@@ -2,31 +2,32 @@ import sqlite3
 import sys
 
 class Entry(object):
-    def __init__(self, trad='', simp='', pin='', jyut='', eng=''):
+    def __init__(self, trad='', simp='', pin='', jyut='', cedict_eng='', canto_eng=''):
         self.traditional = trad
         self.simplified = simp
         self.pinyin = pin
         self.jyutping = jyut
-        self.english = eng
+        self.cedict_english = cedict_eng
+        self.canto_english = canto_eng
 
     def add_jyut_ping(self, jyut):
         self.jyutping = jyut
 
-    def append_eng(self, eng):
-        self.english += '/' + eng
+    def add_canto_eng(self, canto_eng):
+        self.canto_english = canto_eng
 
 def write(entries, db_name):
     db = sqlite3.connect(db_name)
     c = db.cursor()
 
     c.execute('drop table if exists entries');
-    c.execute('create table entries (traditional text, simplified text, pinyin text, jyutping text, english text)')
+    c.execute('create table entries (traditional text, simplified text, pinyin text, jyutping text, cedict_english text, canto_english text)')
 
     def entry_to_tuple(entry):
-        return (entry.traditional, entry.simplified, entry.pinyin, entry.jyutping, entry.english)
+        return (entry.traditional, entry.simplified, entry.pinyin, entry.jyutping, entry.cedict_english, entry.canto_english)
 
     entry_tuples = map(entry_to_tuple, entries.values())
-    c.executemany('insert into entries values (?,?,?,?,?)', entry_tuples)
+    c.executemany('insert into entries values (?,?,?,?,?,?)', entry_tuples)
 
     db.commit()
     db.close()
@@ -45,7 +46,7 @@ def parse_cc_cedict(filename, entries):
             entry = Entry(trad=trad,
                           simp=simp,
                           pin=pin,
-                          eng=eng)
+                          cedict_eng=eng)
 
             entries[trad] = entry
 
@@ -65,10 +66,10 @@ def parse_cc_canto(filename, entries):
                           simp=simp,
                           pin=pin,
                           jyut=jyut,
-                          eng=eng)
+                          canto_eng=eng)
 
             if trad in entries:
-                entries[trad].append_eng(eng)
+                entries[trad].add_canto_eng(eng)
             else:
                 entries[trad] = entry
 
