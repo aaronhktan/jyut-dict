@@ -1,6 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "components/mainsplitter.h"
+#include "components/maintoolbar.h"
+
 #include <QMainWindow>
 
 namespace Ui {
@@ -16,7 +19,8 @@ public:
     ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
+    MainToolBar *mainToolBar;
+    MainSplitter *mainSplitter;
 };
 
 #endif // MAINWINDOW_H

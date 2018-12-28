@@ -25,13 +25,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp
+    main.cpp \
+    components/searchlineedit.cpp \
+    windows/mainwindow.cpp \
+    components/maintoolbar.cpp \
+    components/definitionscrollarea.cpp \
+    components/searchlistview.cpp \
+    components/mainsplitter.cpp
 
 HEADERS += \
-        mainwindow.h
-
-FORMS +=
+    mainwindow.h \
+    components/searchlineedit.h \
+    windows/mainwindow.h \
+    components/maintoolbar.h \
+    components/definitionscrollarea.h \
+    components/searchlistview.h \
+    components/mainsplitter.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
