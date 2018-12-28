@@ -69,6 +69,7 @@ def parse_cc_canto(filename, entries):
                           canto_eng=eng)
 
             if trad in entries:
+                entries[trad].add_jyut_ping(jyut)
                 entries[trad].add_canto_eng(eng)
             else:
                 entries[trad] = entry
