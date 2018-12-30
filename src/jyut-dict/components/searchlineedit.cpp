@@ -6,8 +6,8 @@ SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent)
 {
     this->setPlaceholderText("Search");
 
-    QIcon icon = QIcon("/Users/aaron/Downloads/glass.png");
-    QIcon clear = QIcon("/Users/aaron/Downloads/x.png");
+    QIcon icon = QIcon(":/search_inverted.png");
+    QIcon clear = QIcon(":/x_inverted.png");
 
     this->addAction(icon, QLineEdit::LeadingPosition);
     this->addAction(clear, QLineEdit::TrailingPosition);
@@ -18,10 +18,5 @@ SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent)
                             padding-top: 4px; \
                             padding-bottom: 4px; \
                             selection-background-color: darkgray; \
-                            background-color: #bbbbbb; }");
-}
-
-SearchLineEdit::~SearchLineEdit()
-{
-
+                            background-color: #586365; }");
 }

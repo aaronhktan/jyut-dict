@@ -9,7 +9,6 @@ class SearchLineEdit : public QLineEdit
 
 public:
     explicit SearchLineEdit(QWidget *parent = nullptr);
-    ~SearchLineEdit();
 
 signals:
 
