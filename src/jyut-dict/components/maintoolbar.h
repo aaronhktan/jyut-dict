@@ -8,8 +8,6 @@
 
 class MainToolBar : public QToolBar
 {
-    Q_OBJECT
-
 public:
     explicit MainToolBar(QWidget *parent = nullptr);
     ~MainToolBar();

@@ -9,7 +9,10 @@ class SearchListView : public QListView
 
 public:
     explicit SearchListView(QWidget *parent = nullptr);
-    ~SearchListView();
+
+signals:
+
+public slots:
 };
 
 #endif // SEARCHLISTVIEW_H

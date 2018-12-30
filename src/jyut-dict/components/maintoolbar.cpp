@@ -10,11 +10,13 @@ MainToolBar::MainToolBar(QWidget *parent) : QToolBar(parent)
 
     toolBarWidget->setLayout(toolBarLayout);
 
-    this->addWidget(toolBarWidget);
-    this->setMovable(false);
-    this->setFloatable(false);
+    addWidget(toolBarWidget);
+    setMovable(false);
+    setFloatable(false);
 }
 
 MainToolBar::~MainToolBar()
 {
+    delete toolBarLayout;
+    delete searchBar;
 }

@@ -1,18 +1,18 @@
 #ifndef DEFINITIONSCROLLAREA_H
 #define DEFINITIONSCROLLAREA_H
 
+#include <QResizeEvent>
 #include <QScrollArea>
 
 class DefinitionScrollArea : public QScrollArea
 {
-    Q_OBJECT
 public:
     explicit DefinitionScrollArea(QWidget *parent = nullptr);
-    ~DefinitionScrollArea();
+    void resizeEvent(QResizeEvent *event) override;
+    ~DefinitionScrollArea() override;
 
-signals:
-
-public slots:
+private:
+    QWidget *scrollAreaWidget;
 };
 
 #endif // DEFINITIONSCROLLAREA_H

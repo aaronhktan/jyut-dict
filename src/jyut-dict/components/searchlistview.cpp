@@ -2,10 +2,6 @@
 
 SearchListView::SearchListView(QWidget *parent) : QListView(parent)
 {
-    this->setFrameShape(QFrame::NoFrame);
-}
-
-SearchListView::~SearchListView()
-{
-
+    setFrameShape(QFrame::NoFrame);
+    setMinimumWidth(250);
 }
