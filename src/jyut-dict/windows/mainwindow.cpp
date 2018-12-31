@@ -1,6 +1,8 @@
 #include "windows/mainwindow.h"
 
-#include <stdlib.h>
+#include <logic/entry/sentence.h>
+
+#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)

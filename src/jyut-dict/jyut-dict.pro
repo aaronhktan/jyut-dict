@@ -26,21 +26,26 @@ CONFIG += c++14
 
 SOURCES += \
     main.cpp \
-    components/searchlineedit.cpp \
     windows/mainwindow.cpp \
     components/maintoolbar.cpp \
     components/definitionscrollarea.cpp \
     components/searchlistview.cpp \
-    components/mainsplitter.cpp
+    components/mainsplitter.cpp \
+    components/searchlineedit.cpp \
+    logic/entry/entry.cpp \
+    logic/entry/sentence.cpp
 
 HEADERS += \
     mainwindow.h \
-    components/searchlineedit.h \
     windows/mainwindow.h \
     components/maintoolbar.h \
     components/definitionscrollarea.h \
     components/searchlistview.h \
-    components/mainsplitter.h
+    components/mainsplitter.h \
+    components/maintoolbar.h \
+    components/searchlineedit.h \
+    logic/entry/entry.h \
+    logic/entry/sentence.h
 
 RESOURCES += \
     resources/resource.qrc
