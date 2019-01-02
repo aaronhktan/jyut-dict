@@ -1,6 +1,8 @@
 #ifndef DEFINITIONSCROLLAREA_H
 #define DEFINITIONSCROLLAREA_H
 
+#include "components/definitionwidget.h"
+#include "components/entryheaderwidget.h"
 #include "logic/entry/entry.h"
 
 #include <QFrame>
@@ -22,35 +24,14 @@ public:
     ~DefinitionScrollArea() override;
 
 private:
-    // TODO: Separate these out into their own components
-    // Entry Header
-    QWidget *entryHeader;
-    QGridLayout *entryHeaderLayout;
-    QLabel *wordLabel;
-    QLabel *jyutpingLabel;
-    QLabel *jyutpingPronunciation;
-    QLabel *pinyinLabel;
-    QLabel *pinyinPronunciation;
-
-    // Definition Header
-    QWidget *definitionHeader;
-    QVBoxLayout *definitionHeaderLayout;
-    QLabel *definitionHeaderLabel;
-    QFrame *separatorLine;
-
-    // Definition
-    QWidget *definition;
-    QGridLayout *definitionLayout;
-    std::vector<QLabel *>definitionNumberLabels;
-    std::vector<QLabel *>definitionLabels;
-
-    // Entire definition area (definition + header)
-    QWidget *definitionArea;
-    QVBoxLayout *definitionAreaLayout;
+    EntryHeaderWidget *_entryHeaderWidget;
+    DefinitionWidget *_definitionWidget;
 
     // Entire Scroll Area
-    QVBoxLayout *scrollAreaLayout;
-    QWidget *scrollAreaWidget;
+    QVBoxLayout *_scrollAreaLayout;
+    QWidget *_scrollAreaWidget;
+
+    void testEntry();
 };
 
 #endif // DEFINITIONSCROLLAREA_H

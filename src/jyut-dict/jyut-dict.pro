@@ -27,25 +27,37 @@ CONFIG += c++14
 SOURCES += \
     main.cpp \
     windows/mainwindow.cpp \
-    components/maintoolbar.cpp \
+    components/definitionheaderwidget.cpp \
     components/definitionscrollarea.cpp \
-    components/searchlistview.cpp \
+    components/entryheaderwidget.cpp \
     components/mainsplitter.cpp \
+    components/maintoolbar.cpp \
     components/searchlineedit.cpp \
+    components/searchlistview.cpp \
     logic/entry/entry.cpp \
-    logic/entry/sentence.cpp
+    logic/entry/sentence.cpp \
+    components/definitionsectionwidget.cpp \
+    components/definitioncontentwidget.cpp \
+    logic/entry/definitionsset.cpp \
+    components/definitionwidget.cpp
 
 HEADERS += \
     mainwindow.h \
     windows/mainwindow.h \
-    components/maintoolbar.h \
+    components/definitionheaderwidget.h \
     components/definitionscrollarea.h \
-    components/searchlistview.h \
+    components/entryheaderwidget.h \
+    components/isectionheaderwidget.h \
     components/mainsplitter.h \
     components/maintoolbar.h \
     components/searchlineedit.h \
+    components/searchlistview.h \
     logic/entry/entry.h \
-    logic/entry/sentence.h
+    logic/entry/sentence.h \
+    components/definitionsectionwidget.h \
+    components/definitioncontentwidget.h \
+    logic/entry/definitionsset.h \
+    components/definitionwidget.h
 
 RESOURCES += \
     resources/resource.qrc

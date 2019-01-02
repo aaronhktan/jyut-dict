@@ -13,8 +13,8 @@ public:
     ~MainSplitter();
 
 private:
-    DefinitionScrollArea *definitionScrollArea;
-    SearchListView *searchListView;
+    DefinitionScrollArea *_definitionScrollArea;
+    SearchListView *_searchListView;
 };
 
 #endif // MAINSPLITTER_H

@@ -2,21 +2,21 @@
 
 MainToolBar::MainToolBar(QWidget *parent) : QToolBar(parent)
 {
-    toolBarWidget = new QWidget;
-    toolBarLayout = new QHBoxLayout;
+    _toolBarWidget = new QWidget;
+    _toolBarLayout = new QHBoxLayout;
 
-    searchBar = new SearchLineEdit(this);
-    toolBarLayout->addWidget(searchBar);
+    _searchBar = new SearchLineEdit(this);
+    _toolBarLayout->addWidget(_searchBar);
 
-    toolBarWidget->setLayout(toolBarLayout);
+    _toolBarWidget->setLayout(_toolBarLayout);
 
-    addWidget(toolBarWidget);
+    addWidget(_toolBarWidget);
     setMovable(false);
     setFloatable(false);
 }
 
 MainToolBar::~MainToolBar()
 {
-    delete toolBarLayout;
-    delete searchBar;
+    delete _toolBarLayout;
+    delete _searchBar;
 }

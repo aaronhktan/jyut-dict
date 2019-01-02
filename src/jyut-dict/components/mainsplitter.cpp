@@ -4,11 +4,11 @@
 
 MainSplitter::MainSplitter(QWidget *parent) : QSplitter(parent)
 {
-    definitionScrollArea = new DefinitionScrollArea;
-    searchListView = new SearchListView;
+    _definitionScrollArea = new DefinitionScrollArea;
+    _searchListView = new SearchListView;
 
-    addWidget(searchListView);
-    addWidget(definitionScrollArea);
+    addWidget(_searchListView);
+    addWidget(_definitionScrollArea);
     setHandleWidth(0);
     setCollapsible(0, false);
     setCollapsible(1, false);
@@ -21,6 +21,6 @@ MainSplitter::MainSplitter(QWidget *parent) : QSplitter(parent)
 
 MainSplitter::~MainSplitter()
 {
-    delete definitionScrollArea;
-    delete searchListView;
+    delete _definitionScrollArea;
+    delete _searchListView;
 }

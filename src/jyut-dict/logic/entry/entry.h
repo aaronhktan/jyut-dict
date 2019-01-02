@@ -1,6 +1,7 @@
 #ifndef ENTRY_H
 #define ENTRY_H
 
+#include <logic/entry/definitionsset.h>
 #include <logic/entry/sentence.h>
 
 #include <string>
@@ -11,7 +12,7 @@ class Entry
 public:
     Entry();
     Entry(std::string word, std::string jyutping, std::string pinyin,
-          std::vector<std::string> definitions,
+          std::vector<DefinitionsSet> definitions,
           std::vector<std::string> derivedWords,
           std::vector<Sentence> sentences);
     Entry(const Entry& entry);
@@ -30,8 +31,8 @@ public:
     std::string getPinyin(void) const;
     void setPinyin(std::string pinyin);
 
-    std::vector<std::string> getDefinitions(void) const;
-    void setDefinitions(std::vector<std::string> definitions);
+    std::vector<DefinitionsSet> getDefinitionsSets(void) const;
+    void addDefinitions(DictionarySource source, std::vector<std::string> definitions);
 
     std::vector<std::string> getDerivedWords(void) const;
     void setDerivedWords(std::vector<std::string> derivedWords);
@@ -45,7 +46,7 @@ private:
     std::string _word;
     std::string _jyutping;
     std::string _pinyin;
-    std::vector<std::string> _definitions;
+    std::vector<DefinitionsSet> _definitions;
     std::vector<std::string> _derivedWords;
     std::vector<Sentence> _sentences;
 };

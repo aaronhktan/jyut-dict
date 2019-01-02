@@ -6,7 +6,7 @@ Entry::Entry()
 }
 
 Entry::Entry(std::string word, std::string jyutping, std::string pinyin,
-             std::vector<std::string> definitions,
+             std::vector<DefinitionsSet> definitions,
              std::vector<std::string> derivedWords,
              std::vector<Sentence> sentences)
     : _word{word},
@@ -21,7 +21,7 @@ Entry::Entry(std::string word, std::string jyutping, std::string pinyin,
 
 Entry::Entry(const Entry& entry)
     : _word{entry.getWord()},
-      _definitions{entry.getDefinitions()},
+      _definitions{entry.getDefinitionsSets()},
       _derivedWords{entry.getDerivedWords()},
       _sentences{entry.getSentences()}
 {
@@ -30,20 +30,38 @@ Entry::Entry(const Entry& entry)
 
 Entry::Entry(const Entry&& entry)
     : _word{entry.getWord()},
-      _definitions{entry.getDefinitions()},
+      _definitions{entry.getDefinitionsSets()},
       _derivedWords{entry.getDerivedWords()},
       _sentences{entry.getSentences()}
 {
 
 }
 
-Entry& Entry::operator=(Entry& entry __unused)
+Entry& Entry::operator=(Entry& entry)
 {
+    if (&entry == this) {
+        return *this;
+    }
+
+    _word = entry.getWord();
+    _definitions = entry.getDefinitionsSets();
+    _derivedWords = entry.getDerivedWords();
+    _sentences = entry.getSentences();
+
     return *this;
 }
 
 Entry& Entry::operator=(Entry&& entry __unused)
 {
+    if (&entry == this) {
+        return *this;
+    }
+
+    _word = entry.getWord();
+    _definitions = entry.getDefinitionsSets();
+    _derivedWords = entry.getDerivedWords();
+    _sentences = entry.getSentences();
+
     return *this;
 }
 
@@ -83,14 +101,14 @@ void Entry::setPinyin(std::string pinyin)
     _pinyin = pinyin;
 }
 
-std::vector<std::string> Entry::getDefinitions(void) const
+std::vector<DefinitionsSet> Entry::getDefinitionsSets(void) const
 {
     return _definitions;
 }
 
-void Entry::setDefinitions(std::vector<std::string> definitions)
+void Entry::addDefinitions(DictionarySource source, std::vector<std::string> definitions)
 {
-    _definitions = definitions;
+    _definitions.push_back(DefinitionsSet(source, definitions));
 }
 
 std::vector<std::string> Entry::getDerivedWords(void) const

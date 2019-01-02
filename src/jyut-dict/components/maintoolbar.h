@@ -13,9 +13,9 @@ public:
     ~MainToolBar();
 
 private:
-    QHBoxLayout *toolBarLayout;
-    QWidget *toolBarWidget;
-    SearchLineEdit *searchBar;
+    QHBoxLayout *_toolBarLayout;
+    QWidget *_toolBarWidget;
+    SearchLineEdit *_searchBar;
 };
 
 #endif // MAINTOOLBAR_H
