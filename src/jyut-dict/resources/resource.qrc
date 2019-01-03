@@ -1,8 +1,9 @@
 <RCC>
     <qresource prefix="/">
-        <file>search_inverted.png</file>
-        <file>search.png</file>
-        <file>x_inverted.png</file>
-        <file>x.png</file>
+        <file>images/search_inverted.png</file>
+        <file>images/search.png</file>
+        <file>images/x_inverted.png</file>
+        <file>images/x.png</file>
+        <file>db/test.db</file>
     </qresource>
 </RCC>
