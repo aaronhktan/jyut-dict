@@ -21,7 +21,7 @@ def write(entries, db_name):
     c = db.cursor()
 
     c.execute('drop table if exists entries');
-    c.execute('create table entries (traditional text, simplified text, pinyin text, jyutping text, cedict_english text, canto_english text)')
+    c.execute('create virtual table entries using fts5(traditional, simplified, pinyin, jyutping, cedict_english, canto_english)')
 
     def entry_to_tuple(entry):
         return (entry.traditional, entry.simplified, entry.pinyin, entry.jyutping, entry.cedict_english, entry.canto_english)
