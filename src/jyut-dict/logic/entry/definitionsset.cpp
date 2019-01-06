@@ -1,5 +1,7 @@
 #include "definitionsset.h"
 
+#include <sstream>
+
 DefinitionsSet::DefinitionsSet()
 {
 
@@ -10,6 +12,12 @@ DefinitionsSet::DefinitionsSet(DictionarySource source, std::vector<std::string>
       _definitions{definitions}
 {
 
+}
+
+DefinitionsSet::DefinitionsSet(DictionarySource source, std::string definitions)
+    : _source{source}
+{
+    _definitions = parseDefinitions(definitions);
 }
 
 DefinitionsSet::DefinitionsSet(const DefinitionsSet& definitions)
@@ -50,12 +58,11 @@ DefinitionsSet& DefinitionsSet::operator=(const DefinitionsSet&& definitions)
     return *this;
 }
 
-std::ostream& operator<<(std::ostream& out, DefinitionsSet& definitions)
+std::ostream& operator<<(std::ostream& out, DefinitionsSet const& definitions)
 {
-    out << "Source: " << definitions.getSource() << "; ";
-    out << "Definitions:\n";
+    out << "Definitions (" << definitions.getSource() << "):\n";
 
-    for (auto definition : definitions.getDefinitions()) {
+    for (std::string definition : definitions.getDefinitions()) {
         out << definition << "\n";
     }
 
@@ -70,4 +77,17 @@ DictionarySource DefinitionsSet::getSource() const
 std::vector<std::string> DefinitionsSet::getDefinitions() const
 {
     return _definitions;
+}
+
+std::vector<std::string> DefinitionsSet::parseDefinitions(std::string definitions)
+{
+    std::vector<std::string> definitionsSet;
+    std::stringstream ss(definitions);
+    std::string definition;
+
+    while (std::getline(ss, definition, '/')) {
+        definitionsSet.push_back(definition);
+    }
+
+    return definitionsSet;
 }

@@ -23,9 +23,9 @@ Sentence::Sentence(const Sentence& sentence)
 }
 
 Sentence::Sentence(const Sentence&& sentence)
-    : _cantonese{sentence.getCantonese()},
-      _english{sentence.getEnglish()},
-      _mandarin{sentence.getMandarin()}
+    : _cantonese{std::move(sentence._cantonese)},
+      _english{std::move(sentence._english)},
+      _mandarin{sentence._mandarin}
 {
     std::cout << "Using move constructor" << std::endl;
 }

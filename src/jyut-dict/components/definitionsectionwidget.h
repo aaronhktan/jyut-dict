@@ -12,6 +12,7 @@ class DefinitionSectionWidget : public QWidget
 {
 public:
     explicit DefinitionSectionWidget(QWidget *parent = nullptr);
+    ~DefinitionSectionWidget();
 
     void setEntry(DefinitionsSet& definitionsSet);
 

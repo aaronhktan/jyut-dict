@@ -38,5 +38,7 @@ std::string DefinitionHeaderWidget::formatTitle(std::string title)
 
 DefinitionHeaderWidget::~DefinitionHeaderWidget()
 {
-
+    delete _layout;
+    delete _titleLabel;
+    delete _divider;
 }

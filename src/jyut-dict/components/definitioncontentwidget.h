@@ -11,6 +11,7 @@ class DefinitionContentWidget : public QWidget
 {
 public:
     explicit DefinitionContentWidget(QWidget *parent = nullptr);
+    ~DefinitionContentWidget();
 
     void setEntry(Entry& entry);
     void setEntry(std::vector<std::string> definitions);

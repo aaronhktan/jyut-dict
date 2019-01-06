@@ -7,17 +7,19 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-    this->setWindowTitle("Jyut Dictionary");
-    this->setMinimumSize(QSize(800, 600));
+    setWindowTitle("Jyut Dictionary");
+    setMinimumSize(QSize(800, 600));
 
-    mainToolBar = new MainToolBar;
-    this->addToolBar(mainToolBar);
-    this->setUnifiedTitleAndToolBarOnMac(true);
+    _mainToolBar = new MainToolBar(this);
+    addToolBar(_mainToolBar);
+    setUnifiedTitleAndToolBarOnMac(true);
 
-    mainSplitter = new MainSplitter;
-    this->setCentralWidget(mainSplitter);
+    _mainSplitter = new MainSplitter(this);
+    setCentralWidget(_mainSplitter);
 }
 
 MainWindow::~MainWindow()
 {
+    delete _mainToolBar;
+    delete _mainSplitter;
 }

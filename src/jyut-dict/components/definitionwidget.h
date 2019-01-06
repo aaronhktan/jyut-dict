@@ -12,6 +12,7 @@ class DefinitionWidget : public QWidget
 public:
     explicit DefinitionWidget(QWidget *parent = nullptr);
     explicit DefinitionWidget(Entry& entry, QWidget *parent = nullptr);
+    ~DefinitionWidget();
 
     void setEntry(Entry& entry);
 

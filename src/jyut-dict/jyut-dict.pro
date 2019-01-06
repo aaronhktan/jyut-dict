@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -39,10 +39,11 @@ SOURCES += \
     components/definitionsectionwidget.cpp \
     components/definitioncontentwidget.cpp \
     logic/entry/definitionsset.cpp \
-    components/definitionwidget.cpp
+    components/definitionwidget.cpp \
+    logic/search/sqlsearch.cpp \
+    logic/search/sqldatabasemanager.cpp
 
 HEADERS += \
-    mainwindow.h \
     windows/mainwindow.h \
     components/definitionheaderwidget.h \
     components/definitionscrollarea.h \
@@ -57,7 +58,12 @@ HEADERS += \
     components/definitionsectionwidget.h \
     components/definitioncontentwidget.h \
     logic/entry/definitionsset.h \
-    components/definitionwidget.h
+    components/definitionwidget.h \
+    logic/search/sqlsearch.h \
+    logic/search/isearchobservable.h \
+    logic/search/isearchobserver.h \
+    logic/search/sqldatabasemanager.h \
+    logic/search/isearch.h
 
 RESOURCES += \
     resources/resource.qrc

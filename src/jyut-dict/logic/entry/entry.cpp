@@ -5,11 +5,13 @@ Entry::Entry()
 
 }
 
-Entry::Entry(std::string word, std::string jyutping, std::string pinyin,
+Entry::Entry(std::string simplified, std::string traditional,
+             std::string jyutping, std::string pinyin,
              std::vector<DefinitionsSet> definitions,
              std::vector<std::string> derivedWords,
              std::vector<Sentence> sentences)
-    : _word{word},
+    : _simplified{simplified},
+      _traditional{traditional},
       _jyutping{jyutping},
       _pinyin{pinyin},
       _definitions{definitions},
@@ -20,7 +22,10 @@ Entry::Entry(std::string word, std::string jyutping, std::string pinyin,
 }
 
 Entry::Entry(const Entry& entry)
-    : _word{entry.getWord()},
+    : _simplified{entry.getSimplified()},
+      _traditional{entry.getTraditional()},
+      _jyutping{entry.getJyutping()},
+      _pinyin{entry.getPinyin()},
       _definitions{entry.getDefinitionsSets()},
       _derivedWords{entry.getDerivedWords()},
       _sentences{entry.getSentences()}
@@ -29,10 +34,13 @@ Entry::Entry(const Entry& entry)
 }
 
 Entry::Entry(const Entry&& entry)
-    : _word{entry.getWord()},
-      _definitions{entry.getDefinitionsSets()},
-      _derivedWords{entry.getDerivedWords()},
-      _sentences{entry.getSentences()}
+    : _simplified{std::move(entry._simplified)},
+      _traditional{std::move(entry._traditional)},
+      _jyutping{std::move(entry._jyutping)},
+      _pinyin{std::move(entry._pinyin)},
+      _definitions{std::move(entry._definitions)},
+      _derivedWords{std::move(entry._derivedWords)},
+      _sentences{std::move(entry._sentences)}
 {
 
 }
@@ -43,7 +51,10 @@ Entry& Entry::operator=(Entry& entry)
         return *this;
     }
 
-    _word = entry.getWord();
+    _simplified = entry.getSimplified();
+    _traditional = entry.getTraditional();
+    _jyutping = entry.getJyutping();
+    _pinyin = entry.getPinyin();
     _definitions = entry.getDefinitionsSets();
     _derivedWords = entry.getDerivedWords();
     _sentences = entry.getSentences();
@@ -51,13 +62,16 @@ Entry& Entry::operator=(Entry& entry)
     return *this;
 }
 
-Entry& Entry::operator=(Entry&& entry __unused)
+Entry& Entry::operator=(Entry&& entry)
 {
     if (&entry == this) {
         return *this;
     }
 
-    _word = entry.getWord();
+    _simplified = entry.getSimplified();
+    _traditional = entry.getTraditional();
+    _jyutping = entry.getJyutping();
+    _pinyin = entry.getPinyin();
     _definitions = entry.getDefinitionsSets();
     _derivedWords = entry.getDerivedWords();
     _sentences = entry.getSentences();
@@ -67,18 +81,37 @@ Entry& Entry::operator=(Entry&& entry __unused)
 
 std::ostream& operator<<(std::ostream& out, const Entry& entry)
 {
-    out << entry.getWord();
+    out << "Simplified: " << entry.getSimplified() << "\n";
+    out << "Traditional: " << entry.getTraditional() << "\n";
+    out << "Jyutping: " << entry.getJyutping() << "\n";
+    out << "Pinyin: " << entry.getPinyin() << "\n";
+    for (size_t i = 0; i < entry.getDefinitionsSets().size(); i++) {
+        out << entry.getDefinitionsSets()[i] << "\n";
+    }
+//    for (size_t i = 0; i < entry.getSentences().size(); i++) {
+//        out << entry.getSentences()[i] << "\n";
+//    }
     return out;
 }
 
-std::string Entry::getWord(void) const
+std::string Entry::getSimplified(void) const
 {
-    return _word;
+    return _simplified;
 }
 
-void Entry::setWord(std::string word)
+void Entry::setSimplified(std::string simplified)
 {
-    _word = word;
+    _simplified = simplified;
+}
+
+std::string Entry::getTraditional(void) const
+{
+    return _traditional;
+}
+
+void Entry::setTraditional(std::string traditional)
+{
+    _traditional = traditional;
 }
 
 std::string Entry::getJyutping(void) const

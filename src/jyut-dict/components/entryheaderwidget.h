@@ -10,6 +10,7 @@ class EntryHeaderWidget : public QWidget
 {
 public:
     EntryHeaderWidget(QWidget *parent = nullptr);
+    ~EntryHeaderWidget();
 
     void setEntry(Entry& entry);
     void setEntry(std::string word, std::string jyutping, std::string pinyin);

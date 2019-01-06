@@ -19,8 +19,8 @@ public:
     ~MainWindow();
 
 private:
-    MainToolBar *mainToolBar;
-    MainSplitter *mainSplitter;
+    MainToolBar *_mainToolBar;
+    MainSplitter *_mainSplitter;
 };
 
 #endif // MAINWINDOW_H

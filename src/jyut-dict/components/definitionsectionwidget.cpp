@@ -6,16 +6,25 @@ DefinitionSectionWidget::DefinitionSectionWidget(QWidget *parent) : QWidget(pare
     _definitionAreaLayout->setContentsMargins(0, 0, 0, 0);
     _definitionAreaLayout->setSpacing(11);
     setLayout(_definitionAreaLayout);
+
+    _definitionHeaderWidget = new DefinitionHeaderWidget();
+    _definitionWidget = new DefinitionContentWidget();
 }
 
 void DefinitionSectionWidget::setEntry(DefinitionsSet& definitionsSet)
 {
-    _definitionHeaderWidget = new DefinitionHeaderWidget();
+    // TODO: Change the header depending on dictionary source
     _definitionHeaderWidget->setSectionTitle("DEFINITIONS");
 
-    _definitionWidget = new DefinitionContentWidget();
     _definitionWidget->setEntry(definitionsSet.getDefinitions());
 
     _definitionAreaLayout->addWidget(_definitionHeaderWidget);
     _definitionAreaLayout->addWidget(_definitionWidget);
+}
+
+DefinitionSectionWidget::~DefinitionSectionWidget()
+{
+    delete _definitionAreaLayout;
+    delete _definitionHeaderWidget;
+    delete _definitionWidget;
 }

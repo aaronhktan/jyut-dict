@@ -35,3 +35,16 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
         _definitionLayout->addWidget(_definitionLabels[i], static_cast<int>(i + 9), 1, Qt::AlignTop);
     }
 }
+
+DefinitionContentWidget::~DefinitionContentWidget()
+{
+    for (auto label : _definitionNumberLabels) {
+        delete label;
+    }
+
+    for (auto label : _definitionLabels) {
+        delete label;
+    }
+
+    delete _definitionLayout;
+}

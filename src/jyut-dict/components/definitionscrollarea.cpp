@@ -44,7 +44,8 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
 
 void DefinitionScrollArea::testEntry() {
     // Create dummy entry
-    std::string word{"風水佬呃你十年八年，唔呃得一世"};
+    std::string simplified{"风水佬呃你十年八年，唔呃得一世"};
+    std::string traditional{"風水佬呃你十年八年，唔呃得一世"};
     std::string jyutping{"fung1 seoi2 lou2 ak1 nei5 sap6 nin4 baat3 nin4\u2060，m4 ak1 dak1 jat1 sai3"};
     std::string pinyin{"feng1 shui5 lao3 e4 ni3 shi2 nian2 ba1 nian2\u2060, m2 e4 de5 yi1 shi4"};
     std::vector<std::string>definitions_CC{"literally: 'a Fung Shui master can fool you for only eight to ten years, but not for a whole life'; time will tell; you will realise with time that I am telling you the truth; time will witness the truth; would I lie to you?",
@@ -69,7 +70,7 @@ void DefinitionScrollArea::testEntry() {
     std::vector<std::string>derivedWords{};
     std::vector<Sentence>sentences{};
 
-    Entry entry(word, jyutping, pinyin, definitions, derivedWords, sentences);
+    Entry entry(simplified, traditional, jyutping, pinyin, definitions, derivedWords, sentences);
     setEntry(entry);
 }
 
@@ -86,5 +87,8 @@ void DefinitionScrollArea::resizeEvent(QResizeEvent *event) {
 
 DefinitionScrollArea::~DefinitionScrollArea()
 {
+    delete _scrollAreaLayout;
+    delete _entryHeaderWidget;
+    delete _definitionWidget;
     delete _scrollAreaWidget;
 }

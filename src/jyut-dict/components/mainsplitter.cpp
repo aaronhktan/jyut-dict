@@ -5,7 +5,7 @@
 MainSplitter::MainSplitter(QWidget *parent) : QSplitter(parent)
 {
     _definitionScrollArea = new DefinitionScrollArea;
-    _searchListView = new SearchListView;
+    _searchListView = new SearchListView();
 
     addWidget(_searchListView);
     addWidget(_definitionScrollArea);

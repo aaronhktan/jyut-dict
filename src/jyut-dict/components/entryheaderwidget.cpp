@@ -32,7 +32,7 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
 
 void EntryHeaderWidget::setEntry(Entry& entry)
 {
-    _wordLabel->setText(entry.getWord().c_str());
+    _wordLabel->setText(entry.getSimplified().c_str());
     _jyutpingPronunciation->setText(entry.getJyutping().c_str());
     _pinyinPronunciation->setText(entry.getPinyin().c_str());
 }
@@ -42,4 +42,12 @@ void EntryHeaderWidget::setEntry(std::string word, std::string jyutping, std::st
     _wordLabel->setText(word.c_str());
     _jyutpingPronunciation->setText(jyutping.c_str());
     _pinyinPronunciation->setText(pinyin.c_str());
+}
+
+EntryHeaderWidget::~EntryHeaderWidget()
+{
+    delete _entryHeaderLayout;
+    delete _wordLabel;
+    delete _jyutpingLabel;
+    delete _pinyinLabel;
 }

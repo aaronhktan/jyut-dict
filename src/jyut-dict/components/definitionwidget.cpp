@@ -22,3 +22,11 @@ void DefinitionWidget::setEntry(Entry& entry)
         _definitionSectionsLayout->addWidget(_definitionSections.back());
     }
 }
+
+DefinitionWidget::~DefinitionWidget()
+{
+    delete _definitionSectionsLayout;
+    for (auto definitionSection : _definitionSections) {
+        delete definitionSection;
+    }
+}
