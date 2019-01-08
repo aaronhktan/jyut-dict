@@ -17,6 +17,8 @@ public:
     void setEntry(std::vector<std::string> definitions);
 
 private:
+    void cleanupLabels();
+
     QGridLayout *_definitionLayout;
     std::vector<QLabel *> _definitionNumberLabels;
     std::vector<QLabel *> _definitionLabels;

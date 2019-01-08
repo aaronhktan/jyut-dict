@@ -13,8 +13,8 @@ DefinitionSectionWidget::DefinitionSectionWidget(QWidget *parent) : QWidget(pare
 
 void DefinitionSectionWidget::setEntry(DefinitionsSet& definitionsSet)
 {
-    // TODO: Change the header depending on dictionary source
-    _definitionHeaderWidget->setSectionTitle("DEFINITIONS");
+    std::string source = definitionsSet.getSourceShortString();
+    _definitionHeaderWidget->setSectionTitle("DEFINITIONS (" + source + ")");
 
     _definitionWidget->setEntry(definitionsSet.getDefinitions());
 

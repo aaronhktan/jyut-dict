@@ -13,14 +13,16 @@ DefinitionContentWidget::DefinitionContentWidget(QWidget *parent) : QWidget(pare
 
 void DefinitionContentWidget::setEntry(Entry& entry __unused)
 {
-//    TODO: Fix this
-//    auto definitions = entry.getDefinitions();
-
-//    setEntry(definitions);
+    // Note: displays only the first set of definitions in entry
+    if (entry.getDefinitionsSets().size() >= 1) {
+        setEntry(entry.getDefinitionsSets()[0].getDefinitions());
+    }
 }
 
 void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
 {
+    cleanupLabels();
+
     for (size_t i = 0; i < definitions.size(); i++) {
         std::string number{"<font color=#6f6f6f>" + std::to_string(i + 1) + "</font>"};
         _definitionNumberLabels.push_back(new QLabel(number.c_str(), this));
@@ -36,15 +38,19 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
     }
 }
 
-DefinitionContentWidget::~DefinitionContentWidget()
+void DefinitionContentWidget::cleanupLabels()
 {
     for (auto label : _definitionNumberLabels) {
         delete label;
     }
-
     for (auto label : _definitionLabels) {
         delete label;
     }
+}
+
+DefinitionContentWidget::~DefinitionContentWidget()
+{
+    cleanupLabels();
 
     delete _definitionLayout;
 }

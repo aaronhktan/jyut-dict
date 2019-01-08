@@ -67,10 +67,14 @@ void DefinitionScrollArea::testEntry() {
                                                  "WOOOOOOO"};
     std::vector<DefinitionsSet>definitions{DefinitionsSet{CEDICT, definitions_CC},
                                            DefinitionsSet{CCCANTO, definitions_CCCANTO}};
+    std::vector<DefinitionsSet>definitions2{DefinitionsSet{CEDICT, definitions_CC}};
     std::vector<std::string>derivedWords{};
     std::vector<Sentence>sentences{};
 
     Entry entry(simplified, traditional, jyutping, pinyin, definitions, derivedWords, sentences);
+    Entry entry2("simplified", traditional, jyutping, pinyin, definitions2, derivedWords, sentences);
+    setEntry(entry2);
+
     setEntry(entry);
 }
 

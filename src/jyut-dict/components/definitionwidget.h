@@ -17,6 +17,8 @@ public:
     void setEntry(Entry& entry);
 
 private:
+    void cleanup();
+
     QVBoxLayout *_definitionSectionsLayout;
     std::vector<DefinitionSectionWidget *> _definitionSections;
 };

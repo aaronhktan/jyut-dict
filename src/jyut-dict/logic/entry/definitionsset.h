@@ -23,6 +23,8 @@ public:
     friend std::ostream& operator<<(std::ostream& out, DefinitionsSet const& definitions);
 
     DictionarySource getSource() const;
+    std::string getSourceLongString() const;
+    std::string getSourceShortString() const;
     std::vector<std::string> getDefinitions(void) const;
 
 private:

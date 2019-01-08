@@ -74,6 +74,30 @@ DictionarySource DefinitionsSet::getSource() const
     return _source;
 }
 
+std::string DefinitionsSet::getSourceLongString() const
+{
+    switch (_source) {
+        case CEDICT:
+            return "CEDICT";
+        case CCCANTO:
+            return "CC-CANTO";
+    }
+
+    return "";
+}
+
+std::string DefinitionsSet::getSourceShortString() const
+{
+    switch (_source) {
+        case CEDICT:
+            return "CC";
+        case CCCANTO:
+            return "CCY";
+    }
+
+    return "";
+}
+
 std::vector<std::string> DefinitionsSet::getDefinitions() const
 {
     return _definitions;

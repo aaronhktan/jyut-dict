@@ -8,7 +8,7 @@ class ISectionHeaderWidget
 public:
     virtual void setSectionTitle(std::string name) = 0;
 
-    virtual ~ISectionHeaderWidget() {};
+    virtual ~ISectionHeaderWidget() {}
 };
 
 #endif // ISECTIONHEADER_H
