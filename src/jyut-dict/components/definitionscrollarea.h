@@ -17,13 +17,13 @@ class DefinitionScrollArea : public QScrollArea
 public:
     explicit DefinitionScrollArea(QWidget *parent = nullptr);
 
-    void resizeEvent(QResizeEvent *event) override;
-
     void setEntry(Entry& entry);
 
     ~DefinitionScrollArea() override;
 
 private:
+    void resizeEvent(QResizeEvent *event) override;
+
     EntryHeaderWidget *_entryHeaderWidget;
     DefinitionWidget *_definitionWidget;
 

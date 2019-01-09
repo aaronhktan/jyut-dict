@@ -60,7 +60,7 @@ DefinitionsSet& DefinitionsSet::operator=(const DefinitionsSet&& definitions)
 
 std::ostream& operator<<(std::ostream& out, DefinitionsSet const& definitions)
 {
-    out << "Definitions (" << definitions.getSource() << "):\n";
+//    out << "Definitions (" << definitions.getSourceLongString() << "):\n";
 
     for (std::string definition : definitions.getDefinitions()) {
         out << definition << "\n";
@@ -96,6 +96,15 @@ std::string DefinitionsSet::getSourceShortString() const
     }
 
     return "";
+}
+
+std::string DefinitionsSet::getDefinitionsSnippet() const
+{
+    std::ostringstream definitions;
+    for (std::string definition : _definitions) {
+        definitions << definition << "; ";
+    }
+    return definitions.str();
 }
 
 std::vector<std::string> DefinitionsSet::getDefinitions() const

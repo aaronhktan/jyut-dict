@@ -139,6 +139,14 @@ std::vector<DefinitionsSet> Entry::getDefinitionsSets(void) const
     return _definitions;
 }
 
+std::string Entry::getDefinitionSnippet(void) const
+{
+    if (_definitions.size() > 0) {
+        return _definitions[0].getDefinitionsSnippet();
+    }
+    return "";
+}
+
 void Entry::addDefinitions(DictionarySource source, std::vector<std::string> definitions)
 {
     _definitions.push_back(DefinitionsSet(source, definitions));

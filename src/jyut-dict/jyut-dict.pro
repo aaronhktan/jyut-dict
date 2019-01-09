@@ -41,7 +41,8 @@ SOURCES += \
     logic/entry/definitionsset.cpp \
     components/definitionwidget.cpp \
     logic/search/sqlsearch.cpp \
-    logic/search/sqldatabasemanager.cpp
+    logic/search/sqldatabasemanager.cpp \
+    components/searchlistwidget.cpp
 
 HEADERS += \
     windows/mainwindow.h \
@@ -63,7 +64,8 @@ HEADERS += \
     logic/search/isearchobservable.h \
     logic/search/isearchobserver.h \
     logic/search/sqldatabasemanager.h \
-    logic/search/isearch.h
+    logic/search/isearch.h \
+    components/searchlistwidget.h
 
 RESOURCES += \
     resources/resource.qrc
