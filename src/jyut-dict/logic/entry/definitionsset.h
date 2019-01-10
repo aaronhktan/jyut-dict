@@ -22,6 +22,8 @@ public:
     DefinitionsSet& operator=(const DefinitionsSet&& definitions);
     friend std::ostream& operator<<(std::ostream& out, DefinitionsSet const& definitions);
 
+    bool isEmpty() const;
+
     DictionarySource getSource() const;
     std::string getSourceLongString() const;
     std::string getSourceShortString() const;

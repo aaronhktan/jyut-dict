@@ -32,7 +32,7 @@ void SQLSearch::searchSimplified(const QString& searchTerm)
 {
     QSqlQuery query;
     query.prepare("SELECT * FROM entries WHERE simplified LIKE ?");
-    query.addBindValue("%" + searchTerm + "%");
+    query.addBindValue(searchTerm + "%");
     query.exec();
 
     _results = parseEntries(query);
@@ -44,7 +44,7 @@ void SQLSearch::searchTraditional(const QString& searchTerm)
 {
     QSqlQuery query;
     query.prepare("SELECT * FROM entries WHERE traditional LIKE ?");
-    query.addBindValue("%" + searchTerm + "%");
+    query.addBindValue(searchTerm + "%");
     query.exec();
 
     _results = parseEntries(query);
@@ -56,7 +56,7 @@ void SQLSearch::searchJyutping(const QString &searchTerm)
 {
     QSqlQuery query;
     query.prepare("SELECT * FROM entries WHERE jyutping LIKE ?");
-    query.addBindValue(searchTerm + "%");
+    query.addBindValue("\"" + searchTerm + "%\"");
     query.exec();
 
     _results = parseEntries(query);
@@ -68,7 +68,7 @@ void SQLSearch::searchPinyin(const QString &searchTerm)
 {
     QSqlQuery query;
     query.prepare("SELECT * FROM entries WHERE pinyin LIKE ?");
-    query.addBindValue(searchTerm + "%");
+    query.addBindValue("\"" + searchTerm + "%\"");
     query.exec();
 
     _results = parseEntries(query);

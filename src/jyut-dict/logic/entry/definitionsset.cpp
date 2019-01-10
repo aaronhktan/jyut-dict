@@ -69,6 +69,11 @@ std::ostream& operator<<(std::ostream& out, DefinitionsSet const& definitions)
     return out;
 }
 
+bool DefinitionsSet::isEmpty() const
+{
+    return _definitions.empty();
+}
+
 DictionarySource DefinitionsSet::getSource() const
 {
     return _source;
@@ -100,10 +105,15 @@ std::string DefinitionsSet::getSourceShortString() const
 
 std::string DefinitionsSet::getDefinitionsSnippet() const
 {
-    std::ostringstream definitions;
-    for (std::string definition : _definitions) {
-        definitions << definition << "; ";
+    if (isEmpty()) {
+        return "";
     }
+
+    std::ostringstream definitions;
+    for (size_t i = 0; i < _definitions.size(); i++) {
+        definitions << _definitions[i] << "; ";
+    }
+    definitions << _definitions.back();
     return definitions.str();
 }
 

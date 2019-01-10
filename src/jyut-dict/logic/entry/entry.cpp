@@ -2,7 +2,13 @@
 
 Entry::Entry()
 {
-
+    _simplified = "";
+    _traditional = "";
+    _jyutping = "";
+    _pinyin = "";
+    _definitions = {};
+    _derivedWords = {};
+    _sentences = {};
 }
 
 Entry::Entry(std::string simplified, std::string traditional,
@@ -142,7 +148,11 @@ std::vector<DefinitionsSet> Entry::getDefinitionsSets(void) const
 std::string Entry::getDefinitionSnippet(void) const
 {
     if (_definitions.size() > 0) {
-        return _definitions[0].getDefinitionsSnippet();
+        for (auto definition: _definitions) {
+            if (!definition.isEmpty()) {
+                return definition.getDefinitionsSnippet();
+            }
+        }
     }
     return "";
 }

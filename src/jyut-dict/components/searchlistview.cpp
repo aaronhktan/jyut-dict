@@ -1,40 +1,33 @@
 #include "searchlistview.h"
 
+#include "components/entrylistmodel.h"
 #include "logic/search/sqlsearch.h"
 
+#include "tzfile.h"
+#include <chrono>
+
 SearchListView::SearchListView(QWidget *parent)
-    : QListWidget(parent)
+    : QListView(parent)
 {
     setFrameShape(QFrame::NoFrame);
     setMinimumWidth(250);
 
-    _search = new SQLSearch();
-    _search->registerObserver(this);
-}
+    _model = new EntryListModel({}, this);
+    setModel(_model);
 
-void SearchListView::callback(std::vector<Entry> entries)
-{
-    cleanup();
-    for (auto entry : entries) {
-        QListWidgetItem *item;
-        item = new QListWidgetItem(this);
-        SearchListWidget *widget;
-        widget = new SearchListWidget(entry);
-        setItemWidget(item, widget);
-        item->setSizeHint(QSize(this->width(), widget->minimumSizeHint().height()));
-        addItem(item);
-    }
+    _delegate = new EntryDelegate(this);
+    setItemDelegate(_delegate);
 }
 
 void SearchListView::resizeEvent(QResizeEvent *event)
 {
     event->accept();
-//    for (auto widget : _widgets) {
-//        widget->resize(width(), widget->sizeHint().height());
-//    }
+    for (auto widget : _widgets) {
+        widget->resize(width(), widget->sizeHint().height());
+    }
 }
 
 void SearchListView::cleanup()
 {
-    clear();
+    _widgets.clear();
 }

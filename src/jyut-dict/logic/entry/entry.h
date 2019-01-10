@@ -4,10 +4,12 @@
 #include <logic/entry/definitionsset.h>
 #include <logic/entry/sentence.h>
 
+#include <QVariant>
+
 #include <string>
 #include <vector>
 
-class Entry
+class Entry : public QObject
 {
 public:
     Entry();
@@ -56,5 +58,7 @@ private:
     std::vector<std::string> _derivedWords;
     std::vector<Sentence> _sentences;
 };
+
+Q_DECLARE_METATYPE(Entry);
 
 #endif // ENTRY_H

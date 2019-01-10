@@ -42,7 +42,9 @@ SOURCES += \
     components/definitionwidget.cpp \
     logic/search/sqlsearch.cpp \
     logic/search/sqldatabasemanager.cpp \
-    components/searchlistwidget.cpp
+    components/searchlistwidget.cpp \
+    components/entrylistmodel.cpp \
+    components/entrydelegate.cpp
 
 HEADERS += \
     windows/mainwindow.h \
@@ -65,7 +67,9 @@ HEADERS += \
     logic/search/isearchobserver.h \
     logic/search/sqldatabasemanager.h \
     logic/search/isearch.h \
-    components/searchlistwidget.h
+    components/searchlistwidget.h \
+    components/entrylistmodel.h \
+    components/entrydelegate.h
 
 RESOURCES += \
     resources/resource.qrc
