@@ -45,7 +45,7 @@ void SearchLineEdit::keyReleaseEvent(QKeyEvent *event)
     }
     event->accept();
 
-    _search->searchEnglish(text());
+    _search->searchJyutping(text());
 }
 
 void SearchLineEdit::focusInEvent(QFocusEvent *event)

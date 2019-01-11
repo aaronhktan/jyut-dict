@@ -2,6 +2,8 @@
 
 #include <QFile>
 
+#include <sstream>
+
 std::list<ISearchObserver *> SQLSearch::_observers;
 
 SQLSearch::SQLSearch()
@@ -30,8 +32,15 @@ void SQLSearch::notifyObservers()
 
 void SQLSearch::searchSimplified(const QString& searchTerm)
 {
+    if (searchTerm.isEmpty()) {
+        _results.clear();
+        notifyObservers();
+        return;
+    }
+
     QSqlQuery query;
-    query.prepare("SELECT * FROM entries WHERE simplified LIKE ?");
+    query.prepare("SELECT * FROM entries WHERE simplified LIKE ? "
+                  "ORDER BY freq DESC");
     query.addBindValue(searchTerm + "%");
     query.exec();
 
@@ -42,8 +51,15 @@ void SQLSearch::searchSimplified(const QString& searchTerm)
 
 void SQLSearch::searchTraditional(const QString& searchTerm)
 {
+    if (searchTerm.isEmpty()) {
+        _results.clear();
+        notifyObservers();
+        return;
+    }
+
     QSqlQuery query;
-    query.prepare("SELECT * FROM entries WHERE traditional LIKE ?");
+    query.prepare("SELECT * FROM entries WHERE traditional LIKE ? "
+                  "ORDER BY freq DESC");
     query.addBindValue(searchTerm + "%");
     query.exec();
 
@@ -54,9 +70,22 @@ void SQLSearch::searchTraditional(const QString& searchTerm)
 
 void SQLSearch::searchJyutping(const QString &searchTerm)
 {
+    if (searchTerm.isEmpty()) {
+        _results.clear();
+        notifyObservers();
+        return;
+    }
+
     QSqlQuery query;
-    query.prepare("SELECT * FROM entries WHERE jyutping LIKE ?");
-    query.addBindValue("\"" + searchTerm + "%\"");
+    query.prepare("SELECT * FROM entries WHERE jyutping MATCH ? "
+                  "AND jyutping LIKE ? "
+                  "ORDER BY freq DESC");
+    const char *matchJoinDelimiter = "*";
+    std::string matchTerm = implodePhonetic(explodePhonetic(searchTerm, ' '), matchJoinDelimiter);
+    const char *likeJoinDelimiter = "_";
+    std::string likeTerm = implodePhonetic(explodePhonetic(searchTerm, ' '), likeJoinDelimiter);
+    query.addBindValue(QString(matchTerm.c_str()));
+    query.addBindValue(QString(likeTerm.c_str()) + "%");
     query.exec();
 
     _results = parseEntries(query);
@@ -66,9 +95,22 @@ void SQLSearch::searchJyutping(const QString &searchTerm)
 
 void SQLSearch::searchPinyin(const QString &searchTerm)
 {
+    if (searchTerm.isEmpty()) {
+        _results.clear();
+        notifyObservers();
+        return;
+    }
+
     QSqlQuery query;
-    query.prepare("SELECT * FROM entries WHERE pinyin LIKE ?");
-    query.addBindValue("\"" + searchTerm + "%\"");
+    query.prepare("SELECT * FROM entries WHERE pinyin MATCH ? "
+                  "AND pinyin LIKE ? "
+                  "ORDER BY freq DESC");
+    const char *matchJoinDelimiter = "*";
+    std::string matchTerm = implodePhonetic(explodePhonetic(searchTerm, ' '), matchJoinDelimiter);
+    const char *likeJoinDelimiter = "_";
+    std::string likeTerm = implodePhonetic(explodePhonetic(searchTerm, ' '), likeJoinDelimiter);
+    query.addBindValue(QString(matchTerm.c_str()));
+    query.addBindValue(QString(likeTerm.c_str()) + "%");
 
     query.exec();
 
@@ -79,6 +121,12 @@ void SQLSearch::searchPinyin(const QString &searchTerm)
 
 void SQLSearch::searchEnglish(const QString& searchTerm)
 {
+    if (searchTerm.isEmpty()) {
+        _results.clear();
+        notifyObservers();
+        return;
+    }
+
     QSqlQuery query;
     query.prepare("SELECT * FROM entries WHERE entries MATCH ? "
                   "OR entries MATCH ? "
@@ -91,6 +139,38 @@ void SQLSearch::searchEnglish(const QString& searchTerm)
     _results = parseEntries(query);
 
     notifyObservers();
+}
+
+std::vector<std::string> SQLSearch::explodePhonetic(const QString &string, const char delimiter)
+{
+    std::vector<std::string> words;
+    std::stringstream ss(string.toStdString());
+    std::string word;
+
+    while (std::getline(ss, word, delimiter)) {
+        words.push_back(word);
+    }
+
+    return words;
+}
+
+std::string SQLSearch::implodePhonetic(std::vector<std::string> words, const char *delimiter)
+{
+    std::ostringstream string;
+    for (size_t i = 0; i < words.size() - 1; i++) {
+        if (std::isdigit(words[i].back())) {
+            string << words[i] << " ";
+        } else {
+            string << words[i] << delimiter << " ";
+        }
+    }
+
+    if (std::isdigit(words.back().back())) {
+        string << words.back();
+    } else {
+        string << words.back() << delimiter;
+    }
+    return string.str();
 }
 
 std::vector<Entry> SQLSearch::parseEntries(QSqlQuery query)

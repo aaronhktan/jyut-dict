@@ -110,7 +110,7 @@ std::string DefinitionsSet::getDefinitionsSnippet() const
     }
 
     std::ostringstream definitions;
-    for (size_t i = 0; i < _definitions.size(); i++) {
+    for (size_t i = 0; i < _definitions.size() - 1; i++) {
         definitions << _definitions[i] << "; ";
     }
     definitions << _definitions.back();

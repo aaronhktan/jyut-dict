@@ -26,6 +26,8 @@ public:
 private:
     void notifyObservers() override;
 
+    std::vector<std::string> explodePhonetic(const QString& string, const char delimiter);
+    std::string implodePhonetic(std::vector<std::string> words, const char *delimiter);
     std::vector<Entry> parseEntries(QSqlQuery query);
 
     static std::list<ISearchObserver *> _observers;
