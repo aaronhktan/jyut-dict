@@ -19,13 +19,8 @@ public:
     explicit SearchListView(QWidget *parent = nullptr);
 
 private:
-    void resizeEvent(QResizeEvent *event) override;
-
-    void cleanup();
-
     QAbstractListModel *_model;
     QStyledItemDelegate *_delegate;
-    std::vector<SearchListWidget *> _widgets;
 
 signals:
 

@@ -1,5 +1,7 @@
 #include "mainsplitter.h"
 
+#include "logic/entry/entry.h"
+
 #include <QList>
 
 MainSplitter::MainSplitter(QWidget *parent) : QSplitter(parent)
@@ -9,6 +11,12 @@ MainSplitter::MainSplitter(QWidget *parent) : QSplitter(parent)
 
     addWidget(_searchListView);
     addWidget(_definitionScrollArea);
+
+    connect(_searchListView->selectionModel(),
+       SIGNAL(currentChanged(QModelIndex, QModelIndex)),
+       this, SLOT(handleSelectionChanged(QModelIndex)));
+
+
     setHandleWidth(0);
     setCollapsible(0, false);
     setCollapsible(1, false);
@@ -23,4 +31,10 @@ MainSplitter::~MainSplitter()
 {
     delete _definitionScrollArea;
     delete _searchListView;
+}
+
+void MainSplitter::handleSelectionChanged(const QModelIndex& selection)
+{
+    Entry entry = qvariant_cast<Entry>(selection.data());
+    _definitionScrollArea->setEntry(entry);
 }

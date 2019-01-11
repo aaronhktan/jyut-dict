@@ -16,13 +16,17 @@ SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent)
 
     _clearLineEdit = new QAction(clear, "", this);
     connect(_clearLineEdit, &QAction::triggered,
-            [this](){this->clear(); removeAction(_clearLineEdit);});
+            [this](){
+                this->clear();
+                removeAction(_clearLineEdit);
+                _search->searchEnglish(text());});
 
     addAction(icon, QLineEdit::LeadingPosition);
     addAction(_clearLineEdit, QLineEdit::TrailingPosition);
     setStyleSheet("QLineEdit { \
                      border-radius: 3px; \
-                     outline: 1px solid black; \
+                     border-color: black; \
+                     border-width: 1px; \
                      font-size: 12px; \
                      padding-top: 4px; \
                      padding-bottom: 4px; \
@@ -40,10 +44,6 @@ void SearchLineEdit::keyReleaseEvent(QKeyEvent *event)
         addAction(_clearLineEdit, QLineEdit::TrailingPosition);
     }
     event->accept();
-
-    if (text().isEmpty()) {
-        return;
-    }
 
     _search->searchEnglish(text());
 }

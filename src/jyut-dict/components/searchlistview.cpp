@@ -18,16 +18,3 @@ SearchListView::SearchListView(QWidget *parent)
     _delegate = new EntryDelegate(this);
     setItemDelegate(_delegate);
 }
-
-void SearchListView::resizeEvent(QResizeEvent *event)
-{
-    event->accept();
-    for (auto widget : _widgets) {
-        widget->resize(width(), widget->sizeHint().height());
-    }
-}
-
-void SearchListView::cleanup()
-{
-    _widgets.clear();
-}

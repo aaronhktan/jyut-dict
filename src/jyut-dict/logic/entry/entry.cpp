@@ -147,13 +147,16 @@ std::vector<DefinitionsSet> Entry::getDefinitionsSets(void) const
 
 std::string Entry::getDefinitionSnippet(void) const
 {
-    if (_definitions.size() > 0) {
-        for (auto definition: _definitions) {
-            if (!definition.isEmpty()) {
-                return definition.getDefinitionsSnippet();
-            }
+    if (!_definitions.size()) {
+        return "";
+    }
+
+    for (auto definition: _definitions) {
+        if (!definition.isEmpty()) {
+            return definition.getDefinitionsSnippet();
         }
     }
+
     return "";
 }
 

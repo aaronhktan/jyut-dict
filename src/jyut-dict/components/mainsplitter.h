@@ -10,6 +10,8 @@
 
 class MainSplitter : public QSplitter
 {
+Q_OBJECT
+
 public:
     explicit MainSplitter(QWidget *parent = nullptr);
     ~MainSplitter();
@@ -17,6 +19,9 @@ public:
 private:
     DefinitionScrollArea *_definitionScrollArea;
     SearchListView *_searchListView;
+
+private slots:
+    void handleSelectionChanged(const QModelIndex& selection);
 };
 
 #endif // MAINSPLITTER_H

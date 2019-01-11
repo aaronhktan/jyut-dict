@@ -113,15 +113,23 @@ std::vector<Entry> SQLSearch::parseEntries(QSqlQuery query)
 
          std::string pinyin = query.value(pinyinIndex).toString().toStdString();
 
+         std::vector <DefinitionsSet> definitionsSets{};
+
          std::string cedictDefinitions = query.value(cedictIndex).toString().toStdString();
-         DefinitionsSet cedict_set = DefinitionsSet(CEDICT, cedictDefinitions);
+         if (!cedictDefinitions.empty()) {
+            DefinitionsSet cedict_set = DefinitionsSet(CEDICT, cedictDefinitions);
+            definitionsSets.push_back(cedict_set);
+         }
 
          std::string cccantoDefinitions = query.value(cccantoIndex).toString().toStdString();
-         DefinitionsSet canto_set = DefinitionsSet(CCCANTO, cccantoDefinitions);
+         if (!cccantoDefinitions.empty()) {
+            DefinitionsSet canto_set = DefinitionsSet(CCCANTO, cccantoDefinitions);
+            definitionsSets.push_back(canto_set);
+         }
 
          entries.push_back(Entry(simplified, traditional,
                                  jyutping, pinyin,
-                                 std::vector<DefinitionsSet>{cedict_set, canto_set},
+                                 definitionsSets,
                                  std::vector<std::string>{},
                                  std::vector<Sentence>{}));
     }
