@@ -69,6 +69,7 @@ void SQLSearch::searchPinyin(const QString &searchTerm)
     QSqlQuery query;
     query.prepare("SELECT * FROM entries WHERE pinyin LIKE ?");
     query.addBindValue("\"" + searchTerm + "%\"");
+
     query.exec();
 
     _results = parseEntries(query);
@@ -80,7 +81,8 @@ void SQLSearch::searchEnglish(const QString& searchTerm)
 {
     QSqlQuery query;
     query.prepare("SELECT * FROM entries WHERE entries MATCH ? "
-                  "OR entries MATCH ?");
+                  "OR entries MATCH ? "
+                  "ORDER BY freq DESC");
     query.addBindValue("cedict_english:" + searchTerm);
     query.addBindValue("canto_english:" + searchTerm);
     query.setForwardOnly(true);
