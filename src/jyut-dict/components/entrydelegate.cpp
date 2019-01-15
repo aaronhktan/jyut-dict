@@ -34,14 +34,16 @@ void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     QFont font = painter->font();
     font.setPixelSize(16);
     painter->setFont(font);
-    painter->drawText(r, 0, entry.getSimplified().c_str(), &boundingRect);
+    QFontMetrics metrics(font);
+    QString characters = metrics.elidedText(entry.getCharacters(EntryCharactersOptions::PREFER_TRADITIONAL).c_str(), Qt::ElideRight, r.width());
+    painter->drawText(r, 0, characters, &boundingRect);
 
     r = r.adjusted(0, boundingRect.height(), 0, 0);
     font.setPixelSize(12);
     painter->setFont(font);
-    QFontMetrics metrics(font);
-    QString pinyin = metrics.elidedText(entry.getPinyin().c_str(), Qt::ElideRight, r.width());
-    painter->drawText(r, 0, pinyin, &boundingRect);
+    metrics = QFontMetrics(font);
+    QString phonetic = metrics.elidedText(entry.getPhonetic(EntryPhoneticOptions::PREFER_JYUTPING).c_str(), Qt::ElideRight, r.width());
+    painter->drawText(r, 0, phonetic, &boundingRect);
 
     r = r.adjusted(0, boundingRect.height(), 0, 0);
     QString snippet = metrics.elidedText(entry.getDefinitionSnippet().c_str(), Qt::ElideRight, r.width());

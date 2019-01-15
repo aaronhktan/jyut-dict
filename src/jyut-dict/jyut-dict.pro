@@ -69,7 +69,9 @@ HEADERS += \
     logic/search/isearch.h \
     components/searchlistwidget.h \
     components/entrylistmodel.h \
-    components/entrydelegate.h
+    components/entrydelegate.h \
+    logic/entry/entryphoneticoptions.h \
+    logic/entry/entrycharactersoptions.h
 
 RESOURCES += \
     resources/resource.qrc

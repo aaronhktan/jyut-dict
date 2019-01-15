@@ -1,5 +1,12 @@
 #include "entry.h"
 
+#include <codecvt>
+#include <locale>
+
+#include <iostream>
+#include <string>
+#include <iomanip>
+
 Entry::Entry()
 {
     _simplified = "";
@@ -24,7 +31,9 @@ Entry::Entry(std::string simplified, std::string traditional,
       _derivedWords{derivedWords},
       _sentences{sentences}
 {
-
+    // Normalize pinyin and jyutping to lowercase >:(
+    std::transform(_jyutping.begin(), _jyutping.end(), _jyutping.begin(), ::tolower);
+    std::transform(_pinyin.begin(), _pinyin.end(), _pinyin.begin(), ::tolower);
 }
 
 Entry::Entry(const Entry& entry)
@@ -100,6 +109,69 @@ std::ostream& operator<<(std::ostream& out, const Entry& entry)
     return out;
 }
 
+std::string Entry::getCharacters(EntryCharactersOptions options) const
+{
+    switch (options) {
+        case EntryCharactersOptions::ONLY_SIMPLIFIED: {
+            return _simplified;
+        }
+        case EntryCharactersOptions::ONLY_TRADITIONAL: {
+            return _traditional;
+        }
+        case EntryCharactersOptions::PREFER_SIMPLIFIED: {
+            std::string modifiedTraditional;
+            std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+            std::u32string simplified = converter.from_bytes(_simplified);
+            std::u32string traditional = converter.from_bytes(_traditional);
+            size_t pos = 0;
+            for (auto character : traditional) {
+                bool isDifferent = false;
+                for (size_t i = 0; i < converter.to_bytes(character).size(); i++) {
+                    if (_traditional.at(pos + i) != _simplified.at(pos + i)) {
+                        modifiedTraditional += converter.to_bytes(character);
+                        isDifferent = true;
+                        break;
+                    }
+                }
+
+                if (!isDifferent) {
+                    modifiedTraditional += "－";
+                }
+                pos += converter.to_bytes(character).size();
+            }
+
+            return _simplified + " {" + modifiedTraditional + "}";
+        }
+        case EntryCharactersOptions::PREFER_TRADITIONAL: {
+            std::string modifiedSimplified;
+            std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+            std::u32string simplified = converter.from_bytes(_simplified);
+            std::u32string traditional = converter.from_bytes(_traditional);
+            size_t pos = 0;
+            for (auto character : simplified) {
+                bool isDifferent = false;
+                for (size_t i = 0; i < converter.to_bytes(character).size(); i++) {
+                    if (_simplified.at(pos + i) != _traditional.at(pos + i)) {
+                        modifiedSimplified += converter.to_bytes(character);
+                        isDifferent = true;
+                        break;
+                    }
+                }
+
+                if (!isDifferent) {
+                    modifiedSimplified += "－";
+                }
+                pos += converter.to_bytes(character).size();
+            }
+
+            return _traditional + " {" + modifiedSimplified + "}";
+        }
+        default: {
+            return _jyutping;
+        }
+    }
+}
+
 std::string Entry::getSimplified(void) const
 {
     return _simplified;
@@ -118,6 +190,27 @@ std::string Entry::getTraditional(void) const
 void Entry::setTraditional(std::string traditional)
 {
     _traditional = traditional;
+}
+
+std::string Entry::getPhonetic(EntryPhoneticOptions options) const
+{
+    switch (options) {
+        case EntryPhoneticOptions::ONLY_JYUTPING: {
+            return _jyutping;
+        }
+        case EntryPhoneticOptions::ONLY_PINYIN: {
+            return _pinyin;
+        }
+        case EntryPhoneticOptions::PREFER_JYUTPING: {
+            return _jyutping + " {" + _pinyin + "}";
+        }
+        case EntryPhoneticOptions::PREFER_PINYIN: {
+            return _pinyin + " {" + _jyutping + "}";
+        }
+        default: {
+            return _jyutping;
+        }
+    }
 }
 
 std::string Entry::getJyutping(void) const

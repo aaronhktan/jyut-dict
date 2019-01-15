@@ -32,7 +32,7 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
 
 void EntryHeaderWidget::setEntry(Entry& entry)
 {
-    _wordLabel->setText(entry.getSimplified().c_str());
+    _wordLabel->setText(entry.getCharacters(EntryCharactersOptions::PREFER_SIMPLIFIED).c_str());
     _jyutpingPronunciation->setText(entry.getJyutping().c_str());
     _pinyinPronunciation->setText(entry.getPinyin().c_str());
 }

@@ -72,7 +72,7 @@ void DefinitionScrollArea::testEntry() {
     std::vector<Sentence>sentences{};
 
     Entry entry(simplified, traditional, jyutping, pinyin, definitions, derivedWords, sentences);
-    Entry entry2("simplified", traditional, jyutping, pinyin, definitions2, derivedWords, sentences);
+    Entry entry2(simplified, traditional, jyutping, pinyin, definitions2, derivedWords, sentences);
     setEntry(entry2);
 
     setEntry(entry);

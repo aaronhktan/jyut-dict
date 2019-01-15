@@ -1,8 +1,10 @@
 #ifndef ENTRY_H
 #define ENTRY_H
 
-#include <logic/entry/definitionsset.h>
-#include <logic/entry/sentence.h>
+#include "logic/entry/definitionsset.h"
+#include "logic/entry/entrycharactersoptions.h"
+#include "logic/entry/entryphoneticoptions.h"
+#include "logic/entry/sentence.h"
 
 #include <QVariant>
 
@@ -25,11 +27,15 @@ public:
     Entry& operator=(Entry&& entry);
     friend std::ostream& operator<<(std::ostream& out, const Entry& entry);
 
+    std::string getCharacters(EntryCharactersOptions options) const;
+
     std::string getSimplified(void) const;
     void setSimplified(std::string simplified);
 
     std::string getTraditional(void) const;
     void setTraditional(std::string traditional);
+
+    std::string getPhonetic(EntryPhoneticOptions options) const;
 
     std::string getJyutping(void) const;
     void setJyutping(std::string jyutping);
