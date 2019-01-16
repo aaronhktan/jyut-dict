@@ -13,6 +13,25 @@ DefinitionWidget::DefinitionWidget(Entry& entry, QWidget *parent)
     setEntry(entry);
 }
 
+QSize DefinitionWidget::sizeHint() const
+{
+    if (_definitionSections.empty()) {
+        return QSize(0, 0);
+    } else if (_definitionSections.size() > 1) {
+        int height = 0;
+        for (auto section: _definitionSections) {
+            height += section->sizeHint().height() + _definitionSectionsLayout->spacing();
+        }
+        return QSize(width(), height);
+    } else {
+        int height = 0;
+        for (auto section: _definitionSections) {
+            height += section->sizeHint().height();
+        }
+        return QSize(width(), height);
+    }
+}
+
 void DefinitionWidget::setEntry(Entry& entry)
 {
     cleanup();
@@ -22,6 +41,9 @@ void DefinitionWidget::setEntry(Entry& entry)
 
         _definitionSectionsLayout->addWidget(_definitionSections.back());
     }
+
+    // Force layout to update after adding widgets; fixes some layout issues.
+    _definitionSectionsLayout->activate();
 }
 
 void DefinitionWidget::cleanup()

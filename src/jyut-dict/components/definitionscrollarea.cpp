@@ -30,16 +30,12 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
     _entryHeaderWidget = new EntryHeaderWidget(this);
     _definitionWidget = new DefinitionWidget(this);
 
-//     Extra stuff for testing
-    QTabWidget *widget = new QTabWidget(this);
-    widget->setMinimumHeight(50);
-
     // Add all widgets to main layout
     _scrollAreaLayout->addWidget(_entryHeaderWidget);
     _scrollAreaLayout->addWidget(_definitionWidget);
-    _scrollAreaLayout->addWidget(widget);
+    _scrollAreaLayout->addStretch(1);
 
-    testEntry();
+//    testEntry();
 }
 
 void DefinitionScrollArea::testEntry() {
@@ -82,6 +78,7 @@ void DefinitionScrollArea::setEntry(Entry& entry)
 {
     _entryHeaderWidget->setEntry(entry);
     _definitionWidget->setEntry(entry);
+    _scrollAreaWidget->resize(this->width(), _scrollAreaWidget->sizeHint().height());
 }
 
 void DefinitionScrollArea::resizeEvent(QResizeEvent *event) {
