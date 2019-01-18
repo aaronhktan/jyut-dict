@@ -4,6 +4,6 @@
         <file>images/search.png</file>
         <file>images/x_inverted.png</file>
         <file>images/x.png</file>
-        <file>db/test.db</file>
+        <file>db/eng.db</file>
     </qresource>
 </RCC>

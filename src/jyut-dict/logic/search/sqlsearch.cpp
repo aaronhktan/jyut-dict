@@ -5,9 +5,17 @@
 #include <sstream>
 
 std::list<ISearchObserver *> SQLSearch::_observers;
+SQLDatabaseManager *SQLSearch::_manager;
 
 SQLSearch::SQLSearch()
 {
+    if (!SQLSearch::_manager) {
+       SQLSearch::_manager = new SQLDatabaseManager();
+    }
+
+    if (!SQLSearch::_manager->isEnglishDatabaseOpen()) {
+       SQLSearch::_manager->openEnglishDatabase(":/db/eng.db");
+    }
 }
 
 void SQLSearch::registerObserver(ISearchObserver *observer)
@@ -38,7 +46,7 @@ void SQLSearch::searchSimplified(const QString& searchTerm)
         return;
     }
 
-    QSqlQuery query;
+    QSqlQuery query{SQLSearch::_manager->getEnglishDatabase()};
     query.prepare("SELECT * FROM entries WHERE simplified LIKE ? "
                   "ORDER BY freq DESC");
     query.addBindValue(searchTerm + "%");
@@ -57,7 +65,7 @@ void SQLSearch::searchTraditional(const QString& searchTerm)
         return;
     }
 
-    QSqlQuery query;
+    QSqlQuery query{SQLSearch::_manager->getEnglishDatabase()};
     query.prepare("SELECT * FROM entries WHERE traditional LIKE ? "
                   "ORDER BY freq DESC");
     query.addBindValue(searchTerm + "%");
@@ -76,7 +84,7 @@ void SQLSearch::searchJyutping(const QString &searchTerm)
         return;
     }
 
-    QSqlQuery query;
+    QSqlQuery query{SQLSearch::_manager->getEnglishDatabase()};
     query.prepare("SELECT * FROM entries WHERE jyutping MATCH ? "
                   "AND jyutping LIKE ? "
                   "ORDER BY freq DESC");
@@ -101,7 +109,7 @@ void SQLSearch::searchPinyin(const QString &searchTerm)
         return;
     }
 
-    QSqlQuery query;
+    QSqlQuery query{SQLSearch::_manager->getEnglishDatabase()};
     query.prepare("SELECT * FROM entries WHERE pinyin MATCH ? "
                   "AND pinyin LIKE ? "
                   "ORDER BY freq DESC");
@@ -127,7 +135,7 @@ void SQLSearch::searchEnglish(const QString& searchTerm)
         return;
     }
 
-    QSqlQuery query;
+    QSqlQuery query{SQLSearch::_manager->getEnglishDatabase()};
     query.prepare("SELECT * FROM entries WHERE entries MATCH ? "
                   "OR entries MATCH ? "
                   "ORDER BY freq DESC");

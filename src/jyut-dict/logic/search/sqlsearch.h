@@ -4,6 +4,7 @@
 #include "logic/entry/entry.h"
 #include "logic/search/isearch.h"
 #include "logic/search/isearchobservable.h"
+#include "logic/search/sqldatabasemanager.h"
 
 #include <QtSql>
 
@@ -32,6 +33,8 @@ private:
 
     static std::list<ISearchObserver *> _observers;
     std::vector<Entry> _results;
+
+    static SQLDatabaseManager *_manager;
     QSqlQuery _query;
 };
 
