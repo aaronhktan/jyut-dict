@@ -119,6 +119,10 @@ std::string Entry::getCharacters(EntryCharactersOptions options) const
             return _traditional;
         }
         case EntryCharactersOptions::PREFER_SIMPLIFIED: {
+            if (_simplified.size() != _traditional.size()) {
+                return _simplified + " {}";
+            }
+
             std::string modifiedTraditional;
             std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
             std::u32string simplified = converter.from_bytes(_simplified);
@@ -143,6 +147,10 @@ std::string Entry::getCharacters(EntryCharactersOptions options) const
             return _simplified + " {" + modifiedTraditional + "}";
         }
         case EntryCharactersOptions::PREFER_TRADITIONAL: {
+            if (_traditional.size() != _simplified.size()) {
+                return _traditional + " {}";
+            }
+
             std::string modifiedSimplified;
             std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
             std::u32string simplified = converter.from_bytes(_simplified);
@@ -240,7 +248,7 @@ std::vector<DefinitionsSet> Entry::getDefinitionsSets(void) const
 
 std::string Entry::getDefinitionSnippet(void) const
 {
-    if (!_definitions.size()) {
+    if (_definitions.empty()) {
         return "";
     }
 

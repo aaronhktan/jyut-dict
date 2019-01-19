@@ -23,6 +23,8 @@ public:
     Entry(const Entry& entry);
     Entry(const Entry&& entry);
 
+    ~Entry();
+
     Entry& operator=(Entry& entry);
     Entry& operator=(Entry&& entry);
     friend std::ostream& operator<<(std::ostream& out, const Entry& entry);
@@ -52,8 +54,6 @@ public:
 
     std::vector<Sentence> getSentences(void) const;
     void setSentences(std::vector<Sentence> sentences);
-
-    ~Entry();
 
 private:
     std::string _simplified;

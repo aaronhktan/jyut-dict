@@ -19,36 +19,54 @@ void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 
     Entry entry = qvariant_cast<Entry>(index.data());
 
-    if (option.state & QStyle::State_Selected) {
+    bool isWelcomeEntry = entry.getSimplified() == "Welcome!";
+
+    if (option.state & QStyle::State_Selected && !isWelcomeEntry) {
         painter->fillRect(option.rect, option.palette.highlight());
+        painter->setPen(QPen(option.palette.color(QPalette::HighlightedText)));
     } else {
         painter->fillRect(option.rect, option.palette.base());
+        painter->setPen(QPen(option.palette.color(QPalette::WindowText)));
     }
 
     painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setPen(QPen(option.palette.color(QPalette::WindowText)));
+
+    EntryCharactersOptions characterOptions;
+    EntryPhoneticOptions phoneticOptions;
+    if (isWelcomeEntry) {
+        characterOptions = EntryCharactersOptions::ONLY_SIMPLIFIED;
+        phoneticOptions = EntryPhoneticOptions::ONLY_PINYIN;
+    } else {
+        characterOptions = EntryCharactersOptions::PREFER_TRADITIONAL;
+        phoneticOptions = EntryPhoneticOptions::PREFER_JYUTPING;
+    }
 
     QRect r = option.rect;
-    r = option.rect.adjusted(11, 11, -11, 0);
     QRect boundingRect;
     QFont font = painter->font();
+
+    // Chinese characters
     font.setPixelSize(16);
     painter->setFont(font);
+    r = option.rect.adjusted(11, 11, -11, 0);
     QFontMetrics metrics(font);
-    QString characters = metrics.elidedText(entry.getCharacters(EntryCharactersOptions::PREFER_TRADITIONAL).c_str(), Qt::ElideRight, r.width());
+    QString characters = metrics.elidedText(entry.getCharacters(characterOptions).c_str(), Qt::ElideRight, r.width());
     painter->drawText(r, 0, characters, &boundingRect);
 
-    r = r.adjusted(0, boundingRect.height(), 0, 0);
+    // Phonetic and definition snippets
     font.setPixelSize(12);
     painter->setFont(font);
+
+    r = r.adjusted(0, boundingRect.height(), 0, 0);
     metrics = QFontMetrics(font);
-    QString phonetic = metrics.elidedText(entry.getPhonetic(EntryPhoneticOptions::PREFER_JYUTPING).c_str(), Qt::ElideRight, r.width());
+    QString phonetic = metrics.elidedText(entry.getPhonetic(phoneticOptions).c_str(), Qt::ElideRight, r.width());
     painter->drawText(r, 0, phonetic, &boundingRect);
 
     r = r.adjusted(0, boundingRect.height(), 0, 0);
     QString snippet = metrics.elidedText(entry.getDefinitionSnippet().c_str(), Qt::ElideRight, r.width());
     painter->drawText(r, 0, snippet, &boundingRect);
 
+    // Bottom divider
     QRect rct = option.rect;
     rct.setY(rct.bottom() - 1);
     painter->fillRect(rct, option.palette.color(QPalette::Window));
@@ -56,7 +74,7 @@ void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     painter->restore();
 }
 
-QSize EntryDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+QSize EntryDelegate::sizeHint(const QStyleOptionViewItem &option __unused, const QModelIndex &index) const
 {
     return QSize(100, 80);
 }

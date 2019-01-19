@@ -15,11 +15,13 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _jyutpingLabel->setFixedHeight(_jyutpingLabel->fontMetrics().boundingRect("ly,").height());
     _jyutpingPronunciation = new QLabel(this);
     _jyutpingPronunciation->setWordWrap(true);
+    _jyutpingLabel->setVisible(false);
 
     _pinyinLabel = new QLabel("<font color=#6f6f6f>PY</font>");
     _pinyinLabel->setFixedWidth(_pinyinLabel->fontMetrics().boundingRect("PY").width());
     _pinyinPronunciation = new QLabel(this);
     _pinyinPronunciation->setWordWrap(true);
+    _pinyinLabel->setVisible(false);
 
     _entryHeaderLayout->addWidget(_wordLabel, 1, 0, 1, -1);
     _entryHeaderLayout->addWidget(_jyutpingLabel, 2, 0, 1, 1, Qt::AlignTop);
@@ -32,13 +34,19 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
 
 void EntryHeaderWidget::setEntry(Entry& entry)
 {
-    _wordLabel->setText(entry.getCharacters(EntryCharactersOptions::PREFER_SIMPLIFIED).c_str());
+    _jyutpingLabel->setVisible(true);
+    _pinyinLabel->setVisible(true);
+
+    _wordLabel->setText(entry.getCharacters(EntryCharactersOptions::PREFER_TRADITIONAL).c_str());
     _jyutpingPronunciation->setText(entry.getJyutping().c_str());
     _pinyinPronunciation->setText(entry.getPinyin().c_str());
 }
 
 void EntryHeaderWidget::setEntry(std::string word, std::string jyutping, std::string pinyin)
 {
+    _jyutpingLabel->setVisible(true);
+    _pinyinLabel->setVisible(true);
+
     _wordLabel->setText(word.c_str());
     _jyutpingPronunciation->setText(jyutping.c_str());
     _pinyinPronunciation->setText(pinyin.c_str());

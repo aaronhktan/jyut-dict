@@ -20,6 +20,7 @@ public:
 
     void callback(std::vector<Entry> entries) override;
     void setEntries(std::vector<Entry> entries);
+    void setWelcome();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;
