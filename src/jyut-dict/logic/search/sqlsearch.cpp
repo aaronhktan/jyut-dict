@@ -14,7 +14,7 @@ SQLSearch::SQLSearch()
     }
 
     if (!SQLSearch::_manager->isEnglishDatabaseOpen()) {
-       SQLSearch::_manager->openEnglishDatabase(":/db/eng.db");
+       SQLSearch::_manager->openEnglishDatabase();
     }
 }
 

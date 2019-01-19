@@ -83,6 +83,16 @@ HEADERS += \
 RESOURCES += \
     resources/resource.qrc
 
+macx: {
+    ICON = resources/icon/icon.icns
+    QMAKE_INFO_PLIST = platform/mac/Info.plist
+
+    # Adds files to the Resources folder in macOS bundle
+    APP_DB_FILES.files = resources/db/eng.db
+    APP_DB_FILES.path = Contents/Resources
+    QMAKE_BUNDLE_DATA += APP_DB_FILES
+}
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

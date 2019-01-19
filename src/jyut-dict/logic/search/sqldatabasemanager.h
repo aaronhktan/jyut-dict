@@ -11,8 +11,8 @@ public:
     SQLDatabaseManager();
     ~SQLDatabaseManager();
 
-    void openEnglishDatabase(const QString& path);
-//    void openFrenchDatabase(const QString& path);
+    void openEnglishDatabase();
+//    void openFrenchDatabase();
 
     QSqlDatabase getEnglishDatabase();
     bool isEnglishDatabaseOpen();

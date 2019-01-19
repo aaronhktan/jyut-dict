@@ -1,27 +1,27 @@
 #include "sqldatabasemanager.h"
 
-#include <QDir>
+#include <QCoreApplication>
 #include <QFile>
 
 SQLDatabaseManager::SQLDatabaseManager()
 {
 }
 
-void SQLDatabaseManager::openEnglishDatabase(const QString &path)
+void SQLDatabaseManager::openEnglishDatabase()
 {
-    QFile::copy(path, QDir::currentPath() + "/eng.db");
     if (!_EnglishDB.isOpen()) {
         _EnglishDB = QSqlDatabase::addDatabase("QSQLITE");
-        _EnglishDB.setDatabaseName(QDir::currentPath() + "/eng.db");
+#ifdef __APPLE__
+        _EnglishDB.setDatabaseName(QCoreApplication::applicationDirPath() + "/../Resources/eng.db");
+#endif
         _EnglishDB.open();
     }
 }
 
-//void SQLDatabaseManager::openOtherDatabase(const QString &path)
+//void SQLDatabaseManager::openOtherDatabase()
 //{
-//    QFile::copy(path, QDir::currentPath() + "/fra.db");
 //    _FrenchDB = QSqlDatabase::addDatabase("QSQLITE");
-//    _FrenchDB.setDatabaseName(QDir::currentPath() + "/fra.db");
+//    _FrenchDB.setDatabaseName(QCoreApplication::applicationDirPath() + "/../Resources/fra.db");
 //    _FrenchDB.open();
 //}
 
