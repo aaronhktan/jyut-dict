@@ -1,0 +1,9 @@
+#ifndef ISEARCHPARAMETERSSOURCE_H
+#define ISEARCHPARAMETERSSOURCE_H
+
+class ISearchParametersSource {
+public:
+
+};
+
+#endif // ISEARCHPARAMETERSSOURCE_H

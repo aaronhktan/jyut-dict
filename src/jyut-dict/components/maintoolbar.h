@@ -2,6 +2,8 @@
 #define MAINTOOLBAR_H
 
 #include "components/searchlineedit.h"
+#include "components/searchoptionsradiogroupbox.h"
+#include "logic/search/isearchoptionsmediator.h"
 
 #include <QHBoxLayout>
 #include <QToolBar>
@@ -15,7 +17,10 @@ public:
 private:
     QHBoxLayout *_toolBarLayout;
     QWidget *_toolBarWidget;
+
     SearchLineEdit *_searchBar;
+    SearchOptionsRadioGroupBox *_optionsBox;
+    ISearchOptionsMediator *_searchOptions;
 };
 
 #endif // MAINTOOLBAR_H

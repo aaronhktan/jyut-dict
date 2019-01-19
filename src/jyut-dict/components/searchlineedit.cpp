@@ -7,9 +7,12 @@
 #include <iostream>
 #include <vector>
 
-SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent)
+SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent)
+    : QLineEdit(parent)
 {
-    setPlaceholderText("Search");
+    _mediator = mediator;
+
+    setPlaceholderText(tr("Search"));
 
     QIcon icon = QIcon(":/images/search_inverted.png");
     QIcon clear = QIcon(":/images/x_inverted.png");
@@ -32,6 +35,7 @@ SearchLineEdit::SearchLineEdit(QWidget *parent) : QLineEdit(parent)
                      padding-bottom: 4px; \
                      selection-background-color: darkgray; \
                      background-color: #586365; }");
+    setMinimumWidth(parent->width() / 2);
 
     _search = new SQLSearch();
 }
@@ -44,8 +48,7 @@ void SearchLineEdit::keyReleaseEvent(QKeyEvent *event)
         addAction(_clearLineEdit, QLineEdit::TrailingPosition);
     }
     event->accept();
-
-    _search->searchJyutping(text());
+    search();
 }
 
 void SearchLineEdit::focusInEvent(QFocusEvent *event)
@@ -62,6 +65,40 @@ void SearchLineEdit::focusOutEvent(QFocusEvent *event)
 {
     removeAction(_clearLineEdit);
     QLineEdit::focusOutEvent(event);
+}
+
+void SearchLineEdit::updateParameters(SearchParameters parameters)
+{
+    _parameters = parameters;
+}
+
+void SearchLineEdit::search()
+{
+    switch (_parameters) {
+        case SearchParameters::SIMPLIFIED: {
+            _search->searchSimplified(text());
+            break;
+        }
+        case SearchParameters::TRADITIONAL: {
+            _search->searchTraditional(text());
+            break;
+        }
+        case SearchParameters::PINYIN: {
+            _search->searchPinyin(text());
+            break;
+        }
+        case SearchParameters::JYUTPING: {
+            _search->searchJyutping(text());
+            break;
+        }
+        case SearchParameters::ENGLISH: {
+            _search->searchEnglish(text());
+            break;
+        }
+        default: {
+            break;
+        }
+    }
 }
 
 SearchLineEdit::~SearchLineEdit()

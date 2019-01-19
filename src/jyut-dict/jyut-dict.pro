@@ -44,7 +44,9 @@ SOURCES += \
     logic/search/sqldatabasemanager.cpp \
     components/searchlistwidget.cpp \
     components/entrylistmodel.cpp \
-    components/entrydelegate.cpp
+    components/entrydelegate.cpp \
+    components/searchoptionsradiogroupbox.cpp \
+    logic/search/searchoptionsmediator.cpp
 
 HEADERS += \
     windows/mainwindow.h \
@@ -71,7 +73,12 @@ HEADERS += \
     components/entrylistmodel.h \
     components/entrydelegate.h \
     logic/entry/entryphoneticoptions.h \
-    logic/entry/entrycharactersoptions.h
+    logic/entry/entrycharactersoptions.h \
+    components/searchoptionsradiogroupbox.h \
+    logic/search/searchparameters.h \
+    logic/search/isearchoptionsmediator.h \
+    logic/search/searchoptionsmediator.h \
+    components/isearchlineedit.h
 
 RESOURCES += \
     resources/resource.qrc

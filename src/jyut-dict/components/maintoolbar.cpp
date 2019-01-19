@@ -1,12 +1,21 @@
 #include "maintoolbar.h"
 
+#include "logic/search/searchoptionsmediator.h"
+
 MainToolBar::MainToolBar(QWidget *parent) : QToolBar(parent)
 {
     _toolBarWidget = new QWidget;
     _toolBarLayout = new QHBoxLayout;
 
-    _searchBar = new SearchLineEdit(this);
+    _searchOptions = new SearchOptionsMediator();
+
+    _searchBar = new SearchLineEdit(_searchOptions, this);
+    _searchOptions->registerLineEdit(_searchBar);
+    _optionsBox = new SearchOptionsRadioGroupBox(_searchOptions, this);
+
     _toolBarLayout->addWidget(_searchBar);
+    _toolBarLayout->addWidget(_optionsBox);
+//    _toolBarLayout->addStretch();
 
     _toolBarWidget->setLayout(_toolBarLayout);
 
@@ -19,4 +28,5 @@ MainToolBar::~MainToolBar()
 {
     delete _toolBarLayout;
     delete _searchBar;
+    delete _optionsBox;
 }
