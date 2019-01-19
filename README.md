@@ -63,7 +63,8 @@ The three text files the script requires are:
 In addition, the SQLITE driver must support full-text search on your machine.
 
 Usage:
-`python3 script.py <output database filename> <CC_CEDICT file> <CC_CANTO file> <CC_CANTO readings file>`
+- To install required packages: `pip install -r requirements.txt`
+- To generate database: `python3 script.py <output database filename> <CC_CEDICT file> <CC_CANTO file> <CC_CANTO readings file>`
 
 ### jyut-dict
 
