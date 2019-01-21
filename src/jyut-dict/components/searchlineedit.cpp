@@ -56,6 +56,15 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent
          addAction(search, QLineEdit::LeadingPosition);
          _clearLineEdit->setIcon(clear);
     }
+#elif __WIN32
+    setStyleSheet("QLineEdit { \
+                     border-color: black; \
+                     border-width: 2px; \
+                     font-size: 12px; \
+                     background-color: #ffffff; }");
+    setMinimumHeight(25);
+    addAction(search, QLineEdit::LeadingPosition);
+    _clearLineEdit->setIcon(clear);
 #else
         setStyleSheet("QLineEdit { \
                          border-radius: 3px; \
