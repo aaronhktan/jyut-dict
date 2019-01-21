@@ -3,6 +3,9 @@
 #include "components/entrylistmodel.h"
 #include "logic/search/sqlsearch.h"
 
+#include <QApplication>
+#include <QScrollBar>
+
 SearchListView::SearchListView(QWidget *parent)
     : QListView(parent)
 {
@@ -17,3 +20,13 @@ SearchListView::SearchListView(QWidget *parent)
 
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 }
+
+#if __WIN32
+void SearchListView::wheelEvent(QWheelEvent *event)
+{
+    int singleStep = verticalScrollBar()->singleStep();
+    singleStep = qMin(singleStep, 10);
+    verticalScrollBar()->setSingleStep(singleStep);
+    QAbstractItemView::wheelEvent(event);
+}
+#endif
