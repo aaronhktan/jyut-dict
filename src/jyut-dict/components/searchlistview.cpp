@@ -3,9 +3,6 @@
 #include "components/entrylistmodel.h"
 #include "logic/search/sqlsearch.h"
 
-#include "tzfile.h"
-#include <chrono>
-
 SearchListView::SearchListView(QWidget *parent)
     : QListView(parent)
 {
@@ -17,4 +14,6 @@ SearchListView::SearchListView(QWidget *parent)
 
     _delegate = new EntryDelegate(this);
     setItemDelegate(_delegate);
+
+    setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 }

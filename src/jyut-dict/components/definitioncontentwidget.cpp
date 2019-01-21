@@ -11,7 +11,7 @@ DefinitionContentWidget::DefinitionContentWidget(QWidget *parent) : QWidget(pare
     setLayout(_definitionLayout);
 }
 
-void DefinitionContentWidget::setEntry(Entry& entry __unused)
+void DefinitionContentWidget::setEntry(Entry& entry)
 {
     // Note: displays only the first set of definitions in entry
     if (entry.getDefinitionsSets().size() >= 1) {

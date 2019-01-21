@@ -25,7 +25,7 @@ public:
 
     ~Entry();
 
-    Entry& operator=(Entry& entry);
+    Entry& operator=(const Entry& entry);
     Entry& operator=(Entry&& entry);
     friend std::ostream& operator<<(std::ostream& out, const Entry& entry);
 

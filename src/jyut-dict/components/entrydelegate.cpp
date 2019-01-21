@@ -22,7 +22,11 @@ void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     bool isWelcomeEntry = entry.getSimplified() == "Welcome!";
 
     if (option.state & QStyle::State_Selected && !isWelcomeEntry) {
+#ifdef __WIN32
+        painter->fillRect(option.rect, QColor(204, 0, 1));
+#else
         painter->fillRect(option.rect, option.palette.highlight());
+#endif
         painter->setPen(QPen(option.palette.color(QPalette::HighlightedText)));
     } else {
         painter->fillRect(option.rect, option.palette.base());
@@ -74,7 +78,7 @@ void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     painter->restore();
 }
 
-QSize EntryDelegate::sizeHint(const QStyleOptionViewItem &option __unused, const QModelIndex &index) const
+QSize EntryDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     return QSize(100, 80);
 }

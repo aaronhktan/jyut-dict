@@ -30,6 +30,7 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *m
 
     setLayout(_layout);
     setFlat(true);
+    setStyleSheet("border: 0;");
 }
 
 void SearchOptionsRadioGroupBox::notifyMediator()

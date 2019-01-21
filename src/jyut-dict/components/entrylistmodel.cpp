@@ -34,7 +34,7 @@ void EntryListModel::setWelcome()
     setEntries(std::vector<Entry>{entry});
 }
 
-int EntryListModel::rowCount(const QModelIndex &parent __unused) const
+int EntryListModel::rowCount(const QModelIndex &parent) const
 {
     return static_cast<int>(_entries.size());
 }

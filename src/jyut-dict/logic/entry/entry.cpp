@@ -8,6 +8,7 @@
 #include <iomanip>
 
 Entry::Entry()
+    : QObject()
 {
     _simplified = "";
     _traditional = "";
@@ -60,7 +61,7 @@ Entry::Entry(const Entry&& entry)
 
 }
 
-Entry& Entry::operator=(Entry& entry)
+Entry& Entry::operator=(const Entry& entry)
 {
     if (&entry == this) {
         return *this;
