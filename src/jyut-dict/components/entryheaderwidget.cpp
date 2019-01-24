@@ -9,10 +9,12 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _wordLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _wordLabel->setWordWrap(true);
     _wordLabel->setStyleSheet("QLabel { font-size: 24px}");
+#if __WIN32
+    _wordLabel->setFont(QFont("MingLiU"));
+#endif
 
     _jyutpingLabel = new QLabel("<font color=#6f6f6f>JP</font>", this);
     _jyutpingLabel->setFixedWidth(_jyutpingLabel->fontMetrics().boundingRect("JP").width());
-    _jyutpingLabel->setFixedHeight(_jyutpingLabel->fontMetrics().boundingRect("ly,").height());
     _jyutpingPronunciation = new QLabel(this);
     _jyutpingPronunciation->setWordWrap(true);
     _jyutpingLabel->setVisible(false);
