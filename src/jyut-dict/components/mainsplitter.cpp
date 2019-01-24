@@ -26,7 +26,7 @@ MainSplitter::MainSplitter(QWidget *parent) : QSplitter(parent)
                    { \
                           background-color: rgb(0, 0, 0); \
                    }");
-#elif __WIN32__
+#elif __WIN32
     setStyleSheet("QSplitter::handle \
                    { \
                           background-color: #b9b9b9; \

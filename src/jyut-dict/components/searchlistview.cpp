@@ -21,7 +21,7 @@ SearchListView::SearchListView(QWidget *parent)
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 }
 
-#if __WIN32
+#ifdef __WIN32
 void SearchListView::wheelEvent(QWheelEvent *event)
 {
     int singleStep = verticalScrollBar()->singleStep();

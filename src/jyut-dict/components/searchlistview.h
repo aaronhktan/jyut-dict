@@ -18,7 +18,7 @@ class SearchListView : public QListView
 public:
     explicit SearchListView(QWidget *parent = nullptr);
 
-#if __WIN32
+#ifdef __WIN32
     void wheelEvent(QWheelEvent *event) override;
 #endif
 

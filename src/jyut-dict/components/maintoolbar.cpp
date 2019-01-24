@@ -23,7 +23,7 @@ MainToolBar::MainToolBar(QWidget *parent) : QToolBar(parent)
     setMovable(false);
     setFloatable(false);
 
-#if __WIN32
+#ifdef __WIN32
     setStyleSheet("QToolBar { background-color: white; }");
 #endif
 }

@@ -9,7 +9,7 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _wordLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _wordLabel->setWordWrap(true);
     _wordLabel->setStyleSheet("QLabel { font-size: 24px}");
-#if __WIN32
+#ifdef __WIN32
     _wordLabel->setFont(QFont("MingLiU"));
 #endif
 
