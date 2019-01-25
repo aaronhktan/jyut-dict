@@ -8,9 +8,9 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _wordLabel = new QLabel(this);
     _wordLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _wordLabel->setWordWrap(true);
-    _wordLabel->setStyleSheet("QLabel { font-size: 24px}");
-#ifdef __WIN32
-    _wordLabel->setFont(QFont("MingLiU"));
+    _wordLabel->setStyleSheet("QLabel { font-size: 24px }");
+#ifdef Q_OS_WIN
+    _wordLabel->setFont(QFont("Microsoft YaHei"));
 #endif
 
     _jyutpingLabel = new QLabel("<font color=#6f6f6f>JP</font>", this);

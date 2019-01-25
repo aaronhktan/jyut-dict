@@ -2,6 +2,7 @@
 
 #include <QFile>
 
+#include <cctype>
 #include <sstream>
 
 std::list<ISearchObserver *> SQLSearch::_observers;

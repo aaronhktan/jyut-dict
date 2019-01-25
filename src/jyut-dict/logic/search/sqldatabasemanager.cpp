@@ -11,7 +11,7 @@ void SQLDatabaseManager::openEnglishDatabase()
 {
     if (!_EnglishDB.isOpen()) {
         _EnglishDB = QSqlDatabase::addDatabase("QSQLITE");
-#ifdef __APPLE__
+#ifdef Q_OS_DARWIN
         _EnglishDB.setDatabaseName(QCoreApplication::applicationDirPath() + "/../Resources/eng.db");
 #else
         _EnglishDB.setDatabaseName(QCoreApplication::applicationDirPath() + "./eng.db");

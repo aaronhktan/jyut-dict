@@ -22,7 +22,7 @@ void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     bool isWelcomeEntry = entry.getSimplified() == "Welcome!";
 
     if (option.state & QStyle::State_Selected && !isWelcomeEntry) {
-#ifdef __WIN32
+#ifdef Q_OS_WIN
         painter->fillRect(option.rect, QColor(204, 0, 1));
 #else
         painter->fillRect(option.rect, option.palette.highlight());
@@ -50,6 +50,10 @@ void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     QFont font = painter->font();
 
     // Chinese characters
+#ifdef Q_OS_WIN
+    QFont oldFont = font;
+    font = QFont("Microsoft Yahei");
+#endif
     font.setPixelSize(16);
     painter->setFont(font);
     r = option.rect.adjusted(11, 11, -11, 0);
@@ -58,6 +62,9 @@ void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     painter->drawText(r, 0, characters, &boundingRect);
 
     // Phonetic and definition snippets
+#ifdef Q_OS_WIN
+    font = oldFont;
+#endif
     font.setPixelSize(12);
     painter->setFont(font);
 

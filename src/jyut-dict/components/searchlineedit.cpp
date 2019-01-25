@@ -30,7 +30,16 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent
                 removeAction(_clearLineEdit);
                 _search->searchEnglish(text());});
 
-#ifdef __APPLE__
+#ifdef Q_OS_WIN
+    setStyleSheet("QLineEdit { \
+                     border-color: black; \
+                     border-width: 2px; \
+                     font-size: 12px; \
+                     background-color: #ffffff; }");
+    setMinimumHeight(25);
+    addAction(search, QLineEdit::LeadingPosition);
+    _clearLineEdit->setIcon(clear);
+#elif defined(Q_OS_DARWIN)
     if (!system("defaults read -g AppleInterfaceStyle")) {
         setStyleSheet("QLineEdit { \
                          border-radius: 3px; \
@@ -56,15 +65,6 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent
          addAction(search, QLineEdit::LeadingPosition);
          _clearLineEdit->setIcon(clear);
     }
-#elif __WIN32
-    setStyleSheet("QLineEdit { \
-                     border-color: black; \
-                     border-width: 2px; \
-                     font-size: 12px; \
-                     background-color: #ffffff; }");
-    setMinimumHeight(25);
-    addAction(search, QLineEdit::LeadingPosition);
-    _clearLineEdit->setIcon(clear);
 #else
         setStyleSheet("QLineEdit { \
                          border-radius: 3px; \

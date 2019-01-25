@@ -125,9 +125,16 @@ std::string Entry::getCharacters(EntryCharactersOptions options) const
             }
 
             std::string modifiedTraditional;
+
+#ifdef _MSC_VER
+            std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
+            std::wstring simplified = converter.from_bytes(_simplified);
+            std::wstring traditional = converter.from_bytes(_traditional);
+#else
             std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
             std::u32string simplified = converter.from_bytes(_simplified);
             std::u32string traditional = converter.from_bytes(_traditional);
+#endif
             size_t pos = 0;
             for (auto character : traditional) {
                 bool isDifferent = false;
@@ -153,9 +160,15 @@ std::string Entry::getCharacters(EntryCharactersOptions options) const
             }
 
             std::string modifiedSimplified;
+#ifdef _MSC_VER
+            std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
+            std::wstring simplified = converter.from_bytes(_simplified);
+            std::wstring traditional = converter.from_bytes(_traditional);
+#else
             std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
             std::u32string simplified = converter.from_bytes(_simplified);
             std::u32string traditional = converter.from_bytes(_traditional);
+#endif
             size_t pos = 0;
             for (auto character : simplified) {
                 bool isDifferent = false;
