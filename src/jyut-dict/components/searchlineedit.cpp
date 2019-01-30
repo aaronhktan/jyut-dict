@@ -30,6 +30,11 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent
                 removeAction(_clearLineEdit);
                 _search->searchEnglish(text());});
 
+    connect(this, &QLineEdit::textChanged,
+            [this](){
+                this->checkClearVisibility();
+                this->search();});
+
 #ifdef Q_OS_WIN
     setStyleSheet("QLineEdit { \
                      border-color: black; \
@@ -84,24 +89,18 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent
     _search = new SQLSearch();
 }
 
-void SearchLineEdit::keyReleaseEvent(QKeyEvent *event)
+void SearchLineEdit::checkClearVisibility()
 {
     if (text().isEmpty()) {
         removeAction(_clearLineEdit);
     } else {
         addAction(_clearLineEdit, QLineEdit::TrailingPosition);
     }
-    event->accept();
-    search();
 }
 
 void SearchLineEdit::focusInEvent(QFocusEvent *event)
 {
-    if (text().isEmpty()) {
-        removeAction(_clearLineEdit);
-    } else {
-        addAction(_clearLineEdit, QLineEdit::TrailingPosition);
-    }
+    checkClearVisibility();
     QLineEdit::focusInEvent(event);
 }
 

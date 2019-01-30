@@ -18,7 +18,6 @@ public:
     explicit SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent = nullptr);
     ~SearchLineEdit() override;
 
-    void keyReleaseEvent(QKeyEvent *event) override;
     void focusInEvent(QFocusEvent *event) override;
     void focusOutEvent(QFocusEvent *event) override;
 
@@ -35,6 +34,7 @@ private:
 signals:
 
 public slots:
+    void checkClearVisibility();
 };
 
 #endif // SEARCHLINEEDIT_H
