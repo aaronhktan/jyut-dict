@@ -5,6 +5,9 @@
 
 #include <vector>
 
+// Interface for Observer class for search
+// When informed of new results, calls callback()
+
 class ISearchObserver
 {
 public:

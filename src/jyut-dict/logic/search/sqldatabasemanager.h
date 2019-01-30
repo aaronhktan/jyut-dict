@@ -3,6 +3,9 @@
 
 #include <QSqlDatabase>
 
+// SQLDatabaseManager provides one or more connections to databases
+// that contain the dictionary and its translations
+
 // TODO: support for French Database
 
 class SQLDatabaseManager

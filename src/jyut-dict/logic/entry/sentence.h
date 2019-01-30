@@ -3,6 +3,9 @@
 
 #include <string>
 
+// The Sentence class will in the future contain groupings of translations
+// of a sentence
+
 class Sentence
 {
 public:

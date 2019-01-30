@@ -12,6 +12,13 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 
+// The DefinitionScrollArea is the "detail" view
+// It displays an Entry object in the user interface
+
+// The layout of the DefinitionScrollArea is:
+// EntryHeader - shows word in chinese, pronunciation guides
+// Definition Widget - contains all the definitions and headers for each source
+
 class DefinitionScrollArea : public QScrollArea
 {
 public:

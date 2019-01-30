@@ -6,9 +6,8 @@
 
 #include <QMainWindow>
 
-namespace Ui {
-class MainWindow;
-}
+// As its name suggests, is the main window of the application
+// Contains a toolbar (for searching), and splitter (for results/detail)
 
 class MainWindow : public QMainWindow
 {

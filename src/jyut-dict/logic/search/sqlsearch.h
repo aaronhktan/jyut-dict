@@ -10,6 +10,8 @@
 
 #include <string>
 
+// SQLSearch searches the database provided by SQLDatabaseManager.
+
 class SQLSearch : public ISearch, public ISearchObservable
 {
 public:

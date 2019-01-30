@@ -3,6 +3,10 @@
 
 #include "logic/search/isearchobserver.h"
 
+// Interface for Observable class for search
+// Allows registering/deregistering observers
+// And notifies them when new search results are available
+
 class ISearchObservable
 {
 public:

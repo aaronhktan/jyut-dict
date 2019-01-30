@@ -7,6 +7,9 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+// The DefinitionWidget displays the entire collection of definitions in an Entry
+// It contains multiple definitionsectionwidgets, one for each dictionary source
+
 class DefinitionWidget : public QWidget
 {
 public:

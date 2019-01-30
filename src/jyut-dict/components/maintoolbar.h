@@ -8,6 +8,10 @@
 #include <QHBoxLayout>
 #include <QToolBar>
 
+// The MainToolBar is an object that contains all widgets in the toolbar
+// This includes the searchbar,
+// and any other radio buttons that change search parameters
+
 class MainToolBar : public QToolBar
 {
 public:

@@ -8,6 +8,9 @@
 #include <QHBoxLayout>
 #include <QRadioButton>
 
+// The SearchOptionsRadioGroupBox allows users to change search parameters
+// Currently, there are five options for searching, more may be added
+
 class SearchOptionsRadioGroupBox : public QGroupBox
 {
 Q_OBJECT

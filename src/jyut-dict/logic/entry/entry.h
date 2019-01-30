@@ -11,6 +11,11 @@
 #include <string>
 #include <vector>
 
+// The Entry class is very important, as it is the representation
+// of an entry in the dictionary.
+
+// It contains multiple functions that modify, change, and return aspects of an entry
+
 class Entry : public QObject
 {
 public:

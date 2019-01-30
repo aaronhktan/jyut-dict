@@ -8,6 +8,9 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+// The DefinitionHeaderWidget shows the source of definitions
+// It contains a frame as a divider and the ability to set the source to display
+
 class DefinitionHeaderWidget : public QWidget, public ISectionHeaderWidget
 {
 public:

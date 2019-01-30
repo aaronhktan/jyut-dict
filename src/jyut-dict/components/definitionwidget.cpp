@@ -13,6 +13,8 @@ DefinitionWidget::DefinitionWidget(Entry& entry, QWidget *parent)
     setEntry(entry);
 }
 
+// Must override this so that the layout is rendered properly with the
+// appropriate sizes
 QSize DefinitionWidget::sizeHint() const
 {
     if (_definitionSections.empty()) {

@@ -10,6 +10,8 @@
 #include <QKeyEvent>
 #include <QLineEdit>
 
+// The SearchLineEdit is the main search bar
+
 class SearchLineEdit : public QLineEdit, public ISearchLineEdit
 {
     Q_OBJECT

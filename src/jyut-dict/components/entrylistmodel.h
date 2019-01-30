@@ -11,6 +11,12 @@
 #include <string>
 #include <vector>
 
+// The EntryListModel contains data (a vector of Entry objects)
+// It is populated with the results of a search, being a searchobserver
+
+// Entries are returned as QVariants when an index is provided
+// Header data override is "good manners", but currently is not useful
+
 class EntryListModel : public QAbstractListModel, public ISearchObserver
 {
     Q_OBJECT

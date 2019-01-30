@@ -103,6 +103,10 @@ std::string DefinitionsSet::getSourceShortString() const
     return "";
 }
 
+// getDefinitionSnippet() returns a string that shows the definitions contained
+// in a DefinitionsSet object, in one line, separated by semicolons.
+// This is useful for the search results list view, where the snippet
+// essentially functions as a "preview" of the definitions for a word.
 std::string DefinitionsSet::getDefinitionsSnippet() const
 {
     if (isEmpty()) {
@@ -122,6 +126,10 @@ std::vector<std::string> DefinitionsSet::getDefinitions() const
     return _definitions;
 }
 
+// parseDefinitions takes a string and extracts definitions based on the CEDICT
+// standard.
+//
+// In the standard, each definition is separated by a "/" character.
 std::vector<std::string> DefinitionsSet::parseDefinitions(std::string definitions)
 {
     std::vector<std::string> definitionsSet;

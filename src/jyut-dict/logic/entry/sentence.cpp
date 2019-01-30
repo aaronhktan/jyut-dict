@@ -11,7 +11,6 @@ Sentence::Sentence(std::string cantonese, std::string english, std::string manda
       _english{english},
       _mandarin{mandarin}
 {
-    std::cout << "Using normal constructor" << std::endl;
 }
 
 Sentence::Sentence(const Sentence& sentence)
@@ -19,7 +18,6 @@ Sentence::Sentence(const Sentence& sentence)
       _english{sentence.getEnglish()},
       _mandarin{sentence.getMandarin()}
 {
-    std::cout << "Using copy constructor" << std::endl;
 }
 
 Sentence::Sentence(const Sentence&& sentence)
@@ -27,7 +25,6 @@ Sentence::Sentence(const Sentence&& sentence)
       _english{std::move(sentence._english)},
       _mandarin{sentence._mandarin}
 {
-    std::cout << "Using move constructor" << std::endl;
 }
 
 Sentence& Sentence::operator=(const Sentence& sentence)
@@ -40,7 +37,6 @@ Sentence& Sentence::operator=(const Sentence& sentence)
     _english = sentence.getEnglish();
     _mandarin = sentence.getMandarin();
 
-    std::cout << "Using copy operator" << std::endl;
     return *this;
 }
 
@@ -54,7 +50,6 @@ Sentence& Sentence::operator=(const Sentence&& sentence)
     _english = sentence.getEnglish();
     _mandarin = sentence.getMandarin();
 
-    std::cout << "Using move operator" << std::endl;
     return *this;
 }
 

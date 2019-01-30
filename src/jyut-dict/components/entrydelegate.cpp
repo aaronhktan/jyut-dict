@@ -2,8 +2,6 @@
 
 #include "logic/entry/entry.h"
 
-#include <QDebug>
-
 EntryDelegate::EntryDelegate(QWidget *parent)
     : QStyledItemDelegate (parent)
 {

@@ -4,6 +4,9 @@
 #include <QPainter>
 #include <QStyledItemDelegate>
 
+// The EntryDelegate is responsible for painting elements in the searchlistview
+// It also provides a sizehint for each element
+
 class EntryDelegate : public QStyledItemDelegate
 {
 public:

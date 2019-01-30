@@ -3,6 +3,8 @@
 
 #include <string>
 
+// Interface for header widgets, displaying the source of definitions
+
 class ISectionHeaderWidget
 {
 public:

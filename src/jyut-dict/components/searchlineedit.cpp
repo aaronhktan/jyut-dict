@@ -4,11 +4,8 @@
 
 #include <QIcon>
 
-#include <cstdlib>
 #include <iostream>
 #include <vector>
-
-#include <QDebug>
 
 SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent)
     : QLineEdit(parent)
@@ -35,6 +32,7 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent
                 this->checkClearVisibility();
                 this->search();});
 
+    // Customize the look of the searchbar to fit in better with platform styles
 #ifdef Q_OS_WIN
     setStyleSheet("QLineEdit { \
                      border-color: black; \
@@ -98,12 +96,14 @@ void SearchLineEdit::checkClearVisibility()
     }
 }
 
+// When in focus and text present, the clear button should be visible
 void SearchLineEdit::focusInEvent(QFocusEvent *event)
 {
     checkClearVisibility();
     QLineEdit::focusInEvent(event);
 }
 
+// When out of focus, the clear button should never be visible.
 void SearchLineEdit::focusOutEvent(QFocusEvent *event)
 {
     removeAction(_clearLineEdit);

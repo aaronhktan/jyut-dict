@@ -6,6 +6,9 @@
 #include <QGridLayout>
 #include <QLabel>
 
+// The EntryHeaderWidget displays basic information about the entry
+// at the top of the detail view
+
 class EntryHeaderWidget : public QWidget
 {
 public:

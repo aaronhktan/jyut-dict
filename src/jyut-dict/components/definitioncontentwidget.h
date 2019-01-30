@@ -7,6 +7,10 @@
 #include <QLabel>
 #include <QWidget>
 
+// The DefinitionContentWidget shows all the definitions
+// It contains a colelction of QLabels, one for each definition
+// and its associated "number" (i.e. first definition, second definition, etc.)
+
 class DefinitionContentWidget : public QWidget
 {
 public:

@@ -3,6 +3,8 @@
 
 #include <QString>
 
+// Interface to start a search in database
+
 class ISearch
 {
 public:

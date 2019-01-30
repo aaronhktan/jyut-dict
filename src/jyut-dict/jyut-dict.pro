@@ -42,7 +42,6 @@ SOURCES += \
     components/definitionwidget.cpp \
     logic/search/sqlsearch.cpp \
     logic/search/sqldatabasemanager.cpp \
-    components/searchlistwidget.cpp \
     components/entrylistmodel.cpp \
     components/entrydelegate.cpp \
     components/searchoptionsradiogroupbox.cpp \
@@ -69,7 +68,6 @@ HEADERS += \
     logic/search/isearchobserver.h \
     logic/search/sqldatabasemanager.h \
     logic/search/isearch.h \
-    components/searchlistwidget.h \
     components/entrylistmodel.h \
     components/entrydelegate.h \
     logic/entry/entryphoneticoptions.h \

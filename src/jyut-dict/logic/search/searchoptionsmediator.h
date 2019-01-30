@@ -4,6 +4,9 @@
 #include "logic/search/isearchoptionsmediator.h"
 #include "logic/search/searchparameters.h"
 
+// Concrete implementation of SearchOptionsMediator interface
+// See ISearchOptionsMediator.h for more details
+
 class SearchOptionsMediator : public ISearchOptionsMediator
 {
 public:

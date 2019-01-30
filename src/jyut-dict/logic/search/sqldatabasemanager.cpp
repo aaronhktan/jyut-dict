@@ -3,6 +3,9 @@
 #include <QCoreApplication>
 #include <QFile>
 
+// Todo: move database to QStandardPaths::AppDataLocation, a cross-platform
+// solution for data files.
+
 SQLDatabaseManager::SQLDatabaseManager()
 {
 }

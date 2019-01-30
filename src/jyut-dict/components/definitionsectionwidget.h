@@ -8,6 +8,9 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+// The DefinitionSectionWidget is a group that displays a set of definitions
+// It contains a header (that displays the source), and the definition content
+
 class DefinitionSectionWidget : public QWidget
 {
 public:

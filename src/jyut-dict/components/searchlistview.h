@@ -2,7 +2,6 @@
 #define SEARCHLISTVIEW_H
 
 #include "components/entrydelegate.h"
-#include "components/searchlistwidget.h"
 
 #include "logic/entry/entry.h"
 
@@ -10,6 +9,10 @@
 #include <QResizeEvent>
 
 #include <vector>
+
+// The SearchListView displays results of a search
+// It populates itself with a QAbstractListModel
+// And paints itself with a QStyledItemDelegate
 
 class SearchListView : public QListView
 {

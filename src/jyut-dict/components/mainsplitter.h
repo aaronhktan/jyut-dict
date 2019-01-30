@@ -8,6 +8,14 @@
 
 #include <QSplitter>
 
+// The MainSplitter contains a "master" listview and a "detail" scrollarea
+//
+// It handles the model changed signal that the master listview emits,
+// and passes the data to the detail scrollarea.
+//
+// TODO: Perhaps move that logic out into its own class, to further decouple
+// UI and functionality?
+
 class MainSplitter : public QSplitter
 {
 Q_OBJECT

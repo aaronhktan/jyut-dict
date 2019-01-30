@@ -4,10 +4,14 @@
 #include <iostream>
 #include <vector>
 
+// DictionarySource is an enum that contains possible dictionary sources
+
 enum DictionarySource {
     CEDICT,
     CCCANTO
 };
+
+// The DefintitionsSet class contains a grouping of definitions from one source
 
 class DefinitionsSet
 {
