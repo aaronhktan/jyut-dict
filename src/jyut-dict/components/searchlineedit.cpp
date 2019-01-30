@@ -27,11 +27,6 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent
                 removeAction(_clearLineEdit);
                 _search->searchEnglish(text());});
 
-    connect(this, &QLineEdit::textChanged,
-            [this](){
-                this->checkClearVisibility();
-                this->search();});
-
     // Customize the look of the searchbar to fit in better with platform styles
 #ifdef Q_OS_WIN
     setStyleSheet("QLineEdit { \
@@ -96,6 +91,13 @@ void SearchLineEdit::checkClearVisibility()
     }
 }
 
+void SearchLineEdit::keyReleaseEvent(QKeyEvent *event)
+{
+    checkClearVisibility();
+    QLineEdit::keyReleaseEvent(event);
+    search();
+}
+
 // When in focus and text present, the clear button should be visible
 void SearchLineEdit::focusInEvent(QFocusEvent *event)
 {
@@ -110,9 +112,25 @@ void SearchLineEdit::focusOutEvent(QFocusEvent *event)
     QLineEdit::focusOutEvent(event);
 }
 
+// Since the textChanged event happens before letters are painted,
+// it feels slow.
+// Thus, only use the signals and slots mechanism on Windows, and only
+// when inputting Chinese.
 void SearchLineEdit::updateParameters(SearchParameters parameters)
 {
     _parameters = parameters;
+
+#ifdef Q_OS_WIN
+    if (_parameters == SearchParameters::SIMPLIFIED ||
+            _parameters == SearchParameters::TRADITIONAL) {
+        connect(this, &QLineEdit::textChanged,
+                [this](){
+                    this->checkClearVisibility();
+                    this->search();});
+    } else {
+        disconnect(this, &QLineEdit::textChanged, nullptr, nullptr);
+    }
+#endif
 }
 
 void SearchLineEdit::search()
