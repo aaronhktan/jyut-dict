@@ -31,6 +31,8 @@ MainSplitter::MainSplitter(QWidget *parent) : QSplitter(parent)
                    { \
                           background-color: rgb(0, 0, 0); \
                    }");
+#else
+    setStyleSheet("QSplitter::handle { background-color: lightgray; }");
 #endif
 }
 

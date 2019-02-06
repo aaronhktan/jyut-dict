@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     setWindowTitle("Jyut Dictionary");
-    setMinimumSize(QSize(800, 600));
+    setMinimumSize(QSize(600, 600));
 
     _mainToolBar = new MainToolBar(this);
     addToolBar(_mainToolBar);

@@ -25,6 +25,8 @@ MainToolBar::MainToolBar(QWidget *parent) : QToolBar(parent)
 
 #ifdef Q_OS_WIN
     setStyleSheet("QToolBar { background-color: white; }");
+#elif defined(Q_OS_LINUX)
+    setStyleSheet("QToolBar { border-bottom: 1px solid lightgray; }");
 #endif
 }
 
