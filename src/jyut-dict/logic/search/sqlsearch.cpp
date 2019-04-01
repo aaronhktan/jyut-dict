@@ -185,8 +185,8 @@ void SQLSearch::searchEnglish(const QString& searchTerm)
     query.prepare("SELECT * FROM entries WHERE entries MATCH ? "
                   "OR entries MATCH ? "
                   "ORDER BY freq DESC");
-    query.addBindValue("cedict_english:" + searchTerm);
-    query.addBindValue("canto_english:" + searchTerm);
+    query.addBindValue("cedict_english:\"" + searchTerm + "\"");
+    query.addBindValue("canto_english:\"" + searchTerm + "\"");
     query.setForwardOnly(true);
     query.exec();
 

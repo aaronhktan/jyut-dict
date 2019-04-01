@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include <QFontMetrics>
+#include <QScrollBar>
 #include <QSpacerItem>
 #include <QTabWidget>
 
@@ -22,7 +23,7 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
 
     _scrollAreaWidget = new QWidget(this);
     _scrollAreaWidget->setLayout(_scrollAreaLayout);
-    _scrollAreaWidget->resize(this->width(), _scrollAreaWidget->sizeHint().height());
+    _scrollAreaWidget->resize(this->width() - verticalScrollBar()->width(), _scrollAreaWidget->sizeHint().height());
 
     setWidget(_scrollAreaWidget);
     setMinimumWidth(350);
@@ -83,10 +84,10 @@ void DefinitionScrollArea::setEntry(Entry& entry)
 {
     _entryHeaderWidget->setEntry(entry);
     _definitionWidget->setEntry(entry);
-    _scrollAreaWidget->resize(this->width(), _scrollAreaWidget->sizeHint().height());
+    _scrollAreaWidget->resize(this->width() - verticalScrollBar()->width(), _scrollAreaWidget->sizeHint().height());
 }
 
 void DefinitionScrollArea::resizeEvent(QResizeEvent *event) {
-    _scrollAreaWidget->resize(this->width(), _scrollAreaWidget->sizeHint().height());
+    _scrollAreaWidget->resize(this->width() - verticalScrollBar()->width(), _scrollAreaWidget->sizeHint().height());
     event->accept();
 }

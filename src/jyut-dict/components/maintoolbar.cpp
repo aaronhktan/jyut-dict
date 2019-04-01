@@ -22,6 +22,7 @@ MainToolBar::MainToolBar(QWidget *parent) : QToolBar(parent)
     addWidget(_toolBarWidget);
     setMovable(false);
     setFloatable(false);
+    setContextMenuPolicy(Qt::PreventContextMenu);
 
 #ifdef Q_OS_WIN
     setStyleSheet("QToolBar { background-color: white; }");
