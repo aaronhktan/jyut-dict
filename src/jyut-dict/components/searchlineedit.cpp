@@ -3,6 +3,7 @@
 #include "logic/search/sqlsearch.h"
 
 #include <QIcon>
+#include <QTimer>
 
 #include <iostream>
 #include <vector>
@@ -14,10 +15,8 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent
 
     setPlaceholderText(tr("Search"));
 
-    QIcon search = QIcon(":/images/search.png");
-    QIcon clear = QIcon(":/images/x.png");
-    QIcon search_inverted = QIcon(":/images/search_inverted.png");
-    QIcon clear_inverted = QIcon(":/images/x_inverted.png");
+    _searchLineEdit = new QAction("", this);
+    addAction(_searchLineEdit, QLineEdit::LeadingPosition);
 
     _clearLineEdit = new QAction("", this);
     addAction(_clearLineEdit, QLineEdit::TrailingPosition);
@@ -29,57 +28,30 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent
 
     // Customize the look of the searchbar to fit in better with platform styles
 #ifdef Q_OS_WIN
-    setStyleSheet("QLineEdit { \
-                     border-color: black; \
-                     border-width: 2px; \
-                     font-size: 12px; \
-                     background-color: #ffffff; }");
+    setStyle(/* use_dark = */false);
     setMinimumHeight(25);
-    addAction(search, QLineEdit::LeadingPosition);
-    _clearLineEdit->setIcon(clear);
 #elif defined(Q_OS_DARWIN)
     if (!system("defaults read -g AppleInterfaceStyle")) {
-        setStyleSheet("QLineEdit { \
-                         border-radius: 3px; \
-                         border-color: black; \
-                         border-width: 1px; \
-                         font-size: 12px; \
-                         padding-top: 4px; \
-                         padding-bottom: 4px; \
-                         selection-background-color: darkgray; \
-                         background-color: #586365; }");
-        addAction(search_inverted, QLineEdit::LeadingPosition);
-        _clearLineEdit->setIcon(clear_inverted);
+        setStyle(/* use_dark = */true);
     } else {
-        setStyleSheet("QLineEdit { \
-                         border-radius: 3px; \
-                         border-color: black; \
-                         border-width: 1px; \
-                         font-size: 12px; \
-                         padding-top: 4px; \
-                         padding-bottom: 4px; \
-                         selection-background-color: darkgray; \
-                         background-color: #ffffff; }");
-         addAction(search, QLineEdit::LeadingPosition);
-         _clearLineEdit->setIcon(clear);
+        setStyle(/* use_dark = */false);
     }
 #else
-        setStyleSheet("QLineEdit { \
-                         border-radius: 3px; \
-                         border-color: black; \
-                         border-width: 1px; \
-                         font-size: 12px; \
-                         padding-top: 4px; \
-                         padding-bottom: 4px; \
-                         selection-background-color: darkgray; \
-                         background-color: #ffffff; }");
-        addAction(search, QLineEdit::LeadingPosition);
-        _clearLineEdit->setIcon(clear);
+    setStyle(/* use_dark = */false);
 #endif
 
     setMinimumWidth(parent->width() / 2);
 
     _search = new SQLSearch();
+}
+
+SearchLineEdit::~SearchLineEdit()
+{
+    delete _mediator;
+    delete _search;
+
+    delete _searchLineEdit;
+    delete _clearLineEdit;
 }
 
 void SearchLineEdit::checkClearVisibility()
@@ -110,6 +82,24 @@ void SearchLineEdit::focusOutEvent(QFocusEvent *event)
 {
     removeAction(_clearLineEdit);
     QLineEdit::focusOutEvent(event);
+}
+
+void SearchLineEdit::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; } );
+
+        // Set the style to match whether the user started dark mode
+        if (!system("defaults read -g AppleInterfaceStyle")) {
+            setStyle(/* use_dark = */true);
+        } else {
+            setStyle(/* use_dark = */false);
+        }
+    }
+    QWidget::changeEvent(event);
 }
 
 // Since the textChanged event happens before letters are painted,
@@ -162,7 +152,35 @@ void SearchLineEdit::search()
     }
 }
 
-SearchLineEdit::~SearchLineEdit()
+void SearchLineEdit::setStyle(bool use_dark)
 {
-    delete _clearLineEdit;
+    QIcon search = QIcon(":/images/search.png");
+    QIcon clear = QIcon(":/images/x.png");
+    QIcon search_inverted = QIcon(":/images/search_inverted.png");
+    QIcon clear_inverted = QIcon(":/images/x_inverted.png");
+    if (use_dark) {
+        setStyleSheet("QLineEdit { \
+                         border-radius: 3px; \
+                         border-color: black; \
+                         border-width: 1px; \
+                         font-size: 12px; \
+                         padding-top: 4px; \
+                         padding-bottom: 4px; \
+                         selection-background-color: darkgray; \
+                         background-color: #586365; }");
+        _searchLineEdit->setIcon(search_inverted);
+        _clearLineEdit->setIcon(clear_inverted);
+    } else {
+        setStyleSheet("QLineEdit { \
+                         border-radius: 3px; \
+                         border-color: black; \
+                         border-width: 1px; \
+                         font-size: 12px; \
+                         padding-top: 4px; \
+                         padding-bottom: 4px; \
+                         selection-background-color: darkgray; \
+                         background-color: #ffffff; }");
+         _searchLineEdit->setIcon(search);
+         _clearLineEdit->setIcon(clear);
+    }
 }

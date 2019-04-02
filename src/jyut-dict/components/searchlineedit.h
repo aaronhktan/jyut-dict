@@ -23,19 +23,23 @@ public:
     void keyReleaseEvent(QKeyEvent *event) override;
     void focusInEvent(QFocusEvent *event) override;
     void focusOutEvent(QFocusEvent *event) override;
+    void changeEvent(QEvent *event) override;
 
     void updateParameters(SearchParameters parameters) override;
     void search() override;
 private:
     void checkClearVisibility();
+    void setStyle(bool use_dark);
 
     ISearchOptionsMediator *_mediator;
     ISearch *_search;
 
+    QAction *_searchLineEdit;
     QAction *_clearLineEdit;
 
     SearchParameters _parameters;
 
+    bool _paletteRecentlyChanged;
 signals:
 
 public slots:
