@@ -86,6 +86,7 @@ void SearchLineEdit::focusOutEvent(QFocusEvent *event)
 
 void SearchLineEdit::changeEvent(QEvent *event)
 {
+#if defined(Q_OS_DARWIN)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
@@ -100,6 +101,7 @@ void SearchLineEdit::changeEvent(QEvent *event)
         }
     }
     QWidget::changeEvent(event);
+#endif
 }
 
 // Since the textChanged event happens before letters are painted,
@@ -158,6 +160,16 @@ void SearchLineEdit::setStyle(bool use_dark)
     QIcon clear = QIcon(":/images/x.png");
     QIcon search_inverted = QIcon(":/images/search_inverted.png");
     QIcon clear_inverted = QIcon(":/images/x_inverted.png");
+
+#ifdef Q_OS_WIN
+    setStyleSheet("QLineEdit { \
+                     border-color: black; \
+                     border-width: 2px; \
+                     font-size: 12px; \
+                     background-color: #ffffff; }");
+    _searchLineEdit->setIcon(search);
+    _clearLineEdit->setIcon(clear);
+#else
     if (use_dark) {
         setStyleSheet("QLineEdit { \
                          border-radius: 3px; \
@@ -183,4 +195,5 @@ void SearchLineEdit::setStyle(bool use_dark)
          _searchLineEdit->setIcon(search);
          _clearLineEdit->setIcon(clear);
     }
+#endif
 }
