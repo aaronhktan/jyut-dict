@@ -24,7 +24,10 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *m
     _englishButton->setToolTip(tr("Search English"));
     _englishButton->setStyleSheet("QToolTip { padding: 1px; }");
     _englishButton->setChecked(true);
+#ifdef Q_OS_MAC
+    // Makes the button selection show up correctly on macOS
     _englishButton->setDown(true);
+#endif
     notifyMediator();
 
     connect(_simplifiedButton, &QRadioButton::released, [this](){notifyMediator();});
