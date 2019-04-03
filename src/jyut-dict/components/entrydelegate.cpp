@@ -101,7 +101,11 @@ void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     // Bottom divider
     QRect rct = option.rect;
     rct.setY(rct.bottom() - 1);
+#ifdef WINAPI_FAMILY
     painter->fillRect(rct, QColor("#b9b9b9"));
+#else
+    painter->fillRect(rct, option.palette.color(QPalette::Window));
+#endif
 
     painter->restore();
 }

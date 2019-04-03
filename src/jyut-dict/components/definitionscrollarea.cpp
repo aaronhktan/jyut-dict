@@ -7,9 +7,12 @@
 #include <iostream>
 
 #include <QFontMetrics>
-#include <QScrollBar>
 #include <QSpacerItem>
 #include <QTabWidget>
+
+#ifdef WINAPI_FAMILY
+#include <QScrollBar>
+#endif
 
 #define ENTIRE_WIDTH -1
 
@@ -23,7 +26,11 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
 
     _scrollAreaWidget = new QWidget(this);
     _scrollAreaWidget->setLayout(_scrollAreaLayout);
+#ifdef WINAPI_FAMILY
     _scrollAreaWidget->resize(this->width() - verticalScrollBar()->width(), _scrollAreaWidget->sizeHint().height());
+#else
+    _scrollAreaWidget->resize(this->width(), _scrollAreaWidget->sizeHint().height());
+#endif
 
     setWidget(_scrollAreaWidget);
     setMinimumWidth(350);
@@ -84,10 +91,18 @@ void DefinitionScrollArea::setEntry(Entry& entry)
 {
     _entryHeaderWidget->setEntry(entry);
     _definitionWidget->setEntry(entry);
+#ifdef WINAPI_FAMILY
     _scrollAreaWidget->resize(this->width() - verticalScrollBar()->width(), _scrollAreaWidget->sizeHint().height());
+#else
+    _scrollAreaWidget->resize(this->width(), _scrollAreaWidget->sizeHint().height());
+#endif
 }
 
 void DefinitionScrollArea::resizeEvent(QResizeEvent *event) {
+#ifdef WINAPI_FAMILY
     _scrollAreaWidget->resize(this->width() - verticalScrollBar()->width(), _scrollAreaWidget->sizeHint().height());
+#else
+    _scrollAreaWidget->resize(this->width(), _scrollAreaWidget->sizeHint().height());
+#endif
     event->accept();
 }
