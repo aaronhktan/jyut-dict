@@ -22,7 +22,7 @@ Q_OBJECT
 
 public:
     explicit MainSplitter(QWidget *parent = nullptr);
-    ~MainSplitter();
+    ~MainSplitter() override;
 
 private:
     DefinitionScrollArea *_definitionScrollArea;

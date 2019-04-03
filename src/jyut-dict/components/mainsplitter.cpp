@@ -16,21 +16,14 @@ MainSplitter::MainSplitter(QWidget *parent) : QSplitter(parent)
        SIGNAL(currentChanged(QModelIndex, QModelIndex)),
        this, SLOT(handleSelectionChanged(QModelIndex)));
 
-
     setHandleWidth(1);
     setCollapsible(0, false);
     setCollapsible(1, false);
     setSizes(QList<int>({size().width() / 3, size().width() * 2 / 3}));
 #ifdef Q_OS_WIN
-    setStyleSheet("QSplitter::handle \
-                   { \
-                          background-color: #b9b9b9; \
-                   }");
+    setStyleSheet("QSplitter::handle { background-color: #b9b9b9; }");
 #elif defined(Q_OS_DARWIN)
-    setStyleSheet("QSplitter::handle \
-                   { \
-                          background-color: rgb(0, 0, 0); \
-                   }");
+    setHandleWidth(-1);
 #else
     setStyleSheet("QSplitter::handle { background-color: lightgray; }");
 #endif
