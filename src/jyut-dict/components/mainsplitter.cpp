@@ -23,7 +23,7 @@ MainSplitter::MainSplitter(QWidget *parent) : QSplitter(parent)
 #ifdef Q_OS_WIN
     setStyleSheet("QSplitter::handle { background-color: #b9b9b9; }");
 #elif defined(Q_OS_DARWIN)
-    setHandleWidth(-1);
+    setStyleSheet("QSplitter::handle { background-color: none; }");
 #else
     setStyleSheet("QSplitter::handle { background-color: lightgray; }");
 #endif
