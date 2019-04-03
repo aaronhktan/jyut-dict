@@ -10,19 +10,27 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *m
 
     _simplifiedButton = new QRadioButton(tr("SC"), this);
     _simplifiedButton->setToolTip(tr("Search Simplified Chinese"));
-    _simplifiedButton->setStyleSheet("QToolTip { padding: 1px; }");
     _traditionalButton = new QRadioButton(tr("TC"), this);
     _traditionalButton->setToolTip(tr("Search Traditional Chinese"));
-    _traditionalButton->setStyleSheet("QToolTip { padding: 1px; }");
     _jyutpingButton = new QRadioButton(tr("JP"), this);
     _jyutpingButton->setToolTip(tr("Search Jyutping"));
-    _jyutpingButton->setStyleSheet("QToolTip { padding: 1px; }");
     _pinyinButton = new QRadioButton(tr("PY"), this);
     _pinyinButton->setToolTip(tr("Search Pinyin"));
-    _pinyinButton->setStyleSheet("QToolTip { padding: 1px; }");
     _englishButton = new QRadioButton(tr("EN"), this);
     _englishButton->setToolTip(tr("Search English"));
+#ifdef Q_OS_LINUX
+    _simplifiedButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
+    _traditionalButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
+    _jyutpingButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
+    _pinyinButton->setStyleSheet("QToolTip { padding: 1px; color: black; }");
+    _englishButton->setStyleSheet("QToolTip { padding: 1px; color: black; }");
+#else
+    _simplifiedButton->setStyleSheet("QToolTip { padding: 1px; }");
+    _traditionalButton->setStyleSheet("QToolTip { padding: 1px; }");
+    _jyutpingButton->setStyleSheet("QToolTip { padding: 1px; }");
+    _pinyinButton->setStyleSheet("QToolTip { padding: 1px; }");
     _englishButton->setStyleSheet("QToolTip { padding: 1px; }");
+#endif
     _englishButton->setChecked(true);
 #ifdef Q_OS_MAC
     // Makes the button selection show up correctly on macOS
