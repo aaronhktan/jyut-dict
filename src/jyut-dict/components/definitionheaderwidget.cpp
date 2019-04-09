@@ -11,6 +11,10 @@ DefinitionHeaderWidget::DefinitionHeaderWidget(QWidget *parent)
     _divider = new QFrame(this);
     _divider->setFrameShape(QFrame::HLine);
     _divider->setFrameShadow(QFrame::Raised);
+    _divider->setFixedHeight(1);
+#ifdef Q_OS_MAC
+    _divider->setStyleSheet("QFrame { border: 1px solid #6f6f6f; }");
+#endif
 
     _layout->addWidget(_titleLabel);
     _layout->addWidget(_divider);
