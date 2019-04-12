@@ -31,8 +31,7 @@ MainSplitter::MainSplitter(QWidget *parent) : QSplitter(parent)
 
 MainSplitter::~MainSplitter()
 {
-    delete _definitionScrollArea;
-    delete _searchListView;
+
 }
 
 void MainSplitter::handleSelectionChanged(const QModelIndex& selection)

@@ -11,6 +11,11 @@ DefinitionContentWidget::DefinitionContentWidget(QWidget *parent) : QWidget(pare
     setLayout(_definitionLayout);
 }
 
+DefinitionContentWidget::~DefinitionContentWidget()
+{
+    cleanupLabels();
+}
+
 void DefinitionContentWidget::setEntry(Entry& entry)
 {
     // Note: displays only the first set of definitions in entry
@@ -46,11 +51,4 @@ void DefinitionContentWidget::cleanupLabels()
     for (auto label : _definitionLabels) {
         delete label;
     }
-}
-
-DefinitionContentWidget::~DefinitionContentWidget()
-{
-    cleanupLabels();
-
-    delete _definitionLayout;
 }

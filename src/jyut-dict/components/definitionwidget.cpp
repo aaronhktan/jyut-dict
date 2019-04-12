@@ -13,6 +13,11 @@ DefinitionWidget::DefinitionWidget(Entry& entry, QWidget *parent)
     setEntry(entry);
 }
 
+DefinitionWidget::~DefinitionWidget()
+{
+
+}
+
 // Must override this so that the layout is rendered properly with the
 // appropriate sizes
 QSize DefinitionWidget::sizeHint() const
@@ -38,7 +43,7 @@ void DefinitionWidget::setEntry(Entry& entry)
 {
     cleanup();
     for (auto definitionsSet : entry.getDefinitionsSets()) {
-        _definitionSections.push_back(new DefinitionSectionWidget());
+        _definitionSections.push_back(new DefinitionSectionWidget(this));
         _definitionSections.back()->setEntry(definitionsSet);
 
         _definitionSectionsLayout->addWidget(_definitionSections.back());
@@ -56,13 +61,5 @@ void DefinitionWidget::cleanup()
                                               _definitionSections.end(),
                                               section), _definitionSections.end());
         delete section;
-    }
-}
-
-DefinitionWidget::~DefinitionWidget()
-{
-    delete _definitionSectionsLayout;
-    for (auto definitionSection : _definitionSections) {
-        delete definitionSection;
     }
 }

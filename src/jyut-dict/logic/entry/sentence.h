@@ -14,11 +14,11 @@ public:
     Sentence(const Sentence& sentence);
     Sentence(const Sentence&& sentence);
 
+    ~Sentence();
+
     Sentence& operator=(const Sentence& sentence);
     Sentence& operator=(const Sentence&& sentence);
     friend std::ostream& operator<<(std::ostream& out, const Sentence& sentence);
-
-    ~Sentence();
 
     std::string getCantonese(void) const;
     void setCantonese(std::string cantonese);

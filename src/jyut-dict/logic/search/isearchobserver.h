@@ -11,6 +11,8 @@
 class ISearchObserver
 {
 public:
+    virtual ~ISearchObserver() = default;
+
     virtual void callback(std::vector<Entry>) = 0;
 };
 

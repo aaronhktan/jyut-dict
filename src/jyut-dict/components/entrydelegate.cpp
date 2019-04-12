@@ -5,6 +5,7 @@
 EntryDelegate::EntryDelegate(QWidget *parent)
     : QStyledItemDelegate (parent)
 {
+
 }
 
 void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const

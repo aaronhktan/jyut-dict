@@ -38,7 +38,8 @@ Entry::Entry(std::string simplified, std::string traditional,
 }
 
 Entry::Entry(const Entry& entry)
-    : _simplified{entry.getSimplified()},
+    : QObject(),
+      _simplified{entry.getSimplified()},
       _traditional{entry.getTraditional()},
       _jyutping{entry.getJyutping()},
       _pinyin{entry.getPinyin()},
@@ -57,6 +58,11 @@ Entry::Entry(const Entry&& entry)
       _definitions{std::move(entry._definitions)},
       _derivedWords{std::move(entry._derivedWords)},
       _sentences{std::move(entry._sentences)}
+{
+
+}
+
+Entry::~Entry()
 {
 
 }
@@ -328,9 +334,4 @@ std::vector<Sentence> Entry::getSentences(void) const
 void Entry::setSentences(std::vector<Sentence> sentences)
 {
     _sentences = sentences;
-}
-
-Entry::~Entry()
-{
-
 }

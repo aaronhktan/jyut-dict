@@ -11,6 +11,7 @@ class SearchOptionsMediator : public ISearchOptionsMediator
 {
 public:
     SearchOptionsMediator();
+    ~SearchOptionsMediator() override;
 
     void registerLineEdit(ISearchLineEdit *_searchEdit) override;
 

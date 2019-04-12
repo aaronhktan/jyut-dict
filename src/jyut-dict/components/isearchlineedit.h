@@ -12,6 +12,8 @@ class ISearchLineEdit {
 public:
     virtual void updateParameters(SearchParameters parameters) = 0;
     virtual void search() = 0;
+
+    virtual ~ISearchLineEdit() = default;
 };
 
 #endif // ISEARCHLINEEDIT_H

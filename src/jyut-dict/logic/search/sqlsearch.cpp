@@ -8,17 +8,22 @@
 #include <sstream>
 
 std::list<ISearchObserver *> SQLSearch::_observers;
-SQLDatabaseManager *SQLSearch::_manager;
 
 SQLSearch::SQLSearch()
 {
-    if (!SQLSearch::_manager) {
-       SQLSearch::_manager = new SQLDatabaseManager();
-    }
 
-    if (!SQLSearch::_manager->isEnglishDatabaseOpen()) {
-       SQLSearch::_manager->openEnglishDatabase();
+}
+
+SQLSearch::SQLSearch(std::shared_ptr<SQLDatabaseManager> manager) {
+    _manager = manager;
+    if (!_manager->isEnglishDatabaseOpen()) {
+        _manager->openEnglishDatabase();
     }
+}
+
+SQLSearch::~SQLSearch()
+{
+
 }
 
 void SQLSearch::registerObserver(ISearchObserver *observer)
@@ -53,7 +58,12 @@ void SQLSearch::searchSimplified(const QString& searchTerm)
         return;
     }
 
-    QSqlQuery query{SQLSearch::_manager->getEnglishDatabase()};
+    if (!_manager) {
+        std::cout << "No database specified!" << std::endl;
+        return;
+    }
+
+    QSqlQuery query{_manager->getEnglishDatabase()};
     query.prepare("SELECT * FROM entries WHERE simplified LIKE ? "
                   "ORDER BY freq DESC");
     query.addBindValue(searchTerm + "%");
@@ -72,7 +82,12 @@ void SQLSearch::searchTraditional(const QString& searchTerm)
         return;
     }
 
-    QSqlQuery query{SQLSearch::_manager->getEnglishDatabase()};
+    if (!_manager) {
+        std::cout << "No database specified!" << std::endl;
+        return;
+    }
+
+    QSqlQuery query{_manager->getEnglishDatabase()};
     query.prepare("SELECT * FROM entries WHERE traditional LIKE ? "
                   "ORDER BY freq DESC");
     query.addBindValue(searchTerm + "%");
@@ -98,7 +113,12 @@ void SQLSearch::searchJyutping(const QString &searchTerm)
         return;
     }
 
-    QSqlQuery query{SQLSearch::_manager->getEnglishDatabase()};
+    if (!_manager) {
+        std::cout << "No database specified!" << std::endl;
+        return;
+    }
+
+    QSqlQuery query{_manager->getEnglishDatabase()};
     query.prepare("SELECT * FROM entries WHERE jyutping MATCH ? "
                   "AND jyutping LIKE ? "
                   "ORDER BY freq DESC");
@@ -123,7 +143,12 @@ void SQLSearch::searchPinyin(const QString &searchTerm)
         return;
     }
 
-    QSqlQuery query{SQLSearch::_manager->getEnglishDatabase()};
+    if (!_manager) {
+        std::cout << "No database specified!" << std::endl;
+        return;
+    }
+
+    QSqlQuery query{_manager->getEnglishDatabase()};
     query.prepare("SELECT * FROM entries WHERE pinyin MATCH ? "
                   "AND pinyin LIKE ? "
                   "ORDER BY freq DESC");
@@ -151,7 +176,12 @@ void SQLSearch::searchEnglish(const QString& searchTerm)
         return;
     }
 
-    QSqlQuery query{SQLSearch::_manager->getEnglishDatabase()};
+    if (!_manager) {
+        std::cout << "No database specified!" << std::endl;
+        return;
+    }
+
+    QSqlQuery query{_manager->getEnglishDatabase()};
     query.prepare("SELECT * FROM entries WHERE entries MATCH ? "
                   "OR entries MATCH ? "
                   "ORDER BY freq DESC");

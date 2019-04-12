@@ -13,6 +13,11 @@ EntryListModel::EntryListModel(std::vector<Entry> entries, QObject *parent)
     _search->registerObserver(this);
 }
 
+EntryListModel::~EntryListModel()
+{
+    delete _search;
+}
+
 void EntryListModel::callback(std::vector<Entry> entries)
 {
     setEntries(entries);

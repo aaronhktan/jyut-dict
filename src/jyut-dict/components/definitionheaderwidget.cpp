@@ -24,6 +24,11 @@ DefinitionHeaderWidget::DefinitionHeaderWidget(std::string title, QWidget *paren
     setSectionTitle(title);
 }
 
+DefinitionHeaderWidget::~DefinitionHeaderWidget()
+{
+
+}
+
 void DefinitionHeaderWidget::setSectionTitle(std::string title)
 {
     std::string formattedTitle = formatTitle(title);
@@ -34,11 +39,4 @@ void DefinitionHeaderWidget::setSectionTitle(std::string title)
 std::string DefinitionHeaderWidget::formatTitle(std::string title)
 {
     return "<font color=#6f6f6f>" + title + "</font>";
-}
-
-DefinitionHeaderWidget::~DefinitionHeaderWidget()
-{
-    delete _layout;
-    delete _titleLabel;
-    delete _divider;
 }

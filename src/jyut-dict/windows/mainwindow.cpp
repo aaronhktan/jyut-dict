@@ -22,6 +22,5 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    delete _mainToolBar;
-    delete _mainSplitter;
+
 }

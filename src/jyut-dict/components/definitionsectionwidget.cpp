@@ -11,6 +11,11 @@ DefinitionSectionWidget::DefinitionSectionWidget(QWidget *parent) : QWidget(pare
     _definitionWidget = new DefinitionContentWidget();
 }
 
+DefinitionSectionWidget::~DefinitionSectionWidget()
+{
+
+}
+
 void DefinitionSectionWidget::setEntry(DefinitionsSet& definitionsSet)
 {
     std::string source = definitionsSet.getSourceShortString();
@@ -20,11 +25,4 @@ void DefinitionSectionWidget::setEntry(DefinitionsSet& definitionsSet)
 
     _definitionAreaLayout->addWidget(_definitionHeaderWidget);
     _definitionAreaLayout->addWidget(_definitionWidget);
-}
-
-DefinitionSectionWidget::~DefinitionSectionWidget()
-{
-    delete _definitionAreaLayout;
-    delete _definitionHeaderWidget;
-    delete _definitionWidget;
 }

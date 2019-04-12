@@ -32,7 +32,5 @@ MainToolBar::MainToolBar(QWidget *parent) : QToolBar(parent)
 
 MainToolBar::~MainToolBar()
 {
-    delete _toolBarLayout;
-    delete _searchBar;
-    delete _optionsBox;
+    delete _searchOptions;
 }

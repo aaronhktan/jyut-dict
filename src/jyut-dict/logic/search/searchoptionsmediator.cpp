@@ -4,6 +4,12 @@
 
 SearchOptionsMediator::SearchOptionsMediator()
 {
+
+}
+
+SearchOptionsMediator::~SearchOptionsMediator()
+{
+
 }
 
 void SearchOptionsMediator::registerLineEdit(ISearchLineEdit *searchEdit)

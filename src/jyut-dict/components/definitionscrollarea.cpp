@@ -38,6 +38,11 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
 //    testEntry();
 }
 
+DefinitionScrollArea::~DefinitionScrollArea()
+{
+
+}
+
 void DefinitionScrollArea::testEntry() {
     // Create dummy entry
     std::string simplified{"风水佬呃你十年八年，唔呃得一世"};
@@ -84,12 +89,4 @@ void DefinitionScrollArea::setEntry(Entry& entry)
 void DefinitionScrollArea::resizeEvent(QResizeEvent *event) {
     _scrollAreaWidget->resize(this->width(), _scrollAreaWidget->sizeHint().height());
     event->accept();
-}
-
-DefinitionScrollArea::~DefinitionScrollArea()
-{
-    delete _scrollAreaLayout;
-    delete _entryHeaderWidget;
-    delete _definitionWidget;
-    delete _scrollAreaWidget;
 }

@@ -23,6 +23,7 @@ class EntryListModel : public QAbstractListModel, public ISearchObserver
 public:
     explicit EntryListModel(std::vector<Entry> entries,
                             QObject *parent = nullptr);
+    ~EntryListModel() override;
 
     void callback(std::vector<Entry> entries) override;
     void setEntries(std::vector<Entry> entries);

@@ -10,6 +10,8 @@
 class ISearchObservable
 {
 public:
+    virtual ~ISearchObservable() = default;
+
     virtual void registerObserver(ISearchObserver* observer) = 0;
     virtual void deregisterObserver(ISearchObserver* observer) = 0;
     virtual void notifyObservers() = 0;

@@ -9,16 +9,19 @@
 #include <QtSql>
 
 #include <string>
+#include <memory>
 
 // SQLSearch searches the database provided by SQLDatabaseManager.
 
-class SQLSearch : public ISearch, public ISearchObservable
+class SQLSearch : virtual public ISearch, virtual public ISearchObservable
 {
 public:
+    SQLSearch();
+    SQLSearch(std::shared_ptr<SQLDatabaseManager> manager);
+    ~SQLSearch() override;
+
     void registerObserver(ISearchObserver *observer) override;
     void deregisterObserver(ISearchObserver *observer) override;
-
-    SQLSearch();
 
     void searchSimplified(const QString& searchTerm) override;
     void searchTraditional(const QString& searchTerm) override;
@@ -36,7 +39,7 @@ private:
     static std::list<ISearchObserver *> _observers;
     std::vector<Entry> _results;
 
-    static SQLDatabaseManager *_manager;
+    std::shared_ptr<SQLDatabaseManager> _manager;
     QSqlQuery _query;
 };
 

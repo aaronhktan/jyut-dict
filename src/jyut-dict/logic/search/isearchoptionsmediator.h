@@ -10,6 +10,8 @@
 
 class ISearchOptionsMediator {
 public:
+    virtual ~ISearchOptionsMediator() = default;
+
     virtual void registerLineEdit(ISearchLineEdit *_searchEdit) = 0;
 
     virtual void setParameters(SearchParameters parameters) = 0;

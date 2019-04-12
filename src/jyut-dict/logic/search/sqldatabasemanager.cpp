@@ -8,6 +8,13 @@
 
 SQLDatabaseManager::SQLDatabaseManager()
 {
+
+}
+
+SQLDatabaseManager::~SQLDatabaseManager()
+{
+    _EnglishDB.close();
+//    _FrenchDB.close();
 }
 
 void SQLDatabaseManager::openEnglishDatabase()
@@ -51,9 +58,3 @@ bool SQLDatabaseManager::isEnglishDatabaseOpen()
 //{
 //    return _FrenchDB.isOpen();
 //}
-
-SQLDatabaseManager::~SQLDatabaseManager()
-{
-    _EnglishDB.close();
-//    _FrenchDB.close();
-}

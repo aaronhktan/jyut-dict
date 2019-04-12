@@ -27,6 +27,10 @@ Sentence::Sentence(const Sentence&& sentence)
 {
 }
 
+Sentence::~Sentence()
+{
+}
+
 Sentence& Sentence::operator=(const Sentence& sentence)
 {
     if (&sentence == this) {
@@ -89,9 +93,4 @@ std::string Sentence::getMandarin(void) const
 void Sentence::setMandarin(std::string mandarin)
 {
     _mandarin = mandarin;
-}
-
-Sentence::~Sentence()
-{
-
 }
