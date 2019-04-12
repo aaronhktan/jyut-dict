@@ -44,7 +44,7 @@ void EntryHeaderWidget::setEntry(Entry& entry)
     _jyutpingLabel->setVisible(true);
     _pinyinLabel->setVisible(true);
 
-    _wordLabel->setText(entry.getCharacters(EntryCharactersOptions::PREFER_TRADITIONAL).c_str());
+    _wordLabel->setText(entry.getCharacters(EntryCharactersOptions::PREFER_TRADITIONAL, true).c_str());
     _jyutpingPronunciation->setText(entry.getJyutping().c_str());
     _pinyinPronunciation->setText(entry.getPinyin().c_str());
 }

@@ -2,6 +2,10 @@
 
 #include "logic/entry/entry.h"
 
+#include <QAbstractTextDocumentLayout>
+#include <QRectF>
+#include <QTextDocument>
+
 EntryDelegate::EntryDelegate(QWidget *parent)
     : QStyledItemDelegate (parent)
 {
@@ -36,12 +40,15 @@ void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 
     EntryCharactersOptions characterOptions;
     EntryPhoneticOptions phoneticOptions;
+    bool use_colours = false;
     if (isWelcomeEntry) {
         characterOptions = EntryCharactersOptions::ONLY_SIMPLIFIED;
         phoneticOptions = EntryPhoneticOptions::ONLY_PINYIN;
     } else {
         characterOptions = EntryCharactersOptions::PREFER_TRADITIONAL;
         phoneticOptions = EntryPhoneticOptions::PREFER_JYUTPING;
+        use_colours = !(option.state & QStyle::State_Selected);
+
     }
 
     QRect r = option.rect;
@@ -57,8 +64,23 @@ void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     painter->setFont(font);
     r = option.rect.adjusted(11, 11, -11, 0);
     QFontMetrics metrics(font);
-    QString characters = metrics.elidedText(entry.getCharacters(characterOptions).c_str(), Qt::ElideRight, r.width());
-    painter->drawText(r, 0, characters, &boundingRect);
+
+    // Use QTextDocument for rich text
+    QTextDocument *doc = new QTextDocument();
+    doc->setHtml(QString(entry.getCharacters(characterOptions, use_colours).c_str()));
+    doc->setTextWidth(r.width());
+    doc->setDefaultFont(font);
+    doc->setDocumentMargin(0);
+    QAbstractTextDocumentLayout *documentLayout = doc->documentLayout();
+    auto ctx = QAbstractTextDocumentLayout::PaintContext();
+    ctx.palette.setColor(QPalette::Text, painter->pen().color());
+    QRectF bounds = QRectF(0, 0, r.width(), 16);
+    ctx.clip = bounds;
+    painter->translate(11, r.y());
+    documentLayout->draw(painter, ctx);
+    painter->translate(-11, -r.y());
+
+    delete doc;
 
     // Phonetic and definition snippets
 #ifdef Q_OS_WIN
@@ -67,7 +89,7 @@ void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     font.setPixelSize(12);
     painter->setFont(font);
 
-    r = r.adjusted(0, boundingRect.height(), 0, 0);
+    r = r.adjusted(0, 24, 0, 0);
     metrics = QFontMetrics(font);
     QString phonetic = metrics.elidedText(entry.getPhonetic(phoneticOptions).c_str(), Qt::ElideRight, r.width());
     painter->drawText(r, 0, phonetic, &boundingRect);

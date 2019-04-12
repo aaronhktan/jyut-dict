@@ -34,7 +34,7 @@ public:
     Entry& operator=(Entry&& entry);
     friend std::ostream& operator<<(std::ostream& out, const Entry& entry);
 
-    std::string getCharacters(EntryCharactersOptions options) const;
+    std::string getCharacters(EntryCharactersOptions options, bool use_colours) const;
 
     std::string getSimplified(void) const;
     void setSimplified(std::string simplified);
@@ -46,9 +46,11 @@ public:
 
     std::string getJyutping(void) const;
     void setJyutping(std::string jyutping);
+    std::vector<int> getJyutpingNumbers() const;
 
     std::string getPinyin(void) const;
     void setPinyin(std::string pinyin);
+    std::vector<int> getPinyinNumbers() const;
 
     std::vector<DefinitionsSet> getDefinitionsSets(void) const;
     std::string getDefinitionSnippet(void) const;
@@ -62,12 +64,26 @@ public:
 
 private:
     std::string _simplified;
+    std::string _simplifiedDifference;
     std::string _traditional;
+    std::string _traditionalDifference;
+
+    std::string _colouredSimplified;
+    std::string _colouredSimplifiedDifference;
+    std::string _colouredTraditional;
+    std::string _colouredTraditionalDifference;
+
     std::string _jyutping;
     std::string _pinyin;
+
     std::vector<DefinitionsSet> _definitions;
     std::vector<std::string> _derivedWords;
     std::vector<Sentence> _sentences;
+
+    std::string applyColours(std::string original,
+                             std::vector<int> tones) const;
+    void compareStrings(std::string original, std::string comparison,
+                        std::string& returnString);
 };
 
 Q_DECLARE_METATYPE(Entry);

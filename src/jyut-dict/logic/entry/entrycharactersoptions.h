@@ -3,7 +3,8 @@
 
 // An enum that tells how to display en entry
 
-enum class EntryCharactersOptions {
+enum class EntryCharactersOptions
+{
     ONLY_SIMPLIFIED,
     ONLY_TRADITIONAL,
     PREFER_SIMPLIFIED,
