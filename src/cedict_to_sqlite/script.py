@@ -40,7 +40,7 @@ def write(entries, db_name):
 
 def parse_cc_cedict(filename, entries):
     with open(filename, 'r') as f:
-        for line in f:
+        for index, line in enumerate(f):
             if (len(line) == 0 or line[0] == '#'):
                 continue
 
@@ -54,7 +54,10 @@ def parse_cc_cedict(filename, entries):
                           pin=pin,
                           cedict_eng=eng)
 
-            entries[trad] = entry
+            if trad in entries:
+                entries[trad + str(index)] = entry
+            else:
+                entries[trad] = entry
 
 def parse_cc_canto(filename, entries):
     with open(filename, 'r') as f:
@@ -102,6 +105,7 @@ def assign_frequencies(entries):
 if __name__ == '__main__':
     if len(sys.argv) != 5:
         print('Usage: python3 script.py <database filename> <CC_CEDICT file> <CC_CANTO file> <Cantonese Readings file>')
+        print('e.g. python3 script.py eng.db CC-CEDICT.txt CC-CANTO.txt READINGS.txt')
         sys.exit(1)
 
     entries = {}
