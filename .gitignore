@@ -42,5 +42,20 @@ target_wrapper.*
 # QtCreator CMake
 CMakeLists.txt.user*
 
+# QMake
+*.qmake.stash
+
+# Qt Builds
+*dist/
+
+# Python environment
+*env/
+
 # Mac stuff
 *.DS_Store
+
+# Test files
+/test/*
+
+# Generated databases
+**/cedict_to_sqlite/*.db
