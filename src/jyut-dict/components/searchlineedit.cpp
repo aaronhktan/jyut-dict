@@ -97,7 +97,7 @@ void SearchLineEdit::changeEvent(QEvent *event)
             setStyle(/* use_dark = */false);
         }
     }
-    QWidget::changeEvent(event);
+    QLineEdit::changeEvent(event);
 #endif
 }
 
