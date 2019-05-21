@@ -7,17 +7,22 @@
 #include "logic/search/sqldatabasemanager.h"
 
 #include <QtSql>
+#include <QFuture>
 
 #include <string>
 #include <memory>
+#include <mutex>
 
 // SQLSearch searches the database provided by SQLDatabaseManager.
 
-class SQLSearch : virtual public ISearch, virtual public ISearchObservable
+class SQLSearch : public QObject,
+                  virtual public ISearch,
+                  virtual public ISearchObservable
 {
 public:
     SQLSearch();
     SQLSearch(std::shared_ptr<SQLDatabaseManager> manager);
+    SQLSearch(const SQLSearch& search);
     ~SQLSearch() override;
 
     void registerObserver(ISearchObserver *observer) override;
@@ -32,15 +37,27 @@ public:
 private:
     void notifyObservers() override;
 
+    void runThread(void (SQLSearch::*threadFunction)(const QString& searchTerm),
+                   const QString& searchTerm);
+    void searchSimplifiedThread(const QString& searchTerm);
+    void searchTraditionalThread(const QString& searchTerm);
+    void searchJyutpingThread(const QString& searchTerm);
+    void searchPinyinThread(const QString& searchTerm);
+    void searchEnglishThread(const QString& searchTerm);
+
     std::vector<std::string> explodePhonetic(const QString& string, const char delimiter);
     std::string implodePhonetic(std::vector<std::string> words, const char *delimiter);
-    std::vector<Entry> parseEntries(QSqlQuery query);
+    std::vector<Entry> parseEntries(QSqlQuery& query);
 
     static std::list<ISearchObserver *> _observers;
     std::vector<Entry> _results;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
+    QString _currentSearchString;
     QSqlQuery _query;
+    std::mutex _queryMutex;
 };
+
+Q_DECLARE_METATYPE(SQLSearch);
 
 #endif // SQLSEARCH_H

@@ -1,23 +1,38 @@
 #include "sqlsearch.h"
 
 #include <QFile>
+#include <QFuture>
+
+#include <QtConcurrent/QtConcurrent>
 
 #ifdef Q_OS_WIN
 #include <cctype>
 #endif
+#include <functional>
 #include <sstream>
 
 std::list<ISearchObserver *> SQLSearch::_observers;
 
 SQLSearch::SQLSearch()
+    : QObject()
 {
 
 }
 
-SQLSearch::SQLSearch(std::shared_ptr<SQLDatabaseManager> manager) {
+SQLSearch::SQLSearch(std::shared_ptr<SQLDatabaseManager> manager)
+    : QObject()
+{
     _manager = manager;
     if (!_manager->isEnglishDatabaseOpen()) {
         _manager->openEnglishDatabase();
+    }
+}
+
+SQLSearch::SQLSearch(const SQLSearch& search)
+    : QObject()
+{
+    if (search._manager != nullptr) {
+        _manager = search._manager;
     }
 }
 
@@ -46,12 +61,36 @@ void SQLSearch::notifyObservers()
     }
 }
 
-// For SearchSimplified and SearchTraditional, we use LIKE instead of MATCH
-// even though the database is assumed to the FTS5-compatible.
-// This is because FTS searches using the space as a separator, and
-// Chinese words and phrases are not separated by spaces.
 void SQLSearch::searchSimplified(const QString& searchTerm)
 {
+    runThread(&SQLSearch::searchSimplifiedThread, searchTerm);
+}
+
+void SQLSearch::searchTraditional(const QString& searchTerm)
+{
+    runThread(&SQLSearch::searchTraditionalThread, searchTerm);
+}
+
+void SQLSearch::searchJyutping(const QString &searchTerm)
+{
+    runThread(&SQLSearch::searchJyutpingThread, searchTerm);
+}
+
+void SQLSearch::searchPinyin(const QString &searchTerm)
+{
+    runThread(&SQLSearch::searchPinyinThread, searchTerm);
+}
+
+void SQLSearch::searchEnglish(const QString& searchTerm)
+{
+    runThread(&SQLSearch::searchEnglishThread, searchTerm);
+}
+
+void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString& searchTerm),
+                          const QString& searchTerm)
+{
+    _currentSearchString = searchTerm;
+
     if (searchTerm.isEmpty()) {
         _results.clear();
         notifyObservers();
@@ -63,6 +102,15 @@ void SQLSearch::searchSimplified(const QString& searchTerm)
         return;
     }
 
+    QtConcurrent::run(this, threadFunction, searchTerm);
+}
+
+// For SearchSimplified and SearchTraditional, we use LIKE instead of MATCH
+// even though the database is assumed to the FTS5-compatible.
+// This is because FTS searches using the space as a separator, and
+// Chinese words and phrases are not separated by spaces.
+void SQLSearch::searchSimplifiedThread(const QString &searchTerm)
+{
     QSqlQuery query{_manager->getEnglishDatabase()};
     query.prepare("SELECT * FROM entries WHERE simplified LIKE ? "
                   "ORDER BY freq DESC");
@@ -74,19 +122,8 @@ void SQLSearch::searchSimplified(const QString& searchTerm)
     notifyObservers();
 }
 
-void SQLSearch::searchTraditional(const QString& searchTerm)
+void SQLSearch::searchTraditionalThread(const QString &searchTerm)
 {
-    if (searchTerm.isEmpty()) {
-        _results.clear();
-        notifyObservers();
-        return;
-    }
-
-    if (!_manager) {
-        std::cout << "No database specified!" << std::endl;
-        return;
-    }
-
     QSqlQuery query{_manager->getEnglishDatabase()};
     query.prepare("SELECT * FROM entries WHERE traditional LIKE ? "
                   "ORDER BY freq DESC");
@@ -105,19 +142,9 @@ void SQLSearch::searchTraditional(const QString& searchTerm)
 //
 // This approach is approximately ten times faster than simply using the LIKE
 // operator and the % wildcard.
-void SQLSearch::searchJyutping(const QString &searchTerm)
+void SQLSearch::searchJyutpingThread(const QString &searchTerm)
 {
-    if (searchTerm.isEmpty()) {
-        _results.clear();
-        notifyObservers();
-        return;
-    }
-
-    if (!_manager) {
-        std::cout << "No database specified!" << std::endl;
-        return;
-    }
-
+    std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getEnglishDatabase()};
     query.prepare("SELECT * FROM entries WHERE jyutping MATCH ? "
                   "AND jyutping LIKE ? "
@@ -130,24 +157,26 @@ void SQLSearch::searchJyutping(const QString &searchTerm)
     query.addBindValue(QString(likeTerm.c_str()) + "%");
     query.exec();
 
+    // Check if a new query has been run
+    // If so, do not parse results of previous query
+    if (searchTerm != _currentSearchString) {
+        return;
+    }
+
     _results = parseEntries(query);
+
+    // Check if a new query has been run
+    // If so, do not notify observers of previous query's results
+    if (searchTerm != _currentSearchString) {
+        return;
+    }
 
     notifyObservers();
 }
 
-void SQLSearch::searchPinyin(const QString &searchTerm)
+void SQLSearch::searchPinyinThread(const QString &searchTerm)
 {
-    if (searchTerm.isEmpty()) {
-        _results.clear();
-        notifyObservers();
-        return;
-    }
-
-    if (!_manager) {
-        std::cout << "No database specified!" << std::endl;
-        return;
-    }
-
+    std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getEnglishDatabase()};
     query.prepare("SELECT * FROM entries WHERE pinyin MATCH ? "
                   "AND pinyin LIKE ? "
@@ -161,26 +190,28 @@ void SQLSearch::searchPinyin(const QString &searchTerm)
 
     query.exec();
 
+    // Check if a new query has been run
+    // If so, do not parse results of previous query
+    if (searchTerm != _currentSearchString) {
+        return;
+    }
+
     _results = parseEntries(query);
+
+    // Check if a new query has been run
+    // If so, do not notify observers of previous query's results
+    if (searchTerm != _currentSearchString) {
+        return;
+    }
 
     notifyObservers();
 }
 
-// searchEnglish is the simplest query. It does a full-text search of the
+// Searching English is the simplest query. It does a full-text search of the
 // English columns.
-void SQLSearch::searchEnglish(const QString& searchTerm)
+void SQLSearch::searchEnglishThread(const QString& searchTerm)
 {
-    if (searchTerm.isEmpty()) {
-        _results.clear();
-        notifyObservers();
-        return;
-    }
-
-    if (!_manager) {
-        std::cout << "No database specified!" << std::endl;
-        return;
-    }
-
+    std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getEnglishDatabase()};
     query.prepare("SELECT * FROM entries WHERE entries MATCH ? "
                   "OR entries MATCH ? "
@@ -188,9 +219,22 @@ void SQLSearch::searchEnglish(const QString& searchTerm)
     query.addBindValue("cedict_english:" + searchTerm);
     query.addBindValue("canto_english:" + searchTerm);
     query.setForwardOnly(true);
+
     query.exec();
 
+    // Check if a new query has been run
+    // If so, do not parse results of previous query
+    if (searchTerm != _currentSearchString) {
+        return;
+    }
+
     _results = parseEntries(query);
+
+    // Check if a new query has been run
+    // If so, do not notify observers of previous query's results
+    if (searchTerm != _currentSearchString) {
+        return;
+    }
 
     notifyObservers();
 }
@@ -280,7 +324,7 @@ std::string SQLSearch::implodePhonetic(std::vector<std::string> words, const cha
     return string.str();
 }
 
-std::vector<Entry> SQLSearch::parseEntries(QSqlQuery query)
+std::vector<Entry> SQLSearch::parseEntries(QSqlQuery& query)
 {
     std::vector<Entry> entries;
 
