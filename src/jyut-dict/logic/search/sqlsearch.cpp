@@ -111,26 +111,52 @@ void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString& searc
 // Chinese words and phrases are not separated by spaces.
 void SQLSearch::searchSimplifiedThread(const QString &searchTerm)
 {
+    std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getEnglishDatabase()};
     query.prepare("SELECT * FROM entries WHERE simplified LIKE ? "
                   "ORDER BY freq DESC");
     query.addBindValue(searchTerm + "%");
     query.exec();
 
+    // Check if a new query has been run
+    // If so, do not parse results of previous query
+    if (searchTerm != _currentSearchString) {
+        return;
+    }
+
     _results = parseEntries(query);
+
+    // Check if a new query has been run
+    // If so, do not notify observers of previous query's results
+    if (searchTerm != _currentSearchString) {
+        return;
+    }
 
     notifyObservers();
 }
 
 void SQLSearch::searchTraditionalThread(const QString &searchTerm)
 {
+    std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getEnglishDatabase()};
     query.prepare("SELECT * FROM entries WHERE traditional LIKE ? "
                   "ORDER BY freq DESC");
     query.addBindValue(searchTerm + "%");
     query.exec();
 
+    // Check if a new query has been run
+    // If so, do not parse results of previous query
+    if (searchTerm != _currentSearchString) {
+        return;
+    }
+
     _results = parseEntries(query);
+
+    // Check if a new query has been run
+    // If so, do not notify observers of previous query's results
+    if (searchTerm != _currentSearchString) {
+        return;
+    }
 
     notifyObservers();
 }
