@@ -43,12 +43,16 @@ public:
     void setTraditional(std::string traditional);
 
     std::string getPhonetic(EntryPhoneticOptions options) const;
+    std::string getPhonetic(EntryPhoneticOptions options, MandarinOptions mandarinOptions) const;
+    std::string getPhonetic(EntryPhoneticOptions options, CantoneseOptions cantoneseOptions) const;
+    std::string getPhonetic(EntryPhoneticOptions options, CantoneseOptions cantoneseOptions, MandarinOptions mandarinOptions) const;
 
     std::string getJyutping(void) const;
     void setJyutping(std::string jyutping);
     std::vector<int> getJyutpingNumbers() const;
 
     std::string getPinyin(void) const;
+    std::string getPrettyPinyin(void) const;
     void setPinyin(std::string pinyin);
     std::vector<int> getPinyinNumbers() const;
 
@@ -75,15 +79,22 @@ private:
 
     std::string _jyutping;
     std::string _pinyin;
+    std::string _prettyPinyin;
 
     std::vector<DefinitionsSet> _definitions;
     std::vector<std::string> _derivedWords;
     std::vector<Sentence> _sentences;
 
+    std::string getCantonesePhonetic(CantoneseOptions cantoneseOptions) const;
+    std::string getMandarinPhonetic(MandarinOptions mandarinOptions) const;
+
     std::string applyColours(std::string original,
                              std::vector<int> tones) const;
     void compareStrings(std::string original, std::string comparison,
                         std::string& returnString);
+
+    std::vector<std::string> explodePhonetic(const std::string& string, const char delimiter) const;
+    std::string createPrettyPinyin(void);
 };
 
 Q_DECLARE_METATYPE(Entry);

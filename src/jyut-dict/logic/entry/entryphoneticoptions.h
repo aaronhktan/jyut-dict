@@ -10,4 +10,13 @@ enum class EntryPhoneticOptions {
     PREFER_PINYIN,
 };
 
+enum class CantoneseOptions {
+    RAW_JYUTPING,
+};
+
+enum class MandarinOptions {
+    RAW_PINYIN,
+    PRETTY_PINYIN,
+};
+
 #endif // ENTRYPHONETICOPTIONS_H

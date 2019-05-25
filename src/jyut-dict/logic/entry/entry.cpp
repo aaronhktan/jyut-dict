@@ -1,11 +1,46 @@
 #include "entry.h"
 
 #include <codecvt>
-#include <locale>
-
-#include <iostream>
-#include <string>
 #include <iomanip>
+#include <iostream>
+#include <sstream>
+#include <unordered_map>
+#include <unordered_set>
+
+static std::unordered_map<std::string, std::vector<std::string>> replacementMap = {
+    {"a", {"ā", "á", "ǎ", "à", "a"}},
+    {"e", {"ē", "é", "ě", "è", "e"}},
+    {"i", {"ī", "í", "ǐ", "ì", "i"}},
+    {"o", {"ō", "ó", "ǒ", "ò", "o"}},
+    {"u", {"ū", "ú", "ǔ", "ù", "u"}},
+    {"ü", {"ǖ", "ǘ", "ǚ", "ǜ", "ü"}},
+};
+
+static std::unordered_set<std::string> specialCharacters = {
+    "，", "%", "－", "…", "·",
+};
+
+static std::vector<std::string> toneColours = {
+    "grey",
+    "#00bcd4",
+    "#7cb342",
+    "#657ff1",
+    "#c2185b",
+    "#068900",
+    "#7651d0",
+};
+
+#ifdef _MSC_VER
+    static std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
+#else
+    static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+#endif
+
+#ifdef Q_OS_WIN
+#define SAME_CHARACTER_STRING "−"
+#else
+#define SAME_CHARACTER_STRING "―"
+#endif
 
 Entry::Entry()
     : QObject()
@@ -14,6 +49,7 @@ Entry::Entry()
     _traditional = "";
     _jyutping = "";
     _pinyin = "";
+    _prettyPinyin = "";
     _definitions = {};
     _derivedWords = {};
     _sentences = {};
@@ -45,6 +81,9 @@ Entry::Entry(std::string simplified, std::string traditional,
     _colouredTraditional = applyColours(_traditional, getJyutpingNumbers());
     _colouredSimplifiedDifference = applyColours(_simplifiedDifference, getJyutpingNumbers());
     _colouredTraditionalDifference = applyColours(_traditionalDifference, getJyutpingNumbers());
+
+    // Create pretty pinyin
+    _prettyPinyin = createPrettyPinyin();
 }
 
 Entry::Entry(const Entry& entry)
@@ -59,6 +98,7 @@ Entry::Entry(const Entry& entry)
       _colouredTraditionalDifference{entry._colouredTraditionalDifference},
       _jyutping{entry._jyutping},
       _pinyin{entry._pinyin},
+      _prettyPinyin{entry._prettyPinyin},
       _definitions{entry.getDefinitionsSets()},
       _derivedWords{entry.getDerivedWords()},
       _sentences{entry.getSentences()}
@@ -77,6 +117,7 @@ Entry::Entry(const Entry&& entry)
       _colouredTraditionalDifference{entry._colouredTraditionalDifference},
       _jyutping{std::move(entry._jyutping)},
       _pinyin{std::move(entry._pinyin)},
+      _prettyPinyin{entry._prettyPinyin},
       _definitions{std::move(entry._definitions)},
       _derivedWords{std::move(entry._derivedWords)},
       _sentences{std::move(entry._sentences)}
@@ -105,6 +146,7 @@ Entry& Entry::operator=(const Entry& entry)
     _colouredTraditionalDifference = entry._colouredTraditionalDifference;
     _jyutping = entry._jyutping;
     _pinyin = entry._pinyin;
+    _prettyPinyin = entry._prettyPinyin;
     _definitions = entry.getDefinitionsSets();
     _derivedWords = entry.getDerivedWords();
     _sentences = entry.getSentences();
@@ -128,6 +170,7 @@ Entry& Entry::operator=(Entry&& entry)
     _colouredTraditionalDifference = entry._colouredTraditionalDifference;
     _jyutping = entry._jyutping;
     _pinyin = entry._pinyin;
+    _prettyPinyin = entry._prettyPinyin;
     _definitions = entry.getDefinitionsSets();
     _derivedWords = entry.getDerivedWords();
     _sentences = entry.getSentences();
@@ -204,21 +247,60 @@ void Entry::setTraditional(std::string traditional)
 
 std::string Entry::getPhonetic(EntryPhoneticOptions options) const
 {
+    return getPhonetic(options, CantoneseOptions::RAW_JYUTPING, MandarinOptions::RAW_PINYIN);
+}
+
+std::string Entry::getPhonetic(EntryPhoneticOptions options, MandarinOptions mandarinOptions) const
+{
+    return getPhonetic(options, CantoneseOptions::RAW_JYUTPING, mandarinOptions);
+}
+
+std::string Entry::getPhonetic(EntryPhoneticOptions options, CantoneseOptions cantoneseOptions) const
+{
+    return getPhonetic(options, cantoneseOptions, MandarinOptions::RAW_PINYIN);
+}
+
+std::string Entry::getPhonetic(EntryPhoneticOptions options, CantoneseOptions cantoneseOptions, MandarinOptions mandarinOptions) const
+{
     switch (options) {
         case EntryPhoneticOptions::ONLY_JYUTPING: {
-            return _jyutping;
+            return getCantonesePhonetic(cantoneseOptions);
         }
         case EntryPhoneticOptions::ONLY_PINYIN: {
-            return _pinyin;
+            return getMandarinPhonetic(mandarinOptions);
         }
         case EntryPhoneticOptions::PREFER_JYUTPING: {
-            return _jyutping + " {" + _pinyin + "}";
+            std::string jyutping = getCantonesePhonetic(cantoneseOptions);
+            std::string pinyin = getMandarinPhonetic(mandarinOptions);
+            return jyutping + " {" + pinyin + "}";
         }
         case EntryPhoneticOptions::PREFER_PINYIN: {
-            return _pinyin + " {" + _jyutping + "}";
+            std::string jyutping = getCantonesePhonetic(cantoneseOptions);
+            std::string pinyin = getMandarinPhonetic(mandarinOptions);
+            return pinyin + " {" + jyutping + "}";
         }
     }
     return _jyutping;
+}
+
+std::string Entry::getCantonesePhonetic(CantoneseOptions cantoneseOptions) const
+{
+    switch (cantoneseOptions) {
+        case CantoneseOptions::RAW_JYUTPING:
+        default:
+        return _jyutping;
+    }
+}
+
+std::string Entry::getMandarinPhonetic(MandarinOptions mandarinOptions) const
+{
+    switch (mandarinOptions) {
+        case MandarinOptions::PRETTY_PINYIN:
+            return _prettyPinyin;
+        case MandarinOptions::RAW_PINYIN:
+        default:
+            return _pinyin;
+    }
 }
 
 std::string Entry::getJyutping(void) const
@@ -245,12 +327,17 @@ std::vector<int> Entry::getJyutpingNumbers() const
         pos = _jyutping.find_first_of("0123456", pos + 1);
     }
 
-    return jyutpingNumbers;
+return jyutpingNumbers;
 }
 
 std::string Entry::getPinyin(void) const
 {
     return _pinyin;
+}
+
+std::string Entry::getPrettyPinyin(void) const
+{
+    return _prettyPinyin;
 }
 
 void Entry::setPinyin(std::string pinyin)
@@ -321,84 +408,57 @@ std::string Entry::applyColours(std::string original,
 {
     std::string coloured_string;
 #ifdef _MSC_VER
-        std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
-        std::wstring converted_original = converter.from_bytes(original);
+    std::wstring converted_original = converter.from_bytes(original);
 #else
-        std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
-        std::u32string converted_original = converter.from_bytes(original);
+    std::u32string converted_original = converter.from_bytes(original);
 #endif
-        size_t pos = 0;
-        for (auto character : converted_original) {
-            // Skip dashes and full-width commas; they have no colour
-            if (character == converter.from_bytes("－")[0]) {
-                coloured_string += converter.to_bytes(character);
-                pos++;
-                continue;
-            }
+    size_t pos = 0;
+    for (auto character : converted_original) {
+        std::string originalCharacter = converter.to_bytes(character);
 
-            if (character == converter.from_bytes("， ")[0]) {
-                coloured_string += converter.to_bytes(character);
-                continue;
-            }
-
-            int tone = -1;
-            try {
-                tone = tones.at(pos);
-            } catch (const std::out_of_range& e) {
-//                std::cout << "Couldn't get tone at position:, " << e.what();
-                continue;
-            }
-
-            switch(tone) {
-            case 0: {
-                coloured_string += "<font color=\"grey\">";
-                coloured_string += converter.to_bytes(character);
-                coloured_string += "</font>";
-                break;
-            }
-            case 1: {
-                coloured_string += "<font color=\"#00bcd4\">";
-                coloured_string += converter.to_bytes(character);
-                coloured_string += "</font>";
-                break;
-            }
-            case 2: {
-                coloured_string += "<font color=\"#7cb342\">";
-                coloured_string += converter.to_bytes(character);
-                coloured_string += "</font>";
-                break;
-            }
-            case 3: {
-                coloured_string += "<font color=\"#657ff1\">";
-                coloured_string += converter.to_bytes(character);
-                coloured_string += "</font>";
-                break;
-            }
-            case 4: {
-                coloured_string += "<font color=\"#c2185b\">";
-                coloured_string += converter.to_bytes(character);
-                coloured_string += "</font>";
-                break;
-            }
-            case 5: {
-                coloured_string += "<font color=\"#068900\">";
-                coloured_string += converter.to_bytes(character);
-                coloured_string += "</font>";
-                break;
-            }
-            case 6: {
-                coloured_string += "<font color=\"#7651d0\">";
-                coloured_string += converter.to_bytes(character);
-                coloured_string += "</font>";
-                break;
-            }
-            default: {
-                coloured_string += converter.to_bytes(character);
-                break;
-            }
-            }
+        // Skip same character string; they have no colour
+        // However, increment to the next tone position
+        // since they represent characters that are the same between simplified
+        // and traditional and therefore have tones
+        if (character == converter.from_bytes(SAME_CHARACTER_STRING)[0]) {
+            coloured_string += originalCharacter;
             pos++;
+            continue;
         }
+
+        // Skip any special characters
+        // but do not increment to next tone position,
+        // since special characters do not have any tones associated with them
+        auto isSpecialCharacter = specialCharacters.find(originalCharacter) != specialCharacters.end();
+        auto isAlphabetical = std::find_if(originalCharacter.begin(),
+                                           originalCharacter.end(),
+                                           isalpha)
+                != originalCharacter.end();
+        if (isSpecialCharacter || isAlphabetical) {
+            coloured_string += converter.to_bytes(character);
+            continue;
+        }
+
+        // Get the tone...
+        int tone = 0;
+        try {
+            tone = tones.at(pos);
+        } catch (const std::out_of_range& e) {
+            coloured_string += originalCharacter;
+//            std::cerr << "Couldn't get tone for character"
+//                      << converter.to_bytes(character)
+//                      << " in character" << original
+//                      << " Error:" << e.what() << std::endl;
+            continue;
+        }
+
+        // ... and apply tone colour formatting to the string
+        coloured_string += "<font color=\"" + toneColours.at(static_cast<size_t>(tone)) + "\">";
+        coloured_string += originalCharacter;
+        coloured_string += "</font>";
+
+        pos++;
+    }
 
     return coloured_string;
 }
@@ -408,7 +468,7 @@ std::string Entry::applyColours(std::string original,
 // u32strings on macOS and Linux, or wstrings on Windows.
 //
 // Since there is no guarantee of byte length per "character" in each string
-// (as most latin characters are one byte and chinese characters are usually
+// (as most Latin characters are one byte and Chinese characters are usually
 // 3 bytes due to multibyte encoding schemes of UTF-8, and several entries
 // consist of both latin and chinese character combinations), converting
 // the string to u32string/wstring allows us to advance through the string
@@ -433,26 +493,128 @@ void Entry::compareStrings(std::string original, std::string comparison,
     std::string modifiedComparison;
 
 #ifdef _MSC_VER
-        std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
         std::wstring convertedOriginal = converter.from_bytes(original);
         std::wstring convertedComparison = converter.from_bytes(comparison);
 #else
-        std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
         std::u32string convertedOriginal = converter.from_bytes(original);
         std::u32string convertedComparison = converter.from_bytes(comparison);
 #endif
-        if (convertedOriginal.size() != convertedComparison.size()) {
-            returnString.clear();
-            return;
+    if (convertedOriginal.size() != convertedComparison.size()) {
+        returnString.clear();
+        return;
+    }
+
+    for (size_t i = 0; i < convertedOriginal.size(); i++) {
+        std::string currentCharacter = converter.to_bytes(convertedComparison[i]);
+
+        auto isSpecialCharacter = specialCharacters.find(currentCharacter) != specialCharacters.end();
+        if (isSpecialCharacter
+                || convertedOriginal[i] != convertedComparison[i]) {
+            modifiedComparison += currentCharacter;
+            continue;
         }
 
-        for (size_t i = 0; i < convertedOriginal.size(); i++) {
-            if (convertedOriginal[i] != convertedComparison[i]) {
-                modifiedComparison += converter.to_bytes(convertedComparison[i]);
-            } else {
-                modifiedComparison += "－";
-            }
+        if (std::find_if(currentCharacter.begin(), currentCharacter.end(), isalpha) != currentCharacter.end()) {
+            modifiedComparison += currentCharacter;
+            continue;
         }
+
+        modifiedComparison += SAME_CHARACTER_STRING;
+    }
 
     returnString = modifiedComparison;
+}
+
+// explodePhonetic takes a string and a delimiter, then separates that string up
+// into its components as delimited by, you guessed it, the delimiter.
+// Similar to the .split() function in Python and JavaScript.
+std::vector<std::string> Entry::explodePhonetic(const std::string& string, const char delimiter) const
+{
+    std::vector<std::string> words;
+    std::stringstream ss(string);
+    std::string word;
+
+    while (std::getline(ss, word, delimiter)) {
+        words.push_back(word);
+    }
+
+    return words;
+}
+
+std::string Entry::createPrettyPinyin(void)
+{
+    std::string result;
+
+    // Create a vector of each space-separated value in pinyin
+    std::vector<std::string> syllables = explodePhonetic(_pinyin, ' ');
+    if (syllables.empty()) {
+        return _pinyin;
+    }
+
+    for (auto syllable : syllables) {
+        // Skip the punctuation, they have no tone
+        if (specialCharacters.find(syllable) != specialCharacters.end()) {
+            result += syllable + " ";
+            continue;
+        }
+
+        // Extract the tone from the syllable
+        size_t tone_location = syllable.find_first_of("012345");
+        if (tone_location == std::string::npos) {
+            result += syllable + " ";
+            continue;
+        }
+        int tone = syllable.at(tone_location) - '0';
+
+        // Convert u: to ü
+        size_t location = syllable.find("u:");
+        if (location != std::string::npos) {
+            syllable.erase(location, 2);
+            syllable.insert(location, "ü");
+            location = std::string::npos;
+        }
+
+        // The rule for pinyin diacritic location is:
+        // - If a, e, or o exists in the syllable, it takes the diacritic.
+        // - Otherwise, the last u, ü, or i takes it.
+        location = syllable.find_first_of("aeo");
+        size_t character_size = 1;
+
+        if (location == std::string::npos) {
+            location = syllable.find("ü");
+            // ü is stored as two bytes, so change the number of characters that
+            // we need to delete if we find a ü
+            character_size = location == std::string::npos ? 1 : 2;
+        }
+
+        if (location == std::string::npos) {
+            location = syllable.find_last_of("ui");
+        }
+
+        if (location == std::string::npos) {
+            result += syllable + " ";
+            continue;
+        }
+
+        // replacementMap maps a character to its replacements with diacritics.
+        auto search = replacementMap.find(syllable.substr(location, character_size));
+        if (search != replacementMap.end()) {
+            std::string replacement = search->second.at(static_cast<size_t>(tone) - 1);
+            syllable.erase(location, character_size);
+            syllable.insert(location, replacement);
+        } else {
+            result += syllable + " ";
+            continue;
+        }
+
+        // Remove the tone from the pinyin
+        tone_location = syllable.find_first_of("012345");
+        syllable.erase(tone_location, 1);
+        result += syllable + " ";
+    }
+
+    // Remove trailing space
+    result.erase(result.end() - 1);
+
+    return result;
 }

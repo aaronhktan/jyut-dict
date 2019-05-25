@@ -40,13 +40,16 @@ void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 
     EntryCharactersOptions characterOptions;
     EntryPhoneticOptions phoneticOptions;
+    MandarinOptions mandarinOptions;
     bool use_colours = false;
     if (isWelcomeEntry) {
         characterOptions = EntryCharactersOptions::ONLY_SIMPLIFIED;
         phoneticOptions = EntryPhoneticOptions::ONLY_PINYIN;
+        mandarinOptions = MandarinOptions::RAW_PINYIN;
     } else {
         characterOptions = EntryCharactersOptions::PREFER_TRADITIONAL;
         phoneticOptions = EntryPhoneticOptions::PREFER_JYUTPING;
+        mandarinOptions = MandarinOptions::PRETTY_PINYIN;
         use_colours = !(option.state & QStyle::State_Selected);
 
     }
@@ -91,7 +94,7 @@ void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 
     r = r.adjusted(0, 24, 0, 0);
     metrics = QFontMetrics(font);
-    QString phonetic = metrics.elidedText(entry.getPhonetic(phoneticOptions).c_str(), Qt::ElideRight, r.width());
+    QString phonetic = metrics.elidedText(entry.getPhonetic(phoneticOptions, mandarinOptions).c_str(), Qt::ElideRight, r.width());
     painter->drawText(r, 0, phonetic, &boundingRect);
 
     r = r.adjusted(0, boundingRect.height(), 0, 0);

@@ -46,7 +46,7 @@ void EntryHeaderWidget::setEntry(Entry& entry)
 
     _wordLabel->setText(entry.getCharacters(EntryCharactersOptions::PREFER_TRADITIONAL, true).c_str());
     _jyutpingPronunciation->setText(entry.getJyutping().c_str());
-    _pinyinPronunciation->setText(entry.getPinyin().c_str());
+    _pinyinPronunciation->setText(entry.getPrettyPinyin().c_str());
 }
 
 void EntryHeaderWidget::setEntry(std::string word, std::string jyutping, std::string pinyin)
