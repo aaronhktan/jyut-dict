@@ -46,7 +46,7 @@ private:
     void searchEnglishThread(const QString& searchTerm);
 
     std::vector<std::string> explodePhonetic(const QString& string, const char delimiter);
-    std::string implodePhonetic(std::vector<std::string> words, const char *delimiter);
+    std::string implodePhonetic(std::vector<std::string> words, const char *delimiter, bool surroundWithQuotes=false);
     std::vector<Entry> parseEntries(QSqlQuery& query);
 
     static std::list<ISearchObserver *> _observers;

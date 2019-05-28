@@ -161,25 +161,29 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm)
     notifyObservers();
 }
 
-// For SearchJyutping and SearchPinyin, we use MATCH and then LIKE, in order
+// For searching jyutping and pinyin, we use MATCH and then LIKE, in order
 // to take advantage of the quick full-text-search matching, before then
 // filtering the results to only those that begin with the query
 // using a LIKE wildcard.
 //
 // This approach is approximately ten times faster than simply using the LIKE
 // operator and the % wildcard.
+//
+// !NOTE! Using QSQLQuery's positional placeholder method automatically
+// surrounds the bound value with single quotes, i.e. "'". There is no need
+// to add another set of quotes around placeholder values.
 void SQLSearch::searchJyutpingThread(const QString &searchTerm)
 {
     std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getEnglishDatabase()};
-    query.prepare("SELECT * FROM entries WHERE jyutping MATCH ? "
+    query.prepare("SELECT * FROM entries WHERE entries MATCH ? "
                   "AND jyutping LIKE ? "
                   "ORDER BY freq DESC");
     const char *matchJoinDelimiter = "*";
-    std::string matchTerm = implodePhonetic(explodePhonetic(searchTerm, ' '), matchJoinDelimiter);
+    std::string matchTerm = implodePhonetic(explodePhonetic(searchTerm, ' '), matchJoinDelimiter, /*surroundWithQuotes=*/true);
     const char *likeJoinDelimiter = "_";
     std::string likeTerm = implodePhonetic(explodePhonetic(searchTerm, ' '), likeJoinDelimiter);
-    query.addBindValue(QString(matchTerm.c_str()));
+    query.addBindValue("jyutping:" + QString(matchTerm.c_str()));
     query.addBindValue(QString(likeTerm.c_str()) + "%");
     query.exec();
 
@@ -202,16 +206,32 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm)
 
 void SQLSearch::searchPinyinThread(const QString &searchTerm)
 {
+    // Replace "v" and "ü" with "u:" since "ü" is stored as "u:" in the table
+    QString processedSearchTerm = searchTerm;
+    int location = processedSearchTerm.indexOf("v");
+    while (location != -1) {
+        processedSearchTerm.remove(location, 1);
+        processedSearchTerm.insert(location, "u:");
+        location = processedSearchTerm.indexOf("v", location);
+    }
+
+    location = processedSearchTerm.indexOf("ü");
+    while (location != -1) {
+        processedSearchTerm.remove(location, 1);
+        processedSearchTerm.insert(location, "u:");
+        location = processedSearchTerm.indexOf("ü", location);
+    }
+
     std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getEnglishDatabase()};
-    query.prepare("SELECT * FROM entries WHERE pinyin MATCH ? "
+    query.prepare("SELECT * FROM entries WHERE entries MATCH ? "
                   "AND pinyin LIKE ? "
                   "ORDER BY freq DESC");
     const char *matchJoinDelimiter = "*";
-    std::string matchTerm = implodePhonetic(explodePhonetic(searchTerm, ' '), matchJoinDelimiter);
+    std::string matchTerm = implodePhonetic(explodePhonetic(processedSearchTerm, ' '), matchJoinDelimiter, /*surroundWithQuotes=*/true);
     const char *likeJoinDelimiter = "_";
-    std::string likeTerm = implodePhonetic(explodePhonetic(searchTerm, ' '), likeJoinDelimiter);
-    query.addBindValue(QString(matchTerm.c_str()));
+    std::string likeTerm = implodePhonetic(explodePhonetic(processedSearchTerm, ' '), likeJoinDelimiter);
+    query.addBindValue("pinyin:" + QString{matchTerm.c_str()});
     query.addBindValue(QString(likeTerm.c_str()) + "%");
 
     query.exec();
@@ -242,8 +262,8 @@ void SQLSearch::searchEnglishThread(const QString& searchTerm)
     query.prepare("SELECT * FROM entries WHERE entries MATCH ? "
                   "OR entries MATCH ? "
                   "ORDER BY freq DESC");
-    query.addBindValue("cedict_english:" + searchTerm);
-    query.addBindValue("canto_english:" + searchTerm);
+    query.addBindValue("cedict_english:\"" + searchTerm + "\"");
+    query.addBindValue("canto_english:\"" + searchTerm + "\"");
     query.setForwardOnly(true);
 
     query.exec();
@@ -299,13 +319,21 @@ std::vector<std::string> SQLSearch::explodePhonetic(const QString &string, const
 // 3) (if multiple words) any words with any/specific tones, except for the last
 //    word, which matches against all words that start with that spelling.
 //
+// In addition, we also allow surrounding each search term with quotes.
+// For SQLite3's FTS, used for MATCH, this indicates that the enclosed term is a
+// string. In order for the search to work correcty, the wildcard character
+// (or, as it is called in FTS's documentation, the "prefix token") must be
+// placed outside of the string. e.g. "ke"* is correct, whereas "ke*" is not.
+//
 // Example 1 - Single word:
 // Searching jyutping with "se" does two calls to implodePhonetic:
-// 1) For MATCH, the phrase is affixed with the prefix token "*", to select
-//    all words/phrases that being with "se". The return value is "se*"
+// 1) For MATCH, the delimiter is "*" and surroundWithQuotes is set to true.
+//    The phrase is affixed with the prefix token "*", to select all
+//    words/phrases that begin with "se". The return value is,
+//    including the quotes and star, "se"*.
 // 2) For LIKE, the phrase is affixed with the wildcard character "_",
 //    which allows it to be matched with "se1, se2, se3, se4, se5, se6".
-//    The return value is "se_".
+//    The return value is se_.
 //
 //    Currently, since searchJyutping also appends the unlimited wildcard "%"
 //    at the end of the query, it would also match against "sei1" or "seoi5" or
@@ -316,9 +344,9 @@ std::vector<std::string> SQLSearch::explodePhonetic(const QString &string, const
 // Searching jyutping with "daai koi" is first exploded into "daai" and "koi"
 // by explodePhonetic, then does two calls to implodePhonetic:
 // 1) For MATCH, each phrase is affixed with the prefix token. The return
-//    value is "daai* koi*".
+//    value is "daai"* koi"*.
 // 2) For LIKE, each phrase is affixed with the single character wildcard.
-//    The return value is "daai_ koi_".
+//    The return value is daai_ koi_.
 //
 // Example 3 - Multiple words, some tone markers:
 // Searching pinyin with "ke3 ai" is first exploded into "ke3" and "ai" by
@@ -326,26 +354,27 @@ std::vector<std::string> SQLSearch::explodePhonetic(const QString &string, const
 // 1) For MATCH, since the first phrase ends with a digit, it is not affixed
 //    with the prefix token (as the presence of a digit implies that it is
 //    "complete"). The second phrase, without a digit, is affixed with a token.
-//    The return value is thus "ke3 ai*".
+//    The return value is thus "ke3" "ai"*.
 // 2) For LIKE, the first phrase is not affixed with a single character
 //    wildcard, as it is terminated by a digit. The second one is not, so it
 //    is affixed with the single character wildcard. The return value is
-//    "ke3 ai_".
-std::string SQLSearch::implodePhonetic(std::vector<std::string> words, const char *delimiter)
+//    ke3 ai_.
+std::string SQLSearch::implodePhonetic(std::vector<std::string> words, const char *delimiter, bool surroundWithQuotes)
 {
+    const char *quotes = surroundWithQuotes ? "\"": "";
     std::ostringstream string;
     for (size_t i = 0; i < words.size() - 1; i++) {
         if (std::isdigit(words[i].back())) {
-            string << words[i] << " ";
+            string << quotes << words[i] << quotes << " ";
         } else {
-            string << words[i] << delimiter << " ";
+            string << quotes << words[i] << quotes << delimiter << " ";
         }
     }
 
     if (std::isdigit(words.back().back())) {
-        string << words.back();
+        string << quotes << words.back() << quotes;
     } else {
-        string << words.back() << delimiter;
+        string << quotes << words.back() << quotes << delimiter;
     }
     return string.str();
 }
