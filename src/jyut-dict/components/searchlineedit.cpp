@@ -156,20 +156,18 @@ void SearchLineEdit::setStyle(bool use_dark)
     if (use_dark) {
         setStyleSheet("QLineEdit { \
                          border-radius: 3px; \
-                         border-color: black; \
-                         border-width: 1px; \
                          font-size: 12px; \
                          padding-top: 4px; \
                          padding-bottom: 4px; \
                          selection-background-color: darkgray; \
-                         background-color: #586365; }");
+                         background-color: #586365; } \
+                        QLineEdit:focus { \
+                         border-radius: 2px; }");
         _searchLineEdit->setIcon(search_inverted);
         _clearLineEdit->setIcon(clear_inverted);
     } else {
         setStyleSheet("QLineEdit { \
                          border-radius: 3px; \
-                         border-color: black; \
-                         border-width: 1px; \
                          font-size: 12px; \
                          padding-top: 4px; \
                          padding-bottom: 4px; \
