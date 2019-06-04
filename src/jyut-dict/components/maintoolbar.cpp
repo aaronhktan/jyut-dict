@@ -15,6 +15,9 @@ MainToolBar::MainToolBar(QWidget *parent) : QToolBar(parent)
 
     _toolBarLayout->addWidget(_searchBar);
     _toolBarLayout->addWidget(_optionsBox);
+#ifdef Q_OS_WIN
+    _toolBarLayout->setContentsMargins(6, 2, 6, 9);
+#endif
 //    _toolBarLayout->addStretch();
 
     _toolBarWidget->setLayout(_toolBarLayout);

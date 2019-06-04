@@ -31,7 +31,7 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent
 #ifdef Q_OS_WIN
     setStyle(/* use_dark = */false);
     setMinimumHeight(25);
-#elif defined(Q_OS_DARWIN)
+#elif defined(Q_OS_MAC)
     if (!system("defaults read -g AppleInterfaceStyle")) {
         setStyle(/* use_dark = */true);
     } else {
@@ -44,6 +44,11 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent
     setMinimumWidth(parent->width() / 2);
 
     _search = new SQLSearch(std::make_shared<SQLDatabaseManager>());
+
+    connect(this, &QLineEdit::textChanged,
+            [this](){
+                this->checkClearVisibility();
+                this->search();});
 }
 
 SearchLineEdit::~SearchLineEdit()
@@ -58,13 +63,6 @@ void SearchLineEdit::checkClearVisibility()
     } else {
         addAction(_clearLineEdit, QLineEdit::TrailingPosition);
     }
-}
-
-void SearchLineEdit::keyReleaseEvent(QKeyEvent *event)
-{
-    checkClearVisibility();
-    QLineEdit::keyReleaseEvent(event);
-    search();
 }
 
 // When in focus and text present, the clear button should be visible
@@ -108,18 +106,6 @@ void SearchLineEdit::changeEvent(QEvent *event)
 void SearchLineEdit::updateParameters(SearchParameters parameters)
 {
     _parameters = parameters;
-
-#ifdef Q_OS_WIN
-    if (_parameters == SearchParameters::SIMPLIFIED ||
-            _parameters == SearchParameters::TRADITIONAL) {
-        connect(this, &QLineEdit::textChanged,
-                [this](){
-                    this->checkClearVisibility();
-                    this->search();});
-    } else {
-        disconnect(this, &QLineEdit::textChanged, nullptr, nullptr);
-    }
-#endif
 }
 
 void SearchLineEdit::search()
