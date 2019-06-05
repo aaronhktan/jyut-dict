@@ -25,10 +25,10 @@ void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     bool isWelcomeEntry = entry.getSimplified() == "Welcome!";
 
     if (option.state & QStyle::State_Selected && !isWelcomeEntry) {
-#ifdef Q_OS_WIN
-        painter->fillRect(option.rect, QColor(204, 0, 1));
-#else
+#ifdef Q_OS_MAC
         painter->fillRect(option.rect, option.palette.highlight());
+#else
+        painter->fillRect(option.rect, QColor(204, 0, 1));
 #endif
         painter->setPen(QPen(option.palette.color(QPalette::HighlightedText)));
     } else {

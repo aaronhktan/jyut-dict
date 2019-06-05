@@ -18,6 +18,7 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
     // Entire Scroll Area
     _scrollAreaLayout = new QVBoxLayout(this);
     _scrollAreaLayout->setSpacing(25);
+    _scrollAreaLayout->setContentsMargins(11, 11, 11, 22);
 
     _scrollAreaWidget = new QWidget(this);
     _scrollAreaWidget->setLayout(_scrollAreaLayout);
