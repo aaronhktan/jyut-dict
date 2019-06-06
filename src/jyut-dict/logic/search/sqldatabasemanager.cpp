@@ -1,10 +1,10 @@
 #include "sqldatabasemanager.h"
 
 #include <QCoreApplication>
+#include <QDir>
 #include <QFile>
-
-// Todo: move database to QStandardPaths::AppDataLocation, a cross-platform
-// solution for data files.
+#include <QFileInfo>
+#include <QStandardPaths>
 
 SQLDatabaseManager::SQLDatabaseManager()
 {
@@ -19,17 +19,55 @@ SQLDatabaseManager::~SQLDatabaseManager()
 
 void SQLDatabaseManager::openEnglishDatabase()
 {
-    if (!_EnglishDB.isOpen()) {
-        _EnglishDB = QSqlDatabase::addDatabase("QSQLITE");
-#ifdef Q_OS_DARWIN
-        _EnglishDB.setDatabaseName(QCoreApplication::applicationDirPath() + "/../Resources/eng.db");
-#elif defined(Q_OS_WIN)
-        _EnglishDB.setDatabaseName(QCoreApplication::applicationDirPath() + "./eng.db");
-#else
-        _EnglishDB.setDatabaseName(QCoreApplication::applicationDirPath() + "/eng.db");
-#endif
-        _EnglishDB.open();
+    if (_EnglishDB.isOpen()) {
+        return;
     }
+
+    _EnglishDB = QSqlDatabase::addDatabase("QSQLITE");
+
+#ifdef Q_OS_DARWIN
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/../Resources/eng.db"};
+    QFileInfo localFile{QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
+                 + "/Dictionaries/eng.db"};
+#elif defined(Q_OS_WIN)
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "./eng.db"};
+    QFileInfo localFile{QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
+                 + "/Dictionaries/eng.db"};
+#else
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/eng.db"};
+    QFileInfo localFile{QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
+                 + "/dictionaries/eng.db"};
+#endif
+
+#ifdef PORTABLE
+    if (bundleFile.exists() && bundleFile.isFile()) {
+        _EnglishDB.setDatabaseName(bundleFile.absoluteFilePath());
+    }
+#else
+    // Make path for dictionary storage
+    if (!localFile.exists()) {
+        if (!QDir().mkpath(localFile.absolutePath())) {
+            return;
+        }
+    }
+
+    // Copy file from bundle to Application Support
+    if (!localFile.exists() || !localFile.isFile()) {
+        if (!QFile::copy(bundleFile.absoluteFilePath(), localFile.absoluteFilePath())) {
+            return;
+        }
+    }
+
+    // Delete file in bundle
+    if (bundleFile.exists() && bundleFile.isFile()) {
+        if (!QFile::remove(bundleFile.absoluteFilePath())) {
+            return;
+        }
+    }
+
+    _EnglishDB.setDatabaseName(localFile.absoluteFilePath());
+#endif
+    _EnglishDB.open();
 }
 
 //void SQLDatabaseManager::openOtherDatabase()
