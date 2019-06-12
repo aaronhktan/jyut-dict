@@ -4,6 +4,7 @@
 #include "windows/updatewindow.h"
 
 #include <QApplication>
+#include <QClipboard>
 #include <QDesktopServices>
 #include <QGuiApplication>
 #include <QUrl>
@@ -124,7 +125,7 @@ void MainWindow::createActions()
     _windowMenu->addAction(bringAllToFrontAction);
 
     QAction *helpAction = new QAction{tr("Jyut Dictionary Help"), this};
-    connect(helpAction, &QAction::triggered, this, [](){QDesktopServices::openUrl(QUrl{"https://github.com/aaronhktan/jyut-dict"});});
+    connect(helpAction, &QAction::triggered, this, [](){QDesktopServices::openUrl(QUrl{Utils::GITHUB_LINK});});
     _helpMenu->addAction(helpAction);
 }
 
@@ -175,19 +176,28 @@ void MainWindow::cut()
     }
 }
 
+#include <iostream>
 void MainWindow::copy()
 {
     QWidget *focused = QApplication::focusWidget();
-    if (focused) {
-        QApplication::postEvent(focused,
-                                new QKeyEvent{QEvent::KeyPress,
-                                              Qt::Key_C,
-                                              Qt::ControlModifier});
-        QApplication::postEvent(focused,
-                                new QKeyEvent{QEvent::KeyRelease,
-                                              Qt::Key_C,
-                                              Qt::ControlModifier});
+    if (!focused) {
+        return;
     }
+
+    if (typeid(*focused) == typeid(QLabel)) {
+        QGuiApplication::clipboard()->setText(
+                    static_cast<QLabel *>(focused)->selectedText());
+        return;
+    }
+
+    QApplication::postEvent(focused,
+                            new QKeyEvent{QEvent::KeyPress,
+                                          Qt::Key_C,
+                                          Qt::ControlModifier});
+    QApplication::postEvent(focused,
+                            new QKeyEvent{QEvent::KeyRelease,
+                                          Qt::Key_C,
+                                          Qt::ControlModifier});
 }
 
 void MainWindow::paste()
