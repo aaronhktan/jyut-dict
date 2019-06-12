@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql
+QT       += core gui sql network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,6 +25,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
+    logic/update/githubreleasechecker.cpp \
+    logic/utils/utils.cpp \
     main.cpp \
     windows/mainwindow.cpp \
     components/definitionheaderwidget.cpp \
@@ -45,9 +47,13 @@ SOURCES += \
     components/entrylistmodel.cpp \
     components/entrydelegate.cpp \
     components/searchoptionsradiogroupbox.cpp \
-    logic/search/searchoptionsmediator.cpp
+    logic/search/searchoptionsmediator.cpp \
+    windows/updatewindow.cpp
 
 HEADERS += \
+    logic/update/githubreleasechecker.h \
+    logic/update/iupdatechecker.h \
+    logic/utils/utils.h \
     windows/mainwindow.h \
     components/definitionheaderwidget.h \
     components/definitionscrollarea.h \
@@ -76,7 +82,8 @@ HEADERS += \
     logic/search/searchparameters.h \
     logic/search/isearchoptionsmediator.h \
     logic/search/searchoptionsmediator.h \
-    components/isearchlineedit.h
+    components/isearchlineedit.h \
+    windows/updatewindow.h
 
 RESOURCES += \
     resources/resource.qrc
@@ -101,3 +108,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 #QMAKE_CXXFLAGS += -ggdb3
+
+DISTFILES += \
+    resources/images/update.png \
+    resources/images/warning.png

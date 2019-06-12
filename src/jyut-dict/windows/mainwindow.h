@@ -3,6 +3,7 @@
 
 #include "components/mainsplitter.h"
 #include "components/maintoolbar.h"
+#include "logic/update/githubreleasechecker.h"
 
 #include <QMainWindow>
 #include <QMenu>
@@ -32,6 +33,8 @@ public:
     void toggleMaximized();
 
 private:
+    GithubReleaseChecker *_checker;
+
     MainToolBar *_mainToolBar;
     MainSplitter *_mainSplitter;
 
@@ -39,6 +42,11 @@ private:
     QMenu *_editMenu;
     QMenu *_windowMenu;
     QMenu *_helpMenu;
+
+public slots:
+    void notifyUpdateAvailable(bool updateAvailable,
+                               std::string versionNumber,
+                               std::string url, std::string description);
 };
 
 #endif // MAINWINDOW_H

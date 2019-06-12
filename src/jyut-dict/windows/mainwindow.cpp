@@ -1,12 +1,13 @@
 #include "windows/mainwindow.h"
 
-#include <logic/entry/sentence.h>
+#include "logic/entry/sentence.h"
+#include "windows/updatewindow.h"
 
 #include <QApplication>
-#include <QClipboard>
 #include <QDesktopServices>
 #include <QGuiApplication>
 #include <QUrl>
+#include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -18,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setMinimumSize(QSize(800, 600));
 #endif
 
+    // Create UI elements
     _mainToolBar = new MainToolBar(this);
     addToolBar(_mainToolBar);
     setUnifiedTitleAndToolBarOnMac(true);
@@ -25,13 +27,30 @@ MainWindow::MainWindow(QWidget *parent) :
     _mainSplitter = new MainSplitter(this);
     setCentralWidget(_mainSplitter);
 
+    // Create menu bar and populate it
     createMenus();
-
     createActions();
+
+    // Check for updates
+    _checker = new GithubReleaseChecker{this};
+    QTimer::singleShot(1000, _checker, &GithubReleaseChecker::checkForNewUpdate);
+    connect(_checker, &GithubReleaseChecker::foundUpdate, this,
+            &MainWindow::notifyUpdateAvailable);
 }
 
 MainWindow::~MainWindow()
 {
+
+}
+
+void MainWindow::notifyUpdateAvailable(bool updateAvailable,
+                                       std::string versionNumber,
+                                       std::string url, std::string description)
+{
+    if (updateAvailable) {
+        UpdateWindow *window = new UpdateWindow{this, versionNumber, url, description};
+        window->show();
+    }
 }
 
 void MainWindow::createMenus()
