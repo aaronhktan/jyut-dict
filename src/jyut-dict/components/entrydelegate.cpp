@@ -12,7 +12,8 @@ EntryDelegate::EntryDelegate(QWidget *parent)
 
 }
 
-void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
+                          const QModelIndex &index) const
 {
     if (!index.data().canConvert<Entry>()) {
         return;
@@ -94,11 +95,15 @@ void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 
     r = r.adjusted(0, 24, 0, 0);
     metrics = QFontMetrics(font);
-    QString phonetic = metrics.elidedText(entry.getPhonetic(phoneticOptions, mandarinOptions).c_str(), Qt::ElideRight, r.width());
+    QString phonetic = metrics.elidedText(
+                entry.getPhonetic(phoneticOptions,mandarinOptions).c_str(),
+                Qt::ElideRight, r.width());
     painter->drawText(r, 0, phonetic, &boundingRect);
 
     r = r.adjusted(0, boundingRect.height(), 0, 0);
-    QString snippet = metrics.elidedText(entry.getDefinitionSnippet().c_str(), Qt::ElideRight, r.width());
+    QString snippet = metrics.elidedText(
+                entry.getDefinitionSnippet().c_str(),
+                Qt::ElideRight, r.width());
     painter->drawText(r, 0, snippet, &boundingRect);
 
     // Bottom divider
@@ -109,7 +114,8 @@ void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     painter->restore();
 }
 
-QSize EntryDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+QSize EntryDelegate::sizeHint(const QStyleOptionViewItem &option,
+                              const QModelIndex &index) const
 {
     return QSize(100, 80);
 }

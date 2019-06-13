@@ -14,6 +14,7 @@
 class UpdateWindow : public QWidget
 {
     Q_OBJECT
+
 public:
     explicit UpdateWindow(QWidget *parent = nullptr,
                           std::string versionNumber=Utils::CURRENT_VERSION,

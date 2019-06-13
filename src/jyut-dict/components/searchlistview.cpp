@@ -3,7 +3,6 @@
 #include "components/entrylistmodel.h"
 #include "logic/search/sqlsearch.h"
 
-#include <QApplication>
 #include <QScrollBar>
 
 SearchListView::SearchListView(QWidget *parent)

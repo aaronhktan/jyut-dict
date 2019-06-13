@@ -34,7 +34,8 @@ void EntryListModel::setWelcome()
 {
     Entry entry = Entry{tr("Welcome!").toStdString(), tr("Welcome!").toStdString(),
                         "—", "—", {}, {}, {}};
-    entry.addDefinitions(DictionarySource::CEDICT, {tr("Start typing to search for words").toStdString()});
+    entry.addDefinitions(DictionarySource::CEDICT,
+                         {tr("Start typing to search for words").toStdString()});
 
     setEntries(std::vector<Entry>{entry});
 }
@@ -63,7 +64,8 @@ QVariant EntryListModel::data(const QModelIndex &index, int role) const
     }
 }
 
-QVariant EntryListModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant EntryListModel::headerData(int section, Qt::Orientation orientation,
+                                    int role) const
 {
     if (role != Qt::DisplayRole) {
         return QVariant();

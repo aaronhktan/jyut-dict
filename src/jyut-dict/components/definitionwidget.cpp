@@ -7,7 +7,7 @@ DefinitionWidget::DefinitionWidget(QWidget *parent) : QWidget(parent)
     _definitionSectionsLayout->setSpacing(25);
 }
 
-DefinitionWidget::DefinitionWidget(Entry& entry, QWidget *parent)
+DefinitionWidget::DefinitionWidget(Entry &entry, QWidget *parent)
     : DefinitionWidget(parent)
 {
     setEntry(entry);
@@ -39,7 +39,7 @@ QSize DefinitionWidget::sizeHint() const
     }
 }
 
-void DefinitionWidget::setEntry(Entry& entry)
+void DefinitionWidget::setEntry(const Entry &entry)
 {
     cleanup();
     for (auto definitionsSet : entry.getDefinitionsSets()) {

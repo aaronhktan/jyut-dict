@@ -13,14 +13,14 @@ Sentence::Sentence(std::string cantonese, std::string english, std::string manda
 {
 }
 
-Sentence::Sentence(const Sentence& sentence)
+Sentence::Sentence(const Sentence &sentence)
     : _cantonese{sentence.getCantonese()},
       _english{sentence.getEnglish()},
       _mandarin{sentence.getMandarin()}
 {
 }
 
-Sentence::Sentence(const Sentence&& sentence)
+Sentence::Sentence(const Sentence &&sentence)
     : _cantonese{std::move(sentence._cantonese)},
       _english{std::move(sentence._english)},
       _mandarin{sentence._mandarin}
@@ -31,7 +31,7 @@ Sentence::~Sentence()
 {
 }
 
-Sentence& Sentence::operator=(const Sentence& sentence)
+Sentence &Sentence::operator=(const Sentence &sentence)
 {
     if (&sentence == this) {
         return *this;
@@ -44,7 +44,7 @@ Sentence& Sentence::operator=(const Sentence& sentence)
     return *this;
 }
 
-Sentence& Sentence::operator=(const Sentence&& sentence)
+Sentence &Sentence::operator=(const Sentence &&sentence)
 {
     if (&sentence == this) {
         return *this;
@@ -57,7 +57,7 @@ Sentence& Sentence::operator=(const Sentence&& sentence)
     return *this;
 }
 
-std::ostream& operator<<(std::ostream& out, const Sentence& sentence)
+std::ostream &operator<<(std::ostream &out, const Sentence &sentence)
 {
     out << "Cantonese: " << sentence.getCantonese() << "; ";
     out << "English: " << sentence.getEnglish() << "; ";

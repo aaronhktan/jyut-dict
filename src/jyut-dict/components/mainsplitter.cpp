@@ -34,7 +34,7 @@ MainSplitter::~MainSplitter()
 
 }
 
-void MainSplitter::handleSelectionChanged(const QModelIndex& selection)
+void MainSplitter::handleSelectionChanged(const QModelIndex &selection)
 {
     Entry entry = qvariant_cast<Entry>(selection.data());
     if (entry.getSimplified() == "Welcome!") {

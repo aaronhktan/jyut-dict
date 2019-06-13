@@ -3,6 +3,7 @@
 
 #include "logic/update/iupdatechecker.h"
 
+#include <QObject>
 #include <QtNetwork>
 
 #include <string>
@@ -21,7 +22,8 @@ public:
 private:
     void preConnectToHost(void);
 
-    bool parseJSON(std::string &data, bool &updateAvailable,
+    bool parseJSON(const std::string &data,
+                   bool &updateAvailable,
                    std::string &versionNumber,
                    std::string &url, std::string &description);
     void notifyNewUpdate(void);

@@ -39,17 +39,19 @@ EntryHeaderWidget::~EntryHeaderWidget()
 
 }
 
-void EntryHeaderWidget::setEntry(Entry& entry)
+void EntryHeaderWidget::setEntry(const Entry &entry)
 {
     _jyutpingLabel->setVisible(true);
     _pinyinLabel->setVisible(true);
 
-    _wordLabel->setText(entry.getCharacters(EntryCharactersOptions::PREFER_TRADITIONAL, true).c_str());
+    _wordLabel->setText(entry.getCharacters(EntryCharactersOptions::PREFER_TRADITIONAL,
+                                            true).c_str());
     _jyutpingPronunciation->setText(entry.getJyutping().c_str());
     _pinyinPronunciation->setText(entry.getPrettyPinyin().c_str());
 }
 
-void EntryHeaderWidget::setEntry(std::string word, std::string jyutping, std::string pinyin)
+void EntryHeaderWidget::setEntry(std::string word,
+                                 std::string jyutping, std::string pinyin)
 {
     _jyutpingLabel->setVisible(true);
     _pinyinLabel->setVisible(true);

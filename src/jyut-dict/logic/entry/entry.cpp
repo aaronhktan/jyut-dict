@@ -86,7 +86,7 @@ Entry::Entry(std::string simplified, std::string traditional,
     _prettyPinyin = createPrettyPinyin();
 }
 
-Entry::Entry(const Entry& entry)
+Entry::Entry(const Entry &entry)
     : QObject(),
       _simplified{entry._simplified},
       _simplifiedDifference{entry._simplifiedDifference},
@@ -106,7 +106,7 @@ Entry::Entry(const Entry& entry)
 
 }
 
-Entry::Entry(const Entry&& entry)
+Entry::Entry(const Entry &&entry)
     : _simplified{std::move(entry._simplified)},
       _simplifiedDifference{std::move(entry._simplifiedDifference)},
       _traditional{std::move(entry._traditional)},
@@ -130,7 +130,7 @@ Entry::~Entry()
 
 }
 
-Entry& Entry::operator=(const Entry& entry)
+Entry &Entry::operator=(const Entry &entry)
 {
     if (&entry == this) {
         return *this;
@@ -154,7 +154,7 @@ Entry& Entry::operator=(const Entry& entry)
     return *this;
 }
 
-Entry& Entry::operator=(Entry&& entry)
+Entry &Entry::operator=(const Entry &&entry)
 {
     if (&entry == this) {
         return *this;
@@ -178,7 +178,7 @@ Entry& Entry::operator=(Entry&& entry)
     return *this;
 }
 
-std::ostream& operator<<(std::ostream& out, const Entry& entry)
+std::ostream &operator<<(std::ostream &out, const Entry &entry)
 {
     out << "Simplified: " << entry.getSimplified() << "\n";
     out << "Traditional: " << entry.getTraditional() << "\n";
@@ -443,7 +443,7 @@ std::string Entry::applyColours(std::string original,
         int tone = 0;
         try {
             tone = tones.at(pos);
-        } catch (const std::out_of_range& e) {
+        } catch (const std::out_of_range &e) {
             coloured_string += originalCharacter;
 //            std::cerr << "Couldn't get tone for character"
 //                      << converter.to_bytes(character)
@@ -488,7 +488,7 @@ std::string Entry::applyColours(std::string original,
 // With EntryCharactersOptions::PREFER_SIMPLIFIED:  "身体 {－體}"
 // With EntryCharactersOptions::PREFER_TRADITIONAL: "身體 {－体}"
 void Entry::compareStrings(std::string original, std::string comparison,
-                           std::string& returnString)
+                           std::string &returnString)
 {
     std::string modifiedComparison;
 
@@ -528,7 +528,8 @@ void Entry::compareStrings(std::string original, std::string comparison,
 // explodePhonetic takes a string and a delimiter, then separates that string up
 // into its components as delimited by, you guessed it, the delimiter.
 // Similar to the .split() function in Python and JavaScript.
-std::vector<std::string> Entry::explodePhonetic(const std::string& string, const char delimiter) const
+std::vector<std::string> Entry::explodePhonetic(const std::string &string,
+                                                const char delimiter) const
 {
     std::vector<std::string> words;
     std::stringstream ss(string);

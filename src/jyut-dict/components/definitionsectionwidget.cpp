@@ -16,7 +16,7 @@ DefinitionSectionWidget::~DefinitionSectionWidget()
 
 }
 
-void DefinitionSectionWidget::setEntry(DefinitionsSet& definitionsSet)
+void DefinitionSectionWidget::setEntry(const DefinitionsSet &definitionsSet)
 {
     std::string source = definitionsSet.getSourceShortString();
     _definitionHeaderWidget->setSectionTitle("DEFINITIONS (" + source + ")");

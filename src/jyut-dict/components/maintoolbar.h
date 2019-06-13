@@ -7,6 +7,7 @@
 
 #include <QHBoxLayout>
 #include <QToolBar>
+#include <QWidget>
 
 // The MainToolBar is an object that contains all widgets in the toolbar
 // This includes the searchbar,

@@ -2,11 +2,15 @@
 #define SEARCHLISTVIEW_H
 
 #include "components/entrydelegate.h"
-
 #include "logic/entry/entry.h"
 
+#include <QAbstractListModel>
 #include <QListView>
-#include <QResizeEvent>
+#include <QStyledItemDelegate>
+#ifdef Q_OS_WIN
+#include <QWheelEvent>
+#endif
+#include <QWidget>
 
 #include <vector>
 
@@ -28,10 +32,6 @@ public:
 private:
     QAbstractListModel *_model;
     QStyledItemDelegate *_delegate;
-
-signals:
-
-public slots:
 };
 
 #endif // SEARCHLISTVIEW_H

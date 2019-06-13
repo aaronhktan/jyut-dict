@@ -6,9 +6,10 @@
 #include "logic/search/isearchoptionsmediator.h"
 
 #include <QAction>
+#include <QEvent>
 #include <QFocusEvent>
-#include <QKeyEvent>
 #include <QLineEdit>
+#include <QWidget>
 
 // The SearchLineEdit is the main search bar
 
@@ -17,7 +18,8 @@ class SearchLineEdit : public QLineEdit, public ISearchLineEdit
     Q_OBJECT
 
 public:
-    explicit SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent = nullptr);
+    explicit SearchLineEdit(ISearchOptionsMediator *mediator,
+                            QWidget *parent = nullptr);
     ~SearchLineEdit() override;
 
     void focusInEvent(QFocusEvent *event) override;
@@ -26,6 +28,7 @@ public:
 
     void updateParameters(SearchParameters parameters) override;
     void search() override;
+
 private:
     void checkClearVisibility();
     void setStyle(bool use_dark);
@@ -39,9 +42,6 @@ private:
     SearchParameters _parameters;
 
     bool _paletteRecentlyChanged;
-signals:
-
-public slots:
 };
 
 #endif // SEARCHLINEEDIT_H

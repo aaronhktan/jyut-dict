@@ -8,6 +8,7 @@
 #include <QMainWindow>
 #include <QMenu>
 #include <QMenuBar>
+#include <QWidget>
 
 // As its name suggests, is the main window of the application
 // Contains a toolbar (for searching), and splitter (for results/detail)

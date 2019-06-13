@@ -50,7 +50,8 @@ void GithubReleaseChecker::parseReply(QNetworkReply *reply)
     }
 }
 
-bool GithubReleaseChecker::parseJSON(std::string &data, bool &updateAvailable,
+bool GithubReleaseChecker::parseJSON(const std::string &data,
+                                     bool &updateAvailable,
                                      std::string &versionNumber,
                                      std::string &url, std::string &description)
 {

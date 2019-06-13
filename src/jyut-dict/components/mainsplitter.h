@@ -3,10 +3,11 @@
 
 #include "components/definitionscrollarea.h"
 #include "components/searchlistview.h"
-
 #include "logic/search/sqlsearch.h"
 
+#include <QModelIndex>
 #include <QSplitter>
+#include <QWidget>
 
 // The MainSplitter contains a "master" listview and a "detail" scrollarea
 //
@@ -29,7 +30,7 @@ private:
     SearchListView *_searchListView;
 
 private slots:
-    void handleSelectionChanged(const QModelIndex& selection);
+    void handleSelectionChanged(const QModelIndex &selection);
 };
 
 #endif // MAINSPLITTER_H

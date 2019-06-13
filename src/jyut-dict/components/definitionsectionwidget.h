@@ -17,7 +17,7 @@ public:
     explicit DefinitionSectionWidget(QWidget *parent = nullptr);
     ~DefinitionSectionWidget();
 
-    void setEntry(DefinitionsSet& definitionsSet);
+    void setEntry(const DefinitionsSet &definitionsSet);
 
 private:
     QVBoxLayout *_definitionAreaLayout;

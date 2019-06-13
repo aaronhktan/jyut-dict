@@ -1,8 +1,5 @@
 #include "sqlsearch.h"
 
-#include <QFile>
-#include <QFuture>
-
 #include <QtConcurrent/QtConcurrent>
 
 #ifdef Q_OS_WIN
@@ -28,7 +25,7 @@ SQLSearch::SQLSearch(std::shared_ptr<SQLDatabaseManager> manager)
     }
 }
 
-SQLSearch::SQLSearch(const SQLSearch& search)
+SQLSearch::SQLSearch(const SQLSearch &search)
     : QObject()
 {
     if (search._manager != nullptr) {
@@ -61,12 +58,12 @@ void SQLSearch::notifyObservers()
     }
 }
 
-void SQLSearch::searchSimplified(const QString& searchTerm)
+void SQLSearch::searchSimplified(const QString &searchTerm)
 {
     runThread(&SQLSearch::searchSimplifiedThread, searchTerm);
 }
 
-void SQLSearch::searchTraditional(const QString& searchTerm)
+void SQLSearch::searchTraditional(const QString &searchTerm)
 {
     runThread(&SQLSearch::searchTraditionalThread, searchTerm);
 }
@@ -81,13 +78,13 @@ void SQLSearch::searchPinyin(const QString &searchTerm)
     runThread(&SQLSearch::searchPinyinThread, searchTerm);
 }
 
-void SQLSearch::searchEnglish(const QString& searchTerm)
+void SQLSearch::searchEnglish(const QString &searchTerm)
 {
     runThread(&SQLSearch::searchEnglishThread, searchTerm);
 }
 
-void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString& searchTerm),
-                          const QString& searchTerm)
+void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString &searchTerm),
+                          const QString &searchTerm)
 {
     _currentSearchString = searchTerm;
 
@@ -180,9 +177,12 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm)
                   "AND jyutping LIKE ? "
                   "ORDER BY freq DESC");
     const char *matchJoinDelimiter = "*";
-    std::string matchTerm = implodePhonetic(explodePhonetic(searchTerm, ' '), matchJoinDelimiter, /*surroundWithQuotes=*/true);
+    std::string matchTerm = implodePhonetic(explodePhonetic(searchTerm, ' '),
+                                            matchJoinDelimiter,
+                                            /*surroundWithQuotes=*/true);
     const char *likeJoinDelimiter = "_";
-    std::string likeTerm = implodePhonetic(explodePhonetic(searchTerm, ' '), likeJoinDelimiter);
+    std::string likeTerm = implodePhonetic(explodePhonetic(searchTerm, ' '),
+                                           likeJoinDelimiter);
     query.addBindValue("jyutping:" + QString(matchTerm.c_str()));
     query.addBindValue(QString(likeTerm.c_str()) + "%");
     query.exec();
@@ -228,9 +228,12 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm)
                   "AND pinyin LIKE ? "
                   "ORDER BY freq DESC");
     const char *matchJoinDelimiter = "*";
-    std::string matchTerm = implodePhonetic(explodePhonetic(processedSearchTerm, ' '), matchJoinDelimiter, /*surroundWithQuotes=*/true);
+    std::string matchTerm = implodePhonetic(explodePhonetic(processedSearchTerm, ' '),
+                                            matchJoinDelimiter,
+                                            /*surroundWithQuotes=*/true);
     const char *likeJoinDelimiter = "_";
-    std::string likeTerm = implodePhonetic(explodePhonetic(processedSearchTerm, ' '), likeJoinDelimiter);
+    std::string likeTerm = implodePhonetic(explodePhonetic(processedSearchTerm, ' '),
+                                           likeJoinDelimiter);
     query.addBindValue("pinyin:" + QString{matchTerm.c_str()});
     query.addBindValue(QString(likeTerm.c_str()) + "%");
 
@@ -255,7 +258,7 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm)
 
 // Searching English is the simplest query. It does a full-text search of the
 // English columns.
-void SQLSearch::searchEnglishThread(const QString& searchTerm)
+void SQLSearch::searchEnglishThread(const QString &searchTerm)
 {
     std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getEnglishDatabase()};
@@ -288,7 +291,8 @@ void SQLSearch::searchEnglishThread(const QString& searchTerm)
 // explodePhonetic takes a string and a delimiter, then separates that string up
 // into its components as delimited by, you guessed it, the delimiter.
 // Similar to the .split() function in Python and JavaScript.
-std::vector<std::string> SQLSearch::explodePhonetic(const QString &string, const char delimiter)
+std::vector<std::string> SQLSearch::explodePhonetic(const QString &string,
+                                                    const char delimiter)
 {
     std::vector<std::string> words;
     std::stringstream ss(string.toStdString());
@@ -359,7 +363,9 @@ std::vector<std::string> SQLSearch::explodePhonetic(const QString &string, const
 //    wildcard, as it is terminated by a digit. The second one is not, so it
 //    is affixed with the single character wildcard. The return value is
 //    ke3 ai_.
-std::string SQLSearch::implodePhonetic(std::vector<std::string> words, const char *delimiter, bool surroundWithQuotes)
+std::string SQLSearch::implodePhonetic(std::vector<std::string> words,
+                                       const char *delimiter,
+                                       bool surroundWithQuotes)
 {
     const char *quotes = surroundWithQuotes ? "\"": "";
     std::ostringstream string;
@@ -379,7 +385,7 @@ std::string SQLSearch::implodePhonetic(std::vector<std::string> words, const cha
     return string.str();
 }
 
-std::vector<Entry> SQLSearch::parseEntries(QSqlQuery& query)
+std::vector<Entry> SQLSearch::parseEntries(QSqlQuery &query)
 {
     std::vector<Entry> entries;
 

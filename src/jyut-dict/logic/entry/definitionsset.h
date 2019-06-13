@@ -19,12 +19,13 @@ public:
     DefinitionsSet();
     DefinitionsSet(DictionarySource source, std::vector<std::string> definitions);
     DefinitionsSet(DictionarySource source, std::string definitions);
-    DefinitionsSet(const DefinitionsSet& definitions);
-    DefinitionsSet(const DefinitionsSet&& definitions);
+    DefinitionsSet(const DefinitionsSet &definitions);
+    DefinitionsSet(const DefinitionsSet &&definitions);
 
-    DefinitionsSet& operator=(const DefinitionsSet& definitions);
-    DefinitionsSet& operator=(const DefinitionsSet&& definitions);
-    friend std::ostream& operator<<(std::ostream& out, DefinitionsSet const& definitions);
+    DefinitionsSet &operator=(const DefinitionsSet &definitions);
+    DefinitionsSet &operator=(const DefinitionsSet &&definitions);
+    friend std::ostream &operator<<(std::ostream &out,
+                                    DefinitionsSet const &definitions);
 
     bool isEmpty() const;
 

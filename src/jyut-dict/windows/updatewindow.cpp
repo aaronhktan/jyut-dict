@@ -13,17 +13,23 @@ UpdateWindow::UpdateWindow(QWidget *parent,
 {
     _dialogLayout = new QGridLayout{this};
     _dialogLayout->setSpacing(10);
-    setLayout(_dialogLayout);
+
+    _url = url;
 
 #if defined(Q_OS_WIN) || defined(Q_OS_LINUX)
     setWindowTitle(tr("Update Available!"));
 #endif
+    Qt::WindowFlags flags = windowFlags() | Qt::CustomizeWindowHint | Qt::WindowTitleHint;
+    flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint | Qt::WindowFullscreenButtonHint);
+    setWindowFlags(flags);
+
+    move(parent->x() + (parent->width() - sizeHint().width()) / 2,
+      parent->y() + (parent->height() - sizeHint().height()) / 2);
 
     _iconLabel = new QLabel{this};
     _iconLabel->setFixedWidth(75);
     _iconLabel->setFixedHeight(75);
     _iconLabel->setAlignment(Qt::AlignTop);
-    _dialogLayout->addWidget(_iconLabel, 1, 0, 3, 1);
 
     QPixmap icon = QPixmap{":/images/icon.png"};
     icon.setDevicePixelRatio(devicePixelRatio());
@@ -36,7 +42,6 @@ UpdateWindow::UpdateWindow(QWidget *parent,
     _titleLabel = new QLabel{this};
     _titleLabel->setStyleSheet("QLabel { font-weight: bold }");
     _titleLabel->setText(tr("A new version of Jyut Dictionary is available!"));
-    _dialogLayout->addWidget(_titleLabel, 1, 1, 1, -1);
 
     _messageLabel = new QLabel{this};
     _messageLabel->setWordWrap(true);
@@ -48,7 +53,6 @@ UpdateWindow::UpdateWindow(QWidget *parent,
                            .arg(Utils::CURRENT_VERSION));
     _messageLabel->setFixedWidth(375);
     _messageLabel->setAlignment(Qt::AlignTop);
-    _dialogLayout->addWidget(_messageLabel, 2, 1, 2, -1);
 
     _descriptionTextEdit = new QTextEdit{this};
     _descriptionTextEdit->setText(description.c_str());
@@ -59,32 +63,30 @@ UpdateWindow::UpdateWindow(QWidget *parent,
 
     _spacer = new QWidget{this};
     _spacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-    _dialogLayout->addWidget(_spacer, 4, 1, 1, -1);
 
     _noButton = new QPushButton{this};
     _noButton->setText(tr("Cancel"));
-    _dialogLayout->addWidget(_noButton, 7, 3, 1, 1);
-    connect(_noButton, &QPushButton::clicked, this, &UpdateWindow::noAction);
 
     _showMoreButton = new QPushButton{this};
     _showMoreButton->setText("Show Details");
-    _dialogLayout->addWidget(_showMoreButton, 7, 1, 1, 1);
-    connect(_showMoreButton, &QPushButton::clicked, this, &UpdateWindow::showDetails);
 
     _okButton = new QPushButton{this};
     _okButton->setDefault(true);
     _okButton->setText(tr("Download"));
-    _dialogLayout->addWidget(_okButton, 7, 4, 1, 1);
+
+    connect(_noButton, &QPushButton::clicked, this, &UpdateWindow::noAction);
+    connect(_showMoreButton, &QPushButton::clicked, this, &UpdateWindow::showDetails);
     connect(_okButton, &QPushButton::clicked, this, &UpdateWindow::OKAction);
 
-    _url = url;
+    _dialogLayout->addWidget(_iconLabel, 1, 0, 3, 1);
+    _dialogLayout->addWidget(_titleLabel, 1, 1, 1, -1);
+    _dialogLayout->addWidget(_messageLabel, 2, 1, 2, -1);
+    _dialogLayout->addWidget(_spacer, 4, 1, 1, -1);
+    _dialogLayout->addWidget(_noButton, 7, 3, 1, 1);
+    _dialogLayout->addWidget(_showMoreButton, 7, 1, 1, 1);
+    _dialogLayout->addWidget(_okButton, 7, 4, 1, 1);
 
-    Qt::WindowFlags flags = windowFlags() | Qt::CustomizeWindowHint | Qt::WindowTitleHint;
-    flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint | Qt::WindowFullscreenButtonHint);
-    setWindowFlags(flags);
-
-    move(parent->x() + (parent->width() - sizeHint().width()) / 2,
-      parent->y() + (parent->height() - sizeHint().height()) / 2);
+    setLayout(_dialogLayout);
 }
 
 UpdateWindow::~UpdateWindow()

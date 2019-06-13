@@ -6,7 +6,6 @@
 #include <QIcon>
 #include <QTimer>
 
-#include <iostream>
 #include <vector>
 
 SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent)

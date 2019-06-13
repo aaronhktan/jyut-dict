@@ -7,6 +7,9 @@
 #include "logic/search/sqlsearch.h"
 
 #include <QAbstractListModel>
+#include <QModelIndex>
+#include <QObject>
+#include <QVariant>
 
 #include <string>
 #include <vector>
@@ -20,6 +23,7 @@
 class EntryListModel : public QAbstractListModel, public ISearchObserver
 {
     Q_OBJECT
+
 public:
     explicit EntryListModel(std::vector<Entry> entries,
                             QObject *parent = nullptr);

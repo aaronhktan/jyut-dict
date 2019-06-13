@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql network
+QT       += core gui network sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,64 +25,64 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
-    logic/update/githubreleasechecker.cpp \
-    logic/utils/utils.cpp \
     main.cpp \
-    windows/mainwindow.cpp \
+    components/definitioncontentwidget.cpp \
     components/definitionheaderwidget.cpp \
     components/definitionscrollarea.cpp \
+    components/definitionsectionwidget.cpp \
+    components/definitionwidget.cpp \
+    components/entrydelegate.cpp \
     components/entryheaderwidget.cpp \
+    components/entrylistmodel.cpp \
     components/mainsplitter.cpp \
     components/maintoolbar.cpp \
     components/searchlineedit.cpp \
     components/searchlistview.cpp \
+    components/searchoptionsradiogroupbox.cpp \
+    logic/entry/definitionsset.cpp \
     logic/entry/entry.cpp \
     logic/entry/sentence.cpp \
-    components/definitionsectionwidget.cpp \
-    components/definitioncontentwidget.cpp \
-    logic/entry/definitionsset.cpp \
-    components/definitionwidget.cpp \
-    logic/search/sqlsearch.cpp \
-    logic/search/sqldatabasemanager.cpp \
-    components/entrylistmodel.cpp \
-    components/entrydelegate.cpp \
-    components/searchoptionsradiogroupbox.cpp \
     logic/search/searchoptionsmediator.cpp \
+    logic/search/sqldatabasemanager.cpp \
+    logic/search/sqlsearch.cpp \
+    logic/update/githubreleasechecker.cpp \
+    logic/utils/utils.cpp \
+    windows/mainwindow.cpp \
     windows/updatewindow.cpp
 
 HEADERS += \
-    logic/update/githubreleasechecker.h \
-    logic/update/iupdatechecker.h \
-    logic/utils/utils.h \
-    windows/mainwindow.h \
+    components/definitioncontentwidget.h \
     components/definitionheaderwidget.h \
     components/definitionscrollarea.h \
+    components/definitionsectionwidget.h \
+    components/definitionwidget.h \
+    components/entrydelegate.h \
     components/entryheaderwidget.h \
+    components/entrylistmodel.h \
+    components/isearchlineedit.h \
     components/isectionheaderwidget.h \
     components/mainsplitter.h \
     components/maintoolbar.h \
     components/searchlineedit.h \
     components/searchlistview.h \
-    logic/entry/entry.h \
-    logic/entry/sentence.h \
-    components/definitionsectionwidget.h \
-    components/definitioncontentwidget.h \
+    components/searchoptionsradiogroupbox.h \
     logic/entry/definitionsset.h \
-    components/definitionwidget.h \
-    logic/search/sqlsearch.h \
+    logic/entry/entry.h \
+    logic/entry/entrycharactersoptions.h \
+    logic/entry/entryphoneticoptions.h \
+    logic/entry/sentence.h \
+    logic/search/isearch.h \
     logic/search/isearchobservable.h \
     logic/search/isearchobserver.h \
-    logic/search/sqldatabasemanager.h \
-    logic/search/isearch.h \
-    components/entrylistmodel.h \
-    components/entrydelegate.h \
-    logic/entry/entryphoneticoptions.h \
-    logic/entry/entrycharactersoptions.h \
-    components/searchoptionsradiogroupbox.h \
-    logic/search/searchparameters.h \
     logic/search/isearchoptionsmediator.h \
     logic/search/searchoptionsmediator.h \
-    components/isearchlineedit.h \
+    logic/search/searchparameters.h \
+    logic/search/sqldatabasemanager.h \
+    logic/search/sqlsearch.h \
+    logic/update/githubreleasechecker.h \
+    logic/update/iupdatechecker.h \
+    logic/utils/utils.h \
+    windows/mainwindow.h \
     windows/updatewindow.h
 
 RESOURCES += \
@@ -117,9 +117,3 @@ unix|win32:!macx {
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
-
-#QMAKE_CXXFLAGS += -ggdb3
-
-DISTFILES += \
-    resources/images/update.png \
-    resources/images/warning.png

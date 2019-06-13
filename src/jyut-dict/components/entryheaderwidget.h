@@ -1,10 +1,13 @@
 #ifndef ENTRYHEADERWIDGET_H
 #define ENTRYHEADERWIDGET_H
 
-#include <logic/entry/entry.h>
+#include "logic/entry/entry.h"
 
 #include <QGridLayout>
 #include <QLabel>
+#include <QWidget>
+
+#include <string>
 
 // The EntryHeaderWidget displays basic information about the entry
 // at the top of the detail view
@@ -12,10 +15,10 @@
 class EntryHeaderWidget : public QWidget
 {
 public:
-    EntryHeaderWidget(QWidget *parent = nullptr);
+    explicit EntryHeaderWidget(QWidget *parent = nullptr);
     ~EntryHeaderWidget();
 
-    void setEntry(Entry& entry);
+    void setEntry(const Entry &entry);
     void setEntry(std::string word, std::string jyutping, std::string pinyin);
 
 private:

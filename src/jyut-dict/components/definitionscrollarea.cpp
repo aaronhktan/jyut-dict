@@ -4,10 +4,7 @@
 #include "logic/entry/entry.h"
 #include "logic/entry/sentence.h"
 
-#include <QFontMetrics>
 #include <QScrollBar>
-#include <QSpacerItem>
-#include <QTabWidget>
 
 #define ENTIRE_WIDTH -1
 
@@ -79,7 +76,7 @@ void DefinitionScrollArea::testEntry() {
     setEntry(entry);
 }
 
-void DefinitionScrollArea::setEntry(Entry& entry)
+void DefinitionScrollArea::setEntry(const Entry &entry)
 {
     _entryHeaderWidget->setEntry(entry);
     _definitionWidget->setEntry(entry);

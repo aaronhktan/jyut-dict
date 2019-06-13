@@ -1,6 +1,7 @@
 #include "searchoptionsradiogroupbox.h"
 
-SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *mediator, QWidget *parent) :
+SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *mediator,
+                                                       QWidget *parent) :
     QGroupBox(parent)
 {
     _mediator = mediator;

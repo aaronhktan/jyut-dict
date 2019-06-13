@@ -6,8 +6,10 @@
 #include "logic/entry/entryphoneticoptions.h"
 #include "logic/entry/sentence.h"
 
+#include <QObject>
 #include <QVariant>
 
+#include <ostream>
 #include <string>
 #include <vector>
 
@@ -25,16 +27,17 @@ public:
           std::vector<DefinitionsSet> definitions,
           std::vector<std::string> derivedWords,
           std::vector<Sentence> sentences);
-    Entry(const Entry& entry);
-    Entry(const Entry&& entry);
+    Entry(const Entry &entry);
+    Entry(const Entry &&entry);
 
     ~Entry();
 
-    Entry& operator=(const Entry& entry);
-    Entry& operator=(Entry&& entry);
-    friend std::ostream& operator<<(std::ostream& out, const Entry& entry);
+    Entry &operator=(const Entry &entry);
+    Entry &operator=(const Entry &&entry);
+    friend std::ostream &operator<<(std::ostream &out, const Entry &entry);
 
-    std::string getCharacters(EntryCharactersOptions options, bool use_colours) const;
+    std::string getCharacters(EntryCharactersOptions options,
+                              bool use_colours) const;
 
     std::string getSimplified(void) const;
     void setSimplified(std::string simplified);
@@ -43,9 +46,13 @@ public:
     void setTraditional(std::string traditional);
 
     std::string getPhonetic(EntryPhoneticOptions options) const;
-    std::string getPhonetic(EntryPhoneticOptions options, MandarinOptions mandarinOptions) const;
-    std::string getPhonetic(EntryPhoneticOptions options, CantoneseOptions cantoneseOptions) const;
-    std::string getPhonetic(EntryPhoneticOptions options, CantoneseOptions cantoneseOptions, MandarinOptions mandarinOptions) const;
+    std::string getPhonetic(EntryPhoneticOptions options,
+                            MandarinOptions mandarinOptions) const;
+    std::string getPhonetic(EntryPhoneticOptions options,
+                            CantoneseOptions cantoneseOptions) const;
+    std::string getPhonetic(EntryPhoneticOptions options,
+                            CantoneseOptions cantoneseOptions,
+                            MandarinOptions mandarinOptions) const;
 
     std::string getJyutping(void) const;
     void setJyutping(std::string jyutping);
@@ -58,7 +65,8 @@ public:
 
     std::vector<DefinitionsSet> getDefinitionsSets(void) const;
     std::string getDefinitionSnippet(void) const;
-    void addDefinitions(DictionarySource source, std::vector<std::string> definitions);
+    void addDefinitions(DictionarySource source,
+                        std::vector<std::string> definitions);
 
     std::vector<std::string> getDerivedWords(void) const;
     void setDerivedWords(std::vector<std::string> derivedWords);
@@ -91,9 +99,10 @@ private:
     std::string applyColours(std::string original,
                              std::vector<int> tones) const;
     void compareStrings(std::string original, std::string comparison,
-                        std::string& returnString);
+                        std::string &returnString);
 
-    std::vector<std::string> explodePhonetic(const std::string& string, const char delimiter) const;
+    std::vector<std::string> explodePhonetic(const std::string &string,
+                                             const char delimiter) const;
     std::string createPrettyPinyin(void);
 };
 

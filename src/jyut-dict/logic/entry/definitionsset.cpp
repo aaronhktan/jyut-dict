@@ -7,7 +7,8 @@ DefinitionsSet::DefinitionsSet()
 
 }
 
-DefinitionsSet::DefinitionsSet(DictionarySource source, std::vector<std::string> definitions)
+DefinitionsSet::DefinitionsSet(DictionarySource source,
+                               std::vector<std::string> definitions)
     : _source{source},
       _definitions{definitions}
 {
@@ -20,21 +21,21 @@ DefinitionsSet::DefinitionsSet(DictionarySource source, std::string definitions)
     _definitions = parseDefinitions(definitions);
 }
 
-DefinitionsSet::DefinitionsSet(const DefinitionsSet& definitions)
+DefinitionsSet::DefinitionsSet(const DefinitionsSet &definitions)
     : _source{definitions.getSource()},
       _definitions{definitions.getDefinitions()}
 {
 
 }
 
-DefinitionsSet::DefinitionsSet(const DefinitionsSet&& definitions)
+DefinitionsSet::DefinitionsSet(const DefinitionsSet &&definitions)
     : _source{definitions.getSource()},
       _definitions{definitions.getDefinitions()}
 {
 
 }
 
-DefinitionsSet& DefinitionsSet::operator=(const DefinitionsSet& definitions)
+DefinitionsSet &DefinitionsSet::operator=(const DefinitionsSet &definitions)
 {
     if (&definitions == this) {
         return *this;
@@ -46,7 +47,7 @@ DefinitionsSet& DefinitionsSet::operator=(const DefinitionsSet& definitions)
     return *this;
 }
 
-DefinitionsSet& DefinitionsSet::operator=(const DefinitionsSet&& definitions)
+DefinitionsSet &DefinitionsSet::operator=(const DefinitionsSet &&definitions)
 {
     if (&definitions == this) {
         return *this;
@@ -58,7 +59,7 @@ DefinitionsSet& DefinitionsSet::operator=(const DefinitionsSet&& definitions)
     return *this;
 }
 
-std::ostream& operator<<(std::ostream& out, DefinitionsSet const& definitions)
+std::ostream &operator<<(std::ostream &out, DefinitionsSet const &definitions)
 {
 //    out << "Definitions (" << definitions.getSourceLongString() << "):\n";
 

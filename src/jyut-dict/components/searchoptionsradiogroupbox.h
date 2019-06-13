@@ -7,6 +7,7 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QRadioButton>
+#include <QWidget>
 
 // The SearchOptionsRadioGroupBox allows users to change search parameters
 // Currently, there are five options for searching, more may be added
@@ -14,8 +15,10 @@
 class SearchOptionsRadioGroupBox : public QGroupBox
 {
 Q_OBJECT
+
 public:
-    SearchOptionsRadioGroupBox(ISearchOptionsMediator *mediator, QWidget *parent = nullptr);
+    explicit SearchOptionsRadioGroupBox(ISearchOptionsMediator *mediator,
+                                        QWidget *parent = nullptr);
 
 private:
     void notifyMediator();

@@ -7,6 +7,8 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include <vector>
+
 // The DefinitionWidget displays the entire collection of definitions in an Entry
 // It contains multiple definitionsectionwidgets, one for each dictionary source
 
@@ -14,12 +16,12 @@ class DefinitionWidget : public QWidget
 {
 public:
     explicit DefinitionWidget(QWidget *parent = nullptr);
-    explicit DefinitionWidget(Entry& entry, QWidget *parent = nullptr);
+    explicit DefinitionWidget(Entry &entry, QWidget *parent = nullptr);
     ~DefinitionWidget() override;
 
     QSize sizeHint() const override;
 
-    void setEntry(Entry& entry);
+    void setEntry(const Entry &entry);
 
 private:
     void cleanup();

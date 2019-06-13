@@ -7,6 +7,9 @@
 #include <QLabel>
 #include <QWidget>
 
+#include <string>
+#include <vector>
+
 // The DefinitionContentWidget shows all the definitions
 // It contains a colelction of QLabels, one for each definition
 // and its associated "number" (i.e. first definition, second definition, etc.)
@@ -17,7 +20,7 @@ public:
     explicit DefinitionContentWidget(QWidget *parent = nullptr);
     ~DefinitionContentWidget();
 
-    void setEntry(Entry& entry);
+    void setEntry(const Entry &entry);
     void setEntry(std::vector<std::string> definitions);
 
 private:

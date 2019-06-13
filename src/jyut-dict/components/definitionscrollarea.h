@@ -5,12 +5,10 @@
 #include "components/entryheaderwidget.h"
 #include "logic/entry/entry.h"
 
-#include <QFrame>
-#include <QGridLayout>
-#include <QLabel>
 #include <QResizeEvent>
 #include <QScrollArea>
 #include <QVBoxLayout>
+#include <QWidget>
 
 // The DefinitionScrollArea is the "detail" view
 // It displays an Entry object in the user interface
@@ -24,7 +22,7 @@ class DefinitionScrollArea : public QScrollArea
 public:
     explicit DefinitionScrollArea(QWidget *parent = nullptr);
 
-    void setEntry(Entry& entry);
+    void setEntry(const Entry &entry);
 
     ~DefinitionScrollArea() override;
 
