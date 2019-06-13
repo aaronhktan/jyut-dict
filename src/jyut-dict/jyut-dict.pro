@@ -99,7 +99,18 @@ macx: {
 }
 
 win32: {
+    # Prevent creation of release and debug folders in build directory
+    CONFIG -= debug_and_release debug_and_release_target
     RC_ICONS = resources/icon/icon.ico
+}
+
+unix|win32:!macx {
+    # Copy dictionary database to the build directory
+    copydata.commands = $(COPY_DIR) \"$$system_path($$PWD/resources/db/eng.db)\" \"$$system_path($$OUT_PWD)\"
+    first.depends = $(first) copydata
+    export(first.depends)
+    export(copydata.commands)
+    QMAKE_EXTRA_TARGETS += first copydata
 }
 
 # Default rules for deployment.
