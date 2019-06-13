@@ -61,7 +61,8 @@ void SQLDatabaseManager::openEnglishDatabase()
     // Delete file in bundle
     if (bundleFile.exists() && bundleFile.isFile()) {
         if (!QFile::remove(bundleFile.absoluteFilePath())) {
-            return;
+//            std::cerr << "Couldn't remove original file!" << std::endl;
+//            return;
         }
     }
 
