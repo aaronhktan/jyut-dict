@@ -9,7 +9,7 @@
   <key>CFBundleIdentifier</key>
   <string>Jyut Dictionary</string>
   <key>CFBundleExecutable</key>
-  <string>MacOS/jyut-dict</string>
+  <string>MacOS/Jyut Dictionary</string>
   <key>CFBundleIconFile</key>
   <string>icon.icns</string>
   <key>CFBundleInfoDictionaryVersion</key>

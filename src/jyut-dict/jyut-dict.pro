@@ -8,8 +8,14 @@ QT       += core gui network sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = jyut-dict
+TARGET = "Jyut Dictionary"
 TEMPLATE = app
+
+VERSION = 0.19.06.14
+QMAKE_TARGET_COMPANY = "Aaron Tan"
+QMAKE_TARGET_PRODUCT = "Jyut Dictionary"
+QMAKE_TARGET_DESCRIPTION = "Jyut Dictionary"
+QMAKE_TARGET_COPYRIGHT = "Aaron Tan, 2019"
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings

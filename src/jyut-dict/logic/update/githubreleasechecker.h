@@ -20,6 +20,8 @@ public:
     void checkForNewUpdate(void) override;
 
 private:
+    void preConnectToHost(void);
+
     bool parseJSON(const std::string &data,
                    bool &updateAvailable,
                    std::string &versionNumber,

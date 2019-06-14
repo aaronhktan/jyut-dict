@@ -24,7 +24,19 @@ GithubReleaseChecker::GithubReleaseChecker(QObject *parent)
     // (version <1.1.0, e.g. 1.0.2, since 1.1.0 breaks Qt)
     // and then copy the libeay.dll and ssleay.dll
     // files to the Qt compiler bin directories.
+    //
+    // This primarily affects Windows devices.
     QSslSocket::supportsSsl();
+
+    // QNetworkAccessManager does a lazy load of a library the first time
+    // it connects to a host, leading to the first GET feeling slow.
+    // By connecting to a host first, we avoid this problem.
+    //
+    // Although, we wait for a few milliseconds before doing this
+    // so that it does not block the GUI of the app starting up.
+    //
+    // This primarily affects macOS devices.
+    QTimer::singleShot(100, this, &GithubReleaseChecker::preConnectToHost);
 }
 
 GithubReleaseChecker::~GithubReleaseChecker()
@@ -37,6 +49,11 @@ void GithubReleaseChecker::checkForNewUpdate()
     QNetworkRequest _request{QUrl{GITHUB_UPDATE_URL}};
     _reply = _manager->get(_request);
     connect(_manager, &QNetworkAccessManager::finished, this, &GithubReleaseChecker::parseReply);
+}
+
+void GithubReleaseChecker::preConnectToHost()
+{
+    _manager->connectToHostEncrypted(QUrl{GITHUB_UPDATE_URL}.host());
 }
 
 void GithubReleaseChecker::parseReply(QNetworkReply *reply)
