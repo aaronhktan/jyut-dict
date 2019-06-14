@@ -3,8 +3,8 @@
 #include "logic/utils/utils.h"
 
 #include <QJsonObject>
-#include <QNetworkReply>
 #include <QNetworkAccessManager>
+#include <QNetworkReply>
 #include <QTimer>
 
 #include <regex>
@@ -14,13 +14,17 @@ GithubReleaseChecker::GithubReleaseChecker(QObject *parent)
 {
     _manager = new QNetworkAccessManager{this};
 
-    // QNetworkAccessManager does a lazy load of a library the first time
-    // it connects to a host, leading to the first GET feeling slow.
-    // By connecting to a host first, we avoid this problem.
-    //
-    // Although, we wait for a few milliseconds before doing this
-    // so that it does not block the GUI of the app starting up.
-    QTimer::singleShot(100, this, &GithubReleaseChecker::preConnectToHost);
+    // Force SSL initialization to prevent GUI freeze
+    // If not done, first GET will lazily many OpenSSL
+    // libraries, causing a significant slowdown.
+    // https://bugreports.qt.io/browse/QTBUG-61497
+
+    // If this gives you an error, make sure to install
+    // the appropriate OpenSSL for your operating system
+    // (version <1.1.0, e.g. 1.0.2, since 1.1.0 breaks Qt)
+    // and then copy the libeay.dll and ssleay.dll
+    // files to the Qt compiler bin directories.
+    QSslSocket::supportsSsl();
 }
 
 GithubReleaseChecker::~GithubReleaseChecker()
@@ -33,11 +37,6 @@ void GithubReleaseChecker::checkForNewUpdate()
     QNetworkRequest _request{QUrl{GITHUB_UPDATE_URL}};
     _reply = _manager->get(_request);
     connect(_manager, &QNetworkAccessManager::finished, this, &GithubReleaseChecker::parseReply);
-}
-
-void GithubReleaseChecker::preConnectToHost()
-{
-    _manager->connectToHostEncrypted(QUrl{GITHUB_UPDATE_URL}.host());
 }
 
 void GithubReleaseChecker::parseReply(QNetworkReply *reply)
@@ -111,7 +110,10 @@ bool GithubReleaseChecker::parseJSON(const std::string &data,
                                     Utils::ASSET_FORMATS.end(),
                                     [&](std::string substring) {
                                         return download_url.find(substring) != std::string::npos;
-                                    })) {
+                                    })
+                        && download_url.find(Utils::ARCHITECTURE) != std::string::npos
+                        && download_url.find(Utils::PORTABILITY) != std::string::npos
+                        && download_url.find(Utils::PLATFORM_NAME) != std::string::npos) {
                         url = download_url;
                         versionNumber = version;
                         description = entry["body"].toString().toStdString();

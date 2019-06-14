@@ -23,9 +23,6 @@ UpdateWindow::UpdateWindow(QWidget *parent,
     flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint | Qt::WindowFullscreenButtonHint);
     setWindowFlags(flags);
 
-    move(parent->x() + (parent->width() - sizeHint().width()) / 2,
-      parent->y() + (parent->height() - sizeHint().height()) / 2);
-
     _iconLabel = new QLabel{this};
     _iconLabel->setFixedWidth(75);
     _iconLabel->setFixedHeight(75);
@@ -87,6 +84,9 @@ UpdateWindow::UpdateWindow(QWidget *parent,
     _dialogLayout->addWidget(_okButton, 7, 4, 1, 1);
 
     setLayout(_dialogLayout);
+
+    move(parent->x() + (parent->width() - sizeHint().width()) / 2,
+      parent->y() + (parent->height() - sizeHint().height()) / 2);
 }
 
 UpdateWindow::~UpdateWindow()
