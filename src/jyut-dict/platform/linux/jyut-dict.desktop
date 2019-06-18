@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=0.19.0614
+Type=Application
+Name=Jyut Dictionary
+GenericName=Cantonese Dictionary
+Comment=Look up definitions for words in Cantonese or Mandarin
+Exec=/usr/opt/jyut-dict
+Terminal=false
+Icon=/usr/share/jyut-dict/icon.svg
+Keywords=Jyut;Dictionary;Cantonese;Mandarin;Chinese;Words;
+Categories=Dictionary;Office;TextTools;Education;Utilities
+StartupNotify=true

@@ -1,0 +1,19 @@
+Source: jyutdict
+Section: utils
+Priority: optional
+Maintainer: Aaron <hi@aaronhktan.com>
+Build-Depends: debhelper (>= 10), libqt5core5a (>= 5.9.0), libqt5gui5 (>= 5.9.0), libqt5network5 (>= 5.9.0), libqt5widgets5 (>= 5.9.0)
+Standards-Version: 4.1.2
+Homepage: https://github.com/aaronhktan/jyut-dict
+#Vcs-Git: https://anonscm.debian.org/git/collab-maint/jyutdict.git
+#Vcs-Browser: https://anonscm.debian.org/cgit/collab-maint/jyutdict.git
+
+Package: jyutdict
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Search words in Cantonese and Mandarin!
+ This application allows you to search for definitions
+ of words in Cantonese or Mandarin, from the open-source
+ CC-CEDICT and CC-CANTO dictionaries. It accepts
+ Simplified Chinese, Traditional Chinese, Jyutping, Pinyin, or
+ English as input.

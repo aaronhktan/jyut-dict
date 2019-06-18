@@ -1,0 +1,13 @@
+Package: jyutdict-dbgsym
+Package-Type: ddeb
+Source: jyutdict
+Version: 0.19.0614-1
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: Aaron <hi@aaronhktan.com>
+Installed-Size: 4389
+Depends: jyutdict (= 0.19.0614-1)
+Section: debug
+Priority: optional
+Description: debug symbols for jyutdict
+Build-Ids: 993168fc72acee19333e11fd622690a1a088c196
