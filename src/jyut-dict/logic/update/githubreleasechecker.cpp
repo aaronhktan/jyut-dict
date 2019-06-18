@@ -73,7 +73,8 @@ bool GithubReleaseChecker::parseJSON(const std::string &data,
 {
     QJsonDocument doc = QJsonDocument::fromJson(QString{data.c_str()}.toUtf8());
     for (QJsonValue entry : doc.array()) {
-        std::string release_name = entry["name"].toString().toStdString();
+        std::string release_name = entry.toObject().value("name")
+                .toString().toStdString();
 
         // Regex has three capturing groups:
         // The first is for platform, which is one string of any characters
@@ -121,8 +122,9 @@ bool GithubReleaseChecker::parseJSON(const std::string &data,
             if (std::stoi(current_version.at(i)) < std::stoi(new_version.at(i))) {
                 // Check each browser download url for a compatible file extension
                 // Set the url to the first one that matches
-                for (QJsonValue file : entry["assets"].toArray()) {
-                    std::string download_url = file["browser_download_url"].toString().toStdString();
+                for (QJsonValue file : entry.toObject().value("assets").toArray()) {
+                    std::string download_url = file.toObject().value("browser_download_url")
+                            .toString().toStdString();
                     if (std::any_of(Utils::ASSET_FORMATS.begin(),
                                     Utils::ASSET_FORMATS.end(),
                                     [&](std::string substring) {
@@ -133,7 +135,7 @@ bool GithubReleaseChecker::parseJSON(const std::string &data,
                         && download_url.find(Utils::PLATFORM_NAME) != std::string::npos) {
                         url = download_url;
                         versionNumber = version;
-                        description = entry["body"].toString().toStdString();
+                        description = entry.toObject().value("body").toString().toStdString();
                         updateAvailable = true;
                         return true;
                     }

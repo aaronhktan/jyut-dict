@@ -110,6 +110,19 @@ win32: {
     RC_ICONS = resources/icon/icon.ico
 }
 
+#unix:!macx {
+#    # Move files to appropriate locations on desktop to install the program
+#    binfile.files += $$system_path($$OUT_PWD)/"Jyut Dictionary"
+#    binfile.path = /opt/jyut-dict/
+#    shortcutfiles.files += platform/linux/jyut-dict.desktop
+#    shortcutfiles.path = /usr/share/applications/
+#    icon.files += resources/icon/variant_3/icon.svg
+#    icon.path = /opt/jyut-dict/
+#    INSTALLS += binfile
+#    INSTALLS += shortcutfiles
+#    INSTALLS += icon
+#}
+
 unix|win32:!macx {
     # Copy dictionary database to the build directory
     copydata.commands = $(COPY_DIR) \"$$system_path($$PWD/resources/db/eng.db)\" \"$$system_path($$OUT_PWD)\"
@@ -120,6 +133,6 @@ unix|win32:!macx {
 }
 
 # Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
+#qnx: target.path = /tmp/$${TARGET}/bin
+#else: unix:!android: target.path = /opt/$${TARGET}/bin
+#!isEmpty(target.path): INSTALLS += target
