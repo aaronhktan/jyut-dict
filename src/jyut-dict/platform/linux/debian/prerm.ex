@@ -1,5 +1,5 @@
 #!/bin/sh
-# prerm script for jyutdict
+# prerm script for jyut-dict
 #
 # see: dh_installdeb(1)
 

@@ -1,5 +1,5 @@
 #!/bin/sh
-# postinst script for jyutdict
+# postinst script for jyut-dict
 #
 # see: dh_installdeb(1)
 

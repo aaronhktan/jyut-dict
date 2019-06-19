@@ -1,2 +1,2 @@
-?package(jyutdict):needs="X11|text|vc|wm" section="Applications/see-menu-manual"\
-  title="jyutdict" command="/usr/bin/jyutdict"
+?package(jyut-dict):needs="X11|text|vc|wm" section="Applications/see-menu-manual"\
+  title="jyut-dict" command="/usr/bin/jyut-dict"

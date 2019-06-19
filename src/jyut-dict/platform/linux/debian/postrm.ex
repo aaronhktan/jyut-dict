@@ -1,5 +1,5 @@
 #!/bin/sh
-# postrm script for jyutdict
+# postrm script for jyut-dict
 #
 # see: dh_installdeb(1)
 

@@ -11,28 +11,28 @@ version=4
 
 # HTTP site (basic)
 #http://example.com/downloads.html \
-#  files/jyutdict-([\d\.]+)\.tar\.gz debian uupdate
+#  files/jyut-dict-([\d\.]+)\.tar\.gz debian uupdate
 
 # Uncomment to examine an FTP server
-#ftp://ftp.example.com/pub/jyutdict-(.*)\.tar\.gz debian uupdate
+#ftp://ftp.example.com/pub/jyut-dict-(.*)\.tar\.gz debian uupdate
 
 # SourceForge hosted projects
-# http://sf.net/jyutdict/ jyutdict-(.*)\.tar\.gz debian uupdate
+# http://sf.net/jyut-dict/ jyut-dict-(.*)\.tar\.gz debian uupdate
 
 # GitHub hosted projects
 #opts="filenamemangle=s%(?:.*?)?v?(\d[\d.]*)\.tar\.gz%<project>-$1.tar.gz%" \
-#   https://github.com/<user>/jyutdict/tags \
+#   https://github.com/<user>/jyut-dict/tags \
 #   (?:.*?/)?v?(\d[\d.]*)\.tar\.gz debian uupdate
 
 # PyPI
-# https://pypi.debian.net/jyutdict/jyutdict-(.+)\.(?:zip|tgz|tbz|txz|(?:tar\.(?:gz|bz2|xz)))
+# https://pypi.debian.net/jyut-dict/jyut-dict-(.+)\.(?:zip|tgz|tbz|txz|(?:tar\.(?:gz|bz2|xz)))
 
 # Direct Git
-# opts="mode=git" http://git.example.com/jyutdict.git \
+# opts="mode=git" http://git.example.com/jyut-dict.git \
 #   refs/tags/v([\d\.]+) debian uupdate
 
 
 
 
 # Uncomment to find new files on GooglePages
-# http://example.googlepages.com/foo.html jyutdict-(.*)\.tar\.gz
+# http://example.googlepages.com/foo.html jyut-dict-(.*)\.tar\.gz

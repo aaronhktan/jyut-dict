@@ -110,18 +110,23 @@ win32: {
     RC_ICONS = resources/icon/icon.ico
 }
 
-#unix:!macx {
-#    # Move files to appropriate locations on desktop to install the program
-#    binfile.files += $$system_path($$OUT_PWD)/"Jyut Dictionary"
-#    binfile.path = /opt/jyut-dict/
-#    shortcutfiles.files += platform/linux/jyut-dict.desktop
-#    shortcutfiles.path = /usr/share/applications/
-#    icon.files += resources/icon/variant_3/icon.svg
-#    icon.path = /opt/jyut-dict/
-#    INSTALLS += binfile
-#    INSTALLS += shortcutfiles
-#    INSTALLS += icon
-#}
+unix:!macx {
+    # Move files to appropriate locations on desktop to install the program
+    binfile.extra = cp \"$$system_path($$OUT_PWD)/Jyut Dictionary\" $$system_path($$OUT_PWD)/jyut-dict
+    binfile.files += $$system_path($$OUT_PWD)/jyut-dict
+    binfile.path = /usr/bin/
+    binfile.CONFIG += no_check_exist
+    dictfile.files += resources/db/eng.db
+    dictfile.path = /usr/share/jyut-dict/dictionaries/
+    shortcutfiles.files += platform/linux/jyut-dict.desktop
+    shortcutfiles.path = /usr/share/applications/
+    icon.files += resources/icon/jyut-dict.svg
+    icon.path = /usr/share/icons/hicolor/scalable/apps/
+    INSTALLS += binfile
+    INSTALLS += dictfile
+    INSTALLS += shortcutfiles
+    INSTALLS += icon
+}
 
 unix|win32:!macx {
     # Copy dictionary database to the build directory
