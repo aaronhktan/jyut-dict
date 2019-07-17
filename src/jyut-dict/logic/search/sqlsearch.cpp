@@ -1,5 +1,7 @@
 #include "sqlsearch.h"
 
+#include "logic/utils/utils.h"
+
 #include <QtConcurrent/QtConcurrent>
 
 #ifdef Q_OS_WIN
@@ -110,8 +112,13 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm)
 {
     std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getEnglishDatabase()};
-    query.prepare("SELECT * FROM entries WHERE simplified LIKE ? "
-                  "ORDER BY freq DESC");
+    query.prepare("SELECT traditional, simplified, pinyin, jyutping, group_concat(sourcename || ' ' || definition, '/') "
+                  "FROM entries, definitions, sources "
+                  "WHERE simplified LIKE ? "
+                  "AND entry_id = fk_entry_id "
+                  "AND source_id = fk_source_id "
+                  "GROUP BY entry_id "
+                  "ORDER BY frequency DESC");
     query.addBindValue(searchTerm + "%");
     query.exec();
 
@@ -136,8 +143,13 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm)
 {
     std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getEnglishDatabase()};
-    query.prepare("SELECT * FROM entries WHERE traditional LIKE ? "
-                  "ORDER BY freq DESC");
+    query.prepare("SELECT traditional, simplified, pinyin, jyutping, group_concat(sourcename || ' ' || definition, '/') "
+                  "FROM entries, definitions, sources "
+                  "WHERE traditional LIKE ? "
+                  "AND entry_id = fk_entry_id "
+                  "AND source_id = fk_source_id "
+                  "GROUP BY entry_id "
+                  "ORDER BY frequency DESC");
     query.addBindValue(searchTerm + "%");
     query.exec();
 
@@ -173,9 +185,15 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm)
 {
     std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getEnglishDatabase()};
-    query.prepare("SELECT * FROM entries WHERE entries MATCH ? "
-                  "AND jyutping LIKE ? "
-                  "ORDER BY freq DESC");
+    query.prepare("SELECT traditional, simplified, pinyin, jyutping, group_concat(sourcename || ' ' || definition, '/') "
+                  "FROM entries, definitions, sources "
+                  "WHERE entry_id IN "
+                  "(SELECT rowid FROM entries_fts WHERE entries_fts MATCH ?"
+                  " AND jyutping LIKE ?) "
+                  "AND entry_id = fk_entry_id "
+                  "AND source_id = fk_source_id "
+                  "GROUP BY entry_id "
+                  "ORDER BY frequency DESC");
     const char *matchJoinDelimiter = "*";
     std::string matchTerm = implodePhonetic(explodePhonetic(searchTerm, ' '),
                                             matchJoinDelimiter,
@@ -224,9 +242,15 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm)
 
     std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getEnglishDatabase()};
-    query.prepare("SELECT * FROM entries WHERE entries MATCH ? "
-                  "AND pinyin LIKE ? "
-                  "ORDER BY freq DESC");
+    query.prepare("SELECT traditional, simplified, pinyin, jyutping, group_concat(sourcename || ' ' || definition, '/') "
+                  "FROM entries, definitions, sources "
+                  "WHERE entry_id IN "
+                  "(SELECT rowid FROM entries_fts WHERE entries_fts MATCH ?"
+                  " AND pinyin LIKE ?) "
+                  "AND entry_id = fk_entry_id "
+                  "AND source_id = fk_source_id "
+                  "GROUP BY entry_id "
+                  "ORDER BY frequency DESC");
     const char *matchJoinDelimiter = "*";
     std::string matchTerm = implodePhonetic(explodePhonetic(processedSearchTerm, ' '),
                                             matchJoinDelimiter,
@@ -262,11 +286,17 @@ void SQLSearch::searchEnglishThread(const QString &searchTerm)
 {
     std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getEnglishDatabase()};
-    query.prepare("SELECT * FROM entries WHERE entries MATCH ? "
-                  "OR entries MATCH ? "
-                  "ORDER BY freq DESC");
-    query.addBindValue("cedict_english:\"" + searchTerm + "\"");
-    query.addBindValue("canto_english:\"" + searchTerm + "\"");
+    query.prepare("SELECT traditional, simplified, pinyin, jyutping, group_concat(sourcename || ' ' || definition, '/') "
+                  "FROM entries, definitions, sources "
+                  "WHERE entry_id IN "
+                  "(SELECT fk_entry_id FROM definitions WHERE rowid IN "
+                  "    (SELECT rowid FROM definitions_fts WHERE definitions_fts MATCH ?) "
+                  ") "
+                  "AND entry_id = fk_entry_id "
+                  "AND source_id = fk_source_id "
+                  "GROUP BY entry_id "
+                  "ORDER BY frequency DESC");
+    query.addBindValue(searchTerm);
     query.setForwardOnly(true);
 
     query.exec();
@@ -393,33 +423,52 @@ std::vector<Entry> SQLSearch::parseEntries(QSqlQuery &query)
     int traditionalIndex = query.record().indexOf("traditional");
     int jyutpingIndex = query.record().indexOf("jyutping");
     int pinyinIndex = query.record().indexOf("pinyin");
-    int cedictIndex = query.record().indexOf("cedict_english");
-    int cccantoIndex = query.record().indexOf("canto_english");
-//    int derivedWordsIndex = query.record().indexOf("derivedWords");
-//    int sentencesIndex = query.record().indexOf("sentences");
+    int definitionIndex = query.record().indexOf("group_concat(sourcename || ' ' || definition, '/')");
     while (query.next())
     {
-         std::string simplified = query.value(simplifiedIndex).toString().toStdString();
+        std::string simplified = query.value(simplifiedIndex).toString().toStdString();
 
-         std::string traditional = query.value(traditionalIndex).toString().toStdString();
+        std::string traditional = query.value(traditionalIndex).toString().toStdString();
 
-         std::string jyutping = query.value(jyutpingIndex).toString().toStdString();
+        std::string jyutping = query.value(jyutpingIndex).toString().toStdString();
 
-         std::string pinyin = query.value(pinyinIndex).toString().toStdString();
+        std::string pinyin = query.value(pinyinIndex).toString().toStdString();
 
-         std::vector <DefinitionsSet> definitionsSets{};
+        std::string definition = query.value(definitionIndex).toString().toStdString();
+        if (definition.empty()) {
+            continue;
+        }
 
-         std::string cedictDefinitions = query.value(cedictIndex).toString().toStdString();
-         if (!cedictDefinitions.empty()) {
-            DefinitionsSet cedict_set = DefinitionsSet(CEDICT, cedictDefinitions);
+        std::vector<std::string> definitions;
+        Utils::split(definition, '/', definitions);
+        DefinitionsSet cedict_set = DefinitionsSet{CEDICT};
+        DefinitionsSet canto_set = DefinitionsSet{CCCANTO};
+        for (std::string definition : definitions) {
+            auto search = string_to_dictionarysource.find(
+                        definition.substr(0, definition.find_first_of(" ")));
+            if (search == string_to_dictionarysource.end()) {
+                continue;
+            }
+            std::string new_string = definition.substr(definition.find_first_of(" ")+1);
+            switch (search->second) {
+            case CEDICT: {
+                cedict_set.pushDefinition(new_string);
+                break;
+            }
+            case CCCANTO: {
+                canto_set.pushDefinition(new_string);
+                break;
+            }
+            }
+        }
+
+        std::vector <DefinitionsSet> definitionsSets{};
+        if (!cedict_set.isEmpty()) {
             definitionsSets.push_back(cedict_set);
-         }
-
-         std::string cccantoDefinitions = query.value(cccantoIndex).toString().toStdString();
-         if (!cccantoDefinitions.empty()) {
-            DefinitionsSet canto_set = DefinitionsSet(CCCANTO, cccantoDefinitions);
+        }
+        if (!canto_set.isEmpty()) {
             definitionsSets.push_back(canto_set);
-         }
+        }
 
          entries.push_back(Entry(simplified, traditional,
                                  jyutping, pinyin,

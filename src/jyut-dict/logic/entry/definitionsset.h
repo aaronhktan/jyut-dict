@@ -2,6 +2,7 @@
 #define DEFINITIONS_H
 
 #include <iostream>
+#include <unordered_map>
 #include <vector>
 
 // DictionarySource is an enum that contains possible dictionary sources
@@ -11,12 +12,18 @@ enum DictionarySource {
     CCCANTO
 };
 
+static std::unordered_map<std::string, DictionarySource> string_to_dictionarysource {
+    {"CC_CEDICT", CEDICT},
+    {"CC_CANTO", CCCANTO},
+};
+
 // The DefintitionsSet class contains a grouping of definitions from one source
 
 class DefinitionsSet
 {
 public:
     DefinitionsSet();
+    DefinitionsSet(DictionarySource source);
     DefinitionsSet(DictionarySource source, std::vector<std::string> definitions);
     DefinitionsSet(DictionarySource source, std::string definitions);
     DefinitionsSet(const DefinitionsSet &definitions);
@@ -28,6 +35,8 @@ public:
                                     DefinitionsSet const &definitions);
 
     bool isEmpty() const;
+
+    void pushDefinition(const std::string definition);
 
     DictionarySource getSource() const;
     std::string getSourceLongString() const;

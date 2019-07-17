@@ -7,6 +7,12 @@ DefinitionsSet::DefinitionsSet()
 
 }
 
+DefinitionsSet::DefinitionsSet(DictionarySource source)
+    : _source{source}
+{
+
+}
+
 DefinitionsSet::DefinitionsSet(DictionarySource source,
                                std::vector<std::string> definitions)
     : _source{source},
@@ -73,6 +79,11 @@ std::ostream &operator<<(std::ostream &out, DefinitionsSet const &definitions)
 bool DefinitionsSet::isEmpty() const
 {
     return _definitions.empty();
+}
+
+void DefinitionsSet::pushDefinition(const std::string definition)
+{
+    _definitions.push_back(definition);
 }
 
 DictionarySource DefinitionsSet::getSource() const
