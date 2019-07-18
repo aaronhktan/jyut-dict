@@ -17,7 +17,6 @@ SQLDatabaseManager::~SQLDatabaseManager()
 //    _FrenchDB.close();
 }
 
-#include <QDebug>
 void SQLDatabaseManager::openEnglishDatabase()
 {
     if (_EnglishDB.isOpen()) {
@@ -40,12 +39,8 @@ void SQLDatabaseManager::openEnglishDatabase()
 #endif
 
 #ifdef PORTABLE
-    qDebug() << bundleFile.absoluteFilePath();
-    qDebug() << bundleFile.exists();
-    qDebug() << bundleFile.isFile();
     if (bundleFile.exists() && bundleFile.isFile()) {
         _EnglishDB.setDatabaseName(bundleFile.absoluteFilePath());
-        qDebug() << bundleFile.absoluteFilePath();
     }
 #else
     // Make path for dictionary storage

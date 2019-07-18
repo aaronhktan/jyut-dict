@@ -3,23 +3,19 @@ from wordfreq import zipf_frequency
 import sqlite3
 import sys
 
-sources = ("CC_CEDICT", "CC_CANTO")
+source = ''
 
 class Entry(object):
-    def __init__(self, trad='', simp='', pin='', jyut='', freq=0.0, cedict_eng=[], canto_eng=[]):
+    def __init__(self, trad='', simp='', pin='', jyut='', freq=0.0, defs=[]):
         self.traditional = trad
         self.simplified = simp
         self.pinyin = pin
         self.jyutping = jyut
         self.freq = freq
-        self.cedict_english = cedict_eng
-        self.canto_english = canto_eng
+        self.definitions = defs
 
     def add_jyut_ping(self, jyut):
         self.jyutping = jyut
-
-    def add_canto_eng(self, canto_eng):
-        self.canto_english = canto_eng
 
     def add_freq(self, freq):
         self.freq = freq
@@ -89,7 +85,7 @@ def write(entries, db_name):
     #             ''')
 
     # Add sources to tables
-    [c.execute('INSERT INTO sources values(?,?)', (None, value)) for value in sources]
+    c.execute('INSERT INTO sources values(?,?)', (None, source))
 
     # Add entries to tables
     def entry_to_tuple(entry):
@@ -104,8 +100,7 @@ def write(entries, db_name):
 
             c.execute('SELECT last_insert_rowid()')
             entry_id = c.fetchone()[0]
-            definition_tuples = [definition_to_tuple(definition, entry_id, sources.index('CC_CEDICT')+1) for definition in entry.cedict_english]
-            definition_tuples += [definition_to_tuple(definition, entry_id, sources.index('CC_CANTO')+1) for definition in entry.canto_english]
+            definition_tuples = [definition_to_tuple(definition, entry_id, 1) for definition in entry.definitions]
             c.executemany('INSERT INTO definitions values (?,?,?,?)', definition_tuples)
 
     # Populate FTS versions of tables
@@ -115,7 +110,7 @@ def write(entries, db_name):
     db.commit()
     db.close()
 
-def parse_cc_cedict(filename, entries):
+def parse_file(filename, entries):
     with open(filename, 'r') as f:
         for index, line in enumerate(f):
             if (len(line) == 0 or line[0] == '#'):
@@ -125,39 +120,14 @@ def parse_cc_cedict(filename, entries):
             trad = split[0]
             simp = split[1]
             pin = line[line.index('[') + 1 : line.index(']')]
-            eng = line[line.index('/') + 1 : -2].split('/')
+            definitions = line[line.index('/') + 1 : -2].split('/')
             entry = Entry(trad=trad,
                           simp=simp,
                           pin=pin,
-                          cedict_eng=eng)
+                          defs=definitions)
 
             if trad in entries:
                 entries[trad].append(entry)
-            else:
-                entries[trad] = [entry]
-
-def parse_cc_canto(filename, entries):
-    with open(filename, 'r') as f:
-        for line in f:
-            if (len(line) == 0 or line[0] == '#'):
-                continue
-
-            split = line.split() # Splits by whitespace
-            trad = split[0]
-            simp = split[1]
-            pin = line[line.index('[') + 1 : line.index(']')]
-            jyut = line[line.index('{') + 1 : line.index('}')]
-            eng = [line[line.index('/') + 1 : -2]]
-            entry = Entry(trad=trad,
-                          simp=simp,
-                          pin=pin,
-                          jyut=jyut,
-                          canto_eng=eng)
-
-            if trad in entries:
-                for entry in entries[trad]:
-                    entry.add_jyut_ping(jyut)
-                entries[trad][0].add_canto_eng(eng)
             else:
                 entries[trad] = [entry]
 
@@ -184,13 +154,13 @@ def assign_frequencies(entries):
 
 if __name__ == '__main__':
     if len(sys.argv) != 5:
-        print('Usage: python3 script.py <database filename> <CC_CEDICT file> <CC_CANTO file> <Cantonese Readings file>')
-        print('e.g. python3 script.py eng.db CC-CEDICT.txt CC-CANTO.txt READINGS.txt')
+        print('Usage: python3 script.py <database filename> <CC_CEDICT file> <Cantonese Readings file> <Source name>')
+        print('e.g. python3 script.py dict.db CEDICT.txt READINGS.txt CC-CEDICT')
         sys.exit(1)
 
     entries = {}
-    parse_cc_cedict(sys.argv[2], entries)
-    parse_cc_canto(sys.argv[3], entries)
-    parse_cc_cedict_canto_readings(sys.argv[4], entries)
+    source = sys.argv[4]
+    parse_file(sys.argv[2], entries)
+    parse_cc_cedict_canto_readings(sys.argv[3], entries)
     assign_frequencies(entries)
     write(entries, sys.argv[1])

@@ -9,12 +9,14 @@
 
 enum DictionarySource {
     CEDICT,
-    CCCANTO
+    CCCANTO,
+    CFDICT,
 };
 
 static std::unordered_map<std::string, DictionarySource> string_to_dictionarysource {
     {"CC_CEDICT", CEDICT},
     {"CC_CANTO", CCCANTO},
+    {"CFDICT", CFDICT},
 };
 
 // The DefintitionsSet class contains a grouping of definitions from one source

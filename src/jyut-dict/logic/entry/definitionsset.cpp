@@ -98,6 +98,8 @@ std::string DefinitionsSet::getSourceLongString() const
             return "CEDICT";
         case CCCANTO:
             return "CC-CANTO";
+        case CFDICT:
+            return "CFDICT";
     }
 
     return "";
@@ -110,6 +112,8 @@ std::string DefinitionsSet::getSourceShortString() const
             return "CC";
         case CCCANTO:
             return "CCY";
+        case CFDICT:
+            return "CF";
     }
 
     return "";

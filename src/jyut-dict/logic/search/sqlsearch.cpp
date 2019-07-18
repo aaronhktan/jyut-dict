@@ -112,7 +112,8 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm)
 {
     std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getEnglishDatabase()};
-    query.prepare("SELECT traditional, simplified, pinyin, jyutping, group_concat(sourcename || ' ' || definition, '/') "
+    query.prepare("SELECT traditional, simplified, pinyin, jyutping, "
+                  "group_concat(sourcename || ' ' || definition, '/') AS definitions "
                   "FROM entries, definitions, sources "
                   "WHERE simplified LIKE ? "
                   "AND entry_id = fk_entry_id "
@@ -143,7 +144,8 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm)
 {
     std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getEnglishDatabase()};
-    query.prepare("SELECT traditional, simplified, pinyin, jyutping, group_concat(sourcename || ' ' || definition, '/') "
+    query.prepare("SELECT traditional, simplified, pinyin, jyutping, "
+                  "group_concat(sourcename || ' ' || definition, '/') AS definitions "
                   "FROM entries, definitions, sources "
                   "WHERE traditional LIKE ? "
                   "AND entry_id = fk_entry_id "
@@ -185,7 +187,8 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm)
 {
     std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getEnglishDatabase()};
-    query.prepare("SELECT traditional, simplified, pinyin, jyutping, group_concat(sourcename || ' ' || definition, '/') "
+    query.prepare("SELECT traditional, simplified, pinyin, jyutping, "
+                  "group_concat(sourcename || ' ' || definition, '/') AS definitions "
                   "FROM entries, definitions, sources "
                   "WHERE entry_id IN "
                   "(SELECT rowid FROM entries_fts WHERE entries_fts MATCH ?"
@@ -242,7 +245,8 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm)
 
     std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getEnglishDatabase()};
-    query.prepare("SELECT traditional, simplified, pinyin, jyutping, group_concat(sourcename || ' ' || definition, '/') "
+    query.prepare("SELECT traditional, simplified, pinyin, jyutping, "
+                  "group_concat(sourcename || ' ' || definition, '/') AS definitions "
                   "FROM entries, definitions, sources "
                   "WHERE entry_id IN "
                   "(SELECT rowid FROM entries_fts WHERE entries_fts MATCH ?"
@@ -286,7 +290,8 @@ void SQLSearch::searchEnglishThread(const QString &searchTerm)
 {
     std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getEnglishDatabase()};
-    query.prepare("SELECT traditional, simplified, pinyin, jyutping, group_concat(sourcename || ' ' || definition, '/') "
+    query.prepare("SELECT traditional, simplified, pinyin, jyutping, "
+                  "group_concat(sourcename || ' ' || definition, '/') AS definitions "
                   "FROM entries, definitions, sources "
                   "WHERE entry_id IN "
                   "(SELECT fk_entry_id FROM definitions WHERE rowid IN "
@@ -423,7 +428,7 @@ std::vector<Entry> SQLSearch::parseEntries(QSqlQuery &query)
     int traditionalIndex = query.record().indexOf("traditional");
     int jyutpingIndex = query.record().indexOf("jyutping");
     int pinyinIndex = query.record().indexOf("pinyin");
-    int definitionIndex = query.record().indexOf("group_concat(sourcename || ' ' || definition, '/')");
+    int definitionIndex = query.record().indexOf("definitions");
     while (query.next())
     {
         std::string simplified = query.value(simplifiedIndex).toString().toStdString();
@@ -443,6 +448,7 @@ std::vector<Entry> SQLSearch::parseEntries(QSqlQuery &query)
         Utils::split(definition, '/', definitions);
         DefinitionsSet cedict_set = DefinitionsSet{CEDICT};
         DefinitionsSet canto_set = DefinitionsSet{CCCANTO};
+        DefinitionsSet cfdict_set = DefinitionsSet{CFDICT};
         for (std::string definition : definitions) {
             auto search = string_to_dictionarysource.find(
                         definition.substr(0, definition.find_first_of(" ")));
@@ -459,6 +465,10 @@ std::vector<Entry> SQLSearch::parseEntries(QSqlQuery &query)
                 canto_set.pushDefinition(new_string);
                 break;
             }
+            case CFDICT: {
+                cfdict_set.pushDefinition(new_string);
+                break;
+            }
             }
         }
 
@@ -468,6 +478,9 @@ std::vector<Entry> SQLSearch::parseEntries(QSqlQuery &query)
         }
         if (!canto_set.isEmpty()) {
             definitionsSets.push_back(canto_set);
+        }
+        if (!cfdict_set.isEmpty()) {
+            definitionsSets.push_back(cfdict_set);
         }
 
          entries.push_back(Entry(simplified, traditional,
