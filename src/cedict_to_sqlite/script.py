@@ -28,13 +28,15 @@ def write(entries, db_name):
     db = sqlite3.connect(db_name)
     c = db.cursor()
 
-    # Create tables
+    # Delete old tables and indices
     c.execute('DROP TABLE IF EXISTS entries')
     c.execute('DROP TABLE IF EXISTS entries_fts')
     c.execute('DROP TABLE IF EXISTS sources')
     c.execute('DROP TABLE IF EXISTS definitions')
     c.execute('DROP TABLE IF EXISTS definitions_fts')
+    c.execute('DROP INDEX IF EXISTS fk_entry_id_index')
 
+    # Create new tables
     c.execute('''CREATE TABLE entries(
                     entry_id INTEGER PRIMARY KEY,
                     traditional TEXT,
@@ -111,6 +113,9 @@ def write(entries, db_name):
     # Populate FTS versions of tables
     c.execute('INSERT INTO entries_fts (rowid, pinyin, jyutping) SELECT rowid, pinyin, jyutping FROM entries')
     c.execute('INSERT INTO definitions_fts (rowid, definition) SELECT rowid, definition FROM definitions')
+
+    # Create index
+    c.execute('CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)')
 
     db.commit()
     db.close()

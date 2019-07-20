@@ -301,7 +301,7 @@ void SQLSearch::searchEnglishThread(const QString &searchTerm)
                   "AND source_id = fk_source_id "
                   "GROUP BY entry_id "
                   "ORDER BY frequency DESC");
-    query.addBindValue(searchTerm);
+    query.addBindValue("\"" + searchTerm + "\"");
     query.setForwardOnly(true);
 
     query.exec();
