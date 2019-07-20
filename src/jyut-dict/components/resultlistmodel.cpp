@@ -1,6 +1,6 @@
-#include "entrylistmodel.h"
+#include "resultlistmodel.h"
 
-EntryListModel::EntryListModel(std::vector<Entry> entries, QObject *parent)
+ResultListModel::ResultListModel(std::vector<Entry> entries, QObject *parent)
     : QAbstractListModel(parent)
 {
     if (entries.empty()) {
@@ -13,24 +13,24 @@ EntryListModel::EntryListModel(std::vector<Entry> entries, QObject *parent)
     _search->registerObserver(this);
 }
 
-EntryListModel::~EntryListModel()
+ResultListModel::~ResultListModel()
 {
     delete _search;
 }
 
-void EntryListModel::callback(std::vector<Entry> entries)
+void ResultListModel::callback(std::vector<Entry> entries)
 {
     setEntries(entries);
 }
 
-void EntryListModel::setEntries(std::vector<Entry> entries)
+void ResultListModel::setEntries(std::vector<Entry> entries)
 {
     beginResetModel();
     _entries = entries;
     endResetModel();
 }
 
-void EntryListModel::setWelcome()
+void ResultListModel::setWelcome()
 {
     Entry entry = Entry{tr("Welcome!").toStdString(), tr("Welcome!").toStdString(),
                         "—", "—", {}, {}, {}};
@@ -40,12 +40,12 @@ void EntryListModel::setWelcome()
     setEntries(std::vector<Entry>{entry});
 }
 
-int EntryListModel::rowCount(const QModelIndex &parent) const
+int ResultListModel::rowCount(const QModelIndex &parent) const
 {
     return static_cast<int>(_entries.size());
 }
 
-QVariant EntryListModel::data(const QModelIndex &index, int role) const
+QVariant ResultListModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
         return QVariant();
@@ -64,7 +64,7 @@ QVariant EntryListModel::data(const QModelIndex &index, int role) const
     }
 }
 
-QVariant EntryListModel::headerData(int section, Qt::Orientation orientation,
+QVariant ResultListModel::headerData(int section, Qt::Orientation orientation,
                                     int role) const
 {
     if (role != Qt::DisplayRole) {

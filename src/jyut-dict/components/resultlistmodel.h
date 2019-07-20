@@ -1,5 +1,5 @@
-#ifndef ENTRYLISTMODEL_H
-#define ENTRYLISTMODEL_H
+#ifndef RESULTLISTMODEL_H
+#define RESULTLISTMODEL_H
 
 #include "logic/entry/entry.h"
 #include "logic/search/isearchobservable.h"
@@ -14,20 +14,20 @@
 #include <string>
 #include <vector>
 
-// The EntryListModel contains data (a vector of Entry objects)
+// The ResultListModel contains data (a vector of Entry objects)
 // It is populated with the results of a search, being a searchobserver
 
 // Entries are returned as QVariants when an index is provided
 // Header data override is "good manners", but currently is not useful
 
-class EntryListModel : public QAbstractListModel, public ISearchObserver
+class ResultListModel : public QAbstractListModel, public ISearchObserver
 {
     Q_OBJECT
 
 public:
-    explicit EntryListModel(std::vector<Entry> entries,
+    explicit ResultListModel(std::vector<Entry> entries,
                             QObject *parent = nullptr);
-    ~EntryListModel() override;
+    ~ResultListModel() override;
 
     void callback(std::vector<Entry> entries) override;
     void setEntries(std::vector<Entry> entries);
@@ -44,4 +44,4 @@ private:
     ISearchObservable *_search;
 };
 
-#endif // ENTRYLISTMODEL_H
+#endif // RESULTLISTMODEL_H

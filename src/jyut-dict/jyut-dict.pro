@@ -32,18 +32,21 @@ CONFIG += c++14
 
 SOURCES += \
     main.cpp \
+    components/dictionarylistdelegate.cpp \
+    components/dictionarylistmodel.cpp \
+    components/dictionarylistview.cpp \
     components/definitioncontentwidget.cpp \
     components/definitionheaderwidget.cpp \
     components/definitionscrollarea.cpp \
     components/definitionsectionwidget.cpp \
     components/definitionwidget.cpp \
-    components/entrydelegate.cpp \
     components/entryheaderwidget.cpp \
-    components/entrylistmodel.cpp \
     components/mainsplitter.cpp \
     components/maintoolbar.cpp \
+    components/resultlistdelegate.cpp \
+    components/resultlistmodel.cpp \
+    components/resultlistview.cpp \
     components/searchlineedit.cpp \
-    components/searchlistview.cpp \
     components/searchoptionsradiogroupbox.cpp \
     logic/entry/definitionsset.cpp \
     logic/entry/entry.cpp \
@@ -62,15 +65,18 @@ HEADERS += \
     components/definitionscrollarea.h \
     components/definitionsectionwidget.h \
     components/definitionwidget.h \
-    components/entrydelegate.h \
+    components/dictionarylistdelegate.h \
+    components/dictionarylistmodel.h \
+    components/dictionarylistview.h \
     components/entryheaderwidget.h \
-    components/entrylistmodel.h \
     components/isearchlineedit.h \
     components/isectionheaderwidget.h \
     components/mainsplitter.h \
     components/maintoolbar.h \
+    components/resultlistdelegate.h \
+    components/resultlistmodel.h \
+    components/resultlistview.h \
     components/searchlineedit.h \
-    components/searchlistview.h \
     components/searchoptionsradiogroupbox.h \
     logic/entry/definitionsset.h \
     logic/entry/entry.h \
@@ -99,7 +105,7 @@ macx: {
     QMAKE_INFO_PLIST = platform/mac/Info.plist
 
     # Adds files to the Resources folder in macOS bundle
-    APP_DB_FILES.files = resources/db/eng.db
+    APP_DB_FILES.files = resources/db/dict.db
     APP_DB_FILES.path = Contents/Resources
     QMAKE_BUNDLE_DATA += APP_DB_FILES
 }
@@ -116,7 +122,7 @@ unix:!macx {
     binfile.files += $$system_path($$OUT_PWD)/jyut-dict
     binfile.path = /usr/bin/
     binfile.CONFIG += no_check_exist
-    dictfile.files += resources/db/eng.db
+    dictfile.files += resources/db/dict.db
     dictfile.path = /usr/share/jyut-dict/dictionaries/
     shortcutfiles.files += platform/linux/jyut-dict.desktop
     shortcutfiles.path = /usr/share/applications/
@@ -130,7 +136,7 @@ unix:!macx {
 
 unix|win32:!macx {
     # Copy dictionary database to the build directory
-    copydata.commands = $(COPY_DIR) \"$$system_path($$PWD/resources/db/eng.db)\" \"$$system_path($$OUT_PWD)\"
+    copydata.commands = $(COPY_DIR) \"$$system_path($$PWD/resources/db/dict.db)\" \"$$system_path($$OUT_PWD)\"
     first.depends = $(first) copydata
     export(first.depends)
     export(copydata.commands)

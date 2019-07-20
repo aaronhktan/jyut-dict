@@ -1,7 +1,7 @@
-#ifndef SEARCHLISTVIEW_H
-#define SEARCHLISTVIEW_H
+#ifndef RESULTLISTVIEW_H
+#define RESULTLISTVIEW_H
 
-#include "components/entrydelegate.h"
+#include "components/resultlistdelegate.h"
 #include "logic/entry/entry.h"
 
 #include <QAbstractListModel>
@@ -14,16 +14,16 @@
 
 #include <vector>
 
-// The SearchListView displays results of a search
+// The ResultListView displays results of a search
 // It populates itself with a QAbstractListModel
 // And paints itself with a QStyledItemDelegate
 
-class SearchListView : public QListView
+class ResultListView : public QListView
 {
     Q_OBJECT
 
 public:
-    explicit SearchListView(QWidget *parent = nullptr);
+    explicit ResultListView(QWidget *parent = nullptr);
 
 #ifdef Q_OS_WIN
     void wheelEvent(QWheelEvent *event) override;
@@ -34,4 +34,4 @@ private:
     QStyledItemDelegate *_delegate;
 };
 
-#endif // SEARCHLISTVIEW_H
+#endif // RESULTLISTVIEW_H

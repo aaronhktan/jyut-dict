@@ -1,20 +1,20 @@
-#include "searchlistview.h"
+#include "resultlistview.h"
 
-#include "components/entrylistmodel.h"
+#include "components/resultlistmodel.h"
 #include "logic/search/sqlsearch.h"
 
 #include <QScrollBar>
 
-SearchListView::SearchListView(QWidget *parent)
+ResultListView::ResultListView(QWidget *parent)
     : QListView(parent)
 {
     setFrameShape(QFrame::NoFrame);
     setMinimumWidth(250);
 
-    _model = new EntryListModel({}, this);
+    _model = new ResultListModel({}, this);
     setModel(_model);
 
-    _delegate = new EntryDelegate(this);
+    _delegate = new ResultListDelegate(this);
     setItemDelegate(_delegate);
 
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);

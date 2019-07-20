@@ -1,5 +1,5 @@
-#ifndef ENTRYDELEGATE_H
-#define ENTRYDELEGATE_H
+#ifndef RESULTLISTDELEGATE_H
+#define RESULTLISTDELEGATE_H
 
 #include <QModelIndex>
 #include <QPainter>
@@ -7,13 +7,13 @@
 #include <QStyleOptionViewItem>
 #include <QWidget>
 
-// The EntryDelegate is responsible for painting elements in the searchlistview
+// The ResultListDelegate is responsible for painting elements in the ResultListView
 // It also provides a sizehint for each element
 
-class EntryDelegate : public QStyledItemDelegate
+class ResultListDelegate : public QStyledItemDelegate
 {
 public:
-    explicit EntryDelegate(QWidget *parent = nullptr);
+    explicit ResultListDelegate(QWidget *parent = nullptr);
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option,
                const QModelIndex &index) const override;
@@ -21,4 +21,4 @@ public:
                        const QModelIndex &index) const override;
 };
 
-#endif // ENTRYDELEGATE_H
+#endif // RESULTLISTDELEGATE_H

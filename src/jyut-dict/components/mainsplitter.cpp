@@ -7,12 +7,12 @@
 MainSplitter::MainSplitter(QWidget *parent) : QSplitter(parent)
 {
     _definitionScrollArea = new DefinitionScrollArea;
-    _searchListView = new SearchListView();
+    _resultListView = new ResultListView();
 
-    addWidget(_searchListView);
+    addWidget(_resultListView);
     addWidget(_definitionScrollArea);
 
-    connect(_searchListView->selectionModel(),
+    connect(_resultListView->selectionModel(),
        SIGNAL(currentChanged(QModelIndex, QModelIndex)),
        this, SLOT(handleSelectionChanged(QModelIndex)));
 

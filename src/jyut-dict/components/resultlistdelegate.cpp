@@ -1,4 +1,4 @@
-#include "entrydelegate.h"
+#include "resultlistdelegate.h"
 
 #include "logic/entry/entry.h"
 
@@ -6,13 +6,13 @@
 #include <QRectF>
 #include <QTextDocument>
 
-EntryDelegate::EntryDelegate(QWidget *parent)
+ResultListDelegate::ResultListDelegate(QWidget *parent)
     : QStyledItemDelegate (parent)
 {
 
 }
 
-void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
+void ResultListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                           const QModelIndex &index) const
 {
     if (!index.data().canConvert<Entry>()) {
@@ -114,7 +114,7 @@ void EntryDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     painter->restore();
 }
 
-QSize EntryDelegate::sizeHint(const QStyleOptionViewItem &option,
+QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
                               const QModelIndex &index) const
 {
     return QSize(100, 80);
