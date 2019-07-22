@@ -21,6 +21,19 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private:
+    GithubReleaseChecker *_checker;
+
+    MainToolBar *_mainToolBar;
+    MainSplitter *_mainSplitter;
+
+    QMenu *_fileMenu;
+    QMenu *_editMenu;
+    QMenu *_windowMenu;
+    QMenu *_helpMenu;
+
+    QPointer<QWidget> _settingsWindow;
+
     void createMenus();
     void createActions();
 
@@ -33,16 +46,7 @@ public:
     void toggleMinimized();
     void toggleMaximized();
 
-private:
-    GithubReleaseChecker *_checker;
-
-    MainToolBar *_mainToolBar;
-    MainSplitter *_mainSplitter;
-
-    QMenu *_fileMenu;
-    QMenu *_editMenu;
-    QMenu *_windowMenu;
-    QMenu *_helpMenu;
+    void openSettingsWindow();
 
 public slots:
     void notifyUpdateAvailable(bool updateAvailable,

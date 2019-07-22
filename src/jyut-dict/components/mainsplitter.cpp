@@ -1,5 +1,6 @@
 #include "mainsplitter.h"
 
+#include "components/resultlistview.h"
 #include "logic/entry/entry.h"
 
 #include <QList>

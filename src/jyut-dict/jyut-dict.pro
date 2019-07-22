@@ -32,14 +32,15 @@ CONFIG += c++14
 
 SOURCES += \
     main.cpp \
-    components/dictionarylistdelegate.cpp \
-    components/dictionarylistmodel.cpp \
-    components/dictionarylistview.cpp \
     components/definitioncontentwidget.cpp \
     components/definitionheaderwidget.cpp \
     components/definitionscrollarea.cpp \
     components/definitionsectionwidget.cpp \
     components/definitionwidget.cpp \
+    components/dictionarylistdelegate.cpp \
+    components/dictionarylistmodel.cpp \
+    components/dictionarylistview.cpp \
+    components/dictionarytab.cpp \
     components/entryheaderwidget.cpp \
     components/mainsplitter.cpp \
     components/maintoolbar.cpp \
@@ -57,6 +58,7 @@ SOURCES += \
     logic/update/githubreleasechecker.cpp \
     logic/utils/utils.cpp \
     windows/mainwindow.cpp \
+    windows/settingswindow.cpp \
     windows/updatewindow.cpp
 
 HEADERS += \
@@ -68,6 +70,7 @@ HEADERS += \
     components/dictionarylistdelegate.h \
     components/dictionarylistmodel.h \
     components/dictionarylistview.h \
+    components/dictionarytab.h \
     components/entryheaderwidget.h \
     components/isearchlineedit.h \
     components/isectionheaderwidget.h \
@@ -95,6 +98,7 @@ HEADERS += \
     logic/update/iupdatechecker.h \
     logic/utils/utils.h \
     windows/mainwindow.h \
+    windows/settingswindow.h \
     windows/updatewindow.h
 
 RESOURCES += \

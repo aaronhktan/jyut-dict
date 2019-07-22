@@ -1,6 +1,7 @@
 #include "windows/mainwindow.h"
 
 #include "logic/entry/sentence.h"
+#include "windows/settingswindow.h"
 #include "windows/updatewindow.h"
 
 #include <QApplication>
@@ -76,6 +77,15 @@ void MainWindow::createActions()
     // TODO: Implement an about dialog to give credits to contributors :)
     // connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
     _fileMenu->addAction(aboutAction);
+
+#ifdef Q_OS_MAC
+    QAction *settingsWindowAction = new QAction(tr("Preferences"));
+#else
+    QAction *settingsWindowAction = new QAction(tr("Settings"));
+#endif
+    settingsWindowAction->setStatusTip(tr("Add or remove dictionaries to search"));
+    connect(settingsWindowAction, &QAction::triggered, this, &MainWindow::openSettingsWindow);
+    _fileMenu->addAction(settingsWindowAction);
 
     QAction *closeWindowAction = new QAction{tr("Close Window"), this};
     closeWindowAction->setShortcut(QKeySequence{"Ctrl+W"});
@@ -231,4 +241,16 @@ void MainWindow::toggleMaximized()
     } else {
         showNormal();
     }
+}
+
+void MainWindow::openSettingsWindow()
+{
+    if (_settingsWindow) {
+        _settingsWindow->activateWindow();
+        _settingsWindow->raise();
+        return;
+    }
+
+    _settingsWindow = new SettingsWindow{this};
+    _settingsWindow->show();
 }
