@@ -93,30 +93,12 @@ DictionarySource DefinitionsSet::getSource() const
 
 std::string DefinitionsSet::getSourceLongString() const
 {
-    switch (_source) {
-        case CEDICT:
-            return "CEDICT";
-        case CCCANTO:
-            return "CC-CANTO";
-        case CFDICT:
-            return "CFDICT";
-    }
-
-    return "";
+    return DictionarySourceUtils::getSourceLongString(_source);
 }
 
 std::string DefinitionsSet::getSourceShortString() const
 {
-    switch (_source) {
-        case CEDICT:
-            return "CC";
-        case CCCANTO:
-            return "CCY";
-        case CFDICT:
-            return "CF";
-    }
-
-    return "";
+    return DictionarySourceUtils::getSourceShortString(_source);
 }
 
 // getDefinitionSnippet() returns a string that shows the definitions contained

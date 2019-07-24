@@ -1,9 +1,14 @@
 #include "settingswindow.h"
 
 #include "components/dictionarytab.h"
+#include "logic/utils/utils_mac.h"
 
 #include <QAction>
 #include <QActionGroup>
+#include <QApplication>
+#include <QDebug>
+#include <QGuiApplication>
+#include <QPalette>
 #include <QVBoxLayout>
 #include <QToolButton>
 
@@ -11,7 +16,7 @@ SettingsWindow::SettingsWindow(QWidget *parent)
     : QMainWindow{parent, Qt::Window},
       _parent{parent}
 {
-//    _layout = new QVBoxLayout{this};
+    //    _layout = new QVBoxLayout{this};
 
     _contentStackedWidget = new QStackedWidget{this};
     _toolBar = new QToolBar{this};
@@ -20,73 +25,66 @@ SettingsWindow::SettingsWindow(QWidget *parent)
     _toolBar->setMovable(false);
     _toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 
-    DictionaryTab *_dictionaryTab = new DictionaryTab(this, "hello");
-    DictionaryTab *_seconddictionaryTab = new DictionaryTab(this, "whoa");
+    int r, g, b, a;
+    Utils::getAppleControlAccentColor().getRgb(&r, &g, &b, &a);
+    qDebug() << r << " " << g << " " << b << " " << a;
 
-    _contentStackedWidget->addWidget(_dictionaryTab);
-    _contentStackedWidget->addWidget(_seconddictionaryTab);
-    QToolButton *_toolButton1 = new QToolButton();
-    QToolButton *_toolButton2 = new QToolButton();
-
-    QAction *action1 = new QAction{tr("Dictionary1"), this};
-    action1->setIcon(QIcon(":/images/search_inverted.png"));
-    action1->setCheckable(true);
-    connect(action1, &QAction::triggered, this, &SettingsWindow::openFirstTab);
-    _toolButton1->setDefaultAction(action1);
-    _toolButton1->setStyleSheet("QToolButton { "
-                                "   border-top-left-radius: 4px;"
-                                "   border-top-right-radius: 4px;"
-                                "   margin: 0px; "
-                                "}"
-                                " "
-                                "QToolButton:checked { "
-                                "   border-top-left-radius: 4px;"
-                                "   border-top-right-radius: 4px;"
-                                "   margin: 0px; "
-                                "   background-color: #767676; "
-                                "}");
-    _toolButton1->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-
-    QAction *action2 = new QAction{tr("boop"), this};
-    action2->setIcon(QIcon(":/images/x_inverted.png"));
-    action2->setCheckable(true);
-    connect(action2, &QAction::triggered, this, &SettingsWindow::openSecondTab);
-    _toolButton2->setDefaultAction(action2);
-    _toolButton2->setStyleSheet("QToolButton { "
-                                "   border-top-left-radius: 4px;"
-                                "   border-top-right-radius: 4px;"
-                                "   margin: 0px; "
-                                "}"
-                                " "
-                                "QToolButton:checked { "
-                                "   border-top-left-radius: 4px;"
-                                "   border-top-right-radius: 4px;"
-                                "   margin: 0px; "
-                                "   background-color: #767676; "
-                                "}");
-    _toolButton2->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-
+    std::vector<DictionaryTab *> _dictionaryTabs;
+    std::vector<QToolButton *> _toolButtons;
+    std::vector<QAction *> _actions;
     QActionGroup *_navigationActionGroup = new QActionGroup{this};
     _navigationActionGroup->setExclusive(true);
-    _navigationActionGroup->addAction(action1);
-    _navigationActionGroup->addAction(action2);
-    //    _navigationTabWidget->setTabIcon(0, QIcon(":/images/x_inverted.png"));
-    //    _toolBar->addAction(QIcon(":/images/x_inverted.png"), "Dictionaries", this, &SettingsWindow::openFirstTab);
-    //    _toolBar->addAction(QIcon(":/images/x_inverted.png"), "SecondDictionaries", this, &SettingsWindow::openSecondTab);
-    //    _layout->addWidget(_toolBar);
+    for (int i = 0; i < 4; i++) {
+        _actions.push_back(new QAction(this));
+        _actions.back()->setCheckable(true);
+        connect(_actions.back(), &QAction::triggered, this, [=] { openTab(i); });
+        _navigationActionGroup->addAction(_actions.back());
 
+        _toolButtons.push_back(new QToolButton());
+        QString style{"QToolButton { "
+                      "   border-top-left-radius: 4px;"
+                      "   border-top-right-radius: 4px;"
+                      "   margin: 0px; "
+                      "}"
+                      " "
+                      "QToolButton:checked { "
+                      "   border-top-left-radius: 4px;"
+                      "   border-top-right-radius: 4px;"
+                      "   margin: 0px; "
+                      "   background-color: rgba(%1, %2, %3, %4); "
+                      "}"};
+        _toolButtons.back()->setStyleSheet(style.arg(std::to_string(r).c_str(),
+                                                     std::to_string(g).c_str(),
+                                                     std::to_string(b).c_str(),
+                                                     std::to_string(0.7).c_str()));
+        _toolButtons.back()->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+        _toolButtons.back()->setDefaultAction(_actions.back());
+        _toolBar->addWidget(_toolButtons.back());
 
-    _toolBar->addWidget(_toolButton1);
-    _toolBar->addWidget(_toolButton2);
+        _dictionaryTabs.push_back(new DictionaryTab(this, std::to_string(i).c_str()));
+        _contentStackedWidget->addWidget(_dictionaryTabs.back());
+    }
 
-    _toolButton1->click();
+    // For these images, export as 96px width, and center on 120px canvas.
+    _actions[0]->setText(tr("General"));
+    _actions[0]->setIcon(QIcon(":/images/settings_inverted.png"));
 
-    //    _layout->addWidget(_navigationTabWidget);
+    _actions[1]->setText(tr("Dictionaries"));
+    _actions[1]->setIcon(QIcon(":/images/book_inverted.png"));
+
+    _actions[2]->setText(tr("Advanced"));
+    _actions[2]->setIcon(QIcon(":/images/sliders_inverted.png"));
+
+    _actions[3]->setText(tr("Contact"));
+    _actions[3]->setIcon(QIcon(":/images/help_inverted.png"));
+
+    _toolButtons[0]->click();
+
     setCentralWidget(_contentStackedWidget);
 
     setWindowTitle("Preferences");
 
-    setMinimumSize(600, 400);
+    setMinimumSize(400, 300);
     resize(sizeHint());
 
     setAttribute(Qt::WA_DeleteOnClose);
@@ -97,12 +95,8 @@ SettingsWindow::~SettingsWindow()
 
 }
 
-void SettingsWindow::openFirstTab()
+void SettingsWindow::openTab(int i)
 {
-    _contentStackedWidget->setCurrentIndex(0);
-}
-
-void SettingsWindow::openSecondTab()
-{
-    _contentStackedWidget->setCurrentIndex(1);
+    qDebug() << "Opening " << i;
+    _contentStackedWidget->setCurrentIndex(i);
 }

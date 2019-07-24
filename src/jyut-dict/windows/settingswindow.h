@@ -22,8 +22,7 @@ private:
     QStackedWidget *_contentStackedWidget;
     QToolBar *_toolBar;
 
-    void openFirstTab();
-    void openSecondTab();
+    void openTab(int i);
 };
 
 #endif // SETTINGSWINDOW_H

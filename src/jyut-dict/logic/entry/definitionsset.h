@@ -1,23 +1,11 @@
 #ifndef DEFINITIONS_H
 #define DEFINITIONS_H
 
+#include "logic/entry/dictionarysource.h"
+
 #include <iostream>
 #include <unordered_map>
 #include <vector>
-
-// DictionarySource is an enum that contains possible dictionary sources
-
-enum DictionarySource {
-    CEDICT,
-    CCCANTO,
-    CFDICT,
-};
-
-static std::unordered_map<std::string, DictionarySource> string_to_dictionarysource {
-    {"CC_CEDICT", CEDICT},
-    {"CC_CANTO", CCCANTO},
-    {"CFDICT", CFDICT},
-};
 
 // The DefintitionsSet class contains a grouping of definitions from one source
 

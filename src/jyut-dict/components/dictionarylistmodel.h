@@ -1,7 +1,11 @@
 #ifndef DICTIONARYLISTMODEL_H
 #define DICTIONARYLISTMODEL_H
 
+
 #include <QWidget>
+
+// The DictionaryListModel contains a list of all currently installed
+// dictionaries.
 
 class DictionaryListModel : public QWidget
 {
@@ -9,6 +13,7 @@ class DictionaryListModel : public QWidget
 public:
     explicit DictionaryListModel(QWidget *parent = nullptr);
 
+    void setDictionaries();
 signals:
 
 public slots:

@@ -31,6 +31,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
+    logic/entry/dictionarysource.cpp \
     main.cpp \
     components/definitioncontentwidget.cpp \
     components/definitionheaderwidget.cpp \
@@ -82,6 +83,7 @@ HEADERS += \
     components/searchlineedit.h \
     components/searchoptionsradiogroupbox.h \
     logic/entry/definitionsset.h \
+    logic/entry/dictionarysource.h \
     logic/entry/entry.h \
     logic/entry/entrycharactersoptions.h \
     logic/entry/entryphoneticoptions.h \
@@ -97,6 +99,7 @@ HEADERS += \
     logic/update/githubreleasechecker.h \
     logic/update/iupdatechecker.h \
     logic/utils/utils.h \
+    logic/utils/utils_mac.h \
     windows/mainwindow.h \
     windows/settingswindow.h \
     windows/updatewindow.h
@@ -105,6 +108,10 @@ RESOURCES += \
     resources/resource.qrc
 
 macx: {
+    LIBS += -framework AppKit
+    OBJECTIVE_SOURCES += \
+        logic/utils/utils_mac.mm \
+
     ICON = resources/icon/icon.icns
     QMAKE_INFO_PLIST = platform/mac/Info.plist
 

@@ -186,7 +186,6 @@ void MainWindow::cut()
     }
 }
 
-#include <iostream>
 void MainWindow::copy()
 {
     QWidget *focused = QApplication::focusWidget();
