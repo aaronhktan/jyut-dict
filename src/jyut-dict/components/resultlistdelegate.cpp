@@ -12,8 +12,9 @@ ResultListDelegate::ResultListDelegate(QWidget *parent)
 
 }
 
-void ResultListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
-                          const QModelIndex &index) const
+void ResultListDelegate::paint(QPainter *painter,
+                               const QStyleOptionViewItem &option,
+                               const QModelIndex &index) const
 {
     if (!index.data().canConvert<Entry>()) {
         return;
@@ -115,7 +116,7 @@ void ResultListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
 }
 
 QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
-                              const QModelIndex &index) const
+                                   const QModelIndex &index) const
 {
     return QSize(100, 80);
 }

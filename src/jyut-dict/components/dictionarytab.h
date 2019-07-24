@@ -3,6 +3,7 @@
 
 #include <QLabel>
 #include <QLayout>
+#include <QListView>
 #include <QWidget>
 
 class DictionaryTab : public QWidget
@@ -17,6 +18,8 @@ private:
     QLabel *_title;
 
     QLayout *_tabLayout;
+
+    QListView *_list;
 
 signals:
 

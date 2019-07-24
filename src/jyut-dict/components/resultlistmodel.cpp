@@ -42,7 +42,16 @@ void ResultListModel::setWelcome()
 
 int ResultListModel::rowCount(const QModelIndex &parent) const
 {
-    return static_cast<int>(_entries.size());
+    if (!parent.isValid()) {
+        return static_cast<int>(_entries.size());
+    }
+
+    if (static_cast<unsigned long>(parent.row()) >= _entries.size()) {
+        return static_cast<int>(_entries.size());
+    }
+
+    return static_cast<int>(_entries.size() - 1
+                            - static_cast<unsigned long>(parent.row()));
 }
 
 QVariant ResultListModel::data(const QModelIndex &index, int role) const

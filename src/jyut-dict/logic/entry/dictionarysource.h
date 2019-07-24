@@ -1,13 +1,14 @@
 #ifndef DICTIONARYSOURCE_H
 #define DICTIONARYSOURCE_H
 
+#include <QObject>
+
 #include <algorithm>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 // DictionarySource is an enum that contains possible dictionary sources
-
 enum DictionarySource {
     CEDICT,
     CCCANTO,
@@ -38,4 +39,7 @@ std::string getSourceLongString(DictionarySource source);
 std::string getSourceShortString(DictionarySource source);
 
 }
+
+Q_DECLARE_METATYPE(DictionarySource);
+
 #endif // DICTIONARYSOURCE_H
