@@ -31,7 +31,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
-    logic/entry/dictionarysource.cpp \
+    logic/dictionary/dictionarymetadata.cpp \
     main.cpp \
     components/definitioncontentwidget.cpp \
     components/definitionheaderwidget.cpp \
@@ -50,6 +50,7 @@ SOURCES += \
     components/resultlistview.cpp \
     components/searchlineedit.cpp \
     components/searchoptionsradiogroupbox.cpp \
+    logic/dictionary/dictionarysource.cpp \
     logic/entry/definitionsset.cpp \
     logic/entry/entry.cpp \
     logic/entry/sentence.cpp \
@@ -82,8 +83,9 @@ HEADERS += \
     components/resultlistview.h \
     components/searchlineedit.h \
     components/searchoptionsradiogroupbox.h \
+    logic/dictionary/dictionarymetadata.h \
+    logic/dictionary/dictionarysource.h \
     logic/entry/definitionsset.h \
-    logic/entry/dictionarysource.h \
     logic/entry/entry.h \
     logic/entry/entrycharactersoptions.h \
     logic/entry/entryphoneticoptions.h \

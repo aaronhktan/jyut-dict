@@ -4,12 +4,15 @@
 #include "components/isearchlineedit.h"
 #include "logic/search/isearch.h"
 #include "logic/search/isearchoptionsmediator.h"
+#include "logic/search/sqldatabasemanager.h"
 
 #include <QAction>
 #include <QEvent>
 #include <QFocusEvent>
 #include <QLineEdit>
 #include <QWidget>
+
+#include <memory>
 
 // The SearchLineEdit is the main search bar
 
@@ -19,6 +22,7 @@ class SearchLineEdit : public QLineEdit, public ISearchLineEdit
 
 public:
     explicit SearchLineEdit(ISearchOptionsMediator *mediator,
+                            std::shared_ptr<SQLDatabaseManager> manager,
                             QWidget *parent = nullptr);
     ~SearchLineEdit() override;
 
@@ -33,6 +37,7 @@ private:
     void checkClearVisibility();
     void setStyle(bool use_dark);
 
+    std::shared_ptr<SQLDatabaseManager> _databaseManager;
     ISearchOptionsMediator *_mediator;
     ISearch *_search;
 

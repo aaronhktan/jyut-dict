@@ -1,6 +1,5 @@
 #include "searchlineedit.h"
 
-#include "logic/search/sqldatabasemanager.h"
 #include "logic/search/sqlsearch.h"
 
 #include <QIcon>
@@ -8,7 +7,9 @@
 
 #include <vector>
 
-SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent)
+SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
+                               std::shared_ptr<SQLDatabaseManager> manager,
+                               QWidget *parent)
     : QLineEdit(parent)
 {
     _mediator = mediator;
@@ -42,7 +43,8 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent
 
     setMinimumWidth(parent->width() / 2);
 
-    _search = new SQLSearch(std::make_shared<SQLDatabaseManager>());
+    _databaseManager = manager;
+    _search = new SQLSearch(_databaseManager);
 
     connect(this, &QLineEdit::textChanged,
             [this](){

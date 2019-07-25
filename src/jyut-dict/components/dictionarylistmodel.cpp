@@ -7,14 +7,30 @@ DictionaryListModel::DictionaryListModel(QObject *parent)
     : QAbstractListModel(parent)
 {
     _dictionaries = {};
-    setDictionaries(std::vector<DictionarySource>{CEDICT, CCCANTO, CFDICT});
+//    setDictionaries(std::vector<DictionarySource>{CEDICT, CCCANTO, CFDICT});
 }
 
-void DictionaryListModel::setDictionaries(std::vector<DictionarySource> dictionaries)
+void DictionaryListModel::setDictionaries(
+    std::vector<DictionaryMetadata> dictionaries)
 {
     beginResetModel();
     _dictionaries = dictionaries;
     endResetModel();
+}
+
+bool DictionaryListModel::setData(const QModelIndex &index,
+                                  const QVariant &value,
+                                  int role)
+{
+    try {
+        _dictionaries.push_back(value.value<DictionaryMetadata>());
+    } catch (std::exception &e) {
+//        qDebug() << e.what();
+        return false;
+    }
+
+    dataChanged(index, index);
+    return true;
 }
 
 int DictionaryListModel::rowCount(const QModelIndex &parent) const

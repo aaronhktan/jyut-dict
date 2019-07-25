@@ -4,11 +4,14 @@
 #include "components/mainsplitter.h"
 #include "components/maintoolbar.h"
 #include "logic/update/githubreleasechecker.h"
+#include "logic/search/sqldatabasemanager.h"
 
 #include <QMainWindow>
 #include <QMenu>
 #include <QMenuBar>
 #include <QWidget>
+
+#include <memory>
 
 // As its name suggests, is the main window of the application
 // Contains a toolbar (for searching), and splitter (for results/detail)
@@ -33,6 +36,8 @@ private:
     QMenu *_helpMenu;
 
     QPointer<QWidget> _settingsWindow;
+
+    std::shared_ptr<SQLDatabaseManager> _manager;
 
     void createMenus();
     void createActions();

@@ -7,7 +7,7 @@ DictionaryListView::DictionaryListView(QWidget *parent)
     : QListView(parent)
 {
     setFrameShape(QFrame::NoFrame);
-    setMinimumWidth(250);
+    setMinimumWidth(150);
 
     _model = new DictionaryListModel{this};
     setModel(_model);

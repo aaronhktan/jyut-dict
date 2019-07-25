@@ -21,8 +21,11 @@ MainWindow::MainWindow(QWidget *parent) :
     setMinimumSize(QSize(800, 600));
 #endif
 
+    // Instantiate services
+    _manager = std::make_shared<SQLDatabaseManager>();
+
     // Create UI elements
-    _mainToolBar = new MainToolBar(this);
+    _mainToolBar = new MainToolBar(_manager, this);
     addToolBar(_mainToolBar);
     setUnifiedTitleAndToolBarOnMac(true);
 
@@ -250,6 +253,6 @@ void MainWindow::openSettingsWindow()
         return;
     }
 
-    _settingsWindow = new SettingsWindow{this};
+    _settingsWindow = new SettingsWindow{_manager, this};
     _settingsWindow->show();
 }

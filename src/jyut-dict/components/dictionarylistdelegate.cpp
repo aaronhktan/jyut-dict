@@ -1,6 +1,6 @@
 #include "dictionarylistdelegate.h"
 
-#include "logic/entry/dictionarysource.h"
+#include "logic/dictionary/dictionarymetadata.h"
 
 DictionaryListDelegate::DictionaryListDelegate(QWidget *parent)
     : QStyledItemDelegate(parent)
@@ -12,13 +12,13 @@ void DictionaryListDelegate::paint(QPainter *painter,
                                    const QStyleOptionViewItem &option,
                                    const QModelIndex &index) const
 {
-    if (!index.data().canConvert<DictionarySource>()) {
+    if (!index.data().canConvert<DictionaryMetadata>()) {
         return;
     }
 
     painter->save();
 
-    DictionarySource source = qvariant_cast<DictionarySource>(index.data());
+    DictionaryMetadata source = qvariant_cast<DictionaryMetadata>(index.data());
 
     if (option.state & QStyle::State_Selected) {
 #ifdef Q_OS_MAC
@@ -41,7 +41,7 @@ void DictionaryListDelegate::paint(QPainter *painter,
     r = r.adjusted(6, 6, 6, 6);
     QFontMetrics metrics(font);
     QString phonetic = metrics.elidedText(
-        DictionarySourceUtils::getSourceLongString(source).c_str(),
+        source.getName().c_str(),
         Qt::ElideRight,
         r.width());
     painter->drawText(r, 0, phonetic, &boundingRect);

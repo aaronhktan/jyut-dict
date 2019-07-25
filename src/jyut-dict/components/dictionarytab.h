@@ -1,25 +1,42 @@
 #ifndef DICTIONARYTAB_H
 #define DICTIONARYTAB_H
 
+#include "logic/dictionary/dictionarymetadata.h"
+#include "logic/search/sqldatabasemanager.h"
+
 #include <QLabel>
-#include <QLayout>
+#include <QGridLayout>
 #include <QListView>
+#include <QModelIndex>
 #include <QWidget>
+
+#include <memory>
 
 class DictionaryTab : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit DictionaryTab(QWidget *parent = nullptr);
-    explicit DictionaryTab(QWidget *parent = nullptr, QString text="hi");
+    explicit DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
+                           QWidget *parent = nullptr);
+    explicit DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
+                           QString text = "hi",
+                           QWidget *parent = nullptr);
+
+    void setDictionaryMetadata(const QModelIndex &index);
 
 private:
-    QLabel *_title;
+    void populateDictionaryList();
 
-    QLayout *_tabLayout;
+    QLabel *_title;
+    QLabel *_description;
+    QLabel *_legal;
+
+    QGridLayout *_tabLayout;
 
     QListView *_list;
+
+    std::shared_ptr<SQLDatabaseManager> _manager;
 
 signals:
 

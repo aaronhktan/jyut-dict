@@ -6,17 +6,18 @@
 #include <QAction>
 #include <QActionGroup>
 #include <QApplication>
-#include <QDebug>
 #include <QGuiApplication>
 #include <QPalette>
 #include <QVBoxLayout>
 #include <QToolButton>
 
-SettingsWindow::SettingsWindow(QWidget *parent)
+SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
+                               QWidget *parent)
     : QMainWindow{parent, Qt::Window},
       _parent{parent}
 {
     //    _layout = new QVBoxLayout{this};
+    _manager = manager;
 
     _contentStackedWidget = new QStackedWidget{this};
     _toolBar = new QToolBar{this};
@@ -27,7 +28,7 @@ SettingsWindow::SettingsWindow(QWidget *parent)
 
     int r, g, b, a;
     Utils::getAppleControlAccentColor().getRgb(&r, &g, &b, &a);
-    qDebug() << r << " " << g << " " << b << " " << a;
+//    qDebug() << r << " " << g << " " << b << " " << a;
 
     std::vector<DictionaryTab *> _dictionaryTabs;
     std::vector<QToolButton *> _toolButtons;
@@ -61,7 +62,7 @@ SettingsWindow::SettingsWindow(QWidget *parent)
         _toolButtons.back()->setDefaultAction(_actions.back());
         _toolBar->addWidget(_toolButtons.back());
 
-        _dictionaryTabs.push_back(new DictionaryTab(this, std::to_string(i).c_str()));
+        _dictionaryTabs.push_back(new DictionaryTab(_manager, std::to_string(i).c_str(), this));
         _contentStackedWidget->addWidget(_dictionaryTabs.back());
     }
 
@@ -97,6 +98,5 @@ SettingsWindow::~SettingsWindow()
 
 void SettingsWindow::openTab(int i)
 {
-    qDebug() << "Opening " << i;
     _contentStackedWidget->setCurrentIndex(i);
 }

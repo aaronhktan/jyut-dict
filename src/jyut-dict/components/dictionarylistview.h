@@ -1,6 +1,8 @@
 #ifndef DICTIONARYLISTVIEW_H
 #define DICTIONARYLISTVIEW_H
 
+#include "logic/dictionary/dictionarysource.h"
+
 #include <QAbstractListModel>
 #include <QListView>
 #include <QStyledItemDelegate>

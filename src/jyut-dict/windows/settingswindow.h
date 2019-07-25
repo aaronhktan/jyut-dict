@@ -1,17 +1,22 @@
 #ifndef SETTINGSWINDOW_H
 #define SETTINGSWINDOW_H
 
+#include "logic/search/sqldatabasemanager.h"
+
 #include <QLayout>
 #include <QMainWindow>
 #include <QStackedWidget>
 #include <QToolBar>
+
+#include <memory>
 
 class SettingsWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit SettingsWindow(QWidget *parent = nullptr);
+    explicit SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
+                            QWidget *parent = nullptr);
     ~SettingsWindow();
 
 private:
@@ -21,6 +26,8 @@ private:
 
     QStackedWidget *_contentStackedWidget;
     QToolBar *_toolBar;
+
+    std::shared_ptr<SQLDatabaseManager> _manager;
 
     void openTab(int i);
 };

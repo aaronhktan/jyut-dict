@@ -1,7 +1,7 @@
 #ifndef DEFINITIONS_H
 #define DEFINITIONS_H
 
-#include "logic/entry/dictionarysource.h"
+#include "logic/dictionary/dictionarysource.h"
 
 #include <iostream>
 #include <unordered_map>

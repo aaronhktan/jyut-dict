@@ -40,6 +40,4 @@ std::string getSourceShortString(DictionarySource source);
 
 }
 
-Q_DECLARE_METATYPE(DictionarySource);
-
 #endif // DICTIONARYSOURCE_H
