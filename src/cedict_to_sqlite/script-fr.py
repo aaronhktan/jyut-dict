@@ -3,7 +3,14 @@ from wordfreq import zipf_frequency
 import sqlite3
 import sys
 
-source = ''
+source = {
+    'name': '',
+    'version': '',
+    'description': '',
+    'legal': '',
+    'link': '',
+    'other': ''
+}
 
 class Entry(object):
     def __init__(self, trad='', simp='', pin='', jyut='', freq=0.0, defs=[]):
@@ -46,7 +53,12 @@ def write(entries, db_name):
 
     c.execute('''CREATE TABLE sources(
                     source_id INTEGER PRIMARY KEY,
-                    sourcename TEXT UNIQUE ON CONFLICT IGNORE
+                    sourcename TEXT UNIQUE ON CONFLICT IGNORE,
+                    version TEXT,
+                    description TEXT,
+                    legal TEXT,
+                    link TEXT,
+                    other TEXT
                 )''')
 
     c.execute('''CREATE TABLE definitions(
@@ -87,7 +99,7 @@ def write(entries, db_name):
     #             ''')
 
     # Add sources to tables
-    c.execute('INSERT INTO sources values(?,?)', (None, source))
+    c.execute('INSERT INTO sources values(?,?,?,?,?,?,?)', (None, source['name'], source['version'], source['description'], source['legal'], source['link'], source['other']))
 
     # Add entries to tables
     def entry_to_tuple(entry):
@@ -158,13 +170,18 @@ def assign_frequencies(entries):
             entry.add_freq(freq)
 
 if __name__ == '__main__':
-    if len(sys.argv) != 5:
-        print('Usage: python3 script.py <database filename> <CC_CEDICT file> <Cantonese Readings file> <Source name>')
-        print('e.g. python3 script.py dict.db CEDICT.txt READINGS.txt CC-CEDICT')
+    if len(sys.argv) != 10:
+        print('Usage: python3 script.py <database filename> <CC_CEDICT file> <Cantonese readings file> <source name> <source version> <source description> <source legal> <source link> <source other>')
+        print('e.g. python3 script.py dict.db CEDICT.txt READINGS.txt CC-CEDICT 2018-07-09 "CC-CEDICT is a dictionary." "This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License." "http://www.mdbg.net/chindict/chindict.php?page=cc-cedict" ""')
         sys.exit(1)
 
     entries = {}
-    source = sys.argv[4]
+    source['name'] = sys.argv[4]
+    source['version'] = sys.argv[5]
+    source['description'] = sys.argv[6]
+    source['legal'] = sys.argv[7]
+    source['link'] = sys.argv[8]
+    source['other'] = sys.argv[9]
     parse_file(sys.argv[2], entries)
     parse_cc_cedict_canto_readings(sys.argv[3], entries)
     assign_frequencies(entries)

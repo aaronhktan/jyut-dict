@@ -3,7 +3,24 @@ from wordfreq import zipf_frequency
 import sqlite3
 import sys
 
-sources = ("CC_CEDICT", "CC_CANTO")
+sources = {
+    'CC-CEDICT': {
+        'name': 'CC-CEDICT',
+        'version': '2018-07-09',
+        'description': 'CC-CEDICT is a continuation of the CEDICT project started by Paul Denisowski in 1997 with the aim to provide a complete downloadable Chinese to English dictionary with pronunciation in pinyin for the Chinese characters.',
+        'legal': 'This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.',
+        'link': 'http://www.mdbg.net/chindict/chindict.php?page=cc-cedict',
+        'other': ''
+    },
+    'CC-CANTO': {
+        'name': 'CC-CANTO',
+        'version': '2016-01-15',
+        'description': 'CC-Canto is an open-source Cantonese-to-English dictionary with about 22,000 entries, designed to be used alongside CC-CEDICT.',
+        'legal': 'This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License.',
+        'link': 'http://cantonese.org/download.html',
+        'other': ''
+    }
+}
 
 class Entry(object):
     def __init__(self, trad='', simp='', pin='', jyut='', freq=0.0, cedict_eng=[], canto_eng=[]):
@@ -50,7 +67,12 @@ def write(entries, db_name):
 
     c.execute('''CREATE TABLE sources(
                     source_id INTEGER PRIMARY KEY,
-                    sourcename TEXT UNIQUE ON CONFLICT IGNORE
+                    sourcename TEXT UNIQUE ON CONFLICT IGNORE,
+                    version TEXT,
+                    description TEXT,
+                    legal TEXT,
+                    link TEXT,
+                    other TEXT
                 )''')
 
     c.execute('''CREATE TABLE definitions(
@@ -91,7 +113,7 @@ def write(entries, db_name):
     #             ''')
 
     # Add sources to tables
-    [c.execute('INSERT INTO sources values(?,?)', (None, value)) for value in sources]
+    {c.execute('INSERT INTO sources values(?,?,?,?,?,?,?)', (None, value['name'], value['version'], value['description'], value['legal'], value['link'], value['other'])) for key, value in sources.items()}
 
     # Add entries to tables
     def entry_to_tuple(entry):
@@ -106,8 +128,8 @@ def write(entries, db_name):
 
             c.execute('SELECT last_insert_rowid()')
             entry_id = c.fetchone()[0]
-            definition_tuples = [definition_to_tuple(definition, entry_id, sources.index('CC_CEDICT')+1) for definition in entry.cedict_english]
-            definition_tuples += [definition_to_tuple(definition, entry_id, sources.index('CC_CANTO')+1) for definition in entry.canto_english]
+            definition_tuples = [definition_to_tuple(definition, entry_id, list(sources).index('CC-CEDICT')+1) for definition in entry.cedict_english]
+            definition_tuples += [definition_to_tuple(definition, entry_id, list(sources).index('CC-CANTO')+1) for definition in entry.canto_english]
             c.executemany('INSERT INTO definitions values (?,?,?,?)', definition_tuples)
 
     # Populate FTS versions of tables

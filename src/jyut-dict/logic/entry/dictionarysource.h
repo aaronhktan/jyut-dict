@@ -16,14 +16,14 @@ enum DictionarySource {
 };
 
 static std::unordered_map<std::string, DictionarySource> string_to_dictionarysource{
-    {"CC_CEDICT", CEDICT},
-    {"CC_CANTO", CCCANTO},
+    {"CC-CEDICT", CEDICT},
+    {"CC-CANTO", CCCANTO},
     {"CFDICT", CFDICT},
 };
 
 static std::unordered_map<DictionarySource, std::string> dictionarysource_to_string{
-    {CEDICT, "CC_CEDICT"},
-    {CCCANTO, "CC_CANTO"},
+    {CEDICT, "CC-CEDICT"},
+    {CCCANTO, "CC-CANTO"},
     {CFDICT, "CFDICT"},
 };
 
