@@ -28,7 +28,9 @@ DictionaryMetadata::DictionaryMetadata(const DictionaryMetadata &metadata)
     , _legal{metadata.getLegal()}
     , _link{metadata.getLink()}
     , _other{metadata.getOther()}
-{}
+{
+
+}
 
 DictionaryMetadata::DictionaryMetadata(const DictionaryMetadata &&metadata)
     : _name{metadata.getName()}
@@ -37,7 +39,9 @@ DictionaryMetadata::DictionaryMetadata(const DictionaryMetadata &&metadata)
     , _legal{metadata.getLegal()}
     , _link{metadata.getLink()}
     , _other{metadata.getOther()}
-{}
+{
+
+}
 
 DictionaryMetadata &DictionaryMetadata::operator=(
     const DictionaryMetadata &metadata)

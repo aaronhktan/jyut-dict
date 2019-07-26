@@ -85,8 +85,10 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
 
     setWindowTitle("Preferences");
 
-    setMinimumSize(400, 300);
+    setMinimumSize(500, 400);
     resize(sizeHint());
+    move(parent->x() + (parent->width() - size().width()) / 2,
+         parent->y() + (parent->height() - size().height()) / 2);
 
     setAttribute(Qt::WA_DeleteOnClose);
 }

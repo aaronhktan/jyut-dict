@@ -24,13 +24,28 @@ bool DictionaryListModel::setData(const QModelIndex &index,
 {
     try {
         _dictionaries.push_back(value.value<DictionaryMetadata>());
-    } catch (std::exception &e) {
+    } catch (std::exception /*&e*/) {
 //        qDebug() << e.what();
         return false;
     }
 
     dataChanged(index, index);
     return true;
+}
+
+bool DictionaryListModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    beginResetModel();
+    _dictionaries.erase(_dictionaries.begin() + row, _dictionaries.begin() + row + count);
+    endResetModel();
+    return true;
+}
+
+QModelIndex DictionaryListModel::index(int row,
+                                       int column,
+                                       const QModelIndex &parent) const
+{
+    return createIndex(row, 0);
 }
 
 int DictionaryListModel::rowCount(const QModelIndex &parent) const

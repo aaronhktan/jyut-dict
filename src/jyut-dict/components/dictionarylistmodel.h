@@ -22,7 +22,9 @@ public:
     bool setData(const QModelIndex &index,
                  const QVariant &value,
                  int role = Qt::EditRole) override;
+    bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex()) override;
 
+    QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const override;
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;
     QVariant headerData(int section,
