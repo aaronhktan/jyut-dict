@@ -30,11 +30,13 @@ public:
 private:
     void clearDictionaryList();
     void populateDictionaryList();
+    void addDictionary(QString &dictionaryFile);
 
-    QLabel *_title;
+    QLabel *_explanatory;
     QLabel *_description;
     QLabel *_legal;
 
+    QPushButton *_add;
     QPushButton *_remove;
     QPushButton *_link;
 
@@ -43,7 +45,6 @@ private:
 
     QListView *_list;
     QGroupBox *_groupbox;
-
 
     std::shared_ptr<SQLDatabaseManager> _manager;
 

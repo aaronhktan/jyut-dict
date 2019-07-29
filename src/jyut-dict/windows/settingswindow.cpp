@@ -28,7 +28,7 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
 
     int r, g, b, a;
     Utils::getAppleControlAccentColor().getRgb(&r, &g, &b, &a);
-//    qDebug() << r << " " << g << " " << b << " " << a;
+    //    qDebug() << r << " " << g << " " << b << " " << a;
 
     std::vector<DictionaryTab *> _dictionaryTabs;
     std::vector<QToolButton *> _toolButtons;
@@ -54,15 +54,17 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
                       "   margin: 0px; "
                       "   background-color: rgba(%1, %2, %3, %4); "
                       "}"};
-        _toolButtons.back()->setStyleSheet(style.arg(std::to_string(r).c_str(),
-                                                     std::to_string(g).c_str(),
-                                                     std::to_string(b).c_str(),
-                                                     std::to_string(0.7).c_str()));
+        _toolButtons.back()->setStyleSheet(
+            style.arg(std::to_string(r).c_str(),
+                      std::to_string(g).c_str(),
+                      std::to_string(b).c_str(),
+                      std::to_string(0.7).c_str()));
         _toolButtons.back()->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
         _toolButtons.back()->setDefaultAction(_actions.back());
         _toolBar->addWidget(_toolButtons.back());
 
-        _dictionaryTabs.push_back(new DictionaryTab(_manager, std::to_string(i).c_str(), this));
+        _dictionaryTabs.push_back(
+            new DictionaryTab(_manager, std::to_string(i).c_str(), this));
         _contentStackedWidget->addWidget(_dictionaryTabs.back());
     }
 
@@ -87,6 +89,7 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
 
     setMinimumSize(500, 400);
     resize(sizeHint());
+    setFixedSize(sizeHint());
     move(parent->x() + (parent->width() - size().width()) / 2,
          parent->y() + (parent->height() - size().height()) / 2);
 

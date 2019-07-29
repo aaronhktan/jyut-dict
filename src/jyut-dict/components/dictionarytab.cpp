@@ -4,6 +4,7 @@
 #include "logic/dictionary/dictionarymetadata.h"
 
 #include <QDesktopServices>
+#include <QFileDialog>
 #include <QSpacerItem>
 #include <QtSql>
 
@@ -23,11 +24,16 @@ DictionaryTab::DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
     _tabLayout = new QGridLayout{this};
     _tabLayout->setAlignment(Qt::AlignTop);
 
-    _title = new QLabel{text, this};
-    _title->setWordWrap(true);
-    _title->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    _explanatory = new QLabel{tr("The Dictionaries tab allows you to view "
+                                 "information about dictionaries, "
+                                 "and add or remove them."),
+                              this};
+    _explanatory->setWordWrap(true);
+    _explanatory->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     _list = new DictionaryListView{this};
+    _list->setFixedWidth(200);
     _groupbox = new QGroupBox{this};
+    _groupbox->setMinimumWidth(350);
     _description = new QLabel{this};
     _description->setWordWrap(true);
     _description->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -40,10 +46,12 @@ DictionaryTab::DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
                                                   0,
                                                   QSizePolicy::Expanding,
                                                   QSizePolicy::Expanding};
+    _add = new QPushButton{tr("Add Dictionary..."), this};
 
-    _tabLayout->addWidget(_title, 1, 1, 1, -1);
-    _tabLayout->addWidget(_list, 2, 1, -1, 1);
-    _tabLayout->addWidget(_groupbox, 2, 2, -1, 1);
+    _tabLayout->addWidget(_explanatory, 1, 1, 1, -1);
+    _tabLayout->addWidget(_list, 2, 1, 1, 1);
+    _tabLayout->addWidget(_groupbox, 2, 2, 1, 1);
+    _tabLayout->addWidget(_add, 3, 1, 1, 1);
     _groupboxLayout = new QGridLayout{_groupbox};
     _groupboxLayout->setAlignment(Qt::AlignTop);
     _groupboxLayout->addWidget(_description, 1, 1, 2, 3);
@@ -54,6 +62,7 @@ DictionaryTab::DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
     _groupboxLayout->addWidget(_link, 9, 2, 1, 1);
     _groupboxLayout->setAlignment(_link, Qt::AlignBottom);
 
+
     setLayout(_tabLayout);
     _groupbox->setLayout(_groupboxLayout);
 
@@ -61,6 +70,24 @@ DictionaryTab::DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
             &QItemSelectionModel::currentChanged,
             this,
             &DictionaryTab::setDictionaryMetadata);
+
+    connect(_add, &QPushButton::clicked, this, [=] {
+        QFileDialog *_fileDialog = new QFileDialog{this};
+        _fileDialog->setFileMode(QFileDialog::ExistingFile);
+        _fileDialog->setAcceptMode(QFileDialog::AcceptOpen);
+
+        QString fileName = _fileDialog
+                               ->getOpenFileName(this,
+                                                 tr("Select dictionary file"),
+                                                 "/Users/aaron/Documents/Github/jyut-dict/src/cedict_to_sqlite/",
+                                                 "Dictionary Files (*.db)");
+//        qDebug() << fileName;
+        if (!fileName.toStdString().empty()) {
+            this->addDictionary(fileName);
+            clearDictionaryList();
+            populateDictionaryList();
+        }
+    });
 
     populateDictionaryList();
     _list->setCurrentIndex(_list->model()->index(0, 0));
@@ -70,7 +97,6 @@ void DictionaryTab::setDictionaryMetadata(const QModelIndex &index)
 {
     DictionaryMetadata metadata = qvariant_cast<DictionaryMetadata>(
         index.data());
-    _title->setText(metadata.getName().c_str());
     _description->setText(metadata.getDescription().c_str());
     _legal->setText(metadata.getLegal().c_str());
 
@@ -84,13 +110,19 @@ void DictionaryTab::setDictionaryMetadata(const QModelIndex &index)
     }
     disconnect(_remove, nullptr, nullptr, nullptr);
     connect(_remove, &QPushButton::clicked, this, [=] {
+        // TODO: Probably want to put this into a transaction so we can
+        // roll back if bad things happen.
         QSqlQuery query{_manager->getEnglishDatabase()};
         query.prepare("PRAGMA foreign_keys = ON");
+        query.exec();
+
+        query.prepare("DROP INDEX fk_entry_id_index");
         query.exec();
 
         query.prepare("DELETE FROM sources WHERE sourcename = ?");
         query.addBindValue(metadata.getName().c_str());
         query.exec();
+//        qDebug() << "Done deleting sources";
 
         query.prepare("DELETE FROM definitions_fts");
         query.exec();
@@ -101,6 +133,7 @@ void DictionaryTab::setDictionaryMetadata(const QModelIndex &index)
         query.prepare("DELETE FROM entries WHERE entry_id NOT IN "
                       "(SELECT fk_entry_id FROM definitions)");
         query.exec();
+//        qDebug() << "Done deleting entries";
 
         query.prepare("INSERT INTO entries_fts (rowid, pinyin, jyutping) "
                       "SELECT rowid, pinyin, jyutping FROM entries");
@@ -108,6 +141,9 @@ void DictionaryTab::setDictionaryMetadata(const QModelIndex &index)
 
         query.prepare("INSERT INTO definitions_fts (rowid, definition) "
                       "SELECT rowid, definition FROM definitions");
+        query.exec();
+
+        query.prepare("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
         query.exec();
 
         clearDictionaryList();
@@ -154,6 +190,74 @@ void DictionaryTab::populateDictionaryList()
                                       legal,
                                       link,
                                       other};
-        _list->model()->setData(_list->model()->index(row, 0), QVariant::fromValue(dictionary));
+        _list->model()->setData(_list->model()->index(row, 0),
+                                QVariant::fromValue(dictionary));
     }
+}
+
+void DictionaryTab::addDictionary(QString &dictionaryFile)
+{
+    // TODO: Probably want to put this into a transaction so we can
+    // roll back if bad things happen.
+    QSqlQuery query{_manager->getEnglishDatabase()};
+
+    query.prepare("ATTACH DATABASE ? AS db");
+    query.addBindValue(dictionaryFile);
+    query.exec();
+
+//    qDebug() << query.lastError();
+//    qDebug() << query.lastQuery();
+
+    query.prepare("DROP INDEX fk_entry_id_index");
+    query.exec();
+
+    query.prepare("DELETE FROM definitions_fts");
+    query.exec();
+
+    query.prepare("DELETE FROM entries_fts");
+    query.exec();
+
+    query.prepare("INSERT INTO entries(traditional, simplified, pinyin, "
+                  "jyutping, frequency) "
+                  "SELECT traditional, simplified, pinyin, jyutping, frequency "
+                  "FROM db.entries");
+    query.exec();
+
+    query.prepare("INSERT INTO sources(sourcename, version, description, "
+                  "legal, link, other) SELECT sourcename, version, "
+                  "description, legal, link, other FROM db.sources");
+    query.exec();
+
+    query.prepare("CREATE TEMPORARY TABLE definitions_tmp AS "
+                  "SELECT entries.traditional AS traditional, "
+                  "entries.simplified AS simplified,"
+                  "entries.pinyin AS pinyin, entries.jyutping AS jyutping, "
+                  "sources.sourcename AS sourcename, "
+                  "definitions.definition AS definition "
+                  "FROM db.entries, db.definitions, db.sources "
+                  "WHERE db.definitions.fk_entry_id = db.entries.entry_id "
+                  "AND db.definitions.fk_source_id = db.sources.source_id ");
+    query.exec();
+
+    query.prepare(
+        "INSERT INTO definitions(definition, fk_entry_id, fk_source_id) "
+        " SELECT d.definition, e.entry_id, s.source_id               "
+        " FROM definitions_tmp AS d, sources AS s, entries AS e      "
+        " WHERE d.sourcename = s.sourcename                          "
+        "     AND d.traditional = e.traditional                      "
+        "     AND d.simplified = e.simplified                        "
+        "     AND d.pinyin = e.pinyin                                "
+        "     AND d.jyutping = e.jyutping                            ");
+    query.exec();
+
+    query.prepare("INSERT INTO entries_fts (rowid, pinyin, jyutping) "
+                  "SELECT rowid, pinyin, jyutping FROM entries");
+    query.exec();
+
+    query.prepare("INSERT INTO definitions_fts (rowid, definition) "
+                  "SELECT rowid, definition FROM definitions");
+    query.exec();
+
+    query.prepare("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
+    query.exec();
 }
