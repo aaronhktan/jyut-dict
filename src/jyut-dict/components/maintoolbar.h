@@ -4,7 +4,7 @@
 #include "components/searchlineedit.h"
 #include "components/searchoptionsradiogroupbox.h"
 #include "logic/search/isearchoptionsmediator.h"
-#include "logic/search/sqldatabasemanager.h"
+#include "logic/database/sqldatabasemanager.h"
 
 #include <QHBoxLayout>
 #include <QToolBar>

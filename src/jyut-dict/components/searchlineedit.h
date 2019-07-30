@@ -4,7 +4,7 @@
 #include "components/isearchlineedit.h"
 #include "logic/search/isearch.h"
 #include "logic/search/isearchoptionsmediator.h"
-#include "logic/search/sqldatabasemanager.h"
+#include "logic/database/sqldatabasemanager.h"
 
 #include <QAction>
 #include <QEvent>

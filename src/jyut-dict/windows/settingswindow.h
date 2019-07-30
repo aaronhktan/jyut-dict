@@ -1,7 +1,7 @@
 #ifndef SETTINGSWINDOW_H
 #define SETTINGSWINDOW_H
 
-#include "logic/search/sqldatabasemanager.h"
+#include "logic/database/sqldatabasemanager.h"
 
 #include <QLayout>
 #include <QMainWindow>

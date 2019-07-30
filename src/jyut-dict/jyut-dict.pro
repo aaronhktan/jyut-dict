@@ -31,6 +31,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
+    logic/database/sqldatabaseutils.cpp \
     logic/dictionary/dictionarymetadata.cpp \
     main.cpp \
     components/definitioncontentwidget.cpp \
@@ -50,12 +51,12 @@ SOURCES += \
     components/resultlistview.cpp \
     components/searchlineedit.cpp \
     components/searchoptionsradiogroupbox.cpp \
+    logic/database/sqldatabasemanager.cpp \
     logic/dictionary/dictionarysource.cpp \
     logic/entry/definitionsset.cpp \
     logic/entry/entry.cpp \
     logic/entry/sentence.cpp \
     logic/search/searchoptionsmediator.cpp \
-    logic/search/sqldatabasemanager.cpp \
     logic/search/sqlsearch.cpp \
     logic/update/githubreleasechecker.cpp \
     logic/utils/utils.cpp \
@@ -83,6 +84,8 @@ HEADERS += \
     components/resultlistview.h \
     components/searchlineedit.h \
     components/searchoptionsradiogroupbox.h \
+    logic/database/sqldatabasemanager.h \
+    logic/database/sqldatabaseutils.h \
     logic/dictionary/dictionarymetadata.h \
     logic/dictionary/dictionarysource.h \
     logic/entry/definitionsset.h \
@@ -96,7 +99,6 @@ HEADERS += \
     logic/search/isearchoptionsmediator.h \
     logic/search/searchoptionsmediator.h \
     logic/search/searchparameters.h \
-    logic/search/sqldatabasemanager.h \
     logic/search/sqlsearch.h \
     logic/update/githubreleasechecker.h \
     logic/update/iupdatechecker.h \

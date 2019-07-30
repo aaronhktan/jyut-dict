@@ -4,7 +4,7 @@
 #include "components/mainsplitter.h"
 #include "components/maintoolbar.h"
 #include "logic/update/githubreleasechecker.h"
-#include "logic/search/sqldatabasemanager.h"
+#include "logic/database/sqldatabasemanager.h"
 
 #include <QMainWindow>
 #include <QMenu>

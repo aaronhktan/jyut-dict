@@ -1,8 +1,9 @@
 #ifndef DICTIONARYTAB_H
 #define DICTIONARYTAB_H
 
+#include "logic/database/sqldatabasemanager.h"
+#include "logic/database/sqldatabaseutils.h"
 #include "logic/dictionary/dictionarymetadata.h"
-#include "logic/search/sqldatabasemanager.h"
 
 #include <QLabel>
 #include <QGridLayout>
@@ -31,6 +32,7 @@ private:
     void clearDictionaryList();
     void populateDictionaryList();
     void addDictionary(QString &dictionaryFile);
+    void removeDictionary(DictionaryMetadata metadata);
 
     QLabel *_explanatory;
     QLabel *_description;
@@ -48,6 +50,7 @@ private:
 
     std::shared_ptr<SQLDatabaseManager> _manager;
 
+    SQLDatabaseUtils *_utils;
 signals:
 
 public slots:
