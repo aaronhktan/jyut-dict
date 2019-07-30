@@ -67,7 +67,7 @@ def write(entries, db_name):
 
     c.execute('''CREATE TABLE sources(
                     source_id INTEGER PRIMARY KEY,
-                    sourcename TEXT UNIQUE ON CONFLICT IGNORE,
+                    sourcename TEXT UNIQUE ON CONFLICT ABORT,
                     version TEXT,
                     description TEXT,
                     legal TEXT,
@@ -81,7 +81,8 @@ def write(entries, db_name):
                     fk_entry_id INTEGER,
                     fk_source_id INTEGER,
                     FOREIGN KEY(fk_entry_id) REFERENCES entries(entry_id) ON UPDATE CASCADE,
-                    FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON DELETE CASCADE
+                    FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON DELETE CASCADE,
+                    UNIQUE(definition, fk_entry_id, fk_source_id) ON CONFLICT IGNORE
                 )''')
     c.execute('CREATE VIRTUAL TABLE definitions_fts using fts5(definition)')
 
