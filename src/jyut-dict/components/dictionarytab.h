@@ -10,6 +10,7 @@
 #include <QGroupBox>
 #include <QListView>
 #include <QModelIndex>
+#include <QProgressDialog>
 #include <QPushButton>
 #include <QWidget>
 
@@ -47,6 +48,8 @@ private:
 
     QListView *_list;
     QGroupBox *_groupbox;
+
+    QProgressDialog *_dialog;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
 

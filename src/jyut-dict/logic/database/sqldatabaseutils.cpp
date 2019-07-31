@@ -3,6 +3,7 @@
 #include <QtSql>
 
 SQLDatabaseUtils::SQLDatabaseUtils(std::shared_ptr<SQLDatabaseManager> manager)
+    : QObject()
 {
     _manager = manager;
 }
@@ -23,6 +24,8 @@ bool SQLDatabaseUtils::removeSource(std::string source)
     query.exec("COMMIT");
     query.exec("PRAGMA foreign_keys = OFF");
 
+    emit deletingDefinitions();
+
     query.exec("BEGIN TRANSACTION");
     query.exec("DELETE FROM definitions_fts");
     query.exec("DELETE FROM entries_fts");
@@ -38,7 +41,7 @@ bool SQLDatabaseUtils::removeSource(std::string source)
     int numberToDelete = 0;
     while (query.next()) {
         numberToDelete = query.value(0).toInt();
-        qDebug() << "Number to delete: " << numberToDelete;
+        emit totalToDelete(numberToDelete);
     }
 
     query.exec("SAVEPOINT row_delection");
@@ -48,10 +51,12 @@ bool SQLDatabaseUtils::removeSource(std::string source)
                    "  LEFT JOIN definitions "
                    "  ON definitions.fk_entry_id=entries.entry_id "
                    "  WHERE definitions.fk_entry_id IS NULL LIMIT 1000)");
-        qDebug() << "Deleting " << i;
+        emit deletionProgress(i, numberToDelete);
     }
+    emit deletionProgress(numberToDelete, numberToDelete);
     query.exec("RELEASE row_deletion");
 
+    emit rebuildingIndexes();
     query.exec("INSERT INTO entries_fts (rowid, pinyin, jyutping) "
                "SELECT rowid, pinyin, jyutping FROM entries");
 
@@ -60,6 +65,11 @@ bool SQLDatabaseUtils::removeSource(std::string source)
 
     query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
     query.exec("COMMIT");
+
+    emit cleaningUp();
+    query.exec("VACUUM");
+
+    emit finishedDeletion(true);
     return true;
 }
 
@@ -78,6 +88,8 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
 
     query.exec("DELETE FROM entries_fts");
 
+    emit insertingSource();
+
     query.exec("INSERT INTO sources(sourcename, version, description, "
                " legal, link, other) "
                "SELECT sourcename, version, description, legal, link, other "
@@ -86,15 +98,21 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
     if (query.lastError().isValid()) {
         qDebug() << query.lastError();
         qDebug() << "Failed to add source, is this a duplicate?";
-        query.exec("DETACH DATABASE db");
         query.exec("ROLLBACK");
+        query.exec("DETACH DATABASE db");
+
+        emit finishedAddition(false);
         return false;
     }
+
+    emit insertingEntries();
 
     query.exec("INSERT INTO entries(traditional, simplified, pinyin, "
                " jyutping, frequency)"
                "SELECT traditional, simplified, pinyin, jyutping, frequency "
                "FROM db.entries");
+
+    emit insertingDefinitions();
 
     query.exec("CREATE TEMPORARY TABLE definitions_tmp AS "
                " SELECT entries.traditional AS traditional, "
@@ -115,6 +133,8 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
                "  AND d.pinyin = e.pinyin "
                "  AND d.jyutping = e.jyutping");
 
+    emit rebuildingIndexes();
+
     query.exec("INSERT INTO entries_fts (rowid, pinyin, jyutping) "
                "SELECT rowid, pinyin, jyutping FROM entries");
 
@@ -123,8 +143,11 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
 
     query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
 
+    query.exec("COMMIT");
+
     query.exec("DETACH DATABASE db");
 
-    query.exec("COMMIT");
+    emit finishedAddition(true);
+
     return true;
 }

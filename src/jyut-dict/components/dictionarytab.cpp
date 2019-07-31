@@ -3,6 +3,7 @@
 #include "components/dictionarylistview.h"
 #include "logic/dictionary/dictionarymetadata.h"
 
+#include <QtConcurrent/QtConcurrent>
 #include <QDesktopServices>
 #include <QFileDialog>
 #include <QSpacerItem>
@@ -85,9 +86,6 @@ DictionaryTab::DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
         //        qDebug() << fileName;
         if (!fileName.toStdString().empty()) {
             addDictionary(fileName);
-            clearDictionaryList();
-            populateDictionaryList();
-            _list->setCurrentIndex(_list->model()->index(0, 0));
         }
     });
 
@@ -111,9 +109,6 @@ void DictionaryTab::setDictionaryMetadata(const QModelIndex &index)
     disconnect(_remove, nullptr, nullptr, nullptr);
     connect(_remove, &QPushButton::clicked, this, [=] {
         removeDictionary(metadata);
-        clearDictionaryList();
-        populateDictionaryList();
-        _list->setCurrentIndex(_list->model()->index(0, 0));
     });
 }
 
@@ -162,10 +157,109 @@ void DictionaryTab::populateDictionaryList()
 
 void DictionaryTab::addDictionary(QString &dictionaryFile)
 {
-    _utils->addSource(dictionaryFile.toStdString());
+    QtConcurrent::run(_utils,
+                      &SQLDatabaseUtils::addSource,
+                      dictionaryFile.toStdString());
+
+    _dialog = new QProgressDialog{"", QString(), 0, 0, this};
+    _dialog->setWindowModality(Qt::ApplicationModal);
+    _dialog->setMinimumSize(300, 75);
+    Qt::WindowFlags flags = _dialog->windowFlags() | Qt::CustomizeWindowHint;
+    flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
+               | Qt::WindowFullscreenButtonHint);
+    _dialog->setWindowFlags(flags);
+    _dialog->setMinimumDuration(0);
+    _dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+
+    _dialog->setLabelText(tr("Dropping search indexes..."));
+    _dialog->setRange(0, 0);
+    _dialog->setValue(0);
+
+    disconnect(_utils, nullptr, nullptr, nullptr);
+    connect(_utils, &SQLDatabaseUtils::insertingSource, this, [&] {
+        _dialog->setLabelText(tr("Adding source..."));
+    });
+
+    connect(_utils, &SQLDatabaseUtils::insertingEntries, this, [&] {
+        _dialog->setLabelText(tr("Adding new entries..."));
+    });
+
+    connect(_utils, &SQLDatabaseUtils::insertingDefinitions, this, [&] {
+        _dialog->setLabelText(tr("Adding new definitions..."));
+    });
+
+    connect(_utils, &SQLDatabaseUtils::rebuildingIndexes, this, [&] {
+        _dialog->setLabelText(tr("Rebuilding search indexes..."));
+    });
+
+    connect(_utils, &SQLDatabaseUtils::finishedAddition, this, [&](bool success) {
+        _dialog->setLabelText(success ? tr("Done!") : tr("Failed!"));
+        QTimer::singleShot(500, [&] {
+            _dialog->reset();
+            clearDictionaryList();
+            populateDictionaryList();
+            _list->setCurrentIndex(_list->model()->index(0, 0));
+        });
+    });
 }
 
 void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
 {
-    _utils->removeSource(metadata.getName());
+    QtConcurrent::run(_utils,
+                      &SQLDatabaseUtils::removeSource,
+                      metadata.getName());
+
+    _dialog = new QProgressDialog{"", QString(), 0, 0, this};
+    _dialog->setWindowModality(Qt::ApplicationModal);
+    _dialog->setMinimumSize(300, 75);
+    Qt::WindowFlags flags = _dialog->windowFlags() | Qt::CustomizeWindowHint;
+    flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
+               | Qt::WindowFullscreenButtonHint);
+    _dialog->setWindowFlags(flags);
+    _dialog->setMinimumDuration(0);
+    _dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+
+    _dialog->setLabelText(tr("Removing source..."));
+    _dialog->setRange(0, 0);
+    _dialog->setValue(0);
+
+    disconnect(_utils, nullptr, nullptr, nullptr);
+    connect(_utils, &SQLDatabaseUtils::deletingDefinitions, this, [&] {
+        _dialog->setLabelText(tr("Removing definitions..."));
+    });
+
+    connect(_utils, &SQLDatabaseUtils::totalToDelete, this, [&](int numToDelete) {
+        _dialog->setRange(0, numToDelete + 1);
+        _dialog->setLabelText(
+            QString{tr("Deleted definition 0 of %1")}.arg(numToDelete));
+    });
+
+    connect(_utils,
+            &SQLDatabaseUtils::deletionProgress,
+            this,
+            [&](int deleted, int total) {
+                _dialog->setLabelText(
+                    QString{tr("Deleted definition %1 of %2")}.arg(deleted).arg(
+                        total));
+                _dialog->setValue(deleted);
+            });
+
+    connect(_utils, &SQLDatabaseUtils::rebuildingIndexes, this, [&] {
+        _dialog->setLabelText(tr("Rebuilding search indexes..."));
+        _dialog->setRange(0, 0);
+    });
+
+    connect(_utils, &SQLDatabaseUtils::rebuildingIndexes, this, [&] {
+        _dialog->setLabelText(tr("Cleaning up..."));
+            });
+
+    connect(_utils, &SQLDatabaseUtils::finishedDeletion, this, [&](bool success) {
+        _dialog->setLabelText(success ? tr("Done!") : tr("Failed!"));
+        QTimer::singleShot(500, [&] {
+            _dialog->reset();
+            clearDictionaryList();
+            populateDictionaryList();
+            _list->setCurrentIndex(_list->model()->index(0, 0));
+        });
+    });
 }
