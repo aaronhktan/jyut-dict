@@ -76,11 +76,27 @@ bool SQLDatabaseUtils::removeSource(std::string source)
 bool SQLDatabaseUtils::addSource(std::string filepath)
 {
     QSqlQuery query{_manager->getEnglishDatabase()};
-    query.exec("BEGIN TRANSACTION");
 
     query.prepare("ATTACH DATABASE ? AS db");
     query.addBindValue(filepath.c_str());
     query.exec();
+
+    query.exec("PRAGMA user_version");
+    while (query.next()) {
+        int version = query.value(0).toInt();
+
+        if (version != CURRENT_DATABASE_VERSION) {
+            emit
+                finishedAddition(false,
+                                 tr("Database versions do not match."),
+                                 tr("Current version is %1, file version is %2")
+                                     .arg(CURRENT_DATABASE_VERSION)
+                                     .arg(version));
+            return false;
+        }
+    }
+
+    query.exec("BEGIN TRANSACTION");
 
     query.exec("DROP INDEX fk_entry_id_index");
 
@@ -90,18 +106,23 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
 
     emit insertingSource();
 
+    query.exec("SELECT sourcename FROM db.sources");
+
     query.exec("INSERT INTO sources(sourcename, version, description, "
-               " legal, link, other) "
-               "SELECT sourcename, version, description, legal, link, other "
+               " legal, link, update_url, other) "
+               "SELECT sourcename, version, description, legal, link, "
+               " update_url, other "
                "FROM db.sources");
 
     if (query.lastError().isValid()) {
-        qDebug() << query.lastError();
-        qDebug() << "Failed to add source, is this a duplicate?";
-        query.exec("ROLLBACK");
+        QString error = query.lastError().text();
         query.exec("DETACH DATABASE db");
 
-        emit finishedAddition(false);
+        emit finishedAddition(
+            false,
+            tr("Could not insert source. Could it be a duplicate of a "
+               "dictionary you already installed?"),
+            error);
         return false;
     }
 
@@ -114,6 +135,7 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
 
     emit insertingDefinitions();
 
+    query.exec("DROP TABLE IF EXISTS definitions_tmp");
     query.exec("CREATE TEMPORARY TABLE definitions_tmp AS "
                " SELECT entries.traditional AS traditional, "
                "  entries.simplified AS simplified, "
@@ -147,7 +169,7 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
 
     query.exec("DETACH DATABASE db");
 
-    emit finishedAddition(true);
+    emit finishedAddition(true, "", "");
 
     return true;
 }

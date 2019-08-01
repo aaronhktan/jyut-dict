@@ -7,6 +7,8 @@
 
 #include <memory>
 
+constexpr auto CURRENT_DATABASE_VERSION = 1;
+
 class SQLDatabaseUtils : public QObject
 {
 Q_OBJECT
@@ -30,7 +32,7 @@ signals:
     void insertingSource();
     void insertingEntries();
     void insertingDefinitions();
-    void finishedAddition(bool success);
+    void finishedAddition(bool success, QString reason, QString description);
 };
 
 #endif // SQLDATABASEUTILS_H

@@ -9,6 +9,7 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QListView>
+#include <QMessageBox>
 #include <QModelIndex>
 #include <QProgressDialog>
 #include <QPushButton>
@@ -38,6 +39,7 @@ private:
     QLabel *_explanatory;
     QLabel *_description;
     QLabel *_legal;
+    QLabel *_version;
 
     QPushButton *_add;
     QPushButton *_remove;
@@ -50,6 +52,7 @@ private:
     QGroupBox *_groupbox;
 
     QProgressDialog *_dialog;
+    QMessageBox *_message;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
 

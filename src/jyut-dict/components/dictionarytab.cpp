@@ -42,12 +42,15 @@ DictionaryTab::DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
     _legal = new QLabel{this};
     _legal->setWordWrap(true);
     _legal->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    _version = new QLabel{this};
+    _version->setWordWrap(true);
+    _version->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     _remove = new QPushButton{tr("Delete Dictionary"), this};
     _link = new QPushButton{tr("Website"), this};
     QSpacerItem *verticalSpacer = new QSpacerItem{0,
                                                   0,
-                                                  QSizePolicy::Expanding,
-                                                  QSizePolicy::Expanding};
+                                                  QSizePolicy::MinimumExpanding,
+                                                  QSizePolicy::MinimumExpanding};
     _add = new QPushButton{tr("Add Dictionary..."), this};
 
     _tabLayout->addWidget(_explanatory, 1, 1, 1, -1);
@@ -56,9 +59,10 @@ DictionaryTab::DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
     _tabLayout->addWidget(_add, 3, 1, 1, 1);
     _groupboxLayout = new QGridLayout{_groupbox};
     _groupboxLayout->setAlignment(Qt::AlignTop);
-    _groupboxLayout->addWidget(_description, 1, 1, 2, 3);
-    _groupboxLayout->addWidget(_legal, 3, 1, 2, 3);
-    _groupboxLayout->addItem(verticalSpacer, 5, 1, 1, -1);
+    _groupboxLayout->addWidget(_description, 1, 1, 4, 3);
+    _groupboxLayout->addWidget(_legal, 5, 1, 2, 3);
+    _groupboxLayout->addWidget(_version, 7, 1, 1, 3);
+    _groupboxLayout->addItem(verticalSpacer, 8, 1, 1, -1);
     _groupboxLayout->addWidget(_remove, 9, 3, 1, 1);
     _groupboxLayout->setAlignment(_remove, Qt::AlignBottom);
     _groupboxLayout->addWidget(_link, 9, 2, 1, 1);
@@ -83,7 +87,6 @@ DictionaryTab::DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
             tr("Select dictionary file"),
             "/Users/aaron/Documents/Github/jyut-dict/src/cedict_to_sqlite/",
             "Dictionary Files (*.db)");
-        //        qDebug() << fileName;
         if (!fileName.toStdString().empty()) {
             addDictionary(fileName);
         }
@@ -99,6 +102,8 @@ void DictionaryTab::setDictionaryMetadata(const QModelIndex &index)
         index.data());
     _description->setText(metadata.getDescription().c_str());
     _legal->setText(metadata.getLegal().c_str());
+    _version->setText(QString("Version: %1")
+                          .arg(metadata.getVersion().c_str()));
 
     disconnect(_link, nullptr, nullptr, nullptr);
     connect(_link, &QPushButton::clicked, this, [=] {
@@ -192,15 +197,55 @@ void DictionaryTab::addDictionary(QString &dictionaryFile)
         _dialog->setLabelText(tr("Rebuilding search indexes..."));
     });
 
-    connect(_utils, &SQLDatabaseUtils::finishedAddition, this, [&](bool success) {
-        _dialog->setLabelText(success ? tr("Done!") : tr("Failed!"));
-        QTimer::singleShot(500, [&] {
-            _dialog->reset();
-            clearDictionaryList();
-            populateDictionaryList();
-            _list->setCurrentIndex(_list->model()->index(0, 0));
-        });
-    });
+    connect(_utils,
+            &SQLDatabaseUtils::finishedAddition,
+            this,
+            [&](bool success, QString reason, QString description) {
+                _dialog->setLabelText(success ? tr("Done!") : tr("Failed!"));
+                _dialog->reset();
+                clearDictionaryList();
+                populateDictionaryList();
+                _list->setCurrentIndex(_list->model()->index(0, 0));
+
+                if (!success) {
+                    _message = new QMessageBox{this};
+                    Qt::WindowFlags flags = _message->windowFlags()
+                                            | Qt::CustomizeWindowHint;
+                    flags &= ~(Qt::WindowMinMaxButtonsHint
+                               | Qt::WindowCloseButtonHint
+                               | Qt::WindowFullscreenButtonHint);
+                    _message->setWindowFlags(flags);
+                    _message->setAttribute(Qt::WA_DeleteOnClose, true);
+                    _message->setText(tr("Failed to add source!"));
+                    _message->setInformativeText(reason);
+                    _message->setDetailedText(description);
+                    _message->setIcon(QMessageBox::Warning);
+                    // setDefaultButton doesn't really work, so use this
+                    // workaround to deselect all buttons first.
+                    for (auto button : _message->buttons()) {
+                        QPushButton *b = static_cast<QPushButton *>(button);
+                        b->setDown(false);
+                        b->setAutoDefault(false);
+                        b->setDefault(false);
+                    }
+                    _message->setDefaultButton(QMessageBox::Ok);
+                    // Setting minimum width also doesn't work, so use this
+                    // workaround to set a width.
+                    QSpacerItem *horizontalSpacer
+                        = new QSpacerItem(400,
+                                          0,
+                                          QSizePolicy::Minimum,
+                                          QSizePolicy::Minimum);
+                    QGridLayout *layout = static_cast<QGridLayout *>(
+                        _message->layout());
+                    layout->addItem(horizontalSpacer,
+                                    layout->rowCount(),
+                                    0,
+                                    1,
+                                    layout->columnCount());
+                    _message->exec();
+                }
+            });
 }
 
 void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
@@ -251,15 +296,18 @@ void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
 
     connect(_utils, &SQLDatabaseUtils::rebuildingIndexes, this, [&] {
         _dialog->setLabelText(tr("Cleaning up..."));
-            });
-
-    connect(_utils, &SQLDatabaseUtils::finishedDeletion, this, [&](bool success) {
-        _dialog->setLabelText(success ? tr("Done!") : tr("Failed!"));
-        QTimer::singleShot(500, [&] {
-            _dialog->reset();
-            clearDictionaryList();
-            populateDictionaryList();
-            _list->setCurrentIndex(_list->model()->index(0, 0));
-        });
     });
+
+    connect(_utils,
+            &SQLDatabaseUtils::finishedDeletion,
+            this,
+            [&](bool success) {
+                _dialog->setLabelText(success ? tr("Done!") : tr("Failed!"));
+                QTimer::singleShot(500, [&] {
+                    _dialog->reset();
+                    clearDictionaryList();
+                    populateDictionaryList();
+                    _list->setCurrentIndex(_list->model()->index(0, 0));
+                });
+            });
 }
