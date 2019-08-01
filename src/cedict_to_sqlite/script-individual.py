@@ -3,40 +3,27 @@ from wordfreq import zipf_frequency
 import sqlite3
 import sys
 
-sources = {
-    'CC-CEDICT': {
-        'name': 'CC-CEDICT',
-        'version': '2018-07-09',
-        'description': 'CC-CEDICT is a continuation of the CEDICT project started by Paul Denisowski in 1997 with the aim to provide a complete downloadable Chinese to English dictionary with pronunciation in pinyin for the Chinese characters.',
-        'legal': 'This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.',
-        'link': 'http://www.mdbg.net/chindict/chindict.php?page=cc-cedict',
-        'other': ''
-    },
-    'CC-CANTO': {
-        'name': 'CC-CANTO',
-        'version': '2016-01-15',
-        'description': 'CC-Canto is an open-source Cantonese-to-English dictionary with about 22,000 entries, designed to be used alongside CC-CEDICT.',
-        'legal': 'This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License.',
-        'link': 'http://cantonese.org/download.html',
-        'other': ''
-    }
+source = {
+    'name': '',
+    'version': '',
+    'description': '',
+    'legal': '',
+    'link': '',
+    'update_url': '',
+    'other': ''
 }
 
 class Entry(object):
-    def __init__(self, trad='', simp='', pin='', jyut='', freq=0.0, cedict_eng=[], canto_eng=[]):
+    def __init__(self, trad='', simp='', pin='', jyut='', freq=0.0, defs=[]):
         self.traditional = trad
         self.simplified = simp
         self.pinyin = pin
         self.jyutping = jyut
         self.freq = freq
-        self.cedict_english = cedict_eng
-        self.canto_english = canto_eng
+        self.definitions = defs
 
     def add_jyut_ping(self, jyut):
         self.jyutping = jyut
-
-    def add_canto_eng(self, canto_eng):
-        self.canto_english = canto_eng
 
     def add_freq(self, freq):
         self.freq = freq
@@ -44,6 +31,9 @@ class Entry(object):
 def write(entries, db_name):
     db = sqlite3.connect(db_name)
     c = db.cursor()
+
+    # Set version of database
+    c.execute('PRAGMA user_version=1')
 
     # Delete old tables and indices
     c.execute('DROP TABLE IF EXISTS entries')
@@ -72,6 +62,7 @@ def write(entries, db_name):
                     description TEXT,
                     legal TEXT,
                     link TEXT,
+                    update_url TEXT,
                     other TEXT
                 )''')
 
@@ -114,7 +105,7 @@ def write(entries, db_name):
     #             ''')
 
     # Add sources to tables
-    {c.execute('INSERT INTO sources values(?,?,?,?,?,?,?)', (None, value['name'], value['version'], value['description'], value['legal'], value['link'], value['other'])) for key, value in sources.items()}
+    c.execute('INSERT INTO sources values(?,?,?,?,?,?,?,?)', (None, source['name'], source['version'], source['description'], source['legal'], source['link'], source['update_url'], source['other']))
 
     # Add entries to tables
     def entry_to_tuple(entry):
@@ -129,8 +120,7 @@ def write(entries, db_name):
 
             c.execute('SELECT last_insert_rowid()')
             entry_id = c.fetchone()[0]
-            definition_tuples = [definition_to_tuple(definition, entry_id, list(sources).index('CC-CEDICT')+1) for definition in entry.cedict_english]
-            definition_tuples += [definition_to_tuple(definition, entry_id, list(sources).index('CC-CANTO')+1) for definition in entry.canto_english]
+            definition_tuples = [definition_to_tuple(definition, entry_id, 1) for definition in entry.definitions]
             c.executemany('INSERT INTO definitions values (?,?,?,?)', definition_tuples)
 
     # Populate FTS versions of tables
@@ -143,7 +133,7 @@ def write(entries, db_name):
     db.commit()
     db.close()
 
-def parse_cc_cedict(filename, entries):
+def parse_file(filename, entries):
     with open(filename, 'r') as f:
         for index, line in enumerate(f):
             if (len(line) == 0 or line[0] == '#'):
@@ -153,39 +143,14 @@ def parse_cc_cedict(filename, entries):
             trad = split[0]
             simp = split[1]
             pin = line[line.index('[') + 1 : line.index(']')]
-            eng = line[line.index('/') + 1 : -2].split('/')
+            definitions = line[line.index('/') + 1 : -2].split('/')
             entry = Entry(trad=trad,
                           simp=simp,
                           pin=pin,
-                          cedict_eng=eng)
+                          defs=definitions)
 
             if trad in entries:
                 entries[trad].append(entry)
-            else:
-                entries[trad] = [entry]
-
-def parse_cc_canto(filename, entries):
-    with open(filename, 'r') as f:
-        for line in f:
-            if (len(line) == 0 or line[0] == '#'):
-                continue
-
-            split = line.split() # Splits by whitespace
-            trad = split[0]
-            simp = split[1]
-            pin = line[line.index('[') + 1 : line.index(']')]
-            jyut = line[line.index('{') + 1 : line.index('}')]
-            eng = [line[line.index('/') + 1 : -2]]
-            entry = Entry(trad=trad,
-                          simp=simp,
-                          pin=pin,
-                          jyut=jyut,
-                          canto_eng=eng)
-
-            if trad in entries:
-                for entry in entries[trad]:
-                    entry.add_jyut_ping(jyut)
-                entries[trad][0].add_canto_eng(eng)
             else:
                 entries[trad] = [entry]
 
@@ -211,14 +176,20 @@ def assign_frequencies(entries):
             entry.add_freq(freq)
 
 if __name__ == '__main__':
-    if len(sys.argv) != 5:
-        print('Usage: python3 script.py <database filename> <CC_CEDICT file> <CC_CANTO file> <Cantonese Readings file>')
-        print('e.g. python3 script.py eng.db CC-CEDICT.txt CC-CANTO.txt READINGS.txt')
+    if len(sys.argv) != 11:
+        print('Usage: python3 script.py <database filename> <CC_CEDICT file> <Cantonese readings file> <source name> <source version> <source description> <source legal> <source link> <source update url> <source other>')
+        print('e.g. python3 script.py dict.db CEDICT.txt READINGS.txt CC-CEDICT 2018-07-09 "CC-CEDICT is a dictionary." "This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License." "http://www.mdbg.net/chindict/chindict.php?page=cc-cedict" "" ""')
         sys.exit(1)
 
     entries = {}
-    parse_cc_cedict(sys.argv[2], entries)
-    parse_cc_canto(sys.argv[3], entries)
-    parse_cc_cedict_canto_readings(sys.argv[4], entries)
+    source['name'] = sys.argv[4]
+    source['version'] = sys.argv[5]
+    source['description'] = sys.argv[6]
+    source['legal'] = sys.argv[7]
+    source['link'] = sys.argv[8]
+    source['update_url'] = sys.argv[9]
+    source['other'] = sys.argv[10]
+    parse_file(sys.argv[2], entries)
+    parse_cc_cedict_canto_readings(sys.argv[3], entries)
     assign_frequencies(entries)
     write(entries, sys.argv[1])

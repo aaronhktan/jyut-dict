@@ -12,6 +12,9 @@ if __name__ == '__main__':
     db = sqlite3.connect(sys.argv[1])
     c = db.cursor()
 
+    # Set version of database
+    c.execute('PRAGMA user_version=1')
+
     # Attach new databases
     c.execute('ATTACH DATABASE \'{}\' AS db1'.format(sys.argv[2]))
     c.execute('ATTACH DATABASE \'{}\' AS db2'.format(sys.argv[3]))
@@ -43,6 +46,7 @@ if __name__ == '__main__':
                     description TEXT,
                     legal TEXT,
                     link TEXT,
+                    update_url TEXT,
                     other TEXT
                 )''')
 
@@ -59,12 +63,12 @@ if __name__ == '__main__':
 
     # Insert from first database
     c.execute('INSERT INTO entries(traditional, simplified, pinyin, jyutping, frequency) SELECT traditional, simplified, pinyin, jyutping, frequency FROM db1.entries')
-    c.execute('INSERT INTO sources(sourcename, version, description, legal, link, other) SELECT sourcename, version, description, legal, link, other FROM db1.sources')
+    c.execute('INSERT INTO sources(sourcename, version, description, legal, link, update_url, other) SELECT sourcename, version, description, legal, link, update_url, other FROM db1.sources')
     c.execute('INSERT INTO definitions(definition, fk_entry_id, fk_source_id) SELECT definition, fk_entry_id, fk_source_id FROM db1.definitions')
 
     # Insert from second database
     c.execute('INSERT INTO entries(traditional, simplified, pinyin, jyutping, frequency) SELECT traditional, simplified, pinyin, jyutping, frequency FROM db2.entries')
-    c.execute('INSERT INTO sources(sourcename, version, description, legal, link, other) SELECT sourcename, version, description, legal, link, other FROM db2.sources')
+    c.execute('INSERT INTO sources(sourcename, version, description, legal, link, update_url, other) SELECT sourcename, version, description, legal, link, update_url, other FROM db2.sources')
 
     c.execute('''CREATE TEMPORARY TABLE definitions_tmp AS
                     SELECT entries.traditional AS traditional, entries.simplified AS simplified, entries.pinyin AS pinyin, entries.jyutping AS jyutping,
