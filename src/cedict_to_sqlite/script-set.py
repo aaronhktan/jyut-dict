@@ -6,6 +6,7 @@ import sys
 sources = {
     'CC-CEDICT': {
         'name': 'CC-CEDICT',
+        'shortname': 'CC',
         'version': '2018-07-09',
         'description': 'CC-CEDICT is a continuation of the CEDICT project started by Paul Denisowski in 1997 with the aim to provide a complete downloadable Chinese to English dictionary with pronunciation in pinyin for the Chinese characters.',
         'legal': 'This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.',
@@ -15,6 +16,7 @@ sources = {
     },
     'CC-CANTO': {
         'name': 'CC-CANTO',
+        'shortname': 'CCY',
         'version': '2016-01-15',
         'description': 'CC-Canto is an open-source Cantonese-to-English dictionary with about 22,000 entries, designed to be used alongside CC-CEDICT.',
         'legal': 'This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License.',
@@ -73,6 +75,7 @@ def write(entries, db_name):
     c.execute('''CREATE TABLE sources(
                     source_id INTEGER PRIMARY KEY,
                     sourcename TEXT UNIQUE ON CONFLICT ABORT,
+                    sourceshortname TEXT,
                     version TEXT,
                     description TEXT,
                     legal TEXT,
@@ -120,7 +123,7 @@ def write(entries, db_name):
     #             ''')
 
     # Add sources to tables
-    {c.execute('INSERT INTO sources values(?,?,?,?,?,?,?,?)', (None, value['name'], value['version'], value['description'], value['legal'], value['link'], value['update_url'], value['other'])) for key, value in sources.items()}
+    {c.execute('INSERT INTO sources values(?,?,?,?,?,?,?,?,?)', (None, value['name'], value['shortname'], value['version'], value['description'], value['legal'], value['link'], value['update_url'], value['other'])) for key, value in sources.items()}
 
     # Add entries to tables
     def entry_to_tuple(entry):

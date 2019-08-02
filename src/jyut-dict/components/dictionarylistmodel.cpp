@@ -7,7 +7,6 @@ DictionaryListModel::DictionaryListModel(QObject *parent)
     : QAbstractListModel(parent)
 {
     _dictionaries = {};
-//    setDictionaries(std::vector<DictionarySource>{CEDICT, CCCANTO, CFDICT});
 }
 
 void DictionaryListModel::setDictionaries(

@@ -2,7 +2,6 @@
 #define DICTIONARYLISTMODEL_H
 
 #include "logic/dictionary/dictionarymetadata.h"
-#include "logic/dictionary/dictionarysource.h"
 
 #include <QAbstractListModel>
 

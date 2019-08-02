@@ -2,6 +2,7 @@
 
 #include "components/dictionarylistview.h"
 #include "logic/dictionary/dictionarymetadata.h"
+#include "logic/dictionary/dictionarysource.h"
 
 #include <QtConcurrent/QtConcurrent>
 #include <QDesktopServices>
@@ -207,6 +208,12 @@ void DictionaryTab::addDictionary(QString &dictionaryFile)
                 populateDictionaryList();
                 _list->setCurrentIndex(_list->model()->index(0, 0));
 
+                std::vector<std::pair<std::string, std::string>> sources
+                    = _utils->readSources();
+                for (auto source : sources) {
+                    DictionarySourceUtils::addSource(source.first, source.second);
+                }
+
                 if (!success) {
                     _message = new QMessageBox{this};
                     Qt::WindowFlags flags = _message->windowFlags()
@@ -303,6 +310,15 @@ void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
             this,
             [&](bool success) {
                 _dialog->setLabelText(success ? tr("Done!") : tr("Failed!"));
+
+                if (success) {
+                    std::vector<std::pair<std::string, std::string>> sources
+                        = _utils->readSources();
+                    for (auto source : sources) {
+                        DictionarySourceUtils::addSource(source.first, source.second);
+                    }
+                }
+
                 QTimer::singleShot(500, [&] {
                     _dialog->reset();
                     clearDictionaryList();

@@ -42,6 +42,7 @@ if __name__ == '__main__':
     c.execute('''CREATE TABLE sources(
                     source_id INTEGER PRIMARY KEY,
                     sourcename TEXT UNIQUE ON CONFLICT ABORT,
+                    sourceshortname TEXT,
                     version TEXT,
                     description TEXT,
                     legal TEXT,
@@ -63,12 +64,12 @@ if __name__ == '__main__':
 
     # Insert from first database
     c.execute('INSERT INTO entries(traditional, simplified, pinyin, jyutping, frequency) SELECT traditional, simplified, pinyin, jyutping, frequency FROM db1.entries')
-    c.execute('INSERT INTO sources(sourcename, version, description, legal, link, update_url, other) SELECT sourcename, version, description, legal, link, update_url, other FROM db1.sources')
+    c.execute('INSERT INTO sources(sourcename, sourceshortname, version, description, legal, link, update_url, other) SELECT sourcename, sourceshortname, version, description, legal, link, update_url, other FROM db1.sources')
     c.execute('INSERT INTO definitions(definition, fk_entry_id, fk_source_id) SELECT definition, fk_entry_id, fk_source_id FROM db1.definitions')
 
     # Insert from second database
     c.execute('INSERT INTO entries(traditional, simplified, pinyin, jyutping, frequency) SELECT traditional, simplified, pinyin, jyutping, frequency FROM db2.entries')
-    c.execute('INSERT INTO sources(sourcename, version, description, legal, link, update_url, other) SELECT sourcename, version, description, legal, link, update_url, other FROM db2.sources')
+    c.execute('INSERT INTO sources(sourcename, sourceshortname, version, description, legal, link, update_url, other) SELECT sourcename, sourceshortname, version, description, legal, link, update_url, other FROM db2.sources')
 
     c.execute('''CREATE TEMPORARY TABLE definitions_tmp AS
                     SELECT entries.traditional AS traditional, entries.simplified AS simplified, entries.pinyin AS pinyin, entries.jyutping AS jyutping,

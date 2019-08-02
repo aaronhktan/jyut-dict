@@ -7,13 +7,13 @@ DefinitionsSet::DefinitionsSet()
 
 }
 
-DefinitionsSet::DefinitionsSet(DictionarySource source)
+DefinitionsSet::DefinitionsSet(std::string source)
     : _source{source}
 {
 
 }
 
-DefinitionsSet::DefinitionsSet(DictionarySource source,
+DefinitionsSet::DefinitionsSet(std::string source,
                                std::vector<std::string> definitions)
     : _source{source},
       _definitions{definitions}
@@ -21,7 +21,7 @@ DefinitionsSet::DefinitionsSet(DictionarySource source,
 
 }
 
-DefinitionsSet::DefinitionsSet(DictionarySource source, std::string definitions)
+DefinitionsSet::DefinitionsSet(std::string source, std::string definitions)
     : _source{source}
 {
     _definitions = parseDefinitions(definitions);
@@ -86,14 +86,14 @@ void DefinitionsSet::pushDefinition(const std::string definition)
     _definitions.push_back(definition);
 }
 
-DictionarySource DefinitionsSet::getSource() const
+std::string DefinitionsSet::getSource() const
 {
     return _source;
 }
 
 std::string DefinitionsSet::getSourceLongString() const
 {
-    return DictionarySourceUtils::getSourceLongString(_source);
+    return _source;
 }
 
 std::string DefinitionsSet::getSourceShortString() const

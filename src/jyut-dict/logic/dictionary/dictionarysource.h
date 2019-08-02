@@ -8,35 +8,19 @@
 #include <unordered_map>
 #include <vector>
 
-// DictionarySource is an enum that contains possible dictionary sources
-enum DictionarySource {
-    CEDICT,
-    CCCANTO,
-    CFDICT,
-};
+// The name_to_short_name unordered_map contains mappings for long names to
+// nicknames of sources.
 
-static std::unordered_map<std::string, DictionarySource> string_to_dictionarysource{
-    {"CC-CEDICT", CEDICT},
-    {"CC-CANTO", CCCANTO},
-    {"CFDICT", CFDICT},
-};
-
-static std::unordered_map<DictionarySource, std::string> dictionarysource_to_string{
-    {CEDICT, "CC-CEDICT"},
-    {CCCANTO, "CC-CANTO"},
-    {CFDICT, "CFDICT"},
-};
-
-static std::unordered_map<DictionarySource, std::string> dictionarysource_to_short_string{
-    {CEDICT, "CC"},
-    {CCCANTO, "CCY"},
-    {CFDICT, "CF"},
-};
+// It should be populated upon startup by reading sources in the database,
+// and modified whenever sources are added or removed.
 
 namespace DictionarySourceUtils {
 
-std::string getSourceLongString(DictionarySource source);
-std::string getSourceShortString(DictionarySource source);
+static std::unordered_map<std::string, std::string> name_to_short_name{};
+
+std::string getSourceShortString(std::string source);
+bool addSource(std::string sourcename, std::string shortsourcename);
+bool removeSource(std::string sourcename);
 
 }
 

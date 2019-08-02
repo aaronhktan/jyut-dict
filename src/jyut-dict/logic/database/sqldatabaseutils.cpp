@@ -8,6 +8,28 @@ SQLDatabaseUtils::SQLDatabaseUtils(std::shared_ptr<SQLDatabaseManager> manager)
     _manager = manager;
 }
 
+std::vector<std::pair<std::string, std::string>> SQLDatabaseUtils::readSources()
+{
+    QSqlQuery query{_manager->getEnglishDatabase()};
+    query.exec("SELECT sourcename, sourceshortname FROM sources");
+
+    std::vector<std::pair<std::string, std::string>> sources;
+
+    int sourcenameIndex = query.record().indexOf("sourcename");
+    int sourceshortnameIndex = query.record().indexOf("sourceshortname");
+    while (query.next()) {
+        std::string sourcename
+            = query.value(sourcenameIndex).toString().toStdString();
+        std::string sourceshortname
+            = query.value(sourceshortnameIndex).toString().toStdString();
+
+        sources.push_back(
+            std::pair<std::string, std::string>(sourcename, sourceshortname));
+    }
+
+    return sources;
+}
+
 bool SQLDatabaseUtils::removeSource(std::string source)
 {
     QSqlQuery query{_manager->getEnglishDatabase()};
@@ -108,10 +130,10 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
 
     query.exec("SELECT sourcename FROM db.sources");
 
-    query.exec("INSERT INTO sources(sourcename, version, description, "
-               " legal, link, update_url, other) "
-               "SELECT sourcename, version, description, legal, link, "
-               " update_url, other "
+    query.exec("INSERT INTO sources(sourcename, sourceshortname, version, "
+               "description, legal, link, update_url, other) "
+               "SELECT sourcename, sourceshortname, version, description, "
+               "legal, link, update_url, other "
                "FROM db.sources");
 
     if (query.lastError().isValid()) {
@@ -169,7 +191,7 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
 
     query.exec("DETACH DATABASE db");
 
-    emit finishedAddition(true, "", "");
+    emit finishedAddition(true);
 
     return true;
 }

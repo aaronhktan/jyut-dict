@@ -1,5 +1,7 @@
 #include "windows/mainwindow.h"
 
+#include "logic/database/sqldatabaseutils.h"
+#include "logic/dictionary/dictionarysource.h"
 #include "logic/entry/sentence.h"
 #include "windows/settingswindow.h"
 #include "windows/updatewindow.h"
@@ -23,6 +25,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Instantiate services
     _manager = std::make_shared<SQLDatabaseManager>();
+    _manager->openEnglishDatabase();
+
+    // Populate sources
+    SQLDatabaseUtils *_utils = new SQLDatabaseUtils{_manager};
+    std::vector<std::pair<std::string, std::string>> sources
+        = _utils->readSources();
+    for (auto source : sources) {
+        DictionarySourceUtils::addSource(source.first, source.second);
+    }
 
     // Create UI elements
     _mainToolBar = new MainToolBar(_manager, this);

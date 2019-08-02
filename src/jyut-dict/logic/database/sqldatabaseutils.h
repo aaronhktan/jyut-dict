@@ -6,6 +6,7 @@
 #include <QObject>
 
 #include <memory>
+#include <string>
 
 constexpr auto CURRENT_DATABASE_VERSION = 1;
 
@@ -17,6 +18,7 @@ public:
 
     bool removeSource(std::string source);
     bool addSource(std::string filepath);
+    std::vector<std::pair<std::string, std::string>> readSources();
 
 private:
     std::shared_ptr<SQLDatabaseManager> _manager;
@@ -32,7 +34,7 @@ signals:
     void insertingSource();
     void insertingEntries();
     void insertingDefinitions();
-    void finishedAddition(bool success, QString reason, QString description);
+    void finishedAddition(bool success, QString reason="", QString description="");
 };
 
 #endif // SQLDATABASEUTILS_H

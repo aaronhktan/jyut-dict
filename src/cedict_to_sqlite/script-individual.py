@@ -5,6 +5,7 @@ import sys
 
 source = {
     'name': '',
+    'shortname': '',
     'version': '',
     'description': '',
     'legal': '',
@@ -58,6 +59,7 @@ def write(entries, db_name):
     c.execute('''CREATE TABLE sources(
                     source_id INTEGER PRIMARY KEY,
                     sourcename TEXT UNIQUE ON CONFLICT ABORT,
+                    sourceshortname TEXT,
                     version TEXT,
                     description TEXT,
                     legal TEXT,
@@ -105,7 +107,7 @@ def write(entries, db_name):
     #             ''')
 
     # Add sources to tables
-    c.execute('INSERT INTO sources values(?,?,?,?,?,?,?,?)', (None, source['name'], source['version'], source['description'], source['legal'], source['link'], source['update_url'], source['other']))
+    c.execute('INSERT INTO sources values(?,?,?,?,?,?,?,?,?)', (None, source['name'], source['shortname'], source['version'], source['description'], source['legal'], source['link'], source['update_url'], source['other']))
 
     # Add entries to tables
     def entry_to_tuple(entry):
@@ -176,19 +178,20 @@ def assign_frequencies(entries):
             entry.add_freq(freq)
 
 if __name__ == '__main__':
-    if len(sys.argv) != 11:
-        print('Usage: python3 script.py <database filename> <CC_CEDICT file> <Cantonese readings file> <source name> <source version> <source description> <source legal> <source link> <source update url> <source other>')
-        print('e.g. python3 script.py dict.db CEDICT.txt READINGS.txt CC-CEDICT 2018-07-09 "CC-CEDICT is a dictionary." "This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License." "http://www.mdbg.net/chindict/chindict.php?page=cc-cedict" "" ""')
+    if len(sys.argv) != 12:
+        print('Usage: python3 script.py <database filename> <CC_CEDICT file> <Cantonese readings file> <source name> <source short name> <source version> <source description> <source legal> <source link> <source update url> <source other>')
+        print('e.g. python3 script.py dict.db CEDICT.txt READINGS.txt CC-CEDICT CC 2018-07-09 "CC-CEDICT is a dictionary." "This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License." "http://www.mdbg.net/chindict/chindict.php?page=cc-cedict" "" ""')
         sys.exit(1)
 
     entries = {}
     source['name'] = sys.argv[4]
-    source['version'] = sys.argv[5]
-    source['description'] = sys.argv[6]
-    source['legal'] = sys.argv[7]
-    source['link'] = sys.argv[8]
-    source['update_url'] = sys.argv[9]
-    source['other'] = sys.argv[10]
+    source['shortname'] = sys.argv[5]
+    source['version'] = sys.argv[6]
+    source['description'] = sys.argv[7]
+    source['legal'] = sys.argv[8]
+    source['link'] = sys.argv[9]
+    source['update_url'] = sys.argv[10]
+    source['other'] = sys.argv[11]
     parse_file(sys.argv[2], entries)
     parse_cc_cedict_canto_readings(sys.argv[3], entries)
     assign_frequencies(entries)

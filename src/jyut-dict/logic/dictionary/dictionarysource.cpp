@@ -1,25 +1,37 @@
-#include "logic/entry/dictionarysource.h"
+#include "logic/dictionary/dictionarysource.h"
 
 namespace DictionarySourceUtils {
-std::string getSourceLongString(DictionarySource source)
-{
-    auto result = dictionarysource_to_string.find(source);
 
-    if (result == dictionarysource_to_string.end()) {
+std::string getSourceShortString(std::string source)
+{
+    auto result = name_to_short_name.find(source);
+
+    if (result == name_to_short_name.end()) {
         return "";
     }
 
     return result->second;
 }
 
-std::string getSourceShortString(DictionarySource source)
+bool addSource(std::string sourcename, std::string shortsourcename)
 {
-    auto result = dictionarysource_to_short_string.find(source);
+    return name_to_short_name.insert({sourcename, shortsourcename}).second;
+}
 
-    if (result == dictionarysource_to_short_string.end()) {
-        return "";
+bool removeSource(std::string sourcename)
+{
+    auto index = std::find_if(name_to_short_name.begin(),
+                           name_to_short_name.end(),
+                           [sourcename](
+                               std::pair<std::string, std::string> source) {
+                               return source.first == sourcename;
+                           });
+    if (index == name_to_short_name.end()) {
+        return false;
     }
 
-    return result->second;
+    name_to_short_name.erase(index);
+
+    return true;
 }
 }

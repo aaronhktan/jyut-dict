@@ -34,7 +34,7 @@ void ResultListModel::setWelcome()
 {
     Entry entry = Entry{tr("Welcome!").toStdString(), tr("Welcome!").toStdString(),
                         "—", "—", {}, {}, {}};
-    entry.addDefinitions(DictionarySource::CEDICT,
+    entry.addDefinitions("CEDICT",
                          {tr("Start typing to search for words").toStdString()});
 
     setEntries(std::vector<Entry>{entry});
