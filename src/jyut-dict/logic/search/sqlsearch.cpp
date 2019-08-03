@@ -22,8 +22,8 @@ SQLSearch::SQLSearch(std::shared_ptr<SQLDatabaseManager> manager)
     : QObject()
 {
     _manager = manager;
-    if (!_manager->isEnglishDatabaseOpen()) {
-        _manager->openEnglishDatabase();
+    if (!_manager->isDatabaseOpen()) {
+        _manager->openDatabase();
     }
 }
 
@@ -105,13 +105,13 @@ void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString &searc
 }
 
 // For SearchSimplified and SearchTraditional, we use LIKE instead of MATCH
-// even though the database is assumed to the FTS5-compatible.
+// even though the database is FTS5-compatible.
 // This is because FTS searches using the space as a separator, and
 // Chinese words and phrases are not separated by spaces.
 void SQLSearch::searchSimplifiedThread(const QString &searchTerm)
 {
     std::lock_guard<std::mutex> lock(_queryMutex);
-    QSqlQuery query{_manager->getEnglishDatabase()};
+    QSqlQuery query{_manager->getDatabase()};
     query.prepare("SELECT traditional, simplified, pinyin, jyutping, "
                   "group_concat(sourcename || ' ' || definition, '●') AS definitions "
                   "FROM entries, definitions, sources "
@@ -143,7 +143,7 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm)
 void SQLSearch::searchTraditionalThread(const QString &searchTerm)
 {
     std::lock_guard<std::mutex> lock(_queryMutex);
-    QSqlQuery query{_manager->getEnglishDatabase()};
+    QSqlQuery query{_manager->getDatabase()};
     query.prepare("SELECT traditional, simplified, pinyin, jyutping, "
                   "group_concat(sourcename || ' ' || definition, '●') AS definitions "
                   "FROM entries, definitions, sources "
@@ -186,7 +186,7 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm)
 void SQLSearch::searchJyutpingThread(const QString &searchTerm)
 {
     std::lock_guard<std::mutex> lock(_queryMutex);
-    QSqlQuery query{_manager->getEnglishDatabase()};
+    QSqlQuery query{_manager->getDatabase()};
     query.prepare("SELECT traditional, simplified, pinyin, jyutping, "
                   "group_concat(sourcename || ' ' || definition, '●') AS definitions "
                   "FROM entries, definitions, sources "
@@ -244,7 +244,7 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm)
     }
 
     std::lock_guard<std::mutex> lock(_queryMutex);
-    QSqlQuery query{_manager->getEnglishDatabase()};
+    QSqlQuery query{_manager->getDatabase()};
     query.prepare("SELECT traditional, simplified, pinyin, jyutping, "
                   "group_concat(sourcename || ' ' || definition, '●') AS definitions "
                   "FROM entries, definitions, sources "
@@ -284,12 +284,21 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm)
     notifyObservers();
 }
 
-// Searching English is the simplest query. It does a full-text search of the
-// English columns.
+// Searching English is the most complicated query.
+// First, we match against the full-text columns in definitions_fts,
+// and extract the foreign key that corresponds to the entry that matches
+// that definition.
+// After that, we select all the definitions that match those entries,
+// along with the source that accompanies that entry,
+// grouping by the entry ID and merging all the definitions into one column.
+//
+// For some reason, using two subqueries is ~2-3x faster than doing two
+// INNER JOINs. This is related in some way to the fk_entry_id index, but I'm
+// not entirely sure why.
 void SQLSearch::searchEnglishThread(const QString &searchTerm)
 {
     std::lock_guard<std::mutex> lock(_queryMutex);
-    QSqlQuery query{_manager->getEnglishDatabase()};
+    QSqlQuery query{_manager->getDatabase()};
     query.prepare("SELECT traditional, simplified, pinyin, jyutping, "
                   "group_concat(sourcename || ' ' || definition, '●') AS definitions "
                   "FROM entries, definitions, sources "

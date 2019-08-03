@@ -71,7 +71,7 @@ void ResultListDelegate::paint(QPainter *painter,
     QFontMetrics metrics(font);
 
     // Use QTextDocument for rich text
-    QTextDocument *doc = new QTextDocument();
+    QTextDocument *doc = new QTextDocument{};
     doc->setHtml(QString(entry.getCharacters(characterOptions, use_colours).c_str()));
     doc->setTextWidth(r.width());
     doc->setDefaultFont(font);

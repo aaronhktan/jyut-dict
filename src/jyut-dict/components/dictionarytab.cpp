@@ -125,7 +125,7 @@ void DictionaryTab::clearDictionaryList()
 
 void DictionaryTab::populateDictionaryList()
 {
-    QSqlQuery query{_manager->getEnglishDatabase()};
+    QSqlQuery query{_manager->getDatabase()};
     query.prepare("SELECT sourcename, version, description, legal, link, other "
                   "FROM sources");
 

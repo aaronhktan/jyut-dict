@@ -10,6 +10,7 @@
 #include <QWidget>
 
 // The DictionaryListView displays the dictionaries that a user has installed
+
 class DictionaryListView : public QListView
 {
     Q_OBJECT

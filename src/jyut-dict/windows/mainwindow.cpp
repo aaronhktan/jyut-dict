@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Instantiate services
     _manager = std::make_shared<SQLDatabaseManager>();
-    _manager->openEnglishDatabase();
+    _manager->openDatabase();
 
     // Populate sources
     SQLDatabaseUtils *_utils = new SQLDatabaseUtils{_manager};
@@ -36,11 +36,11 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     // Create UI elements
-    _mainToolBar = new MainToolBar(_manager, this);
+    _mainToolBar = new MainToolBar{_manager, this};
     addToolBar(_mainToolBar);
     setUnifiedTitleAndToolBarOnMac(true);
 
-    _mainSplitter = new MainSplitter(this);
+    _mainSplitter = new MainSplitter{this};
     setCentralWidget(_mainSplitter);
 
     // Create menu bar and populate it
@@ -85,7 +85,7 @@ void MainWindow::createMenus()
 
 void MainWindow::createActions()
 {
-    QAction *aboutAction = new QAction(tr("&About"), this);
+    QAction *aboutAction = new QAction{tr("&About"), this};
     aboutAction->setStatusTip(tr("Show the application's About box"));
     connect(aboutAction, &QAction::triggered, this, &QApplication::aboutQt);
     // TODO: Implement an about dialog to give credits to contributors :)
@@ -93,9 +93,9 @@ void MainWindow::createActions()
     _fileMenu->addAction(aboutAction);
 
 #ifdef Q_OS_MAC
-    QAction *settingsWindowAction = new QAction(tr("Preferences"));
+    QAction *settingsWindowAction = new QAction{tr("Preferences")};
 #else
-    QAction *settingsWindowAction = new QAction(tr("Settings"));
+    QAction *settingsWindowAction = new QAction{tr("Settings")};
 #endif
     settingsWindowAction->setStatusTip(tr("Add or remove dictionaries to search"));
     connect(settingsWindowAction, &QAction::triggered, this, &MainWindow::openSettingsWindow);

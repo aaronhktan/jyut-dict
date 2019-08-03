@@ -7,7 +7,9 @@
 #include <QStyleOptionViewItem>
 #include <QWidget>
 
-// The DictionaryListDelegate is responsible for painting elements
+// The DictionaryListDelegate is responsible for painting dictionaries
+// in a listview.
+
 class DictionaryListDelegate : public QStyledItemDelegate
 {
     Q_OBJECT

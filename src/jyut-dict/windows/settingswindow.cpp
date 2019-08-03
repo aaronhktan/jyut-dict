@@ -36,12 +36,12 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
     QActionGroup *_navigationActionGroup = new QActionGroup{this};
     _navigationActionGroup->setExclusive(true);
     for (int i = 0; i < 4; i++) {
-        _actions.push_back(new QAction(this));
+        _actions.push_back(new QAction{this});
         _actions.back()->setCheckable(true);
         connect(_actions.back(), &QAction::triggered, this, [=] { openTab(i); });
         _navigationActionGroup->addAction(_actions.back());
 
-        _toolButtons.push_back(new QToolButton());
+        _toolButtons.push_back(new QToolButton{this});
         QString style{"QToolButton { "
                       "   border-top-left-radius: 4px;"
                       "   border-top-right-radius: 4px;"
@@ -64,7 +64,7 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
         _toolBar->addWidget(_toolButtons.back());
 
         _dictionaryTabs.push_back(
-            new DictionaryTab(_manager, std::to_string(i).c_str(), this));
+            new DictionaryTab{_manager, std::to_string(i).c_str(), this});
         _contentStackedWidget->addWidget(_dictionaryTabs.back());
     }
 

@@ -13,26 +13,28 @@ SQLDatabaseManager::SQLDatabaseManager()
 
 SQLDatabaseManager::~SQLDatabaseManager()
 {
-    _EnglishDB.close();
-//    _FrenchDB.close();
+    _db.close();
 }
 
-void SQLDatabaseManager::openEnglishDatabase()
+bool SQLDatabaseManager::openDatabase()
 {
-    if (_EnglishDB.isOpen()) {
-        return;
+    if (_db.isOpen()) {
+        return true;
     }
 
-    _EnglishDB = QSqlDatabase::addDatabase("QSQLITE");
+    _db = QSqlDatabase::addDatabase("QSQLITE");
 
 #ifdef Q_OS_DARWIN
-    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/../Resources/dict.db"};
-    QFileInfo localFile{QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
-                 + "/Dictionaries/dict.db"};
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath()
+                         + "/../Resources/dict.db"};
+    QFileInfo localFile{
+        QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
+        + "/Dictionaries/dict.db"};
 #elif defined(Q_OS_WIN)
     QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "./eng.db"};
-    QFileInfo localFile{QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
-                 + "/Dictionaries/eng.db"};
+    QFileInfo localFile{
+        QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
+        + "/Dictionaries/eng.db"};
 #else
     QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/eng.db"};
     QFileInfo localFile{"/usr/share/jyut-dict/dictionaries/eng.db"};
@@ -40,7 +42,7 @@ void SQLDatabaseManager::openEnglishDatabase()
 
 #ifdef PORTABLE
     if (bundleFile.exists() && bundleFile.isFile()) {
-        _EnglishDB.setDatabaseName(bundleFile.absoluteFilePath());
+        _db.setDatabaseName(bundleFile.absoluteFilePath());
     }
 #else
     // Make path for dictionary storage
@@ -52,7 +54,8 @@ void SQLDatabaseManager::openEnglishDatabase()
 
     // Copy file from bundle to Application Support
     if (!localFile.exists() || !localFile.isFile()) {
-        if (!QFile::copy(bundleFile.absoluteFilePath(), localFile.absoluteFilePath())) {
+        if (!QFile::copy(bundleFile.absoluteFilePath(),
+                         localFile.absoluteFilePath())) {
             return;
         }
     }
@@ -60,39 +63,37 @@ void SQLDatabaseManager::openEnglishDatabase()
     // Delete file in bundle
     if (bundleFile.exists() && bundleFile.isFile()) {
         if (!QFile::remove(bundleFile.absoluteFilePath())) {
-//            std::cerr << "Couldn't remove original file!" << std::endl;
-//            return;
+            //            std::cerr << "Couldn't remove original file!" << std::endl;
+            //            return;
         }
     }
 
-    _EnglishDB.setDatabaseName(localFile.absoluteFilePath());
+    _db.setDatabaseName(localFile.absoluteFilePath());
 #endif
-    _EnglishDB.open();
+    return _db.open();
 }
 
-//void SQLDatabaseManager::openOtherDatabase()
-//{
-//    _FrenchDB = QSqlDatabase::addDatabase("QSQLITE");
-//    _FrenchDB.setDatabaseName(QCoreApplication::applicationDirPath() + "/../Resources/fra.db");
-//    _FrenchDB.open();
-//}
+QSqlDatabase SQLDatabaseManager::getDatabase()
+{
+    return _db;
+}
+
+bool SQLDatabaseManager::isDatabaseOpen()
+{
+    return _db.isOpen();
+}
+
+void SQLDatabaseManager::openEnglishDatabase()
+{
+    openDatabase();
+}
 
 QSqlDatabase SQLDatabaseManager::getEnglishDatabase()
 {
-    return _EnglishDB;
+    return getDatabase();
 }
 
 bool SQLDatabaseManager::isEnglishDatabaseOpen()
 {
-    return _EnglishDB.isOpen();
+    return isDatabaseOpen();
 }
-
-//QSqlDatabase SQLDatabaseManager::getFrenchDatabase()
-//{
-//    return _FrenchDB;
-//}
-
-//bool SQLDatabaseManager::isFrenchDatabaseOpen()
-//{
-//    return _FrenchDB.isOpen();
-//}

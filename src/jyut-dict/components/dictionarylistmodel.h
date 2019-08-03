@@ -4,6 +4,9 @@
 #include "logic/dictionary/dictionarymetadata.h"
 
 #include <QAbstractListModel>
+#include <QModelIndex>
+#include <QObject>
+#include <QVariant>
 
 #include <vector>
 

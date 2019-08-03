@@ -7,15 +7,16 @@
 
 MainSplitter::MainSplitter(QWidget *parent) : QSplitter(parent)
 {
-    _definitionScrollArea = new DefinitionScrollArea;
-    _resultListView = new ResultListView();
+    _definitionScrollArea = new DefinitionScrollArea{this};
+    _resultListView = new ResultListView{this};
 
     addWidget(_resultListView);
     addWidget(_definitionScrollArea);
 
     connect(_resultListView->selectionModel(),
-       SIGNAL(currentChanged(QModelIndex, QModelIndex)),
-       this, SLOT(handleSelectionChanged(QModelIndex)));
+            &QItemSelectionModel::currentChanged,
+            this,
+            &MainSplitter::handleSelectionChanged);
 
     setHandleWidth(1);
     setCollapsible(0, false);

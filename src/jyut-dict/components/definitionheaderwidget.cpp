@@ -3,12 +3,12 @@
 DefinitionHeaderWidget::DefinitionHeaderWidget(QWidget *parent)
     : QWidget(parent)
 {
-    _layout = new QVBoxLayout(this);
+    _layout = new QVBoxLayout{this};
     _layout->setContentsMargins(0, 0, 0, 0);
     _layout->setSpacing(5);
 
-    _titleLabel = new QLabel(this);
-    _divider = new QFrame(this);
+    _titleLabel = new QLabel{this};
+    _divider = new QFrame{this};
     _divider->setFrameShape(QFrame::HLine);
     _divider->setFrameShadow(QFrame::Raised);
     _divider->setFixedHeight(1);

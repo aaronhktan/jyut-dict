@@ -10,7 +10,7 @@ SQLDatabaseUtils::SQLDatabaseUtils(std::shared_ptr<SQLDatabaseManager> manager)
 
 std::vector<std::pair<std::string, std::string>> SQLDatabaseUtils::readSources()
 {
-    QSqlQuery query{_manager->getEnglishDatabase()};
+    QSqlQuery query{_manager->getDatabase()};
     query.exec("SELECT sourcename, sourceshortname FROM sources");
 
     std::vector<std::pair<std::string, std::string>> sources;
@@ -32,7 +32,7 @@ std::vector<std::pair<std::string, std::string>> SQLDatabaseUtils::readSources()
 
 bool SQLDatabaseUtils::removeSource(std::string source)
 {
-    QSqlQuery query{_manager->getEnglishDatabase()};
+    QSqlQuery query{_manager->getDatabase()};
     query.exec("PRAGMA foreign_keys = ON");
 
     query.exec("BEGIN TRANSACTION");
@@ -59,7 +59,6 @@ bool SQLDatabaseUtils::removeSource(std::string source)
                " LEFT JOIN definitions "
                " ON definitions.fk_entry_id=entries.entry_id "
                " WHERE definitions.fk_entry_id IS NULL)");
-
     int numberToDelete = 0;
     while (query.next()) {
         numberToDelete = query.value(0).toInt();
@@ -79,12 +78,11 @@ bool SQLDatabaseUtils::removeSource(std::string source)
     query.exec("RELEASE row_deletion");
 
     emit rebuildingIndexes();
+
     query.exec("INSERT INTO entries_fts (rowid, pinyin, jyutping) "
                "SELECT rowid, pinyin, jyutping FROM entries");
-
     query.exec("INSERT INTO definitions_fts (rowid, definition) "
                "SELECT rowid, definition FROM definitions");
-
     query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
     query.exec("COMMIT");
 
@@ -97,7 +95,7 @@ bool SQLDatabaseUtils::removeSource(std::string source)
 
 bool SQLDatabaseUtils::addSource(std::string filepath)
 {
-    QSqlQuery query{_manager->getEnglishDatabase()};
+    QSqlQuery query{_manager->getDatabase()};
 
     query.prepare("ATTACH DATABASE ? AS db");
     query.addBindValue(filepath.c_str());
@@ -121,14 +119,10 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
     query.exec("BEGIN TRANSACTION");
 
     query.exec("DROP INDEX fk_entry_id_index");
-
     query.exec("DELETE FROM definitions_fts");
-
     query.exec("DELETE FROM entries_fts");
 
     emit insertingSource();
-
-    query.exec("SELECT sourcename FROM db.sources");
 
     query.exec("INSERT INTO sources(sourcename, sourceshortname, version, "
                "description, legal, link, update_url, other) "
@@ -167,7 +161,6 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
                "FROM db.entries, db.definitions, db.sources "
                "WHERE db.definitions.fk_entry_id = db.entries.entry_id "
                "AND db.definitions.fk_source_id = db.sources.source_id");
-
     query.exec("INSERT INTO definitions(definition, fk_entry_id, fk_source_id)"
                " SELECT d.definition, e.entry_id, s.source_id "
                " FROM definitions_tmp AS d, sources AS s, entries AS e "
@@ -181,12 +174,9 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
 
     query.exec("INSERT INTO entries_fts (rowid, pinyin, jyutping) "
                "SELECT rowid, pinyin, jyutping FROM entries");
-
     query.exec("INSERT INTO definitions_fts (rowid, definition) "
                "SELECT rowid, definition FROM definitions");
-
     query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
-
     query.exec("COMMIT");
 
     query.exec("DETACH DATABASE db");

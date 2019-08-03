@@ -13,19 +13,19 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
     setFrameShape(QFrame::NoFrame);
 
     // Entire Scroll Area
-    _scrollAreaLayout = new QVBoxLayout(this);
+    _scrollAreaLayout = new QVBoxLayout{this};
     _scrollAreaLayout->setSpacing(25);
     _scrollAreaLayout->setContentsMargins(11, 11, 11, 22);
 
-    _scrollAreaWidget = new QWidget(this);
+    _scrollAreaWidget = new QWidget{this};
     _scrollAreaWidget->setLayout(_scrollAreaLayout);
     _scrollAreaWidget->resize(width(), _scrollAreaWidget->sizeHint().height());
 
     setWidget(_scrollAreaWidget);
     setMinimumWidth(350);
 
-    _entryHeaderWidget = new EntryHeaderWidget(this);
-    _definitionWidget = new DefinitionWidget(this);
+    _entryHeaderWidget = new EntryHeaderWidget{this};
+    _definitionWidget = new DefinitionWidget{this};
 
     // Add all widgets to main layout
     _scrollAreaLayout->addWidget(_entryHeaderWidget);

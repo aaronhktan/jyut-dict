@@ -11,10 +11,10 @@ ResultListView::ResultListView(QWidget *parent)
     setFrameShape(QFrame::NoFrame);
     setMinimumWidth(250);
 
-    _model = new ResultListModel({}, this);
+    _model = new ResultListModel{{}, this};
     setModel(_model);
 
-    _delegate = new ResultListDelegate(this);
+    _delegate = new ResultListDelegate{this};
     setItemDelegate(_delegate);
 
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);

@@ -16,10 +16,10 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
 
     setPlaceholderText(tr("Search"));
 
-    _searchLineEdit = new QAction("", this);
+    _searchLineEdit = new QAction{"", this};
     addAction(_searchLineEdit, QLineEdit::LeadingPosition);
 
-    _clearLineEdit = new QAction("", this);
+    _clearLineEdit = new QAction{"", this};
     addAction(_clearLineEdit, QLineEdit::TrailingPosition);
     connect(_clearLineEdit, &QAction::triggered,
             [this](){
@@ -44,7 +44,7 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
     setMinimumWidth(parent->width() / 2);
 
     _databaseManager = manager;
-    _search = new SQLSearch(_databaseManager);
+    _search = new SQLSearch{_databaseManager};
 
     connect(this, &QLineEdit::textChanged,
             [this](){

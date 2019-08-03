@@ -9,7 +9,7 @@ ResultListModel::ResultListModel(std::vector<Entry> entries, QObject *parent)
         _entries = entries;
     }
 
-    _search = new SQLSearch();
+    _search = new SQLSearch{};
     _search->registerObserver(this);
 }
 

@@ -8,7 +8,7 @@ MainToolBar::MainToolBar(std::shared_ptr<SQLDatabaseManager> manager,
     _toolBarWidget = new QWidget;
     _toolBarLayout = new QHBoxLayout;
 
-    _searchOptions = new SearchOptionsMediator();
+    _searchOptions = new SearchOptionsMediator{};
 
     _searchBar = new SearchLineEdit(_searchOptions, manager, this);
     _searchOptions->registerLineEdit(_searchBar);

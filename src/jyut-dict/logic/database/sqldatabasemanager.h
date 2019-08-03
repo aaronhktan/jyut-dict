@@ -4,9 +4,7 @@
 #include <QSqlDatabase>
 
 // SQLDatabaseManager provides one or more connections to databases
-// that contain the dictionary and its translations
-
-// TODO: support for French Database
+// that contain dictionaries and translations
 
 class SQLDatabaseManager
 {
@@ -14,18 +12,16 @@ public:
     SQLDatabaseManager();
     ~SQLDatabaseManager();
 
-    void openEnglishDatabase();
-//    void openFrenchDatabase();
+    bool openDatabase();
+    QSqlDatabase getDatabase();
+    bool isDatabaseOpen();
 
-    QSqlDatabase getEnglishDatabase();
-    bool isEnglishDatabaseOpen();
-
-//    QSqlDatabase getFrenchDatabase();
-//    bool isFrenchDatabaseOpen();
+    void openEnglishDatabase(); // Deprecated, use openDatabase() instead
+    QSqlDatabase getEnglishDatabase(); // Deprecated, use getDatabase() instead
+    bool isEnglishDatabaseOpen(); // Deprecated, use isDatabaseOpen() instead
 
 private:
-    QSqlDatabase _EnglishDB;
-//    QSqlDatabase _FrenchDB;
+    QSqlDatabase _db;
 };
 
 #endif // SQLDATABASEMANAGER_H

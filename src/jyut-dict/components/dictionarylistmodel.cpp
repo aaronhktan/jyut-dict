@@ -1,8 +1,5 @@
 #include "dictionarylistmodel.h"
 
-#include <QObject>
-#include <QVariant>
-
 DictionaryListModel::DictionaryListModel(QObject *parent)
     : QAbstractListModel(parent)
 {
@@ -17,14 +14,21 @@ void DictionaryListModel::setDictionaries(
     endResetModel();
 }
 
+// Currently, setData ignores the index.
+// TODO: the data should set the data at index.row() instead of just pushing
+// to the back of the dictionaries vector.
 bool DictionaryListModel::setData(const QModelIndex &index,
                                   const QVariant &value,
                                   int role)
 {
+    if (role != Qt::EditRole) {
+        return false;
+    }
+
     try {
         _dictionaries.push_back(value.value<DictionaryMetadata>());
     } catch (std::exception /*&e*/) {
-//        qDebug() << e.what();
+        //        qDebug() << e.what();
         return false;
     }
 
@@ -32,10 +36,15 @@ bool DictionaryListModel::setData(const QModelIndex &index,
     return true;
 }
 
-bool DictionaryListModel::removeRows(int row, int count, const QModelIndex &parent)
+bool DictionaryListModel::removeRows(int row,
+                                     int count,
+                                     const QModelIndex &parent)
 {
     beginResetModel();
-    _dictionaries.erase(_dictionaries.begin() + row, _dictionaries.begin() + row + count);
+    auto start = _dictionaries.begin() + row
+                 + (parent.isValid() ? parent.row() : 0);
+    auto end = start + count;
+    _dictionaries.erase(start, end);
     endResetModel();
     return true;
 }
@@ -44,7 +53,8 @@ QModelIndex DictionaryListModel::index(int row,
                                        int column,
                                        const QModelIndex &parent) const
 {
-    return createIndex(row, 0);
+    return createIndex(parent.isValid() ? parent.row() + row : row,
+                       column);
 }
 
 int DictionaryListModel::rowCount(const QModelIndex &parent) const
