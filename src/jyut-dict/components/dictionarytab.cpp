@@ -60,15 +60,12 @@ void DictionaryTab::setupUI()
     _link = new QPushButton{tr("Website"), this};
 
     _groupboxLayout = new QGridLayout{_groupbox};
-    _groupboxLayout->setAlignment(Qt::AlignTop);
     _groupboxLayout->addWidget(_description, 1, 1, 4, 3);
     _groupboxLayout->addWidget(_legal, 5, 1, 2, 3);
     _groupboxLayout->addWidget(_version, 7, 1, 1, 3);
     _groupboxLayout->setRowStretch(8, INT_MAX);
     _groupboxLayout->addWidget(_remove, 9, 3, 1, 1);
-    _groupboxLayout->setAlignment(_remove, Qt::AlignBottom);
     _groupboxLayout->addWidget(_link, 9, 2, 1, 1);
-    _groupboxLayout->setAlignment(_link, Qt::AlignBottom);
 
     _groupbox->setLayout(_groupboxLayout);
 

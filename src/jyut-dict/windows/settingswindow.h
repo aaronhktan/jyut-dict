@@ -10,6 +10,8 @@
 
 #include <memory>
 
+constexpr auto NUM_OF_TABS = 4;
+
 class SettingsWindow : public QMainWindow
 {
     Q_OBJECT

@@ -16,7 +16,6 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
     : QMainWindow{parent, Qt::Window},
       _parent{parent}
 {
-    //    _layout = new QVBoxLayout{this};
     _manager = manager;
 
     _contentStackedWidget = new QStackedWidget{this};
@@ -28,14 +27,13 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
 
     int r, g, b, a;
     Utils::getAppleControlAccentColor().getRgb(&r, &g, &b, &a);
-    //    qDebug() << r << " " << g << " " << b << " " << a;
 
-    std::vector<DictionaryTab *> _dictionaryTabs;
     std::vector<QToolButton *> _toolButtons;
     std::vector<QAction *> _actions;
     QActionGroup *_navigationActionGroup = new QActionGroup{this};
     _navigationActionGroup->setExclusive(true);
-    for (int i = 0; i < 4; i++) {
+
+    for (int i = 0; i < NUM_OF_TABS; i++) {
         _actions.push_back(new QAction{this});
         _actions.back()->setCheckable(true);
         connect(_actions.back(), &QAction::triggered, this, [=] { openTab(i); });
@@ -62,32 +60,35 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
         _toolButtons.back()->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
         _toolButtons.back()->setDefaultAction(_actions.back());
         _toolBar->addWidget(_toolButtons.back());
-
-        _dictionaryTabs.push_back(
-            new DictionaryTab{_manager, this});
-        _contentStackedWidget->addWidget(_dictionaryTabs.back());
     }
 
     // For these images, export as 96px width, and center on 120px canvas.
     _actions[0]->setText(tr("General"));
     _actions[0]->setIcon(QIcon(":/images/settings_inverted.png"));
+    QWidget *generalTab = new QWidget{this};
+    _contentStackedWidget->addWidget(generalTab);
 
     _actions[1]->setText(tr("Dictionaries"));
     _actions[1]->setIcon(QIcon(":/images/book_inverted.png"));
+    DictionaryTab *dictionaryTab = new DictionaryTab{_manager, this};
+    _contentStackedWidget->addWidget(dictionaryTab);
 
     _actions[2]->setText(tr("Advanced"));
     _actions[2]->setIcon(QIcon(":/images/sliders_inverted.png"));
+    QWidget *advancedTab = new QWidget{this};
+    _contentStackedWidget->addWidget(advancedTab);
 
     _actions[3]->setText(tr("Contact"));
     _actions[3]->setIcon(QIcon(":/images/help_inverted.png"));
+    QWidget *contactTab = new QWidget{this};
+    _contentStackedWidget->addWidget(contactTab);
 
     _toolButtons[0]->click();
 
     setCentralWidget(_contentStackedWidget);
 
-    setWindowTitle("Preferences");
-
-    setMinimumSize(500, 400);
+    setWindowTitle(tr("Preferences"));
+    setMinimumSize(600, 400);
     resize(sizeHint());
     layout()->setSizeConstraint(QLayout::SetFixedSize);
     move(parent->x() + (parent->width() - size().width()) / 2,
