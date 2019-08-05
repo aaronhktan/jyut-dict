@@ -29,8 +29,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Populate sources
     SQLDatabaseUtils *_utils = new SQLDatabaseUtils{_manager};
-    std::vector<std::pair<std::string, std::string>> sources
-        = _utils->readSources();
+    std::vector<std::pair<std::string, std::string>> sources;
+    _utils->readSources(sources);
     for (auto source : sources) {
         DictionarySourceUtils::addSource(source.first, source.second);
     }

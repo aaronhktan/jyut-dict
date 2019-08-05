@@ -2,6 +2,7 @@
 #define SQLDATABASEUTILS_H
 
 #include "logic/database/sqldatabasemanager.h"
+#include "logic/dictionary/dictionarymetadata.h"
 
 #include <QObject>
 
@@ -18,7 +19,8 @@ public:
 
     bool removeSource(std::string source);
     bool addSource(std::string filepath);
-    std::vector<std::pair<std::string, std::string>> readSources();
+    bool readSources(std::vector<std::pair<std::string, std::string>> &sources);
+    bool readSources(std::vector<DictionaryMetadata> &sources);
 
 private:
     std::shared_ptr<SQLDatabaseManager> _manager;
@@ -29,7 +31,7 @@ signals:
     void deletionProgress(int deleted, int total);
     void rebuildingIndexes();
     void cleaningUp();
-    void finishedDeletion(bool success);
+    void finishedDeletion(bool success, QString reason="", QString description="");
 
     void insertingSource();
     void insertingEntries();

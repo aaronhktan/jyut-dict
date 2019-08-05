@@ -24,17 +24,19 @@ class DictionaryTab : public QWidget
 public:
     explicit DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
                            QWidget *parent = nullptr);
-    explicit DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
-                           QString text = "hi",
-                           QWidget *parent = nullptr);
+
+private:
+    void setupUI();
 
     void setDictionaryMetadata(const QModelIndex &index);
 
-private:
     void clearDictionaryList();
     void populateDictionaryList();
     void addDictionary(QString &dictionaryFile);
     void removeDictionary(DictionaryMetadata metadata);
+    void populateDictionarySourceUtils();
+
+    void failureMessage(QString reason, QString description);
 
     QLabel *_explanatory;
     QLabel *_description;
@@ -55,8 +57,7 @@ private:
     QMessageBox *_message;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
-
-    SQLDatabaseUtils *_utils;
+    std::unique_ptr<SQLDatabaseUtils> _utils;
 signals:
 
 public slots:

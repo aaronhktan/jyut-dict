@@ -8,12 +8,14 @@ SQLDatabaseUtils::SQLDatabaseUtils(std::shared_ptr<SQLDatabaseManager> manager)
     _manager = manager;
 }
 
-std::vector<std::pair<std::string, std::string>> SQLDatabaseUtils::readSources()
+bool SQLDatabaseUtils::readSources(std::vector<std::pair<std::string, std::string>> &sources)
 {
     QSqlQuery query{_manager->getDatabase()};
     query.exec("SELECT sourcename, sourceshortname FROM sources");
 
-    std::vector<std::pair<std::string, std::string>> sources;
+    if (query.lastError().isValid()) {
+        return false;
+    }
 
     int sourcenameIndex = query.record().indexOf("sourcename");
     int sourceshortnameIndex = query.record().indexOf("sourceshortname");
@@ -27,7 +29,47 @@ std::vector<std::pair<std::string, std::string>> SQLDatabaseUtils::readSources()
             std::pair<std::string, std::string>(sourcename, sourceshortname));
     }
 
-    return sources;
+    return true;
+}
+
+bool SQLDatabaseUtils::readSources(std::vector<DictionaryMetadata> &sources)
+{
+    QSqlQuery query{_manager->getDatabase()};
+    query.exec("SELECT sourcename, version, description, legal, link, other "
+               "FROM sources");
+
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
+    int sourcenameIndex = query.record().indexOf("sourcename");
+    int versionIndex = query.record().indexOf("version");
+    int descriptionIndex = query.record().indexOf("description");
+    int legalIndex = query.record().indexOf("legal");
+    int linkIndex = query.record().indexOf("link");
+    int otherIndex = query.record().indexOf("other");
+
+    while (query.next()) {
+        std::string source
+            = query.value(sourcenameIndex).toString().toStdString();
+        std::string version = query.value(versionIndex).toString().toStdString();
+        std::string description
+            = query.value(descriptionIndex).toString().toStdString();
+        std::string legal = query.value(legalIndex).toString().toStdString();
+        std::string link = query.value(linkIndex).toString().toStdString();
+        std::string other = query.value(otherIndex).toString().toStdString();
+
+        DictionaryMetadata dictionary{source,
+                                      version,
+                                      description,
+                                      legal,
+                                      link,
+                                      other};
+
+        sources.push_back(dictionary);
+    }
+
+    return true;
 }
 
 bool SQLDatabaseUtils::removeSource(std::string source)

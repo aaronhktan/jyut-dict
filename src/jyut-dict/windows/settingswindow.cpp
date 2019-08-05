@@ -64,7 +64,7 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
         _toolBar->addWidget(_toolButtons.back());
 
         _dictionaryTabs.push_back(
-            new DictionaryTab{_manager, std::to_string(i).c_str(), this});
+            new DictionaryTab{_manager, this});
         _contentStackedWidget->addWidget(_dictionaryTabs.back());
     }
 
@@ -89,7 +89,7 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
 
     setMinimumSize(500, 400);
     resize(sizeHint());
-    setFixedSize(sizeHint());
+    layout()->setSizeConstraint(QLayout::SetFixedSize);
     move(parent->x() + (parent->width() - size().width()) / 2,
          parent->y() + (parent->height() - size().height()) / 2);
 
