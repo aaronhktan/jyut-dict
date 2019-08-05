@@ -83,9 +83,9 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
     QWidget *contactTab = new QWidget{this};
     _contentStackedWidget->addWidget(contactTab);
 
-    _toolButtons[0]->click();
-
     setCentralWidget(_contentStackedWidget);
+
+    _toolButtons[0]->click();
 
     setWindowTitle(tr("Preferences"));
     setMinimumSize(600, 400);
@@ -102,7 +102,18 @@ SettingsWindow::~SettingsWindow()
 
 }
 
-void SettingsWindow::openTab(int i)
+void SettingsWindow::openTab(int tabIndex)
 {
-    _contentStackedWidget->setCurrentIndex(i);
+    for (int index = 0; index < _contentStackedWidget->count(); index++) {
+        // Ignore sizehint of non-active widgets
+        QSizePolicy::Policy policy = QSizePolicy::Ignored;
+        if (index == tabIndex) {
+            policy = QSizePolicy::Expanding;
+        }
+
+        QWidget *widget = _contentStackedWidget->widget(index);
+        widget->setSizePolicy(policy, policy);
+    }
+
+    _contentStackedWidget->setCurrentIndex(tabIndex);
 }

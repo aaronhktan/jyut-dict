@@ -31,7 +31,7 @@ private:
 
     std::shared_ptr<SQLDatabaseManager> _manager;
 
-    void openTab(int i);
+    void openTab(int tabIndex);
 };
 
 #endif // SETTINGSWINDOW_H

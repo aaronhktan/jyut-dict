@@ -2,6 +2,9 @@
 
 #include <QtSql>
 
+#include <chrono>
+#include <thread>
+
 SQLDatabaseUtils::SQLDatabaseUtils(std::shared_ptr<SQLDatabaseManager> manager)
     : QObject()
 {
@@ -143,19 +146,23 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
     query.addBindValue(filepath.c_str());
     query.exec();
 
-    query.exec("PRAGMA user_version");
+    query.exec("PRAGMA db.user_version");
+    int version = -1;
     while (query.next()) {
-        int version = query.value(0).toInt();
+        version = query.value(0).toInt();
+    }
 
-        if (version != CURRENT_DATABASE_VERSION) {
-            emit
-                finishedAddition(false,
-                                 tr("Database versions do not match."),
-                                 tr("Current version is %1, file version is %2")
-                                     .arg(CURRENT_DATABASE_VERSION)
-                                     .arg(version));
-            return false;
-        }
+    if (version != CURRENT_DATABASE_VERSION) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        query.exec("DETACH DATABASE db");
+        emit finishedAddition(false,
+                              tr("Database versions do not match. "
+                                 "Only dictionaries with the same versions "
+                                 "can be added."),
+                              tr("Current version is %1, file version is %2.")
+                                  .arg(CURRENT_DATABASE_VERSION)
+                                  .arg(version));
+        return false;
     }
 
     query.exec("BEGIN TRANSACTION");
@@ -173,6 +180,7 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
                "FROM db.sources");
 
     if (query.lastError().isValid()) {
+        query.exec("ROLLBACK");
         QString error = query.lastError().text();
         query.exec("DETACH DATABASE db");
 
