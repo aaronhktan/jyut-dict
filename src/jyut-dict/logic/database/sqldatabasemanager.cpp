@@ -36,8 +36,10 @@ bool SQLDatabaseManager::openDatabase()
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
         + "/Dictionaries/dict.db"};
 #else
-    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/eng.db"};
-    QFileInfo localFile{"/usr/share/jyut-dict/dictionaries/eng.db"};
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/dict.db"};
+    QFileInfo localFile{
+        QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
+        + "/dictionaries/dict.db"};
 #endif
 
 #ifdef PORTABLE
