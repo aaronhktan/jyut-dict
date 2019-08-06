@@ -50,11 +50,14 @@ void DictionaryTab::setupUI()
     _description = new QLabel{this};
     _description->setWordWrap(true);
     _description->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    _description->setAlignment(Qt::AlignTop);
     _legal = new QLabel{this};
     _legal->setWordWrap(true);
     _legal->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    _legal->setAlignment(Qt::AlignTop);
     _version = new QLabel{this};
     _version->setWordWrap(true);
+    _legal->setAlignment(Qt::AlignTop);
     _version->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     _remove = new QPushButton{tr("Delete Dictionary"), this};
     _link = new QPushButton{tr("Website"), this};

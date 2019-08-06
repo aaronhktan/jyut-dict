@@ -3,6 +3,10 @@
 #include "components/dictionarylistdelegate.h"
 #include "components/dictionarylistmodel.h"
 
+#ifdef Q_OS_WIN
+#include <QScrollBar>
+#endif
+
 DictionaryListView::DictionaryListView(QWidget *parent)
     : QListView(parent)
 {
@@ -22,7 +26,7 @@ DictionaryListView::DictionaryListView(QWidget *parent)
 // is scrolled, listview advances by by three items. Override the wheelEvent to
 // modify this undesired behaviour until fixed by Qt.
 #ifdef Q_OS_WIN
-void SearchListView::wheelEvent(QWheelEvent *event)
+void DictionaryListView::wheelEvent(QWheelEvent *event)
 {
     int singleStep = verticalScrollBar()->singleStep();
     singleStep = qMin(singleStep, 10);

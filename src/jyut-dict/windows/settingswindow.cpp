@@ -20,13 +20,23 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
 
     _contentStackedWidget = new QStackedWidget{this};
     _toolBar = new QToolBar{this};
+#ifdef Q_OS_WIN
+    _toolBar->setStyleSheet("QToolBar {"
+                            "   background-color: white;"
+                            "}");
+#endif
     addToolBar(_toolBar);
     setUnifiedTitleAndToolBarOnMac(true);
     _toolBar->setMovable(false);
     _toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 
     int r, g, b, a;
+#ifdef Q_OS_MAC
     Utils::getAppleControlAccentColor().getRgb(&r, &g, &b, &a);
+    a = 0.8;
+#else
+    QColor(204, 0, 1).getRgb(&r, &g, &b, &a);
+#endif
 
     std::vector<QToolButton *> _toolButtons;
     std::vector<QAction *> _actions;
@@ -40,6 +50,7 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
         _navigationActionGroup->addAction(_actions.back());
 
         _toolButtons.push_back(new QToolButton{this});
+#ifdef Q_OS_MAC
         QString style{"QToolButton { "
                       "   border-top-left-radius: 4px;"
                       "   border-top-right-radius: 4px;"
@@ -52,11 +63,24 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
                       "   margin: 0px; "
                       "   background-color: rgba(%1, %2, %3, %4); "
                       "}"};
+#else
+        QString style{"QToolButton { "
+                      "   border-radius: 2px;"
+                      "   margin: 0px; "
+                      "}"
+                      " "
+                      "QToolButton:checked { "
+                      "   border-radius: 2px;"
+                      "   margin: 0px; "
+                      "   background-color: rgba(%1, %2, %3, %4); "
+                      "   color: #FFFFFF;"
+                      "}"};
+#endif
         _toolButtons.back()->setStyleSheet(
             style.arg(std::to_string(r).c_str(),
                       std::to_string(g).c_str(),
                       std::to_string(b).c_str(),
-                      std::to_string(0.7).c_str()));
+                      std::to_string(a).c_str()));
         _toolButtons.back()->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
         _toolButtons.back()->setDefaultAction(_actions.back());
         _toolBar->addWidget(_toolButtons.back());

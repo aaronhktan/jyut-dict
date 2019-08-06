@@ -3,7 +3,9 @@
 #include "components/resultlistmodel.h"
 #include "logic/search/sqlsearch.h"
 
+#ifdef Q_OS_WIN
 #include <QScrollBar>
+#endif
 
 ResultListView::ResultListView(QWidget *parent)
     : QListView(parent)
@@ -24,7 +26,7 @@ ResultListView::ResultListView(QWidget *parent)
 // is scrolled, listview advances by by three items. Override the wheelEvent to
 // modify this undesired behaviour until fixed by Qt.
 #ifdef Q_OS_WIN
-void SearchListView::wheelEvent(QWheelEvent *event)
+void ResultListView::wheelEvent(QWheelEvent *event)
 {
     int singleStep = verticalScrollBar()->singleStep();
     singleStep = qMin(singleStep, 10);

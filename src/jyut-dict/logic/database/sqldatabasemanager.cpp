@@ -31,10 +31,10 @@ bool SQLDatabaseManager::openDatabase()
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
         + "/Dictionaries/dict.db"};
 #elif defined(Q_OS_WIN)
-    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "./eng.db"};
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "./dict.db"};
     QFileInfo localFile{
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
-        + "/Dictionaries/eng.db"};
+        + "/Dictionaries/dict.db"};
 #else
     QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/eng.db"};
     QFileInfo localFile{"/usr/share/jyut-dict/dictionaries/eng.db"};
@@ -48,7 +48,7 @@ bool SQLDatabaseManager::openDatabase()
     // Make path for dictionary storage
     if (!localFile.exists()) {
         if (!QDir().mkpath(localFile.absolutePath())) {
-            return;
+            return false;
         }
     }
 
@@ -56,7 +56,7 @@ bool SQLDatabaseManager::openDatabase()
     if (!localFile.exists() || !localFile.isFile()) {
         if (!QFile::copy(bundleFile.absoluteFilePath(),
                          localFile.absoluteFilePath())) {
-            return;
+            return false;
         }
     }
 

@@ -31,8 +31,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
-    logic/database/sqldatabaseutils.cpp \
-    logic/dictionary/dictionarymetadata.cpp \
     main.cpp \
     components/definitioncontentwidget.cpp \
     components/definitionheaderwidget.cpp \
@@ -52,6 +50,8 @@ SOURCES += \
     components/searchlineedit.cpp \
     components/searchoptionsradiogroupbox.cpp \
     logic/database/sqldatabasemanager.cpp \
+    logic/database/sqldatabaseutils.cpp \
+    logic/dictionary/dictionarymetadata.cpp \
     logic/dictionary/dictionarysource.cpp \
     logic/entry/definitionsset.cpp \
     logic/entry/entry.cpp \
