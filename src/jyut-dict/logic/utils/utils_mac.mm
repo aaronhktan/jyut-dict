@@ -33,7 +33,7 @@ QColor getAppleControlAccentColor()
 {
     if (@available(macOS 10.14, *)) {
         // macOS 10.14 or later code path
-        return NSColorToQColor([NSColor controlAccentColor]);
+        return NSColorToQColor([NSColor selectedContentBackgroundColor]);
     } else {
         return QApplication::palette().color(QPalette::Active, QPalette::Highlight);
     }

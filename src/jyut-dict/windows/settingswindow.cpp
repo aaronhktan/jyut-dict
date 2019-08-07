@@ -3,13 +3,10 @@
 #include "components/dictionarytab.h"
 #include "logic/utils/utils_mac.h"
 
-#include <QAction>
 #include <QActionGroup>
-#include <QApplication>
 #include <QGuiApplication>
 #include <QPalette>
-#include <QVBoxLayout>
-#include <QToolButton>
+#include <QTimer>
 
 SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
                                QWidget *parent)
@@ -41,18 +38,7 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
     addToolBar(_toolBar);
     setUnifiedTitleAndToolBarOnMac(true);
     _toolBar->setMovable(false);
-    _toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 
-    int r, g, b, a;
-#ifdef Q_OS_MAC
-    Utils::getAppleControlAccentColor().getRgb(&r, &g, &b, &a);
-    a = 0.8;
-#else
-    QColor(204, 0, 1).getRgb(&r, &g, &b, &a);
-#endif
-
-    std::vector<QToolButton *> _toolButtons;
-    std::vector<QAction *> _actions;
     QActionGroup *_navigationActionGroup = new QActionGroup{this};
     _navigationActionGroup->setExclusive(true);
 
@@ -63,60 +49,35 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
         _navigationActionGroup->addAction(_actions.back());
 
         _toolButtons.push_back(new QToolButton{this});
-#ifdef Q_OS_MAC
-        QString style{"QToolButton { "
-                      "   border-top-left-radius: 4px;"
-                      "   border-top-right-radius: 4px;"
-                      "   margin: 0px; "
-                      "}"
-                      " "
-                      "QToolButton:checked { "
-                      "   border-top-left-radius: 4px;"
-                      "   border-top-right-radius: 4px;"
-                      "   margin: 0px; "
-                      "   background-color: rgba(%1, %2, %3, %4); "
-                      "}"};
-#else
-        QString style{"QToolButton { "
-                      "   border-radius: 2px;"
-                      "   margin: 0px; "
-                      "}"
-                      " "
-                      "QToolButton:checked { "
-                      "   border-radius: 2px;"
-                      "   margin: 0px; "
-                      "   background-color: rgba(%1, %2, %3, %4); "
-                      "   color: #FFFFFF;"
-                      "}"};
-#endif
-        _toolButtons.back()->setStyleSheet(
-            style.arg(std::to_string(r).c_str(),
-                      std::to_string(g).c_str(),
-                      std::to_string(b).c_str(),
-                      std::to_string(a).c_str()));
         _toolButtons.back()->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
         _toolButtons.back()->setDefaultAction(_actions.back());
         _toolBar->addWidget(_toolButtons.back());
     }
 
-    // For these images, export as 96px width, and center on 120px canvas.
+    // Customize the look of the toolbar to fit in better with platform styles
+#ifdef Q_OS_MAC
+    if (!system("defaults read -g AppleInterfaceStyle")) {
+        setStyle(/* use_dark = */true);
+    } else {
+        setStyle(/* use_dark = */false);
+    }
+#else
+    setStyle(/* use_dark = */false);
+#endif
+
     _actions[0]->setText(tr("General"));
-    _actions[0]->setIcon(QIcon(":/images/settings_inverted.png"));
     QWidget *generalTab = new QWidget{this};
     _contentStackedWidget->addWidget(generalTab);
 
     _actions[1]->setText(tr("Dictionaries"));
-    _actions[1]->setIcon(QIcon(":/images/book_inverted.png"));
     DictionaryTab *dictionaryTab = new DictionaryTab{_manager, this};
     _contentStackedWidget->addWidget(dictionaryTab);
 
     _actions[2]->setText(tr("Advanced"));
-    _actions[2]->setIcon(QIcon(":/images/sliders_inverted.png"));
     QWidget *advancedTab = new QWidget{this};
     _contentStackedWidget->addWidget(advancedTab);
 
     _actions[3]->setText(tr("Contact"));
-    _actions[3]->setIcon(QIcon(":/images/help_inverted.png"));
     QWidget *contactTab = new QWidget{this};
     _contentStackedWidget->addWidget(contactTab);
 
@@ -139,8 +100,132 @@ SettingsWindow::~SettingsWindow()
 
 }
 
+void SettingsWindow::changeEvent(QEvent *event)
+{
+#if defined(Q_OS_DARWIN)
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        if (!system("defaults read -g AppleInterfaceStyle")) {
+            setStyle(/* use_dark = */ true);
+        } else {
+            setStyle(/* use_dark = */ false);
+        }
+    }
+#endif
+    QMainWindow::changeEvent(event);
+}
+
+void SettingsWindow::setStyle(bool use_dark)
+{
+    // Set background color of tabs in toolbar
+    int r, g, b, a;
+#ifdef Q_OS_MAC
+    Utils::getAppleControlAccentColor().getRgb(&r, &g, &b, &a);
+#else
+    QColor(204, 0, 1).getRgb(&r, &g, &b, &a);
+#endif
+
+#ifdef Q_OS_MAC
+    QString style;
+    if (use_dark) {
+        style = "QToolButton { "
+                "   border-top-left-radius: 4px; "
+                "   border-top-right-radius: 4px; "
+                "   margin: 0px; "
+                "}"
+                " "
+                "QToolButton:checked { "
+                "   border-top-left-radius: 4px; "
+                "   border-top-right-radius: 4px; "
+                "   margin: 0px; "
+                "   background-color: rgba(%1, %2, %3, %4); "
+                "}";
+    } else {
+        style = "QToolButton { "
+                "   border-top-left-radius: 4px; "
+                "   border-top-right-radius: 4px; "
+                "   margin: 0px; "
+                "}"
+                " "
+                "QToolButton:checked { "
+                "   border-top-left-radius: 4px; "
+                "   border-top-right-radius: 4px; "
+                "   margin: 0px; "
+                "   background-color: rgba(%1, %2, %3, %4); "
+                "   color: #FFFFFF; "
+                "}";
+    }
+#else
+    QString style{"QToolButton { "
+                  "   border-radius: 2px; "
+                  "   margin: 0px; "
+                  "}"
+                  " "
+                  "QToolButton:checked { "
+                  "   border-radius: 2px; "
+                  "   margin: 0px; "
+                  "   background-color: rgba(%1, %2, %3, %4); "
+                  "   color: #FFFFFF; "
+                  "}"};
+#endif
+    for (auto button : _toolButtons) {
+        button->setStyleSheet(style.arg(std::to_string(r).c_str(),
+                                        std::to_string(g).c_str(),
+                                        std::to_string(b).c_str(),
+                                        std::to_string(a).c_str()));
+    }
+
+    setButtonIcon(use_dark, _contentStackedWidget->currentIndex());
+}
+
+void SettingsWindow::setButtonIcon(bool use_dark, int index)
+{
+    // For these images, export as 96px width, and center on 120px canvas.
+    QIcon settings = QIcon(":/images/settings.png");
+    QIcon settings_inverted = QIcon(":/images/settings_inverted.png");
+    QIcon book = QIcon(":/images/book.png");
+    QIcon book_inverted = QIcon(":/images/book_inverted.png");
+    QIcon sliders = QIcon(":/images/sliders.png");
+    QIcon sliders_inverted = QIcon(":/images/sliders_inverted.png");
+    QIcon help = QIcon(":/images/help.png");
+    QIcon help_inverted = QIcon(":/images/help_inverted.png");
+
+    // Set icons for each tab
+#ifdef Q_OS_MAC
+    if (use_dark) {
+        _actions[0]->setIcon(settings_inverted);
+        _actions[1]->setIcon(book_inverted);
+        _actions[2]->setIcon(sliders_inverted);
+        _actions[3]->setIcon(help_inverted);
+    } else {
+        _actions[0]->setIcon(index == 0 ? settings_inverted : settings);
+        _actions[1]->setIcon(index == 1 ? book_inverted : book);
+        _actions[2]->setIcon(index == 2 ? sliders_inverted : sliders);
+        _actions[3]->setIcon(index == 3 ? help_inverted : help);
+    }
+#else
+    _actions[0]->setIcon(index == 0 ? settings_inverted : settings);
+    _actions[1]->setIcon(index == 1 ? book_inverted : book);
+    _actions[2]->setIcon(index == 2 ? sliders_inverted : sliders);
+    _actions[3]->setIcon(index == 3 ? help_inverted : help);
+#endif
+}
+
 void SettingsWindow::openTab(int tabIndex)
 {
+#if defined(Q_OS_DARWIN)
+    // Set the style to match whether the user started dark mode
+    if (!system("defaults read -g AppleInterfaceStyle")) {
+        setButtonIcon(/* use_dark = */true, tabIndex);
+    } else {
+        setButtonIcon(/* use_dark = */false, tabIndex);
+    }
+#endif
     for (int index = 0; index < _contentStackedWidget->count(); index++) {
         // Ignore sizehint of non-active widgets
         QSizePolicy::Policy policy = QSizePolicy::Ignored;

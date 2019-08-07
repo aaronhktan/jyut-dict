@@ -3,12 +3,16 @@
 
 #include "logic/database/sqldatabasemanager.h"
 
+#include <QAction>
+#include <QEvent>
 #include <QLayout>
 #include <QMainWindow>
 #include <QStackedWidget>
 #include <QToolBar>
+#include <QToolButton>
 
 #include <memory>
+#include <vector>
 
 constexpr auto NUM_OF_TABS = 4;
 
@@ -21,6 +25,8 @@ public:
                             QWidget *parent = nullptr);
     ~SettingsWindow();
 
+    void changeEvent(QEvent *event);
+
 private:
     QWidget *_parent;
 
@@ -29,8 +35,15 @@ private:
     QStackedWidget *_contentStackedWidget;
     QToolBar *_toolBar;
 
+    std::vector<QToolButton *> _toolButtons;
+    std::vector<QAction *> _actions;
+
     std::shared_ptr<SQLDatabaseManager> _manager;
 
+    bool _paletteRecentlyChanged;
+
+    void setStyle(bool use_dark);
+    void setButtonIcon(bool use_dark, int index);
     void openTab(int tabIndex);
 };
 

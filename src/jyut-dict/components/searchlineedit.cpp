@@ -96,8 +96,8 @@ void SearchLineEdit::changeEvent(QEvent *event)
             setStyle(/* use_dark = */false);
         }
     }
-    QLineEdit::changeEvent(event);
 #endif
+    QLineEdit::changeEvent(event);
 }
 
 // Since the textChanged event happens before letters are painted,
