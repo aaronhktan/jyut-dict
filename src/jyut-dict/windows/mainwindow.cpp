@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     for (auto source : sources) {
         DictionarySourceUtils::addSource(source.first, source.second);
     }
+    delete _utils;
 
     // Create UI elements
     _mainToolBar = new MainToolBar{_manager, this};
@@ -93,9 +94,9 @@ void MainWindow::createActions()
     _fileMenu->addAction(aboutAction);
 
 #ifdef Q_OS_MAC
-    QAction *settingsWindowAction = new QAction{tr("Preferences")};
+    QAction *settingsWindowAction = new QAction{tr("Preferences"), this};
 #else
-    QAction *settingsWindowAction = new QAction{tr("Settings")};
+    QAction *settingsWindowAction = new QAction{tr("Settings"), this};
 #endif
     settingsWindowAction->setStatusTip(tr("Add or remove dictionaries to search"));
     connect(settingsWindowAction, &QAction::triggered, this, &MainWindow::openSettingsWindow);
