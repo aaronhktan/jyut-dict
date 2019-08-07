@@ -34,7 +34,7 @@ void DictionaryTab::setupUI()
                               this};
     _explanatory->setWordWrap(true);
     _explanatory->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     _explanatory->setStyleSheet("QLabel { margin: 5px 0 5px 0; }");
 #endif
     _list = new DictionaryListView{this};
