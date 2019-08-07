@@ -24,6 +24,19 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
     _toolBar->setStyleSheet("QToolBar {"
                             "   background-color: white;"
                             "}");
+#elif defined(Q_OS_LINUX)
+    QColor color = QGuiApplication::palette().color(QPalette::AlternateBase);
+    _toolBar->setStyleSheet(QString("QToolBar {"
+                            "   background: transparent;"
+                            "   background-color: rgba(%1, %2, %3, %4);"
+                            "   border-bottom: 1px solid lightgray;"
+                            "   padding-bottom: 3px;"
+                            "   padding-top: 3px;"
+                            "}")
+                            .arg(std::to_string(color.red()).c_str())
+                            .arg(std::to_string(color.green()).c_str())
+                            .arg(std::to_string(color.blue()).c_str())
+                            .arg(0.7));
 #endif
     addToolBar(_toolBar);
     setUnifiedTitleAndToolBarOnMac(true);
