@@ -82,6 +82,7 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
 
     _actions[3]->setText(tr("Contact"));
     ContactTab *contactTab = new ContactTab{this};
+
     _contentStackedWidget->addWidget(contactTab);
 
     setCentralWidget(_contentStackedWidget);

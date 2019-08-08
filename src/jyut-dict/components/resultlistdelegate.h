@@ -15,6 +15,8 @@
 
 class ResultListDelegate : public QStyledItemDelegate
 {
+Q_OBJECT
+
 public:
     explicit ResultListDelegate(QWidget *parent = nullptr);
 

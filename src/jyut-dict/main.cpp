@@ -23,6 +23,16 @@ int main(int argc, char *argv[])
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication a(argc, argv);
 
+    QTranslator qtTranslator;
+    qtTranslator.load("qt_" + QLocale::system().name(),
+                      QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    a.installTranslator(&qtTranslator);
+
+    QTranslator jyutTranslator;
+    jyutTranslator.load(QString{":/translations/jyutdictionary-%1"}.arg(
+        QLocale::system().name()));
+    a.installTranslator(&jyutTranslator);
+
     MainWindow w;
     w.show();
 

@@ -124,6 +124,9 @@ HEADERS += \
 RESOURCES += \
     resources/resource.qrc
 
+TRANSLATIONS += \
+    resources/translations/jyutdictionary-fr_CA.ts
+
 macx: {
     LIBS += -framework AppKit
     OBJECTIVE_SOURCES += \

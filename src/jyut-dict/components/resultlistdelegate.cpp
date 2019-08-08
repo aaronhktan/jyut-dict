@@ -28,7 +28,7 @@ void ResultListDelegate::paint(QPainter *painter,
 
     Entry entry = qvariant_cast<Entry>(index.data());
 
-    bool isWelcomeEntry = entry.getSimplified() == "Welcome!";
+    bool isWelcomeEntry = entry.getSimplified() == tr("Welcome!").toStdString();
 
     if (option.state & QStyle::State_Selected && !isWelcomeEntry) {
 #ifdef Q_OS_MAC
