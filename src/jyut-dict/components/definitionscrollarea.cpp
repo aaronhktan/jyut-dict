@@ -84,12 +84,8 @@ void DefinitionScrollArea::setEntry(const Entry &entry)
 }
 
 void DefinitionScrollArea::resizeEvent(QResizeEvent *event) {
-#if defined(Q_OS_WIN) || defined(Q_OS_LINUX)
     _scrollAreaWidget->resize(width()
                               - (verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0),
                               _scrollAreaWidget->sizeHint().height());
-#else
-    _scrollAreaWidget->resize(width(), _scrollAreaWidget->sizeHint().height());
-#endif
     event->accept();
 }
