@@ -98,7 +98,8 @@ void MainWindow::createActions()
 #else
     QAction *settingsWindowAction = new QAction{tr("Settings"), this};
 #endif
-    settingsWindowAction->setStatusTip(tr("Add or remove dictionaries to search"));
+    settingsWindowAction->setStatusTip(tr("Change settings"));
+    settingsWindowAction->setShortcut(QKeySequence{"Ctrl+,"});
     connect(settingsWindowAction, &QAction::triggered, this, &MainWindow::openSettingsWindow);
     _fileMenu->addAction(settingsWindowAction);
 

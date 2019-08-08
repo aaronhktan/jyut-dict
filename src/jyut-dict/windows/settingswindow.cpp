@@ -85,7 +85,11 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
 
     _toolButtons[0]->click();
 
+#ifdef Q_OS_MAC
     setWindowTitle(tr("Preferences"));
+#else
+    setWindowTitle(tr("Settings"));
+#endif
     setMinimumSize(600, 400);
     resize(sizeHint());
     layout()->setSizeConstraint(QLayout::SetFixedSize);
