@@ -66,7 +66,10 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
 #endif
 
     _actions[0]->setText(tr("General"));
-    QWidget *generalTab = new QWidget{this};
+    QLabel *generalTab = new QLabel{"This page is intentionally left blank.",
+                                    this};
+    generalTab->setMinimumSize(400, 250);
+    generalTab->setAlignment(Qt::AlignCenter);
     _contentStackedWidget->addWidget(generalTab);
 
     _actions[1]->setText(tr("Dictionaries"));
@@ -74,11 +77,17 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
     _contentStackedWidget->addWidget(dictionaryTab);
 
     _actions[2]->setText(tr("Advanced"));
-    QWidget *advancedTab = new QWidget{this};
+    QLabel *advancedTab = new QLabel{"This page is intentionally left blank.",
+                                     this};
+    advancedTab->setMinimumSize(400, 250);
+    advancedTab->setAlignment(Qt::AlignCenter);
     _contentStackedWidget->addWidget(advancedTab);
 
     _actions[3]->setText(tr("Contact"));
-    QWidget *contactTab = new QWidget{this};
+    QLabel *contactTab = new QLabel{"This page is intentionally left blank.",
+                                    this};
+    contactTab->setMinimumSize(400, 250);
+    contactTab->setAlignment(Qt::AlignCenter);
     _contentStackedWidget->addWidget(contactTab);
 
     setCentralWidget(_contentStackedWidget);
@@ -93,8 +102,8 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
     setMinimumSize(600, 400);
     resize(sizeHint());
     layout()->setSizeConstraint(QLayout::SetFixedSize);
-    move(parent->x() + (parent->width() - size().width()) / 2,
-         parent->y() + (parent->height() - size().height()) / 2);
+    move(parent->x() + (parent->width() - sizeHint().width()) / 2,
+         parent->y() + (parent->height() - sizeHint().height()) / 2);
 
     setAttribute(Qt::WA_DeleteOnClose);
 }
