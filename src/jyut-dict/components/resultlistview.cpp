@@ -11,7 +11,11 @@ ResultListView::ResultListView(QWidget *parent)
     : QListView(parent)
 {
     setFrameShape(QFrame::NoFrame);
+#ifdef Q_OS_LINUX
+    setMinimumWidth(200);
+#else
     setMinimumWidth(250);
+#endif
 
     _model = new ResultListModel{{}, this};
     setModel(_model);

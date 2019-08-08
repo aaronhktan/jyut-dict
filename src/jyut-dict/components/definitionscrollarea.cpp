@@ -22,7 +22,11 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
     _scrollAreaWidget->resize(width(), _scrollAreaWidget->sizeHint().height());
 
     setWidget(_scrollAreaWidget);
+#ifdef Q_OS_LINUX
+    setMinimumWidth(250);
+#else
     setMinimumWidth(350);
+#endif
 
     _entryHeaderWidget = new EntryHeaderWidget{this};
     _definitionWidget = new DefinitionWidget{this};

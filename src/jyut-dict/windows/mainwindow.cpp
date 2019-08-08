@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     setWindowTitle("Jyut Dictionary");
 #ifdef Q_OS_LINUX
-    setMinimumSize(QSize(300, 450));
+    setMinimumSize(QSize(500, 350));
 #else
     setMinimumSize(QSize(800, 600));
 #endif
