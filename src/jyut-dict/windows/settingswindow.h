@@ -14,6 +14,8 @@
 #include <memory>
 #include <vector>
 
+// The SettingsWindow allows users to modify settings. Surprise!
+
 constexpr auto NUM_OF_TABS = 4;
 
 class SettingsWindow : public QMainWindow

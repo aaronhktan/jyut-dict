@@ -153,6 +153,9 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
     }
 
     if (version != CURRENT_DATABASE_VERSION) {
+        // This usually happens so quickly that the slot(s) are not yet
+        // connected to the finishedAddition() signal. Sleep for 1000ms
+        // to make time for all connections to be made.
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         query.exec("DETACH DATABASE db");
         emit finishedAddition(false,

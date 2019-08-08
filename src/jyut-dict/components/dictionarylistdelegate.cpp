@@ -40,11 +40,11 @@ void DictionaryListDelegate::paint(QPainter *painter,
 
     r = r.adjusted(6, 6, 6, 6);
     QFontMetrics metrics(font);
-    QString phonetic = metrics.elidedText(
+    QString sourcename = metrics.elidedText(
         source.getName().c_str(),
         Qt::ElideRight,
         r.width());
-    painter->drawText(r, 0, phonetic, &boundingRect);
+    painter->drawText(r, 0, sourcename, &boundingRect);
 
     painter->restore();
 }

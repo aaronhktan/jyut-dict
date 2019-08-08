@@ -17,6 +17,9 @@
 
 #include <memory>
 
+// The DictionaryTab is the widget displayed in the settings window
+// when a user clicks on the "Dictionaries" icon in the toolbar.
+
 class DictionaryTab : public QWidget
 {
     Q_OBJECT

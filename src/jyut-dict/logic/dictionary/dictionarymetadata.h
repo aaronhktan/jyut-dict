@@ -5,16 +5,18 @@
 
 #include <string>
 
+// The DictionaryMetadata class contains metadata about a particular source.
+
 class DictionaryMetadata
 {
 public:
     DictionaryMetadata();
     DictionaryMetadata(std::string name,
-                                std::string version,
-                                std::string description,
-                                std::string legal,
-                                std::string link,
-                                std::string other);
+                       std::string version,
+                       std::string description,
+                       std::string legal,
+                       std::string link,
+                       std::string other);
     DictionaryMetadata(const DictionaryMetadata &metadata);
     DictionaryMetadata(const DictionaryMetadata &&metadata);
 
