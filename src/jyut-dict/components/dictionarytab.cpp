@@ -148,7 +148,7 @@ void DictionaryTab::addDictionary(QString &dictionaryFile)
     _dialog->setMinimumSize(300, 75);
     Qt::WindowFlags flags = _dialog->windowFlags() | Qt::CustomizeWindowHint;
     flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
-               | Qt::WindowFullscreenButtonHint);
+               | Qt::WindowFullscreenButtonHint | Qt::WindowContextHelpButtonHint);
     _dialog->setWindowFlags(flags);
     _dialog->setMinimumDuration(0);
     _dialog->setAttribute(Qt::WA_DeleteOnClose, true);
@@ -201,7 +201,7 @@ void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
     _dialog->setMinimumSize(300, 75);
     Qt::WindowFlags flags = _dialog->windowFlags() | Qt::CustomizeWindowHint;
     flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
-               | Qt::WindowFullscreenButtonHint);
+               | Qt::WindowFullscreenButtonHint | Qt::WindowContextHelpButtonHint);
     _dialog->setWindowFlags(flags);
     _dialog->setMinimumDuration(0);
     _dialog->setAttribute(Qt::WA_DeleteOnClose, true);

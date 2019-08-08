@@ -241,6 +241,7 @@ void SettingsWindow::openTab(int tabIndex)
 #else
     setButtonIcon(/* use_dark = */false, tabIndex);
 #endif
+
     for (int index = 0; index < _contentStackedWidget->count(); index++) {
         // Ignore sizehint of non-active widgets
         QSizePolicy::Policy policy = QSizePolicy::Ignored;
