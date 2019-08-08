@@ -8,7 +8,25 @@
 
 SQLDatabaseManager::SQLDatabaseManager()
 {
+    // Delete the old version of the dictionary
+#ifdef Q_OS_LINUX
+    QFileInfo localFile{
+        QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
+        + "/dictionaries/eng.db"};
+#else
+    QFileInfo localFile{
+        QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
+        + "/Dictionaries/eng.db"};
+#endif
 
+#ifndef PORTABLE
+    if (localFile.exists() && localFile.isFile()) {
+        if (!QFile::remove(localFile.absoluteFilePath())) {
+            //            std::cerr << "Couldn't remove original file!" << std::endl;
+            //            return;
+        }
+    }
+#endif
 }
 
 SQLDatabaseManager::~SQLDatabaseManager()
