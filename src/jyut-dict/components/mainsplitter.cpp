@@ -1,20 +1,22 @@
 #include "mainsplitter.h"
 
+#include "components/resultlistview.h"
 #include "logic/entry/entry.h"
 
 #include <QList>
 
 MainSplitter::MainSplitter(QWidget *parent) : QSplitter(parent)
 {
-    _definitionScrollArea = new DefinitionScrollArea;
-    _searchListView = new SearchListView();
+    _definitionScrollArea = new DefinitionScrollArea{this};
+    _resultListView = new ResultListView{this};
 
-    addWidget(_searchListView);
+    addWidget(_resultListView);
     addWidget(_definitionScrollArea);
 
-    connect(_searchListView->selectionModel(),
-       SIGNAL(currentChanged(QModelIndex, QModelIndex)),
-       this, SLOT(handleSelectionChanged(QModelIndex)));
+    connect(_resultListView->selectionModel(),
+            &QItemSelectionModel::currentChanged,
+            this,
+            &MainSplitter::handleSelectionChanged);
 
     setHandleWidth(1);
     setCollapsible(0, false);

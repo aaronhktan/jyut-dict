@@ -65,7 +65,7 @@ public:
 
     std::vector<DefinitionsSet> getDefinitionsSets(void) const;
     std::string getDefinitionSnippet(void) const;
-    void addDefinitions(DictionarySource source,
+    void addDefinitions(std::string source,
                         std::vector<std::string> definitions);
 
     std::vector<std::string> getDerivedWords(void) const;

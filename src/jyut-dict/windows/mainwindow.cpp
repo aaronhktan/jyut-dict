@@ -1,6 +1,9 @@
 #include "windows/mainwindow.h"
 
+#include "logic/database/sqldatabaseutils.h"
+#include "logic/dictionary/dictionarysource.h"
 #include "logic/entry/sentence.h"
+#include "windows/settingswindow.h"
 #include "windows/updatewindow.h"
 
 #include <QApplication>
@@ -15,17 +18,30 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     setWindowTitle("Jyut Dictionary");
 #ifdef Q_OS_LINUX
-    setMinimumSize(QSize(600, 600));
+    setMinimumSize(QSize(500, 350));
 #else
     setMinimumSize(QSize(800, 600));
 #endif
 
+    // Instantiate services
+    _manager = std::make_shared<SQLDatabaseManager>();
+    _manager->openDatabase();
+
+    // Populate sources
+    SQLDatabaseUtils *_utils = new SQLDatabaseUtils{_manager};
+    std::vector<std::pair<std::string, std::string>> sources;
+    _utils->readSources(sources);
+    for (auto source : sources) {
+        DictionarySourceUtils::addSource(source.first, source.second);
+    }
+    delete _utils;
+
     // Create UI elements
-    _mainToolBar = new MainToolBar(this);
+    _mainToolBar = new MainToolBar{_manager, this};
     addToolBar(_mainToolBar);
     setUnifiedTitleAndToolBarOnMac(true);
 
-    _mainSplitter = new MainSplitter(this);
+    _mainSplitter = new MainSplitter{this};
     setCentralWidget(_mainSplitter);
 
     // Create menu bar and populate it
@@ -70,12 +86,22 @@ void MainWindow::createMenus()
 
 void MainWindow::createActions()
 {
-    QAction *aboutAction = new QAction(tr("&About"), this);
+    QAction *aboutAction = new QAction{tr("&About"), this};
     aboutAction->setStatusTip(tr("Show the application's About box"));
     connect(aboutAction, &QAction::triggered, this, &QApplication::aboutQt);
     // TODO: Implement an about dialog to give credits to contributors :)
     // connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
     _fileMenu->addAction(aboutAction);
+
+#ifdef Q_OS_MAC
+    QAction *settingsWindowAction = new QAction{tr("Preferences"), this};
+#else
+    QAction *settingsWindowAction = new QAction{tr("Settings"), this};
+#endif
+    settingsWindowAction->setStatusTip(tr("Change settings"));
+    settingsWindowAction->setShortcut(QKeySequence{"Ctrl+,"});
+    connect(settingsWindowAction, &QAction::triggered, this, &MainWindow::openSettingsWindow);
+    _fileMenu->addAction(settingsWindowAction);
 
     QAction *closeWindowAction = new QAction{tr("Close Window"), this};
     closeWindowAction->setShortcut(QKeySequence{"Ctrl+W"});
@@ -176,7 +202,6 @@ void MainWindow::cut()
     }
 }
 
-#include <iostream>
 void MainWindow::copy()
 {
     QWidget *focused = QApplication::focusWidget();
@@ -231,4 +256,16 @@ void MainWindow::toggleMaximized()
     } else {
         showNormal();
     }
+}
+
+void MainWindow::openSettingsWindow()
+{
+    if (_settingsWindow) {
+        _settingsWindow->activateWindow();
+        _settingsWindow->raise();
+        return;
+    }
+
+    _settingsWindow = new SettingsWindow{_manager, this};
+    _settingsWindow->show();
 }

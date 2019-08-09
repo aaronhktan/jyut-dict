@@ -2,13 +2,13 @@
 
 DefinitionSectionWidget::DefinitionSectionWidget(QWidget *parent) : QWidget(parent)
 {
-    _definitionAreaLayout = new QVBoxLayout(this);
+    _definitionAreaLayout = new QVBoxLayout{this};
     _definitionAreaLayout->setContentsMargins(0, 0, 0, 0);
     _definitionAreaLayout->setSpacing(11);
     setLayout(_definitionAreaLayout);
 
-    _definitionHeaderWidget = new DefinitionHeaderWidget();
-    _definitionWidget = new DefinitionContentWidget();
+    _definitionHeaderWidget = new DefinitionHeaderWidget{this};
+    _definitionWidget = new DefinitionContentWidget{this};
 }
 
 DefinitionSectionWidget::~DefinitionSectionWidget()

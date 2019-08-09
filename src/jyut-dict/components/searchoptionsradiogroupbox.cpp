@@ -6,18 +6,18 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *m
 {
     _mediator = mediator;
 
-    _layout = new QHBoxLayout(this);
+    _layout = new QHBoxLayout{this};
     _layout->setContentsMargins(5, 5, 5, 5);
 
-    _simplifiedButton = new QRadioButton(tr("SC"), this);
+    _simplifiedButton = new QRadioButton{tr("SC"), this};
     _simplifiedButton->setToolTip(tr("Search Simplified Chinese"));
-    _traditionalButton = new QRadioButton(tr("TC"), this);
+    _traditionalButton = new QRadioButton{tr("TC"), this};
     _traditionalButton->setToolTip(tr("Search Traditional Chinese"));
-    _jyutpingButton = new QRadioButton(tr("JP"), this);
+    _jyutpingButton = new QRadioButton{tr("JP"), this};
     _jyutpingButton->setToolTip(tr("Search Jyutping"));
-    _pinyinButton = new QRadioButton(tr("PY"), this);
+    _pinyinButton = new QRadioButton{tr("PY"), this};
     _pinyinButton->setToolTip(tr("Search Pinyin"));
-    _englishButton = new QRadioButton(tr("EN"), this);
+    _englishButton = new QRadioButton{tr("EN"), this};
     _englishButton->setToolTip(tr("Search English"));
 #ifdef Q_OS_LINUX
     _simplifiedButton->setStyleSheet("QToolTip { padding: 1px; color: black }");

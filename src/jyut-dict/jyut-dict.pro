@@ -37,23 +37,31 @@ SOURCES += \
     components/definitionscrollarea.cpp \
     components/definitionsectionwidget.cpp \
     components/definitionwidget.cpp \
-    components/entrydelegate.cpp \
+    components/dictionarylistdelegate.cpp \
+    components/dictionarylistmodel.cpp \
+    components/dictionarylistview.cpp \
+    components/dictionarytab.cpp \
     components/entryheaderwidget.cpp \
-    components/entrylistmodel.cpp \
     components/mainsplitter.cpp \
     components/maintoolbar.cpp \
+    components/resultlistdelegate.cpp \
+    components/resultlistmodel.cpp \
+    components/resultlistview.cpp \
     components/searchlineedit.cpp \
-    components/searchlistview.cpp \
     components/searchoptionsradiogroupbox.cpp \
+    logic/database/sqldatabasemanager.cpp \
+    logic/database/sqldatabaseutils.cpp \
+    logic/dictionary/dictionarymetadata.cpp \
+    logic/dictionary/dictionarysource.cpp \
     logic/entry/definitionsset.cpp \
     logic/entry/entry.cpp \
     logic/entry/sentence.cpp \
     logic/search/searchoptionsmediator.cpp \
-    logic/search/sqldatabasemanager.cpp \
     logic/search/sqlsearch.cpp \
     logic/update/githubreleasechecker.cpp \
     logic/utils/utils.cpp \
     windows/mainwindow.cpp \
+    windows/settingswindow.cpp \
     windows/updatewindow.cpp
 
 HEADERS += \
@@ -62,16 +70,24 @@ HEADERS += \
     components/definitionscrollarea.h \
     components/definitionsectionwidget.h \
     components/definitionwidget.h \
-    components/entrydelegate.h \
+    components/dictionarylistdelegate.h \
+    components/dictionarylistmodel.h \
+    components/dictionarylistview.h \
+    components/dictionarytab.h \
     components/entryheaderwidget.h \
-    components/entrylistmodel.h \
     components/isearchlineedit.h \
     components/isectionheaderwidget.h \
     components/mainsplitter.h \
     components/maintoolbar.h \
+    components/resultlistdelegate.h \
+    components/resultlistmodel.h \
+    components/resultlistview.h \
     components/searchlineedit.h \
-    components/searchlistview.h \
     components/searchoptionsradiogroupbox.h \
+    logic/database/sqldatabasemanager.h \
+    logic/database/sqldatabaseutils.h \
+    logic/dictionary/dictionarymetadata.h \
+    logic/dictionary/dictionarysource.h \
     logic/entry/definitionsset.h \
     logic/entry/entry.h \
     logic/entry/entrycharactersoptions.h \
@@ -83,23 +99,28 @@ HEADERS += \
     logic/search/isearchoptionsmediator.h \
     logic/search/searchoptionsmediator.h \
     logic/search/searchparameters.h \
-    logic/search/sqldatabasemanager.h \
     logic/search/sqlsearch.h \
     logic/update/githubreleasechecker.h \
     logic/update/iupdatechecker.h \
     logic/utils/utils.h \
+    logic/utils/utils_mac.h \
     windows/mainwindow.h \
+    windows/settingswindow.h \
     windows/updatewindow.h
 
 RESOURCES += \
     resources/resource.qrc
 
 macx: {
+    LIBS += -framework AppKit
+    OBJECTIVE_SOURCES += \
+        logic/utils/utils_mac.mm \
+
     ICON = resources/icon/icon.icns
     QMAKE_INFO_PLIST = platform/mac/Info.plist
 
     # Adds files to the Resources folder in macOS bundle
-    APP_DB_FILES.files = resources/db/eng.db
+    APP_DB_FILES.files = resources/db/dict.db
     APP_DB_FILES.path = Contents/Resources
     QMAKE_BUNDLE_DATA += APP_DB_FILES
 }
@@ -116,7 +137,7 @@ unix:!macx {
     binfile.files += $$system_path($$OUT_PWD)/jyut-dict
     binfile.path = /usr/bin/
     binfile.CONFIG += no_check_exist
-    dictfile.files += resources/db/eng.db
+    dictfile.files += resources/db/dict.db
     dictfile.path = /usr/share/jyut-dict/dictionaries/
     shortcutfiles.files += platform/linux/jyut-dict.desktop
     shortcutfiles.path = /usr/share/applications/
@@ -130,7 +151,7 @@ unix:!macx {
 
 unix|win32:!macx {
     # Copy dictionary database to the build directory
-    copydata.commands = $(COPY_DIR) \"$$system_path($$PWD/resources/db/eng.db)\" \"$$system_path($$OUT_PWD)\"
+    copydata.commands = $(COPY_DIR) \"$$system_path($$PWD/resources/db/dict.db)\" \"$$system_path($$OUT_PWD)\"
     first.depends = $(first) copydata
     export(first.depends)
     export(copydata.commands)

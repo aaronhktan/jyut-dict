@@ -26,9 +26,9 @@ void SQLDatabaseManager::openEnglishDatabase()
     _EnglishDB = QSqlDatabase::addDatabase("QSQLITE");
 
 #ifdef Q_OS_DARWIN
-    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/../Resources/eng.db"};
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/../Resources/dict.db"};
     QFileInfo localFile{QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
-                 + "/Dictionaries/eng.db"};
+                 + "/Dictionaries/dict.db"};
 #elif defined(Q_OS_WIN)
     QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "./eng.db"};
     QFileInfo localFile{QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)

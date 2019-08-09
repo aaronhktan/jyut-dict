@@ -1,15 +1,11 @@
 #ifndef DEFINITIONS_H
 #define DEFINITIONS_H
 
+#include "logic/dictionary/dictionarysource.h"
+
 #include <iostream>
+#include <unordered_map>
 #include <vector>
-
-// DictionarySource is an enum that contains possible dictionary sources
-
-enum DictionarySource {
-    CEDICT,
-    CCCANTO
-};
 
 // The DefintitionsSet class contains a grouping of definitions from one source
 
@@ -17,8 +13,9 @@ class DefinitionsSet
 {
 public:
     DefinitionsSet();
-    DefinitionsSet(DictionarySource source, std::vector<std::string> definitions);
-    DefinitionsSet(DictionarySource source, std::string definitions);
+    DefinitionsSet(std::string source);
+    DefinitionsSet(std::string source, std::vector<std::string> definitions);
+    DefinitionsSet(std::string source, std::string definitions);
     DefinitionsSet(const DefinitionsSet &definitions);
     DefinitionsSet(const DefinitionsSet &&definitions);
 
@@ -29,7 +26,9 @@ public:
 
     bool isEmpty() const;
 
-    DictionarySource getSource() const;
+    void pushDefinition(const std::string definition);
+
+    std::string getSource() const;
     std::string getSourceLongString() const;
     std::string getSourceShortString() const;
     std::string getDefinitionsSnippet() const;
@@ -38,7 +37,7 @@ public:
 private:
     std::vector<std::string> parseDefinitions(std::string definitions);
 
-    DictionarySource _source;
+    std::string _source;
     std::vector<std::string> _definitions;
 };
 

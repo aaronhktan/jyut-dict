@@ -7,5 +7,13 @@
         <file>images/update.png</file>
         <file>images/warning.png</file>
         <file>images/icon.png</file>
+        <file>images/settings.png</file>
+        <file>images/settings_inverted.png</file>
+        <file>images/book_inverted.png</file>
+        <file>images/book.png</file>
+        <file>images/sliders_inverted.png</file>
+        <file>images/sliders.png</file>
+        <file>images/help_inverted.png</file>
+        <file>images/help.png</file>
     </qresource>
 </RCC>

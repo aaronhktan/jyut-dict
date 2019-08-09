@@ -1,6 +1,5 @@
 #include "searchlineedit.h"
 
-#include "logic/search/sqldatabasemanager.h"
 #include "logic/search/sqlsearch.h"
 
 #include <QIcon>
@@ -8,17 +7,19 @@
 
 #include <vector>
 
-SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent)
+SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
+                               std::shared_ptr<SQLDatabaseManager> manager,
+                               QWidget *parent)
     : QLineEdit(parent)
 {
     _mediator = mediator;
 
     setPlaceholderText(tr("Search"));
 
-    _searchLineEdit = new QAction("", this);
+    _searchLineEdit = new QAction{"", this};
     addAction(_searchLineEdit, QLineEdit::LeadingPosition);
 
-    _clearLineEdit = new QAction("", this);
+    _clearLineEdit = new QAction{"", this};
     addAction(_clearLineEdit, QLineEdit::TrailingPosition);
     connect(_clearLineEdit, &QAction::triggered,
             [this](){
@@ -42,7 +43,8 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator, QWidget *parent
 
     setMinimumWidth(parent->width() / 2);
 
-    _search = new SQLSearch(std::make_shared<SQLDatabaseManager>());
+    _databaseManager = manager;
+    _search = new SQLSearch{_databaseManager};
 
     connect(this, &QLineEdit::textChanged,
             [this](){
@@ -94,8 +96,8 @@ void SearchLineEdit::changeEvent(QEvent *event)
             setStyle(/* use_dark = */false);
         }
     }
-    QLineEdit::changeEvent(event);
 #endif
+    QLineEdit::changeEvent(event);
 }
 
 // Since the textChanged event happens before letters are painted,

@@ -378,9 +378,9 @@ std::string Entry::getDefinitionSnippet(void) const
     return "";
 }
 
-void Entry::addDefinitions(DictionarySource source, std::vector<std::string> definitions)
+void Entry::addDefinitions(std::string source, std::vector<std::string> definitions)
 {
-    _definitions.push_back(DefinitionsSet(source, definitions));
+    _definitions.push_back(DefinitionsSet{source, definitions});
 }
 
 std::vector<std::string> Entry::getDerivedWords(void) const

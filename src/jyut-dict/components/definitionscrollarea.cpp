@@ -13,19 +13,23 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
     setFrameShape(QFrame::NoFrame);
 
     // Entire Scroll Area
-    _scrollAreaLayout = new QVBoxLayout(this);
+    _scrollAreaLayout = new QVBoxLayout{this};
     _scrollAreaLayout->setSpacing(25);
     _scrollAreaLayout->setContentsMargins(11, 11, 11, 22);
 
-    _scrollAreaWidget = new QWidget(this);
+    _scrollAreaWidget = new QWidget{this};
     _scrollAreaWidget->setLayout(_scrollAreaLayout);
     _scrollAreaWidget->resize(width(), _scrollAreaWidget->sizeHint().height());
 
     setWidget(_scrollAreaWidget);
+#ifdef Q_OS_LINUX
+    setMinimumWidth(250);
+#else
     setMinimumWidth(350);
+#endif
 
-    _entryHeaderWidget = new EntryHeaderWidget(this);
-    _definitionWidget = new DefinitionWidget(this);
+    _entryHeaderWidget = new EntryHeaderWidget{this};
+    _definitionWidget = new DefinitionWidget{this};
 
     // Add all widgets to main layout
     _scrollAreaLayout->addWidget(_entryHeaderWidget);
@@ -63,9 +67,9 @@ void DefinitionScrollArea::testEntry() {
     std::vector<std::string>definitions_CCCANTO{"Hi!",
                                                  "THIS IS A TEST",
                                                  "WOOOOOOO"};
-    std::vector<DefinitionsSet>definitions{DefinitionsSet{CEDICT, definitions_CC},
-                                           DefinitionsSet{CCCANTO, definitions_CCCANTO}};
-    std::vector<DefinitionsSet>definitions2{DefinitionsSet{CEDICT, definitions_CC}};
+    std::vector<DefinitionsSet>definitions{DefinitionsSet{"CEDICT", definitions_CC},
+                                           DefinitionsSet{"CC-CANTO", definitions_CCCANTO}};
+    std::vector<DefinitionsSet>definitions2{DefinitionsSet{"CEDICT", definitions_CC}};
     std::vector<std::string>derivedWords{};
     std::vector<Sentence>sentences{};
 
@@ -84,12 +88,8 @@ void DefinitionScrollArea::setEntry(const Entry &entry)
 }
 
 void DefinitionScrollArea::resizeEvent(QResizeEvent *event) {
-#if defined(Q_OS_WIN) || defined(Q_OS_LINUX)
     _scrollAreaWidget->resize(width()
                               - (verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0),
                               _scrollAreaWidget->sizeHint().height());
-#else
-    _scrollAreaWidget->resize(width(), _scrollAreaWidget->sizeHint().height());
-#endif
     event->accept();
 }

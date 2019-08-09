@@ -36,6 +36,10 @@ namespace Utils {
     void split(const std::string &string,
                const char delimiter,
                std::vector<std::string> &result);
+
+    void split(const std::string &string,
+               const std::string delimiter,
+               std::vector<std::string> &result);
 }
 
 #endif // UTILS_H

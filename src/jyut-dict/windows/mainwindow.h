@@ -4,11 +4,14 @@
 #include "components/mainsplitter.h"
 #include "components/maintoolbar.h"
 #include "logic/update/githubreleasechecker.h"
+#include "logic/database/sqldatabasemanager.h"
 
 #include <QMainWindow>
 #include <QMenu>
 #include <QMenuBar>
 #include <QWidget>
+
+#include <memory>
 
 // As its name suggests, is the main window of the application
 // Contains a toolbar (for searching), and splitter (for results/detail)
@@ -20,6 +23,21 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+private:
+    GithubReleaseChecker *_checker;
+
+    MainToolBar *_mainToolBar;
+    MainSplitter *_mainSplitter;
+
+    QMenu *_fileMenu;
+    QMenu *_editMenu;
+    QMenu *_windowMenu;
+    QMenu *_helpMenu;
+
+    QPointer<QWidget> _settingsWindow;
+
+    std::shared_ptr<SQLDatabaseManager> _manager;
 
     void createMenus();
     void createActions();
@@ -33,16 +51,7 @@ public:
     void toggleMinimized();
     void toggleMaximized();
 
-private:
-    GithubReleaseChecker *_checker;
-
-    MainToolBar *_mainToolBar;
-    MainSplitter *_mainSplitter;
-
-    QMenu *_fileMenu;
-    QMenu *_editMenu;
-    QMenu *_windowMenu;
-    QMenu *_helpMenu;
+    void openSettingsWindow();
 
 public slots:
     void notifyUpdateAvailable(bool updateAvailable,

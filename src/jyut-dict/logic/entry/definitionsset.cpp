@@ -7,7 +7,13 @@ DefinitionsSet::DefinitionsSet()
 
 }
 
-DefinitionsSet::DefinitionsSet(DictionarySource source,
+DefinitionsSet::DefinitionsSet(std::string source)
+    : _source{source}
+{
+
+}
+
+DefinitionsSet::DefinitionsSet(std::string source,
                                std::vector<std::string> definitions)
     : _source{source},
       _definitions{definitions}
@@ -15,7 +21,7 @@ DefinitionsSet::DefinitionsSet(DictionarySource source,
 
 }
 
-DefinitionsSet::DefinitionsSet(DictionarySource source, std::string definitions)
+DefinitionsSet::DefinitionsSet(std::string source, std::string definitions)
     : _source{source}
 {
     _definitions = parseDefinitions(definitions);
@@ -75,33 +81,24 @@ bool DefinitionsSet::isEmpty() const
     return _definitions.empty();
 }
 
-DictionarySource DefinitionsSet::getSource() const
+void DefinitionsSet::pushDefinition(const std::string definition)
+{
+    _definitions.push_back(definition);
+}
+
+std::string DefinitionsSet::getSource() const
 {
     return _source;
 }
 
 std::string DefinitionsSet::getSourceLongString() const
 {
-    switch (_source) {
-        case CEDICT:
-            return "CEDICT";
-        case CCCANTO:
-            return "CC-CANTO";
-    }
-
-    return "";
+    return _source;
 }
 
 std::string DefinitionsSet::getSourceShortString() const
 {
-    switch (_source) {
-        case CEDICT:
-            return "CC";
-        case CCCANTO:
-            return "CCY";
-    }
-
-    return "";
+    return DictionarySourceUtils::getSourceShortString(_source);
 }
 
 // getDefinitionSnippet() returns a string that shows the definitions contained

@@ -1,10 +1,10 @@
 #ifndef SQLSEARCH_H
 #define SQLSEARCH_H
 
+#include "logic/database/sqldatabasemanager.h"
 #include "logic/entry/entry.h"
 #include "logic/search/isearch.h"
 #include "logic/search/isearchobservable.h"
-#include "logic/search/sqldatabasemanager.h"
 
 #include <QObject>
 #include <QtSql>

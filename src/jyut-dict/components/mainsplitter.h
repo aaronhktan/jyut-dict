@@ -2,7 +2,6 @@
 #define MAINSPLITTER_H
 
 #include "components/definitionscrollarea.h"
-#include "components/searchlistview.h"
 #include "logic/search/sqlsearch.h"
 
 #include <QModelIndex>
@@ -27,7 +26,7 @@ public:
 
 private:
     DefinitionScrollArea *_definitionScrollArea;
-    SearchListView *_searchListView;
+    QListView *_resultListView;
 
 private slots:
     void handleSelectionChanged(const QModelIndex &selection);

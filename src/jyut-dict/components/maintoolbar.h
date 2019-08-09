@@ -4,10 +4,13 @@
 #include "components/searchlineedit.h"
 #include "components/searchoptionsradiogroupbox.h"
 #include "logic/search/isearchoptionsmediator.h"
+#include "logic/database/sqldatabasemanager.h"
 
 #include <QHBoxLayout>
 #include <QToolBar>
 #include <QWidget>
+
+#include <memory>
 
 // The MainToolBar is an object that contains all widgets in the toolbar
 // This includes the searchbar,
@@ -16,7 +19,8 @@
 class MainToolBar : public QToolBar
 {
 public:
-    explicit MainToolBar(QWidget *parent = nullptr);
+    explicit MainToolBar(std::shared_ptr<SQLDatabaseManager> manager,
+                         QWidget *parent = nullptr);
     ~MainToolBar();
 
 private:

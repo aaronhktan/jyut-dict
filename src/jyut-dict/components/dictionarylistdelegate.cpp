@@ -1,0 +1,56 @@
+#include "dictionarylistdelegate.h"
+
+#include "logic/dictionary/dictionarymetadata.h"
+
+DictionaryListDelegate::DictionaryListDelegate(QWidget *parent)
+    : QStyledItemDelegate(parent)
+{
+
+}
+
+void DictionaryListDelegate::paint(QPainter *painter,
+                                   const QStyleOptionViewItem &option,
+                                   const QModelIndex &index) const
+{
+    if (!index.data().canConvert<DictionaryMetadata>()) {
+        return;
+    }
+
+    painter->save();
+
+    DictionaryMetadata source = qvariant_cast<DictionaryMetadata>(index.data());
+
+    if (option.state & QStyle::State_Selected) {
+#ifdef Q_OS_MAC
+        painter->fillRect(option.rect, option.palette.highlight());
+#else
+        painter->fillRect(option.rect, QColor(204, 0, 1));
+#endif
+        painter->setPen(QPen(option.palette.color(QPalette::HighlightedText)));
+    } else {
+        painter->fillRect(option.rect, option.palette.base());
+        painter->setPen(QPen(option.palette.color(QPalette::WindowText)));
+    }
+
+    painter->setRenderHint(QPainter::Antialiasing, true);
+
+    QRect r = option.rect;
+    QRect boundingRect;
+    QFont font = painter->font();
+
+    r = r.adjusted(6, 6, 6, 6);
+    QFontMetrics metrics(font);
+    QString sourcename = metrics.elidedText(
+        source.getName().c_str(),
+        Qt::ElideRight,
+        r.width());
+    painter->drawText(r, 0, sourcename, &boundingRect);
+
+    painter->restore();
+}
+
+QSize DictionaryListDelegate::sizeHint(const QStyleOptionViewItem &option,
+                                       const QModelIndex &index) const
+{
+    return QSize(100, 30);
+}

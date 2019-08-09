@@ -2,7 +2,7 @@
 
 DefinitionWidget::DefinitionWidget(QWidget *parent) : QWidget(parent)
 {
-    _definitionSectionsLayout = new QVBoxLayout(this);
+    _definitionSectionsLayout = new QVBoxLayout{this};
     _definitionSectionsLayout->setContentsMargins(0, 0, 0, 0);
     _definitionSectionsLayout->setSpacing(25);
 }
@@ -43,7 +43,7 @@ void DefinitionWidget::setEntry(const Entry &entry)
 {
     cleanup();
     for (auto definitionsSet : entry.getDefinitionsSets()) {
-        _definitionSections.push_back(new DefinitionSectionWidget(this));
+        _definitionSections.push_back(new DefinitionSectionWidget{this});
         _definitionSections.back()->setEntry(definitionsSet);
 
         _definitionSectionsLayout->addWidget(_definitionSections.back());
@@ -57,9 +57,7 @@ void DefinitionWidget::cleanup()
 {
     for (auto section : _definitionSections) {
         _definitionSectionsLayout->removeWidget(section);
-        _definitionSections.erase(std::remove(_definitionSections.begin(),
-                                              _definitionSections.end(),
-                                              section), _definitionSections.end());
         delete section;
     }
+    _definitionSections.clear();
 }
