@@ -46,33 +46,33 @@
     <message>
         <location filename="../../components/dictionarytab.cpp" line="162"/>
         <source>Adding source...</source>
-        <translation>Ajout de la nouvelle source en cours...</translation>
+        <translation>Ajout de la nouvelle source...</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="166"/>
         <source>Adding new entries...</source>
-        <translation>Ajout des nouvelles entrées en cours...</translation>
+        <translation>Ajout des nouvelles entrées...</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="170"/>
         <source>Adding new definitions...</source>
-        <translation>Ajout des nouvelles définitions en cours...</translation>
+        <translation>Ajout des nouvelles définitions...</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="174"/>
         <location filename="../../components/dictionarytab.cpp" line="238"/>
         <source>Rebuilding search indexes...</source>
-        <translation>Réorganisation des index en cours...</translation>
+        <translation>Réorganisation des index...</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="209"/>
         <source>Removing source...</source>
-        <translation>Enlèvement de source en cours...</translation>
+        <translation>Supression de source selectionnée...</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="215"/>
         <source>Removing definitions...</source>
-        <translation>Supression de définitions en cours...</translation>
+        <translation>Supression de définitions...</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="224"/>
@@ -87,7 +87,7 @@
     <message>
         <location filename="../../components/dictionarytab.cpp" line="243"/>
         <source>Cleaning up...</source>
-        <translation>Faisons un p&apos;tit peu de ménage...</translation>
+        <translation>Un p&apos;tit peu de ménage...</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="250"/>
@@ -110,7 +110,7 @@
     <message>
         <location filename="../../windows/mainwindow.cpp" line="19"/>
         <source>Jyut Dictionary</source>
-        <translation>Jyut Dictionnaire</translation>
+        <translation>Dictionnaire Jyut</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="75"/>
@@ -265,7 +265,7 @@
     <message>
         <location filename="../../components/searchoptionsradiogroupbox.cpp" line="13"/>
         <source>Search Simplified Chinese</source>
-        <translation>Rechercher le chinois simplifié</translation>
+        <translation>Rechercher avec le chinois simplifié</translation>
     </message>
     <message>
         <location filename="../../components/searchoptionsradiogroupbox.cpp" line="14"/>
@@ -275,7 +275,7 @@
     <message>
         <location filename="../../components/searchoptionsradiogroupbox.cpp" line="15"/>
         <source>Search Traditional Chinese</source>
-        <translation>Rechercher le chinois traditionnel</translation>
+        <translation>Rechercher avec le chinois traditionnel</translation>
     </message>
     <message>
         <location filename="../../components/searchoptionsradiogroupbox.cpp" line="16"/>

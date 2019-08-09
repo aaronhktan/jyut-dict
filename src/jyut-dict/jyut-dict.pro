@@ -144,6 +144,11 @@ macx: {
     APP_SETTINGS_FILES.files = resources/settings/settings.ini
     APP_SETTINGS_FILES.path = Contents/Resources
     QMAKE_BUNDLE_DATA += APP_SETTINGS_FILES
+
+    # Add translations of application name
+    TRANSLATE_fr_CA.files = platform/mac/fr_CA.lproj/InfoPlist.strings
+    TRANSLATE_fr_CA.path = Contents/Resources/fr_CA.lproj
+    QMAKE_BUNDLE_DATA += TRANSLATE_fr_CA
 }
 
 win32: {
