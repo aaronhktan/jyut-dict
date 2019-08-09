@@ -106,6 +106,14 @@
     </message>
 </context>
 <context>
+    <name>MainSplitter</name>
+    <message>
+        <location filename="../../components/mainsplitter.cpp" line="42"/>
+        <source>Welcome!</source>
+        <translation>Bienvenue!</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="19"/>
@@ -211,7 +219,7 @@
 <context>
     <name>ResultListDelegate</name>
     <message>
-        <location filename="../../components/resultlistdelegate.cpp" line="28"/>
+        <location filename="../../components/resultlistdelegate.cpp" line="27"/>
         <source>Welcome!</source>
         <translation>Bienvenue!</translation>
     </message>
