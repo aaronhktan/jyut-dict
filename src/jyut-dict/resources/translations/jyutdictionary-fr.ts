@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="fr_CA">
+<TS version="2.1" language="fr_FR">
 <context>
     <name>DictionaryTab</name>
     <message>
@@ -31,7 +31,7 @@
     <message>
         <location filename="../../components/dictionarytab.cpp" line="105"/>
         <source>Version: %1</source>
-        <translation>Version: %1</translation>
+        <translation>Version : %1</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="107"/>
@@ -87,22 +87,22 @@
     <message>
         <location filename="../../components/dictionarytab.cpp" line="243"/>
         <source>Cleaning up...</source>
-        <translation>Un p&apos;tit peu de ménage...</translation>
+        <translation>Un petit peu de ménage...</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="250"/>
         <source>Done!</source>
-        <translation>Terminé!</translation>
+        <translation>Terminé !</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="250"/>
         <source>Failed!</source>
-        <translation>Erreur!</translation>
+        <translation>Erreur !</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="289"/>
         <source>Failed to add source!</source>
-        <translation>Impossible d&apos;ajouter la source!</translation>
+        <translation>Impossible d&apos;ajouter la source !</translation>
     </message>
 </context>
 <context>
@@ -110,7 +110,7 @@
     <message>
         <location filename="../../components/mainsplitter.cpp" line="42"/>
         <source>Welcome!</source>
-        <translation>Bienvenue!</translation>
+        <translation>Bienvenue !</translation>
     </message>
 </context>
 <context>
@@ -221,7 +221,7 @@
     <message>
         <location filename="../../components/resultlistdelegate.cpp" line="27"/>
         <source>Welcome!</source>
-        <translation>Bienvenue!</translation>
+        <translation>Bienvenue !</translation>
     </message>
 </context>
 <context>
@@ -229,7 +229,7 @@
     <message>
         <location filename="../../components/resultlistmodel.cpp" line="35"/>
         <source>Welcome!</source>
-        <translation>Bienvenue!</translation>
+        <translation>Bienvenue !</translation>
     </message>
     <message>
         <location filename="../../components/resultlistmodel.cpp" line="38"/>
@@ -252,7 +252,7 @@
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="192"/>
         <source>Could not insert source. Could it be a duplicate of a dictionary you already installed?</source>
-        <translation>Erreur lors de l&apos;ajout de la nouvelle source. Est-elle un double d&apos;une source existante?</translation>
+        <translation>Erreur lors de l&apos;ajout de la nouvelle source. Est-elle un double d&apos;une source existante ?</translation>
     </message>
 </context>
 <context>
@@ -361,12 +361,12 @@
     <message>
         <location filename="../../windows/updatewindow.cpp" line="20"/>
         <source>Update Available!</source>
-        <translation>Mise à jour disponible!</translation>
+        <translation>Mise à jour disponible !</translation>
     </message>
     <message>
         <location filename="../../windows/updatewindow.cpp" line="41"/>
         <source>A new version of Jyut Dictionary is available!</source>
-        <translation>Une nouvelle version de Jyut Dictionnaire est disponible!</translation>
+        <translation>Une nouvelle version de Jyut Dictionnaire est disponible !</translation>
     </message>
     <message>
         <location filename="../../windows/updatewindow.cpp" line="46"/>

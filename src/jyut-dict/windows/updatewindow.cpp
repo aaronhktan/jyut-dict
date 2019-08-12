@@ -66,7 +66,7 @@ UpdateWindow::UpdateWindow(QWidget *parent,
     _noButton->setText(tr("Cancel"));
 
     _showMoreButton = new QPushButton{this};
-    _showMoreButton->setText("Show Details");
+    _showMoreButton->setText(tr("Show Details"));
 
     _okButton = new QPushButton{this};
     _okButton->setDefault(true);

@@ -1,108 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="fr_CA">
+<TS version="2.1" language="zh_CN" sourcelanguage="en_CA">
 <context>
     <name>DictionaryTab</name>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="31"/>
         <source>The Dictionaries tab allows you to view information about dictionaries, and add or remove them.</source>
-        <translation>L&apos;onglet Dictionnaires affiche de l&apos;information sur chacun de vos dictionnaires et vous permet d&apos;en ajouter ou en supprimer.</translation>
+        <translation>您在「字典」這一頁上可以查看和管理已儲存的字典。</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="42"/>
         <source>Add Dictionary...</source>
-        <translation>Ajouter un dictionnaire...</translation>
+        <translation>添加字典…</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="65"/>
         <source>Delete Dictionary</source>
-        <translation>Supprimer</translation>
+        <translation>刪除字典</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="66"/>
         <source>Website</source>
-        <translation>Site web</translation>
+        <translation>網站</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="90"/>
         <source>Select dictionary file</source>
-        <translation>Selectionner un fichier dictionnaire</translation>
+        <translation>選擇字典文件</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="105"/>
         <source>Version: %1</source>
-        <translation>Version: %1</translation>
+        <translation>版本： %1</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="107"/>
         <source>About %1</source>
-        <translation>À propos de %1</translation>
+        <translation>關於 %1</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="156"/>
         <source>Dropping search indexes...</source>
-        <translation>Effacement d&apos;index de recherche...</translation>
+        <translation>正在删除搜索索引…</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="162"/>
         <source>Adding source...</source>
-        <translation>Ajout de la nouvelle source...</translation>
+        <translation>正在添加新字典…</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="166"/>
         <source>Adding new entries...</source>
-        <translation>Ajout des nouvelles entrées...</translation>
+        <translation>正在添加新條目…</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="170"/>
         <source>Adding new definitions...</source>
-        <translation>Ajout des nouvelles définitions...</translation>
+        <translation>正在添加新定義…</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="174"/>
         <location filename="../../components/dictionarytab.cpp" line="238"/>
         <source>Rebuilding search indexes...</source>
-        <translation>Réorganisation des index...</translation>
+        <translation>重建搜索索引…</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="209"/>
         <source>Removing source...</source>
-        <translation>Supression de source selectionnée...</translation>
+        <translation>正在移除來源…</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="215"/>
         <source>Removing definitions...</source>
-        <translation>Supression de définitions...</translation>
+        <translation>正在刪除定義…</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="224"/>
         <source>Deleted definition 0 of %1</source>
-        <translation>Définition nº 0 de %1 supprimée</translation>
+        <translation>已刪除 0 / %1 個定義</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="232"/>
         <source>Deleted definition %1 of %2</source>
-        <translation>Définition nº %1 de %2 supprimée</translation>
+        <translation>已刪除 %1 / %2 個定義</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="243"/>
         <source>Cleaning up...</source>
-        <translation>Un p&apos;tit peu de ménage...</translation>
+        <translation>一點點清潔工作…</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="250"/>
         <source>Done!</source>
-        <translation>Terminé!</translation>
+        <translation>完成！</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="250"/>
         <source>Failed!</source>
-        <translation>Erreur!</translation>
+        <translation>失敗！</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="289"/>
         <source>Failed to add source!</source>
-        <translation>Impossible d&apos;ajouter la source!</translation>
+        <translation>添加字典失敗！</translation>
     </message>
 </context>
 <context>
@@ -110,7 +110,7 @@
     <message>
         <location filename="../../components/mainsplitter.cpp" line="42"/>
         <source>Welcome!</source>
-        <translation>Bienvenue!</translation>
+        <translation>歡迎使用粵語字典！</translation>
     </message>
 </context>
 <context>
@@ -118,102 +118,102 @@
     <message>
         <location filename="../../windows/mainwindow.cpp" line="19"/>
         <source>Jyut Dictionary</source>
-        <translation>Dictionnaire Jyut</translation>
+        <translation>粵語字典</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="83"/>
         <source>&amp;File</source>
-        <translation>&amp;Fichier</translation>
+        <translation>檔案</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="84"/>
         <source>&amp;Edit</source>
-        <translation>&amp;Édition</translation>
+        <translation>編輯</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="85"/>
         <source>&amp;Window</source>
-        <translation>&amp;Fenêtre</translation>
+        <translation>視窗</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="86"/>
         <source>&amp;Help</source>
-        <translation>&amp;Aide</translation>
+        <translation>輔助說明</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="97"/>
         <source>&amp;About</source>
-        <translation>&amp;À propos de</translation>
+        <translation>關於</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="98"/>
         <source>Show the application&apos;s About box</source>
-        <translation>Afficher la fenêtre «&#xa0;À propos&#xa0;»</translation>
+        <translation>打開“關於粵語字典”的視窗</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="106"/>
         <source>Preferences</source>
-        <translation>Préférences</translation>
+        <translation>偏好設定…</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="108"/>
         <source>Settings</source>
-        <translation>Réglages</translation>
+        <translation>偏好設定…</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="110"/>
         <source>Change settings</source>
-        <translation>Changer ses préférences</translation>
+        <translation>更改設定</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="116"/>
         <source>Close Window</source>
-        <translation>Fermer</translation>
+        <translation>關閉視窗</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="121"/>
         <source>Undo</source>
-        <translation>Annuler</translation>
+        <translation>還原</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="126"/>
         <source>Redo</source>
-        <translation>Rétablir</translation>
+        <translation>重做</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="133"/>
         <source>Cut</source>
-        <translation>Couper</translation>
+        <translation>剪切</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="138"/>
         <source>Copy</source>
-        <translation>Copier</translation>
+        <translation>拷貝</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="143"/>
         <source>Paste</source>
-        <translation>Coller</translation>
+        <translation>貼上</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="148"/>
         <source>Minimize</source>
-        <translation>Réduire</translation>
+        <translation>縮到最小</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="153"/>
         <source>Zoom</source>
-        <translation>Agrandir</translation>
+        <translation>縮放</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="159"/>
         <source>Bring All to Front</source>
-        <translation>Tout ramener au premier plan</translation>
+        <translation>將此程式所有視窗移至最前</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="163"/>
         <source>Jyut Dictionary Help</source>
-        <translation>Aide Jyut Dictionnaire</translation>
+        <translation>越語字典輔助說明</translation>
     </message>
 </context>
 <context>
@@ -221,7 +221,7 @@
     <message>
         <location filename="../../components/resultlistdelegate.cpp" line="27"/>
         <source>Welcome!</source>
-        <translation>Bienvenue!</translation>
+        <translation>歡迎使用粵語字典！</translation>
     </message>
 </context>
 <context>
@@ -229,12 +229,12 @@
     <message>
         <location filename="../../components/resultlistmodel.cpp" line="35"/>
         <source>Welcome!</source>
-        <translation>Bienvenue!</translation>
+        <translation>歡迎使用粵語字典！</translation>
     </message>
     <message>
         <location filename="../../components/resultlistmodel.cpp" line="38"/>
         <source>Start typing to search for words</source>
-        <translation>Tapez pour effectuer une recherche</translation>
+        <translation>開始輸入並搜尋</translation>
     </message>
 </context>
 <context>
@@ -242,17 +242,17 @@
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="162"/>
         <source>Database versions do not match. Only dictionaries with the same versions can be added.</source>
-        <translation>Les versions des bases de données ne correspondent pas. Seuls les dictionnaires ayant la même version peuvent être ajoutés.</translation>
+        <translation>資料庫版本不符合！只能可添加一樣版本的字典。</translation>
     </message>
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="165"/>
         <source>Current version is %1, file version is %2.</source>
-        <translation>La version actuelle est %1, la version du fichier est %2.</translation>
+        <translation>目前版本：%1，檔案版本：%2。</translation>
     </message>
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="192"/>
         <source>Could not insert source. Could it be a duplicate of a dictionary you already installed?</source>
-        <translation>Erreur lors de l&apos;ajout de la nouvelle source. Est-elle un double d&apos;une source existante?</translation>
+        <translation>添加字典失敗。它是已存儲的字典的重複嗎？</translation>
     </message>
 </context>
 <context>
@@ -260,7 +260,7 @@
     <message>
         <location filename="../../components/searchlineedit.cpp" line="17"/>
         <source>Search</source>
-        <translation>Rechercher</translation>
+        <translation>搜尋</translation>
     </message>
 </context>
 <context>
@@ -268,52 +268,52 @@
     <message>
         <location filename="../../components/searchoptionsradiogroupbox.cpp" line="12"/>
         <source>SC</source>
-        <translation>CS</translation>
+        <translation>簡體中文</translation>
     </message>
     <message>
         <location filename="../../components/searchoptionsradiogroupbox.cpp" line="13"/>
         <source>Search Simplified Chinese</source>
-        <translation>Rechercher avec le chinois simplifié</translation>
+        <translation>搜尋簡體中文</translation>
     </message>
     <message>
         <location filename="../../components/searchoptionsradiogroupbox.cpp" line="14"/>
         <source>TC</source>
-        <translation>CT</translation>
+        <translation>正體中文</translation>
     </message>
     <message>
         <location filename="../../components/searchoptionsradiogroupbox.cpp" line="15"/>
         <source>Search Traditional Chinese</source>
-        <translation>Rechercher avec le chinois traditionnel</translation>
+        <translation>搜尋正體中文</translation>
     </message>
     <message>
         <location filename="../../components/searchoptionsradiogroupbox.cpp" line="16"/>
         <source>JP</source>
-        <translation>JP</translation>
+        <translation>粵語拼音</translation>
     </message>
     <message>
         <location filename="../../components/searchoptionsradiogroupbox.cpp" line="17"/>
         <source>Search Jyutping</source>
-        <translation>Rechercher avec jyutping</translation>
+        <translation>搜尋粵語拼音</translation>
     </message>
     <message>
         <location filename="../../components/searchoptionsradiogroupbox.cpp" line="18"/>
         <source>PY</source>
-        <translation>PY</translation>
+        <translation>漢語拼音</translation>
     </message>
     <message>
         <location filename="../../components/searchoptionsradiogroupbox.cpp" line="19"/>
         <source>Search Pinyin</source>
-        <translation>Rechercher avec pinyin</translation>
+        <translation>搜尋漢語拼音</translation>
     </message>
     <message>
         <location filename="../../components/searchoptionsradiogroupbox.cpp" line="20"/>
         <source>EN</source>
-        <translation>FR</translation>
+        <translation>英文</translation>
     </message>
     <message>
         <location filename="../../components/searchoptionsradiogroupbox.cpp" line="21"/>
         <source>Search English</source>
-        <translation>Rechercher en français</translation>
+        <translation>搜尋英文</translation>
     </message>
 </context>
 <context>
@@ -321,39 +321,39 @@
     <message>
         <location filename="../../windows/settingswindow.cpp" line="68"/>
         <source>General</source>
-        <translation>Général</translation>
+        <translation>一般</translation>
     </message>
     <message>
         <location filename="../../windows/settingswindow.cpp" line="69"/>
         <location filename="../../windows/settingswindow.cpp" line="80"/>
         <location filename="../../windows/settingswindow.cpp" line="87"/>
         <source>This page is intentionally left blank.</source>
-        <translation>Cette page a été intentionnellement laissée en blanc.</translation>
+        <translation>空白頁。</translation>
     </message>
     <message>
         <location filename="../../windows/settingswindow.cpp" line="75"/>
         <source>Dictionaries</source>
-        <translation>Dictionnaires</translation>
+        <translation>字典</translation>
     </message>
     <message>
         <location filename="../../windows/settingswindow.cpp" line="79"/>
         <source>Advanced</source>
-        <translation>Avancé</translation>
+        <translation>進階</translation>
     </message>
     <message>
         <location filename="../../windows/settingswindow.cpp" line="86"/>
         <source>Contact</source>
-        <translation>Contact</translation>
+        <translation>聯繫我們</translation>
     </message>
     <message>
         <location filename="../../windows/settingswindow.cpp" line="98"/>
         <source>Preferences</source>
-        <translation>Préférences</translation>
+        <translation>設定</translation>
     </message>
     <message>
         <location filename="../../windows/settingswindow.cpp" line="100"/>
         <source>Settings</source>
-        <translation>Réglages</translation>
+        <translation>設定</translation>
     </message>
 </context>
 <context>
@@ -361,42 +361,42 @@
     <message>
         <location filename="../../windows/updatewindow.cpp" line="20"/>
         <source>Update Available!</source>
-        <translation>Mise à jour disponible!</translation>
+        <translation>有可用的更新！</translation>
     </message>
     <message>
         <location filename="../../windows/updatewindow.cpp" line="41"/>
         <source>A new version of Jyut Dictionary is available!</source>
-        <translation>Une nouvelle version de Jyut Dictionnaire est disponible!</translation>
+        <translation>有可用的新版本！</translation>
     </message>
     <message>
         <location filename="../../windows/updatewindow.cpp" line="46"/>
         <source>Jyut Dictionary version %1 is available — you have version %2. Click &quot;Download&quot; to get the new version.</source>
-        <translation>La version %1 de Jyut Dictionnaire est disponible — vous avez la version %2. Cliquez sur le bouton «&#xa0;Télécharger&#xa0;» pour obtenir la nouvelle version.</translation>
+        <translation>粵語字典有可用的版本：%1 — 您所使用的版本是 %2。點選下載按鈕以升級新版本。</translation>
     </message>
     <message>
         <location filename="../../windows/updatewindow.cpp" line="65"/>
         <source>Cancel</source>
-        <translation>Annuler</translation>
+        <translation>取消</translation>
     </message>
     <message>
         <location filename="../../windows/updatewindow.cpp" line="68"/>
         <source>Show Details</source>
-        <translation>Afficher les détails</translation>
+        <translation>显示详细信息</translation>
     </message>
     <message>
         <location filename="../../windows/updatewindow.cpp" line="72"/>
         <source>Download</source>
-        <translation>Télécharger</translation>
+        <translation>下载</translation>
     </message>
     <message>
         <location filename="../../windows/updatewindow.cpp" line="100"/>
         <source>Hide details</source>
-        <translation>Masquer les détails</translation>
+        <translation>隐藏详细信息</translation>
     </message>
     <message>
         <location filename="../../windows/updatewindow.cpp" line="119"/>
         <source>Show details</source>
-        <translation>Afficher les détails</translation>
+        <translation>显示详细信息</translation>
     </message>
 </context>
 </TS>

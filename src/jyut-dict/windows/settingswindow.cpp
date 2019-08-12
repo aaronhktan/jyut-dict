@@ -143,28 +143,30 @@ void SettingsWindow::setStyle(bool use_dark)
         style = "QToolButton { "
                 "   border-top-left-radius: 4px; "
                 "   border-top-right-radius: 4px; "
+                "   font-size: %5px; "
                 "   margin: 0px; "
                 "}"
                 " "
                 "QToolButton:checked { "
+                "   background-color: rgba(%1, %2, %3, %4); "
                 "   border-top-left-radius: 4px; "
                 "   border-top-right-radius: 4px; "
                 "   margin: 0px; "
-                "   background-color: rgba(%1, %2, %3, %4); "
                 "}";
     } else {
         style = "QToolButton { "
                 "   border-top-left-radius: 4px; "
                 "   border-top-right-radius: 4px; "
+                "   font-size: %5px; "
                 "   margin: 0px; "
                 "}"
                 " "
                 "QToolButton:checked { "
+                "   background-color: rgba(%1, %2, %3, %4); "
                 "   border-top-left-radius: 4px; "
                 "   border-top-right-radius: 4px; "
-                "   margin: 0px; "
-                "   background-color: rgba(%1, %2, %3, %4); "
                 "   color: #FFFFFF; "
+                "   margin: 0px; "
                 "}";
     }
 #else
@@ -180,13 +182,15 @@ void SettingsWindow::setStyle(bool use_dark)
                   "   color: #FFFFFF; "
                   "}"};
 #endif
-    for (auto button : _toolButtons) {
-        button->setStyleSheet(style.arg(std::to_string(r).c_str(),
-                                        std::to_string(g).c_str(),
-                                        std::to_string(b).c_str(),
-                                        std::to_string(a).c_str()));
-    }
-
+    setStyleSheet(
+        style.arg(std::to_string(r).c_str(),
+                  std::to_string(g).c_str(),
+                  std::to_string(b).c_str(),
+                  std::to_string(a).c_str(),
+                  (QLocale::system().language() == (QLocale::Chinese)
+                   || QLocale::system().language() == QLocale::Cantonese)
+                      ? "12"
+                      : "10"));
     setButtonIcon(use_dark, _contentStackedWidget->currentIndex());
 }
 

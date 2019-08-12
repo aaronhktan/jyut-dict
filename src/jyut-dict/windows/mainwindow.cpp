@@ -95,6 +95,14 @@ MainWindow::MainWindow(QWidget *parent) :
             checkForUpdate(/* showProgress = */ false);
         });
     }
+
+    // Set style depending on language
+#ifdef Q_OS_MAC
+    if (QLocale::system().language() & QLocale::Chinese ||
+        QLocale::system().language() & QLocale::Cantonese) {
+        setStyleSheet("QPushButton { font-size: 13px; height: 16px; }");
+    }
+#endif
 }
 
 MainWindow::~MainWindow()
@@ -172,6 +180,7 @@ void MainWindow::createActions()
 #endif
     settingsWindowAction->setStatusTip(tr("Change settings"));
     settingsWindowAction->setShortcut(QKeySequence{"Ctrl+,"});
+    settingsWindowAction->setMenuRole(QAction::PreferencesRole);
     connect(settingsWindowAction, &QAction::triggered, this, &MainWindow::openSettingsWindow);
     _fileMenu->addAction(settingsWindowAction);
 

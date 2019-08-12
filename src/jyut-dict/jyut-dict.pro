@@ -125,7 +125,14 @@ RESOURCES += \
     resources/resource.qrc
 
 TRANSLATIONS += \
-    resources/translations/jyutdictionary-fr_CA.ts
+    resources/translations/jyutdictionary-fr.ts \
+    resources/translations/jyutdictionary-fr_CA.ts \
+    resources/translations/jyutdictionary-yue_Hans.ts \
+    resources/translations/jyutdictionary-yue_Hant.ts \
+    resources/translations/jyutdictionary-zh_Hans.ts \
+    resources/translations/jyutdictionary-zh_Hant.ts \
+    resources/translations/jyutdictionary-zh_Hans_HK.ts \
+    resources/translations/jyutdictionary-zh_Hant_HK.ts
 
 macx: {
     LIBS += -framework AppKit
@@ -146,9 +153,29 @@ macx: {
     QMAKE_BUNDLE_DATA += APP_SETTINGS_FILES
 
     # Add translations of application name
-    TRANSLATE_fr_CA.files = platform/mac/fr_CA.lproj/InfoPlist.strings
-    TRANSLATE_fr_CA.path = Contents/Resources/fr_CA.lproj
-    QMAKE_BUNDLE_DATA += TRANSLATE_fr_CA
+    TRANSLATE_en.files = platform/mac/en.lproj/InfoPlist.strings
+    TRANSLATE_en.path = Contents/Resources/en.lproj
+    QMAKE_BUNDLE_DATA += TRANSLATE_en
+
+    TRANSLATE_fr.files = platform/mac/fr.lproj/InfoPlist.strings
+    TRANSLATE_fr.path = Contents/Resources/fr.lproj
+    QMAKE_BUNDLE_DATA += TRANSLATE_fr
+
+    TRANSLATE_yue_Hans.files = platform/mac/yue_Hans.lproj/InfoPlist.strings
+    TRANSLATE_yue_Hans.path = Contents/Resources/yue_Hans.lproj
+    QMAKE_BUNDLE_DATA += TRANSLATE_yue_Hans
+
+    TRANSLATE_yue_Hant.files = platform/mac/yue_Hant.lproj/InfoPlist.strings
+    TRANSLATE_yue_Hant.path = Contents/Resources/yue_Hant.lproj
+    QMAKE_BUNDLE_DATA += TRANSLATE_yue_Hant
+
+    TRANSLATE_zh_Hans.files = platform/mac/zh_Hans.lproj/InfoPlist.strings
+    TRANSLATE_zh_Hans.path = Contents/Resources/zh_Hans.lproj
+    QMAKE_BUNDLE_DATA += TRANSLATE_zh_Hans
+
+    TRANSLATE_zh_Hant.files = platform/mac/zh_Hant.lproj/InfoPlist.strings
+    TRANSLATE_zh_Hant.path = Contents/Resources/zh_Hant.lproj
+    QMAKE_BUNDLE_DATA += TRANSLATE_zh_Hant
 }
 
 win32: {
