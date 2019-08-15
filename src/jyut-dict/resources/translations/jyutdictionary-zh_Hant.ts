@@ -248,7 +248,7 @@
     <message>
         <location filename="../../windows/mainwindow.cpp" line="163"/>
         <source>Jyut Dictionary Help</source>
-        <translation>越語字典輔助說明</translation>
+        <translation>粵語字典輔助說明</translation>
     </message>
 </context>
 <context>
@@ -287,7 +287,7 @@
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="192"/>
         <source>Could not insert source. Could it be a duplicate of a dictionary you already installed?</source>
-        <translation>添加字典失敗。你已經添加過這個字典嗎？</translation>
+        <translation>添加字典失敗。您已經添加過這個字典嗎？</translation>
     </message>
 </context>
 <context>

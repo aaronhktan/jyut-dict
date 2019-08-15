@@ -244,7 +244,7 @@
     <message>
         <location filename="../../windows/mainwindow.cpp" line="163"/>
         <source>Jyut Dictionary Help</source>
-        <translation>越語字典輔助說明</translation>
+        <translation>粵語字典輔助說明</translation>
     </message>
 </context>
 <context>

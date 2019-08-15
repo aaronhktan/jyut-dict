@@ -283,7 +283,7 @@
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="192"/>
         <source>Could not insert source. Could it be a duplicate of a dictionary you already installed?</source>
-        <translation>添加字典失败。你已经添加过这个字典吗？</translation>
+        <translation>添加字典失败。您已经添加过这个字典吗？</translation>
     </message>
 </context>
 <context>
