@@ -17,10 +17,11 @@
         <file>translations/jyutdictionary-yue_Hans.qm</file>
         <file>translations/jyutdictionary-yue_Hant.qm</file>
         <file>translations/jyutdictionary-zh_Hans.qm</file>
-        <file>translations/jyutdictionary-zh_Hant.qm</file>
         <file>translations/jyutdictionary-zh_Hant_HK.qm</file>
         <file>translations/jyutdictionary-zh_Hans_HK.qm</file>
         <file>translations/jyutdictionary-fr.qm</file>
         <file>translations/jyutdictionary-fr_CA.qm</file>
+        <file>translations/jyutdictionary-en.qm</file>
+        <file>translations/jyutdictionary-zh_Hant.qm</file>
     </qresource>
 </RCC>

@@ -1,6 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="zh_CN" sourcelanguage="en_CA">
+<TS version="2.1" language="zh" sourcelanguage="en_CA">
+<context>
+    <name>MAC_APPLICATION_MENU</name>
+    <message>
+        <source>Services</source>
+        <translation>服务</translation>
+    </message>
+    <message>
+        <source>Hide %1</source>
+        <translation>隐藏 %1</translation>
+    </message>
+    <message>
+        <source>Hide Others</source>
+        <translation>隐藏其他</translation>
+    </message>
+    <message>
+        <source>Show All</source>
+        <translation>全部显示</translation>
+    </message>
+    <message>
+        <source>Preferences...</source>
+        <translation>偏好设置…</translation>
+    </message>
+    <message>
+        <source>Quit %1</source>
+        <translation>结束 %1</translation>
+    </message>
+    <message>
+        <source>About %1</source>
+        <translation>关于 %1</translation>
+    </message>
+</context>
 <context>
     <name>DictionaryTab</name>
     <message>
@@ -87,7 +118,7 @@
     <message>
         <location filename="../../components/dictionarytab.cpp" line="243"/>
         <source>Cleaning up...</source>
-        <translation>一点点清洁工作…</translation>
+        <translation>正在帮您清理…</translation>
     </message>
     <message>
         <location filename="../../components/dictionarytab.cpp" line="250"/>
@@ -188,7 +219,7 @@
     <message>
         <location filename="../../windows/mainwindow.cpp" line="138"/>
         <source>Copy</source>
-        <translation>拷貝</translation>
+        <translation>拷贝</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="143"/>
@@ -252,7 +283,7 @@
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="192"/>
         <source>Could not insert source. Could it be a duplicate of a dictionary you already installed?</source>
-        <translation>添加字典失败。它是已存储的字典的重复吗？</translation>
+        <translation>添加字典失败。你已经添加过这个字典吗？</translation>
     </message>
 </context>
 <context>
@@ -353,7 +384,7 @@
     <message>
         <location filename="../../windows/settingswindow.cpp" line="100"/>
         <source>Settings</source>
-        <translation>配置</translation>
+        <translation>设置</translation>
     </message>
 </context>
 <context>

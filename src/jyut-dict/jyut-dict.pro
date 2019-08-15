@@ -125,6 +125,7 @@ RESOURCES += \
     resources/resource.qrc
 
 TRANSLATIONS += \
+    resources/translations/jyutdictionary-en.ts \
     resources/translations/jyutdictionary-fr.ts \
     resources/translations/jyutdictionary-fr_CA.ts \
     resources/translations/jyutdictionary-yue_Hans.ts \
@@ -162,19 +163,19 @@ macx: {
     QMAKE_BUNDLE_DATA += TRANSLATE_fr
 
     TRANSLATE_yue_Hans.files = platform/mac/yue_Hans.lproj/InfoPlist.strings
-    TRANSLATE_yue_Hans.path = Contents/Resources/yue_Hans.lproj
+    TRANSLATE_yue_Hans.path = Contents/Resources/yue-Hans.lproj
     QMAKE_BUNDLE_DATA += TRANSLATE_yue_Hans
 
     TRANSLATE_yue_Hant.files = platform/mac/yue_Hant.lproj/InfoPlist.strings
-    TRANSLATE_yue_Hant.path = Contents/Resources/yue_Hant.lproj
+    TRANSLATE_yue_Hant.path = Contents/Resources/yue-Hant.lproj
     QMAKE_BUNDLE_DATA += TRANSLATE_yue_Hant
 
     TRANSLATE_zh_Hans.files = platform/mac/zh_Hans.lproj/InfoPlist.strings
-    TRANSLATE_zh_Hans.path = Contents/Resources/zh_Hans.lproj
+    TRANSLATE_zh_Hans.path = Contents/Resources/zh-Hans.lproj
     QMAKE_BUNDLE_DATA += TRANSLATE_zh_Hans
 
     TRANSLATE_zh_Hant.files = platform/mac/zh_Hant.lproj/InfoPlist.strings
-    TRANSLATE_zh_Hant.path = Contents/Resources/zh_Hant.lproj
+    TRANSLATE_zh_Hant.path = Contents/Resources/zh-Hant.lproj
     QMAKE_BUNDLE_DATA += TRANSLATE_zh_Hant
 }
 

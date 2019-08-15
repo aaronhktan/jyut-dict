@@ -41,7 +41,9 @@ int main(int argc, char *argv[])
     QTranslator jyutTranslator;
     for (auto language : QLocale::system().uiLanguages()) {
         QLocale locale{language};
-        qDebug() << locale.uiLanguages()[0];
+        for (auto uilanguage : locale.uiLanguages()) {
+            qDebug() << uilanguage;
+        }
         if (jyutTranslator.load(/* QLocale */    locale,
                                 /* filename */   "jyutdictionary",
                                 /* prefix */     "-",
