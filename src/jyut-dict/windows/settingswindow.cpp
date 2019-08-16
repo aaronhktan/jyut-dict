@@ -172,14 +172,15 @@ void SettingsWindow::setStyle(bool use_dark)
 #else
     QString style{"QToolButton { "
                   "   border-radius: 2px; "
+                  "   font-size: %5px; "
                   "   margin: 0px; "
                   "}"
                   " "
                   "QToolButton:checked { "
                   "   border-radius: 2px; "
-                  "   margin: 0px; "
                   "   background-color: rgba(%1, %2, %3, %4); "
                   "   color: #FFFFFF; "
+                  "   margin: 0px; "
                   "}"};
 #endif
     setStyleSheet(

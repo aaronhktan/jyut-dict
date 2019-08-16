@@ -150,10 +150,10 @@ void SearchLineEdit::setStyle(bool use_dark)
 
 #ifdef Q_OS_WIN
     setStyleSheet("QLineEdit { \
+                     background-color: #ffffff; \
                      border-color: black; \
                      border-width: 2px; \
-                     font-size: 12px; \
-                     background-color: #ffffff; }");
+                     font-size: 12px; }");
     _searchLineEdit->setIcon(search);
     _clearLineEdit->setIcon(clear);
 #else

@@ -102,6 +102,11 @@ MainWindow::MainWindow(QWidget *parent) :
         QLocale::system().language() & QLocale::Cantonese) {
         setStyleSheet("QPushButton { font-size: 13px; height: 16px; }");
     }
+#elif defined(Q_OS_WIN)
+    if (QLocale::system().language() & QLocale::Chinese ||
+        QLocale::system().language() & QLocale::Cantonese) {
+        setStyleSheet("QPushButton { font-size: 12px; height: 20px; }");
+    }
 #endif
 }
 

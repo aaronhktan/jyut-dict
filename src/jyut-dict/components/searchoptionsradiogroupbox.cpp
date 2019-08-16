@@ -1,5 +1,7 @@
 #include "searchoptionsradiogroupbox.h"
 
+#include <QLocale>
+
 SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *mediator,
                                                        QWidget *parent) :
     QGroupBox(parent)
@@ -32,7 +34,7 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *m
     _pinyinButton->setStyleSheet("QToolTip { padding: 1px; }");
     _englishButton->setStyleSheet("QToolTip { padding: 1px; }");
 #endif
-    _englishButton->setChecked(true);
+    _englishButton->click();
 #ifdef Q_OS_MAC
     // Makes the button selection show up correctly on macOS
     _englishButton->setDown(true);
@@ -53,7 +55,13 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *m
 
     setLayout(_layout);
     setFlat(true);
-    setStyleSheet("border: 0;");
+#ifdef Q_OS_WIN
+    if (QLocale::system().language() & QLocale::Chinese ||
+        QLocale::system().language() & QLocale::Cantonese) {
+        setStyleSheet("QRadioButton { font-size: 12px; }"
+                      "QGroupBox { border: 0; }");
+    }
+#endif
 }
 
 void SearchOptionsRadioGroupBox::notifyMediator()

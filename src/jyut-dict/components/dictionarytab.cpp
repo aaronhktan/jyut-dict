@@ -26,6 +26,12 @@ DictionaryTab::DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
 
 void DictionaryTab::setupUI()
 {
+#ifdef Q_OS_WIN
+    if (QLocale::system().language() & QLocale::Chinese ||
+        QLocale::system().language() & QLocale::Cantonese) {
+        setStyleSheet("QLabel { font-size: 12px; }");
+    }
+#endif
     _tabLayout = new QGridLayout{this};
     _tabLayout->setAlignment(Qt::AlignTop);
 
