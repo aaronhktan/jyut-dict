@@ -143,7 +143,7 @@
     <message>
         <location filename="../../windows/mainwindow.cpp" line="97"/>
         <source>&amp;About</source>
-        <translation>&amp;À propos de Jyut Dictionnaire</translation>
+        <translation>&amp;À propos de Dictionnaire Jyut</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="98"/>
@@ -213,7 +213,7 @@
     <message>
         <location filename="../../windows/mainwindow.cpp" line="163"/>
         <source>Jyut Dictionary Help</source>
-        <translation>Aide Jyut Dictionnaire</translation>
+        <translation>Aide Dictionnaire Jyut</translation>
     </message>
 </context>
 <context>
@@ -366,12 +366,12 @@
     <message>
         <location filename="../../windows/updatewindow.cpp" line="41"/>
         <source>A new version of Jyut Dictionary is available!</source>
-        <translation>Une nouvelle version de Jyut Dictionnaire est disponible !</translation>
+        <translation>Une nouvelle version de Dictionnaire Jyut est disponible !</translation>
     </message>
     <message>
         <location filename="../../windows/updatewindow.cpp" line="46"/>
         <source>Jyut Dictionary version %1 is available — you have version %2. Click &quot;Download&quot; to get the new version.</source>
-        <translation>La version %1 de Jyut Dictionnaire est disponible — vous avez la version %2. Cliquez sur le bouton «&#xa0;Télécharger&#xa0;» pour obtenir la nouvelle version.</translation>
+        <translation>La version %1 de Dictionnaire Jyut est disponible — vous avez la version %2. Cliquez sur le bouton «&#xa0;Télécharger&#xa0;» pour obtenir la nouvelle version.</translation>
     </message>
     <message>
         <location filename="../../windows/updatewindow.cpp" line="65"/>
