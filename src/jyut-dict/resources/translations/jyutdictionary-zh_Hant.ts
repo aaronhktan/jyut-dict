@@ -210,7 +210,7 @@
     <message>
         <location filename="../../windows/mainwindow.cpp" line="97"/>
         <source>&amp;About</source>
-        <translation>關於</translation>
+        <translation>關於粵語字典</translation>
     </message>
     <message>
         <source>&amp;About Jyut Dictionary</source>

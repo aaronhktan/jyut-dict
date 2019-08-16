@@ -143,7 +143,7 @@
     <message>
         <location filename="../../windows/mainwindow.cpp" line="97"/>
         <source>&amp;About</source>
-        <translation>&amp;À propos de</translation>
+        <translation>&amp;À propos de Jyut Dictionnaire</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="98"/>

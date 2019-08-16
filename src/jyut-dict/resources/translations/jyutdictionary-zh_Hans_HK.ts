@@ -214,7 +214,7 @@
     <message>
         <location filename="../../windows/mainwindow.cpp" line="97"/>
         <source>&amp;About</source>
-        <translation>关于</translation>
+        <translation>关于粤语字典</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="98"/>
