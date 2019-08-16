@@ -61,6 +61,8 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *m
         setStyleSheet("QRadioButton { font-size: 12px; }"
                       "QGroupBox { border: 0; }");
     }
+#else
+    setStyleSheet("QGroupBox { border: 0; }");
 #endif
 }
 
