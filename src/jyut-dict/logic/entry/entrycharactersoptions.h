@@ -1,6 +1,10 @@
 #ifndef ENTRYCHARACTERSOPTIONS_H
 #define ENTRYCHARACTERSOPTIONS_H
 
+#include "logic/utils/qvariantutils.h"
+
+#include <QMetaType>
+
 // An enum that tells how to display en entry
 
 enum class EntryCharactersOptions
@@ -10,5 +14,7 @@ enum class EntryCharactersOptions
     PREFER_SIMPLIFIED,
     PREFER_TRADITIONAL,
 };
+
+Q_DECLARE_METATYPE(EntryCharactersOptions);
 
 #endif // ENTRYCHARACTERSOPTIONS_H

@@ -31,6 +31,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
+    logic/settings/settings.cpp \
     main.cpp \
     components/definitioncontentwidget.cpp \
     components/definitionheaderwidget.cpp \
@@ -101,8 +102,10 @@ HEADERS += \
     logic/search/searchoptionsmediator.h \
     logic/search/searchparameters.h \
     logic/search/sqlsearch.h \
+    logic/settings/settings.h \
     logic/update/githubreleasechecker.h \
     logic/update/iupdatechecker.h \
+    logic/utils/qvariantutils.h \
     logic/utils/utils.h \
     logic/utils/utils_mac.h \
     windows/aboutwindow.h \
@@ -125,6 +128,11 @@ macx: {
     APP_DB_FILES.files = resources/db/dict.db
     APP_DB_FILES.path = Contents/Resources
     QMAKE_BUNDLE_DATA += APP_DB_FILES
+
+    # Add settings to Resources folder in macOS bundle
+    APP_SETTINGS_FILES.files = resources/settings/settings.ini
+    APP_SETTINGS_FILES.path = Contents/Resources
+    QMAKE_BUNDLE_DATA += APP_SETTINGS_FILES
 }
 
 win32: {
