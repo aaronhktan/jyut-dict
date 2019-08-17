@@ -1,6 +1,7 @@
 #include "settingswindow.h"
 
 #include "components/dictionarytab.h"
+#include "components/settingstab.h"
 #include "logic/utils/utils_mac.h"
 
 #include <QActionGroup>
@@ -66,10 +67,7 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
 #endif
 
     _actions[0]->setText(tr("General"));
-    QLabel *generalTab = new QLabel{"This page is intentionally left blank.",
-                                    this};
-    generalTab->setMinimumSize(400, 250);
-    generalTab->setAlignment(Qt::AlignCenter);
+    SettingsTab *generalTab = new SettingsTab{this};
     _contentStackedWidget->addWidget(generalTab);
 
     _actions[1]->setText(tr("Dictionaries"));

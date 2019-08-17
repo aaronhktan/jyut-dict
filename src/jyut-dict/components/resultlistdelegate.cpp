@@ -12,15 +12,6 @@ ResultListDelegate::ResultListDelegate(QWidget *parent)
     : QStyledItemDelegate (parent)
 {
     _settings = Settings::getSettings(this);
-    _settings->setValue("character_options",
-                        QVariant::fromValue<EntryCharactersOptions>(
-                            EntryCharactersOptions::PREFER_SIMPLIFIED));
-    _settings->setValue("phonetic_options",
-                        QVariant::fromValue<EntryPhoneticOptions>(
-                            EntryPhoneticOptions::PREFER_PINYIN));
-    _settings->setValue("mandarin_options",
-                        QVariant::fromValue<MandarinOptions>(
-                            MandarinOptions::PRETTY_PINYIN));
 }
 
 void ResultListDelegate::paint(QPainter *painter,
@@ -62,24 +53,21 @@ void ResultListDelegate::paint(QPainter *painter,
     } else {
         characterOptions
             = _settings
-                  ->value("character_options",
+                  ->value("characterOptions",
                           QVariant::fromValue(QVariant::fromValue(
                               EntryCharactersOptions::PREFER_TRADITIONAL)))
                   .value<EntryCharactersOptions>();
-        phoneticOptions
-            = _settings
-                  ->value("phonetic_options",
-                          QVariant::fromValue(
-                              QVariant::fromValue(
-                                  EntryPhoneticOptions::PREFER_JYUTPING)))
-                  .value<EntryPhoneticOptions>();
-        mandarinOptions =
-            _settings
-                ->value("mandarin_options",
-                        QVariant::fromValue(
-                            QVariant::fromValue(
-                                MandarinOptions::RAW_PINYIN)))
-                .value<MandarinOptions>();
+        phoneticOptions = _settings
+                              ->value("phoneticOptions",
+                                      QVariant::fromValue(QVariant::fromValue(
+                                          EntryPhoneticOptions::PREFER_JYUTPING)))
+                              .value<EntryPhoneticOptions>();
+        mandarinOptions = _settings
+                              ->value("mandarinOptions",
+                                      QVariant::fromValue(QVariant::fromValue(
+                                          MandarinOptions::PRETTY_PINYIN)))
+                              .value<MandarinOptions>();
+
         use_colours = !(option.state & QStyle::State_Selected);
     }
 

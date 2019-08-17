@@ -31,7 +31,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
-    logic/settings/settings.cpp \
     main.cpp \
     components/definitioncontentwidget.cpp \
     components/definitionheaderwidget.cpp \
@@ -50,6 +49,7 @@ SOURCES += \
     components/resultlistview.cpp \
     components/searchlineedit.cpp \
     components/searchoptionsradiogroupbox.cpp \
+    components/settingstab.cpp \
     logic/database/sqldatabasemanager.cpp \
     logic/database/sqldatabaseutils.cpp \
     logic/dictionary/dictionarymetadata.cpp \
@@ -59,6 +59,7 @@ SOURCES += \
     logic/entry/sentence.cpp \
     logic/search/searchoptionsmediator.cpp \
     logic/search/sqlsearch.cpp \
+    logic/settings/settings.cpp \
     logic/update/githubreleasechecker.cpp \
     logic/utils/utils.cpp \
     windows/aboutwindow.cpp \
@@ -86,6 +87,7 @@ HEADERS += \
     components/resultlistview.h \
     components/searchlineedit.h \
     components/searchoptionsradiogroupbox.h \
+    components/settingstab.h \
     logic/database/sqldatabasemanager.h \
     logic/database/sqldatabaseutils.h \
     logic/dictionary/dictionarymetadata.h \

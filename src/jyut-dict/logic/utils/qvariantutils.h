@@ -7,7 +7,7 @@
 #include <type_traits>
 
 // These are required to convert an enum class to a QVariant
-// So that the QVariant::load: unable to load/save type
+// So that the "QVariant::load: unable to load/save type" error is suppressed
 // See https://stackoverflow.com/questions/42868924/templated-qdatastream-operator-for-enumerations
 
 template<typename T, typename U = std::enable_if_t<std::is_enum<T>::value>>
@@ -18,10 +18,10 @@ QDataStream &operator<<(QDataStream &stream, T enumValue)
 }
 
 template<typename T,
-         typename U = typename std::enable_if<std::is_enum<T>::value>::type>
+         typename = typename std::enable_if<std::is_enum<T>::value>::type>
 QDataStream &operator>>(QDataStream &stream, T &e)
 {
-    qint64 v;
+    std::underlying_type_t<T> v;
     stream >> v;
     e = static_cast<T>(v);
     return stream;
