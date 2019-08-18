@@ -1,5 +1,7 @@
 #include "entryheaderwidget.h"
 
+#include "logic/settings/settingsutils.h"
+
 EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
 {
     _entryHeaderLayout = new QGridLayout{this};
@@ -44,10 +46,76 @@ void EntryHeaderWidget::setEntry(const Entry &entry)
     _jyutpingLabel->setVisible(true);
     _pinyinLabel->setVisible(true);
 
-    _wordLabel->setText(entry.getCharacters(EntryCharactersOptions::PREFER_TRADITIONAL,
-                                            true).c_str());
-    _jyutpingPronunciation->setText(entry.getJyutping().c_str());
-    _pinyinPronunciation->setText(entry.getPrettyPinyin().c_str());
+    _wordLabel->setText(
+        entry
+            .getCharacters(
+                Settings::getSettings()
+                    ->value("characterOptions",
+                            QVariant::fromValue(
+                                EntryCharactersOptions::PREFER_TRADITIONAL))
+                    .value<EntryCharactersOptions>(),
+                true)
+            .c_str());
+
+    switch (
+        Settings::getSettings()
+            ->value("phoneticOptions",
+                    QVariant::fromValue(EntryPhoneticOptions::PREFER_JYUTPING))
+            .value<EntryPhoneticOptions>()) {
+    case EntryPhoneticOptions::PREFER_JYUTPING: {
+        _entryHeaderLayout->addWidget(_jyutpingLabel, 2, 0, 1, 1, Qt::AlignTop);
+        _entryHeaderLayout->addWidget(_jyutpingPronunciation, 2, 1, 1, 1);
+        _entryHeaderLayout->addWidget(_pinyinLabel, 3, 0, 1, 1, Qt::AlignTop);
+        _entryHeaderLayout->addWidget(_pinyinPronunciation, 3, 1, 1, 1);
+        _pinyinLabel->setVisible(true);
+        _pinyinPronunciation->setVisible(true);
+        _jyutpingLabel->setVisible(true);
+        _jyutpingPronunciation->setVisible(true);
+        break;
+    }
+    case EntryPhoneticOptions::PREFER_PINYIN: {
+        _entryHeaderLayout->addWidget(_pinyinLabel, 2, 0, 1, 1, Qt::AlignTop);
+        _entryHeaderLayout->addWidget(_pinyinPronunciation, 2, 1, 1, 1);
+        _entryHeaderLayout->addWidget(_jyutpingLabel, 3, 0, 1, 1, Qt::AlignTop);
+        _entryHeaderLayout->addWidget(_jyutpingPronunciation, 3, 1, 1, 1);
+        _pinyinLabel->setVisible(true);
+        _pinyinPronunciation->setVisible(true);
+        _jyutpingLabel->setVisible(true);
+        _jyutpingPronunciation->setVisible(true);
+        break;
+    }
+    case EntryPhoneticOptions::ONLY_JYUTPING: {
+        _jyutpingLabel->setVisible(true);
+        _jyutpingPronunciation->setVisible(true);
+        _pinyinLabel->setVisible(false);
+        _pinyinPronunciation->setVisible(false);
+        break;
+    }
+    case EntryPhoneticOptions::ONLY_PINYIN: {
+        _jyutpingLabel->setVisible(false);
+        _jyutpingPronunciation->setVisible(false);
+        _pinyinLabel->setVisible(true);
+        _pinyinPronunciation->setVisible(true);
+        break;
+    }
+    }
+
+    _jyutpingPronunciation->setText(
+        entry
+            .getCantonesePhonetic(
+                Settings::getSettings()
+                    ->value("cantoneseOptions",
+                            QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
+                    .value<CantoneseOptions>())
+            .c_str());
+    _pinyinPronunciation->setText(
+        entry
+            .getMandarinPhonetic(
+                Settings::getSettings()
+                    ->value("mandarinOptions",
+                            QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
+                    .value<MandarinOptions>())
+            .c_str());
 }
 
 void EntryHeaderWidget::setEntry(std::string word,

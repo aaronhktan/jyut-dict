@@ -27,6 +27,7 @@ private:
     void initializeMandarinComboBox(QComboBox &mandarinCombobox);
     //    void initializeLanguageComboBox(QComboBox &languageCombobox);
 
+    void initializeColourComboBox(QComboBox &colourCombobox);
     void initializeJyutpingColourWidget(QWidget &jyutpingColourWidget);
     void initializePinyinColourWidget(QWidget &pinyinColourWidget);
 
@@ -36,6 +37,8 @@ private:
     //    QComboBox *_languageCombobox;
 
     QFrame *_divider;
+
+    QComboBox *_colourCombobox;
 
     QFormLayout *_tabLayout;
 

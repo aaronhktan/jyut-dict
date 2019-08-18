@@ -14,12 +14,6 @@
 #include <string>
 #include <vector>
 
-enum class EntryPhoneticType
-{
-    JYUTPING,
-    PINYIN
-};
-
 // The Entry class is very important, as it is the representation
 // of an entry in the dictionary.
 
@@ -61,6 +55,9 @@ public:
                             CantoneseOptions cantoneseOptions,
                             MandarinOptions mandarinOptions) const;
 
+    std::string getCantonesePhonetic(CantoneseOptions cantoneseOptions) const;
+    std::string getMandarinPhonetic(MandarinOptions mandarinOptions) const;
+
     std::string getJyutping(void) const;
     void setJyutping(std::string jyutping);
     std::vector<int> getJyutpingNumbers() const;
@@ -81,6 +78,9 @@ public:
     std::vector<Sentence> getSentences(void) const;
     void setSentences(std::vector<Sentence> sentences);
 
+    void refreshColours(
+        const EntryColourPhoneticType type = EntryColourPhoneticType::JYUTPING);
+
 private:
     std::string _simplified;
     std::string _simplifiedDifference;
@@ -100,12 +100,9 @@ private:
     std::vector<std::string> _derivedWords;
     std::vector<Sentence> _sentences;
 
-    std::string getCantonesePhonetic(CantoneseOptions cantoneseOptions) const;
-    std::string getMandarinPhonetic(MandarinOptions mandarinOptions) const;
-
     std::string applyColours(std::string original,
                              std::vector<int> tones,
-                             EntryPhoneticType type = EntryPhoneticType::JYUTPING) const;
+                             EntryColourPhoneticType type = EntryColourPhoneticType::JYUTPING) const;
     void compareStrings(std::string original, std::string comparison,
                         std::string &returnString);
 

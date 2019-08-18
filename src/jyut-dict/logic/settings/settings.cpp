@@ -17,5 +17,6 @@ namespace Settings {
         "#01b31c",
         "#150ff0",
         "#8800bf",
+        "grey",
     };
 }

@@ -16,6 +16,8 @@ int main(int argc, char *argv[])
     qRegisterMetaTypeStreamOperators<CantoneseOptions>("CantoneseOptions");
     qRegisterMetaType<MandarinOptions>("MandarinOptions");
     qRegisterMetaTypeStreamOperators<MandarinOptions>("MandarinOptions");
+    qRegisterMetaType<EntryColourPhoneticType>("EntryColourPhoneticType");
+    qRegisterMetaTypeStreamOperators<EntryColourPhoneticType>("EntryColourPhoneticType");
 
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);

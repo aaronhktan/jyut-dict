@@ -68,12 +68,6 @@ Entry::Entry(std::string simplified, std::string traditional,
     compareStrings(_simplified, _traditional, _traditionalDifference);
     compareStrings(_traditional, _simplified, _simplifiedDifference);
 
-    // Create coloured versions of Simplified and Traditional characters
-    _colouredSimplified = applyColours(_simplified, getJyutpingNumbers());
-    _colouredTraditional = applyColours(_traditional, getJyutpingNumbers());
-    _colouredSimplifiedDifference = applyColours(_simplifiedDifference, getJyutpingNumbers());
-    _colouredTraditionalDifference = applyColours(_traditionalDifference, getJyutpingNumbers());
-
     // Create pretty pinyin
     _prettyPinyin = createPrettyPinyin();
 }
@@ -103,10 +97,10 @@ Entry::Entry(const Entry &&entry)
       _simplifiedDifference{std::move(entry._simplifiedDifference)},
       _traditional{std::move(entry._traditional)},
       _traditionalDifference{std::move(entry._traditionalDifference)},
-      _colouredSimplified{entry._colouredSimplified},
-      _colouredSimplifiedDifference{entry._colouredSimplifiedDifference},
-      _colouredTraditional{entry._colouredTraditional},
-      _colouredTraditionalDifference{entry._colouredTraditionalDifference},
+      _colouredSimplified{std::move(entry._colouredSimplified)},
+      _colouredSimplifiedDifference{std::move(entry._colouredSimplifiedDifference)},
+      _colouredTraditional{std::move(entry._colouredTraditional)},
+      _colouredTraditionalDifference{std::move(entry._colouredTraditionalDifference)},
       _jyutping{std::move(entry._jyutping)},
       _pinyin{std::move(entry._pinyin)},
       _prettyPinyin{entry._prettyPinyin},
@@ -395,9 +389,30 @@ void Entry::setSentences(std::vector<Sentence> sentences)
     _sentences = sentences;
 }
 
+void Entry::refreshColours(const EntryColourPhoneticType type)
+{
+    std::vector<int> tones;
+    switch (type) {
+    case EntryColourPhoneticType::JYUTPING: {
+        tones = getJyutpingNumbers();
+        break;
+    }
+    case EntryColourPhoneticType::PINYIN: {
+        tones = getPinyinNumbers();
+        break;
+    }
+    }
+
+    // Create coloured versions of Simplified and Traditional characters
+    _colouredSimplified = applyColours(_simplified, tones, type);
+    _colouredTraditional = applyColours(_traditional, tones, type);
+    _colouredSimplifiedDifference = applyColours(_simplifiedDifference, tones, type);
+    _colouredTraditionalDifference = applyColours(_traditionalDifference, tones, type);
+}
+
 std::string Entry::applyColours(std::string original,
                                 std::vector<int> tones,
-                                EntryPhoneticType type) const
+                                EntryColourPhoneticType type) const
 {
     std::string coloured_string;
 #ifdef _MSC_VER
@@ -447,13 +462,13 @@ std::string Entry::applyColours(std::string original,
 
         // ... and apply tone colour formatting to the string
         switch (type) {
-        case EntryPhoneticType::JYUTPING:
+        case EntryColourPhoneticType::JYUTPING:
             coloured_string += "<font color=\""
                                + Settings::jyutpingToneColours.at(
                                      static_cast<size_t>(tone))
                                + "\">";
             break;
-        case EntryPhoneticType::PINYIN:
+        case EntryColourPhoneticType::PINYIN:
             coloured_string += "<font color=\""
                                + Settings::pinyinToneColours.at(
                                      static_cast<size_t>(tone))

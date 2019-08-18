@@ -20,7 +20,6 @@
 
 #include <memory>
 
-#include <QDebug>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
@@ -38,9 +37,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Get colours from QSettings
     std::unique_ptr<QSettings> settings = Settings::getSettings();
-    int size = settings->beginReadArray("jyutpingColors");
-    qDebug() << size;
-    for (int i = 0; i < 7; ++i) {
+    int size = settings->beginReadArray("jyutpingColours");
+    for (int i = 0; i < Settings::jyutpingToneColours.size(); ++i) {
         settings->setArrayIndex(i);
         QColor color = settings
                            ->value("colour",
@@ -48,6 +46,14 @@ MainWindow::MainWindow(QWidget *parent) :
                                        Settings::jyutpingToneColours[i].c_str()})
                            .value<QColor>();
         Settings::jyutpingToneColours[i] = color.name().toStdString();
+    }
+    settings->endArray();
+
+    size = settings->beginReadArray("pinyinColours");
+    for (int i = 0; i < Settings::pinyinToneColours.size(); ++i) {
+        settings->setArrayIndex(i);
+        QColor color = settings->value("colour").value<QColor>();
+        Settings::pinyinToneColours[i] = color.name().toStdString();
     }
     settings->endArray();
 

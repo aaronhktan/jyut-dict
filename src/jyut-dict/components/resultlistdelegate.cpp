@@ -1,6 +1,8 @@
 #include "resultlistdelegate.h"
 
 #include "logic/entry/entry.h"
+#include "logic/entry/entrycharactersoptions.h"
+#include "logic/entry/entryphoneticoptions.h"
 #include "logic/settings/settingsutils.h"
 
 #include <QAbstractTextDocumentLayout>
@@ -54,18 +56,18 @@ void ResultListDelegate::paint(QPainter *painter,
         characterOptions
             = _settings
                   ->value("characterOptions",
-                          QVariant::fromValue(QVariant::fromValue(
-                              EntryCharactersOptions::PREFER_TRADITIONAL)))
+                          QVariant::fromValue(
+                              EntryCharactersOptions::PREFER_TRADITIONAL))
                   .value<EntryCharactersOptions>();
         phoneticOptions = _settings
                               ->value("phoneticOptions",
-                                      QVariant::fromValue(QVariant::fromValue(
-                                          EntryPhoneticOptions::PREFER_JYUTPING)))
+                                      QVariant::fromValue(
+                                          EntryPhoneticOptions::PREFER_JYUTPING))
                               .value<EntryPhoneticOptions>();
         mandarinOptions = _settings
                               ->value("mandarinOptions",
-                                      QVariant::fromValue(QVariant::fromValue(
-                                          MandarinOptions::PRETTY_PINYIN)))
+                                      QVariant::fromValue(
+                                          MandarinOptions::PRETTY_PINYIN))
                               .value<MandarinOptions>();
 
         use_colours = !(option.state & QStyle::State_Selected);
@@ -87,6 +89,11 @@ void ResultListDelegate::paint(QPainter *painter,
 
     // Use QTextDocument for rich text
     QTextDocument *doc = new QTextDocument{};
+    entry.refreshColours(_settings
+                             ->value("entryColourPhoneticType",
+                                     QVariant::fromValue(
+                                         EntryColourPhoneticType::JYUTPING))
+                             .value<EntryColourPhoneticType>());
     doc->setHtml(QString(entry.getCharacters(characterOptions, use_colours).c_str()));
     doc->setTextWidth(r.width());
     doc->setDefaultFont(font);

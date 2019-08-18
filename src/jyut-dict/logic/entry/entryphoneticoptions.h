@@ -14,6 +14,11 @@ enum EntryPhoneticOptions {
     PREFER_PINYIN,
 };
 
+enum EntryColourPhoneticType {
+    JYUTPING,
+    PINYIN,
+};
+
 enum CantoneseOptions {
     RAW_JYUTPING,
 };
@@ -24,6 +29,7 @@ enum MandarinOptions {
 };
 
 Q_DECLARE_METATYPE(EntryPhoneticOptions);
+Q_DECLARE_METATYPE(EntryColourPhoneticType);
 Q_DECLARE_METATYPE(CantoneseOptions);
 Q_DECLARE_METATYPE(MandarinOptions);
 
