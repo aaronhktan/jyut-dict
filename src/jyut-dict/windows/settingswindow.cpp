@@ -11,7 +11,7 @@
 
 SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
                                QWidget *parent)
-    : QMainWindow{parent, Qt::Window},
+    : QMainWindow{nullptr, Qt::Window},
       _parent{parent}
 {
     _manager = manager;

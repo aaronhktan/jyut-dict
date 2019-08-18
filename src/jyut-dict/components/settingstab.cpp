@@ -3,6 +3,11 @@
 #include "logic/entry/entrycharactersoptions.h"
 #include "logic/entry/entryphoneticoptions.h"
 #include "logic/settings/settings.h"
+#include "logic/settings/settingsutils.h"
+
+#include <QColorDialog>
+#include <QGridLayout>
+#include <QVariant>
 
 SettingsTab::SettingsTab(QWidget *parent)
     : QWidget(parent)
@@ -33,7 +38,17 @@ void SettingsTab::setupUI()
     _tabLayout->addRow(tr("Jyutping/Pinyin display options:"),
                        _phoneticCombobox);
     _tabLayout->addRow(tr("Pinyin display options:"), _mandarinCombobox);
+
     _tabLayout->addRow(_divider);
+
+    QWidget *jyutpingColourWidget = new QWidget{this};
+    initializeJyutpingColourWidget(*jyutpingColourWidget);
+    _tabLayout->addRow(tr("Jyutping tone colours:"), jyutpingColourWidget);
+
+    QWidget *pinyinColourWidget = new QWidget{this};
+    initializePinyinColourWidget(*pinyinColourWidget);
+    _tabLayout->addRow(tr("Pinyin tone colours:"), pinyinColourWidget);
+
     //    _tabLayout->addRow(tr("Interface language:"), _languageCombobox);
 }
 
@@ -151,3 +166,201 @@ void SettingsTab::initializeMandarinComboBox(QComboBox &mandarinCombobox)
 //                _settings->sync();
 //            });
 //}
+
+#include <QDebug>
+void SettingsTab::initializeJyutpingColourWidget(QWidget &jyutpingColourWidget)
+{
+    // Create widgets
+    QGridLayout *jyutpingLayout = new QGridLayout{&jyutpingColourWidget};
+    jyutpingLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+    jyutpingLayout->setContentsMargins(0, 0, 0, 0);
+    jyutpingLayout->setVerticalSpacing(5);
+    jyutpingColourWidget.setLayout(jyutpingLayout);
+    for (std::map<QString, QLabel *>::size_type i = 0; i < 7; i++) {
+        QPushButton *button = new QPushButton{this};
+        button->setStyleSheet(
+            QString{
+                "QPushButton { background: %1; border: 1px solid "
+                "darkgrey; border-radius: 3px; margin: 0px; padding: 0px; }"}
+                .arg(Settings::jyutpingToneColours[i].c_str()));
+        button->setMinimumSize(40, 20);
+        button->setFixedWidth(40);
+        button->setProperty("tone", static_cast<int>(i));
+        jyutpingLayout->addWidget(button,
+                                  0,
+                                  static_cast<int>(i),
+                                  Qt::AlignCenter);
+
+        connect(button, &QPushButton::pressed, this, [&]() {
+            QPushButton *sender = static_cast<QPushButton *>(QObject::sender());
+            sender->setStyleSheet(
+                QString{"QPushButton { background: %1; border: 1px solid "
+                        "lightgrey; border-radius: 3px; margin: 0px; padding: "
+                        "0px; }"}
+                    .arg(Settings::jyutpingToneColours[sender->property("tone")
+                                                           .toInt()]
+                             .c_str()));
+        });
+
+        connect(button, &QPushButton::released, this, [&]() {
+            QPushButton *sender = static_cast<QPushButton *>(QObject::sender());
+            sender->setStyleSheet(
+                QString{"QPushButton { background: %1; border: 1px solid "
+                        "darkgrey; border-radius: 3px; margin: 0px; padding: "
+                        "0px; }"}
+                    .arg(Settings::jyutpingToneColours[sender->property("tone")
+                                                           .toInt()]
+                             .c_str()));
+        });
+
+        connect(button, &QPushButton::clicked, this, [&]() {
+            QPushButton *sender = static_cast<QPushButton *>(QObject::sender());
+            QColor newColour = QColorDialog::getColor(static_cast<QPushButton *>(
+                                                          QObject::sender())
+                                                          ->palette()
+                                                          .button()
+                                                          .color(),
+                                                      this);
+            if (!newColour.isValid()) {
+                return;
+            }
+            Settings::jyutpingToneColours[sender->property("tone").toInt()]
+                = newColour.name().toStdString();
+            sender->setStyleSheet(
+                QString{"QPushButton { background: %1; border: 1px solid "
+                        "darkgrey; border-radius: 3px; margin: 0px; padding: "
+                        "0px; }"}
+                    .arg(Settings::jyutpingToneColours[sender->property("tone")
+                                                           .toInt()]
+                             .c_str()));
+
+            _settings->beginWriteArray("jyutpingColors");
+            for (std::vector<std::string>::size_type i = 0;
+                 i < Settings::jyutpingToneColours.size();
+                 i++) {
+                _settings->setArrayIndex(i);
+                _settings->setValue("colour",
+                                    QColor{Settings::jyutpingToneColours[i]
+                                               .c_str()});
+            }
+            _settings->endArray();
+            _settings->sync();
+        });
+
+        if (i == 0) {
+            jyutpingLayout->addWidget(new QLabel{tr("Neutral"),
+                                                 &jyutpingColourWidget},
+                                      1,
+                                      static_cast<int>(i));
+            continue;
+        }
+
+        jyutpingLayout->addWidget(new QLabel{tr("Tone %1").arg(i),
+                                             &jyutpingColourWidget},
+                                  1,
+                                  static_cast<int>(i));
+    }
+}
+
+void SettingsTab::initializePinyinColourWidget(QWidget &pinyinColourWidget)
+{
+    // Get colours from QSettings
+    _settings->beginReadArray("pinyinColors");
+    for (int i = 0; i < 5; ++i) {
+        _settings->setArrayIndex(i);
+        QColor color
+            = _settings
+                  ->value("colour",
+                          QColor{
+                              Settings::pinyinToneColours[static_cast<ulong>(i)]
+                                  .c_str()})
+                  .value<QColor>();
+        Settings::pinyinToneColours[i] = color.name().toStdString();
+    }
+    _settings->endArray();
+
+    // Create widgets
+    QGridLayout *pinyinLayout = new QGridLayout{&pinyinColourWidget};
+    pinyinLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
+    pinyinLayout->setContentsMargins(0, 0, 0, 0);
+    pinyinLayout->setVerticalSpacing(5);
+    pinyinColourWidget.setLayout(pinyinLayout);
+    for (std::map<QString, QLabel *>::size_type i = 0; i < 5; i++) {
+        QPushButton *button = new QPushButton{this};
+        button->setStyleSheet(QString{
+            "QPushButton { background: %1; border: 1px solid "
+            "darkgrey; border-radius: 3px; margin: 0px; padding: 0px; }"}
+                                  .arg(Settings::pinyinToneColours[i].c_str()));
+        button->setMinimumSize(40, 20);
+        button->setFixedWidth(40);
+        button->setProperty("tone", static_cast<int>(i));
+        pinyinLayout->addWidget(button, 0, static_cast<int>(i), Qt::AlignCenter);
+
+        connect(button, &QPushButton::pressed, this, [&]() {
+            QPushButton *sender = static_cast<QPushButton *>(QObject::sender());
+            sender->setStyleSheet(
+                QString{"QPushButton { background: %1; border: 1px solid "
+                        "lightgrey; border-radius: 3px; margin: 0px; padding: "
+                        "0px; }"}
+                    .arg(Settings::pinyinToneColours[sender->property("tone")
+                                                           .toInt()]
+                             .c_str()));
+        });
+
+        connect(button, &QPushButton::released, this, [&]() {
+            QPushButton *sender = static_cast<QPushButton *>(QObject::sender());
+            sender->setStyleSheet(
+                QString{"QPushButton { background: %1; border: 1px solid "
+                        "darkgrey; border-radius: 3px; margin: 0px; padding: "
+                        "0px; }"}
+                    .arg(Settings::pinyinToneColours[sender->property("tone")
+                                                           .toInt()]
+                             .c_str()));
+        });
+
+        connect(button, &QPushButton::clicked, this, [&]() {
+            QPushButton *sender = static_cast<QPushButton *>(QObject::sender());
+            QColor newColour = QColorDialog::getColor(static_cast<QPushButton *>(QObject::sender())
+                                                          ->palette()
+                                                          .button()
+                                                          .color(),
+                                                      this);
+            if (!newColour.isValid()) {
+                return;
+            }
+            Settings::pinyinToneColours[sender->property("tone").toInt()]
+                = newColour.name().toStdString();
+            sender->setStyleSheet(
+                QString{"QPushButton { background: %1; border: 1px solid "
+                        "darkgrey; border-radius: 3px; margin: 0px; padding: "
+                        "0px; }"}
+                    .arg(Settings::pinyinToneColours[sender->property("tone")
+                                                         .toInt()]
+                             .c_str()));
+
+            _settings->beginWriteArray("pinyinColors");
+            for (std::vector<std::string>::size_type i = 0;
+                 i < Settings::pinyinToneColours.size();
+                 i++) {
+                _settings->setArrayIndex(i);
+                _settings->setValue("colour",
+                                    QColor{
+                                        Settings::pinyinToneColours[i].c_str()});
+            }
+            _settings->endArray();
+            _settings->sync();
+        });
+
+        if (i == 0) {
+            pinyinLayout->addWidget(new QLabel{tr("Neutral"),
+                                               &pinyinColourWidget},
+                                    1,
+                                    static_cast<int>(i));
+            continue;
+        }
+        pinyinLayout->addWidget(new QLabel{tr("Tone %1").arg(i),
+                                           &pinyinColourWidget},
+                                1,
+                                static_cast<int>(i));
+    }
+}

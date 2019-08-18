@@ -5,6 +5,7 @@
 #include "logic/entry/entrycharactersoptions.h"
 #include "logic/entry/entryphoneticoptions.h"
 #include "logic/entry/sentence.h"
+#include "logic/settings/settings.h"
 
 #include <QObject>
 #include <QVariant>
@@ -12,6 +13,12 @@
 #include <ostream>
 #include <string>
 #include <vector>
+
+enum class EntryPhoneticType
+{
+    JYUTPING,
+    PINYIN
+};
 
 // The Entry class is very important, as it is the representation
 // of an entry in the dictionary.
@@ -97,7 +104,8 @@ private:
     std::string getMandarinPhonetic(MandarinOptions mandarinOptions) const;
 
     std::string applyColours(std::string original,
-                             std::vector<int> tones) const;
+                             std::vector<int> tones,
+                             EntryPhoneticType type = EntryPhoneticType::JYUTPING) const;
     void compareStrings(std::string original, std::string comparison,
                         std::string &returnString);
 

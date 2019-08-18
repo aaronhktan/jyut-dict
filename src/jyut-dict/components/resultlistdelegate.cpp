@@ -1,7 +1,7 @@
 #include "resultlistdelegate.h"
 
 #include "logic/entry/entry.h"
-#include "logic/settings/settings.h"
+#include "logic/settings/settingsutils.h"
 
 #include <QAbstractTextDocumentLayout>
 #include <QRectF>

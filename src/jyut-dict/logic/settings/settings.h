@@ -1,15 +1,14 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <QObject>
-#include <QSettings>
-
-#include <memory>
+#include <string>
+#include <vector>
 
 namespace Settings {
 
-std::unique_ptr<QSettings> getSettings(QObject *parent = nullptr);
+extern std::vector<std::string> jyutpingToneColours;
+extern std::vector<std::string> pinyinToneColours;
 
-};
+}
 
 #endif // SETTINGS_H

@@ -1,5 +1,7 @@
 #include "entry.h"
 
+#include "logic/settings/settings.h"
+
 #include <codecvt>
 #include <iomanip>
 #include <iostream>
@@ -18,16 +20,6 @@ static std::unordered_map<std::string, std::vector<std::string>> replacementMap 
 
 static std::unordered_set<std::string> specialCharacters = {
     "，", "%", "－", "…", "·",
-};
-
-static std::vector<std::string> toneColours = {
-    "grey",
-    "#00bcd4",
-    "#7cb342",
-    "#657ff1",
-    "#c2185b",
-    "#068900",
-    "#7651d0",
 };
 
 #ifdef _MSC_VER
@@ -404,7 +396,8 @@ void Entry::setSentences(std::vector<Sentence> sentences)
 }
 
 std::string Entry::applyColours(std::string original,
-                                std::vector<int> tones) const
+                                std::vector<int> tones,
+                                EntryPhoneticType type) const
 {
     std::string coloured_string;
 #ifdef _MSC_VER
@@ -453,7 +446,20 @@ std::string Entry::applyColours(std::string original,
         }
 
         // ... and apply tone colour formatting to the string
-        coloured_string += "<font color=\"" + toneColours.at(static_cast<size_t>(tone)) + "\">";
+        switch (type) {
+        case EntryPhoneticType::JYUTPING:
+            coloured_string += "<font color=\""
+                               + Settings::jyutpingToneColours.at(
+                                     static_cast<size_t>(tone))
+                               + "\">";
+            break;
+        case EntryPhoneticType::PINYIN:
+            coloured_string += "<font color=\""
+                               + Settings::pinyinToneColours.at(
+                                     static_cast<size_t>(tone))
+                               + "\">";
+            break;
+        }
         coloured_string += originalCharacter;
         coloured_string += "</font>";
 

@@ -55,6 +55,8 @@ private:
     void openAboutWindow();
     void openSettingsWindow();
 
+    void closeEvent(QCloseEvent *event) override;
+
 public slots:
     void notifyUpdateAvailable(bool updateAvailable,
                                std::string versionNumber,

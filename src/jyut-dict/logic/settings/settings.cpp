@@ -1,22 +1,21 @@
-#include "settings.h"
+#include "logic/settings/settings.h"
 
-#include <QCoreApplication>
+namespace Settings {
+    std::vector<std::string> jyutpingToneColours = {
+        "grey",
+        "#00bcd4",
+        "#7cb342",
+        "#657ff1",
+        "#c2185b",
+        "#068900",
+        "#7651d0",
+    };
 
-namespace Settings
-{
-
-std::unique_ptr<QSettings> getSettings(QObject *parent)
-{
-#ifdef PORTABLE
-    std::unique_ptr<QSettings> settings
-        = std::make_unique<QSettings>(QCoreApplication::applicationDirPath()
-                                          + "/../Resources/settings.ini",
-                                      QSettings::IniFormat,
-                                      parent);
-    return settings;
-#else
-    retun std::make_unique<QSettings>(parent);
-#endif
-}
-
+    std::vector<std::string> pinyinToneColours = {
+        "grey",
+        "#e30000",
+        "#01b31c",
+        "#150ff0",
+        "#8800bf",
+    };
 }

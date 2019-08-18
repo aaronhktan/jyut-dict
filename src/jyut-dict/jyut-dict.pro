@@ -31,6 +31,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
+    logic/settings/settings.cpp \
+    logic/settings/settingsutils.cpp \
     main.cpp \
     components/definitioncontentwidget.cpp \
     components/definitionheaderwidget.cpp \
@@ -59,7 +61,6 @@ SOURCES += \
     logic/entry/sentence.cpp \
     logic/search/searchoptionsmediator.cpp \
     logic/search/sqlsearch.cpp \
-    logic/settings/settings.cpp \
     logic/update/githubreleasechecker.cpp \
     logic/utils/utils.cpp \
     windows/aboutwindow.cpp \
@@ -105,6 +106,7 @@ HEADERS += \
     logic/search/searchparameters.h \
     logic/search/sqlsearch.h \
     logic/settings/settings.h \
+    logic/settings/settingsutils.h \
     logic/update/githubreleasechecker.h \
     logic/update/iupdatechecker.h \
     logic/utils/qvariantutils.h \
