@@ -20,6 +20,10 @@ SettingsTab::SettingsTab(QWidget *parent)
 void SettingsTab::setupUI()
 {
     _tabLayout = new QFormLayout{this};
+#ifdef Q_OS_WIN
+    _tabLayout->setVerticalSpacing(15);
+    _tabLayout->setContentsMargins(20, 20, 20, 20);
+#endif
 
     _characterCombobox = new QComboBox{this};
     initializeCharacterComboBox(*_characterCombobox);

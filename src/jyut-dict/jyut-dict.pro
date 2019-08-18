@@ -31,8 +31,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
-    logic/settings/settings.cpp \
-    logic/settings/settingsutils.cpp \
     main.cpp \
     components/definitioncontentwidget.cpp \
     components/definitionheaderwidget.cpp \
@@ -61,6 +59,8 @@ SOURCES += \
     logic/entry/sentence.cpp \
     logic/search/searchoptionsmediator.cpp \
     logic/search/sqlsearch.cpp \
+    logic/settings/settings.cpp \
+    logic/settings/settingsutils.cpp \
     logic/update/githubreleasechecker.cpp \
     logic/utils/utils.cpp \
     windows/aboutwindow.cpp \
@@ -170,6 +170,13 @@ unix|win32:!macx {
     export(first.depends)
     export(copydata.commands)
     QMAKE_EXTRA_TARGETS += first copydata
+
+    # Copy settings file to build directory
+    copysettings.commands = $(COPY_DIR) \"$$system_path($$PWD/resources/settings/settings.ini)\" \"$$system_path($$OUT_PWD)\"
+    second.depends = $(second) copysettings
+    export(second.depends)
+    export(copysettings.commands)
+    QMAKE_EXTRA_TARGETS += second copysettings
 }
 
 # Default rules for deployment.
