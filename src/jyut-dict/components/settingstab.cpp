@@ -323,7 +323,7 @@ void SettingsTab::initializePinyinColourWidget(QWidget &pinyinColourWidget)
                     "} "
                     " "
                     "QPushButton:pressed { "
-                    "   background: %1; border: 1px solid lightgrey; "
+                    "   background: %1; border: 2px solid lightgrey; "
                     "   border-radius: 3px; "
                     "   margin: 0px; "
                     "   padding: 0px; "
