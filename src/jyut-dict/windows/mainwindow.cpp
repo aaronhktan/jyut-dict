@@ -52,7 +52,8 @@ MainWindow::MainWindow(QWidget *parent) :
     size = settings->beginReadArray("pinyinColours");
     for (int i = 0; i < Settings::pinyinToneColours.size(); ++i) {
         settings->setArrayIndex(i);
-        QColor color = settings->value("colour").value<QColor>();
+        QColor color = settings->value("colour", QColor{
+                                           Settings::pinyinToneColours[i].c_str()}).value<QColor>();
         Settings::pinyinToneColours[i] = color.name().toStdString();
     }
     settings->endArray();

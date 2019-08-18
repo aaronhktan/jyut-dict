@@ -12,7 +12,7 @@ std::unique_ptr<QSettings> getSettings(QObject *parent)
 #elif defined(Q_OS_WIN)
     QString settingsPath = QCoreApplication::applicationDirPath() + "./settings.ini";
 #elif defined(Q_OS_LINUX)
-    QString settingsPath = QCoreApplication::applicationDirPath() + "/settings.ini"
+    QString settingsPath = QCoreApplication::applicationDirPath() + "/settings.ini";
 #endif
 #ifdef PORTABLE
     std::unique_ptr<QSettings> settings
