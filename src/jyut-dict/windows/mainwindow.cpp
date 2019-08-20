@@ -38,8 +38,10 @@ MainWindow::MainWindow(QWidget *parent) :
     // Get colours from QSettings
     std::unique_ptr<QSettings> settings = Settings::getSettings();
     int size = settings->beginReadArray("jyutpingColours");
-    for (int i = 0; i < Settings::jyutpingToneColours.size(); ++i) {
-        settings->setArrayIndex(i);
+    for (std::vector<std::string>::size_type i = 0;
+         i < Settings::jyutpingToneColours.size();
+         ++i) {
+        settings->setArrayIndex(static_cast<int>(i));
         QColor color = settings
                            ->value("colour",
                                    QColor{
@@ -50,10 +52,15 @@ MainWindow::MainWindow(QWidget *parent) :
     settings->endArray();
 
     size = settings->beginReadArray("pinyinColours");
-    for (int i = 0; i < Settings::pinyinToneColours.size(); ++i) {
-        settings->setArrayIndex(i);
-        QColor color = settings->value("colour", QColor{
-                                           Settings::pinyinToneColours[i].c_str()}).value<QColor>();
+    for (std::vector<std::string>::size_type i = 0;
+         i < Settings::pinyinToneColours.size();
+         ++i) {
+        settings->setArrayIndex(static_cast<int>(i));
+        QColor color = settings
+                           ->value("colour",
+                                   QColor{
+                                       Settings::pinyinToneColours[i].c_str()})
+                           .value<QColor>();
         Settings::pinyinToneColours[i] = color.name().toStdString();
     }
     settings->endArray();
@@ -80,10 +87,16 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
 
     // Check for updates
-    _checker = new GithubReleaseChecker{this};
-    QTimer::singleShot(1000, _checker, &GithubReleaseChecker::checkForNewUpdate);
-    connect(_checker, &GithubReleaseChecker::foundUpdate, this,
-            &MainWindow::notifyUpdateAvailable);
+    if (settings->value("Advanced/updateNotificationsEnabled", QVariant{true}).toBool()) {
+        _checker = new GithubReleaseChecker{this};
+        QTimer::singleShot(1000,
+                           _checker,
+                           &GithubReleaseChecker::checkForNewUpdate);
+        connect(_checker,
+                &GithubReleaseChecker::foundUpdate,
+                this,
+                &MainWindow::notifyUpdateAvailable);
+    }
 }
 
 MainWindow::~MainWindow()

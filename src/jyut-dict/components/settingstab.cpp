@@ -60,8 +60,6 @@ void SettingsTab::setupUI()
     _tabLayout->addRow(tr("Colour words by tone in:"), _colourCombobox);
     _tabLayout->addRow(tr("Jyutping tone colours:"), jyutpingColourWidget);
     _tabLayout->addRow(tr("Pinyin tone colours:"), pinyinColourWidget);
-
-    //    _tabLayout->addRow(tr("Interface language:"), _languageCombobox);
 }
 
 void SettingsTab::initializeCharacterComboBox(QComboBox &characterCombobox)
@@ -147,38 +145,6 @@ void SettingsTab::initializeMandarinComboBox(QComboBox &mandarinCombobox)
             });
 }
 
-//void SettingsTab::initializeLanguageComboBox(QComboBox &languageCombobox)
-//{
-//    phoneticCombobox.addItem(tr("Only Jyutping"),
-//                             QVariant::fromValue<EntryPhoneticOptions>(
-//                                 EntryPhoneticOptions::ONLY_JYUTPING));
-//    phoneticCombobox.addItem(tr("Only Pinyin"),
-//                             QVariant::fromValue<EntryPhoneticOptions>(
-//                                 EntryPhoneticOptions::ONLY_PINYIN));
-//    phoneticCombobox.addItem(tr("Both, Prefer Jyutping"),
-//                             QVariant::fromValue<EntryPhoneticOptions>(
-//                                 EntryPhoneticOptions::PREFER_JYUTPING));
-//    phoneticCombobox.addItem(tr("Both, Prefer Pinyin"),
-//                             QVariant::fromValue<EntryPhoneticOptions>(
-//                                 EntryPhoneticOptions::PREFER_PINYIN));
-
-//    phoneticCombobox.setCurrentIndex(phoneticCombobox.findData(
-//        _settings
-//            ->value("phonetic_options",
-//                    QVariant::fromValue(
-//                        QVariant::fromValue(MandarinOptions::RAW_PINYIN)))
-//            .value<MandarinOptions>()));
-
-//    connect(&phoneticCombobox,
-//            QOverload<int>::of(&QComboBox::currentIndexChanged),
-//            this,
-//            [&](int index) {
-//                _settings->setValue("phonetic_options",
-//                                    phoneticCombobox.itemData(index));
-//                _settings->sync();
-//            });
-//}
-
 void SettingsTab::initializeColourComboBox(QComboBox &colourCombobox)
 {
     colourCombobox.addItem(tr("Jyutping"),
@@ -205,12 +171,14 @@ void SettingsTab::initializeColourComboBox(QComboBox &colourCombobox)
 
 void SettingsTab::initializeJyutpingColourWidget(QWidget &jyutpingColourWidget)
 {
-    // Create widgets
+    // Create buttons that show colours for jyutping tones
     QGridLayout *jyutpingLayout = new QGridLayout{&jyutpingColourWidget};
     jyutpingLayout->setAlignment(Qt::AlignTop | Qt::AlignHCenter);
     jyutpingLayout->setContentsMargins(0, 0, 0, 0);
     jyutpingLayout->setVerticalSpacing(5);
     jyutpingColourWidget.setLayout(jyutpingLayout);
+
+    // Create rounded rect colour buttons and label for tone
     for (std::vector<std::string>::size_type i = 0;
          i < Settings::jyutpingToneColours.size();
          i++) {
@@ -239,6 +207,7 @@ void SettingsTab::initializeJyutpingColourWidget(QWidget &jyutpingColourWidget)
                                   Qt::AlignCenter);
 
         connect(button, &QPushButton::clicked, this, [&]() {
+            // Get new colour from dialog
             QPushButton *sender = static_cast<QPushButton *>(QObject::sender());
             QColor newColour = QColorDialog::getColor(static_cast<QPushButton *>(
                                                           QObject::sender())
@@ -249,7 +218,10 @@ void SettingsTab::initializeJyutpingColourWidget(QWidget &jyutpingColourWidget)
             if (!newColour.isValid()) {
                 return;
             }
-            Settings::jyutpingToneColours[sender->property("tone").toInt()]
+
+            // Save colour to both settings file and global jyutping config
+            Settings::jyutpingToneColours[static_cast<unsigned long>(
+                sender->property("tone").toInt())]
                 = newColour.name().toStdString();
             sender->setStyleSheet(
                 QString{"QPushButton { "
@@ -265,15 +237,16 @@ void SettingsTab::initializeJyutpingColourWidget(QWidget &jyutpingColourWidget)
                         "   margin: 0px; "
                         "   padding: 0px; "
                         "} "}
-                    .arg(Settings::jyutpingToneColours[sender->property("tone")
-                                                           .toInt()]
-                             .c_str()));
+                    .arg(Settings::jyutpingToneColours
+                             [static_cast<unsigned long>(
+                                  sender->property("tone").toInt())]
+                                 .c_str()));
 
             _settings->beginWriteArray("jyutpingColours");
             for (std::vector<std::string>::size_type i = 0;
                  i < Settings::jyutpingToneColours.size();
                  i++) {
-                _settings->setArrayIndex(i);
+                _settings->setArrayIndex(static_cast<int>(i));
                 _settings->setValue("colour",
                                     QColor{Settings::jyutpingToneColours[i]
                                                .c_str()});
@@ -310,7 +283,8 @@ void SettingsTab::initializePinyinColourWidget(QWidget &pinyinColourWidget)
                               Settings::pinyinToneColours[static_cast<ulong>(i)]
                                   .c_str()})
                   .value<QColor>();
-        Settings::pinyinToneColours[i] = color.name().toStdString();
+        Settings::pinyinToneColours[static_cast<unsigned long>(i)]
+            = color.name().toStdString();
     }
     _settings->endArray();
 
@@ -320,7 +294,9 @@ void SettingsTab::initializePinyinColourWidget(QWidget &pinyinColourWidget)
     pinyinLayout->setContentsMargins(0, 0, 0, 0);
     pinyinLayout->setVerticalSpacing(5);
     pinyinColourWidget.setLayout(pinyinLayout);
-    for (std::vector<std::string>::size_type i = 0; i < Settings::pinyinToneColours.size(); i++) {
+    for (std::vector<std::string>::size_type i = 0;
+         i < Settings::pinyinToneColours.size();
+         i++) {
         QPushButton *button = new QPushButton{this};
         button->setStyleSheet(
             QString{"QPushButton { "
@@ -353,7 +329,8 @@ void SettingsTab::initializePinyinColourWidget(QWidget &pinyinColourWidget)
             if (!newColour.isValid()) {
                 return;
             }
-            Settings::pinyinToneColours[sender->property("tone").toInt()]
+            Settings::pinyinToneColours[static_cast<unsigned long>(
+                sender->property("tone").toInt())]
                 = newColour.name().toStdString();
             sender->setStyleSheet(
                 QString{"QPushButton { "
@@ -369,15 +346,17 @@ void SettingsTab::initializePinyinColourWidget(QWidget &pinyinColourWidget)
                         "   margin: 0px; "
                         "   padding: 0px; "
                         "} "}
-                    .arg(Settings::pinyinToneColours[sender->property("tone")
-                                                         .toInt()]
-                             .c_str()));
+                    .arg(
+                        Settings::pinyinToneColours[static_cast<unsigned long>(
+                                                        sender->property("tone")
+                                                            .toInt())]
+                            .c_str()));
 
             _settings->beginWriteArray("pinyinColours");
             for (std::vector<std::string>::size_type i = 0;
                  i < Settings::pinyinToneColours.size();
                  i++) {
-                _settings->setArrayIndex(i);
+                _settings->setArrayIndex(static_cast<int>(i));
                 _settings->setValue("colour",
                                     QColor{
                                         Settings::pinyinToneColours[i].c_str()});

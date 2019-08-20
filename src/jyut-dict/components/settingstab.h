@@ -34,7 +34,6 @@ private:
     QComboBox *_characterCombobox;
     QComboBox *_phoneticCombobox;
     QComboBox *_mandarinCombobox;
-    //    QComboBox *_languageCombobox;
 
     QFrame *_divider;
 

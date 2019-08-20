@@ -31,7 +31,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
+    components/contacttab.cpp \
     main.cpp \
+    components/advancedtab.cpp \
     components/definitioncontentwidget.cpp \
     components/definitionheaderwidget.cpp \
     components/definitionscrollarea.cpp \
@@ -69,6 +71,8 @@ SOURCES += \
     windows/updatewindow.cpp
 
 HEADERS += \
+    components/advancedtab.h \
+    components/contacttab.h \
     components/definitioncontentwidget.h \
     components/definitionheaderwidget.h \
     components/definitionscrollarea.h \

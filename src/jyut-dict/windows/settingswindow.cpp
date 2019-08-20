@@ -1,5 +1,7 @@
 #include "settingswindow.h"
 
+#include "components/advancedtab.h"
+#include "components/contacttab.h"
 #include "components/dictionarytab.h"
 #include "components/settingstab.h"
 #include "logic/utils/utils_mac.h"
@@ -75,17 +77,11 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
     _contentStackedWidget->addWidget(dictionaryTab);
 
     _actions[2]->setText(tr("Advanced"));
-    QLabel *advancedTab = new QLabel{"This page is intentionally left blank.",
-                                     this};
-    advancedTab->setMinimumSize(400, 250);
-    advancedTab->setAlignment(Qt::AlignCenter);
+    AdvancedTab *advancedTab = new AdvancedTab{this};
     _contentStackedWidget->addWidget(advancedTab);
 
     _actions[3]->setText(tr("Contact"));
-    QLabel *contactTab = new QLabel{"This page is intentionally left blank.",
-                                    this};
-    contactTab->setMinimumSize(400, 250);
-    contactTab->setAlignment(Qt::AlignCenter);
+    ContactTab *contactTab = new ContactTab{this};
     _contentStackedWidget->addWidget(contactTab);
 
     setCentralWidget(_contentStackedWidget);
@@ -97,7 +93,6 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
 #else
     setWindowTitle(tr("Settings"));
 #endif
-    setMinimumSize(600, 400);
     resize(sizeHint());
     layout()->setSizeConstraint(QLayout::SetFixedSize);
     move(parent->x() + (parent->width() - sizeHint().width()) / 2,
@@ -227,6 +222,7 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
 #endif
 }
 
+#include <QDebug>
 void SettingsWindow::openTab(int tabIndex)
 {
 #if defined(Q_OS_DARWIN)
@@ -244,7 +240,7 @@ void SettingsWindow::openTab(int tabIndex)
         // Ignore sizehint of non-active widgets
         QSizePolicy::Policy policy = QSizePolicy::Ignored;
         if (index == tabIndex) {
-            policy = QSizePolicy::Expanding;
+            policy = QSizePolicy::Maximum;
         }
 
         QWidget *widget = _contentStackedWidget->widget(index);
