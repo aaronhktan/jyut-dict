@@ -257,9 +257,7 @@ void SettingsTab::initializeJyutpingColourWidget(QWidget &jyutpingColourWidget)
 
         QLabel *label = new QLabel{&jyutpingColourWidget};
         label->setAlignment(Qt::AlignHCenter);
-#ifdef Q_OS_WIN
-        label->setFixedWidth(40);
-#endif
+        label->setMinimumWidth(40);
         if (i == 0) {
             label->setText(tr("No Tone"));
             jyutpingLayout->addWidget(label, 1, static_cast<int>(i));
@@ -370,9 +368,7 @@ void SettingsTab::initializePinyinColourWidget(QWidget &pinyinColourWidget)
 
         QLabel *label = new QLabel{&pinyinColourWidget};
         label->setAlignment(Qt::AlignHCenter);
-#ifdef Q_OS_WIN
-        label->setFixedWidth(40);
-#endif
+        label->setMinimumWidth(40);
         if (i == 0) {
             label->setText(tr("No Tone"));
             pinyinLayout->addWidget(label, 1, static_cast<int>(i));
