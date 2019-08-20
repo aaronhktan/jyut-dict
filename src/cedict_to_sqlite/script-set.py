@@ -27,20 +27,27 @@ sources = {
 }
 
 class Entry(object):
-    def __init__(self, trad='', simp='', pin='', jyut='', freq=0.0, cedict_eng=[], canto_eng=[]):
+    def __init__(self, trad='', simp='', pin='', jyut='', freq=0.0, cedict_eng=None, canto_eng=None):
         self.traditional = trad
         self.simplified = simp
         self.pinyin = pin
-        self.jyutping = jyut
+        self.jyutping = jyut                # An exact match
+        self.fuzzy_jyutping = ''            # A "fuzzy" match (i.e. jyutping matches traditional but not pinyin)
         self.freq = freq
-        self.cedict_english = cedict_eng
-        self.canto_english = canto_eng
+        self.cedict_english = cedict_eng if cedict_eng is not None else []
+        self.canto_english = canto_eng if canto_eng is not None else []
 
-    def add_jyut_ping(self, jyut):
+    def add_jyutping(self, jyut):
         self.jyutping = jyut
+
+    def add_fuzzy_jyutping(self, jyut):
+        if self.fuzzy_jyutping == '':
+            self.fuzzy_jyutping = jyut
+        elif self.fuzzy_jyutping.find(jyut) == -1:
+            self.fuzzy_jyutping += ', ' + jyut
 
     def add_canto_eng(self, canto_eng):
-        self.canto_english = canto_eng
+        self.canto_english.append(canto_eng)
 
     def add_freq(self, freq):
         self.freq = freq
@@ -127,7 +134,7 @@ def write(entries, db_name):
 
     # Add entries to tables
     def entry_to_tuple(entry):
-        return (None, entry.traditional, entry.simplified, entry.pinyin, entry.jyutping, entry.freq)
+        return (None, entry.traditional, entry.simplified, entry.pinyin, entry.jyutping if entry.jyutping != '' else entry.fuzzy_jyutping, entry.freq)
 
     def definition_to_tuple(definition, entry_id, source_id):
         return (None, definition, entry_id, source_id)
@@ -153,7 +160,7 @@ def write(entries, db_name):
     db.close()
 
 def parse_cc_cedict(filename, entries):
-    with open(filename, 'r') as f:
+    with open(filename, 'r', encoding='utf8') as f:
         for index, line in enumerate(f):
             if (len(line) == 0 or line[0] == '#'):
                 continue
@@ -161,7 +168,7 @@ def parse_cc_cedict(filename, entries):
             split = line.split()
             trad = split[0]
             simp = split[1]
-            pin = line[line.index('[') + 1 : line.index(']')]
+            pin = line[line.index('[') + 1 : line.index(']')].lower()
             eng = line[line.index('/') + 1 : -2].split('/')
             entry = Entry(trad=trad,
                           simp=simp,
@@ -174,7 +181,7 @@ def parse_cc_cedict(filename, entries):
                 entries[trad] = [entry]
 
 def parse_cc_canto(filename, entries):
-    with open(filename, 'r') as f:
+    with open(filename, 'r', encoding='utf8') as f:
         for line in f:
             if (len(line) == 0 or line[0] == '#'):
                 continue
@@ -182,36 +189,56 @@ def parse_cc_canto(filename, entries):
             split = line.split() # Splits by whitespace
             trad = split[0]
             simp = split[1]
-            pin = line[line.index('[') + 1 : line.index(']')]
-            jyut = line[line.index('{') + 1 : line.index('}')]
-            eng = [line[line.index('/') + 1 : -2]]
+            pin = line[line.index('[') + 1 : line.index(']')].lower()
+            jyut = line[line.index('{') + 1 : line.index('}')].lower()
+            eng = line[line.index('/') + 1 : -2]
             entry = Entry(trad=trad,
                           simp=simp,
                           pin=pin,
                           jyut=jyut,
-                          canto_eng=eng)
+                          canto_eng=[eng])
 
+            # Check if entry is already in entries list
+            # If it is, then add jyutping and Cantonese definition
+            # Otherwise, add the new entry
             if trad in entries:
-                for entry in entries[trad]:
-                    entry.add_jyut_ping(jyut)
-                entries[trad][0].add_canto_eng(eng)
+                added = False
+                for existing_entry in entries[trad]:
+                    if existing_entry.simplified == simp and pin != '' and ''.join(existing_entry.pinyin.split()) == ''.join(pin.split()):
+                        existing_entry.add_jyutping(jyut)
+                        existing_entry.add_canto_eng(eng)
+                        added = True
+                        break
+
+                if not added:
+                    entries[trad].append(entry)
             else:
                 entries[trad] = [entry]
 
 def parse_cc_cedict_canto_readings(filename, entries):
-    with open(filename, 'r') as f:
+    with open(filename, 'r', encoding='utf8') as f:
         for line in f:
             if (len(line) == 0 or line[0] == '#'):
                 continue
 
             split = line.split()
             trad = split[0]
-            jyut = line[line.index('{') + 1 : -2]
+            simp = split[1]
+            pin = ''.join(line[line.index('[') + 1 : line.index(']')].lower().split())
+            jyut = line[line.index('{') + 1 : line.index('}')].lower()
             if trad not in entries:
                 continue
 
-            for entry in entries[trad]:
-                entry.add_jyut_ping(jyut)
+            # Add jyutping pronunciation if traditional, simplified, and pinyin match
+            # And jyutping pronunciation has not already been added
+            for existing_entry in entries[trad]:
+                # If it's an exact match, then set jyutping
+                if existing_entry.simplified == simp and pin != '' and ''.join(existing_entry.pinyin.split()) == pin:
+                    existing_entry.add_jyutping(jyut)
+                # Otherwise, add as fuzzy
+                else:
+                    existing_entry.add_fuzzy_jyutping(jyut)
+
 
 def assign_frequencies(entries):
     for key in entries:

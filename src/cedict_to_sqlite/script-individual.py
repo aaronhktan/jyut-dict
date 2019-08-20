@@ -15,16 +15,23 @@ source = {
 }
 
 class Entry(object):
-    def __init__(self, trad='', simp='', pin='', jyut='', freq=0.0, defs=[]):
+    def __init__(self, trad='', simp='', pin='', jyut='', freq=0.0, defs=None):
         self.traditional = trad
         self.simplified = simp
         self.pinyin = pin
-        self.jyutping = jyut
+        self.jyutping = jyut                # An exact match
+        self.fuzzy_jyutping = ''            # A "fuzzy" match (i.e. jyutping matches traditional but not pinyin)
         self.freq = freq
-        self.definitions = defs
+        self.definitions = defs if defs is not None else []
 
-    def add_jyut_ping(self, jyut):
+    def add_jyutping(self, jyut):
         self.jyutping = jyut
+
+    def add_fuzzy_jyutping(self, jyut):
+        if self.fuzzy_jyutping == '':
+            self.fuzzy_jyutping = jyut
+        elif self.fuzzy_jyutping.find(jyut) == -1:
+            self.fuzzy_jyutping += ', ' + jyut
 
     def add_freq(self, freq):
         self.freq = freq
@@ -111,7 +118,7 @@ def write(entries, db_name):
 
     # Add entries to tables
     def entry_to_tuple(entry):
-        return (None, entry.traditional, entry.simplified, entry.pinyin, entry.jyutping, entry.freq)
+        return (None, entry.traditional, entry.simplified, entry.pinyin, entry.jyutping if entry.jyutping != '' else entry.fuzzy_jyutping, entry.freq)
 
     def definition_to_tuple(definition, entry_id, source_id):
         return (None, definition, entry_id, source_id)
@@ -136,7 +143,7 @@ def write(entries, db_name):
     db.close()
 
 def parse_file(filename, entries):
-    with open(filename, 'r') as f:
+    with open(filename, 'r', encoding='utf8') as f:
         for index, line in enumerate(f):
             if (len(line) == 0 or line[0] == '#'):
                 continue
@@ -144,7 +151,7 @@ def parse_file(filename, entries):
             split = line.split()
             trad = split[0]
             simp = split[1]
-            pin = line[line.index('[') + 1 : line.index(']')]
+            pin = line[line.index('[') + 1 : line.index(']')].lower()
             definitions = line[line.index('/') + 1 : -2].split('/')
             entry = Entry(trad=trad,
                           simp=simp,
@@ -157,19 +164,26 @@ def parse_file(filename, entries):
                 entries[trad] = [entry]
 
 def parse_cc_cedict_canto_readings(filename, entries):
-    with open(filename, 'r') as f:
+    with open(filename, 'r', encoding='utf8') as f:
         for line in f:
             if (len(line) == 0 or line[0] == '#'):
                 continue
 
             split = line.split()
             trad = split[0]
-            jyut = line[line.index('{') + 1 : -2]
+            simp = split[1]
+            pin = ''.join(line[line.index('[') + 1 : line.index(']')].lower().split())
+            jyut = line[line.index('{') + 1 : line.index('}')].lower()
             if trad not in entries:
                 continue
 
             for entry in entries[trad]:
-                entry.add_jyut_ping(jyut)
+                # If it's an exact match, then set jyutping
+                if entry.simplified == simp and ''.join(entry.pinyin.split()) == pin:
+                    entry.add_jyutping(jyut)
+                # Otherwise, add as fuzzy
+                else:
+                    entry.add_fuzzy_jyutping(jyut)
 
 def assign_frequencies(entries):
     for key in entries:
