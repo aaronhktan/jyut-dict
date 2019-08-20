@@ -255,16 +255,17 @@ void SettingsTab::initializeJyutpingColourWidget(QWidget &jyutpingColourWidget)
             _settings->sync();
         });
 
+        QLabel *label = new QLabel{&jyutpingColourWidget};
+        label->setAlignment(Qt::AlignHCenter);
+        label->setFixedWidth(40);
         if (i == 0) {
-            jyutpingLayout->addWidget(new QLabel{tr("No Tone"),
-                                                 &jyutpingColourWidget},
-                                      1,
-                                      static_cast<int>(i));
+            label->setText(tr("No Tone"));
+            jyutpingLayout->addWidget(label, 1, static_cast<int>(i));
             continue;
         }
 
-        jyutpingLayout->addWidget(new QLabel{tr("Tone %1").arg(i),
-                                             &jyutpingColourWidget},
+        label->setText(tr("Tone %1").arg(i));
+        jyutpingLayout->addWidget(label,
                                   1,
                                   static_cast<int>(i));
     }
@@ -365,24 +366,22 @@ void SettingsTab::initializePinyinColourWidget(QWidget &pinyinColourWidget)
             _settings->sync();
         });
 
+        QLabel *label = new QLabel{&pinyinColourWidget};
+        label->setAlignment(Qt::AlignHCenter);
+        label->setFixedWidth(40);
         if (i == 0) {
-            pinyinLayout->addWidget(new QLabel{tr("No Tone"),
-                                               &pinyinColourWidget},
-                                    1,
-                                    static_cast<int>(i));
+            label->setText(tr("No Tone"));
+            pinyinLayout->addWidget(label, 1, static_cast<int>(i));
             continue;
         }
 
         if (i == 5) {
-            pinyinLayout->addWidget(new QLabel{tr("Neutral"),
-                                               &pinyinColourWidget},
-                                    1,
-                                    static_cast<int>(i));
+            label->setText(tr("Neutral"));
+            pinyinLayout->addWidget(label, 1, static_cast<int>(i));
             continue;
         }
-        pinyinLayout->addWidget(new QLabel{tr("Tone %1").arg(i),
-                                           &pinyinColourWidget},
-                                1,
-                                static_cast<int>(i));
+
+        label->setText(tr("Tone %1").arg(i));
+        pinyinLayout->addWidget(label, 1, static_cast<int>(i));
     }
 }
