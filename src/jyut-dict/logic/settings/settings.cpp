@@ -13,10 +13,10 @@ namespace Settings {
 
     std::vector<std::string> pinyinToneColours = {
         "grey",
-        "#e30000",
-        "#01b31c",
-        "#150ff0",
-        "#8800bf",
+        "#fc433c",
+        "#02ba1f",
+        "#18a6f2",
+        "#9e77ff",
         "grey",
     };
 }
