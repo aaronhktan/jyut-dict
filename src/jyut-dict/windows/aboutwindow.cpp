@@ -18,14 +18,16 @@ AboutWindow::AboutWindow(QWidget *parent)
                             | Qt::WindowTitleHint | Qt::MSWindowsFixedSizeDialogHint;
     flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowFullscreenButtonHint);
     setWindowFlags(flags);
-#ifdef Q_OS_WIN
+#ifndef Q_OS_MAC
     setWindowTitle(tr("About %1").arg(tr(Utils::PRODUCT_NAME)));
 #endif
 
 #ifdef Q_OS_MAC
     resize(sizeHint());
-#else
+#elif defined(Q_OS_WIN)
     resize(minimumWidth(), heightForWidth(minimumWidth()));
+#else
+    setFixedSize(sizeHint().width(), heightForWidth(sizeHint().width()));
 #endif
     move(parent->x() + (parent->width() - sizeHint().width()) / 2,
          parent->y() + (parent->height() - sizeHint().height()) / 2);
@@ -63,6 +65,8 @@ void AboutWindow::setupUI()
     _descriptionLabel->setText(tr(Utils::PRODUCT_DESCRIPTION));
     _descriptionLabel->setAlignment(Qt::AlignHCenter);
     _descriptionLabel->setWordWrap(true);
+    _descriptionLabel->setSizePolicy(QSizePolicy::MinimumExpanding,
+                                     QSizePolicy::MinimumExpanding);
 
     _messageLabel = new QLabel{this};
     _messageLabel->setAlignment(Qt::AlignHCenter);

@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle(tr(Utils::PRODUCT_NAME));
 #ifdef Q_OS_LINUX
     setMinimumSize(QSize(500, 350));
+    resize(600, 450);
 #else
     setMinimumSize(QSize(800, 600));
 #endif
