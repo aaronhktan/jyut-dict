@@ -222,7 +222,6 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
 #endif
 }
 
-#include <QDebug>
 void SettingsWindow::openTab(int tabIndex)
 {
 #if defined(Q_OS_DARWIN)
@@ -240,7 +239,7 @@ void SettingsWindow::openTab(int tabIndex)
         // Ignore sizehint of non-active widgets
         QSizePolicy::Policy policy = QSizePolicy::Ignored;
         if (index == tabIndex) {
-            policy = QSizePolicy::Maximum;
+            policy = QSizePolicy::Expanding;
         }
 
         QWidget *widget = _contentStackedWidget->widget(index);

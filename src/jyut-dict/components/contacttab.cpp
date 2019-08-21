@@ -4,7 +4,6 @@
 #include <QPixmap>
 #include <QUrl>
 
-#include <QDebug>
 ContactTab::ContactTab(QWidget *parent)
     : QWidget(parent)
 {

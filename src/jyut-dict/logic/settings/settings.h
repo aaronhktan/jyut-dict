@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+// Settings should only contain STL functions and data related to settings
+
 namespace Settings {
 
 extern std::vector<std::string> jyutpingToneColours;

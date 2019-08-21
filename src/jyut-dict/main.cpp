@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setOrganizationName("Aaron Tan");
     QCoreApplication::setOrganizationDomain("aaronhktan.com");
-    QCoreApplication::setApplicationName("Jyut Dictionary");
+    QCoreApplication::setApplicationName("CantoneseDictionary");
 
     qRegisterMetaType<EntryCharactersOptions>("EntryCharactersOptions");
     qRegisterMetaTypeStreamOperators<EntryCharactersOptions>("EntryCharactersOptions");

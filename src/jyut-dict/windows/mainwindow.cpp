@@ -87,7 +87,7 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
 
     // Check for updates
-    if (settings->value("Advanced/updateNotificationsEnabled", QVariant{true}).toBool()) {
+    if (settings->value("Advanced/UpdateNotificationsEnabled", QVariant{true}).toBool()) {
         _checker = new GithubReleaseChecker{this};
         QTimer::singleShot(1000,
                            _checker,

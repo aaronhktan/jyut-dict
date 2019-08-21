@@ -1,6 +1,7 @@
 #include "settingsutils.h"
 
 #include <QCoreApplication>
+#include <QDebug>
 
 namespace Settings
 {
@@ -14,15 +15,32 @@ std::unique_ptr<QSettings> getSettings(QObject *parent)
 #elif defined(Q_OS_LINUX)
     QString settingsPath = QCoreApplication::applicationDirPath() + "/settings.ini";
 #endif
+
+    std::unique_ptr<QSettings> settings;
+
 #ifdef PORTABLE
-    std::unique_ptr<QSettings> settings
-        = std::make_unique<QSettings>(settingsPath,
-                                      QSettings::IniFormat,
-                                      parent);
-    return settings;
+    settings = std::make_unique<QSettings>(settingsPath,
+                                           QSettings::IniFormat,
+                                           parent);
 #else
-    retun std::make_unique<QSettings>(parent);
+    settings = std::make_unique<QSettings>(parent);
 #endif
+
+    updateSettings(*settings);
+
+    return settings;
+}
+
+// Currently not used
+bool updateSettings(QSettings &settings)
+{
+    if (settings.value("Metadata/version", QVariant{2}).toInt()
+        != SETTINGS_VERSION) {
+        // Convert to new version here
+        settings.setValue("Metadata/version", QVariant{SETTINGS_VERSION});
+        settings.sync();
+    }
+    return true;
 }
 
 }

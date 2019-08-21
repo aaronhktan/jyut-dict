@@ -6,8 +6,11 @@
 
 #include <type_traits>
 
-// These are required to convert an enum class to a QVariant
-// So that the "QVariant::load: unable to load/save type" error is suppressed
+// These are required to convert an enum class to a QVariant.
+// QVariant serializes and deserializes with a QDataStream, and
+// the default message is the "QVariant::load: unable to load/save type" error.
+// By overriding the operators, the errors are suppressed and data is correctly
+// serialized/deserialized.
 // See https://stackoverflow.com/questions/42868924/templated-qdatastream-operator-for-enumerations
 
 template<typename T, typename U = std::enable_if_t<std::is_enum<T>::value>>

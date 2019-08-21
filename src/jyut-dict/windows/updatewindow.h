@@ -11,6 +11,8 @@
 
 #include <string>
 
+// The Update Window displays an update notification to the user.
+
 class UpdateWindow : public QWidget
 {
     Q_OBJECT

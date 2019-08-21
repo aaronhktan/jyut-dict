@@ -1,6 +1,7 @@
 #include "searchlineedit.h"
 
 #include "logic/search/sqlsearch.h"
+#include "logic/settings/settingsutils.h"
 
 #include <QIcon>
 #include <QTimer>

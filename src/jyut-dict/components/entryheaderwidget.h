@@ -2,6 +2,7 @@
 #define ENTRYHEADERWIDGET_H
 
 #include "logic/entry/entry.h"
+#include "logic/entry/entryphoneticoptions.h"
 
 #include <QGridLayout>
 #include <QLabel>
@@ -22,6 +23,8 @@ public:
     void setEntry(std::string word, std::string jyutping, std::string pinyin);
 
 private:
+    void displayPronunciationLabels(const EntryPhoneticOptions options);
+
     QGridLayout *_entryHeaderLayout;
     QLabel *_wordLabel;
     QLabel *_jyutpingLabel;

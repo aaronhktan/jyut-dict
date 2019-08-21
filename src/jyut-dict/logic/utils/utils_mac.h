@@ -3,6 +3,8 @@
 
 #include <QColor>
 
+// Utils_Mac contains utilities that are only useful/compilable on macOS.
+
 namespace Utils {
 
 QColor getAppleControlAccentColor();

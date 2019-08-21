@@ -5,6 +5,7 @@
 #include "logic/settings/settingsutils.h"
 
 #include <QList>
+#include <QVariant>
 
 MainSplitter::MainSplitter(QWidget *parent) : QSplitter(parent)
 {

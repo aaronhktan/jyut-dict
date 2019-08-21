@@ -6,6 +6,8 @@
 #include <QPushButton>
 #include <QWidget>
 
+// THe contact tab displays contact and donations information.
+
 class ContactTab : public QWidget
 {
 public:

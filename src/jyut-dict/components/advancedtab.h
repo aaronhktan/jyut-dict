@@ -8,6 +8,8 @@
 #include <QSettings>
 #include <QWidget>
 
+// The advanced tab displays advanced options in the settings menu.
+
 class AdvancedTab : public QWidget
 {
 public:

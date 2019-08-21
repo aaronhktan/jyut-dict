@@ -8,6 +8,8 @@
 
 #include <string>
 
+// The GithubReleaseChecker checks the Github API for updates to the application
+
 constexpr auto GITHUB_UPDATE_URL = "https://api.github.com/repos/aaronhktan/jyut-dict/releases";
 
 class GithubReleaseChecker : public QObject, public IUpdateChecker

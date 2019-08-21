@@ -7,23 +7,23 @@
 
 // An enum that tells how to show the phonetic guide of an entry
 
-enum EntryPhoneticOptions {
+enum class EntryPhoneticOptions : int {
     ONLY_JYUTPING,
     ONLY_PINYIN,
     PREFER_JYUTPING,
     PREFER_PINYIN,
 };
 
-enum EntryColourPhoneticType {
+enum class EntryColourPhoneticType : int {
     JYUTPING,
     PINYIN,
 };
 
-enum CantoneseOptions {
+enum class CantoneseOptions : int {
     RAW_JYUTPING,
 };
 
-enum MandarinOptions {
+enum class MandarinOptions : int {
     RAW_PINYIN,
     PRETTY_PINYIN,
 };

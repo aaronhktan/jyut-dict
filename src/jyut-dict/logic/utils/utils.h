@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 
+// The Utils class provides a set of utilities and defines useful
+// in several places in the application.
+
 namespace Utils {
 #ifdef Q_OS_MAC
     constexpr auto PLATFORM_NAME = "macOS";
