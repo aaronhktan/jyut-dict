@@ -13,6 +13,12 @@ AboutWindow::AboutWindow(QWidget *parent)
     : QWidget{parent, Qt::Window}
 {
     setupUI();
+
+    Qt::WindowFlags flags = windowFlags() | Qt::CustomizeWindowHint
+                            | Qt::WindowTitleHint;
+    flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowFullscreenButtonHint);
+    setWindowFlags(flags);
+
     resize(sizeHint());
     move(parent->x() + (parent->width() - sizeHint().width()) / 2,
          parent->y() + (parent->height() - sizeHint().height()) / 2);
