@@ -30,7 +30,20 @@ namespace Utils {
     constexpr auto PORTABILITY = "install";
 #endif
 
+    constexpr auto PRODUCT_NAME = "Jyut Dictionary";
     constexpr auto CURRENT_VERSION = "0.19.614";
+    constexpr auto PRODUCT_DESCRIPTION
+        = "A free, open-source offline Cantonese Dictionary.";
+    constexpr auto CREDITS_TEXT
+        = "Icon based on <a "
+          "href=https://commons.wikimedia.org/wiki/"
+          "Commons:Ancient_Chinese_characters_project "
+          "style=\"color: %1; text-decoration: none\">Wikimedia Ancient "
+          "Chinese characters project</a> files."
+          "<br>UI icons from <a href=https://feathericons.com "
+          "style=\"color: %1; text-decoration: none\">Feather Icons</a>."
+          "<br>Made with <a href=\"#\" style=\"color: %1; text-decoration: none\">"
+          "Qt</a>.";
     constexpr auto GITHUB_LINK = "https://github.com/aaronhktan/jyut-dict";
 
     void split(const std::string &string,
