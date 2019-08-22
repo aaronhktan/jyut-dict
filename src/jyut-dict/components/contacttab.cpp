@@ -45,7 +45,11 @@ void ContactTab::setupUI()
     _titleLabel->setText(tr(Utils::CONTACT_TITLE));
 
     _messageLabel = new QLabel{_box};
+#ifdef Q_OS_WIN
+    _messageLabel->setText(tr(Utils::CONTACT_BODY_NO_EMOJI));
+#else
     _messageLabel->setText(tr(Utils::CONTACT_BODY));
+#endif
 
     _emailButton = new QPushButton{tr("Email..."), _box};
     connect(_emailButton, &QPushButton::clicked, this, [&]() {
@@ -65,15 +69,21 @@ void ContactTab::setupUI()
     _otherSourcesLabel = new QLabel{
         tr("Looking for other Cantonese resources? Try these!"), this};
     _otherSources = new QLabel{this};
+    _otherSources->setOpenExternalLinks(true);
     _otherSources->setText(
         "    " + tr(Utils::OTHER_SOURCES).arg(palette().text().color().name()));
 
     _boxLayout->addWidget(_iconLabel, 2, 0, 2, 1);
+#ifdef Q_OS_WIN
+    _boxLayout->setColumnMinimumWidth(0, _iconLabel->width() + 5);
+#endif
     _boxLayout->addWidget(_titleLabel, 2, 1, 1, -1, Qt::AlignBottom);
     _boxLayout->addWidget(_messageLabel, 3, 1, 1, -1, Qt::AlignTop);
 #ifdef Q_OS_MAC
     _boxLayout->setRowMinimumHeight(5, 30);
-#elif defined(Q_OS_LINUX)
+#elif defined(Q_OS_WIN)
+    _boxLayout->setRowMinimumHeight(5, 20);
+#else
     _boxLayout->setRowMinimumHeight(5, 50);
 #endif
     _boxLayout->addWidget(_emailButton, 5, 1, 1, 1, Qt::AlignBottom);
