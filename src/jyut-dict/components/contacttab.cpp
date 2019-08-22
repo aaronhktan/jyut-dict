@@ -4,8 +4,8 @@
 
 #include <QDesktopServices>
 #include <QPixmap>
-#include <QUrl>
 #include <QTimer>
+#include <QUrl>
 
 ContactTab::ContactTab(QWidget *parent)
     : QWidget(parent)
@@ -19,6 +19,9 @@ void ContactTab::setupUI()
     _tabLayout->setAlignment(Qt::AlignTop);
 
     _box = new QGroupBox{this};
+#ifdef Q_OS_LINUX
+    _box->setStyleSheet("QGroupBox { margin-top: -1em; }");
+#endif
 
     _boxLayout = new QGridLayout{_box};
     _boxLayout->setAlignment(Qt::AlignTop);
@@ -68,7 +71,11 @@ void ContactTab::setupUI()
     _boxLayout->addWidget(_iconLabel, 2, 0, 2, 1);
     _boxLayout->addWidget(_titleLabel, 2, 1, 1, -1, Qt::AlignBottom);
     _boxLayout->addWidget(_messageLabel, 3, 1, 1, -1, Qt::AlignTop);
+#ifdef Q_OS_MAC
     _boxLayout->setRowMinimumHeight(5, 30);
+#elif defined(Q_OS_LINUX)
+    _boxLayout->setRowMinimumHeight(5, 50);
+#endif
     _boxLayout->addWidget(_emailButton, 5, 1, 1, 1, Qt::AlignBottom);
     _boxLayout->addWidget(_donateButton, 5, 2, 1, 1, Qt::AlignBottom);
     _boxLayout->addWidget(_githubButton, 5, 3, 1, 1, Qt::AlignBottom);
