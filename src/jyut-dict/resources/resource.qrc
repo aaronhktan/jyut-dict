@@ -13,5 +13,6 @@
         <file>images/sliders.png</file>
         <file>images/help_inverted.png</file>
         <file>images/help.png</file>
+        <file>images/org_icon.png</file>
     </qresource>
 </RCC>

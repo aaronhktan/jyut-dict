@@ -47,7 +47,20 @@ namespace Utils {
           "style=\"color: %1; text-decoration: none\">Feather Icons</a>."
           "<br>Made with <a href=\"#\" style=\"color: %1; text-decoration: none\">"
           "Qt</a>.";
+    constexpr auto CONTACT_TITLE
+        = "Jyut Dictionary is made with ❤️ by Aaron Tan.";
+    constexpr auto CONTACT_BODY = "Donate 💵, report a bug 🐛, or just say hi 👋!";
+    constexpr auto AUTHOR_EMAIL = "mailto: hi@aaronhktan.com";
+    constexpr auto DONATE_LINK = "https://www.paypal.me/cheeseisdisgusting";
+    constexpr auto AUTHOR_GITHUB_LINK = "https://github.com/aaronhktan/";
     constexpr auto GITHUB_LINK = "https://github.com/aaronhktan/jyut-dict";
+    constexpr auto OTHER_SOURCES
+        = "<a href=https://www.pleco.com style=\"color: %1; "
+          "text-decoration: none\">Pleco Dictionary</a>, "
+          "<a href=http://www.cantonese.sheik.co.uk/dictionary "
+          "style=\"color: %1; text-decoration: none\">CantoDict</a>, "
+          "<a href=https://words.hk style=\"color: %1; text-decoration: "
+          "none\">words.hk</a>";
 
     void split(const std::string &string,
                const char delimiter,
