@@ -60,6 +60,7 @@ SOURCES += \
     logic/search/sqlsearch.cpp \
     logic/update/githubreleasechecker.cpp \
     logic/utils/utils.cpp \
+    windows/aboutwindow.cpp \
     windows/mainwindow.cpp \
     windows/settingswindow.cpp \
     windows/updatewindow.cpp
@@ -104,6 +105,7 @@ HEADERS += \
     logic/update/iupdatechecker.h \
     logic/utils/utils.h \
     logic/utils/utils_mac.h \
+    windows/aboutwindow.h \
     windows/mainwindow.h \
     windows/settingswindow.h \
     windows/updatewindow.h

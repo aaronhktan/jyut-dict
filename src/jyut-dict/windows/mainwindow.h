@@ -35,6 +35,7 @@ private:
     QMenu *_windowMenu;
     QMenu *_helpMenu;
 
+    QPointer<QWidget> _aboutWindow;
     QPointer<QWidget> _settingsWindow;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
@@ -51,6 +52,7 @@ private:
     void toggleMinimized();
     void toggleMaximized();
 
+    void openAboutWindow();
     void openSettingsWindow();
 
 public slots:

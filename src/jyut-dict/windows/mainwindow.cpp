@@ -3,6 +3,7 @@
 #include "logic/database/sqldatabaseutils.h"
 #include "logic/dictionary/dictionarysource.h"
 #include "logic/entry/sentence.h"
+#include "windows/aboutwindow.h"
 #include "windows/settingswindow.h"
 #include "windows/updatewindow.h"
 
@@ -16,9 +17,10 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-    setWindowTitle("Jyut Dictionary");
+    setWindowTitle(tr(Utils::PRODUCT_NAME));
 #ifdef Q_OS_LINUX
     setMinimumSize(QSize(500, 350));
+    resize(600, 450);
 #else
     setMinimumSize(QSize(800, 600));
 #endif
@@ -88,9 +90,7 @@ void MainWindow::createActions()
 {
     QAction *aboutAction = new QAction{tr("&About"), this};
     aboutAction->setStatusTip(tr("Show the application's About box"));
-    connect(aboutAction, &QAction::triggered, this, &QApplication::aboutQt);
-    // TODO: Implement an about dialog to give credits to contributors :)
-    // connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
+    connect(aboutAction, &QAction::triggered, this, &MainWindow::openAboutWindow);
     _fileMenu->addAction(aboutAction);
 
 #ifdef Q_OS_MAC
@@ -150,7 +150,7 @@ void MainWindow::createActions()
     connect(bringAllToFrontAction, &QAction::triggered, this, &QWidget::showNormal);
     _windowMenu->addAction(bringAllToFrontAction);
 
-    QAction *helpAction = new QAction{tr("Jyut Dictionary Help"), this};
+    QAction *helpAction = new QAction{tr("%1 Help").arg(tr(Utils::PRODUCT_NAME)), this};
     connect(helpAction, &QAction::triggered, this, [](){QDesktopServices::openUrl(QUrl{Utils::GITHUB_LINK});});
     _helpMenu->addAction(helpAction);
 }
@@ -256,6 +256,18 @@ void MainWindow::toggleMaximized()
     } else {
         showNormal();
     }
+}
+
+void MainWindow::openAboutWindow()
+{
+    if (_aboutWindow) {
+        _aboutWindow->activateWindow();
+        _aboutWindow->raise();
+        return;
+    }
+
+    _aboutWindow = new AboutWindow{this};
+    _aboutWindow->show();
 }
 
 void MainWindow::openSettingsWindow()
