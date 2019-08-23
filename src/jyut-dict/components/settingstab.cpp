@@ -9,6 +9,7 @@
 #include <QColorDialog>
 #include <QFrame>
 #include <QGridLayout>
+#include <QMessageBox>
 #include <QTimer>
 #include <QVariant>
 
@@ -353,7 +354,21 @@ void SettingsTab::initializePinyinColourWidget(QWidget &pinyinColourWidget)
 void SettingsTab::initializeResetButton(QPushButton &resetButton)
 {
     connect(&resetButton, &QPushButton::clicked, [&]() {
-        resetSettings(*_settings);
+        QMessageBox *_message = new QMessageBox{this};
+        Qt::WindowFlags flags = _message->windowFlags()
+                                | Qt::CustomizeWindowHint;
+        flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
+                   | Qt::WindowFullscreenButtonHint);
+        _message->setWindowFlags(flags);
+        _message->setAttribute(Qt::WA_DeleteOnClose, true);
+        _message->setText(tr("Are you sure you want to reset all settings?"));
+        _message->setInformativeText(tr("There is no way to restore them!"));
+        _message->setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+        _message->setIcon(QMessageBox::Warning);
+
+        if (_message->exec() == QMessageBox::Yes) {
+            resetSettings(*_settings);
+        }
     });
 
     resetButton.setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);

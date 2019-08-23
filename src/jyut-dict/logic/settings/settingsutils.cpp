@@ -1,7 +1,6 @@
 #include "settingsutils.h"
 
 #include <QCoreApplication>
-#include <QDebug>
 
 namespace Settings
 {
