@@ -5,8 +5,8 @@
 
 #include <QColor>
 #include <QComboBox>
+#include <QEvent>
 #include <QFormLayout>
-#include <QFrame>
 #include <QLabel>
 #include <QPushButton>
 #include <QWidget>
@@ -36,8 +36,12 @@ class SettingsTab : public QWidget
 public:
     explicit SettingsTab(QWidget *parent = nullptr);
 
+    void changeEvent(QEvent *event) override;
+
 private:
     void setupUI();
+    void setStyle(bool use_dark);
+
     void initializeCharacterComboBox(QComboBox &characterCombobox);
     void initializePhoneticComboBox(QComboBox &phoneticCombobox);
     void initializeMandarinComboBox(QComboBox &mandarinCombobox);
@@ -46,18 +50,34 @@ private:
     void initializeJyutpingColourWidget(QWidget &jyutpingColourWidget);
     void initializePinyinColourWidget(QWidget &pinyinColourWidget);
 
+    void initializeResetButton(QPushButton &resetButton);
+
     QColor getNewColour(QColor old_colour);
 
     void saveJyutpingColours();
     void savePinyinColours();
 
+    void resetSettings(QSettings &settings);
+
+    void setCharacterComboBoxDefault(QComboBox &characterCombobox);
+    void setPhoneticComboBoxDefault(QComboBox &phoneticCombobox);
+    void setMandarinComboBoxDefault(QComboBox &mandarinCombobox);
+
+    void setColourComboBoxDefault(QComboBox &colourCombobox);
+    void setJyutpingColourWidgetDefault(QWidget &jyutpingColourWidget);
+    void setPinyinColourWidgetDefault(QWidget &pinyinColourWidget);
+
+    bool _paletteRecentlyChanged = false;
+
     QComboBox *_characterCombobox;
     QComboBox *_phoneticCombobox;
     QComboBox *_mandarinCombobox;
 
-    QFrame *_divider;
-
     QComboBox *_colourCombobox;
+    QWidget *_jyutpingColourWidget;
+    QWidget *_pinyinColourWidget;
+
+    QPushButton *_resetButton;
 
     QFormLayout *_tabLayout;
 

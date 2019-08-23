@@ -14,6 +14,7 @@ constexpr auto SETTINGS_VERSION = 1;
 
 std::unique_ptr<QSettings> getSettings(QObject *parent = nullptr);
 bool updateSettings(QSettings &settings);
+bool clearSettings(QSettings &settings);
 
 };
 

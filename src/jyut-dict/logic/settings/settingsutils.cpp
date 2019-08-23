@@ -43,4 +43,12 @@ bool updateSettings(QSettings &settings)
     return true;
 }
 
+bool clearSettings(QSettings &settings)
+{
+    settings.clear();
+    settings.setValue("Metadata/version", QVariant{SETTINGS_VERSION});
+    settings.sync();
+    return true;
+}
+
 }

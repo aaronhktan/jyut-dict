@@ -7,7 +7,9 @@
 #include "logic/settings/settingsutils.h"
 
 #include <QColorDialog>
+#include <QFrame>
 #include <QGridLayout>
+#include <QTimer>
 #include <QVariant>
 
 SettingsTab::SettingsTab(QWidget *parent)
@@ -15,6 +17,37 @@ SettingsTab::SettingsTab(QWidget *parent)
 {
     _settings = Settings::getSettings(this);
     setupUI();
+}
+
+void SettingsTab::changeEvent(QEvent *event)
+{
+#if defined(Q_OS_DARWIN)
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        if (!system("defaults read -g AppleInterfaceStyle")) {
+            setStyle(/* use_dark = */ true);
+        } else {
+            setStyle(/* use_dark = */ false);
+        }
+    }
+#endif
+    QWidget::changeEvent(event);
+}
+
+void SettingsTab::setStyle(bool use_dark)
+{
+    QString colour = use_dark ? "#424242" : "#d5d5d5";
+    QString style = "QFrame { border: 1px solid %1; }";
+    QList<QFrame *> frames
+        = this->findChildren<QFrame *>("divider");
+    for (auto frame : frames) {
+        frame->setStyleSheet(style.arg(colour));
+    }
 }
 
 void SettingsTab::setupUI()
@@ -36,17 +69,27 @@ void SettingsTab::setupUI()
     _mandarinCombobox = new QComboBox{this};
     initializeMandarinComboBox(*_mandarinCombobox);
 
-    _divider = new QFrame{this};
+    QFrame *_divider = new QFrame{this};
+    _divider->setObjectName("divider");
     _divider->setFrameShape(QFrame::HLine);
     _divider->setFrameShadow(QFrame::Raised);
     _divider->setFixedHeight(1);
 
     _colourCombobox = new QComboBox{this};
     initializeColourComboBox(*_colourCombobox);
-    QWidget *jyutpingColourWidget = new QWidget{this};
-    initializeJyutpingColourWidget(*jyutpingColourWidget);
-    QWidget *pinyinColourWidget = new QWidget{this};
-    initializePinyinColourWidget(*pinyinColourWidget);
+    _jyutpingColourWidget = new QWidget{this};
+    initializeJyutpingColourWidget(*_jyutpingColourWidget);
+    _pinyinColourWidget = new QWidget{this};
+    initializePinyinColourWidget(*_pinyinColourWidget);
+
+    QFrame *_resetDivider = new QFrame{this};
+    _resetDivider->setObjectName("divider");
+    _resetDivider->setFrameShape(QFrame::HLine);
+    _resetDivider->setFrameShadow(QFrame::Raised);
+    _resetDivider->setFixedHeight(1);
+
+    _resetButton = new QPushButton{"Reset all settings", this};
+    initializeResetButton(*_resetButton);
 
     _tabLayout->addRow(tr("Simplified/Traditional display options:"),
                        _characterCombobox);
@@ -57,8 +100,22 @@ void SettingsTab::setupUI()
     _tabLayout->addRow(_divider);
 
     _tabLayout->addRow(tr("Colour words by tone using:"), _colourCombobox);
-    _tabLayout->addRow(tr("Jyutping tone colours:"), jyutpingColourWidget);
-    _tabLayout->addRow(tr("Pinyin tone colours:"), pinyinColourWidget);
+    _tabLayout->addRow(tr("Jyutping tone colours:"), _jyutpingColourWidget);
+    _tabLayout->addRow(tr("Pinyin tone colours:"), _pinyinColourWidget);
+
+    _tabLayout->addRow(_resetDivider);
+
+    _tabLayout->addRow(_resetButton);
+    _tabLayout->setAlignment(_resetButton, Qt::AlignRight);
+
+#ifdef Q_OS_MAC
+    // Set the style to match whether the user started dark mode
+    if (!system("defaults read -g AppleInterfaceStyle")) {
+        setStyle(/* use_dark = */ true);
+    } else {
+        setStyle(/* use_dark = */ false);
+    }
+#endif
 }
 
 void SettingsTab::initializeCharacterComboBox(QComboBox &characterCombobox)
@@ -76,10 +133,7 @@ void SettingsTab::initializeCharacterComboBox(QComboBox &characterCombobox)
                               QVariant::fromValue<EntryPhoneticOptions>(
                                   EntryPhoneticOptions::PREFER_PINYIN));
 
-    characterCombobox.setCurrentIndex(characterCombobox.findData(
-        _settings->value("characterOptions",
-                         QVariant::fromValue(
-                             EntryCharactersOptions::PREFER_TRADITIONAL))));
+    setCharacterComboBoxDefault(characterCombobox);
 
     connect(&characterCombobox,
             QOverload<int>::of(&QComboBox::activated),
@@ -106,10 +160,7 @@ void SettingsTab::initializePhoneticComboBox(QComboBox &phoneticCombobox)
                              QVariant::fromValue<EntryPhoneticOptions>(
                                  EntryPhoneticOptions::PREFER_PINYIN));
 
-    phoneticCombobox.setCurrentIndex(phoneticCombobox.findData(
-        _settings->value("phoneticOptions",
-                         QVariant::fromValue(
-                             EntryPhoneticOptions::PREFER_JYUTPING))));
+    setPhoneticComboBoxDefault(phoneticCombobox);
 
     connect(&phoneticCombobox,
             QOverload<int>::of(&QComboBox::activated),
@@ -130,9 +181,7 @@ void SettingsTab::initializeMandarinComboBox(QComboBox &mandarinCombobox)
                              QVariant::fromValue<MandarinOptions>(
                                  MandarinOptions::RAW_PINYIN));
 
-    mandarinCombobox.setCurrentIndex(mandarinCombobox.findData(
-        _settings->value("mandarinOptions",
-                         QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))));
+    setMandarinComboBoxDefault(mandarinCombobox);
 
     connect(&mandarinCombobox,
             QOverload<int>::of(&QComboBox::activated),
@@ -156,10 +205,7 @@ void SettingsTab::initializeColourComboBox(QComboBox &colourCombobox)
                            QVariant::fromValue<EntryColourPhoneticType>(
                                EntryColourPhoneticType::PINYIN));
 
-    colourCombobox.setCurrentIndex(colourCombobox.findData(
-        _settings->value("entryColourPhoneticType",
-                         QVariant::fromValue(
-                             EntryColourPhoneticType::JYUTPING))));
+    setColourComboBoxDefault(colourCombobox);
 
     connect(&colourCombobox,
             QOverload<int>::of(&QComboBox::activated),
@@ -304,6 +350,15 @@ void SettingsTab::initializePinyinColourWidget(QWidget &pinyinColourWidget)
     }
 }
 
+void SettingsTab::initializeResetButton(QPushButton &resetButton)
+{
+    connect(&resetButton, &QPushButton::clicked, [&]() {
+        resetSettings(*_settings);
+    });
+
+    resetButton.setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+}
+
 QColor SettingsTab::getNewColour(QColor old_colour)
 {
     return QColorDialog::getColor(old_colour, this);
@@ -337,4 +392,72 @@ void SettingsTab::savePinyinColours()
     }
     _settings->endArray();
     _settings->sync();
+}
+
+void SettingsTab::resetSettings(QSettings &settings)
+{
+    Settings::clearSettings(settings);
+
+    Settings::jyutpingToneColours = Settings::defaultJyutpingToneColours;
+    Settings::pinyinToneColours = Settings::defaultPinyinToneColours;
+
+    setCharacterComboBoxDefault(*_characterCombobox);
+    setPhoneticComboBoxDefault(*_phoneticCombobox);
+    setMandarinComboBoxDefault(*_mandarinCombobox);
+    setColourComboBoxDefault(*_colourCombobox);
+    setJyutpingColourWidgetDefault(*_jyutpingColourWidget);
+    setPinyinColourWidgetDefault(*_pinyinColourWidget);
+}
+
+void SettingsTab::setCharacterComboBoxDefault(QComboBox &characterCombobox)
+{
+    characterCombobox.setCurrentIndex(characterCombobox.findData(
+        _settings->value("characterOptions",
+                         QVariant::fromValue(
+                             EntryCharactersOptions::PREFER_TRADITIONAL))));
+}
+
+void SettingsTab::setPhoneticComboBoxDefault(QComboBox &phoneticCombobox)
+{
+    phoneticCombobox.setCurrentIndex(phoneticCombobox.findData(
+        _settings->value("phoneticOptions",
+                         QVariant::fromValue(
+                             EntryPhoneticOptions::PREFER_JYUTPING))));
+}
+
+void SettingsTab::setMandarinComboBoxDefault(QComboBox &mandarinCombobox)
+{
+    mandarinCombobox.setCurrentIndex(mandarinCombobox.findData(
+        _settings->value("mandarinOptions",
+                         QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))));
+}
+
+void SettingsTab::setColourComboBoxDefault(QComboBox &colourCombobox)
+{
+    colourCombobox.setCurrentIndex(colourCombobox.findData(
+        _settings->value("entryColourPhoneticType",
+                         QVariant::fromValue(
+                             EntryColourPhoneticType::JYUTPING))));
+}
+
+void SettingsTab::setJyutpingColourWidgetDefault(QWidget &jyutpingColourWidget)
+{
+    QList<QPushButton *> buttons = jyutpingColourWidget
+                                       .findChildren<QPushButton *>();
+    for (QList<QPushButton *>::size_type i = 0; i < buttons.size(); i++) {
+        buttons[i]->setStyleSheet(QString{COLOUR_BUTTON_STYLE}.arg(
+            Settings::jyutpingToneColours[static_cast<unsigned long>(i)]
+                .c_str()));
+    }
+}
+
+void SettingsTab::setPinyinColourWidgetDefault(QWidget &pinyinColourWidget)
+{
+    QList<QPushButton *> buttons = pinyinColourWidget
+                                       .findChildren<QPushButton *>();
+    for (QList<QPushButton *>::size_type i = 0; i < buttons.size(); i++) {
+        buttons[i]->setStyleSheet(QString{COLOUR_BUTTON_STYLE}.arg(
+            Settings::pinyinToneColours[static_cast<unsigned long>(i)]
+                .c_str()));
+    }
 }

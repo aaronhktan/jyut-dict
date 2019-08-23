@@ -41,4 +41,3 @@ void AdvancedTab::initializeUpdateCheckbox(QCheckBox &checkbox)
         _settings->sync();
     });
 }
-
