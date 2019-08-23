@@ -152,6 +152,9 @@ void DictionaryTab::addDictionary(QString &dictionaryFile)
                | Qt::WindowFullscreenButtonHint | Qt::WindowContextHelpButtonHint);
     _dialog->setWindowFlags(flags);
     _dialog->setMinimumDuration(0);
+#ifdef Q_OS_LINUX
+    _dialog->setWindowTitle(" ");
+#endif
     _dialog->setAttribute(Qt::WA_DeleteOnClose, true);
 
     _dialog->setLabelText(tr("Dropping search indexes..."));
@@ -205,6 +208,9 @@ void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
                | Qt::WindowFullscreenButtonHint | Qt::WindowContextHelpButtonHint);
     _dialog->setWindowFlags(flags);
     _dialog->setMinimumDuration(0);
+#ifdef Q_OS_LINUX
+    _dialog->setWindowTitle(" ");
+#endif
     _dialog->setAttribute(Qt::WA_DeleteOnClose, true);
 
     _dialog->setLabelText(tr("Removing source..."));

@@ -20,7 +20,7 @@ void ContactTab::setupUI()
 
     _box = new QGroupBox{this};
 #ifdef Q_OS_LINUX
-    _box->setStyleSheet("QGroupBox { margin-top: -1em; }");
+    _box->setStyleSheet("QGroupBox { margin-top: -20px; }");
 #endif
 
     _boxLayout = new QGridLayout{_box};
