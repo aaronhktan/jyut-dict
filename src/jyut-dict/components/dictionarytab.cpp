@@ -3,6 +3,7 @@
 #include "components/dictionarylistview.h"
 #include "logic/dictionary/dictionarymetadata.h"
 #include "logic/dictionary/dictionarysource.h"
+#include "logic/utils/utils.h"
 
 #include <QtConcurrent/QtConcurrent>
 #include <QDesktopServices>
@@ -290,6 +291,9 @@ void DictionaryTab::failureMessage(QString reason, QString description)
     _message->setInformativeText(reason);
     _message->setDetailedText(description);
     _message->setIcon(QMessageBox::Warning);
+#ifdef Q_OS_LINUX
+    _message->setWindowTitle(" ");
+#endif
 
     // setDefaultButton doesn't really work, so use this
     // workaround to deselect all buttons first.

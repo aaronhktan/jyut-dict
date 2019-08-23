@@ -365,6 +365,9 @@ void SettingsTab::initializeResetButton(QPushButton &resetButton)
         _message->setInformativeText(tr("There is no way to restore them!"));
         _message->setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
         _message->setIcon(QMessageBox::Warning);
+#ifdef Q_OS_LINUX
+        _message->setWindowTitle(" ");
+#endif
 
         if (_message->exec() == QMessageBox::Yes) {
             resetSettings(*_settings);
