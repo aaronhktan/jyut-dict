@@ -35,7 +35,6 @@ void SettingsTab::setupUI()
     initializePhoneticComboBox(*_phoneticCombobox);
     _mandarinCombobox = new QComboBox{this};
     initializeMandarinComboBox(*_mandarinCombobox);
-    //    _languageCombobox = new QComboBox{this};
 
     _divider = new QFrame{this};
     _divider->setFrameShape(QFrame::HLine);
@@ -57,7 +56,7 @@ void SettingsTab::setupUI()
 
     _tabLayout->addRow(_divider);
 
-    _tabLayout->addRow(tr("Colour words by tone in:"), _colourCombobox);
+    _tabLayout->addRow(tr("Colour words by tone using:"), _colourCombobox);
     _tabLayout->addRow(tr("Jyutping tone colours:"), jyutpingColourWidget);
     _tabLayout->addRow(tr("Pinyin tone colours:"), pinyinColourWidget);
 }
@@ -147,6 +146,9 @@ void SettingsTab::initializeMandarinComboBox(QComboBox &mandarinCombobox)
 
 void SettingsTab::initializeColourComboBox(QComboBox &colourCombobox)
 {
+    colourCombobox.addItem(tr("No colours"),
+                           QVariant::fromValue<EntryColourPhoneticType>(
+                               EntryColourPhoneticType::NONE));
     colourCombobox.addItem(tr("Jyutping"),
                            QVariant::fromValue<EntryColourPhoneticType>(
                                EntryColourPhoneticType::JYUTPING));

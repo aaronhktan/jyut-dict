@@ -393,6 +393,13 @@ void Entry::refreshColours(const EntryColourPhoneticType type)
 {
     std::vector<int> tones;
     switch (type) {
+    case EntryColourPhoneticType::NONE: {
+        _colouredSimplified = _simplified;
+        _colouredTraditional = _traditional;
+        _colouredSimplifiedDifference = _simplifiedDifference;
+        _colouredTraditionalDifference = _traditionalDifference;
+        return;
+    }
     case EntryColourPhoneticType::JYUTPING: {
         tones = getJyutpingNumbers();
         break;
@@ -462,18 +469,25 @@ std::string Entry::applyColours(std::string original,
 
         // ... and apply tone colour formatting to the string
         switch (type) {
-        case EntryColourPhoneticType::JYUTPING:
+        case EntryColourPhoneticType::JYUTPING: {
             coloured_string += "<font color=\""
                                + Settings::jyutpingToneColours.at(
                                      static_cast<size_t>(tone))
                                + "\">";
             break;
-        case EntryColourPhoneticType::PINYIN:
+        }
+        case EntryColourPhoneticType::PINYIN: {
             coloured_string += "<font color=\""
                                + Settings::pinyinToneColours.at(
                                      static_cast<size_t>(tone))
                                + "\">";
             break;
+        }
+        case EntryColourPhoneticType::NONE: {
+            // Should never get here
+            coloured_string += "<font>";
+            break;
+        }
         }
         coloured_string += originalCharacter;
         coloured_string += "</font>";

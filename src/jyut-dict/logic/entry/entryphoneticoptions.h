@@ -15,6 +15,7 @@ enum class EntryPhoneticOptions : int {
 };
 
 enum class EntryColourPhoneticType : int {
+    NONE,
     JYUTPING,
     PINYIN,
 };
