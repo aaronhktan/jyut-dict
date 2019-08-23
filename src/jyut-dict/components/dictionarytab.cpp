@@ -152,7 +152,9 @@ void DictionaryTab::addDictionary(QString &dictionaryFile)
                | Qt::WindowFullscreenButtonHint | Qt::WindowContextHelpButtonHint);
     _dialog->setWindowFlags(flags);
     _dialog->setMinimumDuration(0);
-#ifdef Q_OS_LINUX
+#ifdef Q_OS_WIN
+    _dialog->setWindowTitle(tr(Utils::PRODUCT_NAME));
+#elif Q_OS_LINUX
     _dialog->setWindowTitle(" ");
 #endif
     _dialog->setAttribute(Qt::WA_DeleteOnClose, true);
@@ -208,7 +210,9 @@ void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
                | Qt::WindowFullscreenButtonHint | Qt::WindowContextHelpButtonHint);
     _dialog->setWindowFlags(flags);
     _dialog->setMinimumDuration(0);
-#ifdef Q_OS_LINUX
+#ifdef Q_OS_WIN
+    _dialog->setWindowTitle(tr(Utils::PRODUCT_NAME));
+#elif Q_OS_LINUX
     _dialog->setWindowTitle(" ");
 #endif
     _dialog->setAttribute(Qt::WA_DeleteOnClose, true);
@@ -297,7 +301,9 @@ void DictionaryTab::failureMessage(QString reason, QString description)
     _message->setInformativeText(reason);
     _message->setDetailedText(description);
     _message->setIcon(QMessageBox::Warning);
-#ifdef Q_OS_LINUX
+#ifdef Q_OS_WIN
+    _message->setWindowTitle(tr(Utils::PRODUCT_NAME));
+#elif Q_OS_LINUX
     _message->setWindowTitle(" ");
 #endif
 

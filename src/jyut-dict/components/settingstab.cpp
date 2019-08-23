@@ -5,6 +5,7 @@
 #include "logic/entry/entryphoneticoptions.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/utils/utils.h"
 
 #include <QColorDialog>
 #include <QFrame>
@@ -365,7 +366,9 @@ void SettingsTab::initializeResetButton(QPushButton &resetButton)
         _message->setInformativeText(tr("There is no way to restore them!"));
         _message->setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
         _message->setIcon(QMessageBox::Warning);
-#ifdef Q_OS_LINUX
+#ifdef Q_OS_WIN
+        _message->setWindowTitle(tr(Utils::PRODUCT_NAME));
+#elif Q_OS_LINUX
         _message->setWindowTitle(" ");
 #endif
 
