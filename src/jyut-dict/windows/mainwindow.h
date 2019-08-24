@@ -43,6 +43,8 @@ private:
 
     std::shared_ptr<SQLDatabaseManager> _manager;
 
+    bool _recentlyCheckedForUpdates = false;
+
     void createMenus();
     void createActions();
 

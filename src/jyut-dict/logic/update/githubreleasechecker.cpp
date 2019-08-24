@@ -60,6 +60,11 @@ void GithubReleaseChecker::preConnectToHost()
 void GithubReleaseChecker::parseReply(QNetworkReply *reply)
 {
     std::string content = reply->readAll().toStdString();
+    // ConnectToHostEncrypted gets an empty string reply, can safely ignore
+    if (content.empty()) {
+        return;
+    }
+
     bool updateAvailable;
     std::string url, versionNumber, description;
     if (parseJSON(content, updateAvailable, versionNumber, url, description)) {

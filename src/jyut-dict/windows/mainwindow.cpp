@@ -399,11 +399,12 @@ void MainWindow::checkForUpdate(bool showProgress)
                                           url,
                                           description,
                                           /* showIfNoUpdate = */ true);
+
+                    _recentlyCheckedForUpdates = false;
                 });
     } else {
         connect(_checker,
                 &GithubReleaseChecker::foundUpdate,
-                this,
                 [&](bool updateAvailable,
                     std::string versionNumber,
                     std::string url,
@@ -412,10 +413,15 @@ void MainWindow::checkForUpdate(bool showProgress)
                                           versionNumber,
                                           url,
                                           description);
+
+                    _recentlyCheckedForUpdates = false;
                 });
     }
 
-    _checker->checkForNewUpdate();
+    if (!_recentlyCheckedForUpdates) {
+        _checker->checkForNewUpdate();
+        _recentlyCheckedForUpdates = true;
+    }
 }
 
 // Must close settings window, since settings window does not pass the main
