@@ -1,8 +1,10 @@
 #include "aboutwindow.h"
 
 #include "logic/utils/utils.h"
+#include "logic/strings/strings.h"
 
 #include <QApplication>
+#include <QCoreApplication>
 #include <QDesktopServices>
 #include <QPixmap>
 #include <QString>
@@ -19,7 +21,9 @@ AboutWindow::AboutWindow(QWidget *parent)
     flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowFullscreenButtonHint);
     setWindowFlags(flags);
 #ifndef Q_OS_MAC
-    setWindowTitle(tr("About %1").arg(tr(Utils::PRODUCT_NAME)));
+    setWindowTitle(
+        tr("About %1")
+            .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME)));
 #endif
 
 #ifdef Q_OS_MAC
@@ -55,14 +59,16 @@ void AboutWindow::setupUI()
 
     _titleLabel = new QLabel{this};
     _titleLabel->setStyleSheet("QLabel { font-size: 20px; } ");
-    _titleLabel->setText(tr(Utils::PRODUCT_NAME));
+    _titleLabel->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
 
     _versionLabel = new QLabel{this};
     _versionLabel->setStyleSheet("QLabel { font-size: 10px; } ");
     _versionLabel->setText(tr("Build %1").arg(Utils::CURRENT_VERSION));
 
     _descriptionLabel = new QLabel{this};
-    _descriptionLabel->setText(tr(Utils::PRODUCT_DESCRIPTION));
+    _descriptionLabel->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_DESCRIPTION));
     _descriptionLabel->setAlignment(Qt::AlignHCenter);
     _descriptionLabel->setWordWrap(true);
     _descriptionLabel->setSizePolicy(QSizePolicy::MinimumExpanding,
@@ -72,7 +78,8 @@ void AboutWindow::setupUI()
     _messageLabel->setAlignment(Qt::AlignHCenter);
     _messageLabel->setStyleSheet("QLabel { font-size: 10px; }");
     _messageLabel->setText(
-        tr(Utils::CREDITS_TEXT).arg(palette().text().color().name()));
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CREDITS_TEXT)
+            .arg(palette().text().color().name()));
     _messageLabel->setWordWrap(true);
     connect(_messageLabel,
             &QLabel::linkActivated,
@@ -121,5 +128,6 @@ void AboutWindow::changeEvent(QEvent *event)
 void AboutWindow::setStyle(bool use_dark)
 {
     _messageLabel->setText(
-        tr(Utils::CREDITS_TEXT).arg(palette().text().color().name()));
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CREDITS_TEXT)
+            .arg(palette().text().color().name()));
 }

@@ -1,5 +1,8 @@
 #include "updatewindow.h"
 
+#include "logic/strings/strings.h"
+
+#include <QCoreApplication>
 #include <QDesktopServices>
 #include <QFont>
 #include <QPixmap>
@@ -38,17 +41,20 @@ UpdateWindow::UpdateWindow(QWidget *parent,
 
     _titleLabel = new QLabel{this};
     _titleLabel->setStyleSheet("QLabel { font-weight: bold }");
-    _titleLabel->setText(tr("A new version of %1 is available!").arg(tr(Utils::PRODUCT_NAME)));
+    _titleLabel->setText(
+        tr("A new version of %1 is available!")
+            .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME)));
 
     _messageLabel = new QLabel{this};
     _messageLabel->setWordWrap(true);
     _messageLabel->setStyleSheet("QLabel { color: grey; }");
-    _messageLabel->setText(tr("%1 version %2 is available — you "
-                              "have version %3. "
-                              "Click \"Download\" to get the new version.")
-                               .arg(tr(Utils::PRODUCT_NAME))
-                               .arg(QString{versionNumber.c_str()})
-                               .arg(Utils::CURRENT_VERSION));
+    _messageLabel->setText(
+        tr("%1 version %2 is available — you "
+           "have version %3. "
+           "Click \"Download\" to get the new version.")
+            .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME))
+            .arg(QString{versionNumber.c_str()})
+            .arg(Utils::CURRENT_VERSION));
     _messageLabel->setFixedWidth(375);
     _messageLabel->setAlignment(Qt::AlignTop);
 

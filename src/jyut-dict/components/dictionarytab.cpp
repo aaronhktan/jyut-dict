@@ -6,6 +6,7 @@
 #include "logic/utils/utils.h"
 
 #include <QtConcurrent/QtConcurrent>
+#include "QCoreApplication"
 #include <QDesktopServices>
 #include <QDir>
 #include <QFileDialog>
@@ -159,7 +160,8 @@ void DictionaryTab::addDictionary(QString &dictionaryFile)
     _dialog->setWindowFlags(flags);
     _dialog->setMinimumDuration(0);
 #ifdef Q_OS_WIN
-    _dialog->setWindowTitle(tr(Utils::PRODUCT_NAME));
+    _dialog->setWindowTitle(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
 #elif defined(Q_OS_LINUX)
     _dialog->setWindowTitle(" ");
 #endif
@@ -217,7 +219,8 @@ void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
     _dialog->setWindowFlags(flags);
     _dialog->setMinimumDuration(0);
 #ifdef Q_OS_WIN
-    _dialog->setWindowTitle(tr(Utils::PRODUCT_NAME));
+    _dialog->setWindowTitle(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
 #elif defined(Q_OS_LINUX)
     _dialog->setWindowTitle(" ");
 #endif
@@ -308,7 +311,8 @@ void DictionaryTab::failureMessage(QString reason, QString description)
     _message->setDetailedText(description);
     _message->setIcon(QMessageBox::Warning);
 #ifdef Q_OS_WIN
-    _message->setWindowTitle(tr(Utils::PRODUCT_NAME));
+    _message->setWindowTitle(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
 #elif defined(Q_OS_LINUX)
     _message->setWindowTitle(" ");
 #endif

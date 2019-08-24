@@ -11,6 +11,8 @@
 
 class AboutWindow : public QWidget
 {
+    Q_OBJECT
+
 public:
     AboutWindow(QWidget *parent = nullptr);
 

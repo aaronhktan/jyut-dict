@@ -90,7 +90,7 @@ void SettingsTab::setupUI()
     _resetDivider->setFrameShadow(QFrame::Raised);
     _resetDivider->setFixedHeight(1);
 
-    _resetButton = new QPushButton{"Reset all settings", this};
+    _resetButton = new QPushButton{tr("Reset all settings"), this};
     initializeResetButton(*_resetButton);
 
     _tabLayout->addRow(tr("Simplified/Traditional display options:"),
@@ -367,7 +367,8 @@ void SettingsTab::initializeResetButton(QPushButton &resetButton)
         _message->setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
         _message->setIcon(QMessageBox::Warning);
 #ifdef Q_OS_WIN
-        _message->setWindowTitle(tr(Utils::PRODUCT_NAME));
+        _message->setWindowTitle(
+            QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
 #elif defined(Q_OS_LINUX)
         _message->setWindowTitle(" ");
 #endif

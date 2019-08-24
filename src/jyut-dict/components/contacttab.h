@@ -12,6 +12,8 @@
 
 class ContactTab : public QWidget
 {
+    Q_OBJECT
+
 public:
     explicit ContactTab(QWidget *parent = nullptr);
 

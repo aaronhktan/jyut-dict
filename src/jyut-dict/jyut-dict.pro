@@ -111,6 +111,7 @@ HEADERS += \
     logic/search/sqlsearch.h \
     logic/settings/settings.h \
     logic/settings/settingsutils.h \
+    logic/strings/strings.h \
     logic/update/githubreleasechecker.h \
     logic/update/iupdatechecker.h \
     logic/utils/qvariantutils.h \

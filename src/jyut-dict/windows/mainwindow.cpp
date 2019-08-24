@@ -5,12 +5,14 @@
 #include "logic/entry/sentence.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/strings/strings.h"
 #include "windows/aboutwindow.h"
 #include "windows/settingswindow.h"
 #include "windows/updatewindow.h"
 
 #include <QApplication>
 #include <QClipboard>
+#include <QCoreApplication>
 #include <QColor>
 #include <QDesktopServices>
 #include <QGuiApplication>
@@ -25,7 +27,8 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-    setWindowTitle(tr(Utils::PRODUCT_NAME));
+    setWindowTitle(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
 #ifdef Q_OS_LINUX
     setMinimumSize(QSize(500, 350));
     resize(600, 450);
@@ -136,7 +139,8 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
         _message->setStandardButtons(QMessageBox::Ok);
         _message->setIcon(QMessageBox::Information);
 #ifdef Q_OS_WIN
-        _message->setWindowTitle(tr(Utils::PRODUCT_NAME));
+        _message->setWindowTitle(
+            QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
 #elif defined(Q_OS_LINUX)
         _message->setWindowTitle(tr("No update available!"));
 #endif
@@ -236,7 +240,11 @@ void MainWindow::createActions()
     connect(bringAllToFrontAction, &QAction::triggered, this, &QWidget::showNormal);
     _windowMenu->addAction(bringAllToFrontAction);
 
-    QAction *helpAction = new QAction{tr("%1 Help").arg(tr(Utils::PRODUCT_NAME)), this};
+    QAction *helpAction
+        = new QAction{tr("%1 Help").arg(
+                          QCoreApplication::translate("strings",
+                                                      Strings::PRODUCT_NAME)),
+                      this};
     connect(helpAction, &QAction::triggered, this, [](){QDesktopServices::openUrl(QUrl{Utils::GITHUB_LINK});});
     _helpMenu->addAction(helpAction);
 
@@ -407,7 +415,8 @@ void MainWindow::checkForUpdate(bool showProgress)
         _dialog->setWindowFlags(flags);
         _dialog->setMinimumDuration(0);
 #ifdef Q_OS_WIN
-        _dialog->setWindowTitle(tr(Utils::PRODUCT_NAME));
+        _dialog->setWindowTitle(
+            QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
 #elif defined(Q_OS_LINUX)
         _dialog->setWindowTitle(" ");
 #endif

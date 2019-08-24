@@ -1,7 +1,9 @@
 #include "contacttab.h"
 
 #include "logic/utils/utils.h"
+#include "logic/strings/strings.h"
 
+#include <QCoreApplication>
 #include <QDesktopServices>
 #include <QPixmap>
 #include <QTimer>
@@ -42,13 +44,19 @@ void ContactTab::setupUI()
 
     _titleLabel = new QLabel{_box};
     _titleLabel->setStyleSheet("QLabel { font-size: 18px; }");
-    _titleLabel->setText(tr(Utils::CONTACT_TITLE));
+    _titleLabel->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::CONTACT_TITLE)
+            .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                             Strings::PRODUCT_NAME)));
 
     _messageLabel = new QLabel{_box};
 #ifdef Q_OS_WIN
-    _messageLabel->setText(tr(Utils::CONTACT_BODY_NO_EMOJI));
+    _messageLabel->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CONTACT_BODY_NO_EMOJI));
 #else
-    _messageLabel->setText(tr(Utils::CONTACT_BODY));
+    _messageLabel->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CONTACT_BODY));
 #endif
 
     _emailButton = new QPushButton{tr("Email..."), _box};
@@ -71,7 +79,7 @@ void ContactTab::setupUI()
     _otherSources = new QLabel{this};
     _otherSources->setOpenExternalLinks(true);
     _otherSources->setText(
-        "    " + tr(Utils::OTHER_SOURCES).arg(palette().text().color().name()));
+        "    " + QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::OTHER_SOURCES).arg(palette().text().color().name()));
 
     _boxLayout->addWidget(_iconLabel, 2, 0, 2, 1);
 #ifdef Q_OS_WIN
@@ -118,7 +126,6 @@ void ContactTab::changeEvent(QEvent *event)
 void ContactTab::setStyle(bool use_dark)
 {
     _otherSources->setText(
-        tr("Try these:")
-        + tr(Utils::OTHER_SOURCES).arg(palette().text().color().name()));
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::OTHER_SOURCES).arg(palette().text().color().name()));
 }
 
