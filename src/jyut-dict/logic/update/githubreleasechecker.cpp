@@ -48,7 +48,11 @@ void GithubReleaseChecker::checkForNewUpdate()
 {
     QNetworkRequest _request{QUrl{GITHUB_UPDATE_URL}};
     _reply = _manager->get(_request);
+    disconnect(_manager, nullptr, nullptr, nullptr);
     connect(_manager, &QNetworkAccessManager::finished, this, &GithubReleaseChecker::parseReply);
+    QTimer::singleShot(15000, this, [&]() {
+        emit foundUpdate(false, "", "", "");
+    });
 }
 
 void GithubReleaseChecker::preConnectToHost()
@@ -59,6 +63,11 @@ void GithubReleaseChecker::preConnectToHost()
 void GithubReleaseChecker::parseReply(QNetworkReply *reply)
 {
     std::string content = reply->readAll().toStdString();
+    // ConnectToHostEncrypted gets an empty string reply, can safely ignore
+    if (content.empty()) {
+        return;
+    }
+
     bool updateAvailable;
     std::string url, versionNumber, description;
     if (parseJSON(content, updateAvailable, versionNumber, url, description)) {
