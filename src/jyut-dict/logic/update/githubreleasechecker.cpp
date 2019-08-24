@@ -48,6 +48,7 @@ void GithubReleaseChecker::checkForNewUpdate()
 {
     QNetworkRequest _request{QUrl{GITHUB_UPDATE_URL}};
     _reply = _manager->get(_request);
+    disconnect(_manager, nullptr, nullptr, nullptr);
     connect(_manager, &QNetworkAccessManager::finished, this, &GithubReleaseChecker::parseReply);
 }
 

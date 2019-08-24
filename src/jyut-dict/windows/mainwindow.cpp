@@ -14,7 +14,9 @@
 #include <QColor>
 #include <QDesktopServices>
 #include <QGuiApplication>
+#include <QMessageBox>
 #include <QSettings>
+#include <QSpacerItem>
 #include <QTimer>
 #include <QUrl>
 
@@ -87,15 +89,11 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
 
     // Check for updates
+    _checker = new GithubReleaseChecker{this};
     if (settings->value("Advanced/UpdateNotificationsEnabled", QVariant{true}).toBool()) {
-        _checker = new GithubReleaseChecker{this};
-        QTimer::singleShot(1000,
-                           _checker,
-                           &GithubReleaseChecker::checkForNewUpdate);
-        connect(_checker,
-                &GithubReleaseChecker::foundUpdate,
-                this,
-                &MainWindow::notifyUpdateAvailable);
+        QTimer::singleShot(1000, this, [&]() {
+            checkForUpdate(/* showProgress = */ false);
+        });
     }
 }
 
@@ -106,11 +104,43 @@ MainWindow::~MainWindow()
 
 void MainWindow::notifyUpdateAvailable(bool updateAvailable,
                                        std::string versionNumber,
-                                       std::string url, std::string description)
+                                       std::string url, std::string description,
+                                       bool showIfNoUpdate)
 {
     if (updateAvailable) {
         UpdateWindow *window = new UpdateWindow{this, versionNumber, url, description};
         window->show();
+    } else if (showIfNoUpdate) {
+        QMessageBox *_message = new QMessageBox{this};
+        Qt::WindowFlags flags = _message->windowFlags()
+                                | Qt::CustomizeWindowHint;
+        flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
+                   | Qt::WindowFullscreenButtonHint);
+        _message->setWindowFlags(flags);
+        _message->setAttribute(Qt::WA_DeleteOnClose, true);
+        _message->setText(tr("No update found!"));
+        _message->setInformativeText(tr("You are on the newest version, %1.").arg(Utils::CURRENT_VERSION));
+        _message->setStandardButtons(QMessageBox::Ok);
+        _message->setIcon(QMessageBox::Information);
+#ifdef Q_OS_WIN
+        _message->setWindowTitle(tr(Utils::PRODUCT_NAME));
+#elif defined(Q_OS_LINUX)
+        _message->setWindowTitle(" ");
+#endif
+        // Setting minimum width also doesn't work, so use this
+        // workaround to set a width.
+        QSpacerItem *horizontalSpacer = new QSpacerItem(400,
+                                                        0,
+                                                        QSizePolicy::Minimum,
+                                                        QSizePolicy::Minimum);
+        QGridLayout *layout = static_cast<QGridLayout *>(_message->layout());
+        layout->addItem(horizontalSpacer,
+                        layout->rowCount(),
+                        0,
+                        1,
+                        layout->columnCount());
+
+        _message->exec();
     }
 }
 
@@ -195,6 +225,13 @@ void MainWindow::createActions()
     QAction *helpAction = new QAction{tr("%1 Help").arg(tr(Utils::PRODUCT_NAME)), this};
     connect(helpAction, &QAction::triggered, this, [](){QDesktopServices::openUrl(QUrl{Utils::GITHUB_LINK});});
     _helpMenu->addAction(helpAction);
+
+    QAction *updateAction = new QAction{tr("Check for updates..."), this};
+    updateAction->setMenuRole(QAction::ApplicationSpecificRole);
+    connect(updateAction, &QAction::triggered, [&]() {
+        checkForUpdate(/* showProgress = */ true);
+    });
+    _helpMenu->addAction(updateAction);
 }
 
 void MainWindow::undo()
@@ -322,6 +359,63 @@ void MainWindow::openSettingsWindow()
 
     _settingsWindow = new SettingsWindow{_manager, this};
     _settingsWindow->show();
+}
+
+void MainWindow::checkForUpdate(bool showProgress)
+{
+    disconnect(_checker, nullptr, nullptr, nullptr);
+    if (showProgress) {
+        _dialog = new QProgressDialog{"", QString(), 0, 0, this};
+        _dialog->setWindowModality(Qt::ApplicationModal);
+        _dialog->setMinimumSize(300, 75);
+        Qt::WindowFlags flags = _dialog->windowFlags()
+                                | Qt::CustomizeWindowHint;
+        flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
+                   | Qt::WindowFullscreenButtonHint
+                   | Qt::WindowContextHelpButtonHint);
+        _dialog->setWindowFlags(flags);
+        _dialog->setMinimumDuration(0);
+#ifdef Q_OS_WIN
+        _dialog->setWindowTitle(tr(Utils::PRODUCT_NAME));
+#elif defined(Q_OS_LINUX)
+        _dialog->setWindowTitle(" ");
+#endif
+        _dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+
+        _dialog->setLabelText(tr("Checking for update..."));
+        _dialog->setRange(0, 0);
+        _dialog->setValue(0);
+
+        connect(_checker,
+                &GithubReleaseChecker::foundUpdate,
+                [&](bool updateAvailable,
+                    std::string versionNumber,
+                    std::string url,
+                    std::string description) {
+                    _dialog->reset();
+
+                    notifyUpdateAvailable(updateAvailable,
+                                          versionNumber,
+                                          url,
+                                          description,
+                                          /* showIfNoUpdate = */ true);
+                });
+    } else {
+        connect(_checker,
+                &GithubReleaseChecker::foundUpdate,
+                this,
+                [&](bool updateAvailable,
+                    std::string versionNumber,
+                    std::string url,
+                    std::string description) {
+                    notifyUpdateAvailable(updateAvailable,
+                                          versionNumber,
+                                          url,
+                                          description);
+                });
+    }
+
+    _checker->checkForNewUpdate();
 }
 
 // Must close settings window, since settings window does not pass the main

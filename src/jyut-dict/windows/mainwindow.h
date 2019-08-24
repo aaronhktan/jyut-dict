@@ -9,6 +9,7 @@
 #include <QMainWindow>
 #include <QMenu>
 #include <QMenuBar>
+#include <QProgressDialog>
 #include <QWidget>
 
 #include <memory>
@@ -22,7 +23,7 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    ~MainWindow() override;
 
 private:
     GithubReleaseChecker *_checker;
@@ -37,6 +38,8 @@ private:
 
     QPointer<QWidget> _aboutWindow;
     QPointer<QWidget> _settingsWindow;
+
+    QProgressDialog *_dialog;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
 
@@ -55,12 +58,16 @@ private:
     void openAboutWindow();
     void openSettingsWindow();
 
+    void checkForUpdate(bool showProgress);
+
     void closeEvent(QCloseEvent *event) override;
 
 public slots:
     void notifyUpdateAvailable(bool updateAvailable,
                                std::string versionNumber,
-                               std::string url, std::string description);
+                               std::string url,
+                               std::string description,
+                               bool showIfNoUpdate = false);
 };
 
 #endif // MAINWINDOW_H
