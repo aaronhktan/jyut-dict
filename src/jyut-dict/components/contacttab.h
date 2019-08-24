@@ -34,8 +34,6 @@ private:
     QPushButton *_donateButton;
     QPushButton *_githubButton;
 
-    QFrame *_divider;
-
     QLabel *_otherSourcesLabel;
     QLabel *_otherSources;
 
