@@ -50,6 +50,9 @@ void GithubReleaseChecker::checkForNewUpdate()
     _reply = _manager->get(_request);
     disconnect(_manager, nullptr, nullptr, nullptr);
     connect(_manager, &QNetworkAccessManager::finished, this, &GithubReleaseChecker::parseReply);
+    QTimer::singleShot(15000, this, [&]() {
+        emit foundUpdate(false, "", "", "");
+    });
 }
 
 void GithubReleaseChecker::preConnectToHost()

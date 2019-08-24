@@ -227,7 +227,6 @@ void MainWindow::createActions()
     _helpMenu->addAction(helpAction);
 
     QAction *updateAction = new QAction{tr("Check for updates..."), this};
-    updateAction->setMenuRole(QAction::ApplicationSpecificRole);
     connect(updateAction, &QAction::triggered, [&]() {
         checkForUpdate(/* showProgress = */ true);
     });
@@ -365,6 +364,24 @@ void MainWindow::checkForUpdate(bool showProgress)
 {
     disconnect(_checker, nullptr, nullptr, nullptr);
     if (showProgress) {
+        connect(_checker,
+                &GithubReleaseChecker::foundUpdate,
+                [&](bool updateAvailable,
+                    std::string versionNumber,
+                    std::string url,
+                    std::string description) {
+                    _dialog->reset();
+
+                    disconnect(_checker, nullptr, nullptr, nullptr);
+                    notifyUpdateAvailable(updateAvailable,
+                                          versionNumber,
+                                          url,
+                                          description,
+                                          /* showIfNoUpdate = */ true);
+
+                    _recentlyCheckedForUpdates = false;
+                });
+
         _dialog = new QProgressDialog{"", QString(), 0, 0, this};
         _dialog->setWindowModality(Qt::ApplicationModal);
         _dialog->setMinimumSize(300, 75);
@@ -385,23 +402,6 @@ void MainWindow::checkForUpdate(bool showProgress)
         _dialog->setLabelText(tr("Checking for update..."));
         _dialog->setRange(0, 0);
         _dialog->setValue(0);
-
-        connect(_checker,
-                &GithubReleaseChecker::foundUpdate,
-                [&](bool updateAvailable,
-                    std::string versionNumber,
-                    std::string url,
-                    std::string description) {
-                    _dialog->reset();
-
-                    notifyUpdateAvailable(updateAvailable,
-                                          versionNumber,
-                                          url,
-                                          description,
-                                          /* showIfNoUpdate = */ true);
-
-                    _recentlyCheckedForUpdates = false;
-                });
     } else {
         connect(_checker,
                 &GithubReleaseChecker::foundUpdate,
@@ -409,6 +409,7 @@ void MainWindow::checkForUpdate(bool showProgress)
                     std::string versionNumber,
                     std::string url,
                     std::string description) {
+                    disconnect(_checker, nullptr, nullptr, nullptr);
                     notifyUpdateAvailable(updateAvailable,
                                           versionNumber,
                                           url,
