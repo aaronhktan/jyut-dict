@@ -2,8 +2,10 @@
 
 #include "components/resultlistview.h"
 #include "logic/entry/entry.h"
+#include "logic/settings/settingsutils.h"
 
 #include <QList>
+#include <QVariant>
 
 MainSplitter::MainSplitter(QWidget *parent) : QSplitter(parent)
 {
@@ -43,5 +45,10 @@ void MainSplitter::handleSelectionChanged(const QModelIndex &selection)
         return;
     }
 
+    entry.refreshColours(
+        Settings::getSettings()
+            ->value("entryColourPhoneticType",
+                    QVariant::fromValue(EntryColourPhoneticType::JYUTPING))
+            .value<EntryColourPhoneticType>());
     _definitionScrollArea->setEntry(entry);
 }

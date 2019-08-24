@@ -3,16 +3,22 @@
 #include "logic/database/sqldatabaseutils.h"
 #include "logic/dictionary/dictionarysource.h"
 #include "logic/entry/sentence.h"
+#include "logic/settings/settings.h"
+#include "logic/settings/settingsutils.h"
 #include "windows/aboutwindow.h"
 #include "windows/settingswindow.h"
 #include "windows/updatewindow.h"
 
 #include <QApplication>
 #include <QClipboard>
+#include <QColor>
 #include <QDesktopServices>
 #include <QGuiApplication>
-#include <QUrl>
+#include <QSettings>
 #include <QTimer>
+#include <QUrl>
+
+#include <memory>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -28,6 +34,36 @@ MainWindow::MainWindow(QWidget *parent) :
     // Instantiate services
     _manager = std::make_shared<SQLDatabaseManager>();
     _manager->openDatabase();
+
+    // Get colours from QSettings
+    std::unique_ptr<QSettings> settings = Settings::getSettings();
+    int size = settings->beginReadArray("jyutpingColours");
+    for (std::vector<std::string>::size_type i = 0;
+         i < Settings::jyutpingToneColours.size();
+         ++i) {
+        settings->setArrayIndex(static_cast<int>(i));
+        QColor color = settings
+                           ->value("colour",
+                                   QColor{
+                                       Settings::jyutpingToneColours[i].c_str()})
+                           .value<QColor>();
+        Settings::jyutpingToneColours[i] = color.name().toStdString();
+    }
+    settings->endArray();
+
+    size = settings->beginReadArray("pinyinColours");
+    for (std::vector<std::string>::size_type i = 0;
+         i < Settings::pinyinToneColours.size();
+         ++i) {
+        settings->setArrayIndex(static_cast<int>(i));
+        QColor color = settings
+                           ->value("colour",
+                                   QColor{
+                                       Settings::pinyinToneColours[i].c_str()})
+                           .value<QColor>();
+        Settings::pinyinToneColours[i] = color.name().toStdString();
+    }
+    settings->endArray();
 
     // Populate sources
     SQLDatabaseUtils *_utils = new SQLDatabaseUtils{_manager};
@@ -51,10 +87,16 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
 
     // Check for updates
-    _checker = new GithubReleaseChecker{this};
-    QTimer::singleShot(1000, _checker, &GithubReleaseChecker::checkForNewUpdate);
-    connect(_checker, &GithubReleaseChecker::foundUpdate, this,
-            &MainWindow::notifyUpdateAvailable);
+    if (settings->value("Advanced/UpdateNotificationsEnabled", QVariant{true}).toBool()) {
+        _checker = new GithubReleaseChecker{this};
+        QTimer::singleShot(1000,
+                           _checker,
+                           &GithubReleaseChecker::checkForNewUpdate);
+        connect(_checker,
+                &GithubReleaseChecker::foundUpdate,
+                this,
+                &MainWindow::notifyUpdateAvailable);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -280,4 +322,17 @@ void MainWindow::openSettingsWindow()
 
     _settingsWindow = new SettingsWindow{_manager, this};
     _settingsWindow->show();
+}
+
+// Must close settings window, since settings window does not pass the main
+// window as parent into the QWidget constructor.
+// This is because the settings window uses QColorDialog, which will set the
+// focus on the highest-level main window after selecting a colour - hiding the
+// settings window.
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (_settingsWindow) {
+        _settingsWindow->close();
+    }
+    event->accept();
 }

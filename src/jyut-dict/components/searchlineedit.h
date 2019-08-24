@@ -46,7 +46,7 @@ private:
 
     SearchParameters _parameters;
 
-    bool _paletteRecentlyChanged;
+    bool _paletteRecentlyChanged = false;
 };
 
 #endif // SEARCHLINEEDIT_H

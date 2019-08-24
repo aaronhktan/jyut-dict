@@ -1,6 +1,7 @@
 #include "searchlineedit.h"
 
 #include "logic/search/sqlsearch.h"
+#include "logic/settings/settingsutils.h"
 
 #include <QIcon>
 #include <QTimer>
@@ -87,7 +88,9 @@ void SearchLineEdit::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; } );
+        QTimer::singleShot(100, [=]() {
+             _paletteRecentlyChanged = false;
+        });
 
         // Set the style to match whether the user started dark mode
         if (!system("defaults read -g AppleInterfaceStyle")) {

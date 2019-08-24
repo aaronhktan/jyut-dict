@@ -1,15 +1,19 @@
 #include "resultlistdelegate.h"
 
 #include "logic/entry/entry.h"
+#include "logic/entry/entrycharactersoptions.h"
+#include "logic/entry/entryphoneticoptions.h"
+#include "logic/settings/settingsutils.h"
 
 #include <QAbstractTextDocumentLayout>
 #include <QRectF>
 #include <QTextDocument>
+#include <QVariant>
 
 ResultListDelegate::ResultListDelegate(QWidget *parent)
     : QStyledItemDelegate (parent)
 {
-
+    _settings = Settings::getSettings(this);
 }
 
 void ResultListDelegate::paint(QPainter *painter,
@@ -49,11 +53,24 @@ void ResultListDelegate::paint(QPainter *painter,
         phoneticOptions = EntryPhoneticOptions::ONLY_PINYIN;
         mandarinOptions = MandarinOptions::RAW_PINYIN;
     } else {
-        characterOptions = EntryCharactersOptions::PREFER_TRADITIONAL;
-        phoneticOptions = EntryPhoneticOptions::PREFER_JYUTPING;
-        mandarinOptions = MandarinOptions::PRETTY_PINYIN;
-        use_colours = !(option.state & QStyle::State_Selected);
+        characterOptions
+            = _settings
+                  ->value("characterOptions",
+                          QVariant::fromValue(
+                              EntryCharactersOptions::PREFER_TRADITIONAL))
+                  .value<EntryCharactersOptions>();
+        phoneticOptions = _settings
+                              ->value("phoneticOptions",
+                                      QVariant::fromValue(
+                                          EntryPhoneticOptions::PREFER_JYUTPING))
+                              .value<EntryPhoneticOptions>();
+        mandarinOptions = _settings
+                              ->value("mandarinOptions",
+                                      QVariant::fromValue(
+                                          MandarinOptions::PRETTY_PINYIN))
+                              .value<MandarinOptions>();
 
+        use_colours = !(option.state & QStyle::State_Selected);
     }
 
     QRect r = option.rect;
@@ -72,6 +89,11 @@ void ResultListDelegate::paint(QPainter *painter,
 
     // Use QTextDocument for rich text
     QTextDocument *doc = new QTextDocument{};
+    entry.refreshColours(_settings
+                             ->value("entryColourPhoneticType",
+                                     QVariant::fromValue(
+                                         EntryColourPhoneticType::JYUTPING))
+                             .value<EntryColourPhoneticType>());
     doc->setHtml(QString(entry.getCharacters(characterOptions, use_colours).c_str()));
     doc->setTextWidth(r.width());
     doc->setDefaultFont(font);

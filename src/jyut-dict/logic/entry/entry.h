@@ -5,6 +5,7 @@
 #include "logic/entry/entrycharactersoptions.h"
 #include "logic/entry/entryphoneticoptions.h"
 #include "logic/entry/sentence.h"
+#include "logic/settings/settings.h"
 
 #include <QObject>
 #include <QVariant>
@@ -54,6 +55,9 @@ public:
                             CantoneseOptions cantoneseOptions,
                             MandarinOptions mandarinOptions) const;
 
+    std::string getCantonesePhonetic(CantoneseOptions cantoneseOptions) const;
+    std::string getMandarinPhonetic(MandarinOptions mandarinOptions) const;
+
     std::string getJyutping(void) const;
     void setJyutping(std::string jyutping);
     std::vector<int> getJyutpingNumbers() const;
@@ -74,6 +78,9 @@ public:
     std::vector<Sentence> getSentences(void) const;
     void setSentences(std::vector<Sentence> sentences);
 
+    void refreshColours(
+        const EntryColourPhoneticType type = EntryColourPhoneticType::JYUTPING);
+
 private:
     std::string _simplified;
     std::string _simplifiedDifference;
@@ -93,11 +100,9 @@ private:
     std::vector<std::string> _derivedWords;
     std::vector<Sentence> _sentences;
 
-    std::string getCantonesePhonetic(CantoneseOptions cantoneseOptions) const;
-    std::string getMandarinPhonetic(MandarinOptions mandarinOptions) const;
-
     std::string applyColours(std::string original,
-                             std::vector<int> tones) const;
+                             std::vector<int> tones,
+                             EntryColourPhoneticType type = EntryColourPhoneticType::JYUTPING) const;
     void compareStrings(std::string original, std::string comparison,
                         std::string &returnString);
 

@@ -32,6 +32,8 @@ CONFIG += c++14
 
 SOURCES += \
     main.cpp \
+    components/advancedtab.cpp \
+    components/contacttab.cpp \
     components/definitioncontentwidget.cpp \
     components/definitionheaderwidget.cpp \
     components/definitionscrollarea.cpp \
@@ -49,6 +51,7 @@ SOURCES += \
     components/resultlistview.cpp \
     components/searchlineedit.cpp \
     components/searchoptionsradiogroupbox.cpp \
+    components/settingstab.cpp \
     logic/database/sqldatabasemanager.cpp \
     logic/database/sqldatabaseutils.cpp \
     logic/dictionary/dictionarymetadata.cpp \
@@ -58,6 +61,8 @@ SOURCES += \
     logic/entry/sentence.cpp \
     logic/search/searchoptionsmediator.cpp \
     logic/search/sqlsearch.cpp \
+    logic/settings/settings.cpp \
+    logic/settings/settingsutils.cpp \
     logic/update/githubreleasechecker.cpp \
     logic/utils/utils.cpp \
     windows/aboutwindow.cpp \
@@ -66,6 +71,8 @@ SOURCES += \
     windows/updatewindow.cpp
 
 HEADERS += \
+    components/advancedtab.h \
+    components/contacttab.h \
     components/definitioncontentwidget.h \
     components/definitionheaderwidget.h \
     components/definitionscrollarea.h \
@@ -85,6 +92,7 @@ HEADERS += \
     components/resultlistview.h \
     components/searchlineedit.h \
     components/searchoptionsradiogroupbox.h \
+    components/settingstab.h \
     logic/database/sqldatabasemanager.h \
     logic/database/sqldatabaseutils.h \
     logic/dictionary/dictionarymetadata.h \
@@ -101,8 +109,11 @@ HEADERS += \
     logic/search/searchoptionsmediator.h \
     logic/search/searchparameters.h \
     logic/search/sqlsearch.h \
+    logic/settings/settings.h \
+    logic/settings/settingsutils.h \
     logic/update/githubreleasechecker.h \
     logic/update/iupdatechecker.h \
+    logic/utils/qvariantutils.h \
     logic/utils/utils.h \
     logic/utils/utils_mac.h \
     windows/aboutwindow.h \
@@ -125,6 +136,11 @@ macx: {
     APP_DB_FILES.files = resources/db/dict.db
     APP_DB_FILES.path = Contents/Resources
     QMAKE_BUNDLE_DATA += APP_DB_FILES
+
+    # Add settings to Resources folder in macOS bundle
+    APP_SETTINGS_FILES.files = resources/settings/settings.ini
+    APP_SETTINGS_FILES.path = Contents/Resources
+    QMAKE_BUNDLE_DATA += APP_SETTINGS_FILES
 }
 
 win32: {
@@ -158,6 +174,13 @@ unix|win32:!macx {
     export(first.depends)
     export(copydata.commands)
     QMAKE_EXTRA_TARGETS += first copydata
+
+    # Copy settings file to build directory
+    copysettings.commands = $(COPY_DIR) \"$$system_path($$PWD/resources/settings/settings.ini)\" \"$$system_path($$OUT_PWD)\"
+    second.depends = $(second) copysettings
+    export(second.depends)
+    export(copysettings.commands)
+    QMAKE_EXTRA_TARGETS += second copysettings
 }
 
 # Default rules for deployment.

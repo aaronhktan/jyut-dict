@@ -42,7 +42,7 @@ private:
 
     std::shared_ptr<SQLDatabaseManager> _manager;
 
-    bool _paletteRecentlyChanged;
+    bool _paletteRecentlyChanged = false;
 
     void setStyle(bool use_dark);
     void setButtonIcon(bool use_dark, int index);

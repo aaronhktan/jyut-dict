@@ -3,6 +3,8 @@
 
 #include <string>
 
+// Interface for release checking
+
 class IUpdateChecker
 {
 public:

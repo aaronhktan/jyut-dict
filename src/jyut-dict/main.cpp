@@ -4,6 +4,21 @@
 
 int main(int argc, char *argv[])
 {
+    QCoreApplication::setOrganizationName("Aaron Tan");
+    QCoreApplication::setOrganizationDomain("aaronhktan.com");
+    QCoreApplication::setApplicationName("CantoneseDictionary");
+
+    qRegisterMetaType<EntryCharactersOptions>("EntryCharactersOptions");
+    qRegisterMetaTypeStreamOperators<EntryCharactersOptions>("EntryCharactersOptions");
+    qRegisterMetaType<EntryPhoneticOptions>("EntryPhoneticOptions");
+    qRegisterMetaTypeStreamOperators<EntryPhoneticOptions>("EntryPhoneticOptions");
+    qRegisterMetaType<CantoneseOptions>("CantoneseOptions");
+    qRegisterMetaTypeStreamOperators<CantoneseOptions>("CantoneseOptions");
+    qRegisterMetaType<MandarinOptions>("MandarinOptions");
+    qRegisterMetaTypeStreamOperators<MandarinOptions>("MandarinOptions");
+    qRegisterMetaType<EntryColourPhoneticType>("EntryColourPhoneticType");
+    qRegisterMetaTypeStreamOperators<EntryColourPhoneticType>("EntryColourPhoneticType");
+
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication a(argc, argv);

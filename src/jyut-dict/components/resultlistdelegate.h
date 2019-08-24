@@ -3,9 +3,12 @@
 
 #include <QModelIndex>
 #include <QPainter>
+#include <QSettings>
 #include <QStyledItemDelegate>
 #include <QStyleOptionViewItem>
 #include <QWidget>
+
+#include <memory>
 
 // The ResultListDelegate is responsible for painting elements in the ResultListView
 // It also provides a sizehint for each element
@@ -19,6 +22,9 @@ public:
                const QModelIndex &index) const override;
     QSize sizeHint(const QStyleOptionViewItem &option,
                        const QModelIndex &index) const override;
+
+private:
+    std::unique_ptr<QSettings> _settings;
 };
 
 #endif // RESULTLISTDELEGATE_H
