@@ -125,7 +125,7 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
 #ifdef Q_OS_WIN
         _message->setWindowTitle(tr(Utils::PRODUCT_NAME));
 #elif defined(Q_OS_LINUX)
-        _message->setWindowTitle(" ");
+        _message->setWindowTitle(tr("No update available!"));
 #endif
         // Setting minimum width also doesn't work, so use this
         // workaround to set a width.
