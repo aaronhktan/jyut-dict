@@ -33,7 +33,7 @@ std::unique_ptr<QSettings> getSettings(QObject *parent)
 // Currently not used
 bool updateSettings(QSettings &settings)
 {
-    if (settings.value("Metadata/version", QVariant{2}).toInt()
+    if (settings.value("Metadata/version", QVariant{SETTINGS_VERSION}).toInt()
         != SETTINGS_VERSION) {
         // Convert to new version here
         settings.setValue("Metadata/version", QVariant{SETTINGS_VERSION});
