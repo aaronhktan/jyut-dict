@@ -2,21 +2,103 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="yue_HK" sourcelanguage="en_CA">
 <context>
+    <name>MAC_APPLICATION_MENU</name>
+    <message>
+        <source>Services</source>
+        <translation>服務</translation>
+    </message>
+    <message>
+        <source>Hide %1</source>
+        <translation>隱藏 %1</translation>
+    </message>
+    <message>
+        <source>Hide Others</source>
+        <translation>隱藏其他</translation>
+    </message>
+    <message>
+        <source>Show All</source>
+        <translation>顯示全部</translation>
+    </message>
+    <message>
+        <source>Preferences...</source>
+        <translation>偏好設定…</translation>
+    </message>
+    <message>
+        <source>Quit %1</source>
+        <translation>結束 %1</translation>
+    </message>
+    <message>
+        <source>About %1</source>
+        <translation>關於 %1</translation>
+    </message>
+</context>
+<context>
+    <name>QMessageBox</name>
+    <message>
+        <source>Show Details...</source>
+        <translation>顯示詳情...</translation>
+    </message>
+    <message>
+        <source>Hide Details...</source>
+        <translation>隱藏詳情...</translation>
+    </message>
+    <message>
+        <source>&lt;h3&gt;About Qt&lt;/h3&gt;&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;</source>
+        <translation>&lt;h3&gt;關於 Qt&lt;/h3&gt;&lt;p&gt;此程式使用 Qt %1 版。&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Qt is a C++ toolkit for cross-platform application development.&lt;/p&gt;&lt;p&gt;Qt provides single-source portability across all major desktop operating systems. It is also available for embedded Linux and other embedded and mobile operating systems.&lt;/p&gt;&lt;p&gt;Qt is available under multiple licensing options designed to accommodate the needs of our various users.&lt;/p&gt;&lt;p&gt;Qt licensed under our commercial license agreement is appropriate for development of proprietary/commercial software where you do not want to share any source code with third parties or otherwise cannot comply with the terms of GNU (L)GPL.&lt;/p&gt;&lt;p&gt;Qt licensed under GNU (L)GPL is appropriate for the development of Qt&amp;nbsp;applications provided you can comply with the terms and conditions of the respective licenses.&lt;/p&gt;&lt;p&gt;Please see &lt;a href=&quot;http://%2/&quot;&gt;%2&lt;/a&gt; for an overview of Qt licensing.&lt;/p&gt;&lt;p&gt;Copyright (C) %1 The Qt Company Ltd and other contributors.&lt;/p&gt;&lt;p&gt;Qt and the Qt logo are trademarks of The Qt Company Ltd.&lt;/p&gt;&lt;p&gt;Qt is The Qt Company Ltd product developed as an open source project. See &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt; for more information.&lt;/p&gt;</source>
+        <extracomment>Leave this text untranslated or include a verbatim copy of it below and note that it is the authoritative version in case of doubt.</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>About Qt</source>
+        <translation>關於 Qt</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Qt is a C++ toolkit for cross-platform application development.&lt;/p&gt;&lt;p&gt;Qt provides single-source portability across all major desktop operating systems. It is also available for embedded Linux and other embedded and mobile operating systems.&lt;/p&gt;&lt;p&gt;Qt is available under three different licensing options designed to accommodate the needs of our various users.&lt;/p&gt;&lt;p&gt;Qt licensed under our commercial license agreement is appropriate for development of proprietary/commercial software where you do not want to share any source code with third parties or otherwise cannot comply with the terms of the GNU LGPL version 3.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU LGPL version 3 is appropriate for the development of Qt&amp;nbsp;applications provided you can comply with the terms and conditions of the GNU LGPL version 3.&lt;/p&gt;&lt;p&gt;Please see &lt;a href=&quot;http://%2/&quot;&gt;%2&lt;/a&gt; for an overview of Qt licensing.&lt;/p&gt;&lt;p&gt;Copyright (C) %1 The Qt Company Ltd and other contributors.&lt;/p&gt;&lt;p&gt;Qt and the Qt logo are trademarks of The Qt Company Ltd.&lt;/p&gt;&lt;p&gt;Qt is The Qt Company Ltd product developed as an open source project. See &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt; for more information.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Qt 是個用於跨平台應用程式開發的工具箱。&lt;/p&gt;
+&lt;p&gt;Qt 提供了可移植單一來源以能在目前主流的桌面作業系統跨平台。其也支援嵌入式 Linux 和其他嵌入和行動作業系統。&lt;/p&gt;
+&lt;p&gt;Qt 可以用於三個不同的授權選項，以接納各個使用者的需求。&lt;/p&gt;
+&lt;p&gt;使用我們的商業授權條款授權的 Qt 適合拿來開發不希望公開源碼給第三方的專有或商業軟體，或者是無法完全遵守 GNU LGPL 第三版條款的軟體。&lt;/p&gt;
+&lt;p&gt;使用 GNU LGPL 第三版授權的 Qt 適合拿來開發能遵守 LGPL 授權條款與條件的 Qt 應用程式。&lt;/p&gt;
+&lt;p&gt;請參閱 &lt;a href=&quot;http://%2/&quot;&gt;%2&lt;/a&gt; 取得 Qt 授權概覽。&lt;/p&gt;
+&lt;p&gt;版權所有 (C) %1 Qt 公司與其他貢獻者。&lt;/p&gt;
+&lt;p&gt;Qt 與其圖示皆為 Qt 公司的商標。&lt;/p&gt;
+&lt;p&gt;Qt 是 Qt 公司開發的開源專案，參閱 &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt; 取得更多資訊。&lt;/p&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>QPlatformTheme</name>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>&amp;Yes</source>
+        <translation>是</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>確定</translation>
+    </message>
+</context>
+<context>
     <name>AboutWindow</name>
     <message>
         <location filename="../../windows/aboutwindow.cpp" line="25"/>
         <source>About %1</source>
-        <translation type="unfinished">關於 %1</translation>
+        <translation>關於 %1</translation>
     </message>
     <message>
         <location filename="../../windows/aboutwindow.cpp" line="67"/>
         <source>Build %1</source>
-        <translation type="unfinished"></translation>
+        <translation>版本：%1</translation>
     </message>
     <message>
         <location filename="../../windows/aboutwindow.cpp" line="95"/>
         <source>View on Github...</source>
-        <translation type="unfinished"></translation>
+        <translation>喺Github上查看…</translation>
     </message>
 </context>
 <context>
@@ -24,7 +106,7 @@
     <message>
         <location filename="../../components/advancedtab.cpp" line="29"/>
         <source>Automatically check for updates on startup:</source>
-        <translation type="unfinished"></translation>
+        <translation>自動檢查更新:</translation>
     </message>
 </context>
 <context>
@@ -32,27 +114,22 @@
     <message>
         <location filename="../../components/contacttab.cpp" line="62"/>
         <source>Email...</source>
-        <translation type="unfinished"></translation>
+        <translation>發送電子郵件…</translation>
     </message>
     <message>
         <location filename="../../components/contacttab.cpp" line="67"/>
         <source>Donate...</source>
-        <translation type="unfinished"></translation>
+        <translation>捐款…</translation>
     </message>
     <message>
         <location filename="../../components/contacttab.cpp" line="72"/>
         <source>View on Github...</source>
-        <translation type="unfinished"></translation>
+        <translation>喺Github上查看…</translation>
     </message>
     <message>
         <location filename="../../components/contacttab.cpp" line="78"/>
         <source>Looking for other Cantonese resources? Try these!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../components/contacttab.cpp" line="129"/>
-        <source>Try these:</source>
-        <translation type="unfinished"></translation>
+        <translation>你係咪揾緊第啲廣東話嘅資源? 試試呢啲!</translation>
     </message>
 </context>
 <context>
@@ -160,37 +237,6 @@
     </message>
 </context>
 <context>
-    <name>MAC_APPLICATION_MENU</name>
-    <message>
-        <source>Services</source>
-        <translation type="vanished">服務</translation>
-    </message>
-    <message>
-        <source>Hide %1</source>
-        <translation type="vanished">隱藏 %1</translation>
-    </message>
-    <message>
-        <source>Hide Others</source>
-        <translation type="vanished">隱藏其他</translation>
-    </message>
-    <message>
-        <source>Show All</source>
-        <translation type="vanished">顯示全部</translation>
-    </message>
-    <message>
-        <source>Preferences...</source>
-        <translation type="vanished">偏好設定…</translation>
-    </message>
-    <message>
-        <source>Quit %1</source>
-        <translation type="vanished">結束 %1</translation>
-    </message>
-    <message>
-        <source>About %1</source>
-        <translation type="vanished">關於 %1</translation>
-    </message>
-</context>
-<context>
     <name>MainSplitter</name>
     <message>
         <location filename="../../components/mainsplitter.cpp" line="44"/>
@@ -201,23 +247,19 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <source>Jyut Dictionary</source>
-        <translation type="vanished">粵語字典</translation>
-    </message>
-    <message>
         <location filename="../../windows/mainwindow.cpp" line="137"/>
         <source>No update found!</source>
-        <translation type="unfinished"></translation>
+        <translation>冇搵到可用的更新!</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="138"/>
         <source>You are on the newest version, %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>你已經使用最新嘅版本，%1.</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="145"/>
         <source>No update available!</source>
-        <translation type="unfinished"></translation>
+        <translation>冇可用的更新!</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="166"/>
@@ -312,52 +354,17 @@
     <message>
         <location filename="../../windows/mainwindow.cpp" line="244"/>
         <source>%1 Help</source>
-        <translation type="unfinished"></translation>
+        <translation>%1輔助說明</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="251"/>
         <source>Check for updates...</source>
-        <translation type="unfinished"></translation>
+        <translation>檢查更新…</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="425"/>
         <source>Checking for update...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Jyut Dictionary Help</source>
-        <translation type="vanished">粵語字典輔助說明</translation>
-    </message>
-</context>
-<context>
-    <name>QMessageBox</name>
-    <message>
-        <source>Show Details...</source>
-        <translation type="vanished">顯示詳細資料…</translation>
-    </message>
-    <message>
-        <source>Hide Details...</source>
-        <translation type="vanished">隱藏詳細資料…</translation>
-    </message>
-    <message>
-        <source>&lt;h3&gt;About Qt&lt;/h3&gt;&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;</source>
-        <translation type="vanished">&lt;h3&gt;關於 Qt&lt;/h3&gt;&lt;p&gt;此程式使用 Qt %1 版。&lt;/p&gt;</translation>
-    </message>
-    <message>
-        <source>About Qt</source>
-        <translation type="vanished">關於 Qt</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;Qt is a C++ toolkit for cross-platform application development.&lt;/p&gt;&lt;p&gt;Qt provides single-source portability across all major desktop operating systems. It is also available for embedded Linux and other embedded and mobile operating systems.&lt;/p&gt;&lt;p&gt;Qt is available under three different licensing options designed to accommodate the needs of our various users.&lt;/p&gt;&lt;p&gt;Qt licensed under our commercial license agreement is appropriate for development of proprietary/commercial software where you do not want to share any source code with third parties or otherwise cannot comply with the terms of the GNU LGPL version 3.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU LGPL version 3 is appropriate for the development of Qt&amp;nbsp;applications provided you can comply with the terms and conditions of the GNU LGPL version 3.&lt;/p&gt;&lt;p&gt;Please see &lt;a href=&quot;http://%2/&quot;&gt;%2&lt;/a&gt; for an overview of Qt licensing.&lt;/p&gt;&lt;p&gt;Copyright (C) %1 The Qt Company Ltd and other contributors.&lt;/p&gt;&lt;p&gt;Qt and the Qt logo are trademarks of The Qt Company Ltd.&lt;/p&gt;&lt;p&gt;Qt is The Qt Company Ltd product developed as an open source project. See &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt; for more information.&lt;/p&gt;</source>
-        <translation type="vanished">&lt;p&gt;Qt 是個用於跨平台應用程式開發的工具箱。&lt;/p&gt;
-&lt;p&gt;Qt 提供了可移植單一來源以能在目前主流的桌面作業系統跨平台。其也支援嵌入式 Linux 和其他嵌入和行動作業系統。&lt;/p&gt;
-&lt;p&gt;Qt 可以用於三個不同的授權選項，以接納各個使用者的需求。&lt;/p&gt;
-&lt;p&gt;使用我們的商業授權條款授權的 Qt 適合拿來開發不希望公開源碼給第三方的專有或商業軟體，或者是無法完全遵守 GNU LGPL 第三版條款的軟體。&lt;/p&gt;
-&lt;p&gt;使用 GNU LGPL 第三版授權的 Qt 適合拿來開發能遵守 LGPL 授權條款與條件的 Qt 應用程式。&lt;/p&gt;
-&lt;p&gt;請參閱 &lt;a href=&quot;http://%2/&quot;&gt;%2&lt;/a&gt; 取得 Qt 授權概覽。&lt;/p&gt;
-&lt;p&gt;版權所有 (C) %1 Qt 公司與其他貢獻者。&lt;/p&gt;
-&lt;p&gt;Qt 與其圖示皆為 Qt 公司的商標。&lt;/p&gt;
-&lt;p&gt;Qt 是 Qt 公司開發的開源專案，參閱 &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt; 取得更多資訊。&lt;/p&gt;</translation>
+        <translation>檢查緊更新…</translation>
     </message>
 </context>
 <context>
@@ -465,129 +472,129 @@
     <message>
         <location filename="../../components/settingstab.cpp" line="93"/>
         <source>Reset all settings</source>
-        <translation type="unfinished"></translation>
+        <translation>重設所有設定</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="96"/>
         <source>Simplified/Traditional display options:</source>
-        <translation type="unfinished"></translation>
+        <translation>簡體/正體中文顯示設定：</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="98"/>
         <source>Jyutping/Pinyin display options:</source>
-        <translation type="unfinished"></translation>
+        <translation>拼音顯示設定：</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="100"/>
         <source>Pinyin display options:</source>
-        <translation type="unfinished"></translation>
+        <translation>漢語拼音顯示設定：</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="104"/>
         <source>Colour words by tone using:</source>
-        <translation type="unfinished"></translation>
+        <translation>使用拼音填色：</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="105"/>
         <source>Jyutping tone colours:</source>
-        <translation type="unfinished"></translation>
+        <translation>粵語拼音聲調顏色：</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="106"/>
         <source>Pinyin tone colours:</source>
-        <translation type="unfinished"></translation>
+        <translation>漢語拼音聲調顏色：</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="125"/>
         <source>Only Simplified</source>
-        <translation type="unfinished"></translation>
+        <translation>僅顯示簡體中文</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="128"/>
         <source>Only Traditional</source>
-        <translation type="unfinished"></translation>
+        <translation>僅顯示正體中文</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="131"/>
         <source>Both, Prefer Simplified</source>
-        <translation type="unfinished"></translation>
+        <translation>優先顯示簡體中文</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="134"/>
         <source>Both, Prefer Traditional</source>
-        <translation type="unfinished"></translation>
+        <translation>優先顯示正體中文</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="152"/>
         <source>Only Jyutping</source>
-        <translation type="unfinished"></translation>
+        <translation>僅顯示粵語拼音</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="155"/>
         <source>Only Pinyin</source>
-        <translation type="unfinished"></translation>
+        <translation>僅顯示漢語拼音</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="158"/>
         <source>Both, Prefer Jyutping</source>
-        <translation type="unfinished"></translation>
+        <translation>優先顯示粵語拼音</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="161"/>
         <source>Both, Prefer Pinyin</source>
-        <translation type="unfinished"></translation>
+        <translation>優先顯示漢語拼音</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="179"/>
         <source>Pinyin with diacritics</source>
-        <translation type="unfinished"></translation>
+        <translation>用符號的拼音</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="182"/>
         <source>Pinyin with numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>用數字的拼音</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="200"/>
         <source>No colours</source>
-        <translation type="unfinished"></translation>
+        <translation>不填色</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="203"/>
         <source>Jyutping</source>
-        <translation type="unfinished"></translation>
+        <translation>粵語拼音</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="206"/>
         <source>Pinyin</source>
-        <translation type="unfinished"></translation>
+        <translation>汉语拼音</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="271"/>
         <location filename="../../components/settingstab.cpp" line="339"/>
         <source>No Tone</source>
-        <translation type="unfinished"></translation>
+        <translation>未知聲調</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="275"/>
         <location filename="../../components/settingstab.cpp" line="347"/>
         <source>Tone %1</source>
-        <translation type="unfinished"></translation>
+        <translation>第 %1 聲</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="343"/>
         <source>Neutral</source>
-        <translation type="unfinished"></translation>
+        <translation>輕聲</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="365"/>
         <source>Are you sure you want to reset all settings?</source>
-        <translation type="unfinished"></translation>
+        <translation>你確定要重設全部設定嗎？</translation>
     </message>
     <message>
         <location filename="../../components/settingstab.cpp" line="366"/>
         <source>There is no way to restore them!</source>
-        <translation type="unfinished"></translation>
+        <translation>重設之後，無法還原你嘅設定！</translation>
     </message>
 </context>
 <context>
@@ -596,10 +603,6 @@
         <location filename="../../windows/settingswindow.cpp" line="71"/>
         <source>General</source>
         <translation>一般</translation>
-    </message>
-    <message>
-        <source>This page is intentionally left blank.</source>
-        <translation type="vanished">空白頁。</translation>
     </message>
     <message>
         <location filename="../../windows/settingswindow.cpp" line="75"/>
@@ -614,7 +617,7 @@
     <message>
         <location filename="../../windows/settingswindow.cpp" line="83"/>
         <source>Contact</source>
-        <translation>聯繫我們</translation>
+        <translation>聯繫我哋</translation>
     </message>
     <message>
         <location filename="../../windows/settingswindow.cpp" line="93"/>
@@ -635,22 +638,14 @@
         <translation>有可用的更新！</translation>
     </message>
     <message>
-        <source>A new version of Jyut Dictionary is available!</source>
-        <translation type="vanished">有可用的新版本！</translation>
-    </message>
-    <message>
-        <source>Jyut Dictionary version %1 is available — you have version %2. Click &quot;Download&quot; to get the new version.</source>
-        <translation type="vanished">粵語字典有可用的版本：%1 — 你所使用嘅版本係 %2。點選下載按鈕嚟升級新版本。</translation>
-    </message>
-    <message>
         <location filename="../../windows/updatewindow.cpp" line="45"/>
         <source>A new version of %1 is available!</source>
-        <translation type="unfinished"></translation>
+        <translation>%1嘅新版本已可用！</translation>
     </message>
     <message>
         <location filename="../../windows/updatewindow.cpp" line="52"/>
         <source>%1 version %2 is available — you have version %3. Click &quot;Download&quot; to get the new version.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 %2 已可用 — 你所使用嘅版本係 %3。點擊「下載」按鈕以獲取新版本。</translation>
     </message>
     <message>
         <location filename="../../windows/updatewindow.cpp" line="72"/>
@@ -679,48 +674,41 @@
     </message>
 </context>
 <context>
-    <name>Utils</name>
-    <message>
-        <source>Jyut Dictionary</source>
-        <translation type="obsolete">粵語字典</translation>
-    </message>
-</context>
-<context>
     <name>strings</name>
     <message>
         <location filename="../../logic/strings/strings.h" line="10"/>
         <source>Jyut Dictionary</source>
-        <translation type="unfinished">粵語字典</translation>
+        <translation>粵語字典</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="12"/>
         <source>A free, open-source offline Cantonese Dictionary.</source>
-        <translation type="unfinished"></translation>
+        <translation>一個免費、自由、開源及脫機嘅粵語字典。</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="14"/>
         <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt;.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>圖標使用 &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Commons 古漢字計劃&lt;/a&gt; 嘅圖片創造。 &lt;br&gt;界面圖標來源：&lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt;。 &lt;br&gt;使用 &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 編程。</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="26"/>
         <source>%1 is made with ❤️ by Aaron Tan.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1由譚可峰精心打造。</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="29"/>
         <source>Donate 💵, report a bug 🐛, or just say hi 👋!</source>
-        <translation type="unfinished"></translation>
+        <translation>捐款 💵, 报告缺陷 🐛, 或者发送一个問候 👋!</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="32"/>
         <source>Donate, report a bug, or just say hi!</source>
-        <translation type="unfinished"></translation>
+        <translation>捐款, 报告缺陷, 或者发送一个問候!</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="33"/>
         <source>&lt;a href=https://www.pleco.com style=&quot;color: %1; text-decoration: none&quot;&gt;Pleco Dictionary&lt;/a&gt;, &lt;a href=http://www.cantonese.sheik.co.uk/dictionary/ style=&quot;color: %1; text-decoration: none&quot;&gt;CantoDict&lt;/a&gt;, &lt;a href=https://words.hk style=&quot;color: %1; text-decoration: none&quot;&gt;words.hk&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;a href=https://www.pleco.com style=&quot;color: %1; text-decoration: none&quot;&gt;Pleco 漢語詞典&lt;/a&gt;、&lt;a href=http://www.cantonese.sheik.co.uk/dictionary/ style=&quot;color: %1; text-decoration: none&quot;&gt;CantoDict&lt;/a&gt;、&lt;a href=https://words.hk style=&quot;color: %1; text-decoration: none&quot;&gt;words.hk 粤典&lt;/a&gt;</translation>
     </message>
 </context>
 </TS>

@@ -49,11 +49,6 @@
         <source>Looking for other Cantonese resources? Try these!</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <location filename="../../components/contacttab.cpp" line="129"/>
-        <source>Try these:</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>DictionaryTab</name>

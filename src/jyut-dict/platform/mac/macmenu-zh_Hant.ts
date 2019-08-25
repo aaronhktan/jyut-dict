@@ -29,7 +29,6 @@
         <translation>關於 %1</translation>
     </message>
 </context>
-
 <context>
     <name>QMessageBox</name>
     <message>
@@ -64,5 +63,20 @@
 &lt;p&gt;版權所有 (C) %1 Qt 公司與其他貢獻者。&lt;/p&gt;
 &lt;p&gt;Qt 與其圖示皆為 Qt 公司的商標。&lt;/p&gt;
 &lt;p&gt;Qt 是 Qt 公司開發的開源專案，參閱 &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt; 取得更多資訊。&lt;/p&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>QPlatformTheme</name>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>&amp;Yes</source>
+        <translation>是</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>確定</translation>
     </message>
 </context>

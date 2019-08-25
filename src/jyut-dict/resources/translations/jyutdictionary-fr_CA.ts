@@ -49,11 +49,6 @@
         <source>Looking for other Cantonese resources? Try these!</source>
         <translation>D&apos;autres ressources merveilleux pour le cantonais:</translation>
     </message>
-    <message>
-        <location filename="../../components/contacttab.cpp" line="129"/>
-        <source>Try these:</source>
-        <translation>Essayez ceux-ci:</translation>
-    </message>
 </context>
 <context>
     <name>DictionaryTab</name>
@@ -169,10 +164,6 @@
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>Jyut Dictionary</source>
-        <translation type="vanished">Dictionnaire Jyut</translation>
-    </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="137"/>
         <source>No update found!</source>
@@ -292,10 +283,6 @@
         <location filename="../../windows/mainwindow.cpp" line="425"/>
         <source>Checking for update...</source>
         <translation>Recherche de mises à jour...</translation>
-    </message>
-    <message>
-        <source>Jyut Dictionary Help</source>
-        <translation type="vanished">Aide Dictionnaire Jyut</translation>
     </message>
 </context>
 <context>
@@ -536,10 +523,6 @@
         <translation>Général</translation>
     </message>
     <message>
-        <source>This page is intentionally left blank.</source>
-        <translation type="vanished">Cette page a été intentionnellement laissée en blanc.</translation>
-    </message>
-    <message>
         <location filename="../../windows/settingswindow.cpp" line="75"/>
         <source>Dictionaries</source>
         <translation>Dictionnaires</translation>
@@ -571,14 +554,6 @@
         <location filename="../../windows/updatewindow.cpp" line="23"/>
         <source>Update Available!</source>
         <translation>Mise à jour disponible!</translation>
-    </message>
-    <message>
-        <source>A new version of Jyut Dictionary is available!</source>
-        <translation type="vanished">Une nouvelle version de Dictionnaire Jyut est disponible!</translation>
-    </message>
-    <message>
-        <source>Jyut Dictionary version %1 is available — you have version %2. Click &quot;Download&quot; to get the new version.</source>
-        <translation type="vanished">La version %1 de Dictionnaire Jyut est disponible — vous avez la version %2. Cliquez sur le bouton «&#xa0;Télécharger&#xa0;» pour obtenir la nouvelle version.</translation>
     </message>
     <message>
         <location filename="../../windows/updatewindow.cpp" line="45"/>
@@ -617,13 +592,6 @@
     </message>
 </context>
 <context>
-    <name>Utils</name>
-    <message>
-        <source>Jyut Dictionary</source>
-        <translation type="vanished">Dictionnaire Jyut</translation>
-    </message>
-</context>
-<context>
     <name>strings</name>
     <message>
         <location filename="../../logic/strings/strings.h" line="10"/>
@@ -644,10 +612,6 @@
         <location filename="../../logic/strings/strings.h" line="26"/>
         <source>%1 is made with ❤️ by Aaron Tan.</source>
         <translation>%1 est crée avec ❤️ par Aaron Tan.</translation>
-    </message>
-    <message>
-        <source>Jyut Dictionary is made with ❤️ by Aaron Tan.</source>
-        <translation type="vanished">Dictionnaire Jyut est crée avec ❤️ par Aaron Tan.</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="29"/>
