@@ -11,6 +11,7 @@
 #include <QFrame>
 #include <QGridLayout>
 #include <QMessageBox>
+#include <QSpacerItem>
 #include <QTimer>
 #include <QVariant>
 
@@ -116,6 +117,19 @@ void SettingsTab::setupUI()
         setStyle(/* use_dark = */ true);
     } else {
         setStyle(/* use_dark = */ false);
+    }
+#endif
+
+    // Set style depending on language
+#ifdef Q_OS_MAC
+    if (QLocale::system().language() & QLocale::Chinese
+        || QLocale::system().language() & QLocale::Cantonese) {
+        setStyleSheet("QPushButton { font-size: 12px; height: 16px; }");
+    }
+#elif defined(Q_OS_WIN)
+    if (QLocale::system().language() & QLocale::Chinese ||
+        QLocale::system().language() & QLocale::Cantonese) {
+        setStyleSheet("QPushButton { font-size: 12px; height: 20px; }");
     }
 #endif
 }
@@ -372,6 +386,19 @@ void SettingsTab::initializeResetButton(QPushButton &resetButton)
 #elif defined(Q_OS_LINUX)
         _message->setWindowTitle(" ");
 #endif
+
+        // Setting minimum width also doesn't work, so use this
+        // workaround to set a width.
+        QSpacerItem *horizontalSpacer = new QSpacerItem(400,
+                                                        0,
+                                                        QSizePolicy::Minimum,
+                                                        QSizePolicy::Minimum);
+        QGridLayout *layout = static_cast<QGridLayout *>(_message->layout());
+        layout->addItem(horizontalSpacer,
+                        layout->rowCount(),
+                        0,
+                        1,
+                        layout->columnCount());
 
         if (_message->exec() == QMessageBox::Yes) {
             resetSettings(*_settings);

@@ -103,7 +103,7 @@ MainWindow::MainWindow(QWidget *parent) :
 #ifdef Q_OS_MAC
     if (QLocale::system().language() & QLocale::Chinese ||
         QLocale::system().language() & QLocale::Cantonese) {
-        setStyleSheet("QPushButton { font-size: 13px; height: 16px; }");
+        setStyleSheet("QPushButton { font-size: 12px; height: 16px; }");
     }
 #elif defined(Q_OS_WIN)
     if (QLocale::system().language() & QLocale::Chinese ||
@@ -179,6 +179,7 @@ void MainWindow::createActions()
 {
     QAction *aboutAction = new QAction{tr("&About"), this};
     aboutAction->setStatusTip(tr("Show the application's About box"));
+    aboutAction->setMenuRole(QAction::AboutRole);
     connect(aboutAction, &QAction::triggered, this, &MainWindow::openAboutWindow);
     _fileMenu->addAction(aboutAction);
 

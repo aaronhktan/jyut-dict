@@ -5,6 +5,7 @@
 
 #include <QCoreApplication>
 #include <QDesktopServices>
+#include <QLocale>
 #include <QPixmap>
 #include <QTimer>
 #include <QUrl>
@@ -101,6 +102,19 @@ void ContactTab::setupUI()
     _tabLayout->addWidget(_box, 1, 0, 1, -1);
     _tabLayout->addWidget(_otherSourcesLabel, 7, 0, 1, -1, Qt::AlignHCenter);
     _tabLayout->addWidget(_otherSources, 8, 0, 1, -1, Qt::AlignHCenter);
+
+    // Set style depending on language
+#ifdef Q_OS_MAC
+    if (QLocale::system().language() & QLocale::Chinese
+        || QLocale::system().language() & QLocale::Cantonese) {
+        setStyleSheet("QPushButton { font-size: 12px; height: 16px; }");
+    }
+#elif defined(Q_OS_WIN)
+    if (QLocale::system().language() & QLocale::Chinese ||
+        QLocale::system().language() & QLocale::Cantonese) {
+        setStyleSheet("QPushButton { font-size: 12px; height: 20px; }");
+    }
+#endif
 }
 
 void ContactTab::changeEvent(QEvent *event)
