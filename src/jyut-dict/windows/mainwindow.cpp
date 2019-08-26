@@ -78,6 +78,9 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     delete _utils;
 
+    // Install translator
+    installTranslator();
+
     // Create UI elements
     _mainToolBar = new MainToolBar{_manager, this};
     addToolBar(_mainToolBar);
@@ -89,9 +92,6 @@ MainWindow::MainWindow(QWidget *parent) :
     // Create menu bar and populate it
     createMenus();
     createActions();
-
-    // Install translator
-    installTranslator();
 
     // Translate UI
     translateUI();
