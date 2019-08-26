@@ -142,9 +142,15 @@ void AdvancedTab::initializeLanguageCombobox(QComboBox &combobox)
                 QLocale newLocale = Settings::getCurrentLocale();
                 if (localeName == "system") {
                     newLocale = QLocale{};
+                    _settings->remove("Advanced/locale");
                 } else {
                     newLocale = QLocale{combobox.itemData(index).toString()};
+                    _settings->setValue("Advanced/locale",
+                                        combobox.itemData(index));
                 }
+
+                _settings->sync();
+                Settings::setCurrentLocale(newLocale);
 
                 qApp->removeTranslator(&Settings::systemTranslator);
                 Settings::systemTranslator
@@ -160,15 +166,5 @@ void AdvancedTab::initializeLanguageCombobox(QComboBox &combobox)
                           /* prefix */ "-",
                           /* directory */ ":/translations");
                 qApp->installTranslator(&Settings::applicationTranslator);
-
-                Settings::setCurrentLocale(newLocale);
-
-                if (localeName == "system") {
-                    _settings->remove("Advanced/locale");
-                } else {
-                    _settings->setValue("Advanced/locale",
-                                        combobox.itemData(index));
-                }
-                _settings->sync();
             });
 }
