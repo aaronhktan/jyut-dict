@@ -39,6 +39,11 @@
         <translation>系统默认</translation>
     </message>
     <message>
+        <location filename="../../components/advancedtab.cpp" line="+5"/>
+        <source>English</source>
+        <translation>英文</translation>
+    </message>
+    <message>
         <location line="+1"/>
         <source>Simplified Chinese</source>
         <translation>简体中文</translation>

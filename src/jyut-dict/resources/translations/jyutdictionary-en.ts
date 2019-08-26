@@ -40,31 +40,36 @@
     </message>
     <message>
         <location filename="../../components/advancedtab.cpp" line="91"/>
-        <source>Simplified Chinese</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../components/advancedtab.cpp" line="92"/>
-        <source>Traditional Chinese</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../components/advancedtab.cpp" line="93"/>
-        <source>French (CA)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../components/advancedtab.cpp" line="94"/>
-        <source>French</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../components/advancedtab.cpp" line="95"/>
-        <source>Cantonese (Simplified)</source>
+        <source>English</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../components/advancedtab.cpp" line="96"/>
+        <source>Simplified Chinese</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../components/advancedtab.cpp" line="97"/>
+        <source>Traditional Chinese</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../components/advancedtab.cpp" line="92"/>
+        <source>French (CA)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../components/advancedtab.cpp" line="93"/>
+        <source>French</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../components/advancedtab.cpp" line="94"/>
+        <source>Cantonese (Simplified)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../components/advancedtab.cpp" line="95"/>
         <source>Cantonese (Traditional)</source>
         <translation type="unfinished"></translation>
     </message>

@@ -88,12 +88,13 @@ void AdvancedTab::translateUI()
         ->setText(tr("Application language:"));
 
     _languageCombobox->setItemText(0, tr("Use system language"));
-    _languageCombobox->setItemText(1, tr("Simplified Chinese"));
-    _languageCombobox->setItemText(2, tr("Traditional Chinese"));
-    _languageCombobox->setItemText(3, tr("French (CA)"));
-    _languageCombobox->setItemText(4, tr("French"));
-    _languageCombobox->setItemText(5, tr("Cantonese (Simplified)"));
-    _languageCombobox->setItemText(6, tr("Cantonese (Traditional)"));
+    _languageCombobox->setItemText(1, tr("English"));
+    _languageCombobox->setItemText(2, tr("French (CA)"));
+    _languageCombobox->setItemText(3, tr("French"));
+    _languageCombobox->setItemText(4, tr("Cantonese (Simplified)"));
+    _languageCombobox->setItemText(5, tr("Cantonese (Traditional)"));
+    _languageCombobox->setItemText(6, tr("Simplified Chinese"));
+    _languageCombobox->setItemText(7, tr("Traditional Chinese"));
 }
 
 void AdvancedTab::setStyle(bool use_dark)
@@ -122,12 +123,13 @@ void AdvancedTab::initializeUpdateCheckbox(QCheckBox &checkbox)
 void AdvancedTab::initializeLanguageCombobox(QComboBox &combobox)
 {
     combobox.addItem("0", "system");
-    combobox.addItem("0", "zh_Hans");
-    combobox.addItem("1", "zh_Hant");
+    combobox.addItem("1", "en");
     combobox.addItem("2", "fr_CA");
     combobox.addItem("3", "fr");
     combobox.addItem("4", "yue_Hans");
     combobox.addItem("5", "yue_Hant");
+    combobox.addItem("6", "zh_Hans");
+    combobox.addItem("7", "zh_Hant");
 
     combobox.setCurrentIndex(combobox.findData(
         _settings->value("Advanced/locale", QVariant{"system"}).toString()));

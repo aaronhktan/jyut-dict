@@ -40,31 +40,36 @@
     </message>
     <message>
         <location filename="../../components/advancedtab.cpp" line="91"/>
+        <source>English</source>
+        <translation>Anglais</translation>
+    </message>
+    <message>
+        <location filename="../../components/advancedtab.cpp" line="96"/>
         <source>Simplified Chinese</source>
         <translation>Chinois simplifié</translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="92"/>
+        <location filename="../../components/advancedtab.cpp" line="97"/>
         <source>Traditional Chinese</source>
         <translation>Chinois traditionnel</translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="93"/>
+        <location filename="../../components/advancedtab.cpp" line="92"/>
         <source>French (CA)</source>
         <translation>Français (Canada)</translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="94"/>
+        <location filename="../../components/advancedtab.cpp" line="93"/>
         <source>French</source>
         <translation>Français</translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="95"/>
+        <location filename="../../components/advancedtab.cpp" line="94"/>
         <source>Cantonese (Simplified)</source>
         <translation>Cantonais simplifié</translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="96"/>
+        <location filename="../../components/advancedtab.cpp" line="95"/>
         <source>Cantonese (Traditional)</source>
         <translation>Cantonais traditionnel</translation>
     </message>
