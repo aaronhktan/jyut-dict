@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <vector>
 
-// The DefintitionsSet class contains a grouping of definitions from one source
+// The DefinitionsSet class contains a grouping of definitions from one source
 
 class DefinitionsSet
 {

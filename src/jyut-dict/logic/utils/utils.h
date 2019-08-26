@@ -37,7 +37,7 @@ namespace Utils {
 
     // Strings that are not language dependent should go here.
     // If they need to be translated, put them in strings.h
-    constexpr auto CURRENT_VERSION = "0.18.0614";
+    constexpr auto CURRENT_VERSION = "0.19.0828";
     constexpr auto AUTHOR_EMAIL = "mailto: hi@aaronhktan.com";
     constexpr auto DONATE_LINK = "https://www.paypal.me/cheeseisdisgusting";
     constexpr auto AUTHOR_GITHUB_LINK = "https://github.com/aaronhktan/";

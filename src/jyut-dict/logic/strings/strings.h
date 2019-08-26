@@ -3,6 +3,9 @@
 
 #include <QTranslator>
 
+// Strings should contain all the strings that need to be translated
+// and are used in several different locations.
+
 namespace Strings {
 
 constexpr auto STRINGS_CONTEXT = "strings";
