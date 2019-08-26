@@ -458,7 +458,7 @@
     <message>
         <location filename="../../components/searchlineedit.cpp" line="147"/>
         <source>Search</source>
-        <translation>揾粤语字典…</translation>
+        <translation>搵粤语字典…</translation>
     </message>
 </context>
 <context>
