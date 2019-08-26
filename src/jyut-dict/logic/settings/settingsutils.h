@@ -25,6 +25,8 @@ bool clearSettings(QSettings &settings);
 QLocale getCurrentLocale();
 bool setCurrentLocale(QLocale &locale);
 bool isCurrentLocaleHan();
+bool isCurrentLocaleTraditionalHan();
+bool isCurrentLocaleSimplifiedHan();
 
 };
 

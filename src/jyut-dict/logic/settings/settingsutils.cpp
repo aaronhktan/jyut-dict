@@ -73,4 +73,12 @@ bool isCurrentLocaleHan()
            || currentLocale.script() == QLocale::TraditionalHanScript;
 }
 
+bool isCurrentLocaleTraditionalHan() {
+    return currentLocale.script() == QLocale::TraditionalHanScript;
+}
+
+bool isCurrentLocaleSimplifiedHan() {
+    return currentLocale.script() == QLocale::SimplifiedHanScript;
+}
+
 }

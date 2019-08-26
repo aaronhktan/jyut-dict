@@ -34,6 +34,29 @@ SettingsWindow::~SettingsWindow()
 
 }
 
+void SettingsWindow::changeEvent(QEvent *event)
+{
+#if defined(Q_OS_DARWIN)
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        if (!system("defaults read -g AppleInterfaceStyle")) {
+            setStyle(/* use_dark = */ true);
+        } else {
+            setStyle(/* use_dark = */ false);
+        }
+    }
+#endif
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
+    QMainWindow::changeEvent(event);
+}
+
 void SettingsWindow::setupUI()
 {
     _contentStackedWidget = new QStackedWidget{this};
@@ -75,17 +98,6 @@ void SettingsWindow::setupUI()
         _toolBar->addWidget(_toolButtons.back());
     }
 
-    // Customize the look of the toolbar to fit in better with platform styles
-#ifdef Q_OS_MAC
-    if (!system("defaults read -g AppleInterfaceStyle")) {
-        setStyle(/* use_dark = */true);
-    } else {
-        setStyle(/* use_dark = */false);
-    }
-#else
-    setStyle(/* use_dark = */false);
-#endif
-
     SettingsTab *generalTab = new SettingsTab{this};
     _contentStackedWidget->addWidget(generalTab);
 
@@ -102,33 +114,31 @@ void SettingsWindow::setupUI()
     setCentralWidget(_contentStackedWidget);
 
     _toolButtons[0]->click();
-}
 
-void SettingsWindow::changeEvent(QEvent *event)
-{
-#if defined(Q_OS_DARWIN)
-    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
-        // QWidget emits a palette changed event when setting the stylesheet
-        // So prevent it from going into an infinite loop with this timer
-        _paletteRecentlyChanged = true;
-        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
-
-        // Set the style to match whether the user started dark mode
-        if (!system("defaults read -g AppleInterfaceStyle")) {
-            setStyle(/* use_dark = */ true);
-        } else {
-            setStyle(/* use_dark = */ false);
-        }
+    // Customize the look of the toolbar to fit in better with platform styles
+#ifdef Q_OS_MAC
+    if (!system("defaults read -g AppleInterfaceStyle")) {
+        setStyle(/* use_dark = */true);
+    } else {
+        setStyle(/* use_dark = */false);
     }
+#else
+    setStyle(/* use_dark = */false);
 #endif
-    if (event->type() == QEvent::LanguageChange) {
-        translateUI();
-    }
-    QMainWindow::changeEvent(event);
 }
 
 void SettingsWindow::translateUI()
 {
+    // Set property so styling automatically changes
+    setProperty("isHan", Settings::isCurrentLocaleHan());
+
+    QList<QToolButton *> buttons = this->findChildren<QToolButton *>();
+    for (auto button : buttons) {
+        button->setProperty("isHan", Settings::isCurrentLocaleHan());
+        button->style()->unpolish(button);
+        button->style()->polish(button);
+    }
+
     _actions[0]->setText(tr("General"));
     _actions[1]->setText(tr("Dictionaries"));
     _actions[2]->setText(tr("Advanced"));
@@ -154,10 +164,16 @@ void SettingsWindow::setStyle(bool use_dark)
 #ifdef Q_OS_MAC
     QString style;
     if (use_dark) {
-        style = "QToolButton { "
+        style = "QToolButton[isHan=\"true\"] { "
+                "   border-radius: 2px; "
+                "   font-size: %5px; "
+                "   margin: 0px; "
+                "}"
+                ""
+                "QToolButton { "
                 "   border-top-left-radius: 4px; "
                 "   border-top-right-radius: 4px; "
-                "   font-size: %5px; "
+                "   font-size: 10px; "
                 "   margin: 0px; "
                 "}"
                 " "
@@ -168,10 +184,16 @@ void SettingsWindow::setStyle(bool use_dark)
                 "   margin: 0px; "
                 "}";
     } else {
-        style = "QToolButton { "
+        style = "QToolButton[isHan=\"true\"] { "
+                "   border-radius: 2px; "
+                "   font-size: %5px; "
+                "   margin: 0px; "
+                "}"
+                ""
+                "QToolButton { "
                 "   border-top-left-radius: 4px; "
                 "   border-top-right-radius: 4px; "
-                "   font-size: %5px; "
+                "   font-size: 10px; "
                 "   margin: 0px; "
                 "}"
                 " "
@@ -184,9 +206,15 @@ void SettingsWindow::setStyle(bool use_dark)
                 "}";
     }
 #else
-    QString style{"QToolButton { "
+    QString style{"QToolButton[isHan=\"true\"] { "
                   "   border-radius: 2px; "
                   "   font-size: %5px; "
+                  "   margin: 0px; "
+                  "}"
+                  " "
+                  "QToolButton { "
+                  "   border-radius: 2px; "
+                  "   font-size: 10px; "
                   "   margin: 0px; "
                   "}"
                   " "
@@ -202,10 +230,7 @@ void SettingsWindow::setStyle(bool use_dark)
                   std::to_string(g).c_str(),
                   std::to_string(b).c_str(),
                   std::to_string(a).c_str(),
-                  (QLocale::system().language() == (QLocale::Chinese)
-                   || QLocale::system().language() == QLocale::Cantonese)
-                      ? "12"
-                      : "10"));
+                  "13"));
     setButtonIcon(use_dark, _contentStackedWidget->currentIndex());
 }
 

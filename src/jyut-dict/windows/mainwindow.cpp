@@ -126,12 +126,14 @@ void MainWindow::changeEvent(QEvent *event)
 {
     switch (event->type()) {
     case QEvent::LocaleChange: {
-        qDebug() << "locale changed";
         installTranslator();
         break;
     }
     case QEvent::LanguageChange: {
         translateUI();
+        break;
+    }
+    default: {
         break;
     }
     }
@@ -198,6 +200,22 @@ void MainWindow::translateUI()
         button->style()->unpolish(button);
         button->style()->polish(button);
     }
+
+#ifdef Q_OS_WIN
+    if (Settings::isCurrentLocaleTraditionalHan()) {
+        QFont font("Microsoft Jhenghei", 10);
+        font.setStyleHint(QFont::System, QFont::PreferAntialias);
+        qApp->setFont(font);
+    } else if (Settings::isCurrentLocaleSimplifiedHan()) {
+        QFont font("Microsoft YaHei", 10);
+        font.setStyleHint(QFont::System, QFont::PreferAntialias);
+        qApp->setFont(font);
+    } else {
+        QFont font("Segoe UI", 10);
+        font.setStyleHint(QFont::System, QFont::PreferAntialias);
+        qApp->setFont(font);
+   }
+#endif
 
     setWindowTitle(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                                Strings::PRODUCT_NAME));
