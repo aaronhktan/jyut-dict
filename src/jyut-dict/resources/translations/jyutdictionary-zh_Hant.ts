@@ -740,7 +740,7 @@
     <message>
         <location filename="../../logic/strings/strings.h" line="26"/>
         <source>%1 is made with ❤️ by Aaron Tan.</source>
-        <translation>%1 由譚可峰精心打造。</translation>
+        <translation>%1由譚可峰精心打造。</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="29"/>
