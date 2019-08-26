@@ -4,6 +4,7 @@
 #include "logic/dictionary/dictionarymetadata.h"
 #include "logic/dictionary/dictionarysource.h"
 #include "logic/utils/utils.h"
+#include "logic/settings/settingsutils.h"
 
 #include <QtConcurrent/QtConcurrent>
 #include "QCoreApplication"
@@ -21,8 +22,17 @@ DictionaryTab::DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
     _utils = std::make_unique<SQLDatabaseUtils>(_manager);
 
     setupUI();
+    translateUI();
     populateDictionaryList();
     _list->setCurrentIndex(_list->model()->index(0, 0));
+}
+
+void DictionaryTab::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+        _list->setCurrentIndex(_list->model()->index(0, 0));
+    }
 }
 
 void DictionaryTab::setupUI()
@@ -36,10 +46,7 @@ void DictionaryTab::setupUI()
     _tabLayout = new QGridLayout{this};
     _tabLayout->setAlignment(Qt::AlignTop);
 
-    _explanatory = new QLabel{tr("The Dictionaries tab allows you to view "
-                                 "information about dictionaries, "
-                                 "and add or remove them."),
-                              this};
+    _explanatory = new QLabel{this};
     _explanatory->setWordWrap(true);
     _explanatory->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
@@ -47,7 +54,7 @@ void DictionaryTab::setupUI()
 #endif
     _list = new DictionaryListView{this};
     _list->setFixedWidth(200);
-    _add = new QPushButton{tr("Add Dictionary..."), this};
+    _add = new QPushButton{this};
     _groupbox = new QGroupBox{this};
     _groupbox->setMinimumWidth(350);
 
@@ -70,8 +77,8 @@ void DictionaryTab::setupUI()
     _version->setWordWrap(true);
     _legal->setAlignment(Qt::AlignTop);
     _version->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    _remove = new QPushButton{tr("Delete Dictionary"), this};
-    _link = new QPushButton{tr("Website"), this};
+    _remove = new QPushButton{this};
+    _link = new QPushButton{this};
 
     _groupboxLayout = new QGridLayout{_groupbox};
     _groupboxLayout->addWidget(_description, 1, 1, 4, 3);
@@ -103,17 +110,43 @@ void DictionaryTab::setupUI()
         }
     });
 
-    // Set style depending on language
 #ifdef Q_OS_MAC
-    if (QLocale::system().language() & QLocale::Chinese
-        || QLocale::system().language() & QLocale::Cantonese) {
-        setStyleSheet("QPushButton { font-size: 12px; height: 16px; }");
+    // Set the style to match whether the user started dark mode
+    if (!system("defaults read -g AppleInterfaceStyle")) {
+        setStyle(/* use_dark = */ true);
+    } else {
+        setStyle(/* use_dark = */ false);
     }
+#else
+    setStyle(false);
+#endif
+}
+
+void DictionaryTab::translateUI()
+{
+    // Set property so styling automatically changes
+    setProperty("isHan", Settings::isCurrentLocaleHan());
+
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+    for (auto button : buttons) {
+        button->setProperty("isHan", Settings::isCurrentLocaleHan());
+        button->style()->unpolish(button);
+        button->style()->polish(button);
+    }
+
+    _explanatory->setText(tr("The Dictionaries tab allows you to view "
+                             "information about dictionaries, "
+                             "and add or remove them."));
+    _add->setText(tr("Add Dictionary..."));
+    _remove->setText(tr("Delete Dictionary"));
+    _link->setText(tr("Website"));
+}
+
+void DictionaryTab::setStyle(bool use_dark) {
+#ifdef Q_OS_MAC
+    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
 #elif defined(Q_OS_WIN)
-    if (QLocale::system().language() & QLocale::Chinese ||
-        QLocale::system().language() & QLocale::Cantonese) {
-        setStyleSheet("QPushButton { font-size: 12px; height: 20px; }");
-    }
+    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
 #endif
 }
 

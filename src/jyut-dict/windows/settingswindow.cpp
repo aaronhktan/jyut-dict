@@ -18,6 +18,24 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
 {
     _manager = manager;
 
+    setupUI();
+    translateUI();
+
+    resize(sizeHint());
+    layout()->setSizeConstraint(QLayout::SetFixedSize);
+    move(parent->x() + (parent->width() - sizeHint().width()) / 2,
+         parent->y() + (parent->height() - sizeHint().height()) / 2);
+
+    setAttribute(Qt::WA_DeleteOnClose);
+}
+
+SettingsWindow::~SettingsWindow()
+{
+
+}
+
+void SettingsWindow::setupUI()
+{
     _contentStackedWidget = new QStackedWidget{this};
     _toolBar = new QToolBar{this};
 #ifdef Q_OS_WIN
@@ -27,16 +45,16 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
 #elif defined(Q_OS_LINUX)
     QColor color = QGuiApplication::palette().color(QPalette::AlternateBase);
     _toolBar->setStyleSheet(QString("QToolBar {"
-                            "   background: transparent;"
-                            "   background-color: rgba(%1, %2, %3, %4);"
-                            "   border-bottom: 1px solid lightgray;"
-                            "   padding-bottom: 3px;"
-                            "   padding-top: 3px;"
-                            "}")
-                            .arg(std::to_string(color.red()).c_str())
-                            .arg(std::to_string(color.green()).c_str())
-                            .arg(std::to_string(color.blue()).c_str())
-                            .arg(0.7));
+                                    "   background: transparent;"
+                                    "   background-color: rgba(%1, %2, %3, %4);"
+                                    "   border-bottom: 1px solid lightgray;"
+                                    "   padding-bottom: 3px;"
+                                    "   padding-top: 3px;"
+                                    "}")
+                                .arg(std::to_string(color.red()).c_str())
+                                .arg(std::to_string(color.green()).c_str())
+                                .arg(std::to_string(color.blue()).c_str())
+                                .arg(0.7));
 #endif
     addToolBar(_toolBar);
     setUnifiedTitleAndToolBarOnMac(true);
@@ -68,19 +86,15 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
     setStyle(/* use_dark = */false);
 #endif
 
-    _actions[0]->setText(tr("General"));
     SettingsTab *generalTab = new SettingsTab{this};
     _contentStackedWidget->addWidget(generalTab);
 
-    _actions[1]->setText(tr("Dictionaries"));
     DictionaryTab *dictionaryTab = new DictionaryTab{_manager, this};
     _contentStackedWidget->addWidget(dictionaryTab);
 
-    _actions[2]->setText(tr("Advanced"));
     AdvancedTab *advancedTab = new AdvancedTab{this};
     _contentStackedWidget->addWidget(advancedTab);
 
-    _actions[3]->setText(tr("Contact"));
     ContactTab *contactTab = new ContactTab{this};
 
     _contentStackedWidget->addWidget(contactTab);
@@ -88,23 +102,6 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
     setCentralWidget(_contentStackedWidget);
 
     _toolButtons[0]->click();
-
-#ifdef Q_OS_MAC
-    setWindowTitle(tr("Preferences"));
-#else
-    setWindowTitle(tr("Settings"));
-#endif
-    resize(sizeHint());
-    layout()->setSizeConstraint(QLayout::SetFixedSize);
-    move(parent->x() + (parent->width() - sizeHint().width()) / 2,
-         parent->y() + (parent->height() - sizeHint().height()) / 2);
-
-    setAttribute(Qt::WA_DeleteOnClose);
-}
-
-SettingsWindow::~SettingsWindow()
-{
-
 }
 
 void SettingsWindow::changeEvent(QEvent *event)
@@ -124,7 +121,24 @@ void SettingsWindow::changeEvent(QEvent *event)
         }
     }
 #endif
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
     QMainWindow::changeEvent(event);
+}
+
+void SettingsWindow::translateUI()
+{
+    _actions[0]->setText(tr("General"));
+    _actions[1]->setText(tr("Dictionaries"));
+    _actions[2]->setText(tr("Advanced"));
+    _actions[3]->setText(tr("Contact"));
+
+#ifdef Q_OS_MAC
+    setWindowTitle(tr("Preferences"));
+#else
+    setWindowTitle(tr("Settings"));
+#endif
 }
 
 void SettingsWindow::setStyle(bool use_dark)

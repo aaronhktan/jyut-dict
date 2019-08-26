@@ -2,115 +2,21 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="yue_CN">
 <context>
-    <name>MAC_APPLICATION_MENU</name>
-    <message>
-        <source>Services</source>
-        <translation>服务</translation>
-    </message>
-    <message>
-        <source>Hide %1</source>
-        <translation>隐藏 %1</translation>
-    </message>
-    <message>
-        <source>Hide Others</source>
-        <translation>隐藏其他</translation>
-    </message>
-    <message>
-        <source>Show All</source>
-        <translation>全部显示</translation>
-    </message>
-    <message>
-        <source>Preferences...</source>
-        <translation>偏好设置…</translation>
-    </message>
-    <message>
-        <source>Quit %1</source>
-        <translation>结束 %1</translation>
-    </message>
-    <message>
-        <source>About %1</source>
-        <translation>关于 %1</translation>
-    </message>
-</context>
-<context>
-    <name>QMessageBox</name>
-    <message>
-        <location filename="../src/gui/dialogs/qmessagebox.cpp" line="-1111"/>
-        <source>Help</source>
-        <translation>帮助</translation>
-    </message>
-    <message>
-        <location line="-853"/>
-        <location line="+852"/>
-        <location filename="../src/gui/dialogs/qmessagebox.h" line="-52"/>
-        <location line="+8"/>
-        <source>OK</source>
-        <translation>确定</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Cancel</source>
-        <translation>取消</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>&amp;Yes</source>
-        <translation>是</translation>
-    </message>
-    <message>
-        <location line="+509"/>
-        <source>About Qt</source>
-        <translation>关于Qt</translation>
-    </message>
-    <message>
-        <source>&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;</source>
-        <translation type="obsolete">&lt;p&gt;这个程序使用的是Qt %1版。&lt;/p&gt;</translation>
-    </message>
-    <message>
-        <location line="-1605"/>
-        <source>Show Details...</source>
-        <translation>显示详细信息…</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Hide Details...</source>
-        <translation>隐藏详细信息…</translation>
-    </message>
-    <message>
-        <location line="+1570"/>
-        <source>&lt;h3&gt;About Qt&lt;/h3&gt;&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;&lt;p&gt;Qt is a C++ toolkit for cross-platform application development.&lt;/p&gt;&lt;p&gt;Qt provides single-source portability across MS&amp;nbsp;Windows, Mac&amp;nbsp;OS&amp;nbsp;X, Linux, and all major commercial Unix variants. Qt is also available for embedded devices as Qt for Embedded Linux and Qt for Windows CE.&lt;/p&gt;&lt;p&gt;Qt is available under three different licensing options designed to accommodate the needs of our various users.&lt;/p&gt;Qt licensed under our commercial license agreement is appropriate for development of proprietary/commercial software where you do not want to share any source code with third parties or otherwise cannot comply with the terms of the GNU LGPL version 2.1 or GNU GPL version 3.0.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU LGPL version 2.1 is appropriate for the development of Qt applications (proprietary or open source) provided you can comply with the terms and conditions of the GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU General Public License version 3.0 is appropriate for the development of Qt applications where you wish to use such applications in combination with software subject to the terms of the GNU GPL version 3.0 or where you are otherwise willing to comply with the terms of the GNU GPL version 3.0.&lt;/p&gt;&lt;p&gt;Please see &lt;a href=&quot;http://qt.nokia.com/products/licensing&quot;&gt;qt.nokia.com/products/licensing&lt;/a&gt; for an overview of Qt licensing.&lt;/p&gt;&lt;p&gt;Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies).&lt;/p&gt;&lt;p&gt;Qt is a Nokia product. See &lt;a href=&quot;http://qt.nokia.com/&quot;&gt;qt.nokia.com&lt;/a&gt; for more information.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QPlatformTheme</name>
-    <message>
-        <source>Cancel</source>
-        <translation>取消</translation>
-    </message>
-    <message>
-        <source>&amp;Yes</source>
-        <translation>是</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>确定</translation>
-    </message>
-</context>
-<context>
     <name>AboutWindow</name>
     <message>
-        <location filename="../../windows/aboutwindow.cpp" line="+25"/>
+        <location filename="../../windows/aboutwindow.cpp" line="+140"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
     <message>
-        <location line="+42"/>
+        <location line="-77"/>
+        <location line="+68"/>
         <source>Build %1</source>
         <translation>版本：%1</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="-40"/>
+        <location line="+41"/>
         <source>View on Github...</source>
         <translation>喺Github上查看…</translation>
     </message>
@@ -118,30 +24,70 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="+29"/>
+        <location filename="../../components/advancedtab.cpp" line="+86"/>
         <source>Automatically check for updates on startup:</source>
-        <translation>自动检查更新:</translation>
+        <translation>自动检查更新：</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Application language:</source>
+        <translation>软件语言：</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Use system language</source>
+        <translation>系统默认</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Simplified Chinese</source>
+        <translation>简体中文</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Traditional Chinese</source>
+        <translation>繁体中文</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>French (CA)</source>
+        <translation>法文（加拿大）</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>French</source>
+        <translation>法文</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Cantonese (Simplified)</source>
+        <translation>简体粤语</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Cantonese (Traditional)</source>
+        <translation>繁体粤语</translation>
     </message>
 </context>
 <context>
     <name>ContactTab</name>
     <message>
-        <location filename="../../components/contacttab.cpp" line="+62"/>
+        <location filename="../../components/contacttab.cpp" line="+143"/>
         <source>Email...</source>
         <translation>发送电子邮件…</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+1"/>
         <source>Donate...</source>
         <translation>捐款…</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+1"/>
         <source>View on Github...</source>
         <translation>喺Github上查看…</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+3"/>
         <source>Looking for other Cantonese resources? Try these!</source>
         <translation>你系咪揾紧第啲广东话嘅资源? 试试呢啲!</translation>
     </message>
@@ -149,17 +95,17 @@
 <context>
     <name>DictionaryTab</name>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="+39"/>
+        <location filename="../../components/dictionarytab.cpp" line="+128"/>
         <source>The Dictionaries tab allows you to view information about dictionaries, and add or remove them.</source>
         <translation>你喺“字典”呢一页上可以查看同埋管理储存咗嘅字典。</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+3"/>
         <source>Add Dictionary...</source>
         <translation>添加字典…</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+1"/>
         <source>Delete Dictionary</source>
         <translation>刪除字典</translation>
     </message>
@@ -169,12 +115,12 @@
         <translation>网站</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="-29"/>
         <source>Select dictionary file</source>
         <translation>选择字典文件</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+38"/>
         <source>Version: %1</source>
         <translation>版本： %1</translation>
     </message>
@@ -251,6 +197,37 @@
     </message>
 </context>
 <context>
+    <name>MAC_APPLICATION_MENU</name>
+    <message>
+        <source>Services</source>
+        <translation>服务</translation>
+    </message>
+    <message>
+        <source>Hide %1</source>
+        <translation>隐藏 %1</translation>
+    </message>
+    <message>
+        <source>Hide Others</source>
+        <translation>隐藏其他</translation>
+    </message>
+    <message>
+        <source>Show All</source>
+        <translation>全部显示</translation>
+    </message>
+    <message>
+        <source>Preferences...</source>
+        <translation>偏好设置…</translation>
+    </message>
+    <message>
+        <source>Quit %1</source>
+        <translation>结束 %1</translation>
+    </message>
+    <message>
+        <source>About %1</source>
+        <translation>关于 %1</translation>
+    </message>
+</context>
+<context>
     <name>MainSplitter</name>
     <message>
         <location filename="../../components/mainsplitter.cpp" line="+44"/>
@@ -261,7 +238,7 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="+137"/>
+        <location filename="../../windows/mainwindow.cpp" line="+243"/>
         <source>No update found!</source>
         <translation>冇揾到可用嘅更新!</translation>
     </message>
@@ -276,27 +253,31 @@
         <translation>冇可用的更新!</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="-56"/>
+        <location line="+77"/>
         <source>&amp;File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-76"/>
+        <location line="+77"/>
         <source>&amp;Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-76"/>
+        <location line="+77"/>
         <source>&amp;Window</source>
         <translation>窗口</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-76"/>
+        <location line="+77"/>
         <source>&amp;Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="-75"/>
         <source>&amp;About</source>
         <translation>关于粤语字典</translation>
     </message>
@@ -306,7 +287,7 @@
         <translation>打开“关于粤语字典”嘅窗口</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+3"/>
         <source>Preferences</source>
         <translation>偏好设置…</translation>
     </message>
@@ -317,68 +298,119 @@
     </message>
     <message>
         <location line="+2"/>
+        <location line="+87"/>
         <source>Change settings</source>
         <translation>更改设置</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-85"/>
         <source>Close Window</source>
         <translation>关闭窗口</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+2"/>
         <source>Undo</source>
         <translation>撤销</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+1"/>
         <source>Redo</source>
         <translation>重做</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+1"/>
         <source>Cut</source>
         <translation>剪切</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+1"/>
         <source>Copy</source>
         <translation>拷貝</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+1"/>
         <source>Paste</source>
         <translation>粘贴</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+2"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+1"/>
         <source>Zoom</source>
         <translation>缩放</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+1"/>
         <source>Bring All to Front</source>
         <translation>前置全部窗口</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+2"/>
         <source>%1 Help</source>
         <translation>%1 帮助</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+2"/>
         <source>Check for updates...</source>
         <translation>检查更新…</translation>
     </message>
     <message>
-        <location line="+174"/>
+        <location line="+316"/>
         <source>Checking for update...</source>
         <translation>检查紧更新…</translation>
+    </message>
+</context>
+<context>
+    <name>QMessageBox</name>
+    <message>
+        <source>Help</source>
+        <translation>帮助</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>确定</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>&amp;Yes</source>
+        <translation>是</translation>
+    </message>
+    <message>
+        <source>About Qt</source>
+        <translation>关于Qt</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;</source>
+        <translation type="obsolete">&lt;p&gt;这个程序使用的是Qt %1版。&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>Show Details...</source>
+        <translation>显示详细信息…</translation>
+    </message>
+    <message>
+        <source>Hide Details...</source>
+        <translation>隐藏详细信息…</translation>
+    </message>
+</context>
+<context>
+    <name>QPlatformTheme</name>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>&amp;Yes</source>
+        <translation>是</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>确定</translation>
     </message>
 </context>
 <context>
@@ -423,7 +455,7 @@
 <context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/searchlineedit.cpp" line="+18"/>
+        <location filename="../../components/searchlineedit.cpp" line="+147"/>
         <source>Search</source>
         <translation>揾粤语字典…</translation>
     </message>
@@ -431,52 +463,52 @@
 <context>
     <name>SearchOptionsRadioGroupBox</name>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="+14"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="+81"/>
         <source>SC</source>
         <translation>简体中文</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+6"/>
         <source>Search Simplified Chinese</source>
         <translation>用简体中文揾</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-5"/>
         <source>TC</source>
         <translation>繁体中文</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+6"/>
         <source>Search Traditional Chinese</source>
         <translation>用繁体中文揾</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-5"/>
         <source>JP</source>
         <translation>粤语拼音</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+6"/>
         <source>Search Jyutping</source>
         <translation>用粤语拼音揾</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-5"/>
         <source>PY</source>
         <translation>汉语拼音</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+6"/>
         <source>Search Pinyin</source>
         <translation>用汉语拼音揾</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-5"/>
         <source>EN</source>
         <translation>英文</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+6"/>
         <source>Search English</source>
         <translation>用英文揾</translation>
     </message>
@@ -484,12 +516,12 @@
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settingstab.cpp" line="+93"/>
+        <location filename="../../components/settingstab.cpp" line="+203"/>
         <source>Reset all settings</source>
         <translation>重置所有设置</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="-47"/>
         <source>Simplified/Traditional display options:</source>
         <translation>简体/繁体中文显示设置：</translation>
     </message>
@@ -504,94 +536,94 @@
         <translation>汉语拼音显示设置：</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>Colour words by tone using:</source>
         <translation>使用拼音填色：</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Jyutping tone colours:</source>
         <translation>粤语拼音声调颜色：</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Pinyin tone colours:</source>
         <translation>汉语拼音声调颜色：</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="-29"/>
         <source>Only Simplified</source>
         <translation>仅显示简体中文</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>Only Traditional</source>
         <translation>仅显示繁体中文</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>Both, Prefer Simplified</source>
         <translation>优先显示简体中文</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>Both, Prefer Traditional</source>
         <translation>优先显示繁体中文</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+2"/>
         <source>Only Jyutping</source>
         <translation>仅显示粤语拼音</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>Only Pinyin</source>
         <translation>仅显示汉语拼音</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>Both, Prefer Jyutping</source>
         <translation>优先显示粤语拼音</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>Both, Prefer Pinyin</source>
         <translation>优先显示汉语拼音</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+2"/>
         <source>Pinyin with diacritics</source>
         <translation>用符号嘅拼音</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>Pinyin with numbers</source>
         <translation>用数字的拼音</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+2"/>
         <source>No colours</source>
         <translation>唔填色</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>Jyutping</source>
         <translation>粤语拼音</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>Pinyin</source>
         <translation>汉语拼音</translation>
     </message>
     <message>
-        <location line="+65"/>
-        <location line="+68"/>
+        <location line="+21"/>
+        <location line="+15"/>
         <source>No Tone</source>
         <translation>未知声调</translation>
     </message>
     <message>
-        <location line="-64"/>
-        <location line="+72"/>
+        <location line="-11"/>
+        <location line="+19"/>
         <source>Tone %1</source>
         <translation>第 %1 声</translation>
     </message>
@@ -601,7 +633,7 @@
         <translation>轻声</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+242"/>
         <source>Are you sure you want to reset all settings?</source>
         <translation>你确定要重置全部设置吗？</translation>
     </message>
@@ -614,27 +646,27 @@
 <context>
     <name>SettingsWindow</name>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="+71"/>
+        <location filename="../../windows/settingswindow.cpp" line="+132"/>
         <source>General</source>
         <translation>通用</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+1"/>
         <source>Dictionaries</source>
         <translation>字典</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+1"/>
         <source>Advanced</source>
         <translation>高级设置</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+1"/>
         <source>Contact</source>
         <translation>联系我哋</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+3"/>
         <source>Preferences</source>
         <translation>设置</translation>
     </message>
@@ -647,37 +679,37 @@
 <context>
     <name>UpdateWindow</name>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="+23"/>
+        <location filename="../../windows/updatewindow.cpp" line="+127"/>
         <source>Update Available!</source>
         <translation>更新可用！</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="-16"/>
         <source>A new version of %1 is available!</source>
         <translation>%1嘅新版本已可用！</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+4"/>
         <source>%1 version %2 is available — you have version %3. Click &quot;Download&quot; to get the new version.</source>
         <translation>%1 %2 已可用 — 你所使用嘅版本系 %3。点击“下载”按钮以获取新版本。</translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+7"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+1"/>
         <source>Show Details</source>
         <translation>显示详细信息…</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+1"/>
         <source>Download</source>
         <translation>下载</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+12"/>
         <source>Hide details</source>
         <translation>隐藏详细信息…</translation>
     </message>

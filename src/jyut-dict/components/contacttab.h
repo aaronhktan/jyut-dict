@@ -21,6 +21,7 @@ public:
 
 private:
     void setupUI();
+    void translateUI();
 
     void setStyle(bool use_dark);
 

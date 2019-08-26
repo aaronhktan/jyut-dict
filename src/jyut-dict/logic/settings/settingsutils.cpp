@@ -5,6 +5,11 @@
 namespace Settings
 {
 
+QTranslator systemTranslator;
+QTranslator applicationTranslator;
+
+QLocale currentLocale;
+
 std::unique_ptr<QSettings> getSettings(QObject *parent)
 {
 #ifdef Q_OS_MAC
@@ -48,6 +53,24 @@ bool clearSettings(QSettings &settings)
     settings.setValue("Metadata/version", QVariant{SETTINGS_VERSION});
     settings.sync();
     return true;
+}
+
+QLocale getCurrentLocale()
+{
+    return currentLocale;
+}
+
+bool setCurrentLocale(QLocale &locale)
+{
+    currentLocale = locale;
+    return true;
+}
+
+bool isCurrentLocaleHan()
+{
+    return currentLocale.script() == QLocale::HanScript
+           || currentLocale.script() == QLocale::SimplifiedHanScript
+           || currentLocale.script() == QLocale::TraditionalHanScript;
 }
 
 }

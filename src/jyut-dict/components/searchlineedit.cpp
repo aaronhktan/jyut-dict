@@ -13,9 +13,9 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
                                QWidget *parent)
     : QLineEdit(parent)
 {
-    _mediator = mediator;
+    translateUI();
 
-    setPlaceholderText(tr("Search"));
+    _mediator = mediator;
 
     _searchLineEdit = new QAction{"", this};
     addAction(_searchLineEdit, QLineEdit::LeadingPosition);
@@ -67,6 +67,29 @@ void SearchLineEdit::checkClearVisibility()
     }
 }
 
+void SearchLineEdit::changeEvent(QEvent *event)
+{
+#if defined(Q_OS_DARWIN)
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        if (!system("defaults read -g AppleInterfaceStyle")) {
+            setStyle(/* use_dark = */ true);
+        } else {
+            setStyle(/* use_dark = */ false);
+        }
+    }
+#endif
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
+    QLineEdit::changeEvent(event);
+}
+
 // When in focus and text present, the clear button should be visible
 void SearchLineEdit::focusInEvent(QFocusEvent *event)
 {
@@ -79,28 +102,6 @@ void SearchLineEdit::focusOutEvent(QFocusEvent *event)
 {
     removeAction(_clearLineEdit);
     QLineEdit::focusOutEvent(event);
-}
-
-void SearchLineEdit::changeEvent(QEvent *event)
-{
-#if defined(Q_OS_DARWIN)
-    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
-        // QWidget emits a palette changed event when setting the stylesheet
-        // So prevent it from going into an infinite loop with this timer
-        _paletteRecentlyChanged = true;
-        QTimer::singleShot(100, [=]() {
-             _paletteRecentlyChanged = false;
-        });
-
-        // Set the style to match whether the user started dark mode
-        if (!system("defaults read -g AppleInterfaceStyle")) {
-            setStyle(/* use_dark = */true);
-        } else {
-            setStyle(/* use_dark = */false);
-        }
-    }
-#endif
-    QLineEdit::changeEvent(event);
 }
 
 // Since the textChanged event happens before letters are painted,
@@ -139,6 +140,11 @@ void SearchLineEdit::search()
             break;
         }
     }
+}
+
+void SearchLineEdit::translateUI()
+{
+    setPlaceholderText(tr("Search"));
 }
 
 void SearchLineEdit::setStyle(bool use_dark)

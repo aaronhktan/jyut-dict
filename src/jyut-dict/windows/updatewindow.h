@@ -3,6 +3,7 @@
 
 #include "logic/utils/utils.h"
 
+#include <QEvent>
 #include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
@@ -22,9 +23,19 @@ public:
                           std::string versionNumber=Utils::CURRENT_VERSION,
                           std::string url=Utils::GITHUB_LINK,
                           std::string description="");
-    ~UpdateWindow();
+    ~UpdateWindow() override;
+
+    void changeEvent(QEvent *event) override;
 
 private:
+    void setupUI();
+    void translateUI();
+    void setStyle(bool use_dark);
+
+    std::string _versionNumber;
+    std::string _url;
+    std::string _description;
+
     QLabel *_iconLabel;
     QLabel *_titleLabel;
     QLabel *_messageLabel;
@@ -37,8 +48,6 @@ private:
     QPushButton *_okButton;
 
     QGridLayout *_dialogLayout;
-
-    std::string _url;
 
 signals:
 

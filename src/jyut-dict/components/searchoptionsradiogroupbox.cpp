@@ -8,19 +8,29 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *m
 {
     _mediator = mediator;
 
+    setupUI();
+    translateUI();
+}
+
+void SearchOptionsRadioGroupBox::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
+    QGroupBox::changeEvent(event);
+}
+
+void SearchOptionsRadioGroupBox::setupUI()
+{
+
     _layout = new QHBoxLayout{this};
     _layout->setContentsMargins(5, 5, 5, 5);
 
-    _simplifiedButton = new QRadioButton{tr("SC"), this};
-    _simplifiedButton->setToolTip(tr("Search Simplified Chinese"));
-    _traditionalButton = new QRadioButton{tr("TC"), this};
-    _traditionalButton->setToolTip(tr("Search Traditional Chinese"));
-    _jyutpingButton = new QRadioButton{tr("JP"), this};
-    _jyutpingButton->setToolTip(tr("Search Jyutping"));
-    _pinyinButton = new QRadioButton{tr("PY"), this};
-    _pinyinButton->setToolTip(tr("Search Pinyin"));
-    _englishButton = new QRadioButton{tr("EN"), this};
-    _englishButton->setToolTip(tr("Search English"));
+    _simplifiedButton = new QRadioButton{this};
+    _traditionalButton = new QRadioButton{this};
+    _jyutpingButton = new QRadioButton{this};
+    _pinyinButton = new QRadioButton{this};
+    _englishButton = new QRadioButton{this};
 #ifdef Q_OS_LINUX
     _simplifiedButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
     _traditionalButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
@@ -66,6 +76,21 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *m
 #endif
 }
 
+void SearchOptionsRadioGroupBox::translateUI()
+{
+    _simplifiedButton->setText(tr("SC"));
+    _traditionalButton->setText(tr("TC"));
+    _jyutpingButton->setText(tr("JP"));
+    _pinyinButton->setText(tr("PY"));
+    _englishButton->setText(tr("EN"));
+
+    _simplifiedButton->setToolTip(tr("Search Simplified Chinese"));
+    _traditionalButton->setToolTip(tr("Search Traditional Chinese"));
+    _jyutpingButton->setToolTip(tr("Search Jyutping"));
+    _pinyinButton->setToolTip(tr("Search Pinyin"));
+    _englishButton->setToolTip(tr("Search English"));
+}
+
 void SearchOptionsRadioGroupBox::notifyMediator()
 {
     if (_simplifiedButton->isChecked()) {
@@ -82,5 +107,3 @@ void SearchOptionsRadioGroupBox::notifyMediator()
         _mediator->setParameters(SearchParameters::ENGLISH);
     }
 }
-
-

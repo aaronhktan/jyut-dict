@@ -5,6 +5,7 @@
 #include "logic/entry/entry.h"
 
 #include <QAbstractListModel>
+#include <QEvent>
 #include <QListView>
 #include <QStyledItemDelegate>
 #ifdef Q_OS_WIN
@@ -24,6 +25,8 @@ class ResultListView : public QListView
 
 public:
     explicit ResultListView(QWidget *parent = nullptr);
+
+    void changeEvent(QEvent *event) override;
 
 #ifdef Q_OS_WIN
     void wheelEvent(QWheelEvent *event) override;
