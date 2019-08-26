@@ -111,6 +111,7 @@ HEADERS += \
     logic/search/sqlsearch.h \
     logic/settings/settings.h \
     logic/settings/settingsutils.h \
+    logic/strings/strings.h \
     logic/update/githubreleasechecker.h \
     logic/update/iupdatechecker.h \
     logic/utils/qvariantutils.h \
@@ -123,6 +124,17 @@ HEADERS += \
 
 RESOURCES += \
     resources/resource.qrc
+
+TRANSLATIONS += \
+    resources/translations/jyutdictionary-en.ts \
+    resources/translations/jyutdictionary-fr.ts \
+    resources/translations/jyutdictionary-fr_CA.ts \
+    resources/translations/jyutdictionary-yue_Hans.ts \
+    resources/translations/jyutdictionary-yue_Hant.ts \
+    resources/translations/jyutdictionary-zh_Hans.ts \
+    resources/translations/jyutdictionary-zh_Hant.ts \
+    resources/translations/jyutdictionary-zh_Hans_HK.ts \
+    resources/translations/jyutdictionary-zh_Hant_HK.ts
 
 macx: {
     LIBS += -framework AppKit
@@ -141,6 +153,31 @@ macx: {
     APP_SETTINGS_FILES.files = resources/settings/settings.ini
     APP_SETTINGS_FILES.path = Contents/Resources
     QMAKE_BUNDLE_DATA += APP_SETTINGS_FILES
+
+    # Add translations of application name
+    TRANSLATE_en.files = platform/mac/en.lproj/InfoPlist.strings
+    TRANSLATE_en.path = Contents/Resources/en.lproj
+    QMAKE_BUNDLE_DATA += TRANSLATE_en
+
+    TRANSLATE_fr.files = platform/mac/fr.lproj/InfoPlist.strings
+    TRANSLATE_fr.path = Contents/Resources/fr.lproj
+    QMAKE_BUNDLE_DATA += TRANSLATE_fr
+
+    TRANSLATE_yue_Hans.files = platform/mac/yue_Hans.lproj/InfoPlist.strings
+    TRANSLATE_yue_Hans.path = Contents/Resources/yue-Hans.lproj
+    QMAKE_BUNDLE_DATA += TRANSLATE_yue_Hans
+
+    TRANSLATE_yue_Hant.files = platform/mac/yue_Hant.lproj/InfoPlist.strings
+    TRANSLATE_yue_Hant.path = Contents/Resources/yue-Hant.lproj
+    QMAKE_BUNDLE_DATA += TRANSLATE_yue_Hant
+
+    TRANSLATE_zh_Hans.files = platform/mac/zh_Hans.lproj/InfoPlist.strings
+    TRANSLATE_zh_Hans.path = Contents/Resources/zh-Hans.lproj
+    QMAKE_BUNDLE_DATA += TRANSLATE_zh_Hans
+
+    TRANSLATE_zh_Hant.files = platform/mac/zh_Hant.lproj/InfoPlist.strings
+    TRANSLATE_zh_Hant.path = Contents/Resources/zh-Hant.lproj
+    QMAKE_BUNDLE_DATA += TRANSLATE_zh_Hant
 }
 
 win32: {

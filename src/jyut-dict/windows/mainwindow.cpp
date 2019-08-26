@@ -5,12 +5,14 @@
 #include "logic/entry/sentence.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/strings/strings.h"
 #include "windows/aboutwindow.h"
 #include "windows/settingswindow.h"
 #include "windows/updatewindow.h"
 
 #include <QApplication>
 #include <QClipboard>
+#include <QCoreApplication>
 #include <QColor>
 #include <QDesktopServices>
 #include <QGuiApplication>
@@ -25,7 +27,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-    setWindowTitle(tr(Utils::PRODUCT_NAME));
+    // Set window stuff
 #ifdef Q_OS_LINUX
     setMinimumSize(QSize(500, 350));
     resize(600, 450);
@@ -76,6 +78,9 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     delete _utils;
 
+    // Install translator
+    installTranslator();
+
     // Create UI elements
     _mainToolBar = new MainToolBar{_manager, this};
     addToolBar(_mainToolBar);
@@ -88,9 +93,24 @@ MainWindow::MainWindow(QWidget *parent) :
     createMenus();
     createActions();
 
+    // Translate UI
+    translateUI();
+
+    // Set style
+#ifdef Q_OS_MAC
+    // Set the style to match whether the user started dark mode
+    if (!system("defaults read -g AppleInterfaceStyle")) {
+        setStyle(/* use_dark = */ true);
+    } else {
+        setStyle(/* use_dark = */ false);
+    }
+#else
+    setStyle(false);
+#endif
+
     // Check for updates
     _checker = new GithubReleaseChecker{this};
-    if (settings->value("Advanced/UpdateNotificationsEnabled", QVariant{true}).toBool()) {
+    if (settings->value("Advanced/updateNotificationsEnabled", QVariant{true}).toBool()) {
         QTimer::singleShot(1000, this, [&]() {
             checkForUpdate(/* showProgress = */ false);
         });
@@ -100,6 +120,135 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
 
+}
+
+void MainWindow::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
+    QMainWindow::changeEvent(event);
+}
+
+void MainWindow::installTranslator()
+{
+    if (Settings::getSettings()->value("Advanced/locale") == QVariant{}) {
+        Settings::systemTranslator.load("qt_" + QLocale::system().name(),
+                                        QLibraryInfo::location(
+                                            QLibraryInfo::TranslationsPath));
+        qApp->installTranslator(&Settings::systemTranslator);
+
+        // The reason why we need to loop through UI languages is because
+        // if we just use QLocale::system() and the language is zh_Hant_HK,
+        // zh_Hant will always be prioritized over zh_HK.
+
+        // By creating a locale with the language being zh_Hant_HK, the correct
+        // translation file is loaded.
+
+        // Another example of QLocale::system() failing is having simplified
+        // Cantonese as the UI language. QTranslator::load() will try to load
+        // zh_Hant_HK instead of yue_Hans.
+        for (auto language : QLocale::system().uiLanguages()) {
+            QLocale locale{language};
+            if (Settings::applicationTranslator
+                    .load(/* QLocale */ locale,
+                          /* filename */ "jyutdictionary",
+                          /* prefix */ "-",
+                          /* directory */ ":/translations")) {
+                qApp->installTranslator(&Settings::applicationTranslator);
+                break;
+            }
+        }
+    } else {
+        QString localeString
+            = Settings::getSettings()->value("Advanced/locale").toString();
+        QLocale locale{localeString};
+
+        Settings::systemTranslator.load("qt_" + locale.name(),
+                                        QLibraryInfo::location(
+                                            QLibraryInfo::TranslationsPath));
+        qApp->installTranslator(&Settings::systemTranslator);
+
+        Settings::applicationTranslator.load(/* QLocale */ locale,
+                                             /* filename */ "jyutdictionary",
+                                             /* prefix */ "-",
+                                             /* directory */ ":/translations");
+        qApp->installTranslator(&Settings::applicationTranslator);
+
+        Settings::setCurrentLocale(locale);
+    }
+}
+
+void MainWindow::translateUI()
+{
+    // Set property so styling automatically changes
+    setProperty("isHan", Settings::isCurrentLocaleHan());
+
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+    for (auto button : buttons) {
+        button->setProperty("isHan", Settings::isCurrentLocaleHan());
+        button->style()->unpolish(button);
+        button->style()->polish(button);
+    }
+
+#ifdef Q_OS_WIN
+    if (Settings::isCurrentLocaleTraditionalHan()) {
+        QFont font("Microsoft Jhenghei", 10);
+        font.setStyleHint(QFont::System, QFont::PreferAntialias);
+        qApp->setFont(font);
+    } else if (Settings::isCurrentLocaleSimplifiedHan()) {
+        QFont font("Microsoft YaHei", 10);
+        font.setStyleHint(QFont::System, QFont::PreferAntialias);
+        qApp->setFont(font);
+    } else {
+        QFont font("Segoe UI", 10);
+        font.setStyleHint(QFont::System, QFont::PreferAntialias);
+        qApp->setFont(font);
+   }
+#endif
+
+    setWindowTitle(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                               Strings::PRODUCT_NAME));
+
+    _fileMenu->setTitle(tr("&File"));
+    _editMenu->setTitle(tr("&Edit"));
+    _windowMenu->setTitle(tr("&Window"));
+    _helpMenu->setTitle(tr("&Help"));
+
+    _aboutAction->setText(tr("&About"));
+    _aboutAction->setStatusTip(tr("Show the application's About box"));
+
+#ifdef Q_OS_MAC
+    _settingsWindowAction->setText(tr("Preferences"));
+#else
+    _settingsWindowAction->setText(tr("Settings"));
+#endif
+    _settingsWindowAction->setStatusTip(tr("Change settings"));
+
+    _closeWindowAction->setText(tr("Close Window"));
+
+    _undoAction->setText(tr("Undo"));
+    _redoAction->setText(tr("Redo"));
+    _cutAction->setText(tr("Cut"));
+    _copyAction->setText(tr("Copy"));
+    _pasteAction->setText(tr("Paste"));
+
+    _minimizeAction->setText(tr("Minimize"));
+    _maximizeAction->setText(tr("Zoom"));
+    _bringAllToFrontAction->setText(tr("Bring All to Front"));
+
+    _helpAction->setText(tr("%1 Help").arg(
+        QCoreApplication::translate("strings", Strings::PRODUCT_NAME)));
+    _updateAction->setText(tr("Check for updates..."));
+}
+
+void MainWindow::setStyle(bool use_dark)
+{
+#ifdef Q_OS_MAC
+    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
+#elif defined(Q_OS_WIN)
+    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
+#endif
 }
 
 void MainWindow::notifyUpdateAvailable(bool updateAvailable,
@@ -123,7 +272,8 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
         _message->setStandardButtons(QMessageBox::Ok);
         _message->setIcon(QMessageBox::Information);
 #ifdef Q_OS_WIN
-        _message->setWindowTitle(tr(Utils::PRODUCT_NAME));
+        _message->setWindowTitle(
+            QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
 #elif defined(Q_OS_LINUX)
         _message->setWindowTitle(tr("No update available!"));
 #endif
@@ -160,77 +310,91 @@ void MainWindow::createMenus()
 
 void MainWindow::createActions()
 {
-    QAction *aboutAction = new QAction{tr("&About"), this};
-    aboutAction->setStatusTip(tr("Show the application's About box"));
-    connect(aboutAction, &QAction::triggered, this, &MainWindow::openAboutWindow);
-    _fileMenu->addAction(aboutAction);
+    _aboutAction = new QAction{this};
+    _aboutAction->setMenuRole(QAction::AboutRole);
+    connect(_aboutAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::openAboutWindow);
+    _fileMenu->addAction(_aboutAction);
 
-#ifdef Q_OS_MAC
-    QAction *settingsWindowAction = new QAction{tr("Preferences"), this};
-#else
-    QAction *settingsWindowAction = new QAction{tr("Settings"), this};
-#endif
-    settingsWindowAction->setStatusTip(tr("Change settings"));
-    settingsWindowAction->setShortcut(QKeySequence{"Ctrl+,"});
-    connect(settingsWindowAction, &QAction::triggered, this, &MainWindow::openSettingsWindow);
-    _fileMenu->addAction(settingsWindowAction);
+    _settingsWindowAction = new QAction{this};
+    _settingsWindowAction->setStatusTip(tr("Change settings"));
+    _settingsWindowAction->setShortcut(QKeySequence{"Ctrl+,"});
+    _settingsWindowAction->setMenuRole(QAction::PreferencesRole);
+    connect(_settingsWindowAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::openSettingsWindow);
+    _fileMenu->addAction(_settingsWindowAction);
 
-    QAction *closeWindowAction = new QAction{tr("Close Window"), this};
-    closeWindowAction->setShortcut(QKeySequence{"Ctrl+W"});
-    connect(closeWindowAction, &QAction::triggered, this, &QWidget::close);
-    _fileMenu->addAction(closeWindowAction);
+    _closeWindowAction = new QAction{this};
+    _closeWindowAction->setShortcut(QKeySequence{"Ctrl+W"});
+    connect(_closeWindowAction, &QAction::triggered, this, &QWidget::close);
+    _fileMenu->addAction(_closeWindowAction);
 
-    QAction *undoAction = new QAction{tr("Undo"), this};
-    undoAction->setShortcut(QKeySequence{"Ctrl+Z"});
-    connect(undoAction, &QAction::triggered, this, &MainWindow::undo);
-    _editMenu->addAction(undoAction);
+    _undoAction = new QAction{this};
+    _undoAction->setShortcut(QKeySequence{"Ctrl+Z"});
+    connect(_undoAction, &QAction::triggered, this, &MainWindow::undo);
+    _editMenu->addAction(_undoAction);
 
-    QAction *redoAction = new QAction{tr("Redo"), this};
-    redoAction->setShortcut(QKeySequence{"Ctrl+Shift+Z"});
-    connect(redoAction, &QAction::triggered, this, &MainWindow::redo);
-    _editMenu->addAction(redoAction);
+    _redoAction = new QAction{this};
+    _redoAction->setShortcut(QKeySequence{"Ctrl+Shift+Z"});
+    connect(_redoAction, &QAction::triggered, this, &MainWindow::redo);
+    _editMenu->addAction(_redoAction);
 
     _editMenu->addSeparator();
 
-    QAction *cutAction = new QAction{tr("Cut"), this};
-    cutAction->setShortcut(QKeySequence{"Ctrl+X"});
-    connect(cutAction, &QAction::triggered, this, &MainWindow::cut);
-    _editMenu->addAction(cutAction);
+    _cutAction = new QAction{this};
+    _cutAction->setShortcut(QKeySequence{"Ctrl+X"});
+    connect(_cutAction, &QAction::triggered, this, &MainWindow::cut);
+    _editMenu->addAction(_cutAction);
 
-    QAction *copyAction = new QAction{tr("Copy"), this};
-    copyAction->setShortcut(QKeySequence{"Ctrl+C"});
-    connect(copyAction, &QAction::triggered, this, &MainWindow::copy);
-    _editMenu->addAction(copyAction);
+    _copyAction = new QAction{this};
+    _copyAction->setShortcut(QKeySequence{"Ctrl+C"});
+    connect(_copyAction, &QAction::triggered, this, &MainWindow::copy);
+    _editMenu->addAction(_copyAction);
 
-    QAction *pasteAction = new QAction{tr("Paste"), this};
-    pasteAction->setShortcut(QKeySequence{"Ctrl+V"});
-    connect(pasteAction, &QAction::triggered, this, &MainWindow::paste);
-    _editMenu->addAction(pasteAction);
+    _pasteAction = new QAction{this};
+    _pasteAction->setShortcut(QKeySequence{"Ctrl+V"});
+    connect(_pasteAction, &QAction::triggered, this, &MainWindow::paste);
+    _editMenu->addAction(_pasteAction);
 
-    QAction *minimizeAction = new QAction{tr("Minimize"), this};
-    minimizeAction->setShortcut(QKeySequence{"Ctrl+M"});
-    connect(minimizeAction, &QAction::triggered, this, &MainWindow::toggleMinimized);
-    _windowMenu->addAction(minimizeAction);
+    _minimizeAction = new QAction{this};
+    _minimizeAction->setShortcut(QKeySequence{"Ctrl+M"});
+    connect(_minimizeAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::toggleMinimized);
+    _windowMenu->addAction(_minimizeAction);
 
-    QAction *maximizeAction = new QAction{tr("Zoom"), this};
-    connect(maximizeAction, &QAction::triggered, this, &MainWindow::toggleMaximized);
-    _windowMenu->addAction(maximizeAction);
+    _maximizeAction = new QAction{this};
+    connect(_maximizeAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::toggleMaximized);
+    _windowMenu->addAction(_maximizeAction);
 
     _windowMenu->addSeparator();
 
-    QAction *bringAllToFrontAction = new QAction{tr("Bring All to Front"), this};
-    connect(bringAllToFrontAction, &QAction::triggered, this, &QWidget::showNormal);
-    _windowMenu->addAction(bringAllToFrontAction);
+    _bringAllToFrontAction = new QAction{this};
+    connect(_bringAllToFrontAction,
+            &QAction::triggered,
+            this,
+            &QWidget::showNormal);
+    _windowMenu->addAction(_bringAllToFrontAction);
 
-    QAction *helpAction = new QAction{tr("%1 Help").arg(tr(Utils::PRODUCT_NAME)), this};
-    connect(helpAction, &QAction::triggered, this, [](){QDesktopServices::openUrl(QUrl{Utils::GITHUB_LINK});});
-    _helpMenu->addAction(helpAction);
+    _helpAction = new QAction{this};
+    connect(_helpAction, &QAction::triggered, this, []() {
+        QDesktopServices::openUrl(QUrl{Utils::GITHUB_LINK});
+    });
+    _helpMenu->addAction(_helpAction);
 
-    QAction *updateAction = new QAction{tr("Check for updates..."), this};
-    connect(updateAction, &QAction::triggered, [&]() {
+    _updateAction = new QAction{this};
+    connect(_updateAction, &QAction::triggered, [&]() {
         checkForUpdate(/* showProgress = */ true);
     });
-    _helpMenu->addAction(updateAction);
+    _helpMenu->addAction(_updateAction);
 }
 
 void MainWindow::undo()
@@ -393,7 +557,8 @@ void MainWindow::checkForUpdate(bool showProgress)
         _dialog->setWindowFlags(flags);
         _dialog->setMinimumDuration(0);
 #ifdef Q_OS_WIN
-        _dialog->setWindowTitle(tr(Utils::PRODUCT_NAME));
+        _dialog->setWindowTitle(
+            QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
 #elif defined(Q_OS_LINUX)
         _dialog->setWindowTitle(" ");
 #endif

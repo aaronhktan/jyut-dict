@@ -1,9 +1,14 @@
 #include "contacttab.h"
 
 #include "logic/utils/utils.h"
+#include "logic/settings/settingsutils.h"
+#include "logic/strings/strings.h"
 
+#include <QCoreApplication>
 #include <QDesktopServices>
+#include <QLocale>
 #include <QPixmap>
+#include <QStyle>
 #include <QTimer>
 #include <QUrl>
 
@@ -11,6 +16,30 @@ ContactTab::ContactTab(QWidget *parent)
     : QWidget(parent)
 {
     setupUI();
+    translateUI();
+}
+
+void ContactTab::changeEvent(QEvent *event)
+{
+#if defined(Q_OS_DARWIN)
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        if (!system("defaults read -g AppleInterfaceStyle")) {
+            setStyle(/* use_dark = */ true);
+        } else {
+            setStyle(/* use_dark = */ false);
+        }
+    }
+#endif
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
+    QWidget::changeEvent(event);
 }
 
 void ContactTab::setupUI()
@@ -42,36 +71,27 @@ void ContactTab::setupUI()
 
     _titleLabel = new QLabel{_box};
     _titleLabel->setStyleSheet("QLabel { font-size: 18px; }");
-    _titleLabel->setText(tr(Utils::CONTACT_TITLE));
 
     _messageLabel = new QLabel{_box};
-#ifdef Q_OS_WIN
-    _messageLabel->setText(tr(Utils::CONTACT_BODY_NO_EMOJI));
-#else
-    _messageLabel->setText(tr(Utils::CONTACT_BODY));
-#endif
 
-    _emailButton = new QPushButton{tr("Email..."), _box};
+    _emailButton = new QPushButton{_box};
     connect(_emailButton, &QPushButton::clicked, this, [&]() {
         QDesktopServices::openUrl(QUrl{Utils::AUTHOR_EMAIL});
     });
 
-    _donateButton = new QPushButton{tr("Donate..."), _box};
+    _donateButton = new QPushButton{_box};
     connect(_donateButton, &QPushButton::clicked, this, [&]() {
         QDesktopServices::openUrl(QUrl{Utils::DONATE_LINK});
     });
 
-    _githubButton = new QPushButton{tr("View on Github..."), _box};
+    _githubButton = new QPushButton{_box};
     connect(_githubButton, &QPushButton::clicked, this, [&]() {
         QDesktopServices::openUrl(QUrl{Utils::AUTHOR_GITHUB_LINK});
     });
 
-    _otherSourcesLabel = new QLabel{
-        tr("Looking for other Cantonese resources? Try these!"), this};
+    _otherSourcesLabel = new QLabel{this};
     _otherSources = new QLabel{this};
     _otherSources->setOpenExternalLinks(true);
-    _otherSources->setText(
-        "    " + tr(Utils::OTHER_SOURCES).arg(palette().text().color().name()));
 
     _boxLayout->addWidget(_iconLabel, 2, 0, 2, 1);
 #ifdef Q_OS_WIN
@@ -93,32 +113,62 @@ void ContactTab::setupUI()
     _tabLayout->addWidget(_box, 1, 0, 1, -1);
     _tabLayout->addWidget(_otherSourcesLabel, 7, 0, 1, -1, Qt::AlignHCenter);
     _tabLayout->addWidget(_otherSources, 8, 0, 1, -1, Qt::AlignHCenter);
+
+#ifdef Q_OS_MAC
+    // Set the style to match whether the user started dark mode
+    if (!system("defaults read -g AppleInterfaceStyle")) {
+        setStyle(/* use_dark = */ true);
+    } else {
+        setStyle(/* use_dark = */ false);
+    }
+#else
+    setStyle(false);
+#endif
 }
 
-void ContactTab::changeEvent(QEvent *event)
+void ContactTab::translateUI()
 {
-#if defined(Q_OS_DARWIN)
-    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
-        // QWidget emits a palette changed event when setting the stylesheet
-        // So prevent it from going into an infinite loop with this timer
-        _paletteRecentlyChanged = true;
-        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
+    // Set property so styling automatically changes
+    setProperty("isHan", Settings::isCurrentLocaleHan());
 
-        // Set the style to match whether the user started dark mode
-        if (!system("defaults read -g AppleInterfaceStyle")) {
-            setStyle(/* use_dark = */ true);
-        } else {
-            setStyle(/* use_dark = */ false);
-        }
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+    for (auto button : buttons) {
+        button->setProperty("isHan", Settings::isCurrentLocaleHan());
+        button->style()->unpolish(button);
+        button->style()->polish(button);
     }
+
+    _titleLabel->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::CONTACT_TITLE)
+            .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                             Strings::PRODUCT_NAME)));
+#ifdef Q_OS_WIN
+    _messageLabel->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CONTACT_BODY_NO_EMOJI));
+#else
+    _messageLabel->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CONTACT_BODY));
 #endif
-    QWidget::changeEvent(event);
+    _emailButton->setText(tr("Email..."));
+    _donateButton->setText(tr("Donate..."));
+    _githubButton->setText(tr("View on Github..."));
+
+    _otherSourcesLabel->setText(
+        tr("Looking for other Cantonese resources? Try these!"));
+    _otherSources->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::OTHER_SOURCES).arg(palette().text().color().name()));
 }
 
 void ContactTab::setStyle(bool use_dark)
 {
+#ifdef Q_OS_MAC
+    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: "
+                  "13px; height: 16px; }");
+#elif defined(Q_OS_WIN)
+    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
+#endif
     _otherSources->setText(
-        tr("Try these:")
-        + tr(Utils::OTHER_SOURCES).arg(palette().text().color().name()));
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::OTHER_SOURCES).arg(palette().text().color().name()));
 }
 

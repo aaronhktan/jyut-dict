@@ -12,6 +12,8 @@
 
 class ContactTab : public QWidget
 {
+    Q_OBJECT
+
 public:
     explicit ContactTab(QWidget *parent = nullptr);
 
@@ -19,6 +21,7 @@ public:
 
 private:
     void setupUI();
+    void translateUI();
 
     void setStyle(bool use_dark);
 

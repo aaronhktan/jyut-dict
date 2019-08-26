@@ -6,10 +6,13 @@
 #include "logic/update/githubreleasechecker.h"
 #include "logic/database/sqldatabasemanager.h"
 
+#include <QAction>
+#include <QEvent>
 #include <QMainWindow>
 #include <QMenu>
 #include <QMenuBar>
 #include <QProgressDialog>
+#include <QTranslator>
 #include <QWidget>
 
 #include <memory>
@@ -25,6 +28,8 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
 
+    void changeEvent(QEvent *event) override;
+
 private:
     GithubReleaseChecker *_checker;
 
@@ -36,6 +41,23 @@ private:
     QMenu *_windowMenu;
     QMenu *_helpMenu;
 
+    QAction *_aboutAction;
+    QAction *_settingsWindowAction;
+    QAction *_closeWindowAction;
+
+    QAction *_undoAction;
+    QAction *_redoAction;
+    QAction *_cutAction;
+    QAction *_copyAction;
+    QAction *_pasteAction;
+
+    QAction *_minimizeAction;
+    QAction *_maximizeAction;
+    QAction *_bringAllToFrontAction;
+
+    QAction *_helpAction;
+    QAction *_updateAction;
+
     QPointer<QWidget> _aboutWindow;
     QPointer<QWidget> _settingsWindow;
 
@@ -44,6 +66,11 @@ private:
     std::shared_ptr<SQLDatabaseManager> _manager;
 
     bool _recentlyCheckedForUpdates = false;
+
+    void installTranslator();
+    void translateUI();
+
+    void setStyle(bool use_dark);
 
     void createMenus();
     void createActions();

@@ -7,10 +7,13 @@
 #include "logic/settings/settingsutils.h"
 #include "logic/utils/utils.h"
 
+#include <QApplication>
 #include <QColorDialog>
 #include <QFrame>
 #include <QGridLayout>
 #include <QMessageBox>
+#include <QSpacerItem>
+#include <QStyle>
 #include <QTimer>
 #include <QVariant>
 
@@ -19,6 +22,7 @@ SettingsTab::SettingsTab(QWidget *parent)
 {
     _settings = Settings::getSettings(this);
     setupUI();
+    translateUI();
 }
 
 void SettingsTab::changeEvent(QEvent *event)
@@ -38,18 +42,10 @@ void SettingsTab::changeEvent(QEvent *event)
         }
     }
 #endif
-    QWidget::changeEvent(event);
-}
-
-void SettingsTab::setStyle(bool use_dark)
-{
-    QString colour = use_dark ? "#424242" : "#d5d5d5";
-    QString style = "QFrame { border: 1px solid %1; }";
-    QList<QFrame *> frames
-        = this->findChildren<QFrame *>("divider");
-    for (auto frame : frames) {
-        frame->setStyleSheet(style.arg(colour));
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
     }
+    QWidget::changeEvent(event);
 }
 
 void SettingsTab::setupUI()
@@ -65,10 +61,16 @@ void SettingsTab::setupUI()
 #endif
 
     _characterCombobox = new QComboBox{this};
+    _characterCombobox->setSizeAdjustPolicy(
+        QComboBox::AdjustToContents);
     initializeCharacterComboBox(*_characterCombobox);
     _phoneticCombobox = new QComboBox{this};
+    _phoneticCombobox->setSizeAdjustPolicy(
+        QComboBox::AdjustToContents);
     initializePhoneticComboBox(*_phoneticCombobox);
     _mandarinCombobox = new QComboBox{this};
+    _mandarinCombobox->setSizeAdjustPolicy(
+        QComboBox::AdjustToContents);
     initializeMandarinComboBox(*_mandarinCombobox);
 
     QFrame *_divider = new QFrame{this};
@@ -78,6 +80,8 @@ void SettingsTab::setupUI()
     _divider->setFixedHeight(1);
 
     _colourCombobox = new QComboBox{this};
+    _colourCombobox->setSizeAdjustPolicy(
+        QComboBox::AdjustToContents);
     initializeColourComboBox(*_colourCombobox);
     _jyutpingColourWidget = new QWidget{this};
     initializeJyutpingColourWidget(*_jyutpingColourWidget);
@@ -90,20 +94,19 @@ void SettingsTab::setupUI()
     _resetDivider->setFrameShadow(QFrame::Raised);
     _resetDivider->setFixedHeight(1);
 
-    _resetButton = new QPushButton{"Reset all settings", this};
+    _resetButton = new QPushButton{this};
+    _resetButton->setObjectName("reset button");
     initializeResetButton(*_resetButton);
 
-    _tabLayout->addRow(tr("Simplified/Traditional display options:"),
-                       _characterCombobox);
-    _tabLayout->addRow(tr("Jyutping/Pinyin display options:"),
-                       _phoneticCombobox);
-    _tabLayout->addRow(tr("Pinyin display options:"), _mandarinCombobox);
+    _tabLayout->addRow(" ", _characterCombobox);
+    _tabLayout->addRow(" ", _phoneticCombobox);
+    _tabLayout->addRow(" ", _mandarinCombobox);
 
     _tabLayout->addRow(_divider);
 
-    _tabLayout->addRow(tr("Colour words by tone using:"), _colourCombobox);
-    _tabLayout->addRow(tr("Jyutping tone colours:"), _jyutpingColourWidget);
-    _tabLayout->addRow(tr("Pinyin tone colours:"), _pinyinColourWidget);
+    _tabLayout->addRow(" ", _colourCombobox);
+    _tabLayout->addRow(" ", _jyutpingColourWidget);
+    _tabLayout->addRow(" ", _pinyinColourWidget);
 
     _tabLayout->addRow(_resetDivider);
 
@@ -117,21 +120,120 @@ void SettingsTab::setupUI()
     } else {
         setStyle(/* use_dark = */ false);
     }
+#else
+    setStyle(false);
 #endif
+}
+
+void SettingsTab::translateUI()
+{
+    // Set property so styling automatically changes
+    setProperty("isHan", Settings::isCurrentLocaleHan());
+
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+    for (auto button : buttons) {
+        button->setProperty("isHan", Settings::isCurrentLocaleHan());
+        button->style()->unpolish(button);
+        button->style()->polish(button);
+    }
+
+    _characterCombobox->setItemText(0, tr("Only Simplified"));
+    _characterCombobox->setItemText(1, tr("Only Traditional"));
+    _characterCombobox->setItemText(2, tr("Both, Prefer Simplified"));
+    _characterCombobox->setItemText(3, tr("Both, Prefer Traditional"));
+
+    _phoneticCombobox->setItemText(0, tr("Only Jyutping"));
+    _phoneticCombobox->setItemText(1, tr("Only Pinyin"));
+    _phoneticCombobox->setItemText(2, tr("Both, Prefer Jyutping"));
+    _phoneticCombobox->setItemText(3, tr("Both, Prefer Pinyin"));
+
+    _mandarinCombobox->setItemText(0, tr("Pinyin with diacritics"));
+    _mandarinCombobox->setItemText(1, tr("Pinyin with numbers"));
+
+    _colourCombobox->setItemText(0, tr("No colours"));
+    _colourCombobox->setItemText(1, tr("Jyutping"));
+    _colourCombobox->setItemText(2, tr("Pinyin"));
+
+    static_cast<QLabel *>(_tabLayout->labelForField(_characterCombobox))
+        ->setText(tr("Simplified/Traditional display options:"));
+    static_cast<QLabel *>(_tabLayout->labelForField(_phoneticCombobox))
+        ->setText(tr("Jyutping/Pinyin display options:"));
+    static_cast<QLabel *>(_tabLayout->labelForField(_mandarinCombobox))
+        ->setText(tr("Pinyin display options:"));
+
+    static_cast<QLabel *>(_tabLayout->labelForField(_colourCombobox))
+        ->setText(tr("Colour words by tone using:"));
+    static_cast<QLabel *>(_tabLayout->labelForField(_jyutpingColourWidget))
+        ->setText(tr("Jyutping tone colours:"));
+    static_cast<QLabel *>(_tabLayout->labelForField(_pinyinColourWidget))
+        ->setText(tr("Pinyin tone colours:"));
+
+    QList<QLabel *> jyutpingLabels = _jyutpingColourWidget
+                                         ->findChildren<QLabel *>();
+    for (QList<QLabel *>::size_type i = 0; i < jyutpingLabels.size(); i++) {
+        switch (i) {
+        case 0: {
+            jyutpingLabels[i]->setText(tr("No Tone"));
+            break;
+        }
+        default: {
+            jyutpingLabels[i]->setText(tr("Tone %1").arg(i));
+            break;
+        }
+        }
+    }
+
+    QList<QLabel *> pinyinLabels = _pinyinColourWidget->findChildren<QLabel *>();
+    for (QList<QLabel *>::size_type i = 0; i < pinyinLabels.size(); i++) {
+        switch (i) {
+        case 0: {
+            pinyinLabels[i]->setText(tr("No Tone"));
+            break;
+        }
+        case 5: {
+            pinyinLabels[i]->setText(tr("Neutral"));
+            break;
+        }
+        default: {
+            pinyinLabels[i]->setText(tr("Tone %1").arg(i));
+            break;
+        }
+        }
+    }
+
+    _resetButton->setText(tr("Reset all settings"));
+}
+
+void SettingsTab::setStyle(bool use_dark)
+{
+#ifdef Q_OS_MAC
+    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: "
+                  "13px; height: 16px; }");
+#elif defined(Q_OS_WIN)
+    setStyleSheet(
+        "QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
+#endif
+
+    QString colour = use_dark ? "#424242" : "#d5d5d5";
+    QString style = "QFrame { border: 1px solid %1; }";
+    QList<QFrame *> frames = this->findChildren<QFrame *>("divider");
+    for (auto frame : frames) {
+        frame->setStyleSheet(style.arg(colour));
+    }
 }
 
 void SettingsTab::initializeCharacterComboBox(QComboBox &characterCombobox)
 {
-    characterCombobox.addItem(tr("Only Simplified"),
+    characterCombobox.addItem("0",
                               QVariant::fromValue<EntryPhoneticOptions>(
                                   EntryPhoneticOptions::ONLY_JYUTPING));
-    characterCombobox.addItem(tr("Only Traditional"),
+    characterCombobox.addItem("1",
                               QVariant::fromValue<EntryPhoneticOptions>(
                                   EntryPhoneticOptions::ONLY_PINYIN));
-    characterCombobox.addItem(tr("Both, Prefer Simplified"),
+    characterCombobox.addItem("2",
                               QVariant::fromValue<EntryPhoneticOptions>(
                                   EntryPhoneticOptions::PREFER_JYUTPING));
-    characterCombobox.addItem(tr("Both, Prefer Traditional"),
+    characterCombobox.addItem("3",
                               QVariant::fromValue<EntryPhoneticOptions>(
                                   EntryPhoneticOptions::PREFER_PINYIN));
 
@@ -149,16 +251,16 @@ void SettingsTab::initializeCharacterComboBox(QComboBox &characterCombobox)
 
 void SettingsTab::initializePhoneticComboBox(QComboBox &phoneticCombobox)
 {
-    phoneticCombobox.addItem(tr("Only Jyutping"),
+    phoneticCombobox.addItem("0",
                              QVariant::fromValue<EntryPhoneticOptions>(
                                  EntryPhoneticOptions::ONLY_JYUTPING));
-    phoneticCombobox.addItem(tr("Only Pinyin"),
+    phoneticCombobox.addItem("1",
                              QVariant::fromValue<EntryPhoneticOptions>(
                                  EntryPhoneticOptions::ONLY_PINYIN));
-    phoneticCombobox.addItem(tr("Both, Prefer Jyutping"),
+    phoneticCombobox.addItem("2",
                              QVariant::fromValue<EntryPhoneticOptions>(
                                  EntryPhoneticOptions::PREFER_JYUTPING));
-    phoneticCombobox.addItem(tr("Both, Prefer Pinyin"),
+    phoneticCombobox.addItem("3",
                              QVariant::fromValue<EntryPhoneticOptions>(
                                  EntryPhoneticOptions::PREFER_PINYIN));
 
@@ -176,10 +278,10 @@ void SettingsTab::initializePhoneticComboBox(QComboBox &phoneticCombobox)
 
 void SettingsTab::initializeMandarinComboBox(QComboBox &mandarinCombobox)
 {
-    mandarinCombobox.addItem(tr("Pinyin with diacritics"),
+    mandarinCombobox.addItem("0",
                              QVariant::fromValue<MandarinOptions>(
                                  MandarinOptions::PRETTY_PINYIN));
-    mandarinCombobox.addItem(tr("Pinyin with numbers"),
+    mandarinCombobox.addItem("1",
                              QVariant::fromValue<MandarinOptions>(
                                  MandarinOptions::RAW_PINYIN));
 
@@ -197,13 +299,13 @@ void SettingsTab::initializeMandarinComboBox(QComboBox &mandarinCombobox)
 
 void SettingsTab::initializeColourComboBox(QComboBox &colourCombobox)
 {
-    colourCombobox.addItem(tr("No colours"),
+    colourCombobox.addItem("0",
                            QVariant::fromValue<EntryColourPhoneticType>(
                                EntryColourPhoneticType::NONE));
-    colourCombobox.addItem(tr("Jyutping"),
+    colourCombobox.addItem("1",
                            QVariant::fromValue<EntryColourPhoneticType>(
                                EntryColourPhoneticType::JYUTPING));
-    colourCombobox.addItem(tr("Pinyin"),
+    colourCombobox.addItem("2",
                            QVariant::fromValue<EntryColourPhoneticType>(
                                EntryColourPhoneticType::PINYIN));
 
@@ -266,16 +368,6 @@ void SettingsTab::initializeJyutpingColourWidget(QWidget &jyutpingColourWidget)
         QLabel *label = new QLabel{&jyutpingColourWidget};
         label->setAlignment(Qt::AlignHCenter);
         label->setMinimumWidth(40);
-        switch (i) {
-            case 0: {
-                label->setText(tr("No Tone"));
-                break;
-            }
-            default: {
-                label->setText(tr("Tone %1").arg(i));
-                break;
-            }
-        }
         jyutpingLayout->addWidget(label, 1, static_cast<int>(i));
     }
 }
@@ -334,20 +426,6 @@ void SettingsTab::initializePinyinColourWidget(QWidget &pinyinColourWidget)
         QLabel *label = new QLabel{&pinyinColourWidget};
         label->setAlignment(Qt::AlignHCenter);
         label->setMinimumWidth(40);
-        switch (i) {
-            case 0: {
-                label->setText(tr("No Tone"));
-                break;
-            }
-            case 5: {
-                label->setText(tr("Neutral"));
-                break;
-            }
-            default: {
-                label->setText(tr("Tone %1").arg(i));
-                break;
-            }
-        }
         pinyinLayout->addWidget(label, 1, static_cast<int>(i));
     }
 }
@@ -367,10 +445,24 @@ void SettingsTab::initializeResetButton(QPushButton &resetButton)
         _message->setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
         _message->setIcon(QMessageBox::Warning);
 #ifdef Q_OS_WIN
-        _message->setWindowTitle(tr(Utils::PRODUCT_NAME));
+        _message->setWindowTitle(
+            QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
 #elif defined(Q_OS_LINUX)
         _message->setWindowTitle(" ");
 #endif
+
+        // Setting minimum width also doesn't work, so use this
+        // workaround to set a width.
+        QSpacerItem *horizontalSpacer = new QSpacerItem(400,
+                                                        0,
+                                                        QSizePolicy::Minimum,
+                                                        QSizePolicy::Minimum);
+        QGridLayout *layout = static_cast<QGridLayout *>(_message->layout());
+        layout->addItem(horizontalSpacer,
+                        layout->rowCount(),
+                        0,
+                        1,
+                        layout->columnCount());
 
         if (_message->exec() == QMessageBox::Yes) {
             resetSettings(*_settings);

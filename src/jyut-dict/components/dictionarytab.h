@@ -5,9 +5,10 @@
 #include "logic/database/sqldatabaseutils.h"
 #include "logic/dictionary/dictionarymetadata.h"
 
-#include <QLabel>
+#include <QEvent>
 #include <QGridLayout>
 #include <QGroupBox>
+#include <QLabel>
 #include <QListView>
 #include <QMessageBox>
 #include <QModelIndex>
@@ -28,8 +29,13 @@ public:
     explicit DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
                            QWidget *parent = nullptr);
 
+    void changeEvent(QEvent *event) override;
+
 private:
     void setupUI();
+    void translateUI();
+
+    void setStyle(bool use_dark);
 
     void setDictionaryMetadata(const QModelIndex &index);
 

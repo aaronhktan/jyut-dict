@@ -4,6 +4,7 @@
 #include "logic/search/isearchoptionsmediator.h"
 #include "logic/search/searchparameters.h"
 
+#include <QEvent>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QRadioButton>
@@ -20,7 +21,12 @@ public:
     explicit SearchOptionsRadioGroupBox(ISearchOptionsMediator *mediator,
                                         QWidget *parent = nullptr);
 
+    void changeEvent(QEvent *event) override;
+
 private:
+    void setupUI();
+    void translateUI();
+
     void notifyMediator();
 
     ISearchOptionsMediator *_mediator;

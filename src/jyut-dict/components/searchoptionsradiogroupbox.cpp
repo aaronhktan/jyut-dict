@@ -1,24 +1,36 @@
 #include "searchoptionsradiogroupbox.h"
 
+#include <QLocale>
+
 SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *mediator,
                                                        QWidget *parent) :
     QGroupBox(parent)
 {
     _mediator = mediator;
 
+    setupUI();
+    translateUI();
+}
+
+void SearchOptionsRadioGroupBox::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
+    QGroupBox::changeEvent(event);
+}
+
+void SearchOptionsRadioGroupBox::setupUI()
+{
+
     _layout = new QHBoxLayout{this};
     _layout->setContentsMargins(5, 5, 5, 5);
 
-    _simplifiedButton = new QRadioButton{tr("SC"), this};
-    _simplifiedButton->setToolTip(tr("Search Simplified Chinese"));
-    _traditionalButton = new QRadioButton{tr("TC"), this};
-    _traditionalButton->setToolTip(tr("Search Traditional Chinese"));
-    _jyutpingButton = new QRadioButton{tr("JP"), this};
-    _jyutpingButton->setToolTip(tr("Search Jyutping"));
-    _pinyinButton = new QRadioButton{tr("PY"), this};
-    _pinyinButton->setToolTip(tr("Search Pinyin"));
-    _englishButton = new QRadioButton{tr("EN"), this};
-    _englishButton->setToolTip(tr("Search English"));
+    _simplifiedButton = new QRadioButton{this};
+    _traditionalButton = new QRadioButton{this};
+    _jyutpingButton = new QRadioButton{this};
+    _pinyinButton = new QRadioButton{this};
+    _englishButton = new QRadioButton{this};
 #ifdef Q_OS_LINUX
     _simplifiedButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
     _traditionalButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
@@ -32,7 +44,7 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *m
     _pinyinButton->setStyleSheet("QToolTip { padding: 1px; }");
     _englishButton->setStyleSheet("QToolTip { padding: 1px; }");
 #endif
-    _englishButton->setChecked(true);
+    _englishButton->click();
 #ifdef Q_OS_MAC
     // Makes the button selection show up correctly on macOS
     _englishButton->setDown(true);
@@ -53,7 +65,30 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *m
 
     setLayout(_layout);
     setFlat(true);
-    setStyleSheet("border: 0;");
+#ifdef Q_OS_WIN
+    if (QLocale::system().language() & QLocale::Chinese ||
+        QLocale::system().language() & QLocale::Cantonese) {
+        setStyleSheet("QRadioButton { font-size: 12px; }"
+                      "QGroupBox { border: 0; }");
+    }
+#else
+    setStyleSheet("QGroupBox { border: 0; }");
+#endif
+}
+
+void SearchOptionsRadioGroupBox::translateUI()
+{
+    _simplifiedButton->setText(tr("SC"));
+    _traditionalButton->setText(tr("TC"));
+    _jyutpingButton->setText(tr("JP"));
+    _pinyinButton->setText(tr("PY"));
+    _englishButton->setText(tr("EN"));
+
+    _simplifiedButton->setToolTip(tr("Search Simplified Chinese"));
+    _traditionalButton->setToolTip(tr("Search Traditional Chinese"));
+    _jyutpingButton->setToolTip(tr("Search Jyutping"));
+    _pinyinButton->setToolTip(tr("Search Pinyin"));
+    _englishButton->setToolTip(tr("Search English"));
 }
 
 void SearchOptionsRadioGroupBox::notifyMediator()
@@ -72,5 +107,3 @@ void SearchOptionsRadioGroupBox::notifyMediator()
         _mediator->setParameters(SearchParameters::ENGLISH);
     }
 }
-
-

@@ -25,11 +25,18 @@ class SettingsWindow : public QMainWindow
 public:
     explicit SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
                             QWidget *parent = nullptr);
-    ~SettingsWindow();
+    ~SettingsWindow() override;
 
-    void changeEvent(QEvent *event);
+    void changeEvent(QEvent *event) override;
 
 private:
+    void setupUI();
+    void translateUI();
+    void setStyle(bool use_dark);
+
+    void setButtonIcon(bool use_dark, int index);
+    void openTab(int tabIndex);
+
     QWidget *_parent;
 
     QLayout *_layout;
@@ -43,10 +50,6 @@ private:
     std::shared_ptr<SQLDatabaseManager> _manager;
 
     bool _paletteRecentlyChanged = false;
-
-    void setStyle(bool use_dark);
-    void setButtonIcon(bool use_dark, int index);
-    void openTab(int tabIndex);
 };
 
 #endif // SETTINGSWINDOW_H

@@ -1,5 +1,6 @@
 #include "githubreleasechecker.h"
 
+#include "logic/settings/settingsutils.h"
 #include "logic/utils/utils.h"
 
 #include <QJsonObject>
@@ -141,7 +142,11 @@ bool GithubReleaseChecker::parseJSON(const std::string &data,
                                     })
                         && download_url.find(Utils::ARCHITECTURE) != std::string::npos
                         && download_url.find(Utils::PORTABILITY) != std::string::npos
-                        && download_url.find(Utils::PLATFORM_NAME) != std::string::npos) {
+                        && download_url.find(Utils::PLATFORM_NAME) != std::string::npos
+#ifdef Q_OS_WIN
+                        && download_url.find(Settings::getCurrentLocaleLanguageAndScriptIfChinese()) != std::string::npos
+#endif
+                        ) {
                         url = download_url;
                         versionNumber = version;
                         description = entry.toObject().value("body").toString().toStdString();
