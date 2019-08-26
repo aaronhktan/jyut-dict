@@ -81,4 +81,13 @@ bool isCurrentLocaleSimplifiedHan() {
     return currentLocale.script() == QLocale::SimplifiedHanScript;
 }
 
+std::string getCurrentLocaleLanguageAndScriptIfChinese() {
+    if (isCurrentLocaleHan()) {
+        return currentLocale.bcp47Name().toStdString();
+    } else {
+        return currentLocale.bcp47Name().toStdString().substr(0,
+            currentLocale.bcp47Name().toStdString().find_first_of("-"));
+    }
+}
+
 }

@@ -7,6 +7,7 @@
 #include <QTranslator>
 
 #include <memory>
+#include <string>
 
 // SettingsUtils should contain all non-STL functions related to settings
 
@@ -27,6 +28,7 @@ bool setCurrentLocale(QLocale &locale);
 bool isCurrentLocaleHan();
 bool isCurrentLocaleTraditionalHan();
 bool isCurrentLocaleSimplifiedHan();
+std::string getCurrentLocaleLanguageAndScriptIfChinese();
 
 };
 

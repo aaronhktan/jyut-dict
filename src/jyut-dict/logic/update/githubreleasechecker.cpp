@@ -1,5 +1,6 @@
 #include "githubreleasechecker.h"
 
+#include "logic/settings/settingsutils.h"
 #include "logic/utils/utils.h"
 
 #include <QJsonObject>
@@ -75,11 +76,13 @@ void GithubReleaseChecker::parseReply(QNetworkReply *reply)
     }
 }
 
+#include <QDebug>
 bool GithubReleaseChecker::parseJSON(const std::string &data,
                                      bool &updateAvailable,
                                      std::string &versionNumber,
                                      std::string &url, std::string &description)
 {
+    qDebug() << Settings::getCurrentLocaleLanguageAndScriptIfChinese().c_str();
     QJsonDocument doc = QJsonDocument::fromJson(QString{data.c_str()}.toUtf8());
     for (QJsonValue entry : doc.array()) {
         std::string release_name = entry.toObject().value("name")
@@ -141,7 +144,11 @@ bool GithubReleaseChecker::parseJSON(const std::string &data,
                                     })
                         && download_url.find(Utils::ARCHITECTURE) != std::string::npos
                         && download_url.find(Utils::PORTABILITY) != std::string::npos
-                        && download_url.find(Utils::PLATFORM_NAME) != std::string::npos) {
+                        && download_url.find(Utils::PLATFORM_NAME) != std::string::npos
+#ifdef Q_OS_WIN
+                        && download_url.find(Settings::getCurrentLocaleLanguageAndScriptIfChinese()) != std::string::npos
+#endif
+                        ) {
                         url = download_url;
                         versionNumber = version;
                         description = entry.toObject().value("body").toString().toStdString();
