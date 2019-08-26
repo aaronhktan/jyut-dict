@@ -76,13 +76,11 @@ void GithubReleaseChecker::parseReply(QNetworkReply *reply)
     }
 }
 
-#include <QDebug>
 bool GithubReleaseChecker::parseJSON(const std::string &data,
                                      bool &updateAvailable,
                                      std::string &versionNumber,
                                      std::string &url, std::string &description)
 {
-    qDebug() << Settings::getCurrentLocaleLanguageAndScriptIfChinese().c_str();
     QJsonDocument doc = QJsonDocument::fromJson(QString{data.c_str()}.toUtf8());
     for (QJsonValue entry : doc.array()) {
         std::string release_name = entry.toObject().value("name")
