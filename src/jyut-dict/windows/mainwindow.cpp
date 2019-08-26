@@ -124,18 +124,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::changeEvent(QEvent *event)
 {
-    switch (event->type()) {
-    case QEvent::LocaleChange: {
-        installTranslator();
-        break;
-    }
-    case QEvent::LanguageChange: {
+    if (event->type() == QEvent::LanguageChange) {
         translateUI();
-        break;
-    }
-    default: {
-        break;
-    }
     }
     QMainWindow::changeEvent(event);
 }
