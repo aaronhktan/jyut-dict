@@ -2,6 +2,7 @@
 #define MAINSPLITTER_H
 
 #include "components/definitionscrollarea.h"
+#include "logic/analytics/analytics.h"
 #include "logic/search/sqlsearch.h"
 
 #include <QModelIndex>
@@ -25,6 +26,8 @@ public:
     ~MainSplitter() override;
 
 private:
+    Analytics *_analytics;
+
     DefinitionScrollArea *_definitionScrollArea;
     QListView *_resultListView;
 

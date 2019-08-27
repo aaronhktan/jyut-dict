@@ -31,6 +31,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
+    logic/analytics/analytics.cpp \
     main.cpp \
     components/advancedtab.cpp \
     components/contacttab.cpp \
@@ -93,6 +94,7 @@ HEADERS += \
     components/searchlineedit.h \
     components/searchoptionsradiogroupbox.h \
     components/settingstab.h \
+    logic/analytics/analytics.h \
     logic/database/sqldatabasemanager.h \
     logic/database/sqldatabaseutils.h \
     logic/dictionary/dictionarymetadata.h \

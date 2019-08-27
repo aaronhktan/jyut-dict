@@ -30,11 +30,13 @@ private:
     void setStyle(bool use_dark);
 
     void initializeUpdateCheckbox(QCheckBox &checkbox);
+    void initializeAnalyticsCheckbox(QCheckBox &checkbox);
     void initializeLanguageCombobox(QComboBox &combobox);
 
     bool _paletteRecentlyChanged = false;
 
     QCheckBox *_updateCheckbox;
+    QCheckBox *_analyticsCheckbox;
     QComboBox *_languageCombobox;
 
     QFormLayout *_tabLayout;

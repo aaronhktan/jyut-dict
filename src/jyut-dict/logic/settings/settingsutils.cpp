@@ -1,6 +1,7 @@
 #include "settingsutils.h"
 
 #include <QCoreApplication>
+#include <QUuid>
 
 namespace Settings
 {
@@ -35,9 +36,14 @@ std::unique_ptr<QSettings> getSettings(QObject *parent)
     return settings;
 }
 
-// Currently not used
 bool updateSettings(QSettings &settings)
 {
+    if (settings.value("Analytics/uuid") == QVariant{}) {
+        settings.setValue("Analytics/uuid",
+                          QVariant{QUuid::createUuid().toString()});
+        settings.sync();
+    }
+
     if (settings.value("Metadata/version", QVariant{SETTINGS_VERSION}).toInt()
         != SETTINGS_VERSION) {
         // Convert to new version here

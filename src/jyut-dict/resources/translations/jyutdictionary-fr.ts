@@ -4,19 +4,19 @@
 <context>
     <name>AboutWindow</name>
     <message>
-        <location filename="../../windows/aboutwindow.cpp" line="140"/>
+        <location filename="../../windows/aboutwindow.cpp" line="172"/>
         <source>About %1</source>
         <translation>À propos de %1</translation>
     </message>
     <message>
-        <location filename="../../windows/aboutwindow.cpp" line="63"/>
-        <location filename="../../windows/aboutwindow.cpp" line="131"/>
+        <location filename="../../windows/aboutwindow.cpp" line="73"/>
+        <location filename="../../windows/aboutwindow.cpp" line="163"/>
         <source>Build %1</source>
         <translation>Version %1</translation>
     </message>
     <message>
-        <location filename="../../windows/aboutwindow.cpp" line="91"/>
-        <location filename="../../windows/aboutwindow.cpp" line="132"/>
+        <location filename="../../windows/aboutwindow.cpp" line="101"/>
+        <location filename="../../windows/aboutwindow.cpp" line="164"/>
         <source>View on Github...</source>
         <translation>Voir sur Github...</translation>
     </message>
@@ -24,52 +24,57 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="86"/>
+        <location filename="../../components/advancedtab.cpp" line="91"/>
         <source>Automatically check for updates on startup:</source>
         <translation>Vérifier automatiquement les mises à jour :</translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="88"/>
+        <location filename="../../components/advancedtab.cpp" line="93"/>
+        <source>Enable analytics:</source>
+        <translation>Activer la télémétrie :</translation>
+    </message>
+    <message>
+        <location filename="../../components/advancedtab.cpp" line="95"/>
         <source>Application language:</source>
         <translation>Langue d&apos;application :</translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="90"/>
+        <location filename="../../components/advancedtab.cpp" line="97"/>
         <source>Use system language</source>
         <translation>Langue par défault du système</translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="91"/>
+        <location filename="../../components/advancedtab.cpp" line="98"/>
         <source>English</source>
         <translation>Anglais</translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="96"/>
+        <location filename="../../components/advancedtab.cpp" line="103"/>
         <source>Simplified Chinese</source>
         <translation>Chinois simplifié</translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="97"/>
+        <location filename="../../components/advancedtab.cpp" line="104"/>
         <source>Traditional Chinese</source>
         <translation>Chinois traditionnel</translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="92"/>
+        <location filename="../../components/advancedtab.cpp" line="99"/>
         <source>French (CA)</source>
         <translation>Français (Canada)</translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="93"/>
+        <location filename="../../components/advancedtab.cpp" line="100"/>
         <source>French</source>
         <translation>Français</translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="94"/>
+        <location filename="../../components/advancedtab.cpp" line="101"/>
         <source>Cantonese (Simplified)</source>
         <translation>Cantonais simplifié</translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="95"/>
+        <location filename="../../components/advancedtab.cpp" line="102"/>
         <source>Cantonese (Traditional)</source>
         <translation>Cantonais traditionnel</translation>
     </message>
@@ -77,22 +82,22 @@
 <context>
     <name>ContactTab</name>
     <message>
-        <location filename="../../components/contacttab.cpp" line="143"/>
+        <location filename="../../components/contacttab.cpp" line="153"/>
         <source>Email...</source>
         <translation>Envoyer un e-mail...</translation>
     </message>
     <message>
-        <location filename="../../components/contacttab.cpp" line="144"/>
+        <location filename="../../components/contacttab.cpp" line="154"/>
         <source>Donate...</source>
         <translation>Donner...</translation>
     </message>
     <message>
-        <location filename="../../components/contacttab.cpp" line="145"/>
+        <location filename="../../components/contacttab.cpp" line="155"/>
         <source>View on Github...</source>
         <translation>Voir sur Github...</translation>
     </message>
     <message>
-        <location filename="../../components/contacttab.cpp" line="148"/>
+        <location filename="../../components/contacttab.cpp" line="158"/>
         <source>Looking for other Cantonese resources? Try these!</source>
         <translation>D&apos;autres ressources merveilleux pour le cantonais :</translation>
     </message>
@@ -100,103 +105,103 @@
 <context>
     <name>DictionaryTab</name>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="128"/>
+        <location filename="../../components/dictionarytab.cpp" line="137"/>
         <source>The Dictionaries tab allows you to view information about dictionaries, and add or remove them.</source>
         <translation>L&apos;onglet Dictionnaires affiche de l&apos;information sur chacun de vos dictionnaires et vous permet d&apos;en ajouter ou en supprimer.</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="131"/>
+        <location filename="../../components/dictionarytab.cpp" line="140"/>
         <source>Add Dictionary...</source>
         <translation>Ajouter un dictionnaire...</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="132"/>
+        <location filename="../../components/dictionarytab.cpp" line="141"/>
         <source>Delete Dictionary</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="133"/>
+        <location filename="../../components/dictionarytab.cpp" line="142"/>
         <source>Website</source>
         <translation>Site web</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="104"/>
+        <location filename="../../components/dictionarytab.cpp" line="105"/>
         <source>Select dictionary file</source>
         <translation>Selectionner un fichier dictionnaire</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="142"/>
+        <location filename="../../components/dictionarytab.cpp" line="159"/>
         <source>Version: %1</source>
         <translation>Version : %1</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="144"/>
+        <location filename="../../components/dictionarytab.cpp" line="161"/>
         <source>About %1</source>
         <translation>À propos de %1</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="199"/>
+        <location filename="../../components/dictionarytab.cpp" line="216"/>
         <source>Dropping search indexes...</source>
         <translation>Effacement d&apos;index de recherche...</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="205"/>
+        <location filename="../../components/dictionarytab.cpp" line="222"/>
         <source>Adding source...</source>
         <translation>Ajout de la nouvelle source...</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="209"/>
+        <location filename="../../components/dictionarytab.cpp" line="226"/>
         <source>Adding new entries...</source>
         <translation>Ajout des nouvelles entrées...</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="213"/>
+        <location filename="../../components/dictionarytab.cpp" line="230"/>
         <source>Adding new definitions...</source>
         <translation>Ajout des nouvelles définitions...</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="217"/>
-        <location filename="../../components/dictionarytab.cpp" line="287"/>
+        <location filename="../../components/dictionarytab.cpp" line="234"/>
+        <location filename="../../components/dictionarytab.cpp" line="304"/>
         <source>Rebuilding search indexes...</source>
         <translation>Réorganisation des index...</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="258"/>
+        <location filename="../../components/dictionarytab.cpp" line="275"/>
         <source>Removing source...</source>
         <translation>Supression de source selectionnée...</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="264"/>
+        <location filename="../../components/dictionarytab.cpp" line="281"/>
         <source>Removing definitions...</source>
         <translation>Supression de définitions...</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="273"/>
+        <location filename="../../components/dictionarytab.cpp" line="290"/>
         <source>Deleted definition 0 of %1</source>
         <translation>Définition nº 0 de %1 supprimée</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="281"/>
+        <location filename="../../components/dictionarytab.cpp" line="298"/>
         <source>Deleted definition %1 of %2</source>
         <translation>Définition nº %1 de %2 supprimée</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="292"/>
+        <location filename="../../components/dictionarytab.cpp" line="309"/>
         <source>Cleaning up...</source>
         <translation>Un petit peu de ménage...</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="299"/>
+        <location filename="../../components/dictionarytab.cpp" line="316"/>
         <source>Done!</source>
         <translation>Terminé !</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="299"/>
+        <location filename="../../components/dictionarytab.cpp" line="316"/>
         <source>Failed!</source>
         <translation>Erreur !</translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="338"/>
+        <location filename="../../components/dictionarytab.cpp" line="355"/>
         <source>Failed to add source!</source>
         <translation>Impossible d&apos;ajouter la source !</translation>
     </message>
@@ -235,7 +240,7 @@
 <context>
     <name>MainSplitter</name>
     <message>
-        <location filename="../../components/mainsplitter.cpp" line="44"/>
+        <location filename="../../components/mainsplitter.cpp" line="46"/>
         <source>Welcome!</source>
         <translation>Bienvenue !</translation>
     </message>
@@ -243,127 +248,127 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="243"/>
+        <location filename="../../windows/mainwindow.cpp" line="292"/>
         <source>No update found!</source>
         <translation>Aucune mise à jour trouvée !</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="244"/>
+        <location filename="../../windows/mainwindow.cpp" line="293"/>
         <source>You are on the newest version, %1.</source>
         <translation>Vous avez déjà la version actuelle, %1.</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="251"/>
+        <location filename="../../windows/mainwindow.cpp" line="300"/>
         <source>No update available!</source>
         <translation>Aucune mise à jour disponible !</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="195"/>
-        <location filename="../../windows/mainwindow.cpp" line="272"/>
+        <location filename="../../windows/mainwindow.cpp" line="235"/>
+        <location filename="../../windows/mainwindow.cpp" line="321"/>
         <source>&amp;File</source>
         <translation>&amp;Fichier</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="196"/>
-        <location filename="../../windows/mainwindow.cpp" line="273"/>
+        <location filename="../../windows/mainwindow.cpp" line="236"/>
+        <location filename="../../windows/mainwindow.cpp" line="322"/>
         <source>&amp;Edit</source>
         <translation>&amp;Édition</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="197"/>
-        <location filename="../../windows/mainwindow.cpp" line="274"/>
+        <location filename="../../windows/mainwindow.cpp" line="237"/>
+        <location filename="../../windows/mainwindow.cpp" line="323"/>
         <source>&amp;Window</source>
         <translation>&amp;Fenêtre</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="198"/>
-        <location filename="../../windows/mainwindow.cpp" line="275"/>
+        <location filename="../../windows/mainwindow.cpp" line="238"/>
+        <location filename="../../windows/mainwindow.cpp" line="324"/>
         <source>&amp;Help</source>
         <translation>&amp;Aide</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="200"/>
+        <location filename="../../windows/mainwindow.cpp" line="240"/>
         <source>&amp;About</source>
         <translation>&amp;À propos</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="201"/>
+        <location filename="../../windows/mainwindow.cpp" line="241"/>
         <source>Show the application&apos;s About box</source>
         <translation>Afficher la fenêtre «&#xa0;À propos&#xa0;»</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="204"/>
+        <location filename="../../windows/mainwindow.cpp" line="244"/>
         <source>Preferences</source>
         <translation>Préférences</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="206"/>
+        <location filename="../../windows/mainwindow.cpp" line="246"/>
         <source>Settings</source>
         <translation>Réglages</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="208"/>
-        <location filename="../../windows/mainwindow.cpp" line="295"/>
+        <location filename="../../windows/mainwindow.cpp" line="248"/>
+        <location filename="../../windows/mainwindow.cpp" line="344"/>
         <source>Change settings</source>
         <translation>Changer ses préférences</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="210"/>
+        <location filename="../../windows/mainwindow.cpp" line="250"/>
         <source>Close Window</source>
         <translation>Fermer</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="212"/>
+        <location filename="../../windows/mainwindow.cpp" line="252"/>
         <source>Undo</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="213"/>
+        <location filename="../../windows/mainwindow.cpp" line="253"/>
         <source>Redo</source>
         <translation>Rétablir</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="214"/>
+        <location filename="../../windows/mainwindow.cpp" line="254"/>
         <source>Cut</source>
         <translation>Couper</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="215"/>
+        <location filename="../../windows/mainwindow.cpp" line="255"/>
         <source>Copy</source>
         <translation>Copier</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="216"/>
+        <location filename="../../windows/mainwindow.cpp" line="256"/>
         <source>Paste</source>
         <translation>Coller</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="218"/>
+        <location filename="../../windows/mainwindow.cpp" line="258"/>
         <source>Minimize</source>
         <translation>Réduire</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="219"/>
+        <location filename="../../windows/mainwindow.cpp" line="259"/>
         <source>Zoom</source>
         <translation>Agrandir</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="220"/>
+        <location filename="../../windows/mainwindow.cpp" line="260"/>
         <source>Bring All to Front</source>
         <translation>Tout ramener au premier plan</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="222"/>
+        <location filename="../../windows/mainwindow.cpp" line="262"/>
         <source>%1 Help</source>
         <translation>Aide %1</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="224"/>
+        <location filename="../../windows/mainwindow.cpp" line="264"/>
         <source>Check for updates...</source>
         <translation>Rechercher des mises à jour</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="540"/>
+        <location filename="../../windows/mainwindow.cpp" line="589"/>
         <source>Checking for update...</source>
         <translation>Recherche de mises à jour...</translation>
     </message>
@@ -517,129 +522,129 @@
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settingstab.cpp" line="203"/>
+        <location filename="../../components/settingstab.cpp" line="204"/>
         <source>Reset all settings</source>
         <translation>Réinitialiser toutes les préférences</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="156"/>
+        <location filename="../../components/settingstab.cpp" line="158"/>
         <source>Simplified/Traditional display options:</source>
         <translation>Options d&apos;affichage de cararactères simplifiés et traditionnels :</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="158"/>
+        <location filename="../../components/settingstab.cpp" line="160"/>
         <source>Jyutping/Pinyin display options:</source>
         <translation>Afficher le jyutping/pinyin :</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="160"/>
+        <location filename="../../components/settingstab.cpp" line="162"/>
         <source>Pinyin display options:</source>
         <translation>Options d&apos;affichage de pinyin :</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="163"/>
+        <location filename="../../components/settingstab.cpp" line="165"/>
         <source>Colour words by tone using:</source>
         <translation>Colorer les caractères avec les tons de :</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="165"/>
+        <location filename="../../components/settingstab.cpp" line="167"/>
         <source>Jyutping tone colours:</source>
         <translation>Couleurs de tons en jyutping :</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="167"/>
+        <location filename="../../components/settingstab.cpp" line="169"/>
         <source>Pinyin tone colours:</source>
         <translation>Couleurs de tons en jyutping :</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="138"/>
+        <location filename="../../components/settingstab.cpp" line="140"/>
         <source>Only Simplified</source>
         <translation>Uniquement caractères simplifiés</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="139"/>
+        <location filename="../../components/settingstab.cpp" line="141"/>
         <source>Only Traditional</source>
         <translation>Uniquement caractères traditionnels</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="140"/>
+        <location filename="../../components/settingstab.cpp" line="142"/>
         <source>Both, Prefer Simplified</source>
         <translation>Les deux, donner précédence aux caractères simplifiés</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="141"/>
+        <location filename="../../components/settingstab.cpp" line="143"/>
         <source>Both, Prefer Traditional</source>
         <translation>Les deux, donner précédence aux caractères traditionnels</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="143"/>
+        <location filename="../../components/settingstab.cpp" line="145"/>
         <source>Only Jyutping</source>
         <translation>Uniquement jyutping</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="144"/>
+        <location filename="../../components/settingstab.cpp" line="146"/>
         <source>Only Pinyin</source>
         <translation>Uniquement pinyin</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="145"/>
+        <location filename="../../components/settingstab.cpp" line="147"/>
         <source>Both, Prefer Jyutping</source>
         <translation>Les deux, donner précédence au jyutping</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="146"/>
+        <location filename="../../components/settingstab.cpp" line="148"/>
         <source>Both, Prefer Pinyin</source>
         <translation>Les deux, donner précédence au pinyin</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="148"/>
+        <location filename="../../components/settingstab.cpp" line="150"/>
         <source>Pinyin with diacritics</source>
         <translation>Pinyin avec accents</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="149"/>
+        <location filename="../../components/settingstab.cpp" line="151"/>
         <source>Pinyin with numbers</source>
         <translation>Pinyin avec chiffres</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="151"/>
+        <location filename="../../components/settingstab.cpp" line="153"/>
         <source>No colours</source>
         <translation>Ne pas colorer</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="152"/>
+        <location filename="../../components/settingstab.cpp" line="154"/>
         <source>Jyutping</source>
         <translation>Jyutping</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="153"/>
+        <location filename="../../components/settingstab.cpp" line="155"/>
         <source>Pinyin</source>
         <translation>Pinyin</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="174"/>
-        <location filename="../../components/settingstab.cpp" line="189"/>
+        <location filename="../../components/settingstab.cpp" line="176"/>
+        <location filename="../../components/settingstab.cpp" line="190"/>
         <source>No Tone</source>
         <translation>Aucun ton</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="178"/>
-        <location filename="../../components/settingstab.cpp" line="197"/>
+        <location filename="../../components/settingstab.cpp" line="180"/>
+        <location filename="../../components/settingstab.cpp" line="198"/>
         <source>Tone %1</source>
         <translation>Ton %1</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="193"/>
+        <location filename="../../components/settingstab.cpp" line="194"/>
         <source>Neutral</source>
         <translation>Ton neutre</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="435"/>
+        <location filename="../../components/settingstab.cpp" line="443"/>
         <source>Are you sure you want to reset all settings?</source>
         <translation>Êtes-vous sûr de vouloir réinitialiser vos paramètres ?</translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="436"/>
+        <location filename="../../components/settingstab.cpp" line="444"/>
         <source>There is no way to restore them!</source>
         <translation>Il n&apos;y a aucune manière de les récupérer après la suppression !</translation>
     </message>
@@ -647,32 +652,32 @@
 <context>
     <name>SettingsWindow</name>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="132"/>
+        <location filename="../../windows/settingswindow.cpp" line="149"/>
         <source>General</source>
         <translation>Général</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="133"/>
+        <location filename="../../windows/settingswindow.cpp" line="150"/>
         <source>Dictionaries</source>
         <translation>Dictionnaires</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="134"/>
+        <location filename="../../windows/settingswindow.cpp" line="151"/>
         <source>Advanced</source>
         <translation>Avancé</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="135"/>
+        <location filename="../../windows/settingswindow.cpp" line="152"/>
         <source>Contact</source>
         <translation>Contact</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="138"/>
+        <location filename="../../windows/settingswindow.cpp" line="155"/>
         <source>Preferences</source>
         <translation>Préférences</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="140"/>
+        <location filename="../../windows/settingswindow.cpp" line="157"/>
         <source>Settings</source>
         <translation>Réglages</translation>
     </message>
@@ -680,42 +685,42 @@
 <context>
     <name>UpdateWindow</name>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="127"/>
+        <location filename="../../windows/updatewindow.cpp" line="150"/>
         <source>Update Available!</source>
         <translation>Mise à jour disponible !</translation>
     </message>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="111"/>
+        <location filename="../../windows/updatewindow.cpp" line="134"/>
         <source>A new version of %1 is available!</source>
         <translation>Une nouvelle version de %1 est disponible !</translation>
     </message>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="115"/>
+        <location filename="../../windows/updatewindow.cpp" line="138"/>
         <source>%1 version %2 is available — you have version %3. Click &quot;Download&quot; to get the new version.</source>
         <translation>La version %2 de %1 est disponible — vous avez la version %3. Cliquez sur le bouton « Télécharger » pour obtenir la nouvelle version.</translation>
     </message>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="122"/>
+        <location filename="../../windows/updatewindow.cpp" line="145"/>
         <source>Cancel</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="123"/>
+        <location filename="../../windows/updatewindow.cpp" line="146"/>
         <source>Show Details</source>
         <translation>Afficher les détails</translation>
     </message>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="124"/>
+        <location filename="../../windows/updatewindow.cpp" line="147"/>
         <source>Download</source>
         <translation>Télécharger</translation>
     </message>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="136"/>
+        <location filename="../../windows/updatewindow.cpp" line="168"/>
         <source>Hide details</source>
         <translation>Masquer les détails</translation>
     </message>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="155"/>
+        <location filename="../../windows/updatewindow.cpp" line="187"/>
         <source>Show details</source>
         <translation>Afficher les détails</translation>
     </message>

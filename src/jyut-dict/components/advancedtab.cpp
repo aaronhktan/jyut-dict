@@ -56,6 +56,10 @@ void AdvancedTab::setupUI()
     _updateCheckbox->setTristate(false);
     initializeUpdateCheckbox(*_updateCheckbox);
 
+    _analyticsCheckbox = new QCheckBox{this};
+    _analyticsCheckbox->setTristate(false);
+    initializeAnalyticsCheckbox(*_analyticsCheckbox);
+
     QFrame *_divider = new QFrame{this};
     _divider->setObjectName("divider");
     _divider->setFrameShape(QFrame::HLine);
@@ -67,6 +71,7 @@ void AdvancedTab::setupUI()
     initializeLanguageCombobox(*_languageCombobox);
 
     _tabLayout->addRow(" ", _updateCheckbox);
+    _tabLayout->addRow(" ", _analyticsCheckbox);
     _tabLayout->addRow(_divider);
     _tabLayout->addRow(" ", _languageCombobox);
 
@@ -84,6 +89,8 @@ void AdvancedTab::translateUI()
 {
     static_cast<QLabel *>(_tabLayout->labelForField(_updateCheckbox))
         ->setText(tr("Automatically check for updates on startup:"));
+    static_cast<QLabel *>(_tabLayout->labelForField(_analyticsCheckbox))
+        ->setText(tr("Enable analytics:"));
     static_cast<QLabel *>(_tabLayout->labelForField(_languageCombobox))
         ->setText(tr("Application language:"));
 
@@ -115,6 +122,18 @@ void AdvancedTab::initializeUpdateCheckbox(QCheckBox &checkbox)
 
     connect(&checkbox, &QCheckBox::stateChanged, this, [&]() {
         _settings->setValue("Advanced/updateNotificationsEnabled",
+                            checkbox.checkState());
+        _settings->sync();
+    });
+}
+
+void AdvancedTab::initializeAnalyticsCheckbox(QCheckBox &checkbox)
+{
+    checkbox.setChecked(
+        _settings->value("Advanced/analyticsEnabled", QVariant{true}).toBool());
+
+    connect(&checkbox, &QCheckBox::stateChanged, this, [&]() {
+        _settings->setValue("Advanced/analyticsEnabled",
                             checkbox.checkState());
         _settings->sync();
     });

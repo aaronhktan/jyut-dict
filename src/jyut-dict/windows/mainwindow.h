@@ -3,6 +3,7 @@
 
 #include "components/mainsplitter.h"
 #include "components/maintoolbar.h"
+#include "logic/analytics/analytics.h"
 #include "logic/update/githubreleasechecker.h"
 #include "logic/database/sqldatabasemanager.h"
 
@@ -31,6 +32,7 @@ public:
     void changeEvent(QEvent *event) override;
 
 private:
+    Analytics *_analytics;
     GithubReleaseChecker *_checker;
 
     MainToolBar *_mainToolBar;

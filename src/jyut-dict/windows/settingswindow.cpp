@@ -18,8 +18,17 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
 {
     _manager = manager;
 
+    _analytics = new Analytics{this};
+    if (Settings::getSettings()
+            ->value("Advanced/analyticsEnabled", QVariant{true})
+            .toBool()) {
+        _analytics->sendScreenview("Settings");
+    }
+
     setupUI();
     translateUI();
+
+    _toolButtons[0]->click();
 
     resize(sizeHint());
     layout()->setSizeConstraint(QLayout::SetFixedSize);
@@ -112,8 +121,6 @@ void SettingsWindow::setupUI()
     _contentStackedWidget->addWidget(contactTab);
 
     setCentralWidget(_contentStackedWidget);
-
-    _toolButtons[0]->click();
 
     // Customize the look of the toolbar to fit in better with platform styles
 #ifdef Q_OS_MAC
@@ -292,4 +299,13 @@ void SettingsWindow::openTab(int tabIndex)
     }
 
     _contentStackedWidget->setCurrentIndex(tabIndex);
+
+    if (Settings::getSettings()
+            ->value("Advanced/analyticsEnabled", QVariant{true})
+            .toBool()) {
+        _analytics->sendScreenview(
+            _actions[static_cast<std::vector<QAction *>::size_type>(tabIndex)]
+                ->text()
+                .toStdString());
+    };
 }

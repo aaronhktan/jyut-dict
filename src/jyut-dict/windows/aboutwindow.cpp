@@ -17,6 +17,13 @@
 AboutWindow::AboutWindow(QWidget *parent)
     : QWidget{parent, Qt::Window}
 {
+    _analytics = new Analytics{this};
+    if (Settings::getSettings()
+            ->value("Advanced/analyticsEnabled", QVariant{true})
+            .toBool()) {
+        _analytics->sendScreenview("About");
+    }
+
     setupUI();
     translateUI();
 
