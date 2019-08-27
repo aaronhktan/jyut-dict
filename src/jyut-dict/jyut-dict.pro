@@ -31,7 +31,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
-    logic/analytics/analytics.cpp \
     main.cpp \
     components/advancedtab.cpp \
     components/contacttab.cpp \
@@ -53,6 +52,7 @@ SOURCES += \
     components/searchlineedit.cpp \
     components/searchoptionsradiogroupbox.cpp \
     components/settingstab.cpp \
+    logic/analytics/analytics.cpp \
     logic/database/sqldatabasemanager.cpp \
     logic/database/sqldatabaseutils.cpp \
     logic/dictionary/dictionarymetadata.cpp \
