@@ -121,8 +121,8 @@ void Analytics::sendNetworkRequest(QUrlQuery query)
 
 void Analytics::gotReply()
 {
-    QNetworkReply *reply = qobject_cast<QNetworkReply*>(sender());
-    qDebug() << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+//    QNetworkReply *reply = qobject_cast<QNetworkReply*>(sender());
+//    qDebug() << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 }
 
 QString Analytics::getUserAgent()
