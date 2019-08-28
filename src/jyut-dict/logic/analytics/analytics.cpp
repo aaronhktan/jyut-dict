@@ -112,6 +112,9 @@ void Analytics::sendNetworkRequest(QUrlQuery query)
     query.addQueryItem("cid", uuid); // User ID
     query.addQueryItem("an", Strings::PRODUCT_NAME); // Application name
     query.addQueryItem("av", Utils::CURRENT_VERSION); // Application version
+    query.addQueryItem("aip", "1"); // Enable IP anonymization
+    query.addQueryItem("ds", "desktop"); // Set data source to desktop
+    query.addQueryItem("ul", Settings::getCurrentLocale().name()); // Set user language
 
     QByteArray body;
     body.append(query.query());

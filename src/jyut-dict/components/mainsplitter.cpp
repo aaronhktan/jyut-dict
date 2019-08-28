@@ -52,7 +52,8 @@ void MainSplitter::handleSelectionChanged(const QModelIndex &selection)
             .toBool()) {
         _analytics->sendEvent("Entry",
                               "View",
-                              entry.getTraditional() + entry.getSimplified());
+                              entry.getTraditional() + " / "
+                                  + entry.getSimplified());
     }
 
     entry.refreshColours(
