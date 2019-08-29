@@ -125,7 +125,6 @@ void Analytics::sendNetworkRequest(QUrlQuery query)
 
     QByteArray body;
     body.append(query.query());
-    qDebug() << body;
     _reply = _manager->post(request, body);
     connect(_reply, &QNetworkReply::finished, this, &Analytics::gotReply);
 }
