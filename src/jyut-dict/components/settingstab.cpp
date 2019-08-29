@@ -21,6 +21,7 @@ SettingsTab::SettingsTab(QWidget *parent)
     : QWidget(parent)
 {
     _settings = Settings::getSettings(this);
+    _analytics = new Analytics{this};
     setupUI();
     translateUI();
 }
@@ -243,6 +244,8 @@ void SettingsTab::initializeCharacterComboBox(QComboBox &characterCombobox)
             QOverload<int>::of(&QComboBox::activated),
             this,
             [&](int index) {
+                _analytics->sendEvent("settings", "characterOptions",
+                                      characterCombobox.itemText(index).toStdString());
                 _settings->setValue("characterOptions",
                                     characterCombobox.itemData(index));
                 _settings->sync();
@@ -270,6 +273,8 @@ void SettingsTab::initializePhoneticComboBox(QComboBox &phoneticCombobox)
             QOverload<int>::of(&QComboBox::activated),
             this,
             [&](int index) {
+                _analytics->sendEvent("settings", "phoneticOptions",
+                                      phoneticCombobox.itemText(index).toStdString());
                 _settings->setValue("phoneticOptions",
                                     phoneticCombobox.itemData(index));
                 _settings->sync();
@@ -291,6 +296,8 @@ void SettingsTab::initializeMandarinComboBox(QComboBox &mandarinCombobox)
             QOverload<int>::of(&QComboBox::activated),
             this,
             [&](int index) {
+                _analytics->sendEvent("settings", "mandarinOptions",
+                                      mandarinCombobox.itemText(index).toStdString());
                 _settings->setValue("mandarinOptions",
                                     mandarinCombobox.itemData(index));
                 _settings->sync();
@@ -315,6 +322,8 @@ void SettingsTab::initializeColourComboBox(QComboBox &colourCombobox)
             QOverload<int>::of(&QComboBox::activated),
             this,
             [&](int index) {
+                _analytics->sendEvent("settings", "entryColourPhoneticType",
+                                      colourCombobox.itemText(index).toStdString());
                 _settings->setValue("entryColourPhoneticType",
                                     colourCombobox.itemData(index));
                 _settings->sync();
@@ -347,12 +356,19 @@ void SettingsTab::initializeJyutpingColourWidget(QWidget &jyutpingColourWidget)
                                   Qt::AlignCenter);
 
         connect(button, &QPushButton::clicked, this, [&]() {
-            // Get new colour from dialog
             QPushButton *sender = static_cast<QPushButton *>(QObject::sender());
+
+            // Get new colour from dialog
             QColor newColour = getNewColour(sender->palette().button().color());
             if (!newColour.isValid()) {
                 return;
             }
+
+            _analytics->sendEvent("settings", "jyutpingColour",
+                                  "tone "
+                                  + std::to_string(sender->property("tone").toInt())
+                                  + ": "
+                                  + newColour.name().toStdString());
 
             // Save colour to both settings file and global jyutping config
             std::vector<std::string>::size_type index
@@ -414,6 +430,11 @@ void SettingsTab::initializePinyinColourWidget(QWidget &pinyinColourWidget)
                 return;
             }
 
+            _analytics->sendEvent("settings", "pinyinColour",
+                                  "tone "
+                                  + std::to_string(sender->property("tone").toInt())
+                                  + ": "
+                                  + newColour.name().toStdString());
             std::vector<std::string>::size_type index
                 = static_cast<unsigned long>(sender->property("tone").toInt());
             Settings::pinyinToneColours[index] = newColour.name().toStdString();
@@ -510,6 +531,8 @@ void SettingsTab::savePinyinColours()
 void SettingsTab::resetSettings(QSettings &settings)
 {
     Settings::clearSettings(settings);
+
+    _analytics->sendEvent("settings", "reset");
 
     Settings::jyutpingToneColours = Settings::defaultJyutpingToneColours;
     Settings::pinyinToneColours = Settings::defaultPinyinToneColours;

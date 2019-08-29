@@ -1,6 +1,7 @@
 #ifndef DICTIONARYTAB_H
 #define DICTIONARYTAB_H
 
+#include "logic/analytics/analytics.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqldatabaseutils.h"
 #include "logic/dictionary/dictionarymetadata.h"
@@ -46,6 +47,8 @@ private:
     void populateDictionarySourceUtils();
 
     void failureMessage(QString reason, QString description);
+
+    Analytics *_analytics;
 
     QLabel *_explanatory;
     QLabel *_description;

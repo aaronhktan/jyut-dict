@@ -9,6 +9,7 @@ AdvancedTab::AdvancedTab(QWidget *parent)
     : QWidget(parent)
 {
     _settings = Settings::getSettings();
+    _analytics = new Analytics{this};
 
     setupUI();
     translateUI();
@@ -121,6 +122,8 @@ void AdvancedTab::initializeUpdateCheckbox(QCheckBox &checkbox)
         _settings->value("Advanced/updateNotificationsEnabled", QVariant{true}).toBool());
 
     connect(&checkbox, &QCheckBox::stateChanged, this, [&]() {
+        _analytics->sendEvent("settings", "updateNotificationsEnabled",
+                              checkbox.checkState() ? "true": "false");
         _settings->setValue("Advanced/updateNotificationsEnabled",
                             checkbox.checkState());
         _settings->sync();
@@ -133,6 +136,8 @@ void AdvancedTab::initializeAnalyticsCheckbox(QCheckBox &checkbox)
         _settings->value("Advanced/analyticsEnabled", QVariant{true}).toBool());
 
     connect(&checkbox, &QCheckBox::stateChanged, this, [&]() {
+        _analytics->sendEvent("settings", "analyticsEnabled",
+                              checkbox.checkState() ? "true": "false");
         _settings->setValue("Advanced/analyticsEnabled",
                             checkbox.checkState());
         _settings->sync();
@@ -170,6 +175,8 @@ void AdvancedTab::initializeLanguageCombobox(QComboBox &combobox)
 
                 _settings->sync();
                 Settings::setCurrentLocale(newLocale);
+                _analytics->sendEvent("settings", "locale",
+                                      newLocale.name().toStdString());
 
                 qApp->removeTranslator(&Settings::systemTranslator);
                 Settings::systemTranslator
