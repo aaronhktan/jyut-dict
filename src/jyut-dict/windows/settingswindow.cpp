@@ -19,11 +19,7 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
     _manager = manager;
 
     _analytics = new Analytics{this};
-    if (Settings::getSettings()
-            ->value("Advanced/analyticsEnabled", QVariant{true})
-            .toBool()) {
-        _analytics->sendScreenview("Settings");
-    }
+    _analytics->sendScreenview("Settings");
 
     setupUI();
     translateUI();
@@ -300,12 +296,8 @@ void SettingsWindow::openTab(int tabIndex)
 
     _contentStackedWidget->setCurrentIndex(tabIndex);
 
-    if (Settings::getSettings()
-            ->value("Advanced/analyticsEnabled", QVariant{true})
-            .toBool()) {
-        _analytics->sendScreenview(
-            _actions[static_cast<std::vector<QAction *>::size_type>(tabIndex)]
-                ->text()
-                .toStdString());
-    };
+    _analytics->sendScreenview(
+        _actions[static_cast<std::vector<QAction *>::size_type>(tabIndex)]
+            ->text()
+            .toStdString());
 }

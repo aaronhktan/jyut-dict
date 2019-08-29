@@ -31,18 +31,8 @@ MainWindow::MainWindow(QWidget *parent) :
     // slow startup
     _analytics = new Analytics{this};
     QTimer::singleShot(100, this, [&]() {
-        if (Settings::getSettings()
-                ->value("Advanced/analyticsEnabled", QVariant{true})
-                .toBool()) {
-            _analytics->startSession();
-        }
-    });
-    QTimer::singleShot(100, this, [&]() {
-        if (Settings::getSettings()
-                ->value("Advanced/analyticsEnabled", QVariant{true})
-                .toBool()) {
-            _analytics->sendScreenview("Main");
-        }
+        _analytics->startSession();
+        _analytics->sendScreenview("Main");
     });
 
     // Set window stuff
@@ -137,11 +127,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    if (Settings::getSettings()
-            ->value("Advanced/analyticsEnabled", QVariant{true})
-            .toBool()) {
-        _analytics->endSession();
-    }
+    _analytics->endSession();
 }
 
 void MainWindow::changeEvent(QEvent *event)

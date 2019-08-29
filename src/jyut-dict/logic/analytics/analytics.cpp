@@ -97,6 +97,13 @@ void Analytics::preConnectToHost()
 
 void Analytics::sendNetworkRequest(QUrlQuery query)
 {
+    // Do not send analytics if user has disabled them
+    if (!Settings::getSettings()
+            ->value("Advanced/analyticsEnabled", QVariant{true})
+            .toBool()) {
+            return;
+    }
+
     QNetworkRequest request = QNetworkRequest{QUrl{ANALYTICS_URL}};
     request.setHeader(QNetworkRequest::ContentTypeHeader,
                       "application/x-www-form-urlencoded");
@@ -118,6 +125,7 @@ void Analytics::sendNetworkRequest(QUrlQuery query)
 
     QByteArray body;
     body.append(query.query());
+    qDebug() << body;
     _reply = _manager->post(request, body);
     connect(_reply, &QNetworkReply::finished, this, &Analytics::gotReply);
 }
