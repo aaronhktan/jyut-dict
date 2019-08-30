@@ -177,22 +177,6 @@ void MainWindow::installTranslator()
 
         Settings::setCurrentLocale(locale);
     }
-
-#ifdef Q_OS_WIN
-    if (Settings::isCurrentLocaleTraditionalHan()) {
-        QFont font("Microsoft Jhenghei", 10);
-        font.setStyleHint(QFont::System, QFont::PreferAntialias);
-        qApp->setFont(font);
-    } else if (Settings::isCurrentLocaleSimplifiedHan()) {
-        QFont font("Microsoft YaHei", 10);
-        font.setStyleHint(QFont::System, QFont::PreferAntialias);
-        qApp->setFont(font);
-    } else {
-        QFont font("Segoe UI", 10);
-        font.setStyleHint(QFont::System, QFont::PreferAntialias);
-        qApp->setFont(font);
-   }
-#endif
 }
 
 void MainWindow::translateUI()
@@ -240,6 +224,22 @@ void MainWindow::translateUI()
     _helpAction->setText(tr("%1 Help").arg(
         QCoreApplication::translate("strings", Strings::PRODUCT_NAME)));
     _updateAction->setText(tr("Check for updates..."));
+
+#ifdef Q_OS_WIN
+    QFont font;
+    if (Settings::isCurrentLocaleTraditionalHan()) {
+        font = QFont{"Microsoft Jhenghei", 10};
+    } else if (Settings::isCurrentLocaleSimplifiedHan()) {
+        font = QFont{"Microsoft YaHei", 10};
+    } else {
+        font = QFont{"Segoe UI", 10};
+   }
+    font.setStyleHint(QFont::System, QFont::PreferAntialias);
+    qApp->setFont(font);
+    foreach (QWidget *widget, QApplication::allWidgets()) {
+        widget->setFont(font);
+    }
+#endif
 }
 
 void MainWindow::setStyle(bool use_dark)
