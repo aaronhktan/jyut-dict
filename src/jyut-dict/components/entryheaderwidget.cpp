@@ -17,14 +17,16 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _wordLabel->setFont(QFont("Microsoft YaHei"));
 #endif
 
-    _jyutpingLabel = new QLabel{"<font color=#6f6f6f>JP</font>", this};
+    _jyutpingLabel = new QLabel{"JP", this};
+    _jyutpingLabel->setStyleSheet("QLabel { color: #6f6f6f; }");
     _jyutpingLabel->setFixedWidth(_jyutpingLabel->fontMetrics().boundingRect("JP").width());
     _jyutpingPronunciation = new QLabel{this};
     _jyutpingPronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _jyutpingLabel->setVisible(false);
     _jyutpingPronunciation->setWordWrap(true);
 
-    _pinyinLabel = new QLabel{"<font color=#6f6f6f>PY</font>"};
+    _pinyinLabel = new QLabel{"PY", this};
+    _pinyinLabel->setStyleSheet("QLabel { color: #6f6f6f; }");
     _pinyinLabel->setFixedWidth(_pinyinLabel->fontMetrics().boundingRect("PY").width());
     _pinyinPronunciation = new QLabel{this};
     _pinyinPronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);

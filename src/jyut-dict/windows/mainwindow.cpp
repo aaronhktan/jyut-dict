@@ -177,19 +177,6 @@ void MainWindow::installTranslator()
 
         Settings::setCurrentLocale(locale);
     }
-}
-
-void MainWindow::translateUI()
-{
-    // Set property so styling automatically changes
-    setProperty("isHan", Settings::isCurrentLocaleHan());
-
-    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
-    for (auto button : buttons) {
-        button->setProperty("isHan", Settings::isCurrentLocaleHan());
-        button->style()->unpolish(button);
-        button->style()->polish(button);
-    }
 
 #ifdef Q_OS_WIN
     if (Settings::isCurrentLocaleTraditionalHan()) {
@@ -206,6 +193,19 @@ void MainWindow::translateUI()
         qApp->setFont(font);
    }
 #endif
+}
+
+void MainWindow::translateUI()
+{
+    // Set property so styling automatically changes
+    setProperty("isHan", Settings::isCurrentLocaleHan());
+
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+    for (auto button : buttons) {
+        button->setProperty("isHan", Settings::isCurrentLocaleHan());
+        button->style()->unpolish(button);
+        button->style()->polish(button);
+    }
 
     setWindowTitle(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                                Strings::PRODUCT_NAME));
