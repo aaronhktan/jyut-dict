@@ -59,7 +59,12 @@ bool SQLDatabaseManager::openDatabase()
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
         + "/Dictionaries/dict.db"};
 #else
-    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/dict.db"};
+#ifdef APPIMAGE
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath()
+                + "/../share/jyut-dict/dictionaries/dict.db"};
+#else
+    QFileInfo bundleFile{"/usr/share/jyut-dict/dictionaries/dict.db"};
+#endif
     QFileInfo localFile{
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
         + "/dictionaries/dict.db"};

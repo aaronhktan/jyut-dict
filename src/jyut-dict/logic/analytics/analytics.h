@@ -1,6 +1,8 @@
 #ifndef ANALYTICS_H
 #define ANALYTICS_H
 
+#include "logic/analytics/analyticsconfig.h"
+
 #include <QtNetwork>
 #include <QObject>
 #include <QUrl>
@@ -11,7 +13,6 @@
 // using the event API.
 
 constexpr auto ANALYTICS_URL = "https://www.google-analytics.com/collect";
-const auto PROPERTY_ID = qEnvironmentVariable("PROPERTY_ID");
 
 class Analytics : public QObject
 {

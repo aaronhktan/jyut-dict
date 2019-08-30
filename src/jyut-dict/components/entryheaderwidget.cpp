@@ -47,6 +47,17 @@ EntryHeaderWidget::~EntryHeaderWidget()
 
 }
 
+void EntryHeaderWidget::changeEvent(QEvent *event)
+{
+#ifdef Q_OS_WIN
+    if (event->type() == QEvent::FontChange) {
+        _jyutpingLabel->setFixedWidth(_jyutpingLabel->fontMetrics().boundingRect("JP").width());
+        _pinyinLabel->setFixedWidth(_pinyinLabel->fontMetrics().boundingRect("PY").width());
+    }
+#endif
+    QWidget::changeEvent(event);
+}
+
 void EntryHeaderWidget::setEntry(const Entry &entry)
 {
     _jyutpingLabel->setVisible(true);

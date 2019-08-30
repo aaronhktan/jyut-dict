@@ -16,6 +16,7 @@
 #include <QColor>
 #include <QDesktopServices>
 #include <QGuiApplication>
+#include <QIcon>
 #include <QMessageBox>
 #include <QSettings>
 #include <QSpacerItem>
@@ -96,6 +97,9 @@ MainWindow::MainWindow(QWidget *parent) :
     _mainToolBar = new MainToolBar{_manager, this};
     addToolBar(_mainToolBar);
     setUnifiedTitleAndToolBarOnMac(true);
+#ifdef APPIMAGE
+    setWindowIcon(QIcon{":/images/icon.png"});
+#endif
 
     _mainSplitter = new MainSplitter{this};
     setCentralWidget(_mainSplitter);
@@ -242,9 +246,11 @@ void MainWindow::translateUI()
         font = QFont{"Microsoft Jhenghei", 10};
     } else if (Settings::isCurrentLocaleSimplifiedHan()) {
         font = QFont{"Microsoft YaHei", 10};
+    } else if (Settings::isCurrentLocaleHan()) {
+        font = QFont{"Microsoft YaHei", 10};
     } else {
         font = QFont{"Segoe UI", 10};
-   }
+    }
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
     qApp->setFont(font);
     foreach (QWidget *widget, QApplication::allWidgets()) {

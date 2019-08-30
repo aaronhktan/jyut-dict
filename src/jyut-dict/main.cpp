@@ -6,7 +6,11 @@ int main(int argc, char *argv[])
 {
     QCoreApplication::setOrganizationName("Aaron Tan");
     QCoreApplication::setOrganizationDomain("aaronhktan.com");
+#ifdef APPIMAGE
+    QCoreApplication::setApplicationName("Jyut Dictionary");
+#else
     QCoreApplication::setApplicationName("CantoneseDictionary");
+#endif
 
     qRegisterMetaType<EntryCharactersOptions>("EntryCharactersOptions");
     qRegisterMetaTypeStreamOperators<EntryCharactersOptions>("EntryCharactersOptions");

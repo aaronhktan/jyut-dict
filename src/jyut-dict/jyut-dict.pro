@@ -95,6 +95,7 @@ HEADERS += \
     components/searchoptionsradiogroupbox.h \
     components/settingstab.h \
     logic/analytics/analytics.h \
+    logic/analytics/analyticsconfig.h \
     logic/database/sqldatabasemanager.h \
     logic/database/sqldatabaseutils.h \
     logic/dictionary/dictionarymetadata.h \
