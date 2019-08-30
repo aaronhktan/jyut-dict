@@ -1,15 +1,36 @@
 #include "searchoptionsradiogroupbox.h"
 
+#include "logic/settings/settingsutils.h"
+
 #include <QLocale>
+#include <QStyle>
 
 SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *mediator,
                                                        QWidget *parent) :
     QGroupBox(parent)
 {
     _mediator = mediator;
+    _analytics = new Analytics{this};
 
     setupUI();
     translateUI();
+
+    SearchParameters lastSelected
+        = Settings::getSettings()
+              ->value("SearchOptionsRadioGroupBox/lastSelected",
+                      QVariant::fromValue(SearchParameters::ENGLISH))
+              .value<SearchParameters>();
+    QList<QRadioButton *> buttons = this->findChildren<QRadioButton *>();
+    for (auto button : buttons) {
+        if (button->property("data").value<SearchParameters>() == lastSelected) {
+            button->click();
+        #ifdef Q_OS_MAC
+            // Makes the button selection show up correctly on macOS
+            button->setDown(true);
+        #endif
+            break;
+        }
+    }
 }
 
 void SearchOptionsRadioGroupBox::changeEvent(QEvent *event)
@@ -31,6 +52,12 @@ void SearchOptionsRadioGroupBox::setupUI()
     _jyutpingButton = new QRadioButton{this};
     _pinyinButton = new QRadioButton{this};
     _englishButton = new QRadioButton{this};
+
+    _simplifiedButton->setProperty("data", QVariant::fromValue(SearchParameters::SIMPLIFIED));
+    _traditionalButton->setProperty("data", QVariant::fromValue(SearchParameters::TRADITIONAL));
+    _jyutpingButton->setProperty("data", QVariant::fromValue(SearchParameters::JYUTPING));
+    _pinyinButton->setProperty("data", QVariant::fromValue(SearchParameters::PINYIN));
+    _englishButton->setProperty("data", QVariant::fromValue(SearchParameters::ENGLISH));
 #ifdef Q_OS_LINUX
     _simplifiedButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
     _traditionalButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
@@ -44,18 +71,12 @@ void SearchOptionsRadioGroupBox::setupUI()
     _pinyinButton->setStyleSheet("QToolTip { padding: 1px; }");
     _englishButton->setStyleSheet("QToolTip { padding: 1px; }");
 #endif
-    _englishButton->click();
-#ifdef Q_OS_MAC
-    // Makes the button selection show up correctly on macOS
-    _englishButton->setDown(true);
-#endif
-    notifyMediator();
 
-    connect(_simplifiedButton, &QRadioButton::released, [this](){notifyMediator();});
-    connect(_traditionalButton, &QRadioButton::released, [this](){notifyMediator();});
-    connect(_jyutpingButton, &QRadioButton::released, [this](){notifyMediator();});
-    connect(_pinyinButton, &QRadioButton::released, [this](){notifyMediator();});
-    connect(_englishButton, &QRadioButton::released, [this](){notifyMediator();});
+    connect(_simplifiedButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
+    connect(_traditionalButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
+    connect(_jyutpingButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
+    connect(_pinyinButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
+    connect(_englishButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
 
     _layout->addWidget(_simplifiedButton);
     _layout->addWidget(_traditionalButton);
@@ -65,12 +86,10 @@ void SearchOptionsRadioGroupBox::setupUI()
 
     setLayout(_layout);
     setFlat(true);
+
 #ifdef Q_OS_WIN
-    if (QLocale::system().language() & QLocale::Chinese ||
-        QLocale::system().language() & QLocale::Cantonese) {
-        setStyleSheet("QRadioButton { font-size: 12px; }"
-                      "QGroupBox { border: 0; }");
-    }
+    setStyleSheet("QRadioButton[isHan=\"true\"] { font-size: 12px; }"
+                  "QGroupBox { border: 0; }");
 #else
     setStyleSheet("QGroupBox { border: 0; }");
 #endif
@@ -78,6 +97,16 @@ void SearchOptionsRadioGroupBox::setupUI()
 
 void SearchOptionsRadioGroupBox::translateUI()
 {
+    // Set property so styling automatically changes
+    setProperty("isHan", Settings::isCurrentLocaleHan());
+
+    QList<QRadioButton *> buttons = this->findChildren<QRadioButton *>();
+    for (auto button : buttons) {
+        button->setProperty("isHan", Settings::isCurrentLocaleHan());
+        button->style()->unpolish(button);
+        button->style()->polish(button);
+    }
+
     _simplifiedButton->setText(tr("SC"));
     _traditionalButton->setText(tr("TC"));
     _jyutpingButton->setText(tr("JP"));
@@ -93,17 +122,15 @@ void SearchOptionsRadioGroupBox::translateUI()
 
 void SearchOptionsRadioGroupBox::notifyMediator()
 {
-    if (_simplifiedButton->isChecked()) {
-        _mediator->setParameters(SearchParameters::SIMPLIFIED);
-    } else if (_traditionalButton->isChecked()) {
-        _mediator->setParameters(SearchParameters::TRADITIONAL);
-    } else if (_jyutpingButton->isChecked()) {
-        _mediator->setParameters(SearchParameters::JYUTPING);
-    } else if (_pinyinButton->isChecked()) {
-        _mediator->setParameters(SearchParameters::PINYIN);
-    } else if (_englishButton->isChecked()) {
-        _mediator->setParameters(SearchParameters::ENGLISH);
-    } else {
-        _mediator->setParameters(SearchParameters::ENGLISH);
-    }
+    QRadioButton *button = static_cast<QRadioButton *>(QObject::sender());
+
+    std::string language = button->text().toStdString();
+    QTimer::singleShot(100, this, [=]() {
+        _analytics->sendEvent("search", "optionsChange", language);
+    });
+
+    Settings::getSettings()->setValue("SearchOptionsRadioGroupBox/lastSelected",
+                                      button->property("data"));
+
+    _mediator->setParameters(button->property("data").value<SearchParameters>());
 }

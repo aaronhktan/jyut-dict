@@ -20,6 +20,7 @@ DictionaryTab::DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
     _manager{manager}
 {
     _utils = std::make_unique<SQLDatabaseUtils>(_manager);
+    _analytics = new Analytics{this};
 
     setupUI();
     translateUI();
@@ -186,6 +187,8 @@ void DictionaryTab::populateDictionaryList()
     for (std::vector<DictionaryMetadata>::size_type row = 0;
          row < sources.size();
          row++) {
+        _analytics->sendEvent("dictionary", "load",
+                              sources.at(row).getName());
         _list->model()->setData(_list->model()->index(static_cast<int>(row), 0),
                                 QVariant::fromValue(sources.at(row)));
     };
@@ -238,6 +241,8 @@ void DictionaryTab::addDictionary(QString &dictionaryFile)
             &SQLDatabaseUtils::finishedAddition,
             this,
             [&](bool success, QString reason, QString description) {
+                _analytics->sendEvent("dictionary", "add",
+                                      success ? "success" : description.toStdString());
                 _dialog->reset();
                 clearDictionaryList();
                 populateDictionaryList();
@@ -314,6 +319,8 @@ void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
             this,
             [&](bool success) {
                 _dialog->setLabelText(success ? tr("Done!") : tr("Failed!"));
+                _analytics->sendEvent("dictionary", "remove",
+                                      success ? "success" : "fail");
 
                 if (success) {
                     std::vector<std::pair<std::string, std::string>> sources;

@@ -9,6 +9,8 @@
 
 MainSplitter::MainSplitter(QWidget *parent) : QSplitter(parent)
 {
+    _analytics = new Analytics{this};
+
     _definitionScrollArea = new DefinitionScrollArea{this};
     _resultListView = new ResultListView{this};
 
@@ -43,6 +45,15 @@ void MainSplitter::handleSelectionChanged(const QModelIndex &selection)
     Entry entry = qvariant_cast<Entry>(selection.data());
     if (entry.getSimplified() == tr("Welcome!").toStdString()) {
         return;
+    }
+
+    if (Settings::getSettings()
+            ->value("Advanced/analyticsEnabled", QVariant{true})
+            .toBool()) {
+        _analytics->sendEvent("entry",
+                              "view",
+                              entry.getTraditional() + " / "
+                                  + entry.getSimplified());
     }
 
     entry.refreshColours(

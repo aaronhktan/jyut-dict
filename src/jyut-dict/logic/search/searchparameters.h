@@ -1,9 +1,13 @@
 #ifndef SEARCHPARAMETERS_H
 #define SEARCHPARAMETERS_H
 
+#include "logic/utils/qvariantutils.h"
+
+#include <QMetaType>
+
 // An enum that defines all possible search parameters
 
-enum class SearchParameters {
+enum class SearchParameters : int {
     SIMPLIFIED  = 0x01,
     TRADITIONAL = 0x02,
     CHINESE     = SIMPLIFIED | TRADITIONAL,
@@ -13,5 +17,7 @@ enum class SearchParameters {
 
     ENGLISH     = 0x06,
 };
+
+Q_DECLARE_METATYPE(SearchParameters)
 
 #endif // SEARCHPARAMETERS_H

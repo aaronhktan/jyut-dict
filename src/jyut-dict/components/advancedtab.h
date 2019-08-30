@@ -1,6 +1,7 @@
 #ifndef ADVANCEDTAB_H
 #define ADVANCEDTAB_H
 
+#include "logic/analytics/analytics.h"
 #include "logic/settings/settingsutils.h"
 
 #include <QCheckBox>
@@ -30,11 +31,15 @@ private:
     void setStyle(bool use_dark);
 
     void initializeUpdateCheckbox(QCheckBox &checkbox);
+    void initializeAnalyticsCheckbox(QCheckBox &checkbox);
     void initializeLanguageCombobox(QComboBox &combobox);
 
     bool _paletteRecentlyChanged = false;
 
+    Analytics *_analytics;
+
     QCheckBox *_updateCheckbox;
+    QCheckBox *_analyticsCheckbox;
     QComboBox *_languageCombobox;
 
     QFormLayout *_tabLayout;

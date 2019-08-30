@@ -27,6 +27,17 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    // Send analytics, but delayed for 100 ms so it doesn't cause
+    // slow startup
+    _analytics = new Analytics{this};
+    QTimer::singleShot(100, this, [&]() {
+        _analytics->startSession();
+        _analytics->sendScreenview("Main");
+        _analytics->sendEvent("language",
+                              "load",
+                              Settings::getCurrentLocale().name().toStdString());
+    });
+
     // Set window stuff
 #ifdef Q_OS_LINUX
     setMinimumSize(QSize(500, 350));
@@ -119,7 +130,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-
+    _analytics->endSession();
 }
 
 void MainWindow::changeEvent(QEvent *event)
@@ -132,7 +143,7 @@ void MainWindow::changeEvent(QEvent *event)
 
 void MainWindow::installTranslator()
 {
-    if (Settings::getSettings()->value("Advanced/locale") == QVariant{}) {
+    if (!Settings::getSettings()->contains("Advanced/locale")) {
         Settings::systemTranslator.load("qt_" + QLocale::system().name(),
                                         QLibraryInfo::location(
                                             QLibraryInfo::TranslationsPath));

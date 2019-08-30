@@ -143,7 +143,7 @@ bool GithubReleaseChecker::parseJSON(const std::string &data,
                         && download_url.find(Utils::ARCHITECTURE) != std::string::npos
                         && download_url.find(Utils::PORTABILITY) != std::string::npos
                         && download_url.find(Utils::PLATFORM_NAME) != std::string::npos
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) && !defined(PORTABLE)
                         && download_url.find(Settings::getCurrentLocaleLanguageAndScriptIfChinese()) != std::string::npos
 #endif
                         ) {

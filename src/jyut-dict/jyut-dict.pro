@@ -52,6 +52,7 @@ SOURCES += \
     components/searchlineedit.cpp \
     components/searchoptionsradiogroupbox.cpp \
     components/settingstab.cpp \
+    logic/analytics/analytics.cpp \
     logic/database/sqldatabasemanager.cpp \
     logic/database/sqldatabaseutils.cpp \
     logic/dictionary/dictionarymetadata.cpp \
@@ -93,6 +94,7 @@ HEADERS += \
     components/searchlineedit.h \
     components/searchoptionsradiogroupbox.h \
     components/settingstab.h \
+    logic/analytics/analytics.h \
     logic/database/sqldatabasemanager.h \
     logic/database/sqldatabaseutils.h \
     logic/dictionary/dictionarymetadata.h \

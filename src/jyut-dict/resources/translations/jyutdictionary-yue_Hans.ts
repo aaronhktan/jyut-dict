@@ -4,19 +4,19 @@
 <context>
     <name>AboutWindow</name>
     <message>
-        <location filename="../../windows/aboutwindow.cpp" line="+140"/>
+        <location filename="../../windows/aboutwindow.cpp" line="+172"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
     <message>
-        <location line="-77"/>
-        <location line="+68"/>
+        <location line="-99"/>
+        <location line="+90"/>
         <source>Build %1</source>
         <translation>版本：%1</translation>
     </message>
     <message>
-        <location line="-40"/>
-        <location line="+41"/>
+        <location line="-62"/>
+        <location line="+63"/>
         <source>View on Github...</source>
         <translation>喺Github上查看…</translation>
     </message>
@@ -24,9 +24,14 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="+86"/>
+        <location filename="../../components/advancedtab.cpp" line="+91"/>
         <source>Automatically check for updates on startup:</source>
         <translation>自动检查更新：</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Enable analytics:</source>
+        <translation>启用遥测：</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -39,12 +44,12 @@
         <translation>系统默认</translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="+5"/>
+        <location line="+1"/>
         <source>English</source>
         <translation>英文</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+5"/>
         <source>Simplified Chinese</source>
         <translation>简体中文</translation>
     </message>
@@ -54,7 +59,7 @@
         <translation>繁体中文</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-5"/>
         <source>French (CA)</source>
         <translation>法文（加拿大）</translation>
     </message>
@@ -77,7 +82,7 @@
 <context>
     <name>ContactTab</name>
     <message>
-        <location filename="../../components/contacttab.cpp" line="+143"/>
+        <location filename="../../components/contacttab.cpp" line="+153"/>
         <source>Email...</source>
         <translation>发送电子邮件…</translation>
     </message>
@@ -100,7 +105,7 @@
 <context>
     <name>DictionaryTab</name>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="+128"/>
+        <location filename="../../components/dictionarytab.cpp" line="+137"/>
         <source>The Dictionaries tab allows you to view information about dictionaries, and add or remove them.</source>
         <translation>你喺“字典”呢一页上可以查看同埋管理储存咗嘅字典。</translation>
     </message>
@@ -120,12 +125,12 @@
         <translation>网站</translation>
     </message>
     <message>
-        <location line="-29"/>
+        <location line="-37"/>
         <source>Select dictionary file</source>
         <translation>选择字典文件</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+54"/>
         <source>Version: %1</source>
         <translation>版本： %1</translation>
     </message>
@@ -235,7 +240,7 @@
 <context>
     <name>MainSplitter</name>
     <message>
-        <location filename="../../components/mainsplitter.cpp" line="+44"/>
+        <location filename="../../components/mainsplitter.cpp" line="+46"/>
         <source>Welcome!</source>
         <translation>欢迎使用粤语字典！</translation>
     </message>
@@ -243,7 +248,7 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="+243"/>
+        <location filename="../../windows/mainwindow.cpp" line="+292"/>
         <source>No update found!</source>
         <translation>冇揾到可用嘅更新!</translation>
     </message>
@@ -258,31 +263,31 @@
         <translation>冇可用的更新!</translation>
     </message>
     <message>
-        <location line="-56"/>
-        <location line="+77"/>
+        <location line="-65"/>
+        <location line="+86"/>
         <source>&amp;File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location line="-76"/>
-        <location line="+77"/>
+        <location line="-85"/>
+        <location line="+86"/>
         <source>&amp;Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location line="-76"/>
-        <location line="+77"/>
+        <location line="-85"/>
+        <location line="+86"/>
         <source>&amp;Window</source>
         <translation>窗口</translation>
     </message>
     <message>
-        <location line="-76"/>
-        <location line="+77"/>
+        <location line="-85"/>
+        <location line="+86"/>
         <source>&amp;Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location line="-75"/>
+        <location line="-84"/>
         <source>&amp;About</source>
         <translation>关于粤语字典</translation>
     </message>
@@ -303,12 +308,12 @@
     </message>
     <message>
         <location line="+2"/>
-        <location line="+87"/>
+        <location line="+96"/>
         <source>Change settings</source>
         <translation>更改设置</translation>
     </message>
     <message>
-        <location line="-85"/>
+        <location line="-94"/>
         <source>Close Window</source>
         <translation>关闭窗口</translation>
     </message>
@@ -363,7 +368,7 @@
         <translation>检查更新…</translation>
     </message>
     <message>
-        <location line="+316"/>
+        <location line="+325"/>
         <source>Checking for update...</source>
         <translation>检查紧更新…</translation>
     </message>
@@ -521,12 +526,12 @@
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settingstab.cpp" line="+203"/>
+        <location filename="../../components/settingstab.cpp" line="+204"/>
         <source>Reset all settings</source>
         <translation>重置所有设置</translation>
     </message>
     <message>
-        <location line="-47"/>
+        <location line="-46"/>
         <source>Simplified/Traditional display options:</source>
         <translation>简体/繁体中文显示设置：</translation>
     </message>
@@ -622,13 +627,13 @@
     </message>
     <message>
         <location line="+21"/>
-        <location line="+15"/>
+        <location line="+14"/>
         <source>No Tone</source>
         <translation>未知声调</translation>
     </message>
     <message>
-        <location line="-11"/>
-        <location line="+19"/>
+        <location line="-10"/>
+        <location line="+18"/>
         <source>Tone %1</source>
         <translation>第 %1 声</translation>
     </message>
@@ -638,7 +643,7 @@
         <translation>轻声</translation>
     </message>
     <message>
-        <location line="+242"/>
+        <location line="+249"/>
         <source>Are you sure you want to reset all settings?</source>
         <translation>你确定要重置全部设置吗？</translation>
     </message>
@@ -651,7 +656,7 @@
 <context>
     <name>SettingsWindow</name>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="+132"/>
+        <location filename="../../windows/settingswindow.cpp" line="+149"/>
         <source>General</source>
         <translation>通用</translation>
     </message>
@@ -684,7 +689,7 @@
 <context>
     <name>UpdateWindow</name>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="+127"/>
+        <location filename="../../windows/updatewindow.cpp" line="+150"/>
         <source>Update Available!</source>
         <translation>更新可用！</translation>
     </message>
@@ -714,7 +719,7 @@
         <translation>下载</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+21"/>
         <source>Hide details</source>
         <translation>隐藏详细信息…</translation>
     </message>
