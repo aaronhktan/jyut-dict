@@ -101,7 +101,7 @@ void Analytics::sendNetworkRequest(QUrlQuery query)
     if (!Settings::getSettings()
             ->value("Advanced/analyticsEnabled", QVariant{true})
             .toBool()) {
-            return;
+        return;
     }
 
     QNetworkRequest request = QNetworkRequest{QUrl{ANALYTICS_URL}};
@@ -114,6 +114,8 @@ void Analytics::sendNetworkRequest(QUrlQuery query)
                                QVariant{QUuid::createUuid().toString()})
                        .toString();
 
+    QString language = Settings::getCurrentLocale().name();
+
     query.addQueryItem("v", "1"); // Version
     query.addQueryItem("tid", PROPERTY_ID); // Property ID
     query.addQueryItem("cid", uuid); // User ID
@@ -121,7 +123,7 @@ void Analytics::sendNetworkRequest(QUrlQuery query)
     query.addQueryItem("av", Utils::CURRENT_VERSION); // Application version
     query.addQueryItem("aip", "1"); // Enable IP anonymization
     query.addQueryItem("ds", "desktop"); // Set data source to desktop
-    query.addQueryItem("ul", Settings::getCurrentLocale().name()); // Set user language
+    query.addQueryItem("ul",  language.replace('_', '-').toLower()); // Set user language
 
     QByteArray body;
     body.append(query.query());

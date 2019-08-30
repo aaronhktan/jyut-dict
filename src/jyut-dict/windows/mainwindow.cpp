@@ -33,6 +33,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QTimer::singleShot(100, this, [&]() {
         _analytics->startSession();
         _analytics->sendScreenview("Main");
+        _analytics->sendEvent("language",
+                              "load",
+                              Settings::getCurrentLocale().name().toStdString());
     });
 
     // Set window stuff

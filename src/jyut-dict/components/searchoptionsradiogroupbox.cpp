@@ -15,11 +15,11 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *m
     setupUI();
     translateUI();
 
-    SearchParameters lastSelected =
-            Settings::getSettings()->
-            value("SearchOptionsRadioGroupBox/lastSelected",
-                  QVariant::fromValue(SearchParameters::ENGLISH))
-            .value<SearchParameters>();
+    SearchParameters lastSelected
+        = Settings::getSettings()
+              ->value("SearchOptionsRadioGroupBox/lastSelected",
+                      QVariant::fromValue(SearchParameters::ENGLISH))
+              .value<SearchParameters>();
     QList<QRadioButton *> buttons = this->findChildren<QRadioButton *>();
     for (auto button : buttons) {
         if (button->property("data").value<SearchParameters>() == lastSelected) {

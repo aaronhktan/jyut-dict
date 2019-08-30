@@ -50,8 +50,8 @@ void MainSplitter::handleSelectionChanged(const QModelIndex &selection)
     if (Settings::getSettings()
             ->value("Advanced/analyticsEnabled", QVariant{true})
             .toBool()) {
-        _analytics->sendEvent("Entry",
-                              "View",
+        _analytics->sendEvent("entry",
+                              "view",
                               entry.getTraditional() + " / "
                                   + entry.getSimplified());
     }
