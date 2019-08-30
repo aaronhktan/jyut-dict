@@ -38,7 +38,7 @@ std::unique_ptr<QSettings> getSettings(QObject *parent)
 
 bool updateSettings(QSettings &settings)
 {
-    if (settings.value("Analytics/uuid") == QVariant{}) {
+    if (!settings.contains("Analytics/uuid")) {
         settings.setValue("Analytics/uuid",
                           QVariant{QUuid::createUuid().toString()});
         settings.sync();

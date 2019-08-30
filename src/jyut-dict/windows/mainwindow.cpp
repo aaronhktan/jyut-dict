@@ -143,7 +143,7 @@ void MainWindow::changeEvent(QEvent *event)
 
 void MainWindow::installTranslator()
 {
-    if (Settings::getSettings()->value("Advanced/locale") == QVariant{}) {
+    if (!Settings::getSettings()->contains("Advanced/locale")) {
         Settings::systemTranslator.load("qt_" + QLocale::system().name(),
                                         QLibraryInfo::location(
                                             QLibraryInfo::TranslationsPath));
