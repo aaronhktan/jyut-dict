@@ -4,6 +4,7 @@
 #include "logic/entry/entry.h"
 #include "logic/entry/entryphoneticoptions.h"
 
+#include <QEvent>
 #include <QGridLayout>
 #include <QLabel>
 #include <QWidget>
@@ -17,7 +18,9 @@ class EntryHeaderWidget : public QWidget
 {
 public:
     explicit EntryHeaderWidget(QWidget *parent = nullptr);
-    ~EntryHeaderWidget();
+    ~EntryHeaderWidget() override;
+
+    void changeEvent(QEvent *event) override;
 
     void setEntry(const Entry &entry);
     void setEntry(std::string word, std::string jyutping, std::string pinyin);

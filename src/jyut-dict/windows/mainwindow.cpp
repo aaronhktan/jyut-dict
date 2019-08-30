@@ -242,9 +242,11 @@ void MainWindow::translateUI()
         font = QFont{"Microsoft Jhenghei", 10};
     } else if (Settings::isCurrentLocaleSimplifiedHan()) {
         font = QFont{"Microsoft YaHei", 10};
+    } else if (Settings::isCurrentLocaleHan()) {
+        font = QFont{"Microsoft YaHei", 10};
     } else {
         font = QFont{"Segoe UI", 10};
-   }
+    }
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
     qApp->setFont(font);
     foreach (QWidget *widget, QApplication::allWidgets()) {
