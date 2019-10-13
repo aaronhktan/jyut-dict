@@ -9,12 +9,24 @@ DefinitionSectionWidget::DefinitionSectionWidget(QWidget *parent) : QWidget(pare
 
     _definitionHeaderWidget = new DefinitionHeaderWidget{this};
     _definitionWidget = new DefinitionContentWidget{this};
+
+    setStyleSheet("QWidget { "
+                  " background-color: #323232; "
+                  " border-radius: 10px; "
+                  "}");
 }
 
 DefinitionSectionWidget::~DefinitionSectionWidget()
 {
 
 }
+
+//QSize DefinitionSectionWidget::sizeHint() const
+//{
+//    return QSize{width(),
+//                 _definitionHeaderWidget->sizeHint().height()
+//                     + _definitionWidget->sizeHint().height()};
+//}
 
 void DefinitionSectionWidget::setEntry(const DefinitionsSet &definitionsSet)
 {

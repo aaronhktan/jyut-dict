@@ -47,6 +47,14 @@ EntryHeaderWidget::~EntryHeaderWidget()
 
 }
 
+//QSize EntryHeaderWidget::sizeHint() const
+//{
+//    return QSize{width(),
+//                 _wordLabel->sizeHint().height() + _jyutpingLabel->sizeHint().height()
+//                     + _pinyinLabel->sizeHint().height()
+//                     + 2 * _entryHeaderLayout->spacing()};
+//}
+
 void EntryHeaderWidget::changeEvent(QEvent *event)
 {
 #ifdef Q_OS_WIN

@@ -19,12 +19,15 @@ public:
     explicit DefinitionHeaderWidget(QWidget *parent = nullptr);
     explicit DefinitionHeaderWidget(std::string title,
                                     QWidget *parent = nullptr);
+    virtual ~DefinitionHeaderWidget() override;
+
+//    QSize sizeHint() const override;
 
     void setSectionTitle(std::string title) override;
 
-    virtual ~DefinitionHeaderWidget() override;
-
 private:
+//    void resizeEvent(QResizeEvent *event) override;
+
     QLabel *_titleLabel;
     QFrame *_divider;
     QVBoxLayout *_layout;

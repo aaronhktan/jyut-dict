@@ -21,11 +21,9 @@ class DefinitionScrollArea : public QScrollArea
 {
 public:
     explicit DefinitionScrollArea(QWidget *parent = nullptr);
-
-    void setEntry(const Entry &entry);
-
     ~DefinitionScrollArea() override;
 
+    void setEntry(const Entry &entry);
 private:
     void resizeEvent(QResizeEvent *event) override;
 
@@ -35,6 +33,10 @@ private:
     // Entire Scroll Area
     QVBoxLayout *_scrollAreaLayout;
     QWidget *_scrollAreaWidget;
+
+//    QResizeEvent *_myResizeEvent;
+    QSize *_oldSize;
+    QSize *_newSize;
 
     void testEntry();
 };

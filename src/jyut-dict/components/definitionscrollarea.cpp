@@ -15,11 +15,13 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
     // Entire Scroll Area
     _scrollAreaLayout = new QVBoxLayout{this};
     _scrollAreaLayout->setSpacing(25);
-    _scrollAreaLayout->setContentsMargins(11, 11, 11, 22);
+    _scrollAreaLayout->setContentsMargins(11, 11, 11, 11);
 
     _scrollAreaWidget = new QWidget{this};
     _scrollAreaWidget->setLayout(_scrollAreaLayout);
-    _scrollAreaWidget->resize(width(), _scrollAreaWidget->sizeHint().height());
+//    _scrollAreaWidget->resize(width(), _scrollAreaWidget->sizeHint().height());
+    _scrollAreaWidget->setStyleSheet("QWidget { background-color: red; }");
+    setStyleSheet("QScrollArea { background-color: blue; }");
 
     setWidget(_scrollAreaWidget);
 #ifdef Q_OS_LINUX
@@ -80,16 +82,38 @@ void DefinitionScrollArea::testEntry() {
     setEntry(entry);
 }
 
+#include <QDebug>
+#include <QCoreApplication>
+#include <QApplication>
 void DefinitionScrollArea::setEntry(const Entry &entry)
 {
     _entryHeaderWidget->setEntry(entry);
     _definitionWidget->setEntry(entry);
-    _scrollAreaWidget->resize(width(), _scrollAreaWidget->sizeHint().height());
+    //    qDebug() << _entryHeaderWidget->sizeHint().height();
+    //    qDebug() << _definitionWidget->sizeHint().height();
+    //    _scrollAreaWidget->resize(QSize{width(),
+    //                                          _entryHeaderWidget->sizeHint().height() +
+    //                                              _definitionWidget->sizeHint().height()});
+    this->resize(this->geometry().width(), this->geometry().height());
+    _newSize = new QSize{this->geometry().width(), this->geometry().height()};
+    _oldSize = new QSize{this->geometry().width(), this->geometry().height()};
+    QResizeEvent *myResizeEvent = new QResizeEvent{*_newSize, *_oldSize};
+    QApplication::postEvent(this, myResizeEvent);
+    _scrollAreaWidget->resize(width()
+                                  - (verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0),
+                              _scrollAreaWidget->sizeHint().height());
+    this->updateGeometry();
+//    _scrollAreaWidget->resize(width(), _scrollAreaWidget->heightForWidth(width()));
 }
 
 void DefinitionScrollArea::resizeEvent(QResizeEvent *event) {
+    //    _scrollAreaWidget->setFixedSize(QSize{width(),
+    //                                          _entryHeaderWidget->sizeHint().height() +
+    //                                              _definitionWidget->sizeHint().height()});
+    qDebug() << "Resized!";
     _scrollAreaWidget->resize(width()
                               - (verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0),
                               _scrollAreaWidget->sizeHint().height());
+    QScrollArea::resizeEvent(event);
     event->accept();
 }
