@@ -25,10 +25,11 @@ DefinitionContentWidget::~DefinitionContentWidget()
 //    for (size_t i = 0; i < _definitionLabels.size(); i++) {
 ////        QFontMetrics metrics(_definitionLabels[i]->font());
 //int labelHeight = _definitionLabels[i]->sizeHint().height();
+////        int labelHeight = _definitionLabels[i]->heightForWidth(width());
 //        height += labelHeight + _definitionLayout->spacing();
-//        qDebug() << "Label height:" << labelHeight;
+////        qDebug() << "Label height:" << labelHeight;
 //    }
-//    qDebug() << "Total height of content widget: " << height;
+////    qDebug() << "Total height of content widget: " << height;
 //    return QSize(width(), height);
 //}
 
@@ -49,18 +50,21 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
         _definitionNumberLabels.push_back(new QLabel{number.c_str(), this});
         _definitionNumberLabels.back()->setStyleSheet(
             "QLabel { color: #6F6F6F; }");
-        int definitionNumberWidth = _definitionNumberLabels.back()->fontMetrics()
-                .boundingRect("PY").width();
+        int definitionNumberWidth = _definitionNumberLabels.back()
+                                        ->fontMetrics()
+                                        .boundingRect("PY")
+                                        .width();
         _definitionNumberLabels.back()->setFixedWidth(definitionNumberWidth);
-//        int definitionNumberHeight = _definitionNumberLabels.back()
-//                                         ->fontMetrics()
-//                                         .boundingRect("PYing")
-//                                         .height();
-//        _definitionNumberLabels.back()->setFixedHeight(definitionNumberHeight);
+        int definitionNumberHeight = _definitionNumberLabels.back()
+                                         ->fontMetrics()
+                                         .boundingRect("PYing")
+                                         .height();
+        _definitionNumberLabels.back()->setFixedHeight(definitionNumberHeight);
 
-        _definitionLabels.push_back(new QLabel{definitions[i].c_str(), this});
+        _definitionLabels.push_back(new /*ResizeableLabel*/ QLabel{this});
+        _definitionLabels.back()->setText(definitions[i].c_str());
         _definitionLabels.back()->setWordWrap(true);
-//        _definitionLabels.back()->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
+//        _definitionLabels.back()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
         _definitionLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
         _definitionLayout->addWidget(_definitionNumberLabels[i],
@@ -73,10 +77,8 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
 //#include <QResizeEvent>
 //void DefinitionContentWidget::resizeEvent(QResizeEvent *event)
 //{
-//    int width = event->size().width();
 //    for (size_t i = 0; i < _definitionLabels.size(); i++) {
-//        int height = _definitionLabels[i]->heightForWidth(width);
-//        _definitionLabels[i]->setFixedHeight(height);
+//        _definitionLabels[i]->setFixedWidth(event->size().width());
 //    }
 //    updateGeometry();
 //}

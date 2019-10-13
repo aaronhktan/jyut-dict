@@ -1,6 +1,7 @@
 #ifndef DEFINITIONCONTENTWIDGET_H
 #define DEFINITIONCONTENTWIDGET_H
 
+#include "components/resizeablelabel.h"
 #include "logic/entry/entry.h"
 
 #include <QGridLayout>
@@ -32,7 +33,7 @@ private:
 
     QGridLayout *_definitionLayout;
     std::vector<QLabel *> _definitionNumberLabels;
-    std::vector<QLabel *> _definitionLabels;
+    std::vector</*ResizeableLabel*/ QLabel *> _definitionLabels;
 };
 
 #endif // DEFINITIONCONTENTWIDGET_H

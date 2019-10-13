@@ -1,5 +1,6 @@
 #include "definitionscrollarea.h"
 
+#include "components/definitionscrollareawidget.h"
 #include "logic/entry/definitionsset.h"
 #include "logic/entry/entry.h"
 #include "logic/entry/sentence.h"
@@ -12,31 +13,17 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
 {
     setFrameShape(QFrame::NoFrame);
 
-    // Entire Scroll Area
-    _scrollAreaLayout = new QVBoxLayout{this};
-    _scrollAreaLayout->setSpacing(25);
-    _scrollAreaLayout->setContentsMargins(11, 11, 11, 11);
-
-    _scrollAreaWidget = new QWidget{this};
-    _scrollAreaWidget->setLayout(_scrollAreaLayout);
-//    _scrollAreaWidget->resize(width(), _scrollAreaWidget->sizeHint().height());
-    _scrollAreaWidget->setStyleSheet("QWidget { background-color: red; }");
-    setStyleSheet("QScrollArea { background-color: blue; }");
+    _scrollAreaWidget = new DefinitionScrollAreaWidget{this};
+    //    _scrollAreaWidget->resize(width(), _scrollAreaWidget->sizeHint().height());
+    setStyleSheet("QScrollArea { background-color: #1E1E1E; }");
 
     setWidget(_scrollAreaWidget);
+    setWidgetResizable(true);
 #ifdef Q_OS_LINUX
     setMinimumWidth(250);
 #else
     setMinimumWidth(350);
 #endif
-
-    _entryHeaderWidget = new EntryHeaderWidget{this};
-    _definitionWidget = new DefinitionWidget{this};
-
-    // Add all widgets to main layout
-    _scrollAreaLayout->addWidget(_entryHeaderWidget);
-    _scrollAreaLayout->addWidget(_definitionWidget);
-    _scrollAreaLayout->addStretch(1);
 
 //    testEntry();
 }
@@ -87,33 +74,35 @@ void DefinitionScrollArea::testEntry() {
 #include <QApplication>
 void DefinitionScrollArea::setEntry(const Entry &entry)
 {
-    _entryHeaderWidget->setEntry(entry);
-    _definitionWidget->setEntry(entry);
+    _scrollAreaWidget->setEntry(entry);
     //    qDebug() << _entryHeaderWidget->sizeHint().height();
     //    qDebug() << _definitionWidget->sizeHint().height();
     //    _scrollAreaWidget->resize(QSize{width(),
     //                                          _entryHeaderWidget->sizeHint().height() +
     //                                              _definitionWidget->sizeHint().height()});
-    this->resize(this->geometry().width(), this->geometry().height());
-    _newSize = new QSize{this->geometry().width(), this->geometry().height()};
-    _oldSize = new QSize{this->geometry().width(), this->geometry().height()};
-    QResizeEvent *myResizeEvent = new QResizeEvent{*_newSize, *_oldSize};
-    QApplication::postEvent(this, myResizeEvent);
+        this->resize(this->geometry().width(), this->geometry().height());
+    //    _scrollAreaWidget->resize(width()
+    //                                  - (verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0),
+    //                              _scrollAreaWidget->sizeHint().height());
+    //    this->updateGeometry();
+    //    _scrollAreaWidget->resize(width(), _scrollAreaWidget->heightForWidth(width()));
+    _scrollAreaWidget->setFixedWidth(width());
     _scrollAreaWidget->resize(width()
                                   - (verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0),
                               _scrollAreaWidget->sizeHint().height());
-    this->updateGeometry();
-//    _scrollAreaWidget->resize(width(), _scrollAreaWidget->heightForWidth(width()));
+//    adjustSize();
 }
 
-void DefinitionScrollArea::resizeEvent(QResizeEvent *event) {
+void DefinitionScrollArea::resizeEvent(QResizeEvent *event)
+{
     //    _scrollAreaWidget->setFixedSize(QSize{width(),
     //                                          _entryHeaderWidget->sizeHint().height() +
     //                                              _definitionWidget->sizeHint().height()});
-    qDebug() << "Resized!";
+//    qDebug() << "Resized!";
+    _scrollAreaWidget->setFixedWidth(width());
     _scrollAreaWidget->resize(width()
                               - (verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0),
                               _scrollAreaWidget->sizeHint().height());
-    QScrollArea::resizeEvent(event);
-    event->accept();
+//    QScrollArea::resizeEvent(event);
+//    event->accept();
 }

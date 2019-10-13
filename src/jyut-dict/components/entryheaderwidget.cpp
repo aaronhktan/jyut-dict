@@ -12,7 +12,10 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _wordLabel = new QLabel{this};
     _wordLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _wordLabel->setWordWrap(true);
-    _wordLabel->setStyleSheet("QLabel { font-size: 24px }");
+    QFont wordLabelFont = _wordLabel->font();
+    wordLabelFont.setPointSize(24);
+    _wordLabel->setFont(wordLabelFont);
+//    _wordLabel->setStyleSheet("QLabel { font-size: 24px }");
 #ifdef Q_OS_WIN
     _wordLabel->setFont(QFont("Microsoft YaHei"));
 #endif
@@ -47,13 +50,34 @@ EntryHeaderWidget::~EntryHeaderWidget()
 
 }
 
-//QSize EntryHeaderWidget::sizeHint() const
-//{
-//    return QSize{width(),
-//                 _wordLabel->sizeHint().height() + _jyutpingLabel->sizeHint().height()
-//                     + _pinyinLabel->sizeHint().height()
-//                     + 2 * _entryHeaderLayout->spacing()};
-//}
+#include <QDebug>
+QSize EntryHeaderWidget::sizeHint() const
+{
+    int wordLabelHeight
+                = _wordLabel->fontMetrics()
+                                          .boundingRect(_wordLabel->text())
+                                          .height() * devicePixelRatio();
+        //        = _wordLabel->height();
+        //        = _wordLabel->sizeHint().height();
+//    qDebug() << "word label height:" << _wordLabel->sizeHint().height();
+    int jyutpingLabelHeight
+//        = _jyutpingLabel->fontMetrics()
+//                                  .boundingRect(_jyutpingLabel->text())
+//                                  .height();
+    = _jyutpingLabel->sizeHint().height()  * devicePixelRatio();
+//    qDebug() << "word label height:" << _jyutpingLabel->sizeHint().height();
+    int pinyinLabelHeight
+//        = _pinyinLabel->fontMetrics()
+//                                .boundingRect(_pinyinLabel->text())
+//                                .height();
+    = _pinyinLabel->sizeHint().height()  * devicePixelRatio();
+//    qDebug() << "word label height:" << _pinyinLabel->sizeHint().height();
+    int totalHeight = wordLabelHeight + jyutpingLabelHeight + pinyinLabelHeight
+                      + 2 * _entryHeaderLayout->spacing();
+    qDebug() << totalHeight * devicePixelRatio();
+    qDebug() << "requested size";
+    return QSize{width(), totalHeight};
+}
 
 void EntryHeaderWidget::changeEvent(QEvent *event)
 {

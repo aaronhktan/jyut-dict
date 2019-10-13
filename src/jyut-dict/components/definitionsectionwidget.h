@@ -17,7 +17,7 @@ public:
     explicit DefinitionSectionWidget(QWidget *parent = nullptr);
     ~DefinitionSectionWidget() override;
 
-//    QSize sizeHint() const override;
+    QSize sizeHint() const override;
 
     void setEntry(const DefinitionsSet &definitionsSet);
 

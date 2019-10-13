@@ -23,7 +23,6 @@ DefinitionWidget::~DefinitionWidget()
 #include <QDebug>
 QSize DefinitionWidget::sizeHint() const
 {
-    qDebug() << "Height: " << height();
     if (_definitionSections.empty()) {
         return QSize(0, 0);
     } else if (_definitionSections.size() > 1) {
@@ -31,14 +30,15 @@ QSize DefinitionWidget::sizeHint() const
         for (auto section: _definitionSections) {
             height += section->sizeHint().height()
                       + _definitionSectionsLayout->spacing();
-//            qDebug() << "Section height: " << section->sizeHint().height();
+            qDebug() << "Section height: " << section->sizeHint().height();
         }
-//        qDebug() << "Calculated height: " << height;
+//        qDebug() << "Spacing: " << _definitionSectionsLayout->spacing();
         return QSize(width(), height);
     } else {
         int height = 0;
         for (auto section: _definitionSections) {
-            height += section->sizeHint().height();
+            height += section->sizeHint().height()
+            + _definitionSectionsLayout->spacing();
         }
         return QSize(width(), height);
     }

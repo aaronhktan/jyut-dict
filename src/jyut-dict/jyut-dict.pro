@@ -31,6 +31,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
+    components/definitionscrollareawidget.cpp \
+    components/resizeablelabel.cpp \
     main.cpp \
     components/advancedtab.cpp \
     components/contacttab.cpp \
@@ -77,6 +79,7 @@ HEADERS += \
     components/definitioncontentwidget.h \
     components/definitionheaderwidget.h \
     components/definitionscrollarea.h \
+    components/definitionscrollareawidget.h \
     components/definitionsectionwidget.h \
     components/definitionwidget.h \
     components/dictionarylistdelegate.h \
@@ -88,6 +91,7 @@ HEADERS += \
     components/isectionheaderwidget.h \
     components/mainsplitter.h \
     components/maintoolbar.h \
+    components/resizeablelabel.h \
     components/resultlistdelegate.h \
     components/resultlistmodel.h \
     components/resultlistview.h \

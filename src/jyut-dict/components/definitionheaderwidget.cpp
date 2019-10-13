@@ -40,10 +40,12 @@ DefinitionHeaderWidget::~DefinitionHeaderWidget()
 
 }
 
-//QSize DefinitionHeaderWidget::sizeHint() const
-//{
-//    return QSize(width(), _titleLabel->sizeHint().height() + 20);
-//}
+#include <QDebug>
+QSize DefinitionHeaderWidget::sizeHint() const
+{
+//    qDebug() << "Title Label height: " << _titleLabel->sizeHint().height();
+    return QSize(width(), _titleLabel->sizeHint().height() + 20);
+}
 
 void DefinitionHeaderWidget::setSectionTitle(std::string title)
 {

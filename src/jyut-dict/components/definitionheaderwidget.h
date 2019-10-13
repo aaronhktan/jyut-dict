@@ -21,7 +21,7 @@ public:
                                     QWidget *parent = nullptr);
     virtual ~DefinitionHeaderWidget() override;
 
-//    QSize sizeHint() const override;
+    QSize sizeHint() const override;
 
     void setSectionTitle(std::string title) override;
 
