@@ -21,17 +21,6 @@ DefinitionSectionWidget::~DefinitionSectionWidget()
 
 }
 
-#include <QDebug>
-QSize DefinitionSectionWidget::sizeHint() const
-{
-    qDebug() << "Definition content height:"
-             << _definitionWidget->sizeHint().height();
-    return QSize{width(),
-//                 _definitionHeaderWidget->sizeHint().height()
-                     + _definitionWidget->sizeHint().height()
-                     + _definitionAreaLayout->spacing()};
-}
-
 void DefinitionSectionWidget::setEntry(const DefinitionsSet &definitionsSet)
 {
     std::string source = definitionsSet.getSourceShortString();

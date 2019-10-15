@@ -20,19 +20,16 @@ DefinitionScrollAreaWidget::DefinitionScrollAreaWidget(QWidget *parent)
     setStyleSheet("QWidget { background-color: #1E1E1E; }");
 }
 
-#include <QDebug>
-QSize DefinitionScrollAreaWidget::sizeHint() const
-{
-//    qDebug() << "requested scroll area widget sizehint";
-    return QSize{width(),
-                 _entryHeaderWidget->sizeHint().height()
-                 +   _definitionWidget->sizeHint().height()};
-}
+//QSize DefinitionScrollAreaWidget::sizeHint() const
+//{
+//    return QSize{width(),
+//                 _entryHeaderWidget->sizeHint().height()
+//                 +   _definitionWidget->sizeHint().height()};
+//}
 
 void DefinitionScrollAreaWidget::setEntry(const Entry &entry)
 {
     _entryHeaderWidget->setEntry(entry);
     _definitionWidget->setEntry(entry);
-    updateGeometry();
-//    adjustSize();
+//    updateGeometry();
 }

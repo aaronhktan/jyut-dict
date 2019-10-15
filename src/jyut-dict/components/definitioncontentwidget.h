@@ -1,7 +1,6 @@
 #ifndef DEFINITIONCONTENTWIDGET_H
 #define DEFINITIONCONTENTWIDGET_H
 
-#include "components/resizeablelabel.h"
 #include "logic/entry/entry.h"
 
 #include <QGridLayout>
@@ -21,19 +20,15 @@ public:
     explicit DefinitionContentWidget(QWidget *parent = nullptr);
     ~DefinitionContentWidget() override;
 
-//    QSize sizeHint() const override;
-
     void setEntry(const Entry &entry);
     void setEntry(std::vector<std::string> definitions);
 
 private:
-//    void resizeEvent(QResizeEvent *event) override;
-
     void cleanupLabels();
 
     QGridLayout *_definitionLayout;
     std::vector<QLabel *> _definitionNumberLabels;
-    std::vector</*ResizeableLabel*/ QLabel *> _definitionLabels;
+    std::vector<QLabel *> _definitionLabels;
 };
 
 #endif // DEFINITIONCONTENTWIDGET_H

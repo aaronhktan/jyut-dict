@@ -14,11 +14,10 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
     setFrameShape(QFrame::NoFrame);
 
     _scrollAreaWidget = new DefinitionScrollAreaWidget{this};
-    //    _scrollAreaWidget->resize(width(), _scrollAreaWidget->sizeHint().height());
     setStyleSheet("QScrollArea { background-color: #1E1E1E; }");
 
     setWidget(_scrollAreaWidget);
-    setWidgetResizable(true);
+    setWidgetResizable(true); // IMPORTANT! This makes the scrolling widget resize correctly.
 #ifdef Q_OS_LINUX
     setMinimumWidth(250);
 #else
@@ -54,8 +53,8 @@ void DefinitionScrollArea::testEntry() {
                                           "(verb) (of relationship) 1. to break up (with a boy /girl friend); or being dumped (by a boy/girl friend); (of hair) 1. cut; (slang)  ticket; (slang) to kick someone off from (a show, etc.)",
                                           "(noun) a male juvenile rogue; a young gangster; a young thug boy; a juvenile delinquent"};
     std::vector<std::string>definitions_CCCANTO{"Hi!",
-                                                 "THIS IS A TEST",
-                                                 "WOOOOOOO"};
+                                                "THIS IS A TEST",
+                                                "WOOOOOOO"};
     std::vector<DefinitionsSet>definitions{DefinitionsSet{"CEDICT", definitions_CC},
                                            DefinitionsSet{"CC-CANTO", definitions_CCCANTO}};
     std::vector<DefinitionsSet>definitions2{DefinitionsSet{"CEDICT", definitions_CC}};
@@ -69,40 +68,18 @@ void DefinitionScrollArea::testEntry() {
     setEntry(entry);
 }
 
-#include <QDebug>
-#include <QCoreApplication>
-#include <QApplication>
 void DefinitionScrollArea::setEntry(const Entry &entry)
 {
     _scrollAreaWidget->setEntry(entry);
-    //    qDebug() << _entryHeaderWidget->sizeHint().height();
-    //    qDebug() << _definitionWidget->sizeHint().height();
-    //    _scrollAreaWidget->resize(QSize{width(),
-    //                                          _entryHeaderWidget->sizeHint().height() +
-    //                                              _definitionWidget->sizeHint().height()});
-        this->resize(this->geometry().width(), this->geometry().height());
-    //    _scrollAreaWidget->resize(width()
-    //                                  - (verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0),
-    //                              _scrollAreaWidget->sizeHint().height());
-    //    this->updateGeometry();
-    //    _scrollAreaWidget->resize(width(), _scrollAreaWidget->heightForWidth(width()));
-    _scrollAreaWidget->setFixedWidth(width());
     _scrollAreaWidget->resize(width()
                                   - (verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0),
                               _scrollAreaWidget->sizeHint().height());
-//    adjustSize();
 }
 
 void DefinitionScrollArea::resizeEvent(QResizeEvent *event)
 {
-    //    _scrollAreaWidget->setFixedSize(QSize{width(),
-    //                                          _entryHeaderWidget->sizeHint().height() +
-    //                                              _definitionWidget->sizeHint().height()});
-//    qDebug() << "Resized!";
-    _scrollAreaWidget->setFixedWidth(width());
     _scrollAreaWidget->resize(width()
                               - (verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0),
                               _scrollAreaWidget->sizeHint().height());
-//    QScrollArea::resizeEvent(event);
-//    event->accept();
+    event->accept();
 }

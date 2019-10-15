@@ -26,10 +26,7 @@ public:
     void setSectionTitle(std::string title) override;
 
 private:
-//    void resizeEvent(QResizeEvent *event) override;
-
     QLabel *_titleLabel;
-    QFrame *_divider;
     QVBoxLayout *_layout;
 
     std::string formatTitle(std::string title);

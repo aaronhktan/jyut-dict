@@ -26,7 +26,7 @@ public:
 private:
     void resizeEvent(QResizeEvent *event) override;
 
-    // Widget to scroll
+    // Widget that contains elements to scroll
     DefinitionScrollAreaWidget *_scrollAreaWidget;
 
     void testEntry();

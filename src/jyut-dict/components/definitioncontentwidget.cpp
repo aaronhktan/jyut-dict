@@ -16,23 +16,6 @@ DefinitionContentWidget::~DefinitionContentWidget()
     cleanupLabels();
 }
 
-//#include <QDebug>
-//#include <QApplication>
-//#include <QDesktopWidget>
-//QSize DefinitionContentWidget::sizeHint() const
-//{
-//    int height = 20; // For top and bottom margin
-//    for (size_t i = 0; i < _definitionLabels.size(); i++) {
-////        QFontMetrics metrics(_definitionLabels[i]->font());
-//int labelHeight = _definitionLabels[i]->sizeHint().height();
-////        int labelHeight = _definitionLabels[i]->heightForWidth(width());
-//        height += labelHeight + _definitionLayout->spacing();
-////        qDebug() << "Label height:" << labelHeight;
-//    }
-////    qDebug() << "Total height of content widget: " << height;
-//    return QSize(width(), height);
-//}
-
 void DefinitionContentWidget::setEntry(const Entry &entry)
 {
     // Note: displays only the first set of definitions in entry
@@ -61,10 +44,8 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
                                          .height();
         _definitionNumberLabels.back()->setFixedHeight(definitionNumberHeight);
 
-        _definitionLabels.push_back(new /*ResizeableLabel*/ QLabel{this});
-        _definitionLabels.back()->setText(definitions[i].c_str());
+        _definitionLabels.push_back(new QLabel{definitions[i].c_str(), this});
         _definitionLabels.back()->setWordWrap(true);
-//        _definitionLabels.back()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
         _definitionLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
         _definitionLayout->addWidget(_definitionNumberLabels[i],
@@ -73,15 +54,6 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
                                      static_cast<int>(i + 9), 1, Qt::AlignTop);
     }
 }
-
-//#include <QResizeEvent>
-//void DefinitionContentWidget::resizeEvent(QResizeEvent *event)
-//{
-//    for (size_t i = 0; i < _definitionLabels.size(); i++) {
-//        _definitionLabels[i]->setFixedWidth(event->size().width());
-//    }
-//    updateGeometry();
-//}
 
 void DefinitionContentWidget::cleanupLabels()
 {

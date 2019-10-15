@@ -21,7 +21,6 @@ public:
     ~EntryHeaderWidget() override;
 
     void changeEvent(QEvent *event) override;
-    QSize sizeHint() const override;
 
     void setEntry(const Entry &entry);
     void setEntry(std::string word, std::string jyutping, std::string pinyin);
