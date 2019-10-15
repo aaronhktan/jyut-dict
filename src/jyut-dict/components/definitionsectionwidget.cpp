@@ -9,11 +9,6 @@ DefinitionSectionWidget::DefinitionSectionWidget(QWidget *parent) : QWidget(pare
 
     _definitionHeaderWidget = new DefinitionHeaderWidget{this};
     _definitionWidget = new DefinitionContentWidget{this};
-
-    setStyleSheet("QWidget { "
-                  " background-color: #323232; "
-                  " border-radius: 10px; "
-                  "}");
 }
 
 DefinitionSectionWidget::~DefinitionSectionWidget()
