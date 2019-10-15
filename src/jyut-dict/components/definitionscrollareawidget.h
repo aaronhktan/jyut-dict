@@ -13,8 +13,6 @@ class DefinitionScrollAreaWidget : public QWidget
 public:
     explicit DefinitionScrollAreaWidget(QWidget *parent = nullptr);
 
-//    QSize sizeHint() const override;
-
     void setEntry(const Entry &entry);
 private:
     QVBoxLayout *_scrollAreaLayout;

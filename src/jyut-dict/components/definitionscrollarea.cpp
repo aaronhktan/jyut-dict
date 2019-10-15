@@ -14,7 +14,6 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
     setFrameShape(QFrame::NoFrame);
 
     _scrollAreaWidget = new DefinitionScrollAreaWidget{this};
-    setStyleSheet("QScrollArea { background-color: #1E1E1E; }");
 
     setWidget(_scrollAreaWidget);
     setWidgetResizable(true); // IMPORTANT! This makes the scrolling widget resize correctly.

@@ -21,12 +21,11 @@ public:
                                     QWidget *parent = nullptr);
     virtual ~DefinitionHeaderWidget() override;
 
-    QSize sizeHint() const override;
-
     void setSectionTitle(std::string title) override;
 
 private:
     QLabel *_titleLabel;
+    QFrame *_divider;
     QVBoxLayout *_layout;
 
     std::string formatTitle(std::string title);

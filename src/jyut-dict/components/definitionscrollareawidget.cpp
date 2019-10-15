@@ -6,7 +6,7 @@ DefinitionScrollAreaWidget::DefinitionScrollAreaWidget(QWidget *parent)
     // Entire Scroll Area
     _scrollAreaLayout = new QVBoxLayout{this};
     _scrollAreaLayout->setSpacing(25);
-    _scrollAreaLayout->setContentsMargins(11, 11, 11, 11);
+    _scrollAreaLayout->setContentsMargins(11, 11, 11, 22);
 
     setLayout(_scrollAreaLayout);
 
@@ -17,15 +17,7 @@ DefinitionScrollAreaWidget::DefinitionScrollAreaWidget(QWidget *parent)
     _scrollAreaLayout->addWidget(_entryHeaderWidget);
     _scrollAreaLayout->addWidget(_definitionWidget);
     _scrollAreaLayout->addStretch(1);
-    setStyleSheet("QWidget { background-color: #1E1E1E; }");
 }
-
-//QSize DefinitionScrollAreaWidget::sizeHint() const
-//{
-//    return QSize{width(),
-//                 _entryHeaderWidget->sizeHint().height()
-//                 +   _definitionWidget->sizeHint().height()};
-//}
 
 void DefinitionScrollAreaWidget::setEntry(const Entry &entry)
 {
