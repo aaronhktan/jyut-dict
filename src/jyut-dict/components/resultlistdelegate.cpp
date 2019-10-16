@@ -31,23 +31,34 @@ void ResultListDelegate::paint(QPainter *painter,
 
     bool isWelcomeEntry = entry.getSimplified() == tr("Welcome!").toStdString();
 
+    QColor backgroundColour;
     if (option.state & QStyle::State_Selected && !isWelcomeEntry) {
         if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
 #ifdef Q_OS_MAC
-            painter->fillRect(option.rect,
-                              option.palette.brush(QPalette::Inactive,
-                                                   QPalette::Highlight));
+            backgroundColour = option.palette
+                                   .brush(QPalette::Inactive,
+                                          QPalette::Highlight)
+                                   .color();
 #else
-            painter->fillRect(option.rect, QColor(70, 70, 70));
+            backgroundColour = QColor(220, 220, 220);
 #endif
         } else {
 #ifdef Q_OS_MAC
-            painter->fillRect(option.rect, option.palette.highlight());
+            backgroundColour = option.palette
+                                   .brush(QPalette::Active,
+                                          QPalette::Highlight)
+                                   .color();
 #else
-            painter->fillRect(option.rect, QColor(204, 0, 1));
+            backgroundColour = QColor(204, 0, 1);
 #endif
         }
-        painter->setPen(QPen(option.palette.color(QPalette::HighlightedText)));
+        painter->fillRect(option.rect, backgroundColour);
+        // The following is used to calculate a contrasting colour
+        // https://stackoverflow.com/questions/946544/good-text-foreground-color-for-a-given-background-color
+        auto brightness = backgroundColour.redF()* 0.299
+                          + backgroundColour.greenF() * 0.587
+                          + backgroundColour.blueF() * 0.114;
+        painter->setPen((brightness > 0.6) ? Qt::black : Qt::white);
     } else {
         painter->fillRect(option.rect, option.palette.base());
         painter->setPen(QPen(option.palette.color(QPalette::WindowText)));
