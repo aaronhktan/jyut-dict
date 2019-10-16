@@ -4,23 +4,20 @@ DefinitionHeaderWidget::DefinitionHeaderWidget(QWidget *parent)
     : QWidget(parent)
 {
     _layout = new QVBoxLayout{this};
-    _layout->setContentsMargins(0, 0, 0, 0);
-    _layout->setSpacing(5);
+    _layout->setContentsMargins(10, 10, 10, 10);
+    _layout->setSpacing(10);
 
     _titleLabel = new QLabel{this};
-    _divider = new QFrame{this};
-    _divider->setFrameShape(QFrame::HLine);
-    _divider->setFrameShadow(QFrame::Raised);
-    _divider->setFixedHeight(1);
-
-#ifdef Q_OS_MAC
-    _divider->setStyleSheet("QFrame { border: 1px solid #6f6f6f; }");
-#endif
 
     _layout->addWidget(_titleLabel);
-    _layout->addWidget(_divider);
 
-    setLayout(_layout);
+    setStyleSheet("QWidget { "
+                  " background-color: #3C3C3C; "
+                  " border-top-left-radius: 10px; "
+                  " border-top-right-radius: 10px; "
+                  " border-bottom-left-radius: 0px; "
+                  " border-bottom-right-radius: 0px; "
+                  "}");
 }
 
 DefinitionHeaderWidget::DefinitionHeaderWidget(std::string title, QWidget *parent)

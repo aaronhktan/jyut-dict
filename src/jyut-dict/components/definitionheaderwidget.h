@@ -3,7 +3,6 @@
 
 #include "components/isectionheaderwidget.h"
 
-#include <QFrame>
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -25,7 +24,6 @@ public:
 
 private:
     QLabel *_titleLabel;
-    QFrame *_divider;
     QVBoxLayout *_layout;
 
     std::string formatTitle(std::string title);

@@ -3,12 +3,10 @@
 DefinitionContentWidget::DefinitionContentWidget(QWidget *parent) : QWidget(parent)
 {
     _definitionLayout = new QGridLayout{this};
-    _definitionLayout->setContentsMargins(0, 0, 0, 0);
+    _definitionLayout->setContentsMargins(10, 0, 10, 10);
 
     _definitionNumberLabels = {};
     _definitionLabels = {};
-
-    setLayout(_definitionLayout);
 }
 
 DefinitionContentWidget::~DefinitionContentWidget()

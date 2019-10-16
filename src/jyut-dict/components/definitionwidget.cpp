@@ -4,7 +4,7 @@ DefinitionWidget::DefinitionWidget(QWidget *parent) : QWidget(parent)
 {
     _definitionSectionsLayout = new QVBoxLayout{this};
     _definitionSectionsLayout->setContentsMargins(0, 0, 0, 0);
-    _definitionSectionsLayout->setSpacing(25);
+    _definitionSectionsLayout->setSpacing(15);
 }
 
 DefinitionWidget::DefinitionWidget(Entry &entry, QWidget *parent)
