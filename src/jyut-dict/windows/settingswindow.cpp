@@ -31,6 +31,11 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
     move(parent->x() + (parent->width() - sizeHint().width()) / 2,
          parent->y() + (parent->height() - sizeHint().height()) / 2);
 
+    connect(qApp,
+            &QGuiApplication::applicationStateChanged,
+            this,
+            &SettingsWindow::paintWithApplicationState);
+
     setAttribute(Qt::WA_DeleteOnClose);
 }
 
@@ -158,17 +163,31 @@ void SettingsWindow::setStyle(bool use_dark)
 {
     // Set background color of tabs in toolbar
     int r, g, b, a;
+    QColor currentTextColour;
+    QColor otherTextColour;
+    if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
+        QGuiApplication::palette()
+            .color(QPalette::Inactive, QPalette::Highlight)
+            .getRgb(&r, &g, &b, &a);
+        currentTextColour = QColor{"grey"};
+        otherTextColour = QColor{"grey"};
+    } else {
 #ifdef Q_OS_MAC
-    Utils::getAppleControlAccentColor().getRgb(&r, &g, &b, &a);
+        Utils::getAppleControlAccentColor().getRgb(&r, &g, &b, &a);
 #else
-    QColor(204, 0, 1).getRgb(&r, &g, &b, &a);
+        QColor(204, 0, 1).getRgb(&r, &g, &b, &a);
 #endif
+        currentTextColour = QColor{"white"};
+        otherTextColour = QGuiApplication::palette().color(QPalette::Active,
+                                                           QPalette::Text);
+    }
 
 #ifdef Q_OS_MAC
     QString style;
     if (use_dark) {
         style = "QToolButton[isHan=\"true\"] { "
                 "   border-radius: 2px; "
+                "   color: %7; "
                 "   font-size: %5px; "
                 "   margin: 0px; "
                 "}"
@@ -176,6 +195,7 @@ void SettingsWindow::setStyle(bool use_dark)
                 "QToolButton { "
                 "   border-top-left-radius: 4px; "
                 "   border-top-right-radius: 4px; "
+                "   color: %7; "
                 "   font-size: 10px; "
                 "   margin: 0px; "
                 "}"
@@ -184,11 +204,13 @@ void SettingsWindow::setStyle(bool use_dark)
                 "   background-color: rgba(%1, %2, %3, %4); "
                 "   border-top-left-radius: 4px; "
                 "   border-top-right-radius: 4px; "
+                "   color: %6; "
                 "   margin: 0px; "
                 "}";
     } else {
         style = "QToolButton[isHan=\"true\"] { "
                 "   border-radius: 2px; "
+                "   color: %7; "
                 "   font-size: %5px; "
                 "   margin: 0px; "
                 "}"
@@ -196,6 +218,7 @@ void SettingsWindow::setStyle(bool use_dark)
                 "QToolButton { "
                 "   border-top-left-radius: 4px; "
                 "   border-top-right-radius: 4px; "
+                "   color: %7; "
                 "   font-size: 10px; "
                 "   margin: 0px; "
                 "}"
@@ -204,19 +227,21 @@ void SettingsWindow::setStyle(bool use_dark)
                 "   background-color: rgba(%1, %2, %3, %4); "
                 "   border-top-left-radius: 4px; "
                 "   border-top-right-radius: 4px; "
-                "   color: #FFFFFF; "
+                "   color: %6; "
                 "   margin: 0px; "
                 "}";
     }
 #else
     QString style{"QToolButton[isHan=\"true\"] { "
                   "   border-radius: 2px; "
+                "   color: %7; "
                   "   font-size: %5px; "
                   "   margin: 0px; "
                   "}"
                   " "
                   "QToolButton { "
                   "   border-radius: 2px; "
+                  "   color: %7; "
                   "   font-size: 10px; "
                   "   margin: 0px; "
                   "}"
@@ -224,7 +249,7 @@ void SettingsWindow::setStyle(bool use_dark)
                   "QToolButton:checked { "
                   "   border-radius: 2px; "
                   "   background-color: rgba(%1, %2, %3, %4); "
-                  "   color: #FFFFFF; "
+                  "   color: #6; "
                   "   margin: 0px; "
                   "}"};
 #endif
@@ -233,7 +258,9 @@ void SettingsWindow::setStyle(bool use_dark)
                   std::to_string(g).c_str(),
                   std::to_string(b).c_str(),
                   std::to_string(a).c_str(),
-                  "13"));
+                  "13",
+                  currentTextColour.name(),
+                  otherTextColour.name()));
     setButtonIcon(use_dark, _contentStackedWidget->currentIndex());
 }
 
@@ -242,25 +269,36 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
     // For these images, export as 96px width, and center on 120px canvas.
     QIcon settings = QIcon(":/images/settings.png");
     QIcon settings_inverted = QIcon(":/images/settings_inverted.png");
+    QIcon settings_disabled = QIcon(":/images/settings_disabled.png");
     QIcon book = QIcon(":/images/book.png");
     QIcon book_inverted = QIcon(":/images/book_inverted.png");
+    QIcon book_disabled = QIcon(":/images/book_disabled.png");
     QIcon sliders = QIcon(":/images/sliders.png");
     QIcon sliders_inverted = QIcon(":/images/sliders_inverted.png");
+    QIcon sliders_disabled = QIcon(":/images/sliders_disabled.png");
     QIcon help = QIcon(":/images/help.png");
     QIcon help_inverted = QIcon(":/images/help_inverted.png");
+    QIcon help_disabled = QIcon(":/images/help_disabled.png");
 
     // Set icons for each tab
 #ifdef Q_OS_MAC
-    if (use_dark) {
-        _actions[0]->setIcon(settings_inverted);
-        _actions[1]->setIcon(book_inverted);
-        _actions[2]->setIcon(sliders_inverted);
-        _actions[3]->setIcon(help_inverted);
+    if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
+        _actions[0]->setIcon(settings_disabled);
+        _actions[1]->setIcon(book_disabled);
+        _actions[2]->setIcon(sliders_disabled);
+        _actions[3]->setIcon(help_disabled);
     } else {
-        _actions[0]->setIcon(index == 0 ? settings_inverted : settings);
-        _actions[1]->setIcon(index == 1 ? book_inverted : book);
-        _actions[2]->setIcon(index == 2 ? sliders_inverted : sliders);
-        _actions[3]->setIcon(index == 3 ? help_inverted : help);
+        if (use_dark) {
+            _actions[0]->setIcon(settings_inverted);
+            _actions[1]->setIcon(book_inverted);
+            _actions[2]->setIcon(sliders_inverted);
+            _actions[3]->setIcon(help_inverted);
+        } else {
+            _actions[0]->setIcon(index == 0 ? settings_inverted : settings);
+            _actions[1]->setIcon(index == 1 ? book_inverted : book);
+            _actions[2]->setIcon(index == 2 ? sliders_inverted : sliders);
+            _actions[3]->setIcon(index == 3 ? help_inverted : help);
+        }
     }
 #else
     _actions[0]->setIcon(index == 0 ? settings_inverted : settings);
@@ -268,6 +306,12 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
     _actions[2]->setIcon(index == 2 ? sliders_inverted : sliders);
     _actions[3]->setIcon(index == 3 ? help_inverted : help);
 #endif
+
+    QList<QToolButton *> buttons = this->findChildren<QToolButton *>();
+    for (auto button : buttons) {
+        button->style()->unpolish(button);
+        button->style()->polish(button);
+    }
 }
 
 void SettingsWindow::openTab(int tabIndex)
@@ -300,4 +344,17 @@ void SettingsWindow::openTab(int tabIndex)
         _actions[static_cast<std::vector<QAction *>::size_type>(tabIndex)]
             ->text()
             .toStdString());
+}
+
+void SettingsWindow::paintWithApplicationState(Qt::ApplicationState state)
+{
+#ifdef Q_OS_MAC
+    if (!system("defaults read -g AppleInterfaceStyle")) {
+        setStyle(/* use_dark = */ true);
+    } else {
+        setStyle(/* use_dark = */ false);
+    }
+#else
+    setStyle(/* use_dark = */ false);
+#endif
 }

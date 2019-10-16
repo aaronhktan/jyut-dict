@@ -35,6 +35,9 @@ public:
 private:
     QAbstractListModel *_model;
     QStyledItemDelegate *_delegate;
+
+public slots:
+    void paintWithApplicationState();
 };
 
 #endif // RESULTLISTVIEW_H

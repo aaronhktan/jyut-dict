@@ -5,6 +5,7 @@
 #include "logic/entry/entryphoneticoptions.h"
 #include "logic/settings/settingsutils.h"
 
+#include <QGuiApplication>
 #include <QAbstractTextDocumentLayout>
 #include <QRectF>
 #include <QTextDocument>
@@ -31,11 +32,17 @@ void ResultListDelegate::paint(QPainter *painter,
     bool isWelcomeEntry = entry.getSimplified() == tr("Welcome!").toStdString();
 
     if (option.state & QStyle::State_Selected && !isWelcomeEntry) {
+        if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
+            painter->fillRect(option.rect,
+                              option.palette.brush(QPalette::Inactive,
+                                                   QPalette::Highlight));
+        } else {
 #ifdef Q_OS_MAC
-        painter->fillRect(option.rect, option.palette.highlight());
+            painter->fillRect(option.rect, option.palette.highlight());
 #else
-        painter->fillRect(option.rect, QColor(204, 0, 1));
+            painter->fillRect(option.rect, QColor(204, 0, 1));
 #endif
+        }
         painter->setPen(QPen(option.palette.color(QPalette::HighlightedText)));
     } else {
         painter->fillRect(option.rect, option.palette.base());

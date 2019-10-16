@@ -3,6 +3,8 @@
 #include "components/resultlistmodel.h"
 #include "logic/search/sqlsearch.h"
 
+#include <QGuiApplication>
+
 #ifdef Q_OS_WIN
 #include <QScrollBar>
 #endif
@@ -24,6 +26,10 @@ ResultListView::ResultListView(QWidget *parent)
     setItemDelegate(_delegate);
 
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    connect(qApp,
+            &QGuiApplication::applicationStateChanged,
+            this,
+            &ResultListView::paintWithApplicationState);
 }
 
 void ResultListView::changeEvent(QEvent *event)
@@ -46,3 +52,8 @@ void ResultListView::wheelEvent(QWheelEvent *event)
     QAbstractItemView::wheelEvent(event);
 }
 #endif
+
+void ResultListView::paintWithApplicationState()
+{
+    setDirtyRegion(QRegion{this->geometry()}); // Forces repaint of list view
+}

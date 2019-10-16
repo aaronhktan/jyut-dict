@@ -53,6 +53,9 @@ private:
     std::shared_ptr<SQLDatabaseManager> _manager;
 
     bool _paletteRecentlyChanged = false;
+
+public slots:
+    void paintWithApplicationState(Qt::ApplicationState state);
 };
 
 #endif // SETTINGSWINDOW_H

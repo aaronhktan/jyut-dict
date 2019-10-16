@@ -23,5 +23,9 @@
         <file>translations/jyutdictionary-fr_CA.qm</file>
         <file>translations/jyutdictionary-en.qm</file>
         <file>translations/jyutdictionary-zh_Hant.qm</file>
+        <file>images/book_disabled.png</file>
+        <file>images/help_disabled.png</file>
+        <file>images/settings_disabled.png</file>
+        <file>images/sliders_disabled.png</file>
     </qresource>
 </RCC>
