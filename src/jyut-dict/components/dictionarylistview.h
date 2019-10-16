@@ -22,6 +22,8 @@ public:
 #endif
 
 private:
+    void paintWithApplicationState();
+
     QAbstractListModel *_model;
     QStyledItemDelegate *_delegate;
 };

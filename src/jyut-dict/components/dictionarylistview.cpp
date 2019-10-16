@@ -3,6 +3,8 @@
 #include "components/dictionarylistdelegate.h"
 #include "components/dictionarylistmodel.h"
 
+#include <QGuiApplication>
+
 #ifdef Q_OS_WIN
 #include <QScrollBar>
 #endif
@@ -20,6 +22,10 @@ DictionaryListView::DictionaryListView(QWidget *parent)
     setItemDelegate(_delegate);
 
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+    connect(qApp,
+            &QGuiApplication::applicationStateChanged,
+            this,
+            &DictionaryListView::paintWithApplicationState);
 }
 
 // On Windows, because of a bug in Qt (see QTBUG-7232), every time mouse
@@ -34,3 +40,8 @@ void DictionaryListView::wheelEvent(QWheelEvent *event)
     QAbstractItemView::wheelEvent(event);
 }
 #endif
+
+void DictionaryListView::paintWithApplicationState()
+{
+    viewport()->update();
+}

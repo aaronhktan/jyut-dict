@@ -50,6 +50,17 @@ namespace Utils {
     void split(const std::string &string,
                const std::string delimiter,
                std::vector<std::string> &result);
+
+    // The following is used to calculate a contrasting colour
+    // https://stackoverflow.com/questions/946544/good-text-foreground-color-for-a-given-background-color
+    struct colour
+    {
+        int red;
+        int green;
+        int blue;
+    };
+
+    colour getContrastingColour(const colour backgroundColour);
 }
 
 #endif // UTILS_H
