@@ -40,7 +40,7 @@ void ResultListDelegate::paint(QPainter *painter,
                                           QPalette::Highlight)
                                    .color();
 #else
-            backgroundColour = QColor(220, 220, 220);
+            backgroundColour = QColor{220, 220, 220};
 #endif
         } else {
 #ifdef Q_OS_MAC
@@ -49,7 +49,7 @@ void ResultListDelegate::paint(QPainter *painter,
                                           QPalette::Highlight)
                                    .color();
 #else
-            backgroundColour = QColor(204, 0, 1);
+            backgroundColour = QColor{204, 0, 1};
 #endif
         }
         painter->fillRect(option.rect, backgroundColour);

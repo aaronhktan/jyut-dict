@@ -166,16 +166,20 @@ void SettingsWindow::setStyle(bool use_dark)
     QColor currentTextColour;
     QColor otherTextColour;
     if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
+#ifdef Q_OS_MAC
         QGuiApplication::palette()
             .color(QPalette::Inactive, QPalette::Highlight)
             .getRgb(&r, &g, &b, &a);
+#else
+        QColor{220, 220, 220}.getRgb(&r, &g, &b, &a);
+#endif
         currentTextColour = QColor{"grey"};
         otherTextColour = QColor{"grey"};
     } else {
 #ifdef Q_OS_MAC
         Utils::getAppleControlAccentColor().getRgb(&r, &g, &b, &a);
 #else
-        QColor(204, 0, 1).getRgb(&r, &g, &b, &a);
+        QColor{204, 0, 1}.getRgb(&r, &g, &b, &a);
 #endif
         currentTextColour = QColor{"white"};
 #ifdef Q_OS_MAC
@@ -253,7 +257,7 @@ void SettingsWindow::setStyle(bool use_dark)
                   "QToolButton:checked { "
                   "   border-radius: 2px; "
                   "   background-color: rgba(%1, %2, %3, %4); "
-                  "   color: #6; "
+                  "   color: %6; "
                   "   margin: 0px; "
                   "}"};
 #endif
