@@ -55,5 +55,5 @@ void ResultListView::wheelEvent(QWheelEvent *event)
 
 void ResultListView::paintWithApplicationState()
 {
-    setDirtyRegion(QRegion{this->geometry()}); // Forces repaint of list view
+    viewport()->update(); // Forces repaint of viewing area.
 }
