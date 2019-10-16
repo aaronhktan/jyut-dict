@@ -5,7 +5,6 @@
 #include "logic/dictionary/dictionarysource.h"
 #include "logic/utils/utils.h"
 #include "logic/settings/settingsutils.h"
-
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif

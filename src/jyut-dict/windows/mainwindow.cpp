@@ -6,13 +6,12 @@
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/strings/strings.h"
-#include "windows/aboutwindow.h"
-#include "windows/settingswindow.h"
-#include "windows/updatewindow.h"
-
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
+#include "windows/aboutwindow.h"
+#include "windows/settingswindow.h"
+#include "windows/updatewindow.h"
 
 #include <QApplication>
 #include <QClipboard>

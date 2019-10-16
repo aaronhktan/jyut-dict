@@ -5,7 +5,9 @@
 #include "components/dictionarytab.h"
 #include "components/settingstab.h"
 #include "logic/utils/utils.h"
+#ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#endif
 
 #include <QActionGroup>
 #include <QGuiApplication>
@@ -343,11 +345,7 @@ void SettingsWindow::openTab(int tabIndex)
 void SettingsWindow::paintWithApplicationState(Qt::ApplicationState state)
 {
 #ifdef Q_OS_MAC
-    if (!system("defaults read -g AppleInterfaceStyle")) {
-        setStyle(/* use_dark = */ true);
-    } else {
-        setStyle(/* use_dark = */ false);
-    }
+    setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */ false);
 #endif
