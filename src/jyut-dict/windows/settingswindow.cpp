@@ -55,11 +55,7 @@ void SettingsWindow::changeEvent(QEvent *event)
         QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
-        if (!system("defaults read -g AppleInterfaceStyle")) {
-            setStyle(/* use_dark = */ true);
-        } else {
-            setStyle(/* use_dark = */ false);
-        }
+        setStyle(Utils::isDarkMode());
     }
 #endif
     if (event->type() == QEvent::LanguageChange) {
@@ -126,11 +122,7 @@ void SettingsWindow::setupUI()
 
     // Customize the look of the toolbar to fit in better with platform styles
 #ifdef Q_OS_MAC
-    if (!system("defaults read -g AppleInterfaceStyle")) {
-        setStyle(/* use_dark = */true);
-    } else {
-        setStyle(/* use_dark = */false);
-    }
+    setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */false);
 #endif
@@ -324,11 +316,7 @@ void SettingsWindow::openTab(int tabIndex)
 {
 #if defined(Q_OS_DARWIN)
     // Set the style to match whether the user started dark mode
-    if (!system("defaults read -g AppleInterfaceStyle")) {
-        setButtonIcon(/* use_dark = */true, tabIndex);
-    } else {
-        setButtonIcon(/* use_dark = */false, tabIndex);
-    }
+    setButtonIcon(Utils::isDarkMode(), tabIndex);
 #else
     setButtonIcon(/* use_dark = */false, tabIndex);
 #endif
