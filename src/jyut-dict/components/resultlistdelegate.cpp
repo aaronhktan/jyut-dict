@@ -33,9 +33,13 @@ void ResultListDelegate::paint(QPainter *painter,
 
     if (option.state & QStyle::State_Selected && !isWelcomeEntry) {
         if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
+#ifdef Q_OS_MAC
             painter->fillRect(option.rect,
                               option.palette.brush(QPalette::Inactive,
                                                    QPalette::Highlight));
+#else
+            painter->fillRect(option.rect, QColor(70, 70, 70));
+#endif
         } else {
 #ifdef Q_OS_MAC
             painter->fillRect(option.rect, option.palette.highlight());

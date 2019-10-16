@@ -178,8 +178,12 @@ void SettingsWindow::setStyle(bool use_dark)
         QColor(204, 0, 1).getRgb(&r, &g, &b, &a);
 #endif
         currentTextColour = QColor{"white"};
+#ifdef Q_OS_MAC
         otherTextColour = QGuiApplication::palette().color(QPalette::Active,
                                                            QPalette::Text);
+#else
+        otherTextColour = QColor{"black"};
+#endif
     }
 
 #ifdef Q_OS_MAC
@@ -234,7 +238,7 @@ void SettingsWindow::setStyle(bool use_dark)
 #else
     QString style{"QToolButton[isHan=\"true\"] { "
                   "   border-radius: 2px; "
-                "   color: %7; "
+                  "   color: %7; "
                   "   font-size: %5px; "
                   "   margin: 0px; "
                   "}"
@@ -281,7 +285,6 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
     QIcon help_disabled = QIcon(":/images/help_disabled.png");
 
     // Set icons for each tab
-#ifdef Q_OS_MAC
     if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
         _actions[0]->setIcon(settings_disabled);
         _actions[1]->setIcon(book_disabled);
@@ -300,12 +303,6 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
             _actions[3]->setIcon(index == 3 ? help_inverted : help);
         }
     }
-#else
-    _actions[0]->setIcon(index == 0 ? settings_inverted : settings);
-    _actions[1]->setIcon(index == 1 ? book_inverted : book);
-    _actions[2]->setIcon(index == 2 ? sliders_inverted : sliders);
-    _actions[3]->setIcon(index == 3 ? help_inverted : help);
-#endif
 
     QList<QToolButton *> buttons = this->findChildren<QToolButton *>();
     for (auto button : buttons) {
