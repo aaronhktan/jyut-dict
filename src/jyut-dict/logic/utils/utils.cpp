@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 
+#include <iostream>
 namespace Utils {
     void split(const std::string &string,
                const char delimiter,
@@ -31,5 +32,13 @@ namespace Utils {
             previous = current + delimiter.length();
         }
         result.push_back(string.substr(previous));
+    }
+
+    colour getContrastingColour(const colour backgroundColour)
+    {
+        auto brightness = backgroundColour.red / 255.0 * 0.299
+                          + backgroundColour.green / 255.0 * 0.587
+                          + backgroundColour.blue / 255.0 * 0.114;
+        return (brightness > 0.65) ? colour{0, 0, 0} : colour{0xFF, 0xFF, 0xFF};
     }
 }

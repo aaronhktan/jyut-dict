@@ -4,6 +4,7 @@
 #include "components/contacttab.h"
 #include "components/dictionarytab.h"
 #include "components/settingstab.h"
+#include "logic/utils/utils.h"
 #include "logic/utils/utils_mac.h"
 
 #include <QActionGroup>
@@ -181,7 +182,11 @@ void SettingsWindow::setStyle(bool use_dark)
 #else
         QColor{204, 0, 1}.getRgb(&r, &g, &b, &a);
 #endif
-        currentTextColour = QColor{"white"};
+        Utils::colour contrastingColour = Utils::getContrastingColour(
+            Utils::colour{r, g, b});
+        currentTextColour = QColor{contrastingColour.red,
+                                   contrastingColour.blue,
+                                   contrastingColour.green};
 #ifdef Q_OS_MAC
         otherTextColour = QGuiApplication::palette().color(QPalette::Active,
                                                            QPalette::Text);

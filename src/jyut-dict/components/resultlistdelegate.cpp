@@ -4,6 +4,7 @@
 #include "logic/entry/entrycharactersoptions.h"
 #include "logic/entry/entryphoneticoptions.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/utils/utils.h"
 
 #include <QGuiApplication>
 #include <QAbstractTextDocumentLayout>
@@ -53,12 +54,14 @@ void ResultListDelegate::paint(QPainter *painter,
 #endif
         }
         painter->fillRect(option.rect, backgroundColour);
-        // The following is used to calculate a contrasting colour
-        // https://stackoverflow.com/questions/946544/good-text-foreground-color-for-a-given-background-color
-        auto brightness = backgroundColour.redF()* 0.299
-                          + backgroundColour.greenF() * 0.587
-                          + backgroundColour.blueF() * 0.114;
-        painter->setPen((brightness > 0.6) ? Qt::black : Qt::white);
+        Utils::colour contrastingColour = Utils::getContrastingColour(
+            Utils::colour{backgroundColour.red(),
+                          backgroundColour.green(),
+                          backgroundColour.blue()});
+        QColor textColour = QColor{contrastingColour.red,
+                                   contrastingColour.blue,
+                                   contrastingColour.green};
+        painter->setPen(textColour);
     } else {
         painter->fillRect(option.rect, option.palette.base());
         painter->setPen(QPen(option.palette.color(QPalette::WindowText)));
