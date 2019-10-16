@@ -1,8 +1,7 @@
 #ifndef DEFINITIONSCROLLAREA_H
 #define DEFINITIONSCROLLAREA_H
 
-#include "components/definitionwidget.h"
-#include "components/entryheaderwidget.h"
+#include "components/definitionscrollareawidget.h"
 #include "logic/entry/entry.h"
 
 #include <QResizeEvent>
@@ -21,20 +20,14 @@ class DefinitionScrollArea : public QScrollArea
 {
 public:
     explicit DefinitionScrollArea(QWidget *parent = nullptr);
-
-    void setEntry(const Entry &entry);
-
     ~DefinitionScrollArea() override;
 
+    void setEntry(const Entry &entry);
 private:
     void resizeEvent(QResizeEvent *event) override;
 
-    EntryHeaderWidget *_entryHeaderWidget;
-    DefinitionWidget *_definitionWidget;
-
-    // Entire Scroll Area
-    QVBoxLayout *_scrollAreaLayout;
-    QWidget *_scrollAreaWidget;
+    // Widget that contains elements to scroll
+    DefinitionScrollAreaWidget *_scrollAreaWidget;
 
     void testEntry();
 };

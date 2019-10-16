@@ -37,6 +37,7 @@ SOURCES += \
     components/definitioncontentwidget.cpp \
     components/definitionheaderwidget.cpp \
     components/definitionscrollarea.cpp \
+    components/definitionscrollareawidget.cpp \
     components/definitionsectionwidget.cpp \
     components/definitionwidget.cpp \
     components/dictionarylistdelegate.cpp \
@@ -77,6 +78,7 @@ HEADERS += \
     components/definitioncontentwidget.h \
     components/definitionheaderwidget.h \
     components/definitionscrollarea.h \
+    components/definitionscrollareawidget.h \
     components/definitionsectionwidget.h \
     components/definitionwidget.h \
     components/dictionarylistdelegate.h \

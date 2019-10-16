@@ -29,11 +29,20 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
     cleanupLabels();
 
     for (size_t i = 0; i < definitions.size(); i++) {
-        std::string number{"<font color=#6f6f6f>" + std::to_string(i + 1) + "</font>"};
+        std::string number = std::to_string(i + 1);
         _definitionNumberLabels.push_back(new QLabel{number.c_str(), this});
-        int definitionNumberWidth = _definitionNumberLabels.back()->fontMetrics()
-                .boundingRect("PY").width();
+        _definitionNumberLabels.back()->setStyleSheet(
+            "QLabel { color: #6F6F6F; }");
+        int definitionNumberWidth = _definitionNumberLabels.back()
+                                        ->fontMetrics()
+                                        .boundingRect("PY")
+                                        .width();
         _definitionNumberLabels.back()->setFixedWidth(definitionNumberWidth);
+        int definitionNumberHeight = _definitionNumberLabels.back()
+                                         ->fontMetrics()
+                                         .boundingRect("PYing")
+                                         .height();
+        _definitionNumberLabels.back()->setFixedHeight(definitionNumberHeight);
 
         _definitionLabels.push_back(new QLabel{definitions[i].c_str(), this});
         _definitionLabels.back()->setWordWrap(true);

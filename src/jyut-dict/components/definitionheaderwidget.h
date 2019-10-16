@@ -19,10 +19,9 @@ public:
     explicit DefinitionHeaderWidget(QWidget *parent = nullptr);
     explicit DefinitionHeaderWidget(std::string title,
                                     QWidget *parent = nullptr);
+    virtual ~DefinitionHeaderWidget() override;
 
     void setSectionTitle(std::string title) override;
-
-    virtual ~DefinitionHeaderWidget() override;
 
 private:
     QLabel *_titleLabel;

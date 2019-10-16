@@ -11,14 +11,14 @@
 #include <vector>
 
 // The DefinitionContentWidget shows all the definitions
-// It contains a colelction of QLabels, one for each definition
+// It contains a collection of QLabels, one for each definition
 // and its associated "number" (i.e. first definition, second definition, etc.)
 
 class DefinitionContentWidget : public QWidget
 {
 public:
     explicit DefinitionContentWidget(QWidget *parent = nullptr);
-    ~DefinitionContentWidget();
+    ~DefinitionContentWidget() override;
 
     void setEntry(const Entry &entry);
     void setEntry(std::vector<std::string> definitions);

@@ -19,8 +19,6 @@ public:
     explicit DefinitionWidget(Entry &entry, QWidget *parent = nullptr);
     ~DefinitionWidget() override;
 
-    QSize sizeHint() const override;
-
     void setEntry(const Entry &entry);
 
 private:

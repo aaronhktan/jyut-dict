@@ -1,5 +1,6 @@
 #include "definitionscrollarea.h"
 
+#include "components/definitionscrollareawidget.h"
 #include "logic/entry/definitionsset.h"
 #include "logic/entry/entry.h"
 #include "logic/entry/sentence.h"
@@ -12,29 +13,15 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
 {
     setFrameShape(QFrame::NoFrame);
 
-    // Entire Scroll Area
-    _scrollAreaLayout = new QVBoxLayout{this};
-    _scrollAreaLayout->setSpacing(25);
-    _scrollAreaLayout->setContentsMargins(11, 11, 11, 22);
-
-    _scrollAreaWidget = new QWidget{this};
-    _scrollAreaWidget->setLayout(_scrollAreaLayout);
-    _scrollAreaWidget->resize(width(), _scrollAreaWidget->sizeHint().height());
+    _scrollAreaWidget = new DefinitionScrollAreaWidget{this};
 
     setWidget(_scrollAreaWidget);
+    setWidgetResizable(true); // IMPORTANT! This makes the scrolling widget resize correctly.
 #ifdef Q_OS_LINUX
     setMinimumWidth(250);
 #else
     setMinimumWidth(350);
 #endif
-
-    _entryHeaderWidget = new EntryHeaderWidget{this};
-    _definitionWidget = new DefinitionWidget{this};
-
-    // Add all widgets to main layout
-    _scrollAreaLayout->addWidget(_entryHeaderWidget);
-    _scrollAreaLayout->addWidget(_definitionWidget);
-    _scrollAreaLayout->addStretch(1);
 
 //    testEntry();
 }
@@ -65,8 +52,8 @@ void DefinitionScrollArea::testEntry() {
                                           "(verb) (of relationship) 1. to break up (with a boy /girl friend); or being dumped (by a boy/girl friend); (of hair) 1. cut; (slang)  ticket; (slang) to kick someone off from (a show, etc.)",
                                           "(noun) a male juvenile rogue; a young gangster; a young thug boy; a juvenile delinquent"};
     std::vector<std::string>definitions_CCCANTO{"Hi!",
-                                                 "THIS IS A TEST",
-                                                 "WOOOOOOO"};
+                                                "THIS IS A TEST",
+                                                "WOOOOOOO"};
     std::vector<DefinitionsSet>definitions{DefinitionsSet{"CEDICT", definitions_CC},
                                            DefinitionsSet{"CC-CANTO", definitions_CCCANTO}};
     std::vector<DefinitionsSet>definitions2{DefinitionsSet{"CEDICT", definitions_CC}};
@@ -82,12 +69,14 @@ void DefinitionScrollArea::testEntry() {
 
 void DefinitionScrollArea::setEntry(const Entry &entry)
 {
-    _entryHeaderWidget->setEntry(entry);
-    _definitionWidget->setEntry(entry);
-    _scrollAreaWidget->resize(width(), _scrollAreaWidget->sizeHint().height());
+    _scrollAreaWidget->setEntry(entry);
+    _scrollAreaWidget->resize(width()
+                                  - (verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0),
+                              _scrollAreaWidget->sizeHint().height());
 }
 
-void DefinitionScrollArea::resizeEvent(QResizeEvent *event) {
+void DefinitionScrollArea::resizeEvent(QResizeEvent *event)
+{
     _scrollAreaWidget->resize(width()
                               - (verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0),
                               _scrollAreaWidget->sizeHint().height());
