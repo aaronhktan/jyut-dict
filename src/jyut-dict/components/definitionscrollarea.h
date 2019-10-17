@@ -4,6 +4,7 @@
 #include "components/definitionscrollareawidget.h"
 #include "logic/entry/entry.h"
 
+#include <QEvent>
 #include <QResizeEvent>
 #include <QScrollArea>
 #include <QVBoxLayout>
@@ -22,9 +23,12 @@ public:
     explicit DefinitionScrollArea(QWidget *parent = nullptr);
     ~DefinitionScrollArea() override;
 
+    void changeEvent(QEvent *event) override;
+
     void setEntry(const Entry &entry);
 private:
     void resizeEvent(QResizeEvent *event) override;
+    void setStyle(bool use_dark);
 
     bool _paletteRecentlyChanged = false;
 
