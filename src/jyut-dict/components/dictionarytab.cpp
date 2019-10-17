@@ -5,6 +5,9 @@
 #include "logic/dictionary/dictionarysource.h"
 #include "logic/utils/utils.h"
 #include "logic/settings/settingsutils.h"
+#ifdef Q_OS_MAC
+#include "logic/utils/utils_mac.h"
+#endif
 
 #include <QtConcurrent/QtConcurrent>
 #include "QCoreApplication"
@@ -113,11 +116,7 @@ void DictionaryTab::setupUI()
 
 #ifdef Q_OS_MAC
     // Set the style to match whether the user started dark mode
-    if (!system("defaults read -g AppleInterfaceStyle")) {
-        setStyle(/* use_dark = */ true);
-    } else {
-        setStyle(/* use_dark = */ false);
-    }
+    setStyle(Utils::isDarkMode());
 #else
     setStyle(false);
 #endif

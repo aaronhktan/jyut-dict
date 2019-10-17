@@ -6,6 +6,9 @@
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/strings/strings.h"
+#ifdef Q_OS_MAC
+#include "logic/utils/utils_mac.h"
+#endif
 #include "windows/aboutwindow.h"
 #include "windows/settingswindow.h"
 #include "windows/updatewindow.h"
@@ -114,11 +117,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Set style
 #ifdef Q_OS_MAC
     // Set the style to match whether the user started dark mode
-    if (!system("defaults read -g AppleInterfaceStyle")) {
-        setStyle(/* use_dark = */ true);
-    } else {
-        setStyle(/* use_dark = */ false);
-    }
+    setStyle(Utils::isDarkMode());
 #else
     setStyle(false);
 #endif

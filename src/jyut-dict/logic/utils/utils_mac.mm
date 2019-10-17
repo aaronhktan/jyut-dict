@@ -38,6 +38,17 @@ QColor getAppleControlAccentColor()
         return QApplication::palette().color(QPalette::Active, QPalette::Highlight);
     }
 }
+
+bool isDarkMode()
+{
+    NSAppearance *appearance = NSAppearance.currentAppearance;
+    if (@available(macOS 10.14, *)) {
+        return appearance.name == NSAppearanceNameDarkAqua;
+    }
+
+    return false;
+}
+
 #endif
 
 }

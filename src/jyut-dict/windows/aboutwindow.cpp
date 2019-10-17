@@ -2,8 +2,10 @@
 
 #include "logic/utils/utils.h"
 #include "logic/settings/settingsutils.h"
-
 #include "logic/strings/strings.h"
+#ifdef Q_OS_MAC
+#include "logic/utils/utils_mac.h"
+#endif
 
 #include <QApplication>
 #include <QCoreApplication>
@@ -109,11 +111,7 @@ void AboutWindow::setupUI()
     // Set style
 #ifdef Q_OS_MAC
     // Set the style to match whether the user started dark mode
-    if (!system("defaults read -g AppleInterfaceStyle")) {
-        setStyle(/* use_dark = */ true);
-    } else {
-        setStyle(/* use_dark = */ false);
-    }
+    setStyle(Utils::isDarkMode());
 #else
     setStyle(false);
 #endif
@@ -129,11 +127,7 @@ void AboutWindow::changeEvent(QEvent *event)
         QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
-        if (!system("defaults read -g AppleInterfaceStyle")) {
-            setStyle(/* use_dark = */ true);
-        } else {
-            setStyle(/* use_dark = */ false);
-        }
+        setStyle(Utils::isDarkMode());
     }
 #endif
     if (event->type() == QEvent::LanguageChange) {
