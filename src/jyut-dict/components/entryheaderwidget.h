@@ -26,7 +26,11 @@ public:
     void setEntry(std::string word, std::string jyutping, std::string pinyin);
 
 private:
+    void setStyle(bool use_dark);
+
     void displayPronunciationLabels(const EntryPhoneticOptions options);
+
+    bool _paletteRecentlyChanged = false;
 
     QGridLayout *_entryHeaderLayout;
     QLabel *_wordLabel;

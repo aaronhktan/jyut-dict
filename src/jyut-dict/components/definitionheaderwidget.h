@@ -32,8 +32,6 @@ private:
 
     QLabel *_titleLabel;
     QVBoxLayout *_layout;
-
-    std::string formatTitle(std::string title);
 };
 
 #endif // DEFINITIONHEADERWIDGET_H

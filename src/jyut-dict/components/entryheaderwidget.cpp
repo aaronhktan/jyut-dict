@@ -1,7 +1,11 @@
 #include "entryheaderwidget.h"
 
 #include "logic/settings/settingsutils.h"
+#ifdef Q_OS_MAC
+#include "logic/utils/utils_mac.h"
+#endif
 
+#include <QTimer>
 #include <QVariant>
 
 EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
@@ -19,7 +23,6 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
 #endif
 
     _jyutpingLabel = new QLabel{"JP", this};
-    _jyutpingLabel->setStyleSheet("QLabel { color: #6f6f6f; }");
     _jyutpingLabel->setAttribute(Qt::WA_TranslucentBackground);
     _jyutpingLabel->setFixedWidth(_jyutpingLabel->fontMetrics().boundingRect("JP").width());
     _jyutpingPronunciation = new QLabel{this};
@@ -29,7 +32,6 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _jyutpingPronunciation->setWordWrap(true);
 
     _pinyinLabel = new QLabel{"PY", this};
-    _pinyinLabel->setStyleSheet("QLabel { color: #6f6f6f; }");
     _pinyinLabel->setAttribute(Qt::WA_TranslucentBackground);
     _pinyinLabel->setFixedWidth(_pinyinLabel->fontMetrics().boundingRect("PY").width());
     _pinyinPronunciation = new QLabel{this};
@@ -43,6 +45,12 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _entryHeaderLayout->addWidget(_jyutpingPronunciation, 2, 1, 1, 1);
     _entryHeaderLayout->addWidget(_pinyinLabel, 3, 0, 1, 1, Qt::AlignTop);
     _entryHeaderLayout->addWidget(_pinyinPronunciation, 3, 1, 1, 1);
+
+#ifdef Q_OS_MAC
+    setStyle(Utils::isDarkMode());
+#else
+    setStyle(/* use_dark = */false);
+#endif
 }
 
 EntryHeaderWidget::~EntryHeaderWidget()
@@ -56,6 +64,17 @@ void EntryHeaderWidget::changeEvent(QEvent *event)
     if (event->type() == QEvent::FontChange) {
         _jyutpingLabel->setFixedWidth(_jyutpingLabel->fontMetrics().boundingRect("JP").width());
         _pinyinLabel->setFixedWidth(_pinyinLabel->fontMetrics().boundingRect("PY").width());
+    }
+#endif
+#if defined(Q_OS_DARWIN)
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        setStyle(Utils::isDarkMode());
     }
 #endif
     QWidget::changeEvent(event);
@@ -110,6 +129,17 @@ void EntryHeaderWidget::setEntry(std::string word,
     _wordLabel->setText(word.c_str());
     _jyutpingPronunciation->setText(jyutping.c_str());
     _pinyinPronunciation->setText(pinyin.c_str());
+}
+
+void EntryHeaderWidget::setStyle(bool use_dark)
+{
+    if (use_dark) {
+        _jyutpingLabel->setStyleSheet("QLabel { color: #A8A8A8; }");
+        _pinyinLabel->setStyleSheet("QLabel { color: #A8A8A8; }");
+    } else {
+        _jyutpingLabel->setStyleSheet("QLabel { color: #6F6F6F; }");
+        _pinyinLabel->setStyleSheet("QLabel { color: #6F6F6F; }");
+    }
 }
 
 void EntryHeaderWidget::displayPronunciationLabels(const EntryPhoneticOptions options)

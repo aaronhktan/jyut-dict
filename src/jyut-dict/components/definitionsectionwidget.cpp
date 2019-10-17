@@ -19,7 +19,7 @@ DefinitionSectionWidget::DefinitionSectionWidget(QWidget *parent) : QWidget(pare
     _definitionAreaLayout->addWidget(_definitionHeaderWidget);
     _definitionAreaLayout->addWidget(_definitionWidget);
 
-#if defined(Q_OS_MAC)
+#ifdef Q_OS_MAC
     setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */false);

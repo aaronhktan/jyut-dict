@@ -17,7 +17,7 @@ DefinitionHeaderWidget::DefinitionHeaderWidget(QWidget *parent)
 
     _layout->addWidget(_titleLabel);
 
-#if defined(Q_OS_MAC)
+#ifdef Q_OS_MAC
             setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */false);
@@ -53,18 +53,13 @@ DefinitionHeaderWidget::~DefinitionHeaderWidget()
 
 void DefinitionHeaderWidget::setSectionTitle(std::string title)
 {
-    std::string formattedTitle = formatTitle(title);
-    _titleLabel->setText(formattedTitle.c_str());
+    _titleLabel->setText(title.c_str());
     _titleLabel->setFixedHeight(_titleLabel->fontMetrics().boundingRect(title.c_str()).height());
-}
-
-std::string DefinitionHeaderWidget::formatTitle(std::string title)
-{
-    return "<font color=#6F6F6F>" + title + "</font>";
 }
 
 void DefinitionHeaderWidget::setStyle(bool use_dark)
 {
+    // Style the main background
     QColor backgroundColour;
     QString styleSheet = "QWidget { "
                          " background-color: %1; "
@@ -79,4 +74,11 @@ void DefinitionHeaderWidget::setStyle(bool use_dark)
         backgroundColour = QColor{235, 235, 235};
     }
     setStyleSheet(styleSheet.arg(backgroundColour.name()));
+
+    // Style the label
+    if (use_dark) {
+        _titleLabel->setStyleSheet("QLabel { color: #A8A8A8; }");
+    } else {
+        _titleLabel->setStyleSheet("QLabel { color: #6F6F6F; }");
+    }
 }

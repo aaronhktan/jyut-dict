@@ -1,5 +1,11 @@
 #include "definitioncontentwidget.h"
 
+#ifdef Q_OS_MAC
+#include "logic/utils/utils_mac.h"
+#endif
+
+#include <QTimer>
+
 DefinitionContentWidget::DefinitionContentWidget(QWidget *parent) : QWidget(parent)
 {
     _definitionLayout = new QGridLayout{this};
@@ -12,6 +18,22 @@ DefinitionContentWidget::DefinitionContentWidget(QWidget *parent) : QWidget(pare
 DefinitionContentWidget::~DefinitionContentWidget()
 {
     cleanupLabels();
+}
+
+void DefinitionContentWidget::changeEvent(QEvent *event)
+{
+#if defined(Q_OS_DARWIN)
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        setStyle(Utils::isDarkMode());
+    }
+#endif
+    QWidget::changeEvent(event);
 }
 
 void DefinitionContentWidget::setEntry(const Entry &entry)
@@ -29,8 +51,6 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
     for (size_t i = 0; i < definitions.size(); i++) {
         std::string number = std::to_string(i + 1);
         _definitionNumberLabels.push_back(new QLabel{number.c_str(), this});
-        _definitionNumberLabels.back()->setStyleSheet(
-            "QLabel { color: #6F6F6F; }");
         _definitionNumberLabels.back()->setAttribute(Qt::WA_TranslucentBackground);
         int definitionNumberWidth = _definitionNumberLabels.back()
                                         ->fontMetrics()
@@ -52,6 +72,25 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
                                      static_cast<int>(i + 9), 0, Qt::AlignTop);
         _definitionLayout->addWidget(_definitionLabels[i],
                                      static_cast<int>(i + 9), 1, Qt::AlignTop);
+    }
+
+#ifdef Q_OS_MAC
+    setStyle(Utils::isDarkMode());
+#else
+    setStyle(/* use_dark = */false);
+#endif
+}
+
+void DefinitionContentWidget::setStyle(bool use_dark)
+{
+    if (use_dark) {
+        for (auto label : _definitionNumberLabels) {
+            label->setStyleSheet("QLabel { color: #A8A8A8; }");
+        }
+    } else {
+        for (auto label : _definitionNumberLabels) {
+            label->setStyleSheet("QLabel { color: #6F6F6F; }");
+        }
     }
 }
 

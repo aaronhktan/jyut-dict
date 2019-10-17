@@ -3,6 +3,7 @@
 
 #include "logic/entry/entry.h"
 
+#include <QEvent>
 #include <QGridLayout>
 #include <QLabel>
 #include <QWidget>
@@ -20,11 +21,17 @@ public:
     explicit DefinitionContentWidget(QWidget *parent = nullptr);
     ~DefinitionContentWidget() override;
 
+    void changeEvent(QEvent *event) override;
+
     void setEntry(const Entry &entry);
     void setEntry(std::vector<std::string> definitions);
 
 private:
+    void setStyle(bool use_dark);
+
     void cleanupLabels();
+
+    bool _paletteRecentlyChanged = false;
 
     QGridLayout *_definitionLayout;
     std::vector<QLabel *> _definitionNumberLabels;
