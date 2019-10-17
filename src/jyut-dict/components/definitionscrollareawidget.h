@@ -4,8 +4,12 @@
 #include "components/definitionwidget.h"
 #include "components/entryheaderwidget.h"
 
+#include <QEvent>
 #include <QVBoxLayout>
 #include <QWidget>
+
+// The DefinitionScrollAreaWidget is the widget that contains other widgets
+// for the DefinitionScrollArea to pan and view.
 
 class DefinitionScrollAreaWidget : public QWidget
 {
@@ -13,8 +17,14 @@ class DefinitionScrollAreaWidget : public QWidget
 public:
     explicit DefinitionScrollAreaWidget(QWidget *parent = nullptr);
 
+    void changeEvent(QEvent *event) override;
+
     void setEntry(const Entry &entry);
 private:
+    void setStyle(bool use_dark);
+
+    bool _paletteRecentlyChanged = false;
+
     QVBoxLayout *_scrollAreaLayout;
 
     EntryHeaderWidget *_entryHeaderWidget;

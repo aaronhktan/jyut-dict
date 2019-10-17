@@ -10,25 +10,30 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _entryHeaderLayout->setContentsMargins(0, 0, 0, 0);
 
     _wordLabel = new QLabel{this};
+    _wordLabel->setStyleSheet("QLabel { font-size: 24px }");
+    _wordLabel->setAttribute(Qt::WA_TranslucentBackground);
     _wordLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _wordLabel->setWordWrap(true);
-    _wordLabel->setStyleSheet("QLabel { font-size: 24px }");
 #ifdef Q_OS_WIN
     _wordLabel->setFont(QFont("Microsoft YaHei"));
 #endif
 
     _jyutpingLabel = new QLabel{"JP", this};
     _jyutpingLabel->setStyleSheet("QLabel { color: #6f6f6f; }");
+    _jyutpingLabel->setAttribute(Qt::WA_TranslucentBackground);
     _jyutpingLabel->setFixedWidth(_jyutpingLabel->fontMetrics().boundingRect("JP").width());
     _jyutpingPronunciation = new QLabel{this};
+    _jyutpingPronunciation->setAttribute(Qt::WA_TranslucentBackground);
     _jyutpingPronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _jyutpingLabel->setVisible(false);
     _jyutpingPronunciation->setWordWrap(true);
 
     _pinyinLabel = new QLabel{"PY", this};
     _pinyinLabel->setStyleSheet("QLabel { color: #6f6f6f; }");
+    _pinyinLabel->setAttribute(Qt::WA_TranslucentBackground);
     _pinyinLabel->setFixedWidth(_pinyinLabel->fontMetrics().boundingRect("PY").width());
     _pinyinPronunciation = new QLabel{this};
+    _pinyinPronunciation->setAttribute(Qt::WA_TranslucentBackground);
     _pinyinPronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _pinyinLabel->setVisible(false);
     _pinyinPronunciation->setWordWrap(true);
@@ -38,8 +43,6 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _entryHeaderLayout->addWidget(_jyutpingPronunciation, 2, 1, 1, 1);
     _entryHeaderLayout->addWidget(_pinyinLabel, 3, 0, 1, 1, Qt::AlignTop);
     _entryHeaderLayout->addWidget(_pinyinPronunciation, 3, 1, 1, 1);
-
-    setLayout(_entryHeaderLayout);
 }
 
 EntryHeaderWidget::~EntryHeaderWidget()

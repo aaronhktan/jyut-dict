@@ -3,6 +3,7 @@
 
 #include "components/isectionheaderwidget.h"
 
+#include <QEvent>
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -20,9 +21,15 @@ public:
                                     QWidget *parent = nullptr);
     virtual ~DefinitionHeaderWidget() override;
 
+    void changeEvent(QEvent *event) override;
+
     void setSectionTitle(std::string title) override;
 
 private:
+    void setStyle(bool use_dark);
+
+    bool _paletteRecentlyChanged = false;
+
     QLabel *_titleLabel;
     QVBoxLayout *_layout;
 

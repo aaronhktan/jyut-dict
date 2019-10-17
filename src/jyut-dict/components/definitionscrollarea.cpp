@@ -4,8 +4,12 @@
 #include "logic/entry/definitionsset.h"
 #include "logic/entry/entry.h"
 #include "logic/entry/sentence.h"
+#ifdef Q_OS_MAC
+#include "logic/utils/utils_mac.h"
+#endif
 
 #include <QScrollBar>
+#include <QTimer>
 
 #define ENTIRE_WIDTH -1
 
@@ -24,12 +28,33 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
     setMinimumWidth(350);
 #endif
 
+#ifdef Q_OS_MAC
+    setStyle(Utils::isDarkMode());
+#else
+    setStyle(/* use_dark = */false);
+#endif
+
 //    testEntry();
 }
 
 DefinitionScrollArea::~DefinitionScrollArea()
 {
+}
 
+void DefinitionScrollArea::changeEvent(QEvent *event)
+{
+#if defined(Q_OS_DARWIN)
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        setStyle(Utils::isDarkMode());
+    }
+#endif
+    QScrollArea::changeEvent(event);
 }
 
 void DefinitionScrollArea::testEntry() {
@@ -82,4 +107,13 @@ void DefinitionScrollArea::resizeEvent(QResizeEvent *event)
                               - (verticalScrollBar()->isVisible() ? verticalScrollBar()->width() : 0),
                               _scrollAreaWidget->sizeHint().height());
     event->accept();
+}
+
+void DefinitionScrollArea::setStyle(bool use_dark)
+{
+    if (use_dark) {
+        setStyleSheet("QWidget { background-color: #1E1E1E; }");
+    } else {
+        setStyleSheet("QWidget { background-color: #FFFFFF; }");
+    }
 }

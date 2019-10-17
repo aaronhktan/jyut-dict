@@ -31,6 +31,7 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
         _definitionNumberLabels.push_back(new QLabel{number.c_str(), this});
         _definitionNumberLabels.back()->setStyleSheet(
             "QLabel { color: #6F6F6F; }");
+        _definitionNumberLabels.back()->setAttribute(Qt::WA_TranslucentBackground);
         int definitionNumberWidth = _definitionNumberLabels.back()
                                         ->fontMetrics()
                                         .boundingRect("PY")
@@ -43,6 +44,7 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
         _definitionNumberLabels.back()->setFixedHeight(definitionNumberHeight);
 
         _definitionLabels.push_back(new QLabel{definitions[i].c_str(), this});
+        _definitionLabels.back()->setAttribute(Qt::WA_TranslucentBackground);
         _definitionLabels.back()->setWordWrap(true);
         _definitionLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
