@@ -1,10 +1,12 @@
 #include "definitionsectionwidget.h"
 
+#include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QCoreApplication>
 #include <QStyle>
 #include <QTimer>
 
@@ -45,15 +47,31 @@ void DefinitionSectionWidget::changeEvent(QEvent *event)
         setStyle(Utils::isDarkMode());
     }
 #endif
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
     QWidget::changeEvent(event);
 }
 
 void DefinitionSectionWidget::setEntry(const DefinitionsSet &definitionsSet)
 {
-    std::string source = definitionsSet.getSourceShortString();
-    _definitionHeaderWidget->setSectionTitle("DEFINITIONS (" + source + ")");
+    _source = definitionsSet.getSourceShortString();
+    _definitionHeaderWidget->setSectionTitle(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::DEFINITIONS_ALL_CAPS)
+            .toStdString()
+        + " (" + _source + ")");
 
     _definitionWidget->setEntry(definitionsSet.getDefinitions());
+}
+
+void DefinitionSectionWidget::translateUI()
+{
+    _definitionHeaderWidget->setSectionTitle(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::DEFINITIONS_ALL_CAPS)
+            .toStdString()
+        + " (" + _source + ")");
 }
 
 void DefinitionSectionWidget::setStyle(bool use_dark)

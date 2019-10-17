@@ -9,6 +9,8 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include <string>
+
 // The DefinitionSectionWidget is a group that displays a set of definitions
 // It contains a header (that displays the source), and the definition content
 
@@ -23,9 +25,11 @@ public:
     void setEntry(const DefinitionsSet &definitionsSet);
 
 private:
+    void translateUI();
     void setStyle(bool use_dark);
 
     bool _paletteRecentlyChanged = false;
+    std::string _source;
 
     QVBoxLayout *_definitionAreaLayout;
     DefinitionHeaderWidget *_definitionHeaderWidget;

@@ -27,6 +27,7 @@ public:
 
 private:
     void setStyle(bool use_dark);
+    void translateUI();
 
     void displayPronunciationLabels(const EntryPhoneticOptions options);
 

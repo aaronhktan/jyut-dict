@@ -4,19 +4,19 @@
 <context>
     <name>AboutWindow</name>
     <message>
-        <location filename="../../windows/aboutwindow.cpp" line="172"/>
+        <location filename="../../windows/aboutwindow.cpp" line="162"/>
         <source>About %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/aboutwindow.cpp" line="73"/>
-        <location filename="../../windows/aboutwindow.cpp" line="163"/>
+        <location filename="../../windows/aboutwindow.cpp" line="71"/>
+        <location filename="../../windows/aboutwindow.cpp" line="153"/>
         <source>Build %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/aboutwindow.cpp" line="101"/>
-        <location filename="../../windows/aboutwindow.cpp" line="164"/>
+        <location filename="../../windows/aboutwindow.cpp" line="99"/>
+        <location filename="../../windows/aboutwindow.cpp" line="154"/>
         <source>View on Github...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -24,57 +24,57 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="91"/>
+        <location filename="../../components/advancedtab.cpp" line="88"/>
         <source>Automatically check for updates on startup:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="93"/>
+        <location filename="../../components/advancedtab.cpp" line="90"/>
         <source>Enable analytics:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="95"/>
+        <location filename="../../components/advancedtab.cpp" line="92"/>
         <source>Application language:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="97"/>
+        <location filename="../../components/advancedtab.cpp" line="94"/>
         <source>Use system language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="98"/>
+        <location filename="../../components/advancedtab.cpp" line="95"/>
         <source>English</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="103"/>
+        <location filename="../../components/advancedtab.cpp" line="100"/>
         <source>Simplified Chinese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="104"/>
+        <location filename="../../components/advancedtab.cpp" line="101"/>
         <source>Traditional Chinese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="99"/>
+        <location filename="../../components/advancedtab.cpp" line="96"/>
         <source>French (CA)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="100"/>
+        <location filename="../../components/advancedtab.cpp" line="97"/>
         <source>French</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="101"/>
+        <location filename="../../components/advancedtab.cpp" line="98"/>
         <source>Cantonese (Simplified)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="102"/>
+        <location filename="../../components/advancedtab.cpp" line="99"/>
         <source>Cantonese (Traditional)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -82,22 +82,22 @@
 <context>
     <name>ContactTab</name>
     <message>
-        <location filename="../../components/contacttab.cpp" line="153"/>
+        <location filename="../../components/contacttab.cpp" line="148"/>
         <source>Email...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/contacttab.cpp" line="154"/>
+        <location filename="../../components/contacttab.cpp" line="149"/>
         <source>Donate...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/contacttab.cpp" line="155"/>
+        <location filename="../../components/contacttab.cpp" line="150"/>
         <source>View on Github...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/contacttab.cpp" line="158"/>
+        <location filename="../../components/contacttab.cpp" line="153"/>
         <source>Looking for other Cantonese resources? Try these!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -125,7 +125,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="105"/>
+        <location filename="../../components/dictionarytab.cpp" line="109"/>
         <source>Select dictionary file</source>
         <translation type="unfinished"></translation>
     </message>
@@ -140,68 +140,68 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="216"/>
+        <location filename="../../components/dictionarytab.cpp" line="218"/>
         <source>Dropping search indexes...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="222"/>
+        <location filename="../../components/dictionarytab.cpp" line="224"/>
         <source>Adding source...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="226"/>
+        <location filename="../../components/dictionarytab.cpp" line="228"/>
         <source>Adding new entries...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="230"/>
+        <location filename="../../components/dictionarytab.cpp" line="232"/>
         <source>Adding new definitions...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="234"/>
-        <location filename="../../components/dictionarytab.cpp" line="304"/>
+        <location filename="../../components/dictionarytab.cpp" line="236"/>
+        <location filename="../../components/dictionarytab.cpp" line="308"/>
         <source>Rebuilding search indexes...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="275"/>
+        <location filename="../../components/dictionarytab.cpp" line="279"/>
         <source>Removing source...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="281"/>
+        <location filename="../../components/dictionarytab.cpp" line="285"/>
         <source>Removing definitions...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="290"/>
+        <location filename="../../components/dictionarytab.cpp" line="294"/>
         <source>Deleted definition 0 of %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="298"/>
+        <location filename="../../components/dictionarytab.cpp" line="302"/>
         <source>Deleted definition %1 of %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="309"/>
+        <location filename="../../components/dictionarytab.cpp" line="313"/>
         <source>Cleaning up...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="316"/>
+        <location filename="../../components/dictionarytab.cpp" line="320"/>
         <source>Done!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="316"/>
+        <location filename="../../components/dictionarytab.cpp" line="320"/>
         <source>Failed!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="355"/>
+        <location filename="../../components/dictionarytab.cpp" line="361"/>
         <source>Failed to add source!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -217,127 +217,127 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="292"/>
+        <location filename="../../windows/mainwindow.cpp" line="286"/>
         <source>No update found!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="293"/>
+        <location filename="../../windows/mainwindow.cpp" line="287"/>
         <source>You are on the newest version, %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="300"/>
+        <location filename="../../windows/mainwindow.cpp" line="294"/>
         <source>No update available!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="235"/>
-        <location filename="../../windows/mainwindow.cpp" line="321"/>
+        <location filename="../../windows/mainwindow.cpp" line="211"/>
+        <location filename="../../windows/mainwindow.cpp" line="315"/>
         <source>&amp;File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="236"/>
-        <location filename="../../windows/mainwindow.cpp" line="322"/>
+        <location filename="../../windows/mainwindow.cpp" line="212"/>
+        <location filename="../../windows/mainwindow.cpp" line="316"/>
         <source>&amp;Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="237"/>
-        <location filename="../../windows/mainwindow.cpp" line="323"/>
+        <location filename="../../windows/mainwindow.cpp" line="213"/>
+        <location filename="../../windows/mainwindow.cpp" line="317"/>
         <source>&amp;Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="238"/>
-        <location filename="../../windows/mainwindow.cpp" line="324"/>
+        <location filename="../../windows/mainwindow.cpp" line="214"/>
+        <location filename="../../windows/mainwindow.cpp" line="318"/>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="240"/>
+        <location filename="../../windows/mainwindow.cpp" line="216"/>
         <source>&amp;About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="241"/>
+        <location filename="../../windows/mainwindow.cpp" line="217"/>
         <source>Show the application&apos;s About box</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="244"/>
+        <location filename="../../windows/mainwindow.cpp" line="220"/>
         <source>Preferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="246"/>
+        <location filename="../../windows/mainwindow.cpp" line="222"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="248"/>
-        <location filename="../../windows/mainwindow.cpp" line="344"/>
+        <location filename="../../windows/mainwindow.cpp" line="224"/>
+        <location filename="../../windows/mainwindow.cpp" line="338"/>
         <source>Change settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="250"/>
+        <location filename="../../windows/mainwindow.cpp" line="226"/>
         <source>Close Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="252"/>
+        <location filename="../../windows/mainwindow.cpp" line="228"/>
         <source>Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="253"/>
+        <location filename="../../windows/mainwindow.cpp" line="229"/>
         <source>Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="254"/>
+        <location filename="../../windows/mainwindow.cpp" line="230"/>
         <source>Cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="255"/>
+        <location filename="../../windows/mainwindow.cpp" line="231"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="256"/>
+        <location filename="../../windows/mainwindow.cpp" line="232"/>
         <source>Paste</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="258"/>
+        <location filename="../../windows/mainwindow.cpp" line="234"/>
         <source>Minimize</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="259"/>
+        <location filename="../../windows/mainwindow.cpp" line="235"/>
         <source>Zoom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="260"/>
+        <location filename="../../windows/mainwindow.cpp" line="236"/>
         <source>Bring All to Front</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="262"/>
+        <location filename="../../windows/mainwindow.cpp" line="238"/>
         <source>%1 Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="264"/>
+        <location filename="../../windows/mainwindow.cpp" line="240"/>
         <source>Check for updates...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="589"/>
+        <location filename="../../windows/mainwindow.cpp" line="583"/>
         <source>Checking for update...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -345,7 +345,7 @@
 <context>
     <name>ResultListDelegate</name>
     <message>
-        <location filename="../../components/resultlistdelegate.cpp" line="31"/>
+        <location filename="../../components/resultlistdelegate.cpp" line="33"/>
         <source>Welcome!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -384,7 +384,7 @@
 <context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/searchlineedit.cpp" line="147"/>
+        <location filename="../../components/searchlineedit.cpp" line="142"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -392,52 +392,52 @@
 <context>
     <name>SearchOptionsRadioGroupBox</name>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="81"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="110"/>
         <source>SC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="87"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="116"/>
         <source>Search Simplified Chinese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="82"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="111"/>
         <source>TC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="88"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="117"/>
         <source>Search Traditional Chinese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="83"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="112"/>
         <source>JP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="89"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="118"/>
         <source>Search Jyutping</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="84"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="113"/>
         <source>PY</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="90"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="119"/>
         <source>Search Pinyin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="85"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="114"/>
         <source>EN</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="91"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="120"/>
         <source>Search English</source>
         <translation type="unfinished"></translation>
     </message>
@@ -445,129 +445,129 @@
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settingstab.cpp" line="204"/>
+        <location filename="../../components/settingstab.cpp" line="200"/>
         <source>Reset all settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="158"/>
+        <location filename="../../components/settingstab.cpp" line="154"/>
         <source>Simplified/Traditional display options:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="160"/>
+        <location filename="../../components/settingstab.cpp" line="156"/>
         <source>Jyutping/Pinyin display options:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="162"/>
+        <location filename="../../components/settingstab.cpp" line="158"/>
         <source>Pinyin display options:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="165"/>
+        <location filename="../../components/settingstab.cpp" line="161"/>
         <source>Colour words by tone using:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="167"/>
+        <location filename="../../components/settingstab.cpp" line="163"/>
         <source>Jyutping tone colours:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="169"/>
+        <location filename="../../components/settingstab.cpp" line="165"/>
         <source>Pinyin tone colours:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="140"/>
+        <location filename="../../components/settingstab.cpp" line="136"/>
         <source>Only Simplified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="141"/>
+        <location filename="../../components/settingstab.cpp" line="137"/>
         <source>Only Traditional</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="142"/>
+        <location filename="../../components/settingstab.cpp" line="138"/>
         <source>Both, Prefer Simplified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="143"/>
+        <location filename="../../components/settingstab.cpp" line="139"/>
         <source>Both, Prefer Traditional</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="145"/>
+        <location filename="../../components/settingstab.cpp" line="141"/>
         <source>Only Jyutping</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="146"/>
+        <location filename="../../components/settingstab.cpp" line="142"/>
         <source>Only Pinyin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="147"/>
+        <location filename="../../components/settingstab.cpp" line="143"/>
         <source>Both, Prefer Jyutping</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="148"/>
+        <location filename="../../components/settingstab.cpp" line="144"/>
         <source>Both, Prefer Pinyin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="150"/>
+        <location filename="../../components/settingstab.cpp" line="146"/>
         <source>Pinyin with diacritics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="151"/>
+        <location filename="../../components/settingstab.cpp" line="147"/>
         <source>Pinyin with numbers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="153"/>
+        <location filename="../../components/settingstab.cpp" line="149"/>
         <source>No colours</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="154"/>
+        <location filename="../../components/settingstab.cpp" line="150"/>
         <source>Jyutping</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="155"/>
+        <location filename="../../components/settingstab.cpp" line="151"/>
         <source>Pinyin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="176"/>
-        <location filename="../../components/settingstab.cpp" line="190"/>
+        <location filename="../../components/settingstab.cpp" line="172"/>
+        <location filename="../../components/settingstab.cpp" line="186"/>
         <source>No Tone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="180"/>
-        <location filename="../../components/settingstab.cpp" line="198"/>
+        <location filename="../../components/settingstab.cpp" line="176"/>
+        <location filename="../../components/settingstab.cpp" line="194"/>
         <source>Tone %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="194"/>
+        <location filename="../../components/settingstab.cpp" line="190"/>
         <source>Neutral</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="443"/>
+        <location filename="../../components/settingstab.cpp" line="459"/>
         <source>Are you sure you want to reset all settings?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settingstab.cpp" line="444"/>
+        <location filename="../../components/settingstab.cpp" line="460"/>
         <source>There is no way to restore them!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -575,32 +575,32 @@
 <context>
     <name>SettingsWindow</name>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="149"/>
+        <location filename="../../windows/settingswindow.cpp" line="145"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="150"/>
+        <location filename="../../windows/settingswindow.cpp" line="146"/>
         <source>Dictionaries</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="151"/>
+        <location filename="../../windows/settingswindow.cpp" line="147"/>
         <source>Advanced</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="152"/>
+        <location filename="../../windows/settingswindow.cpp" line="148"/>
         <source>Contact</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="155"/>
+        <location filename="../../windows/settingswindow.cpp" line="151"/>
         <source>Preferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="157"/>
+        <location filename="../../windows/settingswindow.cpp" line="153"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -608,42 +608,42 @@
 <context>
     <name>UpdateWindow</name>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="150"/>
+        <location filename="../../windows/updatewindow.cpp" line="152"/>
         <source>Update Available!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="134"/>
+        <location filename="../../windows/updatewindow.cpp" line="136"/>
         <source>A new version of %1 is available!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="138"/>
+        <location filename="../../windows/updatewindow.cpp" line="140"/>
         <source>%1 version %2 is available — you have version %3. Click &quot;Download&quot; to get the new version.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="145"/>
+        <location filename="../../windows/updatewindow.cpp" line="147"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="146"/>
+        <location filename="../../windows/updatewindow.cpp" line="148"/>
         <source>Show Details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="147"/>
+        <location filename="../../windows/updatewindow.cpp" line="149"/>
         <source>Download</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="168"/>
+        <location filename="../../windows/updatewindow.cpp" line="170"/>
         <source>Hide details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="187"/>
+        <location filename="../../windows/updatewindow.cpp" line="189"/>
         <source>Show details</source>
         <translation type="unfinished"></translation>
     </message>
@@ -651,37 +651,52 @@
 <context>
     <name>strings</name>
     <message>
-        <location filename="../../logic/strings/strings.h" line="10"/>
+        <location filename="../../logic/strings/strings.h" line="16"/>
+        <source>JP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="17"/>
+        <source>PY</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="18"/>
+        <source>DEFINITIONS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="20"/>
         <source>Jyut Dictionary</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="12"/>
+        <location filename="../../logic/strings/strings.h" line="22"/>
         <source>A free, open-source offline Cantonese Dictionary.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="14"/>
+        <location filename="../../logic/strings/strings.h" line="24"/>
         <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt;.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="26"/>
+        <location filename="../../logic/strings/strings.h" line="36"/>
         <source>%1 is made with ❤️ by Aaron Tan.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="29"/>
+        <location filename="../../logic/strings/strings.h" line="39"/>
         <source>Donate 💵, report a bug 🐛, or just say hi 👋!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="32"/>
+        <location filename="../../logic/strings/strings.h" line="42"/>
         <source>Donate, report a bug, or just say hi!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="33"/>
+        <location filename="../../logic/strings/strings.h" line="43"/>
         <source>&lt;a href=https://www.pleco.com style=&quot;color: %1; text-decoration: none&quot;&gt;Pleco Dictionary&lt;/a&gt;, &lt;a href=http://www.cantonese.sheik.co.uk/dictionary/ style=&quot;color: %1; text-decoration: none&quot;&gt;CantoDict&lt;/a&gt;, &lt;a href=https://words.hk style=&quot;color: %1; text-decoration: none&quot;&gt;words.hk&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
