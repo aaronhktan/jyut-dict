@@ -18,7 +18,7 @@ DefinitionHeaderWidget::DefinitionHeaderWidget(QWidget *parent)
     _layout->addWidget(_titleLabel);
 
 #ifdef Q_OS_MAC
-            setStyle(Utils::isDarkMode());
+    setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */false);
 #endif
@@ -75,7 +75,7 @@ void DefinitionHeaderWidget::setStyle(bool use_dark)
     }
     setStyleSheet(styleSheet.arg(backgroundColour.name()));
 
-    // Style the label
+    // Style the label text
     if (use_dark) {
         _titleLabel->setStyleSheet("QLabel { color: #A8A8A8; }");
     } else {
