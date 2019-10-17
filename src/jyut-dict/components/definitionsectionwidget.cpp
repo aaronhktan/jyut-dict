@@ -65,7 +65,11 @@ void DefinitionSectionWidget::setStyle(bool use_dark)
     if (use_dark) {
         backgroundColour = QColor{50, 50, 50};
     } else {
+#ifdef Q_OS_MAC
         backgroundColour = QColor{245, 245, 245};
+#else
+        backgroundColour = QColor{253, 253, 253};
+#endif
     }
     setStyleSheet(styleSheet.arg(backgroundColour.name()));
 }

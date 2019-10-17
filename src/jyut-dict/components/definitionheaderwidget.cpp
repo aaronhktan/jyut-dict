@@ -71,7 +71,11 @@ void DefinitionHeaderWidget::setStyle(bool use_dark)
     if (use_dark) {
         backgroundColour = QColor{60, 60, 60};
     } else {
+#ifdef Q_OS_MAC
         backgroundColour = QColor{235, 235, 235};
+#else
+        backgroundColour = QColor{246, 246, 246};
+#endif
     }
     setStyleSheet(styleSheet.arg(backgroundColour.name()));
 
