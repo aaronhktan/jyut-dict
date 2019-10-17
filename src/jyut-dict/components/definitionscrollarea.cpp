@@ -21,7 +21,6 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
 
     setWidget(_scrollAreaWidget);
     setWidgetResizable(true); // IMPORTANT! This makes the scrolling widget resize correctly.
-    setStyleSheet("QScrollArea { background-color: #1E1E1E; }");
 #ifdef Q_OS_LINUX
     setMinimumWidth(250);
 #else
@@ -111,9 +110,13 @@ void DefinitionScrollArea::resizeEvent(QResizeEvent *event)
 
 void DefinitionScrollArea::setStyle(bool use_dark)
 {
+    // Changing the background colour on platforms other than Mac
+    // Causes the scrollbars to look really bad. Restrict this to only Mac.
+#ifdef Q_OS_MAC
     if (use_dark) {
         setStyleSheet("QWidget { background-color: #1E1E1E; }");
     } else {
         setStyleSheet("QWidget { background-color: #FFFFFF; }");
     }
+#endif
 }
