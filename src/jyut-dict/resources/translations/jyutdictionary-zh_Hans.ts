@@ -210,31 +210,31 @@
     <name>MAC_APPLICATION_MENU</name>
     <message>
         <source>Services</source>
-        <translation type="vanished">服务</translation>
+        <translation>服务</translation>
     </message>
     <message>
         <source>Hide %1</source>
-        <translation type="vanished">隐藏 %1</translation>
+        <translation>隐藏 %1</translation>
     </message>
     <message>
         <source>Hide Others</source>
-        <translation type="vanished">隐藏其他</translation>
+        <translation>隐藏其他</translation>
     </message>
     <message>
         <source>Show All</source>
-        <translation type="vanished">全部显示</translation>
+        <translation>全部显示</translation>
     </message>
     <message>
         <source>Preferences...</source>
-        <translation type="vanished">偏好设置…</translation>
+        <translation>偏好设置…</translation>
     </message>
     <message>
         <source>Quit %1</source>
-        <translation type="vanished">结束 %1</translation>
+        <translation>结束 %1</translation>
     </message>
     <message>
         <source>About %1</source>
-        <translation type="vanished">关于 %1</translation>
+        <translation>关于 %1</translation>
     </message>
 </context>
 <context>
@@ -248,7 +248,7 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="+286"/>
+        <location filename="../../windows/mainwindow.cpp" line="+294"/>
         <source>No update found!</source>
         <translation>没有找到可用的更新!</translation>
     </message>
@@ -377,15 +377,15 @@
     <name>QMessageBox</name>
     <message>
         <source>Help</source>
-        <translation type="vanished">帮助</translation>
+        <translation>帮助</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="vanished">确定</translation>
+        <translation>确定</translation>
     </message>
     <message>
         <source>About Qt</source>
-        <translation type="vanished">关于Qt</translation>
+        <translation>关于Qt</translation>
     </message>
     <message>
         <source>&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;</source>
@@ -393,32 +393,32 @@
     </message>
     <message>
         <source>Show Details...</source>
-        <translation type="vanished">显示详细信息…</translation>
+        <translation>显示详细信息…</translation>
     </message>
     <message>
         <source>Hide Details...</source>
-        <translation type="vanished">隐藏详细信息…</translation>
+        <translation>隐藏详细信息…</translation>
     </message>
 </context>
 <context>
     <name>QPlatformTheme</name>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">取消</translation>
+        <translation>取消</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation type="vanished">是</translation>
+        <translation>是</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="vanished">确定</translation>
+        <translation>确定</translation>
     </message>
 </context>
 <context>
     <name>ResultListDelegate</name>
     <message>
-        <location filename="../../components/resultlistdelegate.cpp" line="+33"/>
+        <location filename="../../components/resultlistdelegate.cpp" line="+34"/>
         <source>Welcome!</source>
         <translation>欢迎使用粤语字典！</translation>
     </message>
@@ -648,7 +648,7 @@
 <context>
     <name>SettingsWindow</name>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="+145"/>
+        <location filename="../../windows/settingswindow.cpp" line="+146"/>
         <source>General</source>
         <translation>通用</translation>
     </message>

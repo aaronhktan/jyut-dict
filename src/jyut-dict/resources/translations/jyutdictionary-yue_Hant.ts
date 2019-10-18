@@ -210,31 +210,31 @@
     <name>MAC_APPLICATION_MENU</name>
     <message>
         <source>Services</source>
-        <translation type="vanished">服務</translation>
+        <translation>服務</translation>
     </message>
     <message>
         <source>Hide %1</source>
-        <translation type="vanished">隱藏 %1</translation>
+        <translation>隱藏 %1</translation>
     </message>
     <message>
         <source>Hide Others</source>
-        <translation type="vanished">隱藏其他</translation>
+        <translation>隱藏其他</translation>
     </message>
     <message>
         <source>Show All</source>
-        <translation type="vanished">顯示全部</translation>
+        <translation>顯示全部</translation>
     </message>
     <message>
         <source>Preferences...</source>
-        <translation type="vanished">偏好設定…</translation>
+        <translation>偏好設定…</translation>
     </message>
     <message>
         <source>Quit %1</source>
-        <translation type="vanished">結束 %1</translation>
+        <translation>結束 %1</translation>
     </message>
     <message>
         <source>About %1</source>
-        <translation type="vanished">關於 %1</translation>
+        <translation>關於 %1</translation>
     </message>
 </context>
 <context>
@@ -248,127 +248,127 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="286"/>
+        <location filename="../../windows/mainwindow.cpp" line="294"/>
         <source>No update found!</source>
         <translation>冇搵到可用的更新!</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="287"/>
+        <location filename="../../windows/mainwindow.cpp" line="295"/>
         <source>You are on the newest version, %1.</source>
         <translation>你已經使用最新嘅版本，%1.</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="294"/>
+        <location filename="../../windows/mainwindow.cpp" line="302"/>
         <source>No update available!</source>
         <translation>冇可用的更新!</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="211"/>
-        <location filename="../../windows/mainwindow.cpp" line="315"/>
+        <location filename="../../windows/mainwindow.cpp" line="219"/>
+        <location filename="../../windows/mainwindow.cpp" line="323"/>
         <source>&amp;File</source>
         <translation>檔案</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="212"/>
-        <location filename="../../windows/mainwindow.cpp" line="316"/>
+        <location filename="../../windows/mainwindow.cpp" line="220"/>
+        <location filename="../../windows/mainwindow.cpp" line="324"/>
         <source>&amp;Edit</source>
         <translation>編輯</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="213"/>
-        <location filename="../../windows/mainwindow.cpp" line="317"/>
+        <location filename="../../windows/mainwindow.cpp" line="221"/>
+        <location filename="../../windows/mainwindow.cpp" line="325"/>
         <source>&amp;Window</source>
         <translation>視窗</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="214"/>
-        <location filename="../../windows/mainwindow.cpp" line="318"/>
+        <location filename="../../windows/mainwindow.cpp" line="222"/>
+        <location filename="../../windows/mainwindow.cpp" line="326"/>
         <source>&amp;Help</source>
         <translation>輔助說明</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="216"/>
+        <location filename="../../windows/mainwindow.cpp" line="224"/>
         <source>&amp;About</source>
         <translation>關於粵語字典</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="217"/>
+        <location filename="../../windows/mainwindow.cpp" line="225"/>
         <source>Show the application&apos;s About box</source>
         <translation>打開“關於粵語字典”嘅視窗</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="220"/>
+        <location filename="../../windows/mainwindow.cpp" line="228"/>
         <source>Preferences</source>
         <translation>偏好設定…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="222"/>
+        <location filename="../../windows/mainwindow.cpp" line="230"/>
         <source>Settings</source>
         <translation>偏好設定…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="224"/>
-        <location filename="../../windows/mainwindow.cpp" line="338"/>
+        <location filename="../../windows/mainwindow.cpp" line="232"/>
+        <location filename="../../windows/mainwindow.cpp" line="346"/>
         <source>Change settings</source>
         <translation>更改設定</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="226"/>
+        <location filename="../../windows/mainwindow.cpp" line="234"/>
         <source>Close Window</source>
         <translation>關閉視窗</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="228"/>
+        <location filename="../../windows/mainwindow.cpp" line="236"/>
         <source>Undo</source>
         <translation>還原</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="229"/>
+        <location filename="../../windows/mainwindow.cpp" line="237"/>
         <source>Redo</source>
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="230"/>
+        <location filename="../../windows/mainwindow.cpp" line="238"/>
         <source>Cut</source>
         <translation>剪切</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="231"/>
+        <location filename="../../windows/mainwindow.cpp" line="239"/>
         <source>Copy</source>
         <translation>拷貝</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="232"/>
+        <location filename="../../windows/mainwindow.cpp" line="240"/>
         <source>Paste</source>
         <translation>貼上</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="234"/>
+        <location filename="../../windows/mainwindow.cpp" line="242"/>
         <source>Minimize</source>
         <translation>縮到最小</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="235"/>
+        <location filename="../../windows/mainwindow.cpp" line="243"/>
         <source>Zoom</source>
         <translation>縮放</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="236"/>
+        <location filename="../../windows/mainwindow.cpp" line="244"/>
         <source>Bring All to Front</source>
         <translation>將此程式所有視窗移至最前</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="238"/>
+        <location filename="../../windows/mainwindow.cpp" line="246"/>
         <source>%1 Help</source>
         <translation>%1輔助說明</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="240"/>
+        <location filename="../../windows/mainwindow.cpp" line="248"/>
         <source>Check for updates...</source>
         <translation>檢查更新…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="583"/>
+        <location filename="../../windows/mainwindow.cpp" line="591"/>
         <source>Checking for update...</source>
         <translation>檢查緊更新…</translation>
     </message>
@@ -377,23 +377,23 @@
     <name>QMessageBox</name>
     <message>
         <source>Show Details...</source>
-        <translation type="vanished">顯示詳情...</translation>
+        <translation>顯示詳情...</translation>
     </message>
     <message>
         <source>Hide Details...</source>
-        <translation type="vanished">隱藏詳情...</translation>
+        <translation>隱藏詳情...</translation>
     </message>
     <message>
         <source>&lt;h3&gt;About Qt&lt;/h3&gt;&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;</source>
-        <translation type="vanished">&lt;h3&gt;關於 Qt&lt;/h3&gt;&lt;p&gt;此程式使用 Qt %1 版。&lt;/p&gt;</translation>
+        <translation>&lt;h3&gt;關於 Qt&lt;/h3&gt;&lt;p&gt;此程式使用 Qt %1 版。&lt;/p&gt;</translation>
     </message>
     <message>
         <source>About Qt</source>
-        <translation type="vanished">關於 Qt</translation>
+        <translation>關於 Qt</translation>
     </message>
     <message>
         <source>&lt;p&gt;Qt is a C++ toolkit for cross-platform application development.&lt;/p&gt;&lt;p&gt;Qt provides single-source portability across all major desktop operating systems. It is also available for embedded Linux and other embedded and mobile operating systems.&lt;/p&gt;&lt;p&gt;Qt is available under three different licensing options designed to accommodate the needs of our various users.&lt;/p&gt;&lt;p&gt;Qt licensed under our commercial license agreement is appropriate for development of proprietary/commercial software where you do not want to share any source code with third parties or otherwise cannot comply with the terms of the GNU LGPL version 3.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU LGPL version 3 is appropriate for the development of Qt&amp;nbsp;applications provided you can comply with the terms and conditions of the GNU LGPL version 3.&lt;/p&gt;&lt;p&gt;Please see &lt;a href=&quot;http://%2/&quot;&gt;%2&lt;/a&gt; for an overview of Qt licensing.&lt;/p&gt;&lt;p&gt;Copyright (C) %1 The Qt Company Ltd and other contributors.&lt;/p&gt;&lt;p&gt;Qt and the Qt logo are trademarks of The Qt Company Ltd.&lt;/p&gt;&lt;p&gt;Qt is The Qt Company Ltd product developed as an open source project. See &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt; for more information.&lt;/p&gt;</source>
-        <translation type="vanished">&lt;p&gt;Qt 是個用於跨平台應用程式開發的工具箱。&lt;/p&gt;
+        <translation>&lt;p&gt;Qt 是個用於跨平台應用程式開發的工具箱。&lt;/p&gt;
 &lt;p&gt;Qt 提供了可移植單一來源以能在目前主流的桌面作業系統跨平台。其也支援嵌入式 Linux 和其他嵌入和行動作業系統。&lt;/p&gt;
 &lt;p&gt;Qt 可以用於三個不同的授權選項，以接納各個使用者的需求。&lt;/p&gt;
 &lt;p&gt;使用我們的商業授權條款授權的 Qt 適合拿來開發不希望公開源碼給第三方的專有或商業軟體，或者是無法完全遵守 GNU LGPL 第三版條款的軟體。&lt;/p&gt;
@@ -408,21 +408,21 @@
     <name>QPlatformTheme</name>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">取消</translation>
+        <translation>取消</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation type="vanished">是</translation>
+        <translation>是</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="vanished">確定</translation>
+        <translation>確定</translation>
     </message>
 </context>
 <context>
     <name>ResultListDelegate</name>
     <message>
-        <location filename="../../components/resultlistdelegate.cpp" line="33"/>
+        <location filename="../../components/resultlistdelegate.cpp" line="34"/>
         <source>Welcome!</source>
         <translation>歡迎使用粵語字典！</translation>
     </message>
@@ -652,32 +652,32 @@
 <context>
     <name>SettingsWindow</name>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="145"/>
+        <location filename="../../windows/settingswindow.cpp" line="146"/>
         <source>General</source>
         <translation>一般</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="146"/>
+        <location filename="../../windows/settingswindow.cpp" line="147"/>
         <source>Dictionaries</source>
         <translation>字典</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="147"/>
+        <location filename="../../windows/settingswindow.cpp" line="148"/>
         <source>Advanced</source>
         <translation>進階</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="148"/>
+        <location filename="../../windows/settingswindow.cpp" line="149"/>
         <source>Contact</source>
         <translation>聯繫我哋</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="151"/>
+        <location filename="../../windows/settingswindow.cpp" line="152"/>
         <source>Preferences</source>
         <translation>設定</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="153"/>
+        <location filename="../../windows/settingswindow.cpp" line="154"/>
         <source>Settings</source>
         <translation>設定</translation>
     </message>
