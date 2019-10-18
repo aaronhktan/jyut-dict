@@ -25,12 +25,8 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _wordLabel->setFont(QFont("Microsoft YaHei"));
 #endif
 
-    _jyutpingLabel = new QLabel{"JP", this};
-    QString jyutping = QCoreApplication::translate(Strings::STRINGS_CONTEXT,
-                                                   Strings::JYUTPING_SHORT);
+    _jyutpingLabel = new QLabel{this};
     _jyutpingLabel->setAttribute(Qt::WA_TranslucentBackground);
-    _jyutpingLabel->setFixedWidth(
-        _jyutpingLabel->fontMetrics().boundingRect(jyutping).width());
     _jyutpingPronunciation = new QLabel{this};
     _jyutpingPronunciation->setAttribute(Qt::WA_TranslucentBackground);
     _jyutpingPronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -38,11 +34,8 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _jyutpingPronunciation->setWordWrap(true);
 
 
-    _pinyinLabel = new QLabel{"PY", this};
-    QString pinyin = QCoreApplication::translate(Strings::STRINGS_CONTEXT,
-                                                 Strings::PINYIN_SHORT);
+    _pinyinLabel = new QLabel{this};
     _pinyinLabel->setAttribute(Qt::WA_TranslucentBackground);
-    _pinyinLabel->setFixedWidth(_pinyinLabel->fontMetrics().boundingRect(pinyin).width());
     _pinyinPronunciation = new QLabel{this};
     _pinyinPronunciation->setAttribute(Qt::WA_TranslucentBackground);
     _pinyinPronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -60,6 +53,7 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
 #else
     setStyle(/* use_dark = */false);
 #endif
+    translateUI();
 }
 
 EntryHeaderWidget::~EntryHeaderWidget()
@@ -157,8 +151,13 @@ void EntryHeaderWidget::translateUI()
 {
     _jyutpingLabel->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                                         Strings::JYUTPING_SHORT));
+    _jyutpingLabel->setFixedWidth(
+        _jyutpingLabel->fontMetrics().boundingRect(_jyutpingLabel->text()).width());
+
     _pinyinLabel->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                                       Strings::PINYIN_SHORT));
+    _pinyinLabel->setFixedWidth(
+        _pinyinLabel->fontMetrics().boundingRect(_pinyinLabel->text()).width());
 }
 
 void EntryHeaderWidget::displayPronunciationLabels(const EntryPhoneticOptions options)
