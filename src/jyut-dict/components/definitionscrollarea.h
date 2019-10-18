@@ -26,8 +26,6 @@ public:
 private:
     void resizeEvent(QResizeEvent *event) override;
 
-    bool _paletteRecentlyChanged = false;
-
     // Widget that contains elements to scroll
     DefinitionScrollAreaWidget *_scrollAreaWidget;
 
