@@ -8,6 +8,7 @@
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
+#include "logic/utils/utils_qt.h"
 
 #include <QActionGroup>
 #include <QGuiApplication>
@@ -157,35 +158,37 @@ void SettingsWindow::translateUI()
 void SettingsWindow::setStyle(bool use_dark)
 {
     // Set background color of tabs in toolbar
-    int r, g, b, a;
+    QColor selectedBackgroundColour;
     QColor currentTextColour;
     QColor otherTextColour;
     if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
 #ifdef Q_OS_MAC
-        QGuiApplication::palette()
-            .color(QPalette::Inactive, QPalette::Highlight)
-            .getRgb(&r, &g, &b, &a);
+        selectedBackgroundColour = QGuiApplication::palette()
+            .color(QPalette::Inactive, QPalette::Highlight);
 #else
-        QColor{220, 220, 220}.getRgb(&r, &g, &b, &a);
+        selectedBackgroundColour = use_dark ? Utils::LIST_ITEM_INACTIVE_COLOUR_DARK
+                                            : Utils::LIST_ITEM_INACTIVE_COLOUR_LIGHT;
 #endif
-        currentTextColour = QColor{"grey"};
-        otherTextColour = QColor{"grey"};
+        currentTextColour = use_dark
+                                ? Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_DARK
+                                : Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT;
+        otherTextColour = use_dark ? Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_DARK
+                                   : Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT;
     } else {
 #ifdef Q_OS_MAC
-        Utils::getAppleControlAccentColor().getRgb(&r, &g, &b, &a);
+        selectedBackgroundColour = Utils::getAppleControlAccentColor();
 #else
-        QColor{204, 0, 1}.getRgb(&r, &g, &b, &a);
+        selectedBackgroundColour = use_dark ? Utils::LIST_ITEM_ACTIVE_COLOUR_DARK
+                                            : Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT;
 #endif
-        Utils::colour contrastingColour = Utils::getContrastingColour(
-            Utils::colour{r, g, b});
-        currentTextColour = QColor{contrastingColour.red,
-                                   contrastingColour.blue,
-                                   contrastingColour.green};
+        currentTextColour = Utils::getContrastingColour(selectedBackgroundColour);
 #ifdef Q_OS_MAC
         otherTextColour = QGuiApplication::palette().color(QPalette::Active,
                                                            QPalette::Text);
 #else
-        otherTextColour = QColor{"black"};
+        otherTextColour = use_dark
+                              ? Utils::TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK
+                              : Utils::TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT;
 #endif
     }
 
@@ -194,77 +197,74 @@ void SettingsWindow::setStyle(bool use_dark)
     if (use_dark) {
         style = "QToolButton[isHan=\"true\"] { "
                 "   border-radius: 2px; "
-                "   color: %7; "
-                "   font-size: %5px; "
+                "   color: %4; "
+                "   font-size: %2px; "
                 "   margin: 0px; "
                 "}"
                 ""
                 "QToolButton { "
                 "   border-top-left-radius: 4px; "
                 "   border-top-right-radius: 4px; "
-                "   color: %7; "
+                "   color: %4; "
                 "   font-size: 10px; "
                 "   margin: 0px; "
                 "}"
                 " "
                 "QToolButton:checked { "
-                "   background-color: rgba(%1, %2, %3, %4); "
+                "   background-color: %1; "
                 "   border-top-left-radius: 4px; "
                 "   border-top-right-radius: 4px; "
-                "   color: %6; "
+                "   color: %3; "
                 "   margin: 0px; "
                 "}";
     } else {
         style = "QToolButton[isHan=\"true\"] { "
                 "   border-radius: 2px; "
-                "   color: %7; "
-                "   font-size: %5px; "
+                "   color: %4; "
+                "   font-size: %2px; "
                 "   margin: 0px; "
                 "}"
                 ""
                 "QToolButton { "
                 "   border-top-left-radius: 4px; "
                 "   border-top-right-radius: 4px; "
-                "   color: %7; "
+                "   color: %4; "
                 "   font-size: 10px; "
                 "   margin: 0px; "
                 "}"
                 " "
                 "QToolButton:checked { "
-                "   background-color: rgba(%1, %2, %3, %4); "
+                "   background-color: %1; "
                 "   border-top-left-radius: 4px; "
                 "   border-top-right-radius: 4px; "
-                "   color: %6; "
+                "   color: %3; "
                 "   margin: 0px; "
                 "}";
     }
 #else
     QString style{"QToolButton[isHan=\"true\"] { "
                   "   border-radius: 2px; "
-                  "   color: %7; "
-                  "   font-size: %5px; "
+                  "   color: %4; "
+                  "   font-size: %2px; "
                   "   margin: 0px; "
                   "}"
                   " "
                   "QToolButton { "
                   "   border-radius: 2px; "
-                  "   color: %7; "
+                  "   color: %4; "
                   "   font-size: 10px; "
                   "   margin: 0px; "
                   "}"
                   " "
                   "QToolButton:checked { "
                   "   border-radius: 2px; "
-                  "   background-color: rgba(%1, %2, %3, %4); "
-                  "   color: %6; "
+                  "   background-color: %1; "
+                  "   color: %3; "
                   "   margin: 0px; "
                   "}"};
 #endif
     setStyleSheet(
-        style.arg(std::to_string(r).c_str(),
-                  std::to_string(g).c_str(),
-                  std::to_string(b).c_str(),
-                  std::to_string(a).c_str(),
+        style.arg(selectedBackgroundColour.name(),
                   "13",
                   currentTextColour.name(),
                   otherTextColour.name()));

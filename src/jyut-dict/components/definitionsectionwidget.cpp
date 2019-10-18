@@ -1,8 +1,9 @@
 #include "definitionsectionwidget.h"
 
 #ifdef Q_OS_MAC
-#include <logic/utils/utils_mac.h>
+#include "logic/utils/utils_mac.h"
 #endif
+#include "logic/utils/utils_qt.h"
 
 #include <QStyle>
 #include <QTimer>
@@ -57,15 +58,11 @@ void DefinitionSectionWidget::setEntry(const DefinitionsSet &definitionsSet)
 
 void DefinitionSectionWidget::setStyle(bool use_dark)
 {
-    QColor backgroundColour;
     QString styleSheet = "QWidget { "
                          " background-color: %1; "
                          " border-radius: 10px; "
                          "}";
-    if (use_dark) {
-        backgroundColour = QColor{50, 50, 50};
-    } else {
-        backgroundColour = QColor{245, 245, 245};
-    }
+    QColor backgroundColour = use_dark ? Utils::CONTENT_BACKGROUND_COLOUR_DARK
+                                       : Utils::CONTENT_BACKGROUND_COLOUR_LIGHT;
     setStyleSheet(styleSheet.arg(backgroundColour.name()));
 }

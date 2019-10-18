@@ -2,6 +2,7 @@
 
 #include "logic/dictionary/dictionarymetadata.h"
 #include "logic/utils/utils.h"
+#include "logic/utils/utils_qt.h"
 
 #include <QGuiApplication>
 
@@ -32,7 +33,7 @@ void DictionaryListDelegate::paint(QPainter *painter,
                                           QPalette::Highlight)
                                    .color();
 #else
-            backgroundColour = QColor{220, 220, 220};
+            backgroundColour = Utils::LIST_ITEM_INACTIVE_COLOUR_LIGHT;
 #endif
         } else {
 #ifdef Q_OS_MAC
@@ -41,17 +42,11 @@ void DictionaryListDelegate::paint(QPainter *painter,
                                           QPalette::Highlight)
                                    .color();
 #else
-            backgroundColour = QColor{204, 0, 1};
+            backgroundColour = Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT;
 #endif
         }
         painter->fillRect(option.rect, backgroundColour);
-        Utils::colour contrastingColour = Utils::getContrastingColour(
-            Utils::colour{backgroundColour.red(),
-                          backgroundColour.green(),
-                          backgroundColour.blue()});
-        QColor textColour = QColor{contrastingColour.red,
-                                   contrastingColour.blue,
-                                   contrastingColour.green};
+        QColor textColour = Utils::getContrastingColour(backgroundColour);
         painter->setPen(textColour);
     } else {
         painter->fillRect(option.rect, option.palette.base());

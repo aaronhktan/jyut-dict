@@ -3,6 +3,7 @@
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
+#include "logic/utils/utils_qt.h"
 
 #include <QTimer>
 
@@ -67,13 +68,13 @@ void DefinitionHeaderWidget::setStyle(bool use_dark)
                                " border-bottom-left-radius: 0px; "
                                " border-bottom-right-radius: 0px; "
                                "}";
-    QColor backgroundColour = use_dark ? QColor{60, 60, 60}
-                                       : QColor{235, 235, 235};
+    QColor backgroundColour = use_dark ? Utils::HEADER_BACKGROUND_COLOUR_DARK
+                                       : Utils::HEADER_BACKGROUND_COLOUR_LIGHT;
     setStyleSheet(widgetStyleSheet.arg(backgroundColour.name()));
 
     // Style the label text
     QString textStyleSheet = "QLabel { color: %1; }";
-    QColor textColour = use_dark ? QColor{168, 168, 168}
-                                 : QColor{111, 111, 111};
+    QColor textColour = use_dark ? Utils::LABEL_TEXT_COLOUR_DARK
+                                 : Utils::LABEL_TEXT_COLOUR_LIGHT;
     _titleLabel->setStyleSheet(textStyleSheet.arg(textColour.name()));
 }

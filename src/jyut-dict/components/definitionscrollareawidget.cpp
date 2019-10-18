@@ -3,6 +3,7 @@
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
+#include "logic/utils/utils_qt.h"
 
 #include <QTimer>
 
@@ -55,8 +56,8 @@ void DefinitionScrollAreaWidget::setStyle(bool use_dark)
 {
     // Changing the background colour on platforms other than Mac
     // Causes the scrollbars to look really bad. Restrict this to only Mac.
-    QColor backgroundColour = use_dark ? QColor{30, 30, 30}
-                                       : QColor{255, 255, 255};
+    QColor backgroundColour = use_dark ? Utils::BACKGROUND_COLOUR_DARK
+                                       : Utils::BACKGROUND_COLOUR_LIGHT;
     QString styleSheet = "QWidget { background-color: %1; }";
     setStyleSheet(styleSheet.arg(backgroundColour.name()));
     setAttribute(Qt::WA_StyledBackground);

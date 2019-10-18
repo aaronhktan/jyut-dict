@@ -3,6 +3,7 @@
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
+#include "logic/utils/utils_qt.h"
 
 #include <QTimer>
 
@@ -83,14 +84,12 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
 
 void DefinitionContentWidget::setStyle(bool use_dark)
 {
-    if (use_dark) {
-        for (auto label : _definitionNumberLabels) {
-            label->setStyleSheet("QLabel { color: #A8A8A8; }");
-        }
-    } else {
-        for (auto label : _definitionNumberLabels) {
-            label->setStyleSheet("QLabel { color: #6F6F6F; }");
-        }
+    QString styleSheet = "QLabel { color: %1; }";
+    QColor textColour = use_dark ? Utils::LABEL_TEXT_COLOUR_DARK
+                                 : Utils::LABEL_TEXT_COLOUR_LIGHT;
+    for (auto label : _definitionNumberLabels) {
+        label->setStyleSheet(
+            styleSheet.arg(textColour.name()));
     }
 }
 
