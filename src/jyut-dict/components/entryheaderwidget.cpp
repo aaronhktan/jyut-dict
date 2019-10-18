@@ -4,6 +4,7 @@
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
+#include "logic/utils/utils_qt.h"
 
 #include <QTimer>
 #include <QVariant>
@@ -133,13 +134,11 @@ void EntryHeaderWidget::setEntry(std::string word,
 
 void EntryHeaderWidget::setStyle(bool use_dark)
 {
-    if (use_dark) {
-        _jyutpingLabel->setStyleSheet("QLabel { color: #A8A8A8; }");
-        _pinyinLabel->setStyleSheet("QLabel { color: #A8A8A8; }");
-    } else {
-        _jyutpingLabel->setStyleSheet("QLabel { color: #6F6F6F; }");
-        _pinyinLabel->setStyleSheet("QLabel { color: #6F6F6F; }");
-    }
+    QString styleSheet = "QLabel { color: %1; }";
+    QColor textColour = use_dark ? Utils::LABEL_TEXT_COLOUR_DARK
+                                 : Utils::LABEL_TEXT_COLOUR_LIGHT;
+    _jyutpingLabel->setStyleSheet(styleSheet.arg(textColour.name()));
+    _pinyinLabel->setStyleSheet(styleSheet.arg(textColour.name()));
 }
 
 void EntryHeaderWidget::displayPronunciationLabels(const EntryPhoneticOptions options)
