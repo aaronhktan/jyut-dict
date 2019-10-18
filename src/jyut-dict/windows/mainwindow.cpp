@@ -10,6 +10,7 @@
 #include "logic/utils/utils_mac.h"
 #endif
 #include "windows/aboutwindow.h"
+#include "logic/utils/utils_qt.h"
 #include "windows/settingswindow.h"
 #include "windows/updatewindow.h"
 
@@ -48,6 +49,13 @@ MainWindow::MainWindow(QWidget *parent) :
     resize(600, 450);
 #else
     setMinimumSize(QSize(800, 600));
+#endif
+
+    // Change theme colours
+#ifndef Q_OS_MAC
+    QPalette defaultPalette = QApplication::palette();
+    defaultPalette.setColor(QPalette::Highlight, Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT);
+    QApplication::setPalette(defaultPalette);
 #endif
 
     // Instantiate services
