@@ -60,29 +60,20 @@ void DefinitionHeaderWidget::setSectionTitle(std::string title)
 void DefinitionHeaderWidget::setStyle(bool use_dark)
 {
     // Style the main background
-    QColor backgroundColour;
-    QString styleSheet = "QWidget { "
-                         " background-color: %1; "
-                         " border-top-left-radius: 10px; "
-                         " border-top-right-radius: 10px; "
-                         " border-bottom-left-radius: 0px; "
-                         " border-bottom-right-radius: 0px; "
-                         "}";
-    if (use_dark) {
-        backgroundColour = QColor{60, 60, 60};
-    } else {
-//#ifdef Q_OS_MAC
-        backgroundColour = QColor{235, 235, 235};
-//#else
-//        backgroundColour = QColor{246, 246, 246};
-//#endif
-    }
-    setStyleSheet(styleSheet.arg(backgroundColour.name()));
+    QString widgetStyleSheet = "QWidget { "
+                               " background-color: %1; "
+                               " border-top-left-radius: 10px; "
+                               " border-top-right-radius: 10px; "
+                               " border-bottom-left-radius: 0px; "
+                               " border-bottom-right-radius: 0px; "
+                               "}";
+    QColor backgroundColour = use_dark ? QColor{60, 60, 60}
+                                       : QColor{235, 235, 235};
+    setStyleSheet(widgetStyleSheet.arg(backgroundColour.name()));
 
     // Style the label text
-    if (use_dark) {
-        _titleLabel->setStyleSheet("QLabel { color: #A8A8A8; }");
-    } else {
-        _titleLabel->setStyleSheet("QLabel { color: #6F6F6F; }");
-    }
+    QString textStyleSheet = "QLabel { color: %1; }";
+    QColor textColour = use_dark ? QColor{168, 168, 168}
+                                 : QColor{111, 111, 111};
+    _titleLabel->setStyleSheet(textStyleSheet.arg(textColour.name()));
 }
