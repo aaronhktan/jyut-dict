@@ -5,6 +5,7 @@
 #include "components/definitionheaderwidget.h"
 #include "logic/entry/definitionsset.h"
 
+#include <QEvent>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -17,9 +18,15 @@ public:
     explicit DefinitionSectionWidget(QWidget *parent = nullptr);
     ~DefinitionSectionWidget() override;
 
+    void changeEvent(QEvent *event) override;
+
     void setEntry(const DefinitionsSet &definitionsSet);
 
 private:
+    void setStyle(bool use_dark);
+
+    bool _paletteRecentlyChanged = false;
+
     QVBoxLayout *_definitionAreaLayout;
     DefinitionHeaderWidget *_definitionHeaderWidget;
     DefinitionContentWidget *_definitionWidget;

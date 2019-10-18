@@ -67,6 +67,7 @@ SOURCES += \
     logic/settings/settingsutils.cpp \
     logic/update/githubreleasechecker.cpp \
     logic/utils/utils.cpp \
+    logic/utils/utils_qt.cpp \
     windows/aboutwindow.cpp \
     windows/mainwindow.cpp \
     windows/settingswindow.cpp \
@@ -122,6 +123,7 @@ HEADERS += \
     logic/utils/qvariantutils.h \
     logic/utils/utils.h \
     logic/utils/utils_mac.h \
+    logic/utils/utils_qt.h \
     windows/aboutwindow.h \
     windows/mainwindow.h \
     windows/settingswindow.h \

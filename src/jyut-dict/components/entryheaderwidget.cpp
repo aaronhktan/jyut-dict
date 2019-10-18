@@ -1,7 +1,12 @@
 #include "entryheaderwidget.h"
 
 #include "logic/settings/settingsutils.h"
+#ifdef Q_OS_MAC
+#include "logic/utils/utils_mac.h"
+#endif
+#include "logic/utils/utils_qt.h"
 
+#include <QTimer>
 #include <QVariant>
 
 EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
@@ -10,25 +15,28 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _entryHeaderLayout->setContentsMargins(0, 0, 0, 0);
 
     _wordLabel = new QLabel{this};
+    _wordLabel->setStyleSheet("QLabel { font-size: 24px }");
+    _wordLabel->setAttribute(Qt::WA_TranslucentBackground);
     _wordLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _wordLabel->setWordWrap(true);
-    _wordLabel->setStyleSheet("QLabel { font-size: 24px }");
 #ifdef Q_OS_WIN
     _wordLabel->setFont(QFont("Microsoft YaHei"));
 #endif
 
     _jyutpingLabel = new QLabel{"JP", this};
-    _jyutpingLabel->setStyleSheet("QLabel { color: #6f6f6f; }");
+    _jyutpingLabel->setAttribute(Qt::WA_TranslucentBackground);
     _jyutpingLabel->setFixedWidth(_jyutpingLabel->fontMetrics().boundingRect("JP").width());
     _jyutpingPronunciation = new QLabel{this};
+    _jyutpingPronunciation->setAttribute(Qt::WA_TranslucentBackground);
     _jyutpingPronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _jyutpingLabel->setVisible(false);
     _jyutpingPronunciation->setWordWrap(true);
 
     _pinyinLabel = new QLabel{"PY", this};
-    _pinyinLabel->setStyleSheet("QLabel { color: #6f6f6f; }");
+    _pinyinLabel->setAttribute(Qt::WA_TranslucentBackground);
     _pinyinLabel->setFixedWidth(_pinyinLabel->fontMetrics().boundingRect("PY").width());
     _pinyinPronunciation = new QLabel{this};
+    _pinyinPronunciation->setAttribute(Qt::WA_TranslucentBackground);
     _pinyinPronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _pinyinLabel->setVisible(false);
     _pinyinPronunciation->setWordWrap(true);
@@ -39,7 +47,11 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _entryHeaderLayout->addWidget(_pinyinLabel, 3, 0, 1, 1, Qt::AlignTop);
     _entryHeaderLayout->addWidget(_pinyinPronunciation, 3, 1, 1, 1);
 
-    setLayout(_entryHeaderLayout);
+#ifdef Q_OS_MAC
+    setStyle(Utils::isDarkMode());
+#else
+    setStyle(/* use_dark = */false);
+#endif
 }
 
 EntryHeaderWidget::~EntryHeaderWidget()
@@ -53,6 +65,17 @@ void EntryHeaderWidget::changeEvent(QEvent *event)
     if (event->type() == QEvent::FontChange) {
         _jyutpingLabel->setFixedWidth(_jyutpingLabel->fontMetrics().boundingRect("JP").width());
         _pinyinLabel->setFixedWidth(_pinyinLabel->fontMetrics().boundingRect("PY").width());
+    }
+#endif
+#if defined(Q_OS_DARWIN)
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        setStyle(Utils::isDarkMode());
     }
 #endif
     QWidget::changeEvent(event);
@@ -107,6 +130,15 @@ void EntryHeaderWidget::setEntry(std::string word,
     _wordLabel->setText(word.c_str());
     _jyutpingPronunciation->setText(jyutping.c_str());
     _pinyinPronunciation->setText(pinyin.c_str());
+}
+
+void EntryHeaderWidget::setStyle(bool use_dark)
+{
+    QString styleSheet = "QLabel { color: %1; }";
+    QColor textColour = use_dark ? Utils::LABEL_TEXT_COLOUR_DARK
+                                 : Utils::LABEL_TEXT_COLOUR_LIGHT;
+    _jyutpingLabel->setStyleSheet(styleSheet.arg(textColour.name()));
+    _pinyinLabel->setStyleSheet(styleSheet.arg(textColour.name()));
 }
 
 void EntryHeaderWidget::displayPronunciationLabels(const EntryPhoneticOptions options)

@@ -28,7 +28,6 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
 
 DefinitionScrollArea::~DefinitionScrollArea()
 {
-
 }
 
 void DefinitionScrollArea::testEntry() {
