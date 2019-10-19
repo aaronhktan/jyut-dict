@@ -99,7 +99,7 @@
     <message>
         <location filename="../../components/contacttab.cpp" line="153"/>
         <source>Looking for other Cantonese resources? Try these!</source>
-        <translation>D&apos;autres ressources merveilleux pour le cantonais :</translation>
+        <translation>D&apos;autres ressources merveilleuses pour le cantonais :</translation>
     </message>
 </context>
 <context>
