@@ -1,3 +1,4 @@
 ## Notes on translations
 
-- After doing `lupdate`, please paste the contents of `macmenu-zh_Hans` or `macmenu-zh_Hant` at the top of the simplified/traditional files. This is because lupdate does not recognize "MAC_APPLICATION_MENU" as being a valid context, and marks all of the previous translations as 'vanished'.
+- Before doing `lupdate`: Change yue_CN and yue_HK to zh_CN and zh_HK respectively, since lupdate does not recognize Cantonese and will not insert the new translations.
+- After doing `lupdate`: lupdate will erase everything with MAC_APPLICATION_MENU and some other useful translations by marking them as "vanished". Do a find and replace ` type="vanished"` (with the space at the beginning) => empty to re-enable these translations.
