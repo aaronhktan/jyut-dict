@@ -28,7 +28,8 @@ MainToolBar::MainToolBar(std::shared_ptr<SQLDatabaseManager> manager,
     setFloatable(false);
 
 #ifdef Q_OS_WIN
-    setStyleSheet("QToolBar { background-color: white; }");
+    // setStyleSheet("QToolBar { background-color: white; }");
+    setStyleSheet("QToolBar { border-bottom: 1px solid black; }");
 #elif defined(Q_OS_LINUX)
     setStyleSheet("QToolBar { border-bottom: 1px solid lightgray; }");
 #endif

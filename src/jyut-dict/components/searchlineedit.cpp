@@ -33,7 +33,7 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
 
     // Customize the look of the searchbar to fit in better with platform styles
 #ifdef Q_OS_WIN
-    setStyle(/* use_dark = */false);
+    setStyle(/* use_dark = */true);
     setMinimumHeight(25);
 #elif defined(Q_OS_MAC)
     setStyle(Utils::isDarkMode());
@@ -149,15 +149,15 @@ void SearchLineEdit::setStyle(bool use_dark)
     QIcon search_inverted = QIcon(":/images/search_inverted.png");
     QIcon clear_inverted = QIcon(":/images/x_inverted.png");
 
-#ifdef Q_OS_WIN
-    setStyleSheet("QLineEdit { \
-                     background-color: #ffffff; \
-                     border-color: black; \
-                     border-width: 2px; \
-                     font-size: 12px; }");
-    _searchLineEdit->setIcon(search);
-    _clearLineEdit->setIcon(clear);
-#else
+//#ifdef Q_OS_WIN
+//    setStyleSheet("QLineEdit { \
+//                     background-color: #ffffff; \
+//                     border-color: black; \
+//                     border-width: 2px; \
+//                     font-size: 12px; }");
+//    _searchLineEdit->setIcon(search);
+//    _clearLineEdit->setIcon(clear);
+//#else
     if (use_dark) {
         setStyleSheet("QLineEdit { \
                          border-radius: 3px; \
@@ -181,5 +181,5 @@ void SearchLineEdit::setStyle(bool use_dark)
          _searchLineEdit->setIcon(search);
          _clearLineEdit->setIcon(clear);
     }
-#endif
+//#endif
 }

@@ -53,9 +53,165 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Change theme colours
 #ifndef Q_OS_MAC
-    QPalette defaultPalette = QApplication::palette();
-    defaultPalette.setColor(QPalette::Highlight, Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT);
-    QApplication::setPalette(defaultPalette);
+    //QPalette defaultPalette = QApplication::palette();
+    //defaultPalette.setColor(QPalette::Highlight, Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT);
+    //QApplication::setPalette(defaultPalette);
+    QPalette dark_palette = QPalette();
+
+    dark_palette.setColor(QPalette::Window, QColor(53, 53, 53));
+    dark_palette.setColor(QPalette::WindowText, Qt::white);
+    dark_palette.setColor(QPalette::Base, QColor(25, 25, 25));
+    dark_palette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
+    dark_palette.setColor(QPalette::ToolTipBase, Qt::white);
+    dark_palette.setColor(QPalette::ToolTipText, Qt::white);
+    dark_palette.setColor(QPalette::Text, Qt::white);
+    dark_palette.setColor(QPalette::Button, QColor(63, 63, 63));
+    dark_palette.setColor(QPalette::ButtonText, Qt::white);
+    dark_palette.setColor(QPalette::BrightText, Qt::red);
+    dark_palette.setColor(QPalette::Link, QColor(42, 130, 218));
+    dark_palette.setColor(QPalette::Highlight, Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT);
+    dark_palette.setColor(QPalette::HighlightedText, Qt::black);
+
+    qApp->setPalette(dark_palette);
+
+    qApp->setStyleSheet("QToolTip { "
+                        "color: #ffffff; "
+                        "background-color: #2a82da; "
+                        "border: 1px solid white; }"
+                        ""
+                        "QMenu {"
+                        "background-color:palette(window);"
+                        "border: 1px solid transparent;"
+                        "}"
+                        ""
+                        "QMenuBar::item:selected{"
+                        "background-color:palette(Highlight);"
+                        "border-left:1px solid rgba(106,106,106,127);"
+                        "border-right:1px solid rgba(106,106,106,127);"
+                        "}"
+                        ""
+                        "QMenu::item{"
+                        "padding:3px 25px 3px 25px;"
+                        "border:1px solid transparent;"
+                        "}"
+                        ""
+                        "QMenu::indicator{"
+                        "width:18px;"
+                        "height:18px;"
+                        "}"
+                        ""
+                        "QMenu::item:hover{"
+                        "padding:3px 25px 3px 25px;"
+                        "background-color:palette(Highlight);"
+                        "}"
+                        ""
+                        "QMenu::separator {"
+                        "height: 1px;"
+                        "background:palette(alternate-base);"
+                        "}"
+                        ""
+                        "QPushButton { "
+                        "background-color: palette(button);"
+                        "border: 1px solid palette(alternate-base);"
+                        "padding: 5px;"
+                        "}"
+                        ""
+                        "QPushButton:pressed { "
+                        "background-color: palette(highlight);"
+                        "border: none;"
+                        "}"
+                        ""
+                        "QComboBox { "
+                        "background-color: palette(button);"
+                        "border: 1px solid palette(alternate-base);"
+                        "padding: 5px;"
+                        "}"
+                        "QComboBox::drop-down {"
+                        "    width: 30px;"
+                        "    border: none;"
+                        "}"
+                        ""
+                        "QComboBox QAbstractItemView {"
+                        "    background-color: palette(window);          "
+                        "    border: 1px solid palette(alternate-base);"
+                        "    selection-background-color: palette(highlight);      "
+                        "    outline: 0px;"
+                        "}"
+                        ""
+                        " QComboBox::drop-down { "
+                        "    subcontrol-origin: padding;                       "
+                        "    subcontrol-position: top right;                   "
+                        "    width: 15px;                                      "
+                        "                                                      "
+                        "    border-left-width: 1px;                           "
+                        "    border-left-color: darkgray;                      "
+                        "    border-left-style: solid;                         "
+                        "    border-top-right-radius: 3px;                     "
+                        "    border-bottom-right-radius: 3px;                  "
+                        "}                                                     "
+                        "                                                      "
+                        "QComboBox::down-arrow {                               "
+                        "    image: downarrow-icon;"
+                        "}"
+                        ""
+                        "QScrollBar:vertical{                                  "
+                        "  background: palette(base);                           "
+                        "  background-color: none;"
+                        "  border-top-right-radius:2px;                        "
+                        "  border-bottom-right-radius:2px;                     "
+                        "  width:16px;                                         "
+                        "  margin:0px;                                         "
+                        "}                                                     "
+                        "QScrollBar::handle:vertical{"
+                        "  background-color:#606060;           "
+                        //"  border-radius:2px;                                  "
+                        "  min-height:20px;"
+                        "  margin-top: 15px;"
+                        "  margin-bottom: 15px;                                    "
+                        //"  margin:2px 4px 2px 4px;                             "
+                        //" padding: 0px 15px 0px 15px; "
+                        "}                                                     "
+                        "QScrollBar::handle:vertical:hover{                    "
+                        "  background-color: darkgrey;                "
+                        "}                                                     "
+                        "QScrollBar::add-line:vertical{                        "
+                        "  background: #606060;                                    "
+                        "  height:15px;                                         "
+                        "  subcontrol-position:bottom;                          "
+                        "  subcontrol-origin:margin;                           "
+                        "}                                                     "
+                        "QScrollBar::sub-line:vertical{                        "
+                        "  background:#606060;                                    "
+                        "  height:15px;   "
+                        "  image: :up_arrow;                                      "
+                        "  subcontrol-position:top;                           "
+                        "  subcontrol-origin:margin;                           "
+                        "}"
+                        "QScrollBar::add-page:vertical{                        "
+                        "  background:none;                                    "
+                        "  height:0px;                                         "
+                        "  subcontrol-position:right;                          "
+                        "  subcontrol-origin:margin;                           "
+                        "}                                                     "
+                        "QScrollBar::sub-page:vertical{                        "
+                        "  background:none;                                    "
+                        "  height:0px;                                         "
+                        "  subcontrol-position:left;                           "
+                        "  subcontrol-origin:margin;                           "
+                        "}  "
+                        ""
+                        " QScrollBar::up-arrow:vertical, QScrollBar::down-arrow:vertical {"
+                        "border: 0px solid black;                                          "
+                        "width: 15px;                                                      "
+                        "height: 15px;                                                     "
+                        //"color: blue; "
+                        "background-color: white;"
+                        //"background: white;                                               "
+                        "}                                                     "
+                        "QGroupBox { "
+                        "border: 1px solid palette(alternate-base);"
+                        "}"
+                        "");
 #endif
 
     // Instantiate services
@@ -327,7 +483,7 @@ void MainWindow::createMenus()
 
 #ifdef Q_OS_WIN
     menuBar()->setStyleSheet("QMenuBar { \
-                                background-color: white; \
+                                background-color: #353535; \
                              }");
 #endif
 }

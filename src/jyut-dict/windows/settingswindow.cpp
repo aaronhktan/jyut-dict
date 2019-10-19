@@ -8,6 +8,9 @@
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
+#ifdef Q_OS_WIN
+#include "logic/utils/utils_windows.h"
+#endif
 #include "logic/utils/utils_qt.h"
 
 #include <QActionGroup>
@@ -72,9 +75,9 @@ void SettingsWindow::setupUI()
     _contentStackedWidget = new QStackedWidget{this};
     _toolBar = new QToolBar{this};
 #ifdef Q_OS_WIN
-    _toolBar->setStyleSheet("QToolBar {"
-                            "   background-color: white;"
-                            "}");
+    //_toolBar->setStyleSheet("QToolBar {"
+    //                        "   background-color: white;"
+    //                        "}");
 #elif defined(Q_OS_LINUX)
     QColor color = QGuiApplication::palette().color(QPalette::AlternateBase);
     _toolBar->setStyleSheet(QString("QToolBar {"
@@ -124,7 +127,7 @@ void SettingsWindow::setupUI()
     setCentralWidget(_contentStackedWidget);
 
     // Customize the look of the toolbar to fit in better with platform styles
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_WIN)
     setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */false);
@@ -192,7 +195,7 @@ void SettingsWindow::setStyle(bool use_dark)
 #endif
     }
 
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_WIN)
     QString style;
     if (use_dark) {
         style = "QToolButton[isHan=\"true\"] { "
@@ -316,7 +319,7 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
 
 void SettingsWindow::openTab(int tabIndex)
 {
-#if defined(Q_OS_DARWIN)
+#if defined(Q_OS_DARWIN) || defined(Q_OS_WIN)
     // Set the style to match whether the user started dark mode
     setButtonIcon(Utils::isDarkMode(), tabIndex);
 #else
@@ -344,7 +347,7 @@ void SettingsWindow::openTab(int tabIndex)
 
 void SettingsWindow::paintWithApplicationState(Qt::ApplicationState state)
 {
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_WIN)
     setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */ false);

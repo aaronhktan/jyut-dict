@@ -3,6 +3,9 @@
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
+#ifdef Q_OS_WIN
+#include "logic/utils/utils_windows.h"
+#endif
 #include "logic/utils/utils_qt.h"
 
 #include <QTimer>
@@ -18,7 +21,7 @@ DefinitionHeaderWidget::DefinitionHeaderWidget(QWidget *parent)
 
     _layout->addWidget(_titleLabel);
 
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_WIN)
     setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */false);

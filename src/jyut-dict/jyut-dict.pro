@@ -71,7 +71,8 @@ SOURCES += \
     windows/aboutwindow.cpp \
     windows/mainwindow.cpp \
     windows/settingswindow.cpp \
-    windows/updatewindow.cpp
+    windows/updatewindow.cpp \
+    logic/utils/utils_windows.cpp
 
 HEADERS += \
     components/advancedtab.h \
@@ -127,7 +128,8 @@ HEADERS += \
     windows/aboutwindow.h \
     windows/mainwindow.h \
     windows/settingswindow.h \
-    windows/updatewindow.h
+    windows/updatewindow.h \
+    logic/utils/utils_windows.h
 
 RESOURCES += \
     resources/resource.qrc

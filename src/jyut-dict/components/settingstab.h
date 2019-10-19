@@ -19,14 +19,16 @@
 // The settings tab displays settings to a user.
 
 constexpr auto COLOUR_BUTTON_STYLE = "QPushButton { "
-                                     "   background: %1; border: 1px solid darkgrey; "
+                                     "   background: %1; "
+                                     "   border: 1px solid palette(button); "
                                      "   border-radius: 3px; "
                                      "   margin: 0px; "
                                      "   padding: 0px; "
                                      "} "
                                      " "
                                      "QPushButton:pressed { "
-                                     "   background: %1; border: 2px solid lightgrey; "
+                                     "   background: %1; "
+                                     "   border: 2px solid palette(button); "
                                      "   border-radius: 3px; "
                                      "   margin: 0px; "
                                      "   padding: 0px; "
