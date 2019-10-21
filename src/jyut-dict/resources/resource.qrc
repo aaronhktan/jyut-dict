@@ -27,5 +27,7 @@
         <file>images/help_disabled.png</file>
         <file>images/settings_disabled.png</file>
         <file>images/sliders_disabled.png</file>
+        <file>images/chevron-down.png</file>
+        <file>images/chevron-up.png</file>
     </qresource>
 </RCC>
