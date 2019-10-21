@@ -78,6 +78,9 @@ void SettingsWindow::setupUI()
     //_toolBar->setStyleSheet("QToolBar {"
     //                        "   background-color: white;"
     //                        "}");
+    _toolBar->setStyleSheet("QToolBar {"
+                            "   border-top: none;"
+                            "}");
 #elif defined(Q_OS_LINUX)
     QColor color = QGuiApplication::palette().color(QPalette::AlternateBase);
     _toolBar->setStyleSheet(QString("QToolBar {"

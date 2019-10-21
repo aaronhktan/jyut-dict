@@ -58,14 +58,14 @@ MainWindow::MainWindow(QWidget *parent) :
     //QApplication::setPalette(defaultPalette);
     QPalette dark_palette = QPalette();
 
-    dark_palette.setColor(QPalette::Window, QColor(53, 53, 53));
+    dark_palette.setColor(QPalette::Window, QColor(56, 56, 56));
     dark_palette.setColor(QPalette::WindowText, Qt::white);
     dark_palette.setColor(QPalette::Base, QColor(25, 25, 25));
-    dark_palette.setColor(QPalette::AlternateBase, QColor(53, 53, 53));
+    dark_palette.setColor(QPalette::AlternateBase, QColor(55, 55, 55));
     dark_palette.setColor(QPalette::ToolTipBase, Qt::white);
     dark_palette.setColor(QPalette::ToolTipText, Qt::white);
     dark_palette.setColor(QPalette::Text, Qt::white);
-    dark_palette.setColor(QPalette::Button, QColor(63, 63, 63));
+    dark_palette.setColor(QPalette::Button, QColor(65, 65, 65));
     dark_palette.setColor(QPalette::ButtonText, Qt::white);
     dark_palette.setColor(QPalette::BrightText, Qt::red);
     dark_palette.setColor(QPalette::Link, QColor(42, 130, 218));
@@ -84,10 +84,13 @@ MainWindow::MainWindow(QWidget *parent) :
                         "border: 1px solid transparent;"
                         "}"
                         ""
+                        "QMenuBar{"
+                        "background-color:palette(window);"
+                        "}"
                         "QMenuBar::item:selected{"
                         "background-color:palette(highlight);"
-                        "border-left:1px solid rgba(106,106,106,127);"
-                        "border-right:1px solid rgba(106,106,106,127);"
+                        "border-left:1px solid black;"
+                        "border-right:1px solid black;"
                         "}"
                         ""
                         "QMenu::item{"
@@ -99,10 +102,15 @@ MainWindow::MainWindow(QWidget *parent) :
                         "width:18px;"
                         "height:18px;"
                         "}"
+                        "QMenu::item:selected{"
+                        "background-color: palette(highlight);"
+                        "padding:3px 25px 3px 25px;"
+                        "border:1px solid transparent;"
+                        "}"
                         ""
                         "QMenu::separator {"
                         "height: 1px;"
-                        "background:palette(alternate-base);"
+                        "background-color:palette(alternate-base);"
                         "}"
                         ""
                         "QPushButton { "
@@ -479,11 +487,11 @@ void MainWindow::createMenus()
     _windowMenu = menuBar()->addMenu(tr("&Window"));
     _helpMenu = menuBar()->addMenu(tr("&Help"));
 
-#ifdef Q_OS_WIN
-    menuBar()->setStyleSheet("QMenuBar { \
-                                background-color: #353535; \
-                             }");
-#endif
+//#ifdef Q_OS_WIN
+//    menuBar()->setStyleSheet("QMenuBar { \
+//                                background-color: palette(window); \
+//                             }");
+//#endif
 }
 
 void MainWindow::createActions()
