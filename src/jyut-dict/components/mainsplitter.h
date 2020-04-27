@@ -3,6 +3,7 @@
 
 #include "components/definitionscrollarea.h"
 #include "logic/analytics/analytics.h"
+#include "logic/entry/entry.h"
 #include "logic/search/sqlsearch.h"
 
 #include <QModelIndex>
@@ -32,7 +33,10 @@ private:
     QListView *_resultListView;
 
 private slots:
-    void handleSelectionChanged(const QModelIndex &selection);
+    void prepareEntry(Entry &entry);
+
+    void handleClick(const QModelIndex &selection);
+    void handleDoubleClick(const QModelIndex &selection);
 };
 
 #endif // MAINSPLITTER_H
