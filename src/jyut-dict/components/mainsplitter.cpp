@@ -94,7 +94,9 @@ void MainSplitter::handleClick(const QModelIndex &selection)
 void MainSplitter::handleDoubleClick(const QModelIndex &selection)
 {
     Entry entry = qvariant_cast<Entry>(selection.data());
-    if (entry.getSimplified() == tr("Welcome!").toStdString()) {
+    bool isWelcomeEntry = entry.isWelcome();
+    bool isEmptyEntry = entry.isEmpty();
+    if (isWelcomeEntry || isEmptyEntry) {
         return;
     }
 

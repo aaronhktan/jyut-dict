@@ -11,6 +11,7 @@
 #include <QAbstractTextDocumentLayout>
 #include <QRectF>
 #include <QTextDocument>
+#include <QTextLayout>
 #include <QVariant>
 
 ResultListDelegate::ResultListDelegate(QWidget *parent)
@@ -31,10 +32,11 @@ void ResultListDelegate::paint(QPainter *painter,
 
     Entry entry = qvariant_cast<Entry>(index.data());
 
-    bool isWelcomeEntry = entry.getSimplified() == tr("Welcome!").toStdString();
+    bool isWelcomeEntry = entry.isWelcome();
+    bool isEmptyEntry = entry.isEmpty();
 
     QColor backgroundColour;
-    if (option.state & QStyle::State_Selected && !isWelcomeEntry) {
+    if (option.state & QStyle::State_Selected && !isWelcomeEntry && !isEmptyEntry) {
         if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
 #ifdef Q_OS_MAC
             backgroundColour = option.palette
@@ -72,7 +74,7 @@ void ResultListDelegate::paint(QPainter *painter,
     EntryPhoneticOptions phoneticOptions;
     MandarinOptions mandarinOptions;
     bool use_colours = false;
-    if (isWelcomeEntry) {
+    if (isWelcomeEntry || isEmptyEntry) {
         characterOptions = EntryCharactersOptions::ONLY_SIMPLIFIED;
         phoneticOptions = EntryPhoneticOptions::ONLY_PINYIN;
         mandarinOptions = MandarinOptions::RAW_PINYIN;
@@ -148,10 +150,47 @@ void ResultListDelegate::paint(QPainter *painter,
     painter->drawText(r, 0, phonetic, &boundingRect);
 
     r = r.adjusted(0, boundingRect.height(), 0, 0);
-    QString snippet = metrics.elidedText(
-                entry.getDefinitionSnippet().c_str(),
-                Qt::ElideRight, r.width());
-    painter->drawText(r, 0, snippet, &boundingRect);
+    QString snippet;
+    if (isEmptyEntry) {
+        // Do custom text layout to get eliding double-line label
+        snippet = entry.getDefinitionSnippet().c_str();
+        QTextLayout *textLayout = new QTextLayout{snippet, painter->font()};
+        textLayout->beginLayout();
+
+        // Define start and end y coordinates
+        // max height of label is two lines, so height * 2
+        int y = r.y();
+        int height = y + metrics.height() * 2;
+
+        for (;;) {
+            QTextLine line = textLayout->createLine();
+
+            if (!line.isValid()) {
+                break;
+            }
+
+            line.setLineWidth(r.width());
+            int nextLineY = y + metrics.lineSpacing();
+
+            if (height >= nextLineY + metrics.lineSpacing()) {
+                line.draw(painter, QPoint(r.x(), y));
+                y = nextLineY;
+            } else {
+                QString lastLine = snippet.mid(line.textStart());
+                QString elidedLastLine = metrics.elidedText(lastLine, Qt::ElideRight, r.width());
+                painter->drawText(QPoint(r.x(), y + metrics.ascent()), elidedLastLine);
+                line = textLayout->createLine();
+                break;
+            }
+        }
+
+        delete textLayout;
+    } else {
+        snippet = metrics.elidedText(
+            entry.getDefinitionSnippet().c_str(),
+            Qt::ElideRight, r.width());
+        painter->drawText(r, 0, snippet, &boundingRect);
+    }
 
     // Bottom divider
     QRect rct = option.rect;

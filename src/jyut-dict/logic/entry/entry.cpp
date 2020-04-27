@@ -45,6 +45,8 @@ Entry::Entry()
     _definitions = {};
     _derivedWords = {};
     _sentences = {};
+    _isWelcome = false;
+    _isEmpty = false;
 }
 
 Entry::Entry(std::string simplified, std::string traditional,
@@ -60,6 +62,9 @@ Entry::Entry(std::string simplified, std::string traditional,
       _derivedWords{derivedWords},
       _sentences{sentences}
 {
+    _isWelcome = false;
+    _isEmpty = false;
+
     // Normalize pinyin and jyutping to lowercase >:(
     std::transform(_jyutping.begin(), _jyutping.end(), _jyutping.begin(), ::tolower);
     std::transform(_pinyin.begin(), _pinyin.end(), _pinyin.begin(), ::tolower);
@@ -87,7 +92,9 @@ Entry::Entry(const Entry &entry)
       _prettyPinyin{entry._prettyPinyin},
       _definitions{entry.getDefinitionsSets()},
       _derivedWords{entry.getDerivedWords()},
-      _sentences{entry.getSentences()}
+      _sentences{entry.getSentences()},
+      _isWelcome{entry.isWelcome()},
+      _isEmpty{entry.isEmpty()}
 {
 
 }
@@ -106,7 +113,9 @@ Entry::Entry(const Entry &&entry)
       _prettyPinyin{entry._prettyPinyin},
       _definitions{std::move(entry._definitions)},
       _derivedWords{std::move(entry._derivedWords)},
-      _sentences{std::move(entry._sentences)}
+      _sentences{std::move(entry._sentences)},
+      _isWelcome{entry.isWelcome()},
+      _isEmpty{entry.isEmpty()}
 {
 
 }
@@ -136,6 +145,8 @@ Entry &Entry::operator=(const Entry &entry)
     _definitions = entry.getDefinitionsSets();
     _derivedWords = entry.getDerivedWords();
     _sentences = entry.getSentences();
+    _isWelcome = entry.isWelcome();
+    _isEmpty = entry.isEmpty();
 
     return *this;
 }
@@ -160,6 +171,8 @@ Entry &Entry::operator=(const Entry &&entry)
     _definitions = entry.getDefinitionsSets();
     _derivedWords = entry.getDerivedWords();
     _sentences = entry.getSentences();
+    _isWelcome = entry.isWelcome();
+    _isEmpty = entry.isEmpty();
 
     return *this;
 }
@@ -415,6 +428,26 @@ void Entry::refreshColours(const EntryColourPhoneticType type)
     _colouredTraditional = applyColours(_traditional, tones, type);
     _colouredSimplifiedDifference = applyColours(_simplifiedDifference, tones, type);
     _colouredTraditionalDifference = applyColours(_traditionalDifference, tones, type);
+}
+
+void Entry::setIsWelcome(const bool isWelcome)
+{
+    _isWelcome = isWelcome;
+}
+
+bool Entry::isWelcome(void) const
+{
+    return _isWelcome;
+}
+
+void Entry::setIsEmpty(const bool isEmpty)
+{
+    _isEmpty = isEmpty;
+}
+
+bool Entry::isEmpty(void) const
+{
+    return _isEmpty;
 }
 
 std::string Entry::applyColours(std::string original,

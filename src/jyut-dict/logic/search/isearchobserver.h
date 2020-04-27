@@ -13,7 +13,7 @@ class ISearchObserver
 public:
     virtual ~ISearchObserver() = default;
 
-    virtual void callback(std::vector<Entry>) = 0;
+    virtual void callback(const std::vector<Entry>, bool) = 0;
 };
 
 #endif // ISEARCHOBSERVER_H
