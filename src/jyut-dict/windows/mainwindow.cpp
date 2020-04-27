@@ -54,7 +54,10 @@ MainWindow::MainWindow(QWidget *parent) :
     // Change theme colours
 #ifndef Q_OS_MAC
     QPalette defaultPalette = QApplication::palette();
-    defaultPalette.setColor(QPalette::Highlight, Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT);
+    defaultPalette.setColor(QPalette::Highlight,
+                            QColor{Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
+                                   Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
+                                   Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT_B});
     QApplication::setPalette(defaultPalette);
 #endif
 

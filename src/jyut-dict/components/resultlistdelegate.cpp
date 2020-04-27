@@ -42,7 +42,9 @@ void ResultListDelegate::paint(QPainter *painter,
                                           QPalette::Highlight)
                                    .color();
 #else
-            backgroundColour = Utils::LIST_ITEM_INACTIVE_COLOUR_LIGHT;
+            backgroundColour = QColor{LIST_ITEM_INACTIVE_COLOUR_LIGHT_R,
+                                      LIST_ITEM_INACTIVE_COLOUR_LIGHT_G,
+                                      LIST_ITEM_INACTIVE_COLOUR_LIGHT_B};
 #endif
         } else {
 #ifdef Q_OS_MAC
@@ -51,7 +53,9 @@ void ResultListDelegate::paint(QPainter *painter,
                                           QPalette::Highlight)
                                    .color();
 #else
-            backgroundColour = Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT;
+            backgroundColour = QColor{LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
+                                      LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
+                                      LIST_ITEM_ACTIVE_COLOUR_LIGHT_B};
 #endif
         }
         painter->fillRect(option.rect, backgroundColour);

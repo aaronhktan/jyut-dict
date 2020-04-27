@@ -10,6 +10,8 @@
 DefinitionScrollAreaWidget::DefinitionScrollAreaWidget(QWidget *parent)
     : QWidget(parent)
 {
+    setObjectName("DefinitionScrollAreaWidget");
+
     // Entire Scroll Area
     _scrollAreaLayout = new QVBoxLayout{this};
     _scrollAreaLayout->setSpacing(25);
@@ -37,7 +39,7 @@ void DefinitionScrollAreaWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, [=]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -54,9 +56,13 @@ void DefinitionScrollAreaWidget::setEntry(const Entry &entry)
 
 void DefinitionScrollAreaWidget::setStyle(bool use_dark)
 {
-    QColor backgroundColour = use_dark ? Utils::BACKGROUND_COLOUR_DARK
-                                       : Utils::BACKGROUND_COLOUR_LIGHT;
-    QString styleSheet = "QWidget { background-color: %1; }";
+    QColor backgroundColour = use_dark ? QColor{BACKGROUND_COLOUR_DARK_R,
+                                                BACKGROUND_COLOUR_DARK_G,
+                                                BACKGROUND_COLOUR_DARK_B}
+                                       : QColor{BACKGROUND_COLOUR_LIGHT_R,
+                                                BACKGROUND_COLOUR_LIGHT_G,
+                                                BACKGROUND_COLOUR_LIGHT_B};
+    QString styleSheet = "QWidget#DefinitionScrollAreaWidget { background-color: %1; }";
     setStyleSheet(styleSheet.arg(backgroundColour.name()));
     setAttribute(Qt::WA_StyledBackground);
 }

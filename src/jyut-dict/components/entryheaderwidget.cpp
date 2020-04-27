@@ -18,7 +18,6 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
 
     _wordLabel = new QLabel{this};
     _wordLabel->setStyleSheet("QLabel { font-size: 24px }");
-    _wordLabel->setAttribute(Qt::WA_TranslucentBackground);
     _wordLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _wordLabel->setWordWrap(true);
 #ifdef Q_OS_WIN
@@ -26,18 +25,14 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
 #endif
 
     _jyutpingLabel = new QLabel{this};
-    _jyutpingLabel->setAttribute(Qt::WA_TranslucentBackground);
     _jyutpingPronunciation = new QLabel{this};
-    _jyutpingPronunciation->setAttribute(Qt::WA_TranslucentBackground);
     _jyutpingPronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _jyutpingLabel->setVisible(false);
     _jyutpingPronunciation->setWordWrap(true);
 
 
     _pinyinLabel = new QLabel{this};
-    _pinyinLabel->setAttribute(Qt::WA_TranslucentBackground);
     _pinyinPronunciation = new QLabel{this};
-    _pinyinPronunciation->setAttribute(Qt::WA_TranslucentBackground);
     _pinyinPronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _pinyinLabel->setVisible(false);
     _pinyinPronunciation->setWordWrap(true);
@@ -141,8 +136,12 @@ void EntryHeaderWidget::setEntry(std::string word,
 void EntryHeaderWidget::setStyle(bool use_dark)
 {
     QString styleSheet = "QLabel { color: %1; }";
-    QColor textColour = use_dark ? Utils::LABEL_TEXT_COLOUR_DARK
-                                 : Utils::LABEL_TEXT_COLOUR_LIGHT;
+    QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
+                                          LABEL_TEXT_COLOUR_DARK_G,
+                                          LABEL_TEXT_COLOUR_DARK_B}
+                                 : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
+                                          LABEL_TEXT_COLOUR_LIGHT_R,
+                                          LABEL_TEXT_COLOUR_LIGHT_R};
     _jyutpingLabel->setStyleSheet(styleSheet.arg(textColour.name()));
     _pinyinLabel->setStyleSheet(styleSheet.arg(textColour.name()));
 }

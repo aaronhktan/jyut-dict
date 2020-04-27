@@ -28,7 +28,7 @@ void DefinitionContentWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, [=]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -52,7 +52,6 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
     for (size_t i = 0; i < definitions.size(); i++) {
         std::string number = std::to_string(i + 1);
         _definitionNumberLabels.push_back(new QLabel{number.c_str(), this});
-        _definitionNumberLabels.back()->setAttribute(Qt::WA_TranslucentBackground);
         int definitionNumberWidth = _definitionNumberLabels.back()
                                         ->fontMetrics()
                                         .boundingRect("PY")
@@ -65,7 +64,6 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
         _definitionNumberLabels.back()->setFixedHeight(definitionNumberHeight);
 
         _definitionLabels.push_back(new QLabel{definitions[i].c_str(), this});
-        _definitionLabels.back()->setAttribute(Qt::WA_TranslucentBackground);
         _definitionLabels.back()->setWordWrap(true);
         _definitionLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
@@ -85,8 +83,12 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
 void DefinitionContentWidget::setStyle(bool use_dark)
 {
     QString styleSheet = "QLabel { color: %1; }";
-    QColor textColour = use_dark ? Utils::LABEL_TEXT_COLOUR_DARK
-                                 : Utils::LABEL_TEXT_COLOUR_LIGHT;
+    QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
+                                          LABEL_TEXT_COLOUR_DARK_G,
+                                          LABEL_TEXT_COLOUR_DARK_B}
+                                 : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
+                                          LABEL_TEXT_COLOUR_LIGHT_R,
+                                          LABEL_TEXT_COLOUR_LIGHT_R};
     for (auto label : _definitionNumberLabels) {
         label->setStyleSheet(
             styleSheet.arg(textColour.name()));
@@ -95,10 +97,6 @@ void DefinitionContentWidget::setStyle(bool use_dark)
 
 void DefinitionContentWidget::cleanupLabels()
 {
-    for (auto label : _definitionNumberLabels) {
-        delete label;
-    }
-    for (auto label : _definitionLabels) {
-        delete label;
-    }
+    _definitionNumberLabels.clear();
+    _definitionLabels.clear();
 }
