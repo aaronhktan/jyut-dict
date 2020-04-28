@@ -168,10 +168,10 @@ void SettingsWindow::setStyle(bool use_dark)
 #else
         selectedBackgroundColour
             = use_dark ? QColor{LIST_ITEM_INACTIVE_COLOUR_DARK_R,
-                                LIST_ITEM_INACTIVE_COLOUR_DARK_G
+                                LIST_ITEM_INACTIVE_COLOUR_DARK_G,
                                 LIST_ITEM_INACTIVE_COLOUR_DARK_B}
                        : QColor{LIST_ITEM_INACTIVE_COLOUR_LIGHT_R,
-                                LIST_ITEM_INACTIVE_COLOUR_LIGHT_G
+                                LIST_ITEM_INACTIVE_COLOUR_LIGHT_G,
                                 LIST_ITEM_INACTIVE_COLOUR_LIGHT_B};
 #endif
         currentTextColour
@@ -197,7 +197,7 @@ void SettingsWindow::setStyle(bool use_dark)
                                 LIST_ITEM_ACTIVE_COLOUR_DARK_G,
                                 LIST_ITEM_ACTIVE_COLOUR_DARK_B}
                        : QColor{LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
-                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_G
+                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
                                 LIST_ITEM_ACTIVE_COLOUR_LIGHT_B};
 #endif
         currentTextColour = Utils::getContrastingColour(selectedBackgroundColour);
