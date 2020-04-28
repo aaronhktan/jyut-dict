@@ -29,5 +29,7 @@
         <file>images/sliders_disabled.png</file>
         <file>images/chevron-down.png</file>
         <file>images/chevron-up.png</file>
+        <file>images/chevron-down_inverted.png</file>
+        <file>images/chevron-up_inverted.png</file>
     </qresource>
 </RCC>

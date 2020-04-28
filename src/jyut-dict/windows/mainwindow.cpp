@@ -61,11 +61,11 @@ MainWindow::MainWindow(QWidget *parent) :
     dark_palette.setColor(QPalette::Window, QColor(56, 56, 56));
     dark_palette.setColor(QPalette::WindowText, Qt::white);
     dark_palette.setColor(QPalette::Base, QColor(25, 25, 25));
-    dark_palette.setColor(QPalette::AlternateBase, QColor(55, 55, 55));
+    dark_palette.setColor(QPalette::AlternateBase, QColor(75, 75, 75));
     dark_palette.setColor(QPalette::ToolTipBase, Qt::white);
     dark_palette.setColor(QPalette::ToolTipText, Qt::white);
     dark_palette.setColor(QPalette::Text, Qt::white);
-    dark_palette.setColor(QPalette::Button, QColor(65, 65, 65));
+    dark_palette.setColor(QPalette::Button, QColor(55, 55, 55));
     dark_palette.setColor(QPalette::ButtonText, Qt::white);
     dark_palette.setColor(QPalette::BrightText, Qt::red);
     dark_palette.setColor(QPalette::Link, QColor(42, 130, 218));
@@ -127,7 +127,7 @@ MainWindow::MainWindow(QWidget *parent) :
                         "QComboBox { "
                         "background-color: palette(button);"
                         "border: 1px solid palette(alternate-base);"
-                        "padding: 2px;"
+                        "padding: 3px;"
                         "}"
                         "QComboBox::drop-down {"
                         "    width: 30px;"
@@ -154,7 +154,7 @@ MainWindow::MainWindow(QWidget *parent) :
                         //"}                                                     "
                         "                                                      "
                         "QComboBox::down-arrow {                               "
-                        "    image: url(:/images/chevron-down.png);"
+                        "    image: url(:/images/chevron-down_inverted.png);"
                         "}"
                         ""
                         "QScrollBar:vertical{                                  "
@@ -206,13 +206,13 @@ MainWindow::MainWindow(QWidget *parent) :
                         "border: 0px solid black;                                          "
                         "width: 10px;                                                      "
                         "height: 10px;  "
-                        "image: url(:/images/chevron-up.png);                                                   "
+                        "image: url(:/images/chevron-up_inverted.png);                                                   "
                         "} "
                         "QScrollBar::down-arrow:vertical {"
                         "border: 0px solid black;                                          "
                         "width: 10px;                                                      "
                         "height: 10px;"
-                        "image: url(:/images/chevron-down.png);                                                       "
+                        "image: url(:/images/chevron-down_inverted.png);                                                       "
                         "}                                                     "
                         "QGroupBox { "
                         "border: 1px solid palette(alternate-base);"

@@ -216,6 +216,11 @@ void SettingsTab::setStyle(bool use_dark)
     for (auto frame : frames) {
         frame->setStyleSheet(style.arg(colour));
     }
+#ifdef Q_OS_WIN
+    setAttribute(Qt::WA_StyledBackground);
+    setProperty("class", "settingsTab");
+    setStyleSheet(".settingsTab { background-color: palette(window); }");
+#endif
 }
 
 void SettingsTab::initializeCharacterComboBox(QComboBox &characterCombobox)
