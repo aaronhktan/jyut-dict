@@ -9,6 +9,7 @@
 #endif
 #include <functional>
 #include <sstream>
+#include <unordered_set>
 
 std::list<ISearchObserver *> SQLSearch::_observers;
 
@@ -185,6 +186,9 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm)
 // to add another set of quotes around placeholder values.
 void SQLSearch::searchJyutpingThread(const QString &searchTerm)
 {
+    std::vector<std::string> jyutpingWords = {};
+    segmentJyutping(searchTerm, jyutpingWords);
+
     std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getDatabase()};
     query.prepare("SELECT traditional, simplified, pinyin, jyutping, "
@@ -198,11 +202,11 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm)
                   "GROUP BY entry_id "
                   "ORDER BY frequency DESC");
     const char *matchJoinDelimiter = "*";
-    std::string matchTerm = implodePhonetic(explodePhonetic(searchTerm, ' '),
+    std::string matchTerm = implodePhonetic(jyutpingWords,
                                             matchJoinDelimiter,
                                             /*surroundWithQuotes=*/true);
     const char *likeJoinDelimiter = "_";
-    std::string likeTerm = implodePhonetic(explodePhonetic(searchTerm, ' '),
+    std::string likeTerm = implodePhonetic(jyutpingWords,
                                            likeJoinDelimiter);
     query.addBindValue("jyutping:" + QString(matchTerm.c_str()));
     query.addBindValue(QString(likeTerm.c_str()) + "%");
@@ -225,7 +229,6 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm)
     notifyObservers();
 }
 
-#include <unordered_set>
 void SQLSearch::searchPinyinThread(const QString &searchTerm)
 {
     // Replace "v" and "ü" with "u:" since "ü" is stored as "u:" in the table
@@ -244,114 +247,8 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm)
         location = processedSearchTerm.indexOf("ü", location);
     }
 
-    std::unordered_set<std::string> initials = {"b", "p", "m",  "f",  "d",  "t",
-                                                "n", "l", "g",  "k",  "h",  "j",
-                                                "q", "x", "zh", "ch", "sh", "r",
-                                                "z", "c", "s"};
-    std::unordered_set<std::string> finals
-        = {"a",   "e",   "ai",   "ei",   "ao",   "ou", "an", "ang", "en",
-           "ang", "eng", "ong",  "er",   "i",    "ia", "ie", "iao", "iu",
-           "ian", "in",  "iang", "ing",  "iong", "u",  "ua", "uo",  "uai",
-           "ui",  "uan", "un",   "uang", "u",    "u:", "ue", "u:e", "o"};
-
-    std::vector<std::string> foundWords = {};
-
-    int start_index = 0;
-    int end_index = 0;
-    while (end_index < searchTerm.length()) {
-        //        qDebug() << "start_index " << start_index;
-        //        qDebug() << "end_index " << end_index;
-        QString stringToExamine = processedSearchTerm.mid(end_index, 1).toLower();
-        if (stringToExamine == " ") {
-            start_index++;
-            end_index++;
-            continue;
-        }
-
-        stringToExamine = processedSearchTerm.mid(end_index, 2).toLower();
-        //        qDebug() << "Examining initial 2 " << stringToExamine;
-        auto searchResult = initials.find(processedSearchTerm.toStdString());
-        if (searchResult != initials.end() && stringToExamine.length() == 2) {
-            end_index += 2;
-            qDebug() << end_index;
-            continue;
-        }
-
-        stringToExamine = searchTerm.mid(end_index, 1).toLower();
-        //        qDebug() << "Examining initial 1 " << stringToExamine;
-        searchResult = initials.find(processedSearchTerm.toStdString());
-        if (searchResult != initials.end() && stringToExamine.length() == 1) {
-            end_index++;
-            qDebug() << end_index;
-            continue;
-        }
-
-        stringToExamine = searchTerm.mid(end_index, 3).toLower();
-        //        qDebug() << "Examining 3 " << stringToExamine;
-        searchResult = finals.find(stringToExamine.toStdString());
-        if (searchResult != finals.end() && stringToExamine.length() == 3) {
-            end_index += 3;
-            if (end_index < searchTerm.length()) {
-                if (searchTerm.at(end_index).isDigit()) {
-                    end_index++;
-                }
-            }
-            QString word = searchTerm.mid(start_index, end_index - start_index);
-            foundWords.push_back(word.toStdString());
-            start_index = end_index;
-            //            qDebug() << end_index;
-//            qDebug() << "Added string " << word;
-            continue;
-        }
-
-        stringToExamine = searchTerm.mid(end_index, 2).toLower();
-        //        qDebug() << "Examining 2 " << stringToExamine;
-        searchResult = finals.find(stringToExamine.toStdString());
-        if (searchResult != finals.end() && stringToExamine.length() == 2) {
-            end_index += 2;
-            if (end_index < searchTerm.length()) {
-                if (searchTerm.at(end_index).isDigit()) {
-                    end_index++;
-                }
-            }
-            QString word = searchTerm.mid(start_index, end_index - start_index);
-            foundWords.push_back(word.toStdString());
-            start_index = end_index;
-            //            qDebug() << end_index;
-//            qDebug() << "Added string " << word;
-            continue;
-        }
-
-        stringToExamine = searchTerm.mid(end_index, 1).toLower();
-        //        qDebug() << "Examining 1 " << stringToExamine;
-        searchResult = finals.find(stringToExamine.toStdString());
-        if (searchResult != finals.end()) {
-            end_index++;
-            if (end_index < searchTerm.length()) {
-                if (searchTerm.at(end_index).isDigit()) {
-                    end_index++;
-                }
-            }
-            QString word = searchTerm.mid(start_index, end_index - start_index);
-            foundWords.push_back(word.toStdString());
-            start_index = end_index;
-            //            qDebug() << end_index;
-//            qDebug() << "Added string " << word;
-            continue;
-        }
-
-        end_index++;
-    }
-
-    QString lastWord = searchTerm.mid(start_index, end_index - start_index);
-    if (!lastWord.isEmpty()) {
-        foundWords.push_back(lastWord.toStdString());
-    }
-    qDebug() << "Found:";
-    for (std::string string : foundWords) {
-        qDebug() << string.c_str();
-    }
-//    qDebug() << processedSearchTerm;
+    std::vector<std::string> pinyinWords = {};
+    segmentPinyin(searchTerm, pinyinWords);
 
     std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getDatabase()};
@@ -366,11 +263,11 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm)
                   "GROUP BY entry_id "
                   "ORDER BY frequency DESC");
     const char *matchJoinDelimiter = "*";
-    std::string matchTerm = implodePhonetic(foundWords,
+    std::string matchTerm = implodePhonetic(pinyinWords,
                                             matchJoinDelimiter,
                                             /*surroundWithQuotes=*/true);
     const char *likeJoinDelimiter = "_";
-    std::string likeTerm = implodePhonetic(foundWords,
+    std::string likeTerm = implodePhonetic(pinyinWords,
                                            likeJoinDelimiter);
     query.addBindValue("pinyin:" + QString{matchTerm.c_str()});
     query.addBindValue(QString(likeTerm.c_str()) + "%");
@@ -440,6 +337,247 @@ void SQLSearch::searchEnglishThread(const QString &searchTerm)
     }
 
     notifyObservers();
+}
+
+int SQLSearch::segmentPinyin(const QString &string,
+                             std::vector<std::string> &words)
+{
+    std::unordered_set<std::string> initials = {"b", "p", "m",  "f",  "d",  "t",
+                                                "n", "l", "g",  "k",  "h",  "j",
+                                                "q", "x", "zh", "ch", "sh", "r",
+                                                "z", "c", "s"};
+    std::unordered_set<std::string> finals
+        = {"a",   "e",   "ai",   "ei",   "ao",   "ou", "an", "ang", "en",
+           "ang", "eng", "ong",  "er",   "i",    "ia", "ie", "iao", "iu",
+           "ian", "in",  "iang", "ing",  "iong", "u",  "ua", "uo",  "uai",
+           "ui",  "uan", "un",   "uang", "u",    "u:", "ue", "u:e", "o"};
+
+    // Keep track of indices for current segmented word; [start_index, end_index)
+    // Greedily try to expand end_index by checking for valid sequences
+    // of characters
+    int start_index = 0;
+    int end_index = 0;
+    bool word_started = false;
+
+    while (end_index < string.length()) {
+        bool next_iteration = false;
+        // Ignore separation characters; these are special.
+        QString stringToExamine = string.mid(end_index, 1).toLower();
+        if (stringToExamine == " " || stringToExamine == "'") {
+            if (word_started) { // Add any incomplete word to the vector
+                QString previous_initial = string.mid(start_index,
+                                                      end_index - start_index);
+                words.push_back(previous_initial.toStdString());
+                start_index = end_index;
+                word_started = false;
+            }
+            start_index++;
+            end_index++;
+            continue;
+        }
+
+        // First, check for initials
+        // If initial is valid, then extend the end_index for length of initial
+        // cluster of consonants.
+        for (int length = 2; length > 0; length--) {
+            stringToExamine = string.mid(end_index, length).toLower();
+            auto searchResult = initials.find(stringToExamine.toStdString());
+            if (searchResult != initials.end()
+                && stringToExamine.length() == length) {
+                end_index += length;
+                next_iteration = true;
+                word_started = true;
+                break;
+            }
+        }
+
+        if (next_iteration) {
+            continue;
+        }
+
+        // Then, check for finals
+        // If final is valid, then extend end_index for length of final.
+        // Check for number at end of word as well (this represents tone number).
+        //
+        // Then add the substring from [start_index, end_index) to vector
+        // and reset start_index, so we can start searching after the end_index.
+        for (int length = 4; length > 0; length--) {
+            stringToExamine = string.mid(end_index, length).toLower();
+            auto searchResult = finals.find(stringToExamine.toStdString());
+            if (searchResult != finals.end()
+                && stringToExamine.length() == length) {
+                end_index += length;
+                if (end_index < string.length()) {
+                    if (string.at(end_index).isDigit()) {
+                        end_index++;
+                    }
+                }
+                QString word = string.mid(start_index, end_index - start_index);
+                words.push_back(word.toStdString());
+                start_index = end_index;
+                next_iteration = true;
+                word_started = false;
+                break;
+            }
+        }
+
+        if (next_iteration) {
+            continue;
+        }
+
+        end_index++;
+    }
+
+    // Then add whatever's left in the search term, minus whitespace.
+    QString lastWord = string.mid(start_index, end_index - start_index)
+                           .simplified();
+    if (!lastWord.isEmpty() && lastWord != "'") {
+        words.push_back(lastWord.toStdString());
+    }
+
+    return 0;
+}
+
+
+int SQLSearch::segmentJyutping(const QString &string,
+                               std::vector<std::string> &words)
+{
+    std::unordered_set<std::string> initials = {"b",  "p", "m",  "f",  "d",
+                                                "t",  "n", "l",  "g",  "k",
+                                                "ng", "h", "gw", "kw", "w",
+                                                "z",  "c", "s",  "j",  "m"};
+    std::unordered_set<std::string> finals
+        = {"aa",   "aai", "aau", "aam", "aan", "aang", "aap", "aat",
+           "aak",  "ai",  "au",  "am",  "an",  "ang",  "ap",  "at",
+           "ak",   "e",   "ei",  "eu",  "em",  "eng",  "ep",  "ek",
+           "i",    "iu",  "im",  "in",  "ing", "ip",   "it",  "ik",
+           "o",    "oi",  "ou",  "on",  "ong", "ot",   "ok",  "u",
+           "ui",   "un",  "ung", "ut",  "uk",  "oe",   "eoi", "eon",
+           "oeng", "eot", "oek", "yu",  "yun", "yut",  "m",   "ng"};
+
+    // Keep track of indices for current segmented word; [start_index, end_index)
+    // Greedily try to expand end_index by checking for valid sequences
+    // of characters
+    int start_index = 0;
+    int end_index = 0;
+    bool initial_found = false;
+
+    while (end_index < string.length()) {
+        bool next_iteration = false;
+
+        // Ignore separation characters; these are special.
+        QString stringToExamine = string.mid(end_index, 1).toLower();
+        if (stringToExamine == " " || stringToExamine == "'") {
+            if (initial_found) { // Add any incomplete word to the vector
+                QString previous_initial = string.mid(start_index,
+                                                      end_index - start_index);
+                words.push_back(previous_initial.toStdString());
+                start_index = end_index;
+                initial_found = false;
+            }
+            start_index++;
+            end_index++;
+            continue;
+        }
+
+        // Check for digit
+        // Digits are only valid after a final (which should be handled in the
+        // final-checking code
+        // OR after an initial (that is also a final), like m or ng.
+        // This block checks for the latter case.
+        if (stringToExamine.at(0).isDigit()) {
+            if (initial_found) {
+                QString previous_initial = string.mid(start_index,
+                                                      end_index - start_index);
+                auto searchResult = finals.find(previous_initial.toStdString());
+                if (searchResult != finals.end()) {
+                    // Confirmed, last initial found was also a final
+                    end_index++;
+                    previous_initial = string.mid(start_index,
+                                                  end_index - start_index);
+                    words.push_back(previous_initial.toStdString());
+                    start_index = end_index;
+                    initial_found = false;
+                    continue;
+                }
+            }
+        }
+
+        // First, check for initials
+        // If initial is valid, then extend the end_index for length of initial
+        // cluster of consonants.
+        for (int length = 2; length > 0; length--) {
+            stringToExamine = string.mid(end_index, length).toLower();
+            auto searchResult = initials.find(stringToExamine.toStdString());
+
+            if (searchResult == initials.end()
+                || stringToExamine.length() != length) {
+                continue;
+            }
+
+            // Multiple initials in a row are only valid if previous "initial"
+            // was actually a final (like m or ng)
+            if (initial_found) {
+                QString previous_initial = string.mid(start_index,
+                                                      end_index - start_index);
+                searchResult = finals.find(previous_initial.toStdString());
+                if (searchResult != finals.end()) {
+                    words.push_back(previous_initial.toStdString());
+                    start_index = end_index;
+                    initial_found = false;
+                }
+            }
+
+            end_index += length;
+            next_iteration = true;
+            initial_found = true;
+        }
+
+        if (next_iteration) {
+            continue;
+        }
+
+        // Then, check for finals
+        // If final is valid, then extend end_index for length of final.
+        // Check for number at end of word as well (this represents tone number).
+        //
+        // Then add the substring from [start_index, end_index) to vector
+        // and reset start_index, so we can start searching after the end_index.
+        for (int length = 4; length > 0; length--) {
+            stringToExamine = string.mid(end_index, length).toLower();
+            auto searchResult = finals.find(stringToExamine.toStdString());
+            if (searchResult != finals.end()
+                && stringToExamine.length() == length) {
+                end_index += length;
+                if (end_index < string.length()) {
+                    if (string.at(end_index).isDigit()) {
+                        end_index++;
+                    }
+                }
+                QString word = string.mid(start_index, end_index - start_index);
+                words.push_back(word.toStdString());
+                start_index = end_index;
+                next_iteration = true;
+                initial_found = false;
+                break;
+            }
+        }
+
+        if (next_iteration) {
+            continue;
+        }
+
+        end_index++;
+    }
+
+    // Then add whatever's left in the search term, minus whitespace.
+    QString lastWord = string.mid(start_index, end_index - start_index)
+                           .simplified();
+    if (!lastWord.isEmpty() && lastWord != "'") {
+        words.push_back(lastWord.toStdString());
+    }
+
+    return 0;
 }
 
 // explodePhonetic takes a string and a delimiter, then separates that string up
@@ -517,7 +655,7 @@ std::vector<std::string> SQLSearch::explodePhonetic(const QString &string,
 //    wildcard, as it is terminated by a digit. The second one is not, so it
 //    is affixed with the single character wildcard. The return value is
 //    ke3 ai_.
-std::string SQLSearch::implodePhonetic(std::vector<std::string> words,
+std::string SQLSearch::implodePhonetic(const std::vector<std::string> &words,
                                        const char *delimiter,
                                        bool surroundWithQuotes)
 {

@@ -47,9 +47,11 @@ private:
     void searchPinyinThread(const QString &searchTerm);
     void searchEnglishThread(const QString &searchTerm);
 
+    int segmentPinyin(const QString &string, std::vector<std::string> &words);
+    int segmentJyutping(const QString &string, std::vector<std::string> &words);
     std::vector<std::string> explodePhonetic(const QString &string,
                                              const char delimiter);
-    std::string implodePhonetic(std::vector<std::string> words,
+    std::string implodePhonetic(const std::vector<std::string> &words,
                                 const char *delimiter,
                                 bool surroundWithQuotes=false);
     std::vector<Entry> parseEntries(QSqlQuery &query);
