@@ -1,5 +1,8 @@
 #include "defaultdialog.h"
 
+#include "logic/strings/strings.h"
+
+#include <QCoreApplication>
 #include <QAbstractButton>
 #include <QGridLayout>
 #include <QLabel>

@@ -64,6 +64,12 @@ namespace Utils {
         = "https://packages.debian.org/stretch/libspeechd-dev";
     constexpr auto TTS_HELP_LINK
         = "https://packages.debian.org/stretch/libspeechd-dev";
+#else
+    constexpr auto TTS_LINK
+        = "ms-settings:regionlanguage";
+    constexpr auto TTS_HELP_LINK
+        = "https://support.microsoft.com/en-ca/help/22805/"
+          "windows-10-supported-narrator-languages-voices";
 #endif
 
     void split(const std::string &string,

@@ -19,6 +19,19 @@ public:
     int speakMainlandMandarin(const QString &string);
 
 private:
+    QVector<QVoice> getListOfVoices(const QLocale::Language &language,
+                                    const QLocale::Country &country);
+    int speakWithVoice(const QVoice &voice, const QString &string);
+#ifdef Q_OS_WIN
+    bool checkVoiceName(const QLocale::Language &language,
+                        const QLocale::Country &country,
+                        const QString &voiceName);
+    bool filterVoiceNames(const QLocale::Language &language,
+                          const QLocale::Country &country,
+                          const QVector<QVoice> &voices,
+                          QVoice &voice);
+#endif
+
     QTextToSpeech *_tts;
 };
 
