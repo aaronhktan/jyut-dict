@@ -1,6 +1,7 @@
 #ifndef DICTIONARYTAB_H
 #define DICTIONARYTAB_H
 
+#include "dialogs/dictionarytabfailuredialog.h"
 #include "logic/analytics/analytics.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqldatabaseutils.h"
@@ -11,7 +12,6 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QListView>
-#include <QMessageBox>
 #include <QModelIndex>
 #include <QProgressDialog>
 #include <QPushButton>
@@ -66,7 +66,7 @@ private:
     QGroupBox *_groupbox;
 
     QProgressDialog *_dialog;
-    QMessageBox *_message;
+    DictionaryTabFailureDialog *_message;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
     std::unique_ptr<SQLDatabaseUtils> _utils;

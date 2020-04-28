@@ -27,5 +27,7 @@
         <file>images/help_disabled.png</file>
         <file>images/settings_disabled.png</file>
         <file>images/sliders_disabled.png</file>
+        <file>images/speak_inverted.png</file>
+        <file>images/speak.png</file>
     </qresource>
 </RCC>

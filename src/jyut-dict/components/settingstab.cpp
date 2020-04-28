@@ -14,8 +14,6 @@
 #include <QColorDialog>
 #include <QFrame>
 #include <QGridLayout>
-#include <QMessageBox>
-#include <QSpacerItem>
 #include <QStyle>
 #include <QTimer>
 #include <QVariant>
@@ -449,37 +447,7 @@ void SettingsTab::initializePinyinColourWidget(QWidget &pinyinColourWidget)
 void SettingsTab::initializeResetButton(QPushButton &resetButton)
 {
     connect(&resetButton, &QPushButton::clicked, [&]() {
-        QMessageBox *_message = new QMessageBox{this};
-        Qt::WindowFlags flags = _message->windowFlags()
-                                | Qt::CustomizeWindowHint;
-        flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
-                   | Qt::WindowFullscreenButtonHint);
-        _message->setWindowFlags(flags);
-        _message->setAttribute(Qt::WA_DeleteOnClose, true);
-        _message->setText(tr("Are you sure you want to reset all settings?"));
-        _message->setInformativeText(tr("There is no way to restore them!"));
-        _message->setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
-        _message->setIcon(QMessageBox::Warning);
-#ifdef Q_OS_WIN
-        _message->setWindowTitle(
-            QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
-#elif defined(Q_OS_LINUX)
-        _message->setWindowTitle(" ");
-#endif
-
-        // Setting minimum width also doesn't work, so use this
-        // workaround to set a width.
-        QSpacerItem *horizontalSpacer = new QSpacerItem(400,
-                                                        0,
-                                                        QSizePolicy::Minimum,
-                                                        QSizePolicy::Minimum);
-        QGridLayout *layout = static_cast<QGridLayout *>(_message->layout());
-        layout->addItem(horizontalSpacer,
-                        layout->rowCount(),
-                        0,
-                        1,
-                        layout->columnCount());
-
+        ResetSettingsDialog *_message = new ResetSettingsDialog{this};
         if (_message->exec() == QMessageBox::Yes) {
             resetSettings(*_settings);
         }

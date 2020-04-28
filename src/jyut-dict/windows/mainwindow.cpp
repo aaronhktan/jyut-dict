@@ -1,5 +1,6 @@
 #include "windows/mainwindow.h"
 
+#include "dialogs/noupdatedialog.h"
 #include "logic/database/sqldatabaseutils.h"
 #include "logic/dictionary/dictionarysource.h"
 #include "logic/entry/sentence.h"
@@ -300,36 +301,8 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
         UpdateWindow *window = new UpdateWindow{this, versionNumber, url, description};
         window->show();
     } else if (showIfNoUpdate) {
-        QMessageBox *_message = new QMessageBox{this};
-        Qt::WindowFlags flags = _message->windowFlags()
-                                | Qt::CustomizeWindowHint;
-        flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
-                   | Qt::WindowFullscreenButtonHint);
-        _message->setWindowFlags(flags);
-        _message->setAttribute(Qt::WA_DeleteOnClose, true);
-        _message->setText(tr("No update found!"));
-        _message->setInformativeText(tr("You are on the newest version, %1.").arg(Utils::CURRENT_VERSION));
-        _message->setStandardButtons(QMessageBox::Ok);
-        _message->setIcon(QMessageBox::Information);
-#ifdef Q_OS_WIN
-        _message->setWindowTitle(
-            QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
-#elif defined(Q_OS_LINUX)
-        _message->setWindowTitle(tr("No update available!"));
-#endif
-        // Setting minimum width also doesn't work, so use this
-        // workaround to set a width.
-        QSpacerItem *horizontalSpacer = new QSpacerItem(400,
-                                                        0,
-                                                        QSizePolicy::Minimum,
-                                                        QSizePolicy::Minimum);
-        QGridLayout *layout = static_cast<QGridLayout *>(_message->layout());
-        layout->addItem(horizontalSpacer,
-                        layout->rowCount(),
-                        0,
-                        1,
-                        layout->columnCount());
-
+        QString currentVersion = QString{Utils::CURRENT_VERSION};
+        NoUpdateDialog *_message = new NoUpdateDialog{currentVersion, this};
         _message->exec();
     }
 }

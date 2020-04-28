@@ -53,6 +53,12 @@ namespace Utils {
     constexpr auto AUTHOR_GITHUB_LINK = "https://github.com/aaronhktan/";
     constexpr auto GITHUB_LINK = "https://github.com/aaronhktan/jyut-dict";
 
+    // Strings used for adding languages
+    constexpr auto TTS_LINK = "x-apple.systempreferences:com.apple."
+                              "preference.universalaccess?TextToSpeech";
+    constexpr auto TTS_HELP_LINK
+        = "https://support.apple.com/guide/mac-help/mchlp2290/mac";
+
     void split(const std::string &string,
                const char delimiter,
                std::vector<std::string> &result);

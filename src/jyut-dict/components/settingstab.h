@@ -1,6 +1,7 @@
 #ifndef SETTINGSTAB_H
 #define SETTINGSTAB_H
 
+#include "dialogs/resetsettingsdialog.h"
 #include "logic/analytics/analytics.h"
 #include "logic/settings/settingsutils.h"
 

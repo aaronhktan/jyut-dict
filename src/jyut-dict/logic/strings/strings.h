@@ -48,6 +48,35 @@ constexpr auto OTHER_SOURCES = QT_TRANSLATE_NOOP(
     "style=\"color: %1; text-decoration: none\">CantoDict</a>, "
     "<a href=https://words.hk style=\"color: %1; text-decoration: "
     "none\">words.hk</a>");
+constexpr auto YUE_ERROR_STRING = QT_TRANSLATE_NOOP(
+    "strings",
+    "To add a voice, click the \"Add voice\" button. Then, select "
+    "System Voice > Customize... "
+    "and select a voice for \"Chinese - Hong Kong\".");
+constexpr auto YUE_DESCRIPTION_STRING
+    = QT_TRANSLATE_NOOP("strings",
+                        "Unable to use text to speech.\n\n"
+                        "Debug: Locale: %1, Language: Chinese - Hong Kong");
+
+constexpr auto ZH_TW_ERROR_STRING = QT_TRANSLATE_NOOP(
+    "strings",
+    "To add a voice, click the \"Add voice\" button. Then, select "
+    "System Voice > Customize... "
+    "and select a voice for \"Chinese - Taiwan\".");
+constexpr auto ZH_TW_DESCRIPTION_STRING
+    = QT_TRANSLATE_NOOP("strings",
+                        "Unable to use text to speech.\n\n"
+                        "Debug: Locale: %1, Language: Chinese - Taiwan");
+
+constexpr auto ZH_CN_ERROR_STRING = QT_TRANSLATE_NOOP(
+    "strings",
+    "To add a voice, click the \"Add voice\" button. Then, select "
+    "System Voice > Customize... "
+    "and select a voice for \"Chinese - Mainland China\".");
+constexpr auto ZH_CN_DESCRIPTION_STRING = QT_TRANSLATE_NOOP(
+    "strings",
+    "Unable to use text to speech.\n\n"
+    "Debug: Locale: %1, Language: Chinese - Mainland");
 
 }
 
