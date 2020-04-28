@@ -97,7 +97,7 @@ int EntrySpeaker::speak(const QLocale::Language &language,
         return -2;
     }
 #else
-    voices = voices.at(0);
+    voice = voices.at(0);
 #endif
     speakWithVoice(voice, string);
     return 0;
