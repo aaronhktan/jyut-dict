@@ -1,7 +1,6 @@
 #include "mainsplitter.h"
 
 #include "components/resultlistview.h"
-#include "logic/entry/entry.h"
 #include "logic/settings/settingsutils.h"
 
 #include <QList>
@@ -17,10 +16,17 @@ MainSplitter::MainSplitter(QWidget *parent) : QSplitter(parent)
     addWidget(_resultListView);
     addWidget(_definitionScrollArea);
 
+    // Don't use QListView::click, since it doesn't respond to changes
+    // in the current index if user is navigating with the keyboard
     connect(_resultListView->selectionModel(),
             &QItemSelectionModel::currentChanged,
             this,
-            &MainSplitter::handleSelectionChanged);
+            &MainSplitter::handleClick);
+
+    connect(_resultListView,
+            &QListView::doubleClicked,
+            this,
+            &MainSplitter::handleDoubleClick);
 
     setHandleWidth(1);
     setCollapsible(0, false);
@@ -40,13 +46,8 @@ MainSplitter::~MainSplitter()
 
 }
 
-void MainSplitter::handleSelectionChanged(const QModelIndex &selection)
+void MainSplitter::prepareEntry(Entry &entry)
 {
-    Entry entry = qvariant_cast<Entry>(selection.data());
-    if (entry.getSimplified() == tr("Welcome!").toStdString()) {
-        return;
-    }
-
     if (Settings::getSettings()
             ->value("Advanced/analyticsEnabled", QVariant{true})
             .toBool()) {
@@ -61,5 +62,35 @@ void MainSplitter::handleSelectionChanged(const QModelIndex &selection)
             ->value("entryColourPhoneticType",
                     QVariant::fromValue(EntryColourPhoneticType::JYUTPING))
             .value<EntryColourPhoneticType>());
+
+    return;
+}
+
+void MainSplitter::handleClick(const QModelIndex &selection)
+{
+    Entry entry = qvariant_cast<Entry>(selection.data());
+    if (entry.getSimplified() == tr("Welcome!").toStdString()) {
+        return;
+    }
+
+    prepareEntry(entry);
     _definitionScrollArea->setEntry(entry);
+}
+
+void MainSplitter::handleDoubleClick(const QModelIndex &selection)
+{
+    Entry entry = qvariant_cast<Entry>(selection.data());
+    if (entry.getSimplified() == tr("Welcome!").toStdString()) {
+        return;
+    }
+
+    prepareEntry(entry);
+
+    DefinitionScrollArea *area = new DefinitionScrollArea{nullptr};
+    area->setParent(this, Qt::Window);
+    area->setEntry(entry);
+#ifndef Q_OS_MAC
+    area->setWindowTitle(" ");
+#endif
+    area->show();
 }

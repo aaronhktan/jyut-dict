@@ -23,6 +23,10 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
     setMinimumWidth(350);
 #endif
 
+    if (!parent) {
+        setMinimumHeight(400);
+    }
+
 //    testEntry();
 }
 
