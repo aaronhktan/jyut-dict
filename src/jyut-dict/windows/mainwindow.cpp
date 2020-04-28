@@ -155,7 +155,7 @@ void MainWindow::changeEvent(QEvent *event)
     QMainWindow::changeEvent(event);
 }
 
-void MainWindow::installTranslator()
+void MainWindow::installTranslator(void)
 {
     if (!Settings::getSettings()->contains("Advanced/locale")) {
         Settings::systemTranslator.load("qt_" + QLocale::system().name(),
@@ -204,7 +204,7 @@ void MainWindow::installTranslator()
     }
 }
 
-void MainWindow::translateUI()
+void MainWindow::translateUI(void)
 {
     // Set property so styling automatically changes
     setProperty("isHan", Settings::isCurrentLocaleHan());
@@ -241,6 +241,7 @@ void MainWindow::translateUI()
     _cutAction->setText(tr("Cut"));
     _copyAction->setText(tr("Copy"));
     _pasteAction->setText(tr("Paste"));
+    _findAction->setText(tr("Find"));
 
     _minimizeAction->setText(tr("Minimize"));
     _maximizeAction->setText(tr("Zoom"));
@@ -321,7 +322,7 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
     }
 }
 
-void MainWindow::createMenus()
+void MainWindow::createMenus(void)
 {
     _fileMenu = menuBar()->addMenu(tr("&File"));
     _editMenu = menuBar()->addMenu(tr("&Edit"));
@@ -335,7 +336,7 @@ void MainWindow::createMenus()
 #endif
 }
 
-void MainWindow::createActions()
+void MainWindow::createActions(void)
 {
     _aboutAction = new QAction{this};
     _aboutAction->setMenuRole(QAction::AboutRole);
@@ -387,6 +388,13 @@ void MainWindow::createActions()
     connect(_pasteAction, &QAction::triggered, this, &MainWindow::paste);
     _editMenu->addAction(_pasteAction);
 
+    _editMenu->addSeparator();
+
+    _findAction = new QAction{this};
+    _findAction->setShortcut(QKeySequence{"Ctrl+F"});
+    connect(_findAction, &QAction::triggered, this, &MainWindow::find);
+    _editMenu->addAction(_findAction);
+
     _minimizeAction = new QAction{this};
     _minimizeAction->setShortcut(QKeySequence{"Ctrl+M"});
     connect(_minimizeAction,
@@ -424,7 +432,7 @@ void MainWindow::createActions()
     _helpMenu->addAction(_updateAction);
 }
 
-void MainWindow::undo()
+void MainWindow::undo(void)
 {
     QWidget *focused = QApplication::focusWidget();
     if (focused) {
@@ -439,7 +447,7 @@ void MainWindow::undo()
     }
 }
 
-void MainWindow::redo()
+void MainWindow::redo(void)
 {
     QWidget *focused = QApplication::focusWidget();
     if (focused) {
@@ -456,7 +464,7 @@ void MainWindow::redo()
     }
 }
 
-void MainWindow::cut()
+void MainWindow::cut(void)
 {
     QWidget *focused = QApplication::focusWidget();
     if (focused) {
@@ -471,7 +479,7 @@ void MainWindow::cut()
     }
 }
 
-void MainWindow::copy()
+void MainWindow::copy(void)
 {
     QWidget *focused = QApplication::focusWidget();
     if (!focused) {
@@ -494,7 +502,7 @@ void MainWindow::copy()
                                           Qt::ControlModifier});
 }
 
-void MainWindow::paste()
+void MainWindow::paste(void)
 {
     QWidget *focused = QApplication::focusWidget();
     if (focused) {
@@ -509,7 +517,12 @@ void MainWindow::paste()
     }
 }
 
-void MainWindow::toggleMinimized()
+void MainWindow::find(void)
+{
+    _mainToolBar->setFocus();
+}
+
+void MainWindow::toggleMinimized(void)
 {
     if (!isMinimized()) {
         showMinimized();
@@ -518,7 +531,7 @@ void MainWindow::toggleMinimized()
     }
 }
 
-void MainWindow::toggleMaximized()
+void MainWindow::toggleMaximized(void)
 {
     if (!isMaximized()) {
         showMaximized();
@@ -527,7 +540,7 @@ void MainWindow::toggleMaximized()
     }
 }
 
-void MainWindow::openAboutWindow()
+void MainWindow::openAboutWindow(void)
 {
     if (_aboutWindow) {
         _aboutWindow->activateWindow();
@@ -539,7 +552,7 @@ void MainWindow::openAboutWindow()
     _aboutWindow->show();
 }
 
-void MainWindow::openSettingsWindow()
+void MainWindow::openSettingsWindow(void)
 {
     if (_settingsWindow) {
         _settingsWindow->activateWindow();

@@ -52,6 +52,7 @@ private:
     QAction *_cutAction;
     QAction *_copyAction;
     QAction *_pasteAction;
+    QAction *_findAction;
 
     QAction *_minimizeAction;
     QAction *_maximizeAction;
@@ -69,25 +70,26 @@ private:
 
     bool _recentlyCheckedForUpdates = false;
 
-    void installTranslator();
-    void translateUI();
+    void installTranslator(void);
+    void translateUI(void);
 
     void setStyle(bool use_dark);
 
-    void createMenus();
-    void createActions();
+    void createMenus(void);
+    void createActions(void);
 
-    void undo();
-    void redo();
-    void cut();
-    void copy();
-    void paste();
+    void undo(void);
+    void redo(void);
+    void cut(void);
+    void copy(void);
+    void paste(void);
+    void find(void);
 
-    void toggleMinimized();
-    void toggleMaximized();
+    void toggleMinimized(void);
+    void toggleMaximized(void);
 
-    void openAboutWindow();
-    void openSettingsWindow();
+    void openAboutWindow(void);
+    void openSettingsWindow(void);
 
     void checkForUpdate(bool showProgress);
 
