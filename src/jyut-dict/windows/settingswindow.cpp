@@ -166,29 +166,52 @@ void SettingsWindow::setStyle(bool use_dark)
         selectedBackgroundColour = QGuiApplication::palette()
             .color(QPalette::Inactive, QPalette::Highlight);
 #else
-        selectedBackgroundColour = use_dark ? Utils::LIST_ITEM_INACTIVE_COLOUR_DARK
-                                            : Utils::LIST_ITEM_INACTIVE_COLOUR_LIGHT;
+        selectedBackgroundColour
+            = use_dark ? QColor{LIST_ITEM_INACTIVE_COLOUR_DARK_R,
+                                LIST_ITEM_INACTIVE_COLOUR_DARK_G,
+                                LIST_ITEM_INACTIVE_COLOUR_DARK_B}
+                       : QColor{LIST_ITEM_INACTIVE_COLOUR_LIGHT_R,
+                                LIST_ITEM_INACTIVE_COLOUR_LIGHT_G,
+                                LIST_ITEM_INACTIVE_COLOUR_LIGHT_B};
 #endif
-        currentTextColour = use_dark
-                                ? Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_DARK
-                                : Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT;
-        otherTextColour = use_dark ? Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_DARK
-                                   : Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT;
+        currentTextColour
+            = use_dark ? QColor{TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_R,
+                                TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_G,
+                                TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_B}
+                       : QColor{TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_R,
+                                TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_G,
+                                TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_B};
+        otherTextColour
+            = use_dark ? QColor{TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_R,
+                                TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_G,
+                                TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_B}
+                       : QColor{TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_R,
+                                TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_G,
+                                TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_B};
     } else {
 #ifdef Q_OS_MAC
         selectedBackgroundColour = Utils::getAppleControlAccentColor();
 #else
-        selectedBackgroundColour = use_dark ? Utils::LIST_ITEM_ACTIVE_COLOUR_DARK
-                                            : Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT;
+        selectedBackgroundColour
+            = use_dark ? QColor{LIST_ITEM_ACTIVE_COLOUR_DARK_R,
+                                LIST_ITEM_ACTIVE_COLOUR_DARK_G,
+                                LIST_ITEM_ACTIVE_COLOUR_DARK_B}
+                       : QColor{LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
+                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
+                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_B};
 #endif
         currentTextColour = Utils::getContrastingColour(selectedBackgroundColour);
 #ifdef Q_OS_MAC
         otherTextColour = QGuiApplication::palette().color(QPalette::Active,
                                                            QPalette::Text);
 #else
-        otherTextColour = use_dark
-                              ? Utils::TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK
-                              : Utils::TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT;
+        otherTextColour
+            = use_dark ? QColor{TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_R,
+                                TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_G,
+                                TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_B}
+                       : QColor{TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_R,
+                                TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_G,
+                                TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_B};
 #endif
     }
 

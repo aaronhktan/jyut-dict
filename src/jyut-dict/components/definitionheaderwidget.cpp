@@ -10,11 +10,14 @@
 DefinitionHeaderWidget::DefinitionHeaderWidget(QWidget *parent)
     : QWidget(parent)
 {
+    setObjectName("DefinitionHeaderWidget");
+
     _layout = new QVBoxLayout{this};
     _layout->setContentsMargins(10, 10, 10, 10);
     _layout->setSpacing(10);
 
     _titleLabel = new QLabel{this};
+    _titleLabel->setObjectName("DefinitionHeaderWidgetTitleLabel");
 
     _layout->addWidget(_titleLabel);
 
@@ -38,7 +41,7 @@ void DefinitionHeaderWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, [=]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -61,20 +64,29 @@ void DefinitionHeaderWidget::setSectionTitle(std::string title)
 void DefinitionHeaderWidget::setStyle(bool use_dark)
 {
     // Style the main background
-    QString widgetStyleSheet = "QWidget { "
+    QString widgetStyleSheet = "QWidget#DefinitionHeaderWidget { "
                                " background-color: %1; "
                                " border-top-left-radius: 10px; "
                                " border-top-right-radius: 10px; "
                                " border-bottom-left-radius: 0px; "
                                " border-bottom-right-radius: 0px; "
                                "}";
-    QColor backgroundColour = use_dark ? Utils::HEADER_BACKGROUND_COLOUR_DARK
-                                       : Utils::HEADER_BACKGROUND_COLOUR_LIGHT;
+    QColor backgroundColour
+        = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
+                            HEADER_BACKGROUND_COLOUR_DARK_G,
+                            HEADER_BACKGROUND_COLOUR_DARK_B}
+                   : QColor{HEADER_BACKGROUND_COLOUR_LIGHT_R,
+                            HEADER_BACKGROUND_COLOUR_LIGHT_G,
+                            HEADER_BACKGROUND_COLOUR_LIGHT_B};
     setStyleSheet(widgetStyleSheet.arg(backgroundColour.name()));
 
     // Style the label text
-    QString textStyleSheet = "QLabel { color: %1; }";
-    QColor textColour = use_dark ? Utils::LABEL_TEXT_COLOUR_DARK
-                                 : Utils::LABEL_TEXT_COLOUR_LIGHT;
+    QString textStyleSheet = "QLabel#DefinitionHeaderWidgetTitleLabel { color: %1; }";
+    QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
+                                          LABEL_TEXT_COLOUR_DARK_G,
+                                          LABEL_TEXT_COLOUR_DARK_B}
+                                 : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
+                                          LABEL_TEXT_COLOUR_LIGHT_R,
+                                          LABEL_TEXT_COLOUR_LIGHT_R};
     _titleLabel->setStyleSheet(textStyleSheet.arg(textColour.name()));
 }

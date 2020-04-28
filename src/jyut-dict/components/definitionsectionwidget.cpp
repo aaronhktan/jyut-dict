@@ -12,6 +12,8 @@
 
 DefinitionSectionWidget::DefinitionSectionWidget(QWidget *parent) : QWidget(parent)
 {
+    setObjectName("DefinitionSectionWidget");
+
     _definitionAreaLayout = new QVBoxLayout{this};
     _definitionAreaLayout->setContentsMargins(0, 0, 0, 0);
     _definitionAreaLayout->setSpacing(11);
@@ -41,7 +43,7 @@ void DefinitionSectionWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(100, [&]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -76,11 +78,15 @@ void DefinitionSectionWidget::translateUI()
 
 void DefinitionSectionWidget::setStyle(bool use_dark)
 {
-    QString styleSheet = "QWidget { "
+    QString styleSheet = "QWidget#DefinitionSectionWidget { "
                          " background-color: %1; "
                          " border-radius: 10px; "
                          "}";
-    QColor backgroundColour = use_dark ? Utils::CONTENT_BACKGROUND_COLOUR_DARK
-                                       : Utils::CONTENT_BACKGROUND_COLOUR_LIGHT;
+    QColor backgroundColour = use_dark ? QColor{CONTENT_BACKGROUND_COLOUR_DARK_R,
+                                                CONTENT_BACKGROUND_COLOUR_DARK_G,
+                                                CONTENT_BACKGROUND_COLOUR_DARK_B}
+                                       : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                                                CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                                                CONTENT_BACKGROUND_COLOUR_LIGHT_B};
     setStyleSheet(styleSheet.arg(backgroundColour.name()));
 }
