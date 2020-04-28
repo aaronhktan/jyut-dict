@@ -7,6 +7,7 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QtGlobal>
 #include <QCoreApplication>
 #include <QIcon>
 #include <QTimer>
@@ -29,10 +30,12 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _jyutpingLabel = new QLabel{this};
     _jyutpingLabel->setAttribute(Qt::WA_TranslucentBackground);
     _jyutpingLabel->setVisible(false);
+#if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
     _jyutpingTTS = new QPushButton{this};
     _jyutpingTTS->setMaximumSize(10, 10);
     _jyutpingTTS->setAttribute(Qt::WA_TranslucentBackground);
     _jyutpingTTS->setVisible(false);
+#endif
     _jyutpingPronunciation = new QLabel{this};
     _jyutpingPronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _jyutpingPronunciation->setWordWrap(true);
@@ -40,10 +43,12 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _pinyinLabel = new QLabel{this};
     _pinyinLabel->setAttribute(Qt::WA_TranslucentBackground);
     _pinyinLabel->setVisible(false);
+#if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
     _pinyinTTS = new QPushButton{this};
     _pinyinTTS->setMaximumSize(10, 10);
     _pinyinTTS->setAttribute(Qt::WA_TranslucentBackground);
     _pinyinTTS->setVisible(false);
+#endif
     _pinyinPronunciation = new QLabel{this};
     _pinyinPronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _pinyinPronunciation->setWordWrap(true);
@@ -96,9 +101,13 @@ void EntryHeaderWidget::changeEvent(QEvent *event)
 void EntryHeaderWidget::setEntry(const Entry &entry)
 {
     _jyutpingLabel->setVisible(true);
+#if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
     _jyutpingTTS->setVisible(true);
+#endif
     _pinyinLabel->setVisible(true);
+#if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
     _pinyinTTS->setVisible(true);
+#endif
 
     _wordLabel->setText(
         entry
@@ -149,9 +158,13 @@ void EntryHeaderWidget::setEntry(std::string word,
                                  std::string jyutping, std::string pinyin)
 {
     _jyutpingLabel->setVisible(true);
+#if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
     _jyutpingTTS->setVisible(true);
+#endif
     _pinyinLabel->setVisible(true);
+#if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
     _pinyinTTS->setVisible(true);
+#endif
 
     _wordLabel->setText(word.c_str());
     _jyutpingPronunciation->setText(jyutping.c_str());
@@ -179,6 +192,7 @@ void EntryHeaderWidget::setStyle(bool use_dark)
     _jyutpingLabel->setStyleSheet(styleSheet.arg(textColour.name()));
     _pinyinLabel->setStyleSheet(styleSheet.arg(textColour.name()));
 
+#if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
     _jyutpingTTS->setIcon(use_dark ? QIcon{":/images/speak_inverted.png"}
                                    : QIcon{":/images/speak.png"});
     _jyutpingTTS->setFlat(true);
@@ -193,6 +207,7 @@ void EntryHeaderWidget::setStyle(bool use_dark)
     _pinyinTTS->setObjectName("pinyinTTS");
     _pinyinTTS->setStyleSheet("QPushButton#pinyinTTS { padding: 0px; }"
                               "QPushButton:pressed#pinyinTTS { border: none; }");
+#endif
 }
 
 void EntryHeaderWidget::translateUI()
@@ -207,11 +222,14 @@ void EntryHeaderWidget::translateUI()
     _pinyinLabel->setFixedWidth(
         _pinyinLabel->fontMetrics().boundingRect(_pinyinLabel->text()).width());
 
+#if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
     disconnect(_jyutpingTTS, nullptr, nullptr, nullptr);
     connect(_jyutpingTTS, &QPushButton::clicked, this, [=]() {
+#ifdef Q_OS_MAC
         if (!_speaker->speakCantonese(_jyutping)) {
             return;
         }
+#endif
         if (!_speaker->speakCantonese(_chinese)) {
             return;
         }
@@ -223,9 +241,11 @@ void EntryHeaderWidget::translateUI()
     disconnect(_pinyinTTS, nullptr, nullptr, nullptr);
     if (Settings::getCurrentLocale().country() == QLocale::Taiwan) {
         connect(_pinyinTTS, &QPushButton::clicked, this, [=]() {
+#ifdef Q_OS_MAC
             if (!_speaker->speakTaiwaneseMandarin(_pinyin)) {
                 return;
             }
+#endif
             if (!_speaker->speakTaiwaneseMandarin(_chinese)) {
                 return;
             }
@@ -235,9 +255,11 @@ void EntryHeaderWidget::translateUI()
         });
     } else {
         connect(_pinyinTTS, &QPushButton::clicked, this, [=]() {
+#ifdef Q_OS_MAC
             if (!_speaker->speakMainlandMandarin(_pinyin)) {
                 return;
             }
+#endif
             if (!_speaker->speakMainlandMandarin(_chinese)) {
                 return;
             }
@@ -246,6 +268,7 @@ void EntryHeaderWidget::translateUI()
                           Settings::getCurrentLocale().bcp47Name()));
         });
     }
+#endif
 }
 
 void EntryHeaderWidget::displayPronunciationLabels(const EntryPhoneticOptions options)
@@ -259,10 +282,14 @@ void EntryHeaderWidget::displayPronunciationLabels(const EntryPhoneticOptions op
             _entryHeaderLayout->addWidget(_pinyinTTS, 3, 1, 1, 1);
             _entryHeaderLayout->addWidget(_pinyinPronunciation, 3, 2, 1, 1);
             _jyutpingLabel->setVisible(true);
+#if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
             _jyutpingTTS->setVisible(true);
+#endif
             _jyutpingPronunciation->setVisible(true);
             _pinyinLabel->setVisible(true);
+#if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
             _pinyinTTS->setVisible(true);
+#endif
             _pinyinPronunciation->setVisible(true);
             break;
         }
@@ -274,10 +301,14 @@ void EntryHeaderWidget::displayPronunciationLabels(const EntryPhoneticOptions op
             _entryHeaderLayout->addWidget(_jyutpingTTS, 3, 1, 1, 1);
             _entryHeaderLayout->addWidget(_jyutpingPronunciation, 3, 2, 1, 1);
             _pinyinLabel->setVisible(true);
+#if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
             _pinyinTTS->setVisible(true);
+#endif
             _pinyinPronunciation->setVisible(true);
             _jyutpingLabel->setVisible(true);
+#if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
             _jyutpingTTS->setVisible(true);
+#endif
             _jyutpingPronunciation->setVisible(true);
             break;
         }
@@ -292,10 +323,14 @@ void EntryHeaderWidget::displayPronunciationLabels(const EntryPhoneticOptions op
         }
         case EntryPhoneticOptions::ONLY_PINYIN: {
             _jyutpingLabel->setVisible(false);
+#if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
             _jyutpingTTS->setVisible(false);
+#endif
             _jyutpingPronunciation->setVisible(false);
             _pinyinLabel->setVisible(true);
+#if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
             _pinyinTTS->setVisible(true);
+#endif
             _pinyinPronunciation->setVisible(true);
             break;
         }

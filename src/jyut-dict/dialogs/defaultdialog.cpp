@@ -19,11 +19,11 @@ DefaultDialog::DefaultDialog(const QString &reason,
     setDetailedText(description);
     setIcon(QMessageBox::Warning);
 #ifdef Q_OS_WIN
-    _message->setWindowTitle(
+    setWindowTitle(
         QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                     Strings::PRODUCT_NAME));
 #elif defined(Q_OS_LINUX)
-    _message->setWindowTitle(" ");
+    setWindowTitle(" ");
 #endif
 
     QList<QLabel *> labels = this->findChildren<QLabel *>();

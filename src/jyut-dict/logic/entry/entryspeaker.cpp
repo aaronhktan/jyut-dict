@@ -40,7 +40,11 @@ int EntrySpeaker::speak(const QLocale::Language &language,
 
 int EntrySpeaker::speakCantonese(const QString &string)
 {
+#ifdef Q_OS_LINUX
+    return speak(QLocale::Cantonese, QLocale::HongKong, string);
+#else
     return speak(QLocale::Chinese, QLocale::HongKong, string);
+#endif
 }
 
 int EntrySpeaker::speakTaiwaneseMandarin(const QString &string)
