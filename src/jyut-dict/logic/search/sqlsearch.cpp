@@ -225,6 +225,7 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm)
     notifyObservers();
 }
 
+#include <unordered_set>
 void SQLSearch::searchPinyinThread(const QString &searchTerm)
 {
     // Replace "v" and "ü" with "u:" since "ü" is stored as "u:" in the table
@@ -243,6 +244,115 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm)
         location = processedSearchTerm.indexOf("ü", location);
     }
 
+    std::unordered_set<std::string> initials = {"b", "p", "m",  "f",  "d",  "t",
+                                                "n", "l", "g",  "k",  "h",  "j",
+                                                "q", "x", "zh", "ch", "sh", "r",
+                                                "z", "c", "s"};
+    std::unordered_set<std::string> finals
+        = {"a",   "e",   "ai",   "ei",   "ao",   "ou", "an", "ang", "en",
+           "ang", "eng", "ong",  "er",   "i",    "ia", "ie", "iao", "iu",
+           "ian", "in",  "iang", "ing",  "iong", "u",  "ua", "uo",  "uai",
+           "ui",  "uan", "un",   "uang", "u",    "u:", "ue", "u:e", "o"};
+
+    std::vector<std::string> foundWords = {};
+
+    int start_index = 0;
+    int end_index = 0;
+    while (end_index < searchTerm.length()) {
+        //        qDebug() << "start_index " << start_index;
+        //        qDebug() << "end_index " << end_index;
+        QString stringToExamine = processedSearchTerm.mid(end_index, 1).toLower();
+        if (stringToExamine == " ") {
+            start_index++;
+            end_index++;
+            continue;
+        }
+
+        stringToExamine = processedSearchTerm.mid(end_index, 2).toLower();
+        //        qDebug() << "Examining initial 2 " << stringToExamine;
+        auto searchResult = initials.find(processedSearchTerm.toStdString());
+        if (searchResult != initials.end() && stringToExamine.length() == 2) {
+            end_index += 2;
+            qDebug() << end_index;
+            continue;
+        }
+
+        stringToExamine = searchTerm.mid(end_index, 1).toLower();
+        //        qDebug() << "Examining initial 1 " << stringToExamine;
+        searchResult = initials.find(processedSearchTerm.toStdString());
+        if (searchResult != initials.end() && stringToExamine.length() == 1) {
+            end_index++;
+            qDebug() << end_index;
+            continue;
+        }
+
+        stringToExamine = searchTerm.mid(end_index, 3).toLower();
+        //        qDebug() << "Examining 3 " << stringToExamine;
+        searchResult = finals.find(stringToExamine.toStdString());
+        if (searchResult != finals.end() && stringToExamine.length() == 3) {
+            end_index += 3;
+            if (end_index < searchTerm.length()) {
+                if (searchTerm.at(end_index).isDigit()) {
+                    end_index++;
+                }
+            }
+            QString word = searchTerm.mid(start_index, end_index - start_index);
+            foundWords.push_back(word.toStdString());
+            start_index = end_index;
+            //            qDebug() << end_index;
+//            qDebug() << "Added string " << word;
+            continue;
+        }
+
+        stringToExamine = searchTerm.mid(end_index, 2).toLower();
+        //        qDebug() << "Examining 2 " << stringToExamine;
+        searchResult = finals.find(stringToExamine.toStdString());
+        if (searchResult != finals.end() && stringToExamine.length() == 2) {
+            end_index += 2;
+            if (end_index < searchTerm.length()) {
+                if (searchTerm.at(end_index).isDigit()) {
+                    end_index++;
+                }
+            }
+            QString word = searchTerm.mid(start_index, end_index - start_index);
+            foundWords.push_back(word.toStdString());
+            start_index = end_index;
+            //            qDebug() << end_index;
+//            qDebug() << "Added string " << word;
+            continue;
+        }
+
+        stringToExamine = searchTerm.mid(end_index, 1).toLower();
+        //        qDebug() << "Examining 1 " << stringToExamine;
+        searchResult = finals.find(stringToExamine.toStdString());
+        if (searchResult != finals.end()) {
+            end_index++;
+            if (end_index < searchTerm.length()) {
+                if (searchTerm.at(end_index).isDigit()) {
+                    end_index++;
+                }
+            }
+            QString word = searchTerm.mid(start_index, end_index - start_index);
+            foundWords.push_back(word.toStdString());
+            start_index = end_index;
+            //            qDebug() << end_index;
+//            qDebug() << "Added string " << word;
+            continue;
+        }
+
+        end_index++;
+    }
+
+    QString lastWord = searchTerm.mid(start_index, end_index - start_index);
+    if (!lastWord.isEmpty()) {
+        foundWords.push_back(lastWord.toStdString());
+    }
+    qDebug() << "Found:";
+    for (std::string string : foundWords) {
+        qDebug() << string.c_str();
+    }
+//    qDebug() << processedSearchTerm;
+
     std::lock_guard<std::mutex> lock(_queryMutex);
     QSqlQuery query{_manager->getDatabase()};
     query.prepare("SELECT traditional, simplified, pinyin, jyutping, "
@@ -256,11 +366,11 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm)
                   "GROUP BY entry_id "
                   "ORDER BY frequency DESC");
     const char *matchJoinDelimiter = "*";
-    std::string matchTerm = implodePhonetic(explodePhonetic(processedSearchTerm, ' '),
+    std::string matchTerm = implodePhonetic(foundWords,
                                             matchJoinDelimiter,
                                             /*surroundWithQuotes=*/true);
     const char *likeJoinDelimiter = "_";
-    std::string likeTerm = implodePhonetic(explodePhonetic(processedSearchTerm, ' '),
+    std::string likeTerm = implodePhonetic(foundWords,
                                            likeJoinDelimiter);
     query.addBindValue("pinyin:" + QString{matchTerm.c_str()});
     query.addBindValue(QString(likeTerm.c_str()) + "%");
