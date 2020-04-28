@@ -89,5 +89,8 @@ void MainSplitter::handleDoubleClick(const QModelIndex &selection)
     DefinitionScrollArea *area = new DefinitionScrollArea{nullptr};
     area->setParent(this, Qt::Window);
     area->setEntry(entry);
+#ifndef Q_OS_MAC
+    area->setWindowTitle(" ");
+#endif
     area->show();
 }
