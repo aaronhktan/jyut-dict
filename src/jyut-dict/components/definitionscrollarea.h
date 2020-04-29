@@ -28,8 +28,6 @@ private:
 
     // Widget that contains elements to scroll
     DefinitionScrollAreaWidget *_scrollAreaWidget;
-
-    void testEntry();
 };
 
 #endif // DEFINITIONSCROLLAREA_H
