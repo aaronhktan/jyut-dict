@@ -245,7 +245,7 @@ void MainWindow::translateUI(void)
     _findAction->setText(tr("Start a New Search"));
     _findAndSelectAllAction->setText(tr("Select Contents of Search Box"));
     _setFocusToResultsAction->setText(
-        tr("Jump to first item in search results"));
+        tr("Jump to First Item in Search Results"));
     _selectSimplifiedAction->setText(tr("Search Simplified"));
     _selectTraditionalAction->setText(tr("Search Traditional"));
     _selectJyutpingAction->setText(tr("Search Jyutping"));
