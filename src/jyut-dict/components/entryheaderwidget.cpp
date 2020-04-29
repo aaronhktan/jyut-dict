@@ -20,9 +20,6 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _wordLabel->setStyleSheet("QLabel { font-size: 30px }");
     _wordLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _wordLabel->setWordWrap(true);
-#ifdef Q_OS_WIN
-    _wordLabel->setFont(QFont("Microsoft YaHei"));
-#endif
 
     _jyutpingLabel = new QLabel{this};
     _jyutpingPronunciation = new QLabel{this};
@@ -119,6 +116,12 @@ void EntryHeaderWidget::setEntry(const Entry &entry)
             ->value("phoneticOptions",
                     QVariant::fromValue(EntryPhoneticOptions::PREFER_JYUTPING))
             .value<EntryPhoneticOptions>());
+
+#ifdef Q_OS_WIN
+    QFont font = QFont{"Microsoft YaHei", 30};
+    font.setStyleHint(QFont::System, QFont::PreferAntialias);
+    _wordLabel->setFont(font);
+#endif
 }
 
 void EntryHeaderWidget::setEntry(std::string word,
@@ -130,6 +133,12 @@ void EntryHeaderWidget::setEntry(std::string word,
     _wordLabel->setText(word.c_str());
     _jyutpingPronunciation->setText(jyutping.c_str());
     _pinyinPronunciation->setText(pinyin.c_str());
+
+#ifdef Q_OS_WIN
+    QFont font = QFont{"Microsoft YaHei", 30};
+    font.setStyleHint(QFont::System, QFont::PreferAntialias);
+    _wordLabel->setFont(font);
+#endif
 }
 
 

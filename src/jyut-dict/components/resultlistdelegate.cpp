@@ -229,7 +229,11 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
     bool isEmptyEntry = entry.isEmpty();
 
     if (isEmptyEntry) {
+#ifdef Q_OS_MAC
         return QSize(100, 130);
+#else
+        return QSize(100, 135);
+#endif
     } else {
 #ifdef Q_OS_LINUX
         return QSize(100, 90);
