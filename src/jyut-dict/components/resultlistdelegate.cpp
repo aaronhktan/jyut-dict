@@ -108,7 +108,7 @@ void ResultListDelegate::paint(QPainter *painter,
     QFont oldFont = font;
     font = QFont("Microsoft Yahei");
 #endif
-    font.setPixelSize(16);
+    font.setPixelSize(20);
     painter->setFont(font);
     r = option.rect.adjusted(11, 11, -11, 0);
     QFontMetrics metrics(font);
@@ -139,28 +139,32 @@ void ResultListDelegate::paint(QPainter *painter,
 #ifdef Q_OS_WIN
     font = oldFont;
 #endif
-    font.setPixelSize(12);
-    painter->setFont(font);
-
-    r = r.adjusted(0, 24, 0, 0);
-    metrics = QFontMetrics(font);
-    QString phonetic = metrics.elidedText(
-                entry.getPhonetic(phoneticOptions,mandarinOptions).c_str(),
-                Qt::ElideRight, r.width());
-    painter->drawText(r, 0, phonetic, &boundingRect);
-
-    r = r.adjusted(0, boundingRect.height(), 0, 0);
     QString snippet;
     if (isEmptyEntry) {
+        font.setPixelSize(14);
+        painter->setFont(font);
+        r = r.adjusted(0, 28, 0, 0);
+        metrics = QFontMetrics(font);
+        QString phonetic = metrics.elidedText(entry.getJyutping().c_str(),
+                                              Qt::ElideRight,
+                                              r.width());
+        painter->drawText(r, 0, phonetic, &boundingRect);
+        r = r.adjusted(0, boundingRect.height() + 10, 0, 0);
+
+        font.setPixelSize(11);
+        painter->setFont(font);
+        painter->save();
+        painter->setPen(Qt::lightGray);
+
         // Do custom text layout to get eliding double-line label
         snippet = entry.getDefinitionSnippet().c_str();
         QTextLayout *textLayout = new QTextLayout{snippet, painter->font()};
         textLayout->beginLayout();
 
         // Define start and end y coordinates
-        // max height of label is two lines, so height * 2
+        // max height of label is three lines, so height * 3
         int y = r.y();
-        int height = y + metrics.height() * 2;
+        int height = y + metrics.height() * 3;
 
         for (;;) {
             QTextLine line = textLayout->createLine();
@@ -177,15 +181,33 @@ void ResultListDelegate::paint(QPainter *painter,
                 y = nextLineY;
             } else {
                 QString lastLine = snippet.mid(line.textStart());
-                QString elidedLastLine = metrics.elidedText(lastLine, Qt::ElideRight, r.width());
-                painter->drawText(QPoint(r.x(), y + metrics.ascent()), elidedLastLine);
+                QString elidedLastLine = metrics.elidedText(lastLine,
+                                                            Qt::ElideRight,
+                                                            r.width());
+                // For some reason at small font sizes, -4 is necessary to make
+                // it look right. *shrug*
+                painter->drawText(QPoint(r.x(), y + metrics.ascent() - 4),
+                                  elidedLastLine);
                 line = textLayout->createLine();
                 break;
             }
         }
 
+        textLayout->endLayout();
         delete textLayout;
+        painter->restore();
     } else {
+        font.setPixelSize(12);
+        painter->setFont(font);
+        r = r.adjusted(0, 30, 0, 0);
+        metrics = QFontMetrics(font);
+        QString phonetic = metrics.elidedText(
+            entry.getPhonetic(phoneticOptions, mandarinOptions).c_str(),
+            Qt::ElideRight,
+            r.width());
+        painter->drawText(r, 0, phonetic, &boundingRect);
+        r = r.adjusted(0, boundingRect.height(), 0, 0);
+
         snippet = metrics.elidedText(
             entry.getDefinitionSnippet().c_str(),
             Qt::ElideRight, r.width());
@@ -200,8 +222,15 @@ void ResultListDelegate::paint(QPainter *painter,
     painter->restore();
 }
 
-QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
+QSize ResultListDelegate::sizeHint(__unused const QStyleOptionViewItem &option,
                                    const QModelIndex &index) const
 {
-    return QSize(100, 80);
+    Entry entry = qvariant_cast<Entry>(index.data());
+    bool isEmptyEntry = entry.isEmpty();
+
+    if (isEmptyEntry) {
+        return QSize(100, 130);
+    } else {
+        return QSize(100, 85);
+    }
 }
