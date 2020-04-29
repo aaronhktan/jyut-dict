@@ -149,9 +149,14 @@ void ResultListDelegate::paint(QPainter *painter,
                                               Qt::ElideRight,
                                               r.width());
         painter->drawText(r, 0, phonetic, &boundingRect);
-        r = r.adjusted(0, boundingRect.height() + 10, 0, 0);
 
-        font.setPixelSize(11);
+        if (Settings::isCurrentLocaleHan()) {
+            r = r.adjusted(0, boundingRect.height() + 5, 0, 0);
+            font.setPixelSize(13);
+        } else {
+            r = r.adjusted(0, boundingRect.height() + 10, 0, 0);
+            font.setPixelSize(11);
+        }
         painter->setFont(font);
         painter->save();
         painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
@@ -185,9 +190,14 @@ void ResultListDelegate::paint(QPainter *painter,
                                                             Qt::ElideRight,
                                                             r.width());
                 // For some reason at small font sizes, -4 is necessary to make
-                // it look right. *shrug*
-                painter->drawText(QPoint(r.x(), y + metrics.ascent() - 4),
-                                  elidedLastLine);
+                // it look right (except in Chinese fonts). *shrug*
+                if (Settings::isCurrentLocaleHan()) {
+                    painter->drawText(QPoint(r.x(), y + metrics.ascent()),
+                                      elidedLastLine);
+                } else {
+                    painter->drawText(QPoint(r.x(), y + metrics.ascent() - 4),
+                                      elidedLastLine);
+                }
                 line = textLayout->createLine();
                 break;
             }

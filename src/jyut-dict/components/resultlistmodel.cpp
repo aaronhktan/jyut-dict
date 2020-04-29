@@ -58,7 +58,7 @@ void ResultListModel::setEmpty()
                              "Jyutping (JP), Pinyin (PY), and English (EN) "
                              "are options to the right of the search bar.")
                               .toStdString()});
-    entry.setJyutping("Try switching between languages!");
+    entry.setJyutping(tr("Try switching between languages!").toStdString());
     entry.setIsEmpty(true);
 
     setEntries(std::vector<Entry>{entry});
