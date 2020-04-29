@@ -108,7 +108,7 @@ int EntrySpeaker::speakCantonese(const QString &string)
 #ifdef Q_OS_LINUX
     return speak(QLocale::Cantonese, QLocale::HongKong, string);
 #elif defined(Q_OS_MAC)
-    return speak(QLocale::Polish, QLocale::HongKong, string);
+    return speak(QLocale::Chinese, QLocale::HongKong, string);
 #else
     // On Windows, attempt to speak in zh-HK first, but if that
     // fails, get the list of zh_CN voices and see if any are Cantonese.
