@@ -56,6 +56,7 @@ private:
     QAction *_findAction;
     QAction *_findAndSelectAllAction;
     QAction *_setFocusToResultsAction;
+    QAction *_openCurrentSelectionInNewWindowAction;
     QAction *_selectSimplifiedAction;
     QAction *_selectTraditionalAction;
     QAction *_selectJyutpingAction;
@@ -94,6 +95,7 @@ private:
     void find(void);
     void findAndSelectAll(void);
     void setFocusToResults(void);
+    void openCurrentSelectionInNewWindow(void);
     void selectSimplified(void);
     void selectTraditional(void);
     void selectJyutping(void);

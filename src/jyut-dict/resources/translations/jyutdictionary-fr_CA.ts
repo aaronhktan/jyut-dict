@@ -240,7 +240,8 @@
 <context>
     <name>MainSplitter</name>
     <message>
-        <location filename="../../components/mainsplitter.cpp" line="54"/>
+        <location filename="../../components/mainsplitter.cpp" line="86"/>
+        <location filename="../../components/mainsplitter.cpp" line="97"/>
         <source>Welcome!</source>
         <translation>Bienvenue!</translation>
     </message>
@@ -248,168 +249,173 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="305"/>
+        <location filename="../../windows/mainwindow.cpp" line="310"/>
         <source>No update found!</source>
         <translation>Aucune mise à jour trouvée!</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="306"/>
+        <location filename="../../windows/mainwindow.cpp" line="311"/>
         <source>You are on the newest version, %1.</source>
         <translation>Vous avez déjà la version actuelle, %1.</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="313"/>
+        <location filename="../../windows/mainwindow.cpp" line="318"/>
         <source>No update available!</source>
         <translation>Aucune mise à jour disponible!</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="219"/>
-        <location filename="../../windows/mainwindow.cpp" line="334"/>
+        <location filename="../../windows/mainwindow.cpp" line="222"/>
+        <location filename="../../windows/mainwindow.cpp" line="339"/>
         <source>&amp;File</source>
         <translation>&amp;Fichier</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="220"/>
-        <location filename="../../windows/mainwindow.cpp" line="335"/>
+        <location filename="../../windows/mainwindow.cpp" line="223"/>
+        <location filename="../../windows/mainwindow.cpp" line="340"/>
         <source>&amp;Edit</source>
         <translation>&amp;Édition</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="221"/>
-        <location filename="../../windows/mainwindow.cpp" line="337"/>
+        <location filename="../../windows/mainwindow.cpp" line="224"/>
+        <location filename="../../windows/mainwindow.cpp" line="342"/>
         <source>&amp;Window</source>
         <translation>&amp;Fenêtre</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="223"/>
-        <location filename="../../windows/mainwindow.cpp" line="338"/>
+        <location filename="../../windows/mainwindow.cpp" line="226"/>
+        <location filename="../../windows/mainwindow.cpp" line="343"/>
         <source>&amp;Help</source>
         <translation>&amp;Aide</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="225"/>
+        <location filename="../../windows/mainwindow.cpp" line="228"/>
         <source>&amp;About</source>
         <translation>&amp;À propos</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="226"/>
+        <location filename="../../windows/mainwindow.cpp" line="229"/>
         <source>Show the application&apos;s About box</source>
         <translation>Afficher la fenêtre «&#xa0;À propos&#xa0;»</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="229"/>
+        <location filename="../../windows/mainwindow.cpp" line="232"/>
         <source>Preferences</source>
         <translation>Préférences</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="231"/>
+        <location filename="../../windows/mainwindow.cpp" line="234"/>
         <source>Settings</source>
         <translation>Réglages</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="233"/>
-        <location filename="../../windows/mainwindow.cpp" line="358"/>
+        <location filename="../../windows/mainwindow.cpp" line="236"/>
+        <location filename="../../windows/mainwindow.cpp" line="363"/>
         <source>Change settings</source>
         <translation>Changer ses préférences</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="235"/>
+        <location filename="../../windows/mainwindow.cpp" line="238"/>
         <source>Close Window</source>
         <translation>Fermer</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="237"/>
+        <location filename="../../windows/mainwindow.cpp" line="240"/>
         <source>Undo</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="238"/>
+        <location filename="../../windows/mainwindow.cpp" line="241"/>
         <source>Redo</source>
         <translation>Rétablir</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="239"/>
+        <location filename="../../windows/mainwindow.cpp" line="242"/>
         <source>Cut</source>
         <translation>Couper</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="240"/>
+        <location filename="../../windows/mainwindow.cpp" line="243"/>
         <source>Copy</source>
         <translation>Copier</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="241"/>
+        <location filename="../../windows/mainwindow.cpp" line="244"/>
         <source>Paste</source>
         <translation>Coller</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="243"/>
+        <location filename="../../windows/mainwindow.cpp" line="246"/>
         <source>Start a New Search</source>
         <translation>Rechercher...</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="244"/>
+        <location filename="../../windows/mainwindow.cpp" line="247"/>
         <source>Select Contents of Search Box</source>
         <translation>Tout sélectionner dans la barre de recherche</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="246"/>
+        <location filename="../../windows/mainwindow.cpp" line="249"/>
         <source>Jump to First Item in Search Results</source>
         <translation>Aller au premier résultat de la recherche</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="247"/>
+        <location filename="../../windows/mainwindow.cpp" line="251"/>
+        <source>Open Selected Entry In New Window</source>
+        <translation>Ouvrir la sélection actuelle dans une nouvelle fenêtre</translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="252"/>
         <source>Search Simplified</source>
         <translation>Rechercher avec le chinois simplifié</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="248"/>
+        <location filename="../../windows/mainwindow.cpp" line="253"/>
         <source>Search Traditional</source>
         <translation>Rechercher avec le chinois traditionnel</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="249"/>
+        <location filename="../../windows/mainwindow.cpp" line="254"/>
         <source>Search Jyutping</source>
         <translation>Rechercher avec jyutping</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="250"/>
+        <location filename="../../windows/mainwindow.cpp" line="255"/>
         <source>Search Pinyin</source>
         <translation>Rechercher avec pinyin</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="251"/>
+        <location filename="../../windows/mainwindow.cpp" line="256"/>
         <source>Search English</source>
         <translation>Rechercher en français</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="253"/>
+        <location filename="../../windows/mainwindow.cpp" line="258"/>
         <source>Minimize</source>
         <translation>Réduire</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="254"/>
+        <location filename="../../windows/mainwindow.cpp" line="259"/>
         <source>Zoom</source>
         <translation>Agrandir</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="255"/>
+        <location filename="../../windows/mainwindow.cpp" line="260"/>
         <source>Bring All to Front</source>
         <translation>Tout ramener au premier plan</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="257"/>
+        <location filename="../../windows/mainwindow.cpp" line="262"/>
         <source>%1 Help</source>
         <translation>Aide %1</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="259"/>
+        <location filename="../../windows/mainwindow.cpp" line="264"/>
         <source>Check for Updates...</source>
         <translation>Rechercher des mises à jour</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="222"/>
-        <location filename="../../windows/mainwindow.cpp" line="336"/>
+        <location filename="../../windows/mainwindow.cpp" line="225"/>
+        <location filename="../../windows/mainwindow.cpp" line="341"/>
         <source>&amp;Search</source>
         <translation>Recherche</translation>
     </message>
@@ -418,7 +424,7 @@
         <translation>Rechercher des mises à jour</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="715"/>
+        <location filename="../../windows/mainwindow.cpp" line="734"/>
         <source>Checking for update...</source>
         <translation>Recherche de mises à jour...</translation>
     </message>

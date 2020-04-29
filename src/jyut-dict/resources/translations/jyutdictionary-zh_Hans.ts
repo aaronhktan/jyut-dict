@@ -240,7 +240,8 @@
 <context>
     <name>MainSplitter</name>
     <message>
-        <location filename="../../components/mainsplitter.cpp" line="+54"/>
+        <location filename="../../components/mainsplitter.cpp" line="+86"/>
+        <location line="+11"/>
         <source>Welcome!</source>
         <translation>欢迎使用粤语字典！</translation>
     </message>
@@ -248,7 +249,7 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="+305"/>
+        <location filename="../../windows/mainwindow.cpp" line="+310"/>
         <source>No update found!</source>
         <translation>没有找到可用的更新!</translation>
     </message>
@@ -263,31 +264,31 @@
         <translation>没有可用的更新!</translation>
     </message>
     <message>
-        <location line="-94"/>
-        <location line="+115"/>
+        <location line="-96"/>
+        <location line="+117"/>
         <source>&amp;File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location line="-114"/>
-        <location line="+115"/>
+        <location line="-116"/>
+        <location line="+117"/>
         <source>&amp;Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location line="-114"/>
-        <location line="+116"/>
+        <location line="-116"/>
+        <location line="+118"/>
         <source>&amp;Window</source>
         <translation>窗口</translation>
     </message>
     <message>
-        <location line="-114"/>
-        <location line="+115"/>
+        <location line="-116"/>
+        <location line="+117"/>
         <source>&amp;Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location line="-113"/>
+        <location line="-115"/>
         <source>&amp;About</source>
         <translation>关于粤语字典</translation>
     </message>
@@ -308,12 +309,12 @@
     </message>
     <message>
         <location line="+2"/>
-        <location line="+125"/>
+        <location line="+127"/>
         <source>Change settings</source>
         <translation>更改设置</translation>
     </message>
     <message>
-        <location line="-123"/>
+        <location line="-125"/>
         <source>Close Window</source>
         <translation>关闭窗口</translation>
     </message>
@@ -356,6 +357,11 @@
         <location line="+2"/>
         <source>Jump to First Item in Search Results</source>
         <translation>跳转到第一个搜索结果</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Open Selected Entry In New Window</source>
+        <translation>在新窗口中显示刚才选择的结果</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -408,8 +414,8 @@
         <translation>检查更新…</translation>
     </message>
     <message>
-        <location line="-37"/>
-        <location line="+114"/>
+        <location line="-39"/>
+        <location line="+116"/>
         <source>&amp;Search</source>
         <translation>搜索</translation>
     </message>
@@ -418,7 +424,7 @@
         <translation>检查更新…</translation>
     </message>
     <message>
-        <location line="+379"/>
+        <location line="+393"/>
         <source>Checking for update...</source>
         <translation>正在检查更新…</translation>
     </message>

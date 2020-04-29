@@ -54,6 +54,12 @@ void MainSplitter::setFocusToResults(void)
     _resultListView->scrollTo(entryIndex);
 }
 
+void MainSplitter::openCurrentSelectionInNewWindow(void)
+{
+    QModelIndex entryIndex = _resultListView->currentIndex();
+    handleDoubleClick(entryIndex);
+}
+
 void MainSplitter::prepareEntry(Entry &entry)
 {
     if (Settings::getSettings()

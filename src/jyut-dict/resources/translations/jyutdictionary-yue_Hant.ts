@@ -240,7 +240,8 @@
 <context>
     <name>MainSplitter</name>
     <message>
-        <location filename="../../components/mainsplitter.cpp" line="54"/>
+        <location filename="../../components/mainsplitter.cpp" line="86"/>
+        <location filename="../../components/mainsplitter.cpp" line="97"/>
         <source>Welcome!</source>
         <translation>歡迎使用粵語字典！</translation>
     </message>
@@ -248,168 +249,173 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="305"/>
+        <location filename="../../windows/mainwindow.cpp" line="310"/>
         <source>No update found!</source>
         <translation>冇搵到可用的更新!</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="306"/>
+        <location filename="../../windows/mainwindow.cpp" line="311"/>
         <source>You are on the newest version, %1.</source>
         <translation>你已經使用最新嘅版本，%1.</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="313"/>
+        <location filename="../../windows/mainwindow.cpp" line="318"/>
         <source>No update available!</source>
         <translation>冇可用的更新!</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="219"/>
-        <location filename="../../windows/mainwindow.cpp" line="334"/>
+        <location filename="../../windows/mainwindow.cpp" line="222"/>
+        <location filename="../../windows/mainwindow.cpp" line="339"/>
         <source>&amp;File</source>
         <translation>檔案</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="220"/>
-        <location filename="../../windows/mainwindow.cpp" line="335"/>
+        <location filename="../../windows/mainwindow.cpp" line="223"/>
+        <location filename="../../windows/mainwindow.cpp" line="340"/>
         <source>&amp;Edit</source>
         <translation>編輯</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="221"/>
-        <location filename="../../windows/mainwindow.cpp" line="337"/>
+        <location filename="../../windows/mainwindow.cpp" line="224"/>
+        <location filename="../../windows/mainwindow.cpp" line="342"/>
         <source>&amp;Window</source>
         <translation>視窗</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="223"/>
-        <location filename="../../windows/mainwindow.cpp" line="338"/>
+        <location filename="../../windows/mainwindow.cpp" line="226"/>
+        <location filename="../../windows/mainwindow.cpp" line="343"/>
         <source>&amp;Help</source>
         <translation>輔助說明</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="225"/>
+        <location filename="../../windows/mainwindow.cpp" line="228"/>
         <source>&amp;About</source>
         <translation>關於粵語字典</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="226"/>
+        <location filename="../../windows/mainwindow.cpp" line="229"/>
         <source>Show the application&apos;s About box</source>
         <translation>打開“關於粵語字典”嘅視窗</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="229"/>
+        <location filename="../../windows/mainwindow.cpp" line="232"/>
         <source>Preferences</source>
         <translation>偏好設定…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="231"/>
+        <location filename="../../windows/mainwindow.cpp" line="234"/>
         <source>Settings</source>
         <translation>偏好設定…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="233"/>
-        <location filename="../../windows/mainwindow.cpp" line="358"/>
+        <location filename="../../windows/mainwindow.cpp" line="236"/>
+        <location filename="../../windows/mainwindow.cpp" line="363"/>
         <source>Change settings</source>
         <translation>更改設定</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="235"/>
+        <location filename="../../windows/mainwindow.cpp" line="238"/>
         <source>Close Window</source>
         <translation>關閉視窗</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="237"/>
+        <location filename="../../windows/mainwindow.cpp" line="240"/>
         <source>Undo</source>
         <translation>還原</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="238"/>
+        <location filename="../../windows/mainwindow.cpp" line="241"/>
         <source>Redo</source>
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="239"/>
+        <location filename="../../windows/mainwindow.cpp" line="242"/>
         <source>Cut</source>
         <translation>剪切</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="240"/>
+        <location filename="../../windows/mainwindow.cpp" line="243"/>
         <source>Copy</source>
         <translation>拷貝</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="241"/>
+        <location filename="../../windows/mainwindow.cpp" line="244"/>
         <source>Paste</source>
         <translation>貼上</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="243"/>
+        <location filename="../../windows/mainwindow.cpp" line="246"/>
         <source>Start a New Search</source>
         <translation>重新搜索</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="244"/>
+        <location filename="../../windows/mainwindow.cpp" line="247"/>
         <source>Select Contents of Search Box</source>
         <translation>全選搜索欄文字</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="246"/>
+        <location filename="../../windows/mainwindow.cpp" line="249"/>
         <source>Jump to First Item in Search Results</source>
         <translation>跳到第一個搜索結果</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="247"/>
+        <location filename="../../windows/mainwindow.cpp" line="251"/>
+        <source>Open Selected Entry In New Window</source>
+        <translation>喺新窗口顯示啱啱選擇嘅結果</translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="252"/>
         <source>Search Simplified</source>
         <translation>用簡體中文搵</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="248"/>
+        <location filename="../../windows/mainwindow.cpp" line="253"/>
         <source>Search Traditional</source>
         <translation>用正體中文搵</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="249"/>
+        <location filename="../../windows/mainwindow.cpp" line="254"/>
         <source>Search Jyutping</source>
         <translation>用粵語拼音搵</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="250"/>
+        <location filename="../../windows/mainwindow.cpp" line="255"/>
         <source>Search Pinyin</source>
         <translation>用漢語拼音搵</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="251"/>
+        <location filename="../../windows/mainwindow.cpp" line="256"/>
         <source>Search English</source>
         <translation>用英文搵</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="253"/>
+        <location filename="../../windows/mainwindow.cpp" line="258"/>
         <source>Minimize</source>
         <translation>縮到最小</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="254"/>
+        <location filename="../../windows/mainwindow.cpp" line="259"/>
         <source>Zoom</source>
         <translation>縮放</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="255"/>
+        <location filename="../../windows/mainwindow.cpp" line="260"/>
         <source>Bring All to Front</source>
         <translation>將此程式所有視窗移至最前</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="257"/>
+        <location filename="../../windows/mainwindow.cpp" line="262"/>
         <source>%1 Help</source>
         <translation>%1輔助說明</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="259"/>
+        <location filename="../../windows/mainwindow.cpp" line="264"/>
         <source>Check for Updates...</source>
         <translation>檢查更新…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="222"/>
-        <location filename="../../windows/mainwindow.cpp" line="336"/>
+        <location filename="../../windows/mainwindow.cpp" line="225"/>
+        <location filename="../../windows/mainwindow.cpp" line="341"/>
         <source>&amp;Search</source>
         <translation>搜索</translation>
     </message>
@@ -418,7 +424,7 @@
         <translation>檢查更新…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="715"/>
+        <location filename="../../windows/mainwindow.cpp" line="734"/>
         <source>Checking for update...</source>
         <translation>檢查緊更新…</translation>
     </message>
