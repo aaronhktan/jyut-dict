@@ -411,7 +411,7 @@
         <location filename="../../windows/mainwindow.cpp" line="222"/>
         <location filename="../../windows/mainwindow.cpp" line="336"/>
         <source>&amp;Search</source>
-        <translation>搜索</translation>
+        <translation>搜尋</translation>
     </message>
     <message>
         <source>Check for updates...</source>
