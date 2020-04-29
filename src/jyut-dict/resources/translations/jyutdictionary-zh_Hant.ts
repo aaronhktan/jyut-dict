@@ -365,12 +365,12 @@
     <message>
         <location filename="../../windows/mainwindow.cpp" line="247"/>
         <source>Search Simplified</source>
-        <translation>搜索簡體中文</translation>
+        <translation>搜尋簡體中文</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="248"/>
         <source>Search Traditional</source>
-        <translation>搜索正體中文</translation>
+        <translation>搜尋正體中文</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="249"/>
