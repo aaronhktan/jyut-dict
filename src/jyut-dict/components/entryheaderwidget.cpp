@@ -17,7 +17,7 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _entryHeaderLayout->setContentsMargins(0, 0, 0, 0);
 
     _wordLabel = new QLabel{this};
-    _wordLabel->setStyleSheet("QLabel { font-size: 24px }");
+    _wordLabel->setStyleSheet("QLabel { font-size: 30px }");
     _wordLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _wordLabel->setWordWrap(true);
 #ifdef Q_OS_WIN
