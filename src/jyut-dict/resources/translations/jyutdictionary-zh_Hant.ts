@@ -366,7 +366,7 @@
     <message>
         <location filename="../../windows/mainwindow.cpp" line="251"/>
         <source>Open Selected Entry In New Window</source>
-        <translation>用新視窗剛才選擇的結果</translation>
+        <translation>用新視窗顯示剛才選擇的結果</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="252"/>
