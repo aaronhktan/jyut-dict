@@ -35,6 +35,16 @@ namespace Utils {
     constexpr auto PORTABILITY = "install";
 #endif
 
+    // Index of buttons for Searching
+    enum ButtonOptionIndex {
+        SIMPLIFIED_BUTTON_INDEX,
+        TRADITIONAL_BUTTON_INDEX,
+        JYUTPING_BUTTON_INDEX,
+        PINYIN_BUTTON_INDEX,
+        ENGLISH_BUTTON_INDEX,
+        MAXIMUM_BUTTON_INDEX
+    };
+
     // Strings that are not language dependent should go here.
     // If they need to be translated, put them in strings.h
     constexpr auto CURRENT_VERSION = "0.19.0828";

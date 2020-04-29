@@ -40,6 +40,7 @@ private:
 
     QMenu *_fileMenu;
     QMenu *_editMenu;
+    QMenu *_searchMenu;
     QMenu *_windowMenu;
     QMenu *_helpMenu;
 
@@ -52,6 +53,15 @@ private:
     QAction *_cutAction;
     QAction *_copyAction;
     QAction *_pasteAction;
+    QAction *_findAction;
+    QAction *_findAndSelectAllAction;
+    QAction *_setFocusToResultsAction;
+    QAction *_openCurrentSelectionInNewWindowAction;
+    QAction *_selectSimplifiedAction;
+    QAction *_selectTraditionalAction;
+    QAction *_selectJyutpingAction;
+    QAction *_selectPinyinAction;
+    QAction *_selectEnglishAction;
 
     QAction *_minimizeAction;
     QAction *_maximizeAction;
@@ -69,25 +79,34 @@ private:
 
     bool _recentlyCheckedForUpdates = false;
 
-    void installTranslator();
-    void translateUI();
+    void installTranslator(void);
+    void translateUI(void);
 
     void setStyle(bool use_dark);
 
-    void createMenus();
-    void createActions();
+    void createMenus(void);
+    void createActions(void);
 
-    void undo();
-    void redo();
-    void cut();
-    void copy();
-    void paste();
+    void undo(void);
+    void redo(void);
+    void cut(void);
+    void copy(void);
+    void paste(void);
+    void find(void);
+    void findAndSelectAll(void);
+    void setFocusToResults(void);
+    void openCurrentSelectionInNewWindow(void);
+    void selectSimplified(void);
+    void selectTraditional(void);
+    void selectJyutping(void);
+    void selectPinyin(void);
+    void selectEnglish(void);
 
-    void toggleMinimized();
-    void toggleMaximized();
+    void toggleMinimized(void);
+    void toggleMaximized(void);
 
-    void openAboutWindow();
-    void openSettingsWindow();
+    void openAboutWindow(void);
+    void openSettingsWindow(void);
 
     void checkForUpdate(bool showProgress);
 

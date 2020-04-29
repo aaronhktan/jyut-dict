@@ -155,7 +155,7 @@ void MainWindow::changeEvent(QEvent *event)
     QMainWindow::changeEvent(event);
 }
 
-void MainWindow::installTranslator()
+void MainWindow::installTranslator(void)
 {
     if (!Settings::getSettings()->contains("Advanced/locale")) {
         Settings::systemTranslator.load("qt_" + QLocale::system().name(),
@@ -204,7 +204,7 @@ void MainWindow::installTranslator()
     }
 }
 
-void MainWindow::translateUI()
+void MainWindow::translateUI(void)
 {
     // Set property so styling automatically changes
     setProperty("isHan", Settings::isCurrentLocaleHan());
@@ -222,6 +222,7 @@ void MainWindow::translateUI()
     _fileMenu->setTitle(tr("&File"));
     _editMenu->setTitle(tr("&Edit"));
     _windowMenu->setTitle(tr("&Window"));
+    _searchMenu->setTitle(tr("&Search"));
     _helpMenu->setTitle(tr("&Help"));
 
     _aboutAction->setText(tr("&About"));
@@ -242,13 +243,25 @@ void MainWindow::translateUI()
     _copyAction->setText(tr("Copy"));
     _pasteAction->setText(tr("Paste"));
 
+    _findAction->setText(tr("Start a New Search"));
+    _findAndSelectAllAction->setText(tr("Select Contents of Search Box"));
+    _setFocusToResultsAction->setText(
+        tr("Jump to First Item in Search Results"));
+    _openCurrentSelectionInNewWindowAction->setText(
+        tr("Open Selected Entry In New Window"));
+    _selectSimplifiedAction->setText(tr("Search Simplified"));
+    _selectTraditionalAction->setText(tr("Search Traditional"));
+    _selectJyutpingAction->setText(tr("Search Jyutping"));
+    _selectPinyinAction->setText(tr("Search Pinyin"));
+    _selectEnglishAction->setText(tr("Search English"));
+
     _minimizeAction->setText(tr("Minimize"));
     _maximizeAction->setText(tr("Zoom"));
     _bringAllToFrontAction->setText(tr("Bring All to Front"));
 
     _helpAction->setText(tr("%1 Help").arg(
         QCoreApplication::translate("strings", Strings::PRODUCT_NAME)));
-    _updateAction->setText(tr("Check for updates..."));
+    _updateAction->setText(tr("Check for Updates..."));
 
 #ifdef Q_OS_WIN
     QFont font;
@@ -321,10 +334,11 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
     }
 }
 
-void MainWindow::createMenus()
+void MainWindow::createMenus(void)
 {
     _fileMenu = menuBar()->addMenu(tr("&File"));
     _editMenu = menuBar()->addMenu(tr("&Edit"));
+    _searchMenu = menuBar()->addMenu(tr("&Search"));
     _windowMenu = menuBar()->addMenu(tr("&Window"));
     _helpMenu = menuBar()->addMenu(tr("&Help"));
 
@@ -335,7 +349,7 @@ void MainWindow::createMenus()
 #endif
 }
 
-void MainWindow::createActions()
+void MainWindow::createActions(void)
 {
     _aboutAction = new QAction{this};
     _aboutAction->setMenuRole(QAction::AboutRole);
@@ -387,6 +401,82 @@ void MainWindow::createActions()
     connect(_pasteAction, &QAction::triggered, this, &MainWindow::paste);
     _editMenu->addAction(_pasteAction);
 
+    _editMenu->addSeparator();
+
+    _findAction = new QAction{this};
+    _findAction->setShortcut(QKeySequence{"Ctrl+F"});
+    connect(_findAction, &QAction::triggered, this, &MainWindow::find);
+    _searchMenu->addAction(_findAction);
+
+    _findAndSelectAllAction = new QAction{this};
+    _findAndSelectAllAction->setShortcut(QKeySequence{"Ctrl+Shift+F"});
+    connect(_findAndSelectAllAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::findAndSelectAll);
+    _searchMenu->addAction(_findAndSelectAllAction);
+
+    _searchMenu->addSeparator();
+
+    _setFocusToResultsAction = new QAction{this};
+    _setFocusToResultsAction->setShortcut(QKeySequence{"Ctrl+L"});
+    connect(_setFocusToResultsAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::setFocusToResults);
+    _searchMenu->addAction(_setFocusToResultsAction);
+
+    _openCurrentSelectionInNewWindowAction = new QAction{this};
+    _openCurrentSelectionInNewWindowAction->setShortcut(
+        QKeySequence{"Ctrl+Shift+E"});
+    connect(_openCurrentSelectionInNewWindowAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::openCurrentSelectionInNewWindow);
+    _searchMenu->addAction(_openCurrentSelectionInNewWindowAction);
+
+    _searchMenu->addSeparator();
+
+    _selectSimplifiedAction = new QAction{this};
+    _selectSimplifiedAction->setShortcut(QKeySequence{"Ctrl+1"});
+    connect(_selectSimplifiedAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::selectSimplified);
+    _searchMenu->addAction(_selectSimplifiedAction);
+
+    _selectTraditionalAction = new QAction{this};
+    _selectTraditionalAction->setShortcut(QKeySequence{"Ctrl+2"});
+    connect(_selectTraditionalAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::selectTraditional);
+    _searchMenu->addAction(_selectTraditionalAction);
+
+    _selectJyutpingAction = new QAction{this};
+    _selectJyutpingAction->setShortcut(QKeySequence{"Ctrl+3"});
+    connect(_selectJyutpingAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::selectJyutping);
+    _searchMenu->addAction(_selectJyutpingAction);
+
+    _selectPinyinAction = new QAction{this};
+    _selectPinyinAction->setShortcut(QKeySequence{"Ctrl+4"});
+    connect(_selectPinyinAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::selectPinyin);
+    _searchMenu->addAction(_selectPinyinAction);
+
+    _selectEnglishAction = new QAction{this};
+    _selectEnglishAction->setShortcut(QKeySequence{"Ctrl+5"});
+    connect(_selectEnglishAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::selectEnglish);
+    _searchMenu->addAction(_selectEnglishAction);
+
     _minimizeAction = new QAction{this};
     _minimizeAction->setShortcut(QKeySequence{"Ctrl+M"});
     connect(_minimizeAction,
@@ -424,7 +514,7 @@ void MainWindow::createActions()
     _helpMenu->addAction(_updateAction);
 }
 
-void MainWindow::undo()
+void MainWindow::undo(void)
 {
     QWidget *focused = QApplication::focusWidget();
     if (focused) {
@@ -439,7 +529,7 @@ void MainWindow::undo()
     }
 }
 
-void MainWindow::redo()
+void MainWindow::redo(void)
 {
     QWidget *focused = QApplication::focusWidget();
     if (focused) {
@@ -456,7 +546,7 @@ void MainWindow::redo()
     }
 }
 
-void MainWindow::cut()
+void MainWindow::cut(void)
 {
     QWidget *focused = QApplication::focusWidget();
     if (focused) {
@@ -471,7 +561,7 @@ void MainWindow::cut()
     }
 }
 
-void MainWindow::copy()
+void MainWindow::copy(void)
 {
     QWidget *focused = QApplication::focusWidget();
     if (!focused) {
@@ -494,7 +584,7 @@ void MainWindow::copy()
                                           Qt::ControlModifier});
 }
 
-void MainWindow::paste()
+void MainWindow::paste(void)
 {
     QWidget *focused = QApplication::focusWidget();
     if (focused) {
@@ -509,7 +599,57 @@ void MainWindow::paste()
     }
 }
 
-void MainWindow::toggleMinimized()
+void MainWindow::find(void)
+{
+    _mainToolBar->setFocus();
+}
+
+void MainWindow::findAndSelectAll(void)
+{
+    _mainToolBar->selectAllEvent();
+}
+
+void MainWindow::setFocusToResults(void)
+{
+    _mainSplitter->setFocusToResults();
+}
+
+void MainWindow::openCurrentSelectionInNewWindow(void)
+{
+    _mainSplitter->openCurrentSelectionInNewWindow();
+}
+
+void MainWindow::selectSimplified(void)
+{
+    _mainToolBar->changeOptionEvent(Utils::SIMPLIFIED_BUTTON_INDEX);
+    _mainToolBar->setFocus();
+}
+
+void MainWindow::selectTraditional(void)
+{
+    _mainToolBar->changeOptionEvent(Utils::TRADITIONAL_BUTTON_INDEX);
+    _mainToolBar->setFocus();
+}
+
+void MainWindow::selectJyutping(void)
+{
+    _mainToolBar->changeOptionEvent(Utils::JYUTPING_BUTTON_INDEX);
+    _mainToolBar->setFocus();
+}
+
+void MainWindow::selectPinyin(void)
+{
+    _mainToolBar->changeOptionEvent(Utils::PINYIN_BUTTON_INDEX);
+    _mainToolBar->setFocus();
+}
+
+void MainWindow::selectEnglish(void)
+{
+    _mainToolBar->changeOptionEvent(Utils::ENGLISH_BUTTON_INDEX);
+    _mainToolBar->setFocus();
+}
+
+void MainWindow::toggleMinimized(void)
 {
     if (!isMinimized()) {
         showMinimized();
@@ -518,7 +658,7 @@ void MainWindow::toggleMinimized()
     }
 }
 
-void MainWindow::toggleMaximized()
+void MainWindow::toggleMaximized(void)
 {
     if (!isMaximized()) {
         showMaximized();
@@ -527,7 +667,7 @@ void MainWindow::toggleMaximized()
     }
 }
 
-void MainWindow::openAboutWindow()
+void MainWindow::openAboutWindow(void)
 {
     if (_aboutWindow) {
         _aboutWindow->activateWindow();
@@ -539,7 +679,7 @@ void MainWindow::openAboutWindow()
     _aboutWindow->show();
 }
 
-void MainWindow::openSettingsWindow()
+void MainWindow::openSettingsWindow(void)
 {
     if (_settingsWindow) {
         _settingsWindow->activateWindow();

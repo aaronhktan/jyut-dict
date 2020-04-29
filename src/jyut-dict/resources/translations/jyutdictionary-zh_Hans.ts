@@ -240,7 +240,8 @@
 <context>
     <name>MainSplitter</name>
     <message>
-        <location filename="../../components/mainsplitter.cpp" line="+46"/>
+        <location filename="../../components/mainsplitter.cpp" line="+86"/>
+        <location line="+11"/>
         <source>Welcome!</source>
         <translation>欢迎使用粤语字典！</translation>
     </message>
@@ -248,7 +249,7 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="+294"/>
+        <location filename="../../windows/mainwindow.cpp" line="+310"/>
         <source>No update found!</source>
         <translation>没有找到可用的更新!</translation>
     </message>
@@ -263,31 +264,31 @@
         <translation>没有可用的更新!</translation>
     </message>
     <message>
-        <location line="-83"/>
-        <location line="+104"/>
+        <location line="-96"/>
+        <location line="+117"/>
         <source>&amp;File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location line="-103"/>
-        <location line="+104"/>
+        <location line="-116"/>
+        <location line="+117"/>
         <source>&amp;Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location line="-103"/>
-        <location line="+104"/>
+        <location line="-116"/>
+        <location line="+118"/>
         <source>&amp;Window</source>
         <translation>窗口</translation>
     </message>
     <message>
-        <location line="-103"/>
-        <location line="+104"/>
+        <location line="-116"/>
+        <location line="+117"/>
         <source>&amp;Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location line="-102"/>
+        <location line="-115"/>
         <source>&amp;About</source>
         <translation>关于粤语字典</translation>
     </message>
@@ -308,12 +309,12 @@
     </message>
     <message>
         <location line="+2"/>
-        <location line="+114"/>
+        <location line="+127"/>
         <source>Change settings</source>
         <translation>更改设置</translation>
     </message>
     <message>
-        <location line="-112"/>
+        <location line="-125"/>
         <source>Close Window</source>
         <translation>关闭窗口</translation>
     </message>
@@ -344,6 +345,51 @@
     </message>
     <message>
         <location line="+2"/>
+        <source>Start a New Search</source>
+        <translation>重新搜索</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Select Contents of Search Box</source>
+        <translation>全选搜索栏内文字</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Jump to First Item in Search Results</source>
+        <translation>跳转到第一个搜索结果</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Open Selected Entry In New Window</source>
+        <translation>在新窗口中显示刚才选择的结果</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Search Simplified</source>
+        <translation>搜索简体中文</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Search Traditional</source>
+        <translation>搜索繁体中文</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Search Jyutping</source>
+        <translation>搜索粤语拼音</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Search Pinyin</source>
+        <translation>搜索汉语拼音</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Search English</source>
+        <translation>搜索英文</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
@@ -364,11 +410,21 @@
     </message>
     <message>
         <location line="+2"/>
+        <source>Check for Updates...</source>
+        <translation>检查更新…</translation>
+    </message>
+    <message>
+        <location line="-39"/>
+        <location line="+116"/>
+        <source>&amp;Search</source>
+        <translation>搜索</translation>
+    </message>
+    <message>
         <source>Check for updates...</source>
         <translation>检查更新…</translation>
     </message>
     <message>
-        <location line="+343"/>
+        <location line="+393"/>
         <source>Checking for update...</source>
         <translation>正在检查更新…</translation>
     </message>
@@ -465,7 +521,7 @@
 <context>
     <name>SearchOptionsRadioGroupBox</name>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="+110"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="+120"/>
         <source>SC</source>
         <translation>简体中文</translation>
     </message>

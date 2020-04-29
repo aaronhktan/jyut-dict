@@ -41,6 +41,16 @@ void SearchOptionsRadioGroupBox::changeEvent(QEvent *event)
     QGroupBox::changeEvent(event);
 }
 
+void SearchOptionsRadioGroupBox::setOption(const Utils::ButtonOptionIndex index)
+{
+    if (index >= Utils::MAXIMUM_BUTTON_INDEX) {
+        return;
+    }
+
+    QList<QRadioButton *> buttons = this->findChildren<QRadioButton *>();
+    buttons.at(index)->click();
+}
+
 void SearchOptionsRadioGroupBox::setupUI()
 {
 

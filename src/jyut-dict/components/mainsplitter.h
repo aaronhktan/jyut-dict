@@ -26,6 +26,9 @@ public:
     explicit MainSplitter(QWidget *parent = nullptr);
     ~MainSplitter() override;
 
+    void setFocusToResults(void);
+    void openCurrentSelectionInNewWindow(void);
+
 private:
     Analytics *_analytics;
 

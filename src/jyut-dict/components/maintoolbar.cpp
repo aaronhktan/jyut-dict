@@ -26,6 +26,7 @@ MainToolBar::MainToolBar(std::shared_ptr<SQLDatabaseManager> manager,
     addWidget(_toolBarWidget);
     setMovable(false);
     setFloatable(false);
+    setFocusPolicy(Qt::ClickFocus);
 
 #ifdef Q_OS_WIN
     setStyleSheet("QToolBar { background-color: white; }");
@@ -37,4 +38,21 @@ MainToolBar::MainToolBar(std::shared_ptr<SQLDatabaseManager> manager,
 MainToolBar::~MainToolBar()
 {
     delete _searchOptions;
+}
+
+void MainToolBar::focusInEvent(QFocusEvent *event)
+{
+    QToolBar::focusInEvent(event);
+    _searchBar->setFocus();
+}
+
+void MainToolBar::selectAllEvent(void)
+{
+    _searchBar->setFocus();
+    _searchBar->selectAll();
+}
+
+void MainToolBar::changeOptionEvent(const Utils::ButtonOptionIndex index)
+{
+    _optionsBox->setOption(index);
 }

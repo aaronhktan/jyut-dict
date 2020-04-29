@@ -46,6 +46,20 @@ MainSplitter::~MainSplitter()
 
 }
 
+void MainSplitter::setFocusToResults(void)
+{
+    _resultListView->setFocus();
+    QModelIndex entryIndex = _resultListView->model()->index(0, 0);
+    _resultListView->setCurrentIndex(entryIndex);
+    _resultListView->scrollTo(entryIndex);
+}
+
+void MainSplitter::openCurrentSelectionInNewWindow(void)
+{
+    QModelIndex entryIndex = _resultListView->currentIndex();
+    handleDoubleClick(entryIndex);
+}
+
 void MainSplitter::prepareEntry(Entry &entry)
 {
     if (Settings::getSettings()
