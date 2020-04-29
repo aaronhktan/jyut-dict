@@ -7,6 +7,12 @@ DictionaryTabFailureDialog::DictionaryTabFailureDialog(const QString &reason,
                                              QWidget *parent)
     : DefaultDialog(reason, description, parent)
 {
+    setupUI();
+    translateUI();
+}
+
+void DictionaryTabFailureDialog::setupUI(void)
+{
     setText(tr("Failed to add source!"));
     addButton(tr("OK"), QMessageBox::AcceptRole);
     setWidth(400);

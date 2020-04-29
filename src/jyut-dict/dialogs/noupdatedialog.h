@@ -10,6 +10,9 @@ class NoUpdateDialog : public DefaultDialog
     Q_OBJECT
 public:
     explicit NoUpdateDialog(QString &version, QWidget *parent = nullptr);
+
+private:
+    void setupUI(QString &version);
 };
 
 #endif // NOUPDATEDIALOG_H

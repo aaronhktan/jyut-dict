@@ -233,9 +233,11 @@ void EntryHeaderWidget::translateUI()
         if (!_speaker->speakCantonese(_chinese)) {
             return;
         }
-        showError(Strings::YUE_ERROR_STRING,
-                  QString{Strings::YUE_DESCRIPTION_STRING}.arg(
-                      Settings::getCurrentLocale().bcp47Name()));
+        showError(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                              Strings::YUE_ERROR_STRING),
+                  QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                              Strings::YUE_DESCRIPTION_STRING)
+                      .arg(Settings::getCurrentLocale().bcp47Name()));
     });
 
     disconnect(_pinyinTTS, nullptr, nullptr, nullptr);
@@ -249,9 +251,11 @@ void EntryHeaderWidget::translateUI()
             if (!_speaker->speakTaiwaneseMandarin(_chinese)) {
                 return;
             }
-            showError(Strings::ZH_TW_ERROR_STRING,
-                      QString{Strings::ZH_TW_DESCRIPTION_STRING}.arg(
-                          Settings::getCurrentLocale().bcp47Name()));
+            showError(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                  Strings::ZH_TW_ERROR_STRING),
+                      QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                  Strings::ZH_TW_DESCRIPTION_STRING)
+                          .arg(Settings::getCurrentLocale().bcp47Name()));
         });
     } else {
         connect(_pinyinTTS, &QPushButton::clicked, this, [=]() {
@@ -263,9 +267,11 @@ void EntryHeaderWidget::translateUI()
             if (!_speaker->speakMainlandMandarin(_chinese)) {
                 return;
             }
-            showError(Strings::ZH_CN_ERROR_STRING,
-                      QString{Strings::ZH_CN_DESCRIPTION_STRING}.arg(
-                          Settings::getCurrentLocale().bcp47Name()));
+            showError(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                  Strings::ZH_CN_ERROR_STRING),
+                      QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                  Strings::ZH_CN_DESCRIPTION_STRING)
+                          .arg(Settings::getCurrentLocale().bcp47Name()));
         });
     }
 #endif

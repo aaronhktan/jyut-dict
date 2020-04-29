@@ -12,6 +12,12 @@ EntrySpeakErrorDialog::EntrySpeakErrorDialog(const QString &reason,
                                              QWidget *parent)
     : DefaultDialog(reason, description, parent)
 {
+    setupUI();
+    translateUI();
+}
+
+void EntrySpeakErrorDialog::setupUI()
+{
     setText(tr("Unable to speak entry!"));
 
     addButton(tr("OK"), QMessageBox::AcceptRole);
@@ -30,4 +36,5 @@ EntrySpeakErrorDialog::EntrySpeakErrorDialog(const QString &reason,
     });
 
     setWidth(400);
+    deselectButtons();
 }

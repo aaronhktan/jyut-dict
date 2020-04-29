@@ -3,6 +3,7 @@
 
 #include "dialogs/defaultdialog.h"
 
+#include <QEvent>
 #include <QString>
 
 class DictionaryTabFailureDialog : public DefaultDialog
@@ -12,6 +13,9 @@ public:
     explicit DictionaryTabFailureDialog(const QString &reason,
                                         const QString &description,
                                         QWidget *parent = nullptr);
+
+private:
+    void setupUI(void);
 };
 
 #endif // DICTIONARYTABFAILUREDIALOG_H

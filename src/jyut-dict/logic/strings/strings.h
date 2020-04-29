@@ -50,9 +50,7 @@ constexpr auto OTHER_SOURCES = QT_TRANSLATE_NOOP(
     "none\">words.hk</a>");
 constexpr auto YUE_ERROR_STRING = QT_TRANSLATE_NOOP(
     "strings",
-    "To add a voice, click the \"Add voice\" button. Then, select "
-    "System Voice > Customize... "
-    "and select a voice for \"Chinese - Hong Kong\".");
+    "A voice for \"Chinese - Hong Kong\" could not be found.");
 constexpr auto YUE_DESCRIPTION_STRING
     = QT_TRANSLATE_NOOP("strings",
                         "Unable to use text to speech.\n\n"
@@ -60,9 +58,7 @@ constexpr auto YUE_DESCRIPTION_STRING
 
 constexpr auto ZH_TW_ERROR_STRING = QT_TRANSLATE_NOOP(
     "strings",
-    "To add a voice, click the \"Add voice\" button. Then, select "
-    "System Voice > Customize... "
-    "and select a voice for \"Chinese - Taiwan\".");
+    "A voice for \"Chinese - Taiwan\" could not be found.");
 constexpr auto ZH_TW_DESCRIPTION_STRING
     = QT_TRANSLATE_NOOP("strings",
                         "Unable to use text to speech.\n\n"
@@ -70,9 +66,7 @@ constexpr auto ZH_TW_DESCRIPTION_STRING
 
 constexpr auto ZH_CN_ERROR_STRING = QT_TRANSLATE_NOOP(
     "strings",
-    "To add a voice, click the \"Add voice\" button. Then, select "
-    "System Voice > Customize... "
-    "and select a voice for \"Chinese - Mainland China\".");
+    "A voice for \"Chinese - Mainland China\" could not be found.");
 constexpr auto ZH_CN_DESCRIPTION_STRING = QT_TRANSLATE_NOOP(
     "strings",
     "Unable to use text to speech.\n\n"

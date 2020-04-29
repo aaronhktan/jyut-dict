@@ -8,6 +8,9 @@ class ResetSettingsDialog : public DefaultDialog
     Q_OBJECT
 public:
     explicit ResetSettingsDialog(QWidget *parent = nullptr);
+
+private:
+    void setupUI(void);
 };
 
 #endif // RESETSETTINGSDIALOG_H
