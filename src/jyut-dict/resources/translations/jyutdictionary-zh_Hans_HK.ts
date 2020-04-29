@@ -513,12 +513,12 @@
     <message>
         <location line="+3"/>
         <source>Simplified (SC) and Traditional (TC) Chinese, Jyutping (JP), Pinyin (PY), and English (EN) are options to the right of the search bar.</source>
-        <translation>你喺搜索栏旁边可以选择使用边种语言进行搜索。语言选项包括简体中文，繁体中文，粤语拼音（粤拼），汉语拼音，同埋英文。</translation>
+        <translation>你喺搜索栏旁边可以选择使用边种语言进行搜索。可选择的语言包括简体中文，繁体中文，粤语拼音（粤拼），汉语拼音，同埋英文。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Try switching between languages!</source>
-        <translation>试试用搜索栏旁边嘅按钮选择搜索语言！</translation>
+        <translation>试吓用搜索栏旁边嘅按钮选择搜索语言！</translation>
     </message>
 </context>
 <context>

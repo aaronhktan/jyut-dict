@@ -509,12 +509,12 @@
     <message>
         <location filename="../../components/resultlistmodel.cpp" line="57"/>
         <source>Simplified (SC) and Traditional (TC) Chinese, Jyutping (JP), Pinyin (PY), and English (EN) are options to the right of the search bar.</source>
-        <translation>你喺搜索欄旁邊可以選擇使用邊種語言進行搜索。語言選項包括簡體中文，正體中文，粵語拼音（粵拼），漢語拼音，同埋英文。</translation>
+        <translation>你喺搜索欄旁邊可以選擇使用邊種語言進行搜索。可選擇語言包括簡體中文，正體中文，粵語拼音（粵拼），漢語拼音，同埋英文。</translation>
     </message>
     <message>
         <location filename="../../components/resultlistmodel.cpp" line="61"/>
         <source>Try switching between languages!</source>
-        <translation>試試用搜尋欄旁邊嘅按鈕選擇搜尋語言！</translation>
+        <translation>試吓用搜尋欄旁邊嘅按鈕選擇搜尋語言！</translation>
     </message>
 </context>
 <context>
