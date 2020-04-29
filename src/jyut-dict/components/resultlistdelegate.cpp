@@ -231,6 +231,10 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
     if (isEmptyEntry) {
         return QSize(100, 130);
     } else {
+#ifdef Q_OS_LINUX
+        return QSize(100, 90);
+#else
         return QSize(100, 85);
+#endif
     }
 }
