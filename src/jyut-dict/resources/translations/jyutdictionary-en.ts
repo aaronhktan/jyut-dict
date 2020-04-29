@@ -209,7 +209,7 @@
 <context>
     <name>MainSplitter</name>
     <message>
-        <location filename="../../components/mainsplitter.cpp" line="46"/>
+        <location filename="../../components/mainsplitter.cpp" line="54"/>
         <source>Welcome!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -217,127 +217,173 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="294"/>
+        <location filename="../../windows/mainwindow.cpp" line="305"/>
         <source>No update found!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="295"/>
+        <location filename="../../windows/mainwindow.cpp" line="306"/>
         <source>You are on the newest version, %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="302"/>
+        <location filename="../../windows/mainwindow.cpp" line="313"/>
         <source>No update available!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="219"/>
-        <location filename="../../windows/mainwindow.cpp" line="323"/>
+        <location filename="../../windows/mainwindow.cpp" line="334"/>
         <source>&amp;File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="220"/>
-        <location filename="../../windows/mainwindow.cpp" line="324"/>
+        <location filename="../../windows/mainwindow.cpp" line="335"/>
         <source>&amp;Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="221"/>
-        <location filename="../../windows/mainwindow.cpp" line="325"/>
+        <location filename="../../windows/mainwindow.cpp" line="337"/>
         <source>&amp;Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="222"/>
-        <location filename="../../windows/mainwindow.cpp" line="326"/>
+        <location filename="../../windows/mainwindow.cpp" line="223"/>
+        <location filename="../../windows/mainwindow.cpp" line="338"/>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="224"/>
+        <location filename="../../windows/mainwindow.cpp" line="225"/>
         <source>&amp;About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="225"/>
+        <location filename="../../windows/mainwindow.cpp" line="226"/>
         <source>Show the application&apos;s About box</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="228"/>
+        <location filename="../../windows/mainwindow.cpp" line="229"/>
         <source>Preferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="230"/>
+        <location filename="../../windows/mainwindow.cpp" line="231"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="232"/>
-        <location filename="../../windows/mainwindow.cpp" line="346"/>
+        <location filename="../../windows/mainwindow.cpp" line="233"/>
+        <location filename="../../windows/mainwindow.cpp" line="358"/>
         <source>Change settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="234"/>
+        <location filename="../../windows/mainwindow.cpp" line="235"/>
         <source>Close Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="236"/>
+        <location filename="../../windows/mainwindow.cpp" line="237"/>
         <source>Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="237"/>
+        <location filename="../../windows/mainwindow.cpp" line="238"/>
         <source>Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="238"/>
+        <location filename="../../windows/mainwindow.cpp" line="239"/>
         <source>Cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="239"/>
+        <location filename="../../windows/mainwindow.cpp" line="240"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="240"/>
+        <location filename="../../windows/mainwindow.cpp" line="241"/>
         <source>Paste</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="242"/>
-        <source>Minimize</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../windows/mainwindow.cpp" line="243"/>
-        <source>Zoom</source>
+        <source>Start a New Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="244"/>
-        <source>Bring All to Front</source>
+        <source>Select Contents of Search Box</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="246"/>
-        <source>%1 Help</source>
+        <source>Jump to First Item in Search Results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="247"/>
+        <source>Search Simplified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="248"/>
-        <source>Check for updates...</source>
+        <source>Search Traditional</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="591"/>
+        <location filename="../../windows/mainwindow.cpp" line="249"/>
+        <source>Search Jyutping</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="250"/>
+        <source>Search Pinyin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="251"/>
+        <source>Search English</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="253"/>
+        <source>Minimize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="254"/>
+        <source>Zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="255"/>
+        <source>Bring All to Front</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="257"/>
+        <source>%1 Help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="259"/>
+        <source>Check for Updates...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="222"/>
+        <location filename="../../windows/mainwindow.cpp" line="336"/>
+        <source>&amp;Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="715"/>
         <source>Checking for update...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -392,52 +438,52 @@
 <context>
     <name>SearchOptionsRadioGroupBox</name>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="110"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="120"/>
         <source>SC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="116"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="126"/>
         <source>Search Simplified Chinese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="111"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="121"/>
         <source>TC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="117"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="127"/>
         <source>Search Traditional Chinese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="112"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="122"/>
         <source>JP</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="118"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="128"/>
         <source>Search Jyutping</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="113"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="123"/>
         <source>PY</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="119"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="129"/>
         <source>Search Pinyin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="114"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="124"/>
         <source>EN</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="120"/>
+        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="130"/>
         <source>Search English</source>
         <translation type="unfinished"></translation>
     </message>
