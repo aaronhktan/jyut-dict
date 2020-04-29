@@ -55,6 +55,7 @@ private:
     QAction *_pasteAction;
     QAction *_findAction;
     QAction *_findAndSelectAllAction;
+    QAction *_setFocusToResultsAction;
     QAction *_selectSimplifiedAction;
     QAction *_selectTraditionalAction;
     QAction *_selectJyutpingAction;
@@ -92,6 +93,7 @@ private:
     void paste(void);
     void find(void);
     void findAndSelectAll(void);
+    void setFocusToResults(void);
     void selectSimplified(void);
     void selectTraditional(void);
     void selectJyutping(void);

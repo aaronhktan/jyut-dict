@@ -244,6 +244,8 @@ void MainWindow::translateUI(void)
 
     _findAction->setText(tr("Start a New Search"));
     _findAndSelectAllAction->setText(tr("Select Contents of Search Box"));
+    _setFocusToResultsAction->setText(
+        tr("Jump to first item in search results"));
     _selectSimplifiedAction->setText(tr("Search Simplified"));
     _selectTraditionalAction->setText(tr("Search Traditional"));
     _selectJyutpingAction->setText(tr("Search Jyutping"));
@@ -410,6 +412,16 @@ void MainWindow::createActions(void)
             this,
             &MainWindow::findAndSelectAll);
     _searchMenu->addAction(_findAndSelectAllAction);
+
+    _searchMenu->addSeparator();
+
+    _setFocusToResultsAction = new QAction{this};
+    _setFocusToResultsAction->setShortcut(QKeySequence{"Ctrl+L"});
+    connect(_setFocusToResultsAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::setFocusToResults);
+    _searchMenu->addAction(_setFocusToResultsAction);
 
     _searchMenu->addSeparator();
 
@@ -583,6 +595,11 @@ void MainWindow::find(void)
 void MainWindow::findAndSelectAll(void)
 {
     _mainToolBar->selectAllEvent();
+}
+
+void MainWindow::setFocusToResults(void)
+{
+    _mainSplitter->setFocusToResults();
 }
 
 void MainWindow::selectSimplified(void)
