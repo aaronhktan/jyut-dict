@@ -54,9 +54,16 @@ void ResultListModel::setEmpty()
                         tr("No results...").toStdString(),
                         "", "", {}, {}, {}};
     entry.addDefinitions("CEDICT",
+#ifdef Q_OS_LINUX
                          {tr("Search with Chinese, English, "
                              "Jyutping, or Pinyin with the buttons "
-                             "by the search bar").toStdString()});
+                             "by the search bar").toStdString()}
+#else
+                         {tr("Switch between Chinese, English, "
+                             "Jyutping, or Pinyin using the buttons "
+                             "beside the search bar").toStdString()}
+#endif
+                         );
     entry.setIsEmpty(true);
 
     setEntries(std::vector<Entry>{entry});
