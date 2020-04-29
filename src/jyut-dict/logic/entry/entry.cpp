@@ -209,15 +209,15 @@ std::string Entry::getCharacters(EntryCharactersOptions options, bool use_colour
         }
         case (EntryCharactersOptions::PREFER_SIMPLIFIED): {
             if (use_colours) {
-                return _colouredSimplified + " {" + _colouredTraditionalDifference + "}";
+                return _colouredSimplified + " [" + _colouredTraditionalDifference + "]";
             }
-            return _simplified + " {" + _traditionalDifference + "}";
+            return _simplified + " [" + _traditionalDifference + "]";
         }
         case (EntryCharactersOptions::PREFER_TRADITIONAL): {
             if (use_colours) {
-                return _colouredTraditional + " {" + _colouredSimplifiedDifference + "}";
+                return _colouredTraditional + " [" + _colouredSimplifiedDifference + "]";
             }
-            return _traditional + " {" + _simplifiedDifference + "}";
+            return _traditional + " [" + _simplifiedDifference + "]";
         }
     }
 
@@ -271,12 +271,12 @@ std::string Entry::getPhonetic(EntryPhoneticOptions options, CantoneseOptions ca
         case EntryPhoneticOptions::PREFER_JYUTPING: {
             std::string jyutping = getCantonesePhonetic(cantoneseOptions);
             std::string pinyin = getMandarinPhonetic(mandarinOptions);
-            return jyutping + " {" + pinyin + "}";
+            return jyutping + " (" + pinyin + ")";
         }
         case EntryPhoneticOptions::PREFER_PINYIN: {
             std::string jyutping = getCantonesePhonetic(cantoneseOptions);
             std::string pinyin = getMandarinPhonetic(mandarinOptions);
-            return pinyin + " {" + jyutping + "}";
+            return pinyin + " (" + jyutping + ")";
         }
     }
     return _jyutping;
