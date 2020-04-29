@@ -11,6 +11,7 @@
 #include <QAbstractTextDocumentLayout>
 #include <QRectF>
 #include <QTextDocument>
+#include <QTextLayout>
 #include <QVariant>
 
 ResultListDelegate::ResultListDelegate(QWidget *parent)
@@ -31,10 +32,11 @@ void ResultListDelegate::paint(QPainter *painter,
 
     Entry entry = qvariant_cast<Entry>(index.data());
 
-    bool isWelcomeEntry = entry.getSimplified() == tr("Welcome!").toStdString();
+    bool isWelcomeEntry = entry.isWelcome();
+    bool isEmptyEntry = entry.isEmpty();
 
     QColor backgroundColour;
-    if (option.state & QStyle::State_Selected && !isWelcomeEntry) {
+    if (option.state & QStyle::State_Selected && !isWelcomeEntry && !isEmptyEntry) {
         if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
 #ifdef Q_OS_MAC
             backgroundColour = option.palette
@@ -72,7 +74,7 @@ void ResultListDelegate::paint(QPainter *painter,
     EntryPhoneticOptions phoneticOptions;
     MandarinOptions mandarinOptions;
     bool use_colours = false;
-    if (isWelcomeEntry) {
+    if (isWelcomeEntry || isEmptyEntry) {
         characterOptions = EntryCharactersOptions::ONLY_SIMPLIFIED;
         phoneticOptions = EntryPhoneticOptions::ONLY_PINYIN;
         mandarinOptions = MandarinOptions::RAW_PINYIN;
@@ -106,7 +108,7 @@ void ResultListDelegate::paint(QPainter *painter,
     QFont oldFont = font;
     font = QFont("Microsoft Yahei");
 #endif
-    font.setPixelSize(16);
+    font.setPixelSize(20);
     painter->setFont(font);
     r = option.rect.adjusted(11, 11, -11, 0);
     QFontMetrics metrics(font);
@@ -137,21 +139,90 @@ void ResultListDelegate::paint(QPainter *painter,
 #ifdef Q_OS_WIN
     font = oldFont;
 #endif
-    font.setPixelSize(12);
-    painter->setFont(font);
+    QString snippet;
+    if (isEmptyEntry) {
+        font.setPixelSize(14);
+        painter->setFont(font);
+        r = r.adjusted(0, 28, 0, 0);
+        metrics = QFontMetrics(font);
+        QString phonetic = metrics.elidedText(entry.getJyutping().c_str(),
+                                              Qt::ElideRight,
+                                              r.width());
+        painter->drawText(r, 0, phonetic, &boundingRect);
 
-    r = r.adjusted(0, 24, 0, 0);
-    metrics = QFontMetrics(font);
-    QString phonetic = metrics.elidedText(
-                entry.getPhonetic(phoneticOptions,mandarinOptions).c_str(),
-                Qt::ElideRight, r.width());
-    painter->drawText(r, 0, phonetic, &boundingRect);
+        if (Settings::isCurrentLocaleHan()) {
+            r = r.adjusted(0, boundingRect.height() + 5, 0, 0);
+            font.setPixelSize(13);
+        } else {
+            r = r.adjusted(0, boundingRect.height() + 10, 0, 0);
+            font.setPixelSize(11);
+        }
+        painter->setFont(font);
+        painter->save();
+        painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
 
-    r = r.adjusted(0, boundingRect.height(), 0, 0);
-    QString snippet = metrics.elidedText(
-                entry.getDefinitionSnippet().c_str(),
-                Qt::ElideRight, r.width());
-    painter->drawText(r, 0, snippet, &boundingRect);
+        // Do custom text layout to get eliding double-line label
+        snippet = entry.getDefinitionSnippet().c_str();
+        QTextLayout *textLayout = new QTextLayout{snippet, painter->font()};
+        textLayout->beginLayout();
+
+        // Define start and end y coordinates
+        // max height of label is three lines, so height * 3
+        int y = r.y();
+        int height = y + metrics.height() * 3;
+
+        for (;;) {
+            QTextLine line = textLayout->createLine();
+
+            if (!line.isValid()) {
+                break;
+            }
+
+            line.setLineWidth(r.width());
+            int nextLineY = y + metrics.lineSpacing();
+
+            if (height >= nextLineY + metrics.lineSpacing()) {
+                line.draw(painter, QPoint(r.x(), y));
+                y = nextLineY;
+            } else {
+                QString lastLine = snippet.mid(line.textStart());
+                QString elidedLastLine = metrics.elidedText(lastLine,
+                                                            Qt::ElideRight,
+                                                            r.width());
+                // For some reason at small font sizes, -4 is necessary to make
+                // it look right (except in Chinese fonts). *shrug*
+                if (Settings::isCurrentLocaleHan()) {
+                    painter->drawText(QPoint(r.x(), y + metrics.ascent()),
+                                      elidedLastLine);
+                } else {
+                    painter->drawText(QPoint(r.x(), y + metrics.ascent() - 4),
+                                      elidedLastLine);
+                }
+                line = textLayout->createLine();
+                break;
+            }
+        }
+
+        textLayout->endLayout();
+        delete textLayout;
+        painter->restore();
+    } else {
+        font.setPixelSize(12);
+        painter->setFont(font);
+        r = r.adjusted(0, 30, 0, 0);
+        metrics = QFontMetrics(font);
+        QString phonetic = metrics.elidedText(
+            entry.getPhonetic(phoneticOptions, mandarinOptions).c_str(),
+            Qt::ElideRight,
+            r.width());
+        painter->drawText(r, 0, phonetic, &boundingRect);
+        r = r.adjusted(0, boundingRect.height(), 0, 0);
+
+        snippet = metrics.elidedText(
+            entry.getDefinitionSnippet().c_str(),
+            Qt::ElideRight, r.width());
+        painter->drawText(r, 0, snippet, &boundingRect);
+    }
 
     // Bottom divider
     QRect rct = option.rect;
@@ -164,5 +235,20 @@ void ResultListDelegate::paint(QPainter *painter,
 QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
                                    const QModelIndex &index) const
 {
-    return QSize(100, 80);
+    Entry entry = qvariant_cast<Entry>(index.data());
+    bool isEmptyEntry = entry.isEmpty();
+
+    if (isEmptyEntry) {
+#ifdef Q_OS_MAC
+        return QSize(100, 130);
+#else
+        return QSize(100, 135);
+#endif
+    } else {
+#ifdef Q_OS_LINUX
+        return QSize(100, 90);
+#else
+        return QSize(100, 85);
+#endif
+    }
 }

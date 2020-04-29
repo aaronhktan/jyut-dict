@@ -18,15 +18,22 @@ ResultListModel::~ResultListModel()
     delete _search;
 }
 
-void ResultListModel::callback(std::vector<Entry> entries)
+void ResultListModel::callback(const std::vector<Entry> entries, bool emptyQuery)
 {
-    setEntries(entries);
+    setEntries(entries, emptyQuery);
 }
 
 void ResultListModel::setEntries(std::vector<Entry> entries)
 {
+    setEntries(entries, false);
+}
+
+void ResultListModel::setEntries(std::vector<Entry> entries, bool emptyQuery) {
     beginResetModel();
     _entries = entries;
+    if (_entries.empty() && !emptyQuery) {
+        setEmpty();
+    }
     endResetModel();
 }
 
@@ -36,6 +43,23 @@ void ResultListModel::setWelcome()
                         "—", "—", {}, {}, {}};
     entry.addDefinitions("CEDICT",
                          {tr("Start typing to search for words").toStdString()});
+    entry.setIsWelcome(true);
+
+    setEntries(std::vector<Entry>{entry});
+}
+
+void ResultListModel::setEmpty()
+{
+    Entry entry = Entry{tr("No results...").toStdString(),
+                        tr("No results...").toStdString(),
+                        "", "", {}, {}, {}};
+    entry.addDefinitions("CEDICT",
+                         {tr("Simplified (SC) and Traditional (TC) Chinese, "
+                             "Jyutping (JP), Pinyin (PY), and English (EN) "
+                             "are options to the right of the search bar.")
+                              .toStdString()});
+    entry.setJyutping(tr("Try switching between languages!").toStdString());
+    entry.setIsEmpty(true);
 
     setEntries(std::vector<Entry>{entry});
 }

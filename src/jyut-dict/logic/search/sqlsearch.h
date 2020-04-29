@@ -30,22 +30,27 @@ public:
     void registerObserver(ISearchObserver *observer) override;
     void deregisterObserver(ISearchObserver *observer) override;
 
-    void searchSimplified(const QString &searchTerm) override;
-    void searchTraditional(const QString &searchTerm) override;
-    void searchJyutping(const QString &searchTerm) override;
-    void searchPinyin(const QString &searchTerm) override;
-    void searchEnglish(const QString &searchTerm) override;
+    void searchSimplified(const QString searchTerm) override;
+    void searchTraditional(const QString searchTerm) override;
+    void searchJyutping(const QString searchTerm) override;
+    void searchPinyin(const QString searchTerm) override;
+    void searchEnglish(const QString searchTerm) override;
 
 private:
-    void notifyObservers() override;
+    void notifyObservers(bool emptyQuery);
+    void notifyObservers(const std::vector<Entry> &results, bool emptyQuery) override;
 
-    void runThread(void (SQLSearch::*threadFunction)(const QString &searchTerm),
+    void setCurrentSearchTerm(const QString &searchTerm);
+    void sleepIfEmpty(std::vector<Entry> &results);
+    bool checkQueryCurrent(const QString &query);
+
+    void runThread(void (SQLSearch::*threadFunction)(const QString searchTerm),
                    const QString &searchTerm);
-    void searchSimplifiedThread(const QString &searchTerm);
-    void searchTraditionalThread(const QString &searchTerm);
-    void searchJyutpingThread(const QString &searchTerm);
-    void searchPinyinThread(const QString &searchTerm);
-    void searchEnglishThread(const QString &searchTerm);
+    void searchSimplifiedThread(const QString searchTerm);
+    void searchTraditionalThread(const QString searchTerm);
+    void searchJyutpingThread(const QString searchTerm);
+    void searchPinyinThread(const QString searchTerm);
+    void searchEnglishThread(const QString searchTerm);
 
     int segmentPinyin(const QString &string, std::vector<std::string> &words);
     int segmentJyutping(const QString &string, std::vector<std::string> &words);
@@ -57,12 +62,14 @@ private:
     std::vector<Entry> parseEntries(QSqlQuery &query);
 
     static std::list<ISearchObserver *> _observers;
-    std::vector<Entry> _results;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
     QString _currentSearchString;
     QSqlQuery _query;
-    std::mutex _queryMutex;
+
+    std::mutex _databaseMutex;
+    std::mutex _currentSearchTermMutex;
+    std::mutex _notifyMutex;
 };
 
 Q_DECLARE_METATYPE(SQLSearch);

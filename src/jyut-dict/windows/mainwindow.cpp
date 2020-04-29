@@ -249,8 +249,8 @@ void MainWindow::translateUI(void)
         tr("Jump to First Item in Search Results"));
     _openCurrentSelectionInNewWindowAction->setText(
         tr("Open Selected Entry In New Window"));
-    _selectSimplifiedAction->setText(tr("Search Simplified"));
-    _selectTraditionalAction->setText(tr("Search Traditional"));
+    _selectSimplifiedAction->setText(tr("Search Simplified Chinese"));
+    _selectTraditionalAction->setText(tr("Search Traditional Chinese"));
     _selectJyutpingAction->setText(tr("Search Jyutping"));
     _selectPinyinAction->setText(tr("Search Pinyin"));
     _selectEnglishAction->setText(tr("Search English"));

@@ -240,8 +240,6 @@
 <context>
     <name>MainSplitter</name>
     <message>
-        <location filename="../../components/mainsplitter.cpp" line="+86"/>
-        <location line="+11"/>
         <source>Welcome!</source>
         <translation>欢迎使用粤语字典！</translation>
     </message>
@@ -365,11 +363,19 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>Search Simplified</source>
+        <source>Search Simplified Chinese</source>
         <translation>搜索简体中文</translation>
     </message>
     <message>
         <location line="+1"/>
+        <source>Search Traditional Chinese</source>
+        <translation>搜索繁体中文</translation>
+    </message>
+    <message>
+        <source>Search Simplified</source>
+        <translation>搜索简体中文</translation>
+    </message>
+    <message>
         <source>Search Traditional</source>
         <translation>搜索繁体中文</translation>
     </message>
@@ -474,7 +480,6 @@
 <context>
     <name>ResultListDelegate</name>
     <message>
-        <location filename="../../components/resultlistdelegate.cpp" line="+34"/>
         <source>Welcome!</source>
         <translation>欢迎使用粤语字典！</translation>
     </message>
@@ -482,7 +487,7 @@
 <context>
     <name>ResultListModel</name>
     <message>
-        <location filename="../../components/resultlistmodel.cpp" line="+35"/>
+        <location filename="../../components/resultlistmodel.cpp" line="+42"/>
         <source>Welcome!</source>
         <translation>欢迎使用粤语字典！</translation>
     </message>
@@ -490,6 +495,22 @@
         <location line="+3"/>
         <source>Start typing to search for words</source>
         <translation>开始输入并搜索</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <location line="+1"/>
+        <source>No results...</source>
+        <translation>找不到结果</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Simplified (SC) and Traditional (TC) Chinese, Jyutping (JP), Pinyin (PY), and English (EN) are options to the right of the search bar.</source>
+        <translation>您在搜索栏旁边能选择使用哪种语言进行搜索。可选的语言包括简体中文，繁体中文，粤语拼音（粤拼），汉语拼音，和英文。</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Try switching between languages!</source>
+        <translation>试用搜索栏旁边的按钮选择搜索语言！</translation>
     </message>
 </context>
 <context>

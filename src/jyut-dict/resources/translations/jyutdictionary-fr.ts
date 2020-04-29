@@ -240,8 +240,6 @@
 <context>
     <name>MainSplitter</name>
     <message>
-        <location filename="../../components/mainsplitter.cpp" line="86"/>
-        <location filename="../../components/mainsplitter.cpp" line="97"/>
         <source>Welcome!</source>
         <translation>Bienvenue !</translation>
     </message>
@@ -365,11 +363,19 @@
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="252"/>
-        <source>Search Simplified</source>
+        <source>Search Simplified Chinese</source>
         <translation>Rechercher avec le chinois simplifié</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="253"/>
+        <source>Search Traditional Chinese</source>
+        <translation>Rechercher avec le chinois traditionnel</translation>
+    </message>
+    <message>
+        <source>Search Simplified</source>
+        <translation>Rechercher avec le chinois simplifié</translation>
+    </message>
+    <message>
         <source>Search Traditional</source>
         <translation>Rechercher avec le chinois simplifié</translation>
     </message>
@@ -478,7 +484,6 @@
 <context>
     <name>ResultListDelegate</name>
     <message>
-        <location filename="../../components/resultlistdelegate.cpp" line="34"/>
         <source>Welcome!</source>
         <translation>Bienvenue !</translation>
     </message>
@@ -486,14 +491,30 @@
 <context>
     <name>ResultListModel</name>
     <message>
-        <location filename="../../components/resultlistmodel.cpp" line="35"/>
+        <location filename="../../components/resultlistmodel.cpp" line="42"/>
         <source>Welcome!</source>
         <translation>Bienvenue !</translation>
     </message>
     <message>
-        <location filename="../../components/resultlistmodel.cpp" line="38"/>
+        <location filename="../../components/resultlistmodel.cpp" line="45"/>
         <source>Start typing to search for words</source>
         <translation>Tapez pour effectuer une recherche</translation>
+    </message>
+    <message>
+        <location filename="../../components/resultlistmodel.cpp" line="53"/>
+        <location filename="../../components/resultlistmodel.cpp" line="54"/>
+        <source>No results...</source>
+        <translation>Aucun résultat trouvé</translation>
+    </message>
+    <message>
+        <location filename="../../components/resultlistmodel.cpp" line="57"/>
+        <source>Simplified (SC) and Traditional (TC) Chinese, Jyutping (JP), Pinyin (PY), and English (EN) are options to the right of the search bar.</source>
+        <translation>Vous pouvez changer votre langue de recherche entre le chinois simplifié (CS) et traditionnel (CT), le Jyutping (JP), le Pinyin (PY), et le français (FR).</translation>
+    </message>
+    <message>
+        <location filename="../../components/resultlistmodel.cpp" line="61"/>
+        <source>Try switching between languages!</source>
+        <translation>Changez votre langue de recherche !</translation>
     </message>
 </context>
 <context>

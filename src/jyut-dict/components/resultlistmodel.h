@@ -29,9 +29,11 @@ public:
                             QObject *parent = nullptr);
     ~ResultListModel() override;
 
-    void callback(std::vector<Entry> entries) override;
+    void callback(const std::vector<Entry> entries, bool emptyQuery) override;
     void setEntries(std::vector<Entry> entries);
+    void setEntries(std::vector<Entry> entries, bool emptyQuery);
     void setWelcome();
+    void setEmpty();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;

@@ -81,6 +81,11 @@ public:
     void refreshColours(
         const EntryColourPhoneticType type = EntryColourPhoneticType::JYUTPING);
 
+    void setIsWelcome(const bool isWelcome);
+    bool isWelcome(void) const;
+    void setIsEmpty(const bool isEmpty);
+    bool isEmpty(void) const;
+
 private:
     std::string _simplified;
     std::string _simplifiedDifference;
@@ -99,6 +104,9 @@ private:
     std::vector<DefinitionsSet> _definitions;
     std::vector<std::string> _derivedWords;
     std::vector<Sentence> _sentences;
+
+    bool _isWelcome = false;
+    bool _isEmpty = false;
 
     std::string applyColours(std::string original,
                              std::vector<int> tones,

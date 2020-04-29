@@ -240,8 +240,6 @@
 <context>
     <name>MainSplitter</name>
     <message>
-        <location filename="../../components/mainsplitter.cpp" line="86"/>
-        <location filename="../../components/mainsplitter.cpp" line="97"/>
         <source>Welcome!</source>
         <translation>歡迎使用粵語字典！</translation>
     </message>
@@ -365,11 +363,19 @@
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="252"/>
-        <source>Search Simplified</source>
+        <source>Search Simplified Chinese</source>
         <translation>用簡體中文搵</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="253"/>
+        <source>Search Traditional Chinese</source>
+        <translation>用正體中文搵</translation>
+    </message>
+    <message>
+        <source>Search Simplified</source>
+        <translation>用簡體中文搵</translation>
+    </message>
+    <message>
         <source>Search Traditional</source>
         <translation>用正體中文搵</translation>
     </message>
@@ -478,7 +484,6 @@
 <context>
     <name>ResultListDelegate</name>
     <message>
-        <location filename="../../components/resultlistdelegate.cpp" line="34"/>
         <source>Welcome!</source>
         <translation>歡迎使用粵語字典！</translation>
     </message>
@@ -486,14 +491,30 @@
 <context>
     <name>ResultListModel</name>
     <message>
-        <location filename="../../components/resultlistmodel.cpp" line="35"/>
+        <location filename="../../components/resultlistmodel.cpp" line="42"/>
         <source>Welcome!</source>
         <translation>歡迎使用粵語字典！</translation>
     </message>
     <message>
-        <location filename="../../components/resultlistmodel.cpp" line="38"/>
+        <location filename="../../components/resultlistmodel.cpp" line="45"/>
         <source>Start typing to search for words</source>
         <translation>開始輸入並搜尋</translation>
+    </message>
+    <message>
+        <location filename="../../components/resultlistmodel.cpp" line="53"/>
+        <location filename="../../components/resultlistmodel.cpp" line="54"/>
+        <source>No results...</source>
+        <translation>搵唔到結果</translation>
+    </message>
+    <message>
+        <location filename="../../components/resultlistmodel.cpp" line="57"/>
+        <source>Simplified (SC) and Traditional (TC) Chinese, Jyutping (JP), Pinyin (PY), and English (EN) are options to the right of the search bar.</source>
+        <translation>你喺搜索欄旁邊可以選擇使用邊種語言進行搜索。可選擇語言包括簡體中文，正體中文，粵語拼音（粵拼），漢語拼音，同埋英文。</translation>
+    </message>
+    <message>
+        <location filename="../../components/resultlistmodel.cpp" line="61"/>
+        <source>Try switching between languages!</source>
+        <translation>試吓用搜尋欄旁邊嘅按鈕選擇搜尋語言！</translation>
     </message>
 </context>
 <context>
