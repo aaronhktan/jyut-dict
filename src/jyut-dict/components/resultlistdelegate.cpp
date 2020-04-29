@@ -154,7 +154,7 @@ void ResultListDelegate::paint(QPainter *painter,
         font.setPixelSize(11);
         painter->setFont(font);
         painter->save();
-        painter->setPen(Qt::lightGray);
+        painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
 
         // Do custom text layout to get eliding double-line label
         snippet = entry.getDefinitionSnippet().c_str();
@@ -222,7 +222,7 @@ void ResultListDelegate::paint(QPainter *painter,
     painter->restore();
 }
 
-QSize ResultListDelegate::sizeHint(__unused const QStyleOptionViewItem &option,
+QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
                                    const QModelIndex &index) const
 {
     Entry entry = qvariant_cast<Entry>(index.data());
