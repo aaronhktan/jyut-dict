@@ -310,7 +310,7 @@
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="247"/>
-        <source>Select Contents of Search Box</source>
+        <source>Select Contents of Search Bar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

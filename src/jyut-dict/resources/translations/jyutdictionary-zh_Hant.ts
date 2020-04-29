@@ -363,7 +363,7 @@
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="247"/>
-        <source>Select Contents of Search Box</source>
+        <source>Select Contents of Search Bar</source>
         <translation>全選搜索欄文字</translation>
     </message>
     <message>

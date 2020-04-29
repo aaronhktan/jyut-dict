@@ -245,7 +245,7 @@ void MainWindow::translateUI(void)
     _pasteAction->setText(tr("Paste"));
 
     _findAction->setText(tr("Start a New Search"));
-    _findAndSelectAllAction->setText(tr("Select Contents of Search Box"));
+    _findAndSelectAllAction->setText(tr("Select Contents of Search Bar"));
     _setFocusToResultsAction->setText(
         tr("Jump to First Item in Search Results"));
     _openCurrentSelectionInNewWindowAction->setText(

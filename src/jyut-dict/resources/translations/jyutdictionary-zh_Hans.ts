@@ -348,7 +348,7 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>Select Contents of Search Box</source>
+        <source>Select Contents of Search Bar</source>
         <translation>全选搜索栏内文字</translation>
     </message>
     <message>

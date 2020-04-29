@@ -348,7 +348,7 @@
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="247"/>
-        <source>Select Contents of Search Box</source>
+        <source>Select Contents of Search Bar</source>
         <translation>Tout sélectionner dans la barre de recherche</translation>
     </message>
     <message>
