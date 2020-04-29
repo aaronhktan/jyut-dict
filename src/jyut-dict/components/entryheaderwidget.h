@@ -1,12 +1,16 @@
 #ifndef ENTRYHEADERWIDGET_H
 #define ENTRYHEADERWIDGET_H
 
+#include "dialogs/entryspeakerrordialog.h"
 #include "logic/entry/entry.h"
 #include "logic/entry/entryphoneticoptions.h"
+#include "logic/entry/entryspeaker.h"
+#include "logic/settings/settingsutils.h"
 
 #include <QEvent>
 #include <QGridLayout>
 #include <QLabel>
+#include <QPushButton>
 #include <QWidget>
 
 #include <string>
@@ -30,15 +34,28 @@ private:
     void translateUI();
 
     void displayPronunciationLabels(const EntryPhoneticOptions options);
+    void speakJyutping(void);
+    void speakPinyin(void);
+
+    void showError(const QString &reason, const QString &message);
 
     bool _paletteRecentlyChanged = false;
+
+    QString _chinese;
+    QString _jyutping;
+    QString _pinyin;
+    std::unique_ptr<EntrySpeaker> _speaker;
 
     QGridLayout *_entryHeaderLayout;
     QLabel *_wordLabel;
     QLabel *_jyutpingLabel;
+    QPushButton *_jyutpingTTS;
     QLabel *_jyutpingPronunciation;
     QLabel *_pinyinLabel;
+    QPushButton *_pinyinTTS;
     QLabel *_pinyinPronunciation;
+
+    EntrySpeakErrorDialog *_message;
 };
 
 #endif // ENTRYHEADERWIDGET_H

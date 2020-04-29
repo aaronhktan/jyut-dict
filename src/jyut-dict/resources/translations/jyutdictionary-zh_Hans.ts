@@ -105,7 +105,7 @@
 <context>
     <name>DictionaryTab</name>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="+137"/>
+        <location filename="../../components/dictionarytab.cpp" line="+136"/>
         <source>The Dictionaries tab allows you to view information about dictionaries, and add or remove them.</source>
         <translation>您在“字典”这一页上可以查看和管理已储存的字典。</translation>
     </message>
@@ -201,9 +201,44 @@
         <translation>失败！</translation>
     </message>
     <message>
-        <location line="+41"/>
         <source>Failed to add source!</source>
         <translation>添加字典失败！</translation>
+    </message>
+</context>
+<context>
+    <name>DictionaryTabFailureDialog</name>
+    <message>
+        <location filename="../../dialogs/dictionarytabfailuredialog.cpp" line="+10"/>
+        <source>Failed to add source!</source>
+        <translation>添加字典失败！</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>OK</source>
+        <translation>确定</translation>
+    </message>
+</context>
+<context>
+    <name>EntrySpeakErrorDialog</name>
+    <message>
+        <location filename="../../dialogs/entryspeakerrordialog.cpp" line="+15"/>
+        <source>Unable to speak entry!</source>
+        <translation>播放失败！</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>OK</source>
+        <translation>确定</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Add voice</source>
+        <translation>下载新语言</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Help</source>
+        <translation>帮助</translation>
     </message>
 </context>
 <context>
@@ -247,46 +282,43 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="+310"/>
         <source>No update found!</source>
         <translation>没有找到可用的更新!</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>You are on the newest version, %1.</source>
         <translation>您已经使用最新的版本，%1.</translation>
     </message>
     <message>
-        <location line="+7"/>
         <source>No update available!</source>
         <translation>没有可用的更新!</translation>
     </message>
     <message>
-        <location line="-96"/>
-        <location line="+117"/>
+        <location filename="../../windows/mainwindow.cpp" line="+223"/>
+        <location line="+89"/>
         <source>&amp;File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location line="-116"/>
-        <location line="+117"/>
+        <location line="-88"/>
+        <location line="+89"/>
         <source>&amp;Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location line="-116"/>
-        <location line="+118"/>
+        <location line="-88"/>
+        <location line="+90"/>
         <source>&amp;Window</source>
         <translation>窗口</translation>
     </message>
     <message>
-        <location line="-116"/>
-        <location line="+117"/>
+        <location line="-88"/>
+        <location line="+89"/>
         <source>&amp;Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location line="-115"/>
+        <location line="-87"/>
         <source>&amp;About</source>
         <translation>关于粤语字典</translation>
     </message>
@@ -307,12 +339,12 @@
     </message>
     <message>
         <location line="+2"/>
-        <location line="+127"/>
+        <location line="+99"/>
         <source>Change settings</source>
         <translation>更改设置</translation>
     </message>
     <message>
-        <location line="-125"/>
+        <location line="-97"/>
         <source>Close Window</source>
         <translation>关闭窗口</translation>
     </message>
@@ -348,7 +380,7 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>Select Contents of Search Box</source>
+        <source>Select Contents of Search Bar</source>
         <translation>全选搜索栏内文字</translation>
     </message>
     <message>
@@ -421,7 +453,7 @@
     </message>
     <message>
         <location line="-39"/>
-        <location line="+116"/>
+        <location line="+88"/>
         <source>&amp;Search</source>
         <translation>搜索</translation>
     </message>
@@ -433,6 +465,19 @@
         <location line="+393"/>
         <source>Checking for update...</source>
         <translation>正在检查更新…</translation>
+    </message>
+</context>
+<context>
+    <name>NoUpdateDialog</name>
+    <message>
+        <location filename="../../dialogs/noupdatedialog.cpp" line="+8"/>
+        <source>No update found!</source>
+        <translation type="unfinished">没有找到可用的更新!</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>You are on the newest version, %1.</source>
+        <translation type="unfinished">您已经使用最新的版本，%1.</translation>
     </message>
 </context>
 <context>
@@ -475,6 +520,19 @@
     <message>
         <source>OK</source>
         <translation>确定</translation>
+    </message>
+</context>
+<context>
+    <name>ResetSettingsDialog</name>
+    <message>
+        <location filename="../../dialogs/resetsettingsdialog.cpp" line="+8"/>
+        <source>Are you sure you want to reset all settings?</source>
+        <translation type="unfinished">您确定要重置全部设置吗？</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>There is no way to restore them!</source>
+        <translation type="unfinished">重置之后，无法恢复您的设置！</translation>
     </message>
 </context>
 <context>
@@ -595,7 +653,7 @@
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settingstab.cpp" line="+200"/>
+        <location filename="../../components/settingstab.cpp" line="+198"/>
         <source>Reset all settings</source>
         <translation>重置所有设置</translation>
     </message>
@@ -712,12 +770,10 @@
         <translation>轻声</translation>
     </message>
     <message>
-        <location line="+269"/>
         <source>Are you sure you want to reset all settings?</source>
         <translation>您确定要重置全部设置吗？</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>There is no way to restore them!</source>
         <translation>重置之后，无法恢复您的设置！</translation>
     </message>
@@ -849,6 +905,48 @@
         <location line="+1"/>
         <source>&lt;a href=https://www.pleco.com style=&quot;color: %1; text-decoration: none&quot;&gt;Pleco Dictionary&lt;/a&gt;, &lt;a href=http://www.cantonese.sheik.co.uk/dictionary/ style=&quot;color: %1; text-decoration: none&quot;&gt;CantoDict&lt;/a&gt;, &lt;a href=https://words.hk style=&quot;color: %1; text-decoration: none&quot;&gt;words.hk&lt;/a&gt;</source>
         <translation>&lt;a href=https://www.pleco.com style=&quot;color: %1; text-decoration: none&quot;&gt;Pleco 汉语词典&lt;/a&gt;、&lt;a href=http://www.cantonese.sheik.co.uk/dictionary/ style=&quot;color: %1; text-decoration: none&quot;&gt;CantoDict&lt;/a&gt;、&lt;a href=https://words.hk style=&quot;color: %1; text-decoration: none&quot;&gt;words.hk 粤典&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>A voice for &quot;Chinese - Hong Kong&quot; could not be found.</source>
+        <translation>找不到 “粤语（香港）”语音引擎。</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>A voice for &quot;Chinese - Taiwan&quot; could not be found.</source>
+        <translation>找不到「国语（台湾）」语音引擎。</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>A voice for &quot;Chinese - Mainland China&quot; could not be found.</source>
+        <translation>找不到 “普通话（中国大陆）” 语音引擎。</translation>
+    </message>
+    <message>
+        <location line="-12"/>
+        <source>Unable to use text to speech.
+
+Debug: Locale: %1, Language: Chinese - Hong Kong</source>
+        <translation>播放失败
+
+调试: 区域设置: %1, 语言: 粤语 - 香港</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Unable to use text to speech.
+
+Debug: Locale: %1, Language: Chinese - Taiwan</source>
+        <translation>播放失败
+
+调试: 区域设置: %1, 语言: 国语 - 台湾</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Unable to use text to speech.
+
+Debug: Locale: %1, Language: Chinese - Mainland</source>
+        <translation>播放失败
+
+调试: 区域设置: %1, 语言: 普通话 - 中国大陆</translation>
     </message>
 </context>
 </TS>

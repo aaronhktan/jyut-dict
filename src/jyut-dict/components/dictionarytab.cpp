@@ -14,7 +14,6 @@
 #include <QDesktopServices>
 #include <QDir>
 #include <QFileDialog>
-#include <QSpacerItem>
 #include <QtSql>
 
 DictionaryTab::DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
@@ -350,49 +349,6 @@ void DictionaryTab::populateDictionarySourceUtils()
 
 void DictionaryTab::failureMessage(QString reason, QString description)
 {
-    _message = new QMessageBox{this};
-    Qt::WindowFlags flags = _message->windowFlags()
-                            | Qt::CustomizeWindowHint;
-    flags &= ~(Qt::WindowMinMaxButtonsHint
-               | Qt::WindowCloseButtonHint
-               | Qt::WindowFullscreenButtonHint);
-    _message->setWindowFlags(flags);
-    _message->setAttribute(Qt::WA_DeleteOnClose, true);
-    _message->setText(tr("Failed to add source!"));
-    _message->setInformativeText(reason);
-    _message->setDetailedText(description);
-    _message->setIcon(QMessageBox::Warning);
-#ifdef Q_OS_WIN
-    _message->setWindowTitle(
-        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
-#elif defined(Q_OS_LINUX)
-    _message->setWindowTitle(" ");
-#endif
-
-    // setDefaultButton doesn't really work, so use this
-    // workaround to deselect all buttons first.
-    for (auto button : _message->buttons()) {
-        QPushButton *b = static_cast<QPushButton *>(button);
-        b->setDown(false);
-        b->setAutoDefault(false);
-        b->setDefault(false);
-    }
-    _message->setDefaultButton(QMessageBox::Ok);
-
-    // Setting minimum width also doesn't work, so use this
-    // workaround to set a width.
-    QSpacerItem *horizontalSpacer
-        = new QSpacerItem(400,
-                          0,
-                          QSizePolicy::Minimum,
-                          QSizePolicy::Minimum);
-    QGridLayout *layout = static_cast<QGridLayout *>(
-        _message->layout());
-    layout->addItem(horizontalSpacer,
-                    layout->rowCount(),
-                    0,
-                    1,
-                    layout->columnCount());
-
+    _message = new DictionaryTabFailureDialog{reason, description, this};
     _message->exec();
 }

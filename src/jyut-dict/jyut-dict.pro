@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network sql
+QT       += core gui network sql texttospeech
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -53,6 +53,11 @@ SOURCES += \
     components/searchlineedit.cpp \
     components/searchoptionsradiogroupbox.cpp \
     components/settingstab.cpp \
+    dialogs/defaultdialog.cpp \
+    dialogs/dictionarytabfailuredialog.cpp \
+    dialogs/entryspeakerrordialog.cpp \
+    dialogs/noupdatedialog.cpp \
+    dialogs/resetsettingsdialog.cpp \
     logic/analytics/analytics.cpp \
     logic/database/sqldatabasemanager.cpp \
     logic/database/sqldatabaseutils.cpp \
@@ -60,6 +65,7 @@ SOURCES += \
     logic/dictionary/dictionarysource.cpp \
     logic/entry/definitionsset.cpp \
     logic/entry/entry.cpp \
+    logic/entry/entryspeaker.cpp \
     logic/entry/sentence.cpp \
     logic/search/searchoptionsmediator.cpp \
     logic/search/sqlsearch.cpp \
@@ -97,6 +103,11 @@ HEADERS += \
     components/searchlineedit.h \
     components/searchoptionsradiogroupbox.h \
     components/settingstab.h \
+    dialogs/defaultdialog.h \
+    dialogs/dictionarytabfailuredialog.h \
+    dialogs/entryspeakerrordialog.h \
+    dialogs/noupdatedialog.h \
+    dialogs/resetsettingsdialog.h \
     logic/analytics/analytics.h \
     logic/analytics/analyticsconfig.h \
     logic/database/sqldatabasemanager.h \
@@ -107,6 +118,7 @@ HEADERS += \
     logic/entry/entry.h \
     logic/entry/entrycharactersoptions.h \
     logic/entry/entryphoneticoptions.h \
+    logic/entry/entryspeaker.h \
     logic/entry/sentence.h \
     logic/search/isearch.h \
     logic/search/isearchobservable.h \
