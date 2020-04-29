@@ -5,6 +5,7 @@
 #include "components/searchoptionsradiogroupbox.h"
 #include "logic/search/isearchoptionsmediator.h"
 #include "logic/database/sqldatabasemanager.h"
+#include "logic/utils/utils.h"
 
 #include <QFocusEvent>
 #include <QHBoxLayout>
@@ -25,6 +26,9 @@ public:
     ~MainToolBar() override;
 
     void focusInEvent(QFocusEvent *event) override;
+
+    void selectAllEvent(void);
+    void changeOptionEvent(const Utils::ButtonOptionIndex option);
 
 private:
     QHBoxLayout *_toolBarLayout;

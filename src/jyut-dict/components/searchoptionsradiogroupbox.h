@@ -4,6 +4,7 @@
 #include "logic/analytics/analytics.h"
 #include "logic/search/isearchoptionsmediator.h"
 #include "logic/search/searchparameters.h"
+#include "logic/utils/utils.h"
 
 #include <QEvent>
 #include <QGroupBox>
@@ -23,6 +24,8 @@ public:
                                         QWidget *parent = nullptr);
 
     void changeEvent(QEvent *event) override;
+
+    void setOption(const Utils::ButtonOptionIndex index);
 
 private:
     void setupUI();

@@ -40,6 +40,7 @@ private:
 
     QMenu *_fileMenu;
     QMenu *_editMenu;
+    QMenu *_searchMenu;
     QMenu *_windowMenu;
     QMenu *_helpMenu;
 
@@ -53,6 +54,12 @@ private:
     QAction *_copyAction;
     QAction *_pasteAction;
     QAction *_findAction;
+    QAction *_findAndSelectAllAction;
+    QAction *_selectSimplifiedAction;
+    QAction *_selectTraditionalAction;
+    QAction *_selectJyutpingAction;
+    QAction *_selectPinyinAction;
+    QAction *_selectEnglishAction;
 
     QAction *_minimizeAction;
     QAction *_maximizeAction;
@@ -84,6 +91,12 @@ private:
     void copy(void);
     void paste(void);
     void find(void);
+    void findAndSelectAll(void);
+    void selectSimplified(void);
+    void selectTraditional(void);
+    void selectJyutping(void);
+    void selectPinyin(void);
+    void selectEnglish(void);
 
     void toggleMinimized(void);
     void toggleMaximized(void);

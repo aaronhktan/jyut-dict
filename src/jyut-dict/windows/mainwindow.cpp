@@ -241,7 +241,14 @@ void MainWindow::translateUI(void)
     _cutAction->setText(tr("Cut"));
     _copyAction->setText(tr("Copy"));
     _pasteAction->setText(tr("Paste"));
-    _findAction->setText(tr("Find"));
+
+    _findAction->setText(tr("Start a New Search"));
+    _findAndSelectAllAction->setText(tr("Select Contents of Search Box"));
+    _selectSimplifiedAction->setText(tr("Search Simplified"));
+    _selectTraditionalAction->setText(tr("Search Traditional"));
+    _selectJyutpingAction->setText(tr("Search Jyutping"));
+    _selectPinyinAction->setText(tr("Search Pinyin"));
+    _selectEnglishAction->setText(tr("Search English"));
 
     _minimizeAction->setText(tr("Minimize"));
     _maximizeAction->setText(tr("Zoom"));
@@ -249,7 +256,7 @@ void MainWindow::translateUI(void)
 
     _helpAction->setText(tr("%1 Help").arg(
         QCoreApplication::translate("strings", Strings::PRODUCT_NAME)));
-    _updateAction->setText(tr("Check for updates..."));
+    _updateAction->setText(tr("Check for Updates..."));
 
 #ifdef Q_OS_WIN
     QFont font;
@@ -326,6 +333,7 @@ void MainWindow::createMenus(void)
 {
     _fileMenu = menuBar()->addMenu(tr("&File"));
     _editMenu = menuBar()->addMenu(tr("&Edit"));
+    _searchMenu = menuBar()->addMenu(tr("&Search"));
     _windowMenu = menuBar()->addMenu(tr("&Window"));
     _helpMenu = menuBar()->addMenu(tr("&Help"));
 
@@ -393,7 +401,57 @@ void MainWindow::createActions(void)
     _findAction = new QAction{this};
     _findAction->setShortcut(QKeySequence{"Ctrl+F"});
     connect(_findAction, &QAction::triggered, this, &MainWindow::find);
-    _editMenu->addAction(_findAction);
+    _searchMenu->addAction(_findAction);
+
+    _findAndSelectAllAction = new QAction{this};
+    _findAndSelectAllAction->setShortcut(QKeySequence{"Ctrl+Shift+F"});
+    connect(_findAndSelectAllAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::findAndSelectAll);
+    _searchMenu->addAction(_findAndSelectAllAction);
+
+    _searchMenu->addSeparator();
+
+    _selectSimplifiedAction = new QAction{this};
+    _selectSimplifiedAction->setShortcut(QKeySequence{"Ctrl+1"});
+    connect(_selectSimplifiedAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::selectSimplified);
+    _searchMenu->addAction(_selectSimplifiedAction);
+
+    _selectTraditionalAction = new QAction{this};
+    _selectTraditionalAction->setShortcut(QKeySequence{"Ctrl+2"});
+    connect(_selectTraditionalAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::selectTraditional);
+    _searchMenu->addAction(_selectTraditionalAction);
+
+    _selectJyutpingAction = new QAction{this};
+    _selectJyutpingAction->setShortcut(QKeySequence{"Ctrl+3"});
+    connect(_selectJyutpingAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::selectJyutping);
+    _searchMenu->addAction(_selectJyutpingAction);
+
+    _selectPinyinAction = new QAction{this};
+    _selectPinyinAction->setShortcut(QKeySequence{"Ctrl+4"});
+    connect(_selectPinyinAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::selectPinyin);
+    _searchMenu->addAction(_selectPinyinAction);
+
+    _selectEnglishAction = new QAction{this};
+    _selectEnglishAction->setShortcut(QKeySequence{"Ctrl+5"});
+    connect(_selectEnglishAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::selectEnglish);
+    _searchMenu->addAction(_selectEnglishAction);
 
     _minimizeAction = new QAction{this};
     _minimizeAction->setShortcut(QKeySequence{"Ctrl+M"});
@@ -519,6 +577,41 @@ void MainWindow::paste(void)
 
 void MainWindow::find(void)
 {
+    _mainToolBar->setFocus();
+}
+
+void MainWindow::findAndSelectAll(void)
+{
+    _mainToolBar->selectAllEvent();
+}
+
+void MainWindow::selectSimplified(void)
+{
+    _mainToolBar->changeOptionEvent(Utils::SIMPLIFIED_BUTTON_INDEX);
+    _mainToolBar->setFocus();
+}
+
+void MainWindow::selectTraditional(void)
+{
+    _mainToolBar->changeOptionEvent(Utils::TRADITIONAL_BUTTON_INDEX);
+    _mainToolBar->setFocus();
+}
+
+void MainWindow::selectJyutping(void)
+{
+    _mainToolBar->changeOptionEvent(Utils::JYUTPING_BUTTON_INDEX);
+    _mainToolBar->setFocus();
+}
+
+void MainWindow::selectPinyin(void)
+{
+    _mainToolBar->changeOptionEvent(Utils::PINYIN_BUTTON_INDEX);
+    _mainToolBar->setFocus();
+}
+
+void MainWindow::selectEnglish(void)
+{
+    _mainToolBar->changeOptionEvent(Utils::ENGLISH_BUTTON_INDEX);
     _mainToolBar->setFocus();
 }
 
