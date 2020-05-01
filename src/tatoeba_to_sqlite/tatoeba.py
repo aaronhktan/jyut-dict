@@ -54,7 +54,7 @@ def write(chinese_sentences, nonchinese_sentences, links, db_name):
 
     # Create new tables
     c.execute('''CREATE TABLE chinese_sentences(
-                    chinese_sentence_id INTEGER PRIMARY KEY,
+                    chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE,
                     traditional TEXT,
                     simplified TEXT,
                     pinyin TEXT,
@@ -76,20 +76,20 @@ def write(chinese_sentences, nonchinese_sentences, links, db_name):
                 )''')
 
     c.execute('''CREATE TABLE nonchinese_sentences(
-                    non_chinese_sentence_id INTEGER PRIMARY KEY,
+                    non_chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE,
                     sentence TEXT,
                     language TEXT,
-                    fk_source_id INTEGER,
-                    FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON DELETE CASCADE,
-                    UNIQUE(non_chinese_sentence_id, sentence, fk_source_id) ON CONFLICT IGNORE
+                    UNIQUE(non_chinese_sentence_id, sentence) ON CONFLICT IGNORE
                 )''')
 
     c.execute('''CREATE TABLE sentence_links(
                     fk_chinese_sentence_id INTEGER,
                     fk_non_chinese_sentence_id INTEGER,
+                    fk_source_id INTEGER,
                     direct BOOLEAN,
                     FOREIGN KEY(fk_chinese_sentence_id) REFERENCES sentences(chinese_sentence_id) ON UPDATE CASCADE,
-                    FOREIGN KEY(fk_non_chinese_sentence_id) REFERENCES nonchinese_sentences(non_chinese_sentence_id) ON DELETE CASCADE
+                    FOREIGN KEY(fk_non_chinese_sentence_id) REFERENCES nonchinese_sentences(non_chinese_sentence_id) ON DELETE CASCADE,
+                    FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON DELETE CASCADE
                 )''')
 
     # Add source to tables
@@ -103,8 +103,8 @@ def write(chinese_sentences, nonchinese_sentences, links, db_name):
         return (sentence.id, sentence.traditional, sentence.simplified,
             sentence.pinyin, sentence.jyutping, sentence.language)
 
-    def non_chinese_sentence_to_tuple(sentence, source_id):
-        return (sentence.id, sentence.sentence, sentence.lang, source_id)
+    def non_chinese_sentence_to_tuple(sentence):
+        return (sentence.id, sentence.sentence, sentence.lang)
 
     for key in chinese_sentences:
         sentence = chinese_sentences[key]
@@ -116,15 +116,15 @@ def write(chinese_sentences, nonchinese_sentences, links, db_name):
 
     for key in nonchinese_sentences:
         sentence = nonchinese_sentences[key]
-        c.execute('INSERT INTO nonchinese_sentences values (?,?,?,?)',
-            non_chinese_sentence_to_tuple(sentence, 1))
+        c.execute('INSERT INTO nonchinese_sentences values (?,?,?)',
+            non_chinese_sentence_to_tuple(sentence))
 
     # Add links
-    for source_id in links:
-        target_id = links[source_id].target
-        direct = links[source_id].direct
-        c.execute('INSERT INTO sentence_links values (?,?,?)',
-            (source_id, target_id, direct))
+    for sentence_source_id in links:
+        target_id = links[sentence_source_id].target
+        direct = links[sentence_source_id].direct
+        c.execute('INSERT INTO sentence_links values (?,?,?,?)',
+            (sentence_source_id, target_id, 1, direct))
 
     # Create indices
     # c.execute('CREATE INDEX fk_chinese_sentence_id_index ON sentence_links(fk_chinese_sentence_id)')
