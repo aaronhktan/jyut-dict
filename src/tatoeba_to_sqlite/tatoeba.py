@@ -89,7 +89,7 @@ def write(chinese_sentences, nonchinese_sentences, links, db_name):
                     fk_non_chinese_sentence_id INTEGER,
                     direct BOOLEAN,
                     FOREIGN KEY(fk_chinese_sentence_id) REFERENCES sentences(chinese_sentence_id) ON UPDATE CASCADE,
-                    FOREIGN KEY(fk_non_chinese_sentence_id) REFERENCES nonchinese_sentences(non_chinese_sentence_id) ON DELETE SET NULL
+                    FOREIGN KEY(fk_non_chinese_sentence_id) REFERENCES nonchinese_sentences(non_chinese_sentence_id) ON DELETE CASCADE
                 )''')
 
     # Add source to tables
