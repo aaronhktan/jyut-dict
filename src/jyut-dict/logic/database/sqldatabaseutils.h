@@ -32,6 +32,14 @@ public:
 private:
     std::shared_ptr<SQLDatabaseManager> _manager;
 
+    bool deleteSourceFromDatabase(std::string source);
+
+    bool removeDefinitionsFromDatabase(void);
+    bool removeSentencesFromDatabase(void);
+
+    bool addDefinitionSource(void);
+    bool addSentenceSource(void);
+
 signals:
     void deletingDefinitions();
     void totalToDelete(int number);
@@ -39,6 +47,8 @@ signals:
     void rebuildingIndexes();
     void cleaningUp();
     void finishedDeletion(bool success, QString reason="", QString description="");
+
+    void deletingSentences();
 
     void insertingSource();
     void insertingEntries();

@@ -1,5 +1,7 @@
 #include "sqldatabaseutils.h"
 
+#include "logic/utils/utils.h"
+
 #include <QtSql>
 
 #include <chrono>
@@ -75,7 +77,7 @@ bool SQLDatabaseUtils::readSources(std::vector<DictionaryMetadata> &sources)
     return true;
 }
 
-bool SQLDatabaseUtils::removeSource(std::string source)
+bool SQLDatabaseUtils::deleteSourceFromDatabase(std::string source)
 {
     QSqlQuery query{_manager->getDatabase()};
     query.exec("PRAGMA foreign_keys = ON");
@@ -91,9 +93,15 @@ bool SQLDatabaseUtils::removeSource(std::string source)
     query.exec("COMMIT");
     query.exec("PRAGMA foreign_keys = OFF");
 
+    return true;
+}
+
+bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void)
+{
+    QSqlQuery query{_manager->getDatabase()};
+
     emit deletingDefinitions();
 
-    query.exec("BEGIN TRANSACTION");
     query.exec("DELETE FROM definitions_fts");
     query.exec("DELETE FROM entries_fts");
 
@@ -106,9 +114,12 @@ bool SQLDatabaseUtils::removeSource(std::string source)
                " WHERE definitions.fk_entry_id IS NULL)");
     int numberToDelete = 0;
     while (query.next()) {
+        qDebug() << "count found";
         numberToDelete = query.value(0).toInt();
         emit totalToDelete(numberToDelete);
     }
+
+    qDebug() << numberToDelete;
 
     query.exec("SAVEPOINT row_delection");
     for (int i = 0; i < numberToDelete; i += 1000) {
@@ -129,47 +140,101 @@ bool SQLDatabaseUtils::removeSource(std::string source)
     query.exec("INSERT INTO definitions_fts (rowid, definition) "
                "SELECT rowid, definition FROM definitions");
     query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
-    query.exec("COMMIT");
 
     emit cleaningUp();
     query.exec("VACUUM");
 
-    emit finishedDeletion(true);
     return true;
 }
 
-bool SQLDatabaseUtils::addSource(std::string filepath)
+bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
 {
     QSqlQuery query{_manager->getDatabase()};
 
-    query.prepare("ATTACH DATABASE ? AS db");
-    query.addBindValue(filepath.c_str());
+    emit deletingSentences();
+
+    // Remove Chinese sentences that are no longer linked to any definitions
+    //
+    // The result of the left join is:
+    // chinese_sentences_id     fk_chinese_sentence_id
+    // 12345                    12345                   // Linked sentence
+    // 12346                    NULL                    // Unlinked sentence
+    //
+    // Then, we filter with WHERE to find all chinese_sentence_id with no
+    // fk_chinese_sentence_id referencing it, and DELETE FROM chinese_sentences.
+
+    query.exec("DELETE FROM chinese_sentences "
+               "WHERE chinese_sentences.chinese_sentence_id IN "
+               "(SELECT chinese_sentences.chinese_sentence_id FROM "
+               "chinese_sentences LEFT JOIN sentence_links "
+               "ON chinese_sentences.chinese_sentence_id = "
+               "sentence_links.fk_chinese_sentence_id "
+               "WHERE sentence_links.fk_chinese_sentence_id IS NULL)");
+
+    // Remove non-Chinese sentences that are no longer linked with the same
+    // principles as above
+    query.exec("DELETE FROM nonchinese_sentences "
+               "WHERE nonchinese_sentences.non_chinese_sentence_id IN "
+               "(SELECT nonchinese_sentences.non_chinese_sentence_id FROM "
+               "nonchinese_sentences LEFT JOIN sentence_links "
+               "ON nonchinese_sentences.non_chinese_sentence_id = "
+               "sentence_links.fk_non_chinese_sentence_id "
+               "WHERE sentence_links.fk_non_chinese_sentence_id IS NULL)");
+
+    return true;
+}
+
+bool SQLDatabaseUtils::removeSource(std::string source)
+{
+    QSqlQuery query{_manager->getDatabase()};
+
+    // Determine what type of source it is based on the "other" field
+    query.prepare("SELECT other FROM sources WHERE sourcename = ?");
+    query.addBindValue(source.c_str());
     query.exec();
 
-    query.exec("PRAGMA db.user_version");
-    int version = -1;
+    int otherIndex = query.record().indexOf("other");
+    std::string type = "";
     while (query.next()) {
-        version = query.value(0).toInt();
+        std::string other = query.value(otherIndex).toString().toStdString();
+        std::vector<std::string> metadata;
+        Utils::split(other, "●", metadata);
+
+        if (metadata.size() >= 1) {
+            type = metadata[0];
+        }
     }
 
-    if (version != CURRENT_DATABASE_VERSION) {
-        // This usually happens so quickly that the slot(s) are not yet
-        // connected to the finishedAddition() signal. Sleep for 1000ms
-        // to make time for all connections to be made.
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        query.exec("DETACH DATABASE db");
-        emit finishedAddition(false,
-                              tr("Database versions do not match. "
-                                 "Only dictionaries with the same versions "
-                                 "can be added."),
-                              tr("Current version is %1, file version is %2.")
-                                  .arg(CURRENT_DATABASE_VERSION)
-                                  .arg(version));
-        return false;
-    }
+    deleteSourceFromDatabase(source);
 
+    bool success = false;
     query.exec("BEGIN TRANSACTION");
+    try {
+        qDebug() << type.c_str();
+        if (type.length() == 0) {
+            if (!removeDefinitionsFromDatabase()) {
+                throw std::runtime_error("Failure to remove definitions");
+            }
+        }
+        if (type.find("sentences") != std::string::npos) {
+            if (!removeSentencesFromDatabase()) {
+                throw std::runtime_error("Failure to remove sentences");
+            }
+        }
+        query.exec("COMMIT");
+        success = true;
+    } catch (const std::exception &e) {
+        qDebug() << e.what();
+        query.exec("ROLLBACK");
+    }
 
+    emit finishedDeletion(success);
+    return success;
+}
+
+bool SQLDatabaseUtils::addDefinitionSource(void)
+{
+    QSqlQuery query{_manager->getDatabase()};
     query.exec("DROP INDEX fk_entry_id_index");
     query.exec("DELETE FROM definitions_fts");
     query.exec("DELETE FROM entries_fts");
@@ -183,9 +248,7 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
                "FROM db.sources");
 
     if (query.lastError().isValid()) {
-        query.exec("ROLLBACK");
         QString error = query.lastError().text();
-        query.exec("DETACH DATABASE db");
 
         emit finishedAddition(
             false,
@@ -230,11 +293,148 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
     query.exec("INSERT INTO definitions_fts (rowid, definition) "
                "SELECT rowid, definition FROM definitions");
     query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
-    query.exec("COMMIT");
-
-    query.exec("DETACH DATABASE db");
-
-    emit finishedAddition(true);
 
     return true;
+}
+
+bool SQLDatabaseUtils::addSentenceSource(void)
+{
+    QSqlQuery query{_manager->getDatabase()};
+
+    // Copy the source from the file to database
+    query.exec(
+        "INSERT INTO sources "
+        " (sourcename, sourceshortname, version, description, legal, link, "
+        " update_url, other) "
+        "SELECT sourcename, sourceshortname, version, description, legal, "
+        " link, update_url, other "
+        "FROM db.sources");
+
+    // Copy the Chinese sentences
+    query.exec(
+        "INSERT INTO chinese_sentences "
+        " (chinese_sentence_id, traditional, simplified, pinyin, jyutping, "
+        "  language) "
+        "SELECT chinese_sentence_id, traditional, simplified, pinyin, jyutping,"
+        " language "
+        "FROM db.chinese_sentences");
+
+    // Copy the non-Chinese sentences
+    query.exec("INSERT INTO nonchinese_sentences("
+               " non_chinese_sentence_id, sentence, language)"
+               "SELECT non_chinese_sentence_id, sentence, language"
+               "FROM db.nonchinese_sentences");
+
+    // Because the source number is different between every database, we need to
+    // change the source number for every sentence link.
+    // To do this, create a temporary table that mirrors sentence_link table,
+    // but replaces the fk_source_id with the name of the source
+    query.exec("CREATE TEMPORARY TABLE links_tmp AS "
+               "SELECT sentence_links.fk_chinese_sentence_id as "
+               "  fk_chinese_sentence_id,"
+               " sentence_links.fk_non_chinese_sentence_id as "
+               "  fk_non_chinese_sentence_id,"
+               " sources.sourcename AS sourcename,"
+               " sentence_links.direct as direct"
+               "FROM db.sentence_links, db.sources"
+               "WHERE db.sentence_links.fk_source_id = db.sources.source_id");
+
+    // Then, use that source name to find its source id in the main database
+    // and use that source_id to insert into the main database.
+    query.exec("INSERT INTO sentence_links("
+               " fk_chinese_sentence_id, fk_non_chinese_sentence_id, "
+               " fk_source_id, direct)"
+               "SELECT l.fk_chinese_sentence_id, l.fk_non_chinese_sentence_id,"
+               " s.source_id, l.direct"
+               "FROM links_tmp as l, sources as s"
+               "WHERE l.sourcename = s.sourcename");
+
+    return true;
+}
+
+bool SQLDatabaseUtils::addSource(std::string filepath)
+{
+    QSqlQuery query{_manager->getDatabase()};
+
+    query.prepare("ATTACH DATABASE ? AS db");
+    query.addBindValue(filepath.c_str());
+    query.exec();
+
+    // This usually happens so quickly that the slot(s) are not yet
+    // connected to the finishedAddition() signal. Sleep for 1000ms
+    // to make time for all connections to be made.
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    query.exec("PRAGMA db.user_version");
+    int version = -1;
+    while (query.next()) {
+        version = query.value(0).toInt();
+    }
+
+    if (version != CURRENT_DATABASE_VERSION) {
+        query.exec("DETACH DATABASE db");
+        emit finishedAddition(false,
+                              tr("Database versions do not match. "
+                                 "Only dictionaries with the same versions "
+                                 "can be added."),
+                              tr("Current version is %1, file version is %2.")
+                                  .arg(CURRENT_DATABASE_VERSION)
+                                  .arg(version));
+        return false;
+    }
+
+    query.exec("BEGIN TRANSACTION");
+
+    // Check for presence of "definitions" and "sentence_links" tables; if they
+    // exist, then add their contents to the main database
+    bool hasDefinitions = false;
+    bool hasSentences = false;
+
+    query.prepare("SELECT name FROM db.sqlite_master WHERE type=? AND name=?");
+    query.addBindValue("table");
+    query.addBindValue("definitions");
+    query.exec();
+    int nameIndex = query.record().indexOf("name");
+    while (query.next()) {
+        hasDefinitions = true;
+    }
+
+    query.prepare("SELECT name FROM db.sqlite_master WHERE type=? "
+                  "AND name=?");
+    query.addBindValue("table");
+    query.addBindValue("sentence_links");
+    query.exec();
+    nameIndex = query.record().indexOf("name");
+    while (query.next()) {
+        qDebug() << query.value(nameIndex).toString();
+    }
+    if (query.numRowsAffected() >= 1) {
+        hasSentences = true;
+    } else {
+        qDebug() << "no sentence_links";
+    }
+
+    bool success = false;
+    try {
+        if (hasDefinitions) {
+            if (!addDefinitionSource()) {
+                throw std::runtime_error("Unable to add definitions");
+            }
+        }
+        if (hasSentences) {
+            if (!addSentenceSource()) {
+                throw std::runtime_error("Unable to add sentences");
+            }
+        }
+
+        success = true;
+        query.exec("COMMIT");
+    } catch (std::exception &e) {
+        qDebug() << e.what();
+        query.exec("ROLLBACK");
+    }
+
+    query.exec("DETACH DATABASE db");
+    emit finishedAddition(success);
+    return success;
 }
