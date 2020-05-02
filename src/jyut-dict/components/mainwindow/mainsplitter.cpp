@@ -1,6 +1,6 @@
 #include "mainsplitter.h"
 
-#include "components/resultlistview.h"
+#include "components/entrysearchresult/resultlistview.h"
 #include "logic/settings/settingsutils.h"
 
 #include <QList>

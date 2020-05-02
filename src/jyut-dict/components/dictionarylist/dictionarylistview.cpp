@@ -1,7 +1,7 @@
 #include "dictionarylistview.h"
 
-#include "components/dictionarylistdelegate.h"
-#include "components/dictionarylistmodel.h"
+#include "components/dictionarylist/dictionarylistdelegate.h"
+#include "components/dictionarylist/dictionarylistmodel.h"
 
 #include <QGuiApplication>
 

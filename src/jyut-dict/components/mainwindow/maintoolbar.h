@@ -1,8 +1,8 @@
 #ifndef MAINTOOLBAR_H
 #define MAINTOOLBAR_H
 
-#include "components/searchlineedit.h"
-#include "components/searchoptionsradiogroupbox.h"
+#include "components/mainwindow/searchlineedit.h"
+#include "components/mainwindow/searchoptionsradiogroupbox.h"
 #include "logic/search/isearchoptionsmediator.h"
 #include "logic/search/sqlsearch.h"
 #include "logic/utils/utils.h"

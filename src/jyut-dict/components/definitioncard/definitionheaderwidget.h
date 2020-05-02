@@ -1,7 +1,7 @@
 #ifndef DEFINITIONHEADERWIDGET_H
 #define DEFINITIONHEADERWIDGET_H
 
-#include "components/isectionheaderwidget.h"
+#include "components/definitioncard/icardheaderwidget.h"
 
 #include <QEvent>
 #include <QLabel>
@@ -13,7 +13,7 @@
 // The DefinitionHeaderWidget shows the source of definitions
 // It contains a frame as a divider and the ability to set the source to display
 
-class DefinitionHeaderWidget : public QWidget, public ISectionHeaderWidget
+class DefinitionHeaderWidget : public QWidget, public ICardHeaderWidget
 {
 public:
     explicit DefinitionHeaderWidget(QWidget *parent = nullptr);

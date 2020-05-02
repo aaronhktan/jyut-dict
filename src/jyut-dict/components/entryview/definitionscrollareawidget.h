@@ -1,8 +1,8 @@
 #ifndef DEFINITIONSCROLLAREAWIDGET_H
 #define DEFINITIONSCROLLAREAWIDGET_H
 
-#include "components/definitionwidget.h"
-#include "components/entryheaderwidget.h"
+#include "components/entryview/entrycontentwidget.h"
+#include "components/entryview/entryheaderwidget.h"
 #include "components/loadingwidget.h"
 
 #include <QEvent>
@@ -29,7 +29,7 @@ private:
     QVBoxLayout *_scrollAreaLayout;
 
     EntryHeaderWidget *_entryHeaderWidget;
-    DefinitionWidget *_definitionWidget;
+    EntryContentWidget *_entryContentWidget;
     LoadingWidget *_loadingWidget;
 
 signals:

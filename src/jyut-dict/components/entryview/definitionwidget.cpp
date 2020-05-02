@@ -1,28 +1,28 @@
-#include "definitionwidget.h"
+#include "entrycontentwidget.h"
 
-DefinitionWidget::DefinitionWidget(QWidget *parent) : QWidget(parent)
+EntryContentWidget::EntryContentWidget(QWidget *parent) : QWidget(parent)
 {
     _definitionSectionsLayout = new QVBoxLayout{this};
     _definitionSectionsLayout->setContentsMargins(0, 0, 0, 0);
     _definitionSectionsLayout->setSpacing(15);
 }
 
-DefinitionWidget::DefinitionWidget(Entry &entry, QWidget *parent)
-    : DefinitionWidget(parent)
+EntryContentWidget::EntryContentWidget(Entry &entry, QWidget *parent)
+    : EntryContentWidget(parent)
 {
     setEntry(entry);
 }
 
-DefinitionWidget::~DefinitionWidget()
+EntryContentWidget::~EntryContentWidget()
 {
 
 }
 
-void DefinitionWidget::setEntry(const Entry &entry)
+void EntryContentWidget::setEntry(const Entry &entry)
 {
     cleanup();
     for (auto definitionsSet : entry.getDefinitionsSets()) {
-        _definitionSections.push_back(new DefinitionSectionWidget{this});
+        _definitionSections.push_back(new DefinitionCardWidget{this});
         _definitionSections.back()->setEntry(definitionsSet);
 
         _definitionSectionsLayout->addWidget(_definitionSections.back());
@@ -32,7 +32,7 @@ void DefinitionWidget::setEntry(const Entry &entry)
     _definitionSectionsLayout->activate();
 }
 
-void DefinitionWidget::cleanup()
+void EntryContentWidget::cleanup()
 {
     for (auto section : _definitionSections) {
         _definitionSectionsLayout->removeWidget(section);

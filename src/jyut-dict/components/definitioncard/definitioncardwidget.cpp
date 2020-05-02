@@ -1,4 +1,4 @@
-#include "definitionsectionwidget.h"
+#include "definitioncardwidget.h"
 
 #include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
@@ -10,7 +10,7 @@
 #include <QStyle>
 #include <QTimer>
 
-DefinitionSectionWidget::DefinitionSectionWidget(QWidget *parent) : QWidget(parent)
+DefinitionCardWidget::DefinitionCardWidget(QWidget *parent) : QWidget(parent)
 {
     setObjectName("DefinitionSectionWidget");
 
@@ -31,11 +31,11 @@ DefinitionSectionWidget::DefinitionSectionWidget(QWidget *parent) : QWidget(pare
 #endif
 }
 
-DefinitionSectionWidget::~DefinitionSectionWidget()
+DefinitionCardWidget::~DefinitionCardWidget()
 {
 }
 
-void DefinitionSectionWidget::changeEvent(QEvent *event)
+void DefinitionCardWidget::changeEvent(QEvent *event)
 {
 #ifdef Q_OS_MAC
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
@@ -54,7 +54,7 @@ void DefinitionSectionWidget::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
-void DefinitionSectionWidget::setEntry(const DefinitionsSet &definitionsSet)
+void DefinitionCardWidget::setEntry(const DefinitionsSet &definitionsSet)
 {
     _source = definitionsSet.getSourceShortString();
     _definitionHeaderWidget->setSectionTitle(
@@ -66,7 +66,7 @@ void DefinitionSectionWidget::setEntry(const DefinitionsSet &definitionsSet)
     _definitionWidget->setEntry(definitionsSet.getDefinitions());
 }
 
-void DefinitionSectionWidget::translateUI()
+void DefinitionCardWidget::translateUI()
 {
     _definitionHeaderWidget->setSectionTitle(
         QCoreApplication::translate(Strings::STRINGS_CONTEXT,
@@ -75,7 +75,7 @@ void DefinitionSectionWidget::translateUI()
         + " (" + _source + ")");
 }
 
-void DefinitionSectionWidget::setStyle(bool use_dark)
+void DefinitionCardWidget::setStyle(bool use_dark)
 {
     QString styleSheet = "QWidget#DefinitionSectionWidget { "
                          " background-color: %1; "

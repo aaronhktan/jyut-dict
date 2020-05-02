@@ -1,7 +1,7 @@
 #ifndef RESULTLISTVIEW_H
 #define RESULTLISTVIEW_H
 
-#include "components/resultlistdelegate.h"
+#include "components/entrysearchresult/resultlistdelegate.h"
 #include "logic/entry/entry.h"
 #include "logic/search/sqlsearch.h"
 

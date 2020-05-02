@@ -1,16 +1,16 @@
-#ifndef ISECTIONHEADER_H
-#define ISECTIONHEADER_H
+#ifndef ICARDHEADER_H
+#define ICARDHEADER_H
 
 #include <string>
 
 // Interface for header widgets, displaying the source of definitions
 
-class ISectionHeaderWidget
+class ICardHeaderWidget
 {
 public:
     virtual void setSectionTitle(std::string name) = 0;
 
-    virtual ~ISectionHeaderWidget() = default;
+    virtual ~ICardHeaderWidget() = default;
 };
 
-#endif // ISECTIONHEADER_H
+#endif // ICARDHEADER_H

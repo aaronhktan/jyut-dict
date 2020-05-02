@@ -1,6 +1,6 @@
 #include "resultlistview.h"
 
-#include "components/resultlistmodel.h"
+#include "components/entrysearchresult/resultlistmodel.h"
 #include "logic/search/sqlsearch.h"
 
 #include <QGuiApplication>

@@ -1,7 +1,7 @@
 #ifndef ISEARCHOPTIONSMEDIATOR_H
 #define ISEARCHOPTIONSMEDIATOR_H
 
-#include "components/isearchlineedit.h"
+#include "components/mainwindow/isearchlineedit.h"
 #include "logic/search/searchparameters.h"
 
 // Interface for mediator between search parameter input and output

@@ -1,7 +1,7 @@
 #ifndef DEFINITIONSCROLLAREA_H
 #define DEFINITIONSCROLLAREA_H
 
-#include "components/definitionscrollareawidget.h"
+#include "components/entryview/definitionscrollareawidget.h"
 #include "logic/entry/entry.h"
 
 #include <QResizeEvent>

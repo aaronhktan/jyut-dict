@@ -1,6 +1,6 @@
 #include "definitionscrollarea.h"
 
-#include "components/definitionscrollareawidget.h"
+#include "components/entryview/definitionscrollareawidget.h"
 #include "logic/entry/definitionsset.h"
 #include "logic/entry/entry.h"
 #include "logic/entry/sentence.h"

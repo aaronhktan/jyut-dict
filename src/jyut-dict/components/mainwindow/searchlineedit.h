@@ -1,7 +1,7 @@
 #ifndef SEARCHLINEEDIT_H
 #define SEARCHLINEEDIT_H
 
-#include "components/isearchlineedit.h"
+#include "components/mainwindow/isearchlineedit.h"
 #include "logic/search/isearch.h"
 #include "logic/search/isearchoptionsmediator.h"
 #include "logic/search/sqlsearch.h"

@@ -1,8 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "components/mainsplitter.h"
-#include "components/maintoolbar.h"
+#include "components/mainwindow/mainsplitter.h"
+#include "components/mainwindow/maintoolbar.h"
 #include "logic/analytics/analytics.h"
 #include "logic/update/githubreleasechecker.h"
 #include "logic/database/sqldatabasemanager.h"

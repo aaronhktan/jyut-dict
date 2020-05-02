@@ -31,30 +31,30 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
+    components/definitioncard/definitioncardwidget.cpp \
+    components/definitioncard/definitioncontentwidget.cpp \
+    components/definitioncard/definitionheaderwidget.cpp \
+    components/dictionarylist/dictionarylistdelegate.cpp \
+    components/dictionarylist/dictionarylistmodel.cpp \
+    components/dictionarylist/dictionarylistview.cpp \
+    components/entrysearchresult/resultlistdelegate.cpp \
+    components/entrysearchresult/resultlistmodel.cpp \
+    components/entrysearchresult/resultlistview.cpp \
+    components/entryview/definitionscrollarea.cpp \
+    components/entryview/definitionscrollareawidget.cpp \
+    components/entryview/definitionwidget.cpp \
+    components/entryview/entryheaderwidget.cpp \
     components/loadingwidget.cpp \
+    components/mainwindow/mainsplitter.cpp \
+    components/mainwindow/maintoolbar.cpp \
+    components/mainwindow/searchlineedit.cpp \
+    components/mainwindow/searchoptionsradiogroupbox.cpp \
+    components/settings/advancedtab.cpp \
+    components/settings/contacttab.cpp \
+    components/settings/dictionarytab.cpp \
+    components/settings/settingstab.cpp \
     logic/search/sqlsearch.cpp \
     main.cpp \
-    components/advancedtab.cpp \
-    components/contacttab.cpp \
-    components/definitioncontentwidget.cpp \
-    components/definitionheaderwidget.cpp \
-    components/definitionscrollarea.cpp \
-    components/definitionscrollareawidget.cpp \
-    components/definitionsectionwidget.cpp \
-    components/definitionwidget.cpp \
-    components/dictionarylistdelegate.cpp \
-    components/dictionarylistmodel.cpp \
-    components/dictionarylistview.cpp \
-    components/dictionarytab.cpp \
-    components/entryheaderwidget.cpp \
-    components/mainsplitter.cpp \
-    components/maintoolbar.cpp \
-    components/resultlistdelegate.cpp \
-    components/resultlistmodel.cpp \
-    components/resultlistview.cpp \
-    components/searchlineedit.cpp \
-    components/searchoptionsradiogroupbox.cpp \
-    components/settingstab.cpp \
     dialogs/defaultdialog.cpp \
     dialogs/dictionarytabfailuredialog.cpp \
     dialogs/entryspeakerrordialog.cpp \
@@ -81,30 +81,30 @@ SOURCES += \
     windows/updatewindow.cpp
 
 HEADERS += \
-    components/advancedtab.h \
-    components/contacttab.h \
-    components/definitioncontentwidget.h \
-    components/definitionheaderwidget.h \
-    components/definitionscrollarea.h \
-    components/definitionscrollareawidget.h \
-    components/definitionsectionwidget.h \
-    components/definitionwidget.h \
-    components/dictionarylistdelegate.h \
-    components/dictionarylistmodel.h \
-    components/dictionarylistview.h \
-    components/dictionarytab.h \
-    components/entryheaderwidget.h \
-    components/isearchlineedit.h \
-    components/isectionheaderwidget.h \
+    components/definitioncard/definitioncardwidget.h \
+    components/definitioncard/definitioncontentwidget.h \
+    components/definitioncard/definitionheaderwidget.h \
+    components/definitioncard/icardheaderwidget.h \
+    components/dictionarylist/dictionarylistdelegate.h \
+    components/dictionarylist/dictionarylistmodel.h \
+    components/dictionarylist/dictionarylistview.h \
+    components/entrysearchresult/resultlistdelegate.h \
+    components/entrysearchresult/resultlistmodel.h \
+    components/entrysearchresult/resultlistview.h \
+    components/entryview/definitionscrollarea.h \
+    components/entryview/definitionscrollareawidget.h \
+    components/entryview/entrycontentwidget.h \
+    components/entryview/entryheaderwidget.h \
     components/loadingwidget.h \
-    components/mainsplitter.h \
-    components/maintoolbar.h \
-    components/resultlistdelegate.h \
-    components/resultlistmodel.h \
-    components/resultlistview.h \
-    components/searchlineedit.h \
-    components/searchoptionsradiogroupbox.h \
-    components/settingstab.h \
+    components/mainwindow/isearchlineedit.h \
+    components/mainwindow/mainsplitter.h \
+    components/mainwindow/maintoolbar.h \
+    components/mainwindow/searchlineedit.h \
+    components/mainwindow/searchoptionsradiogroupbox.h \
+    components/settings/advancedtab.h \
+    components/settings/contacttab.h \
+    components/settings/dictionarytab.h \
+    components/settings/settingstab.h \
     dialogs/defaultdialog.h \
     dialogs/dictionarytabfailuredialog.h \
     dialogs/entryspeakerrordialog.h \

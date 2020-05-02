@@ -18,13 +18,13 @@ DefinitionScrollAreaWidget::DefinitionScrollAreaWidget(QWidget *parent)
     _scrollAreaLayout->setContentsMargins(11, 11, 11, 11);
 
     _entryHeaderWidget = new EntryHeaderWidget{this};
-    _definitionWidget = new DefinitionWidget{this};
+    _entryContentWidget = new EntryContentWidget{this};
     _loadingWidget = new LoadingWidget{this};
     _loadingWidget->setVisible(false);
 
     // Add all widgets to main layout
     _scrollAreaLayout->addWidget(_entryHeaderWidget);
-    _scrollAreaLayout->addWidget(_definitionWidget);
+    _scrollAreaLayout->addWidget(_entryContentWidget);
     _scrollAreaLayout->addWidget(_loadingWidget);
     _scrollAreaLayout->setAlignment(_loadingWidget, Qt::AlignHCenter);
     _scrollAreaLayout->addStretch(1);
@@ -55,7 +55,7 @@ void DefinitionScrollAreaWidget::changeEvent(QEvent *event)
 void DefinitionScrollAreaWidget::setEntry(const Entry &entry)
 {
     _entryHeaderWidget->setEntry(entry);
-    _definitionWidget->setEntry(entry);
+    _entryContentWidget->setEntry(entry);
 
     _loadingWidget->setVisible(true);
 }

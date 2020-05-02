@@ -1,6 +1,6 @@
 #include "searchoptionsmediator.h"
 
-#include <components/searchoptionsradiogroupbox.h>
+#include <components/mainwindow/searchoptionsradiogroupbox.h>
 
 SearchOptionsMediator::SearchOptionsMediator()
 {

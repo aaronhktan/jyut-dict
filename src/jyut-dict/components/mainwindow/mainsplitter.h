@@ -1,7 +1,7 @@
 #ifndef MAINSPLITTER_H
 #define MAINSPLITTER_H
 
-#include "components/definitionscrollarea.h"
+#include "components/entryview/definitionscrollarea.h"
 #include "logic/analytics/analytics.h"
 #include "logic/entry/entry.h"
 #include "logic/search/sqlsearch.h"
