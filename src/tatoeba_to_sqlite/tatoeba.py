@@ -33,8 +33,6 @@ class NonChineseSentence(object):
         self.sentence = sentence
         self.lang = lang
 
-Link = collections.namedtuple('Link', ['source', 'target', 'direct'])
-
 def write(chinese_sentences, nonchinese_sentences, links, db_name):
     print("Writing to database file")
 
@@ -120,12 +118,11 @@ def write(chinese_sentences, nonchinese_sentences, links, db_name):
             non_chinese_sentence_to_tuple(sentence))
 
     # Add links
-    for link in links:
-        source_sentence_id = link.source
-        target_target_id = link.target
-        direct = link.direct
-        c.execute('INSERT INTO sentence_links values (?,?,?,?)',
-            (source_sentence_id, target_target_id, 1, direct))
+    for source_sentence_id in links:
+        for target_sentence_id in links[source_sentence_id]:
+            direct = links[source_sentence_id][target_sentence_id]
+            c.execute('INSERT INTO sentence_links values (?,?,?,?)',
+                (source_sentence_id, target_sentence_id, 1, direct))
 
     # Create indices
     # c.execute('CREATE INDEX fk_chinese_sentence_id_index ON sentence_links(fk_chinese_sentence_id)')
@@ -192,13 +189,15 @@ def parse_links_file(filename, sentences, nonchinese_sentences,
                 continue
 
             split = line.split()
-            first_id = split[0]
-            second_id = split[1]
+            source_id = split[0]
+            target_id = split[1]
 
-            if first_id in sentences and second_id in nonchinese_sentences:
-                links.append(Link(first_id, second_id, True))
-                chinese_sentences_filtered[first_id] = chinese_sentences[first_id]
-                nonchinese_sentences_filtered[second_id] = nonchinese_sentences[second_id]
+            if source_id in sentences and target_id in nonchinese_sentences:
+                if source_id not in links:
+                    links[source_id] = {}
+                links[source_id][target_id] = True
+                chinese_sentences_filtered[source_id] = chinese_sentences[source_id]
+                nonchinese_sentences_filtered[target_id] = nonchinese_sentences[target_id]
 
         # Also add translations of translations
         print("Parsing indirect links...")
@@ -226,7 +225,11 @@ def parse_links_file(filename, sentences, nonchinese_sentences,
             if key in second_intermediate:
                 source_id = first_intermediate[key]
                 target_id = second_intermediate[key]
-                links.append(Link(source_id, target_id, False))
+                if source_id not in links:
+                    links[source_id] = {}
+                if target_id in links[source_id]:
+                    continue
+                links[source_id][target_id] = False
                 chinese_sentences_filtered[source_id] = chinese_sentences[source_id]
                 nonchinese_sentences_filtered[target_id] = nonchinese_sentences[target_id]
 
@@ -241,7 +244,7 @@ if __name__ == '__main__':
     intermediate_ids = set() # Use this to store ids of sentences between source/target
     chinese_sentences_filtered = {} # Store only source sentences that match a target sentence
     nonchinese_sentences_filtered = {} # Store only target sentences that match a source sentence
-    links = []                 # Use this to store all the links between sentences
+    links = {}                 # Use this to store all the links between sentences
     source['name'] = sys.argv[6]
     source['shortname'] = sys.argv[7]
     source['version'] = sys.argv[8]
