@@ -31,6 +31,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
+    components/loadingwidget.cpp \
     main.cpp \
     components/advancedtab.cpp \
     components/contacttab.cpp \
@@ -95,6 +96,7 @@ HEADERS += \
     components/entryheaderwidget.h \
     components/isearchlineedit.h \
     components/isectionheaderwidget.h \
+    components/loadingwidget.h \
     components/mainsplitter.h \
     components/maintoolbar.h \
     components/resultlistdelegate.h \

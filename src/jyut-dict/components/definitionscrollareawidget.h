@@ -3,6 +3,7 @@
 
 #include "components/definitionwidget.h"
 #include "components/entryheaderwidget.h"
+#include "components/loadingwidget.h"
 
 #include <QEvent>
 #include <QVBoxLayout>
@@ -29,6 +30,7 @@ private:
 
     EntryHeaderWidget *_entryHeaderWidget;
     DefinitionWidget *_definitionWidget;
+    LoadingWidget *_loadingWidget;
 
 signals:
 
