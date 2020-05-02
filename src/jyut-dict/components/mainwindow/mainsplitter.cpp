@@ -11,7 +11,7 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLSearch> sqlSearch,
 {
     _analytics = new Analytics{this};
 
-    _definitionScrollArea = new DefinitionScrollArea{this};
+    _definitionScrollArea = new EntryScrollArea{this};
     _resultListView = new ResultListView{sqlSearch, this};
 
     addWidget(_resultListView);
@@ -105,7 +105,7 @@ void MainSplitter::handleDoubleClick(const QModelIndex &selection)
 
     prepareEntry(entry);
 
-    DefinitionScrollArea *area = new DefinitionScrollArea{nullptr};
+    EntryScrollArea *area = new EntryScrollArea{nullptr};
     area->setParent(this, Qt::Window);
     area->setEntry(entry);
 #ifndef Q_OS_MAC

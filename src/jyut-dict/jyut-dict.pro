@@ -40,15 +40,15 @@ SOURCES += \
     components/entrysearchresult/resultlistdelegate.cpp \
     components/entrysearchresult/resultlistmodel.cpp \
     components/entrysearchresult/resultlistview.cpp \
-    components/entryview/definitionscrollarea.cpp \
-    components/entryview/definitionscrollareawidget.cpp \
-    components/entryview/definitionwidget.cpp \
+    components/entryview/entrycontentwidget.cpp \
     components/entryview/entryheaderwidget.cpp \
-    components/loadingwidget.cpp \
+    components/entryview/entryscrollarea.cpp \
+    components/entryview/entryscrollareawidget.cpp \
     components/mainwindow/mainsplitter.cpp \
     components/mainwindow/maintoolbar.cpp \
     components/mainwindow/searchlineedit.cpp \
     components/mainwindow/searchoptionsradiogroupbox.cpp \
+    components/sentencecard/loadingwidget.cpp \
     components/settings/advancedtab.cpp \
     components/settings/contacttab.cpp \
     components/settings/dictionarytab.cpp \
@@ -91,16 +91,16 @@ HEADERS += \
     components/entrysearchresult/resultlistdelegate.h \
     components/entrysearchresult/resultlistmodel.h \
     components/entrysearchresult/resultlistview.h \
-    components/entryview/definitionscrollarea.h \
-    components/entryview/definitionscrollareawidget.h \
     components/entryview/entrycontentwidget.h \
     components/entryview/entryheaderwidget.h \
-    components/loadingwidget.h \
+    components/entryview/entryscrollarea.h \
+    components/entryview/entryscrollareawidget.h \
     components/mainwindow/isearchlineedit.h \
     components/mainwindow/mainsplitter.h \
     components/mainwindow/maintoolbar.h \
     components/mainwindow/searchlineedit.h \
     components/mainwindow/searchoptionsradiogroupbox.h \
+    components/sentencecard/loadingwidget.h \
     components/settings/advancedtab.h \
     components/settings/contacttab.h \
     components/settings/dictionarytab.h \

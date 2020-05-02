@@ -1,6 +1,6 @@
-#include "definitionscrollarea.h"
+#include "entryscrollarea.h"
 
-#include "components/entryview/definitionscrollareawidget.h"
+#include "components/entryview/entryscrollareawidget.h"
 #include "logic/entry/definitionsset.h"
 #include "logic/entry/entry.h"
 #include "logic/entry/sentence.h"
@@ -9,11 +9,11 @@
 
 #define ENTIRE_WIDTH -1
 
-DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent)
+EntryScrollArea::EntryScrollArea(QWidget *parent) : QScrollArea(parent)
 {
     setFrameShape(QFrame::NoFrame);
 
-    _scrollAreaWidget = new DefinitionScrollAreaWidget{this};
+    _scrollAreaWidget = new EntryScrollAreaWidget{this};
 
     setWidget(_scrollAreaWidget);
     setWidgetResizable(true); // IMPORTANT! This makes the scrolling widget resize correctly.
@@ -28,11 +28,11 @@ DefinitionScrollArea::DefinitionScrollArea(QWidget *parent) : QScrollArea(parent
     }
 }
 
-DefinitionScrollArea::~DefinitionScrollArea()
+EntryScrollArea::~EntryScrollArea()
 {
 }
 
-void DefinitionScrollArea::setEntry(const Entry &entry)
+void EntryScrollArea::setEntry(const Entry &entry)
 {
     _scrollAreaWidget->setEntry(entry);
     _scrollAreaWidget->resize(width()
@@ -42,7 +42,7 @@ void DefinitionScrollArea::setEntry(const Entry &entry)
                               _scrollAreaWidget->sizeHint().height());
 }
 
-void DefinitionScrollArea::resizeEvent(QResizeEvent *event)
+void EntryScrollArea::resizeEvent(QResizeEvent *event)
 {
     _scrollAreaWidget->resize(width()
                                   - (verticalScrollBar()->isVisible()

@@ -1,7 +1,7 @@
 #ifndef MAINSPLITTER_H
 #define MAINSPLITTER_H
 
-#include "components/entryview/definitionscrollarea.h"
+#include "components/entryview/entryscrollarea.h"
 #include "logic/analytics/analytics.h"
 #include "logic/entry/entry.h"
 #include "logic/search/sqlsearch.h"
@@ -33,7 +33,7 @@ public:
 private:
     Analytics *_analytics;
 
-    DefinitionScrollArea *_definitionScrollArea;
+    EntryScrollArea *_definitionScrollArea;
     QListView *_resultListView;
 
 private slots:

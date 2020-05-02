@@ -1,4 +1,4 @@
-#include "definitionscrollareawidget.h"
+#include "entryscrollareawidget.h"
 
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -7,14 +7,14 @@
 
 #include <QTimer>
 
-DefinitionScrollAreaWidget::DefinitionScrollAreaWidget(QWidget *parent)
+EntryScrollAreaWidget::EntryScrollAreaWidget(QWidget *parent)
     : QWidget(parent)
 {
     setObjectName("DefinitionScrollAreaWidget");
 
     // Entire Scroll Area
     _scrollAreaLayout = new QVBoxLayout{this};
-    _scrollAreaLayout->setSpacing(25);
+    _scrollAreaLayout->setSpacing(0);
     _scrollAreaLayout->setContentsMargins(11, 11, 11, 11);
 
     _entryHeaderWidget = new EntryHeaderWidget{this};
@@ -36,7 +36,7 @@ DefinitionScrollAreaWidget::DefinitionScrollAreaWidget(QWidget *parent)
 #endif
 }
 
-void DefinitionScrollAreaWidget::changeEvent(QEvent *event)
+void EntryScrollAreaWidget::changeEvent(QEvent *event)
 {
 #if defined(Q_OS_DARWIN)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
@@ -52,7 +52,7 @@ void DefinitionScrollAreaWidget::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
-void DefinitionScrollAreaWidget::setEntry(const Entry &entry)
+void EntryScrollAreaWidget::setEntry(const Entry &entry)
 {
     _entryHeaderWidget->setEntry(entry);
     _entryContentWidget->setEntry(entry);
@@ -60,7 +60,7 @@ void DefinitionScrollAreaWidget::setEntry(const Entry &entry)
     _loadingWidget->setVisible(true);
 }
 
-void DefinitionScrollAreaWidget::setStyle(bool use_dark)
+void EntryScrollAreaWidget::setStyle(bool use_dark)
 {
     QColor backgroundColour = use_dark ? QColor{BACKGROUND_COLOUR_DARK_R,
                                                 BACKGROUND_COLOUR_DARK_G,

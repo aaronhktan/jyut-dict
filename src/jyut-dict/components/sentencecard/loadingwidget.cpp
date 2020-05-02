@@ -60,6 +60,8 @@ void LoadingWidget::setupUI(void)
     _layout->addWidget(_descriptiveLabel);
 
     _layout->setAlignment(_movieLabel, Qt::AlignHCenter);
+
+    setContentsMargins(11, 11, 11, 0);
 }
 
 void LoadingWidget::translateUI(void)

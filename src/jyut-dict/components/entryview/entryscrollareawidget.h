@@ -1,9 +1,9 @@
-#ifndef DEFINITIONSCROLLAREAWIDGET_H
-#define DEFINITIONSCROLLAREAWIDGET_H
+#ifndef ENTRYSCROLLAREAWIDGET_H
+#define ENTRYSCROLLAREAWIDGET_H
 
 #include "components/entryview/entrycontentwidget.h"
 #include "components/entryview/entryheaderwidget.h"
-#include "components/loadingwidget.h"
+#include "components/sentencecard/loadingwidget.h"
 
 #include <QEvent>
 #include <QVBoxLayout>
@@ -12,11 +12,11 @@
 // The DefinitionScrollAreaWidget is the widget that contains other widgets
 // for the DefinitionScrollArea to pan and view.
 
-class DefinitionScrollAreaWidget : public QWidget
+class EntryScrollAreaWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit DefinitionScrollAreaWidget(QWidget *parent = nullptr);
+    explicit EntryScrollAreaWidget(QWidget *parent = nullptr);
 
     void changeEvent(QEvent *event) override;
 
@@ -37,4 +37,4 @@ signals:
 public slots:
 };
 
-#endif // DEFINITIONSCROLLAREAWIDGET_H
+#endif // ENTRYSCROLLAREAWIDGET_H

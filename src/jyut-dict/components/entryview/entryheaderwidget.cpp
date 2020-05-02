@@ -16,7 +16,7 @@
 EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
 {
     _entryHeaderLayout = new QGridLayout{this};
-    _entryHeaderLayout->setContentsMargins(0, 0, 0, 0);
+    _entryHeaderLayout->setContentsMargins(0, 0, 0, 25);
     _entryHeaderLayout->setSpacing(5);
 
     _speaker = std::make_unique<EntrySpeaker>();
