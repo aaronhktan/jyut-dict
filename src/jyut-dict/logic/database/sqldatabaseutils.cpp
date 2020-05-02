@@ -13,6 +13,81 @@ SQLDatabaseUtils::SQLDatabaseUtils(std::shared_ptr<SQLDatabaseManager> manager)
     _manager = manager;
 }
 
+bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(void)
+{
+    QSqlQuery query{_manager->getDatabase()};
+
+    query.exec("BEGIN TRANSACTION");
+
+    query.exec(
+        "CREATE TABLE IF NOT EXISTS chinese_sentences( "
+        "chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
+        "traditional TEXT, "
+        "simplified TEXT, "
+        "pinyin TEXT, "
+        "jyutping TEXT, "
+        "language TEXT, "
+        "UNIQUE(traditional, simplified, pinyin, jyutping) ON CONFLICT IGNORE)");
+
+    query.exec(
+        "CREATE TABLE IF NOT EXISTS nonchinese_sentences( "
+        "non_chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
+        "sentence TEXT, "
+        "language TEXT, "
+        "UNIQUE(non_chinese_sentence_id, sentence) ON CONFLICT IGNORE)");
+
+    query.exec("CREATE TABLE IF NOT EXISTS sentence_links( "
+               "fk_chinese_sentence_id INTEGER, "
+               "fk_non_chinese_sentence_id INTEGER, "
+               "fk_source_id INTEGER, "
+               "direct BOOLEAN, "
+               "FOREIGN KEY(fk_chinese_sentence_id) REFERENCES "
+               "    chinese_sentences(chinese_sentence_id), "
+               "FOREIGN KEY(fk_non_chinese_sentence_id) REFERENCES "
+               "    nonchinese_sentences(non_chinese_sentence_id), "
+               "FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON "
+               "    DELETE CASCADE "
+               ")");
+
+    query.exec("COMMIT");
+
+    // For some reason, PRAGMA user_version=? doesn't work; so just use a QString
+    QString queryString = "PRAGMA user_version=%1";
+    query.prepare(queryString.arg(CURRENT_DATABASE_VERSION));
+    query.exec();
+
+    query.exec("PRAGMA user_version");
+    int version = -1;
+    while (query.next()) {
+        version = query.value(0).toInt();
+    }
+    return true;
+}
+
+bool SQLDatabaseUtils::updateDatabase(void)
+{
+    QSqlQuery query{_manager->getDatabase()};
+
+    query.exec("PRAGMA user_version");
+    int version = -1;
+    while (query.next()) {
+        version = query.value(0).toInt();
+    }
+
+    if (version != CURRENT_DATABASE_VERSION) {
+        switch (version) {
+        case -1:
+        case 1:
+            migrateDatabaseFromOneToTwo();
+            [[clang::fallthrough]]; // TODO: remove this!
+        default:
+            break;
+        }
+    }
+
+    return true;
+}
+
 bool SQLDatabaseUtils::readSources(std::vector<std::pair<std::string, std::string>> &sources)
 {
     QSqlQuery query{_manager->getDatabase()};
@@ -160,23 +235,30 @@ bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
     // Then, we filter with WHERE to find all chinese_sentence_id with no
     // fk_chinese_sentence_id referencing it, and DELETE FROM chinese_sentences.
 
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    query.exec("(SELECT chinese_sentences.chinese_sentence_id "
+               "    FROM chinese_sentences LEFT JOIN sentence_links "
+               "    ON chinese_sentences.chinese_sentence_id = "
+               "     sentence_links.fk_chinese_sentence_id "
+               "    WHERE sentence_links.fk_chinese_sentence_id IS NULL)");
+
     query.exec("DELETE FROM chinese_sentences "
                "WHERE chinese_sentences.chinese_sentence_id IN "
-               "(SELECT chinese_sentences.chinese_sentence_id FROM "
-               "chinese_sentences LEFT JOIN sentence_links "
-               "ON chinese_sentences.chinese_sentence_id = "
-               "sentence_links.fk_chinese_sentence_id "
-               "WHERE sentence_links.fk_chinese_sentence_id IS NULL)");
+               "(SELECT chinese_sentences.chinese_sentence_id "
+               "    FROM chinese_sentences LEFT JOIN sentence_links "
+               "    ON chinese_sentences.chinese_sentence_id = "
+               "     sentence_links.fk_chinese_sentence_id "
+               "    WHERE sentence_links.fk_chinese_sentence_id IS NULL)");
 
     // Remove non-Chinese sentences that are no longer linked with the same
     // principles as above
     query.exec("DELETE FROM nonchinese_sentences "
                "WHERE nonchinese_sentences.non_chinese_sentence_id IN "
-               "(SELECT nonchinese_sentences.non_chinese_sentence_id FROM "
-               "nonchinese_sentences LEFT JOIN sentence_links "
-               "ON nonchinese_sentences.non_chinese_sentence_id = "
-               "sentence_links.fk_non_chinese_sentence_id "
-               "WHERE sentence_links.fk_non_chinese_sentence_id IS NULL)");
+               "(SELECT nonchinese_sentences.non_chinese_sentence_id "
+               "    FROM nonchinese_sentences LEFT JOIN sentence_links "
+               "    ON nonchinese_sentences.non_chinese_sentence_id = "
+               "     sentence_links.fk_non_chinese_sentence_id "
+               "    WHERE sentence_links.fk_non_chinese_sentence_id IS NULL)");
 
     return true;
 }
@@ -318,33 +400,34 @@ bool SQLDatabaseUtils::addSentenceSource(void)
         "FROM db.chinese_sentences");
 
     // Copy the non-Chinese sentences
-    query.exec("INSERT INTO nonchinese_sentences("
-               " non_chinese_sentence_id, sentence, language)"
-               "SELECT non_chinese_sentence_id, sentence, language"
+    query.exec("INSERT INTO nonchinese_sentences( "
+               " non_chinese_sentence_id, sentence, language) "
+               "SELECT non_chinese_sentence_id, sentence, language "
                "FROM db.nonchinese_sentences");
 
     // Because the source number is different between every database, we need to
     // change the source number for every sentence link.
     // To do this, create a temporary table that mirrors sentence_link table,
     // but replaces the fk_source_id with the name of the source
+    query.exec("DROP TABLE IF EXISTS links_tmp");
     query.exec("CREATE TEMPORARY TABLE links_tmp AS "
-               "SELECT sentence_links.fk_chinese_sentence_id as "
-               "  fk_chinese_sentence_id,"
-               " sentence_links.fk_non_chinese_sentence_id as "
-               "  fk_non_chinese_sentence_id,"
-               " sources.sourcename AS sourcename,"
-               " sentence_links.direct as direct"
-               "FROM db.sentence_links, db.sources"
+               " SELECT sentence_links.fk_chinese_sentence_id as "
+               "   fk_chinese_sentence_id,"
+               "  sentence_links.fk_non_chinese_sentence_id as "
+               "   fk_non_chinese_sentence_id,"
+               "  sources.sourcename AS sourcename,"
+               "  sentence_links.direct as direct "
+               "FROM db.sentence_links, db.sources "
                "WHERE db.sentence_links.fk_source_id = db.sources.source_id");
 
     // Then, use that source name to find its source id in the main database
     // and use that source_id to insert into the main database.
-    query.exec("INSERT INTO sentence_links("
+    query.exec("INSERT INTO sentence_links( "
                " fk_chinese_sentence_id, fk_non_chinese_sentence_id, "
-               " fk_source_id, direct)"
-               "SELECT l.fk_chinese_sentence_id, l.fk_non_chinese_sentence_id,"
-               " s.source_id, l.direct"
-               "FROM links_tmp as l, sources as s"
+               " fk_source_id, direct) "
+               "SELECT l.fk_chinese_sentence_id, l.fk_non_chinese_sentence_id, "
+               " s.source_id, l.direct "
+               "FROM links_tmp as l, sources as s "
                "WHERE l.sourcename = s.sourcename");
 
     return true;
@@ -381,8 +464,6 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
         return false;
     }
 
-    query.exec("BEGIN TRANSACTION");
-
     // Check for presence of "definitions" and "sentence_links" tables; if they
     // exist, then add their contents to the main database
     bool hasDefinitions = false;
@@ -409,6 +490,7 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
 
     bool success = false;
     try {
+        query.exec("BEGIN TRANSACTION");
         if (hasDefinitions) {
             if (!addDefinitionSource()) {
                 throw std::runtime_error(
@@ -422,9 +504,9 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
             }
         }
 
-        success = true;
-        emit finishedAddition(true);
         query.exec("COMMIT");
+        success = true;
+        emit finishedAddition(success);
     } catch (std::exception &e) {
         query.exec("ROLLBACK");
         emit finishedAddition(success, e.what());
