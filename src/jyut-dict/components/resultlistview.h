@@ -3,6 +3,7 @@
 
 #include "components/resultlistdelegate.h"
 #include "logic/entry/entry.h"
+#include "logic/search/sqlsearch.h"
 
 #include <QAbstractListModel>
 #include <QEvent>
@@ -24,7 +25,8 @@ class ResultListView : public QListView
     Q_OBJECT
 
 public:
-    explicit ResultListView(QWidget *parent = nullptr);
+    explicit ResultListView(std::shared_ptr<SQLSearch> sqlSearch,
+                            QWidget *parent = nullptr);
 
     void changeEvent(QEvent *event) override;
 

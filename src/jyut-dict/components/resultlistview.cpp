@@ -9,7 +9,8 @@
 #include <QScrollBar>
 #endif
 
-ResultListView::ResultListView(QWidget *parent)
+ResultListView::ResultListView(std::shared_ptr<SQLSearch> sqlSearch,
+                               QWidget *parent)
     : QListView(parent)
 {
     setFrameShape(QFrame::NoFrame);
@@ -19,7 +20,7 @@ ResultListView::ResultListView(QWidget *parent)
     setMinimumWidth(250);
 #endif
 
-    _model = new ResultListModel{{}, this};
+    _model = new ResultListModel{sqlSearch, {}, this};
     setModel(_model);
 
     _delegate = new ResultListDelegate{this};

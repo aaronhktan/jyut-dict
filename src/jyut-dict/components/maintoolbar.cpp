@@ -2,7 +2,7 @@
 
 #include "logic/search/searchoptionsmediator.h"
 
-MainToolBar::MainToolBar(std::shared_ptr<SQLDatabaseManager> manager,
+MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
                          QWidget *parent) : QToolBar(parent)
 {
     _toolBarWidget = new QWidget;
@@ -10,7 +10,7 @@ MainToolBar::MainToolBar(std::shared_ptr<SQLDatabaseManager> manager,
 
     _searchOptions = new SearchOptionsMediator{};
 
-    _searchBar = new SearchLineEdit(_searchOptions, manager, this);
+    _searchBar = new SearchLineEdit(_searchOptions, sqlSearch, this);
     _searchOptions->registerLineEdit(_searchBar);
     _optionsBox = new SearchOptionsRadioGroupBox(_searchOptions, this);
 

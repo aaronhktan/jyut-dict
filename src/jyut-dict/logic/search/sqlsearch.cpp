@@ -11,8 +11,6 @@
 #include <sstream>
 #include <unordered_set>
 
-std::list<ISearchObserver *> SQLSearch::_observers;
-
 SQLSearch::SQLSearch()
     : QObject()
 {

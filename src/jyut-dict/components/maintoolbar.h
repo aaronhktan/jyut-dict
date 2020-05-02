@@ -4,7 +4,7 @@
 #include "components/searchlineedit.h"
 #include "components/searchoptionsradiogroupbox.h"
 #include "logic/search/isearchoptionsmediator.h"
-#include "logic/database/sqldatabasemanager.h"
+#include "logic/search/sqlsearch.h"
 #include "logic/utils/utils.h"
 
 #include <QFocusEvent>
@@ -21,7 +21,7 @@
 class MainToolBar : public QToolBar
 {
 public:
-    explicit MainToolBar(std::shared_ptr<SQLDatabaseManager> manager,
+    explicit MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
                          QWidget *parent = nullptr);
     ~MainToolBar() override;
 

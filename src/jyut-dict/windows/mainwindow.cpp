@@ -65,6 +65,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Instantiate services
     _manager = std::make_shared<SQLDatabaseManager>();
     _manager->openDatabase();
+    _sqlSearch = std::make_shared<SQLSearch>(_manager);
 
     // Get colours from QSettings
     std::unique_ptr<QSettings> settings = Settings::getSettings();
@@ -110,14 +111,14 @@ MainWindow::MainWindow(QWidget *parent) :
     installTranslator();
 
     // Create UI elements
-    _mainToolBar = new MainToolBar{_manager, this};
+    _mainToolBar = new MainToolBar{_sqlSearch, this};
     addToolBar(_mainToolBar);
     setUnifiedTitleAndToolBarOnMac(true);
 #ifdef APPIMAGE
     setWindowIcon(QIcon{":/images/icon.png"});
 #endif
 
-    _mainSplitter = new MainSplitter{this};
+    _mainSplitter = new MainSplitter{_sqlSearch, this};
     setCentralWidget(_mainSplitter);
 
     // Create menu bar and populate it

@@ -12,7 +12,7 @@
 #include <vector>
 
 SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
-                               std::shared_ptr<SQLDatabaseManager> manager,
+                               std::shared_ptr<SQLSearch> sqlSearch,
                                QWidget *parent)
     : QLineEdit(parent)
 {
@@ -43,8 +43,7 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
 
     setMinimumWidth(parent->width() / 2);
 
-    _databaseManager = manager;
-    _search = new SQLSearch{_databaseManager};
+    _search = sqlSearch;
 
     connect(this, &QLineEdit::textChanged,
             [this](){
@@ -54,7 +53,7 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
 
 SearchLineEdit::~SearchLineEdit()
 {
-    delete _search;
+
 }
 
 void SearchLineEdit::checkClearVisibility()

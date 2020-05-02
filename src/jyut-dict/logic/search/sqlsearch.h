@@ -61,7 +61,7 @@ private:
                                 bool surroundWithQuotes=false);
     std::vector<Entry> parseEntries(QSqlQuery &query);
 
-    static std::list<ISearchObserver *> _observers;
+    std::list<ISearchObserver *> _observers;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
     QString _currentSearchString;

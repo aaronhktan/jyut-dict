@@ -32,6 +32,7 @@ CONFIG += c++14
 
 SOURCES += \
     components/loadingwidget.cpp \
+    logic/search/sqlsearch.cpp \
     main.cpp \
     components/advancedtab.cpp \
     components/contacttab.cpp \
@@ -69,7 +70,6 @@ SOURCES += \
     logic/entry/entryspeaker.cpp \
     logic/entry/sentence.cpp \
     logic/search/searchoptionsmediator.cpp \
-    logic/search/sqlsearch.cpp \
     logic/settings/settings.cpp \
     logic/settings/settingsutils.cpp \
     logic/update/githubreleasechecker.cpp \

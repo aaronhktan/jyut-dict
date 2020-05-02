@@ -25,8 +25,9 @@ class ResultListModel : public QAbstractListModel, public ISearchObserver
     Q_OBJECT
 
 public:
-    explicit ResultListModel(std::vector<Entry> entries,
-                            QObject *parent = nullptr);
+    explicit ResultListModel(std::shared_ptr<SQLSearch> sqlSearch,
+                             std::vector<Entry> entries,
+                             QObject *parent = nullptr);
     ~ResultListModel() override;
 
     void callback(const std::vector<Entry> entries, bool emptyQuery) override;
@@ -44,7 +45,7 @@ public:
 private:
     std::vector<Entry> _entries;
 
-    ISearchObservable *_search;
+    std::shared_ptr<ISearchObservable> _search;
 };
 
 #endif // RESULTLISTMODEL_H

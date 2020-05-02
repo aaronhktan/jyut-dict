@@ -4,7 +4,7 @@
 #include "components/isearchlineedit.h"
 #include "logic/search/isearch.h"
 #include "logic/search/isearchoptionsmediator.h"
-#include "logic/database/sqldatabasemanager.h"
+#include "logic/search/sqlsearch.h"
 
 #include <QAction>
 #include <QEvent>
@@ -22,7 +22,7 @@ class SearchLineEdit : public QLineEdit, public ISearchLineEdit
 
 public:
     explicit SearchLineEdit(ISearchOptionsMediator *mediator,
-                            std::shared_ptr<SQLDatabaseManager> manager,
+                            std::shared_ptr<SQLSearch> manager,
                             QWidget *parent = nullptr);
     ~SearchLineEdit() override;
 
@@ -38,9 +38,8 @@ private:
     void translateUI();
     void setStyle(bool use_dark);
 
-    std::shared_ptr<SQLDatabaseManager> _databaseManager;
     ISearchOptionsMediator *_mediator;
-    ISearch *_search;
+    std::shared_ptr<ISearch> _search;
 
     QAction *_searchLineEdit;
     QAction *_clearLineEdit;

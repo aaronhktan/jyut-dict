@@ -1,6 +1,7 @@
 #include "resultlistmodel.h"
 
-ResultListModel::ResultListModel(std::vector<Entry> entries, QObject *parent)
+ResultListModel::ResultListModel(std::shared_ptr<SQLSearch> sqlSearch,
+                                 std::vector<Entry> entries, QObject *parent)
     : QAbstractListModel(parent)
 {
     if (entries.empty()) {
@@ -9,13 +10,12 @@ ResultListModel::ResultListModel(std::vector<Entry> entries, QObject *parent)
         _entries = entries;
     }
 
-    _search = new SQLSearch{};
+    _search = sqlSearch;
     _search->registerObserver(this);
 }
 
 ResultListModel::~ResultListModel()
 {
-    delete _search;
 }
 
 void ResultListModel::callback(const std::vector<Entry> entries, bool emptyQuery)

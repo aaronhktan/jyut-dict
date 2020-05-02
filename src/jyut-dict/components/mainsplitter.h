@@ -23,7 +23,8 @@ class MainSplitter : public QSplitter
 Q_OBJECT
 
 public:
-    explicit MainSplitter(QWidget *parent = nullptr);
+    explicit MainSplitter(std::shared_ptr<SQLSearch> sqlSearch,
+                          QWidget *parent = nullptr);
     ~MainSplitter() override;
 
     void setFocusToResults(void);
