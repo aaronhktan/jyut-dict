@@ -114,12 +114,9 @@ bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void)
                " WHERE definitions.fk_entry_id IS NULL)");
     int numberToDelete = 0;
     while (query.next()) {
-        qDebug() << "count found";
         numberToDelete = query.value(0).toInt();
         emit totalToDelete(numberToDelete);
     }
-
-    qDebug() << numberToDelete;
 
     query.exec("SAVEPOINT row_delection");
     for (int i = 0; i < numberToDelete; i += 1000) {
@@ -210,25 +207,26 @@ bool SQLDatabaseUtils::removeSource(std::string source)
     bool success = false;
     query.exec("BEGIN TRANSACTION");
     try {
-        qDebug() << type.c_str();
         if (type.length() == 0) {
             if (!removeDefinitionsFromDatabase()) {
-                throw std::runtime_error("Failure to remove definitions");
+                throw std::runtime_error(
+                    tr("Failed to remove definitions...").toStdString());
             }
         }
         if (type.find("sentences") != std::string::npos) {
             if (!removeSentencesFromDatabase()) {
-                throw std::runtime_error("Failure to remove sentences");
+                throw std::runtime_error(
+                    tr("Failed to remove sentences").toStdString());
             }
         }
         query.exec("COMMIT");
         success = true;
+        emit finishedDeletion(success);
     } catch (const std::exception &e) {
-        qDebug() << e.what();
+        emit finishedDeletion(success, e.what());
         query.exec("ROLLBACK");
     }
 
-    emit finishedDeletion(success);
     return success;
 }
 
@@ -406,35 +404,32 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
     query.exec();
     nameIndex = query.record().indexOf("name");
     while (query.next()) {
-        qDebug() << query.value(nameIndex).toString();
-    }
-    if (query.numRowsAffected() >= 1) {
         hasSentences = true;
-    } else {
-        qDebug() << "no sentence_links";
     }
 
     bool success = false;
     try {
         if (hasDefinitions) {
             if (!addDefinitionSource()) {
-                throw std::runtime_error("Unable to add definitions");
+                throw std::runtime_error(
+                    tr("Unable to add definitions...").toStdString());
             }
         }
         if (hasSentences) {
             if (!addSentenceSource()) {
-                throw std::runtime_error("Unable to add sentences");
+                throw std::runtime_error(
+                    tr("Unable to add sentences...").toStdString());
             }
         }
 
         success = true;
+        emit finishedAddition(true);
         query.exec("COMMIT");
     } catch (std::exception &e) {
-        qDebug() << e.what();
         query.exec("ROLLBACK");
+        emit finishedAddition(success, e.what());
     }
 
     query.exec("DETACH DATABASE db");
-    emit finishedAddition(success);
     return success;
 }
