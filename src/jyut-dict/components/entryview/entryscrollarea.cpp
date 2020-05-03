@@ -3,7 +3,7 @@
 #include "components/entryview/entryscrollareawidget.h"
 #include "logic/entry/definitionsset.h"
 #include "logic/entry/entry.h"
-#include "logic/entry/sentence.h"
+#include "logic/sentence/sentenceset.h"
 
 #include <QScrollBar>
 

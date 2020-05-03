@@ -3,7 +3,6 @@
 #include "dialogs/noupdatedialog.h"
 #include "logic/database/sqldatabaseutils.h"
 #include "logic/dictionary/dictionarysource.h"
-#include "logic/entry/sentence.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/strings/strings.h"

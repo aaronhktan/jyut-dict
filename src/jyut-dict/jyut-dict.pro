@@ -54,6 +54,8 @@ SOURCES += \
     components/settings/dictionarytab.cpp \
     components/settings/settingstab.cpp \
     logic/search/sqlsearch.cpp \
+    logic/sentence/sentenceset.cpp \
+    logic/sentence/sourcesentence.cpp \
     main.cpp \
     dialogs/defaultdialog.cpp \
     dialogs/dictionarytabfailuredialog.cpp \
@@ -68,7 +70,6 @@ SOURCES += \
     logic/entry/definitionsset.cpp \
     logic/entry/entry.cpp \
     logic/entry/entryspeaker.cpp \
-    logic/entry/sentence.cpp \
     logic/search/searchoptionsmediator.cpp \
     logic/settings/settings.cpp \
     logic/settings/settingsutils.cpp \
@@ -121,7 +122,6 @@ HEADERS += \
     logic/entry/entrycharactersoptions.h \
     logic/entry/entryphoneticoptions.h \
     logic/entry/entryspeaker.h \
-    logic/entry/sentence.h \
     logic/search/isearch.h \
     logic/search/isearchobservable.h \
     logic/search/isearchobserver.h \
@@ -129,6 +129,8 @@ HEADERS += \
     logic/search/searchoptionsmediator.h \
     logic/search/searchparameters.h \
     logic/search/sqlsearch.h \
+    logic/sentence/sentenceset.h \
+    logic/sentence/sourcesentence.h \
     logic/settings/settings.h \
     logic/settings/settingsutils.h \
     logic/strings/strings.h \

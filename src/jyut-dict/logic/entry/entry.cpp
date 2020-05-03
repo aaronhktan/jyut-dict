@@ -53,7 +53,7 @@ Entry::Entry(std::string simplified, std::string traditional,
              std::string jyutping, std::string pinyin,
              std::vector<DefinitionsSet> definitions,
              std::vector<std::string> derivedWords,
-             std::vector<Sentence> sentences)
+             std::vector<SourceSentence> sentences)
     : _simplified{simplified},
       _traditional{traditional},
       _jyutping{jyutping},
@@ -392,12 +392,12 @@ void Entry::setDerivedWords(std::vector<std::string> derivedWords)
     _derivedWords = derivedWords;
 }
 
-std::vector<Sentence> Entry::getSentences(void) const
+std::vector<SourceSentence> Entry::getSentences(void) const
 {
     return _sentences;
 }
 
-void Entry::setSentences(std::vector<Sentence> sentences)
+void Entry::setSentences(std::vector<SourceSentence> sentences)
 {
     _sentences = sentences;
 }

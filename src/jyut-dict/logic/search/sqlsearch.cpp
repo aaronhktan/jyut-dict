@@ -758,7 +758,7 @@ std::vector<Entry> SQLSearch::parseEntries(QSqlQuery &query)
                                 pinyin,
                                 definitionsSets,
                                 std::vector<std::string>{},
-                                std::vector<Sentence>{}));
+                                std::vector<SourceSentence>{}));
     }
 
     return entries;
