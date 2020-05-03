@@ -69,6 +69,12 @@ bool SentenceSet::isEmpty(void) const
     return _sentences.empty();
 }
 
+bool SentenceSet::pushSentence(Sentence::TargetSentence sentence)
+{
+    _sentences.push_back(sentence);
+    return true;
+}
+
 std::string SentenceSet::getSource(void) const
 {
     return _source;
@@ -87,8 +93,9 @@ std::string SentenceSet::getSourceShortString() const
 std::vector<Sentence::TargetSentence> SentenceSet::getSentenceSnippet(void) const
 {
     std::vector<Sentence::TargetSentence> snippet;
+    std::size_t size = _sentences.size() >= 5 ? 5 : _sentences.size();
     std::copy(_sentences.begin(),
-              _sentences.begin() + 5,
+              _sentences.begin() + size,
               std::back_inserter(snippet));
     return snippet;
 }

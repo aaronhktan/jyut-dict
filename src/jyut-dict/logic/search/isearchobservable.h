@@ -17,6 +17,9 @@ public:
     virtual void registerObserver(ISearchObserver *observer) = 0;
     virtual void deregisterObserver(ISearchObserver *observer) = 0;
     virtual void notifyObservers(const std::vector<Entry> &results, bool emptyQuery) = 0;
+    virtual void notifyObservers(const std::vector<SourceSentence> &results,
+                                 bool emptyQuery)
+        = 0;
 };
 
 #endif // ISEARCHOBSERVABLE_H

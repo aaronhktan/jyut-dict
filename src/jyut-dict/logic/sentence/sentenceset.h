@@ -14,6 +14,7 @@ struct TargetSentence
 {
     std::string language;
     std::string sentence;
+    bool directTarget;
 };
 
 }
@@ -33,6 +34,8 @@ public:
     ~SentenceSet();
 
     bool isEmpty(void) const;
+
+    bool pushSentence(Sentence::TargetSentence sentence);
 
     std::string getSource(void) const;
     std::string getSourceLongString(void) const;

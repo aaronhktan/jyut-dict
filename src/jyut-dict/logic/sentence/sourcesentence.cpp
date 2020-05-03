@@ -54,10 +54,7 @@ SourceSentence::SourceSentence(const SourceSentence &&sourceSentence)
     , _sentences{std::move(sourceSentence._sentences)}
 {}
 
-SourceSentence::~SourceSentence()
-{
-
-}
+SourceSentence::~SourceSentence() {}
 
 SourceSentence &SourceSentence::operator=(const SourceSentence &sourceSentence)
 {

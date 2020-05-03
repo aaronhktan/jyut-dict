@@ -66,13 +66,25 @@ void SQLSearch::notifyObservers(const std::vector<Entry> &results, bool emptyQue
     }
 }
 
+void SQLSearch::notifyObservers(const std::vector<SourceSentence> &results,
+                                bool emptyQuery)
+{
+    std::lock_guard<std::mutex> notifyLock{_notifyMutex};
+    std::list<ISearchObserver *>::iterator it = SQLSearch::_observers.begin();
+    while (it != SQLSearch::_observers.end()) {
+        (static_cast<ISearchObserver *>(*it))->callback(results, emptyQuery);
+        ++it;
+    }
+}
+
 void SQLSearch::setCurrentSearchTerm(const QString &searchTerm)
 {
     std::lock_guard<std::mutex> lock{_currentSearchTermMutex};
     _currentSearchString = searchTerm;
 }
 
-void SQLSearch::sleepIfEmpty(std::vector<Entry> &results)
+template <class T>
+void SQLSearch::sleepIfEmpty(std::vector<T> &results)
 {
     if (results.empty()) {
         QThread *thisThread = QThread::currentThread();
@@ -119,6 +131,12 @@ void SQLSearch::searchEnglish(const QString searchTerm)
 {
     setCurrentSearchTerm(searchTerm);
     runThread(&SQLSearch::searchEnglishThread, searchTerm);
+}
+
+void SQLSearch::searchTraditionalSentences(const QString searchTerm)
+{
+    setCurrentSearchTerm(searchTerm);
+    runThread(&SQLSearch::searchTraditionalSentencesThread, searchTerm);
 }
 
 void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString searchTerm),
@@ -350,6 +368,42 @@ void SQLSearch::searchEnglishThread(const QString searchTerm)
         // Do not parse results if new query has been made
         if (!checkQueryCurrent(searchTerm)) { return; }
         results = parseEntries(query);
+    }
+
+    sleepIfEmpty(results);
+    if (!checkQueryCurrent(searchTerm)) { return; }
+    notifyObservers(results, /*emptyQuery=*/false);
+}
+
+void SQLSearch::searchTraditionalSentencesThread(const QString searchTerm)
+{
+    std::vector<SourceSentence> results{};
+
+    {
+        std::lock_guard<std::mutex> databaseLock{_databaseMutex};
+
+        QSqlQuery query{_manager->getDatabase()};
+        query.prepare(
+            "SELECT chinese_sentence_id, traditional, simplified, pinyin, "
+            " jyutping, chinese_sentences.language AS source_language, "
+            " group_concat(sourcename || ' ' || nonchinese_sentences.language "
+            "|| ' ' || direct || ' ' || sentence, '●') AS sentences "
+            "FROM chinese_sentences, sentence_links, sources "
+            "JOIN nonchinese_sentences "
+            "ON sentence_links.fk_chinese_sentence_id = "
+            "chinese_sentences.chinese_sentence_id "
+            "AND sentence_links.fk_non_chinese_sentence_id = "
+            "nonchinese_sentences.non_chinese_sentence_id "
+            "AND sentence_links.fk_source_id = sources.source_id "
+            "AND traditional LIKE ? "
+            "GROUP BY chinese_sentences.chinese_sentence_id");
+        query.addBindValue("%" + searchTerm + "%");
+        query.exec();
+
+        if (!checkQueryCurrent(searchTerm)) {
+            return;
+        }
+        results = parseSentences(query);
     }
 
     sleepIfEmpty(results);
@@ -762,4 +816,93 @@ std::vector<Entry> SQLSearch::parseEntries(QSqlQuery &query)
     }
 
     return entries;
+}
+
+std::vector<SourceSentence> SQLSearch::parseSentences(QSqlQuery &query)
+{
+    std::vector<SourceSentence> sentences;
+
+    int sourceSentenceIdIndex = query.record().indexOf("chinese_sentence_id");
+    int simplifiedIndex = query.record().indexOf("simplified");
+    int traditionalIndex = query.record().indexOf("traditional");
+    int jyutpingIndex = query.record().indexOf("jyutping");
+    int pinyinIndex = query.record().indexOf("pinyin");
+    int sourceLanguageIndex = query.record().indexOf("source_language");
+    int sentencesIndex = query.record().indexOf("sentences");
+
+    while (query.next()) {
+        // Get fields from table
+        std::string sourceSentenceId
+            = query.value(sourceSentenceIdIndex).toString().toStdString();
+        std::string simplified
+            = query.value(simplifiedIndex).toString().toStdString();
+        std::string traditional
+            = query.value(traditionalIndex).toString().toStdString();
+        std::string jyutping
+            = query.value(jyutpingIndex).toString().toStdString();
+        std::string pinyin = query.value(pinyinIndex).toString().toStdString();
+        std::string sourceLanguage
+            = query.value(sourceLanguageIndex).toString().toStdString();
+        std::string combinedTargetSentencesData
+            = query.value(sentencesIndex).toString().toStdString();
+        if (combinedTargetSentencesData.empty()) {
+            continue;
+        }
+
+        // Parse sentences
+        std::vector<std::string> targetSentencesData;
+        Utils::split(combinedTargetSentencesData, "●", targetSentencesData);
+
+        // Put target sentences in the correct SentenceSet
+        std::vector<SentenceSet> sentenceSets = {};
+        for (std::string targetSentenceData : targetSentencesData) {
+            SentenceSet *set;
+
+            std::string::size_type first_space_index = targetSentenceData
+                                                           .find_first_of(" ");
+            std::string::size_type second_space_index
+                = targetSentenceData.find(" ", first_space_index + 1);
+            std::string::size_type third_space_index
+                = targetSentenceData.find(" ", second_space_index + 1);
+
+            std::string source = targetSentenceData.substr(0, first_space_index);
+            std::string targetLanguage = targetSentenceData
+                                             .substr(first_space_index + 1,
+                                                     second_space_index
+                                                         - first_space_index);
+            std::string direct = targetSentenceData
+                                     .substr(second_space_index + 1,
+                                             third_space_index
+                                                 - second_space_index);
+            std::string targetSentenceContent = targetSentenceData.substr(
+                third_space_index + 1);
+
+            // Search sentenceSets for a matching set (i.e. set with same source)
+            // Create a new sentenceSet for set if it no matches found
+            // Then get a handle for that set
+            auto search = std::find_if(sentenceSets.begin(),
+                                       sentenceSets.end(),
+                                       [source](const SentenceSet &set) {
+                                           return set.getSource() == source;
+                                       });
+            if (search == sentenceSets.end()) {
+                sentenceSets.push_back(SentenceSet{source});
+                set = &sentenceSets.back();
+            } else {
+                set = &*search;
+            }
+
+            // Push the sentence to that set
+            Sentence::TargetSentence targetSentence = {targetLanguage,
+                                                       targetSentenceContent,
+                                                       direct == "1"};
+            set->pushSentence(targetSentence);
+        }
+
+        sentences.push_back(SourceSentence{
+            simplified, traditional, jyutping, pinyin, sentenceSets
+        });
+    }
+
+    return sentences;
 }
