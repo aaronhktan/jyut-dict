@@ -1,5 +1,6 @@
 #include "sentencecontentwidget.h"
 
+#include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
@@ -80,16 +81,32 @@ void SentenceContentWidget::setSourceSentenceVector(
         _traditionalLabels.back()->setTextInteractionFlags(
             Qt::TextSelectableByMouse);
 
-        _jyutpingLabels.push_back(
-            new QLabel{QString{sourceSentence.getJyutping().c_str()}.trimmed(),
-                       this});
+        _jyutpingLabels.push_back(new QLabel{
+            QString{sourceSentence
+                        .getCantonesePhonetic(
+                            Settings::getSettings()
+                                ->value("cantoneseOptions",
+                                        QVariant::fromValue(
+                                            CantoneseOptions::RAW_JYUTPING))
+                                .value<CantoneseOptions>())
+                        .c_str()}
+                .trimmed(),
+            this});
         _jyutpingLabels.back()->setWordWrap(true);
         _jyutpingLabels.back()->setTextInteractionFlags(
             Qt::TextSelectableByMouse);
 
-        _pinyinLabels.push_back(
-            new QLabel{QString{sourceSentence.getPrettyPinyin().c_str()}.trimmed(),
-                       this});
+        _pinyinLabels.push_back(new QLabel{
+            QString{sourceSentence
+                        .getMandarinPhonetic(
+                            Settings::getSettings()
+                                ->value("mandarinOptions",
+                                        QVariant::fromValue(
+                                            MandarinOptions::PRETTY_PINYIN))
+                                .value<MandarinOptions>())
+                        .c_str()}
+                .trimmed(),
+            this});
         _pinyinLabels.back()->setWordWrap(true);
         _pinyinLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
@@ -97,48 +114,32 @@ void SentenceContentWidget::setSourceSentenceVector(
         _sentenceLabels.push_back(
             new QLabel{QString{
                            targetSentenceSet.getSentences()[0].sentence.c_str()}
-                           .trimmed() + "\n",
+                               .trimmed()
+                           + "\n",
                        this});
         _sentenceLabels.back()->setWordWrap(true);
         _sentenceLabels.back()->setTextInteractionFlags(
             Qt::TextSelectableByMouse);
 
-        _sentenceLayout->addWidget(_sentenceNumberLabels[i],
-                                   static_cast<int>(i * 6),
-                                   0,
-                                   6,
-                                   1,
-                                   Qt::AlignTop);
-        _sentenceLayout->addWidget(_simplifiedLabels[i],
-                                   static_cast<int>(i * 6),
-                                   1,
-                                   1,
-                                   -1,
-                                   Qt::AlignTop);
-        _sentenceLayout->addWidget(_traditionalLabels[i],
-                                   static_cast<int>(i * 6 + 1),
-                                   1,
-                                   1,
-                                   -1,
-                                   Qt::AlignTop);
-        _sentenceLayout->addWidget(_jyutpingLabels[i],
-                                   static_cast<int>(i * 6 + 2),
-                                   1,
-                                   1,
-                                   -1,
-                                   Qt::AlignTop);
-        _sentenceLayout->addWidget(_pinyinLabels[i],
-                                   static_cast<int>(i * 6 + 3),
-                                   1,
-                                   1,
-                                   -1,
-                                   Qt::AlignTop);
-        _sentenceLayout->addWidget(_sentenceLabels[i],
-                                   static_cast<int>(i * 6 + 4),
-                                   1,
-                                   1,
-                                   -1,
-                                   Qt::AlignTop);
+        addLabelsToLayout(
+            _sentenceLayout,
+            static_cast<int>(i),
+            _sentenceNumberLabels[i],
+            _simplifiedLabels[i],
+            _traditionalLabels[i],
+            _jyutpingLabels[i],
+            _pinyinLabels[i],
+            _sentenceLabels[i],
+            Settings::getSettings()
+                ->value("phoneticOptions",
+                        QVariant::fromValue(
+                            EntryPhoneticOptions::PREFER_JYUTPING))
+                .value<EntryPhoneticOptions>(),
+            Settings::getSettings()
+                ->value("characterOptions",
+                        QVariant::fromValue(
+                            EntryCharactersOptions::PREFER_TRADITIONAL))
+                .value<EntryCharactersOptions>());
     }
 
     _sentenceLayout->activate();
@@ -187,8 +188,6 @@ void SentenceContentWidget::setSentenceSet(const SentenceSet &set)
     setStyle(/* use_dark = */false);
 #endif
 }
-
-
 
 void SentenceContentWidget::setStyle(bool use_dark)
 {
@@ -257,4 +256,127 @@ void SentenceContentWidget::cleanupLabels()
         delete label;
     }
     _sentenceLabels.clear();
+}
+
+void SentenceContentWidget::addLabelsToLayout(
+    QGridLayout *layout,
+    int rowNumber,
+    QLabel *sentenceNumberLabel,
+    QLabel *simplifiedLabel,
+    QLabel *traditionalLabel,
+    QLabel *jyutpingLabel,
+    QLabel *pinyinLabel,
+    QLabel *sentenceLabel,
+    EntryPhoneticOptions phoneticOptions,
+    EntryCharactersOptions characterOptions)
+{
+    layout->addWidget(sentenceNumberLabel,
+                      static_cast<int>(rowNumber * 6),
+                      0,
+                      6,
+                      1,
+                      Qt::AlignTop);
+
+    // Add the first character option
+    switch (characterOptions) {
+    case EntryCharactersOptions::ONLY_SIMPLIFIED:
+        traditionalLabel->setVisible(false);
+        [[clang::fallthrough]];
+    case EntryCharactersOptions::PREFER_SIMPLIFIED:
+        layout->addWidget(simplifiedLabel,
+                          static_cast<int>(rowNumber * 6),
+                          1,
+                          1,
+                          -1,
+                          Qt::AlignTop);
+        break;
+    case EntryCharactersOptions::ONLY_TRADITIONAL:
+        simplifiedLabel->setVisible(false);
+        [[clang::fallthrough]];
+    case EntryCharactersOptions::PREFER_TRADITIONAL:
+        layout->addWidget(traditionalLabel,
+                          static_cast<int>(rowNumber * 6),
+                          1,
+                          1,
+                          -1,
+                          Qt::AlignTop);
+        break;
+    }
+
+    // Add the second character label (if applicable)
+    switch (characterOptions) {
+    case EntryCharactersOptions::PREFER_SIMPLIFIED:
+        layout->addWidget(traditionalLabel,
+                          static_cast<int>(rowNumber * 6 + 1),
+                          1,
+                          1,
+                          -1,
+                          Qt::AlignTop);
+        break;
+    case EntryCharactersOptions::PREFER_TRADITIONAL:
+        layout->addWidget(simplifiedLabel,
+                          static_cast<int>(rowNumber * 6 + 1),
+                          1,
+                          1,
+                          -1,
+                          Qt::AlignTop);
+        break;
+    default:
+        break;
+    }
+
+    // Add the first phonetic label
+    switch (phoneticOptions) {
+    case EntryPhoneticOptions::ONLY_JYUTPING:
+        pinyinLabel->setVisible(false);
+        [[clang::fallthrough]];
+    case EntryPhoneticOptions::PREFER_JYUTPING:
+        layout->addWidget(jyutpingLabel,
+                          static_cast<int>(rowNumber * 6 + 2),
+                          1,
+                          1,
+                          -1,
+                          Qt::AlignTop);
+        break;
+    case EntryPhoneticOptions::ONLY_PINYIN:
+        jyutpingLabel->setVisible(false);
+        [[clang::fallthrough]];
+    case EntryPhoneticOptions::PREFER_PINYIN:
+        layout->addWidget(pinyinLabel,
+                          static_cast<int>(rowNumber * 6 + 2),
+                          1,
+                          1,
+                          -1,
+                          Qt::AlignTop);
+        break;
+    }
+
+    // Add the second phonetic label (if applicable)
+    switch (phoneticOptions) {
+    case EntryPhoneticOptions::PREFER_JYUTPING:
+        layout->addWidget(pinyinLabel,
+                          static_cast<int>(rowNumber * 6 + 3),
+                          1,
+                          1,
+                          -1,
+                          Qt::AlignTop);
+        break;
+    case EntryPhoneticOptions::PREFER_PINYIN:
+        layout->addWidget(jyutpingLabel,
+                          static_cast<int>(rowNumber * 6 + 3),
+                          1,
+                          1,
+                          -1,
+                          Qt::AlignTop);
+        break;
+    default:
+        break;
+    }
+
+    layout->addWidget(sentenceLabel,
+                      static_cast<int>(rowNumber * 6 + 4),
+                      1,
+                      1,
+                      -1,
+                      Qt::AlignTop);
 }

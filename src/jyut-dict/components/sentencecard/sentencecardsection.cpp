@@ -37,8 +37,18 @@ void SentenceCardSection::updateUI(std::vector<SourceSentence> sourceSentences)
 {
     cleanup();
     _calledBack = true;
+    _loadingWidget->setVisible(false);
+
     std::unordered_map<std::string, std::vector<SourceSentence>> sources;
     sources = getSamplesForEachSource(sourceSentences);
+
+    // This prevents an extra space from being added at the bottom when there
+    // is nothing to display in the sentence card section.
+    if (sources.empty()) {
+        _sentenceCardsLayout->setContentsMargins(0, 0, 0, 0);
+    } else {
+        _sentenceCardsLayout->setContentsMargins(0, 15, 0, 0);
+    }
 
     for (const auto &item : sources) {
         _sentenceCards.push_back(new SentenceCardWidget{this});
@@ -46,7 +56,7 @@ void SentenceCardSection::updateUI(std::vector<SourceSentence> sourceSentences)
 
         _sentenceCardsLayout->addWidget(_sentenceCards.back(), Qt::AlignHCenter);
     }
-    _loadingWidget->setVisible(false);
+
 }
 
 void SentenceCardSection::setEntry(const Entry &entry)

@@ -3,6 +3,8 @@
 
 #include "logic/sentence/sentenceset.h"
 #include "logic/sentence/sourcesentence.h"
+#include "logic/entry/entrycharactersoptions.h"
+#include "logic/entry/entryphoneticoptions.h"
 
 #include <QEvent>
 #include <QGridLayout>
@@ -26,6 +28,16 @@ public:
         const std::vector<SourceSentence> &sourceSentences);
 
 private:
+    void addLabelsToLayout(QGridLayout *layout,
+                           int rowNumber,
+                           QLabel *sentenceNumberLabel,
+                           QLabel *simplifiedLabel,
+                           QLabel *traditionalLabel,
+                           QLabel *jyutpingLabel,
+                           QLabel *pinyinLabel,
+                           QLabel *sentenceLabel,
+                           EntryPhoneticOptions phoneticOptions,
+                           EntryCharactersOptions characterOptions);
     void setStyle(bool use_dark);
 
     void cleanupLabels();

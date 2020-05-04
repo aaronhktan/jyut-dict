@@ -33,6 +33,7 @@ public:
     void openCurrentSelectionInNewWindow(void);
 
 private:
+    std::shared_ptr<SQLDatabaseManager> _manager;
     Analytics *_analytics;
 
     EntryScrollArea *_definitionScrollArea;

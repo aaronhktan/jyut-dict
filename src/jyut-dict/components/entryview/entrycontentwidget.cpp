@@ -6,7 +6,7 @@ EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manag
 {
     _entryContentLayout = new QVBoxLayout{this};
     _entryContentLayout->setContentsMargins(0, 0, 0, 0);
-    _entryContentLayout->setSpacing(15);
+    _entryContentLayout->setSpacing(0);
 
     _definitionSection = new DefinitionCardSection{this};
     _sentenceSection = new SentenceCardSection{manager, this};
