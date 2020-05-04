@@ -12,17 +12,17 @@
 
 DefinitionCardWidget::DefinitionCardWidget(QWidget *parent) : QWidget(parent)
 {
-    setObjectName("DefinitionSectionWidget");
+    setObjectName("DefinitionCardWidget");
 
     _definitionAreaLayout = new QVBoxLayout{this};
     _definitionAreaLayout->setContentsMargins(0, 0, 0, 0);
     _definitionAreaLayout->setSpacing(11);
 
     _definitionHeaderWidget = new DefinitionHeaderWidget{this};
-    _definitionWidget = new DefinitionContentWidget{this};
+    _definitionContentWidget = new DefinitionContentWidget{this};
 
     _definitionAreaLayout->addWidget(_definitionHeaderWidget);
-    _definitionAreaLayout->addWidget(_definitionWidget);
+    _definitionAreaLayout->addWidget(_definitionContentWidget);
 
 #ifdef Q_OS_MAC
     setStyle(Utils::isDarkMode());
@@ -63,7 +63,7 @@ void DefinitionCardWidget::setEntry(const DefinitionsSet &definitionsSet)
             .toStdString()
         + " (" + _source + ")");
 
-    _definitionWidget->setEntry(definitionsSet.getDefinitions());
+    _definitionContentWidget->setEntry(definitionsSet.getDefinitions());
 }
 
 void DefinitionCardWidget::translateUI()
@@ -77,7 +77,7 @@ void DefinitionCardWidget::translateUI()
 
 void DefinitionCardWidget::setStyle(bool use_dark)
 {
-    QString styleSheet = "QWidget#DefinitionSectionWidget { "
+    QString styleSheet = "QWidget#DefinitionCardWidget { "
                          " background-color: %1; "
                          " border-radius: 10px; "
                          "}";

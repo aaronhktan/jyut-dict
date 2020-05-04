@@ -7,7 +7,8 @@
 
 #include <QTimer>
 
-EntryScrollAreaWidget::EntryScrollAreaWidget(QWidget *parent)
+EntryScrollAreaWidget::EntryScrollAreaWidget(std::shared_ptr<SQLDatabaseManager> manager,
+                                             QWidget *parent)
     : QWidget(parent)
 {
     setObjectName("DefinitionScrollAreaWidget");
@@ -18,15 +19,11 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(QWidget *parent)
     _scrollAreaLayout->setContentsMargins(11, 11, 11, 11);
 
     _entryHeaderWidget = new EntryHeaderWidget{this};
-    _entryContentWidget = new EntryContentWidget{this};
-    _loadingWidget = new LoadingWidget{this};
-    _loadingWidget->setVisible(false);
+    _entryContentWidget = new EntryContentWidget{manager, this};
 
     // Add all widgets to main layout
     _scrollAreaLayout->addWidget(_entryHeaderWidget);
     _scrollAreaLayout->addWidget(_entryContentWidget);
-    _scrollAreaLayout->addWidget(_loadingWidget);
-    _scrollAreaLayout->setAlignment(_loadingWidget, Qt::AlignHCenter);
     _scrollAreaLayout->addStretch(1);
 
 #ifdef Q_OS_MAC
@@ -56,8 +53,6 @@ void EntryScrollAreaWidget::setEntry(const Entry &entry)
 {
     _entryHeaderWidget->setEntry(entry);
     _entryContentWidget->setEntry(entry);
-
-    _loadingWidget->setVisible(true);
 }
 
 void EntryScrollAreaWidget::setStyle(bool use_dark)

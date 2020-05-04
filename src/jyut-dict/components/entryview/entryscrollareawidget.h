@@ -3,7 +3,7 @@
 
 #include "components/entryview/entrycontentwidget.h"
 #include "components/entryview/entryheaderwidget.h"
-#include "components/sentencecard/loadingwidget.h"
+#include "logic/database/sqldatabasemanager.h"
 
 #include <QEvent>
 #include <QVBoxLayout>
@@ -16,7 +16,8 @@ class EntryScrollAreaWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit EntryScrollAreaWidget(QWidget *parent = nullptr);
+    explicit EntryScrollAreaWidget(std::shared_ptr<SQLDatabaseManager> manager,
+                                   QWidget *parent = nullptr);
 
     void changeEvent(QEvent *event) override;
 
@@ -30,7 +31,6 @@ private:
 
     EntryHeaderWidget *_entryHeaderWidget;
     EntryContentWidget *_entryContentWidget;
-    LoadingWidget *_loadingWidget;
 
 signals:
 

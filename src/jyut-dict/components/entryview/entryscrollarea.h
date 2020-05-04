@@ -2,6 +2,7 @@
 #define ENTRYSCROLLAREA_H
 
 #include "components/entryview/entryscrollareawidget.h"
+#include "logic/database/sqldatabasemanager.h"
 #include "logic/entry/entry.h"
 
 #include <QResizeEvent>
@@ -19,7 +20,8 @@
 class EntryScrollArea : public QScrollArea
 {
 public:
-    explicit EntryScrollArea(QWidget *parent = nullptr);
+    explicit EntryScrollArea(std::shared_ptr<SQLDatabaseManager> manager,
+                             QWidget *parent = nullptr);
     ~EntryScrollArea() override;
 
     void setEntry(const Entry &entry);

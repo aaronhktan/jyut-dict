@@ -33,7 +33,7 @@ private:
 
     QVBoxLayout *_definitionAreaLayout;
     DefinitionHeaderWidget *_definitionHeaderWidget;
-    DefinitionContentWidget *_definitionWidget;
+    DefinitionContentWidget *_definitionContentWidget;
 };
 
 #endif // DEFINITIONCARDWIDGET_H

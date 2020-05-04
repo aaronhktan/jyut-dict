@@ -90,13 +90,21 @@ void DefinitionContentWidget::setStyle(bool use_dark)
                                           LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R};
     for (auto label : _definitionNumberLabels) {
-        label->setStyleSheet(
-            styleSheet.arg(textColour.name()));
+        label->setStyleSheet(styleSheet.arg(textColour.name()));
     }
 }
 
 void DefinitionContentWidget::cleanupLabels()
 {
+    for (auto label : _definitionNumberLabels) {
+        _definitionLayout->removeWidget(label);
+        delete label;
+    }
     _definitionNumberLabels.clear();
+
+    for (auto label : _definitionLabels) {
+        _definitionLayout->removeWidget(label);
+        delete label;
+    }
     _definitionLabels.clear();
 }

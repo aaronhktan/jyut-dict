@@ -58,4 +58,7 @@ private:
     std::string createPrettyPinyin(void);
 };
 
+// Required for QueuedConnection
+Q_DECLARE_METATYPE(SourceSentence);
+
 #endif // SOURCESENTENCE_H

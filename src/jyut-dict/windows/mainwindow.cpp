@@ -117,7 +117,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowIcon(QIcon{":/images/icon.png"});
 #endif
 
-    _mainSplitter = new MainSplitter{_sqlSearch, this};
+    _mainSplitter = new MainSplitter{_manager, _sqlSearch, this};
     setCentralWidget(_mainSplitter);
 
     // Create menu bar and populate it

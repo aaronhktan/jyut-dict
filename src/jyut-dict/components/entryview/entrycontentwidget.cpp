@@ -1,16 +1,18 @@
 #include "entrycontentwidget.h"
 
-EntryContentWidget::EntryContentWidget(QWidget *parent) : QWidget(parent)
+EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manager,
+                                       QWidget *parent)
+    : QWidget(parent)
 {
-    _definitionSectionsLayout = new QVBoxLayout{this};
-    _definitionSectionsLayout->setContentsMargins(0, 0, 0, 0);
-    _definitionSectionsLayout->setSpacing(15);
-}
+    _entryContentLayout = new QVBoxLayout{this};
+    _entryContentLayout->setContentsMargins(0, 0, 0, 0);
+    _entryContentLayout->setSpacing(15);
 
-EntryContentWidget::EntryContentWidget(Entry &entry, QWidget *parent)
-    : EntryContentWidget(parent)
-{
-    setEntry(entry);
+    _definitionSection = new DefinitionCardSection{this};
+    _sentenceSection = new SentenceCardSection{manager, this};
+
+    _entryContentLayout->addWidget(_definitionSection);
+    _entryContentLayout->addWidget(_sentenceSection);
 }
 
 EntryContentWidget::~EntryContentWidget()
@@ -20,23 +22,9 @@ EntryContentWidget::~EntryContentWidget()
 
 void EntryContentWidget::setEntry(const Entry &entry)
 {
-    cleanup();
-    for (auto definitionsSet : entry.getDefinitionsSets()) {
-        _definitionSections.push_back(new DefinitionCardWidget{this});
-        _definitionSections.back()->setEntry(definitionsSet);
-
-        _definitionSectionsLayout->addWidget(_definitionSections.back());
-    }
+    _definitionSection->setEntry(entry);
+    _sentenceSection->setEntry(entry);
 
     // Force layout to update after adding widgets; fixes some layout issues.
-    _definitionSectionsLayout->activate();
-}
-
-void EntryContentWidget::cleanup()
-{
-    for (auto section : _definitionSections) {
-        _definitionSectionsLayout->removeWidget(section);
-        delete section;
-    }
-    _definitionSections.clear();
+    _entryContentLayout->activate();
 }

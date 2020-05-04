@@ -1,7 +1,9 @@
 #ifndef ENTRYCONTENTWIDGET_H
 #define ENTRYCONTENTWIDGET_H
 
-#include "components/definitioncard/definitioncardwidget.h"
+#include "components/definitioncard/definitioncardsection.h"
+#include "components/sentencecard/sentencecardsection.h"
+#include "logic/database/sqldatabasemanager.h"
 #include "logic/entry/entry.h"
 
 #include <QVBoxLayout>
@@ -15,17 +17,16 @@
 class EntryContentWidget : public QWidget
 {
 public:
-    explicit EntryContentWidget(QWidget *parent = nullptr);
-    explicit EntryContentWidget(Entry &entry, QWidget *parent = nullptr);
+    explicit EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manager,
+                                QWidget *parent = nullptr);
     ~EntryContentWidget() override;
 
     void setEntry(const Entry &entry);
 
 private:
-    void cleanup();
-
-    QVBoxLayout *_definitionSectionsLayout;
-    std::vector<DefinitionCardWidget *> _definitionSections;
+    QVBoxLayout *_entryContentLayout;
+    DefinitionCardSection *_definitionSection;
+    SentenceCardSection *_sentenceSection;
 };
 
 #endif // ENTRYCONTENTWIDGET_H

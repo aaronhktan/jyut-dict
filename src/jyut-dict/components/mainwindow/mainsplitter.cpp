@@ -6,12 +6,14 @@
 #include <QList>
 #include <QVariant>
 
-MainSplitter::MainSplitter(std::shared_ptr<SQLSearch> sqlSearch,
-                           QWidget *parent) : QSplitter(parent)
+MainSplitter::MainSplitter(std::shared_ptr<SQLDatabaseManager> manager,
+                           std::shared_ptr<SQLSearch> sqlSearch,
+                           QWidget *parent)
+    : QSplitter(parent)
 {
     _analytics = new Analytics{this};
 
-    _definitionScrollArea = new EntryScrollArea{this};
+    _definitionScrollArea = new EntryScrollArea{manager, this};
     _resultListView = new ResultListView{sqlSearch, this};
 
     addWidget(_resultListView);

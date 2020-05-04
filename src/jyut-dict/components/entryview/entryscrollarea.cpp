@@ -9,11 +9,13 @@
 
 #define ENTIRE_WIDTH -1
 
-EntryScrollArea::EntryScrollArea(QWidget *parent) : QScrollArea(parent)
+EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLDatabaseManager> manager,
+                                 QWidget *parent)
+    : QScrollArea(parent)
 {
     setFrameShape(QFrame::NoFrame);
 
-    _scrollAreaWidget = new EntryScrollAreaWidget{this};
+    _scrollAreaWidget = new EntryScrollAreaWidget{manager, this};
 
     setWidget(_scrollAreaWidget);
     setWidgetResizable(true); // IMPORTANT! This makes the scrolling widget resize correctly.

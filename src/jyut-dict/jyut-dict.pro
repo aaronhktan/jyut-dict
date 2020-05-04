@@ -31,6 +31,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
+    components/definitioncard/definitioncardsection.cpp \
     components/definitioncard/definitioncardwidget.cpp \
     components/definitioncard/definitioncontentwidget.cpp \
     components/definitioncard/definitionheaderwidget.cpp \
@@ -49,6 +50,10 @@ SOURCES += \
     components/mainwindow/searchlineedit.cpp \
     components/mainwindow/searchoptionsradiogroupbox.cpp \
     components/sentencecard/loadingwidget.cpp \
+    components/sentencecard/sentencecardsection.cpp \
+    components/sentencecard/sentencecardwidget.cpp \
+    components/sentencecard/sentencecontentwidget.cpp \
+    components/sentencecard/sentenceheaderwidget.cpp \
     components/settings/advancedtab.cpp \
     components/settings/contacttab.cpp \
     components/settings/dictionarytab.cpp \
@@ -82,6 +87,7 @@ SOURCES += \
     windows/updatewindow.cpp
 
 HEADERS += \
+    components/definitioncard/definitioncardsection.h \
     components/definitioncard/definitioncardwidget.h \
     components/definitioncard/definitioncontentwidget.h \
     components/definitioncard/definitionheaderwidget.h \
@@ -102,6 +108,10 @@ HEADERS += \
     components/mainwindow/searchlineedit.h \
     components/mainwindow/searchoptionsradiogroupbox.h \
     components/sentencecard/loadingwidget.h \
+    components/sentencecard/sentencecardsection.h \
+    components/sentencecard/sentencecardwidget.h \
+    components/sentencecard/sentencecontentwidget.h \
+    components/sentencecard/sentenceheaderwidget.h \
     components/settings/advancedtab.h \
     components/settings/contacttab.h \
     components/settings/dictionarytab.h \

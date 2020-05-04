@@ -406,7 +406,6 @@ void SQLSearch::searchTraditionalSentencesThread(const QString searchTerm)
         results = parseSentences(query);
     }
 
-    sleepIfEmpty(results);
     if (!checkQueryCurrent(searchTerm)) { return; }
     notifyObservers(results, /*emptyQuery=*/false);
 }
