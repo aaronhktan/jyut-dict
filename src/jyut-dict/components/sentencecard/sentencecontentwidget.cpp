@@ -143,8 +143,6 @@ void SentenceContentWidget::setSourceSentenceVector(
                 .value<EntryCharactersOptions>());
     }
 
-    _sentenceLayout->activate();
-
 #ifdef Q_OS_MAC
     setStyle(Utils::isDarkMode());
 #else
@@ -186,8 +184,6 @@ void SentenceContentWidget::setSentenceSet(const SentenceSet &set)
         _sentenceLayout->addWidget(_sentenceLabels[i],
                                      static_cast<int>(i + 9), 1, Qt::AlignTop);
     }
-
-    _sentenceLayout->activate();
 
 #ifdef Q_OS_MAC
     setStyle(Utils::isDarkMode());

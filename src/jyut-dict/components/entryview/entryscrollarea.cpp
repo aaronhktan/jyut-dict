@@ -37,11 +37,13 @@ EntryScrollArea::~EntryScrollArea()
 void EntryScrollArea::setEntry(const Entry &entry)
 {
     _scrollAreaWidget->setEntry(entry);
+    _scrollAreaWidget->setVisible(false);
     _scrollAreaWidget->resize(width()
                                   - (verticalScrollBar()->isVisible()
                                          ? verticalScrollBar()->width()
                                          : 0),
                               _scrollAreaWidget->sizeHint().height());
+    _scrollAreaWidget->setVisible(true);
 }
 
 void EntryScrollArea::resizeEvent(QResizeEvent *event)

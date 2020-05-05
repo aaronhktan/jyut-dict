@@ -20,7 +20,4 @@ SentenceViewContentWidget::~SentenceViewContentWidget()
 void SentenceViewContentWidget::setSourceSentence(const SourceSentence &sentence)
 {
     _sentenceSection->setSourceSentence(sentence);
-
-    // Force layout to update after adding widgets; fixes some layout issues.
-    _entryContentLayout->activate();
 }

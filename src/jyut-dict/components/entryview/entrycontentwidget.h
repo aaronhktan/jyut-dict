@@ -27,6 +27,13 @@ private:
     QVBoxLayout *_entryContentLayout;
     DefinitionCardSection *_definitionSection;
     EntryViewSentenceCardSection *_sentenceSection;
+
+public slots:
+    void hideDefinitionSection(void);
+    void showDefinitionSection(void);
+
+    void hideSentenceSection(void);
+    void showSentenceSection(void);
 };
 
 #endif // ENTRYCONTENTWIDGET_H

@@ -29,21 +29,28 @@ EntryViewSentenceCardSection::EntryViewSentenceCardSection(QWidget *parent)
     setupUI();
 }
 
+EntryViewSentenceCardSection::~EntryViewSentenceCardSection()
+{
+}
+
+
 void EntryViewSentenceCardSection::callback(std::vector<Entry> __unused entries,
                                    bool __unused emptyQuery)
 {
     void();
 }
 
-void EntryViewSentenceCardSection::callback(std::vector<SourceSentence> sourceSentences,
-                                   bool __unused emptyQuery)
+void EntryViewSentenceCardSection::callback(
+    std::vector<SourceSentence> sourceSentences, bool __unused emptyQuery)
 {
     emit callbackInvoked(sourceSentences);
 }
 
 void EntryViewSentenceCardSection::updateUI(std::vector<SourceSentence> sourceSentences)
 {
+    emit addingCards();
     cleanup();
+
     _calledBack = true;
     _loadingWidget->setVisible(false);
 
@@ -58,7 +65,7 @@ void EntryViewSentenceCardSection::updateUI(std::vector<SourceSentence> sourceSe
         _sentenceCardsLayout->setContentsMargins(0, 0, 0, 0);
         return;
     } else {
-        _sentenceCardsLayout->setContentsMargins(0, 15, 0, 0);
+        _sentenceCardsLayout->setContentsMargins(0, 11, 0, 0);
     }
 
     for (const auto &item : sources) {
@@ -71,16 +78,19 @@ void EntryViewSentenceCardSection::updateUI(std::vector<SourceSentence> sourceSe
     _sentenceCardsLayout->addWidget(_viewAllSentencesButton);
     _sentenceCardsLayout->setAlignment(_viewAllSentencesButton, Qt::AlignRight);
     _viewAllSentencesButton->setVisible(true);
+
     disconnect(_viewAllSentencesButton, nullptr, nullptr, nullptr);
     connect(_viewAllSentencesButton, &QToolButton::clicked, this, [&]() {
         openSentenceWindow(_sentences);
     });
+    emit finishedAddingCards();
 }
 
 void EntryViewSentenceCardSection::setEntry(const Entry &entry)
 {
     cleanup();
-    QTimer::singleShot(500, [=]() {
+    _calledBack = false;
+    QTimer::singleShot(10, [=]() {
         if (!_calledBack) {
             showLoadingWidget();
         }
@@ -136,9 +146,10 @@ void EntryViewSentenceCardSection::cleanup(void)
 void EntryViewSentenceCardSection::showLoadingWidget(void)
 {
     _loadingWidget->setVisible(true);
+    _sentenceCardsLayout->addWidget(_loadingWidget);
+    _sentenceCardsLayout->setAlignment(_loadingWidget, Qt::AlignHCenter);
 }
 
-#include <QDebug>
 void EntryViewSentenceCardSection::openSentenceWindow(
     std::vector<SourceSentence> sourceSentences)
 {

@@ -9,6 +9,7 @@ DefinitionCardSection::DefinitionCardSection(QWidget *parent) : QWidget(parent)
 
 void DefinitionCardSection::setEntry(const Entry &entry)
 {
+    emit addingCards();
     cleanup();
     for (auto definitionsSet : entry.getDefinitionsSets()) {
         _definitionCards.push_back(new DefinitionCardWidget{this});
@@ -16,6 +17,7 @@ void DefinitionCardSection::setEntry(const Entry &entry)
 
         _definitionCardsLayout->addWidget(_definitionCards.back());
     }
+    emit finishedAddingCards();
 }
 
 void DefinitionCardSection::cleanup(void)

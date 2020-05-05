@@ -20,6 +20,10 @@ private:
 
     QVBoxLayout *_definitionCardsLayout;
     std::vector<DefinitionCardWidget *> _definitionCards;
+
+signals:
+    void addingCards(void);
+    void finishedAddingCards(void);
 };
 
 #endif // DEFINITIONCARDSECTION_H
