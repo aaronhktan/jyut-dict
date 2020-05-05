@@ -2,7 +2,7 @@
 #define ENTRYCONTENTWIDGET_H
 
 #include "components/definitioncard/definitioncardsection.h"
-#include "components/sentencecard/sentencecardsection.h"
+#include "components/entryview/entryviewsentencecardsection.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/entry/entry.h"
 
@@ -26,7 +26,7 @@ public:
 private:
     QVBoxLayout *_entryContentLayout;
     DefinitionCardSection *_definitionSection;
-    SentenceCardSection *_sentenceSection;
+    EntryViewSentenceCardSection *_sentenceSection;
 };
 
 #endif // ENTRYCONTENTWIDGET_H

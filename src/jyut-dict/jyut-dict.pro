@@ -45,15 +45,24 @@ SOURCES += \
     components/entryview/entryheaderwidget.cpp \
     components/entryview/entryscrollarea.cpp \
     components/entryview/entryscrollareawidget.cpp \
+    components/entryview/entryviewsentencecardsection.cpp \
     components/mainwindow/mainsplitter.cpp \
     components/mainwindow/maintoolbar.cpp \
     components/mainwindow/searchlineedit.cpp \
     components/mainwindow/searchoptionsradiogroupbox.cpp \
     components/sentencecard/loadingwidget.cpp \
-    components/sentencecard/sentencecardsection.cpp \
     components/sentencecard/sentencecardwidget.cpp \
     components/sentencecard/sentencecontentwidget.cpp \
     components/sentencecard/sentenceheaderwidget.cpp \
+    components/sentencesearchresult/sentenceresultlistdelegate.cpp \
+    components/sentencesearchresult/sentenceresultlistmodel.cpp \
+    components/sentencesearchresult/sentenceresultlistview.cpp \
+    components/sentenceview/sentencescrollarea.cpp \
+    components/sentenceview/sentencescrollareawidget.cpp \
+    components/sentenceview/sentenceviewcontentwidget.cpp \
+    components/sentenceview/sentenceviewheaderwidget.cpp \
+    components/sentenceview/sentenceviewsentencecardsection.cpp \
+    components/sentencewindow/sentencesplitter.cpp \
     components/settings/advancedtab.cpp \
     components/settings/contacttab.cpp \
     components/settings/dictionarytab.cpp \
@@ -102,16 +111,25 @@ HEADERS += \
     components/entryview/entryheaderwidget.h \
     components/entryview/entryscrollarea.h \
     components/entryview/entryscrollareawidget.h \
+    components/entryview/entryviewsentencecardsection.h \
     components/mainwindow/isearchlineedit.h \
     components/mainwindow/mainsplitter.h \
     components/mainwindow/maintoolbar.h \
     components/mainwindow/searchlineedit.h \
     components/mainwindow/searchoptionsradiogroupbox.h \
     components/sentencecard/loadingwidget.h \
-    components/sentencecard/sentencecardsection.h \
     components/sentencecard/sentencecardwidget.h \
     components/sentencecard/sentencecontentwidget.h \
     components/sentencecard/sentenceheaderwidget.h \
+    components/sentencesearchresult/sentenceresultlistdelegate.h \
+    components/sentencesearchresult/sentenceresultlistmodel.h \
+    components/sentencesearchresult/sentenceresultlistview.h \
+    components/sentenceview/sentencescrollarea.h \
+    components/sentenceview/sentencescrollareawidget.h \
+    components/sentenceview/sentenceviewcontentwidget.h \
+    components/sentenceview/sentenceviewheaderwidget.h \
+    components/sentenceview/sentenceviewsentencecardsection.h \
+    components/sentencewindow/sentencesplitter.h \
     components/settings/advancedtab.h \
     components/settings/contacttab.h \
     components/settings/dictionarytab.h \

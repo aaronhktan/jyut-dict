@@ -197,6 +197,26 @@ std::string SourceSentence::getSentenceSnippet(void) const
     return snippets.at(0).sentence;
 }
 
+void SourceSentence::setIsWelcome(const bool isWelcome)
+{
+    _isWelcome = isWelcome;
+}
+
+bool SourceSentence::isWelcome(void) const
+{
+    return _isWelcome;
+}
+
+void SourceSentence::setIsEmpty(const bool isEmpty)
+{
+    _isEmpty = isEmpty;
+}
+
+bool SourceSentence::isEmpty(void) const
+{
+    return _isEmpty;
+}
+
 std::vector<std::string> SourceSentence::explodePhonetic(
     const std::string &string, const char delimiter) const
 {

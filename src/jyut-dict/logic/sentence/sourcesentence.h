@@ -44,6 +44,11 @@ public:
     std::vector<SentenceSet> getSentenceSets(void) const;
     std::string getSentenceSnippet(void) const;
 
+    void setIsWelcome(const bool isWelcome);
+    bool isWelcome(void) const;
+    void setIsEmpty(const bool isEmpty);
+    bool isEmpty(void) const;
+
 private:
     std::string _simplified;
     std::string _traditional;
@@ -52,6 +57,9 @@ private:
     std::string _prettyPinyin;
 
     std::vector<SentenceSet> _sentences;
+
+    bool _isWelcome = false;
+    bool _isEmpty = false;
 
     std::vector<std::string> explodePhonetic(const std::string &string,
                                              const char delimiter) const;

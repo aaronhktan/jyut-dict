@@ -11,8 +11,6 @@
 SentenceContentWidget::SentenceContentWidget(QWidget *parent) : QWidget(parent)
 {
     _sentenceLayout = new QGridLayout{this};
-    _sentenceLayout->setContentsMargins(10, 0, 10, 0);
-    _sentenceLayout->setVerticalSpacing(0);
 
     _sentenceNumberLabels = {};
     _simplifiedLabels = {};
@@ -49,6 +47,9 @@ void SentenceContentWidget::setSourceSentenceVector(
     if (sourceSentences.empty()) {
         return;
     }
+
+    _sentenceLayout->setVerticalSpacing(0);
+    _sentenceLayout->setContentsMargins(10, 0, 10, 0);
 
     // Iterate through all the source sentences
     for (size_t i = 0; i < sourceSentences.size(); i++) {
@@ -153,9 +154,13 @@ void SentenceContentWidget::setSourceSentenceVector(
 
 void SentenceContentWidget::setSentenceSet(const SentenceSet &set)
 {
+    cleanupLabels();
+
     if (set.isEmpty()) {
         return;
     }
+
+    _sentenceLayout->setContentsMargins(10, 0, 10, 10);
 
     std::vector<Sentence::TargetSentence> sentences = set.getSentences();
     for (size_t i = 0; i < sentences.size(); i++) {
@@ -168,7 +173,7 @@ void SentenceContentWidget::setSentenceSet(const SentenceSet &set)
         _sentenceNumberLabels.back()->setFixedWidth(definitionNumberWidth);
         int definitionNumberHeight = _sentenceNumberLabels.back()
                                          ->fontMetrics()
-                                         .boundingRect("PYing")
+                                         .boundingRect("123PYing")
                                          .height();
         _sentenceNumberLabels.back()->setFixedHeight(definitionNumberHeight);
 
@@ -181,6 +186,8 @@ void SentenceContentWidget::setSentenceSet(const SentenceSet &set)
         _sentenceLayout->addWidget(_sentenceLabels[i],
                                      static_cast<int>(i + 9), 1, Qt::AlignTop);
     }
+
+    _sentenceLayout->activate();
 
 #ifdef Q_OS_MAC
     setStyle(Utils::isDarkMode());

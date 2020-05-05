@@ -9,7 +9,7 @@ EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manag
     _entryContentLayout->setSpacing(0);
 
     _definitionSection = new DefinitionCardSection{this};
-    _sentenceSection = new SentenceCardSection{manager, this};
+    _sentenceSection = new EntryViewSentenceCardSection{manager, this};
 
     _entryContentLayout->addWidget(_definitionSection);
     _entryContentLayout->addWidget(_sentenceSection);

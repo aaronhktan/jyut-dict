@@ -59,7 +59,7 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
         _definitionNumberLabels.back()->setFixedWidth(definitionNumberWidth);
         int definitionNumberHeight = _definitionNumberLabels.back()
                                          ->fontMetrics()
-                                         .boundingRect("PYing")
+                                         .boundingRect("123PYing")
                                          .height();
         _definitionNumberLabels.back()->setFixedHeight(definitionNumberHeight);
 

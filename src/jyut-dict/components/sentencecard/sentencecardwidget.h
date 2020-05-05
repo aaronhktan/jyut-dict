@@ -19,6 +19,7 @@ public:
     void changeEvent(QEvent *event) override;
 
     void displaySentences(const std::vector<SourceSentence> &sentences);
+    void displaySentences(const SentenceSet &set);
 
 private:
     void setStyle(bool use_dark);

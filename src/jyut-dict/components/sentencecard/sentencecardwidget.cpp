@@ -15,7 +15,7 @@ SentenceCardWidget::SentenceCardWidget(QWidget *parent)
 
     _sentenceCardLayout = new QVBoxLayout{this};
     _sentenceCardLayout->setContentsMargins(0, 0, 0, 0);
-    _sentenceCardLayout->setSpacing(15);
+    _sentenceCardLayout->setSpacing(11);
 
     _sentenceHeaderWidget = new SentenceHeaderWidget{this};
     _sentenceContentWidget = new SentenceContentWidget{this};
@@ -57,6 +57,23 @@ void SentenceCardWidget::displaySentences(const std::vector<SourceSentence> &sen
     _sentenceHeaderWidget->setCardTitle("SENTENCES (" +
         sentences.at(0).getSentenceSets().at(0).getSourceShortString() + ")");
     _sentenceContentWidget->setSourceSentenceVector(sentences);
+
+#ifdef Q_OS_MAC
+    setStyle(Utils::isDarkMode());
+#else
+    setStyle(/* use_dark = */false);
+#endif
+}
+
+void SentenceCardWidget::displaySentences(const SentenceSet &set)
+{
+    if (set.getSentences().empty()) {
+        return;
+    }
+
+    _sentenceHeaderWidget->setCardTitle("SENTENCES ("
+                                        + set.getSourceShortString() + ")");
+    _sentenceContentWidget->setSentenceSet(set);
 
 #ifdef Q_OS_MAC
     setStyle(Utils::isDarkMode());

@@ -4,7 +4,7 @@ DefinitionCardSection::DefinitionCardSection(QWidget *parent) : QWidget(parent)
 {
     _definitionCardsLayout = new QVBoxLayout{this};
     _definitionCardsLayout->setContentsMargins(0, 0, 0, 0);
-    _definitionCardsLayout->setSpacing(15);
+    _definitionCardsLayout->setSpacing(11);
 }
 
 void DefinitionCardSection::setEntry(const Entry &entry)
