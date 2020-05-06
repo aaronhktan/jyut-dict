@@ -24,6 +24,10 @@ public:
 private:
     QVBoxLayout *_entryContentLayout;
     SentenceViewSentenceCardSection *_sentenceSection;
+
+public slots:
+    void hideSentenceSection(void);
+    void showSentenceSection(void);
 };
 
 #endif // SENTENCECONTENTWIDGET_H

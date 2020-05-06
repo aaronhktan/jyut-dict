@@ -20,12 +20,14 @@ void SentenceViewSentenceCardSection::setSourceSentence(const SourceSentence &se
         _sentenceCardsLayout->setContentsMargins(0, 11, 0, 0);
     }
 
+    emit addingCards();
     for (const auto &set : sentenceSets) {
         _sentenceCards.push_back(new SentenceCardWidget{this});
         _sentenceCards.back()->displaySentences(set);
 
         _sentenceCardsLayout->addWidget(_sentenceCards.back(), Qt::AlignHCenter);
     }
+    emit finishedAddingCards();
 }
 
 void SentenceViewSentenceCardSection::setupUI(void)

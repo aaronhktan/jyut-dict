@@ -33,6 +33,10 @@ private:
 
     QVBoxLayout *_sentenceCardsLayout;
     std::vector<SentenceCardWidget *> _sentenceCards;
+
+signals:
+    void addingCards();
+    void finishedAddingCards();
 };
 
 #endif // SENTENCEVIEWSENTENCECARDSECTION_H
