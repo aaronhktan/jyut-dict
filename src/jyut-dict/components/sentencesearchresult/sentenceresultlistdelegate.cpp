@@ -135,9 +135,11 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     r = r.adjusted(0, boundingRect.height(), 0, 0);
     painter->restore();
 
-    snippet = metrics.elidedText(
-        sentence.getSentenceSnippet().c_str(),
-                         Qt::ElideRight, r.width()).trimmed();
+    snippet = metrics
+                  .elidedText(sentence.getSentenceSnippet().c_str(),
+                              Qt::ElideRight,
+                              r.width())
+                  .trimmed();
     painter->drawText(r, 0, snippet, &boundingRect);
     r = r.adjusted(0, boundingRect.height() + 4, 0, 0);
 
@@ -145,6 +147,7 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     std::string language = sentence.getSourceLanguage();
     QColor colour = Utils::getLanguageColour(language);
     r = r.adjusted(4, 0, 0, 0);
+    r.setY(option.rect.bottom() - 27);
 
     painter->save();
     font.setPixelSize(12);
