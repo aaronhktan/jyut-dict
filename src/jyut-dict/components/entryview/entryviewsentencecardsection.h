@@ -9,6 +9,7 @@
 #include "logic/search/sqlsearch.h"
 
 #include <QString>
+#include <QTimer>
 #include <QToolButton>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -47,6 +48,7 @@ private:
     QString _title;
 
     bool _calledBack = false;
+    QTimer *_timer;
 
     QVBoxLayout *_sentenceCardsLayout;
     LoadingWidget *_loadingWidget;

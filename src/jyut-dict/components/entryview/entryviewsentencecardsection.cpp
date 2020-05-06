@@ -2,8 +2,6 @@
 
 #include "logic/settings/settingsutils.h"
 
-#include <QTimer>
-
 EntryViewSentenceCardSection::EntryViewSentenceCardSection(std::shared_ptr<SQLDatabaseManager> manager,
                                          QWidget *parent)
     : QWidget(parent),
@@ -48,7 +46,6 @@ void EntryViewSentenceCardSection::callback(
 
 void EntryViewSentenceCardSection::updateUI(std::vector<SourceSentence> sourceSentences)
 {
-    emit addingCards();
     cleanup();
 
     _calledBack = true;
@@ -68,6 +65,7 @@ void EntryViewSentenceCardSection::updateUI(std::vector<SourceSentence> sourceSe
         _sentenceCardsLayout->setContentsMargins(0, 11, 0, 0);
     }
 
+    emit addingCards();
     for (const auto &item : sources) {
         _sentenceCards.push_back(new SentenceCardWidget{this});
         _sentenceCards.back()->displaySentences(item.second);
@@ -90,11 +88,15 @@ void EntryViewSentenceCardSection::setEntry(const Entry &entry)
 {
     cleanup();
     _calledBack = false;
-    QTimer::singleShot(10, [=]() {
+    _timer->stop();
+    _timer->setInterval(1000);
+    _timer->setSingleShot(true);
+    QObject::connect(_timer, &QTimer::timeout, this, [=]() {
         if (!_calledBack) {
             showLoadingWidget();
         }
     });
+    _timer->start();
     _search->searchTraditionalSentences(entry.getTraditional().c_str());
     _title = entry
                  .getCharacters(
@@ -131,6 +133,8 @@ void EntryViewSentenceCardSection::setupUI(void)
     _sentenceCardsLayout->setAlignment(_loadingWidget, Qt::AlignHCenter);
     _sentenceCardsLayout->addWidget(_viewAllSentencesButton);
     _sentenceCardsLayout->setAlignment(_viewAllSentencesButton, Qt::AlignRight);
+
+    _timer = new QTimer{this};
 }
 
 void EntryViewSentenceCardSection::cleanup(void)
@@ -173,7 +177,7 @@ EntryViewSentenceCardSection::getSamplesForEachSource(
     for (auto sourceSentence : sourceSentences) {
         for (auto sentenceSet : sourceSentence.getSentenceSets()) {
             std::string source = sentenceSet.getSource();
-            if (sources[source].size() >= 5) {
+            if (sources[source].size() >= 2) {
                 continue;
             }
 

@@ -57,9 +57,8 @@ DefinitionHeaderWidget::~DefinitionHeaderWidget()
 
 void DefinitionHeaderWidget::setSectionTitle(std::string title)
 {
-    _titleLabel->setText(title.c_str());
     _titleLabel->setFixedHeight(_titleLabel->fontMetrics().boundingRect(title.c_str()).height());
-}
+    _titleLabel->setText(title.c_str());}
 
 void DefinitionHeaderWidget::setStyle(bool use_dark)
 {
