@@ -111,36 +111,6 @@ void SentenceResultListDelegate::paint(QPainter *painter,
 
     delete doc;
 
-    // Draw language indicator
-    std::string language = sentence.getSourceLanguage();
-    QColor colour = Utils::getLanguageColour(language);
-    r = r.adjusted(7, 30, 0, 0);
-
-    painter->save();
-    font.setPixelSize(12);
-    painter->setFont(font);
-    metrics = QFontMetrics(font);
-    QString languageString = Utils::getLanguageFromISO639(language);
-    languageString = metrics
-                         .elidedText(languageString, Qt::ElideRight, r.width())
-                         .trimmed();
-    painter->drawText(r, 0, languageString, &boundingRect);
-
-    QPainterPath path;
-    boundingRect = boundingRect.adjusted(-7, -2, 7, 2);
-    path.addRoundedRect(boundingRect, 10, 10);
-    if (option.state & QStyle::State_Selected) {
-        painter->fillPath(path, backgroundColour.lighter(125));
-        painter->setPen(QPen(option.palette.color(QPalette::WindowText)));
-    } else {
-        painter->fillPath(path, colour);
-        painter->setPen(QPen(option.palette.color(QPalette::WindowText).darker(125)));
-    }
-
-    painter->drawText(r, 0, languageString, &boundingRect);
-    r = r.adjusted(-7, boundingRect.height() + 4, 0, 0);
-    painter->restore();
-
     // Phonetic and definition snippets
 #ifdef Q_OS_WIN
     font = oldFont;
@@ -148,7 +118,7 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     QString snippet;
     font.setPixelSize(12);
     painter->setFont(font);
-    r = r.adjusted(0, 0, 0, 0);
+    r = r.adjusted(0, 30, 0, 0);
     metrics = QFontMetrics(font);
     painter->save();
     painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
@@ -169,6 +139,37 @@ void SentenceResultListDelegate::paint(QPainter *painter,
         sentence.getSentenceSnippet().c_str(),
                          Qt::ElideRight, r.width()).trimmed();
     painter->drawText(r, 0, snippet, &boundingRect);
+    r = r.adjusted(0, boundingRect.height() + 4, 0, 0);
+
+    // Draw language indicator
+    std::string language = sentence.getSourceLanguage();
+    QColor colour = Utils::getLanguageColour(language);
+    r = r.adjusted(4, 0, 0, 0);
+
+    painter->save();
+    font.setPixelSize(12);
+    painter->setFont(font);
+    metrics = QFontMetrics(font);
+    QString languageString = Utils::getLanguageFromISO639(language);
+    languageString = metrics
+                         .elidedText(languageString, Qt::ElideRight, r.width())
+                         .trimmed();
+    painter->drawText(r, 0, languageString, &boundingRect);
+
+    QPainterPath path;
+    boundingRect = boundingRect.adjusted(-7, -2, 7, 2);
+    path.addRoundedRect(boundingRect, 10, 10);
+    if (option.state & QStyle::State_Selected) {
+        painter->fillPath(path, backgroundColour.lighter(125));
+        painter->setPen(QPen(option.palette.color(QPalette::WindowText)));
+    } else {
+        painter->fillPath(path, colour);
+        painter->setPen(QPen(option.palette.color(QPalette::WindowText)));
+    }
+
+    painter->drawText(r, 0, languageString, &boundingRect);
+    r = r.adjusted(-4, boundingRect.height() + 4, 0, 0);
+    painter->restore();
 
     // Bottom divider
     QRect rct = option.rect;
