@@ -32,6 +32,7 @@ private:
     void setStyle(bool use_dark);
     void translateUI();
 
+    void displaySentenceLabels(const EntryCharactersOptions options);
     void displayPronunciationLabels(const EntryPhoneticOptions options);
     void speakJyutping(void);
     void speakPinyin(void);

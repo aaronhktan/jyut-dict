@@ -140,6 +140,12 @@ void SentenceViewHeaderWidget::setSourceSentence(const SourceSentence &sentence)
                     .value<MandarinOptions>())
             .c_str()}.trimmed());
 
+    displaySentenceLabels(
+        Settings::getSettings()
+            ->value("characterOptions",
+                    QVariant::fromValue(
+                        EntryCharactersOptions::PREFER_TRADITIONAL))
+            .value<EntryCharactersOptions>());
     displayPronunciationLabels(
         Settings::getSettings()
             ->value("phoneticOptions",
@@ -240,6 +246,40 @@ void SentenceViewHeaderWidget::translateUI()
         });
     }
 #endif
+}
+
+void SentenceViewHeaderWidget::displaySentenceLabels(
+    const EntryCharactersOptions options)
+{
+    // Display the first label
+    switch (options) {
+    case EntryCharactersOptions::ONLY_SIMPLIFIED:
+        [[clang::fallthrough]];
+    case EntryCharactersOptions::PREFER_SIMPLIFIED:
+        _entryHeaderLayout->addWidget(_simplifiedLabel, 1, 0, 1, -1);
+        break;
+    case EntryCharactersOptions::ONLY_TRADITIONAL:
+        [[clang::fallthrough]];
+    case EntryCharactersOptions::PREFER_TRADITIONAL:
+        _entryHeaderLayout->addWidget(_traditionalLabel, 1, 0, 1, -1);
+        break;
+    }
+
+    // Display the second label
+    switch (options) {
+    case EntryCharactersOptions::ONLY_SIMPLIFIED:
+        _traditionalLabel->setVisible(false);
+        break;
+    case EntryCharactersOptions::ONLY_TRADITIONAL:
+        _simplifiedLabel->setVisible(false);
+        break;
+    case EntryCharactersOptions::PREFER_SIMPLIFIED:
+        _entryHeaderLayout->addWidget(_traditionalLabel, 2, 0, 1, -1);
+        break;
+    case EntryCharactersOptions::PREFER_TRADITIONAL:
+        _entryHeaderLayout->addWidget(_simplifiedLabel, 2, 0, 1, -1);
+        break;
+    }
 }
 
 void SentenceViewHeaderWidget::displayPronunciationLabels(const EntryPhoneticOptions options)

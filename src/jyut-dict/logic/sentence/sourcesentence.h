@@ -1,6 +1,7 @@
 #ifndef SOURCESENTENCE_H
 #define SOURCESENTENCE_H
 
+#include "logic/entry/entrycharactersoptions.h"
 #include "logic/entry/entryphoneticoptions.h"
 #include "sentenceset.h"
 
@@ -25,12 +26,17 @@ public:
     friend std::ostream &operator<<(std::ostream &out,
                                     const SourceSentence &sourceSentence);
 
+    std::string getCharacters(EntryCharactersOptions options) const;
+
     std::string getSimplified(void) const;
     void setSimplified(std::string simplified);
 
     std::string getTraditional(void) const;
     void setTraditional(std::string traditional);
 
+    std::string getPhonetic(EntryPhoneticOptions options,
+                            CantoneseOptions cantoneseOptions,
+                            MandarinOptions mandarinOptions) const;
     std::string getCantonesePhonetic(CantoneseOptions cantoneseOptions) const;
     std::string getMandarinPhonetic(MandarinOptions mandarinOptions) const;
 
