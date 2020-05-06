@@ -46,7 +46,8 @@ private:
     QString _pinyin;
     std::unique_ptr<EntrySpeaker> _speaker;
 
-    QGridLayout *_entryHeaderLayout;
+    QGridLayout *_sentenceHeaderLayout;
+    QLabel *_sourceLanguageLabel;
     QLabel *_simplifiedLabel;
     QLabel *_traditionalLabel;
     QLabel *_jyutpingLabel;

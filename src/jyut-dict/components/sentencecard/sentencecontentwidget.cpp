@@ -115,12 +115,18 @@ void SentenceContentWidget::setSourceSentenceVector(
         _sentenceLabels.push_back(
             new QLabel{QString{
                            targetSentenceSet.getSentences()[0].sentence.c_str()}
-                               .trimmed()
-                           + "\n",
+                               .trimmed(),
                        this});
         _sentenceLabels.back()->setWordWrap(true);
         _sentenceLabels.back()->setTextInteractionFlags(
             Qt::TextSelectableByMouse);
+
+        _sourceSentenceLanguage.push_back(
+            new QLabel{Utils::getLanguageFromISO639(
+                           sourceSentence.getSourceLanguage())
+                               .trimmed(),
+                       this});
+        _sourceSentenceLanguage.back()->setObjectName("sourceSentenceLanguage");
 
         addLabelsToLayout(
             _sentenceLayout,
@@ -131,6 +137,7 @@ void SentenceContentWidget::setSourceSentenceVector(
             _jyutpingLabels[i],
             _pinyinLabels[i],
             _sentenceLabels[i],
+            _sourceSentenceLanguage[i],
             Settings::getSettings()
                 ->value("phoneticOptions",
                         QVariant::fromValue(
@@ -194,7 +201,8 @@ void SentenceContentWidget::setSentenceSet(const SentenceSet &set)
 
 void SentenceContentWidget::setStyle(bool use_dark)
 {
-    QString sentenceNumberStyleSheet = "QLabel { color: %1; }";
+    QString sentenceNumberStyleSheet = "QLabel { color: %1; margin-top: 2px; "
+                                       "padding: 2px; }";
     QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
                                           LABEL_TEXT_COLOUR_DARK_G,
                                           LABEL_TEXT_COLOUR_DARK_B}
@@ -205,7 +213,21 @@ void SentenceContentWidget::setStyle(bool use_dark)
         label->setStyleSheet(sentenceNumberStyleSheet.arg(textColour.name()));
     }
 
-    QString chineseStyleSheet = "QLabel { font-size: 16px; }";
+    for (const auto &label : _sourceSentenceLanguage) {
+        QString sourceStyleSheet
+            = "QLabel#sourceSentenceLanguage {"
+              "background: %1; "
+              "border-radius: 10px; "
+              "margin-top: 2px; "
+              "padding: 2px; }";
+        label->setStyleSheet(sourceStyleSheet.arg(
+            Utils::getLanguageColour(
+                Utils::getISO639FromLanguage(label->text().trimmed()))
+                .name()));
+        label->setFixedWidth(label->sizeHint().width());
+    }
+
+    QString chineseStyleSheet = "QLabel { font-size: 16px; padding-left: 2px; }";
     for (const auto &label : _simplifiedLabels) {
         label->setStyleSheet(chineseStyleSheet);
     }
@@ -213,52 +235,39 @@ void SentenceContentWidget::setStyle(bool use_dark)
         label->setStyleSheet(chineseStyleSheet);
     }
 
-    QString pronunciationStyleSheet = "QLabel { font-size: 13px; color: %1; }";
+    QString pronunciationStyleSheet = "QLabel { font-size: 13px; color: %1;"
+                                      "padding-left: 2px; }";
     for (const auto &label : _jyutpingLabels) {
         label->setStyleSheet(pronunciationStyleSheet.arg(textColour.name()));
     }
     for (const auto &label : _pinyinLabels) {
         label->setStyleSheet(pronunciationStyleSheet.arg(textColour.name()));
     }
+
+    QString sentenceStyleSheet = "QLabel { padding-left: 2px; }";
+    for (const auto &label : _sentenceLabels) {
+        label->setStyleSheet(sentenceStyleSheet);
+    }
 }
 
 void SentenceContentWidget::cleanupLabels()
 {
-    for (auto label : _sentenceNumberLabels) {
-        _sentenceLayout->removeWidget(label);
-        delete label;
-    }
-    _sentenceNumberLabels.clear();
+    clearLabelVector(_sentenceNumberLabels);
+    clearLabelVector(_traditionalLabels);
+    clearLabelVector(_jyutpingLabels);
+    clearLabelVector(_pinyinLabels);
+    clearLabelVector(_sentenceLabels);
+    clearLabelVector(_sourceSentenceLanguage);
+    clearLabelVector(_spaceLabels);
+}
 
-    for (auto label : _simplifiedLabels) {
+void SentenceContentWidget::clearLabelVector(std::vector<QLabel *> &vector)
+{
+    for (auto label : vector) {
         _sentenceLayout->removeWidget(label);
         delete label;
     }
-    _simplifiedLabels.clear();
-
-    for (auto label : _traditionalLabels) {
-        _sentenceLayout->removeWidget(label);
-        delete label;
-    }
-    _traditionalLabels.clear();
-
-    for (auto label : _jyutpingLabels) {
-        _sentenceLayout->removeWidget(label);
-        delete label;
-    }
-    _jyutpingLabels.clear();
-
-    for (auto label : _pinyinLabels) {
-        _sentenceLayout->removeWidget(label);
-        delete label;
-    }
-    _pinyinLabels.clear();
-
-    for (auto label : _sentenceLabels) {
-        _sentenceLayout->removeWidget(label);
-        delete label;
-    }
-    _sentenceLabels.clear();
+    vector.clear();
 }
 
 void SentenceContentWidget::addLabelsToLayout(
@@ -270,15 +279,22 @@ void SentenceContentWidget::addLabelsToLayout(
     QLabel *jyutpingLabel,
     QLabel *pinyinLabel,
     QLabel *sentenceLabel,
+    QLabel *sourceSentenceLanguage,
     EntryPhoneticOptions phoneticOptions,
     EntryCharactersOptions characterOptions)
 {
     layout->addWidget(sentenceNumberLabel,
-                      static_cast<int>(rowNumber * 6),
+                      static_cast<int>(rowNumber * 10),
                       0,
-                      6,
                       1,
-                      Qt::AlignTop);
+                      1);
+
+    layout->addWidget(sourceSentenceLanguage,
+                      static_cast<int>(rowNumber * 10),
+                      1,
+                      1,
+                      1,
+                      Qt::AlignLeft);
 
     // Add the first character option
     switch (characterOptions) {
@@ -287,7 +303,7 @@ void SentenceContentWidget::addLabelsToLayout(
         [[clang::fallthrough]];
     case EntryCharactersOptions::PREFER_SIMPLIFIED:
         layout->addWidget(simplifiedLabel,
-                          static_cast<int>(rowNumber * 6),
+                          static_cast<int>(rowNumber * 10 + 1),
                           1,
                           1,
                           -1,
@@ -298,7 +314,7 @@ void SentenceContentWidget::addLabelsToLayout(
         [[clang::fallthrough]];
     case EntryCharactersOptions::PREFER_TRADITIONAL:
         layout->addWidget(traditionalLabel,
-                          static_cast<int>(rowNumber * 6),
+                          static_cast<int>(rowNumber * 10 + 1),
                           1,
                           1,
                           -1,
@@ -310,7 +326,7 @@ void SentenceContentWidget::addLabelsToLayout(
     switch (characterOptions) {
     case EntryCharactersOptions::PREFER_SIMPLIFIED:
         layout->addWidget(traditionalLabel,
-                          static_cast<int>(rowNumber * 6 + 1),
+                          static_cast<int>(rowNumber * 10 + 2),
                           1,
                           1,
                           -1,
@@ -318,7 +334,7 @@ void SentenceContentWidget::addLabelsToLayout(
         break;
     case EntryCharactersOptions::PREFER_TRADITIONAL:
         layout->addWidget(simplifiedLabel,
-                          static_cast<int>(rowNumber * 6 + 1),
+                          static_cast<int>(rowNumber * 10 + 2),
                           1,
                           1,
                           -1,
@@ -335,7 +351,7 @@ void SentenceContentWidget::addLabelsToLayout(
         [[clang::fallthrough]];
     case EntryPhoneticOptions::PREFER_JYUTPING:
         layout->addWidget(jyutpingLabel,
-                          static_cast<int>(rowNumber * 6 + 2),
+                          static_cast<int>(rowNumber * 10 + 3),
                           1,
                           1,
                           -1,
@@ -346,7 +362,7 @@ void SentenceContentWidget::addLabelsToLayout(
         [[clang::fallthrough]];
     case EntryPhoneticOptions::PREFER_PINYIN:
         layout->addWidget(pinyinLabel,
-                          static_cast<int>(rowNumber * 6 + 2),
+                          static_cast<int>(rowNumber * 10 + 3),
                           1,
                           1,
                           -1,
@@ -358,7 +374,7 @@ void SentenceContentWidget::addLabelsToLayout(
     switch (phoneticOptions) {
     case EntryPhoneticOptions::PREFER_JYUTPING:
         layout->addWidget(pinyinLabel,
-                          static_cast<int>(rowNumber * 6 + 3),
+                          static_cast<int>(rowNumber * 10 + 4),
                           1,
                           1,
                           -1,
@@ -366,7 +382,7 @@ void SentenceContentWidget::addLabelsToLayout(
         break;
     case EntryPhoneticOptions::PREFER_PINYIN:
         layout->addWidget(jyutpingLabel,
-                          static_cast<int>(rowNumber * 6 + 3),
+                          static_cast<int>(rowNumber * 10 + 4),
                           1,
                           1,
                           -1,
@@ -377,9 +393,16 @@ void SentenceContentWidget::addLabelsToLayout(
     }
 
     layout->addWidget(sentenceLabel,
-                      static_cast<int>(rowNumber * 6 + 4),
+                      static_cast<int>(rowNumber * 10 + 5),
                       1,
                       1,
                       -1,
                       Qt::AlignTop);
+
+    _spaceLabels.push_back(new QLabel{" "});
+    layout->addWidget(_spaceLabels.back(),
+                      static_cast<int>(rowNumber * 10 + 6),
+                      1,
+                      1,
+                      -1);
 }

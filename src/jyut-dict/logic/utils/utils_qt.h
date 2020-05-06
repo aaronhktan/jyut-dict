@@ -79,6 +79,7 @@ QColor getContrastingColour(const QColor backgroundColour);
 QColor getLanguageColour(std::string language);
 
 QString getLanguageFromISO639(std::string language);
+std::string getISO639FromLanguage(QString language);
 
 }
 

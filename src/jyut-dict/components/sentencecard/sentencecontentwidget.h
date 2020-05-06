@@ -36,11 +36,13 @@ private:
                            QLabel *jyutpingLabel,
                            QLabel *pinyinLabel,
                            QLabel *sentenceLabel,
+                           QLabel *sourceSentenceLanguage,
                            EntryPhoneticOptions phoneticOptions,
                            EntryCharactersOptions characterOptions);
     void setStyle(bool use_dark);
 
     void cleanupLabels();
+    void clearLabelVector(std::vector<QLabel *> &vector);
 
     bool _paletteRecentlyChanged = false;
 
@@ -51,6 +53,8 @@ private:
     std::vector<QLabel *> _jyutpingLabels;
     std::vector<QLabel *> _pinyinLabels;
     std::vector<QLabel *> _sentenceLabels;
+    std::vector<QLabel *> _sourceSentenceLanguage;
+    std::vector<QLabel *> _spaceLabels;
 };
 
 #endif // SENTENCECONTENTWIDGET_H

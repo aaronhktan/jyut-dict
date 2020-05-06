@@ -8,6 +8,8 @@
 
 #include <unordered_map>
 
+#include <QDebug>
+
 namespace Utils {
 
 static std::unordered_map<std::string, QColor> colourMap = {
@@ -29,6 +31,19 @@ static std::unordered_map<std::string, QString> languageMap = {
      QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::DEU_STRING)},
     {"yue",
      QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::YUE_STRING)},
+};
+
+static QMap<QString, std::string> reverseLanguageMap = {
+    {QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CMN_STRING),
+     "cmn"},
+    {QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::ENG_STRING),
+     "eng"},
+    {QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::FRA_STRING),
+     "fra"},
+    {QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::DEU_STRING),
+     "deu"},
+    {QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::YUE_STRING),
+     "yue"},
 };
 
     QColor getContrastingColour(const QColor backgroundColour)
@@ -58,6 +73,18 @@ static std::unordered_map<std::string, QString> languageMap = {
         } catch (std::out_of_range &e) {
             QLocale locale{QString{language.c_str()}};
             result = locale.languageToString(locale.language());
+        }
+        return result;
+    }
+
+    std::string getISO639FromLanguage(QString language)
+    {
+        std::string result;
+        if (reverseLanguageMap.contains(language)) {
+            result = reverseLanguageMap[language];
+        } else {
+            QString str = QLocale{language}.name();
+            result = str.mid(0, str.indexOf("_")).toStdString();
         }
         return result;
     }
