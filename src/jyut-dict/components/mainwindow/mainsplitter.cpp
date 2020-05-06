@@ -108,11 +108,13 @@ void MainSplitter::handleDoubleClick(const QModelIndex &selection)
 
     prepareEntry(entry);
 
-    EntryScrollArea *area = new EntryScrollArea{_manager, nullptr};
-    area->setParent(this, Qt::Window);
-    area->setEntry(entry);
+    QTimer::singleShot(50, this, [=]() {
+        EntryScrollArea *area = new EntryScrollArea{_manager, nullptr};
+        area->setParent(this, Qt::Window);
+        area->setEntry(entry);
 #ifndef Q_OS_MAC
-    area->setWindowTitle(" ");
+        area->setWindowTitle(" ");
 #endif
-    area->show();
+        area->show();
+    });
 }
