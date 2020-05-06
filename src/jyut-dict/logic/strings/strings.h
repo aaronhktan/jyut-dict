@@ -72,6 +72,12 @@ constexpr auto ZH_CN_DESCRIPTION_STRING = QT_TRANSLATE_NOOP(
     "Unable to use text to speech.\n\n"
     "Debug: Locale: %1, Language: Chinese - Mainland");
 
+constexpr auto ENG_STRING = QT_TRANSLATE_NOOP("strings", "English");
+constexpr auto FRA_STRING = QT_TRANSLATE_NOOP("strings", "French");
+constexpr auto DEU_STRING = QT_TRANSLATE_NOOP("strings", "German");
+constexpr auto YUE_STRING = QT_TRANSLATE_NOOP("strings", "Cantonese");
+constexpr auto CMN_STRING = QT_TRANSLATE_NOOP("strings", "Mandarin");
+
 }
 
 #endif // STRINGS_H

@@ -44,13 +44,13 @@ namespace Utils {
 #define LABEL_TEXT_COLOUR_LIGHT_G 111
 #define LABEL_TEXT_COLOUR_LIGHT_B 111
 
-#define HEADER_BACKGROUND_COLOUR_LIGHT_R 235
-#define HEADER_BACKGROUND_COLOUR_LIGHT_G 235
-#define HEADER_BACKGROUND_COLOUR_LIGHT_B 235
+#define HEADER_BACKGROUND_COLOUR_LIGHT_R 215
+#define HEADER_BACKGROUND_COLOUR_LIGHT_G 215
+#define HEADER_BACKGROUND_COLOUR_LIGHT_B 215
 
-#define CONTENT_BACKGROUND_COLOUR_LIGHT_R 245
-#define CONTENT_BACKGROUND_COLOUR_LIGHT_G 245
-#define CONTENT_BACKGROUND_COLOUR_LIGHT_B 245
+#define CONTENT_BACKGROUND_COLOUR_LIGHT_R 235
+#define CONTENT_BACKGROUND_COLOUR_LIGHT_G 235
+#define CONTENT_BACKGROUND_COLOUR_LIGHT_B 235
 
 #define BACKGROUND_COLOUR_LIGHT_R 255
 #define BACKGROUND_COLOUR_LIGHT_G 255
@@ -75,6 +75,10 @@ namespace Utils {
 // The following is used to calculate a contrasting colour
 // https://stackoverflow.com/questions/946544/good-text-foreground-color-for-a-given-background-color
 QColor getContrastingColour(const QColor backgroundColour);
+
+QColor getLanguageColour(std::string language);
+
+QString getLanguageFromISO639(std::string language);
 
 }
 

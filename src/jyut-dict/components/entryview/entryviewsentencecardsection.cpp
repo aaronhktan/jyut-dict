@@ -182,7 +182,8 @@ EntryViewSentenceCardSection::getSamplesForEachSource(
             }
 
             SourceSentence sentence
-                = SourceSentence(sourceSentence.getSimplified(),
+                = SourceSentence(sourceSentence.getSourceLanguage(),
+                                 sourceSentence.getSimplified(),
                                  sourceSentence.getTraditional(),
                                  sourceSentence.getJyutping(),
                                  sourceSentence.getPinyin(),

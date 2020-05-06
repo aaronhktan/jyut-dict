@@ -901,9 +901,12 @@ std::vector<SourceSentence> SQLSearch::parseSentences(QSqlQuery &query)
             set->pushSentence(targetSentence);
         }
 
-        sentences.push_back(SourceSentence{
-            simplified, traditional, jyutping, pinyin, sentenceSets
-        });
+        sentences.push_back(SourceSentence{sourceLanguage,
+                                           simplified,
+                                           traditional,
+                                           jyutping,
+                                           pinyin,
+                                           sentenceSets});
     }
 
     return sentences;

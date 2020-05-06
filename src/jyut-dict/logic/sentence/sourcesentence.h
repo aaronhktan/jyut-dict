@@ -11,7 +11,8 @@ class SourceSentence
 {
 public:
     SourceSentence();
-    SourceSentence(std::string simplified,
+    SourceSentence(std::string sourceLanguage,
+                   std::string simplified,
                    std::string traditional,
                    std::string jyutping,
                    std::string pinyin,
@@ -25,6 +26,9 @@ public:
     SourceSentence &operator=(const SourceSentence &&sourceSentence);
     friend std::ostream &operator<<(std::ostream &out,
                                     const SourceSentence &sourceSentence);
+
+    std::string getSourceLanguage(void) const;
+    void setSourceLanguage(std::string sourceLanguage);
 
     std::string getCharacters(EntryCharactersOptions options) const;
 
@@ -56,6 +60,7 @@ public:
     bool isEmpty(void) const;
 
 private:
+    std::string _sourceLanguage;
     std::string _simplified;
     std::string _traditional;
     std::string _jyutping;
