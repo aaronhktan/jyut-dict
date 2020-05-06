@@ -25,13 +25,13 @@ SentenceViewHeaderWidget::SentenceViewHeaderWidget(QWidget *parent) : QWidget(pa
     _sourceLanguageLabel->setVisible(false);
 
     _simplifiedLabel = new QLabel{this};
-    _simplifiedLabel->setStyleSheet("QLabel { font-size: 30px }");
+    _simplifiedLabel->setStyleSheet("QLabel { font-size: 24px }");
     _simplifiedLabel->setAttribute(Qt::WA_TranslucentBackground);
     _simplifiedLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _simplifiedLabel->setWordWrap(true);
 
     _traditionalLabel = new QLabel{this};
-    _traditionalLabel->setStyleSheet("QLabel { font-size: 30px }");
+    _traditionalLabel->setStyleSheet("QLabel { font-size: 24px }");
     _traditionalLabel->setAttribute(Qt::WA_TranslucentBackground);
     _traditionalLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _traditionalLabel->setWordWrap(true);
@@ -189,8 +189,8 @@ void SentenceViewHeaderWidget::setStyle(bool use_dark)
             .name()));
     _sourceLanguageLabel->resize(_sourceLanguageLabel->minimumSizeHint());
 
-    _simplifiedLabel->setStyleSheet("QLabel { font-size: 30px }");
-    _traditionalLabel->setStyleSheet("QLabel { font-size: 30px }");
+    _simplifiedLabel->setStyleSheet("QLabel { font-size: 24px }");
+    _traditionalLabel->setStyleSheet("QLabel { font-size: 24px }");
 
     QString styleSheet = "QLabel { color: %1; }";
     QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,

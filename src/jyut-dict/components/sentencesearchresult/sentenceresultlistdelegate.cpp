@@ -83,6 +83,36 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     QFont font = painter->font();
     QFontMetrics metrics{font};
 
+    // Draw language indicator
+    std::string language = sentence.getSourceLanguage();
+    QColor colour = Utils::getLanguageColour(language);
+    r = r.adjusted(15, 11, 0, 0);
+
+    painter->save();
+    font.setPixelSize(12);
+    painter->setFont(font);
+    metrics = QFontMetrics(font);
+    QString languageString = Utils::getLanguageFromISO639(language);
+    languageString = metrics
+                         .elidedText(languageString, Qt::ElideRight, r.width())
+                         .trimmed();
+    painter->drawText(r, 0, languageString, &boundingRect);
+
+    QPainterPath path;
+    boundingRect = boundingRect.adjusted(-7, -2, 7, 2);
+    path.addRoundedRect(boundingRect, 10, 10);
+    if (option.state & QStyle::State_Selected) {
+        painter->fillPath(path, backgroundColour.lighter(125));
+        painter->setPen(QPen(option.palette.color(QPalette::WindowText)));
+    } else {
+        painter->fillPath(path, colour);
+        painter->setPen(QPen(option.palette.color(QPalette::WindowText)));
+    }
+
+    painter->drawText(r, 0, languageString, &boundingRect);
+    r = r.adjusted(-11, boundingRect.height() + 4, 0, 0);
+    painter->restore();
+
     // Chinese characters
     painter->save();
 #ifdef Q_OS_WIN
@@ -93,7 +123,7 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     painter->setFont(font);
 
     // Use QTextDocument for rich text
-    r = option.rect.adjusted(11, 11, -11, 0);
+    r = option.rect.adjusted(11, 30, -11, 0);
     QTextDocument *doc = new QTextDocument{};
     doc->setHtml(QString(sentence.getCharacters(characterOptions).c_str()));
     doc->setTextWidth(r.width());
@@ -118,7 +148,7 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     QString snippet;
     font.setPixelSize(12);
     painter->setFont(font);
-    r = r.adjusted(0, 30, 0, 0);
+    r = r.adjusted(0, 28, 0, 0);
     metrics = QFontMetrics(font);
     painter->save();
     painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
@@ -135,44 +165,15 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     r = r.adjusted(0, boundingRect.height(), 0, 0);
     painter->restore();
 
+    r.setY(option.rect.bottom() - 10
+        - metrics.boundingRect(sentence.getSentenceSnippet().c_str()).height());
     snippet = metrics
                   .elidedText(sentence.getSentenceSnippet().c_str(),
                               Qt::ElideRight,
                               r.width())
                   .trimmed();
     painter->drawText(r, 0, snippet, &boundingRect);
-    r = r.adjusted(0, boundingRect.height() + 4, 0, 0);
-
-    // Draw language indicator
-    std::string language = sentence.getSourceLanguage();
-    QColor colour = Utils::getLanguageColour(language);
-    r = r.adjusted(4, 0, 0, 0);
-    r.setY(option.rect.bottom() - 27);
-
-    painter->save();
-    font.setPixelSize(12);
-    painter->setFont(font);
-    metrics = QFontMetrics(font);
-    QString languageString = Utils::getLanguageFromISO639(language);
-    languageString = metrics
-                         .elidedText(languageString, Qt::ElideRight, r.width())
-                         .trimmed();
-    painter->drawText(r, 0, languageString, &boundingRect);
-
-    QPainterPath path;
-    boundingRect = boundingRect.adjusted(-7, -2, 7, 2);
-    path.addRoundedRect(boundingRect, 10, 10);
-    if (option.state & QStyle::State_Selected) {
-        painter->fillPath(path, backgroundColour.lighter(125));
-        painter->setPen(QPen(option.palette.color(QPalette::WindowText)));
-    } else {
-        painter->fillPath(path, colour);
-        painter->setPen(QPen(option.palette.color(QPalette::WindowText)));
-    }
-
-    painter->drawText(r, 0, languageString, &boundingRect);
-    r = r.adjusted(-4, boundingRect.height() + 4, 0, 0);
-    painter->restore();
+    r = r.adjusted(0, boundingRect.height(), 0, 0);
 
     // Bottom divider
     QRect rct = option.rect;
@@ -190,6 +191,6 @@ QSize SentenceResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
 #ifdef Q_OS_LINUX
     return QSize(100, 90);
 #else
-    return QSize(100, 105);
+    return QSize(100, 100);
 #endif
 }
