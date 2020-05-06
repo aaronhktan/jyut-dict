@@ -8,6 +8,7 @@
 #include "logic/search/isearchobserver.h"
 #include "logic/search/sqlsearch.h"
 
+#include <QEvent>
 #include <QString>
 #include <QTimer>
 #include <QToolButton>
@@ -30,11 +31,15 @@ public:
     void callback(const std::vector<SourceSentence> sourceSentences,
                   bool emptyQuery) override;
 
+    void changeEvent(QEvent *event) override;
+
     void setEntry(const Entry &entry);
 
 private:
     void setupUI(void);
     void cleanup(void);
+
+    void setStyle(bool use_dark);
 
     void showLoadingWidget(void);
     void openSentenceWindow(std::vector<SourceSentence> sourceSentences);
@@ -47,6 +52,7 @@ private:
     std::vector<SourceSentence> _sentences;
     QString _title;
 
+    bool _paletteRecentlyChanged = false;
     bool _calledBack = false;
     QTimer *_timer;
 

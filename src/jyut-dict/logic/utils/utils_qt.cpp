@@ -13,11 +13,11 @@
 namespace Utils {
 
 static std::unordered_map<std::string, QColor> colourMap = {
-    {"cmn", QColor{6, 56, 33}},
+    {"cmn", QColor{14, 139, 83}},
     {"eng", QColor{100, 76, 143}},
     {"fra", QColor{0, 48, 143}},
     {"deu", QColor{186, 200, 95}},
-    {"yue", QColor{73, 13, 38}},
+    {"yue", QColor{173, 31, 90}},
 };
 
 static std::unordered_map<std::string, QString> languageMap = {

@@ -214,16 +214,17 @@ void SentenceContentWidget::setStyle(bool use_dark)
     }
 
     for (const auto &label : _sourceSentenceLanguage) {
-        QString sourceStyleSheet
-            = "QLabel#sourceSentenceLanguage {"
-              "background: %1; "
-              "border-radius: 10px; "
-              "margin-top: 2px; "
-              "padding: 2px; }";
-        label->setStyleSheet(sourceStyleSheet.arg(
-            Utils::getLanguageColour(
-                Utils::getISO639FromLanguage(label->text().trimmed()))
-                .name()));
+        QString sourceStyleSheet = "QLabel {"
+                                   "background: %1; "
+                                   "border-radius: 10px; "
+                                   "color: %2; "
+                                   "margin-top: 2px; "
+                                   "padding: 2px; }";
+        QColor languageColour = Utils::getLanguageColour(
+            Utils::getISO639FromLanguage(label->text().trimmed()));
+        QColor languageTextColour = Utils::getContrastingColour(languageColour);
+        label->setStyleSheet(
+            sourceStyleSheet.arg(languageColour.name(), languageTextColour.name()));
         label->setFixedWidth(label->sizeHint().width());
     }
 

@@ -178,27 +178,30 @@ void SentenceViewHeaderWidget::setSourceSentence(const SourceSentence &sentence)
 
 void SentenceViewHeaderWidget::setStyle(bool use_dark)
 {
-    QString sourceStyleSheet = "QLabel {"
-                               "background: %1; "
-                               "border-radius: 10px; "
-                               "margin-top: 2px; "
-                               "padding: 2px; }";
-    _sourceLanguageLabel->setStyleSheet(sourceStyleSheet.arg(
-        Utils::getLanguageColour(Utils::getISO639FromLanguage(
-                                     _sourceLanguageLabel->text().trimmed()))
-            .name()));
-    _sourceLanguageLabel->resize(_sourceLanguageLabel->minimumSizeHint());
-
-    _simplifiedLabel->setStyleSheet("QLabel { font-size: 24px }");
-    _traditionalLabel->setStyleSheet("QLabel { font-size: 24px }");
-
-    QString styleSheet = "QLabel { color: %1; }";
     QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
                                           LABEL_TEXT_COLOUR_DARK_G,
                                           LABEL_TEXT_COLOUR_DARK_B}
                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R};
+
+    QString sourceStyleSheet = "QLabel {"
+                               "background: %1; "
+                               "border-radius: 10px; "
+                               "color: %2; "
+                               "margin-top: 2px; "
+                               "padding: 2px; }";
+    QColor languageColour = Utils::getLanguageColour(
+        Utils::getISO639FromLanguage(_sourceLanguageLabel->text().trimmed()));
+    QColor languageTextColour = Utils::getContrastingColour(languageColour);
+    _sourceLanguageLabel->setStyleSheet(
+        sourceStyleSheet.arg(languageColour.name(), languageTextColour.name()));
+    _sourceLanguageLabel->resize(_sourceLanguageLabel->sizeHint());
+
+    _simplifiedLabel->setStyleSheet("QLabel { font-size: 24px }");
+    _traditionalLabel->setStyleSheet("QLabel { font-size: 24px }");
+
+    QString styleSheet = "QLabel { color: %1; }";
     _jyutpingLabel->setStyleSheet(styleSheet.arg(textColour.name()));
     _pinyinLabel->setStyleSheet(styleSheet.arg(textColour.name()));
 

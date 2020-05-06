@@ -1,6 +1,10 @@
 #include "entryviewsentencecardsection.h"
 
 #include "logic/settings/settingsutils.h"
+#ifdef Q_OS_MAC
+#include "logic/utils/utils_mac.h"
+#endif
+#include "logic/utils/utils_qt.h"
 
 EntryViewSentenceCardSection::EntryViewSentenceCardSection(std::shared_ptr<SQLDatabaseManager> manager,
                                          QWidget *parent)
@@ -84,6 +88,22 @@ void EntryViewSentenceCardSection::updateUI(std::vector<SourceSentence> sourceSe
     emit finishedAddingCards();
 }
 
+void EntryViewSentenceCardSection::changeEvent(QEvent *event)
+{
+#if defined(Q_OS_DARWIN)
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(10, [=]() { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        setStyle(Utils::isDarkMode());
+    }
+#endif
+    QWidget::changeEvent(event);
+}
+
 void EntryViewSentenceCardSection::setEntry(const Entry &entry)
 {
     cleanup();
@@ -126,8 +146,6 @@ void EntryViewSentenceCardSection::setupUI(void)
     _viewAllSentencesButton->setText("View all sentences →");
     _viewAllSentencesButton->setVisible(false);
     _viewAllSentencesButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
-    _viewAllSentencesButton->setStyleSheet(
-        "QToolButton { border: 2px solid #323232; border-radius: 17px; font-size: 12px; padding: 6px; } ");
 
     _sentenceCardsLayout->addWidget(_loadingWidget);
     _sentenceCardsLayout->setAlignment(_loadingWidget, Qt::AlignHCenter);
@@ -135,6 +153,12 @@ void EntryViewSentenceCardSection::setupUI(void)
     _sentenceCardsLayout->setAlignment(_viewAllSentencesButton, Qt::AlignRight);
 
     _timer = new QTimer{this};
+
+#ifdef Q_OS_MAC
+    setStyle(Utils::isDarkMode());
+#else
+    setStyle(/* use_dark = */false);
+#endif
 }
 
 void EntryViewSentenceCardSection::cleanup(void)
@@ -145,6 +169,23 @@ void EntryViewSentenceCardSection::cleanup(void)
     }
     _sentenceCards.clear();
     _sentenceCardsLayout->removeWidget(_viewAllSentencesButton);
+}
+
+void EntryViewSentenceCardSection::setStyle(bool use_dark)
+{
+    QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
+                                          LABEL_TEXT_COLOUR_DARK_G,
+                                          LABEL_TEXT_COLOUR_DARK_B}
+                                       .darker(200)
+                                 : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
+                                          LABEL_TEXT_COLOUR_LIGHT_G,
+                                          LABEL_TEXT_COLOUR_LIGHT_B}
+                                       .lighter(100);
+    QString styleSheet = "QToolButton { border: 2px solid %1; "
+                         "border-radius: 17px; "
+                         "font-size: 12px; "
+                         "padding: 6px; } ";
+    _viewAllSentencesButton->setStyleSheet(styleSheet.arg(textColour.name()));
 }
 
 void EntryViewSentenceCardSection::showLoadingWidget(void)

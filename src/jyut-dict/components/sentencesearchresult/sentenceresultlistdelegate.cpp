@@ -103,10 +103,10 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     path.addRoundedRect(boundingRect, 10, 10);
     if (option.state & QStyle::State_Selected) {
         painter->fillPath(path, backgroundColour.lighter(125));
-        painter->setPen(QPen(option.palette.color(QPalette::WindowText)));
+        painter->setPen(Utils::getContrastingColour(backgroundColour));
     } else {
         painter->fillPath(path, colour);
-        painter->setPen(QPen(option.palette.color(QPalette::WindowText)));
+        painter->setPen(Utils::getContrastingColour(colour));
     }
 
     painter->drawText(r, 0, languageString, &boundingRect);
@@ -121,6 +121,9 @@ void SentenceResultListDelegate::paint(QPainter *painter,
 #endif
     font.setPixelSize(20);
     painter->setFont(font);
+    if (option.state &QStyle::State_Selected) {
+        painter->setPen(Utils::getContrastingColour(backgroundColour));
+    }
 
     // Use QTextDocument for rich text
     r = option.rect.adjusted(11, 30, -11, 0);
@@ -151,7 +154,12 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     r = r.adjusted(0, 28, 0, 0);
     metrics = QFontMetrics(font);
     painter->save();
-    painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
+    if (option.state & QStyle::State_Selected) {
+        painter->setPen(
+            Utils::getContrastingColour(backgroundColour).darker(125));
+    } else {
+        painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
+    }
     QString phonetic = metrics
                            .elidedText(sentence
                                            .getPhonetic(phoneticOptions,
@@ -165,7 +173,12 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     r = r.adjusted(0, boundingRect.height(), 0, 0);
     painter->restore();
 
-    r.setY(option.rect.bottom() - 10
+    painter->save();
+    if (option.state & QStyle::State_Selected) {
+        painter->setPen(Utils::getContrastingColour(backgroundColour));
+    }
+    r.setY(
+        option.rect.bottom() - 10
         - metrics.boundingRect(sentence.getSentenceSnippet().c_str()).height());
     snippet = metrics
                   .elidedText(sentence.getSentenceSnippet().c_str(),
@@ -174,6 +187,7 @@ void SentenceResultListDelegate::paint(QPainter *painter,
                   .trimmed();
     painter->drawText(r, 0, snippet, &boundingRect);
     r = r.adjusted(0, boundingRect.height(), 0, 0);
+    painter->restore();
 
     // Bottom divider
     QRect rct = option.rect;
