@@ -157,7 +157,7 @@
     <message>
         <location line="+4"/>
         <source>Adding new definitions...</source>
-        <translation>正在添加新定义…</translation>
+        <translation>正在添加新解释…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -173,17 +173,17 @@
     <message>
         <location line="+6"/>
         <source>Removing definitions...</source>
-        <translation>正在删除定义…</translation>
+        <translation>正在删除解释…</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Deleted definition 0 of %1</source>
-        <translation>已删除 0 / %1 个定义</translation>
+        <translation>已删除 0 / %1 个解释</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Deleted definition %1 of %2</source>
-        <translation>已删除 %1 / %2 个定义</translation>
+        <translation>已删除 %1 / %2 个解释</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -592,7 +592,7 @@
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="+325"/>
         <source>Failed to remove definitions...</source>
-        <translation>未能移除定义…</translation>
+        <translation>未能移除解释…</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -612,7 +612,7 @@
     <message>
         <location line="+46"/>
         <source>Unable to add definitions...</source>
-        <translation>未能添加定义…</translation>
+        <translation>未能添加解释…</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -692,13 +692,13 @@
         <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="+76"/>
         <location line="+14"/>
         <source>Sentences for %1 (%2 result)</source>
-        <translation>“%1“例句 （%2 条结果）</translation>
+        <translation>用“%1“造句：（%2 条结果）</translation>
     </message>
     <message>
         <location line="-10"/>
         <location line="+14"/>
         <source>Sentences for %1 (%2 results)</source>
-        <translation>“%1“例句 （%2 条结果）</translation>
+        <translation>用“%1“造句：（%2 条结果）</translation>
     </message>
 </context>
 <context>
@@ -920,7 +920,7 @@
     <message>
         <location line="+1"/>
         <source>DEFINITIONS</source>
-        <translation>定义</translation>
+        <translation>解释</translation>
     </message>
     <message>
         <location line="+2"/>

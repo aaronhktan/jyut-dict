@@ -157,7 +157,7 @@
     <message>
         <location line="+4"/>
         <source>Adding new definitions...</source>
-        <translation>添加紧新定义…</translation>
+        <translation>添加紧新解释…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -173,17 +173,17 @@
     <message>
         <location line="+6"/>
         <source>Removing definitions...</source>
-        <translation>删除紧定义…</translation>
+        <translation>删除紧解释…</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Deleted definition 0 of %1</source>
-        <translation>删除咗 0 / %1 个定义</translation>
+        <translation>删除咗 0 / %1 个解释</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Deleted definition %1 of %2</source>
-        <translation>删除咗 %1 / %2 个定义</translation>
+        <translation>删除咗 %1 / %2 个解释</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -239,22 +239,6 @@
         <location line="+7"/>
         <source>Help</source>
         <translation>帮助</translation>
-    </message>
-</context>
-<context>
-    <name>EntryViewSentenceCardSection</name>
-    <message>
-        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="+84"/>
-        <source>View all sentences →</source>
-        <translation>查看所有例句 →</translation>
-    </message>
-    <message>
-        <source>Sentences for %1 (%2 result)</source>
-        <translation>“%1“例句 （%2 条结果）</translation>
-    </message>
-    <message>
-        <source>Sentences for %1 (%2 results)</source>
-        <translation>“%1“例句 （%2 条结果）</translation>
     </message>
 </context>
 <context>
@@ -608,7 +592,7 @@
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="+325"/>
         <source>Failed to remove definitions...</source>
-        <translation>移除定义失败</translation>
+        <translation>移除解释失败</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -628,7 +612,7 @@
     <message>
         <location line="+46"/>
         <source>Unable to add definitions...</source>
-        <translation>添加定义失败</translation>
+        <translation>添加解释失败</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -708,13 +692,13 @@
         <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="+76"/>
         <location line="+14"/>
         <source>Sentences for %1 (%2 result)</source>
-        <translation>“%1“例句 （%2 条结果）</translation>
+        <translation>用“%1“造句：（%2 个结果）</translation>
     </message>
     <message>
         <location line="-10"/>
         <location line="+14"/>
         <source>Sentences for %1 (%2 results)</source>
-        <translation>“%1“例句 （%2 条结果）</translation>
+        <translation>用“%1“造句：（%2 个结果）</translation>
     </message>
 </context>
 <context>
@@ -936,7 +920,7 @@
     <message>
         <location line="+1"/>
         <source>DEFINITIONS</source>
-        <translation>定义</translation>
+        <translation>解释</translation>
     </message>
     <message>
         <location line="+2"/>

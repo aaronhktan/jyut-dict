@@ -157,7 +157,7 @@
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="231"/>
         <source>Adding new definitions...</source>
-        <translation>添加緊新定義…</translation>
+        <translation>添加緊新解釋…</translation>
     </message>
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="235"/>
@@ -173,17 +173,17 @@
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="284"/>
         <source>Removing definitions...</source>
-        <translation>刪除緊定義…</translation>
+        <translation>刪除緊解釋…</translation>
     </message>
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="293"/>
         <source>Deleted definition 0 of %1</source>
-        <translation>刪除咗 0 / %1 個定義</translation>
+        <translation>刪除咗 0 / %1 個解釋</translation>
     </message>
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="301"/>
         <source>Deleted definition %1 of %2</source>
-        <translation>刪除咗 %1 / %2 個定義</translation>
+        <translation>刪除咗 %1 / %2 個解釋</translation>
     </message>
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="312"/>
@@ -596,7 +596,7 @@
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="325"/>
         <source>Failed to remove definitions...</source>
-        <translation>移除定義失敗</translation>
+        <translation>移除解釋失敗</translation>
     </message>
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="331"/>
@@ -616,7 +616,7 @@
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="613"/>
         <source>Unable to add definitions...</source>
-        <translation>添加定義失敗</translation>
+        <translation>添加解釋失敗</translation>
     </message>
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="619"/>
@@ -696,13 +696,13 @@
         <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="76"/>
         <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="90"/>
         <source>Sentences for %1 (%2 result)</source>
-        <translation>《%1》例句：（%2 條結果）</translation>
+        <translation>用《%1》造句：（%2 個結果）</translation>
     </message>
     <message>
         <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="80"/>
         <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="94"/>
         <source>Sentences for %1 (%2 results)</source>
-        <translation>《%1》例句：（%2 條結果）</translation>
+        <translation>用《%1》造句：（%2 個結果）</translation>
     </message>
 </context>
 <context>
@@ -924,7 +924,7 @@
     <message>
         <location filename="../../logic/strings/strings.h" line="18"/>
         <source>DEFINITIONS</source>
-        <translation>定義</translation>
+        <translation>解釋</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="20"/>
