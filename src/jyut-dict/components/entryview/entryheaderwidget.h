@@ -16,7 +16,7 @@
 #include <string>
 
 // The EntryHeaderWidget displays basic information about the entry
-// at the top of the detail view
+// at the top of the entry detail view
 
 class EntryHeaderWidget : public QWidget
 {
@@ -34,8 +34,6 @@ private:
     void translateUI();
 
     void displayPronunciationLabels(const EntryPhoneticOptions options);
-    void speakJyutping(void);
-    void speakPinyin(void);
 
     void showError(const QString &reason, const QString &message);
 

@@ -3,15 +3,14 @@
 
 #include "components/sentenceview/sentenceviewcontentwidget.h"
 #include "components/sentenceview/sentenceviewheaderwidget.h"
-#include "logic/database/sqldatabasemanager.h"
 #include "logic/sentence/sourcesentence.h"
 
 #include <QEvent>
 #include <QVBoxLayout>
 #include <QWidget>
 
-// The DefinitionScrollAreaWidget is the widget that contains other widgets
-// for the DefinitionScrollArea to pan and view.
+// The SentenceScrollAreaWidget is the widget that contains other widgets
+// for the SentenceScrollArea to pan and view.
 
 class SentenceScrollAreaWidget : public QWidget
 {
@@ -31,10 +30,6 @@ private:
 
     SentenceViewHeaderWidget *_sentenceViewHeaderWidget;
     SentenceViewContentWidget *_sentenceViewContentWidget;
-
-signals:
-
-public slots:
 };
 
 #endif // SENTENCESCROLLAREAWIDGET_H

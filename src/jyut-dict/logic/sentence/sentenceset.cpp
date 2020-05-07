@@ -2,8 +2,6 @@
 
 #include "logic/dictionary/dictionarysource.h"
 
-#include <iostream>
-
 SentenceSet::SentenceSet(std::string source)
     : _source{source}
 {

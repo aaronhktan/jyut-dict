@@ -6,12 +6,14 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+// The SentenceHeaderWidget provides a header for the sentence card
+
 class SentenceHeaderWidget : public QWidget
 {
 public:
     explicit SentenceHeaderWidget(QWidget *parent = nullptr);
     explicit SentenceHeaderWidget(std::string title,
-                                    QWidget *parent = nullptr);
+                                  QWidget *parent = nullptr);
 
     void changeEvent(QEvent *event);
 

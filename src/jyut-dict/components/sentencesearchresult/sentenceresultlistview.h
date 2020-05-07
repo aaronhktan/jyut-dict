@@ -12,9 +12,7 @@
 #endif
 #include <QWidget>
 
-#include <vector>
-
-// The ResultListView displays results of a search
+// The SentenceResultListView displays results of a search
 // It populates itself with a QAbstractListModel
 // And paints itself with a QStyledItemDelegate
 

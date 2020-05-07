@@ -71,7 +71,6 @@ void LoadingWidget::translateUI(void)
 
 void LoadingWidget::setStyle(bool use_dark)
 {
-    // Style the label text
     QString textStyleSheet
         = "QLabel#LoadingDescriptiveTextLabel { color: %1; }";
     QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,

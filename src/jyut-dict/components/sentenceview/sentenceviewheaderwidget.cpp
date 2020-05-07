@@ -15,71 +15,16 @@
 
 SentenceViewHeaderWidget::SentenceViewHeaderWidget(QWidget *parent) : QWidget(parent)
 {
-    _sentenceHeaderLayout = new QGridLayout{this};
-    _sentenceHeaderLayout->setContentsMargins(0, 0, 0, 0);
-    _sentenceHeaderLayout->setSpacing(5);
-
     _speaker = std::make_unique<EntrySpeaker>();
 
-    _sourceLanguageLabel = new QLabel{this};
-    _sourceLanguageLabel->setVisible(false);
-
-    _simplifiedLabel = new QLabel{this};
-    _simplifiedLabel->setStyleSheet("QLabel { font-size: 24px }");
-    _simplifiedLabel->setAttribute(Qt::WA_TranslucentBackground);
-    _simplifiedLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
-    _simplifiedLabel->setWordWrap(true);
-
-    _traditionalLabel = new QLabel{this};
-    _traditionalLabel->setStyleSheet("QLabel { font-size: 24px }");
-    _traditionalLabel->setAttribute(Qt::WA_TranslucentBackground);
-    _traditionalLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
-    _traditionalLabel->setWordWrap(true);
-
-    _jyutpingLabel = new QLabel{this};
-    _jyutpingLabel->setAttribute(Qt::WA_TranslucentBackground);
-    _jyutpingLabel->setVisible(false);
-#if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
-    _jyutpingTTS = new QPushButton{this};
-    _jyutpingTTS->setMaximumWidth(10);
-    _jyutpingTTS->setFixedHeight(18);
-    _jyutpingTTS->setAttribute(Qt::WA_TranslucentBackground);
-    _jyutpingTTS->setVisible(false);
-#endif
-    _jyutpingPronunciation = new QLabel{this};
-    _jyutpingPronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);
-    _jyutpingPronunciation->setWordWrap(true);
-
-    _pinyinLabel = new QLabel{this};
-    _pinyinLabel->setAttribute(Qt::WA_TranslucentBackground);
-    _pinyinLabel->setVisible(false);
-#if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
-    _pinyinTTS = new QPushButton{this};
-    _pinyinTTS->setMaximumWidth(10);
-    _pinyinTTS->setFixedHeight(18);
-    _pinyinTTS->setAttribute(Qt::WA_TranslucentBackground);
-    _pinyinTTS->setVisible(false);
-#endif
-    _pinyinPronunciation = new QLabel{this};
-    _pinyinPronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);
-    _pinyinPronunciation->setWordWrap(true);
-
-    _sentenceHeaderLayout->addWidget(_sourceLanguageLabel, 0, 0, 1, -1, Qt::AlignLeft);
-    _sentenceHeaderLayout->addWidget(_simplifiedLabel, 1, 0, 1, -1);
-    _sentenceHeaderLayout->addWidget(_traditionalLabel, 2, 0, 1, -1);
-    _sentenceHeaderLayout->addWidget(_jyutpingLabel, 3, 0, 1, 1, Qt::AlignTop);
-    _sentenceHeaderLayout->addWidget(_jyutpingTTS, 3, 1, 1, 1, Qt::AlignTop);
-    _sentenceHeaderLayout->addWidget(_jyutpingPronunciation, 3, 2, 1, 1);
-    _sentenceHeaderLayout->addWidget(_pinyinLabel, 4, 0, 1, 1, Qt::AlignTop);
-    _sentenceHeaderLayout->addWidget(_pinyinTTS, 4, 1, 1, 1, Qt::AlignTop);
-    _sentenceHeaderLayout->addWidget(_pinyinPronunciation, 4, 2, 1, 1);
+    setupUI();
+    translateUI();
 
 #ifdef Q_OS_MAC
     setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */false);
 #endif
-    translateUI();
 }
 
 SentenceViewHeaderWidget::~SentenceViewHeaderWidget()
@@ -176,54 +121,67 @@ void SentenceViewHeaderWidget::setSourceSentence(const SourceSentence &sentence)
 #endif
 }
 
-void SentenceViewHeaderWidget::setStyle(bool use_dark)
+void SentenceViewHeaderWidget::setupUI(void)
 {
-    QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                          LABEL_TEXT_COLOUR_DARK_G,
-                                          LABEL_TEXT_COLOUR_DARK_B}
-                                 : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                          LABEL_TEXT_COLOUR_LIGHT_R,
-                                          LABEL_TEXT_COLOUR_LIGHT_R};
+    _sentenceHeaderLayout = new QGridLayout{this};
+    _sentenceHeaderLayout->setContentsMargins(0, 0, 0, 0);
+    _sentenceHeaderLayout->setSpacing(5);
 
-    QString sourceStyleSheet = "QLabel {"
-                               "background: %1; "
-                               "border-radius: 10px; "
-                               "color: %2; "
-                               "margin-top: 2px; "
-                               "padding: 2px; }";
-    QColor languageColour = Utils::getLanguageColour(
-        Utils::getISO639FromLanguage(_sourceLanguageLabel->text().trimmed()));
-    QColor languageTextColour = Utils::getContrastingColour(languageColour);
-    _sourceLanguageLabel->setStyleSheet(
-        sourceStyleSheet.arg(languageColour.name(), languageTextColour.name()));
-    _sourceLanguageLabel->resize(_sourceLanguageLabel->sizeHint());
+    _sourceLanguageLabel = new QLabel{this};
+    _sourceLanguageLabel->setVisible(false);
 
+    _simplifiedLabel = new QLabel{this};
     _simplifiedLabel->setStyleSheet("QLabel { font-size: 24px }");
+    _simplifiedLabel->setAttribute(Qt::WA_TranslucentBackground);
+    _simplifiedLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    _simplifiedLabel->setWordWrap(true);
+
+    _traditionalLabel = new QLabel{this};
     _traditionalLabel->setStyleSheet("QLabel { font-size: 24px }");
+    _traditionalLabel->setAttribute(Qt::WA_TranslucentBackground);
+    _traditionalLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    _traditionalLabel->setWordWrap(true);
 
-    QString styleSheet = "QLabel { color: %1; }";
-    _jyutpingLabel->setStyleSheet(styleSheet.arg(textColour.name()));
-    _pinyinLabel->setStyleSheet(styleSheet.arg(textColour.name()));
-
+    _jyutpingLabel = new QLabel{this};
+    _jyutpingLabel->setAttribute(Qt::WA_TranslucentBackground);
+    _jyutpingLabel->setVisible(false);
 #if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
-    _jyutpingTTS->setIcon(use_dark ? QIcon{":/images/speak_inverted.png"}
-                                   : QIcon{":/images/speak.png"});
-    _jyutpingTTS->setFlat(true);
-    _jyutpingTTS->setObjectName("jyutpingTTS");
-    _jyutpingTTS->setStyleSheet(
-        "QPushButton#jyutpingTTS { padding: 0px; }"
-        "QPushButton:pressed#jyutpingTTS { border: none; }");
-
-    _pinyinTTS->setIcon(use_dark ? QIcon{":/images/speak_inverted.png"}
-                                 : QIcon{":/images/speak.png"});
-    _pinyinTTS->setFlat(true);
-    _pinyinTTS->setObjectName("pinyinTTS");
-    _pinyinTTS->setStyleSheet("QPushButton#pinyinTTS { padding: 0px; }"
-                              "QPushButton:pressed#pinyinTTS { border: none; }");
+    _jyutpingTTS = new QPushButton{this};
+    _jyutpingTTS->setMaximumWidth(10);
+    _jyutpingTTS->setFixedHeight(18);
+    _jyutpingTTS->setAttribute(Qt::WA_TranslucentBackground);
+    _jyutpingTTS->setVisible(false);
 #endif
+    _jyutpingPronunciation = new QLabel{this};
+    _jyutpingPronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    _jyutpingPronunciation->setWordWrap(true);
+
+    _pinyinLabel = new QLabel{this};
+    _pinyinLabel->setAttribute(Qt::WA_TranslucentBackground);
+    _pinyinLabel->setVisible(false);
+#if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
+    _pinyinTTS = new QPushButton{this};
+    _pinyinTTS->setMaximumWidth(10);
+    _pinyinTTS->setFixedHeight(18);
+    _pinyinTTS->setAttribute(Qt::WA_TranslucentBackground);
+    _pinyinTTS->setVisible(false);
+#endif
+    _pinyinPronunciation = new QLabel{this};
+    _pinyinPronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    _pinyinPronunciation->setWordWrap(true);
+
+    _sentenceHeaderLayout->addWidget(_sourceLanguageLabel, 0, 0, 1, -1, Qt::AlignLeft);
+    _sentenceHeaderLayout->addWidget(_simplifiedLabel, 1, 0, 1, -1);
+    _sentenceHeaderLayout->addWidget(_traditionalLabel, 2, 0, 1, -1);
+    _sentenceHeaderLayout->addWidget(_jyutpingLabel, 3, 0, 1, 1, Qt::AlignTop);
+    _sentenceHeaderLayout->addWidget(_jyutpingTTS, 3, 1, 1, 1, Qt::AlignTop);
+    _sentenceHeaderLayout->addWidget(_jyutpingPronunciation, 3, 2, 1, 1);
+    _sentenceHeaderLayout->addWidget(_pinyinLabel, 4, 0, 1, 1, Qt::AlignTop);
+    _sentenceHeaderLayout->addWidget(_pinyinTTS, 4, 1, 1, 1, Qt::AlignTop);
+    _sentenceHeaderLayout->addWidget(_pinyinPronunciation, 4, 2, 1, 1);
 }
 
-void SentenceViewHeaderWidget::translateUI()
+void SentenceViewHeaderWidget::translateUI(void)
 {
     _jyutpingLabel->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                                         Strings::JYUTPING_SHORT));
@@ -272,6 +230,53 @@ void SentenceViewHeaderWidget::translateUI()
                           .arg(Settings::getCurrentLocale().bcp47Name()));
         });
     }
+#endif
+}
+
+void SentenceViewHeaderWidget::setStyle(bool use_dark)
+{
+    QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
+                                          LABEL_TEXT_COLOUR_DARK_G,
+                                          LABEL_TEXT_COLOUR_DARK_B}
+                                 : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
+                                          LABEL_TEXT_COLOUR_LIGHT_R,
+                                          LABEL_TEXT_COLOUR_LIGHT_R};
+
+    QString sourceStyleSheet = "QLabel {"
+                               "background: %1; "
+                               "border-radius: 10px; "
+                               "color: %2; "
+                               "margin-top: 2px; "
+                               "padding: 2px; }";
+    QColor languageColour = Utils::getLanguageColour(
+        Utils::getISO639FromLanguage(_sourceLanguageLabel->text().trimmed()));
+    QColor languageTextColour = Utils::getContrastingColour(languageColour);
+    _sourceLanguageLabel->setStyleSheet(
+        sourceStyleSheet.arg(languageColour.name(), languageTextColour.name()));
+    _sourceLanguageLabel->resize(_sourceLanguageLabel->sizeHint());
+
+    _simplifiedLabel->setStyleSheet("QLabel { font-size: 24px }");
+    _traditionalLabel->setStyleSheet("QLabel { font-size: 24px }");
+
+    QString styleSheet = "QLabel { color: %1; }";
+    _jyutpingLabel->setStyleSheet(styleSheet.arg(textColour.name()));
+    _pinyinLabel->setStyleSheet(styleSheet.arg(textColour.name()));
+
+#if QT_VERSION > QT_VERSION_CHECK(5, 8, 0)
+    _jyutpingTTS->setIcon(use_dark ? QIcon{":/images/speak_inverted.png"}
+                                   : QIcon{":/images/speak.png"});
+    _jyutpingTTS->setFlat(true);
+    _jyutpingTTS->setObjectName("jyutpingTTS");
+    _jyutpingTTS->setStyleSheet(
+        "QPushButton#jyutpingTTS { padding: 0px; }"
+        "QPushButton:pressed#jyutpingTTS { border: none; }");
+
+    _pinyinTTS->setIcon(use_dark ? QIcon{":/images/speak_inverted.png"}
+                                 : QIcon{":/images/speak.png"});
+    _pinyinTTS->setFlat(true);
+    _pinyinTTS->setObjectName("pinyinTTS");
+    _pinyinTTS->setStyleSheet("QPushButton#pinyinTTS { padding: 0px; }"
+                              "QPushButton:pressed#pinyinTTS { border: none; }");
 #endif
 }
 

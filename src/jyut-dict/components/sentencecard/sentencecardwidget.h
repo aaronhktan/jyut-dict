@@ -10,6 +10,9 @@
 
 #include <vector>
 
+// A SentenceCardWidget contains a header (showing that this card is used for
+// sentences), and content (showing the actual content of the sentences)
+
 class SentenceCardWidget : public QWidget
 {
     Q_OBJECT
@@ -22,6 +25,7 @@ public:
     void displaySentences(const SentenceSet &set);
 
 private:
+    void translateUI();
     void setStyle(bool use_dark);
 
     bool _paletteRecentlyChanged = false;

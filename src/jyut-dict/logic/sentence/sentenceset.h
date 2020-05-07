@@ -10,6 +10,9 @@
 
 namespace Sentence {
 
+// The TargetSentence struct provides:
+// the language of the sentence translation, the sentence itself, and whether
+// the sentence was a direct translation of the sentence.
 struct TargetSentence
 {
     std::string language;

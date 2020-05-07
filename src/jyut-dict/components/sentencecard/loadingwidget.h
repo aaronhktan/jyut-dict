@@ -7,6 +7,8 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+// The LoadingWidget displays a sentence and a circular spinner.
+
 class LoadingWidget : public QWidget
 {
     Q_OBJECT
@@ -19,7 +21,6 @@ public:
 private:
     void setupUI(void);
     void translateUI(void);
-
     void setStyle(bool use_dark);
 
     bool _paletteRecentlyChanged = false;

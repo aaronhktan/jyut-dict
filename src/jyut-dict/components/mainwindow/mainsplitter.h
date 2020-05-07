@@ -15,9 +15,6 @@
 //
 // It handles the model changed signal that the master listview emits,
 // and passes the data to the detail scrollarea.
-//
-// TODO: Perhaps move that logic out into its own class, to further decouple
-// UI and functionality?
 
 class MainSplitter : public QSplitter
 {
@@ -36,7 +33,7 @@ private:
     std::shared_ptr<SQLDatabaseManager> _manager;
     Analytics *_analytics;
 
-    EntryScrollArea *_definitionScrollArea;
+    EntryScrollArea *_entryScrollArea;
     QListView *_resultListView;
 
 private slots:

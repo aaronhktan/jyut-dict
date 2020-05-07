@@ -11,8 +11,6 @@ SentenceSplitter::SentenceSplitter(std::shared_ptr<SQLDatabaseManager> manager,
     : QSplitter(parent)
     , _manager{manager}
 {
-    _analytics = new Analytics{this};
-
     _sqlSearch = std::make_shared<SQLSearch>(manager);
     _model = new SentenceResultListModel{_sqlSearch, {}, this};
 
@@ -53,14 +51,6 @@ SentenceSplitter::SentenceSplitter(std::shared_ptr<SQLDatabaseManager> manager,
 SentenceSplitter::~SentenceSplitter()
 {
 
-}
-
-void SentenceSplitter::changeEvent(QEvent *event)
-{
-    if (event->type() == QEvent::LanguageChange) {
-        static_cast<SentenceResultListModel *>(_model)->setWelcome();
-    }
-    QSplitter::changeEvent(event);
 }
 
 void SentenceSplitter::setSourceSentences(

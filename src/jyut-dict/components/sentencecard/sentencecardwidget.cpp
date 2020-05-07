@@ -1,10 +1,12 @@
 #include "sentencecardwidget.h"
 
+#include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QCoreApplication>
 #include <QTimer>
 
 SentenceCardWidget::SentenceCardWidget(QWidget *parent)
@@ -43,9 +45,9 @@ void SentenceCardWidget::changeEvent(QEvent *event)
         setStyle(Utils::isDarkMode());
     }
 #endif
-//    if (event->type() == QEvent::LanguageChange) {
-//        translateUI();
-//    }
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
     QWidget::changeEvent(event);
 }
 
@@ -54,8 +56,13 @@ void SentenceCardWidget::displaySentences(const std::vector<SourceSentence> &sen
     if (sentences.empty()) {
         return;
     }
-    _sentenceHeaderWidget->setCardTitle("SENTENCES (" +
-        sentences.at(0).getSentenceSets().at(0).getSourceShortString() + ")");
+
+    _source = sentences.at(0).getSentenceSets().at(0).getSourceShortString();
+    _sentenceHeaderWidget->setCardTitle(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::SENTENCES_ALL_CAPS)
+            .toStdString()
+        + " (" + _source + ")");
     _sentenceContentWidget->setSourceSentenceVector(sentences);
 
 #ifdef Q_OS_MAC
@@ -71,8 +78,12 @@ void SentenceCardWidget::displaySentences(const SentenceSet &set)
         return;
     }
 
-    _sentenceHeaderWidget->setCardTitle("SENTENCES ("
-                                        + set.getSourceShortString() + ")");
+    _source = set.getSourceShortString();
+    _sentenceHeaderWidget->setCardTitle(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::SENTENCES_ALL_CAPS)
+            .toStdString()
+        + " (" + _source + ")");
     _sentenceContentWidget->setSentenceSet(set);
 
 #ifdef Q_OS_MAC
@@ -80,6 +91,15 @@ void SentenceCardWidget::displaySentences(const SentenceSet &set)
 #else
     setStyle(/* use_dark = */false);
 #endif
+}
+
+void SentenceCardWidget::translateUI()
+{
+    _sentenceHeaderWidget->setCardTitle(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::SENTENCES_ALL_CAPS)
+            .toStdString()
+        + " (" + _source + ")");
 }
 
 void SentenceCardWidget::setStyle(bool use_dark)

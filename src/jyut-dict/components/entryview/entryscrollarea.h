@@ -15,7 +15,8 @@
 
 // The layout of the EntryScrollArea is:
 // EntryHeader - shows word in chinese, pronunciation guides
-// EntryContentWidget - contains all the definitions and headers for each source
+// EntryContentWidget - contains all the definitions and sentences related
+//                      to that entry.
 
 class EntryScrollArea : public QScrollArea
 {
@@ -28,7 +29,6 @@ public:
 private:
     void resizeEvent(QResizeEvent *event) override;
 
-    // Widget that contains elements to scroll
     EntryScrollAreaWidget *_scrollAreaWidget;
 };
 

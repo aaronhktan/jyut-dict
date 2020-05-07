@@ -11,13 +11,12 @@
 #include <QObject>
 #include <QVariant>
 
-#include <string>
 #include <vector>
 
-// The ResultListModel contains data (a vector of Entry objects)
+// The SentenceResultListModel contains data (a vector of SourceSentence objects)
 // It is populated with the results of a search, being a searchobserver
 
-// Entries are returned as QVariants when an index is provided
+// SourceSentences are returned as QVariants when an index is provided
 // Header data override is "good manners", but currently is not useful
 
 class SentenceResultListModel : public QAbstractListModel, public ISearchObserver
@@ -26,17 +25,14 @@ class SentenceResultListModel : public QAbstractListModel, public ISearchObserve
 
 public:
     explicit SentenceResultListModel(std::shared_ptr<SQLSearch> sqlSearch,
-                             std::vector<SourceSentence> sentences,
-                             QObject *parent = nullptr);
+                                     std::vector<SourceSentence> sentences,
+                                     QObject *parent = nullptr);
     ~SentenceResultListModel() override;
 
     void callback(const std::vector<Entry> entries, bool emptyQuery) override;
     void callback(const std::vector<SourceSentence> sentences,
                   bool emptyQuery) override;
     void setSentences(std::vector<SourceSentence> sentences);
-    void setSentences(std::vector<SourceSentence> sentences, bool emptyQuery);
-    void setWelcome();
-    void setEmpty();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;

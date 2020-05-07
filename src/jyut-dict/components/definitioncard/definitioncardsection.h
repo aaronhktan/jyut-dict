@@ -7,6 +7,9 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+// The DefinitionCardSection contains DefinitionCardWidgets, one for
+// each DefinitionSet in the Entry that is set.
+
 class DefinitionCardSection : public QWidget
 {
     Q_OBJECT

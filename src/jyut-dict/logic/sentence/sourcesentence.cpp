@@ -103,9 +103,6 @@ std::ostream &operator<<(std::ostream &out, const SourceSentence &sourceSentence
     for (size_t i = 0; i < sourceSentence.getSentenceSets().size(); i++) {
         out << sourceSentence.getSentenceSets()[i] << "\n";
     }
-    //    for (size_t i = 0; i < entry.getSentences().size(); i++) {
-    //        out << entry.getSentences()[i] << "\n";
-    //    }
     return out;
 }
 

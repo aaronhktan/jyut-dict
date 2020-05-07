@@ -41,6 +41,48 @@ void SentenceContentWidget::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
+void SentenceContentWidget::setSentenceSet(const SentenceSet &set)
+{
+    cleanupLabels();
+
+    if (set.isEmpty()) {
+        return;
+    }
+
+    _sentenceLayout->setContentsMargins(10, 0, 10, 10);
+
+    std::vector<Sentence::TargetSentence> sentences = set.getSentences();
+    for (size_t i = 0; i < sentences.size(); i++) {
+        std::string number = std::to_string(i + 1);
+        _sentenceNumberLabels.push_back(new QLabel{number.c_str(), this});
+        int definitionNumberWidth = _sentenceNumberLabels.back()
+                                        ->fontMetrics()
+                                        .boundingRect("PY")
+                                        .width();
+        _sentenceNumberLabels.back()->setFixedWidth(definitionNumberWidth);
+        int definitionNumberHeight = _sentenceNumberLabels.back()
+                                         ->fontMetrics()
+                                         .boundingRect("123PYingy")
+                                         .height();
+        _sentenceNumberLabels.back()->setFixedHeight(definitionNumberHeight);
+
+        _sentenceLabels.push_back(new QLabel{sentences[i].sentence.c_str(), this});
+        _sentenceLabels.back()->setWordWrap(true);
+        _sentenceLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
+
+        _sentenceLayout->addWidget(_sentenceNumberLabels[i],
+                                   static_cast<int>(i + 9), 0, Qt::AlignTop);
+        _sentenceLayout->addWidget(_sentenceLabels[i],
+                                   static_cast<int>(i + 9), 1, Qt::AlignTop);
+    }
+
+#ifdef Q_OS_MAC
+    setStyle(Utils::isDarkMode());
+#else
+    setStyle(/* use_dark = */false);
+#endif
+}
+
 void SentenceContentWidget::setSourceSentenceVector(
     const std::vector<SourceSentence> &sourceSentences)
 {
@@ -121,11 +163,16 @@ void SentenceContentWidget::setSourceSentenceVector(
         _sentenceLabels.back()->setTextInteractionFlags(
             Qt::TextSelectableByMouse);
 
-        _sourceSentenceLanguage.push_back(
-            new QLabel{Utils::getLanguageFromISO639(
-                           sourceSentence.getSourceLanguage())
-                               .trimmed(),
-                       this});
+        _sourceSentenceLanguage.push_back(new QLabel{this});
+        _sourceSentenceLanguage.back()
+            ->setProperty("language",
+                          sourceSentence.getSourceLanguage().c_str());
+        _sourceSentenceLanguage.back()->setText(
+            Utils::getLanguageFromISO639(_sourceSentenceLanguage.back()
+                                             ->property("language")
+                                             .toString()
+                                             .toStdString())
+                .trimmed());
         _sourceSentenceLanguage.back()->setObjectName("sourceSentenceLanguage");
 
         addLabelsToLayout(
@@ -157,51 +204,10 @@ void SentenceContentWidget::setSourceSentenceVector(
 #endif
 }
 
-void SentenceContentWidget::setSentenceSet(const SentenceSet &set)
-{
-    cleanupLabels();
-
-    if (set.isEmpty()) {
-        return;
-    }
-
-    _sentenceLayout->setContentsMargins(10, 0, 10, 10);
-
-    std::vector<Sentence::TargetSentence> sentences = set.getSentences();
-    for (size_t i = 0; i < sentences.size(); i++) {
-        std::string number = std::to_string(i + 1);
-        _sentenceNumberLabels.push_back(new QLabel{number.c_str(), this});
-        int definitionNumberWidth = _sentenceNumberLabels.back()
-                                        ->fontMetrics()
-                                        .boundingRect("PY")
-                                        .width();
-        _sentenceNumberLabels.back()->setFixedWidth(definitionNumberWidth);
-        int definitionNumberHeight = _sentenceNumberLabels.back()
-                                         ->fontMetrics()
-                                         .boundingRect("123PYing")
-                                         .height();
-        _sentenceNumberLabels.back()->setFixedHeight(definitionNumberHeight);
-
-        _sentenceLabels.push_back(new QLabel{sentences[i].sentence.c_str(), this});
-        _sentenceLabels.back()->setWordWrap(true);
-        _sentenceLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
-
-        _sentenceLayout->addWidget(_sentenceNumberLabels[i],
-                                     static_cast<int>(i + 9), 0, Qt::AlignTop);
-        _sentenceLayout->addWidget(_sentenceLabels[i],
-                                     static_cast<int>(i + 9), 1, Qt::AlignTop);
-    }
-
-#ifdef Q_OS_MAC
-    setStyle(Utils::isDarkMode());
-#else
-    setStyle(/* use_dark = */false);
-#endif
-}
-
 void SentenceContentWidget::setStyle(bool use_dark)
 {
-    QString sentenceNumberStyleSheet = "QLabel { color: %1; margin-top: 2px; "
+    QString sentenceNumberStyleSheet = "QLabel { color: %1; "
+                                       "margin-top: 2px; "
                                        "padding: 2px; }";
     QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
                                           LABEL_TEXT_COLOUR_DARK_G,
@@ -225,6 +231,9 @@ void SentenceContentWidget::setStyle(bool use_dark)
         QColor languageTextColour = Utils::getContrastingColour(languageColour);
         label->setStyleSheet(
             sourceStyleSheet.arg(languageColour.name(), languageTextColour.name()));
+        label->setText(Utils::getLanguageFromISO639(
+                           label->property("language").toString().toStdString())
+                           .trimmed());
         label->setFixedWidth(label->sizeHint().width());
     }
 
@@ -236,7 +245,8 @@ void SentenceContentWidget::setStyle(bool use_dark)
         label->setStyleSheet(chineseStyleSheet);
     }
 
-    QString pronunciationStyleSheet = "QLabel { font-size: 13px; color: %1;"
+    QString pronunciationStyleSheet = "QLabel { font-size: 13px; "
+                                      "color: %1; "
                                       "padding-left: 2px; }";
     for (const auto &label : _jyutpingLabels) {
         label->setStyleSheet(pronunciationStyleSheet.arg(textColour.name()));
@@ -249,26 +259,6 @@ void SentenceContentWidget::setStyle(bool use_dark)
     for (const auto &label : _sentenceLabels) {
         label->setStyleSheet(sentenceStyleSheet);
     }
-}
-
-void SentenceContentWidget::cleanupLabels()
-{
-    clearLabelVector(_sentenceNumberLabels);
-    clearLabelVector(_traditionalLabels);
-    clearLabelVector(_jyutpingLabels);
-    clearLabelVector(_pinyinLabels);
-    clearLabelVector(_sentenceLabels);
-    clearLabelVector(_sourceSentenceLanguage);
-    clearLabelVector(_spaceLabels);
-}
-
-void SentenceContentWidget::clearLabelVector(std::vector<QLabel *> &vector)
-{
-    for (auto label : vector) {
-        _sentenceLayout->removeWidget(label);
-        delete label;
-    }
-    vector.clear();
 }
 
 void SentenceContentWidget::addLabelsToLayout(
@@ -285,13 +275,13 @@ void SentenceContentWidget::addLabelsToLayout(
     EntryCharactersOptions characterOptions)
 {
     layout->addWidget(sentenceNumberLabel,
-                      static_cast<int>(rowNumber * 10),
+                      rowNumber * 10,
                       0,
                       1,
                       1);
 
     layout->addWidget(sourceSentenceLanguage,
-                      static_cast<int>(rowNumber * 10),
+                      rowNumber * 10,
                       1,
                       1,
                       1,
@@ -304,7 +294,7 @@ void SentenceContentWidget::addLabelsToLayout(
         [[clang::fallthrough]];
     case EntryCharactersOptions::PREFER_SIMPLIFIED:
         layout->addWidget(simplifiedLabel,
-                          static_cast<int>(rowNumber * 10 + 1),
+                          rowNumber * 10 + 1,
                           1,
                           1,
                           -1,
@@ -315,7 +305,7 @@ void SentenceContentWidget::addLabelsToLayout(
         [[clang::fallthrough]];
     case EntryCharactersOptions::PREFER_TRADITIONAL:
         layout->addWidget(traditionalLabel,
-                          static_cast<int>(rowNumber * 10 + 1),
+                          rowNumber * 10 + 1,
                           1,
                           1,
                           -1,
@@ -327,7 +317,7 @@ void SentenceContentWidget::addLabelsToLayout(
     switch (characterOptions) {
     case EntryCharactersOptions::PREFER_SIMPLIFIED:
         layout->addWidget(traditionalLabel,
-                          static_cast<int>(rowNumber * 10 + 2),
+                          rowNumber * 10 + 2,
                           1,
                           1,
                           -1,
@@ -335,7 +325,7 @@ void SentenceContentWidget::addLabelsToLayout(
         break;
     case EntryCharactersOptions::PREFER_TRADITIONAL:
         layout->addWidget(simplifiedLabel,
-                          static_cast<int>(rowNumber * 10 + 2),
+                          rowNumber * 10 + 2,
                           1,
                           1,
                           -1,
@@ -352,7 +342,7 @@ void SentenceContentWidget::addLabelsToLayout(
         [[clang::fallthrough]];
     case EntryPhoneticOptions::PREFER_JYUTPING:
         layout->addWidget(jyutpingLabel,
-                          static_cast<int>(rowNumber * 10 + 3),
+                          rowNumber * 10 + 3,
                           1,
                           1,
                           -1,
@@ -363,7 +353,7 @@ void SentenceContentWidget::addLabelsToLayout(
         [[clang::fallthrough]];
     case EntryPhoneticOptions::PREFER_PINYIN:
         layout->addWidget(pinyinLabel,
-                          static_cast<int>(rowNumber * 10 + 3),
+                          rowNumber * 10 + 3,
                           1,
                           1,
                           -1,
@@ -375,7 +365,7 @@ void SentenceContentWidget::addLabelsToLayout(
     switch (phoneticOptions) {
     case EntryPhoneticOptions::PREFER_JYUTPING:
         layout->addWidget(pinyinLabel,
-                          static_cast<int>(rowNumber * 10 + 4),
+                          rowNumber * 10 + 4,
                           1,
                           1,
                           -1,
@@ -383,7 +373,7 @@ void SentenceContentWidget::addLabelsToLayout(
         break;
     case EntryPhoneticOptions::PREFER_PINYIN:
         layout->addWidget(jyutpingLabel,
-                          static_cast<int>(rowNumber * 10 + 4),
+                          rowNumber * 10 + 4,
                           1,
                           1,
                           -1,
@@ -394,7 +384,7 @@ void SentenceContentWidget::addLabelsToLayout(
     }
 
     layout->addWidget(sentenceLabel,
-                      static_cast<int>(rowNumber * 10 + 5),
+                      rowNumber * 10 + 5,
                       1,
                       1,
                       -1,
@@ -402,8 +392,29 @@ void SentenceContentWidget::addLabelsToLayout(
 
     _spaceLabels.push_back(new QLabel{" "});
     layout->addWidget(_spaceLabels.back(),
-                      static_cast<int>(rowNumber * 10 + 6),
+                      rowNumber * 10 + 6,
                       1,
                       1,
                       -1);
+}
+
+void SentenceContentWidget::cleanupLabels()
+{
+    clearLabelVector(_sentenceNumberLabels);
+    clearLabelVector(_simplifiedLabels);
+    clearLabelVector(_traditionalLabels);
+    clearLabelVector(_jyutpingLabels);
+    clearLabelVector(_pinyinLabels);
+    clearLabelVector(_sentenceLabels);
+    clearLabelVector(_sourceSentenceLanguage);
+    clearLabelVector(_spaceLabels);
+}
+
+void SentenceContentWidget::clearLabelVector(std::vector<QLabel *> &vector)
+{
+    for (auto label : vector) {
+        _sentenceLayout->removeWidget(label);
+        delete label;
+    }
+    vector.clear();
 }

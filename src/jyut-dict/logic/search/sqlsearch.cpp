@@ -375,6 +375,11 @@ void SQLSearch::searchEnglishThread(const QString searchTerm)
     notifyObservers(results, /*emptyQuery=*/false);
 }
 
+// To search for sentences, use the sentence_links table to JOIN
+// between the chinese and non_chinese_sentences tables.
+//
+// Sleep for 50ms after finding the search result to prevent some problems
+// with searching too fast.
 void SQLSearch::searchTraditionalSentencesThread(const QString searchTerm)
 {
     std::vector<SourceSentence> results{};
@@ -860,6 +865,9 @@ std::vector<SourceSentence> SQLSearch::parseSentences(QSqlQuery &query)
         for (std::string targetSentenceData : targetSentencesData) {
             SentenceSet *set;
 
+            // Currently, layout of sentences column is
+            // sourcename targetlanguage direct targetsentencecontent
+            // (with spaces separating those)
             std::string::size_type first_space_index = targetSentenceData
                                                            .find_first_of(" ");
             std::string::size_type second_space_index

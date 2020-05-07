@@ -14,6 +14,13 @@
 
 #include <vector>
 
+// The SentenceContentWidget displays sentences.
+// When used with setSentenceSet, it will display a list of
+// targetSentences, all from that set.
+// When used with setSourceSentenceVector, it will display each sourceSentence,
+// and the first targetSentence from the first sentenceSet belonging to that
+// sourceSentence.
+
 class SentenceContentWidget : public QWidget
 {
     Q_OBJECT
@@ -28,6 +35,8 @@ public:
         const std::vector<SourceSentence> &sourceSentences);
 
 private:
+    void setStyle(bool use_dark);
+
     void addLabelsToLayout(QGridLayout *layout,
                            int rowNumber,
                            QLabel *sentenceNumberLabel,
@@ -39,7 +48,6 @@ private:
                            QLabel *sourceSentenceLanguage,
                            EntryPhoneticOptions phoneticOptions,
                            EntryCharactersOptions characterOptions);
-    void setStyle(bool use_dark);
 
     void cleanupLabels();
     void clearLabelVector(std::vector<QLabel *> &vector);

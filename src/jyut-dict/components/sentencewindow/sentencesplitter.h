@@ -3,7 +3,6 @@
 
 #include "components/sentencesearchresult/sentenceresultlistmodel.h"
 #include "components/sentenceview/sentencescrollarea.h"
-#include "logic/analytics/analytics.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/search/sqlsearch.h"
 #include "logic/sentence/sourcesentence.h"
@@ -14,10 +13,12 @@
 #include <QSplitter>
 #include <QWidget>
 
-// The MainSplitter contains a "master" listview and a "detail" scrollarea
+// The SentenceSplitter contains a "master" listview and a "detail" scrollarea
 //
 // It handles the model changed signal that the master listview emits,
 // and passes the data to the detail scrollarea.
+//
+// It also handles updating the model for the listview.
 
 class SentenceSplitter : public QSplitter
 {
@@ -28,8 +29,6 @@ public:
                               QWidget *parent = nullptr);
     ~SentenceSplitter() override;
 
-    void changeEvent(QEvent *event) override;
-
     void setSourceSentences(std::vector<SourceSentence> sourceSentences);
     void setSentenceSearchTerm(QString searchTerm);
 
@@ -38,7 +37,6 @@ public:
 private:
     std::shared_ptr<SQLDatabaseManager> _manager;
     std::shared_ptr<SQLSearch> _sqlSearch;
-    Analytics *_analytics;
 
     SentenceScrollArea *_sentenceScrollArea;
     QAbstractListModel *_model;

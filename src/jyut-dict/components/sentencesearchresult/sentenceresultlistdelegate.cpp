@@ -9,10 +9,8 @@
 
 #include <QGuiApplication>
 #include <QAbstractTextDocumentLayout>
-#include <QLocale>
 #include <QRectF>
 #include <QTextDocument>
-#include <QTextLayout>
 #include <QVariant>
 
 SentenceResultListDelegate::SentenceResultListDelegate(QWidget *parent)
@@ -25,14 +23,15 @@ void SentenceResultListDelegate::paint(QPainter *painter,
                                const QStyleOptionViewItem &option,
                                const QModelIndex &index) const
 {
+    // Get the sentence to paint
     if (!index.data().canConvert<SourceSentence>()) {
         return;
     }
+    SourceSentence sentence = qvariant_cast<SourceSentence>(index.data());
 
     painter->save();
 
-    SourceSentence sentence = qvariant_cast<SourceSentence>(index.data());
-
+    // Draw the rectangle behind each cell in the result view
     QColor backgroundColour;
     if (option.state & QStyle::State_Selected) {
 #ifdef Q_OS_MAC
@@ -51,6 +50,7 @@ void SentenceResultListDelegate::paint(QPainter *painter,
 
     painter->setRenderHint(QPainter::Antialiasing, true);
 
+    // Get preferences from user
     EntryCharactersOptions characterOptions;
     EntryPhoneticOptions phoneticOptions;
     CantoneseOptions cantoneseOptions;
@@ -86,18 +86,23 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     // Draw language indicator
     std::string language = sentence.getSourceLanguage();
     QColor colour = Utils::getLanguageColour(language);
+    // Adjust a few extra pixels to the right so that the rounded corners of
+    // the "pill" look right
     r = r.adjusted(15, 11, 0, 0);
 
     painter->save();
     font.setPixelSize(12);
     painter->setFont(font);
     metrics = QFontMetrics(font);
+
+    // Paint the first time so we can get the bounding rectangle
     QString languageString = Utils::getLanguageFromISO639(language);
     languageString = metrics
                          .elidedText(languageString, Qt::ElideRight, r.width())
                          .trimmed();
     painter->drawText(r, 0, languageString, &boundingRect);
 
+    // Then draw the actual rounded rectangle that contains the language
     QPainterPath path;
     boundingRect = boundingRect.adjusted(-7, -2, 7, 2);
     path.addRoundedRect(boundingRect, 10, 10);

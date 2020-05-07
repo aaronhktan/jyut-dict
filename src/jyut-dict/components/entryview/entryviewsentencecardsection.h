@@ -18,6 +18,9 @@
 #include <unordered_map>
 #include <vector>
 
+// The EntryViewSentenceCardSection displays cards for each set of sentences,
+// where each set of sentences belongs to a particular source.
+
 class EntryViewSentenceCardSection : public QWidget, public ISearchObserver
 {
     Q_OBJECT
@@ -38,7 +41,6 @@ public:
 private:
     void setupUI(void);
     void cleanup(void);
-
     void setStyle(bool use_dark);
 
     void showLoadingWidget(void);

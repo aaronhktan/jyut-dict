@@ -3,13 +3,8 @@
 SentenceResultListModel::SentenceResultListModel(std::shared_ptr<SQLSearch> sqlSearch,
                                  std::vector<SourceSentence> sentences, QObject *parent)
     : QAbstractListModel(parent)
+    , _sentences{sentences}
 {
-    if (sentences.empty()) {
-        setWelcome();
-    } else {
-        _sentences = sentences;
-    }
-
     _search = sqlSearch;
     _search->registerObserver(this);
 }
@@ -26,46 +21,14 @@ void SentenceResultListModel::callback(const std::vector<Entry> entries, bool em
 void SentenceResultListModel::callback(const std::vector<SourceSentence> sentences,
                                bool emptyQuery)
 {
-    setSentences(sentences, emptyQuery);
+    setSentences(sentences);
 }
 
 void SentenceResultListModel::setSentences(std::vector<SourceSentence> sentences)
 {
-    setSentences(sentences, false);
-}
-
-void SentenceResultListModel::setSentences(std::vector<SourceSentence> sentences, bool emptyQuery) {
     beginResetModel();
     _sentences = sentences;
-    if (_sentences.empty() && !emptyQuery) {
-        setEmpty();
-    }
     endResetModel();
-}
-
-void SentenceResultListModel::setWelcome()
-{
-//    Entry entry = Entry{tr("Loading...").toStdString(), tr("Loading...").toStdString(),
-//                        "—", "—", {}, {}, {}};
-//    entry.addDefinitions("CEDICT",
-//                         {tr("Searching sentences...").toStdString()});
-//    entry.setIsWelcome(true);
-
-//    setEntries(std::vector<Entry>{entry});
-}
-
-void SentenceResultListModel::setEmpty()
-{
-//    Entry entry = Entry{tr("No results...").toStdString(),
-//                        tr("No results...").toStdString(),
-//                        "", "", {}, {}, {}};
-//    entry.addDefinitions("CEDICT",
-//                         {tr("No sentences were found...")
-//                              .toStdString()});
-//    entry.setJyutping(tr("-").toStdString());
-//    entry.setIsEmpty(true);
-
-//    setEntries(std::vector<Entry>{entry});
 }
 
 int SentenceResultListModel::rowCount(const QModelIndex &parent) const

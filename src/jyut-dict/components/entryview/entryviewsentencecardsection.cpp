@@ -16,8 +16,9 @@ EntryViewSentenceCardSection::EntryViewSentenceCardSection(std::shared_ptr<SQLDa
 
     setupUI();
 
-    // We need to do this because the callback is in a different thread.
-    // Otherwise, the UI will not appear.
+    // We need to do this because the callback is called from a different thread.
+    // In order for the vector of SourceSentences to be copied to the UI thread,
+    // Q_DECLARE_METATYPE and qRegisterMetaType must be called.
     qRegisterMetaType<std::vector<SourceSentence>>();
     QObject::connect(this,
                      &EntryViewSentenceCardSection::callbackInvoked,
@@ -46,6 +47,37 @@ void EntryViewSentenceCardSection::callback(
     std::vector<SourceSentence> sourceSentences, bool __unused emptyQuery)
 {
     emit callbackInvoked(sourceSentences);
+}
+
+void EntryViewSentenceCardSection::setupUI(void)
+{
+    _sentenceCardsLayout = new QVBoxLayout{this};
+    _sentenceCardsLayout->setContentsMargins(0, 0, 0, 0);
+    _sentenceCardsLayout->setSpacing(11);
+
+    _loadingWidget = new LoadingWidget{this};
+    _loadingWidget->setVisible(false);
+
+    // We can't use a QPushButton on macOS because it breaks the margin
+    // See https://stackoverflow.com/questions/12327609/qpushbutton-changes-margins-on-other-widgets-in-the-same-layout
+    // for more details.
+    _viewAllSentencesButton = new QToolButton{this};
+    _viewAllSentencesButton->setText("View all sentences →");
+    _viewAllSentencesButton->setVisible(false);
+    _viewAllSentencesButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
+
+    _sentenceCardsLayout->addWidget(_loadingWidget);
+    _sentenceCardsLayout->setAlignment(_loadingWidget, Qt::AlignHCenter);
+    _sentenceCardsLayout->addWidget(_viewAllSentencesButton);
+    _sentenceCardsLayout->setAlignment(_viewAllSentencesButton, Qt::AlignRight);
+
+    _timer = new QTimer{this};
+
+#ifdef Q_OS_MAC
+    setStyle(Utils::isDarkMode());
+#else
+    setStyle(/* use_dark = */false);
+#endif
 }
 
 void EntryViewSentenceCardSection::updateUI(std::vector<SourceSentence> sourceSentences)
@@ -88,79 +120,6 @@ void EntryViewSentenceCardSection::updateUI(std::vector<SourceSentence> sourceSe
     emit finishedAddingCards();
 }
 
-void EntryViewSentenceCardSection::changeEvent(QEvent *event)
-{
-#if defined(Q_OS_DARWIN)
-    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
-        // QWidget emits a palette changed event when setting the stylesheet
-        // So prevent it from going into an infinite loop with this timer
-        _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, [=]() { _paletteRecentlyChanged = false; });
-
-        // Set the style to match whether the user started dark mode
-        setStyle(Utils::isDarkMode());
-    }
-#endif
-    QWidget::changeEvent(event);
-}
-
-void EntryViewSentenceCardSection::setEntry(const Entry &entry)
-{
-    cleanup();
-    _calledBack = false;
-    _timer->stop();
-    _timer->setInterval(1000);
-    _timer->setSingleShot(true);
-    QObject::connect(_timer, &QTimer::timeout, this, [=]() {
-        if (!_calledBack) {
-            showLoadingWidget();
-        }
-    });
-    _timer->start();
-    _search->searchTraditionalSentences(entry.getTraditional().c_str());
-    _title = entry
-                 .getCharacters(
-                     Settings::getSettings()
-                         ->value("characterOptions",
-                                 QVariant::fromValue(
-                                     EntryCharactersOptions::PREFER_TRADITIONAL))
-                         .value<EntryCharactersOptions>(),
-                     false)
-                 .c_str();
-    _title = _title.trimmed();
-}
-
-void EntryViewSentenceCardSection::setupUI(void)
-{
-    _sentenceCardsLayout = new QVBoxLayout{this};
-    _sentenceCardsLayout->setContentsMargins(0, 0, 0, 0);
-    _sentenceCardsLayout->setSpacing(11);
-
-    _loadingWidget = new LoadingWidget{this};
-    _loadingWidget->setVisible(false);
-
-    // We can't use a QPushButton on macOS because it breaks the margin
-    // See https://stackoverflow.com/questions/12327609/qpushbutton-changes-margins-on-other-widgets-in-the-same-layout
-    // for more details.
-    _viewAllSentencesButton = new QToolButton{this};
-    _viewAllSentencesButton->setText("View all sentences →");
-    _viewAllSentencesButton->setVisible(false);
-    _viewAllSentencesButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
-
-    _sentenceCardsLayout->addWidget(_loadingWidget);
-    _sentenceCardsLayout->setAlignment(_loadingWidget, Qt::AlignHCenter);
-    _sentenceCardsLayout->addWidget(_viewAllSentencesButton);
-    _sentenceCardsLayout->setAlignment(_viewAllSentencesButton, Qt::AlignRight);
-
-    _timer = new QTimer{this};
-
-#ifdef Q_OS_MAC
-    setStyle(Utils::isDarkMode());
-#else
-    setStyle(/* use_dark = */false);
-#endif
-}
-
 void EntryViewSentenceCardSection::cleanup(void)
 {
     for (auto card : _sentenceCards) {
@@ -186,6 +145,53 @@ void EntryViewSentenceCardSection::setStyle(bool use_dark)
                          "font-size: 12px; "
                          "padding: 6px; } ";
     _viewAllSentencesButton->setStyleSheet(styleSheet.arg(textColour.name()));
+}
+
+void EntryViewSentenceCardSection::changeEvent(QEvent *event)
+{
+#if defined(Q_OS_DARWIN)
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(10, [=]() { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        setStyle(Utils::isDarkMode());
+    }
+#endif
+    QWidget::changeEvent(event);
+}
+
+void EntryViewSentenceCardSection::setEntry(const Entry &entry)
+{
+    cleanup();
+
+    // Show loading widget only if search results are not found within
+    // a certain deadline
+    _calledBack = false;
+    _timer->stop();
+    _timer->setInterval(1000);
+    _timer->setSingleShot(true);
+    QObject::connect(_timer, &QTimer::timeout, this, [=]() {
+        if (!_calledBack) {
+            showLoadingWidget();
+        }
+    });
+    _timer->start();
+
+    // Actually start searching for sentences
+    _search->searchTraditionalSentences(entry.getTraditional().c_str());
+    _title = entry
+                 .getCharacters(
+                     Settings::getSettings()
+                         ->value("characterOptions",
+                                 QVariant::fromValue(
+                                     EntryCharactersOptions::PREFER_TRADITIONAL))
+                         .value<EntryCharactersOptions>(),
+                     false)
+                 .c_str();
+    _title = _title.trimmed();
 }
 
 void EntryViewSentenceCardSection::showLoadingWidget(void)

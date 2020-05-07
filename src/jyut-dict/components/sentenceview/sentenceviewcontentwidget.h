@@ -2,7 +2,6 @@
 #define SENTENCEVIEWCONTENTWIDGET_H
 
 #include "components/sentenceview/sentenceviewsentencecardsection.h"
-#include "logic/database/sqldatabasemanager.h"
 #include "logic/sentence/sourcesentence.h"
 
 #include <QVBoxLayout>
@@ -10,8 +9,8 @@
 
 #include <vector>
 
-// The EntryContentWidget displays data about an Entry (that is not in its header)
-// It contains multiple DefinitionCardWidgets, one for each dictionary source
+// The SentenceViewContentWidget displays data about an Sentence (that is not in its header)
+// It contains a SentenceSection that displays cards for sentences
 
 class SentenceViewContentWidget : public QWidget
 {

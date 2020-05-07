@@ -7,6 +7,9 @@
 
 #include <string>
 
+// The SourceSentence represents a Chinese sentence.
+// It contains SentenceSets, which each represent a source and its translations.
+
 class SourceSentence
 {
 public:

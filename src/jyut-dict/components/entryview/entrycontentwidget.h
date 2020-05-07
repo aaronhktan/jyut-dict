@@ -9,10 +9,9 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include <vector>
-
 // The EntryContentWidget displays data about an Entry (that is not in its header)
-// It contains multiple DefinitionCardWidgets, one for each dictionary source
+// It contains section for definition cards, and another section for
+// sentence cards.
 
 class EntryContentWidget : public QWidget
 {

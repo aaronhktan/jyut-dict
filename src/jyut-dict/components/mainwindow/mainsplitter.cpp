@@ -14,11 +14,11 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLDatabaseManager> manager,
 {
     _analytics = new Analytics{this};
 
-    _definitionScrollArea = new EntryScrollArea{manager, this};
+    _entryScrollArea = new EntryScrollArea{manager, this};
     _resultListView = new ResultListView{sqlSearch, this};
 
     addWidget(_resultListView);
-    addWidget(_definitionScrollArea);
+    addWidget(_entryScrollArea);
 
     // Don't use QListView::click, since it doesn't respond to changes
     // in the current index if user is navigating with the keyboard
@@ -94,7 +94,7 @@ void MainSplitter::handleClick(const QModelIndex &selection)
     }
 
     prepareEntry(entry);
-    _definitionScrollArea->setEntry(entry);
+    _entryScrollArea->setEntry(entry);
 }
 
 void MainSplitter::handleDoubleClick(const QModelIndex &selection)
