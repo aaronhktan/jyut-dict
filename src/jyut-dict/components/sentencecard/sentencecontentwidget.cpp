@@ -69,7 +69,10 @@ void SentenceContentWidget::setSentenceSet(const SentenceSet &set)
                                          .height();
         _sentenceNumberLabels.back()->setFixedHeight(definitionNumberHeight);
 
-        _sentenceLabels.push_back(new QLabel{sentences[i].sentence.c_str(), this});
+        _sentenceLabels.push_back(new QLabel{QString{
+                                                 sentences[i].sentence.c_str()}
+                                                     .trimmed(), this});
+        _sentenceLabels.back()->setProperty("language", sentences[i].language.c_str());
         _sentenceLabels.back()->setWordWrap(true);
         _sentenceLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
@@ -162,6 +165,8 @@ void SentenceContentWidget::setSourceSentenceVector(
                            targetSentenceSet.getSentences()[0].sentence.c_str()}
                                .trimmed(),
                        this});
+        _sentenceLabels.back()->setProperty("language",
+                                            targetSentenceSet.getSentences()[0].language.c_str());
         _sentenceLabels.back()->setWordWrap(true);
         _sentenceLabels.back()->setTextInteractionFlags(
             Qt::TextSelectableByMouse);
@@ -252,9 +257,19 @@ void SentenceContentWidget::setStyle(bool use_dark)
 
     QString chineseStyleSheet = "QLabel { font-size: 16px; padding-left: 2px; }";
     for (const auto &label : _simplifiedLabels) {
+#ifdef Q_OS_WIN
+        QFont font = QFont{"Microsoft YaHei", 16};
+        font.setStyleHint(QFont::System, QFont::PreferAntialias);
+        label->setFont(font);
+#endif
         label->setStyleSheet(chineseStyleSheet);
     }
     for (const auto &label : _traditionalLabels) {
+#ifdef Q_OS_WIN
+        QFont font = QFont{"Microsoft YaHei", 16};
+        font.setStyleHint(QFont::System, QFont::PreferAntialias);
+        label->setFont(font);
+#endif
         label->setStyleSheet(chineseStyleSheet);
     }
 
@@ -270,6 +285,15 @@ void SentenceContentWidget::setStyle(bool use_dark)
 
     QString sentenceStyleSheet = "QLabel { padding-left: 2px; }";
     for (const auto &label : _sentenceLabels) {
+#ifdef Q_OS_WIN
+        if (label->property("language").toString().trimmed() == "cmn" ||
+                label->property("language").toString().trimmed() == "yue") {
+            QFont font = QFont{"Microsoft YaHei"};
+            font.setStyleHint(QFont::System, QFont::PreferAntialias);
+            font.setPixelSize(14);
+            label->setFont(font);
+        }
+#endif
         label->setStyleSheet(sentenceStyleSheet);
     }
 }

@@ -182,9 +182,33 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     if (option.state & QStyle::State_Selected) {
         painter->setPen(Utils::getContrastingColour(backgroundColour));
     }
+#ifdef Q_OS_WIN
+    oldFont = font;
+    QString snippetLanguage = QString{sentence.getSentenceSnippetLanguage()
+            .c_str()}.trimmed();
+    if (snippetLanguage == "cmn" || snippetLanguage == "yue") {
+        font = QFont{"Microsoft Yahei"};
+    } else {
+        font = oldFont;
+    }
+#endif
+    font.setPixelSize(12);
+    painter->setFont(font);
+#ifdef Q_OS_WIN
+    if (snippetLanguage == "cmn" || snippetLanguage == "yue") {
+        r.setY(
+            option.rect.bottom() - 15
+            - metrics.boundingRect(sentence.getSentenceSnippet().c_str()).height());
+    } else {
+        r.setY(
+            option.rect.bottom() - 10
+            - metrics.boundingRect(sentence.getSentenceSnippet().c_str()).height());
+    }
+#else
     r.setY(
         option.rect.bottom() - 10
         - metrics.boundingRect(sentence.getSentenceSnippet().c_str()).height());
+#endif
     snippet = metrics
                   .elidedText(sentence.getSentenceSnippet().c_str(),
                               Qt::ElideRight,
@@ -199,6 +223,9 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     rct.setY(rct.bottom() - 1);
     painter->fillRect(rct, option.palette.color(QPalette::Window));
 
+#ifdef Q_OS_WIN
+    font = oldFont;
+#endif
     painter->restore();
 }
 

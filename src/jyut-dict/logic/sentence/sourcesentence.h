@@ -56,6 +56,7 @@ public:
 
     std::vector<SentenceSet> getSentenceSets(void) const;
     std::string getSentenceSnippet(void) const;
+    std::string getSentenceSnippetLanguage(void) const;
 
     void setIsWelcome(const bool isWelcome);
     bool isWelcome(void) const;

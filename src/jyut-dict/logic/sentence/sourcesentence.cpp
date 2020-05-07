@@ -238,6 +238,28 @@ std::string SourceSentence::getSentenceSnippet(void) const
     return snippets.at(0).sentence;
 }
 
+std::string SourceSentence::getSentenceSnippetLanguage(void) const
+{
+    if (_sentences.empty()) {
+        return "";
+    }
+
+    SentenceSet sentenceSet = _sentences.at(0);
+
+    if (sentenceSet.getSentenceSnippet().empty()) {
+        return "";
+    }
+
+    std::vector<Sentence::TargetSentence> snippets = sentenceSet
+                                                         .getSentenceSnippet();
+
+    if (snippets.empty()) {
+        return "";
+    }
+
+    return snippets.at(0).language;
+}
+
 void SourceSentence::setIsWelcome(const bool isWelcome)
 {
     _isWelcome = isWelcome;

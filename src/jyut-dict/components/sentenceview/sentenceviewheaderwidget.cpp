@@ -113,7 +113,8 @@ void SentenceViewHeaderWidget::setSourceSentence(const SourceSentence &sentence)
 #ifdef Q_OS_WIN
     QFont font = QFont{"Microsoft YaHei", 30};
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
-    _wordLabel->setFont(font);
+    _simplifiedLabel->setFont(font);
+    _traditionalLabel->setFont(font);
 #endif
 
 #ifdef Q_OS_MAC
