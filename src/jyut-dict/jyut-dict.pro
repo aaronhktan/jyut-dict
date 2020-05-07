@@ -257,11 +257,15 @@ unix:!macx {
 
 unix|win32:!macx {
     # Copy dictionary database to the build directory
-    copydata.commands = $(COPY_DIR) \"$$system_path($$PWD/resources/db/dict.db)\" \"$$system_path($$OUT_PWD)\"
-    first.depends = $(first) copydata
-    export(first.depends)
-    export(copydata.commands)
-    QMAKE_EXTRA_TARGETS += first copydata
+    DICTFILES = $$files($${PWD}/resources/db/dict.db)
+
+    copy_files.name = copy dictionary files
+    copy_files.input = DICTFILES
+    copy_files.output = $${OUT_PWD}/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
+    copy_files.commands = ${COPY_FILE} ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
+    copy_files.CONFIG += no_link target_predeps
+
+    QMAKE_EXTRA_COMPILERS += copy_files
 
     # Copy settings file to build directory
     copysettings.commands = $(COPY_DIR) \"$$system_path($$PWD/resources/settings/settings.ini)\" \"$$system_path($$OUT_PWD)\"
