@@ -120,11 +120,9 @@ std::string SourceSentence::getCharacters(EntryCharactersOptions options) const
 {
     switch (options) {
     case EntryCharactersOptions::ONLY_SIMPLIFIED:
-        [[clang::fallthrough]];
     case EntryCharactersOptions::PREFER_SIMPLIFIED:
         return _simplified;
     case EntryCharactersOptions::ONLY_TRADITIONAL:
-        [[clang::fallthrough]];
     case EntryCharactersOptions::PREFER_TRADITIONAL:
         return _traditional;
     }
@@ -156,11 +154,9 @@ std::string SourceSentence::getPhonetic(EntryPhoneticOptions options,
 {
     switch (options) {
     case EntryPhoneticOptions::ONLY_JYUTPING:
-        [[clang::fallthrough]];
     case EntryPhoneticOptions::PREFER_JYUTPING:
         return getCantonesePhonetic(cantoneseOptions);
     case EntryPhoneticOptions::ONLY_PINYIN:
-        [[clang::fallthrough]];
     case EntryPhoneticOptions::PREFER_PINYIN:
         return getMandarinPhonetic(mandarinOptions);
     }

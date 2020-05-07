@@ -77,5 +77,7 @@ void DictionaryListDelegate::paint(QPainter *painter,
 QSize DictionaryListDelegate::sizeHint(const QStyleOptionViewItem &option,
                                        const QModelIndex &index) const
 {
+    (void) (option);
+    (void) (index);
     return QSize(100, 30);
 }

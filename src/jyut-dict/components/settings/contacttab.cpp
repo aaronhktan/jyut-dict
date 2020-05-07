@@ -157,6 +157,7 @@ void ContactTab::translateUI()
 
 void ContactTab::setStyle(bool use_dark)
 {
+    (void) (use_dark);
 #ifdef Q_OS_MAC
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: "
                   "13px; height: 16px; }");

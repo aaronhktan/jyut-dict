@@ -296,12 +296,10 @@ void SentenceViewHeaderWidget::displaySentenceLabels(
     // Display the first label
     switch (options) {
     case EntryCharactersOptions::ONLY_SIMPLIFIED:
-        [[clang::fallthrough]];
     case EntryCharactersOptions::PREFER_SIMPLIFIED:
         _sentenceHeaderLayout->addWidget(_simplifiedLabel, 1, 0, 1, -1);
         break;
     case EntryCharactersOptions::ONLY_TRADITIONAL:
-        [[clang::fallthrough]];
     case EntryCharactersOptions::PREFER_TRADITIONAL:
         _sentenceHeaderLayout->addWidget(_traditionalLabel, 1, 0, 1, -1);
         break;

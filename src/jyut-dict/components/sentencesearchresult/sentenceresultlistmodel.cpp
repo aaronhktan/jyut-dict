@@ -15,12 +15,14 @@ SentenceResultListModel::~SentenceResultListModel()
 
 void SentenceResultListModel::callback(const std::vector<Entry> entries, bool emptyQuery)
 {
-    void();
+    (void) (entries);
+    (void) (emptyQuery);
 }
 
 void SentenceResultListModel::callback(const std::vector<SourceSentence> sentences,
                                bool emptyQuery)
 {
+    (void) (emptyQuery);
     setSentences(sentences);
 }
 

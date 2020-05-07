@@ -367,6 +367,7 @@ void SettingsWindow::openTab(int tabIndex)
 
 void SettingsWindow::paintWithApplicationState(Qt::ApplicationState state)
 {
+    (void) (state);
 #ifdef Q_OS_MAC
     setStyle(Utils::isDarkMode());
 #else

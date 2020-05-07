@@ -304,7 +304,6 @@ void SentenceContentWidget::addLabelsToLayout(
     switch (characterOptions) {
     case EntryCharactersOptions::ONLY_SIMPLIFIED:
         traditionalLabel->setVisible(false);
-        [[clang::fallthrough]];
     case EntryCharactersOptions::PREFER_SIMPLIFIED:
         layout->addWidget(simplifiedLabel,
                           rowNumber * 10 + 1,
@@ -315,7 +314,6 @@ void SentenceContentWidget::addLabelsToLayout(
         break;
     case EntryCharactersOptions::ONLY_TRADITIONAL:
         simplifiedLabel->setVisible(false);
-        [[clang::fallthrough]];
     case EntryCharactersOptions::PREFER_TRADITIONAL:
         layout->addWidget(traditionalLabel,
                           rowNumber * 10 + 1,
@@ -352,7 +350,6 @@ void SentenceContentWidget::addLabelsToLayout(
     switch (phoneticOptions) {
     case EntryPhoneticOptions::ONLY_JYUTPING:
         pinyinLabel->setVisible(false);
-        [[clang::fallthrough]];
     case EntryPhoneticOptions::PREFER_JYUTPING:
         layout->addWidget(jyutpingLabel,
                           rowNumber * 10 + 3,
@@ -363,7 +360,6 @@ void SentenceContentWidget::addLabelsToLayout(
         break;
     case EntryPhoneticOptions::ONLY_PINYIN:
         jyutpingLabel->setVisible(false);
-        [[clang::fallthrough]];
     case EntryPhoneticOptions::PREFER_PINYIN:
         layout->addWidget(pinyinLabel,
                           rowNumber * 10 + 3,

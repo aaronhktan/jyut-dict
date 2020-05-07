@@ -235,6 +235,8 @@ void ResultListDelegate::paint(QPainter *painter,
 QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
                                    const QModelIndex &index) const
 {
+    (void) (option);
+
     Entry entry = qvariant_cast<Entry>(index.data());
     bool isEmptyEntry = entry.isEmpty();
 

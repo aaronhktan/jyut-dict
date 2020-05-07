@@ -83,7 +83,6 @@ bool SQLDatabaseUtils::updateDatabase(void)
         case -1:
         case 1:
             migrateDatabaseFromOneToTwo();
-            [[clang::fallthrough]]; // TODO: remove this!
         default:
             break;
         }

@@ -205,6 +205,8 @@ void SentenceResultListDelegate::paint(QPainter *painter,
 QSize SentenceResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
                                    const QModelIndex &index) const
 {
+    (void) (option);
+
     SourceSentence sentence = qvariant_cast<SourceSentence>(index.data());
 
 #ifdef Q_OS_LINUX

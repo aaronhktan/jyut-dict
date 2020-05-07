@@ -26,7 +26,8 @@ void ResultListModel::callback(const std::vector<Entry> entries, bool emptyQuery
 void ResultListModel::callback(const std::vector<SourceSentence> sentences,
                                bool emptyQuery)
 {
-    void();
+    (void) (sentences);
+    (void) (emptyQuery);
 }
 
 void ResultListModel::setEntries(std::vector<Entry> entries)
