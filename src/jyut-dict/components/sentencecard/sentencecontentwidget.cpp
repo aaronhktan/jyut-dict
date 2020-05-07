@@ -38,6 +38,9 @@ void SentenceContentWidget::changeEvent(QEvent *event)
         setStyle(Utils::isDarkMode());
     }
 #endif
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
     QWidget::changeEvent(event);
 }
 
@@ -204,6 +207,16 @@ void SentenceContentWidget::setSourceSentenceVector(
 #endif
 }
 
+void SentenceContentWidget::translateUI(void)
+{
+    for (auto &label : _sourceSentenceLanguage) {
+        label->setText(Utils::getLanguageFromISO639(
+                           label->property("language").toString().toStdString())
+                           .trimmed());
+        label->resize(label->sizeHint());
+    }
+}
+
 void SentenceContentWidget::setStyle(bool use_dark)
 {
     QString sentenceNumberStyleSheet = "QLabel { color: %1; "
@@ -234,7 +247,7 @@ void SentenceContentWidget::setStyle(bool use_dark)
         label->setText(Utils::getLanguageFromISO639(
                            label->property("language").toString().toStdString())
                            .trimmed());
-        label->setFixedWidth(label->sizeHint().width());
+        label->resize(label->sizeHint());
     }
 
     QString chineseStyleSheet = "QLabel { font-size: 16px; padding-left: 2px; }";

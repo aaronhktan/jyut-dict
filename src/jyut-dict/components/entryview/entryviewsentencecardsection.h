@@ -40,6 +40,7 @@ public:
 
 private:
     void setupUI(void);
+    void translateUI(void);
     void cleanup(void);
     void setStyle(bool use_dark);
 

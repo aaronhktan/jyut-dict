@@ -35,6 +35,7 @@ public:
         const std::vector<SourceSentence> &sourceSentences);
 
 private:
+    void translateUI(void);
     void setStyle(bool use_dark);
 
     void addLabelsToLayout(QGridLayout *layout,

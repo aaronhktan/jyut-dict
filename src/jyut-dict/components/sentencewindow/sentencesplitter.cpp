@@ -7,7 +7,7 @@
 #include <QVariant>
 
 SentenceSplitter::SentenceSplitter(std::shared_ptr<SQLDatabaseManager> manager,
-                           QWidget *parent)
+                                   QWidget *parent)
     : QSplitter(parent)
     , _manager{manager}
 {
@@ -53,15 +53,39 @@ SentenceSplitter::~SentenceSplitter()
 
 }
 
+void SentenceSplitter::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
+    QSplitter::changeEvent(event);
+}
+
 void SentenceSplitter::setSourceSentences(
     std::vector<SourceSentence> sourceSentences)
 {
     static_cast<SentenceResultListModel *>(_model)->setSentences(sourceSentences);
+    _size = static_cast<int>(sourceSentences.size());
 }
 
-void SentenceSplitter::setSentenceSearchTerm(QString searchTerm)
+void SentenceSplitter::setSearchTerm(QString searchTerm)
 {
-    _sqlSearch->searchTraditionalSentences(searchTerm);
+    _searchTerm = searchTerm;
+    translateUI();
+}
+
+void SentenceSplitter::translateUI(void)
+{
+    QString title;
+    if (_size == 1) {
+        title = QString{tr("Sentences for %1 (%2 result)")}.arg(_searchTerm,
+                                                                QString::number(
+                                                                    _size));
+    } else {
+        title = QString{tr("Sentences for %1 (%2 results)")}
+                    .arg(_searchTerm, QString::number(_size));
+    }
+    setWindowTitle(title);
 }
 
 void SentenceSplitter::openCurrentSelectionInNewWindow(void)

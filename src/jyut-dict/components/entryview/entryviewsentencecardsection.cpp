@@ -62,7 +62,6 @@ void EntryViewSentenceCardSection::setupUI(void)
     // See https://stackoverflow.com/questions/12327609/qpushbutton-changes-margins-on-other-widgets-in-the-same-layout
     // for more details.
     _viewAllSentencesButton = new QToolButton{this};
-    _viewAllSentencesButton->setText("View all sentences →");
     _viewAllSentencesButton->setVisible(false);
     _viewAllSentencesButton->setToolButtonStyle(Qt::ToolButtonTextOnly);
 
@@ -78,6 +77,12 @@ void EntryViewSentenceCardSection::setupUI(void)
 #else
     setStyle(/* use_dark = */false);
 #endif
+    translateUI();
+}
+
+void EntryViewSentenceCardSection::translateUI()
+{
+    _viewAllSentencesButton->setText(tr("View all sentences →"));
 }
 
 void EntryViewSentenceCardSection::updateUI(std::vector<SourceSentence> sourceSentences)
@@ -160,6 +165,9 @@ void EntryViewSentenceCardSection::changeEvent(QEvent *event)
         setStyle(Utils::isDarkMode());
     }
 #endif
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
     QWidget::changeEvent(event);
 }
 
@@ -207,10 +215,8 @@ void EntryViewSentenceCardSection::openSentenceWindow(
     SentenceSplitter *splitter = new SentenceSplitter{_manager, nullptr};
     splitter->setParent(this, Qt::Window);
     splitter->setSourceSentences(sourceSentences);
+    splitter->setSearchTerm(_title);
     splitter->show();
-    QString title = QString{"Sentences for %1 (%2 results)"}
-                        .arg(_title, QString::number(sourceSentences.size()));
-    splitter->setWindowTitle(title);
 }
 
 // Given some sourceSentences, returns a set of five (or fewer) sentences from

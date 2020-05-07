@@ -328,7 +328,7 @@ bool SQLDatabaseUtils::removeSource(std::string source)
         if (type.find("sentences") != std::string::npos) {
             if (!removeSentencesFromDatabase()) {
                 throw std::runtime_error(
-                    tr("Failed to remove sentences").toStdString());
+                    tr("Failed to remove sentences...").toStdString());
             }
         }
 

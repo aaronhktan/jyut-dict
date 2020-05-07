@@ -29,14 +29,21 @@ public:
                               QWidget *parent = nullptr);
     ~SentenceSplitter() override;
 
+    void changeEvent(QEvent *event) override;
+
     void setSourceSentences(std::vector<SourceSentence> sourceSentences);
-    void setSentenceSearchTerm(QString searchTerm);
+    void setSearchTerm(QString searchTerm);
+
+private:
+    void translateUI(void);
 
     void openCurrentSelectionInNewWindow(void);
 
-private:
     std::shared_ptr<SQLDatabaseManager> _manager;
     std::shared_ptr<SQLSearch> _sqlSearch;
+
+    QString _searchTerm = "";
+    int _size = 0;
 
     SentenceScrollArea *_sentenceScrollArea;
     QAbstractListModel *_model;

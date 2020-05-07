@@ -8,8 +8,6 @@
 
 #include <unordered_map>
 
-#include <QDebug>
-
 namespace Utils {
 
 static std::unordered_map<std::string, QColor> colourMap = {
@@ -87,5 +85,44 @@ static QMap<QString, std::string> reverseLanguageMap = {
             result = str.mid(0, str.indexOf("_")).toStdString();
         }
         return result;
+    }
+
+    void refreshLanguageMap()
+    {
+        languageMap = {
+            {"cmn",
+             QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                         Strings::CMN_STRING)},
+            {"eng",
+             QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                         Strings::ENG_STRING)},
+            {"fra",
+             QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                         Strings::FRA_STRING)},
+            {"deu",
+             QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                         Strings::DEU_STRING)},
+            {"yue",
+             QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                         Strings::YUE_STRING)},
+        };
+
+        reverseLanguageMap = {
+            {QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                         Strings::CMN_STRING),
+             "cmn"},
+            {QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                         Strings::ENG_STRING),
+             "eng"},
+            {QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                         Strings::FRA_STRING),
+             "fra"},
+            {QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                         Strings::DEU_STRING),
+             "deu"},
+            {QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                         Strings::YUE_STRING),
+             "yue"},
+        };
     }
 }

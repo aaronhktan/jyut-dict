@@ -265,6 +265,8 @@ void MainWindow::translateUI(void)
         QCoreApplication::translate("strings", Strings::PRODUCT_NAME)));
     _updateAction->setText(tr("Check for Updates..."));
 
+    Utils::refreshLanguageMap();
+
 #ifdef Q_OS_WIN
     QFont font;
     if (Settings::isCurrentLocaleTraditionalHan()) {

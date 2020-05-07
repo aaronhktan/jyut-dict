@@ -67,6 +67,8 @@ void SentenceViewHeaderWidget::setSourceSentence(const SourceSentence &sentence)
     _pinyinTTS->setVisible(true);
 #endif
 
+    _sourceLanguageLabel->setProperty("language",
+                                      QString{sentence.getSourceLanguage().c_str()});
     _sourceLanguageLabel->setText(
         Utils::getLanguageFromISO639(sentence.getSourceLanguage()).trimmed());
 
@@ -183,6 +185,12 @@ void SentenceViewHeaderWidget::setupUI(void)
 
 void SentenceViewHeaderWidget::translateUI(void)
 {
+    _sourceLanguageLabel->setText(
+        Utils::getLanguageFromISO639(
+            _sourceLanguageLabel->property("language").toString().toStdString())
+            .trimmed());
+    _sourceLanguageLabel->resize(_sourceLanguageLabel->sizeHint());
+
     _jyutpingLabel->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                                         Strings::JYUTPING_SHORT));
     _jyutpingLabel->setFixedWidth(
