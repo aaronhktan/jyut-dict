@@ -248,14 +248,6 @@
         <source>View all sentences →</source>
         <translation>Voir toutes les phrases →</translation>
     </message>
-    <message>
-        <source>Sentences for %1 (%2 result)</source>
-        <translation>Phrases contenant le mot %1 (%2 résultat)</translation>
-    </message>
-    <message>
-        <source>Sentences for %1 (%2 results)</source>
-        <translation>Phrases contenant le mot %1 (%2 résultats)</translation>
-    </message>
 </context>
 <context>
     <name>LoadingWidget</name>

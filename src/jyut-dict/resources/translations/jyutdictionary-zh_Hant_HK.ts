@@ -248,14 +248,6 @@
         <source>View all sentences →</source>
         <translation>檢視所有例句 →</translation>
     </message>
-    <message>
-        <source>Sentences for %1 (%2 result)</source>
-        <translation>《%1》例句：（%2 條結果）</translation>
-    </message>
-    <message>
-        <source>Sentences for %1 (%2 results)</source>
-        <translation>《%1》例句：（%2 條結果）</translation>
-    </message>
 </context>
 <context>
     <name>LoadingWidget</name>
@@ -704,13 +696,13 @@
         <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="76"/>
         <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="90"/>
         <source>Sentences for %1 (%2 result)</source>
-        <translation>《%1》例句：（%2 結果）</translation>
+        <translation>《%1》例句：（%2 條結果）</translation>
     </message>
     <message>
         <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="80"/>
         <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="94"/>
         <source>Sentences for %1 (%2 results)</source>
-        <translation>《%1》例句：（%2 結果）</translation>
+        <translation>《%1》例句：（%2 條結果）</translation>
     </message>
 </context>
 <context>

@@ -708,13 +708,13 @@
         <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="+76"/>
         <location line="+14"/>
         <source>Sentences for %1 (%2 result)</source>
-        <translation>“%1“例句 （%2 結果）</translation>
+        <translation>“%1“例句 （%2 条结果）</translation>
     </message>
     <message>
         <location line="-10"/>
         <location line="+14"/>
         <source>Sentences for %1 (%2 results)</source>
-        <translation>“%1“例句 （%2 結果）</translation>
+        <translation>“%1“例句 （%2 条结果）</translation>
     </message>
 </context>
 <context>
