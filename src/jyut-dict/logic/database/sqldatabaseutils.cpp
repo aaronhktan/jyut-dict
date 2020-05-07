@@ -13,6 +13,9 @@ SQLDatabaseUtils::SQLDatabaseUtils(std::shared_ptr<SQLDatabaseManager> manager)
     _manager = manager;
 }
 
+// Database differences from version 1 to version 2:
+// - Added chinese_sentences, nonchinese_sentences, and sentence_links tables
+//   to properly support showing sentences in the GUI.
 bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(void)
 {
     QSqlQuery query{_manager->getDatabase()};
@@ -64,6 +67,7 @@ bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(void)
     return true;
 }
 
+// Update the database to whatever the current version is.
 bool SQLDatabaseUtils::updateDatabase(void)
 {
     QSqlQuery query{_manager->getDatabase()};
@@ -88,6 +92,8 @@ bool SQLDatabaseUtils::updateDatabase(void)
     return true;
 }
 
+// Reads a mapping of sourcename / sourceshortname from the database
+// so they can later be converted between the two.
 bool SQLDatabaseUtils::readSources(std::vector<std::pair<std::string, std::string>> &sources)
 {
     QSqlQuery query{_manager->getDatabase()};
@@ -112,6 +118,7 @@ bool SQLDatabaseUtils::readSources(std::vector<std::pair<std::string, std::strin
     return true;
 }
 
+// Reads all the metadata about the sources.
 bool SQLDatabaseUtils::readSources(std::vector<DictionaryMetadata> &sources)
 {
     QSqlQuery query{_manager->getDatabase()};
@@ -152,6 +159,10 @@ bool SQLDatabaseUtils::readSources(std::vector<DictionaryMetadata> &sources)
     return true;
 }
 
+// Deleting a source from the database involves turning on foreign keys
+// (so the constraints are properly enforced), dropping indices (that will no
+// longer be valid after deleting the source), and finally deleting the source
+// that matches the name passed in the function.
 bool SQLDatabaseUtils::deleteSourceFromDatabase(std::string source)
 {
     QSqlQuery query{_manager->getDatabase()};
@@ -171,6 +182,12 @@ bool SQLDatabaseUtils::deleteSourceFromDatabase(std::string source)
     return true;
 }
 
+// Removing definitions from the database involves the following steps:
+// - Deleting all the FTS5 tables (they will no longer be valid)
+// - Finding how many entries will be deleted
+// - Deleting those entries
+// - Re-creating the FTS5 tables
+// - Re-creating indices that were previously invalidated.
 bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void)
 {
     QSqlQuery query{_manager->getDatabase()};
@@ -180,6 +197,14 @@ bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void)
     query.exec("DELETE FROM definitions_fts");
     query.exec("DELETE FROM entries_fts");
 
+    // The table that is built up by this query looks like this:
+    //
+    // entry_id         definitions.fk_entry_id
+    // 1                1                       // Definition references entry
+    // 2                NULL                    // Entry is not referenced
+    //
+    // Then, we can count all the number of rows where definitions.fk_entry_id
+    // is NULL to find the number of entries that must be deleted.
     query.exec("SELECT COUNT(entries.entry_id) AS count "
                "FROM entries "
                "WHERE entries.entry_id IN "
@@ -213,12 +238,16 @@ bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void)
                "SELECT rowid, definition FROM definitions");
     query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
 
-    emit cleaningUp();
-    query.exec("VACUUM");
-
     return true;
 }
 
+// Removing sentences from the database involves the following steps:
+// - Assuming the source has been deleted, because of foreign key constraints,
+//   the sentence_links from that source should have also been deleted.
+// - Use the LEFT JOIN table to find chinese_sentences that are no longer
+//   linked to any other sentences, and delete them.
+// - Use the same LEFT JOIN (but on nonchinese_sentences) to delete
+//   nonchinese_sentences that are also no longer linked to any sentences.
 bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
 {
     QSqlQuery query{_manager->getDatabase()};
@@ -227,7 +256,7 @@ bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
 
     // Remove Chinese sentences that are no longer linked to any definitions
     //
-    // The result of the left join is:
+    // The result of the LEFT JOIN is:
     // chinese_sentences_id     fk_chinese_sentence_id
     // 12345                    12345                   // Linked sentence
     // 12346                    NULL                    // Unlinked sentence
@@ -236,11 +265,6 @@ bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
     // fk_chinese_sentence_id referencing it, and DELETE FROM chinese_sentences.
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    query.exec("(SELECT chinese_sentences.chinese_sentence_id "
-               "    FROM chinese_sentences LEFT JOIN sentence_links "
-               "    ON chinese_sentences.chinese_sentence_id = "
-               "     sentence_links.fk_chinese_sentence_id "
-               "    WHERE sentence_links.fk_chinese_sentence_id IS NULL)");
 
     query.exec("DELETE FROM chinese_sentences "
                "WHERE chinese_sentences.chinese_sentence_id IN "
@@ -263,6 +287,7 @@ bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
     return true;
 }
 
+// Method to remove a source from the database, based on the name of the source.
 bool SQLDatabaseUtils::removeSource(std::string source)
 {
     QSqlQuery query{_manager->getDatabase()};
@@ -272,6 +297,9 @@ bool SQLDatabaseUtils::removeSource(std::string source)
     query.addBindValue(source.c_str());
     query.exec();
 
+    // Assume that the "other" field in the database contains metadata about
+    // what type of data this source contains, in the format
+    // type●type●type (types of data separated by the character ●)
     int otherIndex = query.record().indexOf("other");
     std::string type = "";
     while (query.next()) {
@@ -286,6 +314,8 @@ bool SQLDatabaseUtils::removeSource(std::string source)
 
     deleteSourceFromDatabase(source);
 
+    // In the metadata field, no type is a definition source.
+    // sentences is a sentences source.
     bool success = false;
     query.exec("BEGIN TRANSACTION");
     try {
@@ -301,6 +331,10 @@ bool SQLDatabaseUtils::removeSource(std::string source)
                     tr("Failed to remove sentences").toStdString());
             }
         }
+
+        emit cleaningUp();
+        query.exec("VACUUM");
+
         query.exec("COMMIT");
         success = true;
         emit finishedDeletion(success);
@@ -312,20 +346,21 @@ bool SQLDatabaseUtils::removeSource(std::string source)
     return success;
 }
 
-bool SQLDatabaseUtils::addDefinitionSource(void)
+// Inserting into the database selects all the sources in the attached database
+// and attempts to insert it into the database.
+bool SQLDatabaseUtils::insertSourcesIntoDatabase(void)
 {
     QSqlQuery query{_manager->getDatabase()};
-    query.exec("DROP INDEX fk_entry_id_index");
-    query.exec("DELETE FROM definitions_fts");
-    query.exec("DELETE FROM entries_fts");
 
     emit insertingSource();
 
-    query.exec("INSERT INTO sources(sourcename, sourceshortname, version, "
-               "description, legal, link, update_url, other) "
-               "SELECT sourcename, sourceshortname, version, description, "
-               "legal, link, update_url, other "
-               "FROM db.sources");
+    query.exec(
+        "INSERT INTO sources "
+        " (sourcename, sourceshortname, version, description, legal, link, "
+        " update_url, other) "
+        "SELECT sourcename, sourceshortname, version, description, legal, "
+        " link, update_url, other "
+        "FROM db.sources");
 
     if (query.lastError().isValid()) {
         QString error = query.lastError().text();
@@ -338,6 +373,26 @@ bool SQLDatabaseUtils::addDefinitionSource(void)
         return false;
     }
 
+    return true;
+}
+
+// To add a definition source, the steps are the following:
+// - Drop the index and FTS5 tables; they will be rebuilt later.
+// - Insert into the entries table all the entries from the attached db file.
+// - Create a temporary table that:
+//     - Matches the fk_source_id (from the attached db) to the new source_id
+//       in the main database.
+//     - Matches the fk_entry_id (from the attached db) to the new entry_id
+//       in the main database.
+// - Insert all the entries from the temporary table into the main table.
+// - Re-create index and FTS5 tables.
+bool SQLDatabaseUtils::addDefinitionSource(void)
+{
+    QSqlQuery query{_manager->getDatabase()};
+    query.exec("DROP INDEX fk_entry_id_index");
+    query.exec("DELETE FROM definitions_fts");
+    query.exec("DELETE FROM entries_fts");
+
     emit insertingEntries();
 
     query.exec("INSERT INTO entries(traditional, simplified, pinyin, "
@@ -346,6 +401,39 @@ bool SQLDatabaseUtils::addDefinitionSource(void)
                "FROM db.entries");
 
     emit insertingDefinitions();
+
+    // A diagram of what the various databases look like:
+    //
+    // ATTACHED DB
+    // entries                      | definitions                         | sources
+    // trad simp jp   py entry_id<----fk_entry_id definition fk_source_id-->source_id sourcename
+    // 麼   么    mo1  me 0129<--------0129        what       1------------->1         CC-CEDICT
+    //
+    // MAIN DB
+    // (entry_id and source_id are auto-incremented in the insertion done
+    //  a few lines higher; the fk_entry_id and fk_source_id from the attached
+    //  are database no longer valid)
+    // entries                      | definitions               | sources
+    // trad simp jp   py entry_id<----fk_entry_id  fk_source_id-->source_id sourcename
+    // 麼   么    mo1  me 6130<--------?            ?------------->6         CC-CEDICT
+    //
+    // definitions_tmp
+    // trad  simp jp   py   sourcename  definition
+    // 麼    么    mo1  me   CC-CEDICT   what
+    //
+    // Based on that temporary table, we try to match the new entry against
+    // what exists in the database.
+    // entries                      | definitions               | sources
+    // trad simp jp   py entry_id<----fk_entry_id  fk_source_id-->source_id sourcename
+    // 麼   么    mo1  me 6130<--------?            ?------------->6         CC-CEDICT
+    // ^    ^     ^    ^                                                    ^
+    // |    |     |    |    ┍----------------------------------------------┛
+    // |    |     |    |    ┃
+    // trad  simp jp   py   sourcename  definition
+    // 麼    么    mo1  me   CC-CEDICT   what
+    //
+    // Because we can match trad/simp/jp/py, fk_entry_id is assigned 6130
+    // and because we can match CC-CEDICT, fk_source_id is assigned 6.
 
     query.exec("DROP TABLE IF EXISTS definitions_tmp");
     query.exec("CREATE TEMPORARY TABLE definitions_tmp AS "
@@ -377,20 +465,20 @@ bool SQLDatabaseUtils::addDefinitionSource(void)
     return true;
 }
 
+// To add a sentence source, the steps are the following:
+// - Insert into the chinese_sentences table all sentences from the
+//   chinese_sentences table of the attached database
+// - Insert into the nonchinese_sentence table all the sentences from the
+//   nonchinese_sentences table of the attached database
+// - Create a temporary table that:
+//     - Contains the sentence_links from the attached database
+//     - Matches the fk_source_id (from the attached db) to the new source_id
+//       in the main database.
+// - Insert all the links from the temporary table into the main table.
 bool SQLDatabaseUtils::addSentenceSource(void)
 {
     QSqlQuery query{_manager->getDatabase()};
 
-    // Copy the source from the file to database
-    query.exec(
-        "INSERT INTO sources "
-        " (sourcename, sourceshortname, version, description, legal, link, "
-        " update_url, other) "
-        "SELECT sourcename, sourceshortname, version, description, legal, "
-        " link, update_url, other "
-        "FROM db.sources");
-
-    // Copy the Chinese sentences
     query.exec(
         "INSERT INTO chinese_sentences "
         " (chinese_sentence_id, traditional, simplified, pinyin, jyutping, "
@@ -399,16 +487,37 @@ bool SQLDatabaseUtils::addSentenceSource(void)
         " language "
         "FROM db.chinese_sentences");
 
-    // Copy the non-Chinese sentences
     query.exec("INSERT INTO nonchinese_sentences( "
                " non_chinese_sentence_id, sentence, language) "
                "SELECT non_chinese_sentence_id, sentence, language "
                "FROM db.nonchinese_sentences");
 
-    // Because the source number is different between every database, we need to
-    // change the source number for every sentence link.
-    // To do this, create a temporary table that mirrors sentence_link table,
-    // but replaces the fk_source_id with the name of the source
+    // A diagram of what the various databases look like:
+    //
+    // ATTACHED DB
+    // sentence_link                                             | sources
+    // chinese_sentence_id nonchinese_sentence_id fk_source_id     source_id    sourcename
+    // 55                  104725                 1--------------->1            Tatoeba—Cantonese-English
+    //
+    // TEMPORARY DB
+    // links_tmp
+    // chinese_sentence_id nonchinese_sentence_id sourcename
+    // 55                  104725                 Tatoeba—Cantonese-English
+    //
+    // Based on that temporary table, we try to match the new entry against
+    // what exists in the database.
+    // sentence_link                                             | sources
+    // chinese_sentence_id nonchinese_sentence_id fk_source_id     source_id    sourcename
+    // 55                  104725                 ?                6            Tatoeba—Cantonese-English
+    //                                                                          ^
+    //                                                                          │
+    //                                            ┍━━━━━━━━━━━━━━━━━┛
+    //                                            ┃
+    // chinese_sentence_id nonchinese_sentence_id sourcename
+    // 55                  104725                 Tatoeba—Cantonese-English
+    //
+    // Because we can match Tatoeba—Cantonese-English, fk_source_id is assigned 6.
+
     query.exec("DROP TABLE IF EXISTS links_tmp");
     query.exec("CREATE TEMPORARY TABLE links_tmp AS "
                " SELECT sentence_links.fk_chinese_sentence_id as "
@@ -419,9 +528,6 @@ bool SQLDatabaseUtils::addSentenceSource(void)
                "  sentence_links.direct as direct "
                "FROM db.sentence_links, db.sources "
                "WHERE db.sentence_links.fk_source_id = db.sources.source_id");
-
-    // Then, use that source name to find its source id in the main database
-    // and use that source_id to insert into the main database.
     query.exec("INSERT INTO sentence_links( "
                " fk_chinese_sentence_id, fk_non_chinese_sentence_id, "
                " fk_source_id, direct) "
@@ -469,6 +575,8 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
     bool hasDefinitions = false;
     bool hasSentences = false;
 
+    // Check for presence of particular tables to see if we need to add
+    // those tables from that source.
     query.prepare("SELECT name FROM db.sqlite_master WHERE type=? AND name=?");
     query.addBindValue("table");
     query.addBindValue("definitions");
@@ -487,6 +595,14 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
     while (query.next()) {
         hasSentences = true;
     }
+
+    // Insert the sources from the new database file into the database
+    query.exec("BEGIN TRANSACTION");
+    if (!insertSourcesIntoDatabase()) {
+        query.exec("ROLLBACK");
+        return false;
+    }
+    query.exec("COMMIT");
 
     bool success = false;
     try {

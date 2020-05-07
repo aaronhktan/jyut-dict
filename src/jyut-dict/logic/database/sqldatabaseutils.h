@@ -35,11 +35,12 @@ private:
     std::shared_ptr<SQLDatabaseManager> _manager;
 
     bool migrateDatabaseFromOneToTwo(void);
-    bool deleteSourceFromDatabase(std::string source);
 
+    bool deleteSourceFromDatabase(std::string source);
     bool removeDefinitionsFromDatabase(void);
     bool removeSentencesFromDatabase(void);
 
+    bool insertSourcesIntoDatabase(void);
     bool addDefinitionSource(void);
     bool addSentenceSource(void);
 
