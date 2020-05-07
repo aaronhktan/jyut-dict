@@ -39,6 +39,8 @@ public:
 
     std::string getCharacters(EntryCharactersOptions options,
                               bool use_colours) const;
+    std::string getCharactersNoSecondary(EntryCharactersOptions options,
+                                         bool use_colours) const;
 
     std::string getSimplified(void) const;
     void setSimplified(std::string simplified);

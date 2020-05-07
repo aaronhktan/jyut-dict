@@ -224,6 +224,26 @@ std::string Entry::getCharacters(EntryCharactersOptions options, bool use_colour
     return _simplified;
 }
 
+std::string Entry::getCharactersNoSecondary(EntryCharactersOptions options, bool use_colours) const
+{
+    switch (options) {
+        case (EntryCharactersOptions::PREFER_SIMPLIFIED):
+        case (EntryCharactersOptions::ONLY_SIMPLIFIED):
+            if (use_colours) {
+                return _colouredSimplified;
+            }
+            return _simplified;
+        case (EntryCharactersOptions::PREFER_TRADITIONAL):
+        case (EntryCharactersOptions::ONLY_TRADITIONAL):
+            if (use_colours) {
+                return _colouredTraditional;
+            }
+            return _traditional;
+    }
+
+    return _simplified;
+}
+
 std::string Entry::getSimplified(void) const
 {
     return _simplified;

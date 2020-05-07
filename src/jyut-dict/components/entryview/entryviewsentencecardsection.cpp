@@ -193,7 +193,7 @@ void EntryViewSentenceCardSection::setEntry(const Entry &entry)
     // Actually start searching for sentences
     _search->searchTraditionalSentences(entry.getTraditional().c_str());
     _title = entry
-                 .getCharacters(
+                 .getCharactersNoSecondary(
                      Settings::getSettings()
                          ->value("characterOptions",
                                  QVariant::fromValue(

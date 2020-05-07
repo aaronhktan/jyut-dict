@@ -204,6 +204,18 @@ void SentenceResultListDelegate::paint(QPainter *painter,
             option.rect.bottom() - 10
             - metrics.boundingRect(sentence.getSentenceSnippet().c_str()).height());
     }
+#elif defined(Q_OS_LINUX)
+    QString snippetLanguage = QString{sentence.getSentenceSnippetLanguage()
+            .c_str()}.trimmed();
+    if (snippetLanguage == "cmn" || snippetLanguage == "yue") {
+        r.setY(
+            option.rect.bottom() - 7
+            - metrics.boundingRect(sentence.getSentenceSnippet().c_str()).height());
+    } else {
+        r.setY(
+            option.rect.bottom() - 8
+            - metrics.boundingRect(sentence.getSentenceSnippet().c_str()).height());
+    }
 #else
     r.setY(
         option.rect.bottom() - 10
