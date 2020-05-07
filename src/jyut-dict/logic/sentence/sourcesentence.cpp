@@ -126,6 +126,7 @@ std::string SourceSentence::getCharacters(EntryCharactersOptions options) const
     case EntryCharactersOptions::PREFER_TRADITIONAL:
         return _traditional;
     }
+    return _traditional;
 }
 
 std::string SourceSentence::getSimplified(void) const
@@ -160,6 +161,7 @@ std::string SourceSentence::getPhonetic(EntryPhoneticOptions options,
     case EntryPhoneticOptions::PREFER_PINYIN:
         return getMandarinPhonetic(mandarinOptions);
     }
+    return getCantonesePhonetic(cantoneseOptions);
 }
 
 std::string SourceSentence::getCantonesePhonetic(

@@ -37,15 +37,17 @@ EntryViewSentenceCardSection::~EntryViewSentenceCardSection()
 }
 
 
-void EntryViewSentenceCardSection::callback(std::vector<Entry> __unused entries,
-                                   bool __unused emptyQuery)
+void EntryViewSentenceCardSection::callback(std::vector<Entry> entries,
+                                   bool emptyQuery)
 {
-    void();
+    (void) (entries);
+    (void) (emptyQuery);
 }
 
 void EntryViewSentenceCardSection::callback(
-    std::vector<SourceSentence> sourceSentences, bool __unused emptyQuery)
+    std::vector<SourceSentence> sourceSentences, bool emptyQuery)
 {
+    (void) (emptyQuery);
     emit callbackInvoked(sourceSentences);
 }
 

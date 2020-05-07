@@ -68,7 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Get colours from QSettings
     std::unique_ptr<QSettings> settings = Settings::getSettings();
-    int size = settings->beginReadArray("jyutpingColours");
+    settings->beginReadArray("jyutpingColours");
     for (std::vector<std::string>::size_type i = 0;
          i < Settings::jyutpingToneColours.size();
          ++i) {
@@ -82,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     settings->endArray();
 
-    size = settings->beginReadArray("pinyinColours");
+    settings->beginReadArray("pinyinColours");
     for (std::vector<std::string>::size_type i = 0;
          i < Settings::pinyinToneColours.size();
          ++i) {

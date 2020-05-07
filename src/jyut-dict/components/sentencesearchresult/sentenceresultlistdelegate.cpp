@@ -209,9 +209,5 @@ QSize SentenceResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
 
     SourceSentence sentence = qvariant_cast<SourceSentence>(index.data());
 
-#ifdef Q_OS_LINUX
-    return QSize(100, 90);
-#else
     return QSize(100, 100);
-#endif
 }

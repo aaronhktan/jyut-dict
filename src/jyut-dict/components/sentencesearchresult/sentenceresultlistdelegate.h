@@ -8,6 +8,8 @@
 #include <QStyleOptionViewItem>
 #include <QWidget>
 
+#include <memory>
+
 // The SentenceResultListDelegate is responsible for painting elements in the
 // SentenceResultListView (basically, a bunch of sentence objects)
 // It also provides a sizehint for each element

@@ -58,12 +58,6 @@ bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(void)
     QString queryString = "PRAGMA user_version=%1";
     query.prepare(queryString.arg(CURRENT_DATABASE_VERSION));
     query.exec();
-
-    query.exec("PRAGMA user_version");
-    int version = -1;
-    while (query.next()) {
-        version = query.value(0).toInt();
-    }
     return true;
 }
 
@@ -580,7 +574,6 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
     query.addBindValue("table");
     query.addBindValue("definitions");
     query.exec();
-    int nameIndex = query.record().indexOf("name");
     while (query.next()) {
         hasDefinitions = true;
     }
@@ -590,7 +583,6 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
     query.addBindValue("table");
     query.addBindValue("sentence_links");
     query.exec();
-    nameIndex = query.record().indexOf("name");
     while (query.next()) {
         hasSentences = true;
     }
