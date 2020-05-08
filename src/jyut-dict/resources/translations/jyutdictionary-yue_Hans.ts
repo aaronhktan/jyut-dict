@@ -242,6 +242,14 @@
     </message>
 </context>
 <context>
+    <name>EntryViewSentenceCardSection</name>
+    <message>
+        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="+84"/>
+        <source>View all sentences →</source>
+        <translation>查看所有例句 →</translation>
+    </message>
+</context>
+<context>
     <name>LoadingWidget</name>
     <message>
         <location filename="../../components/sentencecard/loadingwidget.cpp" line="+69"/>
@@ -692,13 +700,13 @@
         <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="+76"/>
         <location line="+14"/>
         <source>Sentences for %1 (%2 result)</source>
-        <translation>用“%1“造句：（%2 个结果）</translation>
+        <translation>用“%1“造句:（%2 个结果）</translation>
     </message>
     <message>
         <location line="-10"/>
         <location line="+14"/>
         <source>Sentences for %1 (%2 results)</source>
-        <translation>用“%1“造句：（%2 个结果）</translation>
+        <translation>用“%1“造句:（%2 个结果）</translation>
     </message>
 </context>
 <context>
