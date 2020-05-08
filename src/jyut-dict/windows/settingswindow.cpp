@@ -1,9 +1,9 @@
 #include "settingswindow.h"
 
-#include "components/advancedtab.h"
-#include "components/contacttab.h"
-#include "components/dictionarytab.h"
-#include "components/settingstab.h"
+#include "components/settings/advancedtab.h"
+#include "components/settings/contacttab.h"
+#include "components/settings/dictionarytab.h"
+#include "components/settings/settingstab.h"
 #include "logic/utils/utils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -367,6 +367,7 @@ void SettingsWindow::openTab(int tabIndex)
 
 void SettingsWindow::paintWithApplicationState(Qt::ApplicationState state)
 {
+    (void) (state);
 #ifdef Q_OS_MAC
     setStyle(Utils::isDarkMode());
 #else

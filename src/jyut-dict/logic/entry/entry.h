@@ -4,7 +4,7 @@
 #include "logic/entry/definitionsset.h"
 #include "logic/entry/entrycharactersoptions.h"
 #include "logic/entry/entryphoneticoptions.h"
-#include "logic/entry/sentence.h"
+#include "logic/sentence/sourcesentence.h"
 #include "logic/settings/settings.h"
 
 #include <QObject>
@@ -27,7 +27,7 @@ public:
           std::string jyutping, std::string pinyin,
           std::vector<DefinitionsSet> definitions,
           std::vector<std::string> derivedWords,
-          std::vector<Sentence> sentences);
+          std::vector<SourceSentence> sentences);
     Entry(const Entry &entry);
     Entry(const Entry &&entry);
 
@@ -39,6 +39,8 @@ public:
 
     std::string getCharacters(EntryCharactersOptions options,
                               bool use_colours) const;
+    std::string getCharactersNoSecondary(EntryCharactersOptions options,
+                                         bool use_colours) const;
 
     std::string getSimplified(void) const;
     void setSimplified(std::string simplified);
@@ -75,8 +77,8 @@ public:
     std::vector<std::string> getDerivedWords(void) const;
     void setDerivedWords(std::vector<std::string> derivedWords);
 
-    std::vector<Sentence> getSentences(void) const;
-    void setSentences(std::vector<Sentence> sentences);
+    std::vector<SourceSentence> getSentences(void) const;
+    void setSentences(std::vector<SourceSentence> sentences);
 
     void refreshColours(
         const EntryColourPhoneticType type = EntryColourPhoneticType::JYUTPING);
@@ -103,7 +105,7 @@ private:
 
     std::vector<DefinitionsSet> _definitions;
     std::vector<std::string> _derivedWords;
-    std::vector<Sentence> _sentences;
+    std::vector<SourceSentence> _sentences;
 
     bool _isWelcome = false;
     bool _isEmpty = false;

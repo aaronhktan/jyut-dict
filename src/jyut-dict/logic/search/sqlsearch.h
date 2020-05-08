@@ -36,12 +36,17 @@ public:
     void searchPinyin(const QString searchTerm) override;
     void searchEnglish(const QString searchTerm) override;
 
+    void searchTraditionalSentences(const QString searchTerm);
+
 private:
     void notifyObservers(bool emptyQuery);
     void notifyObservers(const std::vector<Entry> &results, bool emptyQuery) override;
+    void notifyObservers(const std::vector<SourceSentence> &results,
+                         bool emptyQuery) override;
 
     void setCurrentSearchTerm(const QString &searchTerm);
-    void sleepIfEmpty(std::vector<Entry> &results);
+    template <class T>
+    void sleepIfEmpty(std::vector<T> &results);
     bool checkQueryCurrent(const QString &query);
 
     void runThread(void (SQLSearch::*threadFunction)(const QString searchTerm),
@@ -52,6 +57,8 @@ private:
     void searchPinyinThread(const QString searchTerm);
     void searchEnglishThread(const QString searchTerm);
 
+    void searchTraditionalSentencesThread(const QString searchTerm);
+
     int segmentPinyin(const QString &string, std::vector<std::string> &words);
     int segmentJyutping(const QString &string, std::vector<std::string> &words);
     std::vector<std::string> explodePhonetic(const QString &string,
@@ -60,8 +67,9 @@ private:
                                 const char *delimiter,
                                 bool surroundWithQuotes=false);
     std::vector<Entry> parseEntries(QSqlQuery &query);
+    std::vector<SourceSentence> parseSentences(QSqlQuery &query);
 
-    static std::list<ISearchObserver *> _observers;
+    std::list<ISearchObserver *> _observers;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
     QString _currentSearchString;

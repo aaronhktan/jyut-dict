@@ -29,5 +29,7 @@
         <file>images/sliders_disabled.png</file>
         <file>images/speak_inverted.png</file>
         <file>images/speak.png</file>
+        <file>images/loading.gif</file>
+        <file>images/loading_inverted.gif</file>
     </qresource>
 </RCC>

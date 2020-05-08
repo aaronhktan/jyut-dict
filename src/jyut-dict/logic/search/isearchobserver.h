@@ -14,6 +14,7 @@ public:
     virtual ~ISearchObserver() = default;
 
     virtual void callback(const std::vector<Entry>, bool) = 0;
+    virtual void callback(const std::vector<SourceSentence>, bool) = 0;
 };
 
 #endif // ISEARCHOBSERVER_H

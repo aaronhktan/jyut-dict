@@ -53,7 +53,7 @@ Entry::Entry(std::string simplified, std::string traditional,
              std::string jyutping, std::string pinyin,
              std::vector<DefinitionsSet> definitions,
              std::vector<std::string> derivedWords,
-             std::vector<Sentence> sentences)
+             std::vector<SourceSentence> sentences)
     : _simplified{simplified},
       _traditional{traditional},
       _jyutping{jyutping},
@@ -219,6 +219,26 @@ std::string Entry::getCharacters(EntryCharactersOptions options, bool use_colour
             }
             return _traditional + " [" + _simplifiedDifference + "]";
         }
+    }
+
+    return _simplified;
+}
+
+std::string Entry::getCharactersNoSecondary(EntryCharactersOptions options, bool use_colours) const
+{
+    switch (options) {
+        case (EntryCharactersOptions::PREFER_SIMPLIFIED):
+        case (EntryCharactersOptions::ONLY_SIMPLIFIED):
+            if (use_colours) {
+                return _colouredSimplified;
+            }
+            return _simplified;
+        case (EntryCharactersOptions::PREFER_TRADITIONAL):
+        case (EntryCharactersOptions::ONLY_TRADITIONAL):
+            if (use_colours) {
+                return _colouredTraditional;
+            }
+            return _traditional;
     }
 
     return _simplified;
@@ -392,12 +412,12 @@ void Entry::setDerivedWords(std::vector<std::string> derivedWords)
     _derivedWords = derivedWords;
 }
 
-std::vector<Sentence> Entry::getSentences(void) const
+std::vector<SourceSentence> Entry::getSentences(void) const
 {
     return _sentences;
 }
 
-void Entry::setSentences(std::vector<Sentence> sentences)
+void Entry::setSentences(std::vector<SourceSentence> sentences)
 {
     _sentences = sentences;
 }

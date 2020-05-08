@@ -15,7 +15,9 @@ constexpr auto STRINGS_CONTEXT = "strings";
 
 constexpr auto JYUTPING_SHORT = QT_TRANSLATE_NOOP("strings", "JP");
 constexpr auto PINYIN_SHORT = QT_TRANSLATE_NOOP("strings", "PY");
-constexpr auto DEFINITIONS_ALL_CAPS = QT_TRANSLATE_NOOP("strings", "DEFINITIONS");
+constexpr auto DEFINITIONS_ALL_CAPS = QT_TRANSLATE_NOOP("strings",
+                                                        "DEFINITIONS");
+constexpr auto SENTENCES_ALL_CAPS = QT_TRANSLATE_NOOP("strings", "SENTENCES");
 
 constexpr auto PRODUCT_NAME = QT_TRANSLATE_NOOP("strings", "Jyut Dictionary");
 constexpr auto PRODUCT_DESCRIPTION
@@ -71,6 +73,12 @@ constexpr auto ZH_CN_DESCRIPTION_STRING = QT_TRANSLATE_NOOP(
     "strings",
     "Unable to use text to speech.\n\n"
     "Debug: Locale: %1, Language: Chinese - Mainland");
+
+constexpr auto ENG_STRING = QT_TRANSLATE_NOOP("strings", "English");
+constexpr auto FRA_STRING = QT_TRANSLATE_NOOP("strings", "French");
+constexpr auto DEU_STRING = QT_TRANSLATE_NOOP("strings", "German");
+constexpr auto YUE_STRING = QT_TRANSLATE_NOOP("strings", "Cantonese");
+constexpr auto CMN_STRING = QT_TRANSLATE_NOOP("strings", "Mandarin");
 
 }
 

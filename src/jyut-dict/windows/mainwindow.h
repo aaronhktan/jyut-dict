@@ -1,11 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "components/mainsplitter.h"
-#include "components/maintoolbar.h"
+#include "components/mainwindow/mainsplitter.h"
+#include "components/mainwindow/maintoolbar.h"
 #include "logic/analytics/analytics.h"
 #include "logic/update/githubreleasechecker.h"
 #include "logic/database/sqldatabasemanager.h"
+#include "logic/search/sqlsearch.h"
 
 #include <QAction>
 #include <QEvent>
@@ -76,6 +77,7 @@ private:
     QProgressDialog *_dialog;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
+    std::shared_ptr<SQLSearch> _sqlSearch;
 
     bool _recentlyCheckedForUpdates = false;
 

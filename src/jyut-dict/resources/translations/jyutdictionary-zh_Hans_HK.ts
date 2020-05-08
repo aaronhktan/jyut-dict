@@ -24,7 +24,7 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/advancedtab.cpp" line="+88"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="+88"/>
         <source>Automatically check for updates on startup:</source>
         <translation>自动检查更新：</translation>
     </message>
@@ -82,7 +82,7 @@
 <context>
     <name>ContactTab</name>
     <message>
-        <location filename="../../components/contacttab.cpp" line="+148"/>
+        <location filename="../../components/settings/contacttab.cpp" line="+148"/>
         <source>Email...</source>
         <translation>发送电子邮件…</translation>
     </message>
@@ -105,7 +105,7 @@
 <context>
     <name>DictionaryTab</name>
     <message>
-        <location filename="../../components/dictionarytab.cpp" line="+136"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="+136"/>
         <source>The Dictionaries tab allows you to view information about dictionaries, and add or remove them.</source>
         <translation>你喺“字典”呢一页上可以查看同埋管理储存咗嘅字典。</translation>
     </message>
@@ -157,7 +157,7 @@
     <message>
         <location line="+4"/>
         <source>Adding new definitions...</source>
-        <translation>添加紧新定义…</translation>
+        <translation>添加紧新解释…</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -173,17 +173,17 @@
     <message>
         <location line="+6"/>
         <source>Removing definitions...</source>
-        <translation>删除紧定义…</translation>
+        <translation>删除紧解释…</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Deleted definition 0 of %1</source>
-        <translation>删除咗 0 / %1 个定义</translation>
+        <translation>删除咗 0 / %1 个解释</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Deleted definition %1 of %2</source>
-        <translation>删除咗 %1 / %2 个定义</translation>
+        <translation>删除咗 %1 / %2 个解释</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -208,7 +208,7 @@
 <context>
     <name>DictionaryTabFailureDialog</name>
     <message>
-        <location filename="../../dialogs/dictionarytabfailuredialog.cpp" line="+10"/>
+        <location filename="../../dialogs/dictionarytabfailuredialog.cpp" line="+16"/>
         <source>Failed to add source!</source>
         <translation>添加字典失败！</translation>
     </message>
@@ -221,7 +221,7 @@
 <context>
     <name>EntrySpeakErrorDialog</name>
     <message>
-        <location filename="../../dialogs/entryspeakerrordialog.cpp" line="+15"/>
+        <location filename="../../dialogs/entryspeakerrordialog.cpp" line="+21"/>
         <source>Unable to speak entry!</source>
         <translation>播放失败！</translation>
     </message>
@@ -239,6 +239,22 @@
         <location line="+7"/>
         <source>Help</source>
         <translation>帮助</translation>
+    </message>
+</context>
+<context>
+    <name>EntryViewSentenceCardSection</name>
+    <message>
+        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="+84"/>
+        <source>View all sentences →</source>
+        <translation>查看所有例句 →</translation>
+    </message>
+</context>
+<context>
+    <name>LoadingWidget</name>
+    <message>
+        <location filename="../../components/sentencecard/loadingwidget.cpp" line="+69"/>
+        <source>Searching for example sentences...</source>
+        <translation>揾紧例句…</translation>
     </message>
 </context>
 <context>
@@ -294,31 +310,31 @@
         <translation>冇可用的更新!</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="+223"/>
-        <location line="+89"/>
+        <location filename="../../windows/mainwindow.cpp" line="+224"/>
+        <location line="+91"/>
         <source>&amp;File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location line="-88"/>
-        <location line="+89"/>
+        <location line="-90"/>
+        <location line="+91"/>
         <source>&amp;Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location line="-88"/>
-        <location line="+90"/>
+        <location line="-90"/>
+        <location line="+92"/>
         <source>&amp;Window</source>
         <translation>窗口</translation>
     </message>
     <message>
-        <location line="-88"/>
-        <location line="+89"/>
+        <location line="-90"/>
+        <location line="+91"/>
         <source>&amp;Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location line="-87"/>
+        <location line="-89"/>
         <source>&amp;About</source>
         <translation>关于粤语字典</translation>
     </message>
@@ -339,12 +355,12 @@
     </message>
     <message>
         <location line="+2"/>
-        <location line="+99"/>
+        <location line="+101"/>
         <source>Change settings</source>
         <translation>更改设置</translation>
     </message>
     <message>
-        <location line="-97"/>
+        <location line="-99"/>
         <source>Close Window</source>
         <translation>关闭窗口</translation>
     </message>
@@ -453,7 +469,7 @@
     </message>
     <message>
         <location line="-39"/>
-        <location line="+88"/>
+        <location line="+90"/>
         <source>&amp;Search</source>
         <translation>搜索</translation>
     </message>
@@ -470,7 +486,7 @@
 <context>
     <name>NoUpdateDialog</name>
     <message>
-        <location filename="../../dialogs/noupdatedialog.cpp" line="+8"/>
+        <location filename="../../dialogs/noupdatedialog.cpp" line="+14"/>
         <source>No update found!</source>
         <translation>冇揾到可用嘅更新!</translation>
     </message>
@@ -533,7 +549,7 @@
 <context>
     <name>ResetSettingsDialog</name>
     <message>
-        <location filename="../../dialogs/resetsettingsdialog.cpp" line="+8"/>
+        <location filename="../../dialogs/resetsettingsdialog.cpp" line="+14"/>
         <source>Are you sure you want to reset all settings?</source>
         <translation>你确定要重置全部设置吗？</translation>
     </message>
@@ -553,7 +569,7 @@
 <context>
     <name>ResultListModel</name>
     <message>
-        <location filename="../../components/resultlistmodel.cpp" line="+42"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="+48"/>
         <source>Welcome!</source>
         <translation>欢迎使用粤语字典！</translation>
     </message>
@@ -582,7 +598,17 @@
 <context>
     <name>SQLDatabaseUtils</name>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="+162"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="+325"/>
+        <source>Failed to remove definitions...</source>
+        <translation>移除解释失败</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Failed to remove sentences...</source>
+        <translation>移除例句失败</translation>
+    </message>
+    <message>
+        <location line="+233"/>
         <source>Database versions do not match. Only dictionaries with the same versions can be added.</source>
         <translation>数据库版本唔匹配！净系可以添加一样版本嘅字典。</translation>
     </message>
@@ -592,7 +618,17 @@
         <translation>当前版本：%1，文件版本：%2。</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+46"/>
+        <source>Unable to add definitions...</source>
+        <translation>添加解释失败</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Unable to add sentences...</source>
+        <translation>添加例句失败</translation>
+    </message>
+    <message>
+        <location line="-249"/>
         <source>Could not insert source. Could it be a duplicate of a dictionary you already installed?</source>
         <translation>添加字典失败。你系咪已经添加咗呢个字典㗎？</translation>
     </message>
@@ -600,7 +636,7 @@
 <context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/searchlineedit.cpp" line="+142"/>
+        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+141"/>
         <source>Search</source>
         <translation>揾粤语字典…</translation>
     </message>
@@ -608,7 +644,7 @@
 <context>
     <name>SearchOptionsRadioGroupBox</name>
     <message>
-        <location filename="../../components/searchoptionsradiogroupbox.cpp" line="+120"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="+120"/>
         <source>SC</source>
         <translation>简体中文</translation>
     </message>
@@ -659,9 +695,24 @@
     </message>
 </context>
 <context>
+    <name>SentenceSplitter</name>
+    <message>
+        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="+76"/>
+        <location line="+14"/>
+        <source>Sentences for %1 (%2 result)</source>
+        <translation>用“%1“造句:（%2 个结果）</translation>
+    </message>
+    <message>
+        <location line="-10"/>
+        <location line="+14"/>
+        <source>Sentences for %1 (%2 results)</source>
+        <translation>用“%1“造句:（%2 个结果）</translation>
+    </message>
+</context>
+<context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settingstab.cpp" line="+198"/>
+        <location filename="../../components/settings/settingstab.cpp" line="+198"/>
         <source>Reset all settings</source>
         <translation>重置所有设置</translation>
     </message>
@@ -877,7 +928,12 @@
     <message>
         <location line="+1"/>
         <source>DEFINITIONS</source>
-        <translation>定义</translation>
+        <translation>解释</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>SENTENCES</source>
+        <translation>例句</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -930,7 +986,32 @@
         <translation>揾唔到 “普通话（中国大陆）” 语音引擎。</translation>
     </message>
     <message>
-        <location line="-12"/>
+        <location line="+8"/>
+        <source>English</source>
+        <translation>英文</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>French</source>
+        <translation>法文</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>German</source>
+        <translation>德文</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Cantonese</source>
+        <translation>粤语</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mandarin</source>
+        <translation>普通话</translation>
+    </message>
+    <message>
+        <location line="-24"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Hong Kong</source>

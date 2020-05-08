@@ -13,13 +13,15 @@
 // database. This is differentiated from the SQLDatabaseManager class,
 // which is only responsible for opening and closing a connection to a database.
 
-constexpr auto CURRENT_DATABASE_VERSION = 1;
+constexpr auto CURRENT_DATABASE_VERSION = 2;
 
 class SQLDatabaseUtils : public QObject
 {
 Q_OBJECT
 public:
     SQLDatabaseUtils(std::shared_ptr<SQLDatabaseManager> manager);
+
+    bool updateDatabase(void);
 
     // Note: when adding or removing sources, make sure to update the map in
     // DictionarySourceUtils!
@@ -32,6 +34,16 @@ public:
 private:
     std::shared_ptr<SQLDatabaseManager> _manager;
 
+    bool migrateDatabaseFromOneToTwo(void);
+
+    bool deleteSourceFromDatabase(std::string source);
+    bool removeDefinitionsFromDatabase(void);
+    bool removeSentencesFromDatabase(void);
+
+    bool insertSourcesIntoDatabase(void);
+    bool addDefinitionSource(void);
+    bool addSentenceSource(void);
+
 signals:
     void deletingDefinitions();
     void totalToDelete(int number);
@@ -39,6 +51,8 @@ signals:
     void rebuildingIndexes();
     void cleaningUp();
     void finishedDeletion(bool success, QString reason="", QString description="");
+
+    void deletingSentences();
 
     void insertingSource();
     void insertingEntries();

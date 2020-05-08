@@ -31,28 +31,46 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++14
 
 SOURCES += \
+    components/definitioncard/definitioncardsection.cpp \
+    components/definitioncard/definitioncardwidget.cpp \
+    components/definitioncard/definitioncontentwidget.cpp \
+    components/definitioncard/definitionheaderwidget.cpp \
+    components/dictionarylist/dictionarylistdelegate.cpp \
+    components/dictionarylist/dictionarylistmodel.cpp \
+    components/dictionarylist/dictionarylistview.cpp \
+    components/entrysearchresult/resultlistdelegate.cpp \
+    components/entrysearchresult/resultlistmodel.cpp \
+    components/entrysearchresult/resultlistview.cpp \
+    components/entryview/entrycontentwidget.cpp \
+    components/entryview/entryheaderwidget.cpp \
+    components/entryview/entryscrollarea.cpp \
+    components/entryview/entryscrollareawidget.cpp \
+    components/entryview/entryviewsentencecardsection.cpp \
+    components/mainwindow/mainsplitter.cpp \
+    components/mainwindow/maintoolbar.cpp \
+    components/mainwindow/searchlineedit.cpp \
+    components/mainwindow/searchoptionsradiogroupbox.cpp \
+    components/sentencecard/loadingwidget.cpp \
+    components/sentencecard/sentencecardwidget.cpp \
+    components/sentencecard/sentencecontentwidget.cpp \
+    components/sentencecard/sentenceheaderwidget.cpp \
+    components/sentencesearchresult/sentenceresultlistdelegate.cpp \
+    components/sentencesearchresult/sentenceresultlistmodel.cpp \
+    components/sentencesearchresult/sentenceresultlistview.cpp \
+    components/sentenceview/sentencescrollarea.cpp \
+    components/sentenceview/sentencescrollareawidget.cpp \
+    components/sentenceview/sentenceviewcontentwidget.cpp \
+    components/sentenceview/sentenceviewheaderwidget.cpp \
+    components/sentenceview/sentenceviewsentencecardsection.cpp \
+    components/sentencewindow/sentencesplitter.cpp \
+    components/settings/advancedtab.cpp \
+    components/settings/contacttab.cpp \
+    components/settings/dictionarytab.cpp \
+    components/settings/settingstab.cpp \
+    logic/search/sqlsearch.cpp \
+    logic/sentence/sentenceset.cpp \
+    logic/sentence/sourcesentence.cpp \
     main.cpp \
-    components/advancedtab.cpp \
-    components/contacttab.cpp \
-    components/definitioncontentwidget.cpp \
-    components/definitionheaderwidget.cpp \
-    components/definitionscrollarea.cpp \
-    components/definitionscrollareawidget.cpp \
-    components/definitionsectionwidget.cpp \
-    components/definitionwidget.cpp \
-    components/dictionarylistdelegate.cpp \
-    components/dictionarylistmodel.cpp \
-    components/dictionarylistview.cpp \
-    components/dictionarytab.cpp \
-    components/entryheaderwidget.cpp \
-    components/mainsplitter.cpp \
-    components/maintoolbar.cpp \
-    components/resultlistdelegate.cpp \
-    components/resultlistmodel.cpp \
-    components/resultlistview.cpp \
-    components/searchlineedit.cpp \
-    components/searchoptionsradiogroupbox.cpp \
-    components/settingstab.cpp \
     dialogs/defaultdialog.cpp \
     dialogs/dictionarytabfailuredialog.cpp \
     dialogs/entryspeakerrordialog.cpp \
@@ -66,9 +84,7 @@ SOURCES += \
     logic/entry/definitionsset.cpp \
     logic/entry/entry.cpp \
     logic/entry/entryspeaker.cpp \
-    logic/entry/sentence.cpp \
     logic/search/searchoptionsmediator.cpp \
-    logic/search/sqlsearch.cpp \
     logic/settings/settings.cpp \
     logic/settings/settingsutils.cpp \
     logic/update/githubreleasechecker.cpp \
@@ -80,29 +96,44 @@ SOURCES += \
     windows/updatewindow.cpp
 
 HEADERS += \
-    components/advancedtab.h \
-    components/contacttab.h \
-    components/definitioncontentwidget.h \
-    components/definitionheaderwidget.h \
-    components/definitionscrollarea.h \
-    components/definitionscrollareawidget.h \
-    components/definitionsectionwidget.h \
-    components/definitionwidget.h \
-    components/dictionarylistdelegate.h \
-    components/dictionarylistmodel.h \
-    components/dictionarylistview.h \
-    components/dictionarytab.h \
-    components/entryheaderwidget.h \
-    components/isearchlineedit.h \
-    components/isectionheaderwidget.h \
-    components/mainsplitter.h \
-    components/maintoolbar.h \
-    components/resultlistdelegate.h \
-    components/resultlistmodel.h \
-    components/resultlistview.h \
-    components/searchlineedit.h \
-    components/searchoptionsradiogroupbox.h \
-    components/settingstab.h \
+    components/definitioncard/definitioncardsection.h \
+    components/definitioncard/definitioncardwidget.h \
+    components/definitioncard/definitioncontentwidget.h \
+    components/definitioncard/definitionheaderwidget.h \
+    components/definitioncard/icardheaderwidget.h \
+    components/dictionarylist/dictionarylistdelegate.h \
+    components/dictionarylist/dictionarylistmodel.h \
+    components/dictionarylist/dictionarylistview.h \
+    components/entrysearchresult/resultlistdelegate.h \
+    components/entrysearchresult/resultlistmodel.h \
+    components/entrysearchresult/resultlistview.h \
+    components/entryview/entrycontentwidget.h \
+    components/entryview/entryheaderwidget.h \
+    components/entryview/entryscrollarea.h \
+    components/entryview/entryscrollareawidget.h \
+    components/entryview/entryviewsentencecardsection.h \
+    components/mainwindow/isearchlineedit.h \
+    components/mainwindow/mainsplitter.h \
+    components/mainwindow/maintoolbar.h \
+    components/mainwindow/searchlineedit.h \
+    components/mainwindow/searchoptionsradiogroupbox.h \
+    components/sentencecard/loadingwidget.h \
+    components/sentencecard/sentencecardwidget.h \
+    components/sentencecard/sentencecontentwidget.h \
+    components/sentencecard/sentenceheaderwidget.h \
+    components/sentencesearchresult/sentenceresultlistdelegate.h \
+    components/sentencesearchresult/sentenceresultlistmodel.h \
+    components/sentencesearchresult/sentenceresultlistview.h \
+    components/sentenceview/sentencescrollarea.h \
+    components/sentenceview/sentencescrollareawidget.h \
+    components/sentenceview/sentenceviewcontentwidget.h \
+    components/sentenceview/sentenceviewheaderwidget.h \
+    components/sentenceview/sentenceviewsentencecardsection.h \
+    components/sentencewindow/sentencesplitter.h \
+    components/settings/advancedtab.h \
+    components/settings/contacttab.h \
+    components/settings/dictionarytab.h \
+    components/settings/settingstab.h \
     dialogs/defaultdialog.h \
     dialogs/dictionarytabfailuredialog.h \
     dialogs/entryspeakerrordialog.h \
@@ -119,7 +150,6 @@ HEADERS += \
     logic/entry/entrycharactersoptions.h \
     logic/entry/entryphoneticoptions.h \
     logic/entry/entryspeaker.h \
-    logic/entry/sentence.h \
     logic/search/isearch.h \
     logic/search/isearchobservable.h \
     logic/search/isearchobserver.h \
@@ -127,6 +157,8 @@ HEADERS += \
     logic/search/searchoptionsmediator.h \
     logic/search/searchparameters.h \
     logic/search/sqlsearch.h \
+    logic/sentence/sentenceset.h \
+    logic/sentence/sourcesentence.h \
     logic/settings/settings.h \
     logic/settings/settingsutils.h \
     logic/strings/strings.h \
@@ -225,11 +257,15 @@ unix:!macx {
 
 unix|win32:!macx {
     # Copy dictionary database to the build directory
-    copydata.commands = $(COPY_DIR) \"$$system_path($$PWD/resources/db/dict.db)\" \"$$system_path($$OUT_PWD)\"
-    first.depends = $(first) copydata
-    export(first.depends)
-    export(copydata.commands)
-    QMAKE_EXTRA_TARGETS += first copydata
+    DICTFILES = $$files($${PWD}/resources/db/dict.db)
+
+    copy_files.name = copy dictionary files
+    copy_files.input = DICTFILES
+    copy_files.output = $${OUT_PWD}/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
+    copy_files.commands = ${COPY_FILE} ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
+    copy_files.CONFIG += no_link target_predeps
+
+    QMAKE_EXTRA_COMPILERS += copy_files
 
     # Copy settings file to build directory
     copysettings.commands = $(COPY_DIR) \"$$system_path($$PWD/resources/settings/settings.ini)\" \"$$system_path($$OUT_PWD)\"

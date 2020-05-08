@@ -62,6 +62,8 @@ bool SQLDatabaseManager::openDatabase()
 #ifdef APPIMAGE
     QFileInfo bundleFile{QCoreApplication::applicationDirPath()
                 + "/../share/jyut-dict/dictionaries/dict.db"};
+#elif defined(DEBUG)
+    QFileInfo bundleFile{"./dict.db"};
 #else
     QFileInfo bundleFile{"/usr/share/jyut-dict/dictionaries/dict.db"};
 #endif

@@ -3,7 +3,6 @@
 #include "dialogs/noupdatedialog.h"
 #include "logic/database/sqldatabaseutils.h"
 #include "logic/dictionary/dictionarysource.h"
-#include "logic/entry/sentence.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/strings/strings.h"
@@ -65,10 +64,11 @@ MainWindow::MainWindow(QWidget *parent) :
     // Instantiate services
     _manager = std::make_shared<SQLDatabaseManager>();
     _manager->openDatabase();
+    _sqlSearch = std::make_shared<SQLSearch>(_manager);
 
     // Get colours from QSettings
     std::unique_ptr<QSettings> settings = Settings::getSettings();
-    int size = settings->beginReadArray("jyutpingColours");
+    settings->beginReadArray("jyutpingColours");
     for (std::vector<std::string>::size_type i = 0;
          i < Settings::jyutpingToneColours.size();
          ++i) {
@@ -82,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     settings->endArray();
 
-    size = settings->beginReadArray("pinyinColours");
+    settings->beginReadArray("pinyinColours");
     for (std::vector<std::string>::size_type i = 0;
          i < Settings::pinyinToneColours.size();
          ++i) {
@@ -98,6 +98,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Populate sources
     SQLDatabaseUtils *_utils = new SQLDatabaseUtils{_manager};
+    _utils->updateDatabase();
     std::vector<std::pair<std::string, std::string>> sources;
     _utils->readSources(sources);
     for (auto source : sources) {
@@ -109,14 +110,14 @@ MainWindow::MainWindow(QWidget *parent) :
     installTranslator();
 
     // Create UI elements
-    _mainToolBar = new MainToolBar{_manager, this};
+    _mainToolBar = new MainToolBar{_sqlSearch, this};
     addToolBar(_mainToolBar);
     setUnifiedTitleAndToolBarOnMac(true);
 #ifdef APPIMAGE
     setWindowIcon(QIcon{":/images/icon.png"});
 #endif
 
-    _mainSplitter = new MainSplitter{this};
+    _mainSplitter = new MainSplitter{_manager, _sqlSearch, this};
     setCentralWidget(_mainSplitter);
 
     // Create menu bar and populate it
@@ -264,6 +265,8 @@ void MainWindow::translateUI(void)
         QCoreApplication::translate("strings", Strings::PRODUCT_NAME)));
     _updateAction->setText(tr("Check for Updates..."));
 
+    Utils::refreshLanguageMap();
+
 #ifdef Q_OS_WIN
     QFont font;
     if (Settings::isCurrentLocaleTraditionalHan()) {
@@ -285,6 +288,7 @@ void MainWindow::translateUI(void)
 
 void MainWindow::setStyle(bool use_dark)
 {
+    (void) (use_dark);
 #ifdef Q_OS_MAC
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
 #elif defined(Q_OS_WIN)
