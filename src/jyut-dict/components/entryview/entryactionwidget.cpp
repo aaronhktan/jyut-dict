@@ -8,6 +8,8 @@ EntryActionWidget::EntryActionWidget(std::shared_ptr<SQLDatabaseManager> manager
     _utils = std::make_unique<SQLUserDataUtils>(_manager);
     _utils->registerObserver(this);
     _utils->searchForAllFavouritedWords();
+
+    setupUI();
 }
 
 #include <QDebug>
@@ -22,10 +24,24 @@ void EntryActionWidget::callback(const std::vector<Entry> entries,
 
 void EntryActionWidget::callback(bool entryExists)
 {
+    _bookmarkButton->setText(entryExists ? "yes" : "no");
     qDebug() << "entryExists is " << entryExists;
+}
+
+void EntryActionWidget::setupUI(void)
+{
+    _bookmarkButton = new QToolButton{this};
+    _bookmarkButton->setVisible(false);
+    _bookmarkButton->setText("Hi");
+    _bookmarkButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+
+    _layout = new QHBoxLayout{this};
+    _layout->addWidget(_bookmarkButton);
 }
 
 void EntryActionWidget::setEntry(Entry entry)
 {
+    _bookmarkButton->setVisible(true);
     _utils->checkIfEntryHasBeenFavourited(entry);
+    _entry = entry;
 }

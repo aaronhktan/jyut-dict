@@ -6,6 +6,8 @@
 #include "logic/entry/entry.h"
 #include "logic/search/isearchobserver.h"
 
+#include <QHBoxLayout>
+#include <QToolButton>
 #include <QWidget>
 
 class EntryActionWidget : public QWidget,
@@ -22,8 +24,16 @@ public:
     void setEntry(Entry entry);
 
 private:
+    void setupUI(void);
+
+    void addEntryToFavourites(Entry entry);
+
     std::shared_ptr<SQLDatabaseManager> _manager;
     std::unique_ptr<SQLUserDataUtils> _utils;
+    Entry _entry;
+
+    QHBoxLayout *_layout;
+    QToolButton *_bookmarkButton;
 
 signals:
 
