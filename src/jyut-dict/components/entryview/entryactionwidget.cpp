@@ -24,8 +24,15 @@ void EntryActionWidget::callback(const std::vector<Entry> entries,
 
 void EntryActionWidget::callback(bool entryExists)
 {
+    qDebug() << entryExists;
     _bookmarkButton->setText(entryExists ? "yes" : "no");
-    qDebug() << "entryExists is " << entryExists;
+}
+
+void EntryActionWidget::setEntry(Entry entry)
+{
+    _bookmarkButton->setVisible(true);
+    _utils->checkIfEntryHasBeenFavourited(entry);
+    _entry = entry;
 }
 
 void EntryActionWidget::setupUI(void)
@@ -39,9 +46,7 @@ void EntryActionWidget::setupUI(void)
     _layout->addWidget(_bookmarkButton);
 }
 
-void EntryActionWidget::setEntry(Entry entry)
+void EntryActionWidget::addEntryToFavourites(Entry entry)
 {
-    _bookmarkButton->setVisible(true);
-    _utils->checkIfEntryHasBeenFavourited(entry);
-    _entry = entry;
+    (void) (entry);
 }

@@ -336,6 +336,7 @@ bool SQLDatabaseUtils::removeSource(std::string source)
         query.exec("ROLLBACK");
     }
 
+    _manager->closeDatabase();
     return success;
 }
 
@@ -529,6 +530,7 @@ bool SQLDatabaseUtils::addSentenceSource(void)
                "FROM links_tmp as l, sources as s "
                "WHERE l.sourcename = s.sourcename");
 
+    _manager->closeDatabase();
     return true;
 }
 
@@ -620,5 +622,6 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
     }
 
     query.exec("DETACH DATABASE db");
+    _manager->closeDatabase();
     return success;
 }

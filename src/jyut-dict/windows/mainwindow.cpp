@@ -63,7 +63,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Instantiate services
     _manager = std::make_shared<SQLDatabaseManager>();
-    _manager->openDatabase();
     _sqlSearch = std::make_shared<SQLSearch>(_manager);
 
     // Get colours from QSettings

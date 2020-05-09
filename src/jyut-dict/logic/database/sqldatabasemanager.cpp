@@ -4,8 +4,10 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QSqlError>
 #include <QSqlQuery>
 #include <QStandardPaths>
+#include <QThread>
 #include <QVariant>
 
 SQLDatabaseManager::SQLDatabaseManager()
@@ -38,17 +40,62 @@ SQLDatabaseManager::SQLDatabaseManager()
 
 SQLDatabaseManager::~SQLDatabaseManager()
 {
-    _db.close();
+    QSqlDatabase::database(getCurrentDatabaseName()).close();
 }
 
-bool SQLDatabaseManager::openDatabase()
+QSqlDatabase SQLDatabaseManager::getDatabase()
 {
-    if (_db.isOpen()) {
-        return true;
+    QString name = getCurrentDatabaseName();
+    if (!QSqlDatabase::contains(name)) {
+        addDatabase(name);
+    }
+    if (!(QSqlDatabase::database(name, /*open=*/false).isOpen())) {
+        openDatabase(name);
+    }
+    return QSqlDatabase::database(name);
+}
+
+void SQLDatabaseManager::closeDatabase()
+{
+    QSqlDatabase::database(getCurrentDatabaseName(), /*open=*/false).close();
+}
+
+bool SQLDatabaseManager::isDatabaseOpen()
+{
+    return QSqlDatabase::database(getCurrentDatabaseName(), /*open=*/false)
+        .isOpen();
+}
+
+void SQLDatabaseManager::addDatabase(QString name)
+{
+    QSqlDatabase::addDatabase("QSQLITE", name);
+}
+
+bool SQLDatabaseManager::openDatabase(QString name)
+{
+    try {
+        copyDictionaryDatabase();
+        QSqlDatabase::database(name).setDatabaseName(_dictionaryDatabasePath);
+        bool rv = QSqlDatabase::database(name).open();
+        if (!rv) {
+            throw std::runtime_error{"Couldn't open database..."};
+        }
+
+        copyUserDatabase();
+        rv = attachUserDatabase();
+        if (!rv) {
+            throw std::runtime_error{"Couldn't attach user database..."};
+        }
+    } catch (std::exception &e) {
+        (void) (e);
+        return false;
     }
 
-    _db = QSqlDatabase::addDatabase("QSQLITE");
+    return true;
+}
 
+bool SQLDatabaseManager::copyDictionaryDatabase()
+{
 #ifdef Q_OS_DARWIN
     QFileInfo bundleFile{QCoreApplication::applicationDirPath()
                          + "/../Resources/dict.db"};
@@ -63,7 +110,7 @@ bool SQLDatabaseManager::openDatabase()
 #else
 #ifdef APPIMAGE
     QFileInfo bundleFile{QCoreApplication::applicationDirPath()
-                + "/../share/jyut-dict/dictionaries/dict.db"};
+                         + "/../share/jyut-dict/dictionaries/dict.db"};
 #elif defined(DEBUG)
     QFileInfo bundleFile{"./dict.db"};
 #else
@@ -76,7 +123,7 @@ bool SQLDatabaseManager::openDatabase()
 
 #ifdef PORTABLE
     if (bundleFile.exists() && bundleFile.isFile()) {
-        _db.setDatabaseName(bundleFile.absoluteFilePath());
+        _dictionaryDatabasePath = bundleFile.absoluteFilePath();
     }
 #else
     // Make path for dictionary storage
@@ -102,36 +149,15 @@ bool SQLDatabaseManager::openDatabase()
         }
     }
 
-    _db.setDatabaseName(localFile.absoluteFilePath());
+    _dictionaryDatabasePath = localFile.absoluteFilePath();
 #endif
-    try {
-        bool rv = _db.open();
-        if (!rv) {
-            std::runtime_error{"Couldn't open database..."};
-        }
-
-        copyUserDatabase();
-        attachUserDatabase();
-    } catch (std::exception &e) {
-        return false;
-    }
 
     return true;
 }
 
-QSqlDatabase SQLDatabaseManager::getDatabase()
-{
-    return _db;
-}
-
-bool SQLDatabaseManager::isDatabaseOpen()
-{
-    return _db.isOpen();
-}
-
 bool SQLDatabaseManager::copyUserDatabase()
 {
-    if (!_db.isOpen()) {
+    if (!QSqlDatabase::database(getCurrentDatabaseName()).isOpen()) {
         return false;
     }
 
@@ -194,26 +220,22 @@ bool SQLDatabaseManager::copyUserDatabase()
 
 bool SQLDatabaseManager::attachUserDatabase()
 {
-    QSqlQuery query{_db};
+    QSqlQuery query{QSqlDatabase::database(getCurrentDatabaseName())};
 
     query.prepare("ATTACH DATABASE ? AS user");
     query.addBindValue(QVariant::fromValue(_userDatabasePath));
     query.exec();
 
-    return true;
+    return !query.lastError().isValid();
 }
 
-void SQLDatabaseManager::openEnglishDatabase()
+QString SQLDatabaseManager::getCurrentDatabaseName()
 {
-    openDatabase();
-}
-
-QSqlDatabase SQLDatabaseManager::getEnglishDatabase()
-{
-    return getDatabase();
-}
-
-bool SQLDatabaseManager::isEnglishDatabaseOpen()
-{
-    return isDatabaseOpen();
+    // Generate a unique name for every thread that needs a connection to the
+    // database.
+    QString name = "database_"
+                   + QString::number(reinterpret_cast<uint64_t>(
+                                         QThread::currentThread()),
+                                     16);
+    return name;
 }

@@ -19,11 +19,8 @@ SQLSearch::SQLSearch()
 
 SQLSearch::SQLSearch(std::shared_ptr<SQLDatabaseManager> manager)
     : QObject()
+    , _manager{manager}
 {
-    _manager = manager;
-    if (!_manager->isDatabaseOpen()) {
-        _manager->openDatabase();
-    }
 }
 
 SQLSearch::SQLSearch(const SQLSearch &search)
@@ -181,6 +178,7 @@ void SQLSearch::searchSimplifiedThread(const QString searchTerm)
         // Do not parse results if new query has been made
         if (!checkQueryCurrent(searchTerm)) { return; }
         results = parseEntries(query);
+        _manager->closeDatabase();
     }
 
     sleepIfEmpty(results);
@@ -210,6 +208,7 @@ void SQLSearch::searchTraditionalThread(const QString searchTerm)
         // Do not parse results if new query has been made
         if (!checkQueryCurrent(searchTerm)) { return; }
         results = parseEntries(query);
+        _manager->closeDatabase();
     }
 
     sleepIfEmpty(results);
@@ -264,6 +263,7 @@ void SQLSearch::searchJyutpingThread(const QString searchTerm)
         // Do not parse results if new query has been made
         if (!checkQueryCurrent(searchTerm)) { return; }
         results = parseEntries(query);
+        _manager->closeDatabase();
     }
 
     sleepIfEmpty(results);
@@ -322,6 +322,7 @@ void SQLSearch::searchPinyinThread(const QString searchTerm)
         // Do not parse results if new query has been made
         if (!checkQueryCurrent(searchTerm)) { return; }
         results = parseEntries(query);
+        _manager->closeDatabase();
     }
 
     sleepIfEmpty(results);
@@ -368,6 +369,7 @@ void SQLSearch::searchEnglishThread(const QString searchTerm)
         // Do not parse results if new query has been made
         if (!checkQueryCurrent(searchTerm)) { return; }
         results = parseEntries(query);
+        _manager->closeDatabase();
     }
 
     sleepIfEmpty(results);
@@ -409,6 +411,7 @@ void SQLSearch::searchTraditionalSentencesThread(const QString searchTerm)
             return;
         }
         results = parseSentences(query);
+        _manager->closeDatabase();
     }
 
     QThread *thisThread = QThread::currentThread();

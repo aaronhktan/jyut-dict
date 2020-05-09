@@ -15,21 +15,23 @@ public:
     SQLDatabaseManager();
     ~SQLDatabaseManager();
 
-    bool openDatabase();
     QSqlDatabase getDatabase();
     bool isDatabaseOpen();
-
-    void openEnglishDatabase(); // Deprecated, use openDatabase() instead
-    QSqlDatabase getEnglishDatabase(); // Deprecated, use getDatabase() instead
-    bool isEnglishDatabaseOpen(); // Deprecated, use isDatabaseOpen() instead
+    void closeDatabase();
 
 private:
+    void addDatabase(QString name);
+    bool openDatabase(QString name);
+
+    bool copyDictionaryDatabase();
+
     bool copyUserDatabase();
     bool attachUserDatabase();
 
-    QString _userDatabasePath;
+    QString getCurrentDatabaseName();
 
-    QSqlDatabase _db;
+    QString _dictionaryDatabasePath;
+    QString _userDatabasePath;
 };
 
 #endif // SQLDATABASEMANAGER_H

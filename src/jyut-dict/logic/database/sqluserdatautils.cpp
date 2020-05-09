@@ -7,9 +7,6 @@
 SQLUserDataUtils::SQLUserDataUtils(std::shared_ptr<SQLDatabaseManager> manager)
     : _manager{manager}
 {
-    if (!_manager->isDatabaseOpen()) {
-        _manager->openDatabase();
-    }
 }
 
 SQLUserDataUtils::~SQLUserDataUtils() {}
@@ -73,6 +70,7 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
     {
         std::lock_guard<std::mutex> databaseLock(_databaseMutex);
         QSqlQuery query{_manager->getDatabase()};
+
         query.prepare(
             "SELECT entries.traditional, entries.simplified, entries.pinyin, "
             " entries.jyutping, "
@@ -93,6 +91,7 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
         query.exec();
 
         results = parseEntries(query);
+        _manager->closeDatabase();
     }
 
     notifyObservers(results, /*emptyQuery=*/false);
@@ -104,6 +103,7 @@ void SQLUserDataUtils::checkIfEntryHasBeenFavouritedThread(Entry entry)
     {
         std::lock_guard<std::mutex> databaseLock(_databaseMutex);
         QSqlQuery query{_manager->getDatabase()};
+
         query.prepare(
             "SELECT EXISTS (SELECT 1 FROM user.favourite_words WHERE "
             "traditional=? AND simplified=? AND jyutping=? AND pinyin=?) "
@@ -114,6 +114,7 @@ void SQLUserDataUtils::checkIfEntryHasBeenFavouritedThread(Entry entry)
         query.addBindValue(entry.getPinyin().c_str());
         query.exec();
         existence = parseExistence(query);
+        _manager->closeDatabase();
     }
 
     notifyObservers(existence);
