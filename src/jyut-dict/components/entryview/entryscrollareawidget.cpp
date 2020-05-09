@@ -19,10 +19,12 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(std::shared_ptr<SQLDatabaseManager>
     _scrollAreaLayout->setContentsMargins(11, 11, 11, 11);
 
     _entryHeaderWidget = new EntryHeaderWidget{this};
+    _entryActionWidget = new EntryActionWidget{manager, this};
     _entryContentWidget = new EntryContentWidget{manager, this};
 
     // Add all widgets to main layout
     _scrollAreaLayout->addWidget(_entryHeaderWidget);
+    _scrollAreaLayout->addWidget(_entryActionWidget);
     _scrollAreaLayout->addWidget(_entryContentWidget);
     _scrollAreaLayout->addStretch(1);
 
@@ -52,6 +54,7 @@ void EntryScrollAreaWidget::changeEvent(QEvent *event)
 void EntryScrollAreaWidget::setEntry(const Entry &entry)
 {
     _entryHeaderWidget->setEntry(entry);
+    _entryActionWidget->setEntry(entry);
     _entryContentWidget->setEntry(entry);
 }
 

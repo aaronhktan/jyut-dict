@@ -1,0 +1,205 @@
+#include "sqluserdatautils.h"
+
+#include "logic/utils/utils.h"
+
+#include <QtConcurrent/QtConcurrent>
+
+SQLUserDataUtils::SQLUserDataUtils(std::shared_ptr<SQLDatabaseManager> manager)
+    : _manager{manager}
+{
+    if (!_manager->isDatabaseOpen()) {
+        _manager->openDatabase();
+    }
+}
+
+SQLUserDataUtils::~SQLUserDataUtils() {}
+
+void SQLUserDataUtils::registerObserver(ISearchObserver *observer)
+{
+    _observers.push_back(observer);
+}
+
+void SQLUserDataUtils::deregisterObserver(ISearchObserver *observer)
+{
+    _observers.remove(observer);
+}
+
+void SQLUserDataUtils::notifyObservers(const std::vector<Entry> &results,
+                                       bool emptyQuery)
+{
+    std::lock_guard<std::mutex> notifyLock{_notifyMutex};
+    std::list<ISearchObserver *>::iterator it = _observers.begin();
+    while (it != _observers.end()) {
+        (static_cast<ISearchObserver *>(*it))->callback(results, emptyQuery);
+        ++it;
+    }
+}
+
+void SQLUserDataUtils::notifyObservers(bool entryExists)
+{
+    std::lock_guard<std::mutex> notifyLock{_notifyMutex};
+    std::list<ISearchObserver *>::iterator it = _observers.begin();
+    while (it != _observers.end()) {
+        (static_cast<ISearchObserver *>(*it))->callback(entryExists);
+        ++it;
+    }
+}
+
+void SQLUserDataUtils::searchForAllFavouritedWords(void)
+{
+    if (!_manager) {
+        std::cout << "No database specified!" << std::endl;
+        return;
+    }
+    QtConcurrent::run(this,
+                      &SQLUserDataUtils::searchForAllFavouritedWordsThread);
+}
+
+void SQLUserDataUtils::checkIfEntryHasBeenFavourited(Entry entry)
+{
+    if (!_manager) {
+        std::cout << "No database specified!" << std::endl;
+        return;
+    }
+    QtConcurrent::run(this,
+                      &SQLUserDataUtils::checkIfEntryHasBeenFavouritedThread,
+                      entry);
+}
+
+void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
+{
+    std::vector<Entry> results{};
+
+    {
+        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
+        QSqlQuery query{_manager->getDatabase()};
+        query.prepare(
+            "SELECT entries.traditional, entries.simplified, entries.pinyin, "
+            " entries.jyutping, "
+            " group_concat(sourcename || ' ' || definition, '●') AS "
+            " definitions, "
+            " user.favourite_words.timestamp "
+            "FROM entries, definitions, sources, user.favourite_words "
+            "WHERE entry_id IN "
+            "(SELECT entry_id from entries INNER JOIN user.favourite_words "
+            " ON entries.simplified = favourite_words.simplified "
+            " AND entries.traditional = favourite_words.traditional "
+            " AND entries.jyutping = favourite_words.jyutping "
+            " AND entries.pinyin = favourite_words.pinyin) "
+            "AND entry_id = fk_entry_id "
+            "AND source_id = fk_source_id "
+            "GROUP BY entry_id "
+            "ORDER BY frequency DESC");
+        query.exec();
+
+        results = parseEntries(query);
+    }
+
+    notifyObservers(results, /*emptyQuery=*/false);
+}
+
+void SQLUserDataUtils::checkIfEntryHasBeenFavouritedThread(Entry entry)
+{
+    bool existence = false;
+    {
+        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
+        QSqlQuery query{_manager->getDatabase()};
+        query.prepare(
+            "SELECT EXISTS (SELECT 1 FROM user.favourite_words WHERE "
+            "traditional=? AND simplified=? AND jyutping=? AND pinyin=?) "
+            "AS existence");
+        query.addBindValue(entry.getTraditional().c_str());
+        query.addBindValue(entry.getSimplified().c_str());
+        query.addBindValue(entry.getJyutping().c_str());
+        query.addBindValue(entry.getPinyin().c_str());
+        query.exec();
+        existence = parseExistence(query);
+    }
+
+    notifyObservers(existence);
+}
+
+std::vector<Entry> SQLUserDataUtils::parseEntries(QSqlQuery &query)
+{
+    std::vector<Entry> entries;
+
+    int simplifiedIndex = query.record().indexOf("simplified");
+    int traditionalIndex = query.record().indexOf("traditional");
+    int jyutpingIndex = query.record().indexOf("jyutping");
+    int pinyinIndex = query.record().indexOf("pinyin");
+    int definitionIndex = query.record().indexOf("definitions");
+
+    while (query.next()) {
+        // Get fields from table
+        std::string simplified
+            = query.value(simplifiedIndex).toString().toStdString();
+        std::string traditional
+            = query.value(traditionalIndex).toString().toStdString();
+        std::string jyutping
+            = query.value(jyutpingIndex).toString().toStdString();
+        std::string pinyin = query.value(pinyinIndex).toString().toStdString();
+        std::string definition
+            = query.value(definitionIndex).toString().toStdString();
+        if (definition.empty()) {
+            continue;
+        }
+
+        // Parse definitions
+        std::vector<std::string> definitions;
+        Utils::split(definition, "●", definitions);
+
+        // Put definitions in the correct DefinitionsSet
+        std::vector<DefinitionsSet> definitionsSets = {};
+        for (std::string definition : definitions) {
+            DefinitionsSet *set;
+            std::string source = definition.substr(0,
+                                                   definition.find_first_of(
+                                                       " "));
+
+            // Search definitionsSets for a matching set (i.e. set with same source)
+            // Create a new DefinitionsSet for set if it no matches found
+            // Then get a handle on that set
+            auto search = std::find_if(definitionsSets.begin(),
+                                       definitionsSets.end(),
+                                       [source,
+                                        definition](const DefinitionsSet &set) {
+                                           return set.getSource() == source;
+                                       });
+            if (search == definitionsSets.end()) {
+                definitionsSets.push_back(DefinitionsSet{source});
+                set = &definitionsSets.back();
+            } else {
+                set = &*search;
+            }
+
+            // Push the definition to that set
+            std::string definitionContent = definition.substr(
+                definition.find_first_of(" ") + 1);
+
+            set->pushDefinition(definitionContent);
+        }
+
+        entries.push_back(Entry(simplified,
+                                traditional,
+                                jyutping,
+                                pinyin,
+                                definitionsSets,
+                                std::vector<std::string>{},
+                                std::vector<SourceSentence>{}));
+    }
+
+    return entries;
+}
+
+bool SQLUserDataUtils::parseExistence(QSqlQuery &query)
+{
+    bool existence = 0;
+
+    int existenceIndex = query.record().indexOf("existence");
+
+    while (query.next()) {
+        existence = query.value(existenceIndex).toInt() == 1;
+    }
+
+    return existence;
+}

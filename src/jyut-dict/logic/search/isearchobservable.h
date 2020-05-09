@@ -14,12 +14,27 @@ class ISearchObservable
 public:
     virtual ~ISearchObservable() = default;
 
-    virtual void registerObserver(ISearchObserver *observer) = 0;
-    virtual void deregisterObserver(ISearchObserver *observer) = 0;
-    virtual void notifyObservers(const std::vector<Entry> &results, bool emptyQuery) = 0;
+    virtual void registerObserver(ISearchObserver *observer)
+    {
+        (void) (observer);
+    }
+    virtual void deregisterObserver(ISearchObserver *observer)
+    {
+        (void) (observer);
+    }
+    virtual void notifyObservers(const std::vector<Entry> &results,
+                                 bool emptyQuery)
+    {
+        (void) (results);
+        (void) (emptyQuery);
+    }
     virtual void notifyObservers(const std::vector<SourceSentence> &results,
                                  bool emptyQuery)
-        = 0;
+    {
+        (void) (results);
+        (void) (emptyQuery);
+    }
+    virtual void notifyObservers(bool entryExists) { (void) (entryExists); }
 };
 
 #endif // ISEARCHOBSERVABLE_H

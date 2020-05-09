@@ -1,6 +1,7 @@
 #ifndef ENTRYSCROLLAREAWIDGET_H
 #define ENTRYSCROLLAREAWIDGET_H
 
+#include "components/entryview/entryactionwidget.h"
 #include "components/entryview/entrycontentwidget.h"
 #include "components/entryview/entryheaderwidget.h"
 #include "logic/database/sqldatabasemanager.h"
@@ -30,6 +31,7 @@ private:
     QVBoxLayout *_scrollAreaLayout;
 
     EntryHeaderWidget *_entryHeaderWidget;
+    EntryActionWidget *_entryActionWidget;
     EntryContentWidget *_entryContentWidget;
 
 signals:

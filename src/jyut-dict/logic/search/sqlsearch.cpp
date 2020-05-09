@@ -50,7 +50,7 @@ void SQLSearch::deregisterObserver(ISearchObserver *observer)
 }
 
 // This version assumes an empty result set
-void SQLSearch::notifyObservers(bool emptyQuery)
+void SQLSearch::notifyObserversOfEmptySet(bool emptyQuery)
 {
     std::vector<Entry> results{};
     notifyObservers(results, emptyQuery);
@@ -143,7 +143,7 @@ void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString search
                           const QString &searchTerm)
 {
     if (searchTerm.isEmpty()) {
-        notifyObservers(true);
+        notifyObserversOfEmptySet(true);
         return;
     }
 

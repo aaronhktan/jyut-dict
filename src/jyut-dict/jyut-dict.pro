@@ -41,6 +41,7 @@ SOURCES += \
     components/entrysearchresult/resultlistdelegate.cpp \
     components/entrysearchresult/resultlistmodel.cpp \
     components/entrysearchresult/resultlistview.cpp \
+    components/entryview/entryactionwidget.cpp \
     components/entryview/entrycontentwidget.cpp \
     components/entryview/entryheaderwidget.cpp \
     components/entryview/entryscrollarea.cpp \
@@ -67,6 +68,7 @@ SOURCES += \
     components/settings/contacttab.cpp \
     components/settings/dictionarytab.cpp \
     components/settings/settingstab.cpp \
+    logic/database/sqluserdatautils.cpp \
     logic/search/sqlsearch.cpp \
     logic/sentence/sentenceset.cpp \
     logic/sentence/sourcesentence.cpp \
@@ -107,6 +109,7 @@ HEADERS += \
     components/entrysearchresult/resultlistdelegate.h \
     components/entrysearchresult/resultlistmodel.h \
     components/entrysearchresult/resultlistview.h \
+    components/entryview/entryactionwidget.h \
     components/entryview/entrycontentwidget.h \
     components/entryview/entryheaderwidget.h \
     components/entryview/entryscrollarea.h \
@@ -143,6 +146,7 @@ HEADERS += \
     logic/analytics/analyticsconfig.h \
     logic/database/sqldatabasemanager.h \
     logic/database/sqldatabaseutils.h \
+    logic/database/sqluserdatautils.h \
     logic/dictionary/dictionarymetadata.h \
     logic/dictionary/dictionarysource.h \
     logic/entry/definitionsset.h \
@@ -197,6 +201,7 @@ macx: {
 
     # Adds files to the Resources folder in macOS bundle
     APP_DB_FILES.files = resources/db/dict.db
+    APP_DB_FILES.files += resources/db/user.db
     APP_DB_FILES.path = Contents/Resources
     QMAKE_BUNDLE_DATA += APP_DB_FILES
 

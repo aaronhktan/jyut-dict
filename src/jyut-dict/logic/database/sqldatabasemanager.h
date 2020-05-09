@@ -6,6 +6,9 @@
 // SQLDatabaseManager provides one or more connections to databases
 // that contain dictionaries and translations
 
+// The userDatabase is the database that contains user data (e.g. favourites,
+// search history, etc.)
+
 class SQLDatabaseManager
 {
 public:
@@ -21,6 +24,11 @@ public:
     bool isEnglishDatabaseOpen(); // Deprecated, use isDatabaseOpen() instead
 
 private:
+    bool copyUserDatabase();
+    bool attachUserDatabase();
+
+    QString _userDatabasePath;
+
     QSqlDatabase _db;
 };
 

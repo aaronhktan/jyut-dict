@@ -5,6 +5,7 @@
 #include "components/sentencecard/sentencecardwidget.h"
 #include "components/sentencewindow/sentencesplitter.h"
 #include "logic/database/sqldatabasemanager.h"
+#include "logic/database/sqluserdatautils.h"
 #include "logic/search/isearchobserver.h"
 #include "logic/search/sqlsearch.h"
 
