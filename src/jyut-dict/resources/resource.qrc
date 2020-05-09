@@ -31,5 +31,8 @@
         <file>images/speak.png</file>
         <file>images/loading.gif</file>
         <file>images/loading_inverted.gif</file>
+        <file>images/star_inverted.png</file>
+        <file>images/star.png</file>
+        <file>images/share_inverted.png</file>
     </qresource>
 </RCC>

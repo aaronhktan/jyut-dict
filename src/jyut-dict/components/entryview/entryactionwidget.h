@@ -7,7 +7,7 @@
 #include "logic/search/isearchobserver.h"
 
 #include <QHBoxLayout>
-#include <QToolButton>
+#include <QPushButton>
 #include <QWidget>
 
 class EntryActionWidget : public QWidget,
@@ -18,13 +18,14 @@ public:
     explicit EntryActionWidget(std::shared_ptr<SQLDatabaseManager> manager,
                                QWidget *parent = nullptr);
 
-    void callback(const std::vector<Entry> entries, bool emptyQuery) override;
     void callback(bool entryExists) override;
 
     void setEntry(Entry entry);
 
 private:
     void setupUI(void);
+    void translateUI(void);
+    void setStyle(bool use_dark);
 
     void addEntryToFavourites(Entry entry);
 
@@ -33,9 +34,11 @@ private:
     Entry _entry;
 
     QHBoxLayout *_layout;
-    QToolButton *_bookmarkButton;
+    QPushButton *_bookmarkButton;
+    QPushButton *_shareButton;
 
 signals:
+    void callbackTriggered(bool entryExists);
 
 public slots:
 };
