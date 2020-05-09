@@ -34,5 +34,6 @@
         <file>images/star_inverted.png</file>
         <file>images/star.png</file>
         <file>images/share_inverted.png</file>
+        <file>images/share.png</file>
     </qresource>
 </RCC>

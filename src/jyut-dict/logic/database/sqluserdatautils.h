@@ -25,6 +25,8 @@ public:
 
     void searchForAllFavouritedWords(void);
     void checkIfEntryHasBeenFavourited(Entry entry);
+    void favouriteEntry(Entry entry);
+    void unfavouriteEntry(Entry entry);
 
 private:
     void notifyObservers(const std::vector<Entry> &results,
@@ -35,6 +37,8 @@ private:
 
     void searchForAllFavouritedWordsThread(void);
     void checkIfEntryHasBeenFavouritedThread(Entry entry);
+    void favouriteEntryThread(Entry entry);
+    void unfavouriteEntryThread(Entry entry);
 
     std::vector<Entry> parseEntries(QSqlQuery &query);
     bool parseExistence(QSqlQuery &query);

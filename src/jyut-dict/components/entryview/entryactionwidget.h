@@ -20,6 +20,8 @@ public:
 
     void callback(bool entryExists) override;
 
+    void changeEvent(QEvent *event) override;
+
     void setEntry(Entry entry);
 
 private:
@@ -27,7 +29,13 @@ private:
     void translateUI(void);
     void setStyle(bool use_dark);
 
+    void refreshBookmarkButton(void);
     void addEntryToFavourites(Entry entry);
+    void removeEntryFromFavourites(Entry entry);
+
+    void shareAction(void);
+
+    bool _paletteRecentlyChanged = false;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
     std::unique_ptr<SQLUserDataUtils> _utils;

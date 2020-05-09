@@ -63,6 +63,28 @@ void SQLUserDataUtils::checkIfEntryHasBeenFavourited(Entry entry)
                       entry);
 }
 
+void SQLUserDataUtils::favouriteEntry(Entry entry)
+{
+    if (!_manager) {
+        std::cout << "No database specified!" << std::endl;
+        return;
+    }
+    QtConcurrent::run(this,
+                      &SQLUserDataUtils::favouriteEntryThread,
+                      entry);
+}
+
+void SQLUserDataUtils::unfavouriteEntry(Entry entry)
+{
+    if (!_manager) {
+        std::cout << "No database specified!" << std::endl;
+        return;
+    }
+    QtConcurrent::run(this,
+                      &SQLUserDataUtils::unfavouriteEntryThread,
+                      entry);
+}
+
 void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
 {
     std::vector<Entry> results{};
@@ -118,6 +140,46 @@ void SQLUserDataUtils::checkIfEntryHasBeenFavouritedThread(Entry entry)
     }
 
     notifyObservers(existence);
+}
+
+void SQLUserDataUtils::favouriteEntryThread(Entry entry)
+{
+    {
+        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
+        QSqlQuery query{_manager->getDatabase()};
+
+        query.prepare(
+            "INSERT INTO user.favourite_words(traditional, simplified, "
+            " jyutping, pinyin, fk_list_id, timestamp) "
+            "values(?, ?, ?, ?, 1, datetime(\"now\")) ");
+        qDebug() << query.lastError();
+        query.addBindValue(entry.getTraditional().c_str());
+        query.addBindValue(entry.getSimplified().c_str());
+        query.addBindValue(entry.getJyutping().c_str());
+        query.addBindValue(entry.getPinyin().c_str());
+        query.exec();
+        query.exec("COMMIT");
+        _manager->closeDatabase();
+    }
+}
+
+void SQLUserDataUtils::unfavouriteEntryThread(Entry entry)
+{
+    {
+        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
+        QSqlQuery query{_manager->getDatabase()};
+
+        query.prepare(
+            "DELETE FROM user.favourite_words WHERE "
+            "traditional=? AND simplified=? AND jyutping=? AND pinyin=?");
+        query.addBindValue(entry.getTraditional().c_str());
+        query.addBindValue(entry.getSimplified().c_str());
+        query.addBindValue(entry.getJyutping().c_str());
+        query.addBindValue(entry.getPinyin().c_str());
+        query.exec();
+        query.exec("COMMIT");
+        _manager->closeDatabase();
+    }
 }
 
 std::vector<Entry> SQLUserDataUtils::parseEntries(QSqlQuery &query)
