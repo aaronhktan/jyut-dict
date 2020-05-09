@@ -93,24 +93,31 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
         std::lock_guard<std::mutex> databaseLock(_databaseMutex);
         QSqlQuery query{_manager->getDatabase()};
 
-        query.prepare(
+        query.exec("DROP TABLE IF EXISTS favourite_tmp");
+        // Create a table with two columns, the entry_id and its associated
+        // timestamp.
+        query.exec("CREATE TEMPORARY TABLE favourite_tmp AS "
+                   "SELECT entry_id, timestamp from entries "
+                   "INNER JOIN user.favourite_words "
+                   " ON entries.simplified = favourite_words.simplified "
+                   " AND entries.traditional = favourite_words.traditional "
+                   " AND entries.jyutping = favourite_words.jyutping "
+                   " AND entries.pinyin = favourite_words.pinyin");
+        // Select the fields of the entry and its definitions from the entry_id
+        // from the temporary table, then sort by the timestamp.
+        query.exec(
             "SELECT entries.traditional, entries.simplified, entries.pinyin, "
             " entries.jyutping, "
             " group_concat(sourcename || ' ' || definition, '●') AS "
-            " definitions, "
-            " user.favourite_words.timestamp "
-            "FROM entries, definitions, sources, user.favourite_words "
-            "WHERE entry_id IN "
-            "(SELECT entry_id from entries INNER JOIN user.favourite_words "
-            " ON entries.simplified = favourite_words.simplified "
-            " AND entries.traditional = favourite_words.traditional "
-            " AND entries.jyutping = favourite_words.jyutping "
-            " AND entries.pinyin = favourite_words.pinyin) "
-            "AND entry_id = fk_entry_id "
+            " definitions, timestamp "
+            "FROM entries, definitions, sources, favourite_tmp "
+            "WHERE entries.entry_id IN "
+            "(SELECT entry_id FROM favourite_tmp) "
+            "AND favourite_tmp.entry_id = entries.entry_id "
+            "AND entries.entry_id = fk_entry_id "
             "AND source_id = fk_source_id "
-            "GROUP BY entry_id "
-            "ORDER BY frequency DESC");
-        query.exec();
+            "GROUP BY entries.entry_id "
+            "ORDER BY timestamp DESC");
 
         results = parseEntries(query);
         _manager->closeDatabase();
@@ -152,7 +159,6 @@ void SQLUserDataUtils::favouriteEntryThread(Entry entry)
             "INSERT INTO user.favourite_words(traditional, simplified, "
             " jyutping, pinyin, fk_list_id, timestamp) "
             "values(?, ?, ?, ?, 1, datetime(\"now\")) ");
-        qDebug() << query.lastError();
         query.addBindValue(entry.getTraditional().c_str());
         query.addBindValue(entry.getSimplified().c_str());
         query.addBindValue(entry.getJyutping().c_str());

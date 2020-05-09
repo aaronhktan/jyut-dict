@@ -1,6 +1,6 @@
 #include "resultlistmodel.h"
 
-ResultListModel::ResultListModel(std::shared_ptr<SQLSearch> sqlSearch,
+ResultListModel::ResultListModel(std::shared_ptr<ISearchObservable> sqlSearch,
                                  std::vector<Entry> entries, QObject *parent)
     : QAbstractListModel(parent)
 {

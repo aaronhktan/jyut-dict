@@ -1,5 +1,6 @@
 #include "entryactionwidget.h"
 
+#include "components/favouritewindow/favouritesplitter.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
@@ -72,11 +73,21 @@ void EntryActionWidget::setupUI(void)
             this,
             &EntryActionWidget::shareAction);
 
+    _openFavouritesButton = new QPushButton{this};
+    _openFavouritesButton->setText("Open favourites window");
+    _openFavouritesButton->setVisible(true);
+    connect(_openFavouritesButton, &QPushButton::clicked, this, [=]() {
+        FavouriteSplitter *splitter = new FavouriteSplitter{_manager, nullptr};
+        splitter->setParent(this, Qt::Window);
+        splitter->show();
+    });
+
     _layout = new QHBoxLayout{this};
     _layout->setContentsMargins(0, 5, 0, 15);
     _layout->setSpacing(5);
     _layout->addWidget(_bookmarkButton);
     _layout->addWidget(_shareButton);
+    _layout->addWidget(_openFavouritesButton);
     _layout->addStretch(0);
 
 #ifdef Q_OS_MAC

@@ -47,6 +47,7 @@ SOURCES += \
     components/entryview/entryscrollarea.cpp \
     components/entryview/entryscrollareawidget.cpp \
     components/entryview/entryviewsentencecardsection.cpp \
+    components/favouritewindow/favouritesplitter.cpp \
     components/mainwindow/mainsplitter.cpp \
     components/mainwindow/maintoolbar.cpp \
     components/mainwindow/searchlineedit.cpp \
@@ -115,6 +116,7 @@ HEADERS += \
     components/entryview/entryscrollarea.h \
     components/entryview/entryscrollareawidget.h \
     components/entryview/entryviewsentencecardsection.h \
+    components/favouritewindow/favouritesplitter.h \
     components/mainwindow/isearchlineedit.h \
     components/mainwindow/mainsplitter.h \
     components/mainwindow/maintoolbar.h \

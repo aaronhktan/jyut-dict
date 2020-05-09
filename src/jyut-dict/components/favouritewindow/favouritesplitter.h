@@ -1,11 +1,11 @@
-#ifndef MAINSPLITTER_H
-#define MAINSPLITTER_H
+#ifndef FAVOURITESPLITTER_H
+#define FAVOURITESPLITTER_H
 
 #include "components/entryview/entryscrollarea.h"
 #include "logic/analytics/analytics.h"
 #include "logic/database/sqldatabasemanager.h"
+#include "logic/database/sqluserdatautils.h"
 #include "logic/entry/entry.h"
-#include "logic/search/sqlsearch.h"
 
 #include <QAbstractListModel>
 #include <QModelIndex>
@@ -17,25 +17,24 @@
 // It handles the model changed signal that the master listview emits,
 // and passes the data to the detail scrollarea.
 
-class MainSplitter : public QSplitter
+class FavouriteSplitter : public QSplitter
 {
 Q_OBJECT
 
 public:
-    explicit MainSplitter(std::shared_ptr<SQLDatabaseManager> manager,
-                          std::shared_ptr<SQLSearch> sqlSearch,
-                          QWidget *parent = nullptr);
-    ~MainSplitter() override;
+    explicit FavouriteSplitter(std::shared_ptr<SQLDatabaseManager> manager,
+                               QWidget *parent = nullptr);
+    ~FavouriteSplitter() override;
 
-    void setFocusToResults(void);
     void openCurrentSelectionInNewWindow(void);
 
 private:
+    std::shared_ptr<SQLUserDataUtils> _utils;
     std::shared_ptr<SQLDatabaseManager> _manager;
     Analytics *_analytics;
 
-    EntryScrollArea *_entryScrollArea;
     QAbstractListModel *_model;
+    EntryScrollArea *_entryScrollArea;
     QListView *_resultListView;
 
 private slots:
@@ -45,4 +44,4 @@ private slots:
     void handleDoubleClick(const QModelIndex &selection);
 };
 
-#endif // MAINSPLITTER_H
+#endif // FAVOURITESPLITTER_H

@@ -225,8 +225,7 @@ void SentenceContentWidget::translateUI(void)
 void SentenceContentWidget::setStyle(bool use_dark)
 {
     QString sentenceNumberStyleSheet = "QLabel { color: %1; "
-                                       "margin-top: 2px; "
-                                       "padding: 2px; }";
+                                       "margin-top: 2px; }";
     QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
                                           LABEL_TEXT_COLOUR_DARK_G,
                                           LABEL_TEXT_COLOUR_DARK_B}

@@ -1,4 +1,4 @@
-#include "mainsplitter.h"
+#include "favouritesplitter.h"
 
 #include "components/entrysearchresult/resultlistmodel.h"
 #include "components/entrysearchresult/resultlistview.h"
@@ -7,8 +7,7 @@
 #include <QList>
 #include <QVariant>
 
-MainSplitter::MainSplitter(std::shared_ptr<SQLDatabaseManager> manager,
-                           std::shared_ptr<SQLSearch> sqlSearch,
+FavouriteSplitter::FavouriteSplitter(std::shared_ptr<SQLDatabaseManager> manager,
                            QWidget *parent)
     : QSplitter(parent)
     , _manager{manager}
@@ -17,7 +16,10 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLDatabaseManager> manager,
 
     _entryScrollArea = new EntryScrollArea{manager, this};
     _resultListView = new ResultListView{this};
-    _model = new ResultListModel{sqlSearch, {}, this};
+
+    _utils = std::make_shared<SQLUserDataUtils>(manager);
+
+    _model = new ResultListModel{_utils, {}, this};
     _resultListView->setModel(_model);
 
     addWidget(_resultListView);
@@ -28,12 +30,12 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLDatabaseManager> manager,
     connect(_resultListView->selectionModel(),
             &QItemSelectionModel::currentChanged,
             this,
-            &MainSplitter::handleClick);
+            &FavouriteSplitter::handleClick);
 
     connect(_resultListView,
             &QListView::doubleClicked,
             this,
-            &MainSplitter::handleDoubleClick);
+            &FavouriteSplitter::handleDoubleClick);
 
     setHandleWidth(1);
     setCollapsible(0, false);
@@ -46,28 +48,22 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLDatabaseManager> manager,
 #else
     setStyleSheet("QSplitter::handle { background-color: lightgray; }");
 #endif
+
+    _utils->searchForAllFavouritedWords();
 }
 
-MainSplitter::~MainSplitter()
+FavouriteSplitter::~FavouriteSplitter()
 {
 
 }
 
-void MainSplitter::setFocusToResults(void)
-{
-    _resultListView->setFocus();
-    QModelIndex entryIndex = _resultListView->model()->index(0, 0);
-    _resultListView->setCurrentIndex(entryIndex);
-    _resultListView->scrollTo(entryIndex);
-}
-
-void MainSplitter::openCurrentSelectionInNewWindow(void)
+void FavouriteSplitter::openCurrentSelectionInNewWindow(void)
 {
     QModelIndex entryIndex = _resultListView->currentIndex();
     handleDoubleClick(entryIndex);
 }
 
-void MainSplitter::prepareEntry(Entry &entry)
+void FavouriteSplitter::prepareEntry(Entry &entry)
 {
     if (Settings::getSettings()
             ->value("Advanced/analyticsEnabled", QVariant{true})
@@ -87,7 +83,7 @@ void MainSplitter::prepareEntry(Entry &entry)
     return;
 }
 
-void MainSplitter::handleClick(const QModelIndex &selection)
+void FavouriteSplitter::handleClick(const QModelIndex &selection)
 {
     Entry entry = qvariant_cast<Entry>(selection.data());
     bool isWelcomeEntry = entry.isWelcome();
@@ -100,7 +96,7 @@ void MainSplitter::handleClick(const QModelIndex &selection)
     _entryScrollArea->setEntry(entry);
 }
 
-void MainSplitter::handleDoubleClick(const QModelIndex &selection)
+void FavouriteSplitter::handleDoubleClick(const QModelIndex &selection)
 {
     Entry entry = qvariant_cast<Entry>(selection.data());
     bool isWelcomeEntry = entry.isWelcome();

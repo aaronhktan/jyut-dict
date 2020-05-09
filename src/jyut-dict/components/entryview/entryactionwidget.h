@@ -44,6 +44,7 @@ private:
     QHBoxLayout *_layout;
     QPushButton *_bookmarkButton;
     QPushButton *_shareButton;
+    QPushButton *_openFavouritesButton;
 
 signals:
     void callbackTriggered(bool entryExists);

@@ -9,8 +9,7 @@
 #include <QScrollBar>
 #endif
 
-ResultListView::ResultListView(std::shared_ptr<SQLSearch> sqlSearch,
-                               QWidget *parent)
+ResultListView::ResultListView(QWidget *parent)
     : QListView(parent)
 {
     setFrameShape(QFrame::NoFrame);
@@ -19,9 +18,6 @@ ResultListView::ResultListView(std::shared_ptr<SQLSearch> sqlSearch,
 #else
     setMinimumWidth(250);
 #endif
-
-    _model = new ResultListModel{sqlSearch, {}, this};
-    setModel(_model);
 
     _delegate = new ResultListDelegate{this};
     setItemDelegate(_delegate);
@@ -36,7 +32,7 @@ ResultListView::ResultListView(std::shared_ptr<SQLSearch> sqlSearch,
 void ResultListView::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::LanguageChange) {
-        static_cast<ResultListModel *>(_model)->setWelcome();
+        static_cast<ResultListModel *>(model())->setWelcome();
     }
     QListView::changeEvent(event);
 }
