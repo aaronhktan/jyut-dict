@@ -4,6 +4,7 @@
 #include "components/entryview/entryscrollarea.h"
 #include "logic/analytics/analytics.h"
 #include "logic/database/sqldatabasemanager.h"
+#include "logic/database/sqluserdatautils.h"
 #include "logic/entry/entry.h"
 #include "logic/search/sqlsearch.h"
 
@@ -22,7 +23,8 @@ class MainSplitter : public QSplitter
 Q_OBJECT
 
 public:
-    explicit MainSplitter(std::shared_ptr<SQLDatabaseManager> manager,
+    explicit MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
+                          std::shared_ptr<SQLDatabaseManager> manager,
                           std::shared_ptr<SQLSearch> sqlSearch,
                           QWidget *parent = nullptr);
     ~MainSplitter() override;
@@ -31,6 +33,7 @@ public:
     void openCurrentSelectionInNewWindow(void);
 
 private:
+    std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
     std::shared_ptr<SQLDatabaseManager> _manager;
     Analytics *_analytics;
 

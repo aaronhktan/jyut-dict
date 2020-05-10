@@ -35,6 +35,8 @@ public:
 
     Entry &operator=(const Entry &entry);
     Entry &operator=(const Entry &&entry);
+    bool operator==(const Entry &other) const;
+    bool operator!=(const Entry &other) const;
     friend std::ostream &operator<<(std::ostream &out, const Entry &entry);
 
     std::string getCharacters(EntryCharactersOptions options,

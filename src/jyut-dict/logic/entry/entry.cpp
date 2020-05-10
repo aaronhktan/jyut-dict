@@ -177,6 +177,25 @@ Entry &Entry::operator=(const Entry &&entry)
     return *this;
 }
 
+bool Entry::operator==(const Entry &other) const
+{
+    if (&other == this) {
+        return true;
+    }
+
+    if (other._simplified == _simplified && other._traditional == _traditional
+        && other._jyutping == _jyutping && other._pinyin == _pinyin) {
+        return true;
+    }
+
+    return false;
+}
+
+bool Entry::operator!=(const Entry &other) const
+{
+    return !(*this == other);
+}
+
 std::ostream &operator<<(std::ostream &out, const Entry &entry)
 {
     out << "Simplified: " << entry.getSimplified() << "\n";

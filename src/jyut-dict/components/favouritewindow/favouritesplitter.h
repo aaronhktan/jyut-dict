@@ -22,14 +22,18 @@ class FavouriteSplitter : public QSplitter
 Q_OBJECT
 
 public:
-    explicit FavouriteSplitter(std::shared_ptr<SQLDatabaseManager> manager,
+    explicit FavouriteSplitter(std::shared_ptr<SQLUserDataUtils> utils,
+                               std::shared_ptr<SQLDatabaseManager> manager,
                                QWidget *parent = nullptr);
     ~FavouriteSplitter() override;
 
     void openCurrentSelectionInNewWindow(void);
 
 private:
-    std::shared_ptr<SQLUserDataUtils> _utils;
+    void setupUI();
+    void translateUI();
+
+    std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
     std::shared_ptr<SQLDatabaseManager> _manager;
     Analytics *_analytics;
 

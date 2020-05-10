@@ -8,20 +8,24 @@
 
 #include <QFileDialog>
 
-EntryActionWidget::EntryActionWidget(std::shared_ptr<SQLDatabaseManager> manager,
+EntryActionWidget::EntryActionWidget(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
                                      QWidget *parent)
     : QWidget(parent)
-    , _manager{manager}
+    , _sqlUserUtils{sqlUserUtils}
 {
-    _utils = std::make_unique<SQLUserDataUtils>(_manager);
-    _utils->registerObserver(this);
+    _sqlUserUtils->registerObserver(this);
 
     setupUI();
 }
 
-void EntryActionWidget::callback(bool entryExists)
+EntryActionWidget::~EntryActionWidget(void)
 {
-    emit callbackTriggered(entryExists);
+    _sqlUserUtils->deregisterObserver(this);
+}
+
+void EntryActionWidget::callback(bool entryExists, Entry entry)
+{
+    emit callbackTriggered(entryExists, entry);
 }
 
 void EntryActionWidget::changeEvent(QEvent *event)
@@ -43,16 +47,19 @@ void EntryActionWidget::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
-void EntryActionWidget::setEntry(Entry entry)
+void EntryActionWidget::setEntry(const Entry entry)
 {
-    _utils->checkIfEntryHasBeenFavourited(entry);
+    _sqlUserUtils->checkIfEntryHasBeenFavourited(entry);
     _entry = entry;
 
     disconnect(this, nullptr, nullptr, nullptr);
     connect(this,
             &EntryActionWidget::callbackTriggered,
             this,
-            [=](bool entryExists) {
+            [=](bool entryExists, const Entry existenceEntry) {
+                if (entry != existenceEntry) {
+                    return;
+                }
                 setVisible(false);
                 _bookmarkButton->setProperty("saved",
                                              QVariant::fromValue(entryExists));
@@ -73,21 +80,11 @@ void EntryActionWidget::setupUI(void)
             this,
             &EntryActionWidget::shareAction);
 
-    _openFavouritesButton = new QPushButton{this};
-    _openFavouritesButton->setText("Open favourites window");
-    _openFavouritesButton->setVisible(true);
-    connect(_openFavouritesButton, &QPushButton::clicked, this, [=]() {
-        FavouriteSplitter *splitter = new FavouriteSplitter{_manager, nullptr};
-        splitter->setParent(this, Qt::Window);
-        splitter->show();
-    });
-
     _layout = new QHBoxLayout{this};
     _layout->setContentsMargins(0, 5, 0, 15);
     _layout->setSpacing(5);
     _layout->addWidget(_bookmarkButton);
     _layout->addWidget(_shareButton);
-    _layout->addWidget(_openFavouritesButton);
     _layout->addStretch(0);
 
 #ifdef Q_OS_MAC
@@ -166,12 +163,12 @@ void EntryActionWidget::refreshBookmarkButton(void)
 
 void EntryActionWidget::addEntryToFavourites(Entry entry)
 {
-    _utils->favouriteEntry(entry);
+    _sqlUserUtils->favouriteEntry(entry);
 }
 
 void EntryActionWidget::removeEntryFromFavourites(Entry entry)
 {
-    _utils->unfavouriteEntry(entry);
+    _sqlUserUtils->unfavouriteEntry(entry);
 }
 
 void EntryActionWidget::shareAction(void)

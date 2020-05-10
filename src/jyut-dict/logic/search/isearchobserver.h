@@ -15,7 +15,7 @@ public:
 
     virtual void callback(const std::vector<Entry>, bool){}
     virtual void callback(const std::vector<SourceSentence>, bool){}
-    virtual void callback(bool){}
+    virtual void callback(bool, Entry){}
 };
 
 #endif // ISEARCHOBSERVER_H

@@ -31,7 +31,7 @@ public:
 private:
     void notifyObservers(const std::vector<Entry> &results,
                          bool emptyQuery) override;
-    void notifyObservers(bool entryExists) override;
+    void notifyObservers(bool entryExists, Entry entry) override;
 
     void setCurrentSearchTerm(const QString &searchTerm);
 

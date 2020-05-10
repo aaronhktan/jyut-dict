@@ -32,12 +32,12 @@ void SQLUserDataUtils::notifyObservers(const std::vector<Entry> &results,
     }
 }
 
-void SQLUserDataUtils::notifyObservers(bool entryExists)
+void SQLUserDataUtils::notifyObservers(bool entryExists, Entry entry)
 {
     std::lock_guard<std::mutex> notifyLock{_notifyMutex};
     std::list<ISearchObserver *>::iterator it = _observers.begin();
     while (it != _observers.end()) {
-        (static_cast<ISearchObserver *>(*it))->callback(entryExists);
+        (static_cast<ISearchObserver *>(*it))->callback(entryExists, entry);
         ++it;
     }
 }
@@ -146,7 +146,7 @@ void SQLUserDataUtils::checkIfEntryHasBeenFavouritedThread(Entry entry)
         _manager->closeDatabase();
     }
 
-    notifyObservers(existence);
+    notifyObservers(existence, entry);
 }
 
 void SQLUserDataUtils::favouriteEntryThread(Entry entry)
@@ -167,6 +167,9 @@ void SQLUserDataUtils::favouriteEntryThread(Entry entry)
         query.exec("COMMIT");
         _manager->closeDatabase();
     }
+
+    checkIfEntryHasBeenFavourited(entry);
+    searchForAllFavouritedWords();
 }
 
 void SQLUserDataUtils::unfavouriteEntryThread(Entry entry)
@@ -186,6 +189,9 @@ void SQLUserDataUtils::unfavouriteEntryThread(Entry entry)
         query.exec("COMMIT");
         _manager->closeDatabase();
     }
+
+    checkIfEntryHasBeenFavourited(entry);
+    searchForAllFavouritedWords();
 }
 
 std::vector<Entry> SQLUserDataUtils::parseEntries(QSqlQuery &query)

@@ -34,7 +34,11 @@ public:
         (void) (results);
         (void) (emptyQuery);
     }
-    virtual void notifyObservers(bool entryExists) { (void) (entryExists); }
+    virtual void notifyObservers(bool entryExists, Entry entry)
+    {
+        (void) (entryExists);
+        (void) (entry);
+    }
 };
 
 #endif // ISEARCHOBSERVABLE_H

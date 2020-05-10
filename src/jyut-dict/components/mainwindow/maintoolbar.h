@@ -7,9 +7,12 @@
 #include "logic/search/sqlsearch.h"
 #include "logic/utils/utils.h"
 
+#include <QAction>
 #include <QFocusEvent>
 #include <QHBoxLayout>
+#include <QMenu>
 #include <QToolBar>
+#include <QToolButton>
 #include <QWidget>
 
 #include <memory>
@@ -30,12 +33,17 @@ public:
     void selectAllEvent(void);
     void changeOptionEvent(const Utils::ButtonOptionIndex option);
 
+    void setOpenSettingsAction(QAction *action);
+    void setOpenFavouritesAction(QAction *action);
+
 private:
     QHBoxLayout *_toolBarLayout;
     QWidget *_toolBarWidget;
 
     SearchLineEdit *_searchBar;
     SearchOptionsRadioGroupBox *_optionsBox;
+    QToolButton *_openButton;
+    QToolButton *_openFavouritesButton;
     ISearchOptionsMediator *_searchOptions;
 };
 

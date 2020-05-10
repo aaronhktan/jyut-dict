@@ -7,15 +7,17 @@
 #include <QList>
 #include <QVariant>
 
-MainSplitter::MainSplitter(std::shared_ptr<SQLDatabaseManager> manager,
+MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
+                           std::shared_ptr<SQLDatabaseManager> manager,
                            std::shared_ptr<SQLSearch> sqlSearch,
                            QWidget *parent)
     : QSplitter(parent)
+    , _sqlUserUtils{sqlUserUtils}
     , _manager{manager}
 {
     _analytics = new Analytics{this};
 
-    _entryScrollArea = new EntryScrollArea{manager, this};
+    _entryScrollArea = new EntryScrollArea{sqlUserUtils, manager, this};
     _resultListView = new ResultListView{this};
     _model = new ResultListModel{sqlSearch, {}, this};
     _resultListView->setModel(_model);
@@ -112,7 +114,7 @@ void MainSplitter::handleDoubleClick(const QModelIndex &selection)
     prepareEntry(entry);
 
     QTimer::singleShot(50, this, [=]() {
-        EntryScrollArea *area = new EntryScrollArea{_manager, nullptr};
+        EntryScrollArea *area = new EntryScrollArea{_sqlUserUtils, _manager, nullptr};
         area->setParent(this, Qt::Window);
         area->setEntry(entry);
 #ifndef Q_OS_MAC

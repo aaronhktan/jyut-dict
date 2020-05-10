@@ -15,10 +15,11 @@ class EntryActionWidget : public QWidget,
 {
     Q_OBJECT
 public:
-    explicit EntryActionWidget(std::shared_ptr<SQLDatabaseManager> manager,
+    explicit EntryActionWidget(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
                                QWidget *parent = nullptr);
+    ~EntryActionWidget(void) override;
 
-    void callback(bool entryExists) override;
+    void callback(bool entryExists, Entry entry) override;
 
     void changeEvent(QEvent *event) override;
 
@@ -37,17 +38,15 @@ private:
 
     bool _paletteRecentlyChanged = false;
 
-    std::shared_ptr<SQLDatabaseManager> _manager;
-    std::unique_ptr<SQLUserDataUtils> _utils;
+    std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
     Entry _entry;
 
     QHBoxLayout *_layout;
     QPushButton *_bookmarkButton;
     QPushButton *_shareButton;
-    QPushButton *_openFavouritesButton;
 
 signals:
-    void callbackTriggered(bool entryExists);
+    void callbackTriggered(bool entryExists, Entry entry);
 
 public slots:
 };

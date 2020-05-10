@@ -7,19 +7,32 @@
 #include <QList>
 #include <QVariant>
 
-FavouriteSplitter::FavouriteSplitter(std::shared_ptr<SQLDatabaseManager> manager,
-                           QWidget *parent)
+FavouriteSplitter::FavouriteSplitter(std::shared_ptr<SQLUserDataUtils> utils,
+                                     std::shared_ptr<SQLDatabaseManager> manager,
+                                     QWidget *parent)
     : QSplitter(parent)
+    , _sqlUserUtils{utils}
     , _manager{manager}
 {
     _analytics = new Analytics{this};
 
-    _entryScrollArea = new EntryScrollArea{manager, this};
+    setupUI();
+    translateUI();
+
+    _sqlUserUtils->searchForAllFavouritedWords();
+}
+
+FavouriteSplitter::~FavouriteSplitter()
+{
+}
+
+void FavouriteSplitter::setupUI()
+{
+    _entryScrollArea = new EntryScrollArea{_sqlUserUtils, _manager, this};
     _resultListView = new ResultListView{this};
 
-    _utils = std::make_shared<SQLUserDataUtils>(manager);
-
-    _model = new ResultListModel{_utils, {}, this};
+    _model = new ResultListModel{_sqlUserUtils, {}, this};
+    static_cast<ResultListModel *>(_model)->setIsFavouritesList(true);
     _resultListView->setModel(_model);
 
     addWidget(_resultListView);
@@ -48,13 +61,13 @@ FavouriteSplitter::FavouriteSplitter(std::shared_ptr<SQLDatabaseManager> manager
 #else
     setStyleSheet("QSplitter::handle { background-color: lightgray; }");
 #endif
-
-    _utils->searchForAllFavouritedWords();
+    setMinimumHeight(400);
 }
 
-FavouriteSplitter::~FavouriteSplitter()
+void FavouriteSplitter::translateUI(void)
 {
-
+    QString title = tr("Saved Words");
+    setWindowTitle(title);
 }
 
 void FavouriteSplitter::openCurrentSelectionInNewWindow(void)
@@ -108,7 +121,7 @@ void FavouriteSplitter::handleDoubleClick(const QModelIndex &selection)
     prepareEntry(entry);
 
     QTimer::singleShot(50, this, [=]() {
-        EntryScrollArea *area = new EntryScrollArea{_manager, nullptr};
+        EntryScrollArea *area = new EntryScrollArea{_sqlUserUtils, _manager, nullptr};
         area->setParent(this, Qt::Window);
         area->setEntry(entry);
 #ifndef Q_OS_MAC

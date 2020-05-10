@@ -7,7 +7,8 @@
 
 #include <QTimer>
 
-EntryScrollAreaWidget::EntryScrollAreaWidget(std::shared_ptr<SQLDatabaseManager> manager,
+EntryScrollAreaWidget::EntryScrollAreaWidget(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
+                                             std::shared_ptr<SQLDatabaseManager> manager,
                                              QWidget *parent)
     : QWidget(parent)
 {
@@ -19,7 +20,7 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(std::shared_ptr<SQLDatabaseManager>
     _scrollAreaLayout->setContentsMargins(11, 11, 11, 11);
 
     _entryHeaderWidget = new EntryHeaderWidget{this};
-    _entryActionWidget = new EntryActionWidget{manager, this};
+    _entryActionWidget = new EntryActionWidget{sqlUserUtils, this};
     _entryContentWidget = new EntryContentWidget{manager, this};
 
     // Add all widgets to main layout

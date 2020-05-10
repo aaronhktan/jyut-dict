@@ -31,12 +31,12 @@ public:
     ~ResultListModel() override;
 
     void callback(const std::vector<Entry> entries, bool emptyQuery) override;
-    void callback(const std::vector<SourceSentence> entries,
-                  bool emptyQuery) override;
     void setEntries(std::vector<Entry> entries);
     void setEntries(std::vector<Entry> entries, bool emptyQuery);
     void setWelcome();
     void setEmpty();
+
+    void setIsFavouritesList(bool isFavouritesList);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;
@@ -45,6 +45,8 @@ public:
                         int role = Qt::DisplayRole) const override;
 
 private:
+    bool _isFavouritesList = false;
+
     std::vector<Entry> _entries;
 
     std::shared_ptr<ISearchObservable> _search;

@@ -35,5 +35,11 @@
         <file>images/star.png</file>
         <file>images/share_inverted.png</file>
         <file>images/share.png</file>
+        <file>images/sliders_inverted_nopadding.png</file>
+        <file>images/sliders_nopadding.png</file>
+        <file>images/star_inverted_nopadding.png</file>
+        <file>images/star_nopadding.png</file>
+        <file>images/settings_inverted_nopadding.png</file>
+        <file>images/settings_nopadding.png</file>
     </qresource>
 </RCC>
