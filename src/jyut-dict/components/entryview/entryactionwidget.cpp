@@ -152,14 +152,10 @@ void EntryActionWidget::refreshBookmarkButton(void)
     if (!_bookmarkButton->property("saved").toBool()) {
         QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [=]() {
             addEntryToFavourites(_entry);
-            _bookmarkButton->setProperty("saved", QVariant::fromValue(true));
-            refreshBookmarkButton();
         });
     } else {
         QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [=]() {
             removeEntryFromFavourites(_entry);
-            _bookmarkButton->setProperty("saved", QVariant::fromValue(false));
-            refreshBookmarkButton();
         });
     }
 }

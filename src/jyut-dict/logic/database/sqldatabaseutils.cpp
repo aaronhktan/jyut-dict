@@ -530,7 +530,6 @@ bool SQLDatabaseUtils::addSentenceSource(void)
                "FROM links_tmp as l, sources as s "
                "WHERE l.sourcename = s.sourcename");
 
-    _manager->closeDatabase();
     return true;
 }
 

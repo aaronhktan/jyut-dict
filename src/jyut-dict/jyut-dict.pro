@@ -265,6 +265,7 @@ unix:!macx {
 unix|win32:!macx {
     # Copy dictionary database to the build directory
     DICTFILES = $$files($${PWD}/resources/db/dict.db)
+    DICTFILES += $$files($${PWD}/resources/db/user.db)
 
     copy_files.name = copy dictionary files
     copy_files.input = DICTFILES
