@@ -141,11 +141,11 @@ void EntryViewSentenceCardSection::setStyle(bool use_dark)
     QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
                                           LABEL_TEXT_COLOUR_DARK_G,
                                           LABEL_TEXT_COLOUR_DARK_B}
-                                       .darker(200)
+                                       .darker(300)
                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_G,
                                           LABEL_TEXT_COLOUR_LIGHT_B}
-                                       .lighter(100);
+                                       .lighter(200);
     QString styleSheet = "QToolButton { border: 2px solid %1; "
                          "border-radius: 17px; "
                          "font-size: 12px; "
