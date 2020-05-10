@@ -7,11 +7,11 @@
 #include <QList>
 #include <QVariant>
 
-FavouriteSplitter::FavouriteSplitter(std::shared_ptr<SQLUserDataUtils> utils,
+FavouriteSplitter::FavouriteSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
                                      std::shared_ptr<SQLDatabaseManager> manager,
                                      QWidget *parent)
     : QSplitter(parent)
-    , _sqlUserUtils{utils}
+    , _sqlUserUtils{sqlUserUtils}
     , _manager{manager}
 {
     _analytics = new Analytics{this};

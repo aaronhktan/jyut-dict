@@ -130,8 +130,11 @@ void EntryActionWidget::setStyle(bool use_dark)
     _shareButton->setIcon(
         QIcon{use_dark ? ":/images/share_inverted.png" : ":/images/share.png"});
 
-    _bookmarkButton->adjustSize();
-    _shareButton->adjustSize();
+    // Hack to get around weird button sizing issues when switching styles
+    _bookmarkButton->setVisible(false);
+    _shareButton->setVisible(false);
+    _bookmarkButton->setVisible(true);
+    _shareButton->setVisible(true);
 }
 
 void EntryActionWidget::refreshBookmarkButton(void)

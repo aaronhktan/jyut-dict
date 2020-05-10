@@ -12,17 +12,20 @@
 #include <QSplitter>
 #include <QWidget>
 
-// The MainSplitter contains a "master" listview and a "detail" scrollarea
+// The FavouriteSplitter contains a "master" listview and a "detail" scrollarea
 //
 // It handles the model changed signal that the master listview emits,
 // and passes the data to the detail scrollarea.
+//
+// It also subscribes to the sqlUserUtils to provide updates to the scroll area
+// on the status of whether the current entry is saved.
 
 class FavouriteSplitter : public QSplitter
 {
 Q_OBJECT
 
 public:
-    explicit FavouriteSplitter(std::shared_ptr<SQLUserDataUtils> utils,
+    explicit FavouriteSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
                                std::shared_ptr<SQLDatabaseManager> manager,
                                QWidget *parent = nullptr);
     ~FavouriteSplitter() override;
