@@ -19,9 +19,18 @@ public:
     bool isDatabaseOpen();
     void closeDatabase();
 
+    QString getDictionaryDatabasePath();
+    QString getUserDatabasePath();
+
 private:
     void addDatabase(QString name);
     bool openDatabase(QString name);
+
+    QString getLocalDictionaryDatabasePath();
+    QString getBundleDictionaryDatabasePath();
+
+    QString getLocalUserDatabasePath();
+    QString getBundleUserDatabasePath();
 
     bool copyDictionaryDatabase();
 

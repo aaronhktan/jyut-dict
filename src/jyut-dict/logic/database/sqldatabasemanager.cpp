@@ -55,15 +55,33 @@ QSqlDatabase SQLDatabaseManager::getDatabase()
     return QSqlDatabase::database(name);
 }
 
+bool SQLDatabaseManager::isDatabaseOpen()
+{
+    return QSqlDatabase::database(getCurrentDatabaseName(), /*open=*/false)
+        .isOpen();
+}
+
 void SQLDatabaseManager::closeDatabase()
 {
     QSqlDatabase::database(getCurrentDatabaseName(), /*open=*/false).close();
 }
 
-bool SQLDatabaseManager::isDatabaseOpen()
+QString SQLDatabaseManager::getDictionaryDatabasePath()
 {
-    return QSqlDatabase::database(getCurrentDatabaseName(), /*open=*/false)
-        .isOpen();
+#ifdef PORTABLE
+    return getBundleDictionaryDatabasePath();
+#else
+    return getLocalDictionaryDatabasePath();
+#endif
+}
+
+QString SQLDatabaseManager::getUserDatabasePath()
+{
+#ifdef PORTABLE
+    return getBundleUserDatabasePath();
+#else
+    return getLocalUserDatabasePath();
+#endif
 }
 
 void SQLDatabaseManager::addDatabase(QString name)
@@ -94,19 +112,31 @@ bool SQLDatabaseManager::openDatabase(QString name)
     return true;
 }
 
-bool SQLDatabaseManager::copyDictionaryDatabase()
+QString SQLDatabaseManager::getLocalDictionaryDatabasePath()
 {
 #ifdef Q_OS_DARWIN
-    QFileInfo bundleFile{QCoreApplication::applicationDirPath()
-                         + "/../Resources/dict.db"};
     QFileInfo localFile{
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
         + "/Dictionaries/dict.db"};
 #elif defined(Q_OS_WIN)
-    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "./dict.db"};
     QFileInfo localFile{
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
         + "/Dictionaries/dict.db"};
+#else
+    QFileInfo localFile{
+        QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
+        + "/dictionaries/dict.db"};
+#endif
+    return localFile.absoluteFilePath();
+}
+
+QString SQLDatabaseManager::getBundleDictionaryDatabasePath()
+{
+#ifdef Q_OS_DARWIN
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath()
+                         + "/../Resources/dict.db"};
+#elif defined(Q_OS_WIN)
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "./dict.db"};
 #else
 #ifdef APPIMAGE
     QFileInfo bundleFile{QCoreApplication::applicationDirPath()
@@ -116,62 +146,35 @@ bool SQLDatabaseManager::copyDictionaryDatabase()
 #else
     QFileInfo bundleFile{"/usr/share/jyut-dict/dictionaries/dict.db"};
 #endif
-    QFileInfo localFile{
-        QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
-        + "/dictionaries/dict.db"};
 #endif
-
-#ifdef PORTABLE
-    if (bundleFile.exists() && bundleFile.isFile()) {
-        _dictionaryDatabasePath = bundleFile.absoluteFilePath();
-    }
-#else
-    // Make path for dictionary storage
-    if (!localFile.exists()) {
-        if (!QDir().mkpath(localFile.absolutePath())) {
-            return false;
-        }
-    }
-
-    // Copy file from bundle to Application Support
-    if (!localFile.exists() || !localFile.isFile()) {
-        if (!QFile::copy(bundleFile.absoluteFilePath(),
-                         localFile.absoluteFilePath())) {
-            return false;
-        }
-    }
-
-    // Delete file in bundle
-    if (bundleFile.exists() && bundleFile.isFile()) {
-        if (!QFile::remove(bundleFile.absoluteFilePath())) {
-            //            std::cerr << "Couldn't remove original file!" << std::endl;
-            //            return;
-        }
-    }
-
-    _dictionaryDatabasePath = localFile.absoluteFilePath();
-#endif
-
-    return true;
+    return bundleFile.absoluteFilePath();
 }
 
-bool SQLDatabaseManager::copyUserDatabase()
+QString SQLDatabaseManager::getLocalUserDatabasePath()
 {
-    if (!QSqlDatabase::database(getCurrentDatabaseName()).isOpen()) {
-        return false;
-    }
-
 #ifdef Q_OS_DARWIN
-    QFileInfo bundleFile{QCoreApplication::applicationDirPath()
-                         + "/../Resources/user.db"};
     QFileInfo localFile{
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
         + "/Dictionaries/user.db"};
 #elif defined(Q_OS_WIN)
-    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "./user.db"};
     QFileInfo localFile{
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
         + "/Dictionaries/user.db"};
+#else
+    QFileInfo localFile{
+        QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
+        + "/dictionaries/user.db"};
+#endif
+    return localFile.absoluteFilePath();
+}
+
+QString SQLDatabaseManager::getBundleUserDatabasePath()
+{
+#ifdef Q_OS_DARWIN
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath()
+                         + "/../Resources/user.db"};
+#elif defined(Q_OS_WIN)
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "./user.db"};
 #else
 #ifdef APPIMAGE
     QFileInfo bundleFile{QCoreApplication::applicationDirPath()
@@ -181,14 +184,22 @@ bool SQLDatabaseManager::copyUserDatabase()
 #else
     QFileInfo bundleFile{"/usr/share/jyut-dict/dictionaries/user.db"};
 #endif
-    QFileInfo localFile{
-        QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
-        + "/dictionaries/user.db"};
 #endif
+    return bundleFile.absoluteFilePath();
+}
 
+bool SQLDatabaseManager::copyDictionaryDatabase()
+{
 #ifdef PORTABLE
-    _userDatabasePath = bundleFile.absoluteFilePath();
+    QFileInfo file{getDictionaryDatabasePath()};
+    if (file.exists() && file.isFile()) {
+        _dictionaryDatabasePath = file.absoluteFilePath();
+    }
+    return true;
 #else
+    QFileInfo localFile{getLocalDictionaryDatabasePath()};
+    QFileInfo bundleFile{getBundleDictionaryDatabasePath()};
+
     // Make path for dictionary storage
     if (!localFile.exists()) {
         if (!QDir().mkpath(localFile.absolutePath())) {
@@ -207,8 +218,48 @@ bool SQLDatabaseManager::copyUserDatabase()
     // Delete file in bundle
     if (bundleFile.exists() && bundleFile.isFile()) {
         if (!QFile::remove(bundleFile.absoluteFilePath())) {
-            //            std::cerr << "Couldn't remove original file!" << std::endl;
-            //            return;
+            // This is non-fatal, just ignore it.
+        }
+    }
+
+    _dictionaryDatabasePath = localFile.absoluteFilePath();
+
+    return true;
+#endif
+}
+
+bool SQLDatabaseManager::copyUserDatabase()
+{
+    if (!QSqlDatabase::database(getCurrentDatabaseName()).isOpen()) {
+        return false;
+    }
+
+#ifdef PORTABLE
+    QFileInfo file{getUserDatabasePath()};
+    _userDatabasePath = file.absoluteFilePath();
+#else
+    QFileInfo localFile{getLocalUserDatabasePath()};
+    QFileInfo bundleFile{getBundleUserDatabasePath()};
+
+    // Make path for dictionary storage
+    if (!localFile.exists()) {
+        if (!QDir().mkpath(localFile.absolutePath())) {
+            return false;
+        }
+    }
+
+    // Copy file from bundle to Application Support
+    if (!localFile.exists() || !localFile.isFile()) {
+        if (!QFile::copy(bundleFile.absoluteFilePath(),
+                         localFile.absoluteFilePath())) {
+            return false;
+        }
+    }
+
+    // Delete file in bundle
+    if (bundleFile.exists() && bundleFile.isFile()) {
+        if (!QFile::remove(bundleFile.absoluteFilePath())) {
+            // This is non-fatal, just ignore it.
         }
     }
 
