@@ -93,18 +93,26 @@ void MainToolBar::changeEvent(QEvent *event)
 
 void MainToolBar::setStyle(bool use_dark)
 {
+#ifdef Q_OS_WIN
+    _openHistoryButton->setIcon(QIcon{":/images/clock_black_nopadding.png"});
+#else
     _openHistoryButton->setIcon(
         QIcon{use_dark ? ":/images/clock_inverted_nopadding.png"
                        : ":/images/clock_nopadding.png"});
-    _openHistoryButton->setStyleSheet(QString{
-        "QToolButton { padding: 3px; margin-right: 6px; }"
-        "QToolButton:hover { background-color: %1; border-radius: 3px; "
-        "padding: 3px; }"}
-                                          .arg(use_dark ? "grey" : "whitesmoke"));
+#endif
+    _openHistoryButton->setStyleSheet(
+        QString{"QToolButton { padding: 3px; margin-right: 6px; }"
+                "QToolButton:hover { background-color: %1; border-radius: 3px; "
+                "padding: 3px; }"}
+            .arg(use_dark ? "grey" : "whitesmoke"));
 
+#ifdef Q_OS_WIN
+    _openFavouritesButton->setIcon(QIcon{":/images/star_black_nopadding.png"});
+#else
     _openFavouritesButton->setIcon(
         QIcon{use_dark ? ":/images/star_inverted_nopadding.png"
                        : ":/images/star_nopadding.png"});
+#endif
     _openFavouritesButton->setStyleSheet(QString{
         "QToolButton { padding: 3px; margin-top: 2px; margin-bottom: 2px; "
         "margin-right: 4px; }"
@@ -113,9 +121,13 @@ void MainToolBar::setStyle(bool use_dark)
                                              .arg(use_dark ? "grey"
                                                            : "whitesmoke"));
 
+#ifdef Q_OS_WIN
+    _openSettingsButton->setIcon(QIcon{":/images/settings_black_nopadding.png"});
+#else
     _openSettingsButton->setIcon(QIcon{use_dark
                                    ? ":/images/settings_inverted_nopadding.png"
                                    : ":/images/settings_nopadding.png"});
+#endif
     _openSettingsButton->setStyleSheet(
         QString{"QToolButton { padding: 3px; margin: 0px; }"
                 "QToolButton:hover { background-color: %1; border-radius: 3px; "

@@ -43,5 +43,8 @@
         <file>images/settings_nopadding.png</file>
         <file>images/clock_inverted_nopadding.png</file>
         <file>images/clock_nopadding.png</file>
+        <file>images/clock_black_nopadding.png</file>
+        <file>images/settings_black_nopadding.png</file>
+        <file>images/star_black_nopadding.png</file>
     </qresource>
 </RCC>
