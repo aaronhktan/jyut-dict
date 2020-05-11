@@ -49,7 +49,6 @@ void EntryActionWidget::changeEvent(QEvent *event)
 
 void EntryActionWidget::setEntry(const Entry entry)
 {
-    _sqlUserUtils->checkIfEntryHasBeenFavourited(entry);
     _entry = entry;
 
     disconnect(this, nullptr, nullptr, nullptr);
@@ -60,12 +59,16 @@ void EntryActionWidget::setEntry(const Entry entry)
                 if (entry != existenceEntry) {
                     return;
                 }
+#ifdef Q_OS_MAC
                 setVisible(false);
+#endif
                 _bookmarkButton->setProperty("saved",
                                              QVariant::fromValue(entryExists));
                 refreshBookmarkButton();
                 setVisible(true);
     });
+
+    _sqlUserUtils->checkIfEntryHasBeenFavourited(entry);
 }
 
 void EntryActionWidget::setupUI(void)
@@ -130,11 +133,13 @@ void EntryActionWidget::setStyle(bool use_dark)
     _shareButton->setIcon(
         QIcon{use_dark ? ":/images/share_inverted.png" : ":/images/share.png"});
 
+#ifdef Q_OS_MAC
     // Hack to get around weird button sizing issues when switching styles
     _bookmarkButton->setVisible(false);
     _shareButton->setVisible(false);
     _bookmarkButton->setVisible(true);
     _shareButton->setVisible(true);
+#endif
 }
 
 void EntryActionWidget::refreshBookmarkButton(void)

@@ -55,7 +55,11 @@ void SearchOptionsRadioGroupBox::setupUI()
 {
 
     _layout = new QHBoxLayout{this};
+#ifdef Q_OS_LINUX
+    _layout->setContentsMargins(15, 5, 5, 5);
+#else
     _layout->setContentsMargins(15, 5, 55, 5);
+#endif
 
     _simplifiedButton = new QRadioButton{this};
     _traditionalButton = new QRadioButton{this};
