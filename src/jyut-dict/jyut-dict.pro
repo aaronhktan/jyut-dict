@@ -70,6 +70,7 @@ SOURCES += \
     components/settings/dictionarytab.cpp \
     components/settings/settingstab.cpp \
     logic/database/sqluserdatautils.cpp \
+    logic/database/sqluserhistoryutils.cpp \
     logic/search/sqlsearch.cpp \
     logic/sentence/sentenceset.cpp \
     logic/sentence/sourcesentence.cpp \
@@ -149,6 +150,7 @@ HEADERS += \
     logic/database/sqldatabasemanager.h \
     logic/database/sqldatabaseutils.h \
     logic/database/sqluserdatautils.h \
+    logic/database/sqluserhistoryutils.h \
     logic/dictionary/dictionarymetadata.h \
     logic/dictionary/dictionarysource.h \
     logic/entry/definitionsset.h \
