@@ -24,57 +24,72 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="88"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="115"/>
         <source>Automatically check for updates on startup:</source>
         <translation>Vérifier automatiquement les mises à jour :</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="90"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="117"/>
         <source>Enable analytics:</source>
         <translation>Activer la télémétrie :</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="92"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="119"/>
+        <source>Back up saved words:</source>
+        <translation>Sauvegarder les mots enregistrés :</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="121"/>
         <source>Application language:</source>
         <translation>Langue d&apos;application :</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="94"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="123"/>
+        <source>Back up</source>
+        <translation>Sauvegarder</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="125"/>
         <source>Use system language</source>
         <translation>Langue par défault du système</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="95"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="126"/>
         <source>English</source>
         <translation>Anglais</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="100"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="131"/>
         <source>Simplified Chinese</source>
         <translation>Chinois simplifié</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="101"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="132"/>
         <source>Traditional Chinese</source>
         <translation>Chinois traditionnel</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="96"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="238"/>
+        <source>Path to save exported database</source>
+        <translation>Où enregistrer le fichier</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="127"/>
         <source>French (CA)</source>
         <translation>Français (Canada)</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="97"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="128"/>
         <source>French</source>
         <translation>Français</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="98"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="129"/>
         <source>Cantonese (Simplified)</source>
         <translation>Cantonais simplifié</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="99"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="130"/>
         <source>Cantonese (Traditional)</source>
         <translation>Cantonais traditionnel</translation>
     </message>
@@ -601,44 +616,44 @@
 <context>
     <name>ResultListModel</name>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="43"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="47"/>
         <source>Welcome!</source>
         <translation>Bienvenue !</translation>
     </message>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="46"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="50"/>
         <source>Start typing to search for words</source>
         <translation>Tapez pour effectuer une recherche</translation>
     </message>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="55"/>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="56"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="59"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="60"/>
         <source>No results...</source>
         <translation>Aucun résultat trouvé</translation>
     </message>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="59"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="63"/>
         <source>Simplified (SC) and Traditional (TC) Chinese, Jyutping (JP), Pinyin (PY), and English (EN) are options to the right of the search bar.</source>
         <translation>Vous pouvez changer votre langue de recherche entre le chinois simplifié (CS) et traditionnel (CT), le Jyutping (JP), le Pinyin (PY), et le français (FR).</translation>
     </message>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="63"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="67"/>
         <source>Try switching between languages!</source>
         <translation>Changez votre langue de recherche !</translation>
     </message>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="68"/>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="69"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="72"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="73"/>
         <source>Nothing saved...</source>
         <translation>Aucun mot enregistré...</translation>
     </message>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="72"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="76"/>
         <source>Clicking the &quot;save&quot; button when viewing a word or phrase adds it to this list. Try adding a word that sounds cool!</source>
         <translation>Ajoutez un mot à cette liste en cliquant sur le bouton «Enregistrer» sous un mot. Essayez-le avec un mot cool !</translation>
     </message>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="76"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="80"/>
         <source>Save a word to get started!</source>
         <translation>Enregistrez un mot pour commencer !</translation>
     </message>

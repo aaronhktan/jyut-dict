@@ -24,7 +24,7 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="+88"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="+115"/>
         <source>Automatically check for updates on startup:</source>
         <translation>自动检查更新：</translation>
     </message>
@@ -35,8 +35,18 @@
     </message>
     <message>
         <location line="+2"/>
+        <source>Back up saved words:</source>
+        <translation>备份你保存嘅词语：</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Application language:</source>
         <translation>软件语言：</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Back up</source>
+        <translation>備份</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -59,7 +69,12 @@
         <translation>繁体中文</translation>
     </message>
     <message>
-        <location line="-5"/>
+        <location line="+106"/>
+        <source>Path to save exported database</source>
+        <translation>保存文件至</translation>
+    </message>
+    <message>
+        <location line="-111"/>
         <source>French (CA)</source>
         <translation>法文（加拿大）</translation>
     </message>
@@ -605,7 +620,7 @@
 <context>
     <name>ResultListModel</name>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="+43"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="+47"/>
         <source>Welcome!</source>
         <translation>欢迎使用粤语字典！</translation>
     </message>

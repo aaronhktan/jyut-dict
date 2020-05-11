@@ -235,7 +235,7 @@ void AdvancedTab::exportUserDatabase(void)
 
     QString destinationFileName
         = _fileDialog->getSaveFileName(this,
-                                       tr("Path to save exported image"),
+                                       tr("Path to save exported database"),
                                        QDir::homePath());
     if (!destinationFileName.toStdString().empty()) {
         if (!destinationFileName.endsWith(".db")) {

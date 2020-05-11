@@ -24,57 +24,72 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="88"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="115"/>
         <source>Automatically check for updates on startup:</source>
         <translation>自動檢查更新：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="90"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="117"/>
         <source>Enable analytics:</source>
         <translation>啟用 Telemetry：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="92"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="119"/>
+        <source>Back up saved words:</source>
+        <translation>備份您儲存的詞語：</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="121"/>
         <source>Application language:</source>
         <translation>程式語言：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="94"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="123"/>
+        <source>Back up</source>
+        <translation>備份</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="125"/>
         <source>Use system language</source>
         <translation>系統默認</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="95"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="126"/>
         <source>English</source>
         <translation>英文</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="100"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="131"/>
         <source>Simplified Chinese</source>
         <translation>簡體中文</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="101"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="132"/>
         <source>Traditional Chinese</source>
         <translation>正體中文</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="96"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="238"/>
+        <source>Path to save exported database</source>
+        <translation>將檔案儲存至</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="127"/>
         <source>French (CA)</source>
         <translation>法文（加拿大）</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="97"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="128"/>
         <source>French</source>
         <translation>法文</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="98"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="129"/>
         <source>Cantonese (Simplified)</source>
         <translation>簡體粵語</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="99"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="130"/>
         <source>Cantonese (Traditional)</source>
         <translation>正體粵語</translation>
     </message>
@@ -609,44 +624,44 @@
 <context>
     <name>ResultListModel</name>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="43"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="47"/>
         <source>Welcome!</source>
         <translation>歡迎使用粵語字典！</translation>
     </message>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="46"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="50"/>
         <source>Start typing to search for words</source>
         <translation>開始輸入並搜尋</translation>
     </message>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="55"/>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="56"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="59"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="60"/>
         <source>No results...</source>
         <translation>找不到結果</translation>
     </message>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="59"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="63"/>
         <source>Simplified (SC) and Traditional (TC) Chinese, Jyutping (JP), Pinyin (PY), and English (EN) are options to the right of the search bar.</source>
         <translation>您在搜尋欄旁邊能選擇使用哪種語言進行搜尋。可選擇的語言包括簡體中文，正體中文，粵語拼音（粵拼），漢語拼音，和英文。</translation>
     </message>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="63"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="67"/>
         <source>Try switching between languages!</source>
         <translation>試用搜尋欄旁邊的按鈕選擇搜尋語言！</translation>
     </message>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="68"/>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="69"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="72"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="73"/>
         <source>Nothing saved...</source>
         <translation>你還沒儲存词语啊！</translation>
     </message>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="72"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="76"/>
         <source>Clicking the &quot;save&quot; button when viewing a word or phrase adds it to this list. Try adding a word that sounds cool!</source>
         <translation>按“儲存“按鈕即可儲存詞語。最好加一个有趣的吧！</translation>
     </message>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="76"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="80"/>
         <source>Save a word to get started!</source>
         <translation>—</translation>
     </message>
