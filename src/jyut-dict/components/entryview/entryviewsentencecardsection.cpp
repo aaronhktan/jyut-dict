@@ -36,13 +36,6 @@ EntryViewSentenceCardSection::~EntryViewSentenceCardSection()
 {
 }
 
-void EntryViewSentenceCardSection::callback(std::vector<Entry> entries,
-                                   bool emptyQuery)
-{
-    (void) (emptyQuery);
-    (void) (entries);
-}
-
 void EntryViewSentenceCardSection::callback(
     std::vector<SourceSentence> sourceSentences, bool emptyQuery)
 {

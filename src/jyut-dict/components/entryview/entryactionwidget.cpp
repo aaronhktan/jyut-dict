@@ -1,6 +1,5 @@
 #include "entryactionwidget.h"
 
-#include "components/favouritewindow/favouritesplitter.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
@@ -60,6 +59,8 @@ void EntryActionWidget::setEntry(const Entry entry)
                     return;
                 }
 #ifdef Q_OS_MAC
+                // On other platforms, this causes issues with scrolling.
+                // Restrict to macOS.
                 setVisible(false);
 #endif
                 _bookmarkButton->setProperty("saved",

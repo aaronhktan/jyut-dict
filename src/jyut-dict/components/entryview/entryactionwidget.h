@@ -10,6 +10,10 @@
 #include <QPushButton>
 #include <QWidget>
 
+// The EntryActionWidget provides some actions related to the EntryView.
+// This includes saving the entry to a list of saved words, and
+// exporting an image of the entry.
+
 class EntryActionWidget : public QWidget,
                           public ISearchObserver
 {

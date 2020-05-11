@@ -13,6 +13,10 @@
 #include <mutex>
 #include <vector>
 
+// The SQLUserDataUtils class searches the user database
+// It offers convenient functions like searching for all saved words,
+// whether a particular word was saved, and more.
+
 class SQLUserDataUtils : public QObject,
                          virtual public ISearchObservable
 {

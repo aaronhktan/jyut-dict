@@ -27,5 +27,7 @@ c.execute('''CREATE TABLE favourite_lists(
 c.execute('INSERT INTO favourite_lists VALUES(?,?,?)', 
   (1, 'General', datetime.datetime.now()))
 
+c.execute('PRAGMA user_version=1')
+
 db.commit()
 db.close()
