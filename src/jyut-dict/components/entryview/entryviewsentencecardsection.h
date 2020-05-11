@@ -5,6 +5,7 @@
 #include "components/sentencecard/sentencecardwidget.h"
 #include "components/sentencewindow/sentencesplitter.h"
 #include "logic/database/sqldatabasemanager.h"
+#include "logic/database/sqluserdatautils.h"
 #include "logic/search/isearchobserver.h"
 #include "logic/search/sqlsearch.h"
 
@@ -29,8 +30,6 @@ public:
                                  QWidget *parent = nullptr);
     explicit EntryViewSentenceCardSection(QWidget *parent = nullptr);
     ~EntryViewSentenceCardSection() override;
-    void callback(const std::vector<Entry> sourceSentences,
-                  bool emptyQuery) override;
     void callback(const std::vector<SourceSentence> sourceSentences,
                   bool emptyQuery) override;
 

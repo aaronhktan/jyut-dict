@@ -9,6 +9,7 @@
 #include <QEvent>
 #include <QFormLayout>
 #include <QLabel>
+#include <QPushButton>
 #include <QSettings>
 #include <QTranslator>
 #include <QWidget>
@@ -34,12 +35,15 @@ private:
     void initializeAnalyticsCheckbox(QCheckBox &checkbox);
     void initializeLanguageCombobox(QComboBox &combobox);
 
+    void exportUserDatabase(void);
+
     bool _paletteRecentlyChanged = false;
 
     Analytics *_analytics;
 
     QCheckBox *_updateCheckbox;
     QCheckBox *_analyticsCheckbox;
+    QPushButton *_exportUserDatabaseButton;
     QComboBox *_languageCombobox;
 
     QFormLayout *_tabLayout;

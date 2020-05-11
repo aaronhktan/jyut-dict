@@ -6,6 +6,7 @@
 #include "logic/analytics/analytics.h"
 #include "logic/update/githubreleasechecker.h"
 #include "logic/database/sqldatabasemanager.h"
+#include "logic/database/sqluserdatautils.h"
 #include "logic/search/sqlsearch.h"
 
 #include <QAction>
@@ -64,6 +65,7 @@ private:
     QAction *_selectPinyinAction;
     QAction *_selectEnglishAction;
 
+    QAction *_favouritesWindowAction;
     QAction *_minimizeAction;
     QAction *_maximizeAction;
     QAction *_bringAllToFrontAction;
@@ -73,11 +75,13 @@ private:
 
     QPointer<QWidget> _aboutWindow;
     QPointer<QWidget> _settingsWindow;
+    QPointer<QWidget> _favouritesWindow;
 
     QProgressDialog *_dialog;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
     std::shared_ptr<SQLSearch> _sqlSearch;
+    std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
 
     bool _recentlyCheckedForUpdates = false;
 
@@ -109,6 +113,7 @@ private:
 
     void openAboutWindow(void);
     void openSettingsWindow(void);
+    void openFavouritesWindow(void);
 
     void checkForUpdate(bool showProgress);
 

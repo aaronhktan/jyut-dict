@@ -21,7 +21,8 @@
 class EntryScrollArea : public QScrollArea
 {
 public:
-    explicit EntryScrollArea(std::shared_ptr<SQLDatabaseManager> manager,
+    explicit EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
+                             std::shared_ptr<SQLDatabaseManager> manager,
                              QWidget *parent = nullptr);
     ~EntryScrollArea() override;
 

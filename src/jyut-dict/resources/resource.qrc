@@ -31,5 +31,20 @@
         <file>images/speak.png</file>
         <file>images/loading.gif</file>
         <file>images/loading_inverted.gif</file>
+        <file>images/star_inverted.png</file>
+        <file>images/star.png</file>
+        <file>images/share_inverted.png</file>
+        <file>images/share.png</file>
+        <file>images/sliders_inverted_nopadding.png</file>
+        <file>images/sliders_nopadding.png</file>
+        <file>images/star_inverted_nopadding.png</file>
+        <file>images/star_nopadding.png</file>
+        <file>images/settings_inverted_nopadding.png</file>
+        <file>images/settings_nopadding.png</file>
+        <file>images/clock_inverted_nopadding.png</file>
+        <file>images/clock_nopadding.png</file>
+        <file>images/clock_darkgrey_nopadding.png</file>
+        <file>images/settings_darkgrey_nopadding.png</file>
+        <file>images/star_darkgrey_nopadding.png</file>
     </qresource>
 </RCC>

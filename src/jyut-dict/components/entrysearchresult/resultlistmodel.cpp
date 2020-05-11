@@ -1,6 +1,6 @@
 #include "resultlistmodel.h"
 
-ResultListModel::ResultListModel(std::shared_ptr<SQLSearch> sqlSearch,
+ResultListModel::ResultListModel(std::shared_ptr<ISearchObservable> sqlSearch,
                                  std::vector<Entry> entries, QObject *parent)
     : QAbstractListModel(parent)
 {
@@ -16,18 +16,12 @@ ResultListModel::ResultListModel(std::shared_ptr<SQLSearch> sqlSearch,
 
 ResultListModel::~ResultListModel()
 {
+    _search->deregisterObserver(this);
 }
 
 void ResultListModel::callback(const std::vector<Entry> entries, bool emptyQuery)
 {
     setEntries(entries, emptyQuery);
-}
-
-void ResultListModel::callback(const std::vector<SourceSentence> sentences,
-                               bool emptyQuery)
-{
-    (void) (sentences);
-    (void) (emptyQuery);
 }
 
 void ResultListModel::setEntries(std::vector<Entry> entries)
@@ -46,6 +40,10 @@ void ResultListModel::setEntries(std::vector<Entry> entries, bool emptyQuery) {
 
 void ResultListModel::setWelcome()
 {
+    if (_isFavouritesList) {
+        setEmpty();
+        return;
+    }
     Entry entry = Entry{tr("Welcome!").toStdString(), tr("Welcome!").toStdString(),
                         "—", "—", {}, {}, {}};
     entry.addDefinitions("CEDICT",
@@ -57,18 +55,38 @@ void ResultListModel::setWelcome()
 
 void ResultListModel::setEmpty()
 {
-    Entry entry = Entry{tr("No results...").toStdString(),
-                        tr("No results...").toStdString(),
-                        "", "", {}, {}, {}};
-    entry.addDefinitions("CEDICT",
-                         {tr("Simplified (SC) and Traditional (TC) Chinese, "
-                             "Jyutping (JP), Pinyin (PY), and English (EN) "
-                             "are options to the right of the search bar.")
-                              .toStdString()});
-    entry.setJyutping(tr("Try switching between languages!").toStdString());
-    entry.setIsEmpty(true);
+    if (!_isFavouritesList) {
+        Entry entry = Entry{tr("No results...").toStdString(),
+                            tr("No results...").toStdString(),
+                            "", "", {}, {}, {}};
+        entry.addDefinitions("CEDICT",
+                             {tr("Simplified (SC) and Traditional (TC) Chinese, "
+                                 "Jyutping (JP), Pinyin (PY), and English (EN) "
+                                 "are options to the right of the search bar.")
+                                  .toStdString()});
+        entry.setJyutping(tr("Try switching between languages!").toStdString());
+        entry.setIsEmpty(true);
 
-    setEntries(std::vector<Entry>{entry});
+        setEntries(std::vector<Entry>{entry});
+    } else {
+        Entry entry = Entry{tr("Nothing saved...").toStdString(),
+                            tr("Nothing saved...").toStdString(),
+                            "", "", {}, {}, {}};
+        entry.addDefinitions("CEDICT",
+                             {tr("Clicking the \"save\" button when viewing "
+                                 "a word or phrase adds it to this list. Try "
+                                 "adding a word that sounds cool!")
+                                  .toStdString()});
+        entry.setJyutping(tr("Save a word to get started!").toStdString());
+        entry.setIsEmpty(true);
+
+        setEntries(std::vector<Entry>{entry});
+    }
+}
+
+void ResultListModel::setIsFavouritesList(bool isFavouritesList)
+{
+    _isFavouritesList = isFavouritesList;
 }
 
 int ResultListModel::rowCount(const QModelIndex &parent) const

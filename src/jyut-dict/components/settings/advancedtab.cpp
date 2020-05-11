@@ -1,13 +1,17 @@
 #include "advancedtab.h"
 
+#include "logic/database/sqldatabasemanager.h"
+#include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
 
 #include <QApplication>
+#include <QFileDialog>
 #include <QFrame>
 #include <QLibraryInfo>
 #include <QTimer>
+#include <QtConcurrent/QtConcurrent>
 
 AdvancedTab::AdvancedTab(QWidget *parent)
     : QWidget(parent)
@@ -61,6 +65,18 @@ void AdvancedTab::setupUI()
     _analyticsCheckbox->setTristate(false);
     initializeAnalyticsCheckbox(*_analyticsCheckbox);
 
+    QFrame *_exportDivider = new QFrame{this};
+    _exportDivider->setObjectName("divider");
+    _exportDivider->setFrameShape(QFrame::HLine);
+    _exportDivider->setFrameShadow(QFrame::Raised);
+    _exportDivider->setFixedHeight(1);
+
+    _exportUserDatabaseButton = new QPushButton{this};
+    connect(_exportUserDatabaseButton,
+            &QPushButton::clicked,
+            this,
+            &AdvancedTab::exportUserDatabase);
+
     QFrame *_divider = new QFrame{this};
     _divider->setObjectName("divider");
     _divider->setFrameShape(QFrame::HLine);
@@ -73,6 +89,8 @@ void AdvancedTab::setupUI()
 
     _tabLayout->addRow(" ", _updateCheckbox);
     _tabLayout->addRow(" ", _analyticsCheckbox);
+    _tabLayout->addRow(_exportDivider);
+    _tabLayout->addRow(" ", _exportUserDatabaseButton);
     _tabLayout->addRow(_divider);
     _tabLayout->addRow(" ", _languageCombobox);
 
@@ -84,12 +102,25 @@ void AdvancedTab::setupUI()
 
 void AdvancedTab::translateUI()
 {
+    setProperty("isHan", Settings::isCurrentLocaleHan());
+
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+    for (auto button : buttons) {
+        button->setProperty("isHan", Settings::isCurrentLocaleHan());
+        button->style()->unpolish(button);
+        button->style()->polish(button);
+    }
+
     static_cast<QLabel *>(_tabLayout->labelForField(_updateCheckbox))
         ->setText(tr("Automatically check for updates on startup:"));
     static_cast<QLabel *>(_tabLayout->labelForField(_analyticsCheckbox))
         ->setText(tr("Enable analytics:"));
+    static_cast<QLabel *>(_tabLayout->labelForField(_exportUserDatabaseButton))
+        ->setText(tr("Back up saved words:"));
     static_cast<QLabel *>(_tabLayout->labelForField(_languageCombobox))
         ->setText(tr("Application language:"));
+
+    _exportUserDatabaseButton->setText(tr("Back up"));
 
     _languageCombobox->setItemText(0, tr("Use system language"));
     _languageCombobox->setItemText(1, tr("English"));
@@ -110,6 +141,12 @@ void AdvancedTab::setStyle(bool use_dark)
     for (auto frame : frames) {
         frame->setStyleSheet(style.arg(colour));
     }
+#ifdef Q_OS_MAC
+    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: "
+                  "13px; height: 16px; }");
+#elif defined(Q_OS_WIN)
+    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
+#endif
 }
 
 void AdvancedTab::initializeUpdateCheckbox(QCheckBox &checkbox)
@@ -189,4 +226,27 @@ void AdvancedTab::initializeLanguageCombobox(QComboBox &combobox)
                           /* directory */ ":/translations");
                 qApp->installTranslator(&Settings::applicationTranslator);
             });
+}
+
+void AdvancedTab::exportUserDatabase(void)
+{
+    QFileDialog *_fileDialog = new QFileDialog{this};
+    _fileDialog->setAcceptMode(QFileDialog::AcceptSave);
+
+    QString destinationFileName
+        = _fileDialog->getSaveFileName(this,
+                                       tr("Path to save exported database"),
+                                       QDir::homePath());
+    if (!destinationFileName.toStdString().empty()) {
+        if (!destinationFileName.endsWith(".db")) {
+            destinationFileName = destinationFileName + ".db";
+        }
+        if (QFile::exists(destinationFileName)) {
+            QFile::remove(destinationFileName);
+        }
+        SQLDatabaseManager manager;
+        QtConcurrent::run(QFile::copy,
+                          manager.getUserDatabasePath(),
+                          destinationFileName);
+    }
 }

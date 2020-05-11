@@ -1,5 +1,6 @@
 #include "windows/mainwindow.h"
 
+#include "components/favouritewindow/favouritesplitter.h"
 #include "dialogs/noupdatedialog.h"
 #include "logic/database/sqldatabaseutils.h"
 #include "logic/dictionary/dictionarysource.h"
@@ -63,8 +64,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Instantiate services
     _manager = std::make_shared<SQLDatabaseManager>();
-    _manager->openDatabase();
     _sqlSearch = std::make_shared<SQLSearch>(_manager);
+    _sqlUserUtils = std::make_shared<SQLUserDataUtils>(_manager);
 
     // Get colours from QSettings
     std::unique_ptr<QSettings> settings = Settings::getSettings();
@@ -117,12 +118,14 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowIcon(QIcon{":/images/icon.png"});
 #endif
 
-    _mainSplitter = new MainSplitter{_manager, _sqlSearch, this};
+    _mainSplitter = new MainSplitter{_sqlUserUtils, _manager, _sqlSearch, this};
     setCentralWidget(_mainSplitter);
 
     // Create menu bar and populate it
     createMenus();
     createActions();
+    _mainToolBar->setOpenSettingsAction(_settingsWindowAction);
+    _mainToolBar->setOpenFavouritesAction(_favouritesWindowAction);
 
     // Translate UI
     translateUI();
@@ -257,6 +260,7 @@ void MainWindow::translateUI(void)
     _selectPinyinAction->setText(tr("Search Pinyin"));
     _selectEnglishAction->setText(tr("Search English"));
 
+    _favouritesWindowAction->setText(tr("Open List of Saved Words"));
     _minimizeAction->setText(tr("Minimize"));
     _maximizeAction->setText(tr("Zoom"));
     _bringAllToFrontAction->setText(tr("Bring All to Front"));
@@ -453,6 +457,16 @@ void MainWindow::createActions(void)
             this,
             &MainWindow::selectEnglish);
     _searchMenu->addAction(_selectEnglishAction);
+
+    _favouritesWindowAction = new QAction{this};
+    _favouritesWindowAction->setShortcut(QKeySequence{"Ctrl+Shift+S"});
+    connect(_favouritesWindowAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::openFavouritesWindow);
+    _windowMenu->addAction(_favouritesWindowAction);
+
+    _windowMenu->addSeparator();
 
     _minimizeAction = new QAction{this};
     _minimizeAction->setShortcut(QKeySequence{"Ctrl+M"});
@@ -666,6 +680,20 @@ void MainWindow::openSettingsWindow(void)
 
     _settingsWindow = new SettingsWindow{_manager, this};
     _settingsWindow->show();
+}
+
+void MainWindow::openFavouritesWindow(void)
+{
+    if (_favouritesWindow) {
+        _favouritesWindow->activateWindow();
+        _favouritesWindow->raise();
+        return;
+    }
+
+    _favouritesWindow = new FavouriteSplitter{_sqlUserUtils, _manager, nullptr};
+    _favouritesWindow->setParent(this, Qt::Window);
+    _favouritesWindow->show();
+    _favouritesWindow->setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void MainWindow::checkForUpdate(bool showProgress)

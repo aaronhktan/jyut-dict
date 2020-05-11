@@ -4,9 +4,12 @@
 #include "components/entryview/entryscrollarea.h"
 #include "logic/analytics/analytics.h"
 #include "logic/database/sqldatabasemanager.h"
+#include "logic/database/sqluserdatautils.h"
 #include "logic/entry/entry.h"
 #include "logic/search/sqlsearch.h"
 
+#include <QAbstractListModel>
+#include <QEvent>
 #include <QModelIndex>
 #include <QSplitter>
 #include <QWidget>
@@ -21,19 +24,26 @@ class MainSplitter : public QSplitter
 Q_OBJECT
 
 public:
-    explicit MainSplitter(std::shared_ptr<SQLDatabaseManager> manager,
+    explicit MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
+                          std::shared_ptr<SQLDatabaseManager> manager,
                           std::shared_ptr<SQLSearch> sqlSearch,
                           QWidget *parent = nullptr);
     ~MainSplitter() override;
+
+    void changeEvent(QEvent *event) override;
 
     void setFocusToResults(void);
     void openCurrentSelectionInNewWindow(void);
 
 private:
+    void translateUI(void);
+
+    std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
     std::shared_ptr<SQLDatabaseManager> _manager;
     Analytics *_analytics;
 
     EntryScrollArea *_entryScrollArea;
+    QAbstractListModel *_model;
     QListView *_resultListView;
 
 private slots:

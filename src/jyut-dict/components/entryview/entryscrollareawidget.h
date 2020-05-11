@@ -1,6 +1,7 @@
 #ifndef ENTRYSCROLLAREAWIDGET_H
 #define ENTRYSCROLLAREAWIDGET_H
 
+#include "components/entryview/entryactionwidget.h"
 #include "components/entryview/entrycontentwidget.h"
 #include "components/entryview/entryheaderwidget.h"
 #include "logic/database/sqldatabasemanager.h"
@@ -16,7 +17,8 @@ class EntryScrollAreaWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit EntryScrollAreaWidget(std::shared_ptr<SQLDatabaseManager> manager,
+    explicit EntryScrollAreaWidget(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
+                                   std::shared_ptr<SQLDatabaseManager> manager,
                                    QWidget *parent = nullptr);
 
     void changeEvent(QEvent *event) override;
@@ -30,6 +32,7 @@ private:
     QVBoxLayout *_scrollAreaLayout;
 
     EntryHeaderWidget *_entryHeaderWidget;
+    EntryActionWidget *_entryActionWidget;
     EntryContentWidget *_entryContentWidget;
 
 signals:

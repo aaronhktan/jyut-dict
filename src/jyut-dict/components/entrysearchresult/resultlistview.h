@@ -5,7 +5,6 @@
 #include "logic/entry/entry.h"
 #include "logic/search/sqlsearch.h"
 
-#include <QAbstractListModel>
 #include <QEvent>
 #include <QListView>
 #include <QStyledItemDelegate>
@@ -25,17 +24,13 @@ class ResultListView : public QListView
     Q_OBJECT
 
 public:
-    explicit ResultListView(std::shared_ptr<SQLSearch> sqlSearch,
-                            QWidget *parent = nullptr);
-
-    void changeEvent(QEvent *event) override;
+    explicit ResultListView(QWidget *parent = nullptr);
 
 #ifdef Q_OS_WIN
     void wheelEvent(QWheelEvent *event) override;
 #endif
 
 private:
-    QAbstractListModel *_model;
     QStyledItemDelegate *_delegate;
 
 public slots:

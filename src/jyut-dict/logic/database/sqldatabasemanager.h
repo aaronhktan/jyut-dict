@@ -6,22 +6,41 @@
 // SQLDatabaseManager provides one or more connections to databases
 // that contain dictionaries and translations
 
+// The userDatabase is the database that contains user data (e.g. favourites,
+// search history, etc.)
+
 class SQLDatabaseManager
 {
 public:
     SQLDatabaseManager();
     ~SQLDatabaseManager();
 
-    bool openDatabase();
     QSqlDatabase getDatabase();
     bool isDatabaseOpen();
+    void closeDatabase();
 
-    void openEnglishDatabase(); // Deprecated, use openDatabase() instead
-    QSqlDatabase getEnglishDatabase(); // Deprecated, use getDatabase() instead
-    bool isEnglishDatabaseOpen(); // Deprecated, use isDatabaseOpen() instead
+    QString getDictionaryDatabasePath();
+    QString getUserDatabasePath();
 
 private:
-    QSqlDatabase _db;
+    void addDatabase(QString name);
+    bool openDatabase(QString name);
+
+    QString getLocalDictionaryDatabasePath();
+    QString getBundleDictionaryDatabasePath();
+
+    QString getLocalUserDatabasePath();
+    QString getBundleUserDatabasePath();
+
+    bool copyDictionaryDatabase();
+
+    bool copyUserDatabase();
+    bool attachUserDatabase();
+
+    QString getCurrentDatabaseName();
+
+    QString _dictionaryDatabasePath;
+    QString _userDatabasePath;
 };
 
 #endif // SQLDATABASEMANAGER_H

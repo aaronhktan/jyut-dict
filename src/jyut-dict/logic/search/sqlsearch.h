@@ -39,7 +39,7 @@ public:
     void searchTraditionalSentences(const QString searchTerm);
 
 private:
-    void notifyObservers(bool emptyQuery);
+    void notifyObserversOfEmptySet(bool emptyQuery);
     void notifyObservers(const std::vector<Entry> &results, bool emptyQuery) override;
     void notifyObservers(const std::vector<SourceSentence> &results,
                          bool emptyQuery) override;

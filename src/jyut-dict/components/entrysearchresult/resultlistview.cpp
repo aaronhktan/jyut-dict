@@ -9,8 +9,7 @@
 #include <QScrollBar>
 #endif
 
-ResultListView::ResultListView(std::shared_ptr<SQLSearch> sqlSearch,
-                               QWidget *parent)
+ResultListView::ResultListView(QWidget *parent)
     : QListView(parent)
 {
     setFrameShape(QFrame::NoFrame);
@@ -20,9 +19,6 @@ ResultListView::ResultListView(std::shared_ptr<SQLSearch> sqlSearch,
     setMinimumWidth(250);
 #endif
 
-    _model = new ResultListModel{sqlSearch, {}, this};
-    setModel(_model);
-
     _delegate = new ResultListDelegate{this};
     setItemDelegate(_delegate);
 
@@ -31,14 +27,6 @@ ResultListView::ResultListView(std::shared_ptr<SQLSearch> sqlSearch,
             &QGuiApplication::applicationStateChanged,
             this,
             &ResultListView::paintWithApplicationState);
-}
-
-void ResultListView::changeEvent(QEvent *event)
-{
-    if (event->type() == QEvent::LanguageChange) {
-        static_cast<ResultListModel *>(_model)->setWelcome();
-    }
-    QListView::changeEvent(event);
 }
 
 // On Windows, because of a bug in Qt (see QTBUG-7232), every time mouse

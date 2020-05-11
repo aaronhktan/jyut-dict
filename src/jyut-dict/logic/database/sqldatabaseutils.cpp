@@ -336,6 +336,7 @@ bool SQLDatabaseUtils::removeSource(std::string source)
         query.exec("ROLLBACK");
     }
 
+    _manager->closeDatabase();
     return success;
 }
 
@@ -620,5 +621,6 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
     }
 
     query.exec("DETACH DATABASE db");
+    _manager->closeDatabase();
     return success;
 }
