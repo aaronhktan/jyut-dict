@@ -69,6 +69,15 @@ void FavouriteSplitter::translateUI(void)
 {
     QString title = tr("Saved Words");
     setWindowTitle(title);
+    _sqlUserUtils->searchForAllFavouritedWords();
+}
+
+void FavouriteSplitter::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
+    QSplitter::changeEvent(event);
 }
 
 void FavouriteSplitter::openCurrentSelectionInNewWindow(void)

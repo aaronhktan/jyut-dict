@@ -40,6 +40,10 @@ void ResultListModel::setEntries(std::vector<Entry> entries, bool emptyQuery) {
 
 void ResultListModel::setWelcome()
 {
+    if (_isFavouritesList) {
+        setEmpty();
+        return;
+    }
     Entry entry = Entry{tr("Welcome!").toStdString(), tr("Welcome!").toStdString(),
                         "—", "—", {}, {}, {}};
     entry.addDefinitions("CEDICT",

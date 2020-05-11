@@ -8,6 +8,7 @@
 #include "logic/entry/entry.h"
 
 #include <QAbstractListModel>
+#include <QEvent>
 #include <QModelIndex>
 #include <QSplitter>
 #include <QWidget>
@@ -29,6 +30,8 @@ public:
                                std::shared_ptr<SQLDatabaseManager> manager,
                                QWidget *parent = nullptr);
     ~FavouriteSplitter() override;
+
+    void changeEvent(QEvent *event) override;
 
     void openCurrentSelectionInNewWindow(void);
 

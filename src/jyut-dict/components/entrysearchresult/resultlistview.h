@@ -26,8 +26,6 @@ class ResultListView : public QListView
 public:
     explicit ResultListView(QWidget *parent = nullptr);
 
-    void changeEvent(QEvent *event) override;
-
 #ifdef Q_OS_WIN
     void wheelEvent(QWheelEvent *event) override;
 #endif

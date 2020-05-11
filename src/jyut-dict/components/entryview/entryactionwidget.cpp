@@ -103,7 +103,7 @@ void EntryActionWidget::setupUI(void)
 void EntryActionWidget::translateUI(void)
 {
     _bookmarkButton->setText(
-        _bookmarkButton->property("saved").toBool() ? "Saved!" : "Save");
+        _bookmarkButton->property("saved").toBool() ? tr("Saved!") : tr("Save"));
     _shareButton->setText(tr("Share"));
 }
 

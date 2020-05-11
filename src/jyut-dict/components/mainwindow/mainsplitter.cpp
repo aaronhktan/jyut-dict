@@ -55,6 +55,19 @@ MainSplitter::~MainSplitter()
 
 }
 
+void MainSplitter::translateUI(void)
+{
+    static_cast<ResultListModel *>(_model)->setWelcome();
+}
+
+void MainSplitter::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
+    QSplitter::changeEvent(event);
+}
+
 void MainSplitter::setFocusToResults(void)
 {
     _resultListView->setFocus();

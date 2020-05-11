@@ -9,6 +9,7 @@
 #include "logic/search/sqlsearch.h"
 
 #include <QAbstractListModel>
+#include <QEvent>
 #include <QModelIndex>
 #include <QSplitter>
 #include <QWidget>
@@ -29,10 +30,14 @@ public:
                           QWidget *parent = nullptr);
     ~MainSplitter() override;
 
+    void changeEvent(QEvent *event) override;
+
     void setFocusToResults(void);
     void openCurrentSelectionInNewWindow(void);
 
 private:
+    void translateUI(void);
+
     std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
     std::shared_ptr<SQLDatabaseManager> _manager;
     Analytics *_analytics;
