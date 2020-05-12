@@ -63,4 +63,7 @@ private:
     std::mutex _notifyMutex;
 };
 
+typedef std::pair<std::string, int> searchTermHistoryItem;
+Q_DECLARE_METATYPE(searchTermHistoryItem);
+
 #endif // SQLUSERHISTORYUTILS_H

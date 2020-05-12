@@ -66,6 +66,7 @@ private:
     QAction *_selectPinyinAction;
     QAction *_selectEnglishAction;
 
+    QAction *_historyWindowAction;
     QAction *_favouritesWindowAction;
     QAction *_minimizeAction;
     QAction *_maximizeAction;
@@ -76,6 +77,7 @@ private:
 
     QPointer<QWidget> _aboutWindow;
     QPointer<QWidget> _settingsWindow;
+    QPointer<QWidget> _historyWindow;
     QPointer<QWidget> _favouritesWindow;
 
     QProgressDialog *_dialog;
@@ -115,6 +117,7 @@ private:
 
     void openAboutWindow(void);
     void openSettingsWindow(void);
+    void openHistoryWindow(void);
     void openFavouritesWindow(void);
 
     void checkForUpdate(bool showProgress);

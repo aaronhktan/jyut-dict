@@ -48,6 +48,10 @@ SOURCES += \
     components/entryview/entryscrollareawidget.cpp \
     components/entryview/entryviewsentencecardsection.cpp \
     components/favouritewindow/favouritesplitter.cpp \
+    components/historyview/searchhistorylistdelegate.cpp \
+    components/historyview/searchhistorylistmodel.cpp \
+    components/historyview/searchhistorylistview.cpp \
+    components/historyview/searchhistorytab.cpp \
     components/mainwindow/mainsplitter.cpp \
     components/mainwindow/maintoolbar.cpp \
     components/mainwindow/searchlineedit.cpp \
@@ -95,6 +99,7 @@ SOURCES += \
     logic/utils/utils.cpp \
     logic/utils/utils_qt.cpp \
     windows/aboutwindow.cpp \
+    windows/historywindow.cpp \
     windows/mainwindow.cpp \
     windows/settingswindow.cpp \
     windows/updatewindow.cpp
@@ -118,6 +123,10 @@ HEADERS += \
     components/entryview/entryscrollareawidget.h \
     components/entryview/entryviewsentencecardsection.h \
     components/favouritewindow/favouritesplitter.h \
+    components/historyview/searchhistorylistdelegate.h \
+    components/historyview/searchhistorylistmodel.h \
+    components/historyview/searchhistorylistview.h \
+    components/historyview/searchhistorytab.h \
     components/mainwindow/isearchlineedit.h \
     components/mainwindow/mainsplitter.h \
     components/mainwindow/maintoolbar.h \
@@ -177,6 +186,7 @@ HEADERS += \
     logic/utils/utils_mac.h \
     logic/utils/utils_qt.h \
     windows/aboutwindow.h \
+    windows/historywindow.h \
     windows/mainwindow.h \
     windows/settingswindow.h \
     windows/updatewindow.h

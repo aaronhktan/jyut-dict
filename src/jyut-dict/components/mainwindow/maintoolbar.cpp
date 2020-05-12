@@ -156,6 +156,13 @@ void MainToolBar::changeOptionEvent(const Utils::ButtonOptionIndex index)
     _optionsBox->setOption(index);
 }
 
+void MainToolBar::setOpenHistoryAction(QAction *action)
+{
+    connect(_openHistoryButton, &QToolButton::pressed, this, [=]() {
+        action->trigger();
+    });
+}
+
 void MainToolBar::setOpenSettingsAction(QAction *action)
 {
     connect(_openSettingsButton, &QToolButton::pressed, this, [=]() {

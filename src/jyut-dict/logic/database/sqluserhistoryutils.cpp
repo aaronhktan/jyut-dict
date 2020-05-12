@@ -120,6 +120,8 @@ void SQLUserHistoryUtils::addSearchToHistoryThread(std::string search,
 
         _manager->closeDatabase();
     }
+
+    searchAllSearchHistory();
 }
 
 void SQLUserHistoryUtils::addViewToHistoryThread(Entry entry)
@@ -140,11 +142,13 @@ void SQLUserHistoryUtils::addViewToHistoryThread(Entry entry)
 
         _manager->closeDatabase();
     }
+
+    searchAllViewHistory();
 }
 
 void SQLUserHistoryUtils::searchAllSearchHistoryThread(void)
 {
-    std::vector<Entry> results{};
+    std::vector<std::pair<std::string, int>> results{};
 
     {
         std::lock_guard<std::mutex> databaseLock(_databaseMutex);
@@ -155,7 +159,7 @@ void SQLUserHistoryUtils::searchAllSearchHistoryThread(void)
             "FROM user.search_history "
             "ORDER BY timestamp DESC");
 
-        results = parseEntries(query);
+        results = parseStrings(query);
         _manager->closeDatabase();
     }
 
@@ -172,6 +176,8 @@ void SQLUserHistoryUtils::clearAllSearchHistoryThread(void)
 
         _manager->closeDatabase();
     }
+
+    searchAllSearchHistory();
 }
 
 void SQLUserHistoryUtils::searchAllViewHistoryThread(void)
@@ -204,6 +210,8 @@ void SQLUserHistoryUtils::clearAllViewHistoryThread(void)
 
         _manager->closeDatabase();
     }
+
+    searchAllViewHistory();
 }
 
 std::vector<std::pair<std::string, int>> SQLUserHistoryUtils::parseStrings(

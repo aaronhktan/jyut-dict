@@ -37,8 +37,9 @@ public:
     void selectAllEvent(void);
     void changeOptionEvent(const Utils::ButtonOptionIndex option);
 
-    void setOpenSettingsAction(QAction *action);
+    void setOpenHistoryAction(QAction *action);
     void setOpenFavouritesAction(QAction *action);
+    void setOpenSettingsAction(QAction *action);
 
 private:
     void setupUI(void);

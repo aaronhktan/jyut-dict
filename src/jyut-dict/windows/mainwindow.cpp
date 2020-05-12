@@ -10,8 +10,9 @@
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
-#include "windows/aboutwindow.h"
 #include "logic/utils/utils_qt.h"
+#include "windows/aboutwindow.h"
+#include "windows/historywindow.h"
 #include "windows/settingswindow.h"
 #include "windows/updatewindow.h"
 
@@ -131,6 +132,7 @@ MainWindow::MainWindow(QWidget *parent) :
     createActions();
     _mainToolBar->setOpenSettingsAction(_settingsWindowAction);
     _mainToolBar->setOpenFavouritesAction(_favouritesWindowAction);
+    _mainToolBar->setOpenHistoryAction(_historyWindowAction);
 
     // Translate UI
     translateUI();
@@ -265,6 +267,7 @@ void MainWindow::translateUI(void)
     _selectPinyinAction->setText(tr("Search Pinyin"));
     _selectEnglishAction->setText(tr("Search English"));
 
+    _historyWindowAction->setText(tr("View Search History"));
     _favouritesWindowAction->setText(tr("Open List of Saved Words"));
     _minimizeAction->setText(tr("Minimize"));
     _maximizeAction->setText(tr("Zoom"));
@@ -462,6 +465,14 @@ void MainWindow::createActions(void)
             this,
             &MainWindow::selectEnglish);
     _searchMenu->addAction(_selectEnglishAction);
+
+    _historyWindowAction = new QAction{this};
+    _historyWindowAction->setShortcut(QKeySequence{"Ctrl+Shift+H"});
+    connect(_historyWindowAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::openHistoryWindow);
+    _windowMenu->addAction(_historyWindowAction);
 
     _favouritesWindowAction = new QAction{this};
     _favouritesWindowAction->setShortcut(QKeySequence{"Ctrl+Shift+S"});
@@ -685,6 +696,20 @@ void MainWindow::openSettingsWindow(void)
 
     _settingsWindow = new SettingsWindow{_manager, this};
     _settingsWindow->show();
+}
+
+void MainWindow::openHistoryWindow(void)
+{
+    if (_historyWindow) {
+        _historyWindow->activateWindow();
+        _historyWindow->raise();
+        return;
+    }
+
+    _historyWindow = new HistoryWindow{_sqlHistoryUtils, nullptr};
+    _historyWindow->setParent(this, Qt::Window);
+    _historyWindow->show();
+    _historyWindow->setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void MainWindow::openFavouritesWindow(void)
