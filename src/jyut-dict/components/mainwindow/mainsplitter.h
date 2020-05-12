@@ -5,6 +5,7 @@
 #include "logic/analytics/analytics.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqluserdatautils.h"
+#include "logic/database/sqluserhistoryutils.h"
 #include "logic/entry/entry.h"
 #include "logic/search/sqlsearch.h"
 
@@ -27,6 +28,7 @@ public:
     explicit MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
                           std::shared_ptr<SQLDatabaseManager> manager,
                           std::shared_ptr<SQLSearch> sqlSearch,
+                          std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                           QWidget *parent = nullptr);
     ~MainSplitter() override;
 
@@ -40,6 +42,7 @@ private:
 
     std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
     std::shared_ptr<SQLDatabaseManager> _manager;
+    std::shared_ptr<SQLUserHistoryUtils> _sqlHistoryUtils;
     Analytics *_analytics;
 
     EntryScrollArea *_entryScrollArea;

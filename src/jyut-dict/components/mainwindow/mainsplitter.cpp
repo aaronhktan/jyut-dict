@@ -10,10 +10,12 @@
 MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
                            std::shared_ptr<SQLDatabaseManager> manager,
                            std::shared_ptr<SQLSearch> sqlSearch,
+                           std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                            QWidget *parent)
     : QSplitter(parent)
     , _sqlUserUtils{sqlUserUtils}
     , _manager{manager}
+    , _sqlHistoryUtils{sqlHistoryUtils}
 {
     _analytics = new Analytics{this};
 
@@ -98,6 +100,8 @@ void MainSplitter::prepareEntry(Entry &entry)
             ->value("entryColourPhoneticType",
                     QVariant::fromValue(EntryColourPhoneticType::JYUTPING))
             .value<EntryColourPhoneticType>());
+
+    _sqlHistoryUtils->addViewToHistory(entry);
 
     return;
 }

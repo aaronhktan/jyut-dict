@@ -28,6 +28,9 @@ public:
     void registerObserver(ISearchObserver *observer) override;
     void deregisterObserver(ISearchObserver *observer) override;
 
+    void addSearchToHistory(std::string search, int options);
+    void addViewToHistory(Entry entry);
+
     void searchAllSearchHistory(void);
     void clearAllSearchHistory(void);
 
@@ -39,6 +42,9 @@ private:
                          bool emptyQuery) override;
     void notifyObservers(const std::vector<Entry> &results,
                          bool emptyQuery) override;
+
+    void addSearchToHistoryThread(std::string search, int options);
+    void addViewToHistoryThread(Entry entry);
 
     void searchAllSearchHistoryThread(void);
     void clearAllSearchHistoryThread(void);

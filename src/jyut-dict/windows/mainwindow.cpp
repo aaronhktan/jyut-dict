@@ -66,6 +66,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _manager = std::make_shared<SQLDatabaseManager>();
     _sqlSearch = std::make_shared<SQLSearch>(_manager);
     _sqlUserUtils = std::make_shared<SQLUserDataUtils>(_manager);
+    _sqlHistoryUtils = std::make_shared<SQLUserHistoryUtils>(_manager);
 
     // Get colours from QSettings
     std::unique_ptr<QSettings> settings = Settings::getSettings();
@@ -111,14 +112,18 @@ MainWindow::MainWindow(QWidget *parent) :
     installTranslator();
 
     // Create UI elements
-    _mainToolBar = new MainToolBar{_sqlSearch, this};
+    _mainToolBar = new MainToolBar{_sqlSearch, _sqlHistoryUtils, this};
     addToolBar(_mainToolBar);
     setUnifiedTitleAndToolBarOnMac(true);
 #ifdef APPIMAGE
     setWindowIcon(QIcon{":/images/icon.png"});
 #endif
 
-    _mainSplitter = new MainSplitter{_sqlUserUtils, _manager, _sqlSearch, this};
+    _mainSplitter = new MainSplitter{_sqlUserUtils,
+                                     _manager,
+                                     _sqlSearch,
+                                     _sqlHistoryUtils,
+                                     this};
     setCentralWidget(_mainSplitter);
 
     // Create menu bar and populate it

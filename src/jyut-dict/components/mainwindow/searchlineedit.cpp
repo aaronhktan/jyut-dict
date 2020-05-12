@@ -13,8 +13,10 @@
 
 SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
                                std::shared_ptr<SQLSearch> sqlSearch,
+                               std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                                QWidget *parent)
     : QLineEdit(parent)
+    , _sqlHistoryUtils{sqlHistoryUtils}
 {
     translateUI();
 
@@ -45,10 +47,12 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
 
     _search = sqlSearch;
 
-    connect(this, &QLineEdit::textChanged,
-            [this](){
-                this->checkClearVisibility();
-                this->search();});
+    connect(this, &QLineEdit::textChanged, [this]() {
+        this->checkClearVisibility();
+        this->search();
+    });
+
+    _timer = new QTimer{this};
 }
 
 SearchLineEdit::~SearchLineEdit()
@@ -134,6 +138,8 @@ void SearchLineEdit::search()
             break;
         }
     }
+
+    addSearchTermToHistory();
 }
 
 void SearchLineEdit::translateUI()
@@ -181,4 +187,18 @@ void SearchLineEdit::setStyle(bool use_dark)
          _clearLineEdit->setIcon(clear);
     }
 #endif
+}
+
+void SearchLineEdit::addSearchTermToHistory(void)
+{
+    _timer->stop();
+    disconnect(_timer, nullptr, nullptr, nullptr);
+    _timer->setSingleShot(true);
+    connect(_timer, &QTimer::timeout, this, [=]() {
+        if (!text().isEmpty()) {
+            _sqlHistoryUtils->addSearchToHistory(text().toStdString(),
+                                                 static_cast<int>(_parameters));
+        }
+    });
+    _timer->start(500);
 }

@@ -7,9 +7,13 @@
 #include "logic/utils/utils_qt.h"
 
 MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
+                         std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                          QWidget *parent) : QToolBar(parent)
 {
-    _searchBar = new SearchLineEdit(_searchOptions, sqlSearch, this);
+    _searchBar = new SearchLineEdit(_searchOptions,
+                                    sqlSearch,
+                                    sqlHistoryUtils,
+                                    this);
 
     _searchOptions = new SearchOptionsMediator{};
 

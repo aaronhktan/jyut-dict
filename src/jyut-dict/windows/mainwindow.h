@@ -7,6 +7,7 @@
 #include "logic/update/githubreleasechecker.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqluserdatautils.h"
+#include "logic/database/sqluserhistoryutils.h"
 #include "logic/search/sqlsearch.h"
 
 #include <QAction>
@@ -82,6 +83,7 @@ private:
     std::shared_ptr<SQLDatabaseManager> _manager;
     std::shared_ptr<SQLSearch> _sqlSearch;
     std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
+    std::shared_ptr<SQLUserHistoryUtils> _sqlHistoryUtils;
 
     bool _recentlyCheckedForUpdates = false;
 

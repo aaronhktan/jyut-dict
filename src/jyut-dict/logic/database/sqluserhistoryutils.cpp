@@ -43,6 +43,29 @@ void SQLUserHistoryUtils::notifyObservers(const std::vector<Entry> &results,
     }
 }
 
+void SQLUserHistoryUtils::addSearchToHistory(std::string search, int options)
+{
+    if (!_manager) {
+        std::cout << "No database specified!" << std::endl;
+        return;
+    }
+    QtConcurrent::run(this,
+                      &SQLUserHistoryUtils::addSearchToHistoryThread,
+                      search,
+                      options);
+}
+
+void SQLUserHistoryUtils::addViewToHistory(Entry entry)
+{
+    if (!_manager) {
+        std::cout << "No database specified!" << std::endl;
+        return;
+    }
+    QtConcurrent::run(this,
+                      &SQLUserHistoryUtils::addViewToHistoryThread,
+                      entry);
+}
+
 void SQLUserHistoryUtils::searchAllSearchHistory(void)
 {
     if (!_manager) {
@@ -59,8 +82,7 @@ void SQLUserHistoryUtils::clearAllSearchHistory(void)
         std::cout << "No database specified!" << std::endl;
         return;
     }
-    QtConcurrent::run(this,
-                      &SQLUserHistoryUtils::clearAllSearchHistoryThread);
+    QtConcurrent::run(this, &SQLUserHistoryUtils::clearAllSearchHistoryThread);
 }
 
 void SQLUserHistoryUtils::searchAllViewHistory(void)
@@ -69,8 +91,7 @@ void SQLUserHistoryUtils::searchAllViewHistory(void)
         std::cout << "No database specified!" << std::endl;
         return;
     }
-    QtConcurrent::run(this,
-                      &SQLUserHistoryUtils::searchAllViewHistoryThread);
+    QtConcurrent::run(this, &SQLUserHistoryUtils::searchAllViewHistoryThread);
 }
 
 void SQLUserHistoryUtils::clearAllViewHistory(void)
@@ -79,8 +100,46 @@ void SQLUserHistoryUtils::clearAllViewHistory(void)
         std::cout << "No database specified!" << std::endl;
         return;
     }
-    QtConcurrent::run(this,
-                      &SQLUserHistoryUtils::clearAllViewHistoryThread);
+    QtConcurrent::run(this, &SQLUserHistoryUtils::clearAllViewHistoryThread);
+}
+
+void SQLUserHistoryUtils::addSearchToHistoryThread(std::string search,
+                                                   int options)
+{
+    {
+        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
+        QSqlQuery query{_manager->getDatabase()};
+
+        query.prepare("INSERT INTO user.search_history "
+                      " (search_text, search_options, timestamp) "
+                      "VALUES "
+                      " (?, ?, datetime(\"now\"))");
+        query.addBindValue(search.c_str());
+        query.addBindValue(QVariant::fromValue(options));
+        query.exec();
+
+        _manager->closeDatabase();
+    }
+}
+
+void SQLUserHistoryUtils::addViewToHistoryThread(Entry entry)
+{
+    {
+        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
+        QSqlQuery query{_manager->getDatabase()};
+
+        query.prepare("INSERT INTO user.view_history "
+                      " (traditional, simplified, jyutping, pinyin, timestamp) "
+                      "VALUES "
+                      " (?, ?, ?, ?, datetime(\"now\"))");
+        query.addBindValue(entry.getTraditional().c_str());
+        query.addBindValue(entry.getSimplified().c_str());
+        query.addBindValue(entry.getJyutping().c_str());
+        query.addBindValue(entry.getPinyin().c_str());
+        query.exec();
+
+        _manager->closeDatabase();
+    }
 }
 
 void SQLUserHistoryUtils::searchAllSearchHistoryThread(void)
