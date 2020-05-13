@@ -8,6 +8,9 @@
 #include <QVBoxLayout>
 #include <QTabWidget>
 
+// The HistoryWindow contains a TabWidget, allowing a user to view
+// history of past searches and history of viewed entries.
+
 class HistoryWindow : public QWidget
 {
 public:

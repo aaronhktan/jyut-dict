@@ -9,7 +9,6 @@
 
 #include <QGuiApplication>
 #include <QAbstractTextDocumentLayout>
-#include <QRectF>
 #include <QTextDocument>
 #include <QTextLayout>
 #include <QVariant>
@@ -134,7 +133,7 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
 
     delete doc;
 
-    // Phonetic and definition snippets
+    // Phonetic
 #ifdef Q_OS_WIN
     font = oldFont;
 #endif

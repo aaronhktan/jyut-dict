@@ -1,10 +1,6 @@
 #ifndef VIEWHISTORYLISTVIEW_H
 #define VIEWHISTORYLISTVIEW_H
 
-#include "components/entrysearchresult/resultlistdelegate.h"
-#include "logic/entry/entry.h"
-#include "logic/search/sqlsearch.h"
-
 #include <QEvent>
 #include <QListView>
 #include <QStyledItemDelegate>
@@ -15,7 +11,7 @@
 
 #include <vector>
 
-// The ResultListView displays results of a search
+// The ViewHistoryListView displays results of a search
 // It populates itself with a QAbstractListModel
 // And paints itself with a QStyledItemDelegate
 

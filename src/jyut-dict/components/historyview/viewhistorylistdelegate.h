@@ -10,7 +10,8 @@
 
 #include <memory>
 
-// The ResultListDelegate is responsible for painting elements in the ResultListView
+// The ViewHistoryListDelegate is responsible for painting elements in the
+// ViewHistoryListView
 // It also provides a sizehint for each element
 
 class ViewHistoryListDelegate : public QStyledItemDelegate

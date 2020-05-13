@@ -14,7 +14,8 @@
 #include <string>
 #include <vector>
 
-// The ResultListModel contains data (a vector of Entry objects)
+// The ViewHistoryListModel contains data (a vector of
+// std::pair<std::string, int> pairs) that represents past searches
 // It is populated with the results of a search, being a searchobserver
 
 // Entries are returned as QVariants when an index is provided

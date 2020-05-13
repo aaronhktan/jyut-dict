@@ -157,7 +157,8 @@ void SQLUserHistoryUtils::searchAllSearchHistoryThread(void)
         query.exec(
             "SELECT search_text AS text, search_options AS options, timestamp "
             "FROM user.search_history "
-            "ORDER BY timestamp DESC");
+            "ORDER BY timestamp DESC "
+            "LIMIT 1000");
 
         results = parseStrings(query);
         _manager->closeDatabase();
@@ -191,7 +192,8 @@ void SQLUserHistoryUtils::searchAllViewHistoryThread(void)
         query.exec(
             "SELECT traditional, simplified, pinyin, jyutping, timestamp "
             "FROM user.view_history "
-            "ORDER BY timestamp DESC");
+            "ORDER BY timestamp DESC "
+            "LIMIT 1000");
 
         results = parseEntries(query);
         _manager->closeDatabase();

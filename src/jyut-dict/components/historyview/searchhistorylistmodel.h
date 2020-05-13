@@ -14,7 +14,8 @@
 #include <utility>
 #include <vector>
 
-// The ResultListModel contains data (a vector of Entry objects)
+// The SearchHistoryListModel contains data (a vector of Entry objects)
+// that represents entries that were viewed in the past by a user.
 // It is populated with the results of a search, being a searchobserver
 
 // Entries are returned as QVariants when an index is provided
