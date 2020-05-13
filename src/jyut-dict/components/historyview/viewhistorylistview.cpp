@@ -1,6 +1,7 @@
-#include "searchhistorylistview.h"
+#include "viewhistorylistview.h"
 
-#include "components/historyview/searchhistorylistdelegate.h"
+#include "components/historyview/viewhistorylistdelegate.h"
+#include "logic/search/sqlsearch.h"
 
 #include <QGuiApplication>
 
@@ -8,19 +9,19 @@
 #include <QScrollBar>
 #endif
 
-SearchHistoryListView::SearchHistoryListView(QWidget *parent)
+ViewHistoryListView::ViewHistoryListView(QWidget *parent)
     : QListView(parent)
 {
     setFrameShape(QFrame::NoFrame);
 
-    _delegate = new SearchHistoryListDelegate{this};
+    _delegate = new ViewHistoryListDelegate{this};
     setItemDelegate(_delegate);
 
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     connect(qApp,
             &QGuiApplication::applicationStateChanged,
             this,
-            &SearchHistoryListView::paintWithApplicationState);
+            &ViewHistoryListView::paintWithApplicationState);
 }
 
 // On Windows, because of a bug in Qt (see QTBUG-7232), every time mouse
@@ -36,7 +37,7 @@ void ResultListView::wheelEvent(QWheelEvent *event)
 }
 #endif
 
-void SearchHistoryListView::paintWithApplicationState()
+void ViewHistoryListView::paintWithApplicationState()
 {
     viewport()->update(); // Forces repaint of viewing area.
 }

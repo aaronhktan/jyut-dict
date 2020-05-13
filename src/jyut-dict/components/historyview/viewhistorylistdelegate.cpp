@@ -1,42 +1,41 @@
-#include "searchhistorylistdelegate.h"
+#include "viewhistorylistdelegate.h"
 
-#include "logic/database/sqluserhistoryutils.h"
+#include "logic/entry/entry.h"
+#include "logic/entry/entrycharactersoptions.h"
+#include "logic/entry/entryphoneticoptions.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/utils/utils.h"
 #include "logic/utils/utils_qt.h"
 
 #include <QGuiApplication>
 #include <QAbstractTextDocumentLayout>
+#include <QRectF>
 #include <QTextDocument>
 #include <QTextLayout>
 #include <QVariant>
 
-#include <string>
-#include <utility>
-
-SearchHistoryListDelegate::SearchHistoryListDelegate(QWidget *parent)
+ViewHistoryListDelegate::ViewHistoryListDelegate(QWidget *parent)
     : QStyledItemDelegate (parent)
 {
     _settings = Settings::getSettings(this);
 }
 
-void SearchHistoryListDelegate::paint(QPainter *painter,
+void ViewHistoryListDelegate::paint(QPainter *painter,
                                const QStyleOptionViewItem &option,
                                const QModelIndex &index) const
 {
-    if (!index.data().canConvert<searchTermHistoryItem>()) {
+    if (!index.data().canConvert<Entry>()) {
         return;
     }
 
     painter->save();
 
-    std::pair<std::string, int> pair
-        = qvariant_cast<std::pair<std::string, int>>(index.data());
+    Entry entry = qvariant_cast<Entry>(index.data());
 
-    bool isEmptyPair = (pair.second == -1);
+    bool isEmptyEntry = entry.isEmpty();
 
     QColor backgroundColour;
-    if (option.state & QStyle::State_Selected && !isEmptyPair) {
+    if (option.state & QStyle::State_Selected && !isEmptyEntry) {
         if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
 #ifdef Q_OS_MAC
             backgroundColour = option.palette
@@ -70,41 +69,84 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
 
     painter->setRenderHint(QPainter::Antialiasing, true);
 
+    EntryCharactersOptions characterOptions;
+    EntryPhoneticOptions phoneticOptions;
+    MandarinOptions mandarinOptions;
+    bool use_colours = false;
+    if (isEmptyEntry) {
+        characterOptions = EntryCharactersOptions::ONLY_SIMPLIFIED;
+        phoneticOptions = EntryPhoneticOptions::ONLY_PINYIN;
+        mandarinOptions = MandarinOptions::RAW_PINYIN;
+    } else {
+        characterOptions
+            = _settings
+                  ->value("characterOptions",
+                          QVariant::fromValue(
+                              EntryCharactersOptions::PREFER_TRADITIONAL))
+                  .value<EntryCharactersOptions>();
+        phoneticOptions = _settings
+                              ->value("phoneticOptions",
+                                      QVariant::fromValue(
+                                          EntryPhoneticOptions::PREFER_JYUTPING))
+                              .value<EntryPhoneticOptions>();
+        mandarinOptions = _settings
+                              ->value("mandarinOptions",
+                                      QVariant::fromValue(
+                                          MandarinOptions::PRETTY_PINYIN))
+                              .value<MandarinOptions>();
+
+        use_colours = !(option.state & QStyle::State_Selected);
+    }
+
     QRect r = option.rect;
     QRect boundingRect;
     QFont font = painter->font();
 
-    if (isEmptyPair) {
+    // Chinese characters
 #ifdef Q_OS_WIN
-        QFont oldFont = font;
-        font = QFont("Microsoft Yahei");
+    QFont oldFont = font;
+    font = QFont("Microsoft Yahei");
 #endif
-        font.setPixelSize(20);
-        painter->setFont(font);
-        r = option.rect.adjusted(11, 11, -11, 0);
-        QFontMetrics metrics(font);
+    font.setPixelSize(20);
+    painter->setFont(font);
+    r = option.rect.adjusted(11, 11, -11, 0);
+    QFontMetrics metrics(font);
 
-        QTextDocument *doc = new QTextDocument{};
-        doc->setHtml(QString(pair.first.c_str()));
-        doc->setTextWidth(r.width());
-        doc->setDefaultFont(font);
-        doc->setDocumentMargin(0);
-        QAbstractTextDocumentLayout *documentLayout = doc->documentLayout();
-        auto ctx = QAbstractTextDocumentLayout::PaintContext();
-        ctx.palette.setColor(QPalette::Text, painter->pen().color());
-        QRectF bounds = QRectF(0, 0, r.width(), 16);
-        ctx.clip = bounds;
-        painter->translate(11, r.y());
-        documentLayout->draw(painter, ctx);
-        painter->translate(-11, -r.y());
+    // Use QTextDocument for rich text
+    QTextDocument *doc = new QTextDocument{};
+    entry.refreshColours(_settings
+                             ->value("entryColourPhoneticType",
+                                     QVariant::fromValue(
+                                         EntryColourPhoneticType::JYUTPING))
+                             .value<EntryColourPhoneticType>());
+    doc->setHtml(QString(entry.getCharacters(characterOptions, use_colours).c_str()));
+    doc->setTextWidth(r.width());
+    doc->setDefaultFont(font);
+    doc->setDocumentMargin(0);
+    QAbstractTextDocumentLayout *documentLayout = doc->documentLayout();
+    auto ctx = QAbstractTextDocumentLayout::PaintContext();
+    ctx.palette.setColor(QPalette::Text, painter->pen().color());
+    QRectF bounds = QRectF(0, 0, r.width(), 16);
+    ctx.clip = bounds;
+    painter->translate(11, r.y());
+    documentLayout->draw(painter, ctx);
+    painter->translate(-11, -r.y());
 
-        delete doc;
+    delete doc;
 
+    // Phonetic and definition snippets
+#ifdef Q_OS_WIN
+    font = oldFont;
+#endif
+    QString snippet;
+    if (isEmptyEntry) {
         font.setPixelSize(14);
         painter->setFont(font);
         r = r.adjusted(0, 28, 0, 0);
         metrics = QFontMetrics(font);
-        QString phonetic = "—";
+        QString phonetic = metrics.elidedText(entry.getJyutping().c_str(),
+                                              Qt::ElideRight,
+                                              r.width());
         painter->drawText(r, 0, phonetic, &boundingRect);
 
         if (Settings::isCurrentLocaleHan()) {
@@ -119,9 +161,7 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
         painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
 
         // Do custom text layout to get eliding double-line label
-        QString snippet = tr("After searching for a word, you will find it "
-                             "in this list. Selecting a word will allow you "
-                             "to do the same search again.");
+        snippet = entry.getDefinitionSnippet().c_str();
         QTextLayout *textLayout = new QTextLayout{snippet, painter->font()};
         textLayout->beginLayout();
 
@@ -166,14 +206,16 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
         delete textLayout;
         painter->restore();
     } else {
-        font.setPixelSize(16);
+        font.setPixelSize(12);
         painter->setFont(font);
-        r = r.adjusted(6, 6, 6, 6);
-        QFontMetrics metrics(font);
-        QString searchTerm = metrics.elidedText(pair.first.c_str(),
-                                                Qt::ElideRight,
-                                                r.width());
-        painter->drawText(r, 0, searchTerm, &boundingRect);
+        r = r.adjusted(0, 30, 0, 0);
+        metrics = QFontMetrics(font);
+        QString phonetic = metrics.elidedText(
+            entry.getPhonetic(phoneticOptions, mandarinOptions).c_str(),
+            Qt::ElideRight,
+            r.width());
+        painter->drawText(r, 0, phonetic, &boundingRect);
+        r = r.adjusted(0, boundingRect.height(), 0, 0);
     }
 
     // Bottom divider
@@ -184,22 +226,25 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
     painter->restore();
 }
 
-QSize SearchHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
-                                          const QModelIndex &index) const
+QSize ViewHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
+                                   const QModelIndex &index) const
 {
     (void) (option);
 
-    std::pair<std::string, int> pair
-        = qvariant_cast<searchTermHistoryItem>(index.data());
-    bool isEmptyPair = (pair.second == -1);
+    Entry entry = qvariant_cast<Entry>(index.data());
+    bool isEmptyEntry = entry.isEmpty();
 
-    if (isEmptyPair) {
+    if (isEmptyEntry) {
 #ifdef Q_OS_MAC
         return QSize(100, 130);
 #else
         return QSize(100, 135);
 #endif
     } else {
-        return QSize(100, 32);
+#ifdef Q_OS_LINUX
+        return QSize(100, 90);
+#else
+        return QSize(100, 70);
+#endif
     }
 }

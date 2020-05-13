@@ -10,7 +10,23 @@ SearchHistoryTab::SearchHistoryTab(
     _model = new SearchHistoryListModel{_sqlHistoryUtils, this};
     _listView->setModel(_model);
 
+    _clearAllSearchHistoryButton = new QPushButton{this};
+    connect(_clearAllSearchHistoryButton, &QPushButton::clicked, this, [=]() {
+        _sqlHistoryUtils->clearAllSearchHistory();
+    });
+
+    _tabLayout = new QVBoxLayout{this};
+    _tabLayout->addWidget(_listView);
+    _tabLayout->addWidget(_clearAllSearchHistoryButton);
+    _tabLayout->setAlignment(_clearAllSearchHistoryButton, Qt::AlignHCenter);
+
     _sqlHistoryUtils->searchAllSearchHistory();
-    setMinimumSize(200, 300);
-    _listView->setFixedSize(size());
+    translateUI();
+}
+
+void SearchHistoryTab::translateUI(void)
+{
+    _clearAllSearchHistoryButton->setText(tr("Clear All Search History"));
+    _clearAllSearchHistoryButton->setFixedSize(
+        _clearAllSearchHistoryButton->minimumSizeHint());
 }

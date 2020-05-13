@@ -52,6 +52,10 @@ SOURCES += \
     components/historyview/searchhistorylistmodel.cpp \
     components/historyview/searchhistorylistview.cpp \
     components/historyview/searchhistorytab.cpp \
+    components/historyview/viewhistorylistdelegate.cpp \
+    components/historyview/viewhistorylistmodel.cpp \
+    components/historyview/viewhistorylistview.cpp \
+    components/historyview/viewhistorytab.cpp \
     components/mainwindow/mainsplitter.cpp \
     components/mainwindow/maintoolbar.cpp \
     components/mainwindow/searchlineedit.cpp \
@@ -127,6 +131,10 @@ HEADERS += \
     components/historyview/searchhistorylistmodel.h \
     components/historyview/searchhistorylistview.h \
     components/historyview/searchhistorytab.h \
+    components/historyview/viewhistorylistdelegate.h \
+    components/historyview/viewhistorylistmodel.h \
+    components/historyview/viewhistorylistview.h \
+    components/historyview/viewhistorytab.h \
     components/mainwindow/isearchlineedit.h \
     components/mainwindow/mainsplitter.h \
     components/mainwindow/maintoolbar.h \

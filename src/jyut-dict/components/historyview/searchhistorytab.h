@@ -5,6 +5,8 @@
 #include "components/historyview/searchhistorylistview.h"
 #include "logic/database/sqluserhistoryutils.h"
 
+#include <QPushButton>
+#include <QVBoxLayout>
 #include <QWidget>
 
 class SearchHistoryTab : public QWidget
@@ -16,10 +18,16 @@ public:
         QWidget *parent = nullptr);
 
 private:
+    void translateUI(void);
+
     std::shared_ptr<SQLUserHistoryUtils> _sqlHistoryUtils;
+
+    QVBoxLayout *_tabLayout;
 
     SearchHistoryListView *_listView;
     SearchHistoryListModel *_model;
+
+    QPushButton *_clearAllSearchHistoryButton;
 };
 
 #endif // SEARCHHISTORYTAB_H

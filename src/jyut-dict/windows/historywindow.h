@@ -2,6 +2,7 @@
 #define HISTORYWINDOW_H
 
 #include "components/historyview/searchhistorytab.h"
+#include "components/historyview/viewhistorytab.h"
 #include "logic/database/sqluserhistoryutils.h"
 
 #include <QVBoxLayout>
@@ -18,6 +19,7 @@ private:
     QTabWidget *_tabWidget;
 
     QWidget *_searchHistoryTab;
+    QWidget *_viewHistoryTab;
 };
 
 #endif // HISTORYWINDOW_H
