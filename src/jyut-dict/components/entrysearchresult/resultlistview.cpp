@@ -16,7 +16,7 @@ ResultListView::ResultListView(QWidget *parent)
 #ifdef Q_OS_LINUX
     setMinimumWidth(200);
 #else
-    setMinimumWidth(250);
+    setMinimumWidth(300);
 #endif
 
     _delegate = new ResultListDelegate{this};

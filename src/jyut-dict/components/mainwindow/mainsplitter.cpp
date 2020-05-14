@@ -48,6 +48,8 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     setHandleWidth(1);
     setCollapsible(0, false);
     setCollapsible(1, false);
+    setStretchFactor(0, 0);
+    setStretchFactor(1, 1);
     setSizes(QList<int>({size().width() / 3, size().width() * 2 / 3}));
 #ifdef Q_OS_WIN
     setStyleSheet("QSplitter::handle { background-color: #b9b9b9; }");
