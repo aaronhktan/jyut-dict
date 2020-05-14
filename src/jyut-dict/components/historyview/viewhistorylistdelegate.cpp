@@ -108,7 +108,7 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
 #endif
     font.setPixelSize(20);
     painter->setFont(font);
-    r = option.rect.adjusted(11, 11, -11, 0);
+    r = option.rect.adjusted(7, 5, -7, 0);
     QFontMetrics metrics(font);
 
     // Use QTextDocument for rich text
@@ -127,9 +127,9 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
     ctx.palette.setColor(QPalette::Text, painter->pen().color());
     QRectF bounds = QRectF(0, 0, r.width(), 16);
     ctx.clip = bounds;
-    painter->translate(11, r.y());
+    painter->translate(7, r.y());
     documentLayout->draw(painter, ctx);
-    painter->translate(-11, -r.y());
+    painter->translate(-7, -r.y());
 
     delete doc;
 
@@ -243,7 +243,7 @@ QSize ViewHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
 #ifdef Q_OS_LINUX
         return QSize(100, 90);
 #else
-        return QSize(100, 70);
+        return QSize(100, 60);
 #endif
     }
 }

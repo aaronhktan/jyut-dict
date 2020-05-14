@@ -35,6 +35,7 @@ void ViewHistoryTab::setupUI(void)
     _tabLayout->addWidget(_listView);
     _tabLayout->addWidget(_clearAllViewHistoryButton);
     _tabLayout->setAlignment(_clearAllViewHistoryButton, Qt::AlignHCenter);
+
     setStyle(/*use_dark=*/false);
 }
 

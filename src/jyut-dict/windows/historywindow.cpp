@@ -15,5 +15,4 @@ HistoryWindow::HistoryWindow(
     _windowLayout->addWidget(_tabWidget);
 
     setMinimumSize(300, 500);
-    _viewHistoryTab->adjustSize();
 }
