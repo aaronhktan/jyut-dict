@@ -120,8 +120,6 @@ void SQLUserHistoryUtils::addSearchToHistoryThread(std::string search,
 
         _manager->closeDatabase();
     }
-
-    searchAllSearchHistory();
 }
 
 void SQLUserHistoryUtils::addViewToHistoryThread(Entry entry)

@@ -25,6 +25,7 @@
 
 class MainToolBar : public QToolBar
 {
+    Q_OBJECT
 public:
     explicit MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
                          std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
@@ -56,6 +57,12 @@ private:
     QToolButton *_openFavouritesButton;
     QToolButton *_openSettingsButton;
     ISearchOptionsMediator *_searchOptions;
+
+signals:
+    void searchTermClicked(searchTermHistoryItem &pair);
+
+public slots:
+    void forwardSearchTermItem(searchTermHistoryItem &pair);
 };
 
 #endif // MAINTOOLBAR_H

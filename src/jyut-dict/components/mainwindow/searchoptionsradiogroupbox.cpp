@@ -51,6 +51,16 @@ void SearchOptionsRadioGroupBox::setOption(const Utils::ButtonOptionIndex index)
     buttons.at(index)->click();
 }
 
+void SearchOptionsRadioGroupBox::setOption(const SearchParameters parameters)
+{
+    QList<QRadioButton *> buttons = this->findChildren<QRadioButton *>();
+    for (auto button : buttons) {
+        if (button->property("data") == QVariant::fromValue(parameters)) {
+            button->click();
+        }
+    }
+}
+
 void SearchOptionsRadioGroupBox::setupUI()
 {
 

@@ -80,6 +80,13 @@ constexpr auto DEU_STRING = QT_TRANSLATE_NOOP("strings", "German");
 constexpr auto YUE_STRING = QT_TRANSLATE_NOOP("strings", "Cantonese");
 constexpr auto CMN_STRING = QT_TRANSLATE_NOOP("strings", "Mandarin");
 
+constexpr auto SC_STRING = QT_TRANSLATE_NOOP("strings", "SC");
+constexpr auto TC_STRING = QT_TRANSLATE_NOOP("strings", "TC");
+constexpr auto CN_STRING = QT_TRANSLATE_NOOP("strings", "CN");
+constexpr auto JP_STRING = QT_TRANSLATE_NOOP("strings", "JP");
+constexpr auto PY_STRING = QT_TRANSLATE_NOOP("strings", "PY");
+constexpr auto EN_STRING = QT_TRANSLATE_NOOP("strings", "EN");
+
 }
 
 #endif // STRINGS_H

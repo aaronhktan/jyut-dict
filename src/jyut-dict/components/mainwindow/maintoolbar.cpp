@@ -1,6 +1,7 @@
 #include "maintoolbar.h"
 
 #include "logic/search/searchoptionsmediator.h"
+#include "logic/utils/utils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
@@ -175,4 +176,10 @@ void MainToolBar::setOpenFavouritesAction(QAction *action)
     connect(_openFavouritesButton, &QToolButton::pressed, this, [=]() {
         action->trigger();
     });
+}
+
+void MainToolBar::forwardSearchTermItem(searchTermHistoryItem &pair)
+{
+    _optionsBox->setOption(static_cast<SearchParameters>(pair.second));
+    _searchBar->setText(pair.first.c_str());
 }

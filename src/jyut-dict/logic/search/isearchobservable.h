@@ -42,6 +42,7 @@ public:
         (void) (results);
         (void) (emptyQuery);
     }
+
     virtual void notifyObservers(bool entryExists, Entry entry)
     {
         (void) (entryExists);

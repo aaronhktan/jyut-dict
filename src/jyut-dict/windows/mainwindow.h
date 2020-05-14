@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "components/favouritewindow/favouritesplitter.h"
 #include "components/mainwindow/mainsplitter.h"
 #include "components/mainwindow/maintoolbar.h"
 #include "logic/analytics/analytics.h"
@@ -9,6 +10,10 @@
 #include "logic/database/sqluserdatautils.h"
 #include "logic/database/sqluserhistoryutils.h"
 #include "logic/search/sqlsearch.h"
+#include "windows/aboutwindow.h"
+#include "windows/historywindow.h"
+#include "windows/settingswindow.h"
+#include "windows/updatewindow.h"
 
 #include <QAction>
 #include <QEvent>
@@ -75,10 +80,10 @@ private:
     QAction *_helpAction;
     QAction *_updateAction;
 
-    QPointer<QWidget> _aboutWindow;
-    QPointer<QWidget> _settingsWindow;
-    QPointer<QWidget> _historyWindow;
-    QPointer<QWidget> _favouritesWindow;
+    QPointer<AboutWindow> _aboutWindow;
+    QPointer<SettingsWindow> _settingsWindow;
+    QPointer<HistoryWindow> _historyWindow;
+    QPointer<FavouriteSplitter> _favouritesWindow;
 
     QProgressDialog *_dialog;
 
@@ -124,12 +129,16 @@ private:
 
     void closeEvent(QCloseEvent *event) override;
 
+signals:
+    void searchHistoryClicked(searchTermHistoryItem &pair);
+
 public slots:
     void notifyUpdateAvailable(bool updateAvailable,
                                std::string versionNumber,
                                std::string url,
                                std::string description,
                                bool showIfNoUpdate = false);
+    void forwardSearchTermItem(searchTermHistoryItem &pair);
 };
 
 #endif // MAINWINDOW_H

@@ -168,12 +168,24 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
     } else {
         font.setPixelSize(16);
         painter->setFont(font);
-        r = r.adjusted(6, 6, 6, 6);
+        int margin = 6;
+        r = r.adjusted(margin, margin, margin, margin);
+
         QFontMetrics metrics(font);
+        QString searchOption = Utils::getStringFromSearchParameter(
+                                   static_cast<SearchParameters>(pair.second))
+                                   .c_str();
+        int searchOptionWidth = metrics.width(searchOption);
         QString searchTerm = metrics.elidedText(pair.first.c_str(),
                                                 Qt::ElideRight,
-                                                r.width());
+                                                r.width() - 2 * margin
+                                                    - searchOptionWidth);
+
         painter->drawText(r, 0, searchTerm, &boundingRect);
+
+        r.setX(r.width() - margin - searchOptionWidth);
+        painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
+        painter->drawText(r, 0, searchOption, &boundingRect);
     }
 
     // Bottom divider

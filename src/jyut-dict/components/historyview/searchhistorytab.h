@@ -28,6 +28,8 @@ private:
     void translateUI(void);
     void setStyle(bool use_dark);
 
+    void handleClick(const QModelIndex &selection);
+
     std::shared_ptr<SQLUserHistoryUtils> _sqlHistoryUtils;
 
     QVBoxLayout *_tabLayout;
@@ -36,6 +38,9 @@ private:
     SearchHistoryListModel *_model;
 
     QPushButton *_clearAllSearchHistoryButton;
+
+signals:
+    void searchHistoryClicked(searchTermHistoryItem &pair);
 };
 
 #endif // SEARCHHISTORYTAB_H

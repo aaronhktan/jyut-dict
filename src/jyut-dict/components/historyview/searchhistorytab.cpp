@@ -11,6 +11,11 @@ SearchHistoryTab::SearchHistoryTab(
     _model = new SearchHistoryListModel{_sqlHistoryUtils, this};
     _listView->setModel(_model);
 
+    connect(_listView,
+            &QListView::clicked,
+            this,
+            &SearchHistoryTab::handleClick);
+
     setupUI();
     translateUI();
 
@@ -62,6 +67,19 @@ void SearchHistoryTab::setStyle(bool use_dark)
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: "
                   "13px; height: 16px; }");
 #elif defined(Q_OS_WIN)
-    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
+    setStyleSheet(
+        "QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
 #endif
+}
+
+void SearchHistoryTab::handleClick(const QModelIndex &selection)
+{
+    searchTermHistoryItem pair = qvariant_cast<searchTermHistoryItem>(
+        selection.data());
+    bool isEmptyPair = pair.second == -1;
+    if (isEmptyPair) {
+        return;
+    }
+
+    emit searchHistoryClicked(pair);
 }

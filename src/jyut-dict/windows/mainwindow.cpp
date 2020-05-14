@@ -1,6 +1,5 @@
 #include "windows/mainwindow.h"
 
-#include "components/favouritewindow/favouritesplitter.h"
 #include "dialogs/noupdatedialog.h"
 #include "logic/database/sqldatabaseutils.h"
 #include "logic/dictionary/dictionarysource.h"
@@ -11,10 +10,6 @@
 #include "logic/utils/utils_mac.h"
 #endif
 #include "logic/utils/utils_qt.h"
-#include "windows/aboutwindow.h"
-#include "windows/historywindow.h"
-#include "windows/settingswindow.h"
-#include "windows/updatewindow.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -119,6 +114,10 @@ MainWindow::MainWindow(QWidget *parent) :
 #ifdef APPIMAGE
     setWindowIcon(QIcon{":/images/icon.png"});
 #endif
+    connect(this,
+            &MainWindow::searchHistoryClicked,
+            _mainToolBar,
+            &MainToolBar::forwardSearchTermItem);
 
     _mainSplitter = new MainSplitter{_sqlUserUtils,
                                      _manager,
@@ -321,6 +320,11 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
         NoUpdateDialog *_message = new NoUpdateDialog{currentVersion, this};
         _message->exec();
     }
+}
+
+void MainWindow::forwardSearchTermItem(searchTermHistoryItem &pair)
+{
+    emit searchHistoryClicked(pair);
 }
 
 void MainWindow::createMenus(void)
@@ -710,6 +714,11 @@ void MainWindow::openHistoryWindow(void)
     _historyWindow->setParent(this, Qt::Window);
     _historyWindow->show();
     _historyWindow->setAttribute(Qt::WA_DeleteOnClose);
+
+    connect(static_cast<HistoryWindow *>(_historyWindow),
+            &HistoryWindow::searchHistoryClicked,
+            this,
+            &MainWindow::forwardSearchTermItem);
 }
 
 void MainWindow::openFavouritesWindow(void)
