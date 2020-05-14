@@ -723,6 +723,7 @@ void MainWindow::openHistoryWindow(void)
     _historyWindow->setParent(this, Qt::Window);
     _historyWindow->show();
     _historyWindow->setAttribute(Qt::WA_DeleteOnClose);
+    _historyWindow->move(x() + width(), y());
 
     connect(static_cast<HistoryWindow *>(_historyWindow),
             &HistoryWindow::searchHistoryClicked,
@@ -747,6 +748,10 @@ void MainWindow::openFavouritesWindow(void)
     _favouritesWindow->setParent(this, Qt::Window);
     _favouritesWindow->show();
     _favouritesWindow->setAttribute(Qt::WA_DeleteOnClose);
+    _favouritesWindow->move(x() + (width()
+                                   - _favouritesWindow->size().width()) / 2,
+                            y() + (height()
+                                   - _favouritesWindow->size().height()) / 2);
 }
 
 void MainWindow::checkForUpdate(bool showProgress)

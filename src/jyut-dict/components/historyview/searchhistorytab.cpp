@@ -41,6 +41,9 @@ void SearchHistoryTab::setupUI(void)
     _tabLayout->addWidget(_clearAllSearchHistoryButton);
     _tabLayout->setAlignment(_clearAllSearchHistoryButton, Qt::AlignHCenter);
 
+    _tabLayout->setSpacing(10);
+    _tabLayout->setContentsMargins(0, 0, 0, 0);
+
     setStyle(/*use_dark=*/false);
 }
 
