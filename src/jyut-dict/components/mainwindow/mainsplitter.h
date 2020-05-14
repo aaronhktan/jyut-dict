@@ -40,8 +40,13 @@ public:
 private:
     void translateUI(void);
 
+    void prepareEntry(Entry &entry, bool addToHistory);
+
+    bool _addToHistory = true;
+
     std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
     std::shared_ptr<SQLDatabaseManager> _manager;
+    std::shared_ptr<SQLSearch> _search;
     std::shared_ptr<SQLUserHistoryUtils> _sqlHistoryUtils;
     Analytics *_analytics;
 
@@ -49,9 +54,13 @@ private:
     QAbstractListModel *_model;
     QListView *_resultListView;
 
+public slots:
+    void forwardViewHistoryItem(Entry &entry);
+
 private slots:
     void prepareEntry(Entry &entry);
 
+    void handleModelReset(void);
     void handleClick(const QModelIndex &selection);
     void handleDoubleClick(const QModelIndex &selection);
 };

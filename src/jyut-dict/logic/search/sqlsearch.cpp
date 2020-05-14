@@ -130,6 +130,25 @@ void SQLSearch::searchEnglish(const QString searchTerm)
     runThread(&SQLSearch::searchEnglishThread, searchTerm);
 }
 
+void SQLSearch::searchByUnique(const QString simplified,
+                               const QString traditional,
+                               const QString jyutping,
+                               const QString pinyin)
+{
+    if (!_manager) {
+        std::cout << "No database specified!" << std::endl;
+        return;
+    }
+
+    setCurrentSearchTerm(simplified + traditional + jyutping + pinyin);
+    QtConcurrent::run(this,
+                      &SQLSearch::searchByUniqueThread,
+                      simplified,
+                      traditional,
+                      jyutping,
+                      pinyin);
+}
+
 void SQLSearch::searchTraditionalSentences(const QString searchTerm)
 {
     setCurrentSearchTerm(searchTerm);
@@ -374,6 +393,52 @@ void SQLSearch::searchEnglishThread(const QString searchTerm)
 
     sleepIfEmpty(results);
     if (!checkQueryCurrent(searchTerm)) { return; }
+    notifyObservers(results, /*emptyQuery=*/false);
+}
+
+// To seach by unique, select by all the attributes that we have.
+void SQLSearch::searchByUniqueThread(const QString simplified,
+                                     const QString traditional,
+                                     const QString jyutping,
+                                     const QString pinyin)
+{
+    std::vector<Entry> results{};
+
+    {
+        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
+
+        QSqlQuery query{_manager->getDatabase()};
+        query.prepare(
+            "SELECT traditional, simplified, pinyin, jyutping, "
+            "group_concat(sourcename || ' ' || definition, '●') AS definitions "
+            "FROM entries, definitions, sources "
+            "WHERE simplified LIKE ? "
+            "AND traditional LIKE ? "
+            "AND jyutping LIKE ? "
+            "AND pinyin LIKE ? "
+            "AND entry_id = fk_entry_id "
+            "AND source_id = fk_source_id "
+            "GROUP BY entry_id "
+            "ORDER BY frequency DESC");
+        query.addBindValue(simplified);
+        query.addBindValue(traditional);
+        query.addBindValue(jyutping);
+        query.addBindValue(pinyin);
+        query.setForwardOnly(true);
+        query.exec();
+
+        // Do not parse results if new query has been made
+        if (!checkQueryCurrent(simplified + traditional + jyutping + pinyin)) {
+            return;
+        }
+        results = parseEntries(query);
+        _manager->closeDatabase();
+    }
+
+    sleepIfEmpty(results);
+    if (!checkQueryCurrent(simplified + traditional + jyutping + pinyin)) {
+        return;
+    }
     notifyObservers(results, /*emptyQuery=*/false);
 }
 

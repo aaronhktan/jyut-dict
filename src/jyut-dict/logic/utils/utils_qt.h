@@ -85,7 +85,6 @@ std::string getISO639FromLanguage(QString language);
 
 std::string getStringFromSearchParameter(SearchParameters parameter);
 
-
 void refreshLanguageMap();
 }
 

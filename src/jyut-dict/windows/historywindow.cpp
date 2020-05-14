@@ -10,7 +10,12 @@ HistoryWindow::HistoryWindow(
     connect(static_cast<SearchHistoryTab *>(_searchHistoryTab),
             &SearchHistoryTab::searchHistoryClicked,
             this,
-            &HistoryWindow::forwardSearchTermItem);
+            &HistoryWindow::forwardSearchHistoryItem);
+
+    connect(static_cast<ViewHistoryTab *>(_viewHistoryTab),
+            &ViewHistoryTab::viewHistoryClicked,
+            this,
+            &HistoryWindow::forwardViewHistoryItem);
 
     _tabWidget = new QTabWidget{this};
     _tabWidget->addTab(_searchHistoryTab, tr("Search History"));
@@ -23,7 +28,12 @@ HistoryWindow::HistoryWindow(
 }
 
 
-void HistoryWindow::forwardSearchTermItem(searchTermHistoryItem &pair)
+void HistoryWindow::forwardSearchHistoryItem(searchTermHistoryItem &pair)
 {
     emit searchHistoryClicked(pair);
+}
+
+void HistoryWindow::forwardViewHistoryItem(Entry &entry)
+{
+    emit viewHistoryClicked(entry);
 }

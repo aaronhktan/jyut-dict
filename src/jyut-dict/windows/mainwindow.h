@@ -131,6 +131,7 @@ private:
 
 signals:
     void searchHistoryClicked(searchTermHistoryItem &pair);
+    void viewHistoryClicked(Entry &entry);
 
 public slots:
     void notifyUpdateAvailable(bool updateAvailable,
@@ -138,7 +139,8 @@ public slots:
                                std::string url,
                                std::string description,
                                bool showIfNoUpdate = false);
-    void forwardSearchTermItem(searchTermHistoryItem &pair);
+    void forwardSearchHistoryItem(searchTermHistoryItem &pair);
+    void forwardViewHistoryItem(Entry &entry);
 };
 
 #endif // MAINWINDOW_H

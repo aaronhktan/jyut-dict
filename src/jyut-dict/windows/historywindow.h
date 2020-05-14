@@ -31,9 +31,11 @@ private:
 
 signals:
     void searchHistoryClicked(searchTermHistoryItem &pair);
+    void viewHistoryClicked(Entry &entry);
 
 public slots:
-    void forwardSearchTermItem(searchTermHistoryItem &pair);
+    void forwardSearchHistoryItem(searchTermHistoryItem &pair);
+    void forwardViewHistoryItem(Entry &entry);
 };
 
 #endif // HISTORYWINDOW_H

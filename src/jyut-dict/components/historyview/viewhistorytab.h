@@ -28,6 +28,8 @@ private:
 
     void setStyle(bool use_dark);
 
+    void handleClick(const QModelIndex &selection);
+
     std::shared_ptr<SQLUserHistoryUtils> _sqlHistoryUtils;
 
     QVBoxLayout *_tabLayout;
@@ -36,6 +38,9 @@ private:
     ViewHistoryListModel *_model;
 
     QPushButton *_clearAllViewHistoryButton;
+
+signals:
+    void viewHistoryClicked(Entry &pair);
 };
 
 #endif // VIEWHISTORYTAB_H

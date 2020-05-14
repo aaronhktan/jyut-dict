@@ -58,11 +58,8 @@ private:
     QToolButton *_openSettingsButton;
     ISearchOptionsMediator *_searchOptions;
 
-signals:
-    void searchTermClicked(searchTermHistoryItem &pair);
-
 public slots:
-    void forwardSearchTermItem(searchTermHistoryItem &pair);
+    void forwardSearchHistoryItem(searchTermHistoryItem &pair);
 };
 
 #endif // MAINTOOLBAR_H

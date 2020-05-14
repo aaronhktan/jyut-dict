@@ -117,7 +117,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this,
             &MainWindow::searchHistoryClicked,
             _mainToolBar,
-            &MainToolBar::forwardSearchTermItem);
+            &MainToolBar::forwardSearchHistoryItem);
 
     _mainSplitter = new MainSplitter{_sqlUserUtils,
                                      _manager,
@@ -125,6 +125,10 @@ MainWindow::MainWindow(QWidget *parent) :
                                      _sqlHistoryUtils,
                                      this};
     setCentralWidget(_mainSplitter);
+    connect(this,
+            &MainWindow::viewHistoryClicked,
+            _mainSplitter,
+            &MainSplitter::forwardViewHistoryItem);
 
     // Create menu bar and populate it
     createMenus();
@@ -322,9 +326,14 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
     }
 }
 
-void MainWindow::forwardSearchTermItem(searchTermHistoryItem &pair)
+void MainWindow::forwardSearchHistoryItem(searchTermHistoryItem &pair)
 {
     emit searchHistoryClicked(pair);
+}
+
+void MainWindow::forwardViewHistoryItem(Entry &entry)
+{
+    emit viewHistoryClicked(entry);
 }
 
 void MainWindow::createMenus(void)
@@ -718,7 +727,12 @@ void MainWindow::openHistoryWindow(void)
     connect(static_cast<HistoryWindow *>(_historyWindow),
             &HistoryWindow::searchHistoryClicked,
             this,
-            &MainWindow::forwardSearchTermItem);
+            &MainWindow::forwardSearchHistoryItem);
+
+    connect(static_cast<HistoryWindow *>(_historyWindow),
+            &HistoryWindow::viewHistoryClicked,
+            this,
+            &MainWindow::forwardViewHistoryItem);
 }
 
 void MainWindow::openFavouritesWindow(void)

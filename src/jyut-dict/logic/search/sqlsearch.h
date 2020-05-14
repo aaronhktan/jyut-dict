@@ -36,6 +36,11 @@ public:
     void searchPinyin(const QString searchTerm) override;
     void searchEnglish(const QString searchTerm) override;
 
+    void searchByUnique(const QString simplified,
+                        const QString traditional,
+                        const QString jyutping,
+                        const QString pinyin) override;
+
     void searchTraditionalSentences(const QString searchTerm);
 
 private:
@@ -56,6 +61,11 @@ private:
     void searchJyutpingThread(const QString searchTerm);
     void searchPinyinThread(const QString searchTerm);
     void searchEnglishThread(const QString searchTerm);
+
+    void searchByUniqueThread(const QString simplified,
+                              const QString traditional,
+                              const QString jyutping,
+                              const QString pinyin);
 
     void searchTraditionalSentencesThread(const QString searchTerm);
 

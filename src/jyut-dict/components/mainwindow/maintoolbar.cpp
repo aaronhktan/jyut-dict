@@ -178,7 +178,7 @@ void MainToolBar::setOpenFavouritesAction(QAction *action)
     });
 }
 
-void MainToolBar::forwardSearchTermItem(searchTermHistoryItem &pair)
+void MainToolBar::forwardSearchHistoryItem(searchTermHistoryItem &pair)
 {
     _optionsBox->setOption(static_cast<SearchParameters>(pair.second));
     _searchBar->setText(pair.first.c_str());

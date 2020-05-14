@@ -140,8 +140,6 @@ void SQLUserHistoryUtils::addViewToHistoryThread(Entry entry)
 
         _manager->closeDatabase();
     }
-
-    searchAllViewHistory();
 }
 
 void SQLUserHistoryUtils::searchAllSearchHistoryThread(void)

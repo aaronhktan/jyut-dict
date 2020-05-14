@@ -11,6 +11,11 @@ ViewHistoryTab::ViewHistoryTab(
     _model = new ViewHistoryListModel{_sqlHistoryUtils, this};
     _listView->setModel(_model);
 
+    connect(_listView,
+            &QListView::clicked,
+            this,
+            &ViewHistoryTab::handleClick);
+
     setupUI();
     translateUI();
 
@@ -64,4 +69,16 @@ void ViewHistoryTab::setStyle(bool use_dark)
 #elif defined(Q_OS_WIN)
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
 #endif
+}
+
+void ViewHistoryTab::handleClick(const QModelIndex &selection)
+{
+    Entry entry = qvariant_cast<Entry>(selection.data());
+    bool isWelcomeEntry = entry.isWelcome();
+    bool isEmptyEntry = entry.isEmpty();
+    if (isWelcomeEntry || isEmptyEntry) {
+        return;
+    }
+
+    emit viewHistoryClicked(entry);
 }
