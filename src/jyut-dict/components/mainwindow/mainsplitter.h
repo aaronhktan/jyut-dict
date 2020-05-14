@@ -13,6 +13,7 @@
 #include <QEvent>
 #include <QModelIndex>
 #include <QSplitter>
+#include <QTimer>
 #include <QWidget>
 
 // The MainSplitter contains a "master" listview and a "detail" scrollarea
@@ -43,6 +44,8 @@ private:
     void prepareEntry(Entry &entry, bool addToHistory);
 
     bool _addToHistory = true;
+
+    QTimer *_addToHistoryTimer;
 
     std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
     std::shared_ptr<SQLDatabaseManager> _manager;

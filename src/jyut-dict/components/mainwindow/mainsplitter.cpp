@@ -19,6 +19,7 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     , _sqlHistoryUtils{sqlHistoryUtils}
 {
     _analytics = new Analytics{this};
+    _addToHistoryTimer = new QTimer{this};
 
     _entryScrollArea = new EntryScrollArea{sqlUserUtils, manager, this};
     _resultListView = new ResultListView{this};
@@ -126,7 +127,14 @@ void MainSplitter::prepareEntry(Entry &entry, bool addToHistory)
     }
 
     if (addToHistory) {
-        _sqlHistoryUtils->addViewToHistory(entry);
+        // Only add to history after a few seconds of viewing an entry
+        _addToHistoryTimer->stop();
+        disconnect(_addToHistoryTimer, nullptr, nullptr, nullptr);
+        _addToHistoryTimer->setSingleShot(true);
+        connect(_addToHistoryTimer, &QTimer::timeout, this, [=]() {
+            _sqlHistoryUtils->addViewToHistory(entry);
+        });
+        _addToHistoryTimer->start(1000);
     }
 
     entry.refreshColours(
