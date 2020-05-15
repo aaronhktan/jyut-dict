@@ -26,6 +26,7 @@ public:
     void changeEvent(QEvent *event);
 
 private:
+    void setupUI(void);
     void translateUI(void);
     void setStyle(bool use_dark);
 

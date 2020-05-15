@@ -9,8 +9,6 @@
 #endif
 #include <QWidget>
 
-#include <vector>
-
 // The ViewHistoryListView displays results of a search
 // It populates itself with a QAbstractListModel
 // And paints itself with a QStyledItemDelegate

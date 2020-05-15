@@ -10,6 +10,7 @@ HistoryWindow::HistoryWindow(
     : QWidget(parent)
 {
     setObjectName("HistoryWindow");
+
     _searchHistoryTab = new SearchHistoryTab{sqlHistoryUtils, this};
     _viewHistoryTab = new ViewHistoryTab{sqlHistoryUtils, this};
 
@@ -23,13 +24,7 @@ HistoryWindow::HistoryWindow(
             this,
             &HistoryWindow::forwardViewHistoryItem);
 
-    _tabWidget = new QTabWidget{this};
-    _tabWidget->addTab(_searchHistoryTab, tr("Search History"));
-    _tabWidget->addTab(_viewHistoryTab, tr("Viewed Entries"));
-
-    _windowLayout = new QVBoxLayout{this};
-    _windowLayout->addWidget(_tabWidget);
-
+    setupUI();
     translateUI();
     setMinimumSize(300, 500);
 
@@ -59,10 +54,22 @@ void HistoryWindow::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
+void HistoryWindow::setupUI(void)
+{
+    _tabWidget = new QTabWidget{this};
+    _tabWidget->addTab(_searchHistoryTab, tr("Search History"));
+    _tabWidget->addTab(_viewHistoryTab, tr("Viewed Entries"));
+
+    _windowLayout = new QVBoxLayout{this};
+    _windowLayout->addWidget(_tabWidget);
+}
+
 void HistoryWindow::translateUI(void)
 {
     QString title = tr("History");
     setWindowTitle(title);
+    _tabWidget->setTabText(0, tr("Search History"));
+    _tabWidget->setTabText(1, tr("Viewed Entries"));
 }
 
 void HistoryWindow::setStyle(bool use_dark)

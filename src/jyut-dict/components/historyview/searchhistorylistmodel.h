@@ -30,10 +30,10 @@ public:
                                     QObject *parent = nullptr);
     ~SearchHistoryListModel() override;
 
-    void callback(const std::vector<std::pair<std::string, int>> searchTerms,
+    void callback(const std::vector<searchTermHistoryItem> searchTerms,
                   bool emptyQuery) override;
-    void setEntries(std::vector<std::pair<std::string, int>> searchTerms);
-    void setEntries(std::vector<std::pair<std::string, int>> searchTerms, bool emptyQuery);
+    void setEntries(std::vector<searchTermHistoryItem> searchTerms);
+    void setEntries(std::vector<searchTermHistoryItem> searchTerms, bool emptyQuery);
     void setEmpty();
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -43,7 +43,7 @@ public:
                         int role = Qt::DisplayRole) const override;
 
 private:
-    std::vector<std::pair<std::string, int>> _searchTerms;
+    std::vector<searchTermHistoryItem> _searchTerms;
 
     std::shared_ptr<ISearchObservable> _sqlHistoryUtils;
 };

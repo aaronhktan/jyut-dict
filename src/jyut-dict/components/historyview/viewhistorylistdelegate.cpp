@@ -115,7 +115,6 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
     }
     QFontMetrics metrics(font);
 
-    // Use QTextDocument for rich text
     QTextDocument *doc = new QTextDocument{};
     entry.refreshColours(_settings
                              ->value("entryColourPhoneticType",
@@ -161,7 +160,7 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
         }
         painter->setFont(font);
         painter->save();
-        painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
+        painter->setPen(QPen{option.palette.color(QPalette::PlaceholderText)});
 
         // Do custom text layout to get eliding double-line label
         snippet = entry.getDefinitionSnippet().c_str();

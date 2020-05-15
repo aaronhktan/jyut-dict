@@ -1,7 +1,6 @@
 #include "viewhistorylistview.h"
 
 #include "components/historyview/viewhistorylistdelegate.h"
-#include "logic/search/sqlsearch.h"
 
 #include <QGuiApplication>
 

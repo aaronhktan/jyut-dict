@@ -6,8 +6,6 @@
 #include "logic/utils/utils_qt.h"
 
 #include <QGuiApplication>
-#include <QAbstractTextDocumentLayout>
-#include <QTextDocument>
 #include <QTextLayout>
 #include <QVariant>
 
@@ -30,9 +28,10 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
 
     painter->save();
 
-    std::pair<std::string, int> pair
-        = qvariant_cast<std::pair<std::string, int>>(index.data());
+    searchTermHistoryItem pair
+        = qvariant_cast<searchTermHistoryItem>(index.data());
 
+    // Use -1 to indicate that this is not a valid history item
     bool isEmptyPair = (pair.second == -1);
 
     QColor backgroundColour;
@@ -79,27 +78,14 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
 #endif
 
     if (isEmptyPair) {
+        // In the empty pair, we paint a big title, a separator, and a bunch of
+        // lines with lots of detail.
         font.setPixelSize(20);
         painter->setFont(font);
-        r = option.rect.adjusted(11, 11, -11, 0);
-        QFontMetrics metrics(font);
+        r = option.rect.adjusted(11, 11, -11, 0); // 11 specifies the margin
+        painter->drawText(r, 0, pair.first.c_str());
 
-        QTextDocument *doc = new QTextDocument{};
-        doc->setHtml(QString(pair.first.c_str()));
-        doc->setTextWidth(r.width());
-        doc->setDefaultFont(font);
-        doc->setDocumentMargin(0);
-        QAbstractTextDocumentLayout *documentLayout = doc->documentLayout();
-        auto ctx = QAbstractTextDocumentLayout::PaintContext();
-        ctx.palette.setColor(QPalette::Text, painter->pen().color());
-        QRectF bounds = QRectF(0, 0, r.width(), 16);
-        ctx.clip = bounds;
-        painter->translate(11, r.y());
-        documentLayout->draw(painter, ctx);
-        painter->translate(-11, -r.y());
-
-        delete doc;
-
+        QFontMetrics metrics{font};
         font.setPixelSize(14);
         painter->setFont(font);
         r = r.adjusted(0, 28, 0, 0);
@@ -107,6 +93,8 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
         QString phonetic = "—";
         painter->drawText(r, 0, phonetic, &boundingRect);
 
+        // Add some extra spacing if text is not in Chinese; Chinese text
+        // overhangs the baseline by a few pixels.
         if (Settings::isCurrentLocaleHan()) {
             r = r.adjusted(0, boundingRect.height() + 5, 0, 0);
             font.setPixelSize(13);
@@ -116,7 +104,7 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
         }
         painter->setFont(font);
         painter->save();
-        painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
+        painter->setPen(QPen{option.palette.color(QPalette::PlaceholderText)});
 
         // Do custom text layout to get eliding double-line label
         QString snippet = tr("After searching for a word, you will find it "
@@ -164,6 +152,7 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
 
         textLayout->endLayout();
         delete textLayout;
+
         painter->restore();
     } else {
         font.setPixelSize(16);
@@ -202,7 +191,7 @@ QSize SearchHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
 {
     (void) (option);
 
-    std::pair<std::string, int> pair
+    searchTermHistoryItem pair
         = qvariant_cast<searchTermHistoryItem>(index.data());
     bool isEmptyPair = (pair.second == -1);
 

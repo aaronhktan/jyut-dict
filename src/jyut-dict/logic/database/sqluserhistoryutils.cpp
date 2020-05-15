@@ -21,7 +21,7 @@ void SQLUserHistoryUtils::deregisterObserver(ISearchObserver *observer)
     _observers.remove(observer);
 }
 
-void SQLUserHistoryUtils::notifyObservers(const std::vector<std::pair<std::string, int>> &results,
+void SQLUserHistoryUtils::notifyObservers(const std::vector<searchTermHistoryItem> &results,
                                           bool emptyQuery)
 {
     std::lock_guard<std::mutex> notifyLock{_notifyMutex};
@@ -43,10 +43,18 @@ void SQLUserHistoryUtils::notifyObservers(const std::vector<Entry> &results,
     }
 }
 
-void SQLUserHistoryUtils::addSearchToHistory(std::string search, int options)
+bool SQLUserHistoryUtils::checkForManager(void)
 {
     if (!_manager) {
         std::cout << "No database specified!" << std::endl;
+        return false;
+    }
+    return true;
+}
+
+void SQLUserHistoryUtils::addSearchToHistory(std::string search, int options)
+{
+    if (!checkForManager()) {
         return;
     }
     QtConcurrent::run(this,
@@ -57,8 +65,7 @@ void SQLUserHistoryUtils::addSearchToHistory(std::string search, int options)
 
 void SQLUserHistoryUtils::addViewToHistory(Entry entry)
 {
-    if (!_manager) {
-        std::cout << "No database specified!" << std::endl;
+    if (!checkForManager()) {
         return;
     }
     QtConcurrent::run(this,
@@ -68,8 +75,7 @@ void SQLUserHistoryUtils::addViewToHistory(Entry entry)
 
 void SQLUserHistoryUtils::searchAllSearchHistory(void)
 {
-    if (!_manager) {
-        std::cout << "No database specified!" << std::endl;
+    if (!checkForManager()) {
         return;
     }
     QtConcurrent::run(this,
@@ -78,8 +84,7 @@ void SQLUserHistoryUtils::searchAllSearchHistory(void)
 
 void SQLUserHistoryUtils::clearAllSearchHistory(void)
 {
-    if (!_manager) {
-        std::cout << "No database specified!" << std::endl;
+    if (!checkForManager()) {
         return;
     }
     QtConcurrent::run(this, &SQLUserHistoryUtils::clearAllSearchHistoryThread);
@@ -87,8 +92,7 @@ void SQLUserHistoryUtils::clearAllSearchHistory(void)
 
 void SQLUserHistoryUtils::searchAllViewHistory(void)
 {
-    if (!_manager) {
-        std::cout << "No database specified!" << std::endl;
+    if (!checkForManager()) {
         return;
     }
     QtConcurrent::run(this, &SQLUserHistoryUtils::searchAllViewHistoryThread);
@@ -96,8 +100,7 @@ void SQLUserHistoryUtils::searchAllViewHistory(void)
 
 void SQLUserHistoryUtils::clearAllViewHistory(void)
 {
-    if (!_manager) {
-        std::cout << "No database specified!" << std::endl;
+    if (!checkForManager()) {
         return;
     }
     QtConcurrent::run(this, &SQLUserHistoryUtils::clearAllViewHistoryThread);
@@ -144,7 +147,7 @@ void SQLUserHistoryUtils::addViewToHistoryThread(Entry entry)
 
 void SQLUserHistoryUtils::searchAllSearchHistoryThread(void)
 {
-    std::vector<std::pair<std::string, int>> results{};
+    std::vector<searchTermHistoryItem> results{};
 
     {
         std::lock_guard<std::mutex> databaseLock(_databaseMutex);
@@ -212,10 +215,10 @@ void SQLUserHistoryUtils::clearAllViewHistoryThread(void)
     searchAllViewHistory();
 }
 
-std::vector<std::pair<std::string, int>> SQLUserHistoryUtils::parseStrings(
+std::vector<searchTermHistoryItem> SQLUserHistoryUtils::parseStrings(
     QSqlQuery &query)
 {
-    std::vector<std::pair<std::string, int>> results;
+    std::vector<searchTermHistoryItem> results;
 
     int textIndex = query.record().indexOf("text");
     int optionsIndex = query.record().indexOf("options");
@@ -224,7 +227,7 @@ std::vector<std::pair<std::string, int>> SQLUserHistoryUtils::parseStrings(
         std::string text = query.value(textIndex).toString().toStdString();
         int options = query.value(optionsIndex).toInt();
 
-        results.push_back(std::pair<std::string, int>{text, options});
+        results.push_back(searchTermHistoryItem{text, options});
     }
 
     return results;
@@ -240,7 +243,6 @@ std::vector<Entry> SQLUserHistoryUtils::parseEntries(QSqlQuery &query)
     int pinyinIndex = query.record().indexOf("pinyin");
 
     while (query.next()) {
-        // Get fields from table
         std::string simplified
             = query.value(simplifiedIndex).toString().toStdString();
         std::string traditional

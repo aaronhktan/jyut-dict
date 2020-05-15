@@ -18,6 +18,8 @@
 // The SQLUserHistoryUtils class searches the user database
 // for items regarding history (search history and view history).
 
+typedef std::pair<std::string, int> searchTermHistoryItem;
+
 class SQLUserHistoryUtils : public QObject,
                             virtual public ISearchObservable
 {
@@ -38,10 +40,11 @@ public:
     void clearAllViewHistory(void);
 
 private:
-    void notifyObservers(const std::vector<std::pair<std::string, int>> &results,
+    void notifyObservers(const std::vector<searchTermHistoryItem> &results,
                          bool emptyQuery) override;
     void notifyObservers(const std::vector<Entry> &results,
                          bool emptyQuery) override;
+    bool checkForManager(void);
 
     void addSearchToHistoryThread(std::string search, int options);
     void addViewToHistoryThread(Entry entry);
@@ -52,7 +55,7 @@ private:
     void searchAllViewHistoryThread(void);
     void clearAllViewHistoryThread(void);
 
-    std::vector<std::pair<std::string, int>> parseStrings(QSqlQuery &query);
+    std::vector<searchTermHistoryItem> parseStrings(QSqlQuery &query);
     std::vector<Entry> parseEntries(QSqlQuery &query);
 
     std::list<ISearchObserver *> _observers;
@@ -63,7 +66,6 @@ private:
     std::mutex _notifyMutex;
 };
 
-typedef std::pair<std::string, int> searchTermHistoryItem;
 Q_DECLARE_METATYPE(searchTermHistoryItem);
 
 #endif // SQLUSERHISTORYUTILS_H
