@@ -32,6 +32,8 @@ private:
 
     std::shared_ptr<SQLUserHistoryUtils> _sqlHistoryUtils;
 
+    bool _paletteRecentlyChanged = false;
+
     QVBoxLayout *_tabLayout;
 
     ViewHistoryListView *_listView;

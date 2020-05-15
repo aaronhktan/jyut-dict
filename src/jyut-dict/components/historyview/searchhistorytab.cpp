@@ -1,6 +1,10 @@
 #include "searchhistorytab.h"
 
 #include "logic/settings/settingsutils.h"
+#ifdef Q_OS_MAC
+#include "logic/utils/utils_mac.h"
+#endif
+#include "logic/utils/utils_qt.h"
 
 SearchHistoryTab::SearchHistoryTab(
     std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils, QWidget *parent)
@@ -24,6 +28,17 @@ SearchHistoryTab::SearchHistoryTab(
 
 void SearchHistoryTab::changeEvent(QEvent *event)
 {
+#if defined(Q_OS_DARWIN)
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(10, [=]() { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        setStyle(Utils::isDarkMode());
+    }
+#endif
     if (event->type() == QEvent::LanguageChange) {
         translateUI();
     }
@@ -42,11 +57,12 @@ void SearchHistoryTab::setupUI(void)
     _tabLayout->setAlignment(_clearAllSearchHistoryButton, Qt::AlignHCenter);
 
     _tabLayout->setSpacing(10);
-#ifdef Q_OS_MAC
-    _tabLayout->setContentsMargins(0, 0, 0, 0);
-#endif
 
-    setStyle(/*use_dark=*/false);
+#ifdef Q_OS_MAC
+    setStyle(Utils::isDarkMode());
+#else
+    setStyle(/* use_dark = */ false);
+#endif
 }
 
 void SearchHistoryTab::translateUI(void)
@@ -67,7 +83,6 @@ void SearchHistoryTab::translateUI(void)
 
 void SearchHistoryTab::setStyle(bool use_dark)
 {
-    (void) (use_dark);
 #ifdef Q_OS_MAC
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: "
                   "13px; height: 16px; }");
@@ -76,10 +91,19 @@ void SearchHistoryTab::setStyle(bool use_dark)
         "QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
 #endif
 
-#ifdef Q_OS_LINUX
+#ifdef Q_OS_MAC
+    setStyleSheet(use_dark ? "QListView { border: none; }"
+                           : "QListView { border: 1px solid lightgrey; }");
+#elif defined(Q_OS_LINUX)
     setStyleSheet("QListView { border: 1px solid lightgrey; }");
 #elif defined(Q_OS_WIN)
     setStyleSheet("QListView { border: 1px solid #b9b9b9; }");
+#endif
+
+#ifdef Q_OS_MAC
+    _tabLayout->setContentsMargins(0, 0, 0, use_dark ? 0 : 10);
+#else
+    (void) (use_dark);
 #endif
 }
 
