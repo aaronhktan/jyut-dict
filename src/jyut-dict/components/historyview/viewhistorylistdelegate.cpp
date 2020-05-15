@@ -244,10 +244,6 @@ QSize ViewHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
         return QSize(100, 135);
 #endif
     } else {
-#ifdef Q_OS_LINUX
-        return QSize(100, 90);
-#else
         return QSize(100, 60);
-#endif
     }
 }

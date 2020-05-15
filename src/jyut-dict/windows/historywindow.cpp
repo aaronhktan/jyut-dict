@@ -24,9 +24,23 @@ HistoryWindow::HistoryWindow(
     _windowLayout = new QVBoxLayout{this};
     _windowLayout->addWidget(_tabWidget);
 
+    translateUI();
     setMinimumSize(300, 500);
 }
 
+void HistoryWindow::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
+    QWidget::changeEvent(event);
+}
+
+void HistoryWindow::translateUI(void)
+{
+    QString title = tr("History");
+    setWindowTitle(title);
+}
 
 void HistoryWindow::forwardSearchHistoryItem(searchTermHistoryItem &pair)
 {

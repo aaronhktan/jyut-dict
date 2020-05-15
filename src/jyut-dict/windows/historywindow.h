@@ -6,6 +6,7 @@
 #include "logic/database/sqluserhistoryutils.h"
 #include "logic/entry/entry.h"
 
+#include <QEvent>
 #include <QVBoxLayout>
 #include <QTabWidget>
 
@@ -22,7 +23,11 @@ public:
     explicit HistoryWindow(std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                            QWidget *parent = nullptr);
 
+    void changeEvent(QEvent *event);
+
 private:
+    void translateUI(void);
+
     QVBoxLayout *_windowLayout;
     QTabWidget *_tabWidget;
 

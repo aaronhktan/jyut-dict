@@ -212,6 +212,10 @@ QSize SearchHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
         return QSize(100, 135);
 #endif
     } else {
+#ifdef Q_OS_MAC
         return QSize(100, 32);
+#else
+        return QSize(100, 37);
+#endif
     }
 }

@@ -57,7 +57,7 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
 #elif defined(Q_OS_DARWIN)
     setStyleSheet("QSplitter::handle { background-color: none; }");
 #else
-    setStyleSheet("QSplitter::handle { background-color: lightgray; }");
+    setStyleSheet("QSplitter::handle { background-color: lightgrey; }");
 #endif
 }
 

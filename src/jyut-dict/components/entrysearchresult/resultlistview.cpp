@@ -14,7 +14,7 @@ ResultListView::ResultListView(QWidget *parent)
 {
     setFrameShape(QFrame::NoFrame);
 #ifdef Q_OS_LINUX
-    setMinimumWidth(200);
+    setMinimumWidth(250);
 #else
     setMinimumWidth(300);
 #endif

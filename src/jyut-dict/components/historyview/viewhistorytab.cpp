@@ -42,7 +42,9 @@ void ViewHistoryTab::setupUI(void)
     _tabLayout->setAlignment(_clearAllViewHistoryButton, Qt::AlignHCenter);
 
     _tabLayout->setSpacing(10);
+#ifdef Q_OS_MAC
     _tabLayout->setContentsMargins(0, 0, 0, 0);
+#endif
 
     setStyle(/*use_dark=*/false);
 }
@@ -71,6 +73,10 @@ void ViewHistoryTab::setStyle(bool use_dark)
                   "13px; height: 16px; }");
 #elif defined(Q_OS_WIN)
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
+#endif
+
+#ifdef Q_OS_LINUX
+    setStyleSheet("QListView { border: 1px solid lightgrey; }");
 #endif
 }
 
