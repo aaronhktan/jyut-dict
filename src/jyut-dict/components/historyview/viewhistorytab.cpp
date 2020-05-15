@@ -77,6 +77,8 @@ void ViewHistoryTab::setStyle(bool use_dark)
 
 #ifdef Q_OS_LINUX
     setStyleSheet("QListView { border: 1px solid lightgrey; }");
+#elif defined(Q_OS_WIN)
+    setStyleSheet("QListView { border: 1px solid #b9b9b9; }");
 #endif
 }
 

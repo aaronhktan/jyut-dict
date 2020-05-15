@@ -74,11 +74,11 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
     QRect boundingRect;
     QFont font = painter->font();
 
-    if (isEmptyPair) {
 #ifdef Q_OS_WIN
-        QFont oldFont = font;
-        font = QFont("Microsoft Yahei");
+    font = QFont("Microsoft Yahei");
 #endif
+
+    if (isEmptyPair) {
         font.setPixelSize(20);
         painter->setFont(font);
         r = option.rect.adjusted(11, 11, -11, 0);

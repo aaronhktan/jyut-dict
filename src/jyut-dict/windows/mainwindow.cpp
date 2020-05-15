@@ -721,9 +721,9 @@ void MainWindow::openHistoryWindow(void)
 
     _historyWindow = new HistoryWindow{_sqlHistoryUtils, nullptr};
     _historyWindow->setParent(this, Qt::Window);
-    _historyWindow->show();
     _historyWindow->setAttribute(Qt::WA_DeleteOnClose);
     _historyWindow->move(x() + width(), y());
+    _historyWindow->show();
 
     connect(static_cast<HistoryWindow *>(_historyWindow),
             &HistoryWindow::searchHistoryClicked,
@@ -746,12 +746,12 @@ void MainWindow::openFavouritesWindow(void)
 
     _favouritesWindow = new FavouriteSplitter{_sqlUserUtils, _manager, nullptr};
     _favouritesWindow->setParent(this, Qt::Window);
-    _favouritesWindow->show();
     _favouritesWindow->setAttribute(Qt::WA_DeleteOnClose);
     _favouritesWindow->move(x() + (width()
                                    - _favouritesWindow->size().width()) / 2,
                             y() + (height()
                                    - _favouritesWindow->size().height()) / 2);
+    _favouritesWindow->show();
 }
 
 void MainWindow::checkForUpdate(bool showProgress)

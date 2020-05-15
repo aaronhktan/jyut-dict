@@ -27,7 +27,7 @@ SearchHistoryListView::SearchHistoryListView(QWidget *parent)
 // is scrolled, listview advances by by three items. Override the wheelEvent to
 // modify this undesired behaviour until fixed by Qt.
 #ifdef Q_OS_WIN
-void ResultListView::wheelEvent(QWheelEvent *event)
+void SearchHistoryListView::wheelEvent(QWheelEvent *event)
 {
     int singleStep = verticalScrollBar()->singleStep();
     singleStep = qMin(singleStep, 10);

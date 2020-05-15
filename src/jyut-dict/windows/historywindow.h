@@ -27,6 +27,9 @@ public:
 
 private:
     void translateUI(void);
+    void setStyle(bool use_dark);
+
+    bool paletteRecentlyChanged = false;
 
     QVBoxLayout *_windowLayout;
     QTabWidget *_tabWidget;
