@@ -34,12 +34,24 @@ void SearchHistoryListModel::setEntries(std::vector<searchTermHistoryItem> searc
     endResetModel();
 }
 
-void SearchHistoryListModel::setEmpty()
+void SearchHistoryListModel::setEmpty(void)
 {
     searchTermHistoryItem pair{tr("No search history...").toStdString(),
                                      -1};
 
     setEntries(std::vector<searchTermHistoryItem>{pair});
+}
+
+void SearchHistoryListModel::translateUI(void)
+{
+    try {
+        if (_searchTerms[0].second == -1) {
+            setEmpty();
+        }
+    } catch (std::exception &e) {
+        (void) (e);
+        setEmpty();
+    }
 }
 
 int SearchHistoryListModel::rowCount(const QModelIndex &parent) const

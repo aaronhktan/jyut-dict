@@ -236,7 +236,7 @@
 <context>
     <name>EntryActionWidget</name>
     <message>
-        <location filename="../../components/entryview/entryactionwidget.cpp" line="+106"/>
+        <location filename="../../components/entryview/entryactionwidget.cpp" line="+107"/>
         <source>Saved!</source>
         <translation>已保存！</translation>
     </message>
@@ -282,7 +282,7 @@
 <context>
     <name>EntryViewSentenceCardSection</name>
     <message>
-        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="+86"/>
+        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="+79"/>
         <source>View all sentences →</source>
         <translation>查看所有例句 →</translation>
     </message>
@@ -293,6 +293,26 @@
         <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="+70"/>
         <source>Saved Words</source>
         <translation>已保存词语</translation>
+    </message>
+</context>
+<context>
+    <name>HistoryWindow</name>
+    <message>
+        <location filename="../../windows/historywindow.cpp" line="+60"/>
+        <location line="+11"/>
+        <source>Search History</source>
+        <translation>搜索历史</translation>
+    </message>
+    <message>
+        <location line="-10"/>
+        <location line="+11"/>
+        <source>Viewed Entries</source>
+        <translation>查看历史</translation>
+    </message>
+    <message>
+        <location line="-3"/>
+        <source>History</source>
+        <translation>历史</translation>
     </message>
 </context>
 <context>
@@ -356,31 +376,31 @@
         <translation>没有可用的更新!</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="+227"/>
-        <location line="+93"/>
+        <location filename="../../windows/mainwindow.cpp" line="+237"/>
+        <location line="+104"/>
         <source>&amp;File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location line="-92"/>
-        <location line="+93"/>
+        <location line="-103"/>
+        <location line="+104"/>
         <source>&amp;Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location line="-92"/>
-        <location line="+94"/>
+        <location line="-103"/>
+        <location line="+105"/>
         <source>&amp;Window</source>
         <translation>窗口</translation>
     </message>
     <message>
-        <location line="-92"/>
-        <location line="+93"/>
+        <location line="-103"/>
+        <location line="+104"/>
         <source>&amp;Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location line="-91"/>
+        <location line="-102"/>
         <source>&amp;About</source>
         <translation>关于粤语字典</translation>
     </message>
@@ -401,12 +421,12 @@
     </message>
     <message>
         <location line="+2"/>
-        <location line="+103"/>
+        <location line="+114"/>
         <source>Change settings</source>
         <translation>更改设置</translation>
     </message>
     <message>
-        <location line="-101"/>
+        <location line="-112"/>
         <source>Close Window</source>
         <translation>关闭窗口</translation>
     </message>
@@ -490,6 +510,11 @@
     </message>
     <message>
         <location line="+2"/>
+        <source>View Search History</source>
+        <translation>打开历史记录</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>Open List of Saved Words</source>
         <translation>显示所有已保存的词语</translation>
     </message>
@@ -519,8 +544,8 @@
         <translation>检查更新…</translation>
     </message>
     <message>
-        <location line="-40"/>
-        <location line="+92"/>
+        <location line="-41"/>
+        <location line="+103"/>
         <source>&amp;Search</source>
         <translation>搜索</translation>
     </message>
@@ -529,7 +554,7 @@
         <translation>检查更新…</translation>
     </message>
     <message>
-        <location line="+417"/>
+        <location line="+454"/>
         <source>Checking for update...</source>
         <translation>正在检查更新…</translation>
     </message>
@@ -693,9 +718,33 @@
     </message>
 </context>
 <context>
+    <name>SearchHistoryListDelegate</name>
+    <message>
+        <location filename="../../components/historyview/searchhistorylistdelegate.cpp" line="+110"/>
+        <source>After searching for a word, you will find it in this list. Selecting a word will allow you to do the same search again.</source>
+        <translation>您查字典之后就会在这里找到您的搜素历史。如果您想再次搜素，您可以选择表中的任何一个词语。</translation>
+    </message>
+</context>
+<context>
+    <name>SearchHistoryListModel</name>
+    <message>
+        <location filename="../../components/historyview/searchhistorylistmodel.cpp" line="+39"/>
+        <source>No search history...</source>
+        <translation>无搜素历史…</translation>
+    </message>
+</context>
+<context>
+    <name>SearchHistoryTab</name>
+    <message>
+        <location filename="../../components/historyview/searchhistorytab.cpp" line="+79"/>
+        <source>Clear All Search History</source>
+        <translation>清除搜索历史</translation>
+    </message>
+</context>
+<context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+141"/>
+        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+147"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
@@ -703,7 +752,7 @@
 <context>
     <name>SearchOptionsRadioGroupBox</name>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="+124"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="+134"/>
         <source>SC</source>
         <translation>简体中文</translation>
     </message>
@@ -971,19 +1020,48 @@
     </message>
 </context>
 <context>
+    <name>ViewHistoryListModel</name>
+    <message>
+        <location filename="../../components/historyview/viewhistorylistmodel.cpp" line="+37"/>
+        <location line="+1"/>
+        <source>No viewed items...</source>
+        <translation>无查看历史…</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>After viewing an entry, you can find it in this list. Selecting an item in this list will let you see that entry again.</source>
+        <translation>您查看词语之后就会在这里找到您的查看历史。您选择表中的一个词语就可以在词典里面再次查看那一个词语。</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>—</source>
+        <translation>—</translation>
+    </message>
+</context>
+<context>
+    <name>ViewHistoryTab</name>
+    <message>
+        <location filename="../../components/historyview/viewhistorytab.cpp" line="+79"/>
+        <source>Clear All View History</source>
+        <translation>清除查看历史</translation>
+    </message>
+</context>
+<context>
     <name>strings</name>
     <message>
         <location filename="../../logic/strings/strings.h" line="+16"/>
+        <location line="+70"/>
         <source>JP</source>
         <translation>粤拼</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-69"/>
+        <location line="+70"/>
         <source>PY</source>
         <translation>拼音</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-69"/>
         <source>DEFINITIONS</source>
         <translation>解释</translation>
     </message>
@@ -1068,7 +1146,27 @@
         <translation>普通话</translation>
     </message>
     <message>
-        <location line="-24"/>
+        <location line="+2"/>
+        <source>SC</source>
+        <translation>简体中文</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>TC</source>
+        <translation>繁体中文</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>CN</source>
+        <translation>中文</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>EN</source>
+        <translation>英文</translation>
+    </message>
+    <message>
+        <location line="-31"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Hong Kong</source>

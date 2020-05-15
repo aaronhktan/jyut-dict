@@ -34,7 +34,9 @@ public:
                   bool emptyQuery) override;
     void setEntries(std::vector<searchTermHistoryItem> searchTerms);
     void setEntries(std::vector<searchTermHistoryItem> searchTerms, bool emptyQuery);
-    void setEmpty();
+    void setEmpty(void);
+
+    void translateUI(void);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;

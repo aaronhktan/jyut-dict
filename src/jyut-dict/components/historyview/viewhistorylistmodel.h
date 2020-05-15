@@ -34,7 +34,9 @@ public:
     void callback(const std::vector<Entry> entries, bool emptyQuery) override;
     void setEntries(std::vector<Entry> entries);
     void setEntries(std::vector<Entry> entries, bool emptyQuery);
-    void setEmpty();
+    void setEmpty(void);
+
+    void translateUI(void);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;

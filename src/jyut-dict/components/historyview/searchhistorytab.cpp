@@ -79,6 +79,8 @@ void SearchHistoryTab::translateUI(void)
     _clearAllSearchHistoryButton->setText(tr("Clear All Search History"));
     _clearAllSearchHistoryButton->setFixedSize(
         _clearAllSearchHistoryButton->minimumSizeHint());
+
+    _model->translateUI();
 }
 
 void SearchHistoryTab::setStyle(bool use_dark)

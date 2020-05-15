@@ -32,7 +32,7 @@ void ViewHistoryListModel::setEntries(std::vector<Entry> entries, bool emptyQuer
     endResetModel();
 }
 
-void ViewHistoryListModel::setEmpty()
+void ViewHistoryListModel::setEmpty(void)
 {
     Entry entry = Entry{tr("No viewed items...").toStdString(),
                         tr("No viewed items...").toStdString(),
@@ -46,6 +46,18 @@ void ViewHistoryListModel::setEmpty()
     entry.setIsEmpty(true);
 
     setEntries(std::vector<Entry>{entry});
+}
+
+void ViewHistoryListModel::translateUI(void)
+{
+    try {
+        if (_entries.at(0).isEmpty()) {
+            setEmpty();
+        }
+    } catch (std::exception &e) {
+        (void) (e);
+        setEmpty();
+    }
 }
 
 int ViewHistoryListModel::rowCount(const QModelIndex &parent) const

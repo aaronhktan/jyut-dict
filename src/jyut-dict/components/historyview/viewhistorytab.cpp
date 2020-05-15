@@ -79,6 +79,8 @@ void ViewHistoryTab::translateUI(void)
     _clearAllViewHistoryButton->setText(tr("Clear All View History"));
     _clearAllViewHistoryButton->setFixedSize(
         _clearAllViewHistoryButton->minimumSizeHint());
+
+    _model->translateUI();
 }
 
 void ViewHistoryTab::setStyle(bool use_dark)

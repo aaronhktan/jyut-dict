@@ -236,22 +236,22 @@
 <context>
     <name>EntryActionWidget</name>
     <message>
-        <location filename="../../components/entryview/entryactionwidget.cpp" line="106"/>
+        <location filename="../../components/entryview/entryactionwidget.cpp" line="107"/>
         <source>Saved!</source>
         <translation>Enregistré !</translation>
     </message>
     <message>
-        <location filename="../../components/entryview/entryactionwidget.cpp" line="106"/>
+        <location filename="../../components/entryview/entryactionwidget.cpp" line="107"/>
         <source>Save</source>
         <translation>Enregistrer</translation>
     </message>
     <message>
-        <location filename="../../components/entryview/entryactionwidget.cpp" line="107"/>
+        <location filename="../../components/entryview/entryactionwidget.cpp" line="108"/>
         <source>Share</source>
         <translation>Partager</translation>
     </message>
     <message>
-        <location filename="../../components/entryview/entryactionwidget.cpp" line="186"/>
+        <location filename="../../components/entryview/entryactionwidget.cpp" line="187"/>
         <source>Path to save exported image</source>
         <translation>Où enregistrer le fichier</translation>
     </message>
@@ -282,7 +282,7 @@
 <context>
     <name>EntryViewSentenceCardSection</name>
     <message>
-        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="86"/>
+        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="79"/>
         <source>View all sentences →</source>
         <translation>Voir toutes les phrases →</translation>
     </message>
@@ -293,6 +293,26 @@
         <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="70"/>
         <source>Saved Words</source>
         <translation>Mots enregistrés</translation>
+    </message>
+</context>
+<context>
+    <name>HistoryWindow</name>
+    <message>
+        <location filename="../../windows/historywindow.cpp" line="60"/>
+        <location filename="../../windows/historywindow.cpp" line="71"/>
+        <source>Search History</source>
+        <translation>Recherches</translation>
+    </message>
+    <message>
+        <location filename="../../windows/historywindow.cpp" line="61"/>
+        <location filename="../../windows/historywindow.cpp" line="72"/>
+        <source>Viewed Entries</source>
+        <translation>Entrées</translation>
+    </message>
+    <message>
+        <location filename="../../windows/historywindow.cpp" line="69"/>
+        <source>History</source>
+        <translation>Historique</translation>
     </message>
 </context>
 <context>
@@ -356,112 +376,112 @@
         <translation>Aucune mise à jour disponible !</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="227"/>
-        <location filename="../../windows/mainwindow.cpp" line="320"/>
+        <location filename="../../windows/mainwindow.cpp" line="237"/>
+        <location filename="../../windows/mainwindow.cpp" line="341"/>
         <source>&amp;File</source>
         <translation>&amp;Fichier</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="228"/>
-        <location filename="../../windows/mainwindow.cpp" line="321"/>
+        <location filename="../../windows/mainwindow.cpp" line="238"/>
+        <location filename="../../windows/mainwindow.cpp" line="342"/>
         <source>&amp;Edit</source>
         <translation>&amp;Édition</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="229"/>
-        <location filename="../../windows/mainwindow.cpp" line="323"/>
+        <location filename="../../windows/mainwindow.cpp" line="239"/>
+        <location filename="../../windows/mainwindow.cpp" line="344"/>
         <source>&amp;Window</source>
         <translation>&amp;Fenêtre</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="231"/>
-        <location filename="../../windows/mainwindow.cpp" line="324"/>
+        <location filename="../../windows/mainwindow.cpp" line="241"/>
+        <location filename="../../windows/mainwindow.cpp" line="345"/>
         <source>&amp;Help</source>
         <translation>&amp;Aide</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="233"/>
+        <location filename="../../windows/mainwindow.cpp" line="243"/>
         <source>&amp;About</source>
         <translation>&amp;À propos</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="234"/>
+        <location filename="../../windows/mainwindow.cpp" line="244"/>
         <source>Show the application&apos;s About box</source>
         <translation>Afficher la fenêtre «&#xa0;À propos&#xa0;»</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="237"/>
+        <location filename="../../windows/mainwindow.cpp" line="247"/>
         <source>Preferences</source>
         <translation>Préférences</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="239"/>
+        <location filename="../../windows/mainwindow.cpp" line="249"/>
         <source>Settings</source>
         <translation>Réglages</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="241"/>
-        <location filename="../../windows/mainwindow.cpp" line="344"/>
+        <location filename="../../windows/mainwindow.cpp" line="251"/>
+        <location filename="../../windows/mainwindow.cpp" line="365"/>
         <source>Change settings</source>
         <translation>Changer ses préférences</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="243"/>
+        <location filename="../../windows/mainwindow.cpp" line="253"/>
         <source>Close Window</source>
         <translation>Fermer</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="245"/>
+        <location filename="../../windows/mainwindow.cpp" line="255"/>
         <source>Undo</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="246"/>
+        <location filename="../../windows/mainwindow.cpp" line="256"/>
         <source>Redo</source>
         <translation>Rétablir</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="247"/>
+        <location filename="../../windows/mainwindow.cpp" line="257"/>
         <source>Cut</source>
         <translation>Couper</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="248"/>
+        <location filename="../../windows/mainwindow.cpp" line="258"/>
         <source>Copy</source>
         <translation>Copier</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="249"/>
+        <location filename="../../windows/mainwindow.cpp" line="259"/>
         <source>Paste</source>
         <translation>Coller</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="251"/>
+        <location filename="../../windows/mainwindow.cpp" line="261"/>
         <source>Start a New Search</source>
         <translation>Rechercher...</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="252"/>
+        <location filename="../../windows/mainwindow.cpp" line="262"/>
         <source>Select Contents of Search Bar</source>
         <translation>Tout sélectionner dans la barre de recherche</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="254"/>
+        <location filename="../../windows/mainwindow.cpp" line="264"/>
         <source>Jump to First Item in Search Results</source>
         <translation>Aller au premier résultat de la recherche</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="256"/>
+        <location filename="../../windows/mainwindow.cpp" line="266"/>
         <source>Open Selected Entry In New Window</source>
         <translation>Ouvrir la sélection actuelle dans une nouvelle fenêtre</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="257"/>
+        <location filename="../../windows/mainwindow.cpp" line="267"/>
         <source>Search Simplified Chinese</source>
         <translation>Rechercher avec le chinois simplifié</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="258"/>
+        <location filename="../../windows/mainwindow.cpp" line="268"/>
         <source>Search Traditional Chinese</source>
         <translation>Rechercher avec le chinois traditionnel</translation>
     </message>
@@ -474,53 +494,58 @@
         <translation>Rechercher avec le chinois simplifié</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="259"/>
+        <location filename="../../windows/mainwindow.cpp" line="269"/>
         <source>Search Jyutping</source>
         <translation>Rechercher avec jyutping</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="260"/>
+        <location filename="../../windows/mainwindow.cpp" line="270"/>
         <source>Search Pinyin</source>
         <translation>Rechercher avec pinyin</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="261"/>
+        <location filename="../../windows/mainwindow.cpp" line="271"/>
         <source>Search English</source>
         <translation>Rechercher en français</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="263"/>
+        <location filename="../../windows/mainwindow.cpp" line="273"/>
+        <source>View Search History</source>
+        <translation>Historique de recherche</translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="274"/>
         <source>Open List of Saved Words</source>
         <translation>Ouvrir la liste de mots enregistrés</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="264"/>
+        <location filename="../../windows/mainwindow.cpp" line="275"/>
         <source>Minimize</source>
         <translation>Réduire</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="265"/>
+        <location filename="../../windows/mainwindow.cpp" line="276"/>
         <source>Zoom</source>
         <translation>Agrandir</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="266"/>
+        <location filename="../../windows/mainwindow.cpp" line="277"/>
         <source>Bring All to Front</source>
         <translation>Tout ramener au premier plan</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="268"/>
+        <location filename="../../windows/mainwindow.cpp" line="279"/>
         <source>%1 Help</source>
         <translation>Aide %1</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="270"/>
+        <location filename="../../windows/mainwindow.cpp" line="281"/>
         <source>Check for Updates...</source>
         <translation>Rechercher des mises à jour</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="230"/>
-        <location filename="../../windows/mainwindow.cpp" line="322"/>
+        <location filename="../../windows/mainwindow.cpp" line="240"/>
+        <location filename="../../windows/mainwindow.cpp" line="343"/>
         <source>&amp;Search</source>
         <translation>Recherche</translation>
     </message>
@@ -529,7 +554,7 @@
         <translation>Rechercher des mises à jour</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="739"/>
+        <location filename="../../windows/mainwindow.cpp" line="797"/>
         <source>Checking for update...</source>
         <translation>Recherche de mises à jour...</translation>
     </message>
@@ -697,9 +722,33 @@
     </message>
 </context>
 <context>
+    <name>SearchHistoryListDelegate</name>
+    <message>
+        <location filename="../../components/historyview/searchhistorylistdelegate.cpp" line="110"/>
+        <source>After searching for a word, you will find it in this list. Selecting a word will allow you to do the same search again.</source>
+        <translation>Après avoir effectué une recherche, vous retrouverez votre terme de recherche dans cette liste.</translation>
+    </message>
+</context>
+<context>
+    <name>SearchHistoryListModel</name>
+    <message>
+        <location filename="../../components/historyview/searchhistorylistmodel.cpp" line="39"/>
+        <source>No search history...</source>
+        <translation>Pas d'historique...</translation>
+    </message>
+</context>
+<context>
+    <name>SearchHistoryTab</name>
+    <message>
+        <location filename="../../components/historyview/searchhistorytab.cpp" line="79"/>
+        <source>Clear All Search History</source>
+        <translation>Effacer l'historique de recherche</translation>
+    </message>
+</context>
+<context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/mainwindow/searchlineedit.cpp" line="141"/>
+        <location filename="../../components/mainwindow/searchlineedit.cpp" line="147"/>
         <source>Search</source>
         <translation>Rechercher</translation>
     </message>
@@ -707,52 +756,52 @@
 <context>
     <name>SearchOptionsRadioGroupBox</name>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="124"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="134"/>
         <source>SC</source>
         <translation>CS</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="130"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="140"/>
         <source>Search Simplified Chinese</source>
         <translation>Rechercher avec le chinois simplifié</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="125"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="135"/>
         <source>TC</source>
         <translation>CT</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="131"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="141"/>
         <source>Search Traditional Chinese</source>
         <translation>Rechercher avec le chinois traditionnel</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="126"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="136"/>
         <source>JP</source>
         <translation>JP</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="132"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="142"/>
         <source>Search Jyutping</source>
         <translation>Rechercher avec jyutping</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="127"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="137"/>
         <source>PY</source>
         <translation>PY</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="133"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="143"/>
         <source>Search Pinyin</source>
         <translation>Rechercher avec pinyin</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="128"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="138"/>
         <source>EN</source>
         <translation>FR</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="134"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="144"/>
         <source>Search English</source>
         <translation>Rechercher en français</translation>
     </message>
@@ -975,14 +1024,43 @@
     </message>
 </context>
 <context>
+    <name>ViewHistoryListModel</name>
+    <message>
+        <location filename="../../components/historyview/viewhistorylistmodel.cpp" line="37"/>
+        <location filename="../../components/historyview/viewhistorylistmodel.cpp" line="38"/>
+        <source>No viewed items...</source>
+        <translation>Pas d'historique...</translation>
+    </message>
+    <message>
+        <location filename="../../components/historyview/viewhistorylistmodel.cpp" line="41"/>
+        <source>After viewing an entry, you can find it in this list. Selecting an item in this list will let you see that entry again.</source>
+        <translation>Après avoir consulté un mot, vous le retrouverez dans cette liste. Vous pouvez revoir un mot en le cliquant.</translation>
+    </message>
+    <message>
+        <location filename="../../components/historyview/viewhistorylistmodel.cpp" line="45"/>
+        <source>—</source>
+        <translation>—</translation>
+    </message>
+</context>
+<context>
+    <name>ViewHistoryTab</name>
+    <message>
+        <location filename="../../components/historyview/viewhistorytab.cpp" line="79"/>
+        <source>Clear All View History</source>
+        <translation>Effacer l'historique de consultation</translation>
+    </message>
+</context>
+<context>
     <name>strings</name>
     <message>
         <location filename="../../logic/strings/strings.h" line="16"/>
+        <location filename="../../logic/strings/strings.h" line="86"/>
         <source>JP</source>
         <translation>JP</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="17"/>
+        <location filename="../../logic/strings/strings.h" line="87"/>
         <source>PY</source>
         <translation>PY</translation>
     </message>
@@ -1070,6 +1148,26 @@
         <location filename="../../logic/strings/strings.h" line="81"/>
         <source>Mandarin</source>
         <translation>Mandarin</translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="83"/>
+        <source>SC</source>
+        <translation>CS</translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="84"/>
+        <source>TC</source>
+        <translation>CT</translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="85"/>
+        <source>CN</source>
+        <translation>CN</translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="88"/>
+        <source>EN</source>
+        <translation>FR</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="57"/>
