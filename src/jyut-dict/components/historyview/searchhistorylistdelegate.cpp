@@ -180,8 +180,9 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
                                                 Qt::ElideRight,
                                                 r.width() - 2 * margin
                                                     - searchOptionWidth);
-
-        painter->drawText(r, 0, searchTerm, &boundingRect);
+        QRect rectangle = r;
+        rectangle.setHeight(metrics.height());
+        painter->drawText(rectangle, 0, searchTerm, &boundingRect);
 
         r.setX(r.width() - margin - searchOptionWidth);
         painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
