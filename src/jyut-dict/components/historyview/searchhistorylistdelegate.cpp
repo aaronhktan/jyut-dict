@@ -74,6 +74,7 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
     QFont font = painter->font();
 
 #ifdef Q_OS_WIN
+    QFont oldFont{font};
     font = QFont("Microsoft Yahei");
 #endif
 
@@ -85,6 +86,9 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
         r = option.rect.adjusted(11, 11, -11, 0); // 11 specifies the margin
         painter->drawText(r, 0, pair.first.c_str());
 
+#ifdef Q_OS_WIN
+        font = oldFont;
+#endif
         QFontMetrics metrics{font};
         font.setPixelSize(14);
         painter->setFont(font);
