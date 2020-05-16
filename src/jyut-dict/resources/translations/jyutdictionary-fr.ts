@@ -34,11 +34,6 @@
         <translation>Activer la télémétrie :</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="119"/>
-        <source>Back up saved words:</source>
-        <translation>Sauvegarder les mots enregistrés :</translation>
-    </message>
-    <message>
         <location filename="../../components/settings/advancedtab.cpp" line="121"/>
         <source>Application language:</source>
         <translation>Langue d&apos;application :</translation>
@@ -77,6 +72,11 @@
         <location filename="../../components/settings/advancedtab.cpp" line="127"/>
         <source>French (CA)</source>
         <translation>Français (Canada)</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="119"/>
+        <source>Back up saved words and history:</source>
+        <translation>Sauvegarder les mots enregistrés et l'historique de recherche :</translation>
     </message>
     <message>
         <location filename="../../components/settings/advancedtab.cpp" line="128"/>
@@ -724,7 +724,7 @@
 <context>
     <name>SearchHistoryListDelegate</name>
     <message>
-        <location filename="../../components/historyview/searchhistorylistdelegate.cpp" line="110"/>
+        <location filename="../../components/historyview/searchhistorylistdelegate.cpp" line="114"/>
         <source>After searching for a word, you will find it in this list. Selecting a word will allow you to do the same search again.</source>
         <translation>Après avoir effectué une recherche, vous retrouverez votre terme de recherche dans cette liste.</translation>
     </message>
@@ -734,7 +734,7 @@
     <message>
         <location filename="../../components/historyview/searchhistorylistmodel.cpp" line="39"/>
         <source>No search history...</source>
-        <translation>Pas d'historique...</translation>
+        <translation>Pas d&apos;historique...</translation>
     </message>
 </context>
 <context>
@@ -742,7 +742,7 @@
     <message>
         <location filename="../../components/historyview/searchhistorytab.cpp" line="79"/>
         <source>Clear All Search History</source>
-        <translation>Effacer l'historique de recherche</translation>
+        <translation>Effacer l&apos;historique de recherche</translation>
     </message>
 </context>
 <context>
@@ -1029,7 +1029,7 @@
         <location filename="../../components/historyview/viewhistorylistmodel.cpp" line="37"/>
         <location filename="../../components/historyview/viewhistorylistmodel.cpp" line="38"/>
         <source>No viewed items...</source>
-        <translation>Pas d'historique...</translation>
+        <translation>Pas d&apos;historique...</translation>
     </message>
     <message>
         <location filename="../../components/historyview/viewhistorylistmodel.cpp" line="41"/>
@@ -1047,7 +1047,7 @@
     <message>
         <location filename="../../components/historyview/viewhistorytab.cpp" line="79"/>
         <source>Clear All View History</source>
-        <translation>Effacer l'historique de consultation</translation>
+        <translation>Effacer l&apos;historique de consultation</translation>
     </message>
 </context>
 <context>

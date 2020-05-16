@@ -34,11 +34,6 @@
         <translation>啟用 Telemetry：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="119"/>
-        <source>Back up saved words:</source>
-        <translation>備份你儲存嘅詞語：</translation>
-    </message>
-    <message>
         <location filename="../../components/settings/advancedtab.cpp" line="121"/>
         <source>Application language:</source>
         <translation>程式語言：</translation>
@@ -77,6 +72,11 @@
         <location filename="../../components/settings/advancedtab.cpp" line="127"/>
         <source>French (CA)</source>
         <translation>法文（加拿大）</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="119"/>
+        <source>Back up saved words and history:</source>
+        <translation>備份你儲存嘅詞語同埋搜尋紀錄：</translation>
     </message>
     <message>
         <location filename="../../components/settings/advancedtab.cpp" line="128"/>
@@ -724,7 +724,7 @@
 <context>
     <name>SearchHistoryListDelegate</name>
     <message>
-        <location filename="../../components/historyview/searchhistorylistdelegate.cpp" line="110"/>
+        <location filename="../../components/historyview/searchhistorylistdelegate.cpp" line="114"/>
         <source>After searching for a word, you will find it in this list. Selecting a word will allow you to do the same search again.</source>
         <translation>你查字典之後就喺呢度找搵你嘅搜尋紀錄。如果你想再次搜尋，你可以選擇清單中嘅任何一個詞語。</translation>
     </message>

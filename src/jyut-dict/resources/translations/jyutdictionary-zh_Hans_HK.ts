@@ -34,12 +34,7 @@
         <translation>启用遥测：</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Back up saved words:</source>
-        <translation>备份你保存嘅词语：</translation>
-    </message>
-    <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Application language:</source>
         <translation>软件语言：</translation>
     </message>
@@ -79,7 +74,12 @@
         <translation>法文（加拿大）</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-8"/>
+        <source>Back up saved words and history:</source>
+        <translation>备份你保存嘅词语同埋搜索历史：</translation>
+    </message>
+    <message>
+        <location line="+9"/>
         <source>French</source>
         <translation>法文</translation>
     </message>
@@ -728,7 +728,7 @@
 <context>
     <name>SearchHistoryListDelegate</name>
     <message>
-        <location filename="../../components/historyview/searchhistorylistdelegate.cpp" line="+110"/>
+        <location filename="../../components/historyview/searchhistorylistdelegate.cpp" line="+114"/>
         <source>After searching for a word, you will find it in this list. Selecting a word will allow you to do the same search again.</source>
         <translation>你查字典之后就会喺呢度揾到你嘅搜素历史。如果你想再次搜素，你可以选择表中嘅任何一个词语。</translation>
     </message>
