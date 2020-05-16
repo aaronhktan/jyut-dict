@@ -1,5 +1,6 @@
 #include "utils.h"
 
+#include "logic/search/searchparameters.h"
 #include "logic/strings/strings.h"
 
 #include <QCoreApplication>
@@ -42,6 +43,27 @@ static QMap<QString, std::string> reverseLanguageMap = {
      "deu"},
     {QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::YUE_STRING),
      "yue"},
+};
+
+static QMap<SearchParameters, std::string> searchParameterMap = {
+    {SearchParameters::SIMPLIFIED,
+     QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::SC_STRING)
+         .toStdString()},
+    {SearchParameters::TRADITIONAL,
+     QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::TC_STRING)
+         .toStdString()},
+    {SearchParameters::CHINESE,
+     QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CN_STRING)
+         .toStdString()},
+    {SearchParameters::JYUTPING,
+     QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::JP_STRING)
+         .toStdString()},
+    {SearchParameters::PINYIN,
+     QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PY_STRING)
+         .toStdString()},
+    {SearchParameters::ENGLISH,
+     QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::EN_STRING)
+         .toStdString()},
 };
 
     QColor getContrastingColour(const QColor backgroundColour)
@@ -87,6 +109,17 @@ static QMap<QString, std::string> reverseLanguageMap = {
         return result;
     }
 
+    std::string getStringFromSearchParameter(SearchParameters parameter)
+    {
+        std::string result;
+        if (searchParameterMap.contains(parameter)) {
+            result = searchParameterMap[parameter];
+        } else {
+            result = "";
+        }
+        return result;
+    }
+
     void refreshLanguageMap()
     {
         languageMap = {
@@ -124,5 +157,32 @@ static QMap<QString, std::string> reverseLanguageMap = {
                                          Strings::YUE_STRING),
              "yue"},
         };
+
+        searchParameterMap
+            = {{SearchParameters::SIMPLIFIED,
+                QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                            Strings::SC_STRING)
+                    .toStdString()},
+               {SearchParameters::TRADITIONAL,
+                QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                            Strings::TC_STRING)
+                    .toStdString()},
+               {SearchParameters::CHINESE,
+                QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                            Strings::CN_STRING)
+                    .toStdString()},
+               {SearchParameters::JYUTPING,
+                QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                            Strings::JP_STRING)
+                    .toStdString()},
+               {SearchParameters::PINYIN,
+                QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                            Strings::PY_STRING)
+                    .toStdString()},
+               {SearchParameters::ENGLISH,
+                QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                            Strings::EN_STRING)
+                    .toStdString()},
+         };
     }
 }

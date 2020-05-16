@@ -1,13 +1,19 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "components/favouritewindow/favouritesplitter.h"
 #include "components/mainwindow/mainsplitter.h"
 #include "components/mainwindow/maintoolbar.h"
 #include "logic/analytics/analytics.h"
 #include "logic/update/githubreleasechecker.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqluserdatautils.h"
+#include "logic/database/sqluserhistoryutils.h"
 #include "logic/search/sqlsearch.h"
+#include "windows/aboutwindow.h"
+#include "windows/historywindow.h"
+#include "windows/settingswindow.h"
+#include "windows/updatewindow.h"
 
 #include <QAction>
 #include <QEvent>
@@ -65,6 +71,7 @@ private:
     QAction *_selectPinyinAction;
     QAction *_selectEnglishAction;
 
+    QAction *_historyWindowAction;
     QAction *_favouritesWindowAction;
     QAction *_minimizeAction;
     QAction *_maximizeAction;
@@ -73,15 +80,17 @@ private:
     QAction *_helpAction;
     QAction *_updateAction;
 
-    QPointer<QWidget> _aboutWindow;
-    QPointer<QWidget> _settingsWindow;
-    QPointer<QWidget> _favouritesWindow;
+    QPointer<AboutWindow> _aboutWindow;
+    QPointer<SettingsWindow> _settingsWindow;
+    QPointer<HistoryWindow> _historyWindow;
+    QPointer<FavouriteSplitter> _favouritesWindow;
 
     QProgressDialog *_dialog;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
     std::shared_ptr<SQLSearch> _sqlSearch;
     std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
+    std::shared_ptr<SQLUserHistoryUtils> _sqlHistoryUtils;
 
     bool _recentlyCheckedForUpdates = false;
 
@@ -113,11 +122,16 @@ private:
 
     void openAboutWindow(void);
     void openSettingsWindow(void);
+    void openHistoryWindow(void);
     void openFavouritesWindow(void);
 
     void checkForUpdate(bool showProgress);
 
     void closeEvent(QCloseEvent *event) override;
+
+signals:
+    void searchHistoryClicked(searchTermHistoryItem &pair);
+    void viewHistoryClicked(Entry &entry);
 
 public slots:
     void notifyUpdateAvailable(bool updateAvailable,
@@ -125,6 +139,8 @@ public slots:
                                std::string url,
                                std::string description,
                                bool showIfNoUpdate = false);
+    void forwardSearchHistoryItem(searchTermHistoryItem &pair);
+    void forwardViewHistoryItem(Entry &entry);
 };
 
 #endif // MAINWINDOW_H

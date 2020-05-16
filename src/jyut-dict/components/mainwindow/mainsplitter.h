@@ -5,6 +5,7 @@
 #include "logic/analytics/analytics.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqluserdatautils.h"
+#include "logic/database/sqluserhistoryutils.h"
 #include "logic/entry/entry.h"
 #include "logic/search/sqlsearch.h"
 
@@ -12,6 +13,7 @@
 #include <QEvent>
 #include <QModelIndex>
 #include <QSplitter>
+#include <QTimer>
 #include <QWidget>
 
 // The MainSplitter contains a "master" listview and a "detail" scrollarea
@@ -27,6 +29,7 @@ public:
     explicit MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
                           std::shared_ptr<SQLDatabaseManager> manager,
                           std::shared_ptr<SQLSearch> sqlSearch,
+                          std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                           QWidget *parent = nullptr);
     ~MainSplitter() override;
 
@@ -38,17 +41,29 @@ public:
 private:
     void translateUI(void);
 
+    void prepareEntry(Entry &entry, bool addToHistory);
+
+    bool _addToHistory = true;
+
+    QTimer *_addToHistoryTimer;
+
     std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
     std::shared_ptr<SQLDatabaseManager> _manager;
+    std::shared_ptr<SQLSearch> _search;
+    std::shared_ptr<SQLUserHistoryUtils> _sqlHistoryUtils;
     Analytics *_analytics;
 
     EntryScrollArea *_entryScrollArea;
     QAbstractListModel *_model;
     QListView *_resultListView;
 
+public slots:
+    void forwardViewHistoryItem(Entry &entry);
+
 private slots:
     void prepareEntry(Entry &entry);
 
+    void handleModelReset(void);
     void handleClick(const QModelIndex &selection);
     void handleDoubleClick(const QModelIndex &selection);
 };

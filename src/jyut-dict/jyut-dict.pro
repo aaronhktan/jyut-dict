@@ -48,6 +48,14 @@ SOURCES += \
     components/entryview/entryscrollareawidget.cpp \
     components/entryview/entryviewsentencecardsection.cpp \
     components/favouritewindow/favouritesplitter.cpp \
+    components/historyview/searchhistorylistdelegate.cpp \
+    components/historyview/searchhistorylistmodel.cpp \
+    components/historyview/searchhistorylistview.cpp \
+    components/historyview/searchhistorytab.cpp \
+    components/historyview/viewhistorylistdelegate.cpp \
+    components/historyview/viewhistorylistmodel.cpp \
+    components/historyview/viewhistorylistview.cpp \
+    components/historyview/viewhistorytab.cpp \
     components/mainwindow/mainsplitter.cpp \
     components/mainwindow/maintoolbar.cpp \
     components/mainwindow/searchlineedit.cpp \
@@ -70,6 +78,7 @@ SOURCES += \
     components/settings/dictionarytab.cpp \
     components/settings/settingstab.cpp \
     logic/database/sqluserdatautils.cpp \
+    logic/database/sqluserhistoryutils.cpp \
     logic/search/sqlsearch.cpp \
     logic/sentence/sentenceset.cpp \
     logic/sentence/sourcesentence.cpp \
@@ -94,6 +103,7 @@ SOURCES += \
     logic/utils/utils.cpp \
     logic/utils/utils_qt.cpp \
     windows/aboutwindow.cpp \
+    windows/historywindow.cpp \
     windows/mainwindow.cpp \
     windows/settingswindow.cpp \
     windows/updatewindow.cpp
@@ -117,6 +127,14 @@ HEADERS += \
     components/entryview/entryscrollareawidget.h \
     components/entryview/entryviewsentencecardsection.h \
     components/favouritewindow/favouritesplitter.h \
+    components/historyview/searchhistorylistdelegate.h \
+    components/historyview/searchhistorylistmodel.h \
+    components/historyview/searchhistorylistview.h \
+    components/historyview/searchhistorytab.h \
+    components/historyview/viewhistorylistdelegate.h \
+    components/historyview/viewhistorylistmodel.h \
+    components/historyview/viewhistorylistview.h \
+    components/historyview/viewhistorytab.h \
     components/mainwindow/isearchlineedit.h \
     components/mainwindow/mainsplitter.h \
     components/mainwindow/maintoolbar.h \
@@ -149,6 +167,7 @@ HEADERS += \
     logic/database/sqldatabasemanager.h \
     logic/database/sqldatabaseutils.h \
     logic/database/sqluserdatautils.h \
+    logic/database/sqluserhistoryutils.h \
     logic/dictionary/dictionarymetadata.h \
     logic/dictionary/dictionarysource.h \
     logic/entry/definitionsset.h \
@@ -175,6 +194,7 @@ HEADERS += \
     logic/utils/utils_mac.h \
     logic/utils/utils_qt.h \
     windows/aboutwindow.h \
+    windows/historywindow.h \
     windows/mainwindow.h \
     windows/settingswindow.h \
     windows/updatewindow.h

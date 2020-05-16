@@ -3,6 +3,7 @@
 
 #include "components/mainwindow/searchlineedit.h"
 #include "components/mainwindow/searchoptionsradiogroupbox.h"
+#include "logic/database/sqluserhistoryutils.h"
 #include "logic/search/isearchoptionsmediator.h"
 #include "logic/search/sqlsearch.h"
 #include "logic/utils/utils.h"
@@ -24,8 +25,10 @@
 
 class MainToolBar : public QToolBar
 {
+    Q_OBJECT
 public:
     explicit MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
+                         std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                          QWidget *parent = nullptr);
     ~MainToolBar() override;
 
@@ -35,8 +38,9 @@ public:
     void selectAllEvent(void);
     void changeOptionEvent(const Utils::ButtonOptionIndex option);
 
-    void setOpenSettingsAction(QAction *action);
+    void setOpenHistoryAction(QAction *action);
     void setOpenFavouritesAction(QAction *action);
+    void setOpenSettingsAction(QAction *action);
 
 private:
     void setupUI(void);
@@ -53,6 +57,9 @@ private:
     QToolButton *_openFavouritesButton;
     QToolButton *_openSettingsButton;
     ISearchOptionsMediator *_searchOptions;
+
+public slots:
+    void forwardSearchHistoryItem(searchTermHistoryItem &pair);
 };
 
 #endif // MAINTOOLBAR_H

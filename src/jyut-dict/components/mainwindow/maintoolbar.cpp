@@ -1,15 +1,20 @@
 #include "maintoolbar.h"
 
 #include "logic/search/searchoptionsmediator.h"
+#include "logic/utils/utils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
 MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
+                         std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                          QWidget *parent) : QToolBar(parent)
 {
-    _searchBar = new SearchLineEdit(_searchOptions, sqlSearch, this);
+    _searchBar = new SearchLineEdit(_searchOptions,
+                                    sqlSearch,
+                                    sqlHistoryUtils,
+                                    this);
 
     _searchOptions = new SearchOptionsMediator{};
 
@@ -152,6 +157,13 @@ void MainToolBar::changeOptionEvent(const Utils::ButtonOptionIndex index)
     _optionsBox->setOption(index);
 }
 
+void MainToolBar::setOpenHistoryAction(QAction *action)
+{
+    connect(_openHistoryButton, &QToolButton::pressed, this, [=]() {
+        action->trigger();
+    });
+}
+
 void MainToolBar::setOpenSettingsAction(QAction *action)
 {
     connect(_openSettingsButton, &QToolButton::pressed, this, [=]() {
@@ -164,4 +176,10 @@ void MainToolBar::setOpenFavouritesAction(QAction *action)
     connect(_openFavouritesButton, &QToolButton::pressed, this, [=]() {
         action->trigger();
     });
+}
+
+void MainToolBar::forwardSearchHistoryItem(searchTermHistoryItem &pair)
+{
+    _optionsBox->setOption(static_cast<SearchParameters>(pair.second));
+    _searchBar->setText(pair.first.c_str());
 }

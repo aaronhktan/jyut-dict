@@ -1,6 +1,8 @@
 #ifndef UTILS_QT_H
 #define UTILS_QT_H
 
+#include "logic/search/searchparameters.h"
+
 #include <QColor>
 
 // Whereas utils.h should contain only STL functions, utils_qt can contain
@@ -81,6 +83,7 @@ QColor getLanguageColour(std::string language);
 QString getLanguageFromISO639(std::string language);
 std::string getISO639FromLanguage(QString language);
 
+std::string getStringFromSearchParameter(SearchParameters parameter);
 
 void refreshLanguageMap();
 }

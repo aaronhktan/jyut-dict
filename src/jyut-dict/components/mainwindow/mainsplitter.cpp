@@ -10,12 +10,16 @@
 MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
                            std::shared_ptr<SQLDatabaseManager> manager,
                            std::shared_ptr<SQLSearch> sqlSearch,
+                           std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                            QWidget *parent)
     : QSplitter(parent)
     , _sqlUserUtils{sqlUserUtils}
     , _manager{manager}
+    , _search{sqlSearch}
+    , _sqlHistoryUtils{sqlHistoryUtils}
 {
     _analytics = new Analytics{this};
+    _addToHistoryTimer = new QTimer{this};
 
     _entryScrollArea = new EntryScrollArea{sqlUserUtils, manager, this};
     _resultListView = new ResultListView{this};
@@ -27,6 +31,11 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
 
     // Don't use QListView::click, since it doesn't respond to changes
     // in the current index if user is navigating with the keyboard
+    connect(_model,
+            &QAbstractItemModel::modelReset,
+            this,
+            &MainSplitter::handleModelReset);
+
     connect(_resultListView->selectionModel(),
             &QItemSelectionModel::currentChanged,
             this,
@@ -40,13 +49,15 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     setHandleWidth(1);
     setCollapsible(0, false);
     setCollapsible(1, false);
+    setStretchFactor(0, 0);
+    setStretchFactor(1, 1);
     setSizes(QList<int>({size().width() / 3, size().width() * 2 / 3}));
 #ifdef Q_OS_WIN
     setStyleSheet("QSplitter::handle { background-color: #b9b9b9; }");
 #elif defined(Q_OS_DARWIN)
     setStyleSheet("QSplitter::handle { background-color: none; }");
 #else
-    setStyleSheet("QSplitter::handle { background-color: lightgray; }");
+    setStyleSheet("QSplitter::handle { background-color: lightgrey; }");
 #endif
 }
 
@@ -82,15 +93,48 @@ void MainSplitter::openCurrentSelectionInNewWindow(void)
     handleDoubleClick(entryIndex);
 }
 
+void MainSplitter::forwardViewHistoryItem(Entry &entry)
+{
+    // Disable adding this item to history; _addToHistory should be reset as
+    // soon as the results for this search come back so future views can be
+    // added to history.
+    // The current hack is to reset this variable to true when the model gets
+    // reset (aka the some search result is available). It is possible that
+    // the results come from another source, like searching, but in that case
+    // we lose at most one entry. I consider this to be an acceptable tradeoff.
+    _addToHistory = false;
+    _search->searchByUnique(entry.getSimplified().c_str(),
+                            entry.getTraditional().c_str(),
+                            entry.getJyutping().c_str(),
+                            entry.getPinyin().c_str());
+}
+
 void MainSplitter::prepareEntry(Entry &entry)
+{
+    prepareEntry(entry, true);
+}
+
+void MainSplitter::prepareEntry(Entry &entry, bool addToHistory)
 {
     if (Settings::getSettings()
             ->value("Advanced/analyticsEnabled", QVariant{true})
-            .toBool()) {
+            .toBool()
+        && addToHistory) {
         _analytics->sendEvent("entry",
                               "view",
                               entry.getTraditional() + " / "
                                   + entry.getSimplified());
+    }
+
+    if (addToHistory) {
+        // Only add to history after a few seconds of viewing an entry
+        _addToHistoryTimer->stop();
+        disconnect(_addToHistoryTimer, nullptr, nullptr, nullptr);
+        _addToHistoryTimer->setSingleShot(true);
+        connect(_addToHistoryTimer, &QTimer::timeout, this, [=]() {
+            _sqlHistoryUtils->addViewToHistory(entry);
+        });
+        _addToHistoryTimer->start(1000);
     }
 
     entry.refreshColours(
@@ -102,6 +146,13 @@ void MainSplitter::prepareEntry(Entry &entry)
     return;
 }
 
+void MainSplitter::handleModelReset(void)
+{
+    QModelIndex index = _model->index(0, 0);
+    _resultListView->setCurrentIndex(index);
+    _addToHistory = true;
+}
+
 void MainSplitter::handleClick(const QModelIndex &selection)
 {
     Entry entry = qvariant_cast<Entry>(selection.data());
@@ -111,7 +162,7 @@ void MainSplitter::handleClick(const QModelIndex &selection)
         return;
     }
 
-    prepareEntry(entry);
+    prepareEntry(entry, _addToHistory);
     _entryScrollArea->setEntry(entry);
 }
 
@@ -124,7 +175,7 @@ void MainSplitter::handleDoubleClick(const QModelIndex &selection)
         return;
     }
 
-    prepareEntry(entry);
+    prepareEntry(entry, _addToHistory);
 
     QTimer::singleShot(50, this, [=]() {
         EntryScrollArea *area = new EntryScrollArea{_sqlUserUtils, _manager, nullptr};

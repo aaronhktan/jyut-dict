@@ -1,6 +1,5 @@
 #include "windows/mainwindow.h"
 
-#include "components/favouritewindow/favouritesplitter.h"
 #include "dialogs/noupdatedialog.h"
 #include "logic/database/sqldatabaseutils.h"
 #include "logic/dictionary/dictionarysource.h"
@@ -10,10 +9,7 @@
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
-#include "windows/aboutwindow.h"
 #include "logic/utils/utils_qt.h"
-#include "windows/settingswindow.h"
-#include "windows/updatewindow.h"
 
 #include <QApplication>
 #include <QClipboard>
@@ -66,6 +62,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _manager = std::make_shared<SQLDatabaseManager>();
     _sqlSearch = std::make_shared<SQLSearch>(_manager);
     _sqlUserUtils = std::make_shared<SQLUserDataUtils>(_manager);
+    _sqlHistoryUtils = std::make_shared<SQLUserHistoryUtils>(_manager);
 
     // Get colours from QSettings
     std::unique_ptr<QSettings> settings = Settings::getSettings();
@@ -111,21 +108,34 @@ MainWindow::MainWindow(QWidget *parent) :
     installTranslator();
 
     // Create UI elements
-    _mainToolBar = new MainToolBar{_sqlSearch, this};
+    _mainToolBar = new MainToolBar{_sqlSearch, _sqlHistoryUtils, this};
     addToolBar(_mainToolBar);
     setUnifiedTitleAndToolBarOnMac(true);
 #ifdef APPIMAGE
     setWindowIcon(QIcon{":/images/icon.png"});
 #endif
+    connect(this,
+            &MainWindow::searchHistoryClicked,
+            _mainToolBar,
+            &MainToolBar::forwardSearchHistoryItem);
 
-    _mainSplitter = new MainSplitter{_sqlUserUtils, _manager, _sqlSearch, this};
+    _mainSplitter = new MainSplitter{_sqlUserUtils,
+                                     _manager,
+                                     _sqlSearch,
+                                     _sqlHistoryUtils,
+                                     this};
     setCentralWidget(_mainSplitter);
+    connect(this,
+            &MainWindow::viewHistoryClicked,
+            _mainSplitter,
+            &MainSplitter::forwardViewHistoryItem);
 
     // Create menu bar and populate it
     createMenus();
     createActions();
     _mainToolBar->setOpenSettingsAction(_settingsWindowAction);
     _mainToolBar->setOpenFavouritesAction(_favouritesWindowAction);
+    _mainToolBar->setOpenHistoryAction(_historyWindowAction);
 
     // Translate UI
     translateUI();
@@ -260,6 +270,7 @@ void MainWindow::translateUI(void)
     _selectPinyinAction->setText(tr("Search Pinyin"));
     _selectEnglishAction->setText(tr("Search English"));
 
+    _historyWindowAction->setText(tr("View Search History"));
     _favouritesWindowAction->setText(tr("Open List of Saved Words"));
     _minimizeAction->setText(tr("Minimize"));
     _maximizeAction->setText(tr("Zoom"));
@@ -313,6 +324,16 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
         NoUpdateDialog *_message = new NoUpdateDialog{currentVersion, this};
         _message->exec();
     }
+}
+
+void MainWindow::forwardSearchHistoryItem(searchTermHistoryItem &pair)
+{
+    emit searchHistoryClicked(pair);
+}
+
+void MainWindow::forwardViewHistoryItem(Entry &entry)
+{
+    emit viewHistoryClicked(entry);
 }
 
 void MainWindow::createMenus(void)
@@ -457,6 +478,14 @@ void MainWindow::createActions(void)
             this,
             &MainWindow::selectEnglish);
     _searchMenu->addAction(_selectEnglishAction);
+
+    _historyWindowAction = new QAction{this};
+    _historyWindowAction->setShortcut(QKeySequence{"Ctrl+Shift+H"});
+    connect(_historyWindowAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::openHistoryWindow);
+    _windowMenu->addAction(_historyWindowAction);
 
     _favouritesWindowAction = new QAction{this};
     _favouritesWindowAction->setShortcut(QKeySequence{"Ctrl+Shift+S"});
@@ -682,6 +711,31 @@ void MainWindow::openSettingsWindow(void)
     _settingsWindow->show();
 }
 
+void MainWindow::openHistoryWindow(void)
+{
+    if (_historyWindow) {
+        _historyWindow->activateWindow();
+        _historyWindow->raise();
+        return;
+    }
+
+    _historyWindow = new HistoryWindow{_sqlHistoryUtils, nullptr};
+    _historyWindow->setParent(this, Qt::Window);
+    _historyWindow->setAttribute(Qt::WA_DeleteOnClose);
+    _historyWindow->move(x() + width(), y());
+    _historyWindow->show();
+
+    connect(static_cast<HistoryWindow *>(_historyWindow),
+            &HistoryWindow::searchHistoryClicked,
+            this,
+            &MainWindow::forwardSearchHistoryItem);
+
+    connect(static_cast<HistoryWindow *>(_historyWindow),
+            &HistoryWindow::viewHistoryClicked,
+            this,
+            &MainWindow::forwardViewHistoryItem);
+}
+
 void MainWindow::openFavouritesWindow(void)
 {
     if (_favouritesWindow) {
@@ -692,8 +746,12 @@ void MainWindow::openFavouritesWindow(void)
 
     _favouritesWindow = new FavouriteSplitter{_sqlUserUtils, _manager, nullptr};
     _favouritesWindow->setParent(this, Qt::Window);
-    _favouritesWindow->show();
     _favouritesWindow->setAttribute(Qt::WA_DeleteOnClose);
+    _favouritesWindow->move(x() + (width()
+                                   - _favouritesWindow->size().width()) / 2,
+                            y() + (height()
+                                   - _favouritesWindow->size().height()) / 2);
+    _favouritesWindow->show();
 }
 
 void MainWindow::checkForUpdate(bool showProgress)

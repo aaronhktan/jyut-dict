@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
     qRegisterMetaTypeStreamOperators<EntryColourPhoneticType>("EntryColourPhoneticType");
     qRegisterMetaType<SearchParameters>("SearchParameters");
     qRegisterMetaTypeStreamOperators<SearchParameters>("SearchParameters");
+    qRegisterMetaType<searchTermHistoryItem>();
 
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);

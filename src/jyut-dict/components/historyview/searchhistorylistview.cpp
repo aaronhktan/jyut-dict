@@ -1,7 +1,6 @@
-#include "resultlistview.h"
+#include "searchhistorylistview.h"
 
-#include "components/entrysearchresult/resultlistmodel.h"
-#include "logic/search/sqlsearch.h"
+#include "components/historyview/searchhistorylistdelegate.h"
 
 #include <QGuiApplication>
 
@@ -9,31 +8,26 @@
 #include <QScrollBar>
 #endif
 
-ResultListView::ResultListView(QWidget *parent)
+SearchHistoryListView::SearchHistoryListView(QWidget *parent)
     : QListView(parent)
 {
     setFrameShape(QFrame::NoFrame);
-#ifdef Q_OS_LINUX
-    setMinimumWidth(250);
-#else
-    setMinimumWidth(300);
-#endif
 
-    _delegate = new ResultListDelegate{this};
+    _delegate = new SearchHistoryListDelegate{this};
     setItemDelegate(_delegate);
 
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     connect(qApp,
             &QGuiApplication::applicationStateChanged,
             this,
-            &ResultListView::paintWithApplicationState);
+            &SearchHistoryListView::paintWithApplicationState);
 }
 
 // On Windows, because of a bug in Qt (see QTBUG-7232), every time mouse
 // is scrolled, listview advances by by three items. Override the wheelEvent to
 // modify this undesired behaviour until fixed by Qt.
 #ifdef Q_OS_WIN
-void ResultListView::wheelEvent(QWheelEvent *event)
+void SearchHistoryListView::wheelEvent(QWheelEvent *event)
 {
     int singleStep = verticalScrollBar()->singleStep();
     singleStep = qMin(singleStep, 10);
@@ -42,7 +36,7 @@ void ResultListView::wheelEvent(QWheelEvent *event)
 }
 #endif
 
-void ResultListView::paintWithApplicationState()
+void SearchHistoryListView::paintWithApplicationState()
 {
     viewport()->update(); // Forces repaint of viewing area.
 }

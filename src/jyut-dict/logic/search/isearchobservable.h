@@ -2,8 +2,10 @@
 #define ISEARCHOBSERVABLE_H
 
 #include "logic/entry/entry.h"
-
 #include "logic/search/isearchobserver.h"
+
+#include <utility>
+#include <vector>
 
 // Interface for Observable class for search
 // Allows registering/deregistering observers
@@ -34,6 +36,13 @@ public:
         (void) (results);
         (void) (emptyQuery);
     }
+    virtual void notifyObservers(
+        const std::vector<std::pair<std::string, int>> &results, bool emptyQuery)
+    {
+        (void) (results);
+        (void) (emptyQuery);
+    }
+
     virtual void notifyObservers(bool entryExists, Entry entry)
     {
         (void) (entryExists);

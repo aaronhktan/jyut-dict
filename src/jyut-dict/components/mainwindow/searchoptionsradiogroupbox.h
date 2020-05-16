@@ -26,6 +26,7 @@ public:
     void changeEvent(QEvent *event) override;
 
     void setOption(const Utils::ButtonOptionIndex index);
+    void setOption(const SearchParameters parameters);
 
 private:
     void setupUI();
