@@ -187,6 +187,12 @@ void EntryActionWidget::shareAction(void)
                                              tr("Path to save exported image"),
                                              QDir::homePath());
     if (!fileName.toStdString().empty()) {
+        if (!fileName.endsWith(".png")) {
+            fileName = fileName + ".png";
+        }
+        if (QFile::exists(fileName)) {
+            QFile::remove(fileName);
+        }
         map.save(fileName, "png");
     }
 }
