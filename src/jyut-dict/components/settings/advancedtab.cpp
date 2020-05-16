@@ -116,7 +116,7 @@ void AdvancedTab::translateUI()
     static_cast<QLabel *>(_tabLayout->labelForField(_analyticsCheckbox))
         ->setText(tr("Enable analytics:"));
     static_cast<QLabel *>(_tabLayout->labelForField(_exportUserDatabaseButton))
-        ->setText(tr("Back up saved words:"));
+        ->setText(tr("Back up saved words and history:"));
     static_cast<QLabel *>(_tabLayout->labelForField(_languageCombobox))
         ->setText(tr("Application language:"));
 

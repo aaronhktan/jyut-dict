@@ -34,11 +34,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="119"/>
-        <source>Back up saved words:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../components/settings/advancedtab.cpp" line="121"/>
         <source>Application language:</source>
         <translation type="unfinished"></translation>
@@ -76,6 +71,11 @@
     <message>
         <location filename="../../components/settings/advancedtab.cpp" line="127"/>
         <source>French (CA)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="119"/>
+        <source>Back up saved words and history:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -605,7 +605,7 @@
 <context>
     <name>SearchHistoryListDelegate</name>
     <message>
-        <location filename="../../components/historyview/searchhistorylistdelegate.cpp" line="110"/>
+        <location filename="../../components/historyview/searchhistorylistdelegate.cpp" line="114"/>
         <source>After searching for a word, you will find it in this list. Selecting a word will allow you to do the same search again.</source>
         <translation type="unfinished"></translation>
     </message>
