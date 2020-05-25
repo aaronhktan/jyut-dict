@@ -57,7 +57,7 @@ def write(entries, db_name):
     c = db.cursor()
 
     # Set version of database
-    c.execute('PRAGMA user_version=1')
+    c.execute('PRAGMA user_version=2')
 
     # Delete old tables and indices
     c.execute('DROP TABLE IF EXISTS entries')
@@ -191,7 +191,7 @@ def parse_cc_canto(filename, entries):
             simp = split[1]
             pin = line[line.index('[') + 1 : line.index(']')].lower()
             jyut = line[line.index('{') + 1 : line.index('}')].lower()
-            eng = line[line.index('/') + 1 : -2]
+            eng = line[line.find('/', line.index('}')) + 1 : line.rfind('/')]
             entry = Entry(trad=trad,
                           simp=simp,
                           pin=pin,
