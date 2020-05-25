@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<Package>
+    <DisplayName>Jyut Dictionary</DisplayName>
+    <Description xml:lang="fr">Dictionnaire Jyut</Description>
+    <Description xml:lang="zh_CN">粤语字典</Description>
+    <Description xml:lang="zh_HK">粵語字典</Description>
+    <Description xml:lang="zh_TW">粵語字典</Description>
+    <Description>The Cantonese Dictionary Application.</Description>
+    <Description xml:lang="fr">Application Dictionnaire Jyut.</Description>
+    <Description xml:lang="zh_CN">粤语字典软件。</Description>
+    <Description xml:lang="zh_HK">粵語字典軟件。</Description>
+    <Description xml:lang="zh_TW">粵語字典軟件。</Description>
+    <Version>2020.05.25</Version>
+    <ReleaseDate>2020-05-25</ReleaseDate>
+    <Licenses>
+        <License name="MIT License" file="LICENSE.md" />
+    </Licenses>
+    <Default>true</Default>
+    <Script>installscript.qs</Script>
+</Package>
