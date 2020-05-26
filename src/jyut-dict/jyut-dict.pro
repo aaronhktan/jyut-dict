@@ -278,12 +278,15 @@ unix:!macx {
     binfile.CONFIG += no_check_exist
     dictfile.files += resources/db/dict.db
     dictfile.path = /usr/share/jyut-dict/dictionaries/
+    userfile.files += resources/db/user.db
+    userfile.path = /usr/share/jyut-dict/dictionaries/
     shortcutfiles.files += platform/linux/jyut-dict.desktop
     shortcutfiles.path = /usr/share/applications/
     icon.files += resources/icon/jyut-dict.svg
     icon.path = /usr/share/icons/hicolor/scalable/apps/
     INSTALLS += binfile
     INSTALLS += dictfile
+    INSTALLS += userfile
     INSTALLS += shortcutfiles
     INSTALLS += icon
 }
