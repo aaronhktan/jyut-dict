@@ -1,6 +1,8 @@
 #ifndef ENTRYSPEAKER_H
 #define ENTRYSPEAKER_H
 
+#include <QtGlobal>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
 #include <QString>
 #include <QTextToSpeech>
 
@@ -35,4 +37,5 @@ private:
     QTextToSpeech *_tts;
 };
 
+#endif
 #endif // ENTRYSPEAKER_H

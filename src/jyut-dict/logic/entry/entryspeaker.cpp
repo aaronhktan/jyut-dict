@@ -1,4 +1,5 @@
 #include "entryspeaker.h"
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
 
 #include <QVector>
 
@@ -137,3 +138,5 @@ int EntrySpeaker::speakMainlandMandarin(const QString &string)
 {
     return speak(QLocale::Chinese, QLocale::China, string);
 }
+
+#endif

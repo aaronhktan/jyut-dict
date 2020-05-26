@@ -4,14 +4,20 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network sql texttospeech
+QT       += core gui network sql
+
+equals(QT_MAJOR_VERSION, 5):!lessThan(QT_MINOR_VERSION, 11) {
+   QT += texttospeech
+} else {
+  message(Qt $$QT_VERSION Text to Speech not supported)
+}
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = "Jyut Dictionary"
 TEMPLATE = app
 
-VERSION = 0.19.06.14
+VERSION = 0.20.05.25
 QMAKE_TARGET_COMPANY = "Aaron Tan"
 QMAKE_TARGET_PRODUCT = "Jyut Dictionary"
 QMAKE_TARGET_DESCRIPTION = "Jyut Dictionary"
