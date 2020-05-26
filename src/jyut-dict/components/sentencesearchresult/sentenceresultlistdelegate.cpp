@@ -163,7 +163,11 @@ void SentenceResultListDelegate::paint(QPainter *painter,
         painter->setPen(
             Utils::getContrastingColour(backgroundColour).darker(125));
     } else {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
         painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
+#else
+        painter->setPen(QPen(option.palette.color(QPalette::Disabled, QPalette::WindowText)));
+#endif
     }
     QString phonetic = metrics
                            .elidedText(sentence

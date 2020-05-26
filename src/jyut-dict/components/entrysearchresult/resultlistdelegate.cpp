@@ -159,7 +159,11 @@ void ResultListDelegate::paint(QPainter *painter,
         }
         painter->setFont(font);
         painter->save();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
         painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
+#else
+        painter->setPen(QPen(option.palette.color(QPalette::Disabled, QPalette::WindowText)));
+#endif
 
         // Do custom text layout to get eliding double-line label
         snippet = entry.getDefinitionSnippet().c_str();

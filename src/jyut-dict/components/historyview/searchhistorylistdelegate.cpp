@@ -108,7 +108,11 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
         }
         painter->setFont(font);
         painter->save();
-        painter->setPen(QPen{option.palette.color(QPalette::PlaceholderText)});
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+        painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
+#else
+        painter->setPen(QPen(option.palette.color(QPalette::Disabled, QPalette::WindowText)));
+#endif
 
         // Do custom text layout to get eliding double-line label
         QString snippet = tr("After searching for a word, you will find it "
@@ -178,7 +182,11 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
         painter->drawText(rectangle, 0, searchTerm, &boundingRect);
 
         r.setX(r.width() - margin - searchOptionWidth);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
         painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
+#else
+        painter->setPen(QPen(option.palette.color(QPalette::Disabled, QPalette::WindowText)));
+#endif
         painter->drawText(r, 0, searchOption, &boundingRect);
     }
 

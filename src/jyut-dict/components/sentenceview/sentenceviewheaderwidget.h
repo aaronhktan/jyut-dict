@@ -44,7 +44,9 @@ private:
     QString _chinese;
     QString _jyutping;
     QString _pinyin;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
     std::unique_ptr<EntrySpeaker> _speaker;
+#endif
 
     QGridLayout *_sentenceHeaderLayout;
     QLabel *_sourceLanguageLabel;
