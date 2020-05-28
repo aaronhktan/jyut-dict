@@ -274,16 +274,16 @@ unix:!macx {
     # Move files to appropriate locations on desktop to install the program
     binfile.extra = cp \"$$system_path($$OUT_PWD)/Jyut Dictionary\" $$system_path($$OUT_PWD)/jyut-dict
     binfile.files += $$system_path($$OUT_PWD)/jyut-dict
-    binfile.path = /usr/bin/
+    binfile.path = /app/bin/
     binfile.CONFIG += no_check_exist
     dictfile.files += resources/db/dict.db
-    dictfile.path = /usr/share/jyut-dict/dictionaries/
+    dictfile.path = /app/share/jyut-dict/dictionaries/
     userfile.files += resources/db/user.db
-    userfile.path = /usr/share/jyut-dict/dictionaries/
+    userfile.path = /app/share/jyut-dict/dictionaries/
     shortcutfiles.files += platform/linux/jyut-dict.desktop
-    shortcutfiles.path = /usr/share/applications/
+    shortcutfiles.path = /app/share/applications/
     icon.files += resources/icon/jyut-dict.svg
-    icon.path = /usr/share/icons/hicolor/scalable/apps/
+    icon.path = /app/share/icons/hicolor/scalable/apps/
     INSTALLS += binfile
     INSTALLS += dictfile
     INSTALLS += userfile

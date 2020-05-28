@@ -1,0 +1,24 @@
+{
+    "app-id": "com.aaronhktan.cantonesedictionary",
+    "runtime": "org.kde.Platform",
+    "runtime-version": "5.12",
+    "sdk": "org.kde.Sdk",
+    "command": "jyut-dict",
+    "modules": [
+        {
+            "name": "jyut-dict",
+            "buildsystem": "simple",
+            "build-commands": [
+                "qmake jyut-dict.pro",
+                "make",
+                "make install"
+            ],
+            "sources": [
+                {
+                    "type": "dir",
+                    "path": "../jyut-dict/"
+                }
+            ]
+        }
+    ]
+}
