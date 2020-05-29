@@ -137,12 +137,14 @@ QString SQLDatabaseManager::getBundleDictionaryDatabasePath()
                          + "/../Resources/dict.db"};
 #elif defined(Q_OS_WIN)
     QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "./dict.db"};
-#else
+#else // Q_OS_LINUX
 #ifdef APPIMAGE
     QFileInfo bundleFile{QCoreApplication::applicationDirPath()
                          + "/../share/jyut-dict/dictionaries/dict.db"};
 #elif defined(DEBUG)
     QFileInfo bundleFile{"./dict.db"};
+#elif defined(FLATPAK)
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/dict.db"};
 #else
     QFileInfo bundleFile{"/usr/share/jyut-dict/dictionaries/dict.db"};
 #endif
@@ -181,6 +183,8 @@ QString SQLDatabaseManager::getBundleUserDatabasePath()
                          + "/../share/jyut-dict/dictionaries/user.db"};
 #elif defined(DEBUG)
     QFileInfo bundleFile{"./user.db"};
+#elif defined(FLATPAK)
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/user.db"};
 #else
     QFileInfo bundleFile{"/usr/share/jyut-dict/dictionaries/user.db"};
 #endif

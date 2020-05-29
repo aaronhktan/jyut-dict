@@ -3,13 +3,24 @@
     "runtime": "org.kde.Platform",
     "runtime-version": "5.12",
     "sdk": "org.kde.Sdk",
+    "finish-args": [
+        "--share=network",
+        "--socket=x11",
+        "--socket=wayland",
+        "--filesystem=host"
+    ],
     "command": "jyut-dict",
     "modules": [
         {
             "name": "jyut-dict",
+            "post-install": [
+                "install -m755 \"Jyut Dictionary\" \"/app/bin/jyut-dict\"",
+                "install -m755 \"dict.db\" \"/app/bin/dict.db\"",
+                "install -m755 \"user.db\" \"/app/bin/user.db\""
+            ],
             "buildsystem": "simple",
             "build-commands": [
-                "qmake jyut-dict.pro",
+                "qmake jyut-dict.pro DEFINES+=\"FLATPAK\"",
                 "make",
                 "make install"
             ],
