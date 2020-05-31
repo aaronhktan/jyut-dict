@@ -38,17 +38,20 @@ SQLSearch::~SQLSearch()
 
 void SQLSearch::registerObserver(ISearchObserver *observer)
 {
-    SQLSearch::_observers.push_back(observer);
+    std::lock_guard<std::mutex> notifyLock{_notifyMutex};
+    _observers.push_back(observer);
 }
 
 void SQLSearch::deregisterObserver(ISearchObserver *observer)
 {
-    SQLSearch::_observers.remove(observer);
+    std::lock_guard<std::mutex> notifyLock{_notifyMutex};
+    _observers.remove(observer);
 }
 
 // This version assumes an empty result set
 void SQLSearch::notifyObserversOfEmptySet(bool emptyQuery)
 {
+    // No mutex here because it just calls notifyObservers
     std::vector<Entry> results{};
     notifyObservers(results, emptyQuery);
 }
@@ -56,8 +59,8 @@ void SQLSearch::notifyObserversOfEmptySet(bool emptyQuery)
 void SQLSearch::notifyObservers(const std::vector<Entry> &results, bool emptyQuery)
 {
     std::lock_guard<std::mutex> notifyLock{_notifyMutex};
-    std::list<ISearchObserver *>::iterator it = SQLSearch::_observers.begin();
-    while (it != SQLSearch::_observers.end()) {
+    std::list<ISearchObserver *>::iterator it = _observers.begin();
+    while (it != _observers.end()) {
         (static_cast<ISearchObserver *>(*it))->callback(results, emptyQuery);
         ++it;
     }
@@ -67,8 +70,8 @@ void SQLSearch::notifyObservers(const std::vector<SourceSentence> &results,
                                 bool emptyQuery)
 {
     std::lock_guard<std::mutex> notifyLock{_notifyMutex};
-    std::list<ISearchObserver *>::iterator it = SQLSearch::_observers.begin();
-    while (it != SQLSearch::_observers.end()) {
+    std::list<ISearchObserver *>::iterator it = _observers.begin();
+    while (it != _observers.end()) {
         (static_cast<ISearchObserver *>(*it))->callback(results, emptyQuery);
         ++it;
     }
@@ -102,30 +105,45 @@ bool SQLSearch::checkQueryCurrent(const QString &query)
 
 void SQLSearch::searchSimplified(const QString searchTerm)
 {
+    if (checkQueryCurrent(searchTerm.simplified())) {
+        return;
+    }
     setCurrentSearchTerm(searchTerm);
     runThread(&SQLSearch::searchSimplifiedThread, searchTerm);
 }
 
 void SQLSearch::searchTraditional(const QString searchTerm)
 {
+    if (checkQueryCurrent(searchTerm.simplified())) {
+        return;
+    }
     setCurrentSearchTerm(searchTerm);
     runThread(&SQLSearch::searchTraditionalThread, searchTerm);
 }
 
 void SQLSearch::searchJyutping(const QString searchTerm)
 {
+    if (checkQueryCurrent(searchTerm.simplified())) {
+        return;
+    }
     setCurrentSearchTerm(searchTerm);
     runThread(&SQLSearch::searchJyutpingThread, searchTerm);
 }
 
 void SQLSearch::searchPinyin(const QString searchTerm)
 {
+    if (checkQueryCurrent(searchTerm.simplified())) {
+        return;
+    }
     setCurrentSearchTerm(searchTerm);
     runThread(&SQLSearch::searchPinyinThread, searchTerm);
 }
 
 void SQLSearch::searchEnglish(const QString searchTerm)
 {
+    if (checkQueryCurrent(searchTerm.simplified())) {
+        return;
+    }
     setCurrentSearchTerm(searchTerm);
     runThread(&SQLSearch::searchEnglishThread, searchTerm);
 }

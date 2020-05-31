@@ -40,6 +40,7 @@ void EntryViewSentenceCardSection::callback(
     std::vector<SourceSentence> sourceSentences, bool emptyQuery)
 {
     (void) (emptyQuery);
+    std::lock_guard<std::mutex> updateMutex{layoutMutex};
     emit callbackInvoked(sourceSentences);
 }
 
@@ -81,6 +82,7 @@ void EntryViewSentenceCardSection::translateUI()
 
 void EntryViewSentenceCardSection::updateUI(std::vector<SourceSentence> sourceSentences)
 {
+    std::lock_guard<std::mutex> layout{layoutMutex};
     cleanup();
 
     _calledBack = true;
@@ -167,7 +169,10 @@ void EntryViewSentenceCardSection::changeEvent(QEvent *event)
 
 void EntryViewSentenceCardSection::setEntry(const Entry &entry)
 {
-    cleanup();
+    {
+        std::lock_guard<std::mutex> layout{layoutMutex};
+        cleanup();
+    }
 
     // Show loading widget only if search results are not found within
     // a certain deadline

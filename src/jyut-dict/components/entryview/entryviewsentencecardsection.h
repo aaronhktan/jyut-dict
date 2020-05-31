@@ -16,6 +16,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include <memory>
 #include <unordered_map>
 #include <vector>
 
@@ -45,6 +46,8 @@ private:
 
     void showLoadingWidget(void);
     void openSentenceWindow(std::vector<SourceSentence> sourceSentences);
+
+    std::mutex layoutMutex;
 
     std::unordered_map<std::string, std::vector<SourceSentence>>
     getSamplesForEachSource(const std::vector<SourceSentence> &sourceSentences);
