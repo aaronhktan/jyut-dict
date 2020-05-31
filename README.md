@@ -9,24 +9,29 @@ A program to look up words in Chinese, with Simplified Chinese, Traditional Chin
 ## Features
 
 ### Vast number of entries.
-Jyut Dictionary uses CEDICT and CC-CANTO as sources for its dictionary, giving it over 135,000 entries to search from!
+Jyut Dictionary uses CEDICT and CC-CANTO as sources for its dictionary and Tatoeba as source for its sentences, giving it over 135,000 entries and 60,000 sentences to search from!
 
-<img src="/docs/screenshots/mac/search_jyutping.png?raw=true" style="margin: 5px">
+<img src="/docs/screenshots/mac/search.png?raw=true" style="margin: 5px">
 
 ### Search quickly.
-Results appear in a list as you type, so it's faster and easier to find what you're looking for.
+Results appear in a list as you type, so it's faster and easier to find what you're looking for. Plus, your search history is saved if you want to go back to a word you've looked up before.
 
 <img src="/docs/screenshots/mac/search_animated.gif?raw=true" style="margin: 5px">
 
 ### Search with your preferred input method.
-Jyut Dictionary supports entry with Simplified Chinese, Traditional Chinese, Pinyin, Jyutping, and English. More to come, so stayed tuned!
+Jyut Dictionary supports entry with Simplified Chinese, Traditional Chinese, Pinyin, Jyutping, and English.
 
-<img src="/docs/screenshots/mac/search_simplified.png?raw=true" style="margin: 5px">
+<img src="/docs/screenshots/mac/search_options.gif?raw=true" style="margin: 5px">
 
-### Supports dark mode.
-Dark mode is love. Dark mode is life.
+### Localized.
+Use the dictionary in English, French, Simplified and Traditional Cantonese, or Simplified and Traditional Chinese.
 
-<img src="/docs/screenshots/mac/dark.png?raw=true" style="margin: 5px">
+<img src="/docs/screenshots/mac/search_localization.gif?raw=true" style="margin: 5px">
+
+### Customizable.
+Prefer to only Traditional Chinese first? Maybe hide Pinyin? Change the colours of the words or disable them altogether? Do that with a plethora of settings options!
+
+<img src="/docs/screenshots/mac/settings.png?raw=true" style="margin: 5px">
 
 ## Project structure
 
