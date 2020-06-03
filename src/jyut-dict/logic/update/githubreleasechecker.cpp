@@ -141,7 +141,9 @@ bool GithubReleaseChecker::parseJSON(const std::string &data,
                                         return download_url.find(substring) != std::string::npos;
                                     })
                         && download_url.find(Utils::ARCHITECTURE) != std::string::npos
+#if !defined(APPIMAGE) && !defined(FLATPAK)
                         && download_url.find(Utils::PORTABILITY) != std::string::npos
+#endif
                         && download_url.find(Utils::PLATFORM_NAME) != std::string::npos
                         ) {
                         url = download_url;

@@ -60,3 +60,7 @@ CMakeLists.txt.user*
 # Generated databases
 **/cedict_to_sqlite/*.db
 *.db
+
+# Flatpak builds
+*.flatpak-builder/
+*jyut-dict-flatpak/
