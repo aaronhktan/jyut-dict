@@ -1,8 +1,9 @@
-##### Usage:
+#### Usage:
 - To install required packages: `pip install -r requirements.txt`
+- Data files for CC-CEDICT/CC-CANTO and Cantonese Readings from Pleco are located in the `data` subdirectory.
 - Specific usage instructions for each script are provided by the scripts themselves.
 
-##### Scripts:
+#### Scripts:
 - `generate-readings.py`
   - This script outputs a file that contains Cantonese pronunciations for every term in CC-CANTO *and* the Cantonese readings file provided by Pleco.
   - The purpose of the outputted Cantonese pronunciation file is to provide Cantonese readings for other dictionaries, such as CFDICT or HanDeDict, that do not come with Cantonese pronunciations.

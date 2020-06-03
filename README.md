@@ -41,11 +41,11 @@ The project contains three subdirectories, `cedict_to_sqlite`, `tatoeba_to_sqlit
 
 ### cedict_to_sqlite
 
-This folder contains several Python3 scripts that convert the raw [CC-CEDICT](https://cc-cedict.org/editor/editor.php?handler=Download)/[CC-CANTO](https://cantonese.org/download.html)/CC-CANTO readings files into FTS5 SQLite databases.
+This folder contains several Python3 scripts that convert the raw [CC-CEDICT](https://cc-cedict.org/editor/editor.php?handler=Download)/[CC-CANTO](https://cantonese.org/download.html)/CC-CANTO readings files into FTS5 SQLite databases. The README file in this directory contains a more detailed explanation of the various scripts.
 
 ### tatoeba_to_sqlite
 
-This folder contains several Python3 scripts that convert the raw sentences.csv/links.csv files from [Tatoeba](https://tatoeba.org/eng/downloads) into SQLite databases.
+This folder contains several Python3 scripts that convert the raw sentences.csv/links.csv files from [Tatoeba](https://tatoeba.org/eng/downloads) into SQLite databases. The README file in this directory contains a more detailed explanation of the various scripts.
 
 ### jyut-dict
 
@@ -61,12 +61,12 @@ This folder contains the source code for the program, and a Qt Creator project f
 
 This project uses Qt 5.12. It has been verified to also compile on Qt 5.9.5 on Ubuntu, but there are no guarantees of other compatible Qt versions.
 
-**Before building the application, you must build the dictionary database using `script-set.py` (for CEDICT + CC-CANTO) or `script-individual` (for CFDICT/HanDeDict).** Read the README in `src/cedict_to_sqlite` for instsructions, then place the generated database, named `dict.db`, in `resources/db/`.
+**Before building the application, you must build the dictionary database using `script-set.py` (for CEDICT + CC-CANTO) or `script-individual` (for CFDICT/HanDeDict).** Read the README in `src/cedict_to_sqlite` for instructions, then place the generated database, named `dict.db`, in `src/jyut-dict/resources/db/`.
 
 #### Qt Creator (macOS, Ubuntu, Windows)
 Import the project to Qt Creator, then run.
 
-#### Command line
+#### Command line (macOS, Ubuntu)
 
 ##### macOS
 1. Generate a Makefile from `jyut-dict.pro`: `qmake jyut-dict.pro`
