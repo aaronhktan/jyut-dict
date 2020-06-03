@@ -18,7 +18,13 @@ namespace Utils {
     const std::vector<std::string> ASSET_FORMATS = {".msi", ".exe", ".zip"};
 #elif defined(Q_OS_LINUX)
     constexpr auto PLATFORM_NAME = "Linux";
+#ifdef FLATPAK
+    const std::vector<std::string> ASSET_FORMATS = {".flatpak"};
+#elif defined(APPIMAGE)
+    const std::vector<std::string> ASSET_FORMATS = {".appimage"};
+#else
     const std::vector<std::string> ASSET_FORMATS = {".deb", ".tar.bz2"};
+#endif
 #endif
 
 #if defined(Q_PROCESSOR_X86_64)
