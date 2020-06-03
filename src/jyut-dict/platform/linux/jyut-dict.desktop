@@ -12,6 +12,7 @@ Comment[zh_CN]=搜索粤语字的定义
 Comment[zh_TW]=搜索粵語字的定義
 Comment[zh_HK]=揾粤语字嘅定義
 Exec=/usr/bin/jyut-dict
+StartupWMClass=CantoneseDictionary
 Terminal=false
 Icon=jyut-dict
 Keywords=Jyut;Dictionary;Cantonese;Mandarin;Chinese;Words;
