@@ -64,7 +64,7 @@ This project uses Qt 5.12. It has been verified to also compile on Qt 5.9.5 on U
 **Before building the application, you must build the dictionary database using `script-set.py` (for CEDICT + CC-CANTO) or `script-individual` (for CFDICT/HanDeDict).** Read the README in `src/cedict_to_sqlite` for instructions, then place the generated database, named `dict.db`, in `src/jyut-dict/resources/db/`.
 
 #### Qt Creator (macOS, Ubuntu, Windows)
-Import the project to Qt Creator, then run.
+Import the project to Qt Creator, then run. Add DEFINES+="PORTABLE" to the QMake configuration if you would like to isolate your debug build from any system files.
 
 #### Command line (macOS, Ubuntu)
 
