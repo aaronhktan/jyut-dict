@@ -41,11 +41,11 @@ The project contains three subdirectories, `cedict_to_sqlite`, `tatoeba_to_sqlit
 
 ### cedict_to_sqlite
 
-This folder contains several Python3 scripts that convert the raw [CC-CEDICT](https://cc-cedict.org/editor/editor.php?handler=Download)/[CC-CANTO](https://cantonese.org/download.html)/CC-CANTO readings files into FTS5 SQLite databases. The README file in this directory contains a more detailed explanation of the various scripts.
+This folder contains several Python3 scripts that convert the raw [CC-CEDICT](https://cc-cedict.org/editor/editor.php?handler=Download)/[CC-CANTO](https://cantonese.org/download.html)/CC-CANTO readings files into FTS5 SQLite databases. The [README](/src/cedict_to_sqlite/README.md) file in this directory contains a more detailed explanation of the various scripts.
 
 ### tatoeba_to_sqlite
 
-This folder contains several Python3 scripts that convert the raw sentences.csv/links.csv files from [Tatoeba](https://tatoeba.org/eng/downloads) into SQLite databases. The README file in this directory contains a more detailed explanation of the various scripts.
+This folder contains several Python3 scripts that convert the raw sentences.csv/links.csv files from [Tatoeba](https://tatoeba.org/eng/downloads) into SQLite databases. The [README](/src/tatoeba_to_sqlite/README.md) file in this directory contains a more detailed explanation of the various scripts.
 
 ### jyut-dict
 
