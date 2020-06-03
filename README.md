@@ -2,121 +2,84 @@
 
 /jyːt ˈdɪkʃənɛɹi/
 
-A program to look up words in Chinese, with Simplified Chinese, Traditional Chinese, Pinyin, Jyutping, and English input. Currently on macOS, Windows, and Ubuntu.
+A program to look up words in Mandarin or Cantonese, with Simplified Chinese, Traditional Chinese, Pinyin, Jyutping, and English input.
+
+Available for macOS, Windows, and Ubuntu.
 
 [Download now!](https://github.com/aaronhktan/jyut-dict/releases)
 
 ## Features
 
 ### Vast number of entries.
-Jyut Dictionary uses CEDICT and CC-CANTO as sources for its dictionary, giving it over 135,000 entries to search from!
+Jyut Dictionary uses CEDICT and CC-CANTO as sources for its dictionary and Tatoeba as source for its sentences, giving it over 135,000 entries and 60,000 sentences to search from!
 
-<img src="/docs/screenshots/mac/search_jyutping.png?raw=true" style="margin: 5px">
+<img src="/docs/screenshots/mac/search.png?raw=true" style="margin: 5px">
 
 ### Search quickly.
-Results appear in a list as you type, so it's faster and easier to find what you're looking for.
+Results appear in a list as you type, so it's faster and easier to find what you're looking for. Plus, your search history is saved if you want to go back to a word you've looked up before.
 
 <img src="/docs/screenshots/mac/search_animated.gif?raw=true" style="margin: 5px">
 
 ### Search with your preferred input method.
-Jyut Dictionary supports entry with Simplified Chinese, Traditional Chinese, Pinyin, Jyutping, and English. More to come, so stayed tuned!
+Jyut Dictionary supports entry with Simplified Chinese, Traditional Chinese, Pinyin, Jyutping, and English.
 
-<img src="/docs/screenshots/mac/search_simplified.png?raw=true" style="margin: 5px">
+<img src="/docs/screenshots/mac/search_options.gif?raw=true" style="margin: 5px">
 
-### Supports dark mode.
-Dark mode is love. Dark mode is life.
+### Localized.
+Use the dictionary in English, French, Simplified and Traditional Cantonese, or Simplified and Traditional Chinese.
 
-<img src="/docs/screenshots/mac/dark.png?raw=true" style="margin: 5px">
+<img src="/docs/screenshots/mac/search_localization.gif?raw=true" style="margin: 5px">
+
+### Customizable.
+Prefer to only Traditional Chinese first? Maybe hide Pinyin? Change the colours of the words or disable them altogether? Do that with a plethora of settings options!
+
+<img src="/docs/screenshots/mac/settings.png?raw=true" style="margin: 5px">
 
 ## Project structure
 
-The project contains two main subdirectories, `cedict_to_sqlite` and `jyut-dict`.
+The project contains three subdirectories, `cedict_to_sqlite`, `tatoeba_to_sqlite`, and `jyut-dict`.
 
 ### cedict_to_sqlite
 
-This folder contains a Python 3 script that takes three source files and spits out a full-text search SQLITE3 database.
+This folder contains several Python3 scripts that convert the raw [CC-CEDICT](https://cc-cedict.org/editor/editor.php?handler=Download)/[CC-CANTO](https://cantonese.org/download.html)/CC-CANTO readings files into FTS5 SQLite databases. The README file in this directory contains a more detailed explanation of the various scripts.
+
+### tatoeba_to_sqlite
+
+This folder contains several Python3 scripts that convert the raw sentences.csv/links.csv files from [Tatoeba](https://tatoeba.org/eng/downloads) into SQLite databases. The README file in this directory contains a more detailed explanation of the various scripts.
 
 ### jyut-dict
 
 This folder contains the source code for the program, and a Qt Creator project file. Files are divided into several subdirectories:
-- `windows`: UI windows of the program, such as the main window.
 - `components`: UI components, such as the list view or search bar.
+- `dialogs`: dialogs, such as the update available notification dialog.
 - `logic`: definitions for search and entry classes, as well as any other backend logic.
 - `platform`: platform-specific files, such as `Info.plist` for the macOS application bundle.
 - `resources`: databases, icons, and images.
+- `windows`: UI windows of the program, such as the main window.
 
 ## Build and run
 
-### cedict_to_sqlite
+This project uses Qt 5.12. It has been verified to also compile on Qt 5.9.5 on Ubuntu, but there are no guarantees of other compatible Qt versions.
 
-The three text files the script requires are:
-1. CEDICT
-2. CC-CANTO
-3. CC-CANTO readings for CEDICT
+**Before building the application, you must build the dictionary database using `script-set.py` (for CEDICT + CC-CANTO) or `script-individual` (for CFDICT/HanDeDict).** Read the README in `src/cedict_to_sqlite` for instructions, then place the generated database, named `dict.db`, in `src/jyut-dict/resources/db/`.
 
-In addition, the SQLITE driver must support full-text search on your machine.
+#### Qt Creator (macOS, Ubuntu, Windows)
+Import the project to Qt Creator, then run. Add DEFINES+="PORTABLE" to the QMake configuration if you would like to isolate your debug build from any system files.
 
-Usage:
-- To install required packages: `pip install -r requirements.txt`
-- To generate database: `python3 script.py <output database filename> <CC_CEDICT file> <CC_CANTO file> <CC_CANTO readings file>`
+#### Command line (macOS, Ubuntu)
 
-### jyut-dict
-
-This project uses Qt 5.12.
-
-Before building the application, you must build the database. See the section above for instructions, then place the generated database, named `dict.db`, in `resources/db/`.
-
-#### macOS
-
-##### Command line
+##### macOS
 1. Generate a Makefile from `jyut-dict.pro`: `qmake jyut-dict.pro`
   - Note: you may need the full path of qmake. Search in Spotlight to find the appropriate version, which on 64-bit Macs is the qmake binary under in the `clang_64` folder.
-2. Make with `make`. A `.app` application bundle will appear in the directory where you ran this command, which you can double click to run.
+2. Make with `make`. A `.app` application bundle will appear in the directory where you ran this command, which you can use `open` to run.
 
-##### Qt Creator
-Import the project to Qt Creator, then run.
-
-#### Windows
-
-#### Qt Creator
-Import the project to Qt Creator, then run. If packaging for release, select the release option in the bottom left corner of the IDE.
-
-#### Ubuntu
-
-##### Command line
+##### Ubuntu
 1. Generate a Makefile from `jyut-dict.pro`: `qmake jyut-dict.pro`
 2. Make with `make`. A Linux executable will appear in the directory where you ran this command.
 
-##### Qt Creator
-Import the project to Qt Creator, then run.
-
 ## Packaging for release
 
-### macOS
-
-1. **Generate the deployment .app**: Qt has a handy-dandy application called macdeployqt that packages all the frameworks, resources and other dependencies into the Mac bundle file.
-  - Run it with `macdeployqt ./Jyut\ Dictionary.app` in the directory where the program was built.
-  - Note: you may need the full path of macdeployqt. Search in Spotlight to find the appropriate version, which on 64-bit Macs is the macdeployqt binary in the `clang_64` folder.
-
-2. **Create a .dmg file**: Mac users expect a .dmg file where they can drag and drop the application bundle into the `~/Applications` folder.
-  - To generate the .dmg for distribution, you will need Node.js and create-dmg installed. If you do not have create-dmg installed, get it with ```npm install --global create-dmg```.
-  - Create the dmg. ```create-dmg 'Jyut\ Dictionary.app'```
-
-### Windows
-
-1. **Generate the deployment .exe**: Qt has a handy-dandy application called windeployqt that packages all the .dlls, resources and other dependencies into the same folder as the .exe.
-  - Run it with `windeployqt ./jyut-dict.exe` in the directory where the program was built. (Here, use the release folder.)
-  - Note: you may need the full path of windeployqt, and set the appropriate environment variables. Find the appropriate version by looking in the folder where you installed Qt, which on Windows may be located in the `msvc_<year>` folder if using Microsoft Visual C++, or `mingw<version>_64` if using MinGW/GCC for Windows.
-
-2. **Create a .msi file**: Windows users expect an installer that automatically places frameworks and executables in the right places, as well as setting registry keys as necessary.
-  - To generate the .msi for distribution, you will need Advanced Installer.
-  - Add the .dlls, folders, database files, and executable generated by Qt Creator and windeployqt to the list of files and folders in Advanced Installer, then click 'Build' to generate a .msi file.
-
-### Ubuntu
-
-1. **Generate the AppImage**: A third-party application called linuxdeployqt can generate an AppImage for this application. See that repository for more information.
-
-2. **Create a .deb file**: Ubuntu users also expect to be able to install with a .deb file. This can be generated with the `create-deb.sh` script under `platform/linux`.
+See the READMEs for each platform under `src/jyut-dict/platform/<platform>` for instructions on packaging the built executable.
 
 ## On the roadmap
 See the Github bugs and project for more information!
