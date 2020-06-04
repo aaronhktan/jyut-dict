@@ -14,4 +14,4 @@ To build for Linux:
 	- Run `create-flatpak.sh` in the flatpak subdirectory.
 
 - Build the **.deb** using Ubuntu 18.04.
-	- Run `create-deb.sh`.
+	- Run `create-deb.sh` in the deb subdirectory.
