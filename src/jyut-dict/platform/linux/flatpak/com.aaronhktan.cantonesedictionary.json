@@ -36,7 +36,7 @@
             "buildsystem": "simple",
             "build-commands": [
                 "qmake jyut-dict.pro DEFINES+=\"FLATPAK\" CONFIG+=\"FLATPAK\"",
-                "make",
+                "make -j4",
                 "make install"
             ],
             "sources": [
