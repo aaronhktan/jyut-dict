@@ -31,7 +31,7 @@ static std::unordered_set<std::string> specialCharacters = {
 #ifdef Q_OS_WIN
 #define SAME_CHARACTER_STRING "−"
 #else
-#define SAME_CHARACTER_STRING "―"
+#define SAME_CHARACTER_STRING "－"
 #endif
 
 Entry::Entry()
