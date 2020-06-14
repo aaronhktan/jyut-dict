@@ -172,7 +172,7 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
         QString searchOption = Utils::getStringFromSearchParameter(
                                    static_cast<SearchParameters>(pair.second))
                                    .c_str();
-        int searchOptionWidth = metrics.width(searchOption);
+        int searchOptionWidth = metrics.horizontalAdvance(searchOption);
         QString searchTerm = metrics.elidedText(pair.first.c_str(),
                                                 Qt::ElideRight,
                                                 r.width() - 2 * margin

@@ -1,8 +1,7 @@
 #ifndef SEARCHPARAMETERS_H
 #define SEARCHPARAMETERS_H
 
-#include "logic/utils/qvariantutils.h"
-
+#include <QDataStream>
 #include <QMetaType>
 
 // An enum that defines all possible search parameters

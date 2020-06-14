@@ -1,8 +1,7 @@
 #ifndef ENTRYPHONETICOPTIONS_H
 #define ENTRYPHONETICOPTIONS_H
 
-#include "logic/utils/qvariantutils.h"
-
+#include <QDataStream>
 #include <QMetaType>
 
 // An enum that tells how to show the phonetic guide of an entry

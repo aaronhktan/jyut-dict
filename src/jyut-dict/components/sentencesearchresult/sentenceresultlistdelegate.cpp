@@ -9,6 +9,7 @@
 
 #include <QGuiApplication>
 #include <QAbstractTextDocumentLayout>
+#include <QPainterPath>
 #include <QRectF>
 #include <QTextDocument>
 #include <QVariant>

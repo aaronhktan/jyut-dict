@@ -1,8 +1,7 @@
 #ifndef ENTRYCHARACTERSOPTIONS_H
 #define ENTRYCHARACTERSOPTIONS_H
 
-#include "logic/utils/qvariantutils.h"
-
+#include <QDataStream>
 #include <QMetaType>
 
 // An enum that tells how to display en entry
