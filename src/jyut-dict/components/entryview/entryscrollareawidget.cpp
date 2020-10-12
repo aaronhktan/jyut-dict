@@ -2,6 +2,8 @@
 
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined (Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -29,7 +31,7 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(std::shared_ptr<SQLUserDataUtils> s
     _scrollAreaLayout->addWidget(_entryContentWidget);
     _scrollAreaLayout->addStretch(1);
 
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */false);
@@ -45,7 +47,7 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(std::shared_ptr<SQLUserDataUtils> s
 
 void EntryScrollAreaWidget::changeEvent(QEvent *event)
 {
-#if defined(Q_OS_DARWIN)
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer

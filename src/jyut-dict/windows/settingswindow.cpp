@@ -7,6 +7,8 @@
 #include "logic/utils/utils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined (Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -50,7 +52,7 @@ SettingsWindow::~SettingsWindow()
 
 void SettingsWindow::changeEvent(QEvent *event)
 {
-#if defined(Q_OS_DARWIN)
+#if defined(Q_OS_DARWIN) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
@@ -124,7 +126,7 @@ void SettingsWindow::setupUI()
     setCentralWidget(_contentStackedWidget);
 
     // Customize the look of the toolbar to fit in better with platform styles
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */false);
@@ -162,7 +164,7 @@ void SettingsWindow::setStyle(bool use_dark)
     QColor currentTextColour;
     QColor otherTextColour;
     if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
         selectedBackgroundColour = QGuiApplication::palette()
             .color(QPalette::Inactive, QPalette::Highlight);
 #else

@@ -4,6 +4,8 @@
 #include "logic/utils/utils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined (Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -76,11 +78,9 @@ void MainToolBar::setupUI(void)
 
 #ifdef Q_OS_WIN
     setStyleSheet("QToolBar { background-color: white; }");
-#elif defined(Q_OS_LINUX)
-    setStyleSheet("QToolBar { border-bottom: 1px solid lightgray; }");
 #endif
 
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */ false);
@@ -89,7 +89,7 @@ void MainToolBar::setupUI(void)
 
 void MainToolBar::changeEvent(QEvent *event)
 {
-#if defined(Q_OS_DARWIN)
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
@@ -145,6 +145,14 @@ void MainToolBar::setStyle(bool use_dark)
                 "QToolButton:hover { background-color: %1; border-radius: 3px; "
                 "padding: 3px; margin: 0px; }"}
             .arg(use_dark ? "grey" : "whitesmoke"));
+
+#ifdef Q_OS_LINUX
+    if (use_dark) {
+        setStyleSheet("QToolBar { border-bottom: none; }");
+    } else {
+        setStyleSheet("QToolBar { border-bottom: 1px solid lightgray; }");
+    }
+#endif
 }
 
 void MainToolBar::focusInEvent(QFocusEvent *event)

@@ -3,6 +3,8 @@
 #include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined(Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -24,7 +26,7 @@ DefinitionCardWidget::DefinitionCardWidget(QWidget *parent) : QWidget(parent)
     _definitionAreaLayout->addWidget(_definitionHeaderWidget);
     _definitionAreaLayout->addWidget(_definitionContentWidget);
 
-#ifdef Q_OS_MAC
+#if (defined(Q_OS_MAC) || defined(Q_OS_LINUX))
     setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */false);
@@ -37,7 +39,7 @@ DefinitionCardWidget::~DefinitionCardWidget()
 
 void DefinitionCardWidget::changeEvent(QEvent *event)
 {
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer

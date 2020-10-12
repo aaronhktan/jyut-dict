@@ -3,6 +3,8 @@
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined (Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -81,7 +83,7 @@ void EntryViewSentenceCardSection::setupUI(void)
 
     _timer = new QTimer{this};
 
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */false);

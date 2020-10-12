@@ -4,6 +4,8 @@
 #include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined (Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -22,7 +24,7 @@ SentenceViewHeaderWidget::SentenceViewHeaderWidget(QWidget *parent) : QWidget(pa
     setupUI();
     translateUI();
 
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */false);
@@ -41,7 +43,7 @@ void SentenceViewHeaderWidget::changeEvent(QEvent *event)
         _pinyinLabel->setFixedWidth(_pinyinLabel->fontMetrics().boundingRect("PY").width());
     }
 #endif
-#if defined(Q_OS_DARWIN)
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
@@ -119,7 +121,7 @@ void SentenceViewHeaderWidget::setSourceSentence(const SourceSentence &sentence)
     _traditionalLabel->setFont(font);
 #endif
 
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */ false);

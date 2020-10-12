@@ -2,6 +2,8 @@
 
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined (Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -29,7 +31,7 @@ void EntryActionWidget::callback(bool entryExists, Entry entry)
 
 void EntryActionWidget::changeEvent(QEvent *event)
 {
-#if defined(Q_OS_DARWIN)
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
@@ -91,7 +93,7 @@ void EntryActionWidget::setupUI(void)
     _layout->addWidget(_shareButton);
     _layout->addStretch(0);
 
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */ false);
@@ -156,7 +158,7 @@ void EntryActionWidget::refreshBookmarkButton(void)
 {
     _bookmarkButton->setVisible(true);
     _shareButton->setVisible(true);
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */ false);

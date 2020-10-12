@@ -89,6 +89,7 @@ SOURCES += \
     logic/search/sqlsearch.cpp \
     logic/sentence/sentenceset.cpp \
     logic/sentence/sourcesentence.cpp \
+    logic/utils/utils_linux.cpp \
     main.cpp \
     dialogs/defaultdialog.cpp \
     dialogs/dictionarytabfailuredialog.cpp \
@@ -198,6 +199,7 @@ HEADERS += \
     logic/update/iupdatechecker.h \
     logic/utils/qvariantutils.h \
     logic/utils/utils.h \
+    logic/utils/utils_linux.h \
     logic/utils/utils_mac.h \
     logic/utils/utils_qt.h \
     windows/aboutwindow.h \

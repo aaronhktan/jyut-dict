@@ -8,6 +8,8 @@
 #include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined(Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -41,22 +43,12 @@ MainWindow::MainWindow(QWidget *parent) :
     });
 
     // Set window stuff
-#ifdef Q_OS_LINUX
-    setMinimumSize(QSize(500, 350));
-    resize(600, 450);
-#else
+//#ifdef Q_OS_LINUX
+//    setMinimumSize(QSize(500, 350));
+//    resize(600, 450);
+//#else
     setMinimumSize(QSize(800, 600));
-#endif
-
-    // Change theme colours
-#ifndef Q_OS_MAC
-    QPalette defaultPalette = QApplication::palette();
-    defaultPalette.setColor(QPalette::Highlight,
-                            QColor(LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
-                                   LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
-                                   LIST_ITEM_ACTIVE_COLOUR_LIGHT_B));
-    QApplication::setPalette(defaultPalette);
-#endif
+//#endif
 
     // Instantiate services
     _manager = std::make_shared<SQLDatabaseManager>();
@@ -147,7 +139,7 @@ MainWindow::MainWindow(QWidget *parent) :
     translateUI();
 
     // Set style
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
 #else
@@ -314,6 +306,47 @@ void MainWindow::setStyle(bool use_dark)
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
 #elif defined(Q_OS_WIN)
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
+    QPalette defaultPalette = QApplication::palette();
+    defaultPalette.setColor(QPalette::Highlight,
+                            QColor(LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
+                                   LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
+                                   LIST_ITEM_ACTIVE_COLOUR_LIGHT_B));
+    QApplication::setPalette(defaultPalette);
+#elif defined(Q_OS_LINUX)
+    if (!use_dark) {
+        return;
+    }
+
+    QColor darkGray(53, 53, 53);
+    QColor gray(128, 128, 128);
+    QColor black(25, 25, 25);
+    QColor blue(42, 130, 218);
+
+    QPalette darkPalette;
+    darkPalette.setColor(QPalette::Window, darkGray);
+    darkPalette.setColor(QPalette::WindowText, Qt::white);
+    darkPalette.setColor(QPalette::Base, black);
+    darkPalette.setColor(QPalette::AlternateBase, darkGray);
+    darkPalette.setColor(QPalette::ToolTipBase, blue);
+    darkPalette.setColor(QPalette::ToolTipText, Qt::white);
+    darkPalette.setColor(QPalette::Text, Qt::white);
+    darkPalette.setColor(QPalette::Button, darkGray);
+    darkPalette.setColor(QPalette::ButtonText, Qt::white);
+    darkPalette.setColor(QPalette::Link, blue);
+    darkPalette.setColor(QPalette::Highlight,
+                         QColor(LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
+                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
+                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_B));
+    darkPalette.setColor(QPalette::HighlightedText, Qt::black);
+
+    darkPalette.setColor(QPalette::Active, QPalette::Button, gray.darker());
+    darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, gray);
+    darkPalette.setColor(QPalette::Disabled, QPalette::WindowText, gray);
+    darkPalette.setColor(QPalette::Disabled, QPalette::Text, gray);
+    darkPalette.setColor(QPalette::Disabled, QPalette::Light, darkGray);
+
+    qApp->setPalette(darkPalette);
+    qApp->setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
 #endif
 }
 

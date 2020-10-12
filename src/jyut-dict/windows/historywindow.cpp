@@ -2,6 +2,8 @@
 
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined (Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -28,7 +30,7 @@ HistoryWindow::HistoryWindow(
     translateUI();
     setMinimumSize(300, 500);
 
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */ false);
@@ -74,7 +76,7 @@ void HistoryWindow::translateUI(void)
 
 void HistoryWindow::setStyle(bool use_dark)
 {
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     QColor backgroundColour = use_dark ? QColor{BACKGROUND_COLOUR_DARK_R,
                                                 BACKGROUND_COLOUR_DARK_G,
                                                 BACKGROUND_COLOUR_DARK_B}
