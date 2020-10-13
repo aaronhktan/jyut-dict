@@ -319,19 +319,20 @@ void MainWindow::setStyle(bool use_dark)
 
     QColor darkGray(53, 53, 53);
     QColor gray(128, 128, 128);
-    QColor blue(42, 130, 218);
 
     QPalette darkPalette;
     darkPalette.setColor(QPalette::Window, darkGray);
     darkPalette.setColor(QPalette::WindowText, Qt::white);
-    darkPalette.setColor(QPalette::Base, darkGray.darker());
+    darkPalette.setColor(QPalette::Base, QColor{BACKGROUND_COLOUR_DARK_R,
+                                                BACKGROUND_COLOUR_DARK_G,
+                                                BACKGROUND_COLOUR_DARK_B});
     darkPalette.setColor(QPalette::AlternateBase, darkGray);
     darkPalette.setColor(QPalette::ToolTipBase, darkGray);
     darkPalette.setColor(QPalette::ToolTipText, Qt::white);
     darkPalette.setColor(QPalette::Text, Qt::white);
     darkPalette.setColor(QPalette::Button, darkGray);
     darkPalette.setColor(QPalette::ButtonText, Qt::white);
-    darkPalette.setColor(QPalette::Link, blue);
+    darkPalette.setColor(QPalette::Link, Qt::blue);
     darkPalette.setColor(QPalette::Highlight,
                          QColor(LIST_ITEM_ACTIVE_COLOUR_DARK_R,
                                 LIST_ITEM_ACTIVE_COLOUR_DARK_G,
