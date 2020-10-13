@@ -13,13 +13,24 @@ MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
                          std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                          QWidget *parent) : QToolBar(parent)
 {
-    setObjectName("MainToolBar");
+    setContextMenuPolicy(Qt::PreventContextMenu);
     _searchBar = new SearchLineEdit(_searchOptions,
                                     sqlSearch,
                                     sqlHistoryUtils,
                                     this);
 
     _searchOptions = new SearchOptionsMediator{};
+
+#ifdef Q_OS_LINUX
+    // For some reason, if we disable the border first before creating the
+    // SearchOptionsRadioGroupBox, a vertical spacer (???) gets added to the
+    // groupbox's layout
+    if (Utils::isDarkMode()) {
+        setStyleSheet("QToolBar { border-bottom: 1px solid black; }");
+    } else {
+        setStyleSheet("QToolBar { border-bottom: 1px solid lightgray; }");
+    }
+#endif
 
     _searchOptions->registerLineEdit(_searchBar);
     _optionsBox = new SearchOptionsRadioGroupBox(_searchOptions, this);
@@ -148,12 +159,10 @@ void MainToolBar::setStyle(bool use_dark)
             .arg(use_dark ? "grey" : "whitesmoke"));
 
 #ifdef Q_OS_LINUX
-    if (use_dark) {
-        // For some reason, setting this causes the radio button group box to
-        // put a vertical spacer (??) and pushes the buttons down.
-        setStyleSheet("#MainToolBar { border: black; }");
+    if (Utils::isDarkMode()) {
+        setStyleSheet("QToolBar { border-bottom: 1px solid black; }");
     } else {
-        setStyleSheet("#MainToolBar { border-bottom: 1px solid lightgray; }");
+        setStyleSheet("QToolBar { border-bottom: 1px solid lightgray; }");
     }
 #endif
 }

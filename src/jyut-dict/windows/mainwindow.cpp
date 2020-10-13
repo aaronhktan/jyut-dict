@@ -319,7 +319,6 @@ void MainWindow::setStyle(bool use_dark)
 
     QColor darkGray(53, 53, 53);
     QColor gray(128, 128, 128);
-    QColor black(25, 25, 25);
     QColor blue(42, 130, 218);
 
     QPalette darkPalette;
@@ -327,17 +326,17 @@ void MainWindow::setStyle(bool use_dark)
     darkPalette.setColor(QPalette::WindowText, Qt::white);
     darkPalette.setColor(QPalette::Base, darkGray.darker());
     darkPalette.setColor(QPalette::AlternateBase, darkGray);
-    darkPalette.setColor(QPalette::ToolTipBase, blue);
+    darkPalette.setColor(QPalette::ToolTipBase, darkGray);
     darkPalette.setColor(QPalette::ToolTipText, Qt::white);
     darkPalette.setColor(QPalette::Text, Qt::white);
     darkPalette.setColor(QPalette::Button, darkGray);
     darkPalette.setColor(QPalette::ButtonText, Qt::white);
     darkPalette.setColor(QPalette::Link, blue);
     darkPalette.setColor(QPalette::Highlight,
-                         QColor(LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
-                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
-                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_B));
-    darkPalette.setColor(QPalette::HighlightedText, Qt::black);
+                         QColor(LIST_ITEM_ACTIVE_COLOUR_DARK_R,
+                                LIST_ITEM_ACTIVE_COLOUR_DARK_G,
+                                LIST_ITEM_ACTIVE_COLOUR_DARK_B));
+    darkPalette.setColor(QPalette::HighlightedText, Qt::white);
 
     darkPalette.setColor(QPalette::Active, QPalette::Button, gray.darker());
     darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, gray);
@@ -346,7 +345,9 @@ void MainWindow::setStyle(bool use_dark)
     darkPalette.setColor(QPalette::Disabled, QPalette::Light, darkGray);
 
     qApp->setPalette(darkPalette);
-    qApp->setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
+    // For some reason, if I don't set this, text in dark mode paints as black
+    // (even for all widgets that are not tooltips)
+    qApp->setStyleSheet("QToolTip { color: #ffffff; border: 1px solid white; }");
 #endif
 }
 

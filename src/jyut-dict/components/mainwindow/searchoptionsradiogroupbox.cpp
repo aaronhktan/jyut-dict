@@ -78,13 +78,6 @@ void SearchOptionsRadioGroupBox::setupUI()
     _jyutpingButton->setProperty("data", QVariant::fromValue(SearchParameters::JYUTPING));
     _pinyinButton->setProperty("data", QVariant::fromValue(SearchParameters::PINYIN));
     _englishButton->setProperty("data", QVariant::fromValue(SearchParameters::ENGLISH));
-#ifdef Q_OS_LINUX
-    _simplifiedButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
-    _traditionalButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
-    _jyutpingButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
-    _pinyinButton->setStyleSheet("QToolTip { padding: 1px; color: black; }");
-    _englishButton->setStyleSheet("QToolTip { padding: 1px; color: black; }");
-#endif
 
     connect(_simplifiedButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
     connect(_traditionalButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
@@ -98,26 +91,12 @@ void SearchOptionsRadioGroupBox::setupUI()
     _layout->addWidget(_pinyinButton);
     _layout->addWidget(_englishButton);
 
-#ifdef Q_OS_LINUX
-    _layout->setAlignment(_simplifiedButton, Qt::AlignVCenter);
-    _layout->setAlignment(_traditionalButton, Qt::AlignVCenter);
-    _layout->setAlignment(_jyutpingButton, Qt::AlignVCenter);
-    _layout->setAlignment(_pinyinButton, Qt::AlignVCenter);
-    _layout->setAlignment(_englishButton, Qt::AlignVCenter);
-#endif
-
     setLayout(_layout);
     setFlat(true);
 
 #ifdef Q_OS_WIN
     setStyleSheet("QRadioButton[isHan=\"true\"] { font-size: 12px; }"
                   "QGroupBox { border: 0; }");
-#endif
-#if defined(Q_OS_LINUX)
-    // The -20 is to remove space that Linux reserves for the title of the groupbox
-    qDebug() << styleSheet();
-    setStyleSheet("QGroupBox { border: none; margin-top: -60px; padding-top: 0px; } ");
-    qDebug() << styleSheet();
 #else
     setStyleSheet("QGroupBox { border: none; } ");
 #endif

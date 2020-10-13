@@ -2,6 +2,7 @@
 
 namespace Utils {
 
+// TODO: Make this actually work!
 bool isDarkMode(void) {
     return true;
 }
