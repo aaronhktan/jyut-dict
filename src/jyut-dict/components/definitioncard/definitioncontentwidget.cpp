@@ -75,7 +75,7 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
                                      static_cast<int>(i + 9), 1, Qt::AlignTop);
     }
 
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */false);
