@@ -40,10 +40,8 @@ SentenceSplitter::SentenceSplitter(std::shared_ptr<SQLDatabaseManager> manager,
 #ifdef Q_OS_WIN
     setStyleSheet("QSplitter::handle { background-color: #b9b9b9; } "
                   "QSplitter { border-top: 1px solid lightgrey; }");
-#elif defined(Q_OS_DARWIN)
+#elif defined(Q_OS_DARWIN) || defined(Q_OS_LINUX)
     setStyleSheet("QSplitter::handle { background-color: none; }");
-#else
-    setStyleSheet("QSplitter::handle { background-color: lightgray; }");
 #endif
 
     setMinimumHeight(400);
