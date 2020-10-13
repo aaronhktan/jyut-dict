@@ -13,6 +13,7 @@ MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
                          std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                          QWidget *parent) : QToolBar(parent)
 {
+    setObjectName("MainToolBar");
     _searchBar = new SearchLineEdit(_searchOptions,
                                     sqlSearch,
                                     sqlHistoryUtils,
@@ -148,9 +149,11 @@ void MainToolBar::setStyle(bool use_dark)
 
 #ifdef Q_OS_LINUX
     if (use_dark) {
-        setStyleSheet("QToolBar { border-bottom: none; }");
+        // For some reason, setting this causes the radio button group box to
+        // put a vertical spacer (??) and pushes the buttons down.
+        setStyleSheet("#MainToolBar { border: black; }");
     } else {
-        setStyleSheet("QToolBar { border-bottom: 1px solid lightgray; }");
+        setStyleSheet("#MainToolBar { border-bottom: 1px solid lightgray; }");
     }
 #endif
 }

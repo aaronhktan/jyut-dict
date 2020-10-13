@@ -325,7 +325,7 @@ void MainWindow::setStyle(bool use_dark)
     QPalette darkPalette;
     darkPalette.setColor(QPalette::Window, darkGray);
     darkPalette.setColor(QPalette::WindowText, Qt::white);
-    darkPalette.setColor(QPalette::Base, black);
+    darkPalette.setColor(QPalette::Base, darkGray.darker());
     darkPalette.setColor(QPalette::AlternateBase, darkGray);
     darkPalette.setColor(QPalette::ToolTipBase, blue);
     darkPalette.setColor(QPalette::ToolTipText, Qt::white);

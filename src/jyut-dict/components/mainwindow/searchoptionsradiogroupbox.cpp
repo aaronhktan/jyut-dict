@@ -67,48 +67,36 @@ void SearchOptionsRadioGroupBox::setupUI()
     _layout = new QHBoxLayout{this};
     _layout->setContentsMargins(15, 0, 55, 0);
 
-    _simplifiedButton = new QRadioButton{this};
-    _traditionalButton = new QRadioButton{this};
-    _jyutpingButton = new QRadioButton{this};
-    _pinyinButton = new QRadioButton{this};
-    _englishButton = new QRadioButton{this};
+    _simplifiedButton = new QRadioButton{};
+    _traditionalButton = new QRadioButton{};
+    _jyutpingButton = new QRadioButton{};
+    _pinyinButton = new QRadioButton{};
+    _englishButton = new QRadioButton{};
 
-//    _simplifiedButton->setProperty("data", QVariant::fromValue(SearchParameters::SIMPLIFIED));
-//    _traditionalButton->setProperty("data", QVariant::fromValue(SearchParameters::TRADITIONAL));
-//    _jyutpingButton->setProperty("data", QVariant::fromValue(SearchParameters::JYUTPING));
-//    _pinyinButton->setProperty("data", QVariant::fromValue(SearchParameters::PINYIN));
-//    _englishButton->setProperty("data", QVariant::fromValue(SearchParameters::ENGLISH));
-//#ifdef Q_OS_LINUX
-//    _simplifiedButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
-//    _traditionalButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
-//    _jyutpingButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
-//    _pinyinButton->setStyleSheet("QToolTip { padding: 1px; color: black; }");
-//    _englishButton->setStyleSheet("QToolTip { padding: 1px; color: black; }");
-//#else
-    _simplifiedButton->setStyleSheet("QButton::indicator { padding: 1px; margin: 0px; }");
-    _traditionalButton->setStyleSheet("QButton::indicator { padding: 1px; margin: 0px; }");
-    _jyutpingButton->setStyleSheet("QButton::indicator { padding: 1px; margin: 0px; }");
-    _pinyinButton->setStyleSheet("QButton::indicator { padding: 1px; margin: 0px; }");
-    _englishButton->setStyleSheet("QButton::indicator { padding: 1px; margin: 0px; }");
-//#endif
+    _simplifiedButton->setProperty("data", QVariant::fromValue(SearchParameters::SIMPLIFIED));
+    _traditionalButton->setProperty("data", QVariant::fromValue(SearchParameters::TRADITIONAL));
+    _jyutpingButton->setProperty("data", QVariant::fromValue(SearchParameters::JYUTPING));
+    _pinyinButton->setProperty("data", QVariant::fromValue(SearchParameters::PINYIN));
+    _englishButton->setProperty("data", QVariant::fromValue(SearchParameters::ENGLISH));
+#ifdef Q_OS_LINUX
+    _simplifiedButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
+    _traditionalButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
+    _jyutpingButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
+    _pinyinButton->setStyleSheet("QToolTip { padding: 1px; color: black; }");
+    _englishButton->setStyleSheet("QToolTip { padding: 1px; color: black; }");
+#endif
 
-//    connect(_simplifiedButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
-//    connect(_traditionalButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
-//    connect(_jyutpingButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
-//    connect(_pinyinButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
-//    connect(_englishButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
+    connect(_simplifiedButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
+    connect(_traditionalButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
+    connect(_jyutpingButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
+    connect(_pinyinButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
+    connect(_englishButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
 
     _layout->addWidget(_simplifiedButton);
     _layout->addWidget(_traditionalButton);
     _layout->addWidget(_jyutpingButton);
     _layout->addWidget(_pinyinButton);
     _layout->addWidget(_englishButton);
-
-    _simplifiedButton->setMaximumHeight(20);
-    _traditionalButton->setMaximumHeight(20);
-    _jyutpingButton->setMaximumHeight(20);
-    _pinyinButton->setMaximumHeight(20);
-    _englishButton->setMaximumHeight(20);
 
 #ifdef Q_OS_LINUX
     _layout->setAlignment(_simplifiedButton, Qt::AlignVCenter);
@@ -118,14 +106,20 @@ void SearchOptionsRadioGroupBox::setupUI()
     _layout->setAlignment(_englishButton, Qt::AlignVCenter);
 #endif
 
-//    setLayout(_layout);
+    setLayout(_layout);
     setFlat(true);
 
 #ifdef Q_OS_WIN
     setStyleSheet("QRadioButton[isHan=\"true\"] { font-size: 12px; }"
                   "QGroupBox { border: 0; }");
+#endif
+#if defined(Q_OS_LINUX)
+    // The -20 is to remove space that Linux reserves for the title of the groupbox
+    qDebug() << styleSheet();
+    setStyleSheet("QGroupBox { border: none; margin-top: -60px; padding-top: 0px; } ");
+    qDebug() << styleSheet();
 #else
-//    setStyleSheet("QGroupBox { border: 0; }");
+    setStyleSheet("QGroupBox { border: none; } ");
 #endif
 }
 
