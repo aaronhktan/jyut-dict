@@ -126,7 +126,7 @@ void Analytics::sendNetworkRequest(QUrlQuery query)
     query.addQueryItem("ul",  language.replace('_', '-').toLower()); // Set user language
 
     QByteArray body;
-    body.append(query.query());
+    body.append(query.query().toUtf8());
     _reply = _manager->post(request, body);
     connect(_reply, &QNetworkReply::finished, this, &Analytics::gotReply);
 }
