@@ -1,3 +1,4 @@
+hanzidentifier==1.0.2
 jieba==0.39
 langcodes==1.4.1
 marisa-trie==0.7.5

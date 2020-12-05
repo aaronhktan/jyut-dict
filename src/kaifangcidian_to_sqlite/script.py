@@ -1,6 +1,8 @@
+import hanzidentifier
 from pypinyin import pinyin, Style
 from wordfreq import zipf_frequency
 
+import ast
 import csv
 import sqlite3
 import sys
@@ -98,12 +100,22 @@ def write(entries, db_name):
     def definition_to_tuple(definition, entry_id, source_id):
         return (None, definition, entry_id, source_id)
 
+    entry_id = 0
     for key in entries:
         for entry in entries[key]:
+            c.execute('SELECT COUNT(*) from entries')
+            count_before = c.fetchone()[0]
+
             c.execute('INSERT INTO entries values (?,?,?,?,?,?)', entry_to_tuple(entry))
 
-            c.execute('SELECT last_insert_rowid()')
-            entry_id = c.fetchone()[0]
+            c.execute('SELECT COUNT(*) from entries')
+            count_after = c.fetchone()[0]
+
+            # Only update the entry_id if insert was successful
+            if count_after > count_before:
+                c.execute('SELECT last_insert_rowid()')
+                entry_id = c.fetchone()[0]
+
             definition_tuples = [definition_to_tuple(definition, entry_id, 1) for definition in entry.definitions]
             c.executemany('INSERT INTO definitions values (?,?,?,?)', definition_tuples)
 
@@ -117,25 +129,70 @@ def write(entries, db_name):
     db.commit()
     db.close()
 
-def parse_file(filename_traditional, filename_simplified, entries):
+def parse_file(filename_traditional, filename_simplified_jyutping, entries):
     simplified = traditional = []
     with open(filename_traditional, 'r', encoding='utf8') as f:
         reader = csv.reader(f, delimiter='	')
         traditional = list(reader)
 
-    with open(filename_simplified, 'r', encoding='utf8') as f:
-        reader = csv.reader(f, delimiter='	')
-        simplified = list(reader)
+    # The Kaifangcidian data for jyutping is horrible.
+    # The entire data is on a single line, printed like a flat Python list.
+    # The entry may be a single item in the array, or multiple items.
+    # The Jyutping pronunciation is a separate item for each character in the entry.
+    # The translations to Mandarin may, or may not follow the Jyutping!
+    # And there is no separator between data for different entries :)
+    last_line = ''
+    with open(filename_simplified_jyutping, 'r', encoding='utf8') as f:
+        last_line = f.readlines()[-1]
+    simplified = ast.literal_eval(last_line)
 
-    for index in range(len(simplified)):
-        if index < 9:
+    index = 0
+    for row in range(len(traditional)):
+        if row < 9: # The first nine rows are comments and headers
           continue
 
-        simp = simplified[index][0]
-        trad = traditional[index][0]
-        jyut = simplified[index][1]
+        trad = traditional[row][0]
+
+        # Horrible data workaround 1:
+        # In KFCD Jyutping data, when the entry has Chinese characters in it,
+        # the entry is presented as a single string in the array. (This is sane.)
+        # If it does not (e.g. the word 'pat pat'), each series of characters, delineated
+        # by a space, is a separate entry in the array ('pat pat' => ["pat", "pat"])
+        trad_len = len(trad.split(' '))
+        if not hanzidentifier.has_chinese(trad):
+          simp = ''.join(simplified[index:index+trad_len])
+        else:
+          simp = simplified[index]
+        
+        # Horrible data workaround 2:
+        # In KFCD Jyutping data, the Jyutping for each word in an entry
+        # is presented as a separate string.
+        # To find the indices that correspond to the entry we just extracted,
+        # use the data from the KFCD Yale edition (which is formatted as a CSV) to
+        # determine how many items comprise the Jyutping pronunciation.
+        # One cannot use the string length of the entry, as it may contain punctuation
+        # (e.g. '，') that has no corresponding Jyutping syllable, AND the entry
+        # may be split up into multiple items (as described in horrible
+        # workaround #1).
+        jyut_len = len(traditional[row][1].split(' '))
+        jyut = ' '.join(simplified[index+trad_len:index+trad_len+jyut_len])
+
         pin = ' '.join(p[0] for p in pinyin(trad, style=Style.TONE3)).lower()
-        definitions = simplified[index][2].split('，') if simplified[index][2] else None
+
+        # Horrible data workaround 3:
+        # In the KFCD Yale data, all the definitions are listed as a single item, separated
+        # by the wide-character '，'. Some entries have definitions, and some do not.
+        # In the KFCD Jyutping edition, the definitions are also listed all as a single item.
+        # However, many words do not have definitions; if there are no definitions then
+        # we do NOT need to advance the index by 1 more item (which would have been
+        # the definitions).
+        if traditional[row][2]:
+          definitions = traditional[row][2].split('，')
+          index += trad_len + jyut_len + 1
+        else:
+          definitions = ['（没有汉语解释）']
+          index += trad_len + jyut_len
+        
         entry = Entry(trad=trad,
                       simp=simp,
                       pin=pin,
