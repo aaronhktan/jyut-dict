@@ -854,7 +854,7 @@
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="163"/>
         <source>Pinyin tone colours:</source>
-        <translation>Couleurs de tons en jyutping:</translation>
+        <translation>Couleurs de tons en pinyin:</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="134"/>
