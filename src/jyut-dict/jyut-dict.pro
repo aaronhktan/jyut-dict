@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui network sql
+QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
 
 equals(QT_MAJOR_VERSION, 5):!lessThan(QT_MINOR_VERSION, 11) {
    QT += texttospeech
