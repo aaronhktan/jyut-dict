@@ -25,7 +25,7 @@ void SQLUserHistoryUtils::notifyObservers(const std::vector<searchTermHistoryIte
                                           bool emptyQuery)
 {
     std::lock_guard<std::mutex> notifyLock{_notifyMutex};
-    std::list<ISearchObserver *>::iterator it = _observers.begin();
+    std::list<ISearchObserver *>::const_iterator it = _observers.begin();
     while (it != _observers.end()) {
         (static_cast<ISearchObserver *>(*it))->callback(results, emptyQuery);
         ++it;
@@ -36,7 +36,7 @@ void SQLUserHistoryUtils::notifyObservers(const std::vector<Entry> &results,
                                           bool emptyQuery)
 {
     std::lock_guard<std::mutex> notifyLock{_notifyMutex};
-    std::list<ISearchObserver *>::iterator it = _observers.begin();
+    std::list<ISearchObserver *>::const_iterator it = _observers.begin();
     while (it != _observers.end()) {
         (static_cast<ISearchObserver *>(*it))->callback(results, emptyQuery);
         ++it;
