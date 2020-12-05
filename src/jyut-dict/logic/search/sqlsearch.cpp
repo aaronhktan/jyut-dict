@@ -83,6 +83,16 @@ void SQLSearch::setCurrentSearchTerm(const QString &searchTerm)
     _currentSearchString = searchTerm;
 }
 
+bool SQLSearch::setCurrentSearchTermIfNotCurrent(const QString &searchTerm)
+{
+    std::lock_guard<std::mutex> lock{_currentSearchTermMutex};
+    if (searchTerm == _currentSearchString) {
+        return false;
+    }
+    _currentSearchString = searchTerm;
+    return true;
+}
+
 template <class T>
 void SQLSearch::sleepIfEmpty(std::vector<T> &results)
 {
@@ -105,46 +115,41 @@ bool SQLSearch::checkQueryCurrent(const QString &query)
 
 void SQLSearch::searchSimplified(const QString searchTerm)
 {
-    if (checkQueryCurrent(searchTerm.simplified())) {
+    if (!setCurrentSearchTermIfNotCurrent(searchTerm.simplified())) {
         return;
     }
-    setCurrentSearchTerm(searchTerm);
     runThread(&SQLSearch::searchSimplifiedThread, searchTerm);
 }
 
 void SQLSearch::searchTraditional(const QString searchTerm)
 {
-    if (checkQueryCurrent(searchTerm.simplified())) {
+    if (!setCurrentSearchTermIfNotCurrent(searchTerm.simplified())) {
         return;
     }
-    setCurrentSearchTerm(searchTerm);
     runThread(&SQLSearch::searchTraditionalThread, searchTerm);
 }
 
 void SQLSearch::searchJyutping(const QString searchTerm)
 {
-    if (checkQueryCurrent(searchTerm.simplified())) {
+    if (!setCurrentSearchTermIfNotCurrent(searchTerm.simplified())) {
         return;
     }
-    setCurrentSearchTerm(searchTerm);
     runThread(&SQLSearch::searchJyutpingThread, searchTerm);
 }
 
 void SQLSearch::searchPinyin(const QString searchTerm)
 {
-    if (checkQueryCurrent(searchTerm.simplified())) {
+    if (!setCurrentSearchTermIfNotCurrent(searchTerm.simplified())) {
         return;
     }
-    setCurrentSearchTerm(searchTerm);
     runThread(&SQLSearch::searchPinyinThread, searchTerm);
 }
 
 void SQLSearch::searchEnglish(const QString searchTerm)
 {
-    if (checkQueryCurrent(searchTerm.simplified())) {
+    if (!setCurrentSearchTermIfNotCurrent(searchTerm.simplified())) {
         return;
     }
-    setCurrentSearchTerm(searchTerm);
     runThread(&SQLSearch::searchEnglishThread, searchTerm);
 }
 

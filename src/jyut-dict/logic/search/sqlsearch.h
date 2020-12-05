@@ -50,6 +50,7 @@ private:
                          bool emptyQuery) override;
 
     void setCurrentSearchTerm(const QString &searchTerm);
+    bool setCurrentSearchTermIfNotCurrent(const QString &searchTerm);
     template <class T>
     void sleepIfEmpty(std::vector<T> &results);
     bool checkQueryCurrent(const QString &query);
