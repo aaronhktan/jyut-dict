@@ -13,11 +13,13 @@ SQLUserHistoryUtils::~SQLUserHistoryUtils() {}
 
 void SQLUserHistoryUtils::registerObserver(ISearchObserver *observer)
 {
+    std::lock_guard<std::mutex> notifyLock{_notifyMutex};
     _observers.push_back(observer);
 }
 
 void SQLUserHistoryUtils::deregisterObserver(ISearchObserver *observer)
 {
+    std::lock_guard<std::mutex> notifyLock{_notifyMutex};
     _observers.remove(observer);
 }
 
