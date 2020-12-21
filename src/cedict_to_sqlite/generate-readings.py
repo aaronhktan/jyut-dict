@@ -37,7 +37,7 @@ def parse_cc_canto(filename, entries):
             split = line.split() # Splits by whitespace
             trad = split[0]
             simp = split[1]
-            pin = line[line.index('[') + 1 : line.index(']')].lower()
+            pin = line[line.index('[') + 1 : line.index(']')].lower().replace('v', 'u:')
             jyut = line[line.index('{') + 1 : line.index('}')].lower()
             entry = Entry(trad=trad,
                           simp=simp,
@@ -68,7 +68,7 @@ def parse_cc_cedict_canto_readings(filename, entries):
             split = line.split()
             trad = split[0]
             simp = split[1]
-            pin = line[line.index('[') + 1 : line.index(']')].lower()
+            pin = line[line.index('[') + 1 : line.index(']')].lower().replace('v', 'u:')
             jyut = line[line.index('{') + 1 : line.index('}')].lower()
 
             entry = Entry(trad=trad,
