@@ -182,26 +182,23 @@ void SQLSearch::searchSimplifiedThread(const QString searchTerm)
 {
     std::vector<Entry> results{};
 
-    {
-        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
-        QSqlQuery query{_manager->getDatabase()};
-        query.prepare(
-            "SELECT traditional, simplified, pinyin, jyutping, "
-            "group_concat(sourcename || ' ' || definition, '●') AS definitions "
-            "FROM entries, definitions, sources "
-            "WHERE simplified LIKE ? "
-            "AND entry_id = fk_entry_id "
-            "AND source_id = fk_source_id "
-            "GROUP BY entry_id "
-            "ORDER BY frequency DESC");
-        query.addBindValue(searchTerm + "%");
-        query.exec();
+    QSqlQuery query{_manager->getDatabase()};
+    query.prepare(
+        "SELECT traditional, simplified, pinyin, jyutping, "
+        "group_concat(sourcename || ' ' || definition, '●') AS definitions "
+        "FROM entries, definitions, sources "
+        "WHERE simplified LIKE ? "
+        "AND entry_id = fk_entry_id "
+        "AND source_id = fk_source_id "
+        "GROUP BY entry_id "
+        "ORDER BY frequency DESC");
+    query.addBindValue(searchTerm + "%");
+    query.exec();
 
-        // Do not parse results if new query has been made
-        if (!checkQueryCurrent(searchTerm)) { return; }
-        results = parseEntries(query);
-        _manager->closeDatabase();
-    }
+    // Do not parse results if new query has been made
+    if (!checkQueryCurrent(searchTerm)) { return; }
+    results = parseEntries(query);
+    _manager->closeDatabase();
 
     sleepIfEmpty(results);
     if (!checkQueryCurrent(searchTerm)) { return; }
@@ -212,26 +209,23 @@ void SQLSearch::searchTraditionalThread(const QString searchTerm)
 {
     std::vector<Entry> results{};
 
-    {
-        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
-        QSqlQuery query{_manager->getDatabase()};
-        query.prepare(
-            "SELECT traditional, simplified, pinyin, jyutping, "
-            "group_concat(sourcename || ' ' || definition, '●') AS definitions "
-            "FROM entries, definitions, sources "
-            "WHERE traditional LIKE ? "
-            "AND entry_id = fk_entry_id "
-            "AND source_id = fk_source_id "
-            "GROUP BY entry_id "
-            "ORDER BY frequency DESC");
-        query.addBindValue(searchTerm + "%");
-        query.exec();
+    QSqlQuery query{_manager->getDatabase()};
+    query.prepare(
+        "SELECT traditional, simplified, pinyin, jyutping, "
+        "group_concat(sourcename || ' ' || definition, '●') AS definitions "
+        "FROM entries, definitions, sources "
+        "WHERE traditional LIKE ? "
+        "AND entry_id = fk_entry_id "
+        "AND source_id = fk_source_id "
+        "GROUP BY entry_id "
+        "ORDER BY frequency DESC");
+    query.addBindValue(searchTerm + "%");
+    query.exec();
 
-        // Do not parse results if new query has been made
-        if (!checkQueryCurrent(searchTerm)) { return; }
-        results = parseEntries(query);
-        _manager->closeDatabase();
-    }
+    // Do not parse results if new query has been made
+    if (!checkQueryCurrent(searchTerm)) { return; }
+    results = parseEntries(query);
+    _manager->closeDatabase();
 
     sleepIfEmpty(results);
     if (!checkQueryCurrent(searchTerm)) { return; }
@@ -256,37 +250,33 @@ void SQLSearch::searchJyutpingThread(const QString searchTerm)
 
     std::vector<Entry> results{};
 
-    {
-        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
+    QSqlQuery query{_manager->getDatabase()};
+    query.prepare(
+        "SELECT traditional, simplified, pinyin, jyutping, "
+        "group_concat(sourcename || ' ' || definition, '●') AS definitions "
+        "FROM entries, definitions, sources "
+        "WHERE entry_id IN "
+        "(SELECT rowid FROM entries_fts WHERE entries_fts MATCH ?"
+        " AND jyutping LIKE ?) "
+        "AND entry_id = fk_entry_id "
+        "AND source_id = fk_source_id "
+        "GROUP BY entry_id "
+        "ORDER BY frequency DESC");
+    const char *matchJoinDelimiter = "*";
+    std::string matchTerm = implodePhonetic(jyutpingWords,
+                                            matchJoinDelimiter,
+                                            /*surroundWithQuotes=*/true);
+    const char *likeJoinDelimiter = "_";
+    std::string likeTerm = implodePhonetic(jyutpingWords,
+                                           likeJoinDelimiter);
+    query.addBindValue("jyutping:" + QString(matchTerm.c_str()));
+    query.addBindValue(QString(likeTerm.c_str()) + "%");
+    query.exec();
 
-        QSqlQuery query{_manager->getDatabase()};
-        query.prepare(
-            "SELECT traditional, simplified, pinyin, jyutping, "
-            "group_concat(sourcename || ' ' || definition, '●') AS definitions "
-            "FROM entries, definitions, sources "
-            "WHERE entry_id IN "
-            "(SELECT rowid FROM entries_fts WHERE entries_fts MATCH ?"
-            " AND jyutping LIKE ?) "
-            "AND entry_id = fk_entry_id "
-            "AND source_id = fk_source_id "
-            "GROUP BY entry_id "
-            "ORDER BY frequency DESC");
-        const char *matchJoinDelimiter = "*";
-        std::string matchTerm = implodePhonetic(jyutpingWords,
-                                                matchJoinDelimiter,
-                                                /*surroundWithQuotes=*/true);
-        const char *likeJoinDelimiter = "_";
-        std::string likeTerm = implodePhonetic(jyutpingWords,
-                                               likeJoinDelimiter);
-        query.addBindValue("jyutping:" + QString(matchTerm.c_str()));
-        query.addBindValue(QString(likeTerm.c_str()) + "%");
-        query.exec();
-
-        // Do not parse results if new query has been made
-        if (!checkQueryCurrent(searchTerm)) { return; }
-        results = parseEntries(query);
-        _manager->closeDatabase();
-    }
+    // Do not parse results if new query has been made
+    if (!checkQueryCurrent(searchTerm)) { return; }
+    results = parseEntries(query);
+    _manager->closeDatabase();
 
     sleepIfEmpty(results);
     if (!checkQueryCurrent(searchTerm)) { return; }
@@ -316,36 +306,32 @@ void SQLSearch::searchPinyinThread(const QString searchTerm)
 
     std::vector<Entry> results{};
 
-    {
-        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
+    QSqlQuery query{_manager->getDatabase()};
+    query.prepare("SELECT traditional, simplified, pinyin, jyutping, "
+                  "group_concat(sourcename || ' ' || definition, '●') AS definitions "
+                  "FROM entries, definitions, sources "
+                  "WHERE entry_id IN "
+                  "(SELECT rowid FROM entries_fts WHERE entries_fts MATCH ?"
+                  " AND pinyin LIKE ?) "
+                  "AND entry_id = fk_entry_id "
+                  "AND source_id = fk_source_id "
+                  "GROUP BY entry_id "
+                  "ORDER BY frequency DESC");
+    const char *matchJoinDelimiter = "*";
+    std::string matchTerm = implodePhonetic(pinyinWords,
+                                            matchJoinDelimiter,
+                                            /*surroundWithQuotes=*/true);
+    const char *likeJoinDelimiter = "_";
+    std::string likeTerm = implodePhonetic(pinyinWords,
+                                           likeJoinDelimiter);
+    query.addBindValue("pinyin:" + QString{matchTerm.c_str()});
+    query.addBindValue(QString(likeTerm.c_str()) + "%");
+    query.exec();
 
-        QSqlQuery query{_manager->getDatabase()};
-        query.prepare("SELECT traditional, simplified, pinyin, jyutping, "
-                      "group_concat(sourcename || ' ' || definition, '●') AS definitions "
-                      "FROM entries, definitions, sources "
-                      "WHERE entry_id IN "
-                      "(SELECT rowid FROM entries_fts WHERE entries_fts MATCH ?"
-                      " AND pinyin LIKE ?) "
-                      "AND entry_id = fk_entry_id "
-                      "AND source_id = fk_source_id "
-                      "GROUP BY entry_id "
-                      "ORDER BY frequency DESC");
-        const char *matchJoinDelimiter = "*";
-        std::string matchTerm = implodePhonetic(pinyinWords,
-                                                matchJoinDelimiter,
-                                                /*surroundWithQuotes=*/true);
-        const char *likeJoinDelimiter = "_";
-        std::string likeTerm = implodePhonetic(pinyinWords,
-                                               likeJoinDelimiter);
-        query.addBindValue("pinyin:" + QString{matchTerm.c_str()});
-        query.addBindValue(QString(likeTerm.c_str()) + "%");
-        query.exec();
-
-        // Do not parse results if new query has been made
-        if (!checkQueryCurrent(searchTerm)) { return; }
-        results = parseEntries(query);
-        _manager->closeDatabase();
-    }
+    // Do not parse results if new query has been made
+    if (!checkQueryCurrent(searchTerm)) { return; }
+    results = parseEntries(query);
+    _manager->closeDatabase();
 
     sleepIfEmpty(results);
     if (!checkQueryCurrent(searchTerm)) { return; }
@@ -367,32 +353,28 @@ void SQLSearch::searchEnglishThread(const QString searchTerm)
 {
     std::vector<Entry> results{};
 
-    {
-        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
+    QSqlQuery query{_manager->getDatabase()};
+    query.prepare(
+        "SELECT traditional, simplified, pinyin, jyutping, "
+        "group_concat(sourcename || ' ' || definition, '●') AS definitions "
+        "FROM entries, definitions, sources "
+        "WHERE entry_id IN "
+        "(SELECT fk_entry_id FROM definitions WHERE rowid IN "
+        "    (SELECT rowid FROM definitions_fts WHERE definitions_fts "
+        "MATCH ?) "
+        ") "
+        "AND entry_id = fk_entry_id "
+        "AND source_id = fk_source_id "
+        "GROUP BY entry_id "
+        "ORDER BY frequency DESC");
+    query.addBindValue("\"" + searchTerm + "\"");
+    query.setForwardOnly(true);
+    query.exec();
 
-        QSqlQuery query{_manager->getDatabase()};
-        query.prepare(
-            "SELECT traditional, simplified, pinyin, jyutping, "
-            "group_concat(sourcename || ' ' || definition, '●') AS definitions "
-            "FROM entries, definitions, sources "
-            "WHERE entry_id IN "
-            "(SELECT fk_entry_id FROM definitions WHERE rowid IN "
-            "    (SELECT rowid FROM definitions_fts WHERE definitions_fts "
-            "MATCH ?) "
-            ") "
-            "AND entry_id = fk_entry_id "
-            "AND source_id = fk_source_id "
-            "GROUP BY entry_id "
-            "ORDER BY frequency DESC");
-        query.addBindValue("\"" + searchTerm + "\"");
-        query.setForwardOnly(true);
-        query.exec();
-
-        // Do not parse results if new query has been made
-        if (!checkQueryCurrent(searchTerm)) { return; }
-        results = parseEntries(query);
-        _manager->closeDatabase();
-    }
+    // Do not parse results if new query has been made
+    if (!checkQueryCurrent(searchTerm)) { return; }
+    results = parseEntries(query);
+    _manager->closeDatabase();
 
     sleepIfEmpty(results);
     if (!checkQueryCurrent(searchTerm)) { return; }
@@ -407,36 +389,32 @@ void SQLSearch::searchByUniqueThread(const QString simplified,
 {
     std::vector<Entry> results{};
 
-    {
-        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
+    QSqlQuery query{_manager->getDatabase()};
+    query.prepare(
+        "SELECT traditional, simplified, pinyin, jyutping, "
+        "group_concat(sourcename || ' ' || definition, '●') AS definitions "
+        "FROM entries, definitions, sources "
+        "WHERE simplified LIKE ? "
+        "AND traditional LIKE ? "
+        "AND jyutping LIKE ? "
+        "AND pinyin LIKE ? "
+        "AND entry_id = fk_entry_id "
+        "AND source_id = fk_source_id "
+        "GROUP BY entry_id "
+        "ORDER BY frequency DESC");
+    query.addBindValue(simplified);
+    query.addBindValue(traditional);
+    query.addBindValue(jyutping);
+    query.addBindValue(pinyin);
+    query.setForwardOnly(true);
+    query.exec();
 
-        QSqlQuery query{_manager->getDatabase()};
-        query.prepare(
-            "SELECT traditional, simplified, pinyin, jyutping, "
-            "group_concat(sourcename || ' ' || definition, '●') AS definitions "
-            "FROM entries, definitions, sources "
-            "WHERE simplified LIKE ? "
-            "AND traditional LIKE ? "
-            "AND jyutping LIKE ? "
-            "AND pinyin LIKE ? "
-            "AND entry_id = fk_entry_id "
-            "AND source_id = fk_source_id "
-            "GROUP BY entry_id "
-            "ORDER BY frequency DESC");
-        query.addBindValue(simplified);
-        query.addBindValue(traditional);
-        query.addBindValue(jyutping);
-        query.addBindValue(pinyin);
-        query.setForwardOnly(true);
-        query.exec();
-
-        // Do not parse results if new query has been made
-        if (!checkQueryCurrent(simplified + traditional + jyutping + pinyin)) {
-            return;
-        }
-        results = parseEntries(query);
-        _manager->closeDatabase();
+    // Do not parse results if new query has been made
+    if (!checkQueryCurrent(simplified + traditional + jyutping + pinyin)) {
+        return;
     }
+    results = parseEntries(query);
+    _manager->closeDatabase();
 
     sleepIfEmpty(results);
     if (!checkQueryCurrent(simplified + traditional + jyutping + pinyin)) {
@@ -454,34 +432,31 @@ void SQLSearch::searchTraditionalSentencesThread(const QString searchTerm)
 {
     std::vector<SourceSentence> results{};
 
-    {
-        std::lock_guard<std::mutex> databaseLock{_databaseMutex};
+    QSqlQuery query{_manager->getDatabase()};
+    query.prepare(
+        "SELECT chinese_sentence_id, traditional, simplified, pinyin, "
+        " jyutping, chinese_sentences.language AS source_language, "
+        " group_concat(sourcename || ' ' || nonchinese_sentences.language "
+        "|| ' ' || direct || ' ' || sentence, '●') AS sentences "
+        "FROM chinese_sentences, sentence_links, sources "
+        "JOIN nonchinese_sentences "
+        "ON sentence_links.fk_chinese_sentence_id = "
+        "chinese_sentences.chinese_sentence_id "
+        "AND sentence_links.fk_non_chinese_sentence_id = "
+        "nonchinese_sentences.non_chinese_sentence_id "
+        "AND sentence_links.fk_source_id = sources.source_id "
+        "AND traditional LIKE ? "
+        "GROUP BY chinese_sentences.chinese_sentence_id");
+    query.addBindValue("%" + searchTerm + "%");
+    query.exec();
 
-        QSqlQuery query{_manager->getDatabase()};
-        query.prepare(
-            "SELECT chinese_sentence_id, traditional, simplified, pinyin, "
-            " jyutping, chinese_sentences.language AS source_language, "
-            " group_concat(sourcename || ' ' || nonchinese_sentences.language "
-            "|| ' ' || direct || ' ' || sentence, '●') AS sentences "
-            "FROM chinese_sentences, sentence_links, sources "
-            "JOIN nonchinese_sentences "
-            "ON sentence_links.fk_chinese_sentence_id = "
-            "chinese_sentences.chinese_sentence_id "
-            "AND sentence_links.fk_non_chinese_sentence_id = "
-            "nonchinese_sentences.non_chinese_sentence_id "
-            "AND sentence_links.fk_source_id = sources.source_id "
-            "AND traditional LIKE ? "
-            "GROUP BY chinese_sentences.chinese_sentence_id");
-        query.addBindValue("%" + searchTerm + "%");
-        query.exec();
-
-        if (!checkQueryCurrent(searchTerm)) {
-            return;
-        }
-        results = parseSentences(query);
-        _manager->closeDatabase();
+    if (!checkQueryCurrent(searchTerm)) {
+        return;
     }
+    results = parseSentences(query);
+    _manager->closeDatabase();
 
+    // Horrible hack, but for some reason prevents a lot of problems.
     QThread *thisThread = QThread::currentThread();
     thisThread->msleep(50);
 

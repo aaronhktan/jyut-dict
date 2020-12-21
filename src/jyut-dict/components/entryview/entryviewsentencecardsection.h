@@ -23,6 +23,9 @@
 // The EntryViewSentenceCardSection displays cards for each set of sentences,
 // where each set of sentences belongs to a particular source.
 
+typedef std::unordered_map<std::string, std::vector<SourceSentence>>
+    sentenceSamples;
+
 class EntryViewSentenceCardSection : public QWidget, public ISearchObserver
 {
     Q_OBJECT
@@ -67,12 +70,18 @@ private:
     QToolButton *_viewAllSentencesButton;
 
 public slots:
-    void updateUI(std::vector<SourceSentence> sourceSentences);
+    void updateUI(
+        std::vector<SourceSentence> sourceSentences,
+        sentenceSamples sources);
 
 signals:
-    void callbackInvoked(std::vector<SourceSentence> sourceSentences);
+    void callbackInvoked(
+        std::vector<SourceSentence> sourceSentences,
+        sentenceSamples sources);
     void addingCards();
     void finishedAddingCards();
 };
+
+Q_DECLARE_METATYPE(sentenceSamples);
 
 #endif // ENTRYVIEWSENTENCECARDSECTION_H

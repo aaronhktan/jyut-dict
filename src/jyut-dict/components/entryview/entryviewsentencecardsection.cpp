@@ -20,6 +20,7 @@ EntryViewSentenceCardSection::EntryViewSentenceCardSection(std::shared_ptr<SQLDa
     // In order for the vector of SourceSentences to be copied to the UI thread,
     // Q_DECLARE_METATYPE and qRegisterMetaType must be called.
     qRegisterMetaType<std::vector<SourceSentence>>();
+    qRegisterMetaType<sentenceSamples>();
     QObject::connect(this,
                      &EntryViewSentenceCardSection::callbackInvoked,
                      this,
@@ -41,7 +42,8 @@ void EntryViewSentenceCardSection::callback(
 {
     (void) (emptyQuery);
     std::lock_guard<std::mutex> updateMutex{layoutMutex};
-    emit callbackInvoked(sourceSentences);
+    sentenceSamples samples = getSamplesForEachSource(sourceSentences);
+    emit callbackInvoked(sourceSentences, samples);
 }
 
 void EntryViewSentenceCardSection::setupUI(void)
@@ -80,7 +82,8 @@ void EntryViewSentenceCardSection::translateUI()
     _viewAllSentencesButton->setText(tr("View all sentences →"));
 }
 
-void EntryViewSentenceCardSection::updateUI(std::vector<SourceSentence> sourceSentences)
+void EntryViewSentenceCardSection::updateUI(
+    std::vector<SourceSentence> sourceSentences, sentenceSamples samples)
 {
     std::lock_guard<std::mutex> layout{layoutMutex};
     cleanup();
@@ -90,12 +93,9 @@ void EntryViewSentenceCardSection::updateUI(std::vector<SourceSentence> sourceSe
 
     _sentences = sourceSentences;
 
-    std::unordered_map<std::string, std::vector<SourceSentence>> sources;
-    sources = getSamplesForEachSource(sourceSentences);
-
     // This prevents an extra space from being added at the bottom when there
     // is nothing to display in the sentence card section.
-    if (sources.empty()) {
+    if (samples.empty()) {
         _sentenceCardsLayout->setContentsMargins(0, 0, 0, 0);
         return;
     } else {
@@ -103,7 +103,7 @@ void EntryViewSentenceCardSection::updateUI(std::vector<SourceSentence> sourceSe
     }
 
     emit addingCards();
-    for (const auto &item : sources) {
+    for (const auto &item : samples) {
         _sentenceCards.push_back(new SentenceCardWidget{this});
         _sentenceCards.back()->displaySentences(item.second);
 
@@ -227,12 +227,12 @@ std::unordered_map<std::string, std::vector<SourceSentence>>
 EntryViewSentenceCardSection::getSamplesForEachSource(
     const std::vector<SourceSentence> &sourceSentences)
 {
-    std::unordered_map<std::string, std::vector<SourceSentence>> sources;
+    std::unordered_map<std::string, std::vector<SourceSentence>> samples;
 
     for (auto sourceSentence : sourceSentences) {
         for (auto sentenceSet : sourceSentence.getSentenceSets()) {
             std::string source = sentenceSet.getSource();
-            if (sources[source].size() >= 2) {
+            if (samples[source].size() >= 2) {
                 continue;
             }
 
@@ -244,9 +244,9 @@ EntryViewSentenceCardSection::getSamplesForEachSource(
                                  sourceSentence.getPinyin(),
                                  std::vector<SentenceSet>{sentenceSet});
 
-            sources[source].push_back(sentence);
+            samples[source].push_back(sentence);
         }
     }
 
-    return sources;
+    return samples;
 }
