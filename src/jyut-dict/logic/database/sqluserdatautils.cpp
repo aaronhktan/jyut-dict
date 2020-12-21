@@ -13,11 +13,13 @@ SQLUserDataUtils::~SQLUserDataUtils() {}
 
 void SQLUserDataUtils::registerObserver(ISearchObserver *observer)
 {
+    std::lock_guard<std::mutex> notifyLock{_notifyMutex};
     _observers.push_back(observer);
 }
 
 void SQLUserDataUtils::deregisterObserver(ISearchObserver *observer)
 {
+    std::lock_guard<std::mutex> notifyLock{_notifyMutex};
     _observers.remove(observer);
 }
 
@@ -25,7 +27,7 @@ void SQLUserDataUtils::notifyObservers(const std::vector<Entry> &results,
                                        bool emptyQuery)
 {
     std::lock_guard<std::mutex> notifyLock{_notifyMutex};
-    std::list<ISearchObserver *>::iterator it = _observers.begin();
+    std::list<ISearchObserver *>::const_iterator it = _observers.begin();
     while (it != _observers.end()) {
         (static_cast<ISearchObserver *>(*it))->callback(results, emptyQuery);
         ++it;
@@ -35,7 +37,7 @@ void SQLUserDataUtils::notifyObservers(const std::vector<Entry> &results,
 void SQLUserDataUtils::notifyObservers(bool entryExists, Entry entry)
 {
     std::lock_guard<std::mutex> notifyLock{_notifyMutex};
-    std::list<ISearchObserver *>::iterator it = _observers.begin();
+    std::list<ISearchObserver *>::const_iterator it = _observers.begin();
     while (it != _observers.end()) {
         (static_cast<ISearchObserver *>(*it))->callback(entryExists, entry);
         ++it;
