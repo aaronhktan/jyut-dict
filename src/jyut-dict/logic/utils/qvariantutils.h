@@ -1,9 +1,13 @@
 #ifndef QVARIANTUTILS_H
 #define QVARIANTUTILS_H
 
+#include <QtGlobal>
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
 #include "logic/entry/entrycharactersoptions.h"
 #include "logic/entry/entryphoneticoptions.h"
 #include "logic/search/searchparameters.h"
+#endif
 
 #include <QDataStream>
 #include <QMetaType>
@@ -17,6 +21,7 @@
 // serialized/deserialized.
 // See https://stackoverflow.com/questions/42868924/templated-qdatastream-operator-for-enumerations
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
 QDataStream &operator<<(QDataStream &stream, EntryCharactersOptions enumValue)
 {
     stream << static_cast<std::underlying_type_t<EntryCharactersOptions>>(enumValue);
@@ -100,5 +105,23 @@ QDataStream &operator>>(QDataStream &stream, SearchParameters &e)
     e = static_cast<SearchParameters>(v);
     return stream;
 }
+#else
+template<typename T, typename U = std::enable_if_t<std::is_enum<T>::value>>
+QDataStream &operator<<(QDataStream &stream, T enumValue)
+{
+    stream << static_cast<std::underlying_type_t<T>>(enumValue);
+    return stream;
+}
+
+template<typename T,
+         typename = typename std::enable_if<std::is_enum<T>::value>::type>
+QDataStream &operator>>(QDataStream &stream, T &e)
+{
+    std::underlying_type_t<T> v;
+    stream >> v;
+    e = static_cast<T>(v);
+    return stream;
+}
+#endif
 
 #endif // QVARIANTUTILS_H
