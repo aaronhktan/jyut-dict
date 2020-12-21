@@ -124,7 +124,7 @@ def parse_file(filename, entries):
             split = line.split()
             trad = split[0]
             simp = split[1]
-            pin = line[line.index('[') + 1 : line.index(']')].lower()
+            pin = line[line.index('[') + 1 : line.index(']')].lower().replace('v', 'u:')
             definitions = line[line.index('/') + 1 : -2].split('/')
             entry = Entry(trad=trad,
                           simp=simp,
@@ -145,7 +145,7 @@ def parse_cc_cedict_canto_readings(filename, entries):
             split = line.split()
             trad = split[0]
             simp = split[1]
-            pin = ''.join(line[line.index('[') + 1 : line.index(']')].lower().split())
+            pin = ''.join(line[line.index('[') + 1 : line.index(']')].lower().split()).replace('v', 'u:')
             jyut = line[line.index('{') + 1 : line.index('}')].lower()
             if trad not in entries:
                 continue
