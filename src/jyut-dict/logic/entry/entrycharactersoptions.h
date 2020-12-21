@@ -1,7 +1,12 @@
 #ifndef ENTRYCHARACTERSOPTIONS_H
 #define ENTRYCHARACTERSOPTIONS_H
 
+#include <QtGlobal>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+#include <QDataStream>
+#else
 #include "logic/utils/qvariantutils.h"
+#endif
 
 #include <QMetaType>
 
