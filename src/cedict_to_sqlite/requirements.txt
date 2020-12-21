@@ -1,7 +1,2 @@
-jieba==0.39
-langcodes==1.4.1
-marisa-trie==0.7.5
-msgpack==0.6.0
-regex==2018.2.21
-virtualenv==16.2.0
-wordfreq==2.2.0
+jieba==0.42.1
+wordfreq==2.3.2

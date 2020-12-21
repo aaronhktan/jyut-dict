@@ -102,33 +102,6 @@ def write(entries, db_name):
                 )''')
     c.execute('CREATE VIRTUAL TABLE definitions_fts using fts5(definition)')
 
-    # SQLITE 3 currently only supports triggers FOR EACH ROW
-    # making these extremely slow and time-consuming
-    # Disable for now.
-    # Delete entries when no definitions reference them
-    # c.execute('''CREATE TRIGGER IF NOT EXISTS entry_cleanup 
-    #                 AFTER DELETE ON definitions
-    #             BEGIN
-    #                 DELETE FROM entries WHERE entry_id NOT IN (SELECT fk_entry_id FROM definitions);
-    #             END
-    #             ''')
-
-    # Rebuild entries FTS after modifying entries
-    # c.execute('''CREATE TRIGGER IF NOT EXISTS entries_fts_cleanup 
-    #                 AFTER DELETE ON entries
-    #             BEGIN
-    #                 DELETE FROM entries_fts WHERE rowid NOT IN (SELECT entry_id FROM entries);
-    #             END
-    #             ''')
-
-    # Rebuild definition FTS after modifying definitions
-    # c.execute('''CREATE TRIGGER IF NOT EXISTS definitions_fts_cleanup 
-    #                 AFTER DELETE ON definitions
-    #             BEGIN
-    #                 DELETE FROM definitions_fts WHERE rowid NOT IN (SELECT definition_id FROM definitions);
-    #             END
-    #             ''')
-
     # Add sources to tables
     {c.execute('INSERT INTO sources values(?,?,?,?,?,?,?,?,?)', (None, value['name'], value['shortname'], value['version'], value['description'], value['legal'], value['link'], value['update_url'], value['other'])) for key, value in sources.items()}
 
@@ -204,7 +177,12 @@ def parse_cc_canto(filename, entries):
             if trad in entries:
                 added = False
                 for existing_entry in entries[trad]:
-                    if existing_entry.simplified == simp and pin != '' and ''.join(existing_entry.pinyin.split()) == ''.join(pin.split()):
+                    # Check that simplified form is a match
+                    # Check that pinyin is a match
+                    # Do not overwrite existing jyutping
+                    if (existing_entry.simplified == simp
+                      and pin != '' and ''.join(existing_entry.pinyin.split()) == ''.join(pin.split())
+                      and not existing_entry.jyutping):
                         existing_entry.add_jyutping(jyut)
                         existing_entry.add_canto_eng(eng)
                         added = True
@@ -233,7 +211,9 @@ def parse_cc_cedict_canto_readings(filename, entries):
             # And jyutping pronunciation has not already been added
             for existing_entry in entries[trad]:
                 # If it's an exact match, then set jyutping
-                if existing_entry.simplified == simp and pin != '' and ''.join(existing_entry.pinyin.split()) == pin:
+                if (existing_entry.simplified == simp
+                  and pin != '' and ''.join(existing_entry.pinyin.split()) == ''.join(pin.split())
+                  and not existing_entry.jyutping):
                     existing_entry.add_jyutping(jyut)
                 # Otherwise, add as fuzzy
                 else:
