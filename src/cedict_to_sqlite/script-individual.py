@@ -86,33 +86,6 @@ def write(entries, db_name):
                 )''')
     c.execute('CREATE VIRTUAL TABLE definitions_fts using fts5(definition)')
 
-    # SQLITE 3 currently only supports triggers FOR EACH ROW
-    # making these extremely slow and time-consuming
-    # Disable for now.
-    # Delete entries when no definitions reference them
-    # c.execute('''CREATE TRIGGER IF NOT EXISTS entry_cleanup 
-    #                 AFTER DELETE ON definitions
-    #             BEGIN
-    #                 DELETE FROM entries WHERE entry_id NOT IN (SELECT fk_entry_id FROM definitions);
-    #             END
-    #             ''')
-
-    # Rebuild entries FTS after modifying entries
-    # c.execute('''CREATE TRIGGER IF NOT EXISTS entries_fts_cleanup 
-    #                 AFTER DELETE ON entries
-    #             BEGIN
-    #                 DELETE FROM entries_fts WHERE rowid NOT IN (SELECT entry_id FROM entries);
-    #             END
-    #             ''')
-
-    # Rebuild definition FTS after modifying definitions
-    # c.execute('''CREATE TRIGGER IF NOT EXISTS definitions_fts_cleanup 
-    #                 AFTER DELETE ON definitions
-    #             BEGIN
-    #                 DELETE FROM definitions_fts WHERE rowid NOT IN (SELECT definition_id FROM definitions);
-    #             END
-    #             ''')
-
     # Add sources to tables
     c.execute('INSERT INTO sources values(?,?,?,?,?,?,?,?,?)', (None, source['name'], source['shortname'], source['version'], source['description'], source['legal'], source['link'], source['update_url'], source['other']))
 
