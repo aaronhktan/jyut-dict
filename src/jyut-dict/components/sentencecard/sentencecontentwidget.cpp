@@ -236,21 +236,26 @@ void SentenceContentWidget::setStyle(bool use_dark)
         label->setStyleSheet(sentenceNumberStyleSheet.arg(textColour.name()));
     }
 
+    int borderRadius = 10;
+    QString radiusString = QString::number(borderRadius);
     for (const auto &label : _sourceSentenceLanguage) {
         QString sourceStyleSheet = "QLabel {"
                                    "background: %1; "
-                                   "border-radius: 10px; "
-                                   "color: %2; "
+                                   "border-radius: %2px; "
+                                   "color: %3; "
                                    "margin-top: 2px; "
                                    "padding: 2px; }";
         QColor languageColour = Utils::getLanguageColour(
             Utils::getISO639FromLanguage(label->text().trimmed()));
         QColor languageTextColour = Utils::getContrastingColour(languageColour);
         label->setStyleSheet(
-            sourceStyleSheet.arg(languageColour.name(), languageTextColour.name()));
+            sourceStyleSheet.arg(languageColour.name(),
+                                 radiusString,
+                                 languageTextColour.name()));
         label->setText(Utils::getLanguageFromISO639(
                            label->property("language").toString().toStdString())
                            .trimmed());
+        label->setMinimumHeight(borderRadius * 2);
         label->resize(label->sizeHint());
     }
 

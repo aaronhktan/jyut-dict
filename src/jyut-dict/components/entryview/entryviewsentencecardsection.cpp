@@ -141,11 +141,14 @@ void EntryViewSentenceCardSection::setStyle(bool use_dark)
                                           LABEL_TEXT_COLOUR_LIGHT_G,
                                           LABEL_TEXT_COLOUR_LIGHT_B}
                                        .lighter(200);
+    int borderRadius = 17;
+    QString radiusString = QString::number(borderRadius);
     QString styleSheet = "QToolButton { border: 2px solid %1; "
-                         "border-radius: 17px; "
+                         "border-radius: %2px; "
                          "font-size: 12px; "
                          "padding: 6px; } ";
-    _viewAllSentencesButton->setStyleSheet(styleSheet.arg(textColour.name()));
+    _viewAllSentencesButton->setStyleSheet(styleSheet.arg(textColour.name(), radiusString));
+    _viewAllSentencesButton->setMinimumHeight(borderRadius * 2);
 }
 
 void EntryViewSentenceCardSection::changeEvent(QEvent *event)

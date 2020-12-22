@@ -116,18 +116,22 @@ void EntryActionWidget::setStyle(bool use_dark)
                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_G,
                                           LABEL_TEXT_COLOUR_LIGHT_B};
+    int borderRadius = 13;
+    QString radiusString = QString::number(borderRadius);
     QColor borderColour = use_dark ? textColour.darker(300)
                                    : textColour.lighter(200);
     QString styleSheet = "QPushButton { border: 2px solid %1; "
-                         "border-radius: 13px; "
-                         "color: %2; "
+                         "border-radius: %2px; "
+                         "color: %3; "
                          "font-size: 12px; "
                          "padding: 3px; "
                          "padding-right: 6px; } ";
     _bookmarkButton->setStyleSheet(
-        styleSheet.arg(borderColour.name(), textColour.name()));
+        styleSheet.arg(borderColour.name(), radiusString, textColour.name()));
+    _bookmarkButton->setMinimumHeight(borderRadius * 2);
     _shareButton->setStyleSheet(
-        styleSheet.arg(borderColour.name(), textColour.name()));
+        styleSheet.arg(borderColour.name(), radiusString, textColour.name()));
+    _shareButton->setMinimumHeight(borderRadius * 2);
 
     _bookmarkButton->setIcon(
         QIcon{use_dark ? ":/images/star_inverted.png" : ":/images/star.png"});
