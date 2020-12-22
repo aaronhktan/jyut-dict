@@ -54,33 +54,62 @@ void SQLSearch::deregisterObserver(ISearchObserver *observer)
     _observers.remove(observer);
 }
 
-// This version assumes an empty result set
-void SQLSearch::notifyObserversOfEmptySet(bool emptyQuery)
+// Do not call this function without first acquiring the _noifyMutex!
+void SQLSearch::notifyObservers(const std::vector<Entry> &results, bool emptyQuery)
 {
-    // No mutex here because it just calls notifyObservers
+    std::list<ISearchObserver *>::const_iterator it = _observers.begin();
+    while (it != _observers.end()) {
+        (static_cast<ISearchObserver *>(*it))->callback(results, emptyQuery);
+        ++it;
+    }
+}
+
+// Do not call this function without first acquiring the _noifyMutex!
+void SQLSearch::notifyObservers(const std::vector<SourceSentence> &results,
+                                bool emptyQuery)
+{
+    std::list<ISearchObserver *>::const_iterator it = _observers.begin();
+    while (it != _observers.end()) {
+        (static_cast<ISearchObserver *>(*it))->callback(results, emptyQuery);
+        ++it;
+    }
+}
+
+// This version assumes an empty result set
+void SQLSearch::notifyObserversOfEmptySet(bool emptyQuery,
+                                          const unsigned long long queryID)
+{
+    std::lock_guard<std::mutex> notifyLock{_notifyMutex};
+    if (queryID != _queryID) {
+        return;
+    }
+
     std::vector<Entry> results{};
     notifyObservers(results, emptyQuery);
 }
 
-void SQLSearch::notifyObservers(const std::vector<Entry> &results, bool emptyQuery)
+void SQLSearch::notifyObserversIfQueryIdCurrent(const std::vector<Entry> &results,
+                                                bool emptyQuery,
+                                                const unsigned long long queryID)
 {
     std::lock_guard<std::mutex> notifyLock{_notifyMutex};
-    std::list<ISearchObserver *>::const_iterator it = _observers.begin();
-    while (it != _observers.end()) {
-        (static_cast<ISearchObserver *>(*it))->callback(results, emptyQuery);
-        ++it;
+    if (queryID != _queryID) {
+        return;
     }
+
+    notifyObservers(results, emptyQuery);
 }
 
-void SQLSearch::notifyObservers(const std::vector<SourceSentence> &results,
-                                bool emptyQuery)
+void SQLSearch::notifyObserversIfQueryIdCurrent(const std::vector<SourceSentence> &results,
+                                                bool emptyQuery,
+                                                const unsigned long long queryID)
 {
     std::lock_guard<std::mutex> notifyLock{_notifyMutex};
-    std::list<ISearchObserver *>::const_iterator it = _observers.begin();
-    while (it != _observers.end()) {
-        (static_cast<ISearchObserver *>(*it))->callback(results, emptyQuery);
-        ++it;
+    if (queryID != _queryID) {
+        return;
     }
+
+    notifyObservers(results, emptyQuery);
 }
 
 unsigned long long SQLSearch::generateAndSetQueryID(void) {
@@ -156,7 +185,7 @@ void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString search
                           const QString &searchTerm, const unsigned long long queryID)
 {
     if (searchTerm.isEmpty()) {
-        notifyObserversOfEmptySet(true);
+        notifyObserversOfEmptySet(true, queryID);
         return;
     }
 
@@ -196,7 +225,7 @@ void SQLSearch::searchSimplifiedThread(const QString searchTerm,
     _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) { return; }
-    notifyObservers(results, /*emptyQuery=*/false);
+    notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
 }
 
 void SQLSearch::searchTraditionalThread(const QString searchTerm,
@@ -223,7 +252,7 @@ void SQLSearch::searchTraditionalThread(const QString searchTerm,
     _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) { return; }
-    notifyObservers(results, /*emptyQuery=*/false);
+    notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
 }
 
 // For searching jyutping and pinyin, we use MATCH and then LIKE, in order
@@ -274,7 +303,7 @@ void SQLSearch::searchJyutpingThread(const QString searchTerm,
     _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) { return; }
-    notifyObservers(results, /*emptyQuery=*/false);
+    notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
 }
 
 void SQLSearch::searchPinyinThread(const QString searchTerm,
@@ -329,7 +358,7 @@ void SQLSearch::searchPinyinThread(const QString searchTerm,
     _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) { return; }
-    notifyObservers(results, /*emptyQuery=*/false);
+    notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
 }
 
 // Searching English is the most complicated query.
@@ -372,7 +401,7 @@ void SQLSearch::searchEnglishThread(const QString searchTerm,
     _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) { return; }
-    notifyObservers(results, /*emptyQuery=*/false);
+    notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
 }
 
 // To seach by unique, select by all the attributes that we have.
@@ -414,7 +443,7 @@ void SQLSearch::searchByUniqueThread(const QString simplified,
     if (!checkQueryIDCurrent(queryID)) {
         return;
     }
-    notifyObservers(results, /*emptyQuery=*/false);
+    notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
 }
 
 // To search for sentences, use the sentence_links table to JOIN
@@ -452,7 +481,7 @@ void SQLSearch::searchTraditionalSentencesThread(const QString searchTerm,
     _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) { return; }
-    notifyObservers(results, /*emptyQuery=*/false);
+    notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
 }
 
 int SQLSearch::segmentPinyin(const QString &string,

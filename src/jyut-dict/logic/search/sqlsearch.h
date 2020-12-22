@@ -46,15 +46,23 @@ public:
     void searchTraditionalSentences(const QString searchTerm);
 
 private:
-    void notifyObserversOfEmptySet(bool emptyQuery);
     void notifyObservers(const std::vector<Entry> &results, bool emptyQuery) override;
     void notifyObservers(const std::vector<SourceSentence> &results,
                          bool emptyQuery) override;
+    void notifyObserversOfEmptySet(bool emptyQuery,
+                                   const unsigned long long queryID);
+    void notifyObserversIfQueryIdCurrent(const std::vector<Entry> &results,
+                                         bool emptyQuery,
+                                         const unsigned long long queryID);
+    void notifyObserversIfQueryIdCurrent(const std::vector<SourceSentence> &results,
+                                         bool emptyQuery,
+                                         const unsigned long long queryID);
 
     unsigned long long generateAndSetQueryID(void);
     bool checkQueryIDCurrent(const unsigned long long queryID);
 
-    void runThread(void (SQLSearch::*threadFunction)(const QString searchTerm, const unsigned long long queryID),
+    void runThread(void (SQLSearch::*threadFunction)(const QString searchTerm,
+                                                     const unsigned long long queryID),
                    const QString &searchTerm, const unsigned long long queryID);
     void searchSimplifiedThread(const QString searchTerm,
                                 const unsigned long long queryID);
