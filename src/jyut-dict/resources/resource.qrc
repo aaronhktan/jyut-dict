@@ -46,5 +46,7 @@
         <file>images/clock_darkgrey_nopadding.png</file>
         <file>images/settings_darkgrey_nopadding.png</file>
         <file>images/star_darkgrey_nopadding.png</file>
+        <file>images/star_filled.png</file>
+        <file>images/star_inverted_filled.png</file>
     </qresource>
 </RCC>

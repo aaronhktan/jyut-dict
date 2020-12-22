@@ -133,8 +133,13 @@ void EntryActionWidget::setStyle(bool use_dark)
         styleSheet.arg(borderColour.name(), radiusString, textColour.name()));
     _shareButton->setMinimumHeight(borderRadius * 2);
 
-    _bookmarkButton->setIcon(
-        QIcon{use_dark ? ":/images/star_inverted.png" : ":/images/star.png"});
+    if (_bookmarkButton->property("saved").toBool()) {
+        _bookmarkButton->setIcon(
+            QIcon{use_dark ? ":/images/star_inverted_filled.png" : ":/images/star_filled.png"});
+    } else {
+        _bookmarkButton->setIcon(
+            QIcon{use_dark ? ":/images/star_inverted.png" : ":/images/star.png"});
+    }
     _shareButton->setIcon(
         QIcon{use_dark ? ":/images/share_inverted.png" : ":/images/share.png"});
 
