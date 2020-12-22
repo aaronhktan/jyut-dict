@@ -94,6 +94,95 @@ void EntryViewSentenceCardSection::translateUI()
     _viewAllSentencesButton->setText(tr("View all sentences →"));
 }
 
+void EntryViewSentenceCardSection::cleanup(void)
+{
+    for (auto card : _sentenceCards) {
+        _sentenceCardsLayout->removeWidget(card);
+        delete card;
+    }
+    _sentenceCards.clear();
+    _sentenceCardsLayout->removeWidget(_viewAllSentencesButton);
+}
+
+void EntryViewSentenceCardSection::changeEvent(QEvent *event)
+{
+#if defined(Q_OS_DARWIN)
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(10, [=]() { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        setStyle(Utils::isDarkMode());
+    }
+#endif
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
+    QWidget::changeEvent(event);
+}
+
+void EntryViewSentenceCardSection::setStyle(bool use_dark)
+{
+    QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
+                                          LABEL_TEXT_COLOUR_DARK_G,
+                                          LABEL_TEXT_COLOUR_DARK_B}
+                                       .darker(300)
+                                 : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
+                                          LABEL_TEXT_COLOUR_LIGHT_G,
+                                          LABEL_TEXT_COLOUR_LIGHT_B}
+                                       .lighter(200);
+    int borderRadius = 17;
+    QString radiusString = QString::number(borderRadius);
+    QString styleSheet = "QToolButton { border: 2px solid %1; "
+                         "border-radius: %2px; "
+                         "font-size: 12px; "
+                         "padding: 6px; } ";
+    _viewAllSentencesButton->setStyleSheet(styleSheet.arg(textColour.name(), radiusString));
+    _viewAllSentencesButton->setMinimumHeight(borderRadius * 2);
+}
+
+void EntryViewSentenceCardSection::setEntry(const Entry &entry)
+{
+    {
+        std::lock_guard<std::mutex> layout{layoutMutex};
+        cleanup();
+    }
+
+    // Show loading widget only if search results are not found within
+    // a certain deadline
+    _calledBack = false;
+    _timer->stop();
+    _timer->setInterval(1000);
+    _timer->setSingleShot(true);
+    QObject::connect(_timer, &QTimer::timeout, this, [=]() {
+#ifdef Q_OS_WIN
+        if (!_calledBack && _enableUIUpdate) {
+            showLoadingWidget();
+        }
+#else
+        if (!_calledBack) {
+            showLoadingWidget();
+        }
+#endif
+    });
+    _timer->start();
+
+    // Actually start searching for sentences
+    _search->searchTraditionalSentences(entry.getTraditional().c_str());
+    _title = entry
+                 .getCharactersNoSecondary(
+                     Settings::getSettings()
+                         ->value("characterOptions",
+                                 QVariant::fromValue(
+                                     EntryCharactersOptions::PREFER_TRADITIONAL))
+                         .value<EntryCharactersOptions>(),
+                     false)
+                 .c_str();
+    _title = _title.trimmed();
+}
+
 void EntryViewSentenceCardSection::updateUI(
     std::vector<SourceSentence> sourceSentences, sentenceSamples samples)
 {
@@ -146,96 +235,24 @@ void EntryViewSentenceCardSection::stallUIUpdate(void)
     });
     _enableUIUpdateTimer->start();
 }
-#endif
 
-void EntryViewSentenceCardSection::cleanup(void)
+void EntryViewSentenceCardSection::pauseBeforeUpdatingUI(std::vector<SourceSentence> sourceSentences,
+                                                         sentenceSamples samples)
 {
-    for (auto card : _sentenceCards) {
-        _sentenceCardsLayout->removeWidget(card);
-        delete card;
-    }
-    _sentenceCards.clear();
-    _sentenceCardsLayout->removeWidget(_viewAllSentencesButton);
-}
+    _updateUITimer->stop();
+    disconnect(_updateUITimer, nullptr, nullptr, nullptr);
 
-void EntryViewSentenceCardSection::setStyle(bool use_dark)
-{
-    QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                          LABEL_TEXT_COLOUR_DARK_G,
-                                          LABEL_TEXT_COLOUR_DARK_B}
-                                       .darker(300)
-                                 : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                          LABEL_TEXT_COLOUR_LIGHT_G,
-                                          LABEL_TEXT_COLOUR_LIGHT_B}
-                                       .lighter(200);
-    int borderRadius = 17;
-    QString radiusString = QString::number(borderRadius);
-    QString styleSheet = "QToolButton { border: 2px solid %1; "
-                         "border-radius: %2px; "
-                         "font-size: 12px; "
-                         "padding: 6px; } ";
-    _viewAllSentencesButton->setStyleSheet(styleSheet.arg(textColour.name(), radiusString));
-    _viewAllSentencesButton->setMinimumHeight(borderRadius * 2);
-}
-
-void EntryViewSentenceCardSection::changeEvent(QEvent *event)
-{
-#if defined(Q_OS_DARWIN)
-    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
-        // QWidget emits a palette changed event when setting the stylesheet
-        // So prevent it from going into an infinite loop with this timer
-        _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, [=]() { _paletteRecentlyChanged = false; });
-
-        // Set the style to match whether the user started dark mode
-        setStyle(Utils::isDarkMode());
-    }
-#endif
-    if (event->type() == QEvent::LanguageChange) {
-        translateUI();
-    }
-    QWidget::changeEvent(event);
-}
-
-void EntryViewSentenceCardSection::setEntry(const Entry &entry)
-{
-    {
-        std::lock_guard<std::mutex> layout{layoutMutex};
-        cleanup();
-    }
-
-    // Show loading widget only if search results are not found within
-    // a certain deadline
-    _calledBack = false;
-    _timer->stop();
-    _timer->setInterval(1000);
-    _timer->setSingleShot(true);
-    QObject::connect(_timer, &QTimer::timeout, this, [=]() {
-#ifdef Q_OS_WIN
-        if (!_calledBack && _enableUIUpdate) {
-            showLoadingWidget();
+    _updateUITimer->setInterval(100);
+    QObject::connect(_updateUITimer, &QTimer::timeout, this, [=]() {
+        if (_enableUIUpdate) {
+            _updateUITimer->stop();
+            disconnect(_updateUITimer, nullptr, nullptr, nullptr);
+            updateUI(sourceSentences, samples);
         }
-#else
-        if (!_calledBack) {
-            showLoadingWidget();
-        }
-#endif
     });
-    _timer->start();
-
-    // Actually start searching for sentences
-    _search->searchTraditionalSentences(entry.getTraditional().c_str());
-    _title = entry
-                 .getCharactersNoSecondary(
-                     Settings::getSettings()
-                         ->value("characterOptions",
-                                 QVariant::fromValue(
-                                     EntryCharactersOptions::PREFER_TRADITIONAL))
-                         .value<EntryCharactersOptions>(),
-                     false)
-                 .c_str();
-    _title = _title.trimmed();
+    _updateUITimer->start();
 }
+#endif
 
 void EntryViewSentenceCardSection::showLoadingWidget(void)
 {
@@ -254,25 +271,6 @@ void EntryViewSentenceCardSection::openSentenceWindow(
     splitter->setSearchTerm(_title);
     splitter->show();
 }
-
-#ifdef Q_OS_WIN
-void EntryViewSentenceCardSection::pauseBeforeUpdatingUI(std::vector<SourceSentence> sourceSentences,
-                                                         sentenceSamples samples)
-{
-    _updateUITimer->stop();
-    disconnect(_updateUITimer, nullptr, nullptr, nullptr);
-
-    _updateUITimer->setInterval(100);
-    QObject::connect(_updateUITimer, &QTimer::timeout, this, [=]() {
-        if (_enableUIUpdate) {
-            _updateUITimer->stop();
-            disconnect(_updateUITimer, nullptr, nullptr, nullptr);
-            updateUI(sourceSentences, samples);
-        }
-    });
-    _updateUITimer->start();
-}
-#endif
 
 // Given some sourceSentences, returns a set of five (or fewer) sentences from
 // each source that exists in the source sentence.

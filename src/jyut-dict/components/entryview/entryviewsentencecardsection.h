@@ -50,9 +50,6 @@ private:
     void showLoadingWidget(void);
     void openSentenceWindow(std::vector<SourceSentence> sourceSentences);
 
-    void pauseBeforeUpdatingUI(std::vector<SourceSentence> sourceSentences,
-                               sentenceSamples samples);
-
     std::mutex layoutMutex;
     std::mutex updateMutex;
 
@@ -85,6 +82,10 @@ public slots:
 
 #ifdef Q_OS_WIN
     void stallUIUpdate(void);
+
+private slots:
+    void pauseBeforeUpdatingUI(std::vector<SourceSentence> sourceSentences,
+                               sentenceSamples samples);
 #endif
 
 signals:
