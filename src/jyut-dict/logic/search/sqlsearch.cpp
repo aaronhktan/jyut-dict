@@ -200,7 +200,9 @@ void SQLSearch::searchSimplifiedThread(const QString searchTerm)
     results = parseEntries(query);
     _manager->closeDatabase();
 
+#ifndef Q_OS_WIN
     sleepIfEmpty(results);
+#endif
     if (!checkQueryCurrent(searchTerm)) { return; }
     notifyObservers(results, /*emptyQuery=*/false);
 }
@@ -227,7 +229,9 @@ void SQLSearch::searchTraditionalThread(const QString searchTerm)
     results = parseEntries(query);
     _manager->closeDatabase();
 
+#ifndef Q_OS_WIN
     sleepIfEmpty(results);
+#endif
     if (!checkQueryCurrent(searchTerm)) { return; }
     notifyObservers(results, /*emptyQuery=*/false);
 }
@@ -278,7 +282,9 @@ void SQLSearch::searchJyutpingThread(const QString searchTerm)
     results = parseEntries(query);
     _manager->closeDatabase();
 
+#ifndef Q_OS_WIN
     sleepIfEmpty(results);
+#endif
     if (!checkQueryCurrent(searchTerm)) { return; }
     notifyObservers(results, /*emptyQuery=*/false);
 }
@@ -333,7 +339,9 @@ void SQLSearch::searchPinyinThread(const QString searchTerm)
     results = parseEntries(query);
     _manager->closeDatabase();
 
+#ifndef Q_OS_WIN
     sleepIfEmpty(results);
+#endif
     if (!checkQueryCurrent(searchTerm)) { return; }
     notifyObservers(results, /*emptyQuery=*/false);
 }
@@ -376,7 +384,10 @@ void SQLSearch::searchEnglishThread(const QString searchTerm)
     results = parseEntries(query);
     _manager->closeDatabase();
 
+#ifndef Q_OS_WIN
     sleepIfEmpty(results);
+#endif
+
     if (!checkQueryCurrent(searchTerm)) { return; }
     notifyObservers(results, /*emptyQuery=*/false);
 }
@@ -416,7 +427,9 @@ void SQLSearch::searchByUniqueThread(const QString simplified,
     results = parseEntries(query);
     _manager->closeDatabase();
 
+#ifndef Q_OS_WIN
     sleepIfEmpty(results);
+#endif
     if (!checkQueryCurrent(simplified + traditional + jyutping + pinyin)) {
         return;
     }

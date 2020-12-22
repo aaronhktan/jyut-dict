@@ -50,6 +50,11 @@ private:
     void showLoadingWidget(void);
     void openSentenceWindow(std::vector<SourceSentence> sourceSentences);
 
+#ifdef Q_OS_WIN
+    void pauseBeforeUpdatingUI(std::vector<SourceSentence> sourceSentences,
+                               sentenceSamples samples);
+#endif
+
     std::mutex layoutMutex;
 
     std::unordered_map<std::string, std::vector<SourceSentence>>
@@ -63,6 +68,9 @@ private:
     bool _paletteRecentlyChanged = false;
     bool _calledBack = false;
     QTimer *_timer;
+#ifdef Q_OS_WIN
+    QTimer *_updateUITimer;
+#endif
 
     QVBoxLayout *_sentenceCardsLayout;
     LoadingWidget *_loadingWidget;
@@ -72,12 +80,12 @@ private:
 public slots:
     void updateUI(
         std::vector<SourceSentence> sourceSentences,
-        sentenceSamples sources);
+        sentenceSamples samples);
 
 signals:
     void callbackInvoked(
         std::vector<SourceSentence> sourceSentences,
-        sentenceSamples sources);
+        sentenceSamples samples);
     void addingCards();
     void finishedAddingCards();
 };
