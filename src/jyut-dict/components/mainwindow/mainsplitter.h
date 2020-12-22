@@ -66,6 +66,9 @@ private slots:
     void handleModelReset(void);
     void handleClick(const QModelIndex &selection);
     void handleDoubleClick(const QModelIndex &selection);
+
+signals:
+    void forwardSearchBarTextChange(void);
 };
 
 #endif // MAINSPLITTER_H

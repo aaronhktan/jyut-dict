@@ -14,25 +14,30 @@ EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manag
     _entryContentLayout->addWidget(_definitionSection);
     _entryContentLayout->addWidget(_sentenceSection);
 
-    QObject::connect(_definitionSection,
-                     &DefinitionCardSection::addingCards,
-                     this,
-                     &EntryContentWidget::hideDefinitionSection);
+    connect(_definitionSection,
+            &DefinitionCardSection::addingCards,
+            this,
+            &EntryContentWidget::hideDefinitionSection);
 
-    QObject::connect(_definitionSection,
-                     &DefinitionCardSection::finishedAddingCards,
-                     this,
-                     &EntryContentWidget::showDefinitionSection);
+    connect(_definitionSection,
+            &DefinitionCardSection::finishedAddingCards,
+            this,
+            &EntryContentWidget::showDefinitionSection);
 
-    QObject::connect(_sentenceSection,
-                     &EntryViewSentenceCardSection::addingCards,
-                     this,
-                     &EntryContentWidget::hideSentenceSection);
+    connect(_sentenceSection,
+            &EntryViewSentenceCardSection::addingCards,
+            this,
+            &EntryContentWidget::hideSentenceSection);
 
-    QObject::connect(_sentenceSection,
-                     &EntryViewSentenceCardSection::finishedAddingCards,
-                     this,
-                     &EntryContentWidget::showSentenceSection);
+    connect(_sentenceSection,
+            &EntryViewSentenceCardSection::finishedAddingCards,
+            this,
+            &EntryContentWidget::showSentenceSection);
+
+    connect(this,
+            &EntryContentWidget::forwardSearchBarTextChange,
+            _sentenceSection,
+            &EntryViewSentenceCardSection::stallUIUpdate);
 }
 
 EntryContentWidget::~EntryContentWidget()

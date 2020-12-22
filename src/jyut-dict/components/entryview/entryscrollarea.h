@@ -20,6 +20,7 @@
 
 class EntryScrollArea : public QScrollArea
 {
+    Q_OBJECT
 public:
     explicit EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
                              std::shared_ptr<SQLDatabaseManager> manager,
@@ -31,6 +32,9 @@ private:
     void resizeEvent(QResizeEvent *event) override;
 
     EntryScrollAreaWidget *_scrollAreaWidget;
+
+signals:
+    void forwardSearchBarTextChange(void);
 };
 
 #endif // ENTRYSCROLLAREA_H

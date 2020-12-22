@@ -21,6 +21,11 @@ MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
     _searchOptions->registerLineEdit(_searchBar);
     _optionsBox = new SearchOptionsRadioGroupBox(_searchOptions, this);
 
+    connect(_searchBar,
+            &QLineEdit::textChanged,
+            this,
+            &MainToolBar::searchBarTextChange);
+
     setupUI();
 }
 

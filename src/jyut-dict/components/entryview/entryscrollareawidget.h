@@ -36,8 +36,7 @@ private:
     EntryContentWidget *_entryContentWidget;
 
 signals:
-
-public slots:
+    void forwardSearchBarTextChange(void);
 };
 
 #endif // ENTRYSCROLLAREAWIDGET_H

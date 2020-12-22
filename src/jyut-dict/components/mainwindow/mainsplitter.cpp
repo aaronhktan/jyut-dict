@@ -46,6 +46,11 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
             this,
             &MainSplitter::handleDoubleClick);
 
+    connect(this,
+            &MainSplitter::forwardSearchBarTextChange,
+            _entryScrollArea,
+            &EntryScrollArea::forwardSearchBarTextChange);
+
     setHandleWidth(1);
     setCollapsible(0, false);
     setCollapsible(1, false);

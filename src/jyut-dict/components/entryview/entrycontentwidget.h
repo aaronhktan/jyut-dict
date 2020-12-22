@@ -15,6 +15,7 @@
 
 class EntryContentWidget : public QWidget
 {
+    Q_OBJECT
 public:
     explicit EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manager,
                                 QWidget *parent = nullptr);
@@ -33,6 +34,9 @@ public slots:
 
     void hideSentenceSection(void);
     void showSentenceSection(void);
+
+signals:
+    void forwardSearchBarTextChange(void);
 };
 
 #endif // ENTRYCONTENTWIDGET_H

@@ -60,6 +60,9 @@ private:
 
 public slots:
     void forwardSearchHistoryItem(searchTermHistoryItem &pair);
+
+signals:
+    void searchBarTextChange(void);
 };
 
 #endif // MAINTOOLBAR_H

@@ -12,6 +12,7 @@ EntryViewSentenceCardSection::EntryViewSentenceCardSection(std::shared_ptr<SQLDa
     _manager{manager}
 {
 #ifdef Q_OS_WIN
+    _enableUIUpdateTimer = new QTimer{this};
     _updateUITimer = new QTimer{this};
 #endif
 
@@ -25,24 +26,10 @@ EntryViewSentenceCardSection::EntryViewSentenceCardSection(std::shared_ptr<SQLDa
     // Q_DECLARE_METATYPE and qRegisterMetaType must be called.
     qRegisterMetaType<std::vector<SourceSentence>>();
     qRegisterMetaType<sentenceSamples>();
-#ifdef Q_OS_WIN
-    // Horrible hack: for some reason, on Windows, adding QLabels and laying
-    // out the widgets for the sentences takes a very long time compared
-    // to Linux + macOS. This makes the UI freeze as it attempts to lay out
-    // the sentence cards.
-
-    // Workaround: only add the cards after a period of time has passed and
-    // there have not been new requests to lay out the cards.
     QObject::connect(this,
                      &EntryViewSentenceCardSection::callbackInvoked,
                      this,
                      &EntryViewSentenceCardSection::pauseBeforeUpdatingUI);
-#else
-    QObject::connect(this,
-                     &EntryViewSentenceCardSection::callbackInvoked,
-                     this,
-                     &EntryViewSentenceCardSection::updateUI);
-#endif
 }
 
 EntryViewSentenceCardSection::EntryViewSentenceCardSection(QWidget *parent)
@@ -139,6 +126,19 @@ void EntryViewSentenceCardSection::updateUI(
     emit finishedAddingCards();
 }
 
+void EntryViewSentenceCardSection::stallUIUpdate(void)
+{
+    _enableUIUpdate = false;
+    _enableUIUpdateTimer->stop();
+    disconnect(_enableUIUpdateTimer, nullptr, nullptr, nullptr);
+    _enableUIUpdateTimer->setInterval(500);
+    _enableUIUpdateTimer->setSingleShot(true);
+    QObject::connect(_enableUIUpdateTimer, &QTimer::timeout, this, [=]() {
+        _enableUIUpdate = true;
+    });
+    _enableUIUpdateTimer->start();
+}
+
 void EntryViewSentenceCardSection::cleanup(void)
 {
     for (auto card : _sentenceCards) {
@@ -202,7 +202,7 @@ void EntryViewSentenceCardSection::setEntry(const Entry &entry)
     _timer->setInterval(1000);
     _timer->setSingleShot(true);
     QObject::connect(_timer, &QTimer::timeout, this, [=]() {
-        if (!_calledBack) {
+        if (!_calledBack && _enableUIUpdate) {
             showLoadingWidget();
         }
     });
@@ -240,20 +240,22 @@ void EntryViewSentenceCardSection::openSentenceWindow(
     splitter->show();
 }
 
-#ifdef Q_OS_WIN
 void EntryViewSentenceCardSection::pauseBeforeUpdatingUI(std::vector<SourceSentence> sourceSentences,
                                                          sentenceSamples samples)
 {
     _updateUITimer->stop();
     disconnect(_updateUITimer, nullptr, nullptr, nullptr);
-    _updateUITimer->setInterval(500);
-    _updateUITimer->setSingleShot(true);
+
+    _updateUITimer->setInterval(100);
     QObject::connect(_updateUITimer, &QTimer::timeout, this, [=]() {
-        updateUI(sourceSentences, samples);
+        if (_enableUIUpdate) {
+            _updateUITimer->stop();
+            disconnect(_updateUITimer, nullptr, nullptr, nullptr);
+            updateUI(sourceSentences, samples);
+        }
     });
     _updateUITimer->start();
 }
-#endif
 
 // Given some sourceSentences, returns a set of five (or fewer) sentences from
 // each source that exists in the source sentence.
