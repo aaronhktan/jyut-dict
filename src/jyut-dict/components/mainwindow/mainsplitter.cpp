@@ -51,6 +51,11 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
             &MainSplitter::forwardSearchBarTextChange,
             _entryScrollArea,
             &EntryScrollArea::forwardSearchBarTextChange);
+
+    connect(_resultListView->selectionModel(),
+            &QItemSelectionModel::currentChanged,
+            _entryScrollArea,
+            &EntryScrollArea::forwardSearchBarTextChange);
 #endif
 
     setHandleWidth(1);
