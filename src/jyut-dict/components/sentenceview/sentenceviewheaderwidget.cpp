@@ -260,18 +260,23 @@ void SentenceViewHeaderWidget::setStyle(bool use_dark)
                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R};
+    int borderRadius = 10;
+    QString radiusString = QString::number(borderRadius);
 
     QString sourceStyleSheet = "QLabel {"
                                "background: %1; "
-                               "border-radius: 10px; "
-                               "color: %2; "
+                               "border-radius: %2px; "
+                               "color: %3; "
                                "margin-top: 2px; "
                                "padding: 2px; }";
     QColor languageColour = Utils::getLanguageColour(
         Utils::getISO639FromLanguage(_sourceLanguageLabel->text().trimmed()));
     QColor languageTextColour = Utils::getContrastingColour(languageColour);
     _sourceLanguageLabel->setStyleSheet(
-        sourceStyleSheet.arg(languageColour.name(), languageTextColour.name()));
+        sourceStyleSheet.arg(languageColour.name(),
+                             radiusString,
+                             languageTextColour.name()));
+    _sourceLanguageLabel->setMinimumHeight(borderRadius * 2);
     _sourceLanguageLabel->resize(_sourceLanguageLabel->sizeHint());
 
     _simplifiedLabel->setStyleSheet("QLabel { font-size: 24px }");

@@ -236,8 +236,8 @@ void SentenceContentWidget::setStyle(bool use_dark)
         label->setStyleSheet(sentenceNumberStyleSheet.arg(textColour.name()));
     }
 
-    int labelRadius = 10;
-    QString labelRadiusString = QString::number(labelRadius);
+    int borderRadius = 10;
+    QString radiusString = QString::number(borderRadius);
     for (const auto &label : _sourceSentenceLanguage) {
         QString sourceStyleSheet = "QLabel {"
                                    "background: %1; "
@@ -250,12 +250,12 @@ void SentenceContentWidget::setStyle(bool use_dark)
         QColor languageTextColour = Utils::getContrastingColour(languageColour);
         label->setStyleSheet(
             sourceStyleSheet.arg(languageColour.name(),
-                                 labelRadiusString,
+                                 radiusString,
                                  languageTextColour.name()));
         label->setText(Utils::getLanguageFromISO639(
                            label->property("language").toString().toStdString())
                            .trimmed());
-        label->setMinimumHeight(labelRadius * 2);
+        label->setMinimumHeight(borderRadius * 2);
         label->resize(label->sizeHint());
     }
 
