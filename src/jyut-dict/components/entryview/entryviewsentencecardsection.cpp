@@ -59,7 +59,7 @@ void EntryViewSentenceCardSection::callback(
     std::vector<SourceSentence> sourceSentences, bool emptyQuery)
 {
     (void) (emptyQuery);
-    std::lock_guard<std::mutex> updateMutex{layoutMutex};
+    std::lock_guard<std::mutex> update{updateMutex};
     sentenceSamples samples = getSamplesForEachSource(sourceSentences);
     emit callbackInvoked(sourceSentences, samples);
 }
@@ -249,7 +249,6 @@ void EntryViewSentenceCardSection::pauseBeforeUpdatingUI(std::vector<SourceSente
     _updateUITimer->setInterval(500);
     _updateUITimer->setSingleShot(true);
     QObject::connect(_updateUITimer, &QTimer::timeout, this, [=]() {
-        // Only attempt to update the UI if the ID has not been overwritten
         updateUI(sourceSentences, samples);
     });
     _updateUITimer->start();

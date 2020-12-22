@@ -4,6 +4,10 @@ ResultListModel::ResultListModel(std::shared_ptr<ISearchObservable> sqlSearch,
                                  std::vector<Entry> entries, QObject *parent)
     : QAbstractListModel(parent)
 {
+    _updateModelTimer = new QTimer{this};
+
+    qRegisterMetaType<std::vector<Entry>>();
+
     if (entries.empty()) {
         setWelcome();
     } else {
@@ -12,6 +16,11 @@ ResultListModel::ResultListModel(std::shared_ptr<ISearchObservable> sqlSearch,
 
     _search = sqlSearch;
     _search->registerObserver(this);
+
+    connect(this,
+            &ResultListModel::callbackInvoked,
+            this,
+            &ResultListModel::copyEntries);
 }
 
 ResultListModel::~ResultListModel()
@@ -21,7 +30,24 @@ ResultListModel::~ResultListModel()
 
 void ResultListModel::callback(const std::vector<Entry> entries, bool emptyQuery)
 {
-    setEntries(entries, emptyQuery);
+    emit callbackInvoked(entries, emptyQuery);
+}
+
+void ResultListModel::copyEntries(std::vector<Entry> entries, bool emptyQuery)
+{
+    _updateModelTimer->stop();
+    disconnect(_updateModelTimer, nullptr, nullptr, nullptr);
+
+    if (entries.empty() && !emptyQuery) {
+        _updateModelTimer->setInterval(500);
+        _updateModelTimer->setSingleShot(true);
+        QObject::connect(_updateModelTimer, &QTimer::timeout, this, [=]() {
+            setEntries(entries, emptyQuery);
+        });
+        _updateModelTimer->start();
+    } else {
+        setEntries(entries, emptyQuery);
+    }
 }
 
 void ResultListModel::setEntries(std::vector<Entry> entries)

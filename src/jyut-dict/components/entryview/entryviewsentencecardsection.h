@@ -56,6 +56,7 @@ private:
 #endif
 
     std::mutex layoutMutex;
+    std::mutex updateMutex;
 
     std::unordered_map<std::string, std::vector<SourceSentence>>
     getSamplesForEachSource(const std::vector<SourceSentence> &sourceSentences);

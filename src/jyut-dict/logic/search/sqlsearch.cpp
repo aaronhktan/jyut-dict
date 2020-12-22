@@ -14,13 +14,16 @@
 SQLSearch::SQLSearch()
     : QObject()
 {
-
+    std::random_device rd;
+    _generator = std::mt19937_64{rd()};
 }
 
 SQLSearch::SQLSearch(std::shared_ptr<SQLDatabaseManager> manager)
     : QObject()
     , _manager{manager}
 {
+    std::random_device rd;
+    _generator = std::mt19937_64{rd()};
 }
 
 SQLSearch::SQLSearch(const SQLSearch &search)
@@ -29,6 +32,9 @@ SQLSearch::SQLSearch(const SQLSearch &search)
     if (search._manager != nullptr) {
         _manager = search._manager;
     }
+
+    std::random_device rd;
+    _generator = std::mt19937_64{rd()};
 }
 
 SQLSearch::~SQLSearch()
@@ -77,12 +83,6 @@ void SQLSearch::notifyObservers(const std::vector<SourceSentence> &results,
     }
 }
 
-void SQLSearch::setCurrentSearchTerm(const QString &searchTerm)
-{
-    std::lock_guard<std::mutex> lock{_currentSearchTermMutex};
-    _currentSearchString = searchTerm;
-}
-
 template <class T>
 void SQLSearch::sleepIfEmpty(std::vector<T> &results)
 {
@@ -92,12 +92,14 @@ void SQLSearch::sleepIfEmpty(std::vector<T> &results)
     }
 }
 
-bool SQLSearch::checkQueryCurrent(const QString &query)
-{
-    // Check if a new query has been run
-    // If so, do not notify observers of previous query's results
-    std::lock_guard<std::mutex> searchTermLock{_currentSearchTermMutex};
-    if (query != _currentSearchString) {
+unsigned long long SQLSearch::generateAndSetQueryID(void) {
+    unsigned long long queryID = _dist(_generator);
+    _queryID = queryID;
+    return queryID;
+}
+
+bool SQLSearch::checkQueryIDCurrent(const unsigned long long queryID) {
+    if (queryID != _queryID) {
         return false;
     }
     return true;
@@ -105,32 +107,32 @@ bool SQLSearch::checkQueryCurrent(const QString &query)
 
 void SQLSearch::searchSimplified(const QString searchTerm)
 {
-    setCurrentSearchTerm(searchTerm);
-    runThread(&SQLSearch::searchSimplifiedThread, searchTerm);
+    unsigned long long queryID = generateAndSetQueryID();
+    runThread(&SQLSearch::searchSimplifiedThread, searchTerm, queryID);
 }
 
 void SQLSearch::searchTraditional(const QString searchTerm)
 {
-    setCurrentSearchTerm(searchTerm);
-    runThread(&SQLSearch::searchTraditionalThread, searchTerm);
+    unsigned long long queryID = generateAndSetQueryID();
+    runThread(&SQLSearch::searchTraditionalThread, searchTerm, queryID);
 }
 
 void SQLSearch::searchJyutping(const QString searchTerm)
 {
-    setCurrentSearchTerm(searchTerm);
-    runThread(&SQLSearch::searchJyutpingThread, searchTerm);
+    unsigned long long queryID = generateAndSetQueryID();
+    runThread(&SQLSearch::searchJyutpingThread, searchTerm, queryID);
 }
 
 void SQLSearch::searchPinyin(const QString searchTerm)
 {
-    setCurrentSearchTerm(searchTerm);
-    runThread(&SQLSearch::searchPinyinThread, searchTerm);
+    unsigned long long queryID = generateAndSetQueryID();
+    runThread(&SQLSearch::searchPinyinThread, searchTerm, queryID);
 }
 
 void SQLSearch::searchEnglish(const QString searchTerm)
 {
-    setCurrentSearchTerm(searchTerm);
-    runThread(&SQLSearch::searchEnglishThread, searchTerm);
+    unsigned long long queryID = generateAndSetQueryID();
+    runThread(&SQLSearch::searchEnglishThread, searchTerm, queryID);
 }
 
 void SQLSearch::searchByUnique(const QString simplified,
@@ -143,23 +145,24 @@ void SQLSearch::searchByUnique(const QString simplified,
         return;
     }
 
-    setCurrentSearchTerm(simplified + traditional + jyutping + pinyin);
+    unsigned long long queryID = generateAndSetQueryID();
     QtConcurrent::run(this,
                       &SQLSearch::searchByUniqueThread,
                       simplified,
                       traditional,
                       jyutping,
-                      pinyin);
+                      pinyin,
+                      queryID);
 }
 
 void SQLSearch::searchTraditionalSentences(const QString searchTerm)
 {
-    setCurrentSearchTerm(searchTerm);
-    runThread(&SQLSearch::searchTraditionalSentencesThread, searchTerm);
+    unsigned long long queryID = generateAndSetQueryID();
+    runThread(&SQLSearch::searchTraditionalSentencesThread, searchTerm, queryID);
 }
 
-void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString searchTerm),
-                          const QString &searchTerm)
+void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString searchTerm, const unsigned long long queryID),
+                          const QString &searchTerm, const unsigned long long queryID)
 {
     if (searchTerm.isEmpty()) {
         notifyObserversOfEmptySet(true);
@@ -171,14 +174,15 @@ void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString search
         return;
     }
 
-    QtConcurrent::run(this, threadFunction, searchTerm);
+    QtConcurrent::run(this, threadFunction, searchTerm, queryID);
 }
 
 // For SearchSimplified and SearchTraditional, we use LIKE instead of MATCH
 // even though the database is FTS5-compatible.
 // This is because FTS searches using the space as a separator, and
 // Chinese words and phrases are not separated by spaces.
-void SQLSearch::searchSimplifiedThread(const QString searchTerm)
+void SQLSearch::searchSimplifiedThread(const QString searchTerm,
+                                       const unsigned long long queryID)
 {
     std::vector<Entry> results{};
 
@@ -196,18 +200,16 @@ void SQLSearch::searchSimplifiedThread(const QString searchTerm)
     query.exec();
 
     // Do not parse results if new query has been made
-    if (!checkQueryCurrent(searchTerm)) { return; }
+    if (!checkQueryIDCurrent(queryID)) { return; }
     results = parseEntries(query);
     _manager->closeDatabase();
 
-#ifndef Q_OS_WIN
-    sleepIfEmpty(results);
-#endif
-    if (!checkQueryCurrent(searchTerm)) { return; }
+    if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObservers(results, /*emptyQuery=*/false);
 }
 
-void SQLSearch::searchTraditionalThread(const QString searchTerm)
+void SQLSearch::searchTraditionalThread(const QString searchTerm,
+                                        const unsigned long long queryID)
 {
     std::vector<Entry> results{};
 
@@ -225,14 +227,11 @@ void SQLSearch::searchTraditionalThread(const QString searchTerm)
     query.exec();
 
     // Do not parse results if new query has been made
-    if (!checkQueryCurrent(searchTerm)) { return; }
+    if (!checkQueryIDCurrent(queryID)) { return; }
     results = parseEntries(query);
     _manager->closeDatabase();
 
-#ifndef Q_OS_WIN
-    sleepIfEmpty(results);
-#endif
-    if (!checkQueryCurrent(searchTerm)) { return; }
+    if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObservers(results, /*emptyQuery=*/false);
 }
 
@@ -247,7 +246,8 @@ void SQLSearch::searchTraditionalThread(const QString searchTerm)
 // !NOTE! Using QSQLQuery's positional placeholder method automatically
 // surrounds the bound value with single quotes, i.e. "'". There is no need
 // to add another set of quotes around placeholder values.
-void SQLSearch::searchJyutpingThread(const QString searchTerm)
+void SQLSearch::searchJyutpingThread(const QString searchTerm,
+                                     const unsigned long long queryID)
 {
     std::vector<std::string> jyutpingWords = {};
     segmentJyutping(searchTerm, jyutpingWords);
@@ -278,18 +278,16 @@ void SQLSearch::searchJyutpingThread(const QString searchTerm)
     query.exec();
 
     // Do not parse results if new query has been made
-    if (!checkQueryCurrent(searchTerm)) { return; }
+    if (!checkQueryIDCurrent(queryID)) { return; }
     results = parseEntries(query);
     _manager->closeDatabase();
 
-#ifndef Q_OS_WIN
-    sleepIfEmpty(results);
-#endif
-    if (!checkQueryCurrent(searchTerm)) { return; }
+    if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObservers(results, /*emptyQuery=*/false);
 }
 
-void SQLSearch::searchPinyinThread(const QString searchTerm)
+void SQLSearch::searchPinyinThread(const QString searchTerm,
+                                   const unsigned long long queryID)
 {
     // Replace "v" and "ü" with "u:" since "ü" is stored as "u:" in the table
     QString processedSearchTerm = searchTerm;
@@ -335,14 +333,11 @@ void SQLSearch::searchPinyinThread(const QString searchTerm)
     query.exec();
 
     // Do not parse results if new query has been made
-    if (!checkQueryCurrent(searchTerm)) { return; }
+    if (!checkQueryIDCurrent(queryID)) { return; }
     results = parseEntries(query);
     _manager->closeDatabase();
 
-#ifndef Q_OS_WIN
-    sleepIfEmpty(results);
-#endif
-    if (!checkQueryCurrent(searchTerm)) { return; }
+    if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObservers(results, /*emptyQuery=*/false);
 }
 
@@ -357,7 +352,8 @@ void SQLSearch::searchPinyinThread(const QString searchTerm)
 // For some reason, using two subqueries is ~2-3x faster than doing two
 // INNER JOINs. This is related in some way to the fk_entry_id index, but I'm
 // not entirely sure why.
-void SQLSearch::searchEnglishThread(const QString searchTerm)
+void SQLSearch::searchEnglishThread(const QString searchTerm,
+                                    const unsigned long long queryID)
 {
     std::vector<Entry> results{};
 
@@ -380,15 +376,11 @@ void SQLSearch::searchEnglishThread(const QString searchTerm)
     query.exec();
 
     // Do not parse results if new query has been made
-    if (!checkQueryCurrent(searchTerm)) { return; }
+    if (!checkQueryIDCurrent(queryID)) { return; }
     results = parseEntries(query);
     _manager->closeDatabase();
 
-#ifndef Q_OS_WIN
-    sleepIfEmpty(results);
-#endif
-
-    if (!checkQueryCurrent(searchTerm)) { return; }
+    if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObservers(results, /*emptyQuery=*/false);
 }
 
@@ -396,7 +388,8 @@ void SQLSearch::searchEnglishThread(const QString searchTerm)
 void SQLSearch::searchByUniqueThread(const QString simplified,
                                      const QString traditional,
                                      const QString jyutping,
-                                     const QString pinyin)
+                                     const QString pinyin,
+                                     const unsigned long long queryID)
 {
     std::vector<Entry> results{};
 
@@ -421,16 +414,13 @@ void SQLSearch::searchByUniqueThread(const QString simplified,
     query.exec();
 
     // Do not parse results if new query has been made
-    if (!checkQueryCurrent(simplified + traditional + jyutping + pinyin)) {
+    if (!checkQueryIDCurrent(queryID)) {
         return;
     }
     results = parseEntries(query);
     _manager->closeDatabase();
 
-#ifndef Q_OS_WIN
-    sleepIfEmpty(results);
-#endif
-    if (!checkQueryCurrent(simplified + traditional + jyutping + pinyin)) {
+    if (!checkQueryIDCurrent(queryID)) {
         return;
     }
     notifyObservers(results, /*emptyQuery=*/false);
@@ -441,7 +431,8 @@ void SQLSearch::searchByUniqueThread(const QString simplified,
 //
 // Sleep for 50ms after finding the search result to prevent some problems
 // with searching too fast.
-void SQLSearch::searchTraditionalSentencesThread(const QString searchTerm)
+void SQLSearch::searchTraditionalSentencesThread(const QString searchTerm,
+                                                 const unsigned long long queryID)
 {
     std::vector<SourceSentence> results{};
 
@@ -463,7 +454,7 @@ void SQLSearch::searchTraditionalSentencesThread(const QString searchTerm)
     query.addBindValue("%" + searchTerm + "%");
     query.exec();
 
-    if (!checkQueryCurrent(searchTerm)) {
+    if (!checkQueryIDCurrent(queryID)) {
         return;
     }
     results = parseSentences(query);
@@ -473,7 +464,7 @@ void SQLSearch::searchTraditionalSentencesThread(const QString searchTerm)
     QThread *thisThread = QThread::currentThread();
     thisThread->msleep(50);
 
-    if (!checkQueryCurrent(searchTerm)) { return; }
+    if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObservers(results, /*emptyQuery=*/false);
 }
 
