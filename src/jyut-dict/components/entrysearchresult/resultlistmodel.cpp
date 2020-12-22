@@ -30,11 +30,21 @@ ResultListModel::~ResultListModel()
 
 void ResultListModel::callback(const std::vector<Entry> entries, bool emptyQuery)
 {
+    // This function is usually called in another thread (since ISearchObservable
+    // objects do their work in a separate thread to avoid congesting the UI thread).
+    //
+    // Copying entries into the result model is NOT re-entrant. But with Qt's
+    // signals/slots mechanism, since the connection is a QueuedConnection,
+    // only one copyEntries is called at a time by the main thread
+    // AND in the order the callbackInvoked signals came in, because the thread's
+    // event loop processes signals as a FIFO queue.
     emit callbackInvoked(entries, emptyQuery);
 }
 
 void ResultListModel::copyEntries(std::vector<Entry> entries, bool emptyQuery)
 {
+    // As soon as another event wants to update the list model, kill
+    // any prior pending updates by stopping the timer.
     _updateModelTimer->stop();
     disconnect(_updateModelTimer, nullptr, nullptr, nullptr);
 
