@@ -50,12 +50,12 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     connect(this,
             &MainSplitter::forwardSearchBarTextChange,
             _entryScrollArea,
-            &EntryScrollArea::forwardSearchBarTextChange);
+            &EntryScrollArea::stallUIUpdate);
 
     connect(_resultListView->selectionModel(),
             &QItemSelectionModel::currentChanged,
             _entryScrollArea,
-            &EntryScrollArea::forwardSearchBarTextChange);
+            &EntryScrollArea::stallUIUpdate);
 #endif
 
     setHandleWidth(1);
@@ -195,6 +195,9 @@ void MainSplitter::handleDoubleClick(const QModelIndex &selection)
         area->setEntry(entry);
 #ifndef Q_OS_MAC
         area->setWindowTitle(" ");
+#endif
+#ifdef Q_OS_WIN
+        emit area->stallUIUpdate();
 #endif
         area->show();
     });

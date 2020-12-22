@@ -37,7 +37,7 @@ public slots:
 
 #ifdef Q_OS_WIN
 signals:
-    void forwardSearchBarTextChange(void);
+    void stallUIUpdate(void);
 #endif
 };
 

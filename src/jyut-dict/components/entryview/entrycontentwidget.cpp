@@ -36,7 +36,7 @@ EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manag
 
 #ifdef Q_OS_WIN
     connect(this,
-            &EntryContentWidget::forwardSearchBarTextChange,
+            &EntryContentWidget::stallUIUpdate,
             _sentenceSection,
             &EntryViewSentenceCardSection::stallUIUpdate);
 #endif

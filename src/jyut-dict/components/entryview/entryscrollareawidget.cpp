@@ -37,9 +37,9 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(std::shared_ptr<SQLUserDataUtils> s
 
 #ifdef Q_OS_WIN
     connect(this,
-            &EntryScrollAreaWidget::forwardSearchBarTextChange,
+            &EntryScrollAreaWidget::stallUIUpdate,
             _entryContentWidget,
-            &EntryContentWidget::forwardSearchBarTextChange);
+            &EntryContentWidget::stallUIUpdate);
 #endif
 }
 
