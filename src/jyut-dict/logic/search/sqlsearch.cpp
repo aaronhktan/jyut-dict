@@ -83,15 +83,6 @@ void SQLSearch::notifyObservers(const std::vector<SourceSentence> &results,
     }
 }
 
-template <class T>
-void SQLSearch::sleepIfEmpty(std::vector<T> &results)
-{
-    if (results.empty()) {
-        QThread *thisThread = QThread::currentThread();
-        thisThread->msleep(500);
-    }
-}
-
 unsigned long long SQLSearch::generateAndSetQueryID(void) {
     unsigned long long queryID = _dist(_generator);
     _queryID = queryID;

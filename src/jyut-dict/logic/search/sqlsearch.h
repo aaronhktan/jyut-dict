@@ -51,8 +51,6 @@ private:
     void notifyObservers(const std::vector<SourceSentence> &results,
                          bool emptyQuery) override;
 
-    template <class T>
-    void sleepIfEmpty(std::vector<T> &results);
     unsigned long long generateAndSetQueryID(void);
     bool checkQueryIDCurrent(const unsigned long long queryID);
 
@@ -94,8 +92,6 @@ private:
     QString _currentSearchString;
     QSqlQuery _query;
 
-    std::mutex _databaseMutex;
-    std::mutex _currentSearchTermMutex;
     std::mutex _notifyMutex;
 
     std::atomic<unsigned long long> _queryID;
