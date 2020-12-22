@@ -35,10 +35,12 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(std::shared_ptr<SQLUserDataUtils> s
     setStyle(/* use_dark = */false);
 #endif
 
+#ifdef Q_OS_WIN
     connect(this,
             &EntryScrollAreaWidget::forwardSearchBarTextChange,
             _entryContentWidget,
             &EntryContentWidget::forwardSearchBarTextChange);
+#endif
 }
 
 void EntryScrollAreaWidget::changeEvent(QEvent *event)

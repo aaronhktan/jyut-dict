@@ -35,8 +35,10 @@ private:
     EntryActionWidget *_entryActionWidget;
     EntryContentWidget *_entryContentWidget;
 
+#ifdef Q_OS_WIN
 signals:
     void forwardSearchBarTextChange(void);
+#endif
 };
 
 #endif // ENTRYSCROLLAREAWIDGET_H

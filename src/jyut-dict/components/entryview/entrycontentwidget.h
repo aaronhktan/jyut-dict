@@ -35,8 +35,10 @@ public slots:
     void hideSentenceSection(void);
     void showSentenceSection(void);
 
+#ifdef Q_OS_WIN
 signals:
     void forwardSearchBarTextChange(void);
+#endif
 };
 
 #endif // ENTRYCONTENTWIDGET_H

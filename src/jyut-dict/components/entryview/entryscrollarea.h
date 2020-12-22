@@ -33,8 +33,10 @@ private:
 
     EntryScrollAreaWidget *_scrollAreaWidget;
 
+#ifdef Q_OS_WIN
 signals:
     void forwardSearchBarTextChange(void);
+#endif
 };
 
 #endif // ENTRYSCROLLAREA_H

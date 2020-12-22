@@ -26,10 +26,12 @@ EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     setMinimumWidth(350);
 #endif
 
+#ifdef Q_OS_WIN
     connect(this,
             &EntryScrollArea::forwardSearchBarTextChange,
             _scrollAreaWidget,
             &EntryScrollAreaWidget::forwardSearchBarTextChange);
+#endif
 
     if (!parent) {
         setMinimumHeight(400);

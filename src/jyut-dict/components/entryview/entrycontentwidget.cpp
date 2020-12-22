@@ -34,10 +34,12 @@ EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manag
             this,
             &EntryContentWidget::showSentenceSection);
 
+#ifdef Q_OS_WIN
     connect(this,
             &EntryContentWidget::forwardSearchBarTextChange,
             _sentenceSection,
             &EntryViewSentenceCardSection::stallUIUpdate);
+#endif
 }
 
 EntryContentWidget::~EntryContentWidget()
