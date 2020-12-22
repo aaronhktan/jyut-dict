@@ -451,10 +451,6 @@ void SQLSearch::searchTraditionalSentencesThread(const QString searchTerm,
     results = parseSentences(query);
     _manager->closeDatabase();
 
-    // Horrible hack, but for some reason prevents a lot of problems.
-    QThread *thisThread = QThread::currentThread();
-    thisThread->msleep(50);
-
     if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObservers(results, /*emptyQuery=*/false);
 }
