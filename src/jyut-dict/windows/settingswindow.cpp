@@ -76,6 +76,7 @@ void SettingsWindow::setupUI()
     addToolBar(_toolBar);
     setUnifiedTitleAndToolBarOnMac(true);
     _toolBar->setMovable(false);
+    _toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
 
     QActionGroup *_navigationActionGroup = new QActionGroup{this};
     _navigationActionGroup->setExclusive(true);
