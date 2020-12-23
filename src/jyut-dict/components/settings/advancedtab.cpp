@@ -14,6 +14,9 @@
 #include <QLibraryInfo>
 #include <QTimer>
 #include <QtConcurrent/QtConcurrent>
+#ifdef Q_OS_LINUX
+#include <QWindow>
+#endif
 
 AdvancedTab::AdvancedTab(QWidget *parent)
     : QWidget(parent)
@@ -67,6 +70,12 @@ void AdvancedTab::setupUI()
     _analyticsCheckbox->setTristate(false);
     initializeAnalyticsCheckbox(*_analyticsCheckbox);
 
+#ifdef Q_OS_LINUX
+    _forceDarkModeCheckbox = new QCheckBox{this};
+    _forceDarkModeCheckbox->setTristate(false);
+    initializeForceDarkModeCheckbox(*_forceDarkModeCheckbox);
+#endif
+
     QFrame *_exportDivider = new QFrame{this};
     _exportDivider->setObjectName("divider");
     _exportDivider->setFrameShape(QFrame::HLine);
@@ -91,6 +100,9 @@ void AdvancedTab::setupUI()
 
     _tabLayout->addRow(" ", _updateCheckbox);
     _tabLayout->addRow(" ", _analyticsCheckbox);
+#ifdef Q_OS_LINUX
+    _tabLayout->addRow(" ", _forceDarkModeCheckbox);
+#endif
     _tabLayout->addRow(_exportDivider);
     _tabLayout->addRow(" ", _exportUserDatabaseButton);
     _tabLayout->addRow(_divider);
@@ -117,6 +129,10 @@ void AdvancedTab::translateUI()
         ->setText(tr("Automatically check for updates on startup:"));
     static_cast<QLabel *>(_tabLayout->labelForField(_analyticsCheckbox))
         ->setText(tr("Enable analytics:"));
+#ifdef Q_OS_LINUX
+    static_cast<QLabel *>(_tabLayout->labelForField(_forceDarkModeCheckbox))
+        ->setText(tr("Enable dark mode:"));
+#endif
     static_cast<QLabel *>(_tabLayout->labelForField(_exportUserDatabaseButton))
         ->setText(tr("Back up saved words and history:"));
     static_cast<QLabel *>(_tabLayout->labelForField(_languageCombobox))
@@ -178,6 +194,25 @@ void AdvancedTab::initializeAnalyticsCheckbox(QCheckBox &checkbox)
         _settings->sync();
     });
 }
+
+#ifdef Q_OS_LINUX
+void AdvancedTab::initializeForceDarkModeCheckbox(QCheckBox &checkbox)
+{
+    checkbox.setChecked(
+        _settings->value("Advanced/forceDarkMode", QVariant{false}).toBool());
+
+    connect(&checkbox, &QCheckBox::stateChanged, this, [&]() {
+        _settings->setValue("Advanced/forceDarkMode",
+                            checkbox.checkState());
+        _settings->sync();
+
+        QEvent event{QEvent::PaletteChange};
+        foreach (auto window, qApp->topLevelWindows()) {
+            QCoreApplication::sendEvent(window, &event);
+        }
+    });
+}
+#endif
 
 void AdvancedTab::initializeLanguageCombobox(QComboBox &combobox)
 {

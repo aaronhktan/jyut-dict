@@ -1,10 +1,13 @@
 #include "utils_linux.h"
 
+#include "logic/settings/settingsutils.h"
+
 namespace Utils {
 
-// TODO: Make this actually work!
 bool isDarkMode(void) {
-    return true;
+    std::unique_ptr<QSettings> settings = Settings::getSettings();
+    return settings->value("Advanced/forceDarkMode",
+                           QVariant{false}).toBool();
 }
 
 }

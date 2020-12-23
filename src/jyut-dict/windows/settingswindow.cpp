@@ -102,7 +102,6 @@ void SettingsWindow::setupUI()
     _contentStackedWidget->addWidget(advancedTab);
 
     ContactTab *contactTab = new ContactTab{this};
-
     _contentStackedWidget->addWidget(contactTab);
 
     setCentralWidget(_contentStackedWidget);

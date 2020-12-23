@@ -165,6 +165,13 @@ void MainWindow::changeEvent(QEvent *event)
     if (event->type() == QEvent::LanguageChange) {
         translateUI();
     }
+
+#ifdef Q_OS_LINUX
+    if (event->type() == QEvent::PaletteChange) {
+        setStyle(Utils::isDarkMode());
+    }
+#endif
+
     QMainWindow::changeEvent(event);
 }
 
@@ -314,7 +321,7 @@ void MainWindow::setStyle(bool use_dark)
     QApplication::setPalette(defaultPalette);
 #elif defined(Q_OS_LINUX)
     if (!use_dark) {
-        QPalette palette = QApplication::palette();
+        QPalette palette = QApplication::style()->standardPalette();
         palette.setColor(QPalette::Highlight,
                          QColor{LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
                                 LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
@@ -324,6 +331,7 @@ void MainWindow::setStyle(bool use_dark)
                                 LIST_ITEM_INACTIVE_COLOUR_LIGHT_G,
                                 LIST_ITEM_INACTIVE_COLOUR_LIGHT_B});
         qApp->setPalette(palette);
+        qApp->setStyleSheet("");
     } else {
         QColor darkGray(53, 53, 53);
         QColor gray(128, 128, 128);

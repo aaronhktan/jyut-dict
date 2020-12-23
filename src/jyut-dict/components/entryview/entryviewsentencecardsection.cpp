@@ -108,7 +108,7 @@ void EntryViewSentenceCardSection::cleanup(void)
 
 void EntryViewSentenceCardSection::changeEvent(QEvent *event)
 {
-#if defined(Q_OS_DARWIN)
+#if defined(Q_OS_DARWIN) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
