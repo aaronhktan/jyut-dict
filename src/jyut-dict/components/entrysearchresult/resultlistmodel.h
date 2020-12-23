@@ -54,7 +54,7 @@ private:
 
     std::shared_ptr<ISearchObservable> _search;
 
-public slots:
+private slots:
     void copyEntries(
         std::vector<Entry> entries, bool emptyQuery);
 
