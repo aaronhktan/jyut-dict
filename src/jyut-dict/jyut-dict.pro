@@ -89,7 +89,6 @@ SOURCES += \
     logic/search/sqlsearch.cpp \
     logic/sentence/sentenceset.cpp \
     logic/sentence/sourcesentence.cpp \
-    logic/utils/utils_linux.cpp \
     main.cpp \
     dialogs/defaultdialog.cpp \
     dialogs/dictionarytabfailuredialog.cpp \
@@ -274,6 +273,8 @@ win32: {
 }
 
 unix:!macx {
+    SOURCES += logic/utils/utils_linux.cpp
+
     FLATPAK {
         binfile.extra = cp \"$$system_path($$OUT_PWD)/Jyut Dictionary\" $$system_path($$OUT_PWD)/jyut-dict
         binfile.files += $$system_path($$OUT_PWD)/jyut-dict

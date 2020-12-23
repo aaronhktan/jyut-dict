@@ -109,15 +109,16 @@ QDataStream &operator>>(QDataStream &stream, SearchParameters &e)
 template<typename T, typename U = std::enable_if_t<std::is_enum<T>::value>>
 QDataStream &operator<<(QDataStream &stream, T enumValue)
 {
-    stream << static_cast<std::underlying_type_t<SearchParameters>>(enumValue);
+    stream << static_cast<std::underlying_type_t<T>>(enumValue);
     return stream;
 }
 
-QDataStream &operator>>(QDataStream &stream, SearchParameters &e)
+template<typename T, typename U = std::enable_if_t<std::is_enum<T>::value>>
+QDataStream &operator>>(QDataStream &stream, T &e)
 {
-    std::underlying_type_t<SearchParameters> v;
+    std::underlying_type_t<T> v;
     stream >> v;
-    e = static_cast<SearchParameters>(v);
+    e = static_cast<T>(v);
     return stream;
 }
 #endif
