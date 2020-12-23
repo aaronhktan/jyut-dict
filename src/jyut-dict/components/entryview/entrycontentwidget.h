@@ -15,6 +15,7 @@
 
 class EntryContentWidget : public QWidget
 {
+    Q_OBJECT
 public:
     explicit EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manager,
                                 QWidget *parent = nullptr);
@@ -33,6 +34,11 @@ public slots:
 
     void hideSentenceSection(void);
     void showSentenceSection(void);
+
+#ifdef Q_OS_WIN
+signals:
+    void stallUIUpdate(void);
+#endif
 };
 
 #endif // ENTRYCONTENTWIDGET_H

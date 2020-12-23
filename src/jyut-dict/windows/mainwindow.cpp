@@ -129,6 +129,12 @@ MainWindow::MainWindow(QWidget *parent) :
             &MainWindow::viewHistoryClicked,
             _mainSplitter,
             &MainSplitter::forwardViewHistoryItem);
+#ifdef Q_OS_WIN
+    connect(_mainToolBar,
+            &MainToolBar::searchBarTextChange,
+            _mainSplitter,
+            &MainSplitter::forwardSearchBarTextChange);
+#endif
 
     // Create menu bar and populate it
     createMenus();

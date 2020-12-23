@@ -26,6 +26,13 @@ EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     setMinimumWidth(350);
 #endif
 
+#ifdef Q_OS_WIN
+    connect(this,
+            &EntryScrollArea::stallUIUpdate,
+            _scrollAreaWidget,
+            &EntryScrollAreaWidget::stallUIUpdate);
+#endif
+
     if (!parent) {
         setMinimumHeight(400);
     }

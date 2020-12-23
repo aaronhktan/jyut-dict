@@ -11,6 +11,11 @@ EntryViewSentenceCardSection::EntryViewSentenceCardSection(std::shared_ptr<SQLDa
     : QWidget(parent),
     _manager{manager}
 {
+#ifdef Q_OS_WIN
+    _enableUIUpdateTimer = new QTimer{this};
+    _updateUITimer = new QTimer{this};
+#endif
+
     _search = std::make_unique<SQLSearch>(_manager);
     _search->registerObserver(this);
 
@@ -20,10 +25,18 @@ EntryViewSentenceCardSection::EntryViewSentenceCardSection(std::shared_ptr<SQLDa
     // In order for the vector of SourceSentences to be copied to the UI thread,
     // Q_DECLARE_METATYPE and qRegisterMetaType must be called.
     qRegisterMetaType<std::vector<SourceSentence>>();
+    qRegisterMetaType<sentenceSamples>();
+#ifdef Q_OS_WIN
+    QObject::connect(this,
+                     &EntryViewSentenceCardSection::callbackInvoked,
+                     this,
+                     &EntryViewSentenceCardSection::pauseBeforeUpdatingUI);
+#else
     QObject::connect(this,
                      &EntryViewSentenceCardSection::callbackInvoked,
                      this,
                      &EntryViewSentenceCardSection::updateUI);
+#endif
 }
 
 EntryViewSentenceCardSection::EntryViewSentenceCardSection(QWidget *parent)
@@ -40,8 +53,9 @@ void EntryViewSentenceCardSection::callback(
     std::vector<SourceSentence> sourceSentences, bool emptyQuery)
 {
     (void) (emptyQuery);
-    std::lock_guard<std::mutex> updateMutex{layoutMutex};
-    emit callbackInvoked(sourceSentences);
+    std::lock_guard<std::mutex> update{updateMutex};
+    sentenceSamples samples = getSamplesForEachSource(sourceSentences);
+    emit callbackInvoked(sourceSentences, samples);
 }
 
 void EntryViewSentenceCardSection::setupUI(void)
@@ -80,47 +94,6 @@ void EntryViewSentenceCardSection::translateUI()
     _viewAllSentencesButton->setText(tr("View all sentences →"));
 }
 
-void EntryViewSentenceCardSection::updateUI(std::vector<SourceSentence> sourceSentences)
-{
-    std::lock_guard<std::mutex> layout{layoutMutex};
-    cleanup();
-
-    _calledBack = true;
-    _loadingWidget->setVisible(false);
-
-    _sentences = sourceSentences;
-
-    std::unordered_map<std::string, std::vector<SourceSentence>> sources;
-    sources = getSamplesForEachSource(sourceSentences);
-
-    // This prevents an extra space from being added at the bottom when there
-    // is nothing to display in the sentence card section.
-    if (sources.empty()) {
-        _sentenceCardsLayout->setContentsMargins(0, 0, 0, 0);
-        return;
-    } else {
-        _sentenceCardsLayout->setContentsMargins(0, 11, 0, 0);
-    }
-
-    emit addingCards();
-    for (const auto &item : sources) {
-        _sentenceCards.push_back(new SentenceCardWidget{this});
-        _sentenceCards.back()->displaySentences(item.second);
-
-        _sentenceCardsLayout->addWidget(_sentenceCards.back(), Qt::AlignHCenter);
-    }
-
-    _sentenceCardsLayout->addWidget(_viewAllSentencesButton);
-    _sentenceCardsLayout->setAlignment(_viewAllSentencesButton, Qt::AlignRight);
-    _viewAllSentencesButton->setVisible(true);
-
-    disconnect(_viewAllSentencesButton, nullptr, nullptr, nullptr);
-    connect(_viewAllSentencesButton, &QToolButton::clicked, this, [&]() {
-        openSentenceWindow(_sentences);
-    });
-    emit finishedAddingCards();
-}
-
 void EntryViewSentenceCardSection::cleanup(void)
 {
     for (auto card : _sentenceCards) {
@@ -129,6 +102,25 @@ void EntryViewSentenceCardSection::cleanup(void)
     }
     _sentenceCards.clear();
     _sentenceCardsLayout->removeWidget(_viewAllSentencesButton);
+}
+
+void EntryViewSentenceCardSection::changeEvent(QEvent *event)
+{
+#if defined(Q_OS_DARWIN)
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(10, [=]() { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        setStyle(Utils::isDarkMode());
+    }
+#endif
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
+    QWidget::changeEvent(event);
 }
 
 void EntryViewSentenceCardSection::setStyle(bool use_dark)
@@ -151,25 +143,6 @@ void EntryViewSentenceCardSection::setStyle(bool use_dark)
     _viewAllSentencesButton->setMinimumHeight(borderRadius * 2);
 }
 
-void EntryViewSentenceCardSection::changeEvent(QEvent *event)
-{
-#if defined(Q_OS_DARWIN)
-    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
-        // QWidget emits a palette changed event when setting the stylesheet
-        // So prevent it from going into an infinite loop with this timer
-        _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, [=]() { _paletteRecentlyChanged = false; });
-
-        // Set the style to match whether the user started dark mode
-        setStyle(Utils::isDarkMode());
-    }
-#endif
-    if (event->type() == QEvent::LanguageChange) {
-        translateUI();
-    }
-    QWidget::changeEvent(event);
-}
-
 void EntryViewSentenceCardSection::setEntry(const Entry &entry)
 {
     {
@@ -184,9 +157,15 @@ void EntryViewSentenceCardSection::setEntry(const Entry &entry)
     _timer->setInterval(1000);
     _timer->setSingleShot(true);
     QObject::connect(_timer, &QTimer::timeout, this, [=]() {
+#ifdef Q_OS_WIN
+        if (!_calledBack && _enableUIUpdate) {
+            showLoadingWidget();
+        }
+#else
         if (!_calledBack) {
             showLoadingWidget();
         }
+#endif
     });
     _timer->start();
 
@@ -204,8 +183,80 @@ void EntryViewSentenceCardSection::setEntry(const Entry &entry)
     _title = _title.trimmed();
 }
 
+void EntryViewSentenceCardSection::updateUI(
+    std::vector<SourceSentence> sourceSentences, sentenceSamples samples)
+{
+    std::lock_guard<std::mutex> layout{layoutMutex};
+    cleanup();
+
+    _calledBack = true;
+    _loadingWidget->setVisible(false);
+
+    _sentences = sourceSentences;
+
+    // This prevents an extra space from being added at the bottom when there
+    // is nothing to display in the sentence card section.
+    if (samples.empty()) {
+        _sentenceCardsLayout->setContentsMargins(0, 0, 0, 0);
+        return;
+    } else {
+        _sentenceCardsLayout->setContentsMargins(0, 11, 0, 0);
+    }
+
+    emit addingCards();
+    for (const auto &item : samples) {
+        _sentenceCards.push_back(new SentenceCardWidget{this});
+        _sentenceCards.back()->displaySentences(item.second);
+
+        _sentenceCardsLayout->addWidget(_sentenceCards.back(), Qt::AlignHCenter);
+    }
+
+    _sentenceCardsLayout->addWidget(_viewAllSentencesButton);
+    _sentenceCardsLayout->setAlignment(_viewAllSentencesButton, Qt::AlignRight);
+    _viewAllSentencesButton->setVisible(true);
+
+    disconnect(_viewAllSentencesButton, nullptr, nullptr, nullptr);
+    connect(_viewAllSentencesButton, &QToolButton::clicked, this, [&]() {
+        openSentenceWindow(_sentences);
+    });
+    emit finishedAddingCards();
+}
+
+#ifdef Q_OS_WIN
+void EntryViewSentenceCardSection::stallUIUpdate(void)
+{
+    _enableUIUpdate = false;
+    _enableUIUpdateTimer->stop();
+    disconnect(_enableUIUpdateTimer, nullptr, nullptr, nullptr);
+    _enableUIUpdateTimer->setInterval(500);
+    _enableUIUpdateTimer->setSingleShot(true);
+    QObject::connect(_enableUIUpdateTimer, &QTimer::timeout, this, [=]() {
+        _enableUIUpdate = true;
+    });
+    _enableUIUpdateTimer->start();
+}
+
+void EntryViewSentenceCardSection::pauseBeforeUpdatingUI(std::vector<SourceSentence> sourceSentences,
+                                                         sentenceSamples samples)
+{
+    _updateUITimer->stop();
+    disconnect(_updateUITimer, nullptr, nullptr, nullptr);
+
+    _updateUITimer->setInterval(100);
+    QObject::connect(_updateUITimer, &QTimer::timeout, this, [=]() {
+        if (_enableUIUpdate) {
+            _updateUITimer->stop();
+            disconnect(_updateUITimer, nullptr, nullptr, nullptr);
+            updateUI(sourceSentences, samples);
+        }
+    });
+    _updateUITimer->start();
+}
+#endif
+
 void EntryViewSentenceCardSection::showLoadingWidget(void)
 {
+    std::lock_guard<std::mutex> layout{layoutMutex};
     _loadingWidget->setVisible(true);
     _sentenceCardsLayout->addWidget(_loadingWidget);
     _sentenceCardsLayout->setAlignment(_loadingWidget, Qt::AlignHCenter);
@@ -227,12 +278,12 @@ std::unordered_map<std::string, std::vector<SourceSentence>>
 EntryViewSentenceCardSection::getSamplesForEachSource(
     const std::vector<SourceSentence> &sourceSentences)
 {
-    std::unordered_map<std::string, std::vector<SourceSentence>> sources;
+    std::unordered_map<std::string, std::vector<SourceSentence>> samples;
 
     for (auto sourceSentence : sourceSentences) {
         for (auto sentenceSet : sourceSentence.getSentenceSets()) {
             std::string source = sentenceSet.getSource();
-            if (sources[source].size() >= 2) {
+            if (samples[source].size() >= 2) {
                 continue;
             }
 
@@ -244,9 +295,9 @@ EntryViewSentenceCardSection::getSamplesForEachSource(
                                  sourceSentence.getPinyin(),
                                  std::vector<SentenceSet>{sentenceSet});
 
-            sources[source].push_back(sentence);
+            samples[source].push_back(sentence);
         }
     }
 
-    return sources;
+    return samples;
 }

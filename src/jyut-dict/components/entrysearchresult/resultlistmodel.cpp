@@ -4,6 +4,10 @@ ResultListModel::ResultListModel(std::shared_ptr<ISearchObservable> sqlSearch,
                                  std::vector<Entry> entries, QObject *parent)
     : QAbstractListModel(parent)
 {
+    _updateModelTimer = new QTimer{this};
+
+    qRegisterMetaType<std::vector<Entry>>();
+
     if (entries.empty()) {
         setWelcome();
     } else {
@@ -12,6 +16,11 @@ ResultListModel::ResultListModel(std::shared_ptr<ISearchObservable> sqlSearch,
 
     _search = sqlSearch;
     _search->registerObserver(this);
+
+    connect(this,
+            &ResultListModel::callbackInvoked,
+            this,
+            &ResultListModel::copyEntries);
 }
 
 ResultListModel::~ResultListModel()
@@ -21,7 +30,34 @@ ResultListModel::~ResultListModel()
 
 void ResultListModel::callback(const std::vector<Entry> entries, bool emptyQuery)
 {
-    setEntries(entries, emptyQuery);
+    // This function is usually called in another thread (since ISearchObservable
+    // objects do their work in a separate thread to avoid congesting the UI thread).
+    //
+    // Copying entries into the result model is NOT re-entrant. But with Qt's
+    // signals/slots mechanism, since the connection is a QueuedConnection,
+    // only one copyEntries is called at a time by the main thread
+    // AND in the order the callbackInvoked signals came in, because the thread's
+    // event loop processes signals as a FIFO queue.
+    emit callbackInvoked(entries, emptyQuery);
+}
+
+void ResultListModel::copyEntries(std::vector<Entry> entries, bool emptyQuery)
+{
+    // As soon as another event wants to update the list model, kill
+    // any prior pending updates by stopping the timer.
+    _updateModelTimer->stop();
+    disconnect(_updateModelTimer, nullptr, nullptr, nullptr);
+
+    if (entries.empty() && !emptyQuery) {
+        _updateModelTimer->setInterval(500);
+        _updateModelTimer->setSingleShot(true);
+        QObject::connect(_updateModelTimer, &QTimer::timeout, this, [=]() {
+            setEntries(entries, emptyQuery);
+        });
+        _updateModelTimer->start();
+    } else {
+        setEntries(entries, emptyQuery);
+    }
 }
 
 void ResultListModel::setEntries(std::vector<Entry> entries)

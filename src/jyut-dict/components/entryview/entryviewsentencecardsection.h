@@ -23,6 +23,9 @@
 // The EntryViewSentenceCardSection displays cards for each set of sentences,
 // where each set of sentences belongs to a particular source.
 
+typedef std::unordered_map<std::string, std::vector<SourceSentence>>
+    sentenceSamples;
+
 class EntryViewSentenceCardSection : public QWidget, public ISearchObserver
 {
     Q_OBJECT
@@ -48,6 +51,7 @@ private:
     void openSentenceWindow(std::vector<SourceSentence> sourceSentences);
 
     std::mutex layoutMutex;
+    std::mutex updateMutex;
 
     std::unordered_map<std::string, std::vector<SourceSentence>>
     getSamplesForEachSource(const std::vector<SourceSentence> &sourceSentences);
@@ -60,6 +64,11 @@ private:
     bool _paletteRecentlyChanged = false;
     bool _calledBack = false;
     QTimer *_timer;
+#ifdef Q_OS_WIN
+    QTimer *_enableUIUpdateTimer;
+    QTimer *_updateUITimer;
+    bool _enableUIUpdate = false;
+#endif
 
     QVBoxLayout *_sentenceCardsLayout;
     LoadingWidget *_loadingWidget;
@@ -67,12 +76,26 @@ private:
     QToolButton *_viewAllSentencesButton;
 
 public slots:
-    void updateUI(std::vector<SourceSentence> sourceSentences);
+    void updateUI(
+        std::vector<SourceSentence> sourceSentences,
+        sentenceSamples samples);
+
+#ifdef Q_OS_WIN
+    void stallUIUpdate(void);
+
+private slots:
+    void pauseBeforeUpdatingUI(std::vector<SourceSentence> sourceSentences,
+                               sentenceSamples samples);
+#endif
 
 signals:
-    void callbackInvoked(std::vector<SourceSentence> sourceSentences);
+    void callbackInvoked(
+        std::vector<SourceSentence> sourceSentences,
+        sentenceSamples samples);
     void addingCards();
     void finishedAddingCards();
 };
+
+Q_DECLARE_METATYPE(sentenceSamples);
 
 #endif // ENTRYVIEWSENTENCECARDSECTION_H

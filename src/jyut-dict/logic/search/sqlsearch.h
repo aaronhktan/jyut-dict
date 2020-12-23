@@ -9,9 +9,11 @@
 #include <QObject>
 #include <QtSql>
 
+#include <atomic>
 #include <list>
 #include <memory>
 #include <mutex>
+#include <random>
 #include <string>
 #include <vector>
 
@@ -44,30 +46,43 @@ public:
     void searchTraditionalSentences(const QString searchTerm);
 
 private:
-    void notifyObserversOfEmptySet(bool emptyQuery);
     void notifyObservers(const std::vector<Entry> &results, bool emptyQuery) override;
     void notifyObservers(const std::vector<SourceSentence> &results,
                          bool emptyQuery) override;
+    void notifyObserversOfEmptySet(bool emptyQuery,
+                                   const unsigned long long queryID);
+    void notifyObserversIfQueryIdCurrent(const std::vector<Entry> &results,
+                                         bool emptyQuery,
+                                         const unsigned long long queryID);
+    void notifyObserversIfQueryIdCurrent(const std::vector<SourceSentence> &results,
+                                         bool emptyQuery,
+                                         const unsigned long long queryID);
 
-    void setCurrentSearchTerm(const QString &searchTerm);
-    template <class T>
-    void sleepIfEmpty(std::vector<T> &results);
-    bool checkQueryCurrent(const QString &query);
+    unsigned long long generateAndSetQueryID(void);
+    bool checkQueryIDCurrent(const unsigned long long queryID);
 
-    void runThread(void (SQLSearch::*threadFunction)(const QString searchTerm),
-                   const QString &searchTerm);
-    void searchSimplifiedThread(const QString searchTerm);
-    void searchTraditionalThread(const QString searchTerm);
-    void searchJyutpingThread(const QString searchTerm);
-    void searchPinyinThread(const QString searchTerm);
-    void searchEnglishThread(const QString searchTerm);
+    void runThread(void (SQLSearch::*threadFunction)(const QString searchTerm,
+                                                     const unsigned long long queryID),
+                   const QString &searchTerm, const unsigned long long queryID);
+    void searchSimplifiedThread(const QString searchTerm,
+                                const unsigned long long queryID);
+    void searchTraditionalThread(const QString searchTerm,
+                                 const unsigned long long queryID);
+    void searchJyutpingThread(const QString searchTerm,
+                              const unsigned long long queryID);
+    void searchPinyinThread(const QString searchTerm,
+                            const unsigned long long queryID);
+    void searchEnglishThread(const QString searchTerm,
+                             const unsigned long long queryID);
 
     void searchByUniqueThread(const QString simplified,
                               const QString traditional,
                               const QString jyutping,
-                              const QString pinyin);
+                              const QString pinyin,
+                              const unsigned long long queryID);
 
-    void searchTraditionalSentencesThread(const QString searchTerm);
+    void searchTraditionalSentencesThread(const QString searchTerm,
+                                          const unsigned long long queryID);
 
     int segmentPinyin(const QString &string, std::vector<std::string> &words);
     int segmentJyutping(const QString &string, std::vector<std::string> &words);
@@ -85,9 +100,11 @@ private:
     QString _currentSearchString;
     QSqlQuery _query;
 
-    std::mutex _databaseMutex;
-    std::mutex _currentSearchTermMutex;
     std::mutex _notifyMutex;
+
+    std::atomic<unsigned long long> _queryID;
+    std::mt19937_64 _generator;
+    std::uniform_int_distribution<unsigned long long> _dist;
 };
 
 Q_DECLARE_METATYPE(SQLSearch);

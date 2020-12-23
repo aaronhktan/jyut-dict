@@ -35,9 +35,10 @@ private:
     EntryActionWidget *_entryActionWidget;
     EntryContentWidget *_entryContentWidget;
 
+#ifdef Q_OS_WIN
 signals:
-
-public slots:
+    void stallUIUpdate(void);
+#endif
 };
 
 #endif // ENTRYSCROLLAREAWIDGET_H

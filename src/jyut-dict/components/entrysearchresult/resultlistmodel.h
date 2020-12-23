@@ -9,6 +9,7 @@
 #include <QAbstractListModel>
 #include <QModelIndex>
 #include <QObject>
+#include <QTimer>
 #include <QVariant>
 
 #include <string>
@@ -47,9 +48,19 @@ public:
 private:
     bool _isFavouritesList = false;
 
+    QTimer *_updateModelTimer;
+
     std::vector<Entry> _entries;
 
     std::shared_ptr<ISearchObservable> _search;
+
+private slots:
+    void copyEntries(
+        std::vector<Entry> entries, bool emptyQuery);
+
+signals:
+    void callbackInvoked(
+        std::vector<Entry> entries, bool emptyQuery);
 };
 
 #endif // RESULTLISTMODEL_H
