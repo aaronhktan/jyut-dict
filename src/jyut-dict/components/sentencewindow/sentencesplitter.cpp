@@ -33,6 +33,12 @@ SentenceSplitter::SentenceSplitter(std::shared_ptr<SQLDatabaseManager> manager,
             this,
             &SentenceSplitter::handleDoubleClick);
 
+#ifdef Q_OS_LINUX
+    setMinimumSize(600, 400);
+#else
+    setMinimumHeight(400);
+#endif
+
     setHandleWidth(1);
     setCollapsible(0, false);
     setCollapsible(1, false);
@@ -43,8 +49,6 @@ SentenceSplitter::SentenceSplitter(std::shared_ptr<SQLDatabaseManager> manager,
 #elif defined(Q_OS_DARWIN) || defined(Q_OS_LINUX)
     setStyleSheet("QSplitter::handle { background-color: none; }");
 #endif
-
-    setMinimumHeight(400);
 }
 
 SentenceSplitter::~SentenceSplitter()

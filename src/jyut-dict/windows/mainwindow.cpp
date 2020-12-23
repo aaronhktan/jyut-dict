@@ -42,13 +42,8 @@ MainWindow::MainWindow(QWidget *parent) :
                               Settings::getCurrentLocale().name().toStdString());
     });
 
-    // Set window stuff
-//#ifdef Q_OS_LINUX
-//    setMinimumSize(QSize(500, 350));
-//    resize(600, 450);
-//#else
-    setMinimumSize(QSize(800, 600));
-//#endif
+    // Set window size
+    setMinimumSize(QSize{800, 600});
 
     // Instantiate services
     _manager = std::make_shared<SQLDatabaseManager>();
