@@ -61,6 +61,19 @@ CMakeLists.txt.user*
 **/cedict_to_sqlite/*.db
 *.db
 
+# Data files
+**/cedict_to_sqlite/archive_*
+**/cedict_to_sqlite/developer/*
+**/kaifangcidian_to_sqlite/archive_*
+**/kaifangcidian_to_sqlite/data/*
+**/kaifangcidian_to_sqlite/developer/*
+**/tatoeba_to_sqlite/archive_*
+**/tatoeba_to_sqlite/data/*
+**/tatoeba_to_sqlite/developer/*
+
+# Screenshot files
+docs/screenshots/mac/search/*
+
 # Flatpak builds
 *.flatpak-builder/
 *jyut-dict-flatpak/
