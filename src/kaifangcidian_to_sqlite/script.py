@@ -1,5 +1,5 @@
 import hanzidentifier
-from pypinyin import pinyin, Style
+from pypinyin import lazy_pinyin, Style
 from wordfreq import zipf_frequency
 
 import ast
@@ -24,18 +24,8 @@ class Entry(object):
         self.simplified = simp
         self.pinyin = pin
         self.jyutping = jyut                # An exact match
-        self.fuzzy_jyutping = ''            # A "fuzzy" match (i.e. jyutping matches traditional but not pinyin)
         self.freq = freq
         self.definitions = defs if defs is not None else []
-
-    def add_jyutping(self, jyut):
-        self.jyutping = jyut
-
-    def add_fuzzy_jyutping(self, jyut):
-        if self.fuzzy_jyutping == '':
-            self.fuzzy_jyutping = jyut
-        elif self.fuzzy_jyutping.find(jyut) == -1:
-            self.fuzzy_jyutping += ', ' + jyut
 
     def add_freq(self, freq):
         self.freq = freq
@@ -95,7 +85,7 @@ def write(entries, db_name):
 
     # Add entries to tables
     def entry_to_tuple(entry):
-        return (None, entry.traditional, entry.simplified, entry.pinyin, entry.jyutping if entry.jyutping != '' else entry.fuzzy_jyutping, entry.freq)
+        return (None, entry.traditional, entry.simplified, entry.pinyin, entry.jyutping, entry.freq)
 
     def definition_to_tuple(definition, entry_id, source_id):
         return (None, definition, entry_id, source_id)
@@ -149,7 +139,7 @@ def parse_file(filename_traditional, filename_simplified_jyutping, entries):
     index = 0
     for row in range(len(traditional)):
         if row < 9: # The first nine rows are comments and headers
-          continue
+            continue
 
         trad = traditional[row][0]
 
@@ -160,9 +150,9 @@ def parse_file(filename_traditional, filename_simplified_jyutping, entries):
         # by a space, is a separate entry in the array ('pat pat' => ["pat", "pat"])
         trad_len = len(trad.split(' '))
         if not hanzidentifier.has_chinese(trad):
-          simp = ''.join(simplified[index:index+trad_len])
+            simp = ''.join(simplified[index:index+trad_len])
         else:
-          simp = simplified[index]
+            simp = simplified[index]
         
         # Horrible data workaround 2:
         # In KFCD Jyutping data, the Jyutping for each word in an entry
@@ -177,7 +167,7 @@ def parse_file(filename_traditional, filename_simplified_jyutping, entries):
         jyut_len = len(traditional[row][1].split(' '))
         jyut = ' '.join(simplified[index+trad_len:index+trad_len+jyut_len])
 
-        pin = ' '.join(p[0] for p in pinyin(trad, style=Style.TONE3)).lower()
+        pin = ' '.join(lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True)).lower().replace('v', 'u:')
 
         # Horrible data workaround 3:
         # In the KFCD Yale data, all the definitions are listed as a single item, separated
@@ -187,11 +177,18 @@ def parse_file(filename_traditional, filename_simplified_jyutping, entries):
         # we do NOT need to advance the index by 1 more item (which would have been
         # the definitions).
         if traditional[row][2]:
-          definitions = traditional[row][2].split('，')
-          index += trad_len + jyut_len + 1
+            defs_traditional = traditional[row][2].split('，')
+            defs_simplified = simplified[index+trad_len+jyut_len].split('，')
+            definitions = []
+            for (def_traditional, def_simplified) in zip(defs_traditional, defs_simplified):
+                if def_traditional != def_simplified:
+                    definitions.append(def_traditional + ' – ' + def_simplified)
+                else:
+                    definitions.append(def_traditional)
+            index += trad_len + jyut_len + 1
         else:
-          definitions = ['（没有汉语解释）']
-          index += trad_len + jyut_len
+            definitions = ['（沒有對應漢語詞彙）']
+            index += trad_len + jyut_len
         
         entry = Entry(trad=trad,
                       simp=simp,
@@ -212,8 +209,8 @@ def assign_frequencies(entries):
 
 if __name__ == '__main__':
     if len(sys.argv) != 12:
-        print('Usage: python3 script.py <database filename> <Kaifangcidian traditional file> <Kaifangcidian simplified file> <source name> <source short name> <source version> <source description> <source legal> <source link> <source update url> <source other>')
-        print('e.g. python3 script.py dict.db CEDICT.txt READINGS.txt CC-CEDICT CC 2018-07-09 "CC-CEDICT is a dictionary." "This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License." "http://www.mdbg.net/chindict/chindict.php?page=cc-cedict" "" ""')
+        print('Usage: python3 script.py <database filename> <Kaifangcidian traditional + Yale file> <Kaifangcidian simplified + Jyutping file> <source name> <source short name> <source version> <source description> <source legal> <source link> <source update url> <source other>')
+        print('e.g. python3 script.py kaifangcidian.db cidian_zhyue-ft-kfcd-ylshu-2019623.txt cidian_zhyue-jt-kfcd-yp-2019623.txt Kaifangcidian KFCD 2019-06-23 "Kaifangcidian is a dictionary" "本词典以创作共用“署名 3.0”许可协议授权发布（详见 http://creativecommons.org/licenses/by/3.0/）" "http://www.kaifangcidian.com/han/yue" "" ""')
         sys.exit(1)
 
     entries = {}
