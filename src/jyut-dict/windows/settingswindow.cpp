@@ -7,6 +7,8 @@
 #include "logic/utils/utils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined (Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -50,7 +52,7 @@ SettingsWindow::~SettingsWindow()
 
 void SettingsWindow::changeEvent(QEvent *event)
 {
-#if defined(Q_OS_DARWIN)
+#if defined(Q_OS_DARWIN) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
@@ -71,27 +73,10 @@ void SettingsWindow::setupUI()
 {
     _contentStackedWidget = new QStackedWidget{this};
     _toolBar = new QToolBar{this};
-#ifdef Q_OS_WIN
-    _toolBar->setStyleSheet("QToolBar {"
-                            "   background-color: white;"
-                            "}");
-#elif defined(Q_OS_LINUX)
-    QColor color = QGuiApplication::palette().color(QPalette::AlternateBase);
-    _toolBar->setStyleSheet(QString("QToolBar {"
-                                    "   background: transparent;"
-                                    "   background-color: rgba(%1, %2, %3, %4);"
-                                    "   border-bottom: 1px solid lightgray;"
-                                    "   padding-bottom: 3px;"
-                                    "   padding-top: 3px;"
-                                    "}")
-                                .arg(std::to_string(color.red()).c_str())
-                                .arg(std::to_string(color.green()).c_str())
-                                .arg(std::to_string(color.blue()).c_str())
-                                .arg(0.7));
-#endif
     addToolBar(_toolBar);
     setUnifiedTitleAndToolBarOnMac(true);
     _toolBar->setMovable(false);
+    _toolBar->setContextMenuPolicy(Qt::PreventContextMenu);
 
     QActionGroup *_navigationActionGroup = new QActionGroup{this};
     _navigationActionGroup->setExclusive(true);
@@ -118,13 +103,12 @@ void SettingsWindow::setupUI()
     _contentStackedWidget->addWidget(advancedTab);
 
     ContactTab *contactTab = new ContactTab{this};
-
     _contentStackedWidget->addWidget(contactTab);
 
     setCentralWidget(_contentStackedWidget);
 
     // Customize the look of the toolbar to fit in better with platform styles
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */false);
@@ -162,7 +146,7 @@ void SettingsWindow::setStyle(bool use_dark)
     QColor currentTextColour;
     QColor otherTextColour;
     if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
         selectedBackgroundColour = QGuiApplication::palette()
             .color(QPalette::Inactive, QPalette::Highlight);
 #else
@@ -292,6 +276,27 @@ void SettingsWindow::setStyle(bool use_dark)
                   currentTextColour.name(),
                   otherTextColour.name()));
     setButtonIcon(use_dark, _contentStackedWidget->currentIndex());
+
+    // Customize the bottom of the toolbar
+#ifdef Q_OS_WIN
+    _toolBar->setStyleSheet("QToolBar {"
+                            "   background-color: white;"
+                            "}");
+#elif defined(Q_OS_LINUX)
+    QColor color = QGuiApplication::palette().color(QPalette::AlternateBase);
+    _toolBar->setStyleSheet(QString("QToolBar {"
+                                    "   background: transparent;"
+                                    "   background-color: rgba(%1, %2, %3, %4);"
+                                    "   border-bottom: 1px solid %5;"
+                                    "   padding-bottom: 3px;"
+                                    "   padding-top: 3px;"
+                                    "}")
+                                .arg(std::to_string(color.red()).c_str())
+                                .arg(std::to_string(color.green()).c_str())
+                                .arg(std::to_string(color.blue()).c_str())
+                                .arg(0.7)
+                                .arg(use_dark ? "black" : "lightgray"));
+#endif
 }
 
 void SettingsWindow::setButtonIcon(bool use_dark, int index)
@@ -339,7 +344,7 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
 
 void SettingsWindow::openTab(int tabIndex)
 {
-#if defined(Q_OS_DARWIN)
+#if defined(Q_OS_DARWIN) || defined (Q_OS_LINUX)
     // Set the style to match whether the user started dark mode
     setButtonIcon(Utils::isDarkMode(), tabIndex);
 #else
@@ -368,7 +373,7 @@ void SettingsWindow::openTab(int tabIndex)
 void SettingsWindow::paintWithApplicationState(Qt::ApplicationState state)
 {
     (void) (state);
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
 #else
     setStyle(/* use_dark = */ false);

@@ -65,36 +65,19 @@ void SearchOptionsRadioGroupBox::setupUI()
 {
 
     _layout = new QHBoxLayout{this};
-#ifdef Q_OS_LINUX
-    _layout->setContentsMargins(15, 5, 5, 5);
-#else
-    _layout->setContentsMargins(15, 5, 55, 5);
-#endif
+    _layout->setContentsMargins(15, 0, 55, 0);
 
-    _simplifiedButton = new QRadioButton{this};
-    _traditionalButton = new QRadioButton{this};
-    _jyutpingButton = new QRadioButton{this};
-    _pinyinButton = new QRadioButton{this};
-    _englishButton = new QRadioButton{this};
+    _simplifiedButton = new QRadioButton{};
+    _traditionalButton = new QRadioButton{};
+    _jyutpingButton = new QRadioButton{};
+    _pinyinButton = new QRadioButton{};
+    _englishButton = new QRadioButton{};
 
     _simplifiedButton->setProperty("data", QVariant::fromValue(SearchParameters::SIMPLIFIED));
     _traditionalButton->setProperty("data", QVariant::fromValue(SearchParameters::TRADITIONAL));
     _jyutpingButton->setProperty("data", QVariant::fromValue(SearchParameters::JYUTPING));
     _pinyinButton->setProperty("data", QVariant::fromValue(SearchParameters::PINYIN));
     _englishButton->setProperty("data", QVariant::fromValue(SearchParameters::ENGLISH));
-#ifdef Q_OS_LINUX
-    _simplifiedButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
-    _traditionalButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
-    _jyutpingButton->setStyleSheet("QToolTip { padding: 1px; color: black }");
-    _pinyinButton->setStyleSheet("QToolTip { padding: 1px; color: black; }");
-    _englishButton->setStyleSheet("QToolTip { padding: 1px; color: black; }");
-#else
-    _simplifiedButton->setStyleSheet("QToolTip { padding: 1px; }");
-    _traditionalButton->setStyleSheet("QToolTip { padding: 1px; }");
-    _jyutpingButton->setStyleSheet("QToolTip { padding: 1px; }");
-    _pinyinButton->setStyleSheet("QToolTip { padding: 1px; }");
-    _englishButton->setStyleSheet("QToolTip { padding: 1px; }");
-#endif
 
     connect(_simplifiedButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
     connect(_traditionalButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
@@ -115,7 +98,7 @@ void SearchOptionsRadioGroupBox::setupUI()
     setStyleSheet("QRadioButton[isHan=\"true\"] { font-size: 12px; }"
                   "QGroupBox { border: 0; }");
 #else
-    setStyleSheet("QGroupBox { border: 0; }");
+    setStyleSheet("QGroupBox { border: none; } ");
 #endif
 }
 

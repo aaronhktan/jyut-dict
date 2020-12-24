@@ -8,6 +8,8 @@
 #include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined(Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -40,23 +42,8 @@ MainWindow::MainWindow(QWidget *parent) :
                               Settings::getCurrentLocale().name().toStdString());
     });
 
-    // Set window stuff
-#ifdef Q_OS_LINUX
-    setMinimumSize(QSize(500, 350));
-    resize(600, 450);
-#else
-    setMinimumSize(QSize(800, 600));
-#endif
-
-    // Change theme colours
-#ifndef Q_OS_MAC
-    QPalette defaultPalette = QApplication::palette();
-    defaultPalette.setColor(QPalette::Highlight,
-                            QColor(LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
-                                   LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
-                                   LIST_ITEM_ACTIVE_COLOUR_LIGHT_B));
-    QApplication::setPalette(defaultPalette);
-#endif
+    // Set window size
+    setMinimumSize(QSize{800, 600});
 
     // Instantiate services
     _manager = std::make_shared<SQLDatabaseManager>();
@@ -147,7 +134,7 @@ MainWindow::MainWindow(QWidget *parent) :
     translateUI();
 
     // Set style
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
 #else
@@ -173,6 +160,13 @@ void MainWindow::changeEvent(QEvent *event)
     if (event->type() == QEvent::LanguageChange) {
         translateUI();
     }
+
+#ifdef Q_OS_LINUX
+    if (event->type() == QEvent::PaletteChange) {
+        setStyle(Utils::isDarkMode());
+    }
+#endif
+
     QMainWindow::changeEvent(event);
 }
 
@@ -314,6 +308,63 @@ void MainWindow::setStyle(bool use_dark)
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
 #elif defined(Q_OS_WIN)
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
+    QPalette defaultPalette = QApplication::palette();
+    defaultPalette.setColor(QPalette::Highlight,
+                            QColor(LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
+                                   LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
+                                   LIST_ITEM_ACTIVE_COLOUR_LIGHT_B));
+    QApplication::setPalette(defaultPalette);
+#elif defined(Q_OS_LINUX)
+    if (!use_dark) {
+        QPalette palette = QApplication::style()->standardPalette();
+        palette.setColor(QPalette::Highlight,
+                         QColor{LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
+                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
+                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_B});
+        palette.setColor(QPalette::Inactive, QPalette::Highlight,
+                         QColor{LIST_ITEM_INACTIVE_COLOUR_LIGHT_R,
+                                LIST_ITEM_INACTIVE_COLOUR_LIGHT_G,
+                                LIST_ITEM_INACTIVE_COLOUR_LIGHT_B});
+        qApp->setPalette(palette);
+        qApp->setStyleSheet("");
+    } else {
+        QColor darkGray(53, 53, 53);
+        QColor gray(128, 128, 128);
+
+        QPalette darkPalette;
+        darkPalette.setColor(QPalette::Window, darkGray);
+        darkPalette.setColor(QPalette::WindowText, Qt::white);
+        darkPalette.setColor(QPalette::Base, QColor{BACKGROUND_COLOUR_DARK_R,
+                                                    BACKGROUND_COLOUR_DARK_G,
+                                                    BACKGROUND_COLOUR_DARK_B});
+        darkPalette.setColor(QPalette::AlternateBase, darkGray);
+        darkPalette.setColor(QPalette::ToolTipBase, darkGray);
+        darkPalette.setColor(QPalette::ToolTipText, Qt::white);
+        darkPalette.setColor(QPalette::Text, Qt::white);
+        darkPalette.setColor(QPalette::Button, darkGray);
+        darkPalette.setColor(QPalette::ButtonText, Qt::white);
+        darkPalette.setColor(QPalette::Link, Qt::blue);
+        darkPalette.setColor(QPalette::Highlight,
+                             QColor{LIST_ITEM_ACTIVE_COLOUR_DARK_R,
+                                    LIST_ITEM_ACTIVE_COLOUR_DARK_G,
+                                    LIST_ITEM_ACTIVE_COLOUR_DARK_B});
+        darkPalette.setColor(QPalette::HighlightedText, Qt::white);
+
+        darkPalette.setColor(QPalette::Active, QPalette::Button, gray.darker());
+        darkPalette.setColor(QPalette::Inactive, QPalette::Highlight,
+                             QColor{LIST_ITEM_INACTIVE_COLOUR_DARK_R,
+                                    LIST_ITEM_INACTIVE_COLOUR_DARK_G,
+                                    LIST_ITEM_INACTIVE_COLOUR_DARK_B});
+        darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, gray);
+        darkPalette.setColor(QPalette::Disabled, QPalette::WindowText, gray);
+        darkPalette.setColor(QPalette::Disabled, QPalette::Text, gray);
+        darkPalette.setColor(QPalette::Disabled, QPalette::Light, darkGray);
+
+        qApp->setPalette(darkPalette);
+        // For some reason, if I don't set this, text in dark mode paints as black
+        // (even for all widgets that are not tooltips)
+        qApp->setStyleSheet("QToolTip { color: #ffffff; border: 1px solid white; }");
+    }
 #endif
 }
 

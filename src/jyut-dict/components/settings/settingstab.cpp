@@ -8,6 +8,8 @@
 #include "logic/utils/utils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined (Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
 #endif
 
 #include <QApplication>
@@ -29,7 +31,7 @@ SettingsTab::SettingsTab(QWidget *parent)
 
 void SettingsTab::changeEvent(QEvent *event)
 {
-#if defined(Q_OS_DARWIN)
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
@@ -111,7 +113,7 @@ void SettingsTab::setupUI()
     _tabLayout->addRow(_resetButton);
     _tabLayout->setAlignment(_resetButton, Qt::AlignRight);
 
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
 #else

@@ -13,11 +13,7 @@ SentenceResultListView::SentenceResultListView(QWidget *parent)
     : QListView(parent)
 {
     setFrameShape(QFrame::NoFrame);
-#ifdef Q_OS_LINUX
-    setMinimumWidth(200);
-#else
     setMinimumWidth(250);
-#endif
 
     _delegate = new SentenceResultListDelegate{this};
     setItemDelegate(_delegate);

@@ -10,6 +10,11 @@
 #include <QThread>
 #include <QVariant>
 
+// Watch out!
+// On Linux, define DEBUG and PORTABLE to find the database in the same directory as executable,
+// FLATPAK or APPIMAGE for the image one directory above,
+// or nothing for the .deb
+
 SQLDatabaseManager::SQLDatabaseManager()
 {
     // Delete the old version of the dictionary

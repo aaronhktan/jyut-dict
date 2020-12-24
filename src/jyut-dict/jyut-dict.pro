@@ -198,6 +198,7 @@ HEADERS += \
     logic/update/iupdatechecker.h \
     logic/utils/qvariantutils.h \
     logic/utils/utils.h \
+    logic/utils/utils_linux.h \
     logic/utils/utils_mac.h \
     logic/utils/utils_qt.h \
     windows/aboutwindow.h \
@@ -272,6 +273,8 @@ win32: {
 }
 
 unix:!macx {
+    SOURCES += logic/utils/utils_linux.cpp
+
     FLATPAK {
         binfile.extra = cp \"$$system_path($$OUT_PWD)/Jyut Dictionary\" $$system_path($$OUT_PWD)/jyut-dict
         binfile.files += $$system_path($$OUT_PWD)/jyut-dict

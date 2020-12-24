@@ -20,11 +20,7 @@ EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
 
     setWidget(_scrollAreaWidget);
     setWidgetResizable(true); // IMPORTANT! This makes the scrolling widget resize correctly.
-#ifdef Q_OS_LINUX
-    setMinimumWidth(250);
-#else
     setMinimumWidth(350);
-#endif
 
 #ifdef Q_OS_WIN
     connect(this,

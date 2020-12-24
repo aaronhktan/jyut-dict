@@ -33,6 +33,9 @@ private:
 
     void initializeUpdateCheckbox(QCheckBox &checkbox);
     void initializeAnalyticsCheckbox(QCheckBox &checkbox);
+#ifdef Q_OS_LINUX
+    void initializeForceDarkModeCheckbox(QCheckBox &checkbox);
+#endif
     void initializeLanguageCombobox(QComboBox &combobox);
 
     void exportUserDatabase(void);
@@ -43,6 +46,9 @@ private:
 
     QCheckBox *_updateCheckbox;
     QCheckBox *_analyticsCheckbox;
+#ifdef Q_OS_LINUX
+    QCheckBox *_forceDarkModeCheckbox;
+#endif
     QPushButton *_exportUserDatabaseButton;
     QComboBox *_languageCombobox;
 

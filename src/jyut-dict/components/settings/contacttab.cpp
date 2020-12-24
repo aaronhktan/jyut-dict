@@ -5,6 +5,8 @@
 #include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined (Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
 #endif
 
 #include <QCoreApplication>
@@ -24,7 +26,7 @@ ContactTab::ContactTab(QWidget *parent)
 
 void ContactTab::changeEvent(QEvent *event)
 {
-#if defined(Q_OS_DARWIN)
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
@@ -113,7 +115,7 @@ void ContactTab::setupUI()
     _tabLayout->addWidget(_otherSourcesLabel, 7, 0, 1, -1, Qt::AlignHCenter);
     _tabLayout->addWidget(_otherSources, 8, 0, 1, -1, Qt::AlignHCenter);
 
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
 #else

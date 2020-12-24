@@ -113,8 +113,7 @@ QDataStream &operator<<(QDataStream &stream, T enumValue)
     return stream;
 }
 
-template<typename T,
-         typename = typename std::enable_if<std::is_enum<T>::value>::type>
+template<typename T, typename U = std::enable_if_t<std::is_enum<T>::value>>
 QDataStream &operator>>(QDataStream &stream, T &e)
 {
     std::underlying_type_t<T> v;
