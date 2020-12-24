@@ -24,7 +24,7 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="+115"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="+129"/>
         <source>Automatically check for updates on startup:</source>
         <translation>自动检查更新：</translation>
     </message>
@@ -34,7 +34,12 @@
         <translation>启用遥测：</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
+        <source>Enable dark mode:</source>
+        <translation>使用深色模式：</translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>Application language:</source>
         <translation>软件语言：</translation>
     </message>
@@ -64,12 +69,12 @@
         <translation>繁体中文</translation>
     </message>
     <message>
-        <location line="+106"/>
+        <location line="+125"/>
         <source>Path to save exported database</source>
         <translation>保存文件至</translation>
     </message>
     <message>
-        <location line="-111"/>
+        <location line="-130"/>
         <source>French (CA)</source>
         <translation>法文（加拿大）</translation>
     </message>
@@ -97,7 +102,7 @@
 <context>
     <name>ContactTab</name>
     <message>
-        <location filename="../../components/settings/contacttab.cpp" line="+148"/>
+        <location filename="../../components/settings/contacttab.cpp" line="+150"/>
         <source>Email...</source>
         <translation>发送电子邮件…</translation>
     </message>
@@ -236,7 +241,7 @@
 <context>
     <name>EntryActionWidget</name>
     <message>
-        <location filename="../../components/entryview/entryactionwidget.cpp" line="+107"/>
+        <location filename="../../components/entryview/entryactionwidget.cpp" line="+109"/>
         <source>Saved!</source>
         <translation>已保存！</translation>
     </message>
@@ -251,7 +256,7 @@
         <translation>分享</translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="+88"/>
         <source>Path to save exported image</source>
         <translation>保存文件至</translation>
     </message>
@@ -282,7 +287,7 @@
 <context>
     <name>EntryViewSentenceCardSection</name>
     <message>
-        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="+79"/>
+        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="+96"/>
         <source>View all sentences →</source>
         <translation>查看所有例句 →</translation>
     </message>
@@ -290,7 +295,7 @@
 <context>
     <name>FavouriteSplitter</name>
     <message>
-        <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="+70"/>
+        <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="+68"/>
         <source>Saved Words</source>
         <translation>已保存词语</translation>
     </message>
@@ -298,7 +303,7 @@
 <context>
     <name>HistoryWindow</name>
     <message>
-        <location filename="../../windows/historywindow.cpp" line="+60"/>
+        <location filename="../../windows/historywindow.cpp" line="+62"/>
         <location line="+11"/>
         <source>Search History</source>
         <translation>搜索历史</translation>
@@ -318,7 +323,7 @@
 <context>
     <name>LoadingWidget</name>
     <message>
-        <location filename="../../components/sentencecard/loadingwidget.cpp" line="+69"/>
+        <location filename="../../components/sentencecard/loadingwidget.cpp" line="+71"/>
         <source>Searching for example sentences...</source>
         <translation>搜索例句…</translation>
     </message>
@@ -377,30 +382,30 @@
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="+237"/>
-        <location line="+104"/>
+        <location line="+161"/>
         <source>&amp;File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location line="-103"/>
-        <location line="+104"/>
+        <location line="-160"/>
+        <location line="+161"/>
         <source>&amp;Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location line="-103"/>
-        <location line="+105"/>
+        <location line="-160"/>
+        <location line="+162"/>
         <source>&amp;Window</source>
         <translation>窗口</translation>
     </message>
     <message>
-        <location line="-103"/>
-        <location line="+104"/>
+        <location line="-160"/>
+        <location line="+161"/>
         <source>&amp;Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location line="-102"/>
+        <location line="-159"/>
         <source>&amp;About</source>
         <translation>关于粤语字典</translation>
     </message>
@@ -421,12 +426,12 @@
     </message>
     <message>
         <location line="+2"/>
-        <location line="+114"/>
+        <location line="+171"/>
         <source>Change settings</source>
         <translation>更改设置</translation>
     </message>
     <message>
-        <location line="-112"/>
+        <location line="-169"/>
         <source>Close Window</source>
         <translation>关闭窗口</translation>
     </message>
@@ -545,7 +550,7 @@
     </message>
     <message>
         <location line="-41"/>
-        <location line="+103"/>
+        <location line="+160"/>
         <source>&amp;Search</source>
         <translation>搜索</translation>
     </message>
@@ -637,7 +642,7 @@
 <context>
     <name>ResultListModel</name>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="+47"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="+83"/>
         <source>Welcome!</source>
         <translation>欢迎使用粤语字典！</translation>
     </message>
@@ -720,7 +725,7 @@
 <context>
     <name>SearchHistoryListDelegate</name>
     <message>
-        <location filename="../../components/historyview/searchhistorylistdelegate.cpp" line="+114"/>
+        <location filename="../../components/historyview/searchhistorylistdelegate.cpp" line="+118"/>
         <source>After searching for a word, you will find it in this list. Selecting a word will allow you to do the same search again.</source>
         <translation>您查字典之后就会在这里找到您的搜素历史。如果您想再次搜素，您可以选择表中的任何一个词语。</translation>
     </message>
@@ -736,7 +741,7 @@
 <context>
     <name>SearchHistoryTab</name>
     <message>
-        <location filename="../../components/historyview/searchhistorytab.cpp" line="+79"/>
+        <location filename="../../components/historyview/searchhistorytab.cpp" line="+81"/>
         <source>Clear All Search History</source>
         <translation>清除搜索历史</translation>
     </message>
@@ -752,7 +757,7 @@
 <context>
     <name>SearchOptionsRadioGroupBox</name>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="+134"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="+117"/>
         <source>SC</source>
         <translation>简体中文</translation>
     </message>
@@ -805,7 +810,7 @@
 <context>
     <name>SentenceSplitter</name>
     <message>
-        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="+82"/>
+        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="+84"/>
         <source>Sentences for %1 (%2 result)</source>
         <translation>用“%1“造句：（%2 条结果）</translation>
     </message>
@@ -818,7 +823,7 @@
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="+198"/>
+        <location filename="../../components/settings/settingstab.cpp" line="+200"/>
         <source>Reset all settings</source>
         <translation>重置所有设置</translation>
     </message>
@@ -946,7 +951,7 @@
 <context>
     <name>SettingsWindow</name>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="+146"/>
+        <location filename="../../windows/settingswindow.cpp" line="+130"/>
         <source>General</source>
         <translation>通用</translation>
     </message>
@@ -979,7 +984,7 @@
 <context>
     <name>UpdateWindow</name>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="+152"/>
+        <location filename="../../windows/updatewindow.cpp" line="+154"/>
         <source>Update Available!</source>
         <translation>更新可用！</translation>
     </message>
@@ -1041,7 +1046,7 @@
 <context>
     <name>ViewHistoryTab</name>
     <message>
-        <location filename="../../components/historyview/viewhistorytab.cpp" line="+79"/>
+        <location filename="../../components/historyview/viewhistorytab.cpp" line="+81"/>
         <source>Clear All View History</source>
         <translation>清除查看历史</translation>
     </message>

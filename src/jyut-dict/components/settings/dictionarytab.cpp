@@ -190,7 +190,7 @@ void DictionaryTab::populateDictionaryList()
                               sources.at(row).getName());
         _list->model()->setData(_list->model()->index(static_cast<int>(row), 0),
                                 QVariant::fromValue(sources.at(row)));
-    };
+    }
 }
 
 void DictionaryTab::addDictionary(QString &dictionaryFile)
