@@ -23,7 +23,7 @@ class Entry(object):
         self.traditional = trad
         self.simplified = simp
         self.pinyin = pin
-        self.jyutping = jyut                # An exact match
+        self.jyutping = jyut
         self.freq = freq
         self.definitions = defs if defs is not None else []
 
@@ -225,3 +225,4 @@ if __name__ == '__main__':
     parse_file(sys.argv[2], sys.argv[3], entries)
     assign_frequencies(entries)
     write(entries, sys.argv[1])
+
