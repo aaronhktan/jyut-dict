@@ -48,6 +48,11 @@ void FavouriteSplitter::setupUI()
             this,
             &FavouriteSplitter::handleDoubleClick);
 
+    connect(_resultListView->selectionModel(),
+            &QItemSelectionModel::currentChanged,
+            _entryScrollArea,
+            &EntryScrollArea::stallUIUpdate);
+
     setHandleWidth(1);
     setCollapsible(0, false);
     setCollapsible(1, false);
@@ -124,6 +129,7 @@ void FavouriteSplitter::handleDoubleClick(const QModelIndex &selection)
 #ifndef Q_OS_MAC
         area->setWindowTitle(" ");
 #endif
+        emit area->stallUIUpdate();
         area->show();
     });
 }
