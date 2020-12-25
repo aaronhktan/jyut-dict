@@ -35,7 +35,7 @@ private:
     EntryActionWidget *_entryActionWidget;
     EntryContentWidget *_entryContentWidget;
 
-#ifdef Q_OS_WIN
+#ifndef Q_OS_LINUX
 signals:
     void stallUIUpdate(void);
 #endif

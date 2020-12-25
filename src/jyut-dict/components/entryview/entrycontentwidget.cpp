@@ -34,7 +34,7 @@ EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manag
             this,
             &EntryContentWidget::showSentenceSection);
 
-#ifdef Q_OS_WIN
+#ifndef Q_OS_LINUX
     connect(this,
             &EntryContentWidget::stallUIUpdate,
             _sentenceSection,

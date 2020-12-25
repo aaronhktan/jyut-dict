@@ -13,7 +13,7 @@ EntryViewSentenceCardSection::EntryViewSentenceCardSection(std::shared_ptr<SQLDa
     : QWidget(parent),
     _manager{manager}
 {
-#ifdef Q_OS_WIN
+#ifndef Q_OS_LINUX
     _enableUIUpdateTimer = new QTimer{this};
     _updateUITimer = new QTimer{this};
 #endif
@@ -28,7 +28,7 @@ EntryViewSentenceCardSection::EntryViewSentenceCardSection(std::shared_ptr<SQLDa
     // Q_DECLARE_METATYPE and qRegisterMetaType must be called.
     qRegisterMetaType<std::vector<SourceSentence>>();
     qRegisterMetaType<sentenceSamples>();
-#ifdef Q_OS_WIN
+#ifndef Q_OS_LINUX
     QObject::connect(this,
                      &EntryViewSentenceCardSection::callbackInvoked,
                      this,
@@ -159,7 +159,7 @@ void EntryViewSentenceCardSection::setEntry(const Entry &entry)
     _timer->setInterval(1000);
     _timer->setSingleShot(true);
     QObject::connect(_timer, &QTimer::timeout, this, [=]() {
-#ifdef Q_OS_WIN
+#ifndef Q_OS_LINUX
         if (!_calledBack && _enableUIUpdate) {
             showLoadingWidget();
         }
@@ -224,7 +224,7 @@ void EntryViewSentenceCardSection::updateUI(
     emit finishedAddingCards();
 }
 
-#ifdef Q_OS_WIN
+#ifndef Q_OS_LINUX
 void EntryViewSentenceCardSection::stallUIUpdate(void)
 {
     _enableUIUpdate = false;

@@ -35,7 +35,7 @@ public slots:
     void hideSentenceSection(void);
     void showSentenceSection(void);
 
-#ifdef Q_OS_WIN
+#ifndef Q_OS_LINUX
 signals:
     void stallUIUpdate(void);
 #endif

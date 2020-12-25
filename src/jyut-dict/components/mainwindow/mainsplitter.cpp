@@ -45,7 +45,7 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
             this,
             &MainSplitter::handleDoubleClick);
 
-#ifdef Q_OS_WIN
+#ifndef Q_OS_LINUX
     connect(this,
             &MainSplitter::forwardSearchBarTextChange,
             _entryScrollArea,
@@ -183,7 +183,7 @@ void MainSplitter::handleDoubleClick(const QModelIndex &selection)
 #ifndef Q_OS_MAC
         area->setWindowTitle(" ");
 #endif
-#ifdef Q_OS_WIN
+#ifndef Q_OS_LINUX
         emit area->stallUIUpdate();
 #endif
         area->show();

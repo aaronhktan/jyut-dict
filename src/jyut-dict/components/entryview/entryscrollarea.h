@@ -33,7 +33,7 @@ private:
 
     EntryScrollAreaWidget *_scrollAreaWidget;
 
-#ifdef Q_OS_WIN
+#ifndef Q_OS_LINUX
 signals:
     void stallUIUpdate(void);
 #endif

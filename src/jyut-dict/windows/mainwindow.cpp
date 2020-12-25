@@ -105,7 +105,7 @@ MainWindow::MainWindow(QWidget *parent) :
             &MainWindow::viewHistoryClicked,
             _mainSplitter,
             &MainSplitter::forwardViewHistoryItem);
-#ifdef Q_OS_WIN
+#ifndef Q_OS_LINUX
     connect(_mainToolBar,
             &MainToolBar::searchBarTextChange,
             _mainSplitter,
