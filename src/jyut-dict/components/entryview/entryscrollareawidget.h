@@ -35,10 +35,8 @@ private:
     EntryActionWidget *_entryActionWidget;
     EntryContentWidget *_entryContentWidget;
 
-#ifndef Q_OS_LINUX
 signals:
     void stallUIUpdate(void);
-#endif
 };
 
 #endif // ENTRYSCROLLAREAWIDGET_H

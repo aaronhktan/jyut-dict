@@ -35,12 +35,10 @@ MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
     _searchOptions->registerLineEdit(_searchBar);
     _optionsBox = new SearchOptionsRadioGroupBox(_searchOptions, this);
 
-#ifndef Q_OS_LINUX
     connect(_searchBar,
             &QLineEdit::textChanged,
             this,
             &MainToolBar::searchBarTextChange);
-#endif
 
     setupUI();
 }

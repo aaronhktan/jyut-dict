@@ -37,12 +37,10 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(std::shared_ptr<SQLUserDataUtils> s
     setStyle(/* use_dark = */false);
 #endif
 
-#ifndef Q_OS_LINUX
     connect(this,
             &EntryScrollAreaWidget::stallUIUpdate,
             _entryContentWidget,
             &EntryContentWidget::stallUIUpdate);
-#endif
 }
 
 void EntryScrollAreaWidget::changeEvent(QEvent *event)

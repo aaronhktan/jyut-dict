@@ -33,10 +33,8 @@ private:
 
     EntryScrollAreaWidget *_scrollAreaWidget;
 
-#ifndef Q_OS_LINUX
 signals:
     void stallUIUpdate(void);
-#endif
 };
 
 #endif // ENTRYSCROLLAREA_H

@@ -34,12 +34,10 @@ EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manag
             this,
             &EntryContentWidget::showSentenceSection);
 
-#ifndef Q_OS_LINUX
     connect(this,
             &EntryContentWidget::stallUIUpdate,
             _sentenceSection,
             &EntryViewSentenceCardSection::stallUIUpdate);
-#endif
 }
 
 EntryContentWidget::~EntryContentWidget()

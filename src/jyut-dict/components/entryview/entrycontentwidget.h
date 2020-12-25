@@ -35,10 +35,8 @@ public slots:
     void hideSentenceSection(void);
     void showSentenceSection(void);
 
-#ifndef Q_OS_LINUX
 signals:
     void stallUIUpdate(void);
-#endif
 };
 
 #endif // ENTRYCONTENTWIDGET_H

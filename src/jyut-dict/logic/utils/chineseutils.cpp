@@ -79,7 +79,7 @@ std::string applyColours(
         int tone = 0;
         try {
             tone = tones.at(pos);
-        } catch (const std::out_of_range /*&e*/) {
+        } catch (const std::out_of_range &/*e*/) {
             coloured_string += originalCharacter;
             //            std::cerr << "Couldn't get tone for character"
             //                      << converter.to_bytes(character)
