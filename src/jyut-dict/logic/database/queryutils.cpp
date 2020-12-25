@@ -115,7 +115,7 @@ std::vector<SourceSentence> parseSentences(QSqlQuery &query)
 
         // Put target sentences in the correct SentenceSet
         std::vector<SentenceSet> sentenceSets = {};
-        for (std::string targetSentenceData : targetSentencesData) {
+        for (std::string &targetSentenceData : targetSentencesData) {
             SentenceSet *set;
 
             // Currently, layout of sentences column is
