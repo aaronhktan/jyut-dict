@@ -28,6 +28,7 @@ class ResultListModel : public QAbstractListModel, public ISearchObserver
 public:
     explicit ResultListModel(std::shared_ptr<ISearchObservable> sqlSearch,
                              std::vector<Entry> entries,
+                             bool isFavouritesList = false,
                              QObject *parent = nullptr);
     ~ResultListModel() override;
 

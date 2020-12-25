@@ -22,7 +22,7 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
 
     _entryScrollArea = new EntryScrollArea{sqlUserUtils, manager, this};
     _resultListView = new ResultListView{this};
-    _model = new ResultListModel{sqlSearch, {}, this};
+    _model = new ResultListModel{sqlSearch, {}, false, this};
     _resultListView->setModel(_model);
 
     addWidget(_resultListView);
