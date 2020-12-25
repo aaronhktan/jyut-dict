@@ -41,6 +41,12 @@ namespace Utils {
     constexpr auto PORTABILITY = "install";
 #endif
 
+#ifdef Q_OS_WIN
+    constexpr auto SAME_CHARACTER_STRING = "−";
+#else
+    constexpr auto SAME_CHARACTER_STRING = "－";
+#endif
+
     // Index of buttons for Searching
     enum ButtonOptionIndex {
         SIMPLIFIED_BUTTON_INDEX,

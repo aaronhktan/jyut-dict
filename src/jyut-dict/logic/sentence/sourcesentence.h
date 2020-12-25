@@ -76,9 +76,6 @@ private:
     bool _isWelcome = false;
     bool _isEmpty = false;
 
-    std::vector<std::string> explodePhonetic(const std::string &string,
-                                             const char delimiter) const;
-    std::string createPrettyPinyin(void);
 };
 
 // Required for QueuedConnection

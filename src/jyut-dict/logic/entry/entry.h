@@ -31,7 +31,7 @@ public:
     Entry(const Entry &entry);
     Entry(const Entry &&entry);
 
-    ~Entry();
+    ~Entry() override;
 
     Entry &operator=(const Entry &entry);
     Entry &operator=(const Entry &&entry);
@@ -111,16 +111,6 @@ private:
 
     bool _isWelcome = false;
     bool _isEmpty = false;
-
-    std::string applyColours(std::string original,
-                             std::vector<int> tones,
-                             EntryColourPhoneticType type = EntryColourPhoneticType::JYUTPING) const;
-    void compareStrings(std::string original, std::string comparison,
-                        std::string &returnString);
-
-    std::vector<std::string> explodePhonetic(const std::string &string,
-                                             const char delimiter) const;
-    std::string createPrettyPinyin(void);
 };
 
 Q_DECLARE_METATYPE(Entry);

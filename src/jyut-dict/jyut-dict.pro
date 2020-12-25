@@ -107,6 +107,7 @@ SOURCES += \
     logic/settings/settings.cpp \
     logic/settings/settingsutils.cpp \
     logic/update/githubreleasechecker.cpp \
+    logic/utils/chineseutils.cpp \
     logic/utils/utils.cpp \
     logic/utils/utils_qt.cpp \
     windows/aboutwindow.cpp \
@@ -196,6 +197,7 @@ HEADERS += \
     logic/strings/strings.h \
     logic/update/githubreleasechecker.h \
     logic/update/iupdatechecker.h \
+    logic/utils/chineseutils.h \
     logic/utils/qvariantutils.h \
     logic/utils/utils.h \
     logic/utils/utils_linux.h \
