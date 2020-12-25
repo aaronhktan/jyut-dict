@@ -9,7 +9,7 @@
 namespace ChineseUtils {
 
 std::string applyColours(
-    std::string &original,
+    std::string original,
     std::vector<int> &tones,
     std::vector<std::string> &jyutpingToneColours,
     std::vector<std::string> &pinyinToneColours,
@@ -38,10 +38,10 @@ std::string applyColours(
 // Example return values with an entry Traditional: 身體, Simplified: 身体
 // With EntryCharactersOptions::PREFER_SIMPLIFIED:  "身体 {－體}"
 // With EntryCharactersOptions::PREFER_TRADITIONAL: "身體 {－体}"
-std::string compareStrings(std::string &original,
-                           std::string &comparison);
+std::string compareStrings(std::string original,
+                           std::string comparison);
 
-std::string createPrettyPinyin(std::string &pinyin);
+std::string createPrettyPinyin(std::string pinyin);
 
 
 }

@@ -1,7 +1,6 @@
 #ifndef SETTINGSWINDOW_H
 #define SETTINGSWINDOW_H
 
-#include "logic/analytics/analytics.h"
 #include "logic/database/sqldatabasemanager.h"
 
 #include <QAction>
@@ -37,8 +36,6 @@ private:
 
     void setButtonIcon(bool use_dark, int index);
     void openTab(int tabIndex);
-
-    Analytics *_analytics;
 
     QWidget *_parent;
 

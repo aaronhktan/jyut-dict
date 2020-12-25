@@ -18,7 +18,6 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     , _search{sqlSearch}
     , _sqlHistoryUtils{sqlHistoryUtils}
 {
-    _analytics = new Analytics{this};
     _addToHistoryTimer = new QTimer{this};
 
     _entryScrollArea = new EntryScrollArea{sqlUserUtils, manager, this};
@@ -126,16 +125,6 @@ void MainSplitter::prepareEntry(Entry &entry)
 
 void MainSplitter::prepareEntry(Entry &entry, bool addToHistory)
 {
-    if (Settings::getSettings()
-            ->value("Advanced/analyticsEnabled", QVariant{true})
-            .toBool()
-        && addToHistory) {
-        _analytics->sendEvent("entry",
-                              "view",
-                              entry.getTraditional() + " / "
-                                  + entry.getSimplified());
-    }
-
     if (addToHistory) {
         // Only add to history after a few seconds of viewing an entry
         _addToHistoryTimer->stop();

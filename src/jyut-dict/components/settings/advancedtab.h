@@ -1,7 +1,6 @@
 #ifndef ADVANCEDTAB_H
 #define ADVANCEDTAB_H
 
-#include "logic/analytics/analytics.h"
 #include "logic/settings/settingsutils.h"
 
 #include <QCheckBox>
@@ -32,7 +31,6 @@ private:
     void setStyle(bool use_dark);
 
     void initializeUpdateCheckbox(QCheckBox &checkbox);
-    void initializeAnalyticsCheckbox(QCheckBox &checkbox);
 #ifdef Q_OS_LINUX
     void initializeForceDarkModeCheckbox(QCheckBox &checkbox);
 #endif
@@ -42,10 +40,7 @@ private:
 
     bool _paletteRecentlyChanged = false;
 
-    Analytics *_analytics;
-
     QCheckBox *_updateCheckbox;
-    QCheckBox *_analyticsCheckbox;
 #ifdef Q_OS_LINUX
     QCheckBox *_forceDarkModeCheckbox;
 #endif

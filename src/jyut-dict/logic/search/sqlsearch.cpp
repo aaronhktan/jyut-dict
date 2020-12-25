@@ -448,9 +448,6 @@ void SQLSearch::searchByUniqueThread(const QString simplified,
 
 // To search for sentences, use the sentence_links table to JOIN
 // between the chinese and non_chinese_sentences tables.
-//
-// Sleep for 50ms after finding the search result to prevent some problems
-// with searching too fast.
 void SQLSearch::searchTraditionalSentencesThread(const QString searchTerm,
                                                  const unsigned long long queryID)
 {
@@ -723,23 +720,6 @@ int SQLSearch::segmentJyutping(const QString &string,
     }
 
     return 0;
-}
-
-// explodePhonetic takes a string and a delimiter, then separates that string up
-// into its components as delimited by, you guessed it, the delimiter.
-// Similar to the .split() function in Python and JavaScript.
-std::vector<std::string> SQLSearch::explodePhonetic(const QString &string,
-                                                    const char delimiter)
-{
-    std::vector<std::string> words;
-    std::stringstream ss(string.toStdString());
-    std::string word;
-
-    while (std::getline(ss, word, delimiter)) {
-        words.push_back(word);
-    }
-
-    return words;
 }
 
 // implodePhonetic does the opposite of explodePhonetic, i.e. it takes a vector

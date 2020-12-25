@@ -24,9 +24,6 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
 {
     _manager = manager;
 
-    _analytics = new Analytics{this};
-    _analytics->sendScreenview("Settings");
-
     setupUI();
     translateUI();
 
@@ -363,11 +360,6 @@ void SettingsWindow::openTab(int tabIndex)
     }
 
     _contentStackedWidget->setCurrentIndex(tabIndex);
-
-    _analytics->sendScreenview(
-        _actions[static_cast<std::vector<QAction *>::size_type>(tabIndex)]
-            ->text()
-            .toStdString());
 }
 
 void SettingsWindow::paintWithApplicationState(Qt::ApplicationState state)

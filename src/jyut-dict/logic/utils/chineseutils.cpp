@@ -35,7 +35,7 @@ const static std::unordered_map<std::string, std::vector<std::string>> replaceme
 };
 
 std::string applyColours(
-    std::string &original,
+    std::string original,
     std::vector<int> &tones,
     std::vector<std::string> &jyutpingToneColours,
     std::vector<std::string> &pinyinToneColours,
@@ -118,8 +118,8 @@ std::string applyColours(
     return coloured_string;
 }
 
-std::string compareStrings(std::string &original,
-                           std::string &comparison)
+std::string compareStrings(std::string original,
+                           std::string comparison)
 {
     std::string result;
 
@@ -155,7 +155,7 @@ std::string compareStrings(std::string &original,
     return result;
 }
 
-std::string createPrettyPinyin(std::string &pinyin)
+std::string createPrettyPinyin(std::string pinyin)
 {
     std::string result;
 

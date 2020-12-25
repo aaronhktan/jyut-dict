@@ -10,7 +10,6 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *m
     QGroupBox(parent)
 {
     _mediator = mediator;
-    _analytics = new Analytics{this};
 
     setupUI();
     translateUI();
@@ -132,9 +131,6 @@ void SearchOptionsRadioGroupBox::notifyMediator()
     QRadioButton *button = static_cast<QRadioButton *>(QObject::sender());
 
     std::string language = button->text().toStdString();
-    QTimer::singleShot(100, this, [=]() {
-        _analytics->sendEvent("search", "optionsChange", language);
-    });
 
     Settings::getSettings()->setValue("SearchOptionsRadioGroupBox/lastSelected",
                                       button->property("data"));

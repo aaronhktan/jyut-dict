@@ -14,8 +14,6 @@ FavouriteSplitter::FavouriteSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUt
     , _sqlUserUtils{sqlUserUtils}
     , _manager{manager}
 {
-    _analytics = new Analytics{this};
-
     setupUI();
     translateUI();
 
@@ -86,15 +84,6 @@ void FavouriteSplitter::openCurrentSelectionInNewWindow(void)
 
 void FavouriteSplitter::prepareEntry(Entry &entry)
 {
-    if (Settings::getSettings()
-            ->value("Advanced/analyticsEnabled", QVariant{true})
-            .toBool()) {
-        _analytics->sendEvent("entry",
-                              "view",
-                              entry.getTraditional() + " / "
-                                  + entry.getSimplified());
-    }
-
     entry.refreshColours(
         Settings::getSettings()
             ->value("entryColourPhoneticType",

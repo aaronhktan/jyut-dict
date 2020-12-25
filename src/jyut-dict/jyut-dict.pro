@@ -95,7 +95,6 @@ SOURCES += \
     dialogs/entryspeakerrordialog.cpp \
     dialogs/noupdatedialog.cpp \
     dialogs/resetsettingsdialog.cpp \
-    logic/analytics/analytics.cpp \
     logic/database/sqldatabasemanager.cpp \
     logic/database/sqldatabaseutils.cpp \
     logic/dictionary/dictionarymetadata.cpp \
@@ -170,8 +169,6 @@ HEADERS += \
     dialogs/entryspeakerrordialog.h \
     dialogs/noupdatedialog.h \
     dialogs/resetsettingsdialog.h \
-    logic/analytics/analytics.h \
-    logic/analytics/analyticsconfig.h \
     logic/database/sqldatabasemanager.h \
     logic/database/sqldatabaseutils.h \
     logic/database/sqluserdatautils.h \

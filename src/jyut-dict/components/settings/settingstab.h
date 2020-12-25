@@ -2,7 +2,6 @@
 #define SETTINGSTAB_H
 
 #include "dialogs/resetsettingsdialog.h"
-#include "logic/analytics/analytics.h"
 #include "logic/settings/settingsutils.h"
 
 #include <QColor>
@@ -73,8 +72,6 @@ private:
     void setPinyinColourWidgetDefault(QWidget &pinyinColourWidget);
 
     bool _paletteRecentlyChanged = false;
-
-    Analytics *_analytics;
 
     QComboBox *_characterCombobox;
     QComboBox *_phoneticCombobox;
