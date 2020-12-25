@@ -55,9 +55,6 @@ private:
     void searchAllViewHistoryThread(void);
     void clearAllViewHistoryThread(void);
 
-    std::vector<searchTermHistoryItem> parseStrings(QSqlQuery &query);
-    std::vector<Entry> parseEntries(QSqlQuery &query);
-
     std::list<ISearchObserver *> _observers;
 
     std::shared_ptr<SQLDatabaseManager> _manager;

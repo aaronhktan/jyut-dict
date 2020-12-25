@@ -1,12 +1,12 @@
-#include "queryutils.h"
+#include "queryparseutils.h"
 
 #include "logic/utils/utils.h"
 
 #include <QSqlRecord>
 
-namespace QueryUtils {
+namespace QueryParseUtils {
 
-std::vector<Entry> parseEntries(QSqlQuery &query)
+std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
 {
     std::vector<Entry> entries;
 
@@ -14,7 +14,8 @@ std::vector<Entry> parseEntries(QSqlQuery &query)
     int traditionalIndex = query.record().indexOf("traditional");
     int jyutpingIndex = query.record().indexOf("jyutping");
     int pinyinIndex = query.record().indexOf("pinyin");
-    int definitionIndex = query.record().indexOf("definitions");
+    int definitionIndex = parseDefinitions ?
+                query.record().indexOf("definitions") : 0;
 
     while (query.next()) {
         // Get fields from table
@@ -37,33 +38,36 @@ std::vector<Entry> parseEntries(QSqlQuery &query)
 
         // Put definitions in the correct DefinitionsSet
         std::vector<DefinitionsSet> definitionsSets = {};
-        for (std::string &definition : definitions) {
-            DefinitionsSet *set;
-            std::string source = definition.substr(0,
-                                                   definition.find_first_of(
-                                                       " "));
 
-            // Search definitionsSets for a matching set (i.e. set with same source)
-            // Create a new DefinitionsSet for set if it no matches found
-            // Then get a handle on that set
-            auto search = std::find_if(definitionsSets.begin(),
-                                       definitionsSets.end(),
-                                       [source,
-                                        definition](const DefinitionsSet &set) {
-                                           return set.getSource() == source;
-                                       });
-            if (search == definitionsSets.end()) {
-                definitionsSets.push_back(DefinitionsSet{source});
-                set = &definitionsSets.back();
-            } else {
-                set = &*search;
+        if (parseDefinitions) {
+            for (std::string &definition : definitions) {
+                DefinitionsSet *set;
+                std::string source = definition.substr(0,
+                                                       definition.find_first_of(
+                                                           " "));
+
+                // Search definitionsSets for a matching set (i.e. set with same source)
+                // Create a new DefinitionsSet for set if it no matches found
+                // Then get a handle on that set
+                auto search = std::find_if(definitionsSets.begin(),
+                                           definitionsSets.end(),
+                                           [source,
+                                            definition](const DefinitionsSet &set) {
+                                               return set.getSource() == source;
+                                           });
+                if (search == definitionsSets.end()) {
+                    definitionsSets.push_back(DefinitionsSet{source});
+                    set = &definitionsSets.back();
+                } else {
+                    set = &*search;
+                }
+
+                // Push the definition to that set
+                std::string definitionContent = definition.substr(
+                    definition.find_first_of(" ") + 1);
+
+                set->pushDefinition(definitionContent);
             }
-
-            // Push the definition to that set
-            std::string definitionContent = definition.substr(
-                definition.find_first_of(" ") + 1);
-
-            set->pushDefinition(definitionContent);
         }
 
         entries.push_back(Entry(simplified,
@@ -184,6 +188,23 @@ bool parseExistence(QSqlQuery &query)
     }
 
     return existence;
+}
+
+std::vector<searchTermHistoryItem> parseHistoryItems(QSqlQuery &query)
+{
+    std::vector<searchTermHistoryItem> results;
+
+    int textIndex = query.record().indexOf("text");
+    int optionsIndex = query.record().indexOf("options");
+
+    while (query.next()) {
+        std::string text = query.value(textIndex).toString().toStdString();
+        int options = query.value(optionsIndex).toInt();
+
+        results.push_back(searchTermHistoryItem{text, options});
+    }
+
+    return results;
 }
 
 }

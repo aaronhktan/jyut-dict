@@ -27,7 +27,7 @@ bool DictionaryListModel::setData(const QModelIndex &index,
 
     try {
         _dictionaries.push_back(value.value<DictionaryMetadata>());
-    } catch (std::exception /*&e*/) {
+    } catch (std::exception &/*e*/) {
         //        qDebug() << e.what();
         return false;
     }

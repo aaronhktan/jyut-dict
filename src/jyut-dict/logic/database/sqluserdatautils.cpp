@@ -1,6 +1,6 @@
 #include "sqluserdatautils.h"
 
-#include "logic/database/queryutils.h"
+#include "logic/database/queryparseutils.h"
 #include "logic/utils/utils.h"
 
 #include <QtConcurrent/QtConcurrent>
@@ -122,7 +122,7 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
             "GROUP BY entries.entry_id "
             "ORDER BY timestamp DESC");
 
-        results = QueryUtils::parseEntries(query);
+        results = QueryParseUtils::parseEntries(query);
         _manager->closeDatabase();
     }
 
@@ -145,7 +145,7 @@ void SQLUserDataUtils::checkIfEntryHasBeenFavouritedThread(Entry entry)
         query.addBindValue(entry.getJyutping().c_str());
         query.addBindValue(entry.getPinyin().c_str());
         query.exec();
-        existence = QueryUtils::parseExistence(query);
+        existence = QueryParseUtils::parseExistence(query);
         _manager->closeDatabase();
     }
 

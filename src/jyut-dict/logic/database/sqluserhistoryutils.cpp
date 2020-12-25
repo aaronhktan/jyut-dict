@@ -1,5 +1,6 @@
 #include "sqluserhistoryutils.h"
 
+#include "logic/database/queryparseutils.h"
 #include "logic/utils/utils.h"
 
 #include <QtConcurrent/QtConcurrent>
@@ -161,7 +162,7 @@ void SQLUserHistoryUtils::searchAllSearchHistoryThread(void)
             "ORDER BY timestamp DESC "
             "LIMIT 1000");
 
-        results = parseStrings(query);
+        results = QueryParseUtils::parseHistoryItems(query);
         _manager->closeDatabase();
     }
 
@@ -196,7 +197,7 @@ void SQLUserHistoryUtils::searchAllViewHistoryThread(void)
             "ORDER BY timestamp DESC "
             "LIMIT 1000");
 
-        results = parseEntries(query);
+        results = QueryParseUtils::parseEntries(query, /*parseDefinitions=*/false);
         _manager->closeDatabase();
     }
 
@@ -215,50 +216,4 @@ void SQLUserHistoryUtils::clearAllViewHistoryThread(void)
     }
 
     searchAllViewHistory();
-}
-
-std::vector<searchTermHistoryItem> SQLUserHistoryUtils::parseStrings(
-    QSqlQuery &query)
-{
-    std::vector<searchTermHistoryItem> results;
-
-    int textIndex = query.record().indexOf("text");
-    int optionsIndex = query.record().indexOf("options");
-
-    while (query.next()) {
-        std::string text = query.value(textIndex).toString().toStdString();
-        int options = query.value(optionsIndex).toInt();
-
-        results.push_back(searchTermHistoryItem{text, options});
-    }
-
-    return results;
-}
-
-std::vector<Entry> SQLUserHistoryUtils::parseEntries(QSqlQuery &query)
-{
-    std::vector<Entry> entries;
-
-    int simplifiedIndex = query.record().indexOf("simplified");
-    int traditionalIndex = query.record().indexOf("traditional");
-    int jyutpingIndex = query.record().indexOf("jyutping");
-    int pinyinIndex = query.record().indexOf("pinyin");
-
-    while (query.next()) {
-        std::string simplified
-            = query.value(simplifiedIndex).toString().toStdString();
-        std::string traditional
-            = query.value(traditionalIndex).toString().toStdString();
-        std::string jyutping
-            = query.value(jyutpingIndex).toString().toStdString();
-        std::string pinyin = query.value(pinyinIndex).toString().toStdString();
-
-        entries.push_back(Entry(simplified,
-                                traditional,
-                                jyutping,
-                                pinyin,
-                                {}, {}, {}));
-    }
-
-    return entries;
 }

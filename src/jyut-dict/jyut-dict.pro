@@ -84,7 +84,7 @@ SOURCES += \
     components/settings/contacttab.cpp \
     components/settings/dictionarytab.cpp \
     components/settings/settingstab.cpp \
-    logic/database/queryutils.cpp \
+    logic/database/queryparseutils.cpp \
     logic/database/sqluserdatautils.cpp \
     logic/database/sqluserhistoryutils.cpp \
     logic/search/sqlsearch.cpp \
@@ -170,7 +170,7 @@ HEADERS += \
     dialogs/entryspeakerrordialog.h \
     dialogs/noupdatedialog.h \
     dialogs/resetsettingsdialog.h \
-    logic/database/queryutils.h \
+    logic/database/queryparseutils.h \
     logic/database/sqldatabasemanager.h \
     logic/database/sqldatabaseutils.h \
     logic/database/sqluserdatautils.h \
