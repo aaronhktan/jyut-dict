@@ -84,14 +84,6 @@ private:
     void searchTraditionalSentencesThread(const QString searchTerm,
                                           const unsigned long long queryID);
 
-    int segmentPinyin(const QString &string, std::vector<std::string> &words);
-    int segmentJyutping(const QString &string, std::vector<std::string> &words);
-    std::string implodePhonetic(const std::vector<std::string> &words,
-                                const char *delimiter,
-                                bool surroundWithQuotes=false);
-    std::vector<Entry> parseEntries(QSqlQuery &query);
-    std::vector<SourceSentence> parseSentences(QSqlQuery &query);
-
     std::list<ISearchObserver *> _observers;
 
     std::shared_ptr<SQLDatabaseManager> _manager;

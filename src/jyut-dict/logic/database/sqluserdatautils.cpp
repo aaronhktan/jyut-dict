@@ -1,5 +1,6 @@
 #include "sqluserdatautils.h"
 
+#include "logic/database/queryutils.h"
 #include "logic/utils/utils.h"
 
 #include <QtConcurrent/QtConcurrent>
@@ -121,7 +122,7 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
             "GROUP BY entries.entry_id "
             "ORDER BY timestamp DESC");
 
-        results = parseEntries(query);
+        results = QueryUtils::parseEntries(query);
         _manager->closeDatabase();
     }
 
@@ -144,7 +145,7 @@ void SQLUserDataUtils::checkIfEntryHasBeenFavouritedThread(Entry entry)
         query.addBindValue(entry.getJyutping().c_str());
         query.addBindValue(entry.getPinyin().c_str());
         query.exec();
-        existence = parseExistence(query);
+        existence = QueryUtils::parseExistence(query);
         _manager->closeDatabase();
     }
 
@@ -194,89 +195,4 @@ void SQLUserDataUtils::unfavouriteEntryThread(Entry entry)
 
     checkIfEntryHasBeenFavourited(entry);
     searchForAllFavouritedWords();
-}
-
-std::vector<Entry> SQLUserDataUtils::parseEntries(QSqlQuery &query)
-{
-    std::vector<Entry> entries;
-
-    int simplifiedIndex = query.record().indexOf("simplified");
-    int traditionalIndex = query.record().indexOf("traditional");
-    int jyutpingIndex = query.record().indexOf("jyutping");
-    int pinyinIndex = query.record().indexOf("pinyin");
-    int definitionIndex = query.record().indexOf("definitions");
-
-    while (query.next()) {
-        // Get fields from table
-        std::string simplified
-            = query.value(simplifiedIndex).toString().toStdString();
-        std::string traditional
-            = query.value(traditionalIndex).toString().toStdString();
-        std::string jyutping
-            = query.value(jyutpingIndex).toString().toStdString();
-        std::string pinyin = query.value(pinyinIndex).toString().toStdString();
-        std::string definition
-            = query.value(definitionIndex).toString().toStdString();
-        if (definition.empty()) {
-            continue;
-        }
-
-        // Parse definitions
-        std::vector<std::string> definitions;
-        Utils::split(definition, "●", definitions);
-
-        // Put definitions in the correct DefinitionsSet
-        std::vector<DefinitionsSet> definitionsSets = {};
-        for (std::string definition : definitions) {
-            DefinitionsSet *set;
-            std::string source = definition.substr(0,
-                                                   definition.find_first_of(
-                                                       " "));
-
-            // Search definitionsSets for a matching set (i.e. set with same source)
-            // Create a new DefinitionsSet for set if it no matches found
-            // Then get a handle on that set
-            auto search = std::find_if(definitionsSets.begin(),
-                                       definitionsSets.end(),
-                                       [source,
-                                        definition](const DefinitionsSet &set) {
-                                           return set.getSource() == source;
-                                       });
-            if (search == definitionsSets.end()) {
-                definitionsSets.push_back(DefinitionsSet{source});
-                set = &definitionsSets.back();
-            } else {
-                set = &*search;
-            }
-
-            // Push the definition to that set
-            std::string definitionContent = definition.substr(
-                definition.find_first_of(" ") + 1);
-
-            set->pushDefinition(definitionContent);
-        }
-
-        entries.push_back(Entry(simplified,
-                                traditional,
-                                jyutping,
-                                pinyin,
-                                definitionsSets,
-                                std::vector<std::string>{},
-                                std::vector<SourceSentence>{}));
-    }
-
-    return entries;
-}
-
-bool SQLUserDataUtils::parseExistence(QSqlQuery &query)
-{
-    bool existence = 0;
-
-    int existenceIndex = query.record().indexOf("existence");
-
-    while (query.next()) {
-        existence = query.value(existenceIndex).toInt() == 1;
-    }
-
-    return existence;
 }
