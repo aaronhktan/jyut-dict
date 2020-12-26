@@ -54,12 +54,10 @@ private:
     void searchAllViewHistoryThread(void);
     void clearAllViewHistoryThread(void);
 
+    std::mutex _notifyMutex;
     std::list<ISearchObserver *> _observers;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
-
-    std::mutex _databaseMutex;
-    std::mutex _notifyMutex;
 };
 
 Q_DECLARE_METATYPE(searchTermHistoryItem);

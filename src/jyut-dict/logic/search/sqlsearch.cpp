@@ -56,7 +56,7 @@ void SQLSearch::deregisterObserver(ISearchObserver *observer)
     _observers.remove(observer);
 }
 
-// Do not call this function without first acquiring the _noifyMutex!
+// Do not call this function without first acquiring the _notifyMutex!
 void SQLSearch::notifyObservers(const std::vector<Entry> &results, bool emptyQuery)
 {
     std::list<ISearchObserver *>::const_iterator it = _observers.begin();
@@ -66,7 +66,7 @@ void SQLSearch::notifyObservers(const std::vector<Entry> &results, bool emptyQue
     }
 }
 
-// Do not call this function without first acquiring the _noifyMutex!
+// Do not call this function without first acquiring the _notifyMutex!
 void SQLSearch::notifyObservers(const std::vector<SourceSentence> &results,
                                 bool emptyQuery)
 {

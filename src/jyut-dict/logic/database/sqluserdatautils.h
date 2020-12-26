@@ -44,15 +44,10 @@ private:
     void favouriteEntryThread(Entry entry);
     void unfavouriteEntryThread(Entry entry);
 
+    std::mutex _notifyMutex;
     std::list<ISearchObserver *> _observers;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
-
-    Entry _currentEntry;
-
-    std::mutex _databaseMutex;
-    std::mutex _currentEntryMutex;
-    std::mutex _notifyMutex;
 };
 
 #endif // SQLUSERDATAUTILS_H
