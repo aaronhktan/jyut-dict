@@ -1,14 +1,16 @@
 #include "resultlistmodel.h"
 
 ResultListModel::ResultListModel(std::shared_ptr<ISearchObservable> sqlSearch,
-                                 std::vector<Entry> entries, QObject *parent)
-    : QAbstractListModel(parent)
+                                 std::vector<Entry> entries,
+                                 bool isFavouritesList, QObject *parent)
+    : QAbstractListModel(parent),
+    _isFavouritesList{isFavouritesList}
 {
     _updateModelTimer = new QTimer{this};
 
     qRegisterMetaType<std::vector<Entry>>();
 
-    if (entries.empty()) {
+    if (entries.empty() && !isFavouritesList) {
         setWelcome();
     } else {
         _entries = entries;

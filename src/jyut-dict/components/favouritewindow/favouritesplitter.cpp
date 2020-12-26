@@ -29,8 +29,7 @@ void FavouriteSplitter::setupUI()
     _entryScrollArea = new EntryScrollArea{_sqlUserUtils, _manager, this};
     _resultListView = new ResultListView{this};
 
-    _model = new ResultListModel{_sqlUserUtils, {}, this};
-    static_cast<ResultListModel *>(_model)->setIsFavouritesList(true);
+    _model = new ResultListModel{_sqlUserUtils, {}, true, this};
     _resultListView->setModel(_model);
 
     addWidget(_resultListView);
