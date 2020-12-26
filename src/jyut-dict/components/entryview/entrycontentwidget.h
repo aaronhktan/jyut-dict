@@ -35,10 +35,8 @@ public slots:
     void hideSentenceSection(void);
     void showSentenceSection(void);
 
-#ifdef Q_OS_WIN
 signals:
     void stallUIUpdate(void);
-#endif
 };
 
 #endif // ENTRYCONTENTWIDGET_H

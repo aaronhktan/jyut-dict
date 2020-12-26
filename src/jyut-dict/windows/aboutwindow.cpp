@@ -19,9 +19,6 @@
 AboutWindow::AboutWindow(QWidget *parent)
     : QWidget{parent, Qt::Window}
 {
-    _analytics = new Analytics{this};
-    _analytics->sendScreenview("About");
-
     setupUI();
     translateUI();
 

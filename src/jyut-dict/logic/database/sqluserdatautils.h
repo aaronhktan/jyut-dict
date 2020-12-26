@@ -44,9 +44,6 @@ private:
     void favouriteEntryThread(Entry entry);
     void unfavouriteEntryThread(Entry entry);
 
-    std::vector<Entry> parseEntries(QSqlQuery &query);
-    bool parseExistence(QSqlQuery &query);
-
     std::list<ISearchObserver *> _observers;
 
     std::shared_ptr<SQLDatabaseManager> _manager;

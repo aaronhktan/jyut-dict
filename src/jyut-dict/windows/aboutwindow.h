@@ -1,8 +1,6 @@
 #ifndef ABOUTWINDOW_H
 #define ABOUTWINDOW_H
 
-#include "logic/analytics/analytics.h"
-
 #include <QEvent>
 #include <QGridLayout>
 #include <QLabel>
@@ -26,7 +24,6 @@ private:
 
     void setStyle(bool use_dark);
 
-    Analytics *_analytics;
     bool _paletteRecentlyChanged = false;
 
     QLabel *_iconLabel;

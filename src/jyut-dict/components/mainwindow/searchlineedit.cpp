@@ -155,6 +155,7 @@ void SearchLineEdit::setStyle(bool use_dark)
     QIcon clear_inverted = QIcon(":/images/x_inverted.png");
 
 #ifdef Q_OS_WIN
+    (void) (use_dark);
     setStyleSheet("QLineEdit { \
                      background-color: #ffffff; \
                      border-color: black; \

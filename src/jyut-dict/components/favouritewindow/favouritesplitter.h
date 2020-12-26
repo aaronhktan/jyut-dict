@@ -2,7 +2,6 @@
 #define FAVOURITESPLITTER_H
 
 #include "components/entryview/entryscrollarea.h"
-#include "logic/analytics/analytics.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqluserdatautils.h"
 #include "logic/entry/entry.h"
@@ -41,7 +40,6 @@ private:
 
     std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
     std::shared_ptr<SQLDatabaseManager> _manager;
-    Analytics *_analytics;
 
     QAbstractListModel *_model;
     EntryScrollArea *_entryScrollArea;

@@ -64,11 +64,9 @@ private:
     bool _paletteRecentlyChanged = false;
     bool _calledBack = false;
     QTimer *_timer;
-#ifdef Q_OS_WIN
     QTimer *_enableUIUpdateTimer;
     QTimer *_updateUITimer;
     bool _enableUIUpdate = false;
-#endif
 
     QVBoxLayout *_sentenceCardsLayout;
     LoadingWidget *_loadingWidget;
@@ -79,14 +77,11 @@ public slots:
     void updateUI(
         std::vector<SourceSentence> sourceSentences,
         sentenceSamples samples);
-
-#ifdef Q_OS_WIN
     void stallUIUpdate(void);
 
 private slots:
     void pauseBeforeUpdatingUI(std::vector<SourceSentence> sourceSentences,
                                sentenceSamples samples);
-#endif
 
 signals:
     void callbackInvoked(

@@ -14,7 +14,6 @@
 #include <memory>
 #include <mutex>
 #include <random>
-#include <string>
 #include <vector>
 
 // SQLSearch searches the database provided by SQLDatabaseManager.
@@ -84,23 +83,10 @@ private:
     void searchTraditionalSentencesThread(const QString searchTerm,
                                           const unsigned long long queryID);
 
-    int segmentPinyin(const QString &string, std::vector<std::string> &words);
-    int segmentJyutping(const QString &string, std::vector<std::string> &words);
-    std::vector<std::string> explodePhonetic(const QString &string,
-                                             const char delimiter);
-    std::string implodePhonetic(const std::vector<std::string> &words,
-                                const char *delimiter,
-                                bool surroundWithQuotes=false);
-    std::vector<Entry> parseEntries(QSqlQuery &query);
-    std::vector<SourceSentence> parseSentences(QSqlQuery &query);
-
+    std::mutex _notifyMutex;
     std::list<ISearchObserver *> _observers;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
-    QString _currentSearchString;
-    QSqlQuery _query;
-
-    std::mutex _notifyMutex;
 
     std::atomic<unsigned long long> _queryID;
     std::mt19937_64 _generator;

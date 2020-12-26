@@ -1,7 +1,6 @@
 #ifndef SEARCHOPTIONSRADIOGROUPBOX_H
 #define SEARCHOPTIONSRADIOGROUPBOX_H
 
-#include "logic/analytics/analytics.h"
 #include "logic/search/isearchoptionsmediator.h"
 #include "logic/search/searchparameters.h"
 #include "logic/utils/utils.h"
@@ -33,8 +32,6 @@ private:
     void translateUI();
 
     void notifyMediator();
-
-    Analytics *_analytics;
 
     ISearchOptionsMediator *_mediator;
 

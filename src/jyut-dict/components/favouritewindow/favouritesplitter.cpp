@@ -14,8 +14,6 @@ FavouriteSplitter::FavouriteSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUt
     , _sqlUserUtils{sqlUserUtils}
     , _manager{manager}
 {
-    _analytics = new Analytics{this};
-
     setupUI();
     translateUI();
 
@@ -49,6 +47,11 @@ void FavouriteSplitter::setupUI()
             &QListView::doubleClicked,
             this,
             &FavouriteSplitter::handleDoubleClick);
+
+    connect(_resultListView->selectionModel(),
+            &QItemSelectionModel::currentChanged,
+            _entryScrollArea,
+            &EntryScrollArea::stallUIUpdate);
 
     setHandleWidth(1);
     setCollapsible(0, false);
@@ -86,15 +89,6 @@ void FavouriteSplitter::openCurrentSelectionInNewWindow(void)
 
 void FavouriteSplitter::prepareEntry(Entry &entry)
 {
-    if (Settings::getSettings()
-            ->value("Advanced/analyticsEnabled", QVariant{true})
-            .toBool()) {
-        _analytics->sendEvent("entry",
-                              "view",
-                              entry.getTraditional() + " / "
-                                  + entry.getSimplified());
-    }
-
     entry.refreshColours(
         Settings::getSettings()
             ->value("entryColourPhoneticType",
@@ -135,6 +129,7 @@ void FavouriteSplitter::handleDoubleClick(const QModelIndex &selection)
 #ifndef Q_OS_MAC
         area->setWindowTitle(" ");
 #endif
+        emit area->stallUIUpdate();
         area->show();
     });
 }

@@ -1,21 +1,6 @@
 #include "sourcesentence.h"
 
-#include <sstream>
-#include <unordered_map>
-#include <unordered_set>
-
-static std::unordered_map<std::string, std::vector<std::string>> replacementMap = {
-    {"a", {"ā", "á", "ǎ", "à", "a"}},
-    {"e", {"ē", "é", "ě", "è", "e"}},
-    {"i", {"ī", "í", "ǐ", "ì", "i"}},
-    {"o", {"ō", "ó", "ǒ", "ò", "o"}},
-    {"u", {"ū", "ú", "ǔ", "ù", "u"}},
-    {"ü", {"ǖ", "ǘ", "ǚ", "ǜ", "ü"}},
-    };
-
-static std::unordered_set<std::string> specialCharacters = {
-    "，", "%", "－", "…", "·",
-    };
+#include "logic/utils/chineseutils.h"
 
 SourceSentence::SourceSentence()
 {
@@ -35,7 +20,7 @@ SourceSentence::SourceSentence(std::string sourceLanguage,
     , _sentences{sentences}
 {
     // Create pretty pinyin
-    _prettyPinyin = createPrettyPinyin();
+    _prettyPinyin = ChineseUtils::createPrettyPinyin(_pinyin);
 }
 
 SourceSentence::SourceSentence(const SourceSentence &sourceSentence)
@@ -278,104 +263,4 @@ void SourceSentence::setIsEmpty(const bool isEmpty)
 bool SourceSentence::isEmpty(void) const
 {
     return _isEmpty;
-}
-
-std::vector<std::string> SourceSentence::explodePhonetic(
-    const std::string &string, const char delimiter) const
-{
-    std::vector<std::string> words;
-    std::stringstream ss(string);
-    std::string word;
-
-    while (std::getline(ss, word, delimiter)) {
-        words.push_back(word);
-    }
-
-    return words;
-}
-
-std::string SourceSentence::createPrettyPinyin(void)
-{
-    std::string result;
-
-    // Create a vector of each space-separated value in pinyin
-    std::vector<std::string> syllables = explodePhonetic(_pinyin, ' ');
-    if (syllables.empty()) {
-        return _pinyin;
-    }
-
-    for (auto syllable : syllables) {
-        // Skip the punctuation, they have no tone
-        if (specialCharacters.find(syllable) != specialCharacters.end()) {
-            result += syllable + " ";
-            continue;
-        }
-
-        // Extract the tone from the syllable
-        size_t tone_location = syllable.find_first_of("012345");
-        if (tone_location == std::string::npos) {
-            result += syllable + " ";
-            continue;
-        }
-        int tone = syllable.at(tone_location) - '0';
-
-        // Convert u: to ü
-        size_t location = syllable.find("u:");
-        if (location != std::string::npos) {
-            syllable.erase(location, 2);
-            syllable.insert(location, "ü");
-            location = std::string::npos;
-        }
-
-        // Convert v to ü
-        location = syllable.find("v");
-        if (location != std::string::npos) {
-            syllable.erase(location, 1);
-            syllable.insert(location, "ü");
-            location = std::string::npos;
-        }
-
-        // The rule for pinyin diacritic location is:
-        // - If a, e, or o exists in the syllable, it takes the diacritic.
-        // - Otherwise, the last u, ü, or i takes it.
-        location = syllable.find_first_of("aeo");
-        size_t character_size = 1;
-
-        if (location == std::string::npos) {
-            location = syllable.find("ü");
-            // ü is stored as two bytes, so change the number of characters that
-            // we need to delete if we find a ü
-            character_size = location == std::string::npos ? 1 : 2;
-        }
-
-        if (location == std::string::npos) {
-            location = syllable.find_last_of("ui");
-        }
-
-        if (location == std::string::npos) {
-            result += syllable + " ";
-            continue;
-        }
-
-        // replacementMap maps a character to its replacements with diacritics.
-        auto search = replacementMap.find(syllable.substr(location, character_size));
-        if (search != replacementMap.end()) {
-            std::string replacement = search->second.at(static_cast<size_t>(tone) - 1);
-            syllable.erase(location, character_size);
-            syllable.insert(location, replacement);
-        } else {
-            result += syllable + " ";
-            continue;
-        }
-
-        // Remove the tone from the pinyin
-        tone_location = syllable.find_first_of("012345");
-        syllable.erase(tone_location, 1);
-        result += syllable + " ";
-    }
-
-    // Remove trailing space
-    result.erase(result.end() - 1);
-
-    return result;
 }

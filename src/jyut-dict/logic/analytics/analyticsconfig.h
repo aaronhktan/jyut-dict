@@ -1,6 +1,0 @@
-#ifndef ANALYTICSCONFIG_H
-#define ANALYTICSCONFIG_H
-
-constexpr auto PROPERTY_ID = "";
-
-#endif // ANALYTICSCONFIG_H

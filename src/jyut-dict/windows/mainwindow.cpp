@@ -31,17 +31,6 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
-    // Send analytics, but delayed for 100 ms so it doesn't cause
-    // slow startup
-    _analytics = new Analytics{this};
-    QTimer::singleShot(100, this, [&]() {
-        _analytics->startSession();
-        _analytics->sendScreenview("Main");
-        _analytics->sendEvent("language",
-                              "load",
-                              Settings::getCurrentLocale().name().toStdString());
-    });
-
     // Set window size
     setMinimumSize(QSize{800, 600});
 
@@ -116,12 +105,10 @@ MainWindow::MainWindow(QWidget *parent) :
             &MainWindow::viewHistoryClicked,
             _mainSplitter,
             &MainSplitter::forwardViewHistoryItem);
-#ifdef Q_OS_WIN
     connect(_mainToolBar,
             &MainToolBar::searchBarTextChange,
             _mainSplitter,
             &MainSplitter::forwardSearchBarTextChange);
-#endif
 
     // Create menu bar and populate it
     createMenus();
@@ -152,7 +139,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
-    _analytics->endSession();
 }
 
 void MainWindow::changeEvent(QEvent *event)

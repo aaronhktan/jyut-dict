@@ -13,10 +13,8 @@ EntryViewSentenceCardSection::EntryViewSentenceCardSection(std::shared_ptr<SQLDa
     : QWidget(parent),
     _manager{manager}
 {
-#ifdef Q_OS_WIN
     _enableUIUpdateTimer = new QTimer{this};
     _updateUITimer = new QTimer{this};
-#endif
 
     _search = std::make_unique<SQLSearch>(_manager);
     _search->registerObserver(this);
@@ -28,17 +26,10 @@ EntryViewSentenceCardSection::EntryViewSentenceCardSection(std::shared_ptr<SQLDa
     // Q_DECLARE_METATYPE and qRegisterMetaType must be called.
     qRegisterMetaType<std::vector<SourceSentence>>();
     qRegisterMetaType<sentenceSamples>();
-#ifdef Q_OS_WIN
     QObject::connect(this,
                      &EntryViewSentenceCardSection::callbackInvoked,
                      this,
                      &EntryViewSentenceCardSection::pauseBeforeUpdatingUI);
-#else
-    QObject::connect(this,
-                     &EntryViewSentenceCardSection::callbackInvoked,
-                     this,
-                     &EntryViewSentenceCardSection::updateUI);
-#endif
 }
 
 EntryViewSentenceCardSection::EntryViewSentenceCardSection(QWidget *parent)
@@ -159,15 +150,9 @@ void EntryViewSentenceCardSection::setEntry(const Entry &entry)
     _timer->setInterval(1000);
     _timer->setSingleShot(true);
     QObject::connect(_timer, &QTimer::timeout, this, [=]() {
-#ifdef Q_OS_WIN
         if (!_calledBack && _enableUIUpdate) {
             showLoadingWidget();
         }
-#else
-        if (!_calledBack) {
-            showLoadingWidget();
-        }
-#endif
     });
     _timer->start();
 
@@ -224,7 +209,6 @@ void EntryViewSentenceCardSection::updateUI(
     emit finishedAddingCards();
 }
 
-#ifdef Q_OS_WIN
 void EntryViewSentenceCardSection::stallUIUpdate(void)
 {
     _enableUIUpdate = false;
@@ -254,7 +238,6 @@ void EntryViewSentenceCardSection::pauseBeforeUpdatingUI(std::vector<SourceSente
     });
     _updateUITimer->start();
 }
-#endif
 
 void EntryViewSentenceCardSection::showLoadingWidget(void)
 {

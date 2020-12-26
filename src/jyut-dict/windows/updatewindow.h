@@ -1,7 +1,6 @@
 #ifndef UPDATEWINDOW_H
 #define UPDATEWINDOW_H
 
-#include "logic/analytics/analytics.h"
 #include "logic/utils/utils.h"
 
 #include <QEvent>
@@ -36,8 +35,6 @@ private:
     std::string _versionNumber;
     std::string _url;
     std::string _description;
-
-    Analytics *_analytics;
 
     QLabel *_iconLabel;
     QLabel *_titleLabel;

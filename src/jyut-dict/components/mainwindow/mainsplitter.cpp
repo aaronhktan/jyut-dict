@@ -18,7 +18,6 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     , _search{sqlSearch}
     , _sqlHistoryUtils{sqlHistoryUtils}
 {
-    _analytics = new Analytics{this};
     _addToHistoryTimer = new QTimer{this};
 
     _entryScrollArea = new EntryScrollArea{sqlUserUtils, manager, this};
@@ -46,7 +45,6 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
             this,
             &MainSplitter::handleDoubleClick);
 
-#ifdef Q_OS_WIN
     connect(this,
             &MainSplitter::forwardSearchBarTextChange,
             _entryScrollArea,
@@ -56,7 +54,6 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
             &QItemSelectionModel::currentChanged,
             _entryScrollArea,
             &EntryScrollArea::stallUIUpdate);
-#endif
 
     setHandleWidth(1);
     setCollapsible(0, false);
@@ -126,16 +123,6 @@ void MainSplitter::prepareEntry(Entry &entry)
 
 void MainSplitter::prepareEntry(Entry &entry, bool addToHistory)
 {
-    if (Settings::getSettings()
-            ->value("Advanced/analyticsEnabled", QVariant{true})
-            .toBool()
-        && addToHistory) {
-        _analytics->sendEvent("entry",
-                              "view",
-                              entry.getTraditional() + " / "
-                                  + entry.getSimplified());
-    }
-
     if (addToHistory) {
         // Only add to history after a few seconds of viewing an entry
         _addToHistoryTimer->stop();
@@ -194,9 +181,7 @@ void MainSplitter::handleDoubleClick(const QModelIndex &selection)
 #ifndef Q_OS_MAC
         area->setWindowTitle(" ");
 #endif
-#ifdef Q_OS_WIN
         emit area->stallUIUpdate();
-#endif
         area->show();
     });
 }

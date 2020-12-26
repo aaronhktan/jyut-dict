@@ -61,10 +61,8 @@ private:
 public slots:
     void forwardSearchHistoryItem(searchTermHistoryItem &pair);
 
-#ifdef Q_OS_WIN
 signals:
     void searchBarTextChange(void);
-#endif
 };
 
 #endif // MAINTOOLBAR_H

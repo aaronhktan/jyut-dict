@@ -2,7 +2,6 @@
 #define MAINSPLITTER_H
 
 #include "components/entryview/entryscrollarea.h"
-#include "logic/analytics/analytics.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqluserdatautils.h"
 #include "logic/database/sqluserhistoryutils.h"
@@ -51,7 +50,6 @@ private:
     std::shared_ptr<SQLDatabaseManager> _manager;
     std::shared_ptr<SQLSearch> _search;
     std::shared_ptr<SQLUserHistoryUtils> _sqlHistoryUtils;
-    Analytics *_analytics;
 
     EntryScrollArea *_entryScrollArea;
     QAbstractListModel *_model;
@@ -67,10 +65,8 @@ private slots:
     void handleClick(const QModelIndex &selection);
     void handleDoubleClick(const QModelIndex &selection);
 
-#ifdef Q_OS_WIN
 signals:
     void forwardSearchBarTextChange(void);
-#endif
 };
 
 #endif // MAINSPLITTER_H

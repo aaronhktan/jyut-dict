@@ -25,9 +25,6 @@ UpdateWindow::UpdateWindow(QWidget *parent,
     _url = url;
     _description = description;
 
-    _analytics = new Analytics{this};
-    _analytics->sendScreenview("Update");
-
     setupUI();
     translateUI();
 

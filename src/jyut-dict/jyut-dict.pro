@@ -84,6 +84,7 @@ SOURCES += \
     components/settings/contacttab.cpp \
     components/settings/dictionarytab.cpp \
     components/settings/settingstab.cpp \
+    logic/database/queryparseutils.cpp \
     logic/database/sqluserdatautils.cpp \
     logic/database/sqluserhistoryutils.cpp \
     logic/search/sqlsearch.cpp \
@@ -95,7 +96,6 @@ SOURCES += \
     dialogs/entryspeakerrordialog.cpp \
     dialogs/noupdatedialog.cpp \
     dialogs/resetsettingsdialog.cpp \
-    logic/analytics/analytics.cpp \
     logic/database/sqldatabasemanager.cpp \
     logic/database/sqldatabaseutils.cpp \
     logic/dictionary/dictionarymetadata.cpp \
@@ -107,6 +107,7 @@ SOURCES += \
     logic/settings/settings.cpp \
     logic/settings/settingsutils.cpp \
     logic/update/githubreleasechecker.cpp \
+    logic/utils/chineseutils.cpp \
     logic/utils/utils.cpp \
     logic/utils/utils_qt.cpp \
     windows/aboutwindow.cpp \
@@ -169,8 +170,7 @@ HEADERS += \
     dialogs/entryspeakerrordialog.h \
     dialogs/noupdatedialog.h \
     dialogs/resetsettingsdialog.h \
-    logic/analytics/analytics.h \
-    logic/analytics/analyticsconfig.h \
+    logic/database/queryparseutils.h \
     logic/database/sqldatabasemanager.h \
     logic/database/sqldatabaseutils.h \
     logic/database/sqluserdatautils.h \
@@ -196,6 +196,7 @@ HEADERS += \
     logic/strings/strings.h \
     logic/update/githubreleasechecker.h \
     logic/update/iupdatechecker.h \
+    logic/utils/chineseutils.h \
     logic/utils/qvariantutils.h \
     logic/utils/utils.h \
     logic/utils/utils_linux.h \

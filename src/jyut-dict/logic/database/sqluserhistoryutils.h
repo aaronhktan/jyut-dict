@@ -6,7 +6,6 @@
 #include "logic/search/isearchobservable.h"
 
 #include <QObject>
-#include <QtSql>
 
 #include <list>
 #include <memory>
@@ -54,9 +53,6 @@ private:
 
     void searchAllViewHistoryThread(void);
     void clearAllViewHistoryThread(void);
-
-    std::vector<searchTermHistoryItem> parseStrings(QSqlQuery &query);
-    std::vector<Entry> parseEntries(QSqlQuery &query);
 
     std::list<ISearchObserver *> _observers;
 
