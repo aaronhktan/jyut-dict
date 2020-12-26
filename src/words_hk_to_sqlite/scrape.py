@@ -11,6 +11,7 @@ def read_csv(filename):
 
 index = 0
 
+# Scrape words at indices from [second arg, third arg]
 for item in read_csv(sys.argv[1]):
   index += 1
   if (index < int(sys.argv[2])):
