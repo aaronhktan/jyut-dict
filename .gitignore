@@ -48,6 +48,9 @@ CMakeLists.txt.user*
 # Qt Builds
 *dist/
 
+# vim
+**.swp
+
 # Python environment
 *env/
 
