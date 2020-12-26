@@ -112,73 +112,61 @@ void SQLUserHistoryUtils::clearAllViewHistory(void)
 void SQLUserHistoryUtils::addSearchToHistoryThread(std::string search,
                                                    int options)
 {
-    {
-        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
-        QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{_manager->getDatabase()};
 
-        query.prepare("INSERT INTO user.search_history "
-                      " (search_text, search_options, timestamp) "
-                      "VALUES "
-                      " (?, ?, datetime(\"now\"))");
-        query.addBindValue(search.c_str());
-        query.addBindValue(QVariant::fromValue(options));
-        query.exec();
+    query.prepare("INSERT INTO user.search_history "
+                  " (search_text, search_options, timestamp) "
+                  "VALUES "
+                  " (?, ?, datetime(\"now\"))");
+    query.addBindValue(search.c_str());
+    query.addBindValue(QVariant::fromValue(options));
+    query.exec();
 
-        _manager->closeDatabase();
-    }
+    _manager->closeDatabase();
 }
 
 void SQLUserHistoryUtils::addViewToHistoryThread(Entry entry)
 {
-    {
-        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
-        QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{_manager->getDatabase()};
 
-        query.prepare("INSERT INTO user.view_history "
-                      " (traditional, simplified, jyutping, pinyin, timestamp) "
-                      "VALUES "
-                      " (?, ?, ?, ?, datetime(\"now\"))");
-        query.addBindValue(entry.getTraditional().c_str());
-        query.addBindValue(entry.getSimplified().c_str());
-        query.addBindValue(entry.getJyutping().c_str());
-        query.addBindValue(entry.getPinyin().c_str());
-        query.exec();
+    query.prepare("INSERT INTO user.view_history "
+                  " (traditional, simplified, jyutping, pinyin, timestamp) "
+                  "VALUES "
+                  " (?, ?, ?, ?, datetime(\"now\"))");
+    query.addBindValue(entry.getTraditional().c_str());
+    query.addBindValue(entry.getSimplified().c_str());
+    query.addBindValue(entry.getJyutping().c_str());
+    query.addBindValue(entry.getPinyin().c_str());
+    query.exec();
 
-        _manager->closeDatabase();
-    }
+    _manager->closeDatabase();
 }
 
 void SQLUserHistoryUtils::searchAllSearchHistoryThread(void)
 {
     std::vector<searchTermHistoryItem> results{};
 
-    {
-        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
-        QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{_manager->getDatabase()};
 
-        query.exec(
-            "SELECT search_text AS text, search_options AS options, timestamp "
-            "FROM user.search_history "
-            "ORDER BY timestamp DESC "
-            "LIMIT 1000");
+    query.exec(
+        "SELECT search_text AS text, search_options AS options, timestamp "
+        "FROM user.search_history "
+        "ORDER BY timestamp DESC "
+        "LIMIT 1000");
 
-        results = QueryParseUtils::parseHistoryItems(query);
-        _manager->closeDatabase();
-    }
+    results = QueryParseUtils::parseHistoryItems(query);
+    _manager->closeDatabase();
 
     notifyObservers(results, /*emptyQuery=*/false);
 }
 
 void SQLUserHistoryUtils::clearAllSearchHistoryThread(void)
 {
-    {
-        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
-        QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{_manager->getDatabase()};
 
-        query.exec("DELETE FROM user.search_history");
+    query.exec("DELETE FROM user.search_history");
 
-        _manager->closeDatabase();
-    }
+    _manager->closeDatabase();
 
     searchAllSearchHistory();
 }
@@ -187,33 +175,27 @@ void SQLUserHistoryUtils::searchAllViewHistoryThread(void)
 {
     std::vector<Entry> results{};
 
-    {
-        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
-        QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{_manager->getDatabase()};
 
-        query.exec(
-            "SELECT traditional, simplified, pinyin, jyutping, timestamp "
-            "FROM user.view_history "
-            "ORDER BY timestamp DESC "
-            "LIMIT 1000");
+    query.exec(
+        "SELECT traditional, simplified, pinyin, jyutping, timestamp "
+        "FROM user.view_history "
+        "ORDER BY timestamp DESC "
+        "LIMIT 1000");
 
-        results = QueryParseUtils::parseEntries(query, /*parseDefinitions=*/false);
-        _manager->closeDatabase();
-    }
+    results = QueryParseUtils::parseEntries(query, /*parseDefinitions=*/false);
+    _manager->closeDatabase();
 
     notifyObservers(results, /*emptyQuery=*/false);
 }
 
 void SQLUserHistoryUtils::clearAllViewHistoryThread(void)
 {
-    {
-        std::lock_guard<std::mutex> databaseLock(_databaseMutex);
-        QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{_manager->getDatabase()};
 
-        query.exec("DELETE FROM user.view_history");
+    query.exec("DELETE FROM user.view_history");
 
-        _manager->closeDatabase();
-    }
+    _manager->closeDatabase();
 
     searchAllViewHistory();
 }
