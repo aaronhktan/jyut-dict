@@ -36,11 +36,11 @@ const static std::unordered_map<std::string, std::vector<std::string>> replaceme
 };
 
 std::string applyColours(
-    std::string original,
-    std::vector<int> &tones,
-    std::vector<std::string> &jyutpingToneColours,
-    std::vector<std::string> &pinyinToneColours,
-    EntryColourPhoneticType type)
+    const std::string original,
+    const std::vector<int> &tones,
+    const std::vector<std::string> &jyutpingToneColours,
+    const std::vector<std::string> &pinyinToneColours,
+    const EntryColourPhoneticType type)
 {
     std::string coloured_string;
 #ifdef _MSC_VER
@@ -119,8 +119,8 @@ std::string applyColours(
     return coloured_string;
 }
 
-std::string compareStrings(std::string original,
-                           std::string comparison)
+std::string compareStrings(const std::string original,
+                           const std::string comparison)
 {
     std::string result;
 
@@ -156,7 +156,7 @@ std::string compareStrings(std::string original,
     return result;
 }
 
-std::string createPrettyPinyin(std::string pinyin)
+std::string createPrettyPinyin(const std::string pinyin)
 {
     std::string result;
 
@@ -236,7 +236,7 @@ std::string createPrettyPinyin(std::string pinyin)
 
 std::string constructRomanisationQuery(const std::vector<std::string> &words,
                                        const char *delimiter,
-                                       bool surroundWithQuotes)
+                                       const bool surroundWithQuotes)
 {
     const char *quotes = surroundWithQuotes ? "\"": "";
     std::ostringstream string;

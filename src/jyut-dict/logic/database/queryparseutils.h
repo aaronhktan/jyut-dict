@@ -8,6 +8,9 @@
 
 #include <vector>
 
+// The QueryParseUtils namespace contains static functions to parse the rows
+// that are returned from a query on the database.
+
 namespace QueryParseUtils {
 
 typedef std::pair<std::string, int> searchTermHistoryItem;

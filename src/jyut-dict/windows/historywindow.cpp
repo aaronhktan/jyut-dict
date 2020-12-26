@@ -7,6 +7,8 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QTimer>
+
 HistoryWindow::HistoryWindow(
     std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils, QWidget *parent)
     : QWidget(parent)

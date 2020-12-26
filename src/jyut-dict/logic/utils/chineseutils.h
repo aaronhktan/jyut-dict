@@ -8,14 +8,17 @@
 
 #include <string>
 
+// The ChineseUtils namespace contains static functions for working with
+// various romanization schemes and Chinese queries.
+
 namespace ChineseUtils {
 
 std::string applyColours(
-    std::string original,
-    std::vector<int> &tones,
-    std::vector<std::string> &jyutpingToneColours,
-    std::vector<std::string> &pinyinToneColours,
-    EntryColourPhoneticType type = EntryColourPhoneticType::JYUTPING);
+    const std::string original,
+    const std::vector<int> &tones,
+    const std::vector<std::string> &jyutpingToneColours,
+    const std::vector<std::string> &pinyinToneColours,
+    const EntryColourPhoneticType type = EntryColourPhoneticType::JYUTPING);
 
 // The function first converts both the simplified and traditional strings into
 // u32strings on macOS and Linux, or wstrings on Windows.
@@ -40,10 +43,10 @@ std::string applyColours(
 // Example return values with an entry Traditional: 身體, Simplified: 身体
 // With EntryCharactersOptions::PREFER_SIMPLIFIED:  "身体 {－體}"
 // With EntryCharactersOptions::PREFER_TRADITIONAL: "身體 {－体}"
-std::string compareStrings(std::string original,
-                           std::string comparison);
+std::string compareStrings(const std::string original,
+                           const std::string comparison);
 
-std::string createPrettyPinyin(std::string pinyin);
+std::string createPrettyPinyin(const std::string pinyin);
 
 // constructRomanisationQuery takes a vector of strings and stitches them
 // together with a delimiter.
@@ -105,7 +108,7 @@ std::string createPrettyPinyin(std::string pinyin);
 //    ke3 ai_.
 std::string constructRomanisationQuery(const std::vector<std::string> &words,
                                        const char *delimiter,
-                                       bool surroundWithQuotes=false);
+                                       const bool surroundWithQuotes=false);
 
 std::vector<std::string> segmentPinyin(const QString string);
 std::vector<std::string> segmentJyutping(const QString string);

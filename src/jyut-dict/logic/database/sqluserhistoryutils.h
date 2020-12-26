@@ -6,7 +6,6 @@
 #include "logic/search/isearchobservable.h"
 
 #include <QObject>
-#include <QtSql>
 
 #include <list>
 #include <memory>
