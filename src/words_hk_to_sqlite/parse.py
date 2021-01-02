@@ -21,7 +21,7 @@ SourceTuple = namedtuple('Source',
                             'legal', 'link', 'update_url', 'other'])
                         
 
-def write(db_name, words):
+def write(db_name, source, words):
   print('Writing to database file')
 
   db = sqlite3.connect(db_name)
@@ -113,6 +113,12 @@ def write(db_name, words):
                   FOREIGN KEY(fk_definition_id) REFERENCES definitions(definition_id),
                   FOREIGN KEY(fk_chinese_sentence_id) REFERENCES chinese_sentences(chinese_sentence_id)
             )''')
+
+  # Add source information to table
+  c.execute('INSERT INTO sources values(?,?,?,?,?,?,?,?,?)',
+              (None, source.name, source.shortname, source.version,
+              source.description, source.legal, source.link,
+              source.update_url, source.other))
 
   # Loop through each entry
   for key in words:
@@ -325,9 +331,11 @@ def parse_folder(folder_name, words):
       parse_file(entry.path, words)
 
 if __name__ == '__main__':
+  source = SourceTuple('words.hk', 'WHK', '2020-07-31', '',
+                          '', 'https://words.hk/', '', '')
   # logging.basicConfig(level='INFO')
   parsed_words = defaultdict(list)
   parse_folder(sys.argv[1], parsed_words)
   # parse_file(sys.argv[1], parsed_words)
-  write(sys.argv[2], parsed_words)
+  write(sys.argv[2], source, parsed_words)
 
