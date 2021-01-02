@@ -113,9 +113,11 @@ std::string DefinitionsSet::getDefinitionsSnippet() const
 
     std::ostringstream definitions;
     for (size_t i = 0; i < _definitions.size() - 1; i++) {
-        definitions << _definitions[i] << "; ";
+        auto location = _definitions[i].find_first_of("\r");
+        definitions << _definitions[i].substr(0, location) << "; ";
     }
-    definitions << _definitions.back();
+    auto location = _definitions.back().find_first_of("\r");
+    definitions << _definitions.back().substr(0, location);
     return definitions.str();
 }
 

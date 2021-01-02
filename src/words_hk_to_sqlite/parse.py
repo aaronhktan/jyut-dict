@@ -19,7 +19,18 @@ WordTuple = namedtuple('Word', ['word', 'pronunciation', 'meanings'])
 SourceTuple = namedtuple('Source',
                           ['name', 'shortname', 'version', 'description',
                             'legal', 'link', 'update_url', 'other'])
-                        
+
+# Things that would be nice that are currently not handled:
+#   - Alternate pronunciations (currently just take the first pronunciation on the page)
+#   - POS tagging (database structure doesn't integrate this for now)
+
+# Useful test pages:
+#   - 脂粉客 for malformed entry (or old entry)
+#   - 了 for multiple meanings, multiple examples
+#   - 一戙都冇 for multiple header words
+#   - 是 for item with label and POS
+#   - 印 for item with different POS for different meanings
+#   - 使勁 for broken sentence
 
 def write(db_name, source, words):
   print('Writing to database file')
@@ -112,6 +123,7 @@ def write(db_name, source, words):
                   fk_chinese_sentence_id INTEGER,
                   FOREIGN KEY(fk_definition_id) REFERENCES definitions(definition_id),
                   FOREIGN KEY(fk_chinese_sentence_id) REFERENCES chinese_sentences(chinese_sentence_id)
+                  UNIQUE(fk_definition_id, fk_chinese_sentence_id) ON CONFLICT IGNORE
             )''')
 
   # Add source information to table
@@ -137,6 +149,7 @@ def write(db_name, source, words):
       for meaning in entry.meanings:
         definitions = []
         for definition in meaning.definitions:
+          # Insert a zero-width space between Chinese words so that fts5 properly indexes them
           is_chinese = (hanzidentifier.is_simplified(definition.content)
                           or hanzidentifier.is_traditional(definition.content))
           if is_chinese:
@@ -158,9 +171,30 @@ def write(db_name, source, words):
             pin = ' '.join(lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True)).lower().replace('v', 'u:')
             lang = sentence[0].lang
 
+            c.execute('SELECT max(rowid) FROM chinese_sentences')
+            before_sentence_id = c.fetchone()[0]
             c.execute('INSERT INTO chinese_sentences values (?,?,?,?,?,?)', (None, trad, simp, pin, jyut, lang))
             c.execute('SELECT max(rowid) FROM chinese_sentences')
-            sentence_id = c.fetchone()[0]
+            after_sentence_id = c.fetchone()[0]
+
+            # Check if sentence insertion was successful
+            if before_sentence_id == after_sentence_id:
+              if trad == 'X' or trad == 'x':
+                # Ignore sentences that are just 'x'
+                continue
+              else:
+                # If insertion failed, it's probably because the sentence already exists
+                # Get its rowid, so we can link it to this definition
+                c.execute('''SELECT rowid FROM chinese_sentences WHERE traditional=?
+                              AND simplified=? AND pinyin=? AND jyutping=? AND language=?''',
+                            (trad, simp, pin, jyut, lang))
+                row = c.fetchone()
+                if row is None:
+                  logging.warning(f'Unexpected failure on insertion for sentence: {definition_id} {trad}')
+                  continue
+                sentence_id = row[0]
+            else:
+              sentence_id = after_sentence_id
 
             c.execute('INSERT INTO definitions_chinese_sentences_links values (?,?)', (definition_id, sentence_id))
 
@@ -168,11 +202,17 @@ def write(db_name, source, words):
               trad = translation.content
               lang = translation.lang
 
-              c.execute('INSERT INTO nonchinese_sentences values (?,?,?)', (None, trad, lang))
-              c.execute('SELECT max(rowid) FROM nonchinese_sentences')
-              translation_id = c.fetchone()[0]
+              # Check if translation already exists before trying to insert
+              # Only need to insert a translation if it does not already exist in the table
+              c.execute('SELECT rowid FROM nonchinese_sentences WHERE sentence=? AND language=?',
+                          (trad, lang))
+              row = c.fetchone()
 
-              c.execute('INSERT INTO sentence_links values (?,?,?,?)', (sentence_id, translation_id, 1, True))
+              if row is None:
+                c.execute('INSERT INTO nonchinese_sentences values (?,?,?)', (None, trad, lang))
+                c.execute('SELECT max(rowid) FROM nonchinese_sentences')
+                translation_id = c.fetchone()[0]
+                c.execute('INSERT INTO sentence_links values (?,?,?,?)', (sentence_id, translation_id, 1, True))
 
         if meaning.examplephrases:
           for phrase in meaning.examplephrases:
@@ -182,9 +222,26 @@ def write(db_name, source, words):
             pin = ' '.join(lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True)).lower().replace('v', 'u:')
             lang = phrase[0].lang
 
+            c.execute('SELECT max(rowid) FROM chinese_sentences')
+            before_phrase_id = c.fetchone()[0]
             c.execute('INSERT INTO chinese_sentences values (?,?,?,?,?,?)', (None, trad, simp, pin, jyut, lang))
             c.execute('SELECT max(rowid) FROM chinese_sentences')
-            phrase_id = c.fetchone()[0]
+            after_phrase_id = c.fetchone()[0]
+
+            if before_phrase_id == after_phrase_id:
+              if trad == 'X' or trad == 'x':
+                continue
+              else:
+                c.execute('''SELECT rowid FROM chinese_sentences WHERE traditional=?
+                              AND simplified=? AND pinyin=? AND jyutping=? AND language=?''',
+                            (trad, simp, pin, jyut, lang))
+                row = c.fetchone()
+                if row is None:
+                  logging.warning(f'Unexpected failure on insertion for phrase: {definition_id} {trad}')
+                  continue
+                phrase_id = row[0]
+            else:
+              phrase_id = after_phrase_id
 
             c.execute('INSERT INTO definitions_chinese_sentences_links values (?,?)', (definition_id, phrase_id))
 
@@ -192,11 +249,15 @@ def write(db_name, source, words):
               trad = translation.content
               lang = translation.lang
 
-              c.execute('INSERT INTO nonchinese_sentences values (?,?,?)', (None, trad, lang))
-              c.execute('SELECT max(rowid) FROM nonchinese_sentences')
-              translation_id = c.fetchone()[0]
+              c.execute('SELECT rowid FROM nonchinese_sentences WHERE sentence=? AND language=?',
+                          (trad, lang))
+              row = c.fetchone()
 
-              c.execute('INSERT INTO sentence_links values (?,?,?,?)', (phrase_id, translation_id, 1, True))
+              if row is None:
+                c.execute('INSERT INTO nonchinese_sentences values (?,?,?)', (None, trad, lang))
+                c.execute('SELECT max(rowid) FROM nonchinese_sentences')
+                translation_id = c.fetchone()[0]
+                c.execute('INSERT INTO sentence_links values (?,?,?,?)', (phrase_id, translation_id, 1, True))
 
   # Generate fts5 indices for entries and definitions
   c.execute('INSERT INTO entries_fts (rowid, pinyin, jyutping) SELECT rowid, pinyin, jyutping FROM entries')
@@ -331,11 +392,18 @@ def parse_folder(folder_name, words):
       parse_file(entry.path, words)
 
 if __name__ == '__main__':
-  source = SourceTuple('words.hk', 'WHK', '2020-07-31', '',
-                          '', 'https://words.hk/', '', '')
+  if len(sys.argv) != 11:
+    print(('Usage: python3 script.py <database filename> '
+              '<HTML folder> <source name> <source short name> '
+              '<source version> <source description> <source legal> '
+              '<source link> <source update url> <source other>'))
+    sys.exit(1)
+
+  source = SourceTuple(sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6],
+                          sys.argv[7], sys.argv[8], sys.argv[9], sys.argv[10])
   # logging.basicConfig(level='INFO')
   parsed_words = defaultdict(list)
-  parse_folder(sys.argv[1], parsed_words)
-  # parse_file(sys.argv[1], parsed_words)
-  write(sys.argv[2], source, parsed_words)
+  parse_folder(sys.argv[2], parsed_words)
+  # parse_file(sys.argv[2], parsed_words)
+  write(sys.argv[1], source, parsed_words)
 
