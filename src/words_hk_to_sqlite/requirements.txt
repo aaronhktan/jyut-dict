@@ -1,0 +1,7 @@
+beautifulsoup4==4.9.3
+hanziconv==0.3.2
+hanzidentifier==1.0.2
+jieba==0.39
+msgpack==0.6.0
+pypinyin==0.40.0
+wordfreq==2.2.0

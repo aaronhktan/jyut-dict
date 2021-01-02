@@ -1,14 +1,205 @@
 from bs4 import BeautifulSoup
+from hanziconv import HanziConv
+import hanzidentifier
+import jieba
+from pypinyin import lazy_pinyin, Style
+from wordfreq import zipf_frequency
 
 from collections import defaultdict, namedtuple
 import logging
 import os
+import sqlite3
 import sys
 
 ExampleTuple = namedtuple('ExampleTuple', ['lang', 'pron', 'content'])
 DefinitionTuple = namedtuple('DefinitionTuple', ['lang', 'content'])
 MeaningTuple = namedtuple('Meaning', ['definitions', 'examplephrases', 'examplesentences'])
 WordTuple = namedtuple('Word', ['word', 'pronunciation', 'meanings'])
+
+SourceTuple = namedtuple('Source',
+                          ['name', 'shortname', 'version', 'description',
+                            'legal', 'link', 'update_url', 'other'])
+                        
+
+def write(db_name, words):
+  print('Writing to database file')
+
+  db = sqlite3.connect(db_name)
+  c = db.cursor()
+
+  c.execute('PRAGMA user_version=3')
+
+  # Drop existing tables
+  c.execute('DROP TABLE IF EXISTS entries')
+  c.execute('DROP TABLE IF EXISTS entries_fts')
+  c.execute('DROP TABLE IF EXISTS sources')
+  c.execute('DROP TABLE IF EXISTS definitions')
+  c.execute('DROP TABLE IF EXISTS definitions_fts')
+  c.execute('DROP INDEX IF EXISTS fk_entry_id_index')
+
+  c.execute('DROP TABLE IF EXISTS chinese_sentences')
+  c.execute('DROP TABLE IF EXISTS nonchinese_sentences')
+  c.execute('DROP TABLE IF EXISTS sentence_links')
+  c.execute('DROP INDEX IF EXISTS fk_chinese_sentence_id_index')
+  c.execute('DROP INDEX IF EXISTS fk_non_chinese_sentence_id_index')
+
+  c.execute('DROP TABLE IF EXISTS definitions_chinese_sentences_links')
+
+  # Create new tables
+  c.execute('''CREATE TABLE entries(
+                  entry_id INTEGER PRIMARY KEY,
+                  traditional TEXT,
+                  simplified TEXT,
+                  pinyin TEXT,
+                  jyutping TEXT,
+                  frequency REAL,
+                  UNIQUE(traditional, simplified, pinyin, jyutping) ON CONFLICT IGNORE
+            )''')
+  c.execute('CREATE VIRTUAL TABLE entries_fts using fts5(pinyin, jyutping)')
+
+  c.execute('''CREATE TABLE sources(
+                  source_id INTEGER PRIMARY KEY,
+                  sourcename TEXT UNIQUE ON CONFLICT ABORT,
+                  sourceshortname TEXT,
+                  version TEXT,
+                  description TEXT,
+                  legal TEXT,
+                  link TEXT,
+                  update_url TEXT,
+                  other TEXT
+            )''')
+
+  c.execute('''CREATE TABLE definitions(
+                  definition_id INTEGER PRIMARY KEY,
+                  definition TEXT,
+                  fk_entry_id INTEGER,
+                  fk_source_id INTEGER,
+                  FOREIGN KEY(fk_entry_id) REFERENCES entries(entry_id) ON UPDATE CASCADE,
+                  FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON DELETE CASCADE,
+                  UNIQUE(definition, fk_entry_id, fk_source_id) ON CONFLICT IGNORE
+            )''')
+  c.execute('CREATE VIRTUAL TABLE definitions_fts using fts5(definition)')
+
+  c.execute('''CREATE TABLE chinese_sentences(
+                  chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE,
+                  traditional TEXT,
+                  simplified TEXT,
+                  pinyin TEXT,
+                  jyutping TEXT,
+                  language TEXT,
+                  UNIQUE(traditional, simplified, pinyin, jyutping) ON CONFLICT IGNORE
+            )''')
+
+  c.execute('''CREATE TABLE nonchinese_sentences(
+                  non_chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE,
+                  sentence TEXT,
+                  language TEXT,
+                  UNIQUE(non_chinese_sentence_id, sentence) ON CONFLICT IGNORE
+            )''')
+
+  c.execute('''CREATE TABLE sentence_links(
+                  fk_chinese_sentence_id INTEGER,
+                  fk_non_chinese_sentence_id INTEGER,
+                  fk_source_id INTEGER,
+                  direct BOOLEAN,
+                  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES chinese_sentences(chinese_sentence_id),
+                  FOREIGN KEY(fk_non_chinese_sentence_id) REFERENCES nonchinese_sentences(non_chinese_sentence_id),
+                  FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON DELETE CASCADE
+            )''')
+
+  c.execute('''CREATE TABLE definitions_chinese_sentences_links(
+                  fk_definition_id INTEGER,
+                  fk_chinese_sentence_id INTEGER,
+                  FOREIGN KEY(fk_definition_id) REFERENCES definitions(definition_id),
+                  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES chinese_sentences(chinese_sentence_id)
+            )''')
+
+  # Loop through each entry
+  for key in words:
+    for entry in words[key]:
+      trad = entry.word
+      simp = HanziConv.toSimplified(trad)
+      jyut = entry.pronunciation
+      pin = ' '.join(lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True)).lower().replace('v', 'u:')
+      freq = zipf_frequency(trad, 'zh')
+
+      c.execute('INSERT INTO entries values (?,?,?,?,?,?)', (None, trad, simp, pin, jyut, freq))
+      c.execute('SELECT max(rowid) FROM entries')
+      entry_id = c.fetchone()[0]
+
+      # Insert each meaning for the entry
+      for meaning in entry.meanings:
+        definitions = []
+        for definition in meaning.definitions:
+          is_chinese = (hanzidentifier.is_simplified(definition.content)
+                          or hanzidentifier.is_traditional(definition.content))
+          if is_chinese:
+            definitions.append('​'.join(jieba.cut(definition.content)))
+          else:
+            definitions.append(definition.content)
+        definition = '\r\n'.join(definitions)
+
+        c.execute('INSERT INTO definitions values (?,?,?,?)', (None, definition, entry_id, 1))
+        c.execute('SELECT max(rowid) FROM definitions')
+        definition_id = c.fetchone()[0]
+
+        # Insert examples for each meaning
+        if meaning.examplesentences:
+          for sentence in meaning.examplesentences:
+            trad = sentence[0].content
+            simp = HanziConv.toSimplified(trad)
+            jyut = sentence[0].pron
+            pin = ' '.join(lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True)).lower().replace('v', 'u:')
+            lang = sentence[0].lang
+
+            c.execute('INSERT INTO chinese_sentences values (?,?,?,?,?,?)', (None, trad, simp, pin, jyut, lang))
+            c.execute('SELECT max(rowid) FROM chinese_sentences')
+            sentence_id = c.fetchone()[0]
+
+            c.execute('INSERT INTO definitions_chinese_sentences_links values (?,?)', (definition_id, sentence_id))
+
+            for translation in sentence[1:]:
+              trad = translation.content
+              lang = translation.lang
+
+              c.execute('INSERT INTO nonchinese_sentences values (?,?,?)', (None, trad, lang))
+              c.execute('SELECT max(rowid) FROM nonchinese_sentences')
+              translation_id = c.fetchone()[0]
+
+              c.execute('INSERT INTO sentence_links values (?,?,?,?)', (sentence_id, translation_id, 1, True))
+
+        if meaning.examplephrases:
+          for phrase in meaning.examplephrases:
+            trad = phrase[0].content
+            simp = HanziConv.toSimplified(trad)
+            jyut = phrase[0].pron
+            pin = ' '.join(lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True)).lower().replace('v', 'u:')
+            lang = phrase[0].lang
+
+            c.execute('INSERT INTO chinese_sentences values (?,?,?,?,?,?)', (None, trad, simp, pin, jyut, lang))
+            c.execute('SELECT max(rowid) FROM chinese_sentences')
+            phrase_id = c.fetchone()[0]
+
+            c.execute('INSERT INTO definitions_chinese_sentences_links values (?,?)', (definition_id, phrase_id))
+
+            for translation in phrase[1:]:
+              trad = translation.content
+              lang = translation.lang
+
+              c.execute('INSERT INTO nonchinese_sentences values (?,?,?)', (None, trad, lang))
+              c.execute('SELECT max(rowid) FROM nonchinese_sentences')
+              translation_id = c.fetchone()[0]
+
+              c.execute('INSERT INTO sentence_links values (?,?,?,?)', (phrase_id, translation_id, 1, True))
+
+  # Generate fts5 indices for entries and definitions
+  c.execute('INSERT INTO entries_fts (rowid, pinyin, jyutping) SELECT rowid, pinyin, jyutping FROM entries')
+  c.execute('INSERT INTO definitions_fts (rowid, definition) select rowid, definition FROM definitions')
+  
+  c.execute('CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)')
+
+  db.commit()
+  db.close()
 
 def parse_file(file_name, words):
   with open(file_name, 'r') as file:
@@ -37,7 +228,7 @@ def parse_file(file_name, words):
         try:
           text = draft.find('li', class_=None).text
           definition = DefinitionTuple('yue', text) # Assume definition is in Cantonese
-          meanings.append(MeaningTuple(definition, [], []))
+          meanings.append(MeaningTuple([definition], [], []))
           words[word].append(WordTuple(word, word_pronunciation, meanings))
           continue
         except:
@@ -96,7 +287,7 @@ def parse_file(file_name, words):
             lang = lang_tag.text.strip('()')
             lang_tag.decompose()
 
-            pronunciation_tag = exsen_div.find('span', class_='zi-item-phrase-pronunciation')
+            pronunciation_tag = exsen_div.find('span', class_='zi-item-example-pronunciation')
             if pronunciation_tag:
               pronunciation = pronunciation_tag.text.strip('()')
               pronunciation_tag.decompose()
@@ -109,6 +300,9 @@ def parse_file(file_name, words):
 
         meanings.append(meaning)
 
+      words[word].append(WordTuple(word, word_pronunciation, meanings))
+
+      # Logging for debug purposes
       logging.debug(word, word_pronunciation)
       for index, meaning in enumerate(meanings):
         logging.debug(f'Meaning {index}:')
@@ -122,7 +316,6 @@ def parse_file(file_name, words):
           logging.debug(f'\t\tSentence {i}:')
           for sentence in sentences:
             logging.debug('\t\t\tSentence: ', sentence.lang, sentence.content, sentence.pron)
-      words[word].append(WordTuple(word, word_pronunciation, meanings))
 
 def parse_folder(folder_name, words):
   for index, entry in enumerate(os.scandir(folder_name)):
@@ -135,4 +328,6 @@ if __name__ == '__main__':
   # logging.basicConfig(level='INFO')
   parsed_words = defaultdict(list)
   parse_folder(sys.argv[1], parsed_words)
+  # parse_file(sys.argv[1], parsed_words)
+  write(sys.argv[2], parsed_words)
 
