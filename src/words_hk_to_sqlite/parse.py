@@ -365,6 +365,8 @@ def parse_file(file_name, words):
                             'span', class_='zi-pronunciation').text
                         break
 
+            # If not able to find a corresponding pronunciation or there is only one,
+            # take the first one that exists in this entry
             if not word_pronunciation:
                 word_pronunciation = draft.find(
                     'span', class_='zi-pronunciation').text
