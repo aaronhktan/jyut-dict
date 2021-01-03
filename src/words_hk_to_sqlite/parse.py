@@ -18,7 +18,7 @@ ExampleTuple = namedtuple('ExampleTuple', ['lang', 'pron', 'content'])
 DefinitionTuple = namedtuple('DefinitionTuple', ['lang', 'content'])
 MeaningTuple = namedtuple(
     'Meaning', [
-        'definitions', 'examplephrases', 'examplesentences'])
+        'label', 'definitions', 'examplephrases', 'examplesentences'])
 WordTuple = namedtuple('Word', ['word', 'pronunciation', 'meanings'])
 
 SourceTuple = namedtuple('Source',
@@ -36,6 +36,7 @@ SourceTuple = namedtuple('Source',
 #   - 是 for item with label and POS
 #   - 印 for item with different POS for different meanings
 #   - 使勁 for broken sentence
+#   - 鬼靈精怪 for multiple different pronunciations
 
 
 def drop_tables(c):
@@ -84,6 +85,7 @@ def create_tables(c):
     c.execute('''CREATE TABLE definitions(
                   definition_id INTEGER PRIMARY KEY,
                   definition TEXT,
+                  label TEXT,
                   fk_entry_id INTEGER,
                   fk_source_id INTEGER,
                   FOREIGN KEY(fk_entry_id) REFERENCES entries(entry_id) ON UPDATE CASCADE,
@@ -246,8 +248,8 @@ def insert_words(c, words):
                         definitions.append(definition.content)
                 definition = '\r\n'.join(definitions)
 
-                c.execute('INSERT INTO definitions values (?,?,?,?)',
-                          (None, definition, entry_id, 1))
+                c.execute('INSERT INTO definitions values (?,?,?,?,?)',
+                          (None, definition, meaning.label, entry_id, 1))
                 c.execute('SELECT max(rowid) FROM definitions')
                 definition_id = c.fetchone()[0]
 
@@ -371,6 +373,15 @@ def parse_file(file_name, words):
                 word_pronunciation = draft.find(
                     'span', class_='zi-pronunciation').text
 
+            # The POS tag is in a class labelled zidin-pos
+            # Each draft has definitions for only one POS label, so if an entry like 印 is
+            # both a noun and a verb, words.hk separates it into two drafts.
+            pos_elem = draft.find('tr', class_='zidin-pos')
+            if pos_elem:
+                pos = pos_elem.find('span', class_=None).get_text()
+            else:
+                pos = ''
+
             meanings = []
             # This will find the table row containing meaning if there are multiple meanings
             # If there are multiple meanings, they will be in an ordered list,
@@ -393,7 +404,7 @@ def parse_file(file_name, words):
                     text = draft.find('li', class_=None).text
                     definition = DefinitionTuple(
                         'yue', text)  # Assume definition is in Cantonese
-                    meanings.append(MeaningTuple([definition], [], []))
+                    meanings.append(MeaningTuple('', [definition], [], []))
                     words[word].append(
                         WordTuple(
                             word,
@@ -407,7 +418,7 @@ def parse_file(file_name, words):
 
             logging.info(f'Parsing item {word}')
             for list_item in list_items:
-                meaning = MeaningTuple([], [], [])
+                meaning = MeaningTuple(pos, [], [], [])
 
                 # Each definition for one meaning is contained in a classless
                 # div
