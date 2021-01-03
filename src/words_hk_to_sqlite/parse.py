@@ -89,7 +89,7 @@ def write(db_name, source, words):
                   FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON DELETE CASCADE,
                   UNIQUE(definition, fk_entry_id, fk_source_id) ON CONFLICT IGNORE
             )''')
-  c.execute('CREATE VIRTUAL TABLE definitions_fts using fts5(definition)')
+  c.execute('CREATE VIRTUAL TABLE definitions_fts using fts5(fk_entry_id UNINDEXED, definition)')
 
   c.execute('''CREATE TABLE chinese_sentences(
                   chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE,
@@ -261,7 +261,7 @@ def write(db_name, source, words):
 
   # Generate fts5 indices for entries and definitions
   c.execute('INSERT INTO entries_fts (rowid, pinyin, jyutping) SELECT rowid, pinyin, jyutping FROM entries')
-  c.execute('INSERT INTO definitions_fts (rowid, definition) select rowid, definition FROM definitions')
+  c.execute('INSERT INTO definitions_fts (rowid, fk_entry_id, definition) select rowid, fk_entry_id, definition FROM definitions')
   
   c.execute('CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)')
 
