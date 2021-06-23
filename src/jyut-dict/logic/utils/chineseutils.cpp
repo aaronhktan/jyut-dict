@@ -181,6 +181,10 @@ std::string createPrettyPinyin(const std::string pinyin)
             continue;
         }
         int tone = syllable.at(tone_location) - '0';
+        // Filter out invalid tone: set to neutral if tone doesn't work
+        if (tone <= 0 || tone > 5) {
+            tone = 5;
+        }
 
         // Convert u: to ü
         size_t location = syllable.find("u:");
@@ -214,7 +218,8 @@ std::string createPrettyPinyin(const std::string pinyin)
         // replacementMap maps a character to its replacements with diacritics.
         auto search = replacementMap.find(syllable.substr(location, character_size));
         if (search != replacementMap.end()) {
-            std::string replacement = search->second.at(static_cast<size_t>(tone) - 1);
+            std::string replacement = search->second.at(
+                static_cast<size_t>(tone) - 1);
             syllable.erase(location, character_size);
             syllable.insert(location, replacement);
         } else {
