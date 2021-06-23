@@ -131,10 +131,12 @@ def create_tables(c):
             )''')
 
 
-def insert_example(c, definition_id, example):
+def insert_example(c, definition_id, starting_example_id, example):
   # The example should be a list of ExampleTuples, such that
   # the first item is the 'source', and all subsequent ones are the
   # translations
+    examples_inserted = 0
+
     trad = example[0].content
     simp = HanziConv.toSimplified(trad)
     jyut = example[0].pron
@@ -148,7 +150,7 @@ def insert_example(c, definition_id, example):
     c.execute('SELECT max(rowid) FROM chinese_sentences')
     before_example_id = c.fetchone()[0]
     c.execute('INSERT INTO chinese_sentences values (?,?,?,?,?,?)',
-              (None, trad, simp, pin, jyut, lang))
+              (starting_example_id, trad, simp, pin, jyut, lang))
     c.execute('SELECT max(rowid) FROM chinese_sentences')
     after_example_id = c.fetchone()[0]
 
@@ -156,7 +158,7 @@ def insert_example(c, definition_id, example):
     if before_example_id == after_example_id:
         if trad == 'X' or trad == 'x':
             # Ignore examples that are just 'x'
-            return
+            return 0
         else:
             # If insertion failed, it's probably because the example already exists
             # Get its rowid, so we can link it to this definition
@@ -172,10 +174,11 @@ def insert_example(c, definition_id, example):
             if row is None:
                 logging.warning(
                     f'Unexpected failure on insertion for example: {definition_id} {trad}')
-                return
+                return 0
             example_id = row[0]
     else:
         example_id = after_example_id
+        examples_inserted += 1
 
     c.execute(
         'INSERT INTO definitions_chinese_sentences_links values (?,?)',
@@ -196,12 +199,14 @@ def insert_example(c, definition_id, example):
         row = c.fetchone()
 
         if row is None:
+            translation_id = starting_example_id + examples_inserted
             c.execute(
-                'INSERT INTO nonchinese_sentences values (?,?,?)', (None, trad, lang))
-            c.execute('SELECT max(rowid) FROM nonchinese_sentences')
-            translation_id = c.fetchone()[0]
+                'INSERT INTO nonchinese_sentences values (?,?,?)', (translation_id, trad, lang))
             c.execute('INSERT INTO sentence_links values (?,?,?,?)',
                       (example_id, translation_id, 1, True))
+            examples_inserted += 1
+
+    return examples_inserted
 
 
 def generate_indices(c):
@@ -214,6 +219,11 @@ def generate_indices(c):
 
 
 def insert_words(c, words):
+    # Because the sentence id is presumed to be unique by Tatoeba, we will give it
+    # a namespace of 999999999 potential sentences. Thus, words.hk sentences will start
+    # at rowid 1000000000.
+    example_id = 1000000000
+
     for key in words:
         for entry in words[key]:
             trad = entry.word
@@ -255,10 +265,12 @@ def insert_words(c, words):
 
                 # Insert examples for each meaning
                 for sentence in meaning.examplesentences:
-                    insert_example(c, definition_id, sentence)
+                    examples_inserted = insert_example(c, definition_id, example_id, sentence)
+                    example_id += examples_inserted
 
                 for phrase in meaning.examplephrases:
-                    insert_example(c, definition_id, phrase)
+                    examples_inserted = insert_example(c, definition_id, example_id, phrase)
+                    example_id += examples_inserted
 
 
 def write(db_name, source, words):
@@ -469,8 +481,7 @@ if __name__ == '__main__':
 
     source = SourceTuple(sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6],
                          sys.argv[7], sys.argv[8], sys.argv[9], sys.argv[10])
-    # logging.basicConfig(level='DEBUG')
+    # logging.basicConfig(level='DEBUG') # Uncomment to enable debug logging
     parsed_words = defaultdict(list)
     parse_folder(sys.argv[2], parsed_words)
-    # parse_file(sys.argv[2], parsed_words)
     write(sys.argv[1], source, parsed_words)
