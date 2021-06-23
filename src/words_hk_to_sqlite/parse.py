@@ -37,6 +37,7 @@ SourceTuple = namedtuple('Source',
 #   - 印 for item with different POS for different meanings
 #   - 使勁 for broken sentence
 #   - 鬼靈精怪 for multiple different pronunciations
+#   - 掌 and 撻 for different definitions (腳掌, 撻沙) with the same English translation (sole)
 
 
 def drop_tables(c):
@@ -132,9 +133,9 @@ def create_tables(c):
 
 
 def insert_example(c, definition_id, starting_example_id, example):
-  # The example should be a list of ExampleTuples, such that
-  # the first item is the 'source', and all subsequent ones are the
-  # translations
+    # The example should be a list of ExampleTuples, such that
+    # the first item is the 'source', and all subsequent ones are the
+    # translations
     examples_inserted = 0
 
     trad = example[0].content
@@ -190,21 +191,33 @@ def insert_example(c, definition_id, starting_example_id, example):
         lang = translation.lang
 
         # Check if translation already exists before trying to insert
-        # Only need to insert a translation if it does not already exist in the
-        # table
+        # Insert a translation only if the translation doesn't already exist in the database
         c.execute(
             'SELECT rowid FROM nonchinese_sentences WHERE sentence=? AND language=?',
             (trad,
              lang))
-        row = c.fetchone()
+        translation_row = c.fetchone()
 
-        if row is None:
+        if translation_row is None:
             translation_id = starting_example_id + examples_inserted
             c.execute(
                 'INSERT INTO nonchinese_sentences values (?,?,?)', (translation_id, trad, lang))
+            examples_inserted += 1
+        else:
+            translation_id = translation_row[0]
+
+        # Then, link the translation to the example only if the link doesn't already exist
+        c.execute(
+            'SELECT rowid FROM sentence_links WHERE fk_chinese_sentence_id=? AND fk_non_chinese_sentence_id=?',
+            (example_id,
+             translation_id))
+        link_row = c.fetchone()
+
+        if link_row is None:
             c.execute('INSERT INTO sentence_links values (?,?,?,?)',
                       (example_id, translation_id, 1, True))
-            examples_inserted += 1
+
+
 
     return examples_inserted
 
