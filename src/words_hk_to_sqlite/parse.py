@@ -11,6 +11,8 @@ import os
 import sqlite3
 import sys
 
+# NOTE: This parser will will only parse words.hk pages saved before the 2021 redesign!
+
 # Structure of entries: a WORD contains multiple MEANINGS
 # A MEANING contains multiple DEFINITIONS in different languages, as well
 # as EXAMPLES
@@ -24,10 +26,6 @@ WordTuple = namedtuple('Word', ['word', 'pronunciation', 'meanings'])
 SourceTuple = namedtuple('Source',
                          ['name', 'shortname', 'version', 'description',
                           'legal', 'link', 'update_url', 'other'])
-
-# Things that would be nice that are currently not handled:
-#   - Alternate pronunciations (currently just take the first pronunciation on the page)
-#   - POS tagging (database structure doesn't integrate this for now)
 
 # Useful test pages:
 #   - 脂粉客 for malformed entry (or old entry)
