@@ -48,6 +48,9 @@ CMakeLists.txt.user*
 # Qt Builds
 *dist/
 
+# vim
+**.swp
+
 # Python environment
 *env/
 
@@ -70,6 +73,9 @@ CMakeLists.txt.user*
 **/tatoeba_to_sqlite/archive_*
 **/tatoeba_to_sqlite/data/*
 **/tatoeba_to_sqlite/developer/*
+**/words_hk_to_sqlite/data/*
+**/words_hk_to_sqlite/developer/*
+**/words_hk_to_sqlite/selenium/*
 
 # Screenshot files
 docs/screenshots/mac/search/*
