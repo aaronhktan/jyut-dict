@@ -80,10 +80,3 @@ CMakeLists.txt.user*
 **/words_hk/data/*
 **/words_hk/developer/*
 **/words_hk/selenium/*
-
-# Screenshot files
-docs/screenshots/mac/search/*
-
-# Flatpak builds
-*.flatpak-builder/
-*jyut-dict-flatpak/
