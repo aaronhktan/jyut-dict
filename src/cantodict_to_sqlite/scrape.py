@@ -36,8 +36,11 @@ for base_url, num_pages in urls:
         word_elems = document.find_all("td", class_=classname)
 
         for elem in word_elems:
-            word = elem.find("a").get_text()
-            word_url = elem.find("a").get("href")
+            word = elem.get_text()
+            if elem.find("a"):
+                word_url = elem.find("a").get("href")
+            else:
+                word_url = "?"
 
             if "wordlist" in base_url:
                 word_file.write(f"{word}\t{word_url}\n")
