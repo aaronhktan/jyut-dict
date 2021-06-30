@@ -54,6 +54,9 @@ CMakeLists.txt.user*
 # Python environment
 *env/
 
+# Python stuff
+*.pyc
+
 # Mac stuff
 *.DS_Store
 
@@ -65,17 +68,17 @@ CMakeLists.txt.user*
 *.db
 
 # Data files
-**/cedict_to_sqlite/archive_*
-**/cedict_to_sqlite/developer/*
-**/kaifangcidian_to_sqlite/archive_*
-**/kaifangcidian_to_sqlite/data/*
-**/kaifangcidian_to_sqlite/developer/*
-**/tatoeba_to_sqlite/archive_*
-**/tatoeba_to_sqlite/data/*
-**/tatoeba_to_sqlite/developer/*
-**/words_hk_to_sqlite/data/*
-**/words_hk_to_sqlite/developer/*
-**/words_hk_to_sqlite/selenium/*
+**/cedict/archive_*
+**/cedict/developer/*
+**/kaifangcidian/archive_*
+**/kaifangcidian/data/*
+**/kaifangcidian/developer/*
+**/tatoeba/archive_*
+**/tatoeba/data/*
+**/tatoeba/developer/*
+**/words_hk/data/*
+**/words_hk/developer/*
+**/words_hk/selenium/*
 
 # Screenshot files
 docs/screenshots/mac/search/*
