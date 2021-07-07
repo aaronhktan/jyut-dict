@@ -13,4 +13,4 @@
 - `scrape.py`
   - This script downloads every webpage for each words in the list of words previously downloaded by `setup_data.py`.
 - `parse.py`
-  - This script generates a SQLite database from the webpages downloaded by `scrape.py`. Note that this script only parses words.hk webpages from **July 2020** - the format has since changed by this script has not yet been updated!
+  - This script generates a SQLite database from the webpages downloaded by `scrape.py`. Note that this script only parses words.hk webpages from **July 2020** - the format has since changed but this script has not yet been updated!
