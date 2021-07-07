@@ -117,7 +117,9 @@ def parse_cc_cedict(filename, entries):
             simp = split[1]
             pin = line[line.index("[") + 1 : line.index("]")].lower().replace("v", "u:")
             eng = line[line.index("/") + 1 : -2].split("/")
-            entry = objects.EntryWithCantoneseAndMandarin(trad=trad, simp=simp, pin=pin, cedict_eng=eng)
+            entry = objects.EntryWithCantoneseAndMandarin(
+                trad=trad, simp=simp, pin=pin, cedict_eng=eng
+            )
 
             if trad in entries:
                 entries[trad].append(entry)
@@ -137,7 +139,9 @@ def parse_cc_canto(filename, entries):
             pin = line[line.index("[") + 1 : line.index("]")].lower().replace("v", "u:")
             jyut = line[line.index("{") + 1 : line.index("}")].lower()
             eng = line[line.find("/", line.index("}")) + 1 : line.rfind("/")]
-            entry = entry = objects.EntryWithCantoneseAndMandarin(trad=trad, simp=simp, pin=pin, jyut=jyut, canto_eng=[eng])
+            entry = entry = objects.EntryWithCantoneseAndMandarin(
+                trad=trad, simp=simp, pin=pin, jyut=jyut, canto_eng=[eng]
+            )
 
             # Check if entry is already in entries list
             # If it is, then add jyutping and Cantonese definition

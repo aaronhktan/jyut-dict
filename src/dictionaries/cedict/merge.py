@@ -1,4 +1,4 @@
-from wordfreq import zipf_frequency
+from database import database
 
 import sqlite3
 import sys
@@ -15,111 +15,156 @@ if __name__ == "__main__":
     c = db.cursor()
 
     # Set version of database
-    c.execute("PRAGMA user_version=1")
+    database.write_database_version(c)
 
     # Attach new databases
     c.execute("ATTACH DATABASE '{}' AS db1".format(sys.argv[2]))
     c.execute("ATTACH DATABASE '{}' AS db2".format(sys.argv[3]))
 
     # Delete old tables and indices
-    c.execute("DROP TABLE IF EXISTS entries")
-    c.execute("DROP TABLE IF EXISTS entries_fts")
-    c.execute("DROP TABLE IF EXISTS sources")
-    c.execute("DROP TABLE IF EXISTS definitions")
-    c.execute("DROP TABLE IF EXISTS definitions_fts")
-    c.execute("DROP INDEX IF EXISTS fk_entry_id_index")
+    database.drop_tables(c)
 
     # Create new tables
-    c.execute(
-        """CREATE TABLE entries(
-                    entry_id INTEGER PRIMARY KEY,
-                    traditional TEXT,
-                    simplified TEXT,
-                    pinyin TEXT,
-                    jyutping TEXT,
-                    frequency REAL,
-                    UNIQUE(traditional, simplified, pinyin, jyutping) ON CONFLICT IGNORE
-                )"""
-    )
-    c.execute("CREATE VIRTUAL TABLE entries_fts using fts5(pinyin, jyutping)")
-
-    c.execute(
-        """CREATE TABLE sources(
-                    source_id INTEGER PRIMARY KEY,
-                    sourcename TEXT UNIQUE ON CONFLICT ABORT,
-                    sourceshortname TEXT,
-                    version TEXT,
-                    description TEXT,
-                    legal TEXT,
-                    link TEXT,
-                    update_url TEXT,
-                    other TEXT
-                )"""
-    )
-
-    c.execute(
-        """CREATE TABLE definitions(
-                    definition_id INTEGER PRIMARY KEY,
-                    definition TEXT,
-                    fk_entry_id INTEGER,
-                    fk_source_id INTEGER,
-                    FOREIGN KEY(fk_entry_id) REFERENCES entries(entry_id) ON UPDATE CASCADE,
-                    FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON DELETE CASCADE,
-                    UNIQUE(definition, fk_entry_id, fk_source_id) ON CONFLICT IGNORE
-                )"""
-    )
-    c.execute("CREATE VIRTUAL TABLE definitions_fts using fts5(definition)")
+    database.create_tables(c)
 
     # Insert from first database
     c.execute(
-        "INSERT INTO entries(traditional, simplified, pinyin, jyutping, frequency) SELECT traditional, simplified, pinyin, jyutping, frequency FROM db1.entries"
+        """INSERT INTO entries(traditional, simplified, pinyin, jyutping, frequency)
+            SELECT traditional, simplified, pinyin, jyutping, frequency FROM db1.entries"""
     )
     c.execute(
-        "INSERT INTO sources(sourcename, sourceshortname, version, description, legal, link, update_url, other) SELECT sourcename, sourceshortname, version, description, legal, link, update_url, other FROM db1.sources"
+        """INSERT INTO sources(sourcename, sourceshortname, version, description, legal, link, update_url, other)
+        SELECT sourcename, sourceshortname, version, description, legal, link, update_url, other FROM db1.sources"""
     )
     c.execute(
-        "INSERT INTO definitions(definition, fk_entry_id, fk_source_id) SELECT definition, fk_entry_id, fk_source_id FROM db1.definitions"
+        """INSERT INTO definitions(definition, fk_entry_id, fk_source_id)
+        SELECT definition, fk_entry_id, fk_source_id FROM db1.definitions"""
+    )
+    c.execute(
+        """INSERT INTO chinese_sentences(chinese_sentence_id, traditional, simplified, pinyin, jyutping, language)
+        SELECT chinese_sentence_id, traditional, simplified, pinyin, jyutping, language FROM db1.chinese_sentences"""
+    )
+    c.execute(
+        """INSERT INTO nonchinese_sentences(non_chinese_sentence_id, sentence, language)
+        SELECT non_chinese_sentence_id, sentence, language FROM db1.nonchinese_sentences"""
+    )
+    c.execute(
+        """INSERT INTO sentence_links(fk_chinese_sentence_id, fk_non_chinese_sentence_id, fk_source_id, direct)
+        SELECT fk_chinese_sentence_id, fk_non_chinese_sentence_id, fk_source_id, direct FROM db1.sentence_links"""
+    )
+    c.execute(
+        """INSERT INTO definitions_chinese_sentences_links(fk_definition_id, fk_chinese_sentence_id)
+        SELECT fk_definition_id, fk_chinese_sentence_id FROM db1.definitions_chinese_sentences_links"""
     )
 
     # Insert from second database
     c.execute(
-        "INSERT INTO entries(traditional, simplified, pinyin, jyutping, frequency) SELECT traditional, simplified, pinyin, jyutping, frequency FROM db2.entries"
+        """INSERT INTO entries(traditional, simplified, pinyin, jyutping, frequency)
+        SELECT traditional, simplified, pinyin, jyutping, frequency FROM db2.entries"""
     )
     c.execute(
-        "INSERT INTO sources(sourcename, sourceshortname, version, description, legal, link, update_url, other) SELECT sourcename, sourceshortname, version, description, legal, link, update_url, other FROM db2.sources"
+        """INSERT INTO sources(sourcename, sourceshortname, version, description, legal, link, update_url, other)
+        SELECT sourcename, sourceshortname, version, description, legal, link, update_url, other FROM db2.sources"""
+    )
+    c.execute(
+        """INSERT INTO chinese_sentences(chinese_sentence_id, traditional, simplified, pinyin, jyutping, language)
+        SELECT chinese_sentence_id, traditional, simplified, pinyin, jyutping, language FROM db2.chinese_sentences"""
+    )
+    c.execute(
+        """INSERT INTO nonchinese_sentences(non_chinese_sentence_id, sentence, language)
+        SELECT non_chinese_sentence_id, sentence, language FROM db2.nonchinese_sentences"""
     )
 
+    # Insert definitions separately, as their foreign key references need to be re-written
     c.execute(
-        """CREATE TEMPORARY TABLE definitions_tmp AS
+        """WITH definitions_tmp AS (
                     SELECT entries.traditional AS traditional, entries.simplified AS simplified, entries.pinyin AS pinyin, entries.jyutping AS jyutping,
                         sources.sourcename AS sourcename, definitions.definition AS definition
                     FROM db2.entries, db2.definitions, db2.sources
                     WHERE db2.definitions.fk_entry_id = db2.entries.entry_id AND db2.definitions.fk_source_id = db2.sources.source_id
-              """
+            )
+
+        INSERT INTO definitions(definition, fk_entry_id, fk_source_id)
+            SELECT d.definition, e.entry_id, s.source_id
+            FROM definitions_tmp AS d, sources AS s, entries AS e
+            WHERE d.sourcename = s.sourcename
+                AND d.traditional = e.traditional
+                AND d.simplified = e.simplified
+                AND d.pinyin = e.pinyin
+                AND d.jyutping = e.jyutping
+        """
     )
 
+    # Insert sentence links separate, as their source foreign key needs to be rewritten
     c.execute(
-        """INSERT INTO definitions(definition, fk_entry_id, fk_source_id)
-                SELECT d.definition, e.entry_id, s.source_id
-                FROM definitions_tmp AS d, sources AS s, entries AS e
-                WHERE d.sourcename = s.sourcename
-                    AND d.traditional = e.traditional
-                    AND d.simplified = e.simplified
-                    AND d.pinyin = e.pinyin
-                    AND d.jyutping = e.jyutping
-              """
+        """WITH sentence_links_tmp AS (
+                    SELECT sentence_links.fk_chinese_sentence_id AS fk_csi,
+                        sentence_links.fk_non_chinese_sentence_id AS fk_ncsi,
+                        sentence_links.direct AS direct,
+                        sources.sourcename AS sourcename
+                    FROM db2.sentence_links, db2.sources
+                    WHERE sentence_links.fk_source_id = db2.sources.source_id
+            )
+
+        INSERT INTO sentence_links(fk_chinese_sentence_id, fk_non_chinese_sentence_id, fk_source_id, direct)
+            SELECT sl.fk_csi, sl.fk_ncsi, s.source_id, sl.direct
+            FROM sentence_links_tmp AS sl, sources AS s
+            WHERE sl.sourcename = s.sourcename
+        """
+    )
+
+    # Insert definitions => sentence links
+
+    # entry_and_definitions: [traditional | simplified | pinyin | jyutping | definition]
+    # for each definition in db2, since this uniquely identifies the definition
+
+    # Match that up with sentences, so that we get dfs_s_links_tmp: [traditional | simplified | pinyin | jyutping | definition | sentence]
+    # for each sentence in db2, since this uniquely identifies the sentence
+
+    # In current database, get new_entry_and_defnitions: [traditional | simplified | pinyin | jyutping | definition]
+
+    # And replace the fk_definition_id for each sentence link when traditional/simplified/pinyin/jyutping/definition all match for a sentence.
+    c.execute(
+        """WITH entry_and_definitions AS (
+                    SELECT entries.traditional AS traditional, entries.simplified AS simplified, entries.pinyin AS pinyin, entries.jyutping AS jyutping,
+                        definitions.definition AS definition, definitions.definition_id AS definition_id
+                    FROM db2.entries, db2.definitions
+                    WHERE db2.definitions.fk_entry_id = db2.entries.entry_id
+            ),
+
+            defs_s_links_tmp AS (
+                    SELECT dsl.fk_definition_id AS fdi,
+                        dsl.fk_chinese_sentence_id AS fcsi,
+                        ed.definition AS definition,
+                        ed.traditional AS traditional,
+                        ed.simplified AS simplified,
+                        ed.pinyin AS pinyin,
+                        ed.jyutping AS jyutping
+                    FROM db2.definitions_chinese_sentences_links AS dsl, entry_and_definitions AS ed
+                    WHERE dsl.fk_definition_id = ed.definition_id
+            ),
+
+            new_entry_and_definitions AS (
+                    SELECT entries.traditional AS traditional, entries.simplified AS simplified, entries.pinyin AS pinyin, entries.jyutping AS jyutping,
+                        definitions.definition AS definition, definitions.definition_id AS definition_id
+                    FROM entries, definitions
+                    WHERE definitions.fk_entry_id = entries.entry_id
+            )
+
+            INSERT INTO definitions_chinese_sentences_links(fk_definition_id, fk_chinese_sentence_id)
+                    SELECT ned.definition_id,
+                        dsl.fcsi
+                    FROM defs_s_links_tmp AS dsl, new_entry_and_definitions AS ned
+                    WHERE dsl.definition = ned.definition
+                        AND dsl.traditional = ned.traditional
+                        AND dsl.simplified = ned.simplified
+                        AND dsl.pinyin = ned.pinyin
+                        AND dsl.jyutping = ned.jyutping
+        """
     )
 
     # Populate FTS versions of tables
-    c.execute(
-        "INSERT INTO entries_fts(rowid, pinyin, jyutping) SELECT rowid, pinyin, jyutping FROM entries"
-    )
-    c.execute(
-        "INSERT INTO definitions_fts(rowid, definition) SELECT rowid, definition FROM definitions"
-    )
-
-    # Create index
-    c.execute("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)")
+    database.generate_indices(c)
 
     db.commit()
     db.close()

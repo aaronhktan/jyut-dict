@@ -72,6 +72,7 @@ def create_tables(c):
                   FOREIGN KEY(fk_chinese_sentence_id) REFERENCES chinese_sentences(chinese_sentence_id),
                   FOREIGN KEY(fk_non_chinese_sentence_id) REFERENCES nonchinese_sentences(non_chinese_sentence_id),
                   FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON DELETE CASCADE
+                  UNIQUE(fk_chinese_sentence_id, fk_non_chinese_sentence_id) ON CONFLICT IGNORE
             )"""
     )
 
@@ -262,6 +263,17 @@ def insert_sentence_link(c, sentence_id, translation_id, source_id, direct):
     if after_id != before_id:
         return after_id
     return -1
+
+
+def get_source_id(sourcename):
+    c.execute(
+        """SELECT rowid FROM sources WHERE sourcename=?)""",
+        (sourcename),
+    )
+    row = c.fetchone()
+    if row is None:
+        return -1
+    return row[0]
 
 
 def get_entry_id(c, trad, simp, pin, jyut, freq):

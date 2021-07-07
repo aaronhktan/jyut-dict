@@ -1,15 +1,6 @@
 import sys
 
-
-class Entry(object):
-    def __init__(self, trad="", simp="", pin="", jyut=""):
-        self.traditional = trad
-        self.simplified = simp
-        self.pinyin = pin
-        self.jyutping = jyut
-
-    def add_jyut_ping(self, jyut):
-        self.jyutping = jyut
+from database import objects
 
 
 def write(entries, output_name):
@@ -48,7 +39,7 @@ def parse_cc_canto(filename, entries):
             simp = split[1]
             pin = line[line.index("[") + 1 : line.index("]")].lower().replace("v", "u:")
             jyut = line[line.index("{") + 1 : line.index("}")].lower()
-            entry = Entry(trad=trad, simp=simp, pin=pin, jyut=jyut)
+            entry = objects.Entry(trad=trad, simp=simp, pin=pin, jyut=jyut)
 
             # Check if entry is already in dictionary
             if trad in entries:
@@ -82,7 +73,7 @@ def parse_cc_cedict_canto_readings(filename, entries):
             pin = line[line.index("[") + 1 : line.index("]")].lower().replace("v", "u:")
             jyut = line[line.index("{") + 1 : line.index("}")].lower()
 
-            entry = Entry(trad=trad, simp=simp, pin=pin, jyut=jyut)
+            entry = objects.Entry(trad=trad, simp=simp, pin=pin, jyut=jyut)
 
             if trad in entries:
                 new_entry = True
