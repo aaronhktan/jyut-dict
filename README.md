@@ -37,15 +37,19 @@ Prefer to only Traditional Chinese first? Maybe hide Pinyin? Change the colours 
 
 ## Project structure
 
-The project contains three subdirectories, `cedict_to_sqlite`, `tatoeba_to_sqlite`, and `jyut-dict`.
+The project contains two subdirectories under `src`: `dictionaries`, and `jyut-dict`.
 
-### cedict_to_sqlite
+### dictionaries
 
-This folder contains several Python3 scripts that convert the raw [CC-CEDICT](https://cc-cedict.org/editor/editor.php?handler=Download)/[CC-CANTO](https://cantonese.org/download.html)/CC-CANTO readings files into FTS5 SQLite databases. The [README](/src/cedict_to_sqlite/README.md) file in this directory contains a more detailed explanation of the various scripts.
-
-### tatoeba_to_sqlite
-
-This folder contains several Python3 scripts that convert the raw sentences.csv/links.csv files from [Tatoeba](https://tatoeba.org/eng/downloads) into SQLite databases. The [README](/src/tatoeba_to_sqlite/README.md) file in this directory contains a more detailed explanation of the various scripts.
+This folder contains several Python3 scripts that convert the various online Cantonese dictionaries into the dictionary format used by Jyut Dictionary. Some sources include:
+- CC-CEDICT and CC-CEDICT-compatible dictionaries, such as:
+  - **[CC-CEDICT](https://cc-cedict.org/editor/editor.php?handler=Download)**
+  - **[CC-CANTO](https://cantonese.org/download.html)**
+  - **[CFDICT](https://chine.in/mandarin/dictionnaire/)**
+  - **[HanDeDict](https://handedict.zydeo.net/de)**
+- **[Kaifangcidian 粵語詞典 - 開放詞典](https://www.kaifangcidian.com/han/yue)**
+- **[Tatoeba](https://tatoeba.org/eng/downloads)**
+- **[words.hk 粵典](https://words.hk/)**
 
 ### jyut-dict
 
