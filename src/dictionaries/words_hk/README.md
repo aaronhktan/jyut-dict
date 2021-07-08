@@ -5,7 +5,7 @@
   - `scrape.py`
   - `parse.py`
 - Specific usage instructions for each script are provided by the scripts themselves.
-- Run the scripts from the `dictionaries` folder, e.g. `python3 -m cedict.parse-set <database filename> <CC_CEDICT file> <CC_CANTO file> <Cantonese Readings file>`.
+- Run the scripts from the `dictionaries` folder, e.g. `python3 -m words_hk.parse <database filename>`.
 
 #### Scripts:
 - `setup_data.py`

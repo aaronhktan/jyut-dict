@@ -1,6 +1,7 @@
 #### Usage:
 - To install required packages: `pip install -r requirements.txt`
 - Specific usage instructions for each script are provided by the scripts themselves.
+- Run the scripts from the `dictionaries` folder, e.g. `python3 -m kaifangcidian.parse <database filename>`.
 
 #### Scripts:
 - `parse.py`
