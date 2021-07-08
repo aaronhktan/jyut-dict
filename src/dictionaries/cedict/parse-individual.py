@@ -53,7 +53,7 @@ def write(db_name, source, entries):
                     entry.freq,
                 )
                 if entry_id == -1:
-                    logging.error(f"Could not insert word {trad}, uh oh!")
+                    logging.error(f"Could not insert word {entry.traditional}, uh oh!")
                     continue
 
             for definition in entry.definitions:

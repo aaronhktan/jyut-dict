@@ -196,10 +196,10 @@ def parse_links_file(
 if __name__ == "__main__":
     if len(sys.argv) != 14:
         print(
-            "Usage: python3 script.py <database filename> <Tatoeba sentences file> <Tatoeba links file> <source language> <target language> <source name> <source short name> <source version> <source description> <source legal> <source link> <source update url> <source other>"
+            "Usage: python3 parse.py <database filename> <Tatoeba sentences file> <Tatoeba links file> <source language> <target language> <source name> <source short name> <source version> <source description> <source legal> <source link> <source update url> <source other>"
         )
         print(
-            'e.g. python3 script.py dict.db sentences.csv links.csv yue eng Tatoeba TTB 2018-07-09 "Tatoeba is a collection of sentences." "These files are released under CC BY 2.0 FR." "https://tatoeba.org/eng/downloads" "" ""'
+            'e.g. python3 parse.py dict.db sentences.csv links.csv yue eng Tatoeba TTB 2018-07-09 "Tatoeba is a collection of sentences." "These files are released under CC BY 2.0 FR." "https://tatoeba.org/eng/downloads" "" ""'
         )
         sys.exit(1)
 

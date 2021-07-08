@@ -52,11 +52,7 @@ class EntryWithCantoneseAndMandarin(Entry):
         canto_eng=None,
     ):
         super(EntryWithCantoneseAndMandarin, self).__init__(
-            trad=trad,
-            simp=simp,
-            pin=pin,
-            jyut=jyut,
-            freq=freq
+            trad=trad, simp=simp, pin=pin, jyut=jyut, freq=freq
         )
         self.cedict_english = cedict_eng if cedict_eng is not None else []
         self.canto_english = canto_eng if canto_eng is not None else []
