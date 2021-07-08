@@ -3,37 +3,11 @@ from hanziconv import HanziConv
 from pypinyin import pinyin, Style
 import pinyin_jyutping_sentence
 
+from database import database, objects
+
 import collections
 import sqlite3
 import sys
-
-source = {
-    "name": "",
-    "shortname": "",
-    "version": "",
-    "description": "",
-    "legal": "",
-    "link": "",
-    "update_url": "",
-    "other": "",
-}
-
-
-class ChineseSentence(object):
-    def __init__(self, sentence_id=0, trad="", simp="", pin="", jyut="", lang=""):
-        self.id = sentence_id
-        self.traditional = trad
-        self.simplified = simp
-        self.pinyin = pin
-        self.jyutping = jyut
-        self.language = lang
-
-
-class NonChineseSentence(object):
-    def __init__(self, sentence_id=0, sentence="", lang=""):
-        self.id = sentence_id
-        self.sentence = sentence
-        self.lang = lang
 
 
 def write(chinese_sentences, nonchinese_sentences, links, db_name):
@@ -42,124 +16,55 @@ def write(chinese_sentences, nonchinese_sentences, links, db_name):
     db = sqlite3.connect(db_name)
     c = db.cursor()
 
-    # Set version of database
-    c.execute("PRAGMA user_version=2")
-
-    # Delete old tables and indices
-    c.execute("DROP TABLE IF EXISTS chinese_sentences")
-    c.execute("DROP TABLE IF EXISTS sources")
-    c.execute("DROP TABLE IF EXISTS nonchinese_sentences")
-    c.execute("DROP TABLE IF EXISTS sentence_links")
-    c.execute("DROP INDEX IF EXISTS fk_chinese_sentence_id_index")
-    c.execute("DROP INDEX IF EXISTS fk_non_chinese_sentence_id_index")
-
-    # Create new tables
-    c.execute(
-        """CREATE TABLE chinese_sentences(
-                    chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE,
-                    traditional TEXT,
-                    simplified TEXT,
-                    pinyin TEXT,
-                    jyutping TEXT,
-                    language TEXT,
-                    UNIQUE(traditional, simplified, pinyin, jyutping) ON CONFLICT IGNORE
-                )"""
-    )
-
-    c.execute(
-        """CREATE TABLE sources(
-                    source_id INTEGER PRIMARY KEY,
-                    sourcename TEXT UNIQUE ON CONFLICT ABORT,
-                    sourceshortname TEXT,
-                    version TEXT,
-                    description TEXT,
-                    legal TEXT,
-                    link TEXT,
-                    update_url TEXT,
-                    other TEXT
-                )"""
-    )
-
-    c.execute(
-        """CREATE TABLE nonchinese_sentences(
-                    non_chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE,
-                    sentence TEXT,
-                    language TEXT,
-                    UNIQUE(non_chinese_sentence_id, sentence) ON CONFLICT IGNORE
-                )"""
-    )
-
-    c.execute(
-        """CREATE TABLE sentence_links(
-                    fk_chinese_sentence_id INTEGER,
-                    fk_non_chinese_sentence_id INTEGER,
-                    fk_source_id INTEGER,
-                    direct BOOLEAN,
-                    FOREIGN KEY(fk_chinese_sentence_id) REFERENCES chinese_sentences(chinese_sentence_id),
-                    FOREIGN KEY(fk_non_chinese_sentence_id) REFERENCES nonchinese_sentences(non_chinese_sentence_id),
-                    FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON DELETE CASCADE
-                )"""
-    )
-
-    # Add source to tables
-    c.execute(
-        "INSERT INTO sources values(?,?,?,?,?,?,?,?,?)",
-        (
-            None,
-            source["name"],
-            source["shortname"],
-            source["version"],
-            source["description"],
-            source["legal"],
-            source["link"],
-            source["update_url"],
-            source["other"],
-        ),
+    database.write_database_version(c)
+    database.drop_tables(c)
+    database.create_tables(c)
+    database.insert_source(
+        c,
+        source.name,
+        source.shortname,
+        source.version,
+        source.description,
+        source.legal,
+        source.link,
+        source.update_url,
+        source.other,
+        None,
     )
 
     # Add sentences to tables
-    def chinese_sentence_to_tuple(sentence):
-        return (
-            sentence.id,
+    for key in chinese_sentences:
+        sentence = chinese_sentences[key]
+        database.insert_chinese_sentence(
+            c,
             sentence.traditional,
             sentence.simplified,
             sentence.pinyin,
             sentence.jyutping,
             sentence.language,
+            sentence.id,
         )
-
-    def non_chinese_sentence_to_tuple(sentence):
-        return (sentence.id, sentence.sentence, sentence.lang)
-
-    for key in chinese_sentences:
-        sentence = chinese_sentences[key]
-        c.execute(
-            "INSERT INTO chinese_sentences values (?,?,?,?,?,?)",
-            chinese_sentence_to_tuple(sentence),
-        )
-
-        c.execute("SELECT last_insert_rowid()")
-        sentence_id = c.fetchone()[0]
 
     for key in nonchinese_sentences:
         sentence = nonchinese_sentences[key]
-        c.execute(
-            "INSERT INTO nonchinese_sentences values (?,?,?)",
-            non_chinese_sentence_to_tuple(sentence),
+        database.insert_nonchinese_sentence(
+            c,
+            sentence.sentence,
+            sentence.language,
+            sentence.id,
         )
 
     # Add links
     for source_sentence_id in links:
         for target_sentence_id in links[source_sentence_id]:
             direct = links[source_sentence_id][target_sentence_id]
-            c.execute(
-                "INSERT INTO sentence_links values (?,?,?,?)",
-                (source_sentence_id, target_sentence_id, 1, direct),
+            database.insert_sentence_link(
+                c,
+                source_sentence_id,
+                target_sentence_id,
+                1,
+                direct,
             )
-
-    # Create indices
-    # c.execute('CREATE INDEX fk_chinese_sentence_id_index ON sentence_links(fk_chinese_sentence_id)')
-    # c.execute('CREATE INDEX fk_non_chinese_sentence_id_index ON sentence_links(fk_non_chinese_sentence_id)')
 
     db.commit()
     db.close()
@@ -197,13 +102,13 @@ def parse_sentence_file(
                 jyut = pinyin_jyutping_sentence.jyutping(
                     trad, tone_numbers=True, spaces=True
                 )
-                sentence_row = ChineseSentence(
-                    sentence_id=sentence_id,
-                    trad=trad,
-                    simp=simp,
-                    pin=pin,
-                    jyut=jyut,
-                    lang=lang,
+                sentence_row = objects.ChineseSentence(
+                    sentence_id,
+                    trad,
+                    simp,
+                    pin,
+                    jyut,
+                    lang,
                 )
 
                 sentences[sentence_id] = sentence_row
@@ -211,8 +116,8 @@ def parse_sentence_file(
 
             if lang == target:
                 sentence = line[sentence_start:].strip()
-                sentence_translation = NonChineseSentence(
-                    sentence_id=sentence_id, lang=lang, sentence=sentence
+                sentence_translation = objects.NonChineseSentence(
+                    sentence_id, sentence, lang
                 )
                 nonchinese_sentences[sentence_id] = sentence_translation
                 continue
@@ -308,14 +213,16 @@ if __name__ == "__main__":
         {}
     )  # Store only target sentences that match a source sentence
     links = {}  # Use this to store all the links between sentences
-    source["name"] = sys.argv[6]
-    source["shortname"] = sys.argv[7]
-    source["version"] = sys.argv[8]
-    source["description"] = sys.argv[9]
-    source["legal"] = sys.argv[10]
-    source["link"] = sys.argv[11]
-    source["update_url"] = sys.argv[12]
-    source["other"] = sys.argv[13]
+    source = objects.SourceTuple(
+        sys.argv[6],
+        sys.argv[7],
+        sys.argv[8],
+        sys.argv[9],
+        sys.argv[10],
+        sys.argv[11],
+        sys.argv[12],
+        sys.argv[13],
+    )
     parse_sentence_file(
         sys.argv[2],
         sys.argv[4],
