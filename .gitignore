@@ -76,6 +76,7 @@ CMakeLists.txt.user*
 **/tatoeba/archive_*
 **/tatoeba/data/*
 **/tatoeba/developer/*
+**/words_hk/archive_*
 **/words_hk/data/*
 **/words_hk/developer/*
 **/words_hk/selenium/*
