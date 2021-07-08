@@ -2,143 +2,71 @@ import hanzidentifier
 from pypinyin import lazy_pinyin, Style
 from wordfreq import zipf_frequency
 
+from database import database, objects
+
 import ast
 import csv
+import logging
 import sqlite3
 import sys
-
-
-class Entry(object):
-    def __init__(self, trad="", simp="", pin="", jyut="", freq=0.0, defs=None):
-        self.traditional = trad
-        self.simplified = simp
-        self.pinyin = pin
-        self.jyutping = jyut
-        self.freq = freq
-        self.definitions = defs if defs is not None else []
-
-    def add_freq(self, freq):
-        self.freq = freq
 
 
 def write(entries, db_name):
     db = sqlite3.connect(db_name)
     c = db.cursor()
 
-    # Set version of database
-    c.execute("PRAGMA user_version=2")
-
-    # Delete old tables and indices
-    c.execute("DROP TABLE IF EXISTS entries")
-    c.execute("DROP TABLE IF EXISTS entries_fts")
-    c.execute("DROP TABLE IF EXISTS sources")
-    c.execute("DROP TABLE IF EXISTS definitions")
-    c.execute("DROP TABLE IF EXISTS definitions_fts")
-    c.execute("DROP INDEX IF EXISTS fk_entry_id_index")
-
-    # Create new tables
-    c.execute(
-        """CREATE TABLE entries(
-                    entry_id INTEGER PRIMARY KEY,
-                    traditional TEXT,
-                    simplified TEXT,
-                    pinyin TEXT,
-                    jyutping TEXT,
-                    frequency REAL,
-                    UNIQUE(traditional, simplified, pinyin, jyutping) ON CONFLICT IGNORE
-                )"""
+    database.write_database_version(c)
+    database.drop_tables(c)
+    database.create_tables(c)
+    database.insert_source(
+        c,
+        source.name,
+        source.shortname,
+        source.version,
+        source.description,
+        source.legal,
+        source.link,
+        source.update_url,
+        source.other,
+        None,
     )
-    c.execute("CREATE VIRTUAL TABLE entries_fts using fts5(pinyin, jyutping)")
-
-    c.execute(
-        """CREATE TABLE sources(
-                    source_id INTEGER PRIMARY KEY,
-                    sourcename TEXT UNIQUE ON CONFLICT ABORT,
-                    sourceshortname TEXT,
-                    version TEXT,
-                    description TEXT,
-                    legal TEXT,
-                    link TEXT,
-                    update_url TEXT,
-                    other TEXT
-                )"""
-    )
-
-    c.execute(
-        """CREATE TABLE definitions(
-                    definition_id INTEGER PRIMARY KEY,
-                    definition TEXT,
-                    fk_entry_id INTEGER,
-                    fk_source_id INTEGER,
-                    FOREIGN KEY(fk_entry_id) REFERENCES entries(entry_id) ON UPDATE CASCADE,
-                    FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON DELETE CASCADE,
-                    UNIQUE(definition, fk_entry_id, fk_source_id) ON CONFLICT IGNORE
-                )"""
-    )
-    c.execute("CREATE VIRTUAL TABLE definitions_fts using fts5(definition)")
-
-    # Add sources to tables
-    c.execute(
-        "INSERT INTO sources values(?,?,?,?,?,?,?,?,?)",
-        (
-            None,
-            source["name"],
-            source["shortname"],
-            source["version"],
-            source["description"],
-            source["legal"],
-            source["link"],
-            source["update_url"],
-            source["other"],
-        ),
-    )
-
-    # Add entries to tables
-    def entry_to_tuple(entry):
-        return (
-            None,
-            entry.traditional,
-            entry.simplified,
-            entry.pinyin,
-            entry.jyutping,
-            entry.freq,
-        )
-
-    def definition_to_tuple(definition, entry_id, source_id):
-        return (None, definition, entry_id, source_id)
 
     entry_id = 0
     for key in entries:
         for entry in entries[key]:
-            c.execute("SELECT COUNT(*) from entries")
-            count_before = c.fetchone()[0]
+            entry_id = database.get_entry_id(
+                c,
+                entry.traditional,
+                entry.simplified,
+                entry.pinyin,
+                entry.jyutping if entry.jyutping != "" else entry.fuzzy_jyutping,
+                entry.freq,
+            )
 
-            c.execute("INSERT INTO entries values (?,?,?,?,?,?)", entry_to_tuple(entry))
+            if entry_id == -1:
+                entry_id = database.insert_entry(
+                    c,
+                    entry.traditional,
+                    entry.simplified,
+                    entry.pinyin,
+                    entry.jyutping if entry.jyutping != "" else entry.fuzzy_jyutping,
+                    entry.freq,
+                )
+                if entry_id == -1:
+                    logging.error(f"Could not insert word {entry.traditional}, uh oh!")
+                    continue
 
-            c.execute("SELECT COUNT(*) from entries")
-            count_after = c.fetchone()[0]
+            for definition in entry.definitions:
+                definition_id = database.insert_definition(
+                    c, definition, "", entry_id, 1, None
+                )
+                if definition_id == -1:
+                    logging.error(
+                        f"Could not insert definition {definition} for word {entry.traditional}, uh oh!"
+                    )
+                    continue
 
-            # Only update the entry_id if insert was successful
-            if count_after > count_before:
-                c.execute("SELECT last_insert_rowid()")
-                entry_id = c.fetchone()[0]
-
-            definition_tuples = [
-                definition_to_tuple(definition, entry_id, 1)
-                for definition in entry.definitions
-            ]
-            c.executemany("INSERT INTO definitions values (?,?,?,?)", definition_tuples)
-
-    # Populate FTS versions of tables
-    c.execute(
-        "INSERT INTO entries_fts (rowid, pinyin, jyutping) SELECT rowid, pinyin, jyutping FROM entries"
-    )
-    c.execute(
-        "INSERT INTO definitions_fts (rowid, definition) SELECT rowid, definition FROM definitions"
-    )
-
-    # Create index
-    c.execute("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)")
+    database.generate_indices(c)
 
     db.commit()
     db.close()
@@ -221,7 +149,7 @@ def parse_file(filename_traditional, filename_simplified_jyutping, entries):
             definitions = ["（沒有對應漢語詞彙）"]
             index += trad_len + jyut_len
 
-        entry = Entry(trad=trad, simp=simp, pin=pin, jyut=jyut, defs=definitions)
+        entry = objects.Entry(trad=trad, simp=simp, pin=pin, jyut=jyut, defs=definitions)
 
         if trad in entries:
             entries[trad].append(entry)
@@ -247,14 +175,16 @@ if __name__ == "__main__":
         sys.exit(1)
 
     entries = {}
-    source["name"] = sys.argv[4]
-    source["shortname"] = sys.argv[5]
-    source["version"] = sys.argv[6]
-    source["description"] = sys.argv[7]
-    source["legal"] = sys.argv[8]
-    source["link"] = sys.argv[9]
-    source["update_url"] = sys.argv[10]
-    source["other"] = sys.argv[11]
+    source = objects.SourceTuple(
+        sys.argv[4],
+        sys.argv[5],
+        sys.argv[6],
+        sys.argv[7],
+        sys.argv[8],
+        sys.argv[9],
+        sys.argv[10],
+        sys.argv[11],
+    )
     parse_file(sys.argv[2], sys.argv[3], entries)
     assign_frequencies(entries)
     write(entries, sys.argv[1])
