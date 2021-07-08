@@ -388,6 +388,13 @@ if __name__ == "__main__":
                 "<source link> <source update url> <source other>"
             )
         )
+        print(
+            (
+                "e.g. python3 script.py words_hk.db scraped/data/ 粵典–words.hk WHK 2020-07-14 "
+                '"《粵典》係一個大型嘅粵語辭典計劃。我哋會用Crowd-sourcing嘅方法，整一本大型、可持續發展嘅粵語辭典。" '
+                '"https://words.hk/base/hoifong/" "https://words.hk/" "" ""'
+            )
+        )
         sys.exit(1)
 
     source = objects.SourceTuple(

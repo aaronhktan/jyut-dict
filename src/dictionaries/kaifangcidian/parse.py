@@ -149,7 +149,9 @@ def parse_file(filename_traditional, filename_simplified_jyutping, entries):
             definitions = ["（沒有對應漢語詞彙）"]
             index += trad_len + jyut_len
 
-        entry = objects.Entry(trad=trad, simp=simp, pin=pin, jyut=jyut, defs=definitions)
+        entry = objects.Entry(
+            trad=trad, simp=simp, pin=pin, jyut=jyut, defs=definitions
+        )
 
         if trad in entries:
             entries[trad].append(entry)
@@ -167,10 +169,23 @@ def assign_frequencies(entries):
 if __name__ == "__main__":
     if len(sys.argv) != 12:
         print(
-            "Usage: python3 parse.py <database filename> <Kaifangcidian traditional + Yale file> <Kaifangcidian simplified + Jyutping file> <source name> <source short name> <source version> <source description> <source legal> <source link> <source update url> <source other>"
+            (
+                "Usage: python3 script.py <database filename> "
+                "<Kaifangcidian traditional + Yale file> "
+                "<Kaifangcidian simplified + Jyutping file> "
+                "<source name> <source short name> "
+                "<source version> <source description> <source legal> "
+                "<source link> <source update url> <source other>"
+            )
         )
         print(
-            'e.g. python3 parse.py kfcd.db cidian_zhyue-ft-kfcd-ylshu-2019623.txt cidian_zhyue-jt-kfcd-yp-2019623.txt Kaifangcidian KFCD 2019-06-23 "Kaifangcidian is a dictionary" "本词典以创作共用“署名 3.0”许可协议授权发布（详见 http://creativecommons.org/licenses/by/3.0/）" "http://www.kaifangcidian.com/han/yue" "" ""'
+            (
+                "e.g. python3 script.py kfcd.db cidian_zhyue-ft-kfcd-ylshu-2019623.txt "
+                "cidian_zhyue-jt-kfcd-yp-2019623.txt Kaifangcidian KFCD 2019-06-23 "
+                '"Kaifangcidian is a dictionary" '
+                '"本词典以创作共用“署名 3.0”许可协议授权发布（详见 http://creativecommons.org/licenses/by/3.0/）" '
+                '"http://www.kaifangcidian.com/han/yue" "" ""'
+            )
         )
         sys.exit(1)
 

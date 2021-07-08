@@ -210,7 +210,10 @@ def assign_frequencies(entries):
 if __name__ == "__main__":
     if len(sys.argv) != 5:
         print(
-            "Usage: python3 script.py <database filename> <CC_CEDICT file> <CC_CANTO file> <Cantonese Readings file>"
+            (
+                "Usage: python3 script.py <database filename> "
+                "<CC_CEDICT file> <CC_CANTO file> <Cantonese Readings file>"
+            )
         )
         print("e.g. python3 script.py eng.db CC-CEDICT.txt CC-CANTO.txt READINGS.txt")
         sys.exit(1)
