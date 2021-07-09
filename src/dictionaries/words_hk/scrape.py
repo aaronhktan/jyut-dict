@@ -6,7 +6,7 @@ import time
 
 def read_csv(filename):
     with open(filename) as csvfile:
-        reader = csv.reader(csvfile, delimiter=',')
+        reader = csv.reader(csvfile, delimiter=",")
         for row in reader:
             yield row[0]
 
@@ -16,9 +16,9 @@ index = 0
 # Scrape words at indices from [second arg, third arg]
 for item in read_csv(sys.argv[1]):
     index += 1
-    if (index < int(sys.argv[2])):
+    if index < int(sys.argv[2]):
         continue
-    if (index > int(sys.argv[3])):
+    if index > int(sys.argv[3]):
         break
 
     # Enables login data to be persisted (to access words.hk)
