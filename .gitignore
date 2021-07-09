@@ -68,6 +68,9 @@ CMakeLists.txt.user*
 *.db
 
 # Data files
+**/cantodict/archive_*
+**/cantodict/data/*
+**/cantodict/developer/*
 **/cedict/archive_*
 **/cedict/developer/*
 **/kaifangcidian/archive_*
