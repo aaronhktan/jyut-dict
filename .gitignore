@@ -63,8 +63,10 @@ CMakeLists.txt.user*
 # Test files
 /test/*
 
+# Screenshot files
+**/search/*
+
 # Generated databases
-**/cedict_to_sqlite/*.db
 *.db
 
 # Data files
