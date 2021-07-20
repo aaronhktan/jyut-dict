@@ -139,9 +139,11 @@ def parse_file(file_name, words):
         jyut_element = soup.find("span", class_="cardjyutping")
         jyut = jyut_element.get_text() if jyut_element else ""
         jyut = re.sub(r"\d\*", "", jyut)
+        jyut = jyut.strip()
 
         pin_element = soup.find("span", class_="cardpinyin")
         pin = pin_element.get_text() if pin_element else ""
+        pin = pin.strip()
 
         # Extract the meaning element
         meaning_element = soup.find("td", class_="wordmeaning")
