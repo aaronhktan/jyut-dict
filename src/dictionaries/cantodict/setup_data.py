@@ -5,6 +5,12 @@ import requests
 import sys
 import time
 
+# Limitation of this script:
+# For words that start with a Roman character (e.g. MK仔), CantoDict does not provide a link from the wordlist.
+# This script will get a link to the first non-Roman character (e.g. 仔), which is incorrect.
+# The parse.py script will filter out pages that don't match the filename - so if you want to get compound words
+# that start with a Roman character, you have to download them yourself!
+
 # For now, ignore incomplete compound words
 urls = [
     ("http://www.cantonese.sheik.co.uk/masterlist.htm?action=unsure", 1),
