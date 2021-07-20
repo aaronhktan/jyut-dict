@@ -16,9 +16,18 @@ import sys
 #   - 傾掂 for POS + multiple definitions on same line
 #   - 庶 for weirdness involving newlines and <br> tags
 #   - 福地 for lack of space between [1] and [Taoism/Daoism]
-#   - 蚯蚓 for something weird in the parsing
-#   - 蚺蛇 for nonstandard listing of pronunciations
-#   - 大使 for nonstandard listing of pronunciations
+#   - 蚯蚓 for brackets in the middle of a definition
+#   - 柏 for listing of pronunciations with commas instead of |
+#   - 天秤 for listing of pronunciations with / instead of |
+#   - 一手遮天 for idiom, 香港電台 for brandname, 香港 for place name
+
+# Pages with known issues:
+#   - 茄哩啡  (what is that Jyutping notation?)
+#   - 等 (again, what is that Jyutping notation?)
+#   - 蚺蛇 has different Jyutping for each definition, without any labelling
+#   - 大使 has multiple definitions on the same line, without numbering
+#   - 嘛 has nonstandard labels for Jyutping and Pinyin (instead of 粵 and 國|普, it names jyutping or pinyin)
+#   - 的 has a nonstandard way of indicating different definitions
 
 illegal_strings = ("Default PoS:", "Additional PoS:")
 
@@ -135,12 +144,19 @@ def parse_file(file_name, words):
 
         # Extract the meaning element
         meaning_element = soup.find("td", class_="wordmeaning")
+
+        # Check for special labels in compound words (brandname, idiom, placename, etc.)
+        special_label = ""
+        special_pos_elem = meaning_element.find("img", class_="flagicon")
+        if special_pos_elem:
+            special_label = special_pos_elem["alt"]
+
         # The layout of compound word pages is different from single-character pages
         real_meaning_element = meaning_element.find("div", class_=None)
         if real_meaning_element:
             meaning_element = real_meaning_element
 
-        # Remove children
+        # Remove children (these usually contain useless fluff that interfere with definition parsing)
         children = meaning_element.find_all("div")
         children += meaning_element.find_all("span")
         for child in children:
@@ -148,54 +164,56 @@ def parse_file(file_name, words):
 
         # Parse the meanings from the meaning element
         meanings = []
-        if meaning_element:
-            # CantoDict puts some weird stuff in the meanings div, and the only way to separate
-            # them out is to replace the <br> tags with "\n"
-            for br in soup.find_all("br"):
-                br.replace_with("\n")
+        # CantoDict puts some weird stuff in the meanings div, and the only way to separate
+        # them out is to replace the <br> tags with "\n"
+        for br in soup.find_all("br"):
+            br.replace_with("\n")
 
-            strings = re.compile(r"\[\d+\]\s?|\n").split(meaning_element.get_text())
-            for string in strings:
-                string = string.strip()
-                if not string or any([x in string for x in illegal_strings]):
+        strings = re.compile(r"\[\d+\]\s?|\n").split(meaning_element.get_text())
+        for string in strings:
+            string = string.strip()
+            if not string or any([x in string for x in illegal_strings]):
+                continue
+
+            # Check if this line is a line that denotes a specific pronunciation
+            result = re.search(r"\[粵\]\s?(.+\d+)\s?[\||/|,]?\s?\[[國|普]\]\s?(.+\d+)", string)
+            if result:
+                # If there are previous definitions, add them to the words dict now
+                # Since those meanings belong to the previous pronunciation
+                if meanings:
+                    entry = objects.Entry(
+                        trad,
+                        simp,
+                        pin,
+                        jyut,
+                        freq=freq,
+                        defs=meanings,
+                    )
+                    words.append(entry)
+
+                # Then, extract the new pinyin and jyutping
+                # and reset the meanings tuple
+                jyut = result.group(1)
+                jyut = re.sub(r"\d\*", "", jyut)
+                pin = result.group(2)
+                meanings = []
+                continue
+
+            # Try to isolate a label (usually a POS or [華]: indicating Mandarin-only usage or [粵]: indicating Cantonese-only usage)
+            label = ""
+            definition = string
+            result = re.search(r"^\[(.*?)\]:?\s+(.*)", string)
+            if result:
+                label = result.group(1).strip()
+                definition = result.group(2).strip()
+            else:
+                # Filter out bad non-standard strings
+                if string[0] == "[" and string[-1] == "]":
                     continue
 
-                # Check if this line is a line that denotes a specific pronunciation
-                result = re.search(r"\[粵\]\s+(.+\d+)\s+\|\s+\[國\]\s+(.+\d+)", string)
-                if result:
-                    # If there are previous definitions, add them to the words dict now
-                    # Since those meanings belong to the previous pronunciation
-                    if meanings:
-                        entry = objects.Entry(
-                            trad,
-                            simp,
-                            pin,
-                            jyut,
-                            freq=freq,
-                            defs=meanings,
-                        )
-                        words.append(entry)
-
-                    # Then, extract the new pinyin and jyutping
-                    # and reset the meanings tuple
-                    jyut = result.group(1)
-                    jyut = re.sub(r"\d\*", "", jyut)
-                    pin = result.group(2)
-                    meanings = []
-                    continue
-
-                # Try to isolate a label (usually a POS or [華]: indicating Mandarin-only usage or [粵]: indicating Cantonese-only usage)
-                label = ""
-                definition = string
-                result = re.search(r"^\[(.*?)\]:?\s+(.*)", string)
-                if result:
-                    label = result.group(1).strip()
-                    definition = result.group(2).strip()
-                else:
-                    # Filter out bad non-standard strings
-                    if string[0] == "[" and string[-1] == "]":
-                        continue
-                meanings.append((label, definition))
+            if not label and special_label:
+                label = special_label
+            meanings.append((label, definition))
 
         if meanings:
             entry = objects.Entry(
