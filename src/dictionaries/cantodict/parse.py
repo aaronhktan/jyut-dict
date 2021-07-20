@@ -23,6 +23,7 @@ import sys
 #   - 嘛 has nonstandard labels for Jyutping and Pinyin (instead of 粵 and 國|普, it names jyutping or pinyin)
 #   - 的 has a nonstandard way of indicating different definitions (of which all but the last definition are handled fine)
 #   - 茄哩啡 has a nonstandard Jyutping notation that only it uses (-- Jyutping: /ke1 le1 fei1/ --)
+#   - 操 has a nonstandard Jyutping notation that only it uses (Jyutping cou1)
 #   - 一手遮天 for idiom, 香港電台 for brandname, 香港 for place name
 
 # Pages with known issues:
@@ -300,6 +301,27 @@ def parse_file(file_name, words):
 
             # This one searches for something in the format -- Jyutping: /ke1 le1 fei1/ --
             result = re.search(r"\-\-\s*Jyutping:\s*/(.*\d)/\s*\-\-", string)
+            if result:
+                if meanings:
+                    entry = objects.Entry(
+                        trad,
+                        simp,
+                        pin,
+                        jyut,
+                        freq=freq,
+                        defs=meanings,
+                    )
+                    words.append(entry)
+
+                # Then, extract the new jyutping (but keep the old pinyin!)
+                # and reset the meanings tuple
+                jyut = result.group(1)
+                jyut = re.sub(r"\d\*", "", jyut)
+                meanings = []
+                continue
+
+            # This one searches for something in the format Jyutping cou1
+            result = re.search(r"Jyutping\s*(.*\d)", string)
             if result:
                 if meanings:
                     entry = objects.Entry(
