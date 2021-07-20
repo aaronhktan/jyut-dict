@@ -19,15 +19,15 @@ import sys
 #   - 蚯蚓 for brackets in the middle of a definition
 #   - 柏 for listing of pronunciations with commas instead of |
 #   - 天秤 for listing of pronunciations with / instead of |
+#   - 等 special-case Jyutping notation (-- [jp:] dang2; ting3)
+#   - 嘛 has nonstandard labels for Jyutping and Pinyin (instead of 粵 and 國|普, it names jyutping or pinyin)
+#   - 的 has a nonstandard way of indicating different definitions (of which all but the last definition are handled fine)
+#   - 茄哩啡 has a nonstandard Jyutping notation that only it uses (-- Jyutping: /ke1 le1 fei1/ --)
 #   - 一手遮天 for idiom, 香港電台 for brandname, 香港 for place name
 
 # Pages with known issues:
-#   - 茄哩啡  (what is that Jyutping notation?)
-#   - 等 (again, what is that Jyutping notation?)
-#   - 蚺蛇 has different Jyutping for each definition, without any labelling
-#   - 大使 has multiple definitions on the same line, without numbering
-#   - 嘛 has nonstandard labels for Jyutping and Pinyin (instead of 粵 and 國|普, it names jyutping or pinyin)
-#   - 的 has a nonstandard way of indicating different definitions
+#   - 蚺蛇 has different Jyutping for each definition, without any labelling (we discard the different pronunciations)
+#   - 大使 has multiple definitions on the same line, without numbering (we put them all in one definition)
 
 illegal_strings = ("Default PoS:", "Additional PoS:")
 
@@ -169,14 +169,19 @@ def parse_file(file_name, words):
         for br in soup.find_all("br"):
             br.replace_with("\n")
 
-        strings = re.compile(r"\[\d+\]\s?|\n").split(meaning_element.get_text())
+        strings = re.compile(r"[\(|\[]\d+[\)\]]\s?|\n").split(
+            meaning_element.get_text()
+        )
         for string in strings:
             string = string.strip()
             if not string or any([x in string for x in illegal_strings]):
                 continue
 
             # Check if this line is a line that denotes a specific pronunciation
-            result = re.search(r"\[粵\]\s?(.+\d+)\s?[\||/|,]?\s?\[[國|普]\]\s?(.+\d+)", string)
+            # This one searches for something in the format [粵] ok3 | [國] e4
+            result = re.search(
+                r"\[粵\]\s?(.+\d+)\s?[\||/|,]?\s?\[[國|普]\]\s?(.+\d+)", string
+            )
             if result:
                 # If there are previous definitions, add them to the words dict now
                 # Since those meanings belong to the previous pronunciation
@@ -199,6 +204,121 @@ def parse_file(file_name, words):
                 meanings = []
                 continue
 
+            # This one searches for something in the format [loeng5 & liang3]
+            result = re.search(r"\[(.*\d)\s*&\s*(.*\d)\]", string)
+            if result:
+                if meanings:
+                    entry = objects.Entry(
+                        trad,
+                        simp,
+                        pin,
+                        jyut,
+                        freq=freq,
+                        defs=meanings,
+                    )
+                    words.append(entry)
+
+                # Then, extract the new pinyin and jyutping
+                # and reset the meanings tuple
+                jyut = result.group(1)
+                jyut = re.sub(r"\d\*", "", jyut)
+                pin = result.group(2)
+                meanings = []
+
+                string = re.sub(r"\[(.*\d)\s*&\s*(.*\d)\]", "", string).strip()
+                if not string:
+                    continue
+
+            # This one searches for something in the format (jyutping) toi4, (pinyin) tai2
+            result = re.search(
+                r"\(jyutping\)\s*(.*\d)[,|;]?\s*\(pinyin\)\s*(.*\d)",
+                string,
+                re.IGNORECASE,
+            )
+            if result:
+                if meanings:
+                    entry = objects.Entry(
+                        trad,
+                        simp,
+                        pin,
+                        jyut,
+                        freq=freq,
+                        defs=meanings,
+                    )
+                    words.append(entry)
+
+                # Then, extract the new pinyin and jyutping
+                # and reset the meanings tuple
+                jyut = result.group(1)
+                jyut = re.sub(r"\d\*", "", jyut)
+                pin = result.group(2)
+                meanings = []
+                continue
+
+            # This one searches for something in the format 粵拼: ne1 -- 拼音: ne
+            result = re.search(r"粵拼:\s*(.*\d)\s*(?:\-\-\s*拼音:\s*(.*))?", string)
+            if result:
+                if meanings:
+                    entry = objects.Entry(
+                        trad,
+                        simp,
+                        pin,
+                        jyut,
+                        freq=freq,
+                        defs=meanings,
+                    )
+                    words.append(entry)
+
+                # Then, extract the new pinyin and jyutping
+                # and reset the meanings tuple
+                jyut = result.group(1)
+                jyut = re.sub(r"\d\*", "", jyut)
+                pin = result.group(2) if result.group(2) else ""
+                meanings = []
+                continue
+
+            # This one searches for something in the format -- [jp:] dang2; ting3
+            result = re.search(r"\-\-\s*\[jp:\]s*(.*\d).*", string)
+            if result:
+                if meanings:
+                    entry = objects.Entry(
+                        trad,
+                        simp,
+                        pin,
+                        jyut,
+                        freq=freq,
+                        defs=meanings,
+                    )
+                    words.append(entry)
+
+                # Then, extract the new jyutping (but keep the old pinyin!)
+                # and reset the meanings tuple
+                jyut = result.group(1)
+                jyut = re.sub(r"\d\*", "", jyut)
+                meanings = []
+                continue
+
+            # This one searches for something in the format -- Jyutping: /ke1 le1 fei1/ --
+            result = re.search(r"\-\-\s*Jyutping:\s*/(.*\d)/\s*\-\-", string)
+            if result:
+                if meanings:
+                    entry = objects.Entry(
+                        trad,
+                        simp,
+                        pin,
+                        jyut,
+                        freq=freq,
+                        defs=meanings,
+                    )
+                    words.append(entry)
+
+                # Then, extract the new jyutping (but keep the old pinyin!)
+                # and reset the meanings tuple
+                jyut = result.group(1)
+                jyut = re.sub(r"\d\*", "", jyut)
+                meanings = []
+                continue
+
             # Try to isolate a label (usually a POS or [華]: indicating Mandarin-only usage or [粵]: indicating Cantonese-only usage)
             label = ""
             definition = string
@@ -216,9 +336,7 @@ def parse_file(file_name, words):
             meanings.append((label, definition))
 
         if meanings:
-            entry = objects.Entry(
-                trad, simp, pin, jyut, freq=freq, defs=meanings
-            )
+            entry = objects.Entry(trad, simp, pin, jyut, freq=freq, defs=meanings)
             words.append(entry)
 
 
