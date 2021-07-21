@@ -29,6 +29,7 @@ urls = [
     ("https://www.cantonese.sheik.co.uk/scripts/examplelist.htm?level=4", 8),
 ]
 
+# Download URLs to location specified by args
 character_file = open(sys.argv[1], "a")
 word_file = open(sys.argv[2], "a")
 sentence_file = open(sys.argv[3], "a")
@@ -46,7 +47,14 @@ for base_url, num_pages in urls:
         scrape_url = base_url + "&page=" + str(page)
         print("Scraping url: " + scrape_url)
 
-        r = requests.get(scrape_url)
+        while True:
+            try:
+                r = requests.get(scrape_url)
+            except:
+                print(f"Exception occured getting {scrape_url}, trying again")
+                time.sleep(3)
+                continue
+            break
         document = BeautifulSoup(r.text, "html.parser")
 
         if "examplelist" in base_url:
