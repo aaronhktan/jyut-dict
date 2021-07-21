@@ -69,6 +69,10 @@ CMakeLists.txt.user*
 # Generated databases
 *.db
 
+# Flatpak builds
+*.flatpak-builder/
+*jyut-dict-flatpak/
+
 # Data files
 **/cantodict/archive_*
 **/cantodict/data/*
