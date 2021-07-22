@@ -450,9 +450,17 @@ def parse_sentence_file(file_name, sentences, translations):
         )
         sentences.append(sentence)
 
+        # Find the translation of this sentence
         translation_element = soup.find("div", class_="audioplayer")
+
+        # Remove children (these usually contain useless fluff that interfere with definition parsing)
+        children = translation_element.find_all("a")
+        children += translation_element.find_all("center")
+        for child in translation_element.children:
+            child.decompose()
+
         if translation_element:
-            translation = translation_element.get_text()
+            translation = translation_element.get_text().strip()
             sentence_translation = objects.NonChineseSentence(
                 500000000 + sentence_id, translation, "eng"
             )
