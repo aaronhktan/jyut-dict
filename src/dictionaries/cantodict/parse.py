@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup, element
+from hanziconv import HanziConv
 from wordfreq import zipf_frequency
 
 from database import database, objects
@@ -33,7 +34,7 @@ import sys
 illegal_strings = ("Default PoS:", "Additional PoS:")
 
 
-def write(db_name, source, entries):
+def write(db_name, source, entries, sentences, translations):
     db = sqlite3.connect(db_name)
     c = db.cursor()
 
@@ -91,13 +92,41 @@ def write(db_name, source, entries):
                 )
                 continue
 
+    for sentence in sentences:
+        database.insert_chinese_sentence(
+            c,
+            sentence.traditional,
+            sentence.simplified,
+            sentence.pinyin,
+            sentence.jyutping,
+            sentence.language,
+            sentence.id,
+        )
+        # In CantoDict, a sentence ID and its corresponding translation ID are separated by 500000000
+        # (See parse_sentence_file())
+        database.insert_sentence_link(
+            c,
+            sentence.id,
+            sentence.id + 500000000,
+            1,
+            True,
+        )
+
+    for translation in translations:
+        database.insert_nonchinese_sentence(
+            c,
+            translation.sentence,
+            translation.language,
+            translation.id,
+        )
+
     database.generate_indices(c)
 
     db.commit()
     db.close()
 
 
-def parse_file(file_name, words):
+def parse_word_file(file_name, words):
     with open(file_name, "r") as file:
         soup = BeautifulSoup(file, "html.parser")
 
@@ -364,16 +393,90 @@ def parse_file(file_name, words):
             words.append(entry)
 
 
-def parse_folder(folder_name, words):
+def parse_sentence_file(file_name, sentences, translations):
+    with open(file_name, "r") as file:
+        soup = BeautifulSoup(file, "html.parser")
+
+        # Get the sentence ID
+        # We add 2000000000 to the ID, because 0-99999999 are reserved for Tatoebaa
+        # and 1000000000-1999999999 are reserved for words.hk
+        link_element = soup.find("div", class_="wd_code_links")
+        if link_element:
+            result = re.search(
+                r"http://www\.cantonese\.sheik\.co\.uk/dictionary/examples/(\d*)/",
+                link_element.get_text(),
+            )
+            if result:
+                sentence_id = int(result.group(1)) + 2000000000
+        else:
+            logging.error(f"Couldn't find the sentence ID in file {file_name}")
+            return
+
+        # Get the sentence
+        try:
+            trad = soup.find("span", class_="sentence").get_text()
+            simp = HanziConv.toSimplified(trad)
+        except:
+            logging.error(f"Couldn't find sentence in file {file_name}")
+            return
+
+        # Find romanizations
+        jyut_element = soup.find("span", class_="cardjyutping")
+        jyut = jyut_element.get_text() if jyut_element else ""
+        jyut = re.sub(r"\d\*", "", jyut)
+        jyut = jyut.strip()
+
+        pin_element = soup.find("span", class_="cardpinyin")
+        pin = pin_element.get_text() if pin_element else ""
+        pin = pin.strip()
+
+        # Find the language this sentence is in
+        lang = "zh"
+        meaning_element = soup.find("td", class_="wordmeaning")
+        cantonese_element = meaning_element.find("span", class_="cantonesebox")
+        if cantonese_element:
+            lang = "yue"
+        mandarin_element = meaning_element.find("span", class_="mandarinbox")
+        if mandarin_element:
+            lang = "cmn"
+
+        sentence = objects.ChineseSentence(
+            sentence_id,
+            trad,
+            simp,
+            pin,
+            jyut,
+            lang,
+        )
+        sentences.append(sentence)
+
+        translation_element = soup.find("div", class_="audioplayer")
+        if translation_element:
+            translation = translation_element.get_text()
+            sentence_translation = objects.NonChineseSentence(
+                500000000 + sentence_id, translation, "eng"
+            )
+            translations.append(sentence_translation)
+
+
+def parse_words_folder(folder_name, words):
     for index, entry in enumerate(os.scandir(folder_name)):
         if not index % 100:
             print(f"Parsed word #{index}")
         if entry.is_file() and entry.path.endswith(".html"):
-            parse_file(entry.path, words)
+            parse_word_file(entry.path, words)
+
+
+def parse_sentences_folder(folder_name, sentences, translations):
+    for index, entry in enumerate(os.scandir(folder_name)):
+        if not index % 100:
+            print(f"Parsed sentence #{index}")
+        if entry.is_file() and entry.path.endswith(".html"):
+            parse_sentence_file(entry.path, sentences, translations)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 11:
+    if len(sys.argv) != 12:
         print(
             (
                 "Usage: python3 script.py <database filename> "
@@ -384,7 +487,7 @@ if __name__ == "__main__":
         )
         print(
             (
-                "e.g. python3 script.py cantodict.db scraped/data/ CantoDict CD 2021-07-18 "
+                "e.g. python3 script.py cantodict.db scraped_words/ scraped_sentences/ CantoDict CD 2021-07-18 "
                 '"CantoDict is a collaborative Chinese Dictionary project started in November 2003. '
                 'Entries are added and mistakes corrected by a team of kind volunteers from around the world." '
                 '"https://www.cantonese.sheik.co.uk/copyright.htm" "https://www.cantonese.sheik.co.uk/" "" ""'
@@ -393,7 +496,6 @@ if __name__ == "__main__":
         sys.exit(1)
 
     source = objects.SourceTuple(
-        sys.argv[3],
         sys.argv[4],
         sys.argv[5],
         sys.argv[6],
@@ -401,8 +503,12 @@ if __name__ == "__main__":
         sys.argv[8],
         sys.argv[9],
         sys.argv[10],
+        sys.argv[11],
     )
 
     words = []
-    parse_folder(sys.argv[2], words)
-    write(sys.argv[1], source, words)
+    sentences = []
+    translations = []
+    parse_words_folder(sys.argv[2], words)
+    parse_sentences_folder(sys.argv[3], sentences, translations)
+    write(sys.argv[1], source, words, sentences, translations)

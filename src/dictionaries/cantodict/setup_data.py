@@ -61,8 +61,12 @@ for base_url, num_pages in urls:
             word_elems = document.find_all("span", class_=classname)
 
             for elem in word_elems:
-                sentence = elem.get_text().replace("/", "%2F") # Take out illegal "/" character
-                sentence = sentence.replace("\t", "%09") # Take out illegal "\t" character
+                sentence = elem.get_text().replace(
+                    "/", "%2F"
+                )  # Take out illegal "/" character
+                sentence = sentence.replace(
+                    "\t", "%09"
+                )  # Take out illegal "\t" character
                 sentence_url = elem.parent.parent.find("a").get("href")
                 sentence_file.write(f"{sentence}\t{sentence_url}\n")
         else:
