@@ -456,7 +456,7 @@ def parse_sentence_file(file_name, sentences, translations):
         # Remove children (these usually contain useless fluff that interfere with definition parsing)
         children = translation_element.find_all("a")
         children += translation_element.find_all("center")
-        for child in translation_element.children:
+        for child in children:
             child.decompose()
 
         if translation_element:
