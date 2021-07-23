@@ -398,7 +398,7 @@ def parse_sentence_file(file_name, sentences, translations):
         soup = BeautifulSoup(file, "html.parser")
 
         # Get the sentence ID
-        # We add 2000000000 to the ID, because 0-99999999 are reserved for Tatoebaa
+        # We add 2000000000 to the ID, because 0-999999999 are reserved for Tatoebaa
         # and 1000000000-1999999999 are reserved for words.hk
         link_element = soup.find("div", class_="wd_code_links")
         if link_element:
