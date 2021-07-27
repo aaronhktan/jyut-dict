@@ -63,11 +63,20 @@ CMakeLists.txt.user*
 # Test files
 /test/*
 
+# Screenshot files
+**/search/*
+
 # Generated databases
-**/cedict_to_sqlite/*.db
 *.db
 
+# Flatpak builds
+*.flatpak-builder/
+*jyut-dict-flatpak/
+
 # Data files
+**/cantodict/archive_*
+**/cantodict/data/*
+**/cantodict/developer/*
 **/cedict/archive_*
 **/cedict/developer/*
 **/kaifangcidian/archive_*
@@ -80,10 +89,3 @@ CMakeLists.txt.user*
 **/words_hk/data/*
 **/words_hk/developer/*
 **/words_hk/selenium/*
-
-# Screenshot files
-docs/screenshots/mac/search/*
-
-# Flatpak builds
-*.flatpak-builder/
-*jyut-dict-flatpak/

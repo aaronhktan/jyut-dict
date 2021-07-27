@@ -27,6 +27,14 @@ class Entry(object):
         self.freq = freq
         self.definitions = defs if defs is not None else []
 
+    def __str__(self):
+        return (
+            f"T:{self.traditional}; S:{self.simplified}; "
+            f"P:{self.pinyin}; J:{self.jyutping}; "
+            f"FJ:{self.fuzzy_jyutping}; F:{self.freq}; "
+            f"D:{self.definitions}"
+        )
+
     def add_jyutping(self, jyut):
         self.jyutping = jyut
 
