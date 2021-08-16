@@ -2,6 +2,11 @@
 
 #include <QApplication>
 
+#if defined(Q_OS_WIN)
+#include <vector>
+#include <string>
+#endif
+
 int main(int argc, char *argv[])
 {
     QCoreApplication::setOrganizationName("Aaron Tan");
@@ -33,7 +38,21 @@ int main(int argc, char *argv[])
 
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
+#if defined(Q_OS_WIN)
+    // This is kind of a horrible hack to get dark borders on Windows
+    // But it works!
+    std::vector<char *> args{argv, argv + argc};
+    char *platformArg = const_cast<char *>("-platform");
+    char *darkModeArg = const_cast<char *>("windows:darkmode=1");
+    args.emplace_back(platformArg);
+    args.emplace_back(darkModeArg);
+    argc += 2;
+
+    QApplication a(argc, args.data());
+#else
     QApplication a(argc, argv);
+#endif
 
     MainWindow w;
     w.show();
