@@ -23,8 +23,7 @@ public:
 
     void changeEvent(QEvent *event) override;
 
-    void setEntry(const Entry &entry);
-    void setEntry(std::vector<std::string> definitions);
+    void setEntry(std::vector<Definition::Definition> definitions);
 
 private:
     void setStyle(bool use_dark);

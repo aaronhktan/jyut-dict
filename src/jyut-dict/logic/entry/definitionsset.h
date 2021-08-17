@@ -2,10 +2,24 @@
 #define DEFINITIONS_H
 
 #include "logic/dictionary/dictionarysource.h"
+#include "logic/sentence/sourcesentence.h"
 
 #include <iostream>
 #include <unordered_map>
 #include <vector>
+
+namespace Definition {
+
+// The Definition struct provides:
+// the definition itself, as well as
+// a vector of SourceSentences that shows how it is used in context
+struct Definition
+{
+    std::string definitionContent;
+    std::vector<SourceSentence> sentences;
+};
+
+}
 
 // The DefinitionsSet class contains a grouping of definitions from one source
 
@@ -14,8 +28,7 @@ class DefinitionsSet
 public:
     DefinitionsSet();
     DefinitionsSet(std::string source);
-    DefinitionsSet(std::string source, std::vector<std::string> definitions);
-    DefinitionsSet(std::string source, std::string definitions);
+    DefinitionsSet(std::string source, std::vector<Definition::Definition> definitions);
     DefinitionsSet(const DefinitionsSet &definitions);
     DefinitionsSet(const DefinitionsSet &&definitions);
 
@@ -26,19 +39,19 @@ public:
 
     bool isEmpty() const;
 
-    void pushDefinition(const std::string definition);
+    void pushDefinition(const Definition::Definition definition);
 
     std::string getSource() const;
     std::string getSourceLongString() const;
     std::string getSourceShortString() const;
     std::string getDefinitionsSnippet() const;
-    std::vector<std::string> getDefinitions(void) const;
+    std::vector<Definition::Definition> getDefinitions(void) const;
 
 private:
     std::vector<std::string> parseDefinitions(std::string definitions);
 
     std::string _source;
-    std::vector<std::string> _definitions;
+    std::vector<Definition::Definition> _definitions;
 };
 
 #endif // DEFINITIONS_H

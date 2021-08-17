@@ -66,7 +66,9 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
                 std::string definitionContent = definition.substr(
                     definition.find_first_of(" ") + 1);
 
-                set->pushDefinition(definitionContent);
+                Definition::Definition definitionObject{definitionContent, {}};
+
+                set->pushDefinition(definitionObject);
             }
         }
 

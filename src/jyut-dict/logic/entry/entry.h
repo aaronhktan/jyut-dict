@@ -74,7 +74,7 @@ public:
     std::vector<DefinitionsSet> getDefinitionsSets(void) const;
     std::string getDefinitionSnippet(void) const;
     void addDefinitions(std::string source,
-                        std::vector<std::string> definitions);
+                        std::vector<Definition::Definition> definitions);
 
     std::vector<std::string> getDerivedWords(void) const;
     void setDerivedWords(std::vector<std::string> derivedWords);

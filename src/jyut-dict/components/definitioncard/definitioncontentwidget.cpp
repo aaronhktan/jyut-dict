@@ -39,15 +39,7 @@ void DefinitionContentWidget::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
-void DefinitionContentWidget::setEntry(const Entry &entry)
-{
-    // Note: displays only the first set of definitions in entry
-    if (entry.getDefinitionsSets().size() >= 1) {
-        setEntry(entry.getDefinitionsSets()[0].getDefinitions());
-    }
-}
-
-void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
+void DefinitionContentWidget::setEntry(std::vector<Definition::Definition> definitions)
 {
     cleanupLabels();
 
@@ -65,7 +57,7 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
                                          .height();
         _definitionNumberLabels.back()->setFixedHeight(definitionNumberHeight);
 
-        _definitionLabels.push_back(new QLabel{definitions[i].c_str(), this});
+        _definitionLabels.push_back(new QLabel{definitions[i].definitionContent.c_str(), this});
         _definitionLabels.back()->setWordWrap(true);
         _definitionLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
 

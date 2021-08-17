@@ -386,7 +386,7 @@ std::string Entry::getDefinitionSnippet(void) const
     return "";
 }
 
-void Entry::addDefinitions(std::string source, std::vector<std::string> definitions)
+void Entry::addDefinitions(std::string source, std::vector<Definition::Definition> definitions)
 {
     _definitions.push_back(DefinitionsSet{source, definitions});
 }

@@ -14,17 +14,11 @@ DefinitionsSet::DefinitionsSet(std::string source)
 }
 
 DefinitionsSet::DefinitionsSet(std::string source,
-                               std::vector<std::string> definitions)
+                               std::vector<Definition::Definition> definitions)
     : _source{source},
       _definitions{definitions}
 {
 
-}
-
-DefinitionsSet::DefinitionsSet(std::string source, std::string definitions)
-    : _source{source}
-{
-    _definitions = parseDefinitions(definitions);
 }
 
 DefinitionsSet::DefinitionsSet(const DefinitionsSet &definitions)
@@ -67,10 +61,8 @@ DefinitionsSet &DefinitionsSet::operator=(const DefinitionsSet &&definitions)
 
 std::ostream &operator<<(std::ostream &out, DefinitionsSet const &definitions)
 {
-//    out << "Definitions (" << definitions.getSourceLongString() << "):\n";
-
-    for (std::string definition : definitions.getDefinitions()) {
-        out << definition << "\n";
+    for (Definition::Definition &definition : definitions.getDefinitions()) {
+        out << definition.definitionContent << "\n";
     }
 
     return out;
@@ -81,7 +73,7 @@ bool DefinitionsSet::isEmpty() const
     return _definitions.empty();
 }
 
-void DefinitionsSet::pushDefinition(const std::string definition)
+void DefinitionsSet::pushDefinition(const Definition::Definition definition)
 {
     _definitions.push_back(definition);
 }
@@ -113,15 +105,15 @@ std::string DefinitionsSet::getDefinitionsSnippet() const
 
     std::ostringstream definitions;
     for (size_t i = 0; i < _definitions.size() - 1; i++) {
-        auto location = _definitions[i].find_first_of("\r");
-        definitions << _definitions[i].substr(0, location) << "; ";
+        auto location = _definitions[i].definitionContent.find_first_of("\r");
+        definitions << _definitions[i].definitionContent.substr(0, location) << "; ";
     }
-    auto location = _definitions.back().find_first_of("\r");
-    definitions << _definitions.back().substr(0, location);
+    auto location = _definitions.back().definitionContent.find_first_of("\r");
+    definitions << _definitions.back().definitionContent.substr(0, location);
     return definitions.str();
 }
 
-std::vector<std::string> DefinitionsSet::getDefinitions() const
+std::vector<Definition::Definition> DefinitionsSet::getDefinitions() const
 {
     return _definitions;
 }
