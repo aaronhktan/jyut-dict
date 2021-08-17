@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup, element
 from hanziconv import HanziConv
+from pypinyin import lazy_pinyin, Style
 from wordfreq import zipf_frequency
 
 from database import database, objects
@@ -140,7 +141,9 @@ def parse_word_file(file_name, words):
                 trad = forms[0].strip()
                 simp = forms[1].strip()
             else:
-                trad = simp = forms[0].strip()
+                trad = forms[0].strip()
+                # Cantodict sometimes reports that there is no simplified variant, which is sometimes incorrect
+                simp = HanziConv.toSimplified(trad)
         except:
             logging.error(
                 f"Couldn't find traditional and simplified forms in file {file_name}"
@@ -172,7 +175,12 @@ def parse_word_file(file_name, words):
 
         pin_element = soup.find("span", class_="cardpinyin")
         pin = pin_element.get_text() if pin_element else ""
-        pin = pin.strip()
+        if not pin:
+            pin = (
+                " ".join(lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True))
+                .lower()
+            )
+        pin = pin.strip().replace("v", "u:") # Replace 'v' in Pinyin with the u: that CEDICT uses
 
         # Extract the meaning element
         meaning_element = soup.find("td", class_="wordmeaning")
@@ -428,7 +436,7 @@ def parse_sentence_file(file_name, sentences, translations):
 
         pin_element = soup.find("span", class_="cardpinyin")
         pin = pin_element.get_text() if pin_element else ""
-        pin = pin.strip()
+        pin = pin.strip().replace("v", "u:")
 
         # Find the language this sentence is in
         lang = "zh"
@@ -488,7 +496,8 @@ if __name__ == "__main__":
         print(
             (
                 "Usage: python3 script.py <database filename> "
-                "<HTML folder> <source name> <source short name> "
+                "<characters + compound words HTML folder> <sentences HTML folder> "
+                "<source name> <source short name> "
                 "<source version> <source description> <source legal> "
                 "<source link> <source update url> <source other>"
             )
