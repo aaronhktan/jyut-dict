@@ -176,11 +176,11 @@ def parse_word_file(file_name, words):
         pin_element = soup.find("span", class_="cardpinyin")
         pin = pin_element.get_text() if pin_element else ""
         if not pin:
-            pin = (
-                " ".join(lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True))
-                .lower()
-            )
-        pin = pin.strip().replace("v", "u:") # Replace 'v' in Pinyin with the u: that CEDICT uses
+            pin = " ".join(
+                lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True)
+            ).lower()
+        # Replace 'v' in Pinyin with the u: that CEDICT uses
+        pin = pin.strip().replace("v", "u:")
 
         # Extract the meaning element
         meaning_element = soup.find("td", class_="wordmeaning")
