@@ -36,7 +36,7 @@ void ViewHistoryListModel::setEmpty(void)
 {
     Entry entry = Entry{tr("No viewed items...").toStdString(),
                         tr("No viewed items...").toStdString(),
-                        "", "", {}, {}, {}};
+                        "", "", {}};
     entry.addDefinitions("CEDICT",
                          {Definition::Definition{tr("After viewing an entry, you can find it "
                              "in this list. Selecting an item in this "

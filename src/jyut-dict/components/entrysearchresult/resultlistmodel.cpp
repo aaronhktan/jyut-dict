@@ -83,7 +83,7 @@ void ResultListModel::setWelcome()
         return;
     }
     Entry entry = Entry{tr("Welcome!").toStdString(), tr("Welcome!").toStdString(),
-                        "—", "—", {}, {}, {}};
+                        "—", "—", {}};
     entry.addDefinitions("CEDICT",
                          {Definition::Definition{tr("Start typing to search for words").toStdString(), {}}});
     entry.setIsWelcome(true);
@@ -96,7 +96,7 @@ void ResultListModel::setEmpty()
     if (!_isFavouritesList) {
         Entry entry = Entry{tr("No results...").toStdString(),
                             tr("No results...").toStdString(),
-                            "", "", {}, {}, {}};
+                            "", "", {}};
         entry.addDefinitions("CEDICT",
                              {Definition::Definition{tr("Simplified (SC) and Traditional (TC) Chinese, "
                                  "Jyutping (JP), Pinyin (PY), and English (EN) "
@@ -109,7 +109,7 @@ void ResultListModel::setEmpty()
     } else {
         Entry entry = Entry{tr("Nothing saved...").toStdString(),
                             tr("Nothing saved...").toStdString(),
-                            "", "", {}, {}, {}};
+                            "", "", {}};
         entry.addDefinitions("CEDICT",
                              {Definition::Definition{tr("Clicking the \"save\" button when viewing "
                                  "a word or phrase adds it to this list. Try "

@@ -25,9 +25,7 @@ public:
     Entry();
     Entry(std::string simplified, std::string traditional,
           std::string jyutping, std::string pinyin,
-          std::vector<DefinitionsSet> definitions,
-          std::vector<std::string> derivedWords,
-          std::vector<SourceSentence> sentences);
+          std::vector<DefinitionsSet> definitions);
     Entry(const Entry &entry);
     Entry(const Entry &&entry);
 
@@ -106,8 +104,6 @@ private:
     std::string _prettyPinyin;
 
     std::vector<DefinitionsSet> _definitions;
-    std::vector<std::string> _derivedWords;
-    std::vector<SourceSentence> _sentences;
 
     bool _isWelcome = false;
     bool _isEmpty = false;

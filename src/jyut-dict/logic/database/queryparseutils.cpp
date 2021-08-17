@@ -76,9 +76,7 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
                                 traditional,
                                 jyutping,
                                 pinyin,
-                                definitionsSets,
-                                std::vector<std::string>{},
-                                std::vector<SourceSentence>{}));
+                                definitionsSets));
     }
 
     return entries;

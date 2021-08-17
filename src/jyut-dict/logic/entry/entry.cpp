@@ -13,24 +13,18 @@ Entry::Entry()
     _pinyin = "";
     _prettyPinyin = "";
     _definitions = {};
-    _derivedWords = {};
-    _sentences = {};
     _isWelcome = false;
     _isEmpty = false;
 }
 
 Entry::Entry(std::string simplified, std::string traditional,
              std::string jyutping, std::string pinyin,
-             std::vector<DefinitionsSet> definitions,
-             std::vector<std::string> derivedWords,
-             std::vector<SourceSentence> sentences)
+             std::vector<DefinitionsSet> definitions)
     : _simplified{simplified},
       _traditional{traditional},
       _jyutping{jyutping},
       _pinyin{pinyin},
-      _definitions{definitions},
-      _derivedWords{derivedWords},
-      _sentences{sentences}
+      _definitions{definitions}
 {
     _isWelcome = false;
     _isEmpty = false;
@@ -61,8 +55,6 @@ Entry::Entry(const Entry &entry)
       _pinyin{entry._pinyin},
       _prettyPinyin{entry._prettyPinyin},
       _definitions{entry.getDefinitionsSets()},
-      _derivedWords{entry.getDerivedWords()},
-      _sentences{entry.getSentences()},
       _isWelcome{entry.isWelcome()},
       _isEmpty{entry.isEmpty()}
 {
@@ -82,8 +74,6 @@ Entry::Entry(const Entry &&entry)
       _pinyin{std::move(entry._pinyin)},
       _prettyPinyin{entry._prettyPinyin},
       _definitions{std::move(entry._definitions)},
-      _derivedWords{std::move(entry._derivedWords)},
-      _sentences{std::move(entry._sentences)},
       _isWelcome{entry.isWelcome()},
       _isEmpty{entry.isEmpty()}
 {
@@ -113,8 +103,6 @@ Entry &Entry::operator=(const Entry &entry)
     _pinyin = entry._pinyin;
     _prettyPinyin = entry._prettyPinyin;
     _definitions = entry.getDefinitionsSets();
-    _derivedWords = entry.getDerivedWords();
-    _sentences = entry.getSentences();
     _isWelcome = entry.isWelcome();
     _isEmpty = entry.isEmpty();
 
@@ -139,8 +127,6 @@ Entry &Entry::operator=(const Entry &&entry)
     _pinyin = entry._pinyin;
     _prettyPinyin = entry._prettyPinyin;
     _definitions = entry.getDefinitionsSets();
-    _derivedWords = entry.getDerivedWords();
-    _sentences = entry.getSentences();
     _isWelcome = entry.isWelcome();
     _isEmpty = entry.isEmpty();
 
@@ -175,9 +161,6 @@ std::ostream &operator<<(std::ostream &out, const Entry &entry)
     for (size_t i = 0; i < entry.getDefinitionsSets().size(); i++) {
         out << entry.getDefinitionsSets()[i] << "\n";
     }
-//    for (size_t i = 0; i < entry.getSentences().size(); i++) {
-//        out << entry.getSentences()[i] << "\n";
-//    }
     return out;
 }
 
@@ -389,26 +372,6 @@ std::string Entry::getDefinitionSnippet(void) const
 void Entry::addDefinitions(std::string source, std::vector<Definition::Definition> definitions)
 {
     _definitions.push_back(DefinitionsSet{source, definitions});
-}
-
-std::vector<std::string> Entry::getDerivedWords(void) const
-{
-    return _derivedWords;
-}
-
-void Entry::setDerivedWords(std::vector<std::string> derivedWords)
-{
-    _derivedWords = derivedWords;
-}
-
-std::vector<SourceSentence> Entry::getSentences(void) const
-{
-    return _sentences;
-}
-
-void Entry::setSentences(std::vector<SourceSentence> sentences)
-{
-    _sentences = sentences;
 }
 
 void Entry::refreshColours(const EntryColourPhoneticType type)

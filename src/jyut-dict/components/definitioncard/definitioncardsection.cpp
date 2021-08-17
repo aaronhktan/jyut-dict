@@ -11,7 +11,7 @@ void DefinitionCardSection::setEntry(const Entry &entry)
 {
     emit addingCards();
     cleanup();
-    for (auto definitionsSet : entry.getDefinitionsSets()) {
+    for (auto &definitionsSet : entry.getDefinitionsSets()) {
         _definitionCards.push_back(new DefinitionCardWidget{this});
         _definitionCards.back()->setEntry(definitionsSet);
 

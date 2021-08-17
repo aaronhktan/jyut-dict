@@ -48,8 +48,6 @@ public:
     std::vector<Definition::Definition> getDefinitions(void) const;
 
 private:
-    std::vector<std::string> parseDefinitions(std::string definitions);
-
     std::string _source;
     std::vector<Definition::Definition> _definitions;
 };

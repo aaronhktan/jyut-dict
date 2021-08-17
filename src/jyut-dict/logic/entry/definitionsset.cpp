@@ -117,20 +117,3 @@ std::vector<Definition::Definition> DefinitionsSet::getDefinitions() const
 {
     return _definitions;
 }
-
-// parseDefinitions takes a string and extracts definitions based on the CEDICT
-// standard.
-//
-// In the standard, each definition is separated by a "/" character.
-std::vector<std::string> DefinitionsSet::parseDefinitions(std::string definitions)
-{
-    std::vector<std::string> definitionsSet;
-    std::stringstream ss(definitions);
-    std::string definition;
-
-    while (std::getline(ss, definition, '/')) {
-        definitionsSet.push_back(definition);
-    }
-
-    return definitionsSet;
-}
