@@ -2,6 +2,9 @@
 
 #include "logic/utils/utils.h"
 
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QSqlRecord>
 
 namespace QueryParseUtils {
@@ -32,51 +35,61 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
             continue;
         }
 
-        // Parse definitions
-        std::vector<std::string> definitions;
-        Utils::split(definition, "●", definitions);
-
         // Put definitions in the correct DefinitionsSet
-        std::vector<DefinitionsSet> definitionsSets = {};
+        std::vector<DefinitionsSet> definitionsSets;
 
         if (parseDefinitions) {
-            for (std::string &definition : definitions) {
-                DefinitionsSet *set;
-                std::string source = definition.substr(0,
-                                                       definition.find_first_of(
-                                                           " "));
+            // Parse JSON returned by query
+            QJsonDocument doc = QJsonDocument::fromJson(QString{definition.c_str()}.toUtf8());
+            // Each object in the array represents a group of definitions
+            // that are all from the same source
+            for (QJsonValue definitionGroup : doc.array()) {
+                std::string sourceName = definitionGroup["source"].toString().toStdString();
+                std::vector<Definition::Definition> definitions;
 
-                // Search definitionsSets for a matching set (i.e. set with same source)
-                // Create a new DefinitionsSet for set if it no matches found
-                // Then get a handle on that set
-                auto search = std::find_if(definitionsSets.begin(),
-                                           definitionsSets.end(),
-                                           [source,
-                                            definition](const DefinitionsSet &set) {
-                                               return set.getSource() == source;
-                                           });
-                if (search == definitionsSets.end()) {
-                    definitionsSets.push_back(DefinitionsSet{source});
-                    set = &definitionsSets.back();
-                } else {
-                    set = &*search;
+                for (QJsonValue definition : definitionGroup["definitions"].toArray()) {
+
+                    std::vector<SourceSentence> sentences;
+                    for (QJsonValue sentence : definition["sentences"].toArray()) {
+                        std::vector<SentenceSet> sentence_translations;
+
+                        // Parse each sentence
+                        if (!sentence.isNull()) {
+                            std::vector<Sentence::TargetSentence> targetSentences;
+                            if (!sentence["translations"].isNull()) {
+                                // Parse each of the sentence translations
+                                for (QJsonValue translation : sentence["translations"].toArray()) {
+                                    targetSentences.emplace_back(translation["language"].toString().toStdString(),
+                                                                 translation["sentence"].toString().toStdString(),
+                                                                 translation["direct"].toBool());
+                                }
+                                sentence_translations.emplace_back(sourceName, targetSentences);
+                            }
+
+                            sentences.emplace_back(sentence["language"].toString().toStdString(),
+                                                   sentence["simplified"].toString().toStdString(),
+                                                   sentence["traditional"].toString().toStdString(),
+                                                   sentence["jyutping"].toString().toStdString(),
+                                                   sentence["pinyin"].toString().toStdString(),
+                                                   sentence_translations);
+                        }
+                    }
+
+                    definitions.emplace_back(definition["definition"].toString().toStdString(),
+                                             definition["label"].toString().toStdString(),
+                                             sentences);
                 }
 
-                // Push the definition to that set
-                std::string definitionContent = definition.substr(
-                    definition.find_first_of(" ") + 1);
-
-                Definition::Definition definitionObject{definitionContent, {}};
-
-                set->pushDefinition(definitionObject);
+                definitionsSets.emplace_back(sourceName,
+                                             definitions);
             }
         }
 
-        entries.push_back(Entry(simplified,
-                                traditional,
-                                jyutping,
-                                pinyin,
-                                definitionsSets));
+        entries.emplace_back(simplified,
+                             traditional,
+                             jyutping,
+                             pinyin,
+                             definitionsSets);
     }
 
     return entries;
@@ -160,8 +173,8 @@ std::vector<SourceSentence> parseSentences(QSqlQuery &query)
             }
 
             // Push the sentence to that set
-            Sentence::TargetSentence targetSentence = {targetLanguage,
-                                                       targetSentenceContent,
+            Sentence::TargetSentence targetSentence = {targetSentenceContent,
+                                                       targetLanguage,
                                                        direct == "1"};
             set->pushSentence(targetSentence);
         }

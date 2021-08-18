@@ -15,9 +15,15 @@ namespace Sentence {
 // the sentence was a direct translation of the sentence.
 struct TargetSentence
 {
-    std::string language;
     std::string sentence;
+    std::string language;
     bool directTarget;
+
+    TargetSentence(std::string sentence, std::string language, bool directTarget):
+        sentence{sentence},
+        language{language},
+        directTarget(directTarget)
+    {}
 };
 
 }

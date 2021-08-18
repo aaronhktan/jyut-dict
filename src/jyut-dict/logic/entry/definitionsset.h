@@ -16,7 +16,14 @@ namespace Definition {
 struct Definition
 {
     std::string definitionContent;
+    std::string label;
     std::vector<SourceSentence> sentences;
+
+    Definition(std::string definitionContent, std::string label, std::vector<SourceSentence> sentences):
+        definitionContent{definitionContent},
+        label{label},
+        sentences(sentences)
+    {}
 };
 
 }
