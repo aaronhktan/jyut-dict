@@ -245,11 +245,11 @@ void MainWindow::translateUI(void)
     _pasteAction->setText(tr("Paste"));
 
     _findAction->setText(tr("Start a New Search"));
-    _findAndSelectAllAction->setText(tr("Select Contents of Search Bar"));
+    _findAndSelectAllAction->setText(tr("Select Search Bar Contents"));
     _setFocusToResultsAction->setText(
         tr("Jump to First Item in Search Results"));
     _openCurrentSelectionInNewWindowAction->setText(
-        tr("Open Selected Entry In New Window"));
+        tr("Open Selected Entry in New Window"));
     _selectSimplifiedAction->setText(tr("Search Simplified Chinese"));
     _selectTraditionalAction->setText(tr("Search Traditional Chinese"));
     _selectJyutpingAction->setText(tr("Search Jyutping"));

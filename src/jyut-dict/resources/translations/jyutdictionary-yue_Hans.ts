@@ -467,7 +467,7 @@
     </message>
     <message>
         <location line="+1"/>
-        <source>Select Contents of Search Bar</source>
+        <source>Select Search Bar Contents</source>
         <translation>全选搜索栏内文字</translation>
     </message>
     <message>
@@ -477,7 +477,7 @@
     </message>
     <message>
         <location line="+2"/>
-        <source>Open Selected Entry In New Window</source>
+        <source>Open Selected Entry in New Window</source>
         <translation>喺新窗口显示啱啱选择嘅结果</translation>
     </message>
     <message>

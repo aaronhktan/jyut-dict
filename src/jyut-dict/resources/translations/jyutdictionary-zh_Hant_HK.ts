@@ -467,7 +467,7 @@
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="262"/>
-        <source>Select Contents of Search Bar</source>
+        <source>Select Search Bar Contents</source>
         <translation>全選搜索欄文字</translation>
     </message>
     <message>
@@ -477,7 +477,7 @@
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="266"/>
-        <source>Open Selected Entry In New Window</source>
+        <source>Open Selected Entry in New Window</source>
         <translation>喺新窗口顯示啱啱選擇嘅結果</translation>
     </message>
     <message>
