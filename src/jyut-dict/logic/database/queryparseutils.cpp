@@ -44,6 +44,7 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
             // Each object in the array represents a group of definitions
             // that are all from the same source
             for (QJsonValue definitionGroup : doc.array()) {
+
                 std::string sourceName = definitionGroup["source"].toString().toStdString();
                 std::vector<Definition::Definition> definitions;
 
