@@ -105,10 +105,10 @@ std::string DefinitionsSet::getDefinitionsSnippet() const
 
     std::ostringstream definitions;
     for (size_t i = 0; i < _definitions.size() - 1; i++) {
-        auto location = _definitions[i].definitionContent.find_first_of("\r");
+        auto location = _definitions[i].definitionContent.find_first_of("\r\n");
         definitions << _definitions[i].definitionContent.substr(0, location) << "; ";
     }
-    auto location = _definitions.back().definitionContent.find_first_of("\r");
+    auto location = _definitions.back().definitionContent.find_first_of("\r\n");
     definitions << _definitions.back().definitionContent.substr(0, location);
     return definitions.str();
 }
