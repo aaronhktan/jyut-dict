@@ -282,7 +282,7 @@ void SQLSearch::searchSimplifiedThread(const QString searchTerm,
         " "
         //// Construct the final entry object
         "matching_entries AS ( "
-        "  SELECT traditional, simplified, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
+        "  SELECT simplified, traditional, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
         "  FROM matching_definition_groups AS mdg "
         "  LEFT JOIN entries ON entries.entry_id = mdg.fk_entry_id "
         "  GROUP BY entry_id "
@@ -382,7 +382,7 @@ void SQLSearch::searchTraditionalThread(const QString searchTerm,
         " "
         //// Construct the final entry object
         "matching_entries AS ( "
-        "  SELECT traditional, simplified, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
+        "  SELECT simplified, traditional, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
         "  FROM matching_definition_groups AS mdg "
         "  LEFT JOIN entries ON entries.entry_id = mdg.fk_entry_id "
         "  GROUP BY entry_id "
@@ -496,7 +496,7 @@ void SQLSearch::searchJyutpingThread(const QString searchTerm,
         " "
         //// Construct the final entry object
         "matching_entries AS ( "
-        "  SELECT traditional, simplified, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
+        "  SELECT simplified, traditional, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
         "  FROM matching_definition_groups AS mdg "
         "  LEFT JOIN entries ON entries.entry_id = mdg.fk_entry_id "
         "  GROUP BY entry_id "
@@ -625,7 +625,7 @@ void SQLSearch::searchPinyinThread(const QString searchTerm,
         " "
         //// Construct the final entry object
         "matching_entries AS ( "
-        "  SELECT traditional, simplified, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
+        "  SELECT simplified, traditional, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
         "  FROM matching_definition_groups AS mdg "
         "  LEFT JOIN entries ON entries.entry_id = mdg.fk_entry_id "
         "  GROUP BY entry_id "
@@ -736,7 +736,7 @@ void SQLSearch::searchEnglishThread(const QString searchTerm,
         " "
         //// Construct the final entry object
         "matching_entries AS ( "
-        "  SELECT traditional, simplified, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
+        "  SELECT simplified, traditional, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
         "  FROM matching_definition_groups AS mdg "
         "  LEFT JOIN entries ON entries.entry_id = mdg.fk_entry_id "
         "  GROUP BY entry_id "
@@ -845,7 +845,7 @@ void SQLSearch::searchByUniqueThread(const QString simplified,
         " "
         //// Construct the final entry object
         "matching_entries AS ( "
-        "  SELECT traditional, simplified, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
+        "  SELECT simplified, traditional, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
         "  FROM matching_definition_groups AS mdg "
         "  LEFT JOIN entries ON entries.entry_id = mdg.fk_entry_id "
         "  GROUP BY entry_id "

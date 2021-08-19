@@ -12,6 +12,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("CantoneseDictionary");
 #endif
 
+    // Prevents some UI lag
+    QThreadPool::globalInstance()->setMaxThreadCount(16);
+
     qRegisterMetaType<EntryCharactersOptions>("EntryCharactersOptions");
     qRegisterMetaTypeStreamOperators<EntryCharactersOptions>("EntryCharactersOptions");
     qRegisterMetaType<EntryPhoneticOptions>("EntryPhoneticOptions");
