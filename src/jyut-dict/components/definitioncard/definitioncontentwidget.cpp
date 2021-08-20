@@ -43,6 +43,7 @@ void DefinitionContentWidget::setEntry(std::vector<Definition::Definition> defin
 {
     cleanupLabels();
 
+    int rowNumber = 0;
     for (size_t i = 0; i < definitions.size(); i++) {
         std::string number = std::to_string(i + 1);
         _definitionNumberLabels.push_back(new QLabel{number.c_str(), this});
@@ -61,10 +62,21 @@ void DefinitionContentWidget::setEntry(std::vector<Definition::Definition> defin
         _definitionLabels.back()->setWordWrap(true);
         _definitionLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
-        _definitionLayout->addWidget(_definitionNumberLabels[i],
-                                     static_cast<int>(i + 9), 0, Qt::AlignTop);
-        _definitionLayout->addWidget(_definitionLabels[i],
-                                     static_cast<int>(i + 9), 1, Qt::AlignTop);
+        _definitionLayout->addWidget(_definitionNumberLabels.back(),
+                                     static_cast<int>(rowNumber), 0, Qt::AlignTop);
+        _definitionLayout->addWidget(_definitionLabels.back(),
+                                     static_cast<int>(rowNumber), 1, Qt::AlignTop);
+        rowNumber++;
+
+        for (size_t j = 0; j < definitions[i].sentences.size(); j++) {
+            _definitionLabels.push_back(new QLabel{"▸ " + QString{ definitions[i].sentences[j].getTraditional().c_str()}, this});
+            _definitionLabels.back()->setWordWrap(true);
+            _definitionLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
+            _definitionLabels.back()->setStyleSheet("QLabel { margin-left: 10px; }");
+            _definitionLayout->addWidget(_definitionLabels.back(),
+                                         static_cast<int>(rowNumber), 1, Qt::AlignTop);
+            rowNumber++;
+        }
     }
 
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
