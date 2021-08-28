@@ -297,7 +297,6 @@ void SQLSearch::searchSimplifiedThread(const QString searchTerm,
     // Do not parse results if new query has been made
     if (!checkQueryIDCurrent(queryID)) { return; }
     results = QueryParseUtils::parseEntries(query);
-    _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
@@ -397,7 +396,6 @@ void SQLSearch::searchTraditionalThread(const QString searchTerm,
     // Do not parse results if new query has been made
     if (!checkQueryIDCurrent(queryID)) { return; }
     results = QueryParseUtils::parseEntries(query);
-    _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
@@ -521,7 +519,6 @@ void SQLSearch::searchJyutpingThread(const QString searchTerm,
     // Do not parse results if new query has been made
     if (!checkQueryIDCurrent(queryID)) { return; }
     results = QueryParseUtils::parseEntries(query);
-    _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
@@ -651,7 +648,6 @@ void SQLSearch::searchPinyinThread(const QString searchTerm,
     // Do not parse results if new query has been made
     if (!checkQueryIDCurrent(queryID)) { return; }
     results = QueryParseUtils::parseEntries(query);
-    _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
@@ -752,7 +748,6 @@ void SQLSearch::searchEnglishThread(const QString searchTerm,
     // Do not parse results if new query has been made
     if (!checkQueryIDCurrent(queryID)) { return; }
     results = QueryParseUtils::parseEntries(query);
-    _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
@@ -866,7 +861,6 @@ void SQLSearch::searchByUniqueThread(const QString simplified,
         return;
     }
     results = QueryParseUtils::parseEntries(query);
-    _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) {
         return;
@@ -903,7 +897,6 @@ void SQLSearch::searchTraditionalSentencesThread(const QString searchTerm,
         return;
     }
     results = QueryParseUtils::parseSentences(query);
-    _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
