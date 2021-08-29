@@ -104,7 +104,7 @@ void DefinitionContentWidget::setEntry(std::vector<Definition::Definition> defin
             }
 
             _exampleLabels.push_back(
-                new QLabel{"<ul style=\"list-style-type:disc;\"> <li>"
+                new QLabel{"<ul style=\"list-style-type:circle;\"><li>"
                                + exampleText + "</li></ul>",
                            this});
             _exampleLabels.back()->setContentsMargins(0, 0, 0, 0);

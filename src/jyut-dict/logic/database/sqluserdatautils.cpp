@@ -88,16 +88,16 @@ void SQLUserDataUtils::unfavouriteEntry(Entry entry)
                       entry);
 }
 
+// NOTE: If you are modifying this, you may also want to modify
+// the search functions in SQLSearch.cpp as well!
 void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
 {
     std::vector<Entry> results{};
 
     QSqlQuery query{_manager->getDatabase()};
 
-    // Select the fields of the entry and its definitions from the entry_id
-    // from the temporary table, then sort by the timestamp.
     query.exec(
-        //// Get list of entry ids whose simplified form matches the query
+        //// Get list of entry ids that are in the user's favourites
         //// This CTE is used twice; would be nice if could materialize it
         "WITH matching_entry_ids AS ( "
         "  SELECT entry_id, timestamp from entries "
@@ -111,9 +111,10 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
         //// Get the list of all definitions for those entries
         //// This CTE is used twice; would be nice if could materialize it
         "matching_definition_ids AS ( "
-        "  SELECT definition_id, definition FROM definitions WHERE fk_entry_id IN ( "
-        "       SELECT entry_id FROM matching_entry_ids "
-        "  ) "
+        "  SELECT definition_id, definition FROM definitions WHERE fk_entry_id "
+        "    IN ("
+        "      SELECT entry_id FROM matching_entry_ids "
+        "    )"
         "), "
         " "
         //// Get corresponding sentence ids for each of those definitions
@@ -124,7 +125,7 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
         "  JOIN definitions_chinese_sentences_links AS dcsl ON mdi.definition_id = dcsl.fk_definition_id "
         "), "
         " "
-        //// Get translations for each of those sentences
+        //// Get translations for each of the sentences
         "matching_translations AS ( "
         "  SELECT mcsi.fk_chinese_sentence_id, "
         "    json_group_array(DISTINCT "
@@ -138,8 +139,18 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
         "  GROUP BY mcsi.fk_chinese_sentence_id "
         "), "
         " "
-        //// Create sentence object for each sentence
+        //// Get sentence data for each of the sentence ids
         "matching_sentences AS ( "
+        " SELECT chinese_sentence_id, traditional, simplified, pinyin, "
+        "   jyutping, language "
+        " FROM chinese_sentences AS cs "
+        " WHERE chinese_sentence_id IN ( "
+        "   SELECT fk_chinese_sentence_id FROM matching_chinese_sentence_ids "
+        " ) "
+        "),"
+        " "
+        //// Get translations for each of those sentences
+        "matching_sentences_with_translations AS ( "
         "  SELECT chinese_sentence_id, "
         "    json_object('traditional', traditional, "
         "                'simplified', simplified, "
@@ -147,21 +158,30 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
         "                'jyutping', jyutping, "
         "                'language', language, "
         "                'translations', json(translation)) AS sentence "
-        "  FROM chinese_sentences AS cs "
-        "  LEFT JOIN matching_translations AS mt ON cs.chinese_sentence_id = mt.fk_chinese_sentence_id "
+        "  FROM matching_sentences AS ms "
+        "  LEFT JOIN matching_translations AS mt ON ms.chinese_sentence_id = mt.fk_chinese_sentence_id "
         "), "
         " "
-        //// Create definition object for each definition
+        //// Get definition data for each matching definition
         "matching_definitions AS ( "
-        "  SELECT definitions.fk_entry_id, definitions.fk_source_id, "
-        "    json_object('definition', definitions.definition, "
+        "  SELECT definition_id, fk_entry_id, fk_source_id, definition, "
+        "    label "
+        "  FROM definitions "
+        "  WHERE definitions.definition_id IN ( "
+        "    SELECT definition_id FROM matching_definition_ids"
+        "  ) "
+        "), "
+        " "
+        //// Create definition object with sentences for each definition
+        "matching_definitions_with_sentences AS ( "
+        "  SELECT md.fk_entry_id, md.fk_source_id, "
+        "    json_object('definition', md.definition, "
         "                'label', label, 'sentences', "
         "                json_group_array(json(sentence))) AS definition "
-        "  FROM matching_definition_ids AS mdi "
-        "  LEFT JOIN definitions ON mdi.definition_id = definitions.definition_id "
-        "  LEFT JOIN matching_chinese_sentence_ids AS mcsi ON mdi.definition_id = mcsi.definition_id "
-        "  LEFT JOIN matching_sentences AS ms ON mcsi.fk_chinese_sentence_id = ms.chinese_sentence_id "
-        "  GROUP BY mdi.definition_id "
+        "  FROM matching_definitions AS md "
+        "  LEFT JOIN matching_chinese_sentence_ids AS mcsi ON md.definition_id = mcsi.definition_id "
+        "  LEFT JOIN matching_sentences_with_translations AS mswt ON mcsi.fk_chinese_sentence_id = mswt.chinese_sentence_id "
+        "  GROUP BY md.definition_id "
         "), "
         " "
         //// Create definition groups for definitions of the same entry that come from the same source
@@ -170,8 +190,8 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
         "    json_object('source', sourcename, "
         "                'definitions', "
         "                json_group_array(json(definition))) AS definitions "
-        "  FROM matching_definitions AS md "
-        "  LEFT JOIN sources ON sources.source_id = md.fk_source_id "
+        "  FROM matching_definitions_with_sentences AS mdws "
+        "  LEFT JOIN sources ON sources.source_id = mdws.fk_source_id "
         "  GROUP BY fk_entry_id, fk_source_id "
         "), "
         " "
@@ -180,9 +200,8 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
         "  SELECT simplified, traditional, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
         "  FROM matching_definition_groups AS mdg "
         "  LEFT JOIN entries ON entries.entry_id = mdg.fk_entry_id "
-        "  LEFT JOIN matching_entry_ids AS mei ON entries.entry_id = mei.entry_id "
-        "  GROUP BY entries.entry_id "
-        "  ORDER BY timestamp DESC "
+        "  GROUP BY entry_id "
+        "  ORDER BY frequency DESC "
         ") "
         " "
         "SELECT simplified, traditional, jyutping, pinyin, definitions from matching_entries"

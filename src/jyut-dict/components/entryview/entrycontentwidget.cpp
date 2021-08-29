@@ -58,6 +58,8 @@ void EntryContentWidget::hideDefinitionSection(void)
 
 void EntryContentWidget::showDefinitionSection(void)
 {
+    // Layout of QWidgets occurs here, so this method is very slow.
+    // Is there a way to speed this up? It is causing UI lag.
     _definitionSection->setVisible(true);
 }
 
