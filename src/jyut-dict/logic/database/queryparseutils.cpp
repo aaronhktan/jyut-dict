@@ -60,9 +60,14 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
                             if (!sentence["translations"].isNull()) {
                                 // Parse each of the sentence translations
                                 for (QJsonValue translation : sentence["translations"].toArray()) {
-                                    targetSentences.emplace_back(translation["language"].toString().toStdString(),
-                                                                 translation["sentence"].toString().toStdString(),
-                                                                 translation["direct"].toBool());
+                                    targetSentences.emplace_back(
+                                        translation["sentence"]
+                                            .toString()
+                                            .toStdString(),
+                                        translation["language"]
+                                            .toString()
+                                            .toStdString(),
+                                        translation["direct"].toBool());
                                 }
                                 sentence_translations.emplace_back(sourceName, targetSentences);
                             }

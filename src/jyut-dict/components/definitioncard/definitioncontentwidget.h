@@ -35,6 +35,10 @@ private:
     QGridLayout *_definitionLayout;
     std::vector<QLabel *> _definitionNumberLabels;
     std::vector<QLabel *> _definitionLabels;
+    std::vector<QLabel *> _exampleLabels;
+    std::vector<QLabel *> _examplePronunciationLabels;
+    std::vector<QLabel *> _exampleTranslationLabels;
+    std::vector<QLabel *> _spaceLabels;
 };
 
 #endif // DEFINITIONCONTENTWIDGET_H
