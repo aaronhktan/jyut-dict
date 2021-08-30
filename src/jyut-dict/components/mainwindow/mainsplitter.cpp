@@ -48,12 +48,17 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     connect(this,
             &MainSplitter::forwardSearchBarTextChange,
             _entryScrollArea,
-            &EntryScrollArea::stallUIUpdate);
+            &EntryScrollArea::stallSentenceUIUpdate);
+
+    connect(this,
+            &MainSplitter::forwardSearchBarTextChange,
+            _entryScrollArea,
+            &EntryScrollArea::stallEntryUIUpdate);
 
     connect(_resultListView->selectionModel(),
             &QItemSelectionModel::currentChanged,
             _entryScrollArea,
-            &EntryScrollArea::stallUIUpdate);
+            &EntryScrollArea::stallSentenceUIUpdate);
 
     setHandleWidth(1);
     setCollapsible(0, false);
@@ -148,6 +153,12 @@ void MainSplitter::handleModelReset(void)
     QModelIndex index = _model->index(0, 0);
     _resultListView->setCurrentIndex(index);
     _addToHistory = true;
+
+    // Assumption: a model reset occurs because the user has entered a new query
+    // Therefore, we want to emit forwardSearchBarTextChange, so that
+    // all the behaviour associated with "user enters something on their
+    // keyboard" occurs.
+    emit forwardSearchBarTextChange();
 }
 
 void MainSplitter::handleClick(const QModelIndex &selection)
@@ -181,7 +192,7 @@ void MainSplitter::handleDoubleClick(const QModelIndex &selection)
 #ifndef Q_OS_MAC
         area->setWindowTitle(" ");
 #endif
-        emit area->stallUIUpdate();
+        emit area->stallSentenceUIUpdate();
         area->show();
     });
 }

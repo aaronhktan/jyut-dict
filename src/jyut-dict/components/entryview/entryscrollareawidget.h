@@ -36,7 +36,7 @@ private:
     EntryContentWidget *_entryContentWidget;
 
 signals:
-    void stallUIUpdate(void);
+    void stallUISentenceUpdate(void);
 };
 
 #endif // ENTRYSCROLLAREAWIDGET_H

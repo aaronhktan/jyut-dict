@@ -38,9 +38,9 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(std::shared_ptr<SQLUserDataUtils> s
 #endif
 
     connect(this,
-            &EntryScrollAreaWidget::stallUIUpdate,
+            &EntryScrollAreaWidget::stallUISentenceUpdate,
             _entryContentWidget,
-            &EntryContentWidget::stallUIUpdate);
+            &EntryContentWidget::stallSentenceUIUpdate);
 }
 
 void EntryScrollAreaWidget::changeEvent(QEvent *event)

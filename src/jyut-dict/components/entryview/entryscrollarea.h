@@ -31,10 +31,17 @@ public:
 private:
     void resizeEvent(QResizeEvent *event) override;
 
+    QTimer *_enableUIUpdateTimer;
+    QTimer *_updateUITimer;
+    bool _enableUIUpdate = false;
+
     EntryScrollAreaWidget *_scrollAreaWidget;
 
+public slots:
+    void stallEntryUIUpdate(void);
+
 signals:
-    void stallUIUpdate(void);
+    void stallSentenceUIUpdate(void);
 };
 
 #endif // ENTRYSCROLLAREA_H
