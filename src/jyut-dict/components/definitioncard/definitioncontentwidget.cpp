@@ -66,6 +66,11 @@ void DefinitionContentWidget::setEntry(std::vector<Definition::Definition> defin
         _definitionLabels.push_back(new QLabel{definitions[i].definitionContent.c_str(), this});
         _definitionLabels.back()->setWordWrap(true);
         _definitionLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
+#ifdef Q_OS_WIN
+        QFont font = QFont{"Microsoft YaHei", 10};
+        font.setStyleHint(QFont::System, QFont::PreferAntialias);
+        _definitionLabels.back()->setFont(font);
+#endif
 
         _definitionLayout->addWidget(_definitionNumberLabels.back(),
                                      static_cast<int>(rowNumber), 0, Qt::AlignTop);
@@ -111,6 +116,11 @@ void DefinitionContentWidget::setEntry(std::vector<Definition::Definition> defin
             _exampleLabels.back()->setWordWrap(true);
             _exampleLabels.back()->setTextInteractionFlags(
                 Qt::TextSelectableByMouse);
+#ifdef Q_OS_WIN
+            QFont font = QFont{"Microsoft YaHei", 10};
+            font.setStyleHint(QFont::System, QFont::PreferAntialias);
+            _exampleLabels.back()->setFont(font);
+#endif
             _definitionLayout->addWidget(_exampleLabels.back(),
                                          static_cast<int>(rowNumber++),
                                          1,

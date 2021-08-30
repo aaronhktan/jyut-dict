@@ -214,7 +214,7 @@ void EntryViewSentenceCardSection::stallUIUpdate(void)
     _enableUIUpdate = false;
     _enableUIUpdateTimer->stop();
     disconnect(_enableUIUpdateTimer, nullptr, nullptr, nullptr);
-    _enableUIUpdateTimer->setInterval(250);
+    _enableUIUpdateTimer->setInterval(500);
     _enableUIUpdateTimer->setSingleShot(true);
     QObject::connect(_enableUIUpdateTimer, &QTimer::timeout, this, [=]() {
         _enableUIUpdate = true;
@@ -228,7 +228,7 @@ void EntryViewSentenceCardSection::pauseBeforeUpdatingUI(std::vector<SourceSente
     _updateUITimer->stop();
     disconnect(_updateUITimer, nullptr, nullptr, nullptr);
 
-    _updateUITimer->setInterval(25);
+    _updateUITimer->setInterval(100);
     QObject::connect(_updateUITimer, &QTimer::timeout, this, [=]() {
         if (_enableUIUpdate) {
             _updateUITimer->stop();
