@@ -160,7 +160,9 @@ void DefinitionContentWidget::setEntry(std::vector<Definition::Definition> defin
                 break;
             case EntryPhoneticOptions::PREFER_JYUTPING:
                 pronunciationText = cantonese
-                                    + (cantonese.isEmpty() ? "" : "<br>")
+                                    + (cantonese.isEmpty() || mandarin.isEmpty()
+                                           ? ""
+                                           : "<br>")
                                     + mandarin;
                 break;
             case EntryPhoneticOptions::ONLY_PINYIN:
@@ -168,23 +170,27 @@ void DefinitionContentWidget::setEntry(std::vector<Definition::Definition> defin
                 break;
             case EntryPhoneticOptions::PREFER_PINYIN:
                 pronunciationText = mandarin
-                                    + (mandarin.isEmpty() ? "" : "<br>")
+                                    + (cantonese.isEmpty() || mandarin.isEmpty()
+                                           ? ""
+                                           : "<br>")
                                     + cantonese;
                 break;
             }
 
-            _examplePronunciationLabels.push_back(
-                new QLabel{"<ul style=\"list-style-type:none;\"><li>"
-                               + pronunciationText + "</li></ul>",
-                           this});
-            _examplePronunciationLabels.back()->setContentsMargins(0, 0, 0, 0);
-            _examplePronunciationLabels.back()->setWordWrap(true);
-            _examplePronunciationLabels.back()->setTextInteractionFlags(
-                Qt::TextSelectableByMouse);
-            _definitionLayout->addWidget(_examplePronunciationLabels.back(),
-                                         static_cast<int>(rowNumber++),
-                                         1,
-                                         Qt::AlignTop);
+            if (!pronunciationText.isEmpty()) {
+                _examplePronunciationLabels.push_back(
+                    new QLabel{"<ul style=\"list-style-type:none;\"><li>"
+                                   + pronunciationText + "</li></ul>",
+                               this});
+                _examplePronunciationLabels.back()->setContentsMargins(0, 0, 0, 0);
+                _examplePronunciationLabels.back()->setWordWrap(true);
+                _examplePronunciationLabels.back()->setTextInteractionFlags(
+                    Qt::TextSelectableByMouse);
+                _definitionLayout->addWidget(_examplePronunciationLabels.back(),
+                                             static_cast<int>(rowNumber++),
+                                             1,
+                                             Qt::AlignTop);
+            }
 
             auto sets = definitions[i].sentences[j].getSentenceSets();
             if (!sets.empty()) {
