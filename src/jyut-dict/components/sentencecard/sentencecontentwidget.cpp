@@ -62,7 +62,7 @@ void SentenceContentWidget::setSentenceSet(const SentenceSet &set)
         _sentenceNumberLabels.push_back(new QLabel{number.c_str(), this});
         int definitionNumberWidth = _sentenceNumberLabels.back()
                                         ->fontMetrics()
-                                        .boundingRect("PY")
+                                        .boundingRect("999")
                                         .width();
         _sentenceNumberLabels.back()->setFixedWidth(definitionNumberWidth);
         int definitionNumberHeight = _sentenceNumberLabels.back()
@@ -107,7 +107,7 @@ void SentenceContentWidget::setSourceSentenceVector(
         _sentenceNumberLabels.push_back(new QLabel{number.c_str(), this});
         int definitionNumberWidth = _sentenceNumberLabels.back()
                                         ->fontMetrics()
-                                        .boundingRect("PY")
+                                        .boundingRect("999")
                                         .width();
         _sentenceNumberLabels.back()->setFixedWidth(definitionNumberWidth);
         int latinHeight = _sentenceNumberLabels.back()

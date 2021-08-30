@@ -54,7 +54,7 @@ void DefinitionContentWidget::setEntry(std::vector<Definition::Definition> defin
         _definitionNumberLabels.push_back(new QLabel{number.c_str(), this});
         int definitionNumberWidth = _definitionNumberLabels.back()
                                         ->fontMetrics()
-                                        .boundingRect("PY")
+                                        .boundingRect("999")
                                         .width();
         _definitionNumberLabels.back()->setFixedWidth(definitionNumberWidth);
         int definitionNumberHeight = _definitionNumberLabels.back()

@@ -14,6 +14,7 @@
 // The DefinitionContentWidget shows all the definitions
 // It contains a collection of QLabels, one for each definition
 // and its associated "number" (i.e. first definition, second definition, etc.)
+// It also displays sentences and examples associated with each definition.
 
 class DefinitionContentWidget : public QWidget
 {
