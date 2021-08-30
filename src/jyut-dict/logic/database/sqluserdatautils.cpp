@@ -98,7 +98,7 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
 
     query.exec(
         //// Get list of entry ids that are in the user's favourites
-        //// This CTE is used twice; would be nice if could materialize it
+        //// This CTE is used multiple times; would be nice if could materialize it
         "WITH matching_entry_ids AS ( "
         "  SELECT entry_id, timestamp from entries "
         "  INNER JOIN user.favourite_words "
@@ -109,7 +109,7 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
         "), "
         " "
         //// Get the list of all definitions for those entries
-        //// This CTE is used twice; would be nice if could materialize it
+        //// This CTE is used multiple times; would be nice if could materialize it
         "matching_definition_ids AS ( "
         "  SELECT definition_id, definition FROM definitions WHERE fk_entry_id "
         "    IN ("
@@ -118,7 +118,7 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
         "), "
         " "
         //// Get corresponding sentence ids for each of those definitions
-        //// This CTE is used twice; would be nice if could materialize it
+        //// This CTE is used multiple times; would be nice if could materialize it
         "matching_chinese_sentence_ids AS ( "
         "  SELECT definition_id, fk_chinese_sentence_id "
         "  FROM matching_definition_ids AS mdi "
@@ -174,8 +174,8 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
         " "
         //// Create definition object with sentences for each definition
         "matching_definitions_with_sentences AS ( "
-        "  SELECT md.fk_entry_id, md.fk_source_id, "
-        "    json_object('definition', md.definition, "
+        "  SELECT fk_entry_id, fk_source_id, "
+        "    json_object('definition', definition, "
         "                'label', label, 'sentences', "
         "                json_group_array(json(sentence))) AS definition "
         "  FROM matching_definitions AS md "

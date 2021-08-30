@@ -219,14 +219,14 @@ void SQLSearch::searchSimplifiedThread(const QString searchTerm,
         "), "
         " "
         //// Get the list of all definitions for those entries
-        //// This CTE is used twice; would be nice if could materialize it
+        //// This CTE is used multiple times; would be nice if could materialize it
         "matching_definition_ids AS ( "
         "  SELECT definition_id, definition FROM definitions WHERE fk_entry_id "
         "    IN matching_entry_ids "
         "), "
         " "
         //// Get corresponding sentence ids for each of those definitions
-        //// This CTE is used twice; would be nice if could materialize it
+        //// This CTE is used multiple times; would be nice if could materialize it
         "matching_chinese_sentence_ids AS ( "
         "  SELECT definition_id, fk_chinese_sentence_id "
         "  FROM matching_definition_ids AS mdi "
@@ -282,8 +282,8 @@ void SQLSearch::searchSimplifiedThread(const QString searchTerm,
         " "
         //// Create definition object with sentences for each definition
         "matching_definitions_with_sentences AS ( "
-        "  SELECT md.fk_entry_id, md.fk_source_id, "
-        "    json_object('definition', md.definition, "
+        "  SELECT fk_entry_id, fk_source_id, "
+        "    json_object('definition', definition, "
         "                'label', label, 'sentences', "
         "                json_group_array(json(sentence))) AS definition "
         "  FROM matching_definitions AS md "
@@ -338,14 +338,14 @@ void SQLSearch::searchTraditionalThread(const QString searchTerm,
         "), "
         " "
         //// Get the list of all definitions for those entries
-        //// This CTE is used twice; would be nice if could materialize it
+        //// This CTE is used multiple times; would be nice if could materialize it
         "matching_definition_ids AS ( "
         "  SELECT definition_id, definition FROM definitions WHERE fk_entry_id "
         "    IN matching_entry_ids "
         "), "
         " "
         //// Get corresponding sentence ids for each of those definitions
-        //// This CTE is used twice; would be nice if could materialize it
+        //// This CTE is used multiple times; would be nice if could materialize it
         "matching_chinese_sentence_ids AS ( "
         "  SELECT definition_id, fk_chinese_sentence_id "
         "  FROM matching_definition_ids AS mdi "
@@ -401,8 +401,8 @@ void SQLSearch::searchTraditionalThread(const QString searchTerm,
         " "
         //// Create definition object with sentences for each definition
         "matching_definitions_with_sentences AS ( "
-        "  SELECT md.fk_entry_id, md.fk_source_id, "
-        "    json_object('definition', md.definition, "
+        "  SELECT fk_entry_id, fk_source_id, "
+        "    json_object('definition', definition, "
         "                'label', label, 'sentences', "
         "                json_group_array(json(sentence))) AS definition "
         "  FROM matching_definitions AS md "
@@ -471,14 +471,14 @@ void SQLSearch::searchJyutpingThread(const QString searchTerm,
         "), "
         " "
         //// Get the list of all definitions for those entries
-        //// This CTE is used twice; would be nice if could materialize it
+        //// This CTE is used multiple times; would be nice if could materialize it
         "matching_definition_ids AS ( "
         "  SELECT definition_id, definition FROM definitions WHERE fk_entry_id "
         "    IN matching_entry_ids "
         "), "
         " "
         //// Get corresponding sentence ids for each of those definitions
-        //// This CTE is used twice; would be nice if could materialize it
+        //// This CTE is used multiple times; would be nice if could materialize it
         "matching_chinese_sentence_ids AS ( "
         "  SELECT definition_id, fk_chinese_sentence_id "
         "  FROM matching_definition_ids AS mdi "
@@ -534,8 +534,8 @@ void SQLSearch::searchJyutpingThread(const QString searchTerm,
         " "
         //// Create definition object with sentences for each definition
         "matching_definitions_with_sentences AS ( "
-        "  SELECT md.fk_entry_id, md.fk_source_id, "
-        "    json_object('definition', md.definition, "
+        "  SELECT fk_entry_id, fk_source_id, "
+        "    json_object('definition', definition, "
         "                'label', label, 'sentences', "
         "                json_group_array(json(sentence))) AS definition "
         "  FROM matching_definitions AS md "
@@ -619,14 +619,14 @@ void SQLSearch::searchPinyinThread(const QString searchTerm,
         "), "
         " "
         //// Get the list of all definitions for those entries
-        //// This CTE is used twice; would be nice if could materialize it
+        //// This CTE is used multiple times; would be nice if could materialize it
         "matching_definition_ids AS ( "
         "  SELECT definition_id, definition FROM definitions WHERE fk_entry_id "
         "    IN matching_entry_ids "
         "), "
         " "
         //// Get corresponding sentence ids for each of those definitions
-        //// This CTE is used twice; would be nice if could materialize it
+        //// This CTE is used multiple times; would be nice if could materialize it
         "matching_chinese_sentence_ids AS ( "
         "  SELECT definition_id, fk_chinese_sentence_id "
         "  FROM matching_definition_ids AS mdi "
@@ -682,8 +682,8 @@ void SQLSearch::searchPinyinThread(const QString searchTerm,
         " "
         //// Create definition object with sentences for each definition
         "matching_definitions_with_sentences AS ( "
-        "  SELECT md.fk_entry_id, md.fk_source_id, "
-        "    json_object('definition', md.definition, "
+        "  SELECT fk_entry_id, fk_source_id, "
+        "    json_object('definition', definition, "
         "                'label', label, 'sentences', "
         "                json_group_array(json(sentence))) AS definition "
         "  FROM matching_definitions AS md "
@@ -750,14 +750,14 @@ void SQLSearch::searchEnglishThread(const QString searchTerm,
         "), "
         " "
         //// Get the list of all definitions for those entries
-        //// This CTE is used twice; would be nice if could materialize it
+        //// This CTE is used multiple times; would be nice if could materialize it
         "matching_definition_ids AS ( "
         "  SELECT definition_id, definition FROM definitions WHERE fk_entry_id "
         "    IN matching_entry_ids "
         "), "
         " "
         //// Get corresponding sentence ids for each of those definitions
-        //// This CTE is used twice; would be nice if could materialize it
+        //// This CTE is used multiple times; would be nice if could materialize it
         "matching_chinese_sentence_ids AS ( "
         "  SELECT definition_id, fk_chinese_sentence_id "
         "  FROM matching_definition_ids AS mdi "
@@ -813,8 +813,8 @@ void SQLSearch::searchEnglishThread(const QString searchTerm,
         " "
         //// Create definition object with sentences for each definition
         "matching_definitions_with_sentences AS ( "
-        "  SELECT md.fk_entry_id, md.fk_source_id, "
-        "    json_object('definition', md.definition, "
+        "  SELECT fk_entry_id, fk_source_id, "
+        "    json_object('definition', definition, "
         "                'label', label, 'sentences', "
         "                json_group_array(json(sentence))) AS definition "
         "  FROM matching_definitions AS md "
@@ -878,14 +878,14 @@ void SQLSearch::searchByUniqueThread(const QString simplified,
         "), "
         " "
         //// Get the list of all definitions for those entries
-        //// This CTE is used twice; would be nice if could materialize it
+        //// This CTE is used multiple times; would be nice if could materialize it
         "matching_definition_ids AS ( "
         "  SELECT definition_id, definition FROM definitions WHERE fk_entry_id "
         "    IN matching_entry_ids "
         "), "
         " "
         //// Get corresponding sentence ids for each of those definitions
-        //// This CTE is used twice; would be nice if could materialize it
+        //// This CTE is used multiple times; would be nice if could materialize it
         "matching_chinese_sentence_ids AS ( "
         "  SELECT definition_id, fk_chinese_sentence_id "
         "  FROM matching_definition_ids AS mdi "
