@@ -9,9 +9,6 @@
 #ifdef Q_OS_WIN
 #include <cctype>
 #endif
-#include <functional>
-#include <sstream>
-#include <unordered_set>
 
 SQLSearch::SQLSearch()
     : QObject()

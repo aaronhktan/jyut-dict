@@ -4,7 +4,6 @@
 #include "logic/entry/entrycharactersoptions.h"
 #include "logic/entry/entryphoneticoptions.h"
 #include "logic/settings/settings.h"
-#include "logic/settings/settingsutils.h"
 #include "logic/utils/utils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"

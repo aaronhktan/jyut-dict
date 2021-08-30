@@ -1,6 +1,5 @@
 #include "entryscrollarea.h"
 
-#include "components/entryview/entryscrollareawidget.h"
 #include "logic/entry/definitionsset.h"
 #include "logic/entry/entry.h"
 #include "logic/sentence/sentenceset.h"

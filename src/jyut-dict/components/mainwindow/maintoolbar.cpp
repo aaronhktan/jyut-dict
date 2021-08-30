@@ -1,7 +1,6 @@
 #include "maintoolbar.h"
 
 #include "logic/search/searchoptionsmediator.h"
-#include "logic/utils/utils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)

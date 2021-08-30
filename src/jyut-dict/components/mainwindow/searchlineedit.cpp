@@ -1,6 +1,5 @@
 #include "searchlineedit.h"
 
-#include "logic/search/sqlsearch.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
