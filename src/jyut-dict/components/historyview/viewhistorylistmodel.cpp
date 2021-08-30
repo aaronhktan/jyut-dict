@@ -37,11 +37,14 @@ void ViewHistoryListModel::setEmpty(void)
     Entry entry = Entry{tr("No viewed items...").toStdString(),
                         tr("No viewed items...").toStdString(),
                         "", "", {}};
-    entry.addDefinitions("CEDICT",
-                         {Definition::Definition{tr("After viewing an entry, you can find it "
-                             "in this list. Selecting an item in this "
-                             "list will let you see that entry again.")
-                                                 .toStdString(), "", {}}});
+    entry.addDefinitions(
+        "CEDICT",
+        {Definition::Definition{tr("After viewing an entry, you can find it "
+                                   "in this list. Selecting an item in this "
+                                   "list will let you see that entry again.")
+                                    .toStdString(),
+                                "",
+                                {}}});
     entry.setJyutping(tr("—").toStdString());
     entry.setIsEmpty(true);
 

@@ -82,10 +82,16 @@ void ResultListModel::setWelcome()
         setEmpty();
         return;
     }
-    Entry entry = Entry{tr("Welcome!").toStdString(), tr("Welcome!").toStdString(),
-                        "—", "—", {}};
+    Entry entry = Entry{tr("Welcome!").toStdString(),
+                        tr("Welcome!").toStdString(),
+                        "—",
+                        "—",
+                        {}};
     entry.addDefinitions("CEDICT",
-                         {Definition::Definition{tr("Start typing to search for words").toStdString(), "", {}}});
+                         {Definition::Definition{
+                             tr("Start typing to search for words").toStdString(),
+                             "",
+                             {}}});
     entry.setIsWelcome(true);
 
     setEntries(std::vector<Entry>{entry});
@@ -97,11 +103,15 @@ void ResultListModel::setEmpty()
         Entry entry = Entry{tr("No results...").toStdString(),
                             tr("No results...").toStdString(),
                             "", "", {}};
-        entry.addDefinitions("CEDICT",
-                             {Definition::Definition{tr("Simplified (SC) and Traditional (TC) Chinese, "
-                                 "Jyutping (JP), Pinyin (PY), and English (EN) "
-                                 "are options to the right of the search bar.")
-                                                     .toStdString(), "", {}}});
+        entry.addDefinitions(
+            "CEDICT",
+            {Definition::Definition{
+                tr("Simplified (SC) and Traditional (TC) Chinese, "
+                   "Jyutping (JP), Pinyin (PY), and English (EN) "
+                   "are options to the right of the search bar.")
+                    .toStdString(),
+                "",
+                {}}});
         entry.setJyutping(tr("Try switching between languages!").toStdString());
         entry.setIsEmpty(true);
 
@@ -110,11 +120,15 @@ void ResultListModel::setEmpty()
         Entry entry = Entry{tr("Nothing saved...").toStdString(),
                             tr("Nothing saved...").toStdString(),
                             "", "", {}};
-        entry.addDefinitions("CEDICT",
-                             {Definition::Definition{tr("Clicking the \"save\" button when viewing "
-                                 "a word or phrase adds it to this list. Try "
-                                 "adding a word that sounds cool!")
-                                                     .toStdString(), "", {}}});
+        entry
+            .addDefinitions("CEDICT",
+                            {Definition::Definition{
+                                tr("Clicking the \"save\" button when viewing "
+                                   "a word or phrase adds it to this list. Try "
+                                   "adding a word that sounds cool!")
+                                    .toStdString(),
+                                "",
+                                {}}});
         entry.setJyutping(tr("Save a word to get started!").toStdString());
         entry.setIsEmpty(true);
 

@@ -221,7 +221,7 @@ void DefinitionContentWidget::setEntry(std::vector<Definition::Definition> defin
                                      Qt::AlignTop);
     }
 
-    // This label adds a bit of space at the end f the definition card.
+    // This label adds a bit of space at the end of the definition card.
     _spaceLabels.push_back(new QLabel{" "});
     _spaceLabels.back()->setMaximumHeight(6);
     _definitionLayout->addWidget(_spaceLabels.back(),

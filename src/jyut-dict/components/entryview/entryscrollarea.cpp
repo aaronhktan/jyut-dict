@@ -44,6 +44,9 @@ void EntryScrollArea::setEntry(const Entry &entry)
     _updateUITimer->stop();
     disconnect(_updateUITimer, nullptr, nullptr, nullptr);
 
+    // Is it OK to have entry as a reference? It seems like this doesn't cause
+    // any problems, but theoretically the timer could keep on running
+    // even after the entry object is deleted...?
     _updateUITimer->setInterval(25);
     QObject::connect(_updateUITimer, &QTimer::timeout, this, [=]() {
         if (_enableUIUpdate) {
@@ -77,13 +80,15 @@ void EntryScrollArea::resizeEvent(QResizeEvent *event)
 // the time required to lay out many widgets, and it also must occur on the
 // main GUI thread.
 //
-// We don't want to freeze the UI while the user types, so we disable the call
-// to setEntry(entry) for 200ms. A pause of 200ms is good enough to assume that
-// the user is done typing, so the expensive GUI operation can run.
+// We don't want to freeze the UI while the user types. To do that, we disable
+// the call to setEntry(entry) for 200ms. A pause of 200ms is good enough to
+// assume that the user is done typing, so the expensive GUI operation can run.
 //
 // However, we don't want to stall the UI update every time a call to
 // setEntry(entry) occurs! For example, we don't want to stall the UI update
-// if the user is clicking on a result in the list view.
+// if the user is clicking on a result in the list view. This is why the
+// stalling behaviour is implemented as a slot instead of in the setEntry(entry)
+// method.
 void EntryScrollArea::stallEntryUIUpdate(void)
 {
     _enableUIUpdate = false;
