@@ -117,8 +117,6 @@ def generate_indices(c):
     )
 
     c.execute("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)")
-    c.execute("CREATE INDEX chinese_sentences_index ON chinese_sentences(chinese_sentence_id, traditional, simplified, pinyin, jyutping, language)")
-    c.execute("CREATE INDEX definition_index ON definitions(definition_id, definition, label, fk_entry_id, fk_source_id)")
 
 
 def insert_source(
