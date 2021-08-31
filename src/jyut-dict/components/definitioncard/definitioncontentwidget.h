@@ -14,6 +14,7 @@
 // The DefinitionContentWidget shows all the definitions
 // It contains a collection of QLabels, one for each definition
 // and its associated "number" (i.e. first definition, second definition, etc.)
+// It also displays sentences and examples associated with each definition.
 
 class DefinitionContentWidget : public QWidget
 {
@@ -23,8 +24,7 @@ public:
 
     void changeEvent(QEvent *event) override;
 
-    void setEntry(const Entry &entry);
-    void setEntry(std::vector<std::string> definitions);
+    void setEntry(std::vector<Definition::Definition> definitions);
 
 private:
     void setStyle(bool use_dark);
@@ -36,6 +36,10 @@ private:
     QGridLayout *_definitionLayout;
     std::vector<QLabel *> _definitionNumberLabels;
     std::vector<QLabel *> _definitionLabels;
+    std::vector<QLabel *> _exampleLabels;
+    std::vector<QLabel *> _examplePronunciationLabels;
+    std::vector<QLabel *> _exampleTranslationLabels;
+    std::vector<QLabel *> _spaceLabels;
 };
 
 #endif // DEFINITIONCONTENTWIDGET_H

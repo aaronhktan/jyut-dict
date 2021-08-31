@@ -1,6 +1,5 @@
 #include "searchlineedit.h"
 
-#include "logic/search/sqlsearch.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -115,23 +114,23 @@ void SearchLineEdit::search()
 {
     switch (_parameters) {
         case SearchParameters::SIMPLIFIED: {
-            _search->searchSimplified(text());
+            _search->searchSimplified(text().trimmed());
             break;
         }
         case SearchParameters::TRADITIONAL: {
-            _search->searchTraditional(text());
+            _search->searchTraditional(text().trimmed());
             break;
         }
         case SearchParameters::PINYIN: {
-            _search->searchPinyin(text());
+            _search->searchPinyin(text().trimmed());
             break;
         }
         case SearchParameters::JYUTPING: {
-            _search->searchJyutping(text());
+            _search->searchJyutping(text().trimmed());
             break;
         }
         case SearchParameters::ENGLISH: {
-            _search->searchEnglish(text());
+            _search->searchEnglish(text().trimmed());
             break;
         }
         default: {

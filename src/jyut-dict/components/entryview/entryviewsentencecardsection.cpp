@@ -72,7 +72,7 @@ void EntryViewSentenceCardSection::setupUI(void)
     _sentenceCardsLayout->addWidget(_viewAllSentencesButton);
     _sentenceCardsLayout->setAlignment(_viewAllSentencesButton, Qt::AlignRight);
 
-    _timer = new QTimer{this};
+    _showLoadingIconTimer = new QTimer{this};
 
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
@@ -104,7 +104,7 @@ void EntryViewSentenceCardSection::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -146,15 +146,15 @@ void EntryViewSentenceCardSection::setEntry(const Entry &entry)
     // Show loading widget only if search results are not found within
     // a certain deadline
     _calledBack = false;
-    _timer->stop();
-    _timer->setInterval(1000);
-    _timer->setSingleShot(true);
-    QObject::connect(_timer, &QTimer::timeout, this, [=]() {
+    _showLoadingIconTimer->stop();
+    _showLoadingIconTimer->setInterval(1000);
+    _showLoadingIconTimer->setSingleShot(true);
+    QObject::connect(_showLoadingIconTimer, &QTimer::timeout, this, [=]() {
         if (!_calledBack && _enableUIUpdate) {
             showLoadingWidget();
         }
     });
-    _timer->start();
+    _showLoadingIconTimer->start();
 
     // Actually start searching for sentences
     _search->searchTraditionalSentences(entry.getTraditional().c_str());
@@ -209,12 +209,12 @@ void EntryViewSentenceCardSection::updateUI(
     emit finishedAddingCards();
 }
 
-void EntryViewSentenceCardSection::stallUIUpdate(void)
+void EntryViewSentenceCardSection::stallSentenceUIUpdate(void)
 {
     _enableUIUpdate = false;
     _enableUIUpdateTimer->stop();
     disconnect(_enableUIUpdateTimer, nullptr, nullptr, nullptr);
-    _enableUIUpdateTimer->setInterval(500);
+    _enableUIUpdateTimer->setInterval(250);
     _enableUIUpdateTimer->setSingleShot(true);
     QObject::connect(_enableUIUpdateTimer, &QTimer::timeout, this, [=]() {
         _enableUIUpdate = true;
@@ -228,7 +228,7 @@ void EntryViewSentenceCardSection::pauseBeforeUpdatingUI(std::vector<SourceSente
     _updateUITimer->stop();
     disconnect(_updateUITimer, nullptr, nullptr, nullptr);
 
-    _updateUITimer->setInterval(100);
+    _updateUITimer->setInterval(25);
     QObject::connect(_updateUITimer, &QTimer::timeout, this, [=]() {
         if (_enableUIUpdate) {
             _updateUITimer->stop();

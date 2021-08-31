@@ -31,10 +31,21 @@ public:
 private:
     void resizeEvent(QResizeEvent *event) override;
 
+    QTimer *_enableUIUpdateTimer;
+    QTimer *_updateUITimer;
+    // Unlike EntryViewSentenceCardSection, this is set to true by default
+    // because there are situations where setEntry() is called _without_
+    // the stallEntryUIUpdate slot being called (which would set this variable
+    // to true), such as the Favourites window.
+    bool _enableUIUpdate = true;
+
     EntryScrollAreaWidget *_scrollAreaWidget;
 
+public slots:
+    void stallEntryUIUpdate(void);
+
 signals:
-    void stallUIUpdate(void);
+    void stallSentenceUIUpdate(void);
 };
 
 #endif // ENTRYSCROLLAREA_H

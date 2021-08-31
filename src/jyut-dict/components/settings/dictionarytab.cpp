@@ -1,7 +1,6 @@
 #include "dictionarytab.h"
 
 #include "components/dictionarylist/dictionarylistview.h"
-#include "logic/dictionary/dictionarymetadata.h"
 #include "logic/dictionary/dictionarysource.h"
 #include "logic/utils/utils.h"
 #include "logic/settings/settingsutils.h"

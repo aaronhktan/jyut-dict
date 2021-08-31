@@ -1,7 +1,6 @@
 #include "maintoolbar.h"
 
 #include "logic/search/searchoptionsmediator.h"
-#include "logic/utils/utils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -104,7 +103,7 @@ void MainToolBar::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());

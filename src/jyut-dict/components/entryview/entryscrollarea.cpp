@@ -1,6 +1,5 @@
 #include "entryscrollarea.h"
 
-#include "components/entryview/entryscrollareawidget.h"
 #include "logic/entry/definitionsset.h"
 #include "logic/entry/entry.h"
 #include "logic/sentence/sentenceset.h"
@@ -14,6 +13,9 @@ EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
                                  QWidget *parent)
     : QScrollArea(parent)
 {
+    _enableUIUpdateTimer = new QTimer{this};
+    _updateUITimer = new QTimer{this};
+
     setFrameShape(QFrame::NoFrame);
 
     _scrollAreaWidget = new EntryScrollAreaWidget{sqlUserUtils, manager, this};
@@ -23,9 +25,9 @@ EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     setMinimumWidth(350);
 
     connect(this,
-            &EntryScrollArea::stallUIUpdate,
+            &EntryScrollArea::stallSentenceUIUpdate,
             _scrollAreaWidget,
-            &EntryScrollAreaWidget::stallUIUpdate);
+            &EntryScrollAreaWidget::stallUISentenceUpdate);
 
     if (!parent) {
         setMinimumHeight(400);
@@ -38,14 +40,28 @@ EntryScrollArea::~EntryScrollArea()
 
 void EntryScrollArea::setEntry(const Entry &entry)
 {
-    _scrollAreaWidget->setEntry(entry);
-    _scrollAreaWidget->setVisible(false);
-    _scrollAreaWidget->resize(width()
-                                  - (verticalScrollBar()->isVisible()
-                                         ? verticalScrollBar()->width()
-                                         : 0),
-                              _scrollAreaWidget->sizeHint().height());
-    _scrollAreaWidget->setVisible(true);
+    _updateUITimer->stop();
+    disconnect(_updateUITimer, nullptr, nullptr, nullptr);
+
+    // Is it OK to have entry as a reference? It seems like this doesn't cause
+    // any problems, but theoretically the timer could keep on running
+    // even after the entry object is deleted...?
+    _updateUITimer->setInterval(25);
+    QObject::connect(_updateUITimer, &QTimer::timeout, this, [=]() {
+        if (_enableUIUpdate) {
+            _updateUITimer->stop();
+            disconnect(_updateUITimer, nullptr, nullptr, nullptr);
+            _scrollAreaWidget->setEntry(entry);
+            _scrollAreaWidget->setVisible(false);
+            _scrollAreaWidget->resize(width()
+                                          - (verticalScrollBar()->isVisible()
+                                                 ? verticalScrollBar()->width()
+                                                 : 0),
+                                      _scrollAreaWidget->sizeHint().height());
+            _scrollAreaWidget->setVisible(true);
+        }
+    });
+    _updateUITimer->start();
 }
 
 void EntryScrollArea::resizeEvent(QResizeEvent *event)
@@ -56,4 +72,31 @@ void EntryScrollArea::resizeEvent(QResizeEvent *event)
                                          : 0),
                               _scrollAreaWidget->sizeHint().height());
     event->accept();
+}
+
+// This slot is intended to be called after the user inputs text in the search
+// box. The call to setEntry(entry) is very CPU intensive due to
+// the time required to lay out many widgets, and it also must occur on the
+// main GUI thread.
+//
+// We don't want to freeze the UI while the user types. To do that, we disable
+// the call to setEntry(entry) for 200ms. A pause of 200ms is good enough to
+// assume that the user is done typing, so the expensive GUI operation can run.
+//
+// However, we don't want to stall the UI update every time a call to
+// setEntry(entry) occurs! For example, we don't want to stall the UI update
+// if the user is clicking on a result in the list view. This is why the
+// stalling behaviour is implemented as a slot instead of in the setEntry(entry)
+// method.
+void EntryScrollArea::stallEntryUIUpdate(void)
+{
+    _enableUIUpdate = false;
+    _enableUIUpdateTimer->stop();
+    disconnect(_enableUIUpdateTimer, nullptr, nullptr, nullptr);
+    _enableUIUpdateTimer->setInterval(200);
+    _enableUIUpdateTimer->setSingleShot(true);
+    QObject::connect(_enableUIUpdateTimer, &QTimer::timeout, this, [=]() {
+        _enableUIUpdate = true;
+    });
+    _enableUIUpdateTimer->start();
 }

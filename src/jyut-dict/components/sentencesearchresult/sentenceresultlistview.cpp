@@ -1,7 +1,6 @@
 #include "sentenceresultlistview.h"
 
 #include "components/sentencesearchresult/sentenceresultlistdelegate.h"
-#include "logic/search/sqlsearch.h"
 
 #include <QGuiApplication>
 

@@ -36,7 +36,7 @@ public slots:
     void showSentenceSection(void);
 
 signals:
-    void stallUIUpdate(void);
+    void stallSentenceUIUpdate(void);
 };
 
 #endif // ENTRYCONTENTWIDGET_H

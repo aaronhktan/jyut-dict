@@ -35,9 +35,9 @@ EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manag
             &EntryContentWidget::showSentenceSection);
 
     connect(this,
-            &EntryContentWidget::stallUIUpdate,
+            &EntryContentWidget::stallSentenceUIUpdate,
             _sentenceSection,
-            &EntryViewSentenceCardSection::stallUIUpdate);
+            &EntryViewSentenceCardSection::stallSentenceUIUpdate);
 }
 
 EntryContentWidget::~EntryContentWidget()
@@ -58,9 +58,11 @@ void EntryContentWidget::hideDefinitionSection(void)
 
 void EntryContentWidget::showDefinitionSection(void)
 {
+    // This is an expensive call if there are many widgets
+    // in the _definitionSection.
+    // A workaround for jitter caused by this is located in EntryScrollArea.
     _definitionSection->setVisible(true);
 }
-
 
 void EntryContentWidget::hideSentenceSection(void)
 {

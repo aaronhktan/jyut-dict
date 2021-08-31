@@ -1,5 +1,6 @@
 #include "definitioncontentwidget.h"
 
+#include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined(Q_OS_LINUX)
@@ -12,10 +13,14 @@
 DefinitionContentWidget::DefinitionContentWidget(QWidget *parent) : QWidget(parent)
 {
     _definitionLayout = new QGridLayout{this};
-    _definitionLayout->setContentsMargins(10, 0, 10, 10);
+    _definitionLayout->setVerticalSpacing(1);
+    _definitionLayout->setContentsMargins(10, 0, 10, 0);
 
     _definitionNumberLabels = {};
     _definitionLabels = {};
+    _exampleLabels = {};
+    _examplePronunciationLabels = {};
+    _exampleTranslationLabels = {};
 }
 
 DefinitionContentWidget::~DefinitionContentWidget()
@@ -30,7 +35,7 @@ void DefinitionContentWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -39,24 +44,17 @@ void DefinitionContentWidget::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
-void DefinitionContentWidget::setEntry(const Entry &entry)
-{
-    // Note: displays only the first set of definitions in entry
-    if (entry.getDefinitionsSets().size() >= 1) {
-        setEntry(entry.getDefinitionsSets()[0].getDefinitions());
-    }
-}
-
-void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
+void DefinitionContentWidget::setEntry(std::vector<Definition::Definition> definitions)
 {
     cleanupLabels();
 
+    int rowNumber = 0;
     for (size_t i = 0; i < definitions.size(); i++) {
         std::string number = std::to_string(i + 1);
         _definitionNumberLabels.push_back(new QLabel{number.c_str(), this});
         int definitionNumberWidth = _definitionNumberLabels.back()
                                         ->fontMetrics()
-                                        .boundingRect("PY")
+                                        .boundingRect("999")
                                         .width();
         _definitionNumberLabels.back()->setFixedWidth(definitionNumberWidth);
         int definitionNumberHeight = _definitionNumberLabels.back()
@@ -65,15 +63,171 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
                                          .height();
         _definitionNumberLabels.back()->setFixedHeight(definitionNumberHeight);
 
-        _definitionLabels.push_back(new QLabel{definitions[i].c_str(), this});
+        _definitionLabels.push_back(new QLabel{definitions[i].definitionContent.c_str(), this});
         _definitionLabels.back()->setWordWrap(true);
         _definitionLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
+#ifdef Q_OS_WIN
+        QFont font = QFont{"Microsoft YaHei", 10};
+        font.setStyleHint(QFont::System, QFont::PreferAntialias);
+        _definitionLabels.back()->setFont(font);
+#endif
 
-        _definitionLayout->addWidget(_definitionNumberLabels[i],
-                                     static_cast<int>(i + 9), 0, Qt::AlignTop);
-        _definitionLayout->addWidget(_definitionLabels[i],
-                                     static_cast<int>(i + 9), 1, Qt::AlignTop);
+        _definitionLayout->addWidget(_definitionNumberLabels.back(),
+                                     static_cast<int>(rowNumber), 0, Qt::AlignTop);
+        _definitionLayout->addWidget(_definitionLabels.back(),
+                                     static_cast<int>(rowNumber), 1, Qt::AlignTop);
+        rowNumber++;
+
+        for (size_t j = 0; j < definitions[i].sentences.size(); j++) {
+            QString exampleText;
+            switch (Settings::getSettings()
+                        ->value("characterOptions",
+                                QVariant::fromValue(
+                                    EntryCharactersOptions::PREFER_TRADITIONAL))
+                        .value<EntryCharactersOptions>()) {
+            case EntryCharactersOptions::ONLY_SIMPLIFIED:
+                exampleText = definitions[i].sentences[j].getSimplified().c_str();
+                break;
+            case EntryCharactersOptions::PREFER_SIMPLIFIED:
+                exampleText
+                    = QString{definitions[i].sentences[j].getSimplified().c_str()}
+                      + "<br>"
+                      + QString{
+                          definitions[i].sentences[j].getTraditional().c_str()};
+                break;
+            case EntryCharactersOptions::ONLY_TRADITIONAL:
+                exampleText
+                    = definitions[i].sentences[j].getTraditional().c_str();
+                break;
+            case EntryCharactersOptions::PREFER_TRADITIONAL:
+                exampleText
+                    = QString{definitions[i].sentences[j].getTraditional().c_str()}
+                      + "<br>"
+                      + QString{
+                          definitions[i].sentences[j].getSimplified().c_str()};
+                break;
+            }
+
+            _exampleLabels.push_back(
+                new QLabel{"<ul style=\"list-style-type:circle;\"><li>"
+                               + exampleText + "</li></ul>",
+                           this});
+            _exampleLabels.back()->setContentsMargins(0, 0, 0, 0);
+            _exampleLabels.back()->setWordWrap(true);
+            _exampleLabels.back()->setTextInteractionFlags(
+                Qt::TextSelectableByMouse);
+#ifdef Q_OS_WIN
+            QFont font = QFont{"Microsoft YaHei", 10};
+            font.setStyleHint(QFont::System, QFont::PreferAntialias);
+            _exampleLabels.back()->setFont(font);
+#endif
+            _definitionLayout->addWidget(_exampleLabels.back(),
+                                         static_cast<int>(rowNumber++),
+                                         1,
+                                         Qt::AlignTop);
+
+            QString pronunciationText;
+            QString cantonese
+                = QString{definitions[i]
+                              .sentences[j]
+                              .getCantonesePhonetic(
+                                  Settings::getSettings()
+                                      ->value("cantoneseOptions",
+                                              QVariant::fromValue(
+                                                  CantoneseOptions::RAW_JYUTPING))
+                                      .value<CantoneseOptions>())
+                              .c_str()}
+                      .trimmed();
+            QString mandarin
+                = QString{definitions[i]
+                              .sentences[j]
+                              .getMandarinPhonetic(
+                                  Settings::getSettings()
+                                      ->value("mandarinOptions",
+                                              QVariant::fromValue(
+                                                  MandarinOptions::PRETTY_PINYIN))
+                                      .value<MandarinOptions>())
+                              .c_str()}
+                      .trimmed();
+
+            switch (Settings::getSettings()
+                        ->value("phoneticOptions",
+                                QVariant::fromValue(
+                                    EntryPhoneticOptions::PREFER_JYUTPING))
+                        .value<EntryPhoneticOptions>()) {
+            case EntryPhoneticOptions::ONLY_JYUTPING:
+                pronunciationText = cantonese;
+                break;
+            case EntryPhoneticOptions::PREFER_JYUTPING:
+                pronunciationText = cantonese
+                                    + (cantonese.isEmpty() || mandarin.isEmpty()
+                                           ? ""
+                                           : "<br>")
+                                    + mandarin;
+                break;
+            case EntryPhoneticOptions::ONLY_PINYIN:
+                pronunciationText = mandarin;
+                break;
+            case EntryPhoneticOptions::PREFER_PINYIN:
+                pronunciationText = mandarin
+                                    + (cantonese.isEmpty() || mandarin.isEmpty()
+                                           ? ""
+                                           : "<br>")
+                                    + cantonese;
+                break;
+            }
+
+            if (!pronunciationText.isEmpty()) {
+                _examplePronunciationLabels.push_back(
+                    new QLabel{"<ul style=\"list-style-type:none;\"><li>"
+                                   + pronunciationText + "</li></ul>",
+                               this});
+                _examplePronunciationLabels.back()->setContentsMargins(0, 0, 0, 0);
+                _examplePronunciationLabels.back()->setWordWrap(true);
+                _examplePronunciationLabels.back()->setTextInteractionFlags(
+                    Qt::TextSelectableByMouse);
+                _definitionLayout->addWidget(_examplePronunciationLabels.back(),
+                                             static_cast<int>(rowNumber++),
+                                             1,
+                                             Qt::AlignTop);
+            }
+
+            auto sets = definitions[i].sentences[j].getSentenceSets();
+            if (!sets.empty()) {
+                auto set = sets[0].getSentences();
+                if (!set.empty()) {
+                    QString translation = set[0].sentence.c_str();
+                    _exampleTranslationLabels.push_back(
+                        new QLabel{"<ul style=\"list-style-type:none;\"><li>"
+                                       + translation + "</li></ul>",
+                                   this});
+                    _exampleTranslationLabels.back()->setWordWrap(true);
+                    _exampleTranslationLabels.back()->setTextInteractionFlags(
+                        Qt::TextSelectableByMouse);
+                    _definitionLayout->addWidget(_exampleTranslationLabels.back(),
+                                                 static_cast<int>(rowNumber++),
+                                                 1,
+                                                 Qt::AlignTop);
+                }
+            }
+        }
+
+        // This label adds space between definitions in the definition card.
+        _spaceLabels.push_back(new QLabel{" "});
+        _spaceLabels.back()->setMaximumHeight(4);
+        _definitionLayout->addWidget(_spaceLabels.back(),
+                                     static_cast<int>(rowNumber++),
+                                     1,
+                                     Qt::AlignTop);
     }
+
+    // This label adds a bit of space at the end of the definition card.
+    _spaceLabels.push_back(new QLabel{" "});
+    _spaceLabels.back()->setMaximumHeight(6);
+    _definitionLayout->addWidget(_spaceLabels.back(),
+                                 static_cast<int>(rowNumber++),
+                                 1,
+                                 Qt::AlignTop);
 
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
@@ -84,15 +238,30 @@ void DefinitionContentWidget::setEntry(std::vector<std::string> definitions)
 
 void DefinitionContentWidget::setStyle(bool use_dark)
 {
-    QString styleSheet = "QLabel { color: %1; }";
+    QString styleSheet = "QLabel { color: %1; "
+                         "margin-top: 2px; }";
     QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
                                           LABEL_TEXT_COLOUR_DARK_G,
                                           LABEL_TEXT_COLOUR_DARK_B}
                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R};
-    for (auto label : _definitionNumberLabels) {
+    for (const auto &label : _definitionNumberLabels) {
         label->setStyleSheet(styleSheet.arg(textColour.name()));
+    }
+
+    QString examplePronunciationStyleSheet = "QLabel { color: %1; "
+                                             "padding-left: 0px; "
+                                             "margin-left: 0px; } ";
+    for (const auto &label : _examplePronunciationLabels) {
+        label->setStyleSheet(
+            examplePronunciationStyleSheet.arg(textColour.name()));
+    }
+
+    QString translationStyleSheet = "QLabel { color: %1; "
+                                    "font-style: italic; } ";
+    for (const auto &label : _exampleTranslationLabels) {
+        label->setStyleSheet(translationStyleSheet.arg(textColour.name()));
     }
 }
 
@@ -109,4 +278,16 @@ void DefinitionContentWidget::cleanupLabels()
         delete label;
     }
     _definitionLabels.clear();
+
+    for (auto label : _exampleLabels) {
+        _definitionLayout->removeWidget(label);
+        delete label;
+    }
+    _exampleLabels.clear();
+
+    for (auto label : _spaceLabels) {
+        _definitionLayout->removeWidget(label);
+        delete label;
+    }
+    _spaceLabels.clear();
 }

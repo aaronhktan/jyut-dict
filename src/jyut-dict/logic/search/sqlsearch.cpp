@@ -9,9 +9,6 @@
 #ifdef Q_OS_WIN
 #include <cctype>
 #endif
-#include <functional>
-#include <sstream>
-#include <unordered_set>
 
 SQLSearch::SQLSearch()
     : QObject()
@@ -199,6 +196,9 @@ void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString search
     QtConcurrent::run(this, threadFunction, searchTerm, queryID);
 }
 
+// NOTE: If you are modifying these functions, you may also want to modify
+// the search functions in SQLUserDataUtils.cpp as well!
+
 // For SearchSimplified and SearchTraditional, we use LIKE instead of MATCH
 // even though the database is FTS5-compatible.
 // This is because FTS searches using the space as a separator, and
@@ -210,21 +210,113 @@ void SQLSearch::searchSimplifiedThread(const QString searchTerm,
 
     QSqlQuery query{_manager->getDatabase()};
     query.prepare(
-        "SELECT traditional, simplified, pinyin, jyutping, "
-        "group_concat(sourcename || ' ' || definition, '●') AS definitions "
-        "FROM entries, definitions, sources "
-        "WHERE simplified LIKE ? "
-        "AND entry_id = fk_entry_id "
-        "AND source_id = fk_source_id "
-        "GROUP BY entry_id "
-        "ORDER BY frequency DESC");
+        //// Get list of entry ids whose simplified form matches the query
+        "WITH matching_entry_ids AS ( "
+        "  SELECT rowid FROM entries WHERE simplified LIKE ?"
+        "), "
+        " "
+        //// Get the list of all definitions for those entries
+        //// This CTE is used multiple times; would be nice if could materialize it
+        "matching_definition_ids AS ( "
+        "  SELECT definition_id, definition FROM definitions WHERE fk_entry_id "
+        "    IN matching_entry_ids "
+        "), "
+        " "
+        //// Get corresponding sentence ids for each of those definitions
+        //// This CTE is used multiple times; would be nice if could materialize it
+        "matching_chinese_sentence_ids AS ( "
+        "  SELECT definition_id, fk_chinese_sentence_id "
+        "  FROM matching_definition_ids AS mdi "
+        "  JOIN definitions_chinese_sentences_links AS dcsl ON mdi.definition_id = dcsl.fk_definition_id "
+        "), "
+        " "
+        //// Get translations for each of the sentences
+        "matching_translations AS ( "
+        "  SELECT mcsi.fk_chinese_sentence_id, "
+        "    json_group_array(DISTINCT "
+        "      json_object('sentence', sentence, "
+        "                  'language', language, "
+        "                  'direct', direct "
+        "    )) AS translation "
+        "  FROM matching_chinese_sentence_ids AS mcsi "
+        "  JOIN sentence_links AS sl ON mcsi.fk_chinese_sentence_id = sl.fk_chinese_sentence_id "
+        "  JOIN nonchinese_sentences AS ncs ON ncs.non_chinese_sentence_id = sl.fk_non_chinese_sentence_id "
+        "  GROUP BY mcsi.fk_chinese_sentence_id "
+        "), "
+        " "
+        //// Get sentence data for each of the sentence ids
+        "matching_sentences AS ( "
+        " SELECT chinese_sentence_id, traditional, simplified, pinyin, "
+        "   jyutping, language "
+        " FROM chinese_sentences AS cs "
+        " WHERE chinese_sentence_id IN ( "
+        "   SELECT fk_chinese_sentence_id FROM matching_chinese_sentence_ids "
+        " ) "
+        "),"
+        " "
+        //// Get translations for each of those sentences
+        "matching_sentences_with_translations AS ( "
+        "  SELECT chinese_sentence_id, "
+        "    json_object('traditional', traditional, "
+        "                'simplified', simplified, "
+        "                'pinyin', pinyin, "
+        "                'jyutping', jyutping, "
+        "                'language', language, "
+        "                'translations', json(translation)) AS sentence "
+        "  FROM matching_sentences AS ms "
+        "  LEFT JOIN matching_translations AS mt ON ms.chinese_sentence_id = mt.fk_chinese_sentence_id "
+        "), "
+        " "
+        //// Get definition data for each matching definition
+        "matching_definitions AS ( "
+        "  SELECT definition_id, fk_entry_id, fk_source_id, definition, "
+        "    label "
+        "  FROM definitions "
+        "  WHERE definitions.definition_id IN ( "
+        "    SELECT definition_id FROM matching_definition_ids"
+        "  ) "
+        "), "
+        " "
+        //// Create definition object with sentences for each definition
+        "matching_definitions_with_sentences AS ( "
+        "  SELECT fk_entry_id, fk_source_id, "
+        "    json_object('definition', definition, "
+        "                'label', label, 'sentences', "
+        "                json_group_array(json(sentence))) AS definition "
+        "  FROM matching_definitions AS md "
+        "  LEFT JOIN matching_chinese_sentence_ids AS mcsi ON md.definition_id = mcsi.definition_id "
+        "  LEFT JOIN matching_sentences_with_translations AS mswt ON mcsi.fk_chinese_sentence_id = mswt.chinese_sentence_id "
+        "  GROUP BY md.definition_id "
+        "), "
+        " "
+        //// Create definition groups for definitions of the same entry that come from the same source
+        "matching_definition_groups AS ( "
+        "  SELECT fk_entry_id, "
+        "    json_object('source', sourcename, "
+        "                'definitions', "
+        "                json_group_array(json(definition))) AS definitions "
+        "  FROM matching_definitions_with_sentences AS mdws "
+        "  LEFT JOIN sources ON sources.source_id = mdws.fk_source_id "
+        "  GROUP BY fk_entry_id, fk_source_id "
+        "), "
+        " "
+        //// Construct the final entry object
+        "matching_entries AS ( "
+        "  SELECT simplified, traditional, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
+        "  FROM matching_definition_groups AS mdg "
+        "  LEFT JOIN entries ON entries.entry_id = mdg.fk_entry_id "
+        "  GROUP BY entry_id "
+        "  ORDER BY frequency DESC "
+        ") "
+        " "
+        "SELECT simplified, traditional, jyutping, pinyin, definitions from matching_entries"
+    );
     query.addBindValue(searchTerm + "%");
     query.exec();
 
     // Do not parse results if new query has been made
     if (!checkQueryIDCurrent(queryID)) { return; }
     results = QueryParseUtils::parseEntries(query);
-    _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
@@ -237,21 +329,113 @@ void SQLSearch::searchTraditionalThread(const QString searchTerm,
 
     QSqlQuery query{_manager->getDatabase()};
     query.prepare(
-        "SELECT traditional, simplified, pinyin, jyutping, "
-        "group_concat(sourcename || ' ' || definition, '●') AS definitions "
-        "FROM entries, definitions, sources "
-        "WHERE traditional LIKE ? "
-        "AND entry_id = fk_entry_id "
-        "AND source_id = fk_source_id "
-        "GROUP BY entry_id "
-        "ORDER BY frequency DESC");
+        //// Get list of entry ids whose traditional form matches the query
+        "WITH matching_entry_ids AS ( "
+        "  SELECT rowid FROM entries WHERE traditional LIKE ?"
+        "), "
+        " "
+        //// Get the list of all definitions for those entries
+        //// This CTE is used multiple times; would be nice if could materialize it
+        "matching_definition_ids AS ( "
+        "  SELECT definition_id, definition FROM definitions WHERE fk_entry_id "
+        "    IN matching_entry_ids "
+        "), "
+        " "
+        //// Get corresponding sentence ids for each of those definitions
+        //// This CTE is used multiple times; would be nice if could materialize it
+        "matching_chinese_sentence_ids AS ( "
+        "  SELECT definition_id, fk_chinese_sentence_id "
+        "  FROM matching_definition_ids AS mdi "
+        "  JOIN definitions_chinese_sentences_links AS dcsl ON mdi.definition_id = dcsl.fk_definition_id "
+        "), "
+        " "
+        //// Get translations for each of the sentences
+        "matching_translations AS ( "
+        "  SELECT mcsi.fk_chinese_sentence_id, "
+        "    json_group_array(DISTINCT "
+        "      json_object('sentence', sentence, "
+        "                  'language', language, "
+        "                  'direct', direct "
+        "    )) AS translation "
+        "  FROM matching_chinese_sentence_ids AS mcsi "
+        "  JOIN sentence_links AS sl ON mcsi.fk_chinese_sentence_id = sl.fk_chinese_sentence_id "
+        "  JOIN nonchinese_sentences AS ncs ON ncs.non_chinese_sentence_id = sl.fk_non_chinese_sentence_id "
+        "  GROUP BY mcsi.fk_chinese_sentence_id "
+        "), "
+        " "
+        //// Get sentence data for each of the sentence ids
+        "matching_sentences AS ( "
+        " SELECT chinese_sentence_id, traditional, simplified, pinyin, "
+        "   jyutping, language "
+        " FROM chinese_sentences AS cs "
+        " WHERE chinese_sentence_id IN ( "
+        "   SELECT fk_chinese_sentence_id FROM matching_chinese_sentence_ids "
+        " ) "
+        "),"
+        " "
+        //// Get translations for each of those sentences
+        "matching_sentences_with_translations AS ( "
+        "  SELECT chinese_sentence_id, "
+        "    json_object('traditional', traditional, "
+        "                'simplified', simplified, "
+        "                'pinyin', pinyin, "
+        "                'jyutping', jyutping, "
+        "                'language', language, "
+        "                'translations', json(translation)) AS sentence "
+        "  FROM matching_sentences AS ms "
+        "  LEFT JOIN matching_translations AS mt ON ms.chinese_sentence_id = mt.fk_chinese_sentence_id "
+        "), "
+        " "
+        //// Get definition data for each matching definition
+        "matching_definitions AS ( "
+        "  SELECT definition_id, fk_entry_id, fk_source_id, definition, "
+        "    label "
+        "  FROM definitions "
+        "  WHERE definitions.definition_id IN ( "
+        "    SELECT definition_id FROM matching_definition_ids"
+        "  ) "
+        "), "
+        " "
+        //// Create definition object with sentences for each definition
+        "matching_definitions_with_sentences AS ( "
+        "  SELECT fk_entry_id, fk_source_id, "
+        "    json_object('definition', definition, "
+        "                'label', label, 'sentences', "
+        "                json_group_array(json(sentence))) AS definition "
+        "  FROM matching_definitions AS md "
+        "  LEFT JOIN matching_chinese_sentence_ids AS mcsi ON md.definition_id = mcsi.definition_id "
+        "  LEFT JOIN matching_sentences_with_translations AS mswt ON mcsi.fk_chinese_sentence_id = mswt.chinese_sentence_id "
+        "  GROUP BY md.definition_id "
+        "), "
+        " "
+        //// Create definition groups for definitions of the same entry that come from the same source
+        "matching_definition_groups AS ( "
+        "  SELECT fk_entry_id, "
+        "    json_object('source', sourcename, "
+        "                'definitions', "
+        "                json_group_array(json(definition))) AS definitions "
+        "  FROM matching_definitions_with_sentences AS mdws "
+        "  LEFT JOIN sources ON sources.source_id = mdws.fk_source_id "
+        "  GROUP BY fk_entry_id, fk_source_id "
+        "), "
+        " "
+        //// Construct the final entry object
+        "matching_entries AS ( "
+        "  SELECT simplified, traditional, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
+        "  FROM matching_definition_groups AS mdg "
+        "  LEFT JOIN entries ON entries.entry_id = mdg.fk_entry_id "
+        "  GROUP BY entry_id "
+        "  ORDER BY frequency DESC "
+        ") "
+        " "
+        "SELECT simplified, traditional, jyutping, pinyin, definitions from matching_entries"
+    );
     query.addBindValue(searchTerm + "%");
     query.exec();
 
     // Do not parse results if new query has been made
     if (!checkQueryIDCurrent(queryID)) { return; }
     results = QueryParseUtils::parseEntries(query);
-    _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
@@ -278,16 +462,107 @@ void SQLSearch::searchJyutpingThread(const QString searchTerm,
 
     QSqlQuery query{_manager->getDatabase()};
     query.prepare(
-        "SELECT traditional, simplified, pinyin, jyutping, "
-        "group_concat(sourcename || ' ' || definition, '●') AS definitions "
-        "FROM entries, definitions, sources "
-        "WHERE entry_id IN "
-        "(SELECT rowid FROM entries_fts WHERE entries_fts MATCH ?"
-        " AND jyutping LIKE ?) "
-        "AND entry_id = fk_entry_id "
-        "AND source_id = fk_source_id "
-        "GROUP BY entry_id "
-        "ORDER BY frequency DESC");
+        //// Get list of entry ids whose jyutping starts with the queried string
+        "WITH matching_entry_ids AS ( "
+        "  SELECT rowid FROM entries_fts WHERE entries_fts MATCH ? AND jyutping LIKE ?"
+        "), "
+        " "
+        //// Get the list of all definitions for those entries
+        //// This CTE is used multiple times; would be nice if could materialize it
+        "matching_definition_ids AS ( "
+        "  SELECT definition_id, definition FROM definitions WHERE fk_entry_id "
+        "    IN matching_entry_ids "
+        "), "
+        " "
+        //// Get corresponding sentence ids for each of those definitions
+        //// This CTE is used multiple times; would be nice if could materialize it
+        "matching_chinese_sentence_ids AS ( "
+        "  SELECT definition_id, fk_chinese_sentence_id "
+        "  FROM matching_definition_ids AS mdi "
+        "  JOIN definitions_chinese_sentences_links AS dcsl ON mdi.definition_id = dcsl.fk_definition_id "
+        "), "
+        " "
+        //// Get translations for each of the sentences
+        "matching_translations AS ( "
+        "  SELECT mcsi.fk_chinese_sentence_id, "
+        "    json_group_array(DISTINCT "
+        "      json_object('sentence', sentence, "
+        "                  'language', language, "
+        "                  'direct', direct "
+        "    )) AS translation "
+        "  FROM matching_chinese_sentence_ids AS mcsi "
+        "  JOIN sentence_links AS sl ON mcsi.fk_chinese_sentence_id = sl.fk_chinese_sentence_id "
+        "  JOIN nonchinese_sentences AS ncs ON ncs.non_chinese_sentence_id = sl.fk_non_chinese_sentence_id "
+        "  GROUP BY mcsi.fk_chinese_sentence_id "
+        "), "
+        " "
+        //// Get sentence data for each of the sentence ids
+        "matching_sentences AS ( "
+        " SELECT chinese_sentence_id, traditional, simplified, pinyin, "
+        "   jyutping, language "
+        " FROM chinese_sentences AS cs "
+        " WHERE chinese_sentence_id IN ( "
+        "   SELECT fk_chinese_sentence_id FROM matching_chinese_sentence_ids "
+        " ) "
+        "),"
+        " "
+        //// Get translations for each of those sentences
+        "matching_sentences_with_translations AS ( "
+        "  SELECT chinese_sentence_id, "
+        "    json_object('traditional', traditional, "
+        "                'simplified', simplified, "
+        "                'pinyin', pinyin, "
+        "                'jyutping', jyutping, "
+        "                'language', language, "
+        "                'translations', json(translation)) AS sentence "
+        "  FROM matching_sentences AS ms "
+        "  LEFT JOIN matching_translations AS mt ON ms.chinese_sentence_id = mt.fk_chinese_sentence_id "
+        "), "
+        " "
+        //// Get definition data for each matching definition
+        "matching_definitions AS ( "
+        "  SELECT definition_id, fk_entry_id, fk_source_id, definition, "
+        "    label "
+        "  FROM definitions "
+        "  WHERE definitions.definition_id IN ( "
+        "    SELECT definition_id FROM matching_definition_ids"
+        "  ) "
+        "), "
+        " "
+        //// Create definition object with sentences for each definition
+        "matching_definitions_with_sentences AS ( "
+        "  SELECT fk_entry_id, fk_source_id, "
+        "    json_object('definition', definition, "
+        "                'label', label, 'sentences', "
+        "                json_group_array(json(sentence))) AS definition "
+        "  FROM matching_definitions AS md "
+        "  LEFT JOIN matching_chinese_sentence_ids AS mcsi ON md.definition_id = mcsi.definition_id "
+        "  LEFT JOIN matching_sentences_with_translations AS mswt ON mcsi.fk_chinese_sentence_id = mswt.chinese_sentence_id "
+        "  GROUP BY md.definition_id "
+        "), "
+        " "
+        //// Create definition groups for definitions of the same entry that come from the same source
+        "matching_definition_groups AS ( "
+        "  SELECT fk_entry_id, "
+        "    json_object('source', sourcename, "
+        "                'definitions', "
+        "                json_group_array(json(definition))) AS definitions "
+        "  FROM matching_definitions_with_sentences AS mdws "
+        "  LEFT JOIN sources ON sources.source_id = mdws.fk_source_id "
+        "  GROUP BY fk_entry_id, fk_source_id "
+        "), "
+        " "
+        //// Construct the final entry object
+        "matching_entries AS ( "
+        "  SELECT simplified, traditional, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
+        "  FROM matching_definition_groups AS mdg "
+        "  LEFT JOIN entries ON entries.entry_id = mdg.fk_entry_id "
+        "  GROUP BY entry_id "
+        "  ORDER BY frequency DESC "
+        ") "
+        " "
+        "SELECT simplified, traditional, jyutping, pinyin, definitions from matching_entries"
+    );
     const char *matchJoinDelimiter = "*";
     std::string matchTerm
         = ChineseUtils::constructRomanisationQuery(jyutpingWords,
@@ -304,7 +579,6 @@ void SQLSearch::searchJyutpingThread(const QString searchTerm,
     // Do not parse results if new query has been made
     if (!checkQueryIDCurrent(queryID)) { return; }
     results = QueryParseUtils::parseEntries(query);
-    _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
@@ -335,16 +609,108 @@ void SQLSearch::searchPinyinThread(const QString searchTerm,
     std::vector<Entry> results{};
 
     QSqlQuery query{_manager->getDatabase()};
-    query.prepare("SELECT traditional, simplified, pinyin, jyutping, "
-                  "group_concat(sourcename || ' ' || definition, '●') AS definitions "
-                  "FROM entries, definitions, sources "
-                  "WHERE entry_id IN "
-                  "(SELECT rowid FROM entries_fts WHERE entries_fts MATCH ?"
-                  " AND pinyin LIKE ?) "
-                  "AND entry_id = fk_entry_id "
-                  "AND source_id = fk_source_id "
-                  "GROUP BY entry_id "
-                  "ORDER BY frequency DESC");
+    query.prepare(
+        //// Get list of entry ids whose pinyin starts with the queried string
+        "WITH matching_entry_ids AS ( "
+        "  SELECT rowid FROM entries_fts WHERE entries_fts MATCH ? AND pinyin LIKE ?"
+        "), "
+        " "
+        //// Get the list of all definitions for those entries
+        //// This CTE is used multiple times; would be nice if could materialize it
+        "matching_definition_ids AS ( "
+        "  SELECT definition_id, definition FROM definitions WHERE fk_entry_id "
+        "    IN matching_entry_ids "
+        "), "
+        " "
+        //// Get corresponding sentence ids for each of those definitions
+        //// This CTE is used multiple times; would be nice if could materialize it
+        "matching_chinese_sentence_ids AS ( "
+        "  SELECT definition_id, fk_chinese_sentence_id "
+        "  FROM matching_definition_ids AS mdi "
+        "  JOIN definitions_chinese_sentences_links AS dcsl ON mdi.definition_id = dcsl.fk_definition_id "
+        "), "
+        " "
+        //// Get translations for each of the sentences
+        "matching_translations AS ( "
+        "  SELECT mcsi.fk_chinese_sentence_id, "
+        "    json_group_array(DISTINCT "
+        "      json_object('sentence', sentence, "
+        "                  'language', language, "
+        "                  'direct', direct "
+        "    )) AS translation "
+        "  FROM matching_chinese_sentence_ids AS mcsi "
+        "  JOIN sentence_links AS sl ON mcsi.fk_chinese_sentence_id = sl.fk_chinese_sentence_id "
+        "  JOIN nonchinese_sentences AS ncs ON ncs.non_chinese_sentence_id = sl.fk_non_chinese_sentence_id "
+        "  GROUP BY mcsi.fk_chinese_sentence_id "
+        "), "
+        " "
+        //// Get sentence data for each of the sentence ids
+        "matching_sentences AS ( "
+        " SELECT chinese_sentence_id, traditional, simplified, pinyin, "
+        "   jyutping, language "
+        " FROM chinese_sentences AS cs "
+        " WHERE chinese_sentence_id IN ( "
+        "   SELECT fk_chinese_sentence_id FROM matching_chinese_sentence_ids "
+        " ) "
+        "),"
+        " "
+        //// Get translations for each of those sentences
+        "matching_sentences_with_translations AS ( "
+        "  SELECT chinese_sentence_id, "
+        "    json_object('traditional', traditional, "
+        "                'simplified', simplified, "
+        "                'pinyin', pinyin, "
+        "                'jyutping', jyutping, "
+        "                'language', language, "
+        "                'translations', json(translation)) AS sentence "
+        "  FROM matching_sentences AS ms "
+        "  LEFT JOIN matching_translations AS mt ON ms.chinese_sentence_id = mt.fk_chinese_sentence_id "
+        "), "
+        " "
+        //// Get definition data for each matching definition
+        "matching_definitions AS ( "
+        "  SELECT definition_id, fk_entry_id, fk_source_id, definition, "
+        "    label "
+        "  FROM definitions "
+        "  WHERE definitions.definition_id IN ( "
+        "    SELECT definition_id FROM matching_definition_ids"
+        "  ) "
+        "), "
+        " "
+        //// Create definition object with sentences for each definition
+        "matching_definitions_with_sentences AS ( "
+        "  SELECT fk_entry_id, fk_source_id, "
+        "    json_object('definition', definition, "
+        "                'label', label, 'sentences', "
+        "                json_group_array(json(sentence))) AS definition "
+        "  FROM matching_definitions AS md "
+        "  LEFT JOIN matching_chinese_sentence_ids AS mcsi ON md.definition_id = mcsi.definition_id "
+        "  LEFT JOIN matching_sentences_with_translations AS mswt ON mcsi.fk_chinese_sentence_id = mswt.chinese_sentence_id "
+        "  GROUP BY md.definition_id "
+        "), "
+        " "
+        //// Create definition groups for definitions of the same entry that come from the same source
+        "matching_definition_groups AS ( "
+        "  SELECT fk_entry_id, "
+        "    json_object('source', sourcename, "
+        "                'definitions', "
+        "                json_group_array(json(definition))) AS definitions "
+        "  FROM matching_definitions_with_sentences AS mdws "
+        "  LEFT JOIN sources ON sources.source_id = mdws.fk_source_id "
+        "  GROUP BY fk_entry_id, fk_source_id "
+        "), "
+        " "
+        //// Construct the final entry object
+        "matching_entries AS ( "
+        "  SELECT simplified, traditional, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
+        "  FROM matching_definition_groups AS mdg "
+        "  LEFT JOIN entries ON entries.entry_id = mdg.fk_entry_id "
+        "  GROUP BY entry_id "
+        "  ORDER BY frequency DESC "
+        ") "
+        " "
+        "SELECT simplified, traditional, jyutping, pinyin, definitions from matching_entries"
+    );
     const char *matchJoinDelimiter = "*";
     std::string matchTerm
         = ChineseUtils::constructRomanisationQuery(pinyinWords,
@@ -362,23 +728,11 @@ void SQLSearch::searchPinyinThread(const QString searchTerm,
     // Do not parse results if new query has been made
     if (!checkQueryIDCurrent(queryID)) { return; }
     results = QueryParseUtils::parseEntries(query);
-    _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
 }
 
-// Searching English is the most complicated query.
-// First, we match against the full-text columns in definitions_fts,
-// and extract the foreign key that corresponds to the entry that matches
-// that definition.
-// After that, we select all the definitions that match those entries,
-// along with the source that accompanies that entry,
-// grouping by the entry ID and merging all the definitions into one column.
-//
-// For some reason, using two subqueries is ~2-3x faster than doing two
-// INNER JOINs. This is related in some way to the fk_entry_id index, but I'm
-// not entirely sure why.
 void SQLSearch::searchEnglishThread(const QString searchTerm,
                                     const unsigned long long queryID)
 {
@@ -386,18 +740,108 @@ void SQLSearch::searchEnglishThread(const QString searchTerm,
 
     QSqlQuery query{_manager->getDatabase()};
     query.prepare(
-        "SELECT traditional, simplified, pinyin, jyutping, "
-        "group_concat(sourcename || ' ' || definition, '●') AS definitions "
-        "FROM entries, definitions, sources "
-        "WHERE entry_id IN "
-        "(SELECT fk_entry_id FROM definitions WHERE rowid IN "
-        "    (SELECT rowid FROM definitions_fts WHERE definitions_fts "
-        "MATCH ?) "
+        //// Get list of entry ids where at least one definition matches the query
+        "WITH matching_entry_ids AS ( "
+        "  SELECT fk_entry_id FROM definitions_fts WHERE definitions_fts MATCH "
+        "  ? "
+        "), "
+        " "
+        //// Get the list of all definitions for those entries
+        //// This CTE is used multiple times; would be nice if could materialize it
+        "matching_definition_ids AS ( "
+        "  SELECT definition_id, definition FROM definitions WHERE fk_entry_id "
+        "    IN matching_entry_ids "
+        "), "
+        " "
+        //// Get corresponding sentence ids for each of those definitions
+        //// This CTE is used multiple times; would be nice if could materialize it
+        "matching_chinese_sentence_ids AS ( "
+        "  SELECT definition_id, fk_chinese_sentence_id "
+        "  FROM matching_definition_ids AS mdi "
+        "  JOIN definitions_chinese_sentences_links AS dcsl ON mdi.definition_id = dcsl.fk_definition_id "
+        "), "
+        " "
+        //// Get translations for each of the sentences
+        "matching_translations AS ( "
+        "  SELECT mcsi.fk_chinese_sentence_id, "
+        "    json_group_array(DISTINCT "
+        "      json_object('sentence', sentence, "
+        "                  'language', language, "
+        "                  'direct', direct "
+        "    )) AS translation "
+        "  FROM matching_chinese_sentence_ids AS mcsi "
+        "  JOIN sentence_links AS sl ON mcsi.fk_chinese_sentence_id = sl.fk_chinese_sentence_id "
+        "  JOIN nonchinese_sentences AS ncs ON ncs.non_chinese_sentence_id = sl.fk_non_chinese_sentence_id "
+        "  GROUP BY mcsi.fk_chinese_sentence_id "
+        "), "
+        " "
+        //// Get sentence data for each of the sentence ids
+        "matching_sentences AS ( "
+        " SELECT chinese_sentence_id, traditional, simplified, pinyin, "
+        "   jyutping, language "
+        " FROM chinese_sentences AS cs "
+        " WHERE chinese_sentence_id IN ( "
+        "   SELECT fk_chinese_sentence_id FROM matching_chinese_sentence_ids "
+        " ) "
+        "),"
+        " "
+        //// Get translations for each of those sentences
+        "matching_sentences_with_translations AS ( "
+        "  SELECT chinese_sentence_id, "
+        "    json_object('traditional', traditional, "
+        "                'simplified', simplified, "
+        "                'pinyin', pinyin, "
+        "                'jyutping', jyutping, "
+        "                'language', language, "
+        "                'translations', json(translation)) AS sentence "
+        "  FROM matching_sentences AS ms "
+        "  LEFT JOIN matching_translations AS mt ON ms.chinese_sentence_id = mt.fk_chinese_sentence_id "
+        "), "
+        " "
+        //// Get definition data for each matching definition
+        "matching_definitions AS ( "
+        "  SELECT definition_id, fk_entry_id, fk_source_id, definition, "
+        "    label "
+        "  FROM definitions "
+        "  WHERE definitions.definition_id IN ( "
+        "    SELECT definition_id FROM matching_definition_ids"
+        "  ) "
+        "), "
+        " "
+        //// Create definition object with sentences for each definition
+        "matching_definitions_with_sentences AS ( "
+        "  SELECT fk_entry_id, fk_source_id, "
+        "    json_object('definition', definition, "
+        "                'label', label, 'sentences', "
+        "                json_group_array(json(sentence))) AS definition "
+        "  FROM matching_definitions AS md "
+        "  LEFT JOIN matching_chinese_sentence_ids AS mcsi ON md.definition_id = mcsi.definition_id "
+        "  LEFT JOIN matching_sentences_with_translations AS mswt ON mcsi.fk_chinese_sentence_id = mswt.chinese_sentence_id "
+        "  GROUP BY md.definition_id "
+        "), "
+        " "
+        //// Create definition groups for definitions of the same entry that come from the same source
+        "matching_definition_groups AS ( "
+        "  SELECT fk_entry_id, "
+        "    json_object('source', sourcename, "
+        "                'definitions', "
+        "                json_group_array(json(definition))) AS definitions "
+        "  FROM matching_definitions_with_sentences AS mdws "
+        "  LEFT JOIN sources ON sources.source_id = mdws.fk_source_id "
+        "  GROUP BY fk_entry_id, fk_source_id "
+        "), "
+        " "
+        //// Construct the final entry object
+        "matching_entries AS ( "
+        "  SELECT simplified, traditional, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
+        "  FROM matching_definition_groups AS mdg "
+        "  LEFT JOIN entries ON entries.entry_id = mdg.fk_entry_id "
+        "  GROUP BY entry_id "
+        "  ORDER BY frequency DESC "
         ") "
-        "AND entry_id = fk_entry_id "
-        "AND source_id = fk_source_id "
-        "GROUP BY entry_id "
-        "ORDER BY frequency DESC");
+        " "
+        "SELECT simplified, traditional, jyutping, pinyin, definitions from matching_entries"
+    );
     query.addBindValue("\"" + searchTerm + "\"");
     query.setForwardOnly(true);
     query.exec();
@@ -405,7 +849,6 @@ void SQLSearch::searchEnglishThread(const QString searchTerm,
     // Do not parse results if new query has been made
     if (!checkQueryIDCurrent(queryID)) { return; }
     results = QueryParseUtils::parseEntries(query);
-    _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
@@ -422,17 +865,111 @@ void SQLSearch::searchByUniqueThread(const QString simplified,
 
     QSqlQuery query{_manager->getDatabase()};
     query.prepare(
-        "SELECT traditional, simplified, pinyin, jyutping, "
-        "group_concat(sourcename || ' ' || definition, '●') AS definitions "
-        "FROM entries, definitions, sources "
-        "WHERE simplified LIKE ? "
-        "AND traditional LIKE ? "
-        "AND jyutping LIKE ? "
-        "AND pinyin LIKE ? "
-        "AND entry_id = fk_entry_id "
-        "AND source_id = fk_source_id "
-        "GROUP BY entry_id "
-        "ORDER BY frequency DESC");
+        //// Get list of entry ids whose traditional form matches the query
+        "WITH matching_entry_ids AS ( "
+        "  SELECT rowid FROM entries WHERE "
+        "    simplified LIKE ? "
+        "    AND traditional LIKE ? "
+        "    AND jyutping LIKE ? "
+        "    AND pinyin LIKE ? "
+        "), "
+        " "
+        //// Get the list of all definitions for those entries
+        //// This CTE is used multiple times; would be nice if could materialize it
+        "matching_definition_ids AS ( "
+        "  SELECT definition_id, definition FROM definitions WHERE fk_entry_id "
+        "    IN matching_entry_ids "
+        "), "
+        " "
+        //// Get corresponding sentence ids for each of those definitions
+        //// This CTE is used multiple times; would be nice if could materialize it
+        "matching_chinese_sentence_ids AS ( "
+        "  SELECT definition_id, fk_chinese_sentence_id "
+        "  FROM matching_definition_ids AS mdi "
+        "  JOIN definitions_chinese_sentences_links AS dcsl ON mdi.definition_id = dcsl.fk_definition_id "
+        "), "
+        " "
+        //// Get translations for each of the sentences
+        " matching_translations AS ( "
+        "   SELECT mcsi.fk_chinese_sentence_id, "
+        "     json_group_array(DISTINCT "
+        "       json_object('sentence', sentence, "
+        "                   'language', language, "
+        "                   'direct', direct "
+        "     )) AS translation "
+        "   FROM matching_chinese_sentence_ids AS mcsi "
+        "   JOIN sentence_links AS sl ON mcsi.fk_chinese_sentence_id = sl.fk_chinese_sentence_id "
+        "   JOIN nonchinese_sentences AS ncs ON ncs.non_chinese_sentence_id = sl.fk_non_chinese_sentence_id "
+        "   GROUP BY mcsi.fk_chinese_sentence_id "
+        "), "
+        " "
+        //// Get sentence data for each of the sentence ids
+        " matching_sentences AS ( "
+        "  SELECT chinese_sentence_id, traditional, simplified, pinyin, "
+        "    jyutping, language "
+        "  FROM chinese_sentences AS cs "
+        "  WHERE chinese_sentence_id IN ( "
+        "	 SELECT fk_chinese_sentence_id FROM matching_chinese_sentence_ids "
+        "  ) "
+        "),"
+        " "
+        //// Get translations for each of those sentences
+        " matching_sentences_with_translations AS ( "
+        "   SELECT chinese_sentence_id, "
+        "     json_object('traditional', traditional, "
+        "                 'simplified', simplified, "
+        "                 'pinyin', pinyin, "
+        "                 'jyutping', jyutping, "
+        "                 'language', language, "
+        "                 'translations', json(translation)) AS sentence "
+        "   FROM matching_sentences AS ms "
+        "   LEFT JOIN matching_translations AS mt ON ms.chinese_sentence_id = mt.fk_chinese_sentence_id "
+        "), "
+        " "
+        //// Get definition data for each matching definition
+        " matching_definitions AS ( "
+        "   SELECT definition_id, fk_entry_id, fk_source_id, definition, "
+        "     label "
+        "   FROM definitions "
+        "   WHERE definitions.definition_id IN ( "
+        "     SELECT definition_id FROM matching_definition_ids"
+        "   ) "
+        "), "
+        " "
+        //// Create definition object with sentences for each definition
+        " matching_definitions_with_sentences AS ( "
+        "   SELECT md.fk_entry_id, md.fk_source_id, "
+        "     json_object('definition', md.definition, "
+        "                 'label', label, 'sentences', "
+        "                 json_group_array(json(sentence))) AS definition "
+        "   FROM matching_definitions AS md "
+        "   LEFT JOIN matching_chinese_sentence_ids AS mcsi ON md.definition_id = mcsi.definition_id "
+        "   LEFT JOIN matching_sentences_with_translations AS mswt ON mcsi.fk_chinese_sentence_id = mswt.chinese_sentence_id "
+        "   GROUP BY md.definition_id "
+        "), "
+        " "
+        //// Create definition groups for definitions of the same entry that come from the same source
+        " matching_definition_groups AS ( "
+        "   SELECT fk_entry_id, "
+        "     json_object('source', sourcename, "
+        "                 'definitions', "
+        "                 json_group_array(json(definition))) AS definitions "
+        "   FROM matching_definitions_with_sentences AS mdws "
+        "   LEFT JOIN sources ON sources.source_id = mdws.fk_source_id "
+        "   GROUP BY fk_entry_id, fk_source_id "
+        "), "
+        " "
+        //// Construct the final entry object
+        "matching_entries AS ( "
+        "  SELECT simplified, traditional, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
+        "  FROM matching_definition_groups AS mdg "
+        "  LEFT JOIN entries ON entries.entry_id = mdg.fk_entry_id "
+        "  GROUP BY entry_id "
+        "  ORDER BY frequency DESC "
+        ") "
+        " "
+        "SELECT simplified, traditional, jyutping, pinyin, definitions from matching_entries"
+    );
     query.addBindValue(simplified);
     query.addBindValue(traditional);
     query.addBindValue(jyutping);
@@ -445,7 +982,6 @@ void SQLSearch::searchByUniqueThread(const QString simplified,
         return;
     }
     results = QueryParseUtils::parseEntries(query);
-    _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) {
         return;
@@ -482,7 +1018,6 @@ void SQLSearch::searchTraditionalSentencesThread(const QString searchTerm,
         return;
     }
     results = QueryParseUtils::parseSentences(query);
-    _manager->closeDatabase();
 
     if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);

@@ -84,8 +84,8 @@ if __name__ == "__main__":
                     WHERE db2.definitions.fk_entry_id = db2.entries.entry_id AND db2.definitions.fk_source_id = db2.sources.source_id
             )
 
-        INSERT INTO definitions(definition, fk_entry_id, fk_source_id)
-            SELECT d.definition, e.entry_id, s.source_id
+        INSERT INTO definitions(definition, label, fk_entry_id, fk_source_id)
+            SELECT d.definition, d.label, e.entry_id, s.source_id
             FROM definitions_tmp AS d, sources AS s, entries AS e
             WHERE d.sourcename = s.sourcename
                 AND d.traditional = e.traditional

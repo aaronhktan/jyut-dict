@@ -63,7 +63,7 @@ private:
 
     bool _paletteRecentlyChanged = false;
     bool _calledBack = false;
-    QTimer *_timer;
+    QTimer *_showLoadingIconTimer;
     QTimer *_enableUIUpdateTimer;
     QTimer *_updateUITimer;
     bool _enableUIUpdate = false;
@@ -77,7 +77,7 @@ public slots:
     void updateUI(
         std::vector<SourceSentence> sourceSentences,
         sentenceSamples samples);
-    void stallUIUpdate(void);
+    void stallSentenceUIUpdate(void);
 
 private slots:
     void pauseBeforeUpdatingUI(std::vector<SourceSentence> sourceSentences,

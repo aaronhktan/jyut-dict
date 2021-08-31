@@ -34,7 +34,7 @@ void SentenceContentWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -62,7 +62,7 @@ void SentenceContentWidget::setSentenceSet(const SentenceSet &set)
         _sentenceNumberLabels.push_back(new QLabel{number.c_str(), this});
         int definitionNumberWidth = _sentenceNumberLabels.back()
                                         ->fontMetrics()
-                                        .boundingRect("PY")
+                                        .boundingRect("999")
                                         .width();
         _sentenceNumberLabels.back()->setFixedWidth(definitionNumberWidth);
         int definitionNumberHeight = _sentenceNumberLabels.back()
@@ -107,7 +107,7 @@ void SentenceContentWidget::setSourceSentenceVector(
         _sentenceNumberLabels.push_back(new QLabel{number.c_str(), this});
         int definitionNumberWidth = _sentenceNumberLabels.back()
                                         ->fontMetrics()
-                                        .boundingRect("PY")
+                                        .boundingRect("999")
                                         .width();
         _sentenceNumberLabels.back()->setFixedWidth(definitionNumberWidth);
         int latinHeight = _sentenceNumberLabels.back()
@@ -381,6 +381,10 @@ void SentenceContentWidget::addLabelsToLayout(
     case EntryPhoneticOptions::ONLY_JYUTPING:
         pinyinLabel->setVisible(false);
     case EntryPhoneticOptions::PREFER_JYUTPING:
+        if (jyutpingLabel->text().isEmpty()) {
+            jyutpingLabel->setVisible(false);
+            break;
+        }
         layout->addWidget(jyutpingLabel,
                           rowNumber * 10 + 3,
                           1,
@@ -391,6 +395,10 @@ void SentenceContentWidget::addLabelsToLayout(
     case EntryPhoneticOptions::ONLY_PINYIN:
         jyutpingLabel->setVisible(false);
     case EntryPhoneticOptions::PREFER_PINYIN:
+        if (pinyinLabel->text().isEmpty()) {
+            pinyinLabel->setVisible(false);
+            break;
+        }
         layout->addWidget(pinyinLabel,
                           rowNumber * 10 + 3,
                           1,
@@ -403,6 +411,10 @@ void SentenceContentWidget::addLabelsToLayout(
     // Add the second phonetic label (if applicable)
     switch (phoneticOptions) {
     case EntryPhoneticOptions::PREFER_JYUTPING:
+        if (pinyinLabel->text().isEmpty()) {
+            pinyinLabel->setVisible(false);
+            break;
+        }
         layout->addWidget(pinyinLabel,
                           rowNumber * 10 + 4,
                           1,
@@ -411,6 +423,10 @@ void SentenceContentWidget::addLabelsToLayout(
                           Qt::AlignTop);
         break;
     case EntryPhoneticOptions::PREFER_PINYIN:
+        if (jyutpingLabel->text().isEmpty()) {
+            jyutpingLabel->setVisible(false);
+            break;
+        }
         layout->addWidget(jyutpingLabel,
                           rowNumber * 10 + 4,
                           1,
