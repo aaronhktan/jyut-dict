@@ -17,15 +17,15 @@ if __name__ == "__main__":
     # Set version of database
     database.write_database_version(c)
 
-    # Attach new databases
-    c.execute("ATTACH DATABASE '{}' AS db1".format(sys.argv[2]))
-    c.execute("ATTACH DATABASE '{}' AS db2".format(sys.argv[3]))
-
     # Delete old tables and indices
     database.drop_tables(c)
 
     # Create new tables
     database.create_tables(c)
+
+    # Attach new databases
+    c.execute("ATTACH DATABASE '{}' AS db1".format(sys.argv[2]))
+    c.execute("ATTACH DATABASE '{}' AS db2".format(sys.argv[3]))
 
     # Insert from first database
     c.execute(
@@ -79,7 +79,7 @@ if __name__ == "__main__":
     c.execute(
         """WITH definitions_tmp AS (
                     SELECT entries.traditional AS traditional, entries.simplified AS simplified, entries.pinyin AS pinyin, entries.jyutping AS jyutping,
-                        sources.sourcename AS sourcename, definitions.definition AS definition
+                        sources.sourcename AS sourcename, definitions.definition AS definition, definitions.label AS label
                     FROM db2.entries, db2.definitions, db2.sources
                     WHERE db2.definitions.fk_entry_id = db2.entries.entry_id AND db2.definitions.fk_source_id = db2.sources.source_id
             )
