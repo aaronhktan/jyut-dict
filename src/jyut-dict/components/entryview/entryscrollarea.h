@@ -33,7 +33,11 @@ private:
 
     QTimer *_enableUIUpdateTimer;
     QTimer *_updateUITimer;
-    bool _enableUIUpdate = false;
+    // Unlike EntryViewSentenceCardSection, this is set to true by default
+    // because there are situations where setEntry() is called _without_
+    // the stallEntryUIUpdate slot being called (which would set this variable
+    // to true), such as the Favourites window.
+    bool _enableUIUpdate = true;
 
     EntryScrollAreaWidget *_scrollAreaWidget;
 
