@@ -32,7 +32,7 @@ import sys
 #   - 蚺蛇 has different Jyutping for each definition, without any labelling (we discard the different pronunciations)
 #   - 大使 has multiple definitions on the same line, without numbering (we put them all in one definition)
 
-illegal_strings = ("Default PoS:", "Additional PoS:")
+illegal_strings = ("Default PoS:", "Additional PoS:", "Show all nouns that can use this classifier")
 
 
 def write(db_name, source, entries, sentences, translations):
