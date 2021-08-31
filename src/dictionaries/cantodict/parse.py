@@ -439,7 +439,7 @@ def parse_sentence_file(file_name, sentences, translations):
         pin = pin.strip().replace("v", "u:")
 
         # Find the language this sentence is in
-        lang = "zh"
+        lang = "zho"
         meaning_element = soup.find("td", class_="wordmeaning")
         cantonese_element = meaning_element.find("span", class_="cantonesebox")
         if cantonese_element:

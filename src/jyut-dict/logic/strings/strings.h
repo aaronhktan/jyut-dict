@@ -79,6 +79,7 @@ constexpr auto FRA_STRING = QT_TRANSLATE_NOOP("strings", "French");
 constexpr auto DEU_STRING = QT_TRANSLATE_NOOP("strings", "German");
 constexpr auto YUE_STRING = QT_TRANSLATE_NOOP("strings", "Cantonese");
 constexpr auto CMN_STRING = QT_TRANSLATE_NOOP("strings", "Mandarin");
+constexpr auto ZHO_STRING = QT_TRANSLATE_NOOP("strings", "Chinese");
 
 constexpr auto SC_STRING = QT_TRANSLATE_NOOP("strings", "SC");
 constexpr auto TC_STRING = QT_TRANSLATE_NOOP("strings", "TC");
