@@ -4,7 +4,7 @@
 <context>
     <name>AboutWindow</name>
     <message>
-        <location filename="../../windows/aboutwindow.cpp" line="+162"/>
+        <location filename="../../windows/aboutwindow.cpp" line="+159"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
@@ -24,12 +24,11 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="+129"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="+123"/>
         <source>Automatically check for updates on startup:</source>
         <translation>自动检查更新：</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Enable analytics:</source>
         <translation>启用遥测：</translation>
     </message>
@@ -69,12 +68,12 @@
         <translation>繁体中文</translation>
     </message>
     <message>
-        <location line="+125"/>
+        <location line="+107"/>
         <source>Path to save exported database</source>
         <translation>保存文件至</translation>
     </message>
     <message>
-        <location line="-130"/>
+        <location line="-112"/>
         <source>French (CA)</source>
         <translation>法文（加拿大）</translation>
     </message>
@@ -125,7 +124,7 @@
 <context>
     <name>DictionaryTab</name>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="+136"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="+134"/>
         <source>The Dictionaries tab allows you to view information about dictionaries, and add or remove them.</source>
         <translation>您在“字典”这一页上可以查看和管理已储存的字典。</translation>
     </message>
@@ -160,7 +159,7 @@
         <translation>关于 %1</translation>
     </message>
     <message>
-        <location line="+57"/>
+        <location line="+55"/>
         <source>Dropping search indexes...</source>
         <translation>正在删除搜索索引…</translation>
     </message>
@@ -181,7 +180,7 @@
     </message>
     <message>
         <location line="+4"/>
-        <location line="+72"/>
+        <location line="+70"/>
         <source>Rebuilding search indexes...</source>
         <translation>重建搜索索引…</translation>
     </message>
@@ -287,7 +286,7 @@
 <context>
     <name>EntryViewSentenceCardSection</name>
     <message>
-        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="+96"/>
+        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="+87"/>
         <source>View all sentences →</source>
         <translation>查看所有例句 →</translation>
     </message>
@@ -295,7 +294,7 @@
 <context>
     <name>FavouriteSplitter</name>
     <message>
-        <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="+68"/>
+        <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="+70"/>
         <source>Saved Words</source>
         <translation>已保存词语</translation>
     </message>
@@ -303,7 +302,7 @@
 <context>
     <name>HistoryWindow</name>
     <message>
-        <location filename="../../windows/historywindow.cpp" line="+62"/>
+        <location filename="../../windows/historywindow.cpp" line="+64"/>
         <location line="+11"/>
         <source>Search History</source>
         <translation>搜索历史</translation>
@@ -381,7 +380,7 @@
         <translation>没有可用的更新!</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="+237"/>
+        <location filename="../../windows/mainwindow.cpp" line="+223"/>
         <location line="+161"/>
         <source>&amp;File</source>
         <translation>文件</translation>
@@ -642,28 +641,29 @@
 <context>
     <name>ResultListModel</name>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="+83"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="+85"/>
+        <location line="+1"/>
         <source>Welcome!</source>
         <translation>欢迎使用粤语字典！</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+6"/>
         <source>Start typing to search for words</source>
         <translation>开始输入并搜索</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="+11"/>
         <location line="+1"/>
         <source>No results...</source>
         <translation>找不到结果</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+5"/>
         <source>Simplified (SC) and Traditional (TC) Chinese, Jyutping (JP), Pinyin (PY), and English (EN) are options to the right of the search bar.</source>
         <translation>您在搜索栏旁边能选择使用哪种语言进行搜索。可选的语言包括简体中文，繁体中文，粤语拼音（粤拼），汉语拼音，和英文。</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+6"/>
         <source>Try switching between languages!</source>
         <translation>试用搜索栏旁边的按钮选择搜索语言！</translation>
     </message>
@@ -674,12 +674,12 @@
         <translation>你还没保存词语啊！</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+5"/>
         <source>Clicking the &quot;save&quot; button when viewing a word or phrase adds it to this list. Try adding a word that sounds cool!</source>
         <translation>按“保存“按钮即可保存词语。最好加一个有趣的吧！</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+6"/>
         <source>Save a word to get started!</source>
         <translation>—</translation>
     </message>
@@ -741,7 +741,7 @@
 <context>
     <name>SearchHistoryTab</name>
     <message>
-        <location filename="../../components/historyview/searchhistorytab.cpp" line="+81"/>
+        <location filename="../../components/historyview/searchhistorytab.cpp" line="+83"/>
         <source>Clear All Search History</source>
         <translation>清除搜索历史</translation>
     </message>
@@ -749,7 +749,7 @@
 <context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+147"/>
+        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+146"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
@@ -757,7 +757,7 @@
 <context>
     <name>SearchOptionsRadioGroupBox</name>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="+117"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="+116"/>
         <source>SC</source>
         <translation>简体中文</translation>
     </message>
@@ -823,7 +823,7 @@
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="+200"/>
+        <location filename="../../components/settings/settingstab.cpp" line="+198"/>
         <source>Reset all settings</source>
         <translation>重置所有设置</translation>
     </message>
@@ -951,7 +951,7 @@
 <context>
     <name>SettingsWindow</name>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="+130"/>
+        <location filename="../../windows/settingswindow.cpp" line="+127"/>
         <source>General</source>
         <translation>通用</translation>
     </message>
@@ -984,7 +984,7 @@
 <context>
     <name>UpdateWindow</name>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="+154"/>
+        <location filename="../../windows/updatewindow.cpp" line="+151"/>
         <source>Update Available!</source>
         <translation>更新可用！</translation>
     </message>
@@ -1033,12 +1033,12 @@
         <translation>无查看历史…</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>After viewing an entry, you can find it in this list. Selecting an item in this list will let you see that entry again.</source>
         <translation>您查看词语之后就会在这里找到您的查看历史。您选择表中的一个词语就可以在词典里面再次查看那一个词语。</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+6"/>
         <source>—</source>
         <translation>—</translation>
     </message>
@@ -1046,7 +1046,7 @@
 <context>
     <name>ViewHistoryTab</name>
     <message>
-        <location filename="../../components/historyview/viewhistorytab.cpp" line="+81"/>
+        <location filename="../../components/historyview/viewhistorytab.cpp" line="+83"/>
         <source>Clear All View History</source>
         <translation>清除查看历史</translation>
     </message>
@@ -1055,18 +1055,18 @@
     <name>strings</name>
     <message>
         <location filename="../../logic/strings/strings.h" line="+16"/>
-        <location line="+70"/>
+        <location line="+71"/>
         <source>JP</source>
         <translation>粤拼</translation>
     </message>
     <message>
-        <location line="-69"/>
-        <location line="+70"/>
+        <location line="-70"/>
+        <location line="+71"/>
         <source>PY</source>
         <translation>拼音</translation>
     </message>
     <message>
-        <location line="-69"/>
+        <location line="-70"/>
         <source>DEFINITIONS</source>
         <translation>解释</translation>
     </message>
@@ -1151,6 +1151,11 @@
         <translation>普通话</translation>
     </message>
     <message>
+        <location line="+1"/>
+        <source>Chinese</source>
+        <translation>中文</translation>
+    </message>
+    <message>
         <location line="+2"/>
         <source>SC</source>
         <translation>简体中文</translation>
@@ -1171,7 +1176,7 @@
         <translation>英文</translation>
     </message>
     <message>
-        <location line="-31"/>
+        <location line="-32"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Hong Kong</source>

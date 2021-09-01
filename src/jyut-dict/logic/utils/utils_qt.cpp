@@ -30,6 +30,8 @@ static std::unordered_map<std::string, QString> languageMap = {
      QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::DEU_STRING)},
     {"yue",
      QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::YUE_STRING)},
+    {"zho",
+     QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::ZHO_STRING)},
 };
 
 static QMap<QString, std::string> reverseLanguageMap = {
@@ -43,6 +45,8 @@ static QMap<QString, std::string> reverseLanguageMap = {
      "deu"},
     {QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::YUE_STRING),
      "yue"},
+    {QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::ZHO_STRING),
+     "zho"},
 };
 
 static QMap<SearchParameters, std::string> searchParameterMap = {
@@ -138,6 +142,9 @@ static QMap<SearchParameters, std::string> searchParameterMap = {
             {"yue",
              QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                          Strings::YUE_STRING)},
+            {"zho",
+             QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                         Strings::ZHO_STRING)},
         };
 
         reverseLanguageMap = {
@@ -156,6 +163,9 @@ static QMap<SearchParameters, std::string> searchParameterMap = {
             {QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                          Strings::YUE_STRING),
              "yue"},
+            {QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                         Strings::ZHO_STRING),
+             "zho"},
         };
 
         searchParameterMap

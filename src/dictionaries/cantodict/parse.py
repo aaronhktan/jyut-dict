@@ -32,7 +32,11 @@ import sys
 #   - 蚺蛇 has different Jyutping for each definition, without any labelling (we discard the different pronunciations)
 #   - 大使 has multiple definitions on the same line, without numbering (we put them all in one definition)
 
-illegal_strings = ("Default PoS:", "Additional PoS:")
+illegal_strings = (
+    "Default PoS:",
+    "Additional PoS:",
+    "Show all nouns that can use this classifier",
+)
 
 
 def write(db_name, source, entries, sentences, translations):
@@ -439,7 +443,7 @@ def parse_sentence_file(file_name, sentences, translations):
         pin = pin.strip().replace("v", "u:")
 
         # Find the language this sentence is in
-        lang = "zh"
+        lang = "zho"
         meaning_element = soup.find("td", class_="wordmeaning")
         cantonese_element = meaning_element.find("span", class_="cantonesebox")
         if cantonese_element:

@@ -41,6 +41,13 @@ void DefinitionContentWidget::changeEvent(QEvent *event)
         setStyle(Utils::isDarkMode());
     }
 #endif
+    if (event->type() == QEvent::LanguageChange) {
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+        setStyle(Utils::isDarkMode());
+#else
+        setStyle(/* use_dark = */false);
+#endif
+    }
     QWidget::changeEvent(event);
 }
 
@@ -66,11 +73,6 @@ void DefinitionContentWidget::setEntry(std::vector<Definition::Definition> defin
         _definitionLabels.push_back(new QLabel{definitions[i].definitionContent.c_str(), this});
         _definitionLabels.back()->setWordWrap(true);
         _definitionLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
-#ifdef Q_OS_WIN
-        QFont font = QFont{"Microsoft YaHei", 10};
-        font.setStyleHint(QFont::System, QFont::PreferAntialias);
-        _definitionLabels.back()->setFont(font);
-#endif
 
         _definitionLayout->addWidget(_definitionNumberLabels.back(),
                                      static_cast<int>(rowNumber), 0, Qt::AlignTop);
@@ -116,11 +118,6 @@ void DefinitionContentWidget::setEntry(std::vector<Definition::Definition> defin
             _exampleLabels.back()->setWordWrap(true);
             _exampleLabels.back()->setTextInteractionFlags(
                 Qt::TextSelectableByMouse);
-#ifdef Q_OS_WIN
-            QFont font = QFont{"Microsoft YaHei", 10};
-            font.setStyleHint(QFont::System, QFont::PreferAntialias);
-            _exampleLabels.back()->setFont(font);
-#endif
             _definitionLayout->addWidget(_exampleLabels.back(),
                                          static_cast<int>(rowNumber++),
                                          1,
@@ -263,6 +260,20 @@ void DefinitionContentWidget::setStyle(bool use_dark)
     for (const auto &label : _exampleTranslationLabels) {
         label->setStyleSheet(translationStyleSheet.arg(textColour.name()));
     }
+
+#ifdef Q_OS_WIN
+    QFont font = QFont{"Microsoft YaHei", 10};
+    font.setStyleHint(QFont::System, QFont::PreferAntialias);
+    for (const auto &label : _definitionLabels) {
+        label->setFont(font);
+    }
+    for (const auto &label : _exampleLabels) {
+        label->setFont(font);
+    }
+    for (const auto &label : _exampleTranslationLabels) {
+        label->setFont(font);
+    }
+#endif
 }
 
 void DefinitionContentWidget::cleanupLabels()
