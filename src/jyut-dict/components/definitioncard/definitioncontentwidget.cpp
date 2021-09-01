@@ -277,6 +277,9 @@ void DefinitionContentWidget::setStyle(bool use_dark)
 #ifdef Q_OS_WIN
     QFont font = QFont{"Microsoft YaHei", 10};
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
+    for (const auto &label : _definitionLabelLabels) {
+        label->setFont(font);
+    }
     for (const auto &label : _definitionLabels) {
         label->setFont(font);
     }
