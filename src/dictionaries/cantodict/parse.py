@@ -45,6 +45,11 @@ pos_labels = {
     "adv": "adverb",
     "prep": "preposition",
     "conj": "conjunction",
+    "lit": "literal",
+    "lit.": "literal",
+    "syn": "synonym",
+    "syn.": "synonym",
+    "var.": "variant",
 }
 
 
@@ -415,7 +420,10 @@ def parse_word_file(file_name, words):
             if not definition:
                 continue
 
-            labels = map(lambda x: pos_labels[x] if x in pos_labels else x, labels)
+            labels = map(
+                lambda x: pos_labels[x.lower()] if x.lower() in pos_labels else x,
+                labels
+            )
             label = ", ".join(labels)
             if not label and special_label:
                 label = special_label
