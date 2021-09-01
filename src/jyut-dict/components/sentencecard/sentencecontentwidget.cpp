@@ -42,6 +42,11 @@ void SentenceContentWidget::changeEvent(QEvent *event)
 #endif
     if (event->type() == QEvent::LanguageChange) {
         translateUI();
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+        setStyle(Utils::isDarkMode());
+#else
+        setStyle(/* use_dark = */false);
+#endif
     }
     QWidget::changeEvent(event);
 }
@@ -297,6 +302,10 @@ void SentenceContentWidget::setStyle(bool use_dark)
             QFont font = QFont{"Microsoft YaHei"};
             font.setStyleHint(QFont::System, QFont::PreferAntialias);
             font.setPixelSize(14);
+            label->setFont(font);
+        } else {
+            QFont font = QFont{"Microsoft YaHei", 10};
+            font.setStyleHint(QFont::System, QFont::PreferAntialias);
             label->setFont(font);
         }
 #endif
