@@ -15,12 +15,6 @@ DefinitionContentWidget::DefinitionContentWidget(QWidget *parent) : QWidget(pare
     _definitionLayout = new QGridLayout{this};
     _definitionLayout->setVerticalSpacing(1);
     _definitionLayout->setContentsMargins(10, 0, 10, 0);
-
-    _definitionNumberLabels = {};
-    _definitionLabels = {};
-    _exampleLabels = {};
-    _examplePronunciationLabels = {};
-    _exampleTranslationLabels = {};
 }
 
 DefinitionContentWidget::~DefinitionContentWidget()
@@ -58,6 +52,7 @@ void DefinitionContentWidget::setEntry(std::vector<Definition::Definition> defin
     int rowNumber = 0;
     for (size_t i = 0; i < definitions.size(); i++) {
         std::string number = std::to_string(i + 1);
+
         _definitionNumberLabels.push_back(new QLabel{number.c_str(), this});
         int definitionNumberWidth = _definitionNumberLabels.back()
                                         ->fontMetrics()
@@ -69,16 +64,28 @@ void DefinitionContentWidget::setEntry(std::vector<Definition::Definition> defin
                                          .boundingRect("123PYing")
                                          .height();
         _definitionNumberLabels.back()->setFixedHeight(definitionNumberHeight);
+        _definitionLayout->addWidget(_definitionNumberLabels.back(),
+                                     static_cast<int>(rowNumber),
+                                     0,
+                                     Qt::AlignTop);
 
-        _definitionLabels.push_back(new QLabel{definitions[i].definitionContent.c_str(), this});
+        QString label{definitions[i].label.c_str()};
+        if (!label.isEmpty()) {
+            _definitionLabelLabels.push_back(
+                new QLabel{definitions[i].label.c_str(), this});
+            _definitionLabelLabels.back()->setWordWrap(true);
+            _definitionLayout->addWidget(_definitionLabelLabels.back(),
+                                         static_cast<int>(rowNumber++),
+                                         1,
+                                         Qt::AlignTop);
+        }
+
+        _definitionLabels.push_back(
+            new QLabel{definitions[i].definitionContent.c_str(), this});
         _definitionLabels.back()->setWordWrap(true);
         _definitionLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
-
-        _definitionLayout->addWidget(_definitionNumberLabels.back(),
-                                     static_cast<int>(rowNumber), 0, Qt::AlignTop);
         _definitionLayout->addWidget(_definitionLabels.back(),
-                                     static_cast<int>(rowNumber), 1, Qt::AlignTop);
-        rowNumber++;
+                                     static_cast<int>(rowNumber++), 1, Qt::AlignTop);
 
         for (size_t j = 0; j < definitions[i].sentences.size(); j++) {
             QString exampleText;
@@ -235,16 +242,22 @@ void DefinitionContentWidget::setEntry(std::vector<Definition::Definition> defin
 
 void DefinitionContentWidget::setStyle(bool use_dark)
 {
-    QString styleSheet = "QLabel { color: %1; "
-                         "margin-top: 2px; }";
     QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
                                           LABEL_TEXT_COLOUR_DARK_G,
                                           LABEL_TEXT_COLOUR_DARK_B}
                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R};
+    QString definitionNumberStyleSheet = "QLabel { color: %1; "
+                                         "margin-top: 2px; }";
     for (const auto &label : _definitionNumberLabels) {
-        label->setStyleSheet(styleSheet.arg(textColour.name()));
+        label->setStyleSheet(definitionNumberStyleSheet.arg(textColour.name()));
+    }
+    QString definitionLabelStyleSheet = "QLabel { color: %1; "
+                                        "font-style: italic; "
+                                        "text-transform: lowercase; }";
+    for (const auto &label : _definitionLabelLabels) {
+        label->setStyleSheet(definitionLabelStyleSheet.arg(textColour.name()));
     }
 
     QString examplePronunciationStyleSheet = "QLabel { color: %1; "
@@ -264,6 +277,9 @@ void DefinitionContentWidget::setStyle(bool use_dark)
 #ifdef Q_OS_WIN
     QFont font = QFont{"Microsoft YaHei", 10};
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
+    for (const auto &label : _definitionLabelLabels) {
+        label->setFont(font);
+    }
     for (const auto &label : _definitionLabels) {
         label->setFont(font);
     }
@@ -283,6 +299,12 @@ void DefinitionContentWidget::cleanupLabels()
         delete label;
     }
     _definitionNumberLabels.clear();
+
+    for (auto label : _definitionLabelLabels) {
+        _definitionLayout->removeWidget(label);
+        delete label;
+    }
+    _definitionLabelLabels.clear();
 
     for (auto label : _definitionLabels) {
         _definitionLayout->removeWidget(label);

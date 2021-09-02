@@ -37,8 +37,8 @@ if __name__ == "__main__":
         SELECT sourcename, sourceshortname, version, description, legal, link, update_url, other FROM db1.sources"""
     )
     c.execute(
-        """INSERT INTO definitions(definition, fk_entry_id, fk_source_id)
-        SELECT definition, fk_entry_id, fk_source_id FROM db1.definitions"""
+        """INSERT INTO definitions(definition, label, fk_entry_id, fk_source_id)
+        SELECT definition, label, fk_entry_id, fk_source_id FROM db1.definitions"""
     )
     c.execute(
         """INSERT INTO chinese_sentences(chinese_sentence_id, traditional, simplified, pinyin, jyutping, language)

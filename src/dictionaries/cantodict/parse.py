@@ -38,6 +38,20 @@ illegal_strings = (
     "Show all nouns that can use this classifier",
 )
 
+pos_labels = {
+    "v": "verb",
+    "n": "noun",
+    "adj": "adjective",
+    "adv": "adverb",
+    "prep": "preposition",
+    "conj": "conjunction",
+    "lit": "literal",
+    "lit.": "literal",
+    "syn": "synonym",
+    "syn.": "synonym",
+    "var.": "variant",
+}
+
 
 def write(db_name, source, entries, sentences, translations):
     db = sqlite3.connect(db_name)
@@ -384,20 +398,36 @@ def parse_word_file(file_name, words):
                 meanings = []
                 continue
 
-            # Try to isolate a label (usually a POS or [華]: indicating Mandarin-only usage or [粵]: indicating Cantonese-only usage)
-            label = ""
+            # Try to isolate one or more labels (usually a POS or [華]: indicating Mandarin-only usage or [粵]: indicating Cantonese-only usage)
+            labels = []
             definition = string
-            result = re.search(r"^\[(.*?)\]:?\s+(.*)", string)
-            if result:
-                label = result.group(1).strip()
-                definition = result.group(2).strip()
-            else:
-                # Filter out bad non-standard strings
+            label_regex = re.compile(r"^\[(.*?)\]:?\s*")
+            result = re.search(label_regex, string)
+            if not result:
+                # Filter out bad non-standard strings that are completely enclosed in square braces
                 if string[0] == "[" and string[-1] == "]":
                     continue
 
+            while result:
+                labels.extend(result.group(1).strip().split(","))
+                string = re.sub(label_regex, "", string)
+                result = re.search(label_regex, string)
+
+            # At this point, all the labels enclosed in square braces (possibly followed by whitespace)
+            # should be stripped out of the beginning of the string.
+            # Therefore, we can now assume the contents of the string are the definition
+            definition = string
+            if not definition:
+                continue
+
+            labels = map(
+                lambda x: pos_labels[x.lower()] if x.lower() in pos_labels else x,
+                labels
+            )
+            label = ", ".join(labels)
             if not label and special_label:
                 label = special_label
+
             meanings.append((label, definition))
 
         if meanings:
