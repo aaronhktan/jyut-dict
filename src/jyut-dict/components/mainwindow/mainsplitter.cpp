@@ -3,6 +3,11 @@
 #include "components/entrysearchresult/resultlistmodel.h"
 #include "components/entrysearchresult/resultlistview.h"
 #include "logic/settings/settingsutils.h"
+#ifdef Q_OS_MAC
+#include "logic/utils/utils_mac.h"
+#elif defined (Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
+#endif
 
 #include <QList>
 #include <QVariant>
@@ -66,10 +71,11 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     setStretchFactor(0, 0);
     setStretchFactor(1, 1);
     setSizes(QList<int>({size().width() / 3, size().width() * 2 / 3}));
-#ifdef Q_OS_WIN
-    setStyleSheet("QSplitter::handle { background-color: #b9b9b9; }");
-#elif defined(Q_OS_DARWIN) || defined(Q_OS_LINUX)
-    setStyleSheet("QSplitter::handle { background-color: none; }");
+
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+    setStyle(Utils::isDarkMode());
+#else
+    setStyle(/* use_dark = */ false);
 #endif
 }
 
@@ -78,17 +84,47 @@ MainSplitter::~MainSplitter()
 
 }
 
+void MainSplitter::changeEvent(QEvent *event)
+{
+#if defined(Q_OS_DARWIN) || defined(Q_OS_LINUX)
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(100, this, [=]() {
+            _paletteRecentlyChanged = false;
+        });
+
+        // Set the style to match whether the user started dark mode
+        setStyle(Utils::isDarkMode());
+    }
+#endif
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
+    QSplitter::changeEvent(event);
+}
+
 void MainSplitter::translateUI(void)
 {
     static_cast<ResultListModel *>(_model)->setWelcome();
 }
 
-void MainSplitter::changeEvent(QEvent *event)
+void MainSplitter::setStyle(bool use_dark)
 {
-    if (event->type() == QEvent::LanguageChange) {
-        translateUI();
+#ifdef Q_OS_WIN
+    (void) (use_dark);
+    setStyleSheet("QSplitter::handle { background-color: #b9b9b9; }");
+#elif defined(Q_OS_DARWIN)
+    if (use_dark) {
+        setStyleSheet("QSplitter::handle { background-color: #000000; }");
+    } else {
+        setStyleSheet("");
     }
-    QSplitter::changeEvent(event);
+#elif defined(Q_OS_LINUX)
+    (void) (use_dark);
+    setStyleSheet("QSplitter::handle { background-color: none; }");
+#endif
 }
 
 void MainSplitter::setFocusToResults(void)

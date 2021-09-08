@@ -16,6 +16,7 @@
 #include <QGuiApplication>
 #include <QPalette>
 #include <QTimer>
+#include <QWindow>
 
 SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
                                QWidget *parent)
@@ -104,6 +105,14 @@ void SettingsWindow::setupUI()
 
     setCentralWidget(_contentStackedWidget);
 
+#if defined(Q_OS_MAC)
+    // Qt 5.15 broke the colour on the unified toolbar (it should be black
+    // in dark mode). This is a workaround to restore previous behaviour.
+    QObject::connect(qApp, &QGuiApplication::focusWindowChanged, this, [=]() {
+        setStyle(Utils::isDarkMode());
+    });
+#endif
+
     // Customize the look of the toolbar to fit in better with platform styles
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
@@ -136,13 +145,41 @@ void SettingsWindow::translateUI()
 #endif
 }
 
+#include <QDebug>
 void SettingsWindow::setStyle(bool use_dark)
 {
     // Set background color of tabs in toolbar
     QColor selectedBackgroundColour;
     QColor currentTextColour;
     QColor otherTextColour;
-    if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
+    if (QGuiApplication::applicationState() == Qt::ApplicationActive
+        && isActiveWindow()) {
+#ifdef Q_OS_MAC
+        selectedBackgroundColour = Utils::getAppleControlAccentColor();
+#else
+        selectedBackgroundColour = use_dark
+                                       ? QColor{LIST_ITEM_ACTIVE_COLOUR_DARK_R,
+                                                LIST_ITEM_ACTIVE_COLOUR_DARK_G,
+                                                LIST_ITEM_ACTIVE_COLOUR_DARK_B}
+                                       : QColor{LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
+                                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
+                                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_B};
+#endif
+        currentTextColour = Utils::getContrastingColour(
+            selectedBackgroundColour);
+#ifdef Q_OS_MAC
+        otherTextColour = QGuiApplication::palette().color(QPalette::Active,
+                                                           QPalette::Text);
+#else
+        otherTextColour = use_dark
+                              ? QColor{TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_R,
+                                       TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_G,
+                                       TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_B}
+                              : QColor{TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_R,
+                                       TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_G,
+                                       TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_B};
+#endif
+    } else {
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
         selectedBackgroundColour = QGuiApplication::palette()
             .color(QPalette::Inactive, QPalette::Highlight);
@@ -169,31 +206,6 @@ void SettingsWindow::setStyle(bool use_dark)
                        : QColor{TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_R,
                                 TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_G,
                                 TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_B};
-    } else {
-#ifdef Q_OS_MAC
-        selectedBackgroundColour = Utils::getAppleControlAccentColor();
-#else
-        selectedBackgroundColour
-            = use_dark ? QColor{LIST_ITEM_ACTIVE_COLOUR_DARK_R,
-                                LIST_ITEM_ACTIVE_COLOUR_DARK_G,
-                                LIST_ITEM_ACTIVE_COLOUR_DARK_B}
-                       : QColor{LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
-                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
-                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_B};
-#endif
-        currentTextColour = Utils::getContrastingColour(selectedBackgroundColour);
-#ifdef Q_OS_MAC
-        otherTextColour = QGuiApplication::palette().color(QPalette::Active,
-                                                           QPalette::Text);
-#else
-        otherTextColour
-            = use_dark ? QColor{TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_R,
-                                TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_G,
-                                TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_B}
-                       : QColor{TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_R,
-                                TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_G,
-                                TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_B};
-#endif
     }
 
 #ifdef Q_OS_MAC
@@ -220,6 +232,14 @@ void SettingsWindow::setStyle(bool use_dark)
                 "   border-top-right-radius: 4px; "
                 "   color: %3; "
                 "   margin: 0px; "
+                "}"
+                " "
+                "QToolBar {"
+                "   background-color: rgb(%5, %6, %7);"
+                "   border-bottom: 1px solid #000000;"
+                "   padding: 1px;"
+                "   padding-bottom: 3px;"
+                "   padding-top: 3px;"
                 "}";
     } else {
         style = "QToolButton[isHan=\"true\"] { "
@@ -267,11 +287,33 @@ void SettingsWindow::setStyle(bool use_dark)
                   "   margin: 0px; "
                   "}"};
 #endif
-    setStyleSheet(
-        style.arg(selectedBackgroundColour.name(),
-                  "13",
-                  currentTextColour.name(),
-                  otherTextColour.name()));
+    if (use_dark) {
+        if (QGuiApplication::applicationState() == Qt::ApplicationActive
+            && isActiveWindow()) {
+            _toolBar->setStyleSheet(style
+                                        .arg(selectedBackgroundColour.name(),
+                                             "13",
+                                             currentTextColour.name(),
+                                             otherTextColour.name())
+                                        .arg(TOOLBAR_FOCUSED_COLOUR_DARK_R)
+                                        .arg(TOOLBAR_FOCUSED_COLOUR_DARK_G)
+                                        .arg(TOOLBAR_FOCUSED_COLOUR_DARK_B));
+        } else {
+            _toolBar->setStyleSheet(style
+                                        .arg(selectedBackgroundColour.name(),
+                                             "13",
+                                             currentTextColour.name(),
+                                             otherTextColour.name())
+                                        .arg(TOOLBAR_NOT_FOCUSED_COLOUR_DARK_R)
+                                        .arg(TOOLBAR_NOT_FOCUSED_COLOUR_DARK_G)
+                                        .arg(TOOLBAR_NOT_FOCUSED_COLOUR_DARK_B));
+        }
+    } else {
+        _toolBar->setStyleSheet(style.arg(selectedBackgroundColour.name(),
+                                          "13",
+                                          currentTextColour.name(),
+                                          otherTextColour.name()));
+    }
     setButtonIcon(use_dark, _contentStackedWidget->currentIndex());
 
     // Customize the bottom of the toolbar
@@ -312,13 +354,9 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
     QIcon help_inverted = QIcon(":/images/help_inverted.png");
     QIcon help_disabled = QIcon(":/images/help_disabled.png");
 
-    // Set icons for each tab
-    if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
-        _actions[0]->setIcon(settings_disabled);
-        _actions[1]->setIcon(book_disabled);
-        _actions[2]->setIcon(sliders_disabled);
-        _actions[3]->setIcon(help_disabled);
-    } else {
+    // Set icons for each tab according to window active state
+    if (QGuiApplication::applicationState() == Qt::ApplicationActive
+        && isActiveWindow()) {
         if (use_dark) {
             _actions[0]->setIcon(settings_inverted);
             _actions[1]->setIcon(book_inverted);
@@ -330,6 +368,11 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
             _actions[2]->setIcon(index == 2 ? sliders_inverted : sliders);
             _actions[3]->setIcon(index == 3 ? help_inverted : help);
         }
+    } else {
+        _actions[0]->setIcon(settings_disabled);
+        _actions[1]->setIcon(book_disabled);
+        _actions[2]->setIcon(sliders_disabled);
+        _actions[3]->setIcon(help_disabled);
     }
 
     QList<QToolButton *> buttons = this->findChildren<QToolButton *>();

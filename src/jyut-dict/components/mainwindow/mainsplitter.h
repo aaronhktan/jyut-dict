@@ -40,6 +40,9 @@ public:
 private:
     void translateUI(void);
 
+    void setStyle(bool use_dark);
+    bool _paletteRecentlyChanged = false;
+
     void prepareEntry(Entry &entry, bool addToHistory);
 
     bool _addToHistory = true;

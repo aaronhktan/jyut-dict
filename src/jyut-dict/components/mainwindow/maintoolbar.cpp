@@ -8,6 +8,9 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QGuiApplication>
+#include <QWindow>
+
 MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
                          std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                          QWidget *parent) : QToolBar(parent)
@@ -89,6 +92,19 @@ void MainToolBar::setupUI(void)
     setStyleSheet("QToolBar { background-color: white; }");
 #endif
 
+#if defined(Q_OS_MAC)
+    // Qt 5.15 broke the colour on the unified toolbar (it should be black
+    // in dark mode). This is a workaround to restore previous behaviour.
+    QObject::connect(qApp,
+                     &QGuiApplication::applicationStateChanged,
+                     this,
+                     [=]() { setStyle(Utils::isDarkMode()); });
+
+    QObject::connect(qApp, &QGuiApplication::focusWindowChanged, this, [=]() {
+        setStyle(Utils::isDarkMode());
+    });
+#endif
+
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
 #else
@@ -122,7 +138,8 @@ void MainToolBar::setStyle(bool use_dark)
                        : ":/images/clock_nopadding.png"});
 #endif
     _openHistoryButton->setStyleSheet(
-        QString{"QToolButton { padding: 3px; margin-right: 6px; }"
+        QString{"QToolButton { background-color: none; border-radius: 3px; "
+                "padding: 3px; margin-right: 6px; }"
                 "QToolButton:hover { background-color: %1; border-radius: 3px; "
                 "padding: 3px; }"}
             .arg(use_dark ? "grey" : "whitesmoke"));
@@ -134,13 +151,13 @@ void MainToolBar::setStyle(bool use_dark)
         QIcon{use_dark ? ":/images/star_inverted_nopadding.png"
                        : ":/images/star_nopadding.png"});
 #endif
-    _openFavouritesButton->setStyleSheet(QString{
-        "QToolButton { padding: 3px; margin-top: 2px; margin-bottom: 2px; "
-        "margin-right: 4px; }"
-        "QToolButton:hover { background-color: %1; border-radius: 3px; "
-        "padding: 3px; margin-top: 2px; margin-bottom: 2px; }"}
-                                             .arg(use_dark ? "grey"
-                                                           : "whitesmoke"));
+    _openFavouritesButton->setStyleSheet(
+        QString{"QToolButton { background-color: none; border-radius: 3px; "
+                "padding: 3px; margin-top: 2px; margin-bottom: 2px; "
+                "margin-right: 4px; }"
+                "QToolButton:hover { background-color: %1; border-radius: 3px; "
+                "padding: 3px; margin-top: 2px; margin-bottom: 2px; }"}
+            .arg(use_dark ? "grey" : "whitesmoke"));
 
 #ifdef Q_OS_WIN
     _openSettingsButton->setIcon(QIcon{":/images/settings_darkgrey_nopadding.png"});
@@ -150,12 +167,33 @@ void MainToolBar::setStyle(bool use_dark)
                                    : ":/images/settings_nopadding.png"});
 #endif
     _openSettingsButton->setStyleSheet(
-        QString{"QToolButton { padding: 3px; margin: 0px; }"
+        QString{"QToolButton { background-color: none; border-radius: 3px; "
+                "padding: 3px; margin: 0px; }"
                 "QToolButton:hover { background-color: %1; border-radius: 3px; "
                 "padding: 3px; margin: 0px; }"}
             .arg(use_dark ? "grey" : "whitesmoke"));
 
-#ifdef Q_OS_LINUX
+#ifdef Q_OS_MAC
+    QString toolbarStyle = "QToolBar {"
+                           "   background-color: rgb(%1, %2, %3);"
+                           "   border-bottom: 1px solid #000000;"
+                           "   padding: 1px;"
+                           "}";
+    if (use_dark) {
+        if (QGuiApplication::applicationState() == Qt::ApplicationActive
+            && isActiveWindow()) {
+            setStyleSheet(toolbarStyle.arg(TOOLBAR_FOCUSED_COLOUR_DARK_R)
+                              .arg(TOOLBAR_FOCUSED_COLOUR_DARK_G)
+                              .arg(TOOLBAR_FOCUSED_COLOUR_DARK_B));
+        } else {
+            setStyleSheet(toolbarStyle.arg(TOOLBAR_NOT_FOCUSED_COLOUR_DARK_R)
+                              .arg(TOOLBAR_NOT_FOCUSED_COLOUR_DARK_G)
+                              .arg(TOOLBAR_NOT_FOCUSED_COLOUR_DARK_B));
+        }
+    } else {
+        setStyleSheet("");
+    }
+#elif defined(Q_OS_LINUX)
     if (Utils::isDarkMode()) {
         setStyleSheet("QToolBar { border-bottom: 1px solid black; }");
     } else {
