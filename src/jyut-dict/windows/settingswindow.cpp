@@ -219,7 +219,7 @@ void SettingsWindow::setStyle(bool use_dark)
                 "   font-size: %2px; "
                 "   margin: 0px; "
                 "}"
-                ""
+                " "
                 "QToolButton { "
                 "   border-top-left-radius: 4px; "
                 "   border-top-right-radius: 4px; "
@@ -250,7 +250,7 @@ void SettingsWindow::setStyle(bool use_dark)
                 "   font-size: %2px; "
                 "   margin: 0px; "
                 "}"
-                ""
+                " "
                 "QToolButton { "
                 "   border-top-left-radius: 4px; "
                 "   border-top-right-radius: 4px; "
@@ -313,10 +313,20 @@ void SettingsWindow::setStyle(bool use_dark)
         }
     } else {
 #endif
+        // Not really sure why, but the stylesheet needs to be set on the
+        // _toolBar object on macOS only so that it picks up style changes
+        // when a user switches between light and dark modes.
+#ifdef Q_OS_MAC
+        _toolBar->setStyleSheet(style.arg(selectedBackgroundColour.name(),
+                                "13",
+                                currentTextColour.name(),
+                                otherTextColour.name()));
+#else
         setStyleSheet(style.arg(selectedBackgroundColour.name(),
                                 "13",
                                 currentTextColour.name(),
                                 otherTextColour.name()));
+#endif
 #ifdef Q_OS_MAC
     }
 #endif
