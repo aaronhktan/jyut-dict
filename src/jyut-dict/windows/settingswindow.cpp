@@ -313,10 +313,10 @@ void SettingsWindow::setStyle(bool use_dark)
         }
     } else {
 #endif
-        _toolBar->setStyleSheet(style.arg(selectedBackgroundColour.name(),
-                                          "13",
-                                          currentTextColour.name(),
-                                          otherTextColour.name()));
+        setStyleSheet(style.arg(selectedBackgroundColour.name(),
+                                "13",
+                                currentTextColour.name(),
+                                otherTextColour.name()));
 #ifdef Q_OS_MAC
     }
 #endif
