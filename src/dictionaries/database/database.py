@@ -80,7 +80,7 @@ def create_tables(c):
         """CREATE TABLE definitions_chinese_sentences_links(
                   fk_definition_id INTEGER,
                   fk_chinese_sentence_id INTEGER,
-                  FOREIGN KEY(fk_definition_id) REFERENCES definitions(definition_id),
+                  FOREIGN KEY(fk_definition_id) REFERENCES definitions(definition_id) ON DELETE CASCADE,
                   FOREIGN KEY(fk_chinese_sentence_id) REFERENCES chinese_sentences(chinese_sentence_id)
                   UNIQUE(fk_definition_id, fk_chinese_sentence_id) ON CONFLICT IGNORE
             )"""

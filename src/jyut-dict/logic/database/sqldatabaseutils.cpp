@@ -296,13 +296,7 @@ bool SQLDatabaseUtils::removeSource(std::string source)
     int otherIndex = query.record().indexOf("other");
     std::string type = "";
     while (query.next()) {
-        std::string other = query.value(otherIndex).toString().toStdString();
-        std::vector<std::string> metadata;
-        Utils::split(other, "●", metadata);
-
-        if (metadata.size() >= 1) {
-            type = metadata[0];
-        }
+        type = query.value(otherIndex).toString().toStdString();
     }
 
     deleteSourceFromDatabase(source);
@@ -312,7 +306,7 @@ bool SQLDatabaseUtils::removeSource(std::string source)
     bool success = false;
     query.exec("BEGIN TRANSACTION");
     try {
-        if (type.length() == 0) {
+        if (type.length() == 0 || type.find("words") != std::string::npos) {
             if (!removeDefinitionsFromDatabase()) {
                 throw std::runtime_error(
                     tr("Failed to remove definitions...").toStdString());
