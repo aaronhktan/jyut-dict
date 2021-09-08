@@ -145,7 +145,6 @@ void SettingsWindow::translateUI()
 #endif
 }
 
-#include <QDebug>
 void SettingsWindow::setStyle(bool use_dark)
 {
     // Set background color of tabs in toolbar
