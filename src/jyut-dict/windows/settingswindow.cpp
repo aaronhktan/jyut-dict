@@ -35,11 +35,6 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
     move(parent->x() + (parent->width() - sizeHint().width()) / 2,
          parent->y() + (parent->height() - sizeHint().height()) / 2);
 
-    connect(qApp,
-            &QGuiApplication::applicationStateChanged,
-            this,
-            &SettingsWindow::paintWithApplicationState);
-
     setAttribute(Qt::WA_DeleteOnClose);
 }
 
@@ -105,6 +100,11 @@ void SettingsWindow::setupUI()
 
     setCentralWidget(_contentStackedWidget);
 
+    connect(qApp,
+            &QGuiApplication::applicationStateChanged,
+            this,
+            &SettingsWindow::paintWithApplicationState);
+
 #if defined(Q_OS_MAC)
     // Qt 5.15 broke the colour on the unified toolbar (it should be black
     // in dark mode). This is a workaround to restore previous behaviour.
@@ -152,7 +152,10 @@ void SettingsWindow::setStyle(bool use_dark)
     QColor currentTextColour;
     QColor otherTextColour;
     if (QGuiApplication::applicationState() == Qt::ApplicationActive
-        && isActiveWindow()) {
+#ifdef Q_OS_MAC
+        && isActiveWindow()
+#endif
+        ) {
 #ifdef Q_OS_MAC
         selectedBackgroundColour = Utils::getAppleControlAccentColor();
 #else
@@ -286,6 +289,7 @@ void SettingsWindow::setStyle(bool use_dark)
                   "   margin: 0px; "
                   "}"};
 #endif
+#ifdef Q_OS_MAC
     if (use_dark) {
         if (QGuiApplication::applicationState() == Qt::ApplicationActive
             && isActiveWindow()) {
@@ -308,11 +312,14 @@ void SettingsWindow::setStyle(bool use_dark)
                                         .arg(TOOLBAR_NOT_FOCUSED_COLOUR_DARK_B));
         }
     } else {
+#endif
         _toolBar->setStyleSheet(style.arg(selectedBackgroundColour.name(),
                                           "13",
                                           currentTextColour.name(),
                                           otherTextColour.name()));
+#ifdef Q_OS_MAC
     }
+#endif
     setButtonIcon(use_dark, _contentStackedWidget->currentIndex());
 
     // Customize the bottom of the toolbar
@@ -322,18 +329,18 @@ void SettingsWindow::setStyle(bool use_dark)
                             "}");
 #elif defined(Q_OS_LINUX)
     QColor color = QGuiApplication::palette().color(QPalette::AlternateBase);
-    _toolBar->setStyleSheet(QString("QToolBar {"
+    _toolBar->setStyleSheet(QString{"QToolBar {"
                                     "   background: transparent;"
                                     "   background-color: rgba(%1, %2, %3, %4);"
                                     "   border-bottom: 1px solid %5;"
                                     "   padding-bottom: 3px;"
                                     "   padding-top: 3px;"
-                                    "}")
-                                .arg(std::to_string(color.red()).c_str())
-                                .arg(std::to_string(color.green()).c_str())
-                                .arg(std::to_string(color.blue()).c_str())
-                                .arg(0.7)
-                                .arg(use_dark ? "black" : "lightgray"));
+                                    "}"}
+                                .arg(std::to_string(color.red()).c_str(),
+                                     std::to_string(color.green()).c_str(),
+                                     std::to_string(color.blue()).c_str(),
+                                     QString::number(0.7),
+                                     use_dark ? "black" : "lightgray"));
 #endif
 }
 
@@ -355,7 +362,10 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
 
     // Set icons for each tab according to window active state
     if (QGuiApplication::applicationState() == Qt::ApplicationActive
-        && isActiveWindow()) {
+#ifdef Q_OS_MAC
+        && isActiveWindow()
+#endif
+        ) {
         if (use_dark) {
             _actions[0]->setIcon(settings_inverted);
             _actions[1]->setIcon(book_inverted);
