@@ -1,6 +1,6 @@
 import hanzidentifier
 from hanziconv import HanziConv
-from pypinyin import pinyin, Style
+from pypinyin import lazy_pinyin, Style
 import pinyin_jyutping_sentence
 
 from database import database, objects
@@ -97,8 +97,9 @@ def parse_sentence_file(
                     trad = sentence
                     simp = HanziConv.toSimplified(sentence)
                 pin = " ".join(
-                    p[0] for p in pinyin(sentence, style=Style.TONE3)
+                    lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True)
                 ).lower()
+                pin = pin.strip().replace("v", "u:")
                 jyut = pinyin_jyutping_sentence.jyutping(
                     trad, tone_numbers=True, spaces=True
                 )
