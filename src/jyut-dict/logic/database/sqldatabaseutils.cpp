@@ -209,16 +209,17 @@ bool SQLDatabaseUtils::updateDatabase(void)
 
     if (version != CURRENT_DATABASE_VERSION) {
         emit migratingDatabase();
+        bool success = true;
         switch (version) {
         case -1:
         case 1:
-            migrateDatabaseFromOneToTwo();
+            success = success && migrateDatabaseFromOneToTwo();
         case 2:
-            migrateDatabaseFromTwoToThree();
+            success = success && migrateDatabaseFromTwoToThree();
         default:
             break;
         }
-        emit finishedMigratingDatabase(true);
+        emit finishedMigratingDatabase(success);
     }
 
     return true;
