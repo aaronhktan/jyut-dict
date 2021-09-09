@@ -6,6 +6,7 @@
 #include "components/mainwindow/maintoolbar.h"
 #include "logic/update/githubreleasechecker.h"
 #include "logic/database/sqldatabasemanager.h"
+#include "logic/database/sqldatabaseutils.h"
 #include "logic/database/sqluserdatautils.h"
 #include "logic/database/sqluserhistoryutils.h"
 #include "logic/search/sqlsearch.h"
@@ -83,12 +84,14 @@ private:
     QPointer<HistoryWindow> _historyWindow;
     QPointer<FavouriteSplitter> _favouritesWindow;
 
-    QProgressDialog *_dialog;
+    QProgressDialog *_updateDialog;
+    QProgressDialog *_databaseMigrationDialog;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
     std::shared_ptr<SQLSearch> _sqlSearch;
     std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
     std::shared_ptr<SQLUserHistoryUtils> _sqlHistoryUtils;
+    std::unique_ptr<SQLDatabaseUtils> _utils;
 
     bool _recentlyCheckedForUpdates = false;
 
@@ -137,6 +140,7 @@ public slots:
                                std::string url,
                                std::string description,
                                bool showIfNoUpdate = false);
+    void notifyDatabaseMigration(void);
     void forwardSearchHistoryItem(searchTermHistoryItem &pair);
     void forwardViewHistoryItem(Entry &entry);
 };

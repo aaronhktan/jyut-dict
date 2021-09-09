@@ -86,9 +86,15 @@ bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(void)
         "    chinese_sentences(chinese_sentence_id) "
         "  UNIQUE(fk_definition_id, fk_chinese_sentence_id) ON CONFLICT IGNORE "
         ") ");
+    if (query.lastError().isValid()) {
+        return false;
+    }
 
     // Drop the old definitions_fts table (to be re-created later)
     query.exec("DROP TABLE definitions_fts");
+    if (query.lastError().isValid()) {
+        return false;
+    }
 
     // Delete and recreate the definitions table with new "label" column
     query.exec(
@@ -104,22 +110,43 @@ bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(void)
         "    CASCADE, "
         "  UNIQUE(definition, fk_entry_id, fk_source_id) ON CONFLICT IGNORE "
         ")");
+    if (query.lastError().isValid()) {
+        return false;
+    }
     query.exec("INSERT INTO definitions_new(definition_id, definition, "
                "  fk_entry_id, fk_source_id) "
                "SELECT definition_id, definition, fk_entry_id, fk_source_id "
                "FROM definitions ");
+    if (query.lastError().isValid()) {
+        return false;
+    }
     // This statement also drops the fk_entry_id_index
     query.exec("DROP TABLE definitions");
+    if (query.lastError().isValid()) {
+        return false;
+    }
     query.exec("ALTER TABLE definitions_new RENAME TO definitions");
+    if (query.lastError().isValid()) {
+        return false;
+    }
 
     // Re-populate definitions_fts table, adding new "fk_entry_id" column
     query.exec("CREATE VIRTUAL TABLE definitions_fts using fts5( "
                "  fk_entry_id UNINDEXED, definition "
                ")");
+    if (query.lastError().isValid()) {
+        return false;
+    }
     query.exec("INSERT INTO definitions_fts (rowid, fk_entry_id, definition) "
                "SELECT rowid, fk_entry_id, definition FROM definitions");
+    if (query.lastError().isValid()) {
+        return false;
+    }
     // Re-add index
     query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
+    if (query.lastError().isValid()) {
+        return false;
+    }
 
     // Delete and recreate the sentence links table to add new UNIQUE constraint
     query.exec("CREATE TABLE sentence_links_new( "
@@ -137,15 +164,30 @@ bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(void)
                "    fk_chinese_sentence_id, fk_non_chinese_sentence_id "
                "  ) ON CONFLICT IGNORE "
                ")");
+    if (query.lastError().isValid()) {
+        return false;
+    }
     query.exec("INSERT INTO sentence_links_new(fk_chinese_sentence_id, "
                "  fk_non_chinese_sentence_id, fk_source_id, direct) "
                "SELECT fk_chinese_sentence_id, fk_non_chinese_sentence_id, "
                "  fk_source_id, direct "
                "FROM sentence_links ");
+    if (query.lastError().isValid()) {
+        return false;
+    }
     query.exec("DROP TABLE sentence_links");
+    if (query.lastError().isValid()) {
+        return false;
+    }
     query.exec("ALTER TABLE sentence_links_new RENAME TO sentence_links");
+    if (query.lastError().isValid()) {
+        return false;
+    }
 
     query.exec("COMMIT");
+    if (query.lastError().isValid()) {
+        return false;
+    }
 
     // For some reason, PRAGMA user_version=? doesn't work; so just use a QString
     QString queryString = "PRAGMA user_version=%1";
@@ -166,6 +208,7 @@ bool SQLDatabaseUtils::updateDatabase(void)
     }
 
     if (version != CURRENT_DATABASE_VERSION) {
+        emit migratingDatabase();
         switch (version) {
         case -1:
         case 1:
@@ -175,6 +218,7 @@ bool SQLDatabaseUtils::updateDatabase(void)
         default:
             break;
         }
+        emit finishedMigratingDatabase(true);
     }
 
     return true;

@@ -58,7 +58,12 @@ signals:
     void insertingSource();
     void insertingEntries();
     void insertingDefinitions();
-    void finishedAddition(bool success, QString reason="", QString description="");
+    void finishedAddition(bool success,
+                          QString reason = "",
+                          QString description = "");
+
+    void migratingDatabase();
+    void finishedMigratingDatabase(bool success);
 };
 
 #endif // SQLDATABASEUTILS_H
