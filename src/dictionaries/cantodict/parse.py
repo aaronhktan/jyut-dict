@@ -193,6 +193,8 @@ def parse_word_file(file_name, words):
 
         pin_element = soup.find("span", class_="cardpinyin")
         pin = pin_element.get_text() if pin_element else ""
+        # CantoDict also indicates tone sandhi in pinyin with *, but we don't support that either
+        pin = re.sub(r"\d\*", "", pin)
         if not pin:
             pin = " ".join(
                 lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True)
