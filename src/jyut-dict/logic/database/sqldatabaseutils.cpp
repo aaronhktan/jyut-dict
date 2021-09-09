@@ -227,8 +227,8 @@ bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void)
 
     query.exec("INSERT INTO entries_fts (rowid, pinyin, jyutping) "
                "SELECT rowid, pinyin, jyutping FROM entries");
-    query.exec("INSERT INTO definitions_fts (rowid, definition) "
-               "SELECT rowid, definition FROM definitions");
+    query.exec("INSERT INTO definitions_fts (rowid, fk_entry_id, definition) "
+               "SELECT rowid, fk_entry_id, definition FROM definitions");
     query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
 
     return true;
@@ -446,8 +446,8 @@ bool SQLDatabaseUtils::addDefinitionSource(void)
 
     query.exec("INSERT INTO entries_fts (rowid, pinyin, jyutping) "
                "SELECT rowid, pinyin, jyutping FROM entries");
-    query.exec("INSERT INTO definitions_fts (rowid, definition) "
-               "SELECT rowid, definition FROM definitions");
+    query.exec("INSERT INTO definitions_fts (rowid, fk_entry_id, definition) "
+               "SELECT rowid, fk_entry_id, definition FROM definitions");
     query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
 
     return true;
