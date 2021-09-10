@@ -115,21 +115,22 @@ if __name__ == "__main__":
 
     # Insert definitions => sentence links
 
-    # entry_and_definitions: [traditional | simplified | pinyin | jyutping | definition]
+    # entry_and_definitions: [traditional | simplified | pinyin | jyutping | definition | source]
     # for each definition in db2, since this uniquely identifies the definition
 
-    # Match that up with sentences, so that we get dfs_s_links_tmp: [traditional | simplified | pinyin | jyutping | definition | sentence]
+    # Match that up with sentences, so that we get dfs_s_links_tmp: [traditional | simplified | pinyin | jyutping | definition_id | sentence_id | source]
     # for each sentence in db2, since this uniquely identifies the sentence
 
-    # In current database, get new_entry_and_defnitions: [traditional | simplified | pinyin | jyutping | definition]
+    # In current database, get new_entry_and_defnitions: [traditional | simplified | pinyin | jyutping | definition | source]
 
-    # And replace the fk_definition_id for each sentence link when traditional/simplified/pinyin/jyutping/definition all match for a sentence.
+    # And replace the fk_definition_id for each sentence link when traditional/simplified/pinyin/jyutping/definition/source all match for a sentence.
     c.execute(
         """WITH entry_and_definitions AS (
                     SELECT entries.traditional AS traditional, entries.simplified AS simplified, entries.pinyin AS pinyin, entries.jyutping AS jyutping,
-                        definitions.definition AS definition, definitions.definition_id AS definition_id
-                    FROM db2.entries, db2.definitions
+                        definitions.definition AS definition, definitions.definition_id AS definition_id, sources.sourcename AS source
+                    FROM db2.entries, db2.definitions, db2.sources
                     WHERE db2.definitions.fk_entry_id = db2.entries.entry_id
+                    AND db2.definitions.fk_source_id = db2.sources.source_id
             ),
 
             defs_s_links_tmp AS (
@@ -139,16 +140,18 @@ if __name__ == "__main__":
                         ed.traditional AS traditional,
                         ed.simplified AS simplified,
                         ed.pinyin AS pinyin,
-                        ed.jyutping AS jyutping
+                        ed.jyutping AS jyutping,
+                        ed.source AS source
                     FROM db2.definitions_chinese_sentences_links AS dsl, entry_and_definitions AS ed
                     WHERE dsl.fk_definition_id = ed.definition_id
             ),
 
             new_entry_and_definitions AS (
                     SELECT entries.traditional AS traditional, entries.simplified AS simplified, entries.pinyin AS pinyin, entries.jyutping AS jyutping,
-                        definitions.definition AS definition, definitions.definition_id AS definition_id
-                    FROM entries, definitions
+                        definitions.definition AS definition, definitions.definition_id AS definition_id, sources.sourcename AS source
+                    FROM entries, definitions, sources
                     WHERE definitions.fk_entry_id = entries.entry_id
+                    AND definitions.fk_source_id = sources.source_id
             )
 
             INSERT INTO definitions_chinese_sentences_links(fk_definition_id, fk_chinese_sentence_id)
@@ -160,6 +163,7 @@ if __name__ == "__main__":
                         AND dsl.simplified = ned.simplified
                         AND dsl.pinyin = ned.pinyin
                         AND dsl.jyutping = ned.jyutping
+                        AND dsl.source = ned.source
         """
     )
 
