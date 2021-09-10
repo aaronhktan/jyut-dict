@@ -63,7 +63,7 @@ bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(void)
     return true;
 }
 
-// Database differences from version 1 to version 2:
+// Database differences from version 2 to version 3:
 // - Added definitions_chinese_sentence_links to support linking between
 //   definitions and example sentences
 // - Added label to definitions table, to display parts of speech or other label
