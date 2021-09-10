@@ -151,9 +151,12 @@ MainWindow::MainWindow(QWidget *parent) :
         });
     }
 
-    // Perform database migration if needed
-    QtConcurrent::run(_utils.get(),
-                      &SQLDatabaseUtils::updateDatabase);
+    // Perform database migration if needed, but delay for a bit so that
+    // the notify dialog has time to show itself
+    QTimer::singleShot(500, this, [&]() {
+        QtConcurrent::run(_utils.get(),
+                          &SQLDatabaseUtils::updateDatabase);
+    });
 }
 
 MainWindow::~MainWindow()
@@ -849,10 +852,10 @@ void MainWindow::checkForUpdate(bool showProgress)
         _updateDialog->setWindowFlags(flags);
         _updateDialog->setMinimumDuration(0);
 #ifdef Q_OS_WIN
-        _dialog->setWindowTitle(
+        _updateDialog->setWindowTitle(
             QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
 #elif defined(Q_OS_LINUX)
-        _dialog->setWindowTitle(" ");
+        _updateDialog->setWindowTitle(" ");
 #endif
         _updateDialog->setAttribute(Qt::WA_DeleteOnClose, true);
 
