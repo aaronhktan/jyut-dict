@@ -322,173 +322,190 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="223"/>
-        <location filename="../../windows/mainwindow.cpp" line="384"/>
+        <location filename="../../windows/mainwindow.cpp" line="245"/>
+        <location filename="../../windows/mainwindow.cpp" line="406"/>
         <source>&amp;File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="224"/>
-        <location filename="../../windows/mainwindow.cpp" line="385"/>
+        <location filename="../../windows/mainwindow.cpp" line="246"/>
+        <location filename="../../windows/mainwindow.cpp" line="407"/>
         <source>&amp;Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="225"/>
-        <location filename="../../windows/mainwindow.cpp" line="387"/>
+        <location filename="../../windows/mainwindow.cpp" line="247"/>
+        <location filename="../../windows/mainwindow.cpp" line="409"/>
         <source>&amp;Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="227"/>
-        <location filename="../../windows/mainwindow.cpp" line="388"/>
+        <location filename="../../windows/mainwindow.cpp" line="249"/>
+        <location filename="../../windows/mainwindow.cpp" line="410"/>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="229"/>
+        <location filename="../../windows/mainwindow.cpp" line="251"/>
         <source>&amp;About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="230"/>
+        <location filename="../../windows/mainwindow.cpp" line="252"/>
         <source>Show the application&apos;s About box</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="233"/>
+        <location filename="../../windows/mainwindow.cpp" line="255"/>
         <source>Preferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="235"/>
+        <location filename="../../windows/mainwindow.cpp" line="257"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="237"/>
-        <location filename="../../windows/mainwindow.cpp" line="408"/>
+        <location filename="../../windows/mainwindow.cpp" line="259"/>
+        <location filename="../../windows/mainwindow.cpp" line="430"/>
         <source>Change settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="239"/>
+        <location filename="../../windows/mainwindow.cpp" line="261"/>
         <source>Close Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="241"/>
+        <location filename="../../windows/mainwindow.cpp" line="263"/>
         <source>Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="242"/>
+        <location filename="../../windows/mainwindow.cpp" line="264"/>
         <source>Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="243"/>
+        <location filename="../../windows/mainwindow.cpp" line="265"/>
         <source>Cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="244"/>
+        <location filename="../../windows/mainwindow.cpp" line="266"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="245"/>
+        <location filename="../../windows/mainwindow.cpp" line="267"/>
         <source>Paste</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="247"/>
+        <location filename="../../windows/mainwindow.cpp" line="269"/>
         <source>Start a New Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="248"/>
+        <location filename="../../windows/mainwindow.cpp" line="270"/>
         <source>Select Search Bar Contents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="250"/>
+        <location filename="../../windows/mainwindow.cpp" line="272"/>
         <source>Jump to First Item in Search Results</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="252"/>
+        <location filename="../../windows/mainwindow.cpp" line="274"/>
         <source>Open Selected Entry in New Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="255"/>
+        <location filename="../../windows/mainwindow.cpp" line="277"/>
         <source>Search Jyutping</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="256"/>
+        <location filename="../../windows/mainwindow.cpp" line="278"/>
         <source>Search Pinyin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="257"/>
+        <location filename="../../windows/mainwindow.cpp" line="279"/>
         <source>Search English</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="259"/>
+        <location filename="../../windows/mainwindow.cpp" line="281"/>
         <source>View Search History</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="260"/>
+        <location filename="../../windows/mainwindow.cpp" line="282"/>
         <source>Open List of Saved Words</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="261"/>
+        <location filename="../../windows/mainwindow.cpp" line="283"/>
         <source>Minimize</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="262"/>
+        <location filename="../../windows/mainwindow.cpp" line="284"/>
         <source>Zoom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="263"/>
+        <location filename="../../windows/mainwindow.cpp" line="285"/>
         <source>Bring All to Front</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="265"/>
+        <location filename="../../windows/mainwindow.cpp" line="287"/>
         <source>%1 Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="267"/>
+        <location filename="../../windows/mainwindow.cpp" line="289"/>
         <source>Check for Updates...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="226"/>
-        <location filename="../../windows/mainwindow.cpp" line="386"/>
+        <location filename="../../windows/mainwindow.cpp" line="910"/>
+        <source>Migrating database to new version...
+This might take a few minutes.
+Hang tight!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="248"/>
+        <location filename="../../windows/mainwindow.cpp" line="408"/>
         <source>&amp;Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="253"/>
+        <location filename="../../windows/mainwindow.cpp" line="84"/>
+        <source>Database migration finished!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="85"/>
+        <source>Database migration failed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="275"/>
         <source>Search Simplified Chinese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="254"/>
+        <location filename="../../windows/mainwindow.cpp" line="276"/>
         <source>Search Traditional Chinese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="840"/>
+        <location filename="../../windows/mainwindow.cpp" line="862"/>
         <source>Checking for update...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -568,37 +585,37 @@
 <context>
     <name>SQLDatabaseUtils</name>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="318"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="452"/>
         <source>Failed to remove definitions...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="324"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="458"/>
         <source>Failed to remove sentences...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="558"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="692"/>
         <source>Database versions do not match. Only dictionaries with the same versions can be added.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="561"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="695"/>
         <source>Current version is %1, file version is %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="605"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="739"/>
         <source>Unable to add definitions...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="611"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="745"/>
         <source>Unable to add sentences...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="364"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="498"/>
         <source>Could not insert source. Could it be a duplicate of a dictionary you already installed?</source>
         <translation type="unfinished"></translation>
     </message>

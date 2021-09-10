@@ -29,10 +29,6 @@
         <translation>Vérifier automatiquement les mises à jour :</translation>
     </message>
     <message>
-        <source>Enable analytics:</source>
-        <translation>Activer la télémétrie :</translation>
-    </message>
-    <message>
         <location filename="../../components/settings/advancedtab.cpp" line="126"/>
         <source>Enable dark mode:</source>
         <translation>Activer le mode sombre&#xa0;:</translation>
@@ -219,10 +215,6 @@
         <source>Failed!</source>
         <translation>Erreur !</translation>
     </message>
-    <message>
-        <source>Failed to add source!</source>
-        <translation>Impossible d&apos;ajouter la source !</translation>
-    </message>
 </context>
 <context>
     <name>DictionaryTabFailureDialog</name>
@@ -359,206 +351,193 @@
     </message>
 </context>
 <context>
-    <name>MainSplitter</name>
-    <message>
-        <source>Welcome!</source>
-        <translation>Bienvenue !</translation>
-    </message>
-</context>
-<context>
     <name>MainWindow</name>
     <message>
-        <source>No update found!</source>
-        <translation>Aucune mise à jour trouvée !</translation>
+        <location filename="../../windows/mainwindow.cpp" line="84"/>
+        <source>Database migration finished!</source>
+        <translation>Réussite de la migration de la base de données !</translation>
     </message>
     <message>
-        <source>You are on the newest version, %1.</source>
-        <translation>Vous avez déjà la version actuelle, %1.</translation>
+        <location filename="../../windows/mainwindow.cpp" line="85"/>
+        <source>Database migration failed!</source>
+        <translation>Échec de la migration de la base de données !</translation>
     </message>
     <message>
-        <source>No update available!</source>
-        <translation>Aucune mise à jour disponible !</translation>
-    </message>
-    <message>
-        <location filename="../../windows/mainwindow.cpp" line="223"/>
-        <location filename="../../windows/mainwindow.cpp" line="384"/>
+        <location filename="../../windows/mainwindow.cpp" line="245"/>
+        <location filename="../../windows/mainwindow.cpp" line="406"/>
         <source>&amp;File</source>
         <translation>&amp;Fichier</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="224"/>
-        <location filename="../../windows/mainwindow.cpp" line="385"/>
+        <location filename="../../windows/mainwindow.cpp" line="246"/>
+        <location filename="../../windows/mainwindow.cpp" line="407"/>
         <source>&amp;Edit</source>
         <translation>&amp;Édition</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="225"/>
-        <location filename="../../windows/mainwindow.cpp" line="387"/>
+        <location filename="../../windows/mainwindow.cpp" line="247"/>
+        <location filename="../../windows/mainwindow.cpp" line="409"/>
         <source>&amp;Window</source>
         <translation>&amp;Fenêtre</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="227"/>
-        <location filename="../../windows/mainwindow.cpp" line="388"/>
+        <location filename="../../windows/mainwindow.cpp" line="249"/>
+        <location filename="../../windows/mainwindow.cpp" line="410"/>
         <source>&amp;Help</source>
         <translation>&amp;Aide</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="229"/>
+        <location filename="../../windows/mainwindow.cpp" line="251"/>
         <source>&amp;About</source>
         <translation>&amp;À propos</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="230"/>
+        <location filename="../../windows/mainwindow.cpp" line="252"/>
         <source>Show the application&apos;s About box</source>
         <translation>Afficher la fenêtre «&#xa0;À propos&#xa0;»</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="233"/>
+        <location filename="../../windows/mainwindow.cpp" line="255"/>
         <source>Preferences</source>
         <translation>Préférences</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="235"/>
+        <location filename="../../windows/mainwindow.cpp" line="257"/>
         <source>Settings</source>
         <translation>Réglages</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="237"/>
-        <location filename="../../windows/mainwindow.cpp" line="408"/>
+        <location filename="../../windows/mainwindow.cpp" line="259"/>
+        <location filename="../../windows/mainwindow.cpp" line="430"/>
         <source>Change settings</source>
         <translation>Changer ses préférences</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="239"/>
+        <location filename="../../windows/mainwindow.cpp" line="261"/>
         <source>Close Window</source>
         <translation>Fermer</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="241"/>
+        <location filename="../../windows/mainwindow.cpp" line="263"/>
         <source>Undo</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="242"/>
+        <location filename="../../windows/mainwindow.cpp" line="264"/>
         <source>Redo</source>
         <translation>Rétablir</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="243"/>
+        <location filename="../../windows/mainwindow.cpp" line="265"/>
         <source>Cut</source>
         <translation>Couper</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="244"/>
+        <location filename="../../windows/mainwindow.cpp" line="266"/>
         <source>Copy</source>
         <translation>Copier</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="245"/>
+        <location filename="../../windows/mainwindow.cpp" line="267"/>
         <source>Paste</source>
         <translation>Coller</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="247"/>
+        <location filename="../../windows/mainwindow.cpp" line="269"/>
         <source>Start a New Search</source>
         <translation>Rechercher...</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="248"/>
+        <location filename="../../windows/mainwindow.cpp" line="270"/>
         <source>Select Search Bar Contents</source>
         <translation>Tout sélectionner dans la barre de recherche</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="250"/>
+        <location filename="../../windows/mainwindow.cpp" line="272"/>
         <source>Jump to First Item in Search Results</source>
         <translation>Aller au premier résultat de la recherche</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="252"/>
+        <location filename="../../windows/mainwindow.cpp" line="274"/>
         <source>Open Selected Entry in New Window</source>
         <translation>Ouvrir la sélection actuelle dans une nouvelle fenêtre</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="253"/>
+        <location filename="../../windows/mainwindow.cpp" line="275"/>
         <source>Search Simplified Chinese</source>
         <translation>Rechercher avec le chinois simplifié</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="254"/>
+        <location filename="../../windows/mainwindow.cpp" line="276"/>
         <source>Search Traditional Chinese</source>
         <translation>Rechercher avec le chinois traditionnel</translation>
     </message>
     <message>
-        <source>Search Simplified</source>
-        <translation>Rechercher avec le chinois simplifié</translation>
+        <location filename="../../windows/mainwindow.cpp" line="910"/>
+        <source>Migrating database to new version...
+This might take a few minutes.
+Hang tight!</source>
+        <translation>Début de la migration de la base de données...
+Veuillez patienter quelques minutes.</translation>
     </message>
     <message>
-        <source>Search Traditional</source>
-        <translation>Rechercher avec le chinois simplifié</translation>
-    </message>
-    <message>
-        <location filename="../../windows/mainwindow.cpp" line="255"/>
+        <location filename="../../windows/mainwindow.cpp" line="277"/>
         <source>Search Jyutping</source>
         <translation>Rechercher avec jyutping</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="256"/>
+        <location filename="../../windows/mainwindow.cpp" line="278"/>
         <source>Search Pinyin</source>
         <translation>Rechercher avec pinyin</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="257"/>
+        <location filename="../../windows/mainwindow.cpp" line="279"/>
         <source>Search English</source>
         <translation>Rechercher en français</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="259"/>
+        <location filename="../../windows/mainwindow.cpp" line="281"/>
         <source>View Search History</source>
         <translation>Historique de recherche</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="260"/>
+        <location filename="../../windows/mainwindow.cpp" line="282"/>
         <source>Open List of Saved Words</source>
         <translation>Ouvrir la liste de mots enregistrés</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="261"/>
+        <location filename="../../windows/mainwindow.cpp" line="283"/>
         <source>Minimize</source>
         <translation>Réduire</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="262"/>
+        <location filename="../../windows/mainwindow.cpp" line="284"/>
         <source>Zoom</source>
         <translation>Agrandir</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="263"/>
+        <location filename="../../windows/mainwindow.cpp" line="285"/>
         <source>Bring All to Front</source>
         <translation>Tout ramener au premier plan</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="265"/>
+        <location filename="../../windows/mainwindow.cpp" line="287"/>
         <source>%1 Help</source>
         <translation>Aide %1</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="267"/>
+        <location filename="../../windows/mainwindow.cpp" line="289"/>
         <source>Check for Updates...</source>
         <translation>Rechercher des mises à jour</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="226"/>
-        <location filename="../../windows/mainwindow.cpp" line="386"/>
+        <location filename="../../windows/mainwindow.cpp" line="248"/>
+        <location filename="../../windows/mainwindow.cpp" line="408"/>
         <source>&amp;Search</source>
         <translation>Recherche</translation>
     </message>
     <message>
-        <source>Check for updates...</source>
-        <translation>Rechercher des mises à jour</translation>
-    </message>
-    <message>
-        <location filename="../../windows/mainwindow.cpp" line="840"/>
+        <location filename="../../windows/mainwindow.cpp" line="862"/>
         <source>Checking for update...</source>
         <translation>Recherche de mises à jour...</translation>
     </message>
@@ -636,13 +615,6 @@
     </message>
 </context>
 <context>
-    <name>ResultListDelegate</name>
-    <message>
-        <source>Welcome!</source>
-        <translation>Bienvenue !</translation>
-    </message>
-</context>
-<context>
     <name>ResultListModel</name>
     <message>
         <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="85"/>
@@ -691,37 +663,37 @@
 <context>
     <name>SQLDatabaseUtils</name>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="318"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="452"/>
         <source>Failed to remove definitions...</source>
         <translation>Échec de la suppression des définitions</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="324"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="458"/>
         <source>Failed to remove sentences...</source>
         <translation>Échec de la suppression des phrases</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="558"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="692"/>
         <source>Database versions do not match. Only dictionaries with the same versions can be added.</source>
         <translation>Les versions des bases de données ne correspondent pas. Seuls les dictionnaires ayant la même version peuvent être ajoutés.</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="561"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="695"/>
         <source>Current version is %1, file version is %2.</source>
         <translation>La version actuelle est %1, la version du fichier est %2.</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="605"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="739"/>
         <source>Unable to add definitions...</source>
         <translation>Échec de l&apos;ajout de définitions</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="611"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="745"/>
         <source>Unable to add sentences...</source>
         <translation>Échec de l&apos;ajout de phrases</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="364"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="498"/>
         <source>Could not insert source. Could it be a duplicate of a dictionary you already installed?</source>
         <translation>Erreur lors de l&apos;ajout de la nouvelle source. Est-elle un double d&apos;une source existante ?</translation>
     </message>
@@ -942,14 +914,6 @@
         <location filename="../../components/settings/settingstab.cpp" line="188"/>
         <source>Neutral</source>
         <translation>Ton neutre</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to reset all settings?</source>
-        <translation>Êtes-vous sûr de vouloir réinitialiser vos paramètres ?</translation>
-    </message>
-    <message>
-        <source>There is no way to restore them!</source>
-        <translation>Il n&apos;y a aucune manière de les récupérer après la suppression !</translation>
     </message>
 </context>
 <context>

@@ -29,10 +29,6 @@
         <translation>自动检查更新：</translation>
     </message>
     <message>
-        <source>Enable analytics:</source>
-        <translation>启用遥测：</translation>
-    </message>
-    <message>
         <location line="+3"/>
         <source>Enable dark mode:</source>
         <translation>使用深色模式：</translation>
@@ -219,10 +215,6 @@
         <source>Failed!</source>
         <translation>失败！</translation>
     </message>
-    <message>
-        <source>Failed to add source!</source>
-        <translation>添加字典失败！</translation>
-    </message>
 </context>
 <context>
     <name>DictionaryTabFailureDialog</name>
@@ -359,28 +351,19 @@
     </message>
 </context>
 <context>
-    <name>MainSplitter</name>
-    <message>
-        <source>Welcome!</source>
-        <translation>欢迎使用粤语字典！</translation>
-    </message>
-</context>
-<context>
     <name>MainWindow</name>
     <message>
-        <source>No update found!</source>
-        <translation>冇揾到可用嘅更新!</translation>
+        <location filename="../../windows/mainwindow.cpp" line="+84"/>
+        <source>Database migration finished!</source>
+        <translation>数据库迁移成功！</translation>
     </message>
     <message>
-        <source>You are on the newest version, %1.</source>
-        <translation>你已经使用最新嘅版本，%1.</translation>
+        <location line="+1"/>
+        <source>Database migration failed!</source>
+        <translation>数据库迁移失败！</translation>
     </message>
     <message>
-        <source>No update available!</source>
-        <translation>冇可用的更新!</translation>
-    </message>
-    <message>
-        <location filename="../../windows/mainwindow.cpp" line="+223"/>
+        <location line="+160"/>
         <location line="+161"/>
         <source>&amp;File</source>
         <translation>文件</translation>
@@ -490,15 +473,14 @@
         <translation>用繁体中文揾</translation>
     </message>
     <message>
-        <source>Search Simplified</source>
-        <translation>用简体中文揾</translation>
+        <location line="+634"/>
+        <source>Migrating database to new version...
+This might take a few minutes.
+Hang tight!</source>
+        <translation>数据库迁移已启动，请稍等一阵</translation>
     </message>
     <message>
-        <source>Search Traditional</source>
-        <translation>用繁体中文揾</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="-633"/>
         <source>Search Jyutping</source>
         <translation>用粤语拼音揾</translation>
     </message>
@@ -552,10 +534,6 @@
         <location line="+160"/>
         <source>&amp;Search</source>
         <translation>搜索</translation>
-    </message>
-    <message>
-        <source>Check for updates...</source>
-        <translation>检查更新…</translation>
     </message>
     <message>
         <location line="+454"/>
@@ -640,13 +618,6 @@
     </message>
 </context>
 <context>
-    <name>ResultListDelegate</name>
-    <message>
-        <source>Welcome!</source>
-        <translation>欢迎使用粤语字典！</translation>
-    </message>
-</context>
-<context>
     <name>ResultListModel</name>
     <message>
         <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="+85"/>
@@ -695,7 +666,7 @@
 <context>
     <name>SQLDatabaseUtils</name>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="+318"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="+452"/>
         <source>Failed to remove definitions...</source>
         <translation>移除解释失败</translation>
     </message>
@@ -946,14 +917,6 @@
         <location line="-4"/>
         <source>Neutral</source>
         <translation>轻声</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to reset all settings?</source>
-        <translation>你确定要重置全部设置吗？</translation>
-    </message>
-    <message>
-        <source>There is no way to restore them!</source>
-        <translation>重置之后，无法恢复你嘅设置！</translation>
     </message>
 </context>
 <context>
