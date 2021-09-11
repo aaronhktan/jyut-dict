@@ -24,35 +24,170 @@ bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(void)
 
     query.exec(
         "CREATE TABLE IF NOT EXISTS chinese_sentences( "
-        "chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
-        "traditional TEXT, "
-        "simplified TEXT, "
-        "pinyin TEXT, "
-        "jyutping TEXT, "
-        "language TEXT, "
-        "UNIQUE(traditional, simplified, pinyin, jyutping) ON CONFLICT IGNORE)");
+        "  chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
+        "  traditional TEXT, "
+        "  simplified TEXT, "
+        "  pinyin TEXT, "
+        "  jyutping TEXT, "
+        "  language TEXT, "
+        "  UNIQUE(traditional, simplified, pinyin, jyutping) ON CONFLICT IGNORE"
+        ")");
 
     query.exec(
         "CREATE TABLE IF NOT EXISTS nonchinese_sentences( "
-        "non_chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
-        "sentence TEXT, "
-        "language TEXT, "
-        "UNIQUE(non_chinese_sentence_id, sentence) ON CONFLICT IGNORE)");
+        "  non_chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
+        "  sentence TEXT, "
+        "  language TEXT, "
+        "  UNIQUE(non_chinese_sentence_id, sentence) ON CONFLICT IGNORE"
+        ")");
 
     query.exec("CREATE TABLE IF NOT EXISTS sentence_links( "
-               "fk_chinese_sentence_id INTEGER, "
-               "fk_non_chinese_sentence_id INTEGER, "
-               "fk_source_id INTEGER, "
-               "direct BOOLEAN, "
-               "FOREIGN KEY(fk_chinese_sentence_id) REFERENCES "
+               "  fk_chinese_sentence_id INTEGER, "
+               "  fk_non_chinese_sentence_id INTEGER, "
+               "  fk_source_id INTEGER, "
+               "  direct BOOLEAN, "
+               "  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES "
                "    chinese_sentences(chinese_sentence_id), "
-               "FOREIGN KEY(fk_non_chinese_sentence_id) REFERENCES "
+               "  FOREIGN KEY(fk_non_chinese_sentence_id) REFERENCES "
                "    nonchinese_sentences(non_chinese_sentence_id), "
-               "FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON "
+               "  FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON "
                "    DELETE CASCADE "
                ")");
 
     query.exec("COMMIT");
+
+    // For some reason, PRAGMA user_version=? doesn't work; so just use a QString
+    QString queryString = "PRAGMA user_version=%1";
+    query.prepare(queryString.arg(2));
+    query.exec();
+    return true;
+}
+
+// Database differences from version 2 to version 3:
+// - Added definitions_chinese_sentence_links to support linking between
+//   definitions and example sentences
+// - Added label to definitions table, to display parts of speech or other label
+// - Added fk_entry_id to definitions_fts for faster lookup
+// - Added unique constraint on sentence links
+bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(void)
+{
+    QSqlQuery query{_manager->getDatabase()};
+
+    query.exec("BEGIN TRANSACTION");
+
+    // Add new definitions->chinese_sentence link table
+    query.exec(
+        "CREATE TABLE definitions_chinese_sentences_links( "
+        "  fk_definition_id INTEGER, "
+        "  fk_chinese_sentence_id INTEGER, "
+        "  FOREIGN KEY(fk_definition_id) REFERENCES definitions(definition_id) "
+        "    ON DELETE CASCADE, "
+        "  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES "
+        "    chinese_sentences(chinese_sentence_id) "
+        "  UNIQUE(fk_definition_id, fk_chinese_sentence_id) ON CONFLICT IGNORE "
+        ") ");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
+    // Drop the old definitions_fts table (to be re-created later)
+    query.exec("DROP TABLE definitions_fts");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
+    // Delete and recreate the definitions table with new "label" column
+    query.exec(
+        "CREATE TABLE definitions_new( "
+        "  definition_id INTEGER PRIMARY KEY, "
+        "  definition TEXT, "
+        "  label TEXT, "
+        "  fk_entry_id INTEGER, "
+        "  fk_source_id INTEGER, "
+        "  FOREIGN KEY(fk_entry_id) REFERENCES entries(entry_id) ON UPDATE "
+        "    CASCADE, "
+        "  FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON DELETE "
+        "    CASCADE, "
+        "  UNIQUE(definition, fk_entry_id, fk_source_id) ON CONFLICT IGNORE "
+        ")");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("INSERT INTO definitions_new(definition_id, definition, "
+               "  fk_entry_id, fk_source_id) "
+               "SELECT definition_id, definition, fk_entry_id, fk_source_id "
+               "FROM definitions ");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    // This statement also drops the fk_entry_id_index
+    query.exec("DROP TABLE definitions");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("ALTER TABLE definitions_new RENAME TO definitions");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
+    // Re-populate definitions_fts table, adding new "fk_entry_id" column
+    query.exec("CREATE VIRTUAL TABLE definitions_fts using fts5( "
+               "  fk_entry_id UNINDEXED, definition "
+               ")");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("INSERT INTO definitions_fts (rowid, fk_entry_id, definition) "
+               "SELECT rowid, fk_entry_id, definition FROM definitions");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    // Re-add index
+    query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
+    // Delete and recreate the sentence links table to add new UNIQUE constraint
+    query.exec("CREATE TABLE sentence_links_new( "
+               "  fk_chinese_sentence_id INTEGER, "
+               "  fk_non_chinese_sentence_id INTEGER, "
+               "  fk_source_id INTEGER, "
+               "  direct BOOLEAN, "
+               "  FOREIGN KEY(fk_chinese_sentence_id) "
+               "    REFERENCES chinese_sentences(chinese_sentence_id), "
+               "  FOREIGN KEY(fk_non_chinese_sentence_id) "
+               "    REFERENCES nonchinese_sentences(non_chinese_sentence_id), "
+               "  FOREIGN KEY(fk_source_id) "
+               "    REFERENCES sources(source_id) ON DELETE CASCADE "
+               "  UNIQUE( "
+               "    fk_chinese_sentence_id, fk_non_chinese_sentence_id "
+               "  ) ON CONFLICT IGNORE "
+               ")");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("INSERT INTO sentence_links_new(fk_chinese_sentence_id, "
+               "  fk_non_chinese_sentence_id, fk_source_id, direct) "
+               "SELECT fk_chinese_sentence_id, fk_non_chinese_sentence_id, "
+               "  fk_source_id, direct "
+               "FROM sentence_links ");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("DROP TABLE sentence_links");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("ALTER TABLE sentence_links_new RENAME TO sentence_links");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
+    query.exec("COMMIT");
+    if (query.lastError().isValid()) {
+        return false;
+    }
 
     // For some reason, PRAGMA user_version=? doesn't work; so just use a QString
     QString queryString = "PRAGMA user_version=%1";
@@ -73,13 +208,18 @@ bool SQLDatabaseUtils::updateDatabase(void)
     }
 
     if (version != CURRENT_DATABASE_VERSION) {
+        emit migratingDatabase();
+        bool success = true;
         switch (version) {
         case -1:
         case 1:
-            migrateDatabaseFromOneToTwo();
+            success = success && migrateDatabaseFromOneToTwo();
+        case 2:
+            success = success && migrateDatabaseFromTwoToThree();
         default:
             break;
         }
+        emit finishedMigratingDatabase(success);
     }
 
     return true;

@@ -29,10 +29,6 @@
         <translation>自動檢查更新：</translation>
     </message>
     <message>
-        <source>Enable analytics:</source>
-        <translation>啟用 Telemetry：</translation>
-    </message>
-    <message>
         <location filename="../../components/settings/advancedtab.cpp" line="126"/>
         <source>Enable dark mode:</source>
         <translation>使用「深色模式」：</translation>
@@ -219,10 +215,6 @@
         <source>Failed!</source>
         <translation>失敗！</translation>
     </message>
-    <message>
-        <source>Failed to add source!</source>
-        <translation>添加字典失敗！</translation>
-    </message>
 </context>
 <context>
     <name>DictionaryTabFailureDialog</name>
@@ -289,14 +281,6 @@
         <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="87"/>
         <source>View all sentences →</source>
         <translation>檢視所有例句 →</translation>
-    </message>
-    <message>
-        <source>Sentences for %1 (%2 result)</source>
-        <translation>《%1》例句：（%2 條結果）</translation>
-    </message>
-    <message>
-        <source>Sentences for %1 (%2 results)</source>
-        <translation>《%1》例句：（%2 條結果）</translation>
     </message>
 </context>
 <context>
@@ -367,206 +351,192 @@
     </message>
 </context>
 <context>
-    <name>MainSplitter</name>
-    <message>
-        <source>Welcome!</source>
-        <translation>歡迎使用粵語字典！</translation>
-    </message>
-</context>
-<context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="223"/>
-        <location filename="../../windows/mainwindow.cpp" line="384"/>
+        <location filename="../../windows/mainwindow.cpp" line="245"/>
+        <location filename="../../windows/mainwindow.cpp" line="406"/>
         <source>&amp;File</source>
         <translation>檔案</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="224"/>
-        <location filename="../../windows/mainwindow.cpp" line="385"/>
+        <location filename="../../windows/mainwindow.cpp" line="246"/>
+        <location filename="../../windows/mainwindow.cpp" line="407"/>
         <source>&amp;Edit</source>
         <translation>編輯</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="225"/>
-        <location filename="../../windows/mainwindow.cpp" line="387"/>
+        <location filename="../../windows/mainwindow.cpp" line="247"/>
+        <location filename="../../windows/mainwindow.cpp" line="409"/>
         <source>&amp;Window</source>
         <translation>視窗</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="227"/>
-        <location filename="../../windows/mainwindow.cpp" line="388"/>
+        <location filename="../../windows/mainwindow.cpp" line="249"/>
+        <location filename="../../windows/mainwindow.cpp" line="410"/>
         <source>&amp;Help</source>
         <translation>輔助說明</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="229"/>
+        <location filename="../../windows/mainwindow.cpp" line="251"/>
         <source>&amp;About</source>
         <translation>關於粵語字典</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="253"/>
+        <location filename="../../windows/mainwindow.cpp" line="275"/>
         <source>Search Simplified Chinese</source>
         <translation>搜尋簡體中文</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="254"/>
+        <location filename="../../windows/mainwindow.cpp" line="276"/>
         <source>Search Traditional Chinese</source>
         <translation>搜尋正體中文</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="259"/>
+        <location filename="../../windows/mainwindow.cpp" line="281"/>
         <source>View Search History</source>
         <translation>開啟搜尋紀錄</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="260"/>
+        <location filename="../../windows/mainwindow.cpp" line="282"/>
         <source>Open List of Saved Words</source>
         <translation>顯示所有已儲存詞語</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="267"/>
+        <location filename="../../windows/mainwindow.cpp" line="289"/>
         <source>Check for Updates...</source>
         <translation>檢查更新…</translation>
     </message>
     <message>
-        <source>No update found!</source>
-        <translation>沒有找到可用的更新!</translation>
+        <location filename="../../windows/mainwindow.cpp" line="84"/>
+        <source>Database migration finished!</source>
+        <translation>資料庫移轉成功！</translation>
     </message>
     <message>
-        <source>You are on the newest version, %1.</source>
-        <translation>您已經使用最新的版本，%1.</translation>
+        <location filename="../../windows/mainwindow.cpp" line="85"/>
+        <source>Database migration failed!</source>
+        <translation>資料庫移轉失敗！</translation>
     </message>
     <message>
-        <source>No update available!</source>
-        <translation>沒有可用的更新!</translation>
-    </message>
-    <message>
-        <location filename="../../windows/mainwindow.cpp" line="230"/>
+        <location filename="../../windows/mainwindow.cpp" line="252"/>
         <source>Show the application&apos;s About box</source>
         <translation>打開“關於粵語字典”的視窗</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="233"/>
+        <location filename="../../windows/mainwindow.cpp" line="255"/>
         <source>Preferences</source>
         <translation>偏好設定…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="235"/>
+        <location filename="../../windows/mainwindow.cpp" line="257"/>
         <source>Settings</source>
         <translation>偏好設定…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="237"/>
-        <location filename="../../windows/mainwindow.cpp" line="408"/>
+        <location filename="../../windows/mainwindow.cpp" line="259"/>
+        <location filename="../../windows/mainwindow.cpp" line="430"/>
         <source>Change settings</source>
         <translation>更改設定</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="239"/>
+        <location filename="../../windows/mainwindow.cpp" line="261"/>
         <source>Close Window</source>
         <translation>關閉視窗</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="241"/>
+        <location filename="../../windows/mainwindow.cpp" line="263"/>
         <source>Undo</source>
         <translation>還原</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="242"/>
+        <location filename="../../windows/mainwindow.cpp" line="264"/>
         <source>Redo</source>
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="243"/>
+        <location filename="../../windows/mainwindow.cpp" line="265"/>
         <source>Cut</source>
         <translation>剪切</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="244"/>
+        <location filename="../../windows/mainwindow.cpp" line="266"/>
         <source>Copy</source>
         <translation>拷貝</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="245"/>
+        <location filename="../../windows/mainwindow.cpp" line="267"/>
         <source>Paste</source>
         <translation>貼上</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="247"/>
+        <location filename="../../windows/mainwindow.cpp" line="269"/>
         <source>Start a New Search</source>
         <translation>重新搜索</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="248"/>
+        <location filename="../../windows/mainwindow.cpp" line="270"/>
         <source>Select Search Bar Contents</source>
         <translation>全選搜索欄文字</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="250"/>
+        <location filename="../../windows/mainwindow.cpp" line="272"/>
         <source>Jump to First Item in Search Results</source>
         <translation>跳到第一個搜索結果</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="252"/>
+        <location filename="../../windows/mainwindow.cpp" line="274"/>
         <source>Open Selected Entry in New Window</source>
         <translation>用新視窗顯示剛才選擇的結果</translation>
     </message>
     <message>
-        <source>Search Simplified</source>
-        <translation>搜尋簡體中文</translation>
+        <location filename="../../windows/mainwindow.cpp" line="910"/>
+        <source>Migrating database to new version...
+This might take a few minutes.
+Hang tight!</source>
+        <translation>資料庫移轉已開始，這可能需要幾分鐘的時間。</translation>
     </message>
     <message>
-        <source>Search Traditional</source>
-        <translation>搜尋正體中文</translation>
-    </message>
-    <message>
-        <location filename="../../windows/mainwindow.cpp" line="255"/>
+        <location filename="../../windows/mainwindow.cpp" line="277"/>
         <source>Search Jyutping</source>
         <translation>搜尋粵語拼音</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="256"/>
+        <location filename="../../windows/mainwindow.cpp" line="278"/>
         <source>Search Pinyin</source>
         <translation>搜尋漢語拼音</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="257"/>
+        <location filename="../../windows/mainwindow.cpp" line="279"/>
         <source>Search English</source>
         <translation>搜尋英文</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="261"/>
+        <location filename="../../windows/mainwindow.cpp" line="283"/>
         <source>Minimize</source>
         <translation>縮到最小</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="262"/>
+        <location filename="../../windows/mainwindow.cpp" line="284"/>
         <source>Zoom</source>
         <translation>縮放</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="263"/>
+        <location filename="../../windows/mainwindow.cpp" line="285"/>
         <source>Bring All to Front</source>
         <translation>將此程式所有視窗移至最前</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="265"/>
+        <location filename="../../windows/mainwindow.cpp" line="287"/>
         <source>%1 Help</source>
         <translation>%1輔助說明</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="226"/>
-        <location filename="../../windows/mainwindow.cpp" line="386"/>
+        <location filename="../../windows/mainwindow.cpp" line="248"/>
+        <location filename="../../windows/mainwindow.cpp" line="408"/>
         <source>&amp;Search</source>
         <translation>搜尋</translation>
     </message>
     <message>
-        <source>Check for updates...</source>
-        <translation>檢查更新…</translation>
-    </message>
-    <message>
-        <location filename="../../windows/mainwindow.cpp" line="840"/>
+        <location filename="../../windows/mainwindow.cpp" line="862"/>
         <source>Checking for update...</source>
         <translation>正在檢查更新…</translation>
     </message>
@@ -644,13 +614,6 @@
     </message>
 </context>
 <context>
-    <name>ResultListDelegate</name>
-    <message>
-        <source>Welcome!</source>
-        <translation>歡迎使用粵語字典！</translation>
-    </message>
-</context>
-<context>
     <name>ResultListModel</name>
     <message>
         <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="85"/>
@@ -699,37 +662,37 @@
 <context>
     <name>SQLDatabaseUtils</name>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="318"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="452"/>
         <source>Failed to remove definitions...</source>
         <translation>解釋移除失敗…</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="324"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="458"/>
         <source>Failed to remove sentences...</source>
         <translation>例句移除失敗…</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="558"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="692"/>
         <source>Database versions do not match. Only dictionaries with the same versions can be added.</source>
         <translation>資料庫版本不符合！只能可添加一樣版本的字典。</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="561"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="695"/>
         <source>Current version is %1, file version is %2.</source>
         <translation>目前版本：%1，檔案版本：%2。</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="605"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="739"/>
         <source>Unable to add definitions...</source>
         <translation>添加解釋失敗…</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="611"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="745"/>
         <source>Unable to add sentences...</source>
         <translation>添加列舉失敗…</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="364"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="498"/>
         <source>Could not insert source. Could it be a duplicate of a dictionary you already installed?</source>
         <translation>添加字典失敗。您已經添加過這個字典嗎？</translation>
     </message>
@@ -950,14 +913,6 @@
         <location filename="../../components/settings/settingstab.cpp" line="188"/>
         <source>Neutral</source>
         <translation>輕聲</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to reset all settings?</source>
-        <translation>您確定要重設全部設定嗎？</translation>
-    </message>
-    <message>
-        <source>There is no way to restore them!</source>
-        <translation>重設之後，無法還原您的設定！</translation>
     </message>
 </context>
 <context>

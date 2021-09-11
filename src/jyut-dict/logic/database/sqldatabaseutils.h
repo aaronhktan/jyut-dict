@@ -13,7 +13,7 @@
 // database. This is differentiated from the SQLDatabaseManager class,
 // which is only responsible for opening and closing a connection to a database.
 
-constexpr auto CURRENT_DATABASE_VERSION = 2;
+constexpr auto CURRENT_DATABASE_VERSION = 3;
 
 class SQLDatabaseUtils : public QObject
 {
@@ -35,6 +35,7 @@ private:
     std::shared_ptr<SQLDatabaseManager> _manager;
 
     bool migrateDatabaseFromOneToTwo(void);
+    bool migrateDatabaseFromTwoToThree(void);
 
     bool deleteSourceFromDatabase(std::string source);
     bool removeDefinitionsFromDatabase(void);
@@ -57,7 +58,12 @@ signals:
     void insertingSource();
     void insertingEntries();
     void insertingDefinitions();
-    void finishedAddition(bool success, QString reason="", QString description="");
+    void finishedAddition(bool success,
+                          QString reason = "",
+                          QString description = "");
+
+    void migratingDatabase();
+    void finishedMigratingDatabase(bool success);
 };
 
 #endif // SQLDATABASEUTILS_H

@@ -1,7 +1,6 @@
 #include "windows/mainwindow.h"
 
 #include "dialogs/noupdatedialog.h"
-#include "logic/database/sqldatabaseutils.h"
 #include "logic/dictionary/dictionarysource.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
@@ -15,6 +14,7 @@
 
 #include <QApplication>
 #include <QClipboard>
+#include <QtConcurrent/QtConcurrent>
 #include <QCoreApplication>
 #include <QColor>
 #include <QDesktopServices>
@@ -70,15 +70,30 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     settings->endArray();
 
-    // Populate sources
-    SQLDatabaseUtils *_utils = new SQLDatabaseUtils{_manager};
-    _utils->updateDatabase();
+    // Connect signals to tell the user that database migration has occurred
+    _utils = std::make_unique<SQLDatabaseUtils>(_manager);
+    connect(_utils.get(),
+            &SQLDatabaseUtils::migratingDatabase,
+            this,
+            &MainWindow::notifyDatabaseMigration);
+    connect(_utils.get(),
+            &SQLDatabaseUtils::finishedMigratingDatabase,
+            this,
+            [&](bool success) {
+                _databaseMigrationDialog->setLabelText(
+                    success ? tr("Database migration finished!")
+                            : tr("Database migration failed!"));
+                QTimer::singleShot(1000, this, [&] {
+                    _databaseMigrationDialog->reset();
+                });
+            });
+
+    // Populate global source table
     std::vector<std::pair<std::string, std::string>> sources;
     _utils->readSources(sources);
     for (auto source : sources) {
         DictionarySourceUtils::addSource(source.first, source.second);
     }
-    delete _utils;
 
     // Install translator
     installTranslator();
@@ -135,6 +150,13 @@ MainWindow::MainWindow(QWidget *parent) :
             checkForUpdate(/* showProgress = */ false);
         });
     }
+
+    // Perform database migration if needed, but delay for a bit so that
+    // the notify dialog has time to show itself
+    QTimer::singleShot(500, this, [&]() {
+        QtConcurrent::run(_utils.get(),
+                          &SQLDatabaseUtils::updateDatabase);
+    });
 }
 
 MainWindow::~MainWindow()
@@ -807,7 +829,7 @@ void MainWindow::checkForUpdate(bool showProgress)
                     std::string versionNumber,
                     std::string url,
                     std::string description) {
-                    _dialog->reset();
+                    _updateDialog->reset();
 
                     disconnect(_checker, nullptr, nullptr, nullptr);
                     notifyUpdateAvailable(updateAvailable,
@@ -819,27 +841,27 @@ void MainWindow::checkForUpdate(bool showProgress)
                     _recentlyCheckedForUpdates = false;
                 });
 
-        _dialog = new QProgressDialog{"", QString(), 0, 0, this};
-        _dialog->setWindowModality(Qt::ApplicationModal);
-        _dialog->setMinimumSize(300, 75);
-        Qt::WindowFlags flags = _dialog->windowFlags()
+        _updateDialog = new QProgressDialog{"", QString(), 0, 0, this};
+        _updateDialog->setWindowModality(Qt::ApplicationModal);
+        _updateDialog->setMinimumSize(300, 75);
+        Qt::WindowFlags flags = _updateDialog->windowFlags()
                                 | Qt::CustomizeWindowHint;
         flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
                    | Qt::WindowFullscreenButtonHint
                    | Qt::WindowContextHelpButtonHint);
-        _dialog->setWindowFlags(flags);
-        _dialog->setMinimumDuration(0);
+        _updateDialog->setWindowFlags(flags);
+        _updateDialog->setMinimumDuration(0);
 #ifdef Q_OS_WIN
-        _dialog->setWindowTitle(
+        _updateDialog->setWindowTitle(
             QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
 #elif defined(Q_OS_LINUX)
-        _dialog->setWindowTitle(" ");
+        _updateDialog->setWindowTitle(" ");
 #endif
-        _dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+        _updateDialog->setAttribute(Qt::WA_DeleteOnClose, true);
 
-        _dialog->setLabelText(tr("Checking for update..."));
-        _dialog->setRange(0, 0);
-        _dialog->setValue(0);
+        _updateDialog->setLabelText(tr("Checking for update..."));
+        _updateDialog->setRange(0, 0);
+        _updateDialog->setValue(0);
     } else {
         connect(_checker,
                 &GithubReleaseChecker::foundUpdate,
@@ -861,6 +883,34 @@ void MainWindow::checkForUpdate(bool showProgress)
         _checker->checkForNewUpdate();
         _recentlyCheckedForUpdates = true;
     }
+}
+
+void MainWindow::notifyDatabaseMigration(void)
+{
+    _databaseMigrationDialog = new QProgressDialog{"", QString(), 0, 0, this};
+    _databaseMigrationDialog->setWindowModality(Qt::ApplicationModal);
+    _databaseMigrationDialog->setMinimumSize(300, 75);
+    Qt::WindowFlags flags = _databaseMigrationDialog->windowFlags()
+                            | Qt::CustomizeWindowHint;
+    flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
+               | Qt::WindowFullscreenButtonHint
+               | Qt::WindowContextHelpButtonHint);
+    _databaseMigrationDialog->setWindowFlags(flags);
+    _databaseMigrationDialog->setMinimumDuration(0);
+#ifdef Q_OS_WIN
+    _databaseMigrationDialog->setWindowTitle(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::PRODUCT_NAME));
+#elif defined(Q_OS_LINUX)
+    _databaseMigrationDialog->setWindowTitle(" ");
+#endif
+    _databaseMigrationDialog->setAttribute(Qt::WA_DeleteOnClose, true);
+
+    _databaseMigrationDialog->setLabelText(
+        tr("Migrating database to new version...\n"
+           "This might take a few minutes.\nHang tight!"));
+    _databaseMigrationDialog->setRange(0, 0);
+    _databaseMigrationDialog->setValue(0);
 }
 
 // Must close settings window, since settings window does not pass the main
