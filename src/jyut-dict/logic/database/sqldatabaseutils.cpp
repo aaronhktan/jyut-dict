@@ -359,10 +359,10 @@ bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void)
     query.exec("SELECT COUNT(entries.entry_id) AS count "
                "FROM entries "
                "WHERE entries.entry_id IN "
-               " (SELECT entries.entry_id FROM entries "
-               " LEFT JOIN definitions "
-               " ON definitions.fk_entry_id=entries.entry_id "
-               " WHERE definitions.fk_entry_id IS NULL)");
+               "  (SELECT entries.entry_id FROM entries "
+               "    LEFT JOIN definitions "
+               "    ON definitions.fk_entry_id=entries.entry_id "
+               "    WHERE definitions.fk_entry_id IS NULL)");
     int numberToDelete = 0;
     while (query.next()) {
         numberToDelete = query.value(0).toInt();
@@ -372,10 +372,10 @@ bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void)
     query.exec("SAVEPOINT row_delection");
     for (int i = 0; i < numberToDelete; i += 1000) {
         query.exec("DELETE FROM entries WHERE entry_id IN "
-                   " (SELECT entries.entry_id FROM entries "
-                   "  LEFT JOIN definitions "
-                   "  ON definitions.fk_entry_id=entries.entry_id "
-                   "  WHERE definitions.fk_entry_id IS NULL LIMIT 1000)");
+                   "  (SELECT entries.entry_id FROM entries "
+                   "    LEFT JOIN definitions "
+                   "    ON definitions.fk_entry_id=entries.entry_id "
+                   "    WHERE definitions.fk_entry_id IS NULL LIMIT 1000)");
         emit deletionProgress(i, numberToDelete);
     }
     emit deletionProgress(numberToDelete, numberToDelete);
@@ -412,20 +412,20 @@ bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
     query.exec("DELETE FROM chinese_sentences "
                "WHERE chinese_sentences.chinese_sentence_id IN "
                "(SELECT chinese_sentences.chinese_sentence_id "
-               "    FROM chinese_sentences LEFT JOIN sentence_links "
-               "    ON chinese_sentences.chinese_sentence_id = "
+               "   FROM chinese_sentences LEFT JOIN sentence_links "
+               "   ON chinese_sentences.chinese_sentence_id = "
                "     sentence_links.fk_chinese_sentence_id "
-               "    WHERE sentence_links.fk_chinese_sentence_id IS NULL)");
+               "   WHERE sentence_links.fk_chinese_sentence_id IS NULL)");
 
     // Remove non-Chinese sentences that are no longer linked with the same
     // principles as above
     query.exec("DELETE FROM nonchinese_sentences "
                "WHERE nonchinese_sentences.non_chinese_sentence_id IN "
                "(SELECT nonchinese_sentences.non_chinese_sentence_id "
-               "    FROM nonchinese_sentences LEFT JOIN sentence_links "
-               "    ON nonchinese_sentences.non_chinese_sentence_id = "
+               "   FROM nonchinese_sentences LEFT JOIN sentence_links "
+               "   ON nonchinese_sentences.non_chinese_sentence_id = "
                "     sentence_links.fk_non_chinese_sentence_id "
-               "    WHERE sentence_links.fk_non_chinese_sentence_id IS NULL)");
+               "   WHERE sentence_links.fk_non_chinese_sentence_id IS NULL)");
 
     return true;
 }
@@ -498,10 +498,10 @@ bool SQLDatabaseUtils::insertSourcesIntoDatabase(void)
 
     query.exec(
         "INSERT INTO sources "
-        " (sourcename, sourceshortname, version, description, legal, link, "
-        " update_url, other) "
+        "  (sourcename, sourceshortname, version, description, legal, link, "
+        "    update_url, other) "
         "SELECT sourcename, sourceshortname, version, description, legal, "
-        " link, update_url, other "
+        "  link, update_url, other "
         "FROM db.sources");
 
     if (query.lastError().isValid()) {
@@ -533,7 +533,7 @@ bool SQLDatabaseUtils::addDefinitionSource(void)
     emit insertingEntries();
 
     query.exec("INSERT INTO entries(traditional, simplified, pinyin, "
-               " jyutping, frequency)"
+               "  jyutping, frequency)"
                "SELECT traditional, simplified, pinyin, jyutping, frequency "
                "FROM db.entries");
     if (query.lastError().isValid()) {
@@ -630,17 +630,17 @@ bool SQLDatabaseUtils::addSentenceSource(void)
 
     query.exec(
         "INSERT INTO chinese_sentences "
-        " (chinese_sentence_id, traditional, simplified, pinyin, jyutping, "
-        "  language) "
+        "  (chinese_sentence_id, traditional, simplified, pinyin, jyutping, "
+        "    language) "
         "SELECT chinese_sentence_id, traditional, simplified, pinyin, jyutping,"
-        " language "
+        "   language "
         "FROM db.chinese_sentences");
     if (query.lastError().isValid()) {
         return false;
     }
 
     query.exec("INSERT INTO nonchinese_sentences( "
-               " non_chinese_sentence_id, sentence, language) "
+               "  non_chinese_sentence_id, sentence, language) "
                "SELECT non_chinese_sentence_id, sentence, language "
                "FROM db.nonchinese_sentences");
     if (query.lastError().isValid()) {
