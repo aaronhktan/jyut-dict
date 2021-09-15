@@ -292,6 +292,28 @@ bool SQLDatabaseUtils::readSources(std::vector<DictionaryMetadata> &sources)
     return true;
 }
 
+bool SQLDatabaseUtils::dropIndices(void)
+{
+    QSqlQuery query{_manager->getDatabase()};
+    query.exec("DROP INDEX fk_entry_id_index");
+    query.exec("DELETE FROM definitions_fts");
+    query.exec("DELETE FROM entries_fts");
+    return true;
+}
+
+bool SQLDatabaseUtils::rebuildIndices(void)
+{
+    QSqlQuery query{_manager->getDatabase()};
+    emit rebuildingIndexes();
+
+    query.exec("INSERT INTO entries_fts (rowid, pinyin, jyutping) "
+               "SELECT rowid, pinyin, jyutping FROM entries");
+    query.exec("INSERT INTO definitions_fts (rowid, fk_entry_id, definition) "
+               "SELECT rowid, fk_entry_id, definition FROM definitions");
+    query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
+    return true;
+}
+
 // Deleting a source from the database involves turning on foreign keys
 // (so the constraints are properly enforced), dropping indices (that will no
 // longer be valid after deleting the source), and finally deleting the source
@@ -303,13 +325,12 @@ bool SQLDatabaseUtils::deleteSourceFromDatabase(std::string source)
 
     query.exec("BEGIN TRANSACTION");
 
-    query.exec("DROP INDEX fk_entry_id_index");
-
     query.prepare("DELETE FROM sources WHERE sourcename = ?");
     query.addBindValue(source.c_str());
     query.exec();
 
     query.exec("COMMIT");
+
     query.exec("PRAGMA foreign_keys = OFF");
 
     return true;
@@ -326,9 +347,6 @@ bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void)
     QSqlQuery query{_manager->getDatabase()};
 
     emit deletingDefinitions();
-
-    query.exec("DELETE FROM definitions_fts");
-    query.exec("DELETE FROM entries_fts");
 
     // The table that is built up by this query looks like this:
     //
@@ -362,14 +380,6 @@ bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void)
     }
     emit deletionProgress(numberToDelete, numberToDelete);
     query.exec("RELEASE row_deletion");
-
-    emit rebuildingIndexes();
-
-    query.exec("INSERT INTO entries_fts (rowid, pinyin, jyutping) "
-               "SELECT rowid, pinyin, jyutping FROM entries");
-    query.exec("INSERT INTO definitions_fts (rowid, fk_entry_id, definition) "
-               "SELECT rowid, fk_entry_id, definition FROM definitions");
-    query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
 
     return true;
 }
@@ -432,7 +442,7 @@ bool SQLDatabaseUtils::removeSource(std::string source)
 
     // Assume that the "other" field in the database contains metadata about
     // what type of data this source contains, in the format
-    // type●type●type (types of data separated by the character ●)
+    // type,type,type (types of data separated by the character ',')
     int otherIndex = query.record().indexOf("other");
     std::string type = "";
     while (query.next()) {
@@ -446,6 +456,8 @@ bool SQLDatabaseUtils::removeSource(std::string source)
     bool success = false;
     query.exec("BEGIN TRANSACTION");
     try {
+        dropIndices();
+
         if (type.length() == 0 || type.find("words") != std::string::npos) {
             if (!removeDefinitionsFromDatabase()) {
                 throw std::runtime_error(
@@ -458,6 +470,8 @@ bool SQLDatabaseUtils::removeSource(std::string source)
                     tr("Failed to remove sentences...").toStdString());
             }
         }
+
+        rebuildIndices();
 
         emit cleaningUp();
         query.exec("VACUUM");
@@ -505,21 +519,16 @@ bool SQLDatabaseUtils::insertSourcesIntoDatabase(void)
 }
 
 // To add a definition source, the steps are the following:
-// - Drop the index and FTS5 tables; they will be rebuilt later.
 // - Insert into the entries table all the entries from the attached db file.
-// - Create a temporary table that:
+// - Use a CTE that:
 //     - Matches the fk_source_id (from the attached db) to the new source_id
 //       in the main database.
 //     - Matches the fk_entry_id (from the attached db) to the new entry_id
 //       in the main database.
-// - Insert all the entries from the temporary table into the main table.
-// - Re-create index and FTS5 tables.
+// - Insert all the entries from the CTE into the main table.
 bool SQLDatabaseUtils::addDefinitionSource(void)
 {
     QSqlQuery query{_manager->getDatabase()};
-    query.exec("DROP INDEX fk_entry_id_index");
-    query.exec("DELETE FROM definitions_fts");
-    query.exec("DELETE FROM entries_fts");
 
     emit insertingEntries();
 
@@ -527,6 +536,9 @@ bool SQLDatabaseUtils::addDefinitionSource(void)
                " jyutping, frequency)"
                "SELECT traditional, simplified, pinyin, jyutping, frequency "
                "FROM db.entries");
+    if (query.lastError().isValid()) {
+        return false;
+    }
 
     emit insertingDefinitions();
 
@@ -549,7 +561,7 @@ bool SQLDatabaseUtils::addDefinitionSource(void)
     // trad  simp jp   py   sourcename  definition
     // 麼    么    mo1  me   CC-CEDICT   what
     //
-    // Based on that temporary table, we try to match the new entry against
+    // Based on that CTE, we try to match the new entry against
     // what exists in the database.
     // entries                      | definitions               | sources
     // trad simp jp   py entry_id<----fk_entry_id  fk_source_id-->source_id sourcename
@@ -563,34 +575,29 @@ bool SQLDatabaseUtils::addDefinitionSource(void)
     // Because we can match trad/simp/jp/py, fk_entry_id is assigned 6130
     // and because we can match CC-CEDICT, fk_source_id is assigned 6.
 
-    query.exec("DROP TABLE IF EXISTS definitions_tmp");
-    query.exec("CREATE TEMPORARY TABLE definitions_tmp AS "
-               " SELECT entries.traditional AS traditional, "
-               "  entries.simplified AS simplified, "
-               "  entries.pinyin AS pinyin, entries.jyutping AS jyutping, "
-               "  sources.sourcename AS sourcename, "
-               "  definitions.definition AS definition "
-               "FROM db.entries, db.definitions, db.sources "
-               "WHERE db.definitions.fk_entry_id = db.entries.entry_id "
-               "AND db.definitions.fk_source_id = db.sources.source_id");
-    query.exec("INSERT INTO definitions(definition, fk_entry_id, fk_source_id)"
-               " SELECT d.definition, e.entry_id, s.source_id "
-               " FROM definitions_tmp AS d, sources AS s, entries AS e "
-               " WHERE d.sourcename = s.sourcename "
-               "  AND d.traditional = e.traditional "
-               "  AND d.simplified = e.simplified "
-               "  AND d.pinyin = e.pinyin "
-               "  AND d.jyutping = e.jyutping");
+    query.exec(
+        "WITH definitions_tmp AS ( "
+        "  SELECT entries.traditional AS traditional, "
+        "    entries.simplified AS simplified, "
+        "    entries.pinyin AS pinyin, entries.jyutping AS jyutping, "
+        "    sources.sourcename AS sourcename, "
+        "    definitions.definition AS definition, "
+        "    definitions.label AS label "
+        "  FROM db.entries, db.definitions, db.sources "
+        "  WHERE db.definitions.fk_entry_id = db.entries.entry_id "
+        "  AND db.definitions.fk_source_id = db.sources.source_id "
+        ") "
+        " "
+        "INSERT INTO definitions(definition, label, fk_entry_id, fk_source_id) "
+        "  SELECT d.definition, d.label, e.entry_id, s.source_id "
+        "  FROM definitions_tmp AS d, sources AS s, entries AS e "
+        "  WHERE d.sourcename = s.sourcename "
+        "    AND d.traditional = e.traditional "
+        "    AND d.simplified = e.simplified "
+        "    AND d.pinyin = e.pinyin "
+        "    AND d.jyutping = e.jyutping");
 
-    emit rebuildingIndexes();
-
-    query.exec("INSERT INTO entries_fts (rowid, pinyin, jyutping) "
-               "SELECT rowid, pinyin, jyutping FROM entries");
-    query.exec("INSERT INTO definitions_fts (rowid, fk_entry_id, definition) "
-               "SELECT rowid, fk_entry_id, definition FROM definitions");
-    query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
-
-    return true;
+    return !query.lastError().isValid();
 }
 
 // To add a sentence source, the steps are the following:
@@ -598,11 +605,25 @@ bool SQLDatabaseUtils::addDefinitionSource(void)
 //   chinese_sentences table of the attached database
 // - Insert into the nonchinese_sentence table all the sentences from the
 //   nonchinese_sentences table of the attached database
-// - Create a temporary table that:
+// - Use a CTE that:
 //     - Contains the sentence_links from the attached database
 //     - Matches the fk_source_id (from the attached db) to the new source_id
 //       in the main database.
-// - Insert all the links from the temporary table into the main table.
+// - Insert all the links from the CTE into the main table
+//
+// Then, insert the definitions/sentences links:
+// - entry_and_definitions: Uniquely identify each definition from the attached
+//   database by joining the definition with the entry it belongs to, and the
+//   source it comes from
+// - defs_s_links_tmp: Uniquely identify each definition -> Chinese sentence
+//   link in the attached database by selecting from the
+//   definitions_sentence_links table of the attached database
+// - new_entry_and_definitions: Uniquely identify each definition from the
+//   current database, as in entry_and_definitions
+// - Then, since new_entry_and_definitions contains all the data that uniquely
+//   identifies corresponding defnitions (aka entry / definition / source), join
+//   the definition -> Chinese sentence links from defs_s_links_tmp using that
+//   information
 bool SQLDatabaseUtils::addSentenceSource(void)
 {
     QSqlQuery query{_manager->getDatabase()};
@@ -614,11 +635,17 @@ bool SQLDatabaseUtils::addSentenceSource(void)
         "SELECT chinese_sentence_id, traditional, simplified, pinyin, jyutping,"
         " language "
         "FROM db.chinese_sentences");
+    if (query.lastError().isValid()) {
+        return false;
+    }
 
     query.exec("INSERT INTO nonchinese_sentences( "
                " non_chinese_sentence_id, sentence, language) "
                "SELECT non_chinese_sentence_id, sentence, language "
                "FROM db.nonchinese_sentences");
+    if (query.lastError().isValid()) {
+        return false;
+    }
 
     // A diagram of what the various databases look like:
     //
@@ -627,12 +654,11 @@ bool SQLDatabaseUtils::addSentenceSource(void)
     // chinese_sentence_id nonchinese_sentence_id fk_source_id     source_id    sourcename
     // 55                  104725                 1--------------->1            Tatoeba—Cantonese-English
     //
-    // TEMPORARY DB
-    // links_tmp
+    // CTE: links_tmp
     // chinese_sentence_id nonchinese_sentence_id sourcename
     // 55                  104725                 Tatoeba—Cantonese-English
     //
-    // Based on that temporary table, we try to match the new entry against
+    // Based on that CTE, we try to match the new entry against
     // what exists in the database.
     // sentence_link                                             | sources
     // chinese_sentence_id nonchinese_sentence_id fk_source_id     source_id    sourcename
@@ -646,25 +672,81 @@ bool SQLDatabaseUtils::addSentenceSource(void)
     //
     // Because we can match Tatoeba—Cantonese-English, fk_source_id is assigned 6.
 
-    query.exec("DROP TABLE IF EXISTS links_tmp");
-    query.exec("CREATE TEMPORARY TABLE links_tmp AS "
-               " SELECT sentence_links.fk_chinese_sentence_id as "
-               "   fk_chinese_sentence_id,"
-               "  sentence_links.fk_non_chinese_sentence_id as "
-               "   fk_non_chinese_sentence_id,"
-               "  sources.sourcename AS sourcename,"
-               "  sentence_links.direct as direct "
-               "FROM db.sentence_links, db.sources "
-               "WHERE db.sentence_links.fk_source_id = db.sources.source_id");
-    query.exec("INSERT INTO sentence_links( "
-               " fk_chinese_sentence_id, fk_non_chinese_sentence_id, "
-               " fk_source_id, direct) "
-               "SELECT l.fk_chinese_sentence_id, l.fk_non_chinese_sentence_id, "
-               " s.source_id, l.direct "
-               "FROM links_tmp as l, sources as s "
-               "WHERE l.sourcename = s.sourcename");
+    query.exec(
+        "WITH sentence_links_tmp AS ( "
+        "  SELECT sentence_links.fk_chinese_sentence_id as "
+        "      fk_chinese_sentence_id, "
+        "    sentence_links.fk_non_chinese_sentence_id as "
+        "      fk_non_chinese_sentence_id, "
+        "    sources.sourcename AS sourcename, "
+        "    sentence_links.direct as direct "
+        "  FROM db.sentence_links, db.sources "
+        "  WHERE db.sentence_links.fk_source_id = db.sources.source_id "
+        ") "
+        " "
+        "INSERT INTO sentence_links( "
+        "  fk_chinese_sentence_id, fk_non_chinese_sentence_id, "
+        "  fk_source_id, direct) "
+        "SELECT sl.fk_chinese_sentence_id, sl.fk_non_chinese_sentence_id, "
+        "  s.source_id, sl.direct "
+        "FROM sentence_links_tmp as sl, sources as s "
+        "WHERE sl.sourcename = s.sourcename");
+    if (query.lastError().isValid()) {
+        return false;
+    }
 
-    return true;
+    query.exec("WITH entry_and_definitions AS ( "
+               "  SELECT entries.traditional AS traditional, "
+               "    entries.simplified AS simplified, "
+               "    entries.pinyin AS pinyin, "
+               "    entries.jyutping AS jyutping, "
+               "    definitions.definition AS definition, "
+               "    definitions.definition_id AS definition_id, "
+               "    sources.sourcename AS source "
+               "  FROM db.entries, db.definitions, db.sources "
+               "  WHERE db.definitions.fk_entry_id = db.entries.entry_id "
+               "    AND db.definitions.fk_source_id = db.sources.source_id "
+               "), "
+               " "
+               "defs_s_links_tmp AS ( "
+               "  SELECT dsl.fk_definition_id AS fdi,"
+               "    dsl.fk_chinese_sentence_id AS fcsi, "
+               "    ed.definition AS definition, "
+               "    ed.traditional AS traditional, "
+               "    ed.simplified AS simplified, "
+               "    ed.pinyin AS pinyin, "
+               "    ed.jyutping AS jyutping, "
+               "    ed.source AS source "
+               "  FROM db.definitions_chinese_sentences_links AS dsl, "
+               "    entry_and_definitions AS ed "
+               "  WHERE dsl.fk_definition_id = ed.definition_id"
+               "), "
+               " "
+               "new_entry_and_definitions AS ( "
+               "  SELECT entries.traditional AS traditional, "
+               "    entries.simplified AS simplified, "
+               "    entries.pinyin AS pinyin, "
+               "    entries.jyutping AS jyutping, "
+               "    definitions.definition AS definition, "
+               "    definitions.definition_id AS definition_id, "
+               "    sources.sourcename AS source "
+               "  FROM entries, definitions, sources "
+               "  WHERE definitions.fk_entry_id = entries.entry_id "
+               "    AND definitions.fk_source_id = sources.source_id "
+               ") "
+               " "
+               "INSERT INTO definitions_chinese_sentences_links( "
+               "  fk_definition_id, fk_chinese_sentence_id) "
+               "SELECT ned.definition_id, dsl.fcsi "
+               "FROM defs_s_links_tmp AS dsl, new_entry_and_definitions AS ned "
+               "WHERE dsl.definition = ned.definition "
+               "  AND dsl.traditional = ned.traditional "
+               "  AND dsl.simplified = ned.simplified "
+               "  AND dsl.pinyin = ned.pinyin "
+               "  AND dsl.jyutping = ned.jyutping "
+               "  AND dsl.source = ned.source");
+
+    return !(query.lastError().isValid());
 }
 
 bool SQLDatabaseUtils::addSource(std::string filepath)
@@ -698,30 +780,6 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
         return false;
     }
 
-    // Check for presence of "definitions" and "sentence_links" tables; if they
-    // exist, then add their contents to the main database
-    bool hasDefinitions = false;
-    bool hasSentences = false;
-
-    // Check for presence of particular tables to see if we need to add
-    // those tables from that source.
-    query.prepare("SELECT name FROM db.sqlite_master WHERE type=? AND name=?");
-    query.addBindValue("table");
-    query.addBindValue("definitions");
-    query.exec();
-    while (query.next()) {
-        hasDefinitions = true;
-    }
-
-    query.prepare("SELECT name FROM db.sqlite_master WHERE type=? "
-                  "AND name=?");
-    query.addBindValue("table");
-    query.addBindValue("sentence_links");
-    query.exec();
-    while (query.next()) {
-        hasSentences = true;
-    }
-
     // Insert the sources from the new database file into the database
     query.exec("BEGIN TRANSACTION");
     if (!insertSourcesIntoDatabase()) {
@@ -730,21 +788,23 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
     }
     query.exec("COMMIT");
 
+    // Then, insert the definitions and sentences
     bool success = false;
     try {
         query.exec("BEGIN TRANSACTION");
-        if (hasDefinitions) {
-            if (!addDefinitionSource()) {
-                throw std::runtime_error(
-                    tr("Unable to add definitions...").toStdString());
-            }
+
+        dropIndices();
+
+        if (!addDefinitionSource()) {
+            throw std::runtime_error(
+                tr("Unable to add definitions...").toStdString());
         }
-        if (hasSentences) {
-            if (!addSentenceSource()) {
-                throw std::runtime_error(
-                    tr("Unable to add sentences...").toStdString());
-            }
+        if (!addSentenceSource()) {
+            throw std::runtime_error(
+                tr("Unable to add sentences...").toStdString());
         }
+
+        rebuildIndices();
 
         query.exec("COMMIT");
         success = true;
@@ -755,6 +815,7 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
     }
 
     query.exec("DETACH DATABASE db");
+
     _manager->closeDatabase();
     return success;
 }
