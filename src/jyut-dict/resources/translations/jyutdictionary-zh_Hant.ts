@@ -198,7 +198,7 @@
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="296"/>
         <source>Deleted entry %1 of %2</source>
-        <translation>已刪除 0 / %1 個詞條</translation>
+        <translation>已刪除 %1 / %2 個詞條</translation>
     </message>
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="307"/>
