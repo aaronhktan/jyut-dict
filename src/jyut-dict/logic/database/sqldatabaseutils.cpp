@@ -296,9 +296,17 @@ bool SQLDatabaseUtils::dropIndices(void)
 {
     QSqlQuery query{_manager->getDatabase()};
     query.exec("DROP INDEX fk_entry_id_index");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
     query.exec("DELETE FROM definitions_fts");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
     query.exec("DELETE FROM entries_fts");
-    return true;
+    return !(query.lastError().isValid());
 }
 
 bool SQLDatabaseUtils::rebuildIndices(void)
@@ -308,10 +316,18 @@ bool SQLDatabaseUtils::rebuildIndices(void)
 
     query.exec("INSERT INTO entries_fts (rowid, pinyin, jyutping) "
                "SELECT rowid, pinyin, jyutping FROM entries");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
     query.exec("INSERT INTO definitions_fts (rowid, fk_entry_id, definition) "
                "SELECT rowid, fk_entry_id, definition FROM definitions");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
     query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
-    return true;
+    return !query.lastError().isValid();
 }
 
 // Deleting a source from the database involves turning on foreign keys
@@ -597,7 +613,7 @@ bool SQLDatabaseUtils::addDefinitionSource(void)
         "    AND d.pinyin = e.pinyin "
         "    AND d.jyutping = e.jyutping");
 
-    return !query.lastError().isValid();
+    return !(query.lastError().isValid());
 }
 
 // To add a sentence source, the steps are the following:
