@@ -183,12 +183,12 @@
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="273"/>
         <source>Removing source...</source>
-        <translation>Supression de source selectionnée...</translation>
+        <translation>Suppression de la source selectionnée...</translation>
     </message>
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="279"/>
         <source>Removing definitions...</source>
-        <translation>Supression de définitions...</translation>
+        <translation>Suppression de définitions...</translation>
     </message>
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="288"/>
