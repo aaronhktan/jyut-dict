@@ -192,13 +192,13 @@
     </message>
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="288"/>
-        <source>Deleted definition 0 of %1</source>
-        <translation>已刪除 0 / %1 個解釋</translation>
+        <source>Deleted entry 0 of %1</source>
+        <translation>已刪除 0 / %1 個詞條</translation>
     </message>
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="296"/>
-        <source>Deleted definition %1 of %2</source>
-        <translation>已刪除 %1 / %2 個解釋</translation>
+        <source>Deleted entry %1 of %2</source>
+        <translation>已刪除 0 / %1 個詞條</translation>
     </message>
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="307"/>
@@ -662,37 +662,37 @@ Hang tight!</source>
 <context>
     <name>SQLDatabaseUtils</name>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="452"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="480"/>
         <source>Failed to remove definitions...</source>
         <translation>解釋移除失敗…</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="458"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="486"/>
         <source>Failed to remove sentences...</source>
         <translation>例句移除失敗…</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="692"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="790"/>
         <source>Database versions do not match. Only dictionaries with the same versions can be added.</source>
         <translation>資料庫版本不符合！只能可添加一樣版本的字典。</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="695"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="793"/>
         <source>Current version is %1, file version is %2.</source>
         <translation>目前版本：%1，檔案版本：%2。</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="739"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="816"/>
         <source>Unable to add definitions...</source>
         <translation>添加解釋失敗…</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="745"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="820"/>
         <source>Unable to add sentences...</source>
         <translation>添加列舉失敗…</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="498"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="528"/>
         <source>Could not insert source. Could it be a duplicate of a dictionary you already installed?</source>
         <translation>添加字典失敗。您已經添加過這個字典嗎？</translation>
     </message>

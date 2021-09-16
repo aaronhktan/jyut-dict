@@ -197,7 +197,7 @@
     </message>
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="296"/>
-        <source>Deleted definition %1 of %2</source>
+        <source>Deleted entry %1 of %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -585,37 +585,37 @@ Hang tight!</source>
 <context>
     <name>SQLDatabaseUtils</name>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="452"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="480"/>
         <source>Failed to remove definitions...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="458"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="486"/>
         <source>Failed to remove sentences...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="692"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="790"/>
         <source>Database versions do not match. Only dictionaries with the same versions can be added.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="695"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="793"/>
         <source>Current version is %1, file version is %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="739"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="816"/>
         <source>Unable to add definitions...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="745"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="820"/>
         <source>Unable to add sentences...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="498"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="528"/>
         <source>Could not insert source. Could it be a duplicate of a dictionary you already installed?</source>
         <translation type="unfinished"></translation>
     </message>

@@ -192,13 +192,13 @@
     </message>
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="288"/>
-        <source>Deleted definition 0 of %1</source>
-        <translation>Définition nº 0 de %1 supprimée</translation>
+        <source>Deleted entry 0 of %1</source>
+        <translation>Entrée nº 0 de %1 supprimée</translation>
     </message>
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="296"/>
-        <source>Deleted definition %1 of %2</source>
-        <translation>Définition nº %1 de %2 supprimée</translation>
+        <source>Deleted entry %1 of %2</source>
+        <translation>Entrée nº %1 de %2 supprimée</translation>
     </message>
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="307"/>
@@ -663,37 +663,37 @@ Veuillez patienter quelques minutes.</translation>
 <context>
     <name>SQLDatabaseUtils</name>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="452"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="480"/>
         <source>Failed to remove definitions...</source>
         <translation>Échec de la suppression de définitions</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="458"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="486"/>
         <source>Failed to remove sentences...</source>
         <translation>Échec de la suppression de phrases</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="692"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="790"/>
         <source>Database versions do not match. Only dictionaries with the same versions can be added.</source>
         <translation>Les versions des bases de données ne correspondent pas. Seuls les dictionnaires ayant la même version peuvent être ajoutés.</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="695"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="793"/>
         <source>Current version is %1, file version is %2.</source>
         <translation>La version actuelle est %1, la version du fichier est %2.</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="739"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="816"/>
         <source>Unable to add definitions...</source>
         <translation>Échec de l&apos;ajout de définitions</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="745"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="820"/>
         <source>Unable to add sentences...</source>
         <translation>Échec de l&apos;ajout de phrases</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="498"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="528"/>
         <source>Could not insert source. Could it be a duplicate of a dictionary you already installed?</source>
         <translation>Erreur lors de l&apos;ajout de la nouvelle source. Est-elle un double d&apos;une source existante?</translation>
     </message>
