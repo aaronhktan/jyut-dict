@@ -37,6 +37,9 @@ private:
     bool migrateDatabaseFromOneToTwo(void);
     bool migrateDatabaseFromTwoToThree(void);
 
+    // NOTE: For some reason, this function does not work as intended if it is
+    // surrounded by a transaction! DO NOT PUT BETWEEN A BEGIN TRANSACTION
+    // AND COMMIT.
     bool deleteSourceFromDatabase(std::string source);
     bool removeDefinitionsFromDatabase(void);
     bool removeSentencesFromDatabase(void);
@@ -44,6 +47,9 @@ private:
     bool insertSourcesIntoDatabase(void);
     bool addDefinitionSource(void);
     bool addSentenceSource(void);
+
+    bool dropIndices(void);
+    bool rebuildIndices(void);
 
 signals:
     void deletingDefinitions();

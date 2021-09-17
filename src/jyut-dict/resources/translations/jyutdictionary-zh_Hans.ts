@@ -192,13 +192,13 @@
     </message>
     <message>
         <location line="+9"/>
-        <source>Deleted definition 0 of %1</source>
-        <translation>已删除 0 / %1 个解释</translation>
+        <source>Deleted entry 0 of %1</source>
+        <translation>已删除 0 / %1 个词条</translation>
     </message>
     <message>
         <location line="+8"/>
-        <source>Deleted definition %1 of %2</source>
-        <translation>已删除 %1 / %2 个解释</translation>
+        <source>Deleted entry %1 of %2</source>
+        <translation>已删除 %1 / %2 个词条</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -658,7 +658,7 @@ Hang tight!</source>
 <context>
     <name>SQLDatabaseUtils</name>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="+452"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="+480"/>
         <source>Failed to remove definitions...</source>
         <translation>未能移除解释…</translation>
     </message>
@@ -668,7 +668,7 @@ Hang tight!</source>
         <translation>未能移除例句…</translation>
     </message>
     <message>
-        <location line="+234"/>
+        <location line="+304"/>
         <source>Database versions do not match. Only dictionaries with the same versions can be added.</source>
         <translation>数据库版本不匹配！只能可添加一样版本的字典。</translation>
     </message>
@@ -678,17 +678,17 @@ Hang tight!</source>
         <translation>当前版本：%1，文件版本：%2。</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+23"/>
         <source>Unable to add definitions...</source>
         <translation>未能添加解释…</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+4"/>
         <source>Unable to add sentences...</source>
         <translation>未能添加例句…</translation>
     </message>
     <message>
-        <location line="-247"/>
+        <location line="-292"/>
         <source>Could not insert source. Could it be a duplicate of a dictionary you already installed?</source>
         <translation>添加字典失败。您已经添加过这个字典吗？</translation>
     </message>

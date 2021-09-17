@@ -285,7 +285,7 @@ void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
             [&](int numToDelete) {
                 _dialog->setRange(0, numToDelete + 1);
                 _dialog->setLabelText(
-                    QString{tr("Deleted definition 0 of %1")}.arg(numToDelete));
+                    QString{tr("Deleted entry 0 of %1")}.arg(numToDelete));
             });
 
     connect(_utils.get(),
@@ -293,7 +293,7 @@ void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
             this,
             [&](int deleted, int total) {
                 _dialog->setLabelText(
-                    QString{tr("Deleted definition %1 of %2")}.arg(deleted).arg(
+                    QString{tr("Deleted entry %1 of %2")}.arg(deleted).arg(
                         total));
                 _dialog->setValue(deleted);
             });
