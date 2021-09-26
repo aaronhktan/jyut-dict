@@ -28,6 +28,8 @@ int main(int argc, char *argv[])
     qRegisterMetaType<SearchParameters>("SearchParameters");
     qRegisterMetaTypeStreamOperators<SearchParameters>("SearchParameters");
     qRegisterMetaType<searchTermHistoryItem>();
+    qRegisterMetaType<conflictingDictionaryMetadata>(
+        "conflictingDictionaryNamesMetadata");
 
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);

@@ -449,23 +449,31 @@ bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
 // Method to remove a source from the database, based on the name of the source.
 bool SQLDatabaseUtils::removeSource(std::string source)
 {
+    return removeSources({source});
+}
+
+// Method to remove multiple sources from the database, based on the name of the sources.
+bool SQLDatabaseUtils::removeSources(std::vector<std::string> sources)
+{
     QSqlQuery query{_manager->getDatabase()};
 
-    // Determine what type of source it is based on the "other" field
-    query.prepare("SELECT other FROM sources WHERE sourcename = ?");
-    query.addBindValue(source.c_str());
-    query.exec();
+    std::string type;
+    for (auto &source : sources) {
+        // Determine what type of source it is based on the "other" field
+        query.prepare("SELECT other FROM sources WHERE sourcename = ?");
+        query.addBindValue(source.c_str());
+        query.exec();
 
-    // Assume that the "other" field in the database contains metadata about
-    // what type of data this source contains, in the format
-    // type,type,type (types of data separated by the character ',')
-    int otherIndex = query.record().indexOf("other");
-    std::string type = "";
-    while (query.next()) {
-        type = query.value(otherIndex).toString().toStdString();
+        // Assume that the "other" field in the database contains metadata about
+        // what type of data this source contains, in the format
+        // type,type,type (types of data separated by the character ',')
+        int otherIndex = query.record().indexOf("other");
+        while (query.next()) {
+            type += query.value(otherIndex).toString().toStdString() + ",";
+        }
+
+        deleteSourceFromDatabase(source);
     }
-
-    deleteSourceFromDatabase(source);
 
     // In the metadata field, no type is a definition source.
     // sentences is a sentences source.
@@ -506,11 +514,9 @@ bool SQLDatabaseUtils::removeSource(std::string source)
 
 // Inserting into the database selects all the sources in the attached database
 // and attempts to insert it into the database.
-bool SQLDatabaseUtils::insertSourcesIntoDatabase(void)
+std::pair<bool, std::string> SQLDatabaseUtils::insertSourcesIntoDatabase(void)
 {
     QSqlQuery query{_manager->getDatabase()};
-
-    emit insertingSource();
 
     query.exec(
         "INSERT INTO sources "
@@ -522,16 +528,10 @@ bool SQLDatabaseUtils::insertSourcesIntoDatabase(void)
 
     if (query.lastError().isValid()) {
         QString error = query.lastError().text();
-
-        emit finishedAddition(
-            false,
-            tr("Could not insert source. Could it be a duplicate of a "
-               "dictionary you already installed?"),
-            error);
-        return false;
+        return {false, error.toStdString()};
     }
 
-    return true;
+    return {true, ""};
 }
 
 // To add a definition source, the steps are the following:
@@ -765,7 +765,7 @@ bool SQLDatabaseUtils::addSentenceSource(void)
     return !query.lastError().isValid();
 }
 
-bool SQLDatabaseUtils::addSource(std::string filepath)
+bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflictingDictionary)
 {
     QSqlQuery query{_manager->getDatabase()};
 
@@ -784,6 +784,7 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
         version = query.value(0).toInt();
     }
 
+    // Only databases that match the current version can be added
     if (version != CURRENT_DATABASE_VERSION) {
         query.exec("DETACH DATABASE db");
         emit finishedAddition(false,
@@ -796,16 +797,78 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
         return false;
     }
 
+    // Only databases that don't already exist in the database can be added
+    if (overwriteConflictingDictionary) {
+        // If overwrite is set to true, then we remove the conflicting databases
+        // before adding the ones in the filepath
+        query.prepare("SELECT s.sourcename "
+                      "FROM sources AS s, db.sources AS dbs"
+                      "WHERE sourcename IN "
+                      "  (SELECT sourcename FROM db.sources)");
+        int sourcenameIndex = query.record().indexOf("sourcename");
+        std::vector<std::string> sourcesToRemove;
+        while (query.next()) {
+            sourcesToRemove.emplace_back(
+                query.value(sourcenameIndex).toString().toStdString());
+        }
+        if (!removeSources(sourcesToRemove)) {
+            emit finishedAddition(
+                false,
+                tr("Could not add new dictionaries. We couldn't remove a "
+                   "dictionary that you already had installed with the same "
+                   "name."),
+                tr("Try manually deleting the dictionaries yourself before "
+                   "adding the new dictionary."));
+            return false;
+        }
+    } else {
+        // If overwrite is set to false, then we return the list of conflicting
+        // databases, along with their versions
+        query.exec("SELECT s.sourcename, s.version AS in_database_version, "
+                   "  dbs.version AS new_file_version "
+                   "FROM sources AS s, db.sources AS dbs "
+                   "WHERE s.sourcename IN "
+                   "  (SELECT sourcename FROM db.sources) "
+                   "AND s.sourcename = dbs.sourcename");
+        qDebug() << query.lastError();
+        int sourcenameIndex = query.record().indexOf("sourcename");
+        int inDatabaseVersionIndex = query.record().indexOf(
+            "in_database_version");
+        int newFileVersionIndex = query.record().indexOf("new_file_version");
+        conflictingDictionaryMetadata matchingDictionaryNames;
+        while (query.next()) {
+            matchingDictionaryNames.emplace_back(
+                query.value(sourcenameIndex).toString().toStdString(),
+                query.value(inDatabaseVersionIndex).toString().toStdString(),
+                query.value(newFileVersionIndex).toString().toStdString());
+        }
+        if (!matchingDictionaryNames.empty()) {
+            query.exec("DETACH DATABASE db");
+            emit conflictingDictionaryNamesExist(matchingDictionaryNames);
+            return false;
+        }
+    }
+
     // Insert the sources from the new database file into the database
     query.exec("BEGIN TRANSACTION");
-    if (!insertSourcesIntoDatabase()) {
+    emit insertingSource();
+    bool success;
+    std::string errorMessage;
+    std::tie(success, errorMessage) = insertSourcesIntoDatabase();
+    if (!success) {
         query.exec("ROLLBACK");
+
+        emit finishedAddition(
+            false,
+            tr("Could not insert source. Could it be a duplicate of a "
+               "dictionary you already installed?"),
+            errorMessage.c_str());
+
         return false;
     }
     query.exec("COMMIT");
 
     // Then, insert the definitions and sentences
-    bool success = false;
     try {
         query.exec("BEGIN TRANSACTION");
 

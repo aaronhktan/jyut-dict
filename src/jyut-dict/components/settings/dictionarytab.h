@@ -2,6 +2,7 @@
 #define DICTIONARYTAB_H
 
 #include "dialogs/dictionarytabfailuredialog.h"
+#include "dialogs/overwriteconflictingdictionarydialog.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqldatabaseutils.h"
 #include "logic/dictionary/dictionarymetadata.h"
@@ -42,6 +43,7 @@ private:
     void clearDictionaryList();
     void populateDictionaryList();
     void addDictionary(QString &dictionaryFile);
+    void forceAddDictionary(QString &dictionaryFile);
     void removeDictionary(DictionaryMetadata metadata);
     void populateDictionarySourceUtils();
 
@@ -63,6 +65,7 @@ private:
     QGroupBox *_groupbox;
 
     QProgressDialog *_dialog;
+    OverwriteConflictingDictionaryDialog *_overwriteDialog;
     DictionaryTabFailureDialog *_message;
 
     std::shared_ptr<SQLDatabaseManager> _manager;

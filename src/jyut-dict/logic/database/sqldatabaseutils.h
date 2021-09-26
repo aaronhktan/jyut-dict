@@ -14,6 +14,8 @@
 // which is only responsible for opening and closing a connection to a database.
 
 constexpr auto CURRENT_DATABASE_VERSION = 3;
+typedef std::vector<std::tuple<std::string, std::string, std::string>>
+    conflictingDictionaryMetadata;
 
 class SQLDatabaseUtils : public QObject
 {
@@ -26,7 +28,7 @@ public:
     // Note: when adding or removing sources, make sure to update the map in
     // DictionarySourceUtils!
     bool removeSource(std::string source);
-    bool addSource(std::string filepath);
+    bool addSource(std::string filepath, bool overwriteConflictingDictionary);
 
     bool readSources(std::vector<std::pair<std::string, std::string>> &sources);
     bool readSources(std::vector<DictionaryMetadata> &sources);
@@ -43,8 +45,9 @@ private:
     bool deleteSourceFromDatabase(std::string source);
     bool removeDefinitionsFromDatabase(void);
     bool removeSentencesFromDatabase(void);
+    bool removeSources(std::vector<std::string> sources);
 
-    bool insertSourcesIntoDatabase(void);
+    std::pair<bool, std::string> insertSourcesIntoDatabase(void);
     bool addDefinitionSource(void);
     bool addSentenceSource(void);
 
@@ -61,6 +64,8 @@ signals:
 
     void deletingSentences();
 
+    void conflictingDictionaryNamesExist(
+        conflictingDictionaryMetadata dictionaries);
     void insertingSource();
     void insertingEntries();
     void insertingDefinitions();
@@ -71,5 +76,7 @@ signals:
     void migratingDatabase();
     void finishedMigratingDatabase(bool success);
 };
+
+Q_DECLARE_METATYPE(conflictingDictionaryMetadata);
 
 #endif // SQLDATABASEUTILS_H

@@ -84,6 +84,12 @@ SOURCES += \
     components/settings/contacttab.cpp \
     components/settings/dictionarytab.cpp \
     components/settings/settingstab.cpp \
+    dialogs/defaultdialog.cpp \
+    dialogs/dictionarytabfailuredialog.cpp \
+    dialogs/entryspeakerrordialog.cpp \
+    dialogs/noupdatedialog.cpp \
+    dialogs/overwriteconflictingdictionarydialog.cpp \
+    dialogs/resetsettingsdialog.cpp \
     logic/database/queryparseutils.cpp \
     logic/database/sqluserdatautils.cpp \
     logic/database/sqluserhistoryutils.cpp \
@@ -91,11 +97,6 @@ SOURCES += \
     logic/sentence/sentenceset.cpp \
     logic/sentence/sourcesentence.cpp \
     main.cpp \
-    dialogs/defaultdialog.cpp \
-    dialogs/dictionarytabfailuredialog.cpp \
-    dialogs/entryspeakerrordialog.cpp \
-    dialogs/noupdatedialog.cpp \
-    dialogs/resetsettingsdialog.cpp \
     logic/database/sqldatabasemanager.cpp \
     logic/database/sqldatabaseutils.cpp \
     logic/dictionary/dictionarymetadata.cpp \
@@ -169,6 +170,7 @@ HEADERS += \
     dialogs/dictionarytabfailuredialog.h \
     dialogs/entryspeakerrordialog.h \
     dialogs/noupdatedialog.h \
+    dialogs/overwriteconflictingdictionarydialog.h \
     dialogs/resetsettingsdialog.h \
     logic/database/queryparseutils.h \
     logic/database/sqldatabasemanager.h \
