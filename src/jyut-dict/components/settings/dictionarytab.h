@@ -42,8 +42,8 @@ private:
 
     void clearDictionaryList();
     void populateDictionaryList();
-    void addDictionary(QString &dictionaryFile);
-    void forceAddDictionary(QString &dictionaryFile);
+    void addDictionary(const QString &dictionaryFile);
+    void forceAddDictionary(const QString &dictionaryFile);
     void removeDictionary(DictionaryMetadata metadata);
     void populateDictionarySourceUtils();
 

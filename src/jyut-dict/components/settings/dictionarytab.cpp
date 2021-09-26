@@ -189,7 +189,7 @@ void DictionaryTab::populateDictionaryList()
     }
 }
 
-void DictionaryTab::addDictionary(QString &dictionaryFile)
+void DictionaryTab::addDictionary(const QString &dictionaryFile)
 {
     QtConcurrent::run(_utils.get(),
                       &SQLDatabaseUtils::addSource,
@@ -236,7 +236,7 @@ void DictionaryTab::addDictionary(QString &dictionaryFile)
     connect(_utils.get(),
             &SQLDatabaseUtils::conflictingDictionaryNamesExist,
             this,
-            [&](conflictingDictionaryMetadata dictionaries) {
+            [=](conflictingDictionaryMetadata dictionaries) {
                 _dialog->reset();
 
                 _overwriteDialog
@@ -263,7 +263,7 @@ void DictionaryTab::addDictionary(QString &dictionaryFile)
             });
 }
 
-void DictionaryTab::forceAddDictionary(QString &dictionaryFile)
+void DictionaryTab::forceAddDictionary(const QString &dictionaryFile)
 {
     QtConcurrent::run(_utils.get(),
                       &SQLDatabaseUtils::addSource,
@@ -286,7 +286,7 @@ void DictionaryTab::forceAddDictionary(QString &dictionaryFile)
 #endif
     _dialog->setAttribute(Qt::WA_DeleteOnClose, true);
 
-    _dialog->setLabelText(tr("Dropping search indexes..."));
+    _dialog->setLabelText(tr("Removing source..."));
     _dialog->setRange(0, 0);
     _dialog->setValue(0);
 
@@ -355,7 +355,8 @@ void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
 {
     QtConcurrent::run(_utils.get(),
                       &SQLDatabaseUtils::removeSource,
-                      metadata.getName());
+                      metadata.getName(),
+                      /* skipCleanup */ false);
 
     _dialog = new QProgressDialog{"", QString(), 0, 0, this};
     _dialog->setWindowModality(Qt::ApplicationModal);

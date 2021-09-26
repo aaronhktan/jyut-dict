@@ -447,13 +447,13 @@ bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
 }
 
 // Method to remove a source from the database, based on the name of the source.
-bool SQLDatabaseUtils::removeSource(std::string source)
+bool SQLDatabaseUtils::removeSource(std::string source, bool skipCleanup)
 {
-    return removeSources({source});
+    return removeSources({source}, skipCleanup);
 }
 
 // Method to remove multiple sources from the database, based on the name of the sources.
-bool SQLDatabaseUtils::removeSources(std::vector<std::string> sources)
+bool SQLDatabaseUtils::removeSources(std::vector<std::string> sources, bool skipCleanup)
 {
     QSqlQuery query{_manager->getDatabase()};
 
@@ -495,10 +495,11 @@ bool SQLDatabaseUtils::removeSources(std::vector<std::string> sources)
             }
         }
 
-        rebuildIndices();
-
-        emit cleaningUp();
-        query.exec("VACUUM");
+        if (!skipCleanup) {
+            rebuildIndices();
+            emit cleaningUp();
+            query.exec("VACUUM");
+        }
 
         query.exec("COMMIT");
         success = true;
@@ -508,7 +509,6 @@ bool SQLDatabaseUtils::removeSources(std::vector<std::string> sources)
         query.exec("ROLLBACK");
     }
 
-    _manager->closeDatabase();
     return success;
 }
 
@@ -801,17 +801,15 @@ bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflicting
     if (overwriteConflictingDictionary) {
         // If overwrite is set to true, then we remove the conflicting databases
         // before adding the ones in the filepath
-        query.prepare("SELECT s.sourcename "
-                      "FROM sources AS s, db.sources AS dbs"
-                      "WHERE sourcename IN "
-                      "  (SELECT sourcename FROM db.sources)");
+        query.exec("SELECT sourcename FROM sources WHERE sourcename IN "
+                   "  (SELECT sourcename FROM db.sources)");
         int sourcenameIndex = query.record().indexOf("sourcename");
         std::vector<std::string> sourcesToRemove;
         while (query.next()) {
             sourcesToRemove.emplace_back(
                 query.value(sourcenameIndex).toString().toStdString());
         }
-        if (!removeSources(sourcesToRemove)) {
+        if (!removeSources(sourcesToRemove, /* skipCleanup */ true)) {
             emit finishedAddition(
                 false,
                 tr("Could not add new dictionaries. We couldn't remove a "
@@ -830,7 +828,6 @@ bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflicting
                    "WHERE s.sourcename IN "
                    "  (SELECT sourcename FROM db.sources) "
                    "AND s.sourcename = dbs.sourcename");
-        qDebug() << query.lastError();
         int sourcenameIndex = query.record().indexOf("sourcename");
         int inDatabaseVersionIndex = query.record().indexOf(
             "in_database_version");
@@ -895,6 +892,5 @@ bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflicting
 
     query.exec("DETACH DATABASE db");
 
-    _manager->closeDatabase();
     return success;
 }

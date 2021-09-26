@@ -27,8 +27,8 @@ public:
 
     // Note: when adding or removing sources, make sure to update the map in
     // DictionarySourceUtils!
-    bool removeSource(std::string source);
-    bool addSource(std::string filepath, bool overwriteConflictingDictionary);
+    bool removeSource(std::string source, bool skipCleanup = false);
+    bool addSource(std::string filepath, bool overwriteConflictingDictionary = false);
 
     bool readSources(std::vector<std::pair<std::string, std::string>> &sources);
     bool readSources(std::vector<DictionaryMetadata> &sources);
@@ -45,7 +45,7 @@ private:
     bool deleteSourceFromDatabase(std::string source);
     bool removeDefinitionsFromDatabase(void);
     bool removeSentencesFromDatabase(void);
-    bool removeSources(std::vector<std::string> sources);
+    bool removeSources(std::vector<std::string> sources, bool skipCleanup = false);
 
     std::pair<bool, std::string> insertSourcesIntoDatabase(void);
     bool addDefinitionSource(void);
