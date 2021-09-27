@@ -16,8 +16,8 @@ void OverwriteConflictingDictionaryDialog::setupUI(
     for (auto &dictionary : conflictingDictionaries) {
         dictionariesList.append(std::get<0>(dictionary).c_str());
     }
-    setInformativeText(tr("The dictionaries to be overwritten are:\n- %1")
-                           .arg(dictionariesList.join("\n- ")));
+    setInformativeText(tr("The dictionaries to be overwritten are:\n    - %1")
+                           .arg(dictionariesList.join("\n    - ")));
     setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
     setWidth(400);
 }

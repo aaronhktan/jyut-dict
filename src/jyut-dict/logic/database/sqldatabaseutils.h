@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 // The SQLDatabaseUtils class has functions that read and write from the
 // database. This is differentiated from the SQLDatabaseManager class,
@@ -47,7 +48,8 @@ private:
     // a transaction.
     bool removeSources(std::vector<std::string> sources, bool skipCleanup = false);
 
-    std::pair<bool, std::string> insertSourcesIntoDatabase(void);
+    std::pair<bool, std::string> insertSourcesIntoDatabase(
+        std::unordered_map<std::string, std::string> source_ids);
     bool addDefinitionSource(void);
     bool addSentenceSource(void);
 
