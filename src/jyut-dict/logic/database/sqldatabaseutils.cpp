@@ -522,7 +522,7 @@ bool SQLDatabaseUtils::removeSources(std::vector<std::string> sources, bool skip
 // Inserting into the database loops through all the sources in the attached
 // database and attempts to insert each one into the database.
 std::pair<bool, std::string> SQLDatabaseUtils::insertSourcesIntoDatabase(
-    std::unordered_map<std::string, std::string> source_ids)
+    std::unordered_map<std::string, std::string> old_source_ids)
 {
     QSqlQuery query{_manager->getDatabase()};
 
@@ -538,6 +538,7 @@ std::pair<bool, std::string> SQLDatabaseUtils::insertSourcesIntoDatabase(
     int linkIndex = query.record().indexOf("link");
     int updateURLIndex = query.record().indexOf("update_url");
     int otherIndex = query.record().indexOf("other");
+
     while (query.next()) {
         QSqlQuery insertQuery{_manager->getDatabase()};
 
@@ -550,12 +551,12 @@ std::pair<bool, std::string> SQLDatabaseUtils::insertSourcesIntoDatabase(
         QString updateURL{query.value(updateURLIndex).toString()};
         QString other{query.value(otherIndex).toString()};
 
-        if (source_ids.find(sourcename.toStdString()) != source_ids.end()) {
-            // If the sourcename is in the source_ids map, it means that it
+        if (old_source_ids.find(sourcename.toStdString()) != old_source_ids.end()) {
+            // If the sourcename is in the old_source_ids map, it means that it
             // already existed in the database. Since we want to preserve
             // dictionary order, we will need to insert at the old dictionary ID
             // which is given by the map.
-            QString sourceid{source_ids[sourcename.toStdString()].c_str()};
+            QString sourceid{old_source_ids[sourcename.toStdString()].c_str()};
 
             insertQuery.prepare("INSERT INTO sources "
                                 "  (source_id, sourcename, sourceshortname, "
@@ -588,7 +589,6 @@ std::pair<bool, std::string> SQLDatabaseUtils::insertSourcesIntoDatabase(
         }
 
         insertQuery.exec();
-
         if (insertQuery.lastError().isValid()) {
             QString error = insertQuery.lastError().text();
             return {false, error.toStdString()};
@@ -829,7 +829,7 @@ bool SQLDatabaseUtils::addSentenceSource(void)
     return !query.lastError().isValid();
 }
 
-bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflictingDictionary)
+bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflictingSource)
 {
     QSqlQuery query{_manager->getDatabase()};
 
@@ -842,13 +842,12 @@ bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflicting
     // to make time for all connections to be made.
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
+    // Only databases that match the current version can be added
     query.exec("PRAGMA db.user_version");
     int version = -1;
     while (query.next()) {
         version = query.value(0).toInt();
     }
-
-    // Only databases that match the current version can be added
     if (version != CURRENT_DATABASE_VERSION) {
         query.exec("DETACH DATABASE db");
         emit finishedAddition(false,
@@ -861,13 +860,13 @@ bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflicting
         return false;
     }
 
-    // Only databases that don't already exist in the database can be added
-    std::unordered_map<std::string, std::string> source_ids;
-    if (overwriteConflictingDictionary) {
+    // Only sources that don't already exist in the database can be added
+    std::unordered_map<std::string, std::string> old_source_ids;
+    if (overwriteConflictingSource) {
         // If overwrite is set to true, then we remove the conflicting
-        // dictionaries before adding the new ones from the filepath.
+        // sources before adding the new ones from the filepath.
         // However, we keep around the source_ids belonging to those
-        // dictionaries, so that when we insert the ones from the filepath, we
+        // sources, so that when we insert the ones from the filepath, we
         // can insert them at the same source_id.
         query.exec("SELECT source_id, sourcename "
                    "FROM sources WHERE sourcename IN "
@@ -878,7 +877,7 @@ bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflicting
         while (query.next()) {
             sourcesToRemove.emplace_back(
                 query.value(sourcenameIndex).toString().toStdString());
-            source_ids[query.value(sourcenameIndex).toString().toStdString()]
+            old_source_ids[query.value(sourcenameIndex).toString().toStdString()]
                 = query.value(sourceIdIndex).toString().toStdString();
         }
         if (!removeSources(sourcesToRemove, /* skipCleanup */ true)) {
@@ -924,7 +923,7 @@ bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflicting
     emit insertingSource();
     bool success;
     std::string errorMessage;
-    std::tie(success, errorMessage) = insertSourcesIntoDatabase(source_ids);
+    std::tie(success, errorMessage) = insertSourcesIntoDatabase(old_source_ids);
     if (!success) {
         query.exec("DETACH DATABASE db");
         query.exec("ROLLBACK");
