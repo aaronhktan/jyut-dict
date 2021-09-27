@@ -39,12 +39,12 @@ private:
     bool migrateDatabaseFromOneToTwo(void);
     bool migrateDatabaseFromTwoToThree(void);
 
-    // NOTE: For some reason, this function does not work as intended if it is
-    // surrounded by a transaction! DO NOT PUT BETWEEN A BEGIN TRANSACTION
-    // AND COMMIT.
     bool deleteSourceFromDatabase(std::string source);
     bool removeDefinitionsFromDatabase(void);
     bool removeSentencesFromDatabase(void);
+    // Note to callers: There CANNOT be a transaction running when this method
+    // is called! It does PRAGMA foreign_keys = ON, which is a no-op inside
+    // a transaction.
     bool removeSources(std::vector<std::string> sources, bool skipCleanup = false);
 
     std::pair<bool, std::string> insertSourcesIntoDatabase(void);

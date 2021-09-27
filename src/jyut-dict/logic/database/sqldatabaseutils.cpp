@@ -20,8 +20,6 @@ bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(void)
 {
     QSqlQuery query{_manager->getDatabase()};
 
-    query.exec("BEGIN TRANSACTION");
-
     query.exec(
         "CREATE TABLE IF NOT EXISTS chinese_sentences( "
         "  chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
@@ -54,12 +52,6 @@ bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(void)
                "    DELETE CASCADE "
                ")");
 
-    query.exec("COMMIT");
-
-    // For some reason, PRAGMA user_version=? doesn't work; so just use a QString
-    QString queryString = "PRAGMA user_version=%1";
-    query.prepare(queryString.arg(2));
-    query.exec();
     return true;
 }
 
@@ -72,8 +64,6 @@ bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(void)
 bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(void)
 {
     QSqlQuery query{_manager->getDatabase()};
-
-    query.exec("BEGIN TRANSACTION");
 
     // Add new definitions->chinese_sentence link table
     query.exec(
@@ -184,15 +174,6 @@ bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(void)
         return false;
     }
 
-    query.exec("COMMIT");
-    if (query.lastError().isValid()) {
-        return false;
-    }
-
-    // For some reason, PRAGMA user_version=? doesn't work; so just use a QString
-    QString queryString = "PRAGMA user_version=%1";
-    query.prepare(queryString.arg(CURRENT_DATABASE_VERSION));
-    query.exec();
     return true;
 }
 
@@ -208,17 +189,35 @@ bool SQLDatabaseUtils::updateDatabase(void)
     }
 
     if (version != CURRENT_DATABASE_VERSION) {
+        query.exec("SAVEPOINT database_update");
         emit migratingDatabase();
         bool success = true;
         switch (version) {
         case -1:
         case 1:
-            success = success && migrateDatabaseFromOneToTwo();
+            if (!migrateDatabaseFromOneToTwo()) {
+                success = false;
+                break;
+            }
         case 2:
-            success = success && migrateDatabaseFromTwoToThree();
+            if (!migrateDatabaseFromTwoToThree()) {
+                success = false;
+                break;
+            }
         default:
             break;
         }
+
+        if (success) {
+            query.exec("RELEASE database_update");
+            // For some reason, PRAGMA user_version=? doesn't work; so just use a QString
+            QString queryString = "PRAGMA user_version=%1";
+            query.prepare(queryString.arg(CURRENT_DATABASE_VERSION));
+            query.exec();
+        } else {
+            query.exec("ROLLBACK");
+        }
+
         emit finishedMigratingDatabase(success);
     }
 
@@ -330,26 +329,15 @@ bool SQLDatabaseUtils::rebuildIndices(void)
     return !query.lastError().isValid();
 }
 
-// Deleting a source from the database involves turning on foreign keys
-// (so the constraints are properly enforced), dropping indices (that will no
-// longer be valid after deleting the source), and finally deleting the source
-// that matches the name passed in the function.
 bool SQLDatabaseUtils::deleteSourceFromDatabase(std::string source)
 {
     QSqlQuery query{_manager->getDatabase()};
-    query.exec("PRAGMA foreign_keys = ON");
-
-    query.exec("BEGIN TRANSACTION");
 
     query.prepare("DELETE FROM sources WHERE sourcename = ?");
     query.addBindValue(source.c_str());
     query.exec();
 
-    query.exec("COMMIT");
-
-    query.exec("PRAGMA foreign_keys = OFF");
-
-    return true;
+    return !query.lastError().isValid();
 }
 
 // Removing definitions from the database involves the following steps:
@@ -385,7 +373,6 @@ bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void)
         emit totalToDelete(numberToDelete);
     }
 
-    query.exec("SAVEPOINT row_delection");
     for (int i = 0; i < numberToDelete; i += 1000) {
         query.exec("DELETE FROM entries WHERE entry_id IN "
                    "  (SELECT entries.entry_id FROM entries "
@@ -395,7 +382,6 @@ bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void)
         emit deletionProgress(i, numberToDelete);
     }
     emit deletionProgress(numberToDelete, numberToDelete);
-    query.exec("RELEASE row_deletion");
 
     return true;
 }
@@ -424,7 +410,6 @@ bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
     // fk_chinese_sentence_id referencing it, and DELETE FROM chinese_sentences.
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
     query.exec("DELETE FROM chinese_sentences "
                "WHERE chinese_sentences.chinese_sentence_id IN "
                "(SELECT chinese_sentences.chinese_sentence_id "
@@ -457,6 +442,16 @@ bool SQLDatabaseUtils::removeSources(std::vector<std::string> sources, bool skip
 {
     QSqlQuery query{_manager->getDatabase()};
 
+    // Foreign keys cannnot be turned on inside a SAVEPOINT!
+    // Turn on before this savepoint.
+    query.exec("PRAGMA foreign_keys = ON");
+
+    // Design note: I wish I could make this entire function inside a single
+    // transaction (instead of splitting it into source_deletion and
+    // source_removal). Unfortunately, removeDefinitionsFromDatabase()
+    // is slow as molasses if foreign keys are turned on. I sacrifice a bit
+    // of correctness in exchange for much more speed.
+    query.exec("SAVEPOINT source_deletion");
     std::string type;
     for (auto &source : sources) {
         // Determine what type of source it is based on the "other" field
@@ -472,13 +467,21 @@ bool SQLDatabaseUtils::removeSources(std::vector<std::string> sources, bool skip
             type += query.value(otherIndex).toString().toStdString() + ",";
         }
 
-        deleteSourceFromDatabase(source);
+        if (!deleteSourceFromDatabase(source)) {
+            emit finishedDeletion(
+                false, tr("Failed to delete source from database..."));
+            query.exec("ROLLBACK");
+            query.exec("PRAGMA foreign_keys = OFF");
+            return false;
+        }
     }
+    query.exec("RELEASE source_deletion");
+    query.exec("PRAGMA foreign_keys = OFF");
 
+    query.exec("SAVEPOINT source_removal");
     // In the metadata field, no type is a definition source.
     // sentences is a sentences source.
     bool success = false;
-    query.exec("BEGIN TRANSACTION");
     try {
         dropIndices();
 
@@ -497,11 +500,15 @@ bool SQLDatabaseUtils::removeSources(std::vector<std::string> sources, bool skip
 
         if (!skipCleanup) {
             rebuildIndices();
+        }
+
+        query.exec("RELEASE source_removal");
+
+        if (!skipCleanup) {
             emit cleaningUp();
             query.exec("VACUUM");
         }
 
-        query.exec("COMMIT");
         success = true;
         emit finishedDeletion(success);
     } catch (const std::exception &e) {
@@ -810,6 +817,7 @@ bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflicting
                 query.value(sourcenameIndex).toString().toStdString());
         }
         if (!removeSources(sourcesToRemove, /* skipCleanup */ true)) {
+            query.exec("DETACH DATABASE db");
             emit finishedAddition(
                 false,
                 tr("Could not add new dictionaries. We couldn't remove a "
@@ -846,15 +854,15 @@ bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflicting
         }
     }
 
+    query.exec("SAVEPOINT source_addition");
     // Insert the sources from the new database file into the database
-    query.exec("BEGIN TRANSACTION");
     emit insertingSource();
     bool success;
     std::string errorMessage;
     std::tie(success, errorMessage) = insertSourcesIntoDatabase();
     if (!success) {
+        query.exec("DETACH DATABASE db");
         query.exec("ROLLBACK");
-
         emit finishedAddition(
             false,
             tr("Could not insert source. Could it be a duplicate of a "
@@ -863,12 +871,10 @@ bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflicting
 
         return false;
     }
-    query.exec("COMMIT");
 
     // Then, insert the definitions and sentences
+    success = false;
     try {
-        query.exec("BEGIN TRANSACTION");
-
         dropIndices();
 
         if (!addDefinitionSource()) {
@@ -882,15 +888,14 @@ bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflicting
 
         rebuildIndices();
 
-        query.exec("COMMIT");
+        query.exec("RELEASE source_addition");
         success = true;
         emit finishedAddition(success);
     } catch (std::exception &e) {
+        query.exec("DETACH DATABASE db");
         query.exec("ROLLBACK");
         emit finishedAddition(success, e.what());
     }
-
-    query.exec("DETACH DATABASE db");
 
     return success;
 }
