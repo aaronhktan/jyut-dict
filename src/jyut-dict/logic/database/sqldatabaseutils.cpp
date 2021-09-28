@@ -877,6 +877,7 @@ bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflicting
         }
         if (!removeSources(sourcesToRemove, /* skipCleanup */ true)) {
             query.exec("DETACH DATABASE db");
+            rebuildIndices();
             emit finishedAddition(
                 false,
                 tr("Could not add new dictionaries. We couldn't remove a "
@@ -913,6 +914,18 @@ bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflicting
         }
     }
 
+    // Since removeSources() causes indices to be dropped, but removeSources()
+    // is not always called (it will only be called if there is a conflicting
+    // source), indices must always be dropped and rebuilt outside of the
+    // source_addition savepoint.
+    // If indices were dropped inside the savepoint, then a rollback would cause
+    // the index drop to never occur. We would have an inconsistent state -
+    // if overwrite is true, indices would still be dropped after the rollback,
+    // otherwise, indices would not be dropped. To avoid this state, we always
+    // drop indices before the savepoint, so indices are always dropped after
+    // a rollback.
+    dropIndices();
+
     query.exec("SAVEPOINT source_addition");
     // Insert the sources from the new database file into the database
     emit insertingSource();
@@ -922,6 +935,7 @@ bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflicting
     if (!success) {
         query.exec("DETACH DATABASE db");
         query.exec("ROLLBACK");
+        rebuildIndices();
         emit finishedAddition(
             false,
             tr("Could not insert source. Could it be a duplicate of a "
@@ -934,8 +948,6 @@ bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflicting
     // Then, insert the definitions and sentences
     success = false;
     try {
-        dropIndices();
-
         if (!addDefinitionSource()) {
             throw std::runtime_error(
                 tr("Unable to add definitions...").toStdString());
@@ -945,16 +957,16 @@ bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflicting
                 tr("Unable to add sentences...").toStdString());
         }
 
-        rebuildIndices();
-
         query.exec("RELEASE source_addition");
+        rebuildIndices();
         success = true;
         emit finishedAddition(success);
     } catch (std::exception &e) {
-        query.exec("DETACH DATABASE db");
         query.exec("ROLLBACK");
+        rebuildIndices();
         emit finishedAddition(success, e.what());
     }
 
+    query.exec("DETACH DATABASE db");
     return success;
 }

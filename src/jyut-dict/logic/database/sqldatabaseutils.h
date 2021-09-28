@@ -46,6 +46,8 @@ private:
     // Note to callers: There CANNOT be a transaction running when this method
     // is called! It does PRAGMA foreign_keys = ON, which is a no-op inside
     // a transaction.
+    // If skipCleanup is set to true, the caller MUST call rebuildIndices()
+    // after this method returns if indices are desired.
     bool removeSources(std::vector<std::string> sources, bool skipCleanup = false);
 
     std::pair<bool, std::string> insertSourcesIntoDatabase(
