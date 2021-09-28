@@ -191,11 +191,6 @@ void DictionaryTab::populateDictionaryList()
 
 void DictionaryTab::addDictionary(const QString &dictionaryFile)
 {
-    QtConcurrent::run(_utils.get(),
-                      &SQLDatabaseUtils::addSource,
-                      dictionaryFile.toStdString(),
-                      /* overwriteConflictingDictionaries */ false);
-
     _dialog = new QProgressDialog{"", QString(), 0, 0, this};
     _dialog->setWindowModality(Qt::ApplicationModal);
     _dialog->setMinimumSize(300, 75);
@@ -261,15 +256,15 @@ void DictionaryTab::addDictionary(const QString &dictionaryFile)
                     failureMessage(reason, description);
                 }
             });
+
+    QtConcurrent::run(_utils.get(),
+                      &SQLDatabaseUtils::addSource,
+                      dictionaryFile.toStdString(),
+                      /* overwriteConflictingDictionaries */ false);
 }
 
 void DictionaryTab::forceAddDictionary(const QString &dictionaryFile)
 {
-    QtConcurrent::run(_utils.get(),
-                      &SQLDatabaseUtils::addSource,
-                      dictionaryFile.toStdString(),
-                      /* overwriteConflictingDictionaries */ true);
-
     _dialog = new QProgressDialog{"", QString(), 0, 0, this};
     _dialog->setWindowModality(Qt::ApplicationModal);
     _dialog->setMinimumSize(300, 75);
@@ -315,11 +310,9 @@ void DictionaryTab::forceAddDictionary(const QString &dictionaryFile)
                 _dialog->setValue(deleted);
             });
 
-    connect(_utils.get(), &SQLDatabaseUtils::cleaningUp, this, [&] {
-        _dialog->setLabelText(tr("Cleaning up..."));
-    });
-
     connect(_utils.get(), &SQLDatabaseUtils::insertingSource, this, [&] {
+        _dialog->setValue(0);
+        _dialog->setRange(0, 0);
         _dialog->setLabelText(tr("Adding source..."));
     });
 
@@ -349,15 +342,15 @@ void DictionaryTab::forceAddDictionary(const QString &dictionaryFile)
                     failureMessage(reason, description);
                 }
             });
+
+    QtConcurrent::run(_utils.get(),
+                      &SQLDatabaseUtils::addSource,
+                      dictionaryFile.toStdString(),
+                      /* overwriteConflictingDictionaries */ true);
 }
 
 void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
 {
-    QtConcurrent::run(_utils.get(),
-                      &SQLDatabaseUtils::removeSource,
-                      metadata.getName(),
-                      /* skipCleanup */ false);
-
     _dialog = new QProgressDialog{"", QString(), 0, 0, this};
     _dialog->setWindowModality(Qt::ApplicationModal);
     _dialog->setMinimumSize(300, 75);
@@ -419,25 +412,30 @@ void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
                 if (success) {
                     std::vector<std::pair<std::string, std::string>> sources;
                     _utils->readSources(sources);
-                    for (auto source : sources) {
+                    for (auto &source : sources) {
                         DictionarySourceUtils::addSource(source.first, source.second);
                     }
                 }
 
-                QTimer::singleShot(500, [&] {
+                QTimer::singleShot(500, this, [&] {
                     _dialog->reset();
                     clearDictionaryList();
                     populateDictionaryList();
                     _list->setCurrentIndex(_list->model()->index(0, 0));
                 });
             });
+
+    QtConcurrent::run(_utils.get(),
+                      &SQLDatabaseUtils::removeSource,
+                      metadata.getName(),
+                      /* skipCleanup */ false);
 }
 
 void DictionaryTab::populateDictionarySourceUtils()
 {
     std::vector<std::pair<std::string, std::string>> sources;
     _utils->readSources(sources);
-    for (auto source : sources) {
+    for (auto &source : sources) {
         DictionarySourceUtils::addSource(source.first,
                                          source.second);
     }

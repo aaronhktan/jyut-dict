@@ -837,11 +837,6 @@ bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflicting
     query.addBindValue(filepath.c_str());
     query.exec();
 
-    // This usually happens so quickly that the slot(s) are not yet
-    // connected to the finishedAddition() signal. Sleep for 1000ms
-    // to make time for all connections to be made.
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
     // Only databases that match the current version can be added
     query.exec("PRAGMA db.user_version");
     int version = -1;
