@@ -36,7 +36,7 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
     QColor backgroundColour;
     if (option.state & QStyle::State_Selected && !isEmptyEntry) {
         if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
             backgroundColour = option.palette
                                    .brush(QPalette::Inactive,
                                           QPalette::Highlight)
