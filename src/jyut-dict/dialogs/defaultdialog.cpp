@@ -14,7 +14,7 @@
 DefaultDialog::DefaultDialog(const QString &reason,
                              const QString &description,
                              QWidget *parent)
-    : QMessageBox(parent)
+    : QMessageBox{parent}
 {
     setupUI(reason, description);
     translateUI();

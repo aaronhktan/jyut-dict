@@ -232,6 +232,12 @@ void DictionaryTab::addDictionary(const QString &dictionaryFile)
             &SQLDatabaseUtils::conflictingDictionaryNamesExist,
             this,
             [=](conflictingDictionaryMetadata dictionaries) {
+#ifdef Q_OS_LINUX
+                // Without this delay, a ghost dialog pops up.
+                // I think it's because the _dialog has not yet had time to
+                // paint itself before it is reset.
+                std::this_thread::sleep_for(std::chrono::milliseconds(250));
+#endif
                 _dialog->reset();
 
                 _overwriteDialog
