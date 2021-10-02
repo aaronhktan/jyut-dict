@@ -122,17 +122,17 @@
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="134"/>
         <source>The Dictionaries tab allows you to view information about dictionaries, and add or remove them.</source>
-        <translation>你喺「字典」呢一頁上可以查看同埋管理儲存咗嘅字典。</translation>
+        <translation>你喺「辭典」呢一頁上可以查看同埋管理儲存咗嘅辭典。</translation>
     </message>
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="137"/>
         <source>Add Dictionary...</source>
-        <translation>添加字典…</translation>
+        <translation>添加辭典…</translation>
     </message>
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="138"/>
         <source>Delete Dictionary</source>
-        <translation>刪除字典</translation>
+        <translation>刪除辭典</translation>
     </message>
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="139"/>
@@ -142,7 +142,7 @@
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="106"/>
         <source>Select dictionary file</source>
-        <translation>選擇字典檔案</translation>
+        <translation>選擇辭典檔案</translation>
     </message>
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="157"/>
@@ -155,63 +155,71 @@
         <translation>關於 %1</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="214"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="210"/>
         <source>Dropping search indexes...</source>
         <translation>删除緊搜索索引…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="220"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="216"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="322"/>
         <source>Adding source...</source>
-        <translation>添加緊新字典…</translation>
+        <translation>添加緊新辭典…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="224"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="220"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="326"/>
         <source>Adding new entries...</source>
         <translation>添加緊新條目…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="228"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="224"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="330"/>
         <source>Adding new definitions...</source>
         <translation>添加緊新解釋…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="232"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="302"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="228"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="334"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="405"/>
         <source>Rebuilding search indexes...</source>
         <translation>重建緊搜索索引…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="273"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="290"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="376"/>
         <source>Removing source...</source>
         <translation>移除緊來源…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="279"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="297"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="382"/>
         <source>Removing definitions...</source>
         <translation>刪除緊解釋…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="288"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="306"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="391"/>
         <source>Deleted entry 0 of %1</source>
         <translation>刪除咗 0 / %1 個詞條</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="296"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="314"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="399"/>
         <source>Deleted entry %1 of %2</source>
         <translation>刪除咗 %1 / %2 個詞條</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="307"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="410"/>
         <source>Cleaning up...</source>
         <translation>幫緊你清理…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="314"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="417"/>
         <source>Done!</source>
         <translation>完成！</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="314"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="417"/>
         <source>Failed!</source>
         <translation>失敗！</translation>
     </message>
@@ -221,7 +229,7 @@
     <message>
         <location filename="../../dialogs/dictionarytabfailuredialog.cpp" line="16"/>
         <source>Failed to add source!</source>
-        <translation>添加字典失敗！</translation>
+        <translation>添加辭典失敗！</translation>
     </message>
     <message>
         <location filename="../../dialogs/dictionarytabfailuredialog.cpp" line="17"/>
@@ -288,7 +296,7 @@
     <message>
         <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="70"/>
         <source>Saved Words</source>
-        <translation>已儲存詞語</translation>
+        <translation>已儲存嘅詞語</translation>
     </message>
 </context>
 <context>
@@ -389,12 +397,12 @@
     <message>
         <location filename="../../windows/mainwindow.cpp" line="251"/>
         <source>&amp;About</source>
-        <translation>關於粵語字典</translation>
+        <translation>關於粵語辭典</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="252"/>
         <source>Show the application&apos;s About box</source>
-        <translation>打開“關於粵語字典”嘅視窗</translation>
+        <translation>打開“關於粵語辭典”嘅視窗</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="255"/>
@@ -546,12 +554,27 @@ Hang tight!</source>
     <message>
         <location filename="../../dialogs/noupdatedialog.cpp" line="14"/>
         <source>No update found!</source>
-        <translation>冇搵到可用的更新!</translation>
+        <translation>冇搵到可用嘅更新!</translation>
     </message>
     <message>
         <location filename="../../dialogs/noupdatedialog.cpp" line="15"/>
         <source>You are on the newest version, %1.</source>
         <translation>你已經使用最新嘅版本，%1.</translation>
+    </message>
+</context>
+<context>
+    <name>OverwriteConflictingDictionaryDialog</name>
+    <message>
+        <location filename="../../dialogs/overwriteconflictingdictionarydialog.cpp" line="14"/>
+        <source>Would you like to overwrite dictionaries you already have?</source>
+        <translation>你是否要覆寫已在資料庫嘅同名辭典？</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/overwriteconflictingdictionarydialog.cpp" line="19"/>
+        <source>The dictionaries to be overwritten are:
+    - %1</source>
+        <translation>同名辭典清單：
+    - %1</translation>
     </message>
 </context>
 <context>
@@ -619,7 +642,7 @@ Hang tight!</source>
         <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="85"/>
         <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="86"/>
         <source>Welcome!</source>
-        <translation>歡迎使用粵語字典！</translation>
+        <translation>歡迎使用粵語辭典！</translation>
     </message>
     <message>
         <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="92"/>
@@ -662,39 +685,54 @@ Hang tight!</source>
 <context>
     <name>SQLDatabaseUtils</name>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="480"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="472"/>
+        <source>Failed to delete source from database...</source>
+        <translation>移除辭典失敗</translation>
+    </message>
+    <message>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="491"/>
         <source>Failed to remove definitions...</source>
         <translation>移除解釋失敗</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="486"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="497"/>
         <source>Failed to remove sentences...</source>
         <translation>移除例句失敗</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="790"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="849"/>
         <source>Database versions do not match. Only dictionaries with the same versions can be added.</source>
-        <translation>資料庫版本唔符合！只能可添加一樣版本嘅字典。</translation>
+        <translation>資料庫版本唔符合！只能可添加一樣版本嘅辭典。</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="793"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="852"/>
         <source>Current version is %1, file version is %2.</source>
         <translation>目前版本：%1，檔案版本：%2。</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="816"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="883"/>
+        <source>Could not add new dictionaries. We couldn&apos;t remove a dictionary that you already had installed with the same name.</source>
+        <translation>添加辭典失敗。無法移除一部同名嘅辭典。</translation>
+    </message>
+    <message>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="886"/>
+        <source>Try manually deleting the dictionaries yourself before adding the new dictionary.</source>
+        <translation>在添加新辭典之前，請試試手動移除同名嘅辭典。</translation>
+    </message>
+    <message>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="953"/>
         <source>Unable to add definitions...</source>
         <translation>添加解釋失敗</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="820"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="957"/>
         <source>Unable to add sentences...</source>
         <translation>添加例句失敗</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="528"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="941"/>
         <source>Could not insert source. Could it be a duplicate of a dictionary you already installed?</source>
-        <translation>添加字典失敗。你係咪已經添加咗呢個字典㗎？</translation>
+        <translation>添加辭典失敗。你係咪已經添加咗呢個辭典㗎？</translation>
     </message>
 </context>
 <context>
@@ -702,7 +740,7 @@ Hang tight!</source>
     <message>
         <location filename="../../components/historyview/searchhistorylistdelegate.cpp" line="118"/>
         <source>After searching for a word, you will find it in this list. Selecting a word will allow you to do the same search again.</source>
-        <translation>你查字典之後就喺呢度找搵你嘅搜尋紀錄。如果你想再次搜尋，你可以選擇清單中嘅任何一個詞語。</translation>
+        <translation>你查辭典之後就喺呢度找搵你嘅搜尋紀錄。如果你想再次搜尋，你可以選擇清單中嘅任何一個詞語。</translation>
     </message>
 </context>
 <context>
@@ -726,7 +764,7 @@ Hang tight!</source>
     <message>
         <location filename="../../components/mainwindow/searchlineedit.cpp" line="146"/>
         <source>Search</source>
-        <translation>搵粤语字典…</translation>
+        <translation>搵粤语辭典…</translation>
     </message>
 </context>
 <context>
@@ -875,12 +913,12 @@ Hang tight!</source>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="144"/>
         <source>Pinyin with diacritics</source>
-        <translation>用符號的拼音</translation>
+        <translation>用符號嘅拼音</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="145"/>
         <source>Pinyin with numbers</source>
-        <translation>用數字的拼音</translation>
+        <translation>用數字嘅拼音</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="147"/>
@@ -925,7 +963,7 @@ Hang tight!</source>
     <message>
         <location filename="../../windows/settingswindow.cpp" line="128"/>
         <source>Dictionaries</source>
-        <translation>字典</translation>
+        <translation>辭典</translation>
     </message>
     <message>
         <location filename="../../windows/settingswindow.cpp" line="129"/>
@@ -953,7 +991,7 @@ Hang tight!</source>
     <message>
         <location filename="../../windows/updatewindow.cpp" line="151"/>
         <source>Update Available!</source>
-        <translation>有可用的更新！</translation>
+        <translation>有可用嘅更新！</translation>
     </message>
     <message>
         <location filename="../../windows/updatewindow.cpp" line="135"/>
@@ -1045,12 +1083,12 @@ Hang tight!</source>
     <message>
         <location filename="../../logic/strings/strings.h" line="22"/>
         <source>Jyut Dictionary</source>
-        <translation>粵語字典</translation>
+        <translation>粵語辭典</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="24"/>
         <source>A free, open-source offline Cantonese Dictionary.</source>
-        <translation>一個免費、自由、開源及脫機嘅粵語字典。</translation>
+        <translation>一個免費、自由、開源及脫機嘅粵語辭典。</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="26"/>

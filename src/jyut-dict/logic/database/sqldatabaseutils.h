@@ -8,12 +8,15 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 // The SQLDatabaseUtils class has functions that read and write from the
 // database. This is differentiated from the SQLDatabaseManager class,
 // which is only responsible for opening and closing a connection to a database.
 
 constexpr auto CURRENT_DATABASE_VERSION = 3;
+typedef std::vector<std::tuple<std::string, std::string, std::string>>
+    conflictingDictionaryMetadata;
 
 class SQLDatabaseUtils : public QObject
 {
@@ -25,8 +28,8 @@ public:
 
     // Note: when adding or removing sources, make sure to update the map in
     // DictionarySourceUtils!
-    bool removeSource(std::string source);
-    bool addSource(std::string filepath);
+    bool removeSource(std::string source, bool skipCleanup = false);
+    bool addSource(std::string filepath, bool overwriteConflictingSource = false);
 
     bool readSources(std::vector<std::pair<std::string, std::string>> &sources);
     bool readSources(std::vector<DictionaryMetadata> &sources);
@@ -37,14 +40,18 @@ private:
     bool migrateDatabaseFromOneToTwo(void);
     bool migrateDatabaseFromTwoToThree(void);
 
-    // NOTE: For some reason, this function does not work as intended if it is
-    // surrounded by a transaction! DO NOT PUT BETWEEN A BEGIN TRANSACTION
-    // AND COMMIT.
     bool deleteSourceFromDatabase(std::string source);
     bool removeDefinitionsFromDatabase(void);
     bool removeSentencesFromDatabase(void);
+    // Note to callers: There CANNOT be a transaction running when this method
+    // is called! It does PRAGMA foreign_keys = ON, which is a no-op inside
+    // a transaction.
+    // If skipCleanup is set to true, the caller MUST call rebuildIndices()
+    // after this method returns if indices are desired.
+    bool removeSources(std::vector<std::string> sources, bool skipCleanup = false);
 
-    bool insertSourcesIntoDatabase(void);
+    std::pair<bool, std::string> insertSourcesIntoDatabase(
+        std::unordered_map<std::string, std::string> old_source_ids);
     bool addDefinitionSource(void);
     bool addSentenceSource(void);
 
@@ -61,6 +68,8 @@ signals:
 
     void deletingSentences();
 
+    void conflictingDictionaryNamesExist(
+        conflictingDictionaryMetadata dictionaries);
     void insertingSource();
     void insertingEntries();
     void insertingDefinitions();
@@ -71,5 +80,7 @@ signals:
     void migratingDatabase();
     void finishedMigratingDatabase(bool success);
 };
+
+Q_DECLARE_METATYPE(conflictingDictionaryMetadata);
 
 #endif // SQLDATABASEUTILS_H

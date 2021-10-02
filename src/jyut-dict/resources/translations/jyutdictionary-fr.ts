@@ -155,63 +155,71 @@
         <translation>À propos de %1</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="214"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="210"/>
         <source>Dropping search indexes...</source>
         <translation>Effacement d&apos;index de recherche...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="220"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="216"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="322"/>
         <source>Adding source...</source>
         <translation>Ajout de la nouvelle source...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="224"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="220"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="326"/>
         <source>Adding new entries...</source>
         <translation>Ajout des nouvelles entrées...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="228"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="224"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="330"/>
         <source>Adding new definitions...</source>
         <translation>Ajout des nouvelles définitions...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="232"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="302"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="228"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="334"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="405"/>
         <source>Rebuilding search indexes...</source>
         <translation>Réorganisation des index...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="273"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="290"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="376"/>
         <source>Removing source...</source>
         <translation>Suppression de la source selectionnée...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="279"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="297"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="382"/>
         <source>Removing definitions...</source>
         <translation>Suppression de définitions...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="288"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="306"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="391"/>
         <source>Deleted entry 0 of %1</source>
         <translation>Entrée nº 0 de %1 supprimée</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="296"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="314"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="399"/>
         <source>Deleted entry %1 of %2</source>
         <translation>Entrée nº %1 de %2 supprimée</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="307"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="410"/>
         <source>Cleaning up...</source>
         <translation>Un petit peu de ménage...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="314"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="417"/>
         <source>Done!</source>
         <translation>Terminé !</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="314"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="417"/>
         <source>Failed!</source>
         <translation>Erreur !</translation>
     </message>
@@ -556,6 +564,21 @@ Veuillez patienter quelques minutes.</translation>
     </message>
 </context>
 <context>
+    <name>OverwriteConflictingDictionaryDialog</name>
+    <message>
+        <location filename="../../dialogs/overwriteconflictingdictionarydialog.cpp" line="14"/>
+        <source>Would you like to overwrite dictionaries you already have?</source>
+        <translation>Voulez-vous remplacer les dictionnaires qui sont déjà dans la base de données ?</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/overwriteconflictingdictionarydialog.cpp" line="19"/>
+        <source>The dictionaries to be overwritten are:
+    - %1</source>
+        <translation>Liste des dictionnaires qui seront remplacés :
+    - %1</translation>
+    </message>
+</context>
+<context>
     <name>QMessageBox</name>
     <message>
         <source>Show Details...</source>
@@ -663,37 +686,52 @@ Veuillez patienter quelques minutes.</translation>
 <context>
     <name>SQLDatabaseUtils</name>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="480"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="472"/>
+        <source>Failed to delete source from database...</source>
+        <translation>Échec de la suppression du dictionnaire...</translation>
+    </message>
+    <message>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="491"/>
         <source>Failed to remove definitions...</source>
         <translation>Échec de la suppression des définitions</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="486"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="497"/>
         <source>Failed to remove sentences...</source>
         <translation>Échec de la suppression des phrases</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="790"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="849"/>
         <source>Database versions do not match. Only dictionaries with the same versions can be added.</source>
         <translation>Les versions des bases de données ne correspondent pas. Seuls les dictionnaires ayant la même version peuvent être ajoutés.</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="793"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="852"/>
         <source>Current version is %1, file version is %2.</source>
         <translation>La version actuelle est %1, la version du fichier est %2.</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="816"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="883"/>
+        <source>Could not add new dictionaries. We couldn&apos;t remove a dictionary that you already had installed with the same name.</source>
+        <translation>Impossible d'ajouter les nouveaux dictionnaires. Un ou plusieurs dictionnaires partageant le même nom n'ont pas été supprimés de la base des données.</translation>
+    </message>
+    <message>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="886"/>
+        <source>Try manually deleting the dictionaries yourself before adding the new dictionary.</source>
+        <translation>Veuillez supprimer ces dictionnaires manuellement avant d'en ajouter des nouveaux.</translation>
+    </message>
+    <message>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="953"/>
         <source>Unable to add definitions...</source>
         <translation>Échec de l&apos;ajout de définitions</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="820"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="957"/>
         <source>Unable to add sentences...</source>
         <translation>Échec de l&apos;ajout de phrases</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="528"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="941"/>
         <source>Could not insert source. Could it be a duplicate of a dictionary you already installed?</source>
         <translation>Erreur lors de l&apos;ajout de la nouvelle source. Est-elle un double d&apos;une source existante ?</translation>
     </message>

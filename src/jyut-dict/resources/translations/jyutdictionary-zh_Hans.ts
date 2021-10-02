@@ -122,17 +122,17 @@
     <message>
         <location filename="../../components/settings/dictionarytab.cpp" line="+134"/>
         <source>The Dictionaries tab allows you to view information about dictionaries, and add or remove them.</source>
-        <translation>您在“字典”这一页上可以查看和管理已储存的字典。</translation>
+        <translation>您在“词典”这一页上可以查看和管理已储存的词典。</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Add Dictionary...</source>
-        <translation>添加字典…</translation>
+        <translation>添加词典…</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Delete Dictionary</source>
-        <translation>刪除字典</translation>
+        <translation>刪除词典</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -142,7 +142,7 @@
     <message>
         <location line="-33"/>
         <source>Select dictionary file</source>
-        <translation>选择字典文件</translation>
+        <translation>选择词典文件</translation>
     </message>
     <message>
         <location line="+51"/>
@@ -155,48 +155,56 @@
         <translation>关于 %1</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+51"/>
         <source>Dropping search indexes...</source>
         <translation>正在删除搜索索引…</translation>
     </message>
     <message>
         <location line="+6"/>
+        <location line="+106"/>
         <source>Adding source...</source>
-        <translation>正在添加新字典…</translation>
+        <translation>正在添加新词典…</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="-102"/>
+        <location line="+106"/>
         <source>Adding new entries...</source>
         <translation>正在添加新条目…</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="-102"/>
+        <location line="+106"/>
         <source>Adding new definitions...</source>
         <translation>正在添加新解释…</translation>
     </message>
     <message>
-        <location line="+4"/>
-        <location line="+70"/>
+        <location line="-102"/>
+        <location line="+106"/>
+        <location line="+71"/>
         <source>Rebuilding search indexes...</source>
         <translation>重建搜索索引…</translation>
     </message>
     <message>
-        <location line="-29"/>
+        <location line="-115"/>
+        <location line="+86"/>
         <source>Removing source...</source>
         <translation>正在移除来源…</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="-79"/>
+        <location line="+85"/>
         <source>Removing definitions...</source>
         <translation>正在删除解释…</translation>
     </message>
     <message>
-        <location line="+9"/>
+        <location line="-76"/>
+        <location line="+85"/>
         <source>Deleted entry 0 of %1</source>
         <translation>已删除 0 / %1 个词条</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="-77"/>
+        <location line="+85"/>
         <source>Deleted entry %1 of %2</source>
         <translation>已删除 %1 / %2 个词条</translation>
     </message>
@@ -221,7 +229,7 @@
     <message>
         <location filename="../../dialogs/dictionarytabfailuredialog.cpp" line="+16"/>
         <source>Failed to add source!</source>
-        <translation>添加字典失败！</translation>
+        <translation>添加词典失败！</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -288,7 +296,7 @@
     <message>
         <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="+70"/>
         <source>Saved Words</source>
-        <translation>已保存词语</translation>
+        <translation>已保存的词语</translation>
     </message>
 </context>
 <context>
@@ -389,12 +397,12 @@
     <message>
         <location line="-159"/>
         <source>&amp;About</source>
-        <translation>关于粤语字典</translation>
+        <translation>关于粤语词典</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Show the application&apos;s About box</source>
-        <translation>打开“关于粤语字典”的窗口</translation>
+        <translation>打开“关于粤语词典”的窗口</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -555,6 +563,21 @@ Hang tight!</source>
     </message>
 </context>
 <context>
+    <name>OverwriteConflictingDictionaryDialog</name>
+    <message>
+        <location filename="../../dialogs/overwriteconflictingdictionarydialog.cpp" line="+14"/>
+        <source>Would you like to overwrite dictionaries you already have?</source>
+        <translation>是否要覆盖已在数据库的同名词典？</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>The dictionaries to be overwritten are:
+    - %1</source>
+        <translation>同名词典列表：
+    - %1</translation>
+    </message>
+</context>
+<context>
     <name>QMessageBox</name>
     <message>
         <source>Help</source>
@@ -615,7 +638,7 @@ Hang tight!</source>
         <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="+85"/>
         <location line="+1"/>
         <source>Welcome!</source>
-        <translation>欢迎使用粤语字典！</translation>
+        <translation>欢迎使用粤语词典！</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -658,7 +681,12 @@ Hang tight!</source>
 <context>
     <name>SQLDatabaseUtils</name>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="+480"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="+472"/>
+        <source>Failed to delete source from database...</source>
+        <translation>移除词典失败</translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>Failed to remove definitions...</source>
         <translation>未能移除解释…</translation>
     </message>
@@ -668,9 +696,9 @@ Hang tight!</source>
         <translation>未能移除例句…</translation>
     </message>
     <message>
-        <location line="+304"/>
+        <location line="+352"/>
         <source>Database versions do not match. Only dictionaries with the same versions can be added.</source>
-        <translation>数据库版本不匹配！只能可添加一样版本的字典。</translation>
+        <translation>数据库版本不匹配！只能可添加一样版本的词典。</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -678,7 +706,17 @@ Hang tight!</source>
         <translation>当前版本：%1，文件版本：%2。</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+31"/>
+        <source>Could not add new dictionaries. We couldn&apos;t remove a dictionary that you already had installed with the same name.</source>
+        <translation>添加词典失败。无法移除一部同名的词典。</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Try manually deleting the dictionaries yourself before adding the new dictionary.</source>
+        <translation>在添加新词典之前，请试试手动移除同名的词典。</translation>
+    </message>
+    <message>
+        <location line="+67"/>
         <source>Unable to add definitions...</source>
         <translation>未能添加解释…</translation>
     </message>
@@ -688,9 +726,9 @@ Hang tight!</source>
         <translation>未能添加例句…</translation>
     </message>
     <message>
-        <location line="-292"/>
+        <location line="-16"/>
         <source>Could not insert source. Could it be a duplicate of a dictionary you already installed?</source>
-        <translation>添加字典失败。您已经添加过这个字典吗？</translation>
+        <translation>添加词典失败。您已经添加过这个词典吗？</translation>
     </message>
 </context>
 <context>
@@ -698,7 +736,7 @@ Hang tight!</source>
     <message>
         <location filename="../../components/historyview/searchhistorylistdelegate.cpp" line="+118"/>
         <source>After searching for a word, you will find it in this list. Selecting a word will allow you to do the same search again.</source>
-        <translation>您查字典之后就会在这里找到您的搜素历史。如果您想再次搜素，您可以选择表中的任何一个词语。</translation>
+        <translation>您查词典之后就会在这里找到您的搜素历史。如果您想再次搜素，您可以选择表中的任何一个词语。</translation>
     </message>
 </context>
 <context>
@@ -921,7 +959,7 @@ Hang tight!</source>
     <message>
         <location line="+1"/>
         <source>Dictionaries</source>
-        <translation>字典</translation>
+        <translation>词典</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1041,12 +1079,12 @@ Hang tight!</source>
     <message>
         <location line="+2"/>
         <source>Jyut Dictionary</source>
-        <translation>粤语字典</translation>
+        <translation>粤语词典</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>A free, open-source offline Cantonese Dictionary.</source>
-        <translation>一个免费、自由、开源及脱机的粤语字典。</translation>
+        <translation>一个免费、自由、开源及脱机的粤语词典。</translation>
     </message>
     <message>
         <location line="+2"/>

@@ -20,8 +20,6 @@ bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(void)
 {
     QSqlQuery query{_manager->getDatabase()};
 
-    query.exec("BEGIN TRANSACTION");
-
     query.exec(
         "CREATE TABLE IF NOT EXISTS chinese_sentences( "
         "  chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
@@ -54,12 +52,6 @@ bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(void)
                "    DELETE CASCADE "
                ")");
 
-    query.exec("COMMIT");
-
-    // For some reason, PRAGMA user_version=? doesn't work; so just use a QString
-    QString queryString = "PRAGMA user_version=%1";
-    query.prepare(queryString.arg(2));
-    query.exec();
     return true;
 }
 
@@ -72,8 +64,6 @@ bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(void)
 bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(void)
 {
     QSqlQuery query{_manager->getDatabase()};
-
-    query.exec("BEGIN TRANSACTION");
 
     // Add new definitions->chinese_sentence link table
     query.exec(
@@ -184,15 +174,6 @@ bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(void)
         return false;
     }
 
-    query.exec("COMMIT");
-    if (query.lastError().isValid()) {
-        return false;
-    }
-
-    // For some reason, PRAGMA user_version=? doesn't work; so just use a QString
-    QString queryString = "PRAGMA user_version=%1";
-    query.prepare(queryString.arg(CURRENT_DATABASE_VERSION));
-    query.exec();
     return true;
 }
 
@@ -208,17 +189,35 @@ bool SQLDatabaseUtils::updateDatabase(void)
     }
 
     if (version != CURRENT_DATABASE_VERSION) {
+        query.exec("SAVEPOINT database_update");
         emit migratingDatabase();
         bool success = true;
         switch (version) {
         case -1:
         case 1:
-            success = success && migrateDatabaseFromOneToTwo();
+            if (!migrateDatabaseFromOneToTwo()) {
+                success = false;
+                break;
+            }
         case 2:
-            success = success && migrateDatabaseFromTwoToThree();
+            if (!migrateDatabaseFromTwoToThree()) {
+                success = false;
+                break;
+            }
         default:
             break;
         }
+
+        if (success) {
+            query.exec("RELEASE database_update");
+            // For some reason, PRAGMA user_version=? doesn't work; so just use a QString
+            QString queryString = "PRAGMA user_version=%1";
+            query.prepare(queryString.arg(CURRENT_DATABASE_VERSION));
+            query.exec();
+        } else {
+            query.exec("ROLLBACK");
+        }
+
         emit finishedMigratingDatabase(success);
     }
 
@@ -330,26 +329,15 @@ bool SQLDatabaseUtils::rebuildIndices(void)
     return !query.lastError().isValid();
 }
 
-// Deleting a source from the database involves turning on foreign keys
-// (so the constraints are properly enforced), dropping indices (that will no
-// longer be valid after deleting the source), and finally deleting the source
-// that matches the name passed in the function.
 bool SQLDatabaseUtils::deleteSourceFromDatabase(std::string source)
 {
     QSqlQuery query{_manager->getDatabase()};
-    query.exec("PRAGMA foreign_keys = ON");
-
-    query.exec("BEGIN TRANSACTION");
 
     query.prepare("DELETE FROM sources WHERE sourcename = ?");
     query.addBindValue(source.c_str());
     query.exec();
 
-    query.exec("COMMIT");
-
-    query.exec("PRAGMA foreign_keys = OFF");
-
-    return true;
+    return !query.lastError().isValid();
 }
 
 // Removing definitions from the database involves the following steps:
@@ -385,7 +373,6 @@ bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void)
         emit totalToDelete(numberToDelete);
     }
 
-    query.exec("SAVEPOINT row_delection");
     for (int i = 0; i < numberToDelete; i += 1000) {
         query.exec("DELETE FROM entries WHERE entry_id IN "
                    "  (SELECT entries.entry_id FROM entries "
@@ -395,7 +382,6 @@ bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void)
         emit deletionProgress(i, numberToDelete);
     }
     emit deletionProgress(numberToDelete, numberToDelete);
-    query.exec("RELEASE row_deletion");
 
     return true;
 }
@@ -424,7 +410,6 @@ bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
     // fk_chinese_sentence_id referencing it, and DELETE FROM chinese_sentences.
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
     query.exec("DELETE FROM chinese_sentences "
                "WHERE chinese_sentences.chinese_sentence_id IN "
                "(SELECT chinese_sentences.chinese_sentence_id "
@@ -447,30 +432,56 @@ bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
 }
 
 // Method to remove a source from the database, based on the name of the source.
-bool SQLDatabaseUtils::removeSource(std::string source)
+bool SQLDatabaseUtils::removeSource(std::string source, bool skipCleanup)
+{
+    return removeSources({source}, skipCleanup);
+}
+
+// Method to remove multiple sources from the database, based on the name of the sources.
+bool SQLDatabaseUtils::removeSources(std::vector<std::string> sources, bool skipCleanup)
 {
     QSqlQuery query{_manager->getDatabase()};
 
-    // Determine what type of source it is based on the "other" field
-    query.prepare("SELECT other FROM sources WHERE sourcename = ?");
-    query.addBindValue(source.c_str());
-    query.exec();
+    // Foreign keys cannnot be turned on inside a SAVEPOINT!
+    // Turn on before this savepoint.
+    query.exec("PRAGMA foreign_keys = ON");
 
-    // Assume that the "other" field in the database contains metadata about
-    // what type of data this source contains, in the format
-    // type,type,type (types of data separated by the character ',')
-    int otherIndex = query.record().indexOf("other");
-    std::string type = "";
-    while (query.next()) {
-        type = query.value(otherIndex).toString().toStdString();
+    // Design note: I wish I could make this entire function inside a single
+    // transaction (instead of splitting it into source_deletion and
+    // source_removal). Unfortunately, removeDefinitionsFromDatabase()
+    // is slow as molasses if foreign keys are turned on. I sacrifice a bit
+    // of correctness in exchange for much more speed.
+    query.exec("SAVEPOINT source_deletion");
+    std::string type;
+    for (auto &source : sources) {
+        // Determine what type of source it is based on the "other" field
+        query.prepare("SELECT other FROM sources WHERE sourcename = ?");
+        query.addBindValue(source.c_str());
+        query.exec();
+
+        // Assume that the "other" field in the database contains metadata about
+        // what type of data this source contains, in the format
+        // type,type,type (types of data separated by the character ',')
+        int otherIndex = query.record().indexOf("other");
+        while (query.next()) {
+            type += query.value(otherIndex).toString().toStdString() + ",";
+        }
+
+        if (!deleteSourceFromDatabase(source)) {
+            emit finishedDeletion(
+                false, tr("Failed to delete source from database..."));
+            query.exec("ROLLBACK");
+            query.exec("PRAGMA foreign_keys = OFF");
+            return false;
+        }
     }
+    query.exec("RELEASE source_deletion");
+    query.exec("PRAGMA foreign_keys = OFF");
 
-    deleteSourceFromDatabase(source);
-
+    query.exec("SAVEPOINT source_removal");
     // In the metadata field, no type is a definition source.
     // sentences is a sentences source.
     bool success = false;
-    query.exec("BEGIN TRANSACTION");
     try {
         dropIndices();
 
@@ -487,12 +498,17 @@ bool SQLDatabaseUtils::removeSource(std::string source)
             }
         }
 
-        rebuildIndices();
+        if (!skipCleanup) {
+            rebuildIndices();
+        }
 
-        emit cleaningUp();
-        query.exec("VACUUM");
+        query.exec("RELEASE source_removal");
 
-        query.exec("COMMIT");
+        if (!skipCleanup) {
+            emit cleaningUp();
+            query.exec("VACUUM");
+        }
+
         success = true;
         emit finishedDeletion(success);
     } catch (const std::exception &e) {
@@ -500,38 +516,86 @@ bool SQLDatabaseUtils::removeSource(std::string source)
         query.exec("ROLLBACK");
     }
 
-    _manager->closeDatabase();
     return success;
 }
 
-// Inserting into the database selects all the sources in the attached database
-// and attempts to insert it into the database.
-bool SQLDatabaseUtils::insertSourcesIntoDatabase(void)
+// Inserting into the database loops through all the sources in the attached
+// database and attempts to insert each one into the database.
+std::pair<bool, std::string> SQLDatabaseUtils::insertSourcesIntoDatabase(
+    std::unordered_map<std::string, std::string> old_source_ids)
 {
     QSqlQuery query{_manager->getDatabase()};
 
-    emit insertingSource();
-
     query.exec(
-        "INSERT INTO sources "
-        "  (sourcename, sourceshortname, version, description, legal, link, "
-        "    update_url, other) "
         "SELECT sourcename, sourceshortname, version, description, legal, "
         "  link, update_url, other "
         "FROM db.sources");
+    int sourcenameIndex = query.record().indexOf("sourcename");
+    int sourceshortnameIndex = query.record().indexOf("sourceshortname");
+    int versionIndex = query.record().indexOf("version");
+    int descriptionIndex = query.record().indexOf("description");
+    int legalIndex = query.record().indexOf("legal");
+    int linkIndex = query.record().indexOf("link");
+    int updateURLIndex = query.record().indexOf("update_url");
+    int otherIndex = query.record().indexOf("other");
 
-    if (query.lastError().isValid()) {
-        QString error = query.lastError().text();
+    while (query.next()) {
+        QSqlQuery insertQuery{_manager->getDatabase()};
 
-        emit finishedAddition(
-            false,
-            tr("Could not insert source. Could it be a duplicate of a "
-               "dictionary you already installed?"),
-            error);
-        return false;
+        QString sourcename{query.value(sourcenameIndex).toString()};
+        QString sourceshortname{query.value(sourceshortnameIndex).toString()};
+        QString version{query.value(versionIndex).toString()};
+        QString description{query.value(descriptionIndex).toString()};
+        QString legal{query.value(legalIndex).toString()};
+        QString link{query.value(linkIndex).toString()};
+        QString updateURL{query.value(updateURLIndex).toString()};
+        QString other{query.value(otherIndex).toString()};
+
+        if (old_source_ids.find(sourcename.toStdString()) != old_source_ids.end()) {
+            // If the sourcename is in the old_source_ids map, it means that it
+            // already existed in the database. Since we want to preserve
+            // dictionary order, we will need to insert at the old dictionary ID
+            // which is given by the map.
+            QString sourceid{old_source_ids[sourcename.toStdString()].c_str()};
+
+            insertQuery.prepare("INSERT INTO sources "
+                                "  (source_id, sourcename, sourceshortname, "
+                                "   version, description, legal, link, "
+                                "   update_url, other) "
+                                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            insertQuery.addBindValue(sourceid);
+            insertQuery.addBindValue(sourcename);
+            insertQuery.addBindValue(sourceshortname);
+            insertQuery.addBindValue(version);
+            insertQuery.addBindValue(description);
+            insertQuery.addBindValue(legal);
+            insertQuery.addBindValue(link);
+            insertQuery.addBindValue(updateURL);
+            insertQuery.addBindValue(other);
+        } else {
+            insertQuery.prepare("INSERT INTO sources "
+                                "  (sourcename, sourceshortname, version, "
+                                "   description, legal, link, update_url, "
+                                "   other) "
+                                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            insertQuery.addBindValue(sourcename);
+            insertQuery.addBindValue(sourceshortname);
+            insertQuery.addBindValue(version);
+            insertQuery.addBindValue(description);
+            insertQuery.addBindValue(legal);
+            insertQuery.addBindValue(link);
+            insertQuery.addBindValue(updateURL);
+            insertQuery.addBindValue(other);
+        }
+
+        insertQuery.exec();
+        if (insertQuery.lastError().isValid()) {
+            QString error = insertQuery.lastError().text();
+            return {false, error.toStdString()};
+        }
     }
 
-    return true;
+    return {true, ""};
 }
 
 // To add a definition source, the steps are the following:
@@ -765,7 +829,7 @@ bool SQLDatabaseUtils::addSentenceSource(void)
     return !query.lastError().isValid();
 }
 
-bool SQLDatabaseUtils::addSource(std::string filepath)
+bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflictingSource)
 {
     QSqlQuery query{_manager->getDatabase()};
 
@@ -773,17 +837,12 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
     query.addBindValue(filepath.c_str());
     query.exec();
 
-    // This usually happens so quickly that the slot(s) are not yet
-    // connected to the finishedAddition() signal. Sleep for 1000ms
-    // to make time for all connections to be made.
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
+    // Only databases that match the current version can be added
     query.exec("PRAGMA db.user_version");
     int version = -1;
     while (query.next()) {
         version = query.value(0).toInt();
     }
-
     if (version != CURRENT_DATABASE_VERSION) {
         query.exec("DETACH DATABASE db");
         emit finishedAddition(false,
@@ -796,21 +855,99 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
         return false;
     }
 
+    // Only sources that don't already exist in the database can be added
+    std::unordered_map<std::string, std::string> old_source_ids;
+    if (overwriteConflictingSource) {
+        // If overwrite is set to true, then we remove the conflicting
+        // sources before adding the new ones from the filepath.
+        // However, we keep around the source_ids belonging to those
+        // sources, so that when we insert the ones from the filepath, we
+        // can insert them at the same source_id.
+        query.exec("SELECT source_id, sourcename "
+                   "FROM sources WHERE sourcename IN "
+                   "  (SELECT sourcename FROM db.sources)");
+        int sourceIdIndex = query.record().indexOf("source_id");
+        int sourcenameIndex = query.record().indexOf("sourcename");
+        std::vector<std::string> sourcesToRemove;
+        while (query.next()) {
+            sourcesToRemove.emplace_back(
+                query.value(sourcenameIndex).toString().toStdString());
+            old_source_ids[query.value(sourcenameIndex).toString().toStdString()]
+                = query.value(sourceIdIndex).toString().toStdString();
+        }
+        if (!removeSources(sourcesToRemove, /* skipCleanup */ true)) {
+            query.exec("DETACH DATABASE db");
+            rebuildIndices();
+            emit finishedAddition(
+                false,
+                tr("Could not add new dictionaries. We couldn't remove a "
+                   "dictionary that you already had installed with the same "
+                   "name."),
+                tr("Try manually deleting the dictionaries yourself before "
+                   "adding the new dictionary."));
+            return false;
+        }
+    } else {
+        // If overwrite is set to false, then we return the list of conflicting
+        // databases, along with their versions
+        query.exec("SELECT s.sourcename, s.version AS in_database_version, "
+                   "  dbs.version AS new_file_version "
+                   "FROM sources AS s, db.sources AS dbs "
+                   "WHERE s.sourcename IN "
+                   "  (SELECT sourcename FROM db.sources) "
+                   "AND s.sourcename = dbs.sourcename");
+        int sourcenameIndex = query.record().indexOf("sourcename");
+        int inDatabaseVersionIndex = query.record().indexOf(
+            "in_database_version");
+        int newFileVersionIndex = query.record().indexOf("new_file_version");
+        conflictingDictionaryMetadata matchingDictionaryNames;
+        while (query.next()) {
+            matchingDictionaryNames.emplace_back(
+                query.value(sourcenameIndex).toString().toStdString(),
+                query.value(inDatabaseVersionIndex).toString().toStdString(),
+                query.value(newFileVersionIndex).toString().toStdString());
+        }
+        if (!matchingDictionaryNames.empty()) {
+            query.exec("DETACH DATABASE db");
+            emit conflictingDictionaryNamesExist(matchingDictionaryNames);
+            return false;
+        }
+    }
+
+    // Since removeSources() causes indices to be dropped, but removeSources()
+    // is not always called (it will only be called if there is a conflicting
+    // source), indices must always be dropped and rebuilt outside of the
+    // source_addition savepoint.
+    // If indices were dropped inside the savepoint, then a rollback would cause
+    // the index drop to never occur. We would have an inconsistent state -
+    // if overwrite is true, indices would still be dropped after the rollback,
+    // otherwise, indices would not be dropped. To avoid this state, we always
+    // drop indices before the savepoint, so indices are always dropped after
+    // a rollback.
+    dropIndices();
+
+    query.exec("SAVEPOINT source_addition");
     // Insert the sources from the new database file into the database
-    query.exec("BEGIN TRANSACTION");
-    if (!insertSourcesIntoDatabase()) {
+    emit insertingSource();
+    bool success;
+    std::string errorMessage;
+    std::tie(success, errorMessage) = insertSourcesIntoDatabase(old_source_ids);
+    if (!success) {
+        query.exec("DETACH DATABASE db");
         query.exec("ROLLBACK");
+        rebuildIndices();
+        emit finishedAddition(
+            false,
+            tr("Could not insert source. Could it be a duplicate of a "
+               "dictionary you already installed?"),
+            errorMessage.c_str());
+
         return false;
     }
-    query.exec("COMMIT");
 
     // Then, insert the definitions and sentences
-    bool success = false;
+    success = false;
     try {
-        query.exec("BEGIN TRANSACTION");
-
-        dropIndices();
-
         if (!addDefinitionSource()) {
             throw std::runtime_error(
                 tr("Unable to add definitions...").toStdString());
@@ -820,18 +957,16 @@ bool SQLDatabaseUtils::addSource(std::string filepath)
                 tr("Unable to add sentences...").toStdString());
         }
 
+        query.exec("RELEASE source_addition");
         rebuildIndices();
-
-        query.exec("COMMIT");
         success = true;
         emit finishedAddition(success);
     } catch (std::exception &e) {
         query.exec("ROLLBACK");
+        rebuildIndices();
         emit finishedAddition(success, e.what());
     }
 
     query.exec("DETACH DATABASE db");
-
-    _manager->closeDatabase();
     return success;
 }
