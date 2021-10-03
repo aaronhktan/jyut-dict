@@ -422,10 +422,13 @@ def parse_word_file(file_name, words):
             if not definition:
                 continue
 
+            # Override black trying to add a trailing comma here
+            # fmt: off
             labels = map(
                 lambda x: pos_labels[x.lower()] if x.lower() in pos_labels else x,
                 labels
             )
+            # fmt: on
             label = ", ".join(labels)
             if not label and special_label:
                 label = special_label

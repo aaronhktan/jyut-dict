@@ -48,6 +48,7 @@ This folder contains several Python3 scripts that convert the various online Can
   - **[CFDICT](https://chine.in/mandarin/dictionnaire/)**
   - **[HanDeDict](https://handedict.zydeo.net/de)**
 - **[CUHK 現代標準漢語與粵語對照資料庫](https://apps.itsc.cuhk.edu.hk/hanyu/Page/Cover.aspx)**
+- **[CantoDict](https://www.cantonese.sheik.co.uk/)** 
 - **[Kaifangcidian 粵語詞典 - 開放詞典](https://www.kaifangcidian.com/han/yue)**
 - **[Tatoeba](https://tatoeba.org/eng/downloads)**
 - **[words.hk 粵典](https://words.hk/)**
