@@ -142,7 +142,7 @@ def parse_word_file(file_name, words):
         jyutping_numbers = JYUTPING_NUMBERS_REGEX.findall(jyutping_numbers)
         jyutping_numbers = [
             JYUTPING_MAP[x] if x in JYUTPING_MAP else x for x in jyutping_numbers
-        ]  # Replacement is needed because CUHK uses different notations for checked tones
+        ]  # Replacement is needed because CUHK uses 7-8-9 notation for checked tones instead of 1-3-6
 
         jyut = [x[0] + x[1] for x in zip(jyutping_letters, jyutping_numbers)]
         jyut = " ".join(jyut)
