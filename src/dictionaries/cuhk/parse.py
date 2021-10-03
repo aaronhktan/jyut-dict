@@ -18,7 +18,7 @@ import sys
 #   - 巴士 for three definitions
 #   - 市 for comment
 #   - 重 contains HKSCS characters in the Private-Use Areas of Unicode that must be converted
-#   - 鏈 contains characters that are non-standard, not in HKSCS, and should be replaced with square boxes
+#   - 鏈 contains characters that are non-standard, not in HKSCS, and should be replaced with PRIVATE_USE_AREA_REPLACEMENT_STRING
 
 PRIVATE_USE_AREA_REGEX = re.compile("[\ue000-\uf8ff]")
 PRIVATE_USE_AREA_REPLACEMENT_STRING = "☒"
