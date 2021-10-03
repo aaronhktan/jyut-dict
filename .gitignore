@@ -79,6 +79,9 @@ CMakeLists.txt.user*
 **/cantodict/developer/*
 **/cedict/archive_*
 **/cedict/developer/*
+**/cuhk/archive_*
+**/cuhk/data/*
+**/cuhk/developer/*
 **/kaifangcidian/archive_*
 **/kaifangcidian/data/*
 **/kaifangcidian/developer/*
