@@ -167,6 +167,10 @@ void DictionaryTab::setDictionaryMetadata(const QModelIndex &index)
     connect(_remove, &QPushButton::clicked, this, [=] {
         removeDictionary(metadata);
     });
+
+    _list->setStyleSheet("QListView {"
+                         "   border: 1px solid palette(alternate-base); "
+                         "} ");
 }
 
 void DictionaryTab::clearDictionaryList()

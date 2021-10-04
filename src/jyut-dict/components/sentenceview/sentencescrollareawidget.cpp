@@ -14,7 +14,7 @@
 SentenceScrollAreaWidget::SentenceScrollAreaWidget(QWidget *parent)
     : QWidget(parent)
 {
-    setObjectName("EntryScrollAreaWidget");
+    setObjectName("SentenceScrollAreaWidget");
 
     // Entire Scroll Area
     _scrollAreaLayout = new QVBoxLayout{this};
@@ -53,13 +53,9 @@ void SentenceScrollAreaWidget::setSourceSentence(const SourceSentence &sentence)
 
 void SentenceScrollAreaWidget::setStyle(bool use_dark)
 {
-    QColor backgroundColour = use_dark ? QColor{BACKGROUND_COLOUR_DARK_R,
-                                                BACKGROUND_COLOUR_DARK_G,
-                                                BACKGROUND_COLOUR_DARK_B}
-                                       : QColor{BACKGROUND_COLOUR_LIGHT_R,
-                                                BACKGROUND_COLOUR_LIGHT_G,
-                                                BACKGROUND_COLOUR_LIGHT_B};
-    QString styleSheet = "QWidget#EntryScrollAreaWidget { background-color: %1; }";
-    setStyleSheet(styleSheet.arg(backgroundColour.name()));
+    (void) (use_dark);
     setAttribute(Qt::WA_StyledBackground);
+    setStyleSheet("QWidget#SentenceScrollAreaWidget { "
+                  "   background-color: palette(window); "
+                  "} ");
 }

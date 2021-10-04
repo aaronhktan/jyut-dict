@@ -51,7 +51,7 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
         QColor textColour = Utils::getContrastingColour(backgroundColour);
         painter->setPen(textColour);
     } else {
-        painter->fillRect(option.rect, option.palette.base());
+        painter->fillRect(option.rect, option.palette.window());
         painter->setPen(QPen(option.palette.color(QPalette::WindowText)));
     }
 
@@ -185,7 +185,7 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
     // Bottom divider
     QRect rct = option.rect;
     rct.setY(rct.bottom() - 1);
-    painter->fillRect(rct, option.palette.color(QPalette::Window));
+    painter->fillRect(rct, option.palette.alternateBase());
 
     painter->restore();
 }

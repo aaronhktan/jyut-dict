@@ -50,7 +50,7 @@ void SentenceResultListDelegate::paint(QPainter *painter,
         }
         painter->fillRect(option.rect, backgroundColour);
     } else {
-        painter->fillRect(option.rect, option.palette.base());
+        painter->fillRect(option.rect, option.palette.window());
     }
 
     painter->setRenderHint(QPainter::Antialiasing, true);
@@ -242,7 +242,7 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     // Bottom divider
     QRect rct = option.rect;
     rct.setY(rct.bottom() - 1);
-    painter->fillRect(rct, option.palette.color(QPalette::Window));
+    painter->fillRect(rct, option.palette.alternateBase());
 
 #ifdef Q_OS_WIN
     font = oldFont;

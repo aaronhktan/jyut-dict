@@ -66,7 +66,9 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     setStretchFactor(0, 0);
     setStretchFactor(1, 1);
     setSizes(QList<int>({size().width() / 3, size().width() * 2 / 3}));
-    setStyleSheet("QSplitter::handle { background-color: none; }");
+    setStyleSheet("QSplitter::handle { "
+                  "   background-color: palette(alternate-base); "
+                  "} ");
 }
 
 MainSplitter::~MainSplitter()

@@ -64,13 +64,9 @@ void EntryScrollAreaWidget::setEntry(const Entry &entry)
 
 void EntryScrollAreaWidget::setStyle(bool use_dark)
 {
-    QColor backgroundColour = use_dark ? QColor{BACKGROUND_COLOUR_DARK_R,
-                                                BACKGROUND_COLOUR_DARK_G,
-                                                BACKGROUND_COLOUR_DARK_B}
-                                       : QColor{BACKGROUND_COLOUR_LIGHT_R,
-                                                BACKGROUND_COLOUR_LIGHT_G,
-                                                BACKGROUND_COLOUR_LIGHT_B};
-    QString styleSheet = "QWidget#DefinitionScrollAreaWidget { background-color: %1; }";
-    setStyleSheet(styleSheet.arg(backgroundColour.name()));
+    (void) (use_dark);
     setAttribute(Qt::WA_StyledBackground);
+    setStyleSheet("QWidget#DefinitionScrollAreaWidget { "
+                  "   background-color: palette(window); "
+                  "} ");
 }

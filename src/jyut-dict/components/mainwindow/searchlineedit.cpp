@@ -154,19 +154,21 @@ void SearchLineEdit::setStyle(bool use_dark)
 
 #ifdef Q_OS_WIN
     if (use_dark) {
-        setStyleSheet("QLineEdit { \
-                         background-color: #586365; \
-                         border: 1px solid black; \
-                         font-size: 12px; \
-                         selection-background-color: darkgray; }");
+        setStyleSheet("QLineEdit { "
+                       "  background-color: #586365; "
+                       "  border: 1px solid black; "
+                       "  font-size: 12px; "
+                       "  selection-background-color: palette(alternate-base); "
+                       "} ");
         _searchLineEdit->setIcon(search_inverted);
         _clearLineEdit->setIcon(clear_inverted);
     } else {
-        setStyleSheet("QLineEdit { \
-                         background-color: #ffffff; \
-                         border-color: black; \
-                         border-width: 2px; \
-                         font-size: 12px; }");
+        setStyleSheet("QLineEdit { "
+                      "   background-color: #ffffff; "
+                      "   border-color: black; "
+                      "   border-width: 2px; "
+                      "   font-size: 12px; "
+                      "} ");
         _searchLineEdit->setIcon(search);
         _clearLineEdit->setIcon(clear);
     }

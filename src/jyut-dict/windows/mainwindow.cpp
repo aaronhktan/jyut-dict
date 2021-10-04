@@ -100,6 +100,9 @@ MainWindow::MainWindow(QWidget *parent) :
     // Install translator
     installTranslator();
 
+    // Set the style to match whether the user started dark mode
+    setStyle(Utils::isDarkMode());
+
     // Create UI elements
     _mainToolBar = new MainToolBar{_sqlSearch, _sqlHistoryUtils, this};
     addToolBar(_mainToolBar);
@@ -136,10 +139,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Translate UI
     translateUI();
-
-    // Set style
-    // Set the style to match whether the user started dark mode
-    setStyle(Utils::isDarkMode());
 
     // Check for updates
     _checker = new GithubReleaseChecker{this};
@@ -314,6 +313,7 @@ void MainWindow::setStyle(bool use_dark)
 #elif defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     if (!use_dark) {
         QPalette palette = QApplication::style()->standardPalette();
+        palette.setColor(QPalette::Window, Qt::white);
         palette.setColor(QPalette::Highlight,
                          QColor{LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
                                 LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
@@ -329,12 +329,16 @@ void MainWindow::setStyle(bool use_dark)
         QColor gray{128, 128, 128};
 
         QPalette darkPalette;
-        darkPalette.setColor(QPalette::Window, darkGray);
+        darkPalette.setColor(QPalette::Window, QColor{BACKGROUND_COLOUR_DARK_R,
+                                                      BACKGROUND_COLOUR_DARK_G,
+                                                      BACKGROUND_COLOUR_DARK_B});
         darkPalette.setColor(QPalette::WindowText, Qt::white);
-        darkPalette.setColor(QPalette::Base, QColor{BACKGROUND_COLOUR_DARK_R,
-                                                    BACKGROUND_COLOUR_DARK_G,
-                                                    BACKGROUND_COLOUR_DARK_B});
-        darkPalette.setColor(QPalette::AlternateBase, darkGray);
+        darkPalette.setColor(QPalette::Base, QColor{CONTENT_BACKGROUND_COLOUR_DARK_R,
+                                                    CONTENT_BACKGROUND_COLOUR_DARK_G,
+                                                    CONTENT_BACKGROUND_COLOUR_DARK_B});
+        darkPalette.setColor(QPalette::AlternateBase, QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
+                                                             HEADER_BACKGROUND_COLOUR_DARK_G,
+                                                             HEADER_BACKGROUND_COLOUR_DARK_B});
         darkPalette.setColor(QPalette::ToolTipBase, darkGray);
         darkPalette.setColor(QPalette::ToolTipText, Qt::white);
         darkPalette.setColor(QPalette::Text, Qt::white);
@@ -398,7 +402,11 @@ void MainWindow::setStyle(bool use_dark)
                             "} "
                             ""
                             "QGroupBox { "
-                            "   border: 1px solid palette(base); "
+                            "   border: 1px solid palette(alternate-base); "
+                            "} "
+                            ""
+                            "QListView { "
+                            "   background-color: palette(window); "
                             "} "
                             ""
                             "QMenu { "
@@ -439,8 +447,7 @@ void MainWindow::setStyle(bool use_dark)
                             "} "
                             ""
                             "QScrollBar:vertical { "
-                            "   background: palette(base); "
-                            "   background-color: none; "
+                            "   background-color: palette(base); "
                             "   border-top-right-radius: 2px; "
                             "   border-bottom-right-radius: 2px; "
                             "   width: 16px; "
@@ -448,7 +455,7 @@ void MainWindow::setStyle(bool use_dark)
                             "} "
                             ""
                             "QScrollBar::handle:vertical { "
-                            "   background-color: #606060; "
+                            "   background-color: dimgrey; "
                             "   min-height: 20px; "
                             "   margin-top: 15px; "
                             "   margin-bottom: 15px; "
@@ -457,6 +464,7 @@ void MainWindow::setStyle(bool use_dark)
                             "QScrollBar::handle:vertical:hover { "
                             "   background-color: darkgrey; "
                             "} "
+                            ""
                             "QScrollBar::add-line:vertical { "
                             "   background: none; "
                             "   height: 15px; "
