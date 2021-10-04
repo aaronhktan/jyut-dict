@@ -6,6 +6,8 @@
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined (Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
 #elif defined(Q_OS_WIN)
 #include "logic/utils/utils_windows.h"
 #endif
@@ -153,9 +155,6 @@ void DictionaryTab::setDictionaryMetadata(const QModelIndex &index)
     _description->setText(metadata.getDescription().c_str());
     _legal->setText(metadata.getLegal().c_str());
     _version->setText((tr("Version: %1")).arg(metadata.getVersion().c_str()));
-#ifdef Q_OS_LINUX
-    _groupbox->setTitle(tr("About %1").arg(metadata.getName().c_str()));
-#endif
 
     disconnect(_link, nullptr, nullptr, nullptr);
     connect(_link, &QPushButton::clicked, this, [=] {

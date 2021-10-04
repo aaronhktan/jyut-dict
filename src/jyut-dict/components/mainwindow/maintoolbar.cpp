@@ -153,9 +153,15 @@ void MainToolBar::setStyle(bool use_dark)
 
 #ifdef Q_OS_LINUX
     if (Utils::isDarkMode()) {
-        setStyleSheet("QToolBar { border-bottom: 1px solid black; }");
+        setStyleSheet("QToolBar { "
+                      "   background-color: palette(alternate-base); "
+                      "   border-bottom: 1px solid palette(base); "
+                      "}" );
     } else {
-        setStyleSheet("QToolBar { border-bottom: 1px solid lightgray; }");
+        setStyleSheet("QToolBar { "
+                      "   background: palette(base); "
+                      "   border-bottom: 1px solid palette(alternate-base); "
+                      "} ");
     }
 #endif
 

@@ -314,6 +314,12 @@ void MainWindow::setStyle(bool use_dark)
     if (!use_dark) {
         QPalette palette = QApplication::style()->standardPalette();
         palette.setColor(QPalette::Window, Qt::white);
+        palette.setColor(QPalette::Base, QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                                                CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                                                CONTENT_BACKGROUND_COLOUR_LIGHT_B});
+        palette.setColor(QPalette::AlternateBase, QColor{HEADER_BACKGROUND_COLOUR_LIGHT_R,
+                                                         HEADER_BACKGROUND_COLOUR_LIGHT_G,
+                                                         HEADER_BACKGROUND_COLOUR_LIGHT_B});
         palette.setColor(QPalette::Highlight,
                          QColor{LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
                                 LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
@@ -368,7 +374,26 @@ void MainWindow::setStyle(bool use_dark)
     }
 #endif
 
-#ifdef Q_OS_WIN
+#ifdef Q_OS_LINUX
+    if (use_dark) {
+        menuBar()->setStyleSheet("QMenuBar { "
+                                 "   background-color: palette(alternate-base); "
+                                 "   border-bottom: 1px solid palette(base);"
+                                 "} ");
+    } else {
+        menuBar()->setStyleSheet("QMenuBar { "
+                                 "   background-color: palette(base); "
+                                 "   border-bottom: 1px solid palette(alternate-base);"
+                                 "} ");
+    }
+    qApp->setStyleSheet("QGroupBox { "
+                        "   border: 1px solid palette(alternate-base); "
+                        "} "
+                        ""
+                        "QListView { "
+                        "   background-color: palette(window); "
+                        "} ");
+#elif defined(Q_OS_WIN)
     // Some additional stylesheet overrides for Windows
     if (use_dark) {
         menuBar()->setStyleSheet("QMenuBar { "

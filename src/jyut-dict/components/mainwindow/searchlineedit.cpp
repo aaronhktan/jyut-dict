@@ -188,6 +188,7 @@ void SearchLineEdit::setStyle(bool use_dark)
     } else {
         setStyleSheet("QLineEdit { \
                          border-radius: 3px; \
+                         border: 1px solid palette(alternate-base); \
                          font-size: 12px; \
                          padding-top: 4px; \
                          padding-bottom: 4px; \
