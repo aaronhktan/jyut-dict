@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 
     QApplication a{new_argc, new_argv};
 #else
-    QApplication a(argc, argv);
+    QApplication a{argc, argv};
 #endif
 
     MainWindow w;
