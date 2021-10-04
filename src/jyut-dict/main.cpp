@@ -3,9 +3,13 @@
 #include <QApplication>
 
 #if defined(Q_OS_WIN)
-#include <vector>
-#include <string>
+#include <cstdio>
+#include <cstring>
 #endif
+
+constexpr auto ARG_STR_LEN = 64;
+constexpr auto platformArg = "-platform";
+constexpr auto darkModeArg = "windows:darkmode=1";
 
 int main(int argc, char *argv[])
 {
@@ -42,14 +46,16 @@ int main(int argc, char *argv[])
 #if defined(Q_OS_WIN)
     // This is kind of a horrible hack to get dark borders on Windows
     // But it works!
-    std::vector<char *> args{argv, argv + argc};
-    char *platformArg = const_cast<char *>("-platform");
-    char *darkModeArg = const_cast<char *>("windows:darkmode=1");
-    args.emplace_back(platformArg);
-    args.emplace_back(darkModeArg);
-    argc += 2;
+    int new_argc = argc + 2;
+    char **new_argv = static_cast<char **>(realloc(argv, static_cast<size_t>(new_argc)));
+    char new_platform_arg[ARG_STR_LEN];
+    snprintf(new_platform_arg, ARG_STR_LEN, platformArg);
+    new_argv[argc] = new_platform_arg;
+    char new_dark_mode_arg[ARG_STR_LEN];
+    snprintf(new_dark_mode_arg, ARG_STR_LEN, darkModeArg);
+    new_argv[argc+1] = new_dark_mode_arg;
 
-    QApplication a(argc, args.data());
+    QApplication a{new_argc, new_argv};
 #else
     QApplication a(argc, argv);
 #endif
