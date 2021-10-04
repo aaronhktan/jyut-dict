@@ -1,4 +1,4 @@
-#include "windows/mainwindow.h"
+﻿#include "windows/mainwindow.h"
 
 #include "dialogs/noupdatedialog.h"
 #include "logic/dictionary/dictionarysource.h"
@@ -9,6 +9,8 @@
 #include "logic/utils/utils_mac.h"
 #elif defined(Q_OS_LINUX)
 #include "logic/utils/utils_linux.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -136,12 +138,8 @@ MainWindow::MainWindow(QWidget *parent) :
     translateUI();
 
     // Set style
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(false);
-#endif
 
     // Check for updates
     _checker = new GithubReleaseChecker{this};
@@ -169,7 +167,7 @@ void MainWindow::changeEvent(QEvent *event)
         translateUI();
     }
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     if (event->type() == QEvent::PaletteChange) {
         setStyle(Utils::isDarkMode());
     }
@@ -311,18 +309,9 @@ void MainWindow::translateUI(void)
 
 void MainWindow::setStyle(bool use_dark)
 {
-    (void) (use_dark);
 #ifdef Q_OS_MAC
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
-#elif defined(Q_OS_WIN)
-    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
-    QPalette defaultPalette = QApplication::palette();
-    defaultPalette.setColor(QPalette::Highlight,
-                            QColor(LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
-                                   LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
-                                   LIST_ITEM_ACTIVE_COLOUR_LIGHT_B));
-    QApplication::setPalette(defaultPalette);
-#elif defined(Q_OS_LINUX)
+#elif defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     if (!use_dark) {
         QPalette palette = QApplication::style()->standardPalette();
         palette.setColor(QPalette::Highlight,
@@ -336,8 +325,8 @@ void MainWindow::setStyle(bool use_dark)
         qApp->setPalette(palette);
         qApp->setStyleSheet("");
     } else {
-        QColor darkGray(53, 53, 53);
-        QColor gray(128, 128, 128);
+        QColor darkGray{53, 53, 53};
+        QColor gray{128, 128, 128};
 
         QPalette darkPalette;
         darkPalette.setColor(QPalette::Window, darkGray);
@@ -374,6 +363,128 @@ void MainWindow::setStyle(bool use_dark)
         qApp->setStyleSheet("QToolTip { color: #ffffff; border: 1px solid white; }");
     }
 #endif
+
+#ifdef Q_OS_WIN
+    // Some additional stylesheet overrides for Windows
+    if (use_dark) {
+        menuBar()->setStyleSheet("QMenuBar { "
+                                 "   background-color: black; "
+                                 "} "
+                                 ""
+                                 "QMenuBar::item:selected { "
+                                 "   background-color: palette(highlight); "
+                                 "   border-left: 1px solid black; "
+                                 "   border-right: 1px solid black; "
+                                 "} ");
+        qApp->setStyleSheet("QMenu { "
+                            "   background-color: palette(base); "
+                            "   border: 1px solid transparent; "
+                            "} "
+                            ""
+                            "QMenu::item { "
+                            "   padding: 3px 25px 3px 25px; "
+                            "   border: 1px solid transparent; "
+                            "} "
+                            ""
+                            "QMenu::item:selected { "
+                            "   background-color: palette(highlight); "
+                            "   padding: 3px 25px 3px 25px ;"
+                            "   border: 1px solid transparent; "
+                            "} "
+                            ""
+                            "QMenu::separator { "
+                            "   height: 1px; "
+                            "   background-color: palette(alternate-base); "
+                            "} "
+                            ""
+                            "QMenu::indicator { "
+                            "   width: 18px; "
+                            "   height: 18px; "
+                            "} "
+                            ""
+                            "QPushButton { "
+                            "   background-color: palette(base); "
+                            "   border: 1px solid palette(alternate-base); "
+                            "   padding: 5px; "
+                            "} "
+                            ""
+                            "QPushButton:pressed { "
+                            "   background-color: palette(highlight);"
+                            "   border: none; "
+                            "} "
+                            ""
+                            "QScrollBar:vertical { "
+                            "   background: palette(base); "
+                            "   background-color: none; "
+                            "   border-top-right-radius: 2px; "
+                            "   border-bottom-right-radius: 2px; "
+                            "   width: 16px; "
+                            "   margin: 0px; "
+                            "} "
+                            ""
+                            "QScrollBar::handle:vertical { "
+                            "   background-color: #606060; "
+                            "   min-height: 20px; "
+                            "   margin-top: 15px; "
+                            "   margin-bottom: 15px; "
+                            "}"
+                            ""
+                            "QScrollBar::handle:vertical:hover { "
+                            "   background-color: darkgrey; "
+                            "} "
+                            "QScrollBar::add-line:vertical { "
+                            "   background: none; "
+                            "   height: 15px; "
+                            "   subcontrol-position: bottom; "
+                            "   subcontrol-origin: margin; "
+                            "} "
+                            ""
+                            "QScrollBar::sub-line:vertical{ "
+                            "   background: none; "
+                            "   height: 15px;   "
+                            "   subcontrol-position: top; "
+                            "   subcontrol-origin: margin; "
+                            "} "
+                            ""
+                            "QScrollBar::add-page:vertical { "
+                            "   background: none; "
+                            "   height: 0px; "
+                            "   subcontrol-position: right; "
+                            "   subcontrol-origin: margin; "
+                            "} "
+                            ""
+                            "QScrollBar::sub-page:vertical { "
+                            "   background: none; "
+                            "   height: 0px; "
+                            "   subcontrol-position: left; "
+                            "   subcontrol-origin: margin; "
+                            "} "
+                            ""
+                            "QScrollBar::up-arrow:vertical { "
+                            "   border: 0px solid black; "
+                            "   width: 10px; "
+                            "   height: 10px; "
+                            "   image: url(:/images/chevron-up_inverted.png); "
+                            "} "
+                            ""
+                            "QScrollBar::down-arrow:vertical { "
+                            "   border: 0px solid black; "
+                            "   width: 10px; "
+                            "   height: 10px; "
+                            "   image: url(:/images/chevron-down_inverted.png); "
+                            "} "
+                            ""
+                            "QToolTip { "
+                            "   color: palette(text); "
+                            "   background-color: palette(base); "
+                            "   border: 1px solid palette(alternate-base); "
+                            "} ");
+    } else {
+        menuBar()->setStyleSheet("QMenuBar { \
+                                    background-color: white; \
+                                 }");
+    }
+#endif
 }
 
 void MainWindow::notifyUpdateAvailable(bool updateAvailable,
@@ -408,12 +519,6 @@ void MainWindow::createMenus(void)
     _searchMenu = menuBar()->addMenu(tr("&Search"));
     _windowMenu = menuBar()->addMenu(tr("&Window"));
     _helpMenu = menuBar()->addMenu(tr("&Help"));
-
-#ifdef Q_OS_WIN
-    menuBar()->setStyleSheet("QMenuBar { \
-                                background-color: white; \
-                             }");
-#endif
 }
 
 void MainWindow::createActions(void)

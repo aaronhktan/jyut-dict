@@ -6,6 +6,8 @@
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
 #include "logic/utils/utils_linux.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
 #endif
 
 #include <QApplication>
@@ -14,7 +16,7 @@
 #include <QLibraryInfo>
 #include <QTimer>
 #include <QtConcurrent/QtConcurrent>
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
 #include <QWindow>
 #endif
 
@@ -29,17 +31,17 @@ AdvancedTab::AdvancedTab(QWidget *parent)
 
 void AdvancedTab::changeEvent(QEvent *event)
 {
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(100, this, [=]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }
-#endif
+
     if (event->type() == QEvent::LanguageChange) {
         translateUI();
     }
@@ -65,7 +67,7 @@ void AdvancedTab::setupUI()
     _updateCheckbox->setTristate(false);
     initializeUpdateCheckbox(*_updateCheckbox);
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     _forceDarkModeCheckbox = new QCheckBox{this};
     _forceDarkModeCheckbox->setTristate(false);
     initializeForceDarkModeCheckbox(*_forceDarkModeCheckbox);
@@ -94,7 +96,7 @@ void AdvancedTab::setupUI()
     initializeLanguageCombobox(*_languageCombobox);
 
     _tabLayout->addRow(" ", _updateCheckbox);
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     _tabLayout->addRow(" ", _forceDarkModeCheckbox);
 #endif
     _tabLayout->addRow(_exportDivider);
@@ -102,10 +104,8 @@ void AdvancedTab::setupUI()
     _tabLayout->addRow(_divider);
     _tabLayout->addRow(" ", _languageCombobox);
 
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
-#endif
 }
 
 void AdvancedTab::translateUI()
@@ -121,7 +121,7 @@ void AdvancedTab::translateUI()
 
     static_cast<QLabel *>(_tabLayout->labelForField(_updateCheckbox))
         ->setText(tr("Automatically check for updates on startup:"));
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     static_cast<QLabel *>(_tabLayout->labelForField(_forceDarkModeCheckbox))
         ->setText(tr("Enable dark mode:"));
 #endif
@@ -171,7 +171,7 @@ void AdvancedTab::initializeUpdateCheckbox(QCheckBox &checkbox)
     });
 }
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
 void AdvancedTab::initializeForceDarkModeCheckbox(QCheckBox &checkbox)
 {
     checkbox.setChecked(

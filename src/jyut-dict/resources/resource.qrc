@@ -48,5 +48,7 @@
         <file>images/star_darkgrey_nopadding.png</file>
         <file>images/star_filled.png</file>
         <file>images/star_inverted_filled.png</file>
+        <file>images/chevron-down_inverted.png</file>
+        <file>images/chevron-up_inverted.png</file>
     </qresource>
 </RCC>

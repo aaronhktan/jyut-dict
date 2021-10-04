@@ -201,8 +201,6 @@ HEADERS += \
     logic/utils/chineseutils.h \
     logic/utils/qvariantutils.h \
     logic/utils/utils.h \
-    logic/utils/utils_linux.h \
-    logic/utils/utils_mac.h \
     logic/utils/utils_qt.h \
     windows/aboutwindow.h \
     windows/historywindow.h \
@@ -226,8 +224,8 @@ TRANSLATIONS += \
 
 macx: {
     LIBS += -framework AppKit
-    OBJECTIVE_SOURCES += \
-        logic/utils/utils_mac.mm \
+    OBJECTIVE_SOURCES += logic/utils/utils_mac.mm
+    HEADERS += logic/utils/utils_mac.h
 
     ICON = resources/icon/icon.icns
     QMAKE_INFO_PLIST = platform/mac/Info.plist
@@ -271,12 +269,16 @@ macx: {
 
 win32: {
     # Prevent creation of release and debug folders in build directory
+    SOURCES += logic/utils/utils_windows.cpp
+    HEADERS += logic/utils/utils_windows.h
+
     CONFIG -= debug_and_release debug_and_release_target
     RC_ICONS = resources/icon/icon.ico
 }
 
 unix:!macx {
     SOURCES += logic/utils/utils_linux.cpp
+    HEADERS += logic/utils/utils_linux.h
 
     FLATPAK {
         binfile.extra = cp \"$$system_path($$OUT_PWD)/Jyut Dictionary\" $$system_path($$OUT_PWD)/jyut-dict
@@ -351,3 +353,7 @@ unix|win32:!macx {
 #qnx: target.path = /tmp/$${TARGET}/bin
 #else: unix:!android: target.path = /opt/$${TARGET}/bin
 #!isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    resources/images/chevron-down_inverted.png \
+    resources/images/chevron-up_inverted.png

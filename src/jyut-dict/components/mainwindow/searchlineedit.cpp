@@ -5,6 +5,8 @@
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
 #include "logic/utils/utils_linux.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
 #endif
 
 #include <QIcon>
@@ -28,7 +30,7 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
 
     _clearLineEdit = new QAction{"", this};
     addAction(_clearLineEdit, QLineEdit::TrailingPosition);
-    connect(_clearLineEdit, &QAction::triggered,
+    connect(_clearLineEdit, &QAction::triggered, this,
             [this](){
                 this->clear();
                 removeAction(_clearLineEdit);
@@ -36,11 +38,10 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
 
     // Customize the look of the searchbar to fit in better with platform styles
 #ifdef Q_OS_WIN
-    setStyle(/* use_dark = */false);
     setMinimumHeight(25);
-#elif defined(Q_OS_MAC) || defined(Q_OS_LINUX)
-    setStyle(Utils::isDarkMode());
 #endif
+
+    setStyle(Utils::isDarkMode());
 
     setMinimumWidth(parent->width() / 2);
 
@@ -70,7 +71,6 @@ void SearchLineEdit::checkClearVisibility()
 
 void SearchLineEdit::changeEvent(QEvent *event)
 {
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
@@ -80,7 +80,6 @@ void SearchLineEdit::changeEvent(QEvent *event)
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }
-#endif
     if (event->type() == QEvent::LanguageChange) {
         translateUI();
     }
@@ -154,14 +153,23 @@ void SearchLineEdit::setStyle(bool use_dark)
     QIcon clear_inverted = QIcon(":/images/x_inverted.png");
 
 #ifdef Q_OS_WIN
-    (void) (use_dark);
-    setStyleSheet("QLineEdit { \
-                     background-color: #ffffff; \
-                     border-color: black; \
-                     border-width: 2px; \
-                     font-size: 12px; }");
-    _searchLineEdit->setIcon(search);
-    _clearLineEdit->setIcon(clear);
+    if (use_dark) {
+        setStyleSheet("QLineEdit { \
+                         background-color: #586365; \
+                         border: 1px solid black; \
+                         font-size: 12px; \
+                         selection-background-color: darkgray; }");
+        _searchLineEdit->setIcon(search_inverted);
+        _clearLineEdit->setIcon(clear_inverted);
+    } else {
+        setStyleSheet("QLineEdit { \
+                         background-color: #ffffff; \
+                         border-color: black; \
+                         border-width: 2px; \
+                         font-size: 12px; }");
+        _searchLineEdit->setIcon(search);
+        _clearLineEdit->setIcon(clear);
+    }
 #else
     if (use_dark) {
         setStyleSheet("QLineEdit { \
