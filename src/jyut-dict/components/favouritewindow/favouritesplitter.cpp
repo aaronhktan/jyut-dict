@@ -56,12 +56,7 @@ void FavouriteSplitter::setupUI()
     setCollapsible(0, false);
     setCollapsible(1, false);
     setSizes(QList<int>({size().width() / 3, size().width() * 2 / 3}));
-#ifdef Q_OS_WIN
-    setStyleSheet("QSplitter::handle { background-color: #b9b9b9; }"
-                  "QSplitter { border-top: 1px solid lightgrey; }");
-#elif defined(Q_OS_DARWIN) || defined(Q_OS_LINUX)
     setStyleSheet("QSplitter::handle { background-color: none; }");
-#endif
     setMinimumHeight(400);
 }
 

@@ -107,7 +107,8 @@ void MainToolBar::changeEvent(QEvent *event)
 void MainToolBar::setStyle(bool use_dark)
 {
 #ifdef Q_OS_WIN
-    _openHistoryButton->setIcon(QIcon{":/images/clock_darkgrey_nopadding.png"});
+    _openHistoryButton->setIcon(QIcon{use_dark ? ":/images/clock_inverted_nopadding.png"
+                                               : ":/images/clock_darkgrey_nopadding.png"});
 #else
     _openHistoryButton->setIcon(
         QIcon{use_dark ? ":/images/clock_inverted_nopadding.png"
@@ -120,7 +121,8 @@ void MainToolBar::setStyle(bool use_dark)
             .arg(use_dark ? "grey" : "whitesmoke"));
 
 #ifdef Q_OS_WIN
-    _openFavouritesButton->setIcon(QIcon{":/images/star_darkgrey_nopadding.png"});
+    _openFavouritesButton->setIcon(QIcon{use_dark ? ":/images/star_inverted_nopadding.png"
+                                                  : ":/images/star_darkgrey_nopadding.png"});
 #else
     _openFavouritesButton->setIcon(
         QIcon{use_dark ? ":/images/star_inverted_nopadding.png"
@@ -135,7 +137,9 @@ void MainToolBar::setStyle(bool use_dark)
                                                            : "whitesmoke"));
 
 #ifdef Q_OS_WIN
-    _openSettingsButton->setIcon(QIcon{":/images/settings_darkgrey_nopadding.png"});
+    _openSettingsButton->setIcon(QIcon{use_dark
+                                       ? ":/images/settings_inverted_nopadding.png"
+                                       : ":/images/settings_darkgrey_nopadding.png"});
 #else
     _openSettingsButton->setIcon(QIcon{use_dark
                                    ? ":/images/settings_inverted_nopadding.png"

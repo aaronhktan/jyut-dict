@@ -206,15 +206,15 @@ void EntryHeaderWidget::setStyle(bool use_dark)
     _jyutpingTTS->setFlat(true);
     _jyutpingTTS->setObjectName("jyutpingTTS");
     _jyutpingTTS->setStyleSheet(
-        "QPushButton#jyutpingTTS { padding: 0px; }"
-        "QPushButton:pressed#jyutpingTTS { border: none; }");
+        "QPushButton#jyutpingTTS { background-color: none; border: 1px solid transparent; padding: 0px; }"
+        "QPushButton:pressed#jyutpingTTS { background-color: none; border: 1px solid transparent; }");
 
     _pinyinTTS->setIcon(use_dark ? QIcon{":/images/speak_inverted.png"}
                                  : QIcon{":/images/speak.png"});
     _pinyinTTS->setFlat(true);
     _pinyinTTS->setObjectName("pinyinTTS");
-    _pinyinTTS->setStyleSheet("QPushButton#pinyinTTS { padding: 0px; }"
-                              "QPushButton:pressed#pinyinTTS { border: none; }");
+    _pinyinTTS->setStyleSheet("QPushButton#pinyinTTS { background-color: none; border: 1px solid transparent; padding: 0px; }"
+                              "QPushButton:pressed#pinyinTTS { background-color: none ;border: 1px solid transparent; }");
 #endif
 }
 

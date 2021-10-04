@@ -6,6 +6,8 @@
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
 #endif
 
 #include <QtConcurrent/QtConcurrent>
@@ -111,12 +113,8 @@ void DictionaryTab::setupUI()
         }
     });
 
-#ifdef Q_OS_MAC
     // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(false);
-#endif
 }
 
 void DictionaryTab::translateUI()
