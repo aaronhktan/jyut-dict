@@ -37,15 +37,17 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     // Draw the rectangle behind each cell in the result view
     QColor backgroundColour;
     if (option.state & QStyle::State_Selected) {
-#ifdef Q_OS_MAC
-        backgroundColour = option.palette
-                               .brush(QPalette::Active, QPalette::Highlight)
-                               .color();
-#else
-        backgroundColour = QColor{LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
-                                  LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
-                                  LIST_ITEM_ACTIVE_COLOUR_LIGHT_B};
-#endif
+        if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
+            backgroundColour = option.palette
+                                   .brush(QPalette::Inactive,
+                                          QPalette::Highlight)
+                                   .color();
+        } else {
+            backgroundColour = option.palette
+                                   .brush(QPalette::Active,
+                                          QPalette::Highlight)
+                                   .color();
+        }
         painter->fillRect(option.rect, backgroundColour);
     } else {
         painter->fillRect(option.rect, option.palette.base());

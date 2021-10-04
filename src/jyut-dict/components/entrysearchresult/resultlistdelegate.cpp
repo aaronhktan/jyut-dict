@@ -38,27 +38,15 @@ void ResultListDelegate::paint(QPainter *painter,
     QColor backgroundColour;
     if (option.state & QStyle::State_Selected && !isWelcomeEntry && !isEmptyEntry) {
         if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
             backgroundColour = option.palette
                                    .brush(QPalette::Inactive,
                                           QPalette::Highlight)
                                    .color();
-#else
-            backgroundColour = QColor{LIST_ITEM_INACTIVE_COLOUR_LIGHT_R,
-                                      LIST_ITEM_INACTIVE_COLOUR_LIGHT_G,
-                                      LIST_ITEM_INACTIVE_COLOUR_LIGHT_B};
-#endif
         } else {
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
             backgroundColour = option.palette
                                    .brush(QPalette::Active,
                                           QPalette::Highlight)
                                    .color();
-#else
-            backgroundColour = QColor{LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
-                                      LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
-                                      LIST_ITEM_ACTIVE_COLOUR_LIGHT_B};
-#endif
         }
         painter->fillRect(option.rect, backgroundColour);
         QColor textColour = Utils::getContrastingColour(backgroundColour);
