@@ -46,7 +46,15 @@ SentenceSplitter::SentenceSplitter(std::shared_ptr<SQLDatabaseManager> manager,
     setCollapsible(0, false);
     setCollapsible(1, false);
     setSizes(QList<int>({size().width() / 3, size().width() * 2 / 3}));
-    setStyleSheet("QSplitter::handle { background-color: none; }");
+#ifdef Q_OS_MAC
+    setStyleSheet("QSplitter::handle { "
+                  "   background-color: none; "
+                  "} ");
+#else
+    setStyleSheet("QSplitter::handle { "
+                  "   background-color: palette(alternate-base); "
+                  "} ");
+#endif
 #ifdef Q_OS_WIN
     setStyle(Utils::isDarkMode());
 #endif

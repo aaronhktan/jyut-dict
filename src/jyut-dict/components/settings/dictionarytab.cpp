@@ -175,9 +175,15 @@ void DictionaryTab::setDictionaryMetadata(const QModelIndex &index)
         removeDictionary(metadata);
     });
 
+#ifdef Q_OS_MAC
+    _list->setStyleSheet("QListView {"
+                         "   border: 1px solid palette(window); "
+                         "} ");
+#else
     _list->setStyleSheet("QListView {"
                          "   border: 1px solid palette(alternate-base); "
                          "} ");
+#endif
 }
 
 void DictionaryTab::clearDictionaryList()

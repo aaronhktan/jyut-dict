@@ -74,7 +74,12 @@ void HistoryWindow::translateUI(void)
 void HistoryWindow::setStyle(bool use_dark)
 {
     (void)(use_dark);
-#ifdef Q_OS_LINUX
+#ifdef Q_OS_MAC
+    QString styleSheet = "QWidget#HistoryWindow { "
+                         "   background-color: palette(base); "
+                         "   border-top: 1px solid palette(alternate-base); "
+                         "} ";
+#elif defined(Q_OS_LINUX)
     QString styleSheet = "QWidget#HistoryWindow { "
                          "   background-color: palette(alternate-base); "
                          "   border-top: 1px solid palette(alternate-base); "
