@@ -174,26 +174,30 @@ void SearchLineEdit::setStyle(bool use_dark)
     }
 #else
     if (use_dark) {
-        setStyleSheet("QLineEdit { \
-                         border-radius: 3px; \
-                         font-size: 12px; \
-                         padding-top: 4px; \
-                         padding-bottom: 4px; \
-                         selection-background-color: darkgray; \
-                         background-color: #586365; } \
-                        QLineEdit:focus { \
-                         border-radius: 2px; }");
+        setStyleSheet("QLineEdit { "
+                      "   background-color: #586365; "
+                      "   border-radius: 3px; "
+                      "   font-size: 12px; "
+                      "   padding-top: 4px; "
+                      "   padding-bottom: 4px; "
+                      "   selection-background-color: palette(window); "
+                      "} "
+                      ""
+                      "QLineEdit:focus { "
+                      "   border-radius: 2px; "
+                      "} ");
         _searchLineEdit->setIcon(search_inverted);
         _clearLineEdit->setIcon(clear_inverted);
     } else {
-        setStyleSheet("QLineEdit { \
-                         border-radius: 3px; \
-                         border: 1px solid palette(alternate-base); \
-                         font-size: 12px; \
-                         padding-top: 4px; \
-                         padding-bottom: 4px; \
-                         selection-background-color: darkgray; \
-                         background-color: #ffffff; }");
+        setStyleSheet("QLineEdit { "
+                      "   background-color: #ffffff; "
+                      "   border-radius: 3px; "
+                      "   border: 1px solid palette(alternate-base); "
+                      "   font-size: 12px; "
+                      "   padding-top: 4px; "
+                      "   padding-bottom: 4px; "
+                      "   selection-background-color: darkgray; "
+                      "} ");
          _searchLineEdit->setIcon(search);
          _clearLineEdit->setIcon(clear);
     }
