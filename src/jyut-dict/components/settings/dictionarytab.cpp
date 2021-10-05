@@ -143,7 +143,7 @@ void DictionaryTab::setStyle(bool use_dark) {
     (void) (use_dark);
 #ifdef Q_OS_MAC
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
-#elif defined(Q_OS_WIN)
+#elif defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     setAttribute(Qt::WA_StyledBackground);
     setObjectName("DictionaryTab");
     setStyleSheet("QPushButton[isHan=\"true\"] { "

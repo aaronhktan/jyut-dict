@@ -273,19 +273,21 @@ void SettingsWindow::setStyle(bool use_dark)
                                 "}");
     }
 #elif defined(Q_OS_LINUX)
-    QColor color = QGuiApplication::palette().color(QPalette::AlternateBase);
-    _toolBar->setStyleSheet(QString("QToolBar {"
-                                    "   background: transparent;"
-                                    "   background-color: rgba(%1, %2, %3, %4);"
-                                    "   border-bottom: 1px solid %5;"
-                                    "   padding-bottom: 3px;"
-                                    "   padding-top: 3px;"
-                                    "}")
-                                .arg(std::to_string(color.red()).c_str())
-                                .arg(std::to_string(color.green()).c_str())
-                                .arg(std::to_string(color.blue()).c_str())
-                                .arg(0.7)
-                                .arg(use_dark ? "black" : "lightgray"));
+    if (Utils::isDarkMode()) {
+        _toolBar->setStyleSheet("QToolBar { "
+                                "   background-color: palette(alternate-base); "
+                                "   border-bottom: 1px solid palette(window); "
+                                "   padding-bottom: 3px; "
+                                "   padding-top: 3px; "
+                                "} ");
+    } else {
+        _toolBar->setStyleSheet("QToolBar { "
+                                "   background-color: palette(window); "
+                                "   border-bottom: 1px solid palette(alternate-base); "
+                                "   padding-bottom: 3px; "
+                                "   padding-top: 3px; "
+                                "} ");
+    }
 #endif
 }
 

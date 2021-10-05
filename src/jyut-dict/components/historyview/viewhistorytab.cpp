@@ -100,9 +100,11 @@ void ViewHistoryTab::setStyle(bool use_dark)
                   "} ");
 #endif
 
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+#if defined(Q_OS_MAC)
     setStyleSheet(use_dark ? "QListView { border: none; }"
                            : "QListView { border: 1px solid lightgrey; }");
+#elif defined(Q_OS_LINUX)
+    _listView->setStyleSheet("QListView { border: 1px solid palette(alternate-base); }");
 #elif defined(Q_OS_WIN)
     setStyleSheet(use_dark ? "QListView { border: none; }"
                            : "QListView { border: 1px solid palette(window); }");

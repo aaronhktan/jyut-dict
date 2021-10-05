@@ -73,20 +73,22 @@ void HistoryWindow::translateUI(void)
 
 void HistoryWindow::setStyle(bool use_dark)
 {
-    QColor backgroundColour = use_dark ? QColor{BACKGROUND_COLOUR_DARK_R,
-                                                BACKGROUND_COLOUR_DARK_G,
-                                                BACKGROUND_COLOUR_DARK_B}
-                                       : QColor{BACKGROUND_COLOUR_LIGHT_R,
-                                                BACKGROUND_COLOUR_LIGHT_G,
-                                                BACKGROUND_COLOUR_LIGHT_B};
+    (void)(use_dark);
+#ifdef Q_OS_LINUX
     QString styleSheet = "QWidget#HistoryWindow { "
-                         "   background-color: %1; "
+                         "   background-color: palette(alternate-base); "
                          "   border-top: 1px solid palette(alternate-base); "
                          "} ";
-    setStyleSheet(styleSheet.arg(backgroundColour.name()));
+#elif defined(Q_OS_WINDOWS)
+    QString styleSheet = "QWidget#HistoryWindow { "
+                         "   background-color: palette(base); "
+                         "   border-top: 1px solid palette(alternate-base); "
+                         "} ";
+#endif
+    setStyleSheet(styleSheet);
     setAttribute(Qt::WA_StyledBackground);
 
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN)
     QString tabStyleSheet = "QTabBar::tab { "
                             "   background-color: palette(alternate-base); "
                             "   border: 1px solid palette(base); "
