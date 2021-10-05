@@ -142,8 +142,12 @@ void DictionaryTab::translateUI()
 void DictionaryTab::setStyle(bool use_dark) {
     (void) (use_dark);
 #ifdef Q_OS_MAC
-    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
-#elif defined(Q_OS_LINUX) || defined(Q_OS_WIN)
+    setStyleSheet(
+        "QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
+    _list->setStyleSheet("QListView {"
+                         "   border: 1px solid palette(window); "
+                         "} ");
+#else
     setAttribute(Qt::WA_StyledBackground);
     setObjectName("DictionaryTab");
     setStyleSheet("QPushButton[isHan=\"true\"] { "
@@ -153,6 +157,9 @@ void DictionaryTab::setStyle(bool use_dark) {
                   "QWidget#DictionaryTab {"
                   "   background-color: palette(base);"
                   "} ");
+    _list->setStyleSheet("QListView {"
+                         "   border: 1px solid palette(alternate-base); "
+                         "} ");
 #endif
 }
 
@@ -174,16 +181,6 @@ void DictionaryTab::setDictionaryMetadata(const QModelIndex &index)
     connect(_remove, &QPushButton::clicked, this, [=] {
         removeDictionary(metadata);
     });
-
-#ifdef Q_OS_MAC
-    _list->setStyleSheet("QListView {"
-                         "   border: 1px solid palette(window); "
-                         "} ");
-#else
-    _list->setStyleSheet("QListView {"
-                         "   border: 1px solid palette(alternate-base); "
-                         "} ");
-#endif
 }
 
 void DictionaryTab::clearDictionaryList()

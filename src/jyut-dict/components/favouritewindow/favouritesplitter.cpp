@@ -65,7 +65,9 @@ void FavouriteSplitter::setupUI()
                   "   background-color: none; "
                   "} ");
 #else
-    setStyleSheet("QSplitter::handle { background-color: palette(alternate-base); }");
+    setStyleSheet("QSplitter::handle { "
+                  "   background-color: palette(alternate-base); "
+                  "} ");
 #endif
 #ifdef Q_OS_WIN
     setStyle(Utils::isDarkMode());
