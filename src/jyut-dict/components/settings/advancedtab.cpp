@@ -21,7 +21,7 @@
 #endif
 
 AdvancedTab::AdvancedTab(QWidget *parent)
-    : QWidget(parent)
+    : QWidget{parent}
 {
     _settings = Settings::getSettings();
 
@@ -155,7 +155,15 @@ void AdvancedTab::setStyle(bool use_dark)
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: "
                   "13px; height: 16px; }");
 #elif defined(Q_OS_WIN)
-    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
+    setAttribute(Qt::WA_StyledBackground);
+    setObjectName("AdvancedTab");
+    setStyleSheet("QPushButton[isHan=\"true\"] { "
+                  "   font-size: 12px; height: 20px; "
+                  "} "
+                  ""
+                  "QWidget#AdvancedTab { "
+                  "   background-color: palette(base);"
+                  "} ");
 #endif
 }
 

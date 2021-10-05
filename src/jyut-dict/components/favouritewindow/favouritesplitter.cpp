@@ -3,6 +3,9 @@
 #include "components/entrysearchresult/resultlistmodel.h"
 #include "components/entrysearchresult/resultlistview.h"
 #include "logic/settings/settingsutils.h"
+#ifdef Q_OS_WIN
+#include "logic/utils/utils_windows.h"
+#endif
 
 #include <QList>
 #include <QVariant>
@@ -56,8 +59,11 @@ void FavouriteSplitter::setupUI()
     setCollapsible(0, false);
     setCollapsible(1, false);
     setSizes(QList<int>({size().width() / 3, size().width() * 2 / 3}));
-    setStyleSheet("QSplitter::handle { background-color: palette(alternate-base); }");
     setMinimumHeight(400);
+    setStyleSheet("QSplitter::handle { background-color: palette(alternate-base); }");
+#ifdef Q_OS_WIN
+    setStyle(Utils::isDarkMode());
+#endif
 }
 
 void FavouriteSplitter::translateUI(void)
@@ -67,8 +73,27 @@ void FavouriteSplitter::translateUI(void)
     _sqlUserUtils->searchForAllFavouritedWords();
 }
 
+#ifdef Q_OS_WIN
+void FavouriteSplitter::setStyle(bool use_dark)
+{
+    (void) (use_dark);
+    setStyleSheet("QSplitter { border-top: 1px solid palette(alternate-base); }");
+}
+#endif
+
 void FavouriteSplitter::changeEvent(QEvent *event)
 {
+#ifdef Q_OS_WIN
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(100, this, [=]() { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        setStyle(Utils::isDarkMode());
+    }
+#endif
     if (event->type() == QEvent::LanguageChange) {
         translateUI();
     }

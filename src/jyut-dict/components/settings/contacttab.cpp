@@ -20,7 +20,7 @@
 #include <QUrl>
 
 ContactTab::ContactTab(QWidget *parent)
-    : QWidget(parent)
+    : QWidget{parent}
 {
     setupUI();
     translateUI();
@@ -160,7 +160,15 @@ void ContactTab::setStyle(bool use_dark)
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: "
                   "13px; height: 16px; }");
 #elif defined(Q_OS_WIN)
-    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
+    setAttribute(Qt::WA_StyledBackground);
+    setObjectName("ContactTab");
+    setStyleSheet("QPushButton[isHan=\"true\"] { "
+                  "   font-size: 12px; height: 20px; "
+                  "}"
+                  ""
+                  "QWidget#ContactTab { "
+                  "   background-color: palette(base);"
+                  "} ");
 #endif
     _otherSources->setText(
         QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::OTHER_SOURCES).arg(palette().text().color().name()));

@@ -94,8 +94,11 @@ void SearchHistoryTab::setStyle(bool use_dark)
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: "
                   "13px; height: 16px; }");
 #elif defined(Q_OS_WIN)
-    setStyleSheet(
-        "QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
+    setStyleSheet("QPushButton[isHan=\"true\"] { "
+                  "   border: 1px solid palette(base); "
+                  "   font-size: 12px; "
+                  "   height: 20px; "
+                  "} ");
 #endif
 
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
@@ -103,7 +106,7 @@ void SearchHistoryTab::setStyle(bool use_dark)
                            : "QListView { border: 1px solid lightgrey; }");
 #elif defined(Q_OS_WIN)
     setStyleSheet(use_dark ? "QListView { border: none; }"
-                           : "QListView { border: 1px solid #b9b9b9; }");
+                           : "QListView { border: 1px solid palette(window); }");
 #endif
 
 #ifdef Q_OS_MAC

@@ -79,16 +79,38 @@ void HistoryWindow::setStyle(bool use_dark)
                                        : QColor{BACKGROUND_COLOUR_LIGHT_R,
                                                 BACKGROUND_COLOUR_LIGHT_G,
                                                 BACKGROUND_COLOUR_LIGHT_B};
-    QString styleSheet = "QWidget#HistoryWindow { background-color: %1; }";
+    QString styleSheet = "QWidget#HistoryWindow { "
+                         "   background-color: %1; "
+                         "   border-top: 1px solid palette(alternate-base); "
+                         "} ";
     setStyleSheet(styleSheet.arg(backgroundColour.name()));
     setAttribute(Qt::WA_StyledBackground);
 
 #ifdef Q_OS_WIN
     QString tabStyleSheet = "QTabBar::tab { "
                             "   background-color: palette(alternate-base); "
-                            "}"
+                            "   border: 1px solid palette(base); "
+                            "   padding: 7px; "
+                            "} "
                             ""
-                            "QTabWidget::pane { border: 0px; }";
+                            "QTabBar::tab:selected { "
+                            "   border: 0px; "
+                            "   margin-bottom: -1px; "
+                            "} "
+                            ""
+                            "QTabBar::tab:!selected { "
+                            "   border: 1px solid palette(base); "
+                            "   padding: 7px; "
+                            "} "
+                            ""
+                            "QTabWidget::tab-bar { "
+                            "   alignment: center; "
+                            "} "
+                            ""
+                            "QTabWidget::pane { "
+                            "   border: 1px solid palette(base); "
+                            "   top: -1px; "
+                            "} ";
     _tabWidget->setStyleSheet(tabStyleSheet);
 #endif
 }
