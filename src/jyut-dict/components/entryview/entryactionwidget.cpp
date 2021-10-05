@@ -119,7 +119,7 @@ void EntryActionWidget::setStyle(bool use_dark)
     QColor borderColour = use_dark ? textColour.darker(300)
                                    : textColour.lighter(200);
     QString styleSheet = "QPushButton { "
-                         "   background-color: palette(window); "
+                         "   background-color: palette(base); "
                          "   border: 2px solid %1; "
                          "   border-radius: %2px; "
                          "   color: %3; "

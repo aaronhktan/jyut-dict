@@ -97,7 +97,9 @@ void SearchOptionsRadioGroupBox::setupUI()
     setStyleSheet("QRadioButton[isHan=\"true\"] { font-size: 12px; }"
                   "QGroupBox { border: 0; }");
 #else
-    setStyleSheet("QGroupBox { border: none; } ");
+    setStyleSheet("QGroupBox { "
+                  "   border: none; "
+                  "} ");
 #endif
 }
 

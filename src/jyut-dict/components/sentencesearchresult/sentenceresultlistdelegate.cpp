@@ -50,7 +50,7 @@ void SentenceResultListDelegate::paint(QPainter *painter,
         }
         painter->fillRect(option.rect, backgroundColour);
     } else {
-        painter->fillRect(option.rect, option.palette.window());
+        painter->fillRect(option.rect, option.palette.base());
     }
 
     painter->setRenderHint(QPainter::Antialiasing, true);

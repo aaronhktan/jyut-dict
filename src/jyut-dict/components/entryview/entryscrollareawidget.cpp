@@ -67,6 +67,6 @@ void EntryScrollAreaWidget::setStyle(bool use_dark)
     (void) (use_dark);
     setAttribute(Qt::WA_StyledBackground);
     setStyleSheet("QWidget#DefinitionScrollAreaWidget { "
-                  "   background-color: palette(window); "
+                  "   background-color: palette(base); "
                   "} ");
 }

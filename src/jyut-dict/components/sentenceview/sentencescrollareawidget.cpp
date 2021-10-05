@@ -56,6 +56,6 @@ void SentenceScrollAreaWidget::setStyle(bool use_dark)
     (void) (use_dark);
     setAttribute(Qt::WA_StyledBackground);
     setStyleSheet("QWidget#SentenceScrollAreaWidget { "
-                  "   background-color: palette(window); "
+                  "   background-color: palette(base); "
                   "} ");
 }

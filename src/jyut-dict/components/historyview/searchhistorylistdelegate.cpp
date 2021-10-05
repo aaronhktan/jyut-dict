@@ -51,7 +51,7 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
         QColor textColour = Utils::getContrastingColour(backgroundColour);
         painter->setPen(textColour);
     } else {
-        painter->fillRect(option.rect, option.palette.window());
+        painter->fillRect(option.rect, option.palette.base());
         painter->setPen(QPen(option.palette.color(QPalette::WindowText)));
     }
 

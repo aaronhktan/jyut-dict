@@ -313,10 +313,10 @@ void MainWindow::setStyle(bool use_dark)
 #elif defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     if (!use_dark) {
         QPalette palette = QApplication::style()->standardPalette();
-        palette.setColor(QPalette::Window, Qt::white);
-        palette.setColor(QPalette::Base, QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
-                                                CONTENT_BACKGROUND_COLOUR_LIGHT_G,
-                                                CONTENT_BACKGROUND_COLOUR_LIGHT_B});
+        palette.setColor(QPalette::Window, QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                                                  CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                                                  CONTENT_BACKGROUND_COLOUR_LIGHT_B});
+        palette.setColor(QPalette::Base, Qt::white);
         palette.setColor(QPalette::AlternateBase, QColor{HEADER_BACKGROUND_COLOUR_LIGHT_R,
                                                          HEADER_BACKGROUND_COLOUR_LIGHT_G,
                                                          HEADER_BACKGROUND_COLOUR_LIGHT_B});
@@ -335,13 +335,13 @@ void MainWindow::setStyle(bool use_dark)
         QColor gray{128, 128, 128};
 
         QPalette darkPalette;
-        darkPalette.setColor(QPalette::Window, QColor{BACKGROUND_COLOUR_DARK_R,
-                                                      BACKGROUND_COLOUR_DARK_G,
-                                                      BACKGROUND_COLOUR_DARK_B});
+        darkPalette.setColor(QPalette::Window, QColor{CONTENT_BACKGROUND_COLOUR_DARK_R,
+                                                      CONTENT_BACKGROUND_COLOUR_DARK_G,
+                                                      CONTENT_BACKGROUND_COLOUR_DARK_B});
         darkPalette.setColor(QPalette::WindowText, Qt::white);
-        darkPalette.setColor(QPalette::Base, QColor{CONTENT_BACKGROUND_COLOUR_DARK_R,
-                                                    CONTENT_BACKGROUND_COLOUR_DARK_G,
-                                                    CONTENT_BACKGROUND_COLOUR_DARK_B});
+        darkPalette.setColor(QPalette::Base, QColor{BACKGROUND_COLOUR_DARK_R,
+                                                    BACKGROUND_COLOUR_DARK_G,
+                                                    BACKGROUND_COLOUR_DARK_B});
         darkPalette.setColor(QPalette::AlternateBase, QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
                                                              HEADER_BACKGROUND_COLOUR_DARK_G,
                                                              HEADER_BACKGROUND_COLOUR_DARK_B});
@@ -378,11 +378,11 @@ void MainWindow::setStyle(bool use_dark)
     if (use_dark) {
         menuBar()->setStyleSheet("QMenuBar { "
                                  "   background-color: palette(alternate-base); "
-                                 "   border-bottom: 1px solid palette(base);"
+                                 "   border-bottom: 1px solid palette(window);"
                                  "} ");
     } else {
         menuBar()->setStyleSheet("QMenuBar { "
-                                 "   background-color: palette(base); "
+                                 "   background-color: palette(window); "
                                  "   border-bottom: 1px solid palette(alternate-base);"
                                  "} ");
     }
@@ -391,7 +391,7 @@ void MainWindow::setStyle(bool use_dark)
                         "} "
                         ""
                         "QListView { "
-                        "   background-color: palette(window); "
+                        "   background-color: palette(base); "
                         "} ");
 #elif defined(Q_OS_WIN)
     // Some additional stylesheet overrides for Windows
