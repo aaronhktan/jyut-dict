@@ -93,6 +93,8 @@ void HistoryWindow::setStyle(bool use_dark)
     setStyleSheet(styleSheet);
     setAttribute(Qt::WA_StyledBackground);
 
+// QTabWidget is really weird on Windows, and the -1px stylesheet is a workaround:
+// See https://stackoverflow.com/questions/38369015/customuzing-qtabwidget-with-style-sheets
 #if defined(Q_OS_WIN)
     QString tabStyleSheet = "QTabBar::tab { "
                             "   background-color: palette(alternate-base); "
