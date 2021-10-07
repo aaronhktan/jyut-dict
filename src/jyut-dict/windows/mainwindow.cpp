@@ -439,7 +439,7 @@ void MainWindow::setStyle(bool use_dark)
                             "} "
                             ""
                             "QComboBox::down-arrow { "
-                            "   image: url(:/images/chevron-down_inverted.png); "
+                            "   image: url(:/images/chevron_down_inverted.svg); "
                             "} "
                             ""
                             "QGroupBox { "
