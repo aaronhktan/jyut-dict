@@ -38,7 +38,7 @@ void DictionaryListDelegate::paint(QPainter *painter,
                                    .color();
         }
         painter->fillRect(option.rect, backgroundColour);
-        QColor textColour = Utils::getContrastingColour(backgroundColour);
+        QColor textColour{Utils::getContrastingColour(backgroundColour)};
         painter->setPen(textColour);
     } else {
         painter->fillRect(option.rect, option.palette.base());

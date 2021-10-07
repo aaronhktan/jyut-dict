@@ -48,7 +48,7 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
                                    .color();
         }
         painter->fillRect(option.rect, backgroundColour);
-        QColor textColour = Utils::getContrastingColour(backgroundColour);
+        QColor textColour{Utils::getContrastingColour(backgroundColour)};
         painter->setPen(textColour);
     } else {
         painter->fillRect(option.rect, option.palette.base());
@@ -175,7 +175,12 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
 
         r.setX(r.width() - margin - searchOptionWidth);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
-        painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
+        if (option.state & QStyle::State_Selected) {
+            QColor textColour{Utils::getContrastingColour(backgroundColour)};
+            painter->setPen(textColour);
+        } else {
+            painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
+        }
 #else
         painter->setPen(QPen(option.palette.color(QPalette::Disabled, QPalette::WindowText)));
 #endif
