@@ -25,6 +25,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QSpacerItem>
+#include <QtSvg>
 #include <QTimer>
 #include <QUrl>
 
@@ -410,6 +411,8 @@ void MainWindow::setStyle(bool use_dark)
                             "   width: 20px; "
                             "} "
                             ""
+                            // The SVG files don't work in dark mode (Qt renders
+                            // them very dark for some reason).
                             "QCheckBox::indicator::checked { "
                             "   image: url(:/images/check_box_checked_inverted.png); "
                             "} "
@@ -493,10 +496,13 @@ void MainWindow::setStyle(bool use_dark)
                             "} "
                             ""
                             "QRadioButton::indicator { "
+                            "   background-color: #010101; "
                             "   height: 18px; "
                             "   width: 18px; "
                             "} "
                             ""
+                            // The SVG files don't work in dark mode (Qt renders
+                            // them very dark for some reason).
                             "QRadioButton::indicator::checked { "
                             "   image: url(:/images/radio_button_checked_inverted.png); "
                             "} "
@@ -548,14 +554,14 @@ void MainWindow::setStyle(bool use_dark)
                             "   border: 0px solid black; "
                             "   width: 10px; "
                             "   height: 10px; "
-                            "   image: url(:/images/chevron-up_inverted.png); "
+                            "   image: url(:/images/chevron_up_inverted.svg); "
                             "} "
                             ""
                             "QScrollBar::down-arrow:vertical { "
                             "   border: 0px solid black; "
                             "   width: 10px; "
                             "   height: 10px; "
-                            "   image: url(:/images/chevron-down_inverted.png); "
+                            "   image: url(:/images/chevron_down_inverted.svg); "
                             "} "
                             ""
                             "QToolTip { "
@@ -573,11 +579,11 @@ void MainWindow::setStyle(bool use_dark)
                             "} "
                             ""
                             "QCheckBox::indicator::checked { "
-                            "   image: url(:/images/check_box_checked.png); "
+                            "   image: url(:/images/check_box_checked.svg); "
                             "} "
                             ""
                             "QCheckBox::indicator::unchecked { "
-                            "   image: url(:/images/check_box_unchecked.png); "
+                            "   image: url(:/images/check_box_unchecked.svg); "
                             "} "
                             ""
                             "QRadioButton::indicator { "
@@ -586,11 +592,11 @@ void MainWindow::setStyle(bool use_dark)
                             "} "
                             ""
                             "QRadioButton::indicator::unchecked { "
-                            "   image: url(:/images/radio_button_unchecked.png); "
+                            "   image: url(:/images/radio_button_unchecked.svg); "
                             "} "
                             ""
                             "QRadioButton::indicator::checked { "
-                            "   image: url(:/images/radio_button_checked.png); "
+                            "   image: url(:/images/radio_button_checked.svg); "
                             "} ");
     }
 #endif
@@ -602,7 +608,7 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
                                        bool showIfNoUpdate)
 {
     if (updateAvailable) {
-        UpdateWindow *window = new UpdateWindow{this, versionNumber, url, description};
+        UpdateAvailableWindow *window = new UpdateAvailableWindow{this, versionNumber, url, description};
         window->show();
     } else if (showIfNoUpdate) {
         QString currentVersion = QString{Utils::CURRENT_VERSION};

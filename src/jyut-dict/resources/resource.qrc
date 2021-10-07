@@ -48,15 +48,15 @@
         <file>images/star_darkgrey_nopadding.png</file>
         <file>images/star_filled.png</file>
         <file>images/star_inverted_filled.png</file>
-        <file>images/chevron-down_inverted.png</file>
-        <file>images/chevron-up_inverted.png</file>
         <file>images/radio_button_unchecked_inverted.png</file>
         <file>images/radio_button_checked_inverted.png</file>
-        <file>images/radio_button_checked.png</file>
-        <file>images/radio_button_unchecked.png</file>
-        <file>images/check_box_checked.png</file>
-        <file>images/check_box_unchecked.png</file>
         <file>images/check_box_checked_inverted.png</file>
         <file>images/check_box_unchecked_inverted.png</file>
+        <file>images/chevron_down_inverted.svg</file>
+        <file>images/chevron_up_inverted.svg</file>
+        <file>images/check_box_checked.svg</file>
+        <file>images/check_box_unchecked.svg</file>
+        <file>images/radio_button_checked.svg</file>
+        <file>images/radio_button_unchecked.svg</file>
     </qresource>
 </RCC>

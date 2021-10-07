@@ -16,7 +16,7 @@
 #include <QSize>
 #include <QStyle>
 
-UpdateWindow::UpdateWindow(QWidget *parent,
+UpdateAvailableWindow::UpdateAvailableWindow(QWidget *parent,
                            std::string versionNumber,
                            std::string url, std::string description)
     : QWidget(parent, Qt::Window)
@@ -36,12 +36,12 @@ UpdateWindow::UpdateWindow(QWidget *parent,
       parent->y() + (parent->height() - sizeHint().height()) / 2);
 }
 
-UpdateWindow::~UpdateWindow()
+UpdateAvailableWindow::~UpdateAvailableWindow()
 {
 
 }
 
-void UpdateWindow::changeEvent(QEvent *event)
+void UpdateAvailableWindow::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::LanguageChange) {
         translateUI();
@@ -49,7 +49,7 @@ void UpdateWindow::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
-void UpdateWindow::setupUI()
+void UpdateAvailableWindow::setupUI()
 {
     _dialogLayout = new QGridLayout{this};
     _dialogLayout->setSpacing(10);
@@ -94,12 +94,12 @@ void UpdateWindow::setupUI()
     _okButton = new QPushButton{this};
     _okButton->setDefault(true);
 
-    connect(_noButton, &QPushButton::clicked, this, &UpdateWindow::noAction);
+    connect(_noButton, &QPushButton::clicked, this, &UpdateAvailableWindow::noAction);
     connect(_showMoreButton,
             &QPushButton::clicked,
             this,
-            &UpdateWindow::showDetails);
-    connect(_okButton, &QPushButton::clicked, this, &UpdateWindow::OKAction);
+            &UpdateAvailableWindow::showDetails);
+    connect(_okButton, &QPushButton::clicked, this, &UpdateAvailableWindow::OKAction);
 
     _dialogLayout->addWidget(_iconLabel, 1, 0, 3, 1);
     _dialogLayout->addWidget(_titleLabel, 1, 1, 1, -1);
@@ -119,7 +119,7 @@ void UpdateWindow::setupUI()
 #endif
 }
 
-void UpdateWindow::translateUI()
+void UpdateAvailableWindow::translateUI()
 {
     // Set property so styling automatically changes
     setProperty("isHan", Settings::isCurrentLocaleHan());
@@ -154,7 +154,7 @@ void UpdateWindow::translateUI()
     resize(sizeHint());
 }
 
-void UpdateWindow::setStyle(bool use_dark)
+void UpdateAvailableWindow::setStyle(bool use_dark)
 {
     (void) (use_dark);
 #ifdef Q_OS_MAC
@@ -164,12 +164,12 @@ void UpdateWindow::setStyle(bool use_dark)
 #endif
 }
 
-void UpdateWindow::showDetails()
+void UpdateAvailableWindow::showDetails()
 {
     _dialogLayout->replaceWidget(_spacer, _descriptionTextEdit);
     _showMoreButton->setText(tr("Hide details"));
     disconnect(_showMoreButton, nullptr, nullptr, nullptr);
-    connect(_showMoreButton, &QPushButton::clicked, this, &UpdateWindow::hideDetails);
+    connect(_showMoreButton, &QPushButton::clicked, this, &UpdateAvailableWindow::hideDetails);
 
     QPropertyAnimation *animation = new QPropertyAnimation{this, "size", this};
     animation->setDuration(150);
@@ -179,7 +179,7 @@ void UpdateWindow::showDetails()
     _descriptionTextEdit->show();
 }
 
-void UpdateWindow::hideDetails()
+void UpdateAvailableWindow::hideDetails()
 {
     // Remove the text edit, and use QWidget to take up space so animation
     // doesn't look weird.
@@ -188,7 +188,7 @@ void UpdateWindow::hideDetails()
 
     _showMoreButton->setText(tr("Show details"));
     disconnect(_showMoreButton, nullptr, nullptr, nullptr);
-    connect(_showMoreButton, &QPushButton::clicked, this, &UpdateWindow::showDetails);
+    connect(_showMoreButton, &QPushButton::clicked, this, &UpdateAvailableWindow::showDetails);
 
     QPropertyAnimation *animation = new QPropertyAnimation{this, "size", this};
     animation->setDuration(150);
@@ -196,12 +196,12 @@ void UpdateWindow::hideDetails()
     animation->start();
 }
 
-void UpdateWindow::noAction()
+void UpdateAvailableWindow::noAction()
 {
     close();
 }
 
-void UpdateWindow::OKAction()
+void UpdateAvailableWindow::OKAction()
 {
     QDesktopServices::openUrl(QUrl{_url.c_str()});
 }
