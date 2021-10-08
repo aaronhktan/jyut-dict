@@ -207,7 +207,7 @@ void SettingsTab::setStyle(bool use_dark)
                   "} "
                   ""
                   "QWidget#DictionaryTab { "
-                  "   background-color: palette(base);"
+                  "   background-color: palette(base); "
                   "} ");
 #endif
 

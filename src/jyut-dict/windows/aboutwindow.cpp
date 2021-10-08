@@ -5,6 +5,8 @@
 #include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
 #endif
 
 #include <QApplication>
@@ -116,7 +118,6 @@ void AboutWindow::setupUI()
 
 void AboutWindow::changeEvent(QEvent *event)
 {
-#if defined(Q_OS_DARWIN)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
@@ -126,7 +127,6 @@ void AboutWindow::changeEvent(QEvent *event)
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }
-#endif
     if (event->type() == QEvent::LanguageChange) {
         translateUI();
     }
@@ -167,7 +167,17 @@ void AboutWindow::setStyle(bool use_dark)
 #ifdef Q_OS_MAC
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
 #elif defined(Q_OS_WIN)
-    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
+    setAttribute(Qt::WA_StyledBackground);
+    setObjectName("AboutWindow");
+    setStyleSheet("QPushButton[isHan=\"true\"] { "
+                  "   font-size: 12px; "
+                  "   height: 20px; "
+                  "} "
+                  ""
+                  "QWidget#AboutWindow { "
+                  "   background-color: palette(base); "
+                  "   border-top: 1px solid palette(alternate-base); "
+                  "} ");
 #endif
     _messageLabel->setText(
         QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CREDITS_TEXT)
