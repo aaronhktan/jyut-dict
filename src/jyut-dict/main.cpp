@@ -5,11 +5,11 @@
 #if defined(Q_OS_WIN)
 #include <cstdio>
 #include <cstring>
-#endif
 
 constexpr auto ARG_STR_LEN = 64;
 constexpr auto platformArg = "-platform";
 constexpr auto darkModeArg = "windows:darkmode=1";
+#endif
 
 int main(int argc, char *argv[])
 {
