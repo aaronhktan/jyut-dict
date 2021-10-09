@@ -66,10 +66,14 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     setStretchFactor(0, 0);
     setStretchFactor(1, 1);
     setSizes(QList<int>({size().width() / 3, size().width() * 2 / 3}));
-#ifdef Q_OS_WIN
-    setStyleSheet("QSplitter::handle { background-color: #b9b9b9; }");
-#elif defined(Q_OS_DARWIN) || defined(Q_OS_LINUX)
-    setStyleSheet("QSplitter::handle { background-color: none; }");
+#ifdef Q_OS_MAC
+    setStyleSheet("QSplitter::handle { "
+                  "   background-color: none; "
+                  "} ");
+#else
+    setStyleSheet("QSplitter::handle { "
+                  "   background-color: palette(alternate-base); "
+                  "} ");
 #endif
 }
 

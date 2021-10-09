@@ -9,6 +9,8 @@
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
 #include "logic/utils/utils_linux.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
 #endif
 
 #include <QApplication>
@@ -20,7 +22,7 @@
 #include <QVariant>
 
 SettingsTab::SettingsTab(QWidget *parent)
-    : QWidget(parent)
+    : QWidget{parent}
 {
     _settings = Settings::getSettings(this);
     setupUI();
@@ -29,17 +31,15 @@ SettingsTab::SettingsTab(QWidget *parent)
 
 void SettingsTab::changeEvent(QEvent *event)
 {
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }
-#endif
     if (event->type() == QEvent::LanguageChange) {
         translateUI();
     }
@@ -111,12 +111,8 @@ void SettingsTab::setupUI()
     _tabLayout->addRow(_resetButton);
     _tabLayout->setAlignment(_resetButton, Qt::AlignRight);
 
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(false);
-#endif
 }
 
 void SettingsTab::translateUI()
@@ -203,9 +199,16 @@ void SettingsTab::setStyle(bool use_dark)
 #ifdef Q_OS_MAC
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: "
                   "13px; height: 16px; }");
-#elif defined(Q_OS_WIN)
-    setStyleSheet(
-        "QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
+#elif defined(Q_OS_LINUX) || defined(Q_OS_WIN)
+    setAttribute(Qt::WA_StyledBackground);
+    setObjectName("DictionaryTab");
+    setStyleSheet("QPushButton[isHan=\"true\"] { "
+                  "   font-size: 12px; height: 20px; "
+                  "} "
+                  ""
+                  "QWidget#DictionaryTab { "
+                  "   background-color: palette(base); "
+                  "} ");
 #endif
 
     QString colour = use_dark ? "#424242" : "#d5d5d5";

@@ -2,6 +2,9 @@
 
 #include "components/sentencesearchresult/sentenceresultlistview.h"
 #include "logic/settings/settingsutils.h"
+#ifdef Q_OS_WIN
+#include "logic/utils/utils_windows.h"
+#endif
 
 #include <QList>
 #include <QVariant>
@@ -43,11 +46,17 @@ SentenceSplitter::SentenceSplitter(std::shared_ptr<SQLDatabaseManager> manager,
     setCollapsible(0, false);
     setCollapsible(1, false);
     setSizes(QList<int>({size().width() / 3, size().width() * 2 / 3}));
+#ifdef Q_OS_MAC
+    setStyleSheet("QSplitter::handle { "
+                  "   background-color: none; "
+                  "} ");
+#else
+    setStyleSheet("QSplitter::handle { "
+                  "   background-color: palette(alternate-base); "
+                  "} ");
+#endif
 #ifdef Q_OS_WIN
-    setStyleSheet("QSplitter::handle { background-color: #b9b9b9; } "
-                  "QSplitter { border-top: 1px solid lightgrey; }");
-#elif defined(Q_OS_DARWIN) || defined(Q_OS_LINUX)
-    setStyleSheet("QSplitter::handle { background-color: none; }");
+    setStyle(Utils::isDarkMode());
 #endif
 }
 
@@ -58,11 +67,30 @@ SentenceSplitter::~SentenceSplitter()
 
 void SentenceSplitter::changeEvent(QEvent *event)
 {
+#ifdef Q_OS_WIN
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        setStyle(Utils::isDarkMode());
+    }
+#endif
     if (event->type() == QEvent::LanguageChange) {
         translateUI();
     }
     QSplitter::changeEvent(event);
 }
+
+#ifdef Q_OS_WIN
+void SentenceSplitter::setStyle(bool use_dark)
+{
+    (void) (use_dark);
+    setStyleSheet("QSplitter { border-top: 1px solid palette(alternate-base); }");
+}
+#endif
 
 void SentenceSplitter::setSourceSentences(
     std::vector<SourceSentence> sourceSentences)

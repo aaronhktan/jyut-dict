@@ -4,6 +4,8 @@
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
 #include "logic/utils/utils_linux.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -31,17 +33,11 @@ HistoryWindow::HistoryWindow(
     setupUI();
     translateUI();
     setMinimumSize(300, 500);
-
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(/* use_dark = */ false);
-#endif
 }
 
 void HistoryWindow::changeEvent(QEvent *event)
 {
-#if defined(Q_OS_DARWIN) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
@@ -51,7 +47,6 @@ void HistoryWindow::changeEvent(QEvent *event)
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }
-#endif
     if (event->type() == QEvent::LanguageChange) {
         translateUI();
     }
@@ -78,18 +73,54 @@ void HistoryWindow::translateUI(void)
 
 void HistoryWindow::setStyle(bool use_dark)
 {
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
-    QColor backgroundColour = use_dark ? QColor{BACKGROUND_COLOUR_DARK_R,
-                                                BACKGROUND_COLOUR_DARK_G,
-                                                BACKGROUND_COLOUR_DARK_B}
-                                       : QColor{BACKGROUND_COLOUR_LIGHT_R,
-                                                BACKGROUND_COLOUR_LIGHT_G,
-                                                BACKGROUND_COLOUR_LIGHT_B};
-    QString styleSheet = "QWidget#HistoryWindow { background-color: %1; }";
-    setStyleSheet(styleSheet.arg(backgroundColour.name()));
+    (void)(use_dark);
+#ifdef Q_OS_MAC
+    QString styleSheet = "QWidget#HistoryWindow { "
+                         "   background-color: palette(base); "
+                         "   border-top: 1px solid palette(alternate-base); "
+                         "} ";
+#elif defined(Q_OS_LINUX)
+    QString styleSheet = "QWidget#HistoryWindow { "
+                         "   background-color: palette(alternate-base); "
+                         "   border-top: 1px solid palette(alternate-base); "
+                         "} ";
+#elif defined(Q_OS_WINDOWS)
+    QString styleSheet = "QWidget#HistoryWindow { "
+                         "   background-color: palette(base); "
+                         "   border-top: 1px solid palette(alternate-base); "
+                         "} ";
+#endif
+    setStyleSheet(styleSheet);
     setAttribute(Qt::WA_StyledBackground);
-#else
-    (void) (use_dark);
+
+// QTabWidget is really weird on Windows, and the -1px stylesheet is a workaround:
+// See https://stackoverflow.com/questions/38369015/customuzing-qtabwidget-with-style-sheets
+#if defined(Q_OS_WIN)
+    QString tabStyleSheet = "QTabBar::tab { "
+                            "   background-color: palette(alternate-base); "
+                            "   border: 1px solid palette(base); "
+                            "   padding: 7px; "
+                            "} "
+                            ""
+                            "QTabBar::tab:selected { "
+                            "   border: 0px; "
+                            "   margin-bottom: -1px; "
+                            "} "
+                            ""
+                            "QTabBar::tab:!selected { "
+                            "   border: 1px solid palette(base); "
+                            "   padding: 7px; "
+                            "} "
+                            ""
+                            "QTabWidget::tab-bar { "
+                            "   alignment: center; "
+                            "} "
+                            ""
+                            "QTabWidget::pane { "
+                            "   border: 1px solid palette(base); "
+                            "   top: -1px; "
+                            "} ";
+    _tabWidget->setStyleSheet(tabStyleSheet);
 #endif
 }
 

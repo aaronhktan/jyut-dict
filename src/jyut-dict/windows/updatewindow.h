@@ -12,18 +12,18 @@
 
 #include <string>
 
-// The Update Window displays an update notification to the user.
+// The Update Available Window displays an update notification to the user.
 
-class UpdateWindow : public QWidget
+class UpdateAvailableWindow : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit UpdateWindow(QWidget *parent = nullptr,
+    explicit UpdateAvailableWindow(QWidget *parent = nullptr,
                           std::string versionNumber=Utils::CURRENT_VERSION,
                           std::string url=Utils::GITHUB_LINK,
                           std::string description="");
-    ~UpdateWindow() override;
+    ~UpdateAvailableWindow() override;
 
     void changeEvent(QEvent *event) override;
 

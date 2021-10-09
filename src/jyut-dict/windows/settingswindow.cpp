@@ -9,6 +9,8 @@
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
 #include "logic/utils/utils_linux.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -49,17 +51,15 @@ SettingsWindow::~SettingsWindow()
 
 void SettingsWindow::changeEvent(QEvent *event)
 {
-#if defined(Q_OS_DARWIN) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(100, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }
-#endif
     if (event->type() == QEvent::LanguageChange) {
         translateUI();
     }
@@ -105,11 +105,7 @@ void SettingsWindow::setupUI()
     setCentralWidget(_contentStackedWidget);
 
     // Customize the look of the toolbar to fit in better with platform styles
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(/* use_dark = */false);
-#endif
 }
 
 void SettingsWindow::translateUI()
@@ -143,18 +139,8 @@ void SettingsWindow::setStyle(bool use_dark)
     QColor currentTextColour;
     QColor otherTextColour;
     if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
         selectedBackgroundColour = QGuiApplication::palette()
             .color(QPalette::Inactive, QPalette::Highlight);
-#else
-        selectedBackgroundColour
-            = use_dark ? QColor{LIST_ITEM_INACTIVE_COLOUR_DARK_R,
-                                LIST_ITEM_INACTIVE_COLOUR_DARK_G,
-                                LIST_ITEM_INACTIVE_COLOUR_DARK_B}
-                       : QColor{LIST_ITEM_INACTIVE_COLOUR_LIGHT_R,
-                                LIST_ITEM_INACTIVE_COLOUR_LIGHT_G,
-                                LIST_ITEM_INACTIVE_COLOUR_LIGHT_B};
-#endif
         currentTextColour
             = use_dark ? QColor{TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_R,
                                 TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_G,
@@ -274,25 +260,34 @@ void SettingsWindow::setStyle(bool use_dark)
                   otherTextColour.name()));
     setButtonIcon(use_dark, _contentStackedWidget->currentIndex());
 
-    // Customize the bottom of the toolbar
-#ifdef Q_OS_WIN
-    _toolBar->setStyleSheet("QToolBar {"
-                            "   background-color: white;"
-                            "}");
+    // Customize the look of the toolbar
+#if defined(Q_OS_WIN)
+    if (use_dark) {
+        _toolBar->setStyleSheet("QToolBar {"
+                                "   background-color: black; "
+                                "   border-top: 1px solid black; "
+                                "}");
+    } else {
+        _toolBar->setStyleSheet("QToolBar {"
+                                "   background-color: white;"
+                                "}");
+    }
 #elif defined(Q_OS_LINUX)
-    QColor color = QGuiApplication::palette().color(QPalette::AlternateBase);
-    _toolBar->setStyleSheet(QString("QToolBar {"
-                                    "   background: transparent;"
-                                    "   background-color: rgba(%1, %2, %3, %4);"
-                                    "   border-bottom: 1px solid %5;"
-                                    "   padding-bottom: 3px;"
-                                    "   padding-top: 3px;"
-                                    "}")
-                                .arg(std::to_string(color.red()).c_str())
-                                .arg(std::to_string(color.green()).c_str())
-                                .arg(std::to_string(color.blue()).c_str())
-                                .arg(0.7)
-                                .arg(use_dark ? "black" : "lightgray"));
+    if (Utils::isDarkMode()) {
+        _toolBar->setStyleSheet("QToolBar { "
+                                "   background-color: palette(alternate-base); "
+                                "   border-bottom: 1px solid palette(window); "
+                                "   padding-bottom: 3px; "
+                                "   padding-top: 3px; "
+                                "} ");
+    } else {
+        _toolBar->setStyleSheet("QToolBar { "
+                                "   background-color: palette(window); "
+                                "   border-bottom: 1px solid palette(alternate-base); "
+                                "   padding-bottom: 3px; "
+                                "   padding-top: 3px; "
+                                "} ");
+    }
 #endif
 }
 
@@ -341,12 +336,8 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
 
 void SettingsWindow::openTab(int tabIndex)
 {
-#if defined(Q_OS_DARWIN) || defined (Q_OS_LINUX)
     // Set the style to match whether the user started dark mode
     setButtonIcon(Utils::isDarkMode(), tabIndex);
-#else
-    setButtonIcon(/* use_dark = */false, tabIndex);
-#endif
 
     for (int index = 0; index < _contentStackedWidget->count(); index++) {
         // Ignore sizehint of non-active widgets
@@ -365,9 +356,5 @@ void SettingsWindow::openTab(int tabIndex)
 void SettingsWindow::paintWithApplicationState(Qt::ApplicationState state)
 {
     (void) (state);
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(/* use_dark = */ false);
-#endif
 }

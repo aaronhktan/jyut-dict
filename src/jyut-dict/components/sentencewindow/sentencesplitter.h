@@ -37,6 +37,11 @@ public:
 private:
     void translateUI(void);
 
+#ifdef Q_OS_WIN
+    void setStyle(bool use_dark);
+    bool _paletteRecentlyChanged = false;
+#endif
+
     void openCurrentSelectionInNewWindow(void);
 
     std::shared_ptr<SQLDatabaseManager> _manager;

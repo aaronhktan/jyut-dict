@@ -31,7 +31,7 @@ private:
     void setStyle(bool use_dark);
 
     void initializeUpdateCheckbox(QCheckBox &checkbox);
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     void initializeForceDarkModeCheckbox(QCheckBox &checkbox);
 #endif
     void initializeLanguageCombobox(QComboBox &combobox);
@@ -41,7 +41,7 @@ private:
     bool _paletteRecentlyChanged = false;
 
     QCheckBox *_updateCheckbox;
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     QCheckBox *_forceDarkModeCheckbox;
 #endif
     QPushButton *_exportUserDatabaseButton;

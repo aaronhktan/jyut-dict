@@ -31,7 +31,9 @@ constexpr auto CREDITS_TEXT = QT_TRANSLATE_NOOP(
     "style=\"color: %1; text-decoration: none\">Wikimedia Ancient "
     "Chinese characters project</a> files."
     "<br>UI icons from <a href=https://feathericons.com "
-    "style=\"color: %1; text-decoration: none\">Feather Icons</a>."
+    "style=\"color: %1; text-decoration: none\">Feather Icons</a> and "
+    "<a href=https://github.com/microsoft/fluentui-system-icons "
+    "style=\"color: %1; text-decoration: none\">Fluent UI System Icons</a>."
     "<br>Made with <a href=\"#\" style=\"color: %1; text-decoration: none\">"
     "Qt</a>.");
 constexpr auto CONTACT_TITLE

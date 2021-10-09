@@ -38,6 +38,11 @@ private:
     void setupUI();
     void translateUI();
 
+#ifdef Q_OS_WIN
+    void setStyle(bool use_dark);
+    bool _paletteRecentlyChanged = false;
+#endif
+
     std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
     std::shared_ptr<SQLDatabaseManager> _manager;
 

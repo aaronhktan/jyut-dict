@@ -6,6 +6,10 @@
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined (Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
 #endif
 
 #include <QtConcurrent/QtConcurrent>
@@ -111,12 +115,8 @@ void DictionaryTab::setupUI()
         }
     });
 
-#ifdef Q_OS_MAC
     // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(false);
-#endif
 }
 
 void DictionaryTab::translateUI()
@@ -142,9 +142,24 @@ void DictionaryTab::translateUI()
 void DictionaryTab::setStyle(bool use_dark) {
     (void) (use_dark);
 #ifdef Q_OS_MAC
-    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
-#elif defined(Q_OS_WIN)
-    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
+    setStyleSheet(
+        "QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
+    _list->setStyleSheet("QListView {"
+                         "   border: 1px solid palette(window); "
+                         "} ");
+#else
+    setAttribute(Qt::WA_StyledBackground);
+    setObjectName("DictionaryTab");
+    setStyleSheet("QPushButton[isHan=\"true\"] { "
+                  "   font-size: 12px; height: 20px; "
+                  "}"
+                  ""
+                  "QWidget#DictionaryTab {"
+                  "   background-color: palette(base);"
+                  "} ");
+    _list->setStyleSheet("QListView {"
+                         "   border: 1px solid palette(alternate-base); "
+                         "} ");
 #endif
 }
 
@@ -155,9 +170,6 @@ void DictionaryTab::setDictionaryMetadata(const QModelIndex &index)
     _description->setText(metadata.getDescription().c_str());
     _legal->setText(metadata.getLegal().c_str());
     _version->setText((tr("Version: %1")).arg(metadata.getVersion().c_str()));
-#ifdef Q_OS_LINUX
-    _groupbox->setTitle(tr("About %1").arg(metadata.getName().c_str()));
-#endif
 
     disconnect(_link, nullptr, nullptr, nullptr);
     connect(_link, &QPushButton::clicked, this, [=] {

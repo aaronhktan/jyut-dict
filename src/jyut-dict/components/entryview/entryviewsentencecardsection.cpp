@@ -5,6 +5,8 @@
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
 #include "logic/utils/utils_linux.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -74,11 +76,7 @@ void EntryViewSentenceCardSection::setupUI(void)
 
     _showLoadingIconTimer = new QTimer{this};
 
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(/* use_dark = */false);
-#endif
     translateUI();
 }
 
@@ -99,7 +97,6 @@ void EntryViewSentenceCardSection::cleanup(void)
 
 void EntryViewSentenceCardSection::changeEvent(QEvent *event)
 {
-#if defined(Q_OS_DARWIN) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
@@ -109,7 +106,6 @@ void EntryViewSentenceCardSection::changeEvent(QEvent *event)
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }
-#endif
     if (event->type() == QEvent::LanguageChange) {
         translateUI();
     }
@@ -121,18 +117,19 @@ void EntryViewSentenceCardSection::setStyle(bool use_dark)
     QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
                                           LABEL_TEXT_COLOUR_DARK_G,
                                           LABEL_TEXT_COLOUR_DARK_B}
-                                       .darker(300)
                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_G,
-                                          LABEL_TEXT_COLOUR_LIGHT_B}
-                                       .lighter(200);
+                                          LABEL_TEXT_COLOUR_LIGHT_B};
     int borderRadius = 17;
     QString radiusString = QString::number(borderRadius);
+    QColor borderColour = use_dark ? textColour.darker(300)
+                                   : textColour.lighter(200);
     QString styleSheet = "QToolButton { border: 2px solid %1; "
                          "border-radius: %2px; "
+                         "color: %3; "
                          "font-size: 12px; "
                          "padding: 6px; } ";
-    _viewAllSentencesButton->setStyleSheet(styleSheet.arg(textColour.name(), radiusString));
+    _viewAllSentencesButton->setStyleSheet(styleSheet.arg(borderColour.name(), radiusString, textColour.name()));
     _viewAllSentencesButton->setMinimumHeight(borderRadius * 2);
 }
 

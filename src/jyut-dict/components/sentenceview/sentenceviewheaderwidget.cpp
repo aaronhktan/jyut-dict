@@ -6,6 +6,8 @@
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
 #include "logic/utils/utils_linux.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -23,12 +25,7 @@ SentenceViewHeaderWidget::SentenceViewHeaderWidget(QWidget *parent) : QWidget(pa
 
     setupUI();
     translateUI();
-
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(/* use_dark = */false);
-#endif
 }
 
 SentenceViewHeaderWidget::~SentenceViewHeaderWidget()
@@ -43,7 +40,6 @@ void SentenceViewHeaderWidget::changeEvent(QEvent *event)
         _pinyinLabel->setFixedWidth(_pinyinLabel->fontMetrics().boundingRect("PY").width());
     }
 #endif
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
@@ -53,7 +49,6 @@ void SentenceViewHeaderWidget::changeEvent(QEvent *event)
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }
-#endif
     if (event->type() == QEvent::LanguageChange) {
         translateUI();
     }
@@ -121,11 +116,7 @@ void SentenceViewHeaderWidget::setSourceSentence(const SourceSentence &sentence)
     _traditionalLabel->setFont(font);
 #endif
 
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(/* use_dark = */ false);
-#endif
 }
 
 void SentenceViewHeaderWidget::setupUI(void)
@@ -294,15 +285,15 @@ void SentenceViewHeaderWidget::setStyle(bool use_dark)
     _jyutpingTTS->setFlat(true);
     _jyutpingTTS->setObjectName("jyutpingTTS");
     _jyutpingTTS->setStyleSheet(
-        "QPushButton#jyutpingTTS { padding: 0px; }"
-        "QPushButton:pressed#jyutpingTTS { border: none; }");
+                "QPushButton#jyutpingTTS { background-color: none; border: 1px solid transparent; padding: 0px; }"
+                "QPushButton:pressed#jyutpingTTS { background-color: none; border: 1px solid transparent; }");
 
     _pinyinTTS->setIcon(use_dark ? QIcon{":/images/speak_inverted.png"}
                                  : QIcon{":/images/speak.png"});
     _pinyinTTS->setFlat(true);
     _pinyinTTS->setObjectName("pinyinTTS");
-    _pinyinTTS->setStyleSheet("QPushButton#pinyinTTS { padding: 0px; }"
-                              "QPushButton:pressed#pinyinTTS { border: none; }");
+    _pinyinTTS->setStyleSheet("QPushButton#pinyinTTS { background-color: none; border: 1px solid transparent; padding: 0px; }"
+                              "QPushButton:pressed#pinyinTTS { background-color: none ;border: 1px solid transparent; }");
 #endif
 }
 

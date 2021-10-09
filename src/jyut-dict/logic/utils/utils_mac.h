@@ -8,7 +8,7 @@
 namespace Utils {
 
 QColor getAppleControlAccentColor();
-bool isDarkMode();
+bool isDarkMode(void);
 
 }
 

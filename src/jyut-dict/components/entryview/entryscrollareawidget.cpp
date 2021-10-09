@@ -4,6 +4,8 @@
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
 #include "logic/utils/utils_linux.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -31,11 +33,7 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(std::shared_ptr<SQLUserDataUtils> s
     _scrollAreaLayout->addWidget(_entryContentWidget);
     _scrollAreaLayout->addStretch(1);
 
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(/* use_dark = */false);
-#endif
 
     connect(this,
             &EntryScrollAreaWidget::stallUISentenceUpdate,
@@ -45,7 +43,6 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(std::shared_ptr<SQLUserDataUtils> s
 
 void EntryScrollAreaWidget::changeEvent(QEvent *event)
 {
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
@@ -55,7 +52,6 @@ void EntryScrollAreaWidget::changeEvent(QEvent *event)
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }
-#endif
     QWidget::changeEvent(event);
 }
 
@@ -68,13 +64,9 @@ void EntryScrollAreaWidget::setEntry(const Entry &entry)
 
 void EntryScrollAreaWidget::setStyle(bool use_dark)
 {
-    QColor backgroundColour = use_dark ? QColor{BACKGROUND_COLOUR_DARK_R,
-                                                BACKGROUND_COLOUR_DARK_G,
-                                                BACKGROUND_COLOUR_DARK_B}
-                                       : QColor{BACKGROUND_COLOUR_LIGHT_R,
-                                                BACKGROUND_COLOUR_LIGHT_G,
-                                                BACKGROUND_COLOUR_LIGHT_B};
-    QString styleSheet = "QWidget#DefinitionScrollAreaWidget { background-color: %1; }";
-    setStyleSheet(styleSheet.arg(backgroundColour.name()));
+    (void) (use_dark);
     setAttribute(Qt::WA_StyledBackground);
+    setStyleSheet("QWidget#DefinitionScrollAreaWidget { "
+                  "   background-color: palette(base); "
+                  "} ");
 }

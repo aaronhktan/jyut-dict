@@ -5,6 +5,8 @@
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
 #include "logic/utils/utils_linux.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -27,16 +29,11 @@ SentenceCardWidget::SentenceCardWidget(QWidget *parent)
     _sentenceCardLayout->addWidget(_sentenceHeaderWidget);
     _sentenceCardLayout->addWidget(_sentenceContentWidget);
 
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(/* use_dark = */ false);
-#endif
 }
 
 void SentenceCardWidget::changeEvent(QEvent *event)
 {
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
@@ -46,7 +43,6 @@ void SentenceCardWidget::changeEvent(QEvent *event)
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }
-#endif
     if (event->type() == QEvent::LanguageChange) {
         translateUI();
     }
@@ -67,11 +63,7 @@ void SentenceCardWidget::displaySentences(const std::vector<SourceSentence> &sen
         + " (" + _source + ")");
     _sentenceContentWidget->setSourceSentenceVector(sentences);
 
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(/* use_dark = */false);
-#endif
 }
 
 void SentenceCardWidget::displaySentences(const SentenceSet &set)
@@ -88,11 +80,7 @@ void SentenceCardWidget::displaySentences(const SentenceSet &set)
         + " (" + _source + ")");
     _sentenceContentWidget->setSentenceSet(set);
 
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(/* use_dark = */false);
-#endif
 }
 
 void SentenceCardWidget::translateUI()

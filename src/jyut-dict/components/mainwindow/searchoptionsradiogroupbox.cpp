@@ -65,6 +65,9 @@ void SearchOptionsRadioGroupBox::setupUI()
 
     _layout = new QHBoxLayout{this};
     _layout->setContentsMargins(15, 0, 55, 0);
+#ifdef Q_OS_WIN
+    _layout->setSpacing(15);
+#endif
 
     _simplifiedButton = new QRadioButton{};
     _traditionalButton = new QRadioButton{};
@@ -97,7 +100,9 @@ void SearchOptionsRadioGroupBox::setupUI()
     setStyleSheet("QRadioButton[isHan=\"true\"] { font-size: 12px; }"
                   "QGroupBox { border: 0; }");
 #else
-    setStyleSheet("QGroupBox { border: none; } ");
+    setStyleSheet("QGroupBox { "
+                  "   border: none; "
+                  "} ");
 #endif
 }
 

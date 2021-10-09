@@ -5,6 +5,8 @@
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
 #include "logic/utils/utils_linux.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -32,7 +34,6 @@ SearchHistoryTab::SearchHistoryTab(
 
 void SearchHistoryTab::changeEvent(QEvent *event)
 {
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
@@ -42,7 +43,6 @@ void SearchHistoryTab::changeEvent(QEvent *event)
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }
-#endif
     if (event->type() == QEvent::LanguageChange) {
         translateUI();
     }
@@ -62,11 +62,10 @@ void SearchHistoryTab::setupUI(void)
 
     _tabLayout->setSpacing(10);
 
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
-    setStyle(Utils::isDarkMode());
-#else
-    setStyle(/* use_dark = */ false);
+#ifdef Q_OS_WIN
+    setAttribute(Qt::WA_StyledBackground, true);
 #endif
+    setStyle(Utils::isDarkMode());
 }
 
 void SearchHistoryTab::translateUI(void)
@@ -89,25 +88,36 @@ void SearchHistoryTab::translateUI(void)
 
 void SearchHistoryTab::setStyle(bool use_dark)
 {
+    _clearAllSearchHistoryButton->setFixedSize(
+        _clearAllSearchHistoryButton->minimumSizeHint());
 #ifdef Q_OS_MAC
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: "
                   "13px; height: 16px; }");
 #elif defined(Q_OS_WIN)
-    setStyleSheet(
-        "QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
+    setStyleSheet("QPushButton[isHan=\"true\"] { "
+                  "   border: 1px solid palette(base); "
+                  "   font-size: 12px; "
+                  "   height: 20px; "
+                  "} ");
 #endif
 
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+#if defined(Q_OS_MAC)
     setStyleSheet(use_dark ? "QListView { border: none; }"
                            : "QListView { border: 1px solid lightgrey; }");
+#elif defined(Q_OS_LINUX)
+    _listView->setStyleSheet("QListView { border: 1px solid palette(alternate-base); }");
 #elif defined(Q_OS_WIN)
-    setStyleSheet("QListView { border: 1px solid #b9b9b9; }");
+    setStyleSheet(use_dark ? "QListView { border: none; }"
+                           : "QListView { border: 1px solid palette(window); }");
 #endif
 
 #ifdef Q_OS_MAC
     _tabLayout->setContentsMargins(0, 0, 0, use_dark ? 0 : 10);
-#else
-    (void) (use_dark);
+#elif defined(Q_OS_WIN)
+    setObjectName("searchHistoryTabWidget");
+    setStyleSheet("QWidget#searchHistoryTabWidget { "
+                  "   background-color: palette(alternate-base); "
+                  "} ");
 #endif
 }
 
