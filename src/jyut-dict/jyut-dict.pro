@@ -330,13 +330,13 @@ unix|win32:!macx {
     QMAKE_EXTRA_TARGETS += second copysettings
 
     FLATPAK {
-        DESKTOP_FILES = \"$$system_path($$PWD/resources/icon/variant_3/icon.iconset/icon_16x16.png)\"
-        DESKTOP_FILES += \"$$system_path($$PWD/resources/icon/variant_3/icon.iconset/icon_32x32.png)\"
-        DESKTOP_FILES += \"$$system_path($$PWD/resources/icon/variant_3/icon.iconset/icon_64x64.png)\"
-        DESKTOP_FILES += \"$$system_path($$PWD/resources/icon/variant_3/icon.iconset/icon_128x128.png)\"
-        DESKTOP_FILES += \"$$system_path($$PWD/resources/icon/variant_3/icon.iconset/icon_256x256.png)\"
-        DESKTOP_FILES += \"$$system_path($$PWD/resources/icon/variant_3/icon.iconset/icon_512x512.png)\"
-        DESKTOP_FILES += \"$$system_path($$PWD/resources/icon/variant_3/icon.svg)\"
+        DESKTOP_FILES = \"$$system_path($$PWD/resources/icon/icon.iconset/icon_16x16.png)\"
+        DESKTOP_FILES += \"$$system_path($$PWD/resources/icon/icon.iconset/icon_32x32.png)\"
+        DESKTOP_FILES += \"$$system_path($$PWD/resources/icon/icon.iconset/icon_64x64.png)\"
+        DESKTOP_FILES += \"$$system_path($$PWD/resources/icon/icon.iconset/icon_128x128.png)\"
+        DESKTOP_FILES += \"$$system_path($$PWD/resources/icon/icon.iconset/icon_256x256.png)\"
+        DESKTOP_FILES += \"$$system_path($$PWD/resources/icon/icon.iconset/icon_512x512.png)\"
+        DESKTOP_FILES += \"$$system_path($$PWD/resources/icon/icon.svg)\"
         DESKTOP_FILES += \"$$system_path($$PWD/platform/linux/flatpak/flatpak.desktop)\"
         
         copy_desktop.name = copy desktop and icon files

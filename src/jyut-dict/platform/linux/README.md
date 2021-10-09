@@ -14,4 +14,6 @@ To build for Linux:
 	- Run `create-flatpak.sh` in the flatpak subdirectory.
 
 - Build the **.deb** using Ubuntu 18.04.
+	- Add repository to install Qt 5.15: `sudo add-apt-repository ppa:beineri/opt-qt-5.15.2-bionic; sudo apt-get update`
+	- Install dependencies: `sudo apt install qt515base qt515speech qt515svg`
 	- Run `create-deb.sh` in the deb subdirectory.
