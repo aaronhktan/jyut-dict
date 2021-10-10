@@ -65,7 +65,7 @@ This folder contains the source code for the program, and a Qt Creator project f
 
 ## Build and run
 
-This project uses Qt 5.12. It has been verified to also compile on Qt 5.9.5 on Ubuntu, but there are no guarantees of other compatible Qt versions.
+This project requires Qt 5.15.
 
 **Before building the application, you must build the dictionary database using `script-set.py` (for CEDICT + CC-CANTO) or `script-individual` (for CFDICT/HanDeDict).** Read the README in `src/dictionaries/cedict` for instructions, then place the generated database, named `dict.db`, in `src/jyut-dict/resources/db/`.
 
