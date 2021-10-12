@@ -98,7 +98,7 @@ bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(void)
         "    CASCADE, "
         "  FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON DELETE "
         "    CASCADE, "
-        "  UNIQUE(definition, fk_entry_id, fk_source_id) ON CONFLICT IGNORE "
+        "  UNIQUE(definition, label, fk_entry_id, fk_source_id) ON CONFLICT IGNORE "
         ")");
     if (query.lastError().isValid()) {
         return false;
@@ -701,7 +701,7 @@ bool SQLDatabaseUtils::addDefinitionSource(void)
 // - new_entry_and_definitions: Uniquely identify each definition from the
 //   current database, as in entry_and_definitions
 // - Then, since new_entry_and_definitions contains all the data that uniquely
-//   identifies corresponding defnitions (aka entry / definition / source), join
+//   identifies corresponding defnitions (aka entry / definition / label / source), join
 //   the definition -> Chinese sentence links from defs_s_links_tmp using that
 //   information
 bool SQLDatabaseUtils::addSentenceSource(void)
@@ -781,6 +781,7 @@ bool SQLDatabaseUtils::addSentenceSource(void)
                "    entries.pinyin AS pinyin, "
                "    entries.jyutping AS jyutping, "
                "    definitions.definition AS definition, "
+               "    definitions.label AS label, "
                "    definitions.definition_id AS definition_id, "
                "    sources.sourcename AS source "
                "  FROM db.entries, db.definitions, db.sources "
@@ -792,6 +793,7 @@ bool SQLDatabaseUtils::addSentenceSource(void)
                "  SELECT dsl.fk_definition_id AS fdi,"
                "    dsl.fk_chinese_sentence_id AS fcsi, "
                "    ed.definition AS definition, "
+               "    ed.label AS label, "
                "    ed.traditional AS traditional, "
                "    ed.simplified AS simplified, "
                "    ed.pinyin AS pinyin, "
@@ -808,6 +810,7 @@ bool SQLDatabaseUtils::addSentenceSource(void)
                "    entries.pinyin AS pinyin, "
                "    entries.jyutping AS jyutping, "
                "    definitions.definition AS definition, "
+               "    definitions.label AS label, "
                "    definitions.definition_id AS definition_id, "
                "    sources.sourcename AS source "
                "  FROM entries, definitions, sources "
@@ -820,6 +823,7 @@ bool SQLDatabaseUtils::addSentenceSource(void)
                "SELECT ned.definition_id, dsl.fcsi "
                "FROM defs_s_links_tmp AS dsl, new_entry_and_definitions AS ned "
                "WHERE dsl.definition = ned.definition "
+               "  AND dsl.label = ned.label "
                "  AND dsl.traditional = ned.traditional "
                "  AND dsl.simplified = ned.simplified "
                "  AND dsl.pinyin = ned.pinyin "
