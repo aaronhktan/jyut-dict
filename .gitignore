@@ -89,6 +89,9 @@ CMakeLists.txt.user*
 **/kaifangcidian/archive_*
 **/kaifangcidian/data/*
 **/kaifangcidian/developer/*
+**/moedict/archive_*
+**/moedict/data/*
+**/moedict/developer/*
 **/tatoeba/archive_*
 **/tatoeba/data/*
 **/tatoeba/developer/*
