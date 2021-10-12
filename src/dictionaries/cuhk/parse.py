@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from hanziconv import HanziConv
 from hkscs_unicode_converter import converter
 from pypinyin import lazy_pinyin, Style
+from pypinyin_dict.phrase_pinyin_data import cc_cedict
 from wordfreq import zipf_frequency
 
 from database import database, objects
@@ -205,6 +206,8 @@ if __name__ == "__main__":
         sys.argv[9],
         sys.argv[10],
     )
+
+    cc_cedict.load()
 
     words = []
     parse_words_folder(sys.argv[2], words)
