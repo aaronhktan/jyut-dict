@@ -1,6 +1,7 @@
 import hanzidentifier
 from hanziconv import HanziConv
 from pypinyin import lazy_pinyin, Style
+from pypinyin_dict.phrase_pinyin_data import cc_cedict
 import pinyin_jyutping_sentence
 
 from database import database, objects
@@ -216,6 +217,8 @@ if __name__ == "__main__":
             )
         )
         sys.exit(1)
+
+    cc_cedict.load()
 
     chinese_sentences = {}  # Use this to store all the source sentences
     nonchinese_sentences = {}  # Use this to store all the target sentences

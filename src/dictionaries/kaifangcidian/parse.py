@@ -1,5 +1,6 @@
 import hanzidentifier
 from pypinyin import lazy_pinyin, Style
+from pypinyin_dict.phrase_pinyin_data import cc_cedict
 from wordfreq import zipf_frequency
 
 from database import database, objects
@@ -188,6 +189,8 @@ if __name__ == "__main__":
             )
         )
         sys.exit(1)
+
+    cc_cedict.load()
 
     entries = {}
     source = objects.SourceTuple(

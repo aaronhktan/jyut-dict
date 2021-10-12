@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup, element
 from hanziconv import HanziConv
 from pypinyin import lazy_pinyin, Style
+from pypinyin_dict.phrase_pinyin_data import cc_cedict
 from wordfreq import zipf_frequency
 
 from database import database, objects
@@ -561,6 +562,8 @@ if __name__ == "__main__":
         sys.argv[10],
         sys.argv[11],
     )
+
+    cc_cedict.load()
 
     words = []
     sentences = []

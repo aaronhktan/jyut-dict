@@ -4,4 +4,5 @@ hkscs_unicode_converter==1.1.0
 jieba==0.42.1
 msgpack==1.0.2
 pypinyin==0.40.0
+pypinyin-dict==0.1.0
 wordfreq==2.5.0
