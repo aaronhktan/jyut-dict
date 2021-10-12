@@ -701,7 +701,7 @@ bool SQLDatabaseUtils::addDefinitionSource(void)
 // - new_entry_and_definitions: Uniquely identify each definition from the
 //   current database, as in entry_and_definitions
 // - Then, since new_entry_and_definitions contains all the data that uniquely
-//   identifies corresponding defnitions (aka entry / definition / source), join
+//   identifies corresponding defnitions (aka entry / definition / label / source), join
 //   the definition -> Chinese sentence links from defs_s_links_tmp using that
 //   information
 bool SQLDatabaseUtils::addSentenceSource(void)

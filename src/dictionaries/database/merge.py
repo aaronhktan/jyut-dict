@@ -118,12 +118,12 @@ if __name__ == "__main__":
     # entry_and_definitions: [traditional | simplified | pinyin | jyutping | definition | label | source]
     # for each definition in db2, since this uniquely identifies the definition
 
-    # Match that up with sentences, so that we get dfs_s_links_tmp: [traditional | simplified | pinyin | jyutping | definition_id | sentence_id | source]
+    # Match that up with sentences, so that we get defs_s_links_tmp: [traditional | simplified | pinyin | jyutping | definition_id | definition_label | definition | sentence_id | source]
     # for each sentence in db2, since this uniquely identifies the sentence
 
-    # In current database, get new_entry_and_defnitions: [traditional | simplified | pinyin | jyutping | definition | source]
+    # In current database, get new_entry_and_defnitions: [traditional | simplified | pinyin | jyutping | definition | label | source]
 
-    # And replace the fk_definition_id for each sentence link when traditional/simplified/pinyin/jyutping/definition/source all match for a sentence.
+    # And replace the fk_definition_id for each sentence link when traditional/simplified/pinyin/jyutping/definition/label/source all match for a sentence.
     c.execute(
         """WITH entry_and_definitions AS (
                     SELECT entries.traditional AS traditional, entries.simplified AS simplified, entries.pinyin AS pinyin, entries.jyutping AS jyutping,
