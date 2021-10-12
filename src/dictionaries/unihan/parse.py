@@ -1,9 +1,9 @@
 import hanzidentifier
-from hanziconv import HanziConv
 from wordfreq import zipf_frequency
 
 from database import database, objects
 
+from collections import defaultdict
 import csv
 import logging
 import sqlite3
@@ -136,7 +136,6 @@ PINYIN_CORRESPONDANCE_3 = {
     "ong": "ong5",
 }
 
-bad = 0
 
 def read_csv(filename):
     with open(filename) as csvfile:
@@ -188,18 +187,8 @@ def write(db_name, source, entries):
     )
 
     for key in entries:
-        entry = entries[key]
-        entry_id = database.get_entry_id(
-            c,
-            entry.traditional,
-            entry.simplified,
-            entry.pinyin,
-            entry.jyutping,
-            entry.freq,
-        )
-
-        if entry_id == -1:
-            entry_id = database.insert_entry(
+        for entry in entries[key]:
+            entry_id = database.get_entry_id(
                 c,
                 entry.traditional,
                 entry.simplified,
@@ -207,20 +196,30 @@ def write(db_name, source, entries):
                 entry.jyutping,
                 entry.freq,
             )
-            if entry_id == -1:
-                logging.error(f"Could not insert word {entry.traditional}, uh oh!")
-                continue
 
-        for label, definition in entry.definitions:
-            definition_id = database.insert_definition(
-                c, definition, label, entry_id, 1, None
-            )
-            if definition_id == -1:
-                logging.error(
-                    f"Could not insert definition {definition} for word {entry.traditional} "
-                    "- check if the definition is a duplicate!"
+            if entry_id == -1:
+                entry_id = database.insert_entry(
+                    c,
+                    entry.traditional,
+                    entry.simplified,
+                    entry.pinyin,
+                    entry.jyutping,
+                    entry.freq,
                 )
-                continue
+                if entry_id == -1:
+                    logging.error(f"Could not insert word {entry.traditional}, uh oh!")
+                    continue
+
+            for label, definition in entry.definitions:
+                definition_id = database.insert_definition(
+                    c, definition, label, entry_id, 1, None
+                )
+                if definition_id == -1:
+                    logging.error(
+                        f"Could not insert definition {definition} for word {entry.traditional} "
+                        "- check if the definition is a duplicate!"
+                    )
+                    continue
 
     database.generate_indices(c)
 
@@ -228,7 +227,9 @@ def write(db_name, source, entries):
     db.close()
 
 
-def parse_dictionary_like_data(filename, words):
+def parse_variants(filename, words_traditional, words_simplified):
+    variant_pairs = set()
+
     for line in read_csv(filename):
         if len(line) != 3 or line[0].startswith("#"):
             continue
@@ -237,56 +238,31 @@ def parse_dictionary_like_data(filename, words):
         fieldname = line[1]
         content = line[2]
 
-        if fieldname != "kCangjie":
+        if fieldname not in ("kSimplifiedVariant", "kTraditionalVariant"):
             continue
 
         character = chr(int(codepoint[2:], 16))
-        trad = HanziConv.toTraditional(character)
-        if trad not in words:
-            logging.info(
-                f"{character} not in database but Cangjie found - may be compatibility variant. "
-                "Check https://www.unicode.org/charts/unihan.html"
-            )
-            continue
+        variants = [chr(int(item[2:], 16)) for item in content.split()]
 
-        if words[trad].traditional == words[trad].simplified:
-            if any(label == "Cangjie Input" for (label, _) in words[trad].definitions):
-                # Don't add Cangjie twice!
-                continue
-            words[trad].append_to_defs(("Cangjie Input", content))
-        elif words[trad].simplified == character:
-            # Sometimes, the Cangjie input code is the same for both traditional and simplified
-            # even if the characters are different (see "齷")
-            # So we re-label it to apply to both forms of the character
-            inserted = False
-            for i in range(len(words[trad].definitions)):
-                if words[trad].definitions[i][1] == content:
-                    words[trad].definitions[i] = ("Cangjie Input", content)
-                    inserted = True
-                    break
-            if not inserted:
-                words[trad].append_to_defs(("Cangjie Input - Simplified", content))
-        elif words[trad].traditional == character:
-            # Sometimes, the Cangjie input code is the same for both traditional and simplified
-            # even if the characters are different (see "齷")
-            # So we re-label it to apply to both forms of the character
-            inserted = False
-            for i in range(len(words[trad].definitions)):
-                if words[trad].definitions[i][1] == content:
-                    words[trad].definitions[i] = ("Cangjie Input", content)
-                    inserted = True
-                    break
-            if not inserted:
-                words[trad].append_to_defs(("Cangjie Input - Traditional", content))
-        else:
-            logging.warning(
-                f"The character {character} doesn't match either traditional nor simplified forms of the dictionary word: "
-                f"[character: {character}, traditional: {trad}, "
-                f"dictionary traditional: {words[trad].traditional}, dictionary simplified: {words[trad].simplified}"
-            )
+        if fieldname == "kTraditionalVariant":
+            for variant in variants:
+                if (variant, character) not in variant_pairs:
+                    # This character has a traditional variant - insert into words
+                    entry = objects.Entry(variant, character, "", "")
+                    words_traditional[variant].append(entry)
+                    words_simplified[character].append(entry)
+                    variant_pairs.add((variant, character))
+        elif fieldname == "kSimplifiedVariant":
+            for variant in variants:
+                if (character, variant) not in variant_pairs:
+                    # This character has a simplified variant - insert into words
+                    entry = objects.Entry(character, variant, "", "")
+                    words_traditional[character].append(entry)
+                    words_simplified[variant].append(entry)
+                    variant_pairs.add((character, variant))
 
 
-def parse_readings(filename, words):
+def parse_readings(filename, words_traditional, words_simplified):
     for line in read_csv(filename):
         if len(line) != 3 or line[0].startswith("#"):
             continue
@@ -299,28 +275,31 @@ def parse_readings(filename, words):
             continue
 
         character = chr(int(codepoint[2:], 16))
-        # Skip simplified variants
-        # For some reason, some characters, such as "𦲷", are neither traditional nor simplified
-        # So we need to include them
-        if not hanzidentifier.is_traditional(character) and not (
-            (not hanzidentifier.is_traditional(character))
-            and (not hanzidentifier.is_simplified(character))
-        ):  # Skip simplified variants
-            continue
 
-        if character in words:
-            if fieldname == "kCantonese":
-                words[character].add_jyutping(content)
-            elif fieldname == "kMandarin":
-                pin = convert_pinyin_to_tone_numbers(content, character)
-                words[character].add_pinyin(pin)
-            elif fieldname == "kDefinition":
-                words[character].add_defs([("", x.strip()) for x in content.split(";")])
-        else:
-            trad = character
-            simp = HanziConv.toSimplified(trad)
+        entry_added = False
+
+        if character in words_traditional:
+            freq = zipf_frequency(character, "zh")
+
+            for entry in words_traditional[character]:
+                entry.add_freq(freq)
+                if fieldname == "kCantonese":
+                    entry.add_jyutping(content)
+                elif fieldname == "kMandarin":
+                    pin = convert_pinyin_to_tone_numbers(content, character)
+                    entry.add_pinyin(pin)
+                elif fieldname == "kDefinition":
+                    entry.add_defs([("", x.strip()) for x in content.split(";")])
+
+            entry_added = True
+
+        if character in words_simplified:
+            # Ignore simplified characters
+            entry_added = True
+
+        if not entry_added:
+            trad = simp = character
             freq = zipf_frequency(trad, "zh")
-
             jyut = content if fieldname == "kCantonese" else ""
             pin = (
                 convert_pinyin_to_tone_numbers(content, trad)
@@ -334,16 +313,93 @@ def parse_readings(filename, words):
             )
 
             entry = objects.Entry(trad, simp, pin, jyut, freq=freq, defs=defs)
-            words[character] = entry
+            words_traditional[trad].append(entry)
+            words_simplified[simp].append(entry)
+
+
+def parse_dictionary_like_data(filename, words_traditional, words_simplified):
+    for line in read_csv(filename):
+        if len(line) != 3 or line[0].startswith("#"):
+            continue
+
+        codepoint = line[0]
+        fieldname = line[1]
+        content = line[2]
+
+        if fieldname != "kCangjie":
+            continue
+
+        character = chr(int(codepoint[2:], 16))
+
+        if character not in words_traditional and character not in words_simplified:
+            logging.warning(
+                f"{character} has Cangjie but no definitions or pronunciation - "
+                f"please verify that this is right at https://www.unicode.org/cgi-bin/GetUnihanData.pl?codepoint={character}"
+            )
+            continue
+
+        cangjie_added = False
+        for entry in words_traditional[character]:
+            if entry.traditional == entry.simplified:
+                if any(label == "Cangjie Input" for (label, _) in entry.definitions):
+                    # Don't add Cangjie twice!
+                    continue
+                entry.append_to_defs(("Cangjie Input", content))
+                cangjie_added = True
+            elif entry.traditional == character:
+                # Sometimes, the Cangjie input code is the same for both traditional and simplified
+                # even if the characters are different (see "齷")
+                # So we re-label it to apply to both forms of the character
+                inserted = False
+                for i in range(len(entry.definitions)):
+                    if (
+                        entry.definitions[i][0].startswith("Cangjie Input -")
+                        and entry.definitions[i][1] == content
+                    ):
+                        entry.definitions[i] = ("Cangjie Input", content)
+                        inserted = True
+                        break
+                if not inserted:
+                    entry.append_to_defs(("Cangjie Input - Traditional", content))
+                cangjie_added = True
+
+        for entry in words_simplified[character]:
+            if entry.traditional == entry.simplified:
+                # Assume that the traditional block above has handled inserting Cangjie for traditional == simplified
+                continue
+            elif entry.simplified == character:
+                # Sometimes, the Cangjie input code is the same for both traditional and simplified
+                # even if the characters are different (see "齷")
+                # So we re-label it to apply to both forms of the character
+                inserted = False
+                for i in range(len(entry.definitions)):
+                    if (
+                        entry.definitions[i][0].startswith("Cangjie Input -")
+                        and entry.definitions[i][1] == content
+                    ):
+                        entry.definitions[i] = ("Cangjie Input", content)
+                        inserted = True
+                        break
+                if not inserted:
+                    entry.append_to_defs(("Cangjie Input - Simplified", content))
+                cangjie_added = True
+
+        if not cangjie_added:
+            logging.warning(
+                f"The character {character} matches neither traditional nor simplified forms of the dictionary word: "
+                f"[character: {character}, traditional: {trad}, "
+                f"dictionary traditional: {words[trad].traditional}, dictionary simplified: {words[trad].simplified}"
+            )
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 12:
+    if len(sys.argv) != 13:
         print(
             (
                 "Usage: python3 script.py <database filename> "
                 "<Unihan_DictionaryLikeData.txt filepath> "
                 "<Unihan_Readings.txt filepath> "
+                "<Unihan_Variants.txt filepath> "
                 "<source name> <source short name> "
                 "<source version> <source description> <source legal> "
                 "<source link> <source update url> <source other>"
@@ -352,7 +408,7 @@ if __name__ == "__main__":
         print(
             (
                 "e.g. python3 script.py unihan.db ./Unihan_DictionaryLikeData.txt "
-                "./Unihan_Readings.txt Unihan UNI 2021-08-06 "
+                "./Unihan_Readings.txt ./Unihan_Variants.txt Unihan UNI 2021-08-06 "
                 '"The Unihan database is the repository for the Unicode Consortium’s '
                 "collective knowledge regarding the CJK Unified Ideographs "
                 "contained in the Unicode Standard. It contains mapping data to "
@@ -368,7 +424,6 @@ if __name__ == "__main__":
         sys.exit(1)
 
     source = objects.SourceTuple(
-        sys.argv[4],
         sys.argv[5],
         sys.argv[6],
         sys.argv[7],
@@ -376,11 +431,14 @@ if __name__ == "__main__":
         sys.argv[9],
         sys.argv[10],
         sys.argv[11],
+        sys.argv[12],
     )
 
     logging.getLogger().setLevel(logging.INFO)
 
-    words = {}
-    parse_readings(sys.argv[3], words)
-    parse_dictionary_like_data(sys.argv[2], words)
-    write(sys.argv[1], source, words)
+    words_traditional = defaultdict(list)
+    words_simplified = defaultdict(list)
+    parse_variants(sys.argv[4], words_traditional, words_simplified)
+    parse_readings(sys.argv[3], words_traditional, words_simplified)
+    parse_dictionary_like_data(sys.argv[2], words_traditional, words_simplified)
+    write(sys.argv[1], source, words_traditional)

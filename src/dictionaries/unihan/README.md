@@ -5,4 +5,4 @@
 
 #### Scripts:
 - `parse.py`
-  - This script generates a SQLite database from the Dictionary-Like-Data and Readings files downloaded from `https://www.unicode.org/Public/UCD/latest/ucd/Unihan.zip`.
+  - This script generates a SQLite database from the Dictionary-Like-Data, Readings, and Variants files downloaded from `https://www.unicode.org/Public/UCD/latest/ucd/Unihan.zip`.
