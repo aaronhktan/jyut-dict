@@ -92,6 +92,9 @@ CMakeLists.txt.user*
 **/tatoeba/archive_*
 **/tatoeba/data/*
 **/tatoeba/developer/*
+**/unihan/archive_*
+**/unihan/data/*
+**/unihan/developer/*
 **/words_hk/archive_*
 **/words_hk/data/*
 **/words_hk/developer/*

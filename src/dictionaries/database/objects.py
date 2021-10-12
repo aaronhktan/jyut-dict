@@ -35,6 +35,9 @@ class Entry(object):
             f"D:{self.definitions}"
         )
 
+    def add_pinyin(self, pin):
+        self.pinyin = pin
+
     def add_jyutping(self, jyut):
         self.jyutping = jyut
 
@@ -46,6 +49,12 @@ class Entry(object):
 
     def add_freq(self, freq):
         self.freq = freq
+
+    def add_defs(self, defs):
+        self.definitions = defs
+
+    def append_to_defs(self, item):
+        self.definitions.append(item)
 
 
 class EntryWithCantoneseAndMandarin(Entry):
