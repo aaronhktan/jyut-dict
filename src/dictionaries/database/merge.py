@@ -115,7 +115,7 @@ if __name__ == "__main__":
 
     # Insert definitions => sentence links
 
-    # entry_and_definitions: [traditional | simplified | pinyin | jyutping | definition | source]
+    # entry_and_definitions: [traditional | simplified | pinyin | jyutping | definition | label | source]
     # for each definition in db2, since this uniquely identifies the definition
 
     # Match that up with sentences, so that we get dfs_s_links_tmp: [traditional | simplified | pinyin | jyutping | definition_id | sentence_id | source]
@@ -127,7 +127,7 @@ if __name__ == "__main__":
     c.execute(
         """WITH entry_and_definitions AS (
                     SELECT entries.traditional AS traditional, entries.simplified AS simplified, entries.pinyin AS pinyin, entries.jyutping AS jyutping,
-                        definitions.definition AS definition, definitions.definition_id AS definition_id, sources.sourcename AS source
+                        definitions.definition AS definition, definitions.label AS label, definitions.definition_id AS definition_id, sources.sourcename AS source
                     FROM db2.entries, db2.definitions, db2.sources
                     WHERE db2.definitions.fk_entry_id = db2.entries.entry_id
                     AND db2.definitions.fk_source_id = db2.sources.source_id
@@ -137,6 +137,7 @@ if __name__ == "__main__":
                     SELECT dsl.fk_definition_id AS fdi,
                         dsl.fk_chinese_sentence_id AS fcsi,
                         ed.definition AS definition,
+                        ed.label AS label,
                         ed.traditional AS traditional,
                         ed.simplified AS simplified,
                         ed.pinyin AS pinyin,
@@ -148,7 +149,7 @@ if __name__ == "__main__":
 
             new_entry_and_definitions AS (
                     SELECT entries.traditional AS traditional, entries.simplified AS simplified, entries.pinyin AS pinyin, entries.jyutping AS jyutping,
-                        definitions.definition AS definition, definitions.definition_id AS definition_id, sources.sourcename AS source
+                        definitions.definition AS definition, definitions.label AS label, definitions.definition_id AS definition_id, sources.sourcename AS source
                     FROM entries, definitions, sources
                     WHERE definitions.fk_entry_id = entries.entry_id
                     AND definitions.fk_source_id = sources.source_id
@@ -159,6 +160,7 @@ if __name__ == "__main__":
                         dsl.fcsi
                     FROM defs_s_links_tmp AS dsl, new_entry_and_definitions AS ned
                     WHERE dsl.definition = ned.definition
+                        AND dsl.label = ned.label
                         AND dsl.traditional = ned.traditional
                         AND dsl.simplified = ned.simplified
                         AND dsl.pinyin = ned.pinyin

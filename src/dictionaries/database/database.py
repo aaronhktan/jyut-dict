@@ -35,7 +35,7 @@ def create_tables(c):
                   fk_source_id INTEGER,
                   FOREIGN KEY(fk_entry_id) REFERENCES entries(entry_id) ON UPDATE CASCADE,
                   FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON DELETE CASCADE,
-                  UNIQUE(definition, fk_entry_id, fk_source_id) ON CONFLICT IGNORE
+                  UNIQUE(definition, label, fk_entry_id, fk_source_id) ON CONFLICT IGNORE
             )"""
     )
     c.execute(
