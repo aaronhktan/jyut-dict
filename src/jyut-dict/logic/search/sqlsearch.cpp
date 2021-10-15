@@ -1003,7 +1003,7 @@ void SQLSearch::searchTraditionalSentencesThread(const QString searchTerm,
         " group_concat(sourcename || ' ' || nonchinese_sentences.language "
         "|| ' ' || direct || ' ' || sentence, '●') AS sentences "
         "FROM chinese_sentences, sentence_links, sources "
-        "JOIN nonchinese_sentences "
+        "LEFT JOIN nonchinese_sentences "
         "ON sentence_links.fk_chinese_sentence_id = "
         "chinese_sentences.chinese_sentence_id "
         "AND sentence_links.fk_non_chinese_sentence_id = "
