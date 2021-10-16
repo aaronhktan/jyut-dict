@@ -64,7 +64,14 @@ std::ostream &operator<<(std::ostream &out, const SentenceSet &sentenceSet)
 
 bool SentenceSet::isEmpty(void) const
 {
-    return _sentences.empty();
+    return _sentences.empty()
+           || std::all_of(_sentences.begin(),
+                          _sentences.end(),
+                          [](const Sentence::TargetSentence &sentence) {
+                              return sentence.sentence == ""
+                                     && sentence.language == ""
+                                     && sentence.directTarget == false;
+                          });
 }
 
 bool SentenceSet::pushSentence(Sentence::TargetSentence sentence)
@@ -90,6 +97,9 @@ std::string SentenceSet::getSourceShortString() const
 
 std::vector<Sentence::TargetSentence> SentenceSet::getSentenceSnippet(void) const
 {
+    if (_sentences.empty()) {
+        return {};
+    }
     std::vector<Sentence::TargetSentence> snippet;
     std::size_t size = _sentences.size() >= 5 ? 5 : _sentences.size();
     std::copy(_sentences.begin(),

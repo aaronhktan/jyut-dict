@@ -262,8 +262,8 @@ EntryViewSentenceCardSection::getSamplesForEachSource(
 {
     std::unordered_map<std::string, std::vector<SourceSentence>> samples;
 
-    for (auto sourceSentence : sourceSentences) {
-        for (auto sentenceSet : sourceSentence.getSentenceSets()) {
+    for (auto &sourceSentence : sourceSentences) {
+        for (auto &sentenceSet : sourceSentence.getSentenceSets()) {
             std::string source = sentenceSet.getSource();
             if (samples[source].size() >= 2) {
                 continue;
@@ -280,6 +280,5 @@ EntryViewSentenceCardSection::getSamplesForEachSource(
             samples[source].push_back(sentence);
         }
     }
-
     return samples;
 }
