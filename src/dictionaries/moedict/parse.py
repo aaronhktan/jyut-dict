@@ -464,34 +464,17 @@ def parse_file(filename, words):
                                 if re.match(EXAMPLE_REGEX_PATTERN, example)
                                 else example.split("、")
                             )
+
                             for example_text in example_texts:
                                 example_text = example_text.strip("「」")
-                                example_pinyin = " ".join(
-                                    lazy_pinyin(
-                                        example_text,
-                                        style=Style.TONE3,
-                                        neutral_tone_with_five=True,
-                                    )
-                                ).lower()
-                                example_pinyin = example_pinyin.strip().replace(
-                                    "v", "u:"
-                                )
                                 def_tuple.examples.append(
-                                    ExampleTuple("cmn", example_pinyin, example_text)
+                                    ExampleTuple("cmn", "", example_text)
                                 )
 
                     if "quote" in definition:
                         for quote in definition["quote"]:
-                            quote_pinyin = " ".join(
-                                lazy_pinyin(
-                                    quote,
-                                    style=Style.TONE3,
-                                    neutral_tone_with_five=True,
-                                )
-                            ).lower()
-                            quote_pinyin = quote_pinyin.strip().replace("v", "u:")
                             def_tuple.examples.append(
-                                ExampleTuple("cmn", quote_pinyin, quote)
+                                ExampleTuple("cmn", "", quote)
                             )
 
                     # We currently ignore synonyms, antonyms, and "see also" links, because they are
