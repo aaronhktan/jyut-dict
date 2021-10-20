@@ -1,8 +1,8 @@
 hanziconv==0.3.2
 hanzidentifier==1.0.2
-jieba==0.39
-msgpack==0.6.0
-pinyin_jyutping_sentence==0.5
-pypinyin==0.40.0
+jieba==0.42.1
+msgpack==1.0.2
+pinyin_jyutping_sentence==1.0
+pypinyin==0.43.0
 pypinyin-dict==0.1.0
-wordfreq==2.2.0
+wordfreq==2.5.1
