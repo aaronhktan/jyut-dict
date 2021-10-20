@@ -142,6 +142,9 @@ std::vector<SourceSentence> parseSentences(QSqlQuery &query)
                 std::string sentenceSourceName
                     = translation_set["source"].toString().toStdString();
 
+                // If the sentence has the source it comes from, use it
+                // Otherwise, assume it comes from the same source as the
+                // definition it is linked to (if any)
                 sentence_translation_sets.emplace_back(
                     sentenceSourceName.empty() ? definitionSourceName
                                                : sentenceSourceName);
