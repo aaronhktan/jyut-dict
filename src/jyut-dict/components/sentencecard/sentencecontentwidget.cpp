@@ -115,55 +115,54 @@ void SentenceContentWidget::setSourceSentenceVector(
 
         SourceSentence sourceSentence = sourceSentences.at(i);
 
-        _simplifiedLabels.push_back(
-            new QLabel{QString{sourceSentence.getSimplified().c_str()}.trimmed(),
-                       this});
+        QString simplified = QString{sourceSentence.getSimplified().c_str()}
+                                 .trimmed();
+        _simplifiedLabels.push_back(new QLabel{simplified, this});
         _simplifiedLabels.back()->setWordWrap(true);
         _simplifiedLabels.back()->setTextInteractionFlags(
             Qt::TextSelectableByMouse);
 
-        _traditionalLabels.push_back(
-            new QLabel{QString{sourceSentence.getTraditional().c_str()}.trimmed(),
-                       this});
+        QString traditional = QString{sourceSentence.getTraditional().c_str()}
+                                  .trimmed();
+        _traditionalLabels.push_back(new QLabel{traditional, this});
         _traditionalLabels.back()->setWordWrap(true);
         _traditionalLabels.back()->setTextInteractionFlags(
             Qt::TextSelectableByMouse);
 
-        _jyutpingLabels.push_back(new QLabel{
-            QString{sourceSentence
-                        .getCantonesePhonetic(
-                            Settings::getSettings()
-                                ->value("cantoneseOptions",
-                                        QVariant::fromValue(
-                                            CantoneseOptions::RAW_JYUTPING))
-                                .value<CantoneseOptions>())
-                        .c_str()}
-                .trimmed(),
-            this});
+        QString jyutping
+            = QString{sourceSentence
+                          .getCantonesePhonetic(
+                              Settings::getSettings()
+                                  ->value("cantoneseOptions",
+                                          QVariant::fromValue(
+                                              CantoneseOptions::RAW_JYUTPING))
+                                  .value<CantoneseOptions>())
+                          .c_str()}
+                  .trimmed();
+        _jyutpingLabels.push_back(new QLabel{jyutping, this});
         _jyutpingLabels.back()->setWordWrap(true);
         _jyutpingLabels.back()->setTextInteractionFlags(
             Qt::TextSelectableByMouse);
 
-        _pinyinLabels.push_back(new QLabel{
-            QString{sourceSentence
-                        .getMandarinPhonetic(
-                            Settings::getSettings()
-                                ->value("mandarinOptions",
-                                        QVariant::fromValue(
-                                            MandarinOptions::PRETTY_PINYIN))
-                                .value<MandarinOptions>())
-                        .c_str()}
-                .trimmed(),
-            this});
+        QString pinyin
+            = QString{sourceSentence
+                          .getMandarinPhonetic(
+                              Settings::getSettings()
+                                  ->value("mandarinOptions",
+                                          QVariant::fromValue(
+                                              MandarinOptions::PRETTY_PINYIN))
+                                  .value<MandarinOptions>())
+                          .c_str()}
+                  .trimmed();
+        _pinyinLabels.push_back(new QLabel{pinyin, this});
         _pinyinLabels.back()->setWordWrap(true);
         _pinyinLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
         SentenceSet targetSentenceSet = sourceSentence.getSentenceSets()[0];
-        _sentenceLabels.push_back(
-            new QLabel{QString{
-                           targetSentenceSet.getSentences()[0].sentence.c_str()}
-                               .trimmed(),
-                       this});
+        QString sentence
+            = QString{targetSentenceSet.getSentences()[0].sentence.c_str()}
+                  .trimmed();
+        _sentenceLabels.push_back(new QLabel{sentence, this});
         _sentenceLabels.back()->setProperty("language",
                                             targetSentenceSet.getSentences()[0].language.c_str());
         _sentenceLabels.back()->setWordWrap(true);
@@ -332,6 +331,10 @@ void SentenceContentWidget::addLabelsToLayout(
     case EntryCharactersOptions::ONLY_SIMPLIFIED:
         traditionalLabel->setVisible(false);
     case EntryCharactersOptions::PREFER_SIMPLIFIED:
+        if (simplifiedLabel->text().isEmpty()) {
+            simplifiedLabel->setVisible(false);
+            break;
+        }
         layout->addWidget(simplifiedLabel,
                           rowNumber * 10 + 1,
                           1,
@@ -342,6 +345,10 @@ void SentenceContentWidget::addLabelsToLayout(
     case EntryCharactersOptions::ONLY_TRADITIONAL:
         simplifiedLabel->setVisible(false);
     case EntryCharactersOptions::PREFER_TRADITIONAL:
+        if (traditionalLabel->text().isEmpty()) {
+            traditionalLabel->setVisible(false);
+            break;
+        }
         layout->addWidget(traditionalLabel,
                           rowNumber * 10 + 1,
                           1,
@@ -354,6 +361,10 @@ void SentenceContentWidget::addLabelsToLayout(
     // Add the second character label (if applicable)
     switch (characterOptions) {
     case EntryCharactersOptions::PREFER_SIMPLIFIED:
+        if (traditionalLabel->text().isEmpty()) {
+            traditionalLabel->setVisible(false);
+            break;
+        }
         layout->addWidget(traditionalLabel,
                           rowNumber * 10 + 2,
                           1,
@@ -362,6 +373,10 @@ void SentenceContentWidget::addLabelsToLayout(
                           Qt::AlignTop);
         break;
     case EntryCharactersOptions::PREFER_TRADITIONAL:
+        if (simplifiedLabel->text().isEmpty()) {
+            simplifiedLabel->setVisible(false);
+            break;
+        }
         layout->addWidget(simplifiedLabel,
                           rowNumber * 10 + 2,
                           1,
@@ -441,6 +456,9 @@ void SentenceContentWidget::addLabelsToLayout(
                       1,
                       -1,
                       Qt::AlignTop);
+    if (sentenceLabel->text().isEmpty()) {
+        sentenceLabel->setVisible(false);
+    }
 
     _spaceLabels.push_back(new QLabel{" "});
     layout->addWidget(_spaceLabels.back(),

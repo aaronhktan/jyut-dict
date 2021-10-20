@@ -43,15 +43,15 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
             QJsonDocument doc = QJsonDocument::fromJson(QString{definition.c_str()}.toUtf8());
             // Each object in the array represents a group of definitions
             // that are all from the same source
-            for (QJsonValue definitionGroup : doc.array()) {
+            foreach (const QJsonValue &definitionGroup, doc.array()) {
 
                 std::string sourceName = definitionGroup["source"].toString().toStdString();
                 std::vector<Definition::Definition> definitions;
 
-                for (QJsonValue definition : definitionGroup["definitions"].toArray()) {
+                foreach (const QJsonValue &definition, definitionGroup["definitions"].toArray()) {
 
                     std::vector<SourceSentence> sentences;
-                    for (QJsonValue sentence : definition["sentences"].toArray()) {
+                    foreach (const QJsonValue &sentence, definition["sentences"].toArray()) {
                         std::vector<SentenceSet> sentence_translations;
 
                         // Parse each sentence
@@ -59,7 +59,7 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
                             std::vector<Sentence::TargetSentence> targetSentences;
                             if (!sentence["translations"].isNull()) {
                                 // Parse each of the sentence translations
-                                for (QJsonValue translation : sentence["translations"].toArray()) {
+                                foreach (const QJsonValue &translation, sentence["translations"].toArray()) {
                                     targetSentences.emplace_back(
                                         translation["sentence"]
                                             .toString()
@@ -105,18 +105,16 @@ std::vector<SourceSentence> parseSentences(QSqlQuery &query)
 {
     std::vector<SourceSentence> sentences;
 
-    int sourceSentenceIdIndex = query.record().indexOf("chinese_sentence_id");
     int simplifiedIndex = query.record().indexOf("simplified");
     int traditionalIndex = query.record().indexOf("traditional");
     int jyutpingIndex = query.record().indexOf("jyutping");
     int pinyinIndex = query.record().indexOf("pinyin");
-    int sourceLanguageIndex = query.record().indexOf("source_language");
-    int sentencesIndex = query.record().indexOf("sentences");
+    int sourceLanguageIndex = query.record().indexOf("language");
+    int sentencesIndex = query.record().indexOf("translations");
+    int definitionSourceNameIndex = query.record().indexOf("sourcename");
 
     while (query.next()) {
         // Get fields from table
-        std::string sourceSentenceId
-            = query.value(sourceSentenceIdIndex).toString().toStdString();
         std::string simplified
             = query.value(simplifiedIndex).toString().toStdString();
         std::string traditional
@@ -128,69 +126,47 @@ std::vector<SourceSentence> parseSentences(QSqlQuery &query)
             = query.value(sourceLanguageIndex).toString().toStdString();
         std::string combinedTargetSentencesData
             = query.value(sentencesIndex).toString().toStdString();
-        if (combinedTargetSentencesData.empty()) {
-            continue;
-        }
+        std::string definitionSourceName
+            = query.value(definitionSourceNameIndex).toString().toStdString();
 
-        // Parse sentences
-        std::vector<std::string> targetSentencesData;
-        Utils::split(combinedTargetSentencesData, "●", targetSentencesData);
+        // Each sentence will have a vector of SentenceSets that represents
+        // a group of translations that are from the same source
+        std::vector<SentenceSet> sentence_translation_sets;
 
-        // Put target sentences in the correct SentenceSet
-        std::vector<SentenceSet> sentenceSets = {};
-        for (std::string &targetSentenceData : targetSentencesData) {
-            SentenceSet *set;
+        if (!combinedTargetSentencesData.empty()) {
+            // Parse JSON returned by query
+            QJsonDocument doc = QJsonDocument::fromJson(
+                QString{combinedTargetSentencesData.c_str()}.toUtf8());
+            // Parse each of the sentence translation groups
+            foreach (const QJsonValue &translation_set, doc.array()) {
+                std::string sentenceSourceName
+                    = translation_set["source"].toString().toStdString();
 
-            // Currently, layout of sentences column is
-            // sourcename targetlanguage direct targetsentencecontent
-            // (with spaces separating those)
-            std::string::size_type first_space_index = targetSentenceData
-                                                           .find_first_of(" ");
-            std::string::size_type second_space_index
-                = targetSentenceData.find(" ", first_space_index + 1);
-            std::string::size_type third_space_index
-                = targetSentenceData.find(" ", second_space_index + 1);
+                // If the sentence has the source it comes from, use it
+                // Otherwise, assume it comes from the same source as the
+                // definition it is linked to (if any)
+                sentence_translation_sets.emplace_back(
+                    sentenceSourceName.empty() ? definitionSourceName
+                                               : sentenceSourceName);
 
-            std::string source = targetSentenceData.substr(0, first_space_index);
-            std::string targetLanguage = targetSentenceData
-                                             .substr(first_space_index + 1,
-                                                     second_space_index
-                                                         - first_space_index);
-            std::string direct = targetSentenceData
-                                     .substr(second_space_index + 1,
-                                             third_space_index
-                                                 - second_space_index);
-            std::string targetSentenceContent = targetSentenceData.substr(
-                third_space_index + 1);
-
-            // Search sentenceSets for a matching set (i.e. set with same source)
-            // Create a new sentenceSet for set if it no matches found
-            // Then get a handle for that set
-            auto search = std::find_if(sentenceSets.begin(),
-                                       sentenceSets.end(),
-                                       [source](const SentenceSet &set) {
-                                           return set.getSource() == source;
-                                       });
-            if (search == sentenceSets.end()) {
-                sentenceSets.push_back(SentenceSet{source});
-                set = &sentenceSets.back();
-            } else {
-                set = &*search;
+                foreach (const QJsonValue &translation,
+                         translation_set["translations"].toArray()) {
+                    // Parse each translation in this group
+                    std::vector<Sentence::TargetSentence> targetSentences;
+                    sentence_translation_sets.back().pushSentence(
+                        {translation["sentence"].toString().toStdString(),
+                         translation["language"].toString().toStdString(),
+                         translation["direct"].toBool()});
+                }
             }
-
-            // Push the sentence to that set
-            Sentence::TargetSentence targetSentence = {targetSentenceContent,
-                                                       targetLanguage,
-                                                       direct == "1"};
-            set->pushSentence(targetSentence);
         }
 
-        sentences.push_back(SourceSentence{sourceLanguage,
-                                           simplified,
-                                           traditional,
-                                           jyutping,
-                                           pinyin,
-                                           sentenceSets});
+        sentences.emplace_back(sourceLanguage,
+                               simplified,
+                               traditional,
+                               jyutping,
+                               pinyin,
+                               sentence_translation_sets);
     }
 
     return sentences;

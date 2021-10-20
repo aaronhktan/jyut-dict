@@ -400,6 +400,7 @@ bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
     emit deletingSentences();
 
     // Remove Chinese sentences that are no longer linked to any definitions
+    // or sentence translations translations
     //
     // The result of the LEFT JOIN is:
     // chinese_sentences_id     fk_chinese_sentence_id
@@ -413,10 +414,16 @@ bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
     query.exec("DELETE FROM chinese_sentences "
                "WHERE chinese_sentences.chinese_sentence_id IN "
                "(SELECT chinese_sentences.chinese_sentence_id "
-               "   FROM chinese_sentences LEFT JOIN sentence_links "
-               "   ON chinese_sentences.chinese_sentence_id = "
-               "     sentence_links.fk_chinese_sentence_id "
-               "   WHERE sentence_links.fk_chinese_sentence_id IS NULL)");
+               "   FROM chinese_sentences "
+               "   LEFT JOIN sentence_links "
+               "     ON chinese_sentences.chinese_sentence_id = "
+               "       sentence_links.fk_chinese_sentence_id "
+               "   LEFT JOIN definitions_chinese_sentences_links "
+               "     ON chinese_sentences.chinese_sentence_id = "
+               "       definitions_chinese_sentences_links.fk_chinese_sentence_id "
+               "   WHERE sentence_links.fk_chinese_sentence_id IS NULL "
+               "     AND definitions_chinese_sentences_links.fk_chinese_sentence_id IS NULL "
+               ")");
 
     // Remove non-Chinese sentences that are no longer linked with the same
     // principles as above

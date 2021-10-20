@@ -22,6 +22,10 @@ void SentenceViewSentenceCardSection::setSourceSentence(const SourceSentence &se
 
     emit addingCards();
     for (const auto &set : sentenceSets) {
+        if (set.isEmpty()) {
+            continue;
+        }
+
         _sentenceCards.push_back(new SentenceCardWidget{this});
         _sentenceCards.back()->displaySentences(set);
 
