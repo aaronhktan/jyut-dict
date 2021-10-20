@@ -2,6 +2,6 @@ beautifulsoup4==4.9.3
 hanziconv==0.3.2
 jieba==0.42.1
 msgpack==1.0.2
-pypinyin==0.40.0
+pypinyin==0.43.0
 pypinyin-dict==0.1.0
 wordfreq==2.5.1
