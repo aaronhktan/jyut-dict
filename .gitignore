@@ -83,6 +83,9 @@ CMakeLists.txt.user*
 **/cantodict/developer/*
 **/cedict/archive_*
 **/cedict/developer/*
+**/cross_straits/archive_*
+**/cross_straits/data/*
+**/cross_straits/developer/*
 **/cuhk/archive_*
 **/cuhk/data/*
 **/cuhk/developer/*
