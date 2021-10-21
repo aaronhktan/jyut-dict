@@ -41,15 +41,16 @@ The project contains two subdirectories under `src`: `dictionaries`, and `jyut-d
 
 ### dictionaries
 
-This folder contains several Python3 scripts that convert the various online Cantonese dictionaries into the dictionary format used by Jyut Dictionary. Some sources include:
+This folder contains several Python3 scripts that convert the various online Cantonese/Written Chinese dictionaries into the dictionary format used by Jyut Dictionary. Some sources include:
 - CC-CEDICT and CC-CEDICT-compatible dictionaries, such as:
   - **[CC-CEDICT](https://cc-cedict.org/editor/editor.php?handler=Download)**
   - **[CC-CANTO](https://cantonese.org/download.html)**
   - **[CFDICT](https://chine.in/mandarin/dictionnaire/)**
   - **[HanDeDict](https://handedict.zydeo.net/de)**
 - **[CUHK 現代標準漢語與粵語對照資料庫](https://apps.itsc.cuhk.edu.hk/hanyu/Page/Cover.aspx)**
-- **[CantoDict](https://www.cantonese.sheik.co.uk/)** 
+- **[CantoDict](https://www.cantonese.sheik.co.uk/)**
 - **[Kaifangcidian 粵語詞典 - 開放詞典](https://www.kaifangcidian.com/han/yue)**
+- **[MoEDict](http://dict.revised.moe.edu.tw/cbdic/)**
 - **[Tatoeba](https://tatoeba.org/eng/downloads)**
 - **[words.hk 粵典](https://words.hk/)**
 
