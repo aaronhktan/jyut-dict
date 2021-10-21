@@ -105,7 +105,9 @@ void SentenceViewHeaderWidget::setSourceSentence(const SourceSentence &sentence)
                     QVariant::fromValue(EntryPhoneticOptions::PREFER_JYUTPING))
             .value<EntryPhoneticOptions>());
 
-    _chinese = QString{sentence.getSimplified().c_str()};
+    _chinese = QString{sentence.getSimplified().empty()
+                           ? sentence.getSimplified().c_str()
+                           : sentence.getTraditional().c_str()};
     _jyutping = QString{sentence.getJyutping().c_str()};
     _pinyin = QString{sentence.getPinyin().c_str()};
 
