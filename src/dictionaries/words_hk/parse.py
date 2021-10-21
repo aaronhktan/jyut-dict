@@ -46,11 +46,7 @@ def insert_example(c, definition_id, starting_example_id, example):
     trad = example[0].content
     simp = HanziConv.toSimplified(trad)
     jyut = example[0].pron
-    pin = (
-        " ".join(lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True))
-        .lower()
-        .replace("v", "u:")
-    )
+    pin = ""
     lang = example[0].lang
 
     example_id = database.insert_chinese_sentence(
