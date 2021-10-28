@@ -23,6 +23,14 @@ import traceback
 #   - 歛: multiple heteronyms, labels for definitions
 #   - 穀: some duplicate definitions (姓。) and has labels for literary use (〈書〉)
 #   - 横征暴敛: Pinyin has dashes in it (bad!)
+#   - 空橋: contains 陸⃝ in the definition
+#   - 空擋: contains 臺⃝ in the definition
+#   - 空濛: has a literary definition
+#   - 筋道: contains pinyin with weird a (ɑ)
+#   - 一星半點兒: contains both "diǎr" and a dash in the middle of the pinyin
+#   - 傍邊兒: contains "biār", has a colloquial use (〈口〉)
+#   - 如: contains definitions with preposition POS label and conjunction POS label
+#   - 全銜: incorrect Pinyin (xíɑn) which confuses dragonmapper
 
 DefinitionTuple = namedtuple("Definition", ["definition", "label", "examples"])
 ExampleTuple = namedtuple("ExampleTuple", ["lang", "pron", "content"])
@@ -32,6 +40,34 @@ WHITESPACE_REGEX_PATTERN = re.compile(r"[　 ]")
 VARIANT_PRONUNCIATION_REGEX_PATTERN = re.compile(r"\s\(變\).*")
 COLLOQUIAL_PRONUNCIATION_REGEX_PATTERN = re.compile(r"\s（語音）.*")
 STRANGE_ENTRY_REGEX_PATTERN = re.compile(r".*（.*\)")
+
+LITERARY_REGEX_PATTERN = re.compile(r"〈(書)〉(.*)")
+COLLOQUIAL_REGEX_PATTERN = re.compile(r"〈(口)〉(.*)")
+POS_REGEX_PATTERN = re.compile(r"([量介連助敬謙嘆數代]詞)。(.+)")
+LABEL_REGEX_PATTERNS = [
+    LITERARY_REGEX_PATTERN,
+    COLLOQUIAL_REGEX_PATTERN,
+    POS_REGEX_PATTERN,
+]
+
+# These are known to trip up Dragonmapper, but since there are so few just manually parse it ourselves
+KNOWN_INVALID_SYLLABLES = {
+    "呵": {"ō<br>陸⃝hē": ["o1", "he1"]},
+    "哦": {"ó<br>陸⃝ò": ["o2", "o4"], "ó": ["o2"]},
+    "哼唷": {"hēngyō<br>陸⃝hēngyāo": ["heng1 yo1", "heng1 yao1"]},
+    "唷": {"yō<br>陸⃝yāo": ["yo1", "yao1"]},
+    "喔": {"ō<br>陸⃝wō": ["o1", "wo1"]},
+    "嗯": {
+        "en<br>陸⃝éng": ["en5", "eng2"],
+        "en<br>陸⃝ěng": ["en5", "eng3"],
+        "en<br>陸⃝èng": ["en5", "eng4"],
+    },
+    "嗲": {"diē<br>陸⃝diǎ": ["die1", "dia3"]},
+    "噢": {"yǔ<br>陸⃝ō": ["yu3", "o1"]},
+    "嚄": {"ǒ": ["o3"]},
+    "沙嗲": {"shādiē<br>陸⃝shādiǎ": ["sha1 die1", "sha1 dia3"]},
+    "發嗲": {"fādiē<br>陸⃝fādiǎ": ["fa1 die1", "fa1 dia3"]},
+}
 
 
 # Since the pinyin returned by lazy_pinyin doesn't always match the pinyin
@@ -147,14 +183,11 @@ def write(db_name, source, entries):
     db = sqlite3.connect(db_name)
     c = db.cursor()
 
-    # Set version of database
     database.write_database_version(c)
 
-    # Delete old tables and indices, then create new one
     database.drop_tables(c)
     database.create_tables(c)
 
-    # Add sources to table
     database.insert_source(
         c,
         source.name,
@@ -186,7 +219,7 @@ def parse_file(filename, words):
         # Most items map 1:1 to entries, e.g. "物質" is a single entry
         # Some items are 多音字, so they map to multiple entries (e.g. 重 -> zhòng and chóng)
         #
-        # In the vocabulary of the MoEDict, each item may correspond to multiple heteronyms,
+        # In the vocabulary of the the CSLD, each item may correspond to multiple heteronyms,
         # and each heteronym maps to a single entry.
         for item in data:
             # These do not change no matter the heteronym
@@ -218,16 +251,62 @@ def parse_file(filename, words):
                     )
                     continue
 
-                pins = heteronym["pinyin"].split("<br>陸⃝")
-                # Converting from pinyin -> zhuyin inserts spaces between characters
-                # Converting from zhuyin -> pinyin conserves these spaces
-                try:
-                    pins = [transcriptions.zhuyin_to_pinyin(transcriptions.pinyin_to_zhuyin(x), accented=False) for x in pins]
-                except Exception as e:
-                    logging.error(f"Unable to split up Pinyin for word {trad}: {e}")
-                    continue
-                # Remove commas in pinyin
-                pins = list(map(lambda x: x.replace(",", ""), pins))
+                # Filter out known bad pinyin
+                if (
+                    trad in KNOWN_INVALID_SYLLABLES
+                    and heteronym["pinyin"] in KNOWN_INVALID_SYLLABLES[trad]
+                ):
+                    pins = KNOWN_INVALID_SYLLABLES[trad][heteronym["pinyin"]]
+                else:
+                    pins = heteronym["pinyin"].split("<br>陸⃝")
+
+                    # Some weird a's cause dragonmapper to break, so replace them with standard a's.
+                    pins = list(map(lambda x: x.replace("ɑ", "a"), pins))
+
+                    # Remove dashes in pinyin
+                    pins = list(map(lambda x: x.replace("-", " "), pins))
+
+                    # Remove commas in pinyin
+                    pins = list(map(lambda x: x.replace(",", ""), pins))
+
+                    # Remove weird characters
+                    pins = list(map(lambda x: x.replace("陸⃟", ""), pins))
+
+                    # Dragonmapper cannot handle some erhua
+                    pins = list(map(lambda x: x.replace("diǎr", "diǎn er"), pins))
+                    pins = list(map(lambda x: x.replace("biār", "biān er"), pins))
+
+                    try:
+                        # Converting from pinyin -> zhuyin inserts spaces between characters
+                        # Converting from zhuyin -> pinyin conserves these spaces
+                        pins = [
+                            transcriptions.zhuyin_to_pinyin(
+                                transcriptions.pinyin_to_zhuyin(x), accented=False
+                            )
+                            for x in pins
+                        ]
+
+                        for x in pins:
+                            if x.count(" ") >= len(trad):
+                                # This means that there was an extra space inserted somewhere; the pinyin is not valid
+                                raise ValueError("Too many spaces in parsed Pinyin!")
+                    except Exception as e:
+                        # Try parsing zhuyin as a backup
+                        pins = heteronym["bopomofo"].split("<br>陸⃝")
+
+                        # Remove weird spaces in zhuyin
+                        pins = list(map(lambda x: x.replace("　", " "), pins))
+
+                        try:
+                            pins = [
+                                transcriptions.zhuyin_to_pinyin(x, accented=False)
+                                for x in pins
+                            ]
+                        except Exception as e:
+                            logging.error(
+                                f"Unable to split up Pinyin for word {trad}: {e}, skipping word..."
+                            )
+                            continue
 
                 if len(pins) > 1:
                     taiwan_pin = pins[0]
@@ -235,8 +314,11 @@ def parse_file(filename, words):
                 else:
                     taiwan_pin = mainland_pin = pins[0]
 
-                if last_heteronym_pin != "" and heteronym["pinyin"] != last_heteronym_pin:
-                    # Different pinyin means that we are now processing a new heteronym.
+                if (
+                    last_heteronym_pin != ""
+                    and heteronym["pinyin"] != last_heteronym_pin
+                ):
+                    # A new different pinyin means that we are now processing a new heteronym.
                     # We must create an Entry object for the definitions of the old heteronym
                     # and add it to the list of entries before processing the new one.
                     entry = objects.Entry(
@@ -246,7 +328,12 @@ def parse_file(filename, words):
 
                     if last_mainland_pin != last_taiwan_pin:
                         entry = objects.Entry(
-                            trad, simp, last_mainland_pin, jyut, freq=freq, defs=mainland_defs
+                            trad,
+                            simp,
+                            last_mainland_pin,
+                            jyut,
+                            freq=freq,
+                            defs=mainland_defs,
                         )
                         words.append(entry)
 
@@ -258,12 +345,27 @@ def parse_file(filename, words):
                     taiwan_label = "臺" if taiwan_pin != mainland_pin else ""
                     mainland_label = "陸" if mainland_pin != taiwan_pin else ""
 
+                    definition_text = definition["def"]
+
+                    # Take out parts of definitions that should be in labels
+                    for pattern in LABEL_REGEX_PATTERNS:
+                        if re.match(pattern, definition_text):
+                            definition_label, definition_text = re.match(
+                                pattern, definition_text
+                            ).group(1, 2)
+                            taiwan_label += "、" + definition_label if taiwan_label else definition_label
+                            mainland_label += "、" + definition_label if mainland_label else definition_label
+
+                    # Remove 臺⃝ and 陸⃝ from definitions, since Qt cannot display them
+                    definition_text = definition_text.replace("臺⃝", "臺：")
+                    definition_text = definition_text.replace("陸⃝", "陸：")
+
                     # Insert zero-width spaces so that we can reverse-search the definition
                     taiwan_def_tuple = DefinitionTuple(
-                        "​".join(jieba.cut(definition["def"])), taiwan_label, []
+                        "​".join(jieba.cut(definition_text)), taiwan_label, []
                     )
                     mainland_def_tuple = DefinitionTuple(
-                        "​".join(jieba.cut(definition["def"])), mainland_label, []
+                        "​".join(jieba.cut(definition_text)), mainland_label, []
                     )
 
                     # Parse and add examples to this definition
@@ -330,11 +432,13 @@ def parse_file(filename, words):
                                     # Do not try to match entries formatted like "那搭（Namibia)"
                                     if not re.match(STRANGE_ENTRY_REGEX_PATTERN, trad):
                                         try:
-                                            example_pinyin = change_pinyin_to_match_phrase(
-                                                example_text,
-                                                example_pinyin,
-                                                trad,
-                                                phrase_pinyin,
+                                            example_pinyin = (
+                                                change_pinyin_to_match_phrase(
+                                                    example_text,
+                                                    example_pinyin,
+                                                    trad,
+                                                    phrase_pinyin,
+                                                )
                                             )
                                         except Exception as e:
                                             logging.warning(
@@ -346,15 +450,16 @@ def parse_file(filename, words):
 
                                     if index == 0:
                                         taiwan_def_tuple.examples.append(
-                                            ExampleTuple("cmn", example_pinyin, example_text)
+                                            ExampleTuple(
+                                                "cmn", example_pinyin, example_text
+                                            )
                                         )
                                     elif index == 1:
                                         mainland_def_tuple.examples.append(
-                                            ExampleTuple("cmn", example_pinyin, example_text)
+                                            ExampleTuple(
+                                                "cmn", example_pinyin, example_text
+                                            )
                                         )
-
-                    # We currently ignore synonyms, antonyms, and "see also" links, because they are
-                    # linked to definitions and we have no way to display that data...
 
                     taiwan_defs.append(taiwan_def_tuple)
                     mainland_defs.append(mainland_def_tuple)
@@ -363,7 +468,9 @@ def parse_file(filename, words):
                 last_taiwan_pin = taiwan_pin
                 last_mainland_pin = mainland_pin
 
-            entry = objects.Entry(trad, simp, taiwan_pin, jyut, freq=freq, defs=taiwan_defs)
+            entry = objects.Entry(
+                trad, simp, taiwan_pin, jyut, freq=freq, defs=taiwan_defs
+            )
             words.append(entry)
 
             if mainland_pin != taiwan_pin:
