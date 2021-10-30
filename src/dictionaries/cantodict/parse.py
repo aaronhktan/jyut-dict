@@ -172,13 +172,17 @@ def parse_word_file(file_name, words):
         word = os.path.splitext(os.path.basename(file_name))[0]
         if trad != word:
             if len(trad) == len(word):
-                logging.debug(
-                    f"{trad} and {word} have the same length, is this a simplified/traditional mixup?"
+                logging.error(
+                    f"Parsed word {trad} and file name {word} have "
+                    "the same length but do not match – if they are "
+                    "simplified/traditional variants of each other "
+                    "then this error is safe to ignore."
                 )
                 return
             else:
-                logging.warning(
-                    f"Hmm, looks like the parsed word {trad} doesn't match the filename {word}"
+                logging.error(
+                    f"Hmm, looks like the parsed word {trad} doesn't "
+                    f"match the file name {word}."
                 )
                 return
 
@@ -532,22 +536,26 @@ def parse_sentences_folder(folder_name, sentences, translations):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 12:
+    if len(sys.argv) != 13:
         print(
             (
-                "Usage: python3 script.py <database filename> "
-                "<characters + compound words HTML folder> <sentences HTML folder> "
+                "Usage: python3 -m cantodict.parse <database filename> "
+                "<scraped characters + compound words HTML folder> "
+                "<scraped sentences HTML folder> "
                 "<source name> <source short name> "
                 "<source version> <source description> <source legal> "
-                "<source link> <source update url> <source other>"
+                "<source link> <source update url> <source other> "
+                "<logging output filepath>"
             )
         )
         print(
             (
-                "e.g. python3 script.py cantodict.db scraped_words/ scraped_sentences/ CantoDict CD 2021-07-18 "
+                "e.g. python3 -m cantodict.parse cantodict.db ./cantodict/scraped_words/ "
+                "./cantodict/scraped_sentences/ CantoDict CD 2021-07-18 "
                 '"CantoDict is a collaborative Chinese Dictionary project started in November 2003. '
                 'Entries are added and mistakes corrected by a team of kind volunteers from around the world." '
-                '"https://www.cantonese.sheik.co.uk/copyright.htm" "https://www.cantonese.sheik.co.uk/" "" ""'
+                '"https://www.cantonese.sheik.co.uk/copyright.htm" "https://www.cantonese.sheik.co.uk/" "" "" '
+                "logging.log"
             )
         )
         sys.exit(1)
@@ -565,7 +573,7 @@ if __name__ == "__main__":
 
     cc_cedict.load()
 
-    logging.basicConfig(filename='example.log', level=logging.DEBUG)
+    logging.basicConfig(filename=sys.argv[12], level=logging.DEBUG)
 
     words = []
     sentences = []
