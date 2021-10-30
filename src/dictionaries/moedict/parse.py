@@ -1,5 +1,4 @@
 from hanziconv import HanziConv
-import hanzidentifier
 import jieba
 import pinyin_jyutping_sentence
 from pypinyin import lazy_pinyin, Style

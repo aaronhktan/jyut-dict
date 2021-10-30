@@ -1,4 +1,3 @@
-import hanzidentifier
 from wordfreq import zipf_frequency
 
 from database import database, objects
