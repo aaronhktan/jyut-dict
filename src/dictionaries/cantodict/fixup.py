@@ -20,7 +20,7 @@ if __name__ == "__main__":
                 "<scraped file output folder>"
             )
         )
-        print(("e.g. python3 -m cantodict.fixup logging.log ./cantodict/scraped_words/"))
+        print(("e.g. python3 -m cantodict.fixup ./cantodict/logging.log ./cantodict/scraped_words/"))
         sys.exit(1)
 
     bad_words = []
