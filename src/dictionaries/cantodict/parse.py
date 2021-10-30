@@ -565,6 +565,8 @@ if __name__ == "__main__":
 
     cc_cedict.load()
 
+    logging.basicConfig(filename='example.log', level=logging.DEBUG)
+
     words = []
     sentences = []
     translations = []
