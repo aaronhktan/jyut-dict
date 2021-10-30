@@ -28,6 +28,10 @@ import sys
 #   - 茄哩啡 has a nonstandard Jyutping notation that only it uses (-- Jyutping: /ke1 le1 fei1/ --)
 #   - 操 has a nonstandard Jyutping notation that only it uses (Jyutping cou1)
 #   - 一手遮天 for idiom, 香港電台 for brandname, 香港 for place name
+#   - 卡拉OK has latin script in the entry
+#   - AA制 starts with latin script
+#   - 蛇 gwe has an extra space at the end of the entry name
+#   - 簽咭 gives a sentence page (?) instead of a compound word page
 
 # Pages with known issues:
 #   - 蚺蛇 has different Jyutping for each definition, without any labelling (we discard the different pronunciations)
@@ -52,6 +56,8 @@ pos_labels = {
     "syn.": "synonym",
     "var.": "variant",
 }
+
+TITLE_REGEX_PATTERN = re.compile(r"<title>(.*)</title>")
 
 
 def write(db_name, source, entries, sentences, translations):
@@ -148,7 +154,12 @@ def write(db_name, source, entries, sentences, translations):
 
 def parse_word_file(file_name, words):
     with open(file_name, "r") as file:
-        soup = BeautifulSoup(file, "html.parser")
+        # In pages with latin script, the title messes with BeautifulSoup's HTML parsing
+        # So remove the title and replace it with "CantoDict"
+        file_text = file.read()
+        file_text = re.sub(TITLE_REGEX_PATTERN, "<title>CantoDict</title>", file_text)
+
+        soup = BeautifulSoup(file_text, "html.parser")
 
         # Extract the traditional and simplified forms
         try:
@@ -164,10 +175,24 @@ def parse_word_file(file_name, words):
                 # Cantodict sometimes reports that there is no simplified variant, which is sometimes incorrect
                 simp = HanziConv.toSimplified(trad)
         except:
-            logging.error(
-                f"Couldn't find traditional and simplified forms in file {file_name}"
-            )
-            return
+            # If a character has latin script in it, it may not have a class called "chinesebig"
+            try:
+                forms = [
+                    x.strip()
+                    for x in soup.select("span.word.script")[0].get_text().split(" / ")
+                ]
+                if len(forms) > 1:
+                    trad = forms[0].strip()
+                    simp = forms[1].strip()
+                else:
+                    trad = forms[0].strip()
+                    # Cantodict sometimes reports that there is no simplified variant, which is sometimes incorrect
+                    simp = HanziConv.toSimplified(trad)
+            except:
+                logging.error(
+                    f"Couldn't find traditional and simplified forms in file {file_name}"
+                )
+                return
 
         word = os.path.splitext(os.path.basename(file_name))[0]
         if trad != word:

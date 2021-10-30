@@ -52,6 +52,7 @@ if __name__ == "__main__":
         for image in soup.find_all("img"):
             if image["src"] == "http://www.cantonese.sheik.co.uk/images/icons/book.gif":
                 link = image.parent["href"]
+                break
 
         if link:
             while True:
