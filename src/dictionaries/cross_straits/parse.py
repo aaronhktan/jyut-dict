@@ -1,6 +1,5 @@
 from dragonmapper import transcriptions
 from hanziconv import HanziConv
-import hanzidentifier
 import jieba
 import pinyin_jyutping_sentence
 from pypinyin import lazy_pinyin, Style
@@ -8,7 +7,6 @@ from pypinyin_dict.phrase_pinyin_data import cc_cedict
 from wordfreq import zipf_frequency
 
 from database import database, objects
-from database.utils import pinyin_to_tone_numbers
 
 from collections import namedtuple
 import copy
