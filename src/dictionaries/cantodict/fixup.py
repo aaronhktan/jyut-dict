@@ -41,7 +41,7 @@ if __name__ == "__main__":
                     f"http://www.cantonese.sheik.co.uk/dictionary/search/?searchtype=1&text={word.strip()}"
                 )
             except:
-                print(f"Exception occured getting {word}, trying again")
+                print(f"Exception occured searching for {word.strip()}, trying again")
                 time.sleep(3)
                 continue
             break
@@ -65,8 +65,10 @@ if __name__ == "__main__":
 
             with open(f"{sys.argv[2]}{word.strip()}.html", "w") as f:
                 f.write(r.text)
+
+            print(f"Scraped {word.strip()}")
         else:
-            logging.error(f"Unable to find link for word {word}!")
+            logging.error(f"Unable to find link for word {word.strip()}!")
 
         # Be respectful, only scrape a page once every 5-10 seconds (inclusive)
         time.sleep(random.randint(5, 10))
