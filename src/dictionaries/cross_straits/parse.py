@@ -351,8 +351,16 @@ def parse_file(filename, words):
                             definition_label, definition_text = re.match(
                                 pattern, definition_text
                             ).group(1, 2)
-                            taiwan_label += "、" + definition_label if taiwan_label else definition_label
-                            mainland_label += "、" + definition_label if mainland_label else definition_label
+                            taiwan_label += (
+                                "、" + definition_label
+                                if taiwan_label
+                                else definition_label
+                            )
+                            mainland_label += (
+                                "、" + definition_label
+                                if mainland_label
+                                else definition_label
+                            )
 
                     # Remove 臺⃝ and 陸⃝ from definitions, since Qt cannot display them
                     definition_text = definition_text.replace("臺⃝", "臺：")
