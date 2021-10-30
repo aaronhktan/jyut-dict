@@ -53,6 +53,7 @@ This folder contains several Python3 scripts that convert the various online Can
 - **[Kaifangcidian 粵語詞典 - 開放詞典](https://www.kaifangcidian.com/han/yue)**
 - **[MoEDict (重編國語辭典修訂本)](http://dict.revised.moe.edu.tw/cbdic/)**
 - **[Tatoeba](https://tatoeba.org/eng/downloads)**
+- **[Unihan Database](https://www.unicode.org/reports/tr38/)**
 - **[words.hk 粵典](https://words.hk/)**
 
 ### jyut-dict
