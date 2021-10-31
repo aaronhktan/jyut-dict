@@ -8,7 +8,7 @@ import time
 
 
 FIXUP_REGEX_PATTERN = re.compile(
-    r"WARNING:root:Hmm, looks like the parsed word (.*) doesn't match the filename (.*)"
+    r"ERROR:root:Hmm, looks like the parsed word (.*) doesn't match the file name (.*)\."
 )
 
 if __name__ == "__main__":
@@ -20,7 +20,11 @@ if __name__ == "__main__":
                 "<scraped file output folder>"
             )
         )
-        print(("e.g. python3 -m cantodict.fixup ./cantodict/logging.log ./cantodict/scraped_words/"))
+        print(
+            (
+                "e.g. python3 -m cantodict.fixup ./cantodict/logging.log ./cantodict/scraped_words/"
+            )
+        )
         sys.exit(1)
 
     bad_words = []
