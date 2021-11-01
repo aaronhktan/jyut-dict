@@ -28,6 +28,9 @@ import sys
 #   - 茄哩啡 has a nonstandard Jyutping notation that only it uses (-- Jyutping: /ke1 le1 fei1/ --)
 #   - 操 has a nonstandard Jyutping notation that only it uses (Jyutping cou1)
 #   - 一手遮天 for idiom, 香港電台 for brandname, 香港 for place name
+#   - 卡拉OK has latin script in the entry
+#   - AA制 starts with latin script
+#   - 蛇 gwe has an extra space at the end of the entry name
 
 # Pages with known issues:
 #   - 蚺蛇 has different Jyutping for each definition, without any labelling (we discard the different pronunciations)
@@ -52,6 +55,54 @@ pos_labels = {
     "syn.": "synonym",
     "var.": "variant",
 }
+
+TITLE_REGEX_PATTERN = re.compile(r"<title>(.*)</title>")
+
+# Since Jyut Dictionary does not support displaying literary/colloquial pronunciations
+# in the format toi4*2, remove the literary pronunciation using this regex pattern
+LITERARY_CANTONESE_READING_REGEX_PATTERN = re.compile(r"\d\*")
+# CantoDict does the same with Pinyin
+LITERARY_PINYIN_READING_REGEX_PATTERN = re.compile(r"\d\*")
+
+DEFINITION_SPLITTING_REGEX_PATTERN = re.compile(r"[\(|\[]\d+[\)\]]\s?|\n")
+
+# This one searches for something in the format [粵] ok3 | [國] e4
+SPECIFIC_PRONUNCIATION_REGEX_PATTERN = re.compile(
+    r"\[粵\]\s?(.+\d+)\s?[\||/|,]?\s?\[[國|普]\]\s?(.+\d+)"
+)
+# This one searches for something in the format [loeng5 & liang3]
+AMPERSAND_PRONUNCIATION_REGEX_PATTERN = re.compile(r"\[(.*\d)\s*&\s*(.*\d)\]")
+# This one searches for something in the format (jyutping) toi4, (pinyin) tai2
+PARENTHESES_PRONUNCIATION_REGEX_PATTERN = re.compile(
+    r"\(jyutping\)\s*(.*\d)[,|;]?\s*\(pinyin\)\s*(.*\d)"
+)
+# This one searches for something in the format 粵拼: ne1 -- 拼音: ne
+DASHES_PRONUNCIATION_REGEX_PATTERN = re.compile(
+    r"粵拼:\s*(.*\d)\s*(?:\-\-\s*拼音:\s*(.*))?"
+)
+JYUTPING_PINYIN_REGEX_PATTERNS = (
+    SPECIFIC_PRONUNCIATION_REGEX_PATTERN,
+    AMPERSAND_PRONUNCIATION_REGEX_PATTERN,
+    PARENTHESES_PRONUNCIATION_REGEX_PATTERN,
+    DASHES_PRONUNCIATION_REGEX_PATTERN,
+)
+
+# This one searches for something in the format -- [jp:] dang2; ting3
+DASHES_2_PRONUNCIATION_REGEX_PATTERN = re.compile(r"\-\-\s*\[jp:\]s*(.*\d).*")
+# This one searches for something in the format -- Jyutping: /ke1 le1 fei1/ --
+SLASH_PRONUNCIATION_REGEX_PATTERN = re.compile(r"\-\-\s*Jyutping:\s*/(.*\d)/\s*\-\-")
+# This one searches for something in the format Jyutping cou1
+JYUTPING_PRONUNCIATION_REGEX_PATTERN = re.compile(r"Jyutping\s*(.*\d)")
+JYUTPING_ONLY_REGEX_PATTERNS = (
+    DASHES_2_PRONUNCIATION_REGEX_PATTERN,
+    SLASH_PRONUNCIATION_REGEX_PATTERN,
+    JYUTPING_PRONUNCIATION_REGEX_PATTERN,
+)
+
+LABEL_REGEX_PATTERN = re.compile(r"^\[(.*?)\]:?\s*")
+SENTENCE_ID_PATTERN = re.compile(
+    r"http://www\.cantonese\.sheik\.co\.uk/dictionary/examples/(\d*)/"
+)
 
 
 def write(db_name, source, entries, sentences, translations):
@@ -148,7 +199,12 @@ def write(db_name, source, entries, sentences, translations):
 
 def parse_word_file(file_name, words):
     with open(file_name, "r") as file:
-        soup = BeautifulSoup(file, "html.parser")
+        # In pages with latin script, the title messes with BeautifulSoup's HTML parsing
+        # So remove the title and replace it with "CantoDict"
+        file_text = file.read()
+        file_text = re.sub(TITLE_REGEX_PATTERN, "<title>CantoDict</title>", file_text)
+
+        soup = BeautifulSoup(file_text, "html.parser")
 
         # Extract the traditional and simplified forms
         try:
@@ -164,22 +220,48 @@ def parse_word_file(file_name, words):
                 # Cantodict sometimes reports that there is no simplified variant, which is sometimes incorrect
                 simp = HanziConv.toSimplified(trad)
         except:
-            logging.error(
-                f"Couldn't find traditional and simplified forms in file {file_name}"
-            )
-            return
+            # If a character has latin script in it, it may not have a class called "chinesebig"
+            try:
+                forms = [
+                    x.strip()
+                    for x in soup.select("span.word.script")[0].get_text().split(" / ")
+                ]
+                if len(forms) > 1:
+                    trad = forms[0].strip()
+                    simp = forms[1].strip()
+                else:
+                    trad = forms[0].strip()
+                    # Cantodict sometimes reports that there is no simplified variant, which is sometimes incorrect
+                    simp = HanziConv.toSimplified(trad)
+            except:
+                logging.error(
+                    f"Couldn't find traditional and simplified forms in file {file_name}"
+                )
+                return
 
-        word = os.path.splitext(os.path.basename(file_name))[0]
+        word = os.path.splitext(os.path.basename(file_name))[0].strip()
         if trad != word:
-            if len(trad) == len(word):
+            if trad == HanziConv.toTraditional(word) or word == HanziConv.toSimplified(
+                trad
+            ):
                 logging.debug(
-                    f"{trad} and {word} have the same length, is this a simplified/traditional mixup?"
+                    f"File name {word} appears to be a simplified variant "
+                    f"of {trad}. Ignoring..."
                 )
                 return
             else:
-                logging.warning(
-                    f"Hmm, looks like the parsed word {trad} doesn't match the filename {word}"
-                )
+                if len(trad) == 1:
+                    logging.error(
+                        f"Hmm, looks like the parsed word {trad} doesn't "
+                        f"match the file name {word}. If they are simplified "
+                        "or traditional variants of each other, this error "
+                        "can be safely ignored."
+                    )
+                else:
+                    logging.error(
+                        f"Hmm, looks like the parsed word {trad} doesn't "
+                        f"match the file name {word}."
+                    )
                 return
 
         freq = zipf_frequency(trad, "zh")
@@ -189,13 +271,13 @@ def parse_word_file(file_name, words):
         # So remove the stars
         jyut_element = soup.find("span", class_="cardjyutping")
         jyut = jyut_element.get_text() if jyut_element else ""
-        jyut = re.sub(r"\d\*", "", jyut)
+        jyut = re.sub(LITERARY_CANTONESE_READING_REGEX_PATTERN, "", jyut)
         jyut = jyut.strip()
 
         pin_element = soup.find("span", class_="cardpinyin")
         pin = pin_element.get_text() if pin_element else ""
         # CantoDict also indicates tone sandhi in pinyin with *, but we don't support that either
-        pin = re.sub(r"\d\*", "", pin)
+        pin = re.sub(LITERARY_PINYIN_READING_REGEX_PATTERN, "", pin)
         if not pin:
             pin = " ".join(
                 lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True)
@@ -230,182 +312,68 @@ def parse_word_file(file_name, words):
         for br in soup.find_all("br"):
             br.replace_with("\n")
 
-        strings = re.compile(r"[\(|\[]\d+[\)\]]\s?|\n").split(
-            meaning_element.get_text()
-        )
+        strings = DEFINITION_SPLITTING_REGEX_PATTERN.split(meaning_element.get_text())
         for string in strings:
             string = string.strip()
             if not string or any([x in string for x in illegal_strings]):
                 continue
 
-            # Check if this line is a line that denotes a specific pronunciation
-            # This one searches for something in the format [粵] ok3 | [國] e4
-            result = re.search(
-                r"\[粵\]\s?(.+\d+)\s?[\||/|,]?\s?\[[國|普]\]\s?(.+\d+)", string
-            )
-            if result:
-                # If there are previous definitions, add them to the words dict now
-                # Since those meanings belong to the previous pronunciation
-                if meanings:
-                    entry = objects.Entry(
-                        trad,
-                        simp,
-                        pin,
-                        jyut,
-                        freq=freq,
-                        defs=meanings,
-                    )
-                    words.append(entry)
+            continue_parsing = True
+            for pattern in JYUTPING_PINYIN_REGEX_PATTERNS:
+                result = re.search(pattern, string)
+                if result:
+                    if meanings:
+                        entry = objects.Entry(
+                            trad,
+                            simp,
+                            pin,
+                            jyut,
+                            freq=freq,
+                            defs=meanings,
+                        )
+                        words.append(entry)
 
-                # Then, extract the new pinyin and jyutping
-                # and reset the meanings tuple
-                jyut = result.group(1)
-                jyut = re.sub(r"\d\*", "", jyut)
-                pin = result.group(2)
-                meanings = []
+                    # Then, extract the new pinyin and jyutping
+                    # and reset the meanings tuple
+                    jyut = result.group(1)
+                    jyut = re.sub(LITERARY_CANTONESE_READING_REGEX_PATTERN, "", jyut)
+                    pin = result.group(2) if result.group(2) else ""
+                    meanings = []
+                    continue_parsing = False
+                    break
+
+            if not continue_parsing:
                 continue
 
-            # This one searches for something in the format [loeng5 & liang3]
-            result = re.search(r"\[(.*\d)\s*&\s*(.*\d)\]", string)
-            if result:
-                if meanings:
-                    entry = objects.Entry(
-                        trad,
-                        simp,
-                        pin,
-                        jyut,
-                        freq=freq,
-                        defs=meanings,
-                    )
-                    words.append(entry)
+            for pattern in JYUTPING_ONLY_REGEX_PATTERNS:
+                result = re.search(pattern, string)
+                if result:
+                    if meanings:
+                        entry = objects.Entry(
+                            trad,
+                            simp,
+                            pin,
+                            jyut,
+                            freq=freq,
+                            defs=meanings,
+                        )
+                        words.append(entry)
 
-                # Then, extract the new pinyin and jyutping
-                # and reset the meanings tuple
-                jyut = result.group(1)
-                jyut = re.sub(r"\d\*", "", jyut)
-                pin = result.group(2)
-                meanings = []
+                    # Then, extract the new jyutping (but keep the old pinyin!)
+                    # and reset the meanings tuple
+                    jyut = result.group(1)
+                    jyut = re.sub(LITERARY_CANTONESE_READING_REGEX_PATTERN, "", jyut)
+                    meanings = []
+                    continue_parsing = False
+                    break
 
-                string = re.sub(r"\[(.*\d)\s*&\s*(.*\d)\]", "", string).strip()
-                if not string:
-                    continue
-
-            # This one searches for something in the format (jyutping) toi4, (pinyin) tai2
-            result = re.search(
-                r"\(jyutping\)\s*(.*\d)[,|;]?\s*\(pinyin\)\s*(.*\d)",
-                string,
-                re.IGNORECASE,
-            )
-            if result:
-                if meanings:
-                    entry = objects.Entry(
-                        trad,
-                        simp,
-                        pin,
-                        jyut,
-                        freq=freq,
-                        defs=meanings,
-                    )
-                    words.append(entry)
-
-                # Then, extract the new pinyin and jyutping
-                # and reset the meanings tuple
-                jyut = result.group(1)
-                jyut = re.sub(r"\d\*", "", jyut)
-                pin = result.group(2)
-                meanings = []
-                continue
-
-            # This one searches for something in the format 粵拼: ne1 -- 拼音: ne
-            result = re.search(r"粵拼:\s*(.*\d)\s*(?:\-\-\s*拼音:\s*(.*))?", string)
-            if result:
-                if meanings:
-                    entry = objects.Entry(
-                        trad,
-                        simp,
-                        pin,
-                        jyut,
-                        freq=freq,
-                        defs=meanings,
-                    )
-                    words.append(entry)
-
-                # Then, extract the new pinyin and jyutping
-                # and reset the meanings tuple
-                jyut = result.group(1)
-                jyut = re.sub(r"\d\*", "", jyut)
-                pin = result.group(2) if result.group(2) else ""
-                meanings = []
-                continue
-
-            # This one searches for something in the format -- [jp:] dang2; ting3
-            result = re.search(r"\-\-\s*\[jp:\]s*(.*\d).*", string)
-            if result:
-                if meanings:
-                    entry = objects.Entry(
-                        trad,
-                        simp,
-                        pin,
-                        jyut,
-                        freq=freq,
-                        defs=meanings,
-                    )
-                    words.append(entry)
-
-                # Then, extract the new jyutping (but keep the old pinyin!)
-                # and reset the meanings tuple
-                jyut = result.group(1)
-                jyut = re.sub(r"\d\*", "", jyut)
-                meanings = []
-                continue
-
-            # This one searches for something in the format -- Jyutping: /ke1 le1 fei1/ --
-            result = re.search(r"\-\-\s*Jyutping:\s*/(.*\d)/\s*\-\-", string)
-            if result:
-                if meanings:
-                    entry = objects.Entry(
-                        trad,
-                        simp,
-                        pin,
-                        jyut,
-                        freq=freq,
-                        defs=meanings,
-                    )
-                    words.append(entry)
-
-                # Then, extract the new jyutping (but keep the old pinyin!)
-                # and reset the meanings tuple
-                jyut = result.group(1)
-                jyut = re.sub(r"\d\*", "", jyut)
-                meanings = []
-                continue
-
-            # This one searches for something in the format Jyutping cou1
-            result = re.search(r"Jyutping\s*(.*\d)", string)
-            if result:
-                if meanings:
-                    entry = objects.Entry(
-                        trad,
-                        simp,
-                        pin,
-                        jyut,
-                        freq=freq,
-                        defs=meanings,
-                    )
-                    words.append(entry)
-
-                # Then, extract the new jyutping (but keep the old pinyin!)
-                # and reset the meanings tuple
-                jyut = result.group(1)
-                jyut = re.sub(r"\d\*", "", jyut)
-                meanings = []
+            if not continue_parsing:
                 continue
 
             # Try to isolate one or more labels (usually a POS or [華]: indicating Mandarin-only usage or [粵]: indicating Cantonese-only usage)
             labels = []
             definition = string
-            label_regex = re.compile(r"^\[(.*?)\]:?\s*")
-            result = re.search(label_regex, string)
+            result = re.search(LABEL_REGEX_PATTERN, string)
             if not result:
                 # Filter out bad non-standard strings that are completely enclosed in square braces
                 if string[0] == "[" and string[-1] == "]":
@@ -413,8 +381,8 @@ def parse_word_file(file_name, words):
 
             while result:
                 labels.extend(result.group(1).strip().split(","))
-                string = re.sub(label_regex, "", string)
-                result = re.search(label_regex, string)
+                string = re.sub(LABEL_REGEX_PATTERN, "", string)
+                result = re.search(LABEL_REGEX_PATTERN, string)
 
             # At this point, all the labels enclosed in square braces (possibly followed by whitespace)
             # should be stripped out of the beginning of the string.
@@ -451,7 +419,7 @@ def parse_sentence_file(file_name, sentences, translations):
         link_element = soup.find("div", class_="wd_code_links")
         if link_element:
             result = re.search(
-                r"http://www\.cantonese\.sheik\.co\.uk/dictionary/examples/(\d*)/",
+                SENTENCE_ID_PATTERN,
                 link_element.get_text(),
             )
             if result:
@@ -471,7 +439,7 @@ def parse_sentence_file(file_name, sentences, translations):
         # Find romanizations
         jyut_element = soup.find("span", class_="cardjyutping")
         jyut = jyut_element.get_text() if jyut_element else ""
-        jyut = re.sub(r"\d\*", "", jyut)
+        jyut = re.sub(LITERARY_CANTONESE_READING_REGEX_PATTERN, "", jyut)
         jyut = jyut.strip()
 
         pin_element = soup.find("span", class_="cardpinyin")
@@ -532,22 +500,26 @@ def parse_sentences_folder(folder_name, sentences, translations):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 12:
+    if len(sys.argv) != 13:
         print(
             (
-                "Usage: python3 script.py <database filename> "
-                "<characters + compound words HTML folder> <sentences HTML folder> "
+                "Usage: python3 -m cantodict.parse <database filename> "
+                "<scraped characters + compound words HTML folder> "
+                "<scraped sentences HTML folder> "
                 "<source name> <source short name> "
                 "<source version> <source description> <source legal> "
-                "<source link> <source update url> <source other>"
+                "<source link> <source update url> <source other> "
+                "<logging output filepath>"
             )
         )
         print(
             (
-                "e.g. python3 script.py cantodict.db scraped_words/ scraped_sentences/ CantoDict CD 2021-07-18 "
+                "e.g. python3 -m cantodict.parse cantodict.db ./cantodict/scraped_words/ "
+                "./cantodict/scraped_sentences/ CantoDict CD 2021-07-18 "
                 '"CantoDict is a collaborative Chinese Dictionary project started in November 2003. '
                 'Entries are added and mistakes corrected by a team of kind volunteers from around the world." '
-                '"https://www.cantonese.sheik.co.uk/copyright.htm" "https://www.cantonese.sheik.co.uk/" "" ""'
+                '"https://www.cantonese.sheik.co.uk/copyright.htm" "https://www.cantonese.sheik.co.uk/" "" "" '
+                "./cantodict/logging.log"
             )
         )
         sys.exit(1)
@@ -564,6 +536,8 @@ if __name__ == "__main__":
     )
 
     cc_cedict.load()
+
+    logging.basicConfig(filename=sys.argv[12], level=logging.INFO)
 
     words = []
     sentences = []
