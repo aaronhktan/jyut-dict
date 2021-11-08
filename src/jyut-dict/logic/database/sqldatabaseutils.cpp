@@ -138,6 +138,38 @@ bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(void)
         return false;
     }
 
+    // Delete and recreate the chinese_sentences table to change UNIQUE constraint
+    query.exec("CREATE TABLE chinese_sentences_new( "
+               "  chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
+               "  traditional TEXT, "
+               "  simplified TEXT, "
+               "  pinyin TEXT, "
+               "  jyutping TEXT, "
+               "  language TEXT, "
+               "  UNIQUE( "
+               "    traditional, simplified, pinyin, jyutping, language "
+               "  ) ON CONFLICT IGNORE "
+               ")");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("INSERT INTO chinese_sentences_new(chinese_sentence_id, "
+               "  traditional, simplified, pinyin, jyutping, language) "
+               "SELECT chinese_sentence_id, traditional, simplified, pinyin, "
+               "  jyutping, language "
+               "FROM chinese_sentences");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("DROP TABLE chinese_sentences");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("ALTER TABLE chinese_sentences_new RENAME TO chinese_sentences");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
     // Delete and recreate the sentence links table to add new UNIQUE constraint
     query.exec("CREATE TABLE sentence_links_new( "
                "  fk_chinese_sentence_id INTEGER, "
@@ -694,6 +726,8 @@ bool SQLDatabaseUtils::addDefinitionSource(void)
 //   nonchinese_sentences table of the attached database
 // - Use a CTE that:
 //     - Contains the sentence_links from the attached database
+//     - Matches chinese_sentence IDs from the attached database to the
+//       chinese_sentence IDs that are in the main database
 //     - Matches the fk_source_id (from the attached db) to the new source_id
 //       in the main database.
 // - Insert all the links from the CTE into the main table
@@ -760,24 +794,36 @@ bool SQLDatabaseUtils::addSentenceSource(void)
     // Because we can match Tatoeba—Cantonese-English, fk_source_id is assigned 6.
 
     query.exec(
-        "WITH sentence_links_tmp AS ( "
-        "  SELECT sentence_links.fk_chinese_sentence_id as "
-        "      fk_chinese_sentence_id, "
-        "    sentence_links.fk_non_chinese_sentence_id as "
-        "      fk_non_chinese_sentence_id, "
+        "WITH sentence_links_with_source AS ( "
+        "  SELECT sentence_links.fk_chinese_sentence_id as fk_csi, "
+        "    sentence_links.fk_non_chinese_sentence_id as fk_ncsi, "
         "    sources.sourcename AS sourcename, "
         "    sentence_links.direct as direct "
         "  FROM db.sentence_links, db.sources "
         "  WHERE db.sentence_links.fk_source_id = db.sources.source_id "
+        "), "
+        " "
+        "sentence_links_with_foreign_key AS ( "
+        "  SELECT traditional, simplified, pinyin, jyutping, language, "
+        "    fk_ncsi, direct, sourcename "
+        "  FROM sentence_links_with_source as slws, "
+        "    db.chinese_sentences AS cs "
+        "  WHERE slws.fk_csi = cs.chinese_sentence_id "
         ") "
         " "
         "INSERT INTO sentence_links( "
         "  fk_chinese_sentence_id, fk_non_chinese_sentence_id, "
         "  fk_source_id, direct) "
-        "SELECT sl.fk_chinese_sentence_id, sl.fk_non_chinese_sentence_id, "
-        "  s.source_id, sl.direct "
-        "FROM sentence_links_tmp as sl, sources as s "
-        "WHERE sl.sourcename = s.sourcename");
+        "SELECT cs.chinese_sentence_id, slwfk.fk_ncsi, "
+        "  s.source_id, slwfk.direct "
+        "FROM sentence_links_with_foreign_key AS slwfk, sources as s, "
+        "  chinese_sentences AS cs "
+        "WHERE s.sourcename = slwfk.sourcename "
+        "  AND cs.traditional = slwfk.traditional "
+        "  AND cs.simplified = slwfk.simplified "
+        "  AND cs.pinyin = slwfk.pinyin "
+        "  AND cs.jyutping = slwfk.jyutping "
+        "  AND cs.language = slwfk.language ");
     if (query.lastError().isValid()) {
         return false;
     }
@@ -797,8 +843,12 @@ bool SQLDatabaseUtils::addSentenceSource(void)
                "), "
                " "
                "defs_s_links_tmp AS ( "
-               "  SELECT dsl.fk_definition_id AS fdi,"
-               "    dsl.fk_chinese_sentence_id AS fcsi, "
+               "  SELECT "
+               "    cs.traditional AS sentence_traditional, "
+               "    cs.simplified AS sentence_simplified, "
+               "    cs.pinyin AS sentence_pinyin, "
+               "    cs.jyutping AS sentence_jyutping, "
+               "    cs.language AS sentence_language, "
                "    ed.definition AS definition, "
                "    ed.label AS label, "
                "    ed.traditional AS traditional, "
@@ -807,8 +857,10 @@ bool SQLDatabaseUtils::addSentenceSource(void)
                "    ed.jyutping AS jyutping, "
                "    ed.source AS source "
                "  FROM db.definitions_chinese_sentences_links AS dsl, "
+               "    db.chinese_sentences AS cs, "
                "    entry_and_definitions AS ed "
-               "  WHERE dsl.fk_definition_id = ed.definition_id"
+               "  WHERE dsl.fk_definition_id = ed.definition_id "
+               "    AND dsl.fk_chinese_sentence_id = cs.chinese_sentence_id "
                "), "
                " "
                "new_entry_and_definitions AS ( "
@@ -827,9 +879,16 @@ bool SQLDatabaseUtils::addSentenceSource(void)
                " "
                "INSERT INTO definitions_chinese_sentences_links( "
                "  fk_definition_id, fk_chinese_sentence_id) "
-               "SELECT ned.definition_id, dsl.fcsi "
-               "FROM defs_s_links_tmp AS dsl, new_entry_and_definitions AS ned "
-               "WHERE dsl.definition = ned.definition "
+               "SELECT ned.definition_id, cs.chinese_sentence_id "
+               "FROM defs_s_links_tmp AS dsl, "
+               "  new_entry_and_definitions AS ned, "
+               "  chinese_sentences AS cs "
+               "WHERE dsl.sentence_traditional = cs.traditional "
+               "  AND dsl.sentence_simplified = cs.simplified "
+               "  AND dsl.sentence_pinyin = cs.pinyin "
+               "  AND dsl.sentence_jyutping = cs.jyutping "
+               "  AND dsl.sentence_language = cs.language "
+               "  AND dsl.definition = ned.definition "
                "  AND dsl.label = ned.label "
                "  AND dsl.traditional = ned.traditional "
                "  AND dsl.simplified = ned.simplified "

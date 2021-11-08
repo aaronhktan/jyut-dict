@@ -265,6 +265,7 @@ EntryViewSentenceCardSection::getSamplesForEachSource(
     for (auto &sourceSentence : sourceSentences) {
         for (auto &sentenceSet : sourceSentence.getSentenceSets()) {
             std::string source = sentenceSet.getSource();
+
             if (samples[source].size() >= 2) {
                 continue;
             }
