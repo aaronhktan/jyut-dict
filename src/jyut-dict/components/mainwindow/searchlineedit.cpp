@@ -180,7 +180,6 @@ void SearchLineEdit::setStyle(bool use_dark)
                       "   font-size: 12px; "
                       "   padding-top: 4px; "
                       "   padding-bottom: 4px; "
-                      "   selection-background-color: palette(window); "
                       "} "
                       ""
                       "QLineEdit:focus { "
@@ -196,7 +195,6 @@ void SearchLineEdit::setStyle(bool use_dark)
                       "   font-size: 12px; "
                       "   padding-top: 4px; "
                       "   padding-bottom: 4px; "
-                      "   selection-background-color: darkgray; "
                       "} ");
          _searchLineEdit->setIcon(search);
          _clearLineEdit->setIcon(clear);
