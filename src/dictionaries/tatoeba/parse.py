@@ -209,8 +209,8 @@ if __name__ == "__main__":
                 "<source name> <source short name> "
                 "<source version> <source description> <source legal> "
                 "<source link> <source update url> <source other>"
-                "<enable generation of jyutping>"
-                "<enable generation of pinyin>"
+                "<enable generation of jyutping (enable_jyutping = yes)>"
+                "<enable generation of pinyin (enable_pinyin = yes)>"
             )
         )
         print(
