@@ -98,6 +98,9 @@ CMakeLists.txt.user*
 **/tatoeba/archive_*
 **/tatoeba/data/*
 **/tatoeba/developer/*
+**/two_shores_three_places/archive_*
+**/two_shores_three_places/data/*
+**/two_shores_three_places/developer/*
 **/unihan/archive_*
 **/unihan/data/*
 **/unihan/developer/*
