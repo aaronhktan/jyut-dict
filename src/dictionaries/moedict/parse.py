@@ -28,7 +28,7 @@ DefinitionTuple = namedtuple("Definition", ["definition", "label", "examples"])
 ExampleTuple = namedtuple("ExampleTuple", ["lang", "pron", "content"])
 
 EXCLUDE_VARIANT_REGEX_PATTERN = re.compile(r"{\[.*\]\}")
-EXAMPLE_REGEX_PATTERN = re.compile(r"如：(.*?)。+")
+EXAMPLE_REGEX_PATTERN = re.compile(r"如：(.*)")
 WHITESPACE_REGEX_PATTERN = re.compile(r"[　 ]")
 VARIANT_PRONUNCIATION_REGEX_PATTERN = re.compile(r"\s\(變\).*")
 COLLOQUIAL_PRONUNCIATION_REGEX_PATTERN = re.compile(r"\s（語音）.*")
@@ -245,7 +245,7 @@ def parse_file(filename, words):
                         for example in definition["example"]:
                             if re.match(EXAMPLE_REGEX_PATTERN, example):
                                 example_texts = (
-                                    # Every example is surrounded by "如：<example>。", so only keep the example
+                                    # Every example is surrounded by "如：<example>", so only keep the example
                                     re.match(EXAMPLE_REGEX_PATTERN, example).group(1)
                                     # Some examples contain multiple examples, so split them up by the enumeration comma
                                     .split("、")
@@ -254,8 +254,8 @@ def parse_file(filename, words):
                                 example_texts = example.split("、")
 
                             for example_text in example_texts:
-                                # Strip out Chinese quotation marks at the beginning and end of the example
-                                example_text = example_text.strip("「」")
+                                # Strip out Chinese quotation marks and periods at the beginning and end of the example
+                                example_text = example_text.strip("「」。")
                                 # Strip out weird whitespace
                                 example_text = re.sub(
                                     WHITESPACE_REGEX_PATTERN, "", example_text
@@ -357,7 +357,7 @@ def parse_file(filename, words):
                                     )
                                     traceback.print_exc()
                             def_tuple.examples.append(
-                                ExampleTuple("cmn", quote_pinyin, quote_text)
+                                ExampleTuple("zho", quote_pinyin, quote_text)
                             )
 
                     # We currently ignore synonyms, antonyms, and "see also" links, because they are
