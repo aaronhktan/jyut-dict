@@ -50,7 +50,7 @@ def create_tables(c):
                   pinyin TEXT,
                   jyutping TEXT,
                   language TEXT,
-                  UNIQUE(traditional, simplified, pinyin, jyutping) ON CONFLICT IGNORE
+                  UNIQUE(traditional, simplified, pinyin, jyutping, language) ON CONFLICT IGNORE
             )"""
     )
 

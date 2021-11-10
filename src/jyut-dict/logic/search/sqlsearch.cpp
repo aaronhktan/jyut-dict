@@ -1043,12 +1043,14 @@ void SQLSearch::searchTraditionalSentencesThread(const QString searchTerm,
         //// Match up the translations with their sentences, and get the linked
         //// definition's source name if it exists
         " matching_sentences_with_translations AS ( "
-        "   SELECT sourcename, traditional, simplified, pinyin, jyutping, language, translations "
+        "   SELECT max(sourcename) AS sourcename, traditional, simplified, pinyin, jyutping, language, translations "
         "   FROM matching_sentences AS ms "
         "   LEFT JOIN matching_translations AS mt ON ms.chinese_sentence_id = mt.chinese_sentence_id "
         "   LEFT JOIN definitions_chinese_sentences_links AS dcsl ON ms.chinese_sentence_id = dcsl.fk_chinese_sentence_id "
         "   LEFT JOIN definitions AS d ON dcsl.fk_definition_id = d.definition_id "
         "   LEFT JOIN sources AS s ON d.fk_source_id = s.source_id "
+        "   GROUP BY traditional, simplified, pinyin, jyutping, language, translations "
+        "   ORDER BY ms.chinese_sentence_id "
         ") "
         " "
         "SELECT sourcename, traditional, simplified, pinyin, jyutping, language, translations from matching_sentences_with_translations "

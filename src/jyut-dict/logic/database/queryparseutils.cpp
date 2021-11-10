@@ -110,7 +110,7 @@ std::vector<SourceSentence> parseSentences(QSqlQuery &query)
     int jyutpingIndex = query.record().indexOf("jyutping");
     int pinyinIndex = query.record().indexOf("pinyin");
     int sourceLanguageIndex = query.record().indexOf("language");
-    int sentencesIndex = query.record().indexOf("translations");
+    int translationsIndex = query.record().indexOf("translations");
     int definitionSourceNameIndex = query.record().indexOf("sourcename");
 
     while (query.next()) {
@@ -125,7 +125,7 @@ std::vector<SourceSentence> parseSentences(QSqlQuery &query)
         std::string sourceLanguage
             = query.value(sourceLanguageIndex).toString().toStdString();
         std::string combinedTargetSentencesData
-            = query.value(sentencesIndex).toString().toStdString();
+            = query.value(translationsIndex).toString().toStdString();
         std::string definitionSourceName
             = query.value(definitionSourceNameIndex).toString().toStdString();
 
