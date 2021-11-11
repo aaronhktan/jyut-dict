@@ -75,7 +75,7 @@ def write(chinese_sentences, nonchinese_sentences, links, db_name):
 # If it's a source sentence, we create a Chinese Sentence object
 # Otherwise, we create a non-Chinese Sentence object
 def parse_sentence_file(
-    filename, source, target, sentences, nonchinese_sentences, intermediate_ids
+    filename, source, target, sentences, nonchinese_sentences, intermediate_ids, enable_jyutping, enable_pinyin
 ):
     print("Parsing sentence file...")
     with open(filename, "r", encoding="utf8") as f:
@@ -97,13 +97,17 @@ def parse_sentence_file(
                 else:
                     trad = sentence
                     simp = HanziConv.toSimplified(sentence)
-                pin = " ".join(
-                    lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True)
-                ).lower()
-                pin = pin.strip().replace("v", "u:")
-                jyut = pinyin_jyutping_sentence.jyutping(
-                    trad, tone_numbers=True, spaces=True
-                )
+                pin = ""
+                if enable_pinyin:
+                    pin = " ".join(
+                        lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True)
+                    ).lower()
+                    pin = pin.strip().replace("v", "u:")
+                jyut = ""
+                if enable_jyutping:
+                    jyut = pinyin_jyutping_sentence.jyutping(
+                        trad, tone_numbers=True, spaces=True
+                    )
                 sentence_row = objects.ChineseSentence(
                     sentence_id,
                     trad,
@@ -196,7 +200,7 @@ def parse_links_file(
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 14:
+    if len(sys.argv) != 16:
         print(
             (
                 "Usage: python3 script.py <database filename> "
@@ -205,20 +209,27 @@ if __name__ == "__main__":
                 "<source name> <source short name> "
                 "<source version> <source description> <source legal> "
                 "<source link> <source update url> <source other>"
+                "<enable generation of jyutping (enable_jyutping = yes)>"
+                "<enable generation of pinyin (enable_pinyin = yes)>"
             )
         )
         print(
             (
-                "e.g. python3 parse.py dict.db sentences.csv links.csv "
+                "e.g. python3 -m tatoeba.parse yue-eng.db "
+                "./tatoeba/data/sentences.csv ./tatoeba/data/links.csv "
                 "yue eng Tatoeba TTB 2018-07-09 "
                 '"Tatoeba is a collection of sentences." '
                 '"These files are released under CC BY 2.0 FR." '
                 '"https://tatoeba.org/eng/downloads" "" ""'
+                "enable_jyutping disable_pinyin"
             )
         )
         sys.exit(1)
 
     cc_cedict.load()
+
+    enable_jyutping = sys.argv[14] == "enable_jyutping"
+    enable_pinyin = sys.argv[15] == "enable_pinyin"
 
     chinese_sentences = {}  # Use this to store all the source sentences
     nonchinese_sentences = {}  # Use this to store all the target sentences
@@ -247,6 +258,8 @@ if __name__ == "__main__":
         chinese_sentences,
         nonchinese_sentences,
         intermediate_ids,
+        enable_jyutping,
+        enable_pinyin,
     )
     parse_links_file(
         sys.argv[3],
