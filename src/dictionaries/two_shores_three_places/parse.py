@@ -99,54 +99,58 @@ def parse_same_meaning_file(filename, words):
 
         for index in (4, 5, 6):
             if line[index]:
-                terms[line[index]].add("臺")
+                terms["臺"].add(line[index])
 
         for index in (7, 8, 9):
             if line[index]:
-                terms[line[index]].add("陸")
+                terms["陸"].add(line[index])
 
         for index in (10, 11, 12):
             if line[index]:
-                terms[line[index]].add("香")
+                terms["香"].add(line[index])
 
         for index in (13, 14, 15):
             if line[index]:
-                terms[line[index]].add("澳")
+                terms["澳"].add(line[index])
 
         explanation = None
         if line[16]:
             explanation = DefinitionTuple("​".join(jieba.cut(line[16])), "差異說明")
 
-        for term in terms:
-            trad = term
-            simp = HanziConv.toSimplified(trad)
-            if term == line[4]:
-                # Use the provided pinyin, which always corresponds at least to the first Taiwan term
-                pin = transcriptions.zhuyin_to_pinyin(
-                    line[2].replace("　", " "), accented=False
+        for location in terms:
+            for term in terms[location]:
+                trad = term
+                simp = HanziConv.toSimplified(trad)
+                if term == line[4] and line[2]:
+                    # Use the provided pinyin, which always corresponds at least to the first Taiwan term
+                    pin = transcriptions.zhuyin_to_pinyin(
+                        line[2].replace("　", " "), accented=False
+                    )
+                else:
+                    pin = lazy_pinyin(
+                        trad,
+                        style=Style.TONE3,
+                        neutral_tone_with_five=True,
+                    )
+                    pin = " ".join(pin).lower()
+                    pin = pin.strip().replace("v", "u:")
+                jyut = pinyin_jyutping_sentence.jyutping(
+                    trad, tone_numbers=True, spaces=True
                 )
-            else:
-                pin = lazy_pinyin(
-                    trad,
-                    style=Style.TONE3,
-                    neutral_tone_with_five=True,
+                freq = zipf_frequency(trad, "zh")
+
+                defs = terms.keys()
+                defs = map(
+                    lambda x: DefinitionTuple("、".join(terms[x]), line[1] + "：" + x),
+                    defs,
                 )
-                pin = " ".join(pin).lower()
-                pin = pin.strip().replace("v", "u:")
-            jyut = pinyin_jyutping_sentence.jyutping(
-                trad, tone_numbers=True, spaces=True
-            )
-            freq = zipf_frequency(trad, "zh")
+                defs = list(defs)
 
-            defs = terms.keys()
-            defs = map(lambda x: DefinitionTuple(x, "、".join(terms[x])), defs)
-            defs = list(defs)
+                if explanation:
+                    defs.append(explanation)
 
-            if explanation:
-                defs.append(explanation)
-
-            entry = objects.Entry(trad, simp, pin, jyut, freq=freq, defs=defs)
-            words.append(entry)
+                entry = objects.Entry(trad, simp, pin, jyut, freq=freq, defs=defs)
+                words.add(entry)
 
 
 def parse_same_word_file(filename, words):
@@ -168,7 +172,7 @@ def parse_same_word_file(filename, words):
         defs = [DefinitionTuple("​".join(jieba.cut(line[1])), "臺陸用法和差異")]
 
         entry = objects.Entry(trad, simp, pin, jyut, freq=freq, defs=defs)
-        words.append(entry)
+        words.add(entry)
 
 
 if __name__ == "__main__":
@@ -198,7 +202,7 @@ if __name__ == "__main__":
 
     cc_cedict.load()
 
-    words = []
+    words = set()
     source = objects.SourceTuple(
         sys.argv[4],
         sys.argv[5],

@@ -35,6 +35,20 @@ class Entry(object):
             f"D:{self.definitions}"
         )
 
+    def __eq__(self, other):
+        return (
+            self.traditional == other.traditional
+            and self.simplified == other.simplified
+            and self.pinyin == other.pinyin
+            and self.jyutping == other.jyutping
+            and self.fuzzy_jyutping == other.fuzzy_jyutping
+            and self.freq == other.freq
+            and self.definitions == other.definitions
+        )
+
+    def __hash__(self):
+        return hash(self.__str__())
+
     def add_pinyin(self, pin):
         self.pinyin = pin
 
