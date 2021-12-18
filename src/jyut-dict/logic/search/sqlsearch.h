@@ -6,6 +6,7 @@
 #include "logic/search/isearch.h"
 #include "logic/search/isearchobservable.h"
 
+#include <QList>
 #include <QObject>
 #include <QtSql>
 
@@ -91,6 +92,8 @@ private:
     std::atomic<unsigned long long> _queryID;
     std::mt19937_64 _generator;
     std::uniform_int_distribution<unsigned long long> _dist;
+
+    QList<QFuture<void>> _futures;
 };
 
 Q_DECLARE_METATYPE(SQLSearch);

@@ -38,7 +38,9 @@ SQLSearch::SQLSearch(const SQLSearch &search)
 
 SQLSearch::~SQLSearch()
 {
-
+    for (auto future : _futures) {
+        future.waitForFinished();
+    }
 }
 
 void SQLSearch::registerObserver(ISearchObserver *observer)
@@ -165,13 +167,14 @@ void SQLSearch::searchByUnique(const QString simplified,
     }
 
     unsigned long long queryID = generateAndSetQueryID();
-    QtConcurrent::run(this,
-                      &SQLSearch::searchByUniqueThread,
-                      simplified,
-                      traditional,
-                      jyutping,
-                      pinyin,
-                      queryID);
+    auto future = QtConcurrent::run(this,
+                                    &SQLSearch::searchByUniqueThread,
+                                    simplified,
+                                    traditional,
+                                    jyutping,
+                                    pinyin,
+                                    queryID);
+    _futures.append(future);
 }
 
 void SQLSearch::searchTraditionalSentences(const QString searchTerm)
@@ -193,7 +196,8 @@ void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString search
         return;
     }
 
-    QtConcurrent::run(this, threadFunction, searchTerm, queryID);
+    auto future = QtConcurrent::run(this, threadFunction, searchTerm, queryID);
+    _futures.append(future);
 }
 
 // NOTE: If you are modifying these functions, you may also want to modify
