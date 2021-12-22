@@ -149,9 +149,11 @@ def parse_word_file(file_name, words):
         jyut = " ".join(jyut)
 
         # Automatically generate pinyin
-        pin = " ".join(
-            lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True)
-        ).lower()
+        pin = (
+            " ".join(lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True))
+            .lower()
+            .replace("v", "u:")
+        )
 
         # Extract the meanings
         meaning_elements = soup.find_all("span", id=MEANING_REGEX)
