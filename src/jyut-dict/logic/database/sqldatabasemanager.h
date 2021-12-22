@@ -26,6 +26,7 @@ public:
     QString getUserDatabasePath();
 
     bool backupDictionaryDatabase();
+    bool restoreBackedUpDictionaryDatabase();
 
 private:
     void addDatabase(QString name);

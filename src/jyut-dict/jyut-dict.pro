@@ -87,9 +87,11 @@ SOURCES += \
     dialogs/defaultdialog.cpp \
     dialogs/dictionarytabfailuredialog.cpp \
     dialogs/entryspeakerrordialog.cpp \
+    dialogs/exportdatabasedialog.cpp \
     dialogs/noupdatedialog.cpp \
     dialogs/overwriteconflictingdictionarydialog.cpp \
     dialogs/resetsettingsdialog.cpp \
+    dialogs/restoredatabasedialog.cpp \
     logic/database/queryparseutils.cpp \
     logic/database/sqluserdatautils.cpp \
     logic/database/sqluserhistoryutils.cpp \
@@ -169,9 +171,11 @@ HEADERS += \
     dialogs/defaultdialog.h \
     dialogs/dictionarytabfailuredialog.h \
     dialogs/entryspeakerrordialog.h \
+    dialogs/exportdatabasedialog.h \
     dialogs/noupdatedialog.h \
     dialogs/overwriteconflictingdictionarydialog.h \
     dialogs/resetsettingsdialog.h \
+    dialogs/restoredatabasedialog.h \
     logic/database/queryparseutils.h \
     logic/database/sqldatabasemanager.h \
     logic/database/sqldatabaseutils.h \

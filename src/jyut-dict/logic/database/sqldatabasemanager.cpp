@@ -115,6 +115,20 @@ bool SQLDatabaseManager::backupDictionaryDatabase()
     return QFile::copy(dictFilePath, backupFilePath);
 }
 
+bool SQLDatabaseManager::restoreBackedUpDictionaryDatabase()
+{
+    QString dir = QFileInfo{getDictionaryDatabasePath()}.absolutePath() + "/";
+    QString dictFilePath = dir + DICTIONARY_DATABASE_NAME;
+    QString backupFilePath = dir + DICTIONARY_DATABASE_NAME + "_"
+                             + QString::number(1);
+    if (QFile::exists(backupFilePath)) {
+        QFile::remove(dictFilePath);
+        return QFile::copy(backupFilePath, dictFilePath);
+    } else {
+        return false;
+    }
+}
+
 void SQLDatabaseManager::addDatabase(QString name)
 {
     QSqlDatabase::addDatabase("QSQLITE", name);
