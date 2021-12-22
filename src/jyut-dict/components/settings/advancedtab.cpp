@@ -321,10 +321,16 @@ void AdvancedTab::exportDictionaryDatabase(void)
     });
 
     QFuture<bool> future = QtConcurrent::run([=]() {
+        SQLDatabaseManager manager;
+
+        // Do not attempt to replace database with itself
+        if (destinationFileName == manager.getDictionaryDatabasePath()) {
+            return false;
+        }
+
         if (QFile::exists(destinationFileName)) {
             QFile::remove(destinationFileName);
         }
-        SQLDatabaseManager manager;
         return QFile::copy(manager.getDictionaryDatabasePath(), destinationFileName);
     });
     _watcher->setFuture(future);
@@ -359,10 +365,16 @@ void AdvancedTab::exportUserDatabase(void)
     });
 
     QFuture<bool> future = QtConcurrent::run([=]() {
+        SQLDatabaseManager manager;
+
+        // Do not attempt to replace database with itself
+        if (destinationFileName == manager.getUserDatabasePath()) {
+            return false;
+        }
+
         if (QFile::exists(destinationFileName)) {
             QFile::remove(destinationFileName);
         }
-        SQLDatabaseManager manager;
         return QFile::copy(manager.getUserDatabasePath(), destinationFileName);
     });
     _watcher->setFuture(future);
@@ -439,6 +451,12 @@ void AdvancedTab::restoreExportedDictionaryDatabase(void)
 
     auto future = QtConcurrent::run([=]() {
         SQLDatabaseManager manager;
+
+        // Do not attempt to replace database with itself
+        if (sourceFileName == manager.getDictionaryDatabasePath()) {
+            return false;
+        }
+
         manager.backupDictionaryDatabase();
         QFile::remove(manager.getDictionaryDatabasePath());
         return QFile::copy(sourceFileName, manager.getDictionaryDatabasePath());
@@ -479,6 +497,12 @@ void AdvancedTab::restoreExportedUserDatabase(void)
 
     auto future = QtConcurrent::run([=]() {
         SQLDatabaseManager manager;
+
+        // Do not attempt to replace database with itself
+        if (sourceFileName == manager.getUserDatabasePath()) {
+            return false;
+        }
+
         QFile::remove(manager.getUserDatabasePath());
         return QFile::copy(sourceFileName, manager.getUserDatabasePath());
     });
