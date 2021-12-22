@@ -321,7 +321,6 @@ void AdvancedTab::exportDictionaryDatabase(void)
     });
 
     QFuture<bool> future = QtConcurrent::run([=]() {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10000));
         if (QFile::exists(destinationFileName)) {
             QFile::remove(destinationFileName);
         }
@@ -374,9 +373,7 @@ void AdvancedTab::exportDatabaseResult(bool succeeded,
                                        QString failedText)
 {
     if (succeeded) {
-        _exportDatabaseDialog = new ExportDatabaseDialog{suceededText,
-                                                           "",
-                                                           this};
+        _exportDatabaseDialog = new ExportDatabaseDialog{suceededText, "", this};
     } else {
         _exportDatabaseDialog = new ExportDatabaseDialog{failedText, "", this};
     }
@@ -442,6 +439,7 @@ void AdvancedTab::restoreExportedDictionaryDatabase(void)
 
     auto future = QtConcurrent::run([=]() {
         SQLDatabaseManager manager;
+        manager.backupDictionaryDatabase();
         QFile::remove(manager.getDictionaryDatabasePath());
         return QFile::copy(sourceFileName, manager.getDictionaryDatabasePath());
     });
