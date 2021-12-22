@@ -310,6 +310,7 @@ void MainWindow::translateUI(void)
 void MainWindow::setStyle(bool use_dark)
 {
 #ifdef Q_OS_MAC
+    (void) (use_dark);
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
 #elif defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     if (!use_dark) {

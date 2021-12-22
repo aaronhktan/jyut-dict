@@ -13,6 +13,11 @@ SQLDatabaseUtils::SQLDatabaseUtils(std::shared_ptr<SQLDatabaseManager> manager)
     _manager = manager;
 }
 
+bool SQLDatabaseUtils::backupDatabase(void)
+{
+    return _manager->backupDictionaryDatabase();
+}
+
 // Database differences from version 1 to version 2:
 // - Added chinese_sentences, nonchinese_sentences, and sentence_links tables
 //   to properly support showing sentences in the GUI.
@@ -473,6 +478,7 @@ bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
 // Method to remove a source from the database, based on the name of the source.
 bool SQLDatabaseUtils::removeSource(std::string source, bool skipCleanup)
 {
+    backupDatabase();
     return removeSources({source}, skipCleanup);
 }
 
@@ -901,6 +907,8 @@ bool SQLDatabaseUtils::addSentenceSource(void)
 
 bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflictingSource)
 {
+    backupDatabase();
+
     QSqlQuery query{_manager->getDatabase()};
 
     query.prepare("ATTACH DATABASE ? AS db");

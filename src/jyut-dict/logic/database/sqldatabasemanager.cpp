@@ -89,6 +89,32 @@ QString SQLDatabaseManager::getUserDatabasePath()
 #endif
 }
 
+bool SQLDatabaseManager::backupDictionaryDatabase()
+{
+    QString dir = QFileInfo{getDictionaryDatabasePath()}.absolutePath() + "/";
+
+    // Rename backup 2 -> backup 3; backup 1 -> backup 2
+    for (int i = 3; i > 1; i--) {
+        QString oldFilePath = dir + DICTIONARY_DATABASE_NAME + "_"
+                              + QString::number(i - 1);
+
+        QString backupFilePath = dir + DICTIONARY_DATABASE_NAME + "_"
+                                 + QString::number(i);
+        if (QFile::exists(backupFilePath)) {
+            QFile::remove(backupFilePath);
+        }
+        if (QFile::exists(oldFilePath)) {
+            QFile::rename(oldFilePath, backupFilePath);
+        }
+    }
+
+    // Create backup 1
+    QString dictFilePath = dir + DICTIONARY_DATABASE_NAME;
+    QString backupFilePath = dir + DICTIONARY_DATABASE_NAME + "_"
+                             + QString::number(1);
+    return QFile::copy(dictFilePath, backupFilePath);
+}
+
 void SQLDatabaseManager::addDatabase(QString name)
 {
     QSqlDatabase::addDatabase("QSQLITE", name);
@@ -122,15 +148,15 @@ QString SQLDatabaseManager::getLocalDictionaryDatabasePath()
 #ifdef Q_OS_DARWIN
     QFileInfo localFile{
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
-        + "/Dictionaries/dict.db"};
+        + "/Dictionaries/" + DICTIONARY_DATABASE_NAME};
 #elif defined(Q_OS_WIN)
     QFileInfo localFile{
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
-        + "/Dictionaries/dict.db"};
+        + "/Dictionaries/" + DICTIONARY_DATABASE_NAME};
 #else
     QFileInfo localFile{
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
-        + "/dictionaries/dict.db"};
+        + "/dictionaries/" + DICTIONARY_DATABASE_NAME};
 #endif
     return localFile.absoluteFilePath();
 }
@@ -139,19 +165,23 @@ QString SQLDatabaseManager::getBundleDictionaryDatabasePath()
 {
 #ifdef Q_OS_DARWIN
     QFileInfo bundleFile{QCoreApplication::applicationDirPath()
-                         + "/../Resources/dict.db"};
+                         + "/../Resources/" + DICTIONARY_DATABASE_NAME};
 #elif defined(Q_OS_WIN)
-    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "./dict.db"};
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "./"
+                         + DICTIONARY_DATABASE_NAME};
 #else // Q_OS_LINUX
 #ifdef APPIMAGE
     QFileInfo bundleFile{QCoreApplication::applicationDirPath()
-                         + "/../share/jyut-dict/dictionaries/dict.db"};
+                         + "/../share/jyut-dict/dictionaries/"
+                         + DICTIONARY_DATABASE_NAME};
 #elif defined(DEBUG)
-    QFileInfo bundleFile{"./dict.db"};
+    QFileInfo bundleFile{"./" + DICTIONARY_DATABASE_NAME};
 #elif defined(FLATPAK)
-    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/../share/jyut-dict/dictionaries/dict.db"};
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/../share/jyut-dict/dictionaries/"
+                         + DICTIONARY_DATABASE_NAME};
 #else
-    QFileInfo bundleFile{"/usr/share/jyut-dict/dictionaries/dict.db"};
+    QFileInfo bundleFile{"/usr/share/jyut-dict/dictionaries/"
+                         + DICTIONARY_DATABASE_NAME};
 #endif
 #endif
     return bundleFile.absoluteFilePath();
@@ -162,15 +192,15 @@ QString SQLDatabaseManager::getLocalUserDatabasePath()
 #ifdef Q_OS_DARWIN
     QFileInfo localFile{
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
-        + "/Dictionaries/user.db"};
+        + "/Dictionaries/" + USER_DATABASE_NAME};
 #elif defined(Q_OS_WIN)
     QFileInfo localFile{
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
-        + "/Dictionaries/user.db"};
+        + "/Dictionaries/" + USER_DATABASE_NAME};
 #else
     QFileInfo localFile{
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
-        + "/dictionaries/user.db"};
+        + "/dictionaries/" + USER_DATABASE_NAME};
 #endif
     return localFile.absoluteFilePath();
 }
@@ -179,19 +209,19 @@ QString SQLDatabaseManager::getBundleUserDatabasePath()
 {
 #ifdef Q_OS_DARWIN
     QFileInfo bundleFile{QCoreApplication::applicationDirPath()
-                         + "/../Resources/user.db"};
+                         + "/../Resources/" + USER_DATABASE_NAME};
 #elif defined(Q_OS_WIN)
-    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "./user.db"};
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "./" + USER_DATABASE_NAME};
 #else
 #ifdef APPIMAGE
     QFileInfo bundleFile{QCoreApplication::applicationDirPath()
-                         + "/../share/jyut-dict/dictionaries/user.db"};
+                         + "/../share/jyut-dict/dictionaries/" + USER_DATABASE_NAME};
 #elif defined(DEBUG)
-    QFileInfo bundleFile{"./user.db"};
+    QFileInfo bundleFile{"./" + USER_DATABASE_NAME};
 #elif defined(FLATPAK)
-    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/../share/jyut-dict/dictionaries/user.db"};
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/../share/jyut-dict/dictionaries/" + USER_DATABASE_NAME};
 #else
-    QFileInfo bundleFile{"/usr/share/jyut-dict/dictionaries/user.db"};
+    QFileInfo bundleFile{"/usr/share/jyut-dict/dictionaries/" + USER_DATABASE_NAME};
 #endif
 #endif
     return bundleFile.absoluteFilePath();
