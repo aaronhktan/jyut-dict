@@ -75,7 +75,14 @@ def write(chinese_sentences, nonchinese_sentences, links, db_name):
 # If it's a source sentence, we create a Chinese Sentence object
 # Otherwise, we create a non-Chinese Sentence object
 def parse_sentence_file(
-    filename, source, target, sentences, nonchinese_sentences, intermediate_ids, enable_jyutping, enable_pinyin
+    filename,
+    source,
+    target,
+    sentences,
+    nonchinese_sentences,
+    intermediate_ids,
+    enable_jyutping,
+    enable_pinyin,
 ):
     print("Parsing sentence file...")
     with open(filename, "r", encoding="utf8") as f:
@@ -100,7 +107,9 @@ def parse_sentence_file(
                 pin = ""
                 if enable_pinyin:
                     pin = " ".join(
-                        lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True)
+                        lazy_pinyin(
+                            trad, style=Style.TONE3, neutral_tone_with_five=True
+                        )
                     ).lower()
                     pin = pin.strip().replace("v", "u:")
                 jyut = ""
