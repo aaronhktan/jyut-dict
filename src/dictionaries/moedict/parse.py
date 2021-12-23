@@ -68,9 +68,6 @@ def change_pinyin_to_match_phrase(example, example_pinyin, phrase, phrase_pinyin
 
 
 def insert_example(c, definition_id, starting_example_id, example):
-    # The example should be a list of ExampleTuples, such that
-    # the first item is the 'source', and all subsequent ones are the
-    # translations
     examples_inserted = 0
 
     trad = example.content
@@ -168,7 +165,7 @@ def write(db_name, source, entries):
         None,
     )
 
-    insert_words(c, words)
+    insert_words(c, entries)
 
     database.generate_indices(c)
 

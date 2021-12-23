@@ -1,4 +1,5 @@
 import logging
+import re
 
 PINYIN_CORRESPONDENCE_1 = {
     "ā": "a1",
@@ -258,3 +259,35 @@ def pinyin_to_tone_numbers(pinyin, word):
         )
 
     return ret
+
+
+# Since the pinyin returned by lazy_pinyin doesn't always match the pinyin
+# given in the heteronym, attempt to replace pinyin corresponding to the
+# characters in this heteronym with the pinyin provided by the source file.
+#
+# e.g. example_text = "重新"; example_pinyin = "zhong4 xin1" (returned by lazy_pinyin)
+# trad = "重", phrase_pinyin = "chong2" (provided by source file)
+# means that we should convert "zhong4 xin1" to "chong2 xin1"
+def change_pinyin_to_match_phrase(example, example_pinyin, phrase, phrase_pinyin):
+    phrase_indices = [i.start() for i in re.finditer(phrase, example)]
+    example_pinyin_list = example_pinyin.split()
+    phrase_pinyin_list = phrase_pinyin.split()
+
+    for i in phrase_indices:
+        # I can't do a simple replacement with list slicing, because
+        # sometimes the example contains punctuation that the pinyin does not have
+        # (e.g. "三十年河東，三十年河西" -> "san1 shi2 nian2 he2 dong1 san1 shi2 nian2 he2 xi1")
+        # so we must loop through the example, ignoring punctuation
+        example_index = 0
+        phrase_pinyin_index = 0
+        while phrase_pinyin_index < len(phrase_pinyin_list):
+            if example_pinyin_list[i + example_index] == "，":
+                example_index += 1
+                continue
+            example_pinyin_list[i + example_index] = phrase_pinyin_list[
+                phrase_pinyin_index
+            ]
+            example_index += 1
+            phrase_pinyin_index += 1
+
+    return " ".join(example_pinyin_list)
