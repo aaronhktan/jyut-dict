@@ -14,6 +14,7 @@ import logging
 import sqlite3
 import sys
 
+
 def read_csv(filename):
     with open(filename) as csvfile:
         reader = csv.reader(csvfile)
@@ -112,7 +113,9 @@ def parse_same_meaning_file(filename, words):
 
         explanation = None
         if line[16]:
-            explanation = objects.DefinitionTuple("​".join(jieba.cut(line[16])), "差異說明", [])
+            explanation = objects.DefinitionTuple(
+                "​".join(jieba.cut(line[16])), "差異說明", []
+            )
 
         for location in terms:
             for term in terms[location]:
@@ -138,7 +141,9 @@ def parse_same_meaning_file(filename, words):
 
                 defs = terms.keys()
                 defs = map(
-                    lambda x: objects.DefinitionTuple("、".join(terms[x]), line[1] + "：" + x, []),
+                    lambda x: objects.DefinitionTuple(
+                        "、".join(terms[x]), line[1] + "：" + x, []
+                    ),
                     defs,
                 )
                 defs = list(defs)

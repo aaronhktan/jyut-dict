@@ -72,6 +72,7 @@ class Entry(object):
     def append_to_defs(self, item):
         self.definitions.append(item)
 
+
 # Option 2: same as option 1, but with separate definitions from a
 # Mandarin source (cedict_eng) and a Cantonese source (canto_eng)
 class EntryWithCantoneseAndMandarin(Entry):
@@ -93,6 +94,7 @@ class EntryWithCantoneseAndMandarin(Entry):
 
     def add_canto_eng(self, canto_eng):
         self.canto_english.append(canto_eng)
+
 
 # Basic structure for definitions with examples:
 # one or more examples per DefinitionTuple,

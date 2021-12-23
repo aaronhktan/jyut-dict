@@ -280,7 +280,9 @@ def parse_file(filename, words):
                                         traceback.print_exc()
 
                                 def_tuple.examples.append(
-                                    objects.ExampleTuple("cmn", example_pinyin, example_text)
+                                    objects.ExampleTuple(
+                                        "cmn", example_pinyin, example_text
+                                    )
                                 )
 
                     # Parse and add quotes to this definition
