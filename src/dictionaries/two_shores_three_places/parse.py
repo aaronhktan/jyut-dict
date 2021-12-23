@@ -14,9 +14,6 @@ import logging
 import sqlite3
 import sys
 
-DefinitionTuple = namedtuple("Definition", ["definition", "label"])
-
-
 def read_csv(filename):
     with open(filename) as csvfile:
         reader = csv.reader(csvfile)
@@ -115,7 +112,7 @@ def parse_same_meaning_file(filename, words):
 
         explanation = None
         if line[16]:
-            explanation = DefinitionTuple("​".join(jieba.cut(line[16])), "差異說明")
+            explanation = objects.DefinitionTuple("​".join(jieba.cut(line[16])), "差異說明", [])
 
         for location in terms:
             for term in terms[location]:
@@ -141,7 +138,7 @@ def parse_same_meaning_file(filename, words):
 
                 defs = terms.keys()
                 defs = map(
-                    lambda x: DefinitionTuple("、".join(terms[x]), line[1] + "：" + x),
+                    lambda x: objects.DefinitionTuple("、".join(terms[x]), line[1] + "：" + x, []),
                     defs,
                 )
                 defs = list(defs)
@@ -169,7 +166,7 @@ def parse_same_word_file(filename, words):
         pin = pin.strip().replace("v", "u:")
         jyut = pinyin_jyutping_sentence.jyutping(trad, tone_numbers=True, spaces=True)
         freq = zipf_frequency(trad, "zh")
-        defs = [DefinitionTuple("​".join(jieba.cut(line[1])), "臺陸用法和差異")]
+        defs = [objects.DefinitionTuple("​".join(jieba.cut(line[1])), "臺陸用法和差異", [])]
 
         entry = objects.Entry(trad, simp, pin, jyut, freq=freq, defs=defs)
         words.add(entry)

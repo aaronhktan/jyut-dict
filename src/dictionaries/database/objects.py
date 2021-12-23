@@ -14,7 +14,9 @@ SourceTuple = namedtuple(
     ],
 )
 
-
+# Option 1 for representing an entry: this class gives a basic structure for an object with
+# traditional, simplified, pinyin, jyutping, and definitions, with pinyin/jyutping/definitions
+# able to be set later via add_pinyin/add_jyutping/add_defs functions.
 class Entry(object):
     def __init__(self, trad="", simp="", pin="", jyut="", freq=0.0, defs=None):
         self.traditional = trad
@@ -70,7 +72,8 @@ class Entry(object):
     def append_to_defs(self, item):
         self.definitions.append(item)
 
-
+# Option 2: same as option 1, but with separate definitions from a
+# Mandarin source (cedict_eng) and a Cantonese source (canto_eng)
 class EntryWithCantoneseAndMandarin(Entry):
     def __init__(
         self,
@@ -91,7 +94,21 @@ class EntryWithCantoneseAndMandarin(Entry):
     def add_canto_eng(self, canto_eng):
         self.canto_english.append(canto_eng)
 
+# Basic structure for definitions with examples:
+# one or more examples per DefinitionTuple,
+# multiple DefinitionTuples in the defs array for the Entry object defined above, in this file
+DefinitionTuple = namedtuple("Definition", ["definition", "label", "examples"])
 
+# Basic stucture for an example:
+# - field for language of this example (ISO 693-3), e.g. "cmn" for Mandarin
+# - field for one pronunciation type (either Pinyin or Jyutping, not both)
+# - field for content (either simplified or traditional, not both)
+ExampleTuple = namedtuple("ExampleTuple", ["lang", "pron", "content"])
+
+# More complicated structure for an example:
+# - specifies an ID + may contain pronunciation for Mandarin and Cantonese +
+#   may contain traditional and simplified variants
+# - may be linked to one or more NonChineseSentence tuples
 ChineseSentence = namedtuple(
     "ChineseSentence",
     [

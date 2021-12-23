@@ -6,7 +6,7 @@ from pypinyin_dict.phrase_pinyin_data import cc_cedict
 from wordfreq import zipf_frequency
 
 from database import database, objects
-from database.utils import pinyin_to_tone_numbers
+from database.utils import pinyin_to_tone_numbers, change_pinyin_to_match_phrase
 
 from collections import namedtuple
 import json
@@ -24,47 +24,12 @@ import traceback
 #   - 不全: contains example "他所提出的理由，不全是對的", which contains a full-width comma
 #   - 那搭（Namibia): example of weird formatting
 
-DefinitionTuple = namedtuple("Definition", ["definition", "label", "examples"])
-ExampleTuple = namedtuple("ExampleTuple", ["lang", "pron", "content"])
-
 EXCLUDE_VARIANT_REGEX_PATTERN = re.compile(r"{\[.*\]\}")
 EXAMPLE_REGEX_PATTERN = re.compile(r"如：(.*)")
 WHITESPACE_REGEX_PATTERN = re.compile(r"[　 ]")
 VARIANT_PRONUNCIATION_REGEX_PATTERN = re.compile(r"\s\(變\).*")
 COLLOQUIAL_PRONUNCIATION_REGEX_PATTERN = re.compile(r"\s（語音）.*")
 STRANGE_ENTRY_REGEX_PATTERN = re.compile(r".*（.*\)")
-
-
-# Since the pinyin returned by lazy_pinyin doesn't always match the pinyin
-# given in the heteronym, attempt to replace pinyin corresponding to the
-# characters in this heteronym with the pinyin provided by the JSON file.
-#
-# e.g. example_text = "重新"; example_pinyin = "zhong4 xin1" (returned by lazy_pinyin)
-# trad = "重", phrase_pinyin = "chong2" (provided by JSON file)
-# means that we should convert "zhong4 xin1" to "chong2 xin1"
-def change_pinyin_to_match_phrase(example, example_pinyin, phrase, phrase_pinyin):
-    phrase_indices = [i.start() for i in re.finditer(phrase, example)]
-    example_pinyin_list = example_pinyin.split()
-    phrase_pinyin_list = phrase_pinyin.split()
-
-    for i in phrase_indices:
-        # I can't do a simple replacement with list slicing, because
-        # sometimes the example contains punctuation that the pinyin does not have
-        # (e.g. "三十年河東，三十年河西" -> "san1 shi2 nian2 he2 dong1 san1 shi2 nian2 he2 xi1")
-        # so we must loop through the example, ignoring punctuation
-        example_index = 0
-        phrase_pinyin_index = 0
-        while phrase_pinyin_index < len(phrase_pinyin_list):
-            if example_pinyin_list[i + example_index] == "，":
-                example_index += 1
-                continue
-            example_pinyin_list[i + example_index] = phrase_pinyin_list[
-                phrase_pinyin_index
-            ]
-            example_index += 1
-            phrase_pinyin_index += 1
-
-    return " ".join(example_pinyin_list)
 
 
 def insert_example(c, definition_id, starting_example_id, example):
@@ -233,7 +198,7 @@ def parse_file(filename, words):
                     label = definition["type"] if "type" in definition else ""
 
                     # Insert zero-width spaces so that we can reverse-search the definition
-                    def_tuple = DefinitionTuple(
+                    def_tuple = objects.DefinitionTuple(
                         "​".join(jieba.cut(definition["def"])), label, []
                     )
 
@@ -315,7 +280,7 @@ def parse_file(filename, words):
                                         traceback.print_exc()
 
                                 def_tuple.examples.append(
-                                    ExampleTuple("cmn", example_pinyin, example_text)
+                                    objects.ExampleTuple("cmn", example_pinyin, example_text)
                                 )
 
                     # Parse and add quotes to this definition
@@ -354,7 +319,7 @@ def parse_file(filename, words):
                                     )
                                     traceback.print_exc()
                             def_tuple.examples.append(
-                                ExampleTuple("zho", quote_pinyin, quote_text)
+                                objects.ExampleTuple("zho", quote_pinyin, quote_text)
                             )
 
                     # We currently ignore synonyms, antonyms, and "see also" links, because they are
