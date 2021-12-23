@@ -89,6 +89,9 @@ CMakeLists.txt.user*
 **/cuhk/archive_*
 **/cuhk/data/*
 **/cuhk/developer/*
+**/dacidian/archive_*
+**/dacidian/data/*
+**/dacidian/developer/*
 **/kaifangcidian/archive_*
 **/kaifangcidian/data/*
 **/kaifangcidian/developer/*
