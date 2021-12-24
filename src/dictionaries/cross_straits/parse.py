@@ -30,8 +30,10 @@ import traceback
 #   - 傍邊兒: contains "biār", has a colloquial use (〈口〉)
 #   - 如: contains definitions with preposition POS label and conjunction POS label
 #   - 全銜: incorrect Pinyin (xíɑn) which confuses dragonmapper
+#   - 㾕: has an example which contains an enumeration comma
 
 EXAMPLE_REGEX_PATTERN = re.compile(r"例⃝(.*?)。+")
+INDIVIDUAL_EXAMPLE_REGEX_PATTERN = re.compile(r"「(.*?)」")
 WHITESPACE_REGEX_PATTERN = re.compile(r"[　 ]")
 VARIANT_PRONUNCIATION_REGEX_PATTERN = re.compile(r"\s\(變\).*")
 COLLOQUIAL_PRONUNCIATION_REGEX_PATTERN = re.compile(r"\s（語音）.*")
@@ -81,7 +83,13 @@ def insert_example(c, definition_id, starting_example_id, example):
 
     # Check if example insertion was successful
     if example_id == -1:
-        return 0
+        # If insertion was not successful, it might be because the example already exists in the database
+        # Attempt to get the id of the row that contains that example
+        example_id = database.get_chinese_sentence_id(c, trad, simp, pin, jyut, lang)
+
+        # Something has gone wrong if unable to insert and unable to retrieve the id - bail out here
+        if example_id == -1:
+            return 0
     else:
         examples_inserted += 1
 
@@ -207,7 +215,7 @@ def parse_file(filename, words):
             # Go through each heteronym, creating Entry objects for each one
             for heteronym in item["heteronyms"]:
                 if "pinyin" not in heteronym:
-                    logging.error(
+                    logging.debug(
                         f'Could not find pinyin for heteronym of word {trad} with definitions {heteronym["definitions"]}'
                     )
                     continue
@@ -341,18 +349,22 @@ def parse_file(filename, words):
                     if "example" in definition:
                         for example in definition["example"]:
                             if re.match(EXAMPLE_REGEX_PATTERN, example):
-                                example_texts = (
-                                    # Every example is surrounded by "例⃝<example>。", so only keep the example
-                                    re.match(EXAMPLE_REGEX_PATTERN, example).group(1)
-                                    # Some examples contain multiple examples, so split them up by the enumeration comma
-                                    .split("、")
+                                # Every example is surrounded by "如：<example>", so only keep the example
+                                example = re.match(
+                                    EXAMPLE_REGEX_PATTERN, example
+                                ).group(1)
+                                # Some examples contain multiple examples, so split them up by the enumeration comma
+                                example_texts = re.findall(
+                                    INDIVIDUAL_EXAMPLE_REGEX_PATTERN, example
                                 )
                             else:
+                                logging.warning(
+                                    f"Found example that does not fit the normal example regex pattern: {trad}, {example}"
+                                )
+                                # Fall back to splitting on Chinese enumeration comma
                                 example_texts = example.split("、")
 
                             for example_text in example_texts:
-                                # Strip out Chinese quotation marks at the beginning and end of the example
-                                example_text = example_text.strip("「」")
                                 # Strip out weird whitespace
                                 example_text = re.sub(
                                     WHITESPACE_REGEX_PATTERN, "", example_text
@@ -420,13 +432,13 @@ def parse_file(filename, words):
                                     if index == 0:
                                         taiwan_def_tuple.examples.append(
                                             objects.ExampleTuple(
-                                                "cmn", example_pinyin, example_text
+                                                "zho", example_pinyin, example_text
                                             )
                                         )
                                     elif index == 1:
                                         mainland_def_tuple.examples.append(
                                             objects.ExampleTuple(
-                                                "cmn", example_pinyin, example_text
+                                                "zho", example_pinyin, example_text
                                             )
                                         )
 
