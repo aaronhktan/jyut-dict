@@ -4,19 +4,19 @@
 <context>
     <name>AboutWindow</name>
     <message>
-        <location filename="../../windows/aboutwindow.cpp" line="+159"/>
+        <location filename="../../windows/aboutwindow.cpp" line="+161"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
     <message>
-        <location line="-91"/>
-        <location line="+82"/>
+        <location line="-89"/>
+        <location line="+80"/>
         <source>Build %1</source>
         <translation>版本：%1</translation>
     </message>
     <message>
-        <location line="-54"/>
-        <location line="+55"/>
+        <location line="-52"/>
+        <location line="+53"/>
         <source>View on Github...</source>
         <translation>在Github上查看…</translation>
     </message>
@@ -24,7 +24,7 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="+123"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="+155"/>
         <source>Automatically check for updates on startup:</source>
         <translation>自动检查更新：</translation>
     </message>
@@ -34,17 +34,123 @@
         <translation>使用深色模式：</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+3"/>
+        <source>Export dictionaries file:</source>
+        <translation>导出词典文件：</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Export saved words and history:</source>
+        <translation>导出保存的词语和搜索历史：</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <location line="+1"/>
+        <source>Export</source>
+        <translation>导出</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Restore dictionaries file to last backed up version:</source>
+        <translation>使用先前备份的词典文件恢复你的词典：</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Restore dictionaries file using exported file:</source>
+        <translation>使用先前导出的文件恢复你的词典：</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Restore saved words and history file using exported file:</source>
+        <translation>使用先前导出的文件恢复保存的词语和搜索历史：</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <location line="+1"/>
+        <location line="+1"/>
+        <source>Restore</source>
+        <translation>恢复</translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>Application language:</source>
         <translation>软件语言：</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Back up</source>
-        <translation>备份</translation>
+        <location line="+132"/>
+        <source>Dictionary export succeeded!</source>
+        <translation>词典文件导出成功！</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Dictionary export failed.</source>
+        <translation>词典文件导出失败。</translation>
     </message>
     <message>
         <location line="+2"/>
+        <source>Exporting dictionaries...</source>
+        <translation>正在导出词典文件…</translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>Saved words and history export succeeded!</source>
+        <translation>保存的词语和搜索历史导出成功！</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Saved words and history export failed.</source>
+        <translation>保存的词语和搜索历史导出失败。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Exporting saved words and history...</source>
+        <translation>正在导出保存的词语和搜索历史…</translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <location line="+34"/>
+        <source>Dictionary restore succeeded! %1 will now restart.</source>
+        <translation>词典恢复成功！%1会立即重新启动。</translation>
+    </message>
+    <message>
+        <location line="-31"/>
+        <location line="+34"/>
+        <source>Dictionary restore failed! Jyut Dictionary will now restart.</source>
+        <translation>词典恢复失败！%1会立即重新启动。</translation>
+    </message>
+    <message>
+        <location line="-32"/>
+        <location line="+39"/>
+        <source>Restoring dictionary...</source>
+        <translation>正在恢复词典文件…</translation>
+    </message>
+    <message>
+        <location line="-16"/>
+        <source>Exported dictionary file path</source>
+        <translation>另存为</translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <source>Exported saved words and history path</source>
+        <translation>另存为</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Saved words and history restore succeeded! %1 will now restart.</source>
+        <translation>保存的词语和搜索历史恢复成功！%1会立即重新启动。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Saved words and history restore failed! %1 will now restart.</source>
+        <translation>保存的词语和搜索历史恢复成功！%1会立即重新启动。</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Restoring saved words and history...</source>
+        <translation>正在恢复保存的词语和搜索历史…</translation>
+    </message>
+    <message>
+        <location line="-309"/>
         <source>Use system language</source>
         <translation>系统默认</translation>
     </message>
@@ -64,22 +170,18 @@
         <translation>繁体中文</translation>
     </message>
     <message>
-        <location line="+107"/>
+        <location line="+115"/>
+        <location line="+44"/>
         <source>Path to save exported database</source>
         <translation>保存文件至</translation>
     </message>
     <message>
-        <location line="-112"/>
+        <location line="-164"/>
         <source>French (CA)</source>
         <translation>法文（加拿大）</translation>
     </message>
     <message>
-        <location line="-8"/>
-        <source>Back up saved words and history:</source>
-        <translation>备份您保存的词语和搜索历史：</translation>
-    </message>
-    <message>
-        <location line="+9"/>
+        <location line="+1"/>
         <source>French</source>
         <translation>法文</translation>
     </message>
@@ -97,7 +199,7 @@
 <context>
     <name>ContactTab</name>
     <message>
-        <location filename="../../components/settings/contacttab.cpp" line="+150"/>
+        <location filename="../../components/settings/contacttab.cpp" line="+146"/>
         <source>Email...</source>
         <translation>发送电子邮件…</translation>
     </message>
@@ -140,22 +242,17 @@
         <translation>网站</translation>
     </message>
     <message>
-        <location line="-33"/>
+        <location line="-29"/>
         <source>Select dictionary file</source>
         <translation>选择词典文件</translation>
     </message>
     <message>
-        <location line="+51"/>
+        <location line="+62"/>
         <source>Version: %1</source>
         <translation>版本： %1</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>About %1</source>
-        <translation>关于 %1</translation>
-    </message>
-    <message>
-        <location line="+51"/>
+        <location line="+50"/>
         <source>Dropping search indexes...</source>
         <translation>正在删除搜索索引…</translation>
     </message>
@@ -240,7 +337,7 @@
 <context>
     <name>EntryActionWidget</name>
     <message>
-        <location filename="../../components/entryview/entryactionwidget.cpp" line="+109"/>
+        <location filename="../../components/entryview/entryactionwidget.cpp" line="+105"/>
         <source>Saved!</source>
         <translation>已保存！</translation>
     </message>
@@ -255,7 +352,7 @@
         <translation>分享</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+97"/>
         <source>Path to save exported image</source>
         <translation>保存文件至</translation>
     </message>
@@ -286,15 +383,28 @@
 <context>
     <name>EntryViewSentenceCardSection</name>
     <message>
-        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="+87"/>
+        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="+85"/>
         <source>View all sentences →</source>
         <translation>查看所有例句 →</translation>
     </message>
 </context>
 <context>
+    <name>ExportDatabaseDialog</name>
+    <message>
+        <location filename="../../dialogs/exportdatabasedialog.cpp" line="+14"/>
+        <source>Database export complete!</source>
+        <translation>数据库导出完成！</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>OK</source>
+        <translation>确定</translation>
+    </message>
+</context>
+<context>
     <name>FavouriteSplitter</name>
     <message>
-        <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="+70"/>
+        <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="+79"/>
         <source>Saved Words</source>
         <translation>已保存的词语</translation>
     </message>
@@ -302,7 +412,7 @@
 <context>
     <name>HistoryWindow</name>
     <message>
-        <location filename="../../windows/historywindow.cpp" line="+64"/>
+        <location filename="../../windows/historywindow.cpp" line="+59"/>
         <location line="+11"/>
         <source>Search History</source>
         <translation>搜索历史</translation>
@@ -322,7 +432,7 @@
 <context>
     <name>LoadingWidget</name>
     <message>
-        <location filename="../../components/sentencecard/loadingwidget.cpp" line="+71"/>
+        <location filename="../../components/sentencecard/loadingwidget.cpp" line="+66"/>
         <source>Searching for example sentences...</source>
         <translation>搜索例句…</translation>
     </message>
@@ -361,7 +471,7 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="+84"/>
+        <location filename="../../windows/mainwindow.cpp" line="+87"/>
         <source>Database migration finished!</source>
         <translation>数据库迁移成功！</translation>
     </message>
@@ -371,31 +481,31 @@
         <translation>数据库迁移失败！</translation>
     </message>
     <message>
-        <location line="+160"/>
-        <location line="+161"/>
+        <location line="+155"/>
+        <location line="+395"/>
         <source>&amp;File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location line="-160"/>
-        <location line="+161"/>
+        <location line="-394"/>
+        <location line="+395"/>
         <source>&amp;Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location line="-160"/>
-        <location line="+162"/>
+        <location line="-394"/>
+        <location line="+396"/>
         <source>&amp;Window</source>
         <translation>窗口</translation>
     </message>
     <message>
-        <location line="-160"/>
-        <location line="+161"/>
+        <location line="-394"/>
+        <location line="+395"/>
         <source>&amp;Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location line="-159"/>
+        <location line="-393"/>
         <source>&amp;About</source>
         <translation>关于粤语词典</translation>
     </message>
@@ -416,12 +526,12 @@
     </message>
     <message>
         <location line="+2"/>
-        <location line="+171"/>
+        <location line="+399"/>
         <source>Change settings</source>
         <translation>更改设置</translation>
     </message>
     <message>
-        <location line="-169"/>
+        <location line="-397"/>
         <source>Close Window</source>
         <translation>关闭窗口</translation>
     </message>
@@ -481,14 +591,14 @@
         <translation>搜索繁体中文</translation>
     </message>
     <message>
-        <location line="+634"/>
+        <location line="+862"/>
         <source>Migrating database to new version...
 This might take a few minutes.
 Hang tight!</source>
         <translation>数据库迁移已启动，请稍等几分钟</translation>
     </message>
     <message>
-        <location line="-633"/>
+        <location line="-861"/>
         <source>Search Jyutping</source>
         <translation>搜索粤语拼音</translation>
     </message>
@@ -539,12 +649,12 @@ Hang tight!</source>
     </message>
     <message>
         <location line="-41"/>
-        <location line="+160"/>
+        <location line="+394"/>
         <source>&amp;Search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location line="+454"/>
+        <location line="+448"/>
         <source>Checking for update...</source>
         <translation>正在检查更新…</translation>
     </message>
@@ -633,6 +743,19 @@ Hang tight!</source>
     </message>
 </context>
 <context>
+    <name>RestoreDatabaseDialog</name>
+    <message>
+        <location filename="../../dialogs/restoredatabasedialog.cpp" line="+14"/>
+        <source>Database restore complete!</source>
+        <translation>数据库恢复完成！</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>OK</source>
+        <translation>确定</translation>
+    </message>
+</context>
+<context>
     <name>ResultListModel</name>
     <message>
         <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="+85"/>
@@ -681,7 +804,7 @@ Hang tight!</source>
 <context>
     <name>SQLDatabaseUtils</name>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="+472"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="+517"/>
         <source>Failed to delete source from database...</source>
         <translation>移除词典失败</translation>
     </message>
@@ -696,7 +819,7 @@ Hang tight!</source>
         <translation>未能移除例句…</translation>
     </message>
     <message>
-        <location line="+352"/>
+        <location line="+385"/>
         <source>Database versions do not match. Only dictionaries with the same versions can be added.</source>
         <translation>数据库版本不匹配！只能可添加一样版本的词典。</translation>
     </message>
@@ -734,7 +857,7 @@ Hang tight!</source>
 <context>
     <name>SearchHistoryListDelegate</name>
     <message>
-        <location filename="../../components/historyview/searchhistorylistdelegate.cpp" line="+118"/>
+        <location filename="../../components/historyview/searchhistorylistdelegate.cpp" line="+106"/>
         <source>After searching for a word, you will find it in this list. Selecting a word will allow you to do the same search again.</source>
         <translation>您查词典之后就会在这里找到您的搜素历史。如果您想再次搜素，您可以选择表中的任何一个词语。</translation>
     </message>
@@ -750,7 +873,7 @@ Hang tight!</source>
 <context>
     <name>SearchHistoryTab</name>
     <message>
-        <location filename="../../components/historyview/searchhistorytab.cpp" line="+83"/>
+        <location filename="../../components/historyview/searchhistorytab.cpp" line="+82"/>
         <source>Clear All Search History</source>
         <translation>清除搜索历史</translation>
     </message>
@@ -758,7 +881,7 @@ Hang tight!</source>
 <context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+146"/>
+        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+145"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
@@ -766,7 +889,7 @@ Hang tight!</source>
 <context>
     <name>SearchOptionsRadioGroupBox</name>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="+116"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="+121"/>
         <source>SC</source>
         <translation>简体中文</translation>
     </message>
@@ -819,7 +942,7 @@ Hang tight!</source>
 <context>
     <name>SentenceSplitter</name>
     <message>
-        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="+84"/>
+        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="+112"/>
         <source>Sentences for %1 (%2 result)</source>
         <translation>用“%1“造句：（%2 条结果）</translation>
     </message>
@@ -832,7 +955,7 @@ Hang tight!</source>
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="+198"/>
+        <location filename="../../components/settings/settingstab.cpp" line="+194"/>
         <source>Reset all settings</source>
         <translation>重置所有设置</translation>
     </message>
@@ -952,7 +1075,7 @@ Hang tight!</source>
 <context>
     <name>SettingsWindow</name>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="+127"/>
+        <location filename="../../windows/settingswindow.cpp" line="+123"/>
         <source>General</source>
         <translation>通用</translation>
     </message>
@@ -983,14 +1106,9 @@ Hang tight!</source>
     </message>
 </context>
 <context>
-    <name>UpdateWindow</name>
+    <name>UpdateAvailableWindow</name>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="+151"/>
-        <source>Update Available!</source>
-        <translation>更新可用！</translation>
-    </message>
-    <message>
-        <location line="-16"/>
+        <location filename="../../windows/updatewindow.cpp" line="+135"/>
         <source>A new version of %1 is available!</source>
         <translation>%1的新版本已可用！</translation>
     </message>
@@ -1015,7 +1133,12 @@ Hang tight!</source>
         <translation>下载</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location line="+3"/>
+        <source>Update Available!</source>
+        <translation>更新可用！</translation>
+    </message>
+    <message>
+        <location line="+19"/>
         <source>Hide details</source>
         <translation>隐藏详细信息…</translation>
     </message>
@@ -1047,7 +1170,7 @@ Hang tight!</source>
 <context>
     <name>ViewHistoryTab</name>
     <message>
-        <location filename="../../components/historyview/viewhistorytab.cpp" line="+83"/>
+        <location filename="../../components/historyview/viewhistorytab.cpp" line="+82"/>
         <source>Clear All View History</source>
         <translation>清除查看历史</translation>
     </message>
@@ -1056,18 +1179,18 @@ Hang tight!</source>
     <name>strings</name>
     <message>
         <location filename="../../logic/strings/strings.h" line="+16"/>
-        <location line="+71"/>
+        <location line="+73"/>
         <source>JP</source>
         <translation>粤拼</translation>
     </message>
     <message>
-        <location line="-70"/>
-        <location line="+71"/>
+        <location line="-72"/>
+        <location line="+73"/>
         <source>PY</source>
         <translation>拼音</translation>
     </message>
     <message>
-        <location line="-70"/>
+        <location line="-72"/>
         <source>DEFINITIONS</source>
         <translation>解释</translation>
     </message>
@@ -1092,7 +1215,7 @@ Hang tight!</source>
         <translation>图标使用 &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Commons 古汉字计划&lt;/a&gt; 的图片创造。&lt;br&gt;界面图标来源：&lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt;和&lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;。&lt;br&gt;使用 &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 编程。</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="+14"/>
         <source>%1 is made with ❤️ by Aaron Tan.</source>
         <translation>%1由谭可峰精心打造。</translation>
     </message>

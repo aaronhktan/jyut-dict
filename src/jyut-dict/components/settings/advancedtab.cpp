@@ -2,6 +2,7 @@
 
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -396,10 +397,14 @@ void AdvancedTab::exportDatabaseResult(bool succeeded,
 
 void AdvancedTab::restoreBackedUpDictionaryDatabase(void)
 {
-    QString successText{tr("Dictionary restore succeeded! Jyut "
-                           "Dictionary will now restart.")};
+    QString successText{
+        tr("Dictionary restore succeeded! %1 will now restart.")
+            .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                             Strings::PRODUCT_NAME))};
     QString failureText{
-        tr("Dictionary restore failed! Jyut Dictionary will now restart.")};
+        tr("Dictionary restore failed! %1 will now restart.")
+            .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                             Strings::PRODUCT_NAME))};
 
     showProgressDialog(tr("Restoring dictionary..."));
 
@@ -430,10 +435,15 @@ void AdvancedTab::restoreExportedDictionaryDatabase(void)
         return;
     }
 
-    QString successText{tr("Dictionary restore succeeded! Jyut "
-                           "Dictionary will now restart.")};
+    QString successText{
+        tr("Dictionary restore succeeded! %1 will now restart.")
+            .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                             Strings::PRODUCT_NAME))};
+
     QString failureText{
-        tr("Dictionary restore failed! Jyut Dictionary will now restart.")};
+        tr("Dictionary restore failed! %1 will now restart.")
+            .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                             Strings::PRODUCT_NAME))};
 
     if (!QFile::exists(sourceFileName)) {
         restoreDatabaseResult(false, successText, failureText);
@@ -475,11 +485,14 @@ void AdvancedTab::restoreExportedUserDatabase(void)
         return;
     }
 
-    QString successText{tr("Saved words and history restore succeeded! Jyut "
-                           "Dictionary will now restart.")};
-    QString failureText{tr("Saved words and history restore "
-                           "failed! Jyut Dictionary will now "
-                           "restart.")};
+    QString successText{
+        tr("Saved words and history restore succeeded! %1 will now restart.")
+            .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                             Strings::PRODUCT_NAME))};
+    QString failureText{
+        tr("Saved words and history restore failed! %1 will now restart.")
+            .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                             Strings::PRODUCT_NAME))};
 
     if (!QFile::exists(sourceFileName)) {
         restoreDatabaseResult(false, successText, failureText);
