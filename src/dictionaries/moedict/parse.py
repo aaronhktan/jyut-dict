@@ -219,7 +219,7 @@ def parse_file(filename, words):
                                 example = re.match(
                                     EXAMPLE_REGEX_PATTERN, example
                                 ).group(1)
-                                # Some examples contain multiple examples, so split them up by the enumeration comma
+                                # Some examples contain multiple examples, so split them up by enclosing brackets 「」
                                 example_texts = re.findall(
                                     INDIVIDUAL_EXAMPLE_REGEX_PATTERN, example
                                 )
