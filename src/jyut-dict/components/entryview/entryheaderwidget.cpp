@@ -188,7 +188,10 @@ void EntryHeaderWidget::setEntry(std::string word,
 
 void EntryHeaderWidget::setStyle(bool use_dark)
 {
-    _wordLabel->setStyleSheet("QLabel { font-size: 30px }");
+    _wordLabel->setStyleSheet("QLabel { "
+                              "  font-size: 30px; "
+                              "  font-family: Noto Serif CJK HK; "
+                              "}");
 
     QString styleSheet = "QLabel { color: %1; }";
     QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,

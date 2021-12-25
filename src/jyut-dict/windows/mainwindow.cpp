@@ -31,9 +31,13 @@
 
 #include <memory>
 
+#include <QFontDatabase>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
+    QFontDatabase::addApplicationFont(":/fonts/NotoSerifCJKhk-Regular.otf");
+
     // Set window size
     setMinimumSize(QSize{800, 600});
 

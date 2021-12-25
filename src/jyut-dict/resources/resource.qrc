@@ -58,5 +58,6 @@
         <file>images/check_box_unchecked.svg</file>
         <file>images/radio_button_checked.svg</file>
         <file>images/radio_button_unchecked.svg</file>
+        <file>fonts/NotoSerifCJKhk-Regular.otf</file>
     </qresource>
 </RCC>
