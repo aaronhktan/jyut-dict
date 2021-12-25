@@ -19,7 +19,6 @@ import sys
 # Structure of entries: a WORD contains multiple MEANINGS
 # A MEANING contains multiple DEFINITIONS in different languages, as well
 # as EXAMPLES
-ExampleTuple = namedtuple("ExampleTuple", ["lang", "pron", "content"])
 DefinitionTuple = namedtuple("DefinitionTuple", ["lang", "content"])
 MeaningTuple = namedtuple(
     "Meaning", ["label", "definitions", "examplephrases", "examplesentences"]
@@ -224,7 +223,7 @@ def parse_examples(ex_elem, classname):
             pronunciation = ""
 
         content = ex_div.text.strip()
-        ex.append(ExampleTuple(lang, pronunciation, content))
+        ex.append(objects.ExampleTuple(lang, pronunciation, content))
     return ex
 
 
