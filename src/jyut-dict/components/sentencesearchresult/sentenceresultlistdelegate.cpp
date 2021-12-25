@@ -125,10 +125,11 @@ void SentenceResultListDelegate::paint(QPainter *painter,
 
     // Chinese characters
     painter->save();
-#ifdef Q_OS_WIN
     QFont oldFont = font;
-    font = QFont("Microsoft Yahei");
+#ifdef Q_OS_WIN
+    font = QFont{"Microsoft Yahei"};
 #endif
+    font = QFont{"Noto Serif CJK HK"};
     font.setPixelSize(20);
     painter->setFont(font);
     if (option.state &QStyle::State_Selected) {
@@ -155,9 +156,7 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     delete doc;
 
     // Phonetic and definition snippets
-#ifdef Q_OS_WIN
     font = oldFont;
-#endif
     QString snippet;
     font.setPixelSize(12);
     painter->setFont(font);

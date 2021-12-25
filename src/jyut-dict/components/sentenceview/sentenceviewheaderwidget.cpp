@@ -274,8 +274,14 @@ void SentenceViewHeaderWidget::setStyle(bool use_dark)
     _sourceLanguageLabel->setMinimumHeight(borderRadius * 2);
     _sourceLanguageLabel->resize(_sourceLanguageLabel->sizeHint());
 
-    _simplifiedLabel->setStyleSheet("QLabel { font-size: 24px }");
-    _traditionalLabel->setStyleSheet("QLabel { font-size: 24px }");
+    _simplifiedLabel->setStyleSheet("QLabel { "
+                                    "  font-size: 24px; "
+                                    "  font-family: Noto Serif CJK HK; "
+                                    "}");
+    _traditionalLabel->setStyleSheet("QLabel { "
+                                     "  font-size: 24px; "
+                                     "  font-family: Noto Serif CJK HK; "
+                                     "}");
 
     QString styleSheet = "QLabel { color: %1; }";
     _jyutpingLabel->setStyleSheet(styleSheet.arg(textColour.name()));
