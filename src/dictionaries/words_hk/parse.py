@@ -1,6 +1,4 @@
-from bs4 import BeautifulSoup
 from hanziconv import HanziConv
-import hanzidentifier
 import jieba
 from pypinyin import lazy_pinyin, Style
 from pypinyin_dict.phrase_pinyin_data import cc_cedict
@@ -9,36 +7,31 @@ from wordfreq import zipf_frequency
 from database import database, objects
 
 from collections import defaultdict, namedtuple
+import copy
+import csv
+from itertools import chain
 import logging
-import os
+import re
 import sqlite3
 import sys
+import traceback
 
-# NOTE: This parser will will only parse words.hk pages saved before the 2021 redesign!
+PART_OF_SPEECH_REGEX = re.compile(r"\(pos:(.*?)\)")
+LABEL_REGEX = re.compile(r"\(label:(.*?)\)")
+NEAR_SYNONYM_REGEX = re.compile(r"\(sim:(.*?)\)")
+ANTONYM_REGEX = re.compile(r"\(ant:(.*?)\)")
 
-# Structure of entries: a WORD contains multiple MEANINGS
-# A MEANING contains multiple DEFINITIONS in different languages, as well
-# as EXAMPLES
-DefinitionTuple = namedtuple("DefinitionTuple", ["lang", "content"])
-MeaningTuple = namedtuple(
-    "Meaning", ["label", "definitions", "examplephrases", "examplesentences"]
-)
-WordTuple = namedtuple("Word", ["word", "pronunciation", "meanings"])
 
-# Useful test pages:
-#   - 脂粉客 for malformed entry (or old entry)
-#   - 了 for multiple meanings, multiple examples
-#   - 一戙都冇 for multiple header words
-#   - 是 for item with label and POS
-#   - 印 for item with different POS for different meanings
-#   - 使勁 for broken sentence
-#   - 鬼靈精怪 for multiple different pronunciations
-#   - 掌 and 撻 for different definitions (腳掌, 撻沙) with the same English translation (sole)
+def read_csv(filename):
+    with open(filename) as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            yield row
 
 
 def insert_example(c, definition_id, starting_example_id, example):
-    # The example should be a list of ExampleTuples, such that
-    # the first item is the 'source', and all subsequent ones are the
+    # The example should be a list of Example objects, such that
+    # the first item is the 'source', and all subsequent items are the
     # translations
     examples_inserted = 0
 
@@ -100,60 +93,35 @@ def insert_words(c, words):
 
     for key in words:
         for entry in words[key]:
-            trad = entry.word
-            simp = HanziConv.toSimplified(trad)
-            jyut = entry.pronunciation
-            pin = (
-                " ".join(
-                    lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True)
-                )
-                .lower()
-                .replace("v", "u:")
-            )
-            freq = zipf_frequency(trad, "zh")
+            trad = entry.traditional
+            simp = entry.simplified
+            jyut = entry.jyutping
+            pin = entry.pinyin
+            freq = entry.freq
 
             entry_id = database.get_entry_id(c, trad, simp, pin, jyut, freq)
 
             if entry_id == -1:
                 entry_id = database.insert_entry(c, trad, simp, pin, jyut, freq, None)
                 if entry_id == -1:
-                    logging.error(f"Could not insert word {trad}, uh oh!")
+                    logging.warning(f"Could not insert word {trad}, uh oh!")
                     continue
 
             # Insert each meaning for the entry
-            for meaning in entry.meanings:
-                definitions = []
-                for definition in meaning.definitions:
-                    # Insert a zero-width space between Chinese words so that
-                    # fts5 properly indexes them
-                    is_chinese = hanzidentifier.is_simplified(
-                        definition.content
-                    ) or hanzidentifier.is_traditional(definition.content)
-                    if is_chinese:
-                        definitions.append("​".join(jieba.cut(definition.content)))
-                    else:
-                        definitions.append(definition.content)
-                definition = "\r\n".join(definitions)
-
+            for definition in entry.definitions:
                 definition_id = database.insert_definition(
-                    c, definition, meaning.label, entry_id, 1, None
+                    c, definition.definition, definition.label, entry_id, 1, None
                 )
                 if definition_id == -1:
-                    logging.error(
+                    logging.warning(
                         f"Could not insert definition {definition} for word {trad}, uh oh!"
                     )
                     continue
 
                 # Insert examples for each meaning
-                for sentence in meaning.examplesentences:
+                for example in definition.examples:
                     examples_inserted = insert_example(
-                        c, definition_id, example_id, sentence
-                    )
-                    example_id += examples_inserted
-
-                for phrase in meaning.examplephrases:
-                    examples_inserted = insert_example(
-                        c, definition_id, example_id, phrase
+                        c, definition_id, example_id, example
                     )
                     example_id += examples_inserted
 
@@ -191,187 +159,225 @@ def write(db_name, source, words):
     db.close()
 
 
-def parse_definitions(def_elem):
-    try:
-        # Extract the language of this definition, and then remove it from the
-        # tree
-        lang_tag = def_elem.find("span", class_="zi-item-lang", recursive=False)
-        lang = lang_tag.text.strip("()")
-        lang_tag.decompose()
-    except BaseException:
-        lang = "yue"  # Assume Cantonese definition if no lang tag found
+def process_entry(line):
+    entries = []
 
-    # Get the textual content of the definition
-    content = def_elem.text.strip()
+    # Parse the entry header
+    header = line[1].strip('"')
+    variants = header.split(",")
 
-    return DefinitionTuple(lang, content)
+    trad = variants[0].split(":")[0]
+    simp = HanziConv.toSimplified(trad)
+    jyut = variants[0].split(":")[1] if len(header.split(":")) >= 2 else ""
+    pin = (
+        " ".join(lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True))
+        .lower()
+        .replace("v", "u:")
+    )
+    freq = zipf_frequency(trad, "zh")
 
+    entry = objects.Entry(trad=trad, simp=simp, jyut=jyut, pin=pin, freq=freq)
 
-def parse_examples(ex_elem, classname):
-    ex = []
-    ex_divs = ex_elem.find_all("div", class_=None, recursive=False)
-    for ex_div in ex_divs:
-        lang_tag = ex_div.find("span", class_="zi-item-lang")
-        lang = lang_tag.text.strip("()")
-        lang_tag.decompose()
+    # Parse other variants, if they exist
+    variants = list(map(lambda x: x.split(":"), variants))
 
-        pronunciation_tag = ex_div.find("span", class_=classname)
-        if pronunciation_tag:
-            pronunciation = pronunciation_tag.text.strip("()")
-            pronunciation_tag.decompose()
-        else:
-            pronunciation = ""
+    # Parse the entry content: explnations, examples
+    content = line[2]
+    if content.startswith("未有內容"):
+        entry.append_to_defs(objects.Definition(definition="x"))
+        return [entry]
 
-        content = ex_div.text.strip()
-        ex.append(objects.ExampleTuple(lang, pronunciation, content))
-    return ex
+    entry_labels = []
+    near_synonyms = []
+    antonyms = []
 
+    # Explanations are separated by both '<explanation>' tags and '----' tags
+    explanations = content.split("<explanation>")
+    explanations = map(lambda x: x.split("----"), explanations)
+    explanations = list(chain.from_iterable(explanations))
 
-def log_word(word):
-    # Logging for debug purposes
-    logging.debug(" ".join([word.word, word.pronunciation]))
-    for index, meaning in enumerate(word.meanings):
-        logging.debug(f"Meaning {index}:")
-        for definition in meaning.definitions:
-            logging.debug(
-                " ".join(["\tDefinition:", definition.lang, definition.content])
+    for explanation_index, explanation in enumerate(explanations):
+        if not explanation.strip():
+            continue
+
+        parse_explanation = True
+
+        if explanation_index == 0:
+            # The first item contains metadata about the entry
+            parse_explanation = False
+
+            for x in re.findall(PART_OF_SPEECH_REGEX, explanation):
+                entry_labels.append(x)
+            for x in re.findall(LABEL_REGEX, explanation):
+                entry_labels.append(x)
+            for x in re.findall(NEAR_SYNONYM_REGEX, explanation):
+                near_synonyms.append(x)
+            for x in re.findall(ANTONYM_REGEX, explanation):
+                antonyms.append(x)
+
+            # However, for some items, such as id 89764, the first item also contains the explanation
+            if explanation.find("yue:") != -1:
+                explanation = explanation[explanation.find("yue:") + 1 :]
+                parse_explanation = True
+
+        if parse_explanation:
+            definition = objects.Definition(label="、".join(entry_labels), examples=[])
+
+            # Subsequent items contain explanations
+            for index, item in enumerate(explanation.split("<eg>")):
+                if index == 0:
+                    # The first item contains the explanation
+                    # Translations in different languages are separated by newlines
+                    explanation_translations = item.strip().split("\n")
+                    # Strip out links
+                    explanation_translations = map(
+                        lambda x: x.replace("#", ""), explanation_translations
+                    )
+                    # fmt: off
+                    # Segment the Chinese explanations so they show up in the FTS index 
+                    explanation_translations = map(
+                        lambda x: (x[:x.find(":")], x[x.find(":")+1:]),
+                        explanation_translations
+                    )
+                    explanation_translations = map(
+                        lambda x: (
+                            "​".join(jieba.cut(x[1]))
+                            if x[0] in ("yue", "zho")
+                            else x[1]
+                        ),
+                        explanation_translations
+                    )
+                    # fmt: on
+                    explanation = "\n".join(explanation_translations)
+                    definition.definition = explanation
+                else:
+                    # Subsequent items contain examples for this explanation
+                    definition.examples.append([])
+                    example_translations = item.strip().split("\n")
+                    # fmt: off
+                    # Strip out links
+                    example_translations = map(
+                        lambda x: x.replace("#", ""), example_translations
+                    )
+                    # fmt: on
+                    for translation in example_translations:
+                        if not translation or translation == "----":
+                            # Ignore lines that are not translations
+                            continue
+
+                        # fmt: off
+                        lang = translation[:translation.find(":")]
+                        if lang in ("yue", "zho"):
+                            # Example content ends before the first space with an opening parenthesis after it 
+                            # (which indicates the start of a romanization)
+                            # but some example don't have romanization, so filter for that
+                            if translation.find(" (") >= 0:
+                                content = translation[translation.find(":")+1:translation.find(" (")]
+                            else:
+                                content = translation[translation.find(":")+1:]
+                            # Pronunciation guide only exists for Cantonese examples
+                            pron = (
+                                translation[translation.find(" (")+1:].strip("()")
+                                if len(translation.split()) >= 2
+                                else ""
+                            )
+                            if lang == "yue":
+                                definition.examples[-1].insert(
+                                    0,
+                                    objects.Example(lang=lang, pron=pron, content=content)
+                                )
+                            else:
+                                definition.examples[-1].append(
+                                    objects.Example(lang=lang, content=content)
+                                )
+                        else:
+                            content = translation[translation.find(":")+1:]
+                            if not content:
+                                content = "x"
+                            definition.examples[-1].append(
+                                objects.Example(lang=lang, content=content)
+                            )
+                        # fmt: on
+
+            entry.append_to_defs(definition)
+
+    # Add synonyms, antonyms, and variants at the end
+    if near_synonyms:
+        entry.append_to_defs(
+            objects.Definition(
+                definition="、".join(near_synonyms), label="近義詞", examples=[]
             )
-        for i, phrases in enumerate(meaning.examplephrases):
-            logging.debug(f"\t\tPhrase {i}:")
-            for phrase in phrases:
-                logging.debug(
-                    " ".join(
-                        ["\t\t\tPhrase: ", phrase.lang, phrase.content, phrase.pron]
-                    )
+        )
+    if antonyms:
+        entry.append_to_defs(
+            objects.Definition(definition="、".join(antonyms), label="反義詞", examples=[])
+        )
+
+    # Generate entries for other variants
+    if len(variants) > 1:
+        # We've parsed variants[0] into `entry`, so the other variants are from index 1 onwards
+        for variant in variants[1:]:
+            variant_trad = variant[0]
+            variant_simp = HanziConv.toSimplified(trad)
+            variant_jyut = variant[1] if len(variant) >= 1 else ""
+            variant_pin = (
+                " ".join(
+                    lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True)
                 )
-        for i, sentences in enumerate(meaning.examplesentences):
-            logging.debug(f"\t\tSentence {i}:")
-            for sentence in sentences:
-                logging.debug(
-                    " ".join(
-                        [
-                            "\t\t\tSentence:",
-                            sentence.lang,
-                            sentence.content,
-                            sentence.pron,
-                        ]
-                    )
+                .lower()
+                .replace("v", "u:")
+            )
+            variant_freq = zipf_frequency(trad, "zh")
+
+            variant_entry = objects.Entry(
+                trad=variant_trad,
+                simp=variant_simp,
+                jyut=variant_jyut,
+                pin=variant_pin,
+                freq=variant_freq,
+                defs=copy.deepcopy(entry.definitions),
+            )
+            filtered_variants = filter(lambda x: x[0] != variant_trad, variants)
+            variant_entry.append_to_defs(
+                objects.Definition(
+                    definition="、".join([item[0] for item in filtered_variants]),
+                    label="參看",
+                    examples=[],
                 )
+            )
+            entries.append(variant_entry)
+
+        # Do not add variants whose Chinese characters match the current entry's characters into the current entry's "see also" section
+        filtered_variants = filter(lambda x: x[0] != trad, variants)
+        entry.append_to_defs(
+            objects.Definition(
+                definition="、".join([item[0] for item in filtered_variants]),
+                label="參看",
+                examples=[],
+            )
+        )
+
+    entries.append(entry)
+
+    return entries
 
 
-def parse_file(file_name, words):
-    with open(file_name, "r") as file:
-        soup = BeautifulSoup(file, "html.parser")
-        drafts = soup.find_all("div", class_="draft-version")
+def parse_file(filename, words):
+    index = 0
+    for line in read_csv(filename):
+        # Ignore first and second lines
+        if (len(line) > 1 and not line[0] and not line[1]) or (not line[0]):
+            index += 1
+            continue
 
-        # Each separate entry for a particular word is contained in a div with
-        # a class called "draft-version"
-        for draft in drafts:
-            word, _ = os.path.splitext(os.path.basename(file_name))
+        if not index % 500:
+            print(f"Parsed entry #{index}")
 
-            # In words with multiple written forms or pronunciations,
-            # try to parse the correct one
-            word_pronunciation = ""
-            written_forms = draft.find("tr", class_="zi-written-forms")
-            word_pronunciations = written_forms.find_all("li", class_=None)
-            if word_pronunciations:
-                for item in word_pronunciations:
-                    corresponding_word = "".join(
-                        item.find_all(text=True, recursive=False)
-                    ).strip()
-                    if corresponding_word == word:
-                        word_pronunciation = item.find(
-                            "span", class_="zi-pronunciation"
-                        ).text
-                        break
+        entries = process_entry(line)
+        for current_entry in entries:
+            words[current_entry.traditional].append(current_entry)
 
-            # If not able to find a corresponding pronunciation or there is only one,
-            # take the first one that exists in this entry
-            if not word_pronunciation:
-                word_pronunciation = draft.find("span", class_="zi-pronunciation").text
-
-            # The POS tag is in a class labelled zidin-pos
-            # Each draft has definitions for only one POS label, so if an entry like 印 is
-            # both a noun and a verb, words.hk separates it into two drafts.
-            pos_elem = draft.find("tr", class_="zidin-pos")
-            if pos_elem:
-                pos = pos_elem.find("span", class_=None).get_text()
-            else:
-                pos = ""
-
-            meanings = []
-            # This will find the table row containing meaning if there are multiple meanings
-            # If there are multiple meanings, they will be in an ordered list,
-            # so extract every item in the list.
-            try:
-                list_items = draft.find("tr", class_="zidin-explanation").find_all("li")
-                # This will find the table row containing meanings if there is
-                # a single meaning
-                if not list_items:
-                    list_items = [
-                        draft.find("tr", class_="zidin-explanation").find_all("td")[1]
-                    ]
-            except BaseException:
-                # If there is no zidin-explanation class, it might be an old page
-                # These do not contain good formatting, so just stick it into
-                # the list and call it a day
-                try:
-                    text = draft.find("li", class_=None).text
-                    definition = DefinitionTuple(
-                        "yue", text
-                    )  # Assume definition is in Cantonese
-                    meanings.append(MeaningTuple("", [definition], [], []))
-                    words[word].append(WordTuple(word, word_pronunciation, meanings))
-                    continue
-                except BaseException:
-                    # Malformed page, give up
-                    logging.warning(f"Failed to parse for item {word}")
-                    continue
-
-            logging.info(f"Parsing item {word}")
-            for list_item in list_items:
-                meaning = MeaningTuple(pos, [], [], [])
-
-                # Each definition for one meaning is contained in a classless
-                # div
-                def_divs = list_item.find_all("div", class_=None, recursive=False)
-                for def_div in def_divs:
-                    meaning.definitions.append(parse_definitions(def_div))
-
-                # Each example phrase for the definition is contained in a div
-                # with class zi-details-phrase-item
-                exphr_elems = list_item.find_all(
-                    "div", class_="zi-details-phrase-item", recursive=False
-                )
-                for exphr_elem in exphr_elems:
-                    meaning.examplephrases.append(
-                        parse_examples(exphr_elem, "zi-item-phrase-pronunciation")
-                    )
-
-                # Each example sentence for the definition is contained in a
-                # div with class zi-details-example-item
-                exsen_elems = list_item.find_all(
-                    "div", class_="zi-details-example-item", recursive=False
-                )
-                for exsen_elem in exsen_elems:
-                    meaning.examplesentences.append(
-                        parse_examples(exsen_elem, "zi-item-example-pronunciation")
-                    )
-
-                meanings.append(meaning)
-
-            word_tuple = WordTuple(word, word_pronunciation, meanings)
-            log_word(word_tuple)
-
-            words[word].append(word_tuple)
-
-
-def parse_folder(folder_name, words):
-    for index, entry in enumerate(os.scandir(folder_name)):
-        if not index % 100:
-            print(f"Parsed word #{index}")
-        if entry.is_file() and entry.path.endswith(".html"):
-            parse_file(entry.path, words)
+        index += 1
 
 
 if __name__ == "__main__":
@@ -379,14 +385,14 @@ if __name__ == "__main__":
         print(
             (
                 "Usage: python3 script.py <database filename> "
-                "<HTML folder> <source name> <source short name> "
+                "<all.csv file> <source name> <source short name> "
                 "<source version> <source description> <source legal> "
                 "<source link> <source update url> <source other>"
             )
         )
         print(
             (
-                "e.g. python3 script.py words_hk.db scraped/data/ 粵典–words.hk WHK 2020-07-14 "
+                "e.g. python3 script.py words_hk.db data/all.csv 粵典–words.hk WHK 2020-07-14 "
                 '"《粵典》係一個大型嘅粵語辭典計劃。我哋會用Crowd-sourcing嘅方法，整一本大型、可持續發展嘅粵語辭典。" '
                 '"https://words.hk/base/hoifong/" "https://words.hk/" "" ""'
             )
@@ -407,5 +413,5 @@ if __name__ == "__main__":
     )
     # logging.basicConfig(level='DEBUG') # Uncomment to enable debug logging
     parsed_words = defaultdict(list)
-    parse_folder(sys.argv[2], parsed_words)
+    parse_file(sys.argv[2], parsed_words)
     write(sys.argv[1], source, parsed_words)
