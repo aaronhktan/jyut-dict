@@ -1,6 +1,4 @@
-beautifulsoup4==4.10.0
 hanziconv==0.3.2
-hanzidentifier==1.0.2
 jieba==0.42.1
 msgpack==1.0.2
 pypinyin==0.43.0
