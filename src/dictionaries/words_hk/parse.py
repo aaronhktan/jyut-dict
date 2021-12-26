@@ -16,6 +16,23 @@ import sqlite3
 import sys
 import traceback
 
+# Useful test pages:
+#   - 93076 (脂粉客) for malformed entry (or old entry)
+#   - 55282 (了) for multiple meanings, multiple examples
+#   - 95881 (一戙都冇) for multiple header words
+#   - 84279 (是) for item with label and POS
+#   - 51495 (印) for item with different POS for different meanings
+#   - 84152 (使勁) for broken sentence
+#   - 73697 (鬼靈精怪) for variant with different pronunciation
+#   - 65669 (掌) and 111487 (撻) for different definitions (腳掌, 撻沙) with the same English translation (sole)
+#   - 5026 (滑坡): contains explanation in mandarin
+#   - 44110 (單打): multiple synonyms
+#   - 98534 (套): empty example
+#   - 89764 (奔馳): does not split up definition from metadata with <explanation>
+#   - 98809 (Benz): variants
+#   - 71732 (複製): example with space in it
+#   - 11369 (中國): multiple explanations that are not separated by <explanation>, contains explanation in japanese
+
 PART_OF_SPEECH_REGEX = re.compile(r"\(pos:(.*?)\)")
 LABEL_REGEX = re.compile(r"\(label:(.*?)\)")
 NEAR_SYNONYM_REGEX = re.compile(r"\(sim:(.*?)\)")
