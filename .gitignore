@@ -82,9 +82,9 @@ CMakeLists.txt.user*
 **.mp4
 
 # Data files
-**/abc/archive_*
-**/abc/data/*
-**/abc/developer/*
+**/abc_/archive_*
+**/abc_/data/*
+**/abc_/developer/*
 **/cantodict/archive_*
 **/cantodict/data/*
 **/cantodict/developer/*
