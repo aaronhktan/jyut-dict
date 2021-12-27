@@ -199,7 +199,9 @@ def process_entry(line):
         # Parse all the Jyutping
         pronunciations = variant.split(":")[1:]
         if not pronunciations:
-            entries.append(objects.Entry(trad=trad, simp=simp, jyut="", pin=pin, freq=freq))
+            entries.append(
+                objects.Entry(trad=trad, simp=simp, jyut="", pin=pin, freq=freq)
+            )
         else:
             for jyut in pronunciations:
                 # Non-standard Jyutping starts with an exclamation mark, e.g. !sdet1 or !sdaaf1
@@ -207,7 +209,9 @@ def process_entry(line):
                 if jyut.startswith("!"):
                     jyut = jyut[1:]
 
-                entries.append(objects.Entry(trad=trad, simp=simp, jyut=jyut, pin=pin, freq=freq))
+                entries.append(
+                    objects.Entry(trad=trad, simp=simp, jyut=jyut, pin=pin, freq=freq)
+                )
 
     # Parse the entry content: explanations, examples
     content = line[2]
@@ -307,7 +311,6 @@ def process_entry(line):
                                 content = translation[translation.find(":")+1:translation.find(" (")]
                             else:
                                 content = translation[translation.find(":")+1:]
-                            # Pronunciation guide only exists for Cantonese examples
                             pron = (
                                 translation[translation.find(" (")+1:].strip("()")
                                 if len(translation.split()) >= 2
