@@ -32,6 +32,9 @@ import traceback
 #   - 98809 (Benz): variants
 #   - 71732 (複製): example with space in it
 #   - 11369 (中國): multiple explanations that are not separated by <explanation>, contains explanation in japanese
+#   - 114718 (staff): non-standard Jyutping
+#   - 97459 (緡): multiple pronunciations
+#   - 62089 (投): no pronunciation
 
 PART_OF_SPEECH_REGEX = re.compile(r"\(pos:(.*?)\)")
 LABEL_REGEX = re.compile(r"\(label:(.*?)\)")
@@ -183,27 +186,37 @@ def process_entry(line):
     header = line[1].strip('"')
     variants = header.split(",")
 
-    trad = variants[0].split(":")[0]
-    simp = HanziConv.toSimplified(trad)
-    jyut = variants[0].split(":")[1] if len(header.split(":")) >= 2 else ""
-    pin = (
-        " ".join(lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True))
-        .lower()
-        .replace("v", "u:")
-    )
-    freq = zipf_frequency(trad, "zh")
+    for variant in variants:
+        trad = variant.split(":")[0]
+        simp = HanziConv.toSimplified(trad)
+        pin = (
+            " ".join(lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True))
+            .lower()
+            .replace("v", "u:")
+        )
+        freq = zipf_frequency(trad, "zh")
 
-    entry = objects.Entry(trad=trad, simp=simp, jyut=jyut, pin=pin, freq=freq)
+        # Parse all the Jyutping
+        pronunciations = variant.split(":")[1:]
+        if not pronunciations:
+            entries.append(objects.Entry(trad=trad, simp=simp, jyut="", pin=pin, freq=freq))
+        else:
+            for jyut in pronunciations:
+                # Non-standard Jyutping starts with an exclamation mark, e.g. !sdet1 or !sdaaf1
+                # Remove the exclamation mark
+                if jyut.startswith("!"):
+                    jyut = jyut[1:]
 
-    # Parse other variants, if they exist
-    variants = list(map(lambda x: x.split(":"), variants))
+                entries.append(objects.Entry(trad=trad, simp=simp, jyut=jyut, pin=pin, freq=freq))
 
-    # Parse the entry content: explnations, examples
+    # Parse the entry content: explanations, examples
     content = line[2]
     if content.startswith("未有內容"):
-        entry.append_to_defs(objects.Definition(definition="x"))
-        return [entry]
+        for entry in entries:
+            entry.append_to_defs(objects.Definition(definition="x"))
+        return entries
 
+    definitions = []
     entry_labels = []
     near_synonyms = []
     antonyms = []
@@ -234,7 +247,9 @@ def process_entry(line):
 
             # However, for some items, such as id 89764, the first item also contains the explanation
             if explanation.find("yue:") != -1:
-                explanation = explanation[explanation.find("yue:") + 1 :]
+                # fmt: off
+                explanation = explanation[explanation.find("yue:")+1:]
+                # fmt: on
                 parse_explanation = True
 
         if parse_explanation:
@@ -316,65 +331,37 @@ def process_entry(line):
                             )
                         # fmt: on
 
-            entry.append_to_defs(definition)
+            definitions.append(definition)
 
-    # Add synonyms, antonyms, and variants at the end
+    # Add synonyms, antonyms to list of definitions
     if near_synonyms:
-        entry.append_to_defs(
+        definitions.append(
             objects.Definition(
                 definition="、".join(near_synonyms), label="近義詞", examples=[]
             )
         )
     if antonyms:
-        entry.append_to_defs(
+        definitions.append(
             objects.Definition(definition="、".join(antonyms), label="反義詞", examples=[])
         )
 
-    # Generate entries for other variants
-    if len(variants) > 1:
-        # We've parsed variants[0] into `entry`, so the other variants are from index 1 onwards
-        for variant in variants[1:]:
-            variant_trad = variant[0]
-            variant_simp = HanziConv.toSimplified(trad)
-            variant_jyut = variant[1] if len(variant) >= 1 else ""
-            variant_pin = (
-                " ".join(
-                    lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True)
-                )
-                .lower()
-                .replace("v", "u:")
-            )
-            variant_freq = zipf_frequency(trad, "zh")
+    # Assign definitions to each entry
+    for entry in entries:
+        entry.add_defs(copy.deepcopy(definitions))
 
-            variant_entry = objects.Entry(
-                trad=variant_trad,
-                simp=variant_simp,
-                jyut=variant_jyut,
-                pin=variant_pin,
-                freq=variant_freq,
-                defs=copy.deepcopy(entry.definitions),
-            )
-            filtered_variants = filter(lambda x: x[0] != variant_trad, variants)
-            variant_entry.append_to_defs(
+    # Add variants to the definitions of an entry; these are unique for each entry
+    if len(variants) > 1:
+        variants = set(map(lambda x: x.split(":")[0], variants))
+        for entry in entries:
+            # Do not add variants whose Chinese characters match the current entry's characters into the current entry's "see also" section
+            filtered_variants = filter(lambda x: x != entry.traditional, variants)
+            entry.append_to_defs(
                 objects.Definition(
-                    definition="、".join([item[0] for item in filtered_variants]),
+                    definition="、".join(filtered_variants),
                     label="參看",
                     examples=[],
                 )
             )
-            entries.append(variant_entry)
-
-        # Do not add variants whose Chinese characters match the current entry's characters into the current entry's "see also" section
-        filtered_variants = filter(lambda x: x[0] != trad, variants)
-        entry.append_to_defs(
-            objects.Definition(
-                definition="、".join([item[0] for item in filtered_variants]),
-                label="參看",
-                examples=[],
-            )
-        )
-
-    entries.append(entry)
 
     return entries
 
@@ -409,7 +396,7 @@ if __name__ == "__main__":
         )
         print(
             (
-                "e.g. python3 script.py words_hk.db data/all.csv 粵典–words.hk WHK 2020-07-14 "
+                "e.g. python3 -m words_hk.parse words_hk.db words_hk/data/all.csv 粵典–words.hk WHK 2021-12-23 "
                 '"《粵典》係一個大型嘅粵語辭典計劃。我哋會用Crowd-sourcing嘅方法，整一本大型、可持續發展嘅粵語辭典。" '
                 '"https://words.hk/base/hoifong/" "https://words.hk/" "" ""'
             )
