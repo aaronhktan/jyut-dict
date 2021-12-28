@@ -35,11 +35,13 @@ import traceback
 #   - 114718 (staff): non-standard Jyutping
 #   - 97459 (緡): multiple pronunciations
 #   - 62089 (投): no pronunciation
+#   - 104619 (近義詞): item with a link in it
 
 PART_OF_SPEECH_REGEX = re.compile(r"\(pos:(.*?)\)")
 LABEL_REGEX = re.compile(r"\(label:(.*?)\)")
 NEAR_SYNONYM_REGEX = re.compile(r"\(sim:(.*?)\)")
 ANTONYM_REGEX = re.compile(r"\(ant:(.*?)\)")
+LINK_REGEX = re.compile(r"#(.*)\s")
 
 
 def read_csv(filename):
@@ -252,7 +254,7 @@ def process_entry(line):
             # However, for some items, such as id 89764, the first item also contains the explanation
             if explanation.find("yue:") != -1:
                 # fmt: off
-                explanation = explanation[explanation.find("yue:")+1:]
+                explanation = explanation[explanation.find("yue:"):]
                 # fmt: on
                 parse_explanation = True
 
@@ -267,7 +269,12 @@ def process_entry(line):
                     explanation_translations = item.strip().split("\n")
                     # Strip out links
                     explanation_translations = map(
-                        lambda x: x.replace("#", ""), explanation_translations
+                        lambda x: (
+                            re.sub(LINK_REGEX, r"\1", x).replace("#", "")
+                            if re.search(LINK_REGEX, x)
+                            else x.replace("#", "")
+                        ),
+                        explanation_translations
                     )
                     # fmt: off
                     # Segment the Chinese explanations so they show up in the FTS index 
