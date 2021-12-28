@@ -53,6 +53,12 @@ class Entry(object):
     def __hash__(self):
         return hash(self.__str__())
 
+    def add_traditional(self, trad):
+        self.traditional = trad
+
+    def add_simplified(self, simp):
+        self.simplified = simp
+
     def add_pinyin(self, pin):
         self.pinyin = pin
 
