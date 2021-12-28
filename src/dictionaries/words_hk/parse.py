@@ -41,7 +41,7 @@ PART_OF_SPEECH_REGEX = re.compile(r"\(pos:(.*?)\)")
 LABEL_REGEX = re.compile(r"\(label:(.*?)\)")
 NEAR_SYNONYM_REGEX = re.compile(r"\(sim:(.*?)\)")
 ANTONYM_REGEX = re.compile(r"\(ant:(.*?)\)")
-LINK_REGEX = re.compile(r"#(.*)\s")
+LINK_REGEX = re.compile(r"#(.*?)\s")
 
 
 def read_csv(filename):
@@ -135,10 +135,15 @@ def insert_words(c, words):
                     c, definition.definition, definition.label, entry_id, 1, None
                 )
                 if definition_id == -1:
-                    logging.warning(
-                        f"Could not insert definition {definition} for word {trad}, uh oh!"
+                    # Try to find definition if we got an error
+                    definition_id = database.get_definition_id(
+                        c, definition.definition, definition.label, entry_id, 1
                     )
-                    continue
+                    if definition_id == -1:
+                        logging.warning(
+                            f"Could not insert definition {definition} for word {trad}, uh oh!"
+                        )
+                        continue
 
                 # Insert examples for each meaning
                 for example in definition.examples:
@@ -274,7 +279,7 @@ def process_entry(line):
                             if re.search(LINK_REGEX, x)
                             else x.replace("#", "")
                         ),
-                        explanation_translations
+                        explanation_translations,
                     )
                     # fmt: off
                     # Segment the Chinese explanations so they show up in the FTS index 

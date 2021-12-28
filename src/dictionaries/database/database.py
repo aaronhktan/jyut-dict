@@ -288,6 +288,18 @@ def get_entry_id(c, trad, simp, pin, jyut, freq):
     return row[0]
 
 
+def get_definition_id(c, definition, label, entry_id, source_id):
+    c.execute(
+        """SELECT rowid FROM definitions WHERE definition=?
+            AND label=? AND fk_entry_id=? AND fk_source_id=?""",
+        (definition, label, entry_id, source_id),
+    )
+    row = c.fetchone()
+    if row is None:
+        return -1
+    return row[0]
+
+
 def get_chinese_sentence_id(c, trad, simp, pin, jyut, lang):
     c.execute(
         """SELECT rowid FROM chinese_sentences WHERE traditional=?
