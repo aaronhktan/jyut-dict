@@ -1,4 +1,5 @@
 dragonmapper==0.2.6
+hanziconv==0.3.2
 jieba==0.42.1
 pinyin_jyutping_sentence==1.0
 wordfreq==2.5.1

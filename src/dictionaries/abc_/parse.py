@@ -1,4 +1,5 @@
 from dragonmapper import transcriptions
+from hanziconv import HanziConv
 
 # import jieba
 # import pinyin_jyutping_sentence
@@ -6,9 +7,10 @@ from dragonmapper import transcriptions
 from database import database, objects
 
 from collections import defaultdict
-import enum
+from enum import Enum
 import logging
 import re
+import sqlite3
 import string
 import sys
 
@@ -44,6 +46,143 @@ class Type(Enum):
     SMUSHED = 41
 
 
+def insert_example(c, definition_id, starting_example_id, example):
+    # The example should be a list of Example objects, such that
+    # the first item is the 'source', and all subsequent items are the
+    # translations
+    examples_inserted = 0
+
+    trad = example[0].content
+    simp = HanziConv.toSimplified(trad)
+    jyut = example[0].pron
+    pin = ""
+    lang = example[0].lang
+
+    example_id = database.insert_chinese_sentence(
+        c, trad, simp, pin, jyut, lang, starting_example_id
+    )
+
+    # Check if example insertion was successful
+    if example_id == -1:
+        if trad == "X" or trad == "x":
+            # Ignore examples that are just 'x'
+            return 0
+        else:
+            # If insertion failed, it's probably because the example already exists
+            # Get its rowid, so we can link it to this definition
+            example_id = database.get_chinese_sentence_id(
+                c, trad, simp, pin, jyut, lang
+            )
+            if example_id == -1:  # Something went wrong if example_id is still -1
+                return 0
+    else:
+        examples_inserted += 1
+
+    database.insert_definition_chinese_sentence_link(c, definition_id, example_id)
+
+    for translation in example[1:]:
+        sentence = translation.content
+        lang = translation.lang
+
+        # Check if translation already exists before trying to insert
+        # Insert a translation only if the translation doesn't already exist in the database
+        translation_id = database.get_nonchinese_sentence_id(c, sentence, lang)
+
+        if translation_id == -1:
+            translation_id = starting_example_id + examples_inserted
+            database.insert_nonchinese_sentence(c, sentence, lang, translation_id)
+            examples_inserted += 1
+
+        # Then, link the translation to the example only if the link doesn't already exist
+        link_id = database.get_sentence_link(c, example_id, translation_id)
+
+        if link_id == -1:
+            database.insert_sentence_link(c, example_id, translation_id, 1, True)
+
+    return examples_inserted
+
+
+def insert_words(c, words):
+    # Reserved sentence IDs:
+    #   - 0-999999999: Tatoeba
+    #   - 1000000000-1999999999: words.hk
+    #   - 2000000000-2999999999: CantoDict
+    #   - 3000000000-3999999999: MoEDict
+    #   - 4000000000-4999999999: Cross-Straits Dictionary
+    #   - 5000000000-5999999999: ABC Chinese-English Dictionary
+    example_id = 5000000000
+
+    for key in words:
+        for entry in words[key]:
+            trad = entry.traditional
+            simp = entry.simplified
+            jyut = entry.jyutping
+            pin = entry.pinyin
+            freq = entry.freq
+
+            entry_id = database.get_entry_id(c, trad, simp, pin, jyut, freq)
+
+            if entry_id == -1:
+                entry_id = database.insert_entry(c, trad, simp, pin, jyut, freq, None)
+                if entry_id == -1:
+                    logging.warning(f"Could not insert word {trad}, uh oh!")
+                    continue
+
+            # Insert each meaning for the entry
+            for definition in entry.definitions:
+                definition_id = database.insert_definition(
+                    c, definition.definition, definition.label, entry_id, 1, None
+                )
+                if definition_id == -1:
+                    # Try to find definition if we got an error
+                    definition_id = database.get_definition_id(
+                        c, definition.definition, definition.label, entry_id, 1
+                    )
+                    if definition_id == -1:
+                        logging.warning(
+                            f"Could not insert definition {definition} for word {trad}, uh oh!"
+                        )
+                        continue
+
+                # Insert examples for each meaning
+                for example in definition.examples:
+                    examples_inserted = insert_example(
+                        c, definition_id, example_id, example
+                    )
+                    example_id += examples_inserted
+
+
+def write(db_name, source, words):
+    print("Writing to database file")
+
+    db = sqlite3.connect(db_name)
+    c = db.cursor()
+
+    database.write_database_version(c)
+
+    database.drop_tables(c)
+    database.create_tables(c)
+
+    # Add source information to table
+    database.insert_source(
+        c,
+        source.name,
+        source.shortname,
+        source.version,
+        source.description,
+        source.legal,
+        source.link,
+        source.update_url,
+        source.other,
+        None,
+    )
+
+    insert_words(c, words)
+
+    database.generate_indices(c)
+
+    db.commit()
+    db.close()
 
 
 def parse_pinyin(content):
@@ -55,8 +194,30 @@ def parse_pinyin(content):
     content = content.translate(str.maketrans("ạẹịọụ", "aeiou", "*"))
     # Make the Pinyin lowercase, so that dragonmapper can parse it
     content = content.lower()
+    # Insert spaces in front of commas...
+    content = content.replace(",", " ,")
+    # ...so that we can split up the pinyin by whitespace
+    content = content.split()
+
+    # print(content)
+
     # Transcribing to zhuyin first identifies character boundaries
-    return transcriptions.to_pinyin(transcriptions.to_zhuyin(content), accented=False)
+    new_content = []
+    for x in content:
+        try:
+            new_content.append(
+                transcriptions.to_pinyin(transcriptions.to_zhuyin(x), accented=False)
+            )
+        except:
+            new_content.append(x)
+    content = new_content
+
+    # Rejoin the string
+    content = " ".join(content)
+    # And remove the space in front of the comma
+    content = content.replace(" ,", ",")
+
+    return content
 
 
 def parse_char(content):
@@ -96,6 +257,7 @@ def parse_example_pinyin(content, entry_pinyin):
     # So strip out the punctuation mark, and then re-add it after transcribing
     stripped_punctuation = content[-1]
     content = content[:-1] if content[-1] in string.punctuation else content
+    # print(content)
     # Convert to numbered pinyin
     content = parse_pinyin(content)
     # Re-add stripped punctuation
@@ -121,13 +283,13 @@ def parse_example_translation(content):
     if content.startswith("["):
         # fmt: off
         lang = content[content.find("[")+1:content.find("]")]
-        content = content[content.find["]"]+2:]
+        content = content[content.find("]")+2:]
         # fmt: on
 
     return lang, content
 
 
-def parse_content(column_type, content):
+def parse_content(column_type, content, entry):
     if column_type == ".py":
         pin = parse_pinyin(content)
         return Type.PINYIN, pin
@@ -145,10 +307,14 @@ def parse_content(column_type, content):
         language, definition = parse_definition(content)
         return Type.DEFINITION, (language, definition)
     elif column_type == "ex":
-        example_pinyin = parse_example_pinyin(content, pin)
+        if not entry:
+            return Type.ERROR, None
+        example_pinyin = parse_example_pinyin(content, entry.pinyin)
         return Type.EXAMPLE_PINYIN, example_pinyin
     elif column_type == "hz":
-        example_hanzi = parse_example_hanzi(content, simp)
+        if not entry:
+            return Type.ERROR, None
+        example_hanzi = parse_example_hanzi(content, entry.simplified)
         return Type.EXAMPLE_HANZI, example_hanzi
     elif column_type == "tr":
         language, translation = parse_example_translation(content)
@@ -159,16 +325,18 @@ def parse_content(column_type, content):
         # e.g. "312hz": part-of-speech #3, definition #1 of pos #3, example #2 for definition #1, type = hanzi
         if EXAMPLE_TYPE.search(column_type):
             match = EXAMPLE_TYPE.match(column_type).groupdict()
-            parsed = parse_content(match["type"], content)
+            parsed = parse_content(match["type"], content, entry)
             return Type.SMUSHED, (
-                match["pos_index"],
-                match["def_index"],
-                match["ex_index"],
+                int(match["pos_index"]) if match["pos_index"] else None,
+                int(match["def_index"]) if match["def_index"] else None,
+                int(match["ex_index"]) if match["ex_index"] else None,
                 parsed,
             )
+    else:
+        return Type.ERROR, None
 
 
-def parse_line(line):
+def parse_line(line, entry):
     if not line or line in IGNORED_LINES:
         return Type.NONE, None
 
@@ -187,7 +355,7 @@ def parse_line(line):
 
     content = content.strip()
 
-    return parse_content(column_type, content)
+    return parse_content(column_type, content, entry)
 
 
 def parse_file(filename, words):
@@ -206,16 +374,18 @@ def parse_file(filename, words):
 
     with open(filename) as file:
         for line in file.readlines():
-            parsed_type, parsed = parse_line(line)
+            parsed_type, parsed = parse_line(line, current_entry)
 
             if parsed_type in (Type.NONE, Type.IGNORED, Type.ERROR):
                 continue
 
             elif parsed_type == Type.FINISHED_ENTRY:
+                if current_definition:
+                    current_entry.append_to_defs(current_definition)
                 if current_entry:
                     words[current_entry.traditional].append(current_entry)
                 current_entry = objects.Entry()
-                current_pos = current_definition = current_example = None
+                current_pos = current_posx = current_definition = current_example = None
                 pos_index = definition_index = example_index = 0
 
             elif parsed_type == Type.PINYIN:
@@ -227,36 +397,51 @@ def parse_file(filename, words):
                 current_pos = parsed
             elif parsed_type == Type.POSX:
                 current_posx = parsed
-                current_definition = objects.Definition(definition=current_posx, label=current_pos)
+                current_definition = objects.Definition(
+                    definition=current_posx, label=current_pos
+                )
             elif parsed_type == Type.DEFINITION:
+                lang, definition = parsed
                 # The PSX field should be prepended to all definitions that have a PSX field
-                definition = current_posx + parsed if current_posx else parsed
-                current_definition = objects.Definition(definition=definition, label=current_pos)
+                definition = current_posx + definition if current_posx else definition
+                current_definition = objects.Definition(
+                    definition=definition, label=current_pos
+                )
 
             elif parsed_type == Type.SMUSHED:
                 pos_index, def_index, ex_index, parsed_content = parsed
 
-                if pos_index == part_of_speech_index + 1:
-                    if pos_index > 0:
-                        # Done parsing the last part of speech; write down current definition and move on
-                        current_entry.append_to_defs(current_definition)
-                    current_definition = objects.Definition()
+                if pos_index:
+                    if pos_index == part_of_speech_index + 1:
+                        if pos_index > 0:
+                            # Done parsing the last part of speech; write down current definition and move on
+                            current_entry.append_to_defs(current_definition)
+                        current_definition = objects.Definition()
                 part_of_speech_index = pos_index if pos_index else 0
 
-                if def_index == definition_index + 1:
-                    if def_index > 0:
-                        # We are now parsing the next definition; write down the current definition and move on
-                        current_entry.append_to_defs(current_definition)
-                    current_definition = objects.Definition()
-                elif def_index > definition_index + 1:
-                    logging.error("Uh oh, def_index went wrong: {current_entry}, expected {definition_index}, got {def_index}")
+                if def_index:
+                    if def_index == definition_index + 1:
+                        if def_index > 0:
+                            # We are now parsing the next definition; write down the current definition and move on
+                            current_entry.append_to_defs(current_definition)
+                        current_definition = objects.Definition()
+                    elif def_index > definition_index + 1:
+                        logging.error(
+                            "Uh oh, def_index went wrong: {current_entry}, expected {definition_index}, got {def_index}"
+                        )
                 definition_index = def_index if def_index else 0
 
-                if ex_index == example_index + 1:
-                    current_definition.examples.append([current_example])
+                if ex_index:
+                    if ex_index == example_index + 1:
+                        current_example = objects.Example(lang="cmn")
+                        current_definition.examples.append([current_example])
+                    elif ex_index > example_index + 1:
+                        logging.error(
+                            "Uh oh, ex_index went wrong: {current_entry}, expected {example_index}, got {ex_index}"
+                        )
+                else:
                     current_example = objects.Example(lang="cmn")
-                elif ex_index > example_index + 1:
-                    logging.error("Uh oh, ex_index went wrong: {current_entry}, expected {example_index}, got {ex_index}")
+                    current_definition.examples.append([current_example])
                 example_index = ex_index if ex_index else 0
 
                 parsed_type, parsed = parsed_content
@@ -274,8 +459,9 @@ def parse_file(filename, words):
                         # Only keep English translations for now
                         continue
 
-                    current_definitions.examples[-1].append(objects.Example(lang="eng", content=parsed[1]))
-
+                    current_definition.examples[-1].append(
+                        objects.Example(lang="eng", content=parsed[1])
+                    )
 
 
 if __name__ == "__main__":
@@ -317,4 +503,4 @@ if __name__ == "__main__":
         sys.argv[10],
     )
     parse_file(sys.argv[2], entries)
-    write(entries, sys.argv[1])
+    write(sys.argv[1], source, entries)
