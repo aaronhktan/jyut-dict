@@ -1,4 +1,6 @@
 from collections import namedtuple
+from dataclasses import dataclass, field
+from typing import List
 
 SourceTuple = namedtuple(
     "Source",
@@ -131,3 +133,17 @@ NonChineseSentence = namedtuple(
         "language",
     ],
 )
+
+
+@dataclass
+class Example:
+    lang: str = ""
+    pron: str = ""
+    content: str = ""
+
+
+@dataclass
+class Definition:
+    definition: str = ""
+    label: str = ""
+    examples: List[List[Example]] = field(default_factory=list)
