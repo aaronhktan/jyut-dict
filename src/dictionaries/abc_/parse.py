@@ -22,7 +22,7 @@ IGNORED_TYPES = (
     "ser",
 )
 EXAMPLE_TYPE = re.compile(
-    r"(?P<pos_index>\d?)(?P<def_index>\d?)(?P<ex_index>\d*)(?P<type>\w*)(@\w*)*"
+    r"(?P<pos_index>\d{1})(?P<def_index>\d{1})?(?P<ex_index>\d{1})?(?P<type>\w*)(@\w*)*"
 )
 
 
@@ -243,7 +243,7 @@ def parse_definition(content):
     if content.startswith("["):
         # fmt: off
         lang = content[content.find("[")+1:content.find("]")]
-        content = content[content.find["]"]+2:]
+        content = content[content.find("]")+2:]
         # fmt: on
 
     return lang, content
@@ -301,8 +301,8 @@ def parse_content(column_type, content, entry):
         return Type.POS, part_of_speech
     elif column_type == "psx":
         # not sure exactly what psx actually means
-        part_of_speech_extended = content
-        return Type.POSX, part_of_speech_extended
+        lang, part_of_speech_extended = parse_definition(content)
+        return Type.POSX, (lang, part_of_speech_extended)
     elif column_type == "df":
         language, definition = parse_definition(content)
         return Type.DEFINITION, (language, definition)
@@ -326,12 +326,12 @@ def parse_content(column_type, content, entry):
         if EXAMPLE_TYPE.search(column_type):
             match = EXAMPLE_TYPE.match(column_type).groupdict()
             parsed = parse_content(match["type"], content, entry)
-            return Type.SMUSHED, (
-                int(match["pos_index"]) if match["pos_index"] else None,
-                int(match["def_index"]) if match["def_index"] else None,
-                int(match["ex_index"]) if match["ex_index"] else None,
-                parsed,
-            )
+            return Type.SMUSHED, {
+                "pos_index": int(match["pos_index"]) if match["pos_index"] else None,
+                "def_index": int(match["def_index"]) if match["def_index"] else None,
+                "ex_index": int(match["ex_index"]) if match["ex_index"] else None,
+                "parsed": parsed,
+            }
     else:
         return Type.ERROR, None
 
@@ -361,16 +361,10 @@ def parse_line(line, entry):
 def parse_file(filename, words):
     current_entry = None
 
-    current_pos = None
-    part_of_speech_index = 0
+    entry_pos = None
+    entry_posx = None
 
-    current_posx = None
-
-    current_definition = None
-    definition_index = 0
-
-    current_example = None
-    example_index = 0
+    current_entry_lines = []
 
     with open(filename) as file:
         for line in file.readlines():
@@ -379,89 +373,177 @@ def parse_file(filename, words):
             if parsed_type in (Type.NONE, Type.IGNORED, Type.ERROR):
                 continue
 
-            elif parsed_type == Type.FINISHED_ENTRY:
-                if current_definition:
-                    current_entry.append_to_defs(current_definition)
-                if current_entry:
-                    words[current_entry.traditional].append(current_entry)
+            elif parsed_type != Type.FINISHED_ENTRY:
+                current_entry_lines.append(line)
+
+            else:
                 current_entry = objects.Entry()
-                current_pos = current_posx = current_definition = current_example = None
-                pos_index = definition_index = example_index = 0
 
-            elif parsed_type == Type.PINYIN:
-                current_entry.add_pinyin(parsed)
-            elif parsed_type == Type.HANZI:
-                current_entry.add_traditional(parsed[0])
-                current_entry.add_simplified(parsed[1])
-            elif parsed_type == Type.POS:
-                current_pos = parsed
-            elif parsed_type == Type.POSX:
-                current_posx = parsed
-                current_definition = objects.Definition(
-                    definition=current_posx, label=current_pos
-                )
-            elif parsed_type == Type.DEFINITION:
-                lang, definition = parsed
-                # The PSX field should be prepended to all definitions that have a PSX field
-                definition = current_posx + definition if current_posx else definition
-                current_definition = objects.Definition(
-                    definition=definition, label=current_pos
-                )
+                # First, parse all the lines that relate to the entirety of the entry
+                # These lines do not have a number preceding them.
+                entry_lines = list(filter(lambda x: not (x[0].isdigit()), current_entry_lines))
+                parsed_entry_lines = list(map(parse_line, entry_lines, [current_entry] * len(entry_lines)))
 
-            elif parsed_type == Type.SMUSHED:
-                pos_index, def_index, ex_index, parsed_content = parsed
+                for parsed_type, parsed in parsed_entry_lines:
+                    if parsed_type == Type.PINYIN:
+                        current_entry.add_pinyin(parsed)
+                    elif parsed_type == Type.HANZI:
+                        current_entry.add_traditional(parsed[0])
+                        current_entry.add_simplified(parsed[1])
+                    elif parsed_type == Type.POS:
+                        entry_pos = parsed
+                    elif parsed_type == Type.POSX:
+                        entry_posx = parsed
+                    elif parsed_type == Type.DEFINITION:
+                        # If there is an unnumbered definition, it means that there are no other definitions to parse
+                        lang, definition = parsed
 
-                if pos_index:
-                    if pos_index == part_of_speech_index + 1:
-                        if pos_index > 0:
-                            # Done parsing the last part of speech; write down current definition and move on
-                            current_entry.append_to_defs(current_definition)
-                        current_definition = objects.Definition()
-                part_of_speech_index = pos_index if pos_index else 0
+                        if lang not in (None, "en"):
+                            continue
 
-                if def_index:
-                    if def_index == definition_index + 1:
-                        if def_index > 0:
-                            # We are now parsing the next definition; write down the current definition and move on
-                            current_entry.append_to_defs(current_definition)
-                        current_definition = objects.Definition()
-                    elif def_index > definition_index + 1:
-                        logging.error(
-                            "Uh oh, def_index went wrong: {current_entry}, expected {definition_index}, got {def_index}"
-                        )
-                definition_index = def_index if def_index else 0
+                        # Add the psx label to the definition if there is one
+                        definition = entry_posx + " " + definition if entry_posx else definition
+                        label = entry_pos if entry_pos else ""
 
-                if ex_index:
-                    if ex_index == example_index + 1:
-                        current_example = objects.Example(lang="cmn")
-                        current_definition.examples.append([current_example])
-                    elif ex_index > example_index + 1:
-                        logging.error(
-                            "Uh oh, ex_index went wrong: {current_entry}, expected {example_index}, got {ex_index}"
-                        )
-                else:
-                    current_example = objects.Example(lang="cmn")
-                    current_definition.examples.append([current_example])
-                example_index = ex_index if ex_index else 0
+                        current_entry.append_to_defs(objects.Definition(definition=definition, label=label))
 
-                parsed_type, parsed = parsed_content
-                if parsed_type == Type.POS:
-                    current_pos = parsed
-                elif parsed_type == Type.POSX:
-                    current_definition.definition = parsed
-                elif parsed_type == Type.EXAMPLE_PINYIN:
-                    current_example.pron = parsed
-                elif parsed_type == Type.EXAMPLE_HANZI:
-                    current_example.content = parsed
-                elif parsed_type == Type.EXAMPLE_TRANSLATION:
-                    lang = parsed[0]
-                    if lang != "en":
-                        # Only keep English translations for now
-                        continue
 
-                    current_definition.examples[-1].append(
-                        objects.Example(lang="eng", content=parsed[1])
-                    )
+                # Then, parse each of the numbered parts of speech
+                numbered_lines = list(filter(lambda x: x[0].isdigit(), current_entry_lines))
+                parsed_numbered_lines = list(map(parse_line, numbered_lines, [current_entry] * len(numbered_lines)))
+
+                # print(f"parsed_numbered_lines={parsed_numbered_lines}")
+
+                for pos_index in range(1, 8):
+                    # In the ABC dictionary, there is a maximum of seven parts of speech (1-indexed)
+                    this_parsed_index_lines = list(filter(lambda x: x[0] == Type.SMUSHED and x[1]["pos_index"] == pos_index, parsed_numbered_lines))
+
+                    # print(f"pos_index={pos_index}: {list(this_parsed_index_lines)}")
+
+                    for def_index in range(1, 10):
+                        # For each POS, there can be many definitions, but limit ourselves to 9 for now
+                        this_def_index_lines = list(filter(lambda x: x[0] == Type.SMUSHED and x[1]["def_index"] == def_index, this_parsed_index_lines))
+
+                        # Parse the definitions, keep only English
+                        def_lines = list(map(lambda x: x[1], this_def_index_lines))
+                        def_lines = list(filter(lambda x: x["parsed"] and x[1]["parsed"][0] in (Type.POSX, Type.DEFINITION), this_def_index_lines))
+                        def_lines = list(filter(lambda x: x["parsed"][1][0] == "en", def_lines))
+                        def_lines = list(map(lambda x: x["parsed"], def_lines))
+
+                        # There should only be at maximum one POSX and one DEFINITION; if there are more, raise an error
+                        if len(def_lines) > 2:
+                            logging.error("wtf")
+                            # continue
+
+                        elif len(def_lines) == 2:
+                            # There is a POSX and a DEFINITION, merge them together
+                            posx = definition = ""
+                            for content_type, content in def_lines:
+                                if content_type == Type.POSX:
+                                    posx = content
+                                elif content_type == Type.DEFINITION:
+                                    definition = content
+
+                            definition = posx + definition
+
+                            current_definition = objects.Definition(definition=definition, label=)
+
+                current_entry_lines = []
+
+            # elif parsed_type == Type.PINYIN:
+            #     current_entry.add_pinyin(parsed)
+            # elif parsed_type == Type.HANZI:
+            #     current_entry.add_traditional(parsed[0])
+            #     current_entry.add_simplified(parsed[1])
+            # elif parsed_type == Type.POS:
+            #     current_pos = parsed
+            # elif parsed_type == Type.POSX:
+            #     lang = parsed[0]
+            #     if lang == "en":
+            #         current_posx = parsed[1]
+
+            #     # current_definition = objects.Definition(
+            #     #     definition=current_posx, label=current_pos
+            #     # )
+            # elif parsed_type == Type.DEFINITION:
+            #     lang, definition = parsed
+            #     if lang != "en":
+            #         continue
+
+            #     # The PSX field should be prepended to all definitions that have a PSX field
+            #     definition = current_posx + definition if current_posx else definition
+            #     current_definition = objects.Definition(
+            #         definition=definition, label=current_pos
+            #     )
+
+            # elif parsed_type == Type.SMUSHED:
+            #     pos_index, def_index, ex_index, parsed_content = parsed
+
+            #     if pos_index:
+            #         if pos_index == part_of_speech_index + 1:
+            #             if pos_index > 0:
+            #                 # Done parsing the last part of speech; write down current definition and move on
+            #                 current_entry.append_to_defs(current_definition)
+            #             current_definition = objects.Definition()
+            #     part_of_speech_index = pos_index if pos_index else 0
+
+            #     if def_index:
+            #         if def_index == definition_index + 1:
+            #             if def_index > 0:
+            #                 # We are now parsing the next definition; write down the current definition and move on
+            #                 current_entry.append_to_defs(current_definition)
+            #             current_definition = objects.Definition()
+            #         elif def_index > definition_index + 1:
+            #             logging.error(
+            #                 "Uh oh, def_index went wrong: {current_entry}, expected {definition_index}, got {def_index}"
+            #             )
+            #     definition_index = def_index if def_index else 0
+
+            #     if ex_index:
+            #         if ex_index == example_index + 1:
+            #             current_example = objects.Example(lang="cmn")
+            #             current_definition.examples.append([current_example])
+            #         elif ex_index > example_index + 1:
+            #             logging.error(
+            #                 "Uh oh, ex_index went wrong: {current_entry}, expected {example_index}, got {ex_index}"
+            #             )
+            #     else:
+            #         current_example = objects.Example(lang="cmn")
+            #         current_definition.examples.append([current_example])
+            #     example_index = ex_index if ex_index else 0
+
+            #     parsed_type, parsed = parsed_content
+            #     if parsed_type == Type.POS:
+            #         current_pos = parsed
+            #     elif parsed_type == Type.POSX:
+            #         lang, current_definition.definition = parsed
+            #         if lang != "en":
+            #             continue
+
+            #         current_posx = current_posx + " " + parsed if current_posx else 
+            #     elif parsed_type == Type.DEFINITION:
+            #         lang, definition = parsed
+            #         if lang != "en":
+            #             continue
+
+            #         # The PSX field should be prepended to all definitions that have a PSX field
+            #         definition = current_posx + definition if current_posx else definition
+            #         current_definition = objects.Definition(
+            #             definition=definition, label=current_pos
+            #         )
+            #     elif parsed_type == Type.EXAMPLE_PINYIN:
+            #         current_example.pron = parsed
+            #     elif parsed_type == Type.EXAMPLE_HANZI:
+            #         current_example.content = parsed
+            #     elif parsed_type == Type.EXAMPLE_TRANSLATION:
+            #         lang = parsed[0]
+            #         if lang != "en":
+            #             # Only keep English translations for now
+            #             continue
+
+            #         current_definition.examples[-1].append(
+            #             objects.Example(lang="eng", content=parsed[1])
+            #         )
 
 
 if __name__ == "__main__":
@@ -503,4 +585,4 @@ if __name__ == "__main__":
         sys.argv[10],
     )
     parse_file(sys.argv[2], entries)
-    write(sys.argv[1], source, entries)
+    # write(sys.argv[1], source, entries)
