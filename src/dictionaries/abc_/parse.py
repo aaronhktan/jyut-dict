@@ -299,33 +299,33 @@ def parse_example_translation(content):
 
 
 def parse_content(column_type, content, entry):
-    if column_type == ".py":
+    if column_type.startswith(".py"):
         pin = parse_pinyin(content)
         return Type.PINYIN, pin
-    elif column_type == "char":
+    elif column_type.startswith("char"):
         trad, simp = parse_char(content)
         return Type.HANZI, (trad, simp)
-    elif column_type == "ps":
-        part_of_speech = content
-        return Type.POS, part_of_speech
-    elif column_type == "psx":
+    elif column_type.startswith("psx"):
         # not sure exactly what psx actually means
         lang, part_of_speech_extended = parse_definition(content)
         return Type.POSX, (lang, part_of_speech_extended)
-    elif column_type == "df":
+    elif column_type.startswith("ps"):
+        part_of_speech = content
+        return Type.POS, part_of_speech
+    elif column_type.startswith("df"):
         language, definition = parse_definition(content)
         return Type.DEFINITION, (language, definition)
-    elif column_type == "ex":
+    elif column_type.startswith("ex"):
         if not entry:
             return Type.ERROR, None
         example_pinyin = parse_example_pinyin(content, entry.pinyin)
         return Type.EXAMPLE_PINYIN, example_pinyin
-    elif column_type == "hz":
+    elif column_type.startswith("hz"):
         if not entry:
             return Type.ERROR, None
         example_hanzi = parse_example_hanzi(content, entry.simplified)
         return Type.EXAMPLE_HANZI, example_hanzi
-    elif column_type == "tr":
+    elif column_type.startswith("tr"):
         language, translation = parse_example_translation(content)
         return Type.EXAMPLE_TRANSLATION, (language, translation)
     elif column_type[0].isdigit():
@@ -434,15 +434,19 @@ def parse_file(filename, words):
 
                         current_definition = objects.Definition(definition=definition, label=label)
                         current_entry.append_to_defs(current_definition)
-                    elif content_type == Type.EXAMPLE_HANZI:
-                        entry_ex_hz = content
-                    elif content_type == Type.EXAMPLE_PINYIN:
-                        entry_ex_pin = content
-                    elif content_type == Type.EXAMPLE_TRANSLATION:
-                        if content[0] != "en":
+
+                parsed_entry_lines = list(map(parse_line, entry_lines, [current_entry] * len(entry_lines)))
+
+                for parsed_type, parsed in parsed_entry_lines:
+                    if parsed_type == Type.EXAMPLE_HANZI:
+                        entry_ex_hz = parsed
+                    elif parsed_type == Type.EXAMPLE_PINYIN:
+                        entry_ex_pin = parsed
+                    elif parsed_type == Type.EXAMPLE_TRANSLATION:
+                        if parsed[0] != "en":
                             continue
 
-                        entry_ex_tr = content[1]
+                        entry_ex_tr = parsed[1]
 
                 if entry_ex_pin or entry_ex_hz or entry_ex_tr:
                     current_definition.examples.append([])
@@ -471,7 +475,8 @@ def parse_file(filename, words):
 
                     pos_index_pos = ""
                     if len(pos_index_pos_line) > 1:
-                        logging.error(f"Found more than one part of speech for index {pos_index} in entry {entry.traditional}")
+                        logging.error(f"Found more than one part of speech for index {pos_index} in entry {current_entry.traditional}")
+                        logging.error(pos_index_pos_line)
                     elif len(pos_index_pos_line) == 1:
                         pos_index_pos = pos_index_pos_line[0][1]
 
