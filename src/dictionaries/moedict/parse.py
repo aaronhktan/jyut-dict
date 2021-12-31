@@ -9,6 +9,7 @@ from database import database, objects
 from database.utils import pinyin_to_tone_numbers, change_pinyin_to_match_phrase
 
 from collections import namedtuple
+import itertools
 import json
 import logging
 import re
@@ -25,7 +26,14 @@ import traceback
 #   - 那搭（Namibia): example of weird formatting
 #   - 鹽: has an example with enumeration commas
 #   - 麻: contains example that should already be inserted into the database
+#   - 削: contains 讀音 and 語音
+#   - 剖: contains （又音）
+#   - 乾兒: transcription for 兒 is super annoying
 
+PINYIN_COLLOQUIAL_PRONUNCIATION_REGEX_PATTERN = re.compile(r"（語音）")
+PINYIN_LITERARY_PRONUNCIATION_REGEX_PATTERN = re.compile(r"（讀音）")
+PINYIN_ALTERNATE_PRONUNCIATION_REGEX_PATTERN = re.compile(r"（又音）")
+PINYIN_SECOND_ALTERNATE_PRONUNCIATION_REGEX_PATTERN = re.compile(r"\(變\)")
 EXCLUDE_VARIANT_REGEX_PATTERN = re.compile(r"{\[.*\]\}")
 EXAMPLE_REGEX_PATTERN = re.compile(r"如：(.*)")
 INDIVIDUAL_EXAMPLE_REGEX_PATTERN = re.compile(r"「(.*?)」")
@@ -188,8 +196,18 @@ def parse_file(filename, words):
                     )
                     continue
 
-                pin = heteronym["pinyin"].split()[: len(trad)]
-                pin = [pinyin_to_tone_numbers(syllable, trad) for syllable in pin]
+                pin = PINYIN_COLLOQUIAL_PRONUNCIATION_REGEX_PATTERN.sub(
+                    "", heteronym["pinyin"]
+                )
+                pin = PINYIN_LITERARY_PRONUNCIATION_REGEX_PATTERN.sub("", pin)
+                pin = PINYIN_ALTERNATE_PRONUNCIATION_REGEX_PATTERN.sub("", pin)
+                pin = PINYIN_SECOND_ALTERNATE_PRONUNCIATION_REGEX_PATTERN.sub("", pin)
+                pin = pin.split()
+                pin = [
+                    pinyin_to_tone_numbers(syllable, trad).split() for syllable in pin
+                ]
+                pin = list(itertools.chain.from_iterable(pin))
+                pin = pin[: len(trad)]
                 pin = " ".join(pin)
                 if last_heteronym_pin != "" and pin != last_heteronym_pin:
                     # Different pinyin means that we are now processing a new heteronym.
@@ -214,14 +232,12 @@ def parse_file(filename, words):
                     # Parse and add examples to this definition
                     if "example" in definition:
                         for example in definition["example"]:
-                            if re.match(EXAMPLE_REGEX_PATTERN, example):
+                            if EXAMPLE_REGEX_PATTERN.match(example):
                                 # Every example is surrounded by "如：<example>", so only keep the example
-                                example = re.match(
-                                    EXAMPLE_REGEX_PATTERN, example
-                                ).group(1)
+                                example = EXAMPLE_REGEX_PATTERN.match(example).group(1)
                                 # Some examples contain multiple examples, so split them up by enclosing brackets 「」
-                                example_texts = re.findall(
-                                    INDIVIDUAL_EXAMPLE_REGEX_PATTERN, example
+                                example_texts = (
+                                    INDIVIDUAL_EXAMPLE_REGEX_PATTERN.findall(example)
                                 )
                             else:
                                 logging.warning(
@@ -232,8 +248,8 @@ def parse_file(filename, words):
 
                             for example_text in example_texts:
                                 # Strip out weird whitespace
-                                example_text = re.sub(
-                                    WHITESPACE_REGEX_PATTERN, "", example_text
+                                example_text = WHITESPACE_REGEX_PATTERN.sub(
+                                    "", example_text
                                 )
 
                                 # Joining and splitting separates series of full-width punctuation marks
@@ -264,19 +280,19 @@ def parse_file(filename, words):
 
                                 # Strip out variant pronunciations for conversion purposes
                                 phrase_pinyin = pin
-                                phrase_pinyin = re.sub(
-                                    VARIANT_PRONUNCIATION_REGEX_PATTERN,
+                                phrase_pinyin = VARIANT_PRONUNCIATION_REGEX_PATTERN.sub(
                                     "",
                                     phrase_pinyin,
                                 )
-                                phrase_pinyin = re.sub(
-                                    COLLOQUIAL_PRONUNCIATION_REGEX_PATTERN,
-                                    "",
-                                    phrase_pinyin,
+                                phrase_pinyin = (
+                                    COLLOQUIAL_PRONUNCIATION_REGEX_PATTERN.sub(
+                                        "",
+                                        phrase_pinyin,
+                                    )
                                 )
 
                                 # Do not try to match entries formatted like "那搭（Namibia)"
-                                if not re.match(STRANGE_ENTRY_REGEX_PATTERN, trad):
+                                if not STRANGE_ENTRY_REGEX_PATTERN.match(trad):
                                     try:
                                         example_pinyin = change_pinyin_to_match_phrase(
                                             example_text,
