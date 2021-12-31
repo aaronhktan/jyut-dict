@@ -1,8 +1,7 @@
 from dragonmapper import transcriptions
 from hanziconv import HanziConv
-
-# import jieba
-# import pinyin_jyutping_sentence
+import pinyin_jyutping_sentence
+from wordfreq import zipf_frequency
 
 from database import database, objects
 
@@ -13,6 +12,7 @@ import re
 import sqlite3
 import string
 import sys
+import unicodedata
 
 IGNORED_LINES = ("cidian.wenlindb\n", ".-arc\n", ".-publish\n")
 IGNORED_TYPES = (
@@ -53,9 +53,9 @@ def insert_example(c, definition_id, starting_example_id, example):
     examples_inserted = 0
 
     trad = example[0].content
-    simp = HanziConv.toSimplified(trad)
-    jyut = example[0].pron
-    pin = ""
+    simp = HanziConv.toSimplified(trad) if trad else ""
+    jyut = ""
+    pin = example[0].pron
     lang = example[0].lang
 
     example_id = database.insert_chinese_sentence(
@@ -192,14 +192,15 @@ def parse_pinyin(content):
     # ABC indicates sound change by a dot underneath the vowel
     # But we don't support that, so remove it
     content = content.translate(str.maketrans("ạẹịọụ", "aeiou", "*"))
+    # Also replace combining characters with single-character equivalents
+    content = unicodedata.normalize("NFKC", content)
     # Make the Pinyin lowercase, so that dragonmapper can parse it
     content = content.lower()
-    # Insert spaces in front of commas...
-    content = content.replace(",", " ,")
+    # Insert spaces in front of punctuation
+    for punctuation in string.punctuation:
+        content = content.replace(punctuation, " " + punctuation)
     # ...so that we can split up the pinyin by whitespace
     content = content.split()
-
-    # print(content)
 
     # Transcribing to zhuyin first identifies character boundaries
     new_content = []
@@ -214,8 +215,9 @@ def parse_pinyin(content):
 
     # Rejoin the string
     content = " ".join(content)
-    # And remove the space in front of the comma
-    content = content.replace(" ,", ",")
+    # And remove the space in front of punctuatation
+    for punctuation in string.punctuation:
+        content = content.replace(" " + punctuation, punctuation)
 
     return content
 
@@ -227,6 +229,14 @@ def parse_char(content):
         simp = content[:bracket_index]
         # fmt: off
         trad = content[bracket_index+1:content.find("]")]
+        trad = list(trad)
+        for index, char in enumerate(trad):
+            if char == "-":
+                try:
+                    trad[index] = simp[index]
+                except:
+                    logging.error(f"couldn't get traditional from simplified {simp}, traditional {trad}")
+        trad = "".join(trad)
         # fmt: on
     else:
         simp = trad = content
@@ -257,12 +267,11 @@ def parse_example_pinyin(content, entry_pinyin):
     # So strip out the punctuation mark, and then re-add it after transcribing
     stripped_punctuation = content[-1]
     content = content[:-1] if content[-1] in string.punctuation else content
-    # print(content)
     # Convert to numbered pinyin
     content = parse_pinyin(content)
     # Re-add stripped punctuation
     content = (
-        content + stripped_punctuation if content[-1] in string.punctuation else content
+        content + stripped_punctuation if stripped_punctuation in string.punctuation else content
     )
 
     return content
@@ -361,10 +370,8 @@ def parse_line(line, entry):
 def parse_file(filename, words):
     current_entry = None
 
-    entry_pos = None
-    entry_posx = None
-
     current_entry_lines = []
+    counter = 0
 
     with open(filename) as file:
         for line in file.readlines():
@@ -377,7 +384,19 @@ def parse_file(filename, words):
                 current_entry_lines.append(line)
 
             else:
+                counter += 1
+                if not counter % 500:
+                    print(f"Processed {counter} entries!")
+
+                if not current_entry_lines:
+                    continue
+
                 current_entry = objects.Entry()
+                entry_pos = None
+                entry_posx = None
+                entry_ex_hz = None
+                entry_ex_pin = None
+                entry_ex_tr = None
 
                 # First, parse all the lines that relate to the entirety of the entry
                 # These lines do not have a number preceding them.
@@ -390,12 +409,20 @@ def parse_file(filename, words):
                     elif parsed_type == Type.HANZI:
                         current_entry.add_traditional(parsed[0])
                         current_entry.add_simplified(parsed[1])
+                        current_entry.add_freq(zipf_frequency(parsed[0], "zh"))
+                        current_entry.add_jyutping(pinyin_jyutping_sentence.jyutping(
+                            parsed[0], tone_numbers=True, spaces=True
+                        ))
                     elif parsed_type == Type.POS:
                         entry_pos = parsed
                     elif parsed_type == Type.POSX:
-                        entry_posx = parsed
+                        lang, posx = parsed
+
+                        if lang not in (None, "en"):
+                            continue
+
+                        entry_posx = "(" + posx + ")"
                     elif parsed_type == Type.DEFINITION:
-                        # If there is an unnumbered definition, it means that there are no other definitions to parse
                         lang, definition = parsed
 
                         if lang not in (None, "en"):
@@ -405,145 +432,170 @@ def parse_file(filename, words):
                         definition = entry_posx + " " + definition if entry_posx else definition
                         label = entry_pos if entry_pos else ""
 
-                        current_entry.append_to_defs(objects.Definition(definition=definition, label=label))
+                        current_definition = objects.Definition(definition=definition, label=label)
+                        current_entry.append_to_defs(current_definition)
+                    elif content_type == Type.EXAMPLE_HANZI:
+                        entry_ex_hz = content
+                    elif content_type == Type.EXAMPLE_PINYIN:
+                        entry_ex_pin = content
+                    elif content_type == Type.EXAMPLE_TRANSLATION:
+                        if content[0] != "en":
+                            continue
+
+                        entry_ex_tr = content[1]
+
+                if entry_ex_pin or entry_ex_hz or entry_ex_tr:
+                    current_definition.examples.append([])
+                    current_definition.examples[-1].append(objects.Example(lang="cmn", pron=entry_ex_pin, content=entry_ex_hz))
+                    current_definition.examples[-1].append(objects.Example(lang="eng", content=entry_ex_tr))
 
 
-                # Then, parse each of the numbered parts of speech
+                # Then, parse each of the numbered lines
                 numbered_lines = list(filter(lambda x: x[0].isdigit(), current_entry_lines))
                 parsed_numbered_lines = list(map(parse_line, numbered_lines, [current_entry] * len(numbered_lines)))
-
-                # print(f"parsed_numbered_lines={parsed_numbered_lines}")
+                parsed_numbered_lines = list(filter(lambda x: x[0] == Type.SMUSHED, parsed_numbered_lines))
+                parsed_numbered_lines = list(map(lambda x: x[1], parsed_numbered_lines))
 
                 for pos_index in range(1, 8):
                     # In the ABC dictionary, there is a maximum of seven parts of speech (1-indexed)
-                    this_parsed_index_lines = list(filter(lambda x: x[0] == Type.SMUSHED and x[1]["pos_index"] == pos_index, parsed_numbered_lines))
+                    pos_index_lines = list(filter(lambda x: x["pos_index"] == pos_index, parsed_numbered_lines))
 
-                    # print(f"pos_index={pos_index}: {list(this_parsed_index_lines)}")
+                    # First, let's isolate lines that apply to all lines in this pos_index:
+                    # do this by finding lines where the pos_index is some number, def_index == None, and ex_index == None
+                    # e.g. "1ps   n." => applies to "11df   greeting", as well as "12df   salutation"
+                    applies_to_all_in_this_pos_index = list(filter(lambda x: x["def_index"] == None and x["ex_index"] == None, pos_index_lines))
+
+                    # Parse the part of speech that applies to all lines in this index
+                    pos_index_pos_line = list(filter(lambda x: x["parsed"] and x["parsed"][0] == Type.POS, applies_to_all_in_this_pos_index))
+                    pos_index_pos_line = list(map(lambda x: x["parsed"], pos_index_pos_line))
+
+                    pos_index_pos = ""
+                    if len(pos_index_pos_line) > 1:
+                        logging.error(f"Found more than one part of speech for index {pos_index} in entry {entry.traditional}")
+                    elif len(pos_index_pos_line) == 1:
+                        pos_index_pos = pos_index_pos_line[0][1]
+
+                    # Parse the definitions that apply to all lines in this index
+                    pos_index_def_lines = list(filter(lambda x: x["parsed"] and x["parsed"][0] in (Type.POSX, Type.DEFINITION), applies_to_all_in_this_pos_index))
+                    pos_index_def_lines = list(filter(lambda x: x["parsed"][1][0] == "en", pos_index_def_lines))
+                    pos_index_def_lines = list(map(lambda x: x["parsed"], pos_index_def_lines))
+
+                    posx = definition = ""
+                    definition_list = []
+                    for content_type, content in pos_index_def_lines:
+                        if content_type == Type.POSX:
+                            posx = "(" + content[1] + ")"
+                            definition_list.append(posx)
+                        elif content_type == Type.DEFINITION:
+                            definition = content[1]
+                            definition_list.append(definition)
+
+                    definition = " ".join(definition_list)
+
+                    label = (entry_pos if entry_pos else "") + (pos_index_pos if pos_index_pos else "")
+
+                    if definition:
+                        current_definition = objects.Definition(definition=definition, label=label)
+                        current_entry.append_to_defs(current_definition)
+
+                    # Then, parse the examples
+                    pos_index_ex_lines = list(filter(lambda x: x["parsed"] and x["parsed"][0] in (Type.EXAMPLE_HANZI, Type.EXAMPLE_PINYIN, Type.EXAMPLE_TRANSLATION), applies_to_all_in_this_pos_index))
+                    pos_index_ex_lines = list(map(lambda x: x["parsed"], pos_index_ex_lines))
+
+                    ex_pin = ex_hz = ex_tr = ""
+                    for content_type, content in pos_index_ex_lines:
+                        if content_type == Type.EXAMPLE_HANZI:
+                            ex_hz = content
+                        elif content_type == Type.EXAMPLE_PINYIN:
+                            ex_pin = content
+                        elif content_type == Type.EXAMPLE_TRANSLATION:
+                            if content[0] != "en":
+                                continue
+
+                            ex_tr = content[1]
+
+                    if ex_pin or ex_hz or ex_tr:
+                        current_definition.examples.append([])
+                        current_definition.examples[-1].append(objects.Example(lang="cmn", pron=ex_pin, content=ex_hz))
+                        current_definition.examples[-1].append(objects.Example(lang="eng", content=ex_tr))
 
                     for def_index in range(1, 10):
-                        # For each POS, there can be many definitions, but limit ourselves to 9 for now
-                        this_def_index_lines = list(filter(lambda x: x[0] == Type.SMUSHED and x[1]["def_index"] == def_index, this_parsed_index_lines))
+                        # Then, parse all the lines that apply to a smaller scope
+                        # For each pos_index, there can be many definitions, but limit ourselves to 9 for now
+                        def_index_lines = list(filter(lambda x: x["def_index"] == def_index, pos_index_lines))
+                        applies_to_all_in_this_def_index_lines = list(filter(lambda x: x["ex_index"] == None, def_index_lines))
 
-                        # Parse the definitions, keep only English
-                        def_lines = list(map(lambda x: x[1], this_def_index_lines))
-                        def_lines = list(filter(lambda x: x["parsed"] and x[1]["parsed"][0] in (Type.POSX, Type.DEFINITION), this_def_index_lines))
-                        def_lines = list(filter(lambda x: x["parsed"][1][0] == "en", def_lines))
-                        def_lines = list(map(lambda x: x["parsed"], def_lines))
+                        # Parse the definitions that apply to all lines in this index
+                        def_index_def_lines = list(filter(lambda x: x["parsed"] and x["parsed"][0] in (Type.POSX, Type.DEFINITION), applies_to_all_in_this_def_index_lines))
+                        def_index_def_lines = list(filter(lambda x: x["parsed"][1][0] == "en", def_index_def_lines))
+                        def_index_def_lines = list(map(lambda x: x["parsed"], def_index_def_lines))
 
-                        # There should only be at maximum one POSX and one DEFINITION; if there are more, raise an error
-                        if len(def_lines) > 2:
-                            logging.error("wtf")
-                            # continue
+                        posx = definition = ""
+                        definition_list = []
+                        for content_type, content in def_index_def_lines:
+                            if content_type == Type.POSX:
+                                posx = "(" + content[1] + ")"
+                                definition_list.append(posx)
+                            elif content_type == Type.DEFINITION:
+                                definition = content[1]
+                                definition_list.append(definition)
 
-                        elif len(def_lines) == 2:
-                            # There is a POSX and a DEFINITION, merge them together
-                            posx = definition = ""
-                            for content_type, content in def_lines:
-                                if content_type == Type.POSX:
-                                    posx = content
-                                elif content_type == Type.DEFINITION:
-                                    definition = content
+                        definition = " ".join(definition_list)
 
-                            definition = posx + definition
+                        label = (entry_pos if entry_pos else "") + (pos_index_pos if pos_index_pos else "")
 
-                            current_definition = objects.Definition(definition=definition, label=)
+                        if definition:
+                            current_definition = objects.Definition(definition=definition, label=label)
+                            current_entry.append_to_defs(current_definition)
 
+                        # Then, parse the examples
+                        def_index_ex_lines = list(filter(lambda x: x["parsed"] and x["parsed"][0] in (Type.EXAMPLE_HANZI, Type.EXAMPLE_PINYIN, Type.EXAMPLE_TRANSLATION), applies_to_all_in_this_def_index_lines))
+                        def_index_ex_lines = list(map(lambda x: x["parsed"], def_index_ex_lines))
+
+                        ex_pin = ex_hz = ex_tr = ""
+                        for content_type, content in def_index_ex_lines:
+                            if content_type == Type.EXAMPLE_HANZI:
+                                ex_hz = content
+                            elif content_type == Type.EXAMPLE_PINYIN:
+                                ex_pin = content
+                            elif content_type == Type.EXAMPLE_TRANSLATION:
+                                if content[0] != "en":
+                                    continue
+
+                                ex_tr = content[1]
+
+                        if ex_pin or ex_hz or ex_tr:
+                            current_definition.examples.append([])
+                            current_definition.examples[-1].append(objects.Example(lang="cmn", pron=ex_pin, content=ex_hz))
+                            current_definition.examples[-1].append(objects.Example(lang="eng", content=ex_tr))
+
+
+                        for ex_index in range(1, 10):
+                            # For each definition, there can be up to 10 examples
+                            ex_index_lines = list(filter(lambda x: x["ex_index"] == ex_index, def_index_lines))
+
+                            ex_index_ex_lines = list(filter(lambda x: x["parsed"] and x["parsed"][0] in (Type.EXAMPLE_HANZI, Type.EXAMPLE_PINYIN, Type.EXAMPLE_TRANSLATION), ex_index_lines))
+                            ex_index_ex_lines = list(map(lambda x: x["parsed"], ex_index_ex_lines))
+
+                            ex_pin = ex_hz = ex_tr = ""
+                            for content_type, content in ex_index_ex_lines:
+                                if content_type == Type.EXAMPLE_HANZI:
+                                    ex_hz = content
+                                elif content_type == Type.EXAMPLE_PINYIN:
+                                    ex_pin = content
+                                elif content_type == Type.EXAMPLE_TRANSLATION:
+                                    if content[0] != "en":
+                                        continue
+
+                                    ex_tr = content[1]
+
+                            if ex_pin or ex_hz or ex_tr:
+                                current_definition.examples.append([])
+                                current_definition.examples[-1].append(objects.Example(lang="cmn", pron=ex_pin, content=ex_hz))
+                                current_definition.examples[-1].append(objects.Example(lang="eng", content=ex_tr))
+
+                words[current_entry.traditional].append(current_entry)
                 current_entry_lines = []
-
-            # elif parsed_type == Type.PINYIN:
-            #     current_entry.add_pinyin(parsed)
-            # elif parsed_type == Type.HANZI:
-            #     current_entry.add_traditional(parsed[0])
-            #     current_entry.add_simplified(parsed[1])
-            # elif parsed_type == Type.POS:
-            #     current_pos = parsed
-            # elif parsed_type == Type.POSX:
-            #     lang = parsed[0]
-            #     if lang == "en":
-            #         current_posx = parsed[1]
-
-            #     # current_definition = objects.Definition(
-            #     #     definition=current_posx, label=current_pos
-            #     # )
-            # elif parsed_type == Type.DEFINITION:
-            #     lang, definition = parsed
-            #     if lang != "en":
-            #         continue
-
-            #     # The PSX field should be prepended to all definitions that have a PSX field
-            #     definition = current_posx + definition if current_posx else definition
-            #     current_definition = objects.Definition(
-            #         definition=definition, label=current_pos
-            #     )
-
-            # elif parsed_type == Type.SMUSHED:
-            #     pos_index, def_index, ex_index, parsed_content = parsed
-
-            #     if pos_index:
-            #         if pos_index == part_of_speech_index + 1:
-            #             if pos_index > 0:
-            #                 # Done parsing the last part of speech; write down current definition and move on
-            #                 current_entry.append_to_defs(current_definition)
-            #             current_definition = objects.Definition()
-            #     part_of_speech_index = pos_index if pos_index else 0
-
-            #     if def_index:
-            #         if def_index == definition_index + 1:
-            #             if def_index > 0:
-            #                 # We are now parsing the next definition; write down the current definition and move on
-            #                 current_entry.append_to_defs(current_definition)
-            #             current_definition = objects.Definition()
-            #         elif def_index > definition_index + 1:
-            #             logging.error(
-            #                 "Uh oh, def_index went wrong: {current_entry}, expected {definition_index}, got {def_index}"
-            #             )
-            #     definition_index = def_index if def_index else 0
-
-            #     if ex_index:
-            #         if ex_index == example_index + 1:
-            #             current_example = objects.Example(lang="cmn")
-            #             current_definition.examples.append([current_example])
-            #         elif ex_index > example_index + 1:
-            #             logging.error(
-            #                 "Uh oh, ex_index went wrong: {current_entry}, expected {example_index}, got {ex_index}"
-            #             )
-            #     else:
-            #         current_example = objects.Example(lang="cmn")
-            #         current_definition.examples.append([current_example])
-            #     example_index = ex_index if ex_index else 0
-
-            #     parsed_type, parsed = parsed_content
-            #     if parsed_type == Type.POS:
-            #         current_pos = parsed
-            #     elif parsed_type == Type.POSX:
-            #         lang, current_definition.definition = parsed
-            #         if lang != "en":
-            #             continue
-
-            #         current_posx = current_posx + " " + parsed if current_posx else 
-            #     elif parsed_type == Type.DEFINITION:
-            #         lang, definition = parsed
-            #         if lang != "en":
-            #             continue
-
-            #         # The PSX field should be prepended to all definitions that have a PSX field
-            #         definition = current_posx + definition if current_posx else definition
-            #         current_definition = objects.Definition(
-            #             definition=definition, label=current_pos
-            #         )
-            #     elif parsed_type == Type.EXAMPLE_PINYIN:
-            #         current_example.pron = parsed
-            #     elif parsed_type == Type.EXAMPLE_HANZI:
-            #         current_example.content = parsed
-            #     elif parsed_type == Type.EXAMPLE_TRANSLATION:
-            #         lang = parsed[0]
-            #         if lang != "en":
-            #             # Only keep English translations for now
-            #             continue
-
-            #         current_definition.examples[-1].append(
-            #             objects.Example(lang="eng", content=parsed[1])
-            #         )
 
 
 if __name__ == "__main__":
@@ -585,4 +637,4 @@ if __name__ == "__main__":
         sys.argv[10],
     )
     parse_file(sys.argv[2], entries)
-    # write(sys.argv[1], source, entries)
+    write(sys.argv[1], source, entries)
