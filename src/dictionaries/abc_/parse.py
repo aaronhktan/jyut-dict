@@ -6,6 +6,7 @@ from wordfreq import zipf_frequency
 from database import database, objects
 
 from collections import defaultdict
+import copy
 from enum import Enum
 import logging
 import re
@@ -24,6 +25,7 @@ IGNORED_TYPES = (
 EXAMPLE_TYPE = re.compile(
     r"(?P<pos_index>\d{1})(?P<def_index>\d{1})?(?P<ex_index>\d{1})?(?P<type>\w*)(@\w*)*"
 )
+TRADITIONAL_VARIANTS = re.compile(r"((?:./)+.)")
 
 
 class Type(Enum):
@@ -222,23 +224,39 @@ def parse_pinyin(content):
 
 
 def parse_char(content):
+    trad = []
+
     # Traditional form is indicated enclosed in square brackets
     bracket_index = content.find("[")
     if bracket_index != -1:
         simp = content[:bracket_index]
         # fmt: off
-        trad = content[bracket_index+1:content.find("]")]
-        trad = list(trad)
-        for index, char in enumerate(trad):
-            if char == "-":
-                try:
-                    trad[index] = simp[index]
-                except:
-                    logging.error(f"couldn't get traditional from simplified {simp}, traditional {trad}")
-        trad = "".join(trad)
+        traditional = content[bracket_index+1:content.find("]")]
+
+        # Traditional form may have one or more variants
+        traditional_variants = []
+        match = TRADITIONAL_VARIANTS.search(content)
+        if match:
+            variants = match.group(1).split("/")
+            for variant in variants:
+                traditional_variants.append(TRADITIONAL_VARIANTS.sub(variant, traditional))
+        else:
+            traditional_variants.append(traditional)
+
+        for traditional_variant in traditional_variants:
+            traditional_variant = list(traditional_variant)
+            for index, char in enumerate(traditional_variant):
+                if char == "-":
+                    try:
+                        traditional_variant[index] = simp[index]
+                    except:
+                        logging.error(f"couldn't get traditional from simplified {simp}, traditional {traditional_variant}")
+            traditional_variant = "".join(traditional_variant)
+            trad.append(traditional_variant)
         # fmt: on
     else:
-        simp = trad = content
+        simp = content
+        trad.append(content)
 
     return trad, simp
 
@@ -391,6 +409,7 @@ def parse_file(filename, words):
                     continue
 
                 current_entry = objects.Entry()
+                variants = []
                 entry_pos = None
                 entry_posx = None
                 entry_ex_hz = None
@@ -406,12 +425,13 @@ def parse_file(filename, words):
                     if parsed_type == Type.PINYIN:
                         current_entry.add_pinyin(parsed)
                     elif parsed_type == Type.HANZI:
-                        current_entry.add_traditional(parsed[0])
+                        current_entry.add_traditional(parsed[0][0])
                         current_entry.add_simplified(parsed[1])
-                        current_entry.add_freq(zipf_frequency(parsed[0], "zh"))
+                        current_entry.add_freq(zipf_frequency(parsed[0][0], "zh"))
                         current_entry.add_jyutping(pinyin_jyutping_sentence.jyutping(
-                            parsed[0], tone_numbers=True, spaces=True
+                            parsed[0][0], tone_numbers=True, spaces=True
                         ))
+                        variants = parsed[0][1:]
                     elif parsed_type == Type.POS:
                         entry_pos = parsed
                     elif parsed_type == Type.POSX:
@@ -599,6 +619,16 @@ def parse_file(filename, words):
                                 current_definition.examples[-1].append(objects.Example(lang="eng", content=ex_tr))
 
                 words[current_entry.traditional].append(current_entry)
+
+                for variant in variants:
+                    variant_entry = copy.deepcopy(current_entry)
+                    variant_entry.add_traditional(variant)
+                    variant_entry.add_jyutping(pinyin_jyutping_sentence.jyutping(
+                        variant, tone_numbers=True, spaces=True
+                    ))
+                    variant_entry.add_freq(zipf_frequency(variant, "zh"))
+                    words[variant_entry.traditional].append(variant_entry)
+
                 current_entry_lines = []
 
 
