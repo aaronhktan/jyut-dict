@@ -186,12 +186,11 @@ def write(db_name, source, words):
 
 
 def parse_pinyin(content):
-    # Pinyin sometimes has superscript numbers preceding them
-    # I assume it's to distinguish between words with the same Pinyin? Unsure
-    content = content.strip("¹²³⁴⁵⁶⁷⁸⁹")
     # ABC indicates sound change by a dot underneath the vowel
     # But we don't support that, so remove it
-    content = content.translate(str.maketrans("ạẹịọụ", "aeiou", "*"))
+    # Pinyin also sometimes has superscript numbers preceding them that we need to strip
+    # I assume it's to distinguish between words with the same Pinyin? Unsure
+    content = content.translate(str.maketrans("ạẹịọụ", "aeiou", "*¹²³⁴⁵⁶⁷⁸⁹"))
     # Also replace combining characters with single-character equivalents
     content = unicodedata.normalize("NFKC", content)
     # Make the Pinyin lowercase, so that dragonmapper can parse it
