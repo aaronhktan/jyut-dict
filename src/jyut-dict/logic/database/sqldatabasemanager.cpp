@@ -198,7 +198,7 @@ QString SQLDatabaseManager::getBundleDictionaryDatabasePath()
                          + DICTIONARY_DATABASE_NAME};
 #else
     QFileInfo bundleFile{"/usr/share/jyut-dict/dictionaries/"
-                         + DICTIONARY_DATABASE_NAME};
+                         + QString{DICTIONARY_DATABASE_NAME}};
 #endif
 #endif
     return bundleFile.absoluteFilePath();
@@ -238,7 +238,7 @@ QString SQLDatabaseManager::getBundleUserDatabasePath()
 #elif defined(FLATPAK)
     QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/../share/jyut-dict/dictionaries/" + USER_DATABASE_NAME};
 #else
-    QFileInfo bundleFile{"/usr/share/jyut-dict/dictionaries/" + USER_DATABASE_NAME};
+    QFileInfo bundleFile{"/usr/share/jyut-dict/dictionaries/" + QString{USER_DATABASE_NAME}};
 #endif
 #endif
     return bundleFile.absoluteFilePath();
