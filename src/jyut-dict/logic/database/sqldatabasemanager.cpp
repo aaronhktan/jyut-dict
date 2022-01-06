@@ -117,6 +117,9 @@ bool SQLDatabaseManager::backupDictionaryDatabase()
 
 bool SQLDatabaseManager::restoreBackedUpDictionaryDatabase()
 {
+    // Note: this function does not work in Windows. The OS prevents
+    // the program from deleting the dictionary database file, since the file
+    // is still in use by other instances of SQLDatabaseManager.
     QString dir = QFileInfo{getDictionaryDatabasePath()}.absolutePath() + "/";
     QString dictFilePath = dir + DICTIONARY_DATABASE_NAME;
     QString backupFilePath = dir + DICTIONARY_DATABASE_NAME + "_"
@@ -225,7 +228,7 @@ QString SQLDatabaseManager::getBundleUserDatabasePath()
     QFileInfo bundleFile{QCoreApplication::applicationDirPath()
                          + "/../Resources/" + USER_DATABASE_NAME};
 #elif defined(Q_OS_WIN)
-    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "./" + USER_DATABASE_NAME};
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + USER_DATABASE_NAME};
 #else
 #ifdef APPIMAGE
     QFileInfo bundleFile{QCoreApplication::applicationDirPath()

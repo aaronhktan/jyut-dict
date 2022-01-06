@@ -91,6 +91,7 @@ void AdvancedTab::setupUI()
             this,
             &AdvancedTab::exportUserDatabase);
 
+#ifndef Q_OS_WIN
     QFrame *_restoreDivider = new QFrame{this};
     _restoreDivider->setObjectName("divider");
     _restoreDivider->setFrameShape(QFrame::HLine);
@@ -112,6 +113,7 @@ void AdvancedTab::setupUI()
             &QPushButton::clicked,
             this,
             &AdvancedTab::restoreExportedUserDatabase);
+#endif
 
     QFrame *_languageDivider = new QFrame{this};
     _languageDivider->setObjectName("divider");
@@ -130,10 +132,12 @@ void AdvancedTab::setupUI()
     _tabLayout->addRow(_exportDivider);
     _tabLayout->addRow(" ", _exportDictionaryDatabaseButton);
     _tabLayout->addRow(" ", _exportUserDatabaseButton);
+#ifndef Q_OS_WIN
     _tabLayout->addRow(_restoreDivider);
     _tabLayout->addRow(" ", _restoreBackedUpDictionaryDatabaseButton);
     _tabLayout->addRow(" ", _restoreExportedDictionaryDatabaseButton);
     _tabLayout->addRow(" ", _restoreExportedUserDatabaseButton);
+#endif
     _tabLayout->addRow(_languageDivider);
     _tabLayout->addRow(" ", _languageCombobox);
 
@@ -165,6 +169,7 @@ void AdvancedTab::translateUI()
     _exportDictionaryDatabaseButton->setText(tr("Export"));
     _exportUserDatabaseButton->setText(tr("Export"));
 
+#ifndef Q_OS_WIN
     static_cast<QLabel *>(_tabLayout->labelForField(_restoreBackedUpDictionaryDatabaseButton))
         ->setText(tr("Restore dictionaries file to last backed up version:"));
     static_cast<QLabel *>(_tabLayout->labelForField(_restoreExportedDictionaryDatabaseButton))
@@ -174,7 +179,7 @@ void AdvancedTab::translateUI()
     _restoreBackedUpDictionaryDatabaseButton->setText(tr("Restore"));
     _restoreExportedDictionaryDatabaseButton->setText(tr("Restore"));
     _restoreExportedUserDatabaseButton->setText(tr("Restore"));
-
+#endif
 
     static_cast<QLabel *>(_tabLayout->labelForField(_languageCombobox))
         ->setText(tr("Application language:"));
@@ -397,6 +402,9 @@ void AdvancedTab::exportDatabaseResult(bool succeeded,
 
 void AdvancedTab::restoreBackedUpDictionaryDatabase(void)
 {
+    // Note: this function does not work in Windows. The OS prevents
+    // the program from deleting the dictionary database file, since the file
+    // is still in use by other instances of SQLDatabaseManager.
     QString successText{
         tr("Dictionary restore succeeded! %1 will now restart.")
             .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
@@ -424,6 +432,9 @@ void AdvancedTab::restoreBackedUpDictionaryDatabase(void)
 
 void AdvancedTab::restoreExportedDictionaryDatabase(void)
 {
+    // Note: this function does not work in Windows. The OS prevents
+    // the program from deleting the dictionary database file, since the file
+    // is still in use by other instances of SQLDatabaseManager.
     QFileDialog *_fileDialog = new QFileDialog{this};
     _fileDialog->setAcceptMode(QFileDialog::AcceptOpen);
 
@@ -476,6 +487,9 @@ void AdvancedTab::restoreExportedDictionaryDatabase(void)
 
 void AdvancedTab::restoreExportedUserDatabase(void)
 {
+    // Note: this function does not work in Windows. The OS prevents
+    // the program from deleting the user database file, since the file
+    // is still in use by other instances of SQLDatabaseManager.
     QFileDialog *_fileDialog = new QFileDialog{this};
     _fileDialog->setAcceptMode(QFileDialog::AcceptOpen);
 
