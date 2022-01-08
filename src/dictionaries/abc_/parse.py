@@ -54,8 +54,8 @@ def insert_example(c, definition_id, starting_example_id, example):
     # translations
     examples_inserted = 0
 
-    trad = example[0].content
-    simp = HanziConv.toSimplified(trad) if trad else ""
+    simp = example[0].content
+    trad = HanziConv.toTraditional(simp) if simp else ""
     jyut = ""
     pin = example[0].pron
     lang = example[0].lang
