@@ -7,3 +7,4 @@
   - https://pontoon.mozilla.org/zh-TW/all-projects/all-resources/
   - https://pontoon.mozilla.org/zh-CN/all-projects/all-resources/
   - https://pontoon.mozilla.org/fr/all-projects/all-resources/
+  - https://www.microsoft.com/en-us/language/

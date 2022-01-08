@@ -9,6 +9,9 @@
 // The userDatabase is the database that contains user data (e.g. favourites,
 // search history, etc.)
 
+constexpr auto DICTIONARY_DATABASE_NAME = "dict.db";
+constexpr auto USER_DATABASE_NAME = "user.db";
+
 class SQLDatabaseManager
 {
 public:
@@ -21,6 +24,9 @@ public:
 
     QString getDictionaryDatabasePath();
     QString getUserDatabasePath();
+
+    bool backupDictionaryDatabase();
+    bool restoreBackedUpDictionaryDatabase();
 
 private:
     void addDatabase(QString name);

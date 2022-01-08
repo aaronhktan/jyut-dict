@@ -37,6 +37,8 @@ public:
 private:
     std::shared_ptr<SQLDatabaseManager> _manager;
 
+    bool backupDatabase(void);
+
     bool migrateDatabaseFromOneToTwo(void);
     bool migrateDatabaseFromTwoToThree(void);
 

@@ -1,13 +1,17 @@
 #ifndef ADVANCEDTAB_H
 #define ADVANCEDTAB_H
 
+#include "dialogs/exportdatabasedialog.h"
+#include "dialogs/restoredatabasedialog.h"
 #include "logic/settings/settingsutils.h"
 
 #include <QCheckBox>
 #include <QComboBox>
 #include <QEvent>
 #include <QFormLayout>
+#include <QFutureWatcher>
 #include <QLabel>
+#include <QProgressDialog>
 #include <QPushButton>
 #include <QSettings>
 #include <QTranslator>
@@ -36,7 +40,22 @@ private:
 #endif
     void initializeLanguageCombobox(QComboBox &combobox);
 
+    void exportDictionaryDatabase(void);
     void exportUserDatabase(void);
+
+    void exportDatabaseResult(bool succeeded,
+                              QString suceededText,
+                              QString failedText);
+
+    void restoreBackedUpDictionaryDatabase(void);
+    void restoreExportedDictionaryDatabase(void);
+    void restoreExportedUserDatabase(void);
+
+    void restoreDatabaseResult(bool succeeded,
+                               QString suceededText,
+                               QString failedText);
+
+    void showProgressDialog(QString text);
 
     bool _paletteRecentlyChanged = false;
 
@@ -44,12 +63,22 @@ private:
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     QCheckBox *_forceDarkModeCheckbox;
 #endif
+    QPushButton *_exportDictionaryDatabaseButton;
     QPushButton *_exportUserDatabaseButton;
+    QPushButton *_restoreBackedUpDictionaryDatabaseButton;
+    QPushButton *_restoreExportedDictionaryDatabaseButton;
+    QPushButton *_restoreExportedUserDatabaseButton;
     QComboBox *_languageCombobox;
 
     QFormLayout *_tabLayout;
 
     std::unique_ptr<QSettings> _settings;
+
+    QFutureWatcher<bool> *_watcher;
+
+    QProgressDialog *_progressDialog;
+    ExportDatabaseDialog *_exportDatabaseDialog;
+    RestoreDatabaseDialog *_restoreDatabaseDialog;
 };
 
 #endif // ADVANCEDTAB_H
