@@ -15,6 +15,14 @@ import string
 import sys
 import unicodedata
 
+# Useful test entries:
+# - 语言障碍 (1016843628): contains apostrophe in Pinyin
+# - 棒球 (1000273021): contains Pinyin with erhua
+# - 白 (1000140422): contains @@ in definition content
+# - 机灵 (1006245990): contains dated variant
+# - 犄/觭角 (1006222031): contains variant for simplified
+# - 记/纪录 (1006248609): contains variant for simplified and traditional
+
 IGNORED_LINES = ("cidian.wenlindb\n", ".-arc\n", ".-publish\n")
 IGNORED_TYPES = (
     "gr",
@@ -25,7 +33,8 @@ IGNORED_TYPES = (
 EXAMPLE_TYPE = re.compile(
     r"(?P<pos_index>\d{1})(?P<def_index>\d{1})?(?P<ex_index>\d{1})?(?P<type>\w*)(@\w*)*"
 )
-TRADITIONAL_VARIANTS = re.compile(r"((?:./)+.)")
+VARIANTS = re.compile(r"((?:./)+.)")
+ABRIDGED_DATED_VARIANT = re.compile(r"@{.*?}")
 
 
 class Type(Enum):
@@ -190,9 +199,12 @@ def write(db_name, source, words):
 def parse_pinyin(content):
     # ABC indicates sound change by a dot underneath the vowel
     # But we don't support that, so remove it
-    # Pinyin also sometimes has superscript numbers preceding them that we need to strip
+    # Pinyin also sometimes has superscript numbers preceding them that we need to remove
     # I assume it's to distinguish between words with the same Pinyin? Unsure
-    content = content.translate(str.maketrans("ạẹịọụ", "aeiou", "*¹²³⁴⁵⁶⁷⁸⁹"))
+    content = content.translate(str.maketrans("ạẹịọụ'", "aeiou ", "*¹²³⁴⁵⁶⁷⁸⁹"))
+    # ABC also indicates erhua with (r) in Pinyin. This causes difficulties with
+    # entry coalescing, so remove it.
+    content = content.replace("(r)", "")
     # Also replace combining characters with single-character equivalents
     content = unicodedata.normalize("NFKC", content)
     # Make the Pinyin lowercase, so that dragonmapper can parse it
@@ -224,41 +236,72 @@ def parse_pinyin(content):
 
 
 def parse_char(content):
-    trad = []
+    content_variants = []
+
+    # Remove dated variants, if any (denoted by @{<variant>})
+    content = ABRIDGED_DATED_VARIANT.sub("", content)
 
     # Traditional form is indicated enclosed in square brackets
     bracket_index = content.find("[")
     if bracket_index != -1:
-        simp = content[:bracket_index]
+        simplified = content[:bracket_index]
         # fmt: off
         traditional = content[bracket_index+1:content.find("]")]
 
-        # Traditional form may have one or more variants
-        traditional_variants = []
-        match = TRADITIONAL_VARIANTS.search(content)
+        # Simplified form may have one or more variants
+        simplified_variants = []
+        match = VARIANTS.search(simplified)
         if match:
             variants = match.group(1).split("/")
             for variant in variants:
-                traditional_variants.append(TRADITIONAL_VARIANTS.sub(variant, traditional))
+                simplified_variants.append(VARIANTS.sub(variant, simplified))
+        else:
+            simplified_variants.append(simplified)
+
+        # Traditional form may have one or more variants
+        traditional_variants = []
+        match = VARIANTS.search(traditional)
+        if match:
+            variants = match.group(1).split("/")
+            for variant in variants:
+                traditional_variants.append(VARIANTS.sub(variant, traditional))
         else:
             traditional_variants.append(traditional)
 
-        for traditional_variant in traditional_variants:
+        # Try to match up the traditional variants to their simplified counterparts
+        for variant_index, traditional_variant in enumerate(traditional_variants):
+            if variant_index < len(simplified_variants):
+                simplified_equivalent = simplified_variants[variant_index]
+            else:
+                simplified_equivalent = simplified_variants[0]
+
             traditional_variant = list(traditional_variant)
             for index, char in enumerate(traditional_variant):
                 if char == "-":
                     try:
-                        traditional_variant[index] = simp[index]
+                        traditional_variant[index] = simplified_equivalent[index]
                     except:
-                        logging.error(f"couldn't get traditional from simplified {simp}, traditional {traditional_variant}")
+                        logging.error(f"couldn't get traditional from simplified {simplified_equivalent}, traditional {traditional_variant}")
             traditional_variant = "".join(traditional_variant)
-            trad.append(traditional_variant)
+            content_variants.append((traditional_variant, simplified_equivalent))
         # fmt: on
     else:
-        simp = content
-        trad.append(content)
+        # Simplified form may have one or more variants
+        simplified = content
 
-    return trad, simp
+        simplified_variants = []
+        match = VARIANTS.search(simplified)
+        if match:
+            variants = match.group(1).split("/")
+            for variant in variants:
+                simplified_variants.append(VARIANTS.sub(variant, simplified))
+        else:
+            simplified_variants.append(simplified)
+
+        for simplified_variant in simplified_variants:
+            content_variants.append((simplified_variant, simplified_variant))
+
+    return content_variants
 
 
 def parse_definition(content):
@@ -272,6 +315,10 @@ def parse_definition(content):
         lang = content[content.find("[")+1:content.find("]")]
         content = content[content.find("]")+2:]
         # fmt: on
+
+    # I'm not sure why, but there is sometimes an "@@" in the definition content.
+    # Since it's not useful, remove it.
+    content = content.replace("@@", "")
 
     return lang, content
 
@@ -320,14 +367,14 @@ def parse_content(column_type, content, entry):
         pin = parse_pinyin(content)
         return Type.PINYIN, pin
     elif column_type.startswith("char"):
-        trad, simp = parse_char(content)
-        return Type.HANZI, (trad, simp)
+        variants = parse_char(content)
+        return Type.HANZI, variants
     elif column_type.startswith("psx"):
         # not sure exactly what psx actually means
         lang, part_of_speech_extended = parse_definition(content)
         return Type.POSX, (lang, part_of_speech_extended)
     elif column_type.startswith("ps"):
-        part_of_speech = content
+        part_of_speech = content.replace("@@", "")
         return Type.POS, part_of_speech
     elif column_type.startswith("df"):
         language, definition = parse_definition(content)
@@ -426,12 +473,12 @@ def parse_file(filename, words):
                         current_entry.add_pinyin(parsed)
                     elif parsed_type == Type.HANZI:
                         current_entry.add_traditional(parsed[0][0])
-                        current_entry.add_simplified(parsed[1])
+                        current_entry.add_simplified(parsed[0][1])
                         current_entry.add_freq(zipf_frequency(parsed[0][0], "zh"))
                         current_entry.add_jyutping(pinyin_jyutping_sentence.jyutping(
                             parsed[0][0], tone_numbers=True, spaces=True
                         ))
-                        variants = parsed[0][1:]
+                        variants = parsed[1:]
                     elif parsed_type == Type.POS:
                         entry_pos = parsed
                     elif parsed_type == Type.POSX:
@@ -621,12 +668,14 @@ def parse_file(filename, words):
                 words[current_entry.traditional].append(current_entry)
 
                 for variant in variants:
+                    traditional, simplified = variant
                     variant_entry = copy.deepcopy(current_entry)
-                    variant_entry.add_traditional(variant)
+                    variant_entry.add_simplified(simplified)
+                    variant_entry.add_traditional(traditional)
                     variant_entry.add_jyutping(pinyin_jyutping_sentence.jyutping(
-                        variant, tone_numbers=True, spaces=True
+                        traditional, tone_numbers=True, spaces=True
                     ))
-                    variant_entry.add_freq(zipf_frequency(variant, "zh"))
+                    variant_entry.add_freq(zipf_frequency(traditional, "zh"))
                     words[variant_entry.traditional].append(variant_entry)
 
                 current_entry_lines = []
