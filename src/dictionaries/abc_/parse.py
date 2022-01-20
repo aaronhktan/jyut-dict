@@ -22,6 +22,7 @@ import unicodedata
 # - 机灵 (1006245990): contains dated variant
 # - 犄/觭角 (1006222031): contains variant for simplified
 # - 记/纪录 (1006248609): contains variant for simplified and traditional
+# - 回@@/迴 (1005378131): contains "@@" in entry headword
 
 IGNORED_LINES = ("cidian.wenlindb\n", ".-arc\n", ".-publish\n")
 IGNORED_TYPES = (
@@ -240,6 +241,8 @@ def parse_char(content):
 
     # Remove dated variants, if any (denoted by @{<variant>})
     content = ABRIDGED_DATED_VARIANT.sub("", content)
+    # Remove "@@" from characters
+    content = content.replace("@@", "")
 
     # Traditional form is indicated enclosed in square brackets
     bracket_index = content.find("[")
