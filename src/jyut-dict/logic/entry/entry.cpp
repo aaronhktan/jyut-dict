@@ -7,14 +7,6 @@
 Entry::Entry()
     : QObject()
 {
-    _simplified = "";
-    _traditional = "";
-    _jyutping = "";
-    _pinyin = "";
-    _prettyPinyin = "";
-    _definitions = {};
-    _isWelcome = false;
-    _isEmpty = false;
 }
 
 Entry::Entry(const std::string &simplified, const std::string &traditional,
@@ -26,9 +18,6 @@ Entry::Entry(const std::string &simplified, const std::string &traditional,
       _pinyin{pinyin},
       _definitions{definitions}
 {
-    _isWelcome = false;
-    _isEmpty = false;
-
     // Normalize pinyin and jyutping to lowercase >:(
     std::transform(_jyutping.begin(), _jyutping.end(), _jyutping.begin(), ::tolower);
     std::transform(_pinyin.begin(), _pinyin.end(), _pinyin.begin(), ::tolower);
@@ -58,7 +47,6 @@ Entry::Entry(const Entry &entry)
       _isWelcome{entry.isWelcome()},
       _isEmpty{entry.isEmpty()}
 {
-
 }
 
 Entry::Entry(const Entry &&entry)
@@ -77,7 +65,6 @@ Entry::Entry(const Entry &&entry)
       _isWelcome{entry.isWelcome()},
       _isEmpty{entry.isEmpty()}
 {
-
 }
 
 Entry &Entry::operator=(const Entry &entry)
@@ -219,6 +206,10 @@ std::string Entry::getSimplified(void) const
 void Entry::setSimplified(std::string simplified)
 {
     _simplified = simplified;
+
+    // Create comparison versions of traditional and simplified entries
+    _traditionalDifference = ChineseUtils::compareStrings(_simplified, _traditional);
+    _simplifiedDifference = ChineseUtils::compareStrings(_traditional, _simplified);
 }
 
 std::string Entry::getTraditional(void) const
@@ -229,6 +220,10 @@ std::string Entry::getTraditional(void) const
 void Entry::setTraditional(std::string traditional)
 {
     _traditional = traditional;
+
+    // Create comparison versions of traditional and simplified entries
+    _traditionalDifference = ChineseUtils::compareStrings(_simplified, _traditional);
+    _simplifiedDifference = ChineseUtils::compareStrings(_traditional, _simplified);
 }
 
 std::string Entry::getPhonetic(EntryPhoneticOptions options) const
@@ -297,6 +292,7 @@ std::string Entry::getJyutping(void) const
 void Entry::setJyutping(const std::string &jyutping)
 {
     _jyutping = jyutping;
+    std::transform(_jyutping.begin(), _jyutping.end(), _jyutping.begin(), ::tolower);
 }
 
 std::vector<int> Entry::getJyutpingNumbers() const
@@ -329,6 +325,8 @@ std::string Entry::getPrettyPinyin(void) const
 void Entry::setPinyin(const std::string &pinyin)
 {
     _pinyin = pinyin;
+    std::transform(_pinyin.begin(), _pinyin.end(), _pinyin.begin(), ::tolower);
+    _prettyPinyin = ChineseUtils::createPrettyPinyin(_pinyin);
 }
 
 std::vector<int> Entry::getPinyinNumbers() const
@@ -355,7 +353,7 @@ std::string Entry::getDefinitionSnippet(void) const
         return "";
     }
 
-    for (auto definition: _definitions) {
+    for (const auto &definition: _definitions) {
         if (!definition.isEmpty()) {
             return definition.getDefinitionsSnippet();
         }
