@@ -60,7 +60,7 @@ QSqlDatabase SQLDatabaseManager::getDatabase()
     return QSqlDatabase::database(name);
 }
 
-bool SQLDatabaseManager::isDatabaseOpen()
+bool SQLDatabaseManager::isDatabaseOpen() const
 {
     return QSqlDatabase::database(getCurrentDatabaseName(), /*open=*/false)
         .isOpen();
@@ -132,7 +132,7 @@ bool SQLDatabaseManager::restoreBackedUpDictionaryDatabase()
     }
 }
 
-void SQLDatabaseManager::addDatabase(const QString &name)
+void SQLDatabaseManager::addDatabase(const QString &name) const
 {
     QSqlDatabase::addDatabase("QSQLITE", name);
 }
@@ -336,7 +336,7 @@ bool SQLDatabaseManager::attachUserDatabase()
     return !query.lastError().isValid();
 }
 
-QString SQLDatabaseManager::getCurrentDatabaseName()
+QString SQLDatabaseManager::getCurrentDatabaseName() const
 {
     // Generate a unique name for every thread that needs a connection to the
     // database.

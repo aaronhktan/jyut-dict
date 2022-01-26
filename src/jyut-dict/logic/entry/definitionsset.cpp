@@ -23,7 +23,7 @@ DefinitionsSet::DefinitionsSet(std::string source,
 
 std::ostream &operator<<(std::ostream &out, DefinitionsSet const &definitions)
 {
-    for (Definition::Definition &definition : definitions.getDefinitions()) {
+    for (const auto &definition : definitions.getDefinitions()) {
         out << definition.definitionContent << "\n";
     }
 

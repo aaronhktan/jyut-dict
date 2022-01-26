@@ -286,31 +286,31 @@ void DefinitionContentWidget::setStyle(bool use_dark)
 
 void DefinitionContentWidget::cleanupLabels()
 {
-    for (auto label : _definitionNumberLabels) {
+    for (const auto &label : _definitionNumberLabels) {
         _definitionLayout->removeWidget(label);
         delete label;
     }
     _definitionNumberLabels.clear();
 
-    for (auto label : _definitionLabelLabels) {
+    for (const auto &label : _definitionLabelLabels) {
         _definitionLayout->removeWidget(label);
         delete label;
     }
     _definitionLabelLabels.clear();
 
-    for (auto label : _definitionLabels) {
+    for (const auto &label : _definitionLabels) {
         _definitionLayout->removeWidget(label);
         delete label;
     }
     _definitionLabels.clear();
 
-    for (auto label : _exampleLabels) {
+    for (const auto &label : _exampleLabels) {
         _definitionLayout->removeWidget(label);
         delete label;
     }
     _exampleLabels.clear();
 
-    for (auto label : _spaceLabels) {
+    for (const auto &label : _spaceLabels) {
         _definitionLayout->removeWidget(label);
         delete label;
     }

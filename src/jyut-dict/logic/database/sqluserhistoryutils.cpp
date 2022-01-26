@@ -44,7 +44,7 @@ void SQLUserHistoryUtils::notifyObservers(const std::vector<Entry> &results,
     }
 }
 
-bool SQLUserHistoryUtils::checkForManager(void)
+bool SQLUserHistoryUtils::checkForManager(void) const
 {
     if (!_manager) {
         std::cout << "No database specified!" << std::endl;
@@ -142,7 +142,7 @@ void SQLUserHistoryUtils::addViewToHistoryThread(const Entry &entry)
 
 void SQLUserHistoryUtils::searchAllSearchHistoryThread(void)
 {
-    std::vector<searchTermHistoryItem> results{};
+    std::vector<searchTermHistoryItem> results;
 
     QSqlQuery query{_manager->getDatabase()};
 
@@ -171,7 +171,7 @@ void SQLUserHistoryUtils::clearAllSearchHistoryThread(void)
 
 void SQLUserHistoryUtils::searchAllViewHistoryThread(void)
 {
-    std::vector<Entry> results{};
+    std::vector<Entry> results;
 
     QSqlQuery query{_manager->getDatabase()};
 

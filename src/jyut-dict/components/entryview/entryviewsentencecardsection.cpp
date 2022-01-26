@@ -83,7 +83,7 @@ void EntryViewSentenceCardSection::translateUI()
 
 void EntryViewSentenceCardSection::cleanup(void)
 {
-    for (auto card : _sentenceCards) {
+    for (const auto &card : _sentenceCards) {
         _sentenceCardsLayout->removeWidget(card);
         delete card;
     }
@@ -258,8 +258,8 @@ EntryViewSentenceCardSection::getSamplesForEachSource(
 {
     std::unordered_map<std::string, std::vector<SourceSentence>> samples;
 
-    for (auto &sourceSentence : sourceSentences) {
-        for (auto &sentenceSet : sourceSentence.getSentenceSets()) {
+    for (const auto &sourceSentence : sourceSentences) {
+        for (const auto &sentenceSet : sourceSentence.getSentenceSets()) {
             std::string source = sentenceSet.getSource();
 
             if (samples[source].size() >= 2) {

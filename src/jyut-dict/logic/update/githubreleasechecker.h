@@ -21,24 +21,23 @@ public:
     void checkForNewUpdate(void) override;
 
 private:
-    void preConnectToHost(void);
+    void preConnectToHost(void) const;
 
     bool parseJSON(const std::string &data,
                    bool &updateAvailable,
                    std::string &versionNumber,
-                   std::string &url, std::string &description);
-    void notifyNewUpdate(void);
+                   std::string &url, std::string &description) const;
 
     QNetworkAccessManager *_manager;
     QNetworkReply *_reply;
 
 public slots:
-    void parseReply(QNetworkReply *request);
+    void parseReply(QNetworkReply *request) const;
 
 signals:
     void foundUpdate(bool updateAvailable,
                      std::string versionNumber,
-                     std::string url, std::string description);
+                     std::string url, std::string description) const;
 };
 
 #endif // GITHUBRELEASECHECKER_H

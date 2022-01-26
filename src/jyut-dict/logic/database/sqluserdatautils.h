@@ -36,8 +36,6 @@ private:
                          bool emptyQuery) override;
     void notifyObservers(bool entryExists, const Entry &entry) override;
 
-    void setCurrentSearchTerm(const QString &searchTerm);
-
     void searchForAllFavouritedWordsThread(void);
     void checkIfEntryHasBeenFavouritedThread(const Entry &entry);
     void favouriteEntryThread(const Entry &entry);

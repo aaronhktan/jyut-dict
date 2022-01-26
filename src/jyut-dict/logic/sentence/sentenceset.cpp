@@ -16,7 +16,7 @@ SentenceSet::SentenceSet(const std::string &source,
 
 std::ostream &operator<<(std::ostream &out, const SentenceSet &sentenceSet)
 {
-    for (Sentence::TargetSentence &sentence : sentenceSet.getSentences()) {
+    for (const auto &sentence : sentenceSet.getSentences()) {
         out << sentence.sentence << "\n";
     }
     return out;

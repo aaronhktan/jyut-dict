@@ -150,7 +150,7 @@ void AdvancedTab::translateUI()
     setProperty("isHan", Settings::isCurrentLocaleHan());
 
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
-    foreach (auto button, buttons) {
+    foreach (const auto & button, buttons) {
         button->setProperty("isHan", Settings::isCurrentLocaleHan());
         button->style()->unpolish(button);
         button->style()->polish(button);
@@ -199,7 +199,7 @@ void AdvancedTab::setStyle(bool use_dark)
     QString style = "QFrame { border: 1px solid %1; }";
     QList<QFrame *> frames
         = this->findChildren<QFrame *>("divider");
-    foreach (auto frame, frames) {
+    foreach (const auto & frame, frames) {
         frame->setStyleSheet(style.arg(colour));
     }
 #ifdef Q_OS_MAC
@@ -242,7 +242,7 @@ void AdvancedTab::initializeForceDarkModeCheckbox(QCheckBox &checkbox)
         _settings->sync();
 
         QEvent event{QEvent::PaletteChange};
-        foreach (auto window, qApp->topLevelWindows()) {
+        foreach (const auto & window, qApp->topLevelWindows()) {
             QCoreApplication::sendEvent(window, &event);
         }
     });

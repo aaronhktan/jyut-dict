@@ -208,7 +208,7 @@ void SentenceContentWidget::setSourceSentenceVector(
 
 void SentenceContentWidget::translateUI(void)
 {
-    for (auto &label : _sourceSentenceLanguage) {
+    for (const auto &label : _sourceSentenceLanguage) {
         label->setText(Utils::getLanguageFromISO639(
                            label->property("language").toString().toStdString())
                            .trimmed());
@@ -482,7 +482,7 @@ void SentenceContentWidget::cleanupLabels()
 
 void SentenceContentWidget::clearLabelVector(std::vector<QLabel *> &vector)
 {
-    for (auto label : vector) {
+    for (const auto &label : vector) {
         _sentenceLayout->removeWidget(label);
         delete label;
     }

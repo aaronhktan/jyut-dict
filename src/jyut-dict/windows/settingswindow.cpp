@@ -109,7 +109,7 @@ void SettingsWindow::translateUI()
     setProperty("isHan", Settings::isCurrentLocaleHan());
 
     QList<QToolButton *> buttons = this->findChildren<QToolButton *>();
-    foreach (auto button, buttons) {
+    foreach (const auto & button, buttons) {
         button->setProperty("isHan", Settings::isCurrentLocaleHan());
         button->style()->unpolish(button);
         button->style()->polish(button);
@@ -323,7 +323,7 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
     }
 
     QList<QToolButton *> buttons = this->findChildren<QToolButton *>();
-    foreach (auto button, buttons) {
+    foreach (const auto & button, buttons) {
         button->style()->unpolish(button);
         button->style()->polish(button);
     }

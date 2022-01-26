@@ -62,7 +62,7 @@ void DefaultDialog::setupUI(const QString &reason, const QString &description)
 #endif
 
     QList<QLabel *> labels = this->findChildren<QLabel *>();
-    for (auto label : labels) {
+    foreach (const auto &label, labels) {
         label->setTextInteractionFlags(Qt::NoTextInteraction);
     }
 
@@ -76,7 +76,7 @@ void DefaultDialog::translateUI(void)
     setProperty("isHan", Settings::isCurrentLocaleHan());
 
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
-    foreach (auto button, buttons) {
+    foreach (const auto & button, buttons) {
         button->setProperty("isHan", Settings::isCurrentLocaleHan());
         button->style()->unpolish(button);
         button->style()->polish(button);
@@ -87,7 +87,7 @@ void DefaultDialog::deselectButtons(void)
 {
     // setDefaultButton doesn't really work, so use this
     // workaround to deselect all buttons first.
-    foreach (auto button, buttons()) {
+    foreach (const auto & button, buttons()) {
         QPushButton *b = static_cast<QPushButton *>(button);
         b->setDown(false);
         b->setAutoDefault(false);

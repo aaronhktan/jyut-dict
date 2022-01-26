@@ -90,7 +90,7 @@ void SQLUserDataUtils::unfavouriteEntry(const Entry &entry)
 // the search functions in SQLSearch.cpp as well!
 void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
 {
-    std::vector<Entry> results{};
+    std::vector<Entry> results;
 
     QSqlQuery query{_manager->getDatabase()};
 

@@ -19,7 +19,7 @@ public:
     ~SQLDatabaseManager();
 
     QSqlDatabase getDatabase();
-    bool isDatabaseOpen();
+    bool isDatabaseOpen() const;
     void closeDatabase();
 
     QString getDictionaryDatabasePath();
@@ -29,7 +29,7 @@ public:
     bool restoreBackedUpDictionaryDatabase();
 
 private:
-    void addDatabase(const QString &name);
+    void addDatabase(const QString &name) const;
     bool openDatabase(const QString &name);
 
     QString getLocalDictionaryDatabasePath();
@@ -43,7 +43,7 @@ private:
     bool copyUserDatabase();
     bool attachUserDatabase();
 
-    QString getCurrentDatabaseName();
+    QString getCurrentDatabaseName() const;
 
     QString _dictionaryDatabasePath;
     QString _userDatabasePath;

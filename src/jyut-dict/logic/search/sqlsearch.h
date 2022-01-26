@@ -59,7 +59,7 @@ private:
                                          const unsigned long long queryID);
 
     unsigned long long generateAndSetQueryID(void);
-    bool checkQueryIDCurrent(const unsigned long long queryID);
+    bool checkQueryIDCurrent(const unsigned long long queryID) const;
 
     void runThread(void (SQLSearch::*threadFunction)(const QString &searchTerm,
                                                      const unsigned long long queryID),

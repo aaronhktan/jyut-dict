@@ -13,7 +13,7 @@ SQLDatabaseUtils::SQLDatabaseUtils(std::shared_ptr<SQLDatabaseManager> manager)
     _manager = manager;
 }
 
-bool SQLDatabaseUtils::backupDatabase(void)
+bool SQLDatabaseUtils::backupDatabase(void) const
 {
     return _manager->backupDictionaryDatabase();
 }
@@ -21,7 +21,7 @@ bool SQLDatabaseUtils::backupDatabase(void)
 // Database differences from version 1 to version 2:
 // - Added chinese_sentences, nonchinese_sentences, and sentence_links tables
 //   to properly support showing sentences in the GUI.
-bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(void)
+bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(void) const
 {
     QSqlQuery query{_manager->getDatabase()};
 
@@ -66,7 +66,7 @@ bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(void)
 // - Added label to definitions table, to display parts of speech or other label
 // - Added fk_entry_id to definitions_fts for faster lookup
 // - Added unique constraint on sentence links
-bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(void)
+bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(void) const
 {
     QSqlQuery query{_manager->getDatabase()};
 
@@ -215,7 +215,7 @@ bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(void)
 }
 
 // Update the database to whatever the current version is.
-bool SQLDatabaseUtils::updateDatabase(void)
+bool SQLDatabaseUtils::updateDatabase(void) const
 {
     QSqlQuery query{_manager->getDatabase()};
 
@@ -263,7 +263,8 @@ bool SQLDatabaseUtils::updateDatabase(void)
 
 // Reads a mapping of sourcename / sourceshortname from the database
 // so they can later be converted between the two.
-bool SQLDatabaseUtils::readSources(std::vector<std::pair<std::string, std::string>> &sources)
+bool SQLDatabaseUtils::readSources(std::vector<std::pair<std::string,std::string>> &sources)
+const
 {
     QSqlQuery query{_manager->getDatabase()};
     query.exec("SELECT sourcename, sourceshortname FROM sources");
@@ -288,7 +289,7 @@ bool SQLDatabaseUtils::readSources(std::vector<std::pair<std::string, std::strin
 }
 
 // Reads all the metadata about the sources.
-bool SQLDatabaseUtils::readSources(std::vector<DictionaryMetadata> &sources)
+bool SQLDatabaseUtils::readSources(std::vector<DictionaryMetadata> &sources) const
 {
     QSqlQuery query{_manager->getDatabase()};
     query.exec("SELECT sourcename, version, description, legal, link, other "
@@ -328,7 +329,7 @@ bool SQLDatabaseUtils::readSources(std::vector<DictionaryMetadata> &sources)
     return true;
 }
 
-bool SQLDatabaseUtils::dropIndices(void)
+bool SQLDatabaseUtils::dropIndices(void) const
 {
     QSqlQuery query{_manager->getDatabase()};
     query.exec("DROP INDEX fk_entry_id_index");
@@ -345,7 +346,7 @@ bool SQLDatabaseUtils::dropIndices(void)
     return !query.lastError().isValid();
 }
 
-bool SQLDatabaseUtils::rebuildIndices(void)
+bool SQLDatabaseUtils::rebuildIndices(void) const
 {
     QSqlQuery query{_manager->getDatabase()};
     emit rebuildingIndexes();
@@ -366,7 +367,7 @@ bool SQLDatabaseUtils::rebuildIndices(void)
     return !query.lastError().isValid();
 }
 
-bool SQLDatabaseUtils::deleteSourceFromDatabase(const std::string &source)
+bool SQLDatabaseUtils::deleteSourceFromDatabase(const std::string &source) const
 {
     QSqlQuery query{_manager->getDatabase()};
 
@@ -383,7 +384,7 @@ bool SQLDatabaseUtils::deleteSourceFromDatabase(const std::string &source)
 // - Deleting those entries
 // - Re-creating the FTS5 tables
 // - Re-creating indices that were previously invalidated.
-bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void)
+bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void) const
 {
     QSqlQuery query{_manager->getDatabase()};
 
@@ -430,7 +431,7 @@ bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void)
 //   linked to any other sentences, and delete them.
 // - Use the same LEFT JOIN (but on nonchinese_sentences) to delete
 //   nonchinese_sentences that are also no longer linked to any sentences.
-bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
+bool SQLDatabaseUtils::removeSentencesFromDatabase(void) const
 {
     QSqlQuery query{_manager->getDatabase()};
 
@@ -477,6 +478,7 @@ bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
 
 // Method to remove a source from the database, based on the name of the source.
 bool SQLDatabaseUtils::removeSource(const std::string &source, bool skipCleanup)
+const
 {
     backupDatabase();
     return removeSources({source}, skipCleanup);
@@ -484,7 +486,7 @@ bool SQLDatabaseUtils::removeSource(const std::string &source, bool skipCleanup)
 
 // Method to remove multiple sources from the database, based on the name of the sources.
 bool SQLDatabaseUtils::removeSources(const std::vector<std::string> &sources,
-                                     bool skipCleanup)
+                                     bool skipCleanup) const
 {
     QSqlQuery query{_manager->getDatabase()};
 
@@ -499,7 +501,7 @@ bool SQLDatabaseUtils::removeSources(const std::vector<std::string> &sources,
     // of correctness in exchange for much more speed.
     query.exec("SAVEPOINT source_deletion");
     std::string type;
-    for (auto &source : sources) {
+    for (const auto &source : sources) {
         // Determine what type of source it is based on the "other" field
         query.prepare("SELECT other FROM sources WHERE sourcename = ?");
         query.addBindValue(source.c_str());
@@ -568,7 +570,7 @@ bool SQLDatabaseUtils::removeSources(const std::vector<std::string> &sources,
 // Inserting into the database loops through all the sources in the attached
 // database and attempts to insert each one into the database.
 std::pair<bool, std::string> SQLDatabaseUtils::insertSourcesIntoDatabase(
-    std::unordered_map<std::string, std::string> old_source_ids)
+    std::unordered_map<std::string, std::string> old_source_ids) const
 {
     QSqlQuery query{_manager->getDatabase()};
 
@@ -652,7 +654,7 @@ std::pair<bool, std::string> SQLDatabaseUtils::insertSourcesIntoDatabase(
 //     - Matches the fk_entry_id (from the attached db) to the new entry_id
 //       in the main database.
 // - Insert all the entries from the CTE into the main table.
-bool SQLDatabaseUtils::addDefinitionSource(void)
+bool SQLDatabaseUtils::addDefinitionSource(void) const
 {
     QSqlQuery query{_manager->getDatabase()};
 
@@ -752,7 +754,7 @@ bool SQLDatabaseUtils::addDefinitionSource(void)
 //   identifies corresponding defnitions (aka entry / definition / label / source), join
 //   the definition -> Chinese sentence links from defs_s_links_tmp using that
 //   information
-bool SQLDatabaseUtils::addSentenceSource(void)
+bool SQLDatabaseUtils::addSentenceSource(void) const
 {
     QSqlQuery query{_manager->getDatabase()};
 
@@ -906,7 +908,9 @@ bool SQLDatabaseUtils::addSentenceSource(void)
     return !query.lastError().isValid();
 }
 
-bool SQLDatabaseUtils::addSource(const std::string &filepath, bool overwriteConflictingSource)
+bool SQLDatabaseUtils::addSource(const std::string &filepath,
+                                 bool overwriteConflictingSource)
+const
 {
     backupDatabase();
 

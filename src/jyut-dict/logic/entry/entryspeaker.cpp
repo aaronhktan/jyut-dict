@@ -17,6 +17,7 @@ EntrySpeaker::~EntrySpeaker()
 // Returns list of voices that match the target locale
 QVector<QVoice> EntrySpeaker::getListOfVoices(const QLocale::Language &language,
                                               const QLocale::Country &country)
+const
 {
     QLocale locale = QLocale{language, country};
     if (locale.language() != language || locale.country() != country) {
@@ -72,7 +73,7 @@ bool EntrySpeaker::filterVoiceNames(const QLocale::Language &language,
 }
 #endif
 
-int EntrySpeaker::speakWithVoice(const QVoice &voice, const QString &string) {
+int EntrySpeaker::speakWithVoice(const QVoice &voice, const QString &string) const {
     _tts->setVoice(voice);
     _tts->setRate(-0.25);
     _tts->say(string);
@@ -81,7 +82,7 @@ int EntrySpeaker::speakWithVoice(const QVoice &voice, const QString &string) {
 
 int EntrySpeaker::speak(const QLocale::Language &language,
                         const QLocale::Country &country,
-                        const QString &string)
+                        const QString &string) const
 {
     if (string.isEmpty()) {
         return -1;
@@ -104,7 +105,7 @@ int EntrySpeaker::speak(const QLocale::Language &language,
     return 0;
 }
 
-int EntrySpeaker::speakCantonese(const QString &string)
+int EntrySpeaker::speakCantonese(const QString &string) const
 {
 #ifdef Q_OS_LINUX
     return speak(QLocale::Cantonese, QLocale::HongKong, string);
@@ -129,12 +130,12 @@ int EntrySpeaker::speakCantonese(const QString &string)
 #endif
 }
 
-int EntrySpeaker::speakTaiwaneseMandarin(const QString &string)
+int EntrySpeaker::speakTaiwaneseMandarin(const QString &string) const
 {
     return speak(QLocale::Chinese, QLocale::Taiwan, string);
 }
 
-int EntrySpeaker::speakMainlandMandarin(const QString &string)
+int EntrySpeaker::speakMainlandMandarin(const QString &string) const
 {
     return speak(QLocale::Chinese, QLocale::China, string);
 }

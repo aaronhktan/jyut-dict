@@ -42,7 +42,7 @@ private:
                          bool emptyQuery) override;
     void notifyObservers(const std::vector<Entry> &results,
                          bool emptyQuery) override;
-    bool checkForManager(void);
+    bool checkForManager(void) const;
 
     void addSearchToHistoryThread(const std::string &search, int options);
     void addViewToHistoryThread(const Entry &entry);

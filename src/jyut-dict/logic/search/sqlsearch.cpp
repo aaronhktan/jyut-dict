@@ -85,7 +85,7 @@ void SQLSearch::notifyObserversOfEmptySet(bool emptyQuery,
         return;
     }
 
-    std::vector<Entry> results{};
+    std::vector<Entry> results;
     notifyObservers(results, emptyQuery);
 }
 
@@ -119,7 +119,7 @@ unsigned long long SQLSearch::generateAndSetQueryID(void) {
     return queryID;
 }
 
-bool SQLSearch::checkQueryIDCurrent(const unsigned long long queryID) {
+bool SQLSearch::checkQueryIDCurrent(const unsigned long long queryID) const {
     if (queryID != _queryID) {
         return false;
     }
@@ -210,7 +210,7 @@ void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString &searc
 void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
                                        const unsigned long long queryID)
 {
-    std::vector<Entry> results{};
+    std::vector<Entry> results;
 
     QSqlQuery query{_manager->getDatabase()};
     query.prepare(
@@ -329,7 +329,7 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
 void SQLSearch::searchTraditionalThread(const QString &searchTerm,
                                         const unsigned long long queryID)
 {
-    std::vector<Entry> results{};
+    std::vector<Entry> results;
 
     QSqlQuery query{_manager->getDatabase()};
     query.prepare(
@@ -462,7 +462,7 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
     std::vector<std::string> jyutpingWords = ChineseUtils::segmentJyutping(
         searchTerm);
 
-    std::vector<Entry> results{};
+    std::vector<Entry> results;
 
     QSqlQuery query{_manager->getDatabase()};
     query.prepare(
@@ -610,7 +610,7 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm,
     std::vector<std::string> pinyinWords = ChineseUtils::segmentPinyin(
         searchTerm);
 
-    std::vector<Entry> results{};
+    std::vector<Entry> results;
 
     QSqlQuery query{_manager->getDatabase()};
     query.prepare(
@@ -740,7 +740,7 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm,
 void SQLSearch::searchEnglishThread(const QString &searchTerm,
                                     const unsigned long long queryID)
 {
-    std::vector<Entry> results{};
+    std::vector<Entry> results;
 
     QSqlQuery query{_manager->getDatabase()};
     query.prepare(
@@ -865,7 +865,7 @@ void SQLSearch::searchByUniqueThread(const QString &simplified,
                                      const QString &pinyin,
                                      const unsigned long long queryID)
 {
-    std::vector<Entry> results{};
+    std::vector<Entry> results;
 
     QSqlQuery query{_manager->getDatabase()};
     query.prepare(
@@ -998,7 +998,7 @@ void SQLSearch::searchByUniqueThread(const QString &simplified,
 void SQLSearch::searchTraditionalSentencesThread(const QString &searchTerm,
                                                  const unsigned long long queryID)
 {
-    std::vector<SourceSentence> results{};
+    std::vector<SourceSentence> results;
 
     QSqlQuery query{_manager->getDatabase()};
     query.prepare(

@@ -94,7 +94,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Populate global source table
     std::vector<std::pair<std::string, std::string>> sources;
     _utils->readSources(sources);
-    for (auto source : sources) {
+    for (const auto &source : sources) {
         DictionarySourceUtils::addSource(source.first, source.second);
     }
 
@@ -190,7 +190,7 @@ void MainWindow::installTranslator(void)
         // Another example of QLocale::system() failing is having simplified
         // Cantonese as the UI language. QTranslator::load() will try to load
         // zh_Hant_HK instead of yue_Hans.
-        for (auto language : QLocale::system().uiLanguages()) {
+        for (const auto &language : QLocale::system().uiLanguages()) {
             QLocale locale{language};
             if (Settings::applicationTranslator
                     .load(/* QLocale */ locale,
@@ -227,7 +227,7 @@ void MainWindow::translateUI(void)
     setProperty("isHan", Settings::isCurrentLocaleHan());
 
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
-    foreach (auto button, buttons) {
+    foreach (const auto & button, buttons) {
         button->setProperty("isHan", Settings::isCurrentLocaleHan());
         button->style()->unpolish(button);
         button->style()->polish(button);
