@@ -33,13 +33,13 @@ public:
 
     void changeEvent(QEvent *event) override;
 
-    void setFocusToResults(void);
+    void setFocusToResults(void) const;
     void openCurrentSelectionInNewWindow(void);
 
 private:
     void translateUI(void);
 
-    void prepareEntry(Entry &entry, bool addToHistory);
+    void prepareEntry(Entry &entry, bool addToHistory) const;
 
     bool _addToHistory = true;
 

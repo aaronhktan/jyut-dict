@@ -45,7 +45,7 @@ private:
     void addDictionary(const QString &dictionaryFile);
     void forceAddDictionary(const QString &dictionaryFile);
     void removeDictionary(DictionaryMetadata metadata);
-    void populateDictionarySourceUtils();
+    void populateDictionarySourceUtils() const;
 
     void failureMessage(const QString &reason, const QString &description);
 

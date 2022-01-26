@@ -197,7 +197,7 @@ void SearchLineEdit::setStyle(bool use_dark)
 #endif
 }
 
-void SearchLineEdit::addSearchTermToHistory(void)
+void SearchLineEdit::addSearchTermToHistory(void) const
 {
     _timer->stop();
     disconnect(_timer, nullptr, nullptr, nullptr);

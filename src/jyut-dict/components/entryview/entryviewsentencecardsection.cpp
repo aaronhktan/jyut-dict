@@ -254,7 +254,7 @@ void EntryViewSentenceCardSection::openSentenceWindow(
 // each source that exists in the source sentence.
 std::unordered_map<std::string, std::vector<SourceSentence>>
 EntryViewSentenceCardSection::getSamplesForEachSource(
-    const std::vector<SourceSentence> &sourceSentences)
+    const std::vector<SourceSentence> &sourceSentences) const
 {
     std::unordered_map<std::string, std::vector<SourceSentence>> samples;
 

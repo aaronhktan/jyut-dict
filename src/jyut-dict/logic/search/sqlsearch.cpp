@@ -38,7 +38,7 @@ SQLSearch::SQLSearch(const SQLSearch &search)
 
 SQLSearch::~SQLSearch()
 {
-    foreach(auto future, _futures) {
+    foreach (auto future, _futures) {
         future.waitForFinished();
     }
 }

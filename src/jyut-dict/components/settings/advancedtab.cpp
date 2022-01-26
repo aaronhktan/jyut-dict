@@ -150,7 +150,7 @@ void AdvancedTab::translateUI()
     setProperty("isHan", Settings::isCurrentLocaleHan());
 
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
-    for (auto button : buttons) {
+    foreach (auto button, buttons) {
         button->setProperty("isHan", Settings::isCurrentLocaleHan());
         button->style()->unpolish(button);
         button->style()->polish(button);
@@ -199,7 +199,7 @@ void AdvancedTab::setStyle(bool use_dark)
     QString style = "QFrame { border: 1px solid %1; }";
     QList<QFrame *> frames
         = this->findChildren<QFrame *>("divider");
-    for (auto frame : frames) {
+    foreach (auto frame, frames) {
         frame->setStyleSheet(style.arg(colour));
     }
 #ifdef Q_OS_MAC

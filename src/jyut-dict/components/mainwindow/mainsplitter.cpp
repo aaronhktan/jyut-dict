@@ -90,7 +90,7 @@ void MainSplitter::changeEvent(QEvent *event)
     QSplitter::changeEvent(event);
 }
 
-void MainSplitter::setFocusToResults(void)
+void MainSplitter::setFocusToResults(void) const
 {
     _resultListView->setFocus();
     QModelIndex entryIndex = _resultListView->model()->index(0, 0);
@@ -125,7 +125,7 @@ void MainSplitter::prepareEntry(Entry &entry)
     prepareEntry(entry, true);
 }
 
-void MainSplitter::prepareEntry(Entry &entry, bool addToHistory)
+void MainSplitter::prepareEntry(Entry &entry, bool addToHistory) const
 {
     if (addToHistory) {
         // Only add to history after a few seconds of viewing an entry

@@ -20,7 +20,7 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *m
                       QVariant::fromValue(SearchParameters::ENGLISH))
               .value<SearchParameters>();
     QList<QRadioButton *> buttons = this->findChildren<QRadioButton *>();
-    for (auto button : buttons) {
+    foreach (auto button, buttons) {
         if (button->property("data").value<SearchParameters>() == lastSelected) {
             button->click();
         #ifdef Q_OS_MAC
@@ -53,7 +53,7 @@ void SearchOptionsRadioGroupBox::setOption(const Utils::ButtonOptionIndex index)
 void SearchOptionsRadioGroupBox::setOption(const SearchParameters parameters)
 {
     QList<QRadioButton *> buttons = this->findChildren<QRadioButton *>();
-    for (auto button : buttons) {
+    foreach (auto button, buttons) {
         if (button->property("data") == QVariant::fromValue(parameters)) {
             button->click();
         }
@@ -112,7 +112,7 @@ void SearchOptionsRadioGroupBox::translateUI()
     setProperty("isHan", Settings::isCurrentLocaleHan());
 
     QList<QRadioButton *> buttons = this->findChildren<QRadioButton *>();
-    for (auto button : buttons) {
+    foreach (auto button, buttons) {
         button->setProperty("isHan", Settings::isCurrentLocaleHan());
         button->style()->unpolish(button);
         button->style()->polish(button);
@@ -131,7 +131,7 @@ void SearchOptionsRadioGroupBox::translateUI()
     _englishButton->setToolTip(tr("Search English"));
 }
 
-void SearchOptionsRadioGroupBox::notifyMediator()
+void SearchOptionsRadioGroupBox::notifyMediator() const
 {
     QRadioButton *button = static_cast<QRadioButton *>(QObject::sender());
 

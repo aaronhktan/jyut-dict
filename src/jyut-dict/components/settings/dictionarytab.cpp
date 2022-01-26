@@ -125,7 +125,7 @@ void DictionaryTab::translateUI()
     setProperty("isHan", Settings::isCurrentLocaleHan());
 
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
-    for (auto button : buttons) {
+    foreach (auto button, buttons) {
         button->setProperty("isHan", Settings::isCurrentLocaleHan());
         button->style()->unpolish(button);
         button->style()->polish(button);
@@ -449,7 +449,7 @@ void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
                       /* skipCleanup */ false);
 }
 
-void DictionaryTab::populateDictionarySourceUtils()
+void DictionaryTab::populateDictionarySourceUtils() const
 {
     std::vector<std::pair<std::string, std::string>> sources;
     _utils->readSources(sources);

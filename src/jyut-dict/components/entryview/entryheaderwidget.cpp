@@ -281,7 +281,7 @@ void EntryHeaderWidget::translateUI()
 #endif
 }
 
-void EntryHeaderWidget::displayPronunciationLabels(const EntryPhoneticOptions options)
+void EntryHeaderWidget::displayPronunciationLabels(const EntryPhoneticOptions options) const
 {
     switch (options) {
         case EntryPhoneticOptions::PREFER_JYUTPING: {

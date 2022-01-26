@@ -180,39 +180,39 @@ void MainToolBar::focusInEvent(QFocusEvent *event)
     _searchBar->setFocus();
 }
 
-void MainToolBar::selectAllEvent(void)
+void MainToolBar::selectAllEvent(void) const
 {
     _searchBar->setFocus();
     _searchBar->selectAll();
 }
 
-void MainToolBar::changeOptionEvent(const Utils::ButtonOptionIndex index)
+void MainToolBar::changeOptionEvent(const Utils::ButtonOptionIndex index) const
 {
     _optionsBox->setOption(index);
 }
 
-void MainToolBar::setOpenHistoryAction(QAction *action)
+void MainToolBar::setOpenHistoryAction(QAction *action) const
 {
     connect(_openHistoryButton, &QToolButton::pressed, this, [=]() {
         action->trigger();
     });
 }
 
-void MainToolBar::setOpenSettingsAction(QAction *action)
+void MainToolBar::setOpenSettingsAction(QAction *action) const
 {
     connect(_openSettingsButton, &QToolButton::pressed, this, [=]() {
         action->trigger();
     });
 }
 
-void MainToolBar::setOpenFavouritesAction(QAction *action)
+void MainToolBar::setOpenFavouritesAction(QAction *action) const
 {
     connect(_openFavouritesButton, &QToolButton::pressed, this, [=]() {
         action->trigger();
     });
 }
 
-void MainToolBar::forwardSearchHistoryItem(const searchTermHistoryItem &pair)
+void MainToolBar::forwardSearchHistoryItem(const searchTermHistoryItem &pair) const
 {
     _optionsBox->setOption(static_cast<SearchParameters>(pair.second));
     _searchBar->setText(pair.first.c_str());

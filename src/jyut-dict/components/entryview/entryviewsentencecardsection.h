@@ -53,7 +53,7 @@ private:
     std::mutex updateMutex;
 
     std::unordered_map<std::string, std::vector<SourceSentence>>
-    getSamplesForEachSource(const std::vector<SourceSentence> &sourceSentences);
+    getSamplesForEachSource(const std::vector<SourceSentence> &sourceSentences) const;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
     std::unique_ptr<SQLSearch> _search;

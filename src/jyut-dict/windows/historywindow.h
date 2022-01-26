@@ -39,12 +39,12 @@ private:
     QWidget *_viewHistoryTab;
 
 signals:
-    void searchHistoryClicked(const searchTermHistoryItem &pair);
-    void viewHistoryClicked(const Entry &entry);
+    void searchHistoryClicked(const searchTermHistoryItem &pair) const;
+    void viewHistoryClicked(const Entry &entry) const;
 
 public slots:
-    void forwardSearchHistoryItem(const searchTermHistoryItem &pair);
-    void forwardViewHistoryItem(const Entry &entry);
+    void forwardSearchHistoryItem(const searchTermHistoryItem &pair) const;
+    void forwardViewHistoryItem(const Entry &entry) const;
 };
 
 #endif // HISTORYWINDOW_H

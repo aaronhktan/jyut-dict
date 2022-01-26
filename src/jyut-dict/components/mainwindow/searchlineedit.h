@@ -40,7 +40,7 @@ private:
     void translateUI();
     void setStyle(bool use_dark);
 
-    void addSearchTermToHistory(void);
+    void addSearchTermToHistory(void) const;
 
     ISearchOptionsMediator *_mediator;
     std::shared_ptr<ISearch> _search;

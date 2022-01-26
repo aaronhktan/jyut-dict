@@ -124,12 +124,12 @@ void HistoryWindow::setStyle(bool use_dark)
 #endif
 }
 
-void HistoryWindow::forwardSearchHistoryItem(const searchTermHistoryItem &pair)
+void HistoryWindow::forwardSearchHistoryItem(const searchTermHistoryItem &pair) const
 {
     emit searchHistoryClicked(pair);
 }
 
-void HistoryWindow::forwardViewHistoryItem(const Entry &entry)
+void HistoryWindow::forwardViewHistoryItem(const Entry &entry) const
 {
     emit viewHistoryClicked(entry);
 }
