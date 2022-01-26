@@ -6,6 +6,7 @@ from wordfreq import zipf_frequency
 
 from database import database, objects
 
+import copy
 import logging
 import os
 import re
@@ -31,6 +32,14 @@ import sys
 #   - 卡拉OK has latin script in the entry
 #   - AA制 starts with latin script
 #   - 蛇 gwe has an extra space at the end of the entry name
+#   - 犄角 has zero-width spaces in its Pinyin
+#   - 購 has multiple pronunciations in Jyutping
+#   - 垃圾 has Taiwan/PRC differences in pronunciation (Taiwan first)
+#   - 垃圾桶 has Taiwan/PRC differences in pronunciation (PRC first)
+#   - 緝捕 has Taiwan/PRC partial difference, PRC first
+#   - 擊潰 has Taiwan/PRC partial difference, Taiwan first
+#   - 瀕危 has Taiwan/PRC partial difference, PRC first (but at end of word, which is not currently supported)
+#   - 查究 has Taiwan/PRC partial difference, Taiwan first (but at end of word, which is not currently supported)
 
 # Pages with known issues:
 #   - 蚺蛇 has different Jyutping for each definition, without any labelling (we discard the different pronunciations)
@@ -64,6 +73,23 @@ LITERARY_CANTONESE_READING_REGEX_PATTERN = re.compile(r"\d\*")
 # CantoDict does the same with Pinyin
 LITERARY_PINYIN_READING_REGEX_PATTERN = re.compile(r"\d\*")
 
+# Get the different PRC / Taiwan pronunciations
+TAIWAN_PRC_PRONUNCIATION = re.compile(r"^(?P<tw>.*?) ?\((?:Taiwan|TW)\) ?(?:,|\/|;)? ?(?P<prc>.*?) ?\(PRC\)$", re.IGNORECASE)
+PRC_TAIWAN_PRONUNCIATION = re.compile(r"^(?P<prc>.*?) ?\(PRC\) ?(?:,|\/|;)? ?(?P<tw>.*?) ?\((?:Taiwan|TW)\)$", re.IGNORECASE)
+MANDARIN_PRONUNCIATION_VARIANT_REGEX_PATTERNS = (
+    TAIWAN_PRC_PRONUNCIATION,
+    PRC_TAIWAN_PRONUNCIATION
+)
+# Partial match: only some of the words' pronunciations are different
+# Currently can only parse those whose partial differences are at the beginning of the word,
+# since regex cannot know how long the equivalent pronunciations are
+TAIWAN_PRC_PARTIAL = re.compile(r"^(?P<tw>.*?)\s*\((?:TW|Taiwan)\) ?(?:,|\/|;)? ?(?P<prc>.*?) ?\((?:PRC|CN)\)(?!$)", re.IGNORECASE)
+PRC_TAIWAN_PARTIAL = re.compile(r"^(?P<prc>.*?) ?\((?:PRC|CN)\) ?(?:,|\/|;)? ?(?P<tw>.*?)\s*\((?:TW|Taiwan)\)(?!$)", re.IGNORECASE)
+MANDARIN_PRONUNCIATION_PARTIAL_VARIANT_REGEX_PATTERNS = (
+    TAIWAN_PRC_PARTIAL,
+    PRC_TAIWAN_PARTIAL
+)
+
 DEFINITION_SPLITTING_REGEX_PATTERN = re.compile(r"[\(|\[]\d+[\)\]]\s?|\n")
 
 # This one searches for something in the format [粵] ok3 | [國] e4
@@ -88,7 +114,7 @@ JYUTPING_PINYIN_REGEX_PATTERNS = (
 )
 
 # This one searches for something in the format -- [jp:] dang2; ting3
-DASHES_2_PRONUNCIATION_REGEX_PATTERN = re.compile(r"\-\-\s*\[jp:\]s*(.*\d).*")
+DASHES_2_PRONUNCIATION_REGEX_PATTERN = re.compile(r"\-\-\s*\[jp:\]\s*(.*\d).*")
 # This one searches for something in the format -- Jyutping: /ke1 le1 fei1/ --
 SLASH_PRONUNCIATION_REGEX_PATTERN = re.compile(r"\-\-\s*Jyutping:\s*/(.*\d)/\s*\-\-")
 # This one searches for something in the format Jyutping cou1
@@ -284,6 +310,41 @@ def parse_word_file(file_name, words):
             ).lower()
         # Replace 'v' in Pinyin with the u: that CEDICT uses
         pin = pin.strip().replace("v", "u:")
+        # Remove the zero-width spaces that sometimes show up
+        pin = pin.replace("​", "")
+
+        # CantoDict may have multiple pronunciations for an entry
+        # Check for multiple pronunciations in Jyutping
+        variant_jyutping = []
+        if len(trad) == 1 and len(jyut.split(" ")) > len(trad):
+            variant_jyutping = jyut.split(" ")
+        elif ";" in jyut:
+            variant_jyutping = [x.strip() for x in jyut.split("; ")]
+
+        # Check for differences in PRC and Taiwan pronunciation
+        variant_pinyin = []
+        for pattern in MANDARIN_PRONUNCIATION_VARIANT_REGEX_PATTERNS:
+            match = pattern.match(pin)
+            if match:
+                # Make sure the matched groups match the length of the characters
+                if len(match.group("prc").split(" ")) == len(trad) and len(match.group("tw").split(" ")) == len(trad): 
+                    variant_pinyin.append((match.group("prc"), match.group("tw")))
+        if not variant_pinyin:
+            for pattern in MANDARIN_PRONUNCIATION_PARTIAL_VARIANT_REGEX_PATTERNS:
+                match = pattern.match(pin)
+                if match:
+                    prc_pin = pattern.sub(match.group("prc"), pin)
+                    tw_pin = pattern.sub(match.group("tw"), pin)
+                    # Make sure the found pronunciations match the length of the characters
+                    if len(prc_pin.split(" ")) == len(trad) and len(tw_pin.split(" ")) == len(trad):
+                        variant_pinyin.append((prc_pin, tw_pin))
+        # Also check for multiple pronunciations of single-character words
+        if len(trad) == 1 and len(pin.split(" ")) > len(trad):
+            [variant_pinyin.append((x, None)) for x in pin.split(" ")]
+
+        # Some entries give different meanings for different pronunciation;
+        # assume they don't but mark True if yes
+        variants_handled = False
 
         # Extract the meaning element
         meaning_element = soup.find("td", class_="wordmeaning")
@@ -340,6 +401,7 @@ def parse_word_file(file_name, words):
                     pin = result.group(2) if result.group(2) else ""
                     meanings = []
                     continue_parsing = False
+                    variants_handled = True
                     break
 
             if not continue_parsing:
@@ -364,6 +426,7 @@ def parse_word_file(file_name, words):
                     jyut = result.group(1)
                     jyut = re.sub(LITERARY_CANTONESE_READING_REGEX_PATTERN, "", jyut)
                     meanings = []
+                    variants_handled = True
                     continue_parsing = False
                     break
 
@@ -406,7 +469,25 @@ def parse_word_file(file_name, words):
 
         if meanings:
             entry = objects.Entry(trad, simp, pin, jyut, freq=freq, defs=meanings)
-            words.append(entry)
+
+            if not variant_jyutping and not variant_pinyin:
+                words.append(entry)
+
+            elif not variants_handled:
+                for jyutping in variant_jyutping:
+                    variant_entry = copy.deepcopy(entry)
+                    variant_entry.add_jyutping(jyutping)
+                    words.append(variant_entry)
+
+                for prc, tw in variant_pinyin:
+                    prc_variant = copy.deepcopy(entry)
+                    prc_variant.add_pinyin(prc)
+                    words.append(prc_variant)
+
+                    if tw:
+                        tw_variant = copy.deepcopy(entry)
+                        tw_variant.add_pinyin(tw)
+                        words.append(tw_variant)
 
 
 def parse_sentence_file(file_name, sentences, translations):
