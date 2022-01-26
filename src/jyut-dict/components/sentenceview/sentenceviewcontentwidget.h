@@ -16,7 +16,6 @@ class SentenceViewContentWidget : public QWidget
 {
 public:
     explicit SentenceViewContentWidget(QWidget *parent = nullptr);
-    ~SentenceViewContentWidget() override;
 
     void setSourceSentence(const SourceSentence &sentence);
 

@@ -36,11 +36,7 @@ public:
     DefinitionsSet();
     DefinitionsSet(std::string source);
     DefinitionsSet(std::string source, std::vector<Definition::Definition> definitions);
-    DefinitionsSet(const DefinitionsSet &definitions);
-    DefinitionsSet(const DefinitionsSet &&definitions);
 
-    DefinitionsSet &operator=(const DefinitionsSet &definitions);
-    DefinitionsSet &operator=(const DefinitionsSet &&definitions);
     friend std::ostream &operator<<(std::ostream &out,
                                     DefinitionsSet const &definitions);
 

@@ -31,10 +31,6 @@ DefinitionCardWidget::DefinitionCardWidget(QWidget *parent) : QWidget(parent)
     setStyle(Utils::isDarkMode());
 }
 
-DefinitionCardWidget::~DefinitionCardWidget()
-{
-}
-
 void DefinitionCardWidget::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {

@@ -10,8 +10,6 @@ SQLUserHistoryUtils::SQLUserHistoryUtils(std::shared_ptr<SQLDatabaseManager> man
 {
 }
 
-SQLUserHistoryUtils::~SQLUserHistoryUtils() {}
-
 void SQLUserHistoryUtils::registerObserver(ISearchObserver *observer)
 {
     std::lock_guard<std::mutex> notifyLock{_notifyMutex};
@@ -55,7 +53,7 @@ bool SQLUserHistoryUtils::checkForManager(void)
     return true;
 }
 
-void SQLUserHistoryUtils::addSearchToHistory(std::string search, int options)
+void SQLUserHistoryUtils::addSearchToHistory(const std::string &search, int options)
 {
     if (!checkForManager()) {
         return;
@@ -66,7 +64,7 @@ void SQLUserHistoryUtils::addSearchToHistory(std::string search, int options)
                       options);
 }
 
-void SQLUserHistoryUtils::addViewToHistory(Entry entry)
+void SQLUserHistoryUtils::addViewToHistory(const Entry &entry)
 {
     if (!checkForManager()) {
         return;
@@ -109,7 +107,7 @@ void SQLUserHistoryUtils::clearAllViewHistory(void)
     QtConcurrent::run(this, &SQLUserHistoryUtils::clearAllViewHistoryThread);
 }
 
-void SQLUserHistoryUtils::addSearchToHistoryThread(std::string search,
+void SQLUserHistoryUtils::addSearchToHistoryThread(const std::string &search,
                                                    int options)
 {
     QSqlQuery query{_manager->getDatabase()};
@@ -125,7 +123,7 @@ void SQLUserHistoryUtils::addSearchToHistoryThread(std::string search,
     _manager->closeDatabase();
 }
 
-void SQLUserHistoryUtils::addViewToHistoryThread(Entry entry)
+void SQLUserHistoryUtils::addViewToHistoryThread(const Entry &entry)
 {
     QSqlQuery query{_manager->getDatabase()};
 

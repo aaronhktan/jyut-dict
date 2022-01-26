@@ -17,9 +17,9 @@ Entry::Entry()
     _isEmpty = false;
 }
 
-Entry::Entry(std::string simplified, std::string traditional,
-             std::string jyutping, std::string pinyin,
-             std::vector<DefinitionsSet> definitions)
+Entry::Entry(const std::string &simplified, const std::string &traditional,
+             const std::string &jyutping, const std::string &pinyin,
+             const std::vector<DefinitionsSet> &definitions)
     : _simplified{simplified},
       _traditional{traditional},
       _jyutping{jyutping},
@@ -76,11 +76,6 @@ Entry::Entry(const Entry &&entry)
       _definitions{std::move(entry._definitions)},
       _isWelcome{entry.isWelcome()},
       _isEmpty{entry.isEmpty()}
-{
-
-}
-
-Entry::~Entry()
 {
 
 }
@@ -299,7 +294,7 @@ std::string Entry::getJyutping(void) const
     return _jyutping;
 }
 
-void Entry::setJyutping(std::string jyutping)
+void Entry::setJyutping(const std::string &jyutping)
 {
     _jyutping = jyutping;
 }
@@ -331,7 +326,7 @@ std::string Entry::getPrettyPinyin(void) const
     return _prettyPinyin;
 }
 
-void Entry::setPinyin(std::string pinyin)
+void Entry::setPinyin(const std::string &pinyin)
 {
     _pinyin = pinyin;
 }
@@ -369,7 +364,8 @@ std::string Entry::getDefinitionSnippet(void) const
     return "";
 }
 
-void Entry::addDefinitions(std::string source, std::vector<Definition::Definition> definitions)
+void Entry::addDefinitions(const std::string &source,
+                           const std::vector<Definition::Definition> &definitions)
 {
     _definitions.push_back(DefinitionsSet{source, definitions});
 }

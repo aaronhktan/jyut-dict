@@ -366,7 +366,7 @@ bool SQLDatabaseUtils::rebuildIndices(void)
     return !query.lastError().isValid();
 }
 
-bool SQLDatabaseUtils::deleteSourceFromDatabase(std::string source)
+bool SQLDatabaseUtils::deleteSourceFromDatabase(const std::string &source)
 {
     QSqlQuery query{_manager->getDatabase()};
 
@@ -476,14 +476,15 @@ bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
 }
 
 // Method to remove a source from the database, based on the name of the source.
-bool SQLDatabaseUtils::removeSource(std::string source, bool skipCleanup)
+bool SQLDatabaseUtils::removeSource(const std::string &source, bool skipCleanup)
 {
     backupDatabase();
     return removeSources({source}, skipCleanup);
 }
 
 // Method to remove multiple sources from the database, based on the name of the sources.
-bool SQLDatabaseUtils::removeSources(std::vector<std::string> sources, bool skipCleanup)
+bool SQLDatabaseUtils::removeSources(const std::vector<std::string> &sources,
+                                     bool skipCleanup)
 {
     QSqlQuery query{_manager->getDatabase()};
 
@@ -905,7 +906,7 @@ bool SQLDatabaseUtils::addSentenceSource(void)
     return !query.lastError().isValid();
 }
 
-bool SQLDatabaseUtils::addSource(std::string filepath, bool overwriteConflictingSource)
+bool SQLDatabaseUtils::addSource(const std::string &filepath, bool overwriteConflictingSource)
 {
     backupDatabase();
 

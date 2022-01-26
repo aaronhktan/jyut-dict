@@ -2,61 +2,21 @@
 
 #include "logic/dictionary/dictionarysource.h"
 
-SentenceSet::SentenceSet(std::string source)
+SentenceSet::SentenceSet(const std::string &source)
     : _source{source}
 {
 }
 
-SentenceSet::SentenceSet(std::string source,
-                         std::vector<Sentence::TargetSentence> sentences)
+SentenceSet::SentenceSet(const std::string &source,
+                         const std::vector<Sentence::TargetSentence> &sentences)
     : _source{source}
     , _sentences{sentences}
 {
 }
 
-SentenceSet::SentenceSet(const SentenceSet &sentenceSet)
-    : _source{sentenceSet.getSource()},
-      _sentences{sentenceSet.getSentences()}
-{
-}
-
-SentenceSet::SentenceSet(const SentenceSet &&sentenceSet)
-    : _source{std::move(sentenceSet._source)},
-      _sentences{std::move(sentenceSet._sentences)}
-{
-}
-
-SentenceSet::~SentenceSet()
-{
-}
-
-SentenceSet &SentenceSet::operator=(const SentenceSet &sentence)
-{
-    if (&sentence == this) {
-        return *this;
-    }
-
-    _source = sentence.getSource();
-    _sentences = sentence.getSentences();
-
-    return *this;
-}
-
-SentenceSet &SentenceSet::operator=(const SentenceSet &&sentence)
-{
-    if (&sentence == this) {
-        return *this;
-    }
-
-    _source = std::move(sentence._source);
-    _sentences = std::move(sentence._sentences);
-
-    return *this;
-}
-
 std::ostream &operator<<(std::ostream &out, const SentenceSet &sentenceSet)
 {
-    for (Sentence::TargetSentence sentence : sentenceSet.getSentences()) {
+    for (Sentence::TargetSentence &sentence : sentenceSet.getSentences()) {
         out << sentence.sentence << "\n";
     }
     return out;
@@ -74,7 +34,7 @@ bool SentenceSet::isEmpty(void) const
                           });
 }
 
-bool SentenceSet::pushSentence(Sentence::TargetSentence sentence)
+bool SentenceSet::pushSentence(const Sentence::TargetSentence &sentence)
 {
     _sentences.push_back(sentence);
     return true;

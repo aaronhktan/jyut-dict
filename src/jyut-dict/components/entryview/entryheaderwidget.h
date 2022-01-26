@@ -22,7 +22,6 @@ class EntryHeaderWidget : public QWidget
 {
 public:
     explicit EntryHeaderWidget(QWidget *parent = nullptr);
-    ~EntryHeaderWidget() override;
 
     void changeEvent(QEvent *event) override;
 

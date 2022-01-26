@@ -44,11 +44,6 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
     setAttribute(Qt::WA_DeleteOnClose);
 }
 
-SettingsWindow::~SettingsWindow()
-{
-
-}
-
 void SettingsWindow::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {

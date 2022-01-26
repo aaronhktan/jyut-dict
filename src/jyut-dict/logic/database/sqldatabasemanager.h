@@ -29,8 +29,8 @@ public:
     bool restoreBackedUpDictionaryDatabase();
 
 private:
-    void addDatabase(QString name);
-    bool openDatabase(QString name);
+    void addDatabase(const QString &name);
+    bool openDatabase(const QString &name);
 
     QString getLocalDictionaryDatabasePath();
     QString getBundleDictionaryDatabasePath();

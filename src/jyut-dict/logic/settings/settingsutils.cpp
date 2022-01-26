@@ -38,12 +38,6 @@ std::unique_ptr<QSettings> getSettings(QObject *parent)
 
 bool updateSettings(QSettings &settings)
 {
-    if (!settings.contains("Analytics/uuid")) {
-        settings.setValue("Analytics/uuid",
-                          QVariant{QUuid::createUuid().toString()});
-        settings.sync();
-    }
-
     if (settings.value("Metadata/version", QVariant{SETTINGS_VERSION}).toInt()
         != SETTINGS_VERSION) {
         // Convert to new version here
@@ -66,7 +60,7 @@ QLocale getCurrentLocale()
     return currentLocale;
 }
 
-bool setCurrentLocale(QLocale &locale)
+bool setCurrentLocale(const QLocale &locale)
 {
     currentLocale = locale;
     return true;

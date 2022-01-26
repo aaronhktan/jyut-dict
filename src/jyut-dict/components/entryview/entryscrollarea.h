@@ -25,7 +25,6 @@ public:
     explicit EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
                              std::shared_ptr<SQLDatabaseManager> manager,
                              QWidget *parent = nullptr);
-    ~EntryScrollArea() override;
 
     void setEntry(const Entry &entry);
 private:

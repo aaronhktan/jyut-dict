@@ -25,7 +25,6 @@ class SettingsWindow : public QMainWindow
 public:
     explicit SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
                             QWidget *parent = nullptr);
-    ~SettingsWindow() override;
 
     void changeEvent(QEvent *event) override;
 

@@ -18,9 +18,10 @@ namespace DictionarySourceUtils {
 
 static std::unordered_map<std::string, std::string> name_to_short_name{};
 
-std::string getSourceShortString(std::string source);
-bool addSource(std::string sourcename, std::string shortsourcename);
-bool removeSource(std::string sourcename);
+std::string getSourceShortString(const std::string &source);
+bool addSource(const std::string &sourcename,
+               const std::string &shortsourcename);
+bool removeSource(const std::string &sourcename);
 
 }
 

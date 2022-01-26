@@ -79,10 +79,6 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     translateUI();
 }
 
-EntryHeaderWidget::~EntryHeaderWidget()
-{
-}
-
 void EntryHeaderWidget::changeEvent(QEvent *event)
 {
 #ifdef Q_OS_WIN

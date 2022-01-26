@@ -16,7 +16,6 @@ class SentenceScrollArea : public QScrollArea
 {
 public:
     explicit SentenceScrollArea(QWidget *parent = nullptr);
-    ~SentenceScrollArea() override;
 
     void setSourceSentence(const SourceSentence &sentence);
 private:

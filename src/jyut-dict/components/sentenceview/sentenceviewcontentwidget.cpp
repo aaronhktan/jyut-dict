@@ -25,11 +25,6 @@ SentenceViewContentWidget::SentenceViewContentWidget(QWidget *parent)
                      &SentenceViewContentWidget::showSentenceSection);
 }
 
-SentenceViewContentWidget::~SentenceViewContentWidget()
-{
-
-}
-
 void SentenceViewContentWidget::setSourceSentence(const SourceSentence &sentence)
 {
     _sentenceSection->setSourceSentence(sentence);

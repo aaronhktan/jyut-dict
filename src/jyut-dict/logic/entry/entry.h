@@ -23,16 +23,18 @@ class Entry : public QObject
 {
 public:
     Entry();
-    Entry(std::string simplified, std::string traditional,
-          std::string jyutping, std::string pinyin,
-          std::vector<DefinitionsSet> definitions);
+    Entry(const std::string &simplified, const std::string &traditional,
+          const std::string &jyutping, const std::string &pinyin,
+          const std::vector<DefinitionsSet> &definitions);
+
+    // Must define rule-of-five functions to allow registering this class
+    // as a Qt Metatype, since QObject explicitly deletes them
+    ~Entry() override = default;
     Entry(const Entry &entry);
     Entry(const Entry &&entry);
-
-    ~Entry() override;
-
     Entry &operator=(const Entry &entry);
     Entry &operator=(const Entry &&entry);
+
     bool operator==(const Entry &other) const;
     bool operator!=(const Entry &other) const;
     friend std::ostream &operator<<(std::ostream &out, const Entry &entry);
@@ -61,24 +63,18 @@ public:
     std::string getMandarinPhonetic(MandarinOptions mandarinOptions) const;
 
     std::string getJyutping(void) const;
-    void setJyutping(std::string jyutping);
+    void setJyutping(const std::string &jyutping);
     std::vector<int> getJyutpingNumbers() const;
 
     std::string getPinyin(void) const;
     std::string getPrettyPinyin(void) const;
-    void setPinyin(std::string pinyin);
+    void setPinyin(const std::string &pinyin);
     std::vector<int> getPinyinNumbers() const;
 
     std::vector<DefinitionsSet> getDefinitionsSets(void) const;
     std::string getDefinitionSnippet(void) const;
-    void addDefinitions(std::string source,
-                        std::vector<Definition::Definition> definitions);
-
-    std::vector<std::string> getDerivedWords(void) const;
-    void setDerivedWords(std::vector<std::string> derivedWords);
-
-    std::vector<SourceSentence> getSentences(void) const;
-    void setSentences(std::vector<SourceSentence> sentences);
+    void addDefinitions(const std::string &source,
+                        const std::vector<Definition::Definition> &definitions);
 
     void refreshColours(
         const EntryColourPhoneticType type = EntryColourPhoneticType::JYUTPING);

@@ -157,10 +157,6 @@ MainWindow::MainWindow(QWidget *parent) :
     });
 }
 
-MainWindow::~MainWindow()
-{
-}
-
 void MainWindow::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::LanguageChange) {

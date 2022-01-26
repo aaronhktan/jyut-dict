@@ -119,8 +119,8 @@ std::string applyColours(
     return coloured_string;
 }
 
-std::string compareStrings(const std::string original,
-                           const std::string comparison)
+std::string compareStrings(const std::string &original,
+                           const std::string &comparison)
 {
     std::string result;
 
@@ -156,7 +156,7 @@ std::string compareStrings(const std::string original,
     return result;
 }
 
-std::string createPrettyPinyin(const std::string pinyin)
+std::string createPrettyPinyin(const std::string &pinyin)
 {
     std::string result;
 
@@ -261,7 +261,7 @@ std::string constructRomanisationQuery(const std::vector<std::string> &words,
     return string.str();
 }
 
-std::vector<std::string> segmentPinyin(const QString string)
+std::vector<std::string> segmentPinyin(const QString &string)
 {
     std::vector<std::string> words;
 
@@ -361,7 +361,7 @@ std::vector<std::string> segmentPinyin(const QString string)
     return words;
 }
 
-std::vector<std::string> segmentJyutping(const QString string)
+std::vector<std::string> segmentJyutping(const QString &string)
 {
     std::vector<std::string> words;
 

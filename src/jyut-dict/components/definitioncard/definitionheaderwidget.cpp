@@ -48,15 +48,11 @@ void DefinitionHeaderWidget::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
-DefinitionHeaderWidget::~DefinitionHeaderWidget()
-{
-
-}
-
 void DefinitionHeaderWidget::setSectionTitle(std::string title)
 {
     _titleLabel->setFixedHeight(_titleLabel->fontMetrics().boundingRect(title.c_str()).height());
-    _titleLabel->setText(title.c_str());}
+    _titleLabel->setText(title.c_str());
+}
 
 void DefinitionHeaderWidget::setStyle(bool use_dark)
 {

@@ -36,11 +36,6 @@ UpdateAvailableWindow::UpdateAvailableWindow(QWidget *parent,
       parent->y() + (parent->height() - sizeHint().height()) / 2);
 }
 
-UpdateAvailableWindow::~UpdateAvailableWindow()
-{
-
-}
-
 void UpdateAvailableWindow::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::LanguageChange) {

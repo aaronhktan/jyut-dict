@@ -40,11 +40,6 @@ GithubReleaseChecker::GithubReleaseChecker(QObject *parent)
     QTimer::singleShot(100, this, &GithubReleaseChecker::preConnectToHost);
 }
 
-GithubReleaseChecker::~GithubReleaseChecker()
-{
-
-}
-
 void GithubReleaseChecker::checkForNewUpdate()
 {
     QNetworkRequest _request{QUrl{GITHUB_UPDATE_URL}};

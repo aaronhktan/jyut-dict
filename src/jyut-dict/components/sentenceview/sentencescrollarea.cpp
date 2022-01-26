@@ -25,10 +25,6 @@ SentenceScrollArea::SentenceScrollArea(QWidget *parent)
     }
 }
 
-SentenceScrollArea::~SentenceScrollArea()
-{
-}
-
 void SentenceScrollArea::setSourceSentence(const SourceSentence &sentence)
 {
     _scrollAreaWidget->setSourceSentence(sentence);

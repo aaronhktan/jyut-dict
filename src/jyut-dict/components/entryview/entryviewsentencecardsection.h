@@ -33,7 +33,6 @@ public:
     explicit EntryViewSentenceCardSection(std::shared_ptr<SQLDatabaseManager> manager,
                                  QWidget *parent = nullptr);
     explicit EntryViewSentenceCardSection(QWidget *parent = nullptr);
-    ~EntryViewSentenceCardSection() override;
     void callback(const std::vector<SourceSentence> sourceSentences,
                   bool emptyQuery) override;
 

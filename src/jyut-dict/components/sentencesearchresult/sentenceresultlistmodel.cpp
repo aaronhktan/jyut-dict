@@ -9,10 +9,6 @@ SentenceResultListModel::SentenceResultListModel(std::shared_ptr<SQLSearch> sqlS
     _search->registerObserver(this);
 }
 
-SentenceResultListModel::~SentenceResultListModel()
-{
-}
-
 void SentenceResultListModel::callback(const std::vector<Entry> entries, bool emptyQuery)
 {
     (void) (entries);

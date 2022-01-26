@@ -55,11 +55,6 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
     _timer = new QTimer{this};
 }
 
-SearchLineEdit::~SearchLineEdit()
-{
-
-}
-
 void SearchLineEdit::checkClearVisibility()
 {
     if (text().isEmpty()) {

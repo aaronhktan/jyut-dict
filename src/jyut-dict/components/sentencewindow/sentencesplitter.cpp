@@ -60,11 +60,6 @@ SentenceSplitter::SentenceSplitter(std::shared_ptr<SQLDatabaseManager> manager,
 #endif
 }
 
-SentenceSplitter::~SentenceSplitter()
-{
-
-}
-
 void SentenceSplitter::changeEvent(QEvent *event)
 {
 #ifdef Q_OS_WIN

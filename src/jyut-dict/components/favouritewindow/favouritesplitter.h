@@ -28,7 +28,6 @@ public:
     explicit FavouriteSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
                                std::shared_ptr<SQLDatabaseManager> manager,
                                QWidget *parent = nullptr);
-    ~FavouriteSplitter() override;
 
     void changeEvent(QEvent *event) override;
 

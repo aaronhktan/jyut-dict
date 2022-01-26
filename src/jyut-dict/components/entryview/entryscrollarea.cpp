@@ -34,10 +34,6 @@ EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     }
 }
 
-EntryScrollArea::~EntryScrollArea()
-{
-}
-
 void EntryScrollArea::setEntry(const Entry &entry)
 {
     _updateUITimer->stop();

@@ -40,10 +40,6 @@ EntryViewSentenceCardSection::EntryViewSentenceCardSection(QWidget *parent)
     setupUI();
 }
 
-EntryViewSentenceCardSection::~EntryViewSentenceCardSection()
-{
-}
-
 void EntryViewSentenceCardSection::callback(
     std::vector<SourceSentence> sourceSentences, bool emptyQuery)
 {

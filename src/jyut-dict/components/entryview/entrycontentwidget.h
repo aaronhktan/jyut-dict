@@ -19,7 +19,6 @@ class EntryContentWidget : public QWidget
 public:
     explicit EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manager,
                                 QWidget *parent = nullptr);
-    ~EntryContentWidget() override;
 
     void setEntry(const Entry &entry);
 

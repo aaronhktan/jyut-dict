@@ -10,8 +10,6 @@ SQLUserDataUtils::SQLUserDataUtils(std::shared_ptr<SQLDatabaseManager> manager)
 {
 }
 
-SQLUserDataUtils::~SQLUserDataUtils() {}
-
 void SQLUserDataUtils::registerObserver(ISearchObserver *observer)
 {
     std::lock_guard<std::mutex> notifyLock{_notifyMutex};
@@ -35,7 +33,7 @@ void SQLUserDataUtils::notifyObservers(const std::vector<Entry> &results,
     }
 }
 
-void SQLUserDataUtils::notifyObservers(bool entryExists, Entry entry)
+void SQLUserDataUtils::notifyObservers(bool entryExists, const Entry &entry)
 {
     std::lock_guard<std::mutex> notifyLock{_notifyMutex};
     std::list<ISearchObserver *>::const_iterator it = _observers.begin();
@@ -55,7 +53,7 @@ void SQLUserDataUtils::searchForAllFavouritedWords(void)
                       &SQLUserDataUtils::searchForAllFavouritedWordsThread);
 }
 
-void SQLUserDataUtils::checkIfEntryHasBeenFavourited(Entry entry)
+void SQLUserDataUtils::checkIfEntryHasBeenFavourited(const Entry &entry)
 {
     if (!_manager) {
         std::cout << "No database specified!" << std::endl;
@@ -66,7 +64,7 @@ void SQLUserDataUtils::checkIfEntryHasBeenFavourited(Entry entry)
                       entry);
 }
 
-void SQLUserDataUtils::favouriteEntry(Entry entry)
+void SQLUserDataUtils::favouriteEntry(const Entry &entry)
 {
     if (!_manager) {
         std::cout << "No database specified!" << std::endl;
@@ -77,7 +75,7 @@ void SQLUserDataUtils::favouriteEntry(Entry entry)
                       entry);
 }
 
-void SQLUserDataUtils::unfavouriteEntry(Entry entry)
+void SQLUserDataUtils::unfavouriteEntry(const Entry &entry)
 {
     if (!_manager) {
         std::cout << "No database specified!" << std::endl;
@@ -213,7 +211,7 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
     notifyObservers(results, /*emptyQuery=*/false);
 }
 
-void SQLUserDataUtils::checkIfEntryHasBeenFavouritedThread(Entry entry)
+void SQLUserDataUtils::checkIfEntryHasBeenFavouritedThread(const Entry &entry)
 {
     bool existence = false;
     QSqlQuery query{_manager->getDatabase()};
@@ -233,7 +231,7 @@ void SQLUserDataUtils::checkIfEntryHasBeenFavouritedThread(Entry entry)
     notifyObservers(existence, entry);
 }
 
-void SQLUserDataUtils::favouriteEntryThread(Entry entry)
+void SQLUserDataUtils::favouriteEntryThread(const Entry &entry)
 {
     QSqlQuery query{_manager->getDatabase()};
 
@@ -253,7 +251,7 @@ void SQLUserDataUtils::favouriteEntryThread(Entry entry)
     searchForAllFavouritedWords();
 }
 
-void SQLUserDataUtils::unfavouriteEntryThread(Entry entry)
+void SQLUserDataUtils::unfavouriteEntryThread(const Entry &entry)
 {
     QSqlQuery query{_manager->getDatabase()};
 

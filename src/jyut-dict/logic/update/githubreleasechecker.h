@@ -17,7 +17,6 @@ class GithubReleaseChecker : public QObject, public IUpdateChecker
     Q_OBJECT
 public:
     explicit GithubReleaseChecker(QObject *parent);
-    ~GithubReleaseChecker() override;
 
     void checkForNewUpdate(void) override;
 

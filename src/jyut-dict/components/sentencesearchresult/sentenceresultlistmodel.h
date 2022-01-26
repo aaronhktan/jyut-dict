@@ -27,7 +27,6 @@ public:
     explicit SentenceResultListModel(std::shared_ptr<SQLSearch> sqlSearch,
                                      std::vector<SourceSentence> sentences,
                                      QObject *parent = nullptr);
-    ~SentenceResultListModel() override;
 
     void callback(const std::vector<Entry> entries, bool emptyQuery) override;
     void callback(const std::vector<SourceSentence> sentences,

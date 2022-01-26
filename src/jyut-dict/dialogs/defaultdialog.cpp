@@ -20,10 +20,6 @@ DefaultDialog::DefaultDialog(const QString &reason,
     translateUI();
 }
 
-DefaultDialog::~DefaultDialog()
-{
-}
-
 void DefaultDialog::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::LanguageChange) {

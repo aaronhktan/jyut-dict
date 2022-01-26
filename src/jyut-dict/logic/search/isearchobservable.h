@@ -43,7 +43,7 @@ public:
         (void) (emptyQuery);
     }
 
-    virtual void notifyObservers(bool entryExists, Entry entry)
+    virtual void notifyObservers(bool entryExists, const Entry &entry)
     {
         (void) (entryExists);
         (void) (entry);

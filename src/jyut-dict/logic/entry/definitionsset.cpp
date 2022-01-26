@@ -21,44 +21,6 @@ DefinitionsSet::DefinitionsSet(std::string source,
 
 }
 
-DefinitionsSet::DefinitionsSet(const DefinitionsSet &definitions)
-    : _source{definitions.getSource()},
-      _definitions{definitions.getDefinitions()}
-{
-
-}
-
-DefinitionsSet::DefinitionsSet(const DefinitionsSet &&definitions)
-    : _source{definitions.getSource()},
-      _definitions{definitions.getDefinitions()}
-{
-
-}
-
-DefinitionsSet &DefinitionsSet::operator=(const DefinitionsSet &definitions)
-{
-    if (&definitions == this) {
-        return *this;
-    }
-
-    _source = definitions.getSource();
-    _definitions = definitions.getDefinitions();
-
-    return *this;
-}
-
-DefinitionsSet &DefinitionsSet::operator=(const DefinitionsSet &&definitions)
-{
-    if (&definitions == this) {
-        return *this;
-    }
-
-    _source = definitions.getSource();
-    _definitions = definitions.getDefinitions();
-
-    return *this;
-}
-
 std::ostream &operator<<(std::ostream &out, DefinitionsSet const &definitions)
 {
     for (Definition::Definition &definition : definitions.getDefinitions()) {

@@ -27,7 +27,6 @@ Q_OBJECT
 public:
     explicit SentenceSplitter(std::shared_ptr<SQLDatabaseManager> manager,
                               QWidget *parent = nullptr);
-    ~SentenceSplitter() override;
 
     void changeEvent(QEvent *event) override;
 

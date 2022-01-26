@@ -19,7 +19,6 @@ public:
     explicit DefinitionHeaderWidget(QWidget *parent = nullptr);
     explicit DefinitionHeaderWidget(std::string title,
                                     QWidget *parent = nullptr);
-    virtual ~DefinitionHeaderWidget() override;
 
     void changeEvent(QEvent *event) override;
 

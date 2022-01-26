@@ -5,12 +5,12 @@ DictionaryMetadata::DictionaryMetadata()
 
 }
 
-DictionaryMetadata::DictionaryMetadata(std::string name,
-                                       std::string version,
-                                       std::string description,
-                                       std::string legal,
-                                       std::string link,
-                                       std::string other)
+DictionaryMetadata::DictionaryMetadata(const std::string &name,
+                                       const std::string &version,
+                                       const std::string &description,
+                                       const std::string &legal,
+                                       const std::string &link,
+                                       const std::string &other)
     : _name{name},
     _version{version},
     _description{description},
@@ -19,62 +19,6 @@ DictionaryMetadata::DictionaryMetadata(std::string name,
     _other{other}
 {
 
-}
-
-DictionaryMetadata::DictionaryMetadata(const DictionaryMetadata &metadata)
-    : _name{metadata.getName()}
-    , _version{metadata.getVersion()}
-    , _description{metadata.getDescription()}
-    , _legal{metadata.getLegal()}
-    , _link{metadata.getLink()}
-    , _other{metadata.getOther()}
-{
-
-}
-
-DictionaryMetadata::DictionaryMetadata(const DictionaryMetadata &&metadata)
-    : _name{metadata.getName()}
-    , _version{metadata.getVersion()}
-    , _description{metadata.getDescription()}
-    , _legal{metadata.getLegal()}
-    , _link{metadata.getLink()}
-    , _other{metadata.getOther()}
-{
-
-}
-
-DictionaryMetadata &DictionaryMetadata::operator=(
-    const DictionaryMetadata &metadata)
-{
-    if (&metadata == this) {
-        return *this;
-    }
-
-    _name = metadata.getName();
-    _version = metadata.getVersion();
-    _description = metadata.getDescription();
-    _legal = metadata.getLegal();
-    _link = metadata.getLink();
-    _other = metadata.getOther();
-
-    return *this;
-}
-
-DictionaryMetadata &DictionaryMetadata::operator=(
-    const DictionaryMetadata &&metadata)
-{
-    if (&metadata == this) {
-        return *this;
-    }
-
-    _name = metadata.getName();
-    _version = metadata.getVersion();
-    _description = metadata.getDescription();
-    _legal = metadata.getLegal();
-    _link = metadata.getLink();
-    _other = metadata.getOther();
-
-    return *this;
 }
 
 std::string DictionaryMetadata::getName() const

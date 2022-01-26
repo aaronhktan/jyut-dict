@@ -11,7 +11,7 @@ public:
     explicit DefaultDialog(const QString &reason,
                            const QString &description,
                            QWidget *parent = nullptr);
-    virtual ~DefaultDialog() override;
+    virtual ~DefaultDialog() override = default;
 
     void changeEvent(QEvent *event) override;
 

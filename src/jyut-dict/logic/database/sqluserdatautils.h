@@ -22,27 +22,26 @@ class SQLUserDataUtils : public QObject,
 {
 public:
     SQLUserDataUtils(std::shared_ptr<SQLDatabaseManager> manager);
-    ~SQLUserDataUtils() override;
 
     void registerObserver(ISearchObserver *observer) override;
     void deregisterObserver(ISearchObserver *observer) override;
 
     void searchForAllFavouritedWords(void);
-    void checkIfEntryHasBeenFavourited(Entry entry);
-    void favouriteEntry(Entry entry);
-    void unfavouriteEntry(Entry entry);
+    void checkIfEntryHasBeenFavourited(const Entry &entry);
+    void favouriteEntry(const Entry &entry);
+    void unfavouriteEntry(const Entry &entry);
 
 private:
     void notifyObservers(const std::vector<Entry> &results,
                          bool emptyQuery) override;
-    void notifyObservers(bool entryExists, Entry entry) override;
+    void notifyObservers(bool entryExists, const Entry &entry) override;
 
     void setCurrentSearchTerm(const QString &searchTerm);
 
     void searchForAllFavouritedWordsThread(void);
-    void checkIfEntryHasBeenFavouritedThread(Entry entry);
-    void favouriteEntryThread(Entry entry);
-    void unfavouriteEntryThread(Entry entry);
+    void checkIfEntryHasBeenFavouritedThread(const Entry &entry);
+    void favouriteEntryThread(const Entry &entry);
+    void unfavouriteEntryThread(const Entry &entry);
 
     std::mutex _notifyMutex;
     std::list<ISearchObserver *> _observers;

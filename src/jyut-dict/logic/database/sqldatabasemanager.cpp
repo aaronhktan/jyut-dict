@@ -132,12 +132,12 @@ bool SQLDatabaseManager::restoreBackedUpDictionaryDatabase()
     }
 }
 
-void SQLDatabaseManager::addDatabase(QString name)
+void SQLDatabaseManager::addDatabase(const QString &name)
 {
     QSqlDatabase::addDatabase("QSQLITE", name);
 }
 
-bool SQLDatabaseManager::openDatabase(QString name)
+bool SQLDatabaseManager::openDatabase(const QString &name)
 {
     try {
         copyDictionaryDatabase();

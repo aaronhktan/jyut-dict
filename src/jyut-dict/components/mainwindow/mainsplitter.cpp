@@ -77,11 +77,6 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
 #endif
 }
 
-MainSplitter::~MainSplitter()
-{
-
-}
-
 void MainSplitter::translateUI(void)
 {
     static_cast<ResultListModel *>(_model)->setWelcome();

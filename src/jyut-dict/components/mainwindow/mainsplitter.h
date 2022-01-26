@@ -30,7 +30,6 @@ public:
                           std::shared_ptr<SQLSearch> sqlSearch,
                           std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                           QWidget *parent = nullptr);
-    ~MainSplitter() override;
 
     void changeEvent(QEvent *event) override;
 

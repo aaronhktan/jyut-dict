@@ -6,12 +6,12 @@ SourceSentence::SourceSentence()
 {
 }
 
-SourceSentence::SourceSentence(std::string sourceLanguage,
-                               std::string simplified,
-                               std::string traditional,
-                               std::string jyutping,
-                               std::string pinyin,
-                               std::vector<SentenceSet> sentences)
+SourceSentence::SourceSentence(const std::string &sourceLanguage,
+                               const std::string &simplified,
+                               const std::string &traditional,
+                               const std::string &jyutping,
+                               const std::string &pinyin,
+                               const std::vector<SentenceSet> &sentences)
     : _sourceLanguage{sourceLanguage}
     , _simplified{simplified}
     , _traditional{traditional}
@@ -21,62 +21,6 @@ SourceSentence::SourceSentence(std::string sourceLanguage,
 {
     // Create pretty pinyin
     _prettyPinyin = ChineseUtils::createPrettyPinyin(_pinyin);
-}
-
-SourceSentence::SourceSentence(const SourceSentence &sourceSentence)
-    : _sourceLanguage{std::move(sourceSentence._sourceLanguage)}
-    , _simplified{sourceSentence.getSimplified()}
-    , _traditional{sourceSentence.getTraditional()}
-    , _jyutping{sourceSentence.getJyutping()}
-    , _pinyin{sourceSentence.getPinyin()}
-    , _prettyPinyin{sourceSentence.getPrettyPinyin()}
-    , _sentences{sourceSentence.getSentenceSets()}
-{}
-
-SourceSentence::SourceSentence(const SourceSentence &&sourceSentence)
-    : _sourceLanguage{std::move(sourceSentence._sourceLanguage)}
-    , _simplified{std::move(sourceSentence._simplified)}
-    , _traditional{std::move(sourceSentence._traditional)}
-    , _jyutping{std::move(sourceSentence._jyutping)}
-    , _pinyin{std::move(sourceSentence._pinyin)}
-    , _prettyPinyin{std::move(sourceSentence._prettyPinyin)}
-    , _sentences{std::move(sourceSentence._sentences)}
-{}
-
-SourceSentence::~SourceSentence() {}
-
-SourceSentence &SourceSentence::operator=(const SourceSentence &sourceSentence)
-{
-    if (&sourceSentence == this) {
-        return *this;
-    }
-
-    _sourceLanguage = std::move(sourceSentence._sourceLanguage);
-    _simplified = sourceSentence._simplified;
-    _traditional = sourceSentence._traditional;
-    _jyutping = sourceSentence._jyutping;
-    _pinyin = sourceSentence._pinyin;
-    _prettyPinyin = sourceSentence._prettyPinyin;
-    _sentences = sourceSentence._sentences;
-
-    return *this;
-}
-
-SourceSentence &SourceSentence::operator=(const SourceSentence &&sourceSentence)
-{
-    if (&sourceSentence == this) {
-        return *this;
-    }
-
-    _sourceLanguage = std::move(sourceSentence._sourceLanguage);
-    _simplified = std::move(sourceSentence._simplified);
-    _traditional = std::move(sourceSentence._traditional);
-    _jyutping = std::move(sourceSentence._jyutping);
-    _pinyin = std::move(sourceSentence._pinyin);
-    _prettyPinyin = std::move(sourceSentence._prettyPinyin);
-    _sentences = std::move(sourceSentence._sentences);
-
-    return *this;
 }
 
 std::ostream &operator<<(std::ostream &out, const SourceSentence &sourceSentence)
@@ -176,7 +120,7 @@ std::string SourceSentence::getJyutping(void) const
     return _jyutping;
 }
 
-void SourceSentence::setJyutping(std::string jyutping)
+void SourceSentence::setJyutping(const std::string &jyutping)
 {
     _jyutping = jyutping;
 }
@@ -191,7 +135,7 @@ std::string SourceSentence::getPrettyPinyin(void) const
     return _prettyPinyin;
 }
 
-void SourceSentence::setPinyin(std::string pinyin)
+void SourceSentence::setPinyin(const std::string &pinyin)
 {
     _pinyin = pinyin;
 }

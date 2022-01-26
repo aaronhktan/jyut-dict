@@ -28,8 +28,8 @@ public:
 
     // Note: when adding or removing sources, make sure to update the map in
     // DictionarySourceUtils!
-    bool removeSource(std::string source, bool skipCleanup = false);
-    bool addSource(std::string filepath, bool overwriteConflictingSource = false);
+    bool removeSource(const std::string &source, bool skipCleanup = false);
+    bool addSource(const std::string &filepath, bool overwriteConflictingSource = false);
 
     bool readSources(std::vector<std::pair<std::string, std::string>> &sources);
     bool readSources(std::vector<DictionaryMetadata> &sources);
@@ -42,7 +42,7 @@ private:
     bool migrateDatabaseFromOneToTwo(void);
     bool migrateDatabaseFromTwoToThree(void);
 
-    bool deleteSourceFromDatabase(std::string source);
+    bool deleteSourceFromDatabase(const std::string &source);
     bool removeDefinitionsFromDatabase(void);
     bool removeSentencesFromDatabase(void);
     // Note to callers: There CANNOT be a transaction running when this method
@@ -50,7 +50,8 @@ private:
     // a transaction.
     // If skipCleanup is set to true, the caller MUST call rebuildIndices()
     // after this method returns if indices are desired.
-    bool removeSources(std::vector<std::string> sources, bool skipCleanup = false);
+    bool removeSources(const std::vector<std::string> &sources,
+                       bool skipCleanup = false);
 
     std::pair<bool, std::string> insertSourcesIntoDatabase(
         std::unordered_map<std::string, std::string> old_source_ids);
@@ -66,7 +67,9 @@ signals:
     void deletionProgress(int deleted, int total);
     void rebuildingIndexes();
     void cleaningUp();
-    void finishedDeletion(bool success, QString reason="", QString description="");
+    void finishedDeletion(bool success,
+                          QString reason = "",
+                          QString description = "");
 
     void deletingSentences();
 
