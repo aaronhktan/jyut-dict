@@ -459,7 +459,7 @@ void DictionaryTab::populateDictionarySourceUtils()
     }
 }
 
-void DictionaryTab::failureMessage(QString reason, QString description)
+void DictionaryTab::failureMessage(const QString &reason, const QString &description)
 {
     _message = new DictionaryTabFailureDialog{reason, description, this};
     _message->exec();

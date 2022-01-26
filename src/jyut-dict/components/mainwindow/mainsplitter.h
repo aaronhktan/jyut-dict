@@ -55,7 +55,7 @@ private:
     QListView *_resultListView;
 
 public slots:
-    void forwardViewHistoryItem(Entry &entry);
+    void forwardViewHistoryItem(const Entry &entry);
 
 private slots:
     void prepareEntry(Entry &entry);

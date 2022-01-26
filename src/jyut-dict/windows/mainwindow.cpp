@@ -619,12 +619,12 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
     }
 }
 
-void MainWindow::forwardSearchHistoryItem(searchTermHistoryItem &pair)
+void MainWindow::forwardSearchHistoryItem(const searchTermHistoryItem &pair)
 {
     emit searchHistoryClicked(pair);
 }
 
-void MainWindow::forwardViewHistoryItem(Entry &entry)
+void MainWindow::forwardViewHistoryItem(const Entry &entry)
 {
     emit viewHistoryClicked(entry);
 }

@@ -387,8 +387,8 @@ void AdvancedTab::exportUserDatabase(void)
 }
 
 void AdvancedTab::exportDatabaseResult(bool succeeded,
-                                       QString suceededText,
-                                       QString failedText)
+                                       const QString &suceededText,
+                                       const QString &failedText)
 {
     if (succeeded) {
         _exportDatabaseDialog = new ExportDatabaseDialog{suceededText, "", this};
@@ -537,8 +537,8 @@ void AdvancedTab::restoreExportedUserDatabase(void)
 }
 
 void AdvancedTab::restoreDatabaseResult(bool succeeded,
-                                        QString suceededText,
-                                        QString failedText)
+                                        const QString &suceededText,
+                                        const QString &failedText)
 {
     if (succeeded) {
         _restoreDatabaseDialog = new RestoreDatabaseDialog{suceededText,

@@ -22,7 +22,7 @@ public:
 
     void changeEvent(QEvent *event) override;
 
-    void setSectionTitle(std::string title) override;
+    void setSectionTitle(const std::string &title) override;
 
 private:
     void setStyle(bool use_dark);

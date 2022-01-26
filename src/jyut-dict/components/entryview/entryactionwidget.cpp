@@ -26,7 +26,7 @@ EntryActionWidget::~EntryActionWidget(void)
     _sqlUserUtils->deregisterObserver(this);
 }
 
-void EntryActionWidget::callback(bool entryExists, Entry entry)
+void EntryActionWidget::callback(bool entryExists, const Entry &entry)
 {
     emit callbackTriggered(entryExists, entry);
 }
@@ -48,7 +48,7 @@ void EntryActionWidget::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
-void EntryActionWidget::setEntry(const Entry entry)
+void EntryActionWidget::setEntry(const Entry &entry)
 {
     _entry = entry;
 
@@ -182,12 +182,12 @@ void EntryActionWidget::refreshBookmarkButton(void)
     }
 }
 
-void EntryActionWidget::addEntryToFavourites(Entry entry)
+void EntryActionWidget::addEntryToFavourites(const Entry &entry)
 {
     _sqlUserUtils->favouriteEntry(entry);
 }
 
-void EntryActionWidget::removeEntryFromFavourites(Entry entry)
+void EntryActionWidget::removeEntryFromFavourites(const Entry &entry)
 {
     _sqlUserUtils->unfavouriteEntry(entry);
 }

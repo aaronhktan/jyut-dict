@@ -13,17 +13,17 @@ ViewHistoryListModel::~ViewHistoryListModel()
     _search->deregisterObserver(this);
 }
 
-void ViewHistoryListModel::callback(const std::vector<Entry> entries, bool emptyQuery)
+void ViewHistoryListModel::callback(const std::vector<Entry> &entries, bool emptyQuery)
 {
     setEntries(entries, emptyQuery);
 }
 
-void ViewHistoryListModel::setEntries(std::vector<Entry> entries)
+void ViewHistoryListModel::setEntries(const std::vector<Entry> &entries)
 {
     setEntries(entries, false);
 }
 
-void ViewHistoryListModel::setEntries(std::vector<Entry> entries, bool emptyQuery) {
+void ViewHistoryListModel::setEntries(const std::vector<Entry> &entries, bool emptyQuery) {
     beginResetModel();
     _entries = entries;
     if (_entries.empty() && !emptyQuery) {

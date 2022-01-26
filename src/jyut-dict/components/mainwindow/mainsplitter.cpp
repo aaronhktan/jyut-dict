@@ -104,7 +104,7 @@ void MainSplitter::openCurrentSelectionInNewWindow(void)
     handleDoubleClick(entryIndex);
 }
 
-void MainSplitter::forwardViewHistoryItem(Entry &entry)
+void MainSplitter::forwardViewHistoryItem(const Entry &entry)
 {
     // Disable adding this item to history; _addToHistory should be reset as
     // soon as the results for this search come back so future views can be

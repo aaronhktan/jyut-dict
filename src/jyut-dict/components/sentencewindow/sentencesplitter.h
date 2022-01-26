@@ -30,8 +30,8 @@ public:
 
     void changeEvent(QEvent *event) override;
 
-    void setSourceSentences(std::vector<SourceSentence> sourceSentences);
-    void setSearchTerm(QString searchTerm);
+    void setSourceSentences(const std::vector<SourceSentence> &sourceSentences);
+    void setSearchTerm(const QString &searchTerm);
 
 private:
     void translateUI(void);

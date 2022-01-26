@@ -20,7 +20,7 @@ public:
     explicit ViewHistoryTab(std::shared_ptr<SQLUserHistoryUtils> _sqlHistoryUtils,
                             QWidget *parent = nullptr);
 
-    void changeEvent(QEvent *event);
+    void changeEvent(QEvent *event) override;
 
 private:
     void setupUI(void);

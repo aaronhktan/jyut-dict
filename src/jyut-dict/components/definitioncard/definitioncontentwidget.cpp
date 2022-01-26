@@ -41,7 +41,7 @@ void DefinitionContentWidget::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
-void DefinitionContentWidget::setEntry(std::vector<Definition::Definition> definitions)
+void DefinitionContentWidget::setEntry(const std::vector<Definition::Definition> &definitions)
 {
     cleanupLabels();
 

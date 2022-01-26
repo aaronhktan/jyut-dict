@@ -32,9 +32,9 @@ public:
                              QObject *parent = nullptr);
     ~ResultListModel() override;
 
-    void callback(const std::vector<Entry> entries, bool emptyQuery) override;
-    void setEntries(std::vector<Entry> entries);
-    void setEntries(std::vector<Entry> entries, bool emptyQuery);
+    void callback(const std::vector<Entry> &entries, bool emptyQuery) override;
+    void setEntries(const std::vector<Entry> &entries);
+    void setEntries(const std::vector<Entry> &entries, bool emptyQuery);
     void setWelcome();
     void setEmpty();
 
@@ -57,11 +57,11 @@ private:
 
 private slots:
     void copyEntries(
-        std::vector<Entry> entries, bool emptyQuery);
+        const std::vector<Entry> &entries, bool emptyQuery);
 
 signals:
     void callbackInvoked(
-        std::vector<Entry> entries, bool emptyQuery);
+        const std::vector<Entry> &entries, bool emptyQuery);
 };
 
 #endif // RESULTLISTMODEL_H

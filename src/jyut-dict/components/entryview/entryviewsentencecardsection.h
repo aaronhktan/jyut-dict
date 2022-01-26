@@ -33,7 +33,7 @@ public:
     explicit EntryViewSentenceCardSection(std::shared_ptr<SQLDatabaseManager> manager,
                                  QWidget *parent = nullptr);
     explicit EntryViewSentenceCardSection(QWidget *parent = nullptr);
-    void callback(const std::vector<SourceSentence> sourceSentences,
+    void callback(const std::vector<SourceSentence> &sourceSentences,
                   bool emptyQuery) override;
 
     void changeEvent(QEvent *event) override;
@@ -47,7 +47,7 @@ private:
     void setStyle(bool use_dark);
 
     void showLoadingWidget(void);
-    void openSentenceWindow(std::vector<SourceSentence> sourceSentences);
+    void openSentenceWindow(const std::vector<SourceSentence> &sourceSentences);
 
     std::mutex layoutMutex;
     std::mutex updateMutex;
@@ -74,18 +74,18 @@ private:
 
 public slots:
     void updateUI(
-        std::vector<SourceSentence> sourceSentences,
-        sentenceSamples samples);
+        const std::vector<SourceSentence> &sourceSentences,
+        const sentenceSamples &samples);
     void stallSentenceUIUpdate(void);
 
 private slots:
-    void pauseBeforeUpdatingUI(std::vector<SourceSentence> sourceSentences,
-                               sentenceSamples samples);
+    void pauseBeforeUpdatingUI(const std::vector<SourceSentence> &sourceSentences,
+                               const sentenceSamples &samples);
 
 signals:
     void callbackInvoked(
-        std::vector<SourceSentence> sourceSentences,
-        sentenceSamples samples);
+        const std::vector<SourceSentence> &sourceSentences,
+        const sentenceSamples &samples);
     void addingCards();
     void finishedAddingCards();
 };

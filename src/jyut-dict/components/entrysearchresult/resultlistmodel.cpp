@@ -30,7 +30,7 @@ ResultListModel::~ResultListModel()
     _search->deregisterObserver(this);
 }
 
-void ResultListModel::callback(const std::vector<Entry> entries, bool emptyQuery)
+void ResultListModel::callback(const std::vector<Entry> &entries, bool emptyQuery)
 {
     // This function is usually called in another thread (since ISearchObservable
     // objects do their work in a separate thread to avoid congesting the UI thread).
@@ -43,7 +43,7 @@ void ResultListModel::callback(const std::vector<Entry> entries, bool emptyQuery
     emit callbackInvoked(entries, emptyQuery);
 }
 
-void ResultListModel::copyEntries(std::vector<Entry> entries, bool emptyQuery)
+void ResultListModel::copyEntries(const std::vector<Entry> &entries, bool emptyQuery)
 {
     // As soon as another event wants to update the list model, kill
     // any prior pending updates by stopping the timer.
@@ -62,12 +62,12 @@ void ResultListModel::copyEntries(std::vector<Entry> entries, bool emptyQuery)
     }
 }
 
-void ResultListModel::setEntries(std::vector<Entry> entries)
+void ResultListModel::setEntries(const std::vector<Entry> &entries)
 {
     setEntries(entries, false);
 }
 
-void ResultListModel::setEntries(std::vector<Entry> entries, bool emptyQuery) {
+void ResultListModel::setEntries(const std::vector<Entry> &entries, bool emptyQuery) {
     beginResetModel();
     _entries = entries;
     if (_entries.empty() && !emptyQuery) {

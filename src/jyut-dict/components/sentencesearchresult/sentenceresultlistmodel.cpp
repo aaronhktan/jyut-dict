@@ -9,20 +9,20 @@ SentenceResultListModel::SentenceResultListModel(std::shared_ptr<SQLSearch> sqlS
     _search->registerObserver(this);
 }
 
-void SentenceResultListModel::callback(const std::vector<Entry> entries, bool emptyQuery)
+void SentenceResultListModel::callback(const std::vector<Entry> &entries, bool emptyQuery)
 {
     (void) (entries);
     (void) (emptyQuery);
 }
 
-void SentenceResultListModel::callback(const std::vector<SourceSentence> sentences,
+void SentenceResultListModel::callback(const std::vector<SourceSentence> &sentences,
                                bool emptyQuery)
 {
     (void) (emptyQuery);
     setSentences(sentences);
 }
 
-void SentenceResultListModel::setSentences(std::vector<SourceSentence> sentences)
+void SentenceResultListModel::setSentences(const std::vector<SourceSentence> &sentences)
 {
     beginResetModel();
     _sentences = sentences;

@@ -23,11 +23,11 @@ public:
                                QWidget *parent = nullptr);
     ~EntryActionWidget(void) override;
 
-    void callback(bool entryExists, Entry entry) override;
+    void callback(bool entryExists, const Entry &entry) override;
 
     void changeEvent(QEvent *event) override;
 
-    void setEntry(Entry entry);
+    void setEntry(const Entry &entry);
 
 private:
     void setupUI(void);
@@ -35,8 +35,8 @@ private:
     void setStyle(bool use_dark);
 
     void refreshBookmarkButton(void);
-    void addEntryToFavourites(Entry entry);
-    void removeEntryFromFavourites(Entry entry);
+    void addEntryToFavourites(const Entry &entry);
+    void removeEntryFromFavourites(const Entry &entry);
 
     void shareAction(void);
 
@@ -50,7 +50,7 @@ private:
     QPushButton *_shareButton;
 
 signals:
-    void callbackTriggered(bool entryExists, Entry entry);
+    void callbackTriggered(bool entryExists, const Entry &entry);
 
 public slots:
 };

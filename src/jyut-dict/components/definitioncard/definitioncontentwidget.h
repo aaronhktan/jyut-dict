@@ -24,7 +24,7 @@ public:
 
     void changeEvent(QEvent *event) override;
 
-    void setEntry(std::vector<Definition::Definition> definitions);
+    void setEntry(const std::vector<Definition::Definition> &definitions);
 
 private:
     void setStyle(bool use_dark);

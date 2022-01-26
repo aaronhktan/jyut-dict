@@ -30,10 +30,10 @@ public:
                                     QObject *parent = nullptr);
     ~SearchHistoryListModel() override;
 
-    void callback(const std::vector<searchTermHistoryItem> searchTerms,
+    void callback(const std::vector<searchTermHistoryItem> &searchTerms,
                   bool emptyQuery) override;
-    void setEntries(std::vector<searchTermHistoryItem> searchTerms);
-    void setEntries(std::vector<searchTermHistoryItem> searchTerms, bool emptyQuery);
+    void setEntries(const std::vector<searchTermHistoryItem> &searchTerms);
+    void setEntries(const std::vector<searchTermHistoryItem> &searchTerms, bool emptyQuery);
     void setEmpty(void);
 
     void translateUI(void);

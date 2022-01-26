@@ -48,7 +48,7 @@ void DefinitionHeaderWidget::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
-void DefinitionHeaderWidget::setSectionTitle(std::string title)
+void DefinitionHeaderWidget::setSectionTitle(const std::string &title)
 {
     _titleLabel->setFixedHeight(_titleLabel->fontMetrics().boundingRect(title.c_str()).height());
     _titleLabel->setText(title.c_str());

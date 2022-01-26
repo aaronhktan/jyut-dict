@@ -47,7 +47,7 @@ private:
     void removeDictionary(DictionaryMetadata metadata);
     void populateDictionarySourceUtils();
 
-    void failureMessage(QString reason, QString description);
+    void failureMessage(const QString &reason, const QString &description);
 
     QLabel *_explanatory;
     QLabel *_description;

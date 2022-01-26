@@ -14,18 +14,18 @@ SearchHistoryListModel::~SearchHistoryListModel()
     _sqlHistoryUtils->deregisterObserver(this);
 }
 
-void SearchHistoryListModel::callback(const std::vector<searchTermHistoryItem> searchTerms,
+void SearchHistoryListModel::callback(const std::vector<searchTermHistoryItem> &searchTerms,
                                       bool emptyQuery)
 {
     setEntries(searchTerms, emptyQuery);
 }
 
-void SearchHistoryListModel::setEntries(std::vector<searchTermHistoryItem> searchTerms)
+void SearchHistoryListModel::setEntries(const std::vector<searchTermHistoryItem> &searchTerms)
 {
     setEntries(searchTerms, false);
 }
 
-void SearchHistoryListModel::setEntries(std::vector<searchTermHistoryItem> searchTerms, bool emptyQuery) {
+void SearchHistoryListModel::setEntries(const std::vector<searchTermHistoryItem> &searchTerms, bool emptyQuery) {
     beginResetModel();
     _searchTerms = searchTerms;
     if (_searchTerms.empty() && !emptyQuery) {

@@ -59,7 +59,7 @@ private:
     ISearchOptionsMediator *_searchOptions;
 
 public slots:
-    void forwardSearchHistoryItem(searchTermHistoryItem &pair);
+    void forwardSearchHistoryItem(const searchTermHistoryItem &pair);
 
 signals:
     void searchBarTextChange(void);
