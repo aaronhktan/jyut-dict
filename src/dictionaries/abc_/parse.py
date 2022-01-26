@@ -23,6 +23,7 @@ import unicodedata
 # - 犄/觭角 (1006222031): contains variant for simplified
 # - 记/纪录 (1006248609): contains variant for simplified and traditional
 # - 回@@/迴 (1005378131): contains "@@" in entry headword
+# - 纪委 (1006643399): contains "-" in Pinyin
 
 IGNORED_LINES = ("cidian.wenlindb\n", ".-arc\n", ".-publish\n")
 IGNORED_TYPES = (
@@ -202,7 +203,7 @@ def parse_pinyin(content):
     # But we don't support that, so remove it
     # Pinyin also sometimes has superscript numbers preceding them that we need to remove
     # I assume it's to distinguish between words with the same Pinyin? Unsure
-    content = content.translate(str.maketrans("ạẹịọụ'", "aeiou ", "*¹²³⁴⁵⁶⁷⁸⁹"))
+    content = content.translate(str.maketrans("ạẹịọụ'-", "aeiou  ", "*¹²³⁴⁵⁶⁷⁸⁹"))
     # ABC also indicates erhua with (r) in Pinyin. This causes difficulties with
     # entry coalescing, so remove it.
     content = content.replace("(r)", "")
