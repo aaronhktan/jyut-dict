@@ -12,6 +12,12 @@ public:
     EntrySpeaker();
     ~EntrySpeaker();
 
+    EntrySpeaker(EntrySpeaker &other);
+    EntrySpeaker(EntrySpeaker &&other);
+
+    EntrySpeaker &operator=(const EntrySpeaker &other);
+    EntrySpeaker &operator=(EntrySpeaker &&other);
+
     int speak(const QLocale::Language &language,
               const QLocale::Country &country,
               const QString &string) const;

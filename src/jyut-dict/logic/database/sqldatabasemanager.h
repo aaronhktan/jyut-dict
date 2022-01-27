@@ -16,7 +16,6 @@ class SQLDatabaseManager
 {
 public:
     SQLDatabaseManager();
-    ~SQLDatabaseManager();
 
     QSqlDatabase getDatabase();
     bool isDatabaseOpen() const;

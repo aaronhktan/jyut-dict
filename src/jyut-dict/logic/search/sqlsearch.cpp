@@ -11,27 +11,14 @@
 #endif
 
 SQLSearch::SQLSearch()
-    : QObject()
 {
     std::random_device rd;
     _generator = std::mt19937_64{rd()};
 }
 
 SQLSearch::SQLSearch(std::shared_ptr<SQLDatabaseManager> manager)
-    : QObject()
-    , _manager{manager}
+    : _manager{manager}
 {
-    std::random_device rd;
-    _generator = std::mt19937_64{rd()};
-}
-
-SQLSearch::SQLSearch(const SQLSearch &search)
-    : QObject()
-{
-    if (search._manager != nullptr) {
-        _manager = search._manager;
-    }
-
     std::random_device rd;
     _generator = std::mt19937_64{rd()};
 }

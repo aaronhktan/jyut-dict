@@ -7,7 +7,6 @@
 #include "logic/search/isearchobservable.h"
 
 #include <QList>
-#include <QObject>
 #include <QtSql>
 
 #include <atomic>
@@ -19,15 +18,18 @@
 
 // SQLSearch searches the database provided by SQLDatabaseManager.
 
-class SQLSearch : public QObject,
-                  virtual public ISearch,
+class SQLSearch : virtual public ISearch,
                   virtual public ISearchObservable
 {
 public:
     SQLSearch();
     SQLSearch(std::shared_ptr<SQLDatabaseManager> manager);
-    SQLSearch(const SQLSearch &search);
     ~SQLSearch() override;
+
+    // Disable copy constructor and copy assignment, since the list of futures
+    // and observers shouldn't be copied.
+    SQLSearch(const SQLSearch &) = delete;
+    SQLSearch(SQLSearch &&) = delete;
 
     void registerObserver(ISearchObserver *observer) override;
     void deregisterObserver(ISearchObserver *observer) override;
@@ -95,7 +97,5 @@ private:
 
     QList<QFuture<void>> _futures;
 };
-
-Q_DECLARE_METATYPE(SQLSearch);
 
 #endif // SQLSEARCH_H

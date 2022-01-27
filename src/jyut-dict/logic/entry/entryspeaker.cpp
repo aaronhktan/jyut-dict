@@ -4,14 +4,48 @@
 #include <QVector>
 
 EntrySpeaker::EntrySpeaker()
-    : _tts{nullptr}
+    : _tts{new QTextToSpeech}
 {
-    _tts = new QTextToSpeech{};
 }
 
 EntrySpeaker::~EntrySpeaker()
 {
     delete _tts;
+}
+
+EntrySpeaker::EntrySpeaker(EntrySpeaker &other)
+    : _tts{new QTextToSpeech}
+{
+    // Qt classes cannot be copy-constructed, so just create a new one
+    // instead of copying from other.
+    (void) (other);
+}
+
+EntrySpeaker::EntrySpeaker(EntrySpeaker &&other)
+    : _tts{new QTextToSpeech{other._tts}}
+{
+    other._tts = nullptr;
+}
+
+EntrySpeaker &EntrySpeaker::operator=(const EntrySpeaker &other)
+{
+    // Again, copy-constructor is explicitly deleted for Qt classes, so
+    // just make a new QTextToSpeech object
+    if (&other != this) {
+        _tts = new QTextToSpeech;
+    }
+
+    return *this;
+}
+
+EntrySpeaker &EntrySpeaker::operator=(EntrySpeaker &&other)
+{
+    if (&other != this) {
+        _tts = other._tts;
+        other._tts = nullptr;
+    }
+
+    return *this;
 }
 
 // Returns list of voices that match the target locale

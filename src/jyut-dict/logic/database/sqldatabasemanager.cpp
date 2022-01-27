@@ -18,21 +18,19 @@
 SQLDatabaseManager::SQLDatabaseManager()
 {
     // Delete the old version of the dictionary
+#ifndef PORTABLE
 #ifdef Q_OS_LINUX
     QDir localDir{"/usr/share/jyut-dict/"};
-#ifndef PORTABLE
     if (localDir.exists()) {
         if (!localDir.removeRecursively()) {
             //  std::cerr << "Couldn't remove original dictionary!" << std::endl;
             //  return;
         }
     }
-#endif
 #else
     QFileInfo localFile{
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
         + "/Dictionaries/eng.db"};
-#ifndef PORTABLE
     if (localFile.exists() && localFile.isFile()) {
         if (!QFile::remove(localFile.absoluteFilePath())) {
             //  std::cerr << "Couldn't remove original file!" << std::endl;
@@ -41,11 +39,6 @@ SQLDatabaseManager::SQLDatabaseManager()
     }
 #endif
 #endif
-}
-
-SQLDatabaseManager::~SQLDatabaseManager()
-{
-    QSqlDatabase::database(getCurrentDatabaseName()).close();
 }
 
 QSqlDatabase SQLDatabaseManager::getDatabase()
