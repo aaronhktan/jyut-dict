@@ -42,7 +42,7 @@ private:
     QPushButton *_clearAllSearchHistoryButton;
 
 signals:
-    void searchHistoryClicked(searchTermHistoryItem &pair);
+    void searchHistoryClicked(const searchTermHistoryItem &pair);
 };
 
 #endif // SEARCHHISTORYTAB_H

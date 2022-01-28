@@ -2,7 +2,7 @@
 
 namespace DictionarySourceUtils {
 
-std::string getSourceShortString(std::string source)
+std::string getSourceShortString(const std::string &source)
 {
     auto result = name_to_short_name.find(source);
 
@@ -13,12 +13,12 @@ std::string getSourceShortString(std::string source)
     return result->second;
 }
 
-bool addSource(std::string sourcename, std::string shortsourcename)
+bool addSource(const std::string &sourcename, const std::string &shortsourcename)
 {
     return name_to_short_name.insert({sourcename, shortsourcename}).second;
 }
 
-bool removeSource(std::string sourcename)
+bool removeSource(const std::string &sourcename)
 {
     auto index = std::find_if(name_to_short_name.begin(),
                            name_to_short_name.end(),

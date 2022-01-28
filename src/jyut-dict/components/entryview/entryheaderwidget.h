@@ -22,7 +22,6 @@ class EntryHeaderWidget : public QWidget
 {
 public:
     explicit EntryHeaderWidget(QWidget *parent = nullptr);
-    ~EntryHeaderWidget() override;
 
     void changeEvent(QEvent *event) override;
 
@@ -33,7 +32,7 @@ private:
     void setStyle(bool use_dark);
     void translateUI();
 
-    void displayPronunciationLabels(const EntryPhoneticOptions options);
+    void displayPronunciationLabels(const EntryPhoneticOptions options) const;
 
     void showError(const QString &reason, const QString &message);
 

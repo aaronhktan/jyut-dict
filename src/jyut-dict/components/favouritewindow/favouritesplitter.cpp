@@ -23,10 +23,6 @@ FavouriteSplitter::FavouriteSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUt
     _sqlUserUtils->searchForAllFavouritedWords();
 }
 
-FavouriteSplitter::~FavouriteSplitter()
-{
-}
-
 void FavouriteSplitter::setupUI()
 {
     _entryScrollArea = new EntryScrollArea{_sqlUserUtils, _manager, this};

@@ -27,12 +27,11 @@ public:
     explicit SentenceResultListModel(std::shared_ptr<SQLSearch> sqlSearch,
                                      std::vector<SourceSentence> sentences,
                                      QObject *parent = nullptr);
-    ~SentenceResultListModel() override;
 
-    void callback(const std::vector<Entry> entries, bool emptyQuery) override;
-    void callback(const std::vector<SourceSentence> sentences,
+    void callback(const std::vector<Entry> &entries, bool emptyQuery) override;
+    void callback(const std::vector<SourceSentence> &sentences,
                   bool emptyQuery) override;
-    void setSentences(std::vector<SourceSentence> sentences);
+    void setSentences(const std::vector<SourceSentence> &sentences);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;

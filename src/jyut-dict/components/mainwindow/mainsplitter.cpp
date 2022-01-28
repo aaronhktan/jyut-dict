@@ -77,11 +77,6 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
 #endif
 }
 
-MainSplitter::~MainSplitter()
-{
-
-}
-
 void MainSplitter::translateUI(void)
 {
     static_cast<ResultListModel *>(_model)->setWelcome();
@@ -95,7 +90,7 @@ void MainSplitter::changeEvent(QEvent *event)
     QSplitter::changeEvent(event);
 }
 
-void MainSplitter::setFocusToResults(void)
+void MainSplitter::setFocusToResults(void) const
 {
     _resultListView->setFocus();
     QModelIndex entryIndex = _resultListView->model()->index(0, 0);
@@ -109,7 +104,7 @@ void MainSplitter::openCurrentSelectionInNewWindow(void)
     handleDoubleClick(entryIndex);
 }
 
-void MainSplitter::forwardViewHistoryItem(Entry &entry)
+void MainSplitter::forwardViewHistoryItem(const Entry &entry)
 {
     // Disable adding this item to history; _addToHistory should be reset as
     // soon as the results for this search come back so future views can be
@@ -130,7 +125,7 @@ void MainSplitter::prepareEntry(Entry &entry)
     prepareEntry(entry, true);
 }
 
-void MainSplitter::prepareEntry(Entry &entry, bool addToHistory)
+void MainSplitter::prepareEntry(Entry &entry, bool addToHistory) const
 {
     if (addToHistory) {
         // Only add to history after a few seconds of viewing an entry

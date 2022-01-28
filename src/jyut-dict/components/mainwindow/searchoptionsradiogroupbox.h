@@ -31,7 +31,7 @@ private:
     void setupUI();
     void translateUI();
 
-    void notifyMediator();
+    void notifyMediator() const;
 
     ISearchOptionsMediator *_mediator;
 

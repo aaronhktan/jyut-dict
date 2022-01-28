@@ -40,11 +40,6 @@ EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manag
             &EntryViewSentenceCardSection::stallSentenceUIUpdate);
 }
 
-EntryContentWidget::~EntryContentWidget()
-{
-
-}
-
 void EntryContentWidget::setEntry(const Entry &entry)
 {
     _definitionSection->setEntry(entry);

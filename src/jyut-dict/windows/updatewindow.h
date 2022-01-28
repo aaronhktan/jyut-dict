@@ -23,7 +23,6 @@ public:
                           std::string versionNumber=Utils::CURRENT_VERSION,
                           std::string url=Utils::GITHUB_LINK,
                           std::string description="");
-    ~UpdateAvailableWindow() override;
 
     void changeEvent(QEvent *event) override;
 

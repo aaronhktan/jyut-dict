@@ -44,16 +44,16 @@ private:
     void exportUserDatabase(void);
 
     void exportDatabaseResult(bool succeeded,
-                              QString suceededText,
-                              QString failedText);
+                              const QString &suceededText,
+                              const QString &failedText);
 
     void restoreBackedUpDictionaryDatabase(void);
     void restoreExportedDictionaryDatabase(void);
     void restoreExportedUserDatabase(void);
 
     void restoreDatabaseResult(bool succeeded,
-                               QString suceededText,
-                               QString failedText);
+                               const QString &suceededText,
+                               const QString &failedText);
 
     void showProgressDialog(QString text);
 

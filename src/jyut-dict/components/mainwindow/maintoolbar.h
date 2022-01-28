@@ -35,12 +35,12 @@ public:
     void changeEvent(QEvent *event) override;
     void focusInEvent(QFocusEvent *event) override;
 
-    void selectAllEvent(void);
-    void changeOptionEvent(const Utils::ButtonOptionIndex option);
+    void selectAllEvent(void) const;
+    void changeOptionEvent(const Utils::ButtonOptionIndex option) const;
 
-    void setOpenHistoryAction(QAction *action);
-    void setOpenFavouritesAction(QAction *action);
-    void setOpenSettingsAction(QAction *action);
+    void setOpenHistoryAction(QAction *action) const;
+    void setOpenFavouritesAction(QAction *action) const;
+    void setOpenSettingsAction(QAction *action) const;
 
 private:
     void setupUI(void);
@@ -59,7 +59,7 @@ private:
     ISearchOptionsMediator *_searchOptions;
 
 public slots:
-    void forwardSearchHistoryItem(searchTermHistoryItem &pair);
+    void forwardSearchHistoryItem(const searchTermHistoryItem &pair) const;
 
 signals:
     void searchBarTextChange(void);

@@ -35,7 +35,6 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow() override;
 
     void changeEvent(QEvent *event) override;
 
@@ -103,20 +102,20 @@ private:
     void createMenus(void);
     void createActions(void);
 
-    void undo(void);
-    void redo(void);
-    void cut(void);
-    void copy(void);
-    void paste(void);
-    void find(void);
-    void findAndSelectAll(void);
-    void setFocusToResults(void);
-    void openCurrentSelectionInNewWindow(void);
-    void selectSimplified(void);
-    void selectTraditional(void);
-    void selectJyutping(void);
-    void selectPinyin(void);
-    void selectEnglish(void);
+    void undo(void) const;
+    void redo(void) const;
+    void cut(void) const;
+    void copy(void) const;
+    void paste(void) const;
+    void find(void) const;
+    void findAndSelectAll(void) const;
+    void setFocusToResults(void) const;
+    void openCurrentSelectionInNewWindow(void) const;
+    void selectSimplified(void) const;
+    void selectTraditional(void) const;
+    void selectJyutping(void) const;
+    void selectPinyin(void) const;
+    void selectEnglish(void) const;
 
     void toggleMinimized(void);
     void toggleMaximized(void);
@@ -131,8 +130,8 @@ private:
     void closeEvent(QCloseEvent *event) override;
 
 signals:
-    void searchHistoryClicked(searchTermHistoryItem &pair);
-    void viewHistoryClicked(Entry &entry);
+    void searchHistoryClicked(const searchTermHistoryItem &pair) const;
+    void viewHistoryClicked(const Entry &entry) const;
 
 public slots:
     void notifyUpdateAvailable(bool updateAvailable,
@@ -141,8 +140,8 @@ public slots:
                                std::string description,
                                bool showIfNoUpdate = false);
     void notifyDatabaseMigration(void);
-    void forwardSearchHistoryItem(searchTermHistoryItem &pair);
-    void forwardViewHistoryItem(Entry &entry);
+    void forwardSearchHistoryItem(const searchTermHistoryItem &pair) const;
+    void forwardViewHistoryItem(const Entry &entry) const;
 };
 
 #endif // MAINWINDOW_H

@@ -7,7 +7,6 @@
 #include "logic/search/isearchobservable.h"
 
 #include <QList>
-#include <QObject>
 #include <QtSql>
 
 #include <atomic>
@@ -19,31 +18,34 @@
 
 // SQLSearch searches the database provided by SQLDatabaseManager.
 
-class SQLSearch : public QObject,
-                  virtual public ISearch,
+class SQLSearch : virtual public ISearch,
                   virtual public ISearchObservable
 {
 public:
     SQLSearch();
     SQLSearch(std::shared_ptr<SQLDatabaseManager> manager);
-    SQLSearch(const SQLSearch &search);
     ~SQLSearch() override;
+
+    // Disable copy constructor and copy assignment, since the list of futures
+    // and observers shouldn't be copied.
+    SQLSearch(const SQLSearch &) = delete;
+    SQLSearch(SQLSearch &&) = delete;
 
     void registerObserver(ISearchObserver *observer) override;
     void deregisterObserver(ISearchObserver *observer) override;
 
-    void searchSimplified(const QString searchTerm) override;
-    void searchTraditional(const QString searchTerm) override;
-    void searchJyutping(const QString searchTerm) override;
-    void searchPinyin(const QString searchTerm) override;
-    void searchEnglish(const QString searchTerm) override;
+    void searchSimplified(const QString &searchTerm) override;
+    void searchTraditional(const QString &searchTerm) override;
+    void searchJyutping(const QString &searchTerm) override;
+    void searchPinyin(const QString &searchTerm) override;
+    void searchEnglish(const QString &searchTerm) override;
 
-    void searchByUnique(const QString simplified,
-                        const QString traditional,
-                        const QString jyutping,
-                        const QString pinyin) override;
+    void searchByUnique(const QString &simplified,
+                        const QString &traditional,
+                        const QString &jyutping,
+                        const QString &pinyin) override;
 
-    void searchTraditionalSentences(const QString searchTerm);
+    void searchTraditionalSentences(const QString &searchTerm);
 
 private:
     void notifyObservers(const std::vector<Entry> &results, bool emptyQuery) override;
@@ -59,29 +61,29 @@ private:
                                          const unsigned long long queryID);
 
     unsigned long long generateAndSetQueryID(void);
-    bool checkQueryIDCurrent(const unsigned long long queryID);
+    bool checkQueryIDCurrent(const unsigned long long queryID) const;
 
-    void runThread(void (SQLSearch::*threadFunction)(const QString searchTerm,
+    void runThread(void (SQLSearch::*threadFunction)(const QString &searchTerm,
                                                      const unsigned long long queryID),
                    const QString &searchTerm, const unsigned long long queryID);
-    void searchSimplifiedThread(const QString searchTerm,
+    void searchSimplifiedThread(const QString &searchTerm,
                                 const unsigned long long queryID);
-    void searchTraditionalThread(const QString searchTerm,
+    void searchTraditionalThread(const QString &searchTerm,
                                  const unsigned long long queryID);
-    void searchJyutpingThread(const QString searchTerm,
+    void searchJyutpingThread(const QString &searchTerm,
                               const unsigned long long queryID);
-    void searchPinyinThread(const QString searchTerm,
+    void searchPinyinThread(const QString &searchTerm,
                             const unsigned long long queryID);
-    void searchEnglishThread(const QString searchTerm,
+    void searchEnglishThread(const QString &searchTerm,
                              const unsigned long long queryID);
 
-    void searchByUniqueThread(const QString simplified,
-                              const QString traditional,
-                              const QString jyutping,
-                              const QString pinyin,
+    void searchByUniqueThread(const QString &simplified,
+                              const QString &traditional,
+                              const QString &jyutping,
+                              const QString &pinyin,
                               const unsigned long long queryID);
 
-    void searchTraditionalSentencesThread(const QString searchTerm,
+    void searchTraditionalSentencesThread(const QString &searchTerm,
                                           const unsigned long long queryID);
 
     std::mutex _notifyMutex;
@@ -95,7 +97,5 @@ private:
 
     QList<QFuture<void>> _futures;
 };
-
-Q_DECLARE_METATYPE(SQLSearch);
 
 #endif // SQLSEARCH_H

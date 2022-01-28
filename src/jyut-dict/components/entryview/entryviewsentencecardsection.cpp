@@ -40,12 +40,8 @@ EntryViewSentenceCardSection::EntryViewSentenceCardSection(QWidget *parent)
     setupUI();
 }
 
-EntryViewSentenceCardSection::~EntryViewSentenceCardSection()
-{
-}
-
 void EntryViewSentenceCardSection::callback(
-    std::vector<SourceSentence> sourceSentences, bool emptyQuery)
+    const std::vector<SourceSentence> &sourceSentences, bool emptyQuery)
 {
     (void) (emptyQuery);
     std::lock_guard<std::mutex> update{updateMutex};
@@ -87,7 +83,7 @@ void EntryViewSentenceCardSection::translateUI()
 
 void EntryViewSentenceCardSection::cleanup(void)
 {
-    for (auto card : _sentenceCards) {
+    for (const auto &card : _sentenceCards) {
         _sentenceCardsLayout->removeWidget(card);
         delete card;
     }
@@ -168,7 +164,7 @@ void EntryViewSentenceCardSection::setEntry(const Entry &entry)
 }
 
 void EntryViewSentenceCardSection::updateUI(
-    std::vector<SourceSentence> sourceSentences, sentenceSamples samples)
+    const std::vector<SourceSentence> &sourceSentences, const sentenceSamples &samples)
 {
     std::lock_guard<std::mutex> layout{layoutMutex};
     cleanup();
@@ -219,8 +215,8 @@ void EntryViewSentenceCardSection::stallSentenceUIUpdate(void)
     _enableUIUpdateTimer->start();
 }
 
-void EntryViewSentenceCardSection::pauseBeforeUpdatingUI(std::vector<SourceSentence> sourceSentences,
-                                                         sentenceSamples samples)
+void EntryViewSentenceCardSection::pauseBeforeUpdatingUI(const std::vector<SourceSentence> &sourceSentences,
+                                                         const sentenceSamples &samples)
 {
     _updateUITimer->stop();
     disconnect(_updateUITimer, nullptr, nullptr, nullptr);
@@ -245,7 +241,7 @@ void EntryViewSentenceCardSection::showLoadingWidget(void)
 }
 
 void EntryViewSentenceCardSection::openSentenceWindow(
-    std::vector<SourceSentence> sourceSentences)
+    const std::vector<SourceSentence> &sourceSentences)
 {
     SentenceSplitter *splitter = new SentenceSplitter{_manager, nullptr};
     splitter->setParent(this, Qt::Window);
@@ -258,12 +254,12 @@ void EntryViewSentenceCardSection::openSentenceWindow(
 // each source that exists in the source sentence.
 std::unordered_map<std::string, std::vector<SourceSentence>>
 EntryViewSentenceCardSection::getSamplesForEachSource(
-    const std::vector<SourceSentence> &sourceSentences)
+    const std::vector<SourceSentence> &sourceSentences) const
 {
     std::unordered_map<std::string, std::vector<SourceSentence>> samples;
 
-    for (auto &sourceSentence : sourceSentences) {
-        for (auto &sentenceSet : sourceSentence.getSentenceSets()) {
+    for (const auto &sourceSentence : sourceSentences) {
+        for (const auto &sentenceSet : sourceSentence.getSentenceSets()) {
             std::string source = sentenceSet.getSource();
 
             if (samples[source].size() >= 2) {

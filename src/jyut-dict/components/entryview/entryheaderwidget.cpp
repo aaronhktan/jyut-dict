@@ -79,10 +79,6 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     translateUI();
 }
 
-EntryHeaderWidget::~EntryHeaderWidget()
-{
-}
-
 void EntryHeaderWidget::changeEvent(QEvent *event)
 {
 #ifdef Q_OS_WIN
@@ -285,7 +281,7 @@ void EntryHeaderWidget::translateUI()
 #endif
 }
 
-void EntryHeaderWidget::displayPronunciationLabels(const EntryPhoneticOptions options)
+void EntryHeaderWidget::displayPronunciationLabels(const EntryPhoneticOptions options) const
 {
     switch (options) {
         case EntryPhoneticOptions::PREFER_JYUTPING: {

@@ -24,63 +24,66 @@ Q_OBJECT
 public:
     SQLDatabaseUtils(std::shared_ptr<SQLDatabaseManager> manager);
 
-    bool updateDatabase(void);
+    bool updateDatabase(void) const;
 
     // Note: when adding or removing sources, make sure to update the map in
     // DictionarySourceUtils!
-    bool removeSource(std::string source, bool skipCleanup = false);
-    bool addSource(std::string filepath, bool overwriteConflictingSource = false);
+    bool removeSource(const std::string &source, bool skipCleanup = false) const;
+    bool addSource(const std::string &filepath, bool overwriteConflictingSource = false) const;
 
-    bool readSources(std::vector<std::pair<std::string, std::string>> &sources);
-    bool readSources(std::vector<DictionaryMetadata> &sources);
+    bool readSources(std::vector<std::pair<std::string, std::string>> &sources) const;
+    bool readSources(std::vector<DictionaryMetadata> &sources) const;
 
 private:
     std::shared_ptr<SQLDatabaseManager> _manager;
 
-    bool backupDatabase(void);
+    bool backupDatabase(void) const;
 
-    bool migrateDatabaseFromOneToTwo(void);
-    bool migrateDatabaseFromTwoToThree(void);
+    bool migrateDatabaseFromOneToTwo(void) const;
+    bool migrateDatabaseFromTwoToThree(void) const;
 
-    bool deleteSourceFromDatabase(std::string source);
-    bool removeDefinitionsFromDatabase(void);
-    bool removeSentencesFromDatabase(void);
+    bool deleteSourceFromDatabase(const std::string &source) const;
+    bool removeDefinitionsFromDatabase(void) const;
+    bool removeSentencesFromDatabase(void) const;
     // Note to callers: There CANNOT be a transaction running when this method
     // is called! It does PRAGMA foreign_keys = ON, which is a no-op inside
     // a transaction.
     // If skipCleanup is set to true, the caller MUST call rebuildIndices()
     // after this method returns if indices are desired.
-    bool removeSources(std::vector<std::string> sources, bool skipCleanup = false);
+    bool removeSources(const std::vector<std::string> &sources,
+                       bool skipCleanup = false) const;
 
     std::pair<bool, std::string> insertSourcesIntoDatabase(
-        std::unordered_map<std::string, std::string> old_source_ids);
-    bool addDefinitionSource(void);
-    bool addSentenceSource(void);
+        std::unordered_map<std::string, std::string> old_source_ids) const;
+    bool addDefinitionSource(void) const;
+    bool addSentenceSource(void) const;
 
-    bool dropIndices(void);
-    bool rebuildIndices(void);
+    bool dropIndices(void) const;
+    bool rebuildIndices(void) const;
 
 signals:
-    void deletingDefinitions();
-    void totalToDelete(int number);
-    void deletionProgress(int deleted, int total);
-    void rebuildingIndexes();
-    void cleaningUp();
-    void finishedDeletion(bool success, QString reason="", QString description="");
+    void deletingDefinitions() const;
+    void totalToDelete(int number) const;
+    void deletionProgress(int deleted, int total) const;
+    void rebuildingIndexes() const;
+    void cleaningUp() const;
+    void finishedDeletion(bool success,
+                          QString reason = "",
+                          QString description = "") const;
 
-    void deletingSentences();
+    void deletingSentences() const;
 
     void conflictingDictionaryNamesExist(
-        conflictingDictionaryMetadata dictionaries);
-    void insertingSource();
-    void insertingEntries();
-    void insertingDefinitions();
+        conflictingDictionaryMetadata dictionaries) const;
+    void insertingSource() const;
+    void insertingEntries() const;
+    void insertingDefinitions() const;
     void finishedAddition(bool success,
                           QString reason = "",
-                          QString description = "");
+                          QString description = "") const;
 
-    void migratingDatabase();
-    void finishedMigratingDatabase(bool success);
+    void migratingDatabase() const;
+    void finishedMigratingDatabase(bool success) const;
 };
 
 Q_DECLARE_METATYPE(conflictingDictionaryMetadata);

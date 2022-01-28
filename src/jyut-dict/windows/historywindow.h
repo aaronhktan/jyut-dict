@@ -23,7 +23,7 @@ public:
     explicit HistoryWindow(std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                            QWidget *parent = nullptr);
 
-    void changeEvent(QEvent *event);
+    void changeEvent(QEvent *event) override;
 
 private:
     void setupUI(void);
@@ -39,12 +39,12 @@ private:
     QWidget *_viewHistoryTab;
 
 signals:
-    void searchHistoryClicked(searchTermHistoryItem &pair);
-    void viewHistoryClicked(Entry &entry);
+    void searchHistoryClicked(const searchTermHistoryItem &pair) const;
+    void viewHistoryClicked(const Entry &entry) const;
 
 public slots:
-    void forwardSearchHistoryItem(searchTermHistoryItem &pair);
-    void forwardViewHistoryItem(Entry &entry);
+    void forwardSearchHistoryItem(const searchTermHistoryItem &pair) const;
+    void forwardViewHistoryItem(const Entry &entry) const;
 };
 
 #endif // HISTORYWINDOW_H

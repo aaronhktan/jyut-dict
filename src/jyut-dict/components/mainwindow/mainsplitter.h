@@ -30,17 +30,16 @@ public:
                           std::shared_ptr<SQLSearch> sqlSearch,
                           std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                           QWidget *parent = nullptr);
-    ~MainSplitter() override;
 
     void changeEvent(QEvent *event) override;
 
-    void setFocusToResults(void);
+    void setFocusToResults(void) const;
     void openCurrentSelectionInNewWindow(void);
 
 private:
     void translateUI(void);
 
-    void prepareEntry(Entry &entry, bool addToHistory);
+    void prepareEntry(Entry &entry, bool addToHistory) const;
 
     bool _addToHistory = true;
 
@@ -56,7 +55,7 @@ private:
     QListView *_resultListView;
 
 public slots:
-    void forwardViewHistoryItem(Entry &entry);
+    void forwardViewHistoryItem(const Entry &entry);
 
 private slots:
     void prepareEntry(Entry &entry);

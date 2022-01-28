@@ -12,18 +12,24 @@ public:
     EntrySpeaker();
     ~EntrySpeaker();
 
+    EntrySpeaker(EntrySpeaker &other);
+    EntrySpeaker(EntrySpeaker &&other);
+
+    EntrySpeaker &operator=(const EntrySpeaker &other);
+    EntrySpeaker &operator=(EntrySpeaker &&other);
+
     int speak(const QLocale::Language &language,
               const QLocale::Country &country,
-              const QString &string);
+              const QString &string) const;
 
-    int speakCantonese(const QString &string);
-    int speakTaiwaneseMandarin(const QString &string);
-    int speakMainlandMandarin(const QString &string);
+    int speakCantonese(const QString &string) const;
+    int speakTaiwaneseMandarin(const QString &string) const;
+    int speakMainlandMandarin(const QString &string) const;
 
 private:
     QVector<QVoice> getListOfVoices(const QLocale::Language &language,
-                                    const QLocale::Country &country);
-    int speakWithVoice(const QVoice &voice, const QString &string);
+                                    const QLocale::Country &country) const;
+    int speakWithVoice(const QVoice &voice, const QString &string) const;
 #ifdef Q_OS_WIN
     bool checkVoiceName(const QLocale::Language &language,
                         const QLocale::Country &country,

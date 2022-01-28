@@ -3,32 +3,15 @@
 #include "logic/settings/settings.h"
 #include "logic/utils/chineseutils.h"
 
-
-Entry::Entry()
-    : QObject()
-{
-    _simplified = "";
-    _traditional = "";
-    _jyutping = "";
-    _pinyin = "";
-    _prettyPinyin = "";
-    _definitions = {};
-    _isWelcome = false;
-    _isEmpty = false;
-}
-
-Entry::Entry(std::string simplified, std::string traditional,
-             std::string jyutping, std::string pinyin,
-             std::vector<DefinitionsSet> definitions)
+Entry::Entry(const std::string &simplified, const std::string &traditional,
+             const std::string &jyutping, const std::string &pinyin,
+             const std::vector<DefinitionsSet> &definitions)
     : _simplified{simplified},
       _traditional{traditional},
       _jyutping{jyutping},
       _pinyin{pinyin},
       _definitions{definitions}
 {
-    _isWelcome = false;
-    _isEmpty = false;
-
     // Normalize pinyin and jyutping to lowercase >:(
     std::transform(_jyutping.begin(), _jyutping.end(), _jyutping.begin(), ::tolower);
     std::transform(_pinyin.begin(), _pinyin.end(), _pinyin.begin(), ::tolower);
@@ -42,8 +25,7 @@ Entry::Entry(std::string simplified, std::string traditional,
 }
 
 Entry::Entry(const Entry &entry)
-    : QObject(),
-      _simplified{entry._simplified},
+    : _simplified{entry._simplified},
       _simplifiedDifference{entry._simplifiedDifference},
       _traditional{entry._traditional},
       _traditionalDifference{entry._traditionalDifference},
@@ -54,14 +36,13 @@ Entry::Entry(const Entry &entry)
       _jyutping{entry._jyutping},
       _pinyin{entry._pinyin},
       _prettyPinyin{entry._prettyPinyin},
-      _definitions{entry.getDefinitionsSets()},
-      _isWelcome{entry.isWelcome()},
-      _isEmpty{entry.isEmpty()}
+      _definitions{entry._definitions},
+      _isWelcome{entry._isWelcome},
+      _isEmpty{entry._isEmpty}
 {
-
 }
 
-Entry::Entry(const Entry &&entry)
+Entry::Entry(Entry &&entry)
     : _simplified{std::move(entry._simplified)},
       _simplifiedDifference{std::move(entry._simplifiedDifference)},
       _traditional{std::move(entry._traditional)},
@@ -72,17 +53,11 @@ Entry::Entry(const Entry &&entry)
       _colouredTraditionalDifference{std::move(entry._colouredTraditionalDifference)},
       _jyutping{std::move(entry._jyutping)},
       _pinyin{std::move(entry._pinyin)},
-      _prettyPinyin{entry._prettyPinyin},
+      _prettyPinyin{std::move(entry._prettyPinyin)},
       _definitions{std::move(entry._definitions)},
-      _isWelcome{entry.isWelcome()},
-      _isEmpty{entry.isEmpty()}
+      _isWelcome{entry._isWelcome},
+      _isEmpty{entry._isEmpty}
 {
-
-}
-
-Entry::~Entry()
-{
-
 }
 
 Entry &Entry::operator=(const Entry &entry)
@@ -102,33 +77,33 @@ Entry &Entry::operator=(const Entry &entry)
     _jyutping = entry._jyutping;
     _pinyin = entry._pinyin;
     _prettyPinyin = entry._prettyPinyin;
-    _definitions = entry.getDefinitionsSets();
-    _isWelcome = entry.isWelcome();
-    _isEmpty = entry.isEmpty();
+    _definitions = entry._definitions;
+    _isWelcome = entry._isWelcome;
+    _isEmpty = entry._isEmpty;
 
     return *this;
 }
 
-Entry &Entry::operator=(const Entry &&entry)
+Entry &Entry::operator=(Entry &&entry)
 {
     if (&entry == this) {
         return *this;
     }
 
-    _simplified = entry._simplified;
-    _simplifiedDifference = entry._simplifiedDifference;
-    _traditional = entry._traditional;
-    _traditionalDifference = entry._traditionalDifference;
-    _colouredSimplified = entry._colouredSimplified;
-    _colouredSimplifiedDifference = entry._colouredSimplifiedDifference;
-    _colouredTraditional = entry._colouredTraditional;
-    _colouredTraditionalDifference = entry._colouredTraditionalDifference;
-    _jyutping = entry._jyutping;
-    _pinyin = entry._pinyin;
-    _prettyPinyin = entry._prettyPinyin;
-    _definitions = entry.getDefinitionsSets();
-    _isWelcome = entry.isWelcome();
-    _isEmpty = entry.isEmpty();
+    _simplified = std::move(entry._simplified);
+    _simplifiedDifference = std::move(entry._simplifiedDifference);
+    _traditional = std::move(entry._traditional);
+    _traditionalDifference = std::move(entry._traditionalDifference);
+    _colouredSimplified = std::move(entry._colouredSimplified);
+    _colouredSimplifiedDifference = std::move(entry._colouredSimplifiedDifference);
+    _colouredTraditional = std::move(entry._colouredTraditional);
+    _colouredTraditionalDifference = std::move(entry._colouredTraditionalDifference);
+    _jyutping = std::move(entry._jyutping);
+    _pinyin = std::move(entry._pinyin);
+    _prettyPinyin = std::move(entry._prettyPinyin);
+    _definitions = std::move(entry._definitions);
+    _isWelcome = entry._isWelcome;
+    _isEmpty = entry._isEmpty;
 
     return *this;
 }
@@ -224,6 +199,10 @@ std::string Entry::getSimplified(void) const
 void Entry::setSimplified(std::string simplified)
 {
     _simplified = simplified;
+
+    // Create comparison versions of traditional and simplified entries
+    _traditionalDifference = ChineseUtils::compareStrings(_simplified, _traditional);
+    _simplifiedDifference = ChineseUtils::compareStrings(_traditional, _simplified);
 }
 
 std::string Entry::getTraditional(void) const
@@ -234,6 +213,10 @@ std::string Entry::getTraditional(void) const
 void Entry::setTraditional(std::string traditional)
 {
     _traditional = traditional;
+
+    // Create comparison versions of traditional and simplified entries
+    _traditionalDifference = ChineseUtils::compareStrings(_simplified, _traditional);
+    _simplifiedDifference = ChineseUtils::compareStrings(_traditional, _simplified);
 }
 
 std::string Entry::getPhonetic(EntryPhoneticOptions options) const
@@ -299,9 +282,10 @@ std::string Entry::getJyutping(void) const
     return _jyutping;
 }
 
-void Entry::setJyutping(std::string jyutping)
+void Entry::setJyutping(const std::string &jyutping)
 {
     _jyutping = jyutping;
+    std::transform(_jyutping.begin(), _jyutping.end(), _jyutping.begin(), ::tolower);
 }
 
 std::vector<int> Entry::getJyutpingNumbers() const
@@ -331,9 +315,11 @@ std::string Entry::getPrettyPinyin(void) const
     return _prettyPinyin;
 }
 
-void Entry::setPinyin(std::string pinyin)
+void Entry::setPinyin(const std::string &pinyin)
 {
     _pinyin = pinyin;
+    std::transform(_pinyin.begin(), _pinyin.end(), _pinyin.begin(), ::tolower);
+    _prettyPinyin = ChineseUtils::createPrettyPinyin(_pinyin);
 }
 
 std::vector<int> Entry::getPinyinNumbers() const
@@ -360,7 +346,7 @@ std::string Entry::getDefinitionSnippet(void) const
         return "";
     }
 
-    for (auto definition: _definitions) {
+    for (const auto &definition: _definitions) {
         if (!definition.isEmpty()) {
             return definition.getDefinitionsSnippet();
         }
@@ -369,7 +355,8 @@ std::string Entry::getDefinitionSnippet(void) const
     return "";
 }
 
-void Entry::addDefinitions(std::string source, std::vector<Definition::Definition> definitions)
+void Entry::addDefinitions(const std::string &source,
+                           const std::vector<Definition::Definition> &definitions)
 {
     _definitions.push_back(DefinitionsSet{source, definitions});
 }

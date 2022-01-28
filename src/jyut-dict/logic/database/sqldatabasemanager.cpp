@@ -18,21 +18,19 @@
 SQLDatabaseManager::SQLDatabaseManager()
 {
     // Delete the old version of the dictionary
+#ifndef PORTABLE
 #ifdef Q_OS_LINUX
     QDir localDir{"/usr/share/jyut-dict/"};
-#ifndef PORTABLE
     if (localDir.exists()) {
         if (!localDir.removeRecursively()) {
             //  std::cerr << "Couldn't remove original dictionary!" << std::endl;
             //  return;
         }
     }
-#endif
 #else
     QFileInfo localFile{
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
         + "/Dictionaries/eng.db"};
-#ifndef PORTABLE
     if (localFile.exists() && localFile.isFile()) {
         if (!QFile::remove(localFile.absoluteFilePath())) {
             //  std::cerr << "Couldn't remove original file!" << std::endl;
@@ -41,11 +39,6 @@ SQLDatabaseManager::SQLDatabaseManager()
     }
 #endif
 #endif
-}
-
-SQLDatabaseManager::~SQLDatabaseManager()
-{
-    QSqlDatabase::database(getCurrentDatabaseName()).close();
 }
 
 QSqlDatabase SQLDatabaseManager::getDatabase()
@@ -60,7 +53,7 @@ QSqlDatabase SQLDatabaseManager::getDatabase()
     return QSqlDatabase::database(name);
 }
 
-bool SQLDatabaseManager::isDatabaseOpen()
+bool SQLDatabaseManager::isDatabaseOpen() const
 {
     return QSqlDatabase::database(getCurrentDatabaseName(), /*open=*/false)
         .isOpen();
@@ -132,12 +125,12 @@ bool SQLDatabaseManager::restoreBackedUpDictionaryDatabase()
     }
 }
 
-void SQLDatabaseManager::addDatabase(QString name)
+void SQLDatabaseManager::addDatabase(const QString &name) const
 {
     QSqlDatabase::addDatabase("QSQLITE", name);
 }
 
-bool SQLDatabaseManager::openDatabase(QString name)
+bool SQLDatabaseManager::openDatabase(const QString &name)
 {
     try {
         copyDictionaryDatabase();
@@ -336,7 +329,7 @@ bool SQLDatabaseManager::attachUserDatabase()
     return !query.lastError().isValid();
 }
 
-QString SQLDatabaseManager::getCurrentDatabaseName()
+QString SQLDatabaseManager::getCurrentDatabaseName() const
 {
     // Generate a unique name for every thread that needs a connection to the
     // database.

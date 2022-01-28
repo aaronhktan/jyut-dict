@@ -55,11 +55,6 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
     _timer = new QTimer{this};
 }
 
-SearchLineEdit::~SearchLineEdit()
-{
-
-}
-
 void SearchLineEdit::checkClearVisibility()
 {
     if (text().isEmpty()) {
@@ -202,7 +197,7 @@ void SearchLineEdit::setStyle(bool use_dark)
 #endif
 }
 
-void SearchLineEdit::addSearchTermToHistory(void)
+void SearchLineEdit::addSearchTermToHistory(void) const
 {
     _timer->stop();
     disconnect(_timer, nullptr, nullptr, nullptr);

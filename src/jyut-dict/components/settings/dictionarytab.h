@@ -45,9 +45,9 @@ private:
     void addDictionary(const QString &dictionaryFile);
     void forceAddDictionary(const QString &dictionaryFile);
     void removeDictionary(DictionaryMetadata metadata);
-    void populateDictionarySourceUtils();
+    void populateDictionarySourceUtils() const;
 
-    void failureMessage(QString reason, QString description);
+    void failureMessage(const QString &reason, const QString &description);
 
     QLabel *_explanatory;
     QLabel *_description;

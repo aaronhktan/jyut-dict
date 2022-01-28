@@ -40,11 +40,6 @@ GithubReleaseChecker::GithubReleaseChecker(QObject *parent)
     QTimer::singleShot(100, this, &GithubReleaseChecker::preConnectToHost);
 }
 
-GithubReleaseChecker::~GithubReleaseChecker()
-{
-
-}
-
 void GithubReleaseChecker::checkForNewUpdate()
 {
     QNetworkRequest _request{QUrl{GITHUB_UPDATE_URL}};
@@ -56,12 +51,12 @@ void GithubReleaseChecker::checkForNewUpdate()
     });
 }
 
-void GithubReleaseChecker::preConnectToHost()
+void GithubReleaseChecker::preConnectToHost() const
 {
     _manager->connectToHostEncrypted(QUrl{GITHUB_UPDATE_URL}.host());
 }
 
-void GithubReleaseChecker::parseReply(QNetworkReply *reply)
+void GithubReleaseChecker::parseReply(QNetworkReply *reply) const
 {
     std::string content = reply->readAll().toStdString();
     // ConnectToHostEncrypted gets an empty string reply, can safely ignore
@@ -80,6 +75,7 @@ bool GithubReleaseChecker::parseJSON(const std::string &data,
                                      bool &updateAvailable,
                                      std::string &versionNumber,
                                      std::string &url, std::string &description)
+const
 {
     QJsonDocument doc = QJsonDocument::fromJson(QString{data.c_str()}.toUtf8());
     for (QJsonValue entry : doc.array()) {

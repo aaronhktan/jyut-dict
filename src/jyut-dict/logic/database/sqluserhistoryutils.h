@@ -24,13 +24,12 @@ class SQLUserHistoryUtils : public QObject,
 {
 public:
     SQLUserHistoryUtils(std::shared_ptr<SQLDatabaseManager> manager);
-    ~SQLUserHistoryUtils() override;
 
     void registerObserver(ISearchObserver *observer) override;
     void deregisterObserver(ISearchObserver *observer) override;
 
-    void addSearchToHistory(std::string search, int options);
-    void addViewToHistory(Entry entry);
+    void addSearchToHistory(const std::string &search, int options);
+    void addViewToHistory(const Entry &entry);
 
     void searchAllSearchHistory(void);
     void clearAllSearchHistory(void);
@@ -43,10 +42,10 @@ private:
                          bool emptyQuery) override;
     void notifyObservers(const std::vector<Entry> &results,
                          bool emptyQuery) override;
-    bool checkForManager(void);
+    bool checkForManager(void) const;
 
-    void addSearchToHistoryThread(std::string search, int options);
-    void addViewToHistoryThread(Entry entry);
+    void addSearchToHistoryThread(const std::string &search, int options);
+    void addViewToHistoryThread(const Entry &entry);
 
     void searchAllSearchHistoryThread(void);
     void clearAllSearchHistoryThread(void);

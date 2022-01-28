@@ -49,7 +49,7 @@ std::string applyColours(
     std::u32string converted_original = converter.from_bytes(original);
 #endif
     size_t pos = 0;
-    for (auto character : converted_original) {
+    for (const auto &character : converted_original) {
         std::string originalCharacter = converter.to_bytes(character);
 
         // Skip same character string; they have no colour
@@ -119,8 +119,8 @@ std::string applyColours(
     return coloured_string;
 }
 
-std::string compareStrings(const std::string original,
-                           const std::string comparison)
+std::string compareStrings(const std::string &original,
+                           const std::string &comparison)
 {
     std::string result;
 
@@ -156,7 +156,7 @@ std::string compareStrings(const std::string original,
     return result;
 }
 
-std::string createPrettyPinyin(const std::string pinyin)
+std::string createPrettyPinyin(const std::string &pinyin)
 {
     std::string result;
 
@@ -167,7 +167,7 @@ std::string createPrettyPinyin(const std::string pinyin)
         return pinyin;
     }
 
-    for (auto syllable : syllables) {
+    for (auto &syllable : syllables) {
         // Skip the punctuation, they have no tone
         if (specialCharacters.find(syllable) != specialCharacters.end()) {
             result += syllable + " ";
@@ -261,7 +261,7 @@ std::string constructRomanisationQuery(const std::vector<std::string> &words,
     return string.str();
 }
 
-std::vector<std::string> segmentPinyin(const QString string)
+std::vector<std::string> segmentPinyin(const QString &string)
 {
     std::vector<std::string> words;
 
@@ -361,7 +361,7 @@ std::vector<std::string> segmentPinyin(const QString string)
     return words;
 }
 
-std::vector<std::string> segmentJyutping(const QString string)
+std::vector<std::string> segmentJyutping(const QString &string)
 {
     std::vector<std::string> words;
 

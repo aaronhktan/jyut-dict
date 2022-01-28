@@ -43,10 +43,10 @@ std::string applyColours(
 // Example return values with an entry Traditional: 身體, Simplified: 身体
 // With EntryCharactersOptions::PREFER_SIMPLIFIED:  "身体 {－體}"
 // With EntryCharactersOptions::PREFER_TRADITIONAL: "身體 {－体}"
-std::string compareStrings(const std::string original,
-                           const std::string comparison);
+std::string compareStrings(const std::string &original,
+                           const std::string &comparison);
 
-std::string createPrettyPinyin(const std::string pinyin);
+std::string createPrettyPinyin(const std::string &pinyin);
 
 // constructRomanisationQuery takes a vector of strings and stitches them
 // together with a delimiter.
@@ -110,8 +110,8 @@ std::string constructRomanisationQuery(const std::vector<std::string> &words,
                                        const char *delimiter,
                                        const bool surroundWithQuotes=false);
 
-std::vector<std::string> segmentPinyin(const QString string);
-std::vector<std::string> segmentJyutping(const QString string);
+std::vector<std::string> segmentPinyin(const QString &string);
+std::vector<std::string> segmentJyutping(const QString &string);
 
 }
 

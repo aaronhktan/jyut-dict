@@ -31,9 +31,9 @@ public:
         QObject *parent = nullptr);
     ~ViewHistoryListModel() override;
 
-    void callback(const std::vector<Entry> entries, bool emptyQuery) override;
-    void setEntries(std::vector<Entry> entries);
-    void setEntries(std::vector<Entry> entries, bool emptyQuery);
+    void callback(const std::vector<Entry> &entries, bool emptyQuery) override;
+    void setEntries(const std::vector<Entry> &entries);
+    void setEntries(const std::vector<Entry> &entries, bool emptyQuery);
     void setEmpty(void);
 
     void translateUI(void);

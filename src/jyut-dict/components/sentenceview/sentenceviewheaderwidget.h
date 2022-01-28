@@ -23,7 +23,6 @@ class SentenceViewHeaderWidget : public QWidget
 {
 public:
     explicit SentenceViewHeaderWidget(QWidget *parent = nullptr);
-    ~SentenceViewHeaderWidget() override;
 
     void changeEvent(QEvent *event) override;
 

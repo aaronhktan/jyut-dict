@@ -27,7 +27,6 @@ public:
                             std::shared_ptr<SQLSearch> manager,
                             std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                             QWidget *parent = nullptr);
-    ~SearchLineEdit() override;
 
     void changeEvent(QEvent *event) override;
     void focusInEvent(QFocusEvent *event) override;
@@ -41,7 +40,7 @@ private:
     void translateUI();
     void setStyle(bool use_dark);
 
-    void addSearchTermToHistory(void);
+    void addSearchTermToHistory(void) const;
 
     ISearchOptionsMediator *_mediator;
     std::shared_ptr<ISearch> _search;

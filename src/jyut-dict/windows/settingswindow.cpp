@@ -44,11 +44,6 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
     setAttribute(Qt::WA_DeleteOnClose);
 }
 
-SettingsWindow::~SettingsWindow()
-{
-
-}
-
 void SettingsWindow::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
@@ -114,7 +109,7 @@ void SettingsWindow::translateUI()
     setProperty("isHan", Settings::isCurrentLocaleHan());
 
     QList<QToolButton *> buttons = this->findChildren<QToolButton *>();
-    for (auto button : buttons) {
+    foreach (const auto & button, buttons) {
         button->setProperty("isHan", Settings::isCurrentLocaleHan());
         button->style()->unpolish(button);
         button->style()->polish(button);
@@ -328,7 +323,7 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
     }
 
     QList<QToolButton *> buttons = this->findChildren<QToolButton *>();
-    for (auto button : buttons) {
+    foreach (const auto & button, buttons) {
         button->style()->unpolish(button);
         button->style()->polish(button);
     }

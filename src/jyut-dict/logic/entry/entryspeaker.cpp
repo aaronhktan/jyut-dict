@@ -4,9 +4,8 @@
 #include <QVector>
 
 EntrySpeaker::EntrySpeaker()
-    : _tts{nullptr}
+    : _tts{new QTextToSpeech}
 {
-    _tts = new QTextToSpeech{};
 }
 
 EntrySpeaker::~EntrySpeaker()
@@ -14,9 +13,45 @@ EntrySpeaker::~EntrySpeaker()
     delete _tts;
 }
 
+EntrySpeaker::EntrySpeaker(EntrySpeaker &other)
+    : _tts{new QTextToSpeech}
+{
+    // Qt classes cannot be copy-constructed, so just create a new one
+    // instead of copying from other.
+    (void) (other);
+}
+
+EntrySpeaker::EntrySpeaker(EntrySpeaker &&other)
+    : _tts{new QTextToSpeech{other._tts}}
+{
+    other._tts = nullptr;
+}
+
+EntrySpeaker &EntrySpeaker::operator=(const EntrySpeaker &other)
+{
+    // Again, copy-constructor is explicitly deleted for Qt classes, so
+    // just make a new QTextToSpeech object
+    if (&other != this) {
+        _tts = new QTextToSpeech;
+    }
+
+    return *this;
+}
+
+EntrySpeaker &EntrySpeaker::operator=(EntrySpeaker &&other)
+{
+    if (&other != this) {
+        _tts = other._tts;
+        other._tts = nullptr;
+    }
+
+    return *this;
+}
+
 // Returns list of voices that match the target locale
 QVector<QVoice> EntrySpeaker::getListOfVoices(const QLocale::Language &language,
                                               const QLocale::Country &country)
+const
 {
     QLocale locale = QLocale{language, country};
     if (locale.language() != language || locale.country() != country) {
@@ -72,7 +107,7 @@ bool EntrySpeaker::filterVoiceNames(const QLocale::Language &language,
 }
 #endif
 
-int EntrySpeaker::speakWithVoice(const QVoice &voice, const QString &string) {
+int EntrySpeaker::speakWithVoice(const QVoice &voice, const QString &string) const {
     _tts->setVoice(voice);
     _tts->setRate(-0.25);
     _tts->say(string);
@@ -81,7 +116,7 @@ int EntrySpeaker::speakWithVoice(const QVoice &voice, const QString &string) {
 
 int EntrySpeaker::speak(const QLocale::Language &language,
                         const QLocale::Country &country,
-                        const QString &string)
+                        const QString &string) const
 {
     if (string.isEmpty()) {
         return -1;
@@ -104,7 +139,7 @@ int EntrySpeaker::speak(const QLocale::Language &language,
     return 0;
 }
 
-int EntrySpeaker::speakCantonese(const QString &string)
+int EntrySpeaker::speakCantonese(const QString &string) const
 {
 #ifdef Q_OS_LINUX
     return speak(QLocale::Cantonese, QLocale::HongKong, string);
@@ -129,12 +164,12 @@ int EntrySpeaker::speakCantonese(const QString &string)
 #endif
 }
 
-int EntrySpeaker::speakTaiwaneseMandarin(const QString &string)
+int EntrySpeaker::speakTaiwaneseMandarin(const QString &string) const
 {
     return speak(QLocale::Chinese, QLocale::Taiwan, string);
 }
 
-int EntrySpeaker::speakMainlandMandarin(const QString &string)
+int EntrySpeaker::speakMainlandMandarin(const QString &string) const
 {
     return speak(QLocale::Chinese, QLocale::China, string);
 }

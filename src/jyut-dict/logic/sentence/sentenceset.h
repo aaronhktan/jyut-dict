@@ -19,7 +19,8 @@ struct TargetSentence
     std::string language;
     bool directTarget;
 
-    TargetSentence(std::string sentence, std::string language, bool directTarget):
+    TargetSentence(const std::string &sentence,
+                   const std::string &language, bool directTarget):
         sentence{sentence},
         language{language},
         directTarget(directTarget)
@@ -31,20 +32,15 @@ struct TargetSentence
 class SentenceSet
 {
 public:
-    SentenceSet(std::string source);
-    SentenceSet(std::string source,
-                std::vector<Sentence::TargetSentence> sentences);
-    SentenceSet(const SentenceSet &sentenceSet);
-    SentenceSet(const SentenceSet &&sentenceSet);
-    SentenceSet &operator=(const SentenceSet &sentenceSet);
-    SentenceSet &operator=(const SentenceSet &&sentenceSet);
+    SentenceSet(const std::string &source);
+    SentenceSet(const std::string &source,
+                const std::vector<Sentence::TargetSentence> &sentences);
     friend std::ostream &operator<<(std::ostream &out,
                                     const SentenceSet &sentence);
-    ~SentenceSet();
 
     bool isEmpty(void) const;
 
-    bool pushSentence(Sentence::TargetSentence sentence);
+    bool pushSentence(const Sentence::TargetSentence &sentence);
 
     std::string getSource(void) const;
     std::string getSourceLongString(void) const;

@@ -94,7 +94,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Populate global source table
     std::vector<std::pair<std::string, std::string>> sources;
     _utils->readSources(sources);
-    for (auto source : sources) {
+    for (const auto &source : sources) {
         DictionarySourceUtils::addSource(source.first, source.second);
     }
 
@@ -157,10 +157,6 @@ MainWindow::MainWindow(QWidget *parent) :
     });
 }
 
-MainWindow::~MainWindow()
-{
-}
-
 void MainWindow::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::LanguageChange) {
@@ -194,7 +190,7 @@ void MainWindow::installTranslator(void)
         // Another example of QLocale::system() failing is having simplified
         // Cantonese as the UI language. QTranslator::load() will try to load
         // zh_Hant_HK instead of yue_Hans.
-        for (auto language : QLocale::system().uiLanguages()) {
+        for (const auto &language : QLocale::system().uiLanguages()) {
             QLocale locale{language};
             if (Settings::applicationTranslator
                     .load(/* QLocale */ locale,
@@ -231,7 +227,7 @@ void MainWindow::translateUI(void)
     setProperty("isHan", Settings::isCurrentLocaleHan());
 
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
-    for (auto button : buttons) {
+    foreach (const auto & button, buttons) {
         button->setProperty("isHan", Settings::isCurrentLocaleHan());
         button->style()->unpolish(button);
         button->style()->polish(button);
@@ -623,12 +619,12 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
     }
 }
 
-void MainWindow::forwardSearchHistoryItem(searchTermHistoryItem &pair)
+void MainWindow::forwardSearchHistoryItem(const searchTermHistoryItem &pair) const
 {
     emit searchHistoryClicked(pair);
 }
 
-void MainWindow::forwardViewHistoryItem(Entry &entry)
+void MainWindow::forwardViewHistoryItem(const Entry &entry) const
 {
     emit viewHistoryClicked(entry);
 }
@@ -825,7 +821,7 @@ void MainWindow::createActions(void)
     _helpMenu->addAction(_updateAction);
 }
 
-void MainWindow::undo(void)
+void MainWindow::undo(void) const
 {
     QWidget *focused = QApplication::focusWidget();
     if (focused) {
@@ -840,7 +836,7 @@ void MainWindow::undo(void)
     }
 }
 
-void MainWindow::redo(void)
+void MainWindow::redo(void) const
 {
     QWidget *focused = QApplication::focusWidget();
     if (focused) {
@@ -857,7 +853,7 @@ void MainWindow::redo(void)
     }
 }
 
-void MainWindow::cut(void)
+void MainWindow::cut(void) const
 {
     QWidget *focused = QApplication::focusWidget();
     if (focused) {
@@ -872,7 +868,7 @@ void MainWindow::cut(void)
     }
 }
 
-void MainWindow::copy(void)
+void MainWindow::copy(void) const
 {
     QWidget *focused = QApplication::focusWidget();
     if (!focused) {
@@ -895,7 +891,7 @@ void MainWindow::copy(void)
                                           Qt::ControlModifier});
 }
 
-void MainWindow::paste(void)
+void MainWindow::paste(void) const
 {
     QWidget *focused = QApplication::focusWidget();
     if (focused) {
@@ -910,51 +906,51 @@ void MainWindow::paste(void)
     }
 }
 
-void MainWindow::find(void)
+void MainWindow::find(void) const
 {
     _mainToolBar->setFocus();
 }
 
-void MainWindow::findAndSelectAll(void)
+void MainWindow::findAndSelectAll(void) const
 {
     _mainToolBar->selectAllEvent();
 }
 
-void MainWindow::setFocusToResults(void)
+void MainWindow::setFocusToResults(void) const
 {
     _mainSplitter->setFocusToResults();
 }
 
-void MainWindow::openCurrentSelectionInNewWindow(void)
+void MainWindow::openCurrentSelectionInNewWindow(void) const
 {
     _mainSplitter->openCurrentSelectionInNewWindow();
 }
 
-void MainWindow::selectSimplified(void)
+void MainWindow::selectSimplified(void) const
 {
     _mainToolBar->changeOptionEvent(Utils::SIMPLIFIED_BUTTON_INDEX);
     _mainToolBar->setFocus();
 }
 
-void MainWindow::selectTraditional(void)
+void MainWindow::selectTraditional(void) const
 {
     _mainToolBar->changeOptionEvent(Utils::TRADITIONAL_BUTTON_INDEX);
     _mainToolBar->setFocus();
 }
 
-void MainWindow::selectJyutping(void)
+void MainWindow::selectJyutping(void) const
 {
     _mainToolBar->changeOptionEvent(Utils::JYUTPING_BUTTON_INDEX);
     _mainToolBar->setFocus();
 }
 
-void MainWindow::selectPinyin(void)
+void MainWindow::selectPinyin(void) const
 {
     _mainToolBar->changeOptionEvent(Utils::PINYIN_BUTTON_INDEX);
     _mainToolBar->setFocus();
 }
 
-void MainWindow::selectEnglish(void)
+void MainWindow::selectEnglish(void) const
 {
     _mainToolBar->changeOptionEvent(Utils::ENGLISH_BUTTON_INDEX);
     _mainToolBar->setFocus();

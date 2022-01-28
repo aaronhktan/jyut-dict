@@ -14,19 +14,13 @@ class SourceSentence
 {
 public:
     SourceSentence();
-    SourceSentence(std::string sourceLanguage,
-                   std::string simplified,
-                   std::string traditional,
-                   std::string jyutping,
-                   std::string pinyin,
-                   std::vector<SentenceSet> sentences);
-    SourceSentence(const SourceSentence &sourceSentence);
-    SourceSentence(const SourceSentence &&sourceSentence);
+    SourceSentence(const std::string &sourceLanguage,
+                   const std::string &simplified,
+                   const std::string &traditional,
+                   const std::string &jyutping,
+                   const std::string &pinyin,
+                   const std::vector<SentenceSet> &sentences);
 
-    ~SourceSentence();
-
-    SourceSentence &operator=(const SourceSentence &sourceSentence);
-    SourceSentence &operator=(const SourceSentence &&sourceSentence);
     friend std::ostream &operator<<(std::ostream &out,
                                     const SourceSentence &sourceSentence);
 
@@ -48,11 +42,11 @@ public:
     std::string getMandarinPhonetic(MandarinOptions mandarinOptions) const;
 
     std::string getJyutping(void) const;
-    void setJyutping(std::string jyutping);
+    void setJyutping(const std::string &jyutping);
 
     std::string getPinyin(void) const;
     std::string getPrettyPinyin(void) const;
-    void setPinyin(std::string pinyin);
+    void setPinyin(const std::string &pinyin);
 
     std::vector<SentenceSet> getSentenceSets(void) const;
     std::string getSentenceSnippet(void) const;

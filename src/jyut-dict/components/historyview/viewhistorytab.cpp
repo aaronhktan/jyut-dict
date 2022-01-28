@@ -73,7 +73,7 @@ void ViewHistoryTab::translateUI(void)
     setProperty("isHan", Settings::isCurrentLocaleHan());
 
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
-    for (auto button : buttons) {
+    foreach (const auto & button, buttons) {
         button->setProperty("isHan", Settings::isCurrentLocaleHan());
         button->style()->unpolish(button);
         button->style()->polish(button);

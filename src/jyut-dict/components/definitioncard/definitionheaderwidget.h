@@ -19,11 +19,10 @@ public:
     explicit DefinitionHeaderWidget(QWidget *parent = nullptr);
     explicit DefinitionHeaderWidget(std::string title,
                                     QWidget *parent = nullptr);
-    virtual ~DefinitionHeaderWidget() override;
 
     void changeEvent(QEvent *event) override;
 
-    void setSectionTitle(std::string title) override;
+    void setSectionTitle(const std::string &title) override;
 
 private:
     void setStyle(bool use_dark);

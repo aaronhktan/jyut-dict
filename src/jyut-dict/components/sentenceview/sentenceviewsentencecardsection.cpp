@@ -43,7 +43,7 @@ void SentenceViewSentenceCardSection::setupUI(void)
 
 void SentenceViewSentenceCardSection::cleanup(void)
 {
-    for (auto card : _sentenceCards) {
+    for (const auto &card : _sentenceCards) {
         _sentenceCardsLayout->removeWidget(card);
         delete card;
     }

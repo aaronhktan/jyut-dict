@@ -47,7 +47,7 @@ void SentenceHeaderWidget::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
-void SentenceHeaderWidget::setCardTitle(std::string title)
+void SentenceHeaderWidget::setCardTitle(const std::string &title)
 {
     _titleLabel->setText(title.c_str());
     _titleLabel->setFixedHeight(_titleLabel->fontMetrics().boundingRect(title.c_str()).height());

@@ -28,10 +28,6 @@ SentenceViewHeaderWidget::SentenceViewHeaderWidget(QWidget *parent) : QWidget(pa
     setStyle(Utils::isDarkMode());
 }
 
-SentenceViewHeaderWidget::~SentenceViewHeaderWidget()
-{
-}
-
 void SentenceViewHeaderWidget::changeEvent(QEvent *event)
 {
 #ifdef Q_OS_WIN

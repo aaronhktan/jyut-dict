@@ -36,11 +36,6 @@ UpdateAvailableWindow::UpdateAvailableWindow(QWidget *parent,
       parent->y() + (parent->height() - sizeHint().height()) / 2);
 }
 
-UpdateAvailableWindow::~UpdateAvailableWindow()
-{
-
-}
-
 void UpdateAvailableWindow::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::LanguageChange) {
@@ -125,7 +120,7 @@ void UpdateAvailableWindow::translateUI()
     setProperty("isHan", Settings::isCurrentLocaleHan());
 
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
-    for (auto button : buttons) {
+    foreach (const auto & button, buttons) {
         button->setProperty("isHan", Settings::isCurrentLocaleHan());
         button->style()->unpolish(button);
         button->style()->polish(button);

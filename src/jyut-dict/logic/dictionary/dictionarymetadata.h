@@ -11,17 +11,12 @@ class DictionaryMetadata
 {
 public:
     DictionaryMetadata();
-    DictionaryMetadata(std::string name,
-                       std::string version,
-                       std::string description,
-                       std::string legal,
-                       std::string link,
-                       std::string other);
-    DictionaryMetadata(const DictionaryMetadata &metadata);
-    DictionaryMetadata(const DictionaryMetadata &&metadata);
-
-    DictionaryMetadata &operator=(const DictionaryMetadata &metadata);
-    DictionaryMetadata &operator=(const DictionaryMetadata &&metadata);
+    DictionaryMetadata(const std::string &name,
+                       const std::string &version,
+                       const std::string &description,
+                       const std::string &legal,
+                       const std::string &link,
+                       const std::string &other);
 
     std::string getName() const;
     std::string getVersion() const;

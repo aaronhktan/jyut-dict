@@ -121,7 +121,7 @@ void SettingsTab::translateUI()
     setProperty("isHan", Settings::isCurrentLocaleHan());
 
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
-    for (auto button : buttons) {
+    foreach (const auto & button, buttons) {
         button->setProperty("isHan", Settings::isCurrentLocaleHan());
         button->style()->unpolish(button);
         button->style()->polish(button);
@@ -214,7 +214,7 @@ void SettingsTab::setStyle(bool use_dark)
     QString colour = use_dark ? "#424242" : "#d5d5d5";
     QString style = "QFrame { border: 1px solid %1; }";
     QList<QFrame *> frames = this->findChildren<QFrame *>("divider");
-    for (auto frame : frames) {
+    foreach (const auto & frame, frames) {
         frame->setStyleSheet(style.arg(colour));
     }
 }

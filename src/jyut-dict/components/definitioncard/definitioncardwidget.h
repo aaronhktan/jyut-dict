@@ -18,7 +18,6 @@ class DefinitionCardWidget : public QWidget
 {
 public:
     explicit DefinitionCardWidget(QWidget *parent = nullptr);
-    ~DefinitionCardWidget() override;
 
     void changeEvent(QEvent *event) override;
 

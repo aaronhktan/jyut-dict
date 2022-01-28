@@ -60,11 +60,6 @@ SentenceSplitter::SentenceSplitter(std::shared_ptr<SQLDatabaseManager> manager,
 #endif
 }
 
-SentenceSplitter::~SentenceSplitter()
-{
-
-}
-
 void SentenceSplitter::changeEvent(QEvent *event)
 {
 #ifdef Q_OS_WIN
@@ -93,13 +88,13 @@ void SentenceSplitter::setStyle(bool use_dark)
 #endif
 
 void SentenceSplitter::setSourceSentences(
-    std::vector<SourceSentence> sourceSentences)
+    const std::vector<SourceSentence> &sourceSentences)
 {
     static_cast<SentenceResultListModel *>(_model)->setSentences(sourceSentences);
     _size = static_cast<int>(sourceSentences.size());
 }
 
-void SentenceSplitter::setSearchTerm(QString searchTerm)
+void SentenceSplitter::setSearchTerm(const QString &searchTerm)
 {
     _searchTerm = searchTerm;
     translateUI();
