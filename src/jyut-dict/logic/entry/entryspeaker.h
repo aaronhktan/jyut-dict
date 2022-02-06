@@ -33,11 +33,11 @@ private:
 #ifdef Q_OS_WIN
     bool checkVoiceName(const QLocale::Language &language,
                         const QLocale::Country &country,
-                        const QString &voiceName);
+                        const QString &voiceName) const;
     bool filterVoiceNames(const QLocale::Language &language,
                           const QLocale::Country &country,
                           const QVector<QVoice> &voices,
-                          QVoice &voice);
+                          QVoice &voice) const;
 #endif
 
     QTextToSpeech *_tts;

@@ -12,6 +12,8 @@
 #include "logic/utils/utils_windows.h"
 #endif
 
+#include <thread>
+
 #include <QtConcurrent/QtConcurrent>
 #include "QCoreApplication"
 #include <QDesktopServices>

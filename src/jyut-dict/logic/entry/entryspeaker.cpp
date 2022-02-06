@@ -67,7 +67,7 @@ const
 // actually speak in other than doing pattern matching on the voice name
 bool EntrySpeaker::checkVoiceName(const QLocale::Language &language,
                                   const QLocale::Country &country,
-                                  const QString &voiceName)
+                                  const QString &voiceName) const
 {
     if (language == QLocale::Chinese && country == QLocale::China) {
         if (voiceName.contains("Huihui") || voiceName.contains("Yaoyao") ||
@@ -96,7 +96,7 @@ bool EntrySpeaker::checkVoiceName(const QLocale::Language &language,
 bool EntrySpeaker::filterVoiceNames(const QLocale::Language &language,
                                     const QLocale::Country &country,
                                     const QVector<QVoice> &voices,
-                                    QVoice &voice) {
+                                    QVoice &voice) const {
     for (auto checkVoice : voices) {
         if (checkVoiceName(language, country, checkVoice.name())) {
             voice = checkVoice;

@@ -140,7 +140,7 @@ void EntryViewSentenceCardSection::setEntry(const Entry &entry)
     // a certain deadline
     _calledBack = false;
     _showLoadingIconTimer->stop();
-    _showLoadingIconTimer->setInterval(1000);
+    _showLoadingIconTimer->setInterval(1500);
     _showLoadingIconTimer->setSingleShot(true);
     QObject::connect(_showLoadingIconTimer, &QTimer::timeout, this, [=]() {
         if (!_calledBack && _enableUIUpdate) {
@@ -207,7 +207,11 @@ void EntryViewSentenceCardSection::stallSentenceUIUpdate(void)
     _enableUIUpdate = false;
     _enableUIUpdateTimer->stop();
     disconnect(_enableUIUpdateTimer, nullptr, nullptr, nullptr);
+#ifdef Q_OS_WIN
+    _enableUIUpdateTimer->setInterval(800);
+#else
     _enableUIUpdateTimer->setInterval(250);
+#endif
     _enableUIUpdateTimer->setSingleShot(true);
     QObject::connect(_enableUIUpdateTimer, &QTimer::timeout, this, [=]() {
         _enableUIUpdate = true;
@@ -221,7 +225,11 @@ void EntryViewSentenceCardSection::pauseBeforeUpdatingUI(const std::vector<Sourc
     _updateUITimer->stop();
     disconnect(_updateUITimer, nullptr, nullptr, nullptr);
 
+#ifdef Q_OS_WIN
+    _updateUITimer->setInterval(400);
+#else
     _updateUITimer->setInterval(25);
+#endif
     QObject::connect(_updateUITimer, &QTimer::timeout, this, [=]() {
         if (_enableUIUpdate) {
             _updateUITimer->stop();

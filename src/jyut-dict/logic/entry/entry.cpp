@@ -25,7 +25,8 @@ Entry::Entry(const std::string &simplified, const std::string &traditional,
 }
 
 Entry::Entry(const Entry &entry)
-    : _simplified{entry._simplified},
+    : QObject(),
+      _simplified{entry._simplified},
       _simplifiedDifference{entry._simplifiedDifference},
       _traditional{entry._traditional},
       _traditionalDifference{entry._traditionalDifference},
