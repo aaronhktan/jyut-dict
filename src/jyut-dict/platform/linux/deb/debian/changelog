@@ -1,3 +1,11 @@
+jyut-dict (1.22.0207) bionic; urgency=medium
+
+  * See examples with their definitions.
+  * Added words.hk, Unihan, Kaifangcidian, Two Shores Three Places dictionaries.
+  * Bug fixes.
+
+ -- Aaron Tan <hi@aaronhktan.com>  Mon, 7 Feb 2022 04:44:25 -0400
+
 jyut-dict (0.20.0525-1) bionic; urgency=medium
 
   * New version!
