@@ -10,7 +10,7 @@ sources = [
     objects.SourceTuple(
         "CC-CEDICT",
         "CC",
-        "2018-07-09",
+        "2022-02-07",
         "CC-CEDICT is a continuation of the CEDICT project started by Paul Denisowski in 1997 with the aim to provide a complete downloadable Chinese to English dictionary with pronunciation in pinyin for the Chinese characters.",
         "This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.",
         "http://www.mdbg.net/chindict/chindict.php?page=cc-cedict",
@@ -20,7 +20,7 @@ sources = [
     objects.SourceTuple(
         "CC-CANTO",
         "CCY",
-        "2016-01-15",
+        "2017-02-02",
         "CC-Canto is an open-source Cantonese-to-English dictionary with about 22,000 entries, designed to be used alongside CC-CEDICT.",
         "This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License.",
         "http://cantonese.org/download.html",
