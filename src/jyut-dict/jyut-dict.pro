@@ -18,7 +18,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = "Jyut Dictionary"
 TEMPLATE = app
 
-VERSION = 0.20.05.25
+VERSION = 1.22.02.07
 QMAKE_TARGET_COMPANY = "Aaron Tan"
 QMAKE_TARGET_PRODUCT = "Jyut Dictionary"
 QMAKE_TARGET_DESCRIPTION = "Jyut Dictionary"

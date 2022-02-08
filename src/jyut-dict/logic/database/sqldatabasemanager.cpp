@@ -221,7 +221,8 @@ QString SQLDatabaseManager::getBundleUserDatabasePath()
     QFileInfo bundleFile{QCoreApplication::applicationDirPath()
                          + "/../Resources/" + USER_DATABASE_NAME};
 #elif defined(Q_OS_WIN)
-    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + USER_DATABASE_NAME};
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() +  "./"
+                         + USER_DATABASE_NAME};
 #else
 #ifdef APPIMAGE
     QFileInfo bundleFile{QCoreApplication::applicationDirPath()
