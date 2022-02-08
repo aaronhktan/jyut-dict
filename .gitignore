@@ -77,6 +77,10 @@ CMakeLists.txt.user*
 **/installer32/
 **/installer64/
 
+# Documentation
+**/mac/search_*
+**.mp4
+
 # Data files
 **/cantodict/archive_*
 **/cantodict/data/*
