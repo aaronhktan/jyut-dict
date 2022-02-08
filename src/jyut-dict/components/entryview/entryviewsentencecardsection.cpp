@@ -120,11 +120,22 @@ void EntryViewSentenceCardSection::setStyle(bool use_dark)
     QString radiusString = QString::number(borderRadius);
     QColor borderColour = use_dark ? textColour.darker(300)
                                    : textColour.lighter(200);
-    QString styleSheet = "QToolButton { border: 2px solid %1; "
-                         "border-radius: %2px; "
-                         "color: %3; "
-                         "font-size: 12px; "
-                         "padding: 6px; } ";
+    QString styleSheet = "QToolButton { "
+                         "   border: 2px solid %1; "
+                         "   border-radius: %2px; "
+                         "   color: %3; "
+                         "   font-size: 12px; "
+                         "   padding: 6px; "
+                         "} "
+                         ""
+                         "QToolButton:hover { "
+                         "   background-color: %1; "
+                         "   border: 2px solid %1; "
+                         "   border-radius: %2px; "
+                         "   color: %3; "
+                         "   font-size: 12px; "
+                         "   padding: 6px; "
+                         "} ";
     _viewAllSentencesButton->setStyleSheet(styleSheet.arg(borderColour.name(), radiusString, textColour.name()));
     _viewAllSentencesButton->setMinimumHeight(borderRadius * 2);
 }
