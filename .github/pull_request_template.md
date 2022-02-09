@@ -1,4 +1,4 @@
-Issue #: Please add short description here in imperative form
+Title: Add short description here in imperative form
 
 # Description
 
