@@ -11,7 +11,7 @@ Available for macOS, Windows, and Ubuntu.
 ## Features
 
 ### Vast number of entries.
-Jyut Dictionary gives you access to CEDICT, CC-CANTO, words.hk 粵典, the Unihan database, 開放詞典, and Chinese sentences from Tatoeba, all completely offline. That means over 200,000 entries and 100,000 sentences to search from!
+Jyut Dictionary gives you access to CEDICT, CC-CANTO, words.hk 粵典, the Unihan database, 開放詞典, and Chinese sentences from Tatoeba, all completely offline. Plus, you can download and add more dictionaries to the program. That's over 200,000 entries and 100,000 sentences to search from!
 
 <img src="/docs/screenshots/mac/search.png?raw=true" style="margin: 5px">
 
@@ -21,7 +21,7 @@ Results appear in a list as you type, so it's faster and easier to find what you
 <img src="/docs/screenshots/mac/search_animated.gif?raw=true" style="margin: 5px">
 
 ### Search with your preferred input method.
-Jyut Dictionary supports entry with Simplified Chinese, Traditional Chinese, Pinyin, Jyutping, and English.
+Jyut Dictionary supports entry with Traditional Chinese, Simplified Chinese, Jyutping, Pinyin, and English.
 
 <img src="/docs/screenshots/mac/search_options.gif?raw=true" style="margin: 5px">
 
@@ -61,8 +61,8 @@ This folder contains several Python3 scripts that convert the various online Can
 
 This folder contains the source code for the program, and a Qt Creator project file. Files are divided into several subdirectories:
 - `components`: UI components, such as the list view or search bar.
-- `dialogs`: dialogs, such as the update available notification dialog.
-- `logic`: definitions for search and entry classes, as well as any other backend logic.
+- `dialogs`: dialogs, such as the "update available" notification dialog.
+- `logic`: definitions for search and entry classes, as well as other backend logic.
 - `platform`: platform-specific files, such as `Info.plist` for the macOS application bundle.
 - `resources`: databases, icons, and images.
 - `windows`: UI windows of the program, such as the main window.
@@ -92,4 +92,4 @@ Import the project to Qt Creator, then run. Add DEFINES+="PORTABLE" to the QMake
 See the READMEs for each platform under `src/jyut-dict/platform/<platform>` for instructions on packaging the built executable.
 
 ## On the roadmap
-See the Github bugs and project for more information!
+See the Github issues and projects for more information!
