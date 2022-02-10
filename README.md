@@ -1,17 +1,17 @@
-# <img src="/docs/icon/icon.png?raw=true" height="48"> Jyut Dictionary - An offline Cantonese dictionary
+# <img src="/docs/icon/icon.png?raw=true" height="48"> Jyut Dictionary - A free, open-source, offline Cantonese dictionary
 
 /jyːt ˈdɪkʃənɛɹi/
 
-A program to look up words in Mandarin or Cantonese, with Simplified Chinese, Traditional Chinese, Pinyin, Jyutping, and English input.
+Look up words from multiple dictionaries in Cantonese or Mandarin, with Traditional Chinese, Simplified Chinese, Jyutping, Pinyin, and English input.
+
+### [Download now!](https://github.com/aaronhktan/jyut-dict/releases)
 
 Available for macOS, Windows, and Ubuntu.
-
-[Download now!](https://github.com/aaronhktan/jyut-dict/releases)
 
 ## Features
 
 ### Vast number of entries.
-Jyut Dictionary uses CEDICT and CC-CANTO as sources for its dictionary and Tatoeba as source for its sentences, giving it over 135,000 entries and 60,000 sentences to search from!
+Jyut Dictionary gives you access to CEDICT, CC-CANTO, words.hk 粵典, the Unihan database, 開放詞典, and Chinese sentences from Tatoeba, all completely offline. That means over 200,000 entries and 100,000 sentences to search from!
 
 <img src="/docs/screenshots/mac/search.png?raw=true" style="margin: 5px">
 
@@ -31,7 +31,7 @@ Use the dictionary in English, French, Simplified and Traditional Cantonese, or 
 <img src="/docs/screenshots/mac/search_localization.gif?raw=true" style="margin: 5px">
 
 ### Customizable.
-Prefer to only Traditional Chinese first? Maybe hide Pinyin? Change the colours of the words or disable them altogether? Do that with a plethora of settings options!
+Prefer to see only Traditional Chinese? Maybe hide Pinyin? Change the colours of the words or disable them altogether? Do that with a plethora of settings options!
 
 <img src="/docs/screenshots/mac/settings.png?raw=true" style="margin: 5px">
 
@@ -71,7 +71,7 @@ This folder contains the source code for the program, and a Qt Creator project f
 
 This project requires Qt 5.15.
 
-**Before building the application, you must build the dictionary database using `script-set.py` (for CEDICT + CC-CANTO) or `script-individual` (for CFDICT/HanDeDict).** Read the README in `src/dictionaries/cedict` for instructions, then place the generated database, named `dict.db`, in `src/jyut-dict/resources/db/`.
+**Before building the application, you must build the dictionary database using `parse-set.py` (for CEDICT + CC-CANTO) or `parse-individual.py` (for CFDICT/HanDeDict).** Read the README in `src/dictionaries/cedict` for instructions, then place the generated database, named `dict.db`, in `src/jyut-dict/resources/db/`.
 
 #### Qt Creator (macOS, Ubuntu, Windows)
 Import the project to Qt Creator, then run. Add DEFINES+="PORTABLE" to the QMake configuration if you would like to isolate your debug build from any system files.
