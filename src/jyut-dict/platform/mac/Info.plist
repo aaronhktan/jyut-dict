@@ -7,7 +7,7 @@
   <key>CFBundleName</key>
   <string>Jyut Dictionary</string>
   <key>CFBundleIdentifier</key>
-  <string>Jyut Dictionary</string>
+  <string>com.aaronhktan.cantonesedictionary</string>
   <key>CFBundleExecutable</key>
   <string>MacOS/Jyut Dictionary</string>
   <key>CFBundleIconFile</key>
