@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (4035a4f, 2020-05-01)"
+   sodipodi:docname="hero-bg.svg"
+   id="svg19"
+   version="1.1"
+   width="1781.408"
+   viewBox="0 0 1781.408 796.067"
+   height="796.067">
+  <metadata
+     id="metadata25">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs23" />
+  <sodipodi:namedview
+     inkscape:current-layer="svg19"
+     inkscape:window-maximized="1"
+     inkscape:window-y="586"
+     inkscape:window-x="1080"
+     inkscape:cy="398.03351"
+     inkscape:cx="890.70398"
+     inkscape:zoom="0.61580504"
+     showgrid="false"
+     id="namedview21"
+     inkscape:window-height="1027"
+     inkscape:window-width="1920"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <linearGradient
+     y2="1"
+     x2=".5"
+     x1=".5"
+     gradientUnits="objectBoundingBox"
+     id="a">
+    <stop
+       style="stop-color:#d03439;stop-opacity:1"
+       id="stop10"
+       stop-color="#5864ff"
+       offset="0" />
+    <stop
+       style="stop-color:#d75357;stop-opacity:1"
+       id="stop12"
+       stop-color="#6a74ff"
+       offset="1" />
+  </linearGradient>
+  <path
+     style="fill:#d03439;fill-opacity:1"
+     id="path15"
+     transform="translate(120.633 -755.5)"
+     fill="#5864ff"
+     d="m1650.595 755.5c56.3 272.618-131.189 364.024-310.13 505.374-347.561 273.959-503.57 14.469-1065.8 253.673s-359.832-759.047-359.832-759.047z" />
+  <path
+     id="path17"
+     transform="translate(286.464 -753.856)"
+     fill="url(#a)"
+     d="m-113.148 755.5c-41.4 185.71 96.459 247.977 228.027 344.266 255.548 186.624 370.256 9.856 783.643 172.8s264.57-517.07 264.57-517.07z" />
+</svg>

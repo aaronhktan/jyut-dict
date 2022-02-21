@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (4035a4f, 2020-05-01)"
+   sodipodi:docname="about-right-shape.svg"
+   id="svg1447"
+   version="1.1"
+   width="494.836"
+   viewBox="0 0 494.836 638.601"
+   height="638.601">
+  <metadata
+     id="metadata1453">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs1451" />
+  <sodipodi:namedview
+     inkscape:current-layer="svg1447"
+     inkscape:window-maximized="1"
+     inkscape:window-y="586"
+     inkscape:window-x="1080"
+     inkscape:cy="319.30051"
+     inkscape:cx="247.418"
+     inkscape:zoom="1.1509534"
+     showgrid="false"
+     id="namedview1449"
+     inkscape:window-height="1027"
+     inkscape:window-width="1920"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <clipPath
+     id="a">
+    <path
+       id="path1433"
+       d="m175.536 0c-176.345 0 67.064 208.923-88.593 319.3s-87.752 319.3 88.593 319.3 319.3-142.956 319.3-319.3-142.955-319.3-319.3-319.3z" />
+  </clipPath>
+  <linearGradient
+     y1="1"
+     x2=".5"
+     x1=".5"
+     gradientUnits="objectBoundingBox"
+     id="b">
+    <stop
+       style="stop-color:#f7dfdf;stop-opacity:1"
+       id="stop1436"
+       stop-color="#dddff9"
+       offset="0" />
+    <stop
+       style="stop-color:#d75357;stop-opacity:0"
+       id="stop1438"
+       stop-color="#5864ff"
+       offset="1" />
+  </linearGradient>
+  <path
+     style="fill:#d03439;fill-opacity:1"
+     id="path1441"
+     fill="#5864ff"
+     d="m175.536 0c-176.345 0 67.064 208.923-88.593 319.3s-87.752 319.3 88.593 319.3 319.3-142.956 319.3-319.3-142.955-319.3-319.3-319.3z" />
+  <g
+     id="g1445"
+     clip-path="url(#a)">
+    <path
+       id="path1443"
+       opacity=".3"
+       fill="url(#b)"
+       d="m319.3 638.6c176.345 0-67.066-208.922 88.593-319.3s87.752-319.3-88.593-319.3-319.3 142.956-319.3 319.3 142.956 319.3 319.3 319.3z" />
+  </g>
+</svg>
