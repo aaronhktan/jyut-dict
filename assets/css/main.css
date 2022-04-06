@@ -267,9 +267,9 @@ p {
 }
 
 .main-btn.border-btn {
-  border: 2px solid #5864FF;
-  background: transparent;
-  color: #5864FF;
+  border: 2px solid #D03439;
+  background: #D03439;
+  color: #FFF;
 }
 
 .btn-hover {
