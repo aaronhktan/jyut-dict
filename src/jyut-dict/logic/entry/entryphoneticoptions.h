@@ -26,6 +26,7 @@ enum class EntryColourPhoneticType : int {
 
 enum class CantoneseOptions : int {
     RAW_JYUTPING,
+    PRETTY_YALE,
 };
 
 enum class MandarinOptions : int {

@@ -46,6 +46,8 @@ std::string applyColours(
 std::string compareStrings(const std::string &original,
                            const std::string &comparison);
 
+std::string convertJyutpingToYale(const std::string &jyutping);
+
 std::string createPrettyPinyin(const std::string &pinyin);
 
 // constructRomanisationQuery takes a vector of strings and stitches them

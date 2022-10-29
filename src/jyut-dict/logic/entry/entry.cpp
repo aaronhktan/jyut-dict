@@ -13,8 +13,14 @@ Entry::Entry(const std::string &simplified, const std::string &traditional,
       _definitions{definitions}
 {
     // Normalize pinyin and jyutping to lowercase >:(
-    std::transform(_jyutping.begin(), _jyutping.end(), _jyutping.begin(), ::tolower);
-    std::transform(_pinyin.begin(), _pinyin.end(), _pinyin.begin(), ::tolower);
+    std::transform(_jyutping.cbegin(),
+                   _jyutping.cend(),
+                   _jyutping.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+    std::transform(_pinyin.cbegin(),
+                   _pinyin.cend(),
+                   _pinyin.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
 
     // Create comparison versions of traditional and simplified entries
     _traditionalDifference = ChineseUtils::compareStrings(_simplified, _traditional);
@@ -262,6 +268,7 @@ std::string Entry::getCantonesePhonetic(CantoneseOptions cantoneseOptions) const
 {
     switch (cantoneseOptions) {
         case CantoneseOptions::RAW_JYUTPING:
+        std::cout << ChineseUtils::convertJyutpingToYale(_jyutping) << std::endl;
         default:
         return _jyutping;
     }
@@ -286,7 +293,10 @@ std::string Entry::getJyutping(void) const
 void Entry::setJyutping(const std::string &jyutping)
 {
     _jyutping = jyutping;
-    std::transform(_jyutping.begin(), _jyutping.end(), _jyutping.begin(), ::tolower);
+    std::transform(_jyutping.cbegin(),
+                   _jyutping.cend(),
+                   _jyutping.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
 }
 
 std::vector<int> Entry::getJyutpingNumbers() const
