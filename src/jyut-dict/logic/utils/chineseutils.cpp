@@ -21,10 +21,14 @@ static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
 #endif
 
 const static std::unordered_set<std::string> specialCharacters = {
+    ".",
+    ",",
     "，",
+    "！",
     "%",
     "－",
     "…",
+    "⋯",
     "·",
 };
 
@@ -253,7 +257,13 @@ std::string convertJyutpingToYale(const std::string &jyutping)
     std::vector<std::string> yale_syllables;
 
     for (const auto &syllable : syllables) {
-        // Handle special-case syllables first
+        // Skip syllables that are just punctuation
+        if (specialCharacters.find(syllable) != specialCharacters.end()) {
+            yale_syllables.push_back(syllable);
+            continue;
+        }
+
+        // Handle special-case syllables
         std::string syllable_without_tone = syllable.substr(0,
                                                             syllable.length()
                                                                 - 1);
@@ -261,7 +271,7 @@ std::string convertJyutpingToYale(const std::string &jyutping)
             syllable.substr(syllable.find_first_of("123456"), 1));
         auto search = jyutpingToYaleSpecialSyllables.find(syllable_without_tone);
         if (search != jyutpingToYaleSpecialSyllables.end()) {
-            yale_syllables.push_back(
+            yale_syllables.emplace_back(
                 search->second.at(static_cast<size_t>(tone) - 1));
             continue;
         }
@@ -515,7 +525,7 @@ std::vector<std::string> segmentJyutping(const QString &string)
 
         // Ignore separation characters; these are special.
         QString stringToExamine = string.mid(end_index, 1).toLower();
-        if (stringToExamine == " " || stringToExamine == "'") {
+        if (stringToExamine == " " || stringToExamine == "'" || (specialCharacters.find(stringToExamine.toStdString()) != specialCharacters.end())) {
             if (initial_found) { // Add any incomplete word to the vector
                 QString previous_initial = string.mid(start_index,
                                                       end_index - start_index);
