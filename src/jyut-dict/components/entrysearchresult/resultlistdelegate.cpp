@@ -218,7 +218,7 @@ void ResultListDelegate::paint(QPainter *painter,
 
     // Bottom divider
     QRect rct = option.rect;
-    rct.setY(rct.bottom() - 1);
+    rct.setY(rct.bottom());
     painter->fillRect(rct, option.palette.alternateBase());
 
     painter->restore();
