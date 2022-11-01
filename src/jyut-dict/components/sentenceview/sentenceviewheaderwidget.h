@@ -47,6 +47,7 @@ private:
     std::unique_ptr<EntrySpeaker> _speaker;
 #endif
 
+    // TODO: Add Yale support here
     QGridLayout *_sentenceHeaderLayout;
     QLabel *_sourceLanguageLabel;
     QLabel *_simplifiedLabel;

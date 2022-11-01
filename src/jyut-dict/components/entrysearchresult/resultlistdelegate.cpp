@@ -31,6 +31,7 @@ void ResultListDelegate::paint(QPainter *painter,
     painter->save();
 
     Entry entry = qvariant_cast<Entry>(index.data());
+    // TODO: Generate Pinyin and Yale here so they can be properly displayed
 
     bool isWelcomeEntry = entry.isWelcome();
     bool isEmptyEntry = entry.isEmpty();

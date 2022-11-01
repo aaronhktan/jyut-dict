@@ -26,13 +26,13 @@ public:
     void changeEvent(QEvent *event) override;
 
     void setEntry(const Entry &entry);
-    void setEntry(std::string word, std::string jyutping, std::string pinyin);
 
 private:
     void setStyle(bool use_dark);
     void translateUI();
 
-    void displayPronunciationLabels(const EntryPhoneticOptions options) const;
+    void displayPronunciationLabels(const CantoneseOptions &cantoneseOptions,
+                                    const MandarinOptions &mandarinOptions) const;
 
     void showError(const QString &reason, const QString &message);
 
@@ -45,11 +45,16 @@ private:
     std::unique_ptr<EntrySpeaker> _speaker;
 #endif
 
+    // TODO: Refactor this into a vector of labels so I don't need to make specific
+    // labels for specific kinds of romanizations
     QGridLayout *_entryHeaderLayout;
     QLabel *_wordLabel;
     QLabel *_jyutpingLabel;
     QPushButton *_jyutpingTTS;
     QLabel *_jyutpingPronunciation;
+    QLabel *_yaleLabel;
+    QPushButton *_yaleTTS;
+    QLabel *_yalePronunciation;
     QLabel *_pinyinLabel;
     QPushButton *_pinyinTTS;
     QLabel *_pinyinPronunciation;

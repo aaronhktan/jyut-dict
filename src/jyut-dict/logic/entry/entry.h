@@ -50,6 +50,9 @@ public:
     std::string getTraditional(void) const;
     void setTraditional(std::string traditional);
 
+    bool generatePhonetic(CantoneseOptions cantoneseOptions,
+                          MandarinOptions mandarinOptions);
+
     std::string getPhonetic(EntryPhoneticOptions options) const;
     std::string getPhonetic(EntryPhoneticOptions options,
                             MandarinOptions mandarinOptions) const;
@@ -96,8 +99,12 @@ private:
     std::string _colouredTraditionalDifference;
 
     std::string _jyutping;
+    std::string _yale;
+    bool _isYaleValid = false;
+
     std::string _pinyin;
     std::string _prettyPinyin;
+    bool _isPrettyPinyinValid = false;
 
     std::vector<DefinitionsSet> _definitions;
 

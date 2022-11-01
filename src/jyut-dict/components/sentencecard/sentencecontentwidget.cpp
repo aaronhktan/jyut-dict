@@ -388,6 +388,7 @@ void SentenceContentWidget::addLabelsToLayout(
         break;
     }
 
+    // TODO: Fix this so you can select Yale
     // Add the first phonetic label
     switch (phoneticOptions) {
     case EntryPhoneticOptions::ONLY_JYUTPING:

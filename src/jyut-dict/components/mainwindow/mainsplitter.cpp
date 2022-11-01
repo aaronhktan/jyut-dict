@@ -144,6 +144,10 @@ void MainSplitter::prepareEntry(Entry &entry, bool addToHistory) const
                     QVariant::fromValue(EntryColourPhoneticType::JYUTPING))
             .value<EntryColourPhoneticType>());
 
+    // TODO: Remove the hardcoded options here
+    entry.generatePhonetic(CantoneseOptions::RAW_JYUTPING | CantoneseOptions::PRETTY_YALE,
+                           MandarinOptions::PRETTY_PINYIN);
+
     return;
 }
 
