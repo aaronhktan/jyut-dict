@@ -14,6 +14,7 @@
 #include <QWidget>
 
 #include <string>
+#include <vector>
 
 // The EntryHeaderWidget displays basic information about the entry
 // at the top of the entry detail view
@@ -31,8 +32,10 @@ private:
     void setStyle(bool use_dark);
     void translateUI();
 
-    void displayPronunciationLabels(const CantoneseOptions &cantoneseOptions,
-                                    const MandarinOptions &mandarinOptions) const;
+    void displayPronunciationLabels(const Entry &entry,
+                                    const CantoneseOptions &cantoneseOptions,
+                                    const MandarinOptions &mandarinOptions);
+    void clearPronunciationLabels(void);
 
     void showError(const QString &reason, const QString &message);
 
@@ -41,23 +44,17 @@ private:
     QString _chinese;
     QString _jyutping;
     QString _pinyin;
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
     std::unique_ptr<EntrySpeaker> _speaker;
-#endif
 
-    // TODO: Refactor this into a vector of labels so I don't need to make specific
-    // labels for specific kinds of romanizations
     QGridLayout *_entryHeaderLayout;
     QLabel *_wordLabel;
-    QLabel *_jyutpingLabel;
-    QPushButton *_jyutpingTTS;
-    QLabel *_jyutpingPronunciation;
-    QLabel *_yaleLabel;
-    QPushButton *_yaleTTS;
-    QLabel *_yalePronunciation;
-    QLabel *_pinyinLabel;
-    QPushButton *_pinyinTTS;
-    QLabel *_pinyinPronunciation;
+    std::vector<QLabel *> _pronunciationTypeLabels;
+    std::vector<QLabel *> _pronunciationLabels;
+
+    QPushButton *_cantoneseTTS;
+    bool _cantoneseTTSVisible = false;
+    QPushButton *_mandarinTTS;
+    bool _mandarinTTSVisible = false;
 
     EntrySpeakErrorDialog *_message;
 };

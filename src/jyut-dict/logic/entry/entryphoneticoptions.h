@@ -32,6 +32,7 @@ enum class CantoneseOptions : int {
     PRETTY_YALE = (0x1 << 1),
 };
 
+// These are required so that bitwise operations are allowed on the enum class
 constexpr inline CantoneseOptions operator~ (CantoneseOptions a) { return static_cast<CantoneseOptions>( ~static_cast<std::underlying_type<CantoneseOptions>::type>(a) ); }
 constexpr inline CantoneseOptions operator| (CantoneseOptions a, CantoneseOptions b) { return static_cast<CantoneseOptions>( static_cast<std::underlying_type<CantoneseOptions>::type>(a) | static_cast<std::underlying_type<CantoneseOptions>::type>(b) ); }
 constexpr inline CantoneseOptions operator& (CantoneseOptions a, CantoneseOptions b) { return static_cast<CantoneseOptions>( static_cast<std::underlying_type<CantoneseOptions>::type>(a) & static_cast<std::underlying_type<CantoneseOptions>::type>(b) ); }

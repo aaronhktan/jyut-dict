@@ -31,46 +31,18 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _wordLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _wordLabel->setWordWrap(true);
 
-    _jyutpingLabel = new QLabel{this};
-    _jyutpingLabel->setAttribute(Qt::WA_TranslucentBackground);
-    _jyutpingLabel->setVisible(false);
-    _jyutpingTTS = new QPushButton{this};
-    _jyutpingTTS->setMaximumSize(10, 10);
-    _jyutpingTTS->setAttribute(Qt::WA_TranslucentBackground);
-    _jyutpingTTS->setVisible(false);
-    _jyutpingPronunciation = new QLabel{this};
-    _jyutpingPronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);
-    _jyutpingPronunciation->setWordWrap(true);
 
-    _yaleLabel = new QLabel{this};
-    _yaleLabel->setAttribute(Qt::WA_TranslucentBackground);
-    _yaleLabel->setVisible(false);
-    _yaleTTS = new QPushButton{this};
-    _yaleTTS->setMaximumSize(10, 10);
-    _yaleTTS->setAttribute(Qt::WA_TranslucentBackground);
-    _yaleTTS->setVisible(false);
-    _yalePronunciation = new QLabel{this};
-    _yalePronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);
-    _yalePronunciation->setWordWrap(true);
+    _cantoneseTTS = new QPushButton{this};
+    _cantoneseTTS->setMaximumSize(10, 10);
+    _cantoneseTTS->setAttribute(Qt::WA_TranslucentBackground);
+    _cantoneseTTS->setVisible(false);
 
-    _pinyinLabel = new QLabel{this};
-    _pinyinLabel->setAttribute(Qt::WA_TranslucentBackground);
-    _pinyinLabel->setVisible(false);
-    _pinyinTTS = new QPushButton{this};
-    _pinyinTTS->setMaximumSize(10, 10);
-    _pinyinTTS->setAttribute(Qt::WA_TranslucentBackground);
-    _pinyinTTS->setVisible(false);
-    _pinyinPronunciation = new QLabel{this};
-    _pinyinPronunciation->setTextInteractionFlags(Qt::TextSelectableByMouse);
-    _pinyinPronunciation->setWordWrap(true);
+    _mandarinTTS = new QPushButton{this};
+    _mandarinTTS->setMaximumSize(10, 10);
+    _mandarinTTS->setAttribute(Qt::WA_TranslucentBackground);
+    _mandarinTTS->setVisible(false);
 
     _entryHeaderLayout->addWidget(_wordLabel, 1, 0, 1, -1);
-    _entryHeaderLayout->addWidget(_jyutpingLabel, 2, 0, 1, 1, Qt::AlignTop);
-    _entryHeaderLayout->addWidget(_jyutpingTTS, 2, 1, 1, 1);
-    _entryHeaderLayout->addWidget(_jyutpingPronunciation, 2, 2, 1, 1, Qt::AlignTop);
-    _entryHeaderLayout->addWidget(_pinyinLabel, 3, 0, 1, 1, Qt::AlignTop);
-    _entryHeaderLayout->addWidget(_pinyinTTS, 3, 1, 1, 1);
-    _entryHeaderLayout->addWidget(_pinyinPronunciation, 3, 2, 1, 1, Qt::AlignTop);
 
     setStyle(Utils::isDarkMode());
     translateUI();
@@ -101,12 +73,7 @@ void EntryHeaderWidget::changeEvent(QEvent *event)
 
 void EntryHeaderWidget::setEntry(const Entry &entry)
 {
-    _jyutpingLabel->setVisible(true);
-    _jyutpingTTS->setVisible(true);
-    _yaleLabel->setVisible(true);
-    _yaleTTS->setVisible(true);
-    _pinyinLabel->setVisible(true);
-    _pinyinTTS->setVisible(true);
+    clearPronunciationLabels();
 
     _wordLabel->setText(
         entry
@@ -119,48 +86,29 @@ void EntryHeaderWidget::setEntry(const Entry &entry)
                 true)
             .c_str());
 
-    _jyutpingPronunciation->setText(
-        entry
-            .getCantonesePhonetic(
-                Settings::getSettings()
-                    ->value("cantoneseOptions",
-                            QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
-                    .value<CantoneseOptions>())
-            .c_str());
-    _yalePronunciation->setText(
-        entry.getCantonesePhonetic(CantoneseOptions::PRETTY_YALE).c_str());
-    _pinyinPronunciation->setText(
-        entry
-            .getMandarinPhonetic(
-                Settings::getSettings()
-                    ->value("mandarinOptions",
-                            QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
-                    .value<MandarinOptions>())
-            .c_str());
-
     // TODO: Remove the hardcoded options here
-    //    displayPronunciationLabels(
-    //        Settings::getSettings()
-    //            ->value("phoneticOptions",
-    //                    QVariant::fromValue(EntryPhoneticOptions::PREFER_JYUTPING))
-    //            .value<EntryPhoneticOptions>());
-    displayPronunciationLabels(CantoneseOptions::RAW_JYUTPING
-                               | CantoneseOptions::PRETTY_YALE,
-                               MandarinOptions::PRETTY_PINYIN);
+    displayPronunciationLabels(entry,
+                               CantoneseOptions::RAW_JYUTPING
+                                   | CantoneseOptions::PRETTY_YALE,
+                               MandarinOptions::RAW_PINYIN
+                                   | MandarinOptions::PRETTY_PINYIN);
 
     _chinese = QString{entry.getSimplified().c_str()};
     _jyutping = QString{entry.getJyutping().c_str()};
     _pinyin = QString{entry.getPinyin().c_str()};
 
+    setStyle(Utils::isDarkMode());
+    translateUI();
+}
+
+void EntryHeaderWidget::setStyle(bool use_dark)
+{
 #ifdef Q_OS_WIN
     QFont font = QFont{"Microsoft YaHei", 30};
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
     _wordLabel->setFont(font);
 #endif
-}
 
-void EntryHeaderWidget::setStyle(bool use_dark)
-{
     _wordLabel->setStyleSheet("QLabel { font-size: 30px }");
 
     QString styleSheet = "QLabel { color: %1; }";
@@ -170,54 +118,63 @@ void EntryHeaderWidget::setStyle(bool use_dark)
                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R};
-    _jyutpingLabel->setStyleSheet(styleSheet.arg(textColour.name()));
-    _yaleLabel->setStyleSheet(styleSheet.arg(textColour.name()));
-    _pinyinLabel->setStyleSheet(styleSheet.arg(textColour.name()));
+    for (const auto& label : _pronunciationTypeLabels) {
+        label->setAttribute(Qt::WA_TranslucentBackground);
+        label->setVisible(false);
+        label->setStyleSheet(styleSheet.arg(textColour.name()));
+    }
 
-    _jyutpingTTS->setIcon(use_dark ? QIcon{":/images/speak_inverted.png"}
+    for (const auto& label : _pronunciationLabels) {
+        label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        label->setWordWrap(true);
+    }
+
+
+    _cantoneseTTS->setIcon(use_dark ? QIcon{":/images/speak_inverted.png"}
                                    : QIcon{":/images/speak.png"});
-    _jyutpingTTS->setFlat(true);
-    _jyutpingTTS->setObjectName("jyutpingTTS");
-    _jyutpingTTS->setStyleSheet(
-        "QPushButton#jyutpingTTS { background-color: none; border: 1px solid transparent; padding: 0px; }"
-        "QPushButton:pressed#jyutpingTTS { background-color: none; border: 1px solid transparent; }");
-    _jyutpingTTS->setCursor(Qt::PointingHandCursor);
+    _cantoneseTTS->setFlat(true);
+    _cantoneseTTS->setObjectName("cantoneseTTS");
+    _cantoneseTTS->setStyleSheet(
+        "QPushButton#cantoneseTTS { background-color: none; border: 1px solid "
+        "transparent; padding: 0px; }"
+        "QPushButton:pressed#cantoneseTTS { background-color: none; border: "
+        "1px solid transparent; }");
+    _cantoneseTTS->setCursor(Qt::PointingHandCursor);
 
-    _yaleTTS->setFlat(true);
-    _yaleTTS->setObjectName("yaleTTS");
-    _yaleTTS->setStyleSheet(
-        "QPushButton#yaleTTS { background-color: none; border: 1px solid transparent; padding: 0px; }"
-        "QPushButton:pressed#yaleTTS { background-color: none; border: 1px solid transparent; }");
-    _yaleTTS->setCursor(Qt::PointingHandCursor);
-
-    _pinyinTTS->setIcon(use_dark ? QIcon{":/images/speak_inverted.png"}
+    _mandarinTTS->setIcon(use_dark ? QIcon{":/images/speak_inverted.png"}
                                  : QIcon{":/images/speak.png"});
-    _pinyinTTS->setFlat(true);
-    _pinyinTTS->setObjectName("pinyinTTS");
-    _pinyinTTS->setStyleSheet("QPushButton#pinyinTTS { background-color: none; border: 1px solid transparent; padding: 0px; }"
-                              "QPushButton:pressed#pinyinTTS { background-color: none ;border: 1px solid transparent; }");
-    _pinyinTTS->setCursor(Qt::PointingHandCursor);
+    _mandarinTTS->setFlat(true);
+    _mandarinTTS->setObjectName("mandarinTTS");
+    _mandarinTTS->setStyleSheet(
+        "QPushButton#mandarinTTS { background-color: none; border: 1px solid "
+        "transparent; padding: 0px; }"
+        "QPushButton:pressed#mandarinTTS { background-color: none ;border: 1px "
+        "solid transparent; }");
+    _mandarinTTS->setCursor(Qt::PointingHandCursor);
 }
 
 void EntryHeaderWidget::translateUI()
 {
-    _jyutpingLabel->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
-                                                        Strings::JYUTPING_SHORT));
-    _jyutpingLabel->setFixedWidth(
-        _jyutpingLabel->fontMetrics().boundingRect(_jyutpingLabel->text()).width());
+    for (const auto &label : _pronunciationTypeLabels) {
+        if (label->objectName() == "jyutpingTypeLabel") {
+            label->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                       Strings::JYUTPING_SHORT));
+        } else if (label->objectName() == "yaleTypeLabel") {
+            label->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                       Strings::YALE_SHORT));
+        } else if (label->objectName() == "rawPinyinTypeLabel"
+                   || label->objectName() == "prettyPinyinTypeLabel") {
+            label->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                       Strings::PINYIN_SHORT));
+        }
 
-    _yaleLabel->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
-                                                        Strings::YALE_SHORT));
-    _yaleLabel->setFixedWidth(
-        _yaleLabel->fontMetrics().boundingRect(_yaleLabel->text()).width());
+        label->setFixedWidth(
+            label->fontMetrics().boundingRect(label->text()).width());
+        label->setVisible(true);
+    }
 
-    _pinyinLabel->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
-                                                      Strings::PINYIN_SHORT));
-    _pinyinLabel->setFixedWidth(
-        _pinyinLabel->fontMetrics().boundingRect(_pinyinLabel->text()).width());
-
-    disconnect(_jyutpingTTS, nullptr, nullptr, nullptr);
-    connect(_jyutpingTTS, &QPushButton::clicked, this, [=]() {
+    disconnect(_cantoneseTTS, nullptr, nullptr, nullptr);
+    connect(_cantoneseTTS, &QPushButton::clicked, this, [=]() {
 #ifdef Q_OS_MAC
         if (!_speaker->speakCantonese(_jyutping)) {
             return;
@@ -233,9 +190,9 @@ void EntryHeaderWidget::translateUI()
                       .arg(Settings::getCurrentLocale().bcp47Name()));
     });
 
-    disconnect(_pinyinTTS, nullptr, nullptr, nullptr);
+    disconnect(_mandarinTTS, nullptr, nullptr, nullptr);
     if (Settings::getCurrentLocale().country() == QLocale::Taiwan) {
-        connect(_pinyinTTS, &QPushButton::clicked, this, [=]() {
+        connect(_mandarinTTS, &QPushButton::clicked, this, [=]() {
 #ifdef Q_OS_MAC
             if (!_speaker->speakTaiwaneseMandarin(_pinyin)) {
                 return;
@@ -251,7 +208,7 @@ void EntryHeaderWidget::translateUI()
                           .arg(Settings::getCurrentLocale().bcp47Name()));
         });
     } else {
-        connect(_pinyinTTS, &QPushButton::clicked, this, [=]() {
+        connect(_mandarinTTS, &QPushButton::clicked, this, [=]() {
 #ifdef Q_OS_MAC
             if (!_speaker->speakMainlandMandarin(_pinyin)) {
                 return;
@@ -270,47 +227,137 @@ void EntryHeaderWidget::translateUI()
 }
 
 void EntryHeaderWidget::displayPronunciationLabels(
+    const Entry& entry,
     const CantoneseOptions &cantoneseOptions,
-    const MandarinOptions &mandarinOptions) const
+    const MandarinOptions &mandarinOptions)
 {
-    int row = 2; // The entry itself is the first row, so we start on the second
+    // The entry headword is the first row, so we start adding labels starting
+    // from the second row
+    int row = 2;
 
     if ((cantoneseOptions & CantoneseOptions::RAW_JYUTPING)
         == CantoneseOptions::RAW_JYUTPING) {
-        _entryHeaderLayout->addWidget(_jyutpingLabel, row, 0, 1, 1, Qt::AlignTop);
-        _entryHeaderLayout->addWidget(_jyutpingTTS, row, 1, 1, 1);
-        _entryHeaderLayout->addWidget(_jyutpingPronunciation, row, 2, 1, 1);
-        _jyutpingLabel->setVisible(true);
-        _jyutpingTTS->setVisible(true);
-        _jyutpingPronunciation->setVisible(true);
+        _pronunciationTypeLabels.emplace_back(new QLabel{this});
+        _pronunciationTypeLabels.back()->setObjectName("jyutpingTypeLabel");
+        _entryHeaderLayout->addWidget(_pronunciationTypeLabels.back(),
+                                      row,
+                                      0,
+                                      1,
+                                      1,
+                                      Qt::AlignTop);
+        _pronunciationTypeLabels.back()->setVisible(true);
+
+        _pronunciationLabels.emplace_back(new QLabel{this});
+        _pronunciationLabels.back()->setText(
+            entry.getCantonesePhonetic(CantoneseOptions::RAW_JYUTPING).c_str());
+        _entryHeaderLayout->addWidget(_pronunciationLabels.back(), row, 2, 1, 1);
+        _pronunciationLabels.back()->setVisible(true);
+
+        if (!_cantoneseTTSVisible) {
+            _entryHeaderLayout->addWidget(_cantoneseTTS, row, 1, 1, 1);
+            _cantoneseTTS->setVisible(true);
+            _cantoneseTTSVisible = true;
+        }
 
         row++;
     }
 
     if ((cantoneseOptions & CantoneseOptions::PRETTY_YALE)
         == CantoneseOptions::PRETTY_YALE) {
-        _entryHeaderLayout->addWidget(_yaleLabel, row, 0, 1, 1, Qt::AlignTop);
-        _entryHeaderLayout->addWidget(_yaleTTS, row, 1, 1, 1);
-        _entryHeaderLayout->addWidget(_yalePronunciation, row, 2, 1, 1);
-        _yaleLabel->setVisible(true);
-        _yaleTTS->setVisible(true);
-        _yalePronunciation->setVisible(true);
+        _pronunciationTypeLabels.emplace_back(new QLabel{this});
+        _pronunciationTypeLabels.back()->setObjectName("yaleTypeLabel");
+        _entryHeaderLayout->addWidget(_pronunciationTypeLabels.back(),
+                                      row,
+                                      0,
+                                      1,
+                                      1,
+                                      Qt::AlignTop);
+        _pronunciationTypeLabels.back()->setVisible(true);
+
+        _pronunciationLabels.emplace_back(new QLabel{this});
+        _pronunciationLabels.back()->setText(
+            entry.getCantonesePhonetic(CantoneseOptions::PRETTY_YALE).c_str());
+        _entryHeaderLayout->addWidget(_pronunciationLabels.back(), row, 2, 1, 1);
+        _pronunciationLabels.back()->setVisible(true);
+
+        if (!_cantoneseTTSVisible) {
+            _entryHeaderLayout->addWidget(_cantoneseTTS, row, 1, 1, 1);
+            _cantoneseTTS->setVisible(true);
+            _cantoneseTTSVisible = true;
+        }
 
         row++;
     }
 
     if ((mandarinOptions & MandarinOptions::PRETTY_PINYIN)
         == MandarinOptions::PRETTY_PINYIN) {
-        _entryHeaderLayout->addWidget(_pinyinLabel, row, 0, 1, 1, Qt::AlignTop);
-        _entryHeaderLayout->addWidget(_pinyinTTS, row, 1, 1, 1);
-        _entryHeaderLayout->addWidget(_pinyinPronunciation, row, 2, 1, 1);
-        _pinyinLabel->setVisible(true);
-        _pinyinTTS->setVisible(true);
-        _pinyinPronunciation->setVisible(true);
+        _pronunciationTypeLabels.emplace_back(new QLabel{this});
+        _pronunciationTypeLabels.back()->setObjectName("prettyPinyinTypeLabel");
+        _entryHeaderLayout->addWidget(_pronunciationTypeLabels.back(),
+                                      row,
+                                      0,
+                                      1,
+                                      1,
+                                      Qt::AlignTop);
+        _pronunciationTypeLabels.back()->setVisible(true);
+
+        _pronunciationLabels.emplace_back(new QLabel{this});
+        _pronunciationLabels.back()->setText(
+            entry.getMandarinPhonetic(MandarinOptions::PRETTY_PINYIN).c_str());
+        _entryHeaderLayout->addWidget(_pronunciationLabels.back(), row, 2, 1, 1);
+        _pronunciationLabels.back()->setVisible(true);
+
+        if (!_mandarinTTSVisible) {
+            _entryHeaderLayout->addWidget(_mandarinTTS, row, 1, 1, 1);
+            _mandarinTTS->setVisible(true);
+            _mandarinTTSVisible = true;
+        }
 
         row++;
     }
 
+    if ((mandarinOptions & MandarinOptions::RAW_PINYIN)
+        == MandarinOptions::RAW_PINYIN) {
+        _pronunciationTypeLabels.emplace_back(new QLabel{this});
+        _pronunciationTypeLabels.back()->setObjectName("rawPinyinTypeLabel");
+        _entryHeaderLayout->addWidget(_pronunciationTypeLabels.back(),
+                                      row,
+                                      0,
+                                      1,
+                                      1,
+                                      Qt::AlignTop);
+        _pronunciationTypeLabels.back()->setVisible(true);
+
+        _pronunciationLabels.emplace_back(new QLabel{this});
+        _pronunciationLabels.back()->setText(
+            entry.getMandarinPhonetic(MandarinOptions::RAW_PINYIN).c_str());
+        _entryHeaderLayout->addWidget(_pronunciationLabels.back(), row, 2, 1, 1);
+        _pronunciationLabels.back()->setVisible(true);
+
+        if (!_mandarinTTSVisible) {
+            _entryHeaderLayout->addWidget(_mandarinTTS, row, 1, 1, 1);
+            _mandarinTTS->setVisible(true);
+            _mandarinTTSVisible = true;
+        }
+
+        row++;
+    }
+
+}
+
+void EntryHeaderWidget::clearPronunciationLabels(void)
+{
+    for (auto const &label : _pronunciationTypeLabels) {
+        _entryHeaderLayout->removeWidget(label);
+        delete label;
+    }
+    _pronunciationTypeLabels.clear();
+
+    for (auto const &label : _pronunciationLabels) {
+        _entryHeaderLayout->removeWidget(label);
+        delete label;
+    }
+    _pronunciationLabels.clear();
 }
 
 void EntryHeaderWidget::showError(const QString &reason, const QString &description)
