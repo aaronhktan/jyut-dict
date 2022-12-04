@@ -98,7 +98,7 @@ void SentenceViewHeaderWidget::setSourceSentence(const SourceSentence &sentence)
     displayPronunciationLabels(
         Settings::getSettings()
             ->value("phoneticOptions",
-                    QVariant::fromValue(EntryPhoneticOptions::PREFER_JYUTPING))
+                    QVariant::fromValue(EntryPhoneticOptions::PREFER_CANTONESE))
             .value<EntryPhoneticOptions>());
 
     _chinese = QString{sentence.getSimplified().empty()
@@ -334,7 +334,7 @@ void SentenceViewHeaderWidget::displaySentenceLabels(
 void SentenceViewHeaderWidget::displayPronunciationLabels(const EntryPhoneticOptions options)
 {
     switch (options) {
-        case EntryPhoneticOptions::PREFER_JYUTPING: {
+        case EntryPhoneticOptions::PREFER_CANTONESE: {
             _sentenceHeaderLayout->addWidget(_jyutpingLabel, 3, 0, 1, 1, Qt::AlignTop);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
             _sentenceHeaderLayout->addWidget(_jyutpingTTS, 3, 1, 1, 1, Qt::AlignTop);
@@ -361,7 +361,7 @@ void SentenceViewHeaderWidget::displayPronunciationLabels(const EntryPhoneticOpt
             _pinyinPronunciation->setVisible(true);
             break;
         }
-        case EntryPhoneticOptions::PREFER_PINYIN: {
+        case EntryPhoneticOptions::PREFER_MANDARIN: {
             _sentenceHeaderLayout->addWidget(_pinyinLabel, 3, 0, 1, 1, Qt::AlignTop);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
             _sentenceHeaderLayout->addWidget(_pinyinTTS, 3, 1, 1, 1, Qt::AlignTop);
@@ -388,7 +388,7 @@ void SentenceViewHeaderWidget::displayPronunciationLabels(const EntryPhoneticOpt
             _jyutpingPronunciation->setVisible(true);
             break;
         }
-        case EntryPhoneticOptions::ONLY_JYUTPING: {
+        case EntryPhoneticOptions::ONLY_CANTONESE: {
             _jyutpingLabel->setVisible(true);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
             _jyutpingTTS->setVisible(true);
@@ -401,7 +401,7 @@ void SentenceViewHeaderWidget::displayPronunciationLabels(const EntryPhoneticOpt
             _pinyinPronunciation->setVisible(false);
             break;
         }
-        case EntryPhoneticOptions::ONLY_PINYIN: {
+        case EntryPhoneticOptions::ONLY_MANDARIN: {
             _jyutpingLabel->setVisible(false);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
             _jyutpingTTS->setVisible(false);

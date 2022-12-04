@@ -194,7 +194,7 @@ void SentenceContentWidget::setSourceSentenceVector(
             Settings::getSettings()
                 ->value("phoneticOptions",
                         QVariant::fromValue(
-                            EntryPhoneticOptions::PREFER_JYUTPING))
+                            EntryPhoneticOptions::PREFER_CANTONESE))
                 .value<EntryPhoneticOptions>(),
             Settings::getSettings()
                 ->value("characterOptions",
@@ -391,9 +391,9 @@ void SentenceContentWidget::addLabelsToLayout(
     // TODO: Fix this so you can select Yale
     // Add the first phonetic label
     switch (phoneticOptions) {
-    case EntryPhoneticOptions::ONLY_JYUTPING:
+    case EntryPhoneticOptions::ONLY_CANTONESE:
         pinyinLabel->setVisible(false);
-    case EntryPhoneticOptions::PREFER_JYUTPING:
+    case EntryPhoneticOptions::PREFER_CANTONESE:
         if (jyutpingLabel->text().isEmpty()) {
             jyutpingLabel->setVisible(false);
             break;
@@ -405,9 +405,9 @@ void SentenceContentWidget::addLabelsToLayout(
                           -1,
                           Qt::AlignTop);
         break;
-    case EntryPhoneticOptions::ONLY_PINYIN:
+    case EntryPhoneticOptions::ONLY_MANDARIN:
         jyutpingLabel->setVisible(false);
-    case EntryPhoneticOptions::PREFER_PINYIN:
+    case EntryPhoneticOptions::PREFER_MANDARIN:
         if (pinyinLabel->text().isEmpty()) {
             pinyinLabel->setVisible(false);
             break;
@@ -423,7 +423,7 @@ void SentenceContentWidget::addLabelsToLayout(
 
     // Add the second phonetic label (if applicable)
     switch (phoneticOptions) {
-    case EntryPhoneticOptions::PREFER_JYUTPING:
+    case EntryPhoneticOptions::PREFER_CANTONESE:
         if (pinyinLabel->text().isEmpty()) {
             pinyinLabel->setVisible(false);
             break;
@@ -435,7 +435,7 @@ void SentenceContentWidget::addLabelsToLayout(
                           -1,
                           Qt::AlignTop);
         break;
-    case EntryPhoneticOptions::PREFER_PINYIN:
+    case EntryPhoneticOptions::PREFER_MANDARIN:
         if (jyutpingLabel->text().isEmpty()) {
             jyutpingLabel->setVisible(false);
             break;

@@ -13,12 +13,11 @@
 
 // An enum that tells how to show the phonetic guide of an entry
 
-// TODO: Convert settings from this to CantoneseOptions and MandarinOptions
 enum class EntryPhoneticOptions : int {
-    ONLY_JYUTPING,
-    ONLY_PINYIN,
-    PREFER_JYUTPING,
-    PREFER_PINYIN,
+    ONLY_CANTONESE,
+    ONLY_MANDARIN,
+    PREFER_CANTONESE,
+    PREFER_MANDARIN,
 };
 
 enum class EntryColourPhoneticType : int {

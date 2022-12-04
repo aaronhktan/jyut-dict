@@ -70,7 +70,7 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     phoneticOptions = _settings
                           ->value("phoneticOptions",
                                   QVariant::fromValue(
-                                      EntryPhoneticOptions::PREFER_JYUTPING))
+                                      EntryPhoneticOptions::PREFER_CANTONESE))
                           .value<EntryPhoneticOptions>();
     cantoneseOptions = _settings
                           ->value("cantoneseOptions",

@@ -277,18 +277,18 @@ std::string Entry::getPhonetic(EntryPhoneticOptions options,
                                MandarinOptions mandarinOptions) const
 {
     switch (options) {
-        case EntryPhoneticOptions::ONLY_JYUTPING: {
+        case EntryPhoneticOptions::ONLY_CANTONESE: {
             return getCantonesePhonetic(cantoneseOptions);
         }
-        case EntryPhoneticOptions::ONLY_PINYIN: {
+        case EntryPhoneticOptions::ONLY_MANDARIN: {
             return getMandarinPhonetic(mandarinOptions);
         }
-        case EntryPhoneticOptions::PREFER_JYUTPING: {
+        case EntryPhoneticOptions::PREFER_CANTONESE: {
             std::string jyutping = getCantonesePhonetic(cantoneseOptions);
             std::string pinyin = getMandarinPhonetic(mandarinOptions);
             return jyutping + " (" + pinyin + ")";
         }
-        case EntryPhoneticOptions::PREFER_PINYIN: {
+        case EntryPhoneticOptions::PREFER_MANDARIN: {
             std::string jyutping = getCantonesePhonetic(cantoneseOptions);
             std::string pinyin = getMandarinPhonetic(mandarinOptions);
             return pinyin + " (" + jyutping + ")";

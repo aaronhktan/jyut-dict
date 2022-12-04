@@ -63,19 +63,81 @@ void SettingsTab::setupUI()
         QComboBox::AdjustToContents);
     initializeCharacterComboBox(*_characterCombobox);
 
-    _cantonesePronunciationLayout = new QVBoxLayout{this};
-    _enableJyutpingDisplay = new QCheckBox{this};
-    _enableJyutpingDisplay->setTristate(false);
-    _enableYaleDisplay = new QCheckBox{this};
-    _enableYaleDisplay->setTristate(false);
-    initializeCantonesePronunciationLayout(*_cantonesePronunciationLayout);
+    QFrame *_searchResultsDivider = new QFrame{this};
+    _searchResultsDivider->setObjectName("divider");
+    _searchResultsDivider->setFrameShape(QFrame::HLine);
+    _searchResultsDivider->setFrameShadow(QFrame::Raised);
+    _searchResultsDivider->setFixedHeight(1);
 
-    _mandarinPronunciationLayout = new QVBoxLayout{this};
-    _enablePinyinDisplay = new QCheckBox{this};
-    _enablePinyinDisplay->setTristate(false);
-    _enableRawPinyinDisplay = new QCheckBox{this};
-    _enableRawPinyinDisplay->setTristate(false);
-    initializeMandarinPronunciationLayout(*_mandarinPronunciationLayout);
+    _searchResultsPhoneticCombobox = new QComboBox{this};
+    _searchResultsPhoneticCombobox->setSizeAdjustPolicy(
+        QComboBox::AdjustToContents);
+    initializePhoneticComboBox(*_searchResultsPhoneticCombobox);
+
+    _searchResultsCantonesePronunciation = new QWidget{this};
+    _searchResultsCantonesePronunciationLayout = new QHBoxLayout{
+        _searchResultsCantonesePronunciation};
+    _searchResultsCantonesePronunciationLayout->setContentsMargins(0, 0, 0, 0);
+    _searchResultsJyutping = new QRadioButton{this};
+    _searchResultsJyutping->setProperty("data",
+                                        QVariant::fromValue(
+                                            CantoneseOptions::RAW_JYUTPING));
+    _searchResultsYale = new QRadioButton{this};
+    _searchResultsYale->setProperty("data",
+                                    QVariant::fromValue(
+                                        CantoneseOptions::PRETTY_YALE));
+    initializeSearchResultsCantonesePronunciation(
+        *_searchResultsCantonesePronunciation);
+
+    _searchResultsMandarinPronunciation = new QWidget{this};
+    _searchResultsMandarinPronunciationLayout = new QHBoxLayout{
+        _searchResultsMandarinPronunciation};
+    _searchResultsMandarinPronunciationLayout->setContentsMargins(0, 0, 0, 0);
+    _searchResultsPinyin = new QRadioButton{this};
+    _searchResultsPinyin->setProperty("data",
+                                      QVariant::fromValue(
+                                          MandarinOptions::PRETTY_PINYIN));
+    _searchResultsRawPinyin = new QRadioButton{this};
+    _searchResultsRawPinyin->setProperty("data",
+                                         QVariant::fromValue(
+                                             MandarinOptions::RAW_PINYIN));
+    initializeSearchResultsMandarinPronunciation(
+        *_searchResultsMandarinPronunciation);
+
+    QFrame *_entryDivider = new QFrame{this};
+    _entryDivider->setObjectName("divider");
+    _entryDivider->setFrameShape(QFrame::HLine);
+    _entryDivider->setFrameShadow(QFrame::Raised);
+    _entryDivider->setFixedHeight(1);
+
+    _entryCantonesePronunciation = new QWidget{this};
+    _entryCantonesePronunciationLayout = new QVBoxLayout{
+        _entryCantonesePronunciation};
+    _entryJyutping = new QCheckBox{this};
+    _entryJyutping->setTristate(false);
+    _entryJyutping->setProperty("data",
+                                QVariant::fromValue(
+                                    CantoneseOptions::RAW_JYUTPING));
+    _entryYale = new QCheckBox{this};
+    _entryYale->setTristate(false);
+    _entryYale->setProperty("data",
+                            QVariant::fromValue(CantoneseOptions::PRETTY_YALE));
+    initializeEntryCantonesePronunciation(*_entryCantonesePronunciation);
+
+    _entryMandarinPronunciation = new QWidget{this};
+    _entryMandarinPronunciationLayout = new QVBoxLayout{
+        _entryMandarinPronunciation};
+    _entryPinyin = new QCheckBox{this};
+    _entryPinyin->setTristate(false);
+    _entryPinyin->setProperty("data",
+                              QVariant::fromValue(
+                                  MandarinOptions::PRETTY_PINYIN));
+    _entryRawPinyin = new QCheckBox{this};
+    _entryRawPinyin->setTristate(false);
+    _entryRawPinyin->setProperty("data",
+                                 QVariant::fromValue(
+                                     MandarinOptions::RAW_PINYIN));
+    initializeEntryMandarinPronunciation(*_entryMandarinPronunciation);
 
     QFrame *_divider = new QFrame{this};
     _divider->setObjectName("divider");
@@ -103,8 +165,17 @@ void SettingsTab::setupUI()
     initializeResetButton(*_resetButton);
 
     _tabLayout->addRow(" ", _characterCombobox);
-    _tabLayout->addRow(" ", _cantonesePronunciationLayout);
-    _tabLayout->addRow(" ", _mandarinPronunciationLayout);
+
+    _tabLayout->addRow(_searchResultsDivider);
+
+    _tabLayout->addRow(" ", _searchResultsPhoneticCombobox);
+    _tabLayout->addRow(" ", _searchResultsCantonesePronunciation);
+    _tabLayout->addRow(" ", _searchResultsMandarinPronunciation);
+
+    _tabLayout->addRow(_entryDivider);
+
+    _tabLayout->addRow(" ", _entryCantonesePronunciation);
+    _tabLayout->addRow(" ", _entryMandarinPronunciation);
 
     _tabLayout->addRow(_divider);
 
@@ -133,32 +204,47 @@ void SettingsTab::translateUI()
         button->style()->polish(button);
     }
 
+    static_cast<QLabel *>(_tabLayout->labelForField(_characterCombobox))
+        ->setText(tr("Show simplified/traditional characters:"));
     _characterCombobox->setItemText(0, tr("Only Simplified"));
     _characterCombobox->setItemText(1, tr("Only Traditional"));
     _characterCombobox->setItemText(2, tr("Both, Prefer Simplified"));
     _characterCombobox->setItemText(3, tr("Both, Prefer Traditional"));
 
-    _colourCombobox->setItemText(0, tr("No colours"));
-    _colourCombobox->setItemText(1, tr("Cantonese"));
-    _colourCombobox->setItemText(2, tr("Mandarin"));
-
-    static_cast<QLabel *>(_tabLayout->labelForField(_characterCombobox))
-        ->setText(tr("Simplified/Traditional character display:"));
+    static_cast<QLabel *>(
+        _tabLayout->labelForField(_searchResultsPhoneticCombobox))
+        ->setText(tr("Show pronunciation in search results for:"));
+    _searchResultsPhoneticCombobox->setItemText(0, tr("Only Cantonese"));
+    _searchResultsPhoneticCombobox->setItemText(1, tr("Only Mandarin"));
+    _searchResultsPhoneticCombobox->setItemText(2, tr("Both, Prefer Cantonese"));
+    _searchResultsPhoneticCombobox->setItemText(3, tr("Both, Prefer Mandarin"));
+    static_cast<QLabel *>(
+        _tabLayout->labelForField(_searchResultsCantonesePronunciation))
+        ->setText(tr("In search results, show Cantonese:"));
+    _searchResultsJyutping->setText(tr("Jyutping"));
+    _searchResultsYale->setText(tr("Yale"));
+    static_cast<QLabel *>(
+        _tabLayout->labelForField(_searchResultsMandarinPronunciation))
+        ->setText(tr("In search results, show Mandarin:"));
+    _searchResultsPinyin->setText(tr("Pinyin"));
+    _searchResultsRawPinyin->setText(tr("Pinyin with digits"));
 
     static_cast<QLabel *>(
-        _tabLayout->labelForField(_cantonesePronunciationLayout))
-        ->setText(tr("Cantonese pronunciation display:"));
-    _enableJyutpingDisplay->setText(tr("Jyutping"));
-    _enableYaleDisplay->setText(tr("Yale"));
-
+        _tabLayout->labelForField(_entryCantonesePronunciation))
+        ->setText(tr("When viewing entry, show Cantonese:"));
+    _entryJyutping->setText(tr("Jyutping"));
+    _entryYale->setText(tr("Yale"));
     static_cast<QLabel *>(
-        _tabLayout->labelForField(_mandarinPronunciationLayout))
-        ->setText(tr("Mandarin pronunciation display:"));
-    _enablePinyinDisplay->setText(tr("Pinyin"));
-    _enableRawPinyinDisplay->setText(tr("Pinyin with digits"));
+        _tabLayout->labelForField(_entryMandarinPronunciation))
+        ->setText(tr("When viewing entry, show Mandarin:"));
+    _entryPinyin->setText(tr("Pinyin"));
+    _entryRawPinyin->setText(tr("Pinyin with digits"));
 
     static_cast<QLabel *>(_tabLayout->labelForField(_colourCombobox))
-        ->setText(tr("Colour words by tone using:"));
+        ->setText(tr("Colour characters by tone using:"));
+    _colourCombobox->setItemText(0, tr("No Colours"));
+    _colourCombobox->setItemText(1, tr("Cantonese"));
+    _colourCombobox->setItemText(2, tr("Mandarin"));
     static_cast<QLabel *>(_tabLayout->labelForField(_jyutpingColourWidget))
         ->setText(tr("Cantonese tone colours:"));
     static_cast<QLabel *>(_tabLayout->labelForField(_pinyinColourWidget))
@@ -229,16 +315,16 @@ void SettingsTab::initializeCharacterComboBox(QComboBox &characterCombobox)
 {
     characterCombobox.addItem("0",
                               QVariant::fromValue<EntryPhoneticOptions>(
-                                  EntryPhoneticOptions::ONLY_JYUTPING));
+                                  EntryPhoneticOptions::ONLY_CANTONESE));
     characterCombobox.addItem("1",
                               QVariant::fromValue<EntryPhoneticOptions>(
-                                  EntryPhoneticOptions::ONLY_PINYIN));
+                                  EntryPhoneticOptions::ONLY_MANDARIN));
     characterCombobox.addItem("2",
                               QVariant::fromValue<EntryPhoneticOptions>(
-                                  EntryPhoneticOptions::PREFER_JYUTPING));
+                                  EntryPhoneticOptions::PREFER_CANTONESE));
     characterCombobox.addItem("3",
                               QVariant::fromValue<EntryPhoneticOptions>(
-                                  EntryPhoneticOptions::PREFER_PINYIN));
+                                  EntryPhoneticOptions::PREFER_MANDARIN));
 
     setCharacterComboBoxDefault(characterCombobox);
 
@@ -252,25 +338,98 @@ void SettingsTab::initializeCharacterComboBox(QComboBox &characterCombobox)
             });
 }
 
-void SettingsTab::initializeCantonesePronunciationLayout(
-    QVBoxLayout &cantonesePronunciationLayout)
+void SettingsTab::initializePhoneticComboBox(QComboBox &phoneticCombobox)
 {
-    cantonesePronunciationLayout.addWidget(_enableJyutpingDisplay);
-    cantonesePronunciationLayout.addWidget(_enableYaleDisplay);
+    phoneticCombobox.addItem("0",
+                             QVariant::fromValue<EntryPhoneticOptions>(
+                                 EntryPhoneticOptions::ONLY_CANTONESE));
+    phoneticCombobox.addItem("1",
+                             QVariant::fromValue<EntryPhoneticOptions>(
+                                 EntryPhoneticOptions::ONLY_MANDARIN));
+    phoneticCombobox.addItem("2",
+                             QVariant::fromValue<EntryPhoneticOptions>(
+                                 EntryPhoneticOptions::PREFER_CANTONESE));
+    phoneticCombobox.addItem("3",
+                             QVariant::fromValue<EntryPhoneticOptions>(
+                                 EntryPhoneticOptions::PREFER_MANDARIN));
 
-    connect(_enableJyutpingDisplay, &QCheckBox::stateChanged, this, [&]() {
+    setPhoneticComboBoxDefault(phoneticCombobox);
+
+    connect(&phoneticCombobox,
+            QOverload<int>::of(&QComboBox::activated),
+            this,
+            [&](int index) {
+                _settings->setValue("phoneticOptions",
+                                    phoneticCombobox.itemData(index));
+                _settings->sync();
+            });
+}
+
+void SettingsTab::initializeSearchResultsCantonesePronunciation(
+    QWidget &cantonesePronunciationWidget)
+{
+    cantonesePronunciationWidget.layout()->addWidget(_searchResultsJyutping);
+    cantonesePronunciationWidget.layout()->addWidget(_searchResultsYale);
+
+    connect(_searchResultsJyutping, &QRadioButton::clicked, this, [&]() {
+        _settings->setValue("SearchResults/cantonesePronunciationOptions",
+                            QVariant::fromValue<CantoneseOptions>(
+                                CantoneseOptions::RAW_JYUTPING));
+        _settings->sync();
+    });
+
+    connect(_searchResultsYale, &QRadioButton::clicked, this, [&]() {
+        _settings->setValue("SearchResults/cantonesePronunciationOptions",
+                            QVariant::fromValue<CantoneseOptions>(
+                                CantoneseOptions::PRETTY_YALE));
+        _settings->sync();
+    });
+
+    setSearchResultsCantonesePronunciationDefault(cantonesePronunciationWidget);
+}
+
+void SettingsTab::initializeSearchResultsMandarinPronunciation(
+    QWidget &mandarinPronunciationWidget)
+{
+    mandarinPronunciationWidget.layout()->addWidget(_searchResultsPinyin);
+    mandarinPronunciationWidget.layout()->addWidget(_searchResultsRawPinyin);
+
+    connect(_searchResultsPinyin, &QRadioButton::clicked, this, [&]() {
+        _settings->setValue("SearchResults/mandarinPronunciationOptions",
+                            QVariant::fromValue<MandarinOptions>(
+                                MandarinOptions::PRETTY_PINYIN));
+        _settings->sync();
+    });
+
+    connect(_searchResultsRawPinyin, &QRadioButton::clicked, this, [&]() {
+        _settings->setValue("SearchResults/mandarinPronunciationOptions",
+                            QVariant::fromValue<MandarinOptions>(
+                                MandarinOptions::RAW_PINYIN));
+        _settings->sync();
+    });
+
+    setSearchResultsMandarinPronunciationDefault(mandarinPronunciationWidget);
+}
+
+void SettingsTab::initializeEntryCantonesePronunciation(
+    QWidget &cantonesePronunciationWidget)
+{
+    cantonesePronunciationWidget.layout()->addWidget(_entryJyutping);
+    cantonesePronunciationWidget.layout()->addWidget(_entryYale);
+
+    connect(_entryJyutping, &QCheckBox::stateChanged, this, [&]() {
         CantoneseOptions options
             = _settings
-                  ->value("cantonesePronunciationOptions",
+                  ->value("Entry/cantonesePronunciationOptions",
                           QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
                   .value<CantoneseOptions>();
 
-        if (_enableJyutpingDisplay->isChecked()) {
-            _settings->setValue("cantonesePronunciationOptions",
+        if (_entryJyutping->isChecked()) {
+            _settings->setValue("Entry/cantonesePronunciationOptions",
                                 QVariant::fromValue<CantoneseOptions>(
                                     options | CantoneseOptions::RAW_JYUTPING));
         } else {
-            _settings->setValue("cantonesePronunciationOptions",
+            _settings->setValue("Entry/cantonesePronunciationOptions",
                                 QVariant::fromValue<CantoneseOptions>(
                                     options
                                     & ~(CantoneseOptions::RAW_JYUTPING)));
@@ -278,19 +437,19 @@ void SettingsTab::initializeCantonesePronunciationLayout(
         _settings->sync();
     });
 
-    connect(_enableYaleDisplay, &QCheckBox::stateChanged, this, [&]() {
+    connect(_entryYale, &QCheckBox::stateChanged, this, [&]() {
         CantoneseOptions options
             = _settings
-                  ->value("cantonesePronunciationOptions",
+                  ->value("Entry/cantonesePronunciationOptions",
                           QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
                   .value<CantoneseOptions>();
 
-        if (_enableYaleDisplay->isChecked()) {
-            _settings->setValue("cantonesePronunciationOptions",
+        if (_entryYale->isChecked()) {
+            _settings->setValue("Entry/cantonesePronunciationOptions",
                                 QVariant::fromValue<CantoneseOptions>(
                                     options | CantoneseOptions::PRETTY_YALE));
         } else {
-            _settings->setValue("cantonesePronunciationOptions",
+            _settings->setValue("Entry/cantonesePronunciationOptions",
                                 QVariant::fromValue<CantoneseOptions>(
                                     options
                                     & ~(CantoneseOptions::PRETTY_YALE)));
@@ -298,28 +457,28 @@ void SettingsTab::initializeCantonesePronunciationLayout(
         _settings->sync();
     });
 
-    setCantonesePronunciationDefault();
+    setEntryCantonesePronunciationDefault(cantonesePronunciationWidget);
 }
 
-void SettingsTab::initializeMandarinPronunciationLayout(
-    QVBoxLayout &mandarinPronunciationLayout)
+void SettingsTab::initializeEntryMandarinPronunciation(
+    QWidget &mandarinPronunciationWidget)
 {
-    mandarinPronunciationLayout.addWidget(_enablePinyinDisplay);
-    mandarinPronunciationLayout.addWidget(_enableRawPinyinDisplay);
+    mandarinPronunciationWidget.layout()->addWidget(_entryPinyin);
+    mandarinPronunciationWidget.layout()->addWidget(_entryRawPinyin);
 
-    connect(_enablePinyinDisplay, &QCheckBox::stateChanged, this, [&]() {
+    connect(_entryPinyin, &QCheckBox::stateChanged, this, [&]() {
         MandarinOptions options
             = _settings
-                  ->value("mandarinPronunciationOptions",
+                  ->value("Entry/mandarinPronunciationOptions",
                           QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
                   .value<MandarinOptions>();
 
-        if (_enablePinyinDisplay->isChecked()) {
-            _settings->setValue("mandarinPronunciationOptions",
+        if (_entryPinyin->isChecked()) {
+            _settings->setValue("Entry/mandarinPronunciationOptions",
                                 QVariant::fromValue<MandarinOptions>(
                                     options | MandarinOptions::PRETTY_PINYIN));
         } else {
-            _settings->setValue("mandarinPronunciationOptions",
+            _settings->setValue("Entry/mandarinPronunciationOptions",
                                 QVariant::fromValue<MandarinOptions>(
                                     options
                                     & ~(MandarinOptions::PRETTY_PINYIN)));
@@ -327,19 +486,19 @@ void SettingsTab::initializeMandarinPronunciationLayout(
         _settings->sync();
     });
 
-    connect(_enableRawPinyinDisplay, &QCheckBox::stateChanged, this, [&]() {
+    connect(_entryRawPinyin, &QCheckBox::stateChanged, this, [&]() {
         MandarinOptions options
             = _settings
-                  ->value("mandarinPronunciationOptions",
-                          QVariant::fromValue(MandarinOptions::RAW_PINYIN))
+                  ->value("Entry/mandarinPronunciationOptions",
+                          QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
                   .value<MandarinOptions>();
 
-        if (_enableRawPinyinDisplay->isChecked()) {
-            _settings->setValue("mandarinPronunciationOptions",
+        if (_entryRawPinyin->isChecked()) {
+            _settings->setValue("Entry/mandarinPronunciationOptions",
                                 QVariant::fromValue<MandarinOptions>(
                                     options | MandarinOptions::RAW_PINYIN));
         } else {
-            _settings->setValue("mandarinPronunciationOptions",
+            _settings->setValue("Entry/mandarinPronunciationOptions",
                                 QVariant::fromValue<MandarinOptions>(
                                     options
                                     & ~(MandarinOptions::RAW_PINYIN)));
@@ -347,7 +506,7 @@ void SettingsTab::initializeMandarinPronunciationLayout(
         _settings->sync();
     });
 
-    setMandarinPronunciationDefault();
+    setEntryMandarinPronunciationDefault(mandarinPronunciationWidget);
 }
 
 void SettingsTab::initializeColourComboBox(QComboBox &colourCombobox)
@@ -539,8 +698,16 @@ void SettingsTab::resetSettings(QSettings &settings)
     Settings::pinyinToneColours = Settings::defaultPinyinToneColours;
 
     setCharacterComboBoxDefault(*_characterCombobox);
-    setCantonesePronunciationDefault();
-    setMandarinPronunciationDefault();
+
+    setPhoneticComboBoxDefault(*_searchResultsPhoneticCombobox);
+    setSearchResultsCantonesePronunciationDefault(
+        *_searchResultsCantonesePronunciation);
+    setSearchResultsMandarinPronunciationDefault(
+        *_searchResultsMandarinPronunciation);
+
+    setEntryCantonesePronunciationDefault(*_entryCantonesePronunciation);
+    setEntryMandarinPronunciationDefault(*_entryMandarinPronunciation);
+
     setColourComboBoxDefault(*_colourCombobox);
     setJyutpingColourWidgetDefault(*_jyutpingColourWidget);
     setPinyinColourWidgetDefault(*_pinyinColourWidget);
@@ -554,41 +721,92 @@ void SettingsTab::setCharacterComboBoxDefault(QComboBox &characterCombobox)
                              EntryCharactersOptions::PREFER_TRADITIONAL))));
 }
 
-void SettingsTab::setCantonesePronunciationDefault(void)
+void SettingsTab::setPhoneticComboBoxDefault(QComboBox &phoneticCombobox)
 {
-    // By default, show only Jyutping
-    _enableJyutpingDisplay->setChecked(
-        (_settings
-             ->value("cantonesePronunciationOptions",
-                     QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
-             .value<CantoneseOptions>()
-         & CantoneseOptions::RAW_JYUTPING)
-        == CantoneseOptions::RAW_JYUTPING);
-    _enableYaleDisplay->setChecked(
-        (_settings
-             ->value("cantonesePronunciationOptions",
-                     QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
-             .value<CantoneseOptions>()
-         & CantoneseOptions::PRETTY_YALE)
-        == CantoneseOptions::PRETTY_YALE);
+    phoneticCombobox.setCurrentIndex(phoneticCombobox.findData(
+        _settings->value("phoneticOptions",
+                         QVariant::fromValue(
+                             EntryPhoneticOptions::PREFER_CANTONESE))));
 }
 
-void SettingsTab::setMandarinPronunciationDefault(void)
+void SettingsTab::setSearchResultsCantonesePronunciationDefault(
+    QWidget &widget)
 {
-    _enablePinyinDisplay->setChecked(
-        (_settings
-             ->value("mandarinPronunciationOptions",
-                     QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
-             .value<MandarinOptions>()
-         & MandarinOptions::PRETTY_PINYIN)
-        == MandarinOptions::PRETTY_PINYIN);
-    _enableRawPinyinDisplay->setChecked(
-        (_settings
-             ->value("mandarinPronunciationOptions",
-                     QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
-             .value<MandarinOptions>()
-         & MandarinOptions::RAW_PINYIN)
-        == MandarinOptions::RAW_PINYIN);
+    CantoneseOptions lastSelected
+        = Settings::getSettings()
+              ->value("SearchResults/cantonesePronunciationOptions",
+                      QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
+              .value<CantoneseOptions>();
+
+    QList<QRadioButton *> buttons = widget.findChildren<QRadioButton *>();
+    foreach (const auto &button, buttons) {
+        if (button->property("data").value<CantoneseOptions>() == lastSelected) {
+            button->click();
+#ifdef Q_OS_MAC
+            // Makes the button selection show up correctly on macOS
+            button->setDown(true);
+#endif
+            break;
+        }
+    }
+}
+
+void SettingsTab::setSearchResultsMandarinPronunciationDefault(
+    QWidget &widget)
+{
+    MandarinOptions lastSelected
+        = Settings::getSettings()
+              ->value("SearchResults/mandarinPronunciationOptions",
+                      QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
+              .value<MandarinOptions>();
+
+    QList<QRadioButton *> buttons = widget.findChildren<QRadioButton *>();
+    foreach (const auto &button, buttons) {
+        if (button->property("data").value<MandarinOptions>() == lastSelected) {
+            button->click();
+#ifdef Q_OS_MAC
+            // Makes the button selection show up correctly on macOS
+            button->setDown(true);
+#endif
+            break;
+        }
+    }
+}
+
+void SettingsTab::setEntryCantonesePronunciationDefault(QWidget &widget)
+{
+    CantoneseOptions lastSelected
+        = Settings::getSettings()
+              ->value("Entry/cantonesePronunciationOptions",
+                      QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
+              .value<CantoneseOptions>();
+
+    QList<QCheckBox *> boxes = widget.findChildren<QCheckBox *>();
+    foreach (const auto &box, boxes) {
+        CantoneseOptions boxOption = box->property("data")
+                                         .value<CantoneseOptions>();
+        if ((lastSelected & boxOption) == boxOption) {
+            box->setChecked(true);
+        }
+    }
+}
+
+void SettingsTab::setEntryMandarinPronunciationDefault(QWidget &widget)
+{
+    MandarinOptions lastSelected
+        = Settings::getSettings()
+              ->value("Entry/mandarinPronunciationOptions",
+                      QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
+              .value<MandarinOptions>();
+
+    QList<QCheckBox *> boxes = widget.findChildren<QCheckBox *>();
+    foreach (const auto &box, boxes) {
+        MandarinOptions boxOption = box->property("data")
+                                        .value<MandarinOptions>();
+        if ((lastSelected & boxOption) == boxOption) {
+            box->setChecked(true);
+        }
+    }
 }
 
 void SettingsTab::setColourComboBoxDefault(QComboBox &colourCombobox)

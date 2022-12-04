@@ -11,6 +11,7 @@
 #include <QFormLayout>
 #include <QLabel>
 #include <QPushButton>
+#include <QRadioButton>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -49,8 +50,15 @@ private:
     void setStyle(bool use_dark);
 
     void initializeCharacterComboBox(QComboBox &characterCombobox);
-    void initializeCantonesePronunciationLayout(QVBoxLayout &cantonesePronunciationLayout);
-    void initializeMandarinPronunciationLayout(QVBoxLayout &mandarinPronunciationLayout);
+
+    void initializePhoneticComboBox(QComboBox &phoneticCombobox);
+    void initializeSearchResultsCantonesePronunciation(
+        QWidget &cantonesePronunciationWidget);
+    void initializeSearchResultsMandarinPronunciation(
+        QWidget &mandarinPronunciationWidget);
+
+    void initializeEntryCantonesePronunciation(QWidget &cantonesePronunciationWidget);
+    void initializeEntryMandarinPronunciation(QWidget &mandarinPronunciationWidget);
 
     void initializeColourComboBox(QComboBox &colourCombobox);
     void initializeJyutpingColourWidget(QWidget &jyutpingColourWidget);
@@ -66,8 +74,13 @@ private:
     void resetSettings(QSettings &settings);
 
     void setCharacterComboBoxDefault(QComboBox &characterCombobox);
-    void setCantonesePronunciationDefault(void);
-    void setMandarinPronunciationDefault(void);
+
+    void setPhoneticComboBoxDefault(QComboBox &phoneticCombobox);
+    void setSearchResultsCantonesePronunciationDefault(QWidget &widget);
+    void setSearchResultsMandarinPronunciationDefault(QWidget &widget);
+
+    void setEntryCantonesePronunciationDefault(QWidget &widget);
+    void setEntryMandarinPronunciationDefault(QWidget &widget);
 
     void setColourComboBoxDefault(QComboBox &colourCombobox);
     void setJyutpingColourWidgetDefault(QWidget &jyutpingColourWidget);
@@ -77,13 +90,25 @@ private:
 
     QComboBox *_characterCombobox;
 
-    QVBoxLayout *_cantonesePronunciationLayout;
-    QCheckBox *_enableJyutpingDisplay;
-    QCheckBox *_enableYaleDisplay;
+    QComboBox *_searchResultsPhoneticCombobox;
+    QWidget *_searchResultsCantonesePronunciation;
+    QHBoxLayout *_searchResultsCantonesePronunciationLayout;
+    QRadioButton *_searchResultsJyutping;
+    QRadioButton *_searchResultsYale;
+    QWidget *_searchResultsMandarinPronunciation;
+    QHBoxLayout *_searchResultsMandarinPronunciationLayout;
+    QRadioButton *_searchResultsPinyin;
+    QRadioButton *_searchResultsRawPinyin;
 
-    QVBoxLayout *_mandarinPronunciationLayout;
-    QCheckBox *_enablePinyinDisplay;
-    QCheckBox *_enableRawPinyinDisplay;
+    QWidget *_entryCantonesePronunciation;
+    QVBoxLayout *_entryCantonesePronunciationLayout;
+    QCheckBox *_entryJyutping;
+    QCheckBox *_entryYale;
+
+    QWidget *_entryMandarinPronunciation;
+    QVBoxLayout *_entryMandarinPronunciationLayout;
+    QCheckBox *_entryPinyin;
+    QCheckBox *_entryRawPinyin;
 
     QComboBox *_colourCombobox;
     QWidget *_jyutpingColourWidget;

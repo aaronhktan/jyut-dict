@@ -83,11 +83,11 @@ std::string SourceSentence::getPhonetic(EntryPhoneticOptions options,
                                         MandarinOptions mandarinOptions) const
 {
     switch (options) {
-    case EntryPhoneticOptions::ONLY_JYUTPING:
-    case EntryPhoneticOptions::PREFER_JYUTPING:
+    case EntryPhoneticOptions::ONLY_CANTONESE:
+    case EntryPhoneticOptions::PREFER_CANTONESE:
         return getCantonesePhonetic(cantoneseOptions);
-    case EntryPhoneticOptions::ONLY_PINYIN:
-    case EntryPhoneticOptions::PREFER_PINYIN:
+    case EntryPhoneticOptions::ONLY_MANDARIN:
+    case EntryPhoneticOptions::PREFER_MANDARIN:
         return getMandarinPhonetic(mandarinOptions);
     }
     return getCantonesePhonetic(cantoneseOptions);

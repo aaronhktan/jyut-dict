@@ -153,22 +153,22 @@ void DefinitionContentWidget::setEntry(const std::vector<Definition::Definition>
             switch (Settings::getSettings()
                         ->value("phoneticOptions",
                                 QVariant::fromValue(
-                                    EntryPhoneticOptions::PREFER_JYUTPING))
+                                    EntryPhoneticOptions::PREFER_CANTONESE))
                         .value<EntryPhoneticOptions>()) {
-            case EntryPhoneticOptions::ONLY_JYUTPING:
+            case EntryPhoneticOptions::ONLY_CANTONESE:
                 pronunciationText = cantonese;
                 break;
-            case EntryPhoneticOptions::PREFER_JYUTPING:
+            case EntryPhoneticOptions::PREFER_CANTONESE:
                 pronunciationText = cantonese
                                     + (cantonese.isEmpty() || mandarin.isEmpty()
                                            ? ""
                                            : "<br>")
                                     + mandarin;
                 break;
-            case EntryPhoneticOptions::ONLY_PINYIN:
+            case EntryPhoneticOptions::ONLY_MANDARIN:
                 pronunciationText = mandarin;
                 break;
-            case EntryPhoneticOptions::PREFER_PINYIN:
+            case EntryPhoneticOptions::PREFER_MANDARIN:
                 pronunciationText = mandarin
                                     + (cantonese.isEmpty() || mandarin.isEmpty()
                                            ? ""

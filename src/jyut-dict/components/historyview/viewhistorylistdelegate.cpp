@@ -62,7 +62,7 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
     bool use_colours = false;
     if (isEmptyEntry) {
         characterOptions = EntryCharactersOptions::ONLY_SIMPLIFIED;
-        phoneticOptions = EntryPhoneticOptions::ONLY_PINYIN;
+        phoneticOptions = EntryPhoneticOptions::ONLY_MANDARIN;
         mandarinOptions = MandarinOptions::RAW_PINYIN;
     } else {
         characterOptions
@@ -74,7 +74,7 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
         phoneticOptions = _settings
                               ->value("phoneticOptions",
                                       QVariant::fromValue(
-                                          EntryPhoneticOptions::PREFER_JYUTPING))
+                                          EntryPhoneticOptions::PREFER_CANTONESE))
                               .value<EntryPhoneticOptions>();
         mandarinOptions = _settings
                               ->value("mandarinOptions",
