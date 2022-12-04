@@ -2,6 +2,7 @@
 
 #include "logic/settings/settingsutils.h"
 #include "logic/strings/strings.h"
+#include "logic/utils/chineseutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -102,7 +103,11 @@ void EntryHeaderWidget::setEntry(const Entry &entry)
 
     _chinese = QString{entry.getSimplified().c_str()};
     _jyutping = QString{entry.getJyutping().c_str()};
-    _pinyin = QString{entry.getPinyin().c_str()};
+    // Pinyin by default follows CEDICT's convention of denoting "ü" with "u:",
+    // but most TTS systems denote that vowel with "v". To get the TTS systems
+    // to properly pronounce that word, we must convert "u:" to "v".
+    _pinyin = QString{
+        ChineseUtils::createPinyinWithV(entry.getPinyin()).c_str()};
 
     setStyle(Utils::isDarkMode());
     translateUI();
@@ -169,7 +174,7 @@ void EntryHeaderWidget::translateUI()
         } else if (label->objectName() == "yaleTypeLabel") {
             label->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                                        Strings::YALE_SHORT));
-        } else if (label->objectName() == "rawPinyinTypeLabel"
+        } else if (label->objectName() == "numberedPinyinTypeLabel"
                    || label->objectName() == "prettyPinyinTypeLabel") {
             label->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                                        Strings::PINYIN_SHORT));
@@ -323,10 +328,11 @@ void EntryHeaderWidget::displayPronunciationLabels(
         row++;
     }
 
-    if ((mandarinOptions & MandarinOptions::RAW_PINYIN)
-        == MandarinOptions::RAW_PINYIN) {
+    if ((mandarinOptions & MandarinOptions::NUMBERED_PINYIN)
+        == MandarinOptions::NUMBERED_PINYIN) {
         _pronunciationTypeLabels.emplace_back(new QLabel{this});
-        _pronunciationTypeLabels.back()->setObjectName("rawPinyinTypeLabel");
+        _pronunciationTypeLabels.back()->setObjectName(
+            "numberedPinyinTypeLabel");
         _entryHeaderLayout->addWidget(_pronunciationTypeLabels.back(),
                                       row,
                                       0,
@@ -337,7 +343,7 @@ void EntryHeaderWidget::displayPronunciationLabels(
 
         _pronunciationLabels.emplace_back(new QLabel{this});
         _pronunciationLabels.back()->setText(
-            entry.getMandarinPhonetic(MandarinOptions::RAW_PINYIN).c_str());
+            entry.getMandarinPhonetic(MandarinOptions::NUMBERED_PINYIN).c_str());
         _entryHeaderLayout->addWidget(_pronunciationLabels.back(), row, 2, 1, 1);
         _pronunciationLabels.back()->setVisible(true);
 

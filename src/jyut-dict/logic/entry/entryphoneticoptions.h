@@ -38,7 +38,7 @@ constexpr inline CantoneseOptions operator& (CantoneseOptions a, CantoneseOption
 constexpr inline CantoneseOptions operator^ (CantoneseOptions a, CantoneseOptions b) { return static_cast<CantoneseOptions>( static_cast<std::underlying_type<CantoneseOptions>::type>(a) ^ static_cast<std::underlying_type<CantoneseOptions>::type>(b) ); }
 
 enum class MandarinOptions : int {
-    RAW_PINYIN = (0x1 << 0),
+    NUMBERED_PINYIN = (0x1 << 0),
     PRETTY_PINYIN = (0x1 << 1),
 };
 

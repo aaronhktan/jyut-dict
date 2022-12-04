@@ -98,7 +98,7 @@ private:
     QWidget *_searchResultsMandarinPronunciation;
     QHBoxLayout *_searchResultsMandarinPronunciationLayout;
     QRadioButton *_searchResultsPinyin;
-    QRadioButton *_searchResultsRawPinyin;
+    QRadioButton *_searchResultsNumberedPinyin;
 
     QWidget *_entryCantonesePronunciation;
     QVBoxLayout *_entryCantonesePronunciationLayout;
@@ -108,7 +108,7 @@ private:
     QWidget *_entryMandarinPronunciation;
     QVBoxLayout *_entryMandarinPronunciationLayout;
     QCheckBox *_entryPinyin;
-    QCheckBox *_entryRawPinyin;
+    QCheckBox *_entryNumberedPinyin;
 
     QComboBox *_colourCombobox;
     QWidget *_jyutpingColourWidget;

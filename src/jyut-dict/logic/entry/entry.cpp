@@ -43,6 +43,8 @@ Entry::Entry(const Entry &entry)
     , _pinyin{entry._pinyin}
     , _prettyPinyin{entry._prettyPinyin}
     , _isPrettyPinyinValid{entry._isPrettyPinyinValid}
+    , _numberedPinyin{entry._numberedPinyin}
+    , _isNumberedPinyinValid{entry._isNumberedPinyinValid}
     , _definitions{entry._definitions}
     , _isWelcome{entry._isWelcome}
     , _isEmpty{entry._isEmpty}
@@ -66,6 +68,8 @@ Entry::Entry(Entry &&entry)
     , _pinyin{std::move(entry._pinyin)}
     , _prettyPinyin{std::move(entry._prettyPinyin)}
     , _isPrettyPinyinValid{entry._isPrettyPinyinValid}
+    , _numberedPinyin{std::move(entry._numberedPinyin)}
+    , _isNumberedPinyinValid{entry._isNumberedPinyinValid}
     , _definitions{std::move(entry._definitions)}
     , _isWelcome{entry._isWelcome}
     , _isEmpty{entry._isEmpty}
@@ -92,6 +96,8 @@ Entry &Entry::operator=(const Entry &entry)
     _pinyin = entry._pinyin;
     _prettyPinyin = entry._prettyPinyin;
     _isPrettyPinyinValid = entry._isPrettyPinyinValid;
+    _numberedPinyin = entry._numberedPinyin;
+    _isNumberedPinyinValid = entry._isNumberedPinyinValid;
     _definitions = entry._definitions;
     _isWelcome = entry._isWelcome;
     _isEmpty = entry._isEmpty;
@@ -119,6 +125,8 @@ Entry &Entry::operator=(Entry &&entry)
     _pinyin = std::move(entry._pinyin);
     _prettyPinyin = std::move(entry._prettyPinyin);
     _isPrettyPinyinValid = entry._isPrettyPinyinValid;
+    _numberedPinyin = std::move(entry._numberedPinyin);
+    _isNumberedPinyinValid = entry._isNumberedPinyinValid;
     _definitions = std::move(entry._definitions);
     _isWelcome = entry._isWelcome;
     _isEmpty = entry._isEmpty;
@@ -253,12 +261,18 @@ bool Entry::generatePhonetic(CantoneseOptions cantoneseOptions,
         _isPrettyPinyinValid = true;
     }
 
+    if ((mandarinOptions & MandarinOptions::NUMBERED_PINYIN)
+            == MandarinOptions::NUMBERED_PINYIN && !_isNumberedPinyinValid) {
+        _numberedPinyin = ChineseUtils::createNumberedPinyin(_pinyin);
+        _isNumberedPinyinValid = true;
+    }
+
     return true;
 }
 
 std::string Entry::getPhonetic(EntryPhoneticOptions options) const
 {
-    return getPhonetic(options, CantoneseOptions::RAW_JYUTPING, MandarinOptions::RAW_PINYIN);
+    return getPhonetic(options, CantoneseOptions::RAW_JYUTPING, MandarinOptions::NUMBERED_PINYIN);
 }
 
 std::string Entry::getPhonetic(EntryPhoneticOptions options, MandarinOptions mandarinOptions) const
@@ -269,7 +283,7 @@ std::string Entry::getPhonetic(EntryPhoneticOptions options, MandarinOptions man
 std::string Entry::getPhonetic(EntryPhoneticOptions options,
                                CantoneseOptions cantoneseOptions) const
 {
-    return getPhonetic(options, cantoneseOptions, MandarinOptions::RAW_PINYIN);
+    return getPhonetic(options, cantoneseOptions, MandarinOptions::NUMBERED_PINYIN);
 }
 
 std::string Entry::getPhonetic(EntryPhoneticOptions options,
@@ -300,12 +314,12 @@ std::string Entry::getPhonetic(EntryPhoneticOptions options,
 std::string Entry::getCantonesePhonetic(CantoneseOptions cantoneseOptions) const
 {
     switch (cantoneseOptions) {
-    case CantoneseOptions::PRETTY_YALE: {
-        return _yale;
-    }
-    case CantoneseOptions::RAW_JYUTPING:
-    default:
-        return _jyutping;
+        case CantoneseOptions::PRETTY_YALE: {
+            return _yale;
+        }
+        case CantoneseOptions::RAW_JYUTPING:
+        default:
+            return _jyutping;
     }
 }
 
@@ -314,7 +328,8 @@ std::string Entry::getMandarinPhonetic(MandarinOptions mandarinOptions) const
     switch (mandarinOptions) {
         case MandarinOptions::PRETTY_PINYIN:
             return _prettyPinyin;
-        case MandarinOptions::RAW_PINYIN:
+        case MandarinOptions::NUMBERED_PINYIN:
+            return _numberedPinyin;
         default:
             return _pinyin;
     }
@@ -323,6 +338,11 @@ std::string Entry::getMandarinPhonetic(MandarinOptions mandarinOptions) const
 std::string Entry::getJyutping(void) const
 {
     return _jyutping;
+}
+
+std::string Entry::getYale(void) const
+{
+    return _yale;
 }
 
 void Entry::setJyutping(const std::string &jyutping)
@@ -359,6 +379,11 @@ std::string Entry::getPinyin(void) const
 std::string Entry::getPrettyPinyin(void) const
 {
     return _prettyPinyin;
+}
+
+std::string Entry::getRawPinyin(void) const
+{
+    return _numberedPinyin;
 }
 
 void Entry::setPinyin(const std::string &pinyin)

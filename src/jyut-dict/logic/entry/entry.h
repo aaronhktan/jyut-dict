@@ -66,11 +66,13 @@ public:
     std::string getMandarinPhonetic(MandarinOptions mandarinOptions) const;
 
     std::string getJyutping(void) const;
+    std::string getYale(void) const;
     void setJyutping(const std::string &jyutping);
     std::vector<int> getJyutpingNumbers() const;
 
     std::string getPinyin(void) const;
     std::string getPrettyPinyin(void) const;
+    std::string getRawPinyin(void) const;
     void setPinyin(const std::string &pinyin);
     std::vector<int> getPinyinNumbers() const;
 
@@ -105,6 +107,8 @@ private:
     std::string _pinyin;
     std::string _prettyPinyin;
     bool _isPrettyPinyinValid = false;
+    std::string _numberedPinyin;
+    bool _isNumberedPinyinValid = false;
 
     std::vector<DefinitionsSet> _definitions;
 

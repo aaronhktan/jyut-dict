@@ -374,6 +374,60 @@ std::string createPrettyPinyin(const std::string &pinyin)
     return result;
 }
 
+std::string createNumberedPinyin(const std::string &pinyin)
+{
+    std::string result;
+
+    std::vector<std::string> syllables;
+    Utils::split(pinyin, ' ', syllables);
+    if (syllables.empty()) {
+        return pinyin;
+    }
+
+    for (auto &syllable : syllables) {
+        size_t location = syllable.find("u:");
+        while (location != std::string::npos) {
+            syllable.erase(location, 2);
+            syllable.insert(location, "ü");
+            location = syllable.find("u:");
+        }
+
+        result += syllable + " ";
+    }
+
+    // Remove trailing space
+    result.erase(result.end() - 1);
+
+    return result;
+}
+
+std::string createPinyinWithV(const std::string &pinyin)
+{
+    std::string result;
+
+    std::vector<std::string> syllables;
+    Utils::split(pinyin, ' ', syllables);
+    if (syllables.empty()) {
+        return pinyin;
+    }
+
+    for (auto &syllable : syllables) {
+        size_t location = syllable.find("u:");
+        while (location != std::string::npos) {
+            syllable.erase(location, 2);
+            syllable.insert(location, "v");
+            location = syllable.find("u:");
+        }
+
+        result += syllable + " ";
+    }
+
+    // Remove trailing space
+    result.erase(result.end() - 1);
+
+    return result;
+}
+
 std::string constructRomanisationQuery(const std::vector<std::string> &words,
                                        const char *delimiter,
                                        const bool surroundWithQuotes)

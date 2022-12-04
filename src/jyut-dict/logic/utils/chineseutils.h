@@ -49,6 +49,8 @@ std::string compareStrings(const std::string &original,
 std::string convertJyutpingToYale(const std::string &jyutping);
 
 std::string createPrettyPinyin(const std::string &pinyin);
+std::string createNumberedPinyin(const std::string &pinyin);
+std::string createPinyinWithV(const std::string &pinyin);
 
 // constructRomanisationQuery takes a vector of strings and stitches them
 // together with a delimiter.

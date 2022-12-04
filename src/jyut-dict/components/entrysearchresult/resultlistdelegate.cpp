@@ -68,7 +68,7 @@ void ResultListDelegate::paint(QPainter *painter,
     if (isWelcomeEntry || isEmptyEntry) {
         characterOptions = EntryCharactersOptions::ONLY_SIMPLIFIED;
         phoneticOptions = EntryPhoneticOptions::ONLY_MANDARIN;
-        mandarinOptions = MandarinOptions::RAW_PINYIN;
+        mandarinOptions = MandarinOptions::NUMBERED_PINYIN;
     } else {
         characterOptions
             = _settings

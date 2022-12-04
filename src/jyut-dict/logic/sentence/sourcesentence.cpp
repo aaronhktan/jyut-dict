@@ -109,7 +109,7 @@ std::string SourceSentence::getMandarinPhonetic(
     switch (mandarinOptions) {
     case MandarinOptions::PRETTY_PINYIN:
         return _prettyPinyin;
-    case MandarinOptions::RAW_PINYIN:
+    case MandarinOptions::NUMBERED_PINYIN:
     default:
         return _pinyin;
     }

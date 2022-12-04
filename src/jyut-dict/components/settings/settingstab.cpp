@@ -97,10 +97,10 @@ void SettingsTab::setupUI()
     _searchResultsPinyin->setProperty("data",
                                       QVariant::fromValue(
                                           MandarinOptions::PRETTY_PINYIN));
-    _searchResultsRawPinyin = new QRadioButton{this};
-    _searchResultsRawPinyin->setProperty("data",
+    _searchResultsNumberedPinyin = new QRadioButton{this};
+    _searchResultsNumberedPinyin->setProperty("data",
                                          QVariant::fromValue(
-                                             MandarinOptions::RAW_PINYIN));
+                                             MandarinOptions::NUMBERED_PINYIN));
     initializeSearchResultsMandarinPronunciation(
         *_searchResultsMandarinPronunciation);
 
@@ -134,11 +134,11 @@ void SettingsTab::setupUI()
     _entryPinyin->setProperty("data",
                               QVariant::fromValue(
                                   MandarinOptions::PRETTY_PINYIN));
-    _entryRawPinyin = new QCheckBox{this};
-    _entryRawPinyin->setTristate(false);
-    _entryRawPinyin->setProperty("data",
+    _entryNumberedPinyin = new QCheckBox{this};
+    _entryNumberedPinyin->setTristate(false);
+    _entryNumberedPinyin->setProperty("data",
                                  QVariant::fromValue(
-                                     MandarinOptions::RAW_PINYIN));
+                                     MandarinOptions::NUMBERED_PINYIN));
     initializeEntryMandarinPronunciation(*_entryMandarinPronunciation);
 
     QFrame *_divider = new QFrame{this};
@@ -229,7 +229,7 @@ void SettingsTab::translateUI()
         _tabLayout->labelForField(_searchResultsMandarinPronunciation))
         ->setText(tr("In search results, show Mandarin:"));
     _searchResultsPinyin->setText(tr("Pinyin"));
-    _searchResultsRawPinyin->setText(tr("Pinyin with digits"));
+    _searchResultsNumberedPinyin->setText(tr("Pinyin with digits"));
 
     static_cast<QLabel *>(
         _tabLayout->labelForField(_entryCantonesePronunciation))
@@ -240,7 +240,7 @@ void SettingsTab::translateUI()
         _tabLayout->labelForField(_entryMandarinPronunciation))
         ->setText(tr("When viewing entry, show Mandarin:"));
     _entryPinyin->setText(tr("Pinyin"));
-    _entryRawPinyin->setText(tr("Pinyin with digits"));
+    _entryNumberedPinyin->setText(tr("Pinyin with digits"));
 
     static_cast<QLabel *>(_tabLayout->labelForField(_colourCombobox))
         ->setText(tr("Colour characters by tone using:"));
@@ -394,7 +394,7 @@ void SettingsTab::initializeSearchResultsMandarinPronunciation(
     QWidget &mandarinPronunciationWidget)
 {
     mandarinPronunciationWidget.layout()->addWidget(_searchResultsPinyin);
-    mandarinPronunciationWidget.layout()->addWidget(_searchResultsRawPinyin);
+    mandarinPronunciationWidget.layout()->addWidget(_searchResultsNumberedPinyin);
 
     connect(_searchResultsPinyin, &QRadioButton::clicked, this, [&]() {
         _settings->setValue("SearchResults/mandarinPronunciationOptions",
@@ -403,10 +403,10 @@ void SettingsTab::initializeSearchResultsMandarinPronunciation(
         _settings->sync();
     });
 
-    connect(_searchResultsRawPinyin, &QRadioButton::clicked, this, [&]() {
+    connect(_searchResultsNumberedPinyin, &QRadioButton::clicked, this, [&]() {
         _settings->setValue("SearchResults/mandarinPronunciationOptions",
                             QVariant::fromValue<MandarinOptions>(
-                                MandarinOptions::RAW_PINYIN));
+                                MandarinOptions::NUMBERED_PINYIN));
         _settings->sync();
     });
 
@@ -466,7 +466,7 @@ void SettingsTab::initializeEntryMandarinPronunciation(
     QWidget &mandarinPronunciationWidget)
 {
     mandarinPronunciationWidget.layout()->addWidget(_entryPinyin);
-    mandarinPronunciationWidget.layout()->addWidget(_entryRawPinyin);
+    mandarinPronunciationWidget.layout()->addWidget(_entryNumberedPinyin);
 
     connect(_entryPinyin, &QCheckBox::stateChanged, this, [&]() {
         MandarinOptions options
@@ -488,22 +488,22 @@ void SettingsTab::initializeEntryMandarinPronunciation(
         _settings->sync();
     });
 
-    connect(_entryRawPinyin, &QCheckBox::stateChanged, this, [&]() {
+    connect(_entryNumberedPinyin, &QCheckBox::stateChanged, this, [&]() {
         MandarinOptions options
             = _settings
                   ->value("Entry/mandarinPronunciationOptions",
                           QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
                   .value<MandarinOptions>();
 
-        if (_entryRawPinyin->isChecked()) {
+        if (_entryNumberedPinyin->isChecked()) {
             _settings->setValue("Entry/mandarinPronunciationOptions",
                                 QVariant::fromValue<MandarinOptions>(
-                                    options | MandarinOptions::RAW_PINYIN));
+                                    options | MandarinOptions::NUMBERED_PINYIN));
         } else {
             _settings->setValue("Entry/mandarinPronunciationOptions",
                                 QVariant::fromValue<MandarinOptions>(
                                     options
-                                    & ~(MandarinOptions::RAW_PINYIN)));
+                                    & ~(MandarinOptions::NUMBERED_PINYIN)));
         }
         _settings->sync();
     });
