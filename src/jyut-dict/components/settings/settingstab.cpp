@@ -113,6 +113,7 @@ void SettingsTab::setupUI()
     _entryCantonesePronunciation = new QWidget{this};
     _entryCantonesePronunciationLayout = new QVBoxLayout{
         _entryCantonesePronunciation};
+    _entryCantonesePronunciationLayout->setContentsMargins(0, 0, 0, 0);
     _entryJyutping = new QCheckBox{this};
     _entryJyutping->setTristate(false);
     _entryJyutping->setProperty("data",
@@ -127,6 +128,7 @@ void SettingsTab::setupUI()
     _entryMandarinPronunciation = new QWidget{this};
     _entryMandarinPronunciationLayout = new QVBoxLayout{
         _entryMandarinPronunciation};
+    _entryMandarinPronunciationLayout->setContentsMargins(0, 0, 0, 0);
     _entryPinyin = new QCheckBox{this};
     _entryPinyin->setTristate(false);
     _entryPinyin->setProperty("data",

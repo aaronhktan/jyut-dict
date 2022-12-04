@@ -86,12 +86,19 @@ void EntryHeaderWidget::setEntry(const Entry &entry)
                 true)
             .c_str());
 
-    // TODO: Remove the hardcoded options here
+    CantoneseOptions cantoneseOptions
+        = Settings::getSettings()
+              ->value("Entry/cantonesePronunciationOptions",
+                      QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
+              .value<CantoneseOptions>();
+    MandarinOptions mandarinOptions
+        = Settings::getSettings()
+              ->value("Entry/mandarinPronunciationOptions",
+                      QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
+              .value<MandarinOptions>();
     displayPronunciationLabels(entry,
-                               CantoneseOptions::RAW_JYUTPING
-                                   | CantoneseOptions::PRETTY_YALE,
-                               MandarinOptions::RAW_PINYIN
-                                   | MandarinOptions::PRETTY_PINYIN);
+                               cantoneseOptions,
+                               mandarinOptions);
 
     _chinese = QString{entry.getSimplified().c_str()};
     _jyutping = QString{entry.getJyutping().c_str()};
@@ -358,6 +365,12 @@ void EntryHeaderWidget::clearPronunciationLabels(void)
         delete label;
     }
     _pronunciationLabels.clear();
+
+    _cantoneseTTS->setVisible(false);
+    _cantoneseTTSVisible = false;
+
+    _mandarinTTS->setVisible(false);
+    _mandarinTTSVisible = false;
 }
 
 void EntryHeaderWidget::showError(const QString &reason, const QString &description)
