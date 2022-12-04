@@ -68,7 +68,7 @@ void SentenceResultListDelegate::paint(QPainter *painter,
                           EntryCharactersOptions::PREFER_TRADITIONAL))
               .value<EntryCharactersOptions>();
     phoneticOptions = _settings
-                          ->value("phoneticOptions",
+                          ->value("SearchResults/phoneticOptions",
                                   QVariant::fromValue(
                                       EntryPhoneticOptions::PREFER_CANTONESE))
                           .value<EntryPhoneticOptions>();

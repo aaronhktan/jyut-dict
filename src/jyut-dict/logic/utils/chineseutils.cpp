@@ -288,7 +288,11 @@ std::string convertJyutpingToYale(const std::string &jyutping)
         yale << yale_syllable << " ";
     }
 
-    return yale.str();
+    // Remove trailing space
+    std::string result = yale.str();
+    result.erase(result.end() - 1);
+
+    return result;
 }
 
 std::string createPrettyPinyin(const std::string &pinyin)

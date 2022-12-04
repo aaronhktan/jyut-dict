@@ -31,9 +31,6 @@ void ResultListDelegate::paint(QPainter *painter,
     painter->save();
 
     Entry entry = qvariant_cast<Entry>(index.data());
-    // TODO: Generate pronunciations based on options
-    entry.generatePhonetic(CantoneseOptions::RAW_JYUTPING,
-                           MandarinOptions::PRETTY_PINYIN);
 
     bool isWelcomeEntry = entry.isWelcome();
     bool isEmptyEntry = entry.isEmpty();
@@ -63,12 +60,12 @@ void ResultListDelegate::paint(QPainter *painter,
 
     EntryCharactersOptions characterOptions;
     EntryPhoneticOptions phoneticOptions;
+    CantoneseOptions cantoneseOptions;
     MandarinOptions mandarinOptions;
     bool use_colours = false;
     if (isWelcomeEntry || isEmptyEntry) {
         characterOptions = EntryCharactersOptions::ONLY_SIMPLIFIED;
         phoneticOptions = EntryPhoneticOptions::ONLY_MANDARIN;
-        mandarinOptions = MandarinOptions::NUMBERED_PINYIN;
     } else {
         characterOptions
             = _settings
@@ -77,15 +74,21 @@ void ResultListDelegate::paint(QPainter *painter,
                               EntryCharactersOptions::PREFER_TRADITIONAL))
                   .value<EntryCharactersOptions>();
         phoneticOptions = _settings
-                              ->value("phoneticOptions",
+                              ->value("SearchResults/phoneticOptions",
                                       QVariant::fromValue(
                                           EntryPhoneticOptions::PREFER_CANTONESE))
                               .value<EntryPhoneticOptions>();
-        mandarinOptions = _settings
-                              ->value("mandarinOptions",
-                                      QVariant::fromValue(
-                                          MandarinOptions::PRETTY_PINYIN))
-                              .value<MandarinOptions>();
+        cantoneseOptions
+            = Settings::getSettings()
+                  ->value("SearchResults/cantonesePronunciationOptions",
+                          QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
+                  .value<CantoneseOptions>();
+        mandarinOptions
+            = Settings::getSettings()
+                  ->value("SearchResults/mandarinPronunciationOptions",
+                          QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
+                  .value<MandarinOptions>();
+        entry.generatePhonetic(cantoneseOptions, mandarinOptions);
 
         use_colours = !(option.state & QStyle::State_Selected);
     }
@@ -206,10 +209,13 @@ void ResultListDelegate::paint(QPainter *painter,
         painter->setFont(font);
         r = r.adjusted(0, 30, 0, 0);
         metrics = QFontMetrics(font);
-        QString phonetic = metrics.elidedText(
-            entry.getPhonetic(phoneticOptions, mandarinOptions).c_str(),
-            Qt::ElideRight,
-            r.width());
+        QString phonetic = metrics.elidedText(entry
+                                                  .getPhonetic(phoneticOptions,
+                                                               cantoneseOptions,
+                                                               mandarinOptions)
+                                                  .c_str(),
+                                              Qt::ElideRight,
+                                              r.width());
         painter->drawText(r, 0, phonetic, &boundingRect);
         r = r.adjusted(0, boundingRect.height(), 0, 0);
 

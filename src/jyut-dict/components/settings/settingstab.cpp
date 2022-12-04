@@ -361,7 +361,7 @@ void SettingsTab::initializePhoneticComboBox(QComboBox &phoneticCombobox)
             QOverload<int>::of(&QComboBox::activated),
             this,
             [&](int index) {
-                _settings->setValue("phoneticOptions",
+                _settings->setValue("SearchResults/phoneticOptions",
                                     phoneticCombobox.itemData(index));
                 _settings->sync();
             });
@@ -726,7 +726,7 @@ void SettingsTab::setCharacterComboBoxDefault(QComboBox &characterCombobox)
 void SettingsTab::setPhoneticComboBoxDefault(QComboBox &phoneticCombobox)
 {
     phoneticCombobox.setCurrentIndex(phoneticCombobox.findData(
-        _settings->value("phoneticOptions",
+        _settings->value("SearchResults/phoneticOptions",
                          QVariant::fromValue(
                              EntryPhoneticOptions::PREFER_CANTONESE))));
 }

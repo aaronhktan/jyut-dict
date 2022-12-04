@@ -192,7 +192,7 @@ void SentenceContentWidget::setSourceSentenceVector(
             _sentenceLabels[i],
             _sourceSentenceLanguage[i],
             Settings::getSettings()
-                ->value("phoneticOptions",
+                ->value("SearchResults/phoneticOptions",
                         QVariant::fromValue(
                             EntryPhoneticOptions::PREFER_CANTONESE))
                 .value<EntryPhoneticOptions>(),

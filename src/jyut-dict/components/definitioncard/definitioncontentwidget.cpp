@@ -151,7 +151,7 @@ void DefinitionContentWidget::setEntry(const std::vector<Definition::Definition>
                       .trimmed();
 
             switch (Settings::getSettings()
-                        ->value("phoneticOptions",
+                        ->value("SearchResults/phoneticOptions",
                                 QVariant::fromValue(
                                     EntryPhoneticOptions::PREFER_CANTONESE))
                         .value<EntryPhoneticOptions>()) {
