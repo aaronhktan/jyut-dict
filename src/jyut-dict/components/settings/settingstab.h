@@ -4,12 +4,14 @@
 #include "dialogs/resetsettingsdialog.h"
 #include "logic/settings/settingsutils.h"
 
+#include <QCheckBox>
 #include <QColor>
 #include <QComboBox>
 #include <QEvent>
 #include <QFormLayout>
 #include <QLabel>
 #include <QPushButton>
+#include <QVBoxLayout>
 #include <QWidget>
 
 #include <memory>
@@ -47,8 +49,8 @@ private:
     void setStyle(bool use_dark);
 
     void initializeCharacterComboBox(QComboBox &characterCombobox);
-    void initializePhoneticComboBox(QComboBox &phoneticCombobox);
-    void initializeMandarinComboBox(QComboBox &mandarinCombobox);
+    void initializeCantonesePronunciationLayout(QVBoxLayout &cantonesePronunciationLayout);
+    void initializeMandarinPronunciationLayout(QVBoxLayout &mandarinPronunciationLayout);
 
     void initializeColourComboBox(QComboBox &colourCombobox);
     void initializeJyutpingColourWidget(QWidget &jyutpingColourWidget);
@@ -64,8 +66,8 @@ private:
     void resetSettings(QSettings &settings);
 
     void setCharacterComboBoxDefault(QComboBox &characterCombobox);
-    void setPhoneticComboBoxDefault(QComboBox &phoneticCombobox);
-    void setMandarinComboBoxDefault(QComboBox &mandarinCombobox);
+    void setCantonesePronunciationDefault(void);
+    void setMandarinPronunciationDefault(void);
 
     void setColourComboBoxDefault(QComboBox &colourCombobox);
     void setJyutpingColourWidgetDefault(QWidget &jyutpingColourWidget);
@@ -74,8 +76,14 @@ private:
     bool _paletteRecentlyChanged = false;
 
     QComboBox *_characterCombobox;
-    QComboBox *_phoneticCombobox;
-    QComboBox *_mandarinCombobox;
+
+    QVBoxLayout *_cantonesePronunciationLayout;
+    QCheckBox *_enableJyutpingDisplay;
+    QCheckBox *_enableYaleDisplay;
+
+    QVBoxLayout *_mandarinPronunciationLayout;
+    QCheckBox *_enablePinyinDisplay;
+    QCheckBox *_enableRawPinyinDisplay;
 
     QComboBox *_colourCombobox;
     QWidget *_jyutpingColourWidget;

@@ -31,7 +31,9 @@ void ResultListDelegate::paint(QPainter *painter,
     painter->save();
 
     Entry entry = qvariant_cast<Entry>(index.data());
-    // TODO: Generate Pinyin and Yale here so they can be properly displayed
+    // TODO: Generate pronunciations based on options
+    entry.generatePhonetic(CantoneseOptions::RAW_JYUTPING,
+                           MandarinOptions::PRETTY_PINYIN);
 
     bool isWelcomeEntry = entry.isWelcome();
     bool isEmptyEntry = entry.isEmpty();
