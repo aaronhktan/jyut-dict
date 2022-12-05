@@ -141,7 +141,7 @@ void MainSplitter::prepareEntry(Entry &entry, bool addToHistory) const
     entry.refreshColours(
         Settings::getSettings()
             ->value("entryColourPhoneticType",
-                    QVariant::fromValue(EntryColourPhoneticType::JYUTPING))
+                    QVariant::fromValue(EntryColourPhoneticType::CANTONESE))
             .value<EntryColourPhoneticType>());
 
     CantoneseOptions cantoneseOptions

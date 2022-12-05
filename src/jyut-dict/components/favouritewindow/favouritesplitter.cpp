@@ -115,7 +115,7 @@ void FavouriteSplitter::prepareEntry(Entry &entry)
     entry.refreshColours(
         Settings::getSettings()
             ->value("entryColourPhoneticType",
-                    QVariant::fromValue(EntryColourPhoneticType::JYUTPING))
+                    QVariant::fromValue(EntryColourPhoneticType::CANTONESE))
             .value<EntryColourPhoneticType>());
 
     return;

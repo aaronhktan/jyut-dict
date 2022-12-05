@@ -518,10 +518,10 @@ void SettingsTab::initializeColourComboBox(QComboBox &colourCombobox)
                                EntryColourPhoneticType::NONE));
     colourCombobox.addItem("1",
                            QVariant::fromValue<EntryColourPhoneticType>(
-                               EntryColourPhoneticType::JYUTPING));
+                               EntryColourPhoneticType::CANTONESE));
     colourCombobox.addItem("2",
                            QVariant::fromValue<EntryColourPhoneticType>(
-                               EntryColourPhoneticType::PINYIN));
+                               EntryColourPhoneticType::MANDARIN));
 
     setColourComboBoxDefault(colourCombobox);
 
@@ -816,7 +816,7 @@ void SettingsTab::setColourComboBoxDefault(QComboBox &colourCombobox)
     colourCombobox.setCurrentIndex(colourCombobox.findData(
         _settings->value("entryColourPhoneticType",
                          QVariant::fromValue(
-                             EntryColourPhoneticType::JYUTPING))));
+                             EntryColourPhoneticType::CANTONESE))));
 }
 
 void SettingsTab::setJyutpingColourWidgetDefault(QWidget &jyutpingColourWidget)

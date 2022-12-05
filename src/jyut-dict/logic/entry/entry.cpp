@@ -314,12 +314,12 @@ std::string Entry::getPhonetic(EntryPhoneticOptions options,
 std::string Entry::getCantonesePhonetic(CantoneseOptions cantoneseOptions) const
 {
     switch (cantoneseOptions) {
-        case CantoneseOptions::PRETTY_YALE: {
-            return _yale;
-        }
-        case CantoneseOptions::RAW_JYUTPING:
-        default:
-            return _jyutping;
+    case CantoneseOptions::PRETTY_YALE: {
+        return _yale;
+    }
+    case CantoneseOptions::RAW_JYUTPING:
+    default:
+        return _jyutping;
     }
 }
 
@@ -381,7 +381,7 @@ std::string Entry::getPrettyPinyin(void) const
     return _prettyPinyin;
 }
 
-std::string Entry::getRawPinyin(void) const
+std::string Entry::getNumberedPinyin(void) const
 {
     return _numberedPinyin;
 }
@@ -443,11 +443,11 @@ void Entry::refreshColours(const EntryColourPhoneticType type)
         _colouredTraditionalDifference = _traditionalDifference;
         return;
     }
-    case EntryColourPhoneticType::JYUTPING: {
+    case EntryColourPhoneticType::CANTONESE: {
         tones = getJyutpingNumbers();
         break;
     }
-    case EntryColourPhoneticType::PINYIN: {
+    case EntryColourPhoneticType::MANDARIN: {
         tones = getPinyinNumbers();
         break;
     }

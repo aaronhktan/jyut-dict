@@ -18,7 +18,7 @@ std::string applyColours(
     const std::vector<int> &tones,
     const std::vector<std::string> &jyutpingToneColours,
     const std::vector<std::string> &pinyinToneColours,
-    const EntryColourPhoneticType type = EntryColourPhoneticType::JYUTPING);
+    const EntryColourPhoneticType type = EntryColourPhoneticType::CANTONESE);
 
 // The function first converts both the simplified and traditional strings into
 // u32strings on macOS and Linux, or wstrings on Windows.
@@ -116,6 +116,8 @@ std::string constructRomanisationQuery(const std::vector<std::string> &words,
 
 std::vector<std::string> segmentPinyin(const QString &string);
 std::vector<std::string> segmentJyutping(const QString &string);
+std::vector<std::string> segmentJyutping(const QString &string,
+                                         bool ignorePunctuation);
 
 }
 

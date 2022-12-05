@@ -24,7 +24,10 @@ const static std::unordered_set<std::string> specialCharacters = {
     ".",
     ",",
     "，",
+    "!",
     "！",
+    "?",
+    "？",
     "%",
     "－",
     "…",
@@ -122,14 +125,14 @@ std::string applyColours(
 
         // ... and apply tone colour formatting to the string
         switch (type) {
-        case EntryColourPhoneticType::JYUTPING: {
+        case EntryColourPhoneticType::CANTONESE: {
             coloured_string += "<font color=\""
                                + jyutpingToneColours.at(
                                    static_cast<size_t>(tone))
                                + "\">";
             break;
         }
-        case EntryColourPhoneticType::PINYIN: {
+        case EntryColourPhoneticType::MANDARIN: {
             coloured_string += "<font color=\""
                                + pinyinToneColours.at(
                                    static_cast<size_t>(tone))
@@ -250,14 +253,20 @@ static std::string convertYaleFinal(const std::string &syllable)
     return yale_syllable;
 }
 
+#include <iostream>
 std::string convertJyutpingToYale(const std::string &jyutping)
 {
+    if (jyutping.empty()) {
+        return jyutping;
+    }
+
     std::vector<std::string> syllables = segmentJyutping(
-        QString{jyutping.c_str()});
+        QString{jyutping.c_str()}, /* ignoreSpecialCharacters */ false);
     std::vector<std::string> yale_syllables;
 
     for (const auto &syllable : syllables) {
         // Skip syllables that are just punctuation
+        std::cout << syllable << std::endl;
         if (specialCharacters.find(syllable) != specialCharacters.end()) {
             yale_syllables.push_back(syllable);
             continue;
@@ -297,6 +306,10 @@ std::string convertJyutpingToYale(const std::string &jyutping)
 
 std::string createPrettyPinyin(const std::string &pinyin)
 {
+    if (pinyin.empty()) {
+        return pinyin;
+    }
+
     std::string result;
 
     // Create a vector of each space-separated value in pinyin
@@ -380,6 +393,10 @@ std::string createPrettyPinyin(const std::string &pinyin)
 
 std::string createNumberedPinyin(const std::string &pinyin)
 {
+    if (pinyin.empty()) {
+        return pinyin;
+    }
+
     std::string result;
 
     std::vector<std::string> syllables;
@@ -407,6 +424,10 @@ std::string createNumberedPinyin(const std::string &pinyin)
 
 std::string createPinyinWithV(const std::string &pinyin)
 {
+    if (pinyin.empty()) {
+        return pinyin;
+    }
+
     std::string result;
 
     std::vector<std::string> syllables;
@@ -556,6 +577,12 @@ std::vector<std::string> segmentPinyin(const QString &string)
 
 std::vector<std::string> segmentJyutping(const QString &string)
 {
+    return segmentJyutping(string, /* ignoreSpecialCharacters */ true);
+}
+
+std::vector<std::string> segmentJyutping(const QString &string,
+                                         bool ignoreSpecialCharacters)
+{
     std::vector<std::string> words;
 
     std::unordered_set<std::string> initials = {"b",  "p", "m",  "f",  "d",
@@ -583,13 +610,19 @@ std::vector<std::string> segmentJyutping(const QString &string)
 
         // Ignore separation characters; these are special.
         QString stringToExamine = string.mid(end_index, 1).toLower();
-        if (stringToExamine == " " || stringToExamine == "'" || (specialCharacters.find(stringToExamine.toStdString()) != specialCharacters.end())) {
+        bool isSpecialCharacter = (specialCharacters.find(
+                                       stringToExamine.toStdString())
+                                   != specialCharacters.end());
+        if (stringToExamine == " " || stringToExamine == "'" || isSpecialCharacter) {
             if (initial_found) { // Add any incomplete word to the vector
                 QString previous_initial = string.mid(start_index,
                                                       end_index - start_index);
                 words.push_back(previous_initial.toStdString());
                 start_index = end_index;
                 initial_found = false;
+            }
+            if (!ignoreSpecialCharacters && isSpecialCharacter) {
+                words.push_back(stringToExamine.toStdString());
             }
             start_index++;
             end_index++;

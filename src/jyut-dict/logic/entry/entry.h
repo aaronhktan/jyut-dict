@@ -72,7 +72,7 @@ public:
 
     std::string getPinyin(void) const;
     std::string getPrettyPinyin(void) const;
-    std::string getRawPinyin(void) const;
+    std::string getNumberedPinyin(void) const;
     void setPinyin(const std::string &pinyin);
     std::vector<int> getPinyinNumbers() const;
 
@@ -82,7 +82,7 @@ public:
                         const std::vector<Definition::Definition> &definitions);
 
     void refreshColours(
-        const EntryColourPhoneticType type = EntryColourPhoneticType::JYUTPING);
+        const EntryColourPhoneticType type = EntryColourPhoneticType::CANTONESE);
 
     void setIsWelcome(const bool isWelcome);
     bool isWelcome(void) const;

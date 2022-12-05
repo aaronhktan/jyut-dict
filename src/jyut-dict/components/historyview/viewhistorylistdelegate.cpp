@@ -107,7 +107,7 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
     entry.refreshColours(_settings
                              ->value("entryColourPhoneticType",
                                      QVariant::fromValue(
-                                         EntryColourPhoneticType::JYUTPING))
+                                         EntryColourPhoneticType::CANTONESE))
                              .value<EntryColourPhoneticType>());
     doc->setHtml(QString(entry.getCharacters(characterOptions, use_colours).c_str()));
     doc->setTextWidth(r.width());

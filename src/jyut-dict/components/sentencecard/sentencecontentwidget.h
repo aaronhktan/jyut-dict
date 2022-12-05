@@ -59,8 +59,8 @@ private:
     std::vector<QLabel *> _sentenceNumberLabels;
     std::vector<QLabel *> _simplifiedLabels;
     std::vector<QLabel *> _traditionalLabels;
-    std::vector<QLabel *> _jyutpingLabels;
-    std::vector<QLabel *> _pinyinLabels;
+    std::vector<QLabel *> _cantoneseLabels;
+    std::vector<QLabel *> _mandarinLabels;
     std::vector<QLabel *> _sentenceLabels;
     std::vector<QLabel *> _sourceSentenceLanguage;
     std::vector<QLabel *> _spaceLabels;

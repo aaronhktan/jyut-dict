@@ -19,8 +19,6 @@ SourceSentence::SourceSentence(const std::string &sourceLanguage,
     , _pinyin{pinyin}
     , _sentences{sentences}
 {
-    // Create pretty pinyin
-    _prettyPinyin = ChineseUtils::createPrettyPinyin(_pinyin);
 }
 
 std::ostream &operator<<(std::ostream &out, const SourceSentence &sourceSentence)
@@ -78,6 +76,32 @@ void SourceSentence::setTraditional(std::string traditional)
     _traditional = traditional;
 }
 
+bool SourceSentence::generatePhonetic(CantoneseOptions cantoneseOptions,
+                                      MandarinOptions mandarinOptions)
+{
+    if ((cantoneseOptions & CantoneseOptions::PRETTY_YALE)
+            == CantoneseOptions::PRETTY_YALE
+        && !_isYaleValid) {
+        _yale = ChineseUtils::convertJyutpingToYale(_jyutping);
+        _isYaleValid = true;
+    }
+
+    if ((mandarinOptions & MandarinOptions::PRETTY_PINYIN)
+            == MandarinOptions::PRETTY_PINYIN && !_isPrettyPinyinValid) {
+        _prettyPinyin = ChineseUtils::createPrettyPinyin(_pinyin);
+        _isPrettyPinyinValid = true;
+    }
+
+    if ((mandarinOptions & MandarinOptions::NUMBERED_PINYIN)
+            == MandarinOptions::NUMBERED_PINYIN && !_isNumberedPinyinValid) {
+        _numberedPinyin = ChineseUtils::createNumberedPinyin(_pinyin);
+        _isNumberedPinyinValid = true;
+    }
+
+    return true;
+
+}
+
 std::string SourceSentence::getPhonetic(EntryPhoneticOptions options,
                                         CantoneseOptions cantoneseOptions,
                                         MandarinOptions mandarinOptions) const
@@ -97,6 +121,9 @@ std::string SourceSentence::getCantonesePhonetic(
     CantoneseOptions cantoneseOptions) const
 {
     switch (cantoneseOptions) {
+    case CantoneseOptions::PRETTY_YALE: {
+        return _yale;
+    }
     case CantoneseOptions::RAW_JYUTPING:
     default:
         return _jyutping;
