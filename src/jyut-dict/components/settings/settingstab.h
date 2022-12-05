@@ -51,7 +51,7 @@ private:
 
     void initializeCharacterComboBox(QComboBox &characterCombobox);
 
-    void initializePhoneticComboBox(QComboBox &phoneticCombobox);
+    void initializePreviewPhonetic(QWidget &previewPhoneticWidget);
     void initializeSearchResultsCantonesePronunciation(
         QWidget &cantonesePronunciationWidget);
     void initializeSearchResultsMandarinPronunciation(
@@ -90,15 +90,18 @@ private:
 
     QComboBox *_characterCombobox;
 
-    QComboBox *_searchResultsPhoneticCombobox;
-    QWidget *_searchResultsCantonesePronunciation;
-    QHBoxLayout *_searchResultsCantonesePronunciationLayout;
-    QRadioButton *_searchResultsJyutping;
-    QRadioButton *_searchResultsYale;
-    QWidget *_searchResultsMandarinPronunciation;
-    QHBoxLayout *_searchResultsMandarinPronunciationLayout;
-    QRadioButton *_searchResultsPinyin;
-    QRadioButton *_searchResultsNumberedPinyin;
+    QWidget *_previewPhoneticWidget;
+    QHBoxLayout *_previewPhoneticLayout;
+    QComboBox *_previewPhoneticCombobox;
+    QLabel *_previewPhoneticLabel;
+    QWidget *_previewCantonesePronunciation;
+    QHBoxLayout *_previewCantonesePronunciationLayout;
+    QRadioButton *_previewJyutping;
+    QRadioButton *_previewYale;
+    QWidget *_previewMandarinPronunciation;
+    QHBoxLayout *_previewMandarinPronunciationLayout;
+    QRadioButton *_previewPinyin;
+    QRadioButton *_previewNumberedPinyin;
 
     QWidget *_entryCantonesePronunciation;
     QVBoxLayout *_entryCantonesePronunciationLayout;

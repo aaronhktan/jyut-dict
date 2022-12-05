@@ -32,6 +32,7 @@ const static std::unordered_set<std::string> specialCharacters = {
     "－",
     "…",
     "⋯",
+    ".",
     "·",
 };
 
@@ -253,21 +254,47 @@ static std::string convertYaleFinal(const std::string &syllable)
     return yale_syllable;
 }
 
-#include <iostream>
 std::string convertJyutpingToYale(const std::string &jyutping)
+{
+    return convertJyutpingToYale(jyutping, /* useSpacesToSegment */ false);
+}
+
+std::string convertJyutpingToYale(const std::string &jyutping,
+                                  bool useSpacesToSegment)
 {
     if (jyutping.empty()) {
         return jyutping;
     }
 
-    std::vector<std::string> syllables = segmentJyutping(
-        QString{jyutping.c_str()}, /* ignoreSpecialCharacters */ false);
+    std::vector<std::string> syllables;
+    if (useSpacesToSegment) {
+        // Insert a space before and after every special character, so that the
+        // Yale conversion doesn't attempt to convert special characters.
+        std::string jyutpingCopy = jyutping;
+        for (const auto &specialCharacter : specialCharacters) {
+            size_t location = jyutpingCopy.find(specialCharacter);
+            if (location != std::string::npos) {
+                jyutpingCopy.erase(location, specialCharacter.length());
+                jyutpingCopy.insert(location, " " + specialCharacter + " ");
+            }
+        }
+        Utils::split(jyutpingCopy, ' ', syllables);
+    } else {
+        syllables = segmentJyutping(QString{jyutping.c_str()},
+                                    /* ignoreSpecialCharacters */ false);
+    }
     std::vector<std::string> yale_syllables;
 
     for (const auto &syllable : syllables) {
         // Skip syllables that are just punctuation
-        std::cout << syllable << std::endl;
         if (specialCharacters.find(syllable) != specialCharacters.end()) {
+            yale_syllables.push_back(syllable);
+            continue;
+        }
+
+        // Skip syllables that don't have tone
+        auto location = syllable.find_first_of("123456");
+        if (location == std::string::npos) {
             yale_syllables.push_back(syllable);
             continue;
         }
@@ -590,13 +617,13 @@ std::vector<std::string> segmentJyutping(const QString &string,
                                                 "ng", "h", "gw", "kw", "w",
                                                 "z",  "c", "s",  "j",  "m"};
     std::unordered_set<std::string> finals
-        = {"aa",   "aai", "aau", "aam", "aan", "aang", "aap", "aat",
-           "aak",  "ai",  "au",  "am",  "an",  "ang",  "ap",  "at",
-           "ak",   "e",   "ei",  "eu",  "em",  "eng",  "ep",  "ek",
-           "i",    "iu",  "im",  "in",  "ing", "ip",   "it",  "ik",
-           "o",    "oi",  "ou",  "on",  "ong", "ot",   "ok",  "u",
-           "ui",   "un",  "ung", "ut",  "uk",  "oe",   "eoi", "eon",
-           "oeng", "eot", "oek", "yu",  "yun", "yut",  "m",   "ng"};
+        = {"aa",  "aai", "aau", "aam", "aan",  "aang", "aap", "aat", "aak",
+           "ai",  "au",  "am",  "an",  "ang",  "ap",   "at",  "ak",  "e",
+           "ei",  "eu",  "em",  "en",  "eng",  "ep",   "ek",  "i",   "iu",
+           "im",  "in",  "ing", "ip",  "it",   "ik",   "o",   "oi",  "ou",
+           "on",  "ong", "ot",  "ok",  "u",    "ui",   "un",  "ung", "ut",
+           "uk",  "oe",  "eoi", "eon", "oeng", "eot",  "oek", "yu",  "yun",
+           "yut", "m",   "ng"};
 
     // Keep track of indices for current segmented word; [start_index, end_index)
     // Greedily try to expand end_index by checking for valid sequences

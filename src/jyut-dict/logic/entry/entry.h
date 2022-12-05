@@ -52,6 +52,8 @@ public:
 
     bool generatePhonetic(CantoneseOptions cantoneseOptions,
                           MandarinOptions mandarinOptions);
+    bool generateDefinitionsPhonetic(CantoneseOptions cantoneseOptions,
+                                     MandarinOptions mandarinOptions);
 
     std::string getPhonetic(EntryPhoneticOptions options) const;
     std::string getPhonetic(EntryPhoneticOptions options,

@@ -72,7 +72,7 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
                               EntryCharactersOptions::PREFER_TRADITIONAL))
                   .value<EntryCharactersOptions>();
         phoneticOptions = _settings
-                              ->value("SearchResults/phoneticOptions",
+                              ->value("Preview/phoneticOptions",
                                       QVariant::fromValue(
                                           EntryPhoneticOptions::PREFER_CANTONESE))
                               .value<EntryPhoneticOptions>();

@@ -74,18 +74,18 @@ void ResultListDelegate::paint(QPainter *painter,
                               EntryCharactersOptions::PREFER_TRADITIONAL))
                   .value<EntryCharactersOptions>();
         phoneticOptions = _settings
-                              ->value("SearchResults/phoneticOptions",
+                              ->value("Preview/phoneticOptions",
                                       QVariant::fromValue(
                                           EntryPhoneticOptions::PREFER_CANTONESE))
                               .value<EntryPhoneticOptions>();
         cantoneseOptions
             = Settings::getSettings()
-                  ->value("SearchResults/cantonesePronunciationOptions",
+                  ->value("Preview/cantonesePronunciationOptions",
                           QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
                   .value<CantoneseOptions>();
         mandarinOptions
             = Settings::getSettings()
-                  ->value("SearchResults/mandarinPronunciationOptions",
+                  ->value("Preview/mandarinPronunciationOptions",
                           QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
                   .value<MandarinOptions>();
         entry.generatePhonetic(cantoneseOptions, mandarinOptions);

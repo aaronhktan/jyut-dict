@@ -270,6 +270,16 @@ bool Entry::generatePhonetic(CantoneseOptions cantoneseOptions,
     return true;
 }
 
+bool Entry::generateDefinitionsPhonetic(CantoneseOptions cantoneseOptions,
+                                        MandarinOptions mandarinOptions)
+{
+    for (auto &definitionsSet : _definitions) {
+        definitionsSet.generatePhonetic(cantoneseOptions, mandarinOptions);
+    }
+
+    return true;
+}
+
 std::string Entry::getPhonetic(EntryPhoneticOptions options) const
 {
     return getPhonetic(options, CantoneseOptions::RAW_JYUTPING, MandarinOptions::NUMBERED_PINYIN);

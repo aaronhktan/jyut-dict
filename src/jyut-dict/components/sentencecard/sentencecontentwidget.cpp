@@ -129,34 +129,17 @@ void SentenceContentWidget::setSourceSentenceVector(
         _traditionalLabels.back()->setTextInteractionFlags(
             Qt::TextSelectableByMouse);
 
-        // Get first enabled Cantonese pronunciation option by looping through
-        // enabled bits of cantoneseOptions
         CantoneseOptions cantoneseOptions
             = Settings::getSettings()
-                  ->value("Entry/cantonesePronunciationOptions",
+                  ->value("Preview/cantonesePronunciationOptions",
                           QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
                   .value<CantoneseOptions>();
-        for (uint32_t i = 1;
-             i < static_cast<uint32_t>(CantoneseOptions::SENTRY);
-             i <<= 1) {
-            if (i & static_cast<uint32_t>(cantoneseOptions)) {
-                cantoneseOptions = static_cast<CantoneseOptions>(i);
-            }
-        }
-
         // Do the same thing for mandarin
         MandarinOptions mandarinOptions
             = Settings::getSettings()
-                  ->value("Entry/mandarinPronunciationOptions",
+                  ->value("Preview/mandarinPronunciationOptions",
                           QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
                   .value<MandarinOptions>();
-        for (uint32_t i = 1;
-             i < static_cast<uint32_t>(MandarinOptions::SENTRY);
-             i <<= 1) {
-            if (i & static_cast<uint32_t>(mandarinOptions)) {
-                mandarinOptions = static_cast<MandarinOptions>(i);
-            }
-        }
 
         sourceSentence.generatePhonetic(cantoneseOptions, mandarinOptions);
 
@@ -211,7 +194,7 @@ void SentenceContentWidget::setSourceSentenceVector(
             _sentenceLabels[i],
             _sourceSentenceLanguage[i],
             Settings::getSettings()
-                ->value("SearchResults/phoneticOptions",
+                ->value("Preview/phoneticOptions",
                         QVariant::fromValue(
                             EntryPhoneticOptions::PREFER_CANTONESE))
                 .value<EntryPhoneticOptions>(),

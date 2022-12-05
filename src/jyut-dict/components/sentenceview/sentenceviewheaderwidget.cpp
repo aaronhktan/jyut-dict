@@ -97,7 +97,7 @@ void SentenceViewHeaderWidget::setSourceSentence(const SourceSentence &sentence)
             .value<EntryCharactersOptions>());
     displayPronunciationLabels(
         Settings::getSettings()
-            ->value("SearchResults/phoneticOptions",
+            ->value("Preview/phoneticOptions",
                     QVariant::fromValue(EntryPhoneticOptions::PREFER_CANTONESE))
             .value<EntryPhoneticOptions>());
 

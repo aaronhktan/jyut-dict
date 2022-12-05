@@ -47,6 +47,8 @@ std::string compareStrings(const std::string &original,
                            const std::string &comparison);
 
 std::string convertJyutpingToYale(const std::string &jyutping);
+std::string convertJyutpingToYale(const std::string &jyutping,
+                                  bool useSpacesToSegment);
 
 std::string createPrettyPinyin(const std::string &pinyin);
 std::string createNumberedPinyin(const std::string &pinyin);

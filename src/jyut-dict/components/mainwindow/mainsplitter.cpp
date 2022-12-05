@@ -155,6 +155,19 @@ void MainSplitter::prepareEntry(Entry &entry, bool addToHistory) const
                       QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
               .value<MandarinOptions>();
     entry.generatePhonetic(cantoneseOptions, mandarinOptions);
+
+
+    cantoneseOptions
+        = Settings::getSettings()
+              ->value("Preview/cantonesePronunciationOptions",
+                      QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
+              .value<CantoneseOptions>();
+    mandarinOptions
+        = Settings::getSettings()
+              ->value("Preview/mandarinPronunciationOptions",
+                      QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
+              .value<MandarinOptions>();
+    entry.generateDefinitionsPhonetic(cantoneseOptions, mandarinOptions);
 }
 
 void MainSplitter::handleModelReset(void)

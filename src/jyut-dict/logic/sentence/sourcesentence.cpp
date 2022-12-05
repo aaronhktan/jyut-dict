@@ -82,7 +82,9 @@ bool SourceSentence::generatePhonetic(CantoneseOptions cantoneseOptions,
     if ((cantoneseOptions & CantoneseOptions::PRETTY_YALE)
             == CantoneseOptions::PRETTY_YALE
         && !_isYaleValid) {
-        _yale = ChineseUtils::convertJyutpingToYale(_jyutping);
+        _yale
+            = ChineseUtils::convertJyutpingToYale(_jyutping,
+                                                  /* useSpacesToSegment */ true);
         _isYaleValid = true;
     }
 

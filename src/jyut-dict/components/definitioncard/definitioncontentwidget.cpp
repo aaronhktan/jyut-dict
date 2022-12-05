@@ -127,31 +127,35 @@ void DefinitionContentWidget::setEntry(const std::vector<Definition::Definition>
                                          Qt::AlignTop);
 
             QString pronunciationText;
-            QString cantonese
-                = QString{definitions[i]
-                              .sentences[j]
-                              .getCantonesePhonetic(
-                                  Settings::getSettings()
-                                      ->value("cantoneseOptions",
-                                              QVariant::fromValue(
-                                                  CantoneseOptions::RAW_JYUTPING))
-                                      .value<CantoneseOptions>())
-                              .c_str()}
-                      .trimmed();
-            QString mandarin
-                = QString{definitions[i]
-                              .sentences[j]
-                              .getMandarinPhonetic(
-                                  Settings::getSettings()
-                                      ->value("mandarinOptions",
-                                              QVariant::fromValue(
-                                                  MandarinOptions::PRETTY_PINYIN))
-                                      .value<MandarinOptions>())
-                              .c_str()}
-                      .trimmed();
+
+            CantoneseOptions cantoneseOptions
+                = Settings::getSettings()
+                      ->value("Preview/cantonesePronunciationOptions",
+                              QVariant::fromValue(
+                                  CantoneseOptions::RAW_JYUTPING))
+                      .value<CantoneseOptions>();
+
+            MandarinOptions mandarinOptions
+                = Settings::getSettings()
+                      ->value("Preview/mandarinPronunciationOptions",
+                              QVariant::fromValue(
+                                  MandarinOptions::PRETTY_PINYIN))
+                      .value<MandarinOptions>();
+
+            QString cantonese = QString{definitions[i]
+                                            .sentences[j]
+                                            .getCantonesePhonetic(
+                                                cantoneseOptions)
+                                            .c_str()}
+                                    .trimmed();
+            QString mandarin = QString{definitions[i]
+                                           .sentences[j]
+                                           .getMandarinPhonetic(mandarinOptions)
+                                           .c_str()}
+                                   .trimmed();
 
             switch (Settings::getSettings()
-                        ->value("SearchResults/phoneticOptions",
+                        ->value("Preview/phoneticOptions",
                                 QVariant::fromValue(
                                     EntryPhoneticOptions::PREFER_CANTONESE))
                         .value<EntryPhoneticOptions>()) {
