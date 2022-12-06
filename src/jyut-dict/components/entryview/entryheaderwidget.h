@@ -29,8 +29,8 @@ public:
     void setEntry(const Entry &entry);
 
 private:
-    void setStyle(bool use_dark);
     void translateUI();
+    void setStyle(bool use_dark);
 
     void displayPronunciationLabels(const Entry &entry,
                                     const CantoneseOptions &cantoneseOptions,

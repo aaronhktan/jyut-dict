@@ -34,7 +34,10 @@ private:
     void setStyle(bool use_dark);
 
     void displaySentenceLabels(const EntryCharactersOptions options);
-    void displayPronunciationLabels(const EntryPhoneticOptions options);
+    void displayPronunciationLabels(const SourceSentence &sentence,
+                                    const CantoneseOptions &cantoneseOptions,
+                                    const MandarinOptions &mandarinOptions);
+    void clearPronunciationLabels(void);
 
     void showError(const QString &reason, const QString &message);
 
@@ -43,21 +46,19 @@ private:
     QString _chinese;
     QString _jyutping;
     QString _pinyin;
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
     std::unique_ptr<EntrySpeaker> _speaker;
-#endif
 
-    // TODO: Add Yale support here
     QGridLayout *_sentenceHeaderLayout;
     QLabel *_sourceLanguageLabel;
     QLabel *_simplifiedLabel;
     QLabel *_traditionalLabel;
-    QLabel *_jyutpingLabel;
-    QPushButton *_jyutpingTTS;
-    QLabel *_jyutpingPronunciation;
-    QLabel *_pinyinLabel;
-    QPushButton *_pinyinTTS;
-    QLabel *_pinyinPronunciation;
+    std::vector<QLabel *> _pronunciationTypeLabels;
+    std::vector<QLabel *> _pronunciationLabels;
+
+    QPushButton *_cantoneseTTS;
+    bool _cantoneseTTSVisible = false;
+    QPushButton *_mandarinTTS;
+    bool _mandarinTTSVisible = false;
 
     EntrySpeakErrorDialog *_message;
 };
