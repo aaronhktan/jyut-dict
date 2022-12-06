@@ -49,7 +49,9 @@ void SettingsTab::changeEvent(QEvent *event)
 void SettingsTab::setupUI()
 {
     _tabLayout = new QFormLayout{this};
-#ifdef Q_OS_WIN
+#ifdef Q_OS_MAC
+    _tabLayout->setContentsMargins(20, 20, 20, 20);
+#elif defined(Q_OS_WIN)
     _tabLayout->setVerticalSpacing(15);
     _tabLayout->setContentsMargins(20, 20, 20, 20);
 #elif defined(Q_OS_LINUX)
@@ -58,6 +60,7 @@ void SettingsTab::setupUI()
     _tabLayout->setLabelAlignment(Qt::AlignRight);
 #endif
 
+    _characterTitleLabel = new QLabel{this};
     _characterCombobox = new QComboBox{this};
     _characterCombobox->setSizeAdjustPolicy(
         QComboBox::AdjustToContents);
@@ -69,12 +72,13 @@ void SettingsTab::setupUI()
     _searchResultsDivider->setFrameShadow(QFrame::Raised);
     _searchResultsDivider->setFixedHeight(1);
 
+    _previewTitleLabel = new QLabel{this};
+
     _previewPhoneticWidget = new QWidget{this};
     _previewPhoneticLayout = new QHBoxLayout{_previewPhoneticWidget};
     _previewPhoneticLayout->setContentsMargins(0, 0, 0, 0);
     _previewPhoneticCombobox = new QComboBox{this};
     _previewPhoneticCombobox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-    _previewPhoneticLabel = new QLabel{_previewPhoneticWidget};
     initializePreviewPhonetic(*_previewPhoneticWidget);
 
     _previewCantonesePronunciation = new QWidget{this};
@@ -83,12 +87,12 @@ void SettingsTab::setupUI()
     _previewCantonesePronunciationLayout->setContentsMargins(0, 0, 0, 0);
     _previewJyutping = new QRadioButton{this};
     _previewJyutping->setProperty("data",
-                                        QVariant::fromValue(
-                                            CantoneseOptions::RAW_JYUTPING));
+                                  QVariant::fromValue(
+                                      CantoneseOptions::RAW_JYUTPING));
     _previewYale = new QRadioButton{this};
     _previewYale->setProperty("data",
-                                    QVariant::fromValue(
-                                        CantoneseOptions::PRETTY_YALE));
+                              QVariant::fromValue(
+                                  CantoneseOptions::PRETTY_YALE));
     initializeSearchResultsCantonesePronunciation(
         *_previewCantonesePronunciation);
 
@@ -98,20 +102,21 @@ void SettingsTab::setupUI()
     _previewMandarinPronunciationLayout->setContentsMargins(0, 0, 0, 0);
     _previewPinyin = new QRadioButton{this};
     _previewPinyin->setProperty("data",
-                                      QVariant::fromValue(
-                                          MandarinOptions::PRETTY_PINYIN));
+                                QVariant::fromValue(
+                                    MandarinOptions::PRETTY_PINYIN));
     _previewNumberedPinyin = new QRadioButton{this};
     _previewNumberedPinyin->setProperty("data",
-                                         QVariant::fromValue(
-                                             MandarinOptions::NUMBERED_PINYIN));
-    initializeSearchResultsMandarinPronunciation(
-        *_previewMandarinPronunciation);
+                                        QVariant::fromValue(
+                                            MandarinOptions::NUMBERED_PINYIN));
+    initializeSearchResultsMandarinPronunciation(*_previewMandarinPronunciation);
 
     QFrame *_entryDivider = new QFrame{this};
     _entryDivider->setObjectName("divider");
     _entryDivider->setFrameShape(QFrame::HLine);
     _entryDivider->setFrameShadow(QFrame::Raised);
     _entryDivider->setFixedHeight(1);
+
+    _entryTitleLabel = new QLabel{this};
 
     _entryCantonesePronunciation = new QWidget{this};
     _entryCantonesePronunciationLayout = new QVBoxLayout{
@@ -150,6 +155,7 @@ void SettingsTab::setupUI()
     _divider->setFrameShadow(QFrame::Raised);
     _divider->setFixedHeight(1);
 
+    _colourTitleLabel = new QLabel{this};
     _colourCombobox = new QComboBox{this};
     _colourCombobox->setSizeAdjustPolicy(
         QComboBox::AdjustToContents);
@@ -169,21 +175,25 @@ void SettingsTab::setupUI()
     _resetButton->setObjectName("reset button");
     initializeResetButton(*_resetButton);
 
+    _tabLayout->addRow(_characterTitleLabel);
     _tabLayout->addRow(" ", _characterCombobox);
 
     _tabLayout->addRow(_searchResultsDivider);
 
+    _tabLayout->addRow(_previewTitleLabel);
     _tabLayout->addRow(" ", _previewPhoneticWidget);
     _tabLayout->addRow(" ", _previewCantonesePronunciation);
     _tabLayout->addRow(" ", _previewMandarinPronunciation);
 
     _tabLayout->addRow(_entryDivider);
 
+    _tabLayout->addRow(_entryTitleLabel);
     _tabLayout->addRow(" ", _entryCantonesePronunciation);
     _tabLayout->addRow(" ", _entryMandarinPronunciation);
 
     _tabLayout->addRow(_divider);
 
+    _tabLayout->addRow(_colourTitleLabel);
     _tabLayout->addRow(" ", _colourCombobox);
     _tabLayout->addRow(" ", _jyutpingColourWidget);
     _tabLayout->addRow(" ", _pinyinColourWidget);
@@ -209,20 +219,25 @@ void SettingsTab::translateUI()
         button->style()->polish(button);
     }
 
+    _characterTitleLabel->setText(
+        "<b>" + tr("Character set:") + "</b>");
     static_cast<QLabel *>(_tabLayout->labelForField(_characterCombobox))
-        ->setText(tr("Show simplified/traditional characters:"));
+        ->setText(tr("\tShow simplified/traditional characters:"));
     _characterCombobox->setItemText(0, tr("Only Simplified"));
     _characterCombobox->setItemText(1, tr("Only Traditional"));
     _characterCombobox->setItemText(2, tr("Both, Prefer Simplified"));
     _characterCombobox->setItemText(3, tr("Both, Prefer Traditional"));
 
+    _previewTitleLabel->setText("<b>" + tr("In search results and examples:")
+                                + "</b>");
     static_cast<QLabel *>(_tabLayout->labelForField(_previewPhoneticWidget))
         ->setText(tr("Show pronunciation for:"));
     _previewPhoneticCombobox->setItemText(0, tr("only Cantonese"));
     _previewPhoneticCombobox->setItemText(1, tr("only Mandarin"));
-    _previewPhoneticCombobox->setItemText(2, tr("both languages, prefer Cantonese"));
-    _previewPhoneticCombobox->setItemText(3, tr("both languages, prefer Mandarin"));
-    _previewPhoneticLabel->setText(tr("in search results and examples"));
+    _previewPhoneticCombobox
+        ->setItemText(2, tr("both languages, prefer Cantonese"));
+    _previewPhoneticCombobox
+        ->setItemText(3, tr("both languages, prefer Mandarin"));
     static_cast<QLabel *>(
         _tabLayout->labelForField(_previewCantonesePronunciation))
         ->setText(tr("Show Cantonese:"));
@@ -234,17 +249,20 @@ void SettingsTab::translateUI()
     _previewPinyin->setText(tr("Pinyin"));
     _previewNumberedPinyin->setText(tr("Pinyin with digits"));
 
+    _entryTitleLabel->setText(
+        "<b>" + tr("In the header at the top of an entry:") + "</b>");
     static_cast<QLabel *>(
         _tabLayout->labelForField(_entryCantonesePronunciation))
-        ->setText(tr("In entry header, show Cantonese:"));
+        ->setText(tr("Show Cantonese:"));
     _entryJyutping->setText(tr("Jyutping"));
     _entryYale->setText(tr("Yale"));
-    static_cast<QLabel *>(
-        _tabLayout->labelForField(_entryMandarinPronunciation))
-        ->setText(tr("In entry header, show Mandarin:"));
+    static_cast<QLabel *>(_tabLayout->labelForField(_entryMandarinPronunciation))
+        ->setText(tr("Show Mandarin:"));
     _entryPinyin->setText(tr("Pinyin"));
     _entryNumberedPinyin->setText(tr("Pinyin with digits"));
 
+    _colourTitleLabel->setText(
+        "<b>" + tr("Tone colouring:") + "</b>");
     static_cast<QLabel *>(_tabLayout->labelForField(_colourCombobox))
         ->setText(tr("Colour characters by tone using:"));
     _colourCombobox->setItemText(0, tr("No Colours"));
@@ -346,7 +364,6 @@ void SettingsTab::initializeCharacterComboBox(QComboBox &characterCombobox)
 void SettingsTab::initializePreviewPhonetic(QWidget &previewPhoneticWidget)
 {
     previewPhoneticWidget.layout()->addWidget(_previewPhoneticCombobox);
-    previewPhoneticWidget.layout()->addWidget(_previewPhoneticLabel);
 
     _previewPhoneticCombobox->addItem("0",
                                       QVariant::fromValue<EntryPhoneticOptions>(
@@ -796,6 +813,8 @@ void SettingsTab::setEntryCantonesePronunciationDefault(QWidget &widget)
                                          .value<CantoneseOptions>();
         if ((lastSelected & boxOption) == boxOption) {
             box->setChecked(true);
+        } else {
+            box->setChecked(false);
         }
     }
 }
@@ -814,6 +833,8 @@ void SettingsTab::setEntryMandarinPronunciationDefault(QWidget &widget)
                                         .value<MandarinOptions>();
         if ((lastSelected & boxOption) == boxOption) {
             box->setChecked(true);
+        } else {
+            box->setChecked(false);
         }
     }
 }

@@ -308,8 +308,8 @@ void SentenceContentWidget::addLabelsToLayout(
     QLabel *sentenceNumberLabel,
     QLabel *simplifiedLabel,
     QLabel *traditionalLabel,
-    QLabel *jyutpingLabel,
-    QLabel *pinyinLabel,
+    QLabel *cantoneseLabel,
+    QLabel *mandarinLabel,
     QLabel *sentenceLabel,
     QLabel *sourceSentenceLanguage,
     EntryPhoneticOptions phoneticOptions,
@@ -390,17 +390,16 @@ void SentenceContentWidget::addLabelsToLayout(
         break;
     }
 
-    // TODO: Fix this so you can select Yale
     // Add the first phonetic label
     switch (phoneticOptions) {
     case EntryPhoneticOptions::ONLY_CANTONESE:
-        pinyinLabel->setVisible(false);
+        mandarinLabel->setVisible(false);
     case EntryPhoneticOptions::PREFER_CANTONESE:
-        if (jyutpingLabel->text().isEmpty()) {
-            jyutpingLabel->setVisible(false);
+        if (cantoneseLabel->text().isEmpty()) {
+            cantoneseLabel->setVisible(false);
             break;
         }
-        layout->addWidget(jyutpingLabel,
+        layout->addWidget(cantoneseLabel,
                           rowNumber * 10 + 3,
                           1,
                           1,
@@ -408,13 +407,13 @@ void SentenceContentWidget::addLabelsToLayout(
                           Qt::AlignTop);
         break;
     case EntryPhoneticOptions::ONLY_MANDARIN:
-        jyutpingLabel->setVisible(false);
+        cantoneseLabel->setVisible(false);
     case EntryPhoneticOptions::PREFER_MANDARIN:
-        if (pinyinLabel->text().isEmpty()) {
-            pinyinLabel->setVisible(false);
+        if (mandarinLabel->text().isEmpty()) {
+            mandarinLabel->setVisible(false);
             break;
         }
-        layout->addWidget(pinyinLabel,
+        layout->addWidget(mandarinLabel,
                           rowNumber * 10 + 3,
                           1,
                           1,
@@ -426,11 +425,11 @@ void SentenceContentWidget::addLabelsToLayout(
     // Add the second phonetic label (if applicable)
     switch (phoneticOptions) {
     case EntryPhoneticOptions::PREFER_CANTONESE:
-        if (pinyinLabel->text().isEmpty()) {
-            pinyinLabel->setVisible(false);
+        if (mandarinLabel->text().isEmpty()) {
+            mandarinLabel->setVisible(false);
             break;
         }
-        layout->addWidget(pinyinLabel,
+        layout->addWidget(mandarinLabel,
                           rowNumber * 10 + 4,
                           1,
                           1,
@@ -438,11 +437,11 @@ void SentenceContentWidget::addLabelsToLayout(
                           Qt::AlignTop);
         break;
     case EntryPhoneticOptions::PREFER_MANDARIN:
-        if (jyutpingLabel->text().isEmpty()) {
-            jyutpingLabel->setVisible(false);
+        if (cantoneseLabel->text().isEmpty()) {
+            cantoneseLabel->setVisible(false);
             break;
         }
-        layout->addWidget(jyutpingLabel,
+        layout->addWidget(cantoneseLabel,
                           rowNumber * 10 + 4,
                           1,
                           1,

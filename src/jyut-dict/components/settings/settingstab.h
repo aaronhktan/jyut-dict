@@ -88,12 +88,13 @@ private:
 
     bool _paletteRecentlyChanged = false;
 
+    QLabel *_characterTitleLabel;
     QComboBox *_characterCombobox;
 
+    QLabel *_previewTitleLabel;
     QWidget *_previewPhoneticWidget;
     QHBoxLayout *_previewPhoneticLayout;
     QComboBox *_previewPhoneticCombobox;
-    QLabel *_previewPhoneticLabel;
     QWidget *_previewCantonesePronunciation;
     QHBoxLayout *_previewCantonesePronunciationLayout;
     QRadioButton *_previewJyutping;
@@ -103,6 +104,7 @@ private:
     QRadioButton *_previewPinyin;
     QRadioButton *_previewNumberedPinyin;
 
+    QLabel *_entryTitleLabel;
     QWidget *_entryCantonesePronunciation;
     QVBoxLayout *_entryCantonesePronunciationLayout;
     QCheckBox *_entryJyutping;
@@ -113,6 +115,7 @@ private:
     QCheckBox *_entryPinyin;
     QCheckBox *_entryNumberedPinyin;
 
+    QLabel *_colourTitleLabel;
     QComboBox *_colourCombobox;
     QWidget *_jyutpingColourWidget;
     QWidget *_pinyinColourWidget;
