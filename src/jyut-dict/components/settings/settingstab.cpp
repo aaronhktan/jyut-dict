@@ -337,17 +337,17 @@ void SettingsTab::setStyle(bool use_dark)
 void SettingsTab::initializeCharacterComboBox(QComboBox &characterCombobox)
 {
     characterCombobox.addItem("0",
-                              QVariant::fromValue<EntryPhoneticOptions>(
-                                  EntryPhoneticOptions::ONLY_CANTONESE));
+                              QVariant::fromValue<EntryCharactersOptions>(
+                                  EntryCharactersOptions::ONLY_SIMPLIFIED));
     characterCombobox.addItem("1",
-                              QVariant::fromValue<EntryPhoneticOptions>(
-                                  EntryPhoneticOptions::ONLY_MANDARIN));
+                              QVariant::fromValue<EntryCharactersOptions>(
+                                  EntryCharactersOptions::ONLY_TRADITIONAL));
     characterCombobox.addItem("2",
-                              QVariant::fromValue<EntryPhoneticOptions>(
-                                  EntryPhoneticOptions::PREFER_CANTONESE));
+                              QVariant::fromValue<EntryCharactersOptions>(
+                                  EntryCharactersOptions::PREFER_SIMPLIFIED));
     characterCombobox.addItem("3",
-                              QVariant::fromValue<EntryPhoneticOptions>(
-                                  EntryPhoneticOptions::PREFER_MANDARIN));
+                              QVariant::fromValue<EntryCharactersOptions>(
+                                  EntryCharactersOptions::PREFER_TRADITIONAL));
 
     setCharacterComboBoxDefault(characterCombobox);
 
