@@ -37,6 +37,8 @@ private:
     void setupUI();
     void translateUI();
 
+    void prepareEntry(Entry &entry) const;
+
 #ifdef Q_OS_WIN
     void setStyle(bool use_dark);
     bool _paletteRecentlyChanged = false;
