@@ -103,6 +103,7 @@ private:
     QHBoxLayout *_previewMandarinPronunciationLayout;
     QRadioButton *_previewPinyin;
     QRadioButton *_previewNumberedPinyin;
+    QRadioButton *_previewZhuyin;
 
     QLabel *_entryTitleLabel;
     QWidget *_entryCantonesePronunciation;
@@ -114,6 +115,7 @@ private:
     QVBoxLayout *_entryMandarinPronunciationLayout;
     QCheckBox *_entryPinyin;
     QCheckBox *_entryNumberedPinyin;
+    QCheckBox *_entryZhuyin;
 
     QLabel *_colourTitleLabel;
     QComboBox *_colourCombobox;

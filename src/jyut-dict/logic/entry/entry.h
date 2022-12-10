@@ -111,6 +111,8 @@ private:
     bool _isPrettyPinyinValid = false;
     std::string _numberedPinyin;
     bool _isNumberedPinyinValid = false;
+    std::string _zhuyin;
+    bool _isZhuyinValid = false;
 
     std::vector<DefinitionsSet> _definitions;
 

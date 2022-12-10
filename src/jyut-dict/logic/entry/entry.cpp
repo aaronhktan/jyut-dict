@@ -45,6 +45,8 @@ Entry::Entry(const Entry &entry)
     , _isPrettyPinyinValid{entry._isPrettyPinyinValid}
     , _numberedPinyin{entry._numberedPinyin}
     , _isNumberedPinyinValid{entry._isNumberedPinyinValid}
+    , _zhuyin{entry._zhuyin}
+    , _isZhuyinValid{entry._isZhuyinValid}
     , _definitions{entry._definitions}
     , _isWelcome{entry._isWelcome}
     , _isEmpty{entry._isEmpty}
@@ -70,6 +72,8 @@ Entry::Entry(Entry &&entry)
     , _isPrettyPinyinValid{entry._isPrettyPinyinValid}
     , _numberedPinyin{std::move(entry._numberedPinyin)}
     , _isNumberedPinyinValid{entry._isNumberedPinyinValid}
+    , _zhuyin{std::move(entry._zhuyin)}
+    , _isZhuyinValid{entry._isZhuyinValid}
     , _definitions{std::move(entry._definitions)}
     , _isWelcome{entry._isWelcome}
     , _isEmpty{entry._isEmpty}
@@ -98,6 +102,8 @@ Entry &Entry::operator=(const Entry &entry)
     _isPrettyPinyinValid = entry._isPrettyPinyinValid;
     _numberedPinyin = entry._numberedPinyin;
     _isNumberedPinyinValid = entry._isNumberedPinyinValid;
+    _zhuyin = entry._zhuyin;
+    _isZhuyinValid = entry._isZhuyinValid;
     _definitions = entry._definitions;
     _isWelcome = entry._isWelcome;
     _isEmpty = entry._isEmpty;
@@ -127,6 +133,8 @@ Entry &Entry::operator=(Entry &&entry)
     _isPrettyPinyinValid = entry._isPrettyPinyinValid;
     _numberedPinyin = std::move(entry._numberedPinyin);
     _isNumberedPinyinValid = entry._isNumberedPinyinValid;
+    _zhuyin = std::move(entry._zhuyin);
+    _isZhuyinValid = entry._isZhuyinValid;
     _definitions = std::move(entry._definitions);
     _isWelcome = entry._isWelcome;
     _isEmpty = entry._isEmpty;
@@ -267,6 +275,12 @@ bool Entry::generatePhonetic(CantoneseOptions cantoneseOptions,
         _isNumberedPinyinValid = true;
     }
 
+    if ((mandarinOptions & MandarinOptions::ZHUYIN) == MandarinOptions::ZHUYIN
+        && !_isZhuyinValid) {
+        _zhuyin = ChineseUtils::convertPinyinToZhuyin(_pinyin);
+        _isZhuyinValid = true;
+    }
+
     return true;
 }
 
@@ -336,12 +350,18 @@ std::string Entry::getCantonesePhonetic(CantoneseOptions cantoneseOptions) const
 std::string Entry::getMandarinPhonetic(MandarinOptions mandarinOptions) const
 {
     switch (mandarinOptions) {
-        case MandarinOptions::PRETTY_PINYIN:
-            return _prettyPinyin;
-        case MandarinOptions::NUMBERED_PINYIN:
-            return _numberedPinyin;
-        default:
-            return _pinyin;
+    case MandarinOptions::PRETTY_PINYIN: {
+        return _prettyPinyin;
+    }
+    case MandarinOptions::NUMBERED_PINYIN: {
+        return _numberedPinyin;
+    }
+    case MandarinOptions::ZHUYIN: {
+        return _zhuyin;
+    }
+    default: {
+        return _pinyin;
+    }
     }
 }
 
@@ -400,7 +420,6 @@ void Entry::setPinyin(const std::string &pinyin)
 {
     _pinyin = pinyin;
     std::transform(_pinyin.begin(), _pinyin.end(), _pinyin.begin(), ::tolower);
-    _prettyPinyin = ChineseUtils::createPrettyPinyin(_pinyin);
 }
 
 std::vector<int> Entry::getPinyinNumbers() const

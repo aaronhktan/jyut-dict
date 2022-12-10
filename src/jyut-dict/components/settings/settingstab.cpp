@@ -108,6 +108,9 @@ void SettingsTab::setupUI()
     _previewNumberedPinyin->setProperty("data",
                                         QVariant::fromValue(
                                             MandarinOptions::NUMBERED_PINYIN));
+    _previewZhuyin = new QRadioButton{this};
+    _previewZhuyin->setProperty("data",
+                                QVariant::fromValue(MandarinOptions::ZHUYIN));
     initializeSearchResultsMandarinPronunciation(*_previewMandarinPronunciation);
 
     QFrame *_entryDivider = new QFrame{this};
@@ -147,6 +150,10 @@ void SettingsTab::setupUI()
     _entryNumberedPinyin->setProperty("data",
                                  QVariant::fromValue(
                                      MandarinOptions::NUMBERED_PINYIN));
+    _entryZhuyin = new QCheckBox{this};
+    _entryZhuyin->setTristate(false);
+    _entryZhuyin->setProperty("data",
+                              QVariant::fromValue(MandarinOptions::ZHUYIN));
     initializeEntryMandarinPronunciation(*_entryMandarinPronunciation);
 
     QFrame *_divider = new QFrame{this};
@@ -248,6 +255,7 @@ void SettingsTab::translateUI()
         ->setText(tr("Show Mandarin:"));
     _previewPinyin->setText(tr("Pinyin"));
     _previewNumberedPinyin->setText(tr("Pinyin with digits"));
+    _previewZhuyin->setText(tr("Zhuyin"));
 
     _entryTitleLabel->setText(
         "<b>" + tr("In the header at the top of an entry:") + "</b>");
@@ -260,6 +268,7 @@ void SettingsTab::translateUI()
         ->setText(tr("Show Mandarin:"));
     _entryPinyin->setText(tr("Pinyin"));
     _entryNumberedPinyin->setText(tr("Pinyin with digits"));
+    _entryZhuyin->setText(tr("Zhuyin"));
 
     _colourTitleLabel->setText(
         "<b>" + tr("Tone colouring:") + "</b>");
@@ -419,6 +428,7 @@ void SettingsTab::initializeSearchResultsMandarinPronunciation(
 {
     mandarinPronunciationWidget.layout()->addWidget(_previewPinyin);
     mandarinPronunciationWidget.layout()->addWidget(_previewNumberedPinyin);
+    mandarinPronunciationWidget.layout()->addWidget(_previewZhuyin);
 
     connect(_previewPinyin, &QRadioButton::clicked, this, [&]() {
         _settings->setValue("Preview/mandarinPronunciationOptions",
@@ -431,6 +441,13 @@ void SettingsTab::initializeSearchResultsMandarinPronunciation(
         _settings->setValue("Preview/mandarinPronunciationOptions",
                             QVariant::fromValue<MandarinOptions>(
                                 MandarinOptions::NUMBERED_PINYIN));
+        _settings->sync();
+    });
+
+    connect(_previewZhuyin, &QRadioButton::clicked, this, [&]() {
+        _settings->setValue("Preview/mandarinPronunciationOptions",
+                            QVariant::fromValue<MandarinOptions>(
+                                MandarinOptions::ZHUYIN));
         _settings->sync();
     });
 
@@ -491,6 +508,7 @@ void SettingsTab::initializeEntryMandarinPronunciation(
 {
     mandarinPronunciationWidget.layout()->addWidget(_entryPinyin);
     mandarinPronunciationWidget.layout()->addWidget(_entryNumberedPinyin);
+    mandarinPronunciationWidget.layout()->addWidget(_entryZhuyin);
 
     connect(_entryPinyin, &QCheckBox::stateChanged, this, [&]() {
         MandarinOptions options
@@ -528,6 +546,26 @@ void SettingsTab::initializeEntryMandarinPronunciation(
                                 QVariant::fromValue<MandarinOptions>(
                                     options
                                     & ~(MandarinOptions::NUMBERED_PINYIN)));
+        }
+        _settings->sync();
+    });
+
+    connect(_entryZhuyin, &QCheckBox::stateChanged, this, [&]() {
+        MandarinOptions options
+            = _settings
+                  ->value("Entry/mandarinPronunciationOptions",
+                          QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
+                  .value<MandarinOptions>();
+
+        if (_entryZhuyin->isChecked()) {
+            _settings->setValue("Entry/mandarinPronunciationOptions",
+                                QVariant::fromValue<MandarinOptions>(
+                                    options | MandarinOptions::ZHUYIN));
+        } else {
+            _settings->setValue("Entry/mandarinPronunciationOptions",
+                                QVariant::fromValue<MandarinOptions>(
+                                    options
+                                    & ~(MandarinOptions::ZHUYIN)));
         }
         _settings->sync();
     });

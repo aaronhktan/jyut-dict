@@ -84,17 +84,18 @@ const static std::unordered_map<std::string, std::string> zhuyinFinalMap
        {"wang", "ㄨㄤ"}, {"ying", "ㄧㄥ"}, {"weng", "ㄨㄥ"}, {"iong", "ㄩㄥ"},
        {"yong", "ㄩㄥ"}, {"uai", "ㄨㄞ"},  {"wai", "ㄨㄞ"},  {"yai", "ㄧㄞ"},
        {"iao", "ㄧㄠ"},  {"yao", "ㄧㄠ"},  {"ian", "ㄧㄢ"},  {"yan", "ㄧㄢ"},
-       {"uan", "ㄨㄢ"},  {"wan", "ㄨㄢ"},  {"üan", "ㄩㄢ"},  {"ang", "ㄤ"},
+       {"uan", "ㄨㄢ"},  {"wan", "ㄨㄢ"},  {"van", "ㄩㄢ"},  {"ang", "ㄤ"},
        {"yue", "ㄩㄝ"},  {"wei", "ㄨㄟ"},  {"you", "ㄧㄡ"},  {"yin", "ㄧㄣ"},
        {"wen", "ㄨㄣ"},  {"yun", "ㄩㄣ"},  {"eng", "ㄥ"},    {"ing", "ㄧㄥ"},
+       {"ong", "ㄨㄥ"},  {"io", "ㄧㄛ"},   {"yo", "ㄧㄛ"},   {"ia", "ㄧㄚ"},
        {"ya", "ㄧㄚ"},   {"ua", "ㄨㄚ"},   {"wa", "ㄨㄚ"},   {"ai", "ㄞ"},
        {"ao", "ㄠ"},     {"an", "ㄢ"},     {"ie", "ㄧㄝ"},   {"ye", "ㄧㄝ"},
-       {"uo", "ㄨㄛ"},   {"wo", "ㄨㄛ"},   {"ue", "ㄩㄝ"},   {"üe", "ㄩㄝ"},
+       {"uo", "ㄨㄛ"},   {"wo", "ㄨㄛ"},   {"ue", "ㄩㄝ"},   {"ve", "ㄩㄝ"},
        {"ei", "ㄟ"},     {"ui", "ㄨㄟ"},   {"ou", "ㄡ"},     {"iu", "ㄧㄡ"},
-       {"en", "ㄣ"},     {"in", "ㄧㄣ"},   {"un", "ㄨㄣ"},   {"ün", "ㄩㄣ"},
+       {"en", "ㄣ"},     {"in", "ㄧㄣ"},   {"un", "ㄨㄣ"},   {"vn", "ㄩㄣ"},
        {"yi", "ㄧ"},     {"wu", "ㄨ"},     {"yu", "ㄩ"},     {"a", "ㄚ"},
        {"e", "ㄜ"},      {"o", "ㄛ"},      {"i", "ㄧ"},      {"u", "ㄨ"},
-       {"ü", "ㄩ"},      {"ê", "ㄝ"}};
+       {"v", "ㄩ"},      {"ê", "ㄝ"}};
 
 const static std::vector<std::string> zhuyinTones = {"", "", "ˊ", "ˇ", "ˋ", "˙"};
 
@@ -563,53 +564,55 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
 
         std::string zhuyin_syllable{syllable};
         zhuyin_syllable = std::regex_replace(zhuyin_syllable,
-                                             std::regex{"u:"},
-                                             "ü");
+                                             std::regex{"u\\:"},
+                                             "v");
         zhuyin_syllable = std::regex_replace(zhuyin_syllable,
                                              std::regex{"([jqx])u"},
-                                             "$&ü");
+                                             "$1v");
         zhuyin_syllable = std::regex_replace(zhuyin_syllable,
                                              std::regex{"([zcs]h?)i"},
-                                             "$&");
+                                             "$1");
         zhuyin_syllable = std::regex_replace(zhuyin_syllable,
                                              std::regex{"([r])i"},
-                                             "$&");
+                                             "$1");
 
         // Handle special cases
         zhuyin_syllable = std::regex_replace(zhuyin_syllable,
                                              std::regex{"^ng([012345])$"},
-                                             "ㄫ$&");
+                                             "ㄫ$1");
         zhuyin_syllable = std::regex_replace(zhuyin_syllable,
                                              std::regex{"^hm([012345])$"},
-                                             "ㄏㄇ$&");
+                                             "ㄏㄇ$1");
         zhuyin_syllable = std::regex_replace(zhuyin_syllable,
                                              std::regex{"^hng([012345])$"},
-                                             "ㄏㄫ$&");
+                                             "ㄏㄫ$1");
         zhuyin_syllable = std::regex_replace(zhuyin_syllable,
                                              std::regex{"^er([012345])$"},
-                                             "ㄦ$&");
+                                             "ㄦ$1");
 
         // Handle general case
         // Convert Pinyin initial
         std::smatch initial_match;
         std::regex pinyin_initial = std::regex{"^([bpmfdtnlgkhjqxzcsr]?h?)"};
         if (std::regex_search(zhuyin_syllable, initial_match, pinyin_initial)) {
-            zhuyin_syllable = std::regex_replace(zhuyin_syllable,
-                                                 pinyin_initial,
-                                                 zhuyinInitialMap.at(
-                                                     initial_match[1]));
+            if (initial_match[1].length()) {
+                zhuyin_syllable = std::regex_replace(zhuyin_syllable,
+                                                     pinyin_initial,
+                                                     zhuyinInitialMap.at(
+                                                         initial_match[1]));
+            }
         }
         // Convert Pinyin final
         std::smatch final_match;
         std::regex pinyin_final = std::regex{
-            "([aeiouêüyw]?[aeioun]?[aeioung]?[ng]?)(r?)([012345])$"};
+            "([aeiouêvyw]?[aeioun]?[aeioung]?[ng]?)(r?)([012345])$"};
         if (std::regex_search(zhuyin_syllable, final_match, pinyin_final)) {
             std::string final;
             std::string er;
-            if (final_match[1].matched) {
+            if (final_match[1].length()) {
                 final = zhuyinFinalMap.at(final_match[1]);
             }
-            if (final_match[2].matched && final_match[2].length()) {
+            if (final_match[2].length()) {
                 er = "ㄦ";
             }
             zhuyin_syllable = std::regex_replace(zhuyin_syllable,
@@ -622,7 +625,7 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
             zhuyin_syllable = zhuyinTones[tone] + zhuyin_syllable;
         } else {
             auto er_pos = zhuyin_syllable.find("ㄦ");
-            if (er_pos != std::string::npos) {
+            if (er_pos != std::string::npos && zhuyin_syllable != "ㄦ") {
                 zhuyin_syllable.insert(er_pos, zhuyinTones[tone]);
             } else {
                 zhuyin_syllable = zhuyin_syllable + zhuyinTones[tone];

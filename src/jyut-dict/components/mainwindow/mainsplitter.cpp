@@ -156,7 +156,6 @@ void MainSplitter::prepareEntry(Entry &entry, bool addToHistory) const
               .value<MandarinOptions>();
     entry.generatePhonetic(cantoneseOptions, mandarinOptions);
 
-
     cantoneseOptions
         = Settings::getSettings()
               ->value("Preview/cantonesePronunciationOptions",
