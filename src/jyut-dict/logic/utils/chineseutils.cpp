@@ -71,6 +71,33 @@ const static std::unordered_map<std::string, std::vector<std::string>>
                           {"u", {"ū", "ú", "u", "ù", "ú", "u"}},
 };
 
+const static std::unordered_map<std::string, std::string> zhuyinInitialMap = {
+    {"b", "ㄅ"},  {"p", "ㄆ"}, {"m", "ㄇ"}, {"f", "ㄈ"},  {"d", "ㄉ"},
+    {"t", "ㄊ"},  {"n", "ㄋ"}, {"l", "ㄌ"}, {"g", "ㄍ"},  {"k", "ㄎ"},
+    {"h", "ㄏ"},  {"j", "ㄐ"}, {"q", "ㄑ"}, {"x", "ㄒ"},  {"z", "ㄗ"},
+    {"c", "ㄘ"},  {"s", "ㄙ"}, {"r", "ㄖ"}, {"zh", "ㄓ"}, {"ch", "ㄔ"},
+    {"sh", "ㄕ"},
+};
+
+const static std::unordered_map<std::string, std::string> zhuyinFinalMap
+    = {{"yuan", "ㄩㄢ"}, {"iang", "ㄧㄤ"}, {"yang", "ㄧㄤ"}, {"uang", "ㄨㄤ"},
+       {"wang", "ㄨㄤ"}, {"ying", "ㄧㄥ"}, {"weng", "ㄨㄥ"}, {"iong", "ㄩㄥ"},
+       {"yong", "ㄩㄥ"}, {"uai", "ㄨㄞ"},  {"wai", "ㄨㄞ"},  {"yai", "ㄧㄞ"},
+       {"iao", "ㄧㄠ"},  {"yao", "ㄧㄠ"},  {"ian", "ㄧㄢ"},  {"yan", "ㄧㄢ"},
+       {"uan", "ㄨㄢ"},  {"wan", "ㄨㄢ"},  {"üan", "ㄩㄢ"},  {"ang", "ㄤ"},
+       {"yue", "ㄩㄝ"},  {"wei", "ㄨㄟ"},  {"you", "ㄧㄡ"},  {"yin", "ㄧㄣ"},
+       {"wen", "ㄨㄣ"},  {"yun", "ㄩㄣ"},  {"eng", "ㄥ"},    {"ing", "ㄧㄥ"},
+       {"ya", "ㄧㄚ"},   {"ua", "ㄨㄚ"},   {"wa", "ㄨㄚ"},   {"ai", "ㄞ"},
+       {"ao", "ㄠ"},     {"an", "ㄢ"},     {"ie", "ㄧㄝ"},   {"ye", "ㄧㄝ"},
+       {"uo", "ㄨㄛ"},   {"wo", "ㄨㄛ"},   {"ue", "ㄩㄝ"},   {"üe", "ㄩㄝ"},
+       {"ei", "ㄟ"},     {"ui", "ㄨㄟ"},   {"ou", "ㄡ"},     {"iu", "ㄧㄡ"},
+       {"en", "ㄣ"},     {"in", "ㄧㄣ"},   {"un", "ㄨㄣ"},   {"ün", "ㄩㄣ"},
+       {"yi", "ㄧ"},     {"wu", "ㄨ"},     {"yu", "ㄩ"},     {"a", "ㄚ"},
+       {"e", "ㄜ"},      {"o", "ㄛ"},      {"i", "ㄧ"},      {"u", "ㄨ"},
+       {"ü", "ㄩ"},      {"ê", "ㄝ"}};
+
+const static std::vector<std::string> zhuyinTones = {"", "", "ˊ", "ˇ", "ˋ", "˙"};
+
 std::string applyColours(
     const std::string original,
     const std::vector<int> &tones,
@@ -259,6 +286,9 @@ std::string convertJyutpingToYale(const std::string &jyutping)
     return convertJyutpingToYale(jyutping, /* useSpacesToSegment */ false);
 }
 
+// Note that the majority of this code is derivative of Wiktionary's conversion
+// code, contained in the module yue-pron
+// (https://en.wiktionary.org/wiki/Module:yue-pron)
 std::string convertJyutpingToYale(const std::string &jyutping,
                                   bool useSpacesToSegment)
 {
@@ -283,6 +313,7 @@ std::string convertJyutpingToYale(const std::string &jyutping,
         syllables = segmentJyutping(QString{jyutping.c_str()},
                                     /* ignoreSpecialCharacters */ false);
     }
+
     std::vector<std::string> yale_syllables;
 
     for (const auto &syllable : syllables) {
@@ -475,6 +506,139 @@ std::string createPinyinWithV(const std::string &pinyin)
     }
 
     // Remove trailing space
+    result.erase(result.end() - 1);
+
+    return result;
+}
+
+std::string convertPinyinToZhuyin(const std::string &pinyin)
+{
+    return convertPinyinToZhuyin(pinyin, /* useSpacesToSegment */ false);
+}
+
+// Note that the majority of this code is derivative of Wiktionary's conversion
+// code, contained in the module cmn-pron
+// (https://en.wiktionary.org/wiki/Module:cmn-pron)
+std::string convertPinyinToZhuyin(const std::string &pinyin,
+                                  bool useSpacesToSegment)
+{
+    if (pinyin.empty()) {
+        return pinyin;
+    }
+
+    std::vector<std::string> syllables;
+    if (useSpacesToSegment) {
+        // Insert a space before and after every special character, so that the
+        // Yale conversion doesn't attempt to convert special characters.
+        std::string pinyinCopy = pinyin;
+        for (const auto &specialCharacter : specialCharacters) {
+            size_t location = pinyinCopy.find(specialCharacter);
+            if (location != std::string::npos) {
+                pinyinCopy.erase(location, specialCharacter.length());
+                pinyinCopy.insert(location, " " + specialCharacter + " ");
+            }
+        }
+        Utils::split(pinyinCopy, ' ', syllables);
+    } else {
+        syllables = segmentPinyin(QString{pinyin.c_str()});
+    }
+
+    std::vector<std::string> zhuyin_syllables;
+
+    for (const auto &syllable : syllables) {
+        // Skip syllables that are just punctuation
+        if (specialCharacters.find(syllable) != specialCharacters.end()) {
+            zhuyin_syllables.push_back(syllable);
+            continue;
+        }
+
+        // Skip syllables that don't have tone
+        auto location = syllable.find_first_of("12345");
+        if (location == std::string::npos) {
+            zhuyin_syllables.push_back(syllable);
+            continue;
+        }
+        unsigned long tone = static_cast<unsigned long>(
+            std::stoi(syllable.substr(location, 1)));
+
+        std::string zhuyin_syllable{syllable};
+        zhuyin_syllable = std::regex_replace(zhuyin_syllable,
+                                             std::regex{"u:"},
+                                             "ü");
+        zhuyin_syllable = std::regex_replace(zhuyin_syllable,
+                                             std::regex{"([jqx])u"},
+                                             "$&ü");
+        zhuyin_syllable = std::regex_replace(zhuyin_syllable,
+                                             std::regex{"([zcs]h?)i"},
+                                             "$&");
+        zhuyin_syllable = std::regex_replace(zhuyin_syllable,
+                                             std::regex{"([r])i"},
+                                             "$&");
+
+        // Handle special cases
+        zhuyin_syllable = std::regex_replace(zhuyin_syllable,
+                                             std::regex{"^ng([012345])$"},
+                                             "ㄫ$&");
+        zhuyin_syllable = std::regex_replace(zhuyin_syllable,
+                                             std::regex{"^hm([012345])$"},
+                                             "ㄏㄇ$&");
+        zhuyin_syllable = std::regex_replace(zhuyin_syllable,
+                                             std::regex{"^hng([012345])$"},
+                                             "ㄏㄫ$&");
+        zhuyin_syllable = std::regex_replace(zhuyin_syllable,
+                                             std::regex{"^er([012345])$"},
+                                             "ㄦ$&");
+
+        // Handle general case
+        // Convert Pinyin initial
+        std::smatch initial_match;
+        std::regex pinyin_initial = std::regex{"^([bpmfdtnlgkhjqxzcsr]?h?)"};
+        if (std::regex_search(zhuyin_syllable, initial_match, pinyin_initial)) {
+            zhuyin_syllable = std::regex_replace(zhuyin_syllable,
+                                                 pinyin_initial,
+                                                 zhuyinInitialMap.at(
+                                                     initial_match[1]));
+        }
+        // Convert Pinyin final
+        std::smatch final_match;
+        std::regex pinyin_final = std::regex{
+            "([aeiouêüyw]?[aeioun]?[aeioung]?[ng]?)(r?)([012345])$"};
+        if (std::regex_search(zhuyin_syllable, final_match, pinyin_final)) {
+            std::string final;
+            std::string er;
+            if (final_match[1].matched) {
+                final = zhuyinFinalMap.at(final_match[1]);
+            }
+            if (final_match[2].matched && final_match[2].length()) {
+                er = "ㄦ";
+            }
+            zhuyin_syllable = std::regex_replace(zhuyin_syllable,
+                                                 pinyin_final,
+                                                 final + er);
+        }
+
+        // Add tone to zhuyin syllable
+        if (tone == 5) {
+            zhuyin_syllable = zhuyinTones[tone] + zhuyin_syllable;
+        } else {
+            auto er_pos = zhuyin_syllable.find("ㄦ");
+            if (er_pos != std::string::npos) {
+                zhuyin_syllable.insert(er_pos, zhuyinTones[tone]);
+            } else {
+                zhuyin_syllable = zhuyin_syllable + zhuyinTones[tone];
+            }
+        }
+
+        zhuyin_syllables.emplace_back(zhuyin_syllable);
+    }
+
+    std::ostringstream zhuyin;
+    for (const auto &zhuyin_syllable : zhuyin_syllables) {
+        zhuyin << zhuyin_syllable << " ";
+    }
+
+    // Remove trailing space
+    std::string result = zhuyin.str();
     result.erase(result.end() - 1);
 
     return result;

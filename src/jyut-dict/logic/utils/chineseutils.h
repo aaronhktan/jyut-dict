@@ -54,6 +54,10 @@ std::string createPrettyPinyin(const std::string &pinyin);
 std::string createNumberedPinyin(const std::string &pinyin);
 std::string createPinyinWithV(const std::string &pinyin);
 
+std::string convertPinyinToZhuyin(const std::string &pinyin);
+std::string convertPinyinToZhuyin(const std::string &pinyin,
+                                  bool useSpacesToSegment);
+
 // constructRomanisationQuery takes a vector of strings and stitches them
 // together with a delimiter.
 //
