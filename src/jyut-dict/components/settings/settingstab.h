@@ -4,12 +4,15 @@
 #include "dialogs/resetsettingsdialog.h"
 #include "logic/settings/settingsutils.h"
 
+#include <QCheckBox>
 #include <QColor>
 #include <QComboBox>
 #include <QEvent>
 #include <QFormLayout>
 #include <QLabel>
 #include <QPushButton>
+#include <QRadioButton>
+#include <QVBoxLayout>
 #include <QWidget>
 
 #include <memory>
@@ -47,8 +50,15 @@ private:
     void setStyle(bool use_dark);
 
     void initializeCharacterComboBox(QComboBox &characterCombobox);
-    void initializePhoneticComboBox(QComboBox &phoneticCombobox);
-    void initializeMandarinComboBox(QComboBox &mandarinCombobox);
+
+    void initializePreviewPhonetic(QWidget &previewPhoneticWidget);
+    void initializeSearchResultsCantonesePronunciation(
+        QWidget &cantonesePronunciationWidget);
+    void initializeSearchResultsMandarinPronunciation(
+        QWidget &mandarinPronunciationWidget);
+
+    void initializeEntryCantonesePronunciation(QWidget &cantonesePronunciationWidget);
+    void initializeEntryMandarinPronunciation(QWidget &mandarinPronunciationWidget);
 
     void initializeColourComboBox(QComboBox &colourCombobox);
     void initializeJyutpingColourWidget(QWidget &jyutpingColourWidget);
@@ -64,8 +74,13 @@ private:
     void resetSettings(QSettings &settings);
 
     void setCharacterComboBoxDefault(QComboBox &characterCombobox);
+
     void setPhoneticComboBoxDefault(QComboBox &phoneticCombobox);
-    void setMandarinComboBoxDefault(QComboBox &mandarinCombobox);
+    void setSearchResultsCantonesePronunciationDefault(QWidget &widget);
+    void setSearchResultsMandarinPronunciationDefault(QWidget &widget);
+
+    void setEntryCantonesePronunciationDefault(QWidget &widget);
+    void setEntryMandarinPronunciationDefault(QWidget &widget);
 
     void setColourComboBoxDefault(QComboBox &colourCombobox);
     void setJyutpingColourWidgetDefault(QWidget &jyutpingColourWidget);
@@ -73,10 +88,34 @@ private:
 
     bool _paletteRecentlyChanged = false;
 
+    QLabel *_characterTitleLabel;
     QComboBox *_characterCombobox;
-    QComboBox *_phoneticCombobox;
-    QComboBox *_mandarinCombobox;
 
+    QLabel *_previewTitleLabel;
+    QWidget *_previewPhoneticWidget;
+    QHBoxLayout *_previewPhoneticLayout;
+    QComboBox *_previewPhoneticCombobox;
+    QWidget *_previewCantonesePronunciation;
+    QHBoxLayout *_previewCantonesePronunciationLayout;
+    QRadioButton *_previewJyutping;
+    QRadioButton *_previewYale;
+    QWidget *_previewMandarinPronunciation;
+    QHBoxLayout *_previewMandarinPronunciationLayout;
+    QRadioButton *_previewPinyin;
+    QRadioButton *_previewNumberedPinyin;
+
+    QLabel *_entryTitleLabel;
+    QWidget *_entryCantonesePronunciation;
+    QVBoxLayout *_entryCantonesePronunciationLayout;
+    QCheckBox *_entryJyutping;
+    QCheckBox *_entryYale;
+
+    QWidget *_entryMandarinPronunciation;
+    QVBoxLayout *_entryMandarinPronunciationLayout;
+    QCheckBox *_entryPinyin;
+    QCheckBox *_entryNumberedPinyin;
+
+    QLabel *_colourTitleLabel;
     QComboBox *_colourCombobox;
     QWidget *_jyutpingColourWidget;
     QWidget *_pinyinColourWidget;

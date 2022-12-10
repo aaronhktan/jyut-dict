@@ -2,6 +2,7 @@
 
 #include "components/entrysearchresult/resultlistmodel.h"
 #include "components/entrysearchresult/resultlistview.h"
+#include "logic/entry/entryphoneticoptions.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_WIN
 #include "logic/utils/utils_windows.h"
@@ -21,6 +22,25 @@ FavouriteSplitter::FavouriteSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUt
     translateUI();
 
     _sqlUserUtils->searchForAllFavouritedWords();
+}
+
+void FavouriteSplitter::changeEvent(QEvent *event)
+{
+#ifdef Q_OS_WIN
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        setStyle(Utils::isDarkMode());
+    }
+#endif
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
+    QSplitter::changeEvent(event);
 }
 
 void FavouriteSplitter::setupUI()
@@ -85,25 +105,6 @@ void FavouriteSplitter::setStyle(bool use_dark)
 }
 #endif
 
-void FavouriteSplitter::changeEvent(QEvent *event)
-{
-#ifdef Q_OS_WIN
-    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
-        // QWidget emits a palette changed event when setting the stylesheet
-        // So prevent it from going into an infinite loop with this timer
-        _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
-
-        // Set the style to match whether the user started dark mode
-        setStyle(Utils::isDarkMode());
-    }
-#endif
-    if (event->type() == QEvent::LanguageChange) {
-        translateUI();
-    }
-    QSplitter::changeEvent(event);
-}
-
 void FavouriteSplitter::openCurrentSelectionInNewWindow(void)
 {
     QModelIndex entryIndex = _resultListView->currentIndex();
@@ -115,10 +116,20 @@ void FavouriteSplitter::prepareEntry(Entry &entry)
     entry.refreshColours(
         Settings::getSettings()
             ->value("entryColourPhoneticType",
-                    QVariant::fromValue(EntryColourPhoneticType::JYUTPING))
+                    QVariant::fromValue(EntryColourPhoneticType::CANTONESE))
             .value<EntryColourPhoneticType>());
 
-    return;
+    CantoneseOptions cantoneseOptions
+        = Settings::getSettings()
+              ->value("Entry/cantonesePronunciationOptions",
+                      QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
+              .value<CantoneseOptions>();
+    MandarinOptions mandarinOptions
+        = Settings::getSettings()
+              ->value("Entry/mandarinPronunciationOptions",
+                      QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
+              .value<MandarinOptions>();
+    entry.generatePhonetic(cantoneseOptions, mandarinOptions);
 }
 
 void FavouriteSplitter::handleClick(const QModelIndex &selection)
@@ -145,7 +156,7 @@ void FavouriteSplitter::handleDoubleClick(const QModelIndex &selection)
 
     prepareEntry(entry);
 
-    QTimer::singleShot(50, this, [=]() {
+    QTimer::singleShot(50, this, [&]() {
         EntryScrollArea *area = new EntryScrollArea{_sqlUserUtils, _manager, nullptr};
         area->setParent(this, Qt::Window);
         area->setEntry(entry);

@@ -36,6 +36,8 @@ public:
 private:
     void translateUI(void);
 
+    void prepareSourceSentence(SourceSentence &sentence) const;
+
 #ifdef Q_OS_WIN
     void setStyle(bool use_dark);
     bool _paletteRecentlyChanged = false;

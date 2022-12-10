@@ -114,6 +114,24 @@ void SentenceSplitter::translateUI(void)
     setWindowTitle(title);
 }
 
+void SentenceSplitter::prepareSourceSentence(SourceSentence &sentence) const
+{
+    // Although the setting is named Entry/xxxPronunciationOptions, it applies
+    // to all detail views (i.e. both the entry detail view and sentence detail
+    // view.)
+    CantoneseOptions cantoneseOptions
+        = Settings::getSettings()
+              ->value("Entry/cantonesePronunciationOptions",
+                      QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
+              .value<CantoneseOptions>();
+    MandarinOptions mandarinOptions
+        = Settings::getSettings()
+              ->value("Entry/mandarinPronunciationOptions",
+                      QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
+              .value<MandarinOptions>();
+    sentence.generatePhonetic(cantoneseOptions, mandarinOptions);
+}
+
 void SentenceSplitter::openCurrentSelectionInNewWindow(void)
 {
     QModelIndex entryIndex = _resultListView->currentIndex();
@@ -124,12 +142,16 @@ void SentenceSplitter::handleClick(const QModelIndex &selection)
 {
     SourceSentence sentence = qvariant_cast<SourceSentence>(selection.data());
 
+    prepareSourceSentence(sentence);
+
     _sentenceScrollArea->setSourceSentence(sentence);
 }
 
 void SentenceSplitter::handleDoubleClick(const QModelIndex &selection)
 {
     SourceSentence sentence = qvariant_cast<SourceSentence>(selection.data());
+
+    prepareSourceSentence(sentence);
 
     SentenceScrollArea *area = new SentenceScrollArea{nullptr};
     area->setParent(this, Qt::Window);

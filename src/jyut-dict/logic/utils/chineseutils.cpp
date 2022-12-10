@@ -3,8 +3,11 @@
 #include "logic/utils/utils.h"
 #include "logic/settings/settings.h"
 
+#include <cctype>
 #include <codecvt>
 #include <iomanip>
+#include <iostream>
+#include <regex>
 #include <sstream>
 #include <unordered_map>
 #include <unordered_set>
@@ -18,10 +21,18 @@ static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
 #endif
 
 const static std::unordered_set<std::string> specialCharacters = {
+    ".",
+    ",",
     "，",
+    "!",
+    "！",
+    "?",
+    "？",
     "%",
     "－",
     "…",
+    "⋯",
+    ".",
     "·",
 };
 
@@ -33,6 +44,31 @@ const static std::unordered_map<std::string, std::vector<std::string>> replaceme
         {"o", {"ō", "ó", "ǒ", "ò", "o"}},
         {"u", {"ū", "ú", "ǔ", "ù", "u"}},
         {"ü", {"ǖ", "ǘ", "ǚ", "ǜ", "ü"}},
+};
+
+const static std::unordered_map<std::string, std::string>
+    jyutpingToYaleSpecialFinals = {
+        {"aa", "a"},
+        {"oe", "eu"},
+        {"oeng", "eung"},
+        {"oek", "euk"},
+        {"eoi", "eui"},
+        {"eon", "eun"},
+        {"eot", "eut"},
+};
+
+const static std::unordered_map<std::string, std::vector<std::string>>
+    jyutpingToYaleSpecialSyllables = {
+        {"m", {"m̄", "ḿ", "m", "m̀h", "ḿh", "mh"}},
+        {"ng", {"n̄g", "ńg", "ng", "ǹgh", "ńgh", "ngh"}},
+};
+
+const static std::unordered_map<std::string, std::vector<std::string>>
+    yaleReplacementMap = {{"a", {"ā", "á", "a", "à", "á", "a"}},
+                          {"e", {"ē", "é", "e", "è", "é", "e"}},
+                          {"i", {"ī", "í", "i", "ì", "í", "i"}},
+                          {"o", {"ō", "ó", "o", "ò", "ó", "o"}},
+                          {"u", {"ū", "ú", "u", "ù", "ú", "u"}},
 };
 
 std::string applyColours(
@@ -68,7 +104,7 @@ std::string applyColours(
         auto isSpecialCharacter = specialCharacters.find(originalCharacter) != specialCharacters.end();
         auto isAlphabetical = std::find_if(originalCharacter.begin(),
                                            originalCharacter.end(),
-                                           isalpha)
+                                           [](unsigned char c){ return std::isalpha(c); })
                               != originalCharacter.end();
         if (isSpecialCharacter || isAlphabetical) {
             coloured_string += converter.to_bytes(character);
@@ -90,14 +126,14 @@ std::string applyColours(
 
         // ... and apply tone colour formatting to the string
         switch (type) {
-        case EntryColourPhoneticType::JYUTPING: {
+        case EntryColourPhoneticType::CANTONESE: {
             coloured_string += "<font color=\""
                                + jyutpingToneColours.at(
                                    static_cast<size_t>(tone))
                                + "\">";
             break;
         }
-        case EntryColourPhoneticType::PINYIN: {
+        case EntryColourPhoneticType::MANDARIN: {
             coloured_string += "<font color=\""
                                + pinyinToneColours.at(
                                    static_cast<size_t>(tone))
@@ -156,8 +192,151 @@ std::string compareStrings(const std::string &original,
     return result;
 }
 
+static std::string convertYaleInitial(const std::string &syllable)
+{
+    std::string yale_syllable{syllable};
+    yale_syllable = std::regex_replace(yale_syllable, std::regex{"jy?"}, "y");
+    yale_syllable = std::regex_replace(yale_syllable, std::regex{"z"}, "j");
+    yale_syllable = std::regex_replace(yale_syllable, std::regex{"c"}, "ch");
+    return yale_syllable;
+}
+
+static std::string convertYaleFinal(const std::string &syllable)
+{
+    std::string yale_syllable{syllable};
+
+    // Attempt to isolate the part of the Jyutping syllable that is the final
+    std::regex final_regex{"([aeiou][aeiou]?[iumngptk]?[g]?)([1-6])"};
+    std::smatch match;
+    auto regex_res = std::regex_search(syllable, match, final_regex);
+
+    if (!regex_res) {
+        std::cerr << "No final found!" << std::endl;
+        return yale_syllable;
+    }
+
+    std::string final = match[1].str();
+    int tone = std::stoi(match[2]);
+
+    auto final_location = yale_syllable.find(final);
+
+    // Some Jyutping finals have significant differences when mapped to Yale.
+    // Switch it out here.
+    auto replacement_final_search = jyutpingToYaleSpecialFinals.find(final);
+    if (replacement_final_search != jyutpingToYaleSpecialFinals.end()) {
+        yale_syllable.erase(final_location, final.length());
+        yale_syllable.insert(final_location, replacement_final_search->second);
+    }
+
+    // Insert an "h" before the last consonant cluster for the light tones,
+    // as they are indicated in Yale
+    if (tone == 4 || tone == 5 || tone == 6) {
+        yale_syllable = std::regex_replace(yale_syllable,
+                                           std::regex{"([ptkmn]?g?)[123456]$"},
+                                           "h$&");
+    }
+
+    // Replace the first vowel in the final with its accented version
+    auto replacement_location = yale_syllable.find_first_of("aeiou");
+    std::string first_vowel = yale_syllable.substr(replacement_location, 1);
+    auto replacement_vowel_search = yaleReplacementMap.find(first_vowel);
+    std::string replacement_vowel = (replacement_vowel_search
+                                     == yaleReplacementMap.end())
+                                        ? first_vowel
+                                        : replacement_vowel_search->second.at(
+                                            static_cast<size_t>(tone - 1));
+    yale_syllable.erase(replacement_location, first_vowel.length());
+    yale_syllable.insert(replacement_location, replacement_vowel);
+
+    // Remove the tone number, as Yale doesn't use those
+    yale_syllable.erase(yale_syllable.cend() - 1);
+
+    return yale_syllable;
+}
+
+std::string convertJyutpingToYale(const std::string &jyutping)
+{
+    return convertJyutpingToYale(jyutping, /* useSpacesToSegment */ false);
+}
+
+std::string convertJyutpingToYale(const std::string &jyutping,
+                                  bool useSpacesToSegment)
+{
+    if (jyutping.empty()) {
+        return jyutping;
+    }
+
+    std::vector<std::string> syllables;
+    if (useSpacesToSegment) {
+        // Insert a space before and after every special character, so that the
+        // Yale conversion doesn't attempt to convert special characters.
+        std::string jyutpingCopy = jyutping;
+        for (const auto &specialCharacter : specialCharacters) {
+            size_t location = jyutpingCopy.find(specialCharacter);
+            if (location != std::string::npos) {
+                jyutpingCopy.erase(location, specialCharacter.length());
+                jyutpingCopy.insert(location, " " + specialCharacter + " ");
+            }
+        }
+        Utils::split(jyutpingCopy, ' ', syllables);
+    } else {
+        syllables = segmentJyutping(QString{jyutping.c_str()},
+                                    /* ignoreSpecialCharacters */ false);
+    }
+    std::vector<std::string> yale_syllables;
+
+    for (const auto &syllable : syllables) {
+        // Skip syllables that are just punctuation
+        if (specialCharacters.find(syllable) != specialCharacters.end()) {
+            yale_syllables.push_back(syllable);
+            continue;
+        }
+
+        // Skip syllables that don't have tone
+        auto location = syllable.find_first_of("123456");
+        if (location == std::string::npos) {
+            yale_syllables.push_back(syllable);
+            continue;
+        }
+
+        // Handle special-case syllables
+        std::string syllable_without_tone = syllable.substr(0,
+                                                            syllable.length()
+                                                                - 1);
+        int tone = std::stoi(
+            syllable.substr(syllable.find_first_of("123456"), 1));
+        auto search = jyutpingToYaleSpecialSyllables.find(syllable_without_tone);
+        if (search != jyutpingToYaleSpecialSyllables.end()) {
+            yale_syllables.emplace_back(
+                search->second.at(static_cast<size_t>(tone) - 1));
+            continue;
+        }
+
+        std::string yale_syllable{syllable};
+
+        yale_syllable = convertYaleFinal(yale_syllable);
+        yale_syllable = convertYaleInitial(yale_syllable);
+        yale_syllables.emplace_back(yale_syllable);
+    }
+
+    std::ostringstream yale;
+    for (const auto &yale_syllable : yale_syllables) {
+        yale << yale_syllable << " ";
+    }
+
+    // Remove trailing space
+    std::string result = yale.str();
+    result.erase(result.end() - 1);
+
+    return result;
+}
+
 std::string createPrettyPinyin(const std::string &pinyin)
 {
+    if (pinyin.empty()) {
+        return pinyin;
+    }
+
     std::string result;
 
     // Create a vector of each space-separated value in pinyin
@@ -230,6 +409,68 @@ std::string createPrettyPinyin(const std::string &pinyin)
         // Remove the tone from the pinyin
         tone_location = syllable.find_first_of("012345");
         syllable.erase(tone_location, 1);
+        result += syllable + " ";
+    }
+
+    // Remove trailing space
+    result.erase(result.end() - 1);
+
+    return result;
+}
+
+std::string createNumberedPinyin(const std::string &pinyin)
+{
+    if (pinyin.empty()) {
+        return pinyin;
+    }
+
+    std::string result;
+
+    std::vector<std::string> syllables;
+    Utils::split(pinyin, ' ', syllables);
+    if (syllables.empty()) {
+        return pinyin;
+    }
+
+    for (auto &syllable : syllables) {
+        size_t location = syllable.find("u:");
+        while (location != std::string::npos) {
+            syllable.erase(location, 2);
+            syllable.insert(location, "ü");
+            location = syllable.find("u:");
+        }
+
+        result += syllable + " ";
+    }
+
+    // Remove trailing space
+    result.erase(result.end() - 1);
+
+    return result;
+}
+
+std::string createPinyinWithV(const std::string &pinyin)
+{
+    if (pinyin.empty()) {
+        return pinyin;
+    }
+
+    std::string result;
+
+    std::vector<std::string> syllables;
+    Utils::split(pinyin, ' ', syllables);
+    if (syllables.empty()) {
+        return pinyin;
+    }
+
+    for (auto &syllable : syllables) {
+        size_t location = syllable.find("u:");
+        while (location != std::string::npos) {
+            syllable.erase(location, 2);
+            syllable.insert(location, "v");
+            location = syllable.find("u:");
+        }
+
         result += syllable + " ";
     }
 
@@ -363,6 +604,12 @@ std::vector<std::string> segmentPinyin(const QString &string)
 
 std::vector<std::string> segmentJyutping(const QString &string)
 {
+    return segmentJyutping(string, /* ignoreSpecialCharacters */ true);
+}
+
+std::vector<std::string> segmentJyutping(const QString &string,
+                                         bool ignoreSpecialCharacters)
+{
     std::vector<std::string> words;
 
     std::unordered_set<std::string> initials = {"b",  "p", "m",  "f",  "d",
@@ -370,13 +617,13 @@ std::vector<std::string> segmentJyutping(const QString &string)
                                                 "ng", "h", "gw", "kw", "w",
                                                 "z",  "c", "s",  "j",  "m"};
     std::unordered_set<std::string> finals
-        = {"aa",   "aai", "aau", "aam", "aan", "aang", "aap", "aat",
-           "aak",  "ai",  "au",  "am",  "an",  "ang",  "ap",  "at",
-           "ak",   "e",   "ei",  "eu",  "em",  "eng",  "ep",  "ek",
-           "i",    "iu",  "im",  "in",  "ing", "ip",   "it",  "ik",
-           "o",    "oi",  "ou",  "on",  "ong", "ot",   "ok",  "u",
-           "ui",   "un",  "ung", "ut",  "uk",  "oe",   "eoi", "eon",
-           "oeng", "eot", "oek", "yu",  "yun", "yut",  "m",   "ng"};
+        = {"aa",  "aai", "aau", "aam", "aan",  "aang", "aap", "aat", "aak",
+           "ai",  "au",  "am",  "an",  "ang",  "ap",   "at",  "ak",  "e",
+           "ei",  "eu",  "em",  "en",  "eng",  "ep",   "ek",  "i",   "iu",
+           "im",  "in",  "ing", "ip",  "it",   "ik",   "o",   "oi",  "ou",
+           "on",  "ong", "ot",  "ok",  "u",    "ui",   "un",  "ung", "ut",
+           "uk",  "oe",  "eoi", "eon", "oeng", "eot",  "oek", "yu",  "yun",
+           "yut", "m",   "ng"};
 
     // Keep track of indices for current segmented word; [start_index, end_index)
     // Greedily try to expand end_index by checking for valid sequences
@@ -390,13 +637,19 @@ std::vector<std::string> segmentJyutping(const QString &string)
 
         // Ignore separation characters; these are special.
         QString stringToExamine = string.mid(end_index, 1).toLower();
-        if (stringToExamine == " " || stringToExamine == "'") {
+        bool isSpecialCharacter = (specialCharacters.find(
+                                       stringToExamine.toStdString())
+                                   != specialCharacters.end());
+        if (stringToExamine == " " || stringToExamine == "'" || isSpecialCharacter) {
             if (initial_found) { // Add any incomplete word to the vector
                 QString previous_initial = string.mid(start_index,
                                                       end_index - start_index);
                 words.push_back(previous_initial.toStdString());
                 start_index = end_index;
                 initial_found = false;
+            }
+            if (!ignoreSpecialCharacters && isSpecialCharacter) {
+                words.push_back(stringToExamine.toStdString());
             }
             start_index++;
             end_index++;
@@ -447,7 +700,6 @@ std::vector<std::string> segmentJyutping(const QString &string)
                 if (searchResult != finals.end()) {
                     words.push_back(previous_initial.toStdString());
                     start_index = end_index;
-                    initial_found = false;
                 }
             }
 

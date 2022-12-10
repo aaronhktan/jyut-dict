@@ -68,20 +68,21 @@ void SentenceResultListDelegate::paint(QPainter *painter,
                           EntryCharactersOptions::PREFER_TRADITIONAL))
               .value<EntryCharactersOptions>();
     phoneticOptions = _settings
-                          ->value("phoneticOptions",
+                          ->value("Preview/phoneticOptions",
                                   QVariant::fromValue(
-                                      EntryPhoneticOptions::PREFER_JYUTPING))
+                                      EntryPhoneticOptions::PREFER_CANTONESE))
                           .value<EntryPhoneticOptions>();
     cantoneseOptions = _settings
-                          ->value("cantoneseOptions",
+                          ->value("Preview/cantonesePronunciationOptions",
                                   QVariant::fromValue(
                                       CantoneseOptions::RAW_JYUTPING))
                           .value<CantoneseOptions>();
     mandarinOptions = _settings
-                          ->value("mandarinOptions",
+                          ->value("Preview/mandarinPronunciationOptions",
                                   QVariant::fromValue(
                                       MandarinOptions::PRETTY_PINYIN))
                           .value<MandarinOptions>();
+    sentence.generatePhonetic(cantoneseOptions, mandarinOptions);
 
     QRect r = option.rect;
     QRect boundingRect;

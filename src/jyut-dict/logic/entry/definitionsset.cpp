@@ -40,6 +40,16 @@ void DefinitionsSet::pushDefinition(const Definition::Definition definition)
     _definitions.push_back(definition);
 }
 
+void DefinitionsSet::generatePhonetic(CantoneseOptions cantoneseOptions,
+                                      MandarinOptions mandarinOptions)
+{
+    for (auto &definition : _definitions) {
+        for (auto &sentence : definition.sentences) {
+            sentence.generatePhonetic(cantoneseOptions, mandarinOptions);
+        }
+    }
+}
+
 std::string DefinitionsSet::getSource() const
 {
     return _source;

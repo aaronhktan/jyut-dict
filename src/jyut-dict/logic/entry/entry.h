@@ -50,6 +50,11 @@ public:
     std::string getTraditional(void) const;
     void setTraditional(std::string traditional);
 
+    bool generatePhonetic(CantoneseOptions cantoneseOptions,
+                          MandarinOptions mandarinOptions);
+    bool generateDefinitionsPhonetic(CantoneseOptions cantoneseOptions,
+                                     MandarinOptions mandarinOptions);
+
     std::string getPhonetic(EntryPhoneticOptions options) const;
     std::string getPhonetic(EntryPhoneticOptions options,
                             MandarinOptions mandarinOptions) const;
@@ -63,11 +68,13 @@ public:
     std::string getMandarinPhonetic(MandarinOptions mandarinOptions) const;
 
     std::string getJyutping(void) const;
+    std::string getYale(void) const;
     void setJyutping(const std::string &jyutping);
     std::vector<int> getJyutpingNumbers() const;
 
     std::string getPinyin(void) const;
     std::string getPrettyPinyin(void) const;
+    std::string getNumberedPinyin(void) const;
     void setPinyin(const std::string &pinyin);
     std::vector<int> getPinyinNumbers() const;
 
@@ -77,7 +84,7 @@ public:
                         const std::vector<Definition::Definition> &definitions);
 
     void refreshColours(
-        const EntryColourPhoneticType type = EntryColourPhoneticType::JYUTPING);
+        const EntryColourPhoneticType type = EntryColourPhoneticType::CANTONESE);
 
     void setIsWelcome(const bool isWelcome);
     bool isWelcome(void) const;
@@ -96,8 +103,14 @@ private:
     std::string _colouredTraditionalDifference;
 
     std::string _jyutping;
+    std::string _yale;
+    bool _isYaleValid = false;
+
     std::string _pinyin;
     std::string _prettyPinyin;
+    bool _isPrettyPinyinValid = false;
+    std::string _numberedPinyin;
+    bool _isNumberedPinyinValid = false;
 
     std::vector<DefinitionsSet> _definitions;
 

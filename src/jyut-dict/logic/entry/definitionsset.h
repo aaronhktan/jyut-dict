@@ -1,6 +1,7 @@
 #ifndef DEFINITIONS_H
 #define DEFINITIONS_H
 
+#include "logic/entry/entryphoneticoptions.h"
 #include "logic/dictionary/dictionarysource.h"
 #include "logic/sentence/sourcesentence.h"
 
@@ -43,6 +44,8 @@ public:
     bool isEmpty() const;
 
     void pushDefinition(const Definition::Definition definition);
+    void generatePhonetic(CantoneseOptions cantoneseOptions,
+                          MandarinOptions mandarinOptions);
 
     std::string getSource() const;
     std::string getSourceLongString() const;

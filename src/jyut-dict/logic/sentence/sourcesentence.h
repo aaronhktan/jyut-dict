@@ -35,6 +35,9 @@ public:
     std::string getTraditional(void) const;
     void setTraditional(std::string traditional);
 
+    bool generatePhonetic(CantoneseOptions cantoneseOptions,
+                          MandarinOptions mandarinOptions);
+
     std::string getPhonetic(EntryPhoneticOptions options,
                             CantoneseOptions cantoneseOptions,
                             MandarinOptions mandarinOptions) const;
@@ -42,10 +45,12 @@ public:
     std::string getMandarinPhonetic(MandarinOptions mandarinOptions) const;
 
     std::string getJyutping(void) const;
+    std::string getYale(void) const;
     void setJyutping(const std::string &jyutping);
 
     std::string getPinyin(void) const;
     std::string getPrettyPinyin(void) const;
+    std::string getNumberedPinyin(void) const;
     void setPinyin(const std::string &pinyin);
 
     std::vector<SentenceSet> getSentenceSets(void) const;
@@ -61,9 +66,16 @@ private:
     std::string _sourceLanguage;
     std::string _simplified;
     std::string _traditional;
+
     std::string _jyutping;
+    std::string _yale;
+    bool _isYaleValid = false;
+
     std::string _pinyin;
     std::string _prettyPinyin;
+    bool _isPrettyPinyinValid = false;
+    std::string _numberedPinyin;
+    bool _isNumberedPinyinValid = false;
 
     std::vector<SentenceSet> _sentences;
 

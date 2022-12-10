@@ -14,6 +14,7 @@
 #include <QWidget>
 
 #include <string>
+#include <vector>
 
 // The EntryHeaderWidget displays basic information about the entry
 // at the top of the entry detail view
@@ -26,13 +27,15 @@ public:
     void changeEvent(QEvent *event) override;
 
     void setEntry(const Entry &entry);
-    void setEntry(std::string word, std::string jyutping, std::string pinyin);
 
 private:
-    void setStyle(bool use_dark);
     void translateUI();
+    void setStyle(bool use_dark);
 
-    void displayPronunciationLabels(const EntryPhoneticOptions options) const;
+    void displayPronunciationLabels(const Entry &entry,
+                                    const CantoneseOptions &cantoneseOptions,
+                                    const MandarinOptions &mandarinOptions);
+    void clearPronunciationLabels(void);
 
     void showError(const QString &reason, const QString &message);
 
@@ -41,18 +44,17 @@ private:
     QString _chinese;
     QString _jyutping;
     QString _pinyin;
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
     std::unique_ptr<EntrySpeaker> _speaker;
-#endif
 
     QGridLayout *_entryHeaderLayout;
     QLabel *_wordLabel;
-    QLabel *_jyutpingLabel;
-    QPushButton *_jyutpingTTS;
-    QLabel *_jyutpingPronunciation;
-    QLabel *_pinyinLabel;
-    QPushButton *_pinyinTTS;
-    QLabel *_pinyinPronunciation;
+    std::vector<QLabel *> _pronunciationTypeLabels;
+    std::vector<QLabel *> _pronunciationLabels;
+
+    QPushButton *_cantoneseTTS;
+    bool _cantoneseTTSVisible = false;
+    QPushButton *_mandarinTTS;
+    bool _mandarinTTSVisible = false;
 
     EntrySpeakErrorDialog *_message;
 };

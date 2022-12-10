@@ -141,10 +141,33 @@ void MainSplitter::prepareEntry(Entry &entry, bool addToHistory) const
     entry.refreshColours(
         Settings::getSettings()
             ->value("entryColourPhoneticType",
-                    QVariant::fromValue(EntryColourPhoneticType::JYUTPING))
+                    QVariant::fromValue(EntryColourPhoneticType::CANTONESE))
             .value<EntryColourPhoneticType>());
 
-    return;
+    CantoneseOptions cantoneseOptions
+        = Settings::getSettings()
+              ->value("Entry/cantonesePronunciationOptions",
+                      QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
+              .value<CantoneseOptions>();
+    MandarinOptions mandarinOptions
+        = Settings::getSettings()
+              ->value("Entry/mandarinPronunciationOptions",
+                      QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
+              .value<MandarinOptions>();
+    entry.generatePhonetic(cantoneseOptions, mandarinOptions);
+
+
+    cantoneseOptions
+        = Settings::getSettings()
+              ->value("Preview/cantonesePronunciationOptions",
+                      QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
+              .value<CantoneseOptions>();
+    mandarinOptions
+        = Settings::getSettings()
+              ->value("Preview/mandarinPronunciationOptions",
+                      QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
+              .value<MandarinOptions>();
+    entry.generateDefinitionsPhonetic(cantoneseOptions, mandarinOptions);
 }
 
 void MainSplitter::handleModelReset(void)

@@ -19,8 +19,8 @@ SentenceContentWidget::SentenceContentWidget(QWidget *parent) : QWidget(parent)
     _sentenceNumberLabels = {};
     _simplifiedLabels = {};
     _traditionalLabels = {};
-    _jyutpingLabels = {};
-    _pinyinLabels = {};
+    _cantoneseLabels = {};
+    _mandarinLabels = {};
     _sentenceLabels = {};
 }
 
@@ -129,34 +129,36 @@ void SentenceContentWidget::setSourceSentenceVector(
         _traditionalLabels.back()->setTextInteractionFlags(
             Qt::TextSelectableByMouse);
 
-        QString jyutping
-            = QString{sourceSentence
-                          .getCantonesePhonetic(
-                              Settings::getSettings()
-                                  ->value("cantoneseOptions",
-                                          QVariant::fromValue(
-                                              CantoneseOptions::RAW_JYUTPING))
-                                  .value<CantoneseOptions>())
-                          .c_str()}
-                  .trimmed();
-        _jyutpingLabels.push_back(new QLabel{jyutping, this});
-        _jyutpingLabels.back()->setWordWrap(true);
-        _jyutpingLabels.back()->setTextInteractionFlags(
+        CantoneseOptions cantoneseOptions
+            = Settings::getSettings()
+                  ->value("Preview/cantonesePronunciationOptions",
+                          QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
+                  .value<CantoneseOptions>();
+        // Do the same thing for mandarin
+        MandarinOptions mandarinOptions
+            = Settings::getSettings()
+                  ->value("Preview/mandarinPronunciationOptions",
+                          QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
+                  .value<MandarinOptions>();
+
+        sourceSentence.generatePhonetic(cantoneseOptions, mandarinOptions);
+
+        QString cantonesePronunciation = QString{sourceSentence
+                                                     .getCantonesePhonetic(
+                                                         cantoneseOptions)
+                                                     .c_str()}
+                                             .trimmed();
+        _cantoneseLabels.push_back(new QLabel{cantonesePronunciation, this});
+        _cantoneseLabels.back()->setWordWrap(true);
+        _cantoneseLabels.back()->setTextInteractionFlags(
             Qt::TextSelectableByMouse);
 
-        QString pinyin
-            = QString{sourceSentence
-                          .getMandarinPhonetic(
-                              Settings::getSettings()
-                                  ->value("mandarinOptions",
-                                          QVariant::fromValue(
-                                              MandarinOptions::PRETTY_PINYIN))
-                                  .value<MandarinOptions>())
-                          .c_str()}
+        QString mandarinPronunciation
+            = QString{sourceSentence.getMandarinPhonetic(mandarinOptions).c_str()}
                   .trimmed();
-        _pinyinLabels.push_back(new QLabel{pinyin, this});
-        _pinyinLabels.back()->setWordWrap(true);
-        _pinyinLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        _mandarinLabels.push_back(new QLabel{mandarinPronunciation, this});
+        _mandarinLabels.back()->setWordWrap(true);
+        _mandarinLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
         SentenceSet targetSentenceSet = sourceSentence.getSentenceSets()[0];
         QString sentence
@@ -187,14 +189,14 @@ void SentenceContentWidget::setSourceSentenceVector(
             _sentenceNumberLabels[i],
             _simplifiedLabels[i],
             _traditionalLabels[i],
-            _jyutpingLabels[i],
-            _pinyinLabels[i],
+            _cantoneseLabels[i],
+            _mandarinLabels[i],
             _sentenceLabels[i],
             _sourceSentenceLanguage[i],
             Settings::getSettings()
-                ->value("phoneticOptions",
+                ->value("Preview/phoneticOptions",
                         QVariant::fromValue(
-                            EntryPhoneticOptions::PREFER_JYUTPING))
+                            EntryPhoneticOptions::PREFER_CANTONESE))
                 .value<EntryPhoneticOptions>(),
             Settings::getSettings()
                 ->value("characterOptions",
@@ -274,10 +276,10 @@ void SentenceContentWidget::setStyle(bool use_dark)
     QString pronunciationStyleSheet = "QLabel { font-size: 13px; "
                                       "color: %1; "
                                       "padding-left: 2px; }";
-    for (const auto &label : _jyutpingLabels) {
+    for (const auto &label : _cantoneseLabels) {
         label->setStyleSheet(pronunciationStyleSheet.arg(textColour.name()));
     }
-    for (const auto &label : _pinyinLabels) {
+    for (const auto &label : _mandarinLabels) {
         label->setStyleSheet(pronunciationStyleSheet.arg(textColour.name()));
     }
 
@@ -306,8 +308,8 @@ void SentenceContentWidget::addLabelsToLayout(
     QLabel *sentenceNumberLabel,
     QLabel *simplifiedLabel,
     QLabel *traditionalLabel,
-    QLabel *jyutpingLabel,
-    QLabel *pinyinLabel,
+    QLabel *cantoneseLabel,
+    QLabel *mandarinLabel,
     QLabel *sentenceLabel,
     QLabel *sourceSentenceLanguage,
     EntryPhoneticOptions phoneticOptions,
@@ -390,28 +392,28 @@ void SentenceContentWidget::addLabelsToLayout(
 
     // Add the first phonetic label
     switch (phoneticOptions) {
-    case EntryPhoneticOptions::ONLY_JYUTPING:
-        pinyinLabel->setVisible(false);
-    case EntryPhoneticOptions::PREFER_JYUTPING:
-        if (jyutpingLabel->text().isEmpty()) {
-            jyutpingLabel->setVisible(false);
+    case EntryPhoneticOptions::ONLY_CANTONESE:
+        mandarinLabel->setVisible(false);
+    case EntryPhoneticOptions::PREFER_CANTONESE:
+        if (cantoneseLabel->text().isEmpty()) {
+            cantoneseLabel->setVisible(false);
             break;
         }
-        layout->addWidget(jyutpingLabel,
+        layout->addWidget(cantoneseLabel,
                           rowNumber * 10 + 3,
                           1,
                           1,
                           -1,
                           Qt::AlignTop);
         break;
-    case EntryPhoneticOptions::ONLY_PINYIN:
-        jyutpingLabel->setVisible(false);
-    case EntryPhoneticOptions::PREFER_PINYIN:
-        if (pinyinLabel->text().isEmpty()) {
-            pinyinLabel->setVisible(false);
+    case EntryPhoneticOptions::ONLY_MANDARIN:
+        cantoneseLabel->setVisible(false);
+    case EntryPhoneticOptions::PREFER_MANDARIN:
+        if (mandarinLabel->text().isEmpty()) {
+            mandarinLabel->setVisible(false);
             break;
         }
-        layout->addWidget(pinyinLabel,
+        layout->addWidget(mandarinLabel,
                           rowNumber * 10 + 3,
                           1,
                           1,
@@ -422,24 +424,24 @@ void SentenceContentWidget::addLabelsToLayout(
 
     // Add the second phonetic label (if applicable)
     switch (phoneticOptions) {
-    case EntryPhoneticOptions::PREFER_JYUTPING:
-        if (pinyinLabel->text().isEmpty()) {
-            pinyinLabel->setVisible(false);
+    case EntryPhoneticOptions::PREFER_CANTONESE:
+        if (mandarinLabel->text().isEmpty()) {
+            mandarinLabel->setVisible(false);
             break;
         }
-        layout->addWidget(pinyinLabel,
+        layout->addWidget(mandarinLabel,
                           rowNumber * 10 + 4,
                           1,
                           1,
                           -1,
                           Qt::AlignTop);
         break;
-    case EntryPhoneticOptions::PREFER_PINYIN:
-        if (jyutpingLabel->text().isEmpty()) {
-            jyutpingLabel->setVisible(false);
+    case EntryPhoneticOptions::PREFER_MANDARIN:
+        if (cantoneseLabel->text().isEmpty()) {
+            cantoneseLabel->setVisible(false);
             break;
         }
-        layout->addWidget(jyutpingLabel,
+        layout->addWidget(cantoneseLabel,
                           rowNumber * 10 + 4,
                           1,
                           1,
@@ -473,8 +475,8 @@ void SentenceContentWidget::cleanupLabels()
     clearLabelVector(_sentenceNumberLabels);
     clearLabelVector(_simplifiedLabels);
     clearLabelVector(_traditionalLabels);
-    clearLabelVector(_jyutpingLabels);
-    clearLabelVector(_pinyinLabels);
+    clearLabelVector(_cantoneseLabels);
+    clearLabelVector(_mandarinLabels);
     clearLabelVector(_sentenceLabels);
     clearLabelVector(_sourceSentenceLanguage);
     clearLabelVector(_spaceLabels);
