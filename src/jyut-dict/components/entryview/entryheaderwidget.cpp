@@ -128,6 +128,9 @@ void EntryHeaderWidget::translateUI()
                    || label->objectName() == "prettyPinyinTypeLabel") {
             label->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                                        Strings::PINYIN_SHORT));
+        } else if (label->objectName() == "zhuyinTypeLabel") {
+            label->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                       Strings::ZHUYIN_SHORT));
         }
 
         label->setFixedWidth(
@@ -240,7 +243,6 @@ void EntryHeaderWidget::setStyle(bool use_dark)
     _mandarinTTS->setCursor(Qt::PointingHandCursor);
 }
 
-
 void EntryHeaderWidget::displayPronunciationLabels(
     const Entry& entry,
     const CantoneseOptions &cantoneseOptions,
@@ -350,6 +352,33 @@ void EntryHeaderWidget::displayPronunciationLabels(
         _pronunciationLabels.emplace_back(new QLabel{this});
         _pronunciationLabels.back()->setText(
             entry.getMandarinPhonetic(MandarinOptions::NUMBERED_PINYIN).c_str());
+        _entryHeaderLayout->addWidget(_pronunciationLabels.back(), row, 2, 1, 1);
+        _pronunciationLabels.back()->setVisible(true);
+
+        if (!_mandarinTTSVisible) {
+            _entryHeaderLayout
+                ->addWidget(_mandarinTTS, row, 1, 1, 1);
+            _mandarinTTS->setVisible(true);
+            _mandarinTTSVisible = true;
+        }
+
+        row++;
+    }
+
+    if ((mandarinOptions & MandarinOptions::ZHUYIN) == MandarinOptions::ZHUYIN) {
+        _pronunciationTypeLabels.emplace_back(new QLabel{this});
+        _pronunciationTypeLabels.back()->setObjectName("zhuyinTypeLabel");
+        _entryHeaderLayout->addWidget(_pronunciationTypeLabels.back(),
+                                      row,
+                                      0,
+                                      1,
+                                      1,
+                                      Qt::AlignTop);
+        _pronunciationTypeLabels.back()->setVisible(true);
+
+        _pronunciationLabels.emplace_back(new QLabel{this});
+        _pronunciationLabels.back()->setText(
+            entry.getMandarinPhonetic(MandarinOptions::ZHUYIN).c_str());
         _entryHeaderLayout->addWidget(_pronunciationLabels.back(), row, 2, 1, 1);
         _pronunciationLabels.back()->setVisible(true);
 

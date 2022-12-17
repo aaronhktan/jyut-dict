@@ -100,6 +100,14 @@ bool SourceSentence::generatePhonetic(CantoneseOptions cantoneseOptions,
         _isNumberedPinyinValid = true;
     }
 
+    if ((mandarinOptions & MandarinOptions::ZHUYIN) == MandarinOptions::ZHUYIN
+        && !_isZhuyinValid) {
+        _zhuyin
+            = ChineseUtils::convertPinyinToZhuyin(_pinyin,
+                                                  /* useSpacesToSegment */ true);
+        _isZhuyinValid = true;
+    }
+
     return true;
 
 }
@@ -136,11 +144,18 @@ std::string SourceSentence::getMandarinPhonetic(
     MandarinOptions mandarinOptions) const
 {
     switch (mandarinOptions) {
-    case MandarinOptions::PRETTY_PINYIN:
+    case MandarinOptions::PRETTY_PINYIN: {
         return _prettyPinyin;
-    case MandarinOptions::NUMBERED_PINYIN:
-    default:
+    }
+    case MandarinOptions::NUMBERED_PINYIN: {
+        return _numberedPinyin;
+    }
+    case MandarinOptions::ZHUYIN: {
+        return _zhuyin;
+    }
+    default: {
         return _pinyin;
+    }
     }
 }
 

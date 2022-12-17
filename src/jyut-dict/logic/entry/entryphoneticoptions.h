@@ -46,6 +46,7 @@ enum class MandarinOptions : uint32_t {
     RAW_PINYIN = (0x1 << 0), // DEPRECATED, DO NOT USE
     PRETTY_PINYIN = (0x1 << 1),
     NUMBERED_PINYIN = (0x1 << 2),
+    ZHUYIN = (0x1 << 3),
 
     SENTRY = (0x1 << 2),
 };

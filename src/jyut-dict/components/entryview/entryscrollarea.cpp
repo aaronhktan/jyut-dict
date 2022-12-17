@@ -39,9 +39,6 @@ void EntryScrollArea::setEntry(const Entry &entry)
     _updateUITimer->stop();
     disconnect(_updateUITimer, nullptr, nullptr, nullptr);
 
-    // Is it OK to have entry as a reference? It seems like this doesn't cause
-    // any problems, but theoretically the timer could keep on running
-    // even after the entry object is deleted...?
     _updateUITimer->setInterval(25);
     QObject::connect(_updateUITimer, &QTimer::timeout, this, [=]() {
         if (_enableUIUpdate) {
