@@ -30,18 +30,12 @@ int main(int argc, char *argv[])
     // Required to marshal types to QVariant, so these values can be stored
     // by QSettings or used in a QListModel
     qRegisterMetaType<EntryCharactersOptions>("EntryCharactersOptions");
-    qRegisterMetaTypeStreamOperators<EntryCharactersOptions>("EntryCharactersOptions");
     qRegisterMetaType<EntryPhoneticOptions>("EntryPhoneticOptions");
-    qRegisterMetaTypeStreamOperators<EntryPhoneticOptions>("EntryPhoneticOptions");
     qRegisterMetaType<CantoneseOptions>("CantoneseOptions");
-    qRegisterMetaTypeStreamOperators<CantoneseOptions>("CantoneseOptions");
     qRegisterMetaType<MandarinOptions>("MandarinOptions");
-    qRegisterMetaTypeStreamOperators<MandarinOptions>("MandarinOptions");
     qRegisterMetaType<EntryColourPhoneticType>("EntryColourPhoneticType");
-    qRegisterMetaTypeStreamOperators<EntryColourPhoneticType>("EntryColourPhoneticType");
     qRegisterMetaType<SearchParameters>("SearchParameters");
-    qRegisterMetaTypeStreamOperators<SearchParameters>("SearchParameters");
-    qRegisterMetaType<SearchTermHistoryItem>();
+    qRegisterMetaType<SearchTermHistoryItem>("SearchTermHistoryItem");
     qRegisterMetaType<conflictingDictionaryMetadata>(
         "conflictingDictionaryNamesMetadata");
     qRegisterMetaType<Settings::InterfaceSize>();
@@ -50,9 +44,6 @@ int main(int argc, char *argv[])
     qRegisterMetaTypeStreamOperators<TextToSpeech::SpeakerBackend>();
     qRegisterMetaType<TextToSpeech::SpeakerVoice>();
     qRegisterMetaTypeStreamOperators<TextToSpeech::SpeakerVoice>();
-
-    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
 #if defined(Q_OS_WIN)
     // This is kind of a horrible hack to get dark borders on Windows

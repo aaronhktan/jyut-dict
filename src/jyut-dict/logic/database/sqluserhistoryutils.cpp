@@ -58,10 +58,10 @@ void SQLUserHistoryUtils::addSearchToHistory(const std::string &search, int opti
     if (!checkForManager()) {
         return;
     }
-    QtConcurrent::run(this,
-                      &SQLUserHistoryUtils::addSearchToHistoryThread,
-                      search,
-                      options);
+    std::ignore = QtConcurrent::run(&SQLUserHistoryUtils::addSearchToHistoryThread,
+                                    this,
+                                    search,
+                                    options);
 }
 
 void SQLUserHistoryUtils::addViewToHistory(const Entry &entry)
@@ -69,9 +69,9 @@ void SQLUserHistoryUtils::addViewToHistory(const Entry &entry)
     if (!checkForManager()) {
         return;
     }
-    QtConcurrent::run(this,
-                      &SQLUserHistoryUtils::addViewToHistoryThread,
-                      entry);
+    std::ignore = QtConcurrent::run(&SQLUserHistoryUtils::addViewToHistoryThread,
+                                    this,
+                                    entry);
 }
 
 void SQLUserHistoryUtils::searchAllSearchHistory(void)
@@ -79,8 +79,8 @@ void SQLUserHistoryUtils::searchAllSearchHistory(void)
     if (!checkForManager()) {
         return;
     }
-    QtConcurrent::run(this,
-                      &SQLUserHistoryUtils::searchAllSearchHistoryThread);
+    std::ignore = QtConcurrent::run(&SQLUserHistoryUtils::searchAllSearchHistoryThread,
+                                    this);
 }
 
 void SQLUserHistoryUtils::clearAllSearchHistory(void)
@@ -88,7 +88,8 @@ void SQLUserHistoryUtils::clearAllSearchHistory(void)
     if (!checkForManager()) {
         return;
     }
-    QtConcurrent::run(this, &SQLUserHistoryUtils::clearAllSearchHistoryThread);
+    std::ignore = QtConcurrent::run(&SQLUserHistoryUtils::clearAllSearchHistoryThread,
+                                    this);
 }
 
 void SQLUserHistoryUtils::searchAllViewHistory(void)
@@ -96,7 +97,8 @@ void SQLUserHistoryUtils::searchAllViewHistory(void)
     if (!checkForManager()) {
         return;
     }
-    QtConcurrent::run(this, &SQLUserHistoryUtils::searchAllViewHistoryThread);
+    std::ignore = QtConcurrent::run(&SQLUserHistoryUtils::searchAllViewHistoryThread,
+                                    this);
 }
 
 void SQLUserHistoryUtils::clearAllViewHistory(void)
@@ -104,7 +106,8 @@ void SQLUserHistoryUtils::clearAllViewHistory(void)
     if (!checkForManager()) {
         return;
     }
-    QtConcurrent::run(this, &SQLUserHistoryUtils::clearAllViewHistoryThread);
+    std::ignore = QtConcurrent::run(&SQLUserHistoryUtils::clearAllViewHistoryThread,
+                                    this);
 }
 
 void SQLUserHistoryUtils::addSearchToHistoryThread(const std::string &search,
