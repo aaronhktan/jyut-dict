@@ -31,8 +31,8 @@ void SentenceViewHeaderWidget::changeEvent(QEvent *event)
 {
 #ifdef Q_OS_WIN
     if (event->type() == QEvent::FontChange) {
-        _jyutpingLabel->setFixedWidth(_jyutpingLabel->fontMetrics().boundingRect("JP").width());
-        _pinyinLabel->setFixedWidth(_pinyinLabel->fontMetrics().boundingRect("PY").width());
+        // This is just to correctly resize the JP/PY etc. labels
+        translateUI();
     }
 #endif
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
@@ -240,7 +240,6 @@ void SentenceViewHeaderWidget::setStyle(bool use_dark)
                                           LABEL_TEXT_COLOUR_LIGHT_R};
    for (const auto& label : _pronunciationTypeLabels) {
         label->setAttribute(Qt::WA_TranslucentBackground);
-        label->setVisible(false);
         label->setStyleSheet(styleSheet.arg(textColour.name()));
     }
 
