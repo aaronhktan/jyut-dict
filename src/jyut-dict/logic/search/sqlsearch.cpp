@@ -3,8 +3,11 @@
 #include "logic/database/queryparseutils.h"
 #include "logic/search/searchqueries.h"
 #include "logic/utils/chineseutils.h"
+<<<<<<< HEAD
 #include "logic/utils/scriptdetector.h"
 #include "logic/utils/utils.h"
+=======
+>>>>>>> cf8f0cb (Update program to be compatible with Qt 6)
 
 #include <QtConcurrent/QtConcurrent>
 
@@ -311,7 +314,7 @@ void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString &searc
         return;
     }
 
-    auto future = QtConcurrent::run(this, threadFunction, searchTerm, queryID);
+    auto future = QtConcurrent::run(threadFunction, this, searchTerm, queryID);
     _futures.append(future);
 }
 
