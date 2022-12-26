@@ -534,12 +534,18 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
         if (std::regex_match(ipa_syllable,
                              match,
                              std::regex{"^(h?)([mn]g?)([1-6])$"})) {
+            int tone = std::stoi(match[3]);
             ipa_syllable = std::regex_replace(ipa_syllable,
                                               std::regex{"m"},
                                               "m̩");
             ipa_syllable = std::regex_replace(ipa_syllable,
                                               std::regex{"ng"},
                                               "ŋ̍");
+            ipa_syllable = std::regex_replace(ipa_syllable,
+                                              std::regex{"[1-6]"},
+                                              jyutpingToIPATones.at(
+                                                  static_cast<size_t>(tone
+                                                                      - 1)));
         }
 
         // Replace checked tones
