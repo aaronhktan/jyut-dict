@@ -124,6 +124,10 @@ void EntryHeaderWidget::translateUI()
         } else if (label->objectName() == "yaleTypeLabel") {
             label->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                                        Strings::YALE_SHORT));
+        } else if (label->objectName() == "cantoneseIPATypeLabel") {
+            label->setText(
+                QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                            Strings::CANTONESE_IPA_SHORT));
         } else if (label->objectName() == "numberedPinyinTypeLabel"
                    || label->objectName() == "prettyPinyinTypeLabel") {
             label->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
@@ -294,6 +298,34 @@ void EntryHeaderWidget::displayPronunciationLabels(
         _pronunciationLabels.emplace_back(new QLabel{this});
         _pronunciationLabels.back()->setText(
             entry.getCantonesePhonetic(CantoneseOptions::PRETTY_YALE).c_str());
+        _entryHeaderLayout->addWidget(_pronunciationLabels.back(), row, 2, 1, 1);
+        _pronunciationLabels.back()->setVisible(true);
+
+        if (!_cantoneseTTSVisible) {
+            _entryHeaderLayout
+                ->addWidget(_cantoneseTTS, row, 1, 1, 1, Qt::AlignTop);
+            _cantoneseTTS->setVisible(true);
+            _cantoneseTTSVisible = true;
+        }
+
+        row++;
+    }
+
+    if ((cantoneseOptions & CantoneseOptions::CANTONESE_IPA)
+        == CantoneseOptions::CANTONESE_IPA) {
+        _pronunciationTypeLabels.emplace_back(new QLabel{this});
+        _pronunciationTypeLabels.back()->setObjectName("cantoneseIPATypeLabel");
+        _entryHeaderLayout->addWidget(_pronunciationTypeLabels.back(),
+                                      row,
+                                      0,
+                                      1,
+                                      1,
+                                      Qt::AlignTop);
+        _pronunciationTypeLabels.back()->setVisible(true);
+
+        _pronunciationLabels.emplace_back(new QLabel{this});
+        _pronunciationLabels.back()->setText(
+            entry.getCantonesePhonetic(CantoneseOptions::CANTONESE_IPA).c_str());
         _entryHeaderLayout->addWidget(_pronunciationLabels.back(), row, 2, 1, 1);
         _pronunciationLabels.back()->setVisible(true);
 

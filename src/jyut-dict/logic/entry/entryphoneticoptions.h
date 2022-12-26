@@ -31,8 +31,9 @@ enum class CantoneseOptions : uint32_t {
     NONE = (0x0),
     RAW_JYUTPING = (0x1 << 0),
     PRETTY_YALE = (0x1 << 1),
+    CANTONESE_IPA = (0x1 << 2),
 
-    SENTRY = (0x1 << 2),
+    SENTRY = (0x1 << 3),
 };
 
 // These are required so that bitwise operations are allowed on the enum class
