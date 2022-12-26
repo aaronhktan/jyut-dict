@@ -130,10 +130,15 @@ const static std::unordered_map<std::string, std::string> jyutpingToIPACodas = {
     {"k", "k̚"},
 };
 
+#if defined(Q_OS_MAC)
 // Added a six-per-em space (U+2006) between adjacent tone markers, because Qt's
 // kerning squishes them too close together
 const static std::vector<std::string> jyutpingToIPATones
     = {"˥", "˧ ˥", "˧", "˨ ˩", "˩ ˧", "˨", "˥", "˧", "˨"};
+#else
+const static std::vector<std::string> jyutpingToIPATones
+    = {"˥", "˧˥", "˧", "˨˩", "˩˧", "˨", "˥", "˧", "˨"};
+#endif
 
 const static std::unordered_map<std::string, std::string> zhuyinInitialMap = {
     {"b", "ㄅ"},  {"p", "ㄆ"}, {"m", "ㄇ"}, {"f", "ㄈ"},  {"d", "ㄉ"},
@@ -358,15 +363,17 @@ std::string convertJyutpingToYale(const std::string &jyutping,
 
     std::vector<std::string> syllables;
     if (useSpacesToSegment) {
-        // Insert a space before and after every special character, so that the
-        // Yale conversion doesn't attempt to convert special characters.
         std::string jyutpingCopy;
-        for (const auto &c : jyutping) {
-            if (specialCharacters.find(std::string{c})
+        // Insert a space before and after every special character, so that the
+        // IPA conversion doesn't attempt to convert special characters.
+        std::u32string jyutping_utf32 = converter.from_bytes(jyutping);
+        for (const auto &character : jyutping_utf32) {
+            std::string character_utf8 = converter.to_bytes(character);
+            if (specialCharacters.find(character_utf8)
                 != specialCharacters.end()) {
-                jyutpingCopy += " " + std::string{c} + " ";
+                jyutpingCopy += " " + character_utf8 + " ";
             } else {
-                jyutpingCopy += c;
+                jyutpingCopy += character_utf8;
             }
         }
         Utils::split(jyutpingCopy, ' ', syllables);
@@ -475,9 +482,13 @@ std::string convertIPASyllable(const std::string &syllable)
             static_cast<size_t>(std::stoi(match[4]) - 1));
     }
 
+#if defined(Q_OS_MAC)
     // Added a thin space (U+2009) before tone to better distinguish unreleased
     // stop marker and tone markers
     std::string ipa_syllable = initial + nucleus + coda + " " + tone;
+#else
+    std::string ipa_syllable = initial + nucleus + coda + tone;
+#endif
     return ipa_syllable;
 }
 
@@ -490,15 +501,17 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
 
     std::vector<std::string> syllables;
     if (useSpacesToSegment) {
+        std::string jyutpingCopy;
         // Insert a space before and after every special character, so that the
         // IPA conversion doesn't attempt to convert special characters.
-        std::string jyutpingCopy;
-        for (const auto &c : jyutping) {
-            if (specialCharacters.find(std::string{c})
+        std::u32string jyutping_utf32 = converter.from_bytes(jyutping);
+        for (const auto &character : jyutping_utf32) {
+            std::string character_utf8 = converter.to_bytes(character);
+            if (specialCharacters.find(character_utf8)
                 != specialCharacters.end()) {
-                jyutpingCopy += " " + std::string{c} + " ";
+                jyutpingCopy += " " + character_utf8 + " ";
             } else {
-                jyutpingCopy += c;
+                jyutpingCopy += character_utf8;
             }
         }
         Utils::split(jyutpingCopy, ' ', syllables);
@@ -549,10 +562,13 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
                                               "ŋ̍");
             ipa_syllable = std::regex_replace(ipa_syllable,
                                               std::regex{"[1-6]"},
-                                              " "
-                                                  + jyutpingToIPATones.at(
-                                                      static_cast<size_t>(
-                                                          tone - 1)));
+#if defined(Q_OS_MAC)
+                                              " " +
+#else
+                                              jyutpingToIPATones.at(
+                                                  static_cast<size_t>(tone
+                                                                      - 1)));
+#endif
         }
 
         // Replace checked tones
