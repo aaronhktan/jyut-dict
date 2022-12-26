@@ -99,6 +99,7 @@ private:
     QHBoxLayout *_previewCantonesePronunciationLayout;
     QRadioButton *_previewJyutping;
     QRadioButton *_previewYale;
+    QRadioButton *_previewCantoneseIPA;
     QWidget *_previewMandarinPronunciation;
     QHBoxLayout *_previewMandarinPronunciationLayout;
     QRadioButton *_previewPinyin;
@@ -110,6 +111,7 @@ private:
     QVBoxLayout *_entryCantonesePronunciationLayout;
     QCheckBox *_entryJyutping;
     QCheckBox *_entryYale;
+    QCheckBox *_entryCantoneseIPA;
 
     QWidget *_entryMandarinPronunciation;
     QVBoxLayout *_entryMandarinPronunciationLayout;

@@ -130,8 +130,10 @@ const static std::unordered_map<std::string, std::string> jyutpingToIPACodas = {
     {"k", "k̚"},
 };
 
+// Added a six-per-em space (U+2006) between adjacent tone markers, because Qt's
+// kerning squishes them too close together
 const static std::vector<std::string> jyutpingToIPATones
-    = {"⁵⁵", "³⁵", "³³", "²¹", "¹³", "²²", "⁵", "³", "²"};
+    = {"˥", "˧ ˥", "˧", "˨ ˩", "˩ ˧", "˨", "˥", "˧", "˨"};
 
 const static std::unordered_map<std::string, std::string> zhuyinInitialMap = {
     {"b", "ㄅ"},  {"p", "ㄆ"}, {"m", "ㄇ"}, {"f", "ㄈ"},  {"d", "ㄉ"},
@@ -358,12 +360,13 @@ std::string convertJyutpingToYale(const std::string &jyutping,
     if (useSpacesToSegment) {
         // Insert a space before and after every special character, so that the
         // Yale conversion doesn't attempt to convert special characters.
-        std::string jyutpingCopy = jyutping;
-        for (const auto &specialCharacter : specialCharacters) {
-            size_t location = jyutpingCopy.find(specialCharacter);
-            if (location != std::string::npos) {
-                jyutpingCopy.erase(location, specialCharacter.length());
-                jyutpingCopy.insert(location, " " + specialCharacter + " ");
+        std::string jyutpingCopy;
+        for (const auto &c : jyutping) {
+            if (specialCharacters.find(std::string{c})
+                != specialCharacters.end()) {
+                jyutpingCopy += " " + std::string{c} + " ";
+            } else {
+                jyutpingCopy += c;
             }
         }
         Utils::split(jyutpingCopy, ' ', syllables);
@@ -472,7 +475,9 @@ std::string convertIPASyllable(const std::string &syllable)
             static_cast<size_t>(std::stoi(match[4]) - 1));
     }
 
-    std::string ipa_syllable = initial + nucleus + coda + tone;
+    // Added a thin space (U+2009) before tone to better distinguish unreleased
+    // stop marker and tone markers
+    std::string ipa_syllable = initial + nucleus + coda + " " + tone;
     return ipa_syllable;
 }
 
@@ -487,12 +492,13 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
     if (useSpacesToSegment) {
         // Insert a space before and after every special character, so that the
         // IPA conversion doesn't attempt to convert special characters.
-        std::string jyutpingCopy = jyutping;
-        for (const auto &specialCharacter : specialCharacters) {
-            size_t location = jyutpingCopy.find(specialCharacter);
-            if (location != std::string::npos) {
-                jyutpingCopy.erase(location, specialCharacter.length());
-                jyutpingCopy.insert(location, " " + specialCharacter + " ");
+        std::string jyutpingCopy;
+        for (const auto &c : jyutping) {
+            if (specialCharacters.find(std::string{c})
+                != specialCharacters.end()) {
+                jyutpingCopy += " " + std::string{c} + " ";
+            } else {
+                jyutpingCopy += c;
             }
         }
         Utils::split(jyutpingCopy, ' ', syllables);
@@ -543,9 +549,10 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
                                               "ŋ̍");
             ipa_syllable = std::regex_replace(ipa_syllable,
                                               std::regex{"[1-6]"},
-                                              jyutpingToIPATones.at(
-                                                  static_cast<size_t>(tone
-                                                                      - 1)));
+                                              " "
+                                                  + jyutpingToIPATones.at(
+                                                      static_cast<size_t>(
+                                                          tone - 1)));
         }
 
         // Replace checked tones
@@ -568,13 +575,14 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
     }
 
     std::ostringstream ipa;
+    std::string double_space = "  ";
     for (const auto &ipa_syllable : ipa_syllables) {
-        ipa << ipa_syllable << " ";
+        ipa << ipa_syllable << double_space;
     }
 
     // Remove trailing space
     std::string result = ipa.str();
-    result.erase(result.end() - 1);
+    result.erase(result.end() - double_space.length());
 
     return result;
 }

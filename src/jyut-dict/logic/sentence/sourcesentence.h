@@ -70,6 +70,8 @@ private:
     std::string _jyutping;
     std::string _yale;
     bool _isYaleValid = false;
+    std::string _cantoneseIPA;
+    bool _isCantoneseIPAValid = false;
 
     std::string _pinyin;
     std::string _prettyPinyin;

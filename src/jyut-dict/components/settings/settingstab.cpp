@@ -93,6 +93,10 @@ void SettingsTab::setupUI()
     _previewYale->setProperty("data",
                               QVariant::fromValue(
                                   CantoneseOptions::PRETTY_YALE));
+    _previewCantoneseIPA = new QRadioButton{this};
+    _previewCantoneseIPA->setProperty("data",
+                                      QVariant::fromValue(
+                                          CantoneseOptions::CANTONESE_IPA));
     initializeSearchResultsCantonesePronunciation(
         *_previewCantonesePronunciation);
 
@@ -134,6 +138,11 @@ void SettingsTab::setupUI()
     _entryYale->setTristate(false);
     _entryYale->setProperty("data",
                             QVariant::fromValue(CantoneseOptions::PRETTY_YALE));
+    _entryCantoneseIPA = new QCheckBox{this};
+    _entryCantoneseIPA->setTristate(false);
+    _entryCantoneseIPA->setProperty("data",
+                                    QVariant::fromValue(
+                                        CantoneseOptions::CANTONESE_IPA));
     initializeEntryCantonesePronunciation(*_entryCantonesePronunciation);
 
     _entryMandarinPronunciation = new QWidget{this};
@@ -250,6 +259,7 @@ void SettingsTab::translateUI()
         ->setText(tr("Show Cantonese:"));
     _previewJyutping->setText(tr("Jyutping"));
     _previewYale->setText(tr("Yale"));
+    _previewCantoneseIPA->setText(tr("Cantonese IPA"));
     static_cast<QLabel *>(
         _tabLayout->labelForField(_previewMandarinPronunciation))
         ->setText(tr("Show Mandarin:"));
@@ -264,6 +274,7 @@ void SettingsTab::translateUI()
         ->setText(tr("Show Cantonese:"));
     _entryJyutping->setText(tr("Jyutping"));
     _entryYale->setText(tr("Yale"));
+    _entryCantoneseIPA->setText(tr("Cantonese IPA"));
     static_cast<QLabel *>(_tabLayout->labelForField(_entryMandarinPronunciation))
         ->setText(tr("Show Mandarin:"));
     _entryPinyin->setText(tr("Pinyin"));
@@ -405,6 +416,7 @@ void SettingsTab::initializeSearchResultsCantonesePronunciation(
 {
     cantonesePronunciationWidget.layout()->addWidget(_previewJyutping);
     cantonesePronunciationWidget.layout()->addWidget(_previewYale);
+    cantonesePronunciationWidget.layout()->addWidget(_previewCantoneseIPA);
 
     connect(_previewJyutping, &QRadioButton::clicked, this, [&]() {
         _settings->setValue("Preview/cantonesePronunciationOptions",
@@ -417,6 +429,13 @@ void SettingsTab::initializeSearchResultsCantonesePronunciation(
         _settings->setValue("Preview/cantonesePronunciationOptions",
                             QVariant::fromValue<CantoneseOptions>(
                                 CantoneseOptions::PRETTY_YALE));
+        _settings->sync();
+    });
+
+    connect(_previewCantoneseIPA, &QRadioButton::clicked, this, [&]() {
+        _settings->setValue("Preview/cantonesePronunciationOptions",
+                            QVariant::fromValue<CantoneseOptions>(
+                                CantoneseOptions::CANTONESE_IPA));
         _settings->sync();
     });
 
@@ -459,6 +478,7 @@ void SettingsTab::initializeEntryCantonesePronunciation(
 {
     cantonesePronunciationWidget.layout()->addWidget(_entryJyutping);
     cantonesePronunciationWidget.layout()->addWidget(_entryYale);
+    cantonesePronunciationWidget.layout()->addWidget(_entryCantoneseIPA);
 
     connect(_entryJyutping, &QCheckBox::stateChanged, this, [&]() {
         CantoneseOptions options
@@ -496,6 +516,26 @@ void SettingsTab::initializeEntryCantonesePronunciation(
                                 QVariant::fromValue<CantoneseOptions>(
                                     options
                                     & ~(CantoneseOptions::PRETTY_YALE)));
+        }
+        _settings->sync();
+    });
+
+    connect(_entryCantoneseIPA, &QCheckBox::stateChanged, this, [&]() {
+        CantoneseOptions options
+            = _settings
+                  ->value("Entry/cantonesePronunciationOptions",
+                          QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
+                  .value<CantoneseOptions>();
+
+        if (_entryCantoneseIPA->isChecked()) {
+            _settings->setValue("Entry/cantonesePronunciationOptions",
+                                QVariant::fromValue<CantoneseOptions>(
+                                    options | CantoneseOptions::CANTONESE_IPA));
+        } else {
+            _settings->setValue("Entry/cantonesePronunciationOptions",
+                                QVariant::fromValue<CantoneseOptions>(
+                                    options
+                                    & ~(CantoneseOptions::CANTONESE_IPA)));
         }
         _settings->sync();
     });
