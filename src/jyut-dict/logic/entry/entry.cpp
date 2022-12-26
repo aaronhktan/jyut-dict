@@ -259,8 +259,11 @@ bool Entry::generatePhonetic(CantoneseOptions cantoneseOptions,
     if ((cantoneseOptions & CantoneseOptions::PRETTY_YALE)
             == CantoneseOptions::PRETTY_YALE
         && !_isYaleValid) {
-        _yale = ChineseUtils::convertJyutpingToYale(_jyutping);
-        _isYaleValid = true;
+            _yale = ChineseUtils::convertJyutpingToYale(_jyutping);
+            std::string ipa = ChineseUtils::convertJyutpingToIPA(_jyutping);
+            std::cout << "Jyutping: " << _jyutping << " IPA: " << ipa
+                      << std::endl;
+            _isYaleValid = true;
     }
 
     if ((mandarinOptions & MandarinOptions::PRETTY_PINYIN)
