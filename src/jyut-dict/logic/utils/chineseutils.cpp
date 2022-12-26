@@ -1,7 +1,6 @@
 #include "chineseutils.h"
 
 #include "logic/utils/utils.h"
-#include "logic/settings/settings.h"
 
 #include <cctype>
 #include <codecvt>
@@ -560,15 +559,14 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
             ipa_syllable = std::regex_replace(ipa_syllable,
                                               std::regex{"ng"},
                                               "ŋ̍");
-            ipa_syllable = std::regex_replace(ipa_syllable,
-                                              std::regex{"[1-6]"},
+            ipa_syllable = std::regex_replace(
+                ipa_syllable,
+                std::regex{"[1-6]"},
 #if defined(Q_OS_MAC)
-                                              " " +
-#else
-                                              jyutpingToIPATones.at(
-                                                  static_cast<size_t>(tone
-                                                                      - 1)));
+                // Only macOS needs this space to fix weird kerning
+                " " +
 #endif
+                    jyutpingToIPATones.at(static_cast<size_t>(tone - 1)));
         }
 
         // Replace checked tones
