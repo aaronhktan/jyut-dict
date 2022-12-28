@@ -1,7 +1,6 @@
 #ifndef CHINESEUTILS_H
 #define CHINESEUTILS_H
 
-#include "logic/entry/entrycharactersoptions.h"
 #include "logic/entry/entryphoneticoptions.h"
 
 #include <QString>
@@ -55,9 +54,10 @@ std::string createPrettyPinyin(const std::string &pinyin);
 std::string createNumberedPinyin(const std::string &pinyin);
 std::string createPinyinWithV(const std::string &pinyin);
 
-std::string convertPinyinToZhuyin(const std::string &pinyin);
 std::string convertPinyinToZhuyin(const std::string &pinyin,
-                                  bool useSpacesToSegment);
+                                  bool useSpacesToSegment = false);
+std::string convertPinyinToIPA(const std::string &pinyin,
+                               bool useSpacesToSegment = false);
 
 // constructRomanisationQuery takes a vector of strings and stitches them
 // together with a delimiter.

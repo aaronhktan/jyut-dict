@@ -272,6 +272,8 @@ bool Entry::generatePhonetic(CantoneseOptions cantoneseOptions,
             == MandarinOptions::PRETTY_PINYIN && !_isPrettyPinyinValid) {
         _prettyPinyin = ChineseUtils::createPrettyPinyin(_pinyin);
         _isPrettyPinyinValid = true;
+
+        std::cout << ChineseUtils::convertPinyinToIPA(_pinyin) << std::endl;
     }
 
     if ((mandarinOptions & MandarinOptions::NUMBERED_PINYIN)

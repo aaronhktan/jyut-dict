@@ -13,11 +13,7 @@
 
 namespace ChineseUtils {
 
-#ifdef _MSC_VER
-static std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
-#else
 static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
-#endif
 
 const static std::unordered_set<std::string> specialCharacters = {
     ".",
@@ -35,16 +31,6 @@ const static std::unordered_set<std::string> specialCharacters = {
     "·",
 };
 
-const static std::unordered_map<std::string, std::vector<std::string>> replacementMap
-    = {
-        {"a", {"ā", "á", "ǎ", "à", "a"}},
-        {"e", {"ē", "é", "ě", "è", "e"}},
-        {"i", {"ī", "í", "ǐ", "ì", "i"}},
-        {"o", {"ō", "ó", "ǒ", "ò", "o"}},
-        {"u", {"ū", "ú", "ǔ", "ù", "u"}},
-        {"ü", {"ǖ", "ǘ", "ǚ", "ǜ", "ü"}},
-};
-
 const static std::unordered_map<std::string, std::string>
     jyutpingToYaleSpecialFinals = {
         {"aa", "a"},
@@ -56,54 +42,54 @@ const static std::unordered_map<std::string, std::string>
         {"eot", "eut"},
 };
 
-const static std::unordered_map<std::string, std::vector<std::string>>
+const static std::unordered_map<std::string, std::vector<std::string> >
     jyutpingToYaleSpecialSyllables = {
         {"m", {"m̄", "ḿ", "m", "m̀h", "ḿh", "mh"}},
         {"ng", {"n̄g", "ńg", "ng", "ǹgh", "ńgh", "ngh"}},
 };
 
-const static std::unordered_map<std::string, std::vector<std::string>>
-    yaleReplacementMap = {{"a", {"ā", "á", "a", "à", "á", "a"}},
-                          {"e", {"ē", "é", "e", "è", "é", "e"}},
-                          {"i", {"ī", "í", "i", "ì", "í", "i"}},
-                          {"o", {"ō", "ó", "o", "ò", "ó", "o"}},
-                          {"u", {"ū", "ú", "u", "ù", "ú", "u"}},
+const static std::unordered_map<std::string, std::vector<std::string> >
+    yaleToneReplacements = {
+        {"a", {"ā", "á", "a", "à", "á", "a"}},
+        {"e", {"ē", "é", "e", "è", "é", "e"}},
+        {"i", {"ī", "í", "i", "ì", "í", "i"}},
+        {"o", {"ō", "ó", "o", "ò", "ó", "o"}},
+        {"u", {"ū", "ú", "u", "ù", "ú", "u"}},
 };
 
 // The original Wiktionary module uses breves to indicate a special letter (e.g.
 // ă), but the base C++ regex engine can't match against chars outside of the
 // basic set. As a workaround, I'm just replacing them with other symbols.
 const static std::vector<std::pair<std::string, std::string> >
-    jyutpingToIPASpecialSyllables = {{"a", "@"},
-                                     {"yu", "y"},
-                                     {"@@", "a"},
-                                     {"uk", "^k"},
-                                     {"ik", "|k"},
-                                     {"ou", "~u"},
-                                     {"eoi", "eoy"},
-                                     {"ung", "^ng"},
-                                     {"ing", "|ng"},
-                                     {"ei", ">i"}};
+    cantoneseIPASpecialSyllables = {{"a", "@"},
+                                    {"yu", "y"},
+                                    {"@@", "a"},
+                                    {"uk", "^k"},
+                                    {"ik", "|k"},
+                                    {"ou", "~u"},
+                                    {"eoi", "eoy"},
+                                    {"ung", "^ng"},
+                                    {"ing", "|ng"},
+                                    {"ei", ">i"}};
 
-const static std::unordered_map<std::string, std::string> jyutpingToIPAInitials
-    = {
-        {"b", "p"},
-        {"p", "pʰ"},
-        {"d", "t"},
-        {"t", "tʰ"},
-        {"g", "k"},
-        {"k", "kʰ"},
-        {"ng", "ŋ"},
-        {"gw", "kʷ"},
-        {"kw", "kʷʰ"},
-        {"zh", "t͡ʃ"},
-        {"ch", "t͡ʃʰ"},
-        {"sh", "ʃ"},
-        {"z", "t͡s"},
-        {"c", "t͡sʰ"},
+const static std::unordered_map<std::string, std::string> cantoneseIPAInitials = {
+    {"b", "p"},
+    {"p", "pʰ"},
+    {"d", "t"},
+    {"t", "tʰ"},
+    {"g", "k"},
+    {"k", "kʰ"},
+    {"ng", "ŋ"},
+    {"gw", "kʷ"},
+    {"kw", "kʷʰ"},
+    {"zh", "t͡ʃ"},
+    {"ch", "t͡ʃʰ"},
+    {"sh", "ʃ"},
+    {"z", "t͡s"},
+    {"c", "t͡sʰ"},
 };
 
-const static std::unordered_map<std::string, std::string> jyutpingToIPANuclei = {
+const static std::unordered_map<std::string, std::string> cantoneseIPANuclei = {
     {"a", "äː"},
     {"@", "ɐ"},
     {"e", "ɛː"},
@@ -119,7 +105,7 @@ const static std::unordered_map<std::string, std::string> jyutpingToIPANuclei = 
     {"y", "yː"},
 };
 
-const static std::unordered_map<std::string, std::string> jyutpingToIPACodas = {
+const static std::unordered_map<std::string, std::string> cantoneseIPACodas = {
     {"i", "i̯"},
     {"u", "u̯"},
     {"y", "y̯"},
@@ -139,7 +125,17 @@ const static std::vector<std::string> jyutpingToIPATones
     = {"˥", "˧˥", "˧", "˨˩", "˩˧", "˨", "˥", "˧", "˨"};
 #endif
 
-const static std::unordered_map<std::string, std::string> zhuyinInitialMap = {
+const static std::unordered_map<std::string, std::vector<std::string> >
+    pinyinToneReplacements = {
+        {"a", {"ā", "á", "ǎ", "à", "a"}},
+        {"e", {"ē", "é", "ě", "è", "e"}},
+        {"i", {"ī", "í", "ǐ", "ì", "i"}},
+        {"o", {"ō", "ó", "ǒ", "ò", "o"}},
+        {"u", {"ū", "ú", "ǔ", "ù", "u"}},
+        {"ü", {"ǖ", "ǘ", "ǚ", "ǜ", "ü"}},
+};
+
+const static std::unordered_map<std::string, std::string> zhuyinInitials = {
     {"b", "ㄅ"},  {"p", "ㄆ"}, {"m", "ㄇ"}, {"f", "ㄈ"},  {"d", "ㄉ"},
     {"t", "ㄊ"},  {"n", "ㄋ"}, {"l", "ㄌ"}, {"g", "ㄍ"},  {"k", "ㄎ"},
     {"h", "ㄏ"},  {"j", "ㄐ"}, {"q", "ㄑ"}, {"x", "ㄒ"},  {"z", "ㄗ"},
@@ -147,7 +143,7 @@ const static std::unordered_map<std::string, std::string> zhuyinInitialMap = {
     {"sh", "ㄕ"},
 };
 
-const static std::unordered_map<std::string, std::string> zhuyinFinalMap
+const static std::unordered_map<std::string, std::string> zhuyinFinals
     = {{"yuan", "ㄩㄢ"}, {"iang", "ㄧㄤ"}, {"yang", "ㄧㄤ"}, {"uang", "ㄨㄤ"},
        {"wang", "ㄨㄤ"}, {"ying", "ㄧㄥ"}, {"weng", "ㄨㄥ"}, {"iong", "ㄩㄥ"},
        {"yong", "ㄩㄥ"}, {"uai", "ㄨㄞ"},  {"wai", "ㄨㄞ"},  {"yai", "ㄧㄞ"},
@@ -167,19 +163,87 @@ const static std::unordered_map<std::string, std::string> zhuyinFinalMap
 
 const static std::vector<std::string> zhuyinTones = {"", "", "ˊ", "ˇ", "ˋ", "˙"};
 
-std::string applyColours(
-    const std::string original,
-    const std::vector<int> &tones,
-    const std::vector<std::string> &jyutpingToneColours,
-    const std::vector<std::string> &pinyinToneColours,
-    const EntryColourPhoneticType type)
+const static std::unordered_set<std::string> mandarinIPAGlottal = {
+    "a", "o", "e", "ai", "ei", "ao", "ou", "an", "en", "er", "ang", "ong", "eng"};
+
+const static std::unordered_map<std::string, std::string> mandarinIPAInitials = {
+    {"b", "p"},  {"c", "t͡sʰ"}, {"ch", "ʈ͡ʂʰ"}, {"d", "t"},  {"f", "f"},
+    {"g", "k"},  {"h", "x"},   {"j", "t͡ɕ"},   {"k", "kʰ"}, {"l", "l"},
+    {"m", "m"},  {"n", "n"},   {"ng", "ŋ"},   {"p", "pʰ"}, {"q", "t͡ɕʰ"},
+    {"r", "ʐ"},  {"s", "s"},   {"sh", "ʂ"},   {"t", "tʰ"}, {"x", "ɕ"},
+    {"z", "t͡s"}, {"zh", "ʈ͡ʂ"},
+};
+
+const static std::unordered_map<std::string, std::string> mandarinIPAFinals = {
+    {"a", "ä"},       {"ai", "aɪ̯"},      {"air", "ɑɻ"},     {"an", "än"},
+    {"ang", "ɑŋ"},    {"angr", "ɑ̃ɻ"},    {"anr", "ɑɻ"},     {"ao", "ɑʊ̯"},
+    {"aor", "aʊ̯ɻʷ"},  {"ar", "ɑɻ"},      {"e", "ɤ"},        {"ei", "eɪ̯"},
+    {"eir", "əɻ"},    {"en", "ən"},      {"eng", "ɤŋ"},     {"engr", "ɤ̃ɻ"},
+    {"enr", "əɻ"},    {"er", "ɤɻ"},      {"i", "i"},        {"ia", "jä"},
+    {"ian", "jɛn"},   {"iang", "jɑŋ"},   {"iangr", "jɑ̃ɻ"},  {"ianr", "jɑɻ"},
+    {"iao", "jɑʊ̯"},   {"iaor", "jaʊ̯ɻʷ"}, {"iar", "jɑɻ"},    {"ie", "jɛ"},
+    {"ier", "jɛɻ"},   {"in", "in"},      {"ing", "iŋ"},     {"ingr", "iɤ̯̃ɻ"},
+    {"inr", "iə̯ɻ"},   {"io", "jɔ"},      {"iong", "jʊŋ"},   {"iongr", "jʊ̃ɻ"},
+    {"ir", "iə̯ɻ"},    {"iu", "joʊ̯"},     {"iur", "jɤʊ̯ɻʷ"},  {"m", "m̩"},
+    {"n", "n̩"},       {"ng", "ŋ̍"},       {"o", "wɔ"},       {"ong", "ʊŋ"},
+    {"ongr", "ʊ̃ɻ"},   {"or", "wɔɻ"},     {"ou", "oʊ̯"},      {"our", "ɤʊ̯ɻʷ"},
+    {"u", "u"},       {"ua", "wä"},      {"uai", "waɪ̯"},    {"uair", "wɑɻ"},
+    {"uan", "wän"},   {"uang", "wɑŋ"},   {"uangr", "wɑ̃ɻ"},  {"uanr", "wɑɻ"},
+    {"uar", "wɑɻ"},   {"ue", "ɥɛ"},      {"ui", "weɪ̯"},     {"uir", "wəɻ"},
+    {"un", "wən"},    {"unr", "wəɻ"},    {"uo", "wɔ"},      {"uor", "wɔɻ"},
+    {"ur", "uɻʷ"},    {"v", "y"},        {"van", "ɥɛn"},    {"vanr", "ɥɑɻ"},
+    {"ve", "ɥɛ"},     {"ver", "ɥɛɻ"},    {"vn", "yn"},      {"vnr", "yə̯ɻ"},
+    {"vr", "yə̯ɻ"},    {"wa", "wä"},      {"wai", "waɪ̯"},    {"wair", "wɑɻ"},
+    {"wan", "wän"},   {"wang", "wɑŋ"},   {"wangr", "wɑ̃ɻ"},  {"wanr", "wɑɻ"},
+    {"war", "wɑɻ"},   {"wei", "weɪ̯"},    {"weir", "wəɻ"},   {"wen", "wən"},
+    {"weng", "wəŋ"},  {"wengr", "ʊ̃ɻ"},   {"wenr", "wəɻ"},   {"wo", "wɔ"},
+    {"wor", "wɔɻ"},   {"wu", "u"},       {"wur", "uɻʷ"},    {"ya", "jä"},
+    {"yai", "jaɪ̯"},   {"yan", "jɛn"},    {"yang", "jɑŋ"},   {"yangr", "jɑ̃ɻ"},
+    {"yanr", "jɑɻ"},  {"yao", "jɑʊ̯"},    {"yaor", "jaʊ̯ɻʷ"}, {"yar", "jɑɻ"},
+    {"ye", "jɛ"},     {"yer", "jɛɻ"},    {"yi", "i"},       {"yin", "in"},
+    {"ying", "iŋ"},   {"yingr", "iɤ̯̃ɻ"},  {"yinr", "iə̯ɻ"},   {"yir", "iə̯ɻ"},
+    {"yo", "jɔ"},     {"yong", "jʊŋ"},   {"yongr", "jʊ̃ɻ"},  {"yor", "jɔɻ"},
+    {"you", "joʊ̯"},   {"your", "jɤʊ̯ɻʷ"}, {"yu", "y"},       {"yuan", "ɥɛn"},
+    {"yuanr", "ɥɑɻ"}, {"yue", "ɥɛ"},     {"yuer", "ɥɛɻ"},   {"yun", "yn"},
+    {"yunr", "yə̯ɻ"},  {"yur", "yə̯ɻ"},
+};
+
+const static std::unordered_map<std::string, std::string>
+    mandarinIPAVoicelessInitials = {
+        {"k", "g̊"},
+        {"p", "b̥"},
+        {"t", "d̥"},
+        {"t͡s", "d͡z̥"},
+        {"t͡ɕ", "d͡ʑ̥"},
+        {"ʈ͡ʂ", "ɖ͡ʐ̥"},
+};
+
+const static std::vector<std::string> mandarinIPANeutralTone = {"˨",
+                                                                "˧",
+                                                                "˦",
+                                                                "˩",
+                                                                "˩"};
+
+const static std::vector<std::string> mandarinIPAThirdTone = {"˨˩˦-˨˩˩",
+                                                              "˨˩˦-˨˩˩",
+                                                              "˨˩˦-˧˥",
+                                                              "˨˩˦-˨˩˩",
+                                                              "˨˩˦"};
+
+const static std::vector<std::string> mandarinIPATones = {"˥˥",
+                                                          "˧˥",
+                                                          "˨˩˦",
+                                                          "˥˩",
+                                                          ""};
+
+std::string applyColours(const std::string original,
+                         const std::vector<int> &tones,
+                         const std::vector<std::string> &jyutpingToneColours,
+                         const std::vector<std::string> &pinyinToneColours,
+                         const EntryColourPhoneticType type)
 {
     std::string coloured_string;
-#ifdef _MSC_VER
-    std::wstring converted_original = converter.from_bytes(original);
-#else
     std::u32string converted_original = converter.from_bytes(original);
-#endif
     size_t pos = 0;
     for (const auto &character : converted_original) {
         std::string originalCharacter = converter.to_bytes(character);
@@ -255,14 +319,9 @@ std::string compareStrings(const std::string &original,
                            const std::string &comparison)
 {
     std::string result;
-
-#ifdef _MSC_VER
-    std::wstring convertedOriginal = converter.from_bytes(original);
-    std::wstring convertedComparison = converter.from_bytes(comparison);
-#else
     std::u32string convertedOriginal = converter.from_bytes(original);
     std::u32string convertedComparison = converter.from_bytes(comparison);
-#endif
+
     if (convertedOriginal.size() != convertedComparison.size()) {
         return result;
     }
@@ -335,9 +394,9 @@ static std::string convertYaleFinal(const std::string &syllable)
     // Replace the first vowel in the final with its accented version
     auto replacement_location = yale_syllable.find_first_of("aeiou");
     std::string first_vowel = yale_syllable.substr(replacement_location, 1);
-    auto replacement_vowel_search = yaleReplacementMap.find(first_vowel);
+    auto replacement_vowel_search = yaleToneReplacements.find(first_vowel);
     std::string replacement_vowel = (replacement_vowel_search
-                                     == yaleReplacementMap.end())
+                                     == yaleToneReplacements.end())
                                         ? first_vowel
                                         : replacement_vowel_search->second.at(
                                             static_cast<size_t>(tone - 1));
@@ -429,7 +488,7 @@ std::string convertJyutpingToYale(const std::string &jyutping,
     return result;
 }
 
-std::string convertIPASyllable(const std::string &syllable)
+std::string convertIPACantoneseSyllable(const std::string &syllable)
 {
     std::string initial;
     std::string nucleus;
@@ -449,9 +508,8 @@ std::string convertIPASyllable(const std::string &syllable)
 
     // Get equivalent to matched initial
     if (match[1].length()) {
-        if (jyutpingToIPAInitials.find(match[1])
-            != jyutpingToIPAInitials.end()) {
-            initial = jyutpingToIPAInitials.at(match[1]);
+        if (cantoneseIPAInitials.find(match[1]) != cantoneseIPAInitials.end()) {
+            initial = cantoneseIPAInitials.at(match[1]);
         } else {
             initial = match[1];
         }
@@ -459,8 +517,8 @@ std::string convertIPASyllable(const std::string &syllable)
 
     // Get equivalent to matched nucleus
     if (match[2].length()) {
-        if (jyutpingToIPANuclei.find(match[2]) != jyutpingToIPANuclei.end()) {
-            nucleus = jyutpingToIPANuclei.at(match[2]);
+        if (cantoneseIPANuclei.find(match[2]) != cantoneseIPANuclei.end()) {
+            nucleus = cantoneseIPANuclei.at(match[2]);
         } else {
             nucleus = match[2];
         }
@@ -468,8 +526,8 @@ std::string convertIPASyllable(const std::string &syllable)
 
     // Get equivalent to matched final
     if (match[3].length()) {
-        if (jyutpingToIPACodas.find(match[3]) != jyutpingToIPACodas.end()) {
-            coda = jyutpingToIPACodas.at(match[3]);
+        if (cantoneseIPACodas.find(match[3]) != cantoneseIPACodas.end()) {
+            coda = cantoneseIPACodas.at(match[3]);
         } else {
             coda = match[3];
         }
@@ -579,13 +637,13 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
         }
 
         // Do some more preprocessing
-        for (const auto &pair : jyutpingToIPASpecialSyllables) {
+        for (const auto &pair : cantoneseIPASpecialSyllables) {
             ipa_syllable = std::regex_replace(ipa_syllable,
                                               std::regex{pair.first},
                                               pair.second);
         }
 
-        ipa_syllables.emplace_back(convertIPASyllable(ipa_syllable));
+        ipa_syllables.emplace_back(convertIPACantoneseSyllable(ipa_syllable));
     }
 
     std::ostringstream ipa;
@@ -596,7 +654,7 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
 
     // Remove trailing space
     std::string result = ipa.str();
-    result.erase(result.end() - double_space.length());
+    result.erase(result.end() - static_cast<long>(double_space.length()));
 
     return result;
 }
@@ -665,9 +723,9 @@ std::string createPrettyPinyin(const std::string &pinyin)
         }
 
         // replacementMap maps a character to its replacements with diacritics.
-        auto search = replacementMap.find(
+        auto search = pinyinToneReplacements.find(
             syllable.substr(location, character_size));
-        if (search != replacementMap.end()) {
+        if (search != pinyinToneReplacements.end()) {
             std::string replacement = search->second.at(
                 static_cast<size_t>(tone) - 1);
             syllable.erase(location, character_size);
@@ -751,11 +809,6 @@ std::string createPinyinWithV(const std::string &pinyin)
     return result;
 }
 
-std::string convertPinyinToZhuyin(const std::string &pinyin)
-{
-    return convertPinyinToZhuyin(pinyin, /* useSpacesToSegment */ false);
-}
-
 // Note that the majority of this code is derivative of Wiktionary's conversion
 // code, contained in the module cmn-pron
 // (https://en.wiktionary.org/wiki/Module:cmn-pron)
@@ -768,17 +821,19 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
 
     std::vector<std::string> syllables;
     if (useSpacesToSegment) {
+        std::string pinyinCopy;
         // Insert a space before and after every special character, so that the
-        // Yale conversion doesn't attempt to convert special characters.
-        std::string pinyinCopy = pinyin;
-        for (const auto &specialCharacter : specialCharacters) {
-            size_t location = pinyinCopy.find(specialCharacter);
-            if (location != std::string::npos) {
-                pinyinCopy.erase(location, specialCharacter.length());
-                pinyinCopy.insert(location, " " + specialCharacter + " ");
+        // Zhuyin conversion doesn't attempt to convert special characters.
+        std::u32string pinyin_utf32 = converter.from_bytes(pinyin);
+        for (const auto &character : pinyin_utf32) {
+            std::string character_utf8 = converter.to_bytes(character);
+            if (specialCharacters.find(character_utf8)
+                != specialCharacters.end()) {
+                pinyinCopy += " " + character_utf8 + " ";
+            } else {
+                pinyinCopy += character_utf8;
             }
         }
-        Utils::split(pinyinCopy, ' ', syllables);
     } else {
         syllables = segmentPinyin(QString{pinyin.c_str()});
     }
@@ -837,7 +892,7 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
             if (initial_match[1].length()) {
                 zhuyin_syllable = std::regex_replace(zhuyin_syllable,
                                                      pinyin_initial,
-                                                     zhuyinInitialMap.at(
+                                                     zhuyinInitials.at(
                                                          initial_match[1]));
             }
         }
@@ -849,7 +904,7 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
             std::string final;
             std::string er;
             if (final_match[1].length()) {
-                final = zhuyinFinalMap.at(final_match[1]);
+                final = zhuyinFinals.at(final_match[1]);
             }
             if (final_match[2].length()) {
                 er = "ㄦ";
@@ -882,6 +937,210 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
     // Remove trailing space
     std::string result = zhuyin.str();
     result.erase(result.end() - 1);
+
+    return result;
+}
+
+std::tuple<std::string, std::string> convertIPAMandarinSyllable(
+    std::string &syllable)
+{
+    std::string ipa_initial;
+    std::string ipa_final;
+
+    // Check for special-case "ng", otherwise get replacement initial and final as normal
+    if (syllable == "ng") {
+        ipa_final = mandarinIPAFinals.at("ng");
+    } else {
+        std::regex initial_final_regex{"^([bcdfghjklmnpqrstxz]?h?)(.+)$"};
+        std::smatch ipa_match;
+
+        auto regex_res = std::regex_match(syllable,
+                                          ipa_match,
+                                          initial_final_regex);
+
+        if (!regex_res) {
+            std::cerr << "Invalid pinyin for IPA conversion!" << std::endl;
+            return std::make_tuple("", syllable);
+        }
+
+        if ((mandarinIPAInitials.find(ipa_match[1]) == mandarinIPAInitials.end())
+            || (mandarinIPAFinals.find(ipa_match[2])
+                == mandarinIPAFinals.end())) {
+            return std::make_tuple("", syllable);
+        }
+        ipa_initial = mandarinIPAInitials.at(ipa_match[1]);
+        ipa_final = mandarinIPAFinals.at(ipa_match[2]);
+    }
+
+    // Replace close front unrounded vowel with syllabic retroflex sibilant
+    // fricative (+ voiced retroflex approximant if erhua)
+    // in Pinyin starting with ch, sh, zh, or r
+    if (ipa_initial == "ʈ͡ʂʰ" || ipa_initial == "ʂ" || ipa_initial == "ʈ͡ʂ"
+        || ipa_initial == "ʐ") {
+        if (ipa_final == "ir") {
+            ipa_final = "ʐ̩ɻ";
+        } else if (ipa_final == "i") {
+            ipa_final = "ʐ̩";
+        }
+    }
+
+    // Replace close front unrounded vowel with syllabic alveolar sibilant
+    // fricative (+ voiced retroflex approximant if erhua)
+    // in Pinyin starting with c, s, or z
+    if (ipa_initial == "t͡sʰ" || ipa_initial == "s" || ipa_initial == "t͡s") {
+        if (ipa_final == "ir") {
+            ipa_final = "z̩ɻ";
+        } else if (ipa_final == "i") {
+            ipa_final = "z̩";
+        }
+    }
+
+    // Do some cleanup for Pinyin like "ri"
+    if (ipa_initial == "ʐ" && ipa_final == "ʐ̩") {
+        ipa_initial = "";
+    }
+
+    return std::make_tuple(ipa_initial, ipa_final);
+}
+
+std::string convertPinyinToIPA(const std::string &pinyin,
+                               bool useSpacesToSegment)
+{
+    if (pinyin.empty()) {
+        return pinyin;
+    }
+
+    std::vector<std::string> syllables;
+    if (useSpacesToSegment) {
+        std::string pinyinCopy;
+        // Insert a space before and after every special character, so that the
+        // IPA conversion doesn't attempt to convert special characters.
+        std::u32string pinyin_utf32 = converter.from_bytes(pinyin);
+        for (const auto &character : pinyin_utf32) {
+            std::string character_utf8 = converter.to_bytes(character);
+            if (specialCharacters.find(character_utf8)
+                != specialCharacters.end()) {
+                pinyinCopy += " " + character_utf8 + " ";
+            } else {
+                pinyinCopy += character_utf8;
+            }
+        }
+        Utils::split(pinyinCopy, ' ', syllables);
+    } else {
+        syllables = segmentPinyin(QString{pinyin.c_str()});
+    }
+
+    std::vector<std::string> ipa_syllables;
+
+    // Pre-compute list of tones corresponding to each syllable
+    // This is used for tone sandhi reasons (3->3 sandhi, x->5 sandhi, etc.)
+    std::vector<std::pair<int, unsigned long> > syllable_tones;
+    for (const auto &syllable : syllables) {
+        auto tone_location = syllable.find_first_of("12345");
+        if (tone_location == std::string::npos) {
+            syllable_tones.push_back({-1, -1});
+        } else {
+            int tone = std::stoi(syllable.substr(tone_location, 1));
+            syllable_tones.push_back({tone, tone_location});
+        }
+    }
+
+    for (size_t i = 0; i < syllables.size(); i++) {
+        const auto &syllable = syllables[i];
+        std::string ipa_glottal;
+        std::string ipa_initial;
+        std::string ipa_final;
+        std::string ipa_tone;
+
+        // Filter out special characters
+        if (specialCharacters.find(syllable) != specialCharacters.end()) {
+            ipa_syllables.emplace_back(syllable);
+            continue;
+        }
+
+        // Get syllable without tone
+        auto tone_location = syllable_tones[i].second;
+        std::string syllable_without_tone = syllable.substr(0, tone_location);
+
+        // Figure out whether this syllable needs a glottal stop
+        if (mandarinIPAGlottal.find(syllable_without_tone)
+            != mandarinIPAGlottal.end()) {
+            ipa_glottal = "ˀ";
+        }
+
+        // Mark close front rounded vowel with v instead of "u" or "u:"
+        syllable_without_tone = std::regex_replace(syllable_without_tone,
+                                                   std::regex{"u\\:"},
+                                                   "v");
+        syllable_without_tone = std::regex_replace(syllable_without_tone,
+                                                   std::regex{"([jqx])u"},
+                                                   "$1v");
+
+        // Convert initial and final
+        std::tie(ipa_initial, ipa_final) = convertIPAMandarinSyllable(
+            syllable_without_tone);
+
+        // Convert tones
+        int tone = syllable_tones[i].first;
+        int next_tone = (i == syllables.size() - 1)
+                            ? -1
+                            : syllable_tones[i + 1].first;
+        int prev_tone = (i == 0) ? -1 : syllable_tones[i - 1].first;
+
+        switch (tone) {
+        case 5: {
+            // When neutral tone, replace some initials with voiceless versions
+            if (mandarinIPAVoicelessInitials.find(ipa_initial)
+                != mandarinIPAVoicelessInitials.end()) {
+                ipa_initial = mandarinIPAVoicelessInitials.at(ipa_initial);
+            }
+            if (ipa_final == "ɤ") {
+                ipa_final = "ə";
+            }
+            ipa_tone = prev_tone == -1
+                           ? ""
+                           : mandarinIPANeutralTone
+                               [static_cast<unsigned long>(prev_tone) - 1];
+            break;
+        }
+        case 3: {
+            if (i == syllables.size() - 1) {
+                ipa_tone = (i == 0) ? "˨˩˦" : "˨˩˦-˨˩(˦)";
+            } else {
+                ipa_tone = next_tone == -1
+                               ? ""
+                               : mandarinIPAThirdTone
+                                   [static_cast<unsigned long>(next_tone) - 1];
+            }
+            break;
+        }
+        case 4: {
+            if (next_tone == 4) {
+                ipa_tone = "˥˩-˥˧";
+            } else {
+                ipa_tone = mandarinIPATones[static_cast<unsigned long>(tone) - 1];
+            }
+            break;
+        }
+        default: {
+            ipa_tone = mandarinIPATones[static_cast<unsigned long>(tone) - 1];
+            break;
+        }
+        }
+
+        ipa_syllables.push_back(ipa_glottal + ipa_initial + ipa_final
+                                + ipa_tone);
+    }
+
+    std::ostringstream ipa;
+    std::string double_space = "  ";
+    for (const auto &ipa_syllable : ipa_syllables) {
+        ipa << ipa_syllable << double_space;
+    }
+
+    // Remove trailing space
+    std::string result = ipa.str();
+    result.erase(result.end() - static_cast<long>(double_space.length()));
 
     return result;
 }
