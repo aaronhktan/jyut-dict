@@ -17,6 +17,7 @@ static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
 
 const static std::unordered_set<std::string> specialCharacters = {
     ".",
+    "。",
     ",",
     "，",
     "!",
@@ -31,6 +32,7 @@ const static std::unordered_set<std::string> specialCharacters = {
     "·",
     "\"",
     "“",
+    "”",
 };
 
 const static std::unordered_map<std::string, std::string>
@@ -985,18 +987,25 @@ std::tuple<std::string, std::string> convertIPAMandarinSyllable(
             return std::make_tuple("", syllable);
         }
 
+        std::cout << "syllable: " << syllable << std::endl;
         bool found_initial = !(mandarinIPAInitials.find(ipa_match[1])
                                == mandarinIPAInitials.end());
         bool found_final = !(mandarinIPAFinals.find(ipa_match[2])
                              == mandarinIPAFinals.end());
         if (!found_initial && !found_final) {
+            std::cout << "returning, no initial and no final found"
+                      << std::endl;
             return std::make_tuple("", syllable);
         }
         if (found_initial) {
+            std::cout << "initial: " << ipa_match[1] << std::endl;
             ipa_initial = mandarinIPAInitials.at(ipa_match[1]);
+            std::cout << "IPA initial: " << ipa_initial << std::endl;
         }
         if (found_final) {
+            std::cout << "final: " << ipa_match[2] << std::endl;
             ipa_final = mandarinIPAFinals.at(ipa_match[2]);
+            std::cout << "IPA final: " << ipa_final << std::endl;
         }
     }
 
@@ -1080,7 +1089,15 @@ std::string convertPinyinToIPA(const std::string &pinyin,
         std::string ipa_final;
         std::string ipa_tone;
 
-        // Filter out special characters
+        // Most numbers, single characters, etc. are not Pinyin.
+        // Filter those out.
+        if (syllable.size() == 1) {
+            ipa_syllables.emplace_back(syllable);
+            continue;
+        }
+
+        // Filter out special characters separately, as those may
+        // sometimes be more than one byte long.
         if (specialCharacters.find(syllable) != specialCharacters.end()) {
             ipa_syllables.emplace_back(syllable);
             continue;
@@ -1158,6 +1175,9 @@ std::string convertPinyinToIPA(const std::string &pinyin,
             } else {
                 ipa_tone = mandarinIPATones[static_cast<unsigned long>(tone) - 1];
             }
+            break;
+        }
+        case -1: {
             break;
         }
         default: {
