@@ -1,7 +1,6 @@
 #include "chineseutils.h"
 
 #include "logic/utils/utils.h"
-#include "logic/settings/settings.h"
 
 #include <cctype>
 #include <codecvt>
@@ -70,6 +69,75 @@ const static std::unordered_map<std::string, std::vector<std::string>>
                           {"o", {"ō", "ó", "o", "ò", "ó", "o"}},
                           {"u", {"ū", "ú", "u", "ù", "ú", "u"}},
 };
+
+// The original Wiktionary module uses breves to indicate a special letter (e.g.
+// ă), but the base C++ regex engine can't match against chars outside of the
+// basic set. As a workaround, I'm just replacing them with other symbols.
+const static std::vector<std::pair<std::string, std::string> >
+    jyutpingToIPASpecialSyllables = {{"a", "@"},
+                                     {"yu", "y"},
+                                     {"@@", "a"},
+                                     {"uk", "^k"},
+                                     {"ik", "|k"},
+                                     {"ou", "~u"},
+                                     {"eoi", "eoy"},
+                                     {"ung", "^ng"},
+                                     {"ing", "|ng"},
+                                     {"ei", ">i"}};
+
+const static std::unordered_map<std::string, std::string> jyutpingToIPAInitials
+    = {
+        {"b", "p"},
+        {"p", "pʰ"},
+        {"d", "t"},
+        {"t", "tʰ"},
+        {"g", "k"},
+        {"k", "kʰ"},
+        {"ng", "ŋ"},
+        {"gw", "kʷ"},
+        {"kw", "kʷʰ"},
+        {"zh", "t͡ʃ"},
+        {"ch", "t͡ʃʰ"},
+        {"sh", "ʃ"},
+        {"z", "t͡s"},
+        {"c", "t͡sʰ"},
+};
+
+const static std::unordered_map<std::string, std::string> jyutpingToIPANuclei = {
+    {"a", "äː"},
+    {"@", "ɐ"},
+    {"e", "ɛː"},
+    {">", "e"},
+    {"i", "iː"},
+    {"|", "ɪ"},
+    {"o", "ɔː"},
+    {"~", "o"},
+    {"oe", "œ̽ː"},
+    {"eo", "ɵ"},
+    {"u", "uː"},
+    {"^", "ʊ"},
+    {"y", "yː"},
+};
+
+const static std::unordered_map<std::string, std::string> jyutpingToIPACodas = {
+    {"i", "i̯"},
+    {"u", "u̯"},
+    {"y", "y̯"},
+    {"ng", "ŋ"},
+    {"p", "p̚"},
+    {"t", "t̚"},
+    {"k", "k̚"},
+};
+
+#if defined(Q_OS_MAC)
+// Added a six-per-em space (U+2006) between adjacent tone markers, because Qt's
+// kerning squishes them too close together
+const static std::vector<std::string> jyutpingToIPATones
+    = {"˥", "˧ ˥", "˧", "˨ ˩", "˩ ˧", "˨", "˥", "˧", "˨"};
+#else
+const static std::vector<std::string> jyutpingToIPATones
+    = {"˥", "˧˥", "˧", "˨˩", "˩˧", "˨", "˥", "˧", "˨"};
+#endif
 
 const static std::unordered_map<std::string, std::string> zhuyinInitialMap = {
     {"b", "ㄅ"},  {"p", "ㄆ"}, {"m", "ㄇ"}, {"f", "ㄈ"},  {"d", "ㄉ"},
@@ -282,14 +350,9 @@ static std::string convertYaleFinal(const std::string &syllable)
     return yale_syllable;
 }
 
-std::string convertJyutpingToYale(const std::string &jyutping)
-{
-    return convertJyutpingToYale(jyutping, /* useSpacesToSegment */ false);
-}
-
-// Note that the majority of this code is derivative of Wiktionary's conversion
-// code, contained in the module yue-pron
-// (https://en.wiktionary.org/wiki/Module:yue-pron)
+// Note that the majority of this function and the convertToIPA function
+// is derivative of Wiktionary's conversion code, contained in the module
+// "yue-pron" (https://en.wiktionary.org/wiki/Module:yue-pron)
 std::string convertJyutpingToYale(const std::string &jyutping,
                                   bool useSpacesToSegment)
 {
@@ -299,14 +362,17 @@ std::string convertJyutpingToYale(const std::string &jyutping,
 
     std::vector<std::string> syllables;
     if (useSpacesToSegment) {
+        std::string jyutpingCopy;
         // Insert a space before and after every special character, so that the
-        // Yale conversion doesn't attempt to convert special characters.
-        std::string jyutpingCopy = jyutping;
-        for (const auto &specialCharacter : specialCharacters) {
-            size_t location = jyutpingCopy.find(specialCharacter);
-            if (location != std::string::npos) {
-                jyutpingCopy.erase(location, specialCharacter.length());
-                jyutpingCopy.insert(location, " " + specialCharacter + " ");
+        // IPA conversion doesn't attempt to convert special characters.
+        std::u32string jyutping_utf32 = converter.from_bytes(jyutping);
+        for (const auto &character : jyutping_utf32) {
+            std::string character_utf8 = converter.to_bytes(character);
+            if (specialCharacters.find(character_utf8)
+                != specialCharacters.end()) {
+                jyutpingCopy += " " + character_utf8 + " ";
+            } else {
+                jyutpingCopy += character_utf8;
             }
         }
         Utils::split(jyutpingCopy, ' ', syllables);
@@ -359,6 +425,178 @@ std::string convertJyutpingToYale(const std::string &jyutping,
     // Remove trailing space
     std::string result = yale.str();
     result.erase(result.end() - 1);
+
+    return result;
+}
+
+std::string convertIPASyllable(const std::string &syllable)
+{
+    std::string initial;
+    std::string nucleus;
+    std::string coda;
+    std::string tone;
+
+    std::regex syllable_regex{"([bcdfghjklmnpqrstvwxyz]?[bcdfghjklmnpqrstvwxyz]"
+                              "?)([a@e>i|o~u^y][eo]?)([iuymngptk]?g?)([1-9])"};
+    std::smatch match;
+
+    auto regex_res = std::regex_match(syllable, match, syllable_regex);
+
+    if (!regex_res) {
+        // No valid Jyutping found
+        return syllable;
+    }
+
+    // Get equivalent to matched initial
+    if (match[1].length()) {
+        if (jyutpingToIPAInitials.find(match[1])
+            != jyutpingToIPAInitials.end()) {
+            initial = jyutpingToIPAInitials.at(match[1]);
+        } else {
+            initial = match[1];
+        }
+    }
+
+    // Get equivalent to matched nucleus
+    if (match[2].length()) {
+        if (jyutpingToIPANuclei.find(match[2]) != jyutpingToIPANuclei.end()) {
+            nucleus = jyutpingToIPANuclei.at(match[2]);
+        } else {
+            nucleus = match[2];
+        }
+    }
+
+    // Get equivalent to matched final
+    if (match[3].length()) {
+        if (jyutpingToIPACodas.find(match[3]) != jyutpingToIPACodas.end()) {
+            coda = jyutpingToIPACodas.at(match[3]);
+        } else {
+            coda = match[3];
+        }
+    }
+
+    // Get equivalent to matched tone
+    if (match[4].length()) {
+        tone = jyutpingToIPATones.at(
+            static_cast<size_t>(std::stoi(match[4]) - 1));
+    }
+
+#if defined(Q_OS_MAC)
+    // Added a thin space (U+2009) before tone to better distinguish unreleased
+    // stop marker and tone markers
+    std::string ipa_syllable = initial + nucleus + coda + " " + tone;
+#else
+    std::string ipa_syllable = initial + nucleus + coda + tone;
+#endif
+    return ipa_syllable;
+}
+
+std::string convertJyutpingToIPA(const std::string &jyutping,
+                                 bool useSpacesToSegment)
+{
+    if (jyutping.empty()) {
+        return jyutping;
+    }
+
+    std::vector<std::string> syllables;
+    if (useSpacesToSegment) {
+        std::string jyutpingCopy;
+        // Insert a space before and after every special character, so that the
+        // IPA conversion doesn't attempt to convert special characters.
+        std::u32string jyutping_utf32 = converter.from_bytes(jyutping);
+        for (const auto &character : jyutping_utf32) {
+            std::string character_utf8 = converter.to_bytes(character);
+            if (specialCharacters.find(character_utf8)
+                != specialCharacters.end()) {
+                jyutpingCopy += " " + character_utf8 + " ";
+            } else {
+                jyutpingCopy += character_utf8;
+            }
+        }
+        Utils::split(jyutpingCopy, ' ', syllables);
+    } else {
+        syllables = segmentJyutping(QString{jyutping.c_str()},
+                                    /* ignoreSpecialCharacters */ false);
+    }
+
+    std::vector<std::string> ipa_syllables;
+
+    for (const auto &syllable : syllables) {
+        // Skip syllables that are just punctuation
+        if (specialCharacters.find(syllable) != specialCharacters.end()) {
+            ipa_syllables.push_back(syllable);
+            continue;
+        }
+
+        // Skip syllables that don't have tone
+        auto location = syllable.find_first_of("123456");
+        if (location == std::string::npos) {
+            ipa_syllables.push_back(syllable);
+            continue;
+        }
+
+        // Do some pre-processing
+        std::string ipa_syllable{syllable};
+        ipa_syllable = std::regex_replace(ipa_syllable,
+                                          std::regex{"([zcs])yu"},
+                                          "$1hyu");
+        ipa_syllable = std::regex_replace(ipa_syllable,
+                                          std::regex{"([zc])oe"},
+                                          "$1hoe");
+        ipa_syllable = std::regex_replace(ipa_syllable,
+                                          std::regex{"([zc])eo"},
+                                          "$1heo");
+
+        // Convert special syllables
+        std::smatch match;
+        if (std::regex_match(ipa_syllable,
+                             match,
+                             std::regex{"^(h?)([mn]g?)([1-6])$"})) {
+            int tone = std::stoi(match[3]);
+            ipa_syllable = std::regex_replace(ipa_syllable,
+                                              std::regex{"m"},
+                                              "m̩");
+            ipa_syllable = std::regex_replace(ipa_syllable,
+                                              std::regex{"ng"},
+                                              "ŋ̍");
+            ipa_syllable = std::regex_replace(
+                ipa_syllable,
+                std::regex{"[1-6]"},
+#if defined(Q_OS_MAC)
+                // Only macOS needs this space to fix weird kerning
+                " " +
+#endif
+                    jyutpingToIPATones.at(static_cast<size_t>(tone - 1)));
+        }
+
+        // Replace checked tones
+        if (std::regex_search(ipa_syllable,
+                              match,
+                              std::regex{"([ptk])([136])"})) {
+            std::replace(ipa_syllable.begin(), ipa_syllable.end(), '1', '7');
+            std::replace(ipa_syllable.begin(), ipa_syllable.end(), '3', '8');
+            std::replace(ipa_syllable.begin(), ipa_syllable.end(), '6', '9');
+        }
+
+        // Do some more preprocessing
+        for (const auto &pair : jyutpingToIPASpecialSyllables) {
+            ipa_syllable = std::regex_replace(ipa_syllable,
+                                              std::regex{pair.first},
+                                              pair.second);
+        }
+
+        ipa_syllables.emplace_back(convertIPASyllable(ipa_syllable));
+    }
+
+    std::ostringstream ipa;
+    std::string double_space = "  ";
+    for (const auto &ipa_syllable : ipa_syllables) {
+        ipa << ipa_syllable << double_space;
+    }
+
+    // Remove trailing space
+    std::string result = ipa.str();
+    result.erase(result.end() - double_space.length());
 
     return result;
 }
@@ -427,7 +665,8 @@ std::string createPrettyPinyin(const std::string &pinyin)
         }
 
         // replacementMap maps a character to its replacements with diacritics.
-        auto search = replacementMap.find(syllable.substr(location, character_size));
+        auto search = replacementMap.find(
+            syllable.substr(location, character_size));
         if (search != replacementMap.end()) {
             std::string replacement = search->second.at(
                 static_cast<size_t>(tone) - 1);
@@ -651,7 +890,7 @@ std::string constructRomanisationQuery(const std::vector<std::string> &words,
                                        const char *delimiter,
                                        const bool surroundWithQuotes)
 {
-    const char *quotes = surroundWithQuotes ? "\"": "";
+    const char *quotes = surroundWithQuotes ? "\"" : "";
     std::ostringstream string;
     for (size_t i = 0; i < words.size() - 1; i++) {
         if (std::isdigit(words[i].back())) {
@@ -807,7 +1046,8 @@ std::vector<std::string> segmentJyutping(const QString &string,
         bool isSpecialCharacter = (specialCharacters.find(
                                        stringToExamine.toStdString())
                                    != specialCharacters.end());
-        if (stringToExamine == " " || stringToExamine == "'" || isSpecialCharacter) {
+        if (stringToExamine == " " || stringToExamine == "'"
+            || isSpecialCharacter) {
             if (initial_found) { // Add any incomplete word to the vector
                 QString previous_initial = string.mid(start_index,
                                                       end_index - start_index);
@@ -921,5 +1161,4 @@ std::vector<std::string> segmentJyutping(const QString &string,
 
     return words;
 }
-
-}
+} // namespace ChineseUtils

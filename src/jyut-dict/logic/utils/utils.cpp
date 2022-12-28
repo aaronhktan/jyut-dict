@@ -13,7 +13,9 @@ namespace Utils {
         std::string word;
 
         while (std::getline(ss, word, delimiter)) {
-            result.push_back(word);
+            if (word.length() > 0 && word[0] != delimiter) {
+                result.push_back(word);
+            }
         }
     }
 
@@ -27,7 +29,10 @@ namespace Utils {
         size_t current = 0;
         while ((current = string.find(delimiter, previous))
                != std::string::npos) {
-            result.push_back(string.substr(previous, current - previous));
+            std::string substr = string.substr(previous, current - previous);
+            if (substr != delimiter) {
+                result.push_back(substr);
+            }
             previous = current + delimiter.length();
         }
         result.push_back(string.substr(previous));

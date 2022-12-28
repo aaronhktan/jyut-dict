@@ -88,6 +88,15 @@ bool SourceSentence::generatePhonetic(CantoneseOptions cantoneseOptions,
         _isYaleValid = true;
     }
 
+    if ((cantoneseOptions & CantoneseOptions::CANTONESE_IPA)
+            == CantoneseOptions::CANTONESE_IPA
+        && !_isCantoneseIPAValid) {
+        _cantoneseIPA
+            = ChineseUtils::convertJyutpingToIPA(_jyutping,
+                                                 /* useSpacesToSegment */ true);
+        _isCantoneseIPAValid = true;
+    }
+
     if ((mandarinOptions & MandarinOptions::PRETTY_PINYIN)
             == MandarinOptions::PRETTY_PINYIN && !_isPrettyPinyinValid) {
         _prettyPinyin = ChineseUtils::createPrettyPinyin(_pinyin);
@@ -133,6 +142,9 @@ std::string SourceSentence::getCantonesePhonetic(
     switch (cantoneseOptions) {
     case CantoneseOptions::PRETTY_YALE: {
         return _yale;
+    }
+    case CantoneseOptions::CANTONESE_IPA: {
+        return _cantoneseIPA;
     }
     case CantoneseOptions::RAW_JYUTPING:
     default:

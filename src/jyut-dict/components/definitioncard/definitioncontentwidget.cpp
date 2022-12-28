@@ -182,10 +182,10 @@ void DefinitionContentWidget::setEntry(const std::vector<Definition::Definition>
             }
 
             if (!pronunciationText.isEmpty()) {
+                // Don't use the "list-style-type:none;" stylesheet here; for some
+                // reason it changes all double-spaces (e.g. "  ") to single spaces
                 _examplePronunciationLabels.push_back(
-                    new QLabel{"<ul style=\"list-style-type:none;\"><li>"
-                                   + pronunciationText + "</li></ul>",
-                               this});
+                    new QLabel{pronunciationText, this});
                 _examplePronunciationLabels.back()->setContentsMargins(0, 0, 0, 0);
                 _examplePronunciationLabels.back()->setWordWrap(true);
                 _examplePronunciationLabels.back()->setTextInteractionFlags(
@@ -257,7 +257,7 @@ void DefinitionContentWidget::setStyle(bool use_dark)
     }
 
     QString examplePronunciationStyleSheet = "QLabel { color: %1; "
-                                             "padding-left: 0px; "
+                                             "padding-left: 38px; "
                                              "margin-left: 0px; } ";
     for (const auto &label : _examplePronunciationLabels) {
         label->setStyleSheet(

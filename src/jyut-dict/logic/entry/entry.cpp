@@ -28,57 +28,51 @@ Entry::Entry(const std::string &simplified, const std::string &traditional,
 }
 
 Entry::Entry(const Entry &entry)
-    : QObject()
-    , _simplified{entry._simplified}
-    , _simplifiedDifference{entry._simplifiedDifference}
-    , _traditional{entry._traditional}
-    , _traditionalDifference{entry._traditionalDifference}
-    , _colouredSimplified{entry._colouredSimplified}
-    , _colouredSimplifiedDifference{entry._colouredSimplifiedDifference}
-    , _colouredTraditional{entry._colouredTraditional}
-    , _colouredTraditionalDifference{entry._colouredTraditionalDifference}
-    , _jyutping{entry._jyutping}
-    , _yale{entry._yale}
-    , _isYaleValid{entry._isYaleValid}
-    , _pinyin{entry._pinyin}
-    , _prettyPinyin{entry._prettyPinyin}
-    , _isPrettyPinyinValid{entry._isPrettyPinyinValid}
-    , _numberedPinyin{entry._numberedPinyin}
-    , _isNumberedPinyinValid{entry._isNumberedPinyinValid}
-    , _zhuyin{entry._zhuyin}
-    , _isZhuyinValid{entry._isZhuyinValid}
-    , _definitions{entry._definitions}
-    , _isWelcome{entry._isWelcome}
-    , _isEmpty{entry._isEmpty}
-{
-}
+    : QObject(), _simplified{entry._simplified},
+      _simplifiedDifference{entry._simplifiedDifference},
+      _traditional{entry._traditional},
+      _traditionalDifference{entry._traditionalDifference},
+      _colouredSimplified{entry._colouredSimplified},
+      _colouredSimplifiedDifference{entry._colouredSimplifiedDifference},
+      _colouredTraditional{entry._colouredTraditional},
+      _colouredTraditionalDifference{entry._colouredTraditionalDifference},
+      _jyutping{entry._jyutping}, _yale{entry._yale},
+      _isYaleValid{entry._isYaleValid}, _cantoneseIPA{entry._cantoneseIPA},
+      _isCantoneseIPAValid{entry._isCantoneseIPAValid}, _pinyin{entry._pinyin},
+      _prettyPinyin{entry._prettyPinyin},
+      _isPrettyPinyinValid{entry._isPrettyPinyinValid},
+      _numberedPinyin{entry._numberedPinyin},
+      _isNumberedPinyinValid{entry._isNumberedPinyinValid},
+      _zhuyin{entry._zhuyin}, _isZhuyinValid{entry._isZhuyinValid},
+      _definitions{entry._definitions},
+      _isWelcome{entry._isWelcome}, _isEmpty{entry._isEmpty}
+{}
 
 Entry::Entry(Entry &&entry)
-    : _simplified{std::move(entry._simplified)}
-    , _simplifiedDifference{std::move(entry._simplifiedDifference)}
-    , _traditional{std::move(entry._traditional)}
-    , _traditionalDifference{std::move(entry._traditionalDifference)}
-    , _colouredSimplified{std::move(entry._colouredSimplified)}
-    , _colouredSimplifiedDifference{std::move(
-          entry._colouredSimplifiedDifference)}
-    , _colouredTraditional{std::move(entry._colouredTraditional)}
-    , _colouredTraditionalDifference{std::move(
-          entry._colouredTraditionalDifference)}
-    , _jyutping{std::move(entry._jyutping)}
-    , _yale{std::move(entry._yale)}
-    , _isYaleValid{entry._isYaleValid}
-    , _pinyin{std::move(entry._pinyin)}
-    , _prettyPinyin{std::move(entry._prettyPinyin)}
-    , _isPrettyPinyinValid{entry._isPrettyPinyinValid}
-    , _numberedPinyin{std::move(entry._numberedPinyin)}
-    , _isNumberedPinyinValid{entry._isNumberedPinyinValid}
-    , _zhuyin{std::move(entry._zhuyin)}
-    , _isZhuyinValid{entry._isZhuyinValid}
-    , _definitions{std::move(entry._definitions)}
-    , _isWelcome{entry._isWelcome}
-    , _isEmpty{entry._isEmpty}
-{
-}
+    : _simplified{std::move(entry._simplified)},
+      _simplifiedDifference{std::move(entry._simplifiedDifference)},
+      _traditional{std::move(entry._traditional)},
+      _traditionalDifference{std::move(entry._traditionalDifference)},
+      _colouredSimplified{std::move(entry._colouredSimplified)},
+      _colouredSimplifiedDifference{
+          std::move(entry._colouredSimplifiedDifference)},
+      _colouredTraditional{std::move(entry._colouredTraditional)},
+      _colouredTraditionalDifference{
+          std::move(entry._colouredTraditionalDifference)},
+      _jyutping{std::move(entry._jyutping)}, _yale{std::move(entry._yale)},
+      _isYaleValid{entry._isYaleValid}, _cantoneseIPA{std::move(
+                                            entry._cantoneseIPA)},
+      _isCantoneseIPAValid{entry._isCantoneseIPAValid}, _pinyin{std::move(
+                                                            entry._pinyin)},
+      _prettyPinyin{std::move(entry._prettyPinyin)},
+      _isPrettyPinyinValid{entry._isPrettyPinyinValid},
+      _numberedPinyin{std::move(entry._numberedPinyin)},
+      _isNumberedPinyinValid{entry._isNumberedPinyinValid}, _zhuyin{std::move(
+                                                                entry._zhuyin)},
+      _isZhuyinValid{entry._isZhuyinValid}, _definitions{std::move(
+                                                entry._definitions)},
+      _isWelcome{entry._isWelcome}, _isEmpty{entry._isEmpty}
+{}
 
 Entry &Entry::operator=(const Entry &entry)
 {
@@ -97,6 +91,8 @@ Entry &Entry::operator=(const Entry &entry)
     _jyutping = entry._jyutping;
     _yale = entry._yale;
     _isYaleValid = entry._isYaleValid;
+    _cantoneseIPA = entry._cantoneseIPA;
+    _isCantoneseIPAValid = entry._isCantoneseIPAValid;
     _pinyin = entry._pinyin;
     _prettyPinyin = entry._prettyPinyin;
     _isPrettyPinyinValid = entry._isPrettyPinyinValid;
@@ -128,6 +124,8 @@ Entry &Entry::operator=(Entry &&entry)
     _jyutping = std::move(entry._jyutping);
     _yale = std::move(entry._yale);
     _isYaleValid = entry._isYaleValid;
+    _cantoneseIPA = std::move(entry._cantoneseIPA);
+    _isCantoneseIPAValid = entry._isCantoneseIPAValid;
     _pinyin = std::move(entry._pinyin);
     _prettyPinyin = std::move(entry._prettyPinyin);
     _isPrettyPinyinValid = entry._isPrettyPinyinValid;
@@ -259,8 +257,15 @@ bool Entry::generatePhonetic(CantoneseOptions cantoneseOptions,
     if ((cantoneseOptions & CantoneseOptions::PRETTY_YALE)
             == CantoneseOptions::PRETTY_YALE
         && !_isYaleValid) {
-        _yale = ChineseUtils::convertJyutpingToYale(_jyutping);
-        _isYaleValid = true;
+            _yale = ChineseUtils::convertJyutpingToYale(_jyutping);
+            _isYaleValid = true;
+    }
+
+    if ((cantoneseOptions & CantoneseOptions::CANTONESE_IPA)
+            == CantoneseOptions::CANTONESE_IPA
+        && !_isCantoneseIPAValid) {
+            _cantoneseIPA = ChineseUtils::convertJyutpingToIPA(_jyutping);
+            _isCantoneseIPAValid = true;
     }
 
     if ((mandarinOptions & MandarinOptions::PRETTY_PINYIN)
@@ -340,6 +345,9 @@ std::string Entry::getCantonesePhonetic(CantoneseOptions cantoneseOptions) const
     switch (cantoneseOptions) {
     case CantoneseOptions::PRETTY_YALE: {
         return _yale;
+    }
+    case CantoneseOptions::CANTONESE_IPA: {
+        return _cantoneseIPA;
     }
     case CantoneseOptions::RAW_JYUTPING:
     default:
