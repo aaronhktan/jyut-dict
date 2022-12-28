@@ -60,8 +60,6 @@ int main(int argc, char *argv[])
     QApplication a{argc, argv};
 #endif
 
-    std::cout << __cplusplus << std::endl;
-
     MainWindow w;
     w.show();
 

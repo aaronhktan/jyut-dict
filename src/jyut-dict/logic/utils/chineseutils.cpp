@@ -222,11 +222,21 @@ const static std::unordered_map<std::string, std::string>
         {"ʈ͡ʂ", "ɖ͡ʐ̥"},
 };
 
+#if defined(Q_OS_WIN)
+// For consistency with other reasonings below, use superscript numbers instead
+// of tone letters on Windows.
+const static std::vector<std::string> mandarinIPANeutralTone = {"²",
+                                                                "³",
+                                                                "⁴",
+                                                                "¹",
+                                                                "¹"};
+#else
 const static std::vector<std::string> mandarinIPANeutralTone = {"˨",
                                                                 "˧",
                                                                 "˦",
                                                                 "˩",
                                                                 "˩"};
+#endif
 
 #if defined(Q_OS_MAC)
 // Added a six-per-em space (U+2006) between adjacent tone markers, because Qt's
@@ -236,6 +246,15 @@ const static std::vector<std::string> mandarinIPAThirdTone = {"˨ ˩ ˦ �
                                                               "˨ ˩ ˦ ꜔ ꜒",
                                                               "˨ ˩ ˦ ꜕ ꜖ ꜖",
                                                               "˨ ˩ ˦"};
+#elif defined(Q_OS_WIN)
+// On Windows, the reverse tone letters are not the same height as the "normal"
+// tone letters. In addition, the Segoe UI font cannot handle three tone-letter
+// ligatures. As such, use superscript numbers instead.
+const static std::vector<std::string> mandarinIPAThirdTone = {"²¹⁴⁻²¹¹",
+                                                              "²¹⁴⁻²¹¹",
+                                                              "²¹⁴⁻³⁵",
+                                                              "²¹⁴⁻²¹¹",
+                                                              "²¹⁴"};
 #else
 const static std::vector<std::string> mandarinIPAThirdTone = {"˨˩˦꜕꜖꜖",
                                                               "˨˩˦꜕꜖꜖",
@@ -251,6 +270,14 @@ const static std::vector<std::string> mandarinIPATones = {"˥ ˥",
                                                           "˧ ˥",
                                                           "˨ ˩ ˦",
                                                           "˥ ˩",
+                                                          ""};
+#elif defined(Q_OS_WIN)
+// The Segoe UI font cannot handle three tone-letter ligatures. As such, use
+// superscript numbers instead.
+const static std::vector<std::string> mandarinIPATones = {"⁵⁵",
+                                                          "³⁵",
+                                                          "²¹⁴",
+                                                          "⁵¹",
                                                           ""};
 #else
 const static std::vector<std::string> mandarinIPATones = {"˥˥",
@@ -987,25 +1014,18 @@ std::tuple<std::string, std::string> convertIPAMandarinSyllable(
             return std::make_tuple("", syllable);
         }
 
-        std::cout << "syllable: " << syllable << std::endl;
         bool found_initial = !(mandarinIPAInitials.find(ipa_match[1])
                                == mandarinIPAInitials.end());
         bool found_final = !(mandarinIPAFinals.find(ipa_match[2])
                              == mandarinIPAFinals.end());
         if (!found_initial && !found_final) {
-            std::cout << "returning, no initial and no final found"
-                      << std::endl;
             return std::make_tuple("", syllable);
         }
         if (found_initial) {
-            std::cout << "initial: " << ipa_match[1] << std::endl;
             ipa_initial = mandarinIPAInitials.at(ipa_match[1]);
-            std::cout << "IPA initial: " << ipa_initial << std::endl;
         }
         if (found_final) {
-            std::cout << "final: " << ipa_match[2] << std::endl;
             ipa_final = mandarinIPAFinals.at(ipa_match[2]);
-            std::cout << "IPA final: " << ipa_final << std::endl;
         }
     }
 
@@ -1152,6 +1172,8 @@ std::string convertPinyinToIPA(const std::string &pinyin,
             if (i == syllables.size() - 1) {
 #if defined(Q_OS_MAC)
                 ipa_tone = (i == 0) ? "˨ ˩ ˦" : "˨ ˩ ˦ ꜕ ꜖ ( ꜓ )";
+#elif defined(Q_OS_WIN)
+                ipa_tone = (i == 0) ? "²¹⁴" : "²¹⁴⁻²¹⁽⁴⁾";
 #else
                 ipa_tone = (i == 0) ? "˨˩˦" : "˨˩˦꜕꜖(꜓)";
 #endif
@@ -1169,6 +1191,8 @@ std::string convertPinyinToIPA(const std::string &pinyin,
             if (next_tone == 4) {
 #if defined(Q_OS_MAC)
                 ipa_tone = "˥ ˩ ꜒ ꜔";
+#elif defined(Q_OS_WIN)
+                ipa_tone = "⁵¹⁻⁵³";
 #else
                 ipa_tone = "˥˩꜒꜔";
 #endif
