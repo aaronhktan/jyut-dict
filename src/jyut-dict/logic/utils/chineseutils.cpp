@@ -29,6 +29,8 @@ const static std::unordered_set<std::string> specialCharacters = {
     "⋯",
     ".",
     "·",
+    "\"",
+    "“",
 };
 
 const static std::unordered_map<std::string, std::string>
@@ -224,17 +226,37 @@ const static std::vector<std::string> mandarinIPANeutralTone = {"˨",
                                                                 "˩",
                                                                 "˩"};
 
-const static std::vector<std::string> mandarinIPAThirdTone = {"˨˩˦-˨˩˩",
-                                                              "˨˩˦-˨˩˩",
-                                                              "˨˩˦-˧˥",
-                                                              "˨˩˦-˨˩˩",
+#if defined(Q_OS_MAC)
+// Added a six-per-em space (U+2006) between adjacent tone markers, because Qt's
+// kerning squishes them too close together
+const static std::vector<std::string> mandarinIPAThirdTone = {"˨ ˩ ˦ ꜕ ꜖ ꜖",
+                                                              "˨ ˩ ˦ ꜕ ꜖ ꜖",
+                                                              "˨ ˩ ˦ ꜔ ꜒",
+                                                              "˨ ˩ ˦ ꜕ ꜖ ꜖",
+                                                              "˨ ˩ ˦"};
+#else
+const static std::vector<std::string> mandarinIPAThirdTone = {"˨˩˦꜕꜖꜖",
+                                                              "˨˩˦꜕꜖꜖",
+                                                              "˨˩˦꜔꜒",
+                                                              "˨˩˦꜕꜖꜖",
                                                               "˨˩˦"};
+#endif
 
+#if defined(Q_OS_MAC)
+// Added a six-per-em space (U+2006) between adjacent tone markers, because Qt's
+// kerning squishes them too close together
+const static std::vector<std::string> mandarinIPATones = {"˥ ˥",
+                                                          "˧ ˥",
+                                                          "˨ ˩ ˦",
+                                                          "˥ ˩",
+                                                          ""};
+#else
 const static std::vector<std::string> mandarinIPATones = {"˥˥",
                                                           "˧˥",
                                                           "˨˩˦",
                                                           "˥˩",
                                                           ""};
+#endif
 
 std::string applyColours(const std::string original,
                          const std::vector<int> &tones,
@@ -963,13 +985,19 @@ std::tuple<std::string, std::string> convertIPAMandarinSyllable(
             return std::make_tuple("", syllable);
         }
 
-        if ((mandarinIPAInitials.find(ipa_match[1]) == mandarinIPAInitials.end())
-            || (mandarinIPAFinals.find(ipa_match[2])
-                == mandarinIPAFinals.end())) {
+        bool found_initial = !(mandarinIPAInitials.find(ipa_match[1])
+                               == mandarinIPAInitials.end());
+        bool found_final = !(mandarinIPAFinals.find(ipa_match[2])
+                             == mandarinIPAFinals.end());
+        if (!found_initial && !found_final) {
             return std::make_tuple("", syllable);
         }
-        ipa_initial = mandarinIPAInitials.at(ipa_match[1]);
-        ipa_final = mandarinIPAFinals.at(ipa_match[2]);
+        if (found_initial) {
+            ipa_initial = mandarinIPAInitials.at(ipa_match[1]);
+        }
+        if (found_final) {
+            ipa_final = mandarinIPAFinals.at(ipa_match[2]);
+        }
     }
 
     // Replace close front unrounded vowel with syllabic retroflex sibilant
@@ -1037,7 +1065,7 @@ std::string convertPinyinToIPA(const std::string &pinyin,
     std::vector<std::pair<int, unsigned long> > syllable_tones;
     for (const auto &syllable : syllables) {
         auto tone_location = syllable.find_first_of("12345");
-        if (tone_location == std::string::npos) {
+        if (tone_location == std::string::npos || syllable.size() == 1) {
             syllable_tones.push_back({-1, -1});
         } else {
             int tone = std::stoi(syllable.substr(tone_location, 1));
@@ -1105,10 +1133,16 @@ std::string convertPinyinToIPA(const std::string &pinyin,
         }
         case 3: {
             if (i == syllables.size() - 1) {
-                ipa_tone = (i == 0) ? "˨˩˦" : "˨˩˦-˨˩(˦)";
+#if defined(Q_OS_MAC)
+                ipa_tone = (i == 0) ? "˨ ˩ ˦" : "˨ ˩ ˦ ꜕ ꜖ ( ꜓ )";
+#else
+                ipa_tone = (i == 0) ? "˨˩˦" : "˨˩˦꜕꜖(꜓)";
+#endif
             } else {
+                // If next syllable doesn't have tone, default to no tone sandhi
+                // (which is also what happens when the following tone is tone #5
                 ipa_tone = next_tone == -1
-                               ? ""
+                               ? mandarinIPAThirdTone[4]
                                : mandarinIPAThirdTone
                                    [static_cast<unsigned long>(next_tone) - 1];
             }
@@ -1116,7 +1150,11 @@ std::string convertPinyinToIPA(const std::string &pinyin,
         }
         case 4: {
             if (next_tone == 4) {
-                ipa_tone = "˥˩-˥˧";
+#if defined(Q_OS_MAC)
+                ipa_tone = "˥ ˩ ꜒ ꜔";
+#else
+                ipa_tone = "˥˩꜒꜔";
+#endif
             } else {
                 ipa_tone = mandarinIPATones[static_cast<unsigned long>(tone) - 1];
             }
@@ -1128,8 +1166,14 @@ std::string convertPinyinToIPA(const std::string &pinyin,
         }
         }
 
-        ipa_syllables.push_back(ipa_glottal + ipa_initial + ipa_final
-                                + ipa_tone);
+        ipa_syllables.push_back(
+            ipa_glottal + ipa_initial
+            + ipa_final
+#if defined(Q_OS_MAC)
+            // Only macOS needs this space to fix weird kerning
+            + " "
+#endif
+            + ipa_tone);
     }
 
     std::ostringstream ipa;

@@ -105,6 +105,7 @@ private:
     QRadioButton *_previewPinyin;
     QRadioButton *_previewNumberedPinyin;
     QRadioButton *_previewZhuyin;
+    QRadioButton *_previewMandarinIPA;
 
     QLabel *_entryTitleLabel;
     QWidget *_entryCantonesePronunciation;
@@ -112,12 +113,12 @@ private:
     QCheckBox *_entryJyutping;
     QCheckBox *_entryYale;
     QCheckBox *_entryCantoneseIPA;
-
     QWidget *_entryMandarinPronunciation;
     QVBoxLayout *_entryMandarinPronunciationLayout;
     QCheckBox *_entryPinyin;
     QCheckBox *_entryNumberedPinyin;
     QCheckBox *_entryZhuyin;
+    QCheckBox *_entryMandarinIPA;
 
     QLabel *_colourTitleLabel;
     QComboBox *_colourCombobox;

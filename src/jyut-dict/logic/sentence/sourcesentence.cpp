@@ -117,6 +117,15 @@ bool SourceSentence::generatePhonetic(CantoneseOptions cantoneseOptions,
         _isZhuyinValid = true;
     }
 
+    if ((mandarinOptions & MandarinOptions::MANDARIN_IPA)
+            == MandarinOptions::MANDARIN_IPA
+        && !_isMandarinIPAValid) {
+        _mandarinIPA
+            = ChineseUtils::convertPinyinToIPA(_pinyin,
+                                               /* useSpacesToSegment */ true);
+        _isMandarinIPAValid = true;
+    }
+
     return true;
 
 }
@@ -164,6 +173,9 @@ std::string SourceSentence::getMandarinPhonetic(
     }
     case MandarinOptions::ZHUYIN: {
         return _zhuyin;
+    }
+    case MandarinOptions::MANDARIN_IPA: {
+        return _mandarinIPA;
     }
     default: {
         return _pinyin;

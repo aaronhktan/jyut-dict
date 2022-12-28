@@ -48,8 +48,9 @@ enum class MandarinOptions : uint32_t {
     PRETTY_PINYIN = (0x1 << 1),
     NUMBERED_PINYIN = (0x1 << 2),
     ZHUYIN = (0x1 << 3),
+    MANDARIN_IPA = (0x1 << 4),
 
-    SENTRY = (0x1 << 2),
+    SENTRY = (0x1 << 5),
 };
 
 constexpr inline MandarinOptions operator~ (MandarinOptions a) { return static_cast<MandarinOptions>( ~static_cast<std::underlying_type<MandarinOptions>::type>(a) ); }
