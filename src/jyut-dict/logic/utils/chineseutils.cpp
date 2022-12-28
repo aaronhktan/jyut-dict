@@ -1091,7 +1091,7 @@ std::string convertPinyinToIPA(const std::string &pinyin,
 
     // Pre-compute list of tones corresponding to each syllable
     // This is used for tone sandhi reasons (3->3 sandhi, x->5 sandhi, etc.)
-    std::vector<std::pair<int, unsigned long> > syllable_tones;
+    std::vector<std::pair<int, signed long> > syllable_tones;
     for (const auto &syllable : syllables) {
         auto tone_location = syllable.find_first_of("12345");
         if (tone_location == std::string::npos || syllable.size() == 1) {
@@ -1125,7 +1125,12 @@ std::string convertPinyinToIPA(const std::string &pinyin,
 
         // Get syllable without tone
         auto tone_location = syllable_tones[i].second;
-        std::string syllable_without_tone = syllable.substr(0, tone_location);
+        if (tone_location < 0) {
+            ipa_syllables.emplace_back(syllable);
+            continue;
+        }
+        std::string syllable_without_tone
+            = syllable.substr(0, static_cast<unsigned long>(tone_location));
 
         // Figure out whether this syllable needs a glottal stop
         if (mandarinIPAGlottal.find(syllable_without_tone)
@@ -1199,9 +1204,6 @@ std::string convertPinyinToIPA(const std::string &pinyin,
             } else {
                 ipa_tone = mandarinIPATones[static_cast<unsigned long>(tone) - 1];
             }
-            break;
-        }
-        case -1: {
             break;
         }
         default: {
