@@ -494,6 +494,13 @@ std::string convertJyutpingToYale(const std::string &jyutping,
     std::vector<std::string> yale_syllables;
 
     for (const auto &syllable : syllables) {
+        // Most numbers, single characters, etc. are not Jyutping.
+        // Filter those out.
+        if (syllable.size() == 1) {
+            yale_syllables.emplace_back(syllable);
+            continue;
+        }
+
         // Skip syllables that are just punctuation
         if (specialCharacters.find(syllable) != specialCharacters.end()) {
             yale_syllables.push_back(syllable);
@@ -631,6 +638,13 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
     std::vector<std::string> ipa_syllables;
 
     for (const auto &syllable : syllables) {
+        // Most numbers, single characters, etc. are not Jyutping.
+        // Filter those out.
+        if (syllable.size() == 1) {
+            ipa_syllables.emplace_back(syllable);
+            continue;
+        }
+
         // Skip syllables that are just punctuation
         if (specialCharacters.find(syllable) != specialCharacters.end()) {
             ipa_syllables.push_back(syllable);
@@ -892,6 +906,13 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
     std::vector<std::string> zhuyin_syllables;
 
     for (const auto &syllable : syllables) {
+        // Most numbers, single characters, etc. are not Pinyin.
+        // Filter those out.
+        if (syllable.size() == 1) {
+            zhuyin_syllables.emplace_back(syllable);
+            continue;
+        }
+
         // Skip syllables that are just punctuation
         if (specialCharacters.find(syllable) != specialCharacters.end()) {
             zhuyin_syllables.push_back(syllable);
