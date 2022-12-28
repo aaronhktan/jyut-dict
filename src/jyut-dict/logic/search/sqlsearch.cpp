@@ -197,6 +197,17 @@ void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString &searc
 void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
                                        const unsigned long long queryID)
 {
+    bool searchExactMatch = (searchTerm.at(0) == "\""
+                             && searchTerm.at(searchTerm.size() - 1) == "\"")
+                            || (searchTerm.startsWith("”")
+                                && searchTerm.endsWith("“"));
+    QString searchTermWithoutQuotes;
+    if (searchExactMatch) {
+        // When the search term is surrounded by quotes, search for exact match
+        // of term enclosed by quotes
+        searchTermWithoutQuotes = searchTerm.mid(1, searchTerm.size() - 2);
+    }
+
     std::vector<Entry> results;
 
     QSqlQuery query{_manager->getDatabase()};
@@ -209,7 +220,8 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
         //// Get the list of all definitions for those entries
         //// This CTE is used multiple times; would be nice if could materialize it
         "matching_definition_ids AS ( "
-        "  SELECT definition_id, definition FROM definitions WHERE fk_entry_id "
+        "  SELECT definition_id, definition FROM definitions WHERE "
+        "fk_entry_id "
         "    IN matching_entry_ids "
         "), "
         " "
@@ -218,7 +230,8 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
         "matching_chinese_sentence_ids AS ( "
         "  SELECT definition_id, fk_chinese_sentence_id "
         "  FROM matching_definition_ids AS mdi "
-        "  JOIN definitions_chinese_sentences_links AS dcsl ON mdi.definition_id = dcsl.fk_definition_id "
+        "  JOIN definitions_chinese_sentences_links AS dcsl ON "
+        "mdi.definition_id = dcsl.fk_definition_id "
         "), "
         " "
         //// Get translations for each of the sentences
@@ -230,8 +243,10 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
         "                  'direct', direct "
         "    )) AS translation "
         "  FROM matching_chinese_sentence_ids AS mcsi "
-        "  JOIN sentence_links AS sl ON mcsi.fk_chinese_sentence_id = sl.fk_chinese_sentence_id "
-        "  JOIN nonchinese_sentences AS ncs ON ncs.non_chinese_sentence_id = sl.fk_non_chinese_sentence_id "
+        "  JOIN sentence_links AS sl ON mcsi.fk_chinese_sentence_id = "
+        "sl.fk_chinese_sentence_id "
+        "  JOIN nonchinese_sentences AS ncs ON ncs.non_chinese_sentence_id "
+        "= sl.fk_non_chinese_sentence_id "
         "  GROUP BY mcsi.fk_chinese_sentence_id "
         "), "
         " "
@@ -241,7 +256,8 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
         "   jyutping, language "
         " FROM chinese_sentences AS cs "
         " WHERE chinese_sentence_id IN ( "
-        "   SELECT fk_chinese_sentence_id FROM matching_chinese_sentence_ids "
+        "   SELECT fk_chinese_sentence_id FROM "
+        "matching_chinese_sentence_ids "
         " ) "
         "),"
         " "
@@ -255,7 +271,8 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
         "                'language', language, "
         "                'translations', json(translation)) AS sentence "
         "  FROM matching_sentences AS ms "
-        "  LEFT JOIN matching_translations AS mt ON ms.chinese_sentence_id = mt.fk_chinese_sentence_id "
+        "  LEFT JOIN matching_translations AS mt ON ms.chinese_sentence_id "
+        "= mt.fk_chinese_sentence_id "
         "), "
         " "
         //// Get definition data for each matching definition
@@ -275,8 +292,10 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
         "                'label', label, 'sentences', "
         "                json_group_array(json(sentence))) AS definition "
         "  FROM matching_definitions AS md "
-        "  LEFT JOIN matching_chinese_sentence_ids AS mcsi ON md.definition_id = mcsi.definition_id "
-        "  LEFT JOIN matching_sentences_with_translations AS mswt ON mcsi.fk_chinese_sentence_id = mswt.chinese_sentence_id "
+        "  LEFT JOIN matching_chinese_sentence_ids AS mcsi ON "
+        "md.definition_id = mcsi.definition_id "
+        "  LEFT JOIN matching_sentences_with_translations AS mswt ON "
+        "mcsi.fk_chinese_sentence_id = mswt.chinese_sentence_id "
         "  GROUP BY md.definition_id "
         "), "
         " "
@@ -285,7 +304,8 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
         "  SELECT fk_entry_id, "
         "    json_object('source', sourcename, "
         "                'definitions', "
-        "                json_group_array(json(definition))) AS definitions "
+        "                json_group_array(json(definition))) AS "
+        "definitions "
         "  FROM matching_definitions_with_sentences AS mdws "
         "  LEFT JOIN sources ON sources.source_id = mdws.fk_source_id "
         "  GROUP BY fk_entry_id, fk_source_id "
@@ -293,29 +313,49 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
         " "
         //// Construct the final entry object
         "matching_entries AS ( "
-        "  SELECT simplified, traditional, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
+        "  SELECT simplified, traditional, jyutping, pinyin, "
+        "json_group_array(json(definitions)) AS definitions "
         "  FROM matching_definition_groups AS mdg "
         "  LEFT JOIN entries ON entries.entry_id = mdg.fk_entry_id "
         "  GROUP BY entry_id "
         "  ORDER BY frequency DESC "
         ") "
         " "
-        "SELECT simplified, traditional, jyutping, pinyin, definitions from matching_entries"
-    );
-    query.addBindValue(searchTerm + "%");
+        "SELECT simplified, traditional, jyutping, pinyin, definitions "
+        "from matching_entries");
+    if (searchExactMatch) {
+        query.addBindValue(searchTermWithoutQuotes);
+    } else {
+        query.addBindValue(searchTerm + "%");
+    }
     query.exec();
 
     // Do not parse results if new query has been made
-    if (!checkQueryIDCurrent(queryID)) { return; }
+    if (!checkQueryIDCurrent(queryID)) {
+        return;
+    }
     results = QueryParseUtils::parseEntries(query);
 
-    if (!checkQueryIDCurrent(queryID)) { return; }
+    if (!checkQueryIDCurrent(queryID)) {
+        return;
+    }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
 }
 
 void SQLSearch::searchTraditionalThread(const QString &searchTerm,
                                         const unsigned long long queryID)
 {
+    bool searchExactMatch = (searchTerm.at(0) == "\""
+                             && searchTerm.at(searchTerm.size() - 1) == "\"")
+                            || (searchTerm.startsWith("“")
+                                && searchTerm.endsWith("”"));
+    QString searchTermWithoutQuotes;
+    if (searchExactMatch) {
+        // When the search term is surrounded by quotes, search for exact match
+        // of term enclosed by quotes
+        searchTermWithoutQuotes = searchTerm.mid(1, searchTerm.size() - 2);
+    }
+
     std::vector<Entry> results;
 
     QSqlQuery query{_manager->getDatabase()};
@@ -328,7 +368,8 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
         //// Get the list of all definitions for those entries
         //// This CTE is used multiple times; would be nice if could materialize it
         "matching_definition_ids AS ( "
-        "  SELECT definition_id, definition FROM definitions WHERE fk_entry_id "
+        "  SELECT definition_id, definition FROM definitions WHERE "
+        "fk_entry_id "
         "    IN matching_entry_ids "
         "), "
         " "
@@ -337,7 +378,8 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
         "matching_chinese_sentence_ids AS ( "
         "  SELECT definition_id, fk_chinese_sentence_id "
         "  FROM matching_definition_ids AS mdi "
-        "  JOIN definitions_chinese_sentences_links AS dcsl ON mdi.definition_id = dcsl.fk_definition_id "
+        "  JOIN definitions_chinese_sentences_links AS dcsl ON "
+        "mdi.definition_id = dcsl.fk_definition_id "
         "), "
         " "
         //// Get translations for each of the sentences
@@ -349,8 +391,10 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
         "                  'direct', direct "
         "    )) AS translation "
         "  FROM matching_chinese_sentence_ids AS mcsi "
-        "  JOIN sentence_links AS sl ON mcsi.fk_chinese_sentence_id = sl.fk_chinese_sentence_id "
-        "  JOIN nonchinese_sentences AS ncs ON ncs.non_chinese_sentence_id = sl.fk_non_chinese_sentence_id "
+        "  JOIN sentence_links AS sl ON mcsi.fk_chinese_sentence_id = "
+        "sl.fk_chinese_sentence_id "
+        "  JOIN nonchinese_sentences AS ncs ON ncs.non_chinese_sentence_id "
+        "= sl.fk_non_chinese_sentence_id "
         "  GROUP BY mcsi.fk_chinese_sentence_id "
         "), "
         " "
@@ -360,7 +404,8 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
         "   jyutping, language "
         " FROM chinese_sentences AS cs "
         " WHERE chinese_sentence_id IN ( "
-        "   SELECT fk_chinese_sentence_id FROM matching_chinese_sentence_ids "
+        "   SELECT fk_chinese_sentence_id FROM "
+        "matching_chinese_sentence_ids "
         " ) "
         "),"
         " "
@@ -374,7 +419,8 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
         "                'language', language, "
         "                'translations', json(translation)) AS sentence "
         "  FROM matching_sentences AS ms "
-        "  LEFT JOIN matching_translations AS mt ON ms.chinese_sentence_id = mt.fk_chinese_sentence_id "
+        "  LEFT JOIN matching_translations AS mt ON ms.chinese_sentence_id "
+        "= mt.fk_chinese_sentence_id "
         "), "
         " "
         //// Get definition data for each matching definition
@@ -394,8 +440,10 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
         "                'label', label, 'sentences', "
         "                json_group_array(json(sentence))) AS definition "
         "  FROM matching_definitions AS md "
-        "  LEFT JOIN matching_chinese_sentence_ids AS mcsi ON md.definition_id = mcsi.definition_id "
-        "  LEFT JOIN matching_sentences_with_translations AS mswt ON mcsi.fk_chinese_sentence_id = mswt.chinese_sentence_id "
+        "  LEFT JOIN matching_chinese_sentence_ids AS mcsi ON "
+        "md.definition_id = mcsi.definition_id "
+        "  LEFT JOIN matching_sentences_with_translations AS mswt ON "
+        "mcsi.fk_chinese_sentence_id = mswt.chinese_sentence_id "
         "  GROUP BY md.definition_id "
         "), "
         " "
@@ -404,7 +452,8 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
         "  SELECT fk_entry_id, "
         "    json_object('source', sourcename, "
         "                'definitions', "
-        "                json_group_array(json(definition))) AS definitions "
+        "                json_group_array(json(definition))) AS "
+        "definitions "
         "  FROM matching_definitions_with_sentences AS mdws "
         "  LEFT JOIN sources ON sources.source_id = mdws.fk_source_id "
         "  GROUP BY fk_entry_id, fk_source_id "
@@ -412,20 +461,27 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
         " "
         //// Construct the final entry object
         "matching_entries AS ( "
-        "  SELECT simplified, traditional, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
+        "  SELECT simplified, traditional, jyutping, pinyin, "
+        "json_group_array(json(definitions)) AS definitions "
         "  FROM matching_definition_groups AS mdg "
         "  LEFT JOIN entries ON entries.entry_id = mdg.fk_entry_id "
         "  GROUP BY entry_id "
         "  ORDER BY frequency DESC "
         ") "
         " "
-        "SELECT simplified, traditional, jyutping, pinyin, definitions from matching_entries"
-    );
-    query.addBindValue(searchTerm + "%");
+        "SELECT simplified, traditional, jyutping, pinyin, definitions "
+        "from matching_entries");
+    if (searchExactMatch) {
+        query.addBindValue(searchTermWithoutQuotes);
+    } else {
+        query.addBindValue(searchTerm + "%");
+    }
     query.exec();
 
     // Do not parse results if new query has been made
-    if (!checkQueryIDCurrent(queryID)) { return; }
+    if (!checkQueryIDCurrent(queryID)) {
+        return;
+    }
     results = QueryParseUtils::parseEntries(query);
 
     if (!checkQueryIDCurrent(queryID)) { return; }
@@ -446,8 +502,19 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
 void SQLSearch::searchJyutpingThread(const QString &searchTerm,
                                      const unsigned long long queryID)
 {
-    std::vector<std::string> jyutpingWords = ChineseUtils::segmentJyutping(
-        searchTerm);
+    bool searchExactMatch = searchTerm.at(0) == "\""
+                            && searchTerm.at(searchTerm.size() - 1) == "\""
+                            && searchTerm.length() >= 3;
+    std::vector<std::string> jyutpingWords;
+    if (searchExactMatch) {
+        // When the search term is surrounded by quotes, do not process any
+        // further than checking for spaces
+        QString searchTermWithoutQuotes = searchTerm.mid(1,
+                                                         searchTerm.size() - 2);
+        Utils::split(searchTermWithoutQuotes.toStdString(), ' ', jyutpingWords);
+    } else {
+        jyutpingWords = ChineseUtils::segmentJyutping(searchTerm);
+    }
 
     std::vector<Entry> results;
 
@@ -455,7 +522,8 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
     query.prepare(
         //// Get list of entry ids whose jyutping starts with the queried string
         "WITH matching_entry_ids AS ( "
-        "  SELECT rowid FROM entries_fts WHERE entries_fts MATCH ? AND jyutping LIKE ?"
+        "  SELECT rowid FROM entries_fts WHERE entries_fts MATCH ? AND "
+        "jyutping LIKE ?"
         "), "
         " "
         //// Get the list of all definitions for those entries
@@ -470,7 +538,8 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
         "matching_chinese_sentence_ids AS ( "
         "  SELECT definition_id, fk_chinese_sentence_id "
         "  FROM matching_definition_ids AS mdi "
-        "  JOIN definitions_chinese_sentences_links AS dcsl ON mdi.definition_id = dcsl.fk_definition_id "
+        "  JOIN definitions_chinese_sentences_links AS dcsl ON "
+        "mdi.definition_id = dcsl.fk_definition_id "
         "), "
         " "
         //// Get translations for each of the sentences
@@ -482,8 +551,10 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
         "                  'direct', direct "
         "    )) AS translation "
         "  FROM matching_chinese_sentence_ids AS mcsi "
-        "  JOIN sentence_links AS sl ON mcsi.fk_chinese_sentence_id = sl.fk_chinese_sentence_id "
-        "  JOIN nonchinese_sentences AS ncs ON ncs.non_chinese_sentence_id = sl.fk_non_chinese_sentence_id "
+        "  JOIN sentence_links AS sl ON mcsi.fk_chinese_sentence_id = "
+        "sl.fk_chinese_sentence_id "
+        "  JOIN nonchinese_sentences AS ncs ON ncs.non_chinese_sentence_id = "
+        "sl.fk_non_chinese_sentence_id "
         "  GROUP BY mcsi.fk_chinese_sentence_id "
         "), "
         " "
@@ -507,7 +578,8 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
         "                'language', language, "
         "                'translations', json(translation)) AS sentence "
         "  FROM matching_sentences AS ms "
-        "  LEFT JOIN matching_translations AS mt ON ms.chinese_sentence_id = mt.fk_chinese_sentence_id "
+        "  LEFT JOIN matching_translations AS mt ON ms.chinese_sentence_id = "
+        "mt.fk_chinese_sentence_id "
         "), "
         " "
         //// Get definition data for each matching definition
@@ -527,8 +599,10 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
         "                'label', label, 'sentences', "
         "                json_group_array(json(sentence))) AS definition "
         "  FROM matching_definitions AS md "
-        "  LEFT JOIN matching_chinese_sentence_ids AS mcsi ON md.definition_id = mcsi.definition_id "
-        "  LEFT JOIN matching_sentences_with_translations AS mswt ON mcsi.fk_chinese_sentence_id = mswt.chinese_sentence_id "
+        "  LEFT JOIN matching_chinese_sentence_ids AS mcsi ON md.definition_id "
+        "= mcsi.definition_id "
+        "  LEFT JOIN matching_sentences_with_translations AS mswt ON "
+        "mcsi.fk_chinese_sentence_id = mswt.chinese_sentence_id "
         "  GROUP BY md.definition_id "
         "), "
         " "
@@ -545,26 +619,30 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
         " "
         //// Construct the final entry object
         "matching_entries AS ( "
-        "  SELECT simplified, traditional, jyutping, pinyin, json_group_array(json(definitions)) AS definitions "
+        "  SELECT simplified, traditional, jyutping, pinyin, "
+        "json_group_array(json(definitions)) AS definitions "
         "  FROM matching_definition_groups AS mdg "
         "  LEFT JOIN entries ON entries.entry_id = mdg.fk_entry_id "
         "  GROUP BY entry_id "
         "  ORDER BY frequency DESC "
         ") "
         " "
-        "SELECT simplified, traditional, jyutping, pinyin, definitions from matching_entries"
-    );
-    const char *matchJoinDelimiter = "*";
+        "SELECT simplified, traditional, jyutping, pinyin, definitions from "
+        "matching_entries");
+
+    const char *matchJoinDelimiter = searchExactMatch ? "" : "*";
     std::string matchTerm
         = ChineseUtils::constructRomanisationQuery(jyutpingWords,
                                                    matchJoinDelimiter,
                                                    /*surroundWithQuotes=*/true);
-    const char *likeJoinDelimiter = "_";
+    const char *likeJoinDelimiter = searchExactMatch ? "" : "_";
     std::string likeTerm
         = ChineseUtils::constructRomanisationQuery(jyutpingWords,
                                                    likeJoinDelimiter);
-    query.addBindValue("jyutping:" + QString(matchTerm.c_str()));
-    query.addBindValue(QString(likeTerm.c_str()) + "%");
+
+    query.addBindValue("jyutping:" + QString{matchTerm.c_str()});
+    query.addBindValue(QString{likeTerm.c_str()}
+                       + QString{searchExactMatch ? "" : "%"});
     query.exec();
 
     // Do not parse results if new query has been made
@@ -594,8 +672,20 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm,
         location = processedSearchTerm.indexOf("ü", location);
     }
 
-    std::vector<std::string> pinyinWords = ChineseUtils::segmentPinyin(
-        searchTerm);
+    bool searchExactMatch = searchTerm.at(0) == "\""
+                            && searchTerm.at(searchTerm.size() - 1) == "\""
+                            && searchTerm.length() >= 3;
+
+    std::vector<std::string> pinyinWords;
+    if (searchExactMatch) {
+        // When the search term is surrounded by quotes, do not process any
+        // further than checking for spaces
+        QString searchTermWithoutQuotes = searchTerm.mid(1,
+                                                         searchTerm.size() - 2);
+        Utils::split(searchTermWithoutQuotes.toStdString(), ' ', pinyinWords);
+    } else {
+        pinyinWords = ChineseUtils::segmentPinyin(searchTerm);
+    }
 
     std::vector<Entry> results;
 
@@ -702,18 +792,19 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm,
         " "
         "SELECT simplified, traditional, jyutping, pinyin, definitions from matching_entries"
     );
-    const char *matchJoinDelimiter = "*";
+    const char *matchJoinDelimiter = searchExactMatch ? "" : "*";
     std::string matchTerm
         = ChineseUtils::constructRomanisationQuery(pinyinWords,
                                                    matchJoinDelimiter,
                                                    /*surroundWithQuotes=*/true);
-    const char *likeJoinDelimiter = "_";
+    const char *likeJoinDelimiter = searchExactMatch ? "" : "_";
     std::string likeTerm
         = ChineseUtils::constructRomanisationQuery(pinyinWords,
                                                    likeJoinDelimiter,
                                                    /*surroundWithQuotes=*/false);
     query.addBindValue("pinyin:" + QString{matchTerm.c_str()});
-    query.addBindValue(QString(likeTerm.c_str()) + "%");
+    query.addBindValue(QString{likeTerm.c_str()}
+                       + QString{searchExactMatch ? "" : "%"});
     query.exec();
 
     // Do not parse results if new query has been made
