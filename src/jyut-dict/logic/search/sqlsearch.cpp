@@ -674,17 +674,19 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm,
         location = processedSearchTerm.indexOf("ü", location);
     }
 
-    bool searchExactMatch = searchTerm.at(0) == "\""
-                            && searchTerm.at(searchTerm.size() - 1) == "\""
-                            && searchTerm.length() >= 3;
+    bool searchExactMatch = processedSearchTerm.at(0) == "\""
+                            && processedSearchTerm.at(processedSearchTerm.size()
+                                                      - 1)
+                                   == "\""
+                            && processedSearchTerm.length() >= 3;
 
     std::vector<std::string> pinyinWords;
     if (searchExactMatch) {
-        QString searchTermWithoutQuotes = searchTerm.mid(1,
-                                                         searchTerm.size() - 2);
+        QString searchTermWithoutQuotes
+            = processedSearchTerm.mid(1, processedSearchTerm.size() - 2);
         Utils::split(searchTermWithoutQuotes.toStdString(), ' ', pinyinWords);
     } else {
-        pinyinWords = ChineseUtils::segmentPinyin(searchTerm);
+        pinyinWords = ChineseUtils::segmentPinyin(processedSearchTerm);
     }
 
     std::vector<Entry> results;
