@@ -197,6 +197,8 @@ void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString &searc
 void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
                                        const unsigned long long queryID)
 {
+    // When the search term is surrounded by quotes, search for only term
+    // inside quotes (not the quotes themselves)
     bool searchExactMatch = ((searchTerm.at(0) == "\""
                               && searchTerm.at(searchTerm.size() - 1) == "\"")
                              || (searchTerm.startsWith("”")
@@ -204,8 +206,6 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
                             && searchTerm.length() >= 3;
     QString searchTermWithoutQuotes;
     if (searchExactMatch) {
-        // When the search term is surrounded by quotes, search for exact match
-        // of term enclosed by quotes
         searchTermWithoutQuotes = searchTerm.mid(1, searchTerm.size() - 2);
     }
 
@@ -323,6 +323,7 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
         "SELECT simplified, traditional, jyutping, pinyin, definitions FROM "
         "  matching_entries");
     if (searchExactMatch) {
+        // Don't need to add wildcard character if searching exact!
         query.addBindValue(searchTermWithoutQuotes);
     } else {
         query.addBindValue(searchTerm + "%");
@@ -351,8 +352,6 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
                             && searchTerm.length() >= 3;
     QString searchTermWithoutQuotes;
     if (searchExactMatch) {
-        // When the search term is surrounded by quotes, search for exact match
-        // of term enclosed by quotes
         searchTermWithoutQuotes = searchTerm.mid(1, searchTerm.size() - 2);
     }
 
@@ -500,13 +499,15 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
 void SQLSearch::searchJyutpingThread(const QString &searchTerm,
                                      const unsigned long long queryID)
 {
+    // When the search term is surrounded by quotes, search for only term
+    // inside quotes (not the quotes themselves)
+    // Unlike the simplified/traditional search, only trigger exact match
+    // searching if enclosed by Western quotes (U+0022).
     bool searchExactMatch = searchTerm.at(0) == "\""
                             && searchTerm.at(searchTerm.size() - 1) == "\""
                             && searchTerm.length() >= 3;
     std::vector<std::string> jyutpingWords;
     if (searchExactMatch) {
-        // When the search term is surrounded by quotes, do not process any
-        // further than checking for spaces
         QString searchTermWithoutQuotes = searchTerm.mid(1,
                                                          searchTerm.size() - 2);
         Utils::split(searchTermWithoutQuotes.toStdString(), ' ', jyutpingWords);
@@ -629,6 +630,8 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
         "SELECT simplified, traditional, jyutping, pinyin, definitions FROM "
         "  matching_entries");
 
+    // Don't add wildcard characters to either the MATCH term or the LIKE term
+    // if searching for exact match
     const char *matchJoinDelimiter = searchExactMatch ? "" : "*";
     std::string matchTerm
         = ChineseUtils::constructRomanisationQuery(jyutpingWords,
@@ -677,8 +680,6 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm,
 
     std::vector<std::string> pinyinWords;
     if (searchExactMatch) {
-        // When the search term is surrounded by quotes, do not process any
-        // further than checking for spaces
         QString searchTermWithoutQuotes = searchTerm.mid(1,
                                                          searchTerm.size() - 2);
         Utils::split(searchTermWithoutQuotes.toStdString(), ' ', pinyinWords);
@@ -830,8 +831,6 @@ void SQLSearch::searchEnglishThread(const QString &searchTerm,
                             && searchTerm.length() >= 3;
     QString searchTermWithoutQuotes;
     if (searchExactMatch) {
-        // When the search term is surrounded by quotes, do not process any
-        // further than checking for spaces
         searchTermWithoutQuotes = searchTerm.mid(1, searchTerm.size() - 2);
     }
 
