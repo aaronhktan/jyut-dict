@@ -899,6 +899,7 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
                 pinyinCopy += character_utf8;
             }
         }
+        Utils::split(pinyinCopy, ' ', syllables);
     } else {
         syllables = segmentPinyin(QString{pinyin.c_str()});
     }
