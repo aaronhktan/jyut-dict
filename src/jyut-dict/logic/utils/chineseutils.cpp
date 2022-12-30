@@ -1394,13 +1394,13 @@ std::vector<std::string> segmentJyutping(const QString &string,
                                                 "ng", "h", "gw", "kw", "w",
                                                 "z",  "c", "s",  "j",  "m"};
     std::unordered_set<std::string> finals
-        = {"aa",  "aai", "aau", "aam", "aan",  "aang", "aap", "aat", "aak",
-           "ai",  "au",  "am",  "an",  "ang",  "ap",   "at",  "ak",  "e",
-           "ei",  "eu",  "em",  "en",  "eng",  "ep",   "ek",  "i",   "iu",
-           "im",  "in",  "ing", "ip",  "it",   "ik",   "o",   "oi",  "ou",
-           "on",  "ong", "ot",  "ok",  "u",    "ui",   "un",  "ung", "ut",
-           "uk",  "oe",  "eoi", "eon", "oeng", "eot",  "oek", "yu",  "yun",
-           "yut", "m",   "ng"};
+        = {"a",   "aa",  "aai", "aau", "aam", "aan", "aang", "aap", "aat",
+           "aak", "ai",  "au",  "am",  "an",  "ang", "ap",   "at",  "ak",
+           "e",   "ei",  "eu",  "em",  "en",  "eng", "ep",   "ek",  "i",
+           "iu",  "im",  "in",  "ing", "ip",  "it",  "ik",   "o",   "oi",
+           "ou",  "on",  "ong", "ot",  "ok",  "u",   "ui",   "un",  "ung",
+           "ut",  "uk",  "oe",  "oet", "eoi", "eon", "oeng", "eot", "oek",
+           "yu",  "yun", "yut", "m",   "ng"};
 
     // Keep track of indices for current segmented word; [start_index, end_index)
     // Greedily try to expand end_index by checking for valid sequences
