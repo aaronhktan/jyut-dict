@@ -955,12 +955,12 @@ Hang tight!</source>
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="+329"/>
+        <location filename="../../components/settings/settingstab.cpp" line="+340"/>
         <source>Reset all settings</source>
         <translation>重置所有设置</translation>
     </message>
     <message>
-        <location line="-87"/>
+        <location line="-89"/>
         <source>Only Simplified</source>
         <translation>仅显示简体中文</translation>
     </message>
@@ -997,7 +997,7 @@ Hang tight!</source>
     <message>
         <location line="+3"/>
         <source>Show pronunciation for:</source>
-        <translation>词条拼音语言：</translation>
+        <translation>词条拼音：</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1021,71 +1021,77 @@ Hang tight!</source>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+15"/>
+        <location line="+16"/>
         <source>Show Cantonese:</source>
-        <translation>粤语的拼音方案：</translation>
+        <translation>粤语显示下列拼音：</translation>
     </message>
     <message>
-        <location line="-14"/>
-        <location line="+15"/>
+        <location line="-15"/>
+        <location line="+16"/>
         <source>Jyutping</source>
         <translation>粤语拼音</translation>
     </message>
     <message>
-        <location line="-14"/>
-        <location line="+15"/>
+        <location line="-15"/>
+        <location line="+16"/>
         <source>Yale</source>
         <translation>耶鲁拼音</translation>
     </message>
     <message>
-        <location line="-14"/>
-        <location line="+15"/>
+        <location line="-15"/>
+        <location line="+16"/>
         <source>Cantonese IPA</source>
         <translation>国际音标</translation>
     </message>
     <message>
-        <location line="-12"/>
-        <location line="+14"/>
+        <location line="-13"/>
+        <location line="+15"/>
         <source>Show Mandarin:</source>
-        <translation>普通话的拼音方案：</translation>
+        <translation>普通话显示下列拼音：</translation>
     </message>
     <message>
-        <location line="-13"/>
-        <location line="+14"/>
+        <location line="-14"/>
+        <location line="+15"/>
         <source>Pinyin</source>
         <translation>汉语拼音</translation>
     </message>
     <message>
-        <location line="-13"/>
-        <location line="+14"/>
+        <location line="-14"/>
+        <location line="+15"/>
         <source>Pinyin with digits</source>
         <translation>汉语拼音（数字）</translation>
     </message>
     <message>
-        <location line="-13"/>
-        <location line="+14"/>
+        <location line="-14"/>
+        <location line="+15"/>
         <source>Zhuyin</source>
         <translation>注音</translation>
     </message>
     <message>
-        <location line="-11"/>
+        <location line="-14"/>
+        <location line="+15"/>
+        <source>Mandarin IPA</source>
+        <translation>国际音标</translation>
+    </message>
+    <message>
+        <location line="-12"/>
         <source>In the header at the top of an entry:</source>
         <translation>词条标题：</translation>
     </message>
     <message>
-        <location line="+14"/>
+        <location line="+15"/>
         <source>Tone colouring:</source>
-        <translation>汉字发音填色：</translation>
+        <translation>字体颜色作为拼音声调提示：</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Colour characters by tone using:</source>
-        <translation>使用哪一个语言填色：</translation>
+        <translation>使用哪一种拼音：</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>No Colours</source>
-        <translation>不填色</translation>
+        <translation>不显示</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1100,12 +1106,12 @@ Hang tight!</source>
     <message>
         <location line="+2"/>
         <source>Cantonese tone colours:</source>
-        <translation>粤语声调颜色：</translation>
+        <translation>拼音声调的对应颜色（粤语）：</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Mandarin tone colours:</source>
-        <translation>普通话声调颜色：</translation>
+        <translation>	拼音声调的对应颜色（普通话）：</translation>
     </message>
     <message>
         <location line="+7"/>
@@ -1232,12 +1238,12 @@ Hang tight!</source>
     <name>strings</name>
     <message>
         <location filename="../../logic/strings/strings.h" line="+16"/>
-        <location line="+76"/>
+        <location line="+77"/>
         <source>JP</source>
         <translation>粤拼</translation>
     </message>
     <message>
-        <location line="-75"/>
+        <location line="-76"/>
         <source>YL</source>
         <translation>耶魯粵拼</translation>
     </message>
@@ -1248,14 +1254,19 @@ Hang tight!</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+74"/>
+        <location line="+75"/>
         <source>PY</source>
         <translation>汉语拼音</translation>
     </message>
     <message>
-        <location line="-73"/>
+        <location line="-74"/>
         <source>ZY</source>
         <translation>注音</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>ZI</source>
+        <translation>国际音标</translation>
     </message>
     <message>
         <location line="+1"/>

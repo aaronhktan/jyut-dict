@@ -959,172 +959,178 @@ Hang tight!</source>
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="329"/>
+        <location filename="../../components/settings/settingstab.cpp" line="340"/>
         <source>Reset all settings</source>
         <translation>重設所有設定</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="242"/>
+        <location filename="../../components/settings/settingstab.cpp" line="251"/>
         <source>Only Simplified</source>
         <translation>僅顯示簡體中文</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="243"/>
+        <location filename="../../components/settings/settingstab.cpp" line="252"/>
         <source>Only Traditional</source>
         <translation>僅顯示繁體中文</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="244"/>
+        <location filename="../../components/settings/settingstab.cpp" line="253"/>
         <source>Both, Prefer Simplified</source>
         <translation>優先顯示簡體中文</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="245"/>
+        <location filename="../../components/settings/settingstab.cpp" line="254"/>
         <source>Both, Prefer Traditional</source>
         <translation>優先顯示繁體中文</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="239"/>
+        <location filename="../../components/settings/settingstab.cpp" line="248"/>
         <source>Character set:</source>
         <translation>字體：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="241"/>
+        <location filename="../../components/settings/settingstab.cpp" line="250"/>
         <source>	Show simplified/traditional characters:</source>
         <translation>詞條字體：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="247"/>
+        <location filename="../../components/settings/settingstab.cpp" line="256"/>
         <source>In search results and examples:</source>
         <translation>查詢結果同埋例句：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="250"/>
+        <location filename="../../components/settings/settingstab.cpp" line="259"/>
         <source>Show pronunciation for:</source>
-        <translation>詞條拼音語言：</translation>
+        <translation>詞條拼音：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="251"/>
+        <location filename="../../components/settings/settingstab.cpp" line="260"/>
         <source>only Cantonese</source>
         <translation>淨係顯示粵語拼音</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="252"/>
+        <location filename="../../components/settings/settingstab.cpp" line="261"/>
         <source>only Mandarin</source>
         <translation>淨係顯示普通話拼音</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="254"/>
+        <location filename="../../components/settings/settingstab.cpp" line="263"/>
         <source>both languages, prefer Cantonese</source>
         <translation>優先顯示粵語拼音</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="256"/>
+        <location filename="../../components/settings/settingstab.cpp" line="265"/>
         <source>both languages, prefer Mandarin</source>
         <translation>優先顯示普通話拼音</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="259"/>
-        <location filename="../../components/settings/settingstab.cpp" line="274"/>
+        <location filename="../../components/settings/settingstab.cpp" line="268"/>
+        <location filename="../../components/settings/settingstab.cpp" line="284"/>
         <source>Show Cantonese:</source>
-        <translation>粵語嘅拼音方案：</translation>
+        <translation>粵語顯示下列拼音：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="260"/>
-        <location filename="../../components/settings/settingstab.cpp" line="275"/>
+        <location filename="../../components/settings/settingstab.cpp" line="269"/>
+        <location filename="../../components/settings/settingstab.cpp" line="285"/>
         <source>Jyutping</source>
         <translation>粵語拼音</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="261"/>
-        <location filename="../../components/settings/settingstab.cpp" line="276"/>
+        <location filename="../../components/settings/settingstab.cpp" line="270"/>
+        <location filename="../../components/settings/settingstab.cpp" line="286"/>
         <source>Yale</source>
         <translation>耶魯拼音</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="262"/>
-        <location filename="../../components/settings/settingstab.cpp" line="277"/>
+        <location filename="../../components/settings/settingstab.cpp" line="271"/>
+        <location filename="../../components/settings/settingstab.cpp" line="287"/>
         <source>Cantonese IPA</source>
         <translation>國際音標</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="265"/>
-        <location filename="../../components/settings/settingstab.cpp" line="279"/>
+        <location filename="../../components/settings/settingstab.cpp" line="274"/>
+        <location filename="../../components/settings/settingstab.cpp" line="289"/>
         <source>Show Mandarin:</source>
-        <translation>普通話嘅拼音方案：</translation>
+        <translation>普通話顯示下列拼音：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="266"/>
-        <location filename="../../components/settings/settingstab.cpp" line="280"/>
+        <location filename="../../components/settings/settingstab.cpp" line="275"/>
+        <location filename="../../components/settings/settingstab.cpp" line="290"/>
         <source>Pinyin</source>
         <translation>汉语拼音</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="267"/>
-        <location filename="../../components/settings/settingstab.cpp" line="281"/>
+        <location filename="../../components/settings/settingstab.cpp" line="276"/>
+        <location filename="../../components/settings/settingstab.cpp" line="291"/>
         <source>Pinyin with digits</source>
         <translation>漢語拼音（數字）</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="268"/>
-        <location filename="../../components/settings/settingstab.cpp" line="282"/>
+        <location filename="../../components/settings/settingstab.cpp" line="277"/>
+        <location filename="../../components/settings/settingstab.cpp" line="292"/>
         <source>Zhuyin</source>
         <translation>注音</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="271"/>
+        <location filename="../../components/settings/settingstab.cpp" line="278"/>
+        <location filename="../../components/settings/settingstab.cpp" line="293"/>
+        <source>Mandarin IPA</source>
+        <translation>國際音標</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/settingstab.cpp" line="281"/>
         <source>In the header at the top of an entry:</source>
         <translation>詞條標題：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="285"/>
+        <location filename="../../components/settings/settingstab.cpp" line="296"/>
         <source>Tone colouring:</source>
-        <translation>漢字發音填色：</translation>
+        <translation>字體顏色作為拼音聲調提示：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="287"/>
+        <location filename="../../components/settings/settingstab.cpp" line="298"/>
         <source>Colour characters by tone using:</source>
-        <translation>使用邊一個語言填色：</translation>
+        <translation>使用邊一種拼音：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="288"/>
+        <location filename="../../components/settings/settingstab.cpp" line="299"/>
         <source>No Colours</source>
         <translation>唔填色</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="289"/>
+        <location filename="../../components/settings/settingstab.cpp" line="300"/>
         <source>Cantonese</source>
         <translation>粵語</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="290"/>
+        <location filename="../../components/settings/settingstab.cpp" line="301"/>
         <source>Mandarin</source>
         <translation>普通話</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="292"/>
+        <location filename="../../components/settings/settingstab.cpp" line="303"/>
         <source>Cantonese tone colours:</source>
-        <translation>粵語聲調顏色：</translation>
+        <translation>拼音聲調嘅對應顏色（粵語）：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="294"/>
+        <location filename="../../components/settings/settingstab.cpp" line="305"/>
         <source>Mandarin tone colours:</source>
-        <translation>普通話聲調顏色：</translation>
+        <translation>	拼音聲調嘅對應顏色（普通話）：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="301"/>
-        <location filename="../../components/settings/settingstab.cpp" line="315"/>
+        <location filename="../../components/settings/settingstab.cpp" line="312"/>
+        <location filename="../../components/settings/settingstab.cpp" line="326"/>
         <source>No Tone</source>
         <translation>未知聲調</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="305"/>
-        <location filename="../../components/settings/settingstab.cpp" line="323"/>
+        <location filename="../../components/settings/settingstab.cpp" line="316"/>
+        <location filename="../../components/settings/settingstab.cpp" line="334"/>
         <source>Tone %1</source>
         <translation>第 %1 聲</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="319"/>
+        <location filename="../../components/settings/settingstab.cpp" line="330"/>
         <source>Neutral</source>
         <translation>輕聲</translation>
     </message>
@@ -1236,7 +1242,7 @@ Hang tight!</source>
     <name>strings</name>
     <message>
         <location filename="../../logic/strings/strings.h" line="16"/>
-        <location filename="../../logic/strings/strings.h" line="92"/>
+        <location filename="../../logic/strings/strings.h" line="93"/>
         <source>JP</source>
         <translation>粵拼</translation>
     </message>
@@ -1252,7 +1258,7 @@ Hang tight!</source>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="19"/>
-        <location filename="../../logic/strings/strings.h" line="93"/>
+        <location filename="../../logic/strings/strings.h" line="94"/>
         <source>PY</source>
         <translation>拼音</translation>
     </message>
@@ -1263,116 +1269,121 @@ Hang tight!</source>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="21"/>
+        <source>ZI</source>
+        <translation>國際音標</translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="22"/>
         <source>DEFINITIONS</source>
         <translation>解釋</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="23"/>
+        <location filename="../../logic/strings/strings.h" line="24"/>
         <source>SENTENCES</source>
         <translation>例句</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="25"/>
+        <location filename="../../logic/strings/strings.h" line="26"/>
         <source>Jyut Dictionary</source>
         <translation>粵語辭典</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="27"/>
+        <location filename="../../logic/strings/strings.h" line="28"/>
         <source>A free, open-source offline Cantonese Dictionary.</source>
         <translation>一個免費、自由、開源及脫機嘅粵語辭典。</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="29"/>
+        <location filename="../../logic/strings/strings.h" line="30"/>
         <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
         <translation>圖標使用 &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Commons 古漢字計劃&lt;/a&gt; 嘅圖片創造。 &lt;br&gt;界面圖標來源：&lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt;同埋&lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;。 &lt;br&gt;使用 &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 編程。</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="43"/>
+        <location filename="../../logic/strings/strings.h" line="44"/>
         <source>%1 is made with ❤️ by Aaron Tan.</source>
         <translation>%1由譚可峰精心打造。</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="46"/>
+        <location filename="../../logic/strings/strings.h" line="47"/>
         <source>Donate 💵, report a bug 🐛, or just say hi 👋!</source>
         <translation>捐款 💵, 报告缺陷 🐛, 或者发送一个問候 👋!</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="49"/>
+        <location filename="../../logic/strings/strings.h" line="50"/>
         <source>Donate, report a bug, or just say hi!</source>
         <translation>捐款, 报告缺陷, 或者发送一个問候!</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="50"/>
+        <location filename="../../logic/strings/strings.h" line="51"/>
         <source>&lt;a href=https://www.pleco.com style=&quot;color: %1; text-decoration: none&quot;&gt;Pleco Dictionary&lt;/a&gt;, &lt;a href=http://www.cantonese.sheik.co.uk/dictionary/ style=&quot;color: %1; text-decoration: none&quot;&gt;CantoDict&lt;/a&gt;, &lt;a href=https://words.hk style=&quot;color: %1; text-decoration: none&quot;&gt;words.hk&lt;/a&gt;</source>
         <translation>&lt;a href=https://www.pleco.com style=&quot;color: %1; text-decoration: none&quot;&gt;Pleco 漢語辭典&lt;/a&gt;、&lt;a href=http://www.cantonese.sheik.co.uk/dictionary/ style=&quot;color: %1; text-decoration: none&quot;&gt;CantoDict&lt;/a&gt;、&lt;a href=https://words.hk style=&quot;color: %1; text-decoration: none&quot;&gt;words.hk 粤典&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="58"/>
+        <location filename="../../logic/strings/strings.h" line="59"/>
         <source>A voice for &quot;Chinese - Hong Kong&quot; could not be found.</source>
         <translation>搵唔到「粵語（香港）」語言引擎。</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="66"/>
+        <location filename="../../logic/strings/strings.h" line="67"/>
         <source>A voice for &quot;Chinese - Taiwan&quot; could not be found.</source>
         <translation>搵唔到「國語（台灣）」語言引擎。</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="74"/>
+        <location filename="../../logic/strings/strings.h" line="75"/>
         <source>A voice for &quot;Chinese - Mainland China&quot; could not be found.</source>
         <translation>搵唔到「普通話（中國大陸）」語言引擎。</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="82"/>
+        <location filename="../../logic/strings/strings.h" line="83"/>
         <source>English</source>
         <translation>英文</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="83"/>
+        <location filename="../../logic/strings/strings.h" line="84"/>
         <source>French</source>
         <translation>法文</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="84"/>
+        <location filename="../../logic/strings/strings.h" line="85"/>
         <source>German</source>
         <translation>德文</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="85"/>
+        <location filename="../../logic/strings/strings.h" line="86"/>
         <source>Cantonese</source>
         <translation>粵語</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="86"/>
+        <location filename="../../logic/strings/strings.h" line="87"/>
         <source>Mandarin</source>
         <translation>普通話</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="87"/>
+        <location filename="../../logic/strings/strings.h" line="88"/>
         <source>Chinese</source>
         <translation>中文</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="89"/>
+        <location filename="../../logic/strings/strings.h" line="90"/>
         <source>SC</source>
         <translation>簡體中文</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="90"/>
+        <location filename="../../logic/strings/strings.h" line="91"/>
         <source>TC</source>
         <translation>繁體中文</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="91"/>
+        <location filename="../../logic/strings/strings.h" line="92"/>
         <source>CN</source>
         <translation>中文</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="94"/>
+        <location filename="../../logic/strings/strings.h" line="95"/>
         <source>EN</source>
         <translation>英文</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="62"/>
+        <location filename="../../logic/strings/strings.h" line="63"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Hong Kong</source>
@@ -1381,7 +1392,7 @@ Debug: Locale: %1, Language: Chinese - Hong Kong</source>
 除錯: 地區設定: %1, 語言: 粵語 - 香港</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="70"/>
+        <location filename="../../logic/strings/strings.h" line="71"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Taiwan</source>
@@ -1390,7 +1401,7 @@ Debug: Locale: %1, Language: Chinese - Taiwan</source>
 除錯: 地區設定: %1, 語言: 國語 - 台灣</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="77"/>
+        <location filename="../../logic/strings/strings.h" line="78"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Mainland</source>

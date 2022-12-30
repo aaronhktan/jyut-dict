@@ -441,31 +441,31 @@
     <name>MAC_APPLICATION_MENU</name>
     <message>
         <source>Services</source>
-        <translation>Services</translation>
+        <translation type="vanished">Services</translation>
     </message>
     <message>
         <source>Hide %1</source>
-        <translation>Masquer %1</translation>
+        <translation type="vanished">Masquer %1</translation>
     </message>
     <message>
         <source>Hide Others</source>
-        <translation>Masquer les autres</translation>
+        <translation type="vanished">Masquer les autres</translation>
     </message>
     <message>
         <source>Show All</source>
-        <translation>Tout afficher</translation>
+        <translation type="vanished">Tout afficher</translation>
     </message>
     <message>
         <source>Preferences...</source>
-        <translation>Préférences...</translation>
+        <translation type="vanished">Préférences...</translation>
     </message>
     <message>
         <source>Quit %1</source>
-        <translation>Quitter %1</translation>
+        <translation type="vanished">Quitter %1</translation>
     </message>
     <message>
         <source>About %1</source>
-        <translation>À propos de %1</translation>
+        <translation type="vanished">À propos de %1</translation>
     </message>
 </context>
 <context>
@@ -692,46 +692,46 @@ Veuillez patienter quelques minutes.</translation>
     <name>QMessageBox</name>
     <message>
         <source>Show Details...</source>
-        <translation>Montrer les détails...</translation>
+        <translation type="vanished">Montrer les détails...</translation>
     </message>
     <message>
         <source>Hide Details...</source>
-        <translation>Masquer les détails...</translation>
+        <translation type="vanished">Masquer les détails...</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="vanished">OK</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation>Aide</translation>
+        <translation type="vanished">Aide</translation>
     </message>
     <message>
         <source>&lt;h3&gt;About Qt&lt;/h3&gt;&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;</source>
-        <translation>&lt;h3&gt;À propos de Qt&lt;/h3&gt;&lt;p&gt;Ce programme utilise la version %1 de Qt.&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;h3&gt;À propos de Qt&lt;/h3&gt;&lt;p&gt;Ce programme utilise la version %1 de Qt.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p&gt;Qt is a C++ toolkit for cross-platform application development.&lt;/p&gt;&lt;p&gt;Qt provides single-source portability across all major desktop operating systems. It is also available for embedded Linux and other embedded and mobile operating systems.&lt;/p&gt;&lt;p&gt;Qt is available under three different licensing options designed to accommodate the needs of our various users.&lt;/p&gt;&lt;p&gt;Qt licensed under our commercial license agreement is appropriate for development of proprietary/commercial software where you do not want to share any source code with third parties or otherwise cannot comply with the terms of the GNU LGPL version 3 or GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU LGPL version 3 is appropriate for the development of Qt&amp;nbsp;applications provided you can comply with the terms and conditions of the GNU LGPL version 3.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU LGPL version 2.1 is appropriate for the development of Qt&amp;nbsp;applications provided you can comply with the terms and conditions of the GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Please see &lt;a href=&quot;http://%2/&quot;&gt;%2&lt;/a&gt; for an overview of Qt licensing.&lt;/p&gt;&lt;p&gt;Copyright (C) %1 The Qt Company Ltd and other contributors.&lt;/p&gt;&lt;p&gt;Qt and the Qt logo are trademarks of The Qt Company Ltd.&lt;/p&gt;&lt;p&gt;Qt is The Qt Company Ltd product developed as an open source project. See &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt; for more information.&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Qt est dédié au développement d&apos;applications C++ multiplateformes.&lt;/p&gt;&lt;p&gt;Qt offre un code source unique compatible avec les principaux systèmes d&apos;exploitation &quot;de bureau&quot; (Linux, Mac, Windows). Qt est également compatible avec des systèmes d&apos;exploitation embarqués de type Linux ou autres.&lt;/p&gt;&lt;p&gt;Qt est utilisable sous les termes de trois types de licence différents, afin de répondre aux besoins d&apos;un maximum d&apos;utilisateurs.&lt;/p&gt;&lt;p&gt;La licence commerciale de Qt est appropriée pour le développement de logiciels propriétaires/commerciaux pour lesquels vous ne souhaitez pas partager le code source avec des tierces parties ou pour lesquels les termes de la licence GNU LGPL version 3 ou GNU LGPL version 2.1 ne vous conviennent pas.&lt;/p&gt;&lt;p&gt;La licence GNU LGPL version 3 de Qt est appropriée pour le développement d&apos;applications Qt si vous acceptez les termes et conditions de la licence GNU LGPL version 3.&lt;/p&gt;&lt;p&gt;La licence GNU LGPL version 2.1 est appropriée pour le développement d&apos;applications Qt si vous acceptez les termes et conditions de la licence GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Veuillez consulter &lt;a href=&quot;http://%2/&quot;&gt;%2&lt;/a&gt; pour le détail des différents types de licence Qt.&lt;/p&gt;&lt;p&gt;Copyright (C) %1 &quot;The Qt Company Ltd&quot; et autres contributeurs.&lt;/p&gt;&lt;p&gt;Qt et le logo Qt sont des marques de &quot;The Qt Company Ltd&quot;.&lt;/p&gt;&lt;p&gt;Qt est le produit de &quot;The Qt Company Ltd&quot;, développé sous forme de projet open source. Veuillez trouver de plus amples information à &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt;.&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;p&gt;Qt est dédié au développement d&apos;applications C++ multiplateformes.&lt;/p&gt;&lt;p&gt;Qt offre un code source unique compatible avec les principaux systèmes d&apos;exploitation &quot;de bureau&quot; (Linux, Mac, Windows). Qt est également compatible avec des systèmes d&apos;exploitation embarqués de type Linux ou autres.&lt;/p&gt;&lt;p&gt;Qt est utilisable sous les termes de trois types de licence différents, afin de répondre aux besoins d&apos;un maximum d&apos;utilisateurs.&lt;/p&gt;&lt;p&gt;La licence commerciale de Qt est appropriée pour le développement de logiciels propriétaires/commerciaux pour lesquels vous ne souhaitez pas partager le code source avec des tierces parties ou pour lesquels les termes de la licence GNU LGPL version 3 ou GNU LGPL version 2.1 ne vous conviennent pas.&lt;/p&gt;&lt;p&gt;La licence GNU LGPL version 3 de Qt est appropriée pour le développement d&apos;applications Qt si vous acceptez les termes et conditions de la licence GNU LGPL version 3.&lt;/p&gt;&lt;p&gt;La licence GNU LGPL version 2.1 est appropriée pour le développement d&apos;applications Qt si vous acceptez les termes et conditions de la licence GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Veuillez consulter &lt;a href=&quot;http://%2/&quot;&gt;%2&lt;/a&gt; pour le détail des différents types de licence Qt.&lt;/p&gt;&lt;p&gt;Copyright (C) %1 &quot;The Qt Company Ltd&quot; et autres contributeurs.&lt;/p&gt;&lt;p&gt;Qt et le logo Qt sont des marques de &quot;The Qt Company Ltd&quot;.&lt;/p&gt;&lt;p&gt;Qt est le produit de &quot;The Qt Company Ltd&quot;, développé sous forme de projet open source. Veuillez trouver de plus amples information à &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>About Qt</source>
-        <translation>À propos de Qt</translation>
+        <translation type="vanished">À propos de Qt</translation>
     </message>
 </context>
 <context>
     <name>QPlatformTheme</name>
     <message>
         <source>Cancel</source>
-        <translation>Annuler</translation>
+        <translation type="vanished">Annuler</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation>&amp;Oui</translation>
+        <translation type="vanished">&amp;Oui</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="vanished">OK</translation>
     </message>
 </context>
 <context>
@@ -960,172 +960,178 @@ Veuillez patienter quelques minutes.</translation>
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="329"/>
+        <location filename="../../components/settings/settingstab.cpp" line="340"/>
         <source>Reset all settings</source>
         <translation>Réinitialiser toutes les préférences</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="242"/>
+        <location filename="../../components/settings/settingstab.cpp" line="251"/>
         <source>Only Simplified</source>
         <translation>Uniquement caractères simplifiés</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="243"/>
+        <location filename="../../components/settings/settingstab.cpp" line="252"/>
         <source>Only Traditional</source>
         <translation>Uniquement caractères traditionnels</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="244"/>
+        <location filename="../../components/settings/settingstab.cpp" line="253"/>
         <source>Both, Prefer Simplified</source>
         <translation>Les deux, donner précédence aux caractères simplifiés</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="245"/>
+        <location filename="../../components/settings/settingstab.cpp" line="254"/>
         <source>Both, Prefer Traditional</source>
         <translation>Les deux, donner précédence aux caractères traditionnels</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="239"/>
+        <location filename="../../components/settings/settingstab.cpp" line="248"/>
         <source>Character set:</source>
-        <translation>Système d'écriture :</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="241"/>
-        <source>	Show simplified/traditional characters:</source>
-        <translation>Montrer les sinogrammes simplifiés ou traditionnels :</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="247"/>
-        <source>In search results and examples:</source>
-        <translation>Dans les résultats de recherche et les exemples :</translation>
+        <translation>Système d&apos;écriture&#xa0;:</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="250"/>
-        <source>Show pronunciation for:</source>
-        <translation>Montrer la prononciation pour :</translation>
+        <source>	Show simplified/traditional characters:</source>
+        <translation>	Afficher les sinogrammes simplifiés ou traditionnels&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="251"/>
+        <location filename="../../components/settings/settingstab.cpp" line="256"/>
+        <source>In search results and examples:</source>
+        <translation>Dans les résultats de recherche et les exemples&#xa0;:</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/settingstab.cpp" line="259"/>
+        <source>Show pronunciation for:</source>
+        <translation>Afficher la prononciation pour&#xa0;:</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/settingstab.cpp" line="260"/>
         <source>only Cantonese</source>
         <translation>uniquement le cantonais</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="252"/>
+        <location filename="../../components/settings/settingstab.cpp" line="261"/>
         <source>only Mandarin</source>
         <translation>uniquement le mandarin</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="254"/>
+        <location filename="../../components/settings/settingstab.cpp" line="263"/>
         <source>both languages, prefer Cantonese</source>
         <translation>les deux langues, donner précédence au cantonais</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="256"/>
+        <location filename="../../components/settings/settingstab.cpp" line="265"/>
         <source>both languages, prefer Mandarin</source>
         <translation>les deux langues, donner précédence au mandarin</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="259"/>
-        <location filename="../../components/settings/settingstab.cpp" line="274"/>
+        <location filename="../../components/settings/settingstab.cpp" line="268"/>
+        <location filename="../../components/settings/settingstab.cpp" line="284"/>
         <source>Show Cantonese:</source>
-        <translation>Romanisations pour le cantonais :</translation>
+        <translation>Romanisations pour le cantonais&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="260"/>
-        <location filename="../../components/settings/settingstab.cpp" line="275"/>
+        <location filename="../../components/settings/settingstab.cpp" line="269"/>
+        <location filename="../../components/settings/settingstab.cpp" line="285"/>
         <source>Jyutping</source>
         <translation>Jyutping</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="261"/>
-        <location filename="../../components/settings/settingstab.cpp" line="276"/>
+        <location filename="../../components/settings/settingstab.cpp" line="270"/>
+        <location filename="../../components/settings/settingstab.cpp" line="286"/>
         <source>Yale</source>
         <translation>Yale</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="262"/>
-        <location filename="../../components/settings/settingstab.cpp" line="277"/>
+        <location filename="../../components/settings/settingstab.cpp" line="271"/>
+        <location filename="../../components/settings/settingstab.cpp" line="287"/>
         <source>Cantonese IPA</source>
         <translation>API cantonais</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="265"/>
-        <location filename="../../components/settings/settingstab.cpp" line="279"/>
+        <location filename="../../components/settings/settingstab.cpp" line="274"/>
+        <location filename="../../components/settings/settingstab.cpp" line="289"/>
         <source>Show Mandarin:</source>
-        <translation>Romanisations pour le mandarin :</translation>
+        <translation>Romanisations pour le mandarin&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="266"/>
-        <location filename="../../components/settings/settingstab.cpp" line="280"/>
+        <location filename="../../components/settings/settingstab.cpp" line="275"/>
+        <location filename="../../components/settings/settingstab.cpp" line="290"/>
         <source>Pinyin</source>
         <translation>Pinyin</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="267"/>
-        <location filename="../../components/settings/settingstab.cpp" line="281"/>
+        <location filename="../../components/settings/settingstab.cpp" line="276"/>
+        <location filename="../../components/settings/settingstab.cpp" line="291"/>
         <source>Pinyin with digits</source>
         <translation>Pinyin avec numéros</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="268"/>
-        <location filename="../../components/settings/settingstab.cpp" line="282"/>
+        <location filename="../../components/settings/settingstab.cpp" line="277"/>
+        <location filename="../../components/settings/settingstab.cpp" line="292"/>
         <source>Zhuyin</source>
         <translation>Bopomofo</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="271"/>
+        <location filename="../../components/settings/settingstab.cpp" line="278"/>
+        <location filename="../../components/settings/settingstab.cpp" line="293"/>
+        <source>Mandarin IPA</source>
+        <translation>API mandarin</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/settingstab.cpp" line="281"/>
         <source>In the header at the top of an entry:</source>
-        <translation>Dans le titre d'une entrée :</translation>
+        <translation>Dans le titre d&apos;une entrée&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="285"/>
+        <location filename="../../components/settings/settingstab.cpp" line="296"/>
         <source>Tone colouring:</source>
-        <translation>Couleur des sinogrammes selon le ton :</translation>
+        <translation>Couleur des sinogrammes selon le ton&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="287"/>
+        <location filename="../../components/settings/settingstab.cpp" line="298"/>
         <source>Colour characters by tone using:</source>
-        <translation>Colorer les sinogrammes selon leur prononciation en :</translation>
+        <translation>	Colorer les sinogrammes selon leur prononciation en&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="288"/>
+        <location filename="../../components/settings/settingstab.cpp" line="299"/>
         <source>No Colours</source>
         <translation>ne pas colorer</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="289"/>
+        <location filename="../../components/settings/settingstab.cpp" line="300"/>
         <source>Cantonese</source>
         <translation>cantonais</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="290"/>
+        <location filename="../../components/settings/settingstab.cpp" line="301"/>
         <source>Mandarin</source>
         <translation>mandarin</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="292"/>
+        <location filename="../../components/settings/settingstab.cpp" line="303"/>
         <source>Cantonese tone colours:</source>
-        <translation>Couleurs des tons en cantonais :</translation>
+        <translation>Couleurs des tons en cantonais&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="294"/>
+        <location filename="../../components/settings/settingstab.cpp" line="305"/>
         <source>Mandarin tone colours:</source>
-        <translation>Couleurs des tons en mandarin :</translation>
+        <translation>Couleurs des tons en mandarin&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="301"/>
-        <location filename="../../components/settings/settingstab.cpp" line="315"/>
+        <location filename="../../components/settings/settingstab.cpp" line="312"/>
+        <location filename="../../components/settings/settingstab.cpp" line="326"/>
         <source>No Tone</source>
         <translation>Aucun ton</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="305"/>
-        <location filename="../../components/settings/settingstab.cpp" line="323"/>
+        <location filename="../../components/settings/settingstab.cpp" line="316"/>
+        <location filename="../../components/settings/settingstab.cpp" line="334"/>
         <source>Tone %1</source>
         <translation>Ton %1</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="319"/>
+        <location filename="../../components/settings/settingstab.cpp" line="330"/>
         <source>Neutral</source>
         <translation>Ton neutre</translation>
     </message>
@@ -1237,7 +1243,7 @@ Veuillez patienter quelques minutes.</translation>
     <name>strings</name>
     <message>
         <location filename="../../logic/strings/strings.h" line="16"/>
-        <location filename="../../logic/strings/strings.h" line="92"/>
+        <location filename="../../logic/strings/strings.h" line="93"/>
         <source>JP</source>
         <translation>JP</translation>
     </message>
@@ -1253,7 +1259,7 @@ Veuillez patienter quelques minutes.</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="19"/>
-        <location filename="../../logic/strings/strings.h" line="93"/>
+        <location filename="../../logic/strings/strings.h" line="94"/>
         <source>PY</source>
         <translation>PY</translation>
     </message>
@@ -1264,116 +1270,121 @@ Veuillez patienter quelques minutes.</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="21"/>
+        <source>ZI</source>
+        <translation>ZA</translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="22"/>
         <source>DEFINITIONS</source>
         <translation>DÉFINITIONS</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="23"/>
+        <location filename="../../logic/strings/strings.h" line="24"/>
         <source>SENTENCES</source>
         <translation>PHRASES</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="25"/>
+        <location filename="../../logic/strings/strings.h" line="26"/>
         <source>Jyut Dictionary</source>
         <translation>Dictionnaire Jyut</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="27"/>
+        <location filename="../../logic/strings/strings.h" line="28"/>
         <source>A free, open-source offline Cantonese Dictionary.</source>
         <translation>Un dictionnaire cantonais hors-ligne libre et gratuit.</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="29"/>
+        <location filename="../../logic/strings/strings.h" line="30"/>
         <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
         <translation>Icône créée avec des images originant du &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Ancient Chinese Characters project (caractères chinois anciens)&lt;/a&gt; de Wikimédia.&lt;br&gt;Icônes d&apos;interface: &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; et &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Programmé avec &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="43"/>
+        <location filename="../../logic/strings/strings.h" line="44"/>
         <source>%1 is made with ❤️ by Aaron Tan.</source>
         <translation>%1 est crée avec ❤️ par Aaron Tan.</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="46"/>
+        <location filename="../../logic/strings/strings.h" line="47"/>
         <source>Donate 💵, report a bug 🐛, or just say hi 👋!</source>
         <translation>Donner 💵, signaler un problème 🐛, ou simplement dire bonjour 👋!</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="49"/>
+        <location filename="../../logic/strings/strings.h" line="50"/>
         <source>Donate, report a bug, or just say hi!</source>
         <translation>Donner, signaler un problème, ou simplement dire bonjour!</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="50"/>
+        <location filename="../../logic/strings/strings.h" line="51"/>
         <source>&lt;a href=https://www.pleco.com style=&quot;color: %1; text-decoration: none&quot;&gt;Pleco Dictionary&lt;/a&gt;, &lt;a href=http://www.cantonese.sheik.co.uk/dictionary/ style=&quot;color: %1; text-decoration: none&quot;&gt;CantoDict&lt;/a&gt;, &lt;a href=https://words.hk style=&quot;color: %1; text-decoration: none&quot;&gt;words.hk&lt;/a&gt;</source>
         <translation>&lt;a href=https://www.pleco.com style=&quot;color: %1; text-decoration: none&quot;&gt;Pleco Dictionary&lt;/a&gt;, &lt;a href=http://www.cantonese.sheik.co.uk/dictionary/ style=&quot;color: %1; text-decoration: none&quot;&gt;CantoDict&lt;/a&gt;, &lt;a href=https://words.hk style=&quot;color: %1; text-decoration: none&quot;&gt;words.hk&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="58"/>
+        <location filename="../../logic/strings/strings.h" line="59"/>
         <source>A voice for &quot;Chinese - Hong Kong&quot; could not be found.</source>
         <translation>Aucune voix disponible pour la langue «Cantonais - Hong Kong».</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="66"/>
+        <location filename="../../logic/strings/strings.h" line="67"/>
         <source>A voice for &quot;Chinese - Taiwan&quot; could not be found.</source>
         <translation>Aucune voix disponible pour la langue «Chinois - Taïwan».</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="74"/>
+        <location filename="../../logic/strings/strings.h" line="75"/>
         <source>A voice for &quot;Chinese - Mainland China&quot; could not be found.</source>
         <translation>Aucune voix disponible pour la langue «Chinois - Chine continentale».</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="82"/>
+        <location filename="../../logic/strings/strings.h" line="83"/>
         <source>English</source>
         <translation>Anglais</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="83"/>
+        <location filename="../../logic/strings/strings.h" line="84"/>
         <source>French</source>
         <translation>Français</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="84"/>
+        <location filename="../../logic/strings/strings.h" line="85"/>
         <source>German</source>
         <translation>Allemand</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="85"/>
+        <location filename="../../logic/strings/strings.h" line="86"/>
         <source>Cantonese</source>
         <translation>Cantonais</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="86"/>
+        <location filename="../../logic/strings/strings.h" line="87"/>
         <source>Mandarin</source>
         <translation>Mandarin</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="87"/>
+        <location filename="../../logic/strings/strings.h" line="88"/>
         <source>Chinese</source>
         <translation>Chinois</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="89"/>
+        <location filename="../../logic/strings/strings.h" line="90"/>
         <source>SC</source>
         <translation>CS</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="90"/>
+        <location filename="../../logic/strings/strings.h" line="91"/>
         <source>TC</source>
         <translation>CT</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="91"/>
+        <location filename="../../logic/strings/strings.h" line="92"/>
         <source>CN</source>
         <translation>CN</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="94"/>
+        <location filename="../../logic/strings/strings.h" line="95"/>
         <source>EN</source>
         <translation>FR</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="62"/>
+        <location filename="../../logic/strings/strings.h" line="63"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Hong Kong</source>
@@ -1382,7 +1393,7 @@ Debug: Locale: %1, Language: Chinese - Hong Kong</source>
 Débogage: Locale: %1, Langue: Cantonais - Hong Kong</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="70"/>
+        <location filename="../../logic/strings/strings.h" line="71"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Taiwan</source>
@@ -1391,7 +1402,7 @@ Debug: Locale: %1, Language: Chinese - Taiwan</source>
 Débogage: Locale: %1, Langue: Chinois - Taïwan</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="77"/>
+        <location filename="../../logic/strings/strings.h" line="78"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Mainland</source>
