@@ -18,6 +18,7 @@ constexpr auto YALE_SHORT = QT_TRANSLATE_NOOP("strings", "YL");
 constexpr auto CANTONESE_IPA_SHORT = QT_TRANSLATE_NOOP("strings", "YI");
 constexpr auto PINYIN_SHORT = QT_TRANSLATE_NOOP("strings", "PY");
 constexpr auto ZHUYIN_SHORT = QT_TRANSLATE_NOOP("strings", "ZY");
+constexpr auto MANDARIN_IPA_SHORT = QT_TRANSLATE_NOOP("strings", "ZI");
 constexpr auto DEFINITIONS_ALL_CAPS = QT_TRANSLATE_NOOP("strings",
                                                         "DEFINITIONS");
 constexpr auto SENTENCES_ALL_CAPS = QT_TRANSLATE_NOOP("strings", "SENTENCES");

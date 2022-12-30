@@ -44,6 +44,8 @@ Entry::Entry(const Entry &entry)
       _numberedPinyin{entry._numberedPinyin},
       _isNumberedPinyinValid{entry._isNumberedPinyinValid},
       _zhuyin{entry._zhuyin}, _isZhuyinValid{entry._isZhuyinValid},
+      _mandarinIPA{entry._mandarinIPA},
+      _isMandarinIPAValid{entry._isMandarinIPAValid},
       _definitions{entry._definitions},
       _isWelcome{entry._isWelcome}, _isEmpty{entry._isEmpty}
 {}
@@ -69,8 +71,10 @@ Entry::Entry(Entry &&entry)
       _numberedPinyin{std::move(entry._numberedPinyin)},
       _isNumberedPinyinValid{entry._isNumberedPinyinValid}, _zhuyin{std::move(
                                                                 entry._zhuyin)},
-      _isZhuyinValid{entry._isZhuyinValid}, _definitions{std::move(
-                                                entry._definitions)},
+      _isZhuyinValid{entry._isZhuyinValid}, _mandarinIPA{std::move(
+                                                entry._mandarinIPA)},
+      _isMandarinIPAValid{entry._isMandarinIPAValid}, _definitions{std::move(
+                                                          entry._definitions)},
       _isWelcome{entry._isWelcome}, _isEmpty{entry._isEmpty}
 {}
 
@@ -100,6 +104,8 @@ Entry &Entry::operator=(const Entry &entry)
     _isNumberedPinyinValid = entry._isNumberedPinyinValid;
     _zhuyin = entry._zhuyin;
     _isZhuyinValid = entry._isZhuyinValid;
+    _mandarinIPA = entry._mandarinIPA;
+    _isMandarinIPAValid = entry._isMandarinIPAValid;
     _definitions = entry._definitions;
     _isWelcome = entry._isWelcome;
     _isEmpty = entry._isEmpty;
@@ -133,6 +139,8 @@ Entry &Entry::operator=(Entry &&entry)
     _isNumberedPinyinValid = entry._isNumberedPinyinValid;
     _zhuyin = std::move(entry._zhuyin);
     _isZhuyinValid = entry._isZhuyinValid;
+    _mandarinIPA = std::move(entry._mandarinIPA);
+    _isMandarinIPAValid = entry._isMandarinIPAValid;
     _definitions = std::move(entry._definitions);
     _isWelcome = entry._isWelcome;
     _isEmpty = entry._isEmpty;
@@ -286,6 +294,13 @@ bool Entry::generatePhonetic(CantoneseOptions cantoneseOptions,
         _isZhuyinValid = true;
     }
 
+    if ((mandarinOptions & MandarinOptions::MANDARIN_IPA)
+            == MandarinOptions::MANDARIN_IPA
+        && !_isMandarinIPAValid) {
+        _mandarinIPA = ChineseUtils::convertPinyinToIPA(_pinyin);
+        _isMandarinIPAValid = true;
+    }
+
     return true;
 }
 
@@ -366,6 +381,9 @@ std::string Entry::getMandarinPhonetic(MandarinOptions mandarinOptions) const
     }
     case MandarinOptions::ZHUYIN: {
         return _zhuyin;
+    }
+    case MandarinOptions::MANDARIN_IPA: {
+        return _mandarinIPA;
     }
     default: {
         return _pinyin;

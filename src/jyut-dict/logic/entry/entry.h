@@ -115,6 +115,8 @@ private:
     bool _isNumberedPinyinValid = false;
     std::string _zhuyin;
     bool _isZhuyinValid = false;
+    std::string _mandarinIPA;
+    bool _isMandarinIPAValid = false;
 
     std::vector<DefinitionsSet> _definitions;
 
