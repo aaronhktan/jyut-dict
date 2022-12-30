@@ -967,22 +967,22 @@ Veuillez patienter quelques minutes.</translation>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="251"/>
         <source>Only Simplified</source>
-        <translation>Uniquement caractères simplifiés</translation>
+        <translation>Uniquement sinogrammes simplifiés</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="252"/>
         <source>Only Traditional</source>
-        <translation>Uniquement caractères traditionnels</translation>
+        <translation>Uniquement sinogrammes traditionnels</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="253"/>
         <source>Both, Prefer Simplified</source>
-        <translation>Les deux, donner précédence aux caractères simplifiés</translation>
+        <translation>Les deux, donner précédence aux sinogrammes simplifiés</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="254"/>
         <source>Both, Prefer Traditional</source>
-        <translation>Les deux, donner précédence aux caractères traditionnels</translation>
+        <translation>Les deux, donner précédence aux sinogrammes traditionnels</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="248"/>
@@ -1296,7 +1296,7 @@ Veuillez patienter quelques minutes.</translation>
     <message>
         <location filename="../../logic/strings/strings.h" line="30"/>
         <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
-        <translation>Icône créée avec des images originant du &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Ancient Chinese Characters project (caractères chinois anciens)&lt;/a&gt; de Wikimédia.&lt;br&gt;Icônes d&apos;interface: &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; et &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Programmé avec &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</translation>
+        <translation>Icône créée avec des images originant du &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Ancient Chinese Characters project (sinogrammes anciens)&lt;/a&gt; de Wikimédia.&lt;br&gt;Icônes d&apos;interface: &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; et &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Programmé avec &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="44"/>
