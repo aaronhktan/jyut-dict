@@ -26,22 +26,22 @@
     <message>
         <location filename="../../components/settings/advancedtab.cpp" line="160"/>
         <source>Automatically check for updates on startup:</source>
-        <translation>Vérifier automatiquement les mises à jour:</translation>
+        <translation>Vérifier automatiquement les mises à jour :</translation>
     </message>
     <message>
         <location filename="../../components/settings/advancedtab.cpp" line="163"/>
         <source>Enable dark mode:</source>
-        <translation>Activer le mode sombre:</translation>
+        <translation>Activer le mode sombre :</translation>
     </message>
     <message>
         <location filename="../../components/settings/advancedtab.cpp" line="166"/>
         <source>Export dictionaries file:</source>
-        <translation>Exporter le fichier contenant les dictionnaires:</translation>
+        <translation>Exporter le fichier contenant les dictionnaires :</translation>
     </message>
     <message>
         <location filename="../../components/settings/advancedtab.cpp" line="168"/>
         <source>Export saved words and history:</source>
-        <translation>Exporter les mots enregistrés et l&apos;historique de recherche:</translation>
+        <translation>Exporter les mots enregistrés et l&apos;historique de recherche :</translation>
     </message>
     <message>
         <location filename="../../components/settings/advancedtab.cpp" line="169"/>
@@ -52,17 +52,17 @@
     <message>
         <location filename="../../components/settings/advancedtab.cpp" line="174"/>
         <source>Restore dictionaries file to last backed up version:</source>
-        <translation>Restaurer le fichier contenant les dictionnaires à partir d&apos;une sauvegarde automatique:</translation>
+        <translation>Restaurer le fichier contenant les dictionnaires à partir d&apos;une sauvegarde automatique :</translation>
     </message>
     <message>
         <location filename="../../components/settings/advancedtab.cpp" line="176"/>
         <source>Restore dictionaries file using exported file:</source>
-        <translation>Restaurer le fichier contenant les dictionnaires à partir d&apos;un fichier exporté:</translation>
+        <translation>Restaurer le fichier contenant les dictionnaires à partir d&apos;un fichier exporté :</translation>
     </message>
     <message>
         <location filename="../../components/settings/advancedtab.cpp" line="178"/>
         <source>Restore saved words and history file using exported file:</source>
-        <translation>Restaurer les mots enregistrés et l&apos;historique de recherche à partir d&apos;un fichier exporté:</translation>
+        <translation>Restaurer les mots enregistrés et l&apos;historique de recherche à partir d&apos;un fichier exporté :</translation>
     </message>
     <message>
         <location filename="../../components/settings/advancedtab.cpp" line="179"/>
@@ -74,7 +74,7 @@
     <message>
         <location filename="../../components/settings/advancedtab.cpp" line="185"/>
         <source>Application language:</source>
-        <translation>Langue d&apos;application:</translation>
+        <translation>Langue d&apos;application :</translation>
     </message>
     <message>
         <location filename="../../components/settings/advancedtab.cpp" line="317"/>
@@ -216,7 +216,7 @@
     <message>
         <location filename="../../components/settings/contacttab.cpp" line="151"/>
         <source>Looking for other Cantonese resources? Try these!</source>
-        <translation>D&apos;autres ressources merveilleuses pour le cantonais:</translation>
+        <translation>D&apos;autres ressources merveilleuses pour le cantonais :</translation>
     </message>
 </context>
 <context>
@@ -1390,7 +1390,7 @@ Veuillez patienter quelques minutes.</translation>
 Debug: Locale: %1, Language: Chinese - Hong Kong</source>
         <translation>Erreur de lecture.
 
-Débogage: Locale: %1, Langue: Cantonais - Hong Kong</translation>
+Débogage : Locale : %1, Langue : Cantonais - Hong Kong</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="71"/>
@@ -1399,7 +1399,7 @@ Débogage: Locale: %1, Langue: Cantonais - Hong Kong</translation>
 Debug: Locale: %1, Language: Chinese - Taiwan</source>
         <translation>Erreur de lecture.
 
-Débogage: Locale: %1, Langue: Chinois - Taïwan</translation>
+Débogage : Locale: %1, Langue : Chinois - Taïwan</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="78"/>
@@ -1408,7 +1408,7 @@ Débogage: Locale: %1, Langue: Chinois - Taïwan</translation>
 Debug: Locale: %1, Language: Chinese - Mainland</source>
         <translation>Erreur de lecture.
 
-Débogage: Locale: %1, Langue: Chinois - Chine continentale</translation>
+Débogage : Locale : %1, Langue : Chinois - Chine continentale</translation>
     </message>
 </context>
 </TS>

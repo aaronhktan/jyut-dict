@@ -1390,7 +1390,7 @@ Veuillez patienter quelques minutes.</translation>
 Debug: Locale: %1, Language: Chinese - Hong Kong</source>
         <translation>Erreur de lecture.
 
-Débogage: Locale: %1, Langue: Chinois - Hong Kong</translation>
+Débogage : Locale : %1, Langue : Chinois - Hong Kong</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="71"/>
@@ -1399,7 +1399,7 @@ Débogage: Locale: %1, Langue: Chinois - Hong Kong</translation>
 Debug: Locale: %1, Language: Chinese - Taiwan</source>
         <translation>Erreur de lecture.
 
-Débogage: Locale: %1, Langue: Chinois - Taïwan</translation>
+Débogage : Locale : %1, Langue : Chinois - Taïwan</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="78"/>
@@ -1408,7 +1408,7 @@ Débogage: Locale: %1, Langue: Chinois - Taïwan</translation>
 Debug: Locale: %1, Language: Chinese - Mainland</source>
         <translation>Erreur de lecture.
 
-Débogage: Locale: %1, Langue: Chinois - Chine continentale</translation>
+Débogage : Locale : %1, Langue : Chinois - Chine continentale</translation>
     </message>
 </context>
 </TS>
