@@ -24,7 +24,7 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="+155"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="+160"/>
         <source>Automatically check for updates on startup:</source>
         <translation>自动检查更新：</translation>
     </message>
@@ -50,7 +50,7 @@
         <translation>导出</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+4"/>
         <source>Restore dictionaries file to last backed up version:</source>
         <translation>使用先前备份嘅词典文件恢复你嘅词典：</translation>
     </message>
@@ -107,40 +107,40 @@
         <translation>导出紧保存嘅词语同埋搜索历史…</translation>
     </message>
     <message>
+        <location line="+45"/>
         <location line="+41"/>
-        <location line="+34"/>
         <source>Dictionary restore succeeded! %1 will now restart.</source>
         <translation>词典恢复成功！%1会立即重新启动。</translation>
     </message>
     <message>
-        <location line="-31"/>
-        <location line="+34"/>
+        <location line="-37"/>
+        <location line="+42"/>
         <source>Dictionary restore failed! %1 will now restart.</source>
         <translation>词典恢复失败！%1会立即重新启动。</translation>
     </message>
     <message>
-        <location line="-32"/>
-        <location line="+39"/>
+        <location line="-38"/>
+        <location line="+47"/>
         <source>Restoring dictionary...</source>
         <translation>恢复紧词典文件…</translation>
     </message>
     <message>
-        <location line="-16"/>
+        <location line="-21"/>
         <source>Exported dictionary file path</source>
         <translation>另存为</translation>
     </message>
     <message>
-        <location line="+46"/>
+        <location line="+54"/>
         <source>Exported saved words and history path</source>
         <translation>另存为</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Saved words and history restore succeeded! %1 will now restart.</source>
         <translation>保存嘅词语同埋搜索历史恢复成功！%1会立即重新启动。</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Saved words and history restore failed! %1 will now restart.</source>
         <translation>保存嘅词语同埋搜索历史恢复失败！%1会立即重新启动。</translation>
     </message>
@@ -150,7 +150,7 @@
         <translation>恢复紧保存嘅词语同埋搜索历史…</translation>
     </message>
     <message>
-        <location line="-309"/>
+        <location line="-330"/>
         <source>Use system language</source>
         <translation>系统默认</translation>
     </message>
@@ -222,7 +222,7 @@
 <context>
     <name>DictionaryTab</name>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="+134"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="+136"/>
         <source>The Dictionaries tab allows you to view information about dictionaries, and add or remove them.</source>
         <translation>你喺“词典”呢一页上可以查看同埋管理储存咗嘅词典。</translation>
     </message>
@@ -383,7 +383,7 @@
 <context>
     <name>EntryViewSentenceCardSection</name>
     <message>
-        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="+85"/>
+        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="+81"/>
         <source>View all sentences →</source>
         <translation>查看所有例句 →</translation>
     </message>
@@ -404,7 +404,7 @@
 <context>
     <name>FavouriteSplitter</name>
     <message>
-        <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="+79"/>
+        <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="+95"/>
         <source>Saved Words</source>
         <translation>已保存嘅词语</translation>
     </message>
@@ -481,7 +481,7 @@
         <translation>数据库迁移失败！</translation>
     </message>
     <message>
-        <location line="+155"/>
+        <location line="+151"/>
         <location line="+395"/>
         <source>&amp;File</source>
         <translation>文件</translation>
@@ -812,7 +812,7 @@ Hang tight!</source>
 <context>
     <name>SQLDatabaseUtils</name>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="+517"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="+519"/>
         <source>Failed to delete source from database...</source>
         <translation>移除词典失败</translation>
     </message>
@@ -827,7 +827,7 @@ Hang tight!</source>
         <translation>移除例句失败</translation>
     </message>
     <message>
-        <location line="+385"/>
+        <location line="+387"/>
         <source>Database versions do not match. Only dictionaries with the same versions can be added.</source>
         <translation>数据库版本唔匹配！净系可以添加一样版本嘅词典。</translation>
     </message>
@@ -889,7 +889,7 @@ Hang tight!</source>
 <context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+145"/>
+        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+140"/>
         <source>Search</source>
         <translation>揾粤语词典…</translation>
     </message>
@@ -950,7 +950,7 @@ Hang tight!</source>
 <context>
     <name>SentenceSplitter</name>
     <message>
-        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="+112"/>
+        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="+107"/>
         <source>Sentences for %1 (%2 result)</source>
         <translation>用“%1“造句:（%2 个结果）</translation>
     </message>
@@ -963,49 +963,19 @@ Hang tight!</source>
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="+194"/>
+        <location filename="../../components/settings/settingstab.cpp" line="+340"/>
         <source>Reset all settings</source>
         <translation>重置所有设置</translation>
     </message>
     <message>
-        <location line="-46"/>
-        <source>Simplified/Traditional display options:</source>
-        <translation>简体/繁体中文显示设置：</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Jyutping/Pinyin display options:</source>
-        <translation>拼音显示设置：</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Pinyin display options:</source>
-        <translation>汉语拼音显示设置：</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <source>Colour words by tone using:</source>
-        <translation>使用拼音填色：</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Jyutping tone colours:</source>
-        <translation>粤语拼音声调颜色：</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>Pinyin tone colours:</source>
-        <translation>汉语拼音声调颜色：</translation>
-    </message>
-    <message>
-        <location line="-29"/>
+        <location line="-89"/>
         <source>Only Simplified</source>
-        <translation>仅显示简体中文</translation>
+        <translation>净系显示简体中文</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Only Traditional</source>
-        <translation>仅显示繁体中文</translation>
+        <translation>净系显示繁体中文</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1018,52 +988,141 @@ Hang tight!</source>
         <translation>优先显示繁体中文</translation>
     </message>
     <message>
+        <location line="-6"/>
+        <source>Character set:</source>
+        <translation>字体：</translation>
+    </message>
+    <message>
         <location line="+2"/>
-        <source>Only Jyutping</source>
-        <translation>仅显示粤语拼音</translation>
+        <source>	Show simplified/traditional characters:</source>
+        <translation>词条字体：</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>In search results and examples:</source>
+        <translation>查询结果同埋例句：</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Show pronunciation for:</source>
+        <translation>词条拼音：</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Only Pinyin</source>
-        <translation>仅显示汉语拼音</translation>
+        <source>only Cantonese</source>
+        <translation>净系显示粤语拼音</translation>
     </message>
     <message>
         <location line="+1"/>
-        <source>Both, Prefer Jyutping</source>
+        <source>only Mandarin</source>
+        <translation>净系显示普通话拼音</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>both languages, prefer Cantonese</source>
         <translation>优先显示粤语拼音</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Both, Prefer Pinyin</source>
-        <translation>优先显示汉语拼音</translation>
-    </message>
-    <message>
         <location line="+2"/>
-        <source>Pinyin with diacritics</source>
-        <translation>用符号嘅拼音</translation>
+        <source>both languages, prefer Mandarin</source>
+        <translation>优先显示普通话拼音</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>Pinyin with numbers</source>
-        <translation>用数字嘅拼音</translation>
+        <location line="+3"/>
+        <location line="+16"/>
+        <source>Show Cantonese:</source>
+        <translation>粤语显示下列拼音：</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>No colours</source>
-        <translation>唔填色</translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location line="-15"/>
+        <location line="+16"/>
         <source>Jyutping</source>
         <translation>粤语拼音</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-15"/>
+        <location line="+16"/>
+        <source>Yale</source>
+        <translation>耶鲁拼音</translation>
+    </message>
+    <message>
+        <location line="-15"/>
+        <location line="+16"/>
+        <source>Cantonese IPA</source>
+        <translation>国际音标</translation>
+    </message>
+    <message>
+        <location line="-13"/>
+        <location line="+15"/>
+        <source>Show Mandarin:</source>
+        <translation>普通话显示下列拼音：</translation>
+    </message>
+    <message>
+        <location line="-14"/>
+        <location line="+15"/>
         <source>Pinyin</source>
         <translation>汉语拼音</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="-14"/>
+        <location line="+15"/>
+        <source>Pinyin with digits</source>
+        <translation>汉语拼音（数字）</translation>
+    </message>
+    <message>
+        <location line="-14"/>
+        <location line="+15"/>
+        <source>Zhuyin</source>
+        <translation>注音</translation>
+    </message>
+    <message>
+        <location line="-14"/>
+        <location line="+15"/>
+        <source>Mandarin IPA</source>
+        <translation>国际音标</translation>
+    </message>
+    <message>
+        <location line="-12"/>
+        <source>In the header at the top of an entry:</source>
+        <translation>词条标题：</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Tone colouring:</source>
+        <translation>字体颜色作为拼音声调提示：</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Colour characters by tone using:</source>
+        <translation>使用边一种拼音：</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>No Colours</source>
+        <translation>唔填色</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Cantonese</source>
+        <translation>粤语</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mandarin</source>
+        <translation>普通话</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Cantonese tone colours:</source>
+        <translation>拼音声调嘅对应颜色（粤语）：</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Mandarin tone colours:</source>
+        <translation>	拼音声调嘅对应颜色（普通话）：</translation>
+    </message>
+    <message>
+        <location line="+7"/>
         <location line="+14"/>
         <source>No Tone</source>
         <translation>未知声调</translation>
@@ -1083,7 +1142,7 @@ Hang tight!</source>
 <context>
     <name>SettingsWindow</name>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="+123"/>
+        <location filename="../../windows/settingswindow.cpp" line="+118"/>
         <source>General</source>
         <translation>通用</translation>
     </message>
@@ -1116,7 +1175,7 @@ Hang tight!</source>
 <context>
     <name>UpdateAvailableWindow</name>
     <message>
-        <location filename="../../windows/updatewindow.cpp" line="+135"/>
+        <location filename="../../windows/updatewindow.cpp" line="+130"/>
         <source>A new version of %1 is available!</source>
         <translation>%1嘅新版本已可用！</translation>
     </message>
@@ -1187,18 +1246,38 @@ Hang tight!</source>
     <name>strings</name>
     <message>
         <location filename="../../logic/strings/strings.h" line="+16"/>
-        <location line="+73"/>
+        <location line="+77"/>
         <source>JP</source>
         <translation>粤拼</translation>
     </message>
     <message>
-        <location line="-72"/>
-        <location line="+73"/>
-        <source>PY</source>
-        <translation>拼音</translation>
+        <location line="-76"/>
+        <source>YL</source>
+        <translation>耶魯粵拼</translation>
     </message>
     <message>
-        <location line="-72"/>
+        <location line="+1"/>
+        <source>YI</source>
+        <translation>国际音标</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <location line="+75"/>
+        <source>PY</source>
+        <translation>汉语拼音</translation>
+    </message>
+    <message>
+        <location line="-74"/>
+        <source>ZY</source>
+        <translation>注音</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>ZI</source>
+        <translation>国际音标</translation>
+    </message>
+    <message>
+        <location line="+1"/>
         <source>DEFINITIONS</source>
         <translation>解释</translation>
     </message>
