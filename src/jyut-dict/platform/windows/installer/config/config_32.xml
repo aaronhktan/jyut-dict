@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>Jyut Dictionary</Name>
+    <Version>2022-02-07</Version>
+    <Title>Jyut Dictionary</Title>
+    <Publisher>Aaron Tan</Publisher>
+    <StartMenuDir>Jyut Dictionary</StartMenuDir>
+    <TargetDir>@ApplicationsDir@/Jyut Dictionary</TargetDir>
+</Installer>
