@@ -1,6 +1,9 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+#include <QMetaType>
+
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -29,6 +32,10 @@ const std::string DEFAULT_PINYIN_TONE_3 = "#18a6f2";
 const std::string DEFAULT_PINYIN_TONE_4 = "#9e77ff";
 const std::string DEFAULT_PINYIN_TONE_5 = "grey";
 
-}
+enum class InterfaceSize : uint32_t { SMALLER, SMALL, NORMAL, LARGE, LARGER };
+
+} // namespace Settings
+
+Q_DECLARE_METATYPE(Settings::InterfaceSize);
 
 #endif // SETTINGS_H

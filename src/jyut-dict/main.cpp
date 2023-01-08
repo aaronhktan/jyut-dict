@@ -24,6 +24,8 @@ int main(int argc, char *argv[])
     // Prevents some UI lag
     QThreadPool::globalInstance()->setMaxThreadCount(16);
 
+    // Required to marshal types to QVariant, so these values can be stored
+    // by QSettings or used in a QListModel
     qRegisterMetaType<EntryCharactersOptions>("EntryCharactersOptions");
     qRegisterMetaTypeStreamOperators<EntryCharactersOptions>("EntryCharactersOptions");
     qRegisterMetaType<EntryPhoneticOptions>("EntryPhoneticOptions");
@@ -39,6 +41,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<searchTermHistoryItem>();
     qRegisterMetaType<conflictingDictionaryMetadata>(
         "conflictingDictionaryNamesMetadata");
+    qRegisterMetaType<Settings::InterfaceSize>();
 
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
