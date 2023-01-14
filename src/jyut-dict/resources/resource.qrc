@@ -58,5 +58,8 @@
         <file>images/check_box_unchecked.svg</file>
         <file>images/radio_button_checked.svg</file>
         <file>images/radio_button_unchecked.svg</file>
+        <file>images/text_disabled.png</file>
+        <file>images/text_inverted.png</file>
+        <file>images/text.png</file>
     </qresource>
 </RCC>

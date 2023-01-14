@@ -4,6 +4,7 @@
 #include "components/settings/contacttab.h"
 #include "components/settings/dictionarytab.h"
 #include "components/settings/settingstab.h"
+#include "components/settings/texttab.h"
 #include "logic/utils/utils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -88,6 +89,9 @@ void SettingsWindow::setupUI()
     SettingsTab *generalTab = new SettingsTab{this};
     _contentStackedWidget->addWidget(generalTab);
 
+    TextTab *textTab = new TextTab{this};
+    _contentStackedWidget->addWidget(textTab);
+
     DictionaryTab *dictionaryTab = new DictionaryTab{_manager, this};
     _contentStackedWidget->addWidget(dictionaryTab);
 
@@ -116,9 +120,10 @@ void SettingsWindow::translateUI()
     }
 
     _actions[0]->setText(tr("General"));
-    _actions[1]->setText(tr("Dictionaries"));
-    _actions[2]->setText(tr("Advanced"));
-    _actions[3]->setText(tr("Contact"));
+    _actions[1]->setText(tr("Text"));
+    _actions[2]->setText(tr("Dictionaries"));
+    _actions[3]->setText(tr("Advanced"));
+    _actions[4]->setText(tr("Contact"));
 
 #ifdef Q_OS_MAC
     setWindowTitle(tr("Preferences"));
@@ -288,10 +293,16 @@ void SettingsWindow::setStyle(bool use_dark)
 
 void SettingsWindow::setButtonIcon(bool use_dark, int index)
 {
-    // For these images, export as 96px width, and center on 120px canvas.
+    // For these images, export using Inkscape drawing @ 96px image size width,
+    // then use Gimp to center on 120px canvas with a transparent background.
+    // To generate inverted, use Colors -> Invert in Gimp.
+    // To generate disabled, use Colors -> Brightness-Contrast to -60 in Gimp.
     QIcon settings = QIcon(":/images/settings.png");
     QIcon settings_inverted = QIcon(":/images/settings_inverted.png");
     QIcon settings_disabled = QIcon(":/images/settings_disabled.png");
+    QIcon text = QIcon(":/images/text.png");
+    QIcon text_inverted = QIcon(":/images/text_inverted.png");
+    QIcon text_disabled = QIcon(":/images/text_disabled.png");
     QIcon book = QIcon(":/images/book.png");
     QIcon book_inverted = QIcon(":/images/book_inverted.png");
     QIcon book_disabled = QIcon(":/images/book_disabled.png");
@@ -305,20 +316,23 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
     // Set icons for each tab
     if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
         _actions[0]->setIcon(settings_disabled);
-        _actions[1]->setIcon(book_disabled);
-        _actions[2]->setIcon(sliders_disabled);
-        _actions[3]->setIcon(help_disabled);
+        _actions[1]->setIcon(text_disabled);
+        _actions[2]->setIcon(book_disabled);
+        _actions[3]->setIcon(sliders_disabled);
+        _actions[4]->setIcon(help_disabled);
     } else {
         if (use_dark) {
             _actions[0]->setIcon(settings_inverted);
-            _actions[1]->setIcon(book_inverted);
-            _actions[2]->setIcon(sliders_inverted);
-            _actions[3]->setIcon(help_inverted);
+            _actions[1]->setIcon(text_inverted);
+            _actions[2]->setIcon(book_inverted);
+            _actions[3]->setIcon(sliders_inverted);
+            _actions[4]->setIcon(help_inverted);
         } else {
             _actions[0]->setIcon(index == 0 ? settings_inverted : settings);
-            _actions[1]->setIcon(index == 1 ? book_inverted : book);
-            _actions[2]->setIcon(index == 2 ? sliders_inverted : sliders);
-            _actions[3]->setIcon(index == 3 ? help_inverted : help);
+            _actions[1]->setIcon(index == 1 ? text_inverted : text);
+            _actions[2]->setIcon(index == 1 ? book_inverted : book);
+            _actions[3]->setIcon(index == 2 ? sliders_inverted : sliders);
+            _actions[4]->setIcon(index == 3 ? help_inverted : help);
         }
     }
 

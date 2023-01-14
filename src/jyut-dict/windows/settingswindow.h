@@ -16,7 +16,7 @@
 
 // The SettingsWindow allows users to modify settings. Surprise!
 
-constexpr auto NUM_OF_TABS = 4;
+constexpr auto NUM_OF_TABS = 5;
 
 class SettingsWindow : public QMainWindow
 {
