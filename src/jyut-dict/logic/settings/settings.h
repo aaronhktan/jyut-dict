@@ -32,7 +32,13 @@ const std::string DEFAULT_PINYIN_TONE_3 = "#18a6f2";
 const std::string DEFAULT_PINYIN_TONE_4 = "#9e77ff";
 const std::string DEFAULT_PINYIN_TONE_5 = "grey";
 
-enum class InterfaceSize : uint32_t { SMALLER, SMALL, NORMAL, LARGE, LARGER };
+enum class InterfaceSize : uint32_t {
+    SMALLER = 1,
+    SMALL,
+    NORMAL,
+    LARGE,
+    LARGER
+};
 
 } // namespace Settings
 

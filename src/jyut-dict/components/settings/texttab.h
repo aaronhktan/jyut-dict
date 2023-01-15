@@ -1,13 +1,14 @@
 #ifndef TEXTTAB_H
 #define TEXTTAB_H
 
-#include "logic/settings/settingsutils.h"
-
 #include <QComboBox>
 #include <QEvent>
 #include <QFormLayout>
+#include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
+#include <QSettings>
+#include <QSlider>
 #include <QWidget>
 
 constexpr auto COLOUR_BUTTON_STYLE
@@ -40,11 +41,15 @@ private:
 
     void initializeCharacterComboBox(QComboBox &characterCombobox);
 
+    void initializeInterfaceSizeWidget(QWidget &widget);
+
     void initializeColourComboBox(QComboBox &colourCombobox);
     void initializeJyutpingColourWidget(QWidget &jyutpingColourWidget);
     void initializePinyinColourWidget(QWidget &pinyinColourWidget);
 
     void setCharacterComboBoxDefault(QComboBox &characterCombobox);
+
+    void setInterfaceSizeWidgetDefault(QWidget &widget);
 
     void setColourComboBoxDefault(QComboBox &colourCombobox);
     void setJyutpingColourWidgetDefault(QWidget &jyutpingColourWidget);
@@ -59,6 +64,13 @@ private:
 
     QLabel *_characterTitleLabel;
     QComboBox *_characterCombobox;
+
+    QLabel *_interfaceSizeTitleLabel;
+    QWidget *_interfaceSizeWidget;
+    QGridLayout *_interfaceSizeLayout;
+    QSlider *_interfaceSizeSlider;
+    QLabel *_interfaceSizeSmallLabel;
+    QLabel *_interfaceSizeLargeLabel;
 
     QLabel *_colourTitleLabel;
     QComboBox *_colourCombobox;

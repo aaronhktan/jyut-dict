@@ -5,7 +5,7 @@
 #include "components/settings/dictionarytab.h"
 #include "components/settings/settingstab.h"
 #include "components/settings/texttab.h"
-#include "logic/utils/utils.h"
+#include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)

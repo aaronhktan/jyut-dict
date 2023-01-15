@@ -3,6 +3,7 @@
 #include "logic/entry/entrycharactersoptions.h"
 #include "logic/entry/entryphoneticoptions.h"
 #include "logic/settings/settings.h"
+#include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined(Q_OS_LINUX)
@@ -60,6 +61,21 @@ void TextTab::setupUI()
     _characterCombobox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     initializeCharacterComboBox(*_characterCombobox);
 
+    QFrame *_interfaceSizeDivider = new QFrame{this};
+    _interfaceSizeDivider->setObjectName("divider");
+    _interfaceSizeDivider->setFrameShape(QFrame::HLine);
+    _interfaceSizeDivider->setFrameShadow(QFrame::Raised);
+    _interfaceSizeDivider->setFixedHeight(1);
+
+    _interfaceSizeTitleLabel = new QLabel{this};
+    _interfaceSizeWidget = new QWidget{this};
+    _interfaceSizeLayout = new QGridLayout{_interfaceSizeWidget};
+    _interfaceSizeLayout->setContentsMargins(0, 0, 0, 0);
+    _interfaceSizeSlider = new QSlider{this};
+    _interfaceSizeSmallLabel = new QLabel{this};
+    _interfaceSizeLargeLabel = new QLabel{this};
+    initializeInterfaceSizeWidget(*_interfaceSizeWidget);
+
     QFrame *_divider = new QFrame{this};
     _divider->setObjectName("divider");
     _divider->setFrameShape(QFrame::HLine);
@@ -77,6 +93,11 @@ void TextTab::setupUI()
 
     _tabLayout->addRow(_characterTitleLabel);
     _tabLayout->addRow(" ", _characterCombobox);
+
+    _tabLayout->addRow(_interfaceSizeDivider);
+
+    _tabLayout->addRow(_interfaceSizeTitleLabel);
+    _tabLayout->addRow(" ", _interfaceSizeWidget);
 
     _tabLayout->addRow(_divider);
 
@@ -107,6 +128,12 @@ void TextTab::translateUI()
     _characterCombobox->setItemText(1, tr("Only Traditional"));
     _characterCombobox->setItemText(2, tr("Both, Prefer Simplified"));
     _characterCombobox->setItemText(3, tr("Both, Prefer Traditional"));
+
+    _interfaceSizeTitleLabel->setText("<b>" + tr("Interface:") + "</b>");
+    static_cast<QLabel *>(_tabLayout->labelForField(_interfaceSizeWidget))
+        ->setText(tr("Interface size:"));
+    _interfaceSizeSmallLabel->setText("Smallest");
+    _interfaceSizeLargeLabel->setText("Largest");
 
     _colourTitleLabel->setText("<b>" + tr("Tone colouring:") + "</b>");
     static_cast<QLabel *>(_tabLayout->labelForField(_colourCombobox))
@@ -203,6 +230,39 @@ void TextTab::initializeCharacterComboBox(QComboBox &characterCombobox)
                                     characterCombobox.itemData(index));
                 _settings->sync();
             });
+}
+
+void TextTab::initializeInterfaceSizeWidget(QWidget &widget)
+{
+    _interfaceSizeSlider->setRange(1, 5);
+    _interfaceSizeSlider->setOrientation(Qt::Horizontal);
+    _interfaceSizeSlider->setTracking(false);
+    _interfaceSizeSlider->setTickInterval(1);
+    _interfaceSizeSlider->setTickPosition(QSlider::TicksBelow);
+    _interfaceSizeSlider->setMinimumWidth(300);
+
+    _interfaceSizeLayout->addWidget(_interfaceSizeSlider, 0, 0, 1, 5);
+    _interfaceSizeLayout->addWidget(_interfaceSizeSmallLabel,
+                                    1,
+                                    0,
+                                    1,
+                                    1,
+                                    Qt::AlignTop | Qt::AlignLeft);
+    _interfaceSizeLayout->addWidget(_interfaceSizeLargeLabel,
+                                    1,
+                                    4,
+                                    1,
+                                    1,
+                                    Qt::AlignTop | Qt::AlignRight);
+
+    connect(_interfaceSizeSlider, &QSlider::valueChanged, this, [&](int value) {
+        _settings->setValue("Interface/size",
+                            QVariant::fromValue<Settings::InterfaceSize>(
+                                static_cast<Settings::InterfaceSize>(value)));
+        _settings->sync();
+    });
+
+    setInterfaceSizeWidgetDefault(widget);
 }
 
 void TextTab::initializeColourComboBox(QComboBox &colourCombobox)
@@ -348,6 +408,15 @@ void TextTab::setCharacterComboBoxDefault(QComboBox &characterCombobox)
                              EntryCharactersOptions::PREFER_TRADITIONAL))));
 }
 
+void TextTab::setInterfaceSizeWidgetDefault(QWidget &widget)
+{
+    widget.findChild<QSlider *>()->setSliderPosition(static_cast<int>(
+        _settings
+            ->value("Interface/size",
+                    QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+            .value<Settings::InterfaceSize>()));
+}
+
 void TextTab::setColourComboBoxDefault(QComboBox &colourCombobox)
 {
     colourCombobox.setCurrentIndex(colourCombobox.findData(
@@ -416,6 +485,8 @@ void TextTab::resetSettings(void)
     Settings::pinyinToneColours = Settings::defaultPinyinToneColours;
 
     setCharacterComboBoxDefault(*_characterCombobox);
+
+    setInterfaceSizeWidgetDefault(*_interfaceSizeWidget);
 
     setColourComboBoxDefault(*_colourCombobox);
     setJyutpingColourWidgetDefault(*_jyutpingColourWidget);
