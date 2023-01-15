@@ -103,6 +103,16 @@ void SettingsWindow::setupUI()
 
     setCentralWidget(_contentStackedWidget);
 
+    connect(advancedTab,
+            &AdvancedTab::settingsReset,
+            generalTab,
+            &SettingsTab::resetSettings);
+
+    connect(advancedTab,
+            &AdvancedTab::settingsReset,
+            textTab,
+            &TextTab::resetSettings);
+
     // Customize the look of the toolbar to fit in better with platform styles
     setStyle(Utils::isDarkMode());
 }
