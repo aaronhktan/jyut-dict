@@ -1261,6 +1261,10 @@ std::string constructRomanisationQuery(const std::vector<std::string> &words,
                                        const char *delimiter,
                                        const bool surroundWithQuotes)
 {
+    if (words.empty()) {
+        return "";
+    }
+
     const char *quotes = surroundWithQuotes ? "\"" : "";
     std::ostringstream string;
     for (size_t i = 0; i < words.size() - 1; i++) {
