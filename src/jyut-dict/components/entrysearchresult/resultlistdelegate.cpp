@@ -88,10 +88,9 @@ void ResultListDelegate::paint(QPainter *painter,
                   ->value("Preview/mandarinPronunciationOptions",
                           QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
                   .value<MandarinOptions>();
-        entry.generatePhonetic(cantoneseOptions, mandarinOptions);
-
         use_colours = !(option.state & QStyle::State_Selected);
     }
+    entry.generatePhonetic(cantoneseOptions, mandarinOptions);
 
     QRect r = option.rect;
     QRect boundingRect;
