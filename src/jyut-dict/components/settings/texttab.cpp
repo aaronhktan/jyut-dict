@@ -123,7 +123,11 @@ void TextTab::translateUI()
 
     _characterTitleLabel->setText("<b>" + tr("Character set:") + "</b>");
     static_cast<QLabel *>(_tabLayout->labelForField(_characterCombobox))
+#ifdef Q_OS_MAC
         ->setText(tr("\tShow simplified/traditional characters:"));
+#else
+        ->setText(tr("Show simplified/traditional characters:"));
+#endif
     _characterCombobox->setItemText(0, tr("Only Simplified"));
     _characterCombobox->setItemText(1, tr("Only Traditional"));
     _characterCombobox->setItemText(2, tr("Both, Prefer Simplified"));

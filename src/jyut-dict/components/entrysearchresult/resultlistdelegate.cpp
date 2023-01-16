@@ -300,7 +300,7 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
         }
 #endif
     } else {
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
         switch (interfaceSize) {
         case Settings::InterfaceSize::SMALLER: {
             return QSize(100, 75);
@@ -315,7 +315,7 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
             return QSize(100, 100);
         }
         case Settings::InterfaceSize::LARGER: {
-            return QSize(100, 105);
+            return QSize(100, 110);
         }
         }
 #else

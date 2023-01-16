@@ -48,6 +48,8 @@ private:
     void setStyle(bool use_dark);
     bool _paletteRecentlyChanged = false;
 
+    std::unique_ptr<QSettings> _settings;
+
     QHBoxLayout *_toolBarLayout;
     QWidget *_toolBarWidget;
 

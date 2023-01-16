@@ -114,6 +114,8 @@ void SearchOptionsRadioGroupBox::setupUI()
 
     setLayout(_layout);
     setFlat(true);
+
+    setStyle(Utils::isDarkMode());
 }
 
 void SearchOptionsRadioGroupBox::translateUI()
@@ -155,7 +157,7 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
         static_cast<unsigned long>(interfaceSize - 1));
 
 #ifdef Q_OS_WIN
-    int h6FontSize = Settings::h6FontSize.at(
+    int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
 
     setStyleSheet(QString{"QRadioButton[isHan=\"true\"] { "
@@ -167,10 +169,13 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
                           "} "
                           ""
                           "QGroupBox { "
-                          "   border: none; "
+                          "   border: 0; "
                           "} "}
                       .arg(h6FontSizeHan)
                       .arg(bodyFontSize));
+
+//    setStyleSheet("QRadioButton[isHan=\"true\"] { font-size: 12px; }"
+//                  "QGroupBox { border: 0; }");
 #else
     int h6FontSize = Settings::h6FontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));

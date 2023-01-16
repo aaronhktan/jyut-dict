@@ -1,6 +1,8 @@
 #include "maintoolbar.h"
 
 #include "logic/search/searchoptionsmediator.h"
+#include "logic/settings/settings.h"
+#include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -21,6 +23,7 @@ MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
                                     this);
 
     _searchOptions = new SearchOptionsMediator{};
+    _settings = Settings::getSettings(this);
 
 #ifdef Q_OS_LINUX
     // For some reason, if we disable the border first before creating the
@@ -171,6 +174,17 @@ void MainToolBar::setStyle(bool use_dark)
     } else {
         setStyleSheet("QToolBar { background-color: white; }");
     }
+
+    Settings::InterfaceSize interfaceSize
+        = _settings
+              ->value("Interface/size",
+                      QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+              .value<Settings::InterfaceSize>();
+    if (interfaceSize == Settings::InterfaceSize::LARGER) {
+        setMinimumHeight(55);
+    } else {
+        setMinimumHeight(50);
+    }
 #endif
 }
 
@@ -223,4 +237,5 @@ void MainToolBar::updateStyleRequested(void)
     QEvent event{QEvent::PaletteChange};
     QCoreApplication::sendEvent(_searchBar, &event);
     QCoreApplication::sendEvent(_optionsBox, &event);
+    setStyle(Utils::isDarkMode());
 }

@@ -45,7 +45,7 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
 
     setStyle(Utils::isDarkMode());
 
-    setMinimumWidth(parent->width() / 2);
+    setMinimumWidth(parent->width() / 4);
 
     _search = sqlSearch;
 
@@ -160,26 +160,28 @@ void SearchLineEdit::setStyle(bool use_dark)
 
 #ifdef Q_OS_WIN
     if (use_dark) {
-            setStyleSheet(QString{
-                "QLineEdit { "
-                "  background-color: #586365; "
-                "  border: 1px solid black; "
-                "   font-size: %1px; "
-                "   icon-size: %1px; "
-                "  selection-background-color: palette(alternate-base); "
-                "} "}.arg(std::to_string(h6FontSize).c_str())));
-            _searchLineEdit->setIcon(search_inverted);
-            _clearLineEdit->setIcon(clear_inverted);
+        setStyleSheet(
+            QString{"QLineEdit { "
+                    "  background-color: #586365; "
+                    "  border: 1px solid black; "
+                    "  font-size: %1px; "
+                    "  icon-size: %1px; "
+                    "  selection-background-color: palette(alternate-base); "
+                    "} "}
+                .arg(std::to_string(h6FontSize).c_str()));
+        _searchLineEdit->setIcon(search_inverted);
+        _clearLineEdit->setIcon(clear_inverted);
     } else {
-            setStyleSheet(QString{"QLineEdit { "
-                                  "   background-color: #ffffff; "
-                                  "   border-color: black; "
-                                  "   border-width: 2px; "
-                                  "   font-size: %1px; "
-                                  "   icon-size: %1px; "
-                                  "} "}.arg(std::to_string(h6FontSize).c_str())));
-            _searchLineEdit->setIcon(search);
-            _clearLineEdit->setIcon(clear);
+        setStyleSheet(QString{"QLineEdit { "
+                              "   background-color: #ffffff; "
+                              "   border-color: black; "
+                              "   border-width: 2px; "
+                              "   font-size: %1px; "
+                              "   icon-size: %1px; "
+                              "} "}
+                          .arg(std::to_string(h6FontSize).c_str()));
+        _searchLineEdit->setIcon(search);
+        _clearLineEdit->setIcon(clear);
     }
 #else
     if (use_dark) {
