@@ -103,6 +103,11 @@ void SettingsWindow::setupUI()
 
     setCentralWidget(_contentStackedWidget);
 
+    connect(textTab,
+            &TextTab::updateStyle,
+            this,
+            &SettingsWindow::updateStyleRequested);
+
     connect(advancedTab,
             &AdvancedTab::settingsReset,
             generalTab,
@@ -376,4 +381,9 @@ void SettingsWindow::paintWithApplicationState(Qt::ApplicationState state)
 {
     (void) (state);
     setStyle(Utils::isDarkMode());
+}
+
+void SettingsWindow::updateStyleRequested(void)
+{
+    emit updateStyle();
 }

@@ -81,6 +81,9 @@ private:
 
     std::unique_ptr<QSettings> _settings;
 
+signals:
+    void updateStyle(void);
+
 public slots:
     void resetSettings(void);
 };

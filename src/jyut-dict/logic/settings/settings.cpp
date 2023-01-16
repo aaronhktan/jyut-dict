@@ -62,4 +62,12 @@ namespace Settings {
         24,
         28,
     };
+
+    const std::vector<int> h5FontSize = {
+        12,
+        14,
+        16,
+        20,
+        24,
+    };
 }

@@ -50,8 +50,13 @@ private:
 
     bool _paletteRecentlyChanged = false;
 
+signals:
+    void updateStyle(void);
+
 public slots:
     void paintWithApplicationState(Qt::ApplicationState state);
+
+    void updateStyleRequested(void);
 };
 
 #endif // SETTINGSWINDOW_H

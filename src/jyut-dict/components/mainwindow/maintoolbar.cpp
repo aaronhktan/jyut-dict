@@ -217,3 +217,9 @@ void MainToolBar::forwardSearchHistoryItem(const searchTermHistoryItem &pair) co
     _optionsBox->setOption(static_cast<SearchParameters>(pair.second));
     _searchBar->setText(pair.first.c_str());
 }
+
+void MainToolBar::updateStyleRequested(void)
+{
+    QEvent event{QEvent::PaletteChange};
+    QCoreApplication::sendEvent(_searchBar, &event);
+}

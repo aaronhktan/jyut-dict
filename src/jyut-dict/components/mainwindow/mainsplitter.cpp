@@ -77,11 +77,6 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
 #endif
 }
 
-void MainSplitter::translateUI(void)
-{
-    static_cast<ResultListModel *>(_model)->setWelcome();
-}
-
 void MainSplitter::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::LanguageChange) {
@@ -104,6 +99,11 @@ void MainSplitter::openCurrentSelectionInNewWindow(void)
     handleDoubleClick(entryIndex);
 }
 
+void MainSplitter::translateUI(void)
+{
+    static_cast<ResultListModel *>(_model)->setWelcome();
+}
+
 void MainSplitter::forwardViewHistoryItem(const Entry &entry)
 {
     // Disable adding this item to history; _addToHistory should be reset as
@@ -118,6 +118,11 @@ void MainSplitter::forwardViewHistoryItem(const Entry &entry)
                             entry.getTraditional().c_str(),
                             entry.getJyutping().c_str(),
                             entry.getPinyin().c_str());
+}
+
+void MainSplitter::updateStyleRequested(void)
+{
+    static_cast<ResultListView *>(_resultListView)->paintWithApplicationState();
 }
 
 void MainSplitter::prepareEntry(Entry &entry)

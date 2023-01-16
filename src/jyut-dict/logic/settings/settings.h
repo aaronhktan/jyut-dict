@@ -43,6 +43,7 @@ enum class InterfaceSize : uint32_t {
 const extern std::vector<int> bodyFontSize;
 const extern std::vector<int> bodyFontSizeHan;
 const extern std::vector<int> h4FontSize;
+const extern std::vector<int> h5FontSize;
 
 } // namespace Settings
 

@@ -619,12 +619,12 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
     }
 }
 
-void MainWindow::forwardSearchHistoryItem(const searchTermHistoryItem &pair) const
+void MainWindow::forwardSearchHistoryItem(const searchTermHistoryItem &pair)
 {
     emit searchHistoryClicked(pair);
 }
 
-void MainWindow::forwardViewHistoryItem(const Entry &entry) const
+void MainWindow::forwardViewHistoryItem(const Entry &entry)
 {
     emit viewHistoryClicked(entry);
 }
@@ -996,6 +996,11 @@ void MainWindow::openSettingsWindow(void)
 
     _settingsWindow = new SettingsWindow{_manager, this};
     _settingsWindow->show();
+
+    connect(_settingsWindow,
+            &SettingsWindow::updateStyle,
+            this,
+            &MainWindow::updateStyleRequested);
 }
 
 void MainWindow::openHistoryWindow(void)
@@ -1133,6 +1138,12 @@ void MainWindow::notifyDatabaseMigration(void)
            "This might take a few minutes.\nHang tight!"));
     _databaseMigrationDialog->setRange(0, 0);
     _databaseMigrationDialog->setValue(0);
+}
+
+void MainWindow::updateStyleRequested(void)
+{
+    _mainToolBar->updateStyleRequested();
+    _mainSplitter->updateStyleRequested();
 }
 
 // Must close settings window, since settings window does not pass the main

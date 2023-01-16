@@ -130,8 +130,8 @@ private:
     void closeEvent(QCloseEvent *event) override;
 
 signals:
-    void searchHistoryClicked(const searchTermHistoryItem &pair) const;
-    void viewHistoryClicked(const Entry &entry) const;
+    void searchHistoryClicked(const searchTermHistoryItem &pair);
+    void viewHistoryClicked(const Entry &entry);
 
 public slots:
     void notifyUpdateAvailable(bool updateAvailable,
@@ -140,8 +140,9 @@ public slots:
                                std::string description,
                                bool showIfNoUpdate = false);
     void notifyDatabaseMigration(void);
-    void forwardSearchHistoryItem(const searchTermHistoryItem &pair) const;
-    void forwardViewHistoryItem(const Entry &entry) const;
+    void forwardSearchHistoryItem(const searchTermHistoryItem &pair);
+    void forwardViewHistoryItem(const Entry &entry);
+    void updateStyleRequested(void);
 };
 
 #endif // MAINWINDOW_H

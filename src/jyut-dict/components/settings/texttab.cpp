@@ -260,6 +260,8 @@ void TextTab::initializeInterfaceSizeWidget(QWidget &widget)
                             QVariant::fromValue<Settings::InterfaceSize>(
                                 static_cast<Settings::InterfaceSize>(value)));
         _settings->sync();
+
+        emit updateStyle();
     });
 
     setInterfaceSizeWidgetDefault(widget);

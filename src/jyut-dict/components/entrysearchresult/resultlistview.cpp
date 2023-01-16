@@ -1,7 +1,6 @@
 #include "resultlistview.h"
 
-#include "components/entrysearchresult/resultlistmodel.h"
-#include "logic/search/sqlsearch.h"
+#include "components/entrysearchresult/resultlistdelegate.h"
 
 #include <QGuiApplication>
 
@@ -40,5 +39,6 @@ void ResultListView::wheelEvent(QWheelEvent *event)
 
 void ResultListView::paintWithApplicationState()
 {
-    viewport()->update(); // Forces repaint of viewing area.
+    viewport()->update();         // Forces repaint of viewing area
+    scheduleDelayedItemsLayout(); // Forces items to resize themselves
 }
