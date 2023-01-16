@@ -118,6 +118,11 @@ void SettingsWindow::setupUI()
             textTab,
             &TextTab::resetSettings);
 
+    connect(advancedTab,
+            &AdvancedTab::settingsReset,
+            this,
+            &SettingsWindow::updateStyleRequested);
+
     // Customize the look of the toolbar to fit in better with platform styles
     setStyle(Utils::isDarkMode());
 }
