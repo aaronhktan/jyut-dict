@@ -96,13 +96,24 @@ void ResultListDelegate::paint(QPainter *painter,
     QRect r = option.rect;
     QRect boundingRect;
     QFont font = painter->font();
+    int interfaceSize = static_cast<int>(
+        _settings
+            ->value("Interface/size",
+                    QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+            .value<Settings::InterfaceSize>());
+    int h4FontSize = Settings::h4FontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int bodyFontSize = Settings::bodyFontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
+        static_cast<unsigned long>(interfaceSize - 1));
 
     // Chinese characters
 #ifdef Q_OS_WIN
     QFont oldFont = font;
     font = QFont("Microsoft Yahei");
 #endif
-    font.setPixelSize(20);
+    font.setPixelSize(h4FontSize);
     painter->setFont(font);
     r = option.rect.adjusted(11, 11, -11, 0);
     QFontMetrics metrics(font);
@@ -135,9 +146,9 @@ void ResultListDelegate::paint(QPainter *painter,
 #endif
     QString snippet;
     if (isEmptyEntry) {
-        font.setPixelSize(14);
+        font.setPixelSize(bodyFontSize + 2);
         painter->setFont(font);
-        r = r.adjusted(0, 28, 0, 0);
+        r = r.adjusted(0, h4FontSize + 10, 0, 0);
         metrics = QFontMetrics(font);
         QString phonetic = metrics.elidedText(entry.getJyutping().c_str(),
                                               Qt::ElideRight,
@@ -146,10 +157,10 @@ void ResultListDelegate::paint(QPainter *painter,
 
         if (Settings::isCurrentLocaleHan()) {
             r = r.adjusted(0, boundingRect.height() + 5, 0, 0);
-            font.setPixelSize(13);
+            font.setPixelSize(bodyFontSizeHan);
         } else {
             r = r.adjusted(0, boundingRect.height() + 10, 0, 0);
-            font.setPixelSize(11);
+            font.setPixelSize(bodyFontSize);
         }
         painter->setFont(font);
         painter->save();
@@ -165,9 +176,9 @@ void ResultListDelegate::paint(QPainter *painter,
         textLayout->beginLayout();
 
         // Define start and end y coordinates
-        // max height of label is three lines, so height * 3
+        // max height of label is four lines, so height * 4
         int y = r.y();
-        int height = y + metrics.height() * 3;
+        int height = y + metrics.height() * 4;
 
         for (;;) {
             QTextLine line = textLayout->createLine();
@@ -205,9 +216,12 @@ void ResultListDelegate::paint(QPainter *painter,
         delete textLayout;
         painter->restore();
     } else {
-        font.setPixelSize(12);
+        font.setPixelSize(bodyFontSize);
         painter->setFont(font);
-        r = r.adjusted(0, 30, 0, 0);
+        // We can't get a bounding rect from QAbstractTextDocumentLayout::draw(),
+        // so we have to manually adjust the location where the painter draws
+        // phonetic + definition snippets
+        r = r.adjusted(0, h4FontSize + 10, 0, 0);
         metrics = QFontMetrics(font);
         QString phonetic = metrics.elidedText(entry
                                                   .getPhonetic(phoneticOptions,
@@ -241,17 +255,87 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
     Entry entry = qvariant_cast<Entry>(index.data());
     bool isEmptyEntry = entry.isEmpty();
 
+    Settings::InterfaceSize interfaceSize
+        = _settings
+              ->value("Interface/size",
+                      QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+              .value<Settings::InterfaceSize>();
+
     if (isEmptyEntry) {
 #ifdef Q_OS_MAC
-        return QSize(100, 130);
+        switch (interfaceSize) {
+        case Settings::InterfaceSize::SMALLER: {
+            return QSize(100, 110);
+        }
+        case Settings::InterfaceSize::SMALL: {
+            return QSize(100, 120);
+        }
+        case Settings::InterfaceSize::NORMAL: {
+            return QSize(100, 130);
+        }
+        case Settings::InterfaceSize::LARGE: {
+            return QSize(100, 160);
+        }
+        case Settings::InterfaceSize::LARGER: {
+            return QSize(100, 175);
+        }
+        }
 #else
-        return QSize(100, 135);
+        switch (interfaceSize) {
+        case Settings::InterfaceSize::SMALLER: {
+            return QSize(100, 115);
+        }
+        case Settings::InterfaceSize::SMALL: {
+            return QSize(100, 125);
+        }
+        case Settings::InterfaceSize::NORMAL: {
+            return QSize(100, 135);
+        }
+        case Settings::InterfaceSize::LARGE: {
+            return QSize(100, 165);
+        }
+        case Settings::InterfaceSize::LARGER: {
+            return QSize(100, 180);
+        }
+        }
 #endif
     } else {
 #ifdef Q_OS_LINUX
-        return QSize(100, 90);
+        switch (interfaceSize) {
+        case Settings::InterfaceSize::SMALLER: {
+            return QSize(100, 75);
+        }
+        case Settings::InterfaceSize::SMALL: {
+            return QSize(100, 80);
+        }
+        case Settings::InterfaceSize::NORMAL: {
+            return QSize(100, 90);
+        }
+        case Settings::InterfaceSize::LARGE: {
+            return QSize(100, 100);
+        }
+        case Settings::InterfaceSize::LARGER: {
+            return QSize(100, 105);
+        }
+        }
 #else
-        return QSize(100, 85);
+        switch (interfaceSize) {
+        case Settings::InterfaceSize::SMALLER: {
+            return QSize(100, 70);
+        }
+        case Settings::InterfaceSize::SMALL: {
+            return QSize(100, 75);
+        }
+        case Settings::InterfaceSize::NORMAL: {
+            return QSize(100, 85);
+        }
+        case Settings::InterfaceSize::LARGE: {
+            return QSize(100, 95);
+        }
+        case Settings::InterfaceSize::LARGER: {
+            return QSize(100, 100);
+        }
+        }
 #endif
     }
 }

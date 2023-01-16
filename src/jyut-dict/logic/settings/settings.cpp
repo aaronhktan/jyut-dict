@@ -30,12 +30,36 @@ namespace Settings {
         DEFAULT_JYUTPING_TONE_6,
     };
 
-     const std::vector<std::string> defaultPinyinToneColours = {
+    const std::vector<std::string> defaultPinyinToneColours = {
         DEFAULT_PINYIN_TONE_0,
         DEFAULT_PINYIN_TONE_1,
         DEFAULT_PINYIN_TONE_2,
         DEFAULT_PINYIN_TONE_3,
         DEFAULT_PINYIN_TONE_4,
         DEFAULT_PINYIN_TONE_5,
-     };
+    };
+
+    const std::vector<int> bodyFontSize = {
+        9,
+        10,
+        12,
+        14,
+        16,
+    };
+
+    const std::vector<int> bodyFontSizeHan = {
+        11,
+        12,
+        14,
+        16,
+        18,
+    };
+
+    const std::vector<int> h4FontSize = {
+        16,
+        18,
+        20,
+        24,
+        28,
+    };
 }
