@@ -155,29 +155,29 @@ void SearchLineEdit::setStyle(bool use_dark)
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
 
-    int h5FontSize = Settings::h5FontSize.at(
+    int h6FontSize = Settings::h6FontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
 
 #ifdef Q_OS_WIN
     if (use_dark) {
-            setStyleSheet(
+            setStyleSheet(QString{
                 "QLineEdit { "
                 "  background-color: #586365; "
                 "  border: 1px solid black; "
                 "   font-size: %1px; "
                 "   icon-size: %1px; "
                 "  selection-background-color: palette(alternate-base); "
-                "} ");
+                "} "}.arg(std::to_string(h6FontSize).c_str())));
             _searchLineEdit->setIcon(search_inverted);
             _clearLineEdit->setIcon(clear_inverted);
     } else {
-            setStyleSheet("QLineEdit { "
-                          "   background-color: #ffffff; "
-                          "   border-color: black; "
-                          "   border-width: 2px; "
-                          "   font-size: %1px; "
-                          "   icon-size: %1px; "
-                          "} ");
+            setStyleSheet(QString{"QLineEdit { "
+                                  "   background-color: #ffffff; "
+                                  "   border-color: black; "
+                                  "   border-width: 2px; "
+                                  "   font-size: %1px; "
+                                  "   icon-size: %1px; "
+                                  "} "}.arg(std::to_string(h6FontSize).c_str())));
             _searchLineEdit->setIcon(search);
             _clearLineEdit->setIcon(clear);
     }
@@ -195,7 +195,7 @@ void SearchLineEdit::setStyle(bool use_dark)
                                   "QLineEdit:focus { "
                                   "   border-radius: 2px; "
                                   "} "}
-                              .arg(std::to_string(h5FontSize).c_str()));
+                              .arg(std::to_string(h6FontSize).c_str()));
             _searchLineEdit->setIcon(search_inverted);
             _clearLineEdit->setIcon(clear_inverted);
     } else {
@@ -209,7 +209,7 @@ void SearchLineEdit::setStyle(bool use_dark)
                         "   padding-top: 4px; "
                         "   padding-bottom: 4px; "
                         "} "}
-                    .arg(std::to_string(h5FontSize).c_str()));
+                    .arg(std::to_string(h6FontSize).c_str()));
             _searchLineEdit->setIcon(search);
             _clearLineEdit->setIcon(clear);
     }

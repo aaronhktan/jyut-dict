@@ -222,4 +222,5 @@ void MainToolBar::updateStyleRequested(void)
 {
     QEvent event{QEvent::PaletteChange};
     QCoreApplication::sendEvent(_searchBar, &event);
+    QCoreApplication::sendEvent(_optionsBox, &event);
 }

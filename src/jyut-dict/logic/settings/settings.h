@@ -44,6 +44,8 @@ const extern std::vector<int> bodyFontSize;
 const extern std::vector<int> bodyFontSizeHan;
 const extern std::vector<int> h4FontSize;
 const extern std::vector<int> h5FontSize;
+const extern std::vector<int> h6FontSize;
+const extern std::vector<int> h6FontSizeHan;
 
 } // namespace Settings
 

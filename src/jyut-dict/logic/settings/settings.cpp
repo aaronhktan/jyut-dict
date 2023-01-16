@@ -70,4 +70,20 @@ namespace Settings {
         20,
         24,
     };
+
+    const std::vector<int> h6FontSize = {
+        10,
+        12,
+        14,
+        18,
+        22,
+    };
+
+    const std::vector<int> h6FontSizeHan = {
+        12,
+        14,
+        16,
+        16,
+        16,
+    };
 }
