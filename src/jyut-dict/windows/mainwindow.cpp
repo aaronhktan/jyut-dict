@@ -390,6 +390,15 @@ void MainWindow::setStyle(bool use_dark)
                         ""
                         "QListView { "
                         "   background-color: palette(base); "
+                        "} "
+                        ""
+                        "QCheckBox::indicator { "
+                        "   border: 1px solid #808080 "
+                        "} "
+                        ""
+                        "QRadioButton::indicator { "
+                        "   border: 1px solid #808080; "
+                        "   border-radius: 7px; "
                         "} ");
 #elif defined(Q_OS_WIN)
     // Some additional stylesheet overrides for Windows
