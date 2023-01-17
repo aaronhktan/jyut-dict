@@ -248,6 +248,8 @@ void AdvancedTab::initializeUpdateCheckbox(QCheckBox &checkbox)
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
 void AdvancedTab::initializeForceDarkModeCheckbox(QCheckBox &checkbox)
 {
+    setForceDarkModeCheckboxDefault(checkbox);
+
     connect(&checkbox, &QCheckBox::stateChanged, this, [&]() {
         _settings->setValue("Advanced/forceDarkMode",
                             checkbox.checkState());
@@ -258,8 +260,6 @@ void AdvancedTab::initializeForceDarkModeCheckbox(QCheckBox &checkbox)
             QCoreApplication::sendEvent(window, &event);
         }
     });
-
-    setForceDarkModeCheckboxDefault(checkbox);
 }
 #endif
 
