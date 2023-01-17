@@ -72,4 +72,5 @@ void EntryContentWidget::showSentenceSection(void)
 void EntryContentWidget::updateStyleRequested(void)
 {
     _definitionSection->updateStyleRequested();
+    _sentenceSection->updateStyleRequested();
 }

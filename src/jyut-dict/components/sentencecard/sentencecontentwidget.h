@@ -10,6 +10,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QResizeEvent>
+#include <QSettings>
 #include <QWidget>
 
 #include <vector>
@@ -54,6 +55,8 @@ private:
     void clearLabelVector(std::vector<QLabel *> &vector);
 
     bool _paletteRecentlyChanged = false;
+
+    std::unique_ptr<QSettings> _settings;
 
     QGridLayout *_sentenceLayout;
     std::vector<QLabel *> _sentenceNumberLabels;

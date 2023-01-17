@@ -38,7 +38,7 @@ void SentenceCardWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, [&]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [&]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -107,3 +107,9 @@ void SentenceCardWidget::setStyle(bool use_dark)
     setStyleSheet(styleSheet.arg(backgroundColour.name()));
 }
 
+void SentenceCardWidget::updateStyleRequested(void)
+{
+    QEvent event{QEvent::PaletteChange};
+    QCoreApplication::sendEvent(_sentenceHeaderWidget, &event);
+    QCoreApplication::sendEvent(_sentenceContentWidget, &event);
+}

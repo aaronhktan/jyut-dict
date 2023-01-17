@@ -1,5 +1,6 @@
 #include "entryviewsentencecardsection.h"
 
+#include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -15,6 +16,8 @@ EntryViewSentenceCardSection::EntryViewSentenceCardSection(std::shared_ptr<SQLDa
     : QWidget(parent),
     _manager{manager}
 {
+    _settings = Settings::getSettings(this);
+
     _enableUIUpdateTimer = new QTimer{this};
     _updateUITimer = new QTimer{this};
 
@@ -110,13 +113,21 @@ void EntryViewSentenceCardSection::changeEvent(QEvent *event)
 
 void EntryViewSentenceCardSection::setStyle(bool use_dark)
 {
+    int interfaceSize = static_cast<int>(
+        _settings
+            ->value("Interface/size",
+                    QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+            .value<Settings::InterfaceSize>());
+    int bodyFontSize = Settings::bodyFontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+
     QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
                                           LABEL_TEXT_COLOUR_DARK_G,
                                           LABEL_TEXT_COLOUR_DARK_B}
                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_G,
                                           LABEL_TEXT_COLOUR_LIGHT_B};
-    int borderRadius = 17;
+    int borderRadius = static_cast<int>(bodyFontSize * 1.5);
     QString radiusString = QString::number(borderRadius);
     QColor borderColour = use_dark ? textColour.darker(300)
                                    : textColour.lighter(200);
@@ -124,8 +135,8 @@ void EntryViewSentenceCardSection::setStyle(bool use_dark)
                          "   border: 2px solid %1; "
                          "   border-radius: %2px; "
                          "   color: %3; "
-                         "   font-size: 12px; "
-                         "   padding: 6px; "
+                         "   font-size: %4px; "
+                         "   padding: %5px; "
                          "} "
                          ""
                          "QToolButton:hover { "
@@ -133,10 +144,13 @@ void EntryViewSentenceCardSection::setStyle(bool use_dark)
                          "   border: 2px solid %1; "
                          "   border-radius: %2px; "
                          "   color: %3; "
-                         "   font-size: 12px; "
-                         "   padding: 6px; "
+                         "   font-size: %4px; "
+                         "   padding: %5px; "
                          "} ";
-    _viewAllSentencesButton->setStyleSheet(styleSheet.arg(borderColour.name(), radiusString, textColour.name()));
+    _viewAllSentencesButton->setStyleSheet(
+        styleSheet.arg(borderColour.name(), radiusString, textColour.name())
+            .arg(bodyFontSize)
+            .arg(bodyFontSize / 4));
     _viewAllSentencesButton->setMinimumHeight(borderRadius * 2);
 }
 
@@ -228,6 +242,14 @@ void EntryViewSentenceCardSection::stallSentenceUIUpdate(void)
         _enableUIUpdate = true;
     });
     _enableUIUpdateTimer->start();
+}
+
+void EntryViewSentenceCardSection::updateStyleRequested(void)
+{
+    for (auto &card : _sentenceCards) {
+        card->updateStyleRequested();
+    }
+    setStyle(Utils::isDarkMode());
 }
 
 void EntryViewSentenceCardSection::pauseBeforeUpdatingUI(const std::vector<SourceSentence> &sourceSentences,

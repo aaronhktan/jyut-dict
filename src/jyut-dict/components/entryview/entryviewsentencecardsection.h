@@ -57,6 +57,7 @@ private:
 
     std::shared_ptr<SQLDatabaseManager> _manager;
     std::unique_ptr<SQLSearch> _search;
+    std::unique_ptr<QSettings> _settings;
     std::vector<SourceSentence> _sentences;
     QString _title;
 
@@ -72,22 +73,22 @@ private:
     std::vector<SentenceCardWidget *> _sentenceCards;
     QToolButton *_viewAllSentencesButton;
 
+signals:
+    void callbackInvoked(const std::vector<SourceSentence> &sourceSentences,
+                         const sentenceSamples &samples);
+    void addingCards();
+    void finishedAddingCards();
+
 public slots:
     void updateUI(
         const std::vector<SourceSentence> &sourceSentences,
         const sentenceSamples &samples);
     void stallSentenceUIUpdate(void);
+    void updateStyleRequested(void);
 
 private slots:
     void pauseBeforeUpdatingUI(const std::vector<SourceSentence> &sourceSentences,
                                const sentenceSamples &samples);
-
-signals:
-    void callbackInvoked(
-        const std::vector<SourceSentence> &sourceSentences,
-        const sentenceSamples &samples);
-    void addingCards();
-    void finishedAddingCards();
 };
 
 Q_DECLARE_METATYPE(sentenceSamples);

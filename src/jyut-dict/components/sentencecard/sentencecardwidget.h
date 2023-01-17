@@ -36,6 +36,9 @@ private:
     QVBoxLayout *_sentenceCardLayout;
     SentenceHeaderWidget *_sentenceHeaderWidget;
     SentenceContentWidget *_sentenceContentWidget;
+
+public slots:
+    void updateStyleRequested(void);
 };
 
 #endif // SENTENCECARDWIDGET_H
