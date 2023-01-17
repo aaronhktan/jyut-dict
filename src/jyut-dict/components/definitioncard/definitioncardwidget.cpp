@@ -83,3 +83,10 @@ void DefinitionCardWidget::setStyle(bool use_dark)
                                                 CONTENT_BACKGROUND_COLOUR_LIGHT_B};
     setStyleSheet(styleSheet.arg(backgroundColour.name()));
 }
+
+void DefinitionCardWidget::updateStyleRequested(void)
+{
+    QEvent event{QEvent::PaletteChange};
+    QCoreApplication::sendEvent(_definitionHeaderWidget, &event);
+    QCoreApplication::sendEvent(_definitionContentWidget, &event);
+}

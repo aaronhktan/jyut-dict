@@ -1,5 +1,6 @@
 #include "definitioncontentwidget.h"
 
+#include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -14,9 +15,11 @@
 
 DefinitionContentWidget::DefinitionContentWidget(QWidget *parent) : QWidget(parent)
 {
+    _settings = Settings::getSettings(this);
     _definitionLayout = new QGridLayout{this};
     _definitionLayout->setVerticalSpacing(1);
     _definitionLayout->setContentsMargins(10, 0, 10, 0);
+    _definitionLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
 }
 
 DefinitionContentWidget::~DefinitionContentWidget()
@@ -55,11 +58,6 @@ void DefinitionContentWidget::setEntry(const std::vector<Definition::Definition>
                                         .boundingRect("999")
                                         .width();
         _definitionNumberLabels.back()->setFixedWidth(definitionNumberWidth);
-        int definitionNumberHeight = _definitionNumberLabels.back()
-                                         ->fontMetrics()
-                                         .boundingRect("123PYing")
-                                         .height();
-        _definitionNumberLabels.back()->setFixedHeight(definitionNumberHeight);
         _definitionLayout->addWidget(_definitionNumberLabels.back(),
                                      static_cast<int>(rowNumber),
                                      0,
@@ -79,9 +77,12 @@ void DefinitionContentWidget::setEntry(const std::vector<Definition::Definition>
         _definitionLabels.push_back(
             new QLabel{definitions[i].definitionContent.c_str(), this});
         _definitionLabels.back()->setWordWrap(true);
-        _definitionLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        _definitionLabels.back()->setTextInteractionFlags(
+            Qt::TextSelectableByMouse);
         _definitionLayout->addWidget(_definitionLabels.back(),
-                                     static_cast<int>(rowNumber++), 1, Qt::AlignTop);
+                                     static_cast<int>(rowNumber++),
+                                     1,
+                                     Qt::AlignTop);
 
         for (size_t j = 0; j < definitions[i].sentences.size(); j++) {
             QString exampleText;
@@ -244,30 +245,65 @@ void DefinitionContentWidget::setStyle(bool use_dark)
                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R};
-    QString definitionNumberStyleSheet = "QLabel { color: %1; "
-                                         "margin-top: 2px; }";
+    int interfaceSize = static_cast<int>(
+        _settings
+            ->value("Interface/size",
+                    QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+            .value<Settings::InterfaceSize>());
+    int bodyFontSize = Settings::bodyFontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+
+    QString definitionNumberStyleSheet = "QLabel { "
+                                         "   color: %1; "
+                                         "   font-size: %2px; "
+                                         "}";
     for (const auto &label : _definitionNumberLabels) {
-        label->setStyleSheet(definitionNumberStyleSheet.arg(textColour.name()));
+        label->setStyleSheet(
+            definitionNumberStyleSheet.arg(textColour.name()).arg(bodyFontSize));
     }
-    QString definitionLabelStyleSheet = "QLabel { color: %1; "
-                                        "font-style: italic; "
-                                        "text-transform: lowercase; }";
+    QString definitionLabelLabelStyleSheet = "QLabel { "
+                                             "   color: %1; "
+                                             "   font-size: %2px; "
+                                             "   font-style: italic; "
+                                             "   text-transform: lowercase; "
+                                             "}";
     for (const auto &label : _definitionLabelLabels) {
-        label->setStyleSheet(definitionLabelStyleSheet.arg(textColour.name()));
+        label->setStyleSheet(
+            definitionLabelLabelStyleSheet.arg(textColour.name())
+                .arg(bodyFontSize));
+    }
+    QString definitionLabelStyleSheet = "QLabel { "
+                                        "   font-size: %2px; "
+                                        "}";
+    for (const auto &label : _definitionLabels) {
+        label->setStyleSheet(definitionLabelStyleSheet.arg(bodyFontSize));
     }
 
-    QString examplePronunciationStyleSheet = "QLabel { color: %1; "
-                                             "padding-left: 38px; "
-                                             "margin-left: 0px; } ";
+    QString exampleStyleSheet = "QLabel { "
+                                "   font-size: %2px; "
+                                "}";
+    for (const auto &label : _exampleLabels) {
+        label->setStyleSheet(exampleStyleSheet.arg(bodyFontSize));
+    }
+    QString examplePronunciationStyleSheet = "QLabel { "
+                                             "   color: %1; "
+                                             "   font-size: %2px; "
+                                             "   padding-left: 38px; "
+                                             "   margin-left: 0px; "
+                                             "} ";
     for (const auto &label : _examplePronunciationLabels) {
         label->setStyleSheet(
-            examplePronunciationStyleSheet.arg(textColour.name()));
+            examplePronunciationStyleSheet.arg(textColour.name())
+                .arg(bodyFontSize));
     }
-
-    QString translationStyleSheet = "QLabel { color: %1; "
-                                    "font-style: italic; } ";
+    QString translationStyleSheet = "QLabel { "
+                                    "   color: %1; "
+                                    "   font-size: %2px; "
+                                    "   font-style: italic; "
+                                    "} ";
     for (const auto &label : _exampleTranslationLabels) {
-        label->setStyleSheet(translationStyleSheet.arg(textColour.name()));
+        label->setStyleSheet(
+            translationStyleSheet.arg(textColour.name()).arg(bodyFontSize));
     }
 
 #ifdef Q_OS_WIN

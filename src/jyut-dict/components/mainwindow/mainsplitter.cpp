@@ -123,6 +123,7 @@ void MainSplitter::forwardViewHistoryItem(const Entry &entry)
 void MainSplitter::updateStyleRequested(void)
 {
     static_cast<ResultListView *>(_resultListView)->paintWithApplicationState();
+    _entryScrollArea->updateStyleRequested();
 }
 
 void MainSplitter::prepareEntry(Entry &entry)

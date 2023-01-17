@@ -1,5 +1,7 @@
 #include "definitionheaderwidget.h"
 
+#include "logic/settings/settings.h"
+#include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -14,6 +16,8 @@
 DefinitionHeaderWidget::DefinitionHeaderWidget(QWidget *parent)
     : QWidget(parent)
 {
+    _settings = Settings::getSettings(this);
+
     setObjectName("DefinitionHeaderWidget");
 
     _layout = new QVBoxLayout{this};
@@ -22,16 +26,11 @@ DefinitionHeaderWidget::DefinitionHeaderWidget(QWidget *parent)
 
     _titleLabel = new QLabel{this};
     _titleLabel->setObjectName("DefinitionHeaderWidgetTitleLabel");
+    _titleLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
 
     _layout->addWidget(_titleLabel);
 
     setStyle(Utils::isDarkMode());
-}
-
-DefinitionHeaderWidget::DefinitionHeaderWidget(std::string title, QWidget *parent)
-    : DefinitionHeaderWidget(parent)
-{
-    setSectionTitle(title);
 }
 
 void DefinitionHeaderWidget::changeEvent(QEvent *event)
@@ -50,8 +49,9 @@ void DefinitionHeaderWidget::changeEvent(QEvent *event)
 
 void DefinitionHeaderWidget::setSectionTitle(const std::string &title)
 {
-    _titleLabel->setFixedHeight(_titleLabel->fontMetrics().boundingRect(title.c_str()).height());
+    setStyle(Utils::isDarkMode());
     _titleLabel->setText(title.c_str());
+    resize(minimumSizeHint());
 }
 
 void DefinitionHeaderWidget::setStyle(bool use_dark)
@@ -74,12 +74,24 @@ void DefinitionHeaderWidget::setStyle(bool use_dark)
     setStyleSheet(widgetStyleSheet.arg(backgroundColour.name()));
 
     // Style the label text
-    QString textStyleSheet = "QLabel#DefinitionHeaderWidgetTitleLabel { color: %1; }";
+    int interfaceSize = static_cast<int>(
+        _settings
+            ->value("Interface/size",
+                    QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+            .value<Settings::InterfaceSize>());
+    int bodyFontSize = Settings::bodyFontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+
+    QString textStyleSheet = "QLabel#DefinitionHeaderWidgetTitleLabel { "
+                             "   color: %1; "
+                             "   font-size: %2px; "
+                             "}";
     QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
                                           LABEL_TEXT_COLOUR_DARK_G,
                                           LABEL_TEXT_COLOUR_DARK_B}
                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R};
-    _titleLabel->setStyleSheet(textStyleSheet.arg(textColour.name()));
+    _titleLabel->setStyleSheet(
+        textStyleSheet.arg(textColour.name()).arg(bodyFontSize));
 }

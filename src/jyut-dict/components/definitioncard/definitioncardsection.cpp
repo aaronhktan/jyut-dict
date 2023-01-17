@@ -28,3 +28,10 @@ void DefinitionCardSection::cleanup(void)
     }
     _definitionCards.clear();
 }
+
+void DefinitionCardSection::updateStyleRequested(void)
+{
+    for (auto &card : _definitionCards) {
+        card->updateStyleRequested();
+    }
+}

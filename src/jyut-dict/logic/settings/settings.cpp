@@ -40,11 +40,11 @@ namespace Settings {
     };
 
     const std::vector<int> bodyFontSize = {
-        9,
         10,
-        12,
-        14,
-        16,
+        11,
+        13,
+        15,
+        17,
     };
 
     const std::vector<int> bodyFontSizeHan = {

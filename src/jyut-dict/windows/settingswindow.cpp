@@ -350,9 +350,9 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
         } else {
             _actions[0]->setIcon(index == 0 ? settings_inverted : settings);
             _actions[1]->setIcon(index == 1 ? text_inverted : text);
-            _actions[2]->setIcon(index == 1 ? book_inverted : book);
-            _actions[3]->setIcon(index == 2 ? sliders_inverted : sliders);
-            _actions[4]->setIcon(index == 3 ? help_inverted : help);
+            _actions[2]->setIcon(index == 2 ? book_inverted : book);
+            _actions[3]->setIcon(index == 3 ? sliders_inverted : sliders);
+            _actions[4]->setIcon(index == 4 ? help_inverted : help);
         }
     }
 

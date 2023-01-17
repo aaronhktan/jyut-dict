@@ -1,11 +1,12 @@
 #ifndef DEFINITIONCONTENTWIDGET_H
 #define DEFINITIONCONTENTWIDGET_H
 
-#include "logic/entry/entry.h"
+#include "logic/entry/definitionsset.h"
 
 #include <QEvent>
 #include <QGridLayout>
 #include <QLabel>
+#include <QSettings>
 #include <QWidget>
 
 #include <string>
@@ -32,6 +33,8 @@ private:
     void cleanupLabels();
 
     bool _paletteRecentlyChanged = false;
+
+    std::unique_ptr<QSettings> _settings;
 
     QGridLayout *_definitionLayout;
     std::vector<QLabel *> _definitionNumberLabels;

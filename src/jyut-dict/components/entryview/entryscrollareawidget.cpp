@@ -7,7 +7,6 @@
 #elif defined(Q_OS_WIN)
 #include "logic/utils/utils_windows.h"
 #endif
-#include "logic/utils/utils_qt.h"
 
 #include <QTimer>
 
@@ -16,7 +15,7 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(std::shared_ptr<SQLUserDataUtils> s
                                              QWidget *parent)
     : QWidget(parent)
 {
-    setObjectName("DefinitionScrollAreaWidget");
+    setObjectName("EntryScrollAreaWidget");
 
     // Entire Scroll Area
     _scrollAreaLayout = new QVBoxLayout{this};
@@ -66,7 +65,12 @@ void EntryScrollAreaWidget::setStyle(bool use_dark)
 {
     (void) (use_dark);
     setAttribute(Qt::WA_StyledBackground);
-    setStyleSheet("QWidget#DefinitionScrollAreaWidget { "
+    setStyleSheet("QWidget#EntryScrollAreaWidget { "
                   "   background-color: palette(base); "
                   "} ");
+}
+
+void EntryScrollAreaWidget::updateStyleRequested(void)
+{
+    _entryContentWidget->updateStyleRequested();
 }

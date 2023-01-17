@@ -37,6 +37,9 @@ private:
 
 signals:
     void stallUISentenceUpdate(void);
+
+public slots:
+    void updateStyleRequested(void);
 };
 
 #endif // ENTRYSCROLLAREAWIDGET_H

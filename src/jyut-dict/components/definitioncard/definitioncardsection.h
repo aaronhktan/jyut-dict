@@ -27,6 +27,9 @@ private:
 signals:
     void addingCards(void);
     void finishedAddingCards(void);
+
+public slots:
+    void updateStyleRequested(void);
 };
 
 #endif // DEFINITIONCARDSECTION_H
