@@ -74,6 +74,7 @@ void EntryScrollAreaWidget::updateStyleRequested(void)
 {
     QEvent event{QEvent::PaletteChange};
     QCoreApplication::sendEvent(_entryHeaderWidget, &event);
+    QCoreApplication::sendEvent(_entryActionWidget, &event);
 
     _entryContentWidget->updateStyleRequested();
 }

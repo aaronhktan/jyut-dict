@@ -123,7 +123,12 @@ void MainSplitter::forwardViewHistoryItem(const Entry &entry)
 void MainSplitter::updateStyleRequested(void)
 {
     static_cast<ResultListView *>(_resultListView)->paintWithApplicationState();
-    _entryScrollArea->updateStyleRequested();
+
+    QList<EntryScrollArea *> scrollAreas
+        = this->findChildren<EntryScrollArea *>();
+    foreach (auto &area, scrollAreas) {
+        area->updateStyleRequested();
+    }
 }
 
 void MainSplitter::prepareEntry(Entry &entry)
@@ -162,16 +167,16 @@ void MainSplitter::prepareEntry(Entry &entry, bool addToHistory) const
               .value<MandarinOptions>();
     entry.generatePhonetic(cantoneseOptions, mandarinOptions);
 
-    cantoneseOptions
-        = Settings::getSettings()
-              ->value("Preview/cantonesePronunciationOptions",
-                      QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
-              .value<CantoneseOptions>();
-    mandarinOptions
-        = Settings::getSettings()
-              ->value("Preview/mandarinPronunciationOptions",
-                      QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
-              .value<MandarinOptions>();
+    cantoneseOptions = Settings::getSettings()
+                           ->value("Preview/cantonesePronunciationOptions",
+                                   QVariant::fromValue(
+                                       CantoneseOptions::RAW_JYUTPING))
+                           .value<CantoneseOptions>();
+    mandarinOptions = Settings::getSettings()
+                          ->value("Preview/mandarinPronunciationOptions",
+                                  QVariant::fromValue(
+                                      MandarinOptions::PRETTY_PINYIN))
+                          .value<MandarinOptions>();
     entry.generateDefinitionsPhonetic(cantoneseOptions, mandarinOptions);
 }
 
@@ -213,7 +218,9 @@ void MainSplitter::handleDoubleClick(const QModelIndex &selection)
     prepareEntry(entry, _addToHistory);
 
     QTimer::singleShot(50, this, [=]() {
-        EntryScrollArea *area = new EntryScrollArea{_sqlUserUtils, _manager, nullptr};
+        EntryScrollArea *area = new EntryScrollArea{_sqlUserUtils,
+                                                    _manager,
+                                                    nullptr};
         area->setParent(this, Qt::Window);
         area->setEntry(entry);
 #ifndef Q_OS_MAC

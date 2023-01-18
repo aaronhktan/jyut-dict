@@ -1,5 +1,7 @@
 #include "entryactionwidget.h"
 
+#include "logic/settings/settings.h"
+#include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -16,6 +18,8 @@ EntryActionWidget::EntryActionWidget(std::shared_ptr<SQLUserDataUtils> sqlUserUt
     : QWidget(parent)
     , _sqlUserUtils{sqlUserUtils}
 {
+    _settings = Settings::getSettings(this);
+
     _sqlUserUtils->registerObserver(this);
 
     setupUI();
@@ -114,18 +118,28 @@ void EntryActionWidget::setStyle(bool use_dark)
                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_G,
                                           LABEL_TEXT_COLOUR_LIGHT_B};
-    int borderRadius = 13;
-    QString radiusString = QString::number(borderRadius);
     QColor borderColour = use_dark ? textColour.darker(300)
                                    : textColour.lighter(200);
+    int interfaceSize = static_cast<int>(
+        _settings
+            ->value("Interface/size",
+                    QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+            .value<Settings::InterfaceSize>());
+    int bodyFontSize = Settings::bodyFontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int borderRadius = static_cast<int>(bodyFontSize * 1);
+    int padding = bodyFontSize / 6;
+    int paddingHorizontal = bodyFontSize / 3;
     QString styleSheet = "QPushButton { "
                          "   background-color: palette(base); "
                          "   border: 2px solid %1; "
                          "   border-radius: %2px; "
                          "   color: %3; "
-                         "   font-size: 12px; "
-                         "   padding: 3px; "
-                         "   padding-right: 6px; "
+                         "   font-size: %4px; "
+                         "   icon-size: %4px; "
+                         "   padding: %5px; "
+                         "   padding-left: %6px; "
+                         "   padding-right: %6px; "
                          "} "
                          ""
                          "QPushButton:hover { "
@@ -133,15 +147,25 @@ void EntryActionWidget::setStyle(bool use_dark)
                          "   border: 2px solid %1; "
                          "   border-radius: %2px; "
                          "   color: %3; "
-                         "   font-size: 12px; "
-                         "   padding: 3px; "
-                         "   padding-right: 6px; "
+                         "   font-size: %4px; "
+                         "   icon-size: %4px; "
+                         "   padding: %5px; "
+                         "   padding-left: %6px; "
+                         "   padding-right: %6px; "
                          "} ";
-    _bookmarkButton->setStyleSheet(
-        styleSheet.arg(borderColour.name(), radiusString, textColour.name()));
+    _bookmarkButton->setStyleSheet(styleSheet.arg(borderColour.name())
+                                       .arg(borderRadius)
+                                       .arg(textColour.name())
+                                       .arg(bodyFontSize)
+                                       .arg(padding)
+                                       .arg(paddingHorizontal));
     _bookmarkButton->setMinimumHeight(borderRadius * 2);
-    _shareButton->setStyleSheet(
-        styleSheet.arg(borderColour.name(), radiusString, textColour.name()));
+    _shareButton->setStyleSheet(styleSheet.arg(borderColour.name())
+                                    .arg(borderRadius)
+                                    .arg(textColour.name())
+                                    .arg(bodyFontSize)
+                                    .arg(padding)
+                                    .arg(paddingHorizontal));
     _shareButton->setMinimumHeight(borderRadius * 2);
 
     if (_bookmarkButton->property("saved").toBool()) {
