@@ -55,6 +55,14 @@ namespace Settings {
         18,
     };
 
+    const std::vector<int> h2FontSize = {
+        24,
+        32,
+        36,
+        42,
+        48,
+    };
+
     const std::vector<int> h4FontSize = {
         16,
         18,

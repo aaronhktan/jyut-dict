@@ -5,12 +5,12 @@
 #include "logic/entry/entry.h"
 #include "logic/entry/entryphoneticoptions.h"
 #include "logic/entry/entryspeaker.h"
-#include "logic/settings/settingsutils.h"
 
 #include <QEvent>
 #include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
+#include <QSettings>
 #include <QWidget>
 
 #include <string>
@@ -40,6 +40,8 @@ private:
     void showError(const QString &reason, const QString &message);
 
     bool _paletteRecentlyChanged = false;
+
+    std::unique_ptr<QSettings> _settings;
 
     QString _chinese;
     QString _jyutping;

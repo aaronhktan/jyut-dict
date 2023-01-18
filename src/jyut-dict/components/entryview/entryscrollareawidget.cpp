@@ -72,5 +72,8 @@ void EntryScrollAreaWidget::setStyle(bool use_dark)
 
 void EntryScrollAreaWidget::updateStyleRequested(void)
 {
+    QEvent event{QEvent::PaletteChange};
+    QCoreApplication::sendEvent(_entryHeaderWidget, &event);
+
     _entryContentWidget->updateStyleRequested();
 }

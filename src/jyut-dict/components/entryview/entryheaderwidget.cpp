@@ -1,5 +1,6 @@
 #include "entryheaderwidget.h"
 
+#include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/strings/strings.h"
 #include "logic/utils/chineseutils.h"
@@ -20,6 +21,8 @@
 
 EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
 {
+    _settings = Settings::getSettings(this);
+
     _entryHeaderLayout = new QGridLayout{this};
     _entryHeaderLayout->setContentsMargins(0, 0, 0, 0);
     _entryHeaderLayout->setSpacing(5);
@@ -27,21 +30,15 @@ EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
     _speaker = std::make_unique<EntrySpeaker>();
 
     _wordLabel = new QLabel{this};
-    _wordLabel->setStyleSheet("QLabel { font-size: 30px }");
     _wordLabel->setAttribute(Qt::WA_TranslucentBackground);
     _wordLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _wordLabel->setWordWrap(true);
 
-
     _cantoneseTTS = new QPushButton{this};
-    _cantoneseTTS->setMaximumWidth(10);
-    _cantoneseTTS->setFixedHeight(18);
     _cantoneseTTS->setAttribute(Qt::WA_TranslucentBackground);
     _cantoneseTTS->setVisible(false);
 
     _mandarinTTS = new QPushButton{this};
-    _mandarinTTS->setMaximumWidth(10);
-    _mandarinTTS->setFixedHeight(18);
     _mandarinTTS->setAttribute(Qt::WA_TranslucentBackground);
     _mandarinTTS->setVisible(false);
 
@@ -111,8 +108,8 @@ void EntryHeaderWidget::setEntry(const Entry &entry)
     _pinyin = QString{
         ChineseUtils::createPinyinWithV(entry.getPinyin()).c_str()};
 
-    setStyle(Utils::isDarkMode());
     translateUI();
+    setStyle(Utils::isDarkMode());
 }
 
 void EntryHeaderWidget::translateUI()
@@ -141,8 +138,6 @@ void EntryHeaderWidget::translateUI()
                                             Strings::MANDARIN_IPA_SHORT));
         }
 
-        label->setFixedWidth(
-            label->fontMetrics().boundingRect(label->text()).width());
         label->setVisible(true);
     }
 
@@ -202,14 +197,30 @@ void EntryHeaderWidget::translateUI()
 void EntryHeaderWidget::setStyle(bool use_dark)
 {
 #ifdef Q_OS_WIN
-    QFont font = QFont{"Microsoft YaHei", 30};
+    QFont font = QFont{"Microsoft YaHei"};
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
     _wordLabel->setFont(font);
 #endif
 
-    _wordLabel->setStyleSheet("QLabel { font-size: 30px }");
+    int interfaceSize = static_cast<int>(
+        _settings
+            ->value("Interface/size",
+                    QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+            .value<Settings::InterfaceSize>());
+    int h2FontSize = Settings::h2FontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int bodyFontSize = Settings::bodyFontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
 
-    QString styleSheet = "QLabel { color: %1; }";
+    _wordLabel->setStyleSheet(QString{"QLabel { "
+                                      "   font-size: %1px; "
+                                      "}"}
+                                  .arg(h2FontSize));
+
+    QString pronunciationTypeStyleSheet = QString{"QLabel { "
+                                                  "   color: %1; "
+                                                  "   font-size: %2px; "
+                                                  "}"};
     QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
                                           LABEL_TEXT_COLOUR_DARK_G,
                                           LABEL_TEXT_COLOUR_DARK_B}
@@ -218,17 +229,23 @@ void EntryHeaderWidget::setStyle(bool use_dark)
                                           LABEL_TEXT_COLOUR_LIGHT_R};
     for (const auto& label : _pronunciationTypeLabels) {
         label->setAttribute(Qt::WA_TranslucentBackground);
-        label->setStyleSheet(styleSheet.arg(textColour.name()));
+        label->setStyleSheet(pronunciationTypeStyleSheet.arg(textColour.name())
+                                 .arg(bodyFontSize));
+        label->setFixedWidth(
+            label->fontMetrics().boundingRect(label->text()).width());
     }
 
+    QString pronunciationStyleSheet = QString{"QLabel { "
+                                              "   font-size: %1px; "
+                                              "}"};
     for (const auto& label : _pronunciationLabels) {
         label->setTextInteractionFlags(Qt::TextSelectableByMouse);
         label->setWordWrap(true);
+        label->setStyleSheet(pronunciationStyleSheet.arg(bodyFontSize));
     }
 
-
     _cantoneseTTS->setIcon(use_dark ? QIcon{":/images/speak_inverted.png"}
-                                   : QIcon{":/images/speak.png"});
+                                    : QIcon{":/images/speak.png"});
     _cantoneseTTS->setFlat(true);
     _cantoneseTTS->setObjectName("cantoneseTTS");
     _cantoneseTTS->setStyleSheet(
@@ -237,17 +254,21 @@ void EntryHeaderWidget::setStyle(bool use_dark)
         "QPushButton:pressed#cantoneseTTS { background-color: none; border: "
         "1px solid transparent; }");
     _cantoneseTTS->setCursor(Qt::PointingHandCursor);
+    _cantoneseTTS->setMaximumWidth(bodyFontSize);
+    _cantoneseTTS->setFixedHeight(bodyFontSize);
 
     _mandarinTTS->setIcon(use_dark ? QIcon{":/images/speak_inverted.png"}
-                                 : QIcon{":/images/speak.png"});
+                                   : QIcon{":/images/speak.png"});
     _mandarinTTS->setFlat(true);
     _mandarinTTS->setObjectName("mandarinTTS");
     _mandarinTTS->setStyleSheet(
         "QPushButton#mandarinTTS { background-color: none; border: 1px solid "
         "transparent; padding: 0px; }"
-        "QPushButton:pressed#mandarinTTS { background-color: none ;border: 1px "
+        "QPushButton:pressed#mandarinTTS { background-color: none; border: 1px "
         "solid transparent; }");
     _mandarinTTS->setCursor(Qt::PointingHandCursor);
+    _mandarinTTS->setMaximumWidth(bodyFontSize);
+    _mandarinTTS->setFixedHeight(bodyFontSize);
 }
 
 void EntryHeaderWidget::displayPronunciationLabels(
@@ -267,8 +288,7 @@ void EntryHeaderWidget::displayPronunciationLabels(
                                       row,
                                       0,
                                       1,
-                                      1,
-                                      Qt::AlignTop);
+                                      1);
         _pronunciationTypeLabels.back()->setVisible(true);
 
         _pronunciationLabels.emplace_back(new QLabel{this});
@@ -278,8 +298,7 @@ void EntryHeaderWidget::displayPronunciationLabels(
         _pronunciationLabels.back()->setVisible(true);
 
         if (!_cantoneseTTSVisible) {
-            _entryHeaderLayout
-                ->addWidget(_cantoneseTTS, row, 1, 1, 1, Qt::AlignTop);
+            _entryHeaderLayout->addWidget(_cantoneseTTS, row, 1, 1, 1);
             _cantoneseTTS->setVisible(true);
             _cantoneseTTSVisible = true;
         }
@@ -295,8 +314,7 @@ void EntryHeaderWidget::displayPronunciationLabels(
                                       row,
                                       0,
                                       1,
-                                      1,
-                                      Qt::AlignTop);
+                                      1);
         _pronunciationTypeLabels.back()->setVisible(true);
 
         _pronunciationLabels.emplace_back(new QLabel{this});
@@ -306,8 +324,7 @@ void EntryHeaderWidget::displayPronunciationLabels(
         _pronunciationLabels.back()->setVisible(true);
 
         if (!_cantoneseTTSVisible) {
-            _entryHeaderLayout
-                ->addWidget(_cantoneseTTS, row, 1, 1, 1, Qt::AlignTop);
+            _entryHeaderLayout->addWidget(_cantoneseTTS, row, 1, 1, 1);
             _cantoneseTTS->setVisible(true);
             _cantoneseTTSVisible = true;
         }
@@ -323,8 +340,7 @@ void EntryHeaderWidget::displayPronunciationLabels(
                                       row,
                                       0,
                                       1,
-                                      1,
-                                      Qt::AlignTop);
+                                      1);
         _pronunciationTypeLabels.back()->setVisible(true);
 
         _pronunciationLabels.emplace_back(new QLabel{this});
@@ -334,8 +350,7 @@ void EntryHeaderWidget::displayPronunciationLabels(
         _pronunciationLabels.back()->setVisible(true);
 
         if (!_cantoneseTTSVisible) {
-            _entryHeaderLayout
-                ->addWidget(_cantoneseTTS, row, 1, 1, 1, Qt::AlignTop);
+            _entryHeaderLayout->addWidget(_cantoneseTTS, row, 1, 1, 1);
             _cantoneseTTS->setVisible(true);
             _cantoneseTTSVisible = true;
         }
@@ -351,8 +366,7 @@ void EntryHeaderWidget::displayPronunciationLabels(
                                       row,
                                       0,
                                       1,
-                                      1,
-                                      Qt::AlignTop);
+                                      1);
         _pronunciationTypeLabels.back()->setVisible(true);
 
         _pronunciationLabels.emplace_back(new QLabel{this});
@@ -362,8 +376,7 @@ void EntryHeaderWidget::displayPronunciationLabels(
         _pronunciationLabels.back()->setVisible(true);
 
         if (!_mandarinTTSVisible) {
-            _entryHeaderLayout
-                ->addWidget(_mandarinTTS, row, 1, 1, 1, Qt::AlignTop);
+            _entryHeaderLayout->addWidget(_mandarinTTS, row, 1, 1, 1);
             _mandarinTTS->setVisible(true);
             _mandarinTTSVisible = true;
         }
@@ -380,8 +393,7 @@ void EntryHeaderWidget::displayPronunciationLabels(
                                       row,
                                       0,
                                       1,
-                                      1,
-                                      Qt::AlignTop);
+                                      1);
         _pronunciationTypeLabels.back()->setVisible(true);
 
         _pronunciationLabels.emplace_back(new QLabel{this});
@@ -407,8 +419,7 @@ void EntryHeaderWidget::displayPronunciationLabels(
                                       row,
                                       0,
                                       1,
-                                      1,
-                                      Qt::AlignTop);
+                                      1);
         _pronunciationTypeLabels.back()->setVisible(true);
 
         _pronunciationLabels.emplace_back(new QLabel{this});
@@ -435,8 +446,7 @@ void EntryHeaderWidget::displayPronunciationLabels(
                                       row,
                                       0,
                                       1,
-                                      1,
-                                      Qt::AlignTop);
+                                      1);
         _pronunciationTypeLabels.back()->setVisible(true);
 
         _pronunciationLabels.emplace_back(new QLabel{this});
