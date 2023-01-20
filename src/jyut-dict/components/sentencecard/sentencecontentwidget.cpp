@@ -77,9 +77,13 @@ void SentenceContentWidget::setSentenceSet(const SentenceSet &set)
         _sentenceLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
         _sentenceLayout->addWidget(_sentenceNumberLabels[i],
-                                   static_cast<int>(i + 9), 0, Qt::AlignTop);
+                                   static_cast<int>(i + 9),
+                                   0,
+                                   Qt::AlignTop);
         _sentenceLayout->addWidget(_sentenceLabels[i],
-                                   static_cast<int>(i + 9), 1, Qt::AlignTop);
+                                   static_cast<int>(i + 9),
+                                   1,
+                                   Qt::AlignTop);
     }
 
     setStyle(Utils::isDarkMode());

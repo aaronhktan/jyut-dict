@@ -64,4 +64,5 @@ void SentenceScrollAreaWidget::updateStyleRequested(void)
 {
     QEvent event{QEvent::PaletteChange};
     QCoreApplication::sendEvent(_sentenceViewHeaderWidget, &event);
+    _sentenceViewContentWidget->updateStyleRequested();
 }
