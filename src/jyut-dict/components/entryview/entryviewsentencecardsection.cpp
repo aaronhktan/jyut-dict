@@ -249,6 +249,13 @@ void EntryViewSentenceCardSection::updateStyleRequested(void)
     for (auto &card : _sentenceCards) {
         card->updateStyleRequested();
     }
+
+    QList<SentenceSplitter *> sentenceSplitters
+        = this->findChildren<SentenceSplitter *>();
+    foreach (auto &splitter, sentenceSplitters) {
+        splitter->updateStyleRequested();
+    }
+
     setStyle(Utils::isDarkMode());
 }
 

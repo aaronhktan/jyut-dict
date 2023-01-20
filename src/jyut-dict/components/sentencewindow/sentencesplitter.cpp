@@ -1,5 +1,6 @@
 #include "sentencesplitter.h"
 
+#include "components/sentencesearchresult/sentenceresultlistmodel.h"
 #include "components/sentencesearchresult/sentenceresultlistview.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_WIN
@@ -160,4 +161,9 @@ void SentenceSplitter::handleDoubleClick(const QModelIndex &selection)
     area->setWindowTitle(" ");
 #endif
     area->show();
+}
+
+void SentenceSplitter::updateStyleRequested(void)
+{
+    _sentenceScrollArea->updateStyleRequested();
 }

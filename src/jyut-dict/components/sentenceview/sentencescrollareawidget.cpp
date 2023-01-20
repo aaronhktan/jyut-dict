@@ -7,8 +7,8 @@
 #elif defined(Q_OS_WIN)
 #include "logic/utils/utils_windows.h"
 #endif
-#include "logic/utils/utils_qt.h"
 
+#include <QCoreApplication>
 #include <QTimer>
 
 SentenceScrollAreaWidget::SentenceScrollAreaWidget(QWidget *parent)
@@ -58,4 +58,10 @@ void SentenceScrollAreaWidget::setStyle(bool use_dark)
     setStyleSheet("QWidget#SentenceScrollAreaWidget { "
                   "   background-color: palette(base); "
                   "} ");
+}
+
+void SentenceScrollAreaWidget::updateStyleRequested(void)
+{
+    QEvent event{QEvent::PaletteChange};
+    QCoreApplication::sendEvent(_sentenceViewHeaderWidget, &event);
 }

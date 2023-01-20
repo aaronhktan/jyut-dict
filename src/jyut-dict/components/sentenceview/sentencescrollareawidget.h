@@ -30,6 +30,9 @@ private:
 
     SentenceViewHeaderWidget *_sentenceViewHeaderWidget;
     SentenceViewContentWidget *_sentenceViewContentWidget;
+
+public slots:
+    void updateStyleRequested(void);
 };
 
 #endif // SENTENCESCROLLAREAWIDGET_H
