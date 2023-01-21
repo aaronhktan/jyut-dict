@@ -1,9 +1,6 @@
 #ifndef SENTENCERESULTLISTVIEW_H
 #define SENTENCERESULTLISTVIEW_H
 
-#include "logic/entry/entry.h"
-#include "logic/search/sqlsearch.h"
-
 #include <QEvent>
 #include <QListView>
 #include <QStyledItemDelegate>

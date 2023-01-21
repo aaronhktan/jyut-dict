@@ -241,24 +241,28 @@ void SentenceContentWidget::setStyle(bool use_dark)
             sentenceNumberStyleSheet.arg(textColour.name()).arg(bodyFontSize));
     }
 
-    int borderRadius = bodyFontSize * 3 / 4;
-    QString radiusString = QString::number(borderRadius);
+    int borderRadius = static_cast<int>(bodyFontSize * 5 / 6);
+    int padding = bodyFontSize / 6;
+    int paddingHorizontal = bodyFontSize / 4;
     for (const auto &label : _sourceSentenceLanguage) {
-        QString sourceStyleSheet = "QLabel {"
+        QString sourceStyleSheet = "QLabel { "
                                    "   background: %1; "
                                    "   border-radius: %2px; "
                                    "   color: %3; "
                                    "   font-size: %4px; "
-                                   "   margin-top: 2px; "
-                                   "   padding: 2px; }";
+                                   "   padding: %5px; "
+                                   "   padding-left: %6px; "
+                                   "   padding-right: %6px; "
+                                   "} ";
         QColor languageColour = Utils::getLanguageColour(
             Utils::getISO639FromLanguage(label->text().trimmed()));
         QColor languageTextColour = Utils::getContrastingColour(languageColour);
-        label->setStyleSheet(sourceStyleSheet
-                                 .arg(languageColour.name(),
-                                      radiusString,
-                                      languageTextColour.name())
-                                 .arg(bodyFontSize));
+        label->setStyleSheet(sourceStyleSheet.arg(languageColour.name())
+                                 .arg(borderRadius)
+                                 .arg(languageTextColour.name())
+                                 .arg(bodyFontSize)
+                                 .arg(padding)
+                                 .arg(paddingHorizontal));
         label->setText(Utils::getLanguageFromISO639(
                            label->property("language").toString().toStdString())
                            .trimmed());

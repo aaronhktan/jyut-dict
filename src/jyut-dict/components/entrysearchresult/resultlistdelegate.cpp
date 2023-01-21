@@ -4,7 +4,6 @@
 #include "logic/entry/entrycharactersoptions.h"
 #include "logic/entry/entryphoneticoptions.h"
 #include "logic/settings/settingsutils.h"
-#include "logic/utils/utils.h"
 #include "logic/utils/utils_qt.h"
 
 #include <QGuiApplication>
@@ -115,16 +114,17 @@ void ResultListDelegate::paint(QPainter *painter,
     font.setPixelSize(h4FontSize);
     painter->setFont(font);
     r = option.rect.adjusted(11, 11, -11, 0);
-    QFontMetrics metrics(font);
+    QFontMetrics metrics{font};
 
     // Use QTextDocument for rich text
     QTextDocument *doc = new QTextDocument{};
-    entry.refreshColours(_settings
-                             ->value("entryColourPhoneticType",
-                                     QVariant::fromValue(
-                                         EntryColourPhoneticType::CANTONESE))
-                             .value<EntryColourPhoneticType>());
-    doc->setHtml(QString(entry.getCharacters(characterOptions, use_colours).c_str()));
+    entry.refreshColours(
+        _settings
+            ->value("entryColourPhoneticType",
+                    QVariant::fromValue(EntryColourPhoneticType::CANTONESE))
+            .value<EntryColourPhoneticType>());
+    doc->setHtml(
+        QString(entry.getCharacters(characterOptions, use_colours).c_str()));
     doc->setTextWidth(r.width());
     doc->setDefaultFont(font);
     doc->setDocumentMargin(0);

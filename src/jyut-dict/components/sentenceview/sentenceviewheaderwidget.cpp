@@ -223,15 +223,18 @@ void SentenceViewHeaderWidget::setStyle(bool use_dark)
     int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
 
-    int borderRadius = static_cast<int>(bodyFontSize * 1);
+    int borderRadius = static_cast<int>(bodyFontSize * 5 / 6);
     int padding = bodyFontSize / 6;
+    int paddingHorizontal = bodyFontSize / 4;
 
-    QString sourceStyleSheet = "QLabel {"
+    QString sourceStyleSheet = "QLabel  {"
                                "   background: %1; "
                                "   border-radius: %2px; "
                                "   color: %3; "
                                "   font-size: %4px; "
                                "   padding: %5px; "
+                               "   padding-left: %6px; "
+                               "   padding-right: %6px; "
                                "} ";
     QColor languageColour = Utils::getLanguageColour(
         Utils::getISO639FromLanguage(_sourceLanguageLabel->text().trimmed()));
@@ -241,7 +244,8 @@ void SentenceViewHeaderWidget::setStyle(bool use_dark)
             .arg(borderRadius)
             .arg(languageTextColour.name())
             .arg(bodyFontSize)
-            .arg(padding));
+            .arg(padding)
+            .arg(paddingHorizontal));
     _sourceLanguageLabel->setMinimumHeight(borderRadius * 2);
 
     _simplifiedLabel->setStyleSheet(QString{"QLabel { "

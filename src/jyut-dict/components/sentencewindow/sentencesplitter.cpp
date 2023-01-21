@@ -165,5 +165,7 @@ void SentenceSplitter::handleDoubleClick(const QModelIndex &selection)
 
 void SentenceSplitter::updateStyleRequested(void)
 {
+    static_cast<SentenceResultListView *>(_resultListView)
+        ->paintWithApplicationState();
     _sentenceScrollArea->updateStyleRequested();
 }
