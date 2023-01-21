@@ -253,19 +253,19 @@ QSize ViewHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
 #ifdef Q_OS_MAC
         switch (interfaceSize) {
         case Settings::InterfaceSize::SMALLER: {
-            return QSize(100, 110);
+            return QSize(100, 90);
         }
         case Settings::InterfaceSize::SMALL: {
-            return QSize(100, 120);
+            return QSize(100, 100);
         }
         case Settings::InterfaceSize::NORMAL: {
-            return QSize(100, 130);
+            return QSize(100, 125);
         }
         case Settings::InterfaceSize::LARGE: {
-            return QSize(100, 160);
+            return QSize(100, 145);
         }
         case Settings::InterfaceSize::LARGER: {
-            return QSize(100, 175);
+            return QSize(100, 185);
         }
         }
 #else

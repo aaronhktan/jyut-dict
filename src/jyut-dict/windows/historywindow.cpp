@@ -33,7 +33,7 @@ HistoryWindow::HistoryWindow(
 
     setupUI();
     translateUI();
-    setMinimumSize(300, 500);
+    setMinimumSize(350, 500);
     setStyle(Utils::isDarkMode());
 }
 
@@ -138,4 +138,5 @@ void HistoryWindow::forwardViewHistoryItem(const Entry &entry)
 void HistoryWindow::updateStyleRequested(void)
 {
     static_cast<ViewHistoryTab *>(_viewHistoryTab)->updateStyleRequested();
+    static_cast<SearchHistoryTab *>(_searchHistoryTab)->updateStyleRequested();
 }

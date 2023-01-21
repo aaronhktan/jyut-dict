@@ -43,6 +43,9 @@ private:
 
 signals:
     void searchHistoryClicked(const searchTermHistoryItem &pair);
+
+public slots:
+    void updateStyleRequested(void);
 };
 
 #endif // SEARCHHISTORYTAB_H

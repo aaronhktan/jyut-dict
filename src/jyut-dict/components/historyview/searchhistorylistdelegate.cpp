@@ -1,8 +1,8 @@
 #include "searchhistorylistdelegate.h"
 
 #include "logic/database/sqluserhistoryutils.h"
+#include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
-#include "logic/utils/utils.h"
 #include "logic/utils/utils_qt.h"
 
 #include <QGuiApplication>
@@ -60,6 +60,20 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
     QRect r = option.rect;
     QRect boundingRect;
     QFont font = painter->font();
+    int interfaceSize = static_cast<int>(
+        _settings
+            ->value("Interface/size",
+                    QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+            .value<Settings::InterfaceSize>());
+    int h4FontSize = Settings::h4FontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int bodyFontSize = Settings::bodyFontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int cellTopPadding = bodyFontSize * 2 / 3;
+    int cellLeftPadding = bodyFontSize * 2 / 3;
+    int contentSpacingMargin = bodyFontSize / 2;
 
 #ifdef Q_OS_WIN
     QFont oldFont{font};
@@ -69,38 +83,32 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
     if (isEmptyPair) {
         // In the empty pair, we paint a big title, a separator, and a bunch of
         // lines with lots of detail.
-        font.setPixelSize(20);
+        font.setPixelSize(h4FontSize);
         painter->setFont(font);
-        r = option.rect.adjusted(11, 11, -11, 0); // 11 specifies the margin
+        r = option.rect.adjusted(cellTopPadding,
+                                 cellLeftPadding,
+                                 -cellLeftPadding,
+                                 0);
         painter->drawText(r, 0, pair.first.c_str());
+        r = r.adjusted(0, h4FontSize + contentSpacingMargin * 2, 0, 0);
 
 #ifdef Q_OS_WIN
         font = oldFont;
 #endif
-        QFontMetrics metrics{font};
-        font.setPixelSize(14);
+        font.setPixelSize(bodyFontSize + 2);
         painter->setFont(font);
-        r = r.adjusted(0, 28, 0, 0);
-        metrics = QFontMetrics(font);
+        QFontMetrics metrics{font};
         QString phonetic = "—";
         painter->drawText(r, 0, phonetic, &boundingRect);
+        r = r.adjusted(0, bodyFontSize + 2 + contentSpacingMargin, 0, 0);
 
-        // Add some extra spacing if text is not in Chinese; Chinese text
-        // overhangs the baseline by a few pixels.
         if (Settings::isCurrentLocaleHan()) {
-            r = r.adjusted(0, boundingRect.height() + 5, 0, 0);
-            font.setPixelSize(13);
+            font.setPixelSize(bodyFontSizeHan);
         } else {
-            r = r.adjusted(0, boundingRect.height() + 10, 0, 0);
-            font.setPixelSize(11);
+            font.setPixelSize(bodyFontSize);
         }
         painter->setFont(font);
-        painter->save();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
         painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
-#else
-        painter->setPen(QPen(option.palette.color(QPalette::Disabled, QPalette::WindowText)));
-#endif
 
         // Do custom text layout to get eliding double-line label
         QString snippet = tr("After searching for a word, you will find it "
@@ -110,9 +118,9 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
         textLayout->beginLayout();
 
         // Define start and end y coordinates
-        // max height of label is three lines, so height * 3
+        // max height of label is four lines, so height * 4
         int y = r.y();
-        int height = y + metrics.height() * 3;
+        int height = y + metrics.height() * 4;
 
         for (;;) {
             QTextLine line = textLayout->createLine();
@@ -148,23 +156,20 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
 
         textLayout->endLayout();
         delete textLayout;
-
-        painter->restore();
     } else {
-        font.setPixelSize(16);
+        font.setPixelSize(bodyFontSize);
         painter->setFont(font);
         int margin = 6;
-        r = r.adjusted(margin, margin, margin, margin);
+        r = r.adjusted(cellTopPadding,
+                       cellLeftPadding,
+                       -cellTopPadding,
+                       -cellLeftPadding);
 
-        QFontMetrics metrics(font);
+        QFontMetrics metrics{font};
         QString searchOption = Utils::getStringFromSearchParameter(
                                    static_cast<SearchParameters>(pair.second))
                                    .c_str();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
         int searchOptionWidth = metrics.horizontalAdvance(searchOption);
-#else
-        int searchOptionWidth = metrics.width(searchOption);
-#endif
         QString searchTerm = metrics.elidedText(pair.first.c_str(),
                                                 Qt::ElideRight,
                                                 r.width() - 2 * margin
@@ -174,16 +179,12 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
         painter->drawText(rectangle, 0, searchTerm, &boundingRect);
 
         r.setX(r.width() - margin - searchOptionWidth);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
         if (option.state & QStyle::State_Selected) {
             QColor textColour{Utils::getContrastingColour(backgroundColour)};
             painter->setPen(textColour);
         } else {
             painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
         }
-#else
-        painter->setPen(QPen(option.palette.color(QPalette::Disabled, QPalette::WindowText)));
-#endif
         painter->drawText(r, 0, searchOption, &boundingRect);
     }
 
@@ -204,17 +205,87 @@ QSize SearchHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
         = qvariant_cast<searchTermHistoryItem>(index.data());
     bool isEmptyPair = (pair.second == -1);
 
+    Settings::InterfaceSize interfaceSize
+        = _settings
+              ->value("Interface/size",
+                      QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+              .value<Settings::InterfaceSize>();
+
     if (isEmptyPair) {
 #ifdef Q_OS_MAC
-        return QSize(100, 130);
+        switch (interfaceSize) {
+        case Settings::InterfaceSize::SMALLER: {
+            return QSize(100, 90);
+        }
+        case Settings::InterfaceSize::SMALL: {
+            return QSize(100, 100);
+        }
+        case Settings::InterfaceSize::NORMAL: {
+            return QSize(100, 125);
+        }
+        case Settings::InterfaceSize::LARGE: {
+            return QSize(100, 145);
+        }
+        case Settings::InterfaceSize::LARGER: {
+            return QSize(100, 185);
+        }
+        }
 #else
-        return QSize(100, 135);
+        switch (interfaceSize) {
+        case Settings::InterfaceSize::SMALLER: {
+            return QSize(100, 115);
+        }
+        case Settings::InterfaceSize::SMALL: {
+            return QSize(100, 125);
+        }
+        case Settings::InterfaceSize::NORMAL: {
+            return QSize(100, 135);
+        }
+        case Settings::InterfaceSize::LARGE: {
+            return QSize(100, 165);
+        }
+        case Settings::InterfaceSize::LARGER: {
+            return QSize(100, 180);
+        }
+        }
 #endif
     } else {
-#ifdef Q_OS_MAC
-        return QSize(100, 32);
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
+        switch (interfaceSize) {
+        case Settings::InterfaceSize::SMALLER: {
+            return QSize(100, 75);
+        }
+        case Settings::InterfaceSize::SMALL: {
+            return QSize(100, 80);
+        }
+        case Settings::InterfaceSize::NORMAL: {
+            return QSize(100, 90);
+        }
+        case Settings::InterfaceSize::LARGE: {
+            return QSize(100, 100);
+        }
+        case Settings::InterfaceSize::LARGER: {
+            return QSize(100, 110);
+        }
+        }
 #else
-        return QSize(100, 37);
+        switch (interfaceSize) {
+        case Settings::InterfaceSize::SMALLER: {
+            return QSize(100, 25);
+        }
+        case Settings::InterfaceSize::SMALL: {
+            return QSize(100, 30);
+        }
+        case Settings::InterfaceSize::NORMAL: {
+            return QSize(100, 35);
+        }
+        case Settings::InterfaceSize::LARGE: {
+            return QSize(100, 40);
+        }
+        case Settings::InterfaceSize::LARGER: {
+            return QSize(100, 45);
+        }
+        }
 #endif
     }
 }

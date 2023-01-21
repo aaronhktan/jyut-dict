@@ -132,3 +132,8 @@ void SearchHistoryTab::handleClick(const QModelIndex &selection)
 
     emit searchHistoryClicked(pair);
 }
+
+void SearchHistoryTab::updateStyleRequested(void)
+{
+    static_cast<SearchHistoryListView *>(_listView)->paintWithApplicationState();
+}
