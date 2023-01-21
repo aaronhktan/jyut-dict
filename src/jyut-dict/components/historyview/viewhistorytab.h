@@ -43,6 +43,9 @@ private:
 
 signals:
     void viewHistoryClicked(Entry &pair);
+
+public slots:
+    void updateStyleRequested(void);
 };
 
 #endif // VIEWHISTORYTAB_H

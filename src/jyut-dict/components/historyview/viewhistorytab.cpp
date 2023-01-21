@@ -131,3 +131,8 @@ void ViewHistoryTab::handleClick(const QModelIndex &selection)
 
     emit viewHistoryClicked(entry);
 }
+
+void ViewHistoryTab::updateStyleRequested(void)
+{
+    static_cast<ViewHistoryListView *>(_listView)->paintWithApplicationState();
+}

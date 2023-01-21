@@ -1,5 +1,7 @@
 #include "historywindow.h"
 
+#include "components/historyview/searchhistorytab.h"
+#include "components/historyview/viewhistorytab.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -7,7 +9,6 @@
 #elif defined(Q_OS_WIN)
 #include "logic/utils/utils_windows.h"
 #endif
-#include "logic/utils/utils_qt.h"
 
 #include <QTimer>
 
@@ -124,12 +125,17 @@ void HistoryWindow::setStyle(bool use_dark)
 #endif
 }
 
-void HistoryWindow::forwardSearchHistoryItem(const searchTermHistoryItem &pair) const
+void HistoryWindow::forwardSearchHistoryItem(const searchTermHistoryItem &pair)
 {
     emit searchHistoryClicked(pair);
 }
 
-void HistoryWindow::forwardViewHistoryItem(const Entry &entry) const
+void HistoryWindow::forwardViewHistoryItem(const Entry &entry)
 {
     emit viewHistoryClicked(entry);
+}
+
+void HistoryWindow::updateStyleRequested(void)
+{
+    static_cast<ViewHistoryTab *>(_viewHistoryTab)->updateStyleRequested();
 }
