@@ -1153,6 +1153,7 @@ void MainWindow::updateStyleRequested(void)
 {
     _mainToolBar->updateStyleRequested();
     _mainSplitter->updateStyleRequested();
+    _favouritesWindow->updateStyleRequested();
 }
 
 // Must close settings window, since settings window does not pass the main
