@@ -108,7 +108,7 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     // the "pill" look right
     r = r.adjusted(cellLeftPadding + sourceLanguageIndicatorHorizontalMargin,
                    cellTopPadding,
-                   0,
+                   -cellLeftPadding,
                    0);
 
     painter->save();
@@ -166,7 +166,14 @@ void SentenceResultListDelegate::paint(QPainter *painter,
 
     // Use QTextDocument for rich text
     QTextDocument *doc = new QTextDocument{};
-    doc->setHtml(QString(sentence.getCharacters(characterOptions).c_str()));
+    metrics = QFontMetrics{font};
+    QString characters
+        = metrics
+              .elidedText(sentence.getCharacters(characterOptions).c_str(),
+                          Qt::ElideRight,
+                          r.width())
+              .trimmed();
+    doc->setHtml(characters);
     doc->setTextWidth(r.width());
     doc->setDefaultFont(font);
     doc->setDocumentMargin(0);
@@ -177,7 +184,7 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     ctx.clip = bounds;
     painter->translate(cellLeftPadding, r.y());
     documentLayout->draw(painter, ctx);
-    painter->translate(cellLeftPadding, -r.y());
+    painter->translate(-cellLeftPadding, -r.y());
     painter->restore();
     r = r.adjusted(0, h4FontSize + contentSpacingMargin, 0, 0);
 
@@ -207,6 +214,9 @@ void SentenceResultListDelegate::paint(QPainter *painter,
                                        Qt::ElideRight,
                                        r.width())
                            .trimmed();
+    if (phonetic.isEmpty()) {
+        phonetic = "-";
+    }
     painter->drawText(r, 0, phonetic, &boundingRect);
     painter->restore();
     r = r.adjusted(0, bodyFontSize + contentSpacingMargin, 0, 0);

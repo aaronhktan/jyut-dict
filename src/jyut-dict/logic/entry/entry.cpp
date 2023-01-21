@@ -342,14 +342,26 @@ std::string Entry::getPhonetic(EntryPhoneticOptions options,
             return getMandarinPhonetic(mandarinOptions);
         }
         case EntryPhoneticOptions::PREFER_CANTONESE: {
-            std::string jyutping = getCantonesePhonetic(cantoneseOptions);
-            std::string pinyin = getMandarinPhonetic(mandarinOptions);
-            return jyutping + " (" + pinyin + ")";
+            std::string cantonese = getCantonesePhonetic(cantoneseOptions);
+            std::string mandarin = getMandarinPhonetic(mandarinOptions);
+            if (cantonese.empty()) {
+                return "(" + mandarin + ")";
+            } else if (mandarin.empty()) {
+                return cantonese;
+            } else {
+                return cantonese + " (" + mandarin + ")";
+            }
         }
         case EntryPhoneticOptions::PREFER_MANDARIN: {
-            std::string jyutping = getCantonesePhonetic(cantoneseOptions);
-            std::string pinyin = getMandarinPhonetic(mandarinOptions);
-            return pinyin + " (" + jyutping + ")";
+            std::string cantonese = getCantonesePhonetic(cantoneseOptions);
+            std::string mandarin = getMandarinPhonetic(mandarinOptions);
+            if (mandarin.empty()) {
+                return "(" + cantonese + ")";
+            } else if (cantonese.empty()) {
+                return mandarin;
+            } else {
+                return mandarin + " (" + cantonese + ")";
+            }
         }
     }
     return _jyutping;
