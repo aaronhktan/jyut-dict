@@ -105,8 +105,8 @@ void ResultListDelegate::paint(QPainter *painter,
         static_cast<unsigned long>(interfaceSize - 1));
     int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int cellTopPadding = bodyFontSize * 2 / 3;
-    int cellLeftPadding = bodyFontSize * 2 / 3;
+    int cellTopPadding = bodyFontSize;
+    int cellLeftPadding = bodyFontSize;
     int contentSpacingMargin = bodyFontSize / 2;
 
     // Chinese characters
@@ -155,6 +155,7 @@ void ResultListDelegate::paint(QPainter *painter,
     QFontMetrics metrics{font};
     QString snippet;
     if (isEmptyEntry) {
+        r = r.adjusted(0, -contentSpacingMargin, 0, 0);
         font.setPixelSize(bodyFontSize + 2);
         painter->setFont(font);
         metrics = QFontMetrics(font);
@@ -162,7 +163,7 @@ void ResultListDelegate::paint(QPainter *painter,
                                               Qt::ElideRight,
                                               r.width());
         painter->drawText(r, 0, phonetic, &boundingRect);
-        r = r.adjusted(0, bodyFontSize + 2 + contentSpacingMargin, 0, 0);
+        r = r.adjusted(0, bodyFontSize + 2 + contentSpacingMargin * 2, 0, 0);
 
         if (Settings::isCurrentLocaleHan()) {
             font.setPixelSize(bodyFontSizeHan);
@@ -179,9 +180,9 @@ void ResultListDelegate::paint(QPainter *painter,
         textLayout->beginLayout();
 
         // Define start and end y coordinates
-        // max height of label is four lines, so height * 4
+        // max height of label is five lines, so height * 5
         int y = r.y();
-        int height = y + metrics.height() * 4;
+        int height = y + metrics.height() * 5;
 
         for (;;) {
             QTextLine line = textLayout->createLine();
@@ -233,7 +234,7 @@ void ResultListDelegate::paint(QPainter *painter,
                                               Qt::ElideRight,
                                               r.width());
         painter->drawText(r, 0, phonetic, &boundingRect);
-        r = r.adjusted(0, bodyFontSize + contentSpacingMargin, 0, 0);
+        r = r.adjusted(0, bodyFontSize + contentSpacingMargin / 2, 0, 0);
 
         snippet = metrics.elidedText(
             entry.getDefinitionSnippet().c_str(),
@@ -267,19 +268,51 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
 #ifdef Q_OS_MAC
         switch (interfaceSize) {
         case Settings::InterfaceSize::SMALLER: {
-            return QSize(100, 110);
+            return QSize(100, Settings::isCurrentLocaleHan() ? 105 : 105);
         }
         case Settings::InterfaceSize::SMALL: {
-            return QSize(100, 120);
+            return QSize(100, Settings::isCurrentLocaleHan() ? 115 : 115);
         }
         case Settings::InterfaceSize::NORMAL: {
-            return QSize(100, 130);
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::French: {
+                return QSize(100, 150);
+            }
+            case QLocale::Chinese: {
+                return QSize(100,
+                             Settings::getCurrentLocale().script()
+                                     == QLocale::SimplifiedHanScript
+                                 ? 130
+                                 : 150);
+            }
+            case QLocale::Cantonese: {
+                return QSize(100, 150);
+            }
+            default: {
+                return QSize(100, 130);
+            }
+            }
         }
         case Settings::InterfaceSize::LARGE: {
-            return QSize(100, 160);
+            return QSize(100, Settings::isCurrentLocaleHan() ? 170 : 165);
         }
         case Settings::InterfaceSize::LARGER: {
-            return QSize(100, 175);
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::Chinese: {
+                return QSize(100,
+                             Settings::getCurrentLocale().script()
+                                     == QLocale::SimplifiedHanScript
+                                 ? 190
+                                 : 215);
+            }
+            case QLocale::Cantonese:
+            case QLocale::French: {
+                return QSize(100, 215);
+            }
+            default: {
+                return QSize(100, 190);
+            }
+            }
         }
         }
 #else
@@ -323,19 +356,19 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
 #else
         switch (interfaceSize) {
         case Settings::InterfaceSize::SMALLER: {
-            return QSize(100, 70);
+            return QSize(100, 72);
         }
         case Settings::InterfaceSize::SMALL: {
-            return QSize(100, 75);
+            return QSize(100, 78);
         }
         case Settings::InterfaceSize::NORMAL: {
-            return QSize(100, 85);
+            return QSize(100, 90);
         }
         case Settings::InterfaceSize::LARGE: {
-            return QSize(100, 100);
+            return QSize(100, 105);
         }
         case Settings::InterfaceSize::LARGER: {
-            return QSize(100, 115);
+            return QSize(100, 120);
         }
         }
 #endif
