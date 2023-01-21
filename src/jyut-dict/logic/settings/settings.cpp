@@ -39,6 +39,24 @@ namespace Settings {
         DEFAULT_PINYIN_TONE_5,
     };
 
+    const std::vector<int> uiFontSize = {
+        8,
+        9,
+        10,
+        11,
+        13,
+        15,
+    };
+
+    const std::vector<int> uiFontSizeHan = {
+        11,
+        12,
+        13,
+        14,
+        16,
+        18,
+    };
+
     const std::vector<int> bodyFontSize = {
         10,
         11,

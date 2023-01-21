@@ -7,6 +7,7 @@
 #include <QEvent>
 #include <QLayout>
 #include <QMainWindow>
+#include <QSettings>
 #include <QStackedWidget>
 #include <QToolBar>
 #include <QToolButton>
@@ -47,6 +48,7 @@ private:
     std::vector<QAction *> _actions;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
+    std::shared_ptr<QSettings> _settings;
 
     bool _paletteRecentlyChanged = false;
 
