@@ -214,10 +214,17 @@ QSize SearchHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
 #ifdef Q_OS_MAC
         switch (interfaceSize) {
         case Settings::InterfaceSize::SMALLER: {
-            return QSize(100, 90);
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::English: {
+                return QSize(100, 100);
+            }
+            default: {
+                return QSize(100, 90);
+            }
+            }
         }
         case Settings::InterfaceSize::SMALL: {
-            return QSize(100, 100);
+            return QSize(100, 110);
         }
         case Settings::InterfaceSize::NORMAL: {
             return QSize(100, 125);

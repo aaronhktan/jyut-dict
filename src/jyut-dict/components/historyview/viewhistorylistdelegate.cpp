@@ -253,19 +253,54 @@ QSize ViewHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
 #ifdef Q_OS_MAC
         switch (interfaceSize) {
         case Settings::InterfaceSize::SMALLER: {
-            return QSize(100, 90);
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::Cantonese: {
+                return QSize(100,
+                             Settings::getCurrentLocale().script()
+                                     == QLocale::SimplifiedHanScript
+                                 ? 90
+                                 : 100);
+            }
+            case QLocale::Chinese: {
+                return QSize(100, 100);
+            }
+            default: {
+                return QSize(100, 90);
+            }
+            }
         }
         case Settings::InterfaceSize::SMALL: {
-            return QSize(100, 100);
+            return QSize(100, 110);
         }
         case Settings::InterfaceSize::NORMAL: {
             return QSize(100, 125);
         }
         case Settings::InterfaceSize::LARGE: {
-            return QSize(100, 145);
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::Cantonese: {
+                return QSize(100,
+                             Settings::getCurrentLocale().script()
+                                     == QLocale::SimplifiedHanScript
+                                 ? 145
+                                 : 165);
+            }
+            case QLocale::Chinese: {
+                return QSize(100, 165);
+            }
+            default: {
+                return QSize(100, 145);
+            }
+            }
         }
         case Settings::InterfaceSize::LARGER: {
-            return QSize(100, 185);
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::French: {
+                return QSize(100, 165);
+            }
+            default: {
+                return QSize(100, 185);
+            }
+            }
         }
         }
 #else
