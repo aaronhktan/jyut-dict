@@ -252,6 +252,8 @@ void DefinitionContentWidget::setStyle(bool use_dark)
             .value<Settings::InterfaceSize>());
     int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
+    int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
+        static_cast<unsigned long>(interfaceSize - 1));
 
     QString definitionNumberStyleSheet = "QLabel { "
                                          "   color: %1; "
@@ -283,7 +285,7 @@ void DefinitionContentWidget::setStyle(bool use_dark)
                                 "   font-size: %2px; "
                                 "}";
     for (const auto &label : _exampleLabels) {
-        label->setStyleSheet(exampleStyleSheet.arg(bodyFontSize));
+        label->setStyleSheet(exampleStyleSheet.arg(bodyFontSizeHan));
     }
     QString examplePronunciationStyleSheet = "QLabel { "
                                              "   color: %1; "

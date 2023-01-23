@@ -97,8 +97,8 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
     int sourceLanguageIndicatorHorizontalMargin = 4;
-    int cellTopPadding = bodyFontSize * 5 / 6;
-    int cellLeftPadding = bodyFontSize * 2 / 3;
+    int cellTopPadding = bodyFontSize * 8 / 6;
+    int cellLeftPadding = bodyFontSize;
     int contentSpacingMargin = bodyFontSize / 2;
 
     // Draw language indicator
@@ -288,19 +288,19 @@ QSize SentenceResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
 #else
     switch (interfaceSize) {
     case Settings::InterfaceSize::SMALLER: {
-        return QSize(100, 82);
+        return QSize(100, 88);
     }
     case Settings::InterfaceSize::SMALL: {
-        return QSize(100, 85);
+        return QSize(100, 95);
     }
     case Settings::InterfaceSize::NORMAL: {
-        return QSize(100, 100);
-    }
-    case Settings::InterfaceSize::LARGE: {
         return QSize(100, 115);
     }
+    case Settings::InterfaceSize::LARGE: {
+        return QSize(100, 130);
+    }
     case Settings::InterfaceSize::LARGER: {
-        return QSize(100, 135);
+        return QSize(100, 150);
     }
     }
 #endif
