@@ -159,7 +159,6 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
     } else {
         font.setPixelSize(bodyFontSize);
         painter->setFont(font);
-        int margin = 6;
         r = r.adjusted(cellTopPadding,
                        cellLeftPadding,
                        -cellTopPadding,
@@ -172,13 +171,13 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
         int searchOptionWidth = metrics.horizontalAdvance(searchOption);
         QString searchTerm = metrics.elidedText(pair.first.c_str(),
                                                 Qt::ElideRight,
-                                                r.width() - 2 * margin
+                                                r.width() - 2 * cellLeftPadding
                                                     - searchOptionWidth);
         QRect rectangle = r;
         rectangle.setHeight(metrics.height());
         painter->drawText(rectangle, 0, searchTerm, &boundingRect);
 
-        r.setX(r.width() - margin - searchOptionWidth);
+        r.setX(r.width() - searchOptionWidth);
         if (option.state & QStyle::State_Selected) {
             QColor textColour{Utils::getContrastingColour(backgroundColour)};
             painter->setPen(textColour);
@@ -233,19 +232,37 @@ QSize SearchHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
 #else
         switch (interfaceSize) {
         case Settings::InterfaceSize::SMALLER: {
-            return QSize(100, 115);
+            return QSize(100, 95);
         }
         case Settings::InterfaceSize::SMALL: {
-            return QSize(100, 125);
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::Cantonese:
+            case QLocale::Chinese:
+            case QLocale::French: {
+                return QSize(100, 100);
+            }
+            default: {
+                return QSize(100, 120);
+            }
+            }
         }
         case Settings::InterfaceSize::NORMAL: {
             return QSize(100, 135);
         }
         case Settings::InterfaceSize::LARGE: {
-            return QSize(100, 165);
+            return QSize(100, 155);
         }
         case Settings::InterfaceSize::LARGER: {
-            return QSize(100, 180);
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::French:
+            case QLocale::Chinese:
+            case QLocale::Cantonese: {
+                return QSize(100, 180);
+            }
+            default: {
+                return QSize(100, 200);
+            }
+            }
         }
         }
 #endif
@@ -253,19 +270,19 @@ QSize SearchHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
         switch (interfaceSize) {
         case Settings::InterfaceSize::SMALLER: {
-            return QSize(100, 75);
+            return QSize(100, 30);
         }
         case Settings::InterfaceSize::SMALL: {
-            return QSize(100, 80);
+            return QSize(100, 35);
         }
         case Settings::InterfaceSize::NORMAL: {
-            return QSize(100, 90);
+            return QSize(100, 40);
         }
         case Settings::InterfaceSize::LARGE: {
-            return QSize(100, 100);
+            return QSize(100, 45);
         }
         case Settings::InterfaceSize::LARGER: {
-            return QSize(100, 110);
+            return QSize(100, 50);
         }
         }
 #else

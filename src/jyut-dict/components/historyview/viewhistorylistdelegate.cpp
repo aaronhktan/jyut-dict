@@ -271,19 +271,33 @@ QSize ViewHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
 #else
         switch (interfaceSize) {
         case Settings::InterfaceSize::SMALLER: {
-            return QSize(100, 115);
+            return QSize(100, 95);
         }
         case Settings::InterfaceSize::SMALL: {
-            return QSize(100, 125);
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::Cantonese: {
+                return QSize(100,
+                             Settings::getCurrentLocale().script()
+                                     == QLocale::SimplifiedHanScript
+                                 ? 100
+                                 : 120);
+            }
+            case QLocale::French: {
+                return QSize(100, 100);
+            }
+            default: {
+                return QSize(100, 120);
+            }
+            }
         }
         case Settings::InterfaceSize::NORMAL: {
             return QSize(100, 135);
         }
         case Settings::InterfaceSize::LARGE: {
-            return QSize(100, 165);
+            return QSize(100, 155);
         }
         case Settings::InterfaceSize::LARGER: {
-            return QSize(100, 180);
+            return QSize(100, 200);
         }
         }
 #endif
@@ -291,19 +305,19 @@ QSize ViewHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
         switch (interfaceSize) {
         case Settings::InterfaceSize::SMALLER: {
-            return QSize(100, 75);
+            return QSize(100, 60);
         }
         case Settings::InterfaceSize::SMALL: {
-            return QSize(100, 80);
+            return QSize(100, 65);
         }
         case Settings::InterfaceSize::NORMAL: {
-            return QSize(100, 90);
+            return QSize(100, 70);
         }
         case Settings::InterfaceSize::LARGE: {
-            return QSize(100, 100);
+            return QSize(100, 85);
         }
         case Settings::InterfaceSize::LARGER: {
-            return QSize(100, 110);
+            return QSize(100, 95);
         }
         }
 #else

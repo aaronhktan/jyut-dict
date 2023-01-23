@@ -270,19 +270,19 @@ QSize SentenceResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     switch (interfaceSize) {
     case Settings::InterfaceSize::SMALLER: {
-        return QSize(100, 75);
+        return QSize(100, 93);
     }
     case Settings::InterfaceSize::SMALL: {
-        return QSize(100, 80);
-    }
-    case Settings::InterfaceSize::NORMAL: {
-        return QSize(100, 90);
-    }
-    case Settings::InterfaceSize::LARGE: {
         return QSize(100, 100);
     }
+    case Settings::InterfaceSize::NORMAL: {
+        return QSize(100, 115);
+    }
+    case Settings::InterfaceSize::LARGE: {
+        return QSize(100, 135);
+    }
     case Settings::InterfaceSize::LARGER: {
-        return QSize(100, 110);
+        return QSize(100, 155);
     }
     }
 #else

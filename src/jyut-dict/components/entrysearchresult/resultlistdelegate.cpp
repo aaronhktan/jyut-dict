@@ -268,10 +268,10 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
 #ifdef Q_OS_MAC
         switch (interfaceSize) {
         case Settings::InterfaceSize::SMALLER: {
-            return QSize(100, Settings::isCurrentLocaleHan() ? 105 : 105);
+            return QSize(100, 105);
         }
         case Settings::InterfaceSize::SMALL: {
-            return QSize(100, Settings::isCurrentLocaleHan() ? 115 : 115);
+            return QSize(100, 115);
         }
         case Settings::InterfaceSize::NORMAL: {
             switch (Settings::getCurrentLocale().language()) {
@@ -324,13 +324,45 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
             return QSize(100, 125);
         }
         case Settings::InterfaceSize::NORMAL: {
-            return QSize(100, 135);
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::French: {
+                return QSize(100, 165);
+            }
+            case QLocale::Chinese: {
+                return QSize(100,
+                             Settings::getCurrentLocale().script()
+                                     == QLocale::SimplifiedHanScript
+                                 ? 145
+                                 : 165);
+            }
+            case QLocale::Cantonese: {
+                return QSize(100, 165);
+            }
+            default: {
+                return QSize(100, 140);
+            }
+            }
         }
         case Settings::InterfaceSize::LARGE: {
-            return QSize(100, 165);
+            return QSize(100, Settings::isCurrentLocaleHan() ? 190 : 180);
         }
         case Settings::InterfaceSize::LARGER: {
-            return QSize(100, 180);
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::Chinese: {
+                return QSize(100,
+                             Settings::getCurrentLocale().script()
+                                     == QLocale::SimplifiedHanScript
+                                 ? 215
+                                 : 240);
+            }
+            case QLocale::Cantonese:
+            case QLocale::French: {
+                return QSize(100, 240);
+            }
+            default: {
+                return QSize(100, 215);
+            }
+            }
         }
         }
 #endif
@@ -338,19 +370,19 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
         switch (interfaceSize) {
         case Settings::InterfaceSize::SMALLER: {
-            return QSize(100, 75);
+            return QSize(100, 78);
         }
         case Settings::InterfaceSize::SMALL: {
-            return QSize(100, 80);
+            return QSize(100, 85);
         }
         case Settings::InterfaceSize::NORMAL: {
-            return QSize(100, 90);
-        }
-        case Settings::InterfaceSize::LARGE: {
             return QSize(100, 100);
         }
+        case Settings::InterfaceSize::LARGE: {
+            return QSize(100, 115);
+        }
         case Settings::InterfaceSize::LARGER: {
-            return QSize(100, 110);
+            return QSize(100, 130);
         }
         }
 #else
