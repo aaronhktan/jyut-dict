@@ -296,7 +296,7 @@ void SettingsWindow::setStyle(bool use_dark)
                   " "
                   "QToolButton { "
                   "   border-radius: 2px; "
-                  "   color: %4; "
+                  "   color: %5; "
                   "   font-size: %3px; "
                   "   margin: 0px; "
                   "} "
@@ -376,15 +376,11 @@ void SettingsWindow::setStyle(bool use_dark)
         _toolBar->setStyleSheet("QToolBar { "
                                 "   background-color: palette(alternate-base); "
                                 "   border-bottom: 1px solid palette(window); "
-                                "   padding-bottom: 3px; "
-                                "   padding-top: 3px; "
                                 "} ");
     } else {
         _toolBar->setStyleSheet("QToolBar { "
                                 "   background-color: palette(window); "
                                 "   border-bottom: 1px solid palette(alternate-base); "
-                                "   padding-bottom: 3px; "
-                                "   padding-top: 3px; "
                                 "} ");
     }
 #endif
