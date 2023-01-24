@@ -24,174 +24,179 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="160"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="174"/>
         <source>Automatically check for updates on startup:</source>
-        <translation>Vérifier automatiquement les mises à jour :</translation>
+        <translation>Vérifier automatiquement les mises à jour&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="163"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="177"/>
         <source>Enable dark mode:</source>
-        <translation>Activer le mode sombre :</translation>
+        <translation>Activer le mode sombre&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="166"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="180"/>
         <source>Export dictionaries file:</source>
-        <translation>Exporter le fichier contenant les dictionnaires :</translation>
+        <translation>Exporter le fichier contenant les dictionnaires&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="168"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="182"/>
         <source>Export saved words and history:</source>
-        <translation>Exporter les mots enregistrés et l&apos;historique de recherche :</translation>
+        <translation>Exporter les mots enregistrés et l&apos;historique de recherche&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="169"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="170"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="183"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="184"/>
         <source>Export</source>
         <translation>Exporter</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="174"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="188"/>
         <source>Restore dictionaries file to last backed up version:</source>
-        <translation>Restaurer le fichier contenant les dictionnaires à partir d&apos;une sauvegarde automatique :</translation>
+        <translation>Restaurer le fichier contenant les dictionnaires à partir d&apos;une sauvegarde automatique&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="176"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="190"/>
         <source>Restore dictionaries file using exported file:</source>
-        <translation>Restaurer le fichier contenant les dictionnaires à partir d&apos;un fichier exporté :</translation>
+        <translation>Restaurer le fichier contenant les dictionnaires à partir d&apos;un fichier exporté&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="178"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="192"/>
         <source>Restore saved words and history file using exported file:</source>
-        <translation>Restaurer les mots enregistrés et l&apos;historique de recherche à partir d&apos;un fichier exporté :</translation>
+        <translation>Restaurer les mots enregistrés et l&apos;historique de recherche à partir d&apos;un fichier exporté&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="179"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="180"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="181"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="193"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="194"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="195"/>
         <source>Restore</source>
         <translation>Restaurer</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="185"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="199"/>
         <source>Application language:</source>
-        <translation>Langue d&apos;application :</translation>
+        <translation>Langue d&apos;application&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="317"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="209"/>
+        <source>Reset all settings</source>
+        <translation>Réinitialiser toutes les préférences</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="376"/>
         <source>Dictionary export succeeded!</source>
         <translation>Réussite de l&apos;exportation des dictionnaires!</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="318"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="377"/>
         <source>Dictionary export failed.</source>
         <translation>Échec de l&apos;exportation des dictionnaires.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="320"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="379"/>
         <source>Exporting dictionaries...</source>
         <translation>Exportation des dictionnaires...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="361"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="420"/>
         <source>Saved words and history export succeeded!</source>
         <translation>Réussite de l&apos;exportation des mots enregistrés et l&apos;historique de recherche!</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="362"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="421"/>
         <source>Saved words and history export failed.</source>
         <translation>Échec de l&apos;exportation des mots enregistrés et l&apos;historique de recherche.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="364"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="423"/>
         <source>Exporting saved words and history...</source>
         <translation>Exportation de l&apos;exportation des mots enregistrés et l&apos;historique de recherche...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="409"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="450"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="468"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="509"/>
         <source>Dictionary restore succeeded! %1 will now restart.</source>
         <translation>Réussite de la restauration du fichier contenant les dictionnaires! %1 va redémarrer maintenant.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="413"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="455"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="472"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="514"/>
         <source>Dictionary restore failed! %1 will now restart.</source>
         <translation>Échec de la restauration du fichier contenant les dictionnaires! %1 va redémarrer maintenant.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="417"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="464"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="476"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="523"/>
         <source>Restoring dictionary...</source>
         <translation>Restauration du fichier contenant les dictionnaires...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="443"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="502"/>
         <source>Exported dictionary file path</source>
         <translation>Enregistrer sous</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="497"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="556"/>
         <source>Exported saved words and history path</source>
         <translation>Enregistrer sous</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="503"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="562"/>
         <source>Saved words and history restore succeeded! %1 will now restart.</source>
         <translation>Réussite de la restauration des mots enregistrés et l&apos;historique de recherche! %1 va redémarrer maintenant.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="507"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="566"/>
         <source>Saved words and history restore failed! %1 will now restart.</source>
         <translation>Échec de la restauration des mots enregistrés et l&apos;historique de recherche! %1 va redémarrer maintenant.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="516"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="575"/>
         <source>Restoring saved words and history...</source>
         <translation>Restauration des mots enregistrés et l&apos;historique de recherche...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="186"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="200"/>
         <source>Use system language</source>
         <translation>Langue par défault du système</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="187"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="201"/>
         <source>English</source>
         <translation>Anglais</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="192"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="206"/>
         <source>Simplified Chinese</source>
         <translation>Chinois simplifié</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="193"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="207"/>
         <source>Traditional Chinese</source>
         <translation>Chinois traditionnel</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="308"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="352"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="367"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="411"/>
         <source>Path to save exported database</source>
         <translation>Où enregistrer le fichier</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="188"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="202"/>
         <source>French (CA)</source>
         <translation>Français (Canada)</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="189"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="203"/>
         <source>French</source>
         <translation>Français</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="190"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="204"/>
         <source>Cantonese (Simplified)</source>
         <translation>Cantonais simplifié</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="191"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="205"/>
         <source>Cantonese (Traditional)</source>
         <translation>Cantonais traditionnel</translation>
     </message>
@@ -216,7 +221,7 @@
     <message>
         <location filename="../../components/settings/contacttab.cpp" line="151"/>
         <source>Looking for other Cantonese resources? Try these!</source>
-        <translation>D&apos;autres ressources merveilleuses pour le cantonais :</translation>
+        <translation>D&apos;autres ressources merveilleuses pour le cantonais&#xa0;:</translation>
     </message>
 </context>
 <context>
@@ -337,22 +342,22 @@
 <context>
     <name>EntryActionWidget</name>
     <message>
-        <location filename="../../components/entryview/entryactionwidget.cpp" line="105"/>
+        <location filename="../../components/entryview/entryactionwidget.cpp" line="109"/>
         <source>Saved!</source>
         <translation>Enregistré!</translation>
     </message>
     <message>
-        <location filename="../../components/entryview/entryactionwidget.cpp" line="105"/>
+        <location filename="../../components/entryview/entryactionwidget.cpp" line="109"/>
         <source>Save</source>
         <translation>Enregistrer</translation>
     </message>
     <message>
-        <location filename="../../components/entryview/entryactionwidget.cpp" line="106"/>
+        <location filename="../../components/entryview/entryactionwidget.cpp" line="110"/>
         <source>Share</source>
         <translation>Partager</translation>
     </message>
     <message>
-        <location filename="../../components/entryview/entryactionwidget.cpp" line="203"/>
+        <location filename="../../components/entryview/entryactionwidget.cpp" line="227"/>
         <source>Path to save exported image</source>
         <translation>Où enregistrer le fichier</translation>
     </message>
@@ -383,7 +388,7 @@
 <context>
     <name>EntryViewSentenceCardSection</name>
     <message>
-        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="81"/>
+        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="84"/>
         <source>View all sentences →</source>
         <translation>Voir toutes les phrases →</translation>
     </message>
@@ -412,19 +417,19 @@
 <context>
     <name>HistoryWindow</name>
     <message>
-        <location filename="../../windows/historywindow.cpp" line="59"/>
-        <location filename="../../windows/historywindow.cpp" line="70"/>
+        <location filename="../../windows/historywindow.cpp" line="60"/>
+        <location filename="../../windows/historywindow.cpp" line="71"/>
         <source>Search History</source>
         <translation>Recherche</translation>
     </message>
     <message>
-        <location filename="../../windows/historywindow.cpp" line="60"/>
-        <location filename="../../windows/historywindow.cpp" line="71"/>
+        <location filename="../../windows/historywindow.cpp" line="61"/>
+        <location filename="../../windows/historywindow.cpp" line="72"/>
         <source>Viewed Entries</source>
         <translation>Entrées</translation>
     </message>
     <message>
-        <location filename="../../windows/historywindow.cpp" line="68"/>
+        <location filename="../../windows/historywindow.cpp" line="69"/>
         <source>History</source>
         <translation>Historique</translation>
     </message>
@@ -441,31 +446,31 @@
     <name>MAC_APPLICATION_MENU</name>
     <message>
         <source>Services</source>
-        <translation type="vanished">Services</translation>
+        <translation>Services</translation>
     </message>
     <message>
         <source>Hide %1</source>
-        <translation type="vanished">Masquer %1</translation>
+        <translation>Masquer %1</translation>
     </message>
     <message>
         <source>Hide Others</source>
-        <translation type="vanished">Masquer les autres</translation>
+        <translation>Masquer les autres</translation>
     </message>
     <message>
         <source>Show All</source>
-        <translation type="vanished">Tout afficher</translation>
+        <translation>Tout afficher</translation>
     </message>
     <message>
         <source>Preferences...</source>
-        <translation type="vanished">Préférences...</translation>
+        <translation>Préférences...</translation>
     </message>
     <message>
         <source>Quit %1</source>
-        <translation type="vanished">Quitter %1</translation>
+        <translation>Quitter %1</translation>
     </message>
     <message>
         <source>About %1</source>
-        <translation type="vanished">À propos de %1</translation>
+        <translation>À propos de %1</translation>
     </message>
 </context>
 <context>
@@ -591,7 +596,7 @@
         <translation>Rechercher avec le chinois traditionnel</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="1132"/>
+        <location filename="../../windows/mainwindow.cpp" line="1137"/>
         <source>Migrating database to new version...
 This might take a few minutes.
 Hang tight!</source>
@@ -655,7 +660,7 @@ Veuillez patienter quelques minutes.</translation>
         <translation>Recherche</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="1084"/>
+        <location filename="../../windows/mainwindow.cpp" line="1089"/>
         <source>Checking for update...</source>
         <translation>Recherche de mises à jour...</translation>
     </message>
@@ -692,46 +697,46 @@ Veuillez patienter quelques minutes.</translation>
     <name>QMessageBox</name>
     <message>
         <source>Show Details...</source>
-        <translation type="vanished">Montrer les détails...</translation>
+        <translation>Montrer les détails...</translation>
     </message>
     <message>
         <source>Hide Details...</source>
-        <translation type="vanished">Masquer les détails...</translation>
+        <translation>Masquer les détails...</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="vanished">OK</translation>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation type="vanished">Aide</translation>
+        <translation>Aide</translation>
     </message>
     <message>
         <source>&lt;h3&gt;About Qt&lt;/h3&gt;&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;</source>
-        <translation type="vanished">&lt;h3&gt;À propos de Qt&lt;/h3&gt;&lt;p&gt;Ce programme utilise la version %1 de Qt.&lt;/p&gt;</translation>
+        <translation>&lt;h3&gt;À propos de Qt&lt;/h3&gt;&lt;p&gt;Ce programme utilise la version %1 de Qt.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p&gt;Qt is a C++ toolkit for cross-platform application development.&lt;/p&gt;&lt;p&gt;Qt provides single-source portability across all major desktop operating systems. It is also available for embedded Linux and other embedded and mobile operating systems.&lt;/p&gt;&lt;p&gt;Qt is available under three different licensing options designed to accommodate the needs of our various users.&lt;/p&gt;&lt;p&gt;Qt licensed under our commercial license agreement is appropriate for development of proprietary/commercial software where you do not want to share any source code with third parties or otherwise cannot comply with the terms of the GNU LGPL version 3 or GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU LGPL version 3 is appropriate for the development of Qt&amp;nbsp;applications provided you can comply with the terms and conditions of the GNU LGPL version 3.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU LGPL version 2.1 is appropriate for the development of Qt&amp;nbsp;applications provided you can comply with the terms and conditions of the GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Please see &lt;a href=&quot;http://%2/&quot;&gt;%2&lt;/a&gt; for an overview of Qt licensing.&lt;/p&gt;&lt;p&gt;Copyright (C) %1 The Qt Company Ltd and other contributors.&lt;/p&gt;&lt;p&gt;Qt and the Qt logo are trademarks of The Qt Company Ltd.&lt;/p&gt;&lt;p&gt;Qt is The Qt Company Ltd product developed as an open source project. See &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt; for more information.&lt;/p&gt;</source>
-        <translation type="vanished">&lt;p&gt;Qt est dédié au développement d&apos;applications C++ multiplateformes.&lt;/p&gt;&lt;p&gt;Qt offre un code source unique compatible avec les principaux systèmes d&apos;exploitation &quot;de bureau&quot; (Linux, Mac, Windows). Qt est également compatible avec des systèmes d&apos;exploitation embarqués de type Linux ou autres.&lt;/p&gt;&lt;p&gt;Qt est utilisable sous les termes de trois types de licence différents, afin de répondre aux besoins d&apos;un maximum d&apos;utilisateurs.&lt;/p&gt;&lt;p&gt;La licence commerciale de Qt est appropriée pour le développement de logiciels propriétaires/commerciaux pour lesquels vous ne souhaitez pas partager le code source avec des tierces parties ou pour lesquels les termes de la licence GNU LGPL version 3 ou GNU LGPL version 2.1 ne vous conviennent pas.&lt;/p&gt;&lt;p&gt;La licence GNU LGPL version 3 de Qt est appropriée pour le développement d&apos;applications Qt si vous acceptez les termes et conditions de la licence GNU LGPL version 3.&lt;/p&gt;&lt;p&gt;La licence GNU LGPL version 2.1 est appropriée pour le développement d&apos;applications Qt si vous acceptez les termes et conditions de la licence GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Veuillez consulter &lt;a href=&quot;http://%2/&quot;&gt;%2&lt;/a&gt; pour le détail des différents types de licence Qt.&lt;/p&gt;&lt;p&gt;Copyright (C) %1 &quot;The Qt Company Ltd&quot; et autres contributeurs.&lt;/p&gt;&lt;p&gt;Qt et le logo Qt sont des marques de &quot;The Qt Company Ltd&quot;.&lt;/p&gt;&lt;p&gt;Qt est le produit de &quot;The Qt Company Ltd&quot;, développé sous forme de projet open source. Veuillez trouver de plus amples information à &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt;.&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;Qt est dédié au développement d&apos;applications C++ multiplateformes.&lt;/p&gt;&lt;p&gt;Qt offre un code source unique compatible avec les principaux systèmes d&apos;exploitation &quot;de bureau&quot; (Linux, Mac, Windows). Qt est également compatible avec des systèmes d&apos;exploitation embarqués de type Linux ou autres.&lt;/p&gt;&lt;p&gt;Qt est utilisable sous les termes de trois types de licence différents, afin de répondre aux besoins d&apos;un maximum d&apos;utilisateurs.&lt;/p&gt;&lt;p&gt;La licence commerciale de Qt est appropriée pour le développement de logiciels propriétaires/commerciaux pour lesquels vous ne souhaitez pas partager le code source avec des tierces parties ou pour lesquels les termes de la licence GNU LGPL version 3 ou GNU LGPL version 2.1 ne vous conviennent pas.&lt;/p&gt;&lt;p&gt;La licence GNU LGPL version 3 de Qt est appropriée pour le développement d&apos;applications Qt si vous acceptez les termes et conditions de la licence GNU LGPL version 3.&lt;/p&gt;&lt;p&gt;La licence GNU LGPL version 2.1 est appropriée pour le développement d&apos;applications Qt si vous acceptez les termes et conditions de la licence GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Veuillez consulter &lt;a href=&quot;http://%2/&quot;&gt;%2&lt;/a&gt; pour le détail des différents types de licence Qt.&lt;/p&gt;&lt;p&gt;Copyright (C) %1 &quot;The Qt Company Ltd&quot; et autres contributeurs.&lt;/p&gt;&lt;p&gt;Qt et le logo Qt sont des marques de &quot;The Qt Company Ltd&quot;.&lt;/p&gt;&lt;p&gt;Qt est le produit de &quot;The Qt Company Ltd&quot;, développé sous forme de projet open source. Veuillez trouver de plus amples information à &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>About Qt</source>
-        <translation type="vanished">À propos de Qt</translation>
+        <translation>À propos de Qt</translation>
     </message>
 </context>
 <context>
     <name>QPlatformTheme</name>
     <message>
         <source>Cancel</source>
-        <translation type="vanished">Annuler</translation>
+        <translation>Annuler</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation type="vanished">&amp;Oui</translation>
+        <translation>&amp;Oui</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="vanished">OK</translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -862,7 +867,7 @@ Veuillez patienter quelques minutes.</translation>
 <context>
     <name>SearchHistoryListDelegate</name>
     <message>
-        <location filename="../../components/historyview/searchhistorylistdelegate.cpp" line="106"/>
+        <location filename="../../components/historyview/searchhistorylistdelegate.cpp" line="114"/>
         <source>After searching for a word, you will find it in this list. Selecting a word will allow you to do the same search again.</source>
         <translation>Après avoir effectué une recherche, vous retrouverez votre terme de recherche dans cette liste.</translation>
     </message>
@@ -886,7 +891,7 @@ Veuillez patienter quelques minutes.</translation>
 <context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/mainwindow/searchlineedit.cpp" line="140"/>
+        <location filename="../../components/mainwindow/searchlineedit.cpp" line="142"/>
         <source>Search</source>
         <translation>Rechercher</translation>
     </message>
@@ -894,52 +899,52 @@ Veuillez patienter quelques minutes.</translation>
 <context>
     <name>SearchOptionsRadioGroupBox</name>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="121"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="133"/>
         <source>SC</source>
         <translation>CS</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="127"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="139"/>
         <source>Search Simplified Chinese</source>
         <translation>Rechercher avec le chinois simplifié</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="122"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="134"/>
         <source>TC</source>
         <translation>CT</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="128"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="140"/>
         <source>Search Traditional Chinese</source>
         <translation>Rechercher avec le chinois traditionnel</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="123"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="135"/>
         <source>JP</source>
         <translation>JP</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="129"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="141"/>
         <source>Search Jyutping</source>
         <translation>Rechercher avec jyutping</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="124"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="136"/>
         <source>PY</source>
         <translation>PY</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="130"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="142"/>
         <source>Search Pinyin</source>
         <translation>Rechercher avec pinyin</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="125"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="137"/>
         <source>EN</source>
         <translation>FR</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="131"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="143"/>
         <source>Search English</source>
         <translation>Rechercher en français</translation>
     </message>
@@ -947,12 +952,12 @@ Veuillez patienter quelques minutes.</translation>
 <context>
     <name>SentenceSplitter</name>
     <message>
-        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="107"/>
+        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="108"/>
         <source>Sentences for %1 (%2 result)</source>
         <translation>Phrases contenant le mot %1 (%2 résultat)</translation>
     </message>
     <message>
-        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="111"/>
+        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="112"/>
         <source>Sentences for %1 (%2 results)</source>
         <translation>Phrases contenant le mot %1 (%2 résultats)</translation>
     </message>
@@ -960,213 +965,246 @@ Veuillez patienter quelques minutes.</translation>
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="340"/>
-        <source>Reset all settings</source>
-        <translation>Réinitialiser toutes les préférences</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="251"/>
-        <source>Only Simplified</source>
-        <translation>Uniquement sinogrammes simplifiés</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="252"/>
-        <source>Only Traditional</source>
-        <translation>Uniquement sinogrammes traditionnels</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="253"/>
-        <source>Both, Prefer Simplified</source>
-        <translation>Les deux, donner précédence aux sinogrammes simplifiés</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="254"/>
-        <source>Both, Prefer Traditional</source>
-        <translation>Les deux, donner précédence aux sinogrammes traditionnels</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="248"/>
-        <source>Character set:</source>
-        <translation>Système d&apos;écriture&#xa0;:</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="250"/>
-        <source>	Show simplified/traditional characters:</source>
-        <translation>	Afficher les sinogrammes simplifiés ou traditionnels&#xa0;:</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="256"/>
+        <location filename="../../components/settings/settingstab.cpp" line="189"/>
         <source>In search results and examples:</source>
         <translation>Dans les résultats de recherche et les exemples&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="259"/>
+        <location filename="../../components/settings/settingstab.cpp" line="193"/>
+        <source>	Show pronunciation for:</source>
+        <translation>	Afficher la prononciation pour&#xa0;:</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/settingstab.cpp" line="195"/>
         <source>Show pronunciation for:</source>
         <translation>Afficher la prononciation pour&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="260"/>
+        <location filename="../../components/settings/settingstab.cpp" line="197"/>
         <source>only Cantonese</source>
         <translation>uniquement le cantonais</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="261"/>
+        <location filename="../../components/settings/settingstab.cpp" line="198"/>
         <source>only Mandarin</source>
         <translation>uniquement le mandarin</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="263"/>
+        <location filename="../../components/settings/settingstab.cpp" line="200"/>
         <source>both languages, prefer Cantonese</source>
         <translation>les deux langues, donner précédence au cantonais</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="265"/>
+        <location filename="../../components/settings/settingstab.cpp" line="202"/>
         <source>both languages, prefer Mandarin</source>
         <translation>les deux langues, donner précédence au mandarin</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="268"/>
-        <location filename="../../components/settings/settingstab.cpp" line="284"/>
+        <location filename="../../components/settings/settingstab.cpp" line="205"/>
+        <location filename="../../components/settings/settingstab.cpp" line="221"/>
         <source>Show Cantonese:</source>
         <translation>Romanisations pour le cantonais&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="269"/>
-        <location filename="../../components/settings/settingstab.cpp" line="285"/>
+        <location filename="../../components/settings/settingstab.cpp" line="206"/>
+        <location filename="../../components/settings/settingstab.cpp" line="222"/>
         <source>Jyutping</source>
         <translation>Jyutping</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="270"/>
-        <location filename="../../components/settings/settingstab.cpp" line="286"/>
+        <location filename="../../components/settings/settingstab.cpp" line="207"/>
+        <location filename="../../components/settings/settingstab.cpp" line="223"/>
         <source>Yale</source>
         <translation>Yale</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="271"/>
-        <location filename="../../components/settings/settingstab.cpp" line="287"/>
+        <location filename="../../components/settings/settingstab.cpp" line="208"/>
+        <location filename="../../components/settings/settingstab.cpp" line="224"/>
         <source>Cantonese IPA</source>
         <translation>API cantonais</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="274"/>
-        <location filename="../../components/settings/settingstab.cpp" line="289"/>
+        <location filename="../../components/settings/settingstab.cpp" line="211"/>
+        <location filename="../../components/settings/settingstab.cpp" line="226"/>
         <source>Show Mandarin:</source>
         <translation>Romanisations pour le mandarin&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="275"/>
-        <location filename="../../components/settings/settingstab.cpp" line="290"/>
+        <location filename="../../components/settings/settingstab.cpp" line="212"/>
+        <location filename="../../components/settings/settingstab.cpp" line="227"/>
         <source>Pinyin</source>
         <translation>Pinyin</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="276"/>
-        <location filename="../../components/settings/settingstab.cpp" line="291"/>
+        <location filename="../../components/settings/settingstab.cpp" line="213"/>
+        <location filename="../../components/settings/settingstab.cpp" line="228"/>
         <source>Pinyin with digits</source>
         <translation>Pinyin avec numéros</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="277"/>
-        <location filename="../../components/settings/settingstab.cpp" line="292"/>
+        <location filename="../../components/settings/settingstab.cpp" line="214"/>
+        <location filename="../../components/settings/settingstab.cpp" line="229"/>
         <source>Zhuyin</source>
         <translation>Bopomofo</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="278"/>
-        <location filename="../../components/settings/settingstab.cpp" line="293"/>
+        <location filename="../../components/settings/settingstab.cpp" line="215"/>
+        <location filename="../../components/settings/settingstab.cpp" line="230"/>
         <source>Mandarin IPA</source>
         <translation>API mandarin</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="281"/>
+        <location filename="../../components/settings/settingstab.cpp" line="218"/>
         <source>In the header at the top of an entry:</source>
         <translation>Dans le titre d&apos;une entrée&#xa0;:</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="296"/>
-        <source>Tone colouring:</source>
-        <translation>Couleur des sinogrammes selon le ton&#xa0;:</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="298"/>
-        <source>Colour characters by tone using:</source>
-        <translation>	Colorer les sinogrammes selon leur prononciation en&#xa0;:</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="299"/>
-        <source>No Colours</source>
-        <translation>ne pas colorer</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="300"/>
-        <source>Cantonese</source>
-        <translation>cantonais</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="301"/>
-        <source>Mandarin</source>
-        <translation>mandarin</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="303"/>
-        <source>Cantonese tone colours:</source>
-        <translation>Couleurs des tons en cantonais&#xa0;:</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="305"/>
-        <source>Mandarin tone colours:</source>
-        <translation>Couleurs des tons en mandarin&#xa0;:</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="312"/>
-        <location filename="../../components/settings/settingstab.cpp" line="326"/>
-        <source>No Tone</source>
-        <translation>Aucun ton</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="316"/>
-        <location filename="../../components/settings/settingstab.cpp" line="334"/>
-        <source>Tone %1</source>
-        <translation>Ton %1</translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="330"/>
-        <source>Neutral</source>
-        <translation>Ton neutre</translation>
     </message>
 </context>
 <context>
     <name>SettingsWindow</name>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="118"/>
+        <location filename="../../windows/settingswindow.cpp" line="145"/>
         <source>General</source>
         <translation>Général</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="119"/>
+        <location filename="../../windows/settingswindow.cpp" line="146"/>
+        <source>Text</source>
+        <translation>Texte</translation>
+    </message>
+    <message>
+        <location filename="../../windows/settingswindow.cpp" line="147"/>
         <source>Dictionaries</source>
         <translation>Dictionnaires</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="120"/>
+        <location filename="../../windows/settingswindow.cpp" line="148"/>
         <source>Advanced</source>
         <translation>Avancé</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="121"/>
+        <location filename="../../windows/settingswindow.cpp" line="149"/>
         <source>Contact</source>
         <translation>Contact</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="124"/>
+        <location filename="../../windows/settingswindow.cpp" line="152"/>
         <source>Preferences</source>
         <translation>Préférences</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="126"/>
+        <location filename="../../windows/settingswindow.cpp" line="154"/>
         <source>Settings</source>
         <translation>Réglages</translation>
+    </message>
+</context>
+<context>
+    <name>TextTab</name>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="124"/>
+        <source>Character set:</source>
+        <translation>Système d&apos;écriture&#xa0;:</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="127"/>
+        <source>	Show simplified/traditional characters:</source>
+        <translation>	Afficher les sinogrammes simplifiés ou traditionnels&#xa0;:</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="129"/>
+        <source>Show simplified/traditional characters:</source>
+        <translation>Afficher les sinogrammes simplifiés ou traditionnels&#xa0;:</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="131"/>
+        <source>Only Simplified</source>
+        <translation>Uniquement sinogrammes simplifiés</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="132"/>
+        <source>Only Traditional</source>
+        <translation>Uniquement sinogrammes traditionnels</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="133"/>
+        <source>Both, Prefer Simplified</source>
+        <translation>Les deux, donner précédence aux sinogrammes simplifiés</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="134"/>
+        <source>Both, Prefer Traditional</source>
+        <translation>Les deux, donner précédence aux sinogrammes traditionnels</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="136"/>
+        <source>Interface:</source>
+        <translation>Interface&#xa0;:</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="138"/>
+        <source>Interface size:</source>
+        <translation>Taille d&apos;interface&#xa0;:</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="139"/>
+        <source>Smallest</source>
+        <translation>Plus petit</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="140"/>
+        <source>Largest</source>
+        <translation>Plus grand</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="142"/>
+        <source>Tone colouring:</source>
+        <translation>Couleur des sinogrammes selon le ton&#xa0;:</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="144"/>
+        <source>Colour characters by tone using:</source>
+        <translation>Colorer les sinogrammes selon leur prononciation en&#xa0;:</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="145"/>
+        <source>No Colours</source>
+        <translation>ne pas colorer</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="146"/>
+        <source>Cantonese</source>
+        <translation>cantonais</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="147"/>
+        <source>Mandarin</source>
+        <translation>mandarin</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="149"/>
+        <source>Cantonese tone colours:</source>
+        <translation>Couleurs des tons en cantonais&#xa0;:</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="151"/>
+        <source>Mandarin tone colours:</source>
+        <translation>Couleurs des tons en mandarin&#xa0;:</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="158"/>
+        <location filename="../../components/settings/texttab.cpp" line="172"/>
+        <source>No Tone</source>
+        <translation>Aucun ton</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="162"/>
+        <location filename="../../components/settings/texttab.cpp" line="180"/>
+        <source>Tone %1</source>
+        <translation>Ton %1</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="176"/>
+        <source>Neutral</source>
+        <translation>Ton neutre</translation>
     </message>
 </context>
 <context>
@@ -1390,7 +1428,7 @@ Veuillez patienter quelques minutes.</translation>
 Debug: Locale: %1, Language: Chinese - Hong Kong</source>
         <translation>Erreur de lecture.
 
-Débogage : Locale : %1, Langue : Cantonais - Hong Kong</translation>
+Débogage&#xa0;: Locale&#xa0;: %1, Langue&#xa0;: Cantonais - Hong Kong</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="71"/>
@@ -1399,7 +1437,7 @@ Débogage : Locale : %1, Langue : Cantonais - Hong Kong</translation>
 Debug: Locale: %1, Language: Chinese - Taiwan</source>
         <translation>Erreur de lecture.
 
-Débogage : Locale: %1, Langue : Chinois - Taïwan</translation>
+Débogage&#xa0;: Locale: %1, Langue&#xa0;: Chinois - Taïwan</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="78"/>
@@ -1408,7 +1446,7 @@ Débogage : Locale: %1, Langue : Chinois - Taïwan</translation>
 Debug: Locale: %1, Language: Chinese - Mainland</source>
         <translation>Erreur de lecture.
 
-Débogage : Locale : %1, Langue : Chinois - Chine continentale</translation>
+Débogage&#xa0;: Locale&#xa0;: %1, Langue&#xa0;: Chinois - Chine continentale</translation>
     </message>
 </context>
 </TS>

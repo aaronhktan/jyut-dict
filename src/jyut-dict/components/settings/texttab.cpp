@@ -136,8 +136,8 @@ void TextTab::translateUI()
     _interfaceSizeTitleLabel->setText("<b>" + tr("Interface:") + "</b>");
     static_cast<QLabel *>(_tabLayout->labelForField(_interfaceSizeWidget))
         ->setText(tr("Interface size:"));
-    _interfaceSizeSmallLabel->setText("Smallest");
-    _interfaceSizeLargeLabel->setText("Largest");
+    _interfaceSizeSmallLabel->setText(tr("Smallest"));
+    _interfaceSizeLargeLabel->setText(tr("Largest"));
 
     _colourTitleLabel->setText("<b>" + tr("Tone colouring:") + "</b>");
     static_cast<QLabel *>(_tabLayout->labelForField(_colourCombobox))
