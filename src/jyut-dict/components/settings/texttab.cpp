@@ -123,10 +123,10 @@ void TextTab::translateUI()
 
     _characterTitleLabel->setText("<b>" + tr("Character set:") + "</b>");
     static_cast<QLabel *>(_tabLayout->labelForField(_characterCombobox))
-#ifdef Q_OS_MAC
-        ->setText(tr("\tShow simplified/traditional characters:"));
-#else
+#ifdef Q_OS_WIN
         ->setText(tr("Show simplified/traditional characters:"));
+#else
+        ->setText(tr("\tShow simplified/traditional characters:"));
 #endif
     _characterCombobox->setItemText(0, tr("Only Simplified"));
     _characterCombobox->setItemText(1, tr("Only Traditional"));
@@ -148,7 +148,11 @@ void TextTab::translateUI()
     static_cast<QLabel *>(_tabLayout->labelForField(_jyutpingColourWidget))
         ->setText(tr("Cantonese tone colours:"));
     static_cast<QLabel *>(_tabLayout->labelForField(_pinyinColourWidget))
+#ifdef Q_OS_WIN
         ->setText(tr("Mandarin tone colours:"));
+#else
+        ->setText(tr("\tMandarin tone colours:"));
+#endif
 
     QList<QLabel *> jyutpingLabels
         = _jyutpingColourWidget->findChildren<QLabel *>();

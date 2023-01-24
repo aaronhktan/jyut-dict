@@ -1001,60 +1001,65 @@ Veuillez patienter quelques minutes.</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="205"/>
-        <location filename="../../components/settings/settingstab.cpp" line="221"/>
+        <location filename="../../components/settings/settingstab.cpp" line="225"/>
         <source>Show Cantonese:</source>
         <translation>Romanisations pour le cantonais&#xa0;:</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="206"/>
-        <location filename="../../components/settings/settingstab.cpp" line="222"/>
+        <location filename="../../components/settings/settingstab.cpp" line="226"/>
         <source>Jyutping</source>
         <translation>Jyutping</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="207"/>
-        <location filename="../../components/settings/settingstab.cpp" line="223"/>
+        <location filename="../../components/settings/settingstab.cpp" line="227"/>
         <source>Yale</source>
         <translation>Yale</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="208"/>
-        <location filename="../../components/settings/settingstab.cpp" line="224"/>
+        <location filename="../../components/settings/settingstab.cpp" line="228"/>
         <source>Cantonese IPA</source>
         <translation>API cantonais</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="211"/>
-        <location filename="../../components/settings/settingstab.cpp" line="226"/>
+        <location filename="../../components/settings/settingstab.cpp" line="212"/>
+        <source>	Show Mandarin:</source>
+        <translation>	Romanisations pour le mandarin&#xa0;:</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/settingstab.cpp" line="214"/>
+        <location filename="../../components/settings/settingstab.cpp" line="230"/>
         <source>Show Mandarin:</source>
         <translation>Romanisations pour le mandarin&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="212"/>
-        <location filename="../../components/settings/settingstab.cpp" line="227"/>
+        <location filename="../../components/settings/settingstab.cpp" line="216"/>
+        <location filename="../../components/settings/settingstab.cpp" line="231"/>
         <source>Pinyin</source>
         <translation>Pinyin</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="213"/>
-        <location filename="../../components/settings/settingstab.cpp" line="228"/>
+        <location filename="../../components/settings/settingstab.cpp" line="217"/>
+        <location filename="../../components/settings/settingstab.cpp" line="232"/>
         <source>Pinyin with digits</source>
         <translation>Pinyin avec numéros</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="214"/>
-        <location filename="../../components/settings/settingstab.cpp" line="229"/>
+        <location filename="../../components/settings/settingstab.cpp" line="218"/>
+        <location filename="../../components/settings/settingstab.cpp" line="233"/>
         <source>Zhuyin</source>
         <translation>Bopomofo</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="215"/>
-        <location filename="../../components/settings/settingstab.cpp" line="230"/>
+        <location filename="../../components/settings/settingstab.cpp" line="219"/>
+        <location filename="../../components/settings/settingstab.cpp" line="234"/>
         <source>Mandarin IPA</source>
         <translation>API mandarin</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="218"/>
+        <location filename="../../components/settings/settingstab.cpp" line="222"/>
         <source>In the header at the top of an entry:</source>
         <translation>Dans le titre d&apos;une entrée&#xa0;:</translation>
     </message>
@@ -1185,24 +1190,29 @@ Veuillez patienter quelques minutes.</translation>
         <translation>Couleurs des tons en cantonais&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="151"/>
+        <location filename="../../components/settings/texttab.cpp" line="152"/>
+        <source>	Mandarin tone colours:</source>
+        <translation>	Couleurs des tons en mandarin&#xa0;:</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="154"/>
         <source>Mandarin tone colours:</source>
         <translation>Couleurs des tons en mandarin&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="158"/>
-        <location filename="../../components/settings/texttab.cpp" line="172"/>
+        <location filename="../../components/settings/texttab.cpp" line="162"/>
+        <location filename="../../components/settings/texttab.cpp" line="176"/>
         <source>No Tone</source>
         <translation>Aucun ton</translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="162"/>
-        <location filename="../../components/settings/texttab.cpp" line="180"/>
+        <location filename="../../components/settings/texttab.cpp" line="166"/>
+        <location filename="../../components/settings/texttab.cpp" line="184"/>
         <source>Tone %1</source>
         <translation>Ton %1</translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="176"/>
+        <location filename="../../components/settings/texttab.cpp" line="180"/>
         <source>Neutral</source>
         <translation>Ton neutre</translation>
     </message>

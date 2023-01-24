@@ -974,8 +974,8 @@ Hang tight!</source>
     </message>
     <message>
         <location line="+4"/>
-        <source>    Show pronunciation for:</source>
-        <translation>   词条拼音：</translation>
+        <source>	Show pronunciation for:</source>
+        <translation>	词条拼音：</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1004,31 +1004,36 @@ Hang tight!</source>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+16"/>
+        <location line="+20"/>
         <source>Show Cantonese:</source>
         <translation>粤语显示下列拼音：</translation>
     </message>
     <message>
-        <location line="-15"/>
-        <location line="+16"/>
+        <location line="-19"/>
+        <location line="+20"/>
         <source>Jyutping</source>
         <translation>粤语拼音</translation>
     </message>
     <message>
-        <location line="-15"/>
-        <location line="+16"/>
+        <location line="-19"/>
+        <location line="+20"/>
         <source>Yale</source>
         <translation>耶鲁拼音</translation>
     </message>
     <message>
-        <location line="-15"/>
-        <location line="+16"/>
+        <location line="-19"/>
+        <location line="+20"/>
         <source>Cantonese IPA</source>
         <translation>国际音标</translation>
     </message>
     <message>
-        <location line="-13"/>
-        <location line="+15"/>
+        <location line="-16"/>
+        <source>	Show Mandarin:</source>
+        <translation>	普通话显示下列拼音：</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <location line="+16"/>
         <source>Show Mandarin:</source>
         <translation>普通话显示下列拼音：</translation>
     </message>
@@ -1109,8 +1114,8 @@ Hang tight!</source>
     </message>
     <message>
         <location line="+3"/>
-        <source>    Show simplified/traditional characters:</source>
-        <translation>词条字体：</translation>
+        <source>	Show simplified/traditional characters:</source>
+        <translation>	词条字体：</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1188,12 +1193,17 @@ Hang tight!</source>
         <translation>拼音声调嘅对应颜色（粤语）：</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Mandarin tone colours:</source>
-        <translation>   拼音声调嘅对应颜色（普通话）：</translation>
+        <location line="+3"/>
+        <source>	Mandarin tone colours:</source>
+        <translation>	拼音声调嘅对应颜色（普通话）：</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+2"/>
+        <source>Mandarin tone colours:</source>
+        <translation>拼音声调嘅对应颜色（普通话）：</translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <location line="+14"/>
         <source>No Tone</source>
         <translation>未知声调</translation>

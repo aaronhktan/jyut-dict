@@ -1000,60 +1000,65 @@ Hang tight!</source>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="205"/>
-        <location filename="../../components/settings/settingstab.cpp" line="221"/>
+        <location filename="../../components/settings/settingstab.cpp" line="225"/>
         <source>Show Cantonese:</source>
         <translation>粵語顯示下列拼音：</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="206"/>
-        <location filename="../../components/settings/settingstab.cpp" line="222"/>
+        <location filename="../../components/settings/settingstab.cpp" line="226"/>
         <source>Jyutping</source>
         <translation>粵語拼音</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="207"/>
-        <location filename="../../components/settings/settingstab.cpp" line="223"/>
+        <location filename="../../components/settings/settingstab.cpp" line="227"/>
         <source>Yale</source>
         <translation>耶魯拼音</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="208"/>
-        <location filename="../../components/settings/settingstab.cpp" line="224"/>
+        <location filename="../../components/settings/settingstab.cpp" line="228"/>
         <source>Cantonese IPA</source>
         <translation>國際音標</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="211"/>
-        <location filename="../../components/settings/settingstab.cpp" line="226"/>
+        <location filename="../../components/settings/settingstab.cpp" line="212"/>
+        <source>	Show Mandarin:</source>
+        <translation>	國語顯示下列拼音：</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/settingstab.cpp" line="214"/>
+        <location filename="../../components/settings/settingstab.cpp" line="230"/>
         <source>Show Mandarin:</source>
         <translation>國語顯示下列拼音：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="212"/>
-        <location filename="../../components/settings/settingstab.cpp" line="227"/>
+        <location filename="../../components/settings/settingstab.cpp" line="216"/>
+        <location filename="../../components/settings/settingstab.cpp" line="231"/>
         <source>Pinyin</source>
         <translation>漢語拼音</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="213"/>
-        <location filename="../../components/settings/settingstab.cpp" line="228"/>
+        <location filename="../../components/settings/settingstab.cpp" line="217"/>
+        <location filename="../../components/settings/settingstab.cpp" line="232"/>
         <source>Pinyin with digits</source>
         <translation>漢語拼音（數字）</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="214"/>
-        <location filename="../../components/settings/settingstab.cpp" line="229"/>
+        <location filename="../../components/settings/settingstab.cpp" line="218"/>
+        <location filename="../../components/settings/settingstab.cpp" line="233"/>
         <source>Zhuyin</source>
         <translation>注音</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="215"/>
-        <location filename="../../components/settings/settingstab.cpp" line="230"/>
+        <location filename="../../components/settings/settingstab.cpp" line="219"/>
+        <location filename="../../components/settings/settingstab.cpp" line="234"/>
         <source>Mandarin IPA</source>
         <translation>國際音標</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="218"/>
+        <location filename="../../components/settings/settingstab.cpp" line="222"/>
         <source>In the header at the top of an entry:</source>
         <translation>詞條標題：</translation>
     </message>
@@ -1184,24 +1189,29 @@ Hang tight!</source>
         <translation>拼音聲調的對應顏色（粵語）：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="151"/>
-        <source>Mandarin tone colours:</source>
+        <location filename="../../components/settings/texttab.cpp" line="152"/>
+        <source>	Mandarin tone colours:</source>
         <translation>	拼音聲調的對應顏色（國語）：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="158"/>
-        <location filename="../../components/settings/texttab.cpp" line="172"/>
+        <location filename="../../components/settings/texttab.cpp" line="154"/>
+        <source>Mandarin tone colours:</source>
+        <translation>拼音聲調的對應顏色（國語）：</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="162"/>
+        <location filename="../../components/settings/texttab.cpp" line="176"/>
         <source>No Tone</source>
         <translation>未知聲調</translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="162"/>
-        <location filename="../../components/settings/texttab.cpp" line="180"/>
+        <location filename="../../components/settings/texttab.cpp" line="166"/>
+        <location filename="../../components/settings/texttab.cpp" line="184"/>
         <source>Tone %1</source>
         <translation>第 %1 聲</translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="176"/>
+        <location filename="../../components/settings/texttab.cpp" line="180"/>
         <source>Neutral</source>
         <translation>輕聲</translation>
     </message>

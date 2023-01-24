@@ -189,10 +189,10 @@ void SettingsTab::translateUI()
     _previewTitleLabel->setText("<b>" + tr("In search results and examples:")
                                 + "</b>");
     static_cast<QLabel *>(_tabLayout->labelForField(_previewPhoneticWidget))
-#ifdef Q_OS_MAC
-        ->setText(tr("\tShow pronunciation for:"));
-#else
+#ifdef Q_OS_WIN
         ->setText(tr("Show pronunciation for:"));
+#else
+        ->setText(tr("\tShow pronunciation for:"));
 #endif
     _previewPhoneticCombobox->setItemText(0, tr("only Cantonese"));
     _previewPhoneticCombobox->setItemText(1, tr("only Mandarin"));
@@ -208,7 +208,11 @@ void SettingsTab::translateUI()
     _previewCantoneseIPA->setText(tr("Cantonese IPA"));
     static_cast<QLabel *>(
         _tabLayout->labelForField(_previewMandarinPronunciation))
+#ifdef Q_OS_WIN
         ->setText(tr("Show Mandarin:"));
+#else
+        ->setText(tr("\tShow Mandarin:"));
+#endif
     _previewPinyin->setText(tr("Pinyin"));
     _previewNumberedPinyin->setText(tr("Pinyin with digits"));
     _previewZhuyin->setText(tr("Zhuyin"));
