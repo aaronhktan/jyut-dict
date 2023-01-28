@@ -1,5 +1,6 @@
 #include "advancedtab.h"
 
+#include "dialogs/resetsettingsdialog.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/strings/strings.h"
@@ -125,6 +126,16 @@ void AdvancedTab::setupUI()
     _languageCombobox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
     initializeLanguageCombobox(*_languageCombobox);
 
+    QFrame *_resetDivider = new QFrame{this};
+    _resetDivider->setObjectName("divider");
+    _resetDivider->setFrameShape(QFrame::HLine);
+    _resetDivider->setFrameShadow(QFrame::Raised);
+    _resetDivider->setFixedHeight(1);
+
+    _resetButton = new QPushButton{this};
+    _resetButton->setObjectName("reset button");
+    initializeResetButton(*_resetButton);
+
     _tabLayout->addRow(" ", _updateCheckbox);
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     _tabLayout->addRow(" ", _forceDarkModeCheckbox);
@@ -140,6 +151,9 @@ void AdvancedTab::setupUI()
 #endif
     _tabLayout->addRow(_languageDivider);
     _tabLayout->addRow(" ", _languageCombobox);
+    _tabLayout->addRow(_resetDivider);
+    _tabLayout->addRow(_resetButton);
+    _tabLayout->setAlignment(_resetButton, Qt::AlignRight);
 
     // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
@@ -191,6 +205,8 @@ void AdvancedTab::translateUI()
     _languageCombobox->setItemText(5, tr("Cantonese (Traditional)"));
     _languageCombobox->setItemText(6, tr("Simplified Chinese"));
     _languageCombobox->setItemText(7, tr("Traditional Chinese"));
+
+    _resetButton->setText(tr("Reset all settings"));
 }
 
 void AdvancedTab::setStyle(bool use_dark)
@@ -220,21 +236,19 @@ void AdvancedTab::setStyle(bool use_dark)
 
 void AdvancedTab::initializeUpdateCheckbox(QCheckBox &checkbox)
 {
-    checkbox.setChecked(
-        _settings->value("Advanced/updateNotificationsEnabled", QVariant{true}).toBool());
-
     connect(&checkbox, &QCheckBox::stateChanged, this, [&]() {
         _settings->setValue("Advanced/updateNotificationsEnabled",
                             checkbox.checkState());
         _settings->sync();
     });
+
+    setUpdateCheckboxDefault(checkbox);
 }
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
 void AdvancedTab::initializeForceDarkModeCheckbox(QCheckBox &checkbox)
 {
-    checkbox.setChecked(
-        _settings->value("Advanced/forceDarkMode", QVariant{false}).toBool());
+    setForceDarkModeCheckboxDefault(checkbox);
 
     connect(&checkbox, &QCheckBox::stateChanged, this, [&]() {
         _settings->setValue("Advanced/forceDarkMode",
@@ -259,9 +273,6 @@ void AdvancedTab::initializeLanguageCombobox(QComboBox &combobox)
     combobox.addItem("5", "yue_Hant");
     combobox.addItem("6", "zh_Hans");
     combobox.addItem("7", "zh_Hant");
-
-    combobox.setCurrentIndex(combobox.findData(
-        _settings->value("Advanced/locale", QVariant{"system"}).toString()));
 
     connect(&combobox,
             QOverload<int>::of(&QComboBox::activated),
@@ -296,6 +307,54 @@ void AdvancedTab::initializeLanguageCombobox(QComboBox &combobox)
                           /* directory */ ":/translations");
                 qApp->installTranslator(&Settings::applicationTranslator);
             });
+
+    setLanguageComboboxDefault(combobox);
+}
+
+void AdvancedTab::initializeResetButton(QPushButton &resetButton)
+{
+    connect(&resetButton, &QPushButton::clicked, this, [&]() {
+        ResetSettingsDialog *_message = new ResetSettingsDialog{this};
+        if (_message->exec() == QMessageBox::Yes) {
+            resetSettings(*_settings);
+        }
+    });
+
+    resetButton.setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+}
+
+void AdvancedTab::setUpdateCheckboxDefault(QCheckBox &checkbox)
+{
+    checkbox.setChecked(
+        _settings->value("Advanced/updateNotificationsEnabled", QVariant{true})
+            .toBool());
+}
+
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
+void AdvancedTab::setForceDarkModeCheckboxDefault(QCheckBox &checkbox)
+{
+    checkbox.setChecked(
+        _settings->value("Advanced/forceDarkMode", QVariant{false}).toBool());
+}
+#endif
+
+void AdvancedTab::setLanguageComboboxDefault(QComboBox &combobox)
+{
+    combobox.setCurrentIndex(combobox.findData(
+        _settings->value("Advanced/locale", QVariant{"system"}).toString()));
+}
+
+void AdvancedTab::resetSettings(QSettings &settings)
+{
+    Settings::clearSettings(settings);
+
+    setUpdateCheckboxDefault(*_updateCheckbox);
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
+    setForceDarkModeCheckboxDefault(*_forceDarkModeCheckbox);
+#endif
+    setLanguageComboboxDefault(*_languageCombobox);
+
+    emit settingsReset();
 }
 
 void AdvancedTab::exportDictionaryDatabase(void)

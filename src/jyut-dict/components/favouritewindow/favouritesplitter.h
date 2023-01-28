@@ -51,6 +51,9 @@ private:
     EntryScrollArea *_entryScrollArea;
     QListView *_resultListView;
 
+public slots:
+    void updateStyleRequested();
+
 private slots:
     void prepareEntry(Entry &entry);
 

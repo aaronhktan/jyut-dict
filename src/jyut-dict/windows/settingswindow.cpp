@@ -4,7 +4,9 @@
 #include "components/settings/contacttab.h"
 #include "components/settings/dictionarytab.h"
 #include "components/settings/settingstab.h"
-#include "logic/utils/utils.h"
+#include "components/settings/texttab.h"
+#include "logic/settings/settings.h"
+#include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -24,6 +26,8 @@ SettingsWindow::SettingsWindow(std::shared_ptr<SQLDatabaseManager> manager,
     : QMainWindow{nullptr, Qt::Window},
       _parent{parent}
 {
+    _settings = Settings::getSettings();
+
     _manager = manager;
 
     setupUI();
@@ -88,6 +92,9 @@ void SettingsWindow::setupUI()
     SettingsTab *generalTab = new SettingsTab{this};
     _contentStackedWidget->addWidget(generalTab);
 
+    TextTab *textTab = new TextTab{this};
+    _contentStackedWidget->addWidget(textTab);
+
     DictionaryTab *dictionaryTab = new DictionaryTab{_manager, this};
     _contentStackedWidget->addWidget(dictionaryTab);
 
@@ -98,6 +105,26 @@ void SettingsWindow::setupUI()
     _contentStackedWidget->addWidget(contactTab);
 
     setCentralWidget(_contentStackedWidget);
+
+    connect(textTab,
+            &TextTab::updateStyle,
+            this,
+            &SettingsWindow::updateStyleRequested);
+
+    connect(advancedTab,
+            &AdvancedTab::settingsReset,
+            generalTab,
+            &SettingsTab::resetSettings);
+
+    connect(advancedTab,
+            &AdvancedTab::settingsReset,
+            textTab,
+            &TextTab::resetSettings);
+
+    connect(advancedTab,
+            &AdvancedTab::settingsReset,
+            this,
+            &SettingsWindow::updateStyleRequested);
 
     // Customize the look of the toolbar to fit in better with platform styles
     setStyle(Utils::isDarkMode());
@@ -116,9 +143,10 @@ void SettingsWindow::translateUI()
     }
 
     _actions[0]->setText(tr("General"));
-    _actions[1]->setText(tr("Dictionaries"));
-    _actions[2]->setText(tr("Advanced"));
-    _actions[3]->setText(tr("Contact"));
+    _actions[1]->setText(tr("Text"));
+    _actions[2]->setText(tr("Dictionaries"));
+    _actions[3]->setText(tr("Advanced"));
+    _actions[4]->setText(tr("Contact"));
 
 #ifdef Q_OS_MAC
     setWindowTitle(tr("Preferences"));
@@ -129,6 +157,20 @@ void SettingsWindow::translateUI()
 
 void SettingsWindow::setStyle(bool use_dark)
 {
+    int interfaceSize = static_cast<int>(
+        _settings
+            ->value("Interface/size",
+                    QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+            .value<Settings::InterfaceSize>());
+    int uiFontSize = Settings::uiFontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int uiFontSizeHan = Settings::uiFontSizeHan.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int bodyFontSize = Settings::bodyFontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+
     // Set background color of tabs in toolbar
     QColor selectedBackgroundColour;
     QColor currentTextColour;
@@ -178,81 +220,143 @@ void SettingsWindow::setStyle(bool use_dark)
     }
 
 #ifdef Q_OS_MAC
-    QString style;
-    if (use_dark) {
-        style = "QToolButton[isHan=\"true\"] { "
-                "   border-radius: 2px; "
-                "   color: %4; "
-                "   font-size: %2px; "
-                "   margin: 0px; "
-                "}"
-                ""
-                "QToolButton { "
-                "   border-top-left-radius: 4px; "
-                "   border-top-right-radius: 4px; "
-                "   color: %4; "
-                "   font-size: 10px; "
-                "   margin: 0px; "
-                "}"
-                " "
-                "QToolButton:checked { "
-                "   background-color: %1; "
-                "   border-top-left-radius: 4px; "
-                "   border-top-right-radius: 4px; "
-                "   color: %3; "
-                "   margin: 0px; "
-                "}";
-    } else {
-        style = "QToolButton[isHan=\"true\"] { "
-                "   border-radius: 2px; "
-                "   color: %4; "
-                "   font-size: %2px; "
-                "   margin: 0px; "
-                "}"
-                ""
-                "QToolButton { "
-                "   border-top-left-radius: 4px; "
-                "   border-top-right-radius: 4px; "
-                "   color: %4; "
-                "   font-size: 10px; "
-                "   margin: 0px; "
-                "}"
-                " "
-                "QToolButton:checked { "
-                "   background-color: %1; "
-                "   border-top-left-radius: 4px; "
-                "   border-top-right-radius: 4px; "
-                "   color: %3; "
-                "   margin: 0px; "
-                "}";
-    }
+    QString style{"QToolButton[isHan=\"true\"] { "
+                  "   border-radius: 2px; "
+                  "   color: %5; "
+                  "   font-size: %2px; "
+                  "   margin: 0px; "
+                  "} "
+                  " "
+                  "QToolButton { "
+                  "   border-top-left-radius: 4px; "
+                  "   border-top-right-radius: 4px; "
+                  "   color: %5; "
+                  "   font-size: %3px; "
+                  "   margin: 0px; "
+                  "} "
+                  " "
+                  "QToolButton:checked { "
+                  "   background-color: %1; "
+                  "   border-top-left-radius: 4px; "
+                  "   border-top-right-radius: 4px; "
+                  "   color: %4; "
+                  "   margin: 0px; "
+                  "} "
+                  " "
+                  "QLabel[isHan=\"true\"] { "
+                  "   font-size: %6px; "
+                  "} "
+                  " "
+                  "QLabel { "
+                  "   font-size: %7px; "
+                  "} "
+                  " "
+                  "QComboBox[isHan=\"true\"] { "
+                  "   font-size: %6px; "
+                  "} "
+                  " "
+                  "QComboBox { "
+                  "   font-size: %7px; "
+                  "} "
+                  " "
+                  "QCheckBox[isHan=\"true\"] { "
+                  "   font-size: %6px; "
+                  "} "
+                  " "
+                  "QCheckBox { "
+                  "   font-size: %7px; "
+                  "} "
+                  " "
+                  "QRadioButton[isHan=\"true\"] { "
+                  "   font-size: %6px; "
+                  "} "
+                  " "
+                  "QRadioButton { "
+                  "   font-size: %7px; "
+                  "} "
+                  " "
+                  "QPushButton[isHan=\"true\"] { "
+                  "   font-size: %6px; "
+                  //// QPushButton falls back to Fusion style on macOS when the
+                  //// height exceeds 16px. Set the maximum size to 16px.
+                  "   height: 16px; "
+                  "} "
+                  " "
+                  "QPushButton { "
+                  "   font-size: %7px; "
+                  "   height: 16px; "
+                  "} "};
 #else
     QString style{"QToolButton[isHan=\"true\"] { "
                   "   border-radius: 2px; "
-                  "   color: %4; "
+                  "   color: %5; "
                   "   font-size: %2px; "
                   "   margin: 0px; "
-                  "}"
+                  "} "
                   " "
                   "QToolButton { "
                   "   border-radius: 2px; "
-                  "   color: %4; "
-                  "   font-size: 10px; "
+                  "   color: %5; "
+                  "   font-size: %3px; "
                   "   margin: 0px; "
-                  "}"
+                  "} "
                   " "
                   "QToolButton:checked { "
                   "   border-radius: 2px; "
                   "   background-color: %1; "
-                  "   color: %3; "
+                  "   color: %4; "
                   "   margin: 0px; "
-                  "}"};
+                  "} "
+                  " "
+                  "QLabel[isHan=\"true\"] { "
+                  "   font-size: %6px; "
+                  "} "
+                  " "
+                  "QLabel { "
+                  "   font-size: %7px; "
+                  "} "
+                  " "
+                  "QComboBox[isHan=\"true\"] { "
+                  "   font-size: %6px; "
+                  "} "
+                  " "
+                  "QComboBox { "
+                  "   font-size: %7px; "
+                  "} "
+                  " "
+                  "QCheckBox[isHan=\"true\"] { "
+                  "   font-size: %6px; "
+                  "} "
+                  " "
+                  "QCheckBox { "
+                  "   font-size: %7px; "
+                  "} "
+                  " "
+                  "QRadioButton[isHan=\"true\"] { "
+                  "   font-size: %6px; "
+                  "} "
+                  " "
+                  "QRadioButton { "
+                  "   font-size: %7px; "
+                  "} "
+                  " "
+                  "QPushButton[isHan=\"true\"] { "
+                  "   font-size: %6px; "
+                  "   height: 16px; "
+                  "} "
+                  " "
+                  "QPushButton { "
+                  "   font-size: %7px; "
+                  "   height: 16px; "
+                  "} "};
 #endif
-    setStyleSheet(
-        style.arg(selectedBackgroundColour.name(),
-                  "13",
-                  currentTextColour.name(),
-                  otherTextColour.name()));
+    setStyleSheet(style.arg(selectedBackgroundColour.name(),
+                            std::to_string(uiFontSizeHan).c_str(),
+                            std::to_string(uiFontSize).c_str(),
+                            currentTextColour.name(),
+                            otherTextColour.name(),
+                            std::to_string(bodyFontSizeHan).c_str(),
+                            std::to_string(bodyFontSize).c_str()));
     setButtonIcon(use_dark, _contentStackedWidget->currentIndex());
 
     // Customize the look of the toolbar
@@ -272,15 +376,11 @@ void SettingsWindow::setStyle(bool use_dark)
         _toolBar->setStyleSheet("QToolBar { "
                                 "   background-color: palette(alternate-base); "
                                 "   border-bottom: 1px solid palette(window); "
-                                "   padding-bottom: 3px; "
-                                "   padding-top: 3px; "
                                 "} ");
     } else {
         _toolBar->setStyleSheet("QToolBar { "
                                 "   background-color: palette(window); "
                                 "   border-bottom: 1px solid palette(alternate-base); "
-                                "   padding-bottom: 3px; "
-                                "   padding-top: 3px; "
                                 "} ");
     }
 #endif
@@ -288,10 +388,16 @@ void SettingsWindow::setStyle(bool use_dark)
 
 void SettingsWindow::setButtonIcon(bool use_dark, int index)
 {
-    // For these images, export as 96px width, and center on 120px canvas.
+    // For these images, export using Inkscape drawing @ 96px image size width,
+    // then use Gimp to center on 120px canvas with a transparent background.
+    // To generate inverted, use Colors -> Invert in Gimp.
+    // To generate disabled, use Colors -> Brightness-Contrast to -60 in Gimp.
     QIcon settings = QIcon(":/images/settings.png");
     QIcon settings_inverted = QIcon(":/images/settings_inverted.png");
     QIcon settings_disabled = QIcon(":/images/settings_disabled.png");
+    QIcon text = QIcon(":/images/text.png");
+    QIcon text_inverted = QIcon(":/images/text_inverted.png");
+    QIcon text_disabled = QIcon(":/images/text_disabled.png");
     QIcon book = QIcon(":/images/book.png");
     QIcon book_inverted = QIcon(":/images/book_inverted.png");
     QIcon book_disabled = QIcon(":/images/book_disabled.png");
@@ -305,20 +411,23 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
     // Set icons for each tab
     if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
         _actions[0]->setIcon(settings_disabled);
-        _actions[1]->setIcon(book_disabled);
-        _actions[2]->setIcon(sliders_disabled);
-        _actions[3]->setIcon(help_disabled);
+        _actions[1]->setIcon(text_disabled);
+        _actions[2]->setIcon(book_disabled);
+        _actions[3]->setIcon(sliders_disabled);
+        _actions[4]->setIcon(help_disabled);
     } else {
         if (use_dark) {
             _actions[0]->setIcon(settings_inverted);
-            _actions[1]->setIcon(book_inverted);
-            _actions[2]->setIcon(sliders_inverted);
-            _actions[3]->setIcon(help_inverted);
+            _actions[1]->setIcon(text_inverted);
+            _actions[2]->setIcon(book_inverted);
+            _actions[3]->setIcon(sliders_inverted);
+            _actions[4]->setIcon(help_inverted);
         } else {
             _actions[0]->setIcon(index == 0 ? settings_inverted : settings);
-            _actions[1]->setIcon(index == 1 ? book_inverted : book);
-            _actions[2]->setIcon(index == 2 ? sliders_inverted : sliders);
-            _actions[3]->setIcon(index == 3 ? help_inverted : help);
+            _actions[1]->setIcon(index == 1 ? text_inverted : text);
+            _actions[2]->setIcon(index == 2 ? book_inverted : book);
+            _actions[3]->setIcon(index == 3 ? sliders_inverted : sliders);
+            _actions[4]->setIcon(index == 4 ? help_inverted : help);
         }
     }
 
@@ -352,4 +461,10 @@ void SettingsWindow::paintWithApplicationState(Qt::ApplicationState state)
 {
     (void) (state);
     setStyle(Utils::isDarkMode());
+}
+
+void SettingsWindow::updateStyleRequested(void)
+{
+    setStyle(Utils::isDarkMode());
+    emit updateStyle();
 }

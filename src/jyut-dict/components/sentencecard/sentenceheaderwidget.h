@@ -3,6 +3,7 @@
 
 #include <QEvent>
 #include <QLabel>
+#include <QSettings>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -23,6 +24,8 @@ private:
     void setStyle(bool use_dark);
 
     bool _paletteRecentlyChanged = false;
+
+    std::unique_ptr<QSettings> _settings;
 
     QLabel *_titleLabel;
     QVBoxLayout *_layout;

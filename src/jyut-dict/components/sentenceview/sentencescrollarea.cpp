@@ -1,8 +1,5 @@
 #include "sentencescrollarea.h"
 
-#include "components/entryview/entryscrollareawidget.h"
-#include "logic/sentence/sentenceset.h"
-
 #include <QScrollBar>
 
 SentenceScrollArea::SentenceScrollArea(QWidget *parent)
@@ -43,4 +40,9 @@ void SentenceScrollArea::resizeEvent(QResizeEvent *event)
                                          : 0),
                               event->size().height());
     event->accept();
+}
+
+void SentenceScrollArea::updateStyleRequested(void)
+{
+    _scrollAreaWidget->updateStyleRequested();
 }

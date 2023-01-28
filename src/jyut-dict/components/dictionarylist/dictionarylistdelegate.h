@@ -3,8 +3,9 @@
 
 #include <QModelIndex>
 #include <QPainter>
-#include <QStyledItemDelegate>
+#include <QSettings>
 #include <QStyleOptionViewItem>
+#include <QStyledItemDelegate>
 #include <QWidget>
 
 // The DictionaryListDelegate is responsible for painting dictionaries
@@ -21,9 +22,9 @@ public:
                const QModelIndex &index) const override;
     QSize sizeHint(const QStyleOptionViewItem &option,
                    const QModelIndex &index) const override;
-signals:
 
-public slots:
+private:
+    std::unique_ptr<QSettings> _settings;
 };
 
 #endif // DICTIONARYLISTDELEGATE_H

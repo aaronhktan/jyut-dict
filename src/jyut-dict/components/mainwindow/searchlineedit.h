@@ -45,6 +45,7 @@ private:
     ISearchOptionsMediator *_mediator;
     std::shared_ptr<ISearch> _search;
     std::shared_ptr<SQLUserHistoryUtils> _sqlHistoryUtils;
+    std::unique_ptr<QSettings> _settings;
 
     QAction *_searchLineEdit;
     QAction *_clearLineEdit;

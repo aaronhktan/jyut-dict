@@ -1,13 +1,13 @@
 #ifndef ENTRYACTIONWIDGET_H
 #define ENTRYACTIONWIDGET_H
 
-#include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqluserdatautils.h"
 #include "logic/entry/entry.h"
 #include "logic/search/isearchobserver.h"
 
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QSettings>
 #include <QWidget>
 
 // The EntryActionWidget provides some actions related to the EntryView.
@@ -43,6 +43,7 @@ private:
     bool _paletteRecentlyChanged = false;
 
     std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
+    std::unique_ptr<QSettings> _settings;
     Entry _entry;
 
     QHBoxLayout *_layout;

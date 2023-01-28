@@ -26,6 +26,7 @@ private:
 public slots:
     void hideSentenceSection(void);
     void showSentenceSection(void);
+    void updateStyleRequested(void);
 };
 
 #endif // SENTENCECONTENTWIDGET_H

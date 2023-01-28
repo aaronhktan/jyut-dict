@@ -1,8 +1,6 @@
 #ifndef HISTORYWINDOW_H
 #define HISTORYWINDOW_H
 
-#include "components/historyview/searchhistorytab.h"
-#include "components/historyview/viewhistorytab.h"
 #include "logic/database/sqluserhistoryutils.h"
 #include "logic/entry/entry.h"
 
@@ -39,12 +37,13 @@ private:
     QWidget *_viewHistoryTab;
 
 signals:
-    void searchHistoryClicked(const searchTermHistoryItem &pair) const;
-    void viewHistoryClicked(const Entry &entry) const;
+    void searchHistoryClicked(const searchTermHistoryItem &pair);
+    void viewHistoryClicked(const Entry &entry);
 
 public slots:
-    void forwardSearchHistoryItem(const searchTermHistoryItem &pair) const;
-    void forwardViewHistoryItem(const Entry &entry) const;
+    void forwardSearchHistoryItem(const searchTermHistoryItem &pair);
+    void forwardViewHistoryItem(const Entry &entry);
+    void updateStyleRequested(void);
 };
 
 #endif // HISTORYWINDOW_H

@@ -77,11 +77,6 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
 #endif
 }
 
-void MainSplitter::translateUI(void)
-{
-    static_cast<ResultListModel *>(_model)->setWelcome();
-}
-
 void MainSplitter::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::LanguageChange) {
@@ -104,6 +99,11 @@ void MainSplitter::openCurrentSelectionInNewWindow(void)
     handleDoubleClick(entryIndex);
 }
 
+void MainSplitter::translateUI(void)
+{
+    static_cast<ResultListModel *>(_model)->setWelcome();
+}
+
 void MainSplitter::forwardViewHistoryItem(const Entry &entry)
 {
     // Disable adding this item to history; _addToHistory should be reset as
@@ -118,6 +118,17 @@ void MainSplitter::forwardViewHistoryItem(const Entry &entry)
                             entry.getTraditional().c_str(),
                             entry.getJyutping().c_str(),
                             entry.getPinyin().c_str());
+}
+
+void MainSplitter::updateStyleRequested(void)
+{
+    static_cast<ResultListView *>(_resultListView)->paintWithApplicationState();
+
+    QList<EntryScrollArea *> scrollAreas
+        = this->findChildren<EntryScrollArea *>();
+    foreach (auto &area, scrollAreas) {
+        area->updateStyleRequested();
+    }
 }
 
 void MainSplitter::prepareEntry(Entry &entry)
@@ -156,16 +167,16 @@ void MainSplitter::prepareEntry(Entry &entry, bool addToHistory) const
               .value<MandarinOptions>();
     entry.generatePhonetic(cantoneseOptions, mandarinOptions);
 
-    cantoneseOptions
-        = Settings::getSettings()
-              ->value("Preview/cantonesePronunciationOptions",
-                      QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
-              .value<CantoneseOptions>();
-    mandarinOptions
-        = Settings::getSettings()
-              ->value("Preview/mandarinPronunciationOptions",
-                      QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
-              .value<MandarinOptions>();
+    cantoneseOptions = Settings::getSettings()
+                           ->value("Preview/cantonesePronunciationOptions",
+                                   QVariant::fromValue(
+                                       CantoneseOptions::RAW_JYUTPING))
+                           .value<CantoneseOptions>();
+    mandarinOptions = Settings::getSettings()
+                          ->value("Preview/mandarinPronunciationOptions",
+                                  QVariant::fromValue(
+                                      MandarinOptions::PRETTY_PINYIN))
+                          .value<MandarinOptions>();
     entry.generateDefinitionsPhonetic(cantoneseOptions, mandarinOptions);
 }
 
@@ -207,7 +218,9 @@ void MainSplitter::handleDoubleClick(const QModelIndex &selection)
     prepareEntry(entry, _addToHistory);
 
     QTimer::singleShot(50, this, [=]() {
-        EntryScrollArea *area = new EntryScrollArea{_sqlUserUtils, _manager, nullptr};
+        EntryScrollArea *area = new EntryScrollArea{_sqlUserUtils,
+                                                    _manager,
+                                                    nullptr};
         area->setParent(this, Qt::Window);
         area->setEntry(entry);
 #ifndef Q_OS_MAC

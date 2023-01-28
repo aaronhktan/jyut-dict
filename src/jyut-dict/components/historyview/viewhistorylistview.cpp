@@ -38,5 +38,6 @@ void ViewHistoryListView::wheelEvent(QWheelEvent *event)
 
 void ViewHistoryListView::paintWithApplicationState()
 {
-    viewport()->update(); // Forces repaint of viewing area.
+    viewport()->update();         // Forces repaint of viewing area
+    scheduleDelayedItemsLayout(); // Forces items to resize themselves
 }

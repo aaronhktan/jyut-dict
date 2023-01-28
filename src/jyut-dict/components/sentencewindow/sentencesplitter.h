@@ -1,7 +1,6 @@
 #ifndef SENTENCESPLITTER_H
 #define SENTENCESPLITTER_H
 
-#include "components/sentencesearchresult/sentenceresultlistmodel.h"
 #include "components/sentenceview/sentencescrollarea.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/search/sqlsearch.h"
@@ -58,6 +57,9 @@ private:
 private slots:
     void handleClick(const QModelIndex &selection);
     void handleDoubleClick(const QModelIndex &selection);
+
+public slots:
+    void updateStyleRequested(void);
 };
 
 #endif // SENTENCESPLITTER_H

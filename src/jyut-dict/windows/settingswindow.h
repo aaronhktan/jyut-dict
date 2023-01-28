@@ -7,6 +7,7 @@
 #include <QEvent>
 #include <QLayout>
 #include <QMainWindow>
+#include <QSettings>
 #include <QStackedWidget>
 #include <QToolBar>
 #include <QToolButton>
@@ -16,7 +17,7 @@
 
 // The SettingsWindow allows users to modify settings. Surprise!
 
-constexpr auto NUM_OF_TABS = 4;
+constexpr auto NUM_OF_TABS = 5;
 
 class SettingsWindow : public QMainWindow
 {
@@ -47,11 +48,17 @@ private:
     std::vector<QAction *> _actions;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
+    std::shared_ptr<QSettings> _settings;
 
     bool _paletteRecentlyChanged = false;
 
+signals:
+    void updateStyle(void);
+
 public slots:
     void paintWithApplicationState(Qt::ApplicationState state);
+
+    void updateStyleRequested(void);
 };
 
 #endif // SETTINGSWINDOW_H

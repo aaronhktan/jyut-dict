@@ -84,6 +84,7 @@ SOURCES += \
     components/settings/contacttab.cpp \
     components/settings/dictionarytab.cpp \
     components/settings/settingstab.cpp \
+    components/settings/texttab.cpp \
     dialogs/defaultdialog.cpp \
     dialogs/dictionarytabfailuredialog.cpp \
     dialogs/entryspeakerrordialog.cpp \
@@ -168,6 +169,7 @@ HEADERS += \
     components/settings/contacttab.h \
     components/settings/dictionarytab.h \
     components/settings/settingstab.h \
+    components/settings/texttab.h \
     dialogs/defaultdialog.h \
     dialogs/dictionarytabfailuredialog.h \
     dialogs/entryspeakerrordialog.h \

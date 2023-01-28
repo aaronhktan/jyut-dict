@@ -68,3 +68,9 @@ void EntryContentWidget::showSentenceSection(void)
 {
     _sentenceSection->setVisible(true);
 }
+
+void EntryContentWidget::updateStyleRequested(void)
+{
+    _definitionSection->updateStyleRequested();
+    _sentenceSection->updateStyleRequested();
+}

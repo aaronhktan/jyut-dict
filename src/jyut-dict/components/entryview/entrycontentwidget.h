@@ -27,6 +27,9 @@ private:
     DefinitionCardSection *_definitionSection;
     EntryViewSentenceCardSection *_sentenceSection;
 
+signals:
+    void stallSentenceUIUpdate(void);
+
 public slots:
     void hideDefinitionSection(void);
     void showDefinitionSection(void);
@@ -34,8 +37,7 @@ public slots:
     void hideSentenceSection(void);
     void showSentenceSection(void);
 
-signals:
-    void stallSentenceUIUpdate(void);
+    void updateStyleRequested(void);
 };
 
 #endif // ENTRYCONTENTWIDGET_H

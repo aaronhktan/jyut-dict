@@ -54,8 +54,12 @@ private:
     QAbstractListModel *_model;
     QListView *_resultListView;
 
+signals:
+    void forwardSearchBarTextChange(void);
+
 public slots:
     void forwardViewHistoryItem(const Entry &entry);
+    void updateStyleRequested(void);
 
 private slots:
     void prepareEntry(Entry &entry);
@@ -63,9 +67,6 @@ private slots:
     void handleModelReset(void);
     void handleClick(const QModelIndex &selection);
     void handleDoubleClick(const QModelIndex &selection);
-
-signals:
-    void forwardSearchBarTextChange(void);
 };
 
 #endif // MAINSPLITTER_H

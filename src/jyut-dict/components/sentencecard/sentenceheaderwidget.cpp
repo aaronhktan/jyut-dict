@@ -1,5 +1,7 @@
 #include "sentenceheaderwidget.h"
 
+#include "logic/settings/settings.h"
+#include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -13,14 +15,16 @@
 
 SentenceHeaderWidget::SentenceHeaderWidget(QWidget *parent) : QWidget(parent)
 {
-    setObjectName("DefinitionHeaderWidget");
+    _settings = Settings::getSettings(this);
+
+    setObjectName("SentenceHeaderWidget");
 
     _layout = new QVBoxLayout{this};
     _layout->setContentsMargins(10, 10, 10, 10);
     _layout->setSpacing(10);
 
     _titleLabel = new QLabel{this};
-    _titleLabel->setObjectName("DefinitionHeaderWidgetTitleLabel");
+    _titleLabel->setObjectName("SentenceHeaderWidgetTitleLabel");
 
     _layout->addWidget(_titleLabel);
 
@@ -56,7 +60,7 @@ void SentenceHeaderWidget::setCardTitle(const std::string &title)
 void SentenceHeaderWidget::setStyle(bool use_dark)
 {
     // Style the main background
-    QString widgetStyleSheet = "QWidget#DefinitionHeaderWidget { "
+    QString widgetStyleSheet = "QWidget#SentenceHeaderWidget { "
                                " background-color: %1; "
                                " border-top-left-radius: 10px; "
                                " border-top-right-radius: 10px; "
@@ -73,12 +77,24 @@ void SentenceHeaderWidget::setStyle(bool use_dark)
     setStyleSheet(widgetStyleSheet.arg(backgroundColour.name()));
 
     // Style the label text
-    QString textStyleSheet = "QLabel#DefinitionHeaderWidgetTitleLabel { color: %1; }";
+    int interfaceSize = static_cast<int>(
+        _settings
+            ->value("Interface/size",
+                    QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+            .value<Settings::InterfaceSize>());
+    int bodyFontSize = Settings::bodyFontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+
+    QString textStyleSheet = "QLabel#SentenceHeaderWidgetTitleLabel { "
+                             "   color: %1; "
+                             "   font-size: %2px; "
+                             "}";
     QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
                                           LABEL_TEXT_COLOUR_DARK_G,
                                           LABEL_TEXT_COLOUR_DARK_B}
                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R};
-    _titleLabel->setStyleSheet(textStyleSheet.arg(textColour.name()));
+    _titleLabel->setStyleSheet(
+        textStyleSheet.arg(textColour.name()).arg(bodyFontSize));
 }

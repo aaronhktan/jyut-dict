@@ -3,7 +3,6 @@
 
 #include "dialogs/exportdatabasedialog.h"
 #include "dialogs/restoredatabasedialog.h"
-#include "logic/settings/settingsutils.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -39,6 +38,15 @@ private:
     void initializeForceDarkModeCheckbox(QCheckBox &checkbox);
 #endif
     void initializeLanguageCombobox(QComboBox &combobox);
+    void initializeResetButton(QPushButton &resetButton);
+
+    void setUpdateCheckboxDefault(QCheckBox &checkbox);
+    void setLanguageComboboxDefault(QComboBox &combobox);
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
+    void setForceDarkModeCheckboxDefault(QCheckBox &checkbox);
+#endif
+
+    void resetSettings(QSettings &settings);
 
     void exportDictionaryDatabase(void);
     void exportUserDatabase(void);
@@ -69,6 +77,7 @@ private:
     QPushButton *_restoreExportedDictionaryDatabaseButton;
     QPushButton *_restoreExportedUserDatabaseButton;
     QComboBox *_languageCombobox;
+    QPushButton *_resetButton;
 
     QFormLayout *_tabLayout;
 
@@ -79,6 +88,9 @@ private:
     QProgressDialog *_progressDialog;
     ExportDatabaseDialog *_exportDatabaseDialog;
     RestoreDatabaseDialog *_restoreDatabaseDialog;
+
+signals:
+    void settingsReset(void);
 };
 
 #endif // ADVANCEDTAB_H

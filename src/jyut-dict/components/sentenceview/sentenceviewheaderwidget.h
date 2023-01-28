@@ -11,6 +11,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
+#include <QSettings>
 #include <QWidget>
 
 #include <memory>
@@ -42,6 +43,8 @@ private:
     void showError(const QString &reason, const QString &message);
 
     bool _paletteRecentlyChanged = false;
+
+    std::unique_ptr<QSettings> _settings;
 
     QString _chinese;
     QString _jyutping;

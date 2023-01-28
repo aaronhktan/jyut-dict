@@ -93,3 +93,9 @@ void EntryScrollArea::stallEntryUIUpdate(void)
     });
     _enableUIUpdateTimer->start();
 }
+
+void EntryScrollArea::updateStyleRequested(void)
+{
+    _scrollAreaWidget->updateStyleRequested();
+    _scrollAreaWidget->resize(_scrollAreaWidget->sizeHint());
+}

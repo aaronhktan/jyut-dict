@@ -9,6 +9,7 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QRadioButton>
+#include <QSettings>
 #include <QWidget>
 
 // The SearchOptionsRadioGroupBox allows users to change search parameters
@@ -30,10 +31,14 @@ public:
 private:
     void setupUI();
     void translateUI();
+    void setStyle(bool use_dark);
 
     void notifyMediator() const;
 
+    bool _paletteRecentlyChanged = false;
+
     ISearchOptionsMediator *_mediator;
+    std::unique_ptr<QSettings> _settings;
 
     QHBoxLayout *_layout;
 

@@ -40,11 +40,12 @@ private:
 
     EntryScrollAreaWidget *_scrollAreaWidget;
 
-public slots:
-    void stallEntryUIUpdate(void);
-
 signals:
     void stallSentenceUIUpdate(void);
+
+public slots:
+    void stallEntryUIUpdate(void);
+    void updateStyleRequested(void);
 };
 
 #endif // ENTRYSCROLLAREA_H

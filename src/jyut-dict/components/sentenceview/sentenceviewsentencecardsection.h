@@ -31,6 +31,9 @@ private:
 signals:
     void addingCards();
     void finishedAddingCards();
+
+public slots:
+    void updateStyleRequested(void);
 };
 
 #endif // SENTENCEVIEWSENTENCECARDSECTION_H

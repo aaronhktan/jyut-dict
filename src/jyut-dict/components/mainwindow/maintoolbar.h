@@ -48,6 +48,8 @@ private:
     void setStyle(bool use_dark);
     bool _paletteRecentlyChanged = false;
 
+    std::unique_ptr<QSettings> _settings;
+
     QHBoxLayout *_toolBarLayout;
     QWidget *_toolBarWidget;
 
@@ -58,11 +60,12 @@ private:
     QToolButton *_openSettingsButton;
     ISearchOptionsMediator *_searchOptions;
 
-public slots:
-    void forwardSearchHistoryItem(const searchTermHistoryItem &pair) const;
-
 signals:
     void searchBarTextChange(void);
+
+public slots:
+    void forwardSearchHistoryItem(const searchTermHistoryItem &pair) const;
+    void updateStyleRequested(void);
 };
 
 #endif // MAINTOOLBAR_H

@@ -1,5 +1,6 @@
 #include "sentencecontentwidget.h"
 
+#include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -14,7 +15,9 @@
 
 SentenceContentWidget::SentenceContentWidget(QWidget *parent) : QWidget(parent)
 {
+    _settings = Settings::getSettings(this);
     _sentenceLayout = new QGridLayout{this};
+    _sentenceLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
 
     _sentenceNumberLabels = {};
     _simplifiedLabels = {};
@@ -66,23 +69,21 @@ void SentenceContentWidget::setSentenceSet(const SentenceSet &set)
                                         .boundingRect("999")
                                         .width();
         _sentenceNumberLabels.back()->setFixedWidth(definitionNumberWidth);
-        int definitionNumberHeight = _sentenceNumberLabels.back()
-                                         ->fontMetrics()
-                                         .boundingRect("123PYingy")
-                                         .height();
-        _sentenceNumberLabels.back()->setFixedHeight(definitionNumberHeight);
 
-        _sentenceLabels.push_back(new QLabel{QString{
-                                                 sentences[i].sentence.c_str()}
-                                                     .trimmed(), this});
+        _sentenceLabels.push_back(
+            new QLabel{QString{sentences[i].sentence.c_str()}.trimmed(), this});
         _sentenceLabels.back()->setProperty("language", sentences[i].language.c_str());
         _sentenceLabels.back()->setWordWrap(true);
         _sentenceLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
         _sentenceLayout->addWidget(_sentenceNumberLabels[i],
-                                   static_cast<int>(i + 9), 0, Qt::AlignTop);
+                                   static_cast<int>(i + 9),
+                                   0,
+                                   Qt::AlignTop);
         _sentenceLayout->addWidget(_sentenceLabels[i],
-                                   static_cast<int>(i + 9), 1, Qt::AlignTop);
+                                   static_cast<int>(i + 9),
+                                   1,
+                                   Qt::AlignTop);
     }
 
     setStyle(Utils::isDarkMode());
@@ -107,11 +108,6 @@ void SentenceContentWidget::setSourceSentenceVector(
                                         .boundingRect("999")
                                         .width();
         _sentenceNumberLabels.back()->setFixedWidth(definitionNumberWidth);
-        int latinHeight = _sentenceNumberLabels.back()
-                                         ->fontMetrics()
-                                         .boundingRect("123PYingy")
-                                         .height();
-        _sentenceNumberLabels.back()->setFixedHeight(latinHeight);
 
         SourceSentence sourceSentence = sourceSentences.at(i);
 
@@ -220,8 +216,20 @@ void SentenceContentWidget::translateUI(void)
 
 void SentenceContentWidget::setStyle(bool use_dark)
 {
-    QString sentenceNumberStyleSheet = "QLabel { color: %1; "
-                                       "margin-top: 2px; }";
+    int interfaceSize = static_cast<int>(
+        _settings
+            ->value("Interface/size",
+                    QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+            .value<Settings::InterfaceSize>());
+    int bodyFontSize = Settings::bodyFontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+
+    QString sentenceNumberStyleSheet = "QLabel { "
+                                       "   color: %1; "
+                                       "   font-size: %2px; "
+                                       "}";
     QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
                                           LABEL_TEXT_COLOUR_DARK_G,
                                           LABEL_TEXT_COLOUR_DARK_B}
@@ -229,25 +237,32 @@ void SentenceContentWidget::setStyle(bool use_dark)
                                           LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R};
     for (auto label : _sentenceNumberLabels) {
-        label->setStyleSheet(sentenceNumberStyleSheet.arg(textColour.name()));
+        label->setStyleSheet(
+            sentenceNumberStyleSheet.arg(textColour.name()).arg(bodyFontSize));
     }
 
-    int borderRadius = 10;
-    QString radiusString = QString::number(borderRadius);
+    int borderRadius = static_cast<int>(bodyFontSize * 5 / 6);
+    int padding = bodyFontSize / 6;
+    int paddingHorizontal = bodyFontSize / 4;
     for (const auto &label : _sourceSentenceLanguage) {
-        QString sourceStyleSheet = "QLabel {"
-                                   "background: %1; "
-                                   "border-radius: %2px; "
-                                   "color: %3; "
-                                   "margin-top: 2px; "
-                                   "padding: 2px; }";
+        QString sourceStyleSheet = "QLabel { "
+                                   "   background: %1; "
+                                   "   border-radius: %2px; "
+                                   "   color: %3; "
+                                   "   font-size: %4px; "
+                                   "   padding: %5px; "
+                                   "   padding-left: %6px; "
+                                   "   padding-right: %6px; "
+                                   "} ";
         QColor languageColour = Utils::getLanguageColour(
             Utils::getISO639FromLanguage(label->text().trimmed()));
         QColor languageTextColour = Utils::getContrastingColour(languageColour);
-        label->setStyleSheet(
-            sourceStyleSheet.arg(languageColour.name(),
-                                 radiusString,
-                                 languageTextColour.name()));
+        label->setStyleSheet(sourceStyleSheet.arg(languageColour.name())
+                                 .arg(borderRadius)
+                                 .arg(languageTextColour.name())
+                                 .arg(bodyFontSize)
+                                 .arg(padding)
+                                 .arg(paddingHorizontal));
         label->setText(Utils::getLanguageFromISO639(
                            label->property("language").toString().toStdString())
                            .trimmed());
@@ -255,50 +270,62 @@ void SentenceContentWidget::setStyle(bool use_dark)
         label->resize(label->sizeHint());
     }
 
-    QString chineseStyleSheet = "QLabel { font-size: 16px; padding-left: 2px; }";
+    QString chineseStyleSheet = "QLabel { "
+                                "   font-size: %1px; "
+                                "   padding-left: 2px; "
+                                "}";
     for (const auto &label : _simplifiedLabels) {
 #ifdef Q_OS_WIN
-        QFont font = QFont{"Microsoft YaHei", 16};
+        QFont font = QFont{"Microsoft YaHei", bodyFontSizeHan};
         font.setStyleHint(QFont::System, QFont::PreferAntialias);
         label->setFont(font);
 #endif
-        label->setStyleSheet(chineseStyleSheet);
+        label->setStyleSheet(chineseStyleSheet.arg(bodyFontSizeHan));
     }
     for (const auto &label : _traditionalLabels) {
 #ifdef Q_OS_WIN
-        QFont font = QFont{"Microsoft YaHei", 16};
+        QFont font = QFont{"Microsoft YaHei", bodyFontSizeHan};
         font.setStyleHint(QFont::System, QFont::PreferAntialias);
         label->setFont(font);
 #endif
-        label->setStyleSheet(chineseStyleSheet);
+        label->setStyleSheet(chineseStyleSheet.arg(bodyFontSizeHan));
     }
 
-    QString pronunciationStyleSheet = "QLabel { font-size: 13px; "
-                                      "color: %1; "
-                                      "padding-left: 2px; }";
+    QString pronunciationStyleSheet = "QLabel { "
+                                      "   color: %1; "
+                                      "   font-size: %2px; "
+                                      "   padding-left: 2px; "
+                                      "}";
     for (const auto &label : _cantoneseLabels) {
-        label->setStyleSheet(pronunciationStyleSheet.arg(textColour.name()));
+        label->setStyleSheet(
+            pronunciationStyleSheet.arg(textColour.name()).arg(bodyFontSize));
     }
     for (const auto &label : _mandarinLabels) {
-        label->setStyleSheet(pronunciationStyleSheet.arg(textColour.name()));
+        label->setStyleSheet(
+            pronunciationStyleSheet.arg(textColour.name()).arg(bodyFontSize));
     }
 
-    QString sentenceStyleSheet = "QLabel { padding-left: 2px; }";
+    QString sentenceStyleSheet = "QLabel { "
+                                 "   font-size: %1px; "
+                                 "   padding-left: 2px; "
+                                 "}";
     for (const auto &label : _sentenceLabels) {
+        if (label->property("language").toString().trimmed() == "cmn"
+            || label->property("language").toString().trimmed() == "yue") {
+            label->setStyleSheet(sentenceStyleSheet.arg(bodyFontSizeHan));
 #ifdef Q_OS_WIN
-        if (label->property("language").toString().trimmed() == "cmn" ||
-                label->property("language").toString().trimmed() == "yue") {
-            QFont font = QFont{"Microsoft YaHei"};
-            font.setStyleHint(QFont::System, QFont::PreferAntialias);
-            font.setPixelSize(14);
-            label->setFont(font);
-        } else {
-            QFont font = QFont{"Microsoft YaHei", 10};
+            QFont font = QFont{"Microsoft YaHei", bodyFontSizeHan};
             font.setStyleHint(QFont::System, QFont::PreferAntialias);
             label->setFont(font);
-        }
 #endif
-        label->setStyleSheet(sentenceStyleSheet);
+        } else {
+            label->setStyleSheet(sentenceStyleSheet.arg(bodyFontSize));
+#ifdef Q_OS_WIN
+            QFont font = QFont{"Microsoft YaHei", bodyFontSize};
+            font.setStyleHint(QFont::System, QFont::PreferAntialias);
+            label->setFont(font);
+#endif
+        }
     }
 }
 

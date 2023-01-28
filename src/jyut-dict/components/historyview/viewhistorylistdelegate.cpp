@@ -3,8 +3,8 @@
 #include "logic/entry/entry.h"
 #include "logic/entry/entrycharactersoptions.h"
 #include "logic/entry/entryphoneticoptions.h"
+#include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
-#include "logic/utils/utils.h"
 #include "logic/utils/utils_qt.h"
 
 #include <QGuiApplication>
@@ -94,20 +94,32 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
     QRect r = option.rect;
     QRect boundingRect;
     QFont font = painter->font();
+    int interfaceSize = static_cast<int>(
+        _settings
+            ->value("Interface/size",
+                    QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+            .value<Settings::InterfaceSize>());
+    int h4FontSize = Settings::h4FontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int bodyFontSize = Settings::bodyFontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int cellTopPadding = bodyFontSize * 2 / 3;
+    int cellLeftPadding = bodyFontSize * 2 / 3;
+    int contentSpacingMargin = bodyFontSize / 2;
 
     // Chinese characters
 #ifdef Q_OS_WIN
     QFont oldFont = font;
     font = QFont("Microsoft Yahei");
 #endif
-    font.setPixelSize(20);
+    font.setPixelSize(h4FontSize);
     painter->setFont(font);
-    if (entry.isEmpty()) {
-        r = option.rect.adjusted(11, 11, -11, 0);
-    } else {
-        r = option.rect.adjusted(7, 5, -7, 0);
-    }
-    QFontMetrics metrics(font);
+    r = option.rect.adjusted(cellTopPadding,
+                             cellLeftPadding,
+                             -cellLeftPadding,
+                             0);
 
     QTextDocument *doc = new QTextDocument{};
     entry.refreshColours(_settings
@@ -122,11 +134,12 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
     QAbstractTextDocumentLayout *documentLayout = doc->documentLayout();
     auto ctx = QAbstractTextDocumentLayout::PaintContext();
     ctx.palette.setColor(QPalette::Text, painter->pen().color());
-    QRectF bounds = QRectF(0, 0, r.width(), 16);
+    QRectF bounds = QRectF(0, 0, r.width(), h4FontSize);
     ctx.clip = bounds;
-    painter->translate(entry.isEmpty() ? 11 : 7, r.y());
+    painter->translate(cellLeftPadding, r.y());
     documentLayout->draw(painter, ctx);
-    painter->translate(entry.isEmpty() ? -11 :-7, -r.y());
+    painter->translate(-cellLeftPadding, -r.y());
+    r = r.adjusted(0, h4FontSize + contentSpacingMargin * 2, 0, 0);
 
     delete doc;
 
@@ -134,31 +147,26 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
 #ifdef Q_OS_WIN
     font = oldFont;
 #endif
+    QFontMetrics metrics{font};
     QString snippet;
     if (isEmptyEntry) {
-        font.setPixelSize(14);
+        font.setPixelSize(bodyFontSize + 2);
         painter->setFont(font);
-        r = r.adjusted(0, 28, 0, 0);
         metrics = QFontMetrics(font);
         QString phonetic = metrics.elidedText(entry.getJyutping().c_str(),
                                               Qt::ElideRight,
                                               r.width());
         painter->drawText(r, 0, phonetic, &boundingRect);
+        r = r.adjusted(0, bodyFontSize + 2 + contentSpacingMargin, 0, 0);
 
         if (Settings::isCurrentLocaleHan()) {
-            r = r.adjusted(0, boundingRect.height() + 5, 0, 0);
-            font.setPixelSize(13);
+            font.setPixelSize(bodyFontSizeHan);
         } else {
-            r = r.adjusted(0, boundingRect.height() + 10, 0, 0);
-            font.setPixelSize(11);
+            font.setPixelSize(bodyFontSize);
         }
         painter->setFont(font);
         painter->save();
-#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
         painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
-#else
-        painter->setPen(QPen(option.palette.color(QPalette::Disabled, QPalette::WindowText)));
-#endif
 
         // Do custom text layout to get eliding double-line label
         snippet = entry.getDefinitionSnippet().c_str();
@@ -166,9 +174,9 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
         textLayout->beginLayout();
 
         // Define start and end y coordinates
-        // max height of label is three lines, so height * 3
+        // max height of label is four lines, so height * 4
         int y = r.y();
-        int height = y + metrics.height() * 3;
+        int height = y + metrics.height() * 4;
 
         for (;;) {
             QTextLine line = textLayout->createLine();
@@ -206,9 +214,8 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
         delete textLayout;
         painter->restore();
     } else {
-        font.setPixelSize(12);
+        font.setPixelSize(bodyFontSize);
         painter->setFont(font);
-        r = r.adjusted(0, 30, 0, 0);
         metrics = QFontMetrics(font);
         QString phonetic = metrics.elidedText(entry
                                                   .getPhonetic(phoneticOptions,
@@ -218,7 +225,6 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
                                               Qt::ElideRight,
                                               r.width());
         painter->drawText(r, 0, phonetic, &boundingRect);
-        r = r.adjusted(0, boundingRect.height(), 0, 0);
     }
 
     // Bottom divider
@@ -237,13 +243,136 @@ QSize ViewHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
     Entry entry = qvariant_cast<Entry>(index.data());
     bool isEmptyEntry = entry.isEmpty();
 
+    Settings::InterfaceSize interfaceSize
+        = _settings
+              ->value("Interface/size",
+                      QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+              .value<Settings::InterfaceSize>();
+
     if (isEmptyEntry) {
 #ifdef Q_OS_MAC
-        return QSize(100, 130);
+        switch (interfaceSize) {
+        case Settings::InterfaceSize::SMALLER: {
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::Cantonese: {
+                return QSize(100,
+                             Settings::getCurrentLocale().script()
+                                     == QLocale::SimplifiedHanScript
+                                 ? 90
+                                 : 100);
+            }
+            case QLocale::Chinese: {
+                return QSize(100, 100);
+            }
+            default: {
+                return QSize(100, 90);
+            }
+            }
+        }
+        case Settings::InterfaceSize::SMALL: {
+            return QSize(100, 110);
+        }
+        case Settings::InterfaceSize::NORMAL: {
+            return QSize(100, 125);
+        }
+        case Settings::InterfaceSize::LARGE: {
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::Cantonese: {
+                return QSize(100,
+                             Settings::getCurrentLocale().script()
+                                     == QLocale::SimplifiedHanScript
+                                 ? 145
+                                 : 165);
+            }
+            case QLocale::Chinese: {
+                return QSize(100, 165);
+            }
+            default: {
+                return QSize(100, 145);
+            }
+            }
+        }
+        case Settings::InterfaceSize::LARGER: {
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::French: {
+                return QSize(100, 165);
+            }
+            default: {
+                return QSize(100, 185);
+            }
+            }
+        }
+        }
 #else
-        return QSize(100, 135);
+        switch (interfaceSize) {
+        case Settings::InterfaceSize::SMALLER: {
+            return QSize(100, 95);
+        }
+        case Settings::InterfaceSize::SMALL: {
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::Cantonese: {
+                return QSize(100,
+                             Settings::getCurrentLocale().script()
+                                     == QLocale::SimplifiedHanScript
+                                 ? 100
+                                 : 120);
+            }
+            case QLocale::French: {
+                return QSize(100, 100);
+            }
+            default: {
+                return QSize(100, 120);
+            }
+            }
+        }
+        case Settings::InterfaceSize::NORMAL: {
+            return QSize(100, 135);
+        }
+        case Settings::InterfaceSize::LARGE: {
+            return QSize(100, 155);
+        }
+        case Settings::InterfaceSize::LARGER: {
+            return QSize(100, 200);
+        }
+        }
 #endif
     } else {
-        return QSize(100, 60);
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
+        switch (interfaceSize) {
+        case Settings::InterfaceSize::SMALLER: {
+            return QSize(100, 60);
+        }
+        case Settings::InterfaceSize::SMALL: {
+            return QSize(100, 65);
+        }
+        case Settings::InterfaceSize::NORMAL: {
+            return QSize(100, 70);
+        }
+        case Settings::InterfaceSize::LARGE: {
+            return QSize(100, 85);
+        }
+        case Settings::InterfaceSize::LARGER: {
+            return QSize(100, 95);
+        }
+        }
+#else
+        switch (interfaceSize) {
+        case Settings::InterfaceSize::SMALLER: {
+            return QSize(100, 55);
+        }
+        case Settings::InterfaceSize::SMALL: {
+            return QSize(100, 60);
+        }
+        case Settings::InterfaceSize::NORMAL: {
+            return QSize(100, 70);
+        }
+        case Settings::InterfaceSize::LARGE: {
+            return QSize(100, 80);
+        }
+        case Settings::InterfaceSize::LARGER: {
+            return QSize(100, 90);
+        }
+        }
+#endif
     }
 }

@@ -111,6 +111,17 @@ void FavouriteSplitter::openCurrentSelectionInNewWindow(void)
     handleDoubleClick(entryIndex);
 }
 
+void FavouriteSplitter::updateStyleRequested(void)
+{
+    static_cast<ResultListView *>(_resultListView)->paintWithApplicationState();
+
+    QList<EntryScrollArea *> scrollAreas
+        = this->findChildren<EntryScrollArea *>();
+    foreach (auto &area, scrollAreas) {
+        area->updateStyleRequested();
+    }
+}
+
 void FavouriteSplitter::prepareEntry(Entry &entry)
 {
     entry.refreshColours(

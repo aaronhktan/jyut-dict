@@ -22,6 +22,9 @@ private:
     void resizeEvent(QResizeEvent *event) override;
 
     SentenceScrollAreaWidget *_scrollAreaWidget;
+
+public slots:
+    void updateStyleRequested(void);
 };
 
 #endif // SENTENCESCROLLAREA_H

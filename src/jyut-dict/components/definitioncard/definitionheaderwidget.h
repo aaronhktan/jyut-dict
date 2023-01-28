@@ -5,6 +5,7 @@
 
 #include <QEvent>
 #include <QLabel>
+#include <QSettings>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -17,8 +18,6 @@ class DefinitionHeaderWidget : public QWidget, public ICardHeaderWidget
 {
 public:
     explicit DefinitionHeaderWidget(QWidget *parent = nullptr);
-    explicit DefinitionHeaderWidget(std::string title,
-                                    QWidget *parent = nullptr);
 
     void changeEvent(QEvent *event) override;
 
@@ -28,6 +27,8 @@ private:
     void setStyle(bool use_dark);
 
     bool _paletteRecentlyChanged = false;
+
+    std::unique_ptr<QSettings> _settings;
 
     QLabel *_titleLabel;
     QVBoxLayout *_layout;

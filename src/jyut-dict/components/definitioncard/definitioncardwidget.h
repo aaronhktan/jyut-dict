@@ -33,6 +33,9 @@ private:
     QVBoxLayout *_definitionAreaLayout;
     DefinitionHeaderWidget *_definitionHeaderWidget;
     DefinitionContentWidget *_definitionContentWidget;
+
+public slots:
+    void updateStyleRequested(void);
 };
 
 #endif // DEFINITIONCARDWIDGET_H

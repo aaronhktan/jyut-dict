@@ -1,10 +1,6 @@
 #ifndef RESULTLISTVIEW_H
 #define RESULTLISTVIEW_H
 
-#include "components/entrysearchresult/resultlistdelegate.h"
-#include "logic/entry/entry.h"
-#include "logic/search/sqlsearch.h"
-
 #include <QEvent>
 #include <QListView>
 #include <QStyledItemDelegate>

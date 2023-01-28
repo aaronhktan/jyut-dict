@@ -49,3 +49,10 @@ void SentenceViewSentenceCardSection::cleanup(void)
     }
     _sentenceCards.clear();
 }
+
+void SentenceViewSentenceCardSection::updateStyleRequested(void)
+{
+    for (auto &card : _sentenceCards) {
+        card->updateStyleRequested();
+    }
+}

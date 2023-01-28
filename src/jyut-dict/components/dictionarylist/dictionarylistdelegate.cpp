@@ -1,6 +1,8 @@
 #include "dictionarylistdelegate.h"
 
 #include "logic/dictionary/dictionarymetadata.h"
+#include "logic/settings/settings.h"
+#include "logic/settings/settingsutils.h"
 #include "logic/utils/utils.h"
 #include "logic/utils/utils_qt.h"
 
@@ -9,7 +11,7 @@
 DictionaryListDelegate::DictionaryListDelegate(QWidget *parent)
     : QStyledItemDelegate(parent)
 {
-
+    _settings = Settings::getSettings(this);
 }
 
 void DictionaryListDelegate::paint(QPainter *painter,
@@ -50,9 +52,23 @@ void DictionaryListDelegate::paint(QPainter *painter,
     QRect r = option.rect;
     QRect boundingRect;
     QFont font = painter->font();
+    int interfaceSize = static_cast<int>(
+        _settings
+            ->value("Interface/size",
+                    QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+            .value<Settings::InterfaceSize>());
+    int bodyFontSize = Settings::bodyFontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int cellTopPadding = bodyFontSize * 2 / 3;
+    int cellLeftPadding = bodyFontSize * 2 / 3;
 
-    r = r.adjusted(6, 6, 6, 6);
-    QFontMetrics metrics(font);
+    r = r.adjusted(cellTopPadding,
+                   cellLeftPadding,
+                   -cellTopPadding,
+                   -cellLeftPadding);
+    font.setPixelSize(bodyFontSize);
+    painter->setFont(font);
+    QFontMetrics metrics{font};
     QString sourcename = metrics.elidedText(
         source.getName().c_str(),
         Qt::ElideRight,
@@ -67,5 +83,48 @@ QSize DictionaryListDelegate::sizeHint(const QStyleOptionViewItem &option,
 {
     (void) (option);
     (void) (index);
-    return QSize(100, 30);
+
+    Settings::InterfaceSize interfaceSize
+        = _settings
+              ->value("Interface/size",
+                      QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+              .value<Settings::InterfaceSize>();
+
+#ifdef Q_OS_MAC
+    switch (interfaceSize) {
+    case Settings::InterfaceSize::SMALLER: {
+        return QSize(100, 25);
+    }
+    case Settings::InterfaceSize::SMALL: {
+        return QSize(100, 30);
+    }
+    case Settings::InterfaceSize::NORMAL: {
+        return QSize(100, 35);
+    }
+    case Settings::InterfaceSize::LARGE: {
+        return QSize(100, 40);
+    }
+    case Settings::InterfaceSize::LARGER: {
+        return QSize(100, 45);
+    }
+    }
+#else
+    switch (interfaceSize) {
+    case Settings::InterfaceSize::SMALLER: {
+        return QSize(100, 28);
+    }
+    case Settings::InterfaceSize::SMALL: {
+        return QSize(100, 33);
+    }
+    case Settings::InterfaceSize::NORMAL: {
+        return QSize(100, 38);
+    }
+    case Settings::InterfaceSize::LARGE: {
+        return QSize(100, 43);
+    }
+    case Settings::InterfaceSize::LARGER: {
+        return QSize(100, 48);
+    }
+    }
+#endif
 }
