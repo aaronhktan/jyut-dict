@@ -70,9 +70,6 @@ private:
 
     std::shared_ptr<SQLDatabaseManager> _manager;
     std::unique_ptr<SQLDatabaseUtils> _utils;
-signals:
-
-public slots:
 };
 
 #endif // DICTIONARYTAB_H

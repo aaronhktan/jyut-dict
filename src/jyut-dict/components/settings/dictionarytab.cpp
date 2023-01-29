@@ -2,13 +2,13 @@
 
 #include "components/dictionarylist/dictionarylistview.h"
 #include "logic/dictionary/dictionarysource.h"
-#include "logic/utils/utils.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
 #include "logic/utils/utils_linux.h"
 #elif defined(Q_OS_WIN)
+#include "logic/strings/strings.h"
 #include "logic/utils/utils_windows.h"
 #endif
 
@@ -44,12 +44,6 @@ void DictionaryTab::changeEvent(QEvent *event)
 
 void DictionaryTab::setupUI()
 {
-#ifdef Q_OS_WIN
-    if (QLocale::system().language() & QLocale::Chinese ||
-        QLocale::system().language() & QLocale::Cantonese) {
-        setStyleSheet("QLabel { font-size: 12px; }");
-    }
-#endif
     _tabLayout = new QGridLayout{this};
     _tabLayout->setAlignment(Qt::AlignTop);
 
@@ -144,19 +138,13 @@ void DictionaryTab::translateUI()
 void DictionaryTab::setStyle(bool use_dark) {
     (void) (use_dark);
 #ifdef Q_OS_MAC
-    setStyleSheet(
-        "QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
     _list->setStyleSheet("QListView {"
                          "   border: 1px solid palette(window); "
                          "} ");
 #else
     setAttribute(Qt::WA_StyledBackground);
     setObjectName("DictionaryTab");
-    setStyleSheet("QPushButton[isHan=\"true\"] { "
-                  "   font-size: 12px; height: 20px; "
-                  "}"
-                  ""
-                  "QWidget#DictionaryTab {"
+    setStyleSheet("QWidget#DictionaryTab {"
                   "   background-color: palette(base);"
                   "} ");
     _list->setStyleSheet("QListView {"

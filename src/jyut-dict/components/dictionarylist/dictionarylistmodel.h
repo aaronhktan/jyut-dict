@@ -35,10 +35,6 @@ public:
 
 private:
     std::vector<DictionaryMetadata> _dictionaries;
-
-signals:
-
-public slots:
 };
 
 #endif // DICTIONARYLISTMODEL_H

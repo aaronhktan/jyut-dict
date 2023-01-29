@@ -45,3 +45,14 @@ void DictionaryListView::paintWithApplicationState()
 {
     viewport()->update();
 }
+
+#ifdef Q_OS_MAC
+void DictionaryListView::mousePressEvent(QMouseEvent *event)
+{
+    // Don't change item selection on mouse press.
+    // The window size changes before the user releases the mouse, which causes
+    // the item selection to change, and bounces the user to another item that
+    // they didn't select.
+    (void) (event);
+}
+#endif
