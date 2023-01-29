@@ -96,6 +96,9 @@ CMakeLists.txt.user*
 **/cuhk/archive_*
 **/cuhk/data/*
 **/cuhk/developer/*
+**/hsk3/archive_*
+**/hsk3/data/*
+**/hsk3/developer/*
 **/kaifangcidian/archive_*
 **/kaifangcidian/data/*
 **/kaifangcidian/developer/*
