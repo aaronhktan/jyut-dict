@@ -8,6 +8,7 @@
 #elif defined (Q_OS_LINUX)
 #include "logic/utils/utils_linux.h"
 #elif defined(Q_OS_WIN)
+#include "logic/strings/strings.h"
 #include "logic/utils/utils_windows.h"
 #endif
 

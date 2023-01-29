@@ -46,6 +46,7 @@ void DictionaryListView::paintWithApplicationState()
     viewport()->update();
 }
 
+#ifdef Q_OS_MAC
 void DictionaryListView::mousePressEvent(QMouseEvent *event)
 {
     // Don't change item selection on mouse press.
@@ -54,3 +55,4 @@ void DictionaryListView::mousePressEvent(QMouseEvent *event)
     // they didn't select.
     (void) (event);
 }
+#endif
