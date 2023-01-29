@@ -26,6 +26,9 @@ private:
 
     QAbstractListModel *_model;
     QStyledItemDelegate *_delegate;
+
+protected:
+    virtual void mousePressEvent(QMouseEvent *event) override;
 };
 
 #endif // DICTIONARYLISTVIEW_H
