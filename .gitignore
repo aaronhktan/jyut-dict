@@ -85,6 +85,9 @@ CMakeLists.txt.user*
 **/abc_/archive_*
 **/abc_/data/*
 **/abc_/developer/*
+**/aby/archive_*
+**/aby/data/*
+**/aby/developer/*
 **/cantodict/archive_*
 **/cantodict/data/*
 **/cantodict/developer/*
