@@ -1,5 +1,5 @@
-from hanziconv import HanziConv
 import jieba
+import opencc
 import pinyin_jyutping_sentence
 from pypinyin import lazy_pinyin, Style
 from pypinyin_dict.phrase_pinyin_data import cc_cedict
@@ -16,6 +16,7 @@ import re
 import sqlite3
 import sys
 import traceback
+import unicodedata
 
 # Useful test words:
 #   - 重: multiple heteronyms, labels for definitions
@@ -29,6 +30,10 @@ import traceback
 #   - 削: contains 讀音 and 語音
 #   - 剖: contains （又音）
 #   - 乾兒: transcription for 兒 is super annoying
+#   - 倘來之物: has {[90ba]} in the pronunciation
+#   - 不到頭: has {[97ef]} before a comma
+#   - 救應: has {[9afc]} after a period
+#   - 三十年河東，三十年河西: has multiple punctuation marks one after the other
 
 PINYIN_COLLOQUIAL_PRONUNCIATION_REGEX_PATTERN = re.compile(r"（語音）")
 PINYIN_LITERARY_PRONUNCIATION_REGEX_PATTERN = re.compile(r"（讀音）")
@@ -42,12 +47,19 @@ VARIANT_PRONUNCIATION_REGEX_PATTERN = re.compile(r"\s\(變\).*")
 COLLOQUIAL_PRONUNCIATION_REGEX_PATTERN = re.compile(r"\s（語音）.*")
 STRANGE_ENTRY_REGEX_PATTERN = re.compile(r".*（.*\)")
 
+PUNCTUATION_TABLE = {}
+for i in range(sys.maxunicode):
+    if unicodedata.category(chr(i)).startswith("P"):
+        PUNCTUATION_TABLE[i] = " " + chr(i) + " "
+
+converter = opencc.OpenCC("tw2s.json")
+
 
 def insert_example(c, definition_id, starting_example_id, example):
     examples_inserted = 0
 
     trad = example.content
-    simp = HanziConv.toSimplified(trad)
+    simp = converter.convert(trad)
     jyut = ""
     pin = example.pron
     lang = example.lang
@@ -174,7 +186,7 @@ def parse_file(filename, words):
 
             # These do not change no matter the heteronym
             trad = item["title"]
-            simp = HanziConv.toSimplified(trad)
+            simp = converter.convert(trad)
             jyut = pinyin_jyutping_sentence.jyutping(
                 trad, tone_numbers=True, spaces=True
             )
@@ -252,20 +264,32 @@ def parse_file(filename, words):
                                     "", example_text
                                 )
 
-                                # Joining and splitting separates series of full-width punctuation marks
-                                # into separate items,  which is necessary so that lazy_pinyin() returns
-                                # separate items for each full-width punctuation mark in the list it returns
+                                # Translating using the PUNCTUATION_TABLE adds spaces to series of full-width
+                                # punctuation marks, which is necessary so that the split() in
+                                # change_pinyin_to_match_phrase() creates a list of Pinyin where each entry in that
+                                # list corresponds 1:1 to each Unicode glyph.
                                 #
-                                # e.g. "《儒林外史．第四六回》：「成老爹道..." turns into
-                                # "《 儒 林 外 史 ． 第 四 六 回 》 ： 「 成 老 爹 道", which turns into
-                                # ['《', '儒', '林', '外', '史', '．', '第', '四', '六', '回', '》', '：', '「', '成', '老', '爹', '道']
-                                # (Notice how "》：「"" is now split up into three different items)
-                                example_pinyin = lazy_pinyin(
-                                    " ".join(example_text).split(),
+                                # e.g. "《元．秦{[90ba]}夫《東堂老．第三折》：「忠..." passes through lazy_pinyin(), so it turns into:
+                                # ['yuan2', '．', 'qin2', '{[90ba]}', 'fu1', '《', 'dong1', 'tang2', 'lao3', '．', 'di4', 'san1', 'zhe2', '》：「', 'zhong1']
+                                # Then we add spaces between the punctuation marks and the {[90ba]} to get:
+                                # "yuan2  ．  qin2  {   [  9 0 b a  ]   }  fu1  《  dong1 tang2 lao3  ．  di4 san1 zhe2  》  ：  「  zhong1 xiao4 shi4 li4 shen1 zhi1 ben3  ，  zhe4 qian2 cai2 shi4 tang3 lai2 zhi1 wu4  。  」"
+                                # Finally, change_pinyin_to_match_phrase() calls split() on that string, and it sees:
+                                # ['yuan2', '．', 'qin2', '{', '[', '9', '0', 'b', 'a', ']', '}', 'fu1', '《', 'dong1', 'tang2', 'lao3', '．', 'di4', 'san1', 'zhe2', '》', '：', '「', 'zhong1']
+                                example_pinyin_list = lazy_pinyin(
+                                    converter.convert(example_text),
                                     style=Style.TONE3,
                                     neutral_tone_with_five=True,
                                 )
+                                example_pinyin = []
+                                for item in example_pinyin_list:
+                                    if "{[" in item and "]}" in item:
+                                        example_pinyin += " ".join(item).split()
+                                    else:
+                                        example_pinyin.append(item)
                                 example_pinyin = " ".join(example_pinyin).lower()
+                                example_pinyin = example_pinyin.translate(
+                                    PUNCTUATION_TABLE
+                                )
                                 example_pinyin = example_pinyin.strip().replace(
                                     "v", "u:"
                                 )
@@ -319,12 +343,19 @@ def parse_file(filename, words):
                         for quote in definition["quote"]:
                             quote_text = re.sub(WHITESPACE_REGEX_PATTERN, "", quote)
 
-                            quote_pinyin = lazy_pinyin(
-                                " ".join(quote_text).split(),
+                            quote_pinyin_list = lazy_pinyin(
+                                converter.convert(quote_text),
                                 style=Style.TONE3,
                                 neutral_tone_with_five=True,
                             )
+                            quote_pinyin = []
+                            for item in quote_pinyin_list:
+                                if "{[" in item and "]}" in item:
+                                    quote_pinyin += " ".join(item).split()
+                                else:
+                                    quote_pinyin.append(item)
                             quote_pinyin = " ".join(quote_pinyin).lower()
+                            quote_pinyin = quote_pinyin.translate(PUNCTUATION_TABLE)
                             quote_pinyin = quote_pinyin.strip().replace("v", "u:")
 
                             phrase_pinyin = pin

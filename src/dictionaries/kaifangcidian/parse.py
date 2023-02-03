@@ -122,7 +122,7 @@ def parse_file(filename_traditional, filename_simplified_jyutping, entries):
         jyut = " ".join(simplified[index + trad_len : index + trad_len + jyut_len])
 
         pin = (
-            " ".join(lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True))
+            " ".join(lazy_pinyin(simp, style=Style.TONE3, neutral_tone_with_five=True))
             .lower()
             .replace("v", "u:")
         )
@@ -138,7 +138,7 @@ def parse_file(filename_traditional, filename_simplified_jyutping, entries):
             defs_traditional = traditional[row][2].split("，")
             defs_simplified = simplified[index + trad_len + jyut_len].split("，")
             definitions = []
-            for (def_traditional, def_simplified) in zip(
+            for def_traditional, def_simplified in zip(
                 defs_traditional, defs_simplified
             ):
                 if def_traditional != def_simplified:

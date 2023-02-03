@@ -1,5 +1,5 @@
 import hanzidentifier
-from hanziconv import HanziConv
+import opencc
 from pypinyin import lazy_pinyin, Style
 from pypinyin_dict.phrase_pinyin_data import cc_cedict
 import pinyin_jyutping_sentence
@@ -9,6 +9,9 @@ from database import database, objects
 import collections
 import sqlite3
 import sys
+
+simplified_to_traditional_converter = opencc.OpenCC("s2hk.json")
+traditional_to_simplified_converter = opencc.OpenCC("t2s.json")
 
 
 def write(chinese_sentences, nonchinese_sentences, links, db_name):
@@ -99,16 +102,16 @@ def parse_sentence_file(
 
             if lang == source:
                 if hanzidentifier.is_simplified(sentence):
-                    trad = HanziConv.toTraditional(sentence)
+                    trad = simplified_to_traditional_converter.convert(sentence)
                     simp = sentence
                 else:
                     trad = sentence
-                    simp = HanziConv.toSimplified(sentence)
+                    simp = traditional_to_simplified_converter.convert(sentence)
                 pin = ""
                 if enable_pinyin:
                     pin = " ".join(
                         lazy_pinyin(
-                            trad, style=Style.TONE3, neutral_tone_with_five=True
+                            simp, style=Style.TONE3, neutral_tone_with_five=True
                         )
                     ).lower()
                     pin = pin.strip().replace("v", "u:")
