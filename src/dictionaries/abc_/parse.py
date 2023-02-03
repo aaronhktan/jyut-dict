@@ -206,7 +206,7 @@ def parse_pinyin(content):
     # But we don't support that, so remove it
     # Pinyin also sometimes has superscript numbers preceding them that we need to remove
     # I assume it's to distinguish between words with the same Pinyin? Unsure
-    content = content.translate(str.maketrans("ạẹịọụ'-", "aeiou  ", "̠*¹²³⁴⁵⁶⁷⁸⁹"))
+    content = content.translate(str.maketrans("ạẹịọụ'-", "aeiou  ", "̠*¹²³⁴⁵⁶⁷⁸⁹⁰"))
     # ABC also indicates erhua with (r) in Pinyin. This causes difficulties with
     # entry coalescing, so remove it.
     content = content.replace("(r)", "")
