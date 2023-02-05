@@ -1,6 +1,6 @@
-from hanziconv import HanziConv
 from dragonmapper import transcriptions
 import jieba
+import opencc
 import pinyin_jyutping_sentence
 from pypinyin import lazy_pinyin, Style
 from pypinyin_dict.phrase_pinyin_data import cc_cedict
@@ -13,6 +13,8 @@ import csv
 import logging
 import sqlite3
 import sys
+
+converter = opencc.OpenCC("tw2s.json")
 
 
 def read_csv(filename):
@@ -120,7 +122,7 @@ def parse_same_meaning_file(filename, words):
         for location in terms:
             for term in terms[location]:
                 trad = term
-                simp = HanziConv.toSimplified(trad)
+                simp = converter.convert(trad)
                 if term == line[4] and line[2]:
                     # Use the provided pinyin, which always corresponds at least to the first Taiwan term
                     pin = transcriptions.zhuyin_to_pinyin(
@@ -128,7 +130,7 @@ def parse_same_meaning_file(filename, words):
                     )
                 else:
                     pin = lazy_pinyin(
-                        trad,
+                        simp,
                         style=Style.TONE3,
                         neutral_tone_with_five=True,
                     )
@@ -161,9 +163,9 @@ def parse_same_word_file(filename, words):
             continue
 
         trad = line[0]
-        simp = HanziConv.toSimplified(trad)
+        simp = converter.convert(trad)
         pin = lazy_pinyin(
-            trad,
+            simp,
             style=Style.TONE3,
             neutral_tone_with_five=True,
         )

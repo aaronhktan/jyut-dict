@@ -16,6 +16,7 @@ SourceTuple = namedtuple(
     ],
 )
 
+
 # Option 1 for representing an entry: this class gives a basic structure for an object with
 # traditional, simplified, pinyin, jyutping, and definitions, with pinyin/jyutping/definitions
 # able to be set later via add_pinyin/add_jyutping/add_defs functions.

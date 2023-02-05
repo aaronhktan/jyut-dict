@@ -1,4 +1,4 @@
-from hanziconv import HanziConv
+import opencc
 import pinyin_jyutping_sentence
 from pypinyin import lazy_pinyin, Style
 from pypinyin_dict.phrase_pinyin_data import cc_cedict
@@ -17,6 +17,8 @@ lists = (
     "汉字表",
     "手写字表",
 )
+
+converter = opencc.OpenCC("s2hk.json")
 
 
 def write(db_name, source, entries):
@@ -109,7 +111,7 @@ def parse_file(filename, entries):
                 simp = split[1]
                 label = ""
 
-            trad = HanziConv.toTraditional(simp)
+            trad = converter.convert(simp)
             pin = " ".join(
                 lazy_pinyin(simp, style=Style.TONE3, neutral_tone_with_five=True)
             ).lower()

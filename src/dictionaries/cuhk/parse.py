@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
-from hanziconv import HanziConv
 from hkscs_unicode_converter import converter
+import opencc
 from pypinyin import lazy_pinyin, Style
 from pypinyin_dict.phrase_pinyin_data import cc_cedict
 from wordfreq import zipf_frequency
@@ -35,6 +35,8 @@ MEANING_REGEX = re.compile(
 REMARK_REGEX = re.compile("MainContent_repeaterRecord_lblRemark_*")
 
 JYUTPING_MAP = {"7": "1", "8": "3", "9": "6"}
+
+cc_converter = opencc.OpenCC("hk2s.json")
 
 
 def write(db_name, source, entries):
@@ -116,7 +118,7 @@ def parse_word_file(file_name, words):
             trad = re.sub(
                 PRIVATE_USE_AREA_REGEX, PRIVATE_USE_AREA_REPLACEMENT_STRING, trad
             )
-        simp = HanziConv.toSimplified(trad)
+        simp = cc_converter.convert(trad)
 
         word = os.path.splitext(os.path.basename(file_name))[0]
         word = converter.convert_string(word)
@@ -150,7 +152,7 @@ def parse_word_file(file_name, words):
 
         # Automatically generate pinyin
         pin = (
-            " ".join(lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True))
+            " ".join(lazy_pinyin(simp, style=Style.TONE3, neutral_tone_with_five=True))
             .lower()
             .replace("v", "u:")
         )

@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup, element
-from hanziconv import HanziConv
+import opencc
 from pypinyin import lazy_pinyin, Style
 from pypinyin_dict.phrase_pinyin_data import cc_cedict
 from wordfreq import zipf_frequency
@@ -74,20 +74,32 @@ LITERARY_CANTONESE_READING_REGEX_PATTERN = re.compile(r"\d\*")
 LITERARY_PINYIN_READING_REGEX_PATTERN = re.compile(r"\d\*")
 
 # Get the different PRC / Taiwan pronunciations
-TAIWAN_PRC_PRONUNCIATION = re.compile(r"^(?P<tw>.*?) ?\((?:Taiwan|TW)\) ?(?:,|\/|;)? ?(?P<prc>.*?) ?\(PRC\)$", re.IGNORECASE)
-PRC_TAIWAN_PRONUNCIATION = re.compile(r"^(?P<prc>.*?) ?\(PRC\) ?(?:,|\/|;)? ?(?P<tw>.*?) ?\((?:Taiwan|TW)\)$", re.IGNORECASE)
+TAIWAN_PRC_PRONUNCIATION = re.compile(
+    r"^(?P<tw>.*?) ?\((?:Taiwan|TW)\) ?(?:,|\/|;)? ?(?P<prc>.*?) ?\(PRC\)$",
+    re.IGNORECASE,
+)
+PRC_TAIWAN_PRONUNCIATION = re.compile(
+    r"^(?P<prc>.*?) ?\(PRC\) ?(?:,|\/|;)? ?(?P<tw>.*?) ?\((?:Taiwan|TW)\)$",
+    re.IGNORECASE,
+)
 MANDARIN_PRONUNCIATION_VARIANT_REGEX_PATTERNS = (
     TAIWAN_PRC_PRONUNCIATION,
-    PRC_TAIWAN_PRONUNCIATION
+    PRC_TAIWAN_PRONUNCIATION,
 )
 # Partial match: only some of the words' pronunciations are different
 # Currently can only parse those whose partial differences are at the beginning of the word,
 # since regex cannot know how long the equivalent pronunciations are
-TAIWAN_PRC_PARTIAL = re.compile(r"^(?P<tw>.*?)\s*\((?:TW|Taiwan)\) ?(?:,|\/|;)? ?(?P<prc>.*?) ?\((?:PRC|CN)\)(?!$)", re.IGNORECASE)
-PRC_TAIWAN_PARTIAL = re.compile(r"^(?P<prc>.*?) ?\((?:PRC|CN)\) ?(?:,|\/|;)? ?(?P<tw>.*?)\s*\((?:TW|Taiwan)\)(?!$)", re.IGNORECASE)
+TAIWAN_PRC_PARTIAL = re.compile(
+    r"^(?P<tw>.*?)\s*\((?:TW|Taiwan)\) ?(?:,|\/|;)? ?(?P<prc>.*?) ?\((?:PRC|CN)\)(?!$)",
+    re.IGNORECASE,
+)
+PRC_TAIWAN_PARTIAL = re.compile(
+    r"^(?P<prc>.*?) ?\((?:PRC|CN)\) ?(?:,|\/|;)? ?(?P<tw>.*?)\s*\((?:TW|Taiwan)\)(?!$)",
+    re.IGNORECASE,
+)
 MANDARIN_PRONUNCIATION_PARTIAL_VARIANT_REGEX_PATTERNS = (
     TAIWAN_PRC_PARTIAL,
-    PRC_TAIWAN_PARTIAL
+    PRC_TAIWAN_PARTIAL,
 )
 
 DEFINITION_SPLITTING_REGEX_PATTERN = re.compile(r"[\(|\[]\d+[\)\]]\s?|\n")
@@ -129,6 +141,9 @@ LABEL_REGEX_PATTERN = re.compile(r"^\[(.*?)\]:?\s*")
 SENTENCE_ID_PATTERN = re.compile(
     r"http://www\.cantonese\.sheik\.co\.uk/dictionary/examples/(\d*)/"
 )
+
+traditional_to_simplified_converter = opencc.OpenCC("hk2s.json")
+simplified_to_traditional_converter = opencc.OpenCC("s2hk.json")
 
 
 def write(db_name, source, entries, sentences, translations):
@@ -244,7 +259,7 @@ def parse_word_file(file_name, words):
             else:
                 trad = forms[0].strip()
                 # Cantodict sometimes reports that there is no simplified variant, which is sometimes incorrect
-                simp = HanziConv.toSimplified(trad)
+                simp = traditional_to_simplified_converter.convert(trad)
         except:
             # If a character has latin script in it, it may not have a class called "chinesebig"
             try:
@@ -258,7 +273,7 @@ def parse_word_file(file_name, words):
                 else:
                     trad = forms[0].strip()
                     # Cantodict sometimes reports that there is no simplified variant, which is sometimes incorrect
-                    simp = HanziConv.toSimplified(trad)
+                    simp = traditional_to_simplified_converter(trad)
             except:
                 logging.error(
                     f"Couldn't find traditional and simplified forms in file {file_name}"
@@ -267,9 +282,9 @@ def parse_word_file(file_name, words):
 
         word = os.path.splitext(os.path.basename(file_name))[0].strip()
         if trad != word:
-            if trad == HanziConv.toTraditional(word) or word == HanziConv.toSimplified(
-                trad
-            ):
+            if trad == simplified_to_traditional_converter.convert(
+                word
+            ) or word == traditional_to_simplified_converter.convert(trad):
                 logging.debug(
                     f"File name {word} appears to be a simplified variant "
                     f"of {trad}. Ignoring..."
@@ -306,7 +321,7 @@ def parse_word_file(file_name, words):
         pin = re.sub(LITERARY_PINYIN_READING_REGEX_PATTERN, "", pin)
         if not pin:
             pin = " ".join(
-                lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True)
+                lazy_pinyin(simp, style=Style.TONE3, neutral_tone_with_five=True)
             ).lower()
         # Replace 'v' in Pinyin with the u: that CEDICT uses
         pin = pin.strip().replace("v", "u:")
@@ -327,7 +342,9 @@ def parse_word_file(file_name, words):
             match = pattern.match(pin)
             if match:
                 # Make sure the matched groups match the length of the characters
-                if len(match.group("prc").split(" ")) == len(trad) and len(match.group("tw").split(" ")) == len(trad): 
+                if len(match.group("prc").split(" ")) == len(trad) and len(
+                    match.group("tw").split(" ")
+                ) == len(trad):
                     variant_pinyin.append((match.group("prc"), match.group("tw")))
         if not variant_pinyin:
             for pattern in MANDARIN_PRONUNCIATION_PARTIAL_VARIANT_REGEX_PATTERNS:
@@ -336,7 +353,9 @@ def parse_word_file(file_name, words):
                     prc_pin = pattern.sub(match.group("prc"), pin)
                     tw_pin = pattern.sub(match.group("tw"), pin)
                     # Make sure the found pronunciations match the length of the characters
-                    if len(prc_pin.split(" ")) == len(trad) and len(tw_pin.split(" ")) == len(trad):
+                    if len(prc_pin.split(" ")) == len(trad) and len(
+                        tw_pin.split(" ")
+                    ) == len(trad):
                         variant_pinyin.append((prc_pin, tw_pin))
         # Also check for multiple pronunciations of single-character words
         if len(trad) == 1 and len(pin.split(" ")) > len(trad):
@@ -512,7 +531,7 @@ def parse_sentence_file(file_name, sentences, translations):
         # Get the sentence
         try:
             trad = soup.find("span", class_="sentence").get_text()
-            simp = HanziConv.toSimplified(trad)
+            simp = traditional_to_simplified_converter.convert(trad)
         except:
             logging.error(f"Couldn't find sentence in file {file_name}")
             return

@@ -1,5 +1,5 @@
-from hanziconv import HanziConv
 import jieba
+import opencc
 from pypinyin import lazy_pinyin, Style
 from pypinyin_dict.phrase_pinyin_data import cc_cedict
 from wordfreq import zipf_frequency
@@ -43,6 +43,8 @@ NEAR_SYNONYM_REGEX = re.compile(r"\(sim:(.*?)\)")
 ANTONYM_REGEX = re.compile(r"\(ant:(.*?)\)")
 LINK_REGEX = re.compile(r"#(.*?)\s")
 
+converter = opencc.OpenCC("hk2s.json")
+
 
 def read_csv(filename):
     with open(filename) as csvfile:
@@ -58,7 +60,7 @@ def insert_example(c, definition_id, starting_example_id, example):
     examples_inserted = 0
 
     trad = example[0].content
-    simp = HanziConv.toSimplified(trad)
+    simp = converter.convert(trad)
     jyut = example[0].pron
     pin = ""
     lang = example[0].lang
@@ -195,9 +197,9 @@ def process_entry(line):
 
     for variant in variants:
         trad = variant.split(":")[0]
-        simp = HanziConv.toSimplified(trad)
+        simp = converter.convert(trad)
         pin = (
-            " ".join(lazy_pinyin(trad, style=Style.TONE3, neutral_tone_with_five=True))
+            " ".join(lazy_pinyin(simp, style=Style.TONE3, neutral_tone_with_five=True))
             .lower()
             .replace("v", "u:")
         )
