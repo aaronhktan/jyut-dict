@@ -233,6 +233,9 @@ void ResultListDelegate::paint(QPainter *painter,
                                                   .c_str(),
                                               Qt::ElideRight,
                                               r.width());
+        if (phonetic.isEmpty()) {
+            phonetic = "-";
+        }
         painter->drawText(r, 0, phonetic, &boundingRect);
         r = r.adjusted(0, bodyFontSize + contentSpacingMargin / 2, 0, 0);
 

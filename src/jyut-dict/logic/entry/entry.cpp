@@ -345,7 +345,7 @@ std::string Entry::getPhonetic(EntryPhoneticOptions options,
             std::string cantonese = getCantonesePhonetic(cantoneseOptions);
             std::string mandarin = getMandarinPhonetic(mandarinOptions);
             if (cantonese.empty()) {
-                return "(" + mandarin + ")";
+                return mandarin.empty() ? "" : "(" + mandarin + ")";
             } else if (mandarin.empty()) {
                 return cantonese;
             } else {
@@ -356,7 +356,7 @@ std::string Entry::getPhonetic(EntryPhoneticOptions options,
             std::string cantonese = getCantonesePhonetic(cantoneseOptions);
             std::string mandarin = getMandarinPhonetic(mandarinOptions);
             if (mandarin.empty()) {
-                return "(" + cantonese + ")";
+                return cantonese.empty() ? "" : "(" + cantonese + ")";
             } else if (cantonese.empty()) {
                 return mandarin;
             } else {
