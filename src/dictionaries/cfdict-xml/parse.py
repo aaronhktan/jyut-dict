@@ -7,6 +7,7 @@ import sqlite3
 import sys
 import xml.etree.ElementTree as ET
 
+
 def write(db_name, source, entries):
     db = sqlite3.connect(db_name)
     c = db.cursor()
@@ -146,12 +147,12 @@ if __name__ == "__main__":
             (
                 "e.g. python3 script.py dict.db CFDICT.xml READINGS.txt "
                 'CFDICT-2016 CF2016 2016-01-17 "En 2010, David Houstin, '
-                'fondateur de CHINE INFORMATIONS, a commencé à partager '
-                'librement une partie de la base de données son dictionnaire '
+                "fondateur de CHINE INFORMATIONS, a commencé à partager "
+                "librement une partie de la base de données son dictionnaire "
                 'français-chinois en ligne." '
                 '"Cette création est mise à disposition sous un contrat '
-                'Creative Commons Paternité - Partage des Conditions Initiales '
-                'à l\'Identique." '
+                "Creative Commons Paternité - Partage des Conditions Initiales "
+                "à l'Identique.\" "
                 '"http://www.mdbg.net/chindict/chindict.php?page=cc-cedict" '
                 '"https://chine.in/mandarin/dictionnaire/CFDICT/" "" "words"'
             )
