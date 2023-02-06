@@ -90,6 +90,9 @@ CMakeLists.txt.user*
 **/cantodict/developer/*
 **/cedict/archive_*
 **/cedict/developer/*
+**/cfdict-xml/archive_*
+**/cfdict-xml/data/*
+**/cfdict-xml/developer/*
 **/cross_straits/archive_*
 **/cross_straits/data/*
 **/cross_straits/developer/*
