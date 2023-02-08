@@ -117,9 +117,7 @@ PARENTHESES_PRONUNCIATION_REGEX_PATTERN = re.compile(
     r"\(jyutping\)\s*(.*\d)[,|;]?\s*\(pinyin\)\s*(.*\d)"
 )
 # This one searches for something in the format [粵拼: dei6 haa62 | 漢語: di4 xia5]
-PIPE_PRONUNCIATION_REGEX_PATTERN = re.compile(
-    r"粵拼:\s*(.*\d)\s(?:\|\s*漢語:\s*(.*))\]"
-)
+PIPE_PRONUNCIATION_REGEX_PATTERN = re.compile(r"粵拼:\s*(.*\d)\s(?:\|\s*漢語:\s*(.*))\]")
 # This one searches for something in the format 粵拼: ne1 -- 拼音: ne
 DASHES_PRONUNCIATION_REGEX_PATTERN = re.compile(
     r"粵拼:\s*(.*\d)\s*(?:\-\-\s*拼音:\s*(.*))?"
@@ -425,7 +423,9 @@ def parse_word_file(file_name, words):
                     # and reset the meanings tuple
                     jyut = result.group(1)
                     jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN.sub("", jyut)
-                    jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN_VARIANT.sub("\g<2>", jyut)
+                    jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN_VARIANT.sub(
+                        "\g<2>", jyut
+                    )
                     pin = result.group(2) if result.group(2) else ""
                     meanings = []
                     continue_parsing = False
@@ -453,7 +453,9 @@ def parse_word_file(file_name, words):
                     # and reset the meanings tuple
                     jyut = result.group(1)
                     jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN.sub("", jyut)
-                    jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN_VARIANT.sub("\g<2>", jyut)
+                    jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN_VARIANT.sub(
+                        "\g<2>", jyut
+                    )
                     meanings = []
                     variants_handled = True
                     continue_parsing = False
