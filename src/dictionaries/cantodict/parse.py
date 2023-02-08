@@ -40,6 +40,7 @@ import sys
 #   - 擊潰 has Taiwan/PRC partial difference, Taiwan first
 #   - 瀕危 has Taiwan/PRC partial difference, PRC first (but at end of word, which is not currently supported)
 #   - 查究 has Taiwan/PRC partial difference, Taiwan first (but at end of word, which is not currently supported)
+#   - 地下 has a weird format for variant pronunciations (both indicating literary pronunciation without * and weird Jyutping/Pinyin)
 
 # Pages with known issues:
 #   - 蚺蛇 has different Jyutping for each definition, without any labelling (we discard the different pronunciations)
@@ -70,6 +71,7 @@ TITLE_REGEX_PATTERN = re.compile(r"<title>(.*)</title>")
 # Since Jyut Dictionary does not support displaying literary/colloquial pronunciations
 # in the format toi4*2, remove the literary pronunciation using this regex pattern
 LITERARY_CANTONESE_READING_REGEX_PATTERN = re.compile(r"\d\*")
+LITERARY_CANTONESE_READING_REGEX_PATTERN_VARIANT = re.compile(r"([1-6])([1-6])")
 # CantoDict does the same with Pinyin
 LITERARY_PINYIN_READING_REGEX_PATTERN = re.compile(r"\d\*")
 
@@ -114,6 +116,10 @@ AMPERSAND_PRONUNCIATION_REGEX_PATTERN = re.compile(r"\[(.*\d)\s*&\s*(.*\d)\]")
 PARENTHESES_PRONUNCIATION_REGEX_PATTERN = re.compile(
     r"\(jyutping\)\s*(.*\d)[,|;]?\s*\(pinyin\)\s*(.*\d)"
 )
+# This one searches for something in the format [粵拼: dei6 haa62 | 漢語: di4 xia5]
+PIPE_PRONUNCIATION_REGEX_PATTERN = re.compile(
+    r"粵拼:\s*(.*\d)\s(?:\|\s*漢語:\s*(.*))\]"
+)
 # This one searches for something in the format 粵拼: ne1 -- 拼音: ne
 DASHES_PRONUNCIATION_REGEX_PATTERN = re.compile(
     r"粵拼:\s*(.*\d)\s*(?:\-\-\s*拼音:\s*(.*))?"
@@ -122,6 +128,7 @@ JYUTPING_PINYIN_REGEX_PATTERNS = (
     SPECIFIC_PRONUNCIATION_REGEX_PATTERN,
     AMPERSAND_PRONUNCIATION_REGEX_PATTERN,
     PARENTHESES_PRONUNCIATION_REGEX_PATTERN,
+    PIPE_PRONUNCIATION_REGEX_PATTERN,
     DASHES_PRONUNCIATION_REGEX_PATTERN,
 )
 
@@ -243,7 +250,7 @@ def parse_word_file(file_name, words):
         # In pages with latin script, the title messes with BeautifulSoup's HTML parsing
         # So remove the title and replace it with "CantoDict"
         file_text = file.read()
-        file_text = re.sub(TITLE_REGEX_PATTERN, "<title>CantoDict</title>", file_text)
+        file_text = TITLE_REGEX_PATTERN.sub("<title>CantoDict</title>", file_text)
 
         soup = BeautifulSoup(file_text, "html.parser")
 
@@ -312,13 +319,14 @@ def parse_word_file(file_name, words):
         # So remove the stars
         jyut_element = soup.find("span", class_="cardjyutping")
         jyut = jyut_element.get_text() if jyut_element else ""
-        jyut = re.sub(LITERARY_CANTONESE_READING_REGEX_PATTERN, "", jyut)
+        jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN.sub("", jyut)
+        jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN_VARIANT.sub("\g<2>", jyut)
         jyut = jyut.strip()
 
         pin_element = soup.find("span", class_="cardpinyin")
         pin = pin_element.get_text() if pin_element else ""
         # CantoDict also indicates tone sandhi in pinyin with *, but we don't support that either
-        pin = re.sub(LITERARY_PINYIN_READING_REGEX_PATTERN, "", pin)
+        pin = LITERARY_PINYIN_READING_REGEX_PATTERN.sub("", pin)
         if not pin:
             pin = " ".join(
                 lazy_pinyin(simp, style=Style.TONE3, neutral_tone_with_five=True)
@@ -400,7 +408,7 @@ def parse_word_file(file_name, words):
 
             continue_parsing = True
             for pattern in JYUTPING_PINYIN_REGEX_PATTERNS:
-                result = re.search(pattern, string)
+                result = pattern.search(string)
                 if result:
                     if meanings:
                         entry = objects.Entry(
@@ -416,7 +424,8 @@ def parse_word_file(file_name, words):
                     # Then, extract the new pinyin and jyutping
                     # and reset the meanings tuple
                     jyut = result.group(1)
-                    jyut = re.sub(LITERARY_CANTONESE_READING_REGEX_PATTERN, "", jyut)
+                    jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN.sub("", jyut)
+                    jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN_VARIANT.sub("\g<2>", jyut)
                     pin = result.group(2) if result.group(2) else ""
                     meanings = []
                     continue_parsing = False
@@ -427,7 +436,7 @@ def parse_word_file(file_name, words):
                 continue
 
             for pattern in JYUTPING_ONLY_REGEX_PATTERNS:
-                result = re.search(pattern, string)
+                result = pattern.search(string)
                 if result:
                     if meanings:
                         entry = objects.Entry(
@@ -443,7 +452,8 @@ def parse_word_file(file_name, words):
                     # Then, extract the new jyutping (but keep the old pinyin!)
                     # and reset the meanings tuple
                     jyut = result.group(1)
-                    jyut = re.sub(LITERARY_CANTONESE_READING_REGEX_PATTERN, "", jyut)
+                    jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN.sub("", jyut)
+                    jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN_VARIANT.sub("\g<2>", jyut)
                     meanings = []
                     variants_handled = True
                     continue_parsing = False
@@ -455,7 +465,7 @@ def parse_word_file(file_name, words):
             # Try to isolate one or more labels (usually a POS or [華]: indicating Mandarin-only usage or [粵]: indicating Cantonese-only usage)
             labels = []
             definition = string
-            result = re.search(LABEL_REGEX_PATTERN, string)
+            result = LABEL_REGEX_PATTERN.search(string)
             if not result:
                 # Filter out bad non-standard strings that are completely enclosed in square braces
                 if string[0] == "[" and string[-1] == "]":
@@ -463,8 +473,8 @@ def parse_word_file(file_name, words):
 
             while result:
                 labels.extend(result.group(1).strip().split(","))
-                string = re.sub(LABEL_REGEX_PATTERN, "", string)
-                result = re.search(LABEL_REGEX_PATTERN, string)
+                string = LABEL_REGEX_PATTERN.sub("", string)
+                result = LABEL_REGEX_PATTERN.search(string)
 
             # At this point, all the labels enclosed in square braces (possibly followed by whitespace)
             # should be stripped out of the beginning of the string.
@@ -518,10 +528,7 @@ def parse_sentence_file(file_name, sentences, translations):
         # and 1000000000-1999999999 are reserved for words.hk
         link_element = soup.find("div", class_="wd_code_links")
         if link_element:
-            result = re.search(
-                SENTENCE_ID_PATTERN,
-                link_element.get_text(),
-            )
+            result = SENTENCE_ID_PATTERN.search(link_element.get_text())
             if result:
                 sentence_id = int(result.group(1)) + 2000000000
         else:
@@ -539,7 +546,8 @@ def parse_sentence_file(file_name, sentences, translations):
         # Find romanizations
         jyut_element = soup.find("span", class_="cardjyutping")
         jyut = jyut_element.get_text() if jyut_element else ""
-        jyut = re.sub(LITERARY_CANTONESE_READING_REGEX_PATTERN, "", jyut)
+        jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN.sub("", jyut)
+        jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN_VARIANT.sub("\g<2>", jyut)
         jyut = jyut.strip()
 
         pin_element = soup.find("span", class_="cardpinyin")
