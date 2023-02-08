@@ -403,7 +403,9 @@ def parse_file(filename, words):
                         current_entry.add_pinyin(
                             " ".join(
                                 lazy_pinyin(
-                                    parsed[0][1], style=Style.TONE3, neutral_tone_with_five=True
+                                    parsed[0][1],
+                                    style=Style.TONE3,
+                                    neutral_tone_with_five=True,
                                 )
                             )
                             .lower()
@@ -478,8 +480,8 @@ def parse_file(filename, words):
                 )
                 parsed_numbered_lines = list(map(lambda x: x[1], parsed_numbered_lines))
 
-                for pos_index in range(1, 8):
-                    # In the ABC dictionary, there is a maximum of seven parts of speech (1-indexed)
+                for pos_index in range(1, 7):
+                    # In the ABC Cantonese dictionary, there is a maximum of six parts of speech (1-indexed)
                     pos_index_lines = list(
                         filter(
                             lambda x: x["pos_index"] == pos_index, parsed_numbered_lines
@@ -738,7 +740,9 @@ def parse_file(filename, words):
                     variant_entry.add_pinyin(
                         " ".join(
                             lazy_pinyin(
-                                simplified, style=Style.TONE3, neutral_tone_with_five=True
+                                simplified,
+                                style=Style.TONE3,
+                                neutral_tone_with_five=True,
                             )
                         )
                         .lower()
