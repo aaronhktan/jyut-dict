@@ -1,5 +1,6 @@
 #include "utils.h"
 
+#include <regex>
 #include <sstream>
 #include <string>
 
@@ -36,5 +37,12 @@ namespace Utils {
             previous = current + delimiter.length();
         }
         result.push_back(string.substr(previous));
+    }
+
+    void trim(const std::string &string, std::string &result)
+    {
+        result = std::regex_replace(string,
+                                    std::regex("^\\s+|\\s+$|(\\s)\\s+"),
+                                    "$1");
     }
 }
