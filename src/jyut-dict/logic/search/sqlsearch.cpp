@@ -1129,7 +1129,7 @@ void SQLSearch::searchTraditionalSentencesThread(const QString &searchTerm,
         "WITH matching_chinese_sentence_ids AS ( "
         "  SELECT chinese_sentence_id "
         "  FROM chinese_sentences "
-        "  WHERE traditional LIKE ? "
+        "  WHERE traditional LIKE ? ESCAPE '\\'"
         "), "
         " "
         //// Get translations for each of the sentence
