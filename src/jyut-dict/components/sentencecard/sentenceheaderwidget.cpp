@@ -67,13 +67,13 @@ void SentenceHeaderWidget::setStyle(bool use_dark)
                                " border-bottom-left-radius: 0px; "
                                " border-bottom-right-radius: 0px; "
                                "}";
-    QColor backgroundColour
-        = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
-                            HEADER_BACKGROUND_COLOUR_DARK_G,
-                            HEADER_BACKGROUND_COLOUR_DARK_B}
-                   : QColor{HEADER_BACKGROUND_COLOUR_LIGHT_R,
-                            HEADER_BACKGROUND_COLOUR_LIGHT_G,
-                            HEADER_BACKGROUND_COLOUR_LIGHT_B};
+    QColor backgroundColour = use_dark
+                                  ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
+                                           HEADER_BACKGROUND_COLOUR_DARK_G,
+                                           HEADER_BACKGROUND_COLOUR_DARK_B}
+                                  : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                                           CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                                           CONTENT_BACKGROUND_COLOUR_LIGHT_B};
     setStyleSheet(widgetStyleSheet.arg(backgroundColour.name()));
 
     // Style the label text

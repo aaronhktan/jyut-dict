@@ -129,8 +129,12 @@ void EntryViewSentenceCardSection::setStyle(bool use_dark)
                                           LABEL_TEXT_COLOUR_LIGHT_B};
     int borderRadius = static_cast<int>(bodyFontSize * 1.5);
     QString radiusString = QString::number(borderRadius);
-    QColor borderColour = use_dark ? textColour.darker(300)
-                                   : textColour.lighter(200);
+    QColor borderColour = use_dark ? QColor{CONTENT_BACKGROUND_COLOUR_DARK_R,
+                                            CONTENT_BACKGROUND_COLOUR_DARK_G,
+                                            CONTENT_BACKGROUND_COLOUR_DARK_B}
+                                   : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                                            CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                                            CONTENT_BACKGROUND_COLOUR_LIGHT_B};
     QString styleSheet = "QToolButton { "
                          "   border: 2px solid %1; "
                          "   border-radius: %2px; "

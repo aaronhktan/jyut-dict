@@ -94,10 +94,18 @@ void SentenceCardWidget::translateUI()
 
 void SentenceCardWidget::setStyle(bool use_dark)
 {
-    QString styleSheet = "QWidget#SentenceCardWidget { "
-                         " background-color: %1; "
-                         " border-radius: 10px; "
-                         "}";
+    QString styleSheet;
+    if (use_dark) {
+        styleSheet = "QWidget#SentenceCardWidget { "
+                     " background: %1; "
+                     " border-radius: 10px; "
+                     "}";
+    } else {
+        styleSheet = "QWidget#SentenceCardWidget { "
+                     " border: 1px solid %1; "
+                     " border-radius: 10px; "
+                     "}";
+    }
     QColor backgroundColour = use_dark ? QColor{CONTENT_BACKGROUND_COLOUR_DARK_R,
                                                 CONTENT_BACKGROUND_COLOUR_DARK_G,
                                                 CONTENT_BACKGROUND_COLOUR_DARK_B}

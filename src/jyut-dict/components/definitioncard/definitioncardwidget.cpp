@@ -71,10 +71,18 @@ void DefinitionCardWidget::translateUI()
 
 void DefinitionCardWidget::setStyle(bool use_dark)
 {
-    QString styleSheet = "QWidget#DefinitionCardWidget { "
-                         " background-color: %1; "
-                         " border-radius: 10px; "
-                         "}";
+    QString styleSheet;
+    if (use_dark) {
+        styleSheet = "QWidget#DefinitionCardWidget { "
+                     " background: %1; "
+                     " border-radius: 10px; "
+                     "}";
+    } else {
+        styleSheet = "QWidget#DefinitionCardWidget { "
+                     " border: 1px solid %1; "
+                     " border-radius: 10px; "
+                     "}";
+    }
     QColor backgroundColour = use_dark ? QColor{CONTENT_BACKGROUND_COLOUR_DARK_R,
                                                 CONTENT_BACKGROUND_COLOUR_DARK_G,
                                                 CONTENT_BACKGROUND_COLOUR_DARK_B}
