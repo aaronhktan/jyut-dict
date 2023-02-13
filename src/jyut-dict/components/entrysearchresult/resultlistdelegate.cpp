@@ -373,19 +373,19 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
         switch (interfaceSize) {
         case Settings::InterfaceSize::SMALLER: {
-            return QSize(100, 78);
+            return QSize(100, 77);
         }
         case Settings::InterfaceSize::SMALL: {
-            return QSize(100, 85);
+            return QSize(100, 82);
         }
         case Settings::InterfaceSize::NORMAL: {
-            return QSize(100, 100);
+            return QSize(100, 97);
         }
         case Settings::InterfaceSize::LARGE: {
-            return QSize(100, 115);
+            return QSize(100, 112);
         }
         case Settings::InterfaceSize::LARGER: {
-            return QSize(100, 130);
+            return QSize(100, 127);
         }
         }
 #else
@@ -408,4 +408,6 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
         }
 #endif
     }
+
+    return QSize(100, 100);
 }

@@ -166,7 +166,6 @@ void SearchLineEdit::setStyle(bool use_dark)
                     "  border: 1px solid black; "
                     "  font-size: %1px; "
                     "  icon-size: %1px; "
-                    "  selection-background-color: palette(alternate-base); "
                     "} "}
                 .arg(std::to_string(h6FontSize).c_str()));
         _searchLineEdit->setIcon(search_inverted);
@@ -174,8 +173,14 @@ void SearchLineEdit::setStyle(bool use_dark)
     } else {
         setStyleSheet(QString{"QLineEdit { "
                               "   background-color: #ffffff; "
-                              "   border-color: black; "
-                              "   border-width: 2px; "
+                              "   border: 1px solid black; "
+                              "   font-size: %1px; "
+                              "   icon-size: %1px; "
+                              "} "
+                              " "
+                              "QLineEdit:focus { "
+                              "   background-color: #ffffff; "
+                              "   border: 1px solid black; "
                               "   font-size: %1px; "
                               "   icon-size: %1px; "
                               "} "}
