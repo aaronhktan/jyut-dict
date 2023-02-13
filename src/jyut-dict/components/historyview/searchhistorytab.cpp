@@ -105,6 +105,7 @@ void SearchHistoryTab::setStyle(bool use_dark)
     setStyleSheet(use_dark ? "QListView { border: none; }"
                            : "QListView { border: 1px solid lightgrey; }");
 #elif defined(Q_OS_LINUX)
+    (void) use_dark;
     _listView->setStyleSheet("QListView { border: 1px solid palette(alternate-base); }");
 #elif defined(Q_OS_WIN)
     setStyleSheet(use_dark ? "QListView { border: none; }"

@@ -375,4 +375,8 @@ QSize ViewHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
         }
 #endif
     }
+
+    // All cases should be handled and the function should
+    // never reach here.
+    return QSize(100, 100);
 }
