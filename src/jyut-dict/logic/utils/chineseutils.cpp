@@ -1360,10 +1360,12 @@ std::vector<std::string> segmentPinyin(const QString &string,
                 words.push_back(stringToExamine.toStdString());
             } else if (!removeGlobCharacters && isGlobCharacter) {
                 // Since whitespace matters for glob characters, consume the
-                // next or previous whitespace if it exists.
+                // next or previous whitespace if it exists (and was not
+                // already consumed by another glob character).
                 int new_end_index = end_index;
                 int length = 1;
-                if ((end_index >= 1) && (string.at(end_index - 1) == " ")) {
+                if ((end_index >= 1) && (string.at(end_index - 1) == " ")
+                    && words.back().back() != ' ') {
                     // Add preceding whitespace to this word
                     new_end_index--;
                     length++;
@@ -1499,10 +1501,12 @@ std::vector<std::string> segmentJyutping(const QString &string,
                 words.push_back(stringToExamine.toStdString());
             } else if (!removeGlobCharacters && isGlobCharacter) {
                 // Since whitespace matters for glob characters, consume the
-                // next or previous whitespace if it exists.
+                // next or previous whitespace if it exists (and was not
+                // already consumed by another glob character).
                 int new_end_index = end_index;
                 int length = 1;
-                if ((end_index >= 1) && (string.at(end_index - 1) == " ")) {
+                if ((end_index >= 1) && (string.at(end_index - 1) == " ")
+                    && words.back().back() != ' ') {
                     // Add preceding whitespace to this word
                     new_end_index--;
                     length++;
