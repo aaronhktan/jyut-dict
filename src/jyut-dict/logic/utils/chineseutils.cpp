@@ -33,6 +33,7 @@ const static std::unordered_set<std::string> specialCharacters = {
     "\"",
     "“",
     "”",
+    "$",
 };
 
 const static std::unordered_map<std::string, std::string>
@@ -488,7 +489,8 @@ std::string convertJyutpingToYale(const std::string &jyutping,
         Utils::split(jyutpingCopy, ' ', syllables);
     } else {
         syllables = segmentJyutping(QString{jyutping.c_str()},
-                                    /* ignoreSpecialCharacters */ false);
+                                    /* removeSpecialCharacters */ false,
+                                    /* removeGlobCharacters */ false);
     }
 
     std::vector<std::string> yale_syllables;
@@ -632,7 +634,8 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
         Utils::split(jyutpingCopy, ' ', syllables);
     } else {
         syllables = segmentJyutping(QString{jyutping.c_str()},
-                                    /* ignoreSpecialCharacters */ false);
+                                    /* removeSpecialCharacters */ false,
+                                    /* removeGlobCharacters */ false);
     }
 
     std::vector<std::string> ipa_syllables;
@@ -1258,32 +1261,63 @@ std::string convertPinyinToIPA(const std::string &pinyin,
 }
 
 std::string constructRomanisationQuery(const std::vector<std::string> &words,
-                                       const char *delimiter,
-                                       const bool surroundWithQuotes)
+                                       const char *delimiter)
 {
     if (words.empty()) {
         return "";
     }
 
-    const char *quotes = surroundWithQuotes ? "\"" : "";
+    std::string trimmed_word;
+    std::string space;
+    bool added_delimiter = false;
+
     std::ostringstream string;
     for (size_t i = 0; i < words.size() - 1; i++) {
+        Utils::trim(words[i], trimmed_word);
         if (std::isdigit(words[i].back())) {
-            string << quotes << words[i] << quotes << " ";
+            string << space << words[i];
+            space = " ";
+            added_delimiter = false;
+        } else if (trimmed_word == "*" || trimmed_word == "?") {
+            if ((words[i] == "*" || words[i] == "?" || words[i] == "* "
+                 || words[i] == "? ")
+                && (added_delimiter)) {
+                // Replace delimiter with GLOB wildcard if GLOB wildcard
+                // was attached to end of previous word (i.e. wildcard did not
+                // start with a space)
+                string.seekp(-1, std::ios_base::cur);
+            }
+            string << words[i];
+            // GLOB characters handle their own spacing, so don't insert any
+            // extra spaces.
+            space = "";
+            added_delimiter = false;
         } else {
-            string << quotes << words[i] << quotes << delimiter << " ";
+            string << space << words[i] << delimiter;
+            space = " ";
+            added_delimiter = true;
         }
     }
 
+    Utils::trim(words.back(), trimmed_word);
     if (std::isdigit(words.back().back())) {
-        string << quotes << words.back() << quotes;
+        string << space << words.back();
+    } else if (trimmed_word == "*" || trimmed_word == "?") {
+        if ((words.back() == "*" || words.back() == "?" || words.back() == "* "
+             || words.back() == "? ")
+            && (added_delimiter)) {
+            string.seekp(-1, std::ios_base::cur);
+        }
+        string << words.back();
     } else {
-        string << quotes << words.back() << quotes << delimiter;
+        string << space << words.back() << delimiter;
     }
     return string.str();
 }
 
-std::vector<std::string> segmentPinyin(const QString &string)
+std::vector<std::string> segmentPinyin(const QString &string,
+                                       bool removeSpecialCharacters,
+                                       bool removeGlobCharacters)
 {
     std::vector<std::string> words;
 
@@ -1308,13 +1342,48 @@ std::vector<std::string> segmentPinyin(const QString &string)
         bool next_iteration = false;
         // Ignore separation characters; these are special.
         QString stringToExamine = string.mid(end_index, 1).toLower();
-        if (stringToExamine == " " || stringToExamine == "'") {
+        bool isSpecialCharacter = (specialCharacters.find(
+                                       stringToExamine.toStdString())
+                                   != specialCharacters.end());
+        bool isGlobCharacter = stringToExamine.trimmed() == "*"
+                               || stringToExamine.trimmed() == "?";
+        if (stringToExamine == " " || stringToExamine == "'"
+            || isSpecialCharacter || isGlobCharacter) {
             if (word_started) { // Add any incomplete word to the vector
                 QString previous_initial = string.mid(start_index,
                                                       end_index - start_index);
                 words.push_back(previous_initial.toStdString());
                 start_index = end_index;
                 word_started = false;
+            }
+            if (!removeSpecialCharacters && isSpecialCharacter) {
+                words.push_back(stringToExamine.toStdString());
+            } else if (!removeGlobCharacters && isGlobCharacter) {
+                // Since whitespace matters for glob characters, consume the
+                // next or previous whitespace if it exists (and was not
+                // already consumed by another glob character).
+                int new_end_index = end_index;
+                int length = 1;
+                if ((end_index >= 1) && (string.at(end_index - 1) == " ")
+                    && words.back().back() != ' ') {
+                    // Add preceding whitespace to this word
+                    new_end_index--;
+                    length++;
+                }
+                if ((string.length() > end_index + 1)
+                    && (string.at(end_index + 1) == " ")) {
+                    // Add succeeding whitespace to this word
+                    length++;
+                }
+                QString glob = string.mid(new_end_index, length);
+                words.push_back(glob.toStdString());
+
+                if ((string.length() > end_index + 1)
+                    && (string.at(end_index + 1) == " ")) {
+                    // Advance segmentation pointer past succeeding whitespace
+                    end_index++;
+                }
+                start_index = end_index;
             }
             start_index++;
             end_index++;
@@ -1383,13 +1452,9 @@ std::vector<std::string> segmentPinyin(const QString &string)
     return words;
 }
 
-std::vector<std::string> segmentJyutping(const QString &string)
-{
-    return segmentJyutping(string, /* ignoreSpecialCharacters */ true);
-}
-
 std::vector<std::string> segmentJyutping(const QString &string,
-                                         bool ignoreSpecialCharacters)
+                                         bool removeSpecialCharacters,
+                                         bool removeGlobCharacters)
 {
     std::vector<std::string> words;
 
@@ -1421,8 +1486,10 @@ std::vector<std::string> segmentJyutping(const QString &string,
         bool isSpecialCharacter = (specialCharacters.find(
                                        stringToExamine.toStdString())
                                    != specialCharacters.end());
+        bool isGlobCharacter = stringToExamine.trimmed() == "*"
+                               || stringToExamine.trimmed() == "?";
         if (stringToExamine == " " || stringToExamine == "'"
-            || isSpecialCharacter) {
+            || isSpecialCharacter || isGlobCharacter) {
             if (initial_found) { // Add any incomplete word to the vector
                 QString previous_initial = string.mid(start_index,
                                                       end_index - start_index);
@@ -1430,8 +1497,34 @@ std::vector<std::string> segmentJyutping(const QString &string,
                 start_index = end_index;
                 initial_found = false;
             }
-            if (!ignoreSpecialCharacters && isSpecialCharacter) {
+            if (!removeSpecialCharacters && isSpecialCharacter) {
                 words.push_back(stringToExamine.toStdString());
+            } else if (!removeGlobCharacters && isGlobCharacter) {
+                // Since whitespace matters for glob characters, consume the
+                // next or previous whitespace if it exists (and was not
+                // already consumed by another glob character).
+                int new_end_index = end_index;
+                int length = 1;
+                if ((end_index >= 1) && (string.at(end_index - 1) == " ")
+                    && words.back().back() != ' ') {
+                    // Add preceding whitespace to this word
+                    new_end_index--;
+                    length++;
+                }
+                if ((string.length() > end_index + 1)
+                    && (string.at(end_index + 1) == " ")) {
+                    // Add succeeding whitespace to this word
+                    length++;
+                }
+                QString glob = string.mid(new_end_index, length);
+                words.push_back(glob.toStdString());
+
+                if ((string.length() > end_index + 1)
+                    && (string.at(end_index + 1) == " ")) {
+                    // Advance segmentation pointer past succeeding whitespace
+                    end_index++;
+                }
+                start_index = end_index;
             }
             start_index++;
             end_index++;

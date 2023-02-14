@@ -91,6 +91,8 @@ namespace Utils {
     void split(const std::string &string,
                const std::string delimiter,
                std::vector<std::string> &result);
+
+    void trim(const std::string &string, std::string &result);
 }
 
 #endif // UTILS_H

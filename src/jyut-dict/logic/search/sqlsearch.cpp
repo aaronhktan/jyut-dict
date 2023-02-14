@@ -190,10 +190,8 @@ void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString &searc
 // NOTE: If you are modifying these functions, you may also want to modify
 // the search functions in SQLUserDataUtils.cpp as well!
 
-// For SearchSimplified and SearchTraditional, we use LIKE instead of MATCH
-// even though the database is FTS5-compatible.
-// This is because FTS searches using the space as a separator, and
-// Chinese words and phrases are not separated by spaces.
+// For searching simplified and traditional, we use GLOB, so that wildcard
+// characters like * and ? can be used.
 void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
                                        const unsigned long long queryID)
 {
@@ -204,9 +202,14 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
                              || (searchTerm.startsWith("”")
                                  && searchTerm.endsWith("“")))
                             && searchTerm.length() >= 3;
+    bool dontAppendWildcard = searchTerm.at(searchTerm.size() - 1) == "$";
+
     QString searchTermWithoutQuotes;
+    QString searchTermWithoutEndPositionMarker;
     if (searchExactMatch) {
         searchTermWithoutQuotes = searchTerm.mid(1, searchTerm.size() - 2);
+    } else if (dontAppendWildcard) {
+        searchTermWithoutEndPositionMarker = searchTerm.chopped(1);
     }
 
     std::vector<Entry> results;
@@ -215,7 +218,7 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
     query.prepare(
         //// Get list of entry ids whose simplified form matches the query
         "WITH matching_entry_ids AS ( "
-        "  SELECT rowid FROM entries WHERE simplified LIKE ?"
+        "  SELECT rowid FROM entries WHERE simplified GLOB ?"
         "), "
         " "
         //// Get the list of all definitions for those entries
@@ -323,10 +326,11 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
         "SELECT simplified, traditional, jyutping, pinyin, definitions FROM "
         "  matching_entries");
     if (searchExactMatch) {
-        // Don't need to add wildcard character if searching exact!
         query.addBindValue(searchTermWithoutQuotes);
+    } else if (dontAppendWildcard) {
+        query.addBindValue(searchTermWithoutEndPositionMarker);
     } else {
-        query.addBindValue(searchTerm + "%");
+        query.addBindValue(searchTerm + "*");
     }
     query.exec();
 
@@ -350,9 +354,14 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
                              || (searchTerm.startsWith("“")
                                  && searchTerm.endsWith("”")))
                             && searchTerm.length() >= 3;
+    bool dontAppendWildcard = searchTerm.at(searchTerm.size() - 1) == "$";
+
     QString searchTermWithoutQuotes;
+    QString searchTermWithoutEndPositionMarker;
     if (searchExactMatch) {
         searchTermWithoutQuotes = searchTerm.mid(1, searchTerm.size() - 2);
+    } else if (dontAppendWildcard) {
+        searchTermWithoutEndPositionMarker = searchTerm.chopped(1);
     }
 
     std::vector<Entry> results;
@@ -361,7 +370,7 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
     query.prepare(
         //// Get list of entry ids whose traditional form matches the query
         "WITH matching_entry_ids AS ( "
-        "  SELECT rowid FROM entries WHERE traditional LIKE ?"
+        "  SELECT rowid FROM entries WHERE traditional GLOB ?"
         "), "
         " "
         //// Get the list of all definitions for those entries
@@ -470,8 +479,10 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
         "  matching_entries");
     if (searchExactMatch) {
         query.addBindValue(searchTermWithoutQuotes);
+    } else if (dontAppendWildcard) {
+        query.addBindValue(searchTermWithoutEndPositionMarker);
     } else {
-        query.addBindValue(searchTerm + "%");
+        query.addBindValue(searchTerm + "*");
     }
     query.exec();
 
@@ -485,13 +496,8 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
 }
 
-// For searching jyutping and pinyin, we use MATCH and then LIKE, in order
-// to take advantage of the quick full-text-search matching, before then
-// filtering the results to only those that begin with the query
-// using a LIKE wildcard.
-//
-// This approach is approximately ten times faster than simply using the LIKE
-// operator and the % wildcard.
+// For searching Jyutping and Pinyin, we use GLOB, so that wildcard characters
+// like * and ? can be used.
 //
 // !NOTE! Using QSQLQuery's positional placeholder method automatically
 // surrounds the bound value with single quotes, i.e. "'". There is no need
@@ -506,13 +512,18 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
     bool searchExactMatch = searchTerm.at(0) == "\""
                             && searchTerm.at(searchTerm.size() - 1) == "\""
                             && searchTerm.length() >= 3;
+    bool dontAppendWildcard = searchTerm.at(searchTerm.size() - 1) == "$";
+
     std::vector<std::string> jyutpingWords;
     if (searchExactMatch) {
         QString searchTermWithoutQuotes = searchTerm.mid(1,
                                                          searchTerm.size() - 2);
         Utils::split(searchTermWithoutQuotes.toStdString(), ' ', jyutpingWords);
     } else {
-        jyutpingWords = ChineseUtils::segmentJyutping(searchTerm);
+        jyutpingWords
+            = ChineseUtils::segmentJyutping(searchTerm,
+                                            /* removeSpecialCharacters */ true,
+                                            /* removeGlobCharacters */ false);
     }
 
     std::vector<Entry> results;
@@ -521,8 +532,7 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
     query.prepare(
         //// Get list of entry ids whose jyutping starts with the queried string
         "WITH matching_entry_ids AS ( "
-        "  SELECT rowid FROM entries_fts WHERE entries_fts MATCH ? AND "
-        "    jyutping LIKE ?"
+        "  SELECT rowid FROM entries WHERE jyutping GLOB ?"
         "), "
         " "
         //// Get the list of all definitions for those entries
@@ -630,21 +640,15 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
         "SELECT simplified, traditional, jyutping, pinyin, definitions FROM "
         "  matching_entries");
 
-    // Don't add wildcard characters to either the MATCH term or the LIKE term
-    // if searching for exact match
-    const char *matchJoinDelimiter = searchExactMatch ? "" : "*";
-    std::string matchTerm
+    // Don't add wildcard characters to GLOB term if searching for exact match
+    const char *globJoinDelimiter = searchExactMatch ? "" : "?";
+    std::string globTerm
         = ChineseUtils::constructRomanisationQuery(jyutpingWords,
-                                                   matchJoinDelimiter,
-                                                   /*surroundWithQuotes=*/true);
-    const char *likeJoinDelimiter = searchExactMatch ? "" : "_";
-    std::string likeTerm
-        = ChineseUtils::constructRomanisationQuery(jyutpingWords,
-                                                   likeJoinDelimiter);
+                                                   globJoinDelimiter);
 
-    query.addBindValue("jyutping:" + QString{matchTerm.c_str()});
-    query.addBindValue(QString{likeTerm.c_str()}
-                       + QString{searchExactMatch ? "" : "%"});
+    query.addBindValue(
+        QString{globTerm.c_str()}
+        + QString{(searchExactMatch || dontAppendWildcard) ? "" : "*"});
     query.exec();
 
     // Do not parse results if new query has been made
@@ -679,6 +683,7 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm,
                                                       - 1)
                                    == "\""
                             && processedSearchTerm.length() >= 3;
+    bool dontAppendWildcard = searchTerm.at(searchTerm.size() - 1) == "$";
 
     std::vector<std::string> pinyinWords;
     if (searchExactMatch) {
@@ -686,7 +691,10 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm,
             = processedSearchTerm.mid(1, processedSearchTerm.size() - 2);
         Utils::split(searchTermWithoutQuotes.toStdString(), ' ', pinyinWords);
     } else {
-        pinyinWords = ChineseUtils::segmentPinyin(processedSearchTerm);
+        pinyinWords
+            = ChineseUtils::segmentPinyin(processedSearchTerm,
+                                          /* removeSpecialCharacters */ true,
+                                          /* removeGlobCharacters */ false);
     }
 
     std::vector<Entry> results;
@@ -695,8 +703,7 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm,
     query.prepare(
         //// Get list of entry ids whose pinyin starts with the queried string
         "WITH matching_entry_ids AS ( "
-        "  SELECT rowid FROM entries_fts WHERE entries_fts MATCH ? AND "
-        "    pinyin LIKE ? "
+        "  SELECT rowid FROM entries WHERE pinyin GLOB ?"
         "), "
         " "
         //// Get the list of all definitions for those entries
@@ -802,19 +809,16 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm,
         " "
         "SELECT simplified, traditional, jyutping, pinyin, definitions FROM "
         "  matching_entries");
-    const char *matchJoinDelimiter = searchExactMatch ? "" : "*";
-    std::string matchTerm
+
+    // Don't add wildcard characters to GLOB term if searching for exact match
+    const char *globJoinDelimiter = searchExactMatch ? "" : "?";
+    std::string globTerm
         = ChineseUtils::constructRomanisationQuery(pinyinWords,
-                                                   matchJoinDelimiter,
-                                                   /*surroundWithQuotes=*/true);
-    const char *likeJoinDelimiter = searchExactMatch ? "" : "_";
-    std::string likeTerm
-        = ChineseUtils::constructRomanisationQuery(pinyinWords,
-                                                   likeJoinDelimiter,
-                                                   /*surroundWithQuotes=*/false);
-    query.addBindValue("pinyin:" + QString{matchTerm.c_str()});
-    query.addBindValue(QString{likeTerm.c_str()}
-                       + QString{searchExactMatch ? "" : "%"});
+                                                   globJoinDelimiter);
+
+    query.addBindValue(
+        QString{globTerm.c_str()}
+        + QString{(searchExactMatch || dontAppendWildcard) ? "" : "*"});
     query.exec();
 
     // Do not parse results if new query has been made
@@ -1125,7 +1129,7 @@ void SQLSearch::searchTraditionalSentencesThread(const QString &searchTerm,
         "WITH matching_chinese_sentence_ids AS ( "
         "  SELECT chinese_sentence_id "
         "  FROM chinese_sentences "
-        "  WHERE traditional LIKE ? "
+        "  WHERE traditional LIKE ? ESCAPE '\\'"
         "), "
         " "
         //// Get translations for each of the sentence
