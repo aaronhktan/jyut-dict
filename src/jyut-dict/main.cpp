@@ -51,13 +51,15 @@ int main(int argc, char *argv[])
     // This is kind of a horrible hack to get dark borders on Windows
     // But it works!
     int new_argc = argc + 2;
-    char **new_argv = static_cast<char **>(realloc(argv, static_cast<size_t>(new_argc)));
+    char **new_argv = static_cast<char **>(
+        malloc(sizeof(*new_argv) * (argc + 2)));
+    memcpy(new_argv, argv, argc * sizeof(*argv));
     char new_platform_arg[ARG_STR_LEN];
-    snprintf(new_platform_arg, ARG_STR_LEN, platformArg);
+    snprintf(new_platform_arg, ARG_STR_LEN, "%s", platformArg);
     new_argv[argc] = new_platform_arg;
     char new_dark_mode_arg[ARG_STR_LEN];
-    snprintf(new_dark_mode_arg, ARG_STR_LEN, darkModeArg);
-    new_argv[argc+1] = new_dark_mode_arg;
+    snprintf(new_dark_mode_arg, ARG_STR_LEN, "%s", darkModeArg);
+    new_argv[argc + 1] = new_dark_mode_arg;
 
     QApplication a{new_argc, new_argv};
 #else
