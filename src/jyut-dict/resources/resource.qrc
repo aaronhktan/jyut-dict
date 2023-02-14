@@ -61,5 +61,7 @@
         <file>images/text_disabled.png</file>
         <file>images/text_inverted.png</file>
         <file>images/text.png</file>
+        <file>images/external_link_inverted.png</file>
+        <file>images/external_link.png</file>
     </qresource>
 </RCC>

@@ -49,9 +49,11 @@ private:
     QHBoxLayout *_layout;
     QPushButton *_bookmarkButton;
     QPushButton *_shareButton;
+    QPushButton *_openInNewWindowButton;
 
 signals:
     void callbackTriggered(bool entryExists, const Entry &entry);
+    void openInNewWindowAction(void);
 
 public slots:
 };

@@ -29,6 +29,10 @@ private:
 
     bool _paletteRecentlyChanged = false;
 
+    std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
+    std::shared_ptr<SQLDatabaseManager> _manager;
+    Entry _entry;
+
     QVBoxLayout *_scrollAreaLayout;
 
     EntryHeaderWidget *_entryHeaderWidget;
@@ -40,6 +44,7 @@ signals:
 
 public slots:
     void updateStyleRequested(void);
+    void openInNewWindowAction(void);
 };
 
 #endif // ENTRYSCROLLAREAWIDGET_H

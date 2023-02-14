@@ -1,8 +1,6 @@
 #include "entryscrollarea.h"
 
-#include "logic/entry/definitionsset.h"
 #include "logic/entry/entry.h"
-#include "logic/sentence/sentenceset.h"
 
 #include <QScrollBar>
 
