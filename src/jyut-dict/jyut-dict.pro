@@ -37,6 +37,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++14
 
+QMAKE_CXXFLAGS += "-Wno-implicit-fallthrough"
+
 SOURCES += \
     components/definitioncard/definitioncardsection.cpp \
     components/definitioncard/definitioncardwidget.cpp \

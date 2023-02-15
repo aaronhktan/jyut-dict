@@ -3,7 +3,6 @@
 #include "logic/dictionary/dictionarymetadata.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
-#include "logic/utils/utils.h"
 #include "logic/utils/utils_qt.h"
 
 #include <QGuiApplication>
@@ -127,4 +126,8 @@ QSize DictionaryListDelegate::sizeHint(const QStyleOptionViewItem &option,
     }
     }
 #endif
+
+    // All cases should be handled and the function should
+    // never reach here.
+    return QSize(100, 100);
 }
