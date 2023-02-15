@@ -8,6 +8,9 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+// MagnifyScrollAreaWidget contains the widgets that are displayed in the
+// MagnifyScrollArea. This is the window that shows an enlarged version of the
+// simplified and traditional forms of the entry.
 class MagnifyScrollAreaWidget : public QWidget
 {
     Q_OBJECT

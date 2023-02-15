@@ -9,6 +9,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+// MagnifyScrollArea enables scrolling of the MagnifyScrollAreaWidget.
 class MagnifyScrollArea : public QScrollArea
 {
     Q_OBJECT
