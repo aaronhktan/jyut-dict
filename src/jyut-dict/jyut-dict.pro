@@ -65,6 +65,7 @@ SOURCES += \
     components/historyview/viewhistorylistmodel.cpp \
     components/historyview/viewhistorylistview.cpp \
     components/historyview/viewhistorytab.cpp \
+    components/layouts/flowlayout.cpp \
     components/mainwindow/mainsplitter.cpp \
     components/mainwindow/maintoolbar.cpp \
     components/mainwindow/searchlineedit.cpp \
@@ -149,6 +150,7 @@ HEADERS += \
     components/historyview/viewhistorylistmodel.h \
     components/historyview/viewhistorylistview.h \
     components/historyview/viewhistorytab.h \
+    components/layouts/flowlayout.h \
     components/mainwindow/isearchlineedit.h \
     components/mainwindow/mainsplitter.h \
     components/mainwindow/maintoolbar.h \
@@ -249,6 +251,11 @@ macx: {
     APP_SETTINGS_FILES.path = Contents/Resources
     QMAKE_BUNDLE_DATA += APP_SETTINGS_FILES
 
+    # Add licenses to Resources folder in macOS bundle
+    FLOW_LAYOUT_LICENSE_FILES.files = resources/licenses/FLOW_LAYOUT_LICENSE.txt
+    FLOW_LAYOUT_LICENSE_FILES.path = Contents/Resources/licenses
+    QMAKE_BUNDLE_DATA += FLOW_LAYOUT_LICENSE_FILES
+
     # Add translations of application name
     TRANSLATE_en.files = platform/mac/en.lproj/InfoPlist.strings
     TRANSLATE_en.path = Contents/Resources/en.lproj
@@ -304,6 +311,8 @@ unix:!macx {
         dictfile.path = /usr/share/jyut-dict/dictionaries/
         userfile.files += resources/db/user.db
         userfile.path = /usr/share/jyut-dict/dictionaries/
+        flowlayoutlicensefile.files += resources/licenses/FLOW_LAYOUT_LICENSE.txt
+        flowlayoutlicensefile.path = /usr/share/jyut-dict/licenses/
         shortcutfiles.files += platform/linux/jyut-dict.desktop
         shortcutfiles.path = /usr/share/applications/
         icon.files += resources/icon/jyut-dict.svg
@@ -311,6 +320,7 @@ unix:!macx {
         INSTALLS += binfile
         INSTALLS += dictfile
         INSTALLS += userfile
+        INSTALLS += flowlayoutlicensefile
         INSTALLS += shortcutfiles
         INSTALLS += icon
     }
@@ -332,10 +342,13 @@ unix|win32:!macx {
     # Copy settings file to build directory
     # From https://dragly.org/2013/11/05/copying-data-files-to-the-build-directory-when-working-with-qmake/
     copysettings.commands = $(COPY_DIR) \"$$system_path($$PWD/resources/settings/settings.ini)\" \"$$system_path($$OUT_PWD)\"
-    second.depends = $(second) copysettings
-    export(second.depends)
+    copyflowlayoutlicense.commands = $(COPY_DIR) \"$$system_path($$PWD/resources/licenses/FLOW_LAYOUT_LICENSE.txt)\" \"$$system_path($$OUT_PWD)\"
     export(copysettings.commands)
-    QMAKE_EXTRA_TARGETS += second copysettings
+    export(copyflowlayoutlicense.commands)
+
+    second.depends = $(second) copysettings copyflowlayoutlicense
+    export(second.depends)
+    QMAKE_EXTRA_TARGETS += second copysettings copyflowlayoutlicense
 
     FLATPAK {
         DESKTOP_FILES = \"$$system_path($$PWD/resources/icon/icon.iconset/icon_16x16.png)\"

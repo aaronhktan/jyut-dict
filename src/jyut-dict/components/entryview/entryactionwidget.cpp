@@ -97,13 +97,12 @@ void EntryActionWidget::setupUI(void)
             this,
             &EntryActionWidget::openInNewWindowAction);
 
-    _layout = new QHBoxLayout{this};
+    _layout = new FlowLayout{this};
     _layout->setContentsMargins(0, 5, 0, 15);
     _layout->setSpacing(5);
     _layout->addWidget(_bookmarkButton);
     _layout->addWidget(_shareButton);
     _layout->addWidget(_openInNewWindowButton);
-    _layout->addStretch(0);
 
     setStyle(Utils::isDarkMode());
     translateUI();
