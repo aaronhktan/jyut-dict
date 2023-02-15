@@ -27,6 +27,7 @@ public:
                              QWidget *parent = nullptr);
 
     void setEntry(const Entry &entry);
+
 private:
     void resizeEvent(QResizeEvent *event) override;
 

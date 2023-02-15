@@ -4,8 +4,6 @@
 
 #include <QScrollBar>
 
-#define ENTIRE_WIDTH -1
-
 EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
                                  std::shared_ptr<SQLDatabaseManager> manager,
                                  QWidget *parent)
@@ -95,5 +93,9 @@ void EntryScrollArea::stallEntryUIUpdate(void)
 void EntryScrollArea::updateStyleRequested(void)
 {
     _scrollAreaWidget->updateStyleRequested();
-    _scrollAreaWidget->resize(_scrollAreaWidget->sizeHint());
+    _scrollAreaWidget->resize(width()
+                                  - (verticalScrollBar()->isVisible()
+                                         ? verticalScrollBar()->width()
+                                         : 0),
+                              _scrollAreaWidget->sizeHint().height());
 }

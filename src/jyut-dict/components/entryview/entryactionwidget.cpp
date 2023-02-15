@@ -97,12 +97,20 @@ void EntryActionWidget::setupUI(void)
             this,
             &EntryActionWidget::openInNewWindowAction);
 
+    _magnifyButton = new QPushButton{this};
+    _magnifyButton->setVisible(false);
+    connect(_magnifyButton,
+            &QPushButton::clicked,
+            this,
+            &EntryActionWidget::openMagnifyWindowAction);
+
     _layout = new FlowLayout{this};
     _layout->setContentsMargins(0, 5, 0, 15);
     _layout->setSpacing(5);
     _layout->addWidget(_bookmarkButton);
     _layout->addWidget(_shareButton);
     _layout->addWidget(_openInNewWindowButton);
+    _layout->addWidget(_magnifyButton);
 
     setStyle(Utils::isDarkMode());
     translateUI();
@@ -116,6 +124,7 @@ void EntryActionWidget::translateUI(void)
         _bookmarkButton->property("saved").toBool() ? tr("Saved!") : tr("Save"));
     _shareButton->setText(tr("Share"));
     _openInNewWindowButton->setText(tr("Open in New Window"));
+    _magnifyButton->setText(tr("Magnify"));
 }
 
 void EntryActionWidget::setStyle(bool use_dark)
@@ -195,6 +204,8 @@ void EntryActionWidget::setStyle(bool use_dark)
     _openInNewWindowButton->setIcon(
         QIcon{use_dark ? ":/images/external_link_inverted.png"
                        : ":/images/external_link.png"});
+    _magnifyButton->setIcon(QIcon{use_dark ? ":/images/zoom_in_inverted.png"
+                                           : ":/images/zoom_in.png"});
 }
 
 void EntryActionWidget::refreshBookmarkButton(void)

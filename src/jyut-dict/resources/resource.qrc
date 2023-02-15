@@ -63,5 +63,7 @@
         <file>images/text.png</file>
         <file>images/external_link_inverted.png</file>
         <file>images/external_link.png</file>
+        <file>images/zoom_in_inverted.png</file>
+        <file>images/zoom_in.png</file>
     </qresource>
 </RCC>

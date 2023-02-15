@@ -1,6 +1,7 @@
 #include "entryscrollareawidget.h"
 
 #include "components/entryview/entryscrollarea.h"
+#include "components/magnifywindow/magnifyscrollarea.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -47,6 +48,11 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(
             &EntryActionWidget::openInNewWindowAction,
             this,
             &EntryScrollAreaWidget::openInNewWindowAction);
+
+    connect(_entryActionWidget,
+            &EntryActionWidget::openMagnifyWindowAction,
+            this,
+            &EntryScrollAreaWidget::openMagnifyWindowAction);
 }
 
 void EntryScrollAreaWidget::changeEvent(QEvent *event)
@@ -87,6 +93,11 @@ void EntryScrollAreaWidget::updateStyleRequested(void)
     QCoreApplication::sendEvent(_entryActionWidget, &event);
 
     _entryContentWidget->updateStyleRequested();
+
+    QList<MagnifyScrollArea *> areas = findChildren<MagnifyScrollArea *>();
+    for (auto &area : areas) {
+        area->updateStyleRequested();
+    }
 }
 
 void EntryScrollAreaWidget::openInNewWindowAction(void)
@@ -95,10 +106,23 @@ void EntryScrollAreaWidget::openInNewWindowAction(void)
                                                 _manager,
                                                 nullptr};
     area->setParent(this, Qt::Window);
+    area->setAttribute(Qt::WA_DeleteOnClose);
     area->setEntry(_entry);
 #ifndef Q_OS_MAC
     area->setWindowTitle(" ");
 #endif
     emit area->stallSentenceUIUpdate();
+    area->show();
+}
+
+void EntryScrollAreaWidget::openMagnifyWindowAction(void)
+{
+    MagnifyScrollArea *area = new MagnifyScrollArea{nullptr};
+    area->setParent(this, Qt::Window);
+    area->setAttribute(Qt::WA_DeleteOnClose);
+    area->setEntry(_entry);
+#ifndef Q_OS_MAC
+    area->setWindowTitle(" ");
+#endif
     area->show();
 }

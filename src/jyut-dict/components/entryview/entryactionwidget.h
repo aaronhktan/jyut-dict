@@ -52,10 +52,12 @@ private:
     QPushButton *_bookmarkButton;
     QPushButton *_shareButton;
     QPushButton *_openInNewWindowButton;
+    QPushButton *_magnifyButton;
 
 signals:
     void callbackTriggered(bool entryExists, const Entry &entry);
     void openInNewWindowAction(void);
+    void openMagnifyWindowAction(void);
 
 public slots:
 };

@@ -24,6 +24,7 @@ public:
     void changeEvent(QEvent *event) override;
 
     void setEntry(const Entry &entry);
+
 private:
     void setStyle(bool use_dark);
 
@@ -45,6 +46,7 @@ signals:
 public slots:
     void updateStyleRequested(void);
     void openInNewWindowAction(void);
+    void openMagnifyWindowAction(void);
 };
 
 #endif // ENTRYSCROLLAREAWIDGET_H

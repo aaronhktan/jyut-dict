@@ -66,6 +66,8 @@ SOURCES += \
     components/historyview/viewhistorylistview.cpp \
     components/historyview/viewhistorytab.cpp \
     components/layouts/flowlayout.cpp \
+    components/magnifywindow/magnifyscrollarea.cpp \
+    components/magnifywindow/magnifyscrollareawidget.cpp \
     components/mainwindow/mainsplitter.cpp \
     components/mainwindow/maintoolbar.cpp \
     components/mainwindow/searchlineedit.cpp \
@@ -151,6 +153,8 @@ HEADERS += \
     components/historyview/viewhistorylistview.h \
     components/historyview/viewhistorytab.h \
     components/layouts/flowlayout.h \
+    components/magnifywindow/magnifyscrollarea.h \
+    components/magnifywindow/magnifyscrollareawidget.h \
     components/mainwindow/isearchlineedit.h \
     components/mainwindow/mainsplitter.h \
     components/mainwindow/maintoolbar.h \
