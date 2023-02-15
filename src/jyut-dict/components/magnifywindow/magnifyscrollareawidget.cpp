@@ -140,8 +140,8 @@ void MagnifyScrollAreaWidget::setEntry(const Entry &entry)
 
 void MagnifyScrollAreaWidget::translateUI(void)
 {
-    _traditionalLabelLabel->setText("Traditional");
-    _simplifiedLabelLabel->setText("Simplified");
+    _traditionalLabelLabel->setText(tr("Traditional"));
+    _simplifiedLabelLabel->setText(tr("Simplified"));
     _traditionalLabelLabel->setSizePolicy(QSizePolicy::Maximum,
                                           QSizePolicy::Maximum);
     _simplifiedLabelLabel->setSizePolicy(QSizePolicy::Maximum,
