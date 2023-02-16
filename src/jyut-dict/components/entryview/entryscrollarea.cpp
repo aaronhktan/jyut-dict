@@ -1,4 +1,4 @@
-#include "entryscrollarea.h"
+﻿#include "entryscrollarea.h"
 
 #include "logic/entry/entry.h"
 
@@ -24,6 +24,31 @@ EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
             &EntryScrollArea::stallSentenceUIUpdate,
             _scrollAreaWidget,
             &EntryScrollAreaWidget::stallUISentenceUpdate);
+
+    connect(this,
+            &EntryScrollArea::favouriteCurrentEntry,
+            _scrollAreaWidget,
+            &EntryScrollAreaWidget::favouriteCurrentEntryRequested);
+
+    connect(this,
+            &EntryScrollArea::shareCurrentEntry,
+            _scrollAreaWidget,
+            &EntryScrollAreaWidget::shareCurrentEntryRequested);
+
+    connect(this,
+            &EntryScrollArea::openCurrentEntryInNewWindow,
+            _scrollAreaWidget,
+            &EntryScrollAreaWidget::openInNewWindow);
+
+    connect(this,
+            &EntryScrollArea::magnifyCurrentEntry,
+            _scrollAreaWidget,
+            &EntryScrollAreaWidget::openMagnifyWindow);
+
+    connect(this,
+            &EntryScrollArea::viewAllSentences,
+            _scrollAreaWidget,
+            &EntryScrollAreaWidget::viewAllSentencesRequested);
 
     if (!parent) {
         setMinimumHeight(400);
@@ -98,4 +123,29 @@ void EntryScrollArea::updateStyleRequested(void)
                                          ? verticalScrollBar()->width()
                                          : 0),
                               _scrollAreaWidget->sizeHint().height());
+}
+
+void EntryScrollArea::favouriteCurrentEntryRequested(void)
+{
+    emit favouriteCurrentEntry();
+}
+
+void EntryScrollArea::shareCurrentEntryRequested(void)
+{
+    emit shareCurrentEntry();
+}
+
+void EntryScrollArea::openCurrentEntryInNewWindowRequested(void)
+{
+    emit openCurrentEntryInNewWindow();
+}
+
+void EntryScrollArea::magnifyCurrentEntryRequested(void)
+{
+    emit magnifyCurrentEntry();
+}
+
+void EntryScrollArea::viewAllSentencesRequested(void)
+{
+    emit viewAllSentences();
 }

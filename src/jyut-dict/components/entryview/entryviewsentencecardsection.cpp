@@ -1,5 +1,6 @@
 #include "entryviewsentencecardsection.h"
 
+#include "components/sentencewindow/sentencesplitter.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
@@ -263,6 +264,13 @@ void EntryViewSentenceCardSection::updateStyleRequested(void)
     }
 
     setStyle(Utils::isDarkMode());
+}
+
+void EntryViewSentenceCardSection::viewAllSentencesRequested(void)
+{
+    if (!_sentences.empty()) {
+        _viewAllSentencesButton->click();
+    }
 }
 
 void EntryViewSentenceCardSection::pauseBeforeUpdatingUI(const std::vector<SourceSentence> &sourceSentences,

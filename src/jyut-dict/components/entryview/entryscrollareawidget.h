@@ -33,6 +33,7 @@ private:
     std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
     std::shared_ptr<SQLDatabaseManager> _manager;
     Entry _entry;
+    bool _entryIsValid = false;
 
     QVBoxLayout *_scrollAreaLayout;
 
@@ -42,11 +43,17 @@ private:
 
 signals:
     void stallUISentenceUpdate(void);
+    void favouriteCurrentEntry(void);
+    void shareCurrentEntry(void);
+    void viewAllSentences(void);
 
 public slots:
     void updateStyleRequested(void);
-    void openInNewWindowAction(void);
-    void openMagnifyWindowAction(void);
+    void favouriteCurrentEntryRequested(void);
+    void shareCurrentEntryRequested(void);
+    void openInNewWindow(void);
+    void openMagnifyWindow(void);
+    void viewAllSentencesRequested(void);
 };
 
 #endif // ENTRYSCROLLAREAWIDGET_H

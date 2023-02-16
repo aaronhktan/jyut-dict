@@ -95,14 +95,14 @@ void EntryActionWidget::setupUI(void)
     connect(_openInNewWindowButton,
             &QPushButton::clicked,
             this,
-            &EntryActionWidget::openInNewWindowAction);
+            &EntryActionWidget::openInNewWindow);
 
     _magnifyButton = new QPushButton{this};
     _magnifyButton->setVisible(false);
     connect(_magnifyButton,
             &QPushButton::clicked,
             this,
-            &EntryActionWidget::openMagnifyWindowAction);
+            &EntryActionWidget::openMagnifyWindow);
 
     _layout = new FlowLayout{this};
     _layout->setContentsMargins(0, 5, 0, 15);
@@ -242,6 +242,7 @@ void EntryActionWidget::removeEntryFromFavourites(const Entry &entry)
 
 void EntryActionWidget::shareAction(void)
 {
+    _shareButton->setDown(false);
     QPixmap map{parentWidget()->grab()};
     QFileDialog *_fileDialog = new QFileDialog{this};
     _fileDialog->setAcceptMode(QFileDialog::AcceptSave);
@@ -258,5 +259,19 @@ void EntryActionWidget::shareAction(void)
             QFile::remove(fileName);
         }
         map.save(fileName, "png");
+    }
+}
+
+void EntryActionWidget::favouriteCurrentEntryRequested(void)
+{
+    if (_bookmarkButton->isVisible()) {
+        _bookmarkButton->click();
+    }
+}
+
+void EntryActionWidget::shareCurrentEntryRequested(void)
+{
+    if (_shareButton->isVisible()) {
+        shareAction();
     }
 }

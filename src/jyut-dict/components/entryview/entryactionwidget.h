@@ -56,10 +56,12 @@ private:
 
 signals:
     void callbackTriggered(bool entryExists, const Entry &entry);
-    void openInNewWindowAction(void);
-    void openMagnifyWindowAction(void);
+    void openInNewWindow(void);
+    void openMagnifyWindow(void);
 
 public slots:
+    void favouriteCurrentEntryRequested(void);
+    void shareCurrentEntryRequested(void);
 };
 
 #endif // ENTRYACTIONWIDGET_H

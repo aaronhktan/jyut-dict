@@ -60,6 +60,31 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
             _entryScrollArea,
             &EntryScrollArea::stallSentenceUIUpdate);
 
+    connect(this,
+            &MainSplitter::favouriteCurrentEntry,
+            _entryScrollArea,
+            &EntryScrollArea::favouriteCurrentEntryRequested);
+
+    connect(this,
+            &MainSplitter::shareCurrentEntry,
+            _entryScrollArea,
+            &EntryScrollArea::shareCurrentEntryRequested);
+
+    connect(this,
+            &MainSplitter::openCurrentEntryInNewWindow,
+            _entryScrollArea,
+            &EntryScrollArea::openCurrentEntryInNewWindowRequested);
+
+    connect(this,
+            &MainSplitter::magnifyCurrentEntry,
+            _entryScrollArea,
+            &EntryScrollArea::magnifyCurrentEntryRequested);
+
+    connect(this,
+            &MainSplitter::viewAllSentences,
+            _entryScrollArea,
+            &EntryScrollArea::viewAllSentencesRequested);
+
     setHandleWidth(1);
     setCollapsible(0, false);
     setCollapsible(1, false);
@@ -229,4 +254,29 @@ void MainSplitter::handleDoubleClick(const QModelIndex &selection)
         emit area->stallSentenceUIUpdate();
         area->show();
     });
+}
+
+void MainSplitter::favouriteCurrentEntryRequested(void)
+{
+    emit favouriteCurrentEntry();
+}
+
+void MainSplitter::shareCurrentEntryRequested(void)
+{
+    emit shareCurrentEntry();
+}
+
+void MainSplitter::openCurrentEntryInNewWindowRequested(void)
+{
+    emit openCurrentEntryInNewWindow();
+}
+
+void MainSplitter::magnifyCurrentEntryRequested(void)
+{
+    emit magnifyCurrentEntry();
+}
+
+void MainSplitter::viewAllSentencesRequested(void)
+{
+    emit viewAllSentences();
 }

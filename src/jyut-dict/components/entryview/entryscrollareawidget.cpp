@@ -44,15 +44,30 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(
             _entryContentWidget,
             &EntryContentWidget::stallSentenceUIUpdate);
 
-    connect(_entryActionWidget,
-            &EntryActionWidget::openInNewWindowAction,
-            this,
-            &EntryScrollAreaWidget::openInNewWindowAction);
+    connect(this,
+            &EntryScrollAreaWidget::favouriteCurrentEntry,
+            _entryActionWidget,
+            &EntryActionWidget::favouriteCurrentEntryRequested);
+
+    connect(this,
+            &EntryScrollAreaWidget::shareCurrentEntry,
+            _entryActionWidget,
+            &EntryActionWidget::shareCurrentEntryRequested);
+
+    connect(this,
+            &EntryScrollAreaWidget::viewAllSentences,
+            _entryContentWidget,
+            &EntryContentWidget::viewAllSentencesRequested);
 
     connect(_entryActionWidget,
-            &EntryActionWidget::openMagnifyWindowAction,
+            &EntryActionWidget::openInNewWindow,
             this,
-            &EntryScrollAreaWidget::openMagnifyWindowAction);
+            &EntryScrollAreaWidget::openInNewWindow);
+
+    connect(_entryActionWidget,
+            &EntryActionWidget::openMagnifyWindow,
+            this,
+            &EntryScrollAreaWidget::openMagnifyWindow);
 }
 
 void EntryScrollAreaWidget::changeEvent(QEvent *event)
@@ -72,6 +87,7 @@ void EntryScrollAreaWidget::changeEvent(QEvent *event)
 void EntryScrollAreaWidget::setEntry(const Entry &entry)
 {
     _entry = entry;
+    _entryIsValid = true;
     _entryHeaderWidget->setEntry(entry);
     _entryActionWidget->setEntry(entry);
     _entryContentWidget->setEntry(entry);
@@ -100,8 +116,22 @@ void EntryScrollAreaWidget::updateStyleRequested(void)
     }
 }
 
-void EntryScrollAreaWidget::openInNewWindowAction(void)
+void EntryScrollAreaWidget::favouriteCurrentEntryRequested(void)
 {
+    emit favouriteCurrentEntry();
+}
+
+void EntryScrollAreaWidget::shareCurrentEntryRequested(void)
+{
+    emit shareCurrentEntry();
+}
+
+void EntryScrollAreaWidget::openInNewWindow(void)
+{
+    if (!_entryIsValid) {
+        return;
+    }
+
     EntryScrollArea *area = new EntryScrollArea{_sqlUserUtils,
                                                 _manager,
                                                 nullptr};
@@ -115,8 +145,12 @@ void EntryScrollAreaWidget::openInNewWindowAction(void)
     area->show();
 }
 
-void EntryScrollAreaWidget::openMagnifyWindowAction(void)
+void EntryScrollAreaWidget::openMagnifyWindow(void)
 {
+    if (!_entryIsValid) {
+        return;
+    }
+
     MagnifyScrollArea *area = new MagnifyScrollArea{nullptr};
     area->setParent(this, Qt::Window);
     area->setAttribute(Qt::WA_DeleteOnClose);
@@ -125,4 +159,9 @@ void EntryScrollAreaWidget::openMagnifyWindowAction(void)
     area->setWindowTitle(" ");
 #endif
     area->show();
+}
+
+void EntryScrollAreaWidget::viewAllSentencesRequested(void)
+{
+    emit viewAllSentences();
 }
