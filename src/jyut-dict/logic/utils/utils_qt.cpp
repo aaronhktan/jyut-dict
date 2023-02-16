@@ -220,16 +220,13 @@ QString getBundleLicenseFolderPath()
     QFileInfo bundleFile{QCoreApplication::applicationDirPath()
                          + "/../Resources/licenses/"};
 #elif defined(Q_OS_WIN)
-    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "./licenses/"};
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "./"};
 #else
 #ifdef APPIMAGE
     QFileInfo bundleFile{QCoreApplication::applicationDirPath()
                          + "/../share/jyut-dict/licenses/"};
 #elif defined(DEBUG)
-    QFileInfo bundleFile{"./licenses/"};
-#elif defined(FLATPAK)
-    QFileInfo bundleFile{QCoreApplication::applicationDirPath()
-                         + "/../share/jyut-dict/licenses/"};
+    QFileInfo bundleFile{"./"};
 #else
     QFileInfo bundleFile{"/usr/share/jyut-dict/licenses/"};
 #endif

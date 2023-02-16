@@ -210,8 +210,11 @@ void EntryActionWidget::setStyle(bool use_dark)
 
 void EntryActionWidget::refreshBookmarkButton(void)
 {
-    _bookmarkButton->setVisible(true);
-    _shareButton->setVisible(true);
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+    foreach (const auto &button, buttons) {
+        button->setVisible(true);
+    }
+
     setStyle(Utils::isDarkMode());
     translateUI();
 
