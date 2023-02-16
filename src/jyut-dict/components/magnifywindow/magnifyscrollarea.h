@@ -16,6 +16,8 @@ class MagnifyScrollArea : public QScrollArea
 public:
     explicit MagnifyScrollArea(QWidget *parent = nullptr);
 
+    void keyPressEvent(QKeyEvent *event) override;
+
     void setEntry(const Entry &entry);
 
 private:

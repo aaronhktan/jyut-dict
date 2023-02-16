@@ -30,6 +30,7 @@ public:
                                QWidget *parent = nullptr);
 
     void changeEvent(QEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
     void openCurrentSelectionInNewWindow(void);
 

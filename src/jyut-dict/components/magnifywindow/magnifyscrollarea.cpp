@@ -20,6 +20,13 @@ MagnifyScrollArea::MagnifyScrollArea(QWidget *parent)
     setMinimumSize(QSize{500, 350});
 }
 
+void MagnifyScrollArea::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        close();
+    }
+}
+
 void MagnifyScrollArea::setEntry(const Entry &entry)
 {
     _scrollAreaWidget->setEntry(entry);

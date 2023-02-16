@@ -80,6 +80,13 @@ void SentenceSplitter::changeEvent(QEvent *event)
     QSplitter::changeEvent(event);
 }
 
+void SentenceSplitter::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        close();
+    }
+}
+
 #ifdef Q_OS_WIN
 void SentenceSplitter::setStyle(bool use_dark)
 {

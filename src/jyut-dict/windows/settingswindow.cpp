@@ -18,6 +18,7 @@
 
 #include <QActionGroup>
 #include <QGuiApplication>
+#include <QKeyEvent>
 #include <QPalette>
 #include <QTimer>
 
@@ -63,6 +64,13 @@ void SettingsWindow::changeEvent(QEvent *event)
         translateUI();
     }
     QMainWindow::changeEvent(event);
+}
+
+void SettingsWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        close();
+    }
 }
 
 void SettingsWindow::setupUI()

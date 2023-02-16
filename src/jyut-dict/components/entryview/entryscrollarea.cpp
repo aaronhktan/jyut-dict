@@ -55,6 +55,13 @@ EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     }
 }
 
+void EntryScrollArea::keyPressEvent(QKeyEvent *event)
+{
+    if (isWindow() && event->key() == Qt::Key_Escape) {
+        close();
+    }
+}
+
 void EntryScrollArea::setEntry(const Entry &entry)
 {
     _updateUITimer->stop();
