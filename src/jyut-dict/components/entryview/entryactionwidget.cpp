@@ -243,6 +243,10 @@ void EntryActionWidget::removeEntryFromFavourites(const Entry &entry)
 void EntryActionWidget::shareAction(void)
 {
     _shareButton->setDown(false);
+#ifdef Q_OS_MAC
+    // This prevents the button from showing up as "pressed" in the screenshot
+    _shareButton->setAttribute(Qt::WA_UnderMouse, false);
+#endif
     QPixmap map{parentWidget()->grab()};
     QFileDialog *_fileDialog = new QFileDialog{this};
     _fileDialog->setAcceptMode(QFileDialog::AcceptSave);
