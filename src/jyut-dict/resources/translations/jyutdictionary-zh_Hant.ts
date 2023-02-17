@@ -18,7 +18,7 @@
         <location filename="../../windows/aboutwindow.cpp" line="101"/>
         <location filename="../../windows/aboutwindow.cpp" line="154"/>
         <source>View on Github...</source>
-        <translation>在Github上查看…</translation>
+        <translation>在Github上檢視…</translation>
     </message>
 </context>
 <context>
@@ -216,7 +216,7 @@
     <message>
         <location filename="../../components/settings/contacttab.cpp" line="148"/>
         <source>View on Github...</source>
-        <translation>在Github上查看…</translation>
+        <translation>在Github上檢視…</translation>
     </message>
     <message>
         <location filename="../../components/settings/contacttab.cpp" line="151"/>

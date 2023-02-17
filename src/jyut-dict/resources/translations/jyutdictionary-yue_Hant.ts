@@ -18,7 +18,7 @@
         <location filename="../../windows/aboutwindow.cpp" line="101"/>
         <location filename="../../windows/aboutwindow.cpp" line="154"/>
         <source>View on Github...</source>
-        <translation>喺Github上查看…</translation>
+        <translation>喺Github上檢視…</translation>
     </message>
 </context>
 <context>
@@ -216,7 +216,7 @@
     <message>
         <location filename="../../components/settings/contacttab.cpp" line="148"/>
         <source>View on Github...</source>
-        <translation>喺Github上查看…</translation>
+        <translation>喺Github上檢視…</translation>
     </message>
     <message>
         <location filename="../../components/settings/contacttab.cpp" line="151"/>
@@ -1018,8 +1018,8 @@ Hang tight!</source>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="195"/>
-        <source>	Show pronunciation for:</source>
-        <translation>	詞條拼音：</translation>
+        <source>    Show pronunciation for:</source>
+        <translation>   詞條拼音：</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="193"/>
@@ -1072,8 +1072,8 @@ Hang tight!</source>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="214"/>
-        <source>	Show Mandarin:</source>
-        <translation>	普通話顯示下列拼音：</translation>
+        <source>    Show Mandarin:</source>
+        <translation>   普通話顯示下列拼音：</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="212"/>
@@ -1158,8 +1158,8 @@ Hang tight!</source>
     </message>
     <message>
         <location filename="../../components/settings/texttab.cpp" line="129"/>
-        <source>	Show simplified/traditional characters:</source>
-        <translation>	詞條字體：</translation>
+        <source>    Show simplified/traditional characters:</source>
+        <translation>   詞條字體：</translation>
     </message>
     <message>
         <location filename="../../components/settings/texttab.cpp" line="127"/>
@@ -1238,8 +1238,8 @@ Hang tight!</source>
     </message>
     <message>
         <location filename="../../components/settings/texttab.cpp" line="154"/>
-        <source>	Mandarin tone colours:</source>
-        <translation>	拼音聲調嘅對應顏色（普通話）：</translation>
+        <source>    Mandarin tone colours:</source>
+        <translation>   拼音聲調嘅對應顏色（普通話）：</translation>
     </message>
     <message>
         <location filename="../../components/settings/texttab.cpp" line="152"/>
