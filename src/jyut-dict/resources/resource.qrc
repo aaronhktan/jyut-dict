@@ -4,7 +4,6 @@
         <file>images/search.png</file>
         <file>images/x_inverted.png</file>
         <file>images/x.png</file>
-        <file>images/icon.png</file>
         <file>images/settings.png</file>
         <file>images/settings_inverted.png</file>
         <file>images/book_inverted.png</file>
@@ -65,5 +64,6 @@
         <file>images/external_link.png</file>
         <file>images/zoom_in_inverted.png</file>
         <file>images/zoom_in.png</file>
+        <file>images/icon.png</file>
     </qresource>
 </RCC>
