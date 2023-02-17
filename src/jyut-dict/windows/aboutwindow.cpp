@@ -164,6 +164,8 @@ void AboutWindow::translateUI()
         tr("About %1")
             .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME)));
 #endif
+
+    resize(sizeHint());
 }
 
 void AboutWindow::setStyle(bool use_dark)

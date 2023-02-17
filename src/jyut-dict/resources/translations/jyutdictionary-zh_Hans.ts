@@ -4,12 +4,12 @@
 <context>
     <name>AboutWindow</name>
     <message>
-        <location filename="../../windows/aboutwindow.cpp" line="+161"/>
+        <location filename="../../windows/aboutwindow.cpp" line="+164"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
     <message>
-        <location line="-89"/>
+        <location line="-91"/>
         <location line="+80"/>
         <source>Build %1</source>
         <translation>版本：%1</translation>
@@ -227,7 +227,7 @@
 <context>
     <name>DictionaryTab</name>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="+136"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="+130"/>
         <source>The Dictionaries tab allows you to view information about dictionaries, and add or remove them.</source>
         <translation>您在“词典”这一页上可以查看和管理已储存的词典。</translation>
     </message>
@@ -252,7 +252,7 @@
         <translation>选择词典文件</translation>
     </message>
     <message>
-        <location line="+62"/>
+        <location line="+56"/>
         <source>Version: %1</source>
         <translation>版本： %1</translation>
     </message>
@@ -342,7 +342,7 @@
 <context>
     <name>EntryActionWidget</name>
     <message>
-        <location filename="../../components/entryview/entryactionwidget.cpp" line="+109"/>
+        <location filename="../../components/entryview/entryactionwidget.cpp" line="+124"/>
         <source>Saved!</source>
         <translation>已保存！</translation>
     </message>
@@ -357,7 +357,17 @@
         <translation>分享</translation>
     </message>
     <message>
-        <location line="+117"/>
+        <location line="+1"/>
+        <source>Open in New Window</source>
+        <translation>在新窗口中打开</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Magnify</source>
+        <translation>放大</translation>
+    </message>
+    <message>
+        <location line="+127"/>
         <source>Path to save exported image</source>
         <translation>保存文件至</translation>
     </message>
@@ -388,7 +398,7 @@
 <context>
     <name>EntryViewSentenceCardSection</name>
     <message>
-        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="+84"/>
+        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="+85"/>
         <source>View all sentences →</source>
         <translation>查看所有例句 →</translation>
     </message>
@@ -409,7 +419,7 @@
 <context>
     <name>FavouriteSplitter</name>
     <message>
-        <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="+95"/>
+        <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="+102"/>
         <source>Saved Words</source>
         <translation>已保存的词语</translation>
     </message>
@@ -417,7 +427,7 @@
 <context>
     <name>HistoryWindow</name>
     <message>
-        <location filename="../../windows/historywindow.cpp" line="+60"/>
+        <location filename="../../windows/historywindow.cpp" line="+68"/>
         <location line="+11"/>
         <source>Search History</source>
         <translation>搜索历史</translation>
@@ -474,6 +484,19 @@
     </message>
 </context>
 <context>
+    <name>MagnifyScrollAreaWidget</name>
+    <message>
+        <location filename="../../components/magnifywindow/magnifyscrollareawidget.cpp" line="+143"/>
+        <source>Traditional</source>
+        <translation>繁体字</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Simplified</source>
+        <translation>简体字</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="+87"/>
@@ -486,31 +509,31 @@
         <translation>数据库迁移失败！</translation>
     </message>
     <message>
-        <location line="+151"/>
-        <location line="+395"/>
+        <location line="+171"/>
+        <location line="+467"/>
         <source>&amp;File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location line="-394"/>
-        <location line="+395"/>
+        <location line="-466"/>
+        <location line="+467"/>
         <source>&amp;Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location line="-394"/>
-        <location line="+396"/>
+        <location line="-466"/>
+        <location line="+469"/>
         <source>&amp;Window</source>
         <translation>窗口</translation>
     </message>
     <message>
-        <location line="-394"/>
-        <location line="+395"/>
+        <location line="-467"/>
+        <location line="+468"/>
         <source>&amp;Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location line="-393"/>
+        <location line="-466"/>
         <source>&amp;About</source>
         <translation>关于粤语词典</translation>
     </message>
@@ -531,12 +554,12 @@
     </message>
     <message>
         <location line="+2"/>
-        <location line="+399"/>
+        <location line="+472"/>
         <source>Change settings</source>
         <translation>更改设置</translation>
     </message>
     <message>
-        <location line="-397"/>
+        <location line="-470"/>
         <source>Close Window</source>
         <translation>关闭窗口</translation>
     </message>
@@ -581,11 +604,6 @@
         <translation>跳转到第一个搜索结果</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Open Selected Entry in New Window</source>
-        <translation>在新窗口中显示刚才选择的结果</translation>
-    </message>
-    <message>
         <location line="+1"/>
         <source>Search Simplified Chinese</source>
         <translation>搜索简体中文</translation>
@@ -596,14 +614,19 @@
         <translation>搜索繁体中文</translation>
     </message>
     <message>
-        <location line="+867"/>
+        <location line="+441"/>
+        <source>E&amp;ntry</source>
+        <translation>词条</translation>
+    </message>
+    <message>
+        <location line="+525"/>
         <source>Migrating database to new version...
 This might take a few minutes.
 Hang tight!</source>
         <translation>数据库迁移已启动，请稍等几分钟</translation>
     </message>
     <message>
-        <location line="-866"/>
+        <location line="-965"/>
         <source>Search Jyutping</source>
         <translation>搜索粤语拼音</translation>
     </message>
@@ -616,6 +639,31 @@ Hang tight!</source>
         <location line="+1"/>
         <source>Search English</source>
         <translation>搜索英文</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Save or Unsave Current Entry</source>
+        <translation>保存这条词条</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Share Current Entry...</source>
+        <translation>分享这条词条…</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Open Current Entry in New Window...</source>
+        <translation>在新窗口中显示这条词条…</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>View Large Version of Entry...</source>
+        <translation>放大这条词条…</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>View All Sentences for this Entry...</source>
+        <translation>查看这条词条的所有例句…</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -653,13 +701,13 @@ Hang tight!</source>
         <translation>检查更新…</translation>
     </message>
     <message>
-        <location line="-41"/>
-        <location line="+394"/>
+        <location line="-47"/>
+        <location line="+466"/>
         <source>&amp;Search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location line="+453"/>
+        <location line="+478"/>
         <source>Checking for update...</source>
         <translation>正在检查更新…</translation>
     </message>
@@ -947,7 +995,7 @@ Hang tight!</source>
 <context>
     <name>SentenceSplitter</name>
     <message>
-        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="+108"/>
+        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="+115"/>
         <source>Sentences for %1 (%2 result)</source>
         <translation>用“%1“造句：（%2 条结果）</translation>
     </message>
@@ -965,17 +1013,17 @@ Hang tight!</source>
         <translation>搜索结果和例句：</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+6"/>
         <source>	Show pronunciation for:</source>
         <translation>词条拼音：</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-2"/>
         <source>Show pronunciation for:</source>
         <translation>词条拼音：</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>only Cantonese</source>
         <translation>仅显示粤语拼音</translation>
     </message>
@@ -1019,13 +1067,13 @@ Hang tight!</source>
         <translation>国际音标</translation>
     </message>
     <message>
-        <location line="-16"/>
+        <location line="-14"/>
         <source>	Show Mandarin:</source>
         <translation>	普通话显示下列拼音：</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <location line="+16"/>
+        <location line="-2"/>
+        <location line="+18"/>
         <source>Show Mandarin:</source>
         <translation>普通话显示下列拼音：</translation>
     </message>
@@ -1062,7 +1110,7 @@ Hang tight!</source>
 <context>
     <name>SettingsWindow</name>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="+145"/>
+        <location filename="../../windows/settingswindow.cpp" line="+153"/>
         <source>General</source>
         <translation>通用</translation>
     </message>
@@ -1105,17 +1153,17 @@ Hang tight!</source>
         <translation>字体：</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+5"/>
         <source>	Show simplified/traditional characters:</source>
         <translation>词条字体：</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-2"/>
         <source>Show simplified/traditional characters:</source>
         <translation>词条字体：</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="+4"/>
         <source>Only Simplified</source>
         <translation>仅显示简体中文</translation>
     </message>
@@ -1185,17 +1233,17 @@ Hang tight!</source>
         <translation>拼音声调的对应颜色（粤语）：</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+5"/>
         <source>	Mandarin tone colours:</source>
         <translation>	拼音声调的对应颜色（普通话）：</translation>
     </message>
     <message>
-        <location line="+2"/>
+        <location line="-2"/>
         <source>Mandarin tone colours:</source>
         <translation>拼音声调的对应颜色（普通话）：</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+10"/>
         <location line="+14"/>
         <source>No Tone</source>
         <translation>未知声调</translation>
@@ -1286,12 +1334,12 @@ Hang tight!</source>
     <name>strings</name>
     <message>
         <location filename="../../logic/strings/strings.h" line="+16"/>
-        <location line="+77"/>
+        <location line="+79"/>
         <source>JP</source>
         <translation>粤拼</translation>
     </message>
     <message>
-        <location line="-76"/>
+        <location line="-78"/>
         <source>YL</source>
         <translation>耶魯粵拼</translation>
     </message>
@@ -1302,12 +1350,12 @@ Hang tight!</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+75"/>
+        <location line="+77"/>
         <source>PY</source>
         <translation>汉语拼音</translation>
     </message>
     <message>
-        <location line="-74"/>
+        <location line="-76"/>
         <source>ZY</source>
         <translation>注音</translation>
     </message>
@@ -1337,12 +1385,7 @@ Hang tight!</source>
         <translation>一个免费、自由、开源及脱机的粤语词典。</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
-        <translation>图标使用 &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Commons 古汉字计划&lt;/a&gt; 的图片创造。&lt;br&gt;界面图标来源：&lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt;和&lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;。&lt;br&gt;使用 &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 编程。</translation>
-    </message>
-    <message>
-        <location line="+14"/>
+        <location line="+18"/>
         <source>%1 is made with ❤️ by Aaron Tan.</source>
         <translation>%1由谭可峰精心打造。</translation>
     </message>
@@ -1436,7 +1479,12 @@ Debug: Locale: %1, Language: Chinese - Hong Kong</source>
 调试: 区域设置: %1, 语言: 粤语 - 香港</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="-35"/>
+        <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contains FlowLayout code from &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
+        <translation>图标使用 &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Commons 古汉字计划&lt;/a&gt; 的图片创造。&lt;br&gt;界面图标来源：&lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; 和 &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;。&lt;br&gt;使用 &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 的 FlowLayout 编程。&lt;br&gt;使用 &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 编程。</translation>
+    </message>
+    <message>
+        <location line="+43"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Taiwan</source>

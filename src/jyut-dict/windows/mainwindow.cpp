@@ -258,8 +258,9 @@ void MainWindow::translateUI(void)
 
     _fileMenu->setTitle(tr("&File"));
     _editMenu->setTitle(tr("&Edit"));
-    _windowMenu->setTitle(tr("&Window"));
     _searchMenu->setTitle(tr("&Search"));
+    _entryMenu->setTitle(tr("E&ntry"));
+    _windowMenu->setTitle(tr("&Window"));
     _helpMenu->setTitle(tr("&Help"));
 
     _aboutAction->setText(tr("&About"));
