@@ -17,7 +17,7 @@ MagnifyScrollArea::MagnifyScrollArea(QWidget *parent)
     setWidgetResizable(
         true); // IMPORTANT! This makes the scrolling widget resize correctly.
 
-    setMinimumSize(QSize{500, 350});
+    setMinimumSize(QSize{500, 500});
 }
 
 void MagnifyScrollArea::keyPressEvent(QKeyEvent *event)
