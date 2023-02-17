@@ -295,9 +295,10 @@ void MainWindow::translateUI(void)
     _shareCurrentEntryAction->setText(tr("Share Current Entry..."));
     _openCurrentEntryInNewWindowAction->setText(
         tr("Open Current Entry in New Window..."));
-    _magnifyCurrentEntryAction->setText(tr("View Large Version of Entry..."));
+    _magnifyCurrentEntryAction->setText(
+        tr("View Large Version of Current Entry..."));
     _viewAllSentencesAction->setText(
-        tr("View All Sentences for this Entry..."));
+        tr("View All Sentences for Current Entry..."));
 
     _historyWindowAction->setText(tr("View Search History"));
     _favouritesWindowAction->setText(tr("Open List of Saved Words"));

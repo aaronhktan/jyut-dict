@@ -510,13 +510,13 @@
     </message>
     <message>
         <location line="+171"/>
-        <location line="+467"/>
+        <location line="+469"/>
         <source>&amp;File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location line="-466"/>
-        <location line="+467"/>
+        <location line="-468"/>
+        <location line="+469"/>
         <source>&amp;Edit</source>
         <translation>编辑</translation>
     </message>
@@ -527,13 +527,13 @@
         <translation>窗口</translation>
     </message>
     <message>
-        <location line="-467"/>
-        <location line="+468"/>
+        <location line="-468"/>
+        <location line="+469"/>
         <source>&amp;Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location line="-466"/>
+        <location line="-467"/>
         <source>&amp;About</source>
         <translation>关于粤语词典</translation>
     </message>
@@ -554,12 +554,12 @@
     </message>
     <message>
         <location line="+2"/>
-        <location line="+472"/>
+        <location line="+473"/>
         <source>Change settings</source>
         <translation>更改设置</translation>
     </message>
     <message>
-        <location line="-470"/>
+        <location line="-471"/>
         <source>Close Window</source>
         <translation>关闭窗口</translation>
     </message>
@@ -614,19 +614,30 @@
         <translation>用繁体中文揾</translation>
     </message>
     <message>
-        <location line="+441"/>
+        <location line="-27"/>
+        <location line="+469"/>
         <source>E&amp;ntry</source>
         <translation>词条</translation>
     </message>
     <message>
-        <location line="+525"/>
+        <location line="-432"/>
+        <source>View Large Version of Current Entry...</source>
+        <translation>放大呢一条词条…</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>View All Sentences for Current Entry...</source>
+        <translation>查看呢条词条嘅所有例句…</translation>
+    </message>
+    <message>
+        <location line="+955"/>
         <source>Migrating database to new version...
 This might take a few minutes.
 Hang tight!</source>
         <translation>数据库迁移已启动，请稍等一阵</translation>
     </message>
     <message>
-        <location line="-965"/>
+        <location line="-966"/>
         <source>Search Jyutping</source>
         <translation>用粤语拼音揾</translation>
     </message>
@@ -656,17 +667,7 @@ Hang tight!</source>
         <translation>喺新窗口度显示呢条词条…</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>View Large Version of Entry...</source>
-        <translation>放大呢一条词条…</translation>
-    </message>
-    <message>
-        <location line="+2"/>
-        <source>View All Sentences for this Entry...</source>
-        <translation>查看呢条词条嘅所有例句…</translation>
-    </message>
-    <message>
-        <location line="+2"/>
+        <location line="+6"/>
         <source>View Search History</source>
         <translation>打开历史记录</translation>
     </message>
@@ -701,8 +702,8 @@ Hang tight!</source>
         <translation>检查更新…</translation>
     </message>
     <message>
-        <location line="-47"/>
-        <location line="+466"/>
+        <location line="-50"/>
+        <location line="+469"/>
         <source>&amp;Search</source>
         <translation>搜索</translation>
     </message>
@@ -1021,17 +1022,17 @@ Hang tight!</source>
         <translation>查询结果同埋例句：</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>	Show pronunciation for:</source>
-        <translation>	词条拼音：</translation>
-    </message>
-    <message>
-        <location line="-2"/>
+        <location line="+4"/>
         <source>Show pronunciation for:</source>
         <translation>词条拼音：</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+2"/>
+        <source>	Show pronunciation for:</source>
+        <translation>   词条拼音：</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>only Cantonese</source>
         <translation>净系显示粤语拼音</translation>
     </message>
@@ -1075,18 +1076,18 @@ Hang tight!</source>
         <translation>国际音标</translation>
     </message>
     <message>
-        <location line="-14"/>
-        <source>	Show Mandarin:</source>
-        <translation>	普通话显示下列拼音：</translation>
-    </message>
-    <message>
-        <location line="-2"/>
+        <location line="-16"/>
         <location line="+18"/>
         <source>Show Mandarin:</source>
         <translation>普通话显示下列拼音：</translation>
     </message>
     <message>
-        <location line="-14"/>
+        <location line="-16"/>
+        <source>	Show Mandarin:</source>
+        <translation>   普通话显示下列拼音：</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <location line="+15"/>
         <source>Pinyin</source>
         <translation>汉语拼音</translation>
@@ -1161,17 +1162,17 @@ Hang tight!</source>
         <translation>字体：</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>	Show simplified/traditional characters:</source>
-        <translation>	词条字体：</translation>
-    </message>
-    <message>
-        <location line="-2"/>
+        <location line="+3"/>
         <source>Show simplified/traditional characters:</source>
         <translation>词条字体：</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+2"/>
+        <source>	Show simplified/traditional characters:</source>
+        <translation>   词条字体：</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Only Simplified</source>
         <translation>净系显示简体中文</translation>
     </message>
@@ -1241,17 +1242,17 @@ Hang tight!</source>
         <translation>拼音声调嘅对应颜色（粤语）：</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>	Mandarin tone colours:</source>
-        <translation>	拼音声调嘅对应颜色（普通话）：</translation>
-    </message>
-    <message>
-        <location line="-2"/>
+        <location line="+3"/>
         <source>Mandarin tone colours:</source>
         <translation>拼音声调嘅对应颜色（普通话）：</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+2"/>
+        <source>	Mandarin tone colours:</source>
+        <translation>   拼音声调嘅对应颜色（普通话）：</translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <location line="+14"/>
         <source>No Tone</source>
         <translation>未知声调</translation>

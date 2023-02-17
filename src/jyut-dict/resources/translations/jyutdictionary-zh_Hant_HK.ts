@@ -510,204 +510,205 @@
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="259"/>
-        <location filename="../../windows/mainwindow.cpp" line="726"/>
+        <location filename="../../windows/mainwindow.cpp" line="728"/>
         <source>&amp;File</source>
         <translation>檔案</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="260"/>
-        <location filename="../../windows/mainwindow.cpp" line="727"/>
+        <location filename="../../windows/mainwindow.cpp" line="729"/>
         <source>&amp;Edit</source>
         <translation>編輯</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="261"/>
-        <location filename="../../windows/mainwindow.cpp" line="730"/>
+        <location filename="../../windows/mainwindow.cpp" line="263"/>
+        <location filename="../../windows/mainwindow.cpp" line="732"/>
         <source>&amp;Window</source>
         <translation>視窗</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="263"/>
-        <location filename="../../windows/mainwindow.cpp" line="731"/>
+        <location filename="../../windows/mainwindow.cpp" line="264"/>
+        <location filename="../../windows/mainwindow.cpp" line="733"/>
         <source>&amp;Help</source>
         <translation>輔助說明</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="265"/>
+        <location filename="../../windows/mainwindow.cpp" line="266"/>
         <source>&amp;About</source>
         <translation>關於粵語辭典</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="266"/>
+        <location filename="../../windows/mainwindow.cpp" line="267"/>
         <source>Show the application&apos;s About box</source>
         <translation>開啟“關於粵語辭典”嘅視窗</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="269"/>
+        <location filename="../../windows/mainwindow.cpp" line="270"/>
         <source>Preferences</source>
         <translation>偏好設定…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="271"/>
+        <location filename="../../windows/mainwindow.cpp" line="272"/>
         <source>Settings</source>
         <translation>偏好設定…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="273"/>
-        <location filename="../../windows/mainwindow.cpp" line="745"/>
+        <location filename="../../windows/mainwindow.cpp" line="274"/>
+        <location filename="../../windows/mainwindow.cpp" line="747"/>
         <source>Change settings</source>
         <translation>更改設定</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="275"/>
+        <location filename="../../windows/mainwindow.cpp" line="276"/>
         <source>Close Window</source>
         <translation>關閉視窗</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="277"/>
+        <location filename="../../windows/mainwindow.cpp" line="278"/>
         <source>Undo</source>
         <translation>還原</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="278"/>
+        <location filename="../../windows/mainwindow.cpp" line="279"/>
         <source>Redo</source>
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="279"/>
+        <location filename="../../windows/mainwindow.cpp" line="280"/>
         <source>Cut</source>
         <translation>剪切</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="280"/>
+        <location filename="../../windows/mainwindow.cpp" line="281"/>
         <source>Copy</source>
         <translation>拷貝</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="281"/>
+        <location filename="../../windows/mainwindow.cpp" line="282"/>
         <source>Paste</source>
         <translation>貼上</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="283"/>
+        <location filename="../../windows/mainwindow.cpp" line="284"/>
         <source>Start a New Search</source>
         <translation>重新搜索</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="284"/>
+        <location filename="../../windows/mainwindow.cpp" line="285"/>
         <source>Select Search Bar Contents</source>
         <translation>全選搜索欄文字</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="286"/>
+        <location filename="../../windows/mainwindow.cpp" line="287"/>
         <source>Jump to First Item in Search Results</source>
         <translation>跳到第一個搜索結果</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="287"/>
+        <location filename="../../windows/mainwindow.cpp" line="288"/>
         <source>Search Simplified Chinese</source>
         <translation>用簡體中文搵</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="288"/>
+        <location filename="../../windows/mainwindow.cpp" line="289"/>
         <source>Search Traditional Chinese</source>
         <translation>用繁體中文搵</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="729"/>
+        <location filename="../../windows/mainwindow.cpp" line="262"/>
+        <location filename="../../windows/mainwindow.cpp" line="731"/>
         <source>E&amp;ntry</source>
         <translation>詞條</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="1254"/>
+        <location filename="../../windows/mainwindow.cpp" line="299"/>
+        <source>View Large Version of Current Entry...</source>
+        <translation>放大呢一條詞條…</translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="301"/>
+        <source>View All Sentences for Current Entry...</source>
+        <translation>檢視呢一條詞條嘅所有例句…</translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="1256"/>
         <source>Migrating database to new version...
 This might take a few minutes.
 Hang tight!</source>
         <translation>資料庫移轉已開始，這可能需要幾分鐘嘅時間。</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="289"/>
+        <location filename="../../windows/mainwindow.cpp" line="290"/>
         <source>Search Jyutping</source>
         <translation>用粵語拼音搵</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="290"/>
+        <location filename="../../windows/mainwindow.cpp" line="291"/>
         <source>Search Pinyin</source>
         <translation>用漢語拼音搵</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="291"/>
+        <location filename="../../windows/mainwindow.cpp" line="292"/>
         <source>Search English</source>
         <translation>用英文搵</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="293"/>
+        <location filename="../../windows/mainwindow.cpp" line="294"/>
         <source>Save or Unsave Current Entry</source>
         <translation>儲存呢一條詞條</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="294"/>
+        <location filename="../../windows/mainwindow.cpp" line="295"/>
         <source>Share Current Entry...</source>
         <translation>分享呢一條詞條…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="296"/>
+        <location filename="../../windows/mainwindow.cpp" line="297"/>
         <source>Open Current Entry in New Window...</source>
         <translation>喺新視窗度檢視呢一條詞條…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="297"/>
-        <source>View Large Version of Entry...</source>
-        <translation>放大呢一條詞條…</translation>
-    </message>
-    <message>
-        <location filename="../../windows/mainwindow.cpp" line="299"/>
-        <source>View All Sentences for this Entry...</source>
-        <translation>檢視呢一條詞條嘅所有例句…</translation>
-    </message>
-    <message>
-        <location filename="../../windows/mainwindow.cpp" line="301"/>
+        <location filename="../../windows/mainwindow.cpp" line="303"/>
         <source>View Search History</source>
         <translation>開啟搜尋紀錄</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="302"/>
+        <location filename="../../windows/mainwindow.cpp" line="304"/>
         <source>Open List of Saved Words</source>
         <translation>檢視所有已儲存詞語</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="303"/>
+        <location filename="../../windows/mainwindow.cpp" line="305"/>
         <source>Minimize</source>
         <translation>縮到最小</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="304"/>
+        <location filename="../../windows/mainwindow.cpp" line="306"/>
         <source>Zoom</source>
         <translation>縮放</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="305"/>
+        <location filename="../../windows/mainwindow.cpp" line="307"/>
         <source>Bring All to Front</source>
         <translation>將此程式所有視窗移至最前</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="307"/>
+        <location filename="../../windows/mainwindow.cpp" line="309"/>
         <source>%1 Help</source>
         <translation>%1輔助說明</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="309"/>
+        <location filename="../../windows/mainwindow.cpp" line="311"/>
         <source>Check for Updates...</source>
         <translation>檢查更新…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="262"/>
-        <location filename="../../windows/mainwindow.cpp" line="728"/>
+        <location filename="../../windows/mainwindow.cpp" line="261"/>
+        <location filename="../../windows/mainwindow.cpp" line="730"/>
         <source>&amp;Search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="1206"/>
+        <location filename="../../windows/mainwindow.cpp" line="1208"/>
         <source>Checking for update...</source>
         <translation>檢查緊更新…</translation>
     </message>
@@ -1017,14 +1018,14 @@ Hang tight!</source>
         <translation>查詢結果同埋例句：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="195"/>
-        <source>    Show pronunciation for:</source>
-        <translation>   詞條拼音：</translation>
-    </message>
-    <message>
         <location filename="../../components/settings/settingstab.cpp" line="193"/>
         <source>Show pronunciation for:</source>
         <translation>詞條拼音：</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/settingstab.cpp" line="195"/>
+        <source>	Show pronunciation for:</source>
+        <translation>   詞條拼音：</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="197"/>
@@ -1071,15 +1072,15 @@ Hang tight!</source>
         <translation>國際音標</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="214"/>
-        <source>    Show Mandarin:</source>
-        <translation>   普通話顯示下列拼音：</translation>
-    </message>
-    <message>
         <location filename="../../components/settings/settingstab.cpp" line="212"/>
         <location filename="../../components/settings/settingstab.cpp" line="230"/>
         <source>Show Mandarin:</source>
         <translation>普通話顯示下列拼音：</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/settingstab.cpp" line="214"/>
+        <source>	Show Mandarin:</source>
+        <translation>   普通話顯示下列拼音：</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="216"/>
@@ -1157,14 +1158,14 @@ Hang tight!</source>
         <translation>字體：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="129"/>
-        <source>    Show simplified/traditional characters:</source>
-        <translation>   詞條字體：</translation>
-    </message>
-    <message>
         <location filename="../../components/settings/texttab.cpp" line="127"/>
         <source>Show simplified/traditional characters:</source>
         <translation>詞條字體：</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="129"/>
+        <source>	Show simplified/traditional characters:</source>
+        <translation>   詞條字體：</translation>
     </message>
     <message>
         <location filename="../../components/settings/texttab.cpp" line="131"/>
@@ -1237,14 +1238,14 @@ Hang tight!</source>
         <translation>拼音聲調嘅對應顏色（粵語）：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="154"/>
-        <source>    Mandarin tone colours:</source>
-        <translation>   拼音聲調嘅對應顏色（普通話）：</translation>
-    </message>
-    <message>
         <location filename="../../components/settings/texttab.cpp" line="152"/>
         <source>Mandarin tone colours:</source>
         <translation>拼音聲調嘅對應顏色（普通話）：</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="154"/>
+        <source>	Mandarin tone colours:</source>
+        <translation>   拼音聲調嘅對應顏色（普通話）：</translation>
     </message>
     <message>
         <location filename="../../components/settings/texttab.cpp" line="162"/>
