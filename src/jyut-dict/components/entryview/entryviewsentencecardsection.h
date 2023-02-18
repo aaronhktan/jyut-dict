@@ -3,9 +3,7 @@
 
 #include "components/sentencecard/loadingwidget.h"
 #include "components/sentencecard/sentencecardwidget.h"
-#include "components/sentencewindow/sentencesplitter.h"
 #include "logic/database/sqldatabasemanager.h"
-#include "logic/database/sqluserdatautils.h"
 #include "logic/search/isearchobserver.h"
 #include "logic/search/sqlsearch.h"
 
@@ -85,6 +83,7 @@ public slots:
         const sentenceSamples &samples);
     void stallSentenceUIUpdate(void);
     void updateStyleRequested(void);
+    void viewAllSentencesRequested(void);
 
 private slots:
     void pauseBeforeUpdatingUI(const std::vector<SourceSentence> &sourceSentences,

@@ -28,6 +28,7 @@ public:
                               QWidget *parent = nullptr);
 
     void changeEvent(QEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
     void setSourceSentences(const std::vector<SourceSentence> &sourceSentences);
     void setSearchTerm(const QString &searchTerm);

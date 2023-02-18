@@ -56,10 +56,20 @@ private:
 
 signals:
     void forwardSearchBarTextChange(void);
+    void favouriteCurrentEntry(void);
+    void shareCurrentEntry(void);
+    void openCurrentEntryInNewWindow(void);
+    void magnifyCurrentEntry(void);
+    void viewAllSentences(void);
 
 public slots:
     void forwardViewHistoryItem(const Entry &entry);
     void updateStyleRequested(void);
+    void favouriteCurrentEntryRequested(void);
+    void shareCurrentEntryRequested(void);
+    void openCurrentEntryInNewWindowRequested(void);
+    void magnifyCurrentEntryRequested(void);
+    void viewAllSentencesRequested(void);
 
 private slots:
     void prepareEntry(Entry &entry);

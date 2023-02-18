@@ -47,6 +47,7 @@ private:
     QMenu *_fileMenu;
     QMenu *_editMenu;
     QMenu *_searchMenu;
+    QMenu *_entryMenu;
     QMenu *_windowMenu;
     QMenu *_helpMenu;
 
@@ -62,12 +63,17 @@ private:
     QAction *_findAction;
     QAction *_findAndSelectAllAction;
     QAction *_setFocusToResultsAction;
-    QAction *_openCurrentSelectionInNewWindowAction;
     QAction *_selectSimplifiedAction;
     QAction *_selectTraditionalAction;
     QAction *_selectJyutpingAction;
     QAction *_selectPinyinAction;
     QAction *_selectEnglishAction;
+
+    QAction *_favouriteCurrentEntryAction;
+    QAction *_shareCurrentEntryAction;
+    QAction *_openCurrentEntryInNewWindowAction;
+    QAction *_magnifyCurrentEntryAction;
+    QAction *_viewAllSentencesAction;
 
     QAction *_historyWindowAction;
     QAction *_favouritesWindowAction;
@@ -110,7 +116,6 @@ private:
     void find(void) const;
     void findAndSelectAll(void) const;
     void setFocusToResults(void) const;
-    void openCurrentSelectionInNewWindow(void) const;
     void selectSimplified(void) const;
     void selectTraditional(void) const;
     void selectJyutping(void) const;
@@ -132,6 +137,11 @@ private:
 signals:
     void searchHistoryClicked(const searchTermHistoryItem &pair);
     void viewHistoryClicked(const Entry &entry);
+    void favouriteCurrentEntry(void);
+    void shareCurrentEntry(void);
+    void openCurrentEntryInNewWindow(void);
+    void magnifyCurrentEntry(void);
+    void viewAllSentences(void);
 
 public slots:
     void notifyUpdateAvailable(bool updateAvailable,

@@ -1,6 +1,8 @@
 #ifndef ENTRYACTIONWIDGET_H
 #define ENTRYACTIONWIDGET_H
 
+#include "components/layouts/flowlayout.h"
+
 #include "logic/database/sqluserdatautils.h"
 #include "logic/entry/entry.h"
 #include "logic/search/isearchobserver.h"
@@ -46,14 +48,20 @@ private:
     std::unique_ptr<QSettings> _settings;
     Entry _entry;
 
-    QHBoxLayout *_layout;
+    FlowLayout *_layout;
     QPushButton *_bookmarkButton;
     QPushButton *_shareButton;
+    QPushButton *_openInNewWindowButton;
+    QPushButton *_magnifyButton;
 
 signals:
     void callbackTriggered(bool entryExists, const Entry &entry);
+    void openInNewWindow(void);
+    void openMagnifyWindow(void);
 
 public slots:
+    void favouriteCurrentEntryRequested(void);
+    void shareCurrentEntryRequested(void);
 };
 
 #endif // ENTRYACTIONWIDGET_H

@@ -137,6 +137,26 @@ MainWindow::MainWindow(QWidget *parent) :
     _mainToolBar->setOpenSettingsAction(_settingsWindowAction);
     _mainToolBar->setOpenFavouritesAction(_favouritesWindowAction);
     _mainToolBar->setOpenHistoryAction(_historyWindowAction);
+    connect(this,
+            &MainWindow::favouriteCurrentEntry,
+            _mainSplitter,
+            &MainSplitter::favouriteCurrentEntryRequested);
+    connect(this,
+            &MainWindow::shareCurrentEntry,
+            _mainSplitter,
+            &MainSplitter::shareCurrentEntryRequested);
+    connect(this,
+            &MainWindow::openCurrentEntryInNewWindow,
+            _mainSplitter,
+            &MainSplitter::openCurrentEntryInNewWindowRequested);
+    connect(this,
+            &MainWindow::magnifyCurrentEntry,
+            _mainSplitter,
+            &MainSplitter::magnifyCurrentEntryRequested);
+    connect(this,
+            &MainWindow::viewAllSentences,
+            _mainSplitter,
+            &MainSplitter::viewAllSentencesRequested);
 
     // Translate UI
     translateUI();
@@ -238,8 +258,9 @@ void MainWindow::translateUI(void)
 
     _fileMenu->setTitle(tr("&File"));
     _editMenu->setTitle(tr("&Edit"));
-    _windowMenu->setTitle(tr("&Window"));
     _searchMenu->setTitle(tr("&Search"));
+    _entryMenu->setTitle(tr("E&ntry"));
+    _windowMenu->setTitle(tr("&Window"));
     _helpMenu->setTitle(tr("&Help"));
 
     _aboutAction->setText(tr("&About"));
@@ -264,13 +285,20 @@ void MainWindow::translateUI(void)
     _findAndSelectAllAction->setText(tr("Select Search Bar Contents"));
     _setFocusToResultsAction->setText(
         tr("Jump to First Item in Search Results"));
-    _openCurrentSelectionInNewWindowAction->setText(
-        tr("Open Selected Entry in New Window"));
     _selectSimplifiedAction->setText(tr("Search Simplified Chinese"));
     _selectTraditionalAction->setText(tr("Search Traditional Chinese"));
     _selectJyutpingAction->setText(tr("Search Jyutping"));
     _selectPinyinAction->setText(tr("Search Pinyin"));
     _selectEnglishAction->setText(tr("Search English"));
+
+    _favouriteCurrentEntryAction->setText(tr("Save or Unsave Current Entry"));
+    _shareCurrentEntryAction->setText(tr("Share Current Entry..."));
+    _openCurrentEntryInNewWindowAction->setText(
+        tr("Open Current Entry in New Window..."));
+    _magnifyCurrentEntryAction->setText(
+        tr("View Large Version of Current Entry..."));
+    _viewAllSentencesAction->setText(
+        tr("View All Sentences for Current Entry..."));
 
     _historyWindowAction->setText(tr("View Search History"));
     _favouritesWindowAction->setText(tr("Open List of Saved Words"));
@@ -700,6 +728,7 @@ void MainWindow::createMenus(void)
     _fileMenu = menuBar()->addMenu(tr("&File"));
     _editMenu = menuBar()->addMenu(tr("&Edit"));
     _searchMenu = menuBar()->addMenu(tr("&Search"));
+    _entryMenu = menuBar()->addMenu(tr("E&ntry"));
     _windowMenu = menuBar()->addMenu(tr("&Window"));
     _helpMenu = menuBar()->addMenu(tr("&Help"));
 }
@@ -781,15 +810,6 @@ void MainWindow::createActions(void)
             &MainWindow::setFocusToResults);
     _searchMenu->addAction(_setFocusToResultsAction);
 
-    _openCurrentSelectionInNewWindowAction = new QAction{this};
-    _openCurrentSelectionInNewWindowAction->setShortcut(
-        QKeySequence{"Ctrl+Shift+E"});
-    connect(_openCurrentSelectionInNewWindowAction,
-            &QAction::triggered,
-            this,
-            &MainWindow::openCurrentSelectionInNewWindow);
-    _searchMenu->addAction(_openCurrentSelectionInNewWindowAction);
-
     _searchMenu->addSeparator();
 
     _selectSimplifiedAction = new QAction{this};
@@ -831,6 +851,44 @@ void MainWindow::createActions(void)
             this,
             &MainWindow::selectEnglish);
     _searchMenu->addAction(_selectEnglishAction);
+
+    _favouriteCurrentEntryAction = new QAction{this};
+    _favouriteCurrentEntryAction->setShortcut(QKeySequence{"Ctrl+S"});
+    connect(_favouriteCurrentEntryAction, &QAction::triggered, this, [&]() {
+        emit favouriteCurrentEntry();
+    });
+    _entryMenu->addAction(_favouriteCurrentEntryAction);
+
+    _shareCurrentEntryAction = new QAction{this};
+    _shareCurrentEntryAction->setShortcut(QKeySequence{"Ctrl+P"});
+    connect(_shareCurrentEntryAction, &QAction::triggered, this, [&]() {
+        emit shareCurrentEntry();
+    });
+    _entryMenu->addAction(_shareCurrentEntryAction);
+
+    _openCurrentEntryInNewWindowAction = new QAction{this};
+    _openCurrentEntryInNewWindowAction->setShortcut(QKeySequence{"Ctrl+N"});
+    connect(_openCurrentEntryInNewWindowAction,
+            &QAction::triggered,
+            this,
+            [&]() { emit openCurrentEntryInNewWindow(); });
+    _entryMenu->addAction(_openCurrentEntryInNewWindowAction);
+
+    _magnifyCurrentEntryAction = new QAction{this};
+    _magnifyCurrentEntryAction->setShortcut(QKeySequence{"Ctrl+G"});
+    connect(_magnifyCurrentEntryAction, &QAction::triggered, this, [&]() {
+        emit magnifyCurrentEntry();
+    });
+    _entryMenu->addAction(_magnifyCurrentEntryAction);
+
+    _entryMenu->addSeparator();
+
+    _viewAllSentencesAction = new QAction{this};
+    _viewAllSentencesAction->setShortcut(QKeySequence{"Ctrl+T"});
+    connect(_viewAllSentencesAction, &QAction::triggered, this, [&]() {
+        emit viewAllSentences();
+    });
+    _entryMenu->addAction(_viewAllSentencesAction);
 
     _historyWindowAction = new QAction{this};
     _historyWindowAction->setShortcut(QKeySequence{"Ctrl+Shift+H"});
@@ -985,11 +1043,6 @@ void MainWindow::findAndSelectAll(void) const
 void MainWindow::setFocusToResults(void) const
 {
     _mainSplitter->setFocusToResults();
-}
-
-void MainWindow::openCurrentSelectionInNewWindow(void) const
-{
-    _mainSplitter->openCurrentSelectionInNewWindow();
 }
 
 void MainWindow::selectSimplified(void) const

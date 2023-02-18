@@ -138,6 +138,8 @@ void EntryHeaderWidget::translateUI()
                                             Strings::MANDARIN_IPA_SHORT));
         }
 
+        label->setFixedWidth(
+            label->fontMetrics().boundingRect(label->text()).width());
         label->setVisible(true);
     }
 

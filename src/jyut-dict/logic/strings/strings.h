@@ -38,6 +38,8 @@ constexpr auto CREDITS_TEXT = QT_TRANSLATE_NOOP(
     "style=\"color: %1; text-decoration: none\">Feather Icons</a> and "
     "<a href=https://github.com/microsoft/fluentui-system-icons "
     "style=\"color: %1; text-decoration: none\">Fluent UI System Icons</a>."
+    "<br>Contains FlowLayout code from <a href=\"file://%2\" style=\"color: "
+    "%1; text-decoration: none\">Qt</a>."
     "<br>Made with <a href=\"#\" style=\"color: %1; text-decoration: none\">"
     "Qt</a>.");
 constexpr auto CONTACT_TITLE

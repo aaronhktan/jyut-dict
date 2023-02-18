@@ -1,12 +1,8 @@
-#include "entryscrollarea.h"
+﻿#include "entryscrollarea.h"
 
-#include "logic/entry/definitionsset.h"
 #include "logic/entry/entry.h"
-#include "logic/sentence/sentenceset.h"
 
 #include <QScrollBar>
-
-#define ENTIRE_WIDTH -1
 
 EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
                                  std::shared_ptr<SQLDatabaseManager> manager,
@@ -29,8 +25,40 @@ EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
             _scrollAreaWidget,
             &EntryScrollAreaWidget::stallUISentenceUpdate);
 
+    connect(this,
+            &EntryScrollArea::favouriteCurrentEntry,
+            _scrollAreaWidget,
+            &EntryScrollAreaWidget::favouriteCurrentEntryRequested);
+
+    connect(this,
+            &EntryScrollArea::shareCurrentEntry,
+            _scrollAreaWidget,
+            &EntryScrollAreaWidget::shareCurrentEntryRequested);
+
+    connect(this,
+            &EntryScrollArea::openCurrentEntryInNewWindow,
+            _scrollAreaWidget,
+            &EntryScrollAreaWidget::openInNewWindow);
+
+    connect(this,
+            &EntryScrollArea::magnifyCurrentEntry,
+            _scrollAreaWidget,
+            &EntryScrollAreaWidget::openMagnifyWindow);
+
+    connect(this,
+            &EntryScrollArea::viewAllSentences,
+            _scrollAreaWidget,
+            &EntryScrollAreaWidget::viewAllSentencesRequested);
+
     if (!parent) {
         setMinimumHeight(400);
+    }
+}
+
+void EntryScrollArea::keyPressEvent(QKeyEvent *event)
+{
+    if (isWindow() && event->key() == Qt::Key_Escape) {
+        close();
     }
 }
 
@@ -97,5 +125,34 @@ void EntryScrollArea::stallEntryUIUpdate(void)
 void EntryScrollArea::updateStyleRequested(void)
 {
     _scrollAreaWidget->updateStyleRequested();
-    _scrollAreaWidget->resize(_scrollAreaWidget->sizeHint());
+    _scrollAreaWidget->resize(width()
+                                  - (verticalScrollBar()->isVisible()
+                                         ? verticalScrollBar()->width()
+                                         : 0),
+                              _scrollAreaWidget->sizeHint().height());
+}
+
+void EntryScrollArea::favouriteCurrentEntryRequested(void)
+{
+    emit favouriteCurrentEntry();
+}
+
+void EntryScrollArea::shareCurrentEntryRequested(void)
+{
+    emit shareCurrentEntry();
+}
+
+void EntryScrollArea::openCurrentEntryInNewWindowRequested(void)
+{
+    emit openCurrentEntryInNewWindow();
+}
+
+void EntryScrollArea::magnifyCurrentEntryRequested(void)
+{
+    emit magnifyCurrentEntry();
+}
+
+void EntryScrollArea::viewAllSentencesRequested(void)
+{
+    emit viewAllSentences();
 }

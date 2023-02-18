@@ -65,6 +65,9 @@ SOURCES += \
     components/historyview/viewhistorylistmodel.cpp \
     components/historyview/viewhistorylistview.cpp \
     components/historyview/viewhistorytab.cpp \
+    components/layouts/flowlayout.cpp \
+    components/magnifywindow/magnifyscrollarea.cpp \
+    components/magnifywindow/magnifyscrollareawidget.cpp \
     components/mainwindow/mainsplitter.cpp \
     components/mainwindow/maintoolbar.cpp \
     components/mainwindow/searchlineedit.cpp \
@@ -149,6 +152,9 @@ HEADERS += \
     components/historyview/viewhistorylistmodel.h \
     components/historyview/viewhistorylistview.h \
     components/historyview/viewhistorytab.h \
+    components/layouts/flowlayout.h \
+    components/magnifywindow/magnifyscrollarea.h \
+    components/magnifywindow/magnifyscrollareawidget.h \
     components/mainwindow/isearchlineedit.h \
     components/mainwindow/mainsplitter.h \
     components/mainwindow/maintoolbar.h \
@@ -249,6 +255,11 @@ macx: {
     APP_SETTINGS_FILES.path = Contents/Resources
     QMAKE_BUNDLE_DATA += APP_SETTINGS_FILES
 
+    # Add licenses to Resources folder in macOS bundle
+    FLOW_LAYOUT_LICENSE_FILES.files = resources/licenses/FLOW_LAYOUT_LICENSE.txt
+    FLOW_LAYOUT_LICENSE_FILES.path = Contents/Resources/licenses
+    QMAKE_BUNDLE_DATA += FLOW_LAYOUT_LICENSE_FILES
+
     # Add translations of application name
     TRANSLATE_en.files = platform/mac/en.lproj/InfoPlist.strings
     TRANSLATE_en.path = Contents/Resources/en.lproj
@@ -288,32 +299,27 @@ unix:!macx {
     SOURCES += logic/utils/utils_linux.cpp
     HEADERS += logic/utils/utils_linux.h
 
-    FLATPAK {
-        binfile.extra = cp \"$$system_path($$OUT_PWD)/Jyut Dictionary\" $$system_path($$OUT_PWD)/jyut-dict
-        binfile.files += $$system_path($$OUT_PWD)/jyut-dict
-        binfile.path = /app/bin/
-        binfile.CONFIG += no_check_exist
-        INSTALLS += binfile
-    } else {
-        # Move files to appropriate locations on desktop to install the program
-        binfile.extra = cp \"$$system_path($$OUT_PWD)/Jyut Dictionary\" $$system_path($$OUT_PWD)/jyut-dict
-        binfile.files += $$system_path($$OUT_PWD)/jyut-dict
-        binfile.path = /usr/bin/
-        binfile.CONFIG += no_check_exist
-        dictfile.files += resources/db/dict.db
-        dictfile.path = /usr/share/jyut-dict/dictionaries/
-        userfile.files += resources/db/user.db
-        userfile.path = /usr/share/jyut-dict/dictionaries/
-        shortcutfiles.files += platform/linux/jyut-dict.desktop
-        shortcutfiles.path = /usr/share/applications/
-        icon.files += resources/icon/jyut-dict.svg
-        icon.path = /usr/share/icons/hicolor/scalable/apps/
-        INSTALLS += binfile
-        INSTALLS += dictfile
-        INSTALLS += userfile
-        INSTALLS += shortcutfiles
-        INSTALLS += icon
-    }
+    # Move files to appropriate locations on desktop to install the program
+    binfile.extra = cp \"$$system_path($$OUT_PWD)/Jyut Dictionary\" $$system_path($$OUT_PWD)/jyut-dict
+    binfile.files += $$system_path($$OUT_PWD)/jyut-dict
+    binfile.path = /usr/bin/
+    binfile.CONFIG += no_check_exist
+    dictfile.files += resources/db/dict.db
+    dictfile.path = /usr/share/jyut-dict/dictionaries/
+    userfile.files += resources/db/user.db
+    userfile.path = /usr/share/jyut-dict/dictionaries/
+    flowlayoutlicensefile.files += resources/licenses/FLOW_LAYOUT_LICENSE.txt
+    flowlayoutlicensefile.path = /usr/share/jyut-dict/licenses/
+    shortcutfiles.files += platform/linux/jyut-dict.desktop
+    shortcutfiles.path = /usr/share/applications/
+    icon.files += resources/icon/jyut-dict.svg
+    icon.path = /usr/share/icons/hicolor/scalable/apps/
+    INSTALLS += binfile
+    INSTALLS += dictfile
+    INSTALLS += userfile
+    INSTALLS += flowlayoutlicensefile
+    INSTALLS += shortcutfiles
+    INSTALLS += icon
 }
 
 unix|win32:!macx {
@@ -329,32 +335,25 @@ unix|win32:!macx {
 
     QMAKE_EXTRA_COMPILERS += copy_files
 
+    # Copy licenses to build directory
+    LICENSEFILES = $$files($${PWD}/resources/licenses/FLOW_LAYOUT_LICENSE.txt)
+    copy_licenses.name = copy licenses
+    copy_licenses.input = LICENSEFILES
+    copy_licenses.output = $${OUT_PWD}/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
+    copy_licenses.commands = ${COPY_FILE} ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
+    copy_licenses.CONFIG += no_link target_predeps
+
+    QMAKE_EXTRA_COMPILERS += copy_licenses
+
     # Copy settings file to build directory
-    # From https://dragly.org/2013/11/05/copying-data-files-to-the-build-directory-when-working-with-qmake/
-    copysettings.commands = $(COPY_DIR) \"$$system_path($$PWD/resources/settings/settings.ini)\" \"$$system_path($$OUT_PWD)\"
-    second.depends = $(second) copysettings
-    export(second.depends)
-    export(copysettings.commands)
-    QMAKE_EXTRA_TARGETS += second copysettings
+    SETTINGSFILES = $$files($${PWD}/resources/settings/settings.ini)
+    copy_settings.name = copy settings
+    copy_settings.input = SETTINGSFILES
+    copy_settings.output = $${OUT_PWD}/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
+    copy_settings.commands = ${COPY_FILE} ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
+    copy_settings.CONFIG += no_link target_predeps
 
-    FLATPAK {
-        DESKTOP_FILES = \"$$system_path($$PWD/resources/icon/icon.iconset/icon_16x16.png)\"
-        DESKTOP_FILES += \"$$system_path($$PWD/resources/icon/icon.iconset/icon_32x32.png)\"
-        DESKTOP_FILES += \"$$system_path($$PWD/resources/icon/icon.iconset/icon_64x64.png)\"
-        DESKTOP_FILES += \"$$system_path($$PWD/resources/icon/icon.iconset/icon_128x128.png)\"
-        DESKTOP_FILES += \"$$system_path($$PWD/resources/icon/icon.iconset/icon_256x256.png)\"
-        DESKTOP_FILES += \"$$system_path($$PWD/resources/icon/icon.iconset/icon_512x512.png)\"
-        DESKTOP_FILES += \"$$system_path($$PWD/resources/icon/icon.svg)\"
-        DESKTOP_FILES += \"$$system_path($$PWD/platform/linux/flatpak/flatpak.desktop)\"
-        
-        copy_desktop.name = copy desktop and icon files
-        copy_desktop.input = DESKTOP_FILES
-        copy_desktop.output = $${OUT_PWD}/${QMAKE_FILE_BASE}${QMAKE_FILE_EXT}
-        copy_desktop.commands = ${COPY_FILE} ${QMAKE_FILE_IN} ${QMAKE_FILE_OUT}
-        copy_desktop.CONFIG += no_link target_predeps
-
-        QMAKE_EXTRA_COMPILERS += copy_desktop
-    }
+    QMAKE_EXTRA_COMPILERS += copy_settings
 }
 
 # Default rules for deployment.

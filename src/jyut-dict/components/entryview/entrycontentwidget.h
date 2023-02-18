@@ -29,6 +29,7 @@ private:
 
 signals:
     void stallSentenceUIUpdate(void);
+    void viewAllSentences(void);
 
 public slots:
     void hideDefinitionSection(void);
@@ -38,6 +39,8 @@ public slots:
     void showSentenceSection(void);
 
     void updateStyleRequested(void);
+
+    void viewAllSentencesRequested(void);
 };
 
 #endif // ENTRYCONTENTWIDGET_H

@@ -56,7 +56,7 @@ void EntryActionWidget::setEntry(const Entry &entry)
 {
     _entry = entry;
 
-    disconnect(this, nullptr, nullptr, nullptr);
+    disconnect(this, nullptr, this, nullptr);
     connect(this,
             &EntryActionWidget::callbackTriggered,
             this,
@@ -73,7 +73,7 @@ void EntryActionWidget::setEntry(const Entry &entry)
                                              QVariant::fromValue(entryExists));
                 refreshBookmarkButton();
                 setVisible(true);
-    });
+            });
 
     _sqlUserUtils->checkIfEntryHasBeenFavourited(entry);
 }
@@ -90,12 +90,27 @@ void EntryActionWidget::setupUI(void)
             this,
             &EntryActionWidget::shareAction);
 
-    _layout = new QHBoxLayout{this};
+    _openInNewWindowButton = new QPushButton{this};
+    _openInNewWindowButton->setVisible(false);
+    connect(_openInNewWindowButton,
+            &QPushButton::clicked,
+            this,
+            &EntryActionWidget::openInNewWindow);
+
+    _magnifyButton = new QPushButton{this};
+    _magnifyButton->setVisible(false);
+    connect(_magnifyButton,
+            &QPushButton::clicked,
+            this,
+            &EntryActionWidget::openMagnifyWindow);
+
+    _layout = new FlowLayout{this};
     _layout->setContentsMargins(0, 5, 0, 15);
     _layout->setSpacing(5);
     _layout->addWidget(_bookmarkButton);
     _layout->addWidget(_shareButton);
-    _layout->addStretch(0);
+    _layout->addWidget(_openInNewWindowButton);
+    _layout->addWidget(_magnifyButton);
 
     setStyle(Utils::isDarkMode());
     translateUI();
@@ -108,6 +123,8 @@ void EntryActionWidget::translateUI(void)
     _bookmarkButton->setText(
         _bookmarkButton->property("saved").toBool() ? tr("Saved!") : tr("Save"));
     _shareButton->setText(tr("Share"));
+    _openInNewWindowButton->setText(tr("Open in New Window"));
+    _magnifyButton->setText(tr("Magnify"));
 }
 
 void EntryActionWidget::setStyle(bool use_dark)
@@ -157,20 +174,23 @@ void EntryActionWidget::setStyle(bool use_dark)
                          "   padding-left: %6px; "
                          "   padding-right: %6px; "
                          "} ";
-    _bookmarkButton->setStyleSheet(styleSheet.arg(borderColour.name())
-                                       .arg(borderRadius)
-                                       .arg(textColour.name())
-                                       .arg(bodyFontSize)
-                                       .arg(padding)
-                                       .arg(paddingHorizontal));
-    _bookmarkButton->setMinimumHeight(borderRadius * 2);
-    _shareButton->setStyleSheet(styleSheet.arg(borderColour.name())
-                                    .arg(borderRadius)
-                                    .arg(textColour.name())
-                                    .arg(bodyFontSize)
-                                    .arg(padding)
-                                    .arg(paddingHorizontal));
-    _shareButton->setMinimumHeight(borderRadius * 2);
+
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+    foreach (const auto &button, buttons) {
+        button->setStyleSheet(styleSheet.arg(borderColour.name())
+                                  .arg(borderRadius)
+                                  .arg(textColour.name())
+                                  .arg(bodyFontSize)
+                                  .arg(padding)
+                                  .arg(paddingHorizontal));
+        button->setMinimumHeight(borderRadius * 2);
+
+#ifdef Q_OS_MAC
+        // Hack to get around weird button sizing issues when switching styles
+        button->setVisible(false);
+        button->setVisible(true);
+#endif
+    }
 
     if (_bookmarkButton->property("saved").toBool()) {
         _bookmarkButton->setIcon(
@@ -181,20 +201,20 @@ void EntryActionWidget::setStyle(bool use_dark)
     }
     _shareButton->setIcon(
         QIcon{use_dark ? ":/images/share_inverted.png" : ":/images/share.png"});
-
-#ifdef Q_OS_MAC
-    // Hack to get around weird button sizing issues when switching styles
-    _bookmarkButton->setVisible(false);
-    _shareButton->setVisible(false);
-    _bookmarkButton->setVisible(true);
-    _shareButton->setVisible(true);
-#endif
+    _openInNewWindowButton->setIcon(
+        QIcon{use_dark ? ":/images/external_link_inverted.png"
+                       : ":/images/external_link.png"});
+    _magnifyButton->setIcon(QIcon{use_dark ? ":/images/zoom_in_inverted.png"
+                                           : ":/images/zoom_in.png"});
 }
 
 void EntryActionWidget::refreshBookmarkButton(void)
 {
-    _bookmarkButton->setVisible(true);
-    _shareButton->setVisible(true);
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+    foreach (const auto &button, buttons) {
+        button->setVisible(true);
+    }
+
     setStyle(Utils::isDarkMode());
     translateUI();
 
@@ -222,6 +242,9 @@ void EntryActionWidget::removeEntryFromFavourites(const Entry &entry)
 
 void EntryActionWidget::shareAction(void)
 {
+    // This prevents the button from showing up as "pressed" in the screenshot
+    _shareButton->setAttribute(Qt::WA_UnderMouse, false);
+
     QPixmap map{parentWidget()->grab()};
     QFileDialog *_fileDialog = new QFileDialog{this};
     _fileDialog->setAcceptMode(QFileDialog::AcceptSave);
@@ -238,5 +261,19 @@ void EntryActionWidget::shareAction(void)
             QFile::remove(fileName);
         }
         map.save(fileName, "png");
+    }
+}
+
+void EntryActionWidget::favouriteCurrentEntryRequested(void)
+{
+    if (_bookmarkButton->isVisible()) {
+        _bookmarkButton->click();
+    }
+}
+
+void EntryActionWidget::shareCurrentEntryRequested(void)
+{
+    if (_shareButton->isVisible()) {
+        shareAction();
     }
 }

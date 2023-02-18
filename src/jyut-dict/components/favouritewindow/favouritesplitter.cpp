@@ -43,6 +43,13 @@ void FavouriteSplitter::changeEvent(QEvent *event)
     QSplitter::changeEvent(event);
 }
 
+void FavouriteSplitter::keyPressEvent(QKeyEvent *event)
+{
+    if (isWindow() && event->key() == Qt::Key_Escape) {
+        close();
+    }
+}
+
 void FavouriteSplitter::setupUI()
 {
     _entryScrollArea = new EntryScrollArea{_sqlUserUtils, _manager, this};

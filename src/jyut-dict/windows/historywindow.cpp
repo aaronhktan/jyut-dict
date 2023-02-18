@@ -10,6 +10,7 @@
 #include "logic/utils/utils_windows.h"
 #endif
 
+#include <QKeyEvent>
 #include <QTimer>
 
 HistoryWindow::HistoryWindow(
@@ -52,6 +53,13 @@ void HistoryWindow::changeEvent(QEvent *event)
         translateUI();
     }
     QWidget::changeEvent(event);
+}
+
+void HistoryWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        close();
+    }
 }
 
 void HistoryWindow::setupUI(void)

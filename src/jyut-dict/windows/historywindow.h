@@ -22,6 +22,7 @@ public:
                            QWidget *parent = nullptr);
 
     void changeEvent(QEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     void setupUI(void);

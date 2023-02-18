@@ -38,6 +38,11 @@ EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manag
             &EntryContentWidget::stallSentenceUIUpdate,
             _sentenceSection,
             &EntryViewSentenceCardSection::stallSentenceUIUpdate);
+
+    connect(this,
+            &EntryContentWidget::viewAllSentences,
+            _sentenceSection,
+            &EntryViewSentenceCardSection::viewAllSentencesRequested);
 }
 
 void EntryContentWidget::setEntry(const Entry &entry)
@@ -73,4 +78,9 @@ void EntryContentWidget::updateStyleRequested(void)
 {
     _definitionSection->updateStyleRequested();
     _sentenceSection->updateStyleRequested();
+}
+
+void EntryContentWidget::viewAllSentencesRequested(void)
+{
+    emit viewAllSentences();
 }

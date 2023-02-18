@@ -26,7 +26,10 @@ public:
                              std::shared_ptr<SQLDatabaseManager> manager,
                              QWidget *parent = nullptr);
 
+    void keyPressEvent(QKeyEvent *event) override;
+
     void setEntry(const Entry &entry);
+
 private:
     void resizeEvent(QResizeEvent *event) override;
 
@@ -42,10 +45,20 @@ private:
 
 signals:
     void stallSentenceUIUpdate(void);
+    void favouriteCurrentEntry(void);
+    void shareCurrentEntry(void);
+    void openCurrentEntryInNewWindow(void);
+    void magnifyCurrentEntry(void);
+    void viewAllSentences(void);
 
 public slots:
     void stallEntryUIUpdate(void);
     void updateStyleRequested(void);
+    void favouriteCurrentEntryRequested(void);
+    void shareCurrentEntryRequested(void);
+    void openCurrentEntryInNewWindowRequested(void);
+    void magnifyCurrentEntryRequested(void);
+    void viewAllSentencesRequested(void);
 };
 
 #endif // ENTRYSCROLLAREA_H

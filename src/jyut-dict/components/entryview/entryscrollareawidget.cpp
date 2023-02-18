@@ -1,5 +1,7 @@
 #include "entryscrollareawidget.h"
 
+#include "components/entryview/entryscrollarea.h"
+#include "components/magnifywindow/magnifyscrollarea.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -10,10 +12,13 @@
 
 #include <QTimer>
 
-EntryScrollAreaWidget::EntryScrollAreaWidget(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
-                                             std::shared_ptr<SQLDatabaseManager> manager,
-                                             QWidget *parent)
+EntryScrollAreaWidget::EntryScrollAreaWidget(
+    std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
+    std::shared_ptr<SQLDatabaseManager> manager,
+    QWidget *parent)
     : QWidget(parent)
+    , _sqlUserUtils{sqlUserUtils}
+    , _manager{manager}
 {
     setObjectName("EntryScrollAreaWidget");
 
@@ -38,6 +43,31 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(std::shared_ptr<SQLUserDataUtils> s
             &EntryScrollAreaWidget::stallUISentenceUpdate,
             _entryContentWidget,
             &EntryContentWidget::stallSentenceUIUpdate);
+
+    connect(this,
+            &EntryScrollAreaWidget::favouriteCurrentEntry,
+            _entryActionWidget,
+            &EntryActionWidget::favouriteCurrentEntryRequested);
+
+    connect(this,
+            &EntryScrollAreaWidget::shareCurrentEntry,
+            _entryActionWidget,
+            &EntryActionWidget::shareCurrentEntryRequested);
+
+    connect(this,
+            &EntryScrollAreaWidget::viewAllSentences,
+            _entryContentWidget,
+            &EntryContentWidget::viewAllSentencesRequested);
+
+    connect(_entryActionWidget,
+            &EntryActionWidget::openInNewWindow,
+            this,
+            &EntryScrollAreaWidget::openInNewWindow);
+
+    connect(_entryActionWidget,
+            &EntryActionWidget::openMagnifyWindow,
+            this,
+            &EntryScrollAreaWidget::openMagnifyWindow);
 }
 
 void EntryScrollAreaWidget::changeEvent(QEvent *event)
@@ -56,6 +86,8 @@ void EntryScrollAreaWidget::changeEvent(QEvent *event)
 
 void EntryScrollAreaWidget::setEntry(const Entry &entry)
 {
+    _entry = entry;
+    _entryIsValid = true;
     _entryHeaderWidget->setEntry(entry);
     _entryActionWidget->setEntry(entry);
     _entryContentWidget->setEntry(entry);
@@ -77,4 +109,59 @@ void EntryScrollAreaWidget::updateStyleRequested(void)
     QCoreApplication::sendEvent(_entryActionWidget, &event);
 
     _entryContentWidget->updateStyleRequested();
+
+    QList<MagnifyScrollArea *> areas = findChildren<MagnifyScrollArea *>();
+    for (auto &area : areas) {
+        area->updateStyleRequested();
+    }
+}
+
+void EntryScrollAreaWidget::favouriteCurrentEntryRequested(void)
+{
+    emit favouriteCurrentEntry();
+}
+
+void EntryScrollAreaWidget::shareCurrentEntryRequested(void)
+{
+    emit shareCurrentEntry();
+}
+
+void EntryScrollAreaWidget::openInNewWindow(void)
+{
+    if (!_entryIsValid) {
+        return;
+    }
+
+    EntryScrollArea *area = new EntryScrollArea{_sqlUserUtils,
+                                                _manager,
+                                                nullptr};
+    area->setParent(this, Qt::Window);
+    area->setAttribute(Qt::WA_DeleteOnClose);
+    area->setEntry(_entry);
+#ifndef Q_OS_MAC
+    area->setWindowTitle(" ");
+#endif
+    emit area->stallSentenceUIUpdate();
+    area->show();
+}
+
+void EntryScrollAreaWidget::openMagnifyWindow(void)
+{
+    if (!_entryIsValid) {
+        return;
+    }
+
+    MagnifyScrollArea *area = new MagnifyScrollArea{nullptr};
+    area->setParent(this, Qt::Window);
+    area->setAttribute(Qt::WA_DeleteOnClose);
+    area->setEntry(_entry);
+#ifndef Q_OS_MAC
+    area->setWindowTitle(" ");
+#endif
+    area->show();
+}
+
+void EntryScrollAreaWidget::viewAllSentencesRequested(void)
+{
+    emit viewAllSentences();
 }

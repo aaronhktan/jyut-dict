@@ -1,8 +1,9 @@
 #include "aboutwindow.h"
 
-#include "logic/utils/utils.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/strings/strings.h"
+#include "logic/utils/utils.h"
+#include "logic/utils/utils_qt.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined(Q_OS_LINUX)
@@ -154,13 +155,17 @@ void AboutWindow::translateUI()
     _descriptionLabel->setText(
         QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_DESCRIPTION));
     _messageLabel->setText(
-        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CREDITS_TEXT)
-            .arg(palette().text().color().name()));
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::CREDITS_TEXT)
+            .arg(palette().text().color().name(),
+                 Utils::getLicenseFolderPath() + "FLOW_LAYOUT_LICENSE.txt"));
 #ifndef Q_OS_MAC
     setWindowTitle(
         tr("About %1")
             .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME)));
 #endif
+
+    resize(sizeHint());
 }
 
 void AboutWindow::setStyle(bool use_dark)
