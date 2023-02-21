@@ -72,6 +72,7 @@ SOURCES += \
     components/mainwindow/maintoolbar.cpp \
     components/mainwindow/searchlineedit.cpp \
     components/mainwindow/searchoptionsradiogroupbox.cpp \
+    components/related/relatedsection.cpp \
     components/sentencecard/loadingwidget.cpp \
     components/sentencecard/sentencecardwidget.cpp \
     components/sentencecard/sentencecontentwidget.cpp \
@@ -160,6 +161,7 @@ HEADERS += \
     components/mainwindow/maintoolbar.h \
     components/mainwindow/searchlineedit.h \
     components/mainwindow/searchoptionsradiogroupbox.h \
+    components/related/relatedsection.h \
     components/sentencecard/loadingwidget.h \
     components/sentencecard/sentencecardwidget.h \
     components/sentencecard/sentencecontentwidget.h \
