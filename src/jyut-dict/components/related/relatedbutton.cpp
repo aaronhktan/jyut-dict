@@ -53,7 +53,6 @@ void RelatedButton::setupUI()
     _relatedButtonLayout->addWidget(_header);
     _relatedButtonLayout->addWidget(_content);
 
-    //    setMaximumWidth(250);
     setMinimumHeight(150);
 }
 

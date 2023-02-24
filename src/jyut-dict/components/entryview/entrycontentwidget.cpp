@@ -46,6 +46,11 @@ EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manag
             this,
             &EntryContentWidget::showRelatedSection);
 
+    connect(_sentenceSection,
+            &EntryViewSentenceCardSection::noCardsAdded,
+            this,
+            &EntryContentWidget::showRelatedSection);
+
     connect(this,
             &EntryContentWidget::stallSentenceUIUpdate,
             _sentenceSection,

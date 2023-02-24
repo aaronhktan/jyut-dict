@@ -76,6 +76,7 @@ signals:
                          const sentenceSamples &samples);
     void addingCards();
     void finishedAddingCards();
+    void noCardsAdded();
 
 public slots:
     void updateUI(

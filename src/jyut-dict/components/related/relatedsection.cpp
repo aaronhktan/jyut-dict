@@ -8,6 +8,17 @@ RelatedSection::RelatedSection(QWidget *parent)
     setupUI();
 }
 
+void RelatedSection::setVisible(bool visible)
+{
+    if (visible) {
+        // Only have margin at top of this widget if is visible
+        _relatedLayout->setContentsMargins(0, 11, 0, 0);
+    } else {
+        _relatedLayout->setContentsMargins(0, 0, 0, 0);
+    }
+    QWidget::setVisible(visible);
+}
+
 void RelatedSection::setEntry(const Entry &entry)
 {
     _searchBeginningButton->setEntry(entry);
@@ -18,7 +29,7 @@ void RelatedSection::setEntry(const Entry &entry)
 void RelatedSection::setupUI()
 {
     _relatedLayout = new QGridLayout{this};
-    _relatedLayout->setContentsMargins(0, 11, 0, 0);
+    _relatedLayout->setContentsMargins(0, 0, 0, 0);
     _relatedLayout->setSpacing(11);
 
     _searchBeginningButton = new RelatedButton{RelatedType::SearchBeginning,
@@ -45,7 +56,9 @@ void RelatedSection::setupUI()
     _relatedLayout->setColumnStretch(2, 1);
     _relatedLayout->setColumnStretch(3, 1);
 
-    setVisible(false);
+    // Call base class setVisible to avoid virtual function disabling during
+    // construction warning
+    QWidget::setVisible(false);
 }
 
 void RelatedSection::searchQueryRequested(QString query,

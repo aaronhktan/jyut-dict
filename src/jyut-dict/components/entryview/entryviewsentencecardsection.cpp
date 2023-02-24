@@ -93,6 +93,7 @@ void EntryViewSentenceCardSection::cleanup(void)
     }
     _sentenceCards.clear();
     _sentenceCardsLayout->removeWidget(_viewAllSentencesButton);
+    _sentenceCardsLayout->setContentsMargins(0, 0, 0, 0);
 }
 
 void EntryViewSentenceCardSection::changeEvent(QEvent *event)
@@ -210,6 +211,7 @@ void EntryViewSentenceCardSection::updateUI(
     // is nothing to display in the sentence card section.
     if (samples.empty()) {
         _sentenceCardsLayout->setContentsMargins(0, 0, 0, 0);
+        emit noCardsAdded();
         return;
     } else {
         _sentenceCardsLayout->setContentsMargins(0, 11, 0, 0);

@@ -17,6 +17,8 @@ class RelatedSection : public QWidget
 public:
     explicit RelatedSection(QWidget *parent = nullptr);
 
+    void setVisible(bool visible) override;
+
     void setEntry(const Entry &entry);
 
 private:
