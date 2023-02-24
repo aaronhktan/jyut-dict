@@ -226,15 +226,15 @@ void MainToolBar::setOpenFavouritesAction(QAction *action) const
 
 void MainToolBar::forwardSearchHistoryItem(const searchTermHistoryItem &pair) const
 {
-    _optionsBox->setOption(static_cast<SearchParameters>(pair.second));
     _searchBar->setText(pair.first.c_str());
+    _optionsBox->setOption(static_cast<SearchParameters>(pair.second));
 }
 
-void MainToolBar::searchQueryRequested(QString query,
-                                       SearchParameters parameters) const
+void MainToolBar::searchQueryRequested(const QString &query,
+                                       const SearchParameters &parameters) const
 {
-    _optionsBox->setOption(parameters);
     _searchBar->setText(query);
+    _optionsBox->setOption(parameters);
 }
 
 void MainToolBar::updateStyleRequested(void)

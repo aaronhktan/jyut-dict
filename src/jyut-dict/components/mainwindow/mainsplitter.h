@@ -61,7 +61,7 @@ signals:
     void openCurrentEntryInNewWindow(void);
     void magnifyCurrentEntry(void);
     void viewAllSentences(void);
-    void searchQuery(QString query, SearchParameters parameters);
+    void searchQuery(const QString &query, const SearchParameters &parameters);
 
 public slots:
     void forwardViewHistoryItem(const Entry &entry);
@@ -71,7 +71,8 @@ public slots:
     void openCurrentEntryInNewWindowRequested(void);
     void magnifyCurrentEntryRequested(void);
     void viewAllSentencesRequested(void);
-    void searchQueryRequested(QString query, SearchParameters parameters);
+    void searchQueryRequested(const QString &query,
+                              const SearchParameters &parameters);
 
 private slots:
     void prepareEntry(Entry &entry);

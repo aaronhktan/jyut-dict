@@ -48,7 +48,10 @@ private:
     QPushButton *_actionButton;
 
 signals:
-    void searchQuery(QString query, SearchParameters parameters);
+    void searchQuery(const QString &query, const SearchParameters &parameters);
+
+private slots:
+    void searchQueryRequested(void);
 };
 
 #endif // RELATEDBUTTONCONTENTWIDGET_H

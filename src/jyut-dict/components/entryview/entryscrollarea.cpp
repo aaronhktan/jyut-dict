@@ -162,8 +162,8 @@ void EntryScrollArea::viewAllSentencesRequested(void)
     emit viewAllSentences();
 }
 
-void EntryScrollArea::searchQueryRequested(QString query,
-                                           SearchParameters parameters)
+void EntryScrollArea::searchQueryRequested(const QString &query,
+                                           const SearchParameters &parameters)
 {
     emit searchQuery(query, parameters);
 }

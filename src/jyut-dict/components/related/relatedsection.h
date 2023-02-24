@@ -30,10 +30,11 @@ private:
     RelatedButton *_searchEndingButton;
 
 signals:
-    void searchQuery(QString query, SearchParameters parameters);
+    void searchQuery(const QString &query, const SearchParameters &parameters);
 
 public slots:
-    void searchQueryRequested(QString query, SearchParameters parameters);
+    void searchQueryRequested(const QString &query,
+                              const SearchParameters &parameters);
 };
 
 #endif // RELATEDSECTION_H

@@ -187,8 +187,8 @@ void EntryScrollAreaWidget::viewAllSentencesRequested(void)
     emit viewAllSentences();
 }
 
-void EntryScrollAreaWidget::searchQueryRequested(QString query,
-                                                 SearchParameters parameters)
+void EntryScrollAreaWidget::searchQueryRequested(
+    const QString &query, const SearchParameters &parameters)
 {
     emit searchQuery(query, parameters);
 }

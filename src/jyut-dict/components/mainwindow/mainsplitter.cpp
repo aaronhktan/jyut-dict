@@ -286,8 +286,8 @@ void MainSplitter::viewAllSentencesRequested(void)
     emit viewAllSentences();
 }
 
-void MainSplitter::searchQueryRequested(QString query,
-                                        SearchParameters parameters)
+void MainSplitter::searchQueryRequested(const QString &query,
+                                        const SearchParameters &parameters)
 {
     emit searchQuery(query, parameters);
 }

@@ -32,7 +32,7 @@ private:
 signals:
     void stallSentenceUIUpdate(void);
     void viewAllSentences(void);
-    void searchQuery(QString query, SearchParameters parameters);
+    void searchQuery(const QString &query, const SearchParameters &parameters);
 
 public slots:
     void hideDefinitionSection(void);
@@ -47,7 +47,8 @@ public slots:
     void updateStyleRequested(void);
 
     void viewAllSentencesRequested(void);
-    void searchQueryRequested(QString query, SearchParameters parameters);
+    void searchQueryRequested(const QString &query,
+                              const SearchParameters &parameters);
 };
 
 #endif // ENTRYCONTENTWIDGET_H

@@ -74,8 +74,8 @@ void RelatedSection::setupUI()
     QWidget::setVisible(false);
 }
 
-void RelatedSection::searchQueryRequested(QString query,
-                                          SearchParameters parameters)
+void RelatedSection::searchQueryRequested(const QString &query,
+                                          const SearchParameters &parameters)
 {
     emit searchQuery(query, parameters);
 }

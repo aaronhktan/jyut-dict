@@ -30,11 +30,7 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
 
     _clearLineEdit = new QAction{"", this};
     addAction(_clearLineEdit, QLineEdit::TrailingPosition);
-    connect(_clearLineEdit, &QAction::triggered, this,
-            [this](){
-                this->clear();
-                removeAction(_clearLineEdit);
-                _search->searchEnglish(text());});
+    connect(_clearLineEdit, &QAction::triggered, this, &QLineEdit::clear);
 
     // Customize the look of the searchbar to fit in better with platform styles
 #ifdef Q_OS_WIN
@@ -49,9 +45,9 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
 
     _search = sqlSearch;
 
-    connect(this, &QLineEdit::textChanged, [this]() {
-        this->checkClearVisibility();
-        this->search();
+    connect(this, &QLineEdit::textChanged, this, [&]() {
+        checkClearVisibility();
+        search();
     });
 
     _timer = new QTimer{this};
@@ -59,7 +55,9 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
 
 void SearchLineEdit::checkClearVisibility()
 {
-    if (text().isEmpty()) {
+    if (text().isEmpty() || !hasFocus()) {
+        // Don't add the clear line edit action if the widget doesn't have focus!
+        // Clicking on the clear line edit action causes a crash.
         removeAction(_clearLineEdit);
     } else {
         addAction(_clearLineEdit, QLineEdit::TrailingPosition);
@@ -90,7 +88,7 @@ void SearchLineEdit::focusInEvent(QFocusEvent *event)
     QLineEdit::focusInEvent(event);
 }
 
-// When out of focus, the clear button should never be visible.
+// When out of focus, the clear button should never be visible
 void SearchLineEdit::focusOutEvent(QFocusEvent *event)
 {
     removeAction(_clearLineEdit);

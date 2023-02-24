@@ -118,8 +118,8 @@ void EntryContentWidget::viewAllSentencesRequested(void)
     emit viewAllSentences();
 }
 
-void EntryContentWidget::searchQueryRequested(QString query,
-                                              SearchParameters parameters)
+void EntryContentWidget::searchQueryRequested(const QString &query,
+                                              const SearchParameters &parameters)
 {
     emit searchQuery(query, parameters);
 }

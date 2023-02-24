@@ -51,7 +51,7 @@ signals:
     void magnifyCurrentEntry(void);
     void viewAllSentences(void);
 
-    void searchQuery(QString query, SearchParameters parameters);
+    void searchQuery(const QString &query, const SearchParameters &parameters);
 
 public slots:
     void stallEntryUIUpdate(void);
@@ -62,7 +62,8 @@ public slots:
     void magnifyCurrentEntryRequested(void);
     void viewAllSentencesRequested(void);
 
-    void searchQueryRequested(QString query, SearchParameters parameters);
+    void searchQueryRequested(const QString &query,
+                              const SearchParameters &parameters);
 };
 
 #endif // ENTRYSCROLLAREA_H
