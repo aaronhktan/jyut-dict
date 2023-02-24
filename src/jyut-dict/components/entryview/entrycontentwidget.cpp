@@ -10,9 +10,11 @@ EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manag
 
     _definitionSection = new DefinitionCardSection{this};
     _sentenceSection = new EntryViewSentenceCardSection{manager, this};
+    _relatedSection = new RelatedSection{this};
 
     _entryContentLayout->addWidget(_definitionSection);
     _entryContentLayout->addWidget(_sentenceSection);
+    _entryContentLayout->addWidget(_relatedSection);
 
     connect(_definitionSection,
             &DefinitionCardSection::addingCards,
@@ -34,6 +36,16 @@ EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manag
             this,
             &EntryContentWidget::showSentenceSection);
 
+    connect(_definitionSection,
+            &DefinitionCardSection::addingCards,
+            this,
+            &EntryContentWidget::hideRelatedSection);
+
+    connect(_sentenceSection,
+            &EntryViewSentenceCardSection::finishedAddingCards,
+            this,
+            &EntryContentWidget::showRelatedSection);
+
     connect(this,
             &EntryContentWidget::stallSentenceUIUpdate,
             _sentenceSection,
@@ -49,6 +61,7 @@ void EntryContentWidget::setEntry(const Entry &entry)
 {
     _definitionSection->setEntry(entry);
     _sentenceSection->setEntry(entry);
+    _relatedSection->setEntry(entry);
 }
 
 void EntryContentWidget::hideDefinitionSection(void)
@@ -72,6 +85,16 @@ void EntryContentWidget::hideSentenceSection(void)
 void EntryContentWidget::showSentenceSection(void)
 {
     _sentenceSection->setVisible(true);
+}
+
+void EntryContentWidget::hideRelatedSection(void)
+{
+    _relatedSection->setVisible(false);
+}
+
+void EntryContentWidget::showRelatedSection(void)
+{
+    _relatedSection->setVisible(true);
 }
 
 void EntryContentWidget::updateStyleRequested(void)

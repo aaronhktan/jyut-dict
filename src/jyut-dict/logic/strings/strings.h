@@ -22,6 +22,7 @@ constexpr auto MANDARIN_IPA_SHORT = QT_TRANSLATE_NOOP("strings", "ZI");
 constexpr auto DEFINITIONS_ALL_CAPS = QT_TRANSLATE_NOOP("strings",
                                                         "DEFINITIONS");
 constexpr auto SENTENCES_ALL_CAPS = QT_TRANSLATE_NOOP("strings", "SENTENCES");
+constexpr auto RELATED_ALL_CAPS = QT_TRANSLATE_NOOP("strings", "RELATED SEARCH");
 
 constexpr auto PRODUCT_NAME = QT_TRANSLATE_NOOP("strings", "Jyut Dictionary");
 constexpr auto PRODUCT_DESCRIPTION

@@ -3,6 +3,7 @@
 
 #include "components/definitioncard/definitioncardsection.h"
 #include "components/entryview/entryviewsentencecardsection.h"
+#include "components/related/relatedsection.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/entry/entry.h"
 
@@ -26,6 +27,7 @@ private:
     QVBoxLayout *_entryContentLayout;
     DefinitionCardSection *_definitionSection;
     EntryViewSentenceCardSection *_sentenceSection;
+    RelatedSection *_relatedSection;
 
 signals:
     void stallSentenceUIUpdate(void);
@@ -37,6 +39,9 @@ public slots:
 
     void hideSentenceSection(void);
     void showSentenceSection(void);
+
+    void hideRelatedSection(void);
+    void showRelatedSection(void);
 
     void updateStyleRequested(void);
 

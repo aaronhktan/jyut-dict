@@ -23,19 +23,35 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(
     setObjectName("EntryScrollAreaWidget");
 
     // Entire Scroll Area
-    _scrollAreaLayout = new QVBoxLayout{this};
-    _scrollAreaLayout->setSpacing(0);
+    _scrollAreaLayout = new QGridLayout{this};
     _scrollAreaLayout->setContentsMargins(11, 11, 11, 11);
+    _scrollAreaLayout->setSpacing(0);
 
     _entryHeaderWidget = new EntryHeaderWidget{this};
+    _entryHeaderWidget->setMaximumWidth(800);
     _entryActionWidget = new EntryActionWidget{sqlUserUtils, this};
+    _entryActionWidget->setMaximumWidth(800);
     _entryContentWidget = new EntryContentWidget{manager, this};
+    _entryContentWidget->setMaximumWidth(800);
 
     // Add all widgets to main layout
-    _scrollAreaLayout->addWidget(_entryHeaderWidget);
-    _scrollAreaLayout->addWidget(_entryActionWidget);
-    _scrollAreaLayout->addWidget(_entryContentWidget);
-    _scrollAreaLayout->addStretch(1);
+    // Spacer on left
+    _scrollAreaLayout->addItem(new QSpacerItem{0, 0}, 0, 0, 1, 1);
+    // Spacer on right
+    _scrollAreaLayout->addItem(new QSpacerItem{0, 0}, 0, 2, 1, 1);
+    // Spacer at bottom
+    _scrollAreaLayout->addItem(new QSpacerItem{0,
+                                               0,
+                                               QSizePolicy::Minimum,
+                                               QSizePolicy::MinimumExpanding},
+                               3,
+                               1,
+                               1,
+                               1);
+
+    _scrollAreaLayout->addWidget(_entryHeaderWidget, 0, 1, 1, 1);
+    _scrollAreaLayout->addWidget(_entryActionWidget, 1, 1, 1, 1);
+    _scrollAreaLayout->addWidget(_entryContentWidget, 2, 1, 1, 1);
 
     setStyle(Utils::isDarkMode());
 

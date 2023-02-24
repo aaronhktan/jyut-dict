@@ -1,10 +1,14 @@
 #ifndef RELATEDSECTION_H
 #define RELATEDSECTION_H
 
+#include "components/related/relatedbutton.h"
 #include "logic/entry/entry.h"
 #include "logic/search/searchparameters.h"
 
+#include <QEvent>
+#include <QGridLayout>
 #include <QPushButton>
+#include <QSettings>
 #include <QWidget>
 
 class RelatedSection : public QWidget
@@ -16,12 +20,18 @@ public:
     void setEntry(const Entry &entry);
 
 private:
-    QPushButton *_searchBeginningButton;
-    QPushButton *_searchContainingButton;
-    QPushButton *_searchEndingButton;
+    void setupUI();
+
+    QGridLayout *_relatedLayout;
+    RelatedButton *_searchBeginningButton;
+    RelatedButton *_searchContainingButton;
+    RelatedButton *_searchEndingButton;
 
 signals:
     void searchQuery(QString query, SearchParameters parameters);
+
+public slots:
+    void searchQueryRequested(QString query, SearchParameters parameters);
 };
 
 #endif // RELATEDSECTION_H

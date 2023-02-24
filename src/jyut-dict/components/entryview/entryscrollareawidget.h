@@ -7,7 +7,7 @@
 #include "logic/database/sqldatabasemanager.h"
 
 #include <QEvent>
-#include <QVBoxLayout>
+#include <QGridLayout>
 #include <QWidget>
 
 // The DefinitionScrollAreaWidget is the widget that contains other widgets
@@ -35,7 +35,7 @@ private:
     Entry _entry;
     bool _entryIsValid = false;
 
-    QVBoxLayout *_scrollAreaLayout;
+    QGridLayout *_scrollAreaLayout;
 
     EntryHeaderWidget *_entryHeaderWidget;
     EntryActionWidget *_entryActionWidget;
