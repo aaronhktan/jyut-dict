@@ -69,6 +69,9 @@ void EntryScrollArea::keyPressEvent(QKeyEvent *event)
 
 void EntryScrollArea::setEntry(const Entry &entry)
 {
+    // Scroll to top of scrollable area when new entry is set
+    ensureVisible(0, 0);
+
     _updateUITimer->stop();
     disconnect(_updateUITimer, nullptr, nullptr, nullptr);
 

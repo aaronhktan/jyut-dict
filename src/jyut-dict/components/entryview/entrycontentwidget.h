@@ -19,6 +19,7 @@ class EntryContentWidget : public QWidget
     Q_OBJECT
 public:
     explicit EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manager,
+                                bool showRelatedSection = true,
                                 QWidget *parent = nullptr);
 
     void setEntry(const Entry &entry);

@@ -1,7 +1,9 @@
 #include "entrycontentwidget.h"
 
-EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manager,
-                                       QWidget *parent)
+EntryContentWidget::EntryContentWidget(
+    std::shared_ptr<SQLDatabaseManager> manager,
+    bool showRelatedSection,
+    QWidget *parent)
     : QWidget(parent)
 {
     _entryContentLayout = new QVBoxLayout{this};
@@ -41,15 +43,17 @@ EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manag
             this,
             &EntryContentWidget::hideRelatedSection);
 
-    connect(_sentenceSection,
-            &EntryViewSentenceCardSection::finishedAddingCards,
-            this,
-            &EntryContentWidget::showRelatedSection);
+    if (showRelatedSection) {
+        connect(_sentenceSection,
+                &EntryViewSentenceCardSection::finishedAddingCards,
+                this,
+                &EntryContentWidget::showRelatedSection);
 
-    connect(_sentenceSection,
-            &EntryViewSentenceCardSection::noCardsAdded,
-            this,
-            &EntryContentWidget::showRelatedSection);
+        connect(_sentenceSection,
+                &EntryViewSentenceCardSection::noCardsAdded,
+                this,
+                &EntryContentWidget::showRelatedSection);
+    }
 
     connect(this,
             &EntryContentWidget::stallSentenceUIUpdate,

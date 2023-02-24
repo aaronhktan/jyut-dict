@@ -31,7 +31,10 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(
     _entryHeaderWidget->setMaximumWidth(800);
     _entryActionWidget = new EntryActionWidget{sqlUserUtils, this};
     _entryActionWidget->setMaximumWidth(800);
-    _entryContentWidget = new EntryContentWidget{manager, this};
+    _entryContentWidget
+        = new EntryContentWidget{manager,
+                                 /* showRelatedSection */ !parent->isWindow(),
+                                 this};
     _entryContentWidget->setMaximumWidth(800);
 
     // Add all widgets to main layout
