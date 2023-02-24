@@ -53,6 +53,11 @@ void RelatedButton::setupUI()
     _relatedButtonLayout->addWidget(_header);
     _relatedButtonLayout->addWidget(_content);
 
+    connect(_content,
+            &RelatedButtonContentWidget::searchQuery,
+            this,
+            &RelatedButton::searchQueryRequested);
+
     setMinimumHeight(150);
 }
 
@@ -77,4 +82,10 @@ void RelatedButton::setStyle(bool use_dark)
                            "}";
     }
     setStyleSheet(widgetStyleSheet.arg(borderColour.name()));
+}
+
+void RelatedButton::searchQueryRequested(QString query,
+                                         SearchParameters parameters)
+{
+    emit searchQuery(query, parameters);
 }

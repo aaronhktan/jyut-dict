@@ -85,6 +85,11 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
             _entryScrollArea,
             &EntryScrollArea::viewAllSentencesRequested);
 
+    connect(_entryScrollArea,
+            &EntryScrollArea::searchQuery,
+            this,
+            &MainSplitter::searchQueryRequested);
+
     setHandleWidth(1);
     setCollapsible(0, false);
     setCollapsible(1, false);
@@ -279,4 +284,10 @@ void MainSplitter::magnifyCurrentEntryRequested(void)
 void MainSplitter::viewAllSentencesRequested(void)
 {
     emit viewAllSentences();
+}
+
+void MainSplitter::searchQueryRequested(QString query,
+                                        SearchParameters parameters)
+{
+    emit searchQuery(query, parameters);
 }

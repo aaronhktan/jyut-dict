@@ -46,6 +46,7 @@ signals:
     void favouriteCurrentEntry(void);
     void shareCurrentEntry(void);
     void viewAllSentences(void);
+    void searchQuery(QString query, SearchParameters parameters);
 
 public slots:
     void updateStyleRequested(void);
@@ -54,6 +55,7 @@ public slots:
     void openInNewWindow(void);
     void openMagnifyWindow(void);
     void viewAllSentencesRequested(void);
+    void searchQueryRequested(QString query, SearchParameters parameters);
 };
 
 #endif // ENTRYSCROLLAREAWIDGET_H

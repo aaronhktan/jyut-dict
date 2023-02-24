@@ -50,6 +50,11 @@ EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
             _scrollAreaWidget,
             &EntryScrollAreaWidget::viewAllSentencesRequested);
 
+    connect(_scrollAreaWidget,
+            &EntryScrollAreaWidget::searchQuery,
+            this,
+            &EntryScrollArea::searchQueryRequested);
+
     if (!parent) {
         setMinimumHeight(400);
     }
@@ -155,4 +160,10 @@ void EntryScrollArea::magnifyCurrentEntryRequested(void)
 void EntryScrollArea::viewAllSentencesRequested(void)
 {
     emit viewAllSentences();
+}
+
+void EntryScrollArea::searchQueryRequested(QString query,
+                                           SearchParameters parameters)
+{
+    emit searchQuery(query, parameters);
 }

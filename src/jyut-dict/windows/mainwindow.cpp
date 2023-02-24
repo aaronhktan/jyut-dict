@@ -130,6 +130,10 @@ MainWindow::MainWindow(QWidget *parent) :
             &MainToolBar::searchBarTextChange,
             _mainSplitter,
             &MainSplitter::forwardSearchBarTextChange);
+    connect(_mainSplitter,
+            &MainSplitter::searchQuery,
+            _mainToolBar,
+            &MainToolBar::searchQueryRequested);
 
     // Create menu bar and populate it
     createMenus();

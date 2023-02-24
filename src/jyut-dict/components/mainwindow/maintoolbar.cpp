@@ -1,7 +1,6 @@
 #include "maintoolbar.h"
 
 #include "logic/search/searchoptionsmediator.h"
-#include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -10,7 +9,6 @@
 #elif defined(Q_OS_WIN)
 #include "logic/utils/utils_windows.h"
 #endif
-#include "logic/utils/utils_qt.h"
 
 MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
                          std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
@@ -230,6 +228,13 @@ void MainToolBar::forwardSearchHistoryItem(const searchTermHistoryItem &pair) co
 {
     _optionsBox->setOption(static_cast<SearchParameters>(pair.second));
     _searchBar->setText(pair.first.c_str());
+}
+
+void MainToolBar::searchQueryRequested(QString query,
+                                       SearchParameters parameters) const
+{
+    _optionsBox->setOption(parameters);
+    _searchBar->setText(query);
 }
 
 void MainToolBar::updateStyleRequested(void)

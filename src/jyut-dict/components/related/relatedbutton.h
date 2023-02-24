@@ -38,6 +38,9 @@ private:
 
 signals:
     void searchQuery(QString query, SearchParameters parameters);
+
+public slots:
+    void searchQueryRequested(QString query, SearchParameters parameters);
 };
 
 #endif // RELATEDBUTTON_H

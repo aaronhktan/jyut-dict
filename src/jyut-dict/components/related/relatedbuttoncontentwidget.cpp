@@ -64,6 +64,51 @@ void RelatedButtonContentWidget::setupUI()
 
     _relatedButtonLayout->addWidget(_description);
     _relatedButtonLayout->addWidget(_actionButton);
+
+    connect(_actionButton, &QPushButton::clicked, this, [&]() {
+        SearchParameters params;
+        QString queryCharacters;
+
+        EntryCharactersOptions characterOptions
+            = _settings
+                  ->value("characterOptions",
+                          QVariant::fromValue(
+                              EntryCharactersOptions::PREFER_TRADITIONAL))
+                  .value<EntryCharactersOptions>();
+        switch (characterOptions) {
+        case EntryCharactersOptions::PREFER_TRADITIONAL:
+        case EntryCharactersOptions::ONLY_TRADITIONAL: {
+            params = SearchParameters::TRADITIONAL;
+            queryCharacters = _traditional.c_str();
+            break;
+        }
+        case EntryCharactersOptions::PREFER_SIMPLIFIED:
+        case EntryCharactersOptions::ONLY_SIMPLIFIED: {
+            params = SearchParameters::SIMPLIFIED;
+            queryCharacters = _simplified.c_str();
+            break;
+        }
+        }
+
+        QString query;
+
+        switch (_buttonType) {
+        case RelatedType::SearchBeginning: {
+            query = queryCharacters + "?*";
+            break;
+        }
+        case RelatedType::SearchContaining: {
+            query = "*?" + queryCharacters + "?*";
+            break;
+        }
+        case RelatedType::SearchEnding: {
+            query = "*?" + queryCharacters + "$";
+            break;
+        }
+        }
+
+        emit searchQuery(query, params);
+    });
 }
 
 void RelatedButtonContentWidget::translateUI()

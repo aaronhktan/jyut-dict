@@ -56,6 +56,19 @@ void RelatedSection::setupUI()
     _relatedLayout->setColumnStretch(2, 1);
     _relatedLayout->setColumnStretch(3, 1);
 
+    connect(_searchBeginningButton,
+            &RelatedButton::searchQuery,
+            this,
+            &RelatedSection::searchQueryRequested);
+    connect(_searchContainingButton,
+            &RelatedButton::searchQuery,
+            this,
+            &RelatedSection::searchQueryRequested);
+    connect(_searchEndingButton,
+            &RelatedButton::searchQuery,
+            this,
+            &RelatedSection::searchQueryRequested);
+
     // Call base class setVisible to avoid virtual function disabling during
     // construction warning
     QWidget::setVisible(false);

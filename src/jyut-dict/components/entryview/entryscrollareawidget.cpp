@@ -84,6 +84,11 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(
             &EntryActionWidget::openMagnifyWindow,
             this,
             &EntryScrollAreaWidget::openMagnifyWindow);
+
+    connect(_entryContentWidget,
+            &EntryContentWidget::searchQuery,
+            this,
+            &EntryScrollAreaWidget::searchQueryRequested);
 }
 
 void EntryScrollAreaWidget::changeEvent(QEvent *event)
@@ -180,4 +185,10 @@ void EntryScrollAreaWidget::openMagnifyWindow(void)
 void EntryScrollAreaWidget::viewAllSentencesRequested(void)
 {
     emit viewAllSentences();
+}
+
+void EntryScrollAreaWidget::searchQueryRequested(QString query,
+                                                 SearchParameters parameters)
+{
+    emit searchQuery(query, parameters);
 }

@@ -60,6 +60,11 @@ EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manag
             &EntryContentWidget::viewAllSentences,
             _sentenceSection,
             &EntryViewSentenceCardSection::viewAllSentencesRequested);
+
+    connect(_relatedSection,
+            &RelatedSection::searchQuery,
+            this,
+            &EntryContentWidget::searchQueryRequested);
 }
 
 void EntryContentWidget::setEntry(const Entry &entry)
@@ -111,4 +116,10 @@ void EntryContentWidget::updateStyleRequested(void)
 void EntryContentWidget::viewAllSentencesRequested(void)
 {
     emit viewAllSentences();
+}
+
+void EntryContentWidget::searchQueryRequested(QString query,
+                                              SearchParameters parameters)
+{
+    emit searchQuery(query, parameters);
 }
