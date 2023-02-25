@@ -54,6 +54,7 @@ void RelatedButton::setupUI()
 
     _relatedButtonLayout->addWidget(_header);
     _relatedButtonLayout->addWidget(_content);
+    _relatedButtonLayout->setStretchFactor(_content, 1);
 
     connect(_content,
             &RelatedButtonContentWidget::searchQuery,
