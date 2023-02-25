@@ -19,7 +19,6 @@ RelatedButtonHeaderWidget::RelatedButtonHeaderWidget(QWidget *parent)
     : QWidget(parent)
 {
     setObjectName("RelatedButtonHeaderWidget");
-    setAttribute(Qt::WA_StyledBackground);
 
     _settings = Settings::getSettings(this);
 
@@ -30,12 +29,11 @@ RelatedButtonHeaderWidget::RelatedButtonHeaderWidget(QWidget *parent)
     _titleLabel = new QLabel{this};
     _titleLabel->setObjectName("RelatedButtonHeaderWidgetTitleLabel");
     _titleLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
-    _titleLabel->setAlignment(Qt::AlignHCenter);
+    _titleLabel->setAlignment(Qt::AlignCenter);
 
     _layout->addWidget(_titleLabel);
 
     translateUI();
-    setStyle(Utils::isDarkMode());
 }
 
 void RelatedButtonHeaderWidget::changeEvent(QEvent *event)
@@ -57,9 +55,12 @@ void RelatedButtonHeaderWidget::changeEvent(QEvent *event)
 
 void RelatedButtonHeaderWidget::translateUI()
 {
+    setStyle(Utils::isDarkMode());
     _titleLabel->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                                      Strings::RELATED_ALL_CAPS));
-    setStyle(Utils::isDarkMode());
+    _titleLabel->setFixedHeight(
+        _titleLabel->fontMetrics().boundingRect(_titleLabel->text()).height());
+    resize(minimumSizeHint());
 }
 
 void RelatedButtonHeaderWidget::setStyle(bool use_dark)
@@ -102,6 +103,4 @@ void RelatedButtonHeaderWidget::setStyle(bool use_dark)
                                           LABEL_TEXT_COLOUR_LIGHT_R};
     _titleLabel->setStyleSheet(
         textStyleSheet.arg(textColour.name()).arg(bodyFontSize));
-
-    setMaximumHeight(minimumSizeHint().height());
 }

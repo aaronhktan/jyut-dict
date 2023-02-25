@@ -40,6 +40,7 @@ signals:
     void searchQuery(QString query, SearchParameters parameters);
 
 public slots:
+    void updateStyleRequested(void);
     void searchQueryRequested(QString query, SearchParameters parameters);
 };
 

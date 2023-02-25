@@ -16,9 +16,9 @@
 DefinitionHeaderWidget::DefinitionHeaderWidget(QWidget *parent)
     : QWidget(parent)
 {
-    _settings = Settings::getSettings(this);
-
     setObjectName("DefinitionHeaderWidget");
+
+    _settings = Settings::getSettings(this);
 
     _layout = new QVBoxLayout{this};
     _layout->setContentsMargins(10, 10, 10, 10);
@@ -51,6 +51,8 @@ void DefinitionHeaderWidget::setSectionTitle(const std::string &title)
 {
     setStyle(Utils::isDarkMode());
     _titleLabel->setText(title.c_str());
+    _titleLabel->setFixedHeight(
+        _titleLabel->fontMetrics().boundingRect(_titleLabel->text()).height());
     resize(minimumSizeHint());
 }
 

@@ -33,6 +33,7 @@ signals:
     void searchQuery(const QString &query, const SearchParameters &parameters);
 
 public slots:
+    void updateStyleRequested(void);
     void searchQueryRequested(const QString &query,
                               const SearchParameters &parameters);
 };

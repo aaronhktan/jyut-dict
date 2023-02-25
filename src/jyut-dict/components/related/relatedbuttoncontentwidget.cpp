@@ -56,6 +56,7 @@ void RelatedButtonContentWidget::setupUI()
     _relatedButtonLayout = new QVBoxLayout{this};
     _relatedButtonLayout->setContentsMargins(11, 11, 11, 11);
     _relatedButtonLayout->setSpacing(11);
+    _relatedButtonLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
 
     _description = new QLabel{this};
     _description->setWordWrap(true);
@@ -121,6 +122,11 @@ void RelatedButtonContentWidget::setStyle(bool use_dark)
     int borderRadius = static_cast<int>(bodyFontSize * 1.5);
     int padding = bodyFontSize / 6;
     int paddingHorizontal = bodyFontSize / 3;
+
+    QString descriptionLabelStyleSheet = "QLabel { "
+                                         "   font-size: %2px; "
+                                         "}";
+    _description->setStyleSheet(descriptionLabelStyleSheet.arg(bodyFontSize));
 
     QString buttonStyleSheet;
     if (use_dark) {

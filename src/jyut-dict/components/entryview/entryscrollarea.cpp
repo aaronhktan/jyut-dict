@@ -79,11 +79,13 @@ void EntryScrollArea::setEntry(const Entry &entry)
             disconnect(_updateUITimer, nullptr, nullptr, nullptr);
             _scrollAreaWidget->setEntry(entry);
             _scrollAreaWidget->setVisible(false);
+            int largerHeight = std::max(_scrollAreaWidget->sizeHint().height(),
+                                        height());
             _scrollAreaWidget->resize(width()
                                           - (verticalScrollBar()->isVisible()
                                                  ? verticalScrollBar()->width()
                                                  : 0),
-                                      _scrollAreaWidget->sizeHint().height());
+                                      largerHeight);
             _scrollAreaWidget->setVisible(true);
             // Scroll to top of scrollable area when new entry is set
             ensureVisible(0, 0);
@@ -94,11 +96,13 @@ void EntryScrollArea::setEntry(const Entry &entry)
 
 void EntryScrollArea::resizeEvent(QResizeEvent *event)
 {
+    int largerHeight = std::max(_scrollAreaWidget->sizeHint().height(),
+                                height());
     _scrollAreaWidget->resize(width()
                                   - (verticalScrollBar()->isVisible()
                                          ? verticalScrollBar()->width()
                                          : 0),
-                              _scrollAreaWidget->sizeHint().height());
+                              largerHeight);
     event->accept();
 }
 

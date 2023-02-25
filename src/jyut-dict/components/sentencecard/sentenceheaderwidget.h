@@ -13,8 +13,6 @@ class SentenceHeaderWidget : public QWidget
 {
 public:
     explicit SentenceHeaderWidget(QWidget *parent = nullptr);
-    explicit SentenceHeaderWidget(std::string title,
-                                  QWidget *parent = nullptr);
 
     void changeEvent(QEvent *event) override;
 

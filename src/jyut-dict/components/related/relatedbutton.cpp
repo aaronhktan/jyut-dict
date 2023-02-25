@@ -9,6 +9,7 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QCoreApplication>
 #include <QTimer>
 
 RelatedButton::RelatedButton(RelatedType type, QWidget *parent)
@@ -46,6 +47,7 @@ void RelatedButton::setupUI()
     _relatedButtonLayout = new QVBoxLayout{this};
     _relatedButtonLayout->setContentsMargins(0, 0, 0, 0);
     _relatedButtonLayout->setSpacing(0);
+    _relatedButtonLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
 
     _header = new RelatedButtonHeaderWidget{this};
     _content = new RelatedButtonContentWidget{_buttonType, this};
@@ -58,7 +60,7 @@ void RelatedButton::setupUI()
             this,
             &RelatedButton::searchQueryRequested);
 
-    setMinimumHeight(150);
+    setFixedHeight(150);
 }
 
 void RelatedButton::setStyle(bool use_dark)
@@ -82,6 +84,13 @@ void RelatedButton::setStyle(bool use_dark)
                            "}";
     }
     setStyleSheet(widgetStyleSheet.arg(borderColour.name()));
+}
+
+void RelatedButton::updateStyleRequested(void)
+{
+    QEvent event{QEvent::PaletteChange};
+    QCoreApplication::sendEvent(_header, &event);
+    QCoreApplication::sendEvent(_content, &event);
 }
 
 void RelatedButton::searchQueryRequested(QString query,

@@ -115,6 +115,7 @@ void EntryContentWidget::updateStyleRequested(void)
 {
     _definitionSection->updateStyleRequested();
     _sentenceSection->updateStyleRequested();
+    _relatedSection->updateStyleRequested();
 }
 
 void EntryContentWidget::viewAllSentencesRequested(void)

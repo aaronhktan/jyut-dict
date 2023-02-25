@@ -51,6 +51,14 @@ void RelatedSection::setupUI()
                             4,
                             1,
                             1);
+    _relatedLayout->addItem(new QSpacerItem{0,
+                                            0,
+                                            QSizePolicy::MinimumExpanding,
+                                            QSizePolicy::Expanding},
+                            1,
+                            1,
+                            1,
+                            3);
 
     _relatedLayout->setColumnStretch(1, 1);
     _relatedLayout->setColumnStretch(2, 1);
@@ -72,6 +80,15 @@ void RelatedSection::setupUI()
     // Call base class setVisible to avoid virtual function disabling during
     // construction warning
     QWidget::setVisible(false);
+}
+
+void RelatedSection::updateStyleRequested(void)
+{
+    QList<RelatedButton *> buttons = this->findChildren<RelatedButton *>();
+    foreach (const auto &button, buttons) {
+        button->updateStyleRequested();
+    }
+    resize(minimumSizeHint());
 }
 
 void RelatedSection::searchQueryRequested(const QString &query,
