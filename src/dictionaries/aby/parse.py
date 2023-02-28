@@ -120,7 +120,8 @@ def insert_words(c, words):
     #   - 3000000000-3999999999: MoEDict
     #   - 4000000000-4999999999: Cross-Straits Dictionary
     #   - 5000000000-5999999999: ABC Chinese-English Dictionary
-    example_id = 5000000000
+    #   - 6000000000-6999999999: ABC Cantonese-English Dictionary
+    example_id = 6000000000
 
     for key in words:
         for entry in words[key]:
