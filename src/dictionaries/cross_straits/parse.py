@@ -246,6 +246,9 @@ def parse_file(filename, words):
                     # Remove dashes in pinyin
                     pins = list(map(lambda x: x.replace("-", " "), pins))
 
+                    # Remove apostrophes in pinyin
+                    pins = list(map(lambda x: x.replace("'", " "), pins))
+
                     # Remove commas in pinyin
                     pins = list(map(lambda x: x.replace(",", ""), pins))
 
