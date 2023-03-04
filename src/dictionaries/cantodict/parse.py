@@ -32,6 +32,7 @@ import sys
 #   - 卡拉OK has latin script in the entry
 #   - AA制 starts with latin script
 #   - 蛇 gwe has an extra space at the end of the entry name
+#   - 节哀顺变 has double spaces in its Jyutping
 #   - 犄角 has zero-width spaces in its Pinyin
 #   - 購 has multiple pronunciations in Jyutping
 #   - 垃圾 has Taiwan/PRC differences in pronunciation (Taiwan first)

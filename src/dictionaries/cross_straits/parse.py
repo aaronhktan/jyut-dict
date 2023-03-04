@@ -23,6 +23,7 @@ import unicodedata
 #   - 歛: multiple heteronyms, labels for definitions
 #   - 穀: some duplicate definitions (姓。) and has labels for literary use (〈書〉)
 #   - 横征暴敛: Pinyin has dashes in it (bad!)
+#   - 节哀顺变: has apostrophes in the Pinyin
 #   - 空橋: contains 陸⃝ in the definition
 #   - 空擋: contains 臺⃝ in the definition
 #   - 空濛: has a literary definition
