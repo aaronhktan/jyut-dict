@@ -320,7 +320,7 @@ def parse_word_file(file_name, words):
         jyut = jyut_element.get_text() if jyut_element else ""
         jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN.sub("", jyut)
         jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN_VARIANT.sub("\g<2>", jyut)
-        jyut = jyut.replace("  ", " ") # Remove double-spaces
+        jyut = jyut.replace("  ", " ")  # Remove double-spaces
         jyut = jyut.strip()
 
         pin_element = soup.find("span", class_="cardpinyin")
@@ -335,7 +335,7 @@ def parse_word_file(file_name, words):
         pin = pin.strip().replace("v", "u:")
         # Remove the zero-width spaces that sometimes show up
         pin = pin.replace("​", "")
-        pin = pin.replace("  ", " ") # Remove double-spaces
+        pin = pin.replace("  ", " ")  # Remove double-spaces
 
         # CantoDict may have multiple pronunciations for an entry
         # Check for multiple pronunciations in Jyutping
