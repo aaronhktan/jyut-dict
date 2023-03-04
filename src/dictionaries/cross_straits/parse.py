@@ -53,9 +53,58 @@ LABEL_REGEX_PATTERNS = [
 ]
 
 PUNCTUATION_TABLE = {}
+PUNCTUATION_SET = set()
+SYMBOL_SET = set()
 for i in range(sys.maxunicode):
     if unicodedata.category(chr(i)).startswith("P"):
         PUNCTUATION_TABLE[i] = " " + chr(i) + " "
+        PUNCTUATION_SET.add(chr(i))
+    elif unicodedata.category(chr(i)).startswith("S"):
+        SYMBOL_SET.add(chr(i))
+
+
+ZHUYIN_SET = {
+    "ㄅ",
+    "ㄆ",
+    "ㄇ",
+    "ㄈ",
+    "ㄉ",
+    "ㄊ",
+    "ㄋ",
+    "ㄌ",
+    "ㄍ",
+    "ㄎ",
+    "ㄏ",
+    "ㄐ",
+    "ㄑ",
+    "ㄒ",
+    "ㄓ",
+    "ㄔ",
+    "ㄕ",
+    "ㄖ",
+    "ㄗ",
+    "ㄘ",
+    "ㄙ",
+    "ㄚ",
+    "ㄛ",
+    "ㄜ",
+    "ㄝ",
+    "ㄞ",
+    "ㄟ",
+    "ㄠ",
+    "ㄡ",
+    "ㄢ",
+    "ㄣ",
+    "ㄤ",
+    "ㄥ",
+    "ㄦ",
+    "ㄧ",
+    "ㄨ",
+    "ㄩ",
+    "ㄪ",
+    "ㄫ",
+    "ㄬ",
+}
 
 converter = opencc.OpenCC("tw2s.json")
 
@@ -248,7 +297,7 @@ def parse_file(filename, words):
                     pins = list(map(lambda x: x.replace("-", " "), pins))
 
                     # Remove apostrophes in pinyin
-                    pins = list(map(lambda x: x.replace("'", " "), pins))
+                    pins = list(map(lambda x: x.replace("’", " "), pins))
 
                     # Remove commas in pinyin
                     pins = list(map(lambda x: x.replace(",", ""), pins))
@@ -380,6 +429,9 @@ def parse_file(filename, words):
                                 example_texts = example.split("、")
 
                             for example_text in example_texts:
+                                # Remove "（陸⃝" characters (special case when preceded by opening bracket)
+                                example_text = example_text.replace("（陸⃝", "（陸：")
+
                                 # Strip out weird whitespace
                                 example_text = re.sub(
                                     WHITESPACE_REGEX_PATTERN, "", example_text
@@ -402,18 +454,24 @@ def parse_file(filename, words):
                                     neutral_tone_with_five=True,
                                 )
                                 example_pinyin = []
-                                for item in example_pinyin_list:
-                                    if len(item) > 1:
-                                        example_pinyin += " ".join(item).split()
+                                for p in example_pinyin_list:
+                                    if p != "UV":
+                                        p = p.replace("v", "u:")
+                                    if (
+                                        p.isnumeric()
+                                        or not p[-1].isnumeric()
+                                        or any(zy in p for zy in ZHUYIN_SET)
+                                        or any(punct in p for punct in PUNCTUATION_SET)
+                                        or any(punct in p for punct in SYMBOL_SET)
+                                    ):
+                                        example_pinyin += list(p)
                                     else:
-                                        example_pinyin.append(item)
+                                        example_pinyin.append(p)
                                 example_pinyin = " ".join(example_pinyin).lower()
                                 example_pinyin = example_pinyin.translate(
                                     PUNCTUATION_TABLE
                                 )
-                                example_pinyin = example_pinyin.strip().replace(
-                                    "v", "u:"
-                                )
+                                example_pinyin = example_pinyin.strip()
 
                                 # Since the pinyin returned by lazy_pinyin doesn't always match the pinyin
                                 # given in the heteronym, attempt to replace pinyin corresponding to the
