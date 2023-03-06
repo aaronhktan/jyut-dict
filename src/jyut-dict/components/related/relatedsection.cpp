@@ -64,6 +64,18 @@ void RelatedSection::setupUI()
     _relatedLayout->setColumnStretch(2, 1);
     _relatedLayout->setColumnStretch(3, 1);
 
+    connect(this,
+            &RelatedSection::searchEntriesBeginning,
+            _searchBeginningButton,
+            &RelatedButton::searchRequested);
+    connect(this,
+            &RelatedSection::searchEntriesContaining,
+            _searchContainingButton,
+            &RelatedButton::searchRequested);
+    connect(this,
+            &RelatedSection::searchEntriesEnding,
+            _searchEndingButton,
+            &RelatedButton::searchRequested);
     connect(_searchBeginningButton,
             &RelatedButton::searchQuery,
             this,
@@ -89,6 +101,21 @@ void RelatedSection::updateStyleRequested(void)
         button->updateStyleRequested();
     }
     resize(minimumSizeHint());
+}
+
+void RelatedSection::searchEntriesBeginningRequested(void)
+{
+    emit searchEntriesBeginning();
+}
+
+void RelatedSection::searchEntriesContainingRequested(void)
+{
+    emit searchEntriesContaining();
+}
+
+void RelatedSection::searchEntriesEndingRequested(void)
+{
+    emit searchEntriesEnding();
 }
 
 void RelatedSection::searchQueryRequested(const QString &query,

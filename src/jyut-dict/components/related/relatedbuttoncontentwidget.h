@@ -50,6 +50,9 @@ private:
 signals:
     void searchQuery(const QString &query, const SearchParameters &parameters);
 
+public slots:
+    void searchRequested(void);
+
 private slots:
     void searchQueryRequested(void);
 };

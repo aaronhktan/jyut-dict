@@ -37,10 +37,15 @@ private:
     RelatedButtonContentWidget *_content;
 
 signals:
+    void search(void);
+
     void searchQuery(QString query, SearchParameters parameters);
 
 public slots:
     void updateStyleRequested(void);
+
+    void searchRequested(void);
+
     void searchQueryRequested(QString query, SearchParameters parameters);
 };
 

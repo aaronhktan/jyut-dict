@@ -74,6 +74,9 @@ private:
     QAction *_openCurrentEntryInNewWindowAction;
     QAction *_magnifyCurrentEntryAction;
     QAction *_viewAllSentencesAction;
+    QAction *_searchWordsBeginningAction;
+    QAction *_searchWordsContainingAction;
+    QAction *_searchWordsEndingAction;
 
     QAction *_historyWindowAction;
     QAction *_favouritesWindowAction;
@@ -137,11 +140,16 @@ private:
 signals:
     void searchHistoryClicked(const searchTermHistoryItem &pair);
     void viewHistoryClicked(const Entry &entry);
+
     void favouriteCurrentEntry(void);
     void shareCurrentEntry(void);
     void openCurrentEntryInNewWindow(void);
     void magnifyCurrentEntry(void);
     void viewAllSentences(void);
+
+    void searchEntriesBeginning(void);
+    void searchEntriesContaining(void);
+    void searchEntriesEnding(void);
 
 public slots:
     void notifyUpdateAvailable(bool updateAvailable,

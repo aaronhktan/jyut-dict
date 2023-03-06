@@ -32,7 +32,13 @@ private:
 
 signals:
     void stallSentenceUIUpdate(void);
+
     void viewAllSentences(void);
+
+    void searchEntriesBeginning(void);
+    void searchEntriesContaining(void);
+    void searchEntriesEnding(void);
+
     void searchQuery(const QString &query, const SearchParameters &parameters);
 
 public slots:
@@ -48,6 +54,11 @@ public slots:
     void updateStyleRequested(void);
 
     void viewAllSentencesRequested(void);
+
+    void searchEntriesBeginningRequested(void);
+    void searchEntriesContainingRequested(void);
+    void searchEntriesEndingRequested(void);
+
     void searchQueryRequested(const QString &query,
                               const SearchParameters &parameters);
 };

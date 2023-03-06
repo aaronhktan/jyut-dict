@@ -45,22 +45,32 @@ private:
 
 signals:
     void stallSentenceUIUpdate(void);
+
     void favouriteCurrentEntry(void);
     void shareCurrentEntry(void);
     void openCurrentEntryInNewWindow(void);
     void magnifyCurrentEntry(void);
     void viewAllSentences(void);
 
+    void searchEntriesBeginning(void);
+    void searchEntriesContaining(void);
+    void searchEntriesEnding(void);
+
     void searchQuery(const QString &query, const SearchParameters &parameters);
 
 public slots:
     void stallEntryUIUpdate(void);
     void updateStyleRequested(void);
+
     void favouriteCurrentEntryRequested(void);
     void shareCurrentEntryRequested(void);
     void openCurrentEntryInNewWindowRequested(void);
     void magnifyCurrentEntryRequested(void);
     void viewAllSentencesRequested(void);
+
+    void searchEntriesBeginningRequested(void);
+    void searchEntriesContainingRequested(void);
+    void searchEntriesEndingRequested(void);
 
     void searchQueryRequested(const QString &query,
                               const SearchParameters &parameters);

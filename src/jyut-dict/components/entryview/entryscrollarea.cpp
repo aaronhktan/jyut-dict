@@ -50,6 +50,21 @@ EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
             _scrollAreaWidget,
             &EntryScrollAreaWidget::viewAllSentencesRequested);
 
+    connect(this,
+            &EntryScrollArea::searchEntriesBeginning,
+            _scrollAreaWidget,
+            &EntryScrollAreaWidget::searchEntriesBeginningRequested);
+
+    connect(this,
+            &EntryScrollArea::searchEntriesContaining,
+            _scrollAreaWidget,
+            &EntryScrollAreaWidget::searchEntriesContainingRequested);
+
+    connect(this,
+            &EntryScrollArea::searchEntriesEnding,
+            _scrollAreaWidget,
+            &EntryScrollAreaWidget::searchEntriesEndingRequested);
+
     connect(_scrollAreaWidget,
             &EntryScrollAreaWidget::searchQuery,
             this,
@@ -166,6 +181,21 @@ void EntryScrollArea::magnifyCurrentEntryRequested(void)
 void EntryScrollArea::viewAllSentencesRequested(void)
 {
     emit viewAllSentences();
+}
+
+void EntryScrollArea::searchEntriesBeginningRequested(void)
+{
+    emit searchEntriesBeginning();
+}
+
+void EntryScrollArea::searchEntriesContainingRequested(void)
+{
+    emit searchEntriesContaining();
+}
+
+void EntryScrollArea::searchEntriesEndingRequested(void)
+{
+    emit searchEntriesEnding();
 }
 
 void EntryScrollArea::searchQueryRequested(const QString &query,

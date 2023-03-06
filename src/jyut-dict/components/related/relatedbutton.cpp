@@ -56,6 +56,10 @@ void RelatedButton::setupUI()
     _relatedButtonLayout->addWidget(_content);
     _relatedButtonLayout->setStretchFactor(_content, 1);
 
+    connect(this,
+            &RelatedButton::search,
+            _content,
+            &RelatedButtonContentWidget::searchRequested);
     connect(_content,
             &RelatedButtonContentWidget::searchQuery,
             this,
@@ -92,6 +96,11 @@ void RelatedButton::updateStyleRequested(void)
     QEvent event{QEvent::PaletteChange};
     QCoreApplication::sendEvent(_header, &event);
     QCoreApplication::sendEvent(_content, &event);
+}
+
+void RelatedButton::searchRequested(void)
+{
+    emit search();
 }
 
 void RelatedButton::searchQueryRequested(QString query,

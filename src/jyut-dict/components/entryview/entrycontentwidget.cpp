@@ -65,6 +65,21 @@ EntryContentWidget::EntryContentWidget(
             _sentenceSection,
             &EntryViewSentenceCardSection::viewAllSentencesRequested);
 
+    connect(this,
+            &EntryContentWidget::searchEntriesBeginning,
+            _relatedSection,
+            &RelatedSection::searchEntriesBeginningRequested);
+
+    connect(this,
+            &EntryContentWidget::searchEntriesContaining,
+            _relatedSection,
+            &RelatedSection::searchEntriesContainingRequested);
+
+    connect(this,
+            &EntryContentWidget::searchEntriesEnding,
+            _relatedSection,
+            &RelatedSection::searchEntriesEndingRequested);
+
     connect(_relatedSection,
             &RelatedSection::searchQuery,
             this,
@@ -121,6 +136,21 @@ void EntryContentWidget::updateStyleRequested(void)
 void EntryContentWidget::viewAllSentencesRequested(void)
 {
     emit viewAllSentences();
+}
+
+void EntryContentWidget::searchEntriesBeginningRequested(void)
+{
+    emit searchEntriesBeginning();
+}
+
+void EntryContentWidget::searchEntriesContainingRequested(void)
+{
+    emit searchEntriesContaining();
+}
+
+void EntryContentWidget::searchEntriesEndingRequested(void)
+{
+    emit searchEntriesEnding();
 }
 
 void EntryContentWidget::searchQueryRequested(const QString &query,

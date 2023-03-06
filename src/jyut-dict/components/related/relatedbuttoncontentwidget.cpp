@@ -206,6 +206,13 @@ void RelatedButtonContentWidget::setStyle(bool use_dark)
     }
 }
 
+void RelatedButtonContentWidget::searchRequested(void)
+{
+    if (_actionButton->isVisible()) {
+        _actionButton->click();
+    }
+}
+
 void RelatedButtonContentWidget::searchQueryRequested(void)
 {
     SearchParameters params;

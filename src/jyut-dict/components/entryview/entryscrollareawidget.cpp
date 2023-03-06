@@ -78,6 +78,21 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(
             _entryContentWidget,
             &EntryContentWidget::viewAllSentencesRequested);
 
+    connect(this,
+            &EntryScrollAreaWidget::searchEntriesBeginning,
+            _entryContentWidget,
+            &EntryContentWidget::searchEntriesBeginningRequested);
+
+    connect(this,
+            &EntryScrollAreaWidget::searchEntriesContaining,
+            _entryContentWidget,
+            &EntryContentWidget::searchEntriesContainingRequested);
+
+    connect(this,
+            &EntryScrollAreaWidget::searchEntriesEnding,
+            _entryContentWidget,
+            &EntryContentWidget::searchEntriesEndingRequested);
+
     connect(_entryActionWidget,
             &EntryActionWidget::openInNewWindow,
             this,
@@ -188,6 +203,21 @@ void EntryScrollAreaWidget::openMagnifyWindow(void)
 void EntryScrollAreaWidget::viewAllSentencesRequested(void)
 {
     emit viewAllSentences();
+}
+
+void EntryScrollAreaWidget::searchEntriesBeginningRequested(void)
+{
+    emit searchEntriesBeginning();
+}
+
+void EntryScrollAreaWidget::searchEntriesContainingRequested(void)
+{
+    emit searchEntriesContaining();
+}
+
+void EntryScrollAreaWidget::searchEntriesEndingRequested(void)
+{
+    emit searchEntriesEnding();
 }
 
 void EntryScrollAreaWidget::searchQueryRequested(
