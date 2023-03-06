@@ -16,24 +16,8 @@ namespace ChineseUtils {
 static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
 
 const static std::unordered_set<std::string> specialCharacters = {
-    ".",
-    "。",
-    ",",
-    "，",
-    "!",
-    "！",
-    "?",
-    "？",
-    "%",
-    "－",
-    "…",
-    "⋯",
-    ".",
-    "·",
-    "\"",
-    "“",
-    "”",
-    "$",
+    ".", "。", ",", "，", "!",  "！", "?", "？", "%",  "－",
+    "…", "⋯",  ".", "·",  "\"", "“",  "”", "$",  "｜",
 };
 
 const static std::unordered_map<std::string, std::string>
