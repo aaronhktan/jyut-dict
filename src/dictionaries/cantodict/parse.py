@@ -32,6 +32,7 @@ import sys
 #   - 卡拉OK has latin script in the entry
 #   - AA制 starts with latin script
 #   - 蛇 gwe has an extra space at the end of the entry name
+#   - 节哀顺变 has double spaces in its Jyutping
 #   - 犄角 has zero-width spaces in its Pinyin
 #   - 購 has multiple pronunciations in Jyutping
 #   - 垃圾 has Taiwan/PRC differences in pronunciation (Taiwan first)
@@ -319,6 +320,7 @@ def parse_word_file(file_name, words):
         jyut = jyut_element.get_text() if jyut_element else ""
         jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN.sub("", jyut)
         jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN_VARIANT.sub("\g<2>", jyut)
+        jyut = jyut.replace("  ", " ")  # Remove double-spaces
         jyut = jyut.strip()
 
         pin_element = soup.find("span", class_="cardpinyin")
@@ -333,6 +335,7 @@ def parse_word_file(file_name, words):
         pin = pin.strip().replace("v", "u:")
         # Remove the zero-width spaces that sometimes show up
         pin = pin.replace("​", "")
+        pin = pin.replace("  ", " ")  # Remove double-spaces
 
         # CantoDict may have multiple pronunciations for an entry
         # Check for multiple pronunciations in Jyutping
