@@ -509,31 +509,31 @@
         <translation>数据库迁移失败！</translation>
     </message>
     <message>
-        <location line="+171"/>
-        <location line="+469"/>
+        <location line="+187"/>
+        <location line="+475"/>
         <source>&amp;File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location line="-468"/>
-        <location line="+469"/>
+        <location line="-474"/>
+        <location line="+475"/>
         <source>&amp;Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location line="-466"/>
-        <location line="+469"/>
+        <location line="-472"/>
+        <location line="+475"/>
         <source>&amp;Window</source>
         <translation>窗口</translation>
     </message>
     <message>
-        <location line="-468"/>
-        <location line="+469"/>
+        <location line="-474"/>
+        <location line="+475"/>
         <source>&amp;Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location line="-467"/>
+        <location line="-473"/>
         <source>&amp;About</source>
         <translation>关于粤语词典</translation>
     </message>
@@ -554,12 +554,12 @@
     </message>
     <message>
         <location line="+2"/>
-        <location line="+473"/>
+        <location line="+479"/>
         <source>Change settings</source>
         <translation>更改设置</translation>
     </message>
     <message>
-        <location line="-471"/>
+        <location line="-477"/>
         <source>Close Window</source>
         <translation>关闭窗口</translation>
     </message>
@@ -615,12 +615,12 @@
     </message>
     <message>
         <location line="-27"/>
-        <location line="+469"/>
+        <location line="+475"/>
         <source>E&amp;ntry</source>
         <translation>词条</translation>
     </message>
     <message>
-        <location line="-432"/>
+        <location line="-438"/>
         <source>View Large Version of Current Entry...</source>
         <translation>放大这条词条…</translation>
     </message>
@@ -630,14 +630,14 @@
         <translation>查看这条词条的所有例句…</translation>
     </message>
     <message>
-        <location line="+955"/>
+        <location line="+984"/>
         <source>Migrating database to new version...
 This might take a few minutes.
 Hang tight!</source>
         <translation>数据库迁移已启动，请稍等几分钟</translation>
     </message>
     <message>
-        <location line="-966"/>
+        <location line="-995"/>
         <source>Search Jyutping</source>
         <translation>搜索粤语拼音</translation>
     </message>
@@ -668,6 +668,21 @@ Hang tight!</source>
     </message>
     <message>
         <location line="+6"/>
+        <source>Find Entries That Begin With Current Entry</source>
+        <translation>在词典里查找以该选择词开头的词条</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Find Entries That Contain Current Entry</source>
+        <translation>在词典里查找包含该选择词的词条</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Find Entries That End With Current Entry</source>
+        <translation>在词典里查找以该选择词结尾的词条</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>View Search History</source>
         <translation>打开历史记录</translation>
     </message>
@@ -702,13 +717,13 @@ Hang tight!</source>
         <translation>检查更新…</translation>
     </message>
     <message>
-        <location line="-50"/>
-        <location line="+469"/>
+        <location line="-56"/>
+        <location line="+475"/>
         <source>&amp;Search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location line="+478"/>
+        <location line="+501"/>
         <source>Checking for update...</source>
         <translation>正在检查更新…</translation>
     </message>
@@ -781,6 +796,29 @@ Hang tight!</source>
     <message>
         <source>OK</source>
         <translation>确定</translation>
+    </message>
+</context>
+<context>
+    <name>RelatedButtonContentWidget</name>
+    <message>
+        <location filename="../../components/related/relatedbuttoncontentwidget.cpp" line="+79"/>
+        <source>Find entries that begin with this entry</source>
+        <translation>在词典里查找以该选择词开头的词条</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Find entries that contain this entry</source>
+        <translation>在词典里查找包含该选择词的词条</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Find entries that end with this entry</source>
+        <translation>在词典里查找以该选择词结尾的词条</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Search →</source>
+        <translation>查词典 →</translation>
     </message>
 </context>
 <context>
@@ -935,7 +973,7 @@ Hang tight!</source>
 <context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+142"/>
+        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+140"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
@@ -1335,12 +1373,12 @@ Hang tight!</source>
     <name>strings</name>
     <message>
         <location filename="../../logic/strings/strings.h" line="+16"/>
-        <location line="+79"/>
+        <location line="+80"/>
         <source>JP</source>
         <translation>粤拼</translation>
     </message>
     <message>
-        <location line="-78"/>
+        <location line="-79"/>
         <source>YL</source>
         <translation>耶魯粵拼</translation>
     </message>
@@ -1351,12 +1389,12 @@ Hang tight!</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+77"/>
+        <location line="+78"/>
         <source>PY</source>
         <translation>汉语拼音</translation>
     </message>
     <message>
-        <location line="-76"/>
+        <location line="-77"/>
         <source>ZY</source>
         <translation>注音</translation>
     </message>
@@ -1374,6 +1412,11 @@ Hang tight!</source>
         <location line="+2"/>
         <source>SENTENCES</source>
         <translation>例句</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>RELATED</source>
+        <translation>相关项目</translation>
     </message>
     <message>
         <location line="+2"/>
