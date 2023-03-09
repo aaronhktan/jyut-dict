@@ -1,7 +1,9 @@
 #include "entrycontentwidget.h"
 
-EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manager,
-                                       QWidget *parent)
+EntryContentWidget::EntryContentWidget(
+    std::shared_ptr<SQLDatabaseManager> manager,
+    bool showRelatedSection,
+    QWidget *parent)
     : QWidget(parent)
 {
     _entryContentLayout = new QVBoxLayout{this};
@@ -10,9 +12,11 @@ EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manag
 
     _definitionSection = new DefinitionCardSection{this};
     _sentenceSection = new EntryViewSentenceCardSection{manager, this};
+    _relatedSection = new RelatedSection{this};
 
     _entryContentLayout->addWidget(_definitionSection);
     _entryContentLayout->addWidget(_sentenceSection);
+    _entryContentLayout->addWidget(_relatedSection);
 
     connect(_definitionSection,
             &DefinitionCardSection::addingCards,
@@ -34,6 +38,23 @@ EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manag
             this,
             &EntryContentWidget::showSentenceSection);
 
+    connect(_definitionSection,
+            &DefinitionCardSection::addingCards,
+            this,
+            &EntryContentWidget::hideRelatedSection);
+
+    if (showRelatedSection) {
+        connect(_sentenceSection,
+                &EntryViewSentenceCardSection::finishedAddingCards,
+                this,
+                &EntryContentWidget::showRelatedSection);
+
+        connect(_sentenceSection,
+                &EntryViewSentenceCardSection::noCardsAdded,
+                this,
+                &EntryContentWidget::showRelatedSection);
+    }
+
     connect(this,
             &EntryContentWidget::stallSentenceUIUpdate,
             _sentenceSection,
@@ -43,12 +64,33 @@ EntryContentWidget::EntryContentWidget(std::shared_ptr<SQLDatabaseManager> manag
             &EntryContentWidget::viewAllSentences,
             _sentenceSection,
             &EntryViewSentenceCardSection::viewAllSentencesRequested);
+
+    connect(this,
+            &EntryContentWidget::searchEntriesBeginning,
+            _relatedSection,
+            &RelatedSection::searchEntriesBeginningRequested);
+
+    connect(this,
+            &EntryContentWidget::searchEntriesContaining,
+            _relatedSection,
+            &RelatedSection::searchEntriesContainingRequested);
+
+    connect(this,
+            &EntryContentWidget::searchEntriesEnding,
+            _relatedSection,
+            &RelatedSection::searchEntriesEndingRequested);
+
+    connect(_relatedSection,
+            &RelatedSection::searchQuery,
+            this,
+            &EntryContentWidget::searchQueryRequested);
 }
 
 void EntryContentWidget::setEntry(const Entry &entry)
 {
     _definitionSection->setEntry(entry);
     _sentenceSection->setEntry(entry);
+    _relatedSection->setEntry(entry);
 }
 
 void EntryContentWidget::hideDefinitionSection(void)
@@ -74,13 +116,45 @@ void EntryContentWidget::showSentenceSection(void)
     _sentenceSection->setVisible(true);
 }
 
+void EntryContentWidget::hideRelatedSection(void)
+{
+    _relatedSection->setVisible(false);
+}
+
+void EntryContentWidget::showRelatedSection(void)
+{
+    _relatedSection->setVisible(true);
+}
+
 void EntryContentWidget::updateStyleRequested(void)
 {
     _definitionSection->updateStyleRequested();
     _sentenceSection->updateStyleRequested();
+    _relatedSection->updateStyleRequested();
 }
 
 void EntryContentWidget::viewAllSentencesRequested(void)
 {
     emit viewAllSentences();
+}
+
+void EntryContentWidget::searchEntriesBeginningRequested(void)
+{
+    emit searchEntriesBeginning();
+}
+
+void EntryContentWidget::searchEntriesContainingRequested(void)
+{
+    emit searchEntriesContaining();
+}
+
+void EntryContentWidget::searchEntriesEndingRequested(void)
+{
+    emit searchEntriesEnding();
+}
+
+void EntryContentWidget::searchQueryRequested(const QString &query,
+                                              const SearchParameters &parameters)
+{
+    emit searchQuery(query, parameters);
 }

@@ -468,181 +468,196 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="259"/>
-        <location filename="../../windows/mainwindow.cpp" line="728"/>
+        <location filename="../../windows/mainwindow.cpp" line="275"/>
+        <location filename="../../windows/mainwindow.cpp" line="750"/>
         <source>&amp;File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="260"/>
-        <location filename="../../windows/mainwindow.cpp" line="729"/>
+        <location filename="../../windows/mainwindow.cpp" line="276"/>
+        <location filename="../../windows/mainwindow.cpp" line="751"/>
         <source>&amp;Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="263"/>
-        <location filename="../../windows/mainwindow.cpp" line="732"/>
+        <location filename="../../windows/mainwindow.cpp" line="279"/>
+        <location filename="../../windows/mainwindow.cpp" line="754"/>
         <source>&amp;Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="264"/>
-        <location filename="../../windows/mainwindow.cpp" line="733"/>
+        <location filename="../../windows/mainwindow.cpp" line="280"/>
+        <location filename="../../windows/mainwindow.cpp" line="755"/>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="266"/>
+        <location filename="../../windows/mainwindow.cpp" line="282"/>
         <source>&amp;About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="267"/>
+        <location filename="../../windows/mainwindow.cpp" line="283"/>
         <source>Show the application&apos;s About box</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="270"/>
+        <location filename="../../windows/mainwindow.cpp" line="286"/>
         <source>Preferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="272"/>
+        <location filename="../../windows/mainwindow.cpp" line="288"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="274"/>
-        <location filename="../../windows/mainwindow.cpp" line="747"/>
+        <location filename="../../windows/mainwindow.cpp" line="290"/>
+        <location filename="../../windows/mainwindow.cpp" line="769"/>
         <source>Change settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="276"/>
+        <location filename="../../windows/mainwindow.cpp" line="292"/>
         <source>Close Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="278"/>
+        <location filename="../../windows/mainwindow.cpp" line="294"/>
         <source>Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="279"/>
+        <location filename="../../windows/mainwindow.cpp" line="295"/>
         <source>Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="280"/>
+        <location filename="../../windows/mainwindow.cpp" line="296"/>
         <source>Cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="281"/>
+        <location filename="../../windows/mainwindow.cpp" line="297"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="282"/>
+        <location filename="../../windows/mainwindow.cpp" line="298"/>
         <source>Paste</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="284"/>
+        <location filename="../../windows/mainwindow.cpp" line="300"/>
         <source>Start a New Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="285"/>
+        <location filename="../../windows/mainwindow.cpp" line="301"/>
         <source>Select Search Bar Contents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="287"/>
+        <location filename="../../windows/mainwindow.cpp" line="303"/>
         <source>Jump to First Item in Search Results</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="290"/>
+        <location filename="../../windows/mainwindow.cpp" line="306"/>
         <source>Search Jyutping</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="291"/>
+        <location filename="../../windows/mainwindow.cpp" line="307"/>
         <source>Search Pinyin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="292"/>
+        <location filename="../../windows/mainwindow.cpp" line="308"/>
         <source>Search English</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="294"/>
+        <location filename="../../windows/mainwindow.cpp" line="310"/>
         <source>Save or Unsave Current Entry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="295"/>
+        <location filename="../../windows/mainwindow.cpp" line="311"/>
         <source>Share Current Entry...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="297"/>
+        <location filename="../../windows/mainwindow.cpp" line="313"/>
         <source>Open Current Entry in New Window...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="303"/>
+        <location filename="../../windows/mainwindow.cpp" line="319"/>
+        <source>Find Entries That Begin With Current Entry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="321"/>
+        <source>Find Entries That Contain Current Entry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="323"/>
+        <source>Find Entries That End With Current Entry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../windows/mainwindow.cpp" line="325"/>
         <source>View Search History</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="304"/>
+        <location filename="../../windows/mainwindow.cpp" line="326"/>
         <source>Open List of Saved Words</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="305"/>
+        <location filename="../../windows/mainwindow.cpp" line="327"/>
         <source>Minimize</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="306"/>
+        <location filename="../../windows/mainwindow.cpp" line="328"/>
         <source>Zoom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="307"/>
+        <location filename="../../windows/mainwindow.cpp" line="329"/>
         <source>Bring All to Front</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="309"/>
+        <location filename="../../windows/mainwindow.cpp" line="331"/>
         <source>%1 Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="311"/>
+        <location filename="../../windows/mainwindow.cpp" line="333"/>
         <source>Check for Updates...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="262"/>
-        <location filename="../../windows/mainwindow.cpp" line="731"/>
+        <location filename="../../windows/mainwindow.cpp" line="278"/>
+        <location filename="../../windows/mainwindow.cpp" line="753"/>
         <source>E&amp;ntry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="1256"/>
+        <location filename="../../windows/mainwindow.cpp" line="1301"/>
         <source>Migrating database to new version...
 This might take a few minutes.
 Hang tight!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="261"/>
-        <location filename="../../windows/mainwindow.cpp" line="730"/>
+        <location filename="../../windows/mainwindow.cpp" line="277"/>
+        <location filename="../../windows/mainwindow.cpp" line="752"/>
         <source>&amp;Search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -657,27 +672,27 @@ Hang tight!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="288"/>
+        <location filename="../../windows/mainwindow.cpp" line="304"/>
         <source>Search Simplified Chinese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="289"/>
+        <location filename="../../windows/mainwindow.cpp" line="305"/>
         <source>Search Traditional Chinese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="299"/>
+        <location filename="../../windows/mainwindow.cpp" line="315"/>
         <source>View Large Version of Current Entry...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="301"/>
+        <location filename="../../windows/mainwindow.cpp" line="317"/>
         <source>View All Sentences for Current Entry...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="1208"/>
+        <location filename="../../windows/mainwindow.cpp" line="1253"/>
         <source>Checking for update...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -706,6 +721,29 @@ Hang tight!</source>
         <location filename="../../dialogs/overwriteconflictingdictionarydialog.cpp" line="19"/>
         <source>The dictionaries to be overwritten are:
     - %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RelatedButtonContentWidget</name>
+    <message>
+        <location filename="../../components/related/relatedbuttoncontentwidget.cpp" line="79"/>
+        <source>Find entries that begin with this entry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../components/related/relatedbuttoncontentwidget.cpp" line="83"/>
+        <source>Find entries that contain this entry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../components/related/relatedbuttoncontentwidget.cpp" line="87"/>
+        <source>Find entries that end with this entry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../components/related/relatedbuttoncontentwidget.cpp" line="91"/>
+        <source>Search →</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -861,7 +899,7 @@ Hang tight!</source>
 <context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/mainwindow/searchlineedit.cpp" line="142"/>
+        <location filename="../../components/mainwindow/searchlineedit.cpp" line="140"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1261,7 +1299,7 @@ Hang tight!</source>
     <name>strings</name>
     <message>
         <location filename="../../logic/strings/strings.h" line="16"/>
-        <location filename="../../logic/strings/strings.h" line="95"/>
+        <location filename="../../logic/strings/strings.h" line="96"/>
         <source>JP</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1277,7 +1315,7 @@ Hang tight!</source>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="19"/>
-        <location filename="../../logic/strings/strings.h" line="96"/>
+        <location filename="../../logic/strings/strings.h" line="97"/>
         <source>PY</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1302,121 +1340,126 @@ Hang tight!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="26"/>
+        <location filename="../../logic/strings/strings.h" line="25"/>
+        <source>RELATED</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="27"/>
         <source>Jyut Dictionary</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="28"/>
+        <location filename="../../logic/strings/strings.h" line="29"/>
         <source>A free, open-source offline Cantonese Dictionary.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="30"/>
+        <location filename="../../logic/strings/strings.h" line="31"/>
         <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contains FlowLayout code from &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="46"/>
+        <location filename="../../logic/strings/strings.h" line="47"/>
         <source>%1 is made with ❤️ by Aaron Tan.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="49"/>
+        <location filename="../../logic/strings/strings.h" line="50"/>
         <source>Donate 💵, report a bug 🐛, or just say hi 👋!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="52"/>
+        <location filename="../../logic/strings/strings.h" line="53"/>
         <source>Donate, report a bug, or just say hi!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="53"/>
+        <location filename="../../logic/strings/strings.h" line="54"/>
         <source>&lt;a href=https://www.pleco.com style=&quot;color: %1; text-decoration: none&quot;&gt;Pleco Dictionary&lt;/a&gt;, &lt;a href=http://www.cantonese.sheik.co.uk/dictionary/ style=&quot;color: %1; text-decoration: none&quot;&gt;CantoDict&lt;/a&gt;, &lt;a href=https://words.hk style=&quot;color: %1; text-decoration: none&quot;&gt;words.hk&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="61"/>
+        <location filename="../../logic/strings/strings.h" line="62"/>
         <source>A voice for &quot;Chinese - Hong Kong&quot; could not be found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="69"/>
+        <location filename="../../logic/strings/strings.h" line="70"/>
         <source>A voice for &quot;Chinese - Taiwan&quot; could not be found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="77"/>
+        <location filename="../../logic/strings/strings.h" line="78"/>
         <source>A voice for &quot;Chinese - Mainland China&quot; could not be found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="85"/>
+        <location filename="../../logic/strings/strings.h" line="86"/>
         <source>English</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="86"/>
+        <location filename="../../logic/strings/strings.h" line="87"/>
         <source>French</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="87"/>
+        <location filename="../../logic/strings/strings.h" line="88"/>
         <source>German</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="88"/>
+        <location filename="../../logic/strings/strings.h" line="89"/>
         <source>Cantonese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="89"/>
+        <location filename="../../logic/strings/strings.h" line="90"/>
         <source>Mandarin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="90"/>
+        <location filename="../../logic/strings/strings.h" line="91"/>
         <source>Chinese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="92"/>
+        <location filename="../../logic/strings/strings.h" line="93"/>
         <source>SC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="93"/>
+        <location filename="../../logic/strings/strings.h" line="94"/>
         <source>TC</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="94"/>
+        <location filename="../../logic/strings/strings.h" line="95"/>
         <source>CN</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="97"/>
+        <location filename="../../logic/strings/strings.h" line="98"/>
         <source>EN</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="65"/>
+        <location filename="../../logic/strings/strings.h" line="66"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Hong Kong</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="73"/>
+        <location filename="../../logic/strings/strings.h" line="74"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Taiwan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="80"/>
+        <location filename="../../logic/strings/strings.h" line="81"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Mainland</source>

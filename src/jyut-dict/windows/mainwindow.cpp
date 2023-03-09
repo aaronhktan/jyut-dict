@@ -130,6 +130,10 @@ MainWindow::MainWindow(QWidget *parent) :
             &MainToolBar::searchBarTextChange,
             _mainSplitter,
             &MainSplitter::forwardSearchBarTextChange);
+    connect(_mainSplitter,
+            &MainSplitter::searchQuery,
+            _mainToolBar,
+            &MainToolBar::searchQueryRequested);
 
     // Create menu bar and populate it
     createMenus();
@@ -157,6 +161,18 @@ MainWindow::MainWindow(QWidget *parent) :
             &MainWindow::viewAllSentences,
             _mainSplitter,
             &MainSplitter::viewAllSentencesRequested);
+    connect(this,
+            &MainWindow::searchEntriesBeginning,
+            _mainSplitter,
+            &MainSplitter::searchEntriesBeginningRequested);
+    connect(this,
+            &MainWindow::searchEntriesContaining,
+            _mainSplitter,
+            &MainSplitter::searchEntriesContainingRequested);
+    connect(this,
+            &MainWindow::searchEntriesEnding,
+            _mainSplitter,
+            &MainSplitter::searchEntriesEndingRequested);
 
     // Translate UI
     translateUI();
@@ -299,6 +315,12 @@ void MainWindow::translateUI(void)
         tr("View Large Version of Current Entry..."));
     _viewAllSentencesAction->setText(
         tr("View All Sentences for Current Entry..."));
+    _searchWordsBeginningAction->setText(
+        tr("Find Entries That Begin With Current Entry"));
+    _searchWordsContainingAction->setText(
+        tr("Find Entries That Contain Current Entry"));
+    _searchWordsEndingAction->setText(
+        tr("Find Entries That End With Current Entry"));
 
     _historyWindowAction->setText(tr("View Search History"));
     _favouritesWindowAction->setText(tr("Open List of Saved Words"));
@@ -889,6 +911,29 @@ void MainWindow::createActions(void)
         emit viewAllSentences();
     });
     _entryMenu->addAction(_viewAllSentencesAction);
+
+    _entryMenu->addSeparator();
+
+    _searchWordsBeginningAction = new QAction{this};
+    _searchWordsBeginningAction->setShortcut(QKeySequence{"Ctrl+U"});
+    connect(_searchWordsBeginningAction, &QAction::triggered, this, [&]() {
+        emit searchEntriesBeginning();
+    });
+    _entryMenu->addAction(_searchWordsBeginningAction);
+
+    _searchWordsContainingAction = new QAction{this};
+    _searchWordsContainingAction->setShortcut(QKeySequence{"Ctrl+I"});
+    connect(_searchWordsContainingAction, &QAction::triggered, this, [&]() {
+        emit searchEntriesContaining();
+    });
+    _entryMenu->addAction(_searchWordsContainingAction);
+
+    _searchWordsEndingAction = new QAction{this};
+    _searchWordsEndingAction->setShortcut(QKeySequence{"Ctrl+O"});
+    connect(_searchWordsEndingAction, &QAction::triggered, this, [&]() {
+        emit searchEntriesEnding();
+    });
+    _entryMenu->addAction(_searchWordsEndingAction);
 
     _historyWindowAction = new QAction{this};
     _historyWindowAction->setShortcut(QKeySequence{"Ctrl+Shift+H"});

@@ -12,7 +12,7 @@ ResultListView::ResultListView(QWidget *parent)
     : QListView(parent)
 {
     setFrameShape(QFrame::NoFrame);
-    setMinimumWidth(300);
+    setMinimumWidth(275);
 
     _delegate = new ResultListDelegate{this};
     setItemDelegate(_delegate);

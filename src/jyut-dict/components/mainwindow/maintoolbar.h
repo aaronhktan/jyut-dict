@@ -65,6 +65,8 @@ signals:
 
 public slots:
     void forwardSearchHistoryItem(const searchTermHistoryItem &pair) const;
+    void searchQueryRequested(const QString &query,
+                              const SearchParameters &parameters) const;
     void updateStyleRequested(void);
 };
 

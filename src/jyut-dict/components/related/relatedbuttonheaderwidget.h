@@ -1,5 +1,5 @@
-#ifndef SENTENCEHEADERWIDGET_H
-#define SENTENCEHEADERWIDGET_H
+#ifndef RELATEDBUTTONHEADERWIDGET_H
+#define RELATEDBUTTONHEADERWIDGET_H
 
 #include <QEvent>
 #include <QLabel>
@@ -7,18 +7,18 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-// The SentenceHeaderWidget provides a header for the sentence card
+// The RelatedButtonHeaderWidget is a header for the related button
 
-class SentenceHeaderWidget : public QWidget
+class RelatedButtonHeaderWidget : public QWidget
 {
 public:
-    explicit SentenceHeaderWidget(QWidget *parent = nullptr);
+    explicit RelatedButtonHeaderWidget(QWidget *parent = nullptr);
 
     void changeEvent(QEvent *event) override;
 
-    void setCardTitle(const std::string &title);
-
 private:
+    void translateUI();
+
     void setStyle(bool use_dark);
 
     bool _paletteRecentlyChanged = false;
@@ -27,7 +27,6 @@ private:
 
     QLabel *_titleLabel;
     QVBoxLayout *_layout;
-
 };
 
-#endif // SENTENCEHEADERWIDGET_H
+#endif // RELATEDBUTTONHEADERWIDGET_H

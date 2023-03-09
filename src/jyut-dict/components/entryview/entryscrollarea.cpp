@@ -50,6 +50,26 @@ EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
             _scrollAreaWidget,
             &EntryScrollAreaWidget::viewAllSentencesRequested);
 
+    connect(this,
+            &EntryScrollArea::searchEntriesBeginning,
+            _scrollAreaWidget,
+            &EntryScrollAreaWidget::searchEntriesBeginningRequested);
+
+    connect(this,
+            &EntryScrollArea::searchEntriesContaining,
+            _scrollAreaWidget,
+            &EntryScrollAreaWidget::searchEntriesContainingRequested);
+
+    connect(this,
+            &EntryScrollArea::searchEntriesEnding,
+            _scrollAreaWidget,
+            &EntryScrollAreaWidget::searchEntriesEndingRequested);
+
+    connect(_scrollAreaWidget,
+            &EntryScrollAreaWidget::searchQuery,
+            this,
+            &EntryScrollArea::searchQueryRequested);
+
     if (!parent) {
         setMinimumHeight(400);
     }
@@ -74,12 +94,16 @@ void EntryScrollArea::setEntry(const Entry &entry)
             disconnect(_updateUITimer, nullptr, nullptr, nullptr);
             _scrollAreaWidget->setEntry(entry);
             _scrollAreaWidget->setVisible(false);
+            int largerHeight = std::max(_scrollAreaWidget->sizeHint().height(),
+                                        height());
             _scrollAreaWidget->resize(width()
                                           - (verticalScrollBar()->isVisible()
                                                  ? verticalScrollBar()->width()
                                                  : 0),
-                                      _scrollAreaWidget->sizeHint().height());
+                                      largerHeight);
             _scrollAreaWidget->setVisible(true);
+            // Scroll to top of scrollable area when new entry is set
+            ensureVisible(0, 0);
         }
     });
     _updateUITimer->start();
@@ -87,11 +111,13 @@ void EntryScrollArea::setEntry(const Entry &entry)
 
 void EntryScrollArea::resizeEvent(QResizeEvent *event)
 {
+    int largerHeight = std::max(_scrollAreaWidget->sizeHint().height(),
+                                height());
     _scrollAreaWidget->resize(width()
                                   - (verticalScrollBar()->isVisible()
                                          ? verticalScrollBar()->width()
                                          : 0),
-                              _scrollAreaWidget->sizeHint().height());
+                              largerHeight);
     event->accept();
 }
 
@@ -155,4 +181,25 @@ void EntryScrollArea::magnifyCurrentEntryRequested(void)
 void EntryScrollArea::viewAllSentencesRequested(void)
 {
     emit viewAllSentences();
+}
+
+void EntryScrollArea::searchEntriesBeginningRequested(void)
+{
+    emit searchEntriesBeginning();
+}
+
+void EntryScrollArea::searchEntriesContainingRequested(void)
+{
+    emit searchEntriesContaining();
+}
+
+void EntryScrollArea::searchEntriesEndingRequested(void)
+{
+    emit searchEntriesEnding();
+}
+
+void EntryScrollArea::searchQueryRequested(const QString &query,
+                                           const SearchParameters &parameters)
+{
+    emit searchQuery(query, parameters);
 }

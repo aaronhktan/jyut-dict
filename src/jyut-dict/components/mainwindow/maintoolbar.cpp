@@ -1,7 +1,6 @@
 #include "maintoolbar.h"
 
 #include "logic/search/searchoptionsmediator.h"
-#include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -10,7 +9,6 @@
 #elif defined(Q_OS_WIN)
 #include "logic/utils/utils_windows.h"
 #endif
-#include "logic/utils/utils_qt.h"
 
 MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
                          std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
@@ -228,8 +226,15 @@ void MainToolBar::setOpenFavouritesAction(QAction *action) const
 
 void MainToolBar::forwardSearchHistoryItem(const searchTermHistoryItem &pair) const
 {
-    _optionsBox->setOption(static_cast<SearchParameters>(pair.second));
     _searchBar->setText(pair.first.c_str());
+    _optionsBox->setOption(static_cast<SearchParameters>(pair.second));
+}
+
+void MainToolBar::searchQueryRequested(const QString &query,
+                                       const SearchParameters &parameters) const
+{
+    _searchBar->setText(query);
+    _optionsBox->setOption(parameters);
 }
 
 void MainToolBar::updateStyleRequested(void)

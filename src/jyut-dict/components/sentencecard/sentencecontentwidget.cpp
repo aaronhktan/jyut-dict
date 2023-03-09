@@ -18,13 +18,6 @@ SentenceContentWidget::SentenceContentWidget(QWidget *parent) : QWidget(parent)
     _settings = Settings::getSettings(this);
     _sentenceLayout = new QGridLayout{this};
     _sentenceLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
-
-    _sentenceNumberLabels = {};
-    _simplifiedLabels = {};
-    _traditionalLabels = {};
-    _cantoneseLabels = {};
-    _mandarinLabels = {};
-    _sentenceLabels = {};
 }
 
 SentenceContentWidget::~SentenceContentWidget()

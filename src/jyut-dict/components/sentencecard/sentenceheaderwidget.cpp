@@ -25,16 +25,11 @@ SentenceHeaderWidget::SentenceHeaderWidget(QWidget *parent) : QWidget(parent)
 
     _titleLabel = new QLabel{this};
     _titleLabel->setObjectName("SentenceHeaderWidgetTitleLabel");
+    _titleLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
 
     _layout->addWidget(_titleLabel);
 
     setStyle(Utils::isDarkMode());
-}
-
-SentenceHeaderWidget::SentenceHeaderWidget(std::string title, QWidget *parent)
-    : SentenceHeaderWidget(parent)
-{
-    setCardTitle(title);
 }
 
 void SentenceHeaderWidget::changeEvent(QEvent *event)
@@ -55,6 +50,7 @@ void SentenceHeaderWidget::setCardTitle(const std::string &title)
 {
     _titleLabel->setText(title.c_str());
     _titleLabel->setFixedHeight(_titleLabel->fontMetrics().boundingRect(title.c_str()).height());
+    resize(minimumSizeHint());
 }
 
 void SentenceHeaderWidget::setStyle(bool use_dark)

@@ -1,7 +1,8 @@
-#include "definitionheaderwidget.h"
+#include "relatedbuttonheaderwidget.h"
 
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -11,12 +12,13 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QCoreApplication>
 #include <QTimer>
 
-DefinitionHeaderWidget::DefinitionHeaderWidget(QWidget *parent)
+RelatedButtonHeaderWidget::RelatedButtonHeaderWidget(QWidget *parent)
     : QWidget(parent)
 {
-    setObjectName("DefinitionHeaderWidget");
+    setObjectName("RelatedButtonHeaderWidget");
 
     _settings = Settings::getSettings(this);
 
@@ -25,15 +27,16 @@ DefinitionHeaderWidget::DefinitionHeaderWidget(QWidget *parent)
     _layout->setSpacing(10);
 
     _titleLabel = new QLabel{this};
-    _titleLabel->setObjectName("DefinitionHeaderWidgetTitleLabel");
+    _titleLabel->setObjectName("RelatedButtonHeaderWidgetTitleLabel");
     _titleLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+    _titleLabel->setAlignment(Qt::AlignCenter);
 
     _layout->addWidget(_titleLabel);
 
-    setStyle(Utils::isDarkMode());
+    translateUI();
 }
 
-void DefinitionHeaderWidget::changeEvent(QEvent *event)
+void RelatedButtonHeaderWidget::changeEvent(QEvent *event)
 {
     if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
         // QWidget emits a palette changed event when setting the stylesheet
@@ -44,22 +47,26 @@ void DefinitionHeaderWidget::changeEvent(QEvent *event)
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
     QWidget::changeEvent(event);
 }
 
-void DefinitionHeaderWidget::setSectionTitle(const std::string &title)
+void RelatedButtonHeaderWidget::translateUI()
 {
     setStyle(Utils::isDarkMode());
-    _titleLabel->setText(title.c_str());
+    _titleLabel->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                     Strings::RELATED_ALL_CAPS));
     _titleLabel->setFixedHeight(
         _titleLabel->fontMetrics().boundingRect(_titleLabel->text()).height());
     resize(minimumSizeHint());
 }
 
-void DefinitionHeaderWidget::setStyle(bool use_dark)
+void RelatedButtonHeaderWidget::setStyle(bool use_dark)
 {
     // Style the main background
-    QString widgetStyleSheet = "QWidget#DefinitionHeaderWidget { "
+    QString widgetStyleSheet = "QWidget#RelatedButtonHeaderWidget { "
                                " background: %1; "
                                " border-top-left-radius: 10px; "
                                " border-top-right-radius: 10px; "
@@ -84,7 +91,7 @@ void DefinitionHeaderWidget::setStyle(bool use_dark)
     int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
 
-    QString textStyleSheet = "QLabel#DefinitionHeaderWidgetTitleLabel { "
+    QString textStyleSheet = "QLabel#RelatedButtonHeaderWidgetTitleLabel { "
                              "   color: %1; "
                              "   font-size: %2px; "
                              "}";
