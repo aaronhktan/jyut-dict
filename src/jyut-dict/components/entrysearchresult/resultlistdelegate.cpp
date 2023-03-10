@@ -327,7 +327,7 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
             }
         }
         }
-#else
+#elif defined(Q_OS_LINUX)
         switch (interfaceSize) {
         case Settings::InterfaceSize::SMALLER: {
             return QSize(100, 110);
@@ -359,6 +359,38 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
         }
         case Settings::InterfaceSize::LARGER: {
             return QSize(100, 215);
+        }
+        }
+#elif defined(Q_OS_WIN)
+        switch (interfaceSize) {
+        case Settings::InterfaceSize::SMALLER: {
+            return QSize(100, 115);
+        }
+        case Settings::InterfaceSize::SMALL: {
+            return QSize(100, 125);
+        }
+        case Settings::InterfaceSize::NORMAL: {
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::English: {
+                return QSize(100, 150);
+            }
+            default: {
+                return QSize(100, 165);
+            }
+            }
+        }
+        case Settings::InterfaceSize::LARGE: {
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::French: {
+                return QSize(100, 210);
+            }
+            default: {
+                return QSize(100, 190);
+            }
+            }
+        }
+        case Settings::InterfaceSize::LARGER: {
+            return QSize(100, 240);
         }
         }
 #endif

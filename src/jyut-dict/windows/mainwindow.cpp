@@ -35,7 +35,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     // Set window size
+#ifdef Q_OS_WIN
+    setMinimumSize(QSize{850, 600});
+#else
     setMinimumSize(QSize{800, 600});
+#endif
 
     // Instantiate services
     _manager = std::make_shared<SQLDatabaseManager>();
