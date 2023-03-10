@@ -6,6 +6,7 @@
 #include "logic/sentence/sourcesentence.h"
 
 #include <QEvent>
+#include <QSettings>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -26,6 +27,7 @@ private:
 
     bool _paletteRecentlyChanged = false;
 
+    std::unique_ptr<QSettings> _settings;
     SourceSentence _sentence;
     bool _sentenceIsValid = false;
 

@@ -114,6 +114,11 @@ void SettingsWindow::setupUI()
 
     setCentralWidget(_contentStackedWidget);
 
+    connect(generalTab,
+            &SettingsTab::updateStyle,
+            this,
+            &SettingsWindow::updateStyleRequested);
+
     connect(textTab,
             &TextTab::updateStyle,
             this,

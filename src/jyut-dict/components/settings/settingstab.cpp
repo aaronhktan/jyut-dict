@@ -1,7 +1,6 @@
 #include "settingstab.h"
 
 #include "logic/entry/entryphoneticoptions.h"
-#include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -286,6 +285,8 @@ void SettingsTab::initializePreviewPhonetic(QWidget &previewPhoneticWidget)
                 _settings->setValue("Preview/phoneticOptions",
                                     _previewPhoneticCombobox->itemData(index));
                 _settings->sync();
+
+                emit updateStyle();
             });
 }
 
@@ -301,6 +302,8 @@ void SettingsTab::initializeSearchResultsCantonesePronunciation(
                             QVariant::fromValue<CantoneseOptions>(
                                 CantoneseOptions::RAW_JYUTPING));
         _settings->sync();
+
+        emit updateStyle();
     });
 
     connect(_previewYale, &QRadioButton::clicked, this, [&]() {
@@ -308,6 +311,8 @@ void SettingsTab::initializeSearchResultsCantonesePronunciation(
                             QVariant::fromValue<CantoneseOptions>(
                                 CantoneseOptions::PRETTY_YALE));
         _settings->sync();
+
+        emit updateStyle();
     });
 
     connect(_previewCantoneseIPA, &QRadioButton::clicked, this, [&]() {
@@ -315,6 +320,8 @@ void SettingsTab::initializeSearchResultsCantonesePronunciation(
                             QVariant::fromValue<CantoneseOptions>(
                                 CantoneseOptions::CANTONESE_IPA));
         _settings->sync();
+
+        emit updateStyle();
     });
 
     setSearchResultsCantonesePronunciationDefault(cantonesePronunciationWidget);
@@ -333,6 +340,8 @@ void SettingsTab::initializeSearchResultsMandarinPronunciation(
                             QVariant::fromValue<MandarinOptions>(
                                 MandarinOptions::PRETTY_PINYIN));
         _settings->sync();
+
+        emit updateStyle();
     });
 
     connect(_previewNumberedPinyin, &QRadioButton::clicked, this, [&]() {
@@ -340,6 +349,8 @@ void SettingsTab::initializeSearchResultsMandarinPronunciation(
                             QVariant::fromValue<MandarinOptions>(
                                 MandarinOptions::NUMBERED_PINYIN));
         _settings->sync();
+
+        emit updateStyle();
     });
 
     connect(_previewZhuyin, &QRadioButton::clicked, this, [&]() {
@@ -347,6 +358,8 @@ void SettingsTab::initializeSearchResultsMandarinPronunciation(
                             QVariant::fromValue<MandarinOptions>(
                                 MandarinOptions::ZHUYIN));
         _settings->sync();
+
+        emit updateStyle();
     });
 
     connect(_previewMandarinIPA, &QRadioButton::clicked, this, [&]() {
@@ -354,6 +367,8 @@ void SettingsTab::initializeSearchResultsMandarinPronunciation(
                             QVariant::fromValue<MandarinOptions>(
                                 MandarinOptions::MANDARIN_IPA));
         _settings->sync();
+
+        emit updateStyle();
     });
 
     setSearchResultsMandarinPronunciationDefault(mandarinPronunciationWidget);
@@ -384,6 +399,8 @@ void SettingsTab::initializeEntryCantonesePronunciation(
                                     & ~(CantoneseOptions::RAW_JYUTPING)));
         }
         _settings->sync();
+
+        emit updateStyle();
     });
 
     connect(_entryYale, &QCheckBox::stateChanged, this, [&]() {
@@ -404,6 +421,8 @@ void SettingsTab::initializeEntryCantonesePronunciation(
                                     & ~(CantoneseOptions::PRETTY_YALE)));
         }
         _settings->sync();
+
+        emit updateStyle();
     });
 
     connect(_entryCantoneseIPA, &QCheckBox::stateChanged, this, [&]() {
@@ -424,6 +443,8 @@ void SettingsTab::initializeEntryCantonesePronunciation(
                                     & ~(CantoneseOptions::CANTONESE_IPA)));
         }
         _settings->sync();
+
+        emit updateStyle();
     });
 
     setEntryCantonesePronunciationDefault(cantonesePronunciationWidget);
@@ -455,6 +476,8 @@ void SettingsTab::initializeEntryMandarinPronunciation(
                                     & ~(MandarinOptions::PRETTY_PINYIN)));
         }
         _settings->sync();
+
+        emit updateStyle();
     });
 
     connect(_entryNumberedPinyin, &QCheckBox::stateChanged, this, [&]() {
@@ -475,6 +498,8 @@ void SettingsTab::initializeEntryMandarinPronunciation(
                                     & ~(MandarinOptions::NUMBERED_PINYIN)));
         }
         _settings->sync();
+
+        emit updateStyle();
     });
 
     connect(_entryZhuyin, &QCheckBox::stateChanged, this, [&]() {
@@ -495,6 +520,8 @@ void SettingsTab::initializeEntryMandarinPronunciation(
                                     & ~(MandarinOptions::ZHUYIN)));
         }
         _settings->sync();
+
+        emit updateStyle();
     });
 
     connect(_entryMandarinIPA, &QCheckBox::stateChanged, this, [&]() {
@@ -514,6 +541,8 @@ void SettingsTab::initializeEntryMandarinPronunciation(
                                     options & ~(MandarinOptions::MANDARIN_IPA)));
         }
         _settings->sync();
+
+        emit updateStyle();
     });
 
     setEntryMandarinPronunciationDefault(mandarinPronunciationWidget);

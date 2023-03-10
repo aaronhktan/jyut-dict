@@ -8,6 +8,7 @@
 
 #include <QEvent>
 #include <QGridLayout>
+#include <QSettings>
 #include <QWidget>
 
 // The DefinitionScrollAreaWidget is the widget that contains other widgets
@@ -32,6 +33,7 @@ private:
 
     std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
     std::shared_ptr<SQLDatabaseManager> _manager;
+    std::unique_ptr<QSettings> _settings;
     Entry _entry;
     bool _entryIsValid = false;
 
