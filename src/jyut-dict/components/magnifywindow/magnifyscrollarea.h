@@ -23,6 +23,10 @@ public:
 private:
     void resizeEvent(QResizeEvent *event) override;
 
+    std::unique_ptr<QSettings> _settings;
+    Entry _entry;
+    bool _entryIsValid = false;
+
     MagnifyScrollAreaWidget *_scrollAreaWidget;
 
 public slots:
