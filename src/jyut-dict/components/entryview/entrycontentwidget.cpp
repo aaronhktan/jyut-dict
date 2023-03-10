@@ -132,10 +132,12 @@ void EntryContentWidget::showRelatedSection(void)
 void EntryContentWidget::updateStyleRequested(void)
 {
     if (_entryIsValid) {
+        bool relatedSectionIsVisible = _relatedSection->isVisible();
         // For some reason, setting the entry here makes the application not
         // flash when updating the style. Setting it in the individual definition
         // cards does.
         _definitionSection->setEntry(_entry);
+        _relatedSection->setVisible(relatedSectionIsVisible);
     }
 
     _definitionSection->updateStyleRequested();
