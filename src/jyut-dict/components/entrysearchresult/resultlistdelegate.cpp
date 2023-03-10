@@ -274,7 +274,14 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
             return QSize(100, 105);
         }
         case Settings::InterfaceSize::SMALL: {
-            return QSize(100, 115);
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::French: {
+                return QSize(100, 130);
+            }
+            default: {
+                return QSize(100, 115);
+            }
+            }
         }
         case Settings::InterfaceSize::NORMAL: {
             switch (Settings::getCurrentLocale().language()) {
@@ -282,11 +289,7 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
                 return QSize(100, 150);
             }
             case QLocale::Chinese: {
-                return QSize(100,
-                             Settings::getCurrentLocale().script()
-                                     == QLocale::SimplifiedHanScript
-                                 ? 130
-                                 : 150);
+                return QSize(100, 150);
             }
             case QLocale::Cantonese: {
                 return QSize(100, 150);
@@ -297,16 +300,22 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
             }
         }
         case Settings::InterfaceSize::LARGE: {
-            return QSize(100, Settings::isCurrentLocaleHan() ? 170 : 165);
+            switch (Settings::getCurrentLocale().language()) {
+            case QLocale::Chinese: {
+                return QSize(100, 170);
+            }
+            case QLocale::French: {
+                return QSize(100, 190);
+            }
+            default: {
+                return QSize(100, 165);
+            }
+            }
         }
         case Settings::InterfaceSize::LARGER: {
             switch (Settings::getCurrentLocale().language()) {
             case QLocale::Chinese: {
-                return QSize(100,
-                             Settings::getCurrentLocale().script()
-                                     == QLocale::SimplifiedHanScript
-                                 ? 190
-                                 : 215);
+                return QSize(100, 215);
             }
             case QLocale::Cantonese:
             case QLocale::French: {
