@@ -36,9 +36,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     // Set window size
 #ifdef Q_OS_WIN
-    setMinimumSize(QSize{850, 600});
+    setMinimumSize(QSize{850, 300});
+    resize(850, 600);
 #else
-    setMinimumSize(QSize{800, 600});
+    setMinimumSize(QSize{800, 300});
+    resize(800, 600);
 #endif
 
     // Instantiate services
@@ -1220,6 +1222,7 @@ void MainWindow::checkForUpdate(bool showProgress)
     if (showProgress) {
         connect(_checker,
                 &GithubReleaseChecker::foundUpdate,
+                this,
                 [&](bool updateAvailable,
                     std::string versionNumber,
                     std::string url,
@@ -1260,6 +1263,7 @@ void MainWindow::checkForUpdate(bool showProgress)
     } else {
         connect(_checker,
                 &GithubReleaseChecker::foundUpdate,
+                this,
                 [&](bool updateAvailable,
                     std::string versionNumber,
                     std::string url,

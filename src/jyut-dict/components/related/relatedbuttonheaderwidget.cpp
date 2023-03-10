@@ -103,4 +103,7 @@ void RelatedButtonHeaderWidget::setStyle(bool use_dark)
                                           LABEL_TEXT_COLOUR_LIGHT_R};
     _titleLabel->setStyleSheet(
         textStyleSheet.arg(textColour.name()).arg(bodyFontSize));
+    _titleLabel->setFixedHeight(
+        _titleLabel->fontMetrics().boundingRect(_titleLabel->text()).height());
+    resize(minimumSizeHint());
 }
