@@ -1209,11 +1209,11 @@ void MainWindow::openFavouritesWindow(void)
     _favouritesWindow = new FavouriteSplitter{_sqlUserUtils, _manager, nullptr};
     _favouritesWindow->setParent(this, Qt::Window);
     _favouritesWindow->setAttribute(Qt::WA_DeleteOnClose);
-    _favouritesWindow->move(x() + (width()
-                                   - _favouritesWindow->size().width()) / 2,
-                            y() + (height()
-                                   - _favouritesWindow->size().height()) / 2);
     _favouritesWindow->show();
+    _favouritesWindow
+        ->move(x() + (width() - _favouritesWindow->size().width()) / 2,
+               y() + (height() - _favouritesWindow->size().height()) / 2);
+    _favouritesWindow->setFocus();
 }
 
 void MainWindow::checkForUpdate(bool showProgress)
