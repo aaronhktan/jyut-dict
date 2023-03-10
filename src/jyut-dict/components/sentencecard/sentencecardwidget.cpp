@@ -55,13 +55,16 @@ void SentenceCardWidget::displaySentences(const std::vector<SourceSentence> &sen
         return;
     }
 
+    _sourceSentences = sentences;
+    _sourceSentencesIsValid = true;
+
     _source = sentences.at(0).getSentenceSets().at(0).getSourceShortString();
     _sentenceHeaderWidget->setCardTitle(
         QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                     Strings::SENTENCES_ALL_CAPS)
             .toStdString()
         + " (" + _source + ")");
-    _sentenceContentWidget->setSourceSentenceVector(sentences);
+    _sentenceContentWidget->setSourceSentenceVector(_sourceSentences);
 
     setStyle(Utils::isDarkMode());
 }
@@ -117,6 +120,10 @@ void SentenceCardWidget::setStyle(bool use_dark)
 
 void SentenceCardWidget::updateStyleRequested(void)
 {
+    if (_sourceSentencesIsValid) {
+        _sentenceContentWidget->setSourceSentenceVector(_sourceSentences);
+    }
+
     QEvent event{QEvent::PaletteChange};
     QCoreApplication::sendEvent(_sentenceHeaderWidget, &event);
     QCoreApplication::sendEvent(_sentenceContentWidget, &event);

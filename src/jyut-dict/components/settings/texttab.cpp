@@ -237,6 +237,8 @@ void TextTab::initializeCharacterComboBox(QComboBox &characterCombobox)
                 _settings->setValue("characterOptions",
                                     characterCombobox.itemData(index));
                 _settings->sync();
+
+                emit updateStyle();
             });
 }
 
@@ -296,6 +298,8 @@ void TextTab::initializeColourComboBox(QComboBox &colourCombobox)
                 _settings->setValue("entryColourPhoneticType",
                                     colourCombobox.itemData(index));
                 _settings->sync();
+
+                emit updateStyle();
             });
 }
 
@@ -342,6 +346,8 @@ void TextTab::initializeJyutpingColourWidget(QWidget &jyutpingColourWidget)
                 Settings::jyutpingToneColours[index].c_str()));
 
             saveJyutpingColours();
+
+            emit updateStyle();
         });
 
         // Then add tone label underneath it
@@ -401,6 +407,8 @@ void TextTab::initializePinyinColourWidget(QWidget &pinyinColourWidget)
                 Settings::pinyinToneColours[index].c_str()));
 
             savePinyinColours();
+
+            emit updateStyle();
         });
 
         QLabel *label = new QLabel{&pinyinColourWidget};

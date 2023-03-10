@@ -88,6 +88,9 @@ EntryContentWidget::EntryContentWidget(
 
 void EntryContentWidget::setEntry(const Entry &entry)
 {
+    _entry = entry;
+    _entryIsValid = true;
+
     _definitionSection->setEntry(entry);
     _sentenceSection->setEntry(entry);
     _relatedSection->setEntry(entry);
@@ -128,6 +131,13 @@ void EntryContentWidget::showRelatedSection(void)
 
 void EntryContentWidget::updateStyleRequested(void)
 {
+    if (_entryIsValid) {
+        // For some reason, setting the entry here makes the application not
+        // flash when updating the style. Setting it in the individual definition
+        // cards does.
+        _definitionSection->setEntry(_entry);
+    }
+
     _definitionSection->updateStyleRequested();
     _sentenceSection->updateStyleRequested();
     _relatedSection->updateStyleRequested();

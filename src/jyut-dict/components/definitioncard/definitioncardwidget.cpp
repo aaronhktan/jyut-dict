@@ -51,6 +51,7 @@ void DefinitionCardWidget::changeEvent(QEvent *event)
 void DefinitionCardWidget::setEntry(const DefinitionsSet &definitionsSet)
 {
     _source = definitionsSet.getSourceShortString();
+
     _definitionHeaderWidget->setSectionTitle(
         QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                     Strings::DEFINITIONS_ALL_CAPS)

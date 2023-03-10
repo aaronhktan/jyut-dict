@@ -25,6 +25,9 @@ public:
     void setEntry(const Entry &entry);
 
 private:
+    Entry _entry;
+    bool _entryIsValid = false;
+
     QVBoxLayout *_entryContentLayout;
     DefinitionCardSection *_definitionSection;
     EntryViewSentenceCardSection *_sentenceSection;

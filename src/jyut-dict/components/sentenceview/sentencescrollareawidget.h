@@ -26,6 +26,9 @@ private:
 
     bool _paletteRecentlyChanged = false;
 
+    SourceSentence _sentence;
+    bool _sentenceIsValid = false;
+
     QVBoxLayout *_scrollAreaLayout;
 
     SentenceViewHeaderWidget *_sentenceViewHeaderWidget;

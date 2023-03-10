@@ -85,6 +85,8 @@ void SentenceContentWidget::setSentenceSet(const SentenceSet &set)
 void SentenceContentWidget::setSourceSentenceVector(
     const std::vector<SourceSentence> &sourceSentences)
 {
+    cleanupLabels();
+
     if (sourceSentences.empty()) {
         return;
     }

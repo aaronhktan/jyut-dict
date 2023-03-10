@@ -47,8 +47,11 @@ void SentenceScrollAreaWidget::changeEvent(QEvent *event)
 
 void SentenceScrollAreaWidget::setSourceSentence(const SourceSentence &sentence)
 {
-    _sentenceViewHeaderWidget->setSourceSentence(sentence);
-    _sentenceViewContentWidget->setSourceSentence(sentence);
+    _sentence = sentence;
+    _sentenceIsValid = true;
+
+    _sentenceViewHeaderWidget->setSourceSentence(_sentence);
+    _sentenceViewContentWidget->setSourceSentence(_sentence);
 }
 
 void SentenceScrollAreaWidget::setStyle(bool use_dark)
@@ -62,6 +65,9 @@ void SentenceScrollAreaWidget::setStyle(bool use_dark)
 
 void SentenceScrollAreaWidget::updateStyleRequested(void)
 {
+    if (_sentenceIsValid) {
+        _sentenceViewHeaderWidget->setSourceSentence(_sentence);
+    }
     QEvent event{QEvent::PaletteChange};
     QCoreApplication::sendEvent(_sentenceViewHeaderWidget, &event);
     _sentenceViewContentWidget->updateStyleRequested();
