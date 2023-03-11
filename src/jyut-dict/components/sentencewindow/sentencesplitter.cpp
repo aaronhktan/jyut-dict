@@ -15,6 +15,8 @@ SentenceSplitter::SentenceSplitter(std::shared_ptr<SQLDatabaseManager> manager,
     : QSplitter(parent)
     , _manager{manager}
 {
+    setMinimumSize(QSize{700, 450});
+
     _sqlSearch = std::make_shared<SQLSearch>(manager);
     _model = new SentenceResultListModel{_sqlSearch, {}, this};
 
@@ -36,12 +38,6 @@ SentenceSplitter::SentenceSplitter(std::shared_ptr<SQLDatabaseManager> manager,
             &QListView::doubleClicked,
             this,
             &SentenceSplitter::handleDoubleClick);
-
-#ifdef Q_OS_LINUX
-    setMinimumSize(600, 400);
-#else
-    setMinimumHeight(400);
-#endif
 
     setHandleWidth(1);
     setCollapsible(0, false);

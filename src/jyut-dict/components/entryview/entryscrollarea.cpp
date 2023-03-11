@@ -17,8 +17,13 @@ EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     _scrollAreaWidget = new EntryScrollAreaWidget{sqlUserUtils, manager, this};
 
     setWidget(_scrollAreaWidget);
-    setWidgetResizable(true); // IMPORTANT! This makes the scrolling widget resize correctly.
-    setMinimumWidth(350);
+    setWidgetResizable(
+        true); // IMPORTANT! This makes the scrolling widget resize correctly.
+#ifdef Q_OS_LINUX
+    setMinimumWidth(520);
+#else
+    setMinimumWidth(500);
+#endif
 
     connect(this,
             &EntryScrollArea::stallSentenceUIUpdate,

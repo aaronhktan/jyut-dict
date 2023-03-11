@@ -52,6 +52,8 @@ void FavouriteSplitter::keyPressEvent(QKeyEvent *event)
 
 void FavouriteSplitter::setupUI()
 {
+    setMinimumSize(QSize{700, 550});
+
     _entryScrollArea = new EntryScrollArea{_sqlUserUtils, _manager, this};
     _resultListView = new ResultListView{this};
 

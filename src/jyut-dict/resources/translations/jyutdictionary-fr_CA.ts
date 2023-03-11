@@ -1421,7 +1421,7 @@ Veuillez patienter quelques minutes.</translation>
     <message>
         <location filename="../../logic/strings/strings.h" line="25"/>
         <source>RELATED</source>
-        <translation>MOTS APPARENTÉS</translation>
+        <translation>DÉRIVÉS</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="27"/>

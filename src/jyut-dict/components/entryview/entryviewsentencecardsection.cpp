@@ -309,9 +309,14 @@ void EntryViewSentenceCardSection::openSentenceWindow(
 {
     SentenceSplitter *splitter = new SentenceSplitter{_manager, nullptr};
     splitter->setParent(this, Qt::Window);
+    splitter->setAttribute(Qt::WA_DeleteOnClose);
     splitter->setSourceSentences(sourceSentences);
     splitter->setSearchTerm(_title);
     splitter->show();
+    splitter->move(window()->x()
+                       + (window()->width() - splitter->size().width()) / 2,
+                   window()->y()
+                       + (window()->height() - splitter->size().height()) / 2);
 }
 
 // Given some sourceSentences, returns a set of five (or fewer) sentences from

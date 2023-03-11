@@ -35,7 +35,13 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     // Set window size
-    setMinimumSize(QSize{800, 600});
+#ifdef Q_OS_WIN
+    setMinimumSize(QSize{850, 300});
+    resize(850, 600);
+#else
+    setMinimumSize(QSize{800, 300});
+    resize(800, 600);
+#endif
 
     // Instantiate services
     _manager = std::make_shared<SQLDatabaseManager>();
@@ -1203,11 +1209,11 @@ void MainWindow::openFavouritesWindow(void)
     _favouritesWindow = new FavouriteSplitter{_sqlUserUtils, _manager, nullptr};
     _favouritesWindow->setParent(this, Qt::Window);
     _favouritesWindow->setAttribute(Qt::WA_DeleteOnClose);
-    _favouritesWindow->move(x() + (width()
-                                   - _favouritesWindow->size().width()) / 2,
-                            y() + (height()
-                                   - _favouritesWindow->size().height()) / 2);
     _favouritesWindow->show();
+    _favouritesWindow
+        ->move(x() + (width() - _favouritesWindow->size().width()) / 2,
+               y() + (height() - _favouritesWindow->size().height()) / 2);
+    _favouritesWindow->setFocus();
 }
 
 void MainWindow::checkForUpdate(bool showProgress)
@@ -1216,6 +1222,7 @@ void MainWindow::checkForUpdate(bool showProgress)
     if (showProgress) {
         connect(_checker,
                 &GithubReleaseChecker::foundUpdate,
+                this,
                 [&](bool updateAvailable,
                     std::string versionNumber,
                     std::string url,
@@ -1256,6 +1263,7 @@ void MainWindow::checkForUpdate(bool showProgress)
     } else {
         connect(_checker,
                 &GithubReleaseChecker::foundUpdate,
+                this,
                 [&](bool updateAvailable,
                     std::string versionNumber,
                     std::string url,

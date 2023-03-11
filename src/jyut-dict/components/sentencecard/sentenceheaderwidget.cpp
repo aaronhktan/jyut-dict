@@ -49,7 +49,8 @@ void SentenceHeaderWidget::changeEvent(QEvent *event)
 void SentenceHeaderWidget::setCardTitle(const std::string &title)
 {
     _titleLabel->setText(title.c_str());
-    _titleLabel->setFixedHeight(_titleLabel->fontMetrics().boundingRect(title.c_str()).height());
+    _titleLabel->setFixedHeight(
+        _titleLabel->fontMetrics().boundingRect(title.c_str()).height());
     resize(minimumSizeHint());
 }
 
@@ -93,4 +94,7 @@ void SentenceHeaderWidget::setStyle(bool use_dark)
                                           LABEL_TEXT_COLOUR_LIGHT_R};
     _titleLabel->setStyleSheet(
         textStyleSheet.arg(textColour.name()).arg(bodyFontSize));
+    _titleLabel->setFixedHeight(
+        _titleLabel->fontMetrics().boundingRect(_titleLabel->text()).height());
+    resize(minimumSizeHint());
 }
