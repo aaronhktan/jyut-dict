@@ -52,8 +52,14 @@ private:
     EntryScrollArea *_entryScrollArea;
     QListView *_resultListView;
 
+signals:
+    void searchQuery(const QString &query, const SearchParameters &parameters);
+
 public slots:
     void updateStyleRequested();
+
+    void searchQueryRequested(const QString &query,
+                              const SearchParameters &parameters);
 
 private slots:
     void prepareEntry(Entry &entry);
