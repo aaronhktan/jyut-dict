@@ -95,6 +95,8 @@ void MagnifyScrollAreaWidget::setEntry(const Entry &entry)
             _simplifiedLabel->setVisible(false);
             break;
         }
+        _simplifiedLabelLabel->setVisible(true);
+        _simplifiedLabel->setVisible(true);
         _widgetLayout->addWidget(_simplifiedLabelLabel, Qt::AlignHCenter);
         _widgetLayout->addWidget(_simplifiedLabel);
         break;
@@ -107,6 +109,8 @@ void MagnifyScrollAreaWidget::setEntry(const Entry &entry)
             _traditionalLabel->setVisible(false);
             break;
         }
+        _traditionalLabelLabel->setVisible(true);
+        _traditionalLabel->setVisible(true);
         _widgetLayout->addWidget(_traditionalLabelLabel, Qt::AlignHCenter);
         _widgetLayout->addWidget(_traditionalLabel);
         break;
@@ -119,6 +123,8 @@ void MagnifyScrollAreaWidget::setEntry(const Entry &entry)
             _traditionalLabel->setVisible(false);
             break;
         }
+        _traditionalLabelLabel->setVisible(true);
+        _traditionalLabel->setVisible(true);
         _widgetLayout->addWidget(_traditionalLabelLabel, Qt::AlignHCenter);
         _widgetLayout->addWidget(_traditionalLabel);
         break;
@@ -128,6 +134,8 @@ void MagnifyScrollAreaWidget::setEntry(const Entry &entry)
             _simplifiedLabel->setVisible(false);
             break;
         }
+        _simplifiedLabelLabel->setVisible(true);
+        _simplifiedLabel->setVisible(true);
         _widgetLayout->addWidget(_simplifiedLabelLabel, Qt::AlignHCenter);
         _widgetLayout->addWidget(_simplifiedLabel);
         break;

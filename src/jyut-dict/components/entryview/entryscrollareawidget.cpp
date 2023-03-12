@@ -2,6 +2,7 @@
 
 #include "components/entryview/entryscrollarea.h"
 #include "components/magnifywindow/magnifyscrollarea.h"
+#include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -21,6 +22,8 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(
     , _manager{manager}
 {
     setObjectName("EntryScrollAreaWidget");
+
+    _settings = Settings::getSettings(this);
 
     // Entire Scroll Area
     _scrollAreaLayout = new QGridLayout{this};
@@ -143,6 +146,27 @@ void EntryScrollAreaWidget::setStyle(bool use_dark)
 
 void EntryScrollAreaWidget::updateStyleRequested(void)
 {
+    if (_entryIsValid) {
+        _entry.refreshColours(
+            _settings
+                ->value("entryColourPhoneticType",
+                        QVariant::fromValue(EntryColourPhoneticType::CANTONESE))
+                .value<EntryColourPhoneticType>());
+
+        CantoneseOptions cantoneseOptions
+            = _settings
+                  ->value("Entry/cantonesePronunciationOptions",
+                          QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
+                  .value<CantoneseOptions>();
+        MandarinOptions mandarinOptions
+            = _settings
+                  ->value("Entry/mandarinPronunciationOptions",
+                          QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
+                  .value<MandarinOptions>();
+        _entry.generatePhonetic(cantoneseOptions, mandarinOptions);
+        _entryHeaderWidget->setEntry(_entry);
+    }
+
     QEvent event{QEvent::PaletteChange};
     QCoreApplication::sendEvent(_entryHeaderWidget, &event);
     QCoreApplication::sendEvent(_entryActionWidget, &event);

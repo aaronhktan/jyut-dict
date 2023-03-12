@@ -284,47 +284,20 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
             }
         }
         case Settings::InterfaceSize::NORMAL: {
-            switch (Settings::getCurrentLocale().language()) {
-            case QLocale::French: {
-                return QSize(100, 150);
-            }
-            case QLocale::Chinese: {
-                return QSize(100, 150);
-            }
-            case QLocale::Cantonese: {
-                return QSize(100, 150);
-            }
-            default: {
-                return QSize(100, 130);
-            }
-            }
+            return QSize(100, 150);
         }
         case Settings::InterfaceSize::LARGE: {
             switch (Settings::getCurrentLocale().language()) {
-            case QLocale::Chinese: {
-                return QSize(100, 170);
-            }
             case QLocale::French: {
                 return QSize(100, 190);
             }
             default: {
-                return QSize(100, 165);
+                return QSize(100, 170);
             }
             }
         }
         case Settings::InterfaceSize::LARGER: {
-            switch (Settings::getCurrentLocale().language()) {
-            case QLocale::Chinese: {
-                return QSize(100, 215);
-            }
-            case QLocale::Cantonese:
-            case QLocale::French: {
-                return QSize(100, 215);
-            }
-            default: {
-                return QSize(100, 190);
-            }
-            }
+            return QSize(100, 215);
         }
         }
 #elif defined(Q_OS_LINUX)

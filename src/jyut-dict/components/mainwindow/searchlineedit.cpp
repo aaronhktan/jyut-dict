@@ -204,17 +204,19 @@ void SearchLineEdit::setStyle(bool use_dark)
             _searchLineEdit->setIcon(search_inverted);
             _clearLineEdit->setIcon(clear_inverted);
     } else {
-            setStyleSheet(
-                QString{"QLineEdit { "
-                        "   background-color: #ffffff; "
-                        "   border-radius: 3px; "
-                        "   border: 1px solid palette(alternate-base); "
-                        "   font-size: %1px; "
-                        "   icon-size: %1px; "
-                        "   padding-top: 4px; "
-                        "   padding-bottom: 4px; "
-                        "} "}
-                    .arg(std::to_string(h6FontSize).c_str()));
+            setStyleSheet(QString{"QLineEdit { "
+                                  "   background-color: #ffffff; "
+                                  "   border-radius: 3px; "
+                                  "   font-size: %1px; "
+                                  "   icon-size: %1px; "
+                                  "   padding-top: 4px; "
+                                  "   padding-bottom: 4px; "
+                                  "} "
+                                  ""
+                                  "QLineEdit:focus { "
+                                  "   border-radius: 2px; "
+                                  "} "}
+                              .arg(std::to_string(h6FontSize).c_str()));
             _searchLineEdit->setIcon(search);
             _clearLineEdit->setIcon(clear);
     }

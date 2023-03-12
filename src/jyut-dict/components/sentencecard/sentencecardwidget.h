@@ -31,6 +31,7 @@ private:
     bool _paletteRecentlyChanged = false;
 
     std::vector<SourceSentence> _sourceSentences;
+    bool _sourceSentencesIsValid = false;
     std::string _source;
 
     QVBoxLayout *_sentenceCardLayout;

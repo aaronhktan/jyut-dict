@@ -1214,6 +1214,11 @@ void MainWindow::openFavouritesWindow(void)
         ->move(x() + (width() - _favouritesWindow->size().width()) / 2,
                y() + (height() - _favouritesWindow->size().height()) / 2);
     _favouritesWindow->setFocus();
+
+    connect(_favouritesWindow,
+            &FavouriteSplitter::searchQuery,
+            _mainToolBar,
+            &MainToolBar::searchQueryRequested);
 }
 
 void MainWindow::checkForUpdate(bool showProgress)

@@ -143,17 +143,15 @@ void DefinitionContentWidget::setEntry(const std::vector<Definition::Definition>
                                   MandarinOptions::PRETTY_PINYIN))
                       .value<MandarinOptions>();
 
-            QString cantonese = QString{definitions[i]
-                                            .sentences[j]
-                                            .getCantonesePhonetic(
-                                                cantoneseOptions)
-                                            .c_str()}
-                                    .trimmed();
-            QString mandarin = QString{definitions[i]
-                                           .sentences[j]
-                                           .getMandarinPhonetic(mandarinOptions)
-                                           .c_str()}
-                                   .trimmed();
+            SourceSentence sentence = definitions[i].sentences[j];
+            sentence.generatePhonetic(cantoneseOptions, mandarinOptions);
+
+            QString cantonese
+                = QString{sentence.getCantonesePhonetic(cantoneseOptions).c_str()}
+                      .trimmed();
+            QString mandarin
+                = QString{sentence.getMandarinPhonetic(mandarinOptions).c_str()}
+                      .trimmed();
 
             switch (Settings::getSettings()
                         ->value("Preview/phoneticOptions",

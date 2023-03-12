@@ -80,6 +80,11 @@ void FavouriteSplitter::setupUI()
             _entryScrollArea,
             &EntryScrollArea::stallSentenceUIUpdate);
 
+    connect(_entryScrollArea,
+            &EntryScrollArea::searchQuery,
+            this,
+            &FavouriteSplitter::searchQueryRequested);
+
     setHandleWidth(1);
     setCollapsible(0, false);
     setCollapsible(1, false);
@@ -129,6 +134,12 @@ void FavouriteSplitter::updateStyleRequested(void)
     foreach (auto &area, scrollAreas) {
         area->updateStyleRequested();
     }
+}
+
+void FavouriteSplitter::searchQueryRequested(const QString &query,
+                                             const SearchParameters &parameters)
+{
+    emit searchQuery(query, parameters);
 }
 
 void FavouriteSplitter::prepareEntry(Entry &entry)

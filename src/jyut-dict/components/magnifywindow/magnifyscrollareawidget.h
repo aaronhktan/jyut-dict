@@ -26,7 +26,6 @@ private:
     void setStyle(bool use_dark);
 
     bool _paletteRecentlyChanged = false;
-
     std::unique_ptr<QSettings> _settings;
 
     QVBoxLayout *_scrollAreaLayout;

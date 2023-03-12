@@ -1,5 +1,6 @@
 #include "sentencescrollareawidget.h"
 
+#include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -15,6 +16,8 @@ SentenceScrollAreaWidget::SentenceScrollAreaWidget(QWidget *parent)
     : QWidget(parent)
 {
     setObjectName("SentenceScrollAreaWidget");
+
+    _settings = Settings::getSettings(this);
 
     // Entire Scroll Area
     _scrollAreaLayout = new QVBoxLayout{this};
@@ -47,8 +50,11 @@ void SentenceScrollAreaWidget::changeEvent(QEvent *event)
 
 void SentenceScrollAreaWidget::setSourceSentence(const SourceSentence &sentence)
 {
-    _sentenceViewHeaderWidget->setSourceSentence(sentence);
-    _sentenceViewContentWidget->setSourceSentence(sentence);
+    _sentence = sentence;
+    _sentenceIsValid = true;
+
+    _sentenceViewHeaderWidget->setSourceSentence(_sentence);
+    _sentenceViewContentWidget->setSourceSentence(_sentence);
 }
 
 void SentenceScrollAreaWidget::setStyle(bool use_dark)
@@ -62,6 +68,20 @@ void SentenceScrollAreaWidget::setStyle(bool use_dark)
 
 void SentenceScrollAreaWidget::updateStyleRequested(void)
 {
+    if (_sentenceIsValid) {
+        CantoneseOptions cantoneseOptions
+            = _settings
+                  ->value("Entry/cantonesePronunciationOptions",
+                          QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
+                  .value<CantoneseOptions>();
+        MandarinOptions mandarinOptions
+            = _settings
+                  ->value("Entry/mandarinPronunciationOptions",
+                          QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
+                  .value<MandarinOptions>();
+        _sentence.generatePhonetic(cantoneseOptions, mandarinOptions);
+        _sentenceViewHeaderWidget->setSourceSentence(_sentence);
+    }
     QEvent event{QEvent::PaletteChange};
     QCoreApplication::sendEvent(_sentenceViewHeaderWidget, &event);
     _sentenceViewContentWidget->updateStyleRequested();

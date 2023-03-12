@@ -427,16 +427,16 @@ std::vector<int> Entry::getJyutpingNumbers() const
     std::vector<int> jyutpingNumbers;
 
     if (_jyutping.empty()) {
-        return getPinyinNumbers();
+        return jyutpingNumbers;
     }
 
     size_t pos = _jyutping.find_first_of("0123456");
-    while(pos != std::string::npos) {
+    while (pos != std::string::npos) {
         jyutpingNumbers.push_back(_jyutping.at(pos) - '0');
         pos = _jyutping.find_first_of("0123456", pos + 1);
     }
 
-return jyutpingNumbers;
+    return jyutpingNumbers;
 }
 
 std::string Entry::getPinyin(void) const
@@ -464,8 +464,12 @@ std::vector<int> Entry::getPinyinNumbers() const
 {
     std::vector<int> pinyinNumbers;
 
+    if (_pinyin.empty()) {
+        return pinyinNumbers;
+    }
+
     size_t pos = _pinyin.find_first_of("012345");
-    while(pos != std::string::npos) {
+    while (pos != std::string::npos) {
         pinyinNumbers.push_back(_pinyin.at(pos) - '0');
         pos = _pinyin.find_first_of("012345", pos + 1);
     }

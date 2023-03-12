@@ -51,6 +51,8 @@ private:
 
     bool _paletteRecentlyChanged = false;
 
+    std::unique_ptr<QSettings> _settings;
+
     QLabel *_previewTitleLabel;
     QWidget *_previewPhoneticWidget;
     QHBoxLayout *_previewPhoneticLayout;
@@ -82,7 +84,8 @@ private:
 
     QFormLayout *_tabLayout;
 
-    std::unique_ptr<QSettings> _settings;
+signals:
+    void updateStyle(void);
 
 public slots:
     void resetSettings(void);
