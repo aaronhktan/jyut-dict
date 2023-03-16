@@ -44,10 +44,10 @@ MANDARIN_REGEX_5 = re.compile(
     r"(.*?) \[Beijing Mandarin, trad\.\].* \[Beijing Mandarin, simp.\](?:(.*)*?(?: \[Pinyin\]))?"
 )
 MANDARIN_REGEX_6 = re.compile(
-    r"(.*?) \[Beijing Mandarin, simp\.\](?:From: .*?\n)?((.*)*?(?: \[Pinyin\]))?"
+    r"(.*?) \[Beijing Mandarin, simp\.\](?:From: .*?\n)?(?:(.*)*?(?: \[Pinyin\]))?"
 )
 MANDARIN_REGEX_7 = re.compile(
-    r"(.*?) \[Beijing Mandarin, trad\.\](?:From: .*?\n)?((.*)*?(?: \[Pinyin\]))?"
+    r"(.*?) \[Beijing Mandarin, trad\.\](?:From: .*?\n)?(?:(.*)*?(?: \[Pinyin\]))?"
 )
 MANDARIN_REGEX_8 = re.compile(
     r"(.*?) \[Beijing Mandarin, trad\. and simp.\](?:From: .*?\n)?(?:(.*)(?: \[Pinyin\]))?"
@@ -61,8 +61,11 @@ MANDARIN_REGEX_10 = re.compile(
 MANDARIN_REGEX_11 = re.compile(
     r"(.*?) \[Taiwanese Mandarin, trad\. and simp\.\](?:From:(?:.*|\n*)(?:\n|” ))(.*?) \[Pinyin\]"
 )
-MANDARIN_REGEX_12 = re.compile(r"(.*)\s―\s(.*)\s―\s(.*)")
-MANDARIN_REGEX_13 = re.compile(r"(.*?)\s―\s(.*)")
+MANDARIN_REGEX_12 = re.compile(
+    r"((?:.|\n)*)? \[Taiwanese Mandarin\] ― ((?:.|\n)*)? \[Pinyin\] ― ((?:.|\n)*)?"
+)
+MANDARIN_REGEX_13 = re.compile(r"(.*)\s―\s(.*)\s―\s(.*)")
+MANDARIN_REGEX_14 = re.compile(r"(.*?)\s―\s(.*)")
 
 PINYIN_TONELESS_SYLLABLE_PRONUNCIATION = re.compile(
     r"(?:.*)→ (.*) \(toneless final syllable variant\)"
@@ -441,22 +444,22 @@ def parse_file(filename, words):
                 continue
             gloss = sense["glosses"][0].split("\n")[0]
 
-            synonym_list = []
+            synonym_set = set()
             if "synonyms" in sense:
                 for synonym in sense["synonyms"]:
                     if "word" in synonym and "／" not in synonym["word"]:
-                        synonym_list.append(synonym["word"].replace(" (", ""))
+                        synonym_set.add(synonym["word"].replace(" (", ""))
 
-            antonym_list = []
+            antonym_set = set()
             if "antonyms" in sense:
                 for antonym in sense["antonyms"]:
                     if "word" in antonym and "／" not in antonym["word"]:
-                        antonym_list.append(antonym["word"].replace(" (", ""))
+                        antonym_set.add(antonym["word"].replace(" (", ""))
 
             definition_text = gloss + (
-                "\n(syn.) " + ", ".join(synonym_list) if synonym_list else ""
+                "\n(syn.) " + ", ".join(list(synonym_set)) if synonym_set else ""
             ) + (
-                "\n(ant.) " + ", ".join(antonym_list) if antonym_list else ""
+                "\n(ant.) " + ", ".join(list(antonym_set)) if antonym_set else ""
             )
 
             definition = objects.Definition(
@@ -865,6 +868,18 @@ def parse_file(filename, words):
 
                     if not found_example:
                         match = MANDARIN_REGEX_13.match(example["text"])
+                        if match:
+                            found_example = True
+                            example_text = match.group(1)
+                            example_romanization = match.group(2)
+                            example_romanization = process_mandarin_romanization(
+                                example_romanization
+                            )
+                            example_translation = match.group(3)
+                            lang = "cmn"
+
+                    if not found_example:
+                        match = MANDARIN_REGEX_14.match(example["text"])
                         if match:
                             found_example = True
                             example_text = match.group(1)
