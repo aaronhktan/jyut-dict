@@ -1,10 +1,11 @@
 from dragonmapper import transcriptions
 import opencc
-from pypinyin.contrib.tone_convert import to_tone3
+from pypinyin.contrib.tone_convert import to_normal, to_tone3
 from wordfreq import zipf_frequency
 
 from database import database, objects
 
+import copy
 import json
 import logging
 import re
@@ -15,7 +16,7 @@ import unicodedata
 # Useful test words:
 
 CANTONESE_REGEX_0 = re.compile(
-    r"(.*)\s\[Cantonese.*?\]\s―\s(.*?)\s\[Jyutping\]\s―\s(.*)"
+    r"(.*)\s\[(?:.* )?Cantonese.*?\]\s―\s(.*?)\s\[Jyutping\]\s―\s(.*)"
 )
 CANTONESE_REGEX_1 = re.compile(
     r"((?:.|\n)*) \[(?:.* )?Cantonese.*?\](?:From:\s.*?\n)?((?:.|\n)*) \[Jyutping\]"
@@ -27,16 +28,16 @@ JYUTPING_COLLOQUIAL_PRONUNCIATION = re.compile(r".⁻(.)")
 JYUTPING_REGEX_0 = re.compile(r"(.*)\[Jyutping\]")
 
 MANDARIN_REGEX_0 = re.compile(
-    r"(.*?) \[MSC, trad\.\]\n(?:.*?) \[MSC, simp.\](.*) \[Pinyin\]"
+    r"(.*?) \[MSC, trad\.\]\n(?:.*?) \[MSC, simp.\](.*) \[Pinyin\](?:\n)?((?:.|\n)*)?"
 )
 MANDARIN_REGEX_1 = re.compile(
-    r"((?:.|\n)*) \[MSC, simp\.\](?:From:(?:.*|\n*)\n)?((?:.|\n)*) \[Pinyin\]"
+    r"((?:.|\n)*) \[MSC, simp\.\](?:From:(?:.*|\n*)\n)?((?:.|\n)*) \[Pinyin\](?:\n)?((?:.|\n)*)?"
 )
 MANDARIN_REGEX_2 = re.compile(
-    r"((?:.|\n)*) \[MSC, trad\.\](?:From:(?:.*|\n*)\n)?((?:.|\n)*) \[Pinyin\]"
+    r"((?:.|\n)*) \[MSC, trad\.\](?:From:(?:.*|\n*)\n)?((?:.|\n)*) \[Pinyin\](?:\n)?((?:.|\n)*)?"
 )
 MANDARIN_REGEX_3 = re.compile(
-    r"(.*?) \[MSC, trad\. and simp\.\](?:From:.*\n?.*\n?)?(.*?) \[Pinyin\]"
+    r"(.*?) \[MSC, trad\. and simp\.\](?:From:.*\n?.*\n?)?(.*?) \[Pinyin\](?:\n)?((?:.|\n)*)?"
 )
 MANDARIN_REGEX_4 = re.compile(r"(.*?) \[MSC, trad\. and simp\.\](.*)")
 MANDARIN_REGEX_5 = re.compile(
@@ -68,6 +69,18 @@ PINYIN_TONELESS_SYLLABLE_PRONUNCIATION = re.compile(
 )
 PINYIN_EXTRA_ANNOTATION_REGEX = re.compile(r"(.*)(?: \(.*\))")
 PINYIN_REGEX_0 = re.compile(r"(.*)\[Pinyin]")
+PINYIN_ERHUA_REGEX = re.compile(r".\d")
+
+KNOWN_WEIRD_BOPOMOFO = {
+    "˙ㄏㄫ": "hng5",
+    "˙ㄛ": "o5",
+    "˙ㄏㄇ": "hm5",
+    "˙ㄎㄟ": "kei5",
+    "˙ㄇ": "m5",
+    "˙ㄎㄧㄡ": "kiu5",
+    "˙ㄧㄛ": "yo5",
+    "ㄛ": "o1",
+}
 
 SUPERSCRIPT_EQUIVALENT = str.maketrans("¹²³⁴⁵⁶⁷⁸⁹⁰", "1234567890", "")
 HALF_TO_FULL = dict((i, i + 0xFEE0) for i in range(0x21, 0x7F))
@@ -166,7 +179,7 @@ def insert_example(c, definition_id, starting_example_id, example):
     database.insert_definition_chinese_sentence_link(c, definition_id, example_id)
 
     for translation in example[1:]:
-        sentence = translation.content
+        sentence = translation.content if translation.content else "X"
         lang = translation.lang
 
         # Check if translation already exists before trying to insert
@@ -197,7 +210,7 @@ def insert_words(c, words):
     #   - 5000000000-5999999999: ABC Chinese-English Dictionary
     #   - 6000000000-6999999999: ABC Cantonese-English Dictionary
     #   - 7000000000-7999999999: Wiktionary
-    example_id = 4000000000
+    example_id = 7000000000
 
     for entry in words:
         entry_id = database.get_entry_id(
@@ -222,6 +235,7 @@ def insert_words(c, words):
                 logging.error(f"Could not insert word {entry.traditional}, uh oh!")
                 continue
 
+        # print(entry, entry.definitions)
         for definition in entry.definitions:
             definition_id = database.insert_definition(
                 c, definition.definition, definition.label, entry_id, 1, None
@@ -275,12 +289,15 @@ def parse_cantonese_romanization(romanization):
         return romanization
 
     processed = romanization.translate(SUPERSCRIPT_EQUIVALENT)
-    processed = JYUTPING_COLLOQUIAL_PRONUNCIATION.sub("\1", processed)
+    processed = JYUTPING_COLLOQUIAL_PRONUNCIATION.sub(r"\1", processed)
     return processed
+
 
 def process_mandarin_romanization(romanization):
     if romanization == "":
         return romanization
+
+    romanization = romanization.replace("'", "")
 
     example_romanization_list = (
         romanization.translate(PUNCTUATION_TABLE).strip().split(" ")
@@ -292,7 +309,7 @@ def process_mandarin_romanization(romanization):
         elif (
             any(punct in grouping for punct in PUNCTUATION_SET) or grouping.isnumeric()
         ):
-            processed_example_romanization_list.append(grouping)
+            processed_example_romanization_list.append(grouping.translate(HALF_TO_FULL))
         else:
             try:
                 syllables = transcriptions.to_pinyin(
@@ -302,9 +319,20 @@ def process_mandarin_romanization(romanization):
                 logging.debug(
                     f'Parsing romanization failed for syllable(s) "{grouping}", romanization is "{romanization}"'
                 )
-                processed_example_romanization_list.append(
-                    grouping.translate(HALF_TO_FULL)
-                )
+
+                if grouping in KNOWN_WEIRD_BOPOMOFO:
+                    grouping = KNOWN_WEIRD_BOPOMOFO[grouping]
+                elif grouping[0] == "˙":
+                    # Remove the neutral tone because Dragonmapper cannot handle it
+                    # Dragonmapper will add the first tone since there is no tone indicated by Bopomofo symbols
+                    grouping = transcriptions.to_pinyin(grouping[1:].lower())
+                    # Remove the first tone added by Dragonmapper using pypinyin
+                    grouping = to_normal(grouping)
+                    grouping += "5"
+                else:
+                    grouping = grouping.translate(HALF_TO_FULL)
+
+                processed_example_romanization_list.append(grouping)
                 continue
 
             for syllable in syllables:
@@ -312,6 +340,11 @@ def process_mandarin_romanization(romanization):
                     syllable, v_to_u=True, neutral_tone_with_five=True
                 )
                 converted_syllable.replace("ü", "u:")
+
+                # Erhua is not well supported in Jyut Dictionary, so convert "r" to "er"
+                if PINYIN_ERHUA_REGEX.match(syllable):
+                    converted_syllable = "e" + converted_syllable
+
                 processed_example_romanization_list.append(converted_syllable)
 
     return " ".join(processed_example_romanization_list)
@@ -327,16 +360,16 @@ def parse_file(filename, words):
         trad = data["word"]
         simp = traditional_to_simplified_converter.convert(trad)
 
-        found_pin = found_jyut = False
+        jyutping_list = []
+        pinyin_list = []
+        bopomofo_to_pinyin_list = []
+        mainland_taiwain_pinyin_list = []
         if "sounds" in data:
             for pron in data["sounds"]:
                 if "tags" not in pron:
                     continue
 
-                if not found_pin and (
-                    pron["tags"] == ["Mandarin", "Pinyin", "standard"]
-                    or pron["tags"] == ["Mandarin", "standard"]
-                ):
+                if pron["tags"] == ["Mandarin", "Pinyin", "standard"]:
                     pin = pron["zh-pron"]
                     pin_match = PINYIN_TONELESS_SYLLABLE_PRONUNCIATION.match(pin)
                     if pin_match:
@@ -344,25 +377,59 @@ def parse_file(filename, words):
                     pin_match = PINYIN_EXTRA_ANNOTATION_REGEX.match(pin)
                     if pin_match:
                         pin = pin_match.group(1)
-                    pin = process_mandarin_romanization(pin)
-                    found_pin = True
-                elif not found_jyut and (
-                    pron["tags"] == ["Cantonese", "Guangzhou", "Jyutping"]
-                ):
-                    jyut = parse_cantonese_romanization(pron["zh-pron"])
+                    pinyin_list.append(process_mandarin_romanization(pin))
+                elif pron["tags"] == ["Mandarin", "bopomofo", "standard"]:
+                    bopomofo = pron["zh-pron"]
+                    bopomofo_match = PINYIN_TONELESS_SYLLABLE_PRONUNCIATION.match(
+                        bopomofo
+                    )
+                    if bopomofo_match:
+                        bopomofo = bopomofo_match.group(1)
+                    bopomofo_to_pinyin_list.append(
+                        process_mandarin_romanization(bopomofo)
+                    )
+                elif pron["tags"] == [
+                    "Mainland-China",
+                    "Mandarin",
+                    "Standard-Chinese",
+                    "bopomofo",
+                ] or pron["tags"] == [
+                    "Mandarin",
+                    "Standard-Chinese",
+                    "Taiwan",
+                    "bopomofo",
+                ]:
+                    bopomofo = pron["zh-pron"]
+                    bopomofo_match = PINYIN_TONELESS_SYLLABLE_PRONUNCIATION.match(
+                        bopomofo
+                    )
+                    if bopomofo_match:
+                        bopomofo = bopomofo_match.group(1)
+                    mainland_taiwain_pinyin_list.append(
+                        process_mandarin_romanization(bopomofo)
+                    )
+                elif pron["tags"] == ["Cantonese", "Guangzhou", "Jyutping"]:
+                    jyutping_list.append(parse_cantonese_romanization(pron["zh-pron"]))
 
-                    found_jyut = True
-                if found_pin and found_jyut:
-                    break
+        if len(mainland_taiwain_pinyin_list) > len(pinyin_list):
+            # There is a variance in pronunciation between Mainland China and Taiwan
+            pinyin_list = mainland_taiwain_pinyin_list
+        elif not pinyin_list or len(bopomofo_to_pinyin_list) != len(pinyin_list):
+            # Either there is no Pinyin (due to Wiktionary parsing error),
+            # or the Pinyin list is somehow longer than the Bopomofo list (which
+            # should never happen). In these cases, the Bopomofo is usually more
+            # reliable.
+            pinyin_list = bopomofo_to_pinyin_list
 
         freq = zipf_frequency(trad, "zh")
 
         entry = objects.Entry(
             trad=trad,
             simp=simp,
-            jyut=jyut if found_jyut else "",
-            pin=pin if found_pin else "",
+            jyut=jyutping_list[0] if jyutping_list else "",
+            pin=pinyin_list[0] if pinyin_list else "",
             freq=freq,
+            defs=set(),
         )
 
         words.append(entry)
@@ -372,13 +439,37 @@ def parse_file(filename, words):
         for sense in data["senses"]:
             if "glosses" not in sense:
                 continue
+            gloss = sense["glosses"][0].split("\n")[0]
 
-            definition = objects.DefinitionTuple(
-                sense["glosses"][0].split("\n")[0],
-                ", ".join([pos] + sense["tags"]) if "tags" in sense else pos,
-                [],
+            synonym_list = []
+            if "synonyms" in sense:
+                for synonym in sense["synonyms"]:
+                    if "word" in synonym and "／" not in synonym["word"]:
+                        synonym_list.append(synonym["word"].replace(" (", ""))
+
+            antonym_list = []
+            if "antonyms" in sense:
+                for antonym in sense["antonyms"]:
+                    if "word" in antonym and "／" not in antonym["word"]:
+                        antonym_list.append(antonym["word"].replace(" (", ""))
+
+            definition_text = gloss + (
+                "\n(syn.) " + ", ".join(synonym_list) if synonym_list else ""
+            ) + (
+                "\n(ant.) " + ", ".join(antonym_list) if antonym_list else ""
             )
-            entry.append_to_defs(definition)
+
+            definition = objects.Definition(
+                definition=definition_text,
+                label=", ".join([pos] + sense["tags"]) if "tags" in sense else pos,
+                examples=[],
+            )
+
+            if not entry.append_to_defs(definition):
+                # This definition is not unique. Skip adding it.
+                # This occurs because glosses are often repeated in Wiktionary entries
+                # for some reason.
+                continue
 
             if "examples" not in sense:
                 continue
@@ -425,7 +516,9 @@ def parse_file(filename, words):
                         if match:
                             found_example = True
                             example_text = match.group(1).split("／")[0]
-                            example_romanization = parse_cantonese_romanization(match.group(2))
+                            example_romanization = parse_cantonese_romanization(
+                                match.group(2)
+                            )
                             example_translation = match.group(3)
                             lang = "yue"
 
@@ -434,7 +527,9 @@ def parse_file(filename, words):
                         if match:
                             found_example = True
                             example_text = match.group(1)
-                            example_romanization = parse_cantonese_romanization(match.group(2))
+                            example_romanization = parse_cantonese_romanization(
+                                match.group(2)
+                            )
                             example_translation = (
                                 example["english"] if "english" in example else ""
                             )
@@ -444,7 +539,9 @@ def parse_file(filename, words):
                             if match:
                                 found_example = True
                                 example_text = match.group(1)
-                                example_romanization = parse_cantonese_romanization(match.group(2))
+                                example_romanization = parse_cantonese_romanization(
+                                    match.group(2)
+                                )
                                 example_translation = (
                                     example["text"] if "text" in example else ""
                                 )
@@ -498,7 +595,9 @@ def parse_file(filename, words):
                                 example_romanization
                             )
                             example_translation = (
-                                example["english"] if "english" in example else ""
+                                example["english"]
+                                if "english" in example
+                                else match.group(3)
                             )
                             lang = "cmn"
 
@@ -514,7 +613,9 @@ def parse_file(filename, words):
                                 example_romanization
                             )
                             example_translation = (
-                                example["english"] if "english" in example else ""
+                                example["english"]
+                                if "english" in example
+                                else match.group(3)
                             )
                             lang = "cmn"
 
@@ -528,7 +629,9 @@ def parse_file(filename, words):
                                 example_romanization
                             )
                             example_translation = (
-                                example["english"] if "english" in example else ""
+                                example["english"]
+                                if "english" in example
+                                else match.group(3)
                             )
                             lang = "cmn"
 
@@ -542,12 +645,14 @@ def parse_file(filename, words):
                                 example_romanization
                             )
                             example_translation = (
-                                example["english"] if "english" in example else ""
+                                example["english"]
+                                if "english" in example
+                                else match.group(3)
                             )
                             lang = "cmn"
                         else:
                             match = (
-                                MANDARIN_REGEX_2.match(example["ref"])
+                                MANDARIN_REGEX_3.match(example["ref"])
                                 if "ref" in example
                                 else None
                             )
@@ -559,7 +664,9 @@ def parse_file(filename, words):
                                     example_romanization
                                 )
                                 example_translation = (
-                                    example["english"] if "english" in example else ""
+                                    example["english"]
+                                    if "english" in example
+                                    else match.group(3)
                                 )
                                 lang = "cmn"
 
@@ -779,7 +886,17 @@ def parse_file(filename, words):
                         objects.Example(lang="eng", content=example_translation)
                     )
                 else:
-                    print("no match found for example", example)
+                    logging.warning("no match found for example", example)
+
+        for jyutping in jyutping_list[1:]:
+            new_entry = copy.deepcopy(entry)
+            new_entry.add_jyutping(jyutping)
+            words.append(new_entry)
+
+        for pinyin in pinyin_list[1:]:
+            new_entry = copy.deepcopy(entry)
+            new_entry.add_pinyin(pinyin)
+            words.append(new_entry)
 
 
 if __name__ == "__main__":
@@ -797,7 +914,7 @@ if __name__ == "__main__":
             (
                 "e.g. python3 -m wiktionary.parse wiktionary.db ./dict-wk.json "
                 '"Wiktionary" WT 2023-02-16 '
-                '"Wiktionary, a collaborative project to produce a free-content multilingual dictionary.'
+                '"Wiktionary, a collaborative project to produce a free-content multilingual dictionary. '
                 'It aims to describe all words of all languages using definitions and descriptions in English." '
                 '"Text is available under the Creative Commons Attribution-ShareAlike License; additional terms may apply." '
                 '"https://en.wiktionary.org/wiki/Wiktionary:Main_Page" "" "words,sentences"'
