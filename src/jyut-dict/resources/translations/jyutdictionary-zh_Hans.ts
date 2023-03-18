@@ -1534,7 +1534,7 @@ Hang tight!</source>
     </message>
     <message>
         <location line="+18"/>
-        <source>%1 is made with ❤️ by Aaron Tan.</source>
+        <source>%1 is made with ❤ by Aaron Tan.</source>
         <translation>%1由谭可峰精心打造。</translation>
     </message>
     <message>

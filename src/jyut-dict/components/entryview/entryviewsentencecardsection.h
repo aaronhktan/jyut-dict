@@ -21,8 +21,8 @@
 // The EntryViewSentenceCardSection displays cards for each set of sentences,
 // where each set of sentences belongs to a particular source.
 
-typedef std::unordered_map<std::string, std::vector<SourceSentence>>
-    sentenceSamples;
+using sentenceSamples
+    = std::unordered_map<std::string, std::vector<SourceSentence>>;
 
 class EntryViewSentenceCardSection : public QWidget, public ISearchObserver
 {

@@ -25,7 +25,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
     Svg
     TextToSpeech
     Widgets)
-find_package(KF5Archive)
+find_package(KF6Archive)
 
 set(TS_FILES
     resources/translations/jyutdictionary-en.ts
@@ -162,7 +162,7 @@ target_link_libraries(CantoneseDictionary
     PRIVATE Qt${QT_VERSION_MAJOR}::Sql
     PRIVATE Qt${QT_VERSION_MAJOR}::Svg
     PRIVATE Qt${QT_VERSION_MAJOR}::TextToSpeech
-    PRIVATE KF5::Archive
+    PRIVATE KF6::Archive
 )
 
 add_subdirectory(logic/database/test/TestSqlDatabaseManager)
@@ -233,6 +233,6 @@ install(TARGETS CantoneseDictionary
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(test)
+    qt_finalize_executable(CantoneseDictionary)
 endif()
 

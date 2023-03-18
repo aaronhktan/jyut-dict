@@ -272,10 +272,10 @@ void DictionaryTab::addDictionary(const QString &dictionaryFile)
                 }
             });
 
-    QtConcurrent::run(&SQLDatabaseUtils::addSource,
-                      _utils.get(),
-                      dictionaryFile.toStdString(),
-                      /* overwriteConflictingDictionaries */ false);
+    (void) QtConcurrent::run(&SQLDatabaseUtils::addSource,
+                             _utils.get(),
+                             dictionaryFile.toStdString(),
+                             /* overwriteConflictingDictionaries */ false);
 }
 
 void DictionaryTab::forceAddDictionary(const QString &dictionaryFile)
@@ -358,10 +358,10 @@ void DictionaryTab::forceAddDictionary(const QString &dictionaryFile)
                 }
             });
 
-    QtConcurrent::run(&SQLDatabaseUtils::addSource,
-                      _utils.get(),
-                      dictionaryFile.toStdString(),
-                      /* overwriteConflictingDictionaries */ true);
+    (void) QtConcurrent::run(&SQLDatabaseUtils::addSource,
+                             _utils.get(),
+                             dictionaryFile.toStdString(),
+                             /* overwriteConflictingDictionaries */ true);
 }
 
 void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
@@ -440,10 +440,10 @@ void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
                 });
             });
 
-    QtConcurrent::run(&SQLDatabaseUtils::removeSource,
-                      _utils.get(),
-                      metadata.getName(),
-                      /* skipCleanup */ false);
+    (void) QtConcurrent::run(&SQLDatabaseUtils::removeSource,
+                             _utils.get(),
+                             metadata.getName(),
+                             /* skipCleanup */ false);
 }
 
 void DictionaryTab::populateDictionarySourceUtils() const

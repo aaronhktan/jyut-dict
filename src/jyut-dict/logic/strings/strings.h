@@ -46,8 +46,7 @@ constexpr auto CREDITS_TEXT = QT_TRANSLATE_NOOP(
     "<br>Made with <a href=\"#\" style=\"color: %1; text-decoration: none\">"
     "Qt</a>.");
 constexpr auto CONTACT_TITLE
-    = QT_TRANSLATE_NOOP("strings",
-                        "%1 is made with ❤️ by Aaron Tan.");
+    = QT_TRANSLATE_NOOP("strings", "%1 is made with ❤ by Aaron Tan.");
 constexpr auto CONTACT_BODY
     = QT_TRANSLATE_NOOP("strings",
                         "Donate 💵, report a bug 🐛, or just say hi 👋!");
