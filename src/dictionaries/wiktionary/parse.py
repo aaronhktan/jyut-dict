@@ -1,6 +1,9 @@
 from dragonmapper import transcriptions
 import opencc
+import pinyin_jyutping_sentence
+from pypinyin import lazy_pinyin, Style
 from pypinyin.contrib.tone_convert import to_normal, to_tone3
+from pypinyin_dict.phrase_pinyin_data import cc_cedict
 from wordfreq import zipf_frequency
 
 from database import database, objects
@@ -14,6 +17,61 @@ import sqlite3
 import unicodedata
 
 # Useful test words:
+# - 太: secondary mandarin pronunciation in parentheses
+# - 孫子: mandarin neutral tone
+# - 磚坯: multiple mandarin pronunciations
+# - 浣熊: Taiwan and Mainland China pronunciations
+# - 哎喲: Mandarin yo1 as syllable
+# - 三Q: Mandarin kiu1 as syllable
+# - M: Mandarin aim2 as syllable
+# - K: Mandarin kei1 as syllable
+# - 哦: Mandarin o2 as syllable
+# - 噷: Mandarin hm5 as syllable
+# - 呵: Mandarin o1 as syllable
+# - 哼: Mandarin 哼 as syllable
+# - 學生: Multiple pronunciations in Cantonese and Mandarin
+# - 佢哋: Basic Cantonese test
+# - 綠: ǜ in Pinyin
+# - 澳洲: example with numbers in Pinyin
+# - 2019冠狀病毒病: example with numbers in Pinyin
+# - 芒: duplicate definition
+# - 奇異筆: Basic Cantonese and Mandarin test
+# - 回去: Mandarin neutral tone
+# - 閪: Basic Cantonese test
+
+# Useful test examples:
+# - 呢度好閪热呀！ [Cantonese, simp.]nei¹ dou⁶ hou² hai¹ jit⁶ aa³! [Jyutping]
+# - 驚閪咩？／惊閪咩？ [Cantonese] ― geng¹ hai¹ me¹? [Jyutping] ― What the fuck I am afraid of?
+# - 有閪用！ [Cantonese] ― jau⁵ hai¹ jung⁶! [Jyutping] ― There is no effing use of it!
+# - 撚狗行动 [Cantonese, simp.]From: 2019, https://hk.news.appledaily.com/local/realtime/article/20190621/59740269\nlan² gau² hang⁴ dung⁶ [Jyutping]
+# - 佢识得话人唔识得话自己。 [Guangzhou Cantonese, simp.]keoi⁵ sik¹ dak¹ waa⁶ jan⁴ m⁴ sik¹ dak¹ waa⁶ zi⁶ gei². [Jyutping]
+# - 冬天捐咗入被窦度就唔愿起身。 [Cantonese, simp.]From: 開放詞典 [Kaifang Cidian]\ndung¹ tin¹ gyun¹ zo² jap⁶ pei⁵ dau³ dou⁶ zau⁶ m⁴ jyun⁶ hei² san¹. [Jyutping]
+# - 我而家喺香港。 [Cantonese, trad. and simp.]ngo⁵ ji⁴ gaa¹ hai² hoeng¹ gong². [Jyutping]
+# - 情義已失去，恩愛都失去 [Literary Cantonese, trad.]
+# - 扮示威者 [Cantonese, trad. and simp.]From: 2019, 便衣警扮示威者偷拍人群, in Apple Daily https://hk.news.appledaily.com/local/daily/article/20190627/20714653
+# - C：边队band先？\nA：系\U0003154c。冇讲到系边队band。 [Cantonese, simp.]From: 1998, 收音機1 (Radio 1), Hong Kong Cantonese Corpus (HKCanCor)\nC: Bin¹ deoi⁶ ben¹ sin¹?\nA: Hai⁶ lo¹. mou⁵ gong² dou³ hai⁶ bin¹ deoi⁶ ben¹. [Jyutping]
+# - 扮示威者 [Cantonese, trad. and simp.]From: 2019, 便衣警扮示威者偷拍人群, in Apple Daily https://hk.news.appledaily.com/local/daily/article/20190627/2071465
+# - 佢哋係學生。／佢哋系学生。 [Guangzhou Cantonese] ― keoi⁵ dei⁶ hai⁶ hok⁶ saang¹. [Jyutping] ― They are students.
+# - 达到高效、稳定、安全 [MSC, simp.]dádào gāoxiào, wěndìng, ānquán [Pinyin]
+# - 阿Q被抬上了一辆没有蓬的车，几个短衣人物也和他同坐在一处。 [MSC, simp.]From: Lu Xun, 1922. The True Story of Ah Q (《阿Q正傳》)\nĀqiū bèi tái shàng le yī liàng méiyǒu péng de chē, jǐ ge duǎnyī rénwù yě hé tā tóng zuò zài yī chù. [Pinyin]
+# - 我被机构投资者割韭菜了。 [MSC, simp.]From:\n10 February 2021, ““割韭菜”“韭菜”用英语怎么说？
+# - 你把事情搞糟了，卻倒轉來怪我。 [MSC, trad.]\n你把事情搞糟了，却倒转来怪我。 [MSC, simp.]Nǐ bǎ shìqíng gǎo zāo le, què dàozhuǎn lái guài wǒ. [Pinyin]
+# - 江干 ― jiānggān
+# - 腰圍／腰围 ― yāowéi ― waistline
+# - zhǐshì wēixiǎo de guāng, zhào bù liàng yī mǐ de dìfāng [Pinyin]
+# - 那是一深夜 [Beijing Mandarin, trad. and simp.]From: 2000, 梁左 and 梁欢, 《闲人马大姐》, episode 7, 18:30
+# - 她最近跑到上海去了。 [MSC, trad. and simp.]Tā zuìjìn pǎo dào Shànghǎi qù le. [Pinyin]
+# - 只是微小的光 照不亮一米的地方 [MSC, trad. and simp.]From: 2020, 曹楊／曹杨 (Young), 微光 (Glimmer)
+# - 這桌椅板凳都得從新打，太麻煩。 [Beijing Mandarin, trad.]\n这桌椅板凳都得从新打，太麻烦。 [Beijing Mandarin, simp.]Zhè zhuōyǐbǎndèng dōu děi cóngxīn dǎ, tài máfan. [Pinyin]
+# - 现在的孩子们啊嘴都刁着呢，啊。 [Beijing Mandarin, simp.]From: 2004, 《家有儿女》, episode 68\nXiànzài de háizimen a zuǐ dōu diāo zhe ne, ā. [Pinyin]
+# - 那是一深夜 [Beijing Mandarin, trad. and simp.]From: 2000, 梁左 and 梁欢, 《闲人马大姐》, episode 7, 18:30
+# - 奴才替天下百姓感激皇太后恩典！ [MSC, trad. and simp.]From: 2010, The Firmament of the Pleiades Núcái tì tiānxià bǎixìng gǎnjī huángtàihòu ēndiǎn! [Pinyin]
+# - 有一個人，是從神那裡差來的，名叫約翰。 [MSC, trad.]
+# - 有一个人，是从神那里差来的，名叫约翰。 [MSC, simp.]Yǒu yī ge rén, shì cóng shén nàlǐ chā lái de, míng jiào Yuēhàn. [Pinyin]
+# - 据英国《每日邮报》5月9日报导，不久前，意大利海关在从中国运过来的集装箱里发现一只小橘猫。 [MSC, simp.]From:\n2019, “中国小猫被困在集装箱 “漂流”40多天到意大利”, in sina:\nJù Yīngguó “Měirì Yóubào” 5 yuè 9 rì bàodǎo, bùjiǔqián, Yìdàlì hǎiguān zài cóng zhōngguó yùnguòlái de jízhuāngxiānglǐ fāxiàn yī zhī xiǎo júmāo. [Pinyin]
+# - 甲：为啥你穿校服？\n乙：去上课呗。 [MSC, simp.]Jiǎ: Wèishá nǐ chuān xiàofú?\nYǐ: Qù shàngkè bei. [Pinyin]
+# - 而现在\n乡愁是一湾浅浅的海峡\n我在这头\n大陆在那头 [MSC, simp.]From: 1972, 余光中 (Yu Kwang-chung), 鄉愁\nér xiànzài\nxiāngchóu shì yī wān qiǎn qiǎn de hǎixiá\nwǒ zài zhè tóu\nDàlù zài nà tóu [Pinyin]
+# - 这孙子成绩好是因为丫老给老师舔屁眼。 [Beijing Mandarin, simp.]Zhè sūnzi chéngjì hǎo shì yīnwèi yā lǎo gěi lǎoshī tiǎn pìyǎn. [Pinyin]
 
 CANTONESE_REGEX_0 = re.compile(
     r"(.*)\s\[(?:.* )?Cantonese.*?\]\s―\s(.*?)\s\[Jyutping\]\s―\s(.*)"
@@ -76,13 +134,20 @@ PINYIN_ERHUA_REGEX = re.compile(r".\d")
 
 KNOWN_WEIRD_BOPOMOFO = {
     "˙ㄏㄫ": "hng5",
-    "˙ㄛ": "o5",
     "˙ㄏㄇ": "hm5",
-    "˙ㄎㄟ": "kei5",
     "˙ㄇ": "m5",
     "˙ㄎㄧㄡ": "kiu5",
     "˙ㄧㄛ": "yo5",
+    "ㄎㄟ": "kei1",
+    "ㄎㄟˊ": "kei2",
+    "ㄎㄟˇ": "kei3",
+    "˙ㄎˋ": "kei4",
+    "˙ㄎㄟ": "kei5",
     "ㄛ": "o1",
+    "ㄛˊ": "o2",
+    "ㄛˇ": "o3",
+    "ㄛˋ": "o4",
+    "˙ㄛ": "o5",
 }
 
 SUPERSCRIPT_EQUIVALENT = str.maketrans("¹²³⁴⁵⁶⁷⁸⁹⁰", "1234567890", "")
@@ -424,13 +489,26 @@ def parse_file(filename, words):
             # reliable.
             pinyin_list = bopomofo_to_pinyin_list
 
+        if not jyutping_list:
+            jyutping_list = [
+                pinyin_jyutping_sentence.jyutping(trad, tone_numbers=True, spaces=True)
+            ]
+        if not pinyin_list:
+            pinyin_list = [
+                " ".join(
+                    lazy_pinyin(simp, style=Style.TONE3, neutral_tone_with_five=True)
+                )
+                .lower()
+                .replace("v", "u:")
+            ]
+
         freq = zipf_frequency(trad, "zh")
 
         entry = objects.Entry(
             trad=trad,
             simp=simp,
-            jyut=jyutping_list[0] if jyutping_list else "",
-            pin=pinyin_list[0] if pinyin_list else "",
+            jyut=jyutping_list[0],
+            pin=pinyin_list[0],
             freq=freq,
             defs=set(),
         )
@@ -456,10 +534,10 @@ def parse_file(filename, words):
                     if "word" in antonym and "／" not in antonym["word"]:
                         antonym_set.add(antonym["word"].replace(" (", ""))
 
-            definition_text = gloss + (
-                "\n(syn.) " + ", ".join(list(synonym_set)) if synonym_set else ""
-            ) + (
-                "\n(ant.) " + ", ".join(list(antonym_set)) if antonym_set else ""
+            definition_text = (
+                gloss
+                + ("\n(syn.) " + ", ".join(list(synonym_set)) if synonym_set else "")
+                + ("\n(ant.) " + ", ".join(list(antonym_set)) if antonym_set else "")
             )
 
             definition = objects.Definition(
@@ -947,6 +1025,8 @@ if __name__ == "__main__":
         sys.argv[9],
         sys.argv[10],
     )
+
+    cc_cedict.load()
 
     logging.getLogger().setLevel(logging.INFO)
 
