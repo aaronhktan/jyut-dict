@@ -35,15 +35,10 @@ int main(int argc, char *argv[])
     qRegisterMetaType<MandarinOptions>("MandarinOptions");
     qRegisterMetaType<EntryColourPhoneticType>("EntryColourPhoneticType");
     qRegisterMetaType<SearchParameters>("SearchParameters");
-    qRegisterMetaType<SearchTermHistoryItem>("SearchTermHistoryItem");
+    qRegisterMetaType<searchTermHistoryItem>("searchTermHistoryItem");
     qRegisterMetaType<conflictingDictionaryMetadata>(
         "conflictingDictionaryNamesMetadata");
     qRegisterMetaType<Settings::InterfaceSize>();
-    qRegisterMetaTypeStreamOperators<Settings::InterfaceSize>();
-    qRegisterMetaType<TextToSpeech::SpeakerBackend>();
-    qRegisterMetaTypeStreamOperators<TextToSpeech::SpeakerBackend>();
-    qRegisterMetaType<TextToSpeech::SpeakerVoice>();
-    qRegisterMetaTypeStreamOperators<TextToSpeech::SpeakerVoice>();
 
 #if defined(Q_OS_WIN)
     // This is kind of a horrible hack to get dark borders on Windows

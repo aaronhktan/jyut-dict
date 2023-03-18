@@ -1,7 +1,6 @@
 #include "sqluserhistoryutils.h"
 
 #include "logic/database/queryparseutils.h"
-#include "logic/utils/utils.h"
 
 #include <QtConcurrent/QtConcurrent>
 

@@ -13,7 +13,7 @@
 
 namespace QueryParseUtils {
 
-typedef std::pair<std::string, int> searchTermHistoryItem;
+using searchTermHistoryItem = std::pair<std::string, long>;
 
 std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions = true);
 std::vector<SourceSentence> parseSentences(QSqlQuery &query);

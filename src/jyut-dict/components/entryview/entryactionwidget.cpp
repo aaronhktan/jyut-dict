@@ -1,4 +1,4 @@
-#include "entryactionwidget.h"
+﻿#include "entryactionwidget.h"
 
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
@@ -141,6 +141,7 @@ void EntryActionWidget::setStyle(bool use_dark)
                                    : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
                                             CONTENT_BACKGROUND_COLOUR_LIGHT_G,
                                             CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+
     int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
