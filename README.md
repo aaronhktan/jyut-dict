@@ -55,6 +55,7 @@ This folder contains several Python3 scripts that convert the various online Can
 - **[MoEDict (重編國語辭典修訂本)](http://dict.revised.moe.edu.tw/cbdic/)**
 - **[Tatoeba](https://tatoeba.org/eng/downloads)**
 - **[Unihan Database](https://www.unicode.org/reports/tr38/)**
+- **[Wiktionary - English](https://en.wiktionary.org/wiki/Wiktionary:Main_Page)**
 - **[words.hk 粵典](https://words.hk/)**
 
 ### jyut-dict
