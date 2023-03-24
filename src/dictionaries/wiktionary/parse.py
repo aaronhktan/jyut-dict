@@ -1029,7 +1029,7 @@ if __name__ == "__main__":
             (
                 "e.g. python3 -m wiktionary.parse wiktionary.db ./dict-wk.json "
                 '"Wiktionary" WT 2023-02-16 '
-                '"Wiktionary, a collaborative project to produce a free-content multilingual dictionary. '
+                '"Wiktionary is a collaborative project to produce a free-content multilingual dictionary. '
                 'It aims to describe all words of all languages using definitions and descriptions in English." '
                 '"Text is available under the Creative Commons Attribution-ShareAlike License; additional terms may apply." '
                 '"https://en.wiktionary.org/wiki/Wiktionary:Main_Page" "" "words,sentences"'
