@@ -79,7 +79,13 @@ class Entry(object):
         self.definitions = defs
 
     def append_to_defs(self, item):
-        self.definitions.append(item)
+        if isinstance(self.definitions, list):
+            self.definitions.append(item)
+        elif isinstance(self.definitions, set):
+            if item in self.definitions:
+                return False
+            self.definitions.add(item)
+            return True
 
 
 # Option 2: same as option 1, but with separate definitions from a
@@ -148,9 +154,23 @@ class Example:
     pron: str = ""
     content: str = ""
 
+    def __hash__(self):
+        return hash((self.lang, self.pron, self.content))
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)): return NotImplemented
+        return self.lang == other.lang and self.pron == other.pron and self.content == other.content
+
 
 @dataclass
 class Definition:
     definition: str = ""
     label: str = ""
     examples: List[List[Example]] = field(default_factory=list)
+
+    def __hash__(self):
+        return hash((self.definition, self.label))
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)): return NotImplemented
+        return self.definition == other.definition and self.label == other.label
