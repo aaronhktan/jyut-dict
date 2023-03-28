@@ -18,6 +18,7 @@ public:
     explicit ContactTab(QWidget *parent = nullptr);
 
     void changeEvent(QEvent *event) override;
+    bool eventFilter(QObject *object, QEvent *event) override;
 
 private:
     void setupUI();

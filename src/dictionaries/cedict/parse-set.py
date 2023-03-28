@@ -13,7 +13,7 @@ sources = [
         "2022-02-07",
         "CC-CEDICT is a continuation of the CEDICT project started by Paul Denisowski in 1997 with the aim to provide a complete downloadable Chinese to English dictionary with pronunciation in pinyin for the Chinese characters.",
         "This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.",
-        "http://www.mdbg.net/chindict/chindict.php?page=cc-cedict",
+        "https://www.mdbg.net/chinese/dictionary?page=cc-cedict",
         "",
         "",
     ),

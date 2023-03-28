@@ -45,6 +45,31 @@ AboutWindow::AboutWindow(QWidget *parent)
     setAttribute(Qt::WA_DeleteOnClose);
 }
 
+void AboutWindow::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        setStyle(Utils::isDarkMode());
+    }
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
+    QWidget::changeEvent(event);
+}
+
+bool AboutWindow::eventFilter(QObject *object, QEvent *event)
+{
+    if (object == _iconLabel && event->type() == QEvent::MouseButtonPress) {
+        QDesktopServices::openUrl(QUrl{Utils::WEBSITE_LINK});
+    }
+    return QObject::eventFilter(object, event);
+}
+
 void AboutWindow::setupUI()
 {
     _windowLayout = new QGridLayout{this};
@@ -125,24 +150,6 @@ void AboutWindow::setupUI()
     setStyle(false);
 #endif
 }
-
-void AboutWindow::changeEvent(QEvent *event)
-{
-    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
-        // QWidget emits a palette changed event when setting the stylesheet
-        // So prevent it from going into an infinite loop with this timer
-        _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
-
-        // Set the style to match whether the user started dark mode
-        setStyle(Utils::isDarkMode());
-    }
-    if (event->type() == QEvent::LanguageChange) {
-        translateUI();
-    }
-    QWidget::changeEvent(event);
-}
-
 void AboutWindow::translateUI()
 {
     // Set property so styling automatically changes
@@ -198,12 +205,4 @@ void AboutWindow::setStyle(bool use_dark)
     _messageLabel->setText(
         QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CREDITS_TEXT)
             .arg(palette().text().color().name()));
-}
-
-bool AboutWindow::eventFilter(QObject *object, QEvent *event)
-{
-    if (object == _iconLabel && event->type() == QEvent::MouseButtonPress) {
-        QDesktopServices::openUrl(QUrl{Utils::WEBSITE_LINK});
-    }
-    return QObject::eventFilter(object, event);
 }

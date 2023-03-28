@@ -43,6 +43,14 @@ void ContactTab::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
+bool ContactTab::eventFilter(QObject *object, QEvent *event)
+{
+    if (object == _iconLabel && event->type() == QEvent::MouseButtonPress) {
+        QDesktopServices::openUrl(QUrl{Utils::EASTER_EGG_LINK});
+    }
+    return QObject::eventFilter(object, event);
+}
+
 void ContactTab::setupUI()
 {
     _tabLayout = new QGridLayout{this};
@@ -60,6 +68,7 @@ void ContactTab::setupUI()
     _iconLabel->setFixedWidth(50);
     _iconLabel->setFixedHeight(50);
     _iconLabel->setAlignment(Qt::AlignTop);
+    _iconLabel->installEventFilter(this);
 
     QPixmap icon = QPixmap{":/images/org_icon.png"};
     icon.setDevicePixelRatio(devicePixelRatio());

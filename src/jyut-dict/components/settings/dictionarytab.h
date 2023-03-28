@@ -55,6 +55,7 @@ private:
     QLabel *_version;
 
     QPushButton *_add;
+    QPushButton *_findMore;
     QPushButton *_remove;
     QPushButton *_link;
 
