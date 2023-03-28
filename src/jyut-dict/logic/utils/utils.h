@@ -64,6 +64,7 @@ namespace Utils {
     constexpr auto DONATE_LINK = "https://www.paypal.me/cheeseisdisgusting";
     constexpr auto AUTHOR_GITHUB_LINK = "https://github.com/aaronhktan/";
     constexpr auto GITHUB_LINK = "https://github.com/aaronhktan/jyut-dict";
+    constexpr auto WEBSITE_LINK = "https://jyutdictionary.com";
 
     // Strings used for adding languages
 #ifdef Q_OS_MAC

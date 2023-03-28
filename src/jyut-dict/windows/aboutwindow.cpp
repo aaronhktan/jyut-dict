@@ -53,11 +53,12 @@ void AboutWindow::setupUI()
     _iconLabel->setFixedWidth(100);
     _iconLabel->setFixedHeight(100);
     _iconLabel->setAlignment(Qt::AlignTop);
+    _iconLabel->installEventFilter(this);
 
     QPixmap icon = QPixmap{":/images/icon.png"};
     icon.setDevicePixelRatio(devicePixelRatio());
-    int iconWidth = devicePixelRatio() * _iconLabel->width();
-    int iconHeight = devicePixelRatio() * _iconLabel->height();
+    int iconWidth = static_cast<int>(devicePixelRatio() * _iconLabel->width());
+    int iconHeight = static_cast<int>(devicePixelRatio() * _iconLabel->height());
     _iconLabel->setPixmap(icon.scaled(iconWidth,
                                       iconHeight,
                                       Qt::KeepAspectRatio,
@@ -98,6 +99,11 @@ void AboutWindow::setupUI()
                 }
             });
 
+    _websiteButton = new QPushButton{tr("Visit website..."), this};
+    connect(_websiteButton, &QPushButton::clicked, this, [&]() {
+        QDesktopServices::openUrl(QUrl{Utils::WEBSITE_LINK});
+    });
+
     _githubButton = new QPushButton{tr("View on Github..."), this};
     connect(_githubButton, &QPushButton::clicked, this, [&]() {
         QDesktopServices::openUrl(QUrl{Utils::GITHUB_LINK});
@@ -106,9 +112,10 @@ void AboutWindow::setupUI()
     _windowLayout->addWidget(_iconLabel, 0, 0, 1, -1, Qt::AlignCenter);
     _windowLayout->addWidget(_titleLabel, 1, 0, 1, -1, Qt::AlignCenter);
     _windowLayout->addWidget(_versionLabel, 2, 0, 1, -1, Qt::AlignCenter);
-    _windowLayout->addWidget(_githubButton, 4, 0, 1, -1, Qt::AlignCenter);
     _windowLayout->addWidget(_descriptionLabel, 3, 0, 1, -1, Qt::AlignCenter);
-    _windowLayout->addWidget(_messageLabel, 5, 0, 1, -1, Qt::AlignCenter);
+    _windowLayout->addWidget(_websiteButton, 4, 0, 1, -1, Qt::AlignCenter);
+    _windowLayout->addWidget(_githubButton, 5, 0, 1, -1, Qt::AlignCenter);
+    _windowLayout->addWidget(_messageLabel, 6, 0, 1, -1, Qt::AlignCenter);
 
     // Set style
 #ifdef Q_OS_MAC
@@ -151,9 +158,11 @@ void AboutWindow::translateUI()
     _titleLabel->setText(
         QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
     _versionLabel->setText(tr("Build %1").arg(Utils::CURRENT_VERSION));
-    _githubButton->setText(tr("View on Github..."));
     _descriptionLabel->setText(
-        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_DESCRIPTION));
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::PRODUCT_DESCRIPTION));
+    _websiteButton->setText(tr("Visit website..."));
+    _githubButton->setText(tr("View on Github..."));
     _messageLabel->setText(
         QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                     Strings::CREDITS_TEXT)
@@ -189,4 +198,12 @@ void AboutWindow::setStyle(bool use_dark)
     _messageLabel->setText(
         QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CREDITS_TEXT)
             .arg(palette().text().color().name()));
+}
+
+bool AboutWindow::eventFilter(QObject *object, QEvent *event)
+{
+    if (object == _iconLabel && event->type() == QEvent::MouseButtonPress) {
+        QDesktopServices::openUrl(QUrl{Utils::WEBSITE_LINK});
+    }
+    return QObject::eventFilter(object, event);
 }
