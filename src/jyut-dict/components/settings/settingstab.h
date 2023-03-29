@@ -6,6 +6,7 @@
 #include <QComboBox>
 #include <QEvent>
 #include <QFormLayout>
+#include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QRadioButton>
@@ -81,6 +82,18 @@ private:
     QCheckBox *_entryNumberedPinyin;
     QCheckBox *_entryZhuyin;
     QCheckBox *_entryMandarinIPA;
+
+    QLabel *_referenceTitleLabel;
+    QWidget *_referenceWidget;
+    QGridLayout *_referenceWidgetLayout;
+    QPushButton *_cantoneseReference;
+    QPushButton *_learnJyutping;
+    QPushButton *_learnYale;
+    QPushButton *_learnCantoneseIPA;
+    QPushButton *_mandarinReference;
+    QPushButton *_learnPinyin;
+    QPushButton *_learnBopomofo;
+    QPushButton *_learnMandarinIPA;
 
     QFormLayout *_tabLayout;
 

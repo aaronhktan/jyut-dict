@@ -83,6 +83,31 @@ constexpr auto ZH_CN_DESCRIPTION_STRING = QT_TRANSLATE_NOOP(
     "Unable to use text to speech.\n\n"
     "Debug: Locale: %1, Language: Chinese - Mainland");
 
+constexpr auto CANTONESE_REFERENCE_URL
+    = QT_TRANSLATE_NOOP("strings",
+                        "https://en.wikipedia.org/wiki/Help:IPA/Cantonese");
+constexpr auto LEARN_JYUTPING_URL
+    = QT_TRANSLATE_NOOP("strings", "https://jyutping.org/en/docs/english/");
+constexpr auto LEARN_YALE_URL = QT_TRANSLATE_NOOP(
+    "strings",
+    "https://opencantonese.org/cantonese-pronunciation-yale/introduction/"
+    "overview-cantonese-sounds");
+constexpr auto LEARN_CANTONESE_IPA_URL
+    = QT_TRANSLATE_NOOP("strings", "https://cantonese.ca/pronunciation.html");
+constexpr auto MANDARIN_REFERENCE_URL
+    = QT_TRANSLATE_NOOP("strings",
+                        "https://en.wikipedia.org/wiki/Help:IPA/Mandarin");
+constexpr auto LEARN_PINYIN_URL
+    = QT_TRANSLATE_NOOP("strings",
+                        "https://www.dong-chinese.com/learn/sounds/pinyin");
+constexpr auto LEARN_BOPOMOFO_URL
+    = QT_TRANSLATE_NOOP("strings",
+                        "https://www.dong-chinese.com/learn/sounds/zhuyin");
+constexpr auto LEARN_MANDARIN_IPA_URL = QT_TRANSLATE_NOOP(
+    "strings",
+    "https://www.internationalphoneticassociation.org/IPAcharts/"
+    "IPA_chart_trans/pdfs/JIPA_2011_[2007]_zho.pdf");
+
 constexpr auto ENG_STRING = QT_TRANSLATE_NOOP("strings", "English");
 constexpr auto FRA_STRING = QT_TRANSLATE_NOOP("strings", "French");
 constexpr auto DEU_STRING = QT_TRANSLATE_NOOP("strings", "German");

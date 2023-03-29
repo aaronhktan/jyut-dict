@@ -2,6 +2,7 @@
 
 #include "logic/entry/entryphoneticoptions.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -11,10 +12,12 @@
 #endif
 
 #include <QApplication>
+#include <QDesktopServices>
 #include <QFrame>
 #include <QGridLayout>
 #include <QStyle>
 #include <QTimer>
+#include <QUrl>
 #include <QVariant>
 
 SettingsTab::SettingsTab(QWidget *parent)
@@ -105,11 +108,11 @@ void SettingsTab::setupUI()
                                          MandarinOptions::MANDARIN_IPA));
     initializeSearchResultsMandarinPronunciation(*_previewMandarinPronunciation);
 
-    QFrame *_entryDivider = new QFrame{this};
-    _entryDivider->setObjectName("divider");
-    _entryDivider->setFrameShape(QFrame::HLine);
-    _entryDivider->setFrameShadow(QFrame::Raised);
-    _entryDivider->setFixedHeight(1);
+    QFrame *entryDivider = new QFrame{this};
+    entryDivider->setObjectName("divider");
+    entryDivider->setFrameShape(QFrame::HLine);
+    entryDivider->setFrameShadow(QFrame::Raised);
+    entryDivider->setFixedHeight(1);
 
     _entryTitleLabel = new QLabel{this};
 
@@ -158,16 +161,73 @@ void SettingsTab::setupUI()
                                        MandarinOptions::MANDARIN_IPA));
     initializeEntryMandarinPronunciation(*_entryMandarinPronunciation);
 
+    QFrame *learnDivider = new QFrame{this};
+    learnDivider->setObjectName("divider");
+    learnDivider->setFrameShape(QFrame::HLine);
+    learnDivider->setFrameShadow(QFrame::Raised);
+    learnDivider->setFixedHeight(1);
+
+    _referenceTitleLabel = new QLabel{this};
+
+    _referenceWidget = new QWidget{this};
+    _referenceWidgetLayout = new QGridLayout{_referenceWidget};
+    _referenceWidgetLayout->setContentsMargins(0, 0, 0, 0);
+    _cantoneseReference = new QPushButton{_referenceWidget};
+    connect(_cantoneseReference, &QPushButton::clicked, this, [&]() {
+        QDesktopServices::openUrl(QUrl{Strings::CANTONESE_REFERENCE_URL});
+    });
+    _learnJyutping = new QPushButton{_referenceWidget};
+    connect(_learnJyutping, &QPushButton::clicked, this, [&]() {
+        QDesktopServices::openUrl(QUrl{Strings::LEARN_JYUTPING_URL});
+    });
+    _learnYale = new QPushButton{_referenceWidget};
+    connect(_learnYale, &QPushButton::clicked, this, [&]() {
+        QDesktopServices::openUrl(QUrl{Strings::LEARN_YALE_URL});
+    });
+    _learnCantoneseIPA = new QPushButton{_referenceWidget};
+    connect(_learnCantoneseIPA, &QPushButton::clicked, this, [&]() {
+        QDesktopServices::openUrl(QUrl{Strings::LEARN_CANTONESE_IPA_URL});
+    });
+    _mandarinReference = new QPushButton{_referenceWidget};
+    connect(_mandarinReference, &QPushButton::clicked, this, [&]() {
+        QDesktopServices::openUrl(QUrl{Strings::MANDARIN_REFERENCE_URL});
+    });
+    _learnPinyin = new QPushButton{_referenceWidget};
+    connect(_learnPinyin, &QPushButton::clicked, this, [&]() {
+        QDesktopServices::openUrl(QUrl{Strings::LEARN_PINYIN_URL});
+    });
+    _learnBopomofo = new QPushButton{_referenceWidget};
+    connect(_learnBopomofo, &QPushButton::clicked, this, [&]() {
+        QDesktopServices::openUrl(QUrl{Strings::LEARN_BOPOMOFO_URL});
+    });
+    _learnMandarinIPA = new QPushButton{_referenceWidget};
+    connect(_learnMandarinIPA, &QPushButton::clicked, this, [&]() {
+        QDesktopServices::openUrl(QUrl{Strings::LEARN_MANDARIN_IPA_URL});
+    });
+    _referenceWidgetLayout->addWidget(_cantoneseReference, 0, 0, 1, 1);
+    _referenceWidgetLayout->addWidget(_learnJyutping, 0, 1, 1, 1);
+    _referenceWidgetLayout->addWidget(_learnYale, 0, 2, 1, 1);
+    _referenceWidgetLayout->addWidget(_learnCantoneseIPA, 0, 3, 1, 1);
+    _referenceWidgetLayout->addWidget(_mandarinReference, 1, 0, 1, 1);
+    _referenceWidgetLayout->addWidget(_learnPinyin, 1, 1, 1, 1);
+    _referenceWidgetLayout->addWidget(_learnBopomofo, 1, 2, 1, 1);
+    _referenceWidgetLayout->addWidget(_learnMandarinIPA, 1, 3, 1, 1);
+
     _tabLayout->addRow(_previewTitleLabel);
     _tabLayout->addRow(" ", _previewPhoneticWidget);
     _tabLayout->addRow(" ", _previewCantonesePronunciation);
     _tabLayout->addRow(" ", _previewMandarinPronunciation);
 
-    _tabLayout->addRow(_entryDivider);
+    _tabLayout->addRow(entryDivider);
 
     _tabLayout->addRow(_entryTitleLabel);
     _tabLayout->addRow(" ", _entryCantonesePronunciation);
     _tabLayout->addRow(" ", _entryMandarinPronunciation);
+
+    _tabLayout->addRow(learnDivider);
+
+    _tabLayout->addRow(_referenceTitleLabel);
+    _tabLayout->addRow(_referenceWidget);
 
     // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
@@ -231,6 +291,16 @@ void SettingsTab::translateUI()
     _entryNumberedPinyin->setText(tr("Pinyin with digits"));
     _entryZhuyin->setText(tr("Zhuyin"));
     _entryMandarinIPA->setText(tr("Mandarin IPA"));
+
+    _referenceTitleLabel->setText("<b>" + tr("Resources:") + "</b>");
+    _cantoneseReference->setText(tr("Cantonese Pronunciation Reference..."));
+    _learnJyutping->setText(tr("Learn Jyutping..."));
+    _learnYale->setText(tr("Learn Yale..."));
+    _learnCantoneseIPA->setText(tr("Learn Cantonese IPA..."));
+    _mandarinReference->setText(tr("Mandarin Pronunciation Reference..."));
+    _learnPinyin->setText(tr("Learn Pinyin..."));
+    _learnBopomofo->setText(tr("Learn Zhuyin..."));
+    _learnMandarinIPA->setText(tr("Learn Mandarin IPA..."));
 }
 
 void SettingsTab::setStyle(bool use_dark)
