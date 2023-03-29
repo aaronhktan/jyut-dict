@@ -4,19 +4,25 @@
 <context>
     <name>AboutWindow</name>
     <message>
-        <location filename="../../windows/aboutwindow.cpp" line="164"/>
+        <location filename="../../windows/aboutwindow.cpp" line="180"/>
         <source>About %1</source>
         <translation>關於 %1</translation>
     </message>
     <message>
-        <location filename="../../windows/aboutwindow.cpp" line="73"/>
-        <location filename="../../windows/aboutwindow.cpp" line="153"/>
+        <location filename="../../windows/aboutwindow.cpp" line="99"/>
+        <location filename="../../windows/aboutwindow.cpp" line="167"/>
         <source>Build %1</source>
         <translation>版本：%1</translation>
     </message>
     <message>
-        <location filename="../../windows/aboutwindow.cpp" line="101"/>
-        <location filename="../../windows/aboutwindow.cpp" line="154"/>
+        <location filename="../../windows/aboutwindow.cpp" line="127"/>
+        <location filename="../../windows/aboutwindow.cpp" line="171"/>
+        <source>Visit website...</source>
+        <translation>瀏覽網站…</translation>
+    </message>
+    <message>
+        <location filename="../../windows/aboutwindow.cpp" line="132"/>
+        <location filename="../../windows/aboutwindow.cpp" line="172"/>
         <source>View on Github...</source>
         <translation>喺Github上檢視…</translation>
     </message>
@@ -204,22 +210,22 @@
 <context>
     <name>ContactTab</name>
     <message>
-        <location filename="../../components/settings/contacttab.cpp" line="146"/>
+        <location filename="../../components/settings/contacttab.cpp" line="155"/>
         <source>Email...</source>
         <translation>發送電子郵件…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/contacttab.cpp" line="147"/>
+        <location filename="../../components/settings/contacttab.cpp" line="156"/>
         <source>Donate...</source>
         <translation>捐款…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/contacttab.cpp" line="148"/>
+        <location filename="../../components/settings/contacttab.cpp" line="157"/>
         <source>View on Github...</source>
         <translation>喺Github上檢視…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/contacttab.cpp" line="151"/>
+        <location filename="../../components/settings/contacttab.cpp" line="160"/>
         <source>Looking for other Cantonese resources? Try these!</source>
         <translation>你係咪揾緊第啲廣東話嘅資源? 試試呢啲!</translation>
     </message>
@@ -227,101 +233,106 @@
 <context>
     <name>DictionaryTab</name>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="130"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="136"/>
         <source>The Dictionaries tab allows you to view information about dictionaries, and add or remove them.</source>
         <translation>你喺「辭典」呢一頁上可以查看同埋管理儲存咗嘅辭典。</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="133"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="139"/>
         <source>Add Dictionary...</source>
         <translation>添加辭典…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="134"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="141"/>
         <source>Delete Dictionary</source>
         <translation>刪除辭典</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="135"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="142"/>
         <source>Website</source>
         <translation>網站</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="106"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="112"/>
         <source>Select dictionary file</source>
         <translation>選擇辭典檔案</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="162"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="140"/>
+        <source>Find More Dictionaries...</source>
+        <translation>取得更多辭典…</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/dictionarytab.cpp" line="169"/>
         <source>Version: %1</source>
         <translation>版本： %1</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="212"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="219"/>
         <source>Dropping search indexes...</source>
         <translation>删除緊搜索索引…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="218"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="324"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="225"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="331"/>
         <source>Adding source...</source>
         <translation>添加緊新辭典…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="222"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="328"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="229"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="335"/>
         <source>Adding new entries...</source>
         <translation>添加緊新條目…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="226"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="332"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="233"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="339"/>
         <source>Adding new definitions...</source>
         <translation>添加緊新解釋…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="230"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="336"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="407"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="237"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="343"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="414"/>
         <source>Rebuilding search indexes...</source>
         <translation>重建緊搜索索引…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="292"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="378"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="299"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="385"/>
         <source>Removing source...</source>
         <translation>移除緊來源…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="299"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="384"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="306"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="391"/>
         <source>Removing definitions...</source>
         <translation>刪除緊解釋…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="308"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="393"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="315"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="400"/>
         <source>Deleted entry 0 of %1</source>
         <translation>刪除咗 0 / %1 個詞條</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="316"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="401"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="323"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="408"/>
         <source>Deleted entry %1 of %2</source>
         <translation>刪除咗 %1 / %2 個詞條</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="412"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="419"/>
         <source>Cleaning up...</source>
         <translation>幫緊你清理…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="419"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="426"/>
         <source>Done!</source>
         <translation>完成！</translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="419"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="426"/>
         <source>Failed!</source>
         <translation>失敗！</translation>
     </message>
@@ -419,7 +430,7 @@
 <context>
     <name>FavouriteSplitter</name>
     <message>
-        <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="102"/>
+        <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="109"/>
         <source>Saved Words</source>
         <translation>已儲存嘅詞語</translation>
     </message>
@@ -486,12 +497,12 @@
 <context>
     <name>MagnifyScrollAreaWidget</name>
     <message>
-        <location filename="../../components/magnifywindow/magnifyscrollareawidget.cpp" line="143"/>
+        <location filename="../../components/magnifywindow/magnifyscrollareawidget.cpp" line="151"/>
         <source>Traditional</source>
         <translation>繁體字</translation>
     </message>
     <message>
-        <location filename="../../components/magnifywindow/magnifyscrollareawidget.cpp" line="144"/>
+        <location filename="../../components/magnifywindow/magnifyscrollareawidget.cpp" line="152"/>
         <source>Simplified</source>
         <translation>簡體字</translation>
     </message>
@@ -499,231 +510,231 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="87"/>
+        <location filename="../../windows/mainwindow.cpp" line="93"/>
         <source>Database migration finished!</source>
         <translation>資料庫移轉成功！</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="88"/>
+        <location filename="../../windows/mainwindow.cpp" line="94"/>
         <source>Database migration failed!</source>
         <translation>資料庫移轉失敗！</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="275"/>
-        <location filename="../../windows/mainwindow.cpp" line="750"/>
+        <location filename="../../windows/mainwindow.cpp" line="281"/>
+        <location filename="../../windows/mainwindow.cpp" line="756"/>
         <source>&amp;File</source>
         <translation>檔案</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="276"/>
-        <location filename="../../windows/mainwindow.cpp" line="751"/>
+        <location filename="../../windows/mainwindow.cpp" line="282"/>
+        <location filename="../../windows/mainwindow.cpp" line="757"/>
         <source>&amp;Edit</source>
         <translation>編輯</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="279"/>
-        <location filename="../../windows/mainwindow.cpp" line="754"/>
+        <location filename="../../windows/mainwindow.cpp" line="285"/>
+        <location filename="../../windows/mainwindow.cpp" line="760"/>
         <source>&amp;Window</source>
         <translation>視窗</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="280"/>
-        <location filename="../../windows/mainwindow.cpp" line="755"/>
+        <location filename="../../windows/mainwindow.cpp" line="286"/>
+        <location filename="../../windows/mainwindow.cpp" line="761"/>
         <source>&amp;Help</source>
         <translation>輔助說明</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="282"/>
+        <location filename="../../windows/mainwindow.cpp" line="288"/>
         <source>&amp;About</source>
         <translation>關於粵語辭典</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="283"/>
+        <location filename="../../windows/mainwindow.cpp" line="289"/>
         <source>Show the application&apos;s About box</source>
         <translation>開啟“關於粵語辭典”嘅視窗</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="286"/>
+        <location filename="../../windows/mainwindow.cpp" line="292"/>
         <source>Preferences</source>
         <translation>偏好設定…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="288"/>
+        <location filename="../../windows/mainwindow.cpp" line="294"/>
         <source>Settings</source>
         <translation>偏好設定…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="290"/>
-        <location filename="../../windows/mainwindow.cpp" line="769"/>
+        <location filename="../../windows/mainwindow.cpp" line="296"/>
+        <location filename="../../windows/mainwindow.cpp" line="775"/>
         <source>Change settings</source>
         <translation>更改設定</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="292"/>
+        <location filename="../../windows/mainwindow.cpp" line="298"/>
         <source>Close Window</source>
         <translation>關閉視窗</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="294"/>
+        <location filename="../../windows/mainwindow.cpp" line="300"/>
         <source>Undo</source>
         <translation>還原</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="295"/>
+        <location filename="../../windows/mainwindow.cpp" line="301"/>
         <source>Redo</source>
         <translation>重做</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="296"/>
+        <location filename="../../windows/mainwindow.cpp" line="302"/>
         <source>Cut</source>
         <translation>剪切</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="297"/>
+        <location filename="../../windows/mainwindow.cpp" line="303"/>
         <source>Copy</source>
         <translation>拷貝</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="298"/>
+        <location filename="../../windows/mainwindow.cpp" line="304"/>
         <source>Paste</source>
         <translation>貼上</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="300"/>
+        <location filename="../../windows/mainwindow.cpp" line="306"/>
         <source>Start a New Search</source>
         <translation>重新搜索</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="301"/>
+        <location filename="../../windows/mainwindow.cpp" line="307"/>
         <source>Select Search Bar Contents</source>
         <translation>全選搜索欄文字</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="303"/>
+        <location filename="../../windows/mainwindow.cpp" line="309"/>
         <source>Jump to First Item in Search Results</source>
         <translation>跳到第一個搜索結果</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="304"/>
+        <location filename="../../windows/mainwindow.cpp" line="310"/>
         <source>Search Simplified Chinese</source>
         <translation>用簡體中文搵</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="305"/>
+        <location filename="../../windows/mainwindow.cpp" line="311"/>
         <source>Search Traditional Chinese</source>
         <translation>用繁體中文搵</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="278"/>
-        <location filename="../../windows/mainwindow.cpp" line="753"/>
+        <location filename="../../windows/mainwindow.cpp" line="284"/>
+        <location filename="../../windows/mainwindow.cpp" line="759"/>
         <source>E&amp;ntry</source>
         <translation>詞條</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="315"/>
+        <location filename="../../windows/mainwindow.cpp" line="321"/>
         <source>View Large Version of Current Entry...</source>
         <translation>放大呢一條詞條…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="317"/>
+        <location filename="../../windows/mainwindow.cpp" line="323"/>
         <source>View All Sentences for Current Entry...</source>
         <translation>檢視呢一條詞條嘅所有例句…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="1301"/>
+        <location filename="../../windows/mainwindow.cpp" line="1314"/>
         <source>Migrating database to new version...
 This might take a few minutes.
 Hang tight!</source>
         <translation>資料庫移轉已開始，這可能需要幾分鐘嘅時間。</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="306"/>
+        <location filename="../../windows/mainwindow.cpp" line="312"/>
         <source>Search Jyutping</source>
         <translation>用粵語拼音搵</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="307"/>
+        <location filename="../../windows/mainwindow.cpp" line="313"/>
         <source>Search Pinyin</source>
         <translation>用漢語拼音搵</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="308"/>
+        <location filename="../../windows/mainwindow.cpp" line="314"/>
         <source>Search English</source>
         <translation>用英文搵</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="310"/>
+        <location filename="../../windows/mainwindow.cpp" line="316"/>
         <source>Save or Unsave Current Entry</source>
         <translation>儲存呢一條詞條</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="311"/>
+        <location filename="../../windows/mainwindow.cpp" line="317"/>
         <source>Share Current Entry...</source>
         <translation>分享呢一條詞條…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="313"/>
+        <location filename="../../windows/mainwindow.cpp" line="319"/>
         <source>Open Current Entry in New Window...</source>
         <translation>喺新視窗度檢視呢一條詞條…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="319"/>
+        <location filename="../../windows/mainwindow.cpp" line="325"/>
         <source>Find Entries That Begin With Current Entry</source>
         <translation>喺辭典裡面搵以該選擇詞開頭嘅詞條</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="321"/>
+        <location filename="../../windows/mainwindow.cpp" line="327"/>
         <source>Find Entries That Contain Current Entry</source>
         <translation>喺辭典裡面搵包含該選擇詞嘅詞條</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="323"/>
+        <location filename="../../windows/mainwindow.cpp" line="329"/>
         <source>Find Entries That End With Current Entry</source>
         <translation>喺辭典裡面搵以該選擇詞結尾嘅詞條</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="325"/>
+        <location filename="../../windows/mainwindow.cpp" line="331"/>
         <source>View Search History</source>
         <translation>開啟搜尋紀錄</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="326"/>
+        <location filename="../../windows/mainwindow.cpp" line="332"/>
         <source>Open List of Saved Words</source>
         <translation>檢視所有已儲存詞語</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="327"/>
+        <location filename="../../windows/mainwindow.cpp" line="333"/>
         <source>Minimize</source>
         <translation>縮到最小</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="328"/>
+        <location filename="../../windows/mainwindow.cpp" line="334"/>
         <source>Zoom</source>
         <translation>縮放</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="329"/>
+        <location filename="../../windows/mainwindow.cpp" line="335"/>
         <source>Bring All to Front</source>
         <translation>將此程式所有視窗移至最前</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="331"/>
+        <location filename="../../windows/mainwindow.cpp" line="337"/>
         <source>%1 Help</source>
         <translation>%1輔助說明</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="333"/>
+        <location filename="../../windows/mainwindow.cpp" line="339"/>
         <source>Check for Updates...</source>
         <translation>檢查更新…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="277"/>
-        <location filename="../../windows/mainwindow.cpp" line="752"/>
+        <location filename="../../windows/mainwindow.cpp" line="283"/>
+        <location filename="../../windows/mainwindow.cpp" line="758"/>
         <source>&amp;Search</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="1253"/>
+        <location filename="../../windows/mainwindow.cpp" line="1265"/>
         <source>Checking for update...</source>
         <translation>檢查緊更新…</translation>
     </message>
@@ -1038,12 +1049,12 @@ Hang tight!</source>
 <context>
     <name>SentenceSplitter</name>
     <message>
-        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="115"/>
+        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="111"/>
         <source>Sentences for %1 (%2 result)</source>
         <translation>用《%1》造句：（%2 個結果）</translation>
     </message>
     <message>
-        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="119"/>
+        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="115"/>
         <source>Sentences for %1 (%2 results)</source>
         <translation>用《%1》造句：（%2 個結果）</translation>
     </message>
@@ -1051,101 +1062,101 @@ Hang tight!</source>
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="189"/>
+        <location filename="../../components/settings/settingstab.cpp" line="188"/>
         <source>In search results and examples:</source>
         <translation>查詢結果同埋例句：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="193"/>
+        <location filename="../../components/settings/settingstab.cpp" line="192"/>
         <source>Show pronunciation for:</source>
         <translation>詞條拼音：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="195"/>
+        <location filename="../../components/settings/settingstab.cpp" line="194"/>
         <source>	Show pronunciation for:</source>
         <translation>   詞條拼音：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="197"/>
+        <location filename="../../components/settings/settingstab.cpp" line="196"/>
         <source>only Cantonese</source>
         <translation>淨係顯示粵語拼音</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="198"/>
+        <location filename="../../components/settings/settingstab.cpp" line="197"/>
         <source>only Mandarin</source>
         <translation>淨係顯示普通話拼音</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="200"/>
+        <location filename="../../components/settings/settingstab.cpp" line="199"/>
         <source>both languages, prefer Cantonese</source>
         <translation>優先顯示粵語拼音</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="202"/>
+        <location filename="../../components/settings/settingstab.cpp" line="201"/>
         <source>both languages, prefer Mandarin</source>
         <translation>優先顯示普通話拼音</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="205"/>
-        <location filename="../../components/settings/settingstab.cpp" line="225"/>
+        <location filename="../../components/settings/settingstab.cpp" line="204"/>
+        <location filename="../../components/settings/settingstab.cpp" line="224"/>
         <source>Show Cantonese:</source>
         <translation>粵語顯示下列拼音：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="206"/>
-        <location filename="../../components/settings/settingstab.cpp" line="226"/>
+        <location filename="../../components/settings/settingstab.cpp" line="205"/>
+        <location filename="../../components/settings/settingstab.cpp" line="225"/>
         <source>Jyutping</source>
         <translation>粵語拼音</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="207"/>
-        <location filename="../../components/settings/settingstab.cpp" line="227"/>
+        <location filename="../../components/settings/settingstab.cpp" line="206"/>
+        <location filename="../../components/settings/settingstab.cpp" line="226"/>
         <source>Yale</source>
         <translation>耶魯拼音</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="208"/>
-        <location filename="../../components/settings/settingstab.cpp" line="228"/>
+        <location filename="../../components/settings/settingstab.cpp" line="207"/>
+        <location filename="../../components/settings/settingstab.cpp" line="227"/>
         <source>Cantonese IPA</source>
         <translation>國際音標</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="212"/>
-        <location filename="../../components/settings/settingstab.cpp" line="230"/>
+        <location filename="../../components/settings/settingstab.cpp" line="211"/>
+        <location filename="../../components/settings/settingstab.cpp" line="229"/>
         <source>Show Mandarin:</source>
         <translation>普通話顯示下列拼音：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="214"/>
+        <location filename="../../components/settings/settingstab.cpp" line="213"/>
         <source>	Show Mandarin:</source>
         <translation>   普通話顯示下列拼音：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="216"/>
-        <location filename="../../components/settings/settingstab.cpp" line="231"/>
+        <location filename="../../components/settings/settingstab.cpp" line="215"/>
+        <location filename="../../components/settings/settingstab.cpp" line="230"/>
         <source>Pinyin</source>
         <translation>汉语拼音</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="217"/>
-        <location filename="../../components/settings/settingstab.cpp" line="232"/>
+        <location filename="../../components/settings/settingstab.cpp" line="216"/>
+        <location filename="../../components/settings/settingstab.cpp" line="231"/>
         <source>Pinyin with digits</source>
         <translation>漢語拼音（數字）</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="218"/>
-        <location filename="../../components/settings/settingstab.cpp" line="233"/>
+        <location filename="../../components/settings/settingstab.cpp" line="217"/>
+        <location filename="../../components/settings/settingstab.cpp" line="232"/>
         <source>Zhuyin</source>
         <translation>注音</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="219"/>
-        <location filename="../../components/settings/settingstab.cpp" line="234"/>
+        <location filename="../../components/settings/settingstab.cpp" line="218"/>
+        <location filename="../../components/settings/settingstab.cpp" line="233"/>
         <source>Mandarin IPA</source>
         <translation>國際音標</translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="222"/>
+        <location filename="../../components/settings/settingstab.cpp" line="221"/>
         <source>In the header at the top of an entry:</source>
         <translation>詞條標題：</translation>
     </message>
@@ -1153,37 +1164,37 @@ Hang tight!</source>
 <context>
     <name>SettingsWindow</name>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="153"/>
+        <location filename="../../windows/settingswindow.cpp" line="158"/>
         <source>General</source>
         <translation>一般</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="154"/>
+        <location filename="../../windows/settingswindow.cpp" line="159"/>
         <source>Text</source>
         <translation>文字</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="155"/>
+        <location filename="../../windows/settingswindow.cpp" line="160"/>
         <source>Dictionaries</source>
         <translation>辭典</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="156"/>
+        <location filename="../../windows/settingswindow.cpp" line="161"/>
         <source>Advanced</source>
         <translation>進階</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="157"/>
+        <location filename="../../windows/settingswindow.cpp" line="162"/>
         <source>Contact</source>
         <translation>聯繫我哋</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="160"/>
+        <location filename="../../windows/settingswindow.cpp" line="165"/>
         <source>Preferences</source>
         <translation>設定</translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="162"/>
+        <location filename="../../windows/settingswindow.cpp" line="167"/>
         <source>Settings</source>
         <translation>設定</translation>
     </message>

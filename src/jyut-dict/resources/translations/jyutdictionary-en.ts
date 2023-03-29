@@ -4,19 +4,25 @@
 <context>
     <name>AboutWindow</name>
     <message>
-        <location filename="../../windows/aboutwindow.cpp" line="164"/>
+        <location filename="../../windows/aboutwindow.cpp" line="180"/>
         <source>About %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/aboutwindow.cpp" line="73"/>
-        <location filename="../../windows/aboutwindow.cpp" line="153"/>
+        <location filename="../../windows/aboutwindow.cpp" line="99"/>
+        <location filename="../../windows/aboutwindow.cpp" line="167"/>
         <source>Build %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/aboutwindow.cpp" line="101"/>
-        <location filename="../../windows/aboutwindow.cpp" line="154"/>
+        <location filename="../../windows/aboutwindow.cpp" line="127"/>
+        <location filename="../../windows/aboutwindow.cpp" line="171"/>
+        <source>Visit website...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../windows/aboutwindow.cpp" line="132"/>
+        <location filename="../../windows/aboutwindow.cpp" line="172"/>
         <source>View on Github...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -204,22 +210,22 @@
 <context>
     <name>ContactTab</name>
     <message>
-        <location filename="../../components/settings/contacttab.cpp" line="146"/>
+        <location filename="../../components/settings/contacttab.cpp" line="155"/>
         <source>Email...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/contacttab.cpp" line="147"/>
+        <location filename="../../components/settings/contacttab.cpp" line="156"/>
         <source>Donate...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/contacttab.cpp" line="148"/>
+        <location filename="../../components/settings/contacttab.cpp" line="157"/>
         <source>View on Github...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/contacttab.cpp" line="151"/>
+        <location filename="../../components/settings/contacttab.cpp" line="160"/>
         <source>Looking for other Cantonese resources? Try these!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -227,101 +233,106 @@
 <context>
     <name>DictionaryTab</name>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="130"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="136"/>
         <source>The Dictionaries tab allows you to view information about dictionaries, and add or remove them.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="133"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="139"/>
         <source>Add Dictionary...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="134"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="141"/>
         <source>Delete Dictionary</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="135"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="142"/>
         <source>Website</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="106"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="112"/>
         <source>Select dictionary file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="162"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="140"/>
+        <source>Find More Dictionaries...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/dictionarytab.cpp" line="169"/>
         <source>Version: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="212"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="219"/>
         <source>Dropping search indexes...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="218"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="324"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="225"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="331"/>
         <source>Adding source...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="222"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="328"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="229"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="335"/>
         <source>Adding new entries...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="226"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="332"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="233"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="339"/>
         <source>Adding new definitions...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="230"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="336"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="407"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="237"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="343"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="414"/>
         <source>Rebuilding search indexes...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="292"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="378"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="299"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="385"/>
         <source>Removing source...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="299"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="384"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="306"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="391"/>
         <source>Removing definitions...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="308"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="393"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="315"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="400"/>
         <source>Deleted entry 0 of %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="316"/>
-        <location filename="../../components/settings/dictionarytab.cpp" line="401"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="323"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="408"/>
         <source>Deleted entry %1 of %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="412"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="419"/>
         <source>Cleaning up...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="419"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="426"/>
         <source>Done!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="419"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="426"/>
         <source>Failed!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -419,7 +430,7 @@
 <context>
     <name>FavouriteSplitter</name>
     <message>
-        <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="102"/>
+        <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="109"/>
         <source>Saved Words</source>
         <translation type="unfinished"></translation>
     </message>
@@ -455,12 +466,12 @@
 <context>
     <name>MagnifyScrollAreaWidget</name>
     <message>
-        <location filename="../../components/magnifywindow/magnifyscrollareawidget.cpp" line="143"/>
+        <location filename="../../components/magnifywindow/magnifyscrollareawidget.cpp" line="151"/>
         <source>Traditional</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/magnifywindow/magnifyscrollareawidget.cpp" line="144"/>
+        <location filename="../../components/magnifywindow/magnifyscrollareawidget.cpp" line="152"/>
         <source>Simplified</source>
         <translation type="unfinished"></translation>
     </message>
@@ -468,231 +479,231 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="275"/>
-        <location filename="../../windows/mainwindow.cpp" line="750"/>
+        <location filename="../../windows/mainwindow.cpp" line="281"/>
+        <location filename="../../windows/mainwindow.cpp" line="756"/>
         <source>&amp;File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="276"/>
-        <location filename="../../windows/mainwindow.cpp" line="751"/>
+        <location filename="../../windows/mainwindow.cpp" line="282"/>
+        <location filename="../../windows/mainwindow.cpp" line="757"/>
         <source>&amp;Edit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="279"/>
-        <location filename="../../windows/mainwindow.cpp" line="754"/>
+        <location filename="../../windows/mainwindow.cpp" line="285"/>
+        <location filename="../../windows/mainwindow.cpp" line="760"/>
         <source>&amp;Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="280"/>
-        <location filename="../../windows/mainwindow.cpp" line="755"/>
+        <location filename="../../windows/mainwindow.cpp" line="286"/>
+        <location filename="../../windows/mainwindow.cpp" line="761"/>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="282"/>
+        <location filename="../../windows/mainwindow.cpp" line="288"/>
         <source>&amp;About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="283"/>
+        <location filename="../../windows/mainwindow.cpp" line="289"/>
         <source>Show the application&apos;s About box</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="286"/>
+        <location filename="../../windows/mainwindow.cpp" line="292"/>
         <source>Preferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="288"/>
+        <location filename="../../windows/mainwindow.cpp" line="294"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="290"/>
-        <location filename="../../windows/mainwindow.cpp" line="769"/>
+        <location filename="../../windows/mainwindow.cpp" line="296"/>
+        <location filename="../../windows/mainwindow.cpp" line="775"/>
         <source>Change settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="292"/>
+        <location filename="../../windows/mainwindow.cpp" line="298"/>
         <source>Close Window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="294"/>
+        <location filename="../../windows/mainwindow.cpp" line="300"/>
         <source>Undo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="295"/>
+        <location filename="../../windows/mainwindow.cpp" line="301"/>
         <source>Redo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="296"/>
+        <location filename="../../windows/mainwindow.cpp" line="302"/>
         <source>Cut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="297"/>
+        <location filename="../../windows/mainwindow.cpp" line="303"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="298"/>
+        <location filename="../../windows/mainwindow.cpp" line="304"/>
         <source>Paste</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="300"/>
+        <location filename="../../windows/mainwindow.cpp" line="306"/>
         <source>Start a New Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="301"/>
+        <location filename="../../windows/mainwindow.cpp" line="307"/>
         <source>Select Search Bar Contents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="303"/>
+        <location filename="../../windows/mainwindow.cpp" line="309"/>
         <source>Jump to First Item in Search Results</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="306"/>
+        <location filename="../../windows/mainwindow.cpp" line="312"/>
         <source>Search Jyutping</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="307"/>
+        <location filename="../../windows/mainwindow.cpp" line="313"/>
         <source>Search Pinyin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="308"/>
+        <location filename="../../windows/mainwindow.cpp" line="314"/>
         <source>Search English</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="310"/>
+        <location filename="../../windows/mainwindow.cpp" line="316"/>
         <source>Save or Unsave Current Entry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="311"/>
+        <location filename="../../windows/mainwindow.cpp" line="317"/>
         <source>Share Current Entry...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="313"/>
+        <location filename="../../windows/mainwindow.cpp" line="319"/>
         <source>Open Current Entry in New Window...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="319"/>
+        <location filename="../../windows/mainwindow.cpp" line="325"/>
         <source>Find Entries That Begin With Current Entry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="321"/>
+        <location filename="../../windows/mainwindow.cpp" line="327"/>
         <source>Find Entries That Contain Current Entry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="323"/>
+        <location filename="../../windows/mainwindow.cpp" line="329"/>
         <source>Find Entries That End With Current Entry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="325"/>
+        <location filename="../../windows/mainwindow.cpp" line="331"/>
         <source>View Search History</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="326"/>
+        <location filename="../../windows/mainwindow.cpp" line="332"/>
         <source>Open List of Saved Words</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="327"/>
+        <location filename="../../windows/mainwindow.cpp" line="333"/>
         <source>Minimize</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="328"/>
+        <location filename="../../windows/mainwindow.cpp" line="334"/>
         <source>Zoom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="329"/>
+        <location filename="../../windows/mainwindow.cpp" line="335"/>
         <source>Bring All to Front</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="331"/>
+        <location filename="../../windows/mainwindow.cpp" line="337"/>
         <source>%1 Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="333"/>
+        <location filename="../../windows/mainwindow.cpp" line="339"/>
         <source>Check for Updates...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="278"/>
-        <location filename="../../windows/mainwindow.cpp" line="753"/>
+        <location filename="../../windows/mainwindow.cpp" line="284"/>
+        <location filename="../../windows/mainwindow.cpp" line="759"/>
         <source>E&amp;ntry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="1301"/>
+        <location filename="../../windows/mainwindow.cpp" line="1314"/>
         <source>Migrating database to new version...
 This might take a few minutes.
 Hang tight!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="277"/>
-        <location filename="../../windows/mainwindow.cpp" line="752"/>
+        <location filename="../../windows/mainwindow.cpp" line="283"/>
+        <location filename="../../windows/mainwindow.cpp" line="758"/>
         <source>&amp;Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="87"/>
+        <location filename="../../windows/mainwindow.cpp" line="93"/>
         <source>Database migration finished!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="88"/>
+        <location filename="../../windows/mainwindow.cpp" line="94"/>
         <source>Database migration failed!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="304"/>
+        <location filename="../../windows/mainwindow.cpp" line="310"/>
         <source>Search Simplified Chinese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="305"/>
+        <location filename="../../windows/mainwindow.cpp" line="311"/>
         <source>Search Traditional Chinese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="315"/>
+        <location filename="../../windows/mainwindow.cpp" line="321"/>
         <source>View Large Version of Current Entry...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="317"/>
+        <location filename="../../windows/mainwindow.cpp" line="323"/>
         <source>View All Sentences for Current Entry...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="1253"/>
+        <location filename="../../windows/mainwindow.cpp" line="1265"/>
         <source>Checking for update...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -960,12 +971,12 @@ Hang tight!</source>
 <context>
     <name>SentenceSplitter</name>
     <message>
-        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="115"/>
+        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="111"/>
         <source>Sentences for %1 (%2 result)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="119"/>
+        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="115"/>
         <source>Sentences for %1 (%2 results)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -973,101 +984,101 @@ Hang tight!</source>
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="189"/>
+        <location filename="../../components/settings/settingstab.cpp" line="188"/>
         <source>In search results and examples:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="195"/>
+        <location filename="../../components/settings/settingstab.cpp" line="194"/>
         <source>	Show pronunciation for:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="193"/>
+        <location filename="../../components/settings/settingstab.cpp" line="192"/>
         <source>Show pronunciation for:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="197"/>
+        <location filename="../../components/settings/settingstab.cpp" line="196"/>
         <source>only Cantonese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="198"/>
+        <location filename="../../components/settings/settingstab.cpp" line="197"/>
         <source>only Mandarin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="200"/>
+        <location filename="../../components/settings/settingstab.cpp" line="199"/>
         <source>both languages, prefer Cantonese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="202"/>
+        <location filename="../../components/settings/settingstab.cpp" line="201"/>
         <source>both languages, prefer Mandarin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/settingstab.cpp" line="204"/>
+        <location filename="../../components/settings/settingstab.cpp" line="224"/>
+        <source>Show Cantonese:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="205"/>
         <location filename="../../components/settings/settingstab.cpp" line="225"/>
-        <source>Show Cantonese:</source>
+        <source>Jyutping</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="206"/>
         <location filename="../../components/settings/settingstab.cpp" line="226"/>
-        <source>Jyutping</source>
+        <source>Yale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="207"/>
         <location filename="../../components/settings/settingstab.cpp" line="227"/>
-        <source>Yale</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="208"/>
-        <location filename="../../components/settings/settingstab.cpp" line="228"/>
         <source>Cantonese IPA</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="214"/>
+        <location filename="../../components/settings/settingstab.cpp" line="213"/>
         <source>	Show Mandarin:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="212"/>
-        <location filename="../../components/settings/settingstab.cpp" line="230"/>
+        <location filename="../../components/settings/settingstab.cpp" line="211"/>
+        <location filename="../../components/settings/settingstab.cpp" line="229"/>
         <source>Show Mandarin:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/settingstab.cpp" line="215"/>
+        <location filename="../../components/settings/settingstab.cpp" line="230"/>
+        <source>Pinyin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="216"/>
         <location filename="../../components/settings/settingstab.cpp" line="231"/>
-        <source>Pinyin</source>
+        <source>Pinyin with digits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="217"/>
         <location filename="../../components/settings/settingstab.cpp" line="232"/>
-        <source>Pinyin with digits</source>
+        <source>Zhuyin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="218"/>
         <location filename="../../components/settings/settingstab.cpp" line="233"/>
-        <source>Zhuyin</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/settingstab.cpp" line="219"/>
-        <location filename="../../components/settings/settingstab.cpp" line="234"/>
         <source>Mandarin IPA</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="222"/>
+        <location filename="../../components/settings/settingstab.cpp" line="221"/>
         <source>In the header at the top of an entry:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1075,37 +1086,37 @@ Hang tight!</source>
 <context>
     <name>SettingsWindow</name>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="153"/>
+        <location filename="../../windows/settingswindow.cpp" line="158"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="154"/>
+        <location filename="../../windows/settingswindow.cpp" line="159"/>
         <source>Text</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="155"/>
+        <location filename="../../windows/settingswindow.cpp" line="160"/>
         <source>Dictionaries</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="156"/>
+        <location filename="../../windows/settingswindow.cpp" line="161"/>
         <source>Advanced</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="157"/>
+        <location filename="../../windows/settingswindow.cpp" line="162"/>
         <source>Contact</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="160"/>
+        <location filename="../../windows/settingswindow.cpp" line="165"/>
         <source>Preferences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="162"/>
+        <location filename="../../windows/settingswindow.cpp" line="167"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>

@@ -4,19 +4,25 @@
 <context>
     <name>AboutWindow</name>
     <message>
-        <location filename="../../windows/aboutwindow.cpp" line="+164"/>
+        <location filename="../../windows/aboutwindow.cpp" line="+180"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
     <message>
-        <location line="-91"/>
-        <location line="+80"/>
+        <location line="-81"/>
+        <location line="+68"/>
         <source>Build %1</source>
         <translation>版本：%1</translation>
     </message>
     <message>
-        <location line="-52"/>
-        <location line="+53"/>
+        <location line="-40"/>
+        <location line="+44"/>
+        <source>Visit website...</source>
+        <translation>访问网站…</translation>
+    </message>
+    <message>
+        <location line="-39"/>
+        <location line="+40"/>
         <source>View on Github...</source>
         <translation>在Github上查看…</translation>
     </message>
@@ -204,7 +210,7 @@
 <context>
     <name>ContactTab</name>
     <message>
-        <location filename="../../components/settings/contacttab.cpp" line="+146"/>
+        <location filename="../../components/settings/contacttab.cpp" line="+155"/>
         <source>Email...</source>
         <translation>发送电子邮件…</translation>
     </message>
@@ -227,7 +233,7 @@
 <context>
     <name>DictionaryTab</name>
     <message>
-        <location filename="../../components/settings/dictionarytab.cpp" line="+130"/>
+        <location filename="../../components/settings/dictionarytab.cpp" line="+136"/>
         <source>The Dictionaries tab allows you to view information about dictionaries, and add or remove them.</source>
         <translation>您在“词典”这一页上可以查看和管理已储存的词典。</translation>
     </message>
@@ -237,7 +243,7 @@
         <translation>添加词典…</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="+2"/>
         <source>Delete Dictionary</source>
         <translation>刪除词典</translation>
     </message>
@@ -247,12 +253,17 @@
         <translation>网站</translation>
     </message>
     <message>
-        <location line="-29"/>
+        <location line="-30"/>
         <source>Select dictionary file</source>
         <translation>选择词典文件</translation>
     </message>
     <message>
-        <location line="+56"/>
+        <location line="+28"/>
+        <source>Find More Dictionaries...</source>
+        <translation>获取更多词典…</translation>
+    </message>
+    <message>
+        <location line="+29"/>
         <source>Version: %1</source>
         <translation>版本： %1</translation>
     </message>
@@ -419,7 +430,7 @@
 <context>
     <name>FavouriteSplitter</name>
     <message>
-        <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="+102"/>
+        <location filename="../../components/favouritewindow/favouritesplitter.cpp" line="+109"/>
         <source>Saved Words</source>
         <translation>已保存的词语</translation>
     </message>
@@ -486,7 +497,7 @@
 <context>
     <name>MagnifyScrollAreaWidget</name>
     <message>
-        <location filename="../../components/magnifywindow/magnifyscrollareawidget.cpp" line="+143"/>
+        <location filename="../../components/magnifywindow/magnifyscrollareawidget.cpp" line="+151"/>
         <source>Traditional</source>
         <translation>繁体字</translation>
     </message>
@@ -499,7 +510,7 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="+87"/>
+        <location filename="../../windows/mainwindow.cpp" line="+93"/>
         <source>Database migration finished!</source>
         <translation>数据库迁移成功！</translation>
     </message>
@@ -630,14 +641,14 @@
         <translation>查看这条词条的所有例句…</translation>
     </message>
     <message>
-        <location line="+984"/>
+        <location line="+991"/>
         <source>Migrating database to new version...
 This might take a few minutes.
 Hang tight!</source>
         <translation>数据库迁移已启动，请稍等几分钟</translation>
     </message>
     <message>
-        <location line="-995"/>
+        <location line="-1002"/>
         <source>Search Jyutping</source>
         <translation>搜索粤语拼音</translation>
     </message>
@@ -723,7 +734,7 @@ Hang tight!</source>
         <translation>搜索</translation>
     </message>
     <message>
-        <location line="+501"/>
+        <location line="+507"/>
         <source>Checking for update...</source>
         <translation>正在检查更新…</translation>
     </message>
@@ -1034,7 +1045,7 @@ Hang tight!</source>
 <context>
     <name>SentenceSplitter</name>
     <message>
-        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="+115"/>
+        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="+111"/>
         <source>Sentences for %1 (%2 result)</source>
         <translation>用“%1“造句：（%2 条结果）</translation>
     </message>
@@ -1047,7 +1058,7 @@ Hang tight!</source>
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="+189"/>
+        <location filename="../../components/settings/settingstab.cpp" line="+188"/>
         <source>In search results and examples:</source>
         <translation>搜索结果和例句：</translation>
     </message>
@@ -1149,7 +1160,7 @@ Hang tight!</source>
 <context>
     <name>SettingsWindow</name>
     <message>
-        <location filename="../../windows/settingswindow.cpp" line="+153"/>
+        <location filename="../../windows/settingswindow.cpp" line="+158"/>
         <source>General</source>
         <translation>通用</translation>
     </message>
