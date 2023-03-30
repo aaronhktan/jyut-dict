@@ -103,15 +103,14 @@ void ResultListModel::setEmpty()
         Entry entry = Entry{tr("No results...").toStdString(),
                             tr("No results...").toStdString(),
                             "", "", {}};
-        entry.addDefinitions(
-            "CEDICT",
-            {Definition::Definition{
-                tr("Simplified (SC) and Traditional (TC) Chinese, "
-                   "Jyutping (JP), Pinyin (PY), and English (EN) "
-                   "are options to the right of the search bar.")
-                    .toStdString(),
-                "",
-                {}}});
+        entry.addDefinitions("CEDICT",
+                             {Definition::Definition{
+                                 tr("Simplified Chinese, Traditional Chinese, "
+                                    "Jyutping, Pinyin, and English "
+                                    "are options beneath the search bar.")
+                                     .toStdString(),
+                                 "",
+                                 {}}});
         entry.setJyutping(tr("Try switching between languages!").toStdString());
         entry.setIsEmpty(true);
 

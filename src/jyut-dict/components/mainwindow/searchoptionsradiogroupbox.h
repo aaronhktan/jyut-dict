@@ -8,7 +8,9 @@
 #include <QEvent>
 #include <QGroupBox>
 #include <QHBoxLayout>
-#include <QRadioButton>
+#include <QLabel>
+//#include <QRadioButton>
+#include <QPushButton>
 #include <QSettings>
 #include <QWidget>
 
@@ -42,11 +44,12 @@ private:
 
     QHBoxLayout *_layout;
 
-    QRadioButton *_simplifiedButton;
-    QRadioButton *_traditionalButton;
-    QRadioButton *_jyutpingButton;
-    QRadioButton *_pinyinButton;
-    QRadioButton *_englishButton;
+    QLabel *_currentChoiceLabel;
+    QPushButton *_simplifiedButton;
+    QPushButton *_traditionalButton;
+    QPushButton *_jyutpingButton;
+    QPushButton *_pinyinButton;
+    QPushButton *_englishButton;
 };
 
 #endif // SEARCHOPTIONSRADIOGROUPBOX_H

@@ -11,7 +11,7 @@
 #include <QAction>
 #include <QEvent>
 #include <QFocusEvent>
-#include <QHBoxLayout>
+#include <QGridLayout>
 #include <QMenu>
 #include <QToolBar>
 #include <QToolButton>
@@ -48,9 +48,11 @@ private:
     void setStyle(bool use_dark);
     bool _paletteRecentlyChanged = false;
 
+    int _inactiveCount = 0;
+
     std::unique_ptr<QSettings> _settings;
 
-    QHBoxLayout *_toolBarLayout;
+    QGridLayout *_toolBarLayout;
     QWidget *_toolBarWidget;
 
     SearchLineEdit *_searchBar;

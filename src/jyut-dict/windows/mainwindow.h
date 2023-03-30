@@ -13,7 +13,6 @@
 #include "windows/aboutwindow.h"
 #include "windows/historywindow.h"
 #include "windows/settingswindow.h"
-#include "windows/updatewindow.h"
 
 #include <QAction>
 #include <QEvent>

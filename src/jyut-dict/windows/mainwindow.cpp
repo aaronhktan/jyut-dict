@@ -5,6 +5,7 @@
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/strings/strings.h"
+#include "windows/updatewindow.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined(Q_OS_LINUX)
