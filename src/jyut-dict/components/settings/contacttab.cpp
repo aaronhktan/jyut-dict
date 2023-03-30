@@ -158,8 +158,9 @@ void ContactTab::translateUI()
 
     _otherSourcesLabel->setText(
         tr("Looking for other Cantonese resources? Try these!"));
-    _otherSources->setText(
-        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::OTHER_SOURCES).arg(palette().text().color().name()));
+    _otherSources->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                       Strings::OTHER_SOURCES)
+                               .arg(palette().text().color().name()));
 }
 
 void ContactTab::setStyle(bool use_dark)

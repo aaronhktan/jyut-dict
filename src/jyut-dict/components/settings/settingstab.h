@@ -72,28 +72,25 @@ private:
 
     QLabel *_entryTitleLabel;
     QWidget *_entryCantonesePronunciation;
-    QVBoxLayout *_entryCantonesePronunciationLayout;
+    QGridLayout *_entryCantonesePronunciationLayout;
     QCheckBox *_entryJyutping;
     QCheckBox *_entryYale;
     QCheckBox *_entryCantoneseIPA;
     QWidget *_entryMandarinPronunciation;
-    QVBoxLayout *_entryMandarinPronunciationLayout;
+    QGridLayout *_entryMandarinPronunciationLayout;
     QCheckBox *_entryPinyin;
     QCheckBox *_entryNumberedPinyin;
     QCheckBox *_entryZhuyin;
     QCheckBox *_entryMandarinIPA;
 
-    QLabel *_referenceTitleLabel;
-    QWidget *_referenceWidget;
-    QGridLayout *_referenceWidgetLayout;
-    QPushButton *_cantoneseReference;
-    QPushButton *_learnJyutping;
-    QPushButton *_learnYale;
-    QPushButton *_learnCantoneseIPA;
-    QPushButton *_mandarinReference;
-    QPushButton *_learnPinyin;
-    QPushButton *_learnBopomofo;
-    QPushButton *_learnMandarinIPA;
+    QLabel *_cantoneseReference;
+    QLabel *_learnJyutping;
+    QLabel *_learnYale;
+    QLabel *_learnCantoneseIPA;
+    QLabel *_mandarinReference;
+    QLabel *_learnPinyin;
+    QLabel *_learnZhuyin;
+    QLabel *_learnMandarinIPA;
 
     QFormLayout *_tabLayout;
 
