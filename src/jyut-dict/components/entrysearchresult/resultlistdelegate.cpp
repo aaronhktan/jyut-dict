@@ -284,7 +284,7 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
             }
         }
         case Settings::InterfaceSize::NORMAL: {
-            return QSize(100, 150);
+            return QSize(100, 135);
         }
         case Settings::InterfaceSize::LARGE: {
             switch (Settings::getCurrentLocale().language()) {
@@ -297,7 +297,7 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
             }
         }
         case Settings::InterfaceSize::LARGER: {
-            return QSize(100, 215);
+            return QSize(100, 190);
         }
         }
 #elif defined(Q_OS_LINUX)
