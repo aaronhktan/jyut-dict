@@ -83,9 +83,7 @@ void SearchOptionsRadioGroupBox::setupUI()
 
     _layout = new QHBoxLayout{this};
     _layout->setContentsMargins(0, 0, 0, 0);
-#ifdef Q_OS_WIN
-    _layout->setSpacing(15);
-#endif
+    _layout->setSpacing(10);
 
     _currentChoiceLabel = new QLabel{this};
     _simplifiedButton = new QPushButton{this};
@@ -94,6 +92,7 @@ void SearchOptionsRadioGroupBox::setupUI()
     _pinyinButton = new QPushButton{this};
     _englishButton = new QPushButton{this};
 
+    _currentChoiceLabel->setIndent(0);
     _simplifiedButton->setCheckable(true);
     _traditionalButton->setCheckable(true);
     _jyutpingButton->setCheckable(true);
