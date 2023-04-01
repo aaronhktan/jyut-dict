@@ -78,6 +78,7 @@ void SearchOptionsRadioGroupBox::setOption(const SearchParameters parameters)
 
 void SearchOptionsRadioGroupBox::setupUI()
 {
+    setObjectName("SearchOptionsRadioGroupBox");
     setContentsMargins(0, 0, 0, 0);
     setAttribute(Qt::WA_LayoutOnEntireRect);
 
@@ -134,7 +135,11 @@ void SearchOptionsRadioGroupBox::setupUI()
             this,
             &SearchOptionsRadioGroupBox::notifyMediator);
 
+#ifdef Q_OS_MAC
     _layout->addWidget(_currentChoiceLabel, 0, Qt::AlignLeft | Qt::AlignBottom);
+#else
+    _layout->addWidget(_currentChoiceLabel, 0);
+#endif
     _layout->addWidget(_simplifiedButton);
     _layout->addWidget(_traditionalButton);
     _layout->addWidget(_jyutpingButton);
@@ -212,6 +217,11 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
 //    setStyleSheet("QRadioButton[isHan=\"true\"] { font-size: 12px; }"
 //                  "QGroupBox { border: 0; }");
 #else
+#if defined(Q_OS_LINUX)
+    setStyleSheet("QGroupBox#SearchOptionsRadioGroupBox { "
+                  "   border: 0; "
+                  "} ");
+#endif
     QString styleSheet = "QPushButton { "
                          "   background-color: transparent; "
                          "   border: 2px solid %1; "
