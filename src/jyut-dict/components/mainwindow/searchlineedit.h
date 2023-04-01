@@ -36,9 +36,11 @@ public:
     void search() override;
 
 private:
-    void checkClearVisibility();
-    void translateUI();
+    void setupUI(void);
+    void translateUI(void);
     void setStyle(bool use_dark);
+
+    void checkClearVisibility();
 
     void addSearchTermToHistory(void) const;
 

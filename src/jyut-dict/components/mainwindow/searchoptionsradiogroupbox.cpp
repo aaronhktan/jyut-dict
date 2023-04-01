@@ -193,31 +193,14 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
     int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
     int borderRadius = static_cast<int>(bodyFontSize * 1);
+#ifdef Q_OS_MAC
     int padding = bodyFontSize / 3;
+#else
+    int padding = bodyFontSize / 6;
+#endif
     int paddingHorizontal = bodyFontSize;
 
-#ifdef Q_OS_WIN
-    int bodyFontSize = Settings::bodyFontSize.at(
-        static_cast<unsigned long>(interfaceSize - 1));
-
-    setStyleSheet(QString{"QRadioButton[isHan=\"true\"] { "
-                          "   font-size: %1px; "
-                          "} "
-                          ""
-                          "QRadioButton[isHan=\"false\"] { "
-                          "   font-size: %2px; "
-                          "} "
-                          ""
-                          "QGroupBox { "
-                          "   border: 0; "
-                          "} "}
-                      .arg(h6FontSizeHan)
-                      .arg(bodyFontSize));
-
-//    setStyleSheet("QRadioButton[isHan=\"true\"] { font-size: 12px; }"
-//                  "QGroupBox { border: 0; }");
-#else
-#if defined(Q_OS_LINUX)
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     setStyleSheet("QGroupBox#SearchOptionsRadioGroupBox { "
                   "   border: 0; "
                   "} ");
@@ -226,33 +209,33 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
                          "   background-color: transparent; "
                          "   border: 2px solid %1; "
                          "   border-radius: %2px; "
-                         "   font-size: %4px; "
-                         "   icon-size: %4px; "
-                         "   padding: %5px; "
-                         "   padding-left: %6px; "
-                         "   padding-right: %6px; "
+                         "   font-size: %3px; "
+                         "   icon-size: %3px; "
+                         "   padding: %4px; "
+                         "   padding-left: %5px; "
+                         "   padding-right: %5px; "
                          "} "
                          " "
                          "QPushButton:checked { "
                          "   background-color: %1; "
                          "   border: 2px solid %1; "
                          "   border-radius: %2px; "
-                         "   font-size: %4px; "
-                         "   icon-size: %4px; "
-                         "   padding: %5px; "
-                         "   padding-left: %6px; "
-                         "   padding-right: %6px; "
+                         "   font-size: %3px; "
+                         "   icon-size: %3px; "
+                         "   padding: %4px; "
+                         "   padding-left: %5px; "
+                         "   padding-right: %5px; "
                          "} "
                          " "
                          "QPushButton:hover { "
                          "   background-color: %1; "
                          "   border: 2px solid %1; "
                          "   border-radius: %2px; "
-                         "   font-size: %4px; "
-                         "   icon-size: %4px; "
-                         "   padding: %5px; "
-                         "   padding-left: %6px; "
-                         "   padding-right: %6px; "
+                         "   font-size: %3px; "
+                         "   icon-size: %3px; "
+                         "   padding: %4px; "
+                         "   padding-left: %5px; "
+                         "   padding-right: %5px; "
                          "} ";
 
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
@@ -273,7 +256,6 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
         button->setVisible(true);
 #endif
     }
-#endif
 
     QString textStyleSheet = "QLabel { "
                              "   color: palette(text); "

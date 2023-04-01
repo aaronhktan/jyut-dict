@@ -21,47 +21,16 @@ SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
     : QLineEdit(parent)
     , _sqlHistoryUtils{sqlHistoryUtils}
 {
-    translateUI();
-
-    _mediator = mediator;
-
-    _searchLineEdit = new QAction{"", this};
-    addAction(_searchLineEdit, QLineEdit::LeadingPosition);
-
-    _clearLineEdit = new QAction{"", this};
-    addAction(_clearLineEdit, QLineEdit::TrailingPosition);
-    connect(_clearLineEdit, &QAction::triggered, this, &QLineEdit::clear);
-
-    // Customize the look of the searchbar to fit in better with platform styles
-#ifdef Q_OS_WIN
-    setMinimumHeight(25);
-#endif
-
     _settings = Settings::getSettings(this);
+    _mediator = mediator;
+    _search = sqlSearch;
+    _timer = new QTimer{this};
 
+    setupUI();
+    translateUI();
     setStyle(Utils::isDarkMode());
 
     setMinimumWidth(parent->width() / 4);
-
-    _search = sqlSearch;
-
-    connect(this, &QLineEdit::textChanged, this, [&]() {
-        checkClearVisibility();
-        search();
-    });
-
-    _timer = new QTimer{this};
-}
-
-void SearchLineEdit::checkClearVisibility()
-{
-    if (text().isEmpty() || !hasFocus()) {
-        // Don't add the clear line edit action if the widget doesn't have focus!
-        // Clicking on the clear line edit action causes a crash.
-        removeAction(_clearLineEdit);
-    } else {
-        addAction(_clearLineEdit, QLineEdit::TrailingPosition);
-    }
 }
 
 void SearchLineEdit::changeEvent(QEvent *event)
@@ -135,7 +104,27 @@ void SearchLineEdit::search()
     addSearchTermToHistory();
 }
 
-void SearchLineEdit::translateUI()
+void SearchLineEdit::setupUI(void)
+{
+    _searchLineEdit = new QAction{"", this};
+    addAction(_searchLineEdit, QLineEdit::LeadingPosition);
+
+    _clearLineEdit = new QAction{"", this};
+    addAction(_clearLineEdit, QLineEdit::TrailingPosition);
+    connect(_clearLineEdit, &QAction::triggered, this, &QLineEdit::clear);
+
+    // Customize the look of the searchbar to fit in better with platform styles
+#ifdef Q_OS_WIN
+    setMinimumHeight(30);
+#endif
+
+    connect(this, &QLineEdit::textChanged, this, [&]() {
+        checkClearVisibility();
+        search();
+    });
+}
+
+void SearchLineEdit::translateUI(void)
 {
     setPlaceholderText(tr("Search"));
 }
@@ -156,40 +145,12 @@ void SearchLineEdit::setStyle(bool use_dark)
     int h6FontSize = Settings::h6FontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
 
-#ifdef Q_OS_WIN
-    if (use_dark) {
-        setStyleSheet(
-            QString{"QLineEdit { "
-                    "  background-color: #586365; "
-                    "  border: 1px solid black; "
-                    "  font-size: %1px; "
-                    "  icon-size: %1px; "
-                    "} "}
-                .arg(std::to_string(h6FontSize).c_str()));
-        _searchLineEdit->setIcon(search_inverted);
-        _clearLineEdit->setIcon(clear_inverted);
-    } else {
-        setStyleSheet(QString{"QLineEdit { "
-                              "   background-color: #ffffff; "
-                              "   border: 1px solid black; "
-                              "   font-size: %1px; "
-                              "   icon-size: %1px; "
-                              "} "
-                              " "
-                              "QLineEdit:focus { "
-                              "   background-color: #ffffff; "
-                              "   border: 1px solid black; "
-                              "   font-size: %1px; "
-                              "   icon-size: %1px; "
-                              "} "}
-                          .arg(std::to_string(h6FontSize).c_str()));
-        _searchLineEdit->setIcon(search);
-        _clearLineEdit->setIcon(clear);
-    }
-#else
     if (use_dark) {
             setStyleSheet(QString{"QLineEdit { "
                                   "   background-color: #586365; "
+#ifdef Q_OS_WIN
+                                  "   border: 1px solid black; "
+#endif
                                   "   border-radius: 3px; "
                                   "   font-size: %1px; "
                                   "   icon-size: %1px; "
@@ -206,6 +167,9 @@ void SearchLineEdit::setStyle(bool use_dark)
     } else {
             setStyleSheet(QString{"QLineEdit { "
                                   "   background-color: #ffffff; "
+#ifdef Q_OS_WIN
+                                  "   border: 1px solid lightgrey; "
+#endif
                                   "   border-radius: 3px; "
                                   "   font-size: %1px; "
                                   "   icon-size: %1px; "
@@ -214,13 +178,27 @@ void SearchLineEdit::setStyle(bool use_dark)
                                   "} "
                                   ""
                                   "QLineEdit:focus { "
+#ifdef Q_OS_WIN
+                                  "   border: 1px solid lightgrey; "
+#endif
                                   "   border-radius: 2px; "
                                   "} "}
                               .arg(std::to_string(h6FontSize).c_str()));
             _searchLineEdit->setIcon(search);
             _clearLineEdit->setIcon(clear);
     }
-#endif
+    //#endif
+}
+
+void SearchLineEdit::checkClearVisibility()
+{
+    if (text().isEmpty() || !hasFocus()) {
+            // Don't add the clear line edit action if the widget doesn't have focus!
+            // Clicking on the clear line edit action causes a crash.
+            removeAction(_clearLineEdit);
+    } else {
+            addAction(_clearLineEdit, QLineEdit::TrailingPosition);
+    }
 }
 
 void SearchLineEdit::addSearchTermToHistory(void) const

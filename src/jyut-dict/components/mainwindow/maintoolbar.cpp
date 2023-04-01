@@ -26,17 +26,6 @@ MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
     _searchOptions = new SearchOptionsMediator{};
     _settings = Settings::getSettings(this);
 
-#ifdef Q_OS_LINUX
-    // For some reason, if we disable the border first before creating the
-    // SearchOptionsRadioGroupBox, a vertical spacer (???) gets added to the
-    // groupbox's layout
-    if (Utils::isDarkMode()) {
-        setStyleSheet("QToolBar { border-bottom: 1px solid black; }");
-    } else {
-        setStyleSheet("QToolBar { border-bottom: 1px solid lightgray; }");
-    }
-#endif
-
     _searchOptions->registerLineEdit(_searchBar);
     _optionsBox = new SearchOptionsRadioGroupBox(_searchOptions, this);
 
@@ -225,10 +214,15 @@ void MainToolBar::setStyle(bool use_dark)
 
 #ifdef Q_OS_WIN
     if (use_dark) {
-        setStyleSheet("QToolBar { background-color: black; border-top: 1px "
-                      "solid black; }");
+        setStyleSheet("QToolBar { "
+                      "   background-color: black; "
+                      "   border-top: 1px solid black; "
+                      "}");
     } else {
-        setStyleSheet("QToolBar { background-color: white; }");
+        setStyleSheet("QToolBar { "
+                      "   background-color: white; "
+                      "   border-bottom: 1px solid lightgrey; "
+                      "} ");
     }
 
     Settings::InterfaceSize interfaceSize
