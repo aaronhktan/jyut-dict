@@ -87,6 +87,8 @@ void MainToolBar::setupUI(void)
             setStyle(Utils::isDarkMode());
         }
     });
+
+    _searchBar->setFocus();
 }
 
 void MainToolBar::changeEvent(QEvent *event)
