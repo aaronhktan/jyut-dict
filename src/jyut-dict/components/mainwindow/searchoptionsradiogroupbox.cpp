@@ -84,7 +84,11 @@ void SearchOptionsRadioGroupBox::setupUI()
 
     _layout = new QHBoxLayout{this};
     _layout->setContentsMargins(0, 0, 0, 0);
+#ifdef Q_OS_LINUX
+    _layout->setSpacing(5);
+#else
     _layout->setSpacing(10);
+#endif
 
     _currentChoiceLabel = new QLabel{this};
     _simplifiedButton = new QPushButton{this};
@@ -185,6 +189,9 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
                                    : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
                                             CONTENT_BACKGROUND_COLOUR_LIGHT_G,
                                             CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+#ifdef Q_OS_LINUX
+    borderColour = borderColour.lighter(200);
+#endif
     int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
@@ -210,7 +217,6 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
                          "   border: 2px solid %1; "
                          "   border-radius: %2px; "
                          "   font-size: %3px; "
-                         "   icon-size: %3px; "
                          "   padding: %4px; "
                          "   padding-left: %5px; "
                          "   padding-right: %5px; "
@@ -221,7 +227,6 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
                          "   border: 2px solid %1; "
                          "   border-radius: %2px; "
                          "   font-size: %3px; "
-                         "   icon-size: %3px; "
                          "   padding: %4px; "
                          "   padding-left: %5px; "
                          "   padding-right: %5px; "
@@ -232,7 +237,6 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
                          "   border: 2px solid %1; "
                          "   border-radius: %2px; "
                          "   font-size: %3px; "
-                         "   icon-size: %3px; "
                          "   padding: %4px; "
                          "   padding-left: %5px; "
                          "   padding-right: %5px; "

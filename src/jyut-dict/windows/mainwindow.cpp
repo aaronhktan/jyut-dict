@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     // Set window size
-#ifdef Q_OS_WIN
+#if defined(Q_OS_WIN) || defined(Q_OS_LINUX)
     setMinimumSize(QSize{850, 300});
     resize(850, 600);
 #else
