@@ -353,14 +353,7 @@ QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
             }
         }
         case Settings::InterfaceSize::LARGE: {
-            switch (Settings::getCurrentLocale().language()) {
-            case QLocale::French: {
-                return QSize(100, 210);
-            }
-            default: {
-                return QSize(100, 190);
-            }
-            }
+            return QSize(100, 190);
         }
         case Settings::InterfaceSize::LARGER: {
             return QSize(100, 240);
