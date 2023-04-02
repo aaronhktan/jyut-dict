@@ -984,101 +984,101 @@ Hang tight!</source>
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="188"/>
+        <location filename="../../components/settings/settingstab.cpp" line="214"/>
         <source>In search results and examples:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="194"/>
+        <location filename="../../components/settings/settingstab.cpp" line="220"/>
         <source>	Show pronunciation for:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="192"/>
+        <location filename="../../components/settings/settingstab.cpp" line="218"/>
         <source>Show pronunciation for:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="196"/>
+        <location filename="../../components/settings/settingstab.cpp" line="222"/>
         <source>only Cantonese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="197"/>
+        <location filename="../../components/settings/settingstab.cpp" line="223"/>
         <source>only Mandarin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="199"/>
+        <location filename="../../components/settings/settingstab.cpp" line="225"/>
         <source>both languages, prefer Cantonese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="201"/>
+        <location filename="../../components/settings/settingstab.cpp" line="227"/>
         <source>both languages, prefer Mandarin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="204"/>
-        <location filename="../../components/settings/settingstab.cpp" line="224"/>
+        <location filename="../../components/settings/settingstab.cpp" line="230"/>
+        <location filename="../../components/settings/settingstab.cpp" line="250"/>
         <source>Show Cantonese:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="205"/>
-        <location filename="../../components/settings/settingstab.cpp" line="225"/>
+        <location filename="../../components/settings/settingstab.cpp" line="231"/>
+        <location filename="../../components/settings/settingstab.cpp" line="251"/>
         <source>Jyutping</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="206"/>
-        <location filename="../../components/settings/settingstab.cpp" line="226"/>
+        <location filename="../../components/settings/settingstab.cpp" line="232"/>
+        <location filename="../../components/settings/settingstab.cpp" line="252"/>
         <source>Yale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="207"/>
-        <location filename="../../components/settings/settingstab.cpp" line="227"/>
+        <location filename="../../components/settings/settingstab.cpp" line="233"/>
+        <location filename="../../components/settings/settingstab.cpp" line="253"/>
         <source>Cantonese IPA</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="213"/>
+        <location filename="../../components/settings/settingstab.cpp" line="239"/>
         <source>	Show Mandarin:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="211"/>
-        <location filename="../../components/settings/settingstab.cpp" line="229"/>
+        <location filename="../../components/settings/settingstab.cpp" line="237"/>
+        <location filename="../../components/settings/settingstab.cpp" line="255"/>
         <source>Show Mandarin:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="215"/>
-        <location filename="../../components/settings/settingstab.cpp" line="230"/>
+        <location filename="../../components/settings/settingstab.cpp" line="241"/>
+        <location filename="../../components/settings/settingstab.cpp" line="256"/>
         <source>Pinyin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="216"/>
-        <location filename="../../components/settings/settingstab.cpp" line="231"/>
+        <location filename="../../components/settings/settingstab.cpp" line="242"/>
+        <location filename="../../components/settings/settingstab.cpp" line="257"/>
         <source>Pinyin with digits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="217"/>
-        <location filename="../../components/settings/settingstab.cpp" line="232"/>
+        <location filename="../../components/settings/settingstab.cpp" line="243"/>
+        <location filename="../../components/settings/settingstab.cpp" line="258"/>
         <source>Zhuyin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="218"/>
-        <location filename="../../components/settings/settingstab.cpp" line="233"/>
+        <location filename="../../components/settings/settingstab.cpp" line="244"/>
+        <location filename="../../components/settings/settingstab.cpp" line="259"/>
         <source>Mandarin IPA</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="221"/>
+        <location filename="../../components/settings/settingstab.cpp" line="247"/>
         <source>In the header at the top of an entry:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1310,7 +1310,7 @@ Hang tight!</source>
     <name>strings</name>
     <message>
         <location filename="../../logic/strings/strings.h" line="16"/>
-        <location filename="../../logic/strings/strings.h" line="96"/>
+        <location filename="../../logic/strings/strings.h" line="134"/>
         <source>JP</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1326,7 +1326,7 @@ Hang tight!</source>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="19"/>
-        <location filename="../../logic/strings/strings.h" line="97"/>
+        <location filename="../../logic/strings/strings.h" line="135"/>
         <source>PY</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1407,51 +1407,91 @@ Hang tight!</source>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="86"/>
-        <source>English</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../logic/strings/strings.h" line="87"/>
-        <source>French</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../logic/strings/strings.h" line="88"/>
-        <source>German</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../logic/strings/strings.h" line="89"/>
-        <source>Cantonese</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../logic/strings/strings.h" line="90"/>
-        <source>Mandarin</source>
+        <source>&lt;a href=https://en.wikipedia.org/wiki/Help:IPA/Cantonese style=&quot;color: %1; text-decoration: none&quot;&gt;Learn more with the Cantonese Pronunciation Reference →&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="91"/>
-        <source>Chinese</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../logic/strings/strings.h" line="93"/>
-        <source>SC</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../logic/strings/strings.h" line="94"/>
-        <source>TC</source>
+        <source>&lt;a href=https://jyutping.org/en/docs/english/ style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Jyutping →&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="95"/>
+        <source>&lt;a href=https://opencantonese.org/cantonese-pronunciation-yale/introduction/overview-cantonese-sounds style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Yale →&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="101"/>
+        <source>&lt;a href=https://cantonese.ca/pronunciation.html style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Cantonese IPA →&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="105"/>
+        <source>&lt;a href=https://en.wikipedia.org/wiki/Help:IPA/Mandarin style=&quot;color: %1; text-decoration: none&quot;&gt;Learn more with the Mandarin Pronunciation Reference →&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="110"/>
+        <source>&lt;a href=https://www.dong-chinese.com/learn/sounds/pinyin style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Pinyin →&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="114"/>
+        <source>&lt;a href=https://www.dong-chinese.com/learn/sounds/zhuyin style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Zhuyin →&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="118"/>
+        <source>&lt;a href=https://www.internationalphoneticassociation.org/IPAcharts/IPA_chart_trans/pdfs/JIPA_2011_[2007]_zho.pdf style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Mandarin IPA →&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="124"/>
+        <source>English</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="125"/>
+        <source>French</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="126"/>
+        <source>German</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="127"/>
+        <source>Cantonese</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="128"/>
+        <source>Mandarin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="129"/>
+        <source>Chinese</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="131"/>
+        <source>SC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="132"/>
+        <source>TC</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="133"/>
         <source>CN</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="98"/>
+        <location filename="../../logic/strings/strings.h" line="136"/>
         <source>EN</source>
         <translation type="unfinished"></translation>
     </message>

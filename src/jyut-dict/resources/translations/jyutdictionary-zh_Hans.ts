@@ -1058,7 +1058,7 @@ Hang tight!</source>
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="+188"/>
+        <location filename="../../components/settings/settingstab.cpp" line="+214"/>
         <source>In search results and examples:</source>
         <translation>搜索结果和例句：</translation>
     </message>
@@ -1384,12 +1384,12 @@ Hang tight!</source>
     <name>strings</name>
     <message>
         <location filename="../../logic/strings/strings.h" line="+16"/>
-        <location line="+80"/>
+        <location line="+118"/>
         <source>JP</source>
         <translation>粤拼</translation>
     </message>
     <message>
-        <location line="-79"/>
+        <location line="-117"/>
         <source>YL</source>
         <translation>耶魯粵拼</translation>
     </message>
@@ -1400,12 +1400,12 @@ Hang tight!</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+78"/>
+        <location line="+116"/>
         <source>PY</source>
         <translation>汉语拼音</translation>
     </message>
     <message>
-        <location line="-77"/>
+        <location line="-115"/>
         <source>ZY</source>
         <translation>注音</translation>
     </message>
@@ -1476,6 +1476,46 @@ Hang tight!</source>
     </message>
     <message>
         <location line="+8"/>
+        <source>&lt;a href=https://en.wikipedia.org/wiki/Help:IPA/Cantonese style=&quot;color: %1; text-decoration: none&quot;&gt;Learn more with the Cantonese Pronunciation Reference →&lt;/a&gt;</source>
+        <translation>&lt;a href=https://www.ilc.cuhk.edu.hk/workshop/Chinese/Cantonese/Romanization/ch1_intro/3_compare.aspx style=&quot;color: %1; text-decoration: none&quot;&gt;详细了解所有粤语拼音方案 →&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>&lt;a href=https://jyutping.org/en/docs/english/ style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Jyutping →&lt;/a&gt;</source>
+        <translation>&lt;a href=https://www.ilc.cuhk.edu.hk/workshop/Chinese/Cantonese/Romanization/index.aspx style=&quot;color: %1; text-decoration: none&quot;&gt;详细了解粤拼 →&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&lt;a href=https://opencantonese.org/cantonese-pronunciation-yale/introduction/overview-cantonese-sounds style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Yale →&lt;/a&gt;</source>
+        <translation>&lt;a href=https://baike.baidu.com/item/%E8%80%B6%E9%B2%81%E7%B2%A4%E8%AF%AD%E6%8B%BC%E9%9F%B3/20196349 style=&quot;color: %1; text-decoration: none&quot;&gt;详细了解耶鲁拼音 →&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&lt;a href=https://cantonese.ca/pronunciation.html style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Cantonese IPA →&lt;/a&gt;</source>
+        <translation>&lt;a href=https://baike.baidu.com/item/%E7%B2%A4%E8%AF%AD/266782#3 style=&quot;color: %1; text-decoration: none&quot;&gt;详细了解粤语的国际音标 →&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&lt;a href=https://en.wikipedia.org/wiki/Help:IPA/Mandarin style=&quot;color: %1; text-decoration: none&quot;&gt;Learn more with the Mandarin Pronunciation Reference →&lt;/a&gt;</source>
+        <translation>&lt;a href=https://homepage.ntu.edu.tw/~karchung/ChineseIPAJimmyrev.pdf style=&quot;color: %1; text-decoration: none&quot;&gt;详细了解所有普通话拼音方案 →&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>&lt;a href=https://www.dong-chinese.com/learn/sounds/pinyin style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Pinyin →&lt;/a&gt;</source>
+        <translation>&lt;a href=http://hanyupinyin.cn/ style=&quot;color: %1; text-decoration: none&quot;&gt;详细了解汉语拼音 →&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&lt;a href=https://www.dong-chinese.com/learn/sounds/zhuyin style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Zhuyin →&lt;/a&gt;</source>
+        <translation>&lt;a href=https://baike.baidu.com/item/%E6%B1%89%E8%AF%AD%E6%B3%A8%E9%9F%B3%E7%AC%A6%E5%8F%B7/115195#3 style=&quot;color: %1; text-decoration: none&quot;&gt;详细了解注音符号 →&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>&lt;a href=https://www.internationalphoneticassociation.org/IPAcharts/IPA_chart_trans/pdfs/JIPA_2011_[2007]_zho.pdf style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Mandarin IPA →&lt;/a&gt;</source>
+        <translation>&lt;a href=https://www.internationalphoneticassociation.org/IPAcharts/IPA_chart_trans/pdfs/JIPA_2011_[2007]_zho.pdf style=&quot;color: %1; text-decoration: none&quot;&gt;详细了解普通话的国际音标 →&lt;/a&gt;</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>English</source>
         <translation>英文</translation>
     </message>
@@ -1525,7 +1565,7 @@ Hang tight!</source>
         <translation>英文</translation>
     </message>
     <message>
-        <location line="-32"/>
+        <location line="-70"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Hong Kong</source>

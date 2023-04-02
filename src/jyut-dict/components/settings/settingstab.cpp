@@ -479,7 +479,7 @@ void SettingsTab::initializeEntryCantonesePronunciation(
     QWidget &cantonesePronunciationWidget)
 {
     static_cast<QGridLayout *>(cantonesePronunciationWidget.layout())
-        ->addItem(new QSpacerItem{100, 0}, 0, 1, -1, 1);
+        ->addItem(new QSpacerItem{75, 0}, 0, 1, -1, 1);
     static_cast<QGridLayout *>(cantonesePronunciationWidget.layout())
         ->setColumnMinimumWidth(0, 125);
     static_cast<QGridLayout *>(cantonesePronunciationWidget.layout())
@@ -572,7 +572,7 @@ void SettingsTab::initializeEntryMandarinPronunciation(
     QWidget &mandarinPronunciationWidget)
 {
     static_cast<QGridLayout *>(mandarinPronunciationWidget.layout())
-        ->addItem(new QSpacerItem{100, 0}, 0, 1, -1, 1);
+        ->addItem(new QSpacerItem{75, 0}, 0, 1, -1, 1);
     static_cast<QGridLayout *>(mandarinPronunciationWidget.layout())
         ->setColumnMinimumWidth(0, 125);
     static_cast<QGridLayout *>(mandarinPronunciationWidget.layout())
