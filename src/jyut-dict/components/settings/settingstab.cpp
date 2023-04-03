@@ -2,6 +2,7 @@
 
 #include "logic/entry/entryphoneticoptions.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -9,12 +10,15 @@
 #elif defined(Q_OS_WIN)
 #include "logic/utils/utils_windows.h"
 #endif
+#include "logic/utils/utils_qt.h"
 
 #include <QApplication>
+#include <QDesktopServices>
 #include <QFrame>
 #include <QGridLayout>
 #include <QStyle>
 #include <QTimer>
+#include <QUrl>
 #include <QVariant>
 
 SettingsTab::SettingsTab(QWidget *parent)
@@ -105,43 +109,53 @@ void SettingsTab::setupUI()
                                          MandarinOptions::MANDARIN_IPA));
     initializeSearchResultsMandarinPronunciation(*_previewMandarinPronunciation);
 
-    QFrame *_entryDivider = new QFrame{this};
-    _entryDivider->setObjectName("divider");
-    _entryDivider->setFrameShape(QFrame::HLine);
-    _entryDivider->setFrameShadow(QFrame::Raised);
-    _entryDivider->setFixedHeight(1);
+    QFrame *entryDivider = new QFrame{this};
+    entryDivider->setObjectName("divider");
+    entryDivider->setFrameShape(QFrame::HLine);
+    entryDivider->setFrameShadow(QFrame::Raised);
+    entryDivider->setFixedHeight(1);
 
     _entryTitleLabel = new QLabel{this};
 
     _entryCantonesePronunciation = new QWidget{this};
-    _entryCantonesePronunciationLayout = new QVBoxLayout{
+    _entryCantonesePronunciationLayout = new QGridLayout{
         _entryCantonesePronunciation};
-    _entryCantonesePronunciationLayout->setContentsMargins(0, 0, 0, 0);
+    _entryCantonesePronunciationLayout->setContentsMargins(0, 11, 0, 0);
     _entryJyutping = new QCheckBox{this};
     _entryJyutping->setTristate(false);
     _entryJyutping->setProperty("data",
                                 QVariant::fromValue(
                                     CantoneseOptions::RAW_JYUTPING));
+    _learnJyutping = new QLabel{this};
+    _learnJyutping->setOpenExternalLinks(true);
     _entryYale = new QCheckBox{this};
     _entryYale->setTristate(false);
     _entryYale->setProperty("data",
                             QVariant::fromValue(CantoneseOptions::PRETTY_YALE));
+    _learnYale = new QLabel{this};
+    _learnYale->setOpenExternalLinks(true);
     _entryCantoneseIPA = new QCheckBox{this};
     _entryCantoneseIPA->setTristate(false);
     _entryCantoneseIPA->setProperty("data",
                                     QVariant::fromValue(
                                         CantoneseOptions::CANTONESE_IPA));
+    _learnCantoneseIPA = new QLabel{this};
+    _learnCantoneseIPA->setOpenExternalLinks(true);
+    _cantoneseReference = new QLabel{this};
+    _cantoneseReference->setOpenExternalLinks(true);
     initializeEntryCantonesePronunciation(*_entryCantonesePronunciation);
 
     _entryMandarinPronunciation = new QWidget{this};
-    _entryMandarinPronunciationLayout = new QVBoxLayout{
+    _entryMandarinPronunciationLayout = new QGridLayout{
         _entryMandarinPronunciation};
-    _entryMandarinPronunciationLayout->setContentsMargins(0, 0, 0, 0);
+    _entryMandarinPronunciationLayout->setContentsMargins(0, 11, 0, 0);
     _entryPinyin = new QCheckBox{this};
     _entryPinyin->setTristate(false);
     _entryPinyin->setProperty("data",
                               QVariant::fromValue(
                                   MandarinOptions::PRETTY_PINYIN));
+    _learnPinyin = new QLabel{this};
+    _learnPinyin->setOpenExternalLinks(true);
     _entryNumberedPinyin = new QCheckBox{this};
     _entryNumberedPinyin->setTristate(false);
     _entryNumberedPinyin->setProperty("data",
@@ -151,19 +165,31 @@ void SettingsTab::setupUI()
     _entryZhuyin->setTristate(false);
     _entryZhuyin->setProperty("data",
                               QVariant::fromValue(MandarinOptions::ZHUYIN));
+    _learnZhuyin = new QLabel{this};
+    _learnZhuyin->setOpenExternalLinks(true);
     _entryMandarinIPA = new QCheckBox{this};
     _entryMandarinIPA->setTristate(false);
     _entryMandarinIPA->setProperty("data",
                                    QVariant::fromValue(
                                        MandarinOptions::MANDARIN_IPA));
+    _learnMandarinIPA = new QLabel{this};
+    _learnMandarinIPA->setOpenExternalLinks(true);
+    _mandarinReference = new QLabel{this};
+    _mandarinReference->setOpenExternalLinks(true);
     initializeEntryMandarinPronunciation(*_entryMandarinPronunciation);
+
+    QFrame *learnDivider = new QFrame{this};
+    learnDivider->setObjectName("divider");
+    learnDivider->setFrameShape(QFrame::HLine);
+    learnDivider->setFrameShadow(QFrame::Raised);
+    learnDivider->setFixedHeight(1);
 
     _tabLayout->addRow(_previewTitleLabel);
     _tabLayout->addRow(" ", _previewPhoneticWidget);
     _tabLayout->addRow(" ", _previewCantonesePronunciation);
     _tabLayout->addRow(" ", _previewMandarinPronunciation);
 
-    _tabLayout->addRow(_entryDivider);
+    _tabLayout->addRow(entryDivider);
 
     _tabLayout->addRow(_entryTitleLabel);
     _tabLayout->addRow(" ", _entryCantonesePronunciation);
@@ -231,6 +257,44 @@ void SettingsTab::translateUI()
     _entryNumberedPinyin->setText(tr("Pinyin with digits"));
     _entryZhuyin->setText(tr("Zhuyin"));
     _entryMandarinIPA->setText(tr("Mandarin IPA"));
+
+    QColor backgroundColour = Utils::isDarkMode()
+                                  ? QColor{LABEL_TEXT_COLOUR_DARK_R,
+                                           LABEL_TEXT_COLOUR_DARK_G,
+                                           LABEL_TEXT_COLOUR_DARK_B}
+                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
+                                           LABEL_TEXT_COLOUR_LIGHT_R,
+                                           LABEL_TEXT_COLOUR_LIGHT_R};
+    _cantoneseReference->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::CANTONESE_REFERENCE_URL)
+            .arg(backgroundColour.name()));
+    _learnJyutping->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::LEARN_JYUTPING_URL)
+            .arg(palette().text().color().name()));
+    _learnYale->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                    Strings::LEARN_YALE_URL)
+                            .arg(palette().text().color().name()));
+    _learnCantoneseIPA->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::LEARN_CANTONESE_IPA_URL)
+            .arg(palette().text().color().name()));
+    _mandarinReference->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::MANDARIN_REFERENCE_URL)
+            .arg(backgroundColour.name()));
+    _learnPinyin->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                      Strings::LEARN_PINYIN_URL)
+                              .arg(palette().text().color().name()));
+    _learnZhuyin->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::LEARN_BOPOMOFO_URL)
+            .arg(palette().text().color().name()));
+    _learnMandarinIPA->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::LEARN_MANDARIN_IPA_URL)
+            .arg(palette().text().color().name()));
 }
 
 void SettingsTab::setStyle(bool use_dark)
@@ -256,6 +320,43 @@ void SettingsTab::setStyle(bool use_dark)
     foreach (const auto & frame, frames) {
         frame->setStyleSheet(style.arg(colour));
     }
+
+    QColor backgroundColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
+                                                LABEL_TEXT_COLOUR_DARK_G,
+                                                LABEL_TEXT_COLOUR_DARK_B}
+                                       : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
+                                                LABEL_TEXT_COLOUR_LIGHT_R,
+                                                LABEL_TEXT_COLOUR_LIGHT_R};
+    _cantoneseReference->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::CANTONESE_REFERENCE_URL)
+            .arg(backgroundColour.name()));
+    _learnJyutping->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::LEARN_JYUTPING_URL)
+            .arg(palette().text().color().name()));
+    _learnYale->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                    Strings::LEARN_YALE_URL)
+                            .arg(palette().text().color().name()));
+    _learnCantoneseIPA->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::LEARN_CANTONESE_IPA_URL)
+            .arg(palette().text().color().name()));
+    _mandarinReference->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::MANDARIN_REFERENCE_URL)
+            .arg(backgroundColour.name()));
+    _learnPinyin->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                      Strings::LEARN_PINYIN_URL)
+                              .arg(palette().text().color().name()));
+    _learnZhuyin->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::LEARN_BOPOMOFO_URL)
+            .arg(palette().text().color().name()));
+    _learnMandarinIPA->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::LEARN_MANDARIN_IPA_URL)
+            .arg(palette().text().color().name()));
 }
 
 void SettingsTab::initializePreviewPhonetic(QWidget &previewPhoneticWidget)
@@ -377,9 +478,26 @@ void SettingsTab::initializeSearchResultsMandarinPronunciation(
 void SettingsTab::initializeEntryCantonesePronunciation(
     QWidget &cantonesePronunciationWidget)
 {
-    cantonesePronunciationWidget.layout()->addWidget(_entryJyutping);
-    cantonesePronunciationWidget.layout()->addWidget(_entryYale);
-    cantonesePronunciationWidget.layout()->addWidget(_entryCantoneseIPA);
+    static_cast<QGridLayout *>(cantonesePronunciationWidget.layout())
+        ->addItem(new QSpacerItem{75, 0}, 0, 1, -1, 1);
+    static_cast<QGridLayout *>(cantonesePronunciationWidget.layout())
+        ->setColumnMinimumWidth(0, 125);
+    static_cast<QGridLayout *>(cantonesePronunciationWidget.layout())
+        ->setColumnMinimumWidth(2, 100);
+    static_cast<QGridLayout *>(cantonesePronunciationWidget.layout())
+        ->addWidget(_entryJyutping, 0, 0, 1, 1);
+    static_cast<QGridLayout *>(cantonesePronunciationWidget.layout())
+        ->addWidget(_learnJyutping, 0, 2, 1, 1);
+    static_cast<QGridLayout *>(cantonesePronunciationWidget.layout())
+        ->addWidget(_entryYale, 1, 0, 1, 1);
+    static_cast<QGridLayout *>(cantonesePronunciationWidget.layout())
+        ->addWidget(_learnYale, 1, 2, 1, 1);
+    static_cast<QGridLayout *>(cantonesePronunciationWidget.layout())
+        ->addWidget(_entryCantoneseIPA, 2, 0, 1, 1);
+    static_cast<QGridLayout *>(cantonesePronunciationWidget.layout())
+        ->addWidget(_learnCantoneseIPA, 2, 2, 1, 1);
+    static_cast<QGridLayout *>(cantonesePronunciationWidget.layout())
+        ->addWidget(_cantoneseReference, 3, 0, 1, -1);
 
     connect(_entryJyutping, &QCheckBox::stateChanged, this, [&]() {
         CantoneseOptions options
@@ -453,10 +571,28 @@ void SettingsTab::initializeEntryCantonesePronunciation(
 void SettingsTab::initializeEntryMandarinPronunciation(
     QWidget &mandarinPronunciationWidget)
 {
-    mandarinPronunciationWidget.layout()->addWidget(_entryPinyin);
-    mandarinPronunciationWidget.layout()->addWidget(_entryNumberedPinyin);
-    mandarinPronunciationWidget.layout()->addWidget(_entryZhuyin);
-    mandarinPronunciationWidget.layout()->addWidget(_entryMandarinIPA);
+    static_cast<QGridLayout *>(mandarinPronunciationWidget.layout())
+        ->addItem(new QSpacerItem{75, 0}, 0, 1, -1, 1);
+    static_cast<QGridLayout *>(mandarinPronunciationWidget.layout())
+        ->setColumnMinimumWidth(0, 125);
+    static_cast<QGridLayout *>(mandarinPronunciationWidget.layout())
+        ->setColumnMinimumWidth(2, 100);
+    static_cast<QGridLayout *>(mandarinPronunciationWidget.layout())
+        ->addWidget(_entryPinyin, 0, 0, 1, 1);
+    static_cast<QGridLayout *>(mandarinPronunciationWidget.layout())
+        ->addWidget(_learnPinyin, 0, 2, 1, 1);
+    static_cast<QGridLayout *>(mandarinPronunciationWidget.layout())
+        ->addWidget(_entryNumberedPinyin, 1, 0, 1, 1);
+    static_cast<QGridLayout *>(mandarinPronunciationWidget.layout())
+        ->addWidget(_entryZhuyin, 2, 0, 1, 1);
+    static_cast<QGridLayout *>(mandarinPronunciationWidget.layout())
+        ->addWidget(_learnZhuyin, 2, 2, 1, 1);
+    static_cast<QGridLayout *>(mandarinPronunciationWidget.layout())
+        ->addWidget(_entryMandarinIPA, 3, 0, 1, 1);
+    static_cast<QGridLayout *>(mandarinPronunciationWidget.layout())
+        ->addWidget(_learnMandarinIPA, 3, 2, 1, 1);
+    static_cast<QGridLayout *>(mandarinPronunciationWidget.layout())
+        ->addWidget(_mandarinReference, 4, 0, 1, -1);
 
     connect(_entryPinyin, &QCheckBox::stateChanged, this, [&]() {
         MandarinOptions options

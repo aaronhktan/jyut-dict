@@ -17,6 +17,7 @@ public:
     AboutWindow(QWidget *parent = nullptr);
 
     void changeEvent(QEvent *event) override;
+    bool eventFilter(QObject *object, QEvent *event) override;
 
 private:
     void setupUI();
@@ -32,6 +33,7 @@ private:
     QLabel *_descriptionLabel;
     QLabel *_messageLabel;
 
+    QPushButton *_websiteButton;
     QPushButton *_githubButton;
 
     QGridLayout *_windowLayout;

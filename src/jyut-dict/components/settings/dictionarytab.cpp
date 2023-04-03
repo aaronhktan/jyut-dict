@@ -3,6 +3,7 @@
 #include "components/dictionarylist/dictionarylistview.h"
 #include "logic/dictionary/dictionarysource.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/utils/utils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -56,13 +57,18 @@ void DictionaryTab::setupUI()
     _list = new DictionaryListView{this};
     _list->setFixedWidth(200);
     _add = new QPushButton{this};
+    _findMore = new QPushButton{this};
+    connect(_findMore, &QPushButton::clicked, this, [&]() {
+        QDesktopServices::openUrl(QUrl{Utils::DICTIONARY_DOWNLOAD_LINK});
+    });
     _groupbox = new QGroupBox{this};
     _groupbox->setMinimumWidth(350);
 
     _tabLayout->addWidget(_explanatory, 1, 1, 1, -1);
     _tabLayout->addWidget(_list, 2, 1, 1, 1);
-    _tabLayout->addWidget(_groupbox, 2, 2, 1, 1);
+    _tabLayout->addWidget(_groupbox, 2, 2, 1, 2);
     _tabLayout->addWidget(_add, 3, 1, 1, 1);
+    _tabLayout->addWidget(_findMore, 3, 3, 1, 1);
 
     setLayout(_tabLayout);
 
@@ -131,6 +137,7 @@ void DictionaryTab::translateUI()
                              "information about dictionaries, "
                              "and add or remove them."));
     _add->setText(tr("Add Dictionary..."));
+    _findMore->setText(tr("Find More Dictionaries..."));
     _remove->setText(tr("Delete Dictionary"));
     _link->setText(tr("Website"));
 }

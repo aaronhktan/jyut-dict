@@ -83,6 +83,44 @@ constexpr auto ZH_CN_DESCRIPTION_STRING = QT_TRANSLATE_NOOP(
     "Unable to use text to speech.\n\n"
     "Debug: Locale: %1, Language: Chinese - Mainland");
 
+constexpr auto CANTONESE_REFERENCE_URL = QT_TRANSLATE_NOOP(
+    "strings",
+    "<a href=https://en.wikipedia.org/wiki/Help:IPA/Cantonese style=\"color: "
+    "%1; text-decoration: none\">Learn more with the Cantonese "
+    "Pronunciation Reference →</a>");
+constexpr auto LEARN_JYUTPING_URL = QT_TRANSLATE_NOOP(
+    "strings",
+    "<a href=https://jyutping.org/en/docs/english/ style=\"color: "
+    "%1; text-decoration: none\">Learn Jyutping →</a>");
+constexpr auto LEARN_YALE_URL = QT_TRANSLATE_NOOP(
+    "strings",
+    "<a "
+    "href=https://opencantonese.org/cantonese-pronunciation-yale/introduction/"
+    "overview-cantonese-sounds style=\"color: %1; text-decoration: "
+    "none\">Learn Yale →</a>");
+constexpr auto LEARN_CANTONESE_IPA_URL = QT_TRANSLATE_NOOP(
+    "strings",
+    "<a href=https://cantonese.ca/pronunciation.html style=\"color: "
+    "%1; text-decoration: none\">Learn Cantonese IPA →</a>");
+constexpr auto MANDARIN_REFERENCE_URL = QT_TRANSLATE_NOOP(
+    "strings",
+    "<a href=https://en.wikipedia.org/wiki/Help:IPA/Mandarin style=\"color: "
+    "%1; text-decoration: none\">Learn more with the Mandarin "
+    "Pronunciation Reference →</a>");
+constexpr auto LEARN_PINYIN_URL = QT_TRANSLATE_NOOP(
+    "strings",
+    "<a href=https://www.dong-chinese.com/learn/sounds/pinyin style=\"color: "
+    "%1; text-decoration: none\">Learn Pinyin →</a>");
+constexpr auto LEARN_BOPOMOFO_URL = QT_TRANSLATE_NOOP(
+    "strings",
+    "<a href=https://www.dong-chinese.com/learn/sounds/zhuyin style=\"color: "
+    "%1; text-decoration: none\">Learn Zhuyin →</a>");
+constexpr auto LEARN_MANDARIN_IPA_URL = QT_TRANSLATE_NOOP(
+    "strings",
+    "<a href=https://www.internationalphoneticassociation.org/IPAcharts/"
+    "IPA_chart_trans/pdfs/JIPA_2011_[2007]_zho.pdf style=\"color: %1; "
+    "text-decoration: none\">Learn Mandarin IPA →</a>");
+
 constexpr auto ENG_STRING = QT_TRANSLATE_NOOP("strings", "English");
 constexpr auto FRA_STRING = QT_TRANSLATE_NOOP("strings", "French");
 constexpr auto DEU_STRING = QT_TRANSLATE_NOOP("strings", "German");
@@ -96,7 +134,6 @@ constexpr auto CN_STRING = QT_TRANSLATE_NOOP("strings", "CN");
 constexpr auto JP_STRING = QT_TRANSLATE_NOOP("strings", "JP");
 constexpr auto PY_STRING = QT_TRANSLATE_NOOP("strings", "PY");
 constexpr auto EN_STRING = QT_TRANSLATE_NOOP("strings", "EN");
-
-}
+} // namespace Strings
 
 #endif // STRINGS_H
