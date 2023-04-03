@@ -1404,7 +1404,7 @@ Hang tight!</source>
     <message>
         <location line="-117"/>
         <source>YL</source>
-        <translation>耶魯粵拼</translation>
+        <translation>耶魯拼音</translation>
     </message>
     <message>
         <location line="+1"/>
