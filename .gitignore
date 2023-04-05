@@ -105,6 +105,9 @@ CMakeLists.txt.user*
 **/hsk3/archive_*
 **/hsk3/data/*
 **/hsk3/developer/*
+**/jyutnet/archive_*
+**/jyutnet/data/*
+**/jyutnet/developer/*
 **/kaifangcidian/archive_*
 **/kaifangcidian/data/*
 **/kaifangcidian/developer/*
