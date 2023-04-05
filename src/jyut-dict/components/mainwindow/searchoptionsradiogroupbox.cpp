@@ -9,6 +9,7 @@
 #elif defined(Q_OS_WIN)
 #include "logic/utils/utils_windows.h"
 #endif
+#include "logic/utils/utils_qt.h"
 
 #include <QLocale>
 #include <QStyle>
@@ -29,14 +30,10 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *m
               ->value("SearchOptionsRadioGroupBox/lastSelected",
                       QVariant::fromValue(SearchParameters::ENGLISH))
               .value<SearchParameters>();
-    QList<QRadioButton *> buttons = this->findChildren<QRadioButton *>();
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     foreach (const auto & button, buttons) {
         if (button->property("data").value<SearchParameters>() == lastSelected) {
             button->click();
-        #ifdef Q_OS_MAC
-            // Makes the button selection show up correctly on macOS
-            button->setDown(true);
-        #endif
             break;
         }
     }
@@ -65,13 +62,13 @@ void SearchOptionsRadioGroupBox::setOption(const Utils::ButtonOptionIndex index)
         return;
     }
 
-    QList<QRadioButton *> buttons = this->findChildren<QRadioButton *>();
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     buttons.at(index)->click();
 }
 
 void SearchOptionsRadioGroupBox::setOption(const SearchParameters parameters)
 {
-    QList<QRadioButton *> buttons = this->findChildren<QRadioButton *>();
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     foreach (const auto & button, buttons) {
         if (button->property("data") == QVariant::fromValue(parameters)) {
             button->click();
@@ -81,40 +78,80 @@ void SearchOptionsRadioGroupBox::setOption(const SearchParameters parameters)
 
 void SearchOptionsRadioGroupBox::setupUI()
 {
+    setObjectName("SearchOptionsRadioGroupBox");
+    setContentsMargins(0, 0, 0, 0);
+    setAttribute(Qt::WA_LayoutOnEntireRect);
 
     _layout = new QHBoxLayout{this};
-    _layout->setContentsMargins(15, 0, 55, 0);
-#ifdef Q_OS_WIN
-    _layout->setSpacing(15);
+    _layout->setContentsMargins(0, 0, 0, 0);
+#ifdef Q_OS_LINUX
+    _layout->setSpacing(5);
+#else
+    _layout->setSpacing(10);
 #endif
 
-    _simplifiedButton = new QRadioButton{};
-    _traditionalButton = new QRadioButton{};
-    _jyutpingButton = new QRadioButton{};
-    _pinyinButton = new QRadioButton{};
-    _englishButton = new QRadioButton{};
+    _currentChoiceLabel = new QLabel{this};
+    _simplifiedButton = new QPushButton{this};
+    _traditionalButton = new QPushButton{this};
+    _jyutpingButton = new QPushButton{this};
+    _pinyinButton = new QPushButton{this};
+    _englishButton = new QPushButton{this};
 
-    _simplifiedButton->setProperty("data", QVariant::fromValue(SearchParameters::SIMPLIFIED));
-    _traditionalButton->setProperty("data", QVariant::fromValue(SearchParameters::TRADITIONAL));
-    _jyutpingButton->setProperty("data", QVariant::fromValue(SearchParameters::JYUTPING));
-    _pinyinButton->setProperty("data", QVariant::fromValue(SearchParameters::PINYIN));
-    _englishButton->setProperty("data", QVariant::fromValue(SearchParameters::ENGLISH));
+    _currentChoiceLabel->setIndent(0);
+    _simplifiedButton->setCheckable(true);
+    _traditionalButton->setCheckable(true);
+    _jyutpingButton->setCheckable(true);
+    _pinyinButton->setCheckable(true);
+    _englishButton->setCheckable(true);
 
-    connect(_simplifiedButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
-    connect(_traditionalButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
-    connect(_jyutpingButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
-    connect(_pinyinButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
-    connect(_englishButton, &QRadioButton::clicked, this, &SearchOptionsRadioGroupBox::notifyMediator);
+    _simplifiedButton->setProperty("data",
+                                   QVariant::fromValue(
+                                       SearchParameters::SIMPLIFIED));
+    _traditionalButton->setProperty("data",
+                                    QVariant::fromValue(
+                                        SearchParameters::TRADITIONAL));
+    _jyutpingButton->setProperty("data",
+                                 QVariant::fromValue(
+                                     SearchParameters::JYUTPING));
+    _pinyinButton->setProperty("data",
+                               QVariant::fromValue(SearchParameters::PINYIN));
+    _englishButton->setProperty("data",
+                                QVariant::fromValue(SearchParameters::ENGLISH));
 
+    connect(_simplifiedButton,
+            &QPushButton::clicked,
+            this,
+            &SearchOptionsRadioGroupBox::notifyMediator);
+    connect(_traditionalButton,
+            &QPushButton::clicked,
+            this,
+            &SearchOptionsRadioGroupBox::notifyMediator);
+    connect(_jyutpingButton,
+            &QPushButton::clicked,
+            this,
+            &SearchOptionsRadioGroupBox::notifyMediator);
+    connect(_pinyinButton,
+            &QPushButton::clicked,
+            this,
+            &SearchOptionsRadioGroupBox::notifyMediator);
+    connect(_englishButton,
+            &QPushButton::clicked,
+            this,
+            &SearchOptionsRadioGroupBox::notifyMediator);
+
+#ifdef Q_OS_MAC
+    _layout->addWidget(_currentChoiceLabel, 0, Qt::AlignLeft | Qt::AlignBottom);
+#else
+    _layout->addWidget(_currentChoiceLabel, 0);
+#endif
     _layout->addWidget(_simplifiedButton);
     _layout->addWidget(_traditionalButton);
     _layout->addWidget(_jyutpingButton);
     _layout->addWidget(_pinyinButton);
     _layout->addWidget(_englishButton);
+    _layout->addStretch(1);
 
-    setLayout(_layout);
     setFlat(true);
-
     setStyle(Utils::isDarkMode());
 }
 
@@ -123,18 +160,19 @@ void SearchOptionsRadioGroupBox::translateUI()
     // Set property so styling automatically changes
     setProperty("isHan", Settings::isCurrentLocaleHan());
 
-    QList<QRadioButton *> buttons = this->findChildren<QRadioButton *>();
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     foreach (const auto & button, buttons) {
         button->setProperty("isHan", Settings::isCurrentLocaleHan());
         button->style()->unpolish(button);
         button->style()->polish(button);
     }
 
-    _simplifiedButton->setText(tr("SC"));
-    _traditionalButton->setText(tr("TC"));
-    _jyutpingButton->setText(tr("JP"));
-    _pinyinButton->setText(tr("PY"));
-    _englishButton->setText(tr("EN"));
+    _currentChoiceLabel->setText(tr("Searching:"));
+    _simplifiedButton->setText(tr("Simplified Chinese"));
+    _traditionalButton->setText(tr("Traditional Chinese"));
+    _jyutpingButton->setText(tr("Jyutping"));
+    _pinyinButton->setText(tr("Pinyin"));
+    _englishButton->setText(tr("English"));
 
     _simplifiedButton->setToolTip(tr("Search Simplified Chinese"));
     _traditionalButton->setToolTip(tr("Search Traditional Chinese"));
@@ -145,65 +183,115 @@ void SearchOptionsRadioGroupBox::translateUI()
 
 void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
 {
-    (void) (use_dark);
-
+    QColor borderColour = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
+                                            HEADER_BACKGROUND_COLOUR_DARK_G,
+                                            HEADER_BACKGROUND_COLOUR_DARK_B}
+                                   : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                                            CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                                            CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+#ifdef Q_OS_LINUX
+    borderColour = borderColour.lighter(200);
+#endif
     int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
-
-    int h6FontSizeHan = Settings::h6FontSizeHan.at(
-        static_cast<unsigned long>(interfaceSize - 1));
-
-#ifdef Q_OS_WIN
     int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
-
-    setStyleSheet(QString{"QRadioButton[isHan=\"true\"] { "
-                          "   font-size: %1px; "
-                          "} "
-                          ""
-                          "QRadioButton[isHan=\"false\"] { "
-                          "   font-size: %2px; "
-                          "} "
-                          ""
-                          "QGroupBox { "
-                          "   border: 0; "
-                          "} "}
-                      .arg(h6FontSizeHan)
-                      .arg(bodyFontSize));
-
-//    setStyleSheet("QRadioButton[isHan=\"true\"] { font-size: 12px; }"
-//                  "QGroupBox { border: 0; }");
+    int borderRadius = static_cast<int>(bodyFontSize * 1);
+#ifdef Q_OS_MAC
+    int padding = bodyFontSize / 3;
 #else
-    int h6FontSize = Settings::h6FontSize.at(
-        static_cast<unsigned long>(interfaceSize - 1));
-
-    setStyleSheet(QString{"QRadioButton[isHan=\"true\"] { "
-                          "   font-size: %1px; "
-                          "} "
-                          ""
-                          "QRadioButton[isHan=\"false\"] { "
-                          "   font-size: %2px; "
-                          "} "
-                          ""
-                          "QGroupBox { "
-                          "   border: none; "
-                          "} "}
-                      .arg(h6FontSizeHan)
-                      .arg(h6FontSize));
+    int padding = bodyFontSize / 6;
 #endif
+    int paddingHorizontal = bodyFontSize;
+
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
+    setStyleSheet("QGroupBox#SearchOptionsRadioGroupBox { "
+                  "   border: 0; "
+                  "} ");
+#endif
+    QString styleSheet = "QPushButton { "
+                         "   background-color: transparent; "
+                         "   border: 2px solid %1; "
+                         "   border-radius: %2px; "
+                         "   font-size: %3px; "
+                         "   padding: %4px; "
+                         "   padding-left: %5px; "
+                         "   padding-right: %5px; "
+                         "} "
+                         " "
+                         "QPushButton:checked { "
+                         "   background-color: %1; "
+                         "   border: 2px solid %1; "
+                         "   border-radius: %2px; "
+                         "   font-size: %3px; "
+                         "   padding: %4px; "
+                         "   padding-left: %5px; "
+                         "   padding-right: %5px; "
+                         "} "
+                         " "
+                         "QPushButton:hover { "
+                         "   background-color: %1; "
+                         "   border: 2px solid %1; "
+                         "   border-radius: %2px; "
+                         "   font-size: %3px; "
+                         "   padding: %4px; "
+                         "   padding-left: %5px; "
+                         "   padding-right: %5px; "
+                         "} ";
+
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+    foreach (const auto &button, buttons) {
+        button->setStyleSheet(styleSheet.arg(borderColour.name())
+                                  .arg(borderRadius)
+                                  .arg(bodyFontSize)
+                                  .arg(padding)
+                                  .arg(paddingHorizontal));
+        button->setMinimumHeight(
+            std::max(borderRadius * 2,
+                     button->fontMetrics().boundingRect(button->text()).height()
+                         + 2 * padding + 2 * 2));
+
+#ifdef Q_OS_MAC
+        // Hack to get around weird button sizing issues when switching styles
+        button->setVisible(false);
+        button->setVisible(true);
+#endif
+    }
+
+    QString textStyleSheet = "QLabel { "
+                             "   color: palette(text); "
+                             "   font-size: %1px; "
+                             "   padding-top: %2px; "
+                             "   padding-bottom: %2px; "
+                             "}";
+    _currentChoiceLabel->setStyleSheet(
+        textStyleSheet.arg(bodyFontSize).arg(padding));
+    _currentChoiceLabel->setMinimumHeight(
+        std::max(borderRadius * 2,
+                 _currentChoiceLabel->fontMetrics()
+                         .boundingRect(_currentChoiceLabel->text())
+                         .height()
+                     + 2 * padding + 2 * 2));
+
+    setMinimumHeight(std::max(_currentChoiceLabel->minimumHeight(),
+                              _simplifiedButton->minimumHeight()));
 }
 
 void SearchOptionsRadioGroupBox::notifyMediator() const
 {
-    QRadioButton *button = static_cast<QRadioButton *>(QObject::sender());
+    QPushButton *sender = static_cast<QPushButton *>(QObject::sender());
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+    foreach (const auto &button, buttons) {
+        button->setChecked(button == sender);
+    }
 
-    std::string language = button->text().toStdString();
+    std::string language = sender->text().toStdString();
 
     Settings::getSettings()->setValue("SearchOptionsRadioGroupBox/lastSelected",
-                                      button->property("data"));
+                                      sender->property("data"));
 
-    _mediator->setParameters(button->property("data").value<SearchParameters>());
+    _mediator->setParameters(sender->property("data").value<SearchParameters>());
 }

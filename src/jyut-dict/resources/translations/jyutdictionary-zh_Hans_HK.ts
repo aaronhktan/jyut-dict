@@ -510,7 +510,7 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="+93"/>
+        <location filename="../../windows/mainwindow.cpp" line="+94"/>
         <source>Database migration finished!</source>
         <translation>数据库迁移成功！</translation>
     </message>
@@ -521,30 +521,30 @@
     </message>
     <message>
         <location line="+187"/>
-        <location line="+475"/>
+        <location line="+533"/>
         <source>&amp;File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location line="-474"/>
-        <location line="+475"/>
+        <location line="-532"/>
+        <location line="+533"/>
         <source>&amp;Edit</source>
         <translation>编辑</translation>
     </message>
     <message>
-        <location line="-472"/>
-        <location line="+475"/>
+        <location line="-530"/>
+        <location line="+533"/>
         <source>&amp;Window</source>
         <translation>窗口</translation>
     </message>
     <message>
-        <location line="-474"/>
-        <location line="+475"/>
+        <location line="-532"/>
+        <location line="+533"/>
         <source>&amp;Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location line="-473"/>
+        <location line="-531"/>
         <source>&amp;About</source>
         <translation>关于粤语词典</translation>
     </message>
@@ -565,12 +565,12 @@
     </message>
     <message>
         <location line="+2"/>
-        <location line="+479"/>
+        <location line="+537"/>
         <source>Change settings</source>
         <translation>更改设置</translation>
     </message>
     <message>
-        <location line="-477"/>
+        <location line="-535"/>
         <source>Close Window</source>
         <translation>关闭窗口</translation>
     </message>
@@ -626,12 +626,12 @@
     </message>
     <message>
         <location line="-27"/>
-        <location line="+475"/>
+        <location line="+533"/>
         <source>E&amp;ntry</source>
         <translation>词条</translation>
     </message>
     <message>
-        <location line="-438"/>
+        <location line="-496"/>
         <source>View Large Version of Current Entry...</source>
         <translation>放大呢一条词条…</translation>
     </message>
@@ -641,14 +641,14 @@
         <translation>查看呢条词条嘅所有例句…</translation>
     </message>
     <message>
-        <location line="+991"/>
+        <location line="+1049"/>
         <source>Migrating database to new version...
 This might take a few minutes.
 Hang tight!</source>
         <translation>数据库迁移已启动，请稍等一阵</translation>
     </message>
     <message>
-        <location line="-1002"/>
+        <location line="-1060"/>
         <source>Search Jyutping</source>
         <translation>用粤语拼音揾</translation>
     </message>
@@ -729,7 +729,7 @@ Hang tight!</source>
     </message>
     <message>
         <location line="-56"/>
-        <location line="+475"/>
+        <location line="+533"/>
         <source>&amp;Search</source>
         <translation>搜索</translation>
     </message>
@@ -886,14 +886,14 @@ Hang tight!</source>
         <translation>揾唔到结果</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Simplified (SC) and Traditional (TC) Chinese, Jyutping (JP), Pinyin (PY), and English (EN) are options to the right of the search bar.</source>
-        <translation>你喺搜索栏旁边可以选择使用边种语言进行搜索。可选择嘅语言包括简体中文，繁体中文，粤语拼音（粤拼），汉语拼音，同埋英文。</translation>
+        <location line="+4"/>
+        <source>Simplified Chinese, Traditional Chinese, Jyutping, Pinyin, and English are options beneath the search bar.</source>
+        <translation>你喺搜索栏下可以选择使用边种语言进行搜索。可选择嘅语言包括简体中文，繁体中文，粤语拼音（粤拼），汉语拼音，同埋英文。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Try switching between languages!</source>
-        <translation>试吓用搜索栏旁边嘅按钮选择搜索语言！</translation>
+        <translation>试吓用搜索栏下嘅按钮选择搜索语言！</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -992,60 +992,65 @@ Hang tight!</source>
 <context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+140"/>
+        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+129"/>
         <source>Search</source>
-        <translation>揾粤语词典…</translation>
+        <translation>查粤语词典…</translation>
     </message>
 </context>
 <context>
     <name>SearchOptionsRadioGroupBox</name>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="+133"/>
-        <source>SC</source>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="+170"/>
+        <source>Searching:</source>
+        <translation>搜索语言：</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Simplified Chinese</source>
         <translation>简体中文</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+1"/>
+        <source>Traditional Chinese</source>
+        <translation>繁体中文</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Jyutping</source>
+        <translation>粤语拼音</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Pinyin</source>
+        <translation>汉语拼音</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>English</source>
+        <translation>英文</translation>
+    </message>
+    <message>
+        <location line="+2"/>
         <source>Search Simplified Chinese</source>
         <translation>用简体中文揾</translation>
     </message>
     <message>
-        <location line="-5"/>
-        <source>TC</source>
-        <translation>繁体中文</translation>
-    </message>
-    <message>
-        <location line="+6"/>
+        <location line="+1"/>
         <source>Search Traditional Chinese</source>
         <translation>用繁体中文揾</translation>
     </message>
     <message>
-        <location line="-5"/>
-        <source>JP</source>
-        <translation>粤语拼音</translation>
-    </message>
-    <message>
-        <location line="+6"/>
+        <location line="+1"/>
         <source>Search Jyutping</source>
         <translation>用粤语拼音揾</translation>
     </message>
     <message>
-        <location line="-5"/>
-        <source>PY</source>
-        <translation>汉语拼音</translation>
-    </message>
-    <message>
-        <location line="+6"/>
+        <location line="+1"/>
         <source>Search Pinyin</source>
         <translation>用汉语拼音揾</translation>
     </message>
     <message>
-        <location line="-5"/>
-        <source>EN</source>
-        <translation>英文</translation>
-    </message>
-    <message>
-        <location line="+6"/>
+        <location line="+1"/>
         <source>Search English</source>
         <translation>用英文揾</translation>
     </message>
@@ -1399,7 +1404,7 @@ Hang tight!</source>
     <message>
         <location line="-117"/>
         <source>YL</source>
-        <translation>耶魯粵拼</translation>
+        <translation>耶魯拼音</translation>
     </message>
     <message>
         <location line="+1"/>

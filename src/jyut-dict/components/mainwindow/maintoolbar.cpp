@@ -9,6 +9,9 @@
 #elif defined(Q_OS_WIN)
 #include "logic/utils/utils_windows.h"
 #endif
+#include "logic/utils/utils_qt.h"
+
+#include <QGuiApplication>
 
 MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
                          std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
@@ -22,17 +25,6 @@ MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
 
     _searchOptions = new SearchOptionsMediator{};
     _settings = Settings::getSettings(this);
-
-#ifdef Q_OS_LINUX
-    // For some reason, if we disable the border first before creating the
-    // SearchOptionsRadioGroupBox, a vertical spacer (???) gets added to the
-    // groupbox's layout
-    if (Utils::isDarkMode()) {
-        setStyleSheet("QToolBar { border-bottom: 1px solid black; }");
-    } else {
-        setStyleSheet("QToolBar { border-bottom: 1px solid lightgray; }");
-    }
-#endif
 
     _searchOptions->registerLineEdit(_searchBar);
     _optionsBox = new SearchOptionsRadioGroupBox(_searchOptions, this);
@@ -52,10 +44,11 @@ MainToolBar::~MainToolBar()
 
 void MainToolBar::setupUI(void)
 {
-    _toolBarWidget = new QWidget;
-    _toolBarLayout = new QHBoxLayout;
+    _toolBarWidget = new QWidget{this};
+    _toolBarLayout = new QGridLayout{_toolBarWidget};
     _toolBarLayout->setContentsMargins(11, 11, 11, 11);
     _toolBarLayout->setSpacing(0);
+    _toolBarLayout->setVerticalSpacing(7);
 
     _openHistoryButton = new QToolButton{this};
     _openHistoryButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
@@ -72,16 +65,15 @@ void MainToolBar::setupUI(void)
     _openSettingsButton->setIconSize(QSize{15, 15});
     _openSettingsButton->setCursor(Qt::PointingHandCursor);
 
-    _toolBarLayout->addWidget(_searchBar);
-    _toolBarLayout->addWidget(_optionsBox);
-    _toolBarLayout->addWidget(_openHistoryButton);
-    _toolBarLayout->addWidget(_openFavouritesButton);
-    _toolBarLayout->addWidget(_openSettingsButton);
+    _toolBarLayout->addWidget(_searchBar, 0, 0, 1, 1);
+    _toolBarLayout->addItem(new QSpacerItem{25, 0}, 0, 1, 1, 1);
+    _toolBarLayout->addWidget(_openHistoryButton, 0, 2, 1, 1);
+    _toolBarLayout->addWidget(_openFavouritesButton, 0, 3, 1, 1);
+    _toolBarLayout->addWidget(_openSettingsButton, 0, 4, 1, 1);
+    _toolBarLayout->addWidget(_optionsBox, 1, 0, 1, -1);
 #ifdef Q_OS_WIN
     _toolBarLayout->setContentsMargins(6, 2, 6, 9);
 #endif
-
-    _toolBarWidget->setLayout(_toolBarLayout);
 
     addWidget(_toolBarWidget);
     setMovable(false);
@@ -89,6 +81,14 @@ void MainToolBar::setupUI(void)
     setFocusPolicy(Qt::ClickFocus);
 
     setStyle(Utils::isDarkMode());
+
+    connect(qGuiApp, &QGuiApplication::applicationStateChanged, this, [&]() {
+        if (!_paletteRecentlyChanged) {
+            setStyle(Utils::isDarkMode());
+        }
+    });
+
+    _searchBar->setFocus();
 }
 
 void MainToolBar::changeEvent(QEvent *event)
@@ -107,6 +107,54 @@ void MainToolBar::changeEvent(QEvent *event)
 
 void MainToolBar::setStyle(bool use_dark)
 {
+#ifdef Q_OS_MAC
+    QColor backgroundColour = use_dark
+                                  ? QColor{TITLE_BAR_BACKGROUND_COLOR_DARK_R,
+                                           TITLE_BAR_BACKGROUND_COLOR_DARK_G,
+                                           TITLE_BAR_BACKGROUND_COLOR_DARK_B}
+                                  : QColor{TITLE_BAR_BACKGROUND_COLOR_R,
+                                           TITLE_BAR_BACKGROUND_COLOR_G,
+                                           TITLE_BAR_BACKGROUND_COLOR_B};
+    QColor backgroundColourInactive
+        = use_dark ? QColor{TITLE_BAR_INACTIVE_BACKGROUND_COLOR_DARK_R,
+                            TITLE_BAR_INACTIVE_BACKGROUND_COLOR_DARK_G,
+                            TITLE_BAR_INACTIVE_BACKGROUND_COLOR_DARK_B}
+                   : QColor{TITLE_BAR_INACTIVE_BACKGROUND_COLOR_R,
+                            TITLE_BAR_INACTIVE_BACKGROUND_COLOR_G,
+                            TITLE_BAR_INACTIVE_BACKGROUND_COLOR_B};
+    QColor borderColour = use_dark ? QColor{TITLE_BAR_BORDER_COLOR_DARK_R,
+                                            TITLE_BAR_BORDER_COLOR_DARK_G,
+                                            TITLE_BAR_BORDER_COLOR_DARK_B}
+                                   : QColor{TITLE_BAR_BORDER_COLOR_R,
+                                            TITLE_BAR_BORDER_COLOR_G,
+                                            TITLE_BAR_BORDER_COLOR_B};
+    if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
+        _inactiveCount++;
+        qDebug() << "inactive";
+        if (_inactiveCount > 2) {
+            setStyleSheet(
+                QString{"QToolBar { "
+                        "   background-color: %1; "
+                        "   border-bottom: %2; "
+                        "} "}
+                    .arg(backgroundColourInactive.name(), borderColour.name()));
+        } else {
+            setStyleSheet(
+                QString{"QToolBar { "
+                        "   background-color: %1; "
+                        "   border-bottom: %2; "
+                        "} "}
+                    .arg(backgroundColour.name(), borderColour.name()));
+        }
+    } else {
+        setStyleSheet(QString{"QToolBar { "
+                              "   background-color: %1; "
+                              "   border-bottom: %2; "
+                              "} "}
+                          .arg(backgroundColour.name(), borderColour.name()));
+    }
+#endif
+
 #ifdef Q_OS_WIN
     _openHistoryButton->setIcon(QIcon{use_dark ? ":/images/clock_inverted_nopadding.png"
                                                : ":/images/clock_darkgrey_nopadding.png"});
@@ -168,9 +216,15 @@ void MainToolBar::setStyle(bool use_dark)
 
 #ifdef Q_OS_WIN
     if (use_dark) {
-        setStyleSheet("QToolBar { background-color: black; border-top: 1px solid black; }");
+        setStyleSheet("QToolBar { "
+                      "   background-color: black; "
+                      "   border-top: 1px solid black; "
+                      "}");
     } else {
-        setStyleSheet("QToolBar { background-color: white; }");
+        setStyleSheet("QToolBar { "
+                      "   background-color: white; "
+                      "   border-bottom: 1px solid lightgrey; "
+                      "} ");
     }
 
     Settings::InterfaceSize interfaceSize

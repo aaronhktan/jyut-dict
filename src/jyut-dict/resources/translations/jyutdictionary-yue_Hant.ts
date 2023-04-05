@@ -882,28 +882,28 @@ Hang tight!</source>
         <translation>搵唔到結果</translation>
     </message>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="109"/>
-        <source>Simplified (SC) and Traditional (TC) Chinese, Jyutping (JP), Pinyin (PY), and English (EN) are options to the right of the search bar.</source>
-        <translation>你喺搜索欄旁邊可以選擇使用邊種語言進行搜索。可選擇語言包括簡體中文，繁體中文，粵語拼音（粵拼），漢語拼音，同埋英文。</translation>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="108"/>
+        <source>Simplified Chinese, Traditional Chinese, Jyutping, Pinyin, and English are options beneath the search bar.</source>
+        <translation>你喺搜索欄下可以選擇使用邊種語言進行搜索。可選擇語言包括簡體中文，繁體中文，粵語拼音（粵拼），漢語拼音，同埋英文。</translation>
     </message>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="115"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="114"/>
         <source>Try switching between languages!</source>
-        <translation>試吓用搜尋欄旁邊嘅按鈕選擇搜尋語言！</translation>
+        <translation>試吓用搜尋欄下嘅按鈕選擇搜尋語言！</translation>
     </message>
     <message>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="119"/>
         <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="120"/>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="121"/>
         <source>Nothing saved...</source>
         <translation>你仲未儲存詞語㖞！</translation>
     </message>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="126"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="125"/>
         <source>Clicking the &quot;save&quot; button when viewing a word or phrase adds it to this list. Try adding a word that sounds cool!</source>
         <translation>揿“儲存”掣嚟儲存词语。最好加個得意啲嘅！</translation>
     </message>
     <message>
-        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="132"/>
+        <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="131"/>
         <source>Save a word to get started!</source>
         <translation>—</translation>
     </message>
@@ -988,60 +988,65 @@ Hang tight!</source>
 <context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/mainwindow/searchlineedit.cpp" line="140"/>
+        <location filename="../../components/mainwindow/searchlineedit.cpp" line="129"/>
         <source>Search</source>
-        <translation>搵粤语辭典…</translation>
+        <translation>查粤语辭典…</translation>
     </message>
 </context>
 <context>
     <name>SearchOptionsRadioGroupBox</name>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="133"/>
-        <source>SC</source>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="170"/>
+        <source>Searching:</source>
+        <translation>搜尋語言：</translation>
+    </message>
+    <message>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="171"/>
+        <source>Simplified Chinese</source>
         <translation>簡體中文</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="139"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="172"/>
+        <source>Traditional Chinese</source>
+        <translation>繁體中文</translation>
+    </message>
+    <message>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="173"/>
+        <source>Jyutping</source>
+        <translation>粵語拼音</translation>
+    </message>
+    <message>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="174"/>
+        <source>Pinyin</source>
+        <translation>汉语拼音</translation>
+    </message>
+    <message>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="175"/>
+        <source>English</source>
+        <translation>英文</translation>
+    </message>
+    <message>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="177"/>
         <source>Search Simplified Chinese</source>
         <translation>用簡體中文搵</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="134"/>
-        <source>TC</source>
-        <translation>繁體中文</translation>
-    </message>
-    <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="140"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="178"/>
         <source>Search Traditional Chinese</source>
         <translation>用繁體中文搵</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="135"/>
-        <source>JP</source>
-        <translation>粵語拼音</translation>
-    </message>
-    <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="141"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="179"/>
         <source>Search Jyutping</source>
         <translation>用粵語拼音搵</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="136"/>
-        <source>PY</source>
-        <translation>漢語拼音</translation>
-    </message>
-    <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="142"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="180"/>
         <source>Search Pinyin</source>
         <translation>用漢語拼音搵</translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="137"/>
-        <source>EN</source>
-        <translation>英文</translation>
-    </message>
-    <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="143"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="181"/>
         <source>Search English</source>
         <translation>用英文搵</translation>
     </message>
