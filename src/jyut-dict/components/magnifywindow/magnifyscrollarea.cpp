@@ -6,7 +6,6 @@
 #include <QCoreApplication>
 #include <QScrollBar>
 
-#include <QDebug>
 MagnifyScrollArea::MagnifyScrollArea(QWidget *parent)
     : QScrollArea(parent)
 {
