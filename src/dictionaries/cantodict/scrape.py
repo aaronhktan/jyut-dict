@@ -25,7 +25,7 @@ if __name__ == "__main__":
         print(
             (
                 "e.g. python3 -m cantodict.scrape "
-                "word_urls.txt ./cantodict/scraped_words/ "
+                "word_urls.txt cantodict/data/scraped_words/ "
                 "0 55000"
             )
         )

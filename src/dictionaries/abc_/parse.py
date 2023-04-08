@@ -833,7 +833,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 11:
         print(
             (
-                "Usage: python3 script.py <database filename> "
+                "Usage: python3 -m abc_.parse <database filename> "
                 "<cidian.u8 file> "
                 "<source name> <source short name> "
                 "<source version> <source description> <source legal> "

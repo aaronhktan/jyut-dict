@@ -211,11 +211,14 @@ if __name__ == "__main__":
     if len(sys.argv) != 5:
         print(
             (
-                "Usage: python3 script.py <database filename> "
+                "Usage: python3 -m cedict.parse-set <database filename> "
                 "<CC_CEDICT file> <CC_CANTO file> <Cantonese Readings file>"
             )
         )
-        print("e.g. python3 script.py eng.db CC-CEDICT.txt CC-CANTO.txt READINGS.txt")
+        print(
+            "e.g. python3 -m cedict.parse-set cedict/developer/eng.db "
+            "cedict/data/CC-CEDICT.txt cedict/data/CC-CANTO.txt cedict/data/READINGS.txt"
+        )
         sys.exit(1)
 
     entries = {}

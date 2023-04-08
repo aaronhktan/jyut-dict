@@ -134,7 +134,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 12:
         print(
             (
-                "Usage: python3 script.py <database filename> "
+                "Usage: python3 -m hsk3.parse <database filename> "
                 "<HSK3 wordlist.txt filepath> <HSK3 charlist.txt filepath>"
                 "<source name> <source short name> "
                 "<source version> <source description> <source legal> "
@@ -143,7 +143,8 @@ if __name__ == "__main__":
         )
         print(
             (
-                "e.g. python3 script.py hks3.db ./wordlist.txt ./charlist.txt HSK3.0 HSK3 2021-07-01 "
+                "e.g. python3 -m hsk3.parse hsk3/developer/hks3.db hsk3/data/wordlist.txt "
+                "hsk3/data/charlist.txt HSK3.0 HSK3 2021-07-01 "
                 '"本规范规定了中文作为第二语言的学习 者在生活、学习、'
                 "工作等领域运用中文完成交际的语言水平等级。本规范适用于国际中文教育的学习、"
                 '教学、测试与评估，并为其提供参考。" '

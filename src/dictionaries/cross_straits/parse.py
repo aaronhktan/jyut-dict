@@ -563,8 +563,8 @@ if __name__ == "__main__":
         )
         print(
             (
-                "e.g. python3 script.py cross_straits.db ./dict-clsd.json "
-                '"Cross-Straits Language Database" CSLD 2021-08-06 '
+                "e.g. python3 -m cross_straits.parse cross_straits/developer/cross_straits.db "
+                'cross_straits/data/dict-clsd.json "Cross-Straits Language Database" CSLD 2021-08-06 '
                 '"兩岸差異用詞主要依據《中華語文大辭典》所收兩岸差異語詞加以分類表列，以一般性常用語詞為主，'
                 '如生活、文化、社會等各領域的用語，也包含學術專業語詞，如物理、化學、生物等各學科的用語。" '
                 '"《兩岸詞典》由中華文化總會以 CC BY-NC-ND 4.0 之条款下提供。" '

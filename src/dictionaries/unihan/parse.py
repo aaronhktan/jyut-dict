@@ -395,7 +395,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 13:
         print(
             (
-                "Usage: python3 script.py <database filename> "
+                "Usage: python3 -m unihan.parse <database filename> "
                 "<Unihan_DictionaryLikeData.txt filepath> "
                 "<Unihan_Readings.txt filepath> "
                 "<Unihan_Variants.txt filepath> "
@@ -406,8 +406,9 @@ if __name__ == "__main__":
         )
         print(
             (
-                "e.g. python3 script.py unihan.db ./Unihan_DictionaryLikeData.txt "
-                "./Unihan_Readings.txt ./Unihan_Variants.txt Unihan UNI 2021-08-06 "
+                "e.g. python3 -m unihan.parse unihan/developer/unihan.db "
+                "unihan/data/Unihan_DictionaryLikeData.txt "
+                "unihan/data/Unihan_Readings.txt unihan/data/Unihan_Variants.txt Unihan UNI 2021-08-06 "
                 '"The Unihan database is the repository for the Unicode Consortium’s '
                 "collective knowledge regarding the CJK Unified Ideographs "
                 "contained in the Unicode Standard. It contains mapping data to "

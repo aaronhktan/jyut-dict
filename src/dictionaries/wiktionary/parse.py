@@ -1018,7 +1018,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 11:
         print(
             (
-                "Usage: python3 script.py <database filename> "
+                "Usage: python3 -m wiktionary.parse <database filename> "
                 "<dict-wk.json filepath> "
                 "<source name> <source short name> "
                 "<source version> <source description> <source legal> "
@@ -1027,7 +1027,7 @@ if __name__ == "__main__":
         )
         print(
             (
-                "e.g. python3 -m wiktionary.parse wiktionary.db ./dict-wk.json "
+                "e.g. python3 -m wiktionary.parse wiktionary/developer/wiktionary.db wiktionary/data/dict-wk.json "
                 '"Wiktionary" WT 2023-02-16 '
                 '"Wiktionary is a collaborative project to produce a free-content multilingual dictionary. '
                 'It aims to describe all words of all languages using definitions and descriptions in English." '

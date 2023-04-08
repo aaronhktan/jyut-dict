@@ -29,7 +29,7 @@ def insert_words(c, words):
                 entry.freq,
             )
 
-            already_in_db = (entry_id == -1)
+            already_in_db = entry_id == -1
 
             if entry_id == -1:
                 entry_id = database.insert_entry(
@@ -143,7 +143,9 @@ def parse_file(filename, words):
                 pin = " ".join(pin).lower()
                 pin = pin.strip().replace("v", "u:")
                 freq = zipf_frequency(trad, "zh")
-                entry = objects.Entry(variant, simp, pin, jyut, freq=freq, defs=copy.deepcopy(defs))
+                entry = objects.Entry(
+                    variant, simp, pin, jyut, freq=freq, defs=copy.deepcopy(defs)
+                )
                 words[trad].add(entry)
 
 
@@ -151,7 +153,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 11:
         print(
             (
-                "Usage: python3 -m jyutnet.parse <database filename> "
+                "Usage: python3 -m gzzj.parse <database filename> "
                 "<B01_讀音資料.csv> "
                 "<source name> <source short name> "
                 "<source version> <source description> <source legal> "

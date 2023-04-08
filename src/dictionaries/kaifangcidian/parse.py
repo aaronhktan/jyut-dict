@@ -171,7 +171,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 12:
         print(
             (
-                "Usage: python3 script.py <database filename> "
+                "Usage: python3 -m kaifangcidian.parse <database filename> "
                 "<Kaifangcidian traditional + Yale file> "
                 "<Kaifangcidian simplified + Jyutping file> "
                 "<source name> <source short name> "
@@ -181,8 +181,9 @@ if __name__ == "__main__":
         )
         print(
             (
-                "e.g. python3 script.py kfcd.db cidian_zhyue-ft-kfcd-ylshu-2019623.txt "
-                "cidian_zhyue-jt-kfcd-yp-2019623.txt Kaifangcidian KFCD 2019-06-23 "
+                "e.g. python3 -m kaifangcidian.parse kaifangcidian/developer/kfcd.db "
+                "kaifangcidian/data/cidian_zhyue-ft-kfcd-ylshu-2019623.txt "
+                "kaifangcidian/data/cidian_zhyue-jt-kfcd-yp-2019623.txt Kaifangcidian KFCD 2019-06-23 "
                 '"Kaifangcidian is a dictionary" '
                 '"本词典以创作共用“署名 3.0”许可协议授权发布（详见 http://creativecommons.org/licenses/by/3.0/）" '
                 '"http://www.kaifangcidian.com/han/yue" "" ""'
