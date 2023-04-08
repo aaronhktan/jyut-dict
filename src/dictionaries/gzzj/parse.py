@@ -11,6 +11,7 @@ import csv
 import logging
 import sqlite3
 import sys
+import unicodedata
 
 converter = opencc.OpenCC("hk2s.json")
 
@@ -106,6 +107,7 @@ def parse_file(filename, words):
         for row in reader:
             traditional_variants = row["字頭"].split("|")
             trad = traditional_variants[0]
+            trad = unicodedata.normalize('NFKD', trad)
             simp = converter.convert(trad)
 
             pin = lazy_pinyin(
@@ -129,11 +131,15 @@ def parse_file(filename, words):
             if row["(輔助檢索用異體)"]:
                 defs.append(objects.DefinitionTuple(row["(輔助檢索用異體)"], "異體", []))
 
+            if not defs:
+                defs.append(objects.DefinitionTuple("-", "", []))
+
             entry = objects.Entry(trad, simp, pin, jyut, freq=freq, defs=defs)
             words[trad].add(entry)
 
             for variant in traditional_variants[1:]:
                 trad = variant
+                trad = unicodedata.normalize('NFKD', trad)
                 simp = converter.convert(trad)
                 pin = lazy_pinyin(
                     simp,
