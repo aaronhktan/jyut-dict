@@ -38,6 +38,7 @@ import unicodedata
 # - 奇異筆: Basic Cantonese and Mandarin test
 # - 回去: Mandarin neutral tone
 # - 閪: Basic Cantonese test
+# - 女媧: has ü in Pinyin
 
 # Useful test examples:
 # - 呢度好閪热呀！ [Cantonese, simp.]nei¹ dou⁶ hou² hai¹ jit⁶ aa³! [Jyutping]
@@ -407,7 +408,7 @@ def process_mandarin_romanization(romanization):
                 converted_syllable = to_tone3(
                     syllable, v_to_u=True, neutral_tone_with_five=True
                 )
-                converted_syllable.replace("ü", "u:")
+                converted_syllable = converted_syllable.replace("ü", "u:")
 
                 # Erhua is not well supported in Jyut Dictionary, so convert "r" to "er"
                 if PINYIN_ERHUA_REGEX.match(syllable):
@@ -516,13 +517,11 @@ def parse_file(filename, words):
                 pinyin_jyutping_sentence.jyutping(trad, tone_numbers=True, spaces=True)
             ]
         if not pinyin_list:
-            pinyin_list = [
-                " ".join(
-                    lazy_pinyin(simp, style=Style.TONE3, neutral_tone_with_five=True)
-                )
-                .lower()
-                .replace("v", "u:")
-            ]
+            generated_pinyin = " ".join(
+                lazy_pinyin(simp, style=Style.TONE3, neutral_tone_with_five=True)
+            ).lower()
+            generated_pinyin = generated_pinyin.replace("v", "u:").replace("ü", "u:")
+            pinyin_list = [generated_pinyin]
 
         freq = zipf_frequency(trad, "zh")
 

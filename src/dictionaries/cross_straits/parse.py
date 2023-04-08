@@ -23,6 +23,7 @@ import unicodedata
 #   - 歛: multiple heteronyms, labels for definitions
 #   - 穀: some duplicate definitions (姓。) and has labels for literary use (〈書〉)
 #   - 横征暴敛: Pinyin has dashes in it (bad!)
+#   - 女媧氏: has ü in Pinyin
 #   - 节哀顺变: has apostrophes in the Pinyin
 #   - 空橋: contains 陸⃝ in the definition
 #   - 空擋: contains 臺⃝ in the definition
@@ -318,6 +319,7 @@ def parse_file(filename, words):
                             )
                             for x in pins
                         ]
+                        pins = [x.replace("ü", "u:") for x in pins]
 
                         for x in pins:
                             if x.count(" ") >= len(trad):
@@ -335,6 +337,7 @@ def parse_file(filename, words):
                                 transcriptions.zhuyin_to_pinyin(x, accented=False)
                                 for x in pins
                             ]
+                            pins = [x.replace("ü", "u:") for x in pins]
                         except Exception as e:
                             logging.error(
                                 f"Unable to split up Pinyin for word {trad}: {e}, skipping word..."

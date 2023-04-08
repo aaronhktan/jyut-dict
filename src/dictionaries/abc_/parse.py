@@ -25,6 +25,7 @@ import unicodedata
 # - 回@@/迴 (1005378131): contains "@@" in entry headword
 # - 纪委 (1006643399): contains "-" in Pinyin
 # - 就 (1006571134): contains example with weird Pinyin ("yī̠diǎnr")
+# - 女媧: has ü in Pinyin
 
 IGNORED_LINES = ("cidian.wenlindb\n", ".-arc\n", ".-publish\n")
 IGNORED_TYPES = (
@@ -236,6 +237,9 @@ def parse_pinyin(content):
     # And remove the space in front of punctuatation
     for punctuation in string.punctuation:
         content = content.replace(" " + punctuation, punctuation)
+
+    # Convert ü to u:
+    content = content.replace("ü", "u:")
 
     return content
 

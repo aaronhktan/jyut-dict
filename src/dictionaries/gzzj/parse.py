@@ -107,7 +107,7 @@ def parse_file(filename, words):
         for row in reader:
             traditional_variants = row["字頭"].split("|")
             trad = traditional_variants[0]
-            trad = unicodedata.normalize('NFKD', trad)
+            trad = unicodedata.normalize("NFKD", trad)
             simp = converter.convert(trad)
 
             pin = lazy_pinyin(
@@ -139,7 +139,7 @@ def parse_file(filename, words):
 
             for variant in traditional_variants[1:]:
                 trad = variant
-                trad = unicodedata.normalize('NFKD', trad)
+                trad = unicodedata.normalize("NFKD", trad)
                 simp = converter.convert(trad)
                 pin = lazy_pinyin(
                     simp,
