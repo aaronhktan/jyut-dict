@@ -1,3 +1,11 @@
+jyut-dict (2.23.0408) bionic; urgency=medium
+
+  * Support for Yale, Bopomofo, and IPA.
+  * Adjust interface size.
+  * Bug fixes.
+
+ -- Aaron Tan <hi@aaronhktan.com>  Sat, 8 Apr 2022 16:44:11 -0400
+
 jyut-dict (1.22.0207) bionic; urgency=medium
 
   * See examples with their definitions.

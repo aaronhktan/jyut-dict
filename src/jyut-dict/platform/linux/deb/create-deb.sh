@@ -2,18 +2,18 @@
 
 # Zip up entirety of src/jyut-dict into a zip beside jyut-dict
 cd ../../../
-tar -cvzf ../jyut-dict_1.22.0207.tar.gz * --overwrite
+tar -cvzf ../jyut-dict_2.23.0408.tar.gz * --overwrite
 
 # Switch to src/ directory
 cd ../
 
 # Create folder matching current version of jyut-dict
-rm -rf jyut-dict_1.22.0207
-mkdir jyut-dict_1.22.0207
-cd jyut-dict_1.22.0207
+rm -rf jyut-dict_2.23.0408
+mkdir jyut-dict_2.23.0408
+cd jyut-dict_2.23.0408
 
 # Expand zip file into the folder
-tar -xvzf ../jyut-dict_1.22.0207.tar.gz --overwrite
+tar -xvzf ../jyut-dict_2.23.0408.tar.gz --overwrite
 
 # Delete unneeded files copied by make
 rm ./dict.db
@@ -24,7 +24,7 @@ cp -r ../jyut-dict/platform/linux/deb/debian ./debian
 
 # Creates an orig tar.gz file required for debuild
 # Also creates generic debian/ folder structure if previous command failed
-dh_make -c mit -s -f ../jyut-dict_1.22.0207.tar.gz -p jyut-dict_1.22.0207
+dh_make -c mit -s -f ../jyut-dict_2.23.0408.tar.gz -p jyut-dict_2.23.0408
 
 # Generate the .deb file.
 debuild
