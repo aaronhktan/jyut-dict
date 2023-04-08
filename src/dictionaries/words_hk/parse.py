@@ -405,7 +405,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 11:
         print(
             (
-                "Usage: python3 script.py <database filename> "
+                "Usage: python3 -m words_hk.parse <database filename> "
                 "<all.csv file> <source name> <source short name> "
                 "<source version> <source description> <source legal> "
                 "<source link> <source update url> <source other>"
@@ -413,7 +413,8 @@ if __name__ == "__main__":
         )
         print(
             (
-                "e.g. python3 -m words_hk.parse words_hk.db words_hk/data/all.csv 粵典–words.hk WHK 2021-12-23 "
+                "e.g. python3 -m words_hk.parse words_hk/developer/words_hk.db "
+                "words_hk/data/all.csv 粵典–words.hk WHK 2021-12-23 "
                 '"《粵典》係一個大型嘅粵語辭典計劃。我哋會用Crowd-sourcing嘅方法，整一本大型、可持續發展嘅粵語辭典。" '
                 '"https://words.hk/base/hoifong/" "https://words.hk/" "" ""'
             )

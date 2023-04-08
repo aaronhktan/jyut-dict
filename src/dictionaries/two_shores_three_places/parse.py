@@ -193,9 +193,10 @@ if __name__ == "__main__":
         )
         print(
             (
-                "e.g. python3 -m two_shores_three_places.parse lnsd.db "
-                "./two_shores_three_places/data/兩岸三地生活差異詞語彙編-同實異名.csv "
-                "./two_shores_three_places/data/兩岸三地生活差異詞語彙編-同名異實.csv "
+                "e.g. python3 -m two_shores_three_places.parse "
+                "two_shores_three_places/developer/lnsd.db "
+                "two_shores_three_places/data/兩岸三地生活差異詞語彙編-同實異名.csv "
+                "two_shores_three_places/data/兩岸三地生活差異詞語彙編-同名異實.csv "
                 '"兩岸三地生活差異詞語彙編—Two Shores Three Places" LNSD 2019-06-23 '
                 '"The Two Shores Three Places dictionary compares usage of common terms in Mainland China, Taiwan, and Hong Kong." '
                 '"《兩岸三地生活差異詞語彙編》由中華文化總會以 CC BY-NC-ND 4.0 之条款下提供。" '

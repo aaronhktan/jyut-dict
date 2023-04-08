@@ -627,12 +627,12 @@ if __name__ == "__main__":
         )
         print(
             (
-                "e.g. python3 -m cantodict.parse cantodict.db ./cantodict/scraped_words/ "
-                "./cantodict/scraped_sentences/ CantoDict CD 2021-07-18 "
+                "e.g. python3 -m cantodict.parse cantodict/developer/cantodict.db cantodict/data/scraped_words/ "
+                "cantodict/data/scraped_sentences/ CantoDict CD 2021-07-18 "
                 '"CantoDict is a collaborative Chinese Dictionary project started in November 2003. '
                 'Entries are added and mistakes corrected by a team of kind volunteers from around the world." '
                 '"https://www.cantonese.sheik.co.uk/copyright.htm" "https://www.cantonese.sheik.co.uk/" "" "" '
-                "./cantodict/logging.log"
+                "cantodict/logging.log"
             )
         )
         sys.exit(1)

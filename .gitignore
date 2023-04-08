@@ -102,6 +102,9 @@ CMakeLists.txt.user*
 **/cuhk/archive_*
 **/cuhk/data/*
 **/cuhk/developer/*
+**/gzzj/archive_*
+**/gzzj/data/*
+**/gzzj/developer/*
 **/hsk3/archive_*
 **/hsk3/data/*
 **/hsk3/developer/*

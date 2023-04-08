@@ -184,7 +184,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 11:
         print(
             (
-                "Usage: python3 script.py <database filename> "
+                "Usage: python3 -m cuhk.parse <database filename> "
                 "<entries HTML folder> "
                 "<source name> <source short name> "
                 "<source version> <source description> <source legal> "
@@ -193,9 +193,11 @@ if __name__ == "__main__":
         )
         print(
             (
-                "e.g. python3 script.py cuhk.db scraped_words/ 現代標準漢語與粵語對照資料庫 CUHK 2021-10-03 "
+                "e.g. python3 -m cuhk.parse cuhk/developer/cuhk.db cuhk/data/scraped/ "
+                "現代標準漢語與粵語對照資料庫 CUHK 2021-10-03 "
                 '"香港通行廣州話（以下簡稱粵語），本地逾九成師生之母語為粵語。" '
-                '"(c) 2014保留版權 香港中文大學 中國語言及文學系" "https://apps.itsc.cuhk.edu.hk/hanyu/Page/Cover.aspx" "" "words"'
+                '"(c) 2014保留版權 香港中文大學 中國語言及文學系" '
+                '"https://apps.itsc.cuhk.edu.hk/hanyu/Page/Cover.aspx" "" "words"'
             )
         )
         sys.exit(1)

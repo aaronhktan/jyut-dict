@@ -22,7 +22,8 @@ if __name__ == "__main__":
         )
         print(
             (
-                "e.g. python3 -m cantodict.fixup ./cantodict/logging.log ./cantodict/scraped_words/"
+                "e.g. python3 -m cantodict.fixup cantodict/logging.log "
+                "cantodict/data/scraped_words/"
             )
         )
         sys.exit(1)

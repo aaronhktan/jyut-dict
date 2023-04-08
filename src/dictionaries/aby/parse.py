@@ -759,8 +759,8 @@ if __name__ == "__main__":
     if len(sys.argv) != 11:
         print(
             (
-                "Usage: python3 script.py <database filename> "
-                "<cidian.u8 file> "
+                "Usage: python3 -m aby.parse <database filename> "
+                "<jyut.u8 file> "
                 "<source name> <source short name> "
                 "<source version> <source description> <source legal> "
                 "<source link> <source update url> <source other>"

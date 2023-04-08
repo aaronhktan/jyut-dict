@@ -94,9 +94,12 @@ def parse_cc_cedict_canto_readings(filename, entries):
 if __name__ == "__main__":
     if len(sys.argv) != 4:
         print(
-            "Usage: python3 script.py <output filename> <CC_CANTO file> <Cantonese Readings file>"
+            "Usage: python3 -m cedict.generate-readings <output filename> <CC_CANTO file> <Cantonese Readings file>"
         )
-        print("e.g. python3 script.py FULLREADINGS.txt CC-CANTO.txt READINGS.txt")
+        print(
+            "e.g. python3 -m cedict.generate-readings cedict/data/FULLREADINGS.txt "
+            "cedict/data/CC-CANTO.txt cedict/dataREADINGS.txt"
+        )
         sys.exit(1)
 
     entries = {}

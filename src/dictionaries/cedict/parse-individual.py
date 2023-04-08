@@ -127,7 +127,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 12:
         print(
             (
-                "Usage: python3 script.py <database filename> "
+                "Usage: python3 -m cedict.parse-individual <database filename> "
                 "<CC_CEDICT file> <Cantonese readings file> "
                 "<source name> <source short name> "
                 "<source version> <source description> <source legal> "
@@ -136,7 +136,8 @@ if __name__ == "__main__":
         )
         print(
             (
-                "e.g. python3 script.py dict.db CEDICT.txt READINGS.txt "
+                "e.g. python3 -m cedict.parse-individual cedict/developer/dict.db "
+                "cedict/data/CEDICT.txt cedict/data/READINGS.txt "
                 'CC-CEDICT CC 2018-07-09 "CC-CEDICT is a dictionary." '
                 '"This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License." '
                 '"http://www.mdbg.net/chindict/chindict.php?page=cc-cedict" "" ""'

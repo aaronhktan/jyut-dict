@@ -6,3 +6,4 @@
 #### Scripts:
 - `parse.py`
   - This script generates a SQLite database from the Dictionary-Like-Data, Readings, and Variants files downloaded from `https://www.unicode.org/Public/UCD/latest/ucd/Unihan.zip`.
+  - Run `python3 -m unihan.parse help` to view instructions.

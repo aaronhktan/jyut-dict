@@ -145,7 +145,8 @@ if __name__ == "__main__":
         )
         print(
             (
-                "e.g. python3 script.py dict.db CFDICT.xml READINGS.txt "
+                "e.g. python3 -m cfdict-xml.parse cfdict-xml/developer/dict.db "
+                "cfdict-xml/data/CFDICT.xml cfdict-xml/data/READINGS.txt "
                 'CFDICT-2016 CF2016 2016-01-17 "En 2010, David Houstin, '
                 "fondateur de CHINE INFORMATIONS, a commencé à partager "
                 "librement une partie de la base de données son dictionnaire "

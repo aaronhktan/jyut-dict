@@ -215,7 +215,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 16:
         print(
             (
-                "Usage: python3 script.py <database filename> "
+                "Usage: python3 -m tatoeba.parse <database filename> "
                 "<Tatoeba sentences file> <Tatoeba links file> "
                 "<source language> <target language> "
                 "<source name> <source short name> "
@@ -227,8 +227,8 @@ if __name__ == "__main__":
         )
         print(
             (
-                "e.g. python3 -m tatoeba.parse yue-eng.db "
-                "./tatoeba/data/sentences.csv ./tatoeba/data/links.csv "
+                "e.g. python3 -m tatoeba.parse tatoeba/developer/yue-eng.db "
+                "tatoeba/data/sentences.csv tatoeba/data/links.csv "
                 "yue eng Tatoeba TTB 2018-07-09 "
                 '"Tatoeba is a collection of sentences." '
                 '"These files are released under CC BY 2.0 FR." '

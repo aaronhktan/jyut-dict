@@ -6,3 +6,4 @@
 #### Scripts:
 - `parse.py`
   - This script generates a SQLite database from the wordlist.txt and charlist.txt files downloaded from `https://github.com/elkmovie/hsk30`.
+  - Run `python3 -m hsk3.parse help` to view instructions.

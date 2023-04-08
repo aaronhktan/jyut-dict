@@ -403,7 +403,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 11:
         print(
             (
-                "Usage: python3 script.py <database filename> "
+                "Usage: python3 -m moedict.parse <database filename> "
                 "<dict-revised.json filepath> "
                 "<source name> <source short name> "
                 "<source version> <source description> <source legal> "
@@ -412,7 +412,7 @@ if __name__ == "__main__":
         )
         print(
             (
-                "e.g. python3 script.py moedict.db ./dict-revised.json "
+                "e.g. python3 -m moedict.parse moedict/developer/moedict.db moedict/data/dict-revised.json "
                 '"Ministry of Education Dictionary (MoEDict)" MOE 2021-08-06 '
                 '"本典為一部歷史語言辭典，記錄中古至現代各類詞語，並大量引用古典文獻書證，字 音部分則兼收現代及傳統音讀。" '
                 '"中華民國教育部《重編國語辭典修訂本》資料採「創用CC-姓名標示- 禁止改作 3.0 臺灣授權條款」釋出'
