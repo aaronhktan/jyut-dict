@@ -4,7 +4,7 @@
 
 Look up words from multiple dictionaries in Cantonese or Mandarin, with Traditional Chinese, Simplified Chinese, Jyutping, Pinyin, and English input.
 
-### [Download now!](https://github.com/aaronhktan/jyut-dict/releases)
+### [Download now!](https://jyutdictionary.com/#download-program)
 
 Available for macOS, Windows, and Ubuntu.
 
