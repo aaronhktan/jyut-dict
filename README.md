@@ -53,8 +53,8 @@ This folder contains several Python3 scripts that convert the various online Can
 - **[CantoDict](https://www.cantonese.sheik.co.uk/)**
 - **[Cross-Straits Language Database (兩岸詞典)](http://www.chinese-linguipedia.org/)**
   - **[兩岸三地生活差異詞語彙編](https://github.com/g0v/moedict-data-csld/blob/master/%E5%85%A9%E5%B2%B8%E4%B8%89%E5%9C%B0%E7%94%9F%E6%B4%BB%E5%B7%AE%E7%95%B0%E8%A9%9E%E8%AA%9E%E5%BD%99%E7%B7%A8-%E5%90%8C%E5%90%8D%E7%95%B0%E5%AF%A6.csv)**
-- **[廣州話正音字典](https://github.com/jyutnet/cantonese-books-data/tree/master/2004_%E5%BB%A3%E5%B7%9E%E8%A9%B1%E6%AD%A3%E9%9F%B3%E5%AD%97%E5%85%B8)
-- **[HSK 3.0 (汉语水平考试 3.0)](https://github.com/elkmovie/hsk30)
+- **[廣州話正音字典](https://github.com/jyutnet/cantonese-books-data/tree/master/2004_%E5%BB%A3%E5%B7%9E%E8%A9%B1%E6%AD%A3%E9%9F%B3%E5%AD%97%E5%85%B8)**
+- **[HSK 3.0 (汉语水平考试 3.0)](https://github.com/elkmovie/hsk30)**
 - **[Kaifangcidian 粵語詞典 - 開放詞典](https://www.kaifangcidian.com/han/yue)**
 - **[MoEDict (重編國語辭典修訂本)](http://dict.revised.moe.edu.tw/cbdic/)**
 - **[Tatoeba](https://tatoeba.org/eng/downloads)**
