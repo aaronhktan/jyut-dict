@@ -10,8 +10,8 @@
     <Description xml:lang="zh_CN">粤语词典软件。</Description>
     <Description xml:lang="zh_HK">粵語辭典軟件。</Description>
     <Description xml:lang="zh_TW">粵語辭典軟件。</Description>
-    <Version>2022.02.07</Version>
-    <ReleaseDate>2022-02-07</ReleaseDate>
+    <Version>2023.04.08</Version>
+    <ReleaseDate>2023-04-08</ReleaseDate>
     <Licenses>
         <License name="MIT License" file="LICENSE.md" />
     </Licenses>
