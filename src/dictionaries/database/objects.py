@@ -158,8 +158,13 @@ class Example:
         return hash((self.lang, self.pron, self.content))
 
     def __eq__(self, other):
-        if not isinstance(other, type(self)): return NotImplemented
-        return self.lang == other.lang and self.pron == other.pron and self.content == other.content
+        if not isinstance(other, type(self)):
+            return NotImplemented
+        return (
+            self.lang == other.lang
+            and self.pron == other.pron
+            and self.content == other.content
+        )
 
 
 @dataclass
@@ -172,5 +177,6 @@ class Definition:
         return hash((self.definition, self.label))
 
     def __eq__(self, other):
-        if not isinstance(other, type(self)): return NotImplemented
+        if not isinstance(other, type(self)):
+            return NotImplemented
         return self.definition == other.definition and self.label == other.label
