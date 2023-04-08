@@ -178,12 +178,6 @@ void SettingsTab::setupUI()
     _mandarinReference->setOpenExternalLinks(true);
     initializeEntryMandarinPronunciation(*_entryMandarinPronunciation);
 
-    QFrame *learnDivider = new QFrame{this};
-    learnDivider->setObjectName("divider");
-    learnDivider->setFrameShape(QFrame::HLine);
-    learnDivider->setFrameShadow(QFrame::Raised);
-    learnDivider->setFixedHeight(1);
-
     _tabLayout->addRow(_previewTitleLabel);
     _tabLayout->addRow(" ", _previewPhoneticWidget);
     _tabLayout->addRow(" ", _previewCantonesePronunciation);
