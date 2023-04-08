@@ -130,7 +130,6 @@ void MainToolBar::setStyle(bool use_dark)
                                             TITLE_BAR_BORDER_COLOR_B};
     if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
         _inactiveCount++;
-        qDebug() << "inactive";
         if (_inactiveCount > 2) {
             setStyleSheet(
                 QString{"QToolBar { "

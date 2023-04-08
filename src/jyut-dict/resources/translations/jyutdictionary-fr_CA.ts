@@ -1024,7 +1024,7 @@ Veuillez patienter quelques minutes.</translation>
     <message>
         <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="175"/>
         <source>English</source>
-        <translation>Anglais</translation>
+        <translation>Français</translation>
     </message>
     <message>
         <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="177"/>
