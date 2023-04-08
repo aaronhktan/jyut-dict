@@ -13,6 +13,6 @@ do
   convert $file -background white -alpha remove $file
 done
 
-ffmpeg -framerate 1 -i $1/%d.png -c:v libx264 -r 30 -pix_fmt yuv420p $2
+ffmpeg -framerate 1 -i $1/%d.png -c:v libx264 -r 30 -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" -pix_fmt yuv420p $2
 ffmpeg -v warning -i $2 -vf "$filters,palettegen" -y $palette
 ffmpeg -v warning -i $2 -i $palette -lavfi "$filters [x]; [x][1:v] paletteuse" -y $3
