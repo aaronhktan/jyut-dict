@@ -1411,7 +1411,7 @@ Hang tight!</source>
         <location filename="../../logic/strings/strings.h" line="19"/>
         <location filename="../../logic/strings/strings.h" line="135"/>
         <source>PY</source>
-        <translation>拼音</translation>
+        <translation>漢語拼音</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="20"/>
