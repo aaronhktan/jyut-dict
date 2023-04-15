@@ -11,7 +11,7 @@ Codesigning and Notarizing
 - AFTER GENERATING THE DMG: codesign the .dmg: `codesign -f --deep -v --options runtime -s 'Developer ID Application: {name of developer ID}' {app_name}.dmg`.
 - Upload the codesigned .dmg file: `xcrun altool --notarize-app --primary-bundle-id '{bundle_ID}' --username '{apple_username}' --password '{apple_password}' --file {app_name}.dmg`.
 - Staple the notarization info to the .dmg: `xcrun stapler staple {app_name}.dmg`.
-- For the portable version, you can just codesign/upload the .app bundle and then staple the .app bundle before zipping. Stapling does not work on .zips.
+- For the portable version, you can just codesign the .app bundle, upload the zipped version, and then staple the .app bundle before zipping again. Stapling does not work on .zips.
 
 Common issues:
 - `Warning: unable to build chain to self-signed root for signer`: Open XCode, go to Preferences > Accounts, and click "Download Manual Profiles". You may also need to go to Keychain Access and make sure all the Apple Certificates (e.g. `Apple Root CA`, `Apple Worldwide Developer Relations Certification Authority`, `Developer ID Certification Authority`, etc.) are set to `Use System Default`, NOT `Always Trust`!
