@@ -178,7 +178,7 @@ const static std::unordered_map<std::string, std::string> mandarinIPAFinals = {
     {"ongr", "ʊ̃ɻ"},   {"or", "wɔɻ"},     {"ou", "oʊ̯"},      {"our", "ɤʊ̯ɻʷ"},
     {"u", "u"},       {"ua", "wä"},      {"uai", "waɪ̯"},    {"uair", "wɑɻ"},
     {"uan", "wän"},   {"uang", "wɑŋ"},   {"uangr", "wɑ̃ɻ"},  {"uanr", "wɑɻ"},
-    {"uar", "wɑɻ"},   {"ue", "ɥɛ"},      {"ui", "weɪ̯"},     {"uir", "wəɻ"},
+    {"uar", "u̯ɑɻ"},   {"ue", "ɥɛ"},      {"ui", "weɪ̯"},     {"uir", "wəɻ"},
     {"un", "wən"},    {"unr", "wəɻ"},    {"uo", "wɔ"},      {"uor", "wɔɻ"},
     {"ur", "uɻʷ"},    {"v", "y"},        {"van", "ɥɛn"},    {"vanr", "ɥɑɻ"},
     {"ve", "ɥɛ"},     {"ver", "ɥɛɻ"},    {"vn", "yn"},      {"vnr", "yə̯ɻ"},
@@ -1303,7 +1303,7 @@ std::vector<std::string> segmentPinyin(const QString &string,
                                        bool removeSpecialCharacters,
                                        bool removeGlobCharacters)
 {
-    std::vector<std::string> words;
+    std::vector<std::string> syllables;
 
     std::unordered_set<std::string> initials = {"b", "p", "m",  "f",  "d",  "t",
                                                 "n", "l", "g",  "k",  "h",  "j",
@@ -1318,73 +1318,70 @@ std::vector<std::string> segmentPinyin(const QString &string,
     // Keep track of indices for current segmented word; [start_index, end_index)
     // Greedily try to expand end_index by checking for valid sequences
     // of characters
-    int start_index = 0;
-    int end_index = 0;
-    bool word_started = false;
+    int start_idx = 0;
+    int end_idx = 0;
+    bool initial_found = false;
 
-    while (end_index < string.length()) {
+    while (end_idx < string.length()) {
         bool next_iteration = false;
         // Ignore separation characters; these are special.
-        QString stringToExamine = string.mid(end_index, 1).toLower();
+        QString currentString = string.mid(end_idx, 1).toLower();
         bool isSpecialCharacter = (specialCharacters.find(
-                                       stringToExamine.toStdString())
+                                       currentString.toStdString())
                                    != specialCharacters.end());
-        bool isGlobCharacter = stringToExamine.trimmed() == "*"
-                               || stringToExamine.trimmed() == "?";
-        if (stringToExamine == " " || stringToExamine == "'"
-            || isSpecialCharacter || isGlobCharacter) {
-            if (word_started) { // Add any incomplete word to the vector
-                QString previous_initial = string.mid(start_index,
-                                                      end_index - start_index);
-                words.push_back(previous_initial.toStdString());
-                start_index = end_index;
-                word_started = false;
+        bool isGlobCharacter = currentString.trimmed() == "*"
+                               || currentString.trimmed() == "?";
+        if (currentString == " " || currentString == "'" || isSpecialCharacter
+            || isGlobCharacter) {
+            if (initial_found) { // Add any incomplete word to the vector
+                QString previous_initial = string.mid(start_idx,
+                                                      end_idx - start_idx);
+                syllables.push_back(previous_initial.toStdString());
+                start_idx = end_idx;
+                initial_found = false;
             }
-            if (!removeSpecialCharacters && isSpecialCharacter) {
-                words.push_back(stringToExamine.toStdString());
-            } else if (!removeGlobCharacters && isGlobCharacter) {
+            if (!removeGlobCharacters && isGlobCharacter) {
                 // Since whitespace matters for glob characters, consume the
                 // next or previous whitespace if it exists (and was not
                 // already consumed by another glob character).
-                int new_end_index = end_index;
+                int new_end_index = end_idx;
                 int length = 1;
-                if ((end_index >= 1) && (string.at(end_index - 1) == " ")
-                    && words.back().back() != ' ') {
+                if ((end_idx >= 1) && (string.at(end_idx - 1) == " ")
+                    && syllables.back().back() != ' ') {
                     // Add preceding whitespace to this word
                     new_end_index--;
                     length++;
                 }
-                if ((string.length() > end_index + 1)
-                    && (string.at(end_index + 1) == " ")) {
+                if ((string.length() > end_idx + 1)
+                    && (string.at(end_idx + 1) == " ")) {
                     // Add succeeding whitespace to this word
                     length++;
+                    end_idx++;
                 }
                 QString glob = string.mid(new_end_index, length);
-                words.push_back(glob.toStdString());
+                syllables.push_back(glob.toStdString());
 
-                if ((string.length() > end_index + 1)
-                    && (string.at(end_index + 1) == " ")) {
-                    // Advance segmentation pointer past succeeding whitespace
-                    end_index++;
-                }
-                start_index = end_index;
+                start_idx = end_idx;
+            } else if (!removeSpecialCharacters && isSpecialCharacter) {
+                syllables.push_back(currentString.toStdString());
             }
-            start_index++;
-            end_index++;
+
+            start_idx++;
+            end_idx++;
             continue;
         }
 
         // First, check for initials
         // If initial is valid, then extend the end_index for length of initial
         // cluster of consonants.
-        for (int length = 2; length > 0; length--) {
-            stringToExamine = string.mid(end_index, length).toLower();
-            auto searchResult = initials.find(stringToExamine.toStdString());
+        for (int initial_len = 2; initial_len > 0; initial_len--) {
+            currentString = string.mid(end_idx, initial_len).toLower();
+            auto searchResult = initials.find(currentString.toStdString());
             if (searchResult != initials.end()
-                && stringToExamine.length() == length) {
-                end_index += length;
+                && currentString.length() == initial_len) {
+                end_idx += initial_len;
                 next_iteration = true;
-                word_started = true;
+                initial_found = true;
                 break;
             }
         }
@@ -1399,22 +1396,26 @@ std::vector<std::string> segmentPinyin(const QString &string,
         //
         // Then add the substring from [start_index, end_index) to vector
         // and reset start_index, so we can start searching after the end_index.
-        for (int length = 4; length > 0; length--) {
-            stringToExamine = string.mid(end_index, length).toLower();
-            auto searchResult = finals.find(stringToExamine.toStdString());
+        for (int final_len = 4; final_len > 0; final_len--) {
+            currentString = string.mid(end_idx, final_len).toLower();
+            auto searchResult = finals.find(currentString.toStdString());
             if (searchResult != finals.end()
-                && stringToExamine.length() == length) {
-                end_index += length;
-                if (end_index < string.length()) {
-                    if (string.at(end_index).isDigit()) {
-                        end_index++;
-                    }
+                && currentString.length() == final_len) {
+                end_idx += final_len;
+
+                // Append erhua "r" and tone digit to the syllable
+                if (end_idx < string.length() && string.at(end_idx) == "r") {
+                    end_idx++;
                 }
-                QString word = string.mid(start_index, end_index - start_index);
-                words.push_back(word.toStdString());
-                start_index = end_index;
+                if (end_idx < string.length() && string.at(end_idx).isDigit()) {
+                    end_idx++;
+                }
+
+                QString syllable = string.mid(start_idx, end_idx - start_idx);
+                syllables.push_back(syllable.toStdString());
+                start_idx = end_idx;
                 next_iteration = true;
-                word_started = false;
+                initial_found = false;
                 break;
             }
         }
@@ -1423,24 +1424,24 @@ std::vector<std::string> segmentPinyin(const QString &string,
             continue;
         }
 
-        end_index++;
+        end_idx++;
     }
 
     // Then add whatever's left in the search term, minus whitespace.
-    QString lastWord = string.mid(start_index, end_index - start_index)
-                           .simplified();
-    if (!lastWord.isEmpty() && lastWord != "'") {
-        words.push_back(lastWord.toStdString());
+    QString lastSyllable
+        = string.mid(start_idx, end_idx - start_idx).simplified();
+    if (!lastSyllable.isEmpty() && lastSyllable != "'") {
+        syllables.push_back(lastSyllable.toStdString());
     }
 
-    return words;
+    return syllables;
 }
 
 std::vector<std::string> segmentJyutping(const QString &string,
                                          bool removeSpecialCharacters,
                                          bool removeGlobCharacters)
 {
-    std::vector<std::string> words;
+    std::vector<std::string> syllables;
 
     std::unordered_set<std::string> initials = {"b",  "p", "m",  "f",  "d",
                                                 "t",  "n", "l",  "g",  "k",
@@ -1458,60 +1459,56 @@ std::vector<std::string> segmentJyutping(const QString &string,
     // Keep track of indices for current segmented word; [start_index, end_index)
     // Greedily try to expand end_index by checking for valid sequences
     // of characters
-    int start_index = 0;
-    int end_index = 0;
+    int start_idx = 0;
+    int end_idx = 0;
     bool initial_found = false;
 
-    while (end_index < string.length()) {
-        bool next_iteration = false;
+    while (end_idx < string.length()) {
+        bool component_found = false;
 
         // Ignore separation characters; these are special.
-        QString stringToExamine = string.mid(end_index, 1).toLower();
+        QString currentString = string.mid(end_idx, 1).toLower();
         bool isSpecialCharacter = (specialCharacters.find(
-                                       stringToExamine.toStdString())
+                                       currentString.toStdString())
                                    != specialCharacters.end());
-        bool isGlobCharacter = stringToExamine.trimmed() == "*"
-                               || stringToExamine.trimmed() == "?";
-        if (stringToExamine == " " || stringToExamine == "'"
-            || isSpecialCharacter || isGlobCharacter) {
+        bool isGlobCharacter = currentString.trimmed() == "*"
+                               || currentString.trimmed() == "?";
+        if (currentString == " " || currentString == "'" || isSpecialCharacter
+            || isGlobCharacter) {
             if (initial_found) { // Add any incomplete word to the vector
-                QString previous_initial = string.mid(start_index,
-                                                      end_index - start_index);
-                words.push_back(previous_initial.toStdString());
-                start_index = end_index;
+                QString previous_initial = string.mid(start_idx,
+                                                      end_idx - start_idx);
+                syllables.push_back(previous_initial.toStdString());
+                start_idx = end_idx;
                 initial_found = false;
             }
-            if (!removeSpecialCharacters && isSpecialCharacter) {
-                words.push_back(stringToExamine.toStdString());
-            } else if (!removeGlobCharacters && isGlobCharacter) {
+            if (!removeGlobCharacters && isGlobCharacter) {
                 // Since whitespace matters for glob characters, consume the
                 // next or previous whitespace if it exists (and was not
                 // already consumed by another glob character).
-                int new_end_index = end_index;
+                int glob_start_idx = end_idx;
                 int length = 1;
-                if ((end_index >= 1) && (string.at(end_index - 1) == " ")
-                    && words.back().back() != ' ') {
+                if ((end_idx >= 1) && (string.at(end_idx - 1) == " ")
+                    && syllables.back().back() != ' ') {
                     // Add preceding whitespace to this word
-                    new_end_index--;
+                    glob_start_idx--;
                     length++;
                 }
-                if ((string.length() > end_index + 1)
-                    && (string.at(end_index + 1) == " ")) {
+                if ((string.length() > end_idx + 1)
+                    && (string.at(end_idx + 1) == " ")) {
                     // Add succeeding whitespace to this word
                     length++;
+                    end_idx++;
                 }
-                QString glob = string.mid(new_end_index, length);
-                words.push_back(glob.toStdString());
+                QString glob = string.mid(glob_start_idx, length);
+                syllables.push_back(glob.toStdString());
 
-                if ((string.length() > end_index + 1)
-                    && (string.at(end_index + 1) == " ")) {
-                    // Advance segmentation pointer past succeeding whitespace
-                    end_index++;
-                }
-                start_index = end_index;
+                start_idx = end_idx;
+            } else if (!removeSpecialCharacters && isSpecialCharacter) {
+                syllables.push_back(currentString.toStdString());
             }
-            start_index++;
-            end_index++;
+            start_idx++;
+            end_idx++;
             continue;
         }
 
@@ -1520,18 +1517,18 @@ std::vector<std::string> segmentJyutping(const QString &string,
         // final-checking code
         // OR after an initial (that is also a final), like m or ng.
         // This block checks for the latter case.
-        if (stringToExamine.at(0).isDigit()) {
+        if (currentString.at(0).isDigit()) {
             if (initial_found) {
-                QString previous_initial = string.mid(start_index,
-                                                      end_index - start_index);
+                QString previous_initial = string.mid(start_idx,
+                                                      end_idx - start_idx);
                 auto searchResult = finals.find(previous_initial.toStdString());
                 if (searchResult != finals.end()) {
                     // Confirmed, last initial found was also a final
-                    end_index++;
-                    previous_initial = string.mid(start_index,
-                                                  end_index - start_index);
-                    words.push_back(previous_initial.toStdString());
-                    start_index = end_index;
+                    end_idx++;
+                    previous_initial = string.mid(start_idx,
+                                                  end_idx - start_idx);
+                    syllables.push_back(previous_initial.toStdString());
+                    start_idx = end_idx;
                     initial_found = false;
                     continue;
                 }
@@ -1541,33 +1538,33 @@ std::vector<std::string> segmentJyutping(const QString &string,
         // First, check for initials
         // If initial is valid, then extend the end_index for length of initial
         // cluster of consonants.
-        for (int length = 2; length > 0; length--) {
-            stringToExamine = string.mid(end_index, length).toLower();
-            auto searchResult = initials.find(stringToExamine.toStdString());
+        for (int initial_len = 2; initial_len > 0; initial_len--) {
+            currentString = string.mid(end_idx, initial_len).toLower();
+            auto searchResult = initials.find(currentString.toStdString());
 
             if (searchResult == initials.end()
-                || stringToExamine.length() != length) {
+                || currentString.length() != initial_len) {
                 continue;
             }
 
             // Multiple initials in a row are only valid if previous "initial"
             // was actually a final (like m or ng)
             if (initial_found) {
-                QString previous_initial = string.mid(start_index,
-                                                      end_index - start_index);
-                searchResult = finals.find(previous_initial.toStdString());
+                QString first_initial = string.mid(start_idx,
+                                                   end_idx - start_idx);
+                searchResult = finals.find(first_initial.toStdString());
                 if (searchResult != finals.end()) {
-                    words.push_back(previous_initial.toStdString());
-                    start_index = end_index;
+                    syllables.push_back(first_initial.toStdString());
+                    start_idx = end_idx;
                 }
             }
 
-            end_index += length;
-            next_iteration = true;
+            end_idx += initial_len;
+            component_found = true;
             initial_found = true;
         }
 
-        if (next_iteration) {
+        if (component_found) {
             continue;
         }
 
@@ -1577,40 +1574,40 @@ std::vector<std::string> segmentJyutping(const QString &string,
         //
         // Then add the substring from [start_index, end_index) to vector
         // and reset start_index, so we can start searching after the end_index.
-        for (int length = 4; length > 0; length--) {
-            stringToExamine = string.mid(end_index, length).toLower();
-            auto searchResult = finals.find(stringToExamine.toStdString());
+        for (int final_len = 4; final_len > 0; final_len--) {
+            currentString = string.mid(end_idx, final_len).toLower();
+            auto searchResult = finals.find(currentString.toStdString());
             if (searchResult != finals.end()
-                && stringToExamine.length() == length) {
-                end_index += length;
-                if (end_index < string.length()) {
-                    if (string.at(end_index).isDigit()) {
-                        end_index++;
+                && currentString.length() == final_len) {
+                end_idx += final_len;
+                if (end_idx < string.length()) {
+                    if (string.at(end_idx).isDigit()) {
+                        end_idx++;
                     }
                 }
-                QString word = string.mid(start_index, end_index - start_index);
-                words.push_back(word.toStdString());
-                start_index = end_index;
-                next_iteration = true;
+                QString syllable = string.mid(start_idx, end_idx - start_idx);
+                syllables.push_back(syllable.toStdString());
+                start_idx = end_idx;
+                component_found = true;
                 initial_found = false;
                 break;
             }
         }
 
-        if (next_iteration) {
+        if (component_found) {
             continue;
         }
 
-        end_index++;
+        end_idx++;
     }
 
     // Then add whatever's left in the search term, minus whitespace.
-    QString lastWord = string.mid(start_index, end_index - start_index)
-                           .simplified();
-    if (!lastWord.isEmpty() && lastWord != "'") {
-        words.push_back(lastWord.toStdString());
+    QString lastSyllable
+        = string.mid(start_idx, end_idx - start_idx).simplified();
+    if (!lastSyllable.isEmpty() && lastSyllable != "'") {
+        syllables.push_back(lastSyllable.toStdString());
     }
 
-    return words;
+    return syllables;
 }
 } // namespace ChineseUtils
