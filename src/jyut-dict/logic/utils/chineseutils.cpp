@@ -964,6 +964,12 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
             std::string final;
             std::string er;
             if (final_match[1].length()) {
+                auto final_match_pos = zhuyinFinals.find(final_match[1]);
+                if (final_match_pos == zhuyinFinals.end()) {
+                    // No final could be converted, give up
+                    zhuyin_syllables.emplace_back(syllable);
+                    continue;
+                }
                 final = zhuyinFinals.at(final_match[1]);
             }
             if (final_match[2].length()) {
