@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "prettier": "^3.0.3",
+    "prettier-plugin-sql-cst": "^0.8.3"
+  }
+}
