@@ -210,6 +210,7 @@ HEADERS += \
     logic/search/isearchobservable.h \
     logic/search/isearchobserver.h \
     logic/search/isearchoptionsmediator.h \
+    logic/search/searchqueries.h \
     logic/search/searchoptionsmediator.h \
     logic/search/searchparameters.h \
     logic/search/sqlsearch.h \
@@ -363,11 +364,6 @@ unix|win32:!macx {
 
     QMAKE_EXTRA_COMPILERS += copy_settings
 }
-
-# Default rules for deployment.
-#qnx: target.path = /tmp/$${TARGET}/bin
-#else: unix:!android: target.path = /opt/$${TARGET}/bin
-#!isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
     resources/images/chevron-down_inverted.png \
