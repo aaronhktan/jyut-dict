@@ -1383,14 +1383,14 @@ bool segmentPinyin(const QString &string,
                 // already consumed by another glob character).
                 int new_end_index = end_idx;
                 int length = 1;
-                if ((end_idx >= 1) && (string.at(end_idx - 1) == " ")
+                if ((end_idx >= 1) && (string.at(end_idx - 1) == ' ')
                     && syllables.back().back() != ' ') {
                     // Add preceding whitespace to this word
                     new_end_index--;
                     length++;
                 }
                 if ((string.length() > end_idx + 1)
-                    && (string.at(end_idx + 1) == " ")) {
+                    && (string.at(end_idx + 1) == ' ')) {
                     // Add succeeding whitespace to this word
                     length++;
                     end_idx++;
@@ -1445,7 +1445,7 @@ bool segmentPinyin(const QString &string,
                 end_idx += final_len;
 
                 // Append erhua "r" and tone digit to the syllable
-                if (end_idx < string.length() && string.at(end_idx) == "r") {
+                if (end_idx < string.length() && string.at(end_idx) == 'r') {
                     end_idx++;
                 }
                 if (end_idx < string.length() && string.at(end_idx).isDigit()) {
@@ -1556,14 +1556,14 @@ bool segmentJyutping(const QString &string,
                 // already consumed by another glob character).
                 int glob_start_idx = end_idx;
                 int length = 1;
-                if ((end_idx >= 1) && (string.at(end_idx - 1) == " ")
+                if ((end_idx >= 1) && (string.at(end_idx - 1) == ' ')
                     && syllables.back().back() != ' ') {
                     // Add preceding whitespace to this word
                     glob_start_idx--;
                     length++;
                 }
                 if ((string.length() > end_idx + 1)
-                    && (string.at(end_idx + 1) == " ")) {
+                    && (string.at(end_idx + 1) == ' ')) {
                     // Add succeeding whitespace to this word
                     length++;
                     end_idx++;
