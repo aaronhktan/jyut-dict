@@ -177,7 +177,7 @@ void EntryHeaderWidget::translateUI()
     });
 
     disconnect(_mandarinTTS, nullptr, nullptr, nullptr);
-    if (Settings::getCurrentLocale().country() == QLocale::Taiwan) {
+    if (Settings::getCurrentLocale().territory() == QLocale::Taiwan) {
         TextToSpeech::SpeakerBackend backend
             = Settings::getSettings()
                   ->value("Advanced/MandarinTextToSpeech::SpeakerBackend",
