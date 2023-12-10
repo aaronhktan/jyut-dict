@@ -60,7 +60,7 @@ QVector<QVoice> EntrySpeaker::getListOfVoices(const QLocale::Language &language,
 const
 {
     QLocale locale = QLocale{language, country};
-    if (locale.language() != language || locale.country() != country) {
+    if (locale.language() != language || locale.territory() != country) {
         return QVector<QVoice>();
     }
     _tts->setLocale(locale);

@@ -301,10 +301,12 @@ std::string applyColours(const std::string original,
         // but do not increment to next tone position,
         // since special characters do not have any tones associated with them
         auto isSpecialCharacter = specialCharacters.find(originalCharacter) != specialCharacters.end();
-        auto isAlphabetical = std::find_if(originalCharacter.begin(),
-                                           originalCharacter.end(),
-                                           [](unsigned char c){ return std::isalpha(c); })
-                              != originalCharacter.end();
+        // TODO: FIX THIS SECTION!!!!
+        // auto isAlphabetical = std::find_if(originalCharacter.begin(),
+        //                                    originalCharacter.end(),
+        //                                    [](unsigned char c){ return std::isalpha(c); })
+        //                       != originalCharacter.end();
+        auto isAlphabetical = false;
         if (isSpecialCharacter || isAlphabetical) {
             coloured_string += converter.to_bytes(character);
             continue;
@@ -314,12 +316,8 @@ std::string applyColours(const std::string original,
         int tone = 0;
         try {
             tone = tones.at(pos);
-        } catch (const std::out_of_range &/*e*/) {
+        } catch ([[maybe_unused]] const std::out_of_range &e) {
             coloured_string += originalCharacter;
-            //            std::cerr << "Couldn't get tone for character"
-            //                      << converter.to_bytes(character)
-            //                      << " in character" << original
-            //                      << " Error:" << e.what() << std::endl;
             continue;
         }
 
