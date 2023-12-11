@@ -6,6 +6,7 @@
 #include <QJsonObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QOperatingSystemVersion>
 #include <QTimer>
 
 #include <regex>
@@ -37,11 +38,19 @@ GithubReleaseChecker::GithubReleaseChecker(QObject *parent)
     // so that it does not block the GUI of the app starting up.
     //
     // This primarily affects macOS devices.
-    QTimer::singleShot(100, this, &GithubReleaseChecker::preConnectToHost);
+    QTimer::singleShot(500, this, &GithubReleaseChecker::preConnectToHost);
 }
 
 void GithubReleaseChecker::checkForNewUpdate()
 {
+    // Disable checking for updates on Windows 7 and 8 since we no longer
+    // support them.
+    auto current = QOperatingSystemVersion::current();
+    if ((current.isAnyOfType({QOperatingSystemVersion::Windows})
+         && current < QOperatingSystemVersion::Windows10)) {
+        emit foundUpdate(false, "", "", "");
+        return;
+    }
     QNetworkRequest _request{QUrl{GITHUB_UPDATE_URL}};
     _reply = _manager->get(_request);
     disconnect(_manager, nullptr, nullptr, nullptr);
