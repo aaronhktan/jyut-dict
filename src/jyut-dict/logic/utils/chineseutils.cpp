@@ -2,9 +2,9 @@
 
 #include "logic/utils/utils.h"
 
-#include <cctype>
 #include <codecvt>
 #include <iostream>
+#include <locale>
 #include <regex>
 #include <sstream>
 #include <unordered_map>
@@ -13,6 +13,7 @@
 namespace ChineseUtils {
 
 static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+static std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> wcharconverter;
 
 const static std::unordered_set<std::string> specialCharacters = {
     ".",  "。", ",",  "，", "!",  "！", "?",  "？", "%",  "－", "…",
@@ -301,12 +302,16 @@ std::string applyColours(const std::string original,
         // but do not increment to next tone position,
         // since special characters do not have any tones associated with them
         auto isSpecialCharacter = specialCharacters.find(originalCharacter) != specialCharacters.end();
-        // TODO: FIX THIS SECTION!!!!
-        // auto isAlphabetical = std::find_if(originalCharacter.begin(),
-        //                                    originalCharacter.end(),
-        //                                    [](unsigned char c){ return std::isalpha(c); })
-        //                       != originalCharacter.end();
-        auto isAlphabetical = false;
+        // This is the best I can do without bringing in the ICU library. Converting to wchar_t,
+        // equivalent to UTF-32 (on Unix or Unix-like platforms) or UCS-2 (on Windows) lets me verify that
+        // something is alphabetic within a locale (here, in the UTF-8 locale).
+        // Since wchar_t is 32-bit on Unix and Unix-like platforms, I believe this code should be correct
+        // for all code points, but on Windows, it will only be correct for code points up to 0xFFFF.
+        std::locale loc("en_US.UTF-8");
+        std::wstring wideString = wcharconverter.from_bytes(originalCharacter);
+        auto isAlphabetical = std::find_if(wideString.begin(),
+                                           wideString.end(), [&](wchar_t c) { return std::isalpha(c, loc);})
+                              != wideString.end();
         if (isSpecialCharacter || isAlphabetical) {
             coloured_string += converter.to_bytes(character);
             continue;
