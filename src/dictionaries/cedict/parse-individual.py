@@ -79,11 +79,22 @@ def parse_file(filename, entries):
                 continue
 
             split = line.split()
-            trad = split[0]
-            simp = split[1]
+            if not split:
+                continue
+
+            if split[0].startswith("????"):
+                trad = split[1]
+                simp = split[2]
+            else:
+                trad = split[0]
+                simp = split[1]
             pin = line[line.index("[") + 1 : line.index("]")].lower().replace("v", "u:")
+            try:
+                jyut = line[line.index("{") + 1 : line.index("}")].lower()
+            except:
+                jyut = ""
             definitions = line[line.index("/") + 1 : -2].split("/")
-            entry = objects.Entry(trad=trad, simp=simp, pin=pin, defs=definitions)
+            entry = objects.Entry(trad=trad, simp=simp, pin=pin, jyut=jyut, defs=definitions)
 
             if trad in entries:
                 entries[trad].append(entry)
@@ -110,7 +121,8 @@ def parse_cc_cedict_canto_readings(filename, entries):
             for entry in entries[trad]:
                 # If it's an exact match, then set jyutping
                 if entry.simplified == simp and "".join(entry.pinyin.split()) == pin:
-                    entry.add_jyutping(jyut)
+                    if not entry.jyutping:
+                        entry.add_jyutping(jyut)
                 # Otherwise, add as fuzzy
                 else:
                     entry.add_fuzzy_jyutping(jyut)
