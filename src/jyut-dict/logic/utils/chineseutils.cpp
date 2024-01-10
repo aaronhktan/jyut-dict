@@ -472,9 +472,10 @@ std::string convertJyutpingToYale(const std::string &jyutping,
         }
         Utils::split(jyutpingCopy, ' ', syllables);
     } else {
-        syllables = segmentJyutping(QString{jyutping.c_str()},
-                                    /* removeSpecialCharacters */ false,
-                                    /* removeGlobCharacters */ false);
+        segmentJyutping(QString{jyutping.c_str()},
+                        syllables,
+                        /* removeSpecialCharacters */ false,
+                        /* removeGlobCharacters */ false);
     }
 
     std::vector<std::string> yale_syllables;
@@ -617,9 +618,10 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
         }
         Utils::split(jyutpingCopy, ' ', syllables);
     } else {
-        syllables = segmentJyutping(QString{jyutping.c_str()},
-                                    /* removeSpecialCharacters */ false,
-                                    /* removeGlobCharacters */ false);
+        segmentJyutping(QString{jyutping.c_str()},
+                        syllables,
+                        /* removeSpecialCharacters */ false,
+                        /* removeGlobCharacters */ false);
     }
 
     std::vector<std::string> ipa_syllables;
@@ -888,7 +890,7 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
         }
         Utils::split(pinyinCopy, ' ', syllables);
     } else {
-        syllables = segmentPinyin(QString{pinyin.c_str()});
+        segmentPinyin(QString{pinyin.c_str()}, syllables);
     }
 
     std::vector<std::string> zhuyin_syllables;
@@ -1099,7 +1101,7 @@ std::string convertPinyinToIPA(const std::string &pinyin,
         }
         Utils::split(pinyinCopy, ' ', syllables);
     } else {
-        syllables = segmentPinyin(QString{pinyin.c_str()});
+        segmentPinyin(QString{pinyin.c_str()}, syllables);
     }
 
     std::vector<std::string> ipa_syllables;
@@ -1305,9 +1307,10 @@ std::string constructRomanisationQuery(const std::vector<std::string> &words,
     return string.str();
 }
 
-std::vector<std::string> segmentPinyin(const QString &string,
-                                       bool removeSpecialCharacters,
-                                       bool removeGlobCharacters)
+bool segmentPinyin(const QString &string,
+                   std::vector<std::string> &out,
+                   bool removeSpecialCharacters,
+                   bool removeGlobCharacters)
 {
     std::vector<std::string> syllables;
 
@@ -1321,6 +1324,7 @@ std::vector<std::string> segmentPinyin(const QString &string,
            "ian", "in",  "iang", "ing",  "iong", "u",  "ua", "uo",  "uai",
            "ui",  "uan", "un",   "uang", "u",    "u:", "ue", "u:e", "o"};
 
+    bool valid_pinyin = true;
     // Keep track of indices for current segmented word; [start_index, end_index)
     // Greedily try to expand end_index by checking for valid sequences
     // of characters
@@ -1343,6 +1347,10 @@ std::vector<std::string> segmentPinyin(const QString &string,
                 QString previous_initial = string.mid(start_idx,
                                                       end_idx - start_idx);
                 syllables.push_back(previous_initial.toStdString());
+                if (finals.find(previous_initial.toStdString())
+                    == finals.end()) {
+                    valid_pinyin = false;
+                }
                 start_idx = end_idx;
                 initial_found = false;
             }
@@ -1385,6 +1393,10 @@ std::vector<std::string> segmentPinyin(const QString &string,
             auto searchResult = initials.find(currentString.toStdString());
             if (searchResult != initials.end()
                 && currentString.length() == initial_len) {
+                if (initial_found) {
+                    // Two initials in a row are invalid Pinyin.
+                    valid_pinyin = false;
+                }
                 end_idx += initial_len;
                 next_iteration = true;
                 initial_found = true;
@@ -1438,14 +1450,19 @@ std::vector<std::string> segmentPinyin(const QString &string,
         = string.mid(start_idx, end_idx - start_idx).simplified();
     if (!lastSyllable.isEmpty() && lastSyllable != "'") {
         syllables.push_back(lastSyllable.toStdString());
+        if (finals.find(lastSyllable.toStdString()) == finals.end()) {
+            valid_pinyin = false;
+        }
     }
 
-    return syllables;
+    out = syllables;
+    return valid_pinyin;
 }
 
-std::vector<std::string> segmentJyutping(const QString &string,
-                                         bool removeSpecialCharacters,
-                                         bool removeGlobCharacters)
+bool segmentJyutping(const QString &string,
+                     std::vector<std::string> &out,
+                     bool removeSpecialCharacters,
+                     bool removeGlobCharacters)
 {
     std::vector<std::string> syllables;
 
@@ -1462,6 +1479,7 @@ std::vector<std::string> segmentJyutping(const QString &string,
            "ut",  "uk",  "oe",  "oet", "eoi", "eon", "oeng", "eot", "oek",
            "yu",  "yun", "yut", "m",   "ng"};
 
+    bool valid_jyutping = true;
     // Keep track of indices for current segmented word; [start_index, end_index)
     // Greedily try to expand end_index by checking for valid sequences
     // of characters
@@ -1485,6 +1503,10 @@ std::vector<std::string> segmentJyutping(const QString &string,
                 QString previous_initial = string.mid(start_idx,
                                                       end_idx - start_idx);
                 syllables.push_back(previous_initial.toStdString());
+                if (finals.find(previous_initial.toStdString())
+                    == finals.end()) {
+                    valid_jyutping = false;
+                }
                 start_idx = end_idx;
                 initial_found = false;
             }
@@ -1562,6 +1584,8 @@ std::vector<std::string> segmentJyutping(const QString &string,
                 if (searchResult != finals.end()) {
                     syllables.push_back(first_initial.toStdString());
                     start_idx = end_idx;
+                } else {
+                    valid_jyutping = false;
                 }
             }
 
@@ -1602,6 +1626,8 @@ std::vector<std::string> segmentJyutping(const QString &string,
 
         if (component_found) {
             continue;
+        } else {
+            valid_jyutping = false;
         }
 
         end_idx++;
@@ -1612,8 +1638,12 @@ std::vector<std::string> segmentJyutping(const QString &string,
         = string.mid(start_idx, end_idx - start_idx).simplified();
     if (!lastSyllable.isEmpty() && lastSyllable != "'") {
         syllables.push_back(lastSyllable.toStdString());
+        if (finals.find(lastSyllable.toStdString()) == finals.end()) {
+            valid_jyutping = false;
+        }
     }
 
-    return syllables;
+    out = syllables;
+    return valid_jyutping;
 }
 } // namespace ChineseUtils

@@ -3,6 +3,7 @@
 
 #include "logic/search/isearchoptionsmediator.h"
 #include "logic/search/searchparameters.h"
+#include "logic/search/sqlsearch.h"
 #include "logic/utils/utils.h"
 
 #include <QEvent>
@@ -17,14 +18,16 @@
 // The SearchOptionsRadioGroupBox allows users to change search parameters
 // Currently, there are five options for searching, more may be added
 
-class SearchOptionsRadioGroupBox : public QGroupBox
+class SearchOptionsRadioGroupBox : public QGroupBox, public ISearchObserver
 {
 Q_OBJECT
 
 public:
     explicit SearchOptionsRadioGroupBox(ISearchOptionsMediator *mediator,
+                                        std::shared_ptr<SQLSearch> manager,
                                         QWidget *parent = nullptr);
 
+    void detectedLanguage(SearchParameters) override;
     void changeEvent(QEvent *event) override;
 
     void setOption(const Utils::ButtonOptionIndex index);
@@ -40,6 +43,7 @@ private:
     bool _paletteRecentlyChanged = false;
 
     ISearchOptionsMediator *_mediator;
+    std::shared_ptr<SQLSearch> _search;
     std::unique_ptr<QSettings> _settings;
 
     QHBoxLayout *_layout;

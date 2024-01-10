@@ -24,6 +24,7 @@ public:
     {
         (void) (observer);
     }
+    virtual void notifyObservers(SearchParameters params) { (void) (params); }
     virtual void notifyObservers(const std::vector<Entry> &results,
                                  bool emptyQuery)
     {

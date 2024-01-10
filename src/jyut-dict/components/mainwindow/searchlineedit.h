@@ -5,12 +5,12 @@
 #include "logic/database/sqluserhistoryutils.h"
 #include "logic/search/isearch.h"
 #include "logic/search/isearchoptionsmediator.h"
-#include "logic/search/sqlsearch.h"
 
 #include <QAction>
 #include <QEvent>
 #include <QFocusEvent>
 #include <QLineEdit>
+#include <QSettings>
 #include <QTimer>
 #include <QWidget>
 
@@ -24,7 +24,7 @@ class SearchLineEdit : public QLineEdit, public ISearchLineEdit
 
 public:
     explicit SearchLineEdit(ISearchOptionsMediator *mediator,
-                            std::shared_ptr<SQLSearch> manager,
+                            std::shared_ptr<ISearch> manager,
                             std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                             QWidget *parent = nullptr);
 
