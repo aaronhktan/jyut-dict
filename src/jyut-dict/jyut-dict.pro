@@ -108,6 +108,7 @@ SOURCES += \
     logic/search/sqlsearch.cpp \
     logic/sentence/sentenceset.cpp \
     logic/sentence/sourcesentence.cpp \
+    logic/utils/scriptdetector.cpp \
     main.cpp \
     logic/database/sqldatabasemanager.cpp \
     logic/database/sqldatabaseutils.cpp \
@@ -223,6 +224,7 @@ HEADERS += \
     logic/update/iupdatechecker.h \
     logic/utils/chineseutils.h \
     logic/utils/qvariantutils.h \
+    logic/utils/scriptdetector.h \
     logic/utils/utils.h \
     logic/utils/utils_qt.h \
     windows/aboutwindow.h \

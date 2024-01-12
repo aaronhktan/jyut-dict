@@ -15,12 +15,17 @@
 #include <QStyle>
 #include <QTimer>
 
-SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *mediator,
-                                                       QWidget *parent) :
-    QGroupBox(parent)
+SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(
+    ISearchOptionsMediator *mediator,
+    std::shared_ptr<SQLSearch> manager,
+    QWidget *parent)
+    : QGroupBox(parent)
 {
     _mediator = mediator;
+    _search = manager;
     _settings = Settings::getSettings(this);
+
+    _search->registerObserver(this);
 
     setupUI();
     translateUI();
@@ -35,6 +40,21 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(ISearchOptionsMediator *m
         if (button->property("data").value<SearchParameters>() == lastSelected) {
             button->click();
             break;
+        }
+    }
+}
+
+void SearchOptionsRadioGroupBox::detectedLanguage(SearchParameters params)
+{
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+    foreach (const auto &button, buttons) {
+        if (button->property("data") == QVariant::fromValue(params)) {
+            button->setChecked(true);
+            Settings::getSettings()
+                ->setValue("SearchOptionsRadioGroupBox/lastSelected",
+                           button->property("data"));
+        } else {
+            button->setChecked(false);
         }
     }
 }

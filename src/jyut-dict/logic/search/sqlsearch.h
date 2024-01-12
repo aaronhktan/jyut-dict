@@ -39,6 +39,7 @@ public:
     void searchJyutping(const QString &searchTerm) override;
     void searchPinyin(const QString &searchTerm) override;
     void searchEnglish(const QString &searchTerm) override;
+    void searchAutoDetect(const QString &searchTerm) override;
 
     void searchByUnique(const QString &simplified,
                         const QString &traditional,
@@ -48,11 +49,14 @@ public:
     void searchTraditionalSentences(const QString &searchTerm);
 
 private:
+    void notifyObservers(SearchParameters params) override;
     void notifyObservers(const std::vector<Entry> &results, bool emptyQuery) override;
     void notifyObservers(const std::vector<SourceSentence> &results,
                          bool emptyQuery) override;
     void notifyObserversOfEmptySet(bool emptyQuery,
                                    const unsigned long long queryID);
+    void notifyObserversIfQueryIdCurrent(SearchParameters params,
+                                         const unsigned long long queryID);
     void notifyObserversIfQueryIdCurrent(const std::vector<Entry> &results,
                                          bool emptyQuery,
                                          const unsigned long long queryID);
@@ -76,6 +80,8 @@ private:
                             const unsigned long long queryID);
     void searchEnglishThread(const QString &searchTerm,
                              const unsigned long long queryID);
+    void searchAutoDetectThread(const QString &searchTerm,
+                                const unsigned long long queryID);
 
     void searchByUniqueThread(const QString &simplified,
                               const QString &traditional,

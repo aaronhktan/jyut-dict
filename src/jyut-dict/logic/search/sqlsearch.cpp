@@ -3,6 +3,7 @@
 #include "logic/database/queryparseutils.h"
 #include "logic/search/searchqueries.h"
 #include "logic/utils/chineseutils.h"
+#include "logic/utils/scriptdetector.h"
 #include "logic/utils/utils.h"
 
 #include <QtConcurrent/QtConcurrent>
@@ -44,6 +45,16 @@ void SQLSearch::deregisterObserver(ISearchObserver *observer)
 }
 
 // Do not call this function without first acquiring the _notifyMutex!
+void SQLSearch::notifyObservers(SearchParameters params)
+{
+    std::list<ISearchObserver *>::const_iterator it = _observers.begin();
+    while (it != _observers.end()) {
+        (static_cast<ISearchObserver *>(*it))->detectedLanguage(params);
+        ++it;
+    }
+}
+
+// Do not call this function without first acquiring the _notifyMutex!
 void SQLSearch::notifyObservers(const std::vector<Entry> &results, bool emptyQuery)
 {
     std::list<ISearchObserver *>::const_iterator it = _observers.begin();
@@ -75,6 +86,17 @@ void SQLSearch::notifyObserversOfEmptySet(bool emptyQuery,
 
     std::vector<Entry> results;
     notifyObservers(results, emptyQuery);
+}
+
+void SQLSearch::notifyObserversIfQueryIdCurrent(SearchParameters params,
+                                                const unsigned long long queryID)
+{
+    std::lock_guard<std::mutex> notifyLock{_notifyMutex};
+    if (queryID != _queryID) {
+        return;
+    }
+
+    notifyObservers(params);
 }
 
 void SQLSearch::notifyObserversIfQueryIdCurrent(const std::vector<Entry> &results,
@@ -142,6 +164,12 @@ void SQLSearch::searchEnglish(const QString &searchTerm)
 {
     unsigned long long queryID = generateAndSetQueryID();
     runThread(&SQLSearch::searchEnglishThread, searchTerm, queryID);
+}
+
+void SQLSearch::searchAutoDetect(const QString &searchTerm)
+{
+    unsigned long long queryId = generateAndSetQueryID();
+    runThread(&SQLSearch::searchAutoDetectThread, searchTerm, queryId);
 }
 
 void SQLSearch::searchByUnique(const QString &simplified,
@@ -303,10 +331,10 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
                                                          searchTerm.size() - 2);
         Utils::split(searchTermWithoutQuotes.toStdString(), ' ', jyutpingWords);
     } else {
-        jyutpingWords
-            = ChineseUtils::segmentJyutping(searchTerm,
-                                            /* removeSpecialCharacters */ true,
-                                            /* removeGlobCharacters */ false);
+        ChineseUtils::segmentJyutping(searchTerm,
+                                      jyutpingWords,
+                                      /* removeSpecialCharacters */ true,
+                                      /* removeGlobCharacters */ false);
     }
 
     std::vector<Entry> results;
@@ -365,10 +393,10 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm,
             = processedSearchTerm.mid(1, processedSearchTerm.size() - 2);
         Utils::split(searchTermWithoutQuotes.toStdString(), ' ', pinyinWords);
     } else {
-        pinyinWords
-            = ChineseUtils::segmentPinyin(processedSearchTerm,
-                                          /* removeSpecialCharacters */ true,
-                                          /* removeGlobCharacters */ false);
+        ChineseUtils::segmentPinyin(processedSearchTerm,
+                                    pinyinWords,
+                                    /* removeSpecialCharacters */ true,
+                                    /* removeGlobCharacters */ false);
     }
 
     std::vector<Entry> results;
@@ -430,6 +458,36 @@ void SQLSearch::searchEnglishThread(const QString &searchTerm,
         return;
     }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
+}
+
+void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
+                                       const unsigned long long queryID)
+{
+    ScriptDetector sd{searchTerm};
+    if (sd.containsSimplifiedChinese()) {
+        notifyObserversIfQueryIdCurrent(SearchParameters::SIMPLIFIED, queryID);
+        searchSimplifiedThread(searchTerm, queryID);
+        return;
+    }
+    if (sd.containsTraditionalChinese() || sd.containsChinese()) {
+        notifyObserversIfQueryIdCurrent(SearchParameters::TRADITIONAL, queryID);
+        searchTraditionalThread(searchTerm, queryID);
+        return;
+    }
+    if (sd.isValidJyutping()) {
+        notifyObserversIfQueryIdCurrent(SearchParameters::JYUTPING, queryID);
+        searchJyutpingThread(searchTerm, queryID);
+        return;
+    }
+    if (sd.isValidPinyin()) {
+        notifyObserversIfQueryIdCurrent(SearchParameters::PINYIN, queryID);
+        searchPinyinThread(searchTerm, queryID);
+        return;
+    }
+
+    notifyObserversIfQueryIdCurrent(SearchParameters::ENGLISH, queryID);
+    searchEnglishThread(searchTerm, queryID);
+    return;
 }
 
 // To seach by unique, select by all the attributes that we have.

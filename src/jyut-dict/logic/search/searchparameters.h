@@ -13,14 +13,16 @@
 // An enum that defines all possible search parameters
 
 enum class SearchParameters : int {
-    SIMPLIFIED  = 0x01,
-    TRADITIONAL = 0x02,
-    CHINESE     = SIMPLIFIED | TRADITIONAL,
+    SIMPLIFIED = 1,
+    TRADITIONAL,
+    CHINESE,
 
-    JYUTPING    = 0x04,
-    PINYIN      = 0x05,
+    JYUTPING,
+    PINYIN,
 
-    ENGLISH     = 0x06,
+    ENGLISH,
+
+    AUTO_DETECT = 1000,
 };
 
 Q_DECLARE_METATYPE(SearchParameters)

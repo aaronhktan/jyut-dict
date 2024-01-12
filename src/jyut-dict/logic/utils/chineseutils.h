@@ -105,12 +105,14 @@ std::string convertPinyinToIPA(const std::string &pinyin,
 std::string constructRomanisationQuery(const std::vector<std::string> &words,
                                        const char *delimiter);
 
-std::vector<std::string> segmentPinyin(const QString &string,
-                                       bool removeSpecialCharacters = true,
-                                       bool removeGlobCharacters = true);
-std::vector<std::string> segmentJyutping(const QString &string,
-                                         bool removeSpecialCharacters = true,
-                                         bool removeGlobCharacters = true);
+bool segmentPinyin(const QString &string,
+                   std::vector<std::string> &out,
+                   bool removeSpecialCharacters = true,
+                   bool removeGlobCharacters = true);
+bool segmentJyutping(const QString &string,
+                     std::vector<std::string> &out,
+                     bool removeSpecialCharacters = true,
+                     bool removeGlobCharacters = true);
 } // namespace ChineseUtils
 
 #endif // CHINESEUTILS_H

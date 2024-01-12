@@ -910,7 +910,7 @@ Hang tight!</source>
 <context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/mainwindow/searchlineedit.cpp" line="129"/>
+        <location filename="../../components/mainwindow/searchlineedit.cpp" line="139"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -918,57 +918,57 @@ Hang tight!</source>
 <context>
     <name>SearchOptionsRadioGroupBox</name>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="170"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="190"/>
         <source>Searching:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="171"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="191"/>
         <source>Simplified Chinese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="172"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="192"/>
         <source>Traditional Chinese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="173"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="193"/>
         <source>Jyutping</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="174"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="194"/>
         <source>Pinyin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="175"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="195"/>
         <source>English</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="177"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="197"/>
         <source>Search Simplified Chinese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="178"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="198"/>
         <source>Search Traditional Chinese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="179"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="199"/>
         <source>Search Jyutping</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="180"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="200"/>
         <source>Search Pinyin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="181"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="201"/>
         <source>Search English</source>
         <translation type="unfinished"></translation>
     </message>
@@ -989,101 +989,101 @@ Hang tight!</source>
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="214"/>
+        <location filename="../../components/settings/settingstab.cpp" line="208"/>
         <source>In search results and examples:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="220"/>
+        <location filename="../../components/settings/settingstab.cpp" line="214"/>
         <source>	Show pronunciation for:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="218"/>
+        <location filename="../../components/settings/settingstab.cpp" line="212"/>
         <source>Show pronunciation for:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="222"/>
+        <location filename="../../components/settings/settingstab.cpp" line="216"/>
         <source>only Cantonese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="223"/>
+        <location filename="../../components/settings/settingstab.cpp" line="217"/>
         <source>only Mandarin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="225"/>
+        <location filename="../../components/settings/settingstab.cpp" line="219"/>
         <source>both languages, prefer Cantonese</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="227"/>
+        <location filename="../../components/settings/settingstab.cpp" line="221"/>
         <source>both languages, prefer Mandarin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="230"/>
-        <location filename="../../components/settings/settingstab.cpp" line="250"/>
+        <location filename="../../components/settings/settingstab.cpp" line="224"/>
+        <location filename="../../components/settings/settingstab.cpp" line="244"/>
         <source>Show Cantonese:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="231"/>
-        <location filename="../../components/settings/settingstab.cpp" line="251"/>
+        <location filename="../../components/settings/settingstab.cpp" line="225"/>
+        <location filename="../../components/settings/settingstab.cpp" line="245"/>
         <source>Jyutping</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="232"/>
-        <location filename="../../components/settings/settingstab.cpp" line="252"/>
+        <location filename="../../components/settings/settingstab.cpp" line="226"/>
+        <location filename="../../components/settings/settingstab.cpp" line="246"/>
         <source>Yale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="233"/>
-        <location filename="../../components/settings/settingstab.cpp" line="253"/>
+        <location filename="../../components/settings/settingstab.cpp" line="227"/>
+        <location filename="../../components/settings/settingstab.cpp" line="247"/>
         <source>Cantonese IPA</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="239"/>
+        <location filename="../../components/settings/settingstab.cpp" line="233"/>
         <source>	Show Mandarin:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="237"/>
-        <location filename="../../components/settings/settingstab.cpp" line="255"/>
+        <location filename="../../components/settings/settingstab.cpp" line="231"/>
+        <location filename="../../components/settings/settingstab.cpp" line="249"/>
         <source>Show Mandarin:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="241"/>
-        <location filename="../../components/settings/settingstab.cpp" line="256"/>
+        <location filename="../../components/settings/settingstab.cpp" line="235"/>
+        <location filename="../../components/settings/settingstab.cpp" line="250"/>
         <source>Pinyin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="242"/>
-        <location filename="../../components/settings/settingstab.cpp" line="257"/>
+        <location filename="../../components/settings/settingstab.cpp" line="236"/>
+        <location filename="../../components/settings/settingstab.cpp" line="251"/>
         <source>Pinyin with digits</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="243"/>
-        <location filename="../../components/settings/settingstab.cpp" line="258"/>
+        <location filename="../../components/settings/settingstab.cpp" line="237"/>
+        <location filename="../../components/settings/settingstab.cpp" line="252"/>
         <source>Zhuyin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="244"/>
-        <location filename="../../components/settings/settingstab.cpp" line="259"/>
+        <location filename="../../components/settings/settingstab.cpp" line="238"/>
+        <location filename="../../components/settings/settingstab.cpp" line="253"/>
         <source>Mandarin IPA</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="247"/>
+        <location filename="../../components/settings/settingstab.cpp" line="241"/>
         <source>In the header at the top of an entry:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1129,114 +1129,119 @@ Hang tight!</source>
 <context>
     <name>TextTab</name>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="124"/>
+        <location filename="../../components/settings/texttab.cpp" line="129"/>
         <source>Character set:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="129"/>
+        <location filename="../../components/settings/texttab.cpp" line="134"/>
         <source>	Show simplified/traditional characters:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="127"/>
+        <location filename="../../components/settings/texttab.cpp" line="132"/>
         <source>Show simplified/traditional characters:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="131"/>
+        <location filename="../../components/settings/texttab.cpp" line="136"/>
         <source>Only Simplified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="132"/>
+        <location filename="../../components/settings/texttab.cpp" line="137"/>
         <source>Only Traditional</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="133"/>
+        <location filename="../../components/settings/texttab.cpp" line="138"/>
         <source>Both, Prefer Simplified</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="134"/>
+        <location filename="../../components/settings/texttab.cpp" line="139"/>
         <source>Both, Prefer Traditional</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="136"/>
+        <location filename="../../components/settings/texttab.cpp" line="141"/>
         <source>Interface:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="138"/>
+        <location filename="../../components/settings/texttab.cpp" line="143"/>
         <source>Interface size:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="139"/>
+        <location filename="../../components/settings/texttab.cpp" line="144"/>
         <source>Smallest</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="140"/>
+        <location filename="../../components/settings/texttab.cpp" line="145"/>
         <source>Largest</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="142"/>
-        <source>Tone colouring:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/texttab.cpp" line="144"/>
-        <source>Colour characters by tone using:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/texttab.cpp" line="145"/>
-        <source>No Colours</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../components/settings/texttab.cpp" line="146"/>
-        <source>Cantonese</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../components/settings/texttab.cpp" line="147"/>
-        <source>Mandarin</source>
+        <source>Auto-detect search language:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../components/settings/texttab.cpp" line="149"/>
-        <source>Cantonese tone colours:</source>
+        <source>Tone colouring:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="154"/>
-        <source>	Mandarin tone colours:</source>
+        <location filename="../../components/settings/texttab.cpp" line="151"/>
+        <source>Colour characters by tone using:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../components/settings/texttab.cpp" line="152"/>
+        <source>No Colours</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="153"/>
+        <source>Cantonese</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="154"/>
+        <source>Mandarin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="156"/>
+        <source>Cantonese tone colours:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="161"/>
+        <source>	Mandarin tone colours:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/texttab.cpp" line="159"/>
         <source>Mandarin tone colours:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="162"/>
-        <location filename="../../components/settings/texttab.cpp" line="176"/>
+        <location filename="../../components/settings/texttab.cpp" line="169"/>
+        <location filename="../../components/settings/texttab.cpp" line="183"/>
         <source>No Tone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="166"/>
-        <location filename="../../components/settings/texttab.cpp" line="184"/>
+        <location filename="../../components/settings/texttab.cpp" line="173"/>
+        <location filename="../../components/settings/texttab.cpp" line="191"/>
         <source>Tone %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="180"/>
+        <location filename="../../components/settings/texttab.cpp" line="187"/>
         <source>Neutral</source>
         <translation type="unfinished"></translation>
     </message>

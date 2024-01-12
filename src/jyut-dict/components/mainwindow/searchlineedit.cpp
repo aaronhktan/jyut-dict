@@ -14,10 +14,11 @@
 
 #include <vector>
 
-SearchLineEdit::SearchLineEdit(ISearchOptionsMediator *mediator,
-                               std::shared_ptr<SQLSearch> sqlSearch,
-                               std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
-                               QWidget *parent)
+SearchLineEdit::SearchLineEdit(
+    ISearchOptionsMediator *mediator,
+    std::shared_ptr<ISearch> sqlSearch,
+    std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
+    QWidget *parent)
     : QLineEdit(parent)
     , _sqlHistoryUtils{sqlHistoryUtils}
 {
@@ -96,6 +97,10 @@ void SearchLineEdit::search()
             _search->searchEnglish(text().trimmed());
             break;
         }
+        case SearchParameters::AUTO_DETECT: {
+            _search->searchAutoDetect(text().trimmed());
+            break;
+        }
         default: {
             break;
         }
@@ -120,7 +125,12 @@ void SearchLineEdit::setupUI(void)
 
     connect(this, &QLineEdit::textChanged, this, [&]() {
         checkClearVisibility();
-        search();
+        if (_settings->value("Interface/searchAutoDetect", QVariant{true})
+                .toBool()) {
+            _search->searchAutoDetect(text().trimmed());
+        } else {
+            search();
+        }
     });
 }
 
@@ -199,11 +209,11 @@ void SearchLineEdit::setStyle(bool use_dark)
 void SearchLineEdit::checkClearVisibility()
 {
     if (text().isEmpty() || !hasFocus()) {
-            // Don't add the clear line edit action if the widget doesn't have focus!
-            // Clicking on the clear line edit action causes a crash.
-            removeAction(_clearLineEdit);
+        // Don't add the clear line edit action if the widget doesn't have focus!
+        // Clicking on the clear line edit action causes a crash.
+        removeAction(_clearLineEdit);
     } else {
-            addAction(_clearLineEdit, QLineEdit::TrailingPosition);
+        addAction(_clearLineEdit, QLineEdit::TrailingPosition);
     }
 }
 
