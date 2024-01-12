@@ -47,7 +47,7 @@
     <message>
         <location line="+2"/>
         <source>Export saved words and history:</source>
-        <translation>导出保存嘅词语同埋搜索历史：</translation>
+        <translation>导出保存嘅词语同埋揾嘢历史：</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -105,17 +105,17 @@
     <message>
         <location line="+41"/>
         <source>Saved words and history export succeeded!</source>
-        <translation>保存嘅词语同埋搜索历史导出成功！</translation>
+        <translation>保存嘅词语同埋揾嘢历史导出成功！</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Saved words and history export failed.</source>
-        <translation>保存嘅词语同埋搜索历史导出失败。</translation>
+        <translation>保存嘅词语同埋揾嘢历史导出失败。</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Exporting saved words and history...</source>
-        <translation>导出紧保存嘅词语同埋搜索历史…</translation>
+        <translation>导出紧保存嘅词语同埋揾嘢历史…</translation>
     </message>
     <message>
         <location line="+45"/>
@@ -148,17 +148,17 @@
     <message>
         <location line="+6"/>
         <source>Saved words and history restore succeeded! %1 will now restart.</source>
-        <translation>保存嘅词语同埋搜索历史恢复成功！%1会立即重新启动。</translation>
+        <translation>保存嘅词语同埋揾嘢历史恢复成功！%1会立即重新启动。</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Saved words and history restore failed! %1 will now restart.</source>
-        <translation>保存嘅词语同埋搜索历史恢复失败！%1会立即重新启动。</translation>
+        <translation>保存嘅词语同埋揾嘢历史恢复失败！%1会立即重新启动。</translation>
     </message>
     <message>
         <location line="+9"/>
         <source>Restoring saved words and history...</source>
-        <translation>恢复紧保存嘅词语同埋搜索历史…</translation>
+        <translation>恢复紧保存嘅词语同埋揾嘢历史…</translation>
     </message>
     <message>
         <location line="-375"/>
@@ -441,7 +441,7 @@
         <location filename="../../windows/historywindow.cpp" line="+68"/>
         <location line="+11"/>
         <source>Search History</source>
-        <translation>搜索历史</translation>
+        <translation>揾嘢历史</translation>
     </message>
     <message>
         <location line="-10"/>
@@ -467,31 +467,31 @@
     <name>MAC_APPLICATION_MENU</name>
     <message>
         <source>Services</source>
-        <translation>服务</translation>
+        <translation >服务</translation>
     </message>
     <message>
         <source>Hide %1</source>
-        <translation>隐藏 %1</translation>
+        <translation >隐藏 %1</translation>
     </message>
     <message>
         <source>Hide Others</source>
-        <translation>隐藏其他</translation>
+        <translation >隐藏其他</translation>
     </message>
     <message>
         <source>Show All</source>
-        <translation>全部显示</translation>
+        <translation >全部显示</translation>
     </message>
     <message>
         <source>Preferences...</source>
-        <translation>偏好设置…</translation>
+        <translation >偏好设置…</translation>
     </message>
     <message>
         <source>Quit %1</source>
-        <translation>结束 %1</translation>
+        <translation >结束 %1</translation>
     </message>
     <message>
         <source>About %1</source>
-        <translation>关于 %1</translation>
+        <translation >关于 %1</translation>
     </message>
 </context>
 <context>
@@ -602,12 +602,12 @@
     <message>
         <location line="+2"/>
         <source>Start a New Search</source>
-        <translation>重新搜索</translation>
+        <translation>重新揾嘢</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Select Search Bar Contents</source>
-        <translation>全选搜索栏内文字</translation>
+        <translation>全选揾嘢栏内文字</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -617,12 +617,12 @@
     <message>
         <location line="+1"/>
         <source>Search Simplified Chinese</source>
-        <translation>用简体中文揾</translation>
+        <translation>用简体中文揾嘢</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Search Traditional Chinese</source>
-        <translation>用繁体中文揾</translation>
+        <translation>用繁体中文揾嘢</translation>
     </message>
     <message>
         <location line="-27"/>
@@ -650,17 +650,17 @@ Hang tight!</source>
     <message>
         <location line="-1060"/>
         <source>Search Jyutping</source>
-        <translation>用粤语拼音揾</translation>
+        <translation>用粤语拼音揾嘢</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Search Pinyin</source>
-        <translation>用汉语拼音揾</translation>
+        <translation>用汉语拼音揾嘢</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Search English</source>
-        <translation>用英文揾</translation>
+        <translation>用英文揾嘢</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -731,7 +731,7 @@ Hang tight!</source>
         <location line="-56"/>
         <location line="+533"/>
         <source>&amp;Search</source>
-        <translation>搜索</translation>
+        <translation>揾嘢</translation>
     </message>
     <message>
         <location line="+507"/>
@@ -771,23 +771,23 @@ Hang tight!</source>
     <name>QMessageBox</name>
     <message>
         <source>Help</source>
-        <translation>帮助</translation>
+        <translation >帮助</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>确定</translation>
+        <translation >确定</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation >取消</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation>是</translation>
+        <translation >是</translation>
     </message>
     <message>
         <source>About Qt</source>
-        <translation>关于Qt</translation>
+        <translation >关于Qt</translation>
     </message>
     <message>
         <source>&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;</source>
@@ -795,26 +795,26 @@ Hang tight!</source>
     </message>
     <message>
         <source>Show Details...</source>
-        <translation>显示详细信息…</translation>
+        <translation >显示详细信息…</translation>
     </message>
     <message>
         <source>Hide Details...</source>
-        <translation>隐藏详细信息…</translation>
+        <translation >隐藏详细信息…</translation>
     </message>
 </context>
 <context>
     <name>QPlatformTheme</name>
     <message>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation >取消</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation>是</translation>
+        <translation >是</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>确定</translation>
+        <translation >确定</translation>
     </message>
 </context>
 <context>
@@ -877,23 +877,23 @@ Hang tight!</source>
     <message>
         <location line="+6"/>
         <source>Start typing to search for words</source>
-        <translation>开始输入并搜索</translation>
+        <translation>一开始打字就揾到嘢噶啦！</translation>
     </message>
     <message>
         <location line="+11"/>
         <location line="+1"/>
         <source>No results...</source>
-        <translation>揾唔到结果</translation>
+        <translation>揾唔到嘢㖞</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Simplified Chinese, Traditional Chinese, Jyutping, Pinyin, and English are options beneath the search bar.</source>
-        <translation>你喺搜索栏下可以选择使用边种语言进行搜索。可选择嘅语言包括简体中文，繁体中文，粤语拼音（粤拼），汉语拼音，同埋英文。</translation>
+        <translation>你喺揾嘢栏下可以选择使用边种语言进行搜索。可选择嘅语言包括简体中文，繁体中文，粤语拼音（粤拼），汉语拼音，同埋英文。</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Try switching between languages!</source>
-        <translation>试吓用搜索栏下嘅按钮选择搜索语言！</translation>
+        <translation>试吓用揾嘢栏下嘅按钮选择搜索语言！</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -986,13 +986,13 @@ Hang tight!</source>
     <message>
         <location filename="../../components/historyview/searchhistorytab.cpp" line="+82"/>
         <source>Clear All Search History</source>
-        <translation>清除搜索历史</translation>
+        <translation>清除揾嘢历史</translation>
     </message>
 </context>
 <context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+129"/>
+        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+139"/>
         <source>Search</source>
         <translation>查粤语词典…</translation>
     </message>
@@ -1000,9 +1000,9 @@ Hang tight!</source>
 <context>
     <name>SearchOptionsRadioGroupBox</name>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="+170"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="+190"/>
         <source>Searching:</source>
-        <translation>搜索语言：</translation>
+        <translation>揾嘢语言：</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1071,7 +1071,7 @@ Hang tight!</source>
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="+214"/>
+        <location filename="../../components/settings/settingstab.cpp" line="+208"/>
         <source>In search results and examples:</source>
         <translation>查询结果同埋例句：</translation>
     </message>
@@ -1211,7 +1211,7 @@ Hang tight!</source>
 <context>
     <name>TextTab</name>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="+124"/>
+        <location filename="../../components/settings/texttab.cpp" line="+129"/>
         <source>Character set:</source>
         <translation>字体：</translation>
     </message>
@@ -1264,6 +1264,11 @@ Hang tight!</source>
         <location line="+1"/>
         <source>Largest</source>
         <translation>最大</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Auto-detect search language:</source>
+        <translation>自动检测揾嘢语言：</translation>
     </message>
     <message>
         <location line="+2"/>

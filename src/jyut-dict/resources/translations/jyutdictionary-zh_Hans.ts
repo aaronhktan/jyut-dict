@@ -467,31 +467,31 @@
     <name>MAC_APPLICATION_MENU</name>
     <message>
         <source>Services</source>
-        <translation>服务</translation>
+        <translation >服务</translation>
     </message>
     <message>
         <source>Hide %1</source>
-        <translation>隐藏 %1</translation>
+        <translation >隐藏 %1</translation>
     </message>
     <message>
         <source>Hide Others</source>
-        <translation>隐藏其他</translation>
+        <translation >隐藏其他</translation>
     </message>
     <message>
         <source>Show All</source>
-        <translation>全部显示</translation>
+        <translation >全部显示</translation>
     </message>
     <message>
         <source>Preferences...</source>
-        <translation>偏好设置…</translation>
+        <translation >偏好设置…</translation>
     </message>
     <message>
         <source>Quit %1</source>
-        <translation>结束 %1</translation>
+        <translation >结束 %1</translation>
     </message>
     <message>
         <source>About %1</source>
-        <translation>关于 %1</translation>
+        <translation >关于 %1</translation>
     </message>
 </context>
 <context>
@@ -771,15 +771,15 @@ Hang tight!</source>
     <name>QMessageBox</name>
     <message>
         <source>Help</source>
-        <translation>帮助</translation>
+        <translation >帮助</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>确定</translation>
+        <translation >确定</translation>
     </message>
     <message>
         <source>About Qt</source>
-        <translation>关于Qt</translation>
+        <translation >关于Qt</translation>
     </message>
     <message>
         <source>&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;</source>
@@ -787,26 +787,26 @@ Hang tight!</source>
     </message>
     <message>
         <source>Show Details...</source>
-        <translation>显示详细信息…</translation>
+        <translation >显示详细信息…</translation>
     </message>
     <message>
         <source>Hide Details...</source>
-        <translation>隐藏详细信息…</translation>
+        <translation >隐藏详细信息…</translation>
     </message>
 </context>
 <context>
     <name>QPlatformTheme</name>
     <message>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation >取消</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation>是</translation>
+        <translation >是</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>确定</translation>
+        <translation >确定</translation>
     </message>
 </context>
 <context>
@@ -984,7 +984,7 @@ Hang tight!</source>
 <context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+129"/>
+        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+139"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
@@ -992,7 +992,7 @@ Hang tight!</source>
 <context>
     <name>SearchOptionsRadioGroupBox</name>
     <message>
-        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="+170"/>
+        <location filename="../../components/mainwindow/searchoptionsradiogroupbox.cpp" line="+190"/>
         <source>Searching:</source>
         <translation>搜索语言：</translation>
     </message>
@@ -1063,7 +1063,7 @@ Hang tight!</source>
 <context>
     <name>SettingsTab</name>
     <message>
-        <location filename="../../components/settings/settingstab.cpp" line="+214"/>
+        <location filename="../../components/settings/settingstab.cpp" line="+208"/>
         <source>In search results and examples:</source>
         <translation>搜索结果和例句：</translation>
     </message>
@@ -1203,7 +1203,7 @@ Hang tight!</source>
 <context>
     <name>TextTab</name>
     <message>
-        <location filename="../../components/settings/texttab.cpp" line="+124"/>
+        <location filename="../../components/settings/texttab.cpp" line="+129"/>
         <source>Character set:</source>
         <translation>字体：</translation>
     </message>
@@ -1256,6 +1256,11 @@ Hang tight!</source>
         <location line="+1"/>
         <source>Largest</source>
         <translation>最大</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Auto-detect search language:</source>
+        <translation>自动检测搜索语言：</translation>
     </message>
     <message>
         <location line="+2"/>
