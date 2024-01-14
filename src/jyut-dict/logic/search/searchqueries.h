@@ -288,6 +288,13 @@ constexpr auto SEARCH_TRADITIONAL_QUERY
       "  definitions "
       "FROM matching_entries; ";
 
+constexpr auto SEARCH_JYUTPING_EXISTS_QUERY = "SELECT EXISTS ( "
+                                              "  SELECT "
+                                              "    rowid "
+                                              "  FROM entries "
+                                              "  WHERE jyutping GLOB ? "
+                                              ") AS existence ";
+
 constexpr auto SEARCH_JYUTPING_QUERY
     = "WITH "
       "  matching_entry_ids AS ( "
@@ -432,6 +439,13 @@ constexpr auto SEARCH_JYUTPING_QUERY
       "  pinyin, "
       "  definitions "
       "FROM matching_entries; ";
+
+constexpr auto SEARCH_PINYIN_EXISTS_QUERY = "SELECT EXISTS ( "
+                                            "  SELECT "
+                                            "    rowid "
+                                            "  FROM entries "
+                                            "  WHERE pinyin GLOB ? "
+                                            ") AS existence ";
 
 constexpr auto SEARCH_PINYIN_QUERY
     = "WITH "
