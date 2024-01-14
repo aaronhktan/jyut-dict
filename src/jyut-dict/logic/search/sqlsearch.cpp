@@ -12,6 +12,90 @@
 #include <cctype>
 #endif
 
+namespace {
+
+void prepareJyutpingBindValues(const QString &searchTerm, QString &globTerm)
+{
+    // When the search term is surrounded by quotes, search for only term
+    // inside quotes (not the quotes themselves)
+    // Unlike the simplified/traditional search, only trigger exact match
+    // searching if enclosed by Western quotes (U+0022).
+    bool searchExactMatch = searchTerm.at(0) == "\""
+                            && searchTerm.at(searchTerm.size() - 1) == "\""
+                            && searchTerm.length() >= 3;
+    bool dontAppendWildcard = searchTerm.at(searchTerm.size() - 1) == "$";
+
+    std::vector<std::string> jyutpingWords;
+    if (searchExactMatch) {
+        QString searchTermWithoutQuotes = searchTerm.mid(1,
+                                                         searchTerm.size() - 2);
+        Utils::split(searchTermWithoutQuotes.toStdString(), ' ', jyutpingWords);
+    } else {
+        ChineseUtils::segmentJyutping(searchTerm,
+                                      jyutpingWords,
+                                      /* removeSpecialCharacters */ true,
+                                      /* removeGlobCharacters */ false);
+    }
+
+    // Don't add wildcard characters to GLOB term if searching for exact match
+    const char *globJoinDelimiter = searchExactMatch ? "" : "?";
+    std::string query
+        = ChineseUtils::constructRomanisationQuery(jyutpingWords,
+                                                   globJoinDelimiter);
+
+    globTerm = QString{query.c_str()}
+               + QString{(searchExactMatch || dontAppendWildcard) ? "" : "*"};
+}
+
+void preparePinyinBindValues(const QString &searchTerm, QString &globTerm)
+{
+    // Replace "v" and "ü" with "u:" since "ü" is stored as "u:" in the table
+    QString processedSearchTerm = searchTerm;
+    int location = processedSearchTerm.indexOf("v");
+    while (location != -1) {
+        processedSearchTerm.remove(location, 1);
+        processedSearchTerm.insert(location, "u:");
+        location = processedSearchTerm.indexOf("v", location);
+    }
+
+    location = processedSearchTerm.indexOf("ü");
+    while (location != -1) {
+        processedSearchTerm.remove(location, 1);
+        processedSearchTerm.insert(location, "u:");
+        location = processedSearchTerm.indexOf("ü", location);
+    }
+
+    bool searchExactMatch = processedSearchTerm.at(0) == "\""
+                            && processedSearchTerm.at(processedSearchTerm.size()
+                                                      - 1)
+                                   == "\""
+                            && processedSearchTerm.length() >= 3;
+    bool dontAppendWildcard = searchTerm.at(searchTerm.size() - 1) == "$";
+
+    std::vector<std::string> pinyinWords;
+    if (searchExactMatch) {
+        QString searchTermWithoutQuotes
+            = processedSearchTerm.mid(1, processedSearchTerm.size() - 2);
+        Utils::split(searchTermWithoutQuotes.toStdString(), ' ', pinyinWords);
+    } else {
+        ChineseUtils::segmentPinyin(processedSearchTerm,
+                                    pinyinWords,
+                                    /* removeSpecialCharacters */ true,
+                                    /* removeGlobCharacters */ false);
+    }
+
+    // Don't add wildcard characters to GLOB term if searching for exact match
+    const char *globJoinDelimiter = searchExactMatch ? "" : "?";
+    std::string query
+        = ChineseUtils::constructRomanisationQuery(pinyinWords,
+                                                   globJoinDelimiter);
+
+    globTerm = QString{query.c_str()}
+               + QString{(searchExactMatch || dontAppendWildcard) ? "" : "*"};
+}
+
+} // namespace
+
 SQLSearch::SQLSearch()
 {
     std::random_device rd;
@@ -316,41 +400,14 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
 void SQLSearch::searchJyutpingThread(const QString &searchTerm,
                                      const unsigned long long queryID)
 {
-    // When the search term is surrounded by quotes, search for only term
-    // inside quotes (not the quotes themselves)
-    // Unlike the simplified/traditional search, only trigger exact match
-    // searching if enclosed by Western quotes (U+0022).
-    bool searchExactMatch = searchTerm.at(0) == "\""
-                            && searchTerm.at(searchTerm.size() - 1) == "\""
-                            && searchTerm.length() >= 3;
-    bool dontAppendWildcard = searchTerm.at(searchTerm.size() - 1) == "$";
-
-    std::vector<std::string> jyutpingWords;
-    if (searchExactMatch) {
-        QString searchTermWithoutQuotes = searchTerm.mid(1,
-                                                         searchTerm.size() - 2);
-        Utils::split(searchTermWithoutQuotes.toStdString(), ' ', jyutpingWords);
-    } else {
-        ChineseUtils::segmentJyutping(searchTerm,
-                                      jyutpingWords,
-                                      /* removeSpecialCharacters */ true,
-                                      /* removeGlobCharacters */ false);
-    }
-
     std::vector<Entry> results;
 
     QSqlQuery query{_manager->getDatabase()};
     query.prepare(SEARCH_JYUTPING_QUERY);
 
-    // Don't add wildcard characters to GLOB term if searching for exact match
-    const char *globJoinDelimiter = searchExactMatch ? "" : "?";
-    std::string globTerm
-        = ChineseUtils::constructRomanisationQuery(jyutpingWords,
-                                                   globJoinDelimiter);
-
-    query.addBindValue(
-        QString{globTerm.c_str()}
-        + QString{(searchExactMatch || dontAppendWildcard) ? "" : "*"});
+    QString globTerm;
+    prepareJyutpingBindValues(searchTerm, globTerm);
+    query.addBindValue(globTerm);
     query.exec();
 
     // Do not parse results if new query has been made
@@ -364,55 +421,14 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
 void SQLSearch::searchPinyinThread(const QString &searchTerm,
                                    const unsigned long long queryID)
 {
-    // Replace "v" and "ü" with "u:" since "ü" is stored as "u:" in the table
-    QString processedSearchTerm = searchTerm;
-    int location = processedSearchTerm.indexOf("v");
-    while (location != -1) {
-        processedSearchTerm.remove(location, 1);
-        processedSearchTerm.insert(location, "u:");
-        location = processedSearchTerm.indexOf("v", location);
-    }
-
-    location = processedSearchTerm.indexOf("ü");
-    while (location != -1) {
-        processedSearchTerm.remove(location, 1);
-        processedSearchTerm.insert(location, "u:");
-        location = processedSearchTerm.indexOf("ü", location);
-    }
-
-    bool searchExactMatch = processedSearchTerm.at(0) == "\""
-                            && processedSearchTerm.at(processedSearchTerm.size()
-                                                      - 1)
-                                   == "\""
-                            && processedSearchTerm.length() >= 3;
-    bool dontAppendWildcard = searchTerm.at(searchTerm.size() - 1) == "$";
-
-    std::vector<std::string> pinyinWords;
-    if (searchExactMatch) {
-        QString searchTermWithoutQuotes
-            = processedSearchTerm.mid(1, processedSearchTerm.size() - 2);
-        Utils::split(searchTermWithoutQuotes.toStdString(), ' ', pinyinWords);
-    } else {
-        ChineseUtils::segmentPinyin(processedSearchTerm,
-                                    pinyinWords,
-                                    /* removeSpecialCharacters */ true,
-                                    /* removeGlobCharacters */ false);
-    }
-
     std::vector<Entry> results;
 
     QSqlQuery query{_manager->getDatabase()};
     query.prepare(SEARCH_PINYIN_QUERY);
 
-    // Don't add wildcard characters to GLOB term if searching for exact match
-    const char *globJoinDelimiter = searchExactMatch ? "" : "?";
-    std::string globTerm
-        = ChineseUtils::constructRomanisationQuery(pinyinWords,
-                                                   globJoinDelimiter);
-
-    query.addBindValue(
-        QString{globTerm.c_str()}
-        + QString{(searchExactMatch || dontAppendWildcard) ? "" : "*"});
+    QString globTerm;
+    preparePinyinBindValues(searchTerm, globTerm);
+    query.addBindValue(globTerm);
     query.exec();
 
     // Do not parse results if new query has been made
@@ -475,14 +491,36 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
         return;
     }
     if (sd.isValidJyutping()) {
-        notifyObserversIfQueryIdCurrent(SearchParameters::JYUTPING, queryID);
-        searchJyutpingThread(searchTerm, queryID);
-        return;
+        QSqlQuery query{_manager->getDatabase()};
+        query.prepare(SEARCH_JYUTPING_EXISTS_QUERY);
+        QString globTerm;
+        prepareJyutpingBindValues(searchTerm, globTerm);
+        query.addBindValue(globTerm);
+        query.setForwardOnly(true);
+        query.exec();
+        bool jyutpingExists = QueryParseUtils::parseExistence(query);
+
+        if (jyutpingExists) {
+            notifyObserversIfQueryIdCurrent(SearchParameters::JYUTPING, queryID);
+            searchJyutpingThread(searchTerm, queryID);
+            return;
+        }
     }
     if (sd.isValidPinyin()) {
-        notifyObserversIfQueryIdCurrent(SearchParameters::PINYIN, queryID);
-        searchPinyinThread(searchTerm, queryID);
-        return;
+        QSqlQuery query{_manager->getDatabase()};
+        query.prepare(SEARCH_PINYIN_EXISTS_QUERY);
+        QString globTerm;
+        preparePinyinBindValues(searchTerm, globTerm);
+        query.addBindValue(globTerm);
+        query.setForwardOnly(true);
+        query.exec();
+        bool pinyinExists = QueryParseUtils::parseExistence(query);
+
+        if (pinyinExists) {
+            notifyObserversIfQueryIdCurrent(SearchParameters::PINYIN, queryID);
+            searchPinyinThread(searchTerm, queryID);
+            return;
+        }
     }
 
     notifyObserversIfQueryIdCurrent(SearchParameters::ENGLISH, queryID);
