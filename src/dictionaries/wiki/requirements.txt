@@ -2,7 +2,7 @@ jieba==0.42.1
 msgpack==1.0.2
 opencc==1.1.7
 pinyin_jyutping_sentence==1.0
+pycantonese==3.4.0
 pypinyin==0.43.0
 pypinyin-dict==0.1.0
-wikipedia==1.4.0
 wordfreq==2.5.1

@@ -1,17 +1,15 @@
 import jieba
 import opencc
 import pinyin_jyutping_sentence
+import pycantonese
 from pypinyin import lazy_pinyin, Style
 from pypinyin_dict.phrase_pinyin_data import cc_cedict
+import requests
 from wordfreq import zipf_frequency
-import wikipedia
 
+from collections import defaultdict
 from database import database, objects
-
-from collections import defaultdict, namedtuple
-import copy
-import csv
-from itertools import chain
+import datetime
 import logging
 import re
 import sqlite3
@@ -21,15 +19,14 @@ import traceback
 
 yue_converter = opencc.OpenCC("hk2s.json")
 zh_converter = opencc.OpenCC("tw2s.json")
-wikipedia.set_rate_limiting(True)
 
+SUPERSCRIPT_EQUIVALENT = str.maketrans("¹²³⁴⁵⁶⁷⁸⁹⁰", "1234567890", "")
+WIDE_DIGIT_EQUIVALENT = str.maketrans("1234567890", "１２３４５６７８９０", "")
+JYUTPING_REGEX = re.compile(r"(.*?)（粵拼：(.*?)[）|；|，|/]")
+LITERARY_CANTONESE_READING_REGEX_PATTERN = re.compile(r"\d\*")
+HAN_REGEX = re.compile(r"[\u4e00-\u9fff]")
 
 def insert_words(c, words):
-    # Because the sentence id is presumed to be unique by Tatoeba, we will give it
-    # a namespace of 999999999 potential sentences. Thus, words.hk sentences will start
-    # at rowid 1000000000.
-    example_id = 1000000000
-
     for key in words:
         for entry in words[key]:
             trad = entry.traditional
@@ -96,106 +93,181 @@ def write(db_name, source, words):
     db.close()
 
 
-def parse_file(page_filepath, langlinks_filepath, words):
+def get_summaries(wiki_lang, titles):
+    url = f"https://{wiki_lang}.wikipedia.org/w/api.php?exintro&explaintext&redirects"
+
+    params = {
+        "prop": "extracts|pageprops",
+        "titles": titles,
+        "exlimit": "20",
+        "exsentences": "1",
+        "format": "json",
+        "action": "query",
+    }
+
+    timeouts = 0
+    while True:
+        try:
+            resp = requests.get(url=url, params=params, timeout=30)
+            break
+        except (requests.ConnectionError, requests.Timeout):
+            logging.warning(f"Timed out for words {titles}, retrying")
+            timeouts += 1
+            time.sleep(120 * timeouts)
+        except Exception as e:
+            logging.error(e)
+            break
+
+    data = resp.json()
+
+    parsed = dict()
+    if "batchcomplete" not in data:
+        logging.warning(f"Batch complete was not available in response {resp.url}")
+
+    for page_id in data["query"]["pages"]:
+        page = data["query"]["pages"][page_id]
+
+        # Skip disambiguation pages
+        if "pageprops" in page:
+            if "disambiguation" in page["pageprops"]:
+                continue
+
+        parsed[page["title"]] = page["extract"].replace(" ", "ﾠ") if "extract" in page else None
+
+    if "redirects" in data["query"]:
+        for redirect in data["query"]["redirects"]:
+            if redirect["to"] in parsed:
+                parsed[redirect["from"]] = parsed[redirect["to"]]
+            else:
+                parsed[redirect["from"]] = None
+
+    return parsed
+
+
+def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
+    match lang_src:
+        case "zh-yue":
+            converter = yue_converter
+        case "zh":
+            converter = zh_converter
+        case other:
+            logging.error(f"Source language must be zh or zh-yue, received {lang_src}")
+            return
+
     db = sqlite3.connect(page_filepath)
     c = db.cursor()
 
-    c.execute(f"ATTACH DATABASE '{langlinks_filepath}' AS langlinks")
+    if lang_src != lang_dest:
+        c.execute(f"ATTACH DATABASE '{langlinks_filepath}' AS langlinks")
 
-    # Get the list of all non-redirect article pages in this Wikipedia
-    c.execute(
-        ("""SELECT 
-           page_id, page_title, l.ll_title 
-         FROM 
-           page AS p
-         JOIN 
-           langlinks.langlinks AS l
-         ON 
-           p.page_id = l.ll_from 
-         WHERE 
-           page_namespace = 0 
-         AND 
-           page_is_redirect = 0 
-         AND 
-           ll_lang = 'en'""")
-    )
-    rows = c.fetchall()
-
-    for i, row in enumerate(rows):
-        if not i % 100:
-            logging.info(f"Processed entry #{i}")
-
-        trad = str(row[1]).replace("_", " ")
-        simp = yue_converter.convert(trad)
-        jyut = pinyin_jyutping_sentence.jyutping(
-                trad, tone_numbers=True, spaces=True
-            )
-        pin = (
-            " ".join(lazy_pinyin(simp, style=Style.TONE3, neutral_tone_with_five=True))
-            .lower()
-            .replace("v", "u:")
+        # Get the list of all non-redirect article pages in this Wikipedia
+        c.execute(
+            ("""SELECT 
+               page_title, l.ll_title 
+             FROM 
+               page AS p
+             JOIN 
+               langlinks.langlinks AS l
+             ON 
+               p.page_id = l.ll_from 
+             WHERE 
+               page_namespace = 0 
+             AND 
+               page_is_redirect = 0 
+             AND 
+               ll_lang = ?"""),
+            (lang_dest,)
         )
+        rows = c.fetchall()
+    else:
+        c.execute(
+            ("""SELECT 
+               p.page_title, o.page_title 
+             FROM 
+               page AS p
+             JOIN 
+               page AS o
+             ON 
+               p.page_id = o.page_id 
+             WHERE 
+               p.page_namespace = 0 
+             AND 
+               p.page_is_redirect = 0""")
+        )
+        rows = c.fetchall()
 
-        if "搞清楚" in trad:
-            # This is a disambiguation page, skip
-            continue
+    for i in range(0, len(rows), 20):
+        src_strings = [str(x[0]).replace("_", " ") for x in rows[i:i+20]]
+        dest_strings = [str(x[1]).replace("_", " ") for x in rows[i:i+20]]
+        correspondences = dict(zip(src_strings, dest_strings))
 
-        wikipedia.set_lang("zh-yue")
-        definition_components = []
-        cannot_be_parsed = False
-        timeouts = 0
-        while True:
-            try:
-                definition_components.append(wikipedia.summary(trad, auto_suggest=False, sentences=1))
-                break
-            except wikipedia.exceptions.DisambiguationError:
-                logging.warning(f"DisambiguationError for word {trad}")
-                cannot_be_parsed = True
-                break
-            except TimeoutError:
-                logging.warning(f"Timed out for word {trad}, retrying")
-                timeouts += 1
-                time.sleep(120 * timeouts)
-            except Exception as e:
-                logging.error(e)
-                break
-        if cannot_be_parsed:
-            continue
+        if not i % 100 and i:
+            logging.info(f"Processed entry #{i} at time {datetime.datetime.now().time()}")
 
-        wikipedia.set_lang("en")
-        english_term = str(row[2])
-        definition_components.append(english_term)
-        timeouts = 0
-        while True:
-            try:
-                english_description = wikipedia.summary(english_term, auto_suggest=False, sentences=1)
-                english_description = english_description.replace(" ", "ﾠ")
-                definition_components.append(english_description)
-                break
-            except wikipedia.exceptions.DisambiguationError:
-                logging.warning(f"DisambiguationError for English word {english_term}")
-                break
-            except TimeoutError:
-                logging.warning(f"Timed out for English word {english_term}, retrying")
-                timeouts += 1
-                time.sleep(120 * timeouts)
-            except Exception as e:
-                logging.error(e)
-                break
+        src_summaries = get_summaries(lang_src, "|".join(src_strings))
+        if lang_src != lang_dest:
+            dest_summaries = get_summaries(lang_dest, "|".join(dest_strings))
+        else:
+            dest_summaries = src_summaries
 
-        definition = objects.Definition(definition="\n".join(definition_components))
-        freq = zipf_frequency(trad, "zh")
+        for trad in src_strings:
+            if trad not in src_summaries:
+                continue
 
-        entry = objects.Entry(trad=trad, simp=simp, jyut=jyut, pin=pin, freq=freq, defs=[definition])
-        words[trad].append(entry)
+            summary = src_summaries[trad]
+
+            simp = converter.convert(trad)
+            jyutping_match = JYUTPING_REGEX.search(summary) if summary else None
+            jyut = ""
+            if jyutping_match:
+                jyutping_trad = jyutping_match.group(1)
+                if jyutping_trad == trad:
+                    jyut = jyutping_match.group(2)
+                    jyut = jyut.translate(SUPERSCRIPT_EQUIVALENT)
+                    jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN.sub("", jyut)
+                    jyut = jyut.replace("ﾠ", " ")
+            if not jyutping_match or not jyut:
+                jyut = pinyin_jyutping_sentence.jyutping(
+                        trad.translate(WIDE_DIGIT_EQUIVALENT), tone_numbers=True, spaces=True
+                    )
+
+                han_chars = HAN_REGEX.findall(jyut)
+                for char in han_chars:
+                    char_jyutping = pycantonese.characters_to_jyutping(char)[0][1]
+                    if char_jyutping:
+                        jyut = jyut.replace(char, char_jyutping)
+
+            pin = (
+                " ".join(lazy_pinyin(simp, style=Style.TONE3, neutral_tone_with_five=True, v_to_u=True))
+                .lower()
+                .replace("ü", "u:")
+            )
+
+            definition_components = []
+            dest_key = correspondences[trad]
+            if lang_src != lang_dest:
+                definition_components.append(dest_key)
+            if dest_key in dest_summaries:
+                dest_summary = dest_summaries[dest_key]
+                if dest_summary:
+                    if lang_dest not in ("zh", "zh-yue"):
+                        dest_summary = dest_summary.replace(" ", "ﾠ")
+                    definition_components.append(dest_summary)
+
+            definition = objects.Definition(definition="\n".join(definition_components))
+            freq = zipf_frequency(trad, "zh")
+
+            entry = objects.Entry(trad=trad, simp=simp, jyut=jyut, pin=pin, freq=freq, defs=[definition])
+            words[trad].append(entry)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 12:
+    if len(sys.argv) != 14:
         print(
             (
                 "Usage: python3 -m wikipedia.parse <database filename> "
-                "<page.db file> <langlinks.db file> <source name> <source short name> "
+                "<page.db file> <langlinks.db file> <source language> "
+                "<destination language> <source name> <source short name> "
                 "<source version> <source description> <source legal> "
                 "<source link> <source update url> <source other>"
             )
@@ -203,7 +275,7 @@ if __name__ == "__main__":
         print(
             (
                 "e.g. python3 -m wikipedia.parse wikipedia/developer/wikipedia.db "
-                "wikipedia/data/page.db wikipedia/data/langlinks.db Wikipedia WK 2024-01-01 "
+                "wikipedia/data/page.db wikipedia/data/langlinks.db zh-yue en Wikipedia WK 2024-01-01 "
                 '"Wikipedia[note 3] is a free-content online encyclopedia, written and maintained '
                 'by a community of volunteers, collectively known as Wikipedians, through open '
                 'collaboration and the use of wiki-based editing system MediaWiki." '
@@ -216,16 +288,16 @@ if __name__ == "__main__":
     cc_cedict.load()
 
     source = objects.SourceTuple(
-        sys.argv[4],
-        sys.argv[5],
         sys.argv[6],
         sys.argv[7],
         sys.argv[8],
         sys.argv[9],
         sys.argv[10],
         sys.argv[11],
+        sys.argv[12],
+        sys.argv[13],
     )
     logging.basicConfig(level='INFO') # Uncomment to enable debug logging
     parsed_words = defaultdict(list)
-    parse_file(sys.argv[2], sys.argv[3], parsed_words)
+    parse_file(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], parsed_words)
     write(sys.argv[1], source, parsed_words)

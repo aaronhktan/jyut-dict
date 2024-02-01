@@ -123,6 +123,9 @@ CMakeLists.txt.user*
 **/unihan/archive_*
 **/unihan/data/*
 **/unihan/developer/*
+**/wiki/archive_*
+**/wiki/data/*
+**/wiki/developer/*
 **/wiktionary/archive_*
 **/wiktionary/data/*
 **/wiktionary/developer/*
