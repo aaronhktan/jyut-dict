@@ -197,6 +197,7 @@ def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
         rows = c.fetchall()
 
     for i in range(0, len(rows), 20):
+        # The maximum batch amount for a single Wikimedia API request is 20 items
         src_strings = [str(x[0]).replace("_", " ") for x in rows[i:i+20]]
         dest_strings = [str(x[1]).replace("_", " ") for x in rows[i:i+20]]
         correspondences = dict(zip(src_strings, dest_strings))
@@ -231,6 +232,8 @@ def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
                         trad.translate(WIDE_DIGIT_EQUIVALENT), tone_numbers=True, spaces=True
                     )
 
+                # If pinyin_jyutping_sentences cannot convert to Jyutping, use
+                # pycantonese to convert the character instead
                 han_chars = HAN_REGEX.findall(jyut)
                 for char in han_chars:
                     char_jyutping = pycantonese.characters_to_jyutping(char)[0][1]
@@ -297,7 +300,7 @@ if __name__ == "__main__":
         sys.argv[12],
         sys.argv[13],
     )
-    logging.basicConfig(level='INFO') # Uncomment to enable debug logging
+    # logging.basicConfig(level='INFO') # Uncomment to enable debug logging
     parsed_words = defaultdict(list)
     parse_file(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], parsed_words)
     write(sys.argv[1], source, parsed_words)
