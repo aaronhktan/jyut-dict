@@ -272,18 +272,18 @@ if __name__ == "__main__":
                 "<page.db file> <langlinks.db file> <source language> "
                 "<destination language> <source name> <source short name> "
                 "<source version> <source description> <source legal> "
-                "<source link> <source update url> <source other>"
+                "<source link> <source update url> <source contents>"
             )
         )
         print(
             (
                 "e.g. python3 -m wikipedia.parse wikipedia/developer/wikipedia.db "
                 "wikipedia/data/page.db wikipedia/data/langlinks.db zh-yue en Wikipedia WK 2024-01-01 "
-                '"Wikipedia[note 3] is a free-content online encyclopedia, written and maintained '
+                '"Wikipedia is a free-content online encyclopedia, written and maintained '
                 'by a community of volunteers, collectively known as Wikipedians, through open '
                 'collaboration and the use of wiki-based editing system MediaWiki." '
-                '"https://en.wikipedia.org/wiki/Wikipedia:Text_of_the_Creative_Commons_Attribution-ShareAlike_4.0_International_License"'
-                '"https://www.wikipedia.org/" "" ""'
+                '"Text is available under the Creative Commons Attribution-ShareAlike License 4.0."'
+                '"https://www.wikipedia.org/" "" "words"'
             )
         )
         sys.exit(1)
