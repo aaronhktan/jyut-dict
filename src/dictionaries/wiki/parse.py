@@ -288,7 +288,7 @@ if __name__ == "__main__":
     if len(sys.argv) != 14:
         print(
             (
-                "Usage: python3 -m wikipedia.parse <database filename> "
+                "Usage: python3 -m wiki.parse <database filename> "
                 "<page.db file> <langlinks.db file> <source language> "
                 "<destination language> <source name> <source short name> "
                 "<source version> <source description> <source legal> "
@@ -297,7 +297,7 @@ if __name__ == "__main__":
         )
         print(
             (
-                "e.g. python3 -m wikipedia.parse wikipedia/developer/wikipedia.db "
+                "e.g. python3 -m wiki.parse wikipedia/developer/wikipedia.db "
                 "wikipedia/data/page.db wikipedia/data/langlinks.db zh-yue en Wikipedia WK 2024-01-01 "
                 '"Wikipedia is a free-content online encyclopedia, written and maintained '
                 "by a community of volunteers, collectively known as Wikipedians, through open "
