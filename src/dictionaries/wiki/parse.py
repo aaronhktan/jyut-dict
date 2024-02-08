@@ -26,6 +26,7 @@ JYUTPING_REGEX = re.compile(r"(.*?)（粵拼：(.*?)[）|；|，|/]")
 LITERARY_CANTONESE_READING_REGEX_PATTERN = re.compile(r"\d\*")
 HAN_REGEX = re.compile(r"[\u4e00-\u9fff]")
 
+
 def insert_words(c, words):
     for key in words:
         for entry in words[key]:
@@ -132,7 +133,9 @@ def get_summaries(wiki_lang, titles):
             if "disambiguation" in page["pageprops"]:
                 continue
 
-        parsed[page["title"]] = page["extract"].replace(" ", "ﾠ") if "extract" in page else None
+        parsed[page["title"]] = (
+            page["extract"].replace(" ", "ﾠ") if "extract" in page else None
+        )
 
     if "redirects" in data["query"]:
         for redirect in data["query"]["redirects"]:
@@ -162,7 +165,8 @@ def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
 
         # Get the list of all non-redirect article pages in this Wikipedia
         c.execute(
-            ("""SELECT 
+            (
+                """SELECT 
                page_title, l.ll_title 
              FROM 
                page AS p
@@ -175,13 +179,15 @@ def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
              AND 
                page_is_redirect = 0 
              AND 
-               ll_lang = ?"""),
-            (lang_dest,)
+               ll_lang = ?"""
+            ),
+            (lang_dest,),
         )
         rows = c.fetchall()
     else:
         c.execute(
-            ("""SELECT 
+            (
+                """SELECT 
                p.page_title, o.page_title 
              FROM 
                page AS p
@@ -192,18 +198,21 @@ def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
              WHERE 
                p.page_namespace = 0 
              AND 
-               p.page_is_redirect = 0""")
+               p.page_is_redirect = 0"""
+            )
         )
         rows = c.fetchall()
 
     for i in range(0, len(rows), 20):
         # The maximum batch amount for a single Wikimedia API request is 20 items
-        src_strings = [str(x[0]).replace("_", " ") for x in rows[i:i+20]]
-        dest_strings = [str(x[1]).replace("_", " ") for x in rows[i:i+20]]
+        src_strings = [str(x[0]).replace("_", " ") for x in rows[i : i + 20]]
+        dest_strings = [str(x[1]).replace("_", " ") for x in rows[i : i + 20]]
         correspondences = dict(zip(src_strings, dest_strings))
 
         if not i % 100 and i:
-            logging.info(f"Processed entry #{i} at time {datetime.datetime.now().time()}")
+            logging.info(
+                f"Processed entry #{i} at time {datetime.datetime.now().time()}"
+            )
 
         src_summaries = get_summaries(lang_src, "|".join(src_strings))
         if lang_src != lang_dest:
@@ -229,8 +238,10 @@ def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
                     jyut = jyut.replace("ﾠ", " ")
             if not jyutping_match or not jyut:
                 jyut = pinyin_jyutping_sentence.jyutping(
-                        trad.translate(WIDE_DIGIT_EQUIVALENT), tone_numbers=True, spaces=True
-                    )
+                    trad.translate(WIDE_DIGIT_EQUIVALENT),
+                    tone_numbers=True,
+                    spaces=True,
+                )
 
                 # If pinyin_jyutping_sentences cannot convert to Jyutping, use
                 # pycantonese to convert the character instead
@@ -241,7 +252,14 @@ def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
                         jyut = jyut.replace(char, char_jyutping)
 
             pin = (
-                " ".join(lazy_pinyin(simp, style=Style.TONE3, neutral_tone_with_five=True, v_to_u=True))
+                " ".join(
+                    lazy_pinyin(
+                        simp,
+                        style=Style.TONE3,
+                        neutral_tone_with_five=True,
+                        v_to_u=True,
+                    )
+                )
                 .lower()
                 .replace("ü", "u:")
             )
@@ -260,7 +278,9 @@ def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
             definition = objects.Definition(definition="\n".join(definition_components))
             freq = zipf_frequency(trad, "zh")
 
-            entry = objects.Entry(trad=trad, simp=simp, jyut=jyut, pin=pin, freq=freq, defs=[definition])
+            entry = objects.Entry(
+                trad=trad, simp=simp, jyut=jyut, pin=pin, freq=freq, defs=[definition]
+            )
             words[trad].append(entry)
 
 
@@ -280,7 +300,7 @@ if __name__ == "__main__":
                 "e.g. python3 -m wikipedia.parse wikipedia/developer/wikipedia.db "
                 "wikipedia/data/page.db wikipedia/data/langlinks.db zh-yue en Wikipedia WK 2024-01-01 "
                 '"Wikipedia is a free-content online encyclopedia, written and maintained '
-                'by a community of volunteers, collectively known as Wikipedians, through open '
+                "by a community of volunteers, collectively known as Wikipedians, through open "
                 'collaboration and the use of wiki-based editing system MediaWiki." '
                 '"Text is available under the Creative Commons Attribution-ShareAlike License 4.0."'
                 '"https://www.wikipedia.org/" "" "words"'
