@@ -81,8 +81,13 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
                         }
                     }
 
-                    definitions.emplace_back(definition["definition"].toString().toStdString(),
-                                             definition["label"].toString().toStdString(),
+                    definitions.emplace_back(definition["definition"]
+                                                 .toString()
+                                                 .replace("ﾠ", " ")
+                                                 .toStdString(),
+                                             definition["label"]
+                                                 .toString()
+                                                 .toStdString(),
                                              sentences);
                 }
 

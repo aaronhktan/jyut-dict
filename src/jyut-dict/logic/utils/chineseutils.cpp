@@ -16,8 +16,9 @@ namespace ChineseUtils {
 static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
 
 const static std::unordered_set<std::string> specialCharacters = {
-    ".", "。", ",", "，", "!",  "！", "?", "？", "%",  "－",
-    "…", "⋯",  ".", "·",  "\"", "“",  "”", "$",  "｜",
+    ".",  "。", ",",  "，", "!",  "！", "?",  "？", "%",  "－", "…",
+    "⋯",  ".",  "·",  "\"", "“",  "”",  "$",  "｜", "：", "(",  ")",
+    "１", "２", "３", "４", "５", "６", "７", "８", "９", "０",
 };
 
 const static std::unordered_map<std::string, std::string>
@@ -372,11 +373,6 @@ std::string compareStrings(const std::string &original,
             continue;
         }
 
-        if (std::find_if(currentCharacter.begin(), currentCharacter.end(), isalpha) != currentCharacter.end()) {
-            result += currentCharacter;
-            continue;
-        }
-
         result += Utils::SAME_CHARACTER_STRING;
     }
 
@@ -472,10 +468,14 @@ std::string convertJyutpingToYale(const std::string &jyutping,
         }
         Utils::split(jyutpingCopy, ' ', syllables);
     } else {
-        segmentJyutping(QString{jyutping.c_str()},
-                        syllables,
-                        /* removeSpecialCharacters */ false,
-                        /* removeGlobCharacters */ false);
+        bool valid_jyutping
+            = segmentJyutping(QString{jyutping.c_str()},
+                              syllables,
+                              /* removeSpecialCharacters */ false,
+                              /* removeGlobCharacters */ false);
+        if (!valid_jyutping) {
+            return "x";
+        }
     }
 
     std::vector<std::string> yale_syllables;
@@ -618,10 +618,13 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
         }
         Utils::split(jyutpingCopy, ' ', syllables);
     } else {
-        segmentJyutping(QString{jyutping.c_str()},
-                        syllables,
-                        /* removeSpecialCharacters */ false,
-                        /* removeGlobCharacters */ false);
+        bool validJyutping = segmentJyutping(QString{jyutping.c_str()},
+                                             syllables,
+                                             /* removeSpecialCharacters */ false,
+                                             /* removeGlobCharacters */ false);
+        if (!validJyutping) {
+            return "x";
+        }
     }
 
     std::vector<std::string> ipa_syllables;
