@@ -1,2 +1,4 @@
 jieba==0.42.1
+pinyin_jyutping_sentence==1.0
+pycantonese==3.4.0
 wordfreq==2.5.1

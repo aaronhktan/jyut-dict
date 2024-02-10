@@ -122,9 +122,16 @@ def parse_file(filename_traditional, filename_simplified_jyutping, entries):
         jyut = " ".join(simplified[index + trad_len : index + trad_len + jyut_len])
 
         pin = (
-            " ".join(lazy_pinyin(simp, style=Style.TONE3, neutral_tone_with_five=True))
+            " ".join(
+                lazy_pinyin(
+                    simp,
+                    style=Style.TONE3,
+                    neutral_tone_with_five=True,
+                    v_to_u=True,
+                )
+            )
             .lower()
-            .replace("v", "u:")
+            .replace("ü", "u:")
         )
 
         # Horrible data workaround 3:

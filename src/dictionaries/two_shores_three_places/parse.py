@@ -129,13 +129,18 @@ def parse_same_meaning_file(filename, words):
                         line[2].replace("　", " "), accented=False
                     )
                 else:
-                    pin = lazy_pinyin(
-                        simp,
-                        style=Style.TONE3,
-                        neutral_tone_with_five=True,
+                    pin = (
+                        " ".join(
+                            lazy_pinyin(
+                                simp,
+                                style=Style.TONE3,
+                                neutral_tone_with_five=True,
+                                v_to_u=True,
+                            )
+                        )
+                        .lower()
+                        .replace("ü", "u:")
                     )
-                    pin = " ".join(pin).lower()
-                    pin = pin.strip().replace("v", "u:")
                 jyut = pinyin_jyutping_sentence.jyutping(
                     trad, tone_numbers=True, spaces=True
                 )
@@ -164,16 +169,23 @@ def parse_same_word_file(filename, words):
 
         trad = line[0]
         simp = converter.convert(trad)
-        pin = lazy_pinyin(
-            simp,
-            style=Style.TONE3,
-            neutral_tone_with_five=True,
+        pin = (
+            " ".join(
+                lazy_pinyin(
+                    simp,
+                    style=Style.TONE3,
+                    neutral_tone_with_five=True,
+                    v_to_u=True,
+                )
+            )
+            .lower()
+            .replace("ü", "u:")
         )
-        pin = " ".join(pin).lower()
-        pin = pin.strip().replace("v", "u:")
         jyut = pinyin_jyutping_sentence.jyutping(trad, tone_numbers=True, spaces=True)
         freq = zipf_frequency(trad, "zh")
-        defs = [objects.DefinitionTuple("​".join(jieba.cut(line[1])), "臺陸用法和差異", [])]
+        defs = [
+            objects.DefinitionTuple("​".join(jieba.cut(line[1])), "臺陸用法和差異", [])
+        ]
 
         entry = objects.Entry(trad, simp, pin, jyut, freq=freq, defs=defs)
         words.add(entry)

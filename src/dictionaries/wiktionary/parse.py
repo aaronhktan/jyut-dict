@@ -517,10 +517,18 @@ def parse_file(filename, words):
                 pinyin_jyutping_sentence.jyutping(trad, tone_numbers=True, spaces=True)
             ]
         if not pinyin_list:
-            generated_pinyin = " ".join(
-                lazy_pinyin(simp, style=Style.TONE3, neutral_tone_with_five=True)
-            ).lower()
-            generated_pinyin = generated_pinyin.replace("v", "u:").replace("ü", "u:")
+            pin = (
+                " ".join(
+                    lazy_pinyin(
+                        generated_pinyin,
+                        style=Style.TONE3,
+                        neutral_tone_with_five=True,
+                        v_to_u=True,
+                    )
+                )
+                .lower()
+                .replace("ü", "u:")
+            )
             pinyin_list = [generated_pinyin]
 
         freq = zipf_frequency(trad, "zh")

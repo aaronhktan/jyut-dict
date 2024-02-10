@@ -451,15 +451,21 @@ def parse_file(filename, words):
                                 # "yuan2  ．  qin2  {   [  9 0 b a  ]   }  fu1  《  dong1 tang2 lao3  ．  di4 san1 zhe2  》  ：  「  zhong1 xiao4 shi4 li4 shen1 zhi1 ben3  ，  zhe4 qian2 cai2 shi4 tang3 lai2 zhi1 wu4  。  」"
                                 # Finally, change_pinyin_to_match_phrase() calls split() on that string, and it sees:
                                 # ['yuan2', '．', 'qin2', '{', '[', '9', '0', 'b', 'a', ']', '}', 'fu1', '《', 'dong1', 'tang2', 'lao3', '．', 'di4', 'san1', 'zhe2', '》', '：', '「', 'zhong1']
-                                example_pinyin_list = lazy_pinyin(
-                                    converter.convert(example_text),
-                                    style=Style.TONE3,
-                                    neutral_tone_with_five=True,
+                                example_pinyin_list = (
+                                    " ".join(
+                                        lazy_pinyin(
+                                            converter.convert(example_text),
+                                            style=Style.TONE3,
+                                            neutral_tone_with_five=True,
+                                            v_to_u=True,
+                                        )
+                                    )
+                                    .lower()
+                                    .replace("ü", "u:")
+                                    .split()
                                 )
                                 example_pinyin = []
                                 for p in example_pinyin_list:
-                                    if p != "UV":
-                                        p = p.replace("v", "u:")
                                     if (
                                         p.isnumeric()
                                         or not p[-1].isnumeric()

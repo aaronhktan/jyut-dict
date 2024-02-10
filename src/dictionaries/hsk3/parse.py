@@ -112,10 +112,18 @@ def parse_file(filename, entries):
                 label = ""
 
             trad = converter.convert(simp)
-            pin = " ".join(
-                lazy_pinyin(simp, style=Style.TONE3, neutral_tone_with_five=True)
-            ).lower()
-            pin = pin.strip().replace("v", "u:")
+            pin = (
+                " ".join(
+                    lazy_pinyin(
+                        simp,
+                        style=Style.TONE3,
+                        neutral_tone_with_five=True,
+                        v_to_u=True,
+                    )
+                )
+                .lower()
+                .replace("ü", "u:")
+            )
             jyut = pinyin_jyutping_sentence.jyutping(
                 trad, tone_numbers=True, spaces=True
             )

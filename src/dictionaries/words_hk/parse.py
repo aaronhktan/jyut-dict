@@ -199,9 +199,16 @@ def process_entry(line):
         trad = variant.split(":")[0]
         simp = converter.convert(trad)
         pin = (
-            " ".join(lazy_pinyin(simp, style=Style.TONE3, neutral_tone_with_five=True))
+            " ".join(
+                lazy_pinyin(
+                    simp,
+                    style=Style.TONE3,
+                    neutral_tone_with_five=True,
+                    v_to_u=True,
+                )
+            )
             .lower()
-            .replace("v", "u:")
+            .replace("ü", "u:")
         )
         freq = zipf_frequency(trad, "zh")
 
@@ -359,7 +366,9 @@ def process_entry(line):
         )
     if antonyms:
         definitions.append(
-            objects.Definition(definition="、".join(antonyms), label="反義詞", examples=[])
+            objects.Definition(
+                definition="、".join(antonyms), label="反義詞", examples=[]
+            )
         )
 
     # Assign definitions to each entry
