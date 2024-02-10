@@ -109,12 +109,18 @@ def parse_sentence_file(
                     simp = traditional_to_simplified_converter.convert(sentence)
                 pin = ""
                 if enable_pinyin:
-                    pin = " ".join(
-                        lazy_pinyin(
-                            simp, style=Style.TONE3, neutral_tone_with_five=True
+                    pin = (
+                        " ".join(
+                            lazy_pinyin(
+                                simp,
+                                style=Style.TONE3,
+                                neutral_tone_with_five=True,
+                                v_to_u=True,
+                            )
                         )
-                    ).lower()
-                    pin = pin.strip().replace("v", "u:")
+                        .lower()
+                        .replace("ü", "u:")
+                    )
                 jyut = ""
                 if enable_jyutping:
                     jyut = pinyin_jyutping_sentence.jyutping(

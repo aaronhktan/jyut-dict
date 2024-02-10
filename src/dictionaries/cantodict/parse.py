@@ -118,7 +118,9 @@ PARENTHESES_PRONUNCIATION_REGEX_PATTERN = re.compile(
     r"\(jyutping\)\s*(.*\d)[,|;]?\s*\(pinyin\)\s*(.*\d)"
 )
 # This one searches for something in the format [粵拼: dei6 haa62 | 漢語: di4 xia5]
-PIPE_PRONUNCIATION_REGEX_PATTERN = re.compile(r"粵拼:\s*(.*\d)\s(?:\|\s*漢語:\s*(.*))\]")
+PIPE_PRONUNCIATION_REGEX_PATTERN = re.compile(
+    r"粵拼:\s*(.*\d)\s(?:\|\s*漢語:\s*(.*))\]"
+)
 # This one searches for something in the format 粵拼: ne1 -- 拼音: ne
 DASHES_PRONUNCIATION_REGEX_PATTERN = re.compile(
     r"粵拼:\s*(.*\d)\s*(?:\-\-\s*拼音:\s*(.*))?"
@@ -328,9 +330,18 @@ def parse_word_file(file_name, words):
         # CantoDict also indicates tone sandhi in pinyin with *, but we don't support that either
         pin = LITERARY_PINYIN_READING_REGEX_PATTERN.sub("", pin)
         if not pin:
-            pin = " ".join(
-                lazy_pinyin(simp, style=Style.TONE3, neutral_tone_with_five=True)
-            ).lower()
+            pin = (
+                " ".join(
+                    lazy_pinyin(
+                        simp,
+                        style=Style.TONE3,
+                        neutral_tone_with_five=True,
+                        v_to_u=True,
+                    )
+                )
+                .lower()
+                .replace("ü", "u:")
+            )
         # Replace 'v' in Pinyin with the u: that CEDICT uses
         pin = pin.strip().replace("v", "u:")
         # Remove the zero-width spaces that sometimes show up

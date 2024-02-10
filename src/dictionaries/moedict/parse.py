@@ -275,10 +275,18 @@ def parse_file(filename, words):
                                 # "yuan2  ．  qin2  {   [  9 0 b a  ]   }  fu1  《  dong1 tang2 lao3  ．  di4 san1 zhe2  》  ：  「  zhong1 xiao4 shi4 li4 shen1 zhi1 ben3  ，  zhe4 qian2 cai2 shi4 tang3 lai2 zhi1 wu4  。  」"
                                 # Finally, change_pinyin_to_match_phrase() calls split() on that string, and it sees:
                                 # ['yuan2', '．', 'qin2', '{', '[', '9', '0', 'b', 'a', ']', '}', 'fu1', '《', 'dong1', 'tang2', 'lao3', '．', 'di4', 'san1', 'zhe2', '》', '：', '「', 'zhong1']
-                                example_pinyin_list = lazy_pinyin(
-                                    converter.convert(example_text),
-                                    style=Style.TONE3,
-                                    neutral_tone_with_five=True,
+                                example_pinyin_list = (
+                                    " ".join(
+                                        lazy_pinyin(
+                                            converter.convert(example_text),
+                                            style=Style.TONE3,
+                                            neutral_tone_with_five=True,
+                                            v_to_u=True,
+                                        )
+                                    )
+                                    .lower()
+                                    .replace("ü", "u:")
+                                    .split()
                                 )
                                 example_pinyin = []
                                 for item in example_pinyin_list:
@@ -289,9 +297,6 @@ def parse_file(filename, words):
                                 example_pinyin = " ".join(example_pinyin).lower()
                                 example_pinyin = example_pinyin.translate(
                                     PUNCTUATION_TABLE
-                                )
-                                example_pinyin = example_pinyin.strip().replace(
-                                    "v", "u:"
                                 )
 
                                 # Since the pinyin returned by lazy_pinyin doesn't always match the pinyin
@@ -343,10 +348,18 @@ def parse_file(filename, words):
                         for quote in definition["quote"]:
                             quote_text = re.sub(WHITESPACE_REGEX_PATTERN, "", quote)
 
-                            quote_pinyin_list = lazy_pinyin(
-                                converter.convert(quote_text),
-                                style=Style.TONE3,
-                                neutral_tone_with_five=True,
+                            quote_pinyin_list = (
+                                " ".join(
+                                    lazy_pinyin(
+                                        converter.convert(example_text),
+                                        style=Style.TONE3,
+                                        neutral_tone_with_five=True,
+                                        v_to_u=True,
+                                    )
+                                )
+                                .lower()
+                                .replace("ü", "u:")
+                                .split()
                             )
                             quote_pinyin = []
                             for item in quote_pinyin_list:
@@ -356,7 +369,6 @@ def parse_file(filename, words):
                                     quote_pinyin.append(item)
                             quote_pinyin = " ".join(quote_pinyin).lower()
                             quote_pinyin = quote_pinyin.translate(PUNCTUATION_TABLE)
-                            quote_pinyin = quote_pinyin.strip().replace("v", "u:")
 
                             phrase_pinyin = pin
                             phrase_pinyin = re.sub(

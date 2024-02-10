@@ -152,9 +152,16 @@ def parse_word_file(file_name, words):
 
         # Automatically generate pinyin
         pin = (
-            " ".join(lazy_pinyin(simp, style=Style.TONE3, neutral_tone_with_five=True))
+            " ".join(
+                lazy_pinyin(
+                    simp,
+                    style=Style.TONE3,
+                    neutral_tone_with_five=True,
+                    v_to_u=True,
+                )
+            )
             .lower()
-            .replace("v", "u:")
+            .replace("ü", "u:")
         )
 
         # Extract the meanings

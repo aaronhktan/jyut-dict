@@ -110,13 +110,18 @@ def parse_file(filename, words):
             trad = unicodedata.normalize("NFKD", trad)
             simp = converter.convert(trad)
 
-            pin = lazy_pinyin(
-                simp,
-                style=Style.TONE3,
-                neutral_tone_with_five=True,
+            pin = (
+                " ".join(
+                    lazy_pinyin(
+                        simp,
+                        style=Style.TONE3,
+                        neutral_tone_with_five=True,
+                        v_to_u=True,
+                    )
+                )
+                .lower()
+                .replace("ü", "u:")
             )
-            pin = " ".join(pin).lower()
-            pin = pin.strip().replace("v", "u:")
             jyut = row["粵拼讀音"]
 
             freq = zipf_frequency(trad, "zh")
@@ -129,7 +134,9 @@ def parse_file(filename, words):
                 for definition in definitions:
                     defs.append(objects.DefinitionTuple(definition, "釋義", []))
             if row["(輔助檢索用異體)"]:
-                defs.append(objects.DefinitionTuple(row["(輔助檢索用異體)"], "異體", []))
+                defs.append(
+                    objects.DefinitionTuple(row["(輔助檢索用異體)"], "異體", [])
+                )
 
             if not defs:
                 defs.append(objects.DefinitionTuple("-", "", []))
@@ -141,13 +148,18 @@ def parse_file(filename, words):
                 trad = variant
                 trad = unicodedata.normalize("NFKD", trad)
                 simp = converter.convert(trad)
-                pin = lazy_pinyin(
-                    simp,
-                    style=Style.TONE3,
-                    neutral_tone_with_five=True,
+                pin = (
+                    " ".join(
+                        lazy_pinyin(
+                            simp,
+                            style=Style.TONE3,
+                            neutral_tone_with_five=True,
+                            v_to_u=True,
+                        )
+                    )
+                    .lower()
+                    .replace("ü", "u:")
                 )
-                pin = " ".join(pin).lower()
-                pin = pin.strip().replace("v", "u:")
                 freq = zipf_frequency(trad, "zh")
                 entry = objects.Entry(
                     variant, simp, pin, jyut, freq=freq, defs=copy.deepcopy(defs)

@@ -407,10 +407,11 @@ def parse_file(filename, words):
                                     parsed[0][1],
                                     style=Style.TONE3,
                                     neutral_tone_with_five=True,
+                                    v_to_u=True,
                                 )
                             )
                             .lower()
-                            .replace("v", "u:")
+                            .replace("ü", "u:")
                         )
                         variants = parsed[1:]
                     elif parsed_type == Type.POS:
@@ -744,10 +745,11 @@ def parse_file(filename, words):
                                 simplified,
                                 style=Style.TONE3,
                                 neutral_tone_with_five=True,
+                                v_to_u=True,
                             )
                         )
                         .lower()
-                        .replace("v", "u:")
+                        .replace("ü", "u:")
                     )
                     variant_entry.add_freq(zipf_frequency(traditional, "zh"))
                     words[variant_entry.traditional].append(variant_entry)
