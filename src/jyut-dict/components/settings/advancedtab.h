@@ -12,6 +12,7 @@
 #include <QLabel>
 #include <QProgressDialog>
 #include <QPushButton>
+#include <QRadioButton>
 #include <QSettings>
 #include <QTranslator>
 #include <QWidget>
@@ -37,6 +38,8 @@ private:
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     void initializeForceDarkModeCheckbox(QCheckBox &checkbox);
 #endif
+    void initializeCantoneseTTSWidget(QWidget &widget);
+    void initializeMandarinTTSWidget(QWidget &widget);
     void initializeLanguageCombobox(QComboBox &combobox);
     void initializeResetButton(QPushButton &resetButton);
 
@@ -45,6 +48,8 @@ private:
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     void setForceDarkModeCheckboxDefault(QCheckBox &checkbox);
 #endif
+    void setCantoneseTTSWidgetDefault(QWidget &widget);
+    void setMandarinTTSWidgetDefault(QWidget &widget);
 
     void resetSettings(QSettings &settings);
 
@@ -71,6 +76,21 @@ private:
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     QCheckBox *_forceDarkModeCheckbox;
 #endif
+
+    QWidget *_cantoneseTTSWidget;
+    QLayout *_cantoneseTTSLayout;
+    QRadioButton *_useCantoneseQtTTSBackend;
+    QRadioButton *_useCantoneseGoogleOfflineSyllableTTSBackend;
+    QRadioButton *_useYue1Voice;
+    QRadioButton *_useYue2Voice;
+
+    QWidget *_mandarinTTSWidget;
+    QLayout *_mandarinTTSLayout;
+    QRadioButton *_useMandarinQtTTSBackend;
+    QRadioButton *_useMandarinGoogleOfflineSyllableTTSBackend;
+    QRadioButton *_useCmn1Voice;
+    QRadioButton *_useCmn2Voice;
+
     QPushButton *_exportDictionaryDatabaseButton;
     QPushButton *_exportUserDatabaseButton;
     QPushButton *_restoreBackedUpDictionaryDatabaseButton;

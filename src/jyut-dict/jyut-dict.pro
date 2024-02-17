@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network sql svg
+QT       += core gui network sql svg multimedia
 QMAKE_MACOSX_DEPLOYMENT_TARGET = 11.0
 
 equals(QT_MAJOR_VERSION, 5):!lessThan(QT_MINOR_VERSION, 11) {

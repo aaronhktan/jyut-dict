@@ -43,6 +43,10 @@ int main(int argc, char *argv[])
         "conflictingDictionaryNamesMetadata");
     qRegisterMetaType<Settings::InterfaceSize>();
     qRegisterMetaTypeStreamOperators<Settings::InterfaceSize>();
+    qRegisterMetaType<SpeakerBackend>();
+    qRegisterMetaTypeStreamOperators<SpeakerBackend>();
+    qRegisterMetaType<Voice>();
+    qRegisterMetaTypeStreamOperators<Voice>();
 
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);

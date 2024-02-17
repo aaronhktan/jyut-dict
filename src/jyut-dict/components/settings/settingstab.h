@@ -15,8 +15,6 @@
 #include <QWidget>
 
 #include <memory>
-#include <string>
-#include <vector>
 
 // The settings tab displays settings to a user.
 
