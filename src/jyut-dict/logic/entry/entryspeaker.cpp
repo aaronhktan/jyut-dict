@@ -121,18 +121,18 @@ int EntrySpeaker::speak(const QLocale::Language &language,
                         const QLocale::Country &country,
                         const QString &string,
                         const SpeakerBackend backend,
-                        const Voice voice) const
+                        const SpeakerVoice voice) const
 {
     if (string.isEmpty()) {
         return -1;
     }
 
-    if ((backend == SpeakerBackend::QT_TTS) && (voice != Voice::NONE)) {
+    if ((backend == SpeakerBackend::QT_TTS) && (voice != SpeakerVoice::NONE)) {
         // Setting voices is not supported using Qt TTS
         return -1;
     }
 
-    if ((backend != SpeakerBackend::QT_TTS) && (voice == Voice::NONE)) {
+    if ((backend != SpeakerBackend::QT_TTS) && (voice == SpeakerVoice::NONE)) {
         // Backends other than Qt must specify a voice name
         return -1;
     }
@@ -183,7 +183,7 @@ int EntrySpeaker::speak(const QLocale::Language &language,
 
 int EntrySpeaker::speakCantonese(const QString &string,
                                  const SpeakerBackend backend,
-                                 const Voice voice) const
+                                 const SpeakerVoice voice) const
 {
 #ifdef Q_OS_LINUX
     return speak(QLocale::Cantonese, QLocale::HongKong, string);
@@ -212,14 +212,14 @@ int EntrySpeaker::speakCantonese(const QString &string,
 
 int EntrySpeaker::speakTaiwaneseMandarin(const QString &string,
                                          const SpeakerBackend backend,
-                                         const Voice voice) const
+                                         const SpeakerVoice voice) const
 {
     return speak(QLocale::Chinese, QLocale::Taiwan, string, backend, voice);
 }
 
 int EntrySpeaker::speakMainlandMandarin(const QString &string,
                                         const SpeakerBackend backend,
-                                        const Voice voice) const
+                                        const SpeakerVoice voice) const
 {
     return speak(QLocale::Chinese, QLocale::China, string, backend, voice);
 }

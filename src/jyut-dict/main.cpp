@@ -45,8 +45,8 @@ int main(int argc, char *argv[])
     qRegisterMetaTypeStreamOperators<Settings::InterfaceSize>();
     qRegisterMetaType<SpeakerBackend>();
     qRegisterMetaTypeStreamOperators<SpeakerBackend>();
-    qRegisterMetaType<Voice>();
-    qRegisterMetaTypeStreamOperators<Voice>();
+    qRegisterMetaType<SpeakerVoice>();
+    qRegisterMetaTypeStreamOperators<SpeakerVoice>();
 
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);

@@ -81,15 +81,13 @@ private:
     QLayout *_cantoneseTTSLayout;
     QRadioButton *_useCantoneseQtTTSBackend;
     QRadioButton *_useCantoneseGoogleOfflineSyllableTTSBackend;
-    QRadioButton *_useYue1Voice;
-    QRadioButton *_useYue2Voice;
 
     QWidget *_mandarinTTSWidget;
     QLayout *_mandarinTTSLayout;
     QRadioButton *_useMandarinQtTTSBackend;
     QRadioButton *_useMandarinGoogleOfflineSyllableTTSBackend;
-    QRadioButton *_useCmn1Voice;
-    QRadioButton *_useCmn2Voice;
+
+    QLabel *_ttsExplainer;
 
     QPushButton *_exportDictionaryDatabaseButton;
     QPushButton *_exportUserDatabaseButton;

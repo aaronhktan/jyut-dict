@@ -12,6 +12,7 @@
 #elif defined(Q_OS_WIN)
 #include "logic/utils/utils_windows.h"
 #endif
+#include "logic/utils/utils_qt.h"
 
 #include <QApplication>
 #include <QFileDialog>
@@ -83,7 +84,7 @@ void AdvancedTab::setupUI()
     _ttsDivider->setFixedHeight(1);
 
     _cantoneseTTSWidget = new QWidget{this};
-    _cantoneseTTSLayout = new QHBoxLayout{_cantoneseTTSWidget};
+    _cantoneseTTSLayout = new QGridLayout{_cantoneseTTSWidget};
     _cantoneseTTSLayout->setContentsMargins(0, 0, 0, 0);
     _useCantoneseQtTTSBackend = new QRadioButton{this};
     _useCantoneseQtTTSBackend->setProperty("data",
@@ -94,14 +95,10 @@ void AdvancedTab::setupUI()
         ->setProperty("data",
                       QVariant::fromValue(
                           SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS));
-    _useYue1Voice = new QRadioButton{this};
-    _useYue1Voice->setProperty("data", QVariant::fromValue(Voice::YUE_1));
-    _useYue2Voice = new QRadioButton{this};
-    _useYue2Voice->setProperty("data", QVariant::fromValue(Voice::YUE_2));
     initializeCantoneseTTSWidget(*_cantoneseTTSWidget);
 
     _mandarinTTSWidget = new QWidget{this};
-    _mandarinTTSLayout = new QHBoxLayout{_mandarinTTSWidget};
+    _mandarinTTSLayout = new QGridLayout{_mandarinTTSWidget};
     _mandarinTTSLayout->setContentsMargins(0, 0, 0, 0);
     _useMandarinQtTTSBackend = new QRadioButton{this};
     _useMandarinQtTTSBackend->setProperty("data",
@@ -112,10 +109,9 @@ void AdvancedTab::setupUI()
         ->setProperty("data",
                       QVariant::fromValue(
                           SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS));
-    _useCmn1Voice = new QRadioButton{this};
-    _useCmn1Voice->setProperty("data", QVariant::fromValue(Voice::CMN_1));
-    _useCmn2Voice = new QRadioButton{this};
-    _useCmn2Voice->setProperty("data", QVariant::fromValue(Voice::CMN_2));
+    initializeMandarinTTSWidget(*_mandarinTTSWidget);
+
+    _ttsExplainer = new QLabel{this};
 
     QFrame *_exportDivider = new QFrame{this};
     _exportDivider->setObjectName("divider");
@@ -185,6 +181,7 @@ void AdvancedTab::setupUI()
     _tabLayout->addRow(_ttsDivider);
     _tabLayout->addRow(" ", _cantoneseTTSWidget);
     _tabLayout->addRow(" ", _mandarinTTSWidget);
+    _tabLayout->addRow(" ", _ttsExplainer);
     _tabLayout->addRow(_exportDivider);
     _tabLayout->addRow(" ", _exportDictionaryDatabaseButton);
     _tabLayout->addRow(" ", _exportUserDatabaseButton);
@@ -229,6 +226,18 @@ void AdvancedTab::translateUI()
         ->setText(tr("Mandarin text-to-speech:"));
     _useMandarinQtTTSBackend->setText(tr("Qt"));
     _useMandarinGoogleOfflineSyllableTTSBackend->setText(tr("Google"));
+
+    QColor backgroundColour = Utils::isDarkMode()
+                                  ? QColor{LABEL_TEXT_COLOUR_DARK_R,
+                                           LABEL_TEXT_COLOUR_DARK_G,
+                                           LABEL_TEXT_COLOUR_DARK_B}
+                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
+                                           LABEL_TEXT_COLOUR_LIGHT_R,
+                                           LABEL_TEXT_COLOUR_LIGHT_R};
+    _ttsExplainer->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                       Strings::TTS_EXPLAINER)
+                               .arg(backgroundColour.name()));
+
     static_cast<QLabel *>(
         _tabLayout->labelForField(_exportDictionaryDatabaseButton))
         ->setText(tr("Export dictionaries file:"));
@@ -319,15 +328,18 @@ void AdvancedTab::initializeForceDarkModeCheckbox(QCheckBox &checkbox)
 
 void AdvancedTab::initializeCantoneseTTSWidget(QWidget &widget)
 {
-    widget.layout()->addWidget(_useCantoneseQtTTSBackend);
-    widget.layout()->addWidget(_useCantoneseGoogleOfflineSyllableTTSBackend);
+    static_cast<QGridLayout *>(widget.layout())
+        ->addWidget(_useCantoneseQtTTSBackend, 0, 0, 1, 1);
+    static_cast<QGridLayout *>(widget.layout())
+        ->addWidget(_useCantoneseGoogleOfflineSyllableTTSBackend, 0, 1, 1, 1);
 
     connect(_useCantoneseQtTTSBackend, &QRadioButton::clicked, this, [&]() {
         _settings->setValue("Advanced/CantoneseSpeakerBackend",
                             QVariant::fromValue<SpeakerBackend>(
                                 SpeakerBackend::QT_TTS));
         _settings->setValue("Advanced/CantoneseSpeakerVoice",
-                            QVariant::fromValue<Voice>(Voice::NONE));
+                            QVariant::fromValue<SpeakerVoice>(
+                                SpeakerVoice::NONE));
         _settings->sync();
     });
 
@@ -340,11 +352,46 @@ void AdvancedTab::initializeCantoneseTTSWidget(QWidget &widget)
                                QVariant::fromValue<SpeakerBackend>(
                                    SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS));
                 _settings->setValue("Advanced/CantoneseSpeakerVoice",
-                                    QVariant::fromValue<Voice>(Voice::YUE_1));
+                                    QVariant::fromValue<SpeakerVoice>(
+                                        SpeakerVoice::YUE_1));
                 _settings->sync();
             });
 
     setCantoneseTTSWidgetDefault(widget);
+}
+
+void AdvancedTab::initializeMandarinTTSWidget(QWidget &widget)
+{
+    static_cast<QGridLayout *>(widget.layout())
+        ->addWidget(_useMandarinQtTTSBackend, 0, 0, 1, 1);
+    static_cast<QGridLayout *>(widget.layout())
+        ->addWidget(_useMandarinGoogleOfflineSyllableTTSBackend, 0, 1, 1, 1);
+
+    connect(_useMandarinQtTTSBackend, &QRadioButton::clicked, this, [&]() {
+        _settings->setValue("Advanced/MandarinSpeakerBackend",
+                            QVariant::fromValue<SpeakerBackend>(
+                                SpeakerBackend::QT_TTS));
+        _settings->setValue("Advanced/MandarinSpeakerVoice",
+                            QVariant::fromValue<SpeakerVoice>(
+                                SpeakerVoice::NONE));
+        _settings->sync();
+    });
+
+    connect(_useMandarinGoogleOfflineSyllableTTSBackend,
+            &QRadioButton::clicked,
+            this,
+            [&]() {
+                _settings
+                    ->setValue("Advanced/MandarinSpeakerBackend",
+                               QVariant::fromValue<SpeakerBackend>(
+                                   SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS));
+                _settings->setValue("Advanced/MandarinSpeakerVoice",
+                                    QVariant::fromValue<SpeakerVoice>(
+                                        SpeakerVoice::CMN_1));
+                _settings->sync();
+            });
+
+    setMandarinTTSWidgetDefault(widget);
 }
 
 void AdvancedTab::initializeLanguageCombobox(QComboBox &combobox)
@@ -438,7 +485,26 @@ void AdvancedTab::setCantoneseTTSWidgetDefault(QWidget &widget)
             // Makes the button selection show up correctly on macOS
             button->setDown(true);
 #endif
-            break;
+        }
+    }
+}
+
+void AdvancedTab::setMandarinTTSWidgetDefault(QWidget &widget)
+{
+    SpeakerBackend backend = Settings::getSettings()
+                                 ->value("Advanced/MandarinSpeakerBackend",
+                                         QVariant::fromValue(
+                                             SpeakerBackend::QT_TTS))
+                                 .value<SpeakerBackend>();
+
+    QList<QRadioButton *> buttons = widget.findChildren<QRadioButton *>();
+    foreach (const auto &button, buttons) {
+        if (button->property("data").value<SpeakerBackend>() == backend) {
+            button->click();
+#ifdef Q_OS_MAC
+            // Makes the button selection show up correctly on macOS
+            button->setDown(true);
+#endif
         }
     }
 }

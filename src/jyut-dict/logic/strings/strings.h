@@ -121,6 +121,12 @@ constexpr auto LEARN_MANDARIN_IPA_URL = QT_TRANSLATE_NOOP(
     "IPA_chart_trans/pdfs/JIPA_2011_[2007]_zho.pdf style=\"color: %1; "
     "text-decoration: none\">Learn Mandarin IPA →</a>");
 
+constexpr auto TTS_EXPLAINER = QT_TRANSLATE_NOOP(
+    "strings",
+    "<p style=\"color: %1;\">Google text-to-speech is a collection of MP3 "
+    "files.<br>No Internet connection is required; no data is sent to "
+    "Google.</p>");
+
 constexpr auto ENG_STRING = QT_TRANSLATE_NOOP("strings", "English");
 constexpr auto FRA_STRING = QT_TRANSLATE_NOOP("strings", "French");
 constexpr auto DEU_STRING = QT_TRANSLATE_NOOP("strings", "German");

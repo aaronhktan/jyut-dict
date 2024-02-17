@@ -150,10 +150,10 @@ void EntryHeaderWidget::translateUI()
                                              QVariant::fromValue(
                                                  SpeakerBackend::QT_TTS))
                                      .value<SpeakerBackend>();
-        Voice voice = Settings::getSettings()
-                          ->value("Advanced/CantoneseSpeakerVoice",
-                                  QVariant::fromValue(Voice::NONE))
-                          .value<Voice>();
+        SpeakerVoice voice = Settings::getSettings()
+                                 ->value("Advanced/CantoneseSpeakerVoice",
+                                         QVariant::fromValue(SpeakerVoice::NONE))
+                                 .value<SpeakerVoice>();
 #ifdef Q_OS_MAC
         if (!_speaker->speakCantonese(_jyutping, backend, voice)) {
             return;
@@ -181,10 +181,10 @@ void EntryHeaderWidget::translateUI()
                                              QVariant::fromValue(
                                                  SpeakerBackend::QT_TTS))
                                      .value<SpeakerBackend>();
-        Voice voice = Settings::getSettings()
-                          ->value("Advanced/MandarinSpeakerVoice",
-                                  QVariant::fromValue(Voice::NONE))
-                          .value<Voice>();
+        SpeakerVoice voice = Settings::getSettings()
+                                 ->value("Advanced/MandarinSpeakerVoice",
+                                         QVariant::fromValue(SpeakerVoice::NONE))
+                                 .value<SpeakerVoice>();
         connect(_mandarinTTS, &QPushButton::clicked, this, [=]() {
 #ifdef Q_OS_MAC
             if (!_speaker->speakTaiwaneseMandarin(_pinyin, backend, voice)) {
@@ -212,10 +212,11 @@ void EntryHeaderWidget::translateUI()
                       ->value("Advanced/MandarinSpeakerBackend",
                               QVariant::fromValue(SpeakerBackend::QT_TTS))
                       .value<SpeakerBackend>();
-            Voice voice = Settings::getSettings()
-                              ->value("Advanced/MandarinSpeakerVoice",
-                                      QVariant::fromValue(Voice::NONE))
-                              .value<Voice>();
+            SpeakerVoice voice = Settings::getSettings()
+                                     ->value("Advanced/MandarinSpeakerVoice",
+                                             QVariant::fromValue(
+                                                 SpeakerVoice::NONE))
+                                     .value<SpeakerVoice>();
 #ifdef Q_OS_MAC
             if (!_speaker->speakMainlandMandarin(_pinyin, backend, voice)) {
                 return;

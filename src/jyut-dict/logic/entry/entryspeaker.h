@@ -14,7 +14,9 @@ enum class SpeakerBackend : int {
     GOOGLE_OFFLINE_SYLLABLE_TTS = 10,
 };
 
-enum class Voice : int {
+// This enumeration is not currently being exposed via the UI,
+// but is defined for experimentation and future expansion
+enum class SpeakerVoice : int {
     NONE,
 
     YUE_1 = 10,
@@ -40,19 +42,19 @@ public:
               const QLocale::Country &country,
               const QString &string,
               const SpeakerBackend backend = SpeakerBackend::QT_TTS,
-              const Voice voiceName = Voice::NONE) const;
+              const SpeakerVoice voiceName = SpeakerVoice::NONE) const;
 
     int speakCantonese(const QString &string,
                        const SpeakerBackend backend = SpeakerBackend::QT_TTS,
-                       const Voice voiceName = Voice::NONE) const;
-    int speakTaiwaneseMandarin(const QString &string,
-                               const SpeakerBackend backend
-                               = SpeakerBackend::QT_TTS,
-                               const Voice voiceName = Voice::NONE) const;
-    int speakMainlandMandarin(const QString &string,
-                              const SpeakerBackend backend
-                              = SpeakerBackend::QT_TTS,
-                              const Voice voiceName = Voice::NONE) const;
+                       const SpeakerVoice voiceName = SpeakerVoice::NONE) const;
+    int speakTaiwaneseMandarin(
+        const QString &string,
+        const SpeakerBackend backend = SpeakerBackend::QT_TTS,
+        const SpeakerVoice voiceName = SpeakerVoice::NONE) const;
+    int speakMainlandMandarin(
+        const QString &string,
+        const SpeakerBackend backend = SpeakerBackend::QT_TTS,
+        const SpeakerVoice voiceName = SpeakerVoice::NONE) const;
 
 private:
     QVector<QVoice> getListOfVoices(const QLocale::Language &language,
@@ -81,15 +83,15 @@ private:
         {SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS, "Google"},
     };
 
-    QMap<Voice, QString> _voiceNames{
-        {Voice::NONE, ""},
-        {Voice::YUE_1, "YUE_1"},
-        {Voice::YUE_2, "YUE_2"},
+    QMap<SpeakerVoice, QString> _voiceNames{
+        {SpeakerVoice::NONE, ""},
+        {SpeakerVoice::YUE_1, "YUE_1"},
+        {SpeakerVoice::YUE_2, "YUE_2"},
     };
 };
 
 Q_DECLARE_METATYPE(SpeakerBackend);
-Q_DECLARE_METATYPE(Voice);
+Q_DECLARE_METATYPE(SpeakerVoice);
 
 #endif
 #endif // ENTRYSPEAKER_H
