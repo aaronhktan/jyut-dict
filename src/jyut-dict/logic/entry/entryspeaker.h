@@ -87,6 +87,8 @@ private:
         {SpeakerVoice::NONE, ""},
         {SpeakerVoice::YUE_1, "YUE_1"},
         {SpeakerVoice::YUE_2, "YUE_2"},
+        {SpeakerVoice::CMN_1, "CMN_1"},
+        {SpeakerVoice::CMN_2, "CMN_2"},
     };
 };
 

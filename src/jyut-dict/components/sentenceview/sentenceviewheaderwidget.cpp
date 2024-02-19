@@ -168,8 +168,28 @@ void SentenceViewHeaderWidget::translateUI(void)
 
     disconnect(_cantoneseTTS, nullptr, nullptr, nullptr);
     connect(_cantoneseTTS, &QPushButton::clicked, this, [=]() {
-        if (!_speaker->speakCantonese(_chinese)) {
-            return;
+        SpeakerBackend backend = Settings::getSettings()
+                                     ->value("Advanced/CantoneseSpeakerBackend",
+                                             QVariant::fromValue(
+                                                 SpeakerBackend::QT_TTS))
+                                     .value<SpeakerBackend>();
+        SpeakerVoice voice = Settings::getSettings()
+                                 ->value("Advanced/CantoneseSpeakerVoice",
+                                         QVariant::fromValue(SpeakerVoice::NONE))
+                                 .value<SpeakerVoice>();
+        if ((backend != SpeakerBackend::QT_TTS)) {
+            QString transcription;
+            std::remove_copy_if(_jyutping.begin(),
+                                _jyutping.end(),
+                                std::back_inserter(transcription),
+                                [](QChar c) { return c.isPunct(); });
+            if (!_speaker->speakCantonese(transcription, backend, voice)) {
+                return;
+            }
+        } else {
+            if (!_speaker->speakCantonese(_chinese, backend, voice)) {
+                return;
+            }
         }
         showError(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                               Strings::YUE_ERROR_STRING),
@@ -181,8 +201,24 @@ void SentenceViewHeaderWidget::translateUI(void)
     disconnect(_mandarinTTS, nullptr, nullptr, nullptr);
     if (Settings::getCurrentLocale().country() == QLocale::Taiwan) {
         connect(_mandarinTTS, &QPushButton::clicked, this, [=]() {
-            if (!_speaker->speakTaiwaneseMandarin(_chinese)) {
-                return;
+            SpeakerBackend backend
+                = Settings::getSettings()
+                      ->value("Advanced/MandarinSpeakerBackend",
+                              QVariant::fromValue(SpeakerBackend::QT_TTS))
+                      .value<SpeakerBackend>();
+            SpeakerVoice voice = Settings::getSettings()
+                                     ->value("Advanced/MandarinSpeakerVoice",
+                                             QVariant::fromValue(
+                                                 SpeakerVoice::NONE))
+                                     .value<SpeakerVoice>();
+            if ((backend != SpeakerBackend::QT_TTS)) {
+                if (!_speaker->speakTaiwaneseMandarin(_pinyin, backend, voice)) {
+                    return;
+                }
+            } else {
+                if (!_speaker->speakTaiwaneseMandarin(_chinese, backend, voice)) {
+                    return;
+                }
             }
             showError(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                                   Strings::ZH_TW_ERROR_STRING),
@@ -192,8 +228,24 @@ void SentenceViewHeaderWidget::translateUI(void)
         });
     } else {
         connect(_mandarinTTS, &QPushButton::clicked, this, [=]() {
-            if (!_speaker->speakMainlandMandarin(_chinese)) {
-                return;
+            SpeakerBackend backend
+                = Settings::getSettings()
+                      ->value("Advanced/MandarinSpeakerBackend",
+                              QVariant::fromValue(SpeakerBackend::QT_TTS))
+                      .value<SpeakerBackend>();
+            SpeakerVoice voice = Settings::getSettings()
+                                     ->value("Advanced/MandarinSpeakerVoice",
+                                             QVariant::fromValue(
+                                                 SpeakerVoice::NONE))
+                                     .value<SpeakerVoice>();
+            if ((backend != SpeakerBackend::QT_TTS)) {
+                if (!_speaker->speakMainlandMandarin(_pinyin, backend, voice)) {
+                    return;
+                }
+            } else {
+                if (!_speaker->speakMainlandMandarin(_chinese, backend, voice)) {
+                    return;
+                }
             }
             showError(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                                   Strings::ZH_CN_ERROR_STRING),

@@ -1,6 +1,7 @@
 #include "advancedtab.h"
 
 #include "dialogs/resetsettingsdialog.h"
+#include "kzip.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/entry/entryspeaker.h"
 #include "logic/settings/settingsutils.h"
@@ -13,6 +14,8 @@
 #include "logic/utils/utils_windows.h"
 #endif
 #include "logic/utils/utils_qt.h"
+
+#include "kcompressiondevice.h"
 
 #include <QApplication>
 #include <QFileDialog>
@@ -491,6 +494,9 @@ void AdvancedTab::setCantoneseTTSWidgetDefault(QWidget &widget)
 
 void AdvancedTab::setMandarinTTSWidgetDefault(QWidget &widget)
 {
+    KZip zip{"/Users/aaron/Downloads/quazip-1.4.zip"};
+    zip.open(QIODevice::ReadOnly);
+    zip.directory()->copyTo("/Users/aaron/Downloads/");
     SpeakerBackend backend = Settings::getSettings()
                                  ->value("Advanced/MandarinSpeakerBackend",
                                          QVariant::fromValue(

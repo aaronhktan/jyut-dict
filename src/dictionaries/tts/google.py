@@ -5,18 +5,48 @@ import logging
 import os
 import re
 import sqlite3
+import subprocess
 import sys
 
-JYUTPING_REGEX = re.compile(r"(\w*?)(\d)")
 TTS_URL = "https://texttospeech.googleapis.com/v1/text:synthesize"
+
+language_settings = {
+    "yue-HK": {
+        "alphabet": "jyutping",
+        "languageCode": "yue-HK",
+        "regex": re.compile(r"(\w*?)(\d)"),
+        "name": "yue-HK-Standard-C",
+    },
+    "cmn-CN": {
+        "alphabet": "pinyin",
+        "languageCode": "cmn-Hans-CN",
+        "regex": re.compile(r"(\w*?)(\d)"),
+        "name": "cmn-CN-Standard-C",
+    },
+    "cmn-TW": {
+        "alphabet": "pinyin",
+        "languageCode": "cmn-Hant-TW",
+        "regex": re.compile(r"(\w*?)(\d)"),
+        "name": "cmn-TW-Standard-B",
+    },
+}
 
 
 def fetch_key():
-    return os.environ["GCLOUD_KEY"]
+    key = (
+        subprocess.Popen(
+            ["gcloud auth print-access-token"], shell=True, stdout=subprocess.PIPE
+        )
+        .stdout.read()
+        .strip()
+        .decode("utf-8")
+    )
+    logging.info(f"Fetched new key: {key}")
+    return key
 
 
-def fetch_pronunciation(output_path, syllable, key):
-    match = JYUTPING_REGEX.fullmatch(syllable)
+def fetch_pronunciation(output_path, syllable, lang, key):
+    match = language_settings[lang]["regex"].fullmatch(syllable)
 
     if not match:
         logging.debug(f"Ignoring {syllable}")
@@ -39,7 +69,7 @@ def fetch_pronunciation(output_path, syllable, key):
 
     ssml = (
         "<speak>"
-        f'<phoneme alphabet="jyutping" ph="{syllable}">饭</phoneme>'
+        f"<phoneme alphabet=\"{language_settings[lang]['alphabet']}\" ph=\"{syllable}\">饭</phoneme>"
         "</speak>"
     )
 
@@ -49,16 +79,15 @@ def fetch_pronunciation(output_path, syllable, key):
         f"    'ssml': '{ssml}'"
         "  },"
         "  'voice': {"
-        "    'languageCode': 'yue-HK',"
-        "    'name': 'yue-HK-Standard-C',"
+        f"    'languageCode': '{language_settings[lang]['languageCode']}',"
+        f"    'name': '{language_settings[lang]['name']}'"
         "  },"
         "  'audioConfig': {"
         "    'audioEncoding': 'MP3',"
         "    'effectsProfileId': ["
         "      'large-home-entertainment-class-device'"
         "    ],"
-        "    'speakingRate': 0.8,"
-        "    'pitch': 4.5,"
+        "    'speakingRate': 0.8"
         "  }"
         "}"
     )
@@ -84,15 +113,33 @@ def fetch_pronunciation(output_path, syllable, key):
 
 if __name__ == "__main__":
     logging.basicConfig(level="INFO")
+
+    if len(sys.argv) != 4:
+        print(
+            (
+                "Usage: python3 google.py <database filename> "
+                "<output folder> <language code>"
+            )
+        )
+        print("e.g. python3 google.py ./data/dict.db" "./data/files/")
+        sys.exit(1)
+
     db_path = sys.argv[1]
     output_path = sys.argv[2]
+    lang = sys.argv[3]
+
+    if lang not in language_settings.keys():
+        logging.error(
+            f"Language not found, choose between [{', '.join(language_settings.keys())}]"
+        )
+        sys.exit(1)
 
     jyutping_syllables = set()
 
     db = sqlite3.connect(db_path)
     c = db.cursor()
 
-    c.execute("SELECT jyutping FROM entries")
+    c.execute(f"SELECT {language_settings[lang]['alphabet']} FROM entries")
     rows = c.fetchall()
 
     for row in rows:
@@ -102,7 +149,7 @@ if __name__ == "__main__":
     key = fetch_key()
 
     for syllable in jyutping_syllables:
-        status_code = fetch_pronunciation(output_path, syllable, key)
-        while status_code == 401:
+        status_code = fetch_pronunciation(output_path, syllable, lang, key)
+        while status_code == 400:
             key = fetch_key()
-            status_code = fetch_pronunciation(output_path, syllable, key)
+            status_code = fetch_pronunciation(output_path, syllable, lang, key)

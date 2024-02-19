@@ -35,7 +35,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-CONFIG += c++14
+CONFIG += c++17
 
 QMAKE_CXXFLAGS += "-Wno-implicit-fallthrough"
 
@@ -251,6 +251,9 @@ macx: {
     LIBS += -framework AppKit
     OBJECTIVE_SOURCES += logic/utils/utils_mac.mm
     HEADERS += logic/utils/utils_mac.h
+
+    INCLUDEPATH += "/opt/homebrew/Cellar/karchive/5.115.0/include/KF5/KArchive"
+    LIBS += -L"/opt/homebrew/Cellar/karchive/5.115.0/lib" -lKF5Archive
 
     ICON = resources/icon/icon.icns
     QMAKE_INFO_PLIST = platform/mac/Info.plist

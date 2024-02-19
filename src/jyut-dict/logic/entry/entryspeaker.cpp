@@ -153,6 +153,7 @@ int EntrySpeaker::speak(const QLocale::Language &language,
         voice = voices.at(0);
 #endif
         speakWithVoice(voice, string);
+        break;
     }
     case SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS: {
         QString languageName = QLocale::languageToString(language) + "_"
@@ -175,6 +176,7 @@ int EntrySpeaker::speak(const QLocale::Language &language,
         }
         _player->setPlaylist(playlist);
         _player->play();
+        break;
     }
     }
 
