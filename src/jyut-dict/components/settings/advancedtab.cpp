@@ -14,9 +14,7 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
-#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
-#include "kzip.h"
-#endif
+#include <KZip>
 
 #include <QApplication>
 #include <QFileDialog>
@@ -495,9 +493,15 @@ void AdvancedTab::setCantoneseTTSWidgetDefault(QWidget &widget)
 
 void AdvancedTab::setMandarinTTSWidgetDefault(QWidget &widget)
 {
-    KZip zip{"/Users/aaron/Downloads/quazip-1.4.zip"};
+#ifdef Q_OS_MAC
+#elif defined(Q_OS_WIN)
+    QString zipFile = "C:\\Users\\Aaron\\Downloads\\quazip-1.4.zip";
+    QString outputFolder = "C:\\Users\\Aaron\\Downloads";
+#elif defined(Q_OS_LINUX)
+#endif
+    KZip zip{zipFile};
     zip.open(QIODevice::ReadOnly);
-    zip.directory()->copyTo("/Users/aaron/Downloads/");
+    zip.directory()->copyTo(outputFolder);
     SpeakerBackend backend = Settings::getSettings()
                                  ->value("Advanced/MandarinSpeakerBackend",
                                          QVariant::fromValue(

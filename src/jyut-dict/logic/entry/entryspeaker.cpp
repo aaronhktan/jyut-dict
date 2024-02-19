@@ -195,7 +195,7 @@ int EntrySpeaker::speakCantonese(const QString &string,
     // On Windows, attempt to speak in zh-HK first, but if that
     // fails, get the list of zh_CN voices and see if any are Cantonese.
     // (This is because some Cantonese voices are labelled zh-CN)
-    int rv = speak(QLocale::Chinese, QLocale::HongKong, string, voice);
+    int rv = speak(QLocale::Chinese, QLocale::HongKong, string, backend, voice);
     if (rv) {
         QVector<QVoice> availableVoices = getListOfVoices(QLocale::Chinese,
                                                           QLocale::China);
