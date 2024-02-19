@@ -494,6 +494,8 @@ void AdvancedTab::setCantoneseTTSWidgetDefault(QWidget &widget)
 void AdvancedTab::setMandarinTTSWidgetDefault(QWidget &widget)
 {
 #ifdef Q_OS_MAC
+    QString zipFile = "/Users/aaron/Downloads/quazip-1.4.zip";
+    QString outputFolder = "/Users/aaron/Downloads";
 #elif defined(Q_OS_WIN)
     QString zipFile = "C:\\Users\\Aaron\\Downloads\\quazip-1.4.zip";
     QString outputFolder = "C:\\Users\\Aaron\\Downloads";
