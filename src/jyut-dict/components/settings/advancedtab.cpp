@@ -498,6 +498,8 @@ void AdvancedTab::setMandarinTTSWidgetDefault(QWidget &widget)
     QString zipFile = "C:\\Users\\Aaron\\Downloads\\quazip-1.4.zip";
     QString outputFolder = "C:\\Users\\Aaron\\Downloads";
 #elif defined(Q_OS_LINUX)
+    QString zipFile = "/home/aaron/Downloads/quazip-1.4.zip";
+    QString outputFolder = "/home/aaron/Downloads";
 #endif
     KZip zip{zipFile};
     zip.open(QIODevice::ReadOnly);

@@ -252,9 +252,6 @@ macx: {
     OBJECTIVE_SOURCES += logic/utils/utils_mac.mm
     HEADERS += logic/utils/utils_mac.h
 
-    INCLUDEPATH += "/opt/homebrew/Cellar/karchive/5.115.0/include/KF5/KArchive"
-    LIBS += -L"/opt/homebrew/Cellar/karchive/5.115.0/lib" -lKF5Archive
-
     ICON = resources/icon/icon.icns
     QMAKE_INFO_PLIST = platform/mac/Info.plist
 
