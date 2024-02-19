@@ -1,7 +1,6 @@
 #include "advancedtab.h"
 
 #include "dialogs/resetsettingsdialog.h"
-#include "kzip.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/entry/entryspeaker.h"
 #include "logic/settings/settingsutils.h"
@@ -15,7 +14,9 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
-#include "kcompressiondevice.h"
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+#include "kzip.h"
+#endif
 
 #include <QApplication>
 #include <QFileDialog>

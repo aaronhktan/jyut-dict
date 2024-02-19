@@ -313,6 +313,9 @@ unix:!macx {
     SOURCES += logic/utils/utils_linux.cpp
     HEADERS += logic/utils/utils_linux.h
 
+    INCLUDEPATH += "/usr/include/KF5/KArchive"
+    LIBS += -lKF5Archive
+
     # Move files to appropriate locations on desktop to install the program
     binfile.extra = cp \"$$system_path($$OUT_PWD)/Jyut Dictionary\" $$system_path($$OUT_PWD)/jyut-dict
     binfile.files += $$system_path($$OUT_PWD)/jyut-dict
