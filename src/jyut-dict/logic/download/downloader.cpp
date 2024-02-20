@@ -5,11 +5,14 @@
 #include <QFileInfo>
 
 #include <cerrno>
+#include <thread>
 
 Downloader::Downloader(QUrl url, QString outputPath, QObject *parent)
     : QObject{parent}
     , _outputPath{outputPath}
 {
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+
     _manager = new QNetworkAccessManager;
     _manager->setRedirectPolicy(QNetworkRequest::UserVerifiedRedirectPolicy);
     connect(_manager,
@@ -37,6 +40,8 @@ void Downloader::fileDownloaded(QNetworkReply *reply)
         return;
     }
     _downloadedData = reply->readAll();
+
+    std::this_thread::sleep_for(std::chrono::seconds(5));
 
     reply->deleteLater();
 

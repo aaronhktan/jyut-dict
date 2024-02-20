@@ -493,17 +493,35 @@ void AdvancedTab::setCantoneseTTSWidgetDefault(QWidget &widget)
 
 void AdvancedTab::setMandarinTTSWidgetDefault(QWidget &widget)
 {
+    showProgressDialog(tr("Downloading ZIP file..."));
     QString zipFile
-        = QStandardPaths::standardLocations(QStandardPaths::TempLocation).first()
+        = QStandardPaths::standardLocations(QStandardPaths::TempLocation).at(0)
           + "/quazip-1.4.zip";
     QUrl url{"https://github.com/stachenov/quazip/archive/refs/tags/v1.4.zip"};
-    _downloader = new Downloader{url, zipFile, this};
 
-    disconnect(_downloader, nullptr, nullptr, nullptr);
-    connect(_downloader,
-            &Downloader::downloaded,
-            this,
-            &AdvancedTab::downloadComplete);
+    _watcher = new QFutureWatcher<bool>{this};
+    disconnect(_watcher, nullptr, nullptr, nullptr);
+    connect(_watcher, &QFutureWatcher<bool>::finished, this, [=]() {
+        _progressDialog->reset();
+    });
+
+    QFuture<bool> future = QtConcurrent::run([=]() {
+        QEventLoop loop;
+        _downloader = new Downloader{url, zipFile, this};
+        disconnect(_downloader, nullptr, nullptr, nullptr);
+
+        connect(_downloader,
+                &Downloader::downloaded,
+                this,
+                &AdvancedTab::downloadComplete);
+
+        connect(_downloader, &Downloader::error, &loop, &QEventLoop::quit);
+        connect(_downloader, &Downloader::downloaded, &loop, &QEventLoop::quit);
+
+        loop.exec();
+        return true;
+    });
+    _watcher->setFuture(future);
 
     SpeakerBackend backend = Settings::getSettings()
                                  ->value("Advanced/MandarinSpeakerBackend",
@@ -825,6 +843,7 @@ void AdvancedTab::showProgressDialog(QString text)
 void AdvancedTab::downloadComplete(QString outputPath)
 {
     qDebug() << "Download is complete, file available @" << outputPath;
+
 #ifdef Q_OS_MAC
     QString outputFolder = "/Users/aaron/Downloads";
 #elif defined(Q_OS_WIN)
