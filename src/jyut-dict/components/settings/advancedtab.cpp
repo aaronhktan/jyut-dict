@@ -493,19 +493,18 @@ void AdvancedTab::setCantoneseTTSWidgetDefault(QWidget &widget)
 
 void AdvancedTab::setMandarinTTSWidgetDefault(QWidget &widget)
 {
-#ifdef Q_OS_MAC
-    QString zipFile = "/Users/aaron/Downloads/quazip-1.4.zip";
-    QString outputFolder = "/Users/aaron/Downloads";
-#elif defined(Q_OS_WIN)
-    QString zipFile = "C:\\Users\\Aaron\\Downloads\\quazip-1.4.zip";
-    QString outputFolder = "C:\\Users\\Aaron\\Downloads";
-#elif defined(Q_OS_LINUX)
-    QString zipFile = "/home/aaron/Downloads/quazip-1.4.zip";
-    QString outputFolder = "/home/aaron/Downloads";
-#endif
-    KZip zip{zipFile};
-    zip.open(QIODevice::ReadOnly);
-    zip.directory()->copyTo(outputFolder);
+    QString zipFile
+        = QStandardPaths::standardLocations(QStandardPaths::TempLocation).first()
+          + "/quazip-1.4.zip";
+    QUrl url{"https://github.com/stachenov/quazip/archive/refs/tags/v1.4.zip"};
+    _downloader = new Downloader{url, zipFile, this};
+
+    disconnect(_downloader, nullptr, nullptr, nullptr);
+    connect(_downloader,
+            &Downloader::downloaded,
+            this,
+            &AdvancedTab::downloadComplete);
+
     SpeakerBackend backend = Settings::getSettings()
                                  ->value("Advanced/MandarinSpeakerBackend",
                                          QVariant::fromValue(
@@ -821,4 +820,20 @@ void AdvancedTab::showProgressDialog(QString text)
     _progressDialog->setLabelText(text);
     _progressDialog->setRange(0, 0);
     _progressDialog->setValue(0);
+}
+
+void AdvancedTab::downloadComplete(QString outputPath)
+{
+    qDebug() << "Download is complete, file available @" << outputPath;
+#ifdef Q_OS_MAC
+    QString outputFolder = "/Users/aaron/Downloads";
+#elif defined(Q_OS_WIN)
+    QString outputFolder = "C:\\Users\\Aaron\\Downloads";
+#elif defined(Q_OS_LINUX)
+    QString outputFolder = "/home/aaron/Downloads";
+#endif
+
+    KZip zip{outputPath};
+    qDebug() << zip.open(QIODevice::ReadOnly);
+    qDebug() << zip.directory()->copyTo(outputFolder);
 }

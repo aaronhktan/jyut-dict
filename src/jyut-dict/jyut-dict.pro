@@ -103,27 +103,28 @@ SOURCES += \
     dialogs/resetsettingsdialog.cpp \
     dialogs/restoredatabasedialog.cpp \
     logic/database/queryparseutils.cpp \
-    logic/database/sqluserdatautils.cpp \
-    logic/database/sqluserhistoryutils.cpp \
-    logic/search/sqlsearch.cpp \
-    logic/sentence/sentenceset.cpp \
-    logic/sentence/sourcesentence.cpp \
-    logic/utils/scriptdetector.cpp \
-    main.cpp \
     logic/database/sqldatabasemanager.cpp \
     logic/database/sqldatabaseutils.cpp \
+    logic/database/sqluserdatautils.cpp \
+    logic/database/sqluserhistoryutils.cpp \
     logic/dictionary/dictionarymetadata.cpp \
     logic/dictionary/dictionarysource.cpp \
+    logic/download/downloader.cpp \
     logic/entry/definitionsset.cpp \
     logic/entry/entry.cpp \
     logic/entry/entryspeaker.cpp \
     logic/search/searchoptionsmediator.cpp \
+    logic/search/sqlsearch.cpp \
+    logic/sentence/sentenceset.cpp \
+    logic/sentence/sourcesentence.cpp \
     logic/settings/settings.cpp \
     logic/settings/settingsutils.cpp \
     logic/update/githubreleasechecker.cpp \
     logic/utils/chineseutils.cpp \
+    logic/utils/scriptdetector.cpp \
     logic/utils/utils.cpp \
     logic/utils/utils_qt.cpp \
+    main.cpp \
     windows/aboutwindow.cpp \
     windows/historywindow.cpp \
     windows/mainwindow.cpp \
@@ -202,6 +203,7 @@ HEADERS += \
     logic/database/sqluserhistoryutils.h \
     logic/dictionary/dictionarymetadata.h \
     logic/dictionary/dictionarysource.h \
+    logic/download/downloader.h \
     logic/entry/definitionsset.h \
     logic/entry/entry.h \
     logic/entry/entrycharactersoptions.h \

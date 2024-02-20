@@ -3,6 +3,7 @@
 
 #include "dialogs/exportdatabasedialog.h"
 #include "dialogs/restoredatabasedialog.h"
+#include "logic/download/downloader.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -27,6 +28,9 @@ public:
     explicit AdvancedTab(QWidget *parent = nullptr);
 
     void changeEvent(QEvent *event) override;
+
+public slots:
+    void downloadComplete(QString outputPath);
 
 private:
     void setupUI();
@@ -106,6 +110,8 @@ private:
     QProgressDialog *_progressDialog;
     ExportDatabaseDialog *_exportDatabaseDialog;
     RestoreDatabaseDialog *_restoreDatabaseDialog;
+
+    Downloader *_downloader;
 
 signals:
     void settingsReset(void);
