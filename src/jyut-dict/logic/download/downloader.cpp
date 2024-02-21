@@ -3,33 +3,47 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QtConcurrent/QtConcurrent>
 
 #include <cerrno>
-#include <thread>
 
 Downloader::Downloader(QUrl url, QString outputPath, QObject *parent)
     : QObject{parent}
+    , _url{url}
     , _outputPath{outputPath}
+{}
+
+void Downloader::startDownload()
 {
-    std::this_thread::sleep_for(std::chrono::seconds(5));
+    QtConcurrent::run([&]() {
+        QEventLoop loop;
 
-    _manager = new QNetworkAccessManager;
-    _manager->setRedirectPolicy(QNetworkRequest::UserVerifiedRedirectPolicy);
-    connect(_manager,
-            &QNetworkAccessManager::finished,
-            this,
-            &Downloader::fileDownloaded);
+        std::this_thread::sleep_for(std::chrono::seconds(5));
 
-    QNetworkRequest request{url};
+        _manager = new QNetworkAccessManager;
+        _manager->setRedirectPolicy(QNetworkRequest::UserVerifiedRedirectPolicy);
+        connect(_manager,
+                &QNetworkAccessManager::finished,
+                this,
+                &Downloader::fileDownloaded);
 
-    _reply = _manager->get(request);
-    connect(_reply,
-            &QNetworkReply::errorOccurred,
-            this,
-            &Downloader::errorOccurred);
-    // Allow all redirects (insecure, but leave it for now)
-    connect(_reply, &QNetworkReply::redirected, this, [&]() {
-        emit _reply->redirectAllowed();
+        QNetworkRequest request{_url};
+        _reply = _manager->get(request);
+        connect(_reply,
+                &QNetworkReply::errorOccurred,
+                this,
+                &Downloader::errorOccurred);
+
+        // Allow all redirects (insecure, but leave it for now)
+        connect(_reply, &QNetworkReply::redirected, this, [&]() {
+            emit _reply->redirectAllowed();
+        });
+
+        connect(this, &Downloader::error, &loop, &QEventLoop::quit);
+        connect(this, &Downloader::downloaded, &loop, &QEventLoop::quit);
+
+        loop.exec();
+        return;
     });
 }
 
@@ -40,8 +54,6 @@ void Downloader::fileDownloaded(QNetworkReply *reply)
         return;
     }
     _downloadedData = reply->readAll();
-
-    std::this_thread::sleep_for(std::chrono::seconds(5));
 
     reply->deleteLater();
 

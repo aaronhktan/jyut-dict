@@ -162,12 +162,22 @@ int EntrySpeaker::speak(const QLocale::Language &language,
         QList<QString> syllables = string.split(" ");
         QMediaPlaylist *playlist = new QMediaPlaylist;
         for (const auto &syllable : qAsConst(syllables)) {
+            QString convertedVSyllable = syllable;
+
+            if (languageName == QLocale::Chinese
+                && country != QLocale::HongKong) {
+                convertedVSyllable = convertedVSyllable.replace(QString{"u:"},
+                                                                QString{"ü"});
+                convertedVSyllable = convertedVSyllable.replace(QString{"v"},
+                                                                QString{"ü"});
+            }
+
             QString filepath
                 = getAudioPath()
                   + QString{"%1/%2/%3/%4.mp3"}.arg(_backendNames[backend],
                                                    languageName,
                                                    _voiceNames[voice],
-                                                   syllable);
+                                                   convertedVSyllable);
             if (!QFileInfo::exists(filepath)) {
                 qDebug() << "File " << filepath << " does not exist";
             }
@@ -226,7 +236,7 @@ int EntrySpeaker::speakMainlandMandarin(const QString &string,
     return speak(QLocale::Chinese, QLocale::China, string, backend, voice);
 }
 
-QString EntrySpeaker::getAudioPath() const
+QString EntrySpeaker::getAudioPath()
 {
 #ifdef PORTABLE
     return getBundleAudioPath();
@@ -235,7 +245,7 @@ QString EntrySpeaker::getAudioPath() const
 #endif
 }
 
-QString EntrySpeaker::getLocalAudioPath() const
+QString EntrySpeaker::getLocalAudioPath()
 {
 #ifdef Q_OS_DARWIN
     QFileInfo localFile{
@@ -253,7 +263,7 @@ QString EntrySpeaker::getLocalAudioPath() const
     return localFile.absoluteFilePath();
 }
 
-QString EntrySpeaker::getBundleAudioPath() const
+QString EntrySpeaker::getBundleAudioPath()
 {
 #ifdef Q_OS_DARWIN
     QFileInfo bundlePath{QCoreApplication::applicationDirPath()

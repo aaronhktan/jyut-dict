@@ -349,14 +349,49 @@ void AdvancedTab::initializeCantoneseTTSWidget(QWidget &widget)
             &QRadioButton::clicked,
             this,
             [&]() {
-                _settings
-                    ->setValue("Advanced/CantoneseSpeakerBackend",
-                               QVariant::fromValue<SpeakerBackend>(
-                                   SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS));
-                _settings->setValue("Advanced/CantoneseSpeakerVoice",
-                                    QVariant::fromValue<SpeakerVoice>(
-                                        SpeakerVoice::YUE_1));
-                _settings->sync();
+                if (QDir{EntrySpeaker::getAudioPath()}.exists()) {
+                    return;
+                }
+
+                _downloadAudioDialog = new DownloadAudioDialog;
+                if (_downloadAudioDialog->exec() != QMessageBox::Yes) {
+                    setCantoneseTTSWidgetDefault(widget);
+                    _downloadAudioDialog->deleteLater();
+                    return;
+                }
+                _downloadAudioDialog->deleteLater();
+
+                showProgressDialog(tr("Downloading audio files..."));
+
+                QString zipFile = QStandardPaths::standardLocations(
+                                      QStandardPaths::TempLocation)
+                                      .at(0)
+                                  + "/quazip-1.4.zip";
+                QUrl url{"https://github.com/stachenov/quazip/archive/refs/"
+                         "tags/v1.4.zip"};
+
+                _downloader = new Downloader(url, zipFile, this);
+
+                disconnect(_downloader, nullptr, nullptr, nullptr);
+                connect(_downloader,
+                        &Downloader::downloaded,
+                        this,
+                        &AdvancedTab::downloadComplete);
+                connect(_downloader, &Downloader::error, this, [&](int error) {
+                    _progressDialog->reset();
+                    downloadAudioResult(
+                        !error,
+                        tr("Audio downloaded successfully!"),
+                        tr("Audio could not be downloaded, error code %1.")
+                            .arg(_intReturnWatcher->result()));
+                    if (error) {
+                        // An error happened, set it back to original backend
+                        setCantoneseTTSWidgetDefault(widget);
+                    }
+                    _downloader->deleteLater();
+                });
+
+                _downloader->startDownload();
             });
 
     setCantoneseTTSWidgetDefault(widget);
@@ -493,36 +528,6 @@ void AdvancedTab::setCantoneseTTSWidgetDefault(QWidget &widget)
 
 void AdvancedTab::setMandarinTTSWidgetDefault(QWidget &widget)
 {
-    showProgressDialog(tr("Downloading ZIP file..."));
-    QString zipFile
-        = QStandardPaths::standardLocations(QStandardPaths::TempLocation).at(0)
-          + "/quazip-1.4.zip";
-    QUrl url{"https://github.com/stachenov/quazip/archive/refs/tags/v1.4.zip"};
-
-    _watcher = new QFutureWatcher<bool>{this};
-    disconnect(_watcher, nullptr, nullptr, nullptr);
-    connect(_watcher, &QFutureWatcher<bool>::finished, this, [=]() {
-        _progressDialog->reset();
-    });
-
-    QFuture<bool> future = QtConcurrent::run([=]() {
-        QEventLoop loop;
-        _downloader = new Downloader{url, zipFile, this};
-        disconnect(_downloader, nullptr, nullptr, nullptr);
-
-        connect(_downloader,
-                &Downloader::downloaded,
-                this,
-                &AdvancedTab::downloadComplete);
-
-        connect(_downloader, &Downloader::error, &loop, &QEventLoop::quit);
-        connect(_downloader, &Downloader::downloaded, &loop, &QEventLoop::quit);
-
-        loop.exec();
-        return true;
-    });
-    _watcher->setFuture(future);
-
     SpeakerBackend backend = Settings::getSettings()
                                  ->value("Advanced/MandarinSpeakerBackend",
                                          QVariant::fromValue(
@@ -581,11 +586,13 @@ void AdvancedTab::exportDictionaryDatabase(void)
 
     showProgressDialog(tr("Exporting dictionaries..."));
 
-    _watcher = new QFutureWatcher<bool>{this};
-    disconnect(_watcher, nullptr, nullptr, nullptr);
-    connect(_watcher, &QFutureWatcher<bool>::finished, this, [=]() {
+    _boolReturnWatcher = new QFutureWatcher<bool>{this};
+    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=]() {
         _progressDialog->reset();
-        exportDatabaseResult(_watcher->result(), successText, failureText);
+        exportDatabaseResult(_boolReturnWatcher->result(),
+                             successText,
+                             failureText);
     });
 
     QFuture<bool> future = QtConcurrent::run([=]() {
@@ -601,7 +608,7 @@ void AdvancedTab::exportDictionaryDatabase(void)
         }
         return QFile::copy(manager.getDictionaryDatabasePath(), destinationFileName);
     });
-    _watcher->setFuture(future);
+    _boolReturnWatcher->setFuture(future);
 }
 
 void AdvancedTab::exportUserDatabase(void)
@@ -625,11 +632,13 @@ void AdvancedTab::exportUserDatabase(void)
 
     showProgressDialog(tr("Exporting saved words and history..."));
 
-    _watcher = new QFutureWatcher<bool>{this};
-    disconnect(_watcher, nullptr, nullptr, nullptr);
-    connect(_watcher, &QFutureWatcher<bool>::finished, this, [=]() {
+    _boolReturnWatcher = new QFutureWatcher<bool>{this};
+    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=]() {
         _progressDialog->reset();
-        exportDatabaseResult(_watcher->result(), successText, failureText);
+        exportDatabaseResult(_boolReturnWatcher->result(),
+                             successText,
+                             failureText);
     });
 
     QFuture<bool> future = QtConcurrent::run([=]() {
@@ -645,7 +654,7 @@ void AdvancedTab::exportUserDatabase(void)
         }
         return QFile::copy(manager.getUserDatabasePath(), destinationFileName);
     });
-    _watcher->setFuture(future);
+    _boolReturnWatcher->setFuture(future);
 }
 
 void AdvancedTab::exportDatabaseResult(bool succeeded,
@@ -678,18 +687,20 @@ void AdvancedTab::restoreBackedUpDictionaryDatabase(void)
 
     showProgressDialog(tr("Restoring dictionary..."));
 
-    _watcher = new QFutureWatcher<bool>{this};
-    disconnect(_watcher, nullptr, nullptr, nullptr);
-    connect(_watcher, &QFutureWatcher<bool>::finished, this, [=]() {
+    _boolReturnWatcher = new QFutureWatcher<bool>{this};
+    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=]() {
         _progressDialog->reset();
-        restoreDatabaseResult(_watcher->result(), successText, failureText);
+        restoreDatabaseResult(_boolReturnWatcher->result(),
+                              successText,
+                              failureText);
     });
 
     QFuture<bool> future = QtConcurrent::run([]() {
         SQLDatabaseManager manager;
         return manager.restoreBackedUpDictionaryDatabase();
     });
-    _watcher->setFuture(future);
+    _boolReturnWatcher->setFuture(future);
 }
 
 void AdvancedTab::restoreExportedDictionaryDatabase(void)
@@ -725,11 +736,13 @@ void AdvancedTab::restoreExportedDictionaryDatabase(void)
 
     showProgressDialog(tr("Restoring dictionary..."));
 
-    _watcher = new QFutureWatcher<bool>{this};
-    disconnect(_watcher, nullptr, nullptr, nullptr);
-    connect(_watcher, &QFutureWatcher<bool>::finished, this, [=]() {
+    _boolReturnWatcher = new QFutureWatcher<bool>{this};
+    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=]() {
         _progressDialog->reset();
-        restoreDatabaseResult(_watcher->result(), successText, failureText);
+        restoreDatabaseResult(_boolReturnWatcher->result(),
+                              successText,
+                              failureText);
     });
 
     auto future = QtConcurrent::run([=]() {
@@ -744,7 +757,7 @@ void AdvancedTab::restoreExportedDictionaryDatabase(void)
         QFile::remove(manager.getDictionaryDatabasePath());
         return QFile::copy(sourceFileName, manager.getDictionaryDatabasePath());
     });
-    _watcher->setFuture(future);
+    _boolReturnWatcher->setFuture(future);
 }
 
 void AdvancedTab::restoreExportedUserDatabase(void)
@@ -777,11 +790,13 @@ void AdvancedTab::restoreExportedUserDatabase(void)
 
     showProgressDialog(tr("Restoring saved words and history..."));
 
-    _watcher = new QFutureWatcher<bool>{this};
-    disconnect(_watcher, nullptr, nullptr, nullptr);
-    connect(_watcher, &QFutureWatcher<bool>::finished, this, [=]() {
+    _boolReturnWatcher = new QFutureWatcher<bool>{this};
+    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=]() {
         _progressDialog->reset();
-        restoreDatabaseResult(_watcher->result(), successText, failureText);
+        restoreDatabaseResult(_boolReturnWatcher->result(),
+                              successText,
+                              failureText);
     });
 
     auto future = QtConcurrent::run([=]() {
@@ -795,7 +810,7 @@ void AdvancedTab::restoreExportedUserDatabase(void)
         QFile::remove(manager.getUserDatabasePath());
         return QFile::copy(sourceFileName, manager.getUserDatabasePath());
     });
-    _watcher->setFuture(future);
+    _boolReturnWatcher->setFuture(future);
 }
 
 void AdvancedTab::restoreDatabaseResult(bool succeeded,
@@ -816,6 +831,24 @@ void AdvancedTab::restoreDatabaseResult(bool succeeded,
     // Restart application
     qApp->quit();
     QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
+}
+
+void AdvancedTab::downloadAudioResult(bool succeeded,
+                                      const QString &suceededText,
+                                      const QString &failedText)
+{
+    if (succeeded) {
+        _downloadCompleteDialog = new DownloadCompleteDialog{suceededText,
+                                                             "",
+                                                             this};
+    } else {
+        _downloadCompleteDialog = new DownloadCompleteDialog{failedText,
+                                                             "",
+                                                             this};
+    }
+
+    _downloadCompleteDialog->setAttribute(Qt::WA_DeleteOnClose, true);
+    _downloadCompleteDialog->exec();
 }
 
 void AdvancedTab::showProgressDialog(QString text)
@@ -843,6 +876,7 @@ void AdvancedTab::showProgressDialog(QString text)
 void AdvancedTab::downloadComplete(QString outputPath)
 {
     qDebug() << "Download is complete, file available @" << outputPath;
+    _downloader->deleteLater();
 
 #ifdef Q_OS_MAC
     QString outputFolder = "/Users/aaron/Downloads";
@@ -855,4 +889,14 @@ void AdvancedTab::downloadComplete(QString outputPath)
     KZip zip{outputPath};
     qDebug() << zip.open(QIODevice::ReadOnly);
     qDebug() << zip.directory()->copyTo(outputFolder);
+    _progressDialog->reset();
+
+    _settings->setValue("Advanced/CantoneseSpeakerBackend",
+                        QVariant::fromValue<SpeakerBackend>(
+                            SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS));
+    _settings->setValue("Advanced/CantoneseSpeakerVoice",
+                        QVariant::fromValue<SpeakerVoice>(SpeakerVoice::YUE_1));
+    _settings->sync();
+
+    downloadAudioResult(true, tr("Audio downloaded successfully!"), "");
 }

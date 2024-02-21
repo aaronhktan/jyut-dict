@@ -96,6 +96,8 @@ SOURCES += \
     components/settings/texttab.cpp \
     dialogs/defaultdialog.cpp \
     dialogs/dictionarytabfailuredialog.cpp \
+    dialogs/downloadaudiodialog.cpp \
+    dialogs/downloadcompletedialog.cpp \
     dialogs/entryspeakerrordialog.cpp \
     dialogs/exportdatabasedialog.cpp \
     dialogs/noupdatedialog.cpp \
@@ -190,6 +192,8 @@ HEADERS += \
     components/settings/texttab.h \
     dialogs/defaultdialog.h \
     dialogs/dictionarytabfailuredialog.h \
+    dialogs/downloadaudiodialog.h \
+    dialogs/downloadcompletedialog.h \
     dialogs/entryspeakerrordialog.h \
     dialogs/exportdatabasedialog.h \
     dialogs/noupdatedialog.h \

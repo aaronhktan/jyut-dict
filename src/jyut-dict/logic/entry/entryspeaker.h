@@ -56,6 +56,10 @@ public:
         const SpeakerBackend backend = SpeakerBackend::QT_TTS,
         const SpeakerVoice voiceName = SpeakerVoice::NONE) const;
 
+    static QString getAudioPath();
+    static QString getLocalAudioPath();
+    static QString getBundleAudioPath();
+
 private:
     QVector<QVoice> getListOfVoices(const QLocale::Language &language,
                                     const QLocale::Country &country) const;
@@ -69,10 +73,6 @@ private:
                           const QVector<QVoice> &voices,
                           QVoice &voice) const;
 #endif
-
-    QString getAudioPath() const;
-    QString getLocalAudioPath() const;
-    QString getBundleAudioPath() const;
 
     QTextToSpeech *_tts;
     QAudioOutput *_output;

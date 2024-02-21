@@ -134,7 +134,7 @@ if __name__ == "__main__":
         )
         sys.exit(1)
 
-    jyutping_syllables = set()
+    syllable_set = set()
 
     db = sqlite3.connect(db_path)
     c = db.cursor()
@@ -144,11 +144,11 @@ if __name__ == "__main__":
 
     for row in rows:
         syllables = row[0].split()
-        [jyutping_syllables.add(x) for x in syllables]
+        [syllable_set.add(x.replace("u:", "ü")) for x in syllables]
 
     key = fetch_key()
 
-    for syllable in jyutping_syllables:
+    for syllable in syllable_set:
         status_code = fetch_pronunciation(output_path, syllable, lang, key)
         while status_code == 400:
             key = fetch_key()

@@ -1,6 +1,8 @@
 #ifndef ADVANCEDTAB_H
 #define ADVANCEDTAB_H
 
+#include "dialogs/downloadaudiodialog.h"
+#include "dialogs/downloadcompletedialog.h"
 #include "dialogs/exportdatabasedialog.h"
 #include "dialogs/restoredatabasedialog.h"
 #include "logic/download/downloader.h"
@@ -48,14 +50,12 @@ private:
     void initializeResetButton(QPushButton &resetButton);
 
     void setUpdateCheckboxDefault(QCheckBox &checkbox);
-    void setLanguageComboboxDefault(QComboBox &combobox);
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     void setForceDarkModeCheckboxDefault(QCheckBox &checkbox);
 #endif
     void setCantoneseTTSWidgetDefault(QWidget &widget);
     void setMandarinTTSWidgetDefault(QWidget &widget);
-
-    void resetSettings(QSettings &settings);
+    void setLanguageComboboxDefault(QComboBox &combobox);
 
     void exportDictionaryDatabase(void);
     void exportUserDatabase(void);
@@ -68,9 +68,14 @@ private:
     void restoreExportedDictionaryDatabase(void);
     void restoreExportedUserDatabase(void);
 
+    void resetSettings(QSettings &settings);
+
     void restoreDatabaseResult(bool succeeded,
                                const QString &suceededText,
                                const QString &failedText);
+    void downloadAudioResult(bool succeeded,
+                             const QString &succeededText,
+                             const QString &failedText);
 
     void showProgressDialog(QString text);
 
@@ -105,9 +110,14 @@ private:
 
     std::unique_ptr<QSettings> _settings;
 
-    QFutureWatcher<bool> *_watcher;
+    QFutureWatcher<bool> *_boolReturnWatcher;
+    QFutureWatcher<int> *_intReturnWatcher;
+
+    int _audioDownloadReturnCode;
 
     QProgressDialog *_progressDialog;
+    DownloadCompleteDialog *_downloadCompleteDialog;
+    DownloadAudioDialog *_downloadAudioDialog;
     ExportDatabaseDialog *_exportDatabaseDialog;
     RestoreDatabaseDialog *_restoreDatabaseDialog;
 
