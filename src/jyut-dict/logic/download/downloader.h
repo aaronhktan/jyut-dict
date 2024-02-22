@@ -23,7 +23,6 @@ signals:
     void error(int err);
 
 private slots:
-    void errorOccurred(QNetworkReply::NetworkError code);
     void fileDownloaded(QNetworkReply *reply);
 
 private:

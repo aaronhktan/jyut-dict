@@ -8,6 +8,8 @@
 #include <QString>
 #include <QTextToSpeech>
 
+namespace TextToSpeech {
+
 enum class SpeakerBackend : int {
     QT_TTS,
 
@@ -26,6 +28,21 @@ enum class SpeakerVoice : int {
     CMN_2,
 };
 
+static QMap<TextToSpeech::SpeakerBackend, QString> backendNames{
+    {TextToSpeech::SpeakerBackend::QT_TTS, "Qt"},
+    {TextToSpeech::SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS, "Google"},
+};
+
+static QMap<TextToSpeech::SpeakerVoice, QString> voiceNames{
+    {TextToSpeech::SpeakerVoice::NONE, ""},
+    {TextToSpeech::SpeakerVoice::YUE_1, "YUE_1"},
+    {TextToSpeech::SpeakerVoice::YUE_2, "YUE_2"},
+    {TextToSpeech::SpeakerVoice::CMN_1, "CMN_1"},
+    {TextToSpeech::SpeakerVoice::CMN_2, "CMN_2"},
+};
+
+} // namespace TextToSpeech
+
 class EntrySpeaker
 {
 public:
@@ -41,20 +58,26 @@ public:
     int speak(const QLocale::Language &language,
               const QLocale::Country &country,
               const QString &string,
-              const SpeakerBackend backend = SpeakerBackend::QT_TTS,
-              const SpeakerVoice voiceName = SpeakerVoice::NONE) const;
+              const TextToSpeech::SpeakerBackend backend
+              = TextToSpeech::SpeakerBackend::QT_TTS,
+              const TextToSpeech::SpeakerVoice voiceName
+              = TextToSpeech::SpeakerVoice::NONE) const;
 
     int speakCantonese(const QString &string,
-                       const SpeakerBackend backend = SpeakerBackend::QT_TTS,
-                       const SpeakerVoice voiceName = SpeakerVoice::NONE) const;
-    int speakTaiwaneseMandarin(
-        const QString &string,
-        const SpeakerBackend backend = SpeakerBackend::QT_TTS,
-        const SpeakerVoice voiceName = SpeakerVoice::NONE) const;
-    int speakMainlandMandarin(
-        const QString &string,
-        const SpeakerBackend backend = SpeakerBackend::QT_TTS,
-        const SpeakerVoice voiceName = SpeakerVoice::NONE) const;
+                       const TextToSpeech::SpeakerBackend backend
+                       = TextToSpeech::SpeakerBackend::QT_TTS,
+                       const TextToSpeech::SpeakerVoice voiceName
+                       = TextToSpeech::SpeakerVoice::NONE) const;
+    int speakTaiwaneseMandarin(const QString &string,
+                               const TextToSpeech::SpeakerBackend backend
+                               = TextToSpeech::SpeakerBackend::QT_TTS,
+                               const TextToSpeech::SpeakerVoice voiceName
+                               = TextToSpeech::SpeakerVoice::NONE) const;
+    int speakMainlandMandarin(const QString &string,
+                              const TextToSpeech::SpeakerBackend backend
+                              = TextToSpeech::SpeakerBackend::QT_TTS,
+                              const TextToSpeech::SpeakerVoice voiceName
+                              = TextToSpeech::SpeakerVoice::NONE) const;
 
     static QString getAudioPath();
     static QString getLocalAudioPath();
@@ -77,23 +100,10 @@ private:
     QTextToSpeech *_tts;
     QAudioOutput *_output;
     QMediaPlayer *_player;
-
-    QMap<SpeakerBackend, QString> _backendNames{
-        {SpeakerBackend::QT_TTS, "Qt"},
-        {SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS, "Google"},
-    };
-
-    QMap<SpeakerVoice, QString> _voiceNames{
-        {SpeakerVoice::NONE, ""},
-        {SpeakerVoice::YUE_1, "YUE_1"},
-        {SpeakerVoice::YUE_2, "YUE_2"},
-        {SpeakerVoice::CMN_1, "CMN_1"},
-        {SpeakerVoice::CMN_2, "CMN_2"},
-    };
 };
 
-Q_DECLARE_METATYPE(SpeakerBackend);
-Q_DECLARE_METATYPE(SpeakerVoice);
+Q_DECLARE_METATYPE(TextToSpeech::SpeakerBackend);
+Q_DECLARE_METATYPE(TextToSpeech::SpeakerVoice);
 
 #endif
 #endif // ENTRYSPEAKER_H

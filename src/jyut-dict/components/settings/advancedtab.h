@@ -2,7 +2,7 @@
 #define ADVANCEDTAB_H
 
 #include "dialogs/downloadaudiodialog.h"
-#include "dialogs/downloadcompletedialog.h"
+#include "dialogs/downloadresultdialog.h"
 #include "dialogs/exportdatabasedialog.h"
 #include "dialogs/restoredatabasedialog.h"
 #include "logic/download/downloader.h"
@@ -32,7 +32,8 @@ public:
     void changeEvent(QEvent *event) override;
 
 public slots:
-    void downloadComplete(QString outputPath);
+    void unzipFile(QString outputPath);
+    void unzipComplete(bool completed);
 
 private:
     void setupUI();
@@ -73,6 +74,7 @@ private:
     void restoreDatabaseResult(bool succeeded,
                                const QString &suceededText,
                                const QString &failedText);
+    void startAudioDownload();
     void downloadAudioResult(bool succeeded,
                              const QString &succeededText,
                              const QString &failedText);
@@ -111,12 +113,9 @@ private:
     std::unique_ptr<QSettings> _settings;
 
     QFutureWatcher<bool> *_boolReturnWatcher;
-    QFutureWatcher<int> *_intReturnWatcher;
-
-    int _audioDownloadReturnCode;
 
     QProgressDialog *_progressDialog;
-    DownloadCompleteDialog *_downloadCompleteDialog;
+    DownloadResultDialog *_downloadResultDialog;
     DownloadAudioDialog *_downloadAudioDialog;
     ExportDatabaseDialog *_exportDatabaseDialog;
     RestoreDatabaseDialog *_restoreDatabaseDialog;

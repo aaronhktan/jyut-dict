@@ -120,25 +120,27 @@ int EntrySpeaker::speakWithVoice(const QVoice &voice, const QString &string) con
 int EntrySpeaker::speak(const QLocale::Language &language,
                         const QLocale::Country &country,
                         const QString &string,
-                        const SpeakerBackend backend,
-                        const SpeakerVoice voice) const
+                        const TextToSpeech::SpeakerBackend backend,
+                        const TextToSpeech::SpeakerVoice voice) const
 {
     if (string.isEmpty()) {
         return -1;
     }
 
-    if ((backend == SpeakerBackend::QT_TTS) && (voice != SpeakerVoice::NONE)) {
+    if ((backend == TextToSpeech::SpeakerBackend::QT_TTS)
+        && (voice != TextToSpeech::SpeakerVoice::NONE)) {
         // Setting voices is not supported using Qt TTS
         return -1;
     }
 
-    if ((backend != SpeakerBackend::QT_TTS) && (voice == SpeakerVoice::NONE)) {
+    if ((backend != TextToSpeech::SpeakerBackend::QT_TTS)
+        && (voice == TextToSpeech::SpeakerVoice::NONE)) {
         // Backends other than Qt must specify a voice name
         return -1;
     }
 
     switch (backend) {
-    case SpeakerBackend::QT_TTS: {
+    case TextToSpeech::SpeakerBackend::QT_TTS: {
         auto voices = getListOfVoices(language, country);
         if (voices.isEmpty()) {
             return -2;
@@ -155,7 +157,7 @@ int EntrySpeaker::speak(const QLocale::Language &language,
         speakWithVoice(voice, string);
         break;
     }
-    case SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS: {
+    case TextToSpeech::SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS: {
         QString languageName = QLocale::languageToString(language) + "_"
                                + QLocale::countryToString(country);
 
@@ -172,12 +174,12 @@ int EntrySpeaker::speak(const QLocale::Language &language,
                                                                 QString{"ü"});
             }
 
-            QString filepath
-                = getAudioPath()
-                  + QString{"%1/%2/%3/%4.mp3"}.arg(_backendNames[backend],
-                                                   languageName,
-                                                   _voiceNames[voice],
-                                                   convertedVSyllable);
+            QString filepath = getAudioPath()
+                               + QString{"%1/%2/%3/%4.mp3"}
+                                     .arg(TextToSpeech::backendNames[backend],
+                                          languageName,
+                                          TextToSpeech::voiceNames[voice],
+                                          convertedVSyllable);
             if (!QFileInfo::exists(filepath)) {
                 qDebug() << "File " << filepath << " does not exist";
             }
@@ -194,8 +196,8 @@ int EntrySpeaker::speak(const QLocale::Language &language,
 }
 
 int EntrySpeaker::speakCantonese(const QString &string,
-                                 const SpeakerBackend backend,
-                                 const SpeakerVoice voice) const
+                                 const TextToSpeech::SpeakerBackend backend,
+                                 const TextToSpeech::SpeakerVoice voice) const
 {
 #ifdef Q_OS_LINUX
     return speak(QLocale::Cantonese, QLocale::HongKong, string);
@@ -222,16 +224,18 @@ int EntrySpeaker::speakCantonese(const QString &string,
 #endif
 }
 
-int EntrySpeaker::speakTaiwaneseMandarin(const QString &string,
-                                         const SpeakerBackend backend,
-                                         const SpeakerVoice voice) const
+int EntrySpeaker::speakTaiwaneseMandarin(
+    const QString &string,
+    const TextToSpeech::SpeakerBackend backend,
+    const TextToSpeech::SpeakerVoice voice) const
 {
     return speak(QLocale::Chinese, QLocale::Taiwan, string, backend, voice);
 }
 
-int EntrySpeaker::speakMainlandMandarin(const QString &string,
-                                        const SpeakerBackend backend,
-                                        const SpeakerVoice voice) const
+int EntrySpeaker::speakMainlandMandarin(
+    const QString &string,
+    const TextToSpeech::SpeakerBackend backend,
+    const TextToSpeech::SpeakerVoice voice) const
 {
     return speak(QLocale::Chinese, QLocale::China, string, backend, voice);
 }

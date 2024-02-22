@@ -97,7 +97,7 @@ SOURCES += \
     dialogs/defaultdialog.cpp \
     dialogs/dictionarytabfailuredialog.cpp \
     dialogs/downloadaudiodialog.cpp \
-    dialogs/downloadcompletedialog.cpp \
+    dialogs/downloadresultdialog.cpp \
     dialogs/entryspeakerrordialog.cpp \
     dialogs/exportdatabasedialog.cpp \
     dialogs/noupdatedialog.cpp \
@@ -193,7 +193,7 @@ HEADERS += \
     dialogs/defaultdialog.h \
     dialogs/dictionarytabfailuredialog.h \
     dialogs/downloadaudiodialog.h \
-    dialogs/downloadcompletedialog.h \
+    dialogs/downloadresultdialog.h \
     dialogs/entryspeakerrordialog.h \
     dialogs/exportdatabasedialog.h \
     dialogs/noupdatedialog.h \

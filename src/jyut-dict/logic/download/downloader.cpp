@@ -29,18 +29,13 @@ void Downloader::startDownload()
 
         QNetworkRequest request{_url};
         _reply = _manager->get(request);
-        connect(_reply,
-                &QNetworkReply::errorOccurred,
-                this,
-                &Downloader::errorOccurred);
 
         // Allow all redirects (insecure, but leave it for now)
         connect(_reply, &QNetworkReply::redirected, this, [&]() {
             emit _reply->redirectAllowed();
         });
 
-        connect(this, &Downloader::error, &loop, &QEventLoop::quit);
-        connect(this, &Downloader::downloaded, &loop, &QEventLoop::quit);
+        connect(_reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
 
         loop.exec();
         return;
@@ -75,11 +70,6 @@ void Downloader::fileDownloaded(QNetworkReply *reply)
     file.close();
 
     emit downloaded(_outputPath);
-}
-
-void Downloader::errorOccurred([[maybe_unused]] QNetworkReply::NetworkError code)
-{
-    emit error(ENETDOWN);
 }
 
 QByteArray Downloader::downloadedData() const
