@@ -21,7 +21,6 @@ void Downloader::startDownload()
         std::this_thread::sleep_for(std::chrono::seconds(5));
 
         _manager = new QNetworkAccessManager;
-        _manager->setRedirectPolicy(QNetworkRequest::UserVerifiedRedirectPolicy);
         connect(_manager,
                 &QNetworkAccessManager::finished,
                 this,
@@ -29,11 +28,6 @@ void Downloader::startDownload()
 
         QNetworkRequest request{_url};
         _reply = _manager->get(request);
-
-        // Allow all redirects (insecure, but leave it for now)
-        connect(_reply, &QNetworkReply::redirected, this, [&]() {
-            emit _reply->redirectAllowed();
-        });
 
         connect(_reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
 

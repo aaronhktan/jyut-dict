@@ -3,6 +3,10 @@
 
 #include "dialogs/defaultdialog.h"
 
+// The DownloadAudioDialog prompts a user to download the audio
+// files required for text-to-speech. On exec(), it will return
+// QMessageBox::Yes if the user accepts.
+
 class DownloadAudioDialog : public DefaultDialog
 {
     Q_OBJECT

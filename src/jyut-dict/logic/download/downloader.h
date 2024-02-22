@@ -8,7 +8,8 @@
 #include <QObject>
 
 // The Downloader class provides a simple interface to download a file
-// from a URL to a specified location on disk. This class is NOT thread-safe!
+// from a URL to a specified location on disk in a background thread.
+// This class is NOT thread-safe!
 
 class Downloader : public QObject
 {

@@ -6,6 +6,9 @@
 #include <QEvent>
 #include <QString>
 
+// The DownloadResultDialog shows whether a download succeeded or failed,
+// with a reason.
+
 class DownloadResultDialog : public DefaultDialog
 {
     Q_OBJECT
