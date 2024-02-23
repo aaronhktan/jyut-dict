@@ -22,8 +22,6 @@ void Downloader::startDownload()
     QtConcurrent::run([&]() {
         QEventLoop loop;
 
-        std::this_thread::sleep_for(std::chrono::seconds(5));
-
         _manager = new QNetworkAccessManager;
         connect(_manager,
                 &QNetworkAccessManager::finished,
