@@ -6,6 +6,8 @@
 #include <QStandardPaths>
 #include <QVector>
 
+#include <cerrno>
+
 EntrySpeaker::EntrySpeaker()
     : _tts{new QTextToSpeech}
     , _player{new QMediaPlayer}
@@ -124,32 +126,32 @@ int EntrySpeaker::speak(const QLocale::Language &language,
                         const TextToSpeech::SpeakerVoice voice) const
 {
     if (string.isEmpty()) {
-        return -1;
+        return -EINVAL;
     }
 
     if ((backend == TextToSpeech::SpeakerBackend::QT_TTS)
         && (voice != TextToSpeech::SpeakerVoice::NONE)) {
         // Setting voices is not supported using Qt TTS
-        return -1;
+        return -EINVAL;
     }
 
     if ((backend != TextToSpeech::SpeakerBackend::QT_TTS)
         && (voice == TextToSpeech::SpeakerVoice::NONE)) {
         // Backends other than Qt must specify a voice name
-        return -1;
+        return -EINVAL;
     }
 
     switch (backend) {
     case TextToSpeech::SpeakerBackend::QT_TTS: {
         auto voices = getListOfVoices(language, country);
         if (voices.isEmpty()) {
-            return -2;
+            return -ENOENT;
         }
 
         QVoice voice;
 #ifdef Q_OS_WIN
         if (!filterVoiceNames(language, country, voices, voice)) {
-            return -2;
+            return -ENOENT;
         }
 #else
         voice = voices.at(0);
@@ -166,8 +168,7 @@ int EntrySpeaker::speak(const QLocale::Language &language,
         for (const auto &syllable : qAsConst(syllables)) {
             QString convertedVSyllable = syllable;
 
-            if (languageName == QLocale::Chinese
-                && country != QLocale::HongKong) {
+            if (language == QLocale::Chinese && country != QLocale::HongKong) {
                 convertedVSyllable = convertedVSyllable.replace(QString{"u:"},
                                                                 QString{"ü"});
                 convertedVSyllable = convertedVSyllable.replace(QString{"v"},
@@ -199,29 +200,33 @@ int EntrySpeaker::speakCantonese(const QString &string,
                                  const TextToSpeech::SpeakerBackend backend,
                                  const TextToSpeech::SpeakerVoice voice) const
 {
+    if (backend != TextToSpeech::SpeakerBackend::QT_TTS) {
+        return speak(QLocale::Chinese, QLocale::HongKong, string, backend, voice);
+    } else {
 #ifdef Q_OS_LINUX
-    return speak(QLocale::Cantonese, QLocale::HongKong, string);
+        return speak(QLocale::Cantonese, QLocale::HongKong, string);
 #elif defined(Q_OS_MAC)
-    return speak(QLocale::Chinese, QLocale::HongKong, string, backend, voice);
+        return speak(QLocale::Chinese, QLocale::HongKong, string);
 #else
-    // On Windows, attempt to speak in zh-HK first, but if that
-    // fails, get the list of zh_CN voices and see if any are Cantonese.
-    // (This is because some Cantonese voices are labelled zh-CN)
-    int rv = speak(QLocale::Chinese, QLocale::HongKong, string, backend, voice);
-    if (rv) {
-        QVector<QVoice> availableVoices = getListOfVoices(QLocale::Chinese,
-                                                          QLocale::China);
-        QVoice qVoice;
-        if (!filterVoiceNames(QLocale::Chinese,
-                              QLocale::HongKong,
-                              availableVoices,
-                              qVoice)) {
-            return rv;
+        // On Windows, attempt to speak in zh-HK first, but if that
+        // fails, get the list of zh_CN voices and see if any are Cantonese.
+        // (This is because some Cantonese voices are labelled zh-CN)
+        int rv = speak(QLocale::Chinese, QLocale::HongKong, string);
+        if (rv) {
+            QVector<QVoice> availableVoices = getListOfVoices(QLocale::Chinese,
+                                                              QLocale::China);
+            QVoice qVoice;
+            if (!filterVoiceNames(QLocale::Chinese,
+                                  QLocale::HongKong,
+                                  availableVoices,
+                                  qVoice)) {
+                return rv;
+            }
+            rv = speakWithVoice(qVoice, string);
         }
-        rv = speakWithVoice(qVoice, string);
-    }
-    return rv;
+        return rv;
 #endif
+    }
 }
 
 int EntrySpeaker::speakTaiwaneseMandarin(

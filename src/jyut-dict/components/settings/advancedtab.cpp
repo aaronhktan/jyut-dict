@@ -97,7 +97,7 @@ void AdvancedTab::setupUI()
         "data",
         QVariant::fromValue(
             TextToSpeech::SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS));
-    initializeCantoneseTTSWidget(*_cantoneseTTSWidget);
+    initializeCantoneseTTSWidget(_cantoneseTTSWidget);
 
     _mandarinTTSWidget = new QWidget{this};
     _mandarinTTSLayout = new QGridLayout{_mandarinTTSWidget};
@@ -111,7 +111,7 @@ void AdvancedTab::setupUI()
         "data",
         QVariant::fromValue(
             TextToSpeech::SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS));
-    initializeMandarinTTSWidget(*_mandarinTTSWidget);
+    initializeMandarinTTSWidget(_mandarinTTSWidget);
 
     _ttsExplainer = new QLabel{this};
 
@@ -328,62 +328,60 @@ void AdvancedTab::initializeForceDarkModeCheckbox(QCheckBox &checkbox)
 }
 #endif
 
-void AdvancedTab::initializeCantoneseTTSWidget(QWidget &widget)
+void AdvancedTab::initializeCantoneseTTSWidget(QWidget *widget)
 {
-    static_cast<QGridLayout *>(widget.layout())
+    static_cast<QGridLayout *>(widget->layout())
         ->addWidget(_useCantoneseQtTTSBackend, 0, 0, 1, 1);
-    static_cast<QGridLayout *>(widget.layout())
+    static_cast<QGridLayout *>(widget->layout())
         ->addWidget(_useCantoneseGoogleOfflineSyllableTTSBackend, 0, 1, 1, 1);
 
     connect(_useCantoneseQtTTSBackend, &QRadioButton::clicked, this, [&]() {
-        _settings->setValue("Advanced/CantoneseTextToSpeech::SpeakerBackend",
-                            QVariant::fromValue<TextToSpeech::SpeakerBackend>(
-                                TextToSpeech::SpeakerBackend::QT_TTS));
-        _settings->setValue("Advanced/CantoneseTextToSpeech::SpeakerVoice",
-                            QVariant::fromValue<TextToSpeech::SpeakerVoice>(
-                                TextToSpeech::SpeakerVoice::NONE));
-        _settings->sync();
+        setCantoneseTTSSettings(TextToSpeech::SpeakerBackend::QT_TTS,
+                                TextToSpeech::SpeakerVoice::NONE);
     });
+
+    _cantoneseTTSCallbacks = std::make_shared<TextToSpeechCallbacks>(
+        std::bind(&AdvancedTab::setCantoneseTTSWidgetDefault,
+                  this,
+                  _cantoneseTTSWidget),
+        std::bind(&AdvancedTab::setCantoneseTTSSettings,
+                  this,
+                  TextToSpeech::SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS,
+                  TextToSpeech::SpeakerVoice::YUE_1)),
 
     connect(_useCantoneseGoogleOfflineSyllableTTSBackend,
             &QRadioButton::clicked,
             this,
-            &AdvancedTab::startAudioDownload);
+            [&]() { startAudioDownload(_cantoneseTTSCallbacks); });
 
     setCantoneseTTSWidgetDefault(widget);
 }
 
-void AdvancedTab::initializeMandarinTTSWidget(QWidget &widget)
+void AdvancedTab::initializeMandarinTTSWidget(QWidget *widget)
 {
-    static_cast<QGridLayout *>(widget.layout())
+    static_cast<QGridLayout *>(widget->layout())
         ->addWidget(_useMandarinQtTTSBackend, 0, 0, 1, 1);
-    static_cast<QGridLayout *>(widget.layout())
+    static_cast<QGridLayout *>(widget->layout())
         ->addWidget(_useMandarinGoogleOfflineSyllableTTSBackend, 0, 1, 1, 1);
 
     connect(_useMandarinQtTTSBackend, &QRadioButton::clicked, this, [&]() {
-        _settings->setValue("Advanced/MandarinTextToSpeech::SpeakerBackend",
-                            QVariant::fromValue<TextToSpeech::SpeakerBackend>(
-                                TextToSpeech::SpeakerBackend::QT_TTS));
-        _settings->setValue("Advanced/MandarinTextToSpeech::SpeakerVoice",
-                            QVariant::fromValue<TextToSpeech::SpeakerVoice>(
-                                TextToSpeech::SpeakerVoice::NONE));
-        _settings->sync();
+        setMandarinTTSSettings(TextToSpeech::SpeakerBackend::QT_TTS,
+                               TextToSpeech::SpeakerVoice::NONE);
     });
 
-    connect(
-        _useMandarinGoogleOfflineSyllableTTSBackend,
-        &QRadioButton::clicked,
-        this,
-        [&]() {
-            _settings->setValue(
-                "Advanced/MandarinTextToSpeech::SpeakerBackend",
-                QVariant::fromValue<TextToSpeech::SpeakerBackend>(
-                    TextToSpeech::SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS));
-            _settings->setValue("Advanced/MandarinTextToSpeech::SpeakerVoice",
-                                QVariant::fromValue<TextToSpeech::SpeakerVoice>(
-                                    TextToSpeech::SpeakerVoice::CMN_1));
-            _settings->sync();
-        });
+    _mandarinTTSCallbacks = std::make_shared<TextToSpeechCallbacks>(
+        std::bind(&AdvancedTab::setMandarinTTSWidgetDefault,
+                  this,
+                  _mandarinTTSWidget),
+        std::bind(&AdvancedTab::setMandarinTTSSettings,
+                  this,
+                  TextToSpeech::SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS,
+                  TextToSpeech::SpeakerVoice::CMN_1)),
+
+    connect(_useMandarinGoogleOfflineSyllableTTSBackend,
+            &QRadioButton::clicked,
+            this,
+            [&]() { startAudioDownload(_mandarinTTSCallbacks); });
 
     setMandarinTTSWidgetDefault(widget);
 }
@@ -463,7 +461,7 @@ void AdvancedTab::setForceDarkModeCheckboxDefault(QCheckBox &checkbox)
 }
 #endif
 
-void AdvancedTab::setCantoneseTTSWidgetDefault(QWidget &widget)
+void AdvancedTab::setCantoneseTTSWidgetDefault(QWidget *widget)
 {
     TextToSpeech::SpeakerBackend backend
         = Settings::getSettings()
@@ -471,7 +469,7 @@ void AdvancedTab::setCantoneseTTSWidgetDefault(QWidget &widget)
                       QVariant::fromValue(TextToSpeech::SpeakerBackend::QT_TTS))
               .value<TextToSpeech::SpeakerBackend>();
 
-    QList<QRadioButton *> buttons = widget.findChildren<QRadioButton *>();
+    QList<QRadioButton *> buttons = widget->findChildren<QRadioButton *>();
     foreach (const auto &button, buttons) {
         if (button->property("data").value<TextToSpeech::SpeakerBackend>()
             == backend) {
@@ -484,7 +482,18 @@ void AdvancedTab::setCantoneseTTSWidgetDefault(QWidget &widget)
     }
 }
 
-void AdvancedTab::setMandarinTTSWidgetDefault(QWidget &widget)
+void AdvancedTab::setCantoneseTTSSettings(TextToSpeech::SpeakerBackend backend,
+                                          TextToSpeech::SpeakerVoice voice)
+{
+    _settings->setValue("Advanced/CantoneseTextToSpeech::SpeakerBackend",
+                        QVariant::fromValue<TextToSpeech::SpeakerBackend>(
+                            backend));
+    _settings->setValue("Advanced/CantoneseTextToSpeech::SpeakerVoice",
+                        QVariant::fromValue<TextToSpeech::SpeakerVoice>(voice));
+    _settings->sync();
+}
+
+void AdvancedTab::setMandarinTTSWidgetDefault(QWidget *widget)
 {
     TextToSpeech::SpeakerBackend backend
         = Settings::getSettings()
@@ -492,7 +501,7 @@ void AdvancedTab::setMandarinTTSWidgetDefault(QWidget &widget)
                       QVariant::fromValue(TextToSpeech::SpeakerBackend::QT_TTS))
               .value<TextToSpeech::SpeakerBackend>();
 
-    QList<QRadioButton *> buttons = widget.findChildren<QRadioButton *>();
+    QList<QRadioButton *> buttons = widget->findChildren<QRadioButton *>();
     foreach (const auto &button, buttons) {
         if (button->property("data").value<TextToSpeech::SpeakerBackend>()
             == backend) {
@@ -503,6 +512,17 @@ void AdvancedTab::setMandarinTTSWidgetDefault(QWidget &widget)
 #endif
         }
     }
+}
+
+void AdvancedTab::setMandarinTTSSettings(TextToSpeech::SpeakerBackend backend,
+                                         TextToSpeech::SpeakerVoice voice)
+{
+    _settings->setValue("Advanced/MandarinTextToSpeech::SpeakerBackend",
+                        QVariant::fromValue<TextToSpeech::SpeakerBackend>(
+                            backend));
+    _settings->setValue("Advanced/MandarinTextToSpeech::SpeakerVoice",
+                        QVariant::fromValue<TextToSpeech::SpeakerVoice>(voice));
+    _settings->sync();
 }
 
 void AdvancedTab::setLanguageComboboxDefault(QComboBox &combobox)
@@ -792,7 +812,7 @@ void AdvancedTab::restoreDatabaseResult(bool succeeded,
     QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
 }
 
-void AdvancedTab::startAudioDownload()
+void AdvancedTab::startAudioDownload(std::shared_ptr<TextToSpeechCallbacks> cbs)
 {
     if (!sender()) {
         return;
@@ -804,12 +824,13 @@ void AdvancedTab::startAudioDownload()
             .exists()) {
         // In the future, there should be logic here that tests whether
         // the downloaded version is the newest.
+        cbs->successCb();
         return;
     }
 
     _downloadAudioDialog = new DownloadAudioDialog{this};
     if (_downloadAudioDialog->exec() != QMessageBox::Yes) {
-        setCantoneseTTSWidgetDefault(*_cantoneseTTSWidget);
+        cbs->resetCb();
         return;
     }
 
@@ -821,11 +842,22 @@ void AdvancedTab::startAudioDownload()
     QUrl url{"https://jyutdictionary.com/static/audio/"
              + TextToSpeech::backendNames[backend] + ".zip"};
 
-    _downloader = new Downloader(url, zipFile, this);
+    _downloader = new Downloader(url, zipFile, cbs, this);
 
     disconnect(_downloader, nullptr, nullptr, nullptr);
-    connect(_downloader, &Downloader::downloaded, this, &AdvancedTab::unzipFile);
-    connect(_downloader, &Downloader::error, this, [&](int error) {
+    connect(_downloader,
+            &Downloader::downloaded,
+            this,
+            [&](QString outputPath, std::any callbacks) {
+                // Is this horrible? Yes. But I don't want to expose
+                // struct TextToSpeechCallbacks publicly...
+                unzipFile(outputPath,
+                          std::any_cast<std::shared_ptr<TextToSpeechCallbacks>>(
+                              callbacks));
+            });
+    connect(_downloader, &Downloader::error, this, [=](int error) {
+        // Since the std::shared_ptr cbs goes out of scope once this function ends,
+        // it must be captured by value instead of by reference
         _progressDialog->reset();
         downloadAudioResult(!error,
                             tr("Audio downloaded successfully!"),
@@ -833,7 +865,7 @@ void AdvancedTab::startAudioDownload()
                                 .arg(error));
         if (error) {
             // An error happened, set it back to original backend
-            setCantoneseTTSWidgetDefault(*_cantoneseTTSWidget);
+            cbs->resetCb();
         }
     });
 
@@ -876,7 +908,8 @@ void AdvancedTab::showProgressDialog(QString text)
     _progressDialog->setValue(0);
 }
 
-void AdvancedTab::unzipFile(QString outputPath)
+void AdvancedTab::unzipFile(QString outputPath,
+                            std::shared_ptr<TextToSpeechCallbacks> cbs)
 {
     QString outputFolder = EntrySpeaker::getAudioPath();
     _progressDialog->setLabelText(tr("Installing downloaded files..."));
@@ -893,24 +926,21 @@ void AdvancedTab::unzipFile(QString outputPath)
         return true;
     });
     _boolReturnWatcher->setFuture(future);
-    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [&]() {
-        unzipComplete(static_cast<QFutureWatcher<bool> *>(sender())->result());
+    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=]() {
+        // Since the std::shared_ptr cbs goes out of scope once this function ends,
+        // it must be captured by value instead of by reference
+        unzipComplete(static_cast<QFutureWatcher<bool> *>(sender())->result(),
+                      cbs);
     });
 }
 
-void AdvancedTab::unzipComplete(bool completed)
+void AdvancedTab::unzipComplete(bool completed,
+                                std::shared_ptr<TextToSpeechCallbacks> cbs)
 {
     if (completed) {
-        _settings->setValue(
-            "Advanced/CantoneseTextToSpeech::SpeakerBackend",
-            QVariant::fromValue<TextToSpeech::SpeakerBackend>(
-                TextToSpeech::SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS));
-        _settings->setValue("Advanced/CantoneseTextToSpeech::SpeakerVoice",
-                            QVariant::fromValue<TextToSpeech::SpeakerVoice>(
-                                TextToSpeech::SpeakerVoice::YUE_1));
-        _settings->sync();
+        cbs->successCb();
     } else {
-        setCantoneseTTSWidgetDefault(*_cantoneseTTSWidget);
+        cbs->resetCb();
     }
     _progressDialog->reset();
     downloadAudioResult(completed,

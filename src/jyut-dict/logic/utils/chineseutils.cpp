@@ -4,7 +4,6 @@
 
 #include <cctype>
 #include <codecvt>
-#include <iomanip>
 #include <iostream>
 #include <regex>
 #include <sstream>
