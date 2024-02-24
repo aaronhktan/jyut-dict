@@ -39,10 +39,10 @@
 ## Linux
 
 ### .deb
+- [ ] Set up the environment according to instructions in the `linux` subfolder.
 - [ ] Run `create-deb.sh` in Ubuntu 18.04.
 
 ### AppImage
 - [ ] Build the binary using the Release configuration with APPIMAGE defined on Ubuntu 16.04.
-- [ ] Move the binary to the other folder structure under platform/linux.
-- [ ] Copy relevant data files to the folder structure.
+- [ ] See list of files to copy in the `linux` subfolder.
 - [ ] Run linuxdeployqt.
