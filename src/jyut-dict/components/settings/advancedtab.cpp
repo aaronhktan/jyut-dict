@@ -539,6 +539,8 @@ void AdvancedTab::resetSettings(QSettings &settings)
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     setForceDarkModeCheckboxDefault(*_forceDarkModeCheckbox);
 #endif
+    setCantoneseTTSWidgetDefault(_cantoneseTTSWidget);
+    setMandarinTTSWidgetDefault(_cantoneseTTSWidget);
     setLanguageComboboxDefault(*_languageCombobox);
 
     emit settingsReset();

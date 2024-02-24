@@ -30,7 +30,7 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="+174"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="+218"/>
         <source>Automatically check for updates on startup:</source>
         <translation>自动检查更新：</translation>
     </message>
@@ -41,6 +41,28 @@
     </message>
     <message>
         <location line="+3"/>
+        <source>Cantonese text-to-speech:</source>
+        <translation>广东话文本语言转换（TTS)：</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <location line="+4"/>
+        <source>Qt</source>
+        <translation>Qt</translation>
+    </message>
+    <message>
+        <location line="-3"/>
+        <location line="+4"/>
+        <source>Google</source>
+        <translation>Google</translation>
+    </message>
+    <message>
+        <location line="-2"/>
+        <source>Mandarin text-to-speech:</source>
+        <translation>普通话文本语言转换（TTS)：</translation>
+    </message>
+    <message>
+        <location line="+17"/>
         <source>Export dictionaries file:</source>
         <translation>导出词典文件：</translation>
     </message>
@@ -88,7 +110,7 @@
         <translation>重置所有设置</translation>
     </message>
     <message>
-        <location line="+167"/>
+        <location line="+289"/>
         <source>Dictionary export succeeded!</source>
         <translation>词典文件导出成功！</translation>
     </message>
@@ -103,7 +125,7 @@
         <translation>正在导出词典文件…</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+43"/>
         <source>Saved words and history export succeeded!</source>
         <translation>保存的词语和搜索历史导出成功！</translation>
     </message>
@@ -118,20 +140,20 @@
         <translation>正在导出保存的词语和搜索历史…</translation>
     </message>
     <message>
-        <location line="+45"/>
-        <location line="+41"/>
+        <location line="+47"/>
+        <location line="+43"/>
         <source>Dictionary restore succeeded! %1 will now restart.</source>
         <translation>词典恢复成功！%1会立即重新启动。</translation>
     </message>
     <message>
-        <location line="-37"/>
-        <location line="+42"/>
+        <location line="-39"/>
+        <location line="+44"/>
         <source>Dictionary restore failed! %1 will now restart.</source>
         <translation>词典恢复失败！%1会立即重新启动。</translation>
     </message>
     <message>
-        <location line="-38"/>
-        <location line="+47"/>
+        <location line="-40"/>
+        <location line="+49"/>
         <source>Restoring dictionary...</source>
         <translation>正在恢复词典文件…</translation>
     </message>
@@ -141,7 +163,7 @@
         <translation>另存为</translation>
     </message>
     <message>
-        <location line="+54"/>
+        <location line="+56"/>
         <source>Exported saved words and history path</source>
         <translation>另存为</translation>
     </message>
@@ -161,7 +183,37 @@
         <translation>正在恢复保存的词语和搜索历史…</translation>
     </message>
     <message>
-        <location line="-375"/>
+        <location line="+67"/>
+        <source>Downloading audio files...</source>
+        <translation>正在下载音频文件…</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Audio downloaded successfully!</source>
+        <translation>音频文件下载成功！</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Audio could not be downloaded, error code %1.</source>
+        <translation>音频文件下载失败，错误代码%1。</translation>
+    </message>
+    <message>
+        <location line="+51"/>
+        <source>Installing downloaded files...</source>
+        <translation>正在安装文件…</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Files installed successfully!</source>
+        <translation>文件安装成功！</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Files could not be installed.</source>
+        <translation>文件安装失败。</translation>
+    </message>
+    <message>
+        <location line="-683"/>
         <source>Use system language</source>
         <translation>系统默认</translation>
     </message>
@@ -181,13 +233,13 @@
         <translation>繁体中文</translation>
     </message>
     <message>
-        <location line="+160"/>
-        <location line="+44"/>
+        <location line="+282"/>
+        <location line="+46"/>
         <source>Path to save exported database</source>
         <translation>保存文件至</translation>
     </message>
     <message>
-        <location line="-209"/>
+        <location line="-333"/>
         <source>French (CA)</source>
         <translation>法文（加拿大）</translation>
     </message>
@@ -351,6 +403,32 @@
     </message>
 </context>
 <context>
+    <name>DownloadAudioDialog</name>
+    <message>
+        <location filename="../../dialogs/downloadaudiodialog.cpp" line="+12"/>
+        <source>To use this option for text-to-speech, files must be downloaded. Would you like to download them now?</source>
+        <translation>你必须下载音频文件才可以选择这个选项。你是否想现在下载这些文件？</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Downloading files requires a working Internet connection.</source>
+        <translation>下载这些文件需要一个可靠的联网连接。</translation>
+    </message>
+</context>
+<context>
+    <name>DownloadResultDialog</name>
+    <message>
+        <location filename="../../dialogs/downloadresultdialog.cpp" line="+14"/>
+        <source>Your download has finished.</source>
+        <translation>下载完成。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>OK</source>
+        <translation>确定</translation>
+    </message>
+</context>
+<context>
     <name>EntryActionWidget</name>
     <message>
         <location filename="../../components/entryview/entryactionwidget.cpp" line="+124"/>
@@ -467,31 +545,31 @@
     <name>MAC_APPLICATION_MENU</name>
     <message>
         <source>Services</source>
-        <translation >服务</translation>
+        <translation>服务</translation>
     </message>
     <message>
         <source>Hide %1</source>
-        <translation >隐藏 %1</translation>
+        <translation>隐藏 %1</translation>
     </message>
     <message>
         <source>Hide Others</source>
-        <translation >隐藏其他</translation>
+        <translation>隐藏其他</translation>
     </message>
     <message>
         <source>Show All</source>
-        <translation >全部显示</translation>
+        <translation>全部显示</translation>
     </message>
     <message>
         <source>Preferences...</source>
-        <translation >偏好设置…</translation>
+        <translation>偏好设置…</translation>
     </message>
     <message>
         <source>Quit %1</source>
-        <translation >结束 %1</translation>
+        <translation>结束 %1</translation>
     </message>
     <message>
         <source>About %1</source>
-        <translation >关于 %1</translation>
+        <translation>关于 %1</translation>
     </message>
 </context>
 <context>
@@ -742,7 +820,7 @@ Hang tight!</source>
 <context>
     <name>NoUpdateDialog</name>
     <message>
-        <location filename="../../dialogs/noupdatedialog.cpp" line="+14"/>
+        <location filename="../../dialogs/noupdatedialog.cpp" line="+12"/>
         <source>No update found!</source>
         <translation>没有找到可用的更新!</translation>
     </message>
@@ -771,15 +849,15 @@ Hang tight!</source>
     <name>QMessageBox</name>
     <message>
         <source>Help</source>
-        <translation >帮助</translation>
+        <translation>帮助</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation >确定</translation>
+        <translation>确定</translation>
     </message>
     <message>
         <source>About Qt</source>
-        <translation >关于Qt</translation>
+        <translation>关于Qt</translation>
     </message>
     <message>
         <source>&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;</source>
@@ -787,26 +865,26 @@ Hang tight!</source>
     </message>
     <message>
         <source>Show Details...</source>
-        <translation >显示详细信息…</translation>
+        <translation>显示详细信息…</translation>
     </message>
     <message>
         <source>Hide Details...</source>
-        <translation >隐藏详细信息…</translation>
+        <translation>隐藏详细信息…</translation>
     </message>
 </context>
 <context>
     <name>QPlatformTheme</name>
     <message>
         <source>Cancel</source>
-        <translation >取消</translation>
+        <translation>取消</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation >是</translation>
+        <translation>是</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation >确定</translation>
+        <translation>确定</translation>
     </message>
 </context>
 <context>
@@ -1394,12 +1472,12 @@ Hang tight!</source>
     <name>strings</name>
     <message>
         <location filename="../../logic/strings/strings.h" line="+16"/>
-        <location line="+118"/>
+        <location line="+126"/>
         <source>JP</source>
         <translation>粤拼</translation>
     </message>
     <message>
-        <location line="-117"/>
+        <location line="-125"/>
         <source>YL</source>
         <translation>耶魯拼音</translation>
     </message>
@@ -1410,12 +1488,12 @@ Hang tight!</source>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+116"/>
+        <location line="+124"/>
         <source>PY</source>
         <translation>汉语拼音</translation>
     </message>
     <message>
-        <location line="-115"/>
+        <location line="-123"/>
         <source>ZY</source>
         <translation>注音</translation>
     </message>
@@ -1448,6 +1526,11 @@ Hang tight!</source>
         <location line="+2"/>
         <source>A free, open-source offline Cantonese Dictionary.</source>
         <translation>一个免费、自由、开源及脱机的粤语词典。</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contains FlowLayout code from &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; and &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; code from KDE.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
+        <translation>图标使用 &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Commons 古汉字计划&lt;/a&gt; 的图片创造。&lt;br&gt;界面图标来源：&lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; 和 &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;。&lt;br&gt;使用 &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 的 FlowLayout 和 KDE 的 &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; 编程。&lt;br&gt;使用 &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 编程。</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -1526,6 +1609,11 @@ Hang tight!</source>
     </message>
     <message>
         <location line="+6"/>
+        <source>&lt;p style=&quot;color: %1;&quot;&gt;Google text-to-speech is a collection of MP3 files.&lt;br&gt;No Internet connection is required after initial download.&lt;br&gt;No data is sent to Google.&lt;/p&gt;</source>
+        <translation>&lt;p style=&quot;color: %1;&quot;&gt;Google 文本语言转换是一个音频文件资料集。&lt;br&gt;这个资料集下载了之后，您可以离线使用文本语言转换。&lt;br&gt;粤语词典不会传出你的资料。&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location line="+6"/>
         <source>English</source>
         <translation>英文</translation>
     </message>
@@ -1575,7 +1663,7 @@ Hang tight!</source>
         <translation>英文</translation>
     </message>
     <message>
-        <location line="-70"/>
+        <location line="-76"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Hong Kong</source>
@@ -1584,12 +1672,7 @@ Debug: Locale: %1, Language: Chinese - Hong Kong</source>
 调试: 区域设置: %1, 语言: 粤语 - 香港</translation>
     </message>
     <message>
-        <location line="-35"/>
-        <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contains FlowLayout code from &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
-        <translation>图标使用 &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Commons 古汉字计划&lt;/a&gt; 的图片创造。&lt;br&gt;界面图标来源：&lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; 和 &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;。&lt;br&gt;使用 &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 的 FlowLayout 编程。&lt;br&gt;使用 &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 编程。</translation>
-    </message>
-    <message>
-        <location line="+43"/>
+        <location line="+8"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Taiwan</source>

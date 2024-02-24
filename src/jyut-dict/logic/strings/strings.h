@@ -40,7 +40,9 @@ constexpr auto CREDITS_TEXT = QT_TRANSLATE_NOOP(
     "<a href=https://github.com/microsoft/fluentui-system-icons "
     "style=\"color: %1; text-decoration: none\">Fluent UI System Icons</a>."
     "<br>Contains FlowLayout code from <a href=\"file://%2\" style=\"color: "
-    "%1; text-decoration: none\">Qt</a>."
+    "%1; text-decoration: none\">Qt</a> and <a href=\"https://invent.kde.org/"
+    "frameworks/karchive\" style=\"color: %1; text-decoration: none\">"
+    "KArchive</a> code from KDE."
     "<br>Made with <a href=\"#\" style=\"color: %1; text-decoration: none\">"
     "Qt</a>.");
 constexpr auto CONTACT_TITLE
@@ -124,8 +126,8 @@ constexpr auto LEARN_MANDARIN_IPA_URL = QT_TRANSLATE_NOOP(
 constexpr auto TTS_EXPLAINER = QT_TRANSLATE_NOOP(
     "strings",
     "<p style=\"color: %1;\">Google text-to-speech is a collection of MP3 "
-    "files.<br>No Internet connection is required; no data is sent to "
-    "Google.</p>");
+    "files.<br>No Internet connection is required after initial download."
+    "<br>No data is sent to Google.</p>");
 
 constexpr auto ENG_STRING = QT_TRANSLATE_NOOP("strings", "English");
 constexpr auto FRA_STRING = QT_TRANSLATE_NOOP("strings", "French");

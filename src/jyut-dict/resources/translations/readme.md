@@ -8,4 +8,4 @@
   - https://pontoon.mozilla.org/zh-TW/all-projects/all-resources/
   - https://pontoon.mozilla.org/zh-CN/all-projects/all-resources/
   - https://pontoon.mozilla.org/fr/all-projects/all-resources/
-  - https://www.microsoft.com/en-us/language/
+  - https://msit.powerbi.com/view?r=eyJrIjoiODJmYjU4Y2YtM2M0ZC00YzYxLWE1YTktNzFjYmYxNTAxNjQ0IiwidCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsImMiOjV9
