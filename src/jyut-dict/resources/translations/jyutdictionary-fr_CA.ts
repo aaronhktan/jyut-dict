@@ -30,179 +30,231 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="174"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="218"/>
         <source>Automatically check for updates on startup:</source>
         <translation>Vérifier automatiquement les mises à jour&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="177"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="221"/>
         <source>Enable dark mode:</source>
         <translation>Activer le mode sombre&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="180"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="224"/>
+        <source>Cantonese text-to-speech:</source>
+        <translation>Moteur de synthèse vocale pour le cantonais :</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="225"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="229"/>
+        <source>Qt</source>
+        <translation>Qt</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="226"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="230"/>
+        <source>Google</source>
+        <translation>Google</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="228"/>
+        <source>Mandarin text-to-speech:</source>
+        <translation>Moteur de synthèse vocale pour le mandarin :</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="245"/>
         <source>Export dictionaries file:</source>
         <translation>Exporter le fichier contenant les dictionnaires&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="182"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="247"/>
         <source>Export saved words and history:</source>
         <translation>Exporter les mots enregistrés et l&apos;historique de recherche&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="183"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="184"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="248"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="249"/>
         <source>Export</source>
         <translation>Exporter</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="188"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="253"/>
         <source>Restore dictionaries file to last backed up version:</source>
         <translation>Restaurer le fichier contenant les dictionnaires à partir d&apos;une sauvegarde automatique&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="190"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="255"/>
         <source>Restore dictionaries file using exported file:</source>
         <translation>Restaurer le fichier contenant les dictionnaires à partir d&apos;un fichier exporté&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="192"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="257"/>
         <source>Restore saved words and history file using exported file:</source>
         <translation>Restaurer les mots enregistrés et l&apos;historique de recherche à partir d&apos;un fichier exporté&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="193"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="194"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="195"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="258"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="259"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="260"/>
         <source>Restore</source>
         <translation>Restaurer</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="199"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="264"/>
         <source>Application language:</source>
         <translation>Langue d&apos;application&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="209"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="274"/>
         <source>Reset all settings</source>
         <translation>Réinitialiser toutes les préférences</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="376"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="563"/>
         <source>Dictionary export succeeded!</source>
         <translation>Réussite de l&apos;exportation des dictionnaires!</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="377"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="564"/>
         <source>Dictionary export failed.</source>
         <translation>Échec de l&apos;exportation des dictionnaires.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="379"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="566"/>
         <source>Exporting dictionaries...</source>
         <translation>Exportation des dictionnaires...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="420"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="609"/>
         <source>Saved words and history export succeeded!</source>
         <translation>Réussite de l&apos;exportation des mots enregistrés et l&apos;historique de recherche!</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="421"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="610"/>
         <source>Saved words and history export failed.</source>
         <translation>Échec de l&apos;exportation des mots enregistrés et l&apos;historique de recherche.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="423"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="612"/>
         <source>Exporting saved words and history...</source>
         <translation>Exportation de l&apos;exportation des mots enregistrés et l&apos;historique de recherche...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="468"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="509"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="659"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="702"/>
         <source>Dictionary restore succeeded! %1 will now restart.</source>
         <translation>Réussite de la restauration du fichier contenant les dictionnaires! %1 va redémarrer maintenant.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="472"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="514"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="663"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="707"/>
         <source>Dictionary restore failed! %1 will now restart.</source>
         <translation>Échec de la restauration du fichier contenant les dictionnaires! %1 va redémarrer maintenant.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="476"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="523"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="667"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="716"/>
         <source>Restoring dictionary...</source>
         <translation>Restauration du fichier contenant les dictionnaires...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="502"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="695"/>
         <source>Exported dictionary file path</source>
         <translation>Enregistrer sous</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="556"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="751"/>
         <source>Exported saved words and history path</source>
         <translation>Enregistrer sous</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="562"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="757"/>
         <source>Saved words and history restore succeeded! %1 will now restart.</source>
         <translation>Réussite de la restauration des mots enregistrés et l&apos;historique de recherche! %1 va redémarrer maintenant.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="566"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="761"/>
         <source>Saved words and history restore failed! %1 will now restart.</source>
         <translation>Échec de la restauration des mots enregistrés et l&apos;historique de recherche! %1 va redémarrer maintenant.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="575"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="770"/>
         <source>Restoring saved words and history...</source>
         <translation>Restauration des mots enregistrés et l&apos;historique de recherche...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="200"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="837"/>
+        <source>Downloading audio files...</source>
+        <translation>Téléchargement des fichiers audio...</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="863"/>
+        <source>Audio downloaded successfully!</source>
+        <translation>Réussite du téléchargement des fichiers audio!</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="864"/>
+        <source>Audio could not be downloaded, error code %1.</source>
+        <translation>Échec du téléchargement des fichiers audio, code d'erreur %1.</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="915"/>
+        <source>Installing downloaded files...</source>
+        <translation>Installation des fichiers audio...</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="947"/>
+        <source>Files installed successfully!</source>
+        <translation>Réussite de l'installation des fichiers audio!</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="948"/>
+        <source>Files could not be installed.</source>
+        <translation>Échec de l'installation des fichiers audio.</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="265"/>
         <source>Use system language</source>
         <translation>Langue par défault du système</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="201"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="266"/>
         <source>English</source>
         <translation>Anglais</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="206"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="271"/>
         <source>Simplified Chinese</source>
         <translation>Chinois simplifié</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="207"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="272"/>
         <source>Traditional Chinese</source>
         <translation>Chinois traditionnel</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="367"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="411"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="554"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="600"/>
         <source>Path to save exported database</source>
         <translation>Où enregistrer le fichier</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="202"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="267"/>
         <source>French (CA)</source>
         <translation>Français (Canada)</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="203"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="268"/>
         <source>French</source>
         <translation>Français</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="204"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="269"/>
         <source>Cantonese (Simplified)</source>
         <translation>Cantonais simplifié</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="205"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="270"/>
         <source>Cantonese (Traditional)</source>
         <translation>Cantonais traditionnel</translation>
     </message>
@@ -346,6 +398,32 @@
     </message>
     <message>
         <location filename="../../dialogs/dictionarytabfailuredialog.cpp" line="17"/>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+</context>
+<context>
+    <name>DownloadAudioDialog</name>
+    <message>
+        <location filename="../../dialogs/downloadaudiodialog.cpp" line="12"/>
+        <source>To use this option for text-to-speech, files must be downloaded. Would you like to download them now?</source>
+        <translation>Afin de choisir cette option pour le moteur de synthèse vocale, il faut en premier télécharger des fichiers audio. Voulez-vous les télécharger maintenant?</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/downloadaudiodialog.cpp" line="15"/>
+        <source>Downloading files requires a working Internet connection.</source>
+        <translation>Le téléchargement des fichiers audio requiert une connexion Internet.</translation>
+    </message>
+</context>
+<context>
+    <name>DownloadResultDialog</name>
+    <message>
+        <location filename="../../dialogs/downloadresultdialog.cpp" line="14"/>
+        <source>Your download has finished.</source>
+        <translation>Téléchargement terminé.</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/downloadresultdialog.cpp" line="16"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -743,12 +821,12 @@ Veuillez patienter quelques minutes.</translation>
 <context>
     <name>NoUpdateDialog</name>
     <message>
-        <location filename="../../dialogs/noupdatedialog.cpp" line="14"/>
+        <location filename="../../dialogs/noupdatedialog.cpp" line="12"/>
         <source>No update found!</source>
         <translation>Aucune mise à jour trouvée!</translation>
     </message>
     <message>
-        <location filename="../../dialogs/noupdatedialog.cpp" line="15"/>
+        <location filename="../../dialogs/noupdatedialog.cpp" line="13"/>
         <source>You are on the newest version, %1.</source>
         <translation>Vous avez déjà la version actuelle, %1.</translation>
     </message>
@@ -1399,7 +1477,7 @@ Veuillez patienter quelques minutes.</translation>
     <name>strings</name>
     <message>
         <location filename="../../logic/strings/strings.h" line="16"/>
-        <location filename="../../logic/strings/strings.h" line="134"/>
+        <location filename="../../logic/strings/strings.h" line="142"/>
         <source>JP</source>
         <translation>JP</translation>
     </message>
@@ -1415,7 +1493,7 @@ Veuillez patienter quelques minutes.</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="19"/>
-        <location filename="../../logic/strings/strings.h" line="135"/>
+        <location filename="../../logic/strings/strings.h" line="143"/>
         <source>PY</source>
         <translation>PY</translation>
     </message>
@@ -1455,132 +1533,142 @@ Veuillez patienter quelques minutes.</translation>
         <translation>Un dictionnaire cantonais hors-ligne libre et gratuit.</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="47"/>
+        <location filename="../../logic/strings/strings.h" line="31"/>
+        <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contains FlowLayout code from &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; and &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; code from KDE.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
+        <translation>Icône créée avec des images originant du &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Ancient Chinese Characters project (sinogrammes anciens)&lt;/a&gt; de Wikimédia.&lt;br&gt;Icônes d&apos;interface : &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; et &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contient du code FlowLayout de &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; et &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; de KDE.&lt;br&gt;Programmé avec &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="49"/>
         <source>%1 is made with ❤️ by Aaron Tan.</source>
         <translation>%1 est crée avec ❤️ par Aaron Tan.</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="50"/>
+        <location filename="../../logic/strings/strings.h" line="52"/>
         <source>Donate 💵, report a bug 🐛, or just say hi 👋!</source>
         <translation>Donner 💵, signaler un problème 🐛, ou simplement dire bonjour 👋!</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="53"/>
+        <location filename="../../logic/strings/strings.h" line="55"/>
         <source>Donate, report a bug, or just say hi!</source>
         <translation>Donner, signaler un problème, ou simplement dire bonjour!</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="54"/>
+        <location filename="../../logic/strings/strings.h" line="56"/>
         <source>&lt;a href=https://www.pleco.com style=&quot;color: %1; text-decoration: none&quot;&gt;Pleco Dictionary&lt;/a&gt;, &lt;a href=http://www.cantonese.sheik.co.uk/dictionary/ style=&quot;color: %1; text-decoration: none&quot;&gt;CantoDict&lt;/a&gt;, &lt;a href=https://words.hk style=&quot;color: %1; text-decoration: none&quot;&gt;words.hk&lt;/a&gt;</source>
         <translation>&lt;a href=https://www.pleco.com style=&quot;color: %1; text-decoration: none&quot;&gt;Pleco Dictionary&lt;/a&gt;, &lt;a href=http://www.cantonese.sheik.co.uk/dictionary/ style=&quot;color: %1; text-decoration: none&quot;&gt;CantoDict&lt;/a&gt;, &lt;a href=https://words.hk style=&quot;color: %1; text-decoration: none&quot;&gt;words.hk&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="62"/>
+        <location filename="../../logic/strings/strings.h" line="64"/>
         <source>A voice for &quot;Chinese - Hong Kong&quot; could not be found.</source>
         <translation>Aucune voix disponible pour la langue «Cantonais - Hong Kong».</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="70"/>
+        <location filename="../../logic/strings/strings.h" line="72"/>
         <source>A voice for &quot;Chinese - Taiwan&quot; could not be found.</source>
         <translation>Aucune voix disponible pour la langue «Chinois - Taïwan».</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="78"/>
+        <location filename="../../logic/strings/strings.h" line="80"/>
         <source>A voice for &quot;Chinese - Mainland China&quot; could not be found.</source>
         <translation>Aucune voix disponible pour la langue «Chinois - Chine continentale».</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="86"/>
+        <location filename="../../logic/strings/strings.h" line="88"/>
         <source>&lt;a href=https://en.wikipedia.org/wiki/Help:IPA/Cantonese style=&quot;color: %1; text-decoration: none&quot;&gt;Learn more with the Cantonese Pronunciation Reference →&lt;/a&gt;</source>
         <translation>&lt;a href=https://fr.wikipedia.org/wiki/Cantonais#Romanisations style=&quot;color: %1; text-decoration: none&quot;&gt;En savoir plus avec le guide de référence de la prononciation du cantonais →&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="91"/>
+        <location filename="../../logic/strings/strings.h" line="93"/>
         <source>&lt;a href=https://jyutping.org/en/docs/english/ style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Jyutping →&lt;/a&gt;</source>
         <translation>&lt;a href=https://fr.wikipedia.org/wiki/Jyutping style=&quot;color: %1; text-decoration: none&quot;&gt;En savoir plus sur le Jyutping →&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="95"/>
+        <location filename="../../logic/strings/strings.h" line="97"/>
         <source>&lt;a href=https://opencantonese.org/cantonese-pronunciation-yale/introduction/overview-cantonese-sounds style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Yale →&lt;/a&gt;</source>
         <translation>&lt;a href=https://www.chine-nouvelle.com/methode/cantonais/mandarin-cantonais-2.html style=&quot;color: %1; text-decoration: none&quot;&gt;En savoir plus sur le Yale →&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="101"/>
+        <location filename="../../logic/strings/strings.h" line="103"/>
         <source>&lt;a href=https://cantonese.ca/pronunciation.html style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Cantonese IPA →&lt;/a&gt;</source>
         <translation>&lt;a href=https://fr.wikipedia.org/wiki/Aide:Alphabet_phon%C3%A9tique_cantonais style=&quot;color: %1; text-decoration: none&quot;&gt;En savoir plus sur l&apos;API cantonais →&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="105"/>
+        <location filename="../../logic/strings/strings.h" line="107"/>
         <source>&lt;a href=https://en.wikipedia.org/wiki/Help:IPA/Mandarin style=&quot;color: %1; text-decoration: none&quot;&gt;Learn more with the Mandarin Pronunciation Reference →&lt;/a&gt;</source>
         <translation>&lt;a href=https://fr.wikipedia.org/wiki/Prononciation_du_mandarin_standard style=&quot;color: %1; text-decoration: none&quot;&gt;En savoir plus avec le guide de référence de la prononciation du mandarin →&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="110"/>
+        <location filename="../../logic/strings/strings.h" line="112"/>
         <source>&lt;a href=https://www.dong-chinese.com/learn/sounds/pinyin style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Pinyin →&lt;/a&gt;</source>
         <translation>&lt;a href=https://chine.in/mandarin/methode/index.php style=&quot;color: %1; text-decoration: none&quot;&gt;En savoir plus sur le Pinyin →&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="114"/>
+        <location filename="../../logic/strings/strings.h" line="116"/>
         <source>&lt;a href=https://www.dong-chinese.com/learn/sounds/zhuyin style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Zhuyin →&lt;/a&gt;</source>
         <translation>&lt;a href=https://ltl-chinois.fr/bopomofo/#chapter-3 style=&quot;color: %1; text-decoration: none&quot;&gt;En savoir plus sur le Zhuyin →&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="118"/>
+        <location filename="../../logic/strings/strings.h" line="120"/>
         <source>&lt;a href=https://www.internationalphoneticassociation.org/IPAcharts/IPA_chart_trans/pdfs/JIPA_2011_[2007]_zho.pdf style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Mandarin IPA →&lt;/a&gt;</source>
         <translation>&lt;a href=https://www.internationalphoneticassociation.org/IPAcharts/IPA_chart_trans/pdfs/JIPA_2011_[2007]_zho.pdf style=&quot;color: %1; text-decoration: none&quot;&gt;En savoir plus sur l&apos;API mandarin →&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="124"/>
+        <location filename="../../logic/strings/strings.h" line="126"/>
+        <source>&lt;p style=&quot;color: %1;&quot;&gt;Google text-to-speech is a collection of MP3 files.&lt;br&gt;No Internet connection is required after initial download.&lt;br&gt;No data is sent to Google.&lt;/p&gt;</source>
+        <translation>&lt;p style=&quot;color: %1;&quot;&gt;Le moteur de synthèse vocale Google est une collection de fichiers MP3.&lt;br&gt;Une connexion à Internet n'est pas nécessaire après le téléchargement initial.&lt;br&gt;Vos données ne sont pas transmises à Google.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="132"/>
         <source>English</source>
         <translation>Anglais</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="125"/>
+        <location filename="../../logic/strings/strings.h" line="133"/>
         <source>French</source>
         <translation>Français</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="126"/>
+        <location filename="../../logic/strings/strings.h" line="134"/>
         <source>German</source>
         <translation>Allemand</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="127"/>
+        <location filename="../../logic/strings/strings.h" line="135"/>
         <source>Cantonese</source>
         <translation>Cantonais</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="128"/>
+        <location filename="../../logic/strings/strings.h" line="136"/>
         <source>Mandarin</source>
         <translation>Mandarin</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="129"/>
+        <location filename="../../logic/strings/strings.h" line="137"/>
         <source>Chinese</source>
         <translation>Chinois</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="131"/>
+        <location filename="../../logic/strings/strings.h" line="139"/>
         <source>SC</source>
         <translation>CS</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="132"/>
+        <location filename="../../logic/strings/strings.h" line="140"/>
         <source>TC</source>
         <translation>CT</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="133"/>
+        <location filename="../../logic/strings/strings.h" line="141"/>
         <source>CN</source>
         <translation>CN</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="136"/>
+        <location filename="../../logic/strings/strings.h" line="144"/>
         <source>EN</source>
         <translation>FR</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="66"/>
+        <location filename="../../logic/strings/strings.h" line="68"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Hong Kong</source>
@@ -1589,12 +1677,7 @@ Debug: Locale: %1, Language: Chinese - Hong Kong</source>
 Débogage&#xa0;: Locale&#xa0;: %1, Langue&#xa0;: Cantonais - Hong Kong</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="31"/>
-        <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contains FlowLayout code from &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
-        <translation>Icône créée avec des images originant du &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Ancient Chinese Characters project (sinogrammes anciens)&lt;/a&gt; de Wikimédia.&lt;br&gt;Icônes d&apos;interface : &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; et &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contient du code FlowLayout de &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.&lt;br&gt;Programmé avec &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</translation>
-    </message>
-    <message>
-        <location filename="../../logic/strings/strings.h" line="74"/>
+        <location filename="../../logic/strings/strings.h" line="76"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Taiwan</source>
@@ -1603,7 +1686,7 @@ Debug: Locale: %1, Language: Chinese - Taiwan</source>
 Débogage&#xa0;: Locale: %1, Langue&#xa0;: Chinois - Taïwan</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="81"/>
+        <location filename="../../logic/strings/strings.h" line="83"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Mainland</source>

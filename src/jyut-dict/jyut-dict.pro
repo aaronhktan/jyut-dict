@@ -4,25 +4,17 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network sql svg
+QT       += core gui network sql svg multimedia texttospeech widgets KArchive
 QMAKE_MACOSX_DEPLOYMENT_TARGET = 11.0
-
-equals(QT_MAJOR_VERSION, 5):!lessThan(QT_MINOR_VERSION, 11) {
-   QT += texttospeech
-} else {
-  message(Qt $$QT_VERSION Text to Speech not supported)
-}
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = "Jyut Dictionary"
 TEMPLATE = app
 
-VERSION = 1.22.02.07
+VERSION = 2.23.04.08
 QMAKE_TARGET_COMPANY = "Aaron Tan"
 QMAKE_TARGET_PRODUCT = "Jyut Dictionary"
 QMAKE_TARGET_DESCRIPTION = "Jyut Dictionary"
-QMAKE_TARGET_COPYRIGHT = "Aaron Tan, 2019"
+QMAKE_TARGET_COPYRIGHT = "Aaron Tan, 2023"
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -35,7 +27,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-CONFIG += c++14
+CONFIG += c++17
 
 QMAKE_CXXFLAGS += "-Wno-implicit-fallthrough"
 
@@ -96,6 +88,8 @@ SOURCES += \
     components/settings/texttab.cpp \
     dialogs/defaultdialog.cpp \
     dialogs/dictionarytabfailuredialog.cpp \
+    dialogs/downloadaudiodialog.cpp \
+    dialogs/downloadresultdialog.cpp \
     dialogs/entryspeakerrordialog.cpp \
     dialogs/exportdatabasedialog.cpp \
     dialogs/noupdatedialog.cpp \
@@ -103,27 +97,28 @@ SOURCES += \
     dialogs/resetsettingsdialog.cpp \
     dialogs/restoredatabasedialog.cpp \
     logic/database/queryparseutils.cpp \
-    logic/database/sqluserdatautils.cpp \
-    logic/database/sqluserhistoryutils.cpp \
-    logic/search/sqlsearch.cpp \
-    logic/sentence/sentenceset.cpp \
-    logic/sentence/sourcesentence.cpp \
-    logic/utils/scriptdetector.cpp \
-    main.cpp \
     logic/database/sqldatabasemanager.cpp \
     logic/database/sqldatabaseutils.cpp \
+    logic/database/sqluserdatautils.cpp \
+    logic/database/sqluserhistoryutils.cpp \
     logic/dictionary/dictionarymetadata.cpp \
     logic/dictionary/dictionarysource.cpp \
+    logic/download/downloader.cpp \
     logic/entry/definitionsset.cpp \
     logic/entry/entry.cpp \
     logic/entry/entryspeaker.cpp \
     logic/search/searchoptionsmediator.cpp \
+    logic/search/sqlsearch.cpp \
+    logic/sentence/sentenceset.cpp \
+    logic/sentence/sourcesentence.cpp \
     logic/settings/settings.cpp \
     logic/settings/settingsutils.cpp \
     logic/update/githubreleasechecker.cpp \
     logic/utils/chineseutils.cpp \
+    logic/utils/scriptdetector.cpp \
     logic/utils/utils.cpp \
     logic/utils/utils_qt.cpp \
+    main.cpp \
     windows/aboutwindow.cpp \
     windows/historywindow.cpp \
     windows/mainwindow.cpp \
@@ -189,6 +184,8 @@ HEADERS += \
     components/settings/texttab.h \
     dialogs/defaultdialog.h \
     dialogs/dictionarytabfailuredialog.h \
+    dialogs/downloadaudiodialog.h \
+    dialogs/downloadresultdialog.h \
     dialogs/entryspeakerrordialog.h \
     dialogs/exportdatabasedialog.h \
     dialogs/noupdatedialog.h \
@@ -202,6 +199,7 @@ HEADERS += \
     logic/database/sqluserhistoryutils.h \
     logic/dictionary/dictionarymetadata.h \
     logic/dictionary/dictionarysource.h \
+    logic/download/downloader.h \
     logic/entry/definitionsset.h \
     logic/entry/entry.h \
     logic/entry/entrycharactersoptions.h \

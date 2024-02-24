@@ -527,6 +527,7 @@ void TextTab::resetSettings(void)
 
     setCharacterComboBoxDefault(*_characterCombobox);
 
+    setSearchAutoDetectCheckboxDefault(*_searchAutoDetectCheckbox);
     setInterfaceSizeWidgetDefault(*_interfaceSizeWidget);
 
     setColourComboBoxDefault(*_colourCombobox);

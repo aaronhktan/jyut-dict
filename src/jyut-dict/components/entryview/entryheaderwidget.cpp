@@ -145,12 +145,28 @@ void EntryHeaderWidget::translateUI()
 
     disconnect(_cantoneseTTS, nullptr, nullptr, nullptr);
     connect(_cantoneseTTS, &QPushButton::clicked, this, [=]() {
+        TextToSpeech::SpeakerBackend backend
+            = Settings::getSettings()
+                  ->value("Advanced/CantoneseTextToSpeech::SpeakerBackend",
+                          QVariant::fromValue(
+                              TextToSpeech::SpeakerBackend::QT_TTS))
+                  .value<TextToSpeech::SpeakerBackend>();
+        TextToSpeech::SpeakerVoice voice
+            = Settings::getSettings()
+                  ->value("Advanced/CantoneseTextToSpeech::SpeakerVoice",
+                          QVariant::fromValue(TextToSpeech::SpeakerVoice::NONE))
+                  .value<TextToSpeech::SpeakerVoice>();
 #ifdef Q_OS_MAC
-        if (!_speaker->speakCantonese(_jyutping)) {
+        if (!_speaker->speakCantonese(_jyutping, backend, voice)) {
             return;
         }
 #endif
-        if (!_speaker->speakCantonese(_chinese)) {
+        if ((backend != TextToSpeech::SpeakerBackend::QT_TTS)) {
+            if (!_speaker->speakCantonese(_jyutping, backend, voice)) {
+                return;
+            }
+        }
+        if (!_speaker->speakCantonese(_chinese, backend, voice)) {
             return;
         }
         showError(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
@@ -162,13 +178,29 @@ void EntryHeaderWidget::translateUI()
 
     disconnect(_mandarinTTS, nullptr, nullptr, nullptr);
     if (Settings::getCurrentLocale().country() == QLocale::Taiwan) {
+        TextToSpeech::SpeakerBackend backend
+            = Settings::getSettings()
+                  ->value("Advanced/MandarinTextToSpeech::SpeakerBackend",
+                          QVariant::fromValue(
+                              TextToSpeech::SpeakerBackend::QT_TTS))
+                  .value<TextToSpeech::SpeakerBackend>();
+        TextToSpeech::SpeakerVoice voice
+            = Settings::getSettings()
+                  ->value("Advanced/MandarinTextToSpeech::SpeakerVoice",
+                          QVariant::fromValue(TextToSpeech::SpeakerVoice::NONE))
+                  .value<TextToSpeech::SpeakerVoice>();
         connect(_mandarinTTS, &QPushButton::clicked, this, [=]() {
 #ifdef Q_OS_MAC
-            if (!_speaker->speakTaiwaneseMandarin(_pinyin)) {
+            if (!_speaker->speakTaiwaneseMandarin(_pinyin, backend, voice)) {
                 return;
             }
 #endif
-            if (!_speaker->speakTaiwaneseMandarin(_chinese)) {
+            if (backend != TextToSpeech::SpeakerBackend::QT_TTS) {
+                if (!_speaker->speakTaiwaneseMandarin(_pinyin, backend, voice)) {
+                    return;
+                }
+            }
+            if (!_speaker->speakTaiwaneseMandarin(_chinese, backend, voice)) {
                 return;
             }
             showError(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
@@ -179,11 +211,28 @@ void EntryHeaderWidget::translateUI()
         });
     } else {
         connect(_mandarinTTS, &QPushButton::clicked, this, [=]() {
+            TextToSpeech::SpeakerBackend backend
+                = Settings::getSettings()
+                      ->value("Advanced/MandarinTextToSpeech::SpeakerBackend",
+                              QVariant::fromValue(
+                                  TextToSpeech::SpeakerBackend::QT_TTS))
+                      .value<TextToSpeech::SpeakerBackend>();
+            TextToSpeech::SpeakerVoice voice
+                = Settings::getSettings()
+                      ->value("Advanced/MandarinTextToSpeech::SpeakerVoice",
+                              QVariant::fromValue(
+                                  TextToSpeech::SpeakerVoice::NONE))
+                      .value<TextToSpeech::SpeakerVoice>();
 #ifdef Q_OS_MAC
-            if (!_speaker->speakMainlandMandarin(_pinyin)) {
+            if (!_speaker->speakMainlandMandarin(_pinyin, backend, voice)) {
                 return;
             }
 #endif
+            if (backend != TextToSpeech::SpeakerBackend::QT_TTS) {
+                if (!_speaker->speakMainlandMandarin(_pinyin, backend, voice)) {
+                    return;
+                }
+            }
             if (!_speaker->speakMainlandMandarin(_chinese)) {
                 return;
             }

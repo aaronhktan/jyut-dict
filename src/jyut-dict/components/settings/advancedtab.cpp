@@ -2,6 +2,7 @@
 
 #include "dialogs/resetsettingsdialog.h"
 #include "logic/database/sqldatabasemanager.h"
+#include "logic/entry/entryspeaker.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
@@ -11,6 +12,9 @@
 #elif defined(Q_OS_WIN)
 #include "logic/utils/utils_windows.h"
 #endif
+#include "logic/utils/utils_qt.h"
+
+#include <KZip>
 
 #include <QApplication>
 #include <QFileDialog>
@@ -74,6 +78,42 @@ void AdvancedTab::setupUI()
     _forceDarkModeCheckbox->setTristate(false);
     initializeForceDarkModeCheckbox(*_forceDarkModeCheckbox);
 #endif
+
+    QFrame *_ttsDivider = new QFrame{this};
+    _ttsDivider->setObjectName("divider");
+    _ttsDivider->setFrameShape(QFrame::HLine);
+    _ttsDivider->setFrameShadow(QFrame::Raised);
+    _ttsDivider->setFixedHeight(1);
+
+    _cantoneseTTSWidget = new QWidget{this};
+    _cantoneseTTSLayout = new QGridLayout{_cantoneseTTSWidget};
+    _cantoneseTTSLayout->setContentsMargins(0, 0, 0, 0);
+    _useCantoneseQtTTSBackend = new QRadioButton{this};
+    _useCantoneseQtTTSBackend
+        ->setProperty("data",
+                      QVariant::fromValue(TextToSpeech::SpeakerBackend::QT_TTS));
+    _useCantoneseGoogleOfflineSyllableTTSBackend = new QRadioButton{this};
+    _useCantoneseGoogleOfflineSyllableTTSBackend->setProperty(
+        "data",
+        QVariant::fromValue(
+            TextToSpeech::SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS));
+    initializeCantoneseTTSWidget(_cantoneseTTSWidget);
+
+    _mandarinTTSWidget = new QWidget{this};
+    _mandarinTTSLayout = new QGridLayout{_mandarinTTSWidget};
+    _mandarinTTSLayout->setContentsMargins(0, 0, 0, 0);
+    _useMandarinQtTTSBackend = new QRadioButton{this};
+    _useMandarinQtTTSBackend
+        ->setProperty("data",
+                      QVariant::fromValue(TextToSpeech::SpeakerBackend::QT_TTS));
+    _useMandarinGoogleOfflineSyllableTTSBackend = new QRadioButton{this};
+    _useMandarinGoogleOfflineSyllableTTSBackend->setProperty(
+        "data",
+        QVariant::fromValue(
+            TextToSpeech::SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS));
+    initializeMandarinTTSWidget(_mandarinTTSWidget);
+
+    _ttsExplainer = new QLabel{this};
 
     QFrame *_exportDivider = new QFrame{this};
     _exportDivider->setObjectName("divider");
@@ -140,6 +180,10 @@ void AdvancedTab::setupUI()
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     _tabLayout->addRow(" ", _forceDarkModeCheckbox);
 #endif
+    _tabLayout->addRow(_ttsDivider);
+    _tabLayout->addRow(" ", _cantoneseTTSWidget);
+    _tabLayout->addRow(" ", _mandarinTTSWidget);
+    _tabLayout->addRow(" ", _ttsExplainer);
     _tabLayout->addRow(_exportDivider);
     _tabLayout->addRow(" ", _exportDictionaryDatabaseButton);
     _tabLayout->addRow(" ", _exportUserDatabaseButton);
@@ -176,7 +220,28 @@ void AdvancedTab::translateUI()
     static_cast<QLabel *>(_tabLayout->labelForField(_forceDarkModeCheckbox))
         ->setText(tr("Enable dark mode:"));
 #endif
-    static_cast<QLabel *>(_tabLayout->labelForField(_exportDictionaryDatabaseButton))
+    static_cast<QLabel *>(_tabLayout->labelForField(_cantoneseTTSWidget))
+        ->setText(tr("Cantonese text-to-speech:"));
+    _useCantoneseQtTTSBackend->setText(tr("Qt"));
+    _useCantoneseGoogleOfflineSyllableTTSBackend->setText(tr("Google"));
+    static_cast<QLabel *>(_tabLayout->labelForField(_mandarinTTSWidget))
+        ->setText(tr("Mandarin text-to-speech:"));
+    _useMandarinQtTTSBackend->setText(tr("Qt"));
+    _useMandarinGoogleOfflineSyllableTTSBackend->setText(tr("Google"));
+
+    QColor backgroundColour = Utils::isDarkMode()
+                                  ? QColor{LABEL_TEXT_COLOUR_DARK_R,
+                                           LABEL_TEXT_COLOUR_DARK_G,
+                                           LABEL_TEXT_COLOUR_DARK_B}
+                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
+                                           LABEL_TEXT_COLOUR_LIGHT_R,
+                                           LABEL_TEXT_COLOUR_LIGHT_R};
+    _ttsExplainer->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                       Strings::TTS_EXPLAINER)
+                               .arg(backgroundColour.name()));
+
+    static_cast<QLabel *>(
+        _tabLayout->labelForField(_exportDictionaryDatabaseButton))
         ->setText(tr("Export dictionaries file:"));
     static_cast<QLabel *>(_tabLayout->labelForField(_exportUserDatabaseButton))
         ->setText(tr("Export saved words and history:"));
@@ -263,6 +328,64 @@ void AdvancedTab::initializeForceDarkModeCheckbox(QCheckBox &checkbox)
 }
 #endif
 
+void AdvancedTab::initializeCantoneseTTSWidget(QWidget *widget)
+{
+    static_cast<QGridLayout *>(widget->layout())
+        ->addWidget(_useCantoneseQtTTSBackend, 0, 0, 1, 1);
+    static_cast<QGridLayout *>(widget->layout())
+        ->addWidget(_useCantoneseGoogleOfflineSyllableTTSBackend, 0, 1, 1, 1);
+
+    connect(_useCantoneseQtTTSBackend, &QRadioButton::clicked, this, [&]() {
+        setCantoneseTTSSettings(TextToSpeech::SpeakerBackend::QT_TTS,
+                                TextToSpeech::SpeakerVoice::NONE);
+    });
+
+    _cantoneseTTSCallbacks = std::make_shared<TextToSpeechCallbacks>(
+        std::bind(&AdvancedTab::setCantoneseTTSWidgetDefault,
+                  this,
+                  _cantoneseTTSWidget),
+        std::bind(&AdvancedTab::setCantoneseTTSSettings,
+                  this,
+                  TextToSpeech::SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS,
+                  TextToSpeech::SpeakerVoice::YUE_1)),
+
+    connect(_useCantoneseGoogleOfflineSyllableTTSBackend,
+            &QRadioButton::clicked,
+            this,
+            [&]() { startAudioDownload(_cantoneseTTSCallbacks); });
+
+    setCantoneseTTSWidgetDefault(widget);
+}
+
+void AdvancedTab::initializeMandarinTTSWidget(QWidget *widget)
+{
+    static_cast<QGridLayout *>(widget->layout())
+        ->addWidget(_useMandarinQtTTSBackend, 0, 0, 1, 1);
+    static_cast<QGridLayout *>(widget->layout())
+        ->addWidget(_useMandarinGoogleOfflineSyllableTTSBackend, 0, 1, 1, 1);
+
+    connect(_useMandarinQtTTSBackend, &QRadioButton::clicked, this, [&]() {
+        setMandarinTTSSettings(TextToSpeech::SpeakerBackend::QT_TTS,
+                               TextToSpeech::SpeakerVoice::NONE);
+    });
+
+    _mandarinTTSCallbacks = std::make_shared<TextToSpeechCallbacks>(
+        std::bind(&AdvancedTab::setMandarinTTSWidgetDefault,
+                  this,
+                  _mandarinTTSWidget),
+        std::bind(&AdvancedTab::setMandarinTTSSettings,
+                  this,
+                  TextToSpeech::SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS,
+                  TextToSpeech::SpeakerVoice::CMN_1)),
+
+    connect(_useMandarinGoogleOfflineSyllableTTSBackend,
+            &QRadioButton::clicked,
+            this,
+            [&]() { startAudioDownload(_mandarinTTSCallbacks); });
+
+    setMandarinTTSWidgetDefault(widget);
+}
+
 void AdvancedTab::initializeLanguageCombobox(QComboBox &combobox)
 {
     combobox.addItem("0", "system");
@@ -338,6 +461,70 @@ void AdvancedTab::setForceDarkModeCheckboxDefault(QCheckBox &checkbox)
 }
 #endif
 
+void AdvancedTab::setCantoneseTTSWidgetDefault(QWidget *widget)
+{
+    TextToSpeech::SpeakerBackend backend
+        = Settings::getSettings()
+              ->value("Advanced/CantoneseTextToSpeech::SpeakerBackend",
+                      QVariant::fromValue(TextToSpeech::SpeakerBackend::QT_TTS))
+              .value<TextToSpeech::SpeakerBackend>();
+
+    QList<QRadioButton *> buttons = widget->findChildren<QRadioButton *>();
+    foreach (const auto &button, buttons) {
+        if (button->property("data").value<TextToSpeech::SpeakerBackend>()
+            == backend) {
+            button->click();
+#ifdef Q_OS_MAC
+            // Makes the button selection show up correctly on macOS
+            button->setDown(true);
+#endif
+        }
+    }
+}
+
+void AdvancedTab::setCantoneseTTSSettings(TextToSpeech::SpeakerBackend backend,
+                                          TextToSpeech::SpeakerVoice voice)
+{
+    _settings->setValue("Advanced/CantoneseTextToSpeech::SpeakerBackend",
+                        QVariant::fromValue<TextToSpeech::SpeakerBackend>(
+                            backend));
+    _settings->setValue("Advanced/CantoneseTextToSpeech::SpeakerVoice",
+                        QVariant::fromValue<TextToSpeech::SpeakerVoice>(voice));
+    _settings->sync();
+}
+
+void AdvancedTab::setMandarinTTSWidgetDefault(QWidget *widget)
+{
+    TextToSpeech::SpeakerBackend backend
+        = Settings::getSettings()
+              ->value("Advanced/MandarinTextToSpeech::SpeakerBackend",
+                      QVariant::fromValue(TextToSpeech::SpeakerBackend::QT_TTS))
+              .value<TextToSpeech::SpeakerBackend>();
+
+    QList<QRadioButton *> buttons = widget->findChildren<QRadioButton *>();
+    foreach (const auto &button, buttons) {
+        if (button->property("data").value<TextToSpeech::SpeakerBackend>()
+            == backend) {
+            button->click();
+#ifdef Q_OS_MAC
+            // Makes the button selection show up correctly on macOS
+            button->setDown(true);
+#endif
+        }
+    }
+}
+
+void AdvancedTab::setMandarinTTSSettings(TextToSpeech::SpeakerBackend backend,
+                                         TextToSpeech::SpeakerVoice voice)
+{
+    _settings->setValue("Advanced/MandarinTextToSpeech::SpeakerBackend",
+                        QVariant::fromValue<TextToSpeech::SpeakerBackend>(
+                            backend));
+    _settings->setValue("Advanced/MandarinTextToSpeech::SpeakerVoice",
+                        QVariant::fromValue<TextToSpeech::SpeakerVoice>(voice));
+    _settings->sync();
+}
+
 void AdvancedTab::setLanguageComboboxDefault(QComboBox &combobox)
 {
     combobox.setCurrentIndex(combobox.findData(
@@ -352,6 +539,8 @@ void AdvancedTab::resetSettings(QSettings &settings)
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     setForceDarkModeCheckboxDefault(*_forceDarkModeCheckbox);
 #endif
+    setCantoneseTTSWidgetDefault(_cantoneseTTSWidget);
+    setMandarinTTSWidgetDefault(_cantoneseTTSWidget);
     setLanguageComboboxDefault(*_languageCombobox);
 
     emit settingsReset();
@@ -378,11 +567,13 @@ void AdvancedTab::exportDictionaryDatabase(void)
 
     showProgressDialog(tr("Exporting dictionaries..."));
 
-    _watcher = new QFutureWatcher<bool>{this};
-    disconnect(_watcher, nullptr, nullptr, nullptr);
-    connect(_watcher, &QFutureWatcher<bool>::finished, this, [=]() {
+    _boolReturnWatcher = new QFutureWatcher<bool>{this};
+    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=]() {
         _progressDialog->reset();
-        exportDatabaseResult(_watcher->result(), successText, failureText);
+        exportDatabaseResult(_boolReturnWatcher->result(),
+                             successText,
+                             failureText);
     });
 
     QFuture<bool> future = QtConcurrent::run([=]() {
@@ -398,7 +589,7 @@ void AdvancedTab::exportDictionaryDatabase(void)
         }
         return QFile::copy(manager.getDictionaryDatabasePath(), destinationFileName);
     });
-    _watcher->setFuture(future);
+    _boolReturnWatcher->setFuture(future);
 }
 
 void AdvancedTab::exportUserDatabase(void)
@@ -422,11 +613,13 @@ void AdvancedTab::exportUserDatabase(void)
 
     showProgressDialog(tr("Exporting saved words and history..."));
 
-    _watcher = new QFutureWatcher<bool>{this};
-    disconnect(_watcher, nullptr, nullptr, nullptr);
-    connect(_watcher, &QFutureWatcher<bool>::finished, this, [=]() {
+    _boolReturnWatcher = new QFutureWatcher<bool>{this};
+    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=]() {
         _progressDialog->reset();
-        exportDatabaseResult(_watcher->result(), successText, failureText);
+        exportDatabaseResult(_boolReturnWatcher->result(),
+                             successText,
+                             failureText);
     });
 
     QFuture<bool> future = QtConcurrent::run([=]() {
@@ -442,7 +635,7 @@ void AdvancedTab::exportUserDatabase(void)
         }
         return QFile::copy(manager.getUserDatabasePath(), destinationFileName);
     });
-    _watcher->setFuture(future);
+    _boolReturnWatcher->setFuture(future);
 }
 
 void AdvancedTab::exportDatabaseResult(bool succeeded,
@@ -475,18 +668,20 @@ void AdvancedTab::restoreBackedUpDictionaryDatabase(void)
 
     showProgressDialog(tr("Restoring dictionary..."));
 
-    _watcher = new QFutureWatcher<bool>{this};
-    disconnect(_watcher, nullptr, nullptr, nullptr);
-    connect(_watcher, &QFutureWatcher<bool>::finished, this, [=]() {
+    _boolReturnWatcher = new QFutureWatcher<bool>{this};
+    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=]() {
         _progressDialog->reset();
-        restoreDatabaseResult(_watcher->result(), successText, failureText);
+        restoreDatabaseResult(_boolReturnWatcher->result(),
+                              successText,
+                              failureText);
     });
 
     QFuture<bool> future = QtConcurrent::run([]() {
         SQLDatabaseManager manager;
         return manager.restoreBackedUpDictionaryDatabase();
     });
-    _watcher->setFuture(future);
+    _boolReturnWatcher->setFuture(future);
 }
 
 void AdvancedTab::restoreExportedDictionaryDatabase(void)
@@ -522,11 +717,13 @@ void AdvancedTab::restoreExportedDictionaryDatabase(void)
 
     showProgressDialog(tr("Restoring dictionary..."));
 
-    _watcher = new QFutureWatcher<bool>{this};
-    disconnect(_watcher, nullptr, nullptr, nullptr);
-    connect(_watcher, &QFutureWatcher<bool>::finished, this, [=]() {
+    _boolReturnWatcher = new QFutureWatcher<bool>{this};
+    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=]() {
         _progressDialog->reset();
-        restoreDatabaseResult(_watcher->result(), successText, failureText);
+        restoreDatabaseResult(_boolReturnWatcher->result(),
+                              successText,
+                              failureText);
     });
 
     auto future = QtConcurrent::run([=]() {
@@ -541,7 +738,7 @@ void AdvancedTab::restoreExportedDictionaryDatabase(void)
         QFile::remove(manager.getDictionaryDatabasePath());
         return QFile::copy(sourceFileName, manager.getDictionaryDatabasePath());
     });
-    _watcher->setFuture(future);
+    _boolReturnWatcher->setFuture(future);
 }
 
 void AdvancedTab::restoreExportedUserDatabase(void)
@@ -574,11 +771,13 @@ void AdvancedTab::restoreExportedUserDatabase(void)
 
     showProgressDialog(tr("Restoring saved words and history..."));
 
-    _watcher = new QFutureWatcher<bool>{this};
-    disconnect(_watcher, nullptr, nullptr, nullptr);
-    connect(_watcher, &QFutureWatcher<bool>::finished, this, [=]() {
+    _boolReturnWatcher = new QFutureWatcher<bool>{this};
+    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=]() {
         _progressDialog->reset();
-        restoreDatabaseResult(_watcher->result(), successText, failureText);
+        restoreDatabaseResult(_boolReturnWatcher->result(),
+                              successText,
+                              failureText);
     });
 
     auto future = QtConcurrent::run([=]() {
@@ -592,7 +791,7 @@ void AdvancedTab::restoreExportedUserDatabase(void)
         QFile::remove(manager.getUserDatabasePath());
         return QFile::copy(sourceFileName, manager.getUserDatabasePath());
     });
-    _watcher->setFuture(future);
+    _boolReturnWatcher->setFuture(future);
 }
 
 void AdvancedTab::restoreDatabaseResult(bool succeeded,
@@ -615,6 +814,80 @@ void AdvancedTab::restoreDatabaseResult(bool succeeded,
     QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
 }
 
+void AdvancedTab::startAudioDownload(std::shared_ptr<TextToSpeechCallbacks> cbs)
+{
+    if (!sender()) {
+        return;
+    }
+
+    auto backend
+        = sender()->property("data").value<TextToSpeech::SpeakerBackend>();
+    if (QDir{EntrySpeaker::getAudioPath() + TextToSpeech::backendNames[backend]}
+            .exists()) {
+        // In the future, there should be logic here that tests whether
+        // the downloaded version is the newest.
+        cbs->successCb();
+        return;
+    }
+
+    _downloadAudioDialog = new DownloadAudioDialog{this};
+    if (_downloadAudioDialog->exec() != QMessageBox::Yes) {
+        cbs->resetCb();
+        return;
+    }
+
+    showProgressDialog(tr("Downloading audio files..."));
+
+    QString zipFile
+        = QStandardPaths::standardLocations(QStandardPaths::TempLocation).at(0)
+          + "/" + TextToSpeech::backendNames[backend];
+    QUrl url{"https://jyutdictionary.com/static/audio/"
+             + TextToSpeech::backendNames[backend] + ".zip"};
+
+    _downloader = new Downloader(url, zipFile, cbs, this);
+
+    disconnect(_downloader, nullptr, nullptr, nullptr);
+    connect(_downloader,
+            &Downloader::downloaded,
+            this,
+            [&](QString outputPath, std::any callbacks) {
+                // Is this horrible? Yes. But I don't want to expose
+                // struct TextToSpeechCallbacks publicly...
+                unzipFile(outputPath,
+                          std::any_cast<std::shared_ptr<TextToSpeechCallbacks>>(
+                              callbacks));
+            });
+    connect(_downloader, &Downloader::error, this, [=](int error) {
+        // Since the std::shared_ptr cbs goes out of scope once this function ends,
+        // it must be captured by value instead of by reference
+        _progressDialog->reset();
+        downloadAudioResult(!error,
+                            tr("Audio downloaded successfully!"),
+                            tr("Audio could not be downloaded, error code %1.")
+                                .arg(error));
+        if (error) {
+            // An error happened, set it back to original backend
+            cbs->resetCb();
+        }
+    });
+
+    _downloader->startDownload();
+}
+
+void AdvancedTab::downloadAudioResult(bool succeeded,
+                                      const QString &suceededText,
+                                      const QString &failedText)
+{
+    if (succeeded) {
+        _downloadResultDialog = new DownloadResultDialog{suceededText, "", this};
+    } else {
+        _downloadResultDialog = new DownloadResultDialog{failedText, "", this};
+    }
+
+    _downloadResultDialog->setAttribute(Qt::WA_DeleteOnClose, true);
+    _downloadResultDialog->exec();
+}
+
 void AdvancedTab::showProgressDialog(QString text)
 {
     _progressDialog = new QProgressDialog{"", QString(), 0, 0, this};
@@ -635,4 +908,44 @@ void AdvancedTab::showProgressDialog(QString text)
     _progressDialog->setLabelText(text);
     _progressDialog->setRange(0, 0);
     _progressDialog->setValue(0);
+}
+
+void AdvancedTab::unzipFile(QString outputPath,
+                            std::shared_ptr<TextToSpeechCallbacks> cbs)
+{
+    QString outputFolder = EntrySpeaker::getAudioPath();
+    _progressDialog->setLabelText(tr("Installing downloaded files..."));
+
+    _boolReturnWatcher = new QFutureWatcher<bool>{this};
+    QFuture<bool> future = QtConcurrent::run([=]() {
+        KZip zip{outputPath};
+        if (!zip.open(QIODevice::ReadOnly)) {
+            return false;
+        }
+        if (!zip.directory()->copyTo(outputFolder)) {
+            return false;
+        }
+        return true;
+    });
+    _boolReturnWatcher->setFuture(future);
+    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=]() {
+        // Since the std::shared_ptr cbs goes out of scope once this function ends,
+        // it must be captured by value instead of by reference
+        unzipComplete(static_cast<QFutureWatcher<bool> *>(sender())->result(),
+                      cbs);
+    });
+}
+
+void AdvancedTab::unzipComplete(bool completed,
+                                std::shared_ptr<TextToSpeechCallbacks> cbs)
+{
+    if (completed) {
+        cbs->successCb();
+    } else {
+        cbs->resetCb();
+    }
+    _progressDialog->reset();
+    downloadAudioResult(completed,
+                        tr("Files installed successfully!"),
+                        tr("Files could not be installed."));
 }

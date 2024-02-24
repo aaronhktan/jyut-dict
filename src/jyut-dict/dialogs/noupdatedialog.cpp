@@ -1,7 +1,5 @@
 #include "noupdatedialog.h"
 
-#include "logic/utils/utils.h"
-
 NoUpdateDialog::NoUpdateDialog(QString &version, QWidget *parent)
     : DefaultDialog("", "", parent)
 {

@@ -4,7 +4,6 @@
 
 #include <cctype>
 #include <codecvt>
-#include <iomanip>
 #include <iostream>
 #include <regex>
 #include <sstream>
@@ -726,7 +725,7 @@ std::string createPrettyPinyin(const std::string &pinyin)
 
     // Create a vector of each space-separated value in pinyin
     std::vector<std::string> syllables;
-    Utils::split(pinyin, ' ', syllables);
+    ChineseUtils::segmentPinyin(QString::fromStdString(pinyin), syllables);
     if (syllables.empty()) {
         return pinyin;
     }

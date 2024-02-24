@@ -59,6 +59,7 @@ This folder contains several Python3 scripts that convert the various online Can
 - **[MoEDict (重編國語辭典修訂本)](http://dict.revised.moe.edu.tw/cbdic/)**
 - **[Tatoeba](https://tatoeba.org/eng/downloads)**
 - **[Unihan Database](https://www.unicode.org/reports/tr38/)**
+- **[Wikipedia Article Titles](https://wikipedia.org)**
 - **[Wiktionary - English](https://en.wiktionary.org/wiki/Wiktionary:Main_Page)**
 - **[words.hk 粵典](https://words.hk/)**
 
@@ -76,21 +77,39 @@ This folder contains the source code for the program, and a Qt Creator project f
 
 This project requires Qt 5.15.
 
-**Before building the application, you must build the dictionary database using `parse-set.py` (for CEDICT + CC-CANTO) or `parse-individual.py` (for CFDICT/HanDeDict).** Read the README in `src/dictionaries/cedict` for instructions, then place the generated database, named `dict.db`, in `src/jyut-dict/resources/db/`.
+**Before building the application, you must provide a dictionary database. Download one from [the website](https://jyutdictionary.com/#download-addon), or build the dictionary database using `parse-set.py` (for CEDICT + CC-CANTO) or `parse-individual.py` (for CFDICT/HanDeDict).**
 
-#### Qt Creator (macOS, Ubuntu, Windows)
-Import the project to Qt Creator, then run. Add DEFINES+="PORTABLE" to the QMake configuration if you would like to isolate your debug build from any system files.
+Place the database, named `dict.db`, in `src/jyut-dict/resources/db/`
 
-#### Command line (macOS, Ubuntu)
+### macOS, Windows: Craft + Qt Creator
+1. Install [Craft](https://community.kde.org/Craft).
+2. Install various dependencies using Craft:
+```
+craft libs/qt/multimedia
+craft libs/qt/qtspeech
+craft karchive
+```
+3. Set up Qt Creator with a kit from Craft, following instructions [here](https://community.kde.org/Craft#Using_Craft_with_an_IDE).
+4. Open Jyut Dictionary in Qt Creator, and add DEFINES+="PORTABLE" to the QMake configuration if you would like to isolate your debug build from any system files.
+5. Compile and run!
 
-##### macOS
-1. Generate a Makefile from `jyut-dict.pro`: `qmake jyut-dict.pro`
-  - Note: you may need the full path of qmake. Search in Spotlight to find the appropriate version, which on 64-bit Macs is the qmake binary under in the `clang_64` folder.
-2. Make with `make`. A `.app` application bundle will appear in the directory where you ran this command, which you can use `open` to run.
-
-##### Ubuntu
-1. Generate a Makefile from `jyut-dict.pro`: `qmake jyut-dict.pro`
-2. Make with `make`. A Linux executable will appear in the directory where you ran this command.
+#### Ubuntu: Manual Git clone + Qt Creator
+This guide assumes you have already installed Qt 5.15.2 using the online installer to `~/Qt`, with the Qt Multimedia and Qt Speech plugins.
+1. Clone KArchive and check out `tags/v5.114.0`. This is the last version of KArchive that is compatible with Qt 5.
+```
+git clone https://github.com/KDE/karchive.git
+cd karchive
+git checkout tags/v5.114.0
+```
+2. Build according to KArchive instructions:
+```
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX=~/Qt/5.15.2/gcc_64
+make
+sudo make install
+```
+3. Open Jyut Dictionary in Qt Creator, and add DEFINES+="PORTABLE" to the QMake configuration if you would like to isolate your debug build from any system files.
+4. Compile and run!
 
 ## Packaging for release
 

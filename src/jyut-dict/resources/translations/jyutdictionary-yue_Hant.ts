@@ -30,179 +30,231 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="174"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="218"/>
         <source>Automatically check for updates on startup:</source>
         <translation>自動檢查更新：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="177"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="221"/>
         <source>Enable dark mode:</source>
         <translation>使用「深色模式」：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="180"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="224"/>
+        <source>Cantonese text-to-speech:</source>
+        <translation>廣東話文字語言轉換（TTS)：</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="225"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="229"/>
+        <source>Qt</source>
+        <translation>Qt</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="226"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="230"/>
+        <source>Google</source>
+        <translation>Google</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="228"/>
+        <source>Mandarin text-to-speech:</source>
+        <translation>普通話文字語言轉換（TTS)：</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="245"/>
         <source>Export dictionaries file:</source>
         <translation>匯出你嘅辭典文件：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="182"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="247"/>
         <source>Export saved words and history:</source>
         <translation>匯出儲存嘅詞語同埋搵嘢紀錄：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="183"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="184"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="248"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="249"/>
         <source>Export</source>
         <translation>匯出</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="188"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="253"/>
         <source>Restore dictionaries file to last backed up version:</source>
         <translation>使用先前備份嘅辭典文件回復你嘅辭典：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="190"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="255"/>
         <source>Restore dictionaries file using exported file:</source>
         <translation>使用先前匯出嘅辭典文件回復你嘅辭典：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="192"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="257"/>
         <source>Restore saved words and history file using exported file:</source>
         <translation>使用先前匯出嘅文件回復儲存嘅詞語同埋搵嘢紀錄：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="193"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="194"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="195"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="258"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="259"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="260"/>
         <source>Restore</source>
         <translation>回復</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="199"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="264"/>
         <source>Application language:</source>
         <translation>程式語言：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="209"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="274"/>
         <source>Reset all settings</source>
         <translation>重設所有設定</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="376"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="563"/>
         <source>Dictionary export succeeded!</source>
         <translation>辭典文件匯出成功！</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="377"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="564"/>
         <source>Dictionary export failed.</source>
         <translation>辭典文件匯出失敗。</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="379"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="566"/>
         <source>Exporting dictionaries...</source>
         <translation>匯出緊辭典文件…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="420"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="609"/>
         <source>Saved words and history export succeeded!</source>
         <translation>儲存嘅詞語同埋搵嘢紀錄匯出成功！</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="421"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="610"/>
         <source>Saved words and history export failed.</source>
         <translation>儲存嘅詞語同埋搵嘢紀錄匯出失敗。</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="423"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="612"/>
         <source>Exporting saved words and history...</source>
         <translation>匯出緊儲存嘅詞語同埋搵嘢紀錄…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="468"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="509"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="659"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="702"/>
         <source>Dictionary restore succeeded! %1 will now restart.</source>
         <translation>辭典回復成功！%1將立即重新啟動。</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="472"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="514"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="663"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="707"/>
         <source>Dictionary restore failed! %1 will now restart.</source>
         <translation>辭典回復失敗！%1將立即重新啟動。</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="476"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="523"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="667"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="716"/>
         <source>Restoring dictionary...</source>
         <translation>回復緊辭典文件…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="502"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="695"/>
         <source>Exported dictionary file path</source>
         <translation>另存新檔</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="556"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="751"/>
         <source>Exported saved words and history path</source>
         <translation>另存新檔</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="562"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="757"/>
         <source>Saved words and history restore succeeded! %1 will now restart.</source>
         <translation>儲存嘅詞語同埋搵嘢紀錄回復成功！%1將立即重新啟動。</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="566"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="761"/>
         <source>Saved words and history restore failed! %1 will now restart.</source>
         <translation>儲存嘅詞語同埋搵嘢紀錄回復失敗！%1將立即重新啟動。</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="575"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="770"/>
         <source>Restoring saved words and history...</source>
         <translation>回復緊儲存嘅詞語同埋搵嘢紀錄…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="200"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="837"/>
+        <source>Downloading audio files...</source>
+        <translation>下載緊音訊檔案…</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="863"/>
+        <source>Audio downloaded successfully!</source>
+        <translation>音訊檔案下載成功！</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="864"/>
+        <source>Audio could not be downloaded, error code %1.</source>
+        <translation>音訊檔案下載失敗，錯誤碼 %1。</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="915"/>
+        <source>Installing downloaded files...</source>
+        <translation>安裝緊音訊檔案…</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="947"/>
+        <source>Files installed successfully!</source>
+        <translation>音訊檔案安裝成功！</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="948"/>
+        <source>Files could not be installed.</source>
+        <translation>音訊檔案安裝失敗。</translation>
+    </message>
+    <message>
+        <location filename="../../components/settings/advancedtab.cpp" line="265"/>
         <source>Use system language</source>
         <translation>系統默認</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="201"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="266"/>
         <source>English</source>
         <translation>英文</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="206"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="271"/>
         <source>Simplified Chinese</source>
         <translation>簡體中文</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="207"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="272"/>
         <source>Traditional Chinese</source>
         <translation>繁體中文</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="367"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="411"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="554"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="600"/>
         <source>Path to save exported database</source>
         <translation>將檔案儲存至</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="202"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="267"/>
         <source>French (CA)</source>
         <translation>法文（加拿大）</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="203"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="268"/>
         <source>French</source>
         <translation>法文</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="204"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="269"/>
         <source>Cantonese (Simplified)</source>
         <translation>簡體粵語</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="205"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="270"/>
         <source>Cantonese (Traditional)</source>
         <translation>繁體粵語</translation>
     </message>
@@ -351,6 +403,32 @@
     </message>
 </context>
 <context>
+    <name>DownloadAudioDialog</name>
+    <message>
+        <location filename="../../dialogs/downloadaudiodialog.cpp" line="12"/>
+        <source>To use this option for text-to-speech, files must be downloaded. Would you like to download them now?</source>
+        <translation>你必須下載音訊檔案先可以揀呢個選項。你想唔想而家開始下載？</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/downloadaudiodialog.cpp" line="15"/>
+        <source>Downloading files requires a working Internet connection.</source>
+        <translation>下載呢啲檔案需要一個可靠嘅網路連線。</translation>
+    </message>
+</context>
+<context>
+    <name>DownloadResultDialog</name>
+    <message>
+        <location filename="../../dialogs/downloadresultdialog.cpp" line="14"/>
+        <source>Your download has finished.</source>
+        <translation>下載完成。</translation>
+    </message>
+    <message>
+        <location filename="../../dialogs/downloadresultdialog.cpp" line="16"/>
+        <source>OK</source>
+        <translation>確定</translation>
+    </message>
+</context>
+<context>
     <name>EntryActionWidget</name>
     <message>
         <location filename="../../components/entryview/entryactionwidget.cpp" line="124"/>
@@ -467,31 +545,31 @@
     <name>MAC_APPLICATION_MENU</name>
     <message>
         <source>Services</source>
-        <translation >服務</translation>
+        <translation>服務</translation>
     </message>
     <message>
         <source>Hide %1</source>
-        <translation >隱藏 %1</translation>
+        <translation>隱藏 %1</translation>
     </message>
     <message>
         <source>Hide Others</source>
-        <translation >隱藏其他</translation>
+        <translation>隱藏其他</translation>
     </message>
     <message>
         <source>Show All</source>
-        <translation >顯示全部</translation>
+        <translation>顯示全部</translation>
     </message>
     <message>
         <source>Preferences...</source>
-        <translation >偏好設定…</translation>
+        <translation>偏好設定…</translation>
     </message>
     <message>
         <source>Quit %1</source>
-        <translation >結束 %1</translation>
+        <translation>結束 %1</translation>
     </message>
     <message>
         <source>About %1</source>
-        <translation >關於 %1</translation>
+        <translation>關於 %1</translation>
     </message>
 </context>
 <context>
@@ -742,12 +820,12 @@ Hang tight!</source>
 <context>
     <name>NoUpdateDialog</name>
     <message>
-        <location filename="../../dialogs/noupdatedialog.cpp" line="14"/>
+        <location filename="../../dialogs/noupdatedialog.cpp" line="12"/>
         <source>No update found!</source>
         <translation>冇搵到可用嘅更新!</translation>
     </message>
     <message>
-        <location filename="../../dialogs/noupdatedialog.cpp" line="15"/>
+        <location filename="../../dialogs/noupdatedialog.cpp" line="13"/>
         <source>You are on the newest version, %1.</source>
         <translation>你已經使用最新嘅版本，%1.</translation>
     </message>
@@ -771,23 +849,23 @@ Hang tight!</source>
     <name>QMessageBox</name>
     <message>
         <source>Show Details...</source>
-        <translation >顯示詳情...</translation>
+        <translation>顯示詳情...</translation>
     </message>
     <message>
         <source>Hide Details...</source>
-        <translation >隱藏詳情...</translation>
+        <translation>隱藏詳情...</translation>
     </message>
     <message>
         <source>&lt;h3&gt;About Qt&lt;/h3&gt;&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;</source>
-        <translation >&lt;h3&gt;關於 Qt&lt;/h3&gt;&lt;p&gt;此程式使用 Qt %1 版。&lt;/p&gt;</translation>
+        <translation>&lt;h3&gt;關於 Qt&lt;/h3&gt;&lt;p&gt;此程式使用 Qt %1 版。&lt;/p&gt;</translation>
     </message>
     <message>
         <source>About Qt</source>
-        <translation >關於 Qt</translation>
+        <translation>關於 Qt</translation>
     </message>
     <message>
         <source>&lt;p&gt;Qt is a C++ toolkit for cross-platform application development.&lt;/p&gt;&lt;p&gt;Qt provides single-source portability across all major desktop operating systems. It is also available for embedded Linux and other embedded and mobile operating systems.&lt;/p&gt;&lt;p&gt;Qt is available under three different licensing options designed to accommodate the needs of our various users.&lt;/p&gt;&lt;p&gt;Qt licensed under our commercial license agreement is appropriate for development of proprietary/commercial software where you do not want to share any source code with third parties or otherwise cannot comply with the terms of the GNU LGPL version 3.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU LGPL version 3 is appropriate for the development of Qt&amp;nbsp;applications provided you can comply with the terms and conditions of the GNU LGPL version 3.&lt;/p&gt;&lt;p&gt;Please see &lt;a href=&quot;http://%2/&quot;&gt;%2&lt;/a&gt; for an overview of Qt licensing.&lt;/p&gt;&lt;p&gt;Copyright (C) %1 The Qt Company Ltd and other contributors.&lt;/p&gt;&lt;p&gt;Qt and the Qt logo are trademarks of The Qt Company Ltd.&lt;/p&gt;&lt;p&gt;Qt is The Qt Company Ltd product developed as an open source project. See &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt; for more information.&lt;/p&gt;</source>
-        <translation >&lt;p&gt;Qt 是個用於跨平台應用程式開發的工具箱。&lt;/p&gt;
+        <translation>&lt;p&gt;Qt 是個用於跨平台應用程式開發的工具箱。&lt;/p&gt;
 &lt;p&gt;Qt 提供了可移植單一來源以能在目前主流的桌面作業系統跨平台。其也支援嵌入式 Linux 和其他嵌入和行動作業系統。&lt;/p&gt;
 &lt;p&gt;Qt 可以用於三個不同的授權選項，以接納各個使用者的需求。&lt;/p&gt;
 &lt;p&gt;使用我們的商業授權條款授權的 Qt 適合拿來開發不希望公開源碼給第三方的專有或商業軟體，或者是無法完全遵守 GNU LGPL 第三版條款的軟體。&lt;/p&gt;
@@ -802,15 +880,15 @@ Hang tight!</source>
     <name>QPlatformTheme</name>
     <message>
         <source>Cancel</source>
-        <translation >取消</translation>
+        <translation>取消</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation >是</translation>
+        <translation>是</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation >確定</translation>
+        <translation>確定</translation>
     </message>
 </context>
 <context>
@@ -1077,9 +1155,13 @@ Hang tight!</source>
         <translation>詞條拼音：</translation>
     </message>
     <message>
+        <source>    Show pronunciation for:</source>
+        <translation>   詞條拼音：</translation>
+    </message>
+    <message>
         <location filename="../../components/settings/settingstab.cpp" line="214"/>
         <source>	Show pronunciation for:</source>
-        <translation>   詞條拼音：</translation>
+        <translation>	詞條拼音：</translation>
     </message>
     <message>
         <location filename="../../components/settings/settingstab.cpp" line="216"/>
@@ -1398,7 +1480,7 @@ Hang tight!</source>
     <name>strings</name>
     <message>
         <location filename="../../logic/strings/strings.h" line="16"/>
-        <location filename="../../logic/strings/strings.h" line="134"/>
+        <location filename="../../logic/strings/strings.h" line="142"/>
         <source>JP</source>
         <translation>粵拼</translation>
     </message>
@@ -1414,7 +1496,7 @@ Hang tight!</source>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="19"/>
-        <location filename="../../logic/strings/strings.h" line="135"/>
+        <location filename="../../logic/strings/strings.h" line="143"/>
         <source>PY</source>
         <translation>漢語拼音</translation>
     </message>
@@ -1454,132 +1536,142 @@ Hang tight!</source>
         <translation>一個免費、自由、開源及脫機嘅粵語辭典。</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="47"/>
+        <location filename="../../logic/strings/strings.h" line="31"/>
+        <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contains FlowLayout code from &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; and &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; code from KDE.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
+        <translation>圖標使用 &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Commons 古漢字計劃&lt;/a&gt; 嘅圖片創造。 &lt;br&gt;界面圖標來源：&lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; 同埋&lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;。&lt;br&gt;使用 &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 嘅 FlowLayout 同埋 KDE 嘅 &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; 編程。&lt;br&gt;使用 &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 編程。</translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="49"/>
         <source>%1 is made with ❤️ by Aaron Tan.</source>
         <translation>%1由譚可峰精心打造。</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="50"/>
+        <location filename="../../logic/strings/strings.h" line="52"/>
         <source>Donate 💵, report a bug 🐛, or just say hi 👋!</source>
         <translation>捐款 💵, 报告缺陷 🐛, 或者发送一个問候 👋!</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="53"/>
+        <location filename="../../logic/strings/strings.h" line="55"/>
         <source>Donate, report a bug, or just say hi!</source>
         <translation>捐款, 报告缺陷, 或者发送一个問候!</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="54"/>
+        <location filename="../../logic/strings/strings.h" line="56"/>
         <source>&lt;a href=https://www.pleco.com style=&quot;color: %1; text-decoration: none&quot;&gt;Pleco Dictionary&lt;/a&gt;, &lt;a href=http://www.cantonese.sheik.co.uk/dictionary/ style=&quot;color: %1; text-decoration: none&quot;&gt;CantoDict&lt;/a&gt;, &lt;a href=https://words.hk style=&quot;color: %1; text-decoration: none&quot;&gt;words.hk&lt;/a&gt;</source>
         <translation>&lt;a href=https://www.pleco.com style=&quot;color: %1; text-decoration: none&quot;&gt;Pleco 漢語辭典&lt;/a&gt;、&lt;a href=http://www.cantonese.sheik.co.uk/dictionary/ style=&quot;color: %1; text-decoration: none&quot;&gt;CantoDict&lt;/a&gt;、&lt;a href=https://words.hk style=&quot;color: %1; text-decoration: none&quot;&gt;words.hk 粤典&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="62"/>
+        <location filename="../../logic/strings/strings.h" line="64"/>
         <source>A voice for &quot;Chinese - Hong Kong&quot; could not be found.</source>
         <translation>搵唔到「粵語（香港）」語言引擎。</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="70"/>
+        <location filename="../../logic/strings/strings.h" line="72"/>
         <source>A voice for &quot;Chinese - Taiwan&quot; could not be found.</source>
         <translation>搵唔到「國語（台灣）」語言引擎。</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="78"/>
+        <location filename="../../logic/strings/strings.h" line="80"/>
         <source>A voice for &quot;Chinese - Mainland China&quot; could not be found.</source>
         <translation>搵唔到「普通話（中國大陸）」語言引擎。</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="86"/>
+        <location filename="../../logic/strings/strings.h" line="88"/>
         <source>&lt;a href=https://en.wikipedia.org/wiki/Help:IPA/Cantonese style=&quot;color: %1; text-decoration: none&quot;&gt;Learn more with the Cantonese Pronunciation Reference →&lt;/a&gt;</source>
         <translation>&lt;a href=https://jyutping.org/blog/table/ style=&quot;color: %1; text-decoration: none&quot;&gt;深入了解所有粵語拼音方案 →&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="91"/>
+        <location filename="../../logic/strings/strings.h" line="93"/>
         <source>&lt;a href=https://jyutping.org/en/docs/english/ style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Jyutping →&lt;/a&gt;</source>
         <translation>&lt;a href=https://jyutping.org/docs/cantonese/ style=&quot;color: %1; text-decoration: none&quot;&gt;深入了解粵拼 →&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="95"/>
+        <location filename="../../logic/strings/strings.h" line="97"/>
         <source>&lt;a href=https://opencantonese.org/cantonese-pronunciation-yale/introduction/overview-cantonese-sounds style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Yale →&lt;/a&gt;</source>
         <translation>&lt;a href=https://zh.wikipedia.org/wiki/%E8%80%B6%E9%AD%AF%E6%8B%BC%E9%9F%B3#%E7%B2%A4%E8%AF%AD%E8%80%B6%E9%B2%81%E6%8B%BC%E9%9F%B3 style=&quot;color: %1; text-decoration: none&quot;&gt;深入了解耶魯拼音 →&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="101"/>
+        <location filename="../../logic/strings/strings.h" line="103"/>
         <source>&lt;a href=https://cantonese.ca/pronunciation.html style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Cantonese IPA →&lt;/a&gt;</source>
         <translation>&lt;a href=https://zh.wikipedia.org/wiki/Help:%E7%8E%B0%E4%BB%A3%E6%A0%87%E5%87%86%E6%B1%89%E8%AF%AD%E5%9B%BD%E9%99%85%E9%9F%B3%E6%A0%87 style=&quot;color: %1; text-decoration: none&quot;&gt;深入了解粵語嘅国际音标 →&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="105"/>
+        <location filename="../../logic/strings/strings.h" line="107"/>
         <source>&lt;a href=https://en.wikipedia.org/wiki/Help:IPA/Mandarin style=&quot;color: %1; text-decoration: none&quot;&gt;Learn more with the Mandarin Pronunciation Reference →&lt;/a&gt;</source>
         <translation>&lt;a href=https://zh-yue.wikipedia.org/wiki/Help:%E7%B2%B5%E8%AA%9E%E5%98%85%E5%9C%8B%E9%9A%9B%E9%9F%B3%E6%A8%99%E8%AE%80%E9%9F%B3 style=&quot;color: %1; text-decoration: none&quot;&gt;深入了解所有普通話拼音方案 →&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="110"/>
+        <location filename="../../logic/strings/strings.h" line="112"/>
         <source>&lt;a href=https://www.dong-chinese.com/learn/sounds/pinyin style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Pinyin →&lt;/a&gt;</source>
         <translation>&lt;a href=http://hanyupinyin.cn/ style=&quot;color: %1; text-decoration: none&quot;&gt;深入了解漢語拼音 →&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="114"/>
+        <location filename="../../logic/strings/strings.h" line="116"/>
         <source>&lt;a href=https://www.dong-chinese.com/learn/sounds/zhuyin style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Zhuyin →&lt;/a&gt;</source>
         <translation>&lt;a href=https://zh.wikipedia.org/wiki/%E6%B3%A8%E9%9F%B3%E7%AC%A6%E8%99%9F#%E6%B3%A8%E9%9F%B3%E7%AC%A6%E8%99%9F%E7%B3%BB%E7%B5%B1 style=&quot;color: %1; text-decoration: none&quot;&gt;深入了解注音符號 →&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="118"/>
+        <location filename="../../logic/strings/strings.h" line="120"/>
         <source>&lt;a href=https://www.internationalphoneticassociation.org/IPAcharts/IPA_chart_trans/pdfs/JIPA_2011_[2007]_zho.pdf style=&quot;color: %1; text-decoration: none&quot;&gt;Learn Mandarin IPA →&lt;/a&gt;</source>
         <translation>&lt;a href=https://www.internationalphoneticassociation.org/IPAcharts/IPA_chart_trans/pdfs/JIPA_2011_[2007]_zho.pdf style=&quot;color: %1; text-decoration: none&quot;&gt;深入了解普通話嘅国际音标 →&lt;/a&gt;</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="124"/>
+        <location filename="../../logic/strings/strings.h" line="126"/>
+        <source>&lt;p style=&quot;color: %1;&quot;&gt;Google text-to-speech is a collection of MP3 files.&lt;br&gt;No Internet connection is required after initial download.&lt;br&gt;No data is sent to Google.&lt;/p&gt;</source>
+        <translation>&lt;p style=&quot;color: %1;&quot;&gt;Google 文字語言轉換係一個音訊檔案資料集。&lt;br&gt;下載咗呢個資料集之後，你就可以離線使用文字語言轉換。&lt;br&gt;粵語辭典唔會傳出你嘅資料。&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="132"/>
         <source>English</source>
         <translation>英文</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="125"/>
+        <location filename="../../logic/strings/strings.h" line="133"/>
         <source>French</source>
         <translation>法文</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="126"/>
+        <location filename="../../logic/strings/strings.h" line="134"/>
         <source>German</source>
         <translation>德文</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="127"/>
+        <location filename="../../logic/strings/strings.h" line="135"/>
         <source>Cantonese</source>
         <translation>粵語</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="128"/>
+        <location filename="../../logic/strings/strings.h" line="136"/>
         <source>Mandarin</source>
         <translation>普通話</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="129"/>
+        <location filename="../../logic/strings/strings.h" line="137"/>
         <source>Chinese</source>
         <translation>中文</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="131"/>
+        <location filename="../../logic/strings/strings.h" line="139"/>
         <source>SC</source>
         <translation>簡體中文</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="132"/>
+        <location filename="../../logic/strings/strings.h" line="140"/>
         <source>TC</source>
         <translation>繁體中文</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="133"/>
+        <location filename="../../logic/strings/strings.h" line="141"/>
         <source>CN</source>
         <translation>中文</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="136"/>
+        <location filename="../../logic/strings/strings.h" line="144"/>
         <source>EN</source>
         <translation>英文</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="66"/>
+        <location filename="../../logic/strings/strings.h" line="68"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Hong Kong</source>
@@ -1588,12 +1680,7 @@ Debug: Locale: %1, Language: Chinese - Hong Kong</source>
 除錯: 地區設定: %1, 語言: 粵語 - 香港</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="31"/>
-        <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contains FlowLayout code from &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
-        <translation>圖標使用 &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Commons 古漢字計劃&lt;/a&gt; 嘅圖片創造。 &lt;br&gt;界面圖標來源：&lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; 同埋&lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;。&lt;br&gt;使用 &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 嘅 FlowLayout 編程。&lt;br&gt;使用 &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 編程。</translation>
-    </message>
-    <message>
-        <location filename="../../logic/strings/strings.h" line="74"/>
+        <location filename="../../logic/strings/strings.h" line="76"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Taiwan</source>
@@ -1602,7 +1689,7 @@ Debug: Locale: %1, Language: Chinese - Taiwan</source>
 除錯: 地區設定: %1, 語言: 國語 - 台灣</translation>
     </message>
     <message>
-        <location filename="../../logic/strings/strings.h" line="81"/>
+        <location filename="../../logic/strings/strings.h" line="83"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Mainland</source>
