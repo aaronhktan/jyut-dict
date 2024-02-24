@@ -1,4 +1,5 @@
 #include "entryspeaker.h"
+#include "logic/utils/chineseutils.h"
 
 #include <QCoreApplication>
 #include <QFileInfo>
@@ -163,24 +164,24 @@ int EntrySpeaker::speak(const QLocale::Language &language,
         QString languageName = QLocale::languageToString(language) + "_"
                                + QLocale::countryToString(country);
 
-        QList<QString> syllables = string.split(" ");
+        std::vector<std::string> syllables;
+        if (language == QLocale::Cantonese || country == QLocale::HongKong) {
+            ChineseUtils::segmentJyutping(string, syllables);
+        } else {
+            QString mutableString = string;
+            mutableString.replace("u:", "ü");
+            mutableString.replace("v", "ü");
+            ChineseUtils::segmentPinyin(mutableString, syllables);
+        }
+
         QMediaPlaylist *playlist = new QMediaPlaylist;
-        for (const auto &syllable : qAsConst(syllables)) {
-            QString convertedVSyllable = syllable;
-
-            if (language == QLocale::Chinese && country != QLocale::HongKong) {
-                convertedVSyllable = convertedVSyllable.replace(QString{"u:"},
-                                                                QString{"ü"});
-                convertedVSyllable = convertedVSyllable.replace(QString{"v"},
-                                                                QString{"ü"});
-            }
-
+        for (const auto &syllable : syllables) {
             QString filepath = getAudioPath()
                                + QString{"%1/%2/%3/%4.mp3"}
                                      .arg(TextToSpeech::backendNames[backend],
                                           languageName,
                                           TextToSpeech::voiceNames[voice],
-                                          convertedVSyllable);
+                                          QString::fromStdString(syllable));
             if (!QFileInfo::exists(filepath)) {
                 qDebug() << "File " << filepath << " does not exist";
             }
