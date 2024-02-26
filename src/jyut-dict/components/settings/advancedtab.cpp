@@ -844,22 +844,15 @@ void AdvancedTab::startAudioDownload(std::shared_ptr<TextToSpeechCallbacks> cbs)
     QUrl url{"https://jyutdictionary.com/static/audio/"
              + TextToSpeech::backendNames[backend] + ".zip"};
 
-    _downloader = new Downloader(url, zipFile, cbs, this);
+    _downloader = new Downloader(url, zipFile, this);
 
     disconnect(_downloader, nullptr, nullptr, nullptr);
-    connect(_downloader,
-            &Downloader::downloaded,
-            this,
-            [&](QString outputPath, std::any callbacks) {
-                // Is this horrible? Yes. But I don't want to expose
-                // struct TextToSpeechCallbacks publicly...
-                unzipFile(outputPath,
-                          std::any_cast<std::shared_ptr<TextToSpeechCallbacks>>(
-                              callbacks));
-            });
-    connect(_downloader, &Downloader::error, this, [=](int error) {
+    connect(_downloader, &Downloader::downloaded, this, [=](QString outputPath) {
         // Since the std::shared_ptr cbs goes out of scope once this function ends,
         // it must be captured by value instead of by reference
+        unzipFile(outputPath, cbs);
+    });
+    connect(_downloader, &Downloader::error, this, [=](int error) {
         _progressDialog->reset();
         downloadAudioResult(!error,
                             tr("Audio downloaded successfully!"),
