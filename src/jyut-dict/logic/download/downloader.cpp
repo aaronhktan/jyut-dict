@@ -9,12 +9,10 @@
 
 Downloader::Downloader(QUrl url,
                        QString outputPath,
-                       std::any callbacks,
                        QObject *parent)
     : QObject{parent}
     , _url{url}
     , _outputPath{outputPath}
-    , _callbacks{callbacks}
 {}
 
 void Downloader::startDownload()
@@ -65,7 +63,7 @@ void Downloader::fileDownloaded(QNetworkReply *reply)
     }
     file.close();
 
-    emit downloaded(_outputPath, _callbacks);
+    emit downloaded(_outputPath);
 }
 
 QByteArray Downloader::downloadedData() const
