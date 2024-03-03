@@ -1,0 +1,44 @@
+[
+	{
+		"channel": "release",
+		"versionNumber": "2.23.0408",
+		"description": "<h3>New:</h3>\r\n- <b>Yale, Bopomofo/Zhuyin, and IPA:</b> You can now choose to use Yale, Bopomofo/Zhuyin, and IPA to display pronunciation, in addition to the existing Jyutping and Pinyin. Thanks for the feature request <a href=https://github.com/vintotal>@vintotal</a>!\r\n<br>- <b>Wildcard searching:</b> When searching using Simplified/Traditional Chinese, Jyutping, or Pinyin, you can now use * and ? as wildcards to mean any number of characters and one character respectively. For example, maybe you remember a 成語 ending with 鄉 — you could search ???鄉 to find 走鄉隨鄉!\r\n<br>- <b>Exact match searching:</b> Surrounding your search with \"\" quotes means that the dictionary will only find entries that match exactly what is enclosed within the quotes. For example, \"鄉\" will return <b>only</b> the entry 鄉, <b>not</b> 鄉鎮 or 走鄉隨鄉.\r\n<br>- <b>Adjust interface size:</b> If you find that the interface was too small before, good news! You can make it humongous or tiny, with five size settings. <a href= https://github.com/AlienKevin>@AlienKevin</a> this one’s for you!\r\n<br>- <b>Magnify and Open In New Window:</b> To see a larger version of an entry, or open it in a different window, there are new buttons in the entry detail view.\r\n<br>- <b>New dictionaries:</b> If you are a new user, the program now comes with HSK3 tags and Wiktionary! If you're upgrading from an older version, please visit the <a href=https://jyutdictionary.com/#download-addon>Jyut Dictionary website</a> to download and add these new dictionaries.\r\n\r\n<h3>Improvements:</h3>\r\n- <b>Refreshed light mode UI on Windows and Linux:</b> Light more now has less grey, and the UI has been updated to fit in better with Windows 11.\r\n<br>- <b>Immediate settings:</b> Settings now apply immediately instead of on next search.\r\n<br>- <b>More obvious search options:</b> Buttons to switch between Simplified Chinese/Traditional Chinese/Jyutping/Pinyin/English are now larger and not abbreviated. <a href= https://github.com/derekyin>@derekyin</a> this is for you!\r\n<br>- <b>Pour les utilisateurs francophones :</b> La version 2016 de CFDICT, qui contient beaucoup plus d'entrées et définitions, est maintenant disponible! Pour en savoir plus, veuillez cliquer sur <a href=https://chine.in/forum/relance-programme-cfdict_45959.html>ce lien</a>.\r\n\r\n<h3>Notes:</h3>\r\n- <b>On Ubuntu 20.04:</b> You must run `sudo add-apt-repository ppa:beineri/opt-qt-5.15.2-focal` before installing the .deb file. This version drops support for Ubuntu 16.04 and Ubuntu 18.04.",
+		"links": [
+			{
+				"arch": ["arm64", "x86_64"],
+				"kernel": "darwin",
+				"minOSVersionNumber": "11.0",
+				"updateLink": "https://github.com/aaronhktan/jyut-dict/releases/download/v2.23.0408-release/Jyut-Dictionary_2.23.0408_macOS_64bit_install.dmg",
+				"variant": "install"
+			},
+			{
+				"arch": ["arm64", "x86_64"],
+				"kernel": "darwin",
+				"minOSVersionNumber": "11.0",
+				"updateLink": "https://github.com/aaronhktan/jyut-dict/releases/download/v2.23.0408-release/Jyut-Dictionary_2.23.0408_macOS_64bit_portable.zip",
+				"variant": "portable"
+			},
+			{
+				"arch": ["x86_64"],
+				"kernel": "linux",
+				"minOSVersionNumber": "0",
+				"updateLink": "https://github.com/aaronhktan/jyut-dict/releases/download/v2.23.0408-release/Jyut-Dictionary_2.23.0408_Linux_64bit_appimage.tar.bz2",
+				"variant": "appimage"
+			},
+			{
+				"arch": ["x86_64"],
+				"kernel": "winnt",
+				"minOSVersionNumber": "7",
+				"updateLink": "https://github.com/aaronhktan/jyut-dict/releases/download/v2.23.0408-release/Jyut-Dictionary_2.23.0408_Windows_64bit_install.exe",
+				"variant": "install"
+			},
+			{
+				"arch": ["x86_64"],
+				"kernel": "winnt",
+				"minOSVersionNumber": "7",
+				"updateLink": "https://github.com/aaronhktan/jyut-dict/releases/download/v2.23.0408-release/Jyut-Dictionary_2.23.0408_Windows_64bit_portable.zip",
+				"variant": "portable"
+			}
+		]
+	}
+]
