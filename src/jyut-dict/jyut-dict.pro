@@ -113,7 +113,7 @@ SOURCES += \
     logic/sentence/sourcesentence.cpp \
     logic/settings/settings.cpp \
     logic/settings/settingsutils.cpp \
-    logic/update/githubreleasechecker.cpp \
+    logic/update/jyutdictionaryreleasechecker.cpp \
     logic/utils/chineseutils.cpp \
     logic/utils/scriptdetector.cpp \
     logic/utils/utils.cpp \
@@ -218,8 +218,8 @@ HEADERS += \
     logic/settings/settings.h \
     logic/settings/settingsutils.h \
     logic/strings/strings.h \
-    logic/update/githubreleasechecker.h \
     logic/update/iupdatechecker.h \
+    logic/update/jyutdictionaryreleasechecker.h \
     logic/utils/chineseutils.h \
     logic/utils/qvariantutils.h \
     logic/utils/scriptdetector.h \

@@ -1,6 +1,7 @@
 #include "windows/mainwindow.h"
 
 #include <QApplication>
+#include <QSysInfo>
 
 #if defined(Q_OS_WIN)
 #include <cstdio>

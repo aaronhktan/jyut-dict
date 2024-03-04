@@ -1,7 +1,6 @@
 #ifndef ENTRYSPEAKER_H
 #define ENTRYSPEAKER_H
 
-#include <QAudioOutput>
 #include <QMediaPlayer>
 #include <QtGlobal>
 #if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
@@ -98,7 +97,6 @@ private:
 #endif
 
     QTextToSpeech *_tts;
-    QAudioOutput *_output;
     QMediaPlayer *_player;
 };
 

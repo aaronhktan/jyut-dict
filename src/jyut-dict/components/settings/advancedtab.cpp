@@ -26,6 +26,11 @@
 #include <QWindow>
 #endif
 
+namespace {
+constexpr auto AUDIO_DOWNLOAD_URL
+    = "https://jyutdictionary.com/static/audio/v1/";
+}
+
 AdvancedTab::AdvancedTab(QWidget *parent)
     : QWidget{parent}
 {
@@ -841,8 +846,7 @@ void AdvancedTab::startAudioDownload(std::shared_ptr<TextToSpeechCallbacks> cbs)
     QString zipFile
         = QStandardPaths::standardLocations(QStandardPaths::TempLocation).at(0)
           + "/" + TextToSpeech::backendNames[backend];
-    QUrl url{"https://jyutdictionary.com/static/audio/"
-             + TextToSpeech::backendNames[backend] + ".zip"};
+    QUrl url{AUDIO_DOWNLOAD_URL + TextToSpeech::backendNames[backend] + ".zip"};
 
     _downloader = new Downloader(url, zipFile, this);
 

@@ -4,12 +4,12 @@
 #include "components/favouritewindow/favouritesplitter.h"
 #include "components/mainwindow/mainsplitter.h"
 #include "components/mainwindow/maintoolbar.h"
-#include "logic/update/githubreleasechecker.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqldatabaseutils.h"
 #include "logic/database/sqluserdatautils.h"
 #include "logic/database/sqluserhistoryutils.h"
 #include "logic/search/sqlsearch.h"
+#include "logic/update/jyutdictionaryreleasechecker.h"
 #include "windows/aboutwindow.h"
 #include "windows/historywindow.h"
 #include "windows/settingswindow.h"
@@ -38,7 +38,7 @@ public:
     void changeEvent(QEvent *event) override;
 
 private:
-    GithubReleaseChecker *_checker;
+    JyutDictionaryReleaseChecker *_checker;
 
     MainToolBar *_mainToolBar;
     MainSplitter *_mainSplitter;
