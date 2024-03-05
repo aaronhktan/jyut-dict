@@ -53,12 +53,12 @@ JyutDictionaryReleaseChecker::JyutDictionaryReleaseChecker(QObject *parent)
 void JyutDictionaryReleaseChecker::checkForNewUpdate()
 {
     QNetworkRequest _request{QUrl{JYUT_DICTIONARY_UPDATE_URL}};
-    _reply = _manager->get(_request);
     disconnect(_manager, nullptr, nullptr, nullptr);
     connect(_manager,
             &QNetworkAccessManager::finished,
             this,
             &JyutDictionaryReleaseChecker::parseReply);
+    _reply = _manager->get(_request);
     QTimer::singleShot(15000, this, [&]() {
         emit foundUpdate(false, "", "", "");
     });
@@ -202,6 +202,14 @@ bool JyutDictionaryReleaseChecker::parseJSON(const std::string &data,
             if (webVariant != Utils::VARIANT) {
                 continue;
             }
+
+#ifdef Q_OS_LINUX
+            // On Linux, the install versions (aka .deb) must be built for
+            // the specific version of Ubuntu
+            if (webVariant == "install" && webOSVersion != currentOSVersion) {
+                continue;
+            }
+#endif
 
             // If all these conditions are true, then this is a valid update!
             updateAvailable = true;
