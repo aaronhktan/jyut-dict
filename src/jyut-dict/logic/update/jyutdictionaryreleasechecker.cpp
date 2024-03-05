@@ -115,6 +115,11 @@ bool JyutDictionaryReleaseChecker::parseJSON(const std::string &data,
 
         QString applicationChannel = QLibraryInfo::isDebugBuild() ? "debug"
                                                                   : "release";
+#if defined(Q_OS_MAC) && defined(PORTABLE)
+        // isDebugBuild() always returns false on macOS. For more information, see
+        // https://stackoverflow.com/questions/11714118/detect-if-qt-is-running-a-debug-build-at-runtime
+        applicationChannel = "debug";
+#endif
         if (applicationChannel != channel) {
             continue;
         }
