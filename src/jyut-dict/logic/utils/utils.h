@@ -38,7 +38,7 @@ constexpr auto VARIANT = "install";
 
     // Strings that are not language dependent should go here.
     // If they need to be translated, put them in strings.h
-    constexpr auto CURRENT_VERSION = "1.23.0408";
+    constexpr auto CURRENT_VERSION = "2.23.0408";
     constexpr auto AUTHOR_EMAIL = "mailto: hi@aaronhktan.com";
     constexpr auto DONATE_LINK = "https://ko-fi.com/aaronhktan";
     constexpr auto AUTHOR_GITHUB_LINK = "https://github.com/aaronhktan/";
