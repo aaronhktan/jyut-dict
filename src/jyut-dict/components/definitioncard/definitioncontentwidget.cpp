@@ -63,7 +63,7 @@ void DefinitionContentWidget::setEntry(const std::vector<Definition::Definition>
                                      0,
                                      Qt::AlignTop);
 
-        QString label{definitions[i].label.c_str()};
+        QString label = QString::fromStdString(definitions[i].label);
         if (!label.isEmpty()) {
             _definitionLabelLabels.push_back(
                 new QLabel{definitions[i].label.c_str(), this});
@@ -95,22 +95,22 @@ void DefinitionContentWidget::setEntry(const std::vector<Definition::Definition>
                 exampleText = definitions[i].sentences[j].getSimplified().c_str();
                 break;
             case EntryCharactersOptions::PREFER_SIMPLIFIED:
-                exampleText
-                    = QString{definitions[i].sentences[j].getSimplified().c_str()}
-                      + "<br>"
-                      + QString{
-                          definitions[i].sentences[j].getTraditional().c_str()};
+                exampleText = QString::fromStdString(
+                                  definitions[i].sentences[j].getSimplified())
+                              + "<br>"
+                              + QString::fromStdString(
+                                  definitions[i].sentences[j].getTraditional());
                 break;
             case EntryCharactersOptions::ONLY_TRADITIONAL:
                 exampleText
                     = definitions[i].sentences[j].getTraditional().c_str();
                 break;
             case EntryCharactersOptions::PREFER_TRADITIONAL:
-                exampleText
-                    = QString{definitions[i].sentences[j].getTraditional().c_str()}
-                      + "<br>"
-                      + QString{
-                          definitions[i].sentences[j].getSimplified().c_str()};
+                exampleText = QString::fromStdString(
+                                  definitions[i].sentences[j].getTraditional())
+                              + "<br>"
+                              + QString::fromStdString(
+                                  definitions[i].sentences[j].getSimplified());
                 break;
             }
 
@@ -146,12 +146,13 @@ void DefinitionContentWidget::setEntry(const std::vector<Definition::Definition>
             SourceSentence sentence = definitions[i].sentences[j];
             sentence.generatePhonetic(cantoneseOptions, mandarinOptions);
 
-            QString cantonese
-                = QString{sentence.getCantonesePhonetic(cantoneseOptions).c_str()}
-                      .trimmed();
-            QString mandarin
-                = QString{sentence.getMandarinPhonetic(mandarinOptions).c_str()}
-                      .trimmed();
+            QString cantonese = QString::fromStdString(
+                                    sentence.getCantonesePhonetic(
+                                        cantoneseOptions))
+                                    .trimmed();
+            QString mandarin = QString::fromStdString(
+                                   sentence.getMandarinPhonetic(mandarinOptions))
+                                   .trimmed();
 
             switch (Settings::getSettings()
                         ->value("Preview/phoneticOptions",
@@ -199,7 +200,8 @@ void DefinitionContentWidget::setEntry(const std::vector<Definition::Definition>
             if (!sets.empty()) {
                 auto set = sets[0].getSentences();
                 if (!set.empty()) {
-                    QString translation = set[0].sentence.c_str();
+                    QString translation = QString::fromStdString(
+                        set[0].sentence);
                     _exampleTranslationLabels.push_back(
                         new QLabel{"<ul style=\"list-style-type:none;\"><li>"
                                        + translation + "</li></ul>",

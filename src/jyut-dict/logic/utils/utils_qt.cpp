@@ -95,7 +95,7 @@ QString getLanguageFromISO639(std::string language)
     try {
         result = languageMap.at(language);
     } catch (std::out_of_range &e) {
-        QLocale locale{QString{language.c_str()}};
+        QLocale locale{QString::fromStdString(language.c_str())};
         result = locale.languageToString(locale.language());
     }
     return result;

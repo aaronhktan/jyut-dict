@@ -603,7 +603,8 @@ std::pair<bool, std::string> SQLDatabaseUtils::insertSourcesIntoDatabase(
             // already existed in the database. Since we want to preserve
             // dictionary order, we will need to insert at the old dictionary ID
             // which is given by the map.
-            QString sourceid{old_source_ids[sourcename.toStdString()].c_str()};
+            QString sourceid = QString::fromStdString(
+                old_source_ids[sourcename.toStdString()]);
 
             insertQuery.prepare("INSERT INTO sources "
                                 "  (source_id, sourcename, sourceshortname, "

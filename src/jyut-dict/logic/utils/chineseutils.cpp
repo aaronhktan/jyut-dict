@@ -468,7 +468,7 @@ std::string convertJyutpingToYale(const std::string &jyutping,
         Utils::split(jyutpingCopy, ' ', syllables);
     } else {
         bool valid_jyutping
-            = segmentJyutping(QString{jyutping.c_str()},
+            = segmentJyutping(QString::fromStdString(jyutping),
                               syllables,
                               /* removeSpecialCharacters */ false,
                               /* removeGlobCharacters */ false);
@@ -617,7 +617,7 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
         }
         Utils::split(jyutpingCopy, ' ', syllables);
     } else {
-        bool validJyutping = segmentJyutping(QString{jyutping.c_str()},
+        bool validJyutping = segmentJyutping(QString::fromStdString(jyutping),
                                              syllables,
                                              /* removeSpecialCharacters */ false,
                                              /* removeGlobCharacters */ false);
@@ -892,7 +892,7 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
         }
         Utils::split(pinyinCopy, ' ', syllables);
     } else {
-        segmentPinyin(QString{pinyin.c_str()}, syllables);
+        segmentPinyin(QString::fromStdString(pinyin), syllables);
     }
 
     std::vector<std::string> zhuyin_syllables;
@@ -1103,7 +1103,7 @@ std::string convertPinyinToIPA(const std::string &pinyin,
         }
         Utils::split(pinyinCopy, ' ', syllables);
     } else {
-        segmentPinyin(QString{pinyin.c_str()}, syllables);
+        segmentPinyin(QString::fromStdString(pinyin), syllables);
     }
 
     std::vector<std::string> ipa_syllables;

@@ -227,8 +227,9 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     }
 #ifdef Q_OS_WIN
     oldFont = font;
-    QString snippetLanguage = QString{sentence.getSentenceSnippetLanguage()
-            .c_str()}.trimmed();
+    QString snippetLanguage = QString::fromStdString(
+                                  sentence.getSentenceSnippetLanguage())
+                                  .trimmed();
     if (snippetLanguage == "cmn" || snippetLanguage == "yue") {
         font = QFont{"Microsoft Yahei"};
     } else {

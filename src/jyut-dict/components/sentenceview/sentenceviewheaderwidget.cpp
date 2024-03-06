@@ -58,14 +58,15 @@ void SentenceViewHeaderWidget::setSourceSentence(const SourceSentence &sentence)
     clearPronunciationLabels();
 
     _sourceLanguageLabel->setProperty("language",
-                                      QString{sentence.getSourceLanguage().c_str()});
+                                      QString::fromStdString(
+                                          sentence.getSourceLanguage()));
     _sourceLanguageLabel->setText(
         Utils::getLanguageFromISO639(sentence.getSourceLanguage()).trimmed());
 
     _simplifiedLabel->setText(
-        QString{sentence.getSimplified().c_str()}.trimmed());
+        QString::fromStdString(sentence.getSimplified()).trimmed());
     _traditionalLabel->setText(
-        QString{sentence.getTraditional().c_str()}.trimmed());
+        QString::fromStdString(sentence.getTraditional()).trimmed());
 
     CantoneseOptions cantoneseOptions
         = Settings::getSettings()
@@ -88,12 +89,12 @@ void SentenceViewHeaderWidget::setSourceSentence(const SourceSentence &sentence)
                                cantoneseOptions,
                                mandarinOptions);
 
-    _chinese = QString{sentence.getSimplified().empty()
-                           ? sentence.getSimplified().c_str()
-                           : sentence.getTraditional().c_str()};
-    _jyutping = QString{sentence.getJyutping().c_str()};
-    _pinyin = QString{
-        ChineseUtils::createPinyinWithV(sentence.getPinyin()).c_str()};
+    _chinese = QString::fromStdString(sentence.getSimplified().empty()
+                                          ? sentence.getSimplified()
+                                          : sentence.getTraditional());
+    _jyutping = QString::fromStdString(sentence.getJyutping());
+    _pinyin = QString::fromStdString(
+        ChineseUtils::createPinyinWithV(sentence.getPinyin()));
 
     translateUI();
     setStyle(Utils::isDarkMode());

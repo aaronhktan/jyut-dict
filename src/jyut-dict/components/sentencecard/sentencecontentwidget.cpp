@@ -64,7 +64,8 @@ void SentenceContentWidget::setSentenceSet(const SentenceSet &set)
         _sentenceNumberLabels.back()->setFixedWidth(definitionNumberWidth);
 
         _sentenceLabels.push_back(
-            new QLabel{QString{sentences[i].sentence.c_str()}.trimmed(), this});
+            new QLabel{QString::fromStdString(sentences[i].sentence).trimmed(),
+                       this});
         _sentenceLabels.back()->setProperty("language", sentences[i].language.c_str());
         _sentenceLabels.back()->setWordWrap(true);
         _sentenceLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -106,15 +107,15 @@ void SentenceContentWidget::setSourceSentenceVector(
 
         SourceSentence sourceSentence = sourceSentences.at(i);
 
-        QString simplified = QString{sourceSentence.getSimplified().c_str()}
-                                 .trimmed();
+        QString simplified
+            = QString::fromStdString(sourceSentence.getSimplified()).trimmed();
         _simplifiedLabels.push_back(new QLabel{simplified, this});
         _simplifiedLabels.back()->setWordWrap(true);
         _simplifiedLabels.back()->setTextInteractionFlags(
             Qt::TextSelectableByMouse);
 
-        QString traditional = QString{sourceSentence.getTraditional().c_str()}
-                                  .trimmed();
+        QString traditional
+            = QString::fromStdString(sourceSentence.getTraditional()).trimmed();
         _traditionalLabels.push_back(new QLabel{traditional, this});
         _traditionalLabels.back()->setWordWrap(true);
         _traditionalLabels.back()->setTextInteractionFlags(
@@ -134,27 +135,27 @@ void SentenceContentWidget::setSourceSentenceVector(
 
         sourceSentence.generatePhonetic(cantoneseOptions, mandarinOptions);
 
-        QString cantonesePronunciation = QString{sourceSentence
-                                                     .getCantonesePhonetic(
-                                                         cantoneseOptions)
-                                                     .c_str()}
-                                             .trimmed();
+        QString cantonesePronunciation
+            = QString::fromStdString(
+                  sourceSentence.getCantonesePhonetic(cantoneseOptions))
+                  .trimmed();
         _cantoneseLabels.push_back(new QLabel{cantonesePronunciation, this});
         _cantoneseLabels.back()->setWordWrap(true);
         _cantoneseLabels.back()->setTextInteractionFlags(
             Qt::TextSelectableByMouse);
 
-        QString mandarinPronunciation
-            = QString{sourceSentence.getMandarinPhonetic(mandarinOptions).c_str()}
-                  .trimmed();
+        QString mandarinPronunciation = QString::fromStdString(
+                                            sourceSentence.getMandarinPhonetic(
+                                                mandarinOptions))
+                                            .trimmed();
         _mandarinLabels.push_back(new QLabel{mandarinPronunciation, this});
         _mandarinLabels.back()->setWordWrap(true);
         _mandarinLabels.back()->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
         SentenceSet targetSentenceSet = sourceSentence.getSentenceSets()[0];
-        QString sentence
-            = QString{targetSentenceSet.getSentences()[0].sentence.c_str()}
-                  .trimmed();
+        QString sentence = QString::fromStdString(
+                               targetSentenceSet.getSentences()[0].sentence)
+                               .trimmed();
         _sentenceLabels.push_back(new QLabel{sentence, this});
         _sentenceLabels.back()->setProperty("language",
                                             targetSentenceSet.getSentences()[0].language.c_str());
