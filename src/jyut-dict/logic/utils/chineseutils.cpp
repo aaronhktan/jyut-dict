@@ -279,7 +279,10 @@ std::string applyColours(const std::string original,
                          const EntryColourPhoneticType type)
 {
     std::string coloured_string;
-    std::u32string converted_original = converter.from_bytes(original);
+    std::u32string converted_original = converter.from_bytes(
+        QString::fromStdString(original)
+            .normalized(QString::NormalizationForm_C)
+            .toStdString());
     size_t pos = 0;
     for (const auto &character : converted_original) {
         std::string originalCharacter = converter.to_bytes(character);
@@ -355,8 +358,14 @@ std::string compareStrings(const std::string &original,
                            const std::string &comparison)
 {
     std::string result;
-    std::u32string convertedOriginal = converter.from_bytes(original);
-    std::u32string convertedComparison = converter.from_bytes(comparison);
+    std::u32string convertedOriginal = converter.from_bytes(
+        QString::fromStdString(original)
+            .normalized(QString::NormalizationForm_C)
+            .toStdString());
+    std::u32string convertedComparison = converter.from_bytes(
+        QString::fromStdString(comparison)
+            .normalized(QString::NormalizationForm_C)
+            .toStdString());
 
     if (convertedOriginal.size() != convertedComparison.size()) {
         return result;

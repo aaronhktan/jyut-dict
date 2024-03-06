@@ -1,6 +1,8 @@
 #include <QtTest>
 
+#include "logic/settings/settings.h"
 #include "logic/utils/chineseutils.h"
+#include "logic/utils/utils.h"
 
 class TestChineseUtils : public QObject
 {
@@ -11,6 +13,40 @@ public:
     ~TestChineseUtils();
 
 private slots:
+    void applyColoursJyutping();
+    void applyColoursPinyin();
+
+    void compareStringsSimple();
+    void compareStringsSingleMultibyteGrapheme();
+    void compareStringsMultipleMultibyteGraphemes();
+    void compareStringsMultibyteGraphemesWithAlpha();
+    void compareStringsCompatibilityVariantNormalization();
+
+    // void jyutpingToYaleSimple();
+    // void jyutpingToYaleRejectNoTone();
+    // void jyutpingToYaleRejectSingleLetter();
+    // void jyutpingToYaleRejectSpecialCharacter();
+    // void jyutpingToYaleNoSpaces();
+    // void jyutpingToYaleSpacesToSegment();
+    // void jyutpingToYaleSpecialFinal();
+    // void jyutpingToYaleLightTone();
+    // void jyutpingToYaleSpecialSyllable();
+    // void jyutpingToYaleTones();
+    // void jyutpingToYaleNoTone();
+
+    // void jyutpingToIPASimple();
+    // void jyutpingToIPARejectNoTone();
+    // void jyutpingToIPARejectSingleLetter();
+    // void jyutpingToIPARejectSpecialCharacter();
+    // void jyutpingToIPANoSpaces();
+    // void jyutpingToIPASpacesToSegment();
+    // void jyutpingToIPAPreprocessInitial();
+    // void jyutpingToIPASpecialSyllable();
+    // void jyutpingToIPACheckedTone();
+    // void jyutpingToIPASpecialFinal();
+    // void jyutpingToIPATones();
+    // void jyutpingToIPANoTone();
+
     void segmentJyutpingSimple();
     void segmentJyutpingNoDigits();
     void segmentJyutpingNoSpaces();
@@ -58,6 +94,74 @@ private slots:
 TestChineseUtils::TestChineseUtils() {}
 
 TestChineseUtils::~TestChineseUtils() {}
+
+void TestChineseUtils::applyColoursJyutping()
+{
+    std::string text = "唔係";
+    std::vector<int> tones = {4, 6};
+    std::string result
+        = ChineseUtils::applyColours(text,
+                                     tones,
+                                     Settings::defaultJyutpingToneColours,
+                                     {},
+                                     EntryColourPhoneticType::CANTONESE);
+    std::string expected = "<font color=\""
+                           + Settings::defaultJyutpingToneColours[4]
+                           + "\">唔</font>" + "<font color=\""
+                           + Settings::defaultJyutpingToneColours[6]
+                           + "\">係</font>";
+    QCOMPARE(result, expected);
+}
+void TestChineseUtils::applyColoursPinyin()
+{
+    std::string text = "不是";
+    std::vector<int> tones = {2, 4};
+    std::string result
+        = ChineseUtils::applyColours(text,
+                                     tones,
+                                     {},
+                                     Settings::defaultPinyinToneColours,
+                                     EntryColourPhoneticType::MANDARIN);
+    std::string expected = "<font color=\""
+                           + Settings::defaultPinyinToneColours[2]
+                           + "\">不</font>" + "<font color=\""
+                           + Settings::defaultPinyinToneColours[4]
+                           + "\">是</font>";
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::compareStringsSimple()
+{
+    std::string result = ChineseUtils::compareStrings("語言藝術", "语言艺术");
+    QCOMPARE(result, "语－艺术");
+}
+
+void TestChineseUtils::compareStringsSingleMultibyteGrapheme()
+{
+    std::string result = ChineseUtils::compareStrings("賵", "赗");
+    QCOMPARE(result, "赗");
+}
+
+void TestChineseUtils::compareStringsMultipleMultibyteGraphemes()
+{
+    std::string result = ChineseUtils::compareStrings("齮齕", "𬺈龁");
+    QCOMPARE(result, "𬺈龁");
+}
+
+void TestChineseUtils::compareStringsMultibyteGraphemesWithAlpha()
+{
+    std::string result = ChineseUtils::compareStrings("齮aaaa齕", "𬺈aaaa龁");
+    QCOMPARE(result,
+             "𬺈" + std::string{Utils::SAME_CHARACTER_STRING}
+                 + Utils::SAME_CHARACTER_STRING + Utils::SAME_CHARACTER_STRING
+                 + Utils::SAME_CHARACTER_STRING + "龁");
+}
+
+void TestChineseUtils::compareStringsCompatibilityVariantNormalization()
+{
+    std::string result = ChineseUtils::compareStrings("響", "響");
+    QCOMPARE(result, Utils::SAME_CHARACTER_STRING);
+}
 
 void TestChineseUtils::segmentJyutpingSimple()
 {
