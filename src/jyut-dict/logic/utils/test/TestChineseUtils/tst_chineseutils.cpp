@@ -32,6 +32,27 @@ private slots:
     void segmentJyutpingMultipleFinalsConsonantsOnly();
     void segmentJyutpingMultipleFinals();
     void segmentJyutpingGarbage();
+
+    void segmentPinyinSimple();
+    void segmentPinyinNoDigits();
+    void segmentPinyinNoSpaces();
+    void segmentPinyinNoDigitsNoSpaces();
+    void segmentPinyinNoDigitsApostrophe();
+    void segmentPinyinDigitsApostrophe();
+    void segmentPinyinRemoveSpecialCharacters();
+    void segmentPinyinKeepGlobCharacters();
+    void segmentPinyinKeepGlobCharactersNoWhitespace();
+    void segmentPinyinKeepMultipleGlobCharacters();
+    void segmentPinyinKeepMultipleGlobCharactersWhitespace();
+    void segmentPinyinKeepMultipleGlobCharactersWhitespaceSurround();
+    void segmentPinyinGlobCharactersTrimWhitespace();
+    void segmentPinyinKeepSpecialCharacters();
+    void segmentPinyinRemoveWhitespace();
+    void segmentPinyinLower();
+    void segmentPinyinLowerWithDigits();
+    void segmentPinyinMultipleFinalsVowelsOnly();
+    void segmentPinyinMultipleFinals();
+    void segmentPinyinGarbage();
 };
 
 TestChineseUtils::TestChineseUtils() {}
@@ -243,6 +264,200 @@ void TestChineseUtils::segmentJyutpingGarbage()
     QCOMPARE(valid, false);
 }
 
+void TestChineseUtils::segmentPinyinSimple()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("guang3 dong1", result);
+    std::vector<std::string> expected = {"guang3", "dong1"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinNoDigits()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("guang dong", result);
+    std::vector<std::string> expected = {"guang", "dong"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinNoSpaces()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("guang3dong1", result);
+    std::vector<std::string> expected = {"guang3", "dong1"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinNoDigitsNoSpaces()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("guangdong", result);
+    std::vector<std::string> expected = {"guang", "dong"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinNoDigitsApostrophe()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("xi'an", result);
+    std::vector<std::string> expected = {"xi", "an"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinDigitsApostrophe()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("xi1'an", result);
+    std::vector<std::string> expected = {"xi1", "an"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinRemoveSpecialCharacters()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("guang*dong!!", result);
+    std::vector<std::string> expected = {"guang", "dong"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinKeepGlobCharacters()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("guang* dong?",
+                                result,
+                                /* removeSpecialCharacters = */ true,
+                                /* removeGlobCharacters = */ false);
+    std::vector<std::string> expected = {"guang", "* ", "dong", "?"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinKeepGlobCharactersNoWhitespace()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("guang*dong?",
+                                result,
+                                /* removeSpecialCharacters = */ true,
+                                /* removeGlobCharacters = */ false);
+    std::vector<std::string> expected = {"guang", "*", "dong", "?"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinKeepMultipleGlobCharacters()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("guang?* dong",
+                                result,
+                                /* removeSpecialCharacters = */ true,
+                                /* removeGlobCharacters = */ false);
+    std::vector<std::string> expected = {"guang", "?", "* ", "dong"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinKeepMultipleGlobCharactersWhitespace()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("guang? * dong",
+                                result,
+                                /* removeSpecialCharacters = */ true,
+                                /* removeGlobCharacters = */ false);
+    std::vector<std::string> expected = {"guang", "? ", "* ", "dong"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinKeepMultipleGlobCharactersWhitespaceSurround()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("guang ? * dong",
+                                result,
+                                /* removeSpecialCharacters = */ true,
+                                /* removeGlobCharacters = */ false);
+    std::vector<std::string> expected = {"guang", " ? ", "* ", "dong"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinGlobCharactersTrimWhitespace()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("guang  ?            *      dong",
+                                result,
+                                /* removeSpecialCharacters = */ true,
+                                /* removeGlobCharacters = */ false);
+    std::vector<std::string> expected = {"guang", " ? ", "* ", "dong"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinKeepSpecialCharacters()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("guang？ dong1",
+                                result,
+                                /* removeSpecialCharacters = */ false);
+    std::vector<std::string> expected = {"guang", "？", "dong1"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinRemoveWhitespace()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("  guang                           dong      ",
+                                result,
+                                /* removeSpecialCharacters = */ true,
+                                /* removeGlobCharacters = */ false);
+    std::vector<std::string> expected = {"guang", "dong"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinLower()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("gUanGdOnG", result);
+    std::vector<std::string> expected = {"guang", "dong"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinLowerWithDigits()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("guAng3dONg1", result);
+    std::vector<std::string> expected = {"guang3", "dong1"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinMultipleFinalsVowelsOnly()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("ee",
+                                result,
+                                /* removeSpecialCharacters = */ true,
+                                /* removeGlobCharacters = */ false);
+    std::vector<std::string> expected = {"e", "e"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinMultipleFinals()
+{
+    std::vector<std::string> result;
+    ChineseUtils::segmentPinyin("angang",
+                                result,
+                                /* removeSpecialCharacters = */ true,
+                                /* removeGlobCharacters = */ false);
+    std::vector<std::string> expected = {"ang", "ang"};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinGarbage()
+{
+    std::vector<std::string> result;
+    bool valid
+        = ChineseUtils::segmentPinyin("kljnxclkjvnl",
+                                      result,
+                                      /* removeSpecialCharacters = */ true,
+                                      /* removeGlobCharacters = */ false);
+    std::vector<std::string> expected = {"kljnxclkjvnl"};
+    QCOMPARE(result, expected);
+    QCOMPARE(valid, false);
+}
+
 QTEST_APPLESS_MAIN(TestChineseUtils)
 
-#include "tst_testchineseutils.moc"
+#include "tst_chineseutils.moc"

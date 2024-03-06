@@ -1346,8 +1346,8 @@ bool segmentPinyin(const QString &string,
         if (currentString == " " || currentString == "'" || isSpecialCharacter
             || isGlobCharacter) {
             if (initial_found) { // Add any incomplete word to the vector
-                QString previous_initial = string.mid(start_idx,
-                                                      end_idx - start_idx);
+                QString previous_initial
+                    = string.mid(start_idx, end_idx - start_idx).toLower();
                 syllables.push_back(previous_initial.toStdString());
                 if (finals.find(previous_initial.toStdString())
                     == finals.end()) {
@@ -1374,7 +1374,7 @@ bool segmentPinyin(const QString &string,
                     length++;
                     end_idx++;
                 }
-                QString glob = string.mid(new_end_index, length);
+                QString glob = string.mid(new_end_index, length).toLower();
                 syllables.push_back(glob.toStdString());
 
                 start_idx = end_idx;
@@ -1431,7 +1431,8 @@ bool segmentPinyin(const QString &string,
                     end_idx++;
                 }
 
-                QString syllable = string.mid(start_idx, end_idx - start_idx);
+                QString syllable
+                    = string.mid(start_idx, end_idx - start_idx).toLower();
                 syllables.push_back(syllable.toStdString());
                 start_idx = end_idx;
                 next_iteration = true;
@@ -1449,7 +1450,7 @@ bool segmentPinyin(const QString &string,
 
     // Then add whatever's left in the search term, minus whitespace.
     QString lastSyllable
-        = string.mid(start_idx, end_idx - start_idx).simplified();
+        = string.mid(start_idx, end_idx - start_idx).simplified().toLower();
     if (!lastSyllable.isEmpty() && lastSyllable != "'") {
         syllables.push_back(lastSyllable.toStdString());
         if (finals.find(lastSyllable.toStdString()) == finals.end()) {
