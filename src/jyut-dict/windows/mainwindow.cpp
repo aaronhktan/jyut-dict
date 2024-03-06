@@ -185,7 +185,7 @@ MainWindow::MainWindow(QWidget *parent) :
     translateUI();
 
     // Check for updates
-    _checker = new GithubReleaseChecker{this};
+    _checker = new JyutDictionaryReleaseChecker{this};
     if (settings->value("Advanced/updateNotificationsEnabled", QVariant{true}).toBool()) {
         QTimer::singleShot(1000, this, [&]() {
             checkForUpdate(/* showProgress = */ false);
@@ -1285,7 +1285,7 @@ void MainWindow::checkForUpdate(bool showProgress)
     disconnect(_checker, nullptr, nullptr, nullptr);
     if (showProgress) {
         connect(_checker,
-                &GithubReleaseChecker::foundUpdate,
+                &JyutDictionaryReleaseChecker::foundUpdate,
                 this,
                 [&](bool updateAvailable,
                     std::string versionNumber,
@@ -1326,7 +1326,7 @@ void MainWindow::checkForUpdate(bool showProgress)
         _updateDialog->setValue(0);
     } else {
         connect(_checker,
-                &GithubReleaseChecker::foundUpdate,
+                &JyutDictionaryReleaseChecker::foundUpdate,
                 this,
                 [&](bool updateAvailable,
                     std::string versionNumber,
@@ -1336,7 +1336,8 @@ void MainWindow::checkForUpdate(bool showProgress)
                     notifyUpdateAvailable(updateAvailable,
                                           versionNumber,
                                           url,
-                                          description);
+                                          description,
+                                          /* showIfNoUpdateo = */ false);
 
                     _recentlyCheckedForUpdates = false;
                 });

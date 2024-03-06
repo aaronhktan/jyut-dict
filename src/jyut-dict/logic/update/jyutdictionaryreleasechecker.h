@@ -1,5 +1,5 @@
-#ifndef GITHUBRELEASECHECKER_H
-#define GITHUBRELEASECHECKER_H
+#ifndef JYUTDICTIONARYRELEASECHECKER_H
+#define JYUTDICTIONARYRELEASECHECKER_H
 
 #include "logic/update/iupdatechecker.h"
 
@@ -8,15 +8,14 @@
 
 #include <string>
 
-// The GithubReleaseChecker checks the Github API for updates to the application
+// The JyutDictionaryReleaseChecker checks the Jyut Dictionary website
+// for updates to the application
 
-constexpr auto GITHUB_UPDATE_URL = "https://api.github.com/repos/aaronhktan/jyut-dict/releases";
-
-class GithubReleaseChecker : public QObject, public IUpdateChecker
+class JyutDictionaryReleaseChecker : public QObject, public IUpdateChecker
 {
     Q_OBJECT
 public:
-    explicit GithubReleaseChecker(QObject *parent);
+    explicit JyutDictionaryReleaseChecker(QObject *parent);
 
     void checkForNewUpdate(void) override;
 
@@ -32,12 +31,13 @@ private:
     QNetworkReply *_reply;
 
 public slots:
-    void parseReply(QNetworkReply *request) const;
+    void parseReply(QNetworkReply *request);
 
 signals:
     void foundUpdate(bool updateAvailable,
                      std::string versionNumber,
-                     std::string url, std::string description) const;
+                     std::string url,
+                     std::string description) override;
 };
 
-#endif // GITHUBRELEASECHECKER_H
+#endif // JYUTDICTIONARYRELEASECHECKER_H
