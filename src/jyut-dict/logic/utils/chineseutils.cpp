@@ -1502,8 +1502,8 @@ bool segmentJyutping(const QString &string,
         if (currentString == " " || currentString == "'" || isSpecialCharacter
             || isGlobCharacter) {
             if (initial_found) { // Add any incomplete word to the vector
-                QString previous_initial = string.mid(start_idx,
-                                                      end_idx - start_idx);
+                QString previous_initial
+                    = string.mid(start_idx, end_idx - start_idx).toLower();
                 syllables.push_back(previous_initial.toStdString());
                 if (finals.find(previous_initial.toStdString())
                     == finals.end()) {
@@ -1530,7 +1530,7 @@ bool segmentJyutping(const QString &string,
                     length++;
                     end_idx++;
                 }
-                QString glob = string.mid(glob_start_idx, length);
+                QString glob = string.mid(glob_start_idx, length).toLower();
                 syllables.push_back(glob.toStdString());
 
                 start_idx = end_idx;
@@ -1549,14 +1549,14 @@ bool segmentJyutping(const QString &string,
         // This block checks for the latter case.
         if (currentString.at(0).isDigit()) {
             if (initial_found) {
-                QString previous_initial = string.mid(start_idx,
-                                                      end_idx - start_idx);
+                QString previous_initial
+                    = string.mid(start_idx, end_idx - start_idx).toLower();
                 auto searchResult = finals.find(previous_initial.toStdString());
                 if (searchResult != finals.end()) {
                     // Confirmed, last initial found was also a final
                     end_idx++;
-                    previous_initial = string.mid(start_idx,
-                                                  end_idx - start_idx);
+                    previous_initial
+                        = string.mid(start_idx, end_idx - start_idx).toLower();
                     syllables.push_back(previous_initial.toStdString());
                     start_idx = end_idx;
                     initial_found = false;
@@ -1580,8 +1580,8 @@ bool segmentJyutping(const QString &string,
             // Multiple initials in a row are only valid if previous "initial"
             // was actually a final (like m or ng)
             if (initial_found) {
-                QString first_initial = string.mid(start_idx,
-                                                   end_idx - start_idx);
+                QString first_initial
+                    = string.mid(start_idx, end_idx - start_idx).toLower();
                 searchResult = finals.find(first_initial.toStdString());
                 if (searchResult != finals.end()) {
                     syllables.push_back(first_initial.toStdString());
@@ -1617,7 +1617,8 @@ bool segmentJyutping(const QString &string,
                         end_idx++;
                     }
                 }
-                QString syllable = string.mid(start_idx, end_idx - start_idx);
+                QString syllable
+                    = string.mid(start_idx, end_idx - start_idx).toLower();
                 syllables.push_back(syllable.toStdString());
                 start_idx = end_idx;
                 component_found = true;
@@ -1637,7 +1638,7 @@ bool segmentJyutping(const QString &string,
 
     // Then add whatever's left in the search term, minus whitespace.
     QString lastSyllable
-        = string.mid(start_idx, end_idx - start_idx).simplified();
+        = string.mid(start_idx, end_idx - start_idx).simplified().toLower();
     if (!lastSyllable.isEmpty() && lastSyllable != "'") {
         syllables.push_back(lastSyllable.toStdString());
         if (finals.find(lastSyllable.toStdString()) == finals.end()) {
