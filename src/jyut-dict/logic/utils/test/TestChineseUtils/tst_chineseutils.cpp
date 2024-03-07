@@ -133,7 +133,7 @@ void TestChineseUtils::applyColoursPinyin()
 void TestChineseUtils::compareStringsSimple()
 {
     std::string result = ChineseUtils::compareStrings("語言藝術", "语言艺术");
-    QCOMPARE(result, "语－艺术");
+    QCOMPARE(result, "语" + std::string{Utils::SAME_CHARACTER_STRING} + "艺术");
 }
 
 void TestChineseUtils::compareStringsSingleMultibyteGrapheme()
