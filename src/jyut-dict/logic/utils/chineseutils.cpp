@@ -719,7 +719,7 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
 
     // Remove trailing space
     std::string result = ipa.str();
-    result.erase(result.end() - static_cast<long>(double_space.length()));
+    result.resize(result.size() - double_space.length());
 
     return result;
 }

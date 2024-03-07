@@ -22,30 +22,30 @@ private slots:
     void compareStringsMultibyteGraphemesWithAlpha();
     void compareStringsCompatibilityVariantNormalization();
 
-    // void jyutpingToYaleSimple();
-    // void jyutpingToYaleRejectNoTone();
-    // void jyutpingToYaleRejectSingleLetter();
-    // void jyutpingToYaleRejectSpecialCharacter();
-    // void jyutpingToYaleNoSpaces();
-    // void jyutpingToYaleSpacesToSegment();
-    // void jyutpingToYaleSpecialFinal();
-    // void jyutpingToYaleLightTone();
-    // void jyutpingToYaleSpecialSyllable();
-    // void jyutpingToYaleTones();
-    // void jyutpingToYaleNoTone();
+    void jyutpingToYaleSimple();
+    void jyutpingToYaleRejectNoTone();
+    void jyutpingToYaleRejectSingleLetter();
+    void jyutpingToYaleRejectSpecialCharacter();
+    void jyutpingToYaleNoSpaces();
+    void jyutpingToYaleSpacesToSegment();
+    void jyutpingToYaleSpecialFinal();
+    void jyutpingToYaleLightTone();
+    void jyutpingToYaleSpecialSyllable();
+    void jyutpingToYaleTones();
+    void jyutpingToYaleNoTone();
 
-    // void jyutpingToIPASimple();
-    // void jyutpingToIPARejectNoTone();
-    // void jyutpingToIPARejectSingleLetter();
-    // void jyutpingToIPARejectSpecialCharacter();
-    // void jyutpingToIPANoSpaces();
-    // void jyutpingToIPASpacesToSegment();
-    // void jyutpingToIPAPreprocessInitial();
-    // void jyutpingToIPASpecialSyllable();
-    // void jyutpingToIPACheckedTone();
-    // void jyutpingToIPASpecialFinal();
-    // void jyutpingToIPATones();
-    // void jyutpingToIPANoTone();
+    void jyutpingToIPASimple();
+    void jyutpingToIPARejectNoTone();
+    void jyutpingToIPARejectSingleLetter();
+    void jyutpingToIPARejectSpecialCharacter();
+    void jyutpingToIPANoSpaces();
+    void jyutpingToIPASpacesToSegment();
+    void jyutpingToIPAPreprocessInitial();
+    void jyutpingToIPASpecialSyllable();
+    void jyutpingToIPACheckedTone();
+    void jyutpingToIPASpecialFinal();
+    void jyutpingToIPATones();
+    void jyutpingToIPANoTone();
 
     void segmentJyutpingSimple();
     void segmentJyutpingNoDigits();
@@ -161,6 +161,183 @@ void TestChineseUtils::compareStringsCompatibilityVariantNormalization()
 {
     std::string result = ChineseUtils::compareStrings("響", "響");
     QCOMPARE(result, Utils::SAME_CHARACTER_STRING);
+}
+
+void TestChineseUtils::jyutpingToYaleSimple()
+{
+    std::string result = ChineseUtils::convertJyutpingToYale("si1 zi2 saan1");
+    QCOMPARE(result, "sī jí sāan");
+}
+
+void TestChineseUtils::jyutpingToYaleRejectNoTone()
+{
+    std::string result = ChineseUtils::convertJyutpingToYale("joeng");
+    QCOMPARE(result, "joeng");
+}
+
+void TestChineseUtils::jyutpingToYaleRejectSingleLetter()
+{
+    std::string result = ChineseUtils::convertJyutpingToYale("a");
+    QCOMPARE(result, "a");
+}
+
+void TestChineseUtils::jyutpingToYaleRejectSpecialCharacter()
+{
+    std::string result = ChineseUtils::convertJyutpingToYale("-");
+    QCOMPARE(result, "x");
+}
+
+void TestChineseUtils::jyutpingToYaleNoSpaces()
+{
+    std::string result = ChineseUtils::convertJyutpingToYale("si1zi2saan1");
+    QCOMPARE(result, "sī jí sāan");
+}
+
+void TestChineseUtils::jyutpingToYaleSpacesToSegment()
+{
+    std::string result
+        = ChineseUtils::convertJyutpingToYale("si1 zi2 saan1",
+                                              /* usSpacesToSegment = */ true);
+    QCOMPARE(result, "sī jí sāan");
+}
+
+void TestChineseUtils::jyutpingToYaleSpecialFinal()
+{
+    std::string result = ChineseUtils::convertJyutpingToYale("goek3jyun5");
+    QCOMPARE(result, "geuk yúhn");
+}
+
+void TestChineseUtils::jyutpingToYaleLightTone()
+{
+    std::string result = ChineseUtils::convertJyutpingToYale("lok6 jyu5");
+    QCOMPARE(result, "lohk yúh");
+}
+
+void TestChineseUtils::jyutpingToYaleSpecialSyllable()
+{
+    std::string result = ChineseUtils::convertJyutpingToYale("m4 hai6");
+    QCOMPARE(result, "m̀h haih");
+}
+
+void TestChineseUtils::jyutpingToYaleTones()
+{
+    std::string result = ChineseUtils::convertJyutpingToYale(
+        "saam1 gau2 sei3 ling4 ng5 ji6 cat1 baat3 luk6");
+    QCOMPARE(result, "sāam gáu sei lìhng ńgh yih chāt baat luhk");
+}
+
+void TestChineseUtils::jyutpingToYaleNoTone()
+{
+    std::string result = ChineseUtils::convertJyutpingToYale("mit");
+    QCOMPARE(result, "mit");
+}
+
+void TestChineseUtils::jyutpingToIPASimple()
+{
+    std::string result = ChineseUtils::convertJyutpingToIPA("joeng4 sing4");
+#ifdef Q_OS_MAC
+    QCOMPARE(result, "jœ̽ːŋ ˨ ˩  sɪŋ ˨ ˩");
+#else
+    QCOMPARE(result, "jœ̽ːŋ˨˩  sɪŋ˨˩");
+#endif
+}
+
+void TestChineseUtils::jyutpingToIPARejectNoTone()
+{
+    std::string result = ChineseUtils::convertJyutpingToIPA("joeng");
+    QCOMPARE(result, "joeng");
+}
+
+void TestChineseUtils::jyutpingToIPARejectSingleLetter()
+{
+    std::string result = ChineseUtils::convertJyutpingToIPA("a");
+    QCOMPARE(result, "a");
+}
+
+void TestChineseUtils::jyutpingToIPARejectSpecialCharacter()
+{
+    std::string result = ChineseUtils::convertJyutpingToIPA("-");
+    QCOMPARE(result, "x");
+}
+
+void TestChineseUtils::jyutpingToIPANoSpaces()
+{
+    std::string result = ChineseUtils::convertJyutpingToIPA("faa1sing4");
+#ifdef Q_OS_MAC
+    QCOMPARE(result, "fäː ˥  sɪŋ ˨ ˩");
+#else
+    QCOMPARE(result, "fäː˥  sɪŋ˨˩");
+#endif
+}
+
+void TestChineseUtils::jyutpingToIPASpacesToSegment()
+{
+    std::string result
+        = ChineseUtils::convertJyutpingToIPA("joeng4 sing4",
+                                             /* useSpacesToSegment = */ true);
+#ifdef Q_OS_MAC
+    QCOMPARE(result, "jœ̽ːŋ ˨ ˩  sɪŋ ˨ ˩");
+#else
+    QCOMPARE(result, "jœ̽ːŋ˨˩  sɪŋ˨˩");
+#endif
+}
+
+void TestChineseUtils::jyutpingToIPAPreprocessInitial()
+{
+    std::string result = ChineseUtils::convertJyutpingToIPA("zyu2 sung3");
+#ifdef Q_OS_MAC
+    QCOMPARE(result, "t͡ʃyː ˧ ˥  sʊŋ ˧");
+#else
+    QCOMPARE(result, "t͡ʃyː˧˥  sʊŋ˧");
+#endif
+}
+
+void TestChineseUtils::jyutpingToIPASpecialSyllable()
+{
+    std::string result = ChineseUtils::convertJyutpingToIPA("m4");
+#ifdef Q_OS_MAC
+    QCOMPARE(result, "m̩ ˨ ˩");
+#else
+    QCOMPARE(result, "m̩˨˩");
+#endif
+}
+
+void TestChineseUtils::jyutpingToIPACheckedTone()
+{
+    std::string result = ChineseUtils::convertJyutpingToIPA(
+        "sik6 si2 o1 faan6");
+#ifdef Q_OS_MAC
+    QCOMPARE(result, "sɪk̚ ˨  siː ˧ ˥  ɔː ˥  fäːn ˨");
+#else
+    QCOMPARE(result, "sɪk̚˨ siː˧˥ ɔː˥ fäːn˨");
+#endif
+}
+
+void TestChineseUtils::jyutpingToIPASpecialFinal()
+{
+    std::string result = ChineseUtils::convertJyutpingToIPA("uk1 kei2 jan4");
+#ifdef Q_OS_MAC
+    QCOMPARE(result, "ʊk̚ ˥  kʰei̯ ˧ ˥  jɐn ˨ ˩");
+#else
+    QCOMPARE(result, "ʊk̚˥ kʰei̯˧˥ jɐn˨˩");
+#endif
+}
+void TestChineseUtils::jyutpingToIPATones()
+{
+    std::string result = ChineseUtils::convertJyutpingToIPA(
+        "saam1 gau2 sei3 ling4 ng5 ji6 cat1 baat3 luk6");
+#ifdef Q_OS_MAC
+    QCOMPARE(result,
+             "säːm ˥  kɐu̯ ˧ ˥  sei̯ ˧  lɪŋ ˨ ˩  ŋ̍ ˩ ˧  jiː ˨  t͡sʰɐt̚ ˥  päːt̚ ˧  "
+             "lʊk̚ ˨");
+#else
+    QCOMPARE(result, "säːm˥ kɐu̯˧˥ sei̯˧ lɪŋ˨˩ ŋ̍˩˧ jiː˨ t͡sʰɐt̚˥ päːt̚˧ lʊk̚˨");
+#endif
+}
+void TestChineseUtils::jyutpingToIPANoTone()
+{
+    std::string result = ChineseUtils::convertJyutpingToIPA("mok");
+    QCOMPARE(result, "mok");
 }
 
 void TestChineseUtils::segmentJyutpingSimple()
