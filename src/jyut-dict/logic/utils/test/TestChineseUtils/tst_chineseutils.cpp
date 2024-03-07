@@ -47,6 +47,45 @@ private slots:
     void jyutpingToIPATones();
     void jyutpingToIPANoTone();
 
+    void prettyPinyinSimple();
+    void prettyPinyinRejectNoTone();
+    void prettyPinyinRejectSingleLetter();
+    void prettyPinyinRejectSpecialCharacter();
+    void prettyPinyinSecondaryVowel();
+    void prettyPinyinUmlaut();
+    void prettyPinyinTones();
+    void prettyPinyinNoTone();
+
+    void numberedPinyinSimple();
+
+    void pinyinWithVSimple();
+
+    void pinuyinToZhuyinSimple();
+    void pinuyinToZhuyinRejectNoTone();
+    void pinuyinToZhuyinRejectSingleLetter();
+    void pinuyinToZhuyinRejectSpecialCharacter();
+    void pinuyinToZhuyinNoSpaces();
+    void pinuyinToZhuyinSpacesToSegment();
+    void pinuyinToZhuyinSpecialInitial();
+    void pinuyinToZhuyinSpecialFinals();
+    void pinuyinToZhuyinErhua();
+    void pinuyinToZhuyinMalformed();
+
+    void pinyinToIPASimple();
+    void pinyinToIPARejectNoTone();
+    void pinyinToIPARejectSingleLetter();
+    void pinyinToIPARejectSpecialCharacter();
+    void pinyinToIPANoSpaces();
+    void pinyinToIPASpacesToSegment();
+    void pinyinToIPASpecialCaseNg();
+    void pinyinToIPASpecialCaseRi();
+    void pinyinToIPASyllableWithV();
+    void pinyinToIPAVoicelessInitial();
+    void pinyinToIPAToneThree();
+    void pinyinToIPAToneFour();
+    void pinyinToIPAOtherTone();
+    void pinyinToIPAErhua();
+
     void segmentJyutpingSimple();
     void segmentJyutpingNoDigits();
     void segmentJyutpingNoSpaces();
@@ -339,6 +378,256 @@ void TestChineseUtils::jyutpingToIPANoTone()
 {
     std::string result = ChineseUtils::convertJyutpingToIPA("mok");
     QCOMPARE(result, "mok");
+}
+
+void TestChineseUtils::prettyPinyinSimple()
+{
+    std::string result = ChineseUtils::createPrettyPinyin("shuai4 ge1");
+    QCOMPARE(result, "shuài gē");
+}
+
+void TestChineseUtils::prettyPinyinRejectNoTone()
+{
+    std::string result = ChineseUtils::createPrettyPinyin("ba");
+    QCOMPARE(result, "ba");
+}
+
+void TestChineseUtils::prettyPinyinRejectSingleLetter()
+{
+    std::string result = ChineseUtils::createPrettyPinyin("a");
+    QCOMPARE(result, "a");
+}
+
+void TestChineseUtils::prettyPinyinRejectSpecialCharacter()
+{
+    std::string result = ChineseUtils::createPrettyPinyin("-");
+    QCOMPARE(result, "-");
+}
+
+void TestChineseUtils::prettyPinyinSecondaryVowel()
+{
+    std::string result = ChineseUtils::createPrettyPinyin("hui4 tu2");
+    QCOMPARE(result, "huì tú");
+}
+
+void TestChineseUtils::prettyPinyinUmlaut()
+{
+    std::string result = ChineseUtils::createPrettyPinyin("nu:3 hai2");
+    QCOMPARE(result, "nǚ hái");
+}
+
+void TestChineseUtils::prettyPinyinTones()
+{
+    std::string result = ChineseUtils::createPrettyPinyin(
+        "ma1 ma2 ma3 ma4 ma5");
+    QCOMPARE(result, "mā má mǎ mà ma");
+}
+void TestChineseUtils::prettyPinyinNoTone()
+{
+    std::string result = ChineseUtils::createPrettyPinyin("nu");
+    QCOMPARE(result, "nu");
+}
+
+void TestChineseUtils::numberedPinyinSimple()
+{
+    std::string result = ChineseUtils::createNumberedPinyin("nu:3 hai2");
+    QCOMPARE(result, "nü3 hai2");
+}
+
+void TestChineseUtils::pinyinWithVSimple()
+{
+    std::string result = ChineseUtils::createPinyinWithV("nu:3 hai2");
+    QCOMPARE(result, "nv3 hai2");
+}
+
+void TestChineseUtils::pinuyinToZhuyinSimple()
+{
+    std::string result = ChineseUtils::convertPinyinToZhuyin("ba1 da2 tong1");
+    QCOMPARE(result, "ㄅㄚ ㄉㄚˊ ㄊㄨㄥ");
+}
+
+void TestChineseUtils::pinuyinToZhuyinRejectNoTone()
+{
+    std::string result = ChineseUtils::convertPinyinToZhuyin("ba");
+    QCOMPARE(result, "ba");
+}
+
+void TestChineseUtils::pinuyinToZhuyinRejectSingleLetter()
+{
+    std::string result = ChineseUtils::convertPinyinToZhuyin("a");
+    QCOMPARE(result, "a");
+}
+void TestChineseUtils::pinuyinToZhuyinRejectSpecialCharacter()
+{
+    std::string result = ChineseUtils::convertPinyinToZhuyin("-");
+    QCOMPARE(result, "-");
+}
+void TestChineseUtils::pinuyinToZhuyinNoSpaces()
+{
+    std::string result = ChineseUtils::convertPinyinToZhuyin("ba1da2tong1");
+    QCOMPARE(result, "ㄅㄚ ㄉㄚˊ ㄊㄨㄥ");
+}
+void TestChineseUtils::pinuyinToZhuyinSpacesToSegment()
+{
+    std::string result
+        = ChineseUtils::convertPinyinToZhuyin("ba1 da2 tong1",
+                                              /* useSpacesToSegment = */ true);
+    QCOMPARE(result, "ㄅㄚ ㄉㄚˊ ㄊㄨㄥ");
+}
+void TestChineseUtils::pinuyinToZhuyinSpecialInitial()
+{
+    std::string result = ChineseUtils::convertPinyinToZhuyin("qu4");
+    QCOMPARE(result, "ㄑㄩˋ");
+
+    result = ChineseUtils::convertPinyinToZhuyin("chi1");
+    QCOMPARE(result, "ㄔ");
+
+    result = ChineseUtils::convertPinyinToZhuyin("ri4");
+    QCOMPARE(result, "ㄖˋ");
+}
+void TestChineseUtils::pinuyinToZhuyinSpecialFinals()
+{
+    std::string result = ChineseUtils::convertPinyinToZhuyin("hm5");
+    QCOMPARE(result, "˙ㄏㄇ");
+
+    result = ChineseUtils::convertPinyinToZhuyin("hng5");
+    QCOMPARE(result, "˙ㄏㄫ");
+
+    result = ChineseUtils::convertPinyinToZhuyin("er2");
+    QCOMPARE(result, "ㄦˊ");
+}
+void TestChineseUtils::pinuyinToZhuyinErhua()
+{
+    std::string result = ChineseUtils::convertPinyinToZhuyin("quanr1");
+    QCOMPARE(result, "ㄑㄩㄢㄦ");
+}
+void TestChineseUtils::pinuyinToZhuyinMalformed()
+{
+    std::string result = ChineseUtils::convertPinyinToZhuyin("chzng2 quanr1");
+    QCOMPARE(result, "chzng2 ㄑㄩㄢㄦ");
+}
+
+void TestChineseUtils::pinyinToIPASimple()
+{
+    std::string result = ChineseUtils::convertPinyinToIPA("ba1 da2 tong1");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "pä˥˥  tä˧˥  tʰʊŋ˥˥");
+}
+
+void TestChineseUtils::pinyinToIPARejectNoTone()
+{
+    std::string result = ChineseUtils::convertPinyinToIPA("ba");
+    QCOMPARE(result, "ba");
+}
+
+void TestChineseUtils::pinyinToIPARejectSingleLetter()
+{
+    std::string result = ChineseUtils::convertPinyinToIPA("a");
+    QCOMPARE(result, "a");
+}
+
+void TestChineseUtils::pinyinToIPARejectSpecialCharacter()
+{
+    std::string result = ChineseUtils::convertPinyinToIPA("-");
+    QCOMPARE(result, "-");
+}
+
+void TestChineseUtils::pinyinToIPANoSpaces()
+{
+    std::string result = ChineseUtils::convertPinyinToIPA("ba1da2tong1");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "pä˥˥  tä˧˥  tʰʊŋ˥˥");
+}
+
+void TestChineseUtils::pinyinToIPASpacesToSegment()
+{
+    std::string result
+        = ChineseUtils::convertPinyinToIPA("ba1 da2 tong1",
+                                           /* useSpacesToSegment = */ true);
+    qDebug() << result.c_str();
+    QCOMPARE(result, "pä˥˥  tä˧˥  tʰʊŋ˥˥");
+}
+
+void TestChineseUtils::pinyinToIPASpecialCaseNg()
+{
+    std::string result = ChineseUtils::convertPinyinToIPA("ng5");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "ŋ̍");
+}
+
+void TestChineseUtils::pinyinToIPASpecialCaseRi()
+{
+    std::string result = ChineseUtils::convertPinyinToIPA("ri4");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "ʐ̩˥˩");
+}
+
+void TestChineseUtils::pinyinToIPASyllableWithV()
+{
+    std::string result = ChineseUtils::convertPinyinToIPA("nv3");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "ny˨˩˦");
+
+    result = ChineseUtils::convertPinyinToIPA("qu4");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "t͡ɕʰy˥˩");
+}
+
+void TestChineseUtils::pinyinToIPAVoicelessInitial()
+{
+    std::string result = ChineseUtils::convertPinyinToIPA("ge5");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "g̊ə");
+
+    result = ChineseUtils::convertPinyinToIPA("yi1 ge5");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "i˥˥  g̊ə˨");
+}
+
+void TestChineseUtils::pinyinToIPAToneThree()
+{
+    std::string result = ChineseUtils::convertPinyinToIPA("ke3");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "kʰɤ˨˩˦");
+
+    result = ChineseUtils::convertPinyinToIPA("ke3 yi3");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "kʰɤ˨˩˦꜔꜒  i˨˩˦꜕꜖(꜓)");
+}
+
+void TestChineseUtils::pinyinToIPAToneFour()
+{
+    std::string result = ChineseUtils::convertPinyinToIPA("xia4 qu4");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "ɕjä˥˩꜒꜔  t͡ɕʰy˥˩");
+
+    result = ChineseUtils::convertPinyinToIPA("xia4");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "ɕjä˥˩");
+}
+
+void TestChineseUtils::pinyinToIPAOtherTone()
+{
+    std::string result = ChineseUtils::convertPinyinToIPA("ma1");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "mä˥˥");
+
+    result = ChineseUtils::convertPinyinToIPA("ma2");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "mä˧˥");
+
+    result = ChineseUtils::convertPinyinToIPA("ma5");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "mä");
+}
+void TestChineseUtils::pinyinToIPAErhua()
+{
+    std::string result = ChineseUtils::convertPinyinToIPA("huar1");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "xu̯ɑɻ˥˥");
+
+    result = ChineseUtils::convertPinyinToIPA("quanr1");
+    QCOMPARE(result, "t͡ɕʰɥɑɻ˥˥");
 }
 
 void TestChineseUtils::segmentJyutpingSimple()
