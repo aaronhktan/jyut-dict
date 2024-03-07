@@ -509,8 +509,11 @@ void TestChineseUtils::pinuyinToZhuyinMalformed()
 
 void TestChineseUtils::pinyinToIPASimple()
 {
+#if defined(Q_OS_WINDOWS)
+    QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
+#endif
     std::string result = ChineseUtils::convertPinyinToIPA("ba1 da2 tong1");
-    qDebug() << result.c_str();
+    qDebug() << QString::fromStdString(result);
     QCOMPARE(result, "pä˥˥  tä˧˥  tʰʊŋ˥˥");
 }
 
@@ -534,6 +537,9 @@ void TestChineseUtils::pinyinToIPARejectSpecialCharacter()
 
 void TestChineseUtils::pinyinToIPANoSpaces()
 {
+#if defined(Q_OS_WINDOWS)
+    QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
+#endif
     std::string result = ChineseUtils::convertPinyinToIPA("ba1da2tong1");
     qDebug() << result.c_str();
     QCOMPARE(result, "pä˥˥  tä˧˥  tʰʊŋ˥˥");
@@ -541,6 +547,9 @@ void TestChineseUtils::pinyinToIPANoSpaces()
 
 void TestChineseUtils::pinyinToIPASpacesToSegment()
 {
+#if defined(Q_OS_WINDOWS)
+    QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
+#endif
     std::string result
         = ChineseUtils::convertPinyinToIPA("ba1 da2 tong1",
                                            /* useSpacesToSegment = */ true);
@@ -557,6 +566,9 @@ void TestChineseUtils::pinyinToIPASpecialCaseNg()
 
 void TestChineseUtils::pinyinToIPASpecialCaseRi()
 {
+#if defined(Q_OS_WINDOWS)
+    QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
+#endif
     std::string result = ChineseUtils::convertPinyinToIPA("ri4");
     qDebug() << result.c_str();
     QCOMPARE(result, "ʐ̩˥˩");
@@ -564,6 +576,9 @@ void TestChineseUtils::pinyinToIPASpecialCaseRi()
 
 void TestChineseUtils::pinyinToIPASyllableWithV()
 {
+#if defined(Q_OS_WINDOWS)
+    QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
+#endif
     std::string result = ChineseUtils::convertPinyinToIPA("nv3");
     qDebug() << result.c_str();
     QCOMPARE(result, "ny˨˩˦");
@@ -575,6 +590,9 @@ void TestChineseUtils::pinyinToIPASyllableWithV()
 
 void TestChineseUtils::pinyinToIPAVoicelessInitial()
 {
+#if defined(Q_OS_WINDOWS)
+    QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
+#endif
     std::string result = ChineseUtils::convertPinyinToIPA("ge5");
     qDebug() << result.c_str();
     QCOMPARE(result, "g̊ə");
@@ -586,6 +604,9 @@ void TestChineseUtils::pinyinToIPAVoicelessInitial()
 
 void TestChineseUtils::pinyinToIPAToneThree()
 {
+#if defined(Q_OS_WINDOWS)
+    QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
+#endif
     std::string result = ChineseUtils::convertPinyinToIPA("ke3");
     qDebug() << result.c_str();
     QCOMPARE(result, "kʰɤ˨˩˦");
@@ -597,6 +618,9 @@ void TestChineseUtils::pinyinToIPAToneThree()
 
 void TestChineseUtils::pinyinToIPAToneFour()
 {
+#if defined(Q_OS_WINDOWS)
+    QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
+#endif
     std::string result = ChineseUtils::convertPinyinToIPA("xia4 qu4");
     qDebug() << result.c_str();
     QCOMPARE(result, "ɕjä˥˩꜒꜔  t͡ɕʰy˥˩");
@@ -608,6 +632,9 @@ void TestChineseUtils::pinyinToIPAToneFour()
 
 void TestChineseUtils::pinyinToIPAOtherTone()
 {
+#if defined(Q_OS_WINDOWS)
+    QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
+#endif
     std::string result = ChineseUtils::convertPinyinToIPA("ma1");
     qDebug() << result.c_str();
     QCOMPARE(result, "mä˥˥");
@@ -622,6 +649,9 @@ void TestChineseUtils::pinyinToIPAOtherTone()
 }
 void TestChineseUtils::pinyinToIPAErhua()
 {
+#if defined(Q_OS_WINDOWS)
+    QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
+#endif
     std::string result = ChineseUtils::convertPinyinToIPA("huar1");
     qDebug() << result.c_str();
     QCOMPARE(result, "xu̯ɑɻ˥˥");
