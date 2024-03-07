@@ -309,7 +309,7 @@ void TestChineseUtils::jyutpingToIPACheckedTone()
 #ifdef Q_OS_MAC
     QCOMPARE(result, "sɪk̚ ˨  siː ˧ ˥  ɔː ˥  fäːn ˨");
 #else
-    QCOMPARE(result, "sɪk̚˨ siː˧˥ ɔː˥ fäːn˨");
+    QCOMPARE(result, "sɪk̚˨  siː˧˥  ɔː˥  fäːn˨");
 #endif
 }
 
@@ -319,7 +319,7 @@ void TestChineseUtils::jyutpingToIPASpecialFinal()
 #ifdef Q_OS_MAC
     QCOMPARE(result, "ʊk̚ ˥  kʰei̯ ˧ ˥  jɐn ˨ ˩");
 #else
-    QCOMPARE(result, "ʊk̚˥ kʰei̯˧˥ jɐn˨˩");
+    QCOMPARE(result, "ʊk̚˥  kʰei̯˧˥  jɐn˨˩");
 #endif
 }
 void TestChineseUtils::jyutpingToIPATones()
@@ -331,7 +331,8 @@ void TestChineseUtils::jyutpingToIPATones()
              "säːm ˥  kɐu̯ ˧ ˥  sei̯ ˧  lɪŋ ˨ ˩  ŋ̍ ˩ ˧  jiː ˨  t͡sʰɐt̚ ˥  päːt̚ ˧  "
              "lʊk̚ ˨");
 #else
-    QCOMPARE(result, "säːm˥ kɐu̯˧˥ sei̯˧ lɪŋ˨˩ ŋ̍˩˧ jiː˨ t͡sʰɐt̚˥ päːt̚˧ lʊk̚˨");
+    QCOMPARE(result,
+             "säːm˥  kɐu̯˧˥  sei̯˧  lɪŋ˨˩  ŋ̍˩˧  jiː˨  t͡sʰɐt̚˥  päːt̚˧  lʊk̚˨");
 #endif
 }
 void TestChineseUtils::jyutpingToIPANoTone()

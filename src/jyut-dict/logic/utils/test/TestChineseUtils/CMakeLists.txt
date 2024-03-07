@@ -22,7 +22,7 @@ target_link_libraries(TestChineseUtils PRIVATE Qt${QT_VERSION_MAJOR}::Test)
 target_include_directories(TestChineseUtils PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../../)
 
 target_sources(TestChineseUtils
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../ChineseUtils.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../chineseutils.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../settings/settings.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../utils.cpp)
 
