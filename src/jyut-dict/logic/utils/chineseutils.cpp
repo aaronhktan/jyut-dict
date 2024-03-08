@@ -1328,7 +1328,7 @@ bool segmentPinyin(const QString &string,
     std::unordered_set<std::string> initials = {"b", "p", "m",  "f",  "d",  "t",
                                                 "n", "l", "g",  "k",  "h",  "j",
                                                 "q", "x", "zh", "ch", "sh", "r",
-                                                "z", "c", "s"};
+                                                "z", "c", "s",  "y"};
     std::unordered_set<std::string> finals
         = {"a",   "e",   "ai",   "ei",   "ao",   "ou", "an", "ang", "en",
            "ang", "eng", "ong",  "er",   "i",    "ia", "ie", "iao", "iu",
@@ -1437,6 +1437,10 @@ bool segmentPinyin(const QString &string,
                     end_idx++;
                 }
                 if (end_idx < string.length() && string.at(end_idx).isDigit()) {
+                    if (string.at(end_idx).digitValue() < 1
+                        || string.at(end_idx).digitValue() > 5) {
+                        valid_pinyin = false;
+                    }
                     end_idx++;
                 }
 
@@ -1570,6 +1574,12 @@ bool segmentJyutping(const QString &string,
                     syllables.push_back(previous_initial.toStdString());
                     start_idx = end_idx;
                     initial_found = false;
+
+                    if (currentString.at(0).digitValue() < 1
+                        || currentString.at(0).digitValue() > 6) {
+                        valid_jyutping = false;
+                    }
+
                     continue;
                 }
             }
@@ -1624,6 +1634,11 @@ bool segmentJyutping(const QString &string,
                 end_idx += final_len;
                 if (end_idx < string.length()) {
                     if (string.at(end_idx).isDigit()) {
+                        if (string.at(end_idx).digitValue() < 1
+                            || string.at(end_idx).digitValue() > 6) {
+                            valid_jyutping = false;
+                        }
+
                         end_idx++;
                     }
                 }
