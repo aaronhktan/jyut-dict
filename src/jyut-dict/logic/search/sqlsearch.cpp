@@ -223,37 +223,49 @@ bool SQLSearch::checkQueryIDCurrent(const unsigned long long queryID) const {
 void SQLSearch::searchSimplified(const QString &searchTerm)
 {
     unsigned long long queryID = generateAndSetQueryID();
-    runThread(&SQLSearch::searchSimplifiedThread, searchTerm, queryID);
+    runThread(&SQLSearch::searchSimplifiedThread,
+              searchTerm.normalized(QString::NormalizationForm_C),
+              queryID);
 }
 
 void SQLSearch::searchTraditional(const QString &searchTerm)
 {
     unsigned long long queryID = generateAndSetQueryID();
-    runThread(&SQLSearch::searchTraditionalThread, searchTerm, queryID);
+    runThread(&SQLSearch::searchTraditionalThread,
+              searchTerm.normalized(QString::NormalizationForm_C),
+              queryID);
 }
 
 void SQLSearch::searchJyutping(const QString &searchTerm)
 {
     unsigned long long queryID = generateAndSetQueryID();
-    runThread(&SQLSearch::searchJyutpingThread, searchTerm, queryID);
+    runThread(&SQLSearch::searchJyutpingThread,
+              searchTerm.normalized(QString::NormalizationForm_C),
+              queryID);
 }
 
 void SQLSearch::searchPinyin(const QString &searchTerm)
 {
     unsigned long long queryID = generateAndSetQueryID();
-    runThread(&SQLSearch::searchPinyinThread, searchTerm, queryID);
+    runThread(&SQLSearch::searchPinyinThread,
+              searchTerm.normalized(QString::NormalizationForm_C),
+              queryID);
 }
 
 void SQLSearch::searchEnglish(const QString &searchTerm)
 {
     unsigned long long queryID = generateAndSetQueryID();
-    runThread(&SQLSearch::searchEnglishThread, searchTerm, queryID);
+    runThread(&SQLSearch::searchEnglishThread,
+              searchTerm.normalized(QString::NormalizationForm_C),
+              queryID);
 }
 
 void SQLSearch::searchAutoDetect(const QString &searchTerm)
 {
     unsigned long long queryId = generateAndSetQueryID();
-    runThread(&SQLSearch::searchAutoDetectThread, searchTerm, queryId);
+    runThread(&SQLSearch::searchAutoDetectThread,
+              searchTerm.normalized(QString::NormalizationForm_C),
+              queryId);
 }
 
 void SQLSearch::searchByUnique(const QString &simplified,
