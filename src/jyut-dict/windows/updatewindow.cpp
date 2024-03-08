@@ -136,7 +136,7 @@ void UpdateAvailableWindow::translateUI()
            "Click \"Download\" to get the new version.")
             .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                              Strings::PRODUCT_NAME))
-            .arg(QString{_versionNumber.c_str()})
+            .arg(QString::fromStdString(_versionNumber))
             .arg(Utils::CURRENT_VERSION));
     _noButton->setText(tr("Cancel"));
     _showMoreButton->setText(tr("Show Details"));

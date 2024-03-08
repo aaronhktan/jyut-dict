@@ -181,9 +181,10 @@ void EntryViewSentenceCardSection::setEntry(const Entry &entry)
     _showLoadingIconTimer->start();
 
     // Actually start searching for sentences
-    _search->searchTraditionalSentences(QString{entry.getTraditional().c_str()}
-                                            .replace("%", "\\%")
-                                            .replace("_", "\\_"));
+    _search->searchTraditionalSentences(
+        QString::fromStdString(entry.getTraditional())
+            .replace("%", "\\%")
+            .replace("_", "\\_"));
     _title = entry
                  .getCharactersNoSecondary(
                      Settings::getSettings()

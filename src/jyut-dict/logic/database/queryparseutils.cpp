@@ -40,7 +40,8 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
 
         if (parseDefinitions) {
             // Parse JSON returned by query
-            QJsonDocument doc = QJsonDocument::fromJson(QString{definition.c_str()}.toUtf8());
+            QJsonDocument doc = QJsonDocument::fromJson(
+                QString::fromStdString(definition).toUtf8());
             // Each object in the array represents a group of definitions
             // that are all from the same source
             foreach (const QJsonValue &definitionGroup, doc.array()) {
@@ -141,7 +142,7 @@ std::vector<SourceSentence> parseSentences(QSqlQuery &query)
         if (!combinedTargetSentencesData.empty()) {
             // Parse JSON returned by query
             QJsonDocument doc = QJsonDocument::fromJson(
-                QString{combinedTargetSentencesData.c_str()}.toUtf8());
+                QString::fromStdString(combinedTargetSentencesData).toUtf8());
             // Parse each of the sentence translation groups
             foreach (const QJsonValue &translation_set, doc.array()) {
                 std::string sentenceSourceName

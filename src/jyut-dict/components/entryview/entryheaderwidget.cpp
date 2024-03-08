@@ -100,13 +100,13 @@ void EntryHeaderWidget::setEntry(const Entry &entry)
                                cantoneseOptions,
                                mandarinOptions);
 
-    _chinese = QString{entry.getSimplified().c_str()};
-    _jyutping = QString{entry.getJyutping().c_str()};
+    _chinese = QString::fromStdString(entry.getSimplified());
+    _jyutping = QString::fromStdString(entry.getJyutping());
     // Pinyin by default follows CEDICT's convention of denoting "ü" with "u:",
     // but most TTS systems denote that vowel with "v". To get the TTS systems
     // to properly pronounce that word, we must convert "u:" to "v".
-    _pinyin = QString{
-        ChineseUtils::createPinyinWithV(entry.getPinyin()).c_str()};
+    _pinyin = QString::fromStdString(
+        ChineseUtils::createPinyinWithV(entry.getPinyin()));
 
     translateUI();
     setStyle(Utils::isDarkMode());

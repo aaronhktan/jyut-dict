@@ -105,7 +105,8 @@ bool JyutDictionaryReleaseChecker::parseJSON(const std::string &data,
          std::stoi(localVersionNumberComponents[1]),
          std::stoi(localVersionNumberComponents[2])});
 
-    QJsonDocument doc = QJsonDocument::fromJson(QString{data.c_str()}.toUtf8());
+    QJsonDocument doc = QJsonDocument::fromJson(
+        QString::fromStdString(data.c_str()).toUtf8());
     QJsonValue version;
     foreach (version, doc.array()) {
         QJsonObject versionObject = version.toObject();

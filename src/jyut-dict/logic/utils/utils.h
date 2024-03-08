@@ -72,7 +72,7 @@ constexpr auto VARIANT = "install";
                const char delimiter,
                std::vector<std::string> &result);
 
-    void split(const std::string &string,
+    void split(std::string_view string,
                const std::string delimiter,
                std::vector<std::string> &result);
 
