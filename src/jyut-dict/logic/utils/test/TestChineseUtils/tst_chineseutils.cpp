@@ -86,6 +86,10 @@ private slots:
     void pinyinToIPAOtherTone();
     void pinyinToIPAErhua();
 
+    void constructRomanisationQuerySingleSyllable();
+    void constructRomanisationQueryMultiSyllable();
+    void constructRomanisationQueryGlobCharacters();
+
     void segmentJyutpingSimple();
     void segmentJyutpingNoDigits();
     void segmentJyutpingNoSpaces();
@@ -713,6 +717,67 @@ void TestChineseUtils::pinyinToIPAErhua()
 #else
     QCOMPARE(result, "t͡ɕʰɥɑɻ˥˥");
 #endif
+}
+
+void TestChineseUtils::constructRomanisationQuerySingleSyllable()
+{
+    std::string result = ChineseUtils::constructRomanisationQuery({"se"}, "?");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "se?");
+
+    result = ChineseUtils::constructRomanisationQuery({"se2"}, "?");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "se2");
+
+    result = ChineseUtils::constructRomanisationQuery({"se*"}, "?");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "se*?");
+
+    result = ChineseUtils::constructRomanisationQuery({"se?"}, "?");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "se??");
+}
+
+void TestChineseUtils::constructRomanisationQueryMultiSyllable()
+{
+    std::string result = ChineseUtils::constructRomanisationQuery({"se", "dak"},
+                                                                  "?");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "se? dak?");
+
+    result = ChineseUtils::constructRomanisationQuery({"se2", "dak1"}, "?");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "se2 dak1");
+
+    result = ChineseUtils::constructRomanisationQuery({"se*", "dak*"}, "?");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "se*? dak*?");
+
+    result = ChineseUtils::constructRomanisationQuery({"se?", "dak?"}, "?");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "se?? dak??");
+}
+
+void TestChineseUtils::constructRomanisationQueryGlobCharacters()
+{
+    std::string result = ChineseUtils::constructRomanisationQuery({"se", " *"},
+                                                                  "?");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "se? *");
+
+    result = ChineseUtils::constructRomanisationQuery({"se", " ?", "?", "?"},
+                                                      "?");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "se? ???");
+
+    result = ChineseUtils::constructRomanisationQuery({"se",
+                                                       " ?",
+                                                       "?",
+                                                       "? ",
+                                                       "dak"},
+                                                      "?");
+    qDebug() << result.c_str();
+    QCOMPARE(result, "se? ??? dak?");
 }
 
 void TestChineseUtils::segmentJyutpingSimple()
