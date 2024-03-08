@@ -110,6 +110,7 @@ private slots:
     void segmentJyutpingMultipleFinalsVowelsOnly();
     void segmentJyutpingMultipleFinalsConsonantsOnly();
     void segmentJyutpingMultipleFinals();
+    void segmentJyutpingInvalidTone();
     void segmentJyutpingGarbage();
 
     void segmentPinyinSimple();
@@ -131,6 +132,7 @@ private slots:
     void segmentPinyinLowerWithDigits();
     void segmentPinyinMultipleFinalsVowelsOnly();
     void segmentPinyinMultipleFinals();
+    void segmentPinyinInvalidTone();
     void segmentPinyinGarbage();
 };
 
@@ -982,6 +984,27 @@ void TestChineseUtils::segmentJyutpingMultipleFinals()
     QCOMPARE(result, expected);
 }
 
+void TestChineseUtils::segmentJyutpingInvalidTone()
+{
+    std::vector<std::string> result;
+    bool valid
+        = ChineseUtils::segmentPinyin("hang0",
+                                      result,
+                                      /* removeSpecialCharacters = */ true,
+                                      /* removeGlobCharacters = */ false);
+    std::vector<std::string> expected = {"hang0"};
+    QCOMPARE(result, expected);
+    QCOMPARE(valid, false);
+
+    valid = ChineseUtils::segmentPinyin("hang7",
+                                        result,
+                                        /* removeSpecialCharacters = */ true,
+                                        /* removeGlobCharacters = */ false);
+    expected = {"hang7"};
+    QCOMPARE(result, expected);
+    QCOMPARE(valid, false);
+}
+
 void TestChineseUtils::segmentJyutpingGarbage()
 {
     std::vector<std::string> result;
@@ -1195,6 +1218,27 @@ void TestChineseUtils::segmentPinyinMultipleFinals()
                                 /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"ang", "ang"};
     QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::segmentPinyinInvalidTone()
+{
+    std::vector<std::string> result;
+    bool valid
+        = ChineseUtils::segmentPinyin("heng0",
+                                      result,
+                                      /* removeSpecialCharacters = */ true,
+                                      /* removeGlobCharacters = */ false);
+    std::vector<std::string> expected = {"heng0"};
+    QCOMPARE(result, expected);
+    QCOMPARE(valid, false);
+
+    valid = ChineseUtils::segmentPinyin("heng6",
+                                        result,
+                                        /* removeSpecialCharacters = */ true,
+                                        /* removeGlobCharacters = */ false);
+    expected = {"heng6"};
+    QCOMPARE(result, expected);
+    QCOMPARE(valid, false);
 }
 
 void TestChineseUtils::segmentPinyinGarbage()
