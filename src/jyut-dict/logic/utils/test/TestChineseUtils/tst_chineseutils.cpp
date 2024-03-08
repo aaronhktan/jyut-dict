@@ -722,19 +722,15 @@ void TestChineseUtils::pinyinToIPAErhua()
 void TestChineseUtils::constructRomanisationQuerySingleSyllable()
 {
     std::string result = ChineseUtils::constructRomanisationQuery({"se"}, "?");
-    qDebug() << result.c_str();
     QCOMPARE(result, "se?");
 
     result = ChineseUtils::constructRomanisationQuery({"se2"}, "?");
-    qDebug() << result.c_str();
     QCOMPARE(result, "se2");
 
     result = ChineseUtils::constructRomanisationQuery({"se*"}, "?");
-    qDebug() << result.c_str();
     QCOMPARE(result, "se*?");
 
     result = ChineseUtils::constructRomanisationQuery({"se?"}, "?");
-    qDebug() << result.c_str();
     QCOMPARE(result, "se??");
 }
 
@@ -742,19 +738,15 @@ void TestChineseUtils::constructRomanisationQueryMultiSyllable()
 {
     std::string result = ChineseUtils::constructRomanisationQuery({"se", "dak"},
                                                                   "?");
-    qDebug() << result.c_str();
     QCOMPARE(result, "se? dak?");
 
     result = ChineseUtils::constructRomanisationQuery({"se2", "dak1"}, "?");
-    qDebug() << result.c_str();
     QCOMPARE(result, "se2 dak1");
 
     result = ChineseUtils::constructRomanisationQuery({"se*", "dak*"}, "?");
-    qDebug() << result.c_str();
     QCOMPARE(result, "se*? dak*?");
 
     result = ChineseUtils::constructRomanisationQuery({"se?", "dak?"}, "?");
-    qDebug() << result.c_str();
     QCOMPARE(result, "se?? dak??");
 }
 
@@ -762,12 +754,10 @@ void TestChineseUtils::constructRomanisationQueryGlobCharacters()
 {
     std::string result = ChineseUtils::constructRomanisationQuery({"se", " *"},
                                                                   "?");
-    qDebug() << result.c_str();
     QCOMPARE(result, "se? *");
 
     result = ChineseUtils::constructRomanisationQuery({"se", " ?", "?", "?"},
                                                       "?");
-    qDebug() << result.c_str();
     QCOMPARE(result, "se? ???");
 
     result = ChineseUtils::constructRomanisationQuery({"se",
@@ -776,7 +766,6 @@ void TestChineseUtils::constructRomanisationQueryGlobCharacters()
                                                        "? ",
                                                        "dak"},
                                                       "?");
-    qDebug() << result.c_str();
     QCOMPARE(result, "se? ??? dak?");
 }
 
@@ -899,6 +888,27 @@ void TestChineseUtils::segmentJyutpingGlobCharactersTrimWhitespace()
                                   /* removeSpecialCharacters = */ true,
                                   /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"m", " ? ", "* ", "goi"};
+    QCOMPARE(result, expected);
+
+    ChineseUtils::segmentJyutping("m?* ????",
+                                  result,
+                                  /* removeSpecialCharacters = */ true,
+                                  /* removeGlobCharacters = */ false);
+    expected = {"m", "?", "* ", "?", "?", "?", "?"};
+    QCOMPARE(result, expected);
+
+    ChineseUtils::segmentJyutping("m * ????*",
+                                  result,
+                                  /* removeSpecialCharacters = */ true,
+                                  /* removeGlobCharacters = */ false);
+    expected = {"m", " * ", "?", "?", "?", "?", "*"};
+    QCOMPARE(result, expected);
+
+    ChineseUtils::segmentJyutping("m? goi*",
+                                  result,
+                                  /* removeSpecialCharacters = */ true,
+                                  /* removeGlobCharacters = */ false);
+    expected = {"m", "? ", "goi", "*"};
     QCOMPARE(result, expected);
 }
 
@@ -1104,6 +1114,27 @@ void TestChineseUtils::segmentPinyinGlobCharactersTrimWhitespace()
                                 /* removeSpecialCharacters = */ true,
                                 /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"guang", " ? ", "* ", "dong"};
+    QCOMPARE(result, expected);
+
+    ChineseUtils::segmentPinyin("guang?* ?????",
+                                result,
+                                /* removeSpecialCharacters = */ true,
+                                /* removeGlobCharacters = */ false);
+    expected = {"guang", "?", "* ", "?", "?", "?", "?", "?"};
+    QCOMPARE(result, expected);
+
+    ChineseUtils::segmentPinyin("guang * ????*",
+                                result,
+                                /* removeSpecialCharacters = */ true,
+                                /* removeGlobCharacters = */ false);
+    expected = {"guang", " * ", "?", "?", "?", "?", "*"};
+    QCOMPARE(result, expected);
+
+    ChineseUtils::segmentPinyin("guang? dong*",
+                                result,
+                                /* removeSpecialCharacters = */ true,
+                                /* removeGlobCharacters = */ false);
+    expected = {"guang", "? ", "dong", "*"};
     QCOMPARE(result, expected);
 }
 
