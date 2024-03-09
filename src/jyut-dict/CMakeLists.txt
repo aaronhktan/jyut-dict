@@ -204,9 +204,17 @@ if (APPLE)
     set_property(SOURCE platform/mac/yue_Hant.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/yue-Hant.lproj")
     set_property(SOURCE platform/mac/zh_Hans.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/zh-hans.lproj")
     set_property(SOURCE platform/mac/zh_Hant.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/zh-hant.lproj")
-
 elseif (UNIX)
     TARGET_SOURCES(CantoneseDictionary PRIVATE logic/utils/utils_linux.cpp)
+    configure_file(resources/db/dict.db dict.db COPYONLY)
+    configure_file(resources/db/user.db user.db COPYONLY)
+    configure_file(resources/licenses/FLOW_LAYOUT_LICENSE.txt FLOW_LAYOUT_LICENSE.txt COPYONLY)
+    configure_file(resources/settings/settings.ini settings.ini COPYONLY)
+elseif (WIN32)
+    enable_language("RC")
+    TARGET_SOURCES(CantoneseDictionary PRIVATE
+        logic/utils/utils_windows.cpp
+        platform/windows/app.rc)
     configure_file(resources/db/dict.db dict.db COPYONLY)
     configure_file(resources/db/user.db user.db COPYONLY)
     configure_file(resources/licenses/FLOW_LAYOUT_LICENSE.txt FLOW_LAYOUT_LICENSE.txt COPYONLY)
