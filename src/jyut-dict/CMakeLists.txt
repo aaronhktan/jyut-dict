@@ -183,6 +183,10 @@ if (APPLE)
     target_link_libraries(CantoneseDictionary PRIVATE "-framework AppKit")
 elseif (UNIX)
     TARGET_SOURCES(CantoneseDictionary PRIVATE logic/utils/utils_linux.cpp)
+    configure_file(resources/db/dict.db dict.db COPYONLY)
+    configure_file(resources/db/user.db user.db COPYONLY)
+    configure_file(resources/licenses/FLOW_LAYOUT_LICENSE.txt FLOW_LAYOUT_LICENSE.txt COPYONLY)
+    configure_file(resources/settings/settings.ini settings.ini COPYONLY)
 endif()
 
 install(TARGETS CantoneseDictionary
