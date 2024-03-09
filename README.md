@@ -90,7 +90,7 @@ craft libs/qt/qtspeech
 craft karchive
 ```
 3. Set up Qt Creator with a kit from Craft, following instructions [here](https://community.kde.org/Craft#Using_Craft_with_an_IDE).
-4. Open Jyut Dictionary in Qt Creator, and add DEFINES+="PORTABLE" to the QMake configuration if you would like to isolate your debug build from any system files.
+4. Open CMakeLists.txt in Qt Creator, and define `CMAKE_CXX_FLAGS` as `-DPORTABLE -DDEBUG` in the CMake configuration if you would like to isolate your debug build from any system files.
 5. Compile and run!
 
 #### Ubuntu: Manual Git clone + Qt Creator
@@ -108,7 +108,7 @@ cmake .. -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX=~/Qt/5.15.2/gcc_64
 make
 sudo make install
 ```
-3. Open Jyut Dictionary in Qt Creator, and add DEFINES+="PORTABLE" to the QMake configuration if you would like to isolate your debug build from any system files.
+3. Open CMakeLists.txt in Qt Creator, and define `CMAKE_CXX_FLAGS` as `-DPORTABLE -DDEBUG` in the CMake configuration if you would like to isolate your debug build from any system files.
 4. Compile and run!
 
 ## Packaging for release
