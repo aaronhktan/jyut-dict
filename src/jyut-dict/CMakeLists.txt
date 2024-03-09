@@ -168,6 +168,7 @@ target_link_libraries(CantoneseDictionary
 add_subdirectory(logic/settings/test/TestSettingsUtils)
 add_subdirectory(logic/utils/test/TestChineseUtils)
 add_subdirectory(logic/utils/test/TestScriptDetector)
+add_subdirectory(logic/sentence/test/TestSourceSentence)
 
 set_target_properties(CantoneseDictionary PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/platform/mac/Info.plist
