@@ -133,6 +133,7 @@ bool migrateSettingsFromOneToTwo(QSettings &settings)
         }
     }
 
+    settings.setValue("Metadata/version", QVariant{SETTINGS_VERSION});
     settings.sync();
 
     return true;

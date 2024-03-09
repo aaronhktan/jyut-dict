@@ -165,12 +165,9 @@ target_link_libraries(CantoneseDictionary
     PRIVATE KF5::Archive
 )
 
-add_subdirectory(
-    logic/utils/test/TestChineseUtils
-)
-add_subdirectory(
-    logic/utils/test/TestScriptDetector
-)
+add_subdirectory(logic/settings/test/TestSettingsUtils)
+add_subdirectory(logic/utils/test/TestChineseUtils)
+add_subdirectory(logic/utils/test/TestScriptDetector)
 
 set_target_properties(CantoneseDictionary PROPERTIES
     MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/platform/mac/Info.plist
