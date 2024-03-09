@@ -172,15 +172,39 @@ add_subdirectory(
 )
 
 set_target_properties(CantoneseDictionary PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER jyutdictionary.com
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+    MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/platform/mac/Info.plist
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
 
 if (APPLE)
     target_link_libraries(CantoneseDictionary PRIVATE "-framework AppKit")
+    TARGET_SOURCES(CantoneseDictionary
+        PRIVATE logic/utils/utils_mac.mm
+        PRIVATE resources/db/dict.db
+        PRIVATE resources/db/user.db
+        PRIVATE resources/licenses/FLOW_LAYOUT_LICENSE.txt
+        PRIVATE resources/settings/settings.ini
+        PRIVATE resources/icon/icon.icns
+        PRIVATE platform/mac/en.lproj/InfoPlist.strings
+        PRIVATE platform/mac/fr.lproj/InfoPlist.strings
+        PRIVATE platform/mac/yue_Hans.lproj/InfoPlist.strings
+        PRIVATE platform/mac/yue_Hant.lproj/InfoPlist.strings
+        PRIVATE platform/mac/zh_Hans.lproj/InfoPlist.strings
+        PRIVATE platform/mac/zh_Hant.lproj/InfoPlist.strings)
+
+    set_property(SOURCE resources/db/dict.db PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
+    set_property(SOURCE resources/db/user.db PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
+    set_property(SOURCE resources/licenses/FLOW_LAYOUT_LICENSE.txt PROPERTY MACOSX_PACKAGE_LOCATION "Resources/Licenses")
+    set_property(SOURCE resources/settings/settings.ini PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
+    set_property(SOURCE resources/icon/icon.icns PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
+    set_property(SOURCE platform/mac/en.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/en.lproj")
+    set_property(SOURCE platform/mac/fr.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/fr.lproj")
+    set_property(SOURCE platform/mac/yue_Hans.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/yue-Hans.lproj")
+    set_property(SOURCE platform/mac/yue_Hant.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/yue-Hant.lproj")
+    set_property(SOURCE platform/mac/zh_Hans.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/zh-hans.lproj")
+    set_property(SOURCE platform/mac/zh_Hant.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/zh-hant.lproj")
+
 elseif (UNIX)
     TARGET_SOURCES(CantoneseDictionary PRIVATE logic/utils/utils_linux.cpp)
     configure_file(resources/db/dict.db dict.db COPYONLY)

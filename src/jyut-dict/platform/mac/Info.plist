@@ -9,7 +9,7 @@
   <key>CFBundleIdentifier</key>
   <string>com.aaronhktan.cantonesedictionary</string>
   <key>CFBundleExecutable</key>
-  <string>MacOS/Jyut Dictionary</string>
+  <string>MacOS/CantoneseDictionary</string>
   <key>CFBundleIconFile</key>
   <string>icon.icns</string>
   <key>CFBundleInfoDictionaryVersion</key>
