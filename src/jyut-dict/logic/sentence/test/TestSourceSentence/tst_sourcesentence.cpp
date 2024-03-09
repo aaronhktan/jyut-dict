@@ -105,9 +105,15 @@ void TestSourceSentence::generatePhonetic()
     QCOMPARE(QString::fromStdString(
                  sentence.getCantonesePhonetic(CantoneseOptions::PRETTY_YALE)),
              "tòih sāan wá");
+#ifdef Q_OS_MAC
     QCOMPARE(QString::fromStdString(sentence.getCantonesePhonetic(
                  CantoneseOptions::CANTONESE_IPA)),
              QString{"tʰɔːi̯ ˨ ˩  säːn ˥  wäː ˧ ˥"});
+#elif defined(Q_OS_LINUX)
+    QCOMPARE(QString::fromStdString(sentence.getCantonesePhonetic(
+                 CantoneseOptions::CANTONESE_IPA)),
+             QString{"tʰɔːi̯˨˩  säːn˥  wäː˧˥"});
+#endif
     QCOMPARE(QString::fromStdString(
                  sentence.getMandarinPhonetic(MandarinOptions::RAW_PINYIN)),
              QString::fromStdString(pinyin));
@@ -120,9 +126,15 @@ void TestSourceSentence::generatePhonetic()
     QCOMPARE(QString::fromStdString(
                  sentence.getMandarinPhonetic(MandarinOptions::ZHUYIN)),
              "ㄊㄞˊ ㄕㄢ ㄏㄨㄚˋ");
+#ifdef Q_OS_MAC
     QCOMPARE(QString::fromStdString(
                  sentence.getMandarinPhonetic(MandarinOptions::MANDARIN_IPA)),
              "tʰaɪ̯ ˧ ˥  ʂän ˥ ˥  xwä ˥ ˩");
+#elif defined(Q_OS_LINUX)
+    QCOMPARE(QString::fromStdString(
+                 sentence.getMandarinPhonetic(MandarinOptions::MANDARIN_IPA)),
+             "tʰaɪ̯˧˥  ʂän˥˥  xwä˥˩");
+#endif
 }
 
 void TestSourceSentence::specialCases()

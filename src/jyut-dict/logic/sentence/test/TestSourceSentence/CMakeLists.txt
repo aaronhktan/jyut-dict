@@ -24,6 +24,6 @@ target_sources(SourceSentence
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../sentenceset.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../sourcesentence.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../dictionary/dictionarysource.cpp
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/ChineseUtils.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/chineseutils.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/utils.cpp
 )
