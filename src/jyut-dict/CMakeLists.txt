@@ -145,14 +145,14 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         resources/resource.qrc
     )
 
-    qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
+#    qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 else()
     add_executable(CantoneseDictionary
         ${PROJECT_SOURCES}
         resources/resource.qrc
     )
 
-    qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
+#    qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
 target_link_libraries(CantoneseDictionary
