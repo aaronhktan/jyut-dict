@@ -15,6 +15,9 @@ public:
     ~TestSettingsUtils();
 
 private slots:
+    void noSettingsUpdate();
+    void clearSettings();
+
     void migrateCantoneseOnlyOneToTwo();
     void migrateMandarinOnlyOneToTwo();
     void migratePreferCantoneseOneToTwo();
@@ -36,6 +39,32 @@ TestSettingsUtils::TestSettingsUtils()
 }
 
 TestSettingsUtils::~TestSettingsUtils() {}
+
+void TestSettingsUtils::noSettingsUpdate()
+{
+    std::unique_ptr<QSettings> settings = Settings::getSettings();
+    settings->clear();
+    settings->setValue("Metadata/version", QVariant{Settings::SETTINGS_VERSION});
+    settings->sync();
+
+    Settings::updateSettings(*settings);
+    QCOMPARE(settings->value("Metadata/version"),
+             QVariant{Settings::SETTINGS_VERSION});
+    settings->clear();
+    settings->sync();
+}
+
+void TestSettingsUtils::clearSettings()
+{
+    std::unique_ptr<QSettings> settings = Settings::getSettings();
+    Settings::clearSettings(*settings);
+
+    QCOMPARE(settings->value("Metadata/version"),
+             QVariant{Settings::SETTINGS_VERSION});
+
+    settings->clear();
+    settings->sync();
+}
 
 void TestSettingsUtils::migrateCantoneseOnlyOneToTwo()
 {
