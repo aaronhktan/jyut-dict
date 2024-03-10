@@ -3,6 +3,7 @@
 #include "logic/entry/entry.h"
 #include "logic/entry/entrycharactersoptions.h"
 #include "logic/entry/entryphoneticoptions.h"
+#include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/utils/utils_qt.h"
 

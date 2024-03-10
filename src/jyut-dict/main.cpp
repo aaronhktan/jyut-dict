@@ -1,5 +1,7 @@
 #include "windows/mainwindow.h"
 
+#include "logic/settings/settings.h"
+
 #include <QApplication>
 #include <QSysInfo>
 
