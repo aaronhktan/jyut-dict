@@ -25,6 +25,12 @@ struct TargetSentence
         language{language},
         directTarget(directTarget)
     {}
+
+    bool operator==(const TargetSentence &other) const
+    {
+        return sentence == other.sentence && language == other.language
+               && directTarget == other.directTarget;
+    }
 };
 
 }

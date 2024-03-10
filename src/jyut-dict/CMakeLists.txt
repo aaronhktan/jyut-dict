@@ -165,6 +165,8 @@ target_link_libraries(CantoneseDictionary
     PRIVATE KF5::Archive
 )
 
+add_subdirectory(logic/sentence/test/TestSentenceSet)
+add_subdirectory(logic/sentence/test/TestSourceSentence)
 add_subdirectory(logic/settings/test/TestSettingsUtils)
 add_subdirectory(logic/utils/test/TestChineseUtils)
 add_subdirectory(logic/utils/test/TestScriptDetector)
