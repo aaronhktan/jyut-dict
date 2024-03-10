@@ -179,29 +179,30 @@ std::ostream &operator<<(std::ostream &out, const Entry &entry)
     return out;
 }
 
-std::string Entry::getCharacters(EntryCharactersOptions options, bool use_colours) const
+std::string Entry::getCharacters(EntryCharactersOptions options,
+                                 bool useColours) const
 {
     switch (options) {
         case (EntryCharactersOptions::ONLY_SIMPLIFIED): {
-            if (use_colours) {
+            if (useColours) {
                 return _colouredSimplified;
             }
             return _simplified;
         }
         case (EntryCharactersOptions::ONLY_TRADITIONAL): {
-            if (use_colours) {
+            if (useColours) {
                 return _colouredTraditional;
             }
             return _traditional;
         }
         case (EntryCharactersOptions::PREFER_SIMPLIFIED): {
-            if (use_colours) {
+            if (useColours) {
                 return _colouredSimplified + " [" + _colouredTraditionalDifference + "]";
             }
             return _simplified + " [" + _traditionalDifference + "]";
         }
         case (EntryCharactersOptions::PREFER_TRADITIONAL): {
-            if (use_colours) {
+            if (useColours) {
                 return _colouredTraditional + " [" + _colouredSimplifiedDifference + "]";
             }
             return _traditional + " [" + _simplifiedDifference + "]";
@@ -211,18 +212,19 @@ std::string Entry::getCharacters(EntryCharactersOptions options, bool use_colour
     return _simplified;
 }
 
-std::string Entry::getCharactersNoSecondary(EntryCharactersOptions options, bool use_colours) const
+std::string Entry::getCharactersNoSecondary(EntryCharactersOptions options,
+                                            bool useColours) const
 {
     switch (options) {
         case (EntryCharactersOptions::PREFER_SIMPLIFIED):
         case (EntryCharactersOptions::ONLY_SIMPLIFIED):
-            if (use_colours) {
+            if (useColours) {
                 return _colouredSimplified;
             }
             return _simplified;
         case (EntryCharactersOptions::PREFER_TRADITIONAL):
         case (EntryCharactersOptions::ONLY_TRADITIONAL):
-            if (use_colours) {
+            if (useColours) {
                 return _colouredTraditional;
             }
             return _traditional;
@@ -408,11 +410,6 @@ std::string Entry::getJyutping(void) const
     return _jyutping;
 }
 
-std::string Entry::getYale(void) const
-{
-    return _yale;
-}
-
 void Entry::setJyutping(const std::string &jyutping)
 {
     _jyutping = jyutping;
@@ -442,16 +439,6 @@ std::vector<int> Entry::getJyutpingNumbers() const
 std::string Entry::getPinyin(void) const
 {
     return _pinyin;
-}
-
-std::string Entry::getPrettyPinyin(void) const
-{
-    return _prettyPinyin;
-}
-
-std::string Entry::getNumberedPinyin(void) const
-{
-    return _numberedPinyin;
 }
 
 void Entry::setPinyin(const std::string &pinyin)

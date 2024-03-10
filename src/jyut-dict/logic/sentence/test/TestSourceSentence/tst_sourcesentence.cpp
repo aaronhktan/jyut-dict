@@ -94,7 +94,8 @@ void TestSourceSentence::generatePhonetic()
     sentence.generatePhonetic(CantoneseOptions::RAW_JYUTPING
                                   | CantoneseOptions::PRETTY_YALE
                                   | CantoneseOptions::CANTONESE_IPA,
-                              MandarinOptions::PRETTY_PINYIN
+                              MandarinOptions::NUMBERED_PINYIN
+                                  | MandarinOptions::PRETTY_PINYIN
                                   | MandarinOptions::ZHUYIN
                                   | MandarinOptions::MANDARIN_IPA);
     QCOMPARE(QString::fromStdString(
@@ -119,6 +120,9 @@ void TestSourceSentence::generatePhonetic()
              QString::fromStdString(pinyin));
     QCOMPARE(QString::fromStdString(sentence.getPinyin()),
              QString::fromStdString(pinyin));
+    QCOMPARE(QString::fromStdString(sentence.getMandarinPhonetic(
+                 MandarinOptions::NUMBERED_PINYIN)),
+             QString::fromStdString("tai2 shan1 hua4"));
     QCOMPARE(QString::fromStdString(
                  sentence.getMandarinPhonetic(MandarinOptions::PRETTY_PINYIN)),
              "tái shān huà");
