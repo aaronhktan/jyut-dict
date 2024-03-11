@@ -4,8 +4,6 @@
 #include "logic/entry/definitionsset.h"
 #include "logic/entry/entrycharactersoptions.h"
 #include "logic/entry/entryphoneticoptions.h"
-#include "logic/sentence/sourcesentence.h"
-#include "logic/settings/settings.h"
 
 #include <QObject>
 #include <QVariant>
@@ -40,9 +38,9 @@ public:
     friend std::ostream &operator<<(std::ostream &out, const Entry &entry);
 
     std::string getCharacters(EntryCharactersOptions options,
-                              bool use_colours) const;
+                              bool useColours) const;
     std::string getCharactersNoSecondary(EntryCharactersOptions options,
-                                         bool use_colours) const;
+                                         bool useColours) const;
 
     std::string getSimplified(void) const;
     void setSimplified(std::string simplified);
@@ -68,13 +66,10 @@ public:
     std::string getMandarinPhonetic(MandarinOptions mandarinOptions) const;
 
     std::string getJyutping(void) const;
-    std::string getYale(void) const;
     void setJyutping(const std::string &jyutping);
     std::vector<int> getJyutpingNumbers() const;
 
     std::string getPinyin(void) const;
-    std::string getPrettyPinyin(void) const;
-    std::string getNumberedPinyin(void) const;
     void setPinyin(const std::string &pinyin);
     std::vector<int> getPinyinNumbers() const;
 
