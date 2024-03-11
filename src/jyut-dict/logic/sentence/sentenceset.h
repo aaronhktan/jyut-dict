@@ -43,6 +43,10 @@ public:
                 const std::vector<Sentence::TargetSentence> &sentences);
     friend std::ostream &operator<<(std::ostream &out,
                                     const SentenceSet &sentence);
+    bool operator==(const SentenceSet &other) const
+    {
+        return _source == other._source && _sentences == other._sentences;
+    }
 
     bool isEmpty(void) const;
 

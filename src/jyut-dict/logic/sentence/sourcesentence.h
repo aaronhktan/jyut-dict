@@ -23,6 +23,14 @@ public:
 
     friend std::ostream &operator<<(std::ostream &out,
                                     const SourceSentence &sourceSentence);
+    bool operator==(const SourceSentence &other) const
+    {
+        return _sourceLanguage == other._sourceLanguage
+               && _simplified == other._simplified
+               && _traditional == other._traditional
+               && _jyutping == other._jyutping && _pinyin == other._pinyin
+               && _sentences == other._sentences;
+    }
 
     std::string getSourceLanguage(void) const;
     void setSourceLanguage(std::string sourceLanguage);

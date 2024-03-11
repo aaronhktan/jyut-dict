@@ -274,12 +274,69 @@ void TestEntry::getPhonetic()
 
 void TestEntry::definitions()
 {
-    QSKIP("Not implemented yet");
+    std::vector<Definition::Definition> definitions{
+        {"Chinatown", "", {}},
+        {"CL:條|条[tiao2],座[zuo4]", "", {}},
+    };
+
+    DefinitionsSet definitionsSet{"CC-CEDICT", definitions};
+
+    std::string simplified = "唐人街";
+    std::string traditional = "唐人街";
+    std::string jyutping = "tong4 jan4 gaai1";
+    std::string pinyin = "tang2 ren2 jie1";
+    Entry entry{simplified, traditional, jyutping, pinyin, {definitionsSet}};
+
+    QCOMPARE(entry.getDefinitionsSets(), {definitionsSet});
+    QCOMPARE(entry.getDefinitionSnippet(),
+             "Chinatown; CL:條|条[tiao2],座[zuo4]");
+
+    Definition::Definition additionalDefinition{
+        "響外國​城市​嘅​華​人​聚居地​（​量​詞​"
+        "："
+        "條）\nChinatown; an area in an overseas city heavily populated by "
+        "ethnic Chinese; literally \"Chinese street\"",
+        "名詞",
+        {}};
+    DefinitionsSet additionalDefinitionsSet{"粵典-words.hk",
+                                            {additionalDefinition}};
+    entry.addDefinitions("粵典-words.hk", {additionalDefinition});
+
+    std::vector<DefinitionsSet> sets{definitionsSet, additionalDefinitionsSet};
+    QCOMPARE(entry.getDefinitionsSets(), sets);
 }
 
 void TestEntry::refreshColours()
 {
-    QSKIP("Not implemented yet");
+    std::string simplified = "岭南文化";
+    std::string traditional = "嶺南文化";
+    std::string jyutping = "ling5 naam4 man4 faa3";
+    std::string pinyin = "ling3 nan2 wen2 hua4";
+    Entry entry{simplified, traditional, jyutping, pinyin, {}};
+
+    entry.refreshColours(EntryColourPhoneticType::CANTONESE);
+    QCOMPARE(
+        QString::fromStdString(
+            entry.getCharacters(EntryCharactersOptions::ONLY_SIMPLIFIED,
+                                /* useColours = */ true)),
+        "<font color=\"#068900\">\u5CAD</font><font "
+        "color=\"#c2185b\">\u5357</font><font "
+        "color=\"#c2185b\">\u6587</font><font color=\"#657ff1\">\u5316</font>");
+
+    entry.refreshColours(EntryColourPhoneticType::MANDARIN);
+    QCOMPARE(
+        QString::fromStdString(
+            entry.getCharacters(EntryCharactersOptions::ONLY_TRADITIONAL,
+                                /* useColours = */ true)),
+        "<font color=\"#18a6f2\">\u5DBA</font><font "
+        "color=\"#02ba1f\">\u5357</font><font "
+        "color=\"#02ba1f\">\u6587</font><font color=\"#9e77ff\">\u5316</font>");
+
+    entry.refreshColours(EntryColourPhoneticType::NONE);
+    QCOMPARE(QString::fromStdString(
+                 entry.getCharacters(EntryCharactersOptions::ONLY_TRADITIONAL,
+                                     /* useColours = */ true)),
+             "嶺南文化");
 }
 
 void TestEntry::specialCases()

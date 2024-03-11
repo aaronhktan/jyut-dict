@@ -25,6 +25,12 @@ struct Definition
         label{label},
         sentences(sentences)
     {}
+
+    bool operator==(const Definition &other) const
+    {
+        return definitionContent == other.definitionContent
+               && label == other.label && sentences == other.sentences;
+    }
 };
 
 }
@@ -40,6 +46,10 @@ public:
 
     friend std::ostream &operator<<(std::ostream &out,
                                     DefinitionsSet const &definitions);
+    bool operator==(const DefinitionsSet &other) const
+    {
+        return _source == other._source && _definitions == other._definitions;
+    }
 
     bool isEmpty() const;
 
