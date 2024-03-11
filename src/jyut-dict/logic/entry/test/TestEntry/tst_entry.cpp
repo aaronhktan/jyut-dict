@@ -261,8 +261,7 @@ void TestEntry::getPhonetic()
     QCOMPARE(QString::fromStdString(
                  entry.getPhonetic(EntryPhoneticOptions::PREFER_CANTONESE,
                                    CantoneseOptions::CANTONESE_IPA)),
-             QString::fromStdString("tʰɔːi̯ ˨ ˩  säːn ˥  wäː ˧ ˥ (" + pinyin
-                                    + ")"));
+             QString::fromStdString("tʰɔːi̯˨˩  säːn˥  wäː˧˥ (" + pinyin + ")"));
 #endif
 
     QCOMPARE(QString::fromStdString(
