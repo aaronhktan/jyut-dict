@@ -76,10 +76,6 @@ void TestSqlDatabaseManager::backupAndRestore()
     QCOMPARE(databaseFile.remove(), true);
     QCOMPARE(databaseBackupFile.remove(), true);
     QCOMPARE(databaseBackupBackupFile.remove(), true);
-
-    databaseFile.close();
-    databaseBackupFile.close();
-    databaseBackupBackupFile.close();
 }
 
 QTEST_MAIN(TestSqlDatabaseManager)

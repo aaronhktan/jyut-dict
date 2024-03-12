@@ -102,8 +102,7 @@ bool SQLDatabaseManager::backupDictionaryDatabase()
             QFile::remove(backupFilePath);
         }
         if (QFile::exists(oldFilePath)) {
-            QFile::copy(oldFilePath, backupFilePath);
-            QFile::remove(oldFilePath);
+            QFile::rename(oldFilePath, backupFilePath);
         }
     }
 
