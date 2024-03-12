@@ -15,6 +15,11 @@
 // FLATPAK or APPIMAGE for the image one directory above,
 // or nothing for the .deb
 
+namespace {
+constexpr auto DICTIONARY_DATABASE_NAME = "dict.db";
+constexpr auto USER_DATABASE_NAME = "user.db";
+} // namespace
+
 SQLDatabaseManager::SQLDatabaseManager()
 {
     // Delete the old version of the dictionary
