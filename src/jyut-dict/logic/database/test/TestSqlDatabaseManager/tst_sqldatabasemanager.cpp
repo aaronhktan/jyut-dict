@@ -48,7 +48,7 @@ void TestSqlDatabaseManager::backupAndRestore()
     QCOMPARE(databaseFile.open(QIODevice::ReadWrite), true);
     QCOMPARE(databaseFile.exists(), true);
 
-    manager.backupDictionaryDatabase();
+    QCOMPARE(manager.backupDictionaryDatabase(), true);
     QCOMPARE(databaseFile.exists(), true);
 
     QFile databaseBackupFile{manager.getDictionaryDatabasePath() + "_1"};
@@ -58,15 +58,24 @@ void TestSqlDatabaseManager::backupAndRestore()
     QCOMPARE(databaseFile.remove(), true);
     QCOMPARE(databaseFile.exists(), false);
 
-    manager.restoreBackedUpDictionaryDatabase();
+    QCOMPARE(manager.restoreBackedUpDictionaryDatabase(), true);
 
     QCOMPARE(databaseBackupFile.exists(), true);
     QCOMPARE(databaseFile.exists(), true);
 
-    manager.backupDictionaryDatabase();
+#ifdef Q_OS_WINDOWS
+    // On Windows, open files cannot be deleted.
+    databaseBackupFile.close();
+#endif
+
+    QCOMPARE(manager.backupDictionaryDatabase(), true);
     QFile databaseBackupBackupFile{manager.getDictionaryDatabasePath() + "_2"};
-    QCOMPARE(databaseBackupBackupFile.open(QIODevice::ReadOnly), true);
     QCOMPARE(databaseBackupBackupFile.exists(), true);
+    QCOMPARE(databaseBackupBackupFile.open(QIODevice::ReadOnly), true);
+
+    QCOMPARE(databaseFile.remove(), true);
+    QCOMPARE(databaseBackupFile.remove(), true);
+    QCOMPARE(databaseBackupBackupFile.remove(), true);
 
     databaseFile.close();
     databaseBackupFile.close();
