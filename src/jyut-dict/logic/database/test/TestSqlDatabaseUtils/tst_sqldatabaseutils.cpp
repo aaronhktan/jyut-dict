@@ -101,7 +101,8 @@ void TestSqlDatabaseUtils::createV1Database(const QString &dbPath)
                "  other TEXT "
                ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
-    query.exec("CREATE VIRTUAL TABLE definitions_fts using fts5(definition)");
+    query.exec("CREATE VIRTUAL TABLE definitions_fts using fts5(fk_entry_id, "
+               "  definition)");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec("CREATE VIRTUAL TABLE entries_fts using fts5(pinyin, jyutping)");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
@@ -110,7 +111,7 @@ void TestSqlDatabaseUtils::createV1Database(const QString &dbPath)
     query.exec("INSERT INTO entries_fts (rowid, pinyin, jyutping) SELECT "
                "rowid, pinyin, jyutping FROM entries");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
-    query.exec("INSERT INTO definitions_fts (rowid, definition) "
+    query.exec("INSERT INTO definitions_fts (fk_entry_id, definition) "
                "select rowid, definition FROM definitions");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec("PRAGMA user_version=1");
@@ -256,6 +257,17 @@ void TestSqlDatabaseUtils::createV3Database(const QString &dbPath)
                "    CONFLICT IGNORE "
                ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec(
+        "CREATE TABLE definitions_chinese_sentences_links( "
+        "  fk_definition_id INTEGER, "
+        "  fk_chinese_sentence_id INTEGER, "
+        "  FOREIGN KEY(fk_definition_id) REFERENCES definitions(definition_id) "
+        "ON DELETE CASCADE, "
+        "  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES "
+        "    chinese_sentences(chinese_sentence_id) "
+        "  UNIQUE(fk_definition_id, fk_chinese_sentence_id) ON CONFLICT IGNORE "
+        ") ");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec("CREATE TABLE entries( "
                "  entry_id INTEGER PRIMARY KEY, "
                "  traditional TEXT, "
@@ -360,14 +372,14 @@ void TestSqlDatabaseUtils::updateDatabaseFromV1()
 
     // Check stuff added in v2
     query.exec("SELECT name FROM sqlite_master WHERE type='table' AND "
-               "name='nonchinese_sentences'");
-    QCOMPARE(query.first(), true);
-    QCOMPARE(query.value(0).toString(), "nonchinese_sentences");
-
-    query.exec("SELECT name FROM sqlite_master WHERE type='table' AND "
                "name='chinese_sentences'");
     QCOMPARE(query.first(), true);
     QCOMPARE(query.value(0).toString(), "chinese_sentences");
+
+    query.exec("SELECT name FROM sqlite_master WHERE type='table' AND "
+               "name='nonchinese_sentences'");
+    QCOMPARE(query.first(), true);
+    QCOMPARE(query.value(0).toString(), "nonchinese_sentences");
 
     query.exec("SELECT name FROM sqlite_master WHERE type='table' AND "
                "name='sentence_links'");
@@ -375,6 +387,11 @@ void TestSqlDatabaseUtils::updateDatabaseFromV1()
     QCOMPARE(query.value(0).toString(), "sentence_links");
 
     // Check stuff added in v3
+    query.exec("SELECT name FROM sqlite_master WHERE type='table' AND "
+               "name='definitions_chinese_sentences_links'");
+    QCOMPARE(query.first(), true);
+    QCOMPARE(query.value(0).toString(), "definitions_chinese_sentences_links");
+
     query.exec(
         "SELECT * FROM pragma_table_info('definitions_fts') AS table_info");
     std::unordered_set<QString> expected_columns{"fk_entry_id", "definition"};
@@ -416,6 +433,11 @@ void TestSqlDatabaseUtils::updateDatabaseFromV2()
         version = query.value(0).toInt();
     }
     QCOMPARE(version, CURRENT_DATABASE_VERSION);
+
+    query.exec("SELECT name FROM sqlite_master WHERE type='table' AND "
+               "name='definitions_chinese_sentences_links'");
+    QCOMPARE(query.first(), true);
+    QCOMPARE(query.value(0).toString(), "definitions_chinese_sentences_links");
 
     query.exec(
         "SELECT * FROM pragma_table_info('definitions_fts') AS table_info");
@@ -500,8 +522,8 @@ void TestSqlDatabaseUtils::addAndRemoveSources()
 
     query.exec("INSERT INTO entries (traditional, simplified, pinyin, "
                "  jyutping, frequency) "
-               "VALUES ('越秀', '越秀', 'jyut6 sau3', "
-               "  'yue4 xiu4', '0.00')");
+               "VALUES ('越秀', '越秀', 'yue4 xiu4', "
+               "  'jyut6 sau3', '0.00')");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec("INSERT INTO sources (sourcename, sourceshortname, version, "
                "  description, legal, link, update_url, other) "

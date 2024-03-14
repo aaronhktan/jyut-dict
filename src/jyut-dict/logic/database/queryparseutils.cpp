@@ -68,7 +68,7 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
                                         translation["language"]
                                             .toString()
                                             .toStdString(),
-                                        translation["direct"].toBool());
+                                        translation["direct"].toInt() == 1);
                                 }
                                 sentence_translations.emplace_back(sourceName, targetSentences);
                             }
@@ -162,7 +162,7 @@ std::vector<SourceSentence> parseSentences(QSqlQuery &query)
                     sentence_translation_sets.back().pushSentence(
                         {translation["sentence"].toString().toStdString(),
                          translation["language"].toString().toStdString(),
-                         translation["direct"].toBool()});
+                         translation["direct"].toInt() == 1});
                 }
             }
         }

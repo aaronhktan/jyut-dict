@@ -2,17 +2,6 @@
 
 #include <sstream>
 
-DefinitionsSet::DefinitionsSet()
-{
-
-}
-
-DefinitionsSet::DefinitionsSet(std::string source)
-    : _source{source}
-{
-
-}
-
 DefinitionsSet::DefinitionsSet(std::string source,
                                std::vector<Definition::Definition> definitions)
     : _source{source},
@@ -23,8 +12,13 @@ DefinitionsSet::DefinitionsSet(std::string source,
 
 std::ostream &operator<<(std::ostream &out, DefinitionsSet const &definitions)
 {
+    out << "= source\n" << definitions.getSource() << "\n";
     for (const auto &definition : definitions.getDefinitions()) {
-        out << definition.definitionContent << "\n";
+        out << "== definition\n" << definition.definitionContent << "\n";
+        out << "== label\n" << definition.label << "\n";
+        for (const auto &e : definition.sentences) {
+            out << "===== sentence\n" << e << "\n";
+        }
     }
 
     return out;

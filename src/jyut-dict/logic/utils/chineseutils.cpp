@@ -1366,6 +1366,18 @@ bool segmentPinyin(const QString &string,
                 initial_found = false;
             }
             if (!removeGlobCharacters && isGlobCharacter) {
+                // Add anything before the current glob character
+                if (end_idx >= 1 && (end_idx - start_idx >= 1)) {
+                    QString previous_initial
+                        = string.mid(start_idx, end_idx - start_idx).toLower();
+                    syllables.push_back(previous_initial.toStdString());
+                    if (finals.find(previous_initial.toStdString())
+                        == finals.end()) {
+                        valid_pinyin = false;
+                    }
+                    initial_found = false;
+                }
+
                 // Since whitespace matters for glob characters, consume the
                 // next or previous whitespace if it exists (and was not
                 // already consumed by another glob character).
@@ -1527,6 +1539,18 @@ bool segmentJyutping(const QString &string,
                 initial_found = false;
             }
             if (!removeGlobCharacters && isGlobCharacter) {
+                // Add anything before the current glob character
+                if (end_idx >= 1 && (end_idx - start_idx >= 1)) {
+                    QString previous_initial
+                        = string.mid(start_idx, end_idx - start_idx).toLower();
+                    syllables.push_back(previous_initial.toStdString());
+                    if (finals.find(previous_initial.toStdString())
+                        == finals.end()) {
+                        valid_jyutping = false;
+                    }
+                    initial_found = false;
+                }
+
                 // Since whitespace matters for glob characters, consume the
                 // next or previous whitespace if it exists (and was not
                 // already consumed by another glob character).
