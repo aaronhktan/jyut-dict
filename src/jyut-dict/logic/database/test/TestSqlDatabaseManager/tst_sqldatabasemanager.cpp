@@ -14,6 +14,7 @@ public:
 
 private slots:
     void getDatabase();
+    void removeAllDatabaseConnections();
     void backupAndRestore();
 };
 
@@ -34,6 +35,57 @@ void TestSqlDatabaseManager::getDatabase()
     manager.closeAndRemoveDatabaseConnection();
     QCOMPARE(manager.isDatabaseOpen(), false);
     QCOMPARE(database.isOpen(), false);
+}
+
+void TestSqlDatabaseManager::removeAllDatabaseConnections()
+{
+    std::shared_ptr<SQLDatabaseManager> manager
+        = std::make_shared<SQLDatabaseManager>();
+    std::mutex mutex;
+    std::condition_variable cv;
+    QCOMPARE(manager->isDatabaseOpen(), false);
+
+    QSqlDatabase database = manager->getDatabase();
+    QCOMPARE(manager->isDatabaseOpen(), true);
+    QCOMPARE(database.isOpen(), true);
+    QCOMPARE(database.isValid(), true);
+    QString mainThreadConnectionName = database.connectionName();
+
+    auto future = std::async([&]() {
+        QSqlDatabase database = manager->getDatabase();
+        QCOMPARE(database.isOpen(), true);
+        QCOMPARE(database.connectionName() != mainThreadConnectionName, true);
+
+        // Now that we've opened a connection, proceed in the main thread...
+        cv.notify_one();
+
+        {
+            // Wait until the main thread has killed our connection...
+            std::unique_lock lock{mutex};
+            cv.wait(lock);
+
+            // ... and verify that it's dead
+            QCOMPARE(database.isOpen(), false);
+            return;
+        }
+    });
+
+    {
+        std::unique_lock lock{mutex};
+        cv.wait(lock);
+    }
+
+    // We got notified by the async thread, which means there are two
+    // connections open (one from the main thread, one from the async
+    // thread). Force-kill all of them.
+    manager->removeAllDatabaseConnections();
+    QCOMPARE(manager->isDatabaseOpen(), false);
+    QCOMPARE(database.isOpen(), false);
+
+    // Signal the async thread so it can check that its database got
+    // closed.
+    cv.notify_one();
+    future.get();
 }
 
 void TestSqlDatabaseManager::backupAndRestore()
