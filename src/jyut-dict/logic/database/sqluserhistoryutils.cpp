@@ -120,7 +120,7 @@ void SQLUserHistoryUtils::addSearchToHistoryThread(const std::string &search,
     query.addBindValue(QVariant::fromValue(options));
     query.exec();
 
-    _manager->closeDatabase();
+    _manager->closeAndRemoveDatabaseConnection();
 }
 
 void SQLUserHistoryUtils::addViewToHistoryThread(const Entry &entry)
@@ -137,7 +137,7 @@ void SQLUserHistoryUtils::addViewToHistoryThread(const Entry &entry)
     query.addBindValue(entry.getPinyin().c_str());
     query.exec();
 
-    _manager->closeDatabase();
+    _manager->closeAndRemoveDatabaseConnection();
 }
 
 void SQLUserHistoryUtils::searchAllSearchHistoryThread(void)
@@ -153,7 +153,7 @@ void SQLUserHistoryUtils::searchAllSearchHistoryThread(void)
         "LIMIT 1000");
 
     results = QueryParseUtils::parseHistoryItems(query);
-    _manager->closeDatabase();
+    _manager->closeAndRemoveDatabaseConnection();
 
     notifyObservers(results, /*emptyQuery=*/false);
 }
@@ -164,7 +164,7 @@ void SQLUserHistoryUtils::clearAllSearchHistoryThread(void)
 
     query.exec("DELETE FROM user.search_history");
 
-    _manager->closeDatabase();
+    _manager->closeAndRemoveDatabaseConnection();
 
     searchAllSearchHistory();
 }
@@ -182,7 +182,7 @@ void SQLUserHistoryUtils::searchAllViewHistoryThread(void)
         "LIMIT 1000");
 
     results = QueryParseUtils::parseEntries(query, /*parseDefinitions=*/false);
-    _manager->closeDatabase();
+    _manager->closeAndRemoveDatabaseConnection();
 
     notifyObservers(results, /*emptyQuery=*/false);
 }
@@ -193,7 +193,7 @@ void SQLUserHistoryUtils::clearAllViewHistoryThread(void)
 
     query.exec("DELETE FROM user.view_history");
 
-    _manager->closeDatabase();
+    _manager->closeAndRemoveDatabaseConnection();
 
     searchAllViewHistory();
 }

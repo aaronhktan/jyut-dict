@@ -3,6 +3,9 @@
 
 #include <QSqlDatabase>
 
+#include <shared_mutex>
+#include <unordered_set>
+
 // SQLDatabaseManager provides one or more connections to databases
 // that contain dictionaries and translations
 
@@ -16,7 +19,14 @@ public:
 
     QSqlDatabase getDatabase();
     bool isDatabaseOpen() const;
-    void closeDatabase();
+    void closeAndRemoveDatabaseConnection();
+
+    // This function is dangerous! Make sure that no queries are
+    // being run when this is called. Since database connections
+    // may be opened from other threads, it is not possible
+    // to close them from whichever thread this function is called
+    // from.
+    bool removeAllDatabaseConnections();
 
     QString getDictionaryDatabasePath();
     QString getUserDatabasePath();
@@ -25,8 +35,8 @@ public:
     bool restoreBackedUpDictionaryDatabase();
 
 private:
-    void addDatabase(const QString &name) const;
-    bool openDatabase(const QString &name);
+    void addDatabaseConnection(const QString &connectionName) const;
+    bool openDatabaseConnection(const QString &connectionName);
 
     QString getLocalDictionaryDatabasePath();
     QString getBundleDictionaryDatabasePath();
@@ -39,7 +49,10 @@ private:
     bool copyUserDatabase();
     bool attachUserDatabase();
 
-    QString getCurrentDatabaseName() const;
+    QString getConnectionName() const;
+
+    std::unordered_set<std::string> _openConnectionNames;
+    std::shared_mutex _mutex;
 
     QString _dictionaryDatabasePath;
     QString _userDatabasePath;

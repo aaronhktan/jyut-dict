@@ -31,7 +31,7 @@ void TestSqlDatabaseManager::getDatabase()
     QCOMPARE(database.isOpen(), true);
     QCOMPARE(database.isValid(), true);
 
-    manager.closeDatabase();
+    manager.closeAndRemoveDatabaseConnection();
     QCOMPARE(manager.isDatabaseOpen(), false);
     QCOMPARE(database.isOpen(), false);
 }

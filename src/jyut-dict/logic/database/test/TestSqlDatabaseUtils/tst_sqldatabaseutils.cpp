@@ -352,7 +352,7 @@ void TestSqlDatabaseUtils::createV3Database(const QString &dbPath)
 
 void TestSqlDatabaseUtils::removeDatabase()
 {
-    _manager->closeDatabase();
+    _manager->closeAndRemoveDatabaseConnection();
     QFile::remove(_manager->getDictionaryDatabasePath());
 }
 

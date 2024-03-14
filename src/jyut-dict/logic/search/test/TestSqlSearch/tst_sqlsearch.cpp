@@ -89,11 +89,14 @@ TestSqlSearch::TestSqlSearch()
 {
     _manager = std::make_shared<SQLDatabaseManager>();
     _utils = new SQLDatabaseUtils{_manager};
+
+    createV3Database(_manager->getDictionaryDatabasePath());
 }
 
 TestSqlSearch::~TestSqlSearch()
 {
-    removeDatabase();
+    _manager->removeAllDatabaseConnections();
+    QFile::remove(_manager->getDictionaryDatabasePath());
 }
 
 void TestSqlSearch::createV3Database(const QString &dbPath)
@@ -279,17 +282,8 @@ void TestSqlSearch::createV3Database(const QString &dbPath)
     QSqlDatabase::removeDatabase(dbCreateConnName);
 }
 
-void TestSqlSearch::removeDatabase()
-{
-    _manager->closeDatabase();
-    QFile::remove(_manager->getDictionaryDatabasePath());
-}
-
 void TestSqlSearch::searchSimplified()
 {
-    removeDatabase();
-    createV3Database(_manager->getDictionaryDatabasePath());
-
     TestObserver observer;
     SQLSearch search{_manager};
 
@@ -390,15 +384,10 @@ void TestSqlSearch::searchSimplified()
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-
-    removeDatabase();
 }
 
 void TestSqlSearch::searchSimplifiedNoResults()
 {
-    removeDatabase();
-    createV3Database(_manager->getDictionaryDatabasePath());
-
     TestObserver observer;
     SQLSearch search{_manager};
 
@@ -431,15 +420,10 @@ void TestSqlSearch::searchSimplifiedNoResults()
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-
-    removeDatabase();
 }
 
 void TestSqlSearch::searchTraditional()
 {
-    removeDatabase();
-    createV3Database(_manager->getDictionaryDatabasePath());
-
     TestObserver observer;
     SQLSearch search{_manager};
 
@@ -540,15 +524,10 @@ void TestSqlSearch::searchTraditional()
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-
-    removeDatabase();
 }
 
 void TestSqlSearch::searchTraditionalNoResults()
 {
-    removeDatabase();
-    createV3Database(_manager->getDictionaryDatabasePath());
-
     TestObserver observer;
     SQLSearch search{_manager};
 
@@ -581,15 +560,10 @@ void TestSqlSearch::searchTraditionalNoResults()
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-
-    removeDatabase();
 }
 
 void TestSqlSearch::searchJyutping()
 {
-    removeDatabase();
-    createV3Database(_manager->getDictionaryDatabasePath());
-
     TestObserver observer;
     SQLSearch search{_manager};
 
@@ -716,15 +690,10 @@ void TestSqlSearch::searchJyutping()
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-
-    removeDatabase();
 }
 
 void TestSqlSearch::searchJyutpingNoResults()
 {
-    removeDatabase();
-    createV3Database(_manager->getDictionaryDatabasePath());
-
     TestObserver observer;
     SQLSearch search{_manager};
 
@@ -769,15 +738,10 @@ void TestSqlSearch::searchJyutpingNoResults()
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-
-    removeDatabase();
 }
 
 void TestSqlSearch::searchPinyin()
 {
-    removeDatabase();
-    createV3Database(_manager->getDictionaryDatabasePath());
-
     TestObserver observer;
     SQLSearch search{_manager};
 
@@ -904,15 +868,10 @@ void TestSqlSearch::searchPinyin()
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-
-    removeDatabase();
 }
 
 void TestSqlSearch::searchPinyinNoResults()
 {
-    removeDatabase();
-    createV3Database(_manager->getDictionaryDatabasePath());
-
     TestObserver observer;
     SQLSearch search{_manager};
 
@@ -957,15 +916,10 @@ void TestSqlSearch::searchPinyinNoResults()
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-
-    removeDatabase();
 }
 
 void TestSqlSearch::searchEnglish()
 {
-    removeDatabase();
-    createV3Database(_manager->getDictionaryDatabasePath());
-
     TestObserver observer;
     SQLSearch search{_manager};
 
@@ -1044,15 +998,10 @@ void TestSqlSearch::searchEnglish()
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-
-    removeDatabase();
 }
 
 void TestSqlSearch::searchEnglishNoResults()
 {
-    removeDatabase();
-    createV3Database(_manager->getDictionaryDatabasePath());
-
     TestObserver observer;
     SQLSearch search{_manager};
 
@@ -1073,14 +1022,10 @@ void TestSqlSearch::searchEnglishNoResults()
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    removeDatabase();
 }
 
 void TestSqlSearch::searchAutoDetect()
 {
-    removeDatabase();
-    createV3Database(_manager->getDictionaryDatabasePath());
-
     TestObserver observer;
     SQLSearch search{_manager};
 
@@ -1260,15 +1205,10 @@ void TestSqlSearch::searchAutoDetect()
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-
-    removeDatabase();
 }
 
 void TestSqlSearch::searchAutoDetectNoResults()
 {
-    removeDatabase();
-    createV3Database(_manager->getDictionaryDatabasePath());
-
     TestObserver observer;
     SQLSearch search{_manager};
 
@@ -1310,15 +1250,10 @@ void TestSqlSearch::searchAutoDetectNoResults()
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-
-    removeDatabase();
 }
 
 void TestSqlSearch::searchUnique()
 {
-    removeDatabase();
-    createV3Database(_manager->getDictionaryDatabasePath());
-
     TestObserver observer;
     SQLSearch search{_manager};
 
@@ -1372,9 +1307,6 @@ void TestSqlSearch::searchUnique()
 
 void TestSqlSearch::searchTraditionalSentences()
 {
-    removeDatabase();
-    createV3Database(_manager->getDictionaryDatabasePath());
-
     TestObserver observer;
     SQLSearch search{_manager};
 
