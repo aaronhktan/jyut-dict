@@ -40,8 +40,7 @@ struct Definition
 class DefinitionsSet
 {
 public:
-    DefinitionsSet();
-    DefinitionsSet(std::string source);
+    DefinitionsSet() = delete;
     DefinitionsSet(std::string source, std::vector<Definition::Definition> definitions);
 
     friend std::ostream &operator<<(std::ostream &out,

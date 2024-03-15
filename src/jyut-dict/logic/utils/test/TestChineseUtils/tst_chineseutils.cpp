@@ -89,6 +89,7 @@ private slots:
     void constructRomanisationQuerySingleSyllable();
     void constructRomanisationQueryMultiSyllable();
     void constructRomanisationQueryGlobCharacters();
+    void constructRomanisationQueryOnlyGlobCharacters();
 
     void segmentJyutpingSimple();
     void segmentJyutpingNoDigits();
@@ -769,6 +770,13 @@ void TestChineseUtils::constructRomanisationQueryGlobCharacters()
                                                        "dak"},
                                                       "?");
     QCOMPARE(result, "se? ??? dak?");
+}
+
+void TestChineseUtils::constructRomanisationQueryOnlyGlobCharacters()
+{
+    std::string result = ChineseUtils::constructRomanisationQuery(
+        {"?", "?", "?", "?", "? ", "?", "?", "?", "?"}, "?");
+    QCOMPARE(QString::fromStdString(result), "????? ????");
 }
 
 void TestChineseUtils::segmentJyutpingSimple()

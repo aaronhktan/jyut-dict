@@ -220,7 +220,7 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
         "ORDER BY timestamp ASC ");
 
     results = QueryParseUtils::parseEntries(query);
-    _manager->closeDatabase();
+    _manager->closeAndRemoveDatabaseConnection();
 
     notifyObservers(results, /*emptyQuery=*/false);
 }
@@ -240,7 +240,7 @@ void SQLUserDataUtils::checkIfEntryHasBeenFavouritedThread(const Entry &entry)
     query.addBindValue(entry.getPinyin().c_str());
     query.exec();
     existence = QueryParseUtils::parseExistence(query);
-    _manager->closeDatabase();
+    _manager->closeAndRemoveDatabaseConnection();
 
     notifyObservers(existence, entry);
 }
@@ -259,7 +259,7 @@ void SQLUserDataUtils::favouriteEntryThread(const Entry &entry)
     query.addBindValue(entry.getPinyin().c_str());
     query.exec();
     query.exec("COMMIT");
-    _manager->closeDatabase();
+    _manager->closeAndRemoveDatabaseConnection();
 
     checkIfEntryHasBeenFavourited(entry);
     searchForAllFavouritedWords();
@@ -278,7 +278,7 @@ void SQLUserDataUtils::unfavouriteEntryThread(const Entry &entry)
     query.addBindValue(entry.getPinyin().c_str());
     query.exec();
     query.exec("COMMIT");
-    _manager->closeDatabase();
+    _manager->closeAndRemoveDatabaseConnection();
 
     checkIfEntryHasBeenFavourited(entry);
     searchForAllFavouritedWords();

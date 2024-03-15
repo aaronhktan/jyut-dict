@@ -24,7 +24,7 @@ TestDefinitionsSet::~TestDefinitionsSet() {}
 
 void TestDefinitionsSet::isEmpty()
 {
-    DefinitionsSet set{"CC-CEDICT"};
+    DefinitionsSet set{"CC-CEDICT", {}};
     QCOMPARE(set.isEmpty(), true);
 }
 

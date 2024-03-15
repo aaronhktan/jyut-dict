@@ -16,8 +16,11 @@ SentenceSet::SentenceSet(const std::string &source,
 
 std::ostream &operator<<(std::ostream &out, const SentenceSet &sentenceSet)
 {
+    out << "======== source\n" << sentenceSet.getSource() << "\n";
     for (const auto &sentence : sentenceSet.getSentences()) {
-        out << sentence.sentence << "\n";
+        out << "=========== translation\n" << sentence.sentence << "\n";
+        out << "=========== language\n" << sentence.language << "\n";
+        out << "=========== directTarget\n" << sentence.directTarget << "\n";
     }
     return out;
 }

@@ -48,25 +48,49 @@ SQLDatabaseManager::SQLDatabaseManager()
 
 QSqlDatabase SQLDatabaseManager::getDatabase()
 {
-    QString name = getCurrentDatabaseName();
+    QString name = getConnectionName();
     if (!QSqlDatabase::contains(name)) {
-        addDatabase(name);
+        addDatabaseConnection(name);
     }
-    if (!(QSqlDatabase::database(name, /*open=*/false).isOpen())) {
-        openDatabase(name);
+    if (!(QSqlDatabase::database(name, /* open= */ false).isOpen())) {
+        openDatabaseConnection(name);
     }
     return QSqlDatabase::database(name);
 }
 
 bool SQLDatabaseManager::isDatabaseOpen() const
 {
-    return QSqlDatabase::database(getCurrentDatabaseName(), /*open=*/false)
+    return QSqlDatabase::database(getConnectionName(), /* open= */ false)
         .isOpen();
 }
 
-void SQLDatabaseManager::closeDatabase()
+void SQLDatabaseManager::closeAndRemoveDatabaseConnection()
 {
-    QSqlDatabase::database(getCurrentDatabaseName(), /*open=*/false).close();
+    QSqlDatabase::database(getConnectionName(), /* open= */ false).close();
+    QSqlDatabase::removeDatabase(getConnectionName());
+    {
+        std::lock_guard lock{_mutex};
+        _openConnectionNames.extract(getConnectionName().toStdString());
+    }
+}
+
+bool SQLDatabaseManager::removeAllDatabaseConnections()
+{
+    std::lock_guard lock{_mutex};
+    std::vector<std::string> connectionNames;
+    connectionNames.insert(connectionNames.end(),
+                           _openConnectionNames.begin(),
+                           _openConnectionNames.end());
+    for (const auto &connectionName : connectionNames) {
+        QSqlDatabase::removeDatabase(QString::fromStdString(connectionName));
+        if (!QSqlDatabase::database(QString::fromStdString(connectionName),
+                                    /* open = */ false)
+                 .isOpen()) {
+            _openConnectionNames.erase(connectionName);
+        }
+    }
+
+    return _openConnectionNames.empty();
 }
 
 QString SQLDatabaseManager::getDictionaryDatabasePath()
@@ -130,17 +154,19 @@ bool SQLDatabaseManager::restoreBackedUpDictionaryDatabase()
     }
 }
 
-void SQLDatabaseManager::addDatabase(const QString &name) const
+void SQLDatabaseManager::addDatabaseConnection(const QString &connectionName) const
 {
-    QSqlDatabase::addDatabase("QSQLITE", name);
+    QSqlDatabase::addDatabase("QSQLITE", connectionName);
 }
 
-bool SQLDatabaseManager::openDatabase(const QString &name)
+bool SQLDatabaseManager::openDatabaseConnection(const QString &connectionName)
 {
     try {
         copyDictionaryDatabase();
-        QSqlDatabase::database(name).setDatabaseName(_dictionaryDatabasePath);
-        bool rv = QSqlDatabase::database(name).open();
+
+        QSqlDatabase::database(connectionName)
+            .setDatabaseName(_dictionaryDatabasePath);
+        bool rv = QSqlDatabase::database(connectionName).open();
         if (!rv) {
             throw std::runtime_error{"Couldn't open database..."};
         }
@@ -149,6 +175,11 @@ bool SQLDatabaseManager::openDatabase(const QString &name)
         rv = attachUserDatabase();
         if (!rv) {
             throw std::runtime_error{"Couldn't attach user database..."};
+        }
+
+        {
+            std::lock_guard lock{_mutex};
+            _openConnectionNames.emplace(connectionName.toStdString());
         }
     } catch (std::exception &e) {
         (void) (e);
@@ -182,7 +213,7 @@ QString SQLDatabaseManager::getBundleDictionaryDatabasePath()
     QFileInfo bundleFile{QCoreApplication::applicationDirPath()
                          + "/../Resources/" + DICTIONARY_DATABASE_NAME};
 #elif defined(Q_OS_WIN)
-    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "./"
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/"
                          + DICTIONARY_DATABASE_NAME};
 #else // Q_OS_LINUX
 #ifdef APPIMAGE
@@ -285,7 +316,7 @@ bool SQLDatabaseManager::copyDictionaryDatabase()
 
 bool SQLDatabaseManager::copyUserDatabase()
 {
-    if (!QSqlDatabase::database(getCurrentDatabaseName()).isOpen()) {
+    if (!QSqlDatabase::database(getConnectionName()).isOpen()) {
         return false;
     }
 
@@ -326,7 +357,7 @@ bool SQLDatabaseManager::copyUserDatabase()
 
 bool SQLDatabaseManager::attachUserDatabase()
 {
-    QSqlQuery query{QSqlDatabase::database(getCurrentDatabaseName())};
+    QSqlQuery query{QSqlDatabase::database(getConnectionName())};
 
     query.prepare("ATTACH DATABASE ? AS user");
     query.addBindValue(QVariant::fromValue(_userDatabasePath));
@@ -335,7 +366,7 @@ bool SQLDatabaseManager::attachUserDatabase()
     return !query.lastError().isValid();
 }
 
-QString SQLDatabaseManager::getCurrentDatabaseName() const
+QString SQLDatabaseManager::getConnectionName() const
 {
     // Generate a unique name for every thread that needs a connection to the
     // database.

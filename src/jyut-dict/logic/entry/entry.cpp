@@ -155,7 +155,8 @@ bool Entry::operator==(const Entry &other) const
     }
 
     if (other._simplified == _simplified && other._traditional == _traditional
-        && other._jyutping == _jyutping && other._pinyin == _pinyin) {
+        && other._jyutping == _jyutping && other._pinyin == _pinyin
+        && other._definitions == _definitions) {
         return true;
     }
 
