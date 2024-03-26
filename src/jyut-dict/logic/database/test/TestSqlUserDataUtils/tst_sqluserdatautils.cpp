@@ -74,9 +74,9 @@ TestSqlUserDataUtils::TestSqlUserDataUtils()
 
 TestSqlUserDataUtils::~TestSqlUserDataUtils()
 {
-    // _manager->removeAllDatabaseConnections();
-    // QFile::remove(_manager->getDictionaryDatabasePath());
-    // QFile::remove(_manager->getUserDatabasePath());
+    _manager->removeAllDatabaseConnections();
+    QFile::remove(_manager->getDictionaryDatabasePath());
+    QFile::remove(_manager->getUserDatabasePath());
 }
 
 void TestSqlUserDataUtils::createV3Database(const QString &dbPath)
