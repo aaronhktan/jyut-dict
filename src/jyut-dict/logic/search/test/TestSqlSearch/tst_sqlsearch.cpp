@@ -79,16 +79,13 @@ private slots:
 
 private:
     void createV3Database(const QString &dbPath);
-    void removeDatabase();
 
     std::shared_ptr<SQLDatabaseManager> _manager;
-    SQLDatabaseUtils *_utils;
 };
 
 TestSqlSearch::TestSqlSearch()
 {
     _manager = std::make_shared<SQLDatabaseManager>();
-    _utils = new SQLDatabaseUtils{_manager};
 
     createV3Database(_manager->getDictionaryDatabasePath());
 }
