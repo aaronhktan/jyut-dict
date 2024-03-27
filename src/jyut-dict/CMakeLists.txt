@@ -167,6 +167,7 @@ target_link_libraries(CantoneseDictionary
 
 add_subdirectory(logic/database/test/TestSqlDatabaseManager)
 add_subdirectory(logic/database/test/TestSqlDatabaseUtils)
+add_subdirectory(logic/database/test/TestSqlUserDataUtils)
 add_subdirectory(logic/entry/test/TestDefinitionsSet)
 add_subdirectory(logic/entry/test/TestEntry)
 add_subdirectory(logic/search/test/TestSqlSearch)
