@@ -133,7 +133,7 @@ void HistoryWindow::setStyle(bool use_dark)
 #endif
 }
 
-void HistoryWindow::forwardSearchHistoryItem(const searchTermHistoryItem &pair)
+void HistoryWindow::forwardSearchHistoryItem(const SearchTermHistoryItem &pair)
 {
     emit searchHistoryClicked(pair);
 }

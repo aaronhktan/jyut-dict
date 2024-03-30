@@ -29,11 +29,11 @@ public:
     explicit SearchHistoryListModel(std::shared_ptr<ISearchObservable> sqlHistoryUtils,
                                     QObject *parent = nullptr);
     ~SearchHistoryListModel() override;
-
-    void callback(const std::vector<searchTermHistoryItem> &searchTerms,
+    
+    void callback(const std::vector<SearchTermHistoryItem> &searchTerms,
                   bool emptyQuery) override;
-    void setEntries(const std::vector<searchTermHistoryItem> &searchTerms);
-    void setEntries(const std::vector<searchTermHistoryItem> &searchTerms, bool emptyQuery);
+    void setEntries(const std::vector<SearchTermHistoryItem> &searchTerms);
+    void setEntries(const std::vector<SearchTermHistoryItem> &searchTerms, bool emptyQuery);
     void setEmpty(void);
 
     void translateUI(void);
@@ -45,7 +45,7 @@ public:
                         int role = Qt::DisplayRole) const override;
 
 private:
-    std::vector<searchTermHistoryItem> _searchTerms;
+    std::vector<SearchTermHistoryItem> _searchTerms;
 
     std::shared_ptr<ISearchObservable> _sqlHistoryUtils;
 };

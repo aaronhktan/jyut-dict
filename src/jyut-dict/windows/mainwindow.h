@@ -137,7 +137,7 @@ private:
     void closeEvent(QCloseEvent *event) override;
 
 signals:
-    void searchHistoryClicked(const searchTermHistoryItem &pair);
+    void searchHistoryClicked(const SearchTermHistoryItem &pair);
     void viewHistoryClicked(const Entry &entry);
 
     void favouriteCurrentEntry(void);
@@ -157,7 +157,7 @@ public slots:
                                std::string description,
                                bool showIfNoUpdate = false);
     void notifyDatabaseMigration(void);
-    void forwardSearchHistoryItem(const searchTermHistoryItem &pair);
+    void forwardSearchHistoryItem(const SearchTermHistoryItem &pair);
     void forwardViewHistoryItem(const Entry &entry);
     void updateStyleRequested(void);
 };

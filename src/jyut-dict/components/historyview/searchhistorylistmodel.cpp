@@ -14,18 +14,18 @@ SearchHistoryListModel::~SearchHistoryListModel()
     _sqlHistoryUtils->deregisterObserver(this);
 }
 
-void SearchHistoryListModel::callback(const std::vector<searchTermHistoryItem> &searchTerms,
+void SearchHistoryListModel::callback(const std::vector<SearchTermHistoryItem> &searchTerms,
                                       bool emptyQuery)
 {
     setEntries(searchTerms, emptyQuery);
 }
 
-void SearchHistoryListModel::setEntries(const std::vector<searchTermHistoryItem> &searchTerms)
+void SearchHistoryListModel::setEntries(const std::vector<SearchTermHistoryItem> &searchTerms)
 {
     setEntries(searchTerms, false);
 }
 
-void SearchHistoryListModel::setEntries(const std::vector<searchTermHistoryItem> &searchTerms, bool emptyQuery) {
+void SearchHistoryListModel::setEntries(const std::vector<SearchTermHistoryItem> &searchTerms, bool emptyQuery) {
     beginResetModel();
     _searchTerms = searchTerms;
     if (_searchTerms.empty() && !emptyQuery) {
@@ -36,10 +36,10 @@ void SearchHistoryListModel::setEntries(const std::vector<searchTermHistoryItem>
 
 void SearchHistoryListModel::setEmpty(void)
 {
-    searchTermHistoryItem pair{tr("No search history...").toStdString(),
+    SearchTermHistoryItem pair{tr("No search history...").toStdString(),
                                      -1};
-
-    setEntries(std::vector<searchTermHistoryItem>{pair});
+    
+    setEntries(std::vector<SearchTermHistoryItem>{pair});
 }
 
 void SearchHistoryListModel::translateUI(void)

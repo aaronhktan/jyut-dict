@@ -22,14 +22,14 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
                                const QStyleOptionViewItem &option,
                                const QModelIndex &index) const
 {
-    if (!index.data().canConvert<searchTermHistoryItem>()) {
+    if (!index.data().canConvert<SearchTermHistoryItem>()) {
         return;
     }
 
     painter->save();
-
-    searchTermHistoryItem pair
-        = qvariant_cast<searchTermHistoryItem>(index.data());
+    
+    SearchTermHistoryItem pair
+        = qvariant_cast<SearchTermHistoryItem>(index.data());
 
     // Use -1 to indicate that this is not a valid history item
     bool isEmptyPair = (pair.second == -1);
@@ -199,9 +199,9 @@ QSize SearchHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
                                           const QModelIndex &index) const
 {
     (void) (option);
-
-    searchTermHistoryItem pair
-        = qvariant_cast<searchTermHistoryItem>(index.data());
+    
+    SearchTermHistoryItem pair
+        = qvariant_cast<SearchTermHistoryItem>(index.data());
     bool isEmptyPair = (pair.second == -1);
 
     Settings::InterfaceSize interfaceSize
