@@ -85,7 +85,7 @@ Place the database, named `dict.db`, in `src/jyut-dict/resources/db/`
 1. Install [Craft](https://community.kde.org/Craft).
 2. Install various dependencies using Craft:
 ```
-craft libs/qt/multimedia
+craft libs/qt/qtmultimedia
 craft libs/qt/qtspeech
 craft karchive
 ```
