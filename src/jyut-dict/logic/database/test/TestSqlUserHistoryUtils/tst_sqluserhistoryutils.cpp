@@ -1,8 +1,12 @@
+#include "logic/database/sqldatabasemanager.h"
+#include "logic/database/sqluserhistoryutils.h"
+
 #include <QCoreApplication>
 #include <QtTest>
+#include <QSqlError>
+#include <QSqlQuery>
 
-#include "logic/database/sqldatabasemanager.h"
-#include "logic/database/sqluserdatautils.h"
+#include <thread>
 
 namespace {
 constexpr auto dbCreateConnName = "dbCreateConn";
@@ -10,22 +14,21 @@ constexpr auto dbCreateConnName = "dbCreateConn";
 class TestObserver : public ISearchObserver
 {
 public:
-    void setExpected(bool entryExists, const Entry &entry)
-    {
-        _entryExists = entryExists;
-        _entry = entry;
+    void setExpected(const std::vector<SearchTermHistoryItem> &results) {
+        _results = results;
     }
     void setExpected(const std::vector<Entry> &entries) { _entries = entries; }
-    void callback(const std::vector<Entry> &entries, bool emptyQuery) override
+
+    void callback(const std::vector<SearchTermHistoryItem> &results, bool emptyQuery) override
     {
-        if (entries != _entries) {
+        if (results != _results) {
             testFailed = true;
         }
         resultsReady.notify_one();
     }
-    void callback(bool entryExists, const Entry &entry) override
+    void callback(const std::vector<Entry> &entries, bool emptyQuery) override
     {
-        if ((entryExists != _entryExists) || (entry != _entry)) {
+        if (entries != _entries) {
             testFailed = true;
         }
         resultsReady.notify_one();
@@ -37,23 +40,22 @@ public:
 
 private:
     bool _entryExists;
-    Entry _entry;
+    std::vector<SearchTermHistoryItem> _results;
     std::vector<Entry> _entries;
 };
 } // namespace
 
-class TestSqlUserDataUtils : public QObject
+class TestSqlUserHistoryUtils : public QObject
 {
     Q_OBJECT
 
 public:
-    TestSqlUserDataUtils();
-    ~TestSqlUserDataUtils();
+    TestSqlUserHistoryUtils();
+    ~TestSqlUserHistoryUtils();
 
 private slots:
-    void favouriteUnfavouriteEntry();
-    void checkIfEntryHasBeenFavourited();
-    void searchForAllFavouritedWords();
+    void searchHistory();
+    void viewHistory();
 
 private:
     void createV3Database(const QString &dbPath);
@@ -62,22 +64,20 @@ private:
     std::shared_ptr<SQLDatabaseManager> _manager;
 };
 
-TestSqlUserDataUtils::TestSqlUserDataUtils()
-{
+TestSqlUserHistoryUtils::TestSqlUserHistoryUtils() {
     _manager = std::make_shared<SQLDatabaseManager>();
 
     createV3Database(_manager->getDictionaryDatabasePath());
     createV1UserDatabase(_manager->getUserDatabasePath());
 }
 
-TestSqlUserDataUtils::~TestSqlUserDataUtils()
-{
+TestSqlUserHistoryUtils::~TestSqlUserHistoryUtils() {
     _manager->removeAllDatabaseConnections();
     QFile::remove(_manager->getDictionaryDatabasePath());
     QFile::remove(_manager->getUserDatabasePath());
 }
 
-void TestSqlUserDataUtils::createV3Database(const QString &dbPath)
+void TestSqlUserHistoryUtils::createV3Database(const QString &dbPath)
 {
     QFile databaseFile{dbPath};
     QDir databaseDir{QFileInfo{databaseFile.fileName()}.absolutePath()};
@@ -260,7 +260,7 @@ void TestSqlUserDataUtils::createV3Database(const QString &dbPath)
     QSqlDatabase::removeDatabase(dbCreateConnName);
 }
 
-void TestSqlUserDataUtils::createV1UserDatabase(const QString &dbPath)
+void TestSqlUserHistoryUtils::createV1UserDatabase(const QString &dbPath)
 {
     QFile databaseFile{dbPath};
     QDir databaseDir{QFileInfo{databaseFile.fileName()}.absolutePath()};
@@ -320,68 +320,95 @@ void TestSqlUserDataUtils::createV1UserDatabase(const QString &dbPath)
     QSqlDatabase::removeDatabase(dbCreateConnName);
 }
 
-void TestSqlUserDataUtils::favouriteUnfavouriteEntry()
+void TestSqlUserHistoryUtils::searchHistory() {
+    TestObserver observer;
+    SQLUserHistoryUtils utils{_manager};
+
+    utils.registerObserver(&observer);
+
+    std::vector<SearchTermHistoryItem> results = {{"hello", static_cast<int>(SearchParameters::ENGLISH)}};
+    observer.setExpected(results);
+    utils.addSearchToHistory(results.back().first, results.back().second);
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    utils.searchAllSearchHistory();
+    {
+        std::unique_lock lock{observer.mutex};
+        observer.resultsReady.wait(lock);
+        QCOMPARE(observer.testFailed, false);
+    }
+
+    results.emplace_back("旺角", static_cast<int>(SearchParameters::TRADITIONAL));
+    observer.setExpected(results);
+    utils.addSearchToHistory(results.back().first, results.back().second);
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    utils.searchAllSearchHistory();
+    {
+        std::unique_lock lock{observer.mutex};
+        observer.resultsReady.wait(lock);
+        QCOMPARE(observer.testFailed, false);
+    }
+
+    results = {};
+    observer.setExpected(results);
+    utils.clearAllSearchHistory();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    utils.searchAllSearchHistory();
+    {
+        std::unique_lock lock{observer.mutex};
+        observer.resultsReady.wait(lock);
+        QCOMPARE(observer.testFailed, false);
+    }
+}
+
+void TestSqlUserHistoryUtils::viewHistory()
 {
     TestObserver observer;
-    SQLUserDataUtils utils{_manager};
+    SQLUserHistoryUtils utils{_manager};
 
     utils.registerObserver(&observer);
 
     std::vector<DefinitionsSet> definitions = {
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
-    Entry expected{"白云山",
-                   "白雲山",
-                   "baak6 wan4 saan1",
-                   "bai2 yun2 shan1",
-                   definitions};
-    observer.setExpected(true, expected);
-    observer.setExpected({expected});
+    Entry originalEntry{"白云山",
+                        "白雲山",
+                        "baak6 wan4 saan1",
+                        "bai2 yun2 shan1",
+                        definitions};
 
-    // Technically there could be a race between the two condvar waits,
-    // but I don't care enough to check for that in a test.
-    utils.favouriteEntry(expected);
-    {
-        // After favouriting an entry, SQLUserDataUtils will
-        // check that it has been favourited.
-        // The reason for this behaviour is to refresh the
-        // status of the "favourite" button in the GUI.
-        std::unique_lock lock{observer.mutex};
-        observer.resultsReady.wait(lock);
-        QCOMPARE(observer.testFailed, false);
-    }
-    {
-        // After checking for favouriting, it'll search for
-        // all favourite words. The reason for this search
-        // is to refresh the favourited words window in the GUI.
-        std::unique_lock lock{observer.mutex};
-        observer.resultsReady.wait(lock);
-        QCOMPARE(observer.testFailed, false);
-    }
-
-    // Expect the list of favourited entries to be empty
-    // after unfavouriting
-    observer.setExpected(false, expected);
-    observer.setExpected({});
-    utils.unfavouriteEntry(expected);
-    {
-        std::unique_lock lock{observer.mutex};
-        observer.resultsReady.wait(lock);
-        QCOMPARE(observer.testFailed, false);
-    }
+    // The result we get back from the database should have no definitions.
+    Entry expectedEntry{"白云山",
+                        "白雲山",
+                        "baak6 wan4 saan1",
+                        "bai2 yun2 shan1",
+                        {}};
+    std::vector<Entry> expected = {expectedEntry};
+    observer.setExpected(expected);
+    utils.addViewToHistory(originalEntry);
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    utils.searchAllViewHistory();
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
 
-    // Unfavouriting a word should be idempotent
-    utils.unfavouriteEntry(expected);
+    expected.emplace_back(Entry{"更", "更", "gang3", "geng4", {}});
+    observer.setExpected(expected);
+    utils.addViewToHistory(expected.back());
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    utils.searchAllViewHistory();
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
+
+    expected = {};
+    observer.setExpected(expected);
+    utils.clearAllViewHistory();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    utils.searchAllViewHistory();
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
@@ -389,124 +416,6 @@ void TestSqlUserDataUtils::favouriteUnfavouriteEntry()
     }
 }
 
-void TestSqlUserDataUtils::checkIfEntryHasBeenFavourited()
-{
-    TestObserver observer;
-    SQLUserDataUtils utils{_manager};
+QTEST_MAIN(TestSqlUserHistoryUtils)
 
-    utils.registerObserver(&observer);
-
-    Entry expected{"更", "更", "gang3", "geng4", {}};
-    observer.setExpected(false, expected);
-    observer.setExpected({});
-
-    // Entry should not be favourited when list is empty
-    utils.checkIfEntryHasBeenFavourited(expected);
-    {
-        std::unique_lock lock{observer.mutex};
-        observer.resultsReady.wait(lock);
-        QCOMPARE(observer.testFailed, false);
-    }
-
-    // Add to list of favourited words, and it should appear.
-    std::vector<DefinitionsSet> definitions = {
-        {"CC-CANTO", {{"more", "adverb", {}}}},
-    };
-    expected = {"更", "更", "gang3", "geng4", definitions};
-    observer.setExpected(true, expected);
-    observer.setExpected({expected});
-
-    utils.favouriteEntry(expected);
-    {
-        std::unique_lock lock{observer.mutex};
-        observer.resultsReady.wait(lock);
-        QCOMPARE(observer.testFailed, false);
-    }
-    {
-        std::unique_lock lock{observer.mutex};
-        observer.resultsReady.wait(lock);
-        QCOMPARE(observer.testFailed, false);
-    }
-
-    utils.checkIfEntryHasBeenFavourited(expected);
-    {
-        std::unique_lock lock{observer.mutex};
-        observer.resultsReady.wait(lock);
-        QCOMPARE(observer.testFailed, false);
-    }
-
-    observer.setExpected(false, expected);
-    observer.setExpected({});
-    utils.unfavouriteEntry(expected);
-    {
-        std::unique_lock lock{observer.mutex};
-        observer.resultsReady.wait(lock);
-        QCOMPARE(observer.testFailed, false);
-    }
-    {
-        std::unique_lock lock{observer.mutex};
-        observer.resultsReady.wait(lock);
-        QCOMPARE(observer.testFailed, false);
-    }
-}
-
-void TestSqlUserDataUtils::searchForAllFavouritedWords()
-{
-    TestObserver observer;
-    SQLUserDataUtils utils{_manager};
-
-    utils.registerObserver(&observer);
-
-    // Initially, the list of favourited words should be empty.
-    observer.setExpected({});
-    utils.searchForAllFavouritedWords();
-    {
-        std::unique_lock lock{observer.mutex};
-        observer.resultsReady.wait(lock);
-        QCOMPARE(observer.testFailed, false);
-    }
-
-    std::vector<DefinitionsSet> definitions = {
-        {"CC-CANTO", {{"more", "adverb", {}}}},
-    };
-    Entry expected = {"更", "更", "gang3", "geng4", definitions};
-    observer.setExpected(true, expected);
-    observer.setExpected({expected});
-
-    utils.favouriteEntry(expected);
-    {
-        std::unique_lock lock{observer.mutex};
-        observer.resultsReady.wait(lock);
-        QCOMPARE(observer.testFailed, false);
-    }
-    {
-        std::unique_lock lock{observer.mutex};
-        observer.resultsReady.wait(lock);
-        QCOMPARE(observer.testFailed, false);
-    }
-
-    utils.searchForAllFavouritedWords();
-    {
-        std::unique_lock lock{observer.mutex};
-        observer.resultsReady.wait(lock);
-        QCOMPARE(observer.testFailed, false);
-    }
-
-    observer.setExpected(false, expected);
-    observer.setExpected({});
-    utils.unfavouriteEntry(expected);
-    {
-        std::unique_lock lock{observer.mutex};
-        observer.resultsReady.wait(lock);
-        QCOMPARE(observer.testFailed, false);
-    }
-    {
-        std::unique_lock lock{observer.mutex};
-        observer.resultsReady.wait(lock);
-        QCOMPARE(observer.testFailed, false);
-    }
-}
-
-QTEST_MAIN(TestSqlUserDataUtils)
-
-#include "tst_sqluserdatautils.moc"
+#include "tst_sqluserhistoryutils.moc"

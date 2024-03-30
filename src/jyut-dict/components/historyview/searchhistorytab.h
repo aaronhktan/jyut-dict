@@ -42,7 +42,7 @@ private:
     QPushButton *_clearAllSearchHistoryButton;
 
 signals:
-    void searchHistoryClicked(const searchTermHistoryItem &pair);
+    void searchHistoryClicked(const SearchTermHistoryItem &pair);
 
 public slots:
     void updateStyleRequested(void);

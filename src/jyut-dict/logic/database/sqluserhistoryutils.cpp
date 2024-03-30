@@ -22,7 +22,7 @@ void SQLUserHistoryUtils::deregisterObserver(ISearchObserver *observer)
     _observers.remove(observer);
 }
 
-void SQLUserHistoryUtils::notifyObservers(const std::vector<searchTermHistoryItem> &results,
+void SQLUserHistoryUtils::notifyObservers(const std::vector<SearchTermHistoryItem> &results,
                                           bool emptyQuery)
 {
     std::lock_guard<std::mutex> notifyLock{_notifyMutex};
@@ -142,7 +142,7 @@ void SQLUserHistoryUtils::addViewToHistoryThread(const Entry &entry)
 
 void SQLUserHistoryUtils::searchAllSearchHistoryThread(void)
 {
-    std::vector<searchTermHistoryItem> results;
+    std::vector<SearchTermHistoryItem> results;
 
     QSqlQuery query{_manager->getDatabase()};
 
