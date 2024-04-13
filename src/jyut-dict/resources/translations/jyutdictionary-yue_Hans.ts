@@ -407,7 +407,7 @@
     <message>
         <location filename="../../dialogs/downloadaudiodialog.cpp" line="+12"/>
         <source>To use this option for text-to-speech, files must be downloaded. Would you like to download them now?</source>
-        <translation>你必须下载音频文件先可以拣呢个选项。你想唔想而家开始下载？</translation>
+        <translation>你一定要下载音频文件先可以拣呢个选项。你想唔想即刻下载？</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -955,7 +955,7 @@ Hang tight!</source>
     <message>
         <location line="+6"/>
         <source>Start typing to search for words</source>
-        <translation>一开始打字就揾到嘢噶啦！</translation>
+        <translation>一打字就查到词典噶啦！</translation>
     </message>
     <message>
         <location line="+11"/>
