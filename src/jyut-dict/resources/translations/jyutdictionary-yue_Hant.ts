@@ -407,7 +407,7 @@
     <message>
         <location filename="../../dialogs/downloadaudiodialog.cpp" line="12"/>
         <source>To use this option for text-to-speech, files must be downloaded. Would you like to download them now?</source>
-        <translation>你必須下載音訊檔案先可以揀呢個選項。你想唔想而家開始下載？</translation>
+        <translation>你一定要下載音訊檔案先可以揀呢個選項。你想唔想即刻下載？</translation>
     </message>
     <message>
         <location filename="../../dialogs/downloadaudiodialog.cpp" line="15"/>
@@ -951,7 +951,7 @@ Hang tight!</source>
     <message>
         <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="92"/>
         <source>Start typing to search for words</source>
-        <translation>一開始打字就搵到嘢㗎啦！</translation>
+        <translation>一打字就查到辭典㗎啦！</translation>
     </message>
     <message>
         <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="103"/>
@@ -978,7 +978,7 @@ Hang tight!</source>
     <message>
         <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="125"/>
         <source>Clicking the &quot;save&quot; button when viewing a word or phrase adds it to this list. Try adding a word that sounds cool!</source>
-        <translation>揿“儲存”掣嚟儲存词语。最好加個得意啲嘅！</translation>
+        <translation>揿“儲存”掣嚟儲存詞語。最好加個得意啲嘅！</translation>
     </message>
     <message>
         <location filename="../../components/entrysearchresult/resultlistmodel.cpp" line="131"/>
@@ -1068,7 +1068,7 @@ Hang tight!</source>
     <message>
         <location filename="../../components/mainwindow/searchlineedit.cpp" line="139"/>
         <source>Search</source>
-        <translation>查粤语辭典…</translation>
+        <translation>查粵語辭典…</translation>
     </message>
 </context>
 <context>
