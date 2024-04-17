@@ -13,6 +13,7 @@ EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     _updateUITimer = new QTimer{this};
 
     setFrameShape(QFrame::NoFrame);
+    verticalScrollBar()->setFocusPolicy(Qt::StrongFocus);
 
     _scrollAreaWidget = new EntryScrollAreaWidget{sqlUserUtils, manager, this};
 
@@ -84,7 +85,43 @@ void EntryScrollArea::keyPressEvent(QKeyEvent *event)
 {
     if (isWindow() && event->key() == Qt::Key_Escape) {
         close();
+        return;
+    } else {
+        // Not sure why setting the focus policy of the scroll bar
+        // doesn't work, but this is a workaround!
+        switch (event->key()) {
+        case Qt::Key_Down: {
+            verticalScrollBar()->triggerAction(
+                QAbstractSlider::SliderSingleStepAdd);
+            break;
+        }
+        case Qt::Key_Up: {
+            verticalScrollBar()->triggerAction(
+                QAbstractSlider::SliderSingleStepSub);
+            break;
+        }
+        case Qt::Key_PageDown: {
+            verticalScrollBar()->triggerAction(
+                QAbstractSlider::SliderPageStepAdd);
+            break;
+        }
+        case Qt::Key_PageUp: {
+            verticalScrollBar()->triggerAction(
+                QAbstractSlider::SliderPageStepSub);
+            break;
+        }
+        case Qt::Key_Home: {
+            verticalScrollBar()->triggerAction(QAbstractSlider::SliderToMinimum);
+            break;
+        }
+        case Qt::Key_End: {
+            verticalScrollBar()->triggerAction(QAbstractSlider::SliderToMaximum);
+            break;
+        }
+        }
+        return;
     }
+    QWidget::keyPressEvent(event);
 }
 
 void EntryScrollArea::setEntry(const Entry &entry)
