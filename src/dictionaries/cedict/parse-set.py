@@ -235,7 +235,7 @@ if __name__ == "__main__":
         )
         print(
             "e.g. python3 -m cedict.parse-set cedict/developer/eng.db "
-            "cedict/data/CC-CEDICT.txt cedict/data/CC-CANTO.txt cedict/data/READINGS.txt"
+            "cedict/data/CC-CEDICT.txt cedict/data/CC-CANTO.txt cedict/data/FULLREADINGS.txt"
         )
         sys.exit(1)
 

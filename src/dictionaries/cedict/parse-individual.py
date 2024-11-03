@@ -87,21 +87,32 @@ def parse_file(filename, entries):
             trad = split[0]
             simp = split[1]
             pin = line[line.index("[") + 1 : line.index("]")].lower().replace("v", "u:")
-            jyut = pinyin_jyutping_sentence.jyutping(
-                trad,
-                tone_numbers=True,
-                spaces=True,
-            )
+            has_jyut = False
+            if "{" in line:
+                jyut = line[line.index("{") + 1 : line.index("}")].lower()
+                has_jyut = True
+            else:
+                jyut = pinyin_jyutping_sentence.jyutping(
+                    trad,
+                    tone_numbers=True,
+                    spaces=True,
+                )
 
-            # If pinyin_jyutping_sentences cannot convert to Jyutping, use
-            # pycantonese to convert the character instead
-            han_chars = HAN_REGEX.findall(jyut)
-            for char in han_chars:
-                char_jyutping = pycantonese.characters_to_jyutping(char)[0][1]
-                if char_jyutping:
-                    jyut = jyut.replace(char, char_jyutping)
+                # If pinyin_jyutping_sentences cannot convert to Jyutping, use
+                # pycantonese to convert the character instead
+                han_chars = HAN_REGEX.findall(jyut)
+                for char in han_chars:
+                    char_jyutping = pycantonese.characters_to_jyutping(char)[0][1]
+                    if char_jyutping:
+                        jyut = jyut.replace(char, char_jyutping)
+
             definitions = line[line.index("/") + 1 : -2].split("/")
+
             entry = objects.Entry(trad=trad, simp=simp, pin=pin, defs=definitions)
+            if has_jyut:
+                entry.add_jyutping(jyut)
+            else:
+                entry.add_fuzzy_jyutping(jyut)
 
             if trad in entries:
                 entries[trad].append(entry)

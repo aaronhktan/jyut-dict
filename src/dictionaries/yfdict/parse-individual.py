@@ -197,7 +197,7 @@ if __name__ == "__main__":
         print(
             (
                 "Usage: python3 -m yfdict.parse-individual <database filename> "
-                "<CC_CEDICT file> <Cantonese readings file> "
+                "<YFDICT file> <Cantonese readings file> "
                 "<source name> <source short name> "
                 "<source version> <source description> <source legal> "
                 "<source link> <source update url> <source other>"
@@ -206,7 +206,7 @@ if __name__ == "__main__":
         print(
             (
                 "e.g. python3 -m yfdict.parse-individual yfdict/developer/dict.db "
-                "yfdict/data/YFDICT.txt yfdict/data/READINGS.txt "
+                "yfdict/data/YFDICT.txt cedict/data/FULLREADINGS.txt "
                 'YFDICT YF 2024-11-02 "YFDICT est un dictionnaire cantonais-français créé par Aaron Tan." '
                 '"Cette création est mise à disposition sous un contrat Creative Commons Paternité - Partage des Conditions Initiales à l\'Identique." '
                 '"http://cantonais.org/telecharger" "http://cantonais.org/telecharger" "words"'

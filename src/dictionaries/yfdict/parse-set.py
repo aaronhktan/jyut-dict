@@ -275,7 +275,7 @@ if __name__ == "__main__":
         )
         print(
             "e.g. python3 -m yfdict.parse-set yfdict/developer/yfdict.db "
-            "cedict/data/CFDICT.txt cedict/data/YFDICT.txt cedict/data/READINGS.txt"
+            "cedict/data/CFDICT.txt cedict/data/YFDICT.txt cedict/data/FULLREADINGS.txt"
         )
         sys.exit(1)
 
