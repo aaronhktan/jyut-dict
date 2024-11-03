@@ -34,7 +34,12 @@ def parse_cc_canto(filename, entries):
             if len(line) == 0 or line[0] == "#":
                 continue
 
-            split = line.split()  # Splits by whitespace
+            split = line.split()
+            if not split:
+                continue
+            if split[0].startswith("????"):
+                split = split[1:]
+
             trad = split[0]
             simp = split[1]
             pin = line[line.index("[") + 1 : line.index("]")].lower().replace("v", "u:")
@@ -98,7 +103,7 @@ if __name__ == "__main__":
         )
         print(
             "e.g. python3 -m cedict.generate-readings cedict/data/FULLREADINGS.txt "
-            "cedict/data/CC-CANTO.txt cedict/dataREADINGS.txt"
+            "cedict/data/CC-CANTO.txt cedict/data/READINGS.txt"
         )
         sys.exit(1)
 
