@@ -1,3 +1,12 @@
+jyut-dict (3.25.0304) bionic; urgency=medium
+
+  * Support for detection of script when searching.
+  * Support for using pre-generated audio files for pronunciation.
+  * Improved ranking to prioritize Cantonese.
+  * Bug fixes.
+
+ -- Aaron Tan <hi@aaronhktan.com>  Tue, 4 Mar 2025 16:22:51 -0500
+
 jyut-dict (2.23.0408) bionic; urgency=medium
 
   * Support for Yale, Bopomofo, and IPA.

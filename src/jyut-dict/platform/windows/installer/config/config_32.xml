@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Installer>
     <Name>Jyut Dictionary</Name>
-    <Version>2023-04-08</Version>
+    <Version>2025-03-04</Version>
     <Title>Jyut Dictionary</Title>
     <Publisher>Aaron Tan</Publisher>
     <StartMenuDir>Jyut Dictionary</StartMenuDir>
