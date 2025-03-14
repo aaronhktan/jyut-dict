@@ -1,3 +1,0 @@
-shlibs:Depends=libc6 (>= 2.14), libgcc1 (>= 1:3.0), qt515base (>=5.15.2-1basyskom4), qt515speech (>=5.15.2-1basyskom1), qt515svg (>=5.15.2-1basyskom1), libstdc++6 (>= 5.2)
-misc:Depends=
-misc:Pre-Depends=

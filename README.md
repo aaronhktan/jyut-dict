@@ -81,7 +81,7 @@ This project requires Qt 5.15.
 
 Place the database, named `dict.db`, in `src/jyut-dict/resources/db/`
 
-### macOS, Windows: Craft + Qt Creator
+### macOS, Windows, Linux: Craft + Qt Creator
 1. Install [Craft](https://community.kde.org/Craft).
 2. Install various dependencies using Craft:
 ```
@@ -92,24 +92,6 @@ craft karchive
 3. Set up Qt Creator with a kit from Craft, following instructions [here](https://community.kde.org/Craft#Using_Craft_with_an_IDE).
 4. Open CMakeLists.txt in Qt Creator, and define `CMAKE_CXX_FLAGS` as `-DPORTABLE -DDEBUG` in the CMake configuration if you would like to isolate your debug build from any system files.
 5. Compile and run!
-
-#### Ubuntu: Manual Git clone + Qt Creator
-This guide assumes you have already installed Qt 5.15.2 using the online installer to `~/Qt`, with the Qt Multimedia and Qt Speech plugins.
-1. Clone KArchive and check out `tags/v5.114.0`. This is the last version of KArchive that is compatible with Qt 5.
-```
-git clone https://github.com/KDE/karchive.git
-cd karchive
-git checkout tags/v5.114.0
-```
-2. Build according to KArchive instructions:
-```
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX=~/Qt/5.15.2/gcc_64
-make
-sudo make install
-```
-3. Open CMakeLists.txt in Qt Creator, and define `CMAKE_CXX_FLAGS` as `-DPORTABLE -DDEBUG` in the CMake configuration if you would like to isolate your debug build from any system files.
-4. Compile and run!
 
 ## Packaging for release
 
