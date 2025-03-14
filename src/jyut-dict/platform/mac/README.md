@@ -9,7 +9,7 @@ Codesigning and Notarizing
 - Use XCode to generate a Developer ID certificate: Preferences > Accounts > Manage Certificates... > + (lower left corner) > Developer ID Application.
 - BEFORE GENERATING THE DMG: codesign the generated .app bundle: `codesign -f --deep -v --options runtime -s 'Developer ID Application: {name of developer ID}' {app_name}.app`. You can find the name of the developer ID in Keychain, under `Certificates`; it'll have the format `Developer ID Application: <name> (<alphanumeric string>)`.
 - AFTER GENERATING THE DMG: codesign the .dmg: `codesign -f --deep -v --options runtime -s 'Developer ID Application: {name of developer ID}' {app_name}.dmg`.
-- Upload the codesigned .dmg file: `xcrun altool --notarize-app --primary-bundle-id '{bundle_ID}' --username '{apple_username}' --password '{apple_password}' --file {app_name}.dmg`.
+- Upload the codesigned .dmg file: `xcrun notarytool store-credentials` (on first run), and then `xcrun notarytool submit {app_name}.dmg --keychain-profile "{credential name}"`.
 - Staple the notarization info to the .dmg: `xcrun stapler staple {app_name}.dmg`.
 - For the portable version, you can just codesign the .app bundle, upload the zipped version, and then staple the .app bundle before zipping again. Stapling does not work on .zips.
 
