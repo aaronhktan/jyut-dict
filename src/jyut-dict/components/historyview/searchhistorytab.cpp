@@ -124,7 +124,7 @@ void SearchHistoryTab::setStyle(bool use_dark)
 
 void SearchHistoryTab::handleClick(const QModelIndex &selection)
 {
-    SearchTermHistoryItem pair = qvariant_cast<SearchTermHistoryItem>(
+    searchTermHistoryItem pair = qvariant_cast<searchTermHistoryItem>(
         selection.data());
     bool isEmptyPair = pair.second == -1;
     if (isEmptyPair) {

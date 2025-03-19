@@ -38,8 +38,6 @@ public:
     void clearAllViewHistory(void);
 
 private:
-    void notifyObservers(const std::vector<searchTermHistoryItem> &results,
-                         bool emptyQuery) override;
     using ISearchObservable::notifyObservers;
     void notifyObservers(const std::vector<searchTermHistoryItem> &results,
                          bool emptyQuery);

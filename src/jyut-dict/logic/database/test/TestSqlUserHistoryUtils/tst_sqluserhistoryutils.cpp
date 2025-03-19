@@ -14,12 +14,14 @@ constexpr auto dbCreateConnName = "dbCreateConn";
 class TestObserver : public ISearchObserver
 {
 public:
-    void setExpected(const std::vector<SearchTermHistoryItem> &results) {
+    void setExpected(const std::vector<searchTermHistoryItem> &results)
+    {
         _results = results;
     }
     void setExpected(const std::vector<Entry> &entries) { _entries = entries; }
 
-    void callback(const std::vector<SearchTermHistoryItem> &results, bool emptyQuery) override
+    void callback(const std::vector<searchTermHistoryItem> &results,
+                  bool emptyQuery) override
     {
         if (results != _results) {
             testFailed = true;
@@ -40,7 +42,7 @@ public:
 
 private:
     bool _entryExists;
-    std::vector<SearchTermHistoryItem> _results;
+    std::vector<searchTermHistoryItem> _results;
     std::vector<Entry> _entries;
 };
 } // namespace
@@ -326,7 +328,8 @@ void TestSqlUserHistoryUtils::searchHistory() {
 
     utils.registerObserver(&observer);
 
-    std::vector<SearchTermHistoryItem> results = {{"hello", static_cast<int>(SearchParameters::ENGLISH)}};
+    std::vector<searchTermHistoryItem> results = {
+        {"hello", static_cast<int>(SearchParameters::ENGLISH)}};
     observer.setExpected(results);
     utils.addSearchToHistory(results.back().first, results.back().second);
     std::this_thread::sleep_for(std::chrono::milliseconds(50));

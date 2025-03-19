@@ -3,7 +3,6 @@
 
 #include <QCoreApplication>
 #include <QFileInfo>
-#include <QMediaPlaylist>
 #include <QStandardPaths>
 #include <QVector>
 
@@ -162,7 +161,7 @@ int EntrySpeaker::speak(const QLocale::Language &language,
     }
     case TextToSpeech::SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS: {
         QString languageName = QLocale::languageToString(language) + "_"
-                               + QLocale::countryToString(country);
+                               + QLocale::territoryToString(country);
 
         std::vector<std::string> syllables;
         if (language == QLocale::Cantonese || country == QLocale::HongKong) {
@@ -174,7 +173,6 @@ int EntrySpeaker::speak(const QLocale::Language &language,
             ChineseUtils::segmentPinyin(mutableString, syllables);
         }
 
-        QMediaPlaylist *playlist = new QMediaPlaylist;
         for (const auto &syllable : syllables) {
             QString filepath = getAudioPath()
                                + QString{"%1/%2/%3/%4.mp3"}
@@ -186,10 +184,9 @@ int EntrySpeaker::speak(const QLocale::Language &language,
                 qDebug() << "File " << filepath << " does not exist";
             }
             QUrl url = QUrl::fromLocalFile(filepath);
-            playlist->addMedia(url);
+            _player->setSource(url);
+            _player->play();
         }
-        _player->setPlaylist(playlist);
-        _player->play();
         break;
     }
     }
