@@ -802,7 +802,7 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
     }
 }
 
-void MainWindow::forwardSearchHistoryItem(const SearchTermHistoryItem &pair)
+void MainWindow::forwardSearchHistoryItem(const searchTermHistoryItem &pair)
 {
     emit searchHistoryClicked(pair);
 }

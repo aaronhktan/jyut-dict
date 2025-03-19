@@ -279,8 +279,8 @@ void SQLSearch::searchByUnique(const QString &simplified,
 
     unsigned long long queryID = generateAndSetQueryID();
     auto future
-        = QtConcurrent::run(this,
-                            &SQLSearch::searchByUniqueThread,
+        = QtConcurrent::run(&SQLSearch::searchByUniqueThread,
+                            this,
                             simplified.normalized(QString::NormalizationForm_C),
                             traditional.normalized(QString::NormalizationForm_C),
                             jyutping.normalized(QString::NormalizationForm_C),

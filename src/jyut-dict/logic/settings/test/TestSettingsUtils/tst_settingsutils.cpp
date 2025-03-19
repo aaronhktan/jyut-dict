@@ -27,14 +27,8 @@ private slots:
 TestSettingsUtils::TestSettingsUtils()
 {
     qRegisterMetaType<EntryCharactersOptions>("EntryCharactersOptions");
-    qRegisterMetaTypeStreamOperators<EntryCharactersOptions>(
-        "EntryCharactersOptions");
     qRegisterMetaType<EntryPhoneticOptions>("EntryPhoneticOptions");
-    qRegisterMetaTypeStreamOperators<EntryPhoneticOptions>(
-        "EntryPhoneticOptions");
-    qRegisterMetaTypeStreamOperators<CantoneseOptions>("CantoneseOptions");
     qRegisterMetaType<MandarinOptions>("MandarinOptions");
-    qRegisterMetaTypeStreamOperators<MandarinOptions>("MandarinOptions");
     qRegisterMetaType<EntryColourPhoneticType>("EntryColourPhoneticType");
 }
 
