@@ -142,6 +142,7 @@ constexpr auto CN_STRING = QT_TRANSLATE_NOOP("strings", "CN");
 constexpr auto JP_STRING = QT_TRANSLATE_NOOP("strings", "JP");
 constexpr auto PY_STRING = QT_TRANSLATE_NOOP("strings", "PY");
 constexpr auto EN_STRING = QT_TRANSLATE_NOOP("strings", "EN");
+constexpr auto AD_STRING = QT_TRANSLATE_NOOP("strings", "AUTO");
 } // namespace Strings
 
 #endif // STRINGS_H

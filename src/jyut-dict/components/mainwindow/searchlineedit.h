@@ -42,7 +42,7 @@ private:
 
     void checkClearVisibility();
 
-    void addSearchTermToHistory(void) const;
+    void addSearchTermToHistory(SearchParameters parameters) const;
 
     ISearchOptionsMediator *_mediator;
     std::shared_ptr<ISearch> _search;

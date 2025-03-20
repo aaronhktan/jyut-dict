@@ -107,7 +107,7 @@ void SearchLineEdit::search()
         }
     }
 
-    addSearchTermToHistory();
+    addSearchTermToHistory(_parameters);
 }
 
 void SearchLineEdit::setupUI(void)
@@ -129,6 +129,7 @@ void SearchLineEdit::setupUI(void)
         if (_settings->value("Interface/searchAutoDetect", QVariant{true})
                 .toBool()) {
             _search->searchAutoDetect(text().trimmed());
+            addSearchTermToHistory(SearchParameters::AUTO_DETECT);
         } else {
             search();
         }
@@ -218,7 +219,7 @@ void SearchLineEdit::checkClearVisibility()
     }
 }
 
-void SearchLineEdit::addSearchTermToHistory(void) const
+void SearchLineEdit::addSearchTermToHistory(SearchParameters parameters) const
 {
     _timer->stop();
     disconnect(_timer, nullptr, nullptr, nullptr);
@@ -226,7 +227,7 @@ void SearchLineEdit::addSearchTermToHistory(void) const
     connect(_timer, &QTimer::timeout, this, [=]() {
         if (!text().isEmpty()) {
             _sqlHistoryUtils->addSearchToHistory(text().toStdString(),
-                                                 static_cast<int>(_parameters));
+                                                 static_cast<int>(parameters));
         }
     });
     _timer->start(500);
