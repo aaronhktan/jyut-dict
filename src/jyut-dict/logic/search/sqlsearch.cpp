@@ -42,7 +42,9 @@ void prepareJyutpingBindValues(const QString &searchTerm, QString &globTerm)
         = ChineseUtils::constructRomanisationQuery(jyutpingWords,
                                                    globJoinDelimiter);
 
-    globTerm = QString{"^"} + QString::fromStdString(query).replace("*", ".*")
+    globTerm = QString{"^"}
+               + QString::fromStdString(query).replace("*", ".*").replace("?",
+                                                                          ".")
                + QString{(searchExactMatch || dontAppendWildcard) ? "" : ".*"};
 }
 
