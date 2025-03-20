@@ -292,13 +292,13 @@ constexpr auto SEARCH_JYUTPING_EXISTS_QUERY = "SELECT EXISTS ( "
                                               "  SELECT "
                                               "    rowid "
                                               "  FROM entries "
-                                              "  WHERE jyutping GLOB ? "
+                                              "  WHERE jyutping REGEXP ? "
                                               ") AS existence ";
 
 constexpr auto SEARCH_JYUTPING_QUERY
     = "WITH "
       "  matching_entry_ids AS ( "
-      "    SELECT rowid FROM entries WHERE jyutping GLOB ? "
+      "    SELECT rowid FROM entries WHERE jyutping REGEXP ? "
       "  ), "
       "  matching_definition_ids AS ( "
       "    SELECT definition_id, definition "

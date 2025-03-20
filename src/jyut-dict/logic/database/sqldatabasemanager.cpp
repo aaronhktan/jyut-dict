@@ -164,9 +164,10 @@ bool SQLDatabaseManager::openDatabaseConnection(const QString &connectionName)
     try {
         copyDictionaryDatabase();
 
-        QSqlDatabase::database(connectionName)
-            .setDatabaseName(_dictionaryDatabasePath);
-        bool rv = QSqlDatabase::database(connectionName).open();
+        QSqlDatabase db = QSqlDatabase::database(connectionName);
+        db.setDatabaseName(_dictionaryDatabasePath);
+        db.setConnectOptions("QSQLITE_ENABLE_REGEXP");
+        bool rv = db.open();
         if (!rv) {
             throw std::runtime_error{"Couldn't open database..."};
         }
