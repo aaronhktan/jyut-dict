@@ -42,8 +42,8 @@ void prepareJyutpingBindValues(const QString &searchTerm, QString &globTerm)
         = ChineseUtils::constructRomanisationQuery(jyutpingWords,
                                                    globJoinDelimiter);
 
-    globTerm = QString::fromStdString(query)
-               + QString{(searchExactMatch || dontAppendWildcard) ? "" : "*"};
+    globTerm = QString{"^"} + QString::fromStdString(query).replace("*", ".*")
+               + QString{(searchExactMatch || dontAppendWildcard) ? "" : ".*"};
 }
 
 void preparePinyinBindValues(const QString &searchTerm, QString &globTerm)
