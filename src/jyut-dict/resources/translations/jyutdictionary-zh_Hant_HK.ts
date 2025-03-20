@@ -30,231 +30,231 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="218"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="223"/>
         <source>Automatically check for updates on startup:</source>
         <translation>自動檢查更新：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="221"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="226"/>
         <source>Enable dark mode:</source>
         <translation>使用「深色模式」：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="224"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="229"/>
         <source>Cantonese text-to-speech:</source>
         <translation>廣東話文字語言轉換（TTS)：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="225"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="229"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="230"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="234"/>
         <source>Qt</source>
         <translation>Qt</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="226"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="230"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="231"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="235"/>
         <source>Google</source>
         <translation>Google</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="228"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="233"/>
         <source>Mandarin text-to-speech:</source>
         <translation>普通話文字語言轉換（TTS)：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="245"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="250"/>
         <source>Export dictionaries file:</source>
         <translation>匯出你嘅辭典文件：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="247"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="252"/>
         <source>Export saved words and history:</source>
         <translation>匯出儲存嘅詞語同埋搵嘢紀錄：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="248"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="249"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="253"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="254"/>
         <source>Export</source>
         <translation>匯出</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="253"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="258"/>
         <source>Restore dictionaries file to last backed up version:</source>
         <translation>使用先前備份嘅辭典文件回復你嘅辭典：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="255"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="260"/>
         <source>Restore dictionaries file using exported file:</source>
         <translation>使用先前匯出嘅辭典文件回復你嘅辭典：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="257"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="262"/>
         <source>Restore saved words and history file using exported file:</source>
         <translation>使用先前匯出嘅文件回復儲存嘅詞語同埋搵嘢紀錄：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="258"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="259"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="260"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="263"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="264"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="265"/>
         <source>Restore</source>
         <translation>回復</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="264"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="269"/>
         <source>Application language:</source>
         <translation>程式語言：</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="274"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="279"/>
         <source>Reset all settings</source>
         <translation>重設所有設定</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="563"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="570"/>
         <source>Dictionary export succeeded!</source>
         <translation>辭典文件匯出成功！</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="564"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="571"/>
         <source>Dictionary export failed.</source>
         <translation>辭典文件匯出失敗。</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="566"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="573"/>
         <source>Exporting dictionaries...</source>
         <translation>匯出緊辭典文件…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="609"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="616"/>
         <source>Saved words and history export succeeded!</source>
         <translation>儲存嘅詞語同埋搵嘢紀錄匯出成功！</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="610"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="617"/>
         <source>Saved words and history export failed.</source>
         <translation>儲存嘅詞語同埋搵嘢紀錄匯出失敗。</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="612"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="619"/>
         <source>Exporting saved words and history...</source>
         <translation>匯出緊儲存嘅詞語同埋搵嘢紀錄…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="659"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="702"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="666"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="709"/>
         <source>Dictionary restore succeeded! %1 will now restart.</source>
         <translation>辭典回復成功！%1將立即重新啟動。</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="663"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="707"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="670"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="714"/>
         <source>Dictionary restore failed! %1 will now restart.</source>
         <translation>辭典回復失敗！%1將立即重新啟動。</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="667"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="716"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="674"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="723"/>
         <source>Restoring dictionary...</source>
         <translation>回復緊辭典文件…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="695"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="702"/>
         <source>Exported dictionary file path</source>
         <translation>另存新檔</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="751"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="758"/>
         <source>Exported saved words and history path</source>
         <translation>另存新檔</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="757"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="764"/>
         <source>Saved words and history restore succeeded! %1 will now restart.</source>
         <translation>儲存嘅詞語同埋搵嘢紀錄回復成功！%1將立即重新啟動。</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="761"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="768"/>
         <source>Saved words and history restore failed! %1 will now restart.</source>
         <translation>儲存嘅詞語同埋搵嘢紀錄回復失敗！%1將立即重新啟動。</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="770"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="777"/>
         <source>Restoring saved words and history...</source>
         <translation>回復緊儲存嘅詞語同埋搵嘢紀錄…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="837"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="844"/>
         <source>Downloading audio files...</source>
         <translation>下載緊音訊檔案…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="863"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="862"/>
         <source>Audio downloaded successfully!</source>
         <translation>音訊檔案下載成功！</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="864"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="863"/>
         <source>Audio could not be downloaded, error code %1.</source>
         <translation>音訊檔案下載失敗，錯誤碼 %1。</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="915"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="914"/>
         <source>Installing downloaded files...</source>
         <translation>安裝緊音訊檔案…</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="947"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="946"/>
         <source>Files installed successfully!</source>
         <translation>音訊檔案安裝成功！</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="948"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="947"/>
         <source>Files could not be installed.</source>
         <translation>音訊檔案安裝失敗。</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="265"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="270"/>
         <source>Use system language</source>
         <translation>系統默認</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="266"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="271"/>
         <source>English</source>
         <translation>英文</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="271"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="276"/>
         <source>Simplified Chinese</source>
         <translation>簡體中文</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="272"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="277"/>
         <source>Traditional Chinese</source>
         <translation>繁體中文</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="554"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="600"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="561"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="607"/>
         <source>Path to save exported database</source>
         <translation>將檔案儲存至</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="267"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="272"/>
         <source>French (CA)</source>
         <translation>法文（加拿大）</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="268"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="273"/>
         <source>French</source>
         <translation>法文</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="269"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="274"/>
         <source>Cantonese (Simplified)</source>
         <translation>簡體粵語</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="270"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="275"/>
         <source>Cantonese (Traditional)</source>
         <translation>繁體粵語</translation>
     </message>
@@ -719,7 +719,7 @@
         <translation>檢視呢一條詞條嘅所有例句…</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="1373"/>
+        <location filename="../../windows/mainwindow.cpp" line="1374"/>
         <source>Migrating database to new version...
 This might take a few minutes.
 Hang tight!</source>
@@ -1004,37 +1004,37 @@ Hang tight!</source>
         <translation>移除例句失敗</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="931"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="932"/>
         <source>Database versions do not match. Only dictionaries with the same versions can be added.</source>
         <translation>資料庫版本唔符合！只能可添加一樣版本嘅辭典。</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="934"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="935"/>
         <source>Current version is %1, file version is %2.</source>
         <translation>目前版本：%1，檔案版本：%2。</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="965"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="966"/>
         <source>Could not add new dictionaries. We couldn&apos;t remove a dictionary that you already had installed with the same name.</source>
         <translation>添加辭典失敗。無法移除一部同名嘅辭典。</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="968"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="969"/>
         <source>Try manually deleting the dictionaries yourself before adding the new dictionary.</source>
         <translation>在添加新辭典之前，請試試手動移除同名嘅辭典。</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="1035"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="1036"/>
         <source>Unable to add definitions...</source>
         <translation>添加解釋失敗</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="1039"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="1040"/>
         <source>Unable to add sentences...</source>
         <translation>添加例句失敗</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="1023"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="1024"/>
         <source>Could not insert source. Could it be a duplicate of a dictionary you already installed?</source>
         <translation>添加辭典失敗。你係咪已經添加咗呢個辭典㗎？</translation>
     </message>
@@ -1066,7 +1066,7 @@ Hang tight!</source>
 <context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/mainwindow/searchlineedit.cpp" line="139"/>
+        <location filename="../../components/mainwindow/searchlineedit.cpp" line="141"/>
         <source>Search</source>
         <translation>查粵語辭典…</translation>
     </message>
@@ -1669,6 +1669,11 @@ Hang tight!</source>
         <location filename="../../logic/strings/strings.h" line="144"/>
         <source>EN</source>
         <translation>英文</translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="145"/>
+        <source>AUTO</source>
+        <translation>自動</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="68"/>

@@ -30,231 +30,231 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="218"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="223"/>
         <source>Automatically check for updates on startup:</source>
         <translation>Vérifier automatiquement les mises à jour :</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="221"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="226"/>
         <source>Enable dark mode:</source>
         <translation>Activer le mode sombre&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="224"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="229"/>
         <source>Cantonese text-to-speech:</source>
-        <translation>Moteur de synthèse vocale pour le cantonais :</translation>
+        <translation>Moteur de synthèse vocale pour le cantonais&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="225"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="229"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="230"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="234"/>
         <source>Qt</source>
         <translation>Qt</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="226"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="230"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="231"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="235"/>
         <source>Google</source>
         <translation>Google</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="228"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="233"/>
         <source>Mandarin text-to-speech:</source>
-        <translation>Moteur de synthèse vocale pour le mandarin :</translation>
+        <translation>Moteur de synthèse vocale pour le mandarin&#xa0;:</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="245"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="250"/>
         <source>Export dictionaries file:</source>
         <translation>Exporter le fichier contenant les dictionnaires :</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="247"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="252"/>
         <source>Export saved words and history:</source>
         <translation>Exporter les mots enregistrés et l&apos;historique de recherche :</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="248"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="249"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="253"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="254"/>
         <source>Export</source>
         <translation>Exporter</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="253"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="258"/>
         <source>Restore dictionaries file to last backed up version:</source>
         <translation>Restaurer le fichier contenant les dictionnaires à partir d&apos;une sauvegarde automatique :</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="255"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="260"/>
         <source>Restore dictionaries file using exported file:</source>
         <translation>Restaurer le fichier contenant les dictionnaires à partir d&apos;un fichier exporté :</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="257"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="262"/>
         <source>Restore saved words and history file using exported file:</source>
         <translation>Restaurer les mots enregistrés et l&apos;historique de recherche à partir d&apos;un fichier exporté :</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="258"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="259"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="260"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="263"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="264"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="265"/>
         <source>Restore</source>
         <translation>Restaurer</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="264"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="269"/>
         <source>Application language:</source>
         <translation>Langue d&apos;application :</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="274"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="279"/>
         <source>Reset all settings</source>
         <translation>Réinitialiser toutes les préférences</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="563"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="570"/>
         <source>Dictionary export succeeded!</source>
         <translation>Réussite de l&apos;exportation des dictionnaires !</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="564"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="571"/>
         <source>Dictionary export failed.</source>
         <translation>Échec de l&apos;exportation des dictionnaires.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="566"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="573"/>
         <source>Exporting dictionaries...</source>
         <translation>Exportation des dictionnaires...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="609"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="616"/>
         <source>Saved words and history export succeeded!</source>
         <translation>Réussite de l&apos;exportation des mots enregistrés et l&apos;historique de recherche !</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="610"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="617"/>
         <source>Saved words and history export failed.</source>
         <translation>Échec de l&apos;exportation des mots enregistrés et l&apos;historique de recherche.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="612"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="619"/>
         <source>Exporting saved words and history...</source>
         <translation>Exportation de l&apos;exportation des mots enregistrés et l&apos;historique de recherche...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="659"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="702"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="666"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="709"/>
         <source>Dictionary restore succeeded! %1 will now restart.</source>
         <translation>Réussite de la restauration du fichier contenant les dictionnaires ! %1 va redémarrer maintenant.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="663"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="707"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="670"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="714"/>
         <source>Dictionary restore failed! %1 will now restart.</source>
         <translation>Échec de la restauration du fichier contenant les dictionnaires ! %1 va redémarrer maintenant.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="667"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="716"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="674"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="723"/>
         <source>Restoring dictionary...</source>
         <translation>Restauration du fichier contenant les dictionnaires...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="695"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="702"/>
         <source>Exported dictionary file path</source>
         <translation>Enregistrer sous</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="751"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="758"/>
         <source>Exported saved words and history path</source>
         <translation>Enregistrer sous</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="757"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="764"/>
         <source>Saved words and history restore succeeded! %1 will now restart.</source>
         <translation>Réussite de la restauration des mots enregistrés et l&apos;historique de recherche ! %1 va redémarrer maintenant.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="761"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="768"/>
         <source>Saved words and history restore failed! %1 will now restart.</source>
         <translation>Échec de la restauration des mots enregistrés et l&apos;historique de recherche ! %1 va redémarrer maintenant.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="770"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="777"/>
         <source>Restoring saved words and history...</source>
         <translation>Restauration des mots enregistrés et l&apos;historique de recherche...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="837"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="844"/>
         <source>Downloading audio files...</source>
         <translation>Téléchargement des fichiers audio...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="863"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="862"/>
         <source>Audio downloaded successfully!</source>
-        <translation>Réussite du téléchargement des fichiers audio !</translation>
+        <translation>Réussite du téléchargement des fichiers audio&#xa0;!</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="864"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="863"/>
         <source>Audio could not be downloaded, error code %1.</source>
-        <translation>Échec du téléchargement des fichiers audio, code d'erreur %1.</translation>
+        <translation>Échec du téléchargement des fichiers audio, code d&apos;erreur %1.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="915"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="914"/>
         <source>Installing downloaded files...</source>
         <translation>Installation des fichiers audio...</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="947"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="946"/>
         <source>Files installed successfully!</source>
-        <translation>Réussite de l'installation des fichiers audio !</translation>
+        <translation>Réussite de l&apos;installation des fichiers audio&#xa0;!</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="948"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="947"/>
         <source>Files could not be installed.</source>
-        <translation>Échec de l'installation des fichiers audio.</translation>
+        <translation>Échec de l&apos;installation des fichiers audio.</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="265"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="270"/>
         <source>Use system language</source>
         <translation>Langue par défault du système</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="266"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="271"/>
         <source>English</source>
         <translation>Anglais</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="271"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="276"/>
         <source>Simplified Chinese</source>
         <translation>Chinois simplifié</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="272"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="277"/>
         <source>Traditional Chinese</source>
         <translation>Chinois traditionnel</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="554"/>
-        <location filename="../../components/settings/advancedtab.cpp" line="600"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="561"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="607"/>
         <source>Path to save exported database</source>
         <translation>Où enregistrer le fichier</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="267"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="272"/>
         <source>French (CA)</source>
         <translation>Français (Canada)</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="268"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="273"/>
         <source>French</source>
         <translation>Français</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="269"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="274"/>
         <source>Cantonese (Simplified)</source>
         <translation>Cantonais simplifié</translation>
     </message>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="270"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="275"/>
         <source>Cantonese (Traditional)</source>
         <translation>Cantonais traditionnel</translation>
     </message>
@@ -407,7 +407,7 @@
     <message>
         <location filename="../../dialogs/downloadaudiodialog.cpp" line="12"/>
         <source>To use this option for text-to-speech, files must be downloaded. Would you like to download them now?</source>
-        <translation>Afin de choisir cette option pour le moteur de synthèse vocale, il faut en premier télécharger des fichiers audio. Voulez-vous les télécharger maintenant ?</translation>
+        <translation>Afin de choisir cette option pour le moteur de synthèse vocale, il faut en premier télécharger des fichiers audio. Voulez-vous les télécharger maintenant&#xa0;?</translation>
     </message>
     <message>
         <location filename="../../dialogs/downloadaudiodialog.cpp" line="15"/>
@@ -719,7 +719,7 @@
         <translation>Voir toutes les phrases pour cette entrée...</translation>
     </message>
     <message>
-        <location filename="../../windows/mainwindow.cpp" line="1373"/>
+        <location filename="../../windows/mainwindow.cpp" line="1374"/>
         <source>Migrating database to new version...
 This might take a few minutes.
 Hang tight!</source>
@@ -1005,37 +1005,37 @@ Veuillez patienter quelques minutes.</translation>
         <translation>Échec de la suppression des phrases</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="931"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="932"/>
         <source>Database versions do not match. Only dictionaries with the same versions can be added.</source>
         <translation>Les versions des bases de données ne correspondent pas. Seuls les dictionnaires ayant la même version peuvent être ajoutés.</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="934"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="935"/>
         <source>Current version is %1, file version is %2.</source>
         <translation>La version actuelle est %1, la version du fichier est %2.</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="965"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="966"/>
         <source>Could not add new dictionaries. We couldn&apos;t remove a dictionary that you already had installed with the same name.</source>
         <translation>Impossible d&apos;ajouter les nouveaux dictionnaires. Un ou plusieurs dictionnaires partageant le même nom n&apos;ont pas été supprimés de la base des données.</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="968"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="969"/>
         <source>Try manually deleting the dictionaries yourself before adding the new dictionary.</source>
         <translation>Veuillez supprimer ces dictionnaires manuellement avant d&apos;en ajouter des nouveaux.</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="1035"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="1036"/>
         <source>Unable to add definitions...</source>
         <translation>Échec de l&apos;ajout de définitions</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="1039"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="1040"/>
         <source>Unable to add sentences...</source>
         <translation>Échec de l&apos;ajout de phrases</translation>
     </message>
     <message>
-        <location filename="../../logic/database/sqldatabaseutils.cpp" line="1023"/>
+        <location filename="../../logic/database/sqldatabaseutils.cpp" line="1024"/>
         <source>Could not insert source. Could it be a duplicate of a dictionary you already installed?</source>
         <translation>Erreur lors de l&apos;ajout de la nouvelle source. Est-elle un double d&apos;une source existante ?</translation>
     </message>
@@ -1067,7 +1067,7 @@ Veuillez patienter quelques minutes.</translation>
 <context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/mainwindow/searchlineedit.cpp" line="139"/>
+        <location filename="../../components/mainwindow/searchlineedit.cpp" line="141"/>
         <source>Search</source>
         <translation>Rechercher</translation>
     </message>
@@ -1615,7 +1615,7 @@ Veuillez patienter quelques minutes.</translation>
     <message>
         <location filename="../../logic/strings/strings.h" line="126"/>
         <source>&lt;p style=&quot;color: %1;&quot;&gt;Google text-to-speech is a collection of MP3 files.&lt;br&gt;No Internet connection is required after initial download.&lt;br&gt;No data is sent to Google.&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot;color: %1;&quot;&gt;Le moteur de synthèse vocale Google est une collection de fichiers MP3.&lt;br&gt;Une connexion à Internet n'est pas nécessaire après le téléchargement initial.&lt;br&gt;Vos données ne sont pas transmises à Google.&lt;/p&gt;</translation>
+        <translation>&lt;p style=&quot;color: %1;&quot;&gt;Le moteur de synthèse vocale Google est une collection de fichiers MP3.&lt;br&gt;Une connexion à Internet n&apos;est pas nécessaire après le téléchargement initial.&lt;br&gt;Vos données ne sont pas transmises à Google.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="132"/>
@@ -1666,6 +1666,11 @@ Veuillez patienter quelques minutes.</translation>
         <location filename="../../logic/strings/strings.h" line="144"/>
         <source>EN</source>
         <translation>FR</translation>
+    </message>
+    <message>
+        <location filename="../../logic/strings/strings.h" line="145"/>
+        <source>AUTO</source>
+        <translation>AUTO</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="68"/>

@@ -30,7 +30,7 @@
 <context>
     <name>AdvancedTab</name>
     <message>
-        <location filename="../../components/settings/advancedtab.cpp" line="+218"/>
+        <location filename="../../components/settings/advancedtab.cpp" line="+223"/>
         <source>Automatically check for updates on startup:</source>
         <translation>自动检查更新：</translation>
     </message>
@@ -110,7 +110,7 @@
         <translation>重置所有设置</translation>
     </message>
     <message>
-        <location line="+289"/>
+        <location line="+291"/>
         <source>Dictionary export succeeded!</source>
         <translation>词典文件导出成功！</translation>
     </message>
@@ -188,7 +188,7 @@
         <translation>正在下载音频文件…</translation>
     </message>
     <message>
-        <location line="+26"/>
+        <location line="+18"/>
         <source>Audio downloaded successfully!</source>
         <translation>音频文件下载成功！</translation>
     </message>
@@ -213,7 +213,7 @@
         <translation>文件安装失败。</translation>
     </message>
     <message>
-        <location line="-683"/>
+        <location line="-677"/>
         <source>Use system language</source>
         <translation>系统默认</translation>
     </message>
@@ -233,13 +233,13 @@
         <translation>繁体中文</translation>
     </message>
     <message>
-        <location line="+282"/>
+        <location line="+284"/>
         <location line="+46"/>
         <source>Path to save exported database</source>
         <translation>保存文件至</translation>
     </message>
     <message>
-        <location line="-333"/>
+        <location line="-335"/>
         <source>French (CA)</source>
         <translation>法文（加拿大）</translation>
     </message>
@@ -719,14 +719,14 @@
         <translation>查看这条词条的所有例句…</translation>
     </message>
     <message>
-        <location line="+1049"/>
+        <location line="+1050"/>
         <source>Migrating database to new version...
 This might take a few minutes.
 Hang tight!</source>
         <translation>数据库迁移已启动，请稍等几分钟</translation>
     </message>
     <message>
-        <location line="-1060"/>
+        <location line="-1061"/>
         <source>Search Jyutping</source>
         <translation>搜索粤语拼音</translation>
     </message>
@@ -1000,7 +1000,7 @@ Hang tight!</source>
         <translation>未能移除例句…</translation>
     </message>
     <message>
-        <location line="+387"/>
+        <location line="+388"/>
         <source>Database versions do not match. Only dictionaries with the same versions can be added.</source>
         <translation>数据库版本不匹配！只能可添加一样版本的词典。</translation>
     </message>
@@ -1062,7 +1062,7 @@ Hang tight!</source>
 <context>
     <name>SearchLineEdit</name>
     <message>
-        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+139"/>
+        <location filename="../../components/mainwindow/searchlineedit.cpp" line="+141"/>
         <source>Search</source>
         <translation>搜索</translation>
     </message>
@@ -1663,7 +1663,12 @@ Hang tight!</source>
         <translation>英文</translation>
     </message>
     <message>
-        <location line="-76"/>
+        <location line="+1"/>
+        <source>AUTO</source>
+        <translation>自动</translation>
+    </message>
+    <message>
+        <location line="-77"/>
         <source>Unable to use text to speech.
 
 Debug: Locale: %1, Language: Chinese - Hong Kong</source>
