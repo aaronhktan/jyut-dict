@@ -1325,6 +1325,11 @@ std::string constructRomanisationQuery(const std::vector<std::string> &words,
 bool jyutpingAutocorrect(const QString &in, QString &out)
 {
     out = in;
+
+    // This is for some romanizations like "shui" for 水
+    // And needs to happen before the "sh" -> "s" conversion
+    out.replace("hui", "heoi");
+
     // Change ch, sh, zh -> c, s, z respectively
     out.replace("ch", "c").replace("sh", "s").replace("zh", "z");
 
@@ -1332,7 +1337,6 @@ bool jyutpingAutocorrect(const QString &in, QString &out)
     // I think this is safe, since there aren't any entries that have
     // "-eon g*" as a sequence of characters
     out.replace("eung", "oeng").replace("erng", "oeng").replace("eong", "oeng");
-
     // Change "eun", "ern" -> "eon"
     out.replace("eun", "eon").replace("ern", "eon");
     int idx = out.indexOf("oen");
@@ -1344,20 +1348,15 @@ bool jyutpingAutocorrect(const QString &in, QString &out)
         out.replace("oen", "eon");
         idx = out.indexOf("oen", idx + 1);
     }
-
-    // Change "eui" -> "eoi"
     out.replace("eui", "eoi");
-    // Change "euk" -> "oek"
     out.replace("euk", "oek");
 
-    // Change "oo" -> "u"
-    out.replace("oo", "u");
-
-    // Change "ee" -> "i"
-    out.replace("ee", "i");
-
-    // Change "ay" -> "ei"
-    out.replace("ay", "ei");
+    out.replace("ar", "aa");      // like in "char siu"
+    out.replace("oo", "u");       // like in "foo young"
+    out.replace("ee", "i");       // like in "lai see"
+    out.replace("ay", "ei");      // like in "gong hay fat choy"
+    out.replace("young", "jung"); // like in "foo young"
+    out.replace("oy", "oi");      // like in "choy sum"
 
     // Change any "y" that is not followed by a "u" to "j"
     idx = out.indexOf("y");
@@ -1370,19 +1369,23 @@ bool jyutpingAutocorrect(const QString &in, QString &out)
         idx = out.indexOf("y", idx + 1);
     }
 
-    // Change "yue" -> "jyu"
-    out.replace("yue", "jyu");
-
-    // Change "ue" -> "yu"
-    out.replace("ue", "yu");
+    out.replace("yue", "jyu"); // like "yuet yue"
+    out.replace("ue", "yu");   // like "tsuen wan"
+    out.replace("tsz", "zi");  // like "tsat tsz mui"
 
     // !!! Dangerous Changes !!!
     // Change "um" -> "am"
     // This is dangerous! There are many terms that have a final -u and initial m
     // like gu3 man6
     out.replace("um", "am");
-    out.replace("tsz", "zi");
+    // This is also dangerous! -un is a valid final in Jyutping
+    // out.replace("un", "an");
+    // Same with -t and s-, like kat1 sau3
     out.replace("ts", "c");
+    // Same with -o and w-, like ho1 wu6
+    out.replace("ow", "au");
+    // Same with -k and w-, like baak6 wun2
+    out.replace("kwu", "gu");
 
     return 0;
 }
@@ -1407,6 +1410,7 @@ bool jyutpingSoundChanges(std::vector<std::string> &inOut)
         }
 
         // Initial sound changes
+        // "Lazy" pronunciations
         if (syllable.length() >= 2
             && (syllable[0] == 'n' && syllable[1] == 'g')) {
             // loss of [ŋ] initial, replacement with null initial
@@ -1427,6 +1431,14 @@ bool jyutpingSoundChanges(std::vector<std::string> &inOut)
             } else if (syllable[0] == 'k') {
                 syllable.replace(0, 1, "kw!");
             }
+        }
+        // Lack of distinction between aspirated and unaspirated initials
+        if (syllable.starts_with("d") || syllable.starts_with("t")) {
+            syllable.replace(0, 1, "(d|t)");
+        } else if (syllable.starts_with("c") || syllable.starts_with("z")) {
+            syllable.replace(0, 1, "(c|z)");
+        } else if (syllable.starts_with("g") || syllable.starts_with("k")) {
+            syllable.replace(0, 1, "(g|k)");
         }
 
         // Nucleus sound changes
