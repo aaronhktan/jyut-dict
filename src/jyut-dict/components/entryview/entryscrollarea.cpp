@@ -130,7 +130,7 @@ void EntryScrollArea::setEntry(const Entry &entry)
     disconnect(_updateUITimer, nullptr, nullptr, nullptr);
 
     _updateUITimer->setInterval(25);
-    QObject::connect(_updateUITimer, &QTimer::timeout, this, [=]() {
+    QObject::connect(_updateUITimer, &QTimer::timeout, this, [=, this]() {
         if (_enableUIUpdate) {
             _updateUITimer->stop();
             disconnect(_updateUITimer, nullptr, nullptr, nullptr);
@@ -184,7 +184,7 @@ void EntryScrollArea::stallEntryUIUpdate(void)
     disconnect(_enableUIUpdateTimer, nullptr, nullptr, nullptr);
     _enableUIUpdateTimer->setInterval(200);
     _enableUIUpdateTimer->setSingleShot(true);
-    QObject::connect(_enableUIUpdateTimer, &QTimer::timeout, this, [=]() {
+    QObject::connect(_enableUIUpdateTimer, &QTimer::timeout, this, [=, this]() {
         _enableUIUpdate = true;
     });
     _enableUIUpdateTimer->start();

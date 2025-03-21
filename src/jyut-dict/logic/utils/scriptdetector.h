@@ -13,6 +13,7 @@ public:
     bool containsChinese();
 
     bool isValidJyutping();
+    bool isValidJyutpingAfterAutocorrect();
     bool isValidPinyin();
 
 private:
@@ -21,6 +22,7 @@ private:
     bool _containsChinese = false;
 
     bool _isValidJyutping = false;
+    bool _isValidJyutpingAfterAutocorrect = false;
     bool _isValidPinyin = false;
 };
 

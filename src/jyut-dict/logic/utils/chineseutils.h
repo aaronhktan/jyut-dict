@@ -105,6 +105,9 @@ std::string convertPinyinToIPA(const std::string &pinyin,
 std::string constructRomanisationQuery(const std::vector<std::string> &words,
                                        const char *delimiter);
 
+bool jyutpingAutocorrect(const QString &in, QString &out);
+bool jyutpingSoundChanges(std::vector<std::string> &inOut);
+
 bool segmentPinyin(const QString &string,
                    std::vector<std::string> &out,
                    bool removeSpecialCharacters = true,

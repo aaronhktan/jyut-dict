@@ -835,6 +835,10 @@ ScriptDetector::ScriptDetector(const QString &string)
 
     std::vector<std::string> dummyVec;
     _isValidJyutping = ChineseUtils::segmentJyutping(string, dummyVec);
+    QString out;
+    ChineseUtils::jyutpingAutocorrect(string, out);
+    _isValidJyutpingAfterAutocorrect = ChineseUtils::segmentJyutping(out,
+                                                                     dummyVec);
     QString processedPinyin = string;
     _isValidPinyin = ChineseUtils::segmentPinyin(processedPinyin
                                                      .replace("v", "u:")
@@ -860,6 +864,11 @@ bool ScriptDetector::containsTraditionalChinese()
 bool ScriptDetector::isValidJyutping()
 {
     return _isValidJyutping;
+}
+
+bool ScriptDetector::isValidJyutpingAfterAutocorrect()
+{
+    return _isValidJyutpingAfterAutocorrect;
 }
 
 bool ScriptDetector::isValidPinyin()
