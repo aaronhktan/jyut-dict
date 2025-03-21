@@ -15,7 +15,6 @@
 #include <QWidget>
 
 #include <memory>
-#include <string>
 
 // The SentenceViewHeaderWidget displays basic information about the sourceSentence
 // at the top of the detail view

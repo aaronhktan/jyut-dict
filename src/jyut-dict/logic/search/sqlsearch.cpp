@@ -5,6 +5,8 @@
 #include "logic/utils/chineseutils.h"
 #include "logic/utils/scriptdetector.h"
 #include "logic/utils/utils.h"
+
+#include <QString>
 #include <QtConcurrent/QtConcurrent>
 
 #ifdef Q_OS_WIN
@@ -13,7 +15,7 @@
 
 namespace {
 
-void prepareJyutpingBindValues(const QString &searchTerm, QString &globTerm)
+void prepareJyutpingBindValues(const QString &searchTerm, QString &regexTerm)
 {
     // When the search term is surrounded by quotes, search for only term
     // inside quotes (not the quotes themselves)
@@ -24,76 +26,26 @@ void prepareJyutpingBindValues(const QString &searchTerm, QString &globTerm)
                             && searchTerm.length() >= 3;
     bool dontAppendWildcard = searchTerm.at(searchTerm.size() - 1) == "$";
 
+    QString correctedSearchTerm{searchTerm};
+    if (!searchExactMatch) {
+        ChineseUtils::jyutpingAutocorrect(searchTerm, correctedSearchTerm);
+    }
+
     std::vector<std::string> jyutpingWords;
     if (searchExactMatch) {
-        QString searchTermWithoutQuotes = searchTerm.mid(1,
-                                                         searchTerm.size() - 2);
+        QString searchTermWithoutQuotes
+            = correctedSearchTerm.mid(1, correctedSearchTerm.size() - 2);
         Utils::split(searchTermWithoutQuotes.toStdString(), ' ', jyutpingWords);
     } else {
-        ChineseUtils::segmentJyutping(searchTerm,
+        ChineseUtils::segmentJyutping(correctedSearchTerm,
                                       jyutpingWords,
                                       /* removeSpecialCharacters */ true,
                                       /* removeGlobCharacters */ false);
     }
 
-    // Fuzzy Jyutping checking
-    for (auto &x : jyutpingWords) {
-        // Whole-syllable sound changes
-        std::cout << x << std::endl;
-        if (x.length() >= 2 && x[0] == 'n' && x[1] == 'g') {
-            if (x.length() == 3
-                && (std::isdigit(x[x.length() - 1])
-                    || x[x.length() - 1] == '?')) {
-                x.replace(0, 2, "(ng|m)");
-                continue;
-            } else if (x.length() == 2) {
-                x.replace(0, 2, "(ng|m)");
-                continue;
-            }
-        } else if (x.length() >= 1 && x[0] == 'm') {
-            if (x.length() == 2
-                && (std::isdigit(x[x.length() - 1])
-                    || x[x.length() - 1] == '?')) {
-                x.replace(0, 1, "(ng|m)");
-                continue;
-            } else if (x.length() == 1) {
-                x.replace(0, 2, "(ng|m)");
-                continue;
-            }
-        }
-
-        // Initial sound changes
-        if (x.length() >= 2 && (x[0] == 'n' && x[1] == 'g')) {
-            // loss of [ŋ] initial, replacement with null initial
-            x.replace(0, 2, "(ng)!");
-        } else if (x[0] == 'a' || x[0] == 'o' || x[0] == 'u') {
-            // merging of null initial with initial [ŋ] before [a, ɐ, ɔ, o]
-            x.insert(0, "(ng)!");
-        } else if (x[0] == 'n') {
-            // merge of [n] and [l] initials
-            x.replace(0, 1, "(n|l)");
-        } else if (x.length() >= 2 && (x[0] == 'g' || x[0] == 'k')
-                   && x[1] == 'o') {
-            // merging of [k]/[kʷ] and [kʰ]/[kʷʰ] initials before [ɔ]
-            if (x[0] == 'g') {
-                x.replace(0, 1, "gw!");
-            } else if (x[0] == 'k') {
-                x.replace(0, 1, "kw!");
-            }
-        }
-
-        // Final sound changes
-        if (x.length() >= 2
-            && (x[x.length() - 2] == 'n' && x[x.length() - 1] == 'g')) {
-            // alveolarization of final [ŋ]
-            x.replace(x.length() - 2, 2, "ng!");
-        } else if (x[x.length() - 1] == 'n') {
-            // velarization of final [n]
-            x.append("g!");
-        } else if (x[x.length() - 1] == 'k' || x[x.length() - 1] == 't') {
-            // velarization of final [k] or [t]
-            x.replace(x.length() - 1, 1, "(k|t)");
-        }
+    if (!searchExactMatch) {
+        // Check for "lazy pronunciation" sound changes
+        ChineseUtils::jyutpingSoundChanges(jyutpingWords);
     }
 
     // Don't add wildcard characters to GLOB term if searching for exact match
@@ -102,12 +54,13 @@ void prepareJyutpingBindValues(const QString &searchTerm, QString &globTerm)
         = ChineseUtils::constructRomanisationQuery(jyutpingWords,
                                                    globJoinDelimiter);
 
-    globTerm = QString{"^"}
-               + QString::fromStdString(query)
-                     .replace("*", ".*")
-                     .replace("?", ".")
-                     .replace("!", "?")
-               + QString{(searchExactMatch || dontAppendWildcard) ? "$" : ".*$"};
+    regexTerm = QString{"^"}
+                + QString::fromStdString(query)
+                      .replace("*", ".*")
+                      .replace("?", ".")
+                      .replace("!", "?")
+                + QString{(searchExactMatch || dontAppendWildcard) ? "$"
+                                                                   : ".*$"};
 }
 
 void preparePinyinBindValues(const QString &searchTerm, QString &globTerm)
@@ -566,7 +519,7 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
         searchTraditionalThread(searchTerm, queryID);
         return;
     }
-    if (sd.isValidJyutping()) {
+    if (sd.isValidJyutping() || sd.isValidJyutpingAfterAutocorrect()) {
         QSqlQuery query{_manager->getDatabase()};
         query.prepare(SEARCH_JYUTPING_EXISTS_QUERY);
         QString globTerm;

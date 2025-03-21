@@ -584,7 +584,6 @@ void AdvancedTab::exportDictionaryDatabase(void)
                                      successText,
                                      failureText);
             });
-
     QFuture<bool> future = QtConcurrent::run([=, this]() {
         SQLDatabaseManager manager;
 
@@ -633,7 +632,6 @@ void AdvancedTab::exportUserDatabase(void)
                                      successText,
                                      failureText);
             });
-
     QFuture<bool> future = QtConcurrent::run([=, this]() {
         SQLDatabaseManager manager;
 
@@ -691,7 +689,6 @@ void AdvancedTab::restoreBackedUpDictionaryDatabase(void)
                                       successText,
                                       failureText);
             });
-
     QFuture<bool> future = QtConcurrent::run([]() {
         SQLDatabaseManager manager;
         return manager.restoreBackedUpDictionaryDatabase();
@@ -743,7 +740,6 @@ void AdvancedTab::restoreExportedDictionaryDatabase(void)
                                       successText,
                                       failureText);
             });
-
     auto future = QtConcurrent::run([=, this]() {
         SQLDatabaseManager manager;
 
@@ -800,7 +796,6 @@ void AdvancedTab::restoreExportedUserDatabase(void)
                                       successText,
                                       failureText);
             });
-
     auto future = QtConcurrent::run([=, this]() {
         SQLDatabaseManager manager;
 

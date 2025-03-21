@@ -1322,6 +1322,159 @@ std::string constructRomanisationQuery(const std::vector<std::string> &words,
     return string.str();
 }
 
+bool jyutpingAutocorrect(const QString &in, QString &out)
+{
+    out = in;
+    // Change ch, sh, zh -> c, s, z respectively
+    out.replace("ch", "c").replace("sh", "s").replace("zh", "z");
+
+    // Change "eung", "erng", "eong" -> "oeng"
+    // I think this is safe, since there aren't any entries that have
+    // "-eon g*" as a sequence of characters
+    out.replace("eung", "oeng").replace("erng", "oeng").replace("eong", "oeng");
+
+    // Change "eun", "ern" -> "eon"
+    out.replace("eun", "eon").replace("ern", "eon");
+    int idx = out.indexOf("oen");
+    while (idx != -1) {
+        if (QStringView{out.constBegin() + idx, 4} == QString{"oeng"}) {
+            idx = out.indexOf("oen", idx + 1);
+            continue;
+        }
+        out.replace("oen", "eon");
+        idx = out.indexOf("oen", idx + 1);
+    }
+
+    // Change "eui" -> "eoi"
+    out.replace("eui", "eoi");
+    // Change "euk" -> "oek"
+    out.replace("euk", "oek");
+
+    // Change "oo" -> "u"
+    out.replace("oo", "u");
+
+    // Change "ee" -> "i"
+    out.replace("ee", "i");
+
+    // Change "ay" -> "ei"
+    out.replace("ay", "ei");
+
+    // Change any "y" that is not followed by a "u" to "j"
+    idx = out.indexOf("y");
+    while (idx != -1) {
+        if (QStringView{out.constBegin() + idx, 2} == QString{"yu"}) {
+            idx = out.indexOf("y", idx + 1);
+            continue;
+        }
+        out.replace("y", "j");
+        idx = out.indexOf("y", idx + 1);
+    }
+
+    // Change "yue" -> "jyu"
+    out.replace("yue", "jyu");
+
+    // Change "ue" -> "yu"
+    out.replace("ue", "yu");
+
+    // !!! Dangerous Changes !!!
+    // Change "um" -> "am"
+    // This is dangerous! There are many terms that have a final -u and initial m
+    // like gu3 man6
+    out.replace("um", "am");
+    out.replace("tsz", "zi");
+    out.replace("ts", "c");
+
+    return 0;
+}
+
+bool jyutpingSoundChanges(std::vector<std::string> &inOut)
+{
+    for (auto &syllable : inOut) {
+        // Whole-syllable sound changes
+        if (syllable == "ng"
+            || (syllable.length() == 3
+                && std::string_view{syllable.begin(), syllable.end() - 1}
+                       .ends_with("ng")
+                && (std::isdigit(syllable.back()) || syllable.back() == '?'))) {
+            syllable.replace(syllable.rfind("ng"), 2, "(ng|m)");
+            continue;
+        } else if (syllable == "m"
+                   || (syllable.length() == 2 && syllable.front() == 'm'
+                       && (std::isdigit(syllable.back())
+                           || syllable.back() == '?'))) {
+            syllable.replace(syllable.rfind("m"), 1, "(ng|m)");
+            continue;
+        }
+
+        // Initial sound changes
+        if (syllable.length() >= 2
+            && (syllable[0] == 'n' && syllable[1] == 'g')) {
+            // loss of [ŋ] initial, replacement with null initial
+            syllable.replace(0, 2, "(ng)!");
+        } else if (syllable[0] == 'a' || syllable[0] == 'o'
+                   || syllable[0] == 'u') {
+            // merging of null initial with initial [ŋ] before [a, ɐ, ɔ, o]
+            syllable.insert(0, "(ng)!");
+        } else if (syllable[0] == 'n') {
+            // merge of [n] and [l] initials
+            syllable.replace(0, 1, "(n|l)");
+        } else if (syllable.length() >= 2
+                   && (syllable[0] == 'g' || syllable[0] == 'k')
+                   && syllable[1] == 'o') {
+            // merging of [k]/[kʷ] and [kʰ]/[kʷʰ] initials before [ɔ]
+            if (syllable[0] == 'g') {
+                syllable.replace(0, 1, "gw!");
+            } else if (syllable[0] == 'k') {
+                syllable.replace(0, 1, "kw!");
+            }
+        }
+
+        // Nucleus sound changes
+        // Merge between [aː] and [ɐ]
+        auto pos = syllable.find("a");
+        while (pos != std::string::npos) {
+            if (std::string_view{syllable.begin() + pos,
+                                 syllable.begin() + pos + 2}
+                == "aa") {
+                syllable.insert(pos + 2, "!");
+                pos = syllable.find("a", pos + 3);
+            } else {
+                syllable.insert(pos + 1, "a!");
+                pos = syllable.find("a", pos + 2);
+            }
+        }
+
+        // Final sound changes
+        if (syllable.ends_with("ng")
+            || (syllable.length() >= 3
+                && std::string_view{syllable.begin(), syllable.end() - 1}
+                       .ends_with("ng"))) {
+            // alveolarization of final [ŋ]
+            syllable.replace(syllable.rfind("ng"), 2, "ng!");
+        } else if (syllable.ends_with("n")
+                   || (syllable.length() >= 2
+                       && std::string_view{syllable.begin(), syllable.end() - 1}
+                              .ends_with("n"))) {
+            // velarization of final [n]
+            syllable.replace(syllable.rfind("n"), 1, "ng!");
+        } else if (syllable.ends_with("t")
+                   || (syllable.length() >= 2
+                       && (std::string_view{syllable.begin(), syllable.end() - 1}
+                               .ends_with("t")))) {
+            // velarization of final [t]
+            syllable.replace(syllable.rfind("t"), 1, "(k|t)");
+        } else if (syllable.ends_with("k")
+                   || (syllable.length() >= 2
+                       && (std::string_view{syllable.begin(), syllable.end() - 1}
+                               .ends_with("k")))) {
+            // velarization of final [k]
+            syllable.replace(syllable.rfind("k"), 1, "(k|t)");
+        }
+    }
+
+    return 0;
+}
+
 bool segmentPinyin(const QString &string,
                    std::vector<std::string> &out,
                    bool removeSpecialCharacters,
