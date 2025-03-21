@@ -36,6 +36,66 @@ void prepareJyutpingBindValues(const QString &searchTerm, QString &globTerm)
                                       /* removeGlobCharacters */ false);
     }
 
+    // Fuzzy Jyutping checking
+    for (auto &x : jyutpingWords) {
+        // Whole-syllable sound changes
+        std::cout << x << std::endl;
+        if (x.length() >= 2 && x[0] == 'n' && x[1] == 'g') {
+            if (x.length() == 3
+                && (std::isdigit(x[x.length() - 1])
+                    || x[x.length() - 1] == '?')) {
+                x.replace(0, 2, "(ng|m)");
+                continue;
+            } else if (x.length() == 2) {
+                x.replace(0, 2, "(ng|m)");
+                continue;
+            }
+        } else if (x.length() >= 1 && x[0] == 'm') {
+            if (x.length() == 2
+                && (std::isdigit(x[x.length() - 1])
+                    || x[x.length() - 1] == '?')) {
+                x.replace(0, 1, "(ng|m)");
+                continue;
+            } else if (x.length() == 1) {
+                x.replace(0, 2, "(ng|m)");
+                continue;
+            }
+        }
+
+        // Initial sound changes
+        if (x.length() >= 2 && (x[0] == 'n' && x[1] == 'g')) {
+            // loss of [ŋ] initial, replacement with null initial
+            x.replace(0, 2, "(ng)!");
+        } else if (x[0] == 'a' || x[0] == 'o' || x[0] == 'u') {
+            // merging of null initial with initial [ŋ] before [a, ɐ, ɔ, o]
+            x.insert(0, "(ng)!");
+        } else if (x[0] == 'n') {
+            // merge of [n] and [l] initials
+            x.replace(0, 1, "(n|l)");
+        } else if (x.length() >= 2 && (x[0] == 'g' || x[0] == 'k')
+                   && x[1] == 'o') {
+            // merging of [k]/[kʷ] and [kʰ]/[kʷʰ] initials before [ɔ]
+            if (x[0] == 'g') {
+                x.replace(0, 1, "gw!");
+            } else if (x[0] == 'k') {
+                x.replace(0, 1, "kw!");
+            }
+        }
+
+        // Final sound changes
+        if (x.length() >= 2
+            && (x[x.length() - 2] == 'n' && x[x.length() - 1] == 'g')) {
+            // alveolarization of final [ŋ]
+            x.replace(x.length() - 2, 2, "ng!");
+        } else if (x[x.length() - 1] == 'n') {
+            // velarization of final [n]
+            x.append("g!");
+        } else if (x[x.length() - 1] == 'k' || x[x.length() - 1] == 't') {
+            // velarization of final [k] or [t]
+            x.replace(x.length() - 1, 1, "(k|t)");
+        }
+    }
+
     // Don't add wildcard characters to GLOB term if searching for exact match
     const char *globJoinDelimiter = searchExactMatch ? "" : "?";
     std::string query
@@ -43,9 +103,11 @@ void prepareJyutpingBindValues(const QString &searchTerm, QString &globTerm)
                                                    globJoinDelimiter);
 
     globTerm = QString{"^"}
-               + QString::fromStdString(query).replace("*", ".*").replace("?",
-                                                                          ".")
-               + QString{(searchExactMatch || dontAppendWildcard) ? "" : ".*"};
+               + QString::fromStdString(query)
+                     .replace("*", ".*")
+                     .replace("?", ".")
+                     .replace("!", "?")
+               + QString{(searchExactMatch || dontAppendWildcard) ? "$" : ".*$"};
 }
 
 void preparePinyinBindValues(const QString &searchTerm, QString &globTerm)
