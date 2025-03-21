@@ -68,6 +68,9 @@ static QMap<SearchParameters, std::string> searchParameterMap = {
     {SearchParameters::ENGLISH,
      QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::EN_STRING)
          .toStdString()},
+    {SearchParameters::AUTO_DETECT,
+     QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::AD_STRING)
+         .toStdString()},
 };
 
 QColor getContrastingColour(const QColor backgroundColour)
@@ -192,6 +195,10 @@ void refreshLanguageMap()
         {SearchParameters::ENGLISH,
          QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                      Strings::EN_STRING)
+             .toStdString()},
+        {SearchParameters::AUTO_DETECT,
+         QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                     Strings::AD_STRING)
              .toStdString()},
     };
 }
