@@ -1322,13 +1322,29 @@ std::string constructRomanisationQuery(const std::vector<std::string> &words,
     return string.str();
 }
 
-bool jyutpingAutocorrect(const QString &in, QString &out)
+bool jyutpingAutocorrect(const QString &in,
+                         QString &out,
+                         bool unsafeSubstitutions)
 {
     out = in;
 
     // This is for some romanizations like "shui" for 水
     // And needs to happen before the "sh" -> "s" conversion
     out.replace("hui", "heoi");
+
+    // The initial + nucleus "cu-" never appears in Jyutping, so the user
+    // probably intended to make the IPA [kʰɐ] sound
+    // Surround the k with capturing group to prevent replacement with (g|k)
+    // later on
+    if (unsafeSubstitutions) {
+        out.replace("cu", "(k)u");
+    } else {
+        out.replace("cu", "ku");
+    }
+
+    // "x" never appears in Jyutping, the user might be more familiar
+    // with Pinyin and assume that it's an "s" sound
+    out.replace("x", "s");
 
     // Change ch, sh, zh -> c, s, z respectively
     out.replace("ch", "c").replace("sh", "s").replace("zh", "z");
@@ -1337,8 +1353,21 @@ bool jyutpingAutocorrect(const QString &in, QString &out)
     // I think this is safe, since there aren't any entries that have
     // "-eon g*" as a sequence of characters
     out.replace("eung", "oeng").replace("erng", "oeng").replace("eong", "oeng");
-    // Change "eun", "ern" -> "eon"
-    out.replace("eun", "eon").replace("ern", "eon");
+
+    // Change "eun" -> "eon" (or "-yun" if unsafe substitutions are allowed)
+    if (unsafeSubstitutions) {
+        out.replace("eun", "(eo|yu)n");
+        out.replace("eut", "(eo|yu)t");
+        out.replace("eu", "(e|y)u");
+    } else {
+        out.replace("eun", "eon");
+        out.replace("eut", "eot");
+    }
+
+    // Change "ern" -> "eon"
+    out.replace("ern", "eon");
+
+    // Change "-oen" -> "-oeng"
     int idx = out.indexOf("oen");
     while (idx != -1) {
         if (QStringView{out.constBegin() + idx, 4} == QString{"oeng"}) {
@@ -1348,44 +1377,81 @@ bool jyutpingAutocorrect(const QString &in, QString &out)
         out.replace("oen", "eon");
         idx = out.indexOf("oen", idx + 1);
     }
+
     out.replace("eui", "eoi");
     out.replace("euk", "oek");
 
     out.replace("ar", "aa");      // like in "char siu"
-    out.replace("oo", "u");       // like in "foo young"
     out.replace("ee", "i");       // like in "lai see"
     out.replace("ay", "ei");      // like in "gong hay fat choy"
     out.replace("young", "jung"); // like in "foo young"
     out.replace("oy", "oi");      // like in "choy sum"
+    if (unsafeSubstitutions) {
+        out.replace("oo", "(y!u)"); // like in "soot goh"
+        out.replace("ong", "(o|u)ng");
+    } else {
+        out.replace("oo", "u"); // like in "foo young"
+    }
+
+    out.replace("yue", "jyu"); // like "yuet yue" (粵語)
+    out.replace("ue", "yu");   // like "tsuen wan" (轉彎)
+    out.replace("tsz", "zi");  // like "tsat tsz mui" (七姊妹)
+    out.replace("ack", "ak");  // like "back" (白)
+
+    // Unsafe because it is ambiguous whether these are final +
+    // initial or a "misspelling" of a final
+    if (unsafeSubstitutions) {
+        out.replace("um", "am"); // unsafe because of gu3 man6
+        out.replace("ow", "au"); // unsafe because of ho1 wu6
+        out.replace("ey",
+                    "ei"); // could be a double-misspelling of "-e" + "j-"
+        out.replace("oh", "ou");
+    } else {
+        // It is unambiguous if there is a separator at the end of the syllable
+        out.replace("um ", "am ").replace("um'", "am'");
+        out.replace("ow ", "au ").replace("ow'", "au'");
+        out.replace("ey ", "ei ").replace("ey'", "ei'");
+        out.replace("oh ", "ou ").replace("oh'", "oh'");
+    }
+
+    // Unsafe because it is ambiguous whether these are final + initial
+    // or a "misspelling" of an initial
+    if (unsafeSubstitutions) {
+        out.replace("kwu", "gu"); // unsafe because of baak6 wun2
+        out.replace("ts", "c");   // unsafe because of kat1 sau3
+    }
 
     // Change any "y" that is not followed by a "u" to "j"
+    // This needs to happen before the final replacements
     idx = out.indexOf("y");
     while (idx != -1) {
-        if (QStringView{out.constBegin() + idx, 2} == QString{"yu"}) {
+        if (QStringView{out.constBegin() + idx, 2} == QString{"yu"}
+            || QStringView{out.constBegin() + idx, 3} == QString{"y!u"}
+            || QStringView{out.constBegin() + idx, 3} == QString{"y)u"}) {
             idx = out.indexOf("y", idx + 1);
             continue;
         }
-        out.replace("y", "j");
+        out.replace(idx, 1, 'j');
         idx = out.indexOf("y", idx + 1);
     }
 
-    out.replace("yue", "jyu"); // like "yuet yue"
-    out.replace("ue", "yu");   // like "tsuen wan"
-    out.replace("tsz", "zi");  // like "tsat tsz mui"
+    // If there is a syllable that starts with "yut", the user means
+    // to type "jat"
+    if (out.startsWith("yut")) {
+        out.replace(0, 3, "jat");
+    }
+    out.replace(" yut", " jat");
+    if (out.startsWith("yun")) {
+        out.replace(0, 3, "jyun");
+    }
+    out.replace(" yun", " jyun");
 
-    // !!! Dangerous Changes !!!
-    // Change "um" -> "am"
-    // This is dangerous! There are many terms that have a final -u and initial m
-    // like gu3 man6
-    out.replace("um", "am");
-    // This is also dangerous! -un is a valid final in Jyutping
-    // out.replace("un", "an");
-    // Same with -t and s-, like kat1 sau3
-    out.replace("ts", "c");
-    // Same with -o and w-, like ho1 wu6
-    out.replace("ow", "au");
-    // Same with -k and w-, like baak6 wun2
-    out.replace("kwu", "gu");
+    // Unsafe because these are valid finals
+    if (unsafeSubstitutions) {
+        out.replace("un", "(y!un|an|eon)");
+        out.replace("ut", "(ut|at)");
+        out.replace("ui", "(eoi|ui)");
+    }
 
     return 0;
 }

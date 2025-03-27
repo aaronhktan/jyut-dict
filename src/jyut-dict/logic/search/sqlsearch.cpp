@@ -21,21 +21,26 @@ void prepareJyutpingBindValues(const QString &searchTerm, QString &regexTerm)
     // inside quotes (not the quotes themselves)
     // Unlike the simplified/traditional search, only trigger exact match
     // searching if enclosed by Western quotes (U+0022).
-    bool searchExactMatch = searchTerm.at(0) == "\""
-                            && searchTerm.at(searchTerm.size() - 1) == "\""
+    bool searchExactMatch = searchTerm.startsWith("\"")
+                            && searchTerm.endsWith("\"")
                             && searchTerm.length() >= 3;
-    bool dontAppendWildcard = searchTerm.at(searchTerm.size() - 1) == "$";
+    bool dontAppendWildcard = searchTerm.endsWith("$");
 
     QString correctedSearchTerm{searchTerm};
     if (!searchExactMatch) {
-        ChineseUtils::jyutpingAutocorrect(searchTerm, correctedSearchTerm);
+        ChineseUtils::jyutpingAutocorrect(searchTerm,
+                                          correctedSearchTerm,
+                                          /* unsafeSubstitutions */ false);
     }
 
     std::vector<std::string> jyutpingWords;
     if (searchExactMatch) {
-        QString searchTermWithoutQuotes
-            = correctedSearchTerm.mid(1, correctedSearchTerm.size() - 2);
-        Utils::split(searchTermWithoutQuotes.toStdString(), ' ', jyutpingWords);
+        Utils::split(QStringView{correctedSearchTerm.constBegin() + 1,
+                                 correctedSearchTerm.constEnd() - 1}
+                         .toString()
+                         .toStdString(),
+                     ' ',
+                     jyutpingWords);
     } else {
         ChineseUtils::segmentJyutping(correctedSearchTerm,
                                       jyutpingWords,
@@ -56,11 +61,12 @@ void prepareJyutpingBindValues(const QString &searchTerm, QString &regexTerm)
 
     regexTerm = QString{"^"}
                 + QString::fromStdString(query)
-                      .replace("*", ".*")
+                      .replace("*", ".*") // Convert glob characters to regex
                       .replace("?", ".")
-                      .replace("!", "?")
+                      .replace("!", "?") // Workaround for glob  replacement
                 + QString{(searchExactMatch || dontAppendWildcard) ? "$"
                                                                    : ".*$"};
+    qDebug() << regexTerm;
 }
 
 void preparePinyinBindValues(const QString &searchTerm, QString &globTerm)
@@ -519,22 +525,22 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
         searchTraditionalThread(searchTerm, queryID);
         return;
     }
-    if (sd.isValidJyutping() || sd.isValidJyutpingAfterAutocorrect()) {
-        QSqlQuery query{_manager->getDatabase()};
-        query.prepare(SEARCH_JYUTPING_EXISTS_QUERY);
-        QString globTerm;
-        prepareJyutpingBindValues(searchTerm, globTerm);
-        query.addBindValue(globTerm);
-        query.setForwardOnly(true);
-        query.exec();
-        bool jyutpingExists = QueryParseUtils::parseExistence(query);
 
-        if (jyutpingExists) {
-            notifyObserversIfQueryIdCurrent(SearchParameters::JYUTPING, queryID);
-            searchJyutpingThread(searchTerm, queryID);
-            return;
-        }
+    QSqlQuery query{_manager->getDatabase()};
+    query.prepare(SEARCH_JYUTPING_EXISTS_QUERY);
+    QString globTerm;
+    prepareJyutpingBindValues(searchTerm, globTerm);
+    query.addBindValue(globTerm);
+    query.setForwardOnly(true);
+    query.exec();
+    bool jyutpingExists = QueryParseUtils::parseExistence(query);
+
+    if (jyutpingExists) {
+        notifyObserversIfQueryIdCurrent(SearchParameters::JYUTPING, queryID);
+        searchJyutpingThread(searchTerm, queryID);
+        return;
     }
+
     if (sd.isValidPinyin()) {
         QSqlQuery query{_manager->getDatabase()};
         query.prepare(SEARCH_PINYIN_EXISTS_QUERY);
