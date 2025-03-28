@@ -1405,11 +1405,7 @@ bool jyutpingAutocorrect(const QString &in,
     // probably intended to make the IPA [kʰɐ] sound
     // Surround the k with capturing group to prevent replacement with (g|k)
     // later on
-    if (unsafeSubstitutions) {
-        out.replace("cu", "(k)u");
-    } else {
-        out.replace("cu", "ku");
-    }
+    out.replace("cu", "(k)u");
 
     // "x" never appears in Jyutping, the user might be more familiar
     // with Pinyin and assume that it's an "s" sound
@@ -1424,15 +1420,9 @@ bool jyutpingAutocorrect(const QString &in,
     out.replace("eung", "oeng").replace("erng", "oeng").replace("eong", "oeng");
 
     // Change "eun" -> "eon" (or "-yun" if unsafe substitutions are allowed)
-    if (unsafeSubstitutions) {
-        out.replace("eun", "(eo|yu)n");
-        out.replace("eut", "(eo|yu)t");
-        out.replace("eu", "(e|y)u");
-    } else {
-        out.replace("eun", "eon");
-        out.replace("eut", "eot");
-    }
-
+    out.replace("eun", "(eo|yu)n");
+    out.replace("eut", "(eo|yu)t");
+    out.replace("eu", "(e|y)u");
     // Change "ern" -> "eon"
     out.replace("ern", "eon");
 
@@ -1455,12 +1445,8 @@ bool jyutpingAutocorrect(const QString &in,
     out.replace("ay", "ei");      // like in "gong hay fat choy"
     out.replace("young", "jung"); // like in "foo young"
     out.replace("oy", "oi");      // like in "choy sum"
-    if (unsafeSubstitutions) {
-        out.replace("oo", "(y!u)"); // like in "soot goh"
-        out.replace("ong", "(o|u)ng");
-    } else {
-        out.replace("oo", "u"); // like in "foo young"
-    }
+    out.replace("oo", "(y!u)");   // like in "soot goh"
+    out.replace("ong", "(o|u)ng");
 
     out.replace("yue", "jyu"); // like "yuet yue" (粵語)
     out.replace("ue", "(yu)"); // like "tsuen wan" (轉彎)
@@ -1469,18 +1455,154 @@ bool jyutpingAutocorrect(const QString &in,
 
     // Unsafe because it is ambiguous whether these are final +
     // initial or a "misspelling" of a final
-    if (unsafeSubstitutions) {
-        out.replace("um", "am"); // unsafe because of gu3 man6
-        out.replace("ow", "au"); // unsafe because of ho1 wu6
-        out.replace("ey",
-                    "ei"); // could be a double-misspelling of "-e" + "j-"
-        out.replace("oh", "ou");
-    } else {
-        // It is unambiguous if there is a separator at the end of the syllable
-        out.replace("um ", "am ").replace("um'", "am'");
-        out.replace("ow ", "au ").replace("ow'", "au'");
-        out.replace("ey ", "ei ").replace("ey'", "ei'");
-        out.replace("oh ", "ou ").replace("oh'", "oh'");
+
+    // It is unambiguous if there is a separator at the end of the syllable
+    out.replace("um ", "am ").replace("um'", "am'");
+    out.replace("ow ", "au ").replace("ow'", "au'");
+    out.replace("ey ", "ei ").replace("ey'", "ei'");
+    out.replace("oh ", "ou ").replace("oh'", "oh'");
+
+    int replacementIdx = out.indexOf("um");
+    // Initials for which <initial> + "am" exist in Jyutping
+    std::unordered_set<QString> openMidCentralVowelCluster
+        = {"b", "p", "m", "d", "t", "n", "l", "k", "h", "z", "c", "s", "j"};
+    // Initials for which <initial> + "-u m-" exist in Jyutping
+    std::unordered_set<QString> closeBackVowelCluster
+        = {"f", "w", "a", "e", "i", "o"};
+    if (replacementIdx != -1) {
+        if (replacementIdx != 0) {
+            // Check if the user intends to write an [ɐm] or [-uː  m-] cluster
+            if (openMidCentralVowelCluster.find(out.at(replacementIdx - 1))
+                != openMidCentralVowelCluster.end()) {
+                out.replace(replacementIdx, 2, "am");
+            } else if (closeBackVowelCluster.find(out.at(replacementIdx - 1))
+                       != closeBackVowelCluster.end()) {
+                (void) 0; // Do nothing
+            } else if (out.at(replacementIdx - 1) == "g") {
+                if (unsafeSubstitutions) {
+                    out.replace(replacementIdx, 2, "am");
+                }
+            }
+        } else if (replacementIdx == 0) {
+            out.replace(replacementIdx, 2, "am");
+        }
+    }
+
+    replacementIdx = out.indexOf("ow");
+    // Initials for which <initial> + "-aau" exist in Jyutping
+    closeBackVowelCluster = {"b", "m", "k", "s"};
+    // Initials for which <initial> + "-o w-" exist in Jyutping
+    std::unordered_set<QString> openMidBackVowelCluster = {"f", "d", "t"};
+    // Initials for which both exist in Jyutping
+    std::unordered_set<QString> ambiguousVowelCluster
+        = {"p", "m", "n", "l", "h", "z", "c", "s"};
+    if (replacementIdx != -1) {
+        if (replacementIdx != 0) {
+            // Check if the user intends to write an [-ɔː w-] or [-auː] cluster
+            if (closeBackVowelCluster.find(out.at(replacementIdx - 1))
+                != closeBackVowelCluster.end()) {
+                out.replace(replacementIdx, 2, "aau");
+            } else if (openMidBackVowelCluster.find(out.at(replacementIdx - 1))
+                       != openMidBackVowelCluster.end()) {
+                (void) 0;
+            } else if (ambiguousVowelCluster.find(out.at(replacementIdx - 1))
+                       != ambiguousVowelCluster.end()) {
+                if (unsafeSubstitutions) {
+                    out.replace(replacementIdx, 2, "aau");
+                }
+            }
+        } else if (replacementIdx == 0) {
+            out.replace(replacementIdx, 2, "aau");
+        }
+    }
+
+    replacementIdx = out.indexOf("ey");
+    // Initials for which <initial> + "-ei" exist in Jyutping
+    std::unordered_set<QString> closeFrontVowelCluster
+        = {"p", "f", "d", "n", "l", "h", "w", ""};
+    // Initials for which <initial> + "-e j-" exist in Jyutping
+    std::unordered_set<QString> openMidFrontVowelCluster = {"c", "j", "y"};
+    // Initials for which both exist in Jyutping
+    ambiguousVowelCluster = {"b", "m", "g", "k", "z", "s"};
+    if (replacementIdx != -1) {
+        if (replacementIdx != 0) {
+            // Check if the user intends to write an [-ɛː j-] or [-ei̯] cluster
+            if (closeFrontVowelCluster.find(out.at(replacementIdx - 1))
+                != closeFrontVowelCluster.end()) {
+                out.replace(replacementIdx, 2, "ei");
+            } else if (openMidFrontVowelCluster.find(out.at(replacementIdx - 1))
+                       != openMidFrontVowelCluster.end()) {
+                out.replace(replacementIdx, 2, "e j");
+            } else if (ambiguousVowelCluster.find(out.at(replacementIdx - 1))
+                       != ambiguousVowelCluster.end()) {
+                if (unsafeSubstitutions) {
+                    out.replace(replacementIdx, 2, "ei");
+                } else {
+                    out.replace(replacementIdx, 2, "e j");
+                }
+            }
+        } else if (replacementIdx == 0) {
+            out.replace(replacementIdx, 2, "ei");
+        }
+    }
+
+    replacementIdx = out.indexOf("oh");
+    // Initials for which <initial> + "-ou" exist in Jyutping
+    closeBackVowelCluster = {"n", "j"};
+    // Initials for which both "-ou" and "-o h-" exist in Jyutping
+    ambiguousVowelCluster
+        = {"b", "p", "m", "f", "d", "t", "l", "g", "h", "w", "z", "c", "s"};
+    if (replacementIdx != -1) {
+        if (replacementIdx != 0) {
+            // Check if the user intends to write an [-ɔː h-] or [-ou̯] cluster
+            if (closeBackVowelCluster.find(out.at(replacementIdx - 1))
+                != closeBackVowelCluster.end()) {
+                out.replace(replacementIdx, 2, "ou");
+            } else if (ambiguousVowelCluster.find(out.at(replacementIdx - 1))
+                       != ambiguousVowelCluster.end()) {
+                if (unsafeSubstitutions) {
+                    out.replace(replacementIdx, 2, "ou");
+                } else {
+                    out.replace(replacementIdx, 2, "o h");
+                }
+            }
+        } else if (replacementIdx == 0) {
+            out.replace(replacementIdx, 2, "ou");
+        }
+    }
+
+    replacementIdx = out.indexOf("yum");
+    // Initials for which <initial> + "-yu j-" exist in Jyutping
+    closeFrontVowelCluster = {"z", "c", "s", "j"};
+    if (replacementIdx != -1) {
+        if (replacementIdx != 0) {
+            // Check if the user intends to write an [-yː j-] or [-ɐm] cluster
+            if (closeFrontVowelCluster.find(out.at(replacementIdx - 1))
+                != closeFrontVowelCluster.end()) {
+                out.replace(replacementIdx, 3, "yu m");
+            } else {
+                out.replace(replacementIdx, 3, "jam");
+            }
+        } else if (replacementIdx == 0) {
+            out.replace(replacementIdx, 3, "jam");
+        }
+    }
+
+    replacementIdx = out.indexOf("yup");
+    // Initials for which <initial> + "-yu p-" exist in Jyutping
+    closeFrontVowelCluster = {"z", "s", "j"};
+    if (replacementIdx != -1) {
+        if (replacementIdx != 0) {
+            // Check if the user intends to write an [-yː p-] or [-ɐp] cluster
+            if (closeFrontVowelCluster.find(out.at(replacementIdx - 1))
+                != closeFrontVowelCluster.end()) {
+                out.replace(replacementIdx, 3, "yu p");
+            } else {
+                out.replace(replacementIdx, 3, "jap");
+            }
+        } else if (replacementIdx == 0) {
+            out.replace(replacementIdx, 3, "jap");
+        }
     }
 
     // Unsafe because it is ambiguous whether these are final + initial
@@ -1515,13 +1637,11 @@ bool jyutpingAutocorrect(const QString &in,
     }
     out.replace(" yun", " jyun");
 
-    // Unsafe because these are valid finals
-    if (unsafeSubstitutions) {
-        out.replace("un", "(y!u|a|eo)n");
-        out.replace("yut", "(ja|yu)t");
-        out.replace("ut", "(u|a)t");
-        out.replace("ui", "(eo|u)i");
-    }
+    out.replace("yut", "(ja|yu)t");
+    out.replace("yun", "(ja|jyu|yu)n");
+    out.replace("un", "(y!u|a|eo)n");
+    out.replace("ut", "(u|a)t");
+    out.replace("ui", "(eo|u)i");
 
     qDebug() << "AFTER SUBSTITUTIONS: " << out;
 
@@ -1862,9 +1982,6 @@ bool segmentJyutping(const QString &string,
                                    != specialCharacters.end());
         bool isGlobCharacter = currentString.trimmed() == "*"
                                || currentString.trimmed() == "?";
-        bool isRegexCharacter = (regexCharacters.find(
-                                     currentString.toStdString())
-                                 != regexCharacters.end());
         if (currentString == " " || currentString == "'" || isSpecialCharacter
             || isGlobCharacter) {
             if (initial_found) { // Add any incomplete word to the vector
