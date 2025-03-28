@@ -306,7 +306,7 @@ void AdvancedTab::setStyle(bool use_dark)
 
 void AdvancedTab::initializeUpdateCheckbox(QCheckBox &checkbox)
 {
-    connect(&checkbox, &QCheckBox::stateChanged, this, [&]() {
+    connect(&checkbox, &QCheckBox::checkStateChanged, this, [&]() {
         _settings->setValue("Advanced/updateNotificationsEnabled",
                             checkbox.checkState());
         _settings->sync();
@@ -320,7 +320,7 @@ void AdvancedTab::initializeForceDarkModeCheckbox(QCheckBox &checkbox)
 {
     setForceDarkModeCheckboxDefault(checkbox);
 
-    connect(&checkbox, &QCheckBox::stateChanged, this, [&]() {
+    connect(&checkbox, &QCheckBox::checkStateChanged, this, [&]() {
         _settings->setValue("Advanced/forceDarkMode",
                             checkbox.checkState());
         _settings->sync();

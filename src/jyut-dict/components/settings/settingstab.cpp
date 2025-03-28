@@ -493,7 +493,7 @@ void SettingsTab::initializeEntryCantonesePronunciation(
     static_cast<QGridLayout *>(cantonesePronunciationWidget.layout())
         ->addWidget(_cantoneseReference, 3, 0, 1, -1);
 
-    connect(_entryJyutping, &QCheckBox::stateChanged, this, [&]() {
+    connect(_entryJyutping, &QCheckBox::checkStateChanged, this, [&]() {
         CantoneseOptions options
             = _settings
                   ->value("Entry/cantonesePronunciationOptions",
@@ -515,7 +515,7 @@ void SettingsTab::initializeEntryCantonesePronunciation(
         emit updateStyle();
     });
 
-    connect(_entryYale, &QCheckBox::stateChanged, this, [&]() {
+    connect(_entryYale, &QCheckBox::checkStateChanged, this, [&]() {
         CantoneseOptions options
             = _settings
                   ->value("Entry/cantonesePronunciationOptions",
@@ -537,7 +537,7 @@ void SettingsTab::initializeEntryCantonesePronunciation(
         emit updateStyle();
     });
 
-    connect(_entryCantoneseIPA, &QCheckBox::stateChanged, this, [&]() {
+    connect(_entryCantoneseIPA, &QCheckBox::checkStateChanged, this, [&]() {
         CantoneseOptions options
             = _settings
                   ->value("Entry/cantonesePronunciationOptions",
@@ -588,7 +588,7 @@ void SettingsTab::initializeEntryMandarinPronunciation(
     static_cast<QGridLayout *>(mandarinPronunciationWidget.layout())
         ->addWidget(_mandarinReference, 4, 0, 1, -1);
 
-    connect(_entryPinyin, &QCheckBox::stateChanged, this, [&]() {
+    connect(_entryPinyin, &QCheckBox::checkStateChanged, this, [&]() {
         MandarinOptions options
             = _settings
                   ->value("Entry/mandarinPronunciationOptions",
@@ -610,7 +610,7 @@ void SettingsTab::initializeEntryMandarinPronunciation(
         emit updateStyle();
     });
 
-    connect(_entryNumberedPinyin, &QCheckBox::stateChanged, this, [&]() {
+    connect(_entryNumberedPinyin, &QCheckBox::checkStateChanged, this, [&]() {
         MandarinOptions options
             = _settings
                   ->value("Entry/mandarinPronunciationOptions",
@@ -632,7 +632,7 @@ void SettingsTab::initializeEntryMandarinPronunciation(
         emit updateStyle();
     });
 
-    connect(_entryZhuyin, &QCheckBox::stateChanged, this, [&]() {
+    connect(_entryZhuyin, &QCheckBox::checkStateChanged, this, [&]() {
         MandarinOptions options
             = _settings
                   ->value("Entry/mandarinPronunciationOptions",
@@ -654,7 +654,7 @@ void SettingsTab::initializeEntryMandarinPronunciation(
         emit updateStyle();
     });
 
-    connect(_entryMandarinIPA, &QCheckBox::stateChanged, this, [&]() {
+    connect(_entryMandarinIPA, &QCheckBox::checkStateChanged, this, [&]() {
         MandarinOptions options
             = _settings
                   ->value("Entry/mandarinPronunciationOptions",

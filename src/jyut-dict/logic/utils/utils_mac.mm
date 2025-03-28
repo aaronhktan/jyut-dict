@@ -14,18 +14,10 @@ namespace Utils {
 QColor NSColorToQColor(const NSColor *color)
 {
     QColor convertedColor;
-    NSString *colorSpace = [color colorSpaceName];
-    if (colorSpace == NSDeviceCMYKColorSpace) {
-        CGFloat cyan, magenta, yellow, black, alpha;
-        [color getCyan:&cyan magenta:&magenta yellow:&yellow black:&black alpha:&alpha];
-        convertedColor.setCmykF(cyan, magenta, yellow, black, alpha);
-    } else {
-        NSColor *tmpColor;
-        tmpColor = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
-        CGFloat red, green, blue, alpha;
-        [tmpColor getRed:&red green:&green blue:&blue alpha:&alpha];
-        convertedColor.setRgbF(red, green, blue, alpha);
-    }
+    NSColor *tmpColor = [color colorUsingColorSpace:[NSColorSpace deviceRGBColorSpace]];
+    CGFloat red, green, blue, alpha;
+    [tmpColor getRed:&red green:&green blue:&blue alpha:&alpha];
+    convertedColor.setRgbF(red, green, blue, alpha);
     return convertedColor;
 }
 
@@ -41,7 +33,7 @@ QColor getAppleControlAccentColor()
 
 bool isDarkMode()
 {
-    NSAppearance *appearance = NSAppearance.currentAppearance;
+    NSAppearance *appearance = NSAppearance.currentDrawingAppearance;
     if (@available(macOS 10.14, *)) {
         return appearance.name == NSAppearanceNameDarkAqua;
     }

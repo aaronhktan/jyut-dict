@@ -286,7 +286,7 @@ void TextTab::initializeInterfaceSizeWidget(QWidget &widget)
 
 void TextTab::initializeSearchAutoDetectCheckbox(QCheckBox &checkbox)
 {
-    connect(&checkbox, &QCheckBox::stateChanged, this, [&]() {
+    connect(&checkbox, &QCheckBox::checkStateChanged, this, [&]() {
         _settings->setValue("Interface/searchAutoDetect", checkbox.checkState());
         _settings->sync();
     });
