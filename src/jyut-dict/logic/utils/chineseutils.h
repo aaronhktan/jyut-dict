@@ -117,7 +117,8 @@ bool segmentPinyin(const QString &string,
 bool segmentJyutping(const QString &string,
                      std::vector<std::string> &out,
                      bool removeSpecialCharacters = true,
-                     bool removeGlobCharacters = true);
+                     bool removeGlobCharacters = true,
+                     bool removeRegexCharacters = true);
 } // namespace ChineseUtils
 
 #endif // CHINESEUTILS_H

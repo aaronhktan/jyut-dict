@@ -7,13 +7,82 @@
 #include <sstream>
 #include <unordered_map>
 #include <unordered_set>
+#include <QDebug>
+
+namespace {
+bool unfoldJyutpingRegex(const QString &string, std::vector<QString> &out)
+{
+    std::vector<QString> stringPossibilities;
+    // Invariant: there must be only one set of parentheses and one exclamation
+    if (string.count("(") > 1 || string.count(")") > 1
+        || string.count("!") > 1) {
+        return false;
+    }
+
+    // If there is a parenthesis, then all of the options must be checked
+    if (string.indexOf("(") != -1 && string.indexOf(")") != -1) {
+        int startIdx = string.indexOf("(") + 1;
+        int endIdx = string.indexOf(")");
+
+        int orIdx = string.indexOf("|");
+        while (orIdx != -1) {
+            stringPossibilities.push_back(
+                string.mid(0, string.indexOf("("))
+                + string.mid(startIdx, orIdx - startIdx)
+                + string.mid(string.indexOf(")") + 1));
+            startIdx = orIdx + 1;
+            orIdx = string.indexOf("|", startIdx);
+        }
+        stringPossibilities.push_back(string.mid(0, string.indexOf("("))
+                                      + string.mid(startIdx, endIdx - startIdx)
+                                      + string.mid(string.indexOf(")") + 1));
+    } else {
+        stringPossibilities.push_back(string);
+    }
+
+    qDebug() << "STRING POSSIBILITIES for" << string << "BEGINNING!!!!!!!!!!!";
+    for (const auto &i : stringPossibilities) {
+        qDebug() << i;
+    }
+    qDebug() << "STRING POSSIBILITIES ENDED !!!!!!!!!!!";
+
+    // If there is a "!", then the initial with and the initial without
+    // that optional character should be considered
+    for (const auto &s : stringPossibilities) {
+        int regexIdx = s.indexOf("!");
+        if (regexIdx == -1) {
+            out.push_back(s);
+        } else if (regexIdx == 0) {
+            QString tmp = s;
+            out.push_back(tmp.replace(0, 1, ""));
+        } else {
+            QString tmp = s;
+            out.push_back(tmp.replace(regexIdx - 1, 2, ""));
+        }
+    }
+
+    for (const auto &i : out) {
+        qDebug() << i;
+    }
+    qDebug() << "OUT ENDED ===========";
+
+    return true;
+}
+} // namespace
 
 namespace ChineseUtils {
 
 const static std::unordered_set<std::string> specialCharacters = {
-    ".",  "。", ",",  "，", "!",  "！", "?",  "？", "%",  "－", "…",
-    "⋯",  ".",  "·",  "\"", "“",  "”",  "$",  "｜", "：", "(",  ")",
-    "１", "２", "３", "４", "５", "６", "７", "８", "９", "０",
+    ".",  "。", ",",  "，", "！", "？", "%",  "－", "…",  "⋯",
+    ".",  "·",  "\"", "“",  "”",  "$",  "｜", "：", "１", "２",
+    "３", "４", "５", "６", "７", "８", "９", "０",
+};
+
+const static std::unordered_set<std::string> regexCharacters = {
+    "!",
+    "(",
+    ")",
+    "|",
 };
 
 const static std::unordered_map<std::string, std::string>
@@ -1394,7 +1463,7 @@ bool jyutpingAutocorrect(const QString &in,
     }
 
     out.replace("yue", "jyu"); // like "yuet yue" (粵語)
-    out.replace("ue", "yu");   // like "tsuen wan" (轉彎)
+    out.replace("ue", "(yu)"); // like "tsuen wan" (轉彎)
     out.replace("tsz", "zi");  // like "tsat tsz mui" (七姊妹)
     out.replace("ack", "ak");  // like "back" (白)
 
@@ -1448,10 +1517,13 @@ bool jyutpingAutocorrect(const QString &in,
 
     // Unsafe because these are valid finals
     if (unsafeSubstitutions) {
-        out.replace("un", "(y!un|an|eon)");
-        out.replace("ut", "(ut|at)");
-        out.replace("ui", "(eoi|ui)");
+        out.replace("un", "(y!u|a|eo)n");
+        out.replace("yut", "(ja|yu)t");
+        out.replace("ut", "(u|a)t");
+        out.replace("ui", "(eo|u)i");
     }
+
+    qDebug() << "AFTER SUBSTITUTIONS: " << out;
 
     return 0;
 }
@@ -1725,7 +1797,8 @@ bool segmentPinyin(const QString &string,
 bool segmentJyutping(const QString &string,
                      std::vector<std::string> &out,
                      bool removeSpecialCharacters,
-                     bool removeGlobCharacters)
+                     bool removeGlobCharacters,
+                     bool removeRegexCharacters)
 {
     std::vector<std::string> syllables;
 
@@ -1750,37 +1823,77 @@ bool segmentJyutping(const QString &string,
     int end_idx = 0;
     bool initial_found = false;
 
-    while (end_idx < string.length()) {
+    QString processedString = string;
+    if (removeSpecialCharacters) {
+        for (const auto &i : specialCharacters) {
+            int charIdx = processedString.indexOf(i.c_str());
+            while (charIdx != -1) {
+                processedString.replace(charIdx, 1, " ");
+                charIdx = processedString.indexOf(i.c_str());
+            }
+        }
+    }
+    if (removeGlobCharacters) {
+        for (const auto &i : std::unordered_set{"*", "?"}) {
+            int charIdx = processedString.indexOf(i);
+            while (charIdx != -1) {
+                processedString.replace(charIdx, 1, " ");
+                charIdx = processedString.indexOf(i);
+            }
+        }
+    }
+    if (removeRegexCharacters) {
+        for (const auto &i : regexCharacters) {
+            int charIdx = processedString.indexOf(i.c_str());
+            while (charIdx != -1) {
+                processedString.replace(charIdx, 1, " ");
+                charIdx = processedString.indexOf(i.c_str());
+            }
+        }
+    }
+
+    while (end_idx < processedString.length()) {
         bool component_found = false;
 
         // Ignore separation characters; these are special.
-        QString currentString = string.mid(end_idx, 1).toLower();
+        QString currentString = processedString.mid(end_idx, 1).toLower();
         bool isSpecialCharacter = (specialCharacters.find(
                                        currentString.toStdString())
                                    != specialCharacters.end());
         bool isGlobCharacter = currentString.trimmed() == "*"
                                || currentString.trimmed() == "?";
+        bool isRegexCharacter = (regexCharacters.find(
+                                     currentString.toStdString())
+                                 != regexCharacters.end());
         if (currentString == " " || currentString == "'" || isSpecialCharacter
             || isGlobCharacter) {
             if (initial_found) { // Add any incomplete word to the vector
-                QString previous_initial
-                    = string.mid(start_idx, end_idx - start_idx).toLower();
+                QString previous_initial = processedString
+                                               .mid(start_idx,
+                                                    end_idx - start_idx)
+                                               .toLower();
                 syllables.push_back(previous_initial.toStdString());
                 if (finals.find(previous_initial.toStdString())
                     == finals.end()) {
+                    qDebug() << "jyutping is not valid because incomplete "
+                                "final not valid";
                     valid_jyutping = false;
                 }
                 start_idx = end_idx;
                 initial_found = false;
             }
-            if (!removeGlobCharacters && isGlobCharacter) {
+            if (isGlobCharacter) {
                 // Add anything before the current glob character
                 if (end_idx >= 1 && (end_idx - start_idx >= 1)) {
-                    QString previous_initial
-                        = string.mid(start_idx, end_idx - start_idx).toLower();
+                    QString previous_initial = processedString
+                                                   .mid(start_idx,
+                                                        end_idx - start_idx)
+                                                   .toLower();
                     syllables.push_back(previous_initial.toStdString());
                     if (finals.find(previous_initial.toStdString())
                         == finals.end()) {
+                        qDebug() << "jyutping is not valid because initial not "
+                                    "valid for glob";
                         valid_jyutping = false;
                     }
                     initial_found = false;
@@ -1791,23 +1904,24 @@ bool segmentJyutping(const QString &string,
                 // already consumed by another glob character).
                 int glob_start_idx = end_idx;
                 int length = 1;
-                if ((end_idx >= 1) && (string.at(end_idx - 1) == ' ')
-                    && syllables.back().back() != ' ') {
+                if ((end_idx >= 1) && (processedString.at(end_idx - 1) == ' ')
+                    && (!syllables.empty()) && syllables.back().back() != ' ') {
                     // Add preceding whitespace to this word
                     glob_start_idx--;
                     length++;
                 }
-                if ((string.length() > end_idx + 1)
-                    && (string.at(end_idx + 1) == ' ')) {
+                if ((processedString.length() > end_idx + 1)
+                    && (processedString.at(end_idx + 1) == ' ')) {
                     // Add succeeding whitespace to this word
                     length++;
                     end_idx++;
                 }
-                QString glob = string.mid(glob_start_idx, length).toLower();
+                QString glob
+                    = processedString.mid(glob_start_idx, length).toLower();
                 syllables.push_back(glob.toStdString());
 
                 start_idx = end_idx;
-            } else if (!removeSpecialCharacters && isSpecialCharacter) {
+            } else if (isSpecialCharacter) {
                 syllables.push_back(currentString.toStdString());
             }
             start_idx++;
@@ -1822,20 +1936,36 @@ bool segmentJyutping(const QString &string,
         // This block checks for the latter case.
         if (currentString.at(0).isDigit()) {
             if (initial_found) {
-                QString previous_initial
-                    = string.mid(start_idx, end_idx - start_idx).toLower();
-                auto searchResult = finals.find(previous_initial.toStdString());
-                if (searchResult != finals.end()) {
+                QString previous_initial = processedString
+                                               .mid(start_idx,
+                                                    end_idx - start_idx)
+                                               .toLower();
+
+                // Regex characters need to be handled in a special way
+                std::vector<QString> stringsToSearch;
+                QString stringToSearch = previous_initial;
+                unfoldJyutpingRegex(stringToSearch, stringsToSearch);
+
+                bool isValidFinal = false;
+                for (const auto &s : stringsToSearch) {
+                    auto searchResult = finals.find(s.toStdString());
+                    isValidFinal = isValidFinal
+                                   || (searchResult != finals.end());
+                }
+                if (isValidFinal) {
                     // Confirmed, last initial found was also a final
                     end_idx++;
-                    previous_initial
-                        = string.mid(start_idx, end_idx - start_idx).toLower();
+                    previous_initial = processedString
+                                           .mid(start_idx, end_idx - start_idx)
+                                           .toLower();
                     syllables.push_back(previous_initial.toStdString());
                     start_idx = end_idx;
                     initial_found = false;
 
                     if (currentString.at(0).digitValue() < 1
                         || currentString.at(0).digitValue() > 6) {
+                        qDebug()
+                            << "jyutping is not valid because number not valid";
                         valid_jyutping = false;
                     }
 
@@ -1847,30 +1977,68 @@ bool segmentJyutping(const QString &string,
         // First, check for initials
         // If initial is valid, then extend the end_index for length of initial
         // cluster of consonants.
-        for (int initial_len = 2; initial_len > 0; initial_len--) {
-            currentString = string.mid(end_idx, initial_len).toLower();
-            auto searchResult = initials.find(currentString.toStdString());
+        for (int initial_len = removeRegexCharacters
+                                   ? 2
+                                   : std::min(16,
+                                              static_cast<int>(
+                                                  processedString.size())
+                                                  - end_idx);
+             initial_len > 0;
+             initial_len--) {
+            currentString = processedString.mid(end_idx, initial_len).toLower();
+            qDebug() << "Checking current string " << currentString
+                     << "which is from" << end_idx << "to"
+                     << end_idx + initial_len;
 
-            if (searchResult == initials.end()
-                || currentString.length() != initial_len) {
+            std::vector<QString> stringsToSearch;
+            QString stringToSearch = currentString;
+            unfoldJyutpingRegex(stringToSearch, stringsToSearch);
+
+            bool isValidInitial = false;
+            for (const auto &s : stringsToSearch) {
+                auto searchResult = initials.find(s.toStdString());
+                qDebug() << s
+                         << (searchResult == initials.end() ? "is not" : "is")
+                         << "a valid initial";
+                isValidInitial = isValidInitial
+                                 || (searchResult != initials.end());
+            }
+
+            if (!isValidInitial) {
                 continue;
             }
 
-            // Multiple initials in a row are only valid if previous "initial"
-            // was actually a final (like m or ng)
             if (initial_found) {
-                QString first_initial
-                    = string.mid(start_idx, end_idx - start_idx).toLower();
-                searchResult = finals.find(first_initial.toStdString());
-                if (searchResult != finals.end()) {
-                    syllables.push_back(first_initial.toStdString());
+                // Multiple initials in a row are only valid if previous "initial"
+                // was actually a final (like m or ng)
+                QString previousInitial = processedString
+                                              .mid(start_idx,
+                                                   end_idx - start_idx)
+                                              .toLower();
+                qDebug() << "checking previous initial: " << previousInitial;
+                stringsToSearch.clear();
+                QString stringToSearch = previousInitial;
+                unfoldJyutpingRegex(stringToSearch, stringsToSearch);
+
+                bool previousInitialIsValidFinal = false;
+                for (const auto &s : stringsToSearch) {
+                    auto searchResult = finals.find(s.toStdString());
+                    previousInitialIsValidFinal = previousInitialIsValidFinal
+                                                  || (searchResult
+                                                      != initials.end());
+                }
+                if (previousInitialIsValidFinal) {
+                    syllables.push_back(previousInitial.toStdString());
                     start_idx = end_idx;
                 } else {
+                    qDebug() << "jyutping is not valid because previous "
+                                "initial not valid";
                     valid_jyutping = false;
                 }
             }
 
             end_idx += initial_len;
+            qDebug() << "end_idx is now" << end_idx;
             component_found = true;
             initial_found = true;
         }
@@ -1885,24 +2053,46 @@ bool segmentJyutping(const QString &string,
         //
         // Then add the substring from [start_index, end_index) to vector
         // and reset start_index, so we can start searching after the end_index.
-        for (int final_len = 4; final_len > 0; final_len--) {
-            currentString = string.mid(end_idx, final_len).toLower();
-            auto searchResult = finals.find(currentString.toStdString());
-            if (searchResult != finals.end()
-                && currentString.length() == final_len) {
+        for (int final_len = removeRegexCharacters
+                                 ? 4
+                                 : std::min(16,
+                                            static_cast<int>(
+                                                processedString.size())
+                                                - end_idx);
+             final_len > 0;
+             final_len--) {
+            currentString = processedString.mid(end_idx, final_len).toLower();
+
+            std::vector<QString> stringsToSearch;
+            QString stringToSearch = currentString;
+            unfoldJyutpingRegex(stringToSearch, stringsToSearch);
+
+            bool isValidFinal = false;
+            for (const auto &s : stringsToSearch) {
+                auto searchResult = finals.find(s.toStdString());
+                qDebug() << s
+                         << (searchResult == finals.end() ? " is not " : " is ")
+                         << "a valid final";
+                isValidFinal = isValidFinal || (searchResult != finals.end());
+            }
+
+            if (isValidFinal) {
                 end_idx += final_len;
-                if (end_idx < string.length()) {
-                    if (string.at(end_idx).isDigit()) {
-                        if (string.at(end_idx).digitValue() < 1
-                            || string.at(end_idx).digitValue() > 6) {
+                if (end_idx < processedString.length()) {
+                    if (processedString.at(end_idx).isDigit()) {
+                        if (processedString.at(end_idx).digitValue() < 1
+                            || processedString.at(end_idx).digitValue() > 6) {
+                            qDebug() << "jyutping is not valid because final "
+                                        "number not valid";
                             valid_jyutping = false;
                         }
 
                         end_idx++;
                     }
                 }
-                QString syllable
-                    = string.mid(start_idx, end_idx - start_idx).toLower();
+                QString syllable = processedString
+                                       .mid(start_idx, end_idx - start_idx)
+                                       .toLower();
                 syllables.push_back(syllable.toStdString());
                 start_idx = end_idx;
                 component_found = true;
@@ -1914,6 +2104,7 @@ bool segmentJyutping(const QString &string,
         if (component_found) {
             continue;
         } else {
+            qDebug() << "jyutping is not valid because component not valid";
             valid_jyutping = false;
         }
 
@@ -1926,8 +2117,14 @@ bool segmentJyutping(const QString &string,
     if (!lastSyllable.isEmpty() && lastSyllable != "'") {
         syllables.push_back(lastSyllable.toStdString());
         if (finals.find(lastSyllable.toStdString()) == finals.end()) {
+            qDebug() << "jyutping is not valid because last syllable number "
+                        "not valid";
             valid_jyutping = false;
         }
+    }
+
+    for (const auto &i : out) {
+        qDebug() << "OUT: " << i.c_str();
     }
 
     out = syllables;

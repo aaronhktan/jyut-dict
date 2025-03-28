@@ -212,6 +212,7 @@ void TestChineseUtils::compareStringsCompatibilityVariantNormalization()
 void TestChineseUtils::jyutpingToYaleSimple()
 {
     std::string result = ChineseUtils::convertJyutpingToYale("si1 zi2 saan1");
+    qDebug() << result.c_str();
     QCOMPARE(result, "sī jí sāan");
 }
 

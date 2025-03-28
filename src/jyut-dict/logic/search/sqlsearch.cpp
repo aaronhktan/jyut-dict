@@ -30,7 +30,7 @@ void prepareJyutpingBindValues(const QString &searchTerm, QString &regexTerm)
     if (!searchExactMatch) {
         ChineseUtils::jyutpingAutocorrect(searchTerm,
                                           correctedSearchTerm,
-                                          /* unsafeSubstitutions */ false);
+                                          /* unsafeSubstitutions */ true);
     }
 
     std::vector<std::string> jyutpingWords;
@@ -45,7 +45,8 @@ void prepareJyutpingBindValues(const QString &searchTerm, QString &regexTerm)
         ChineseUtils::segmentJyutping(correctedSearchTerm,
                                       jyutpingWords,
                                       /* removeSpecialCharacters */ true,
-                                      /* removeGlobCharacters */ false);
+                                      /* removeGlobCharacters */ false,
+                                      /*removeRegexCharacters=*/false);
     }
 
     if (!searchExactMatch) {
