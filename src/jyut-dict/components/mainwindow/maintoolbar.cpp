@@ -100,7 +100,7 @@ void MainToolBar::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -261,21 +261,21 @@ void MainToolBar::changeOptionEvent(const Utils::ButtonOptionIndex index) const
 
 void MainToolBar::setOpenHistoryAction(QAction *action) const
 {
-    connect(_openHistoryButton, &QToolButton::pressed, this, [=]() {
+    connect(_openHistoryButton, &QToolButton::pressed, this, [=, this]() {
         action->trigger();
     });
 }
 
 void MainToolBar::setOpenSettingsAction(QAction *action) const
 {
-    connect(_openSettingsButton, &QToolButton::pressed, this, [=]() {
+    connect(_openSettingsButton, &QToolButton::pressed, this, [=, this]() {
         action->trigger();
     });
 }
 
 void MainToolBar::setOpenFavouritesAction(QAction *action) const
 {
-    connect(_openFavouritesButton, &QToolButton::pressed, this, [=]() {
+    connect(_openFavouritesButton, &QToolButton::pressed, this, [=, this]() {
         action->trigger();
     });
 }

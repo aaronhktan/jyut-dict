@@ -102,7 +102,7 @@ void EntryViewSentenceCardSection::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -173,7 +173,7 @@ void EntryViewSentenceCardSection::setEntry(const Entry &entry)
     _showLoadingIconTimer->stop();
     _showLoadingIconTimer->setInterval(1500);
     _showLoadingIconTimer->setSingleShot(true);
-    QObject::connect(_showLoadingIconTimer, &QTimer::timeout, this, [=]() {
+    QObject::connect(_showLoadingIconTimer, &QTimer::timeout, this, [=, this]() {
         if (!_calledBack && _enableUIUpdate) {
             showLoadingWidget();
         }
@@ -248,7 +248,7 @@ void EntryViewSentenceCardSection::stallSentenceUIUpdate(void)
     _enableUIUpdateTimer->setInterval(250);
 #endif
     _enableUIUpdateTimer->setSingleShot(true);
-    QObject::connect(_enableUIUpdateTimer, &QTimer::timeout, this, [=]() {
+    QObject::connect(_enableUIUpdateTimer, &QTimer::timeout, this, [=, this]() {
         _enableUIUpdate = true;
     });
     _enableUIUpdateTimer->start();
@@ -287,7 +287,7 @@ void EntryViewSentenceCardSection::pauseBeforeUpdatingUI(const std::vector<Sourc
 #else
     _updateUITimer->setInterval(25);
 #endif
-    QObject::connect(_updateUITimer, &QTimer::timeout, this, [=]() {
+    QObject::connect(_updateUITimer, &QTimer::timeout, this, [=, this]() {
         if (_enableUIUpdate) {
             _updateUITimer->stop();
             disconnect(_updateUITimer, nullptr, nullptr, nullptr);
