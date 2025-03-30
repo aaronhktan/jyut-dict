@@ -1673,7 +1673,7 @@ bool jyutpingSoundChanges(std::vector<std::string> &inOut)
                    || syllable[0] == 'u') {
             // merging of null initial with initial [ŋ] before [a, ɐ, ɔ, o]
             syllable.insert(0, "(ng)!");
-        } else if (syllable[0] == 'n') {
+        } else if (syllable[0] == 'n' || syllable[0] == 'l') {
             // merge of [n] and [l] initials
             syllable.replace(0, 1, "(n|l)");
         } else if (syllable.length() >= 2
