@@ -1676,9 +1676,9 @@ bool jyutpingSoundChanges(std::vector<std::string> &inOut)
         } else if (syllable[0] == 'n' || syllable[0] == 'l') {
             // merge of [n] and [l] initials
             syllable.replace(0, 1, "(n|l)");
-        } else if (syllable.length() >= 2
-                   && (syllable[0] == 'g' || syllable[0] == 'k')
-                   && syllable[1] == 'o') {
+        } else if (syllable.starts_with("go") || syllable.starts_with("ko")
+                   || syllable.starts_with("g(o")
+                   || syllable.starts_with("k(o")) {
             // merging of [k]/[kʷ] and [kʰ]/[kʷʰ] initials before [ɔ]
             if (syllable[0] == 'g') {
                 syllable.replace(0, 1, "gw!");
@@ -1686,6 +1686,7 @@ bool jyutpingSoundChanges(std::vector<std::string> &inOut)
                 syllable.replace(0, 1, "kw!");
             }
         }
+
         // Lack of distinction between aspirated and unaspirated initials
         if (syllable.starts_with("d") || syllable.starts_with("t")) {
             syllable.replace(0, 1, "(d|t)");
