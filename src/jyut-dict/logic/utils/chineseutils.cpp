@@ -1632,10 +1632,6 @@ bool jyutpingAutocorrect(const QString &in,
         out.replace(0, 3, "jat");
     }
     out.replace(" yut", " jat");
-    if (out.startsWith("yun")) {
-        out.replace(0, 3, "jyun");
-    }
-    out.replace(" yun", " jyun");
 
     out.replace("yut", "(ja|yu)t");
     out.replace("yun", "(ja|jyu|yu)n");
