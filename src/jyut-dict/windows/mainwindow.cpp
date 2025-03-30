@@ -195,8 +195,8 @@ MainWindow::MainWindow(QWidget *parent) :
     // Perform database migration if needed, but delay for a bit so that
     // the notify dialog has time to show itself
     QTimer::singleShot(500, this, [&]() {
-        QtConcurrent::run(_utils.get(),
-                          &SQLDatabaseUtils::updateDatabase);
+        std::ignore = QtConcurrent::run(&SQLDatabaseUtils::updateDatabase,
+                                        _utils.get());
     });
 }
 
@@ -218,9 +218,9 @@ void MainWindow::changeEvent(QEvent *event)
 void MainWindow::installTranslator(void)
 {
     if (!Settings::getSettings()->contains("Advanced/locale")) {
-        Settings::systemTranslator.load("qt_" + QLocale::system().name(),
-                                        QLibraryInfo::location(
-                                            QLibraryInfo::TranslationsPath));
+        std::ignore = Settings::systemTranslator.load("qt_" + QLocale::system().name(),
+                                                      QLibraryInfo::path(
+                                                          QLibraryInfo::TranslationsPath));
         qApp->installTranslator(&Settings::systemTranslator);
 
         // The reason why we need to loop through UI languages is because
@@ -249,15 +249,15 @@ void MainWindow::installTranslator(void)
             = Settings::getSettings()->value("Advanced/locale").toString();
         QLocale locale{localeString};
 
-        Settings::systemTranslator.load("qt_" + locale.name(),
-                                        QLibraryInfo::location(
-                                            QLibraryInfo::TranslationsPath));
+        std::ignore = Settings::systemTranslator.load("qt_" + locale.name(),
+                                                      QLibraryInfo::path(
+                                                          QLibraryInfo::TranslationsPath));
         qApp->installTranslator(&Settings::systemTranslator);
 
-        Settings::applicationTranslator.load(/* QLocale */ locale,
-                                             /* filename */ "jyutdictionary",
-                                             /* prefix */ "-",
-                                             /* directory */ ":/translations");
+        std::ignore = Settings::applicationTranslator.load(/* QLocale */ locale,
+                                                           /* filename */ "jyutdictionary",
+                                                           /* prefix */ "-",
+                                                           /* directory */ ":/translations");
         qApp->installTranslator(&Settings::applicationTranslator);
 
         Settings::setCurrentLocale(locale);
@@ -364,7 +364,9 @@ void MainWindow::setStyle(bool use_dark)
 {
 #ifdef Q_OS_MAC
     (void) (use_dark);
-    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
+
+    setStyleSheet(
+        "QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
 #elif defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     if (!use_dark) {
         QPalette palette = QApplication::style()->standardPalette();
@@ -710,6 +712,17 @@ void MainWindow::setStyle(bool use_dark)
             "   image: url(:/images/check_box_unchecked.svg); "
             "} "
             ""
+            "QPushButton { "
+            "   background-color: palette(base); "
+            "   border: 1px solid palette(alternate-base); "
+            "   padding: 5px; "
+            "} "
+            ""
+            "QPushButton:pressed { "
+            "   background-color: palette(window);"
+            "   border: none; "
+            "} "
+            ""
             "QRadioButton::indicator { "
             "   height: 18px; "
             "   width: 18px; "
@@ -800,7 +813,7 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
     }
 }
 
-void MainWindow::forwardSearchHistoryItem(const SearchTermHistoryItem &pair)
+void MainWindow::forwardSearchHistoryItem(const searchTermHistoryItem &pair)
 {
     emit searchHistoryClicked(pair);
 }

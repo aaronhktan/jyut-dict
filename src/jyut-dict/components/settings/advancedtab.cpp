@@ -47,7 +47,9 @@ void AdvancedTab::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [=, this]() {
+            _paletteRecentlyChanged = false;
+        });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -306,7 +308,7 @@ void AdvancedTab::setStyle(bool use_dark)
 
 void AdvancedTab::initializeUpdateCheckbox(QCheckBox &checkbox)
 {
-    connect(&checkbox, &QCheckBox::stateChanged, this, [&]() {
+    connect(&checkbox, &QCheckBox::checkStateChanged, this, [&]() {
         _settings->setValue("Advanced/updateNotificationsEnabled",
                             checkbox.checkState());
         _settings->sync();
@@ -320,7 +322,7 @@ void AdvancedTab::initializeForceDarkModeCheckbox(QCheckBox &checkbox)
 {
     setForceDarkModeCheckboxDefault(checkbox);
 
-    connect(&checkbox, &QCheckBox::stateChanged, this, [&]() {
+    connect(&checkbox, &QCheckBox::checkStateChanged, this, [&]() {
         _settings->setValue("Advanced/forceDarkMode",
                             checkbox.checkState());
         _settings->sync();
@@ -421,14 +423,13 @@ void AdvancedTab::initializeLanguageCombobox(QComboBox &combobox)
                 Settings::setCurrentLocale(newLocale);
 
                 qApp->removeTranslator(&Settings::systemTranslator);
-                Settings::systemTranslator
+                (void) Settings::systemTranslator
                     .load("qt_" + newLocale.name(),
-                          QLibraryInfo::location(
-                              QLibraryInfo::TranslationsPath));
+                          QLibraryInfo::path(QLibraryInfo::TranslationsPath));
                 qApp->installTranslator(&Settings::systemTranslator);
 
                 qApp->removeTranslator(&Settings::applicationTranslator);
-                Settings::applicationTranslator
+                (void) Settings::applicationTranslator
                     .load(/* QLocale */ newLocale,
                           /* filename */ "jyutdictionary",
                           /* prefix */ "-",
@@ -574,14 +575,17 @@ void AdvancedTab::exportDictionaryDatabase(void)
 
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
     disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
-    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=]() {
-        _progressDialog->reset();
-        exportDatabaseResult(_boolReturnWatcher->result(),
-                             successText,
-                             failureText);
-    });
+    connect(_boolReturnWatcher,
+            &QFutureWatcher<bool>::finished,
+            this,
+            [=, this]() {
+                _progressDialog->reset();
+                exportDatabaseResult(_boolReturnWatcher->result(),
+                                     successText,
+                                     failureText);
+            });
 
-    QFuture<bool> future = QtConcurrent::run([=]() {
+    QFuture<bool> future = QtConcurrent::run([=, this]() {
         SQLDatabaseManager manager;
 
         // Do not attempt to replace database with itself
@@ -620,14 +624,17 @@ void AdvancedTab::exportUserDatabase(void)
 
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
     disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
-    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=]() {
-        _progressDialog->reset();
-        exportDatabaseResult(_boolReturnWatcher->result(),
-                             successText,
-                             failureText);
-    });
+    connect(_boolReturnWatcher,
+            &QFutureWatcher<bool>::finished,
+            this,
+            [=, this]() {
+                _progressDialog->reset();
+                exportDatabaseResult(_boolReturnWatcher->result(),
+                                     successText,
+                                     failureText);
+            });
 
-    QFuture<bool> future = QtConcurrent::run([=]() {
+    QFuture<bool> future = QtConcurrent::run([=, this]() {
         SQLDatabaseManager manager;
 
         // Do not attempt to replace database with itself
@@ -675,12 +682,15 @@ void AdvancedTab::restoreBackedUpDictionaryDatabase(void)
 
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
     disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
-    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=]() {
-        _progressDialog->reset();
-        restoreDatabaseResult(_boolReturnWatcher->result(),
-                              successText,
-                              failureText);
-    });
+    connect(_boolReturnWatcher,
+            &QFutureWatcher<bool>::finished,
+            this,
+            [=, this]() {
+                _progressDialog->reset();
+                restoreDatabaseResult(_boolReturnWatcher->result(),
+                                      successText,
+                                      failureText);
+            });
 
     QFuture<bool> future = QtConcurrent::run([]() {
         SQLDatabaseManager manager;
@@ -724,14 +734,17 @@ void AdvancedTab::restoreExportedDictionaryDatabase(void)
 
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
     disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
-    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=]() {
-        _progressDialog->reset();
-        restoreDatabaseResult(_boolReturnWatcher->result(),
-                              successText,
-                              failureText);
-    });
+    connect(_boolReturnWatcher,
+            &QFutureWatcher<bool>::finished,
+            this,
+            [=, this]() {
+                _progressDialog->reset();
+                restoreDatabaseResult(_boolReturnWatcher->result(),
+                                      successText,
+                                      failureText);
+            });
 
-    auto future = QtConcurrent::run([=]() {
+    auto future = QtConcurrent::run([=, this]() {
         SQLDatabaseManager manager;
 
         // Do not attempt to replace database with itself
@@ -778,14 +791,17 @@ void AdvancedTab::restoreExportedUserDatabase(void)
 
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
     disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
-    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=]() {
-        _progressDialog->reset();
-        restoreDatabaseResult(_boolReturnWatcher->result(),
-                              successText,
-                              failureText);
-    });
+    connect(_boolReturnWatcher,
+            &QFutureWatcher<bool>::finished,
+            this,
+            [=, this]() {
+                _progressDialog->reset();
+                restoreDatabaseResult(_boolReturnWatcher->result(),
+                                      successText,
+                                      failureText);
+            });
 
-    auto future = QtConcurrent::run([=]() {
+    auto future = QtConcurrent::run([=, this]() {
         SQLDatabaseManager manager;
 
         // Do not attempt to replace database with itself
@@ -851,12 +867,12 @@ void AdvancedTab::startAudioDownload(std::shared_ptr<TextToSpeechCallbacks> cbs)
     _downloader = new Downloader(url, zipFile, this);
 
     disconnect(_downloader, nullptr, nullptr, nullptr);
-    connect(_downloader, &Downloader::downloaded, this, [=](QString outputPath) {
+    connect(_downloader, &Downloader::downloaded, this, [=, this](QString outputPath) {
         // Since the std::shared_ptr cbs goes out of scope once this function ends,
         // it must be captured by value instead of by reference
         unzipFile(outputPath, cbs);
     });
-    connect(_downloader, &Downloader::error, this, [=](int error) {
+    connect(_downloader, &Downloader::error, this, [=, this](int error) {
         _progressDialog->reset();
         downloadAudioResult(!error,
                             tr("Audio downloaded successfully!"),
@@ -914,7 +930,7 @@ void AdvancedTab::unzipFile(QString outputPath,
     _progressDialog->setLabelText(tr("Installing downloaded files..."));
 
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
-    QFuture<bool> future = QtConcurrent::run([=]() {
+    QFuture<bool> future = QtConcurrent::run([=, this]() {
         KZip zip{outputPath};
         if (!zip.open(QIODevice::ReadOnly)) {
             return false;
@@ -925,7 +941,7 @@ void AdvancedTab::unzipFile(QString outputPath,
         return true;
     });
     _boolReturnWatcher->setFuture(future);
-    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=]() {
+    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=, this]() {
         // Since the std::shared_ptr cbs goes out of scope once this function ends,
         // it must be captured by value instead of by reference
         unzipComplete(static_cast<QFutureWatcher<bool> *>(sender())->result(),

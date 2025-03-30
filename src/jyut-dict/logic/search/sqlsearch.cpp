@@ -5,7 +5,6 @@
 #include "logic/utils/chineseutils.h"
 #include "logic/utils/scriptdetector.h"
 #include "logic/utils/utils.h"
-
 #include <QtConcurrent/QtConcurrent>
 
 #ifdef Q_OS_WIN
@@ -280,8 +279,8 @@ void SQLSearch::searchByUnique(const QString &simplified,
 
     unsigned long long queryID = generateAndSetQueryID();
     auto future
-        = QtConcurrent::run(this,
-                            &SQLSearch::searchByUniqueThread,
+        = QtConcurrent::run(&SQLSearch::searchByUniqueThread,
+                            this,
                             simplified.normalized(QString::NormalizationForm_C),
                             traditional.normalized(QString::NormalizationForm_C),
                             jyutping.normalized(QString::NormalizationForm_C),
@@ -311,7 +310,7 @@ void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString &searc
         return;
     }
 
-    auto future = QtConcurrent::run(this, threadFunction, searchTerm, queryID);
+    auto future = QtConcurrent::run(threadFunction, this, searchTerm, queryID);
     _futures.append(future);
 }
 
@@ -325,12 +324,11 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
 {
     // When the search term is surrounded by quotes, search for only term
     // inside quotes (not the quotes themselves)
-    bool searchExactMatch = ((searchTerm.at(0) == "\""
-                              && searchTerm.at(searchTerm.size() - 1) == "\"")
-                             || (searchTerm.startsWith("”")
-                                 && searchTerm.endsWith("“")))
-                            && searchTerm.length() >= 3;
-    bool dontAppendWildcard = searchTerm.at(searchTerm.size() - 1) == "$";
+    bool searchExactMatch
+        = ((searchTerm.startsWith("\"") && searchTerm.endsWith("\""))
+           || (searchTerm.startsWith("”") && searchTerm.endsWith("“")))
+          && searchTerm.length() >= 3;
+    bool dontAppendWildcard = searchTerm.endsWith("$");
 
     QString searchTermWithoutQuotes;
     QString searchTermWithoutEndPositionMarker;
@@ -368,12 +366,11 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
 void SQLSearch::searchTraditionalThread(const QString &searchTerm,
                                         const unsigned long long queryID)
 {
-    bool searchExactMatch = ((searchTerm.at(0) == "\""
-                              && searchTerm.at(searchTerm.size() - 1) == "\"")
-                             || (searchTerm.startsWith("“")
-                                 && searchTerm.endsWith("”")))
-                            && searchTerm.length() >= 3;
-    bool dontAppendWildcard = searchTerm.at(searchTerm.size() - 1) == "$";
+    bool searchExactMatch
+        = ((searchTerm.startsWith("\"") && searchTerm.endsWith("\""))
+           || (searchTerm.startsWith("“") && searchTerm.endsWith("”")))
+          && searchTerm.length() >= 3;
+    bool dontAppendWildcard = searchTerm.endsWith("$");
 
     QString searchTermWithoutQuotes;
     QString searchTermWithoutEndPositionMarker;
@@ -457,8 +454,8 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm,
 void SQLSearch::searchEnglishThread(const QString &searchTerm,
                                     const unsigned long long queryID)
 {
-    bool searchExactMatch = searchTerm.at(0) == "\""
-                            && searchTerm.at(searchTerm.size() - 1) == "\""
+    bool searchExactMatch = searchTerm.startsWith("\"")
+                            && searchTerm.endsWith("\"")
                             && searchTerm.length() >= 3;
     QString searchTermWithoutQuotes;
     if (searchExactMatch) {

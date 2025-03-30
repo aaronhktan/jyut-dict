@@ -60,7 +60,7 @@ void EntryHeaderWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -144,7 +144,7 @@ void EntryHeaderWidget::translateUI()
     }
 
     disconnect(_cantoneseTTS, nullptr, nullptr, nullptr);
-    connect(_cantoneseTTS, &QPushButton::clicked, this, [=]() {
+    connect(_cantoneseTTS, &QPushButton::clicked, this, [=, this]() {
         TextToSpeech::SpeakerBackend backend
             = Settings::getSettings()
                   ->value("Advanced/CantoneseTextToSpeech::SpeakerBackend",
@@ -177,7 +177,7 @@ void EntryHeaderWidget::translateUI()
     });
 
     disconnect(_mandarinTTS, nullptr, nullptr, nullptr);
-    if (Settings::getCurrentLocale().country() == QLocale::Taiwan) {
+    if (Settings::getCurrentLocale().territory() == QLocale::Taiwan) {
         TextToSpeech::SpeakerBackend backend
             = Settings::getSettings()
                   ->value("Advanced/MandarinTextToSpeech::SpeakerBackend",
@@ -189,7 +189,7 @@ void EntryHeaderWidget::translateUI()
                   ->value("Advanced/MandarinTextToSpeech::SpeakerVoice",
                           QVariant::fromValue(TextToSpeech::SpeakerVoice::NONE))
                   .value<TextToSpeech::SpeakerVoice>();
-        connect(_mandarinTTS, &QPushButton::clicked, this, [=]() {
+        connect(_mandarinTTS, &QPushButton::clicked, this, [=, this]() {
 #ifdef Q_OS_MAC
             if (!_speaker->speakTaiwaneseMandarin(_pinyin, backend, voice)) {
                 return;
@@ -210,7 +210,7 @@ void EntryHeaderWidget::translateUI()
                           .arg(Settings::getCurrentLocale().bcp47Name()));
         });
     } else {
-        connect(_mandarinTTS, &QPushButton::clicked, this, [=]() {
+        connect(_mandarinTTS, &QPushButton::clicked, this, [=, this]() {
             TextToSpeech::SpeakerBackend backend
                 = Settings::getSettings()
                       ->value("Advanced/MandarinTextToSpeech::SpeakerBackend",

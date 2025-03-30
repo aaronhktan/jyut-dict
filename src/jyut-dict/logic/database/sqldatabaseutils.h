@@ -15,8 +15,8 @@
 // which is only responsible for opening and closing a connection to a database.
 
 constexpr auto CURRENT_DATABASE_VERSION = 3;
-typedef std::vector<std::tuple<std::string, std::string, std::string>>
-    conflictingDictionaryMetadata;
+using conflictingDictionaryMetadata
+    = std::vector<std::tuple<std::string, std::string, std::string>>;
 
 class SQLDatabaseUtils : public QObject
 {
@@ -24,66 +24,67 @@ Q_OBJECT
 public:
     SQLDatabaseUtils(std::shared_ptr<SQLDatabaseManager> manager);
 
-    bool updateDatabase(void) const;
+    bool updateDatabase(void);
 
     // Note: when adding or removing sources, make sure to update the map in
     // DictionarySourceUtils!
-    bool removeSource(const std::string &source, bool skipCleanup = false) const;
-    bool addSource(const std::string &filepath, bool overwriteConflictingSource = false) const;
+    bool removeSource(const std::string &source, bool skipCleanup = false);
+    bool addSource(const std::string &filepath,
+                   bool overwriteConflictingSource = false);
 
-    bool readSources(std::vector<std::pair<std::string, std::string>> &sources) const;
-    bool readSources(std::vector<DictionaryMetadata> &sources) const;
+    bool readSources(std::vector<std::pair<std::string, std::string>> &sources);
+    bool readSources(std::vector<DictionaryMetadata> &sources);
 
 private:
     std::shared_ptr<SQLDatabaseManager> _manager;
 
-    bool backupDatabase(void) const;
+    bool backupDatabase(void);
 
-    bool migrateDatabaseFromOneToTwo(void) const;
-    bool migrateDatabaseFromTwoToThree(void) const;
+    bool migrateDatabaseFromOneToTwo(void);
+    bool migrateDatabaseFromTwoToThree(void);
 
-    bool deleteSourceFromDatabase(const std::string &source) const;
-    bool removeDefinitionsFromDatabase(void) const;
-    bool removeSentencesFromDatabase(void) const;
+    bool deleteSourceFromDatabase(const std::string &source);
+    bool removeDefinitionsFromDatabase(void);
+    bool removeSentencesFromDatabase(void);
     // Note to callers: There CANNOT be a transaction running when this method
     // is called! It does PRAGMA foreign_keys = ON, which is a no-op inside
     // a transaction.
     // If skipCleanup is set to true, the caller MUST call rebuildIndices()
     // after this method returns if indices are desired.
     bool removeSources(const std::vector<std::string> &sources,
-                       bool skipCleanup = false) const;
+                       bool skipCleanup = false);
 
     std::pair<bool, std::string> insertSourcesIntoDatabase(
-        std::unordered_map<std::string, std::string> old_source_ids) const;
-    bool addDefinitionSource(void) const;
-    bool addSentenceSource(void) const;
+        std::unordered_map<std::string, std::string> old_source_ids);
+    bool addDefinitionSource(void);
+    bool addSentenceSource(void);
 
-    bool dropIndices(void) const;
-    bool rebuildIndices(void) const;
+    bool dropIndices(void);
+    bool rebuildIndices(void);
 
 signals:
-    void deletingDefinitions() const;
-    void totalToDelete(int number) const;
-    void deletionProgress(int deleted, int total) const;
-    void rebuildingIndexes() const;
-    void cleaningUp() const;
+    void deletingDefinitions();
+    void totalToDelete(int number);
+    void deletionProgress(int deleted, int total);
+    void rebuildingIndexes();
+    void cleaningUp();
     void finishedDeletion(bool success,
                           QString reason = "",
-                          QString description = "") const;
+                          QString description = "");
 
-    void deletingSentences() const;
+    void deletingSentences();
 
     void conflictingDictionaryNamesExist(
-        conflictingDictionaryMetadata dictionaries) const;
-    void insertingSource() const;
-    void insertingEntries() const;
-    void insertingDefinitions() const;
+        conflictingDictionaryMetadata dictionaries);
+    void insertingSource();
+    void insertingEntries();
+    void insertingDefinitions();
     void finishedAddition(bool success,
                           QString reason = "",
-                          QString description = "") const;
+                          QString description = "");
 
-    void migratingDatabase() const;
-    void finishedMigratingDatabase(bool success) const;
+    void migratingDatabase();
+    void finishedMigratingDatabase(bool success);
 };
 
 Q_DECLARE_METATYPE(conflictingDictionaryMetadata);

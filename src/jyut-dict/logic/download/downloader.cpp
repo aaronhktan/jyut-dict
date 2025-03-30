@@ -17,7 +17,7 @@ Downloader::Downloader(QUrl url,
 
 void Downloader::startDownload()
 {
-    QtConcurrent::run([&]() {
+    std::ignore = QtConcurrent::run([&]() {
         QEventLoop loop;
 
         _manager = new QNetworkAccessManager;

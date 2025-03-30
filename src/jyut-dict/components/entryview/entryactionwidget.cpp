@@ -1,4 +1,4 @@
-#include "entryactionwidget.h"
+﻿#include "entryactionwidget.h"
 
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
@@ -41,7 +41,7 @@ void EntryActionWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -60,7 +60,7 @@ void EntryActionWidget::setEntry(const Entry &entry)
     connect(this,
             &EntryActionWidget::callbackTriggered,
             this,
-            [=](bool entryExists, const Entry existenceEntry) {
+            [=, this](bool entryExists, const Entry existenceEntry) {
                 if (entry != existenceEntry) {
                     return;
                 }
@@ -141,6 +141,7 @@ void EntryActionWidget::setStyle(bool use_dark)
                                    : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
                                             CONTENT_BACKGROUND_COLOUR_LIGHT_G,
                                             CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+
     int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
@@ -220,11 +221,11 @@ void EntryActionWidget::refreshBookmarkButton(void)
 
     disconnect(_bookmarkButton, nullptr, nullptr, nullptr);
     if (!_bookmarkButton->property("saved").toBool()) {
-        QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [=]() {
+        QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [=, this]() {
             addEntryToFavourites(_entry);
         });
     } else {
-        QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [=]() {
+        QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [=, this]() {
             removeEntryFromFavourites(_entry);
         });
     }

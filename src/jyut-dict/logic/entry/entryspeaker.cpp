@@ -3,7 +3,6 @@
 
 #include <QCoreApplication>
 #include <QFileInfo>
-#include <QMediaPlaylist>
 #include <QStandardPaths>
 #include <QVector>
 
@@ -12,7 +11,19 @@
 EntrySpeaker::EntrySpeaker()
     : _tts{new QTextToSpeech}
     , _player{new QMediaPlayer}
-{}
+{
+#ifdef Q_OS_MAC
+    // The AVSpeechSynthesizer backend for macOS does not properly
+    // select voices if the Siri voice is set to Cantonese (QTBUG-135010).
+    // As a workaround, manually select the NSSpeechSynthesizer backend if
+    // available.
+    for (const QString &engine : QTextToSpeech::availableEngines()) {
+        if (engine == "macos") {
+            _tts->setEngine(engine);
+        }
+    }
+#endif
+}
 
 EntrySpeaker::~EntrySpeaker()
 {
@@ -60,7 +71,7 @@ QVector<QVoice> EntrySpeaker::getListOfVoices(const QLocale::Language &language,
 const
 {
     QLocale locale = QLocale{language, country};
-    if (locale.language() != language || locale.country() != country) {
+    if (locale.language() != language || locale.territory() != country) {
         return QVector<QVoice>();
     }
     _tts->setLocale(locale);
@@ -154,6 +165,33 @@ int EntrySpeaker::speak(const QLocale::Language &language,
         if (!filterVoiceNames(language, country, voices, voice)) {
             return -ENOENT;
         }
+#elif defined(Q_OS_MAC)
+        // Filter out "Eloquence" voices from macOS, which sound much more
+        // robotic. Fall back to using the first voice in voices list if
+        // the better voices are not available.
+        if (language == QLocale::Chinese && country == QLocale::Taiwan) {
+            for (const auto &v : voices) {
+                if (v.name() == "Meijia") {
+                    voice = v;
+                }
+            }
+        } else if (language == QLocale::Chinese && country == QLocale::China) {
+            for (const auto &v : voices) {
+                if (v.name() == "Tingting") {
+                    voice = v;
+                }
+            }
+        } else if (language == QLocale::Chinese
+                   && country == QLocale::HongKong) {
+            for (const auto &v : voices) {
+                if (v.name() == "Sinji") {
+                    voice = v;
+                }
+            }
+        }
+        if (!voices.contains(voice)) {
+            voice = voices.at(0);
+        }
 #else
         voice = voices.at(0);
 #endif
@@ -162,7 +200,7 @@ int EntrySpeaker::speak(const QLocale::Language &language,
     }
     case TextToSpeech::SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS: {
         QString languageName = QLocale::languageToString(language) + "_"
-                               + QLocale::countryToString(country);
+                               + QLocale::territoryToString(country);
 
         std::vector<std::string> syllables;
         if (language == QLocale::Cantonese || country == QLocale::HongKong) {
@@ -174,7 +212,6 @@ int EntrySpeaker::speak(const QLocale::Language &language,
             ChineseUtils::segmentPinyin(mutableString, syllables);
         }
 
-        QMediaPlaylist *playlist = new QMediaPlaylist;
         for (const auto &syllable : syllables) {
             QString filepath = getAudioPath()
                                + QString{"%1/%2/%3/%4.mp3"}
@@ -186,10 +223,9 @@ int EntrySpeaker::speak(const QLocale::Language &language,
                 qDebug() << "File " << filepath << " does not exist";
             }
             QUrl url = QUrl::fromLocalFile(filepath);
-            playlist->addMedia(url);
+            _player->setSource(url);
+            _player->play();
         }
-        _player->setPlaylist(playlist);
-        _player->play();
         break;
     }
     }

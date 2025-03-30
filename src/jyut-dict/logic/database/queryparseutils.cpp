@@ -1,7 +1,5 @@
 #include "queryparseutils.h"
 
-#include "logic/utils/utils.h"
-
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -44,15 +42,17 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
                 QString::fromStdString(definition).toUtf8());
             // Each object in the array represents a group of definitions
             // that are all from the same source
-            foreach (const QJsonValue &definitionGroup, doc.array()) {
-
+            // We can ignore the C++ range-loop error because Qt no longer supports
+            // using foreach with QJsonValue
+            for (const QJsonValue definitionGroup : doc.array()) {
                 std::string sourceName = definitionGroup["source"].toString().toStdString();
                 std::vector<Definition::Definition> definitions;
 
-                foreach (const QJsonValue &definition, definitionGroup["definitions"].toArray()) {
-
+                for (const QJsonValue definition :
+                     definitionGroup["definitions"].toArray()) {
                     std::vector<SourceSentence> sentences;
-                    foreach (const QJsonValue &sentence, definition["sentences"].toArray()) {
+                    for (const QJsonValue sentence :
+                         definition["sentences"].toArray()) {
                         std::vector<SentenceSet> sentence_translations;
 
                         // Parse each sentence
@@ -60,7 +60,8 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
                             std::vector<Sentence::TargetSentence> targetSentences;
                             if (!sentence["translations"].isNull()) {
                                 // Parse each of the sentence translations
-                                foreach (const QJsonValue &translation, sentence["translations"].toArray()) {
+                                for (const QJsonValue translation :
+                                     sentence["translations"].toArray()) {
                                     targetSentences.emplace_back(
                                         translation["sentence"]
                                             .toString()
@@ -144,7 +145,7 @@ std::vector<SourceSentence> parseSentences(QSqlQuery &query)
             QJsonDocument doc = QJsonDocument::fromJson(
                 QString::fromStdString(combinedTargetSentencesData).toUtf8());
             // Parse each of the sentence translation groups
-            foreach (const QJsonValue &translation_set, doc.array()) {
+            for (const QJsonValue translation_set : doc.array()) {
                 std::string sentenceSourceName
                     = translation_set["source"].toString().toStdString();
 
@@ -155,8 +156,8 @@ std::vector<SourceSentence> parseSentences(QSqlQuery &query)
                     sentenceSourceName.empty() ? definitionSourceName
                                                : sentenceSourceName);
 
-                foreach (const QJsonValue &translation,
-                         translation_set["translations"].toArray()) {
+                for (const QJsonValue translation :
+                     translation_set["translations"].toArray()) {
                     // Parse each translation in this group
                     std::vector<Sentence::TargetSentence> targetSentences;
                     sentence_translation_sets.back().pushSentence(

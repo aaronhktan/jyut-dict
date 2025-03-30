@@ -102,7 +102,7 @@ void DictionaryTab::setupUI()
             this,
             &DictionaryTab::setDictionaryMetadata);
 
-    connect(_add, &QPushButton::clicked, this, [=] {
+    connect(_add, &QPushButton::clicked, this, [=, this] {
         QFileDialog *_fileDialog = new QFileDialog{this};
         _fileDialog->setFileMode(QFileDialog::ExistingFile);
         _fileDialog->setAcceptMode(QFileDialog::AcceptOpen);
@@ -169,13 +169,13 @@ void DictionaryTab::setDictionaryMetadata(const QModelIndex &index)
     _version->setText((tr("Version: %1")).arg(metadata.getVersion().c_str()));
 
     disconnect(_link, nullptr, nullptr, nullptr);
-    connect(_link, &QPushButton::clicked, this, [=] {
+    connect(_link, &QPushButton::clicked, this, [=, this] {
         QDesktopServices::openUrl(QUrl{metadata.getLink().c_str()});
     });
 
     _remove->setEnabled(_list->model()->rowCount() > 1);
     disconnect(_remove, nullptr, nullptr, nullptr);
-    connect(_remove, &QPushButton::clicked, this, [=] {
+    connect(_remove, &QPushButton::clicked, this, [=, this] {
         removeDictionary(metadata);
     });
 }
@@ -240,7 +240,7 @@ void DictionaryTab::addDictionary(const QString &dictionaryFile)
     connect(_utils.get(),
             &SQLDatabaseUtils::conflictingDictionaryNamesExist,
             this,
-            [=](conflictingDictionaryMetadata dictionaries) {
+            [=, this](conflictingDictionaryMetadata dictionaries) {
 #ifdef Q_OS_LINUX
                 // Without this delay, a ghost dialog pops up.
                 // I think it's because the _dialog has not yet had time to
@@ -272,10 +272,10 @@ void DictionaryTab::addDictionary(const QString &dictionaryFile)
                 }
             });
 
-    QtConcurrent::run(_utils.get(),
-                      &SQLDatabaseUtils::addSource,
-                      dictionaryFile.toStdString(),
-                      /* overwriteConflictingDictionaries */ false);
+    (void) QtConcurrent::run(&SQLDatabaseUtils::addSource,
+                             _utils.get(),
+                             dictionaryFile.toStdString(),
+                             /* overwriteConflictingDictionaries */ false);
 }
 
 void DictionaryTab::forceAddDictionary(const QString &dictionaryFile)
@@ -358,10 +358,10 @@ void DictionaryTab::forceAddDictionary(const QString &dictionaryFile)
                 }
             });
 
-    QtConcurrent::run(_utils.get(),
-                      &SQLDatabaseUtils::addSource,
-                      dictionaryFile.toStdString(),
-                      /* overwriteConflictingDictionaries */ true);
+    (void) QtConcurrent::run(&SQLDatabaseUtils::addSource,
+                             _utils.get(),
+                             dictionaryFile.toStdString(),
+                             /* overwriteConflictingDictionaries */ true);
 }
 
 void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
@@ -440,10 +440,10 @@ void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
                 });
             });
 
-    QtConcurrent::run(_utils.get(),
-                      &SQLDatabaseUtils::removeSource,
-                      metadata.getName(),
-                      /* skipCleanup */ false);
+    (void) QtConcurrent::run(&SQLDatabaseUtils::removeSource,
+                             _utils.get(),
+                             metadata.getName(),
+                             /* skipCleanup */ false);
 }
 
 void DictionaryTab::populateDictionarySourceUtils() const

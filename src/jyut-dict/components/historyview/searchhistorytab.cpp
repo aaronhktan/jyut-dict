@@ -38,7 +38,7 @@ void SearchHistoryTab::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -51,7 +51,7 @@ void SearchHistoryTab::changeEvent(QEvent *event)
 void SearchHistoryTab::setupUI(void)
 {
     _clearAllSearchHistoryButton = new QPushButton{this};
-    connect(_clearAllSearchHistoryButton, &QPushButton::clicked, this, [=]() {
+    connect(_clearAllSearchHistoryButton, &QPushButton::clicked, this, [=, this]() {
         _sqlHistoryUtils->clearAllSearchHistory();
     });
 
@@ -124,7 +124,7 @@ void SearchHistoryTab::setStyle(bool use_dark)
 
 void SearchHistoryTab::handleClick(const QModelIndex &selection)
 {
-    SearchTermHistoryItem pair = qvariant_cast<SearchTermHistoryItem>(
+    searchTermHistoryItem pair = qvariant_cast<searchTermHistoryItem>(
         selection.data());
     bool isEmptyPair = pair.second == -1;
     if (isEmptyPair) {

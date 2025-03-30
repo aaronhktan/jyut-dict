@@ -41,7 +41,7 @@ void SearchLineEdit::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -224,7 +224,7 @@ void SearchLineEdit::addSearchTermToHistory(SearchParameters parameters) const
     _timer->stop();
     disconnect(_timer, nullptr, nullptr, nullptr);
     _timer->setSingleShot(true);
-    connect(_timer, &QTimer::timeout, this, [=]() {
+    connect(_timer, &QTimer::timeout, this, [=, this]() {
         if (!text().isEmpty()) {
             _sqlHistoryUtils->addSearchToHistory(text().toStdString(),
                                                  static_cast<int>(parameters));

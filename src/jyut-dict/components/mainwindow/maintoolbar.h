@@ -66,7 +66,7 @@ signals:
     void searchBarTextChange(void);
 
 public slots:
-    void forwardSearchHistoryItem(const SearchTermHistoryItem &pair) const;
+    void forwardSearchHistoryItem(const searchTermHistoryItem &pair) const;
     void searchQueryRequested(const QString &query,
                               const SearchParameters &parameters) const;
     void updateStyleRequested(void);

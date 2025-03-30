@@ -1,7 +1,6 @@
 #include "sqluserdatautils.h"
 
 #include "logic/database/queryparseutils.h"
-#include "logic/utils/utils.h"
 
 #include <QtConcurrent/QtConcurrent>
 
@@ -49,8 +48,8 @@ void SQLUserDataUtils::searchForAllFavouritedWords(void)
         std::cout << "No database specified!" << std::endl;
         return;
     }
-    QtConcurrent::run(this,
-                      &SQLUserDataUtils::searchForAllFavouritedWordsThread);
+    std::ignore = QtConcurrent::run(&SQLUserDataUtils::searchForAllFavouritedWordsThread,
+                                    this);
 }
 
 void SQLUserDataUtils::checkIfEntryHasBeenFavourited(const Entry &entry)
@@ -59,9 +58,9 @@ void SQLUserDataUtils::checkIfEntryHasBeenFavourited(const Entry &entry)
         std::cout << "No database specified!" << std::endl;
         return;
     }
-    QtConcurrent::run(this,
-                      &SQLUserDataUtils::checkIfEntryHasBeenFavouritedThread,
-                      entry);
+    std::ignore = QtConcurrent::run(&SQLUserDataUtils::checkIfEntryHasBeenFavouritedThread,
+                                    this,
+                                    entry);
 }
 
 void SQLUserDataUtils::favouriteEntry(const Entry &entry)
@@ -70,9 +69,9 @@ void SQLUserDataUtils::favouriteEntry(const Entry &entry)
         std::cout << "No database specified!" << std::endl;
         return;
     }
-    QtConcurrent::run(this,
-                      &SQLUserDataUtils::favouriteEntryThread,
-                      entry);
+    std::ignore = QtConcurrent::run(&SQLUserDataUtils::favouriteEntryThread,
+                                    this,
+                                    entry);
 }
 
 void SQLUserDataUtils::unfavouriteEntry(const Entry &entry)
@@ -81,9 +80,9 @@ void SQLUserDataUtils::unfavouriteEntry(const Entry &entry)
         std::cout << "No database specified!" << std::endl;
         return;
     }
-    QtConcurrent::run(this,
-                      &SQLUserDataUtils::unfavouriteEntryThread,
-                      entry);
+    std::ignore = QtConcurrent::run(&SQLUserDataUtils::unfavouriteEntryThread,
+                                    this,
+                                    entry);
 }
 
 // NOTE: If you are modifying this, you may also want to modify

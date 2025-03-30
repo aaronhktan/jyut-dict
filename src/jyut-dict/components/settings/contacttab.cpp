@@ -32,7 +32,7 @@ void ContactTab::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -145,12 +145,13 @@ void ContactTab::translateUI()
                                     Strings::CONTACT_TITLE)
             .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                              Strings::PRODUCT_NAME)));
-#ifdef Q_OS_WIN
-    _messageLabel->setText(
-        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CONTACT_BODY_NO_EMOJI));
+#ifdef Q_OS_LINUX
+    _messageLabel->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                       Strings::CONTACT_BODY));
 #else
     _messageLabel->setText(
-        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CONTACT_BODY));
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::CONTACT_BODY_NO_EMOJI));
 #endif
     _emailButton->setText(tr("Email..."));
     _donateButton->setText(tr("Donate..."));

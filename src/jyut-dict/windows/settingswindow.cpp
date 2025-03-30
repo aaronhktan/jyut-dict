@@ -55,7 +55,7 @@ void SettingsWindow::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -88,7 +88,7 @@ void SettingsWindow::setupUI()
     for (int i = 0; i < NUM_OF_TABS; i++) {
         _actions.push_back(new QAction{this});
         _actions.back()->setCheckable(true);
-        connect(_actions.back(), &QAction::triggered, this, [=] { openTab(i); });
+        connect(_actions.back(), &QAction::triggered, this, [=, this] { openTab(i); });
         _navigationActionGroup->addAction(_actions.back());
 
         _toolButtons.push_back(new QToolButton{this});
