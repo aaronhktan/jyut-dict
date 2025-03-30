@@ -75,7 +75,7 @@ This folder contains the source code for the program, and a Qt Creator project f
 
 ## Build and run
 
-This project requires Qt 6.4 or above.
+This project requires Qt 6.8 or above.
 
 **Before building the application, you must provide a dictionary database. Download one from [the website](https://jyutdictionary.com/#download-addon), or build the dictionary database using `parse-set.py` (for CEDICT + CC-CANTO) or `parse-individual.py` (for CFDICT/HanDeDict).**
 
@@ -85,8 +85,7 @@ Place the database, named `dict.db`, in `src/jyut-dict/resources/db/`
 1. Install [Craft](https://community.kde.org/Craft).
 2. Install various dependencies using Craft:
 ```
-craft libs/qt/qtmultimedia
-craft libs/qt/qtspeech
+craft libs/qt6
 craft karchive
 ```
 3. Set up Qt Creator with a kit from Craft, following instructions [here](https://community.kde.org/Craft#Using_Craft_with_an_IDE).
