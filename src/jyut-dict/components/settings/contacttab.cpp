@@ -145,12 +145,13 @@ void ContactTab::translateUI()
                                     Strings::CONTACT_TITLE)
             .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                              Strings::PRODUCT_NAME)));
-#ifdef Q_OS_WIN
-    _messageLabel->setText(
-        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CONTACT_BODY_NO_EMOJI));
+#ifdef Q_OS_LINUX
+    _messageLabel->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                       Strings::CONTACT_BODY));
 #else
     _messageLabel->setText(
-        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CONTACT_BODY));
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::CONTACT_BODY_NO_EMOJI));
 #endif
     _emailButton->setText(tr("Email..."));
     _donateButton->setText(tr("Donate..."));
