@@ -2,18 +2,13 @@
 
 #include "logic/utils/utils.h"
 
-#include <codecvt>
 #include <iostream>
-#include <locale>
 #include <regex>
 #include <sstream>
 #include <unordered_map>
 #include <unordered_set>
 
 namespace ChineseUtils {
-
-static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
-static std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> wcharconverter;
 
 const static std::unordered_set<std::string> specialCharacters = {
     ".",  "。", ",",  "，", "!",  "！", "?",  "？", "%",  "－", "…",
@@ -280,20 +275,19 @@ std::string applyColours(const std::string original,
                          const EntryColourPhoneticType type)
 {
     std::string coloured_string;
-    std::u32string converted_original = converter.from_bytes(
-        QString::fromStdString(original)
-            .normalized(QString::NormalizationForm_C)
-            .toStdString());
+    auto data = QString::fromStdString(original)
+                    .normalized(QString::NormalizationForm_C)
+                    .toStdU32String();
     size_t pos = 0;
-    for (const auto &character : converted_original) {
-        std::string originalCharacter = converter.to_bytes(character);
+    for (const auto codepoint : data) {
+        std::string originalStr = QString::fromStdU32String(std::u32string{codepoint}).toStdString();
 
         // Skip same character string; they have no colour
         // However, increment to the next tone position
         // since they represent characters that are the same between simplified
         // and traditional and therefore have tones
-        if (character == converter.from_bytes(Utils::SAME_CHARACTER_STRING)[0]) {
-            coloured_string += originalCharacter;
+        if (codepoint == QString::fromStdString(Utils::SAME_CHARACTER_STRING).toStdU32String()[0]) {
+            coloured_string += originalStr;
             pos++;
             continue;
         }
@@ -301,19 +295,17 @@ std::string applyColours(const std::string original,
         // Skip any special characters
         // but do not increment to next tone position,
         // since special characters do not have any tones associated with them
-        auto isSpecialCharacter = specialCharacters.find(originalCharacter) != specialCharacters.end();
-        // This is the best I can do without bringing in the ICU library. Converting to wchar_t,
-        // equivalent to UTF-32 (on Unix or Unix-like platforms) or UCS-2 (on Windows) lets me verify that
-        // something is alphabetic within a locale (here, in the UTF-8 locale).
-        // Since wchar_t is 32-bit on Unix and Unix-like platforms, I believe this code should be correct
-        // for all code points, but on Windows, it will only be correct for code points up to 0xFFFF.
-        std::locale loc("en_US.UTF-8");
-        std::wstring wideString = wcharconverter.from_bytes(originalCharacter);
-        auto isAlphabetical = std::find_if(wideString.begin(),
-                                           wideString.end(), [&](wchar_t c) { return std::isalpha(c, loc);})
-                              != wideString.end();
-        if (isSpecialCharacter || isAlphabetical) {
-            coloured_string += converter.to_bytes(character);
+        auto isSpecialCharacter = specialCharacters.find(originalStr) != specialCharacters.end();
+        bool isIdeograph =
+            (codepoint >= 0x4E00 && codepoint <= 0x9FFF) // CJK Unified Ideographs
+            || (codepoint >= 0x3400 && codepoint <= 0x4DBF) // CJK Unified Ideographs Extension A
+            || (codepoint >= 0x20000 && codepoint <= 0x2A6DF) // CJK Unified Ideographs Extension B
+            || (codepoint >= 0x2A700 && codepoint <= 0x2B73F) // CJK Unified Ideographs Extension C
+            || (codepoint >= 0x2B740 && codepoint <= 0x2B81F) // CJK Unified Ideographs Extension D
+            || (codepoint >= 0x2B820 && codepoint <= 0x2CEAF) // CJK Unified Ideographs Extension E
+            || (codepoint >= 0x2CEB0 && codepoint <= 0x2EBEF); // CJK Unified Ideographs Extension F
+        if (isSpecialCharacter || !isIdeograph) {
+            coloured_string += originalStr;
             continue;
         }
 
@@ -322,7 +314,7 @@ std::string applyColours(const std::string original,
         try {
             tone = tones.at(pos);
         } catch ([[maybe_unused]] const std::out_of_range &e) {
-            coloured_string += originalCharacter;
+            coloured_string += originalStr;
             continue;
         }
 
@@ -348,7 +340,7 @@ std::string applyColours(const std::string original,
             break;
         }
         }
-        coloured_string += originalCharacter;
+        coloured_string += originalStr;
         coloured_string += "</font>";
 
         pos++;
@@ -361,21 +353,21 @@ std::string compareStrings(const std::string &original,
                            const std::string &comparison)
 {
     std::string result;
-    std::u32string convertedOriginal = converter.from_bytes(
+    std::u32string convertedOriginal =
         QString::fromStdString(original)
             .normalized(QString::NormalizationForm_C)
-            .toStdString());
-    std::u32string convertedComparison = converter.from_bytes(
+            .toStdU32String();
+    std::u32string convertedComparison =
         QString::fromStdString(comparison)
             .normalized(QString::NormalizationForm_C)
-            .toStdString());
+            .toStdU32String();
 
     if (convertedOriginal.size() != convertedComparison.size()) {
         return result;
     }
 
     for (size_t i = 0; i < convertedOriginal.size(); i++) {
-        std::string currentCharacter = converter.to_bytes(convertedComparison[i]);
+        std::string currentCharacter = QString::fromStdU32String(std::u32string{convertedComparison[i]}).toStdString();
 
         auto isSpecialCharacter = specialCharacters.find(currentCharacter) != specialCharacters.end();
         if (isSpecialCharacter
@@ -467,9 +459,9 @@ std::string convertJyutpingToYale(const std::string &jyutping,
         std::string jyutpingCopy;
         // Insert a space before and after every special character, so that the
         // IPA conversion doesn't attempt to convert special characters.
-        std::u32string jyutping_utf32 = converter.from_bytes(jyutping);
+        std::u32string jyutping_utf32 = QString::fromStdString(jyutping).normalized(QString::NormalizationForm_C).toStdU32String();
         for (const auto &character : jyutping_utf32) {
-            std::string character_utf8 = converter.to_bytes(character);
+            std::string character_utf8 = QString::fromStdU32String(std::u32string{character}).toStdString();
             if (specialCharacters.find(character_utf8)
                 != specialCharacters.end()) {
                 jyutpingCopy += " " + character_utf8 + " ";
@@ -617,9 +609,9 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
         std::string jyutpingCopy;
         // Insert a space before and after every special character, so that the
         // IPA conversion doesn't attempt to convert special characters.
-        std::u32string jyutping_utf32 = converter.from_bytes(jyutping);
+        std::u32string jyutping_utf32 = QString::fromStdString(jyutping).normalized(QString::NormalizationForm_C).toStdU32String();
         for (const auto &character : jyutping_utf32) {
-            std::string character_utf8 = converter.to_bytes(character);
+            std::string character_utf8 = QString::fromStdU32String(std::u32string{character}).toStdString();
             if (specialCharacters.find(character_utf8)
                 != specialCharacters.end()) {
                 jyutpingCopy += " " + character_utf8 + " ";
@@ -892,9 +884,9 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
         std::string pinyinCopy;
         // Insert a space before and after every special character, so that the
         // Zhuyin conversion doesn't attempt to convert special characters.
-        std::u32string pinyin_utf32 = converter.from_bytes(pinyin);
+        std::u32string pinyin_utf32 = QString::fromStdString(pinyin).normalized(QString::NormalizationForm_C).toStdU32String();
         for (const auto &character : pinyin_utf32) {
-            std::string character_utf8 = converter.to_bytes(character);
+            std::string character_utf8 = QString::fromStdU32String(std::u32string{character}).toStdString();
             if (specialCharacters.find(character_utf8)
                 != specialCharacters.end()) {
                 pinyinCopy += " " + character_utf8 + " ";
@@ -1103,9 +1095,9 @@ std::string convertPinyinToIPA(const std::string &pinyin,
         std::string pinyinCopy;
         // Insert a space before and after every special character, so that the
         // IPA conversion doesn't attempt to convert special characters.
-        std::u32string pinyin_utf32 = converter.from_bytes(pinyin);
+        std::u32string pinyin_utf32 = QString::fromStdString(pinyin).normalized(QString::NormalizationForm_C).toStdU32String();
         for (const auto &character : pinyin_utf32) {
-            std::string character_utf8 = converter.to_bytes(character);
+            std::string character_utf8 = QString::fromStdU32String(std::u32string{character}).toStdString();
             if (specialCharacters.find(character_utf8)
                 != specialCharacters.end()) {
                 pinyinCopy += " " + character_utf8 + " ";

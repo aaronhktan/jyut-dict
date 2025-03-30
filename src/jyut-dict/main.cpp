@@ -39,6 +39,8 @@ int main(int argc, char *argv[])
     qRegisterMetaType<conflictingDictionaryMetadata>(
         "conflictingDictionaryNamesMetadata");
     qRegisterMetaType<Settings::InterfaceSize>();
+    qRegisterMetaType<TextToSpeech::SpeakerBackend>();
+    qRegisterMetaType<TextToSpeech::SpeakerVoice>();
 
 #if defined(Q_OS_WIN)
     // This is kind of a horrible hack to get dark borders on Windows
