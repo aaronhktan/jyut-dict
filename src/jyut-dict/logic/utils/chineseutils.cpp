@@ -27,13 +27,13 @@ const static std::unordered_map<std::string, std::string>
         {"eot", "eut"},
 };
 
-const static std::unordered_map<std::string, std::vector<std::string> >
+const static std::unordered_map<std::string, std::vector<std::string>>
     jyutpingToYaleSpecialSyllables = {
         {"m", {"m̄", "ḿ", "m", "m̀h", "ḿh", "mh"}},
         {"ng", {"n̄g", "ńg", "ng", "ǹgh", "ńgh", "ngh"}},
 };
 
-const static std::unordered_map<std::string, std::vector<std::string> >
+const static std::unordered_map<std::string, std::vector<std::string>>
     yaleToneReplacements = {
         {"a", {"ā", "á", "a", "à", "á", "a"}},
         {"e", {"ē", "é", "e", "è", "é", "e"}},
@@ -45,7 +45,7 @@ const static std::unordered_map<std::string, std::vector<std::string> >
 // The original Wiktionary module uses breves to indicate a special letter (e.g.
 // ă), but the base C++ regex engine can't match against chars outside of the
 // basic set. As a workaround, I'm just replacing them with other symbols.
-const static std::vector<std::pair<std::string, std::string> >
+const static std::vector<std::pair<std::string, std::string>>
     cantoneseIPASpecialSyllables = {{"a", "@"},
                                     {"yu", "y"},
                                     {"@@", "a"},
@@ -110,7 +110,7 @@ const static std::vector<std::string> jyutpingToIPATones
     = {"˥", "˧˥", "˧", "˨˩", "˩˧", "˨", "˥", "˧", "˨"};
 #endif
 
-const static std::unordered_map<std::string, std::vector<std::string> >
+const static std::unordered_map<std::string, std::vector<std::string>>
     pinyinToneReplacements = {
         {"a", {"ā", "á", "ǎ", "à", "a"}},
         {"e", {"ē", "é", "ě", "è", "e"}},
@@ -206,66 +206,42 @@ const static std::unordered_map<std::string, std::string>
 #if defined(Q_OS_WIN)
 // For consistency with other reasonings below, use superscript numbers instead
 // of tone letters on Windows.
-const static std::vector<std::string> mandarinIPANeutralTone = {"²",
-                                                                "³",
-                                                                "⁴",
-                                                                "¹",
-                                                                "¹"};
+const static std::vector<std::string> mandarinIPANeutralTone
+    = {"²", "³", "⁴", "¹", "¹"};
 #else
-const static std::vector<std::string> mandarinIPANeutralTone = {"˨",
-                                                                "˧",
-                                                                "˦",
-                                                                "˩",
-                                                                "˩"};
+const static std::vector<std::string> mandarinIPANeutralTone
+    = {"˨", "˧", "˦", "˩", "˩"};
 #endif
 
 #if defined(Q_OS_MAC)
 // Added a six-per-em space (U+2006) between adjacent tone markers, because Qt's
 // kerning squishes them too close together
-const static std::vector<std::string> mandarinIPAThirdTone = {"˨ ˩ ˦ ꜕ ꜖ ꜖",
-                                                              "˨ ˩ ˦ ꜕ ꜖ ꜖",
-                                                              "˨ ˩ ˦ ꜔ ꜒",
-                                                              "˨ ˩ ˦ ꜕ ꜖ ꜖",
-                                                              "˨ ˩ ˦"};
+const static std::vector<std::string> mandarinIPAThirdTone
+    = {"˨ ˩ ˦ ꜕ ꜖ ꜖", "˨ ˩ ˦ ꜕ ꜖ ꜖", "˨ ˩ ˦ ꜔ ꜒", "˨ ˩ ˦ ꜕ ꜖ ꜖", "˨ ˩ ˦"};
 #elif defined(Q_OS_WIN)
 // On Windows, the reverse tone letters are not the same height as the "normal"
 // tone letters. In addition, the Segoe UI font cannot handle three tone-letter
 // ligatures. As such, use superscript numbers instead.
-const static std::vector<std::string> mandarinIPAThirdTone = {"²¹⁴⁻²¹¹",
-                                                              "²¹⁴⁻²¹¹",
-                                                              "²¹⁴⁻³⁵",
-                                                              "²¹⁴⁻²¹¹",
-                                                              "²¹⁴"};
+const static std::vector<std::string> mandarinIPAThirdTone
+    = {"²¹⁴⁻²¹¹", "²¹⁴⁻²¹¹", "²¹⁴⁻³⁵", "²¹⁴⁻²¹¹", "²¹⁴"};
 #else
-const static std::vector<std::string> mandarinIPAThirdTone = {"˨˩˦꜕꜖꜖",
-                                                              "˨˩˦꜕꜖꜖",
-                                                              "˨˩˦꜔꜒",
-                                                              "˨˩˦꜕꜖꜖",
-                                                              "˨˩˦"};
+const static std::vector<std::string> mandarinIPAThirdTone
+    = {"˨˩˦꜕꜖꜖", "˨˩˦꜕꜖꜖", "˨˩˦꜔꜒", "˨˩˦꜕꜖꜖", "˨˩˦"};
 #endif
 
 #if defined(Q_OS_MAC)
 // Added a six-per-em space (U+2006) between adjacent tone markers, because Qt's
 // kerning squishes them too close together
-const static std::vector<std::string> mandarinIPATones = {"˥ ˥",
-                                                          "˧ ˥",
-                                                          "˨ ˩ ˦",
-                                                          "˥ ˩",
-                                                          ""};
+const static std::vector<std::string> mandarinIPATones
+    = {"˥ ˥", "˧ ˥", "˨ ˩ ˦", "˥ ˩", ""};
 #elif defined(Q_OS_WIN)
 // The Segoe UI font cannot handle three tone-letter ligatures. As such, use
 // superscript numbers instead.
-const static std::vector<std::string> mandarinIPATones = {"⁵⁵",
-                                                          "³⁵",
-                                                          "²¹⁴",
-                                                          "⁵¹",
-                                                          ""};
+const static std::vector<std::string> mandarinIPATones
+    = {"⁵⁵", "³⁵", "²¹⁴", "⁵¹", ""};
 #else
-const static std::vector<std::string> mandarinIPATones = {"˥˥",
-                                                          "˧˥",
-                                                          "˨˩˦",
-                                                          "˥˩",
-                                                          ""};
+const static std::vector<std::string> mandarinIPATones
+    = {"˥˥", "˧˥", "˨˩˦", "˥˩", ""};
 #endif
 
 std::string applyColours(const std::string original,
@@ -280,13 +256,16 @@ std::string applyColours(const std::string original,
                     .toStdU32String();
     size_t pos = 0;
     for (const auto codepoint : data) {
-        std::string originalStr = QString::fromStdU32String(std::u32string{codepoint}).toStdString();
+        std::string originalStr
+            = QString::fromStdU32String(std::u32string{codepoint}).toStdString();
 
         // Skip same character string; they have no colour
         // However, increment to the next tone position
         // since they represent characters that are the same between simplified
         // and traditional and therefore have tones
-        if (codepoint == QString::fromStdString(Utils::SAME_CHARACTER_STRING).toStdU32String()[0]) {
+        if (codepoint
+            == QString::fromStdString(Utils::SAME_CHARACTER_STRING)
+                   .toStdU32String()[0]) {
             coloured_string += originalStr;
             pos++;
             continue;
@@ -295,15 +274,23 @@ std::string applyColours(const std::string original,
         // Skip any special characters
         // but do not increment to next tone position,
         // since special characters do not have any tones associated with them
-        auto isSpecialCharacter = specialCharacters.find(originalStr) != specialCharacters.end();
-        bool isIdeograph =
-            (codepoint >= 0x4E00 && codepoint <= 0x9FFF) // CJK Unified Ideographs
-            || (codepoint >= 0x3400 && codepoint <= 0x4DBF) // CJK Unified Ideographs Extension A
-            || (codepoint >= 0x20000 && codepoint <= 0x2A6DF) // CJK Unified Ideographs Extension B
-            || (codepoint >= 0x2A700 && codepoint <= 0x2B73F) // CJK Unified Ideographs Extension C
-            || (codepoint >= 0x2B740 && codepoint <= 0x2B81F) // CJK Unified Ideographs Extension D
-            || (codepoint >= 0x2B820 && codepoint <= 0x2CEAF) // CJK Unified Ideographs Extension E
-            || (codepoint >= 0x2CEB0 && codepoint <= 0x2EBEF); // CJK Unified Ideographs Extension F
+        auto isSpecialCharacter = specialCharacters.find(originalStr)
+                                  != specialCharacters.end();
+        bool isIdeograph
+            = (codepoint >= 0x4E00
+               && codepoint <= 0x9FFF) // CJK Unified Ideographs
+              || (codepoint >= 0x3400
+                  && codepoint <= 0x4DBF) // CJK Unified Ideographs Extension A
+              || (codepoint >= 0x20000
+                  && codepoint <= 0x2A6DF) // CJK Unified Ideographs Extension B
+              || (codepoint >= 0x2A700
+                  && codepoint <= 0x2B73F) // CJK Unified Ideographs Extension C
+              || (codepoint >= 0x2B740
+                  && codepoint <= 0x2B81F) // CJK Unified Ideographs Extension D
+              || (codepoint >= 0x2B820
+                  && codepoint <= 0x2CEAF) // CJK Unified Ideographs Extension E
+              || (codepoint >= 0x2CEB0
+                  && codepoint <= 0x2EBEF); // CJK Unified Ideographs Extension F
         if (isSpecialCharacter || !isIdeograph) {
             coloured_string += originalStr;
             continue;
@@ -329,8 +316,7 @@ std::string applyColours(const std::string original,
         }
         case EntryColourPhoneticType::MANDARIN: {
             coloured_string += "<font color=\""
-                               + pinyinToneColours.at(
-                                   static_cast<size_t>(tone))
+                               + pinyinToneColours.at(static_cast<size_t>(tone))
                                + "\">";
             break;
         }
@@ -353,23 +339,26 @@ std::string compareStrings(const std::string &original,
                            const std::string &comparison)
 {
     std::string result;
-    std::u32string convertedOriginal =
-        QString::fromStdString(original)
-            .normalized(QString::NormalizationForm_C)
-            .toStdU32String();
-    std::u32string convertedComparison =
-        QString::fromStdString(comparison)
-            .normalized(QString::NormalizationForm_C)
-            .toStdU32String();
+    std::u32string convertedOriginal = QString::fromStdString(original)
+                                           .normalized(
+                                               QString::NormalizationForm_C)
+                                           .toStdU32String();
+    std::u32string convertedComparison = QString::fromStdString(comparison)
+                                             .normalized(
+                                                 QString::NormalizationForm_C)
+                                             .toStdU32String();
 
     if (convertedOriginal.size() != convertedComparison.size()) {
         return result;
     }
 
     for (size_t i = 0; i < convertedOriginal.size(); i++) {
-        std::string currentCharacter = QString::fromStdU32String(std::u32string{convertedComparison[i]}).toStdString();
+        std::string currentCharacter
+            = QString::fromStdU32String(std::u32string{convertedComparison[i]})
+                  .toStdString();
 
-        auto isSpecialCharacter = specialCharacters.find(currentCharacter) != specialCharacters.end();
+        auto isSpecialCharacter = specialCharacters.find(currentCharacter)
+                                  != specialCharacters.end();
         if (isSpecialCharacter
             || convertedOriginal[i] != convertedComparison[i]) {
             result += currentCharacter;
@@ -459,9 +448,14 @@ std::string convertJyutpingToYale(const std::string &jyutping,
         std::string jyutpingCopy;
         // Insert a space before and after every special character, so that the
         // IPA conversion doesn't attempt to convert special characters.
-        std::u32string jyutping_utf32 = QString::fromStdString(jyutping).normalized(QString::NormalizationForm_C).toStdU32String();
+        std::u32string jyutping_utf32 = QString::fromStdString(jyutping)
+                                            .normalized(
+                                                QString::NormalizationForm_C)
+                                            .toStdU32String();
         for (const auto &character : jyutping_utf32) {
-            std::string character_utf8 = QString::fromStdU32String(std::u32string{character}).toStdString();
+            std::string character_utf8 = QString::fromStdU32String(
+                                             std::u32string{character})
+                                             .toStdString();
             if (specialCharacters.find(character_utf8)
                 != specialCharacters.end()) {
                 jyutpingCopy += " " + character_utf8 + " ";
@@ -505,9 +499,8 @@ std::string convertJyutpingToYale(const std::string &jyutping,
         }
 
         // Handle special-case syllables
-        std::string syllable_without_tone = syllable.substr(0,
-                                                            syllable.length()
-                                                                - 1);
+        std::string syllable_without_tone
+            = syllable.substr(0, syllable.length() - 1);
         int tone = std::stoi(
             syllable.substr(syllable.find_first_of("123456"), 1));
         auto search = jyutpingToYaleSpecialSyllables.find(syllable_without_tone);
@@ -609,9 +602,14 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
         std::string jyutpingCopy;
         // Insert a space before and after every special character, so that the
         // IPA conversion doesn't attempt to convert special characters.
-        std::u32string jyutping_utf32 = QString::fromStdString(jyutping).normalized(QString::NormalizationForm_C).toStdU32String();
+        std::u32string jyutping_utf32 = QString::fromStdString(jyutping)
+                                            .normalized(
+                                                QString::NormalizationForm_C)
+                                            .toStdU32String();
         for (const auto &character : jyutping_utf32) {
-            std::string character_utf8 = QString::fromStdU32String(std::u32string{character}).toStdString();
+            std::string character_utf8 = QString::fromStdU32String(
+                                             std::u32string{character})
+                                             .toStdString();
             if (specialCharacters.find(character_utf8)
                 != specialCharacters.end()) {
                 jyutpingCopy += " " + character_utf8 + " ";
@@ -884,9 +882,14 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
         std::string pinyinCopy;
         // Insert a space before and after every special character, so that the
         // Zhuyin conversion doesn't attempt to convert special characters.
-        std::u32string pinyin_utf32 = QString::fromStdString(pinyin).normalized(QString::NormalizationForm_C).toStdU32String();
+        std::u32string pinyin_utf32 = QString::fromStdString(pinyin)
+                                          .normalized(
+                                              QString::NormalizationForm_C)
+                                          .toStdU32String();
         for (const auto &character : pinyin_utf32) {
-            std::string character_utf8 = QString::fromStdU32String(std::u32string{character}).toStdString();
+            std::string character_utf8 = QString::fromStdU32String(
+                                             std::u32string{character})
+                                             .toStdString();
             if (specialCharacters.find(character_utf8)
                 != specialCharacters.end()) {
                 pinyinCopy += " " + character_utf8 + " ";
@@ -1095,9 +1098,14 @@ std::string convertPinyinToIPA(const std::string &pinyin,
         std::string pinyinCopy;
         // Insert a space before and after every special character, so that the
         // IPA conversion doesn't attempt to convert special characters.
-        std::u32string pinyin_utf32 = QString::fromStdString(pinyin).normalized(QString::NormalizationForm_C).toStdU32String();
+        std::u32string pinyin_utf32 = QString::fromStdString(pinyin)
+                                          .normalized(
+                                              QString::NormalizationForm_C)
+                                          .toStdU32String();
         for (const auto &character : pinyin_utf32) {
-            std::string character_utf8 = QString::fromStdU32String(std::u32string{character}).toStdString();
+            std::string character_utf8 = QString::fromStdU32String(
+                                             std::u32string{character})
+                                             .toStdString();
             if (specialCharacters.find(character_utf8)
                 != specialCharacters.end()) {
                 pinyinCopy += " " + character_utf8 + " ";
@@ -1114,7 +1122,7 @@ std::string convertPinyinToIPA(const std::string &pinyin,
 
     // Pre-compute list of tones corresponding to each syllable
     // This is used for tone sandhi reasons (3->3 sandhi, x->5 sandhi, etc.)
-    std::vector<std::pair<int, signed long> > syllable_tones;
+    std::vector<std::pair<int, signed long>> syllable_tones;
     for (const auto &syllable : syllables) {
         auto tone_location = syllable.find_first_of("12345");
         if (tone_location == std::string::npos || syllable.size() == 1) {
@@ -1225,7 +1233,8 @@ std::string convertPinyinToIPA(const std::string &pinyin,
                 ipa_tone = "˥˩꜒꜔";
 #endif
             } else {
-                ipa_tone = mandarinIPATones[static_cast<unsigned long>(tone) - 1];
+                ipa_tone
+                    = mandarinIPATones[static_cast<unsigned long>(tone) - 1];
             }
             break;
         }
