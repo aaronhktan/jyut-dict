@@ -1451,7 +1451,7 @@ bool jyutpingAutocorrect(const QString &in,
     out.replace("yue", "jyu"); // like "yuet yue" (粵語)
     out.replace("ue", "(yu)"); // like "tsuen wan" (轉彎)
     out.replace("tsz", "zi");  // like "tsat tsz mui" (七姊妹)
-    out.replace("ack", "ak");  // like "back" (白)
+    out.replace("ck", "k");    // like "back" (白)
 
     // Unsafe because it is ambiguous whether these are final +
     // initial or a "misspelling" of a final
@@ -1712,28 +1712,49 @@ bool jyutpingSoundChanges(std::vector<std::string> &inOut)
         }
 
         // Final sound changes
-        if (syllable.ends_with("ng")
-            || (syllable.length() >= 3
+        if ((syllable.ends_with("ang") || syllable.ends_with("ong"))
+            || (syllable.length() >= 4
                 && std::string_view{syllable.begin(), syllable.end() - 1}
-                       .ends_with("ng"))) {
+                       .ends_with("ang"))
+            || (syllable.length() >= 4
+                && std::string_view{syllable.begin(), syllable.end() - 1}
+                       .ends_with("ong"))) {
             // alveolarization of final [ŋ]
             syllable.replace(syllable.rfind("ng"), 2, "ng!");
-        } else if (syllable.ends_with("n")
-                   || (syllable.length() >= 2
+        } else if ((syllable.ends_with("an") || syllable.ends_with("on"))
+                   || (syllable.length() >= 3
                        && std::string_view{syllable.begin(), syllable.end() - 1}
-                              .ends_with("n"))) {
+                              .ends_with("an"))
+                   || (syllable.length() >= 3
+                       && std::string_view{syllable.begin(), syllable.end() - 1}
+                              .ends_with("on"))) {
             // velarization of final [n]
             syllable.replace(syllable.rfind("n"), 1, "ng!");
-        } else if (syllable.ends_with("t")
-                   || (syllable.length() >= 2
+        } else if ((syllable.ends_with("t") && !syllable.ends_with("it")
+                    && !syllable.ends_with("ut"))
+                   || (syllable.length() >= 3
                        && (std::string_view{syllable.begin(), syllable.end() - 1}
-                               .ends_with("t")))) {
+                               .ends_with("t")
+                           && !std::string_view{syllable.begin(),
+                                                syllable.end() - 2}
+                                   .ends_with("it")
+                           && !std::string_view{syllable.begin(),
+                                                syllable.end() - 2}
+                                   .ends_with("ut")))) {
             // velarization of final [t]
             syllable.replace(syllable.rfind("t"), 1, "(k|t)");
-        } else if (syllable.ends_with("k")
-                   || (syllable.length() >= 2
-                       && (std::string_view{syllable.begin(), syllable.end() - 1}
-                               .ends_with("k")))) {
+        } else if ((syllable.ends_with("k") && !syllable.ends_with("ik")
+                        && !syllable.ends_with("uk")
+                    || (syllable.length() >= 3
+                        && (std::string_view{syllable.begin(),
+                                             syllable.end() - 1}
+                                .ends_with("k")
+                            && !std::string_view{syllable.begin(),
+                                                 syllable.end() - 2}
+                                    .ends_with("ik")
+                            && !std::string_view{syllable.begin(),
+                                                 syllable.end() - 2}
+                                    .ends_with("uk"))))) {
             // velarization of final [k]
             syllable.replace(syllable.rfind("k"), 1, "(k|t)");
         }
