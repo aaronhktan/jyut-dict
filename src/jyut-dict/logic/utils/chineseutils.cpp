@@ -7,7 +7,6 @@
 #include <sstream>
 #include <unordered_map>
 #include <unordered_set>
-#include <QDebug>
 
 namespace {
 bool unfoldJyutpingRegex(const QString &string, std::vector<QString> &out)
@@ -40,12 +39,6 @@ bool unfoldJyutpingRegex(const QString &string, std::vector<QString> &out)
         stringPossibilities.push_back(string);
     }
 
-    qDebug() << "STRING POSSIBILITIES for" << string << "BEGINNING!!!!!!!!!!!";
-    for (const auto &i : stringPossibilities) {
-        qDebug() << i;
-    }
-    qDebug() << "STRING POSSIBILITIES ENDED !!!!!!!!!!!";
-
     // If there is a "!", then the initial with and the initial without
     // that optional character should be considered
     for (const auto &s : stringPossibilities) {
@@ -60,12 +53,6 @@ bool unfoldJyutpingRegex(const QString &string, std::vector<QString> &out)
             out.push_back(tmp.replace(regexIdx - 1, 2, ""));
         }
     }
-
-    for (const auto &i : out) {
-        qDebug() << i;
-    }
-    qDebug() << "OUT ENDED ===========";
-
     return true;
 }
 } // namespace
@@ -1639,8 +1626,6 @@ bool jyutpingAutocorrect(const QString &in,
     out.replace("ut", "(u|a)t");
     out.replace("ui", "(eo|u)i");
 
-    qDebug() << "AFTER SUBSTITUTIONS: " << out;
-
     return 0;
 }
 
@@ -2010,8 +1995,6 @@ bool segmentJyutping(const QString &string,
                 syllables.push_back(previous_initial.toStdString());
                 if (finals.find(previous_initial.toStdString())
                     == finals.end()) {
-                    qDebug() << "jyutping is not valid because incomplete "
-                                "final not valid";
                     valid_jyutping = false;
                 }
                 start_idx = end_idx;
@@ -2027,8 +2010,6 @@ bool segmentJyutping(const QString &string,
                     syllables.push_back(previous_initial.toStdString());
                     if (finals.find(previous_initial.toStdString())
                         == finals.end()) {
-                        qDebug() << "jyutping is not valid because initial not "
-                                    "valid for glob";
                         valid_jyutping = false;
                     }
                     initial_found = false;
@@ -2099,8 +2080,6 @@ bool segmentJyutping(const QString &string,
 
                     if (currentString.at(0).digitValue() < 1
                         || currentString.at(0).digitValue() > 6) {
-                        qDebug()
-                            << "jyutping is not valid because number not valid";
                         valid_jyutping = false;
                     }
 
@@ -2121,9 +2100,6 @@ bool segmentJyutping(const QString &string,
              initial_len > 0;
              initial_len--) {
             currentString = processedString.mid(end_idx, initial_len).toLower();
-            qDebug() << "Checking current string " << currentString
-                     << "which is from" << end_idx << "to"
-                     << end_idx + initial_len;
 
             std::vector<QString> stringsToSearch;
             QString stringToSearch = currentString;
@@ -2132,9 +2108,6 @@ bool segmentJyutping(const QString &string,
             bool isValidInitial = false;
             for (const auto &s : stringsToSearch) {
                 auto searchResult = initials.find(s.toStdString());
-                qDebug() << s
-                         << (searchResult == initials.end() ? "is not" : "is")
-                         << "a valid initial";
                 isValidInitial = isValidInitial
                                  || (searchResult != initials.end());
             }
@@ -2150,7 +2123,6 @@ bool segmentJyutping(const QString &string,
                                               .mid(start_idx,
                                                    end_idx - start_idx)
                                               .toLower();
-                qDebug() << "checking previous initial: " << previousInitial;
                 stringsToSearch.clear();
                 QString stringToSearch = previousInitial;
                 unfoldJyutpingRegex(stringToSearch, stringsToSearch);
@@ -2166,14 +2138,11 @@ bool segmentJyutping(const QString &string,
                     syllables.push_back(previousInitial.toStdString());
                     start_idx = end_idx;
                 } else {
-                    qDebug() << "jyutping is not valid because previous "
-                                "initial not valid";
                     valid_jyutping = false;
                 }
             }
 
             end_idx += initial_len;
-            qDebug() << "end_idx is now" << end_idx;
             component_found = true;
             initial_found = true;
         }
@@ -2205,9 +2174,6 @@ bool segmentJyutping(const QString &string,
             bool isValidFinal = false;
             for (const auto &s : stringsToSearch) {
                 auto searchResult = finals.find(s.toStdString());
-                qDebug() << s
-                         << (searchResult == finals.end() ? " is not " : " is ")
-                         << "a valid final";
                 isValidFinal = isValidFinal || (searchResult != finals.end());
             }
 
@@ -2217,8 +2183,6 @@ bool segmentJyutping(const QString &string,
                     if (processedString.at(end_idx).isDigit()) {
                         if (processedString.at(end_idx).digitValue() < 1
                             || processedString.at(end_idx).digitValue() > 6) {
-                            qDebug() << "jyutping is not valid because final "
-                                        "number not valid";
                             valid_jyutping = false;
                         }
 
@@ -2239,7 +2203,6 @@ bool segmentJyutping(const QString &string,
         if (component_found) {
             continue;
         } else {
-            qDebug() << "jyutping is not valid because component not valid";
             valid_jyutping = false;
         }
 
@@ -2252,14 +2215,8 @@ bool segmentJyutping(const QString &string,
     if (!lastSyllable.isEmpty() && lastSyllable != "'") {
         syllables.push_back(lastSyllable.toStdString());
         if (finals.find(lastSyllable.toStdString()) == finals.end()) {
-            qDebug() << "jyutping is not valid because last syllable number "
-                        "not valid";
             valid_jyutping = false;
         }
-    }
-
-    for (const auto &i : out) {
-        qDebug() << "OUT: " << i.c_str();
     }
 
     out = syllables;
