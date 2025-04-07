@@ -1,5 +1,6 @@
 #include "scriptdetector.h"
 
+#include "logic/utils/cantoneseutils.h"
 #include "logic/utils/chineseutils.h"
 
 #include <QList>
@@ -834,10 +835,10 @@ ScriptDetector::ScriptDetector(const QString &string)
     }
 
     std::vector<std::string> dummyVec;
-    _isValidJyutping = ChineseUtils::segmentJyutping(string, dummyVec);
+    _isValidJyutping = CantoneseUtils::segmentJyutping(string, dummyVec);
     QString out;
-    ChineseUtils::jyutpingAutocorrect(string, out);
-    _isValidJyutpingAfterAutocorrect = ChineseUtils::segmentJyutping(out,
+    CantoneseUtils::jyutpingAutocorrect(string, out);
+    _isValidJyutpingAfterAutocorrect = CantoneseUtils::segmentJyutping(out,
                                                                      dummyVec);
     QString processedPinyin = string;
     _isValidPinyin = ChineseUtils::segmentPinyin(processedPinyin

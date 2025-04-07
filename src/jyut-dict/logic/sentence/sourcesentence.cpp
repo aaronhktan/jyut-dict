@@ -1,5 +1,6 @@
 #include "sourcesentence.h"
 
+#include "logic/utils/cantoneseutils.h"
 #include "logic/utils/chineseutils.h"
 
 SourceSentence::SourceSentence()
@@ -82,9 +83,9 @@ bool SourceSentence::generatePhonetic(CantoneseOptions cantoneseOptions,
     if ((cantoneseOptions & CantoneseOptions::PRETTY_YALE)
             == CantoneseOptions::PRETTY_YALE
         && !_isYaleValid) {
-        _yale
-            = ChineseUtils::convertJyutpingToYale(_jyutping,
-                                                  /* useSpacesToSegment */ true);
+        _yale = CantoneseUtils::convertJyutpingToYale(
+            _jyutping,
+            /* useSpacesToSegment */ true);
         _isYaleValid = true;
     }
 
@@ -92,8 +93,8 @@ bool SourceSentence::generatePhonetic(CantoneseOptions cantoneseOptions,
             == CantoneseOptions::CANTONESE_IPA
         && !_isCantoneseIPAValid) {
         _cantoneseIPA
-            = ChineseUtils::convertJyutpingToIPA(_jyutping,
-                                                 /* useSpacesToSegment */ true);
+            = CantoneseUtils::convertJyutpingToIPA(_jyutping,
+                                                   /* useSpacesToSegment */ true);
         _isCantoneseIPAValid = true;
     }
 

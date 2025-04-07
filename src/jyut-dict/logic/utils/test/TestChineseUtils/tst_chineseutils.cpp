@@ -1,6 +1,7 @@
 #include <QtTest>
 
 #include "logic/settings/settings.h"
+#include "logic/utils/cantoneseutils.h"
 #include "logic/utils/chineseutils.h"
 #include "logic/utils/utils.h"
 
@@ -211,77 +212,77 @@ void TestChineseUtils::compareStringsCompatibilityVariantNormalization()
 
 void TestChineseUtils::jyutpingToYaleSimple()
 {
-    std::string result = ChineseUtils::convertJyutpingToYale("si1 zi2 saan1");
+    std::string result = CantoneseUtils::convertJyutpingToYale("si1 zi2 saan1");
     qDebug() << result.c_str();
     QCOMPARE(result, "sī jí sāan");
 }
 
 void TestChineseUtils::jyutpingToYaleRejectNoTone()
 {
-    std::string result = ChineseUtils::convertJyutpingToYale("joeng");
+    std::string result = CantoneseUtils::convertJyutpingToYale("joeng");
     QCOMPARE(result, "joeng");
 }
 
 void TestChineseUtils::jyutpingToYaleRejectSingleLetter()
 {
-    std::string result = ChineseUtils::convertJyutpingToYale("a");
+    std::string result = CantoneseUtils::convertJyutpingToYale("a");
     QCOMPARE(result, "a");
 }
 
 void TestChineseUtils::jyutpingToYaleRejectSpecialCharacter()
 {
-    std::string result = ChineseUtils::convertJyutpingToYale("-");
+    std::string result = CantoneseUtils::convertJyutpingToYale("-");
     QCOMPARE(result, "x");
 }
 
 void TestChineseUtils::jyutpingToYaleNoSpaces()
 {
-    std::string result = ChineseUtils::convertJyutpingToYale("si1zi2saan1");
+    std::string result = CantoneseUtils::convertJyutpingToYale("si1zi2saan1");
     QCOMPARE(result, "sī jí sāan");
 }
 
 void TestChineseUtils::jyutpingToYaleSpacesToSegment()
 {
     std::string result
-        = ChineseUtils::convertJyutpingToYale("si1 zi2 saan1",
+        = CantoneseUtils::convertJyutpingToYale("si1 zi2 saan1",
                                               /* usSpacesToSegment = */ true);
     QCOMPARE(result, "sī jí sāan");
 }
 
 void TestChineseUtils::jyutpingToYaleSpecialFinal()
 {
-    std::string result = ChineseUtils::convertJyutpingToYale("goek3jyun5");
+    std::string result = CantoneseUtils::convertJyutpingToYale("goek3jyun5");
     QCOMPARE(result, "geuk yúhn");
 }
 
 void TestChineseUtils::jyutpingToYaleLightTone()
 {
-    std::string result = ChineseUtils::convertJyutpingToYale("lok6 jyu5");
+    std::string result = CantoneseUtils::convertJyutpingToYale("lok6 jyu5");
     QCOMPARE(result, "lohk yúh");
 }
 
 void TestChineseUtils::jyutpingToYaleSpecialSyllable()
 {
-    std::string result = ChineseUtils::convertJyutpingToYale("m4 hai6");
+    std::string result = CantoneseUtils::convertJyutpingToYale("m4 hai6");
     QCOMPARE(result, "m̀h haih");
 }
 
 void TestChineseUtils::jyutpingToYaleTones()
 {
-    std::string result = ChineseUtils::convertJyutpingToYale(
+    std::string result = CantoneseUtils::convertJyutpingToYale(
         "saam1 gau2 sei3 ling4 ng5 ji6 cat1 baat3 luk6");
     QCOMPARE(result, "sāam gáu sei lìhng ńgh yih chāt baat luhk");
 }
 
 void TestChineseUtils::jyutpingToYaleNoTone()
 {
-    std::string result = ChineseUtils::convertJyutpingToYale("mit");
+    std::string result = CantoneseUtils::convertJyutpingToYale("mit");
     QCOMPARE(result, "mit");
 }
 
 void TestChineseUtils::jyutpingToIPASimple()
 {
-    std::string result = ChineseUtils::convertJyutpingToIPA("joeng4 sing4");
+    std::string result = CantoneseUtils::convertJyutpingToIPA("joeng4 sing4");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "jœ̽ːŋ ˨ ˩  sɪŋ ˨ ˩");
 #else
@@ -291,25 +292,25 @@ void TestChineseUtils::jyutpingToIPASimple()
 
 void TestChineseUtils::jyutpingToIPARejectNoTone()
 {
-    std::string result = ChineseUtils::convertJyutpingToIPA("joeng");
+    std::string result = CantoneseUtils::convertJyutpingToIPA("joeng");
     QCOMPARE(result, "joeng");
 }
 
 void TestChineseUtils::jyutpingToIPARejectSingleLetter()
 {
-    std::string result = ChineseUtils::convertJyutpingToIPA("a");
+    std::string result = CantoneseUtils::convertJyutpingToIPA("a");
     QCOMPARE(result, "a");
 }
 
 void TestChineseUtils::jyutpingToIPARejectSpecialCharacter()
 {
-    std::string result = ChineseUtils::convertJyutpingToIPA("-");
+    std::string result = CantoneseUtils::convertJyutpingToIPA("-");
     QCOMPARE(result, "x");
 }
 
 void TestChineseUtils::jyutpingToIPANoSpaces()
 {
-    std::string result = ChineseUtils::convertJyutpingToIPA("faa1sing4");
+    std::string result = CantoneseUtils::convertJyutpingToIPA("faa1sing4");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "fäː ˥  sɪŋ ˨ ˩");
 #else
@@ -320,7 +321,7 @@ void TestChineseUtils::jyutpingToIPANoSpaces()
 void TestChineseUtils::jyutpingToIPASpacesToSegment()
 {
     std::string result
-        = ChineseUtils::convertJyutpingToIPA("joeng4 sing4",
+        = CantoneseUtils::convertJyutpingToIPA("joeng4 sing4",
                                              /* useSpacesToSegment = */ true);
 #ifdef Q_OS_MAC
     QCOMPARE(result, "jœ̽ːŋ ˨ ˩  sɪŋ ˨ ˩");
@@ -331,7 +332,7 @@ void TestChineseUtils::jyutpingToIPASpacesToSegment()
 
 void TestChineseUtils::jyutpingToIPAPreprocessInitial()
 {
-    std::string result = ChineseUtils::convertJyutpingToIPA("zyu2 sung3");
+    std::string result = CantoneseUtils::convertJyutpingToIPA("zyu2 sung3");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "t͡ʃyː ˧ ˥  sʊŋ ˧");
 #else
@@ -341,7 +342,7 @@ void TestChineseUtils::jyutpingToIPAPreprocessInitial()
 
 void TestChineseUtils::jyutpingToIPASpecialSyllable()
 {
-    std::string result = ChineseUtils::convertJyutpingToIPA("m4");
+    std::string result = CantoneseUtils::convertJyutpingToIPA("m4");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "m̩ ˨ ˩");
 #else
@@ -351,7 +352,7 @@ void TestChineseUtils::jyutpingToIPASpecialSyllable()
 
 void TestChineseUtils::jyutpingToIPACheckedTone()
 {
-    std::string result = ChineseUtils::convertJyutpingToIPA(
+    std::string result = CantoneseUtils::convertJyutpingToIPA(
         "sik6 si2 o1 faan6");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "sɪk̚ ˨  siː ˧ ˥  ɔː ˥  fäːn ˨");
@@ -362,7 +363,7 @@ void TestChineseUtils::jyutpingToIPACheckedTone()
 
 void TestChineseUtils::jyutpingToIPASpecialFinal()
 {
-    std::string result = ChineseUtils::convertJyutpingToIPA("uk1 kei2 jan4");
+    std::string result = CantoneseUtils::convertJyutpingToIPA("uk1 kei2 jan4");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "ʊk̚ ˥  kʰei̯ ˧ ˥  jɐn ˨ ˩");
 #else
@@ -371,7 +372,7 @@ void TestChineseUtils::jyutpingToIPASpecialFinal()
 }
 void TestChineseUtils::jyutpingToIPATones()
 {
-    std::string result = ChineseUtils::convertJyutpingToIPA(
+    std::string result = CantoneseUtils::convertJyutpingToIPA(
         "saam1 gau2 sei3 ling4 ng5 ji6 cat1 baat3 luk6");
 #ifdef Q_OS_MAC
     QCOMPARE(result,
@@ -384,7 +385,7 @@ void TestChineseUtils::jyutpingToIPATones()
 }
 void TestChineseUtils::jyutpingToIPANoTone()
 {
-    std::string result = ChineseUtils::convertJyutpingToIPA("mok");
+    std::string result = CantoneseUtils::convertJyutpingToIPA("mok");
     QCOMPARE(result, "mok");
 }
 
@@ -783,7 +784,7 @@ void TestChineseUtils::constructRomanisationQueryOnlyGlobCharacters()
 void TestChineseUtils::segmentJyutpingSimple()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("m4 goi1", result);
+    CantoneseUtils::segmentJyutping("m4 goi1", result);
     std::vector<std::string> expected = {"m4", "goi1"};
     QCOMPARE(result, expected);
 }
@@ -791,7 +792,7 @@ void TestChineseUtils::segmentJyutpingSimple()
 void TestChineseUtils::segmentJyutpingNoDigits()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("m goi", result);
+    CantoneseUtils::segmentJyutping("m goi", result);
     std::vector<std::string> expected = {"m", "goi"};
     QCOMPARE(result, expected);
 }
@@ -799,7 +800,7 @@ void TestChineseUtils::segmentJyutpingNoDigits()
 void TestChineseUtils::segmentJyutpingNoSpaces()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("m4goi1", result);
+    CantoneseUtils::segmentJyutping("m4goi1", result);
     std::vector<std::string> expected = {"m4", "goi1"};
     QCOMPARE(result, expected);
 }
@@ -807,7 +808,7 @@ void TestChineseUtils::segmentJyutpingNoSpaces()
 void TestChineseUtils::segmentJyutpingNoDigitsNoSpaces()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("mgoi", result);
+    CantoneseUtils::segmentJyutping("mgoi", result);
     std::vector<std::string> expected = {"m", "goi"};
     QCOMPARE(result, expected);
 }
@@ -815,7 +816,7 @@ void TestChineseUtils::segmentJyutpingNoDigitsNoSpaces()
 void TestChineseUtils::segmentJyutpingNoDigitsApostrophe()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("m'aam", result);
+    CantoneseUtils::segmentJyutping("m'aam", result);
     std::vector<std::string> expected = {"m", "aam"};
     QCOMPARE(result, expected);
 }
@@ -823,7 +824,7 @@ void TestChineseUtils::segmentJyutpingNoDigitsApostrophe()
 void TestChineseUtils::segmentJyutpingDigitsApostrophe()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("m4'aam", result);
+    CantoneseUtils::segmentJyutping("m4'aam", result);
     std::vector<std::string> expected = {"m4", "aam"};
     QCOMPARE(result, expected);
 }
@@ -831,7 +832,7 @@ void TestChineseUtils::segmentJyutpingDigitsApostrophe()
 void TestChineseUtils::segmentJyutpingRemoveSpecialCharacters()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("m*goi", result);
+    CantoneseUtils::segmentJyutping("m*goi", result);
     std::vector<std::string> expected = {"m", "goi"};
     QCOMPARE(result, expected);
 }
@@ -839,7 +840,7 @@ void TestChineseUtils::segmentJyutpingRemoveSpecialCharacters()
 void TestChineseUtils::segmentJyutpingKeepGlobCharacters()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("m* goi",
+    CantoneseUtils::segmentJyutping("m* goi",
                                   result,
                                   /* removeSpecialCharacters = */ true,
                                   /* removeGlobCharacters = */ false);
@@ -850,7 +851,7 @@ void TestChineseUtils::segmentJyutpingKeepGlobCharacters()
 void TestChineseUtils::segmentJyutpingKeepGlobCharactersNoWhitespace()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("m*goi",
+    CantoneseUtils::segmentJyutping("m*goi",
                                   result,
                                   /* removeSpecialCharacters = */ true,
                                   /* removeGlobCharacters = */ false);
@@ -861,7 +862,7 @@ void TestChineseUtils::segmentJyutpingKeepGlobCharactersNoWhitespace()
 void TestChineseUtils::segmentJyutpingKeepMultipleGlobCharacters()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("m?* goi",
+    CantoneseUtils::segmentJyutping("m?* goi",
                                   result,
                                   /* removeSpecialCharacters = */ true,
                                   /* removeGlobCharacters = */ false);
@@ -872,7 +873,7 @@ void TestChineseUtils::segmentJyutpingKeepMultipleGlobCharacters()
 void TestChineseUtils::segmentJyutpingKeepMultipleGlobCharactersWhitespace()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("m? * goi",
+    CantoneseUtils::segmentJyutping("m? * goi",
                                   result,
                                   /* removeSpecialCharacters = */ true,
                                   /* removeGlobCharacters = */ false);
@@ -883,7 +884,7 @@ void TestChineseUtils::segmentJyutpingKeepMultipleGlobCharactersWhitespace()
 void TestChineseUtils::segmentJyutpingKeepMultipleGlobCharactersWhitespaceSurround()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("m ? * goi",
+    CantoneseUtils::segmentJyutping("m ? * goi",
                                   result,
                                   /* removeSpecialCharacters = */ true,
                                   /* removeGlobCharacters = */ false);
@@ -894,28 +895,28 @@ void TestChineseUtils::segmentJyutpingKeepMultipleGlobCharactersWhitespaceSurrou
 void TestChineseUtils::segmentJyutpingGlobCharactersTrimWhitespace()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("m  ?            *      goi",
+    CantoneseUtils::segmentJyutping("m  ?            *      goi",
                                   result,
                                   /* removeSpecialCharacters = */ true,
                                   /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"m", " ? ", "* ", "goi"};
     QCOMPARE(result, expected);
 
-    ChineseUtils::segmentJyutping("m?* ????",
+    CantoneseUtils::segmentJyutping("m?* ????",
                                   result,
                                   /* removeSpecialCharacters = */ true,
                                   /* removeGlobCharacters = */ false);
     expected = {"m", "?", "* ", "?", "?", "?", "?"};
     QCOMPARE(result, expected);
 
-    ChineseUtils::segmentJyutping("m * ????*",
+    CantoneseUtils::segmentJyutping("m * ????*",
                                   result,
                                   /* removeSpecialCharacters = */ true,
                                   /* removeGlobCharacters = */ false);
     expected = {"m", " * ", "?", "?", "?", "?", "*"};
     QCOMPARE(result, expected);
 
-    ChineseUtils::segmentJyutping("m? goi*",
+    CantoneseUtils::segmentJyutping("m? goi*",
                                   result,
                                   /* removeSpecialCharacters = */ true,
                                   /* removeGlobCharacters = */ false);
@@ -926,7 +927,7 @@ void TestChineseUtils::segmentJyutpingGlobCharactersTrimWhitespace()
 void TestChineseUtils::segmentJyutpingKeepSpecialCharacters()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("m？ goi",
+    CantoneseUtils::segmentJyutping("m？ goi",
                                   result,
                                   /* removeSpecialCharacters = */ false);
     std::vector<std::string> expected = {"m", "？", "goi"};
@@ -936,7 +937,7 @@ void TestChineseUtils::segmentJyutpingKeepSpecialCharacters()
 void TestChineseUtils::segmentJyutpingRemoveWhitespace()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("  m                           goi      ",
+    CantoneseUtils::segmentJyutping("  m                           goi      ",
                                   result,
                                   /* removeSpecialCharacters = */ true,
                                   /* removeGlobCharacters = */ false);
@@ -947,7 +948,7 @@ void TestChineseUtils::segmentJyutpingRemoveWhitespace()
 void TestChineseUtils::segmentJyutpingLower()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("mGoI", result);
+    CantoneseUtils::segmentJyutping("mGoI", result);
     std::vector<std::string> expected = {"m", "goi"};
     QCOMPARE(result, expected);
 }
@@ -955,7 +956,7 @@ void TestChineseUtils::segmentJyutpingLower()
 void TestChineseUtils::segmentJyutpingLowerWithDigits()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("m4GoI1", result);
+    CantoneseUtils::segmentJyutping("m4GoI1", result);
     std::vector<std::string> expected = {"m4", "goi1"};
     QCOMPARE(result, expected);
 }
@@ -963,7 +964,7 @@ void TestChineseUtils::segmentJyutpingLowerWithDigits()
 void TestChineseUtils::segmentJyutpingMultipleFinalsVowelsOnly()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("aaaa",
+    CantoneseUtils::segmentJyutping("aaaa",
                                   result,
                                   /* removeSpecialCharacters = */ true,
                                   /* removeGlobCharacters = */ false);
@@ -974,7 +975,7 @@ void TestChineseUtils::segmentJyutpingMultipleFinalsVowelsOnly()
 void TestChineseUtils::segmentJyutpingMultipleFinalsConsonantsOnly()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("ngng",
+    CantoneseUtils::segmentJyutping("ngng",
                                   result,
                                   /* removeSpecialCharacters = */ true,
                                   /* removeGlobCharacters = */ false);
@@ -985,7 +986,7 @@ void TestChineseUtils::segmentJyutpingMultipleFinalsConsonantsOnly()
 void TestChineseUtils::segmentJyutpingMultipleFinals()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentJyutping("amam",
+    CantoneseUtils::segmentJyutping("amam",
                                   result,
                                   /* removeSpecialCharacters = */ true,
                                   /* removeGlobCharacters = */ false);
@@ -1018,7 +1019,7 @@ void TestChineseUtils::segmentJyutpingGarbage()
 {
     std::vector<std::string> result;
     bool valid
-        = ChineseUtils::segmentJyutping("kljnxclkjvnl",
+        = CantoneseUtils::segmentJyutping("kljnxclkjvnl",
                                         result,
                                         /* removeSpecialCharacters = */ true,
                                         /* removeGlobCharacters = */ false);

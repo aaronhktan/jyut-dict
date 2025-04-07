@@ -1,6 +1,7 @@
 #include "entry.h"
 
 #include "logic/settings/settings.h"
+#include "logic/utils/cantoneseutils.h"
 #include "logic/utils/chineseutils.h"
 
 Entry::Entry(const std::string &simplified, const std::string &traditional,
@@ -268,14 +269,14 @@ bool Entry::generatePhonetic(CantoneseOptions cantoneseOptions,
     if ((cantoneseOptions & CantoneseOptions::PRETTY_YALE)
             == CantoneseOptions::PRETTY_YALE
         && !_isYaleValid) {
-            _yale = ChineseUtils::convertJyutpingToYale(_jyutping);
+            _yale = CantoneseUtils::convertJyutpingToYale(_jyutping);
             _isYaleValid = true;
     }
 
     if ((cantoneseOptions & CantoneseOptions::CANTONESE_IPA)
             == CantoneseOptions::CANTONESE_IPA
         && !_isCantoneseIPAValid) {
-            _cantoneseIPA = ChineseUtils::convertJyutpingToIPA(_jyutping);
+            _cantoneseIPA = CantoneseUtils::convertJyutpingToIPA(_jyutping);
             _isCantoneseIPAValid = true;
     }
 

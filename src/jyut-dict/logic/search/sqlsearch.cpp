@@ -2,6 +2,7 @@
 
 #include "logic/database/queryparseutils.h"
 #include "logic/search/searchqueries.h"
+#include "logic/utils/cantoneseutils.h"
 #include "logic/utils/chineseutils.h"
 #include "logic/utils/scriptdetector.h"
 #include "logic/utils/utils.h"
@@ -26,38 +27,39 @@ void prepareJyutpingBindValues(const QString &searchTerm, QString &regexTerm)
                             && searchTerm.length() >= 3;
     bool dontAppendWildcard = searchTerm.endsWith("$");
 
+    // Attempt to correct romanization issues (but not pronunciation!)
     QString correctedSearchTerm{searchTerm};
     if (!searchExactMatch) {
-        ChineseUtils::jyutpingAutocorrect(searchTerm,
-                                          correctedSearchTerm,
-                                          /* unsafeSubstitutions */ true);
+        CantoneseUtils::jyutpingAutocorrect(searchTerm,
+                                            correctedSearchTerm,
+                                            /* unsafeSubstitutions */ true);
     }
 
-    std::vector<std::string> jyutpingWords;
+    std::vector<std::string> jyutpingSyllables;
     if (searchExactMatch) {
         Utils::split(QStringView{correctedSearchTerm.constBegin() + 1,
                                  correctedSearchTerm.constEnd() - 1}
                          .toString()
                          .toStdString(),
                      ' ',
-                     jyutpingWords);
+                     jyutpingSyllables);
     } else {
-        ChineseUtils::segmentJyutping(correctedSearchTerm,
-                                      jyutpingWords,
-                                      /* removeSpecialCharacters */ true,
-                                      /* removeGlobCharacters */ false,
-                                      /*removeRegexCharacters=*/false);
+        CantoneseUtils::segmentJyutping(correctedSearchTerm,
+                                        jyutpingSyllables,
+                                        /* removeSpecialCharacters */ true,
+                                        /* removeGlobCharacters */ false,
+                                        /* removeRegexCharacters= */ false);
     }
 
     if (!searchExactMatch) {
-        // Check for "lazy pronunciation" sound changes
-        ChineseUtils::jyutpingSoundChanges(jyutpingWords);
+        // Attempt to broaden search for sound changes (e.g. nei5 -> lei5)
+        CantoneseUtils::jyutpingSoundChanges(jyutpingSyllables);
     }
 
     // Don't add wildcard characters to GLOB term if searching for exact match
     const char *globJoinDelimiter = searchExactMatch ? "" : "?";
     std::string query
-        = ChineseUtils::constructRomanisationQuery(jyutpingWords,
+        = ChineseUtils::constructRomanisationQuery(jyutpingSyllables,
                                                    globJoinDelimiter);
 
     regexTerm = QString{"^"}

@@ -122,6 +122,7 @@ set(PROJECT_SOURCES
         logic/settings/settings.cpp
         logic/settings/settingsutils.cpp
         logic/update/jyutdictionaryreleasechecker.cpp
+        logic/utils/cantoneseutils.cpp
         logic/utils/chineseutils.cpp
         logic/utils/scriptdetector.cpp
         logic/utils/utils.cpp
