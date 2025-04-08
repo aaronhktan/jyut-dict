@@ -3,6 +3,7 @@
 #include "logic/settings/settings.h"
 #include "logic/utils/cantoneseutils.h"
 #include "logic/utils/chineseutils.h"
+#include "logic/utils/mandarinutils.h"
 #include "logic/utils/utils.h"
 
 class TestChineseUtils : public QObject
@@ -391,128 +392,128 @@ void TestChineseUtils::jyutpingToIPANoTone()
 
 void TestChineseUtils::prettyPinyinSimple()
 {
-    std::string result = ChineseUtils::createPrettyPinyin("shuai4 ge1");
+    std::string result = MandarinUtils::createPrettyPinyin("shuai4 ge1");
     QCOMPARE(result, "shuài gē");
 }
 
 void TestChineseUtils::prettyPinyinRejectNoTone()
 {
-    std::string result = ChineseUtils::createPrettyPinyin("ba");
+    std::string result = MandarinUtils::createPrettyPinyin("ba");
     QCOMPARE(result, "ba");
 }
 
 void TestChineseUtils::prettyPinyinRejectSingleLetter()
 {
-    std::string result = ChineseUtils::createPrettyPinyin("a");
+    std::string result = MandarinUtils::createPrettyPinyin("a");
     QCOMPARE(result, "a");
 }
 
 void TestChineseUtils::prettyPinyinRejectSpecialCharacter()
 {
-    std::string result = ChineseUtils::createPrettyPinyin("-");
+    std::string result = MandarinUtils::createPrettyPinyin("-");
     QCOMPARE(result, "-");
 }
 
 void TestChineseUtils::prettyPinyinSecondaryVowel()
 {
-    std::string result = ChineseUtils::createPrettyPinyin("hui4 tu2");
+    std::string result = MandarinUtils::createPrettyPinyin("hui4 tu2");
     QCOMPARE(result, "huì tú");
 }
 
 void TestChineseUtils::prettyPinyinUmlaut()
 {
-    std::string result = ChineseUtils::createPrettyPinyin("nu:3 hai2");
+    std::string result = MandarinUtils::createPrettyPinyin("nu:3 hai2");
     QCOMPARE(result, "nǚ hái");
 }
 
 void TestChineseUtils::prettyPinyinTones()
 {
-    std::string result = ChineseUtils::createPrettyPinyin(
+    std::string result = MandarinUtils::createPrettyPinyin(
         "ma1 ma2 ma3 ma4 ma5");
     QCOMPARE(result, "mā má mǎ mà ma");
 }
 void TestChineseUtils::prettyPinyinNoTone()
 {
-    std::string result = ChineseUtils::createPrettyPinyin("nu");
+    std::string result = MandarinUtils::createPrettyPinyin("nu");
     QCOMPARE(result, "nu");
 }
 
 void TestChineseUtils::numberedPinyinSimple()
 {
-    std::string result = ChineseUtils::createNumberedPinyin("nu:3 hai2");
+    std::string result = MandarinUtils::createNumberedPinyin("nu:3 hai2");
     QCOMPARE(result, "nü3 hai2");
 }
 
 void TestChineseUtils::pinyinWithVSimple()
 {
-    std::string result = ChineseUtils::createPinyinWithV("nu:3 hai2");
+    std::string result = MandarinUtils::createPinyinWithV("nu:3 hai2");
     QCOMPARE(result, "nv3 hai2");
 }
 
 void TestChineseUtils::pinuyinToZhuyinSimple()
 {
-    std::string result = ChineseUtils::convertPinyinToZhuyin("ba1 da2 tong1");
+    std::string result = MandarinUtils::convertPinyinToZhuyin("ba1 da2 tong1");
     QCOMPARE(result, "ㄅㄚ ㄉㄚˊ ㄊㄨㄥ");
 }
 
 void TestChineseUtils::pinuyinToZhuyinRejectNoTone()
 {
-    std::string result = ChineseUtils::convertPinyinToZhuyin("ba");
+    std::string result = MandarinUtils::convertPinyinToZhuyin("ba");
     QCOMPARE(result, "ba");
 }
 
 void TestChineseUtils::pinuyinToZhuyinRejectSingleLetter()
 {
-    std::string result = ChineseUtils::convertPinyinToZhuyin("a");
+    std::string result = MandarinUtils::convertPinyinToZhuyin("a");
     QCOMPARE(result, "a");
 }
 void TestChineseUtils::pinuyinToZhuyinRejectSpecialCharacter()
 {
-    std::string result = ChineseUtils::convertPinyinToZhuyin("-");
+    std::string result = MandarinUtils::convertPinyinToZhuyin("-");
     QCOMPARE(result, "-");
 }
 void TestChineseUtils::pinuyinToZhuyinNoSpaces()
 {
-    std::string result = ChineseUtils::convertPinyinToZhuyin("ba1da2tong1");
+    std::string result = MandarinUtils::convertPinyinToZhuyin("ba1da2tong1");
     QCOMPARE(result, "ㄅㄚ ㄉㄚˊ ㄊㄨㄥ");
 }
 void TestChineseUtils::pinuyinToZhuyinSpacesToSegment()
 {
     std::string result
-        = ChineseUtils::convertPinyinToZhuyin("ba1 da2 tong1",
-                                              /* useSpacesToSegment = */ true);
+        = MandarinUtils::convertPinyinToZhuyin("ba1 da2 tong1",
+                                               /* useSpacesToSegment = */ true);
     QCOMPARE(result, "ㄅㄚ ㄉㄚˊ ㄊㄨㄥ");
 }
 void TestChineseUtils::pinuyinToZhuyinSpecialInitial()
 {
-    std::string result = ChineseUtils::convertPinyinToZhuyin("qu4");
+    std::string result = MandarinUtils::convertPinyinToZhuyin("qu4");
     QCOMPARE(result, "ㄑㄩˋ");
 
-    result = ChineseUtils::convertPinyinToZhuyin("chi1");
+    result = MandarinUtils::convertPinyinToZhuyin("chi1");
     QCOMPARE(result, "ㄔ");
 
-    result = ChineseUtils::convertPinyinToZhuyin("ri4");
+    result = MandarinUtils::convertPinyinToZhuyin("ri4");
     QCOMPARE(result, "ㄖˋ");
 }
 void TestChineseUtils::pinuyinToZhuyinSpecialFinals()
 {
-    std::string result = ChineseUtils::convertPinyinToZhuyin("hm5");
+    std::string result = MandarinUtils::convertPinyinToZhuyin("hm5");
     QCOMPARE(result, "˙ㄏㄇ");
 
-    result = ChineseUtils::convertPinyinToZhuyin("hng5");
+    result = MandarinUtils::convertPinyinToZhuyin("hng5");
     QCOMPARE(result, "˙ㄏㄫ");
 
-    result = ChineseUtils::convertPinyinToZhuyin("er2");
+    result = MandarinUtils::convertPinyinToZhuyin("er2");
     QCOMPARE(result, "ㄦˊ");
 }
 void TestChineseUtils::pinuyinToZhuyinErhua()
 {
-    std::string result = ChineseUtils::convertPinyinToZhuyin("quanr1");
+    std::string result = MandarinUtils::convertPinyinToZhuyin("quanr1");
     QCOMPARE(result, "ㄑㄩㄢㄦ");
 }
 void TestChineseUtils::pinuyinToZhuyinMalformed()
 {
-    std::string result = ChineseUtils::convertPinyinToZhuyin("chzng2 quanr1");
+    std::string result = MandarinUtils::convertPinyinToZhuyin("chzng2 quanr1");
     QCOMPARE(result, "chzng2 ㄑㄩㄢㄦ");
 }
 
@@ -521,7 +522,7 @@ void TestChineseUtils::pinyinToIPASimple()
 #ifdef Q_OS_WINDOWS
     QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
 #endif
-    std::string result = ChineseUtils::convertPinyinToIPA("ba1 da2 tong1");
+    std::string result = MandarinUtils::convertPinyinToIPA("ba1 da2 tong1");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "pä ˥ ˥  tä ˧ ˥  tʰʊŋ ˥ ˥");
 #else
@@ -531,19 +532,19 @@ void TestChineseUtils::pinyinToIPASimple()
 
 void TestChineseUtils::pinyinToIPARejectNoTone()
 {
-    std::string result = ChineseUtils::convertPinyinToIPA("ba");
+    std::string result = MandarinUtils::convertPinyinToIPA("ba");
     QCOMPARE(result, "ba");
 }
 
 void TestChineseUtils::pinyinToIPARejectSingleLetter()
 {
-    std::string result = ChineseUtils::convertPinyinToIPA("a");
+    std::string result = MandarinUtils::convertPinyinToIPA("a");
     QCOMPARE(result, "a");
 }
 
 void TestChineseUtils::pinyinToIPARejectSpecialCharacter()
 {
-    std::string result = ChineseUtils::convertPinyinToIPA("-");
+    std::string result = MandarinUtils::convertPinyinToIPA("-");
     QCOMPARE(result, "-");
 }
 
@@ -552,7 +553,7 @@ void TestChineseUtils::pinyinToIPANoSpaces()
 #ifdef Q_OS_WINDOWS
     QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
 #endif
-    std::string result = ChineseUtils::convertPinyinToIPA("ba1da2tong1");
+    std::string result = MandarinUtils::convertPinyinToIPA("ba1da2tong1");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "pä ˥ ˥  tä ˧ ˥  tʰʊŋ ˥ ˥");
 #else
@@ -566,8 +567,8 @@ void TestChineseUtils::pinyinToIPASpacesToSegment()
     QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
 #endif
     std::string result
-        = ChineseUtils::convertPinyinToIPA("ba1 da2 tong1",
-                                           /* useSpacesToSegment = */ true);
+        = MandarinUtils::convertPinyinToIPA("ba1 da2 tong1",
+                                            /* useSpacesToSegment = */ true);
 #ifdef Q_OS_MAC
     QCOMPARE(result, "pä ˥ ˥  tä ˧ ˥  tʰʊŋ ˥ ˥");
 #else
@@ -577,7 +578,7 @@ void TestChineseUtils::pinyinToIPASpacesToSegment()
 
 void TestChineseUtils::pinyinToIPASpecialCaseNg()
 {
-    std::string result = ChineseUtils::convertPinyinToIPA("ng5");
+    std::string result = MandarinUtils::convertPinyinToIPA("ng5");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "ŋ̍ ");
 #else
@@ -590,7 +591,7 @@ void TestChineseUtils::pinyinToIPASpecialCaseRi()
 #ifdef Q_OS_WINDOWS
     QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
 #endif
-    std::string result = ChineseUtils::convertPinyinToIPA("ri4");
+    std::string result = MandarinUtils::convertPinyinToIPA("ri4");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "ʐ̩ ˥ ˩");
 #else
@@ -603,14 +604,14 @@ void TestChineseUtils::pinyinToIPASyllableWithV()
 #ifdef Q_OS_WINDOWS
     QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
 #endif
-    std::string result = ChineseUtils::convertPinyinToIPA("nv3");
+    std::string result = MandarinUtils::convertPinyinToIPA("nv3");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "ny ˨ ˩ ˦");
 #else
     QCOMPARE(result, "ny˨˩˦");
 #endif
 
-    result = ChineseUtils::convertPinyinToIPA("qu4");
+    result = MandarinUtils::convertPinyinToIPA("qu4");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "t͡ɕʰy ˥ ˩");
 #else
@@ -623,14 +624,14 @@ void TestChineseUtils::pinyinToIPAVoicelessInitial()
 #ifdef Q_OS_WINDOWS
     QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
 #endif
-    std::string result = ChineseUtils::convertPinyinToIPA("ge5");
+    std::string result = MandarinUtils::convertPinyinToIPA("ge5");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "g̊ə ");
 #else
     QCOMPARE(result, "g̊ə");
 #endif
 
-    result = ChineseUtils::convertPinyinToIPA("yi1 ge5");
+    result = MandarinUtils::convertPinyinToIPA("yi1 ge5");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "i ˥ ˥  g̊ə ˨");
 #else
@@ -643,14 +644,14 @@ void TestChineseUtils::pinyinToIPAToneThree()
 #ifdef Q_OS_WINDOWS
     QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
 #endif
-    std::string result = ChineseUtils::convertPinyinToIPA("ke3");
+    std::string result = MandarinUtils::convertPinyinToIPA("ke3");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "kʰɤ ˨ ˩ ˦");
 #else
     QCOMPARE(result, "kʰɤ˨˩˦");
 #endif
 
-    result = ChineseUtils::convertPinyinToIPA("ke3 yi3");
+    result = MandarinUtils::convertPinyinToIPA("ke3 yi3");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "kʰɤ ˨ ˩ ˦ ꜔ ꜒  i ˨ ˩ ˦ ꜕ ꜖ ( ꜓ )");
 #else
@@ -663,14 +664,14 @@ void TestChineseUtils::pinyinToIPAToneFour()
 #ifdef Q_OS_WINDOWS
     QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
 #endif
-    std::string result = ChineseUtils::convertPinyinToIPA("xia4 qu4");
+    std::string result = MandarinUtils::convertPinyinToIPA("xia4 qu4");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "ɕjä ˥ ˩ ꜒ ꜔  t͡ɕʰy ˥ ˩");
 #else
     QCOMPARE(result, "ɕjä˥˩꜒꜔  t͡ɕʰy˥˩");
 #endif
 
-    result = ChineseUtils::convertPinyinToIPA("xia4");
+    result = MandarinUtils::convertPinyinToIPA("xia4");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "ɕjä ˥ ˩");
 #else
@@ -683,21 +684,21 @@ void TestChineseUtils::pinyinToIPAOtherTone()
 #ifdef Q_OS_WINDOWS
     QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
 #endif
-    std::string result = ChineseUtils::convertPinyinToIPA("ma1");
+    std::string result = MandarinUtils::convertPinyinToIPA("ma1");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "mä ˥ ˥");
 #else
     QCOMPARE(result, "mä˥˥");
 #endif
 
-    result = ChineseUtils::convertPinyinToIPA("ma2");
+    result = MandarinUtils::convertPinyinToIPA("ma2");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "mä ˧ ˥");
 #else
     QCOMPARE(result, "mä˧˥");
 #endif
 
-    result = ChineseUtils::convertPinyinToIPA("ma5");
+    result = MandarinUtils::convertPinyinToIPA("ma5");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "mä ");
 #else
@@ -709,14 +710,14 @@ void TestChineseUtils::pinyinToIPAErhua()
 #ifdef Q_OS_WINDOWS
     QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
 #endif
-    std::string result = ChineseUtils::convertPinyinToIPA("huar1");
+    std::string result = MandarinUtils::convertPinyinToIPA("huar1");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "xu̯ɑɻ ˥ ˥");
 #else
     QCOMPARE(result, "xu̯ɑɻ˥˥");
 #endif
 
-    result = ChineseUtils::convertPinyinToIPA("quanr1");
+    result = MandarinUtils::convertPinyinToIPA("quanr1");
 #ifdef Q_OS_MAC
     QCOMPARE(result, "t͡ɕʰɥɑɻ ˥ ˥");
 #else
@@ -998,18 +999,18 @@ void TestChineseUtils::segmentJyutpingInvalidTone()
 {
     std::vector<std::string> result;
     bool valid
-        = ChineseUtils::segmentPinyin("hang0",
-                                      result,
-                                      /* removeSpecialCharacters = */ true,
-                                      /* removeGlobCharacters = */ false);
+        = MandarinUtils::segmentPinyin("hang0",
+                                       result,
+                                       /* removeSpecialCharacters = */ true,
+                                       /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"hang0"};
     QCOMPARE(result, expected);
     QCOMPARE(valid, false);
 
-    valid = ChineseUtils::segmentPinyin("hang7",
-                                        result,
-                                        /* removeSpecialCharacters = */ true,
-                                        /* removeGlobCharacters = */ false);
+    valid = MandarinUtils::segmentPinyin("hang7",
+                                         result,
+                                         /* removeSpecialCharacters = */ true,
+                                         /* removeGlobCharacters = */ false);
     expected = {"hang7"};
     QCOMPARE(result, expected);
     QCOMPARE(valid, false);
@@ -1028,237 +1029,237 @@ void TestChineseUtils::segmentJyutpingGarbage()
     QCOMPARE(valid, false);
 }
 
-void TestChineseUtils::segmentPinyinSimple()
+void TestMandarinUtils::segmentPinyinSimple()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("guang3 dong1", result);
+    MandarinUtils::segmentPinyin("guang3 dong1", result);
     std::vector<std::string> expected = {"guang3", "dong1"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinNoDigits()
+void TestMandarinUtils::segmentPinyinNoDigits()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("guang dong", result);
+    MandarinUtils::segmentPinyin("guang dong", result);
     std::vector<std::string> expected = {"guang", "dong"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinNoSpaces()
+void TestMandarinUtils::segmentPinyinNoSpaces()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("guang3dong1", result);
+    MandarinUtils::segmentPinyin("guang3dong1", result);
     std::vector<std::string> expected = {"guang3", "dong1"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinNoDigitsNoSpaces()
+void TestMandarinUtils::segmentPinyinNoDigitsNoSpaces()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("guangdong", result);
+    MandarinUtils::segmentPinyin("guangdong", result);
     std::vector<std::string> expected = {"guang", "dong"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinNoDigitsApostrophe()
+void TestMandarinUtils::segmentPinyinNoDigitsApostrophe()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("xi'an", result);
+    MandarinUtils::segmentPinyin("xi'an", result);
     std::vector<std::string> expected = {"xi", "an"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinDigitsApostrophe()
+void TestMandarinUtils::segmentPinyinDigitsApostrophe()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("xi1'an", result);
+    MandarinUtils::segmentPinyin("xi1'an", result);
     std::vector<std::string> expected = {"xi1", "an"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinRemoveSpecialCharacters()
+void TestMandarinUtils::segmentPinyinRemoveSpecialCharacters()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("guang*dong!!", result);
+    MandarinUtils::segmentPinyin("guang*dong!!", result);
     std::vector<std::string> expected = {"guang", "dong"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinKeepGlobCharacters()
+void TestMandarinUtils::segmentPinyinKeepGlobCharacters()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("guang* dong?",
-                                result,
-                                /* removeSpecialCharacters = */ true,
-                                /* removeGlobCharacters = */ false);
+    MandarinUtils::segmentPinyin("guang* dong?",
+                                 result,
+                                 /* removeSpecialCharacters = */ true,
+                                 /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"guang", "* ", "dong", "?"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinKeepGlobCharactersNoWhitespace()
+void TestMandarinUtils::segmentPinyinKeepGlobCharactersNoWhitespace()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("guang*dong?",
-                                result,
-                                /* removeSpecialCharacters = */ true,
-                                /* removeGlobCharacters = */ false);
+    MandarinUtils::segmentPinyin("guang*dong?",
+                                 result,
+                                 /* removeSpecialCharacters = */ true,
+                                 /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"guang", "*", "dong", "?"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinKeepMultipleGlobCharacters()
+void TestMandarinUtils::segmentPinyinKeepMultipleGlobCharacters()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("guang?* dong",
-                                result,
-                                /* removeSpecialCharacters = */ true,
-                                /* removeGlobCharacters = */ false);
+    MandarinUtils::segmentPinyin("guang?* dong",
+                                 result,
+                                 /* removeSpecialCharacters = */ true,
+                                 /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"guang", "?", "* ", "dong"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinKeepMultipleGlobCharactersWhitespace()
+void TestMandarinUtils::segmentPinyinKeepMultipleGlobCharactersWhitespace()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("guang? * dong",
-                                result,
-                                /* removeSpecialCharacters = */ true,
-                                /* removeGlobCharacters = */ false);
+    MandarinUtils::segmentPinyin("guang? * dong",
+                                 result,
+                                 /* removeSpecialCharacters = */ true,
+                                 /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"guang", "? ", "* ", "dong"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinKeepMultipleGlobCharactersWhitespaceSurround()
+void TestMandarinUtils::segmentPinyinKeepMultipleGlobCharactersWhitespaceSurround()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("guang ? * dong",
-                                result,
-                                /* removeSpecialCharacters = */ true,
-                                /* removeGlobCharacters = */ false);
+    MandarinUtils::segmentPinyin("guang ? * dong",
+                                 result,
+                                 /* removeSpecialCharacters = */ true,
+                                 /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"guang", " ? ", "* ", "dong"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinGlobCharactersTrimWhitespace()
+void TestMandarinUtils::segmentPinyinGlobCharactersTrimWhitespace()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("guang  ?            *      dong",
-                                result,
-                                /* removeSpecialCharacters = */ true,
-                                /* removeGlobCharacters = */ false);
+    MandarinUtils::segmentPinyin("guang  ?            *      dong",
+                                 result,
+                                 /* removeSpecialCharacters = */ true,
+                                 /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"guang", " ? ", "* ", "dong"};
     QCOMPARE(result, expected);
 
-    ChineseUtils::segmentPinyin("guang?* ?????",
-                                result,
-                                /* removeSpecialCharacters = */ true,
-                                /* removeGlobCharacters = */ false);
+    MandarinUtils::segmentPinyin("guang?* ?????",
+                                 result,
+                                 /* removeSpecialCharacters = */ true,
+                                 /* removeGlobCharacters = */ false);
     expected = {"guang", "?", "* ", "?", "?", "?", "?", "?"};
     QCOMPARE(result, expected);
 
-    ChineseUtils::segmentPinyin("guang * ????*",
-                                result,
-                                /* removeSpecialCharacters = */ true,
-                                /* removeGlobCharacters = */ false);
+    MandarinUtils::segmentPinyin("guang * ????*",
+                                 result,
+                                 /* removeSpecialCharacters = */ true,
+                                 /* removeGlobCharacters = */ false);
     expected = {"guang", " * ", "?", "?", "?", "?", "*"};
     QCOMPARE(result, expected);
 
-    ChineseUtils::segmentPinyin("guang? dong*",
-                                result,
-                                /* removeSpecialCharacters = */ true,
-                                /* removeGlobCharacters = */ false);
+    MandarinUtils::segmentPinyin("guang? dong*",
+                                 result,
+                                 /* removeSpecialCharacters = */ true,
+                                 /* removeGlobCharacters = */ false);
     expected = {"guang", "? ", "dong", "*"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinKeepSpecialCharacters()
+void TestMandarinUtils::segmentPinyinKeepSpecialCharacters()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("guang？ dong1",
-                                result,
-                                /* removeSpecialCharacters = */ false);
+    MandarinUtils::segmentPinyin("guang？ dong1",
+                                 result,
+                                 /* removeSpecialCharacters = */ false);
     std::vector<std::string> expected = {"guang", "？", "dong1"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinRemoveWhitespace()
+void TestMandarinUtils::segmentPinyinRemoveWhitespace()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("  guang                           dong      ",
-                                result,
-                                /* removeSpecialCharacters = */ true,
-                                /* removeGlobCharacters = */ false);
+    MandarinUtils::segmentPinyin("  guang                           dong      ",
+                                 result,
+                                 /* removeSpecialCharacters = */ true,
+                                 /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"guang", "dong"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinLower()
+void TestMandarinUtils::segmentPinyinLower()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("gUanGdOnG", result);
+    MandarinUtils::segmentPinyin("gUanGdOnG", result);
     std::vector<std::string> expected = {"guang", "dong"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinLowerWithDigits()
+void TestMandarinUtils::segmentPinyinLowerWithDigits()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("guAng3dONg1", result);
+    MandarinUtils::segmentPinyin("guAng3dONg1", result);
     std::vector<std::string> expected = {"guang3", "dong1"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinMultipleFinalsVowelsOnly()
+void TestMandarinUtils::segmentPinyinMultipleFinalsVowelsOnly()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("ee",
-                                result,
-                                /* removeSpecialCharacters = */ true,
-                                /* removeGlobCharacters = */ false);
+    MandarinUtils::segmentPinyin("ee",
+                                 result,
+                                 /* removeSpecialCharacters = */ true,
+                                 /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"e", "e"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinMultipleFinals()
+void TestMandarinUtils::segmentPinyinMultipleFinals()
 {
     std::vector<std::string> result;
-    ChineseUtils::segmentPinyin("angang",
-                                result,
-                                /* removeSpecialCharacters = */ true,
-                                /* removeGlobCharacters = */ false);
+    MandarinUtils::segmentPinyin("angang",
+                                 result,
+                                 /* removeSpecialCharacters = */ true,
+                                 /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"ang", "ang"};
     QCOMPARE(result, expected);
 }
 
-void TestChineseUtils::segmentPinyinInvalidTone()
+void TestMandarinUtils::segmentPinyinInvalidTone()
 {
     std::vector<std::string> result;
     bool valid
-        = ChineseUtils::segmentPinyin("heng0",
-                                      result,
-                                      /* removeSpecialCharacters = */ true,
-                                      /* removeGlobCharacters = */ false);
+        = MandarinUtils::segmentPinyin("heng0",
+                                       result,
+                                       /* removeSpecialCharacters = */ true,
+                                       /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"heng0"};
     QCOMPARE(result, expected);
     QCOMPARE(valid, false);
 
-    valid = ChineseUtils::segmentPinyin("heng6",
-                                        result,
-                                        /* removeSpecialCharacters = */ true,
-                                        /* removeGlobCharacters = */ false);
+    valid = MandarinUtils::segmentPinyin("heng6",
+                                         result,
+                                         /* removeSpecialCharacters = */ true,
+                                         /* removeGlobCharacters = */ false);
     expected = {"heng6"};
     QCOMPARE(result, expected);
     QCOMPARE(valid, false);
 }
 
-void TestChineseUtils::segmentPinyinGarbage()
+void TestMandarinUtils::segmentPinyinGarbage()
 {
     std::vector<std::string> result;
     bool valid
-        = ChineseUtils::segmentPinyin("kljnxclkjvnl",
-                                      result,
-                                      /* removeSpecialCharacters = */ true,
-                                      /* removeGlobCharacters = */ false);
+        = MandarinUtils::segmentPinyin("kljnxclkjvnl",
+                                       result,
+                                       /* removeSpecialCharacters = */ true,
+                                       /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"kljnxclkjvnl"};
     QCOMPARE(result, expected);
     QCOMPARE(valid, false);

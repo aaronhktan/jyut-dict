@@ -3,6 +3,7 @@
 #include "logic/settings/settings.h"
 #include "logic/utils/cantoneseutils.h"
 #include "logic/utils/chineseutils.h"
+#include "logic/utils/mandarinutils.h"
 
 Entry::Entry(const std::string &simplified, const std::string &traditional,
              const std::string &jyutping, const std::string &pinyin,
@@ -282,26 +283,26 @@ bool Entry::generatePhonetic(CantoneseOptions cantoneseOptions,
 
     if ((mandarinOptions & MandarinOptions::PRETTY_PINYIN)
             == MandarinOptions::PRETTY_PINYIN && !_isPrettyPinyinValid) {
-        _prettyPinyin = ChineseUtils::createPrettyPinyin(_pinyin);
+        _prettyPinyin = MandarinUtils::createPrettyPinyin(_pinyin);
         _isPrettyPinyinValid = true;
     }
 
     if ((mandarinOptions & MandarinOptions::NUMBERED_PINYIN)
             == MandarinOptions::NUMBERED_PINYIN && !_isNumberedPinyinValid) {
-        _numberedPinyin = ChineseUtils::createNumberedPinyin(_pinyin);
+        _numberedPinyin = MandarinUtils::createNumberedPinyin(_pinyin);
         _isNumberedPinyinValid = true;
     }
 
     if ((mandarinOptions & MandarinOptions::ZHUYIN) == MandarinOptions::ZHUYIN
         && !_isZhuyinValid) {
-        _zhuyin = ChineseUtils::convertPinyinToZhuyin(_pinyin);
+        _zhuyin = MandarinUtils::convertPinyinToZhuyin(_pinyin);
         _isZhuyinValid = true;
     }
 
     if ((mandarinOptions & MandarinOptions::MANDARIN_IPA)
             == MandarinOptions::MANDARIN_IPA
         && !_isMandarinIPAValid) {
-        _mandarinIPA = ChineseUtils::convertPinyinToIPA(_pinyin);
+        _mandarinIPA = MandarinUtils::convertPinyinToIPA(_pinyin);
         _isMandarinIPAValid = true;
     }
 

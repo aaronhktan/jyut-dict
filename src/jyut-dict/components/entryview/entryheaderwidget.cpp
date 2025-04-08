@@ -3,7 +3,7 @@
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/strings/strings.h"
-#include "logic/utils/chineseutils.h"
+#include "logic/utils/mandarinutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -106,7 +106,7 @@ void EntryHeaderWidget::setEntry(const Entry &entry)
     // but most TTS systems denote that vowel with "v". To get the TTS systems
     // to properly pronounce that word, we must convert "u:" to "v".
     _pinyin = QString::fromStdString(
-        ChineseUtils::createPinyinWithV(entry.getPinyin()));
+        MandarinUtils::createPinyinWithV(entry.getPinyin()));
 
     translateUI();
     setStyle(Utils::isDarkMode());

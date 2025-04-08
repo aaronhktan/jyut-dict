@@ -42,15 +42,6 @@ std::string applyColours(
 std::string compareStrings(const std::string &original,
                            const std::string &comparison);
 
-std::string createPrettyPinyin(const std::string &pinyin);
-std::string createNumberedPinyin(const std::string &pinyin);
-std::string createPinyinWithV(const std::string &pinyin);
-
-std::string convertPinyinToZhuyin(const std::string &pinyin,
-                                  bool useSpacesToSegment = false);
-std::string convertPinyinToIPA(const std::string &pinyin,
-                               bool useSpacesToSegment = false);
-
 // constructRomanisationQuery takes a vector of strings and stitches them
 // together with a delimiter.
 //
@@ -97,10 +88,6 @@ std::string convertPinyinToIPA(const std::string &pinyin,
 std::string constructRomanisationQuery(const std::vector<std::string> &words,
                                        const char *delimiter);
 
-bool segmentPinyin(const QString &string,
-                   std::vector<std::string> &out,
-                   bool removeSpecialCharacters = true,
-                   bool removeGlobCharacters = true);
 } // namespace ChineseUtils
 
 #endif // CHINESEUTILS_H

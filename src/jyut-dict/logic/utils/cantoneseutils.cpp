@@ -9,6 +9,100 @@
 #include <unordered_set>
 
 namespace {
+std::unordered_set<std::string> specialCharacters
+    = {".",  "。", ",",  "，", "！", "？", "%",  "－", "…",  "⋯",
+       ".",  "·",  "\"", "“",  "”",  "$",  "｜", "：", "１", "２",
+       "３", "４", "５", "６", "７", "８", "９", "０"};
+
+std::unordered_set<std::string> regexCharacters = {"!", "(", ")", "|"};
+
+std::unordered_map<std::string, std::vector<std::string>>
+    jyutpingToYaleSpecialSyllables = {
+        {"m", {"m̄", "ḿ", "m", "m̀h", "ḿh", "mh"}},
+        {"ng", {"n̄g", "ńg", "ng", "ǹgh", "ńgh", "ngh"}},
+};
+
+std::unordered_map<std::string, std::string> jyutpingToYaleSpecialFinals = {
+    {"aa", "a"},
+    {"oe", "eu"},
+    {"oeng", "eung"},
+    {"oek", "euk"},
+    {"eoi", "eui"},
+    {"eon", "eun"},
+    {"eot", "eut"},
+};
+
+std::unordered_map<std::string, std::vector<std::string>> yaleToneReplacements = {
+    {"a", {"ā", "á", "a", "à", "á", "a"}},
+    {"e", {"ē", "é", "e", "è", "é", "e"}},
+    {"i", {"ī", "í", "i", "ì", "í", "i"}},
+    {"o", {"ō", "ó", "o", "ò", "ó", "o"}},
+    {"u", {"ū", "ú", "u", "ù", "ú", "u"}},
+};
+
+std::vector<std::pair<std::string, std::string>> cantoneseIPASpecialSyllables
+    = {{"a", "@"},
+       {"yu", "y"},
+       {"@@", "a"},
+       {"uk", "^k"},
+       {"ik", "|k"},
+       {"ou", "~u"},
+       {"eoi", "eoy"},
+       {"ung", "^ng"},
+       {"ing", "|ng"},
+       {"ei", ">i"}};
+
+std::unordered_map<std::string, std::string> cantoneseIPAInitials
+    = {{"b", "p"},
+       {"p", "pʰ"},
+       {"d", "t"},
+       {"t", "tʰ"},
+       {"g", "k"},
+       {"k", "kʰ"},
+       {"ng", "ŋ"},
+       {"gw", "kʷ"},
+       {"kw", "kʷʰ"},
+       {"zh", "t͡ʃ"},
+       {"ch", "t͡ʃʰ"},
+       {"sh", "ʃ"},
+       {"z", "t͡s"},
+       {"c", "t͡sʰ"}};
+
+std::unordered_map<std::string, std::string> cantoneseIPANuclei = {{"a", "äː"},
+                                                                   {"@", "ɐ"},
+                                                                   {"e", "ɛː"},
+                                                                   {">", "e"},
+                                                                   {"i", "iː"},
+                                                                   {"|", "ɪ"},
+                                                                   {"o", "ɔː"},
+                                                                   {"~", "o"},
+                                                                   {"oe", "œ̽ː"},
+                                                                   {"eo", "ɵ"},
+                                                                   {"u", "uː"},
+                                                                   {"^", "ʊ"},
+                                                                   {"y", "yː"}};
+
+std::unordered_map<std::string, std::string> cantoneseIPACodas = {{"i", "i̯"},
+                                                                  {"u", "u̯"},
+                                                                  {"y", "y̯"},
+                                                                  {"ng", "ŋ"},
+                                                                  {"p", "p̚"},
+                                                                  {"t", "t̚"},
+                                                                  {"k", "k̚"}};
+
+// The original Wiktionary module uses breves to indicate a special letter (e.g.
+// ă), but the base C++ regex engine can't match against chars outside of the
+// basic set. As a workaround, I'm just replacing them with other symbols.
+#if defined(Q_OS_MAC)
+// Added a six-per-em space (U+2006) between adjacent tone markers, because Qt's
+// kerning squishes them too close together
+std::vector<std::string> jyutpingToIPATones
+    = {"˥", "˧ ˥", "˧", "˨ ˩", "˩ ˧", "˨", "˥", "˧", "˨"};
+#else
+std::vector<std::string> jyutpingToIPATones
+    = {"˥", "˧˥", "˧", "˨˩", "˩˧", "˨", "˥", "˧", "˨"};
+#endif
+
 bool unfoldJyutpingRegex(const QString &string, std::vector<QString> &out)
 {
     std::vector<QString> stringPossibilities;
@@ -64,24 +158,6 @@ std::string convertYaleInitial(const std::string &syllable)
     yale_syllable = std::regex_replace(yale_syllable, std::regex{"c"}, "ch");
     return yale_syllable;
 }
-
-std::unordered_map<std::string, std::string> jyutpingToYaleSpecialFinals = {
-    {"aa", "a"},
-    {"oe", "eu"},
-    {"oeng", "eung"},
-    {"oek", "euk"},
-    {"eoi", "eui"},
-    {"eon", "eun"},
-    {"eot", "eut"},
-};
-
-std::unordered_map<std::string, std::vector<std::string>> yaleToneReplacements = {
-    {"a", {"ā", "á", "a", "à", "á", "a"}},
-    {"e", {"ē", "é", "e", "è", "é", "e"}},
-    {"i", {"ī", "í", "i", "ì", "í", "i"}},
-    {"o", {"ō", "ó", "o", "ò", "ó", "o"}},
-    {"u", {"ū", "ú", "u", "ù", "ú", "u"}},
-};
 
 std::string convertYaleFinal(const std::string &syllable)
 {
@@ -139,94 +215,6 @@ std::string convertYaleFinal(const std::string &syllable)
 } // namespace
 
 namespace CantoneseUtils {
-
-const static std::unordered_set<std::string> specialCharacters = {
-    ".",  "。", ",",  "，", "！", "？", "%",  "－", "…",  "⋯",
-    ".",  "·",  "\"", "“",  "”",  "$",  "｜", "：", "１", "２",
-    "３", "４", "５", "６", "７", "８", "９", "０",
-};
-
-const static std::unordered_set<std::string> regexCharacters = {
-    "!",
-    "(",
-    ")",
-    "|",
-};
-
-const static std::unordered_map<std::string, std::vector<std::string>>
-    jyutpingToYaleSpecialSyllables = {
-        {"m", {"m̄", "ḿ", "m", "m̀h", "ḿh", "mh"}},
-        {"ng", {"n̄g", "ńg", "ng", "ǹgh", "ńgh", "ngh"}},
-};
-
-// The original Wiktionary module uses breves to indicate a special letter (e.g.
-// ă), but the base C++ regex engine can't match against chars outside of the
-// basic set. As a workaround, I'm just replacing them with other symbols.
-const static std::vector<std::pair<std::string, std::string>>
-    cantoneseIPASpecialSyllables = {{"a", "@"},
-                                    {"yu", "y"},
-                                    {"@@", "a"},
-                                    {"uk", "^k"},
-                                    {"ik", "|k"},
-                                    {"ou", "~u"},
-                                    {"eoi", "eoy"},
-                                    {"ung", "^ng"},
-                                    {"ing", "|ng"},
-                                    {"ei", ">i"}};
-
-const static std::unordered_map<std::string, std::string> cantoneseIPAInitials = {
-    {"b", "p"},
-    {"p", "pʰ"},
-    {"d", "t"},
-    {"t", "tʰ"},
-    {"g", "k"},
-    {"k", "kʰ"},
-    {"ng", "ŋ"},
-    {"gw", "kʷ"},
-    {"kw", "kʷʰ"},
-    {"zh", "t͡ʃ"},
-    {"ch", "t͡ʃʰ"},
-    {"sh", "ʃ"},
-    {"z", "t͡s"},
-    {"c", "t͡sʰ"},
-};
-
-const static std::unordered_map<std::string, std::string> cantoneseIPANuclei = {
-    {"a", "äː"},
-    {"@", "ɐ"},
-    {"e", "ɛː"},
-    {">", "e"},
-    {"i", "iː"},
-    {"|", "ɪ"},
-    {"o", "ɔː"},
-    {"~", "o"},
-    {"oe", "œ̽ː"},
-    {"eo", "ɵ"},
-    {"u", "uː"},
-    {"^", "ʊ"},
-    {"y", "yː"},
-};
-
-const static std::unordered_map<std::string, std::string> cantoneseIPACodas = {
-    {"i", "i̯"},
-    {"u", "u̯"},
-    {"y", "y̯"},
-    {"ng", "ŋ"},
-    {"p", "p̚"},
-    {"t", "t̚"},
-    {"k", "k̚"},
-};
-
-#if defined(Q_OS_MAC)
-// Added a six-per-em space (U+2006) between adjacent tone markers, because Qt's
-// kerning squishes them too close together
-const static std::vector<std::string> jyutpingToIPATones
-    = {"˥", "˧ ˥", "˧", "˨ ˩", "˩ ˧", "˨", "˥", "˧", "˨"};
-#else
-const static std::vector<std::string> jyutpingToIPATones
-    = {"˥", "˧˥", "˧", "˨˩", "˩˧", "˨", "˥", "˧", "˨"};
-#endif
-
 // Note that the majority of this function and the convertToIPA function
 // is derivative of Wiktionary's conversion code, contained in the module
 // "yue-pron" (https://en.wiktionary.org/wiki/Module:yue-pron)

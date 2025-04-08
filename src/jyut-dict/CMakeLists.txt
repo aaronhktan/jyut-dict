@@ -124,6 +124,7 @@ set(PROJECT_SOURCES
         logic/update/jyutdictionaryreleasechecker.cpp
         logic/utils/cantoneseutils.cpp
         logic/utils/chineseutils.cpp
+        logic/utils/mandarinutils.cpp
         logic/utils/scriptdetector.cpp
         logic/utils/utils.cpp
         logic/utils/utils_qt.cpp

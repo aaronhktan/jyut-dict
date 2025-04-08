@@ -4,6 +4,7 @@
 #include "logic/search/searchqueries.h"
 #include "logic/utils/cantoneseutils.h"
 #include "logic/utils/chineseutils.h"
+#include "logic/utils/mandarinutils.h"
 #include "logic/utils/scriptdetector.h"
 #include "logic/utils/utils.h"
 
@@ -103,10 +104,10 @@ void preparePinyinBindValues(const QString &searchTerm, QString &globTerm)
             = processedSearchTerm.mid(1, processedSearchTerm.size() - 2);
         Utils::split(searchTermWithoutQuotes.toStdString(), ' ', pinyinWords);
     } else {
-        ChineseUtils::segmentPinyin(processedSearchTerm,
-                                    pinyinWords,
-                                    /* removeSpecialCharacters */ true,
-                                    /* removeGlobCharacters */ false);
+        MandarinUtils::segmentPinyin(processedSearchTerm,
+                                     pinyinWords,
+                                     /* removeSpecialCharacters */ true,
+                                     /* removeGlobCharacters */ false);
     }
 
     // Don't add wildcard characters to GLOB term if searching for exact match
