@@ -901,9 +901,9 @@ bool jyutpingAutocorrect(const QString &in,
     out.replace(" yut", " jat");
     out.replace("yut", "(ja|yu)t");
 
+    out.replace("ui", "(eo|u)i");
     out.replace("un", "(y!u|a|eo)n");
     out.replace("ut", "(u|a)t");
-    out.replace("ui", "(eo|u)i");
 
     return 0;
 }
