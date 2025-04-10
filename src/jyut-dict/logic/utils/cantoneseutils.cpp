@@ -929,8 +929,8 @@ bool jyutpingSoundChanges(std::vector<std::string> &inOut)
 
         // Initial sound changes
         // "Lazy" pronunciations
-        if (syllable.length() >= 2
-            && (syllable[0] == 'n' && syllable[1] == 'g')) {
+        if (syllable.length() >= 3 && syllable.starts_with("ng")
+            && !std::isdigit(syllable[2]) && syllable[2] != '?') {
             // loss of [ŋ] initial, replacement with null initial
             syllable.replace(0, 2, "(ng)!");
         } else if (syllable[0] == 'a' || syllable[0] == 'o'
@@ -976,19 +976,27 @@ bool jyutpingSoundChanges(std::vector<std::string> &inOut)
         }
 
         // Final sound changes
-        if ((syllable.ends_with("ang") || syllable.ends_with("ong"))
+        if ((syllable.ends_with("ang") || syllable.ends_with("a!ng")
+             || syllable.ends_with("ong"))
             || (syllable.length() >= 4
                 && std::string_view{syllable.begin(), syllable.end() - 1}
                        .ends_with("ang"))
+            || (syllable.length() >= 5
+                && std::string_view{syllable.begin(), syllable.end() - 1}
+                       .ends_with("aa!ng"))
             || (syllable.length() >= 4
                 && std::string_view{syllable.begin(), syllable.end() - 1}
                        .ends_with("ong"))) {
             // alveolarization of final [ŋ]
             syllable.replace(syllable.rfind("ng"), 2, "ng!");
-        } else if ((syllable.ends_with("an") || syllable.ends_with("on"))
+        } else if ((syllable.ends_with("an") || syllable.ends_with("a!n")
+                    || syllable.ends_with("on"))
                    || (syllable.length() >= 3
                        && std::string_view{syllable.begin(), syllable.end() - 1}
                               .ends_with("an"))
+                   || (syllable.length() >= 4
+                       && std::string_view{syllable.begin(), syllable.end() - 1}
+                              .ends_with("a!n"))
                    || (syllable.length() >= 3
                        && std::string_view{syllable.begin(), syllable.end() - 1}
                               .ends_with("on"))) {
@@ -1000,25 +1008,24 @@ bool jyutpingSoundChanges(std::vector<std::string> &inOut)
                        && (std::string_view{syllable.begin(), syllable.end() - 1}
                                .ends_with("t")
                            && !std::string_view{syllable.begin(),
-                                                syllable.end() - 2}
+                                                syllable.end() - 1}
                                    .ends_with("it")
                            && !std::string_view{syllable.begin(),
-                                                syllable.end() - 2}
+                                                syllable.end() - 1}
                                    .ends_with("ut")))) {
             // velarization of final [t]
             syllable.replace(syllable.rfind("t"), 1, "(k|t)");
         } else if ((syllable.ends_with("k") && !syllable.ends_with("ik")
-                        && !syllable.ends_with("uk")
-                    || (syllable.length() >= 3
-                        && (std::string_view{syllable.begin(),
-                                             syllable.end() - 1}
-                                .ends_with("k")
-                            && !std::string_view{syllable.begin(),
-                                                 syllable.end() - 2}
-                                    .ends_with("ik")
-                            && !std::string_view{syllable.begin(),
-                                                 syllable.end() - 2}
-                                    .ends_with("uk"))))) {
+                    && !syllable.ends_with("uk"))
+                   || (syllable.length() >= 3
+                       && (std::string_view{syllable.begin(), syllable.end() - 1}
+                               .ends_with("k")
+                           && !std::string_view{syllable.begin(),
+                                                syllable.end() - 1}
+                                   .ends_with("ik")
+                           && !std::string_view{syllable.begin(),
+                                                syllable.end() - 1}
+                                   .ends_with("uk")))) {
             // velarization of final [k]
             syllable.replace(syllable.rfind("k"), 1, "(k|t)");
         }

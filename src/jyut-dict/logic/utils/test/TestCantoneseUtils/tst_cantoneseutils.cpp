@@ -99,6 +99,28 @@ private slots:
     void autocorrectJyutpingUi();
     void autocorrectJyutpingUn();
     void autocorrectJyutpingUt();
+
+    void soundChangeNg();
+    void soundChangeM();
+    void soundChangeNgInitial();
+    void soundChangeNullInitial();
+    void soundChangeNInitial();
+    void soundChangeLInitial();
+    void soundChangeGw();
+    void soundChangeKw();
+    void soundChangeD();
+    void soundChangeTInitial();
+    void soundChangeC();
+    void soundChangeZ();
+    void soundChangeG();
+    void soundChangeKInitial();
+    void soundChangeAa();
+    void soundChangeAng();
+    void soundChangeOng();
+    void soundChangeAn();
+    void soundChangeOn();
+    void soundChangeTFinal();
+    void soundChangeKFinal();
 };
 
 TestCantoneseUtils::TestCantoneseUtils() {}
@@ -2075,6 +2097,645 @@ void TestCantoneseUtils::autocorrectJyutpingUt()
                                               result,
                                               /* unsafeSubstitutions */ true);
     expected = "gamg(u|a)t";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeNg()
+{
+    std::vector<std::string> result{"ng"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"(ng|m)"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"ng4"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(ng|m)4"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"ng?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(ng|m)?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeM()
+{
+    std::vector<std::string> result{"m"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"(ng|m)"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"m4"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(ng|m)4"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"m?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(ng|m)?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeNgInitial()
+{
+    std::vector<std::string> result{"ngo"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"(ng)!o"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"ngo5"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(ng)!o5"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"ngo?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(ng)!o?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeNullInitial()
+{
+    std::vector<std::string> result{"o"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"(ng)!o"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"o5"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(ng)!o5"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"o?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(ng)!o?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"ang"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(ng)!aa!ng!"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"ang2"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(ng)!aa!ng!2"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"ang?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(ng)!aa!ng!?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"uk"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(ng)!uk"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"uk1"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(ng)!uk1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"uk?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(ng)!uk?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeNInitial()
+{
+    std::vector<std::string> result{"nei"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"(n|l)ei"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"nei5"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(n|l)ei5"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"nei?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(n|l)ei?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeLInitial()
+{
+    std::vector<std::string> result{"lei"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"(n|l)ei"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"lei5"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(n|l)ei5"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"lei?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(n|l)ei?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeGw()
+{
+    std::vector<std::string> result{"gok"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"(g|k)w!o(k|t)"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"gok3"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(g|k)w!o(k|t)3"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"gok?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(g|k)w!o(k|t)?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"g(o|u)ng"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(g|k)w!(o|u)ng"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"g(o|u)ng3"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(g|k)w!(o|u)ng3"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"g(o|u)ng?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(g|k)w!(o|u)ng?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeKw()
+{
+    std::vector<std::string> result{"kok"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"(g|k)w!o(k|t)"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"kok3"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(g|k)w!o(k|t)3"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"kok?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(g|k)w!o(k|t)?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"k(o|u)ng"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(g|k)w!(o|u)ng"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"k(o|u)ng3"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(g|k)w!(o|u)ng3"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"k(o|u)ng?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(g|k)w!(o|u)ng?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeD()
+{
+    std::vector<std::string> result{"deng"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"(d|t)eng"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"deng1"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(d|t)eng1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"deng?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(d|t)eng?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeTInitial()
+{
+    std::vector<std::string> result{"teng"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"(d|t)eng"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"teng1"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(d|t)eng1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"teng?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(d|t)eng?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeC()
+{
+    std::vector<std::string> result{"ceng"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"(c|z)eng"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"ceng2"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(c|z)eng2"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"ceng?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(c|z)eng?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeZ()
+{
+    std::vector<std::string> result{"zeng"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"(c|z)eng"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"zeng2"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(c|z)eng2"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"zeng?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(c|z)eng?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeG()
+{
+    std::vector<std::string> result{"ging"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"(g|k)ing"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"ging1"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(g|k)ing1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"ging?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(g|k)ing?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeKInitial()
+{
+    std::vector<std::string> result{"king"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"(g|k)ing"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"king1"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(g|k)ing1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"king?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(g|k)ing?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeAa()
+{
+    std::vector<std::string> result{"mak"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"maa!(k|t)"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"mak6"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"maa!(k|t)6"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"mak?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"maa!(k|t)?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"maak"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"maa!(k|t)"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"maak1"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"maa!(k|t)1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"maak?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"maa!(k|t)?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeAng()
+{
+    std::vector<std::string> result{"maang"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"maa!ng!"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"maang4"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"maa!ng!4"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"maang?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"maa!ng!?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"mang"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"maa!ng!"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"mang1"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"maa!ng!1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"mang?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"maa!ng!?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeOng()
+{
+    std::vector<std::string> result{"bong"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"bong!"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"bong2"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"bong!2"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"bong?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"bong!?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeAn()
+{
+    std::vector<std::string> result{"maan"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"maa!ng!"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"maan4"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"maa!ng!4"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"maan?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"maa!ng!?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"man"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"maa!ng!"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"man1"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"maa!ng!1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"man?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"maa!ng!?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeOn()
+{
+    std::vector<std::string> result{"mon"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"mong!"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"mon1"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"mong!1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"mon?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"mong!?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeTFinal()
+{
+    std::vector<std::string> result{"got"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"(g|k)w!o(k|t)"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"got3"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(g|k)w!o(k|t)3"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"got?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(g|k)w!o(k|t)?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"bit"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"bit"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"bit6"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"bit6"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"bit?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"bit?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"but"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"but"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"but6"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"but6"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"but?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"but?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeKFinal()
+{
+    std::vector<std::string> result{"gok"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"(g|k)w!o(k|t)"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"gok3"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(g|k)w!o(k|t)3"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"gok?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(g|k)w!o(k|t)?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"bik"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"bik"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"bik1"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"bik1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"bik?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"bik?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"buk"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"buk"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"buk1"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"buk1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"buk?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"buk?"};
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 }
