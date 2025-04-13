@@ -90,12 +90,12 @@ private slots:
     void autocorrectJyutpingUm();
     void autocorrectJyutpingYum();
     void autocorrectJyutpingYup();
-    void autocorrectJyutpingUnsafe();
-    void autocorrectJyutpingY();
     void autocorrectJyutpingYuk();
     void autocorrectJyutpingYung();
     void autocorrectJyutpingYun();
     void autocorrectJyutpingYut();
+    void autocorrectJyutpingUnsafe();
+    void autocorrectJyutpingY();
     void autocorrectJyutpingUi();
     void autocorrectJyutpingUn();
     void autocorrectJyutpingUt();
@@ -121,6 +121,10 @@ private slots:
     void soundChangeOn();
     void soundChangeTFinal();
     void soundChangeKFinal();
+
+    void testCasesClarence();
+    // void testCasesMichelle();
+    // void testCasesYvonne();
 };
 
 TestCantoneseUtils::TestCantoneseUtils() {}
@@ -1071,14 +1075,14 @@ void TestCantoneseUtils::autocorrectJyutpingYue()
         = CantoneseUtils::jyutpingAutocorrect("yuet",
                                               result,
                                               /* unsafeSubstitutions */ false);
-    QString expected = "j(ja|yu)t";
+    QString expected = "j(yu)t";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 
     err = CantoneseUtils::jyutpingAutocorrect("yuet",
                                               result,
                                               /* unsafeSubstitutions */ true);
-    expected = "j(ja|yu)t";
+    expected = "j(yu)t";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 }
@@ -1090,7 +1094,7 @@ void TestCantoneseUtils::autocorrectJyutpingUe()
         = CantoneseUtils::jyutpingAutocorrect("tsuen",
                                               result,
                                               /* unsafeSubstitutions */ false);
-    QString expected = "ts(yu)n";
+    QString expected = "c(yu)n";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 
@@ -1098,6 +1102,20 @@ void TestCantoneseUtils::autocorrectJyutpingUe()
                                               result,
                                               /* unsafeSubstitutions */ true);
     expected = "c(yu)n";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("wantsuen",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = "wants(yu)n";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("wantsuen",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "wanc(yu)n";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 }
@@ -1664,6 +1682,306 @@ void TestCantoneseUtils::autocorrectJyutpingYup()
     QCOMPARE(err, false);
 }
 
+void TestCantoneseUtils::autocorrectJyutpingYuk()
+{
+    QString result;
+    bool err
+        = CantoneseUtils::jyutpingAutocorrect("yuk",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    QString expected = "juk";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("yuk",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "juk";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(" yuk",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = " juk";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(" yuk",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = " juk";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("geyyuk",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = "geijuk";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("geyyuk",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "geijuk";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("gey yuk",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = "gei juk";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("gey yuk",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "gei juk";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("jyukap",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = "jyu kap";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("jyukap",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "jyu kap";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("jyu kap",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = "jyu kap";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("jyu kap",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "jyu kap";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::autocorrectJyutpingYung()
+{
+    QString result;
+    bool err
+        = CantoneseUtils::jyutpingAutocorrect("yung",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    QString expected = "j(y!u|a|eo)ng";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("yung",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "j(y!u|a|eo)ng";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(" yung",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = " j(y!u|a|eo)ng";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(" yung",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = " j(y!u|a|eo)ng";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("gumyung",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = "gamj(y!u|a|eo)ng";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("gumyung",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "gamj(y!u|a|eo)ng";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("zyungaa",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = "z(yu)n gaa";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("zyungaa",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "z(yu)n gaa";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("jyungin",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = "j(yu)n gin";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("jyungin",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "j(yu)n gin";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::autocorrectJyutpingYun()
+{
+    QString result;
+    bool err
+        = CantoneseUtils::jyutpingAutocorrect("yun",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    QString expected = "j(a|yu)n";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("yun",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "j(a|yu)n";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(" yun",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = " (ja|jyu|yu)n";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(" yun",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = " (ja|jyu|yu)n";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("gumyun",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = "gam(ja|jyu|yu)n";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("gumyun",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "gam(ja|jyu|yu)n";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("syuntau",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "sy(y!u|a|eo)ntau";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("syuntau",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "sy(y!u|a|eo)ntau";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::autocorrectJyutpingYut()
+{
+    QString result;
+    bool err
+        = CantoneseUtils::jyutpingAutocorrect("yut",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    QString expected = "j(a|yu)t";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("yut",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "j(a|yu)t";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(" yut",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = " (ja|jyu|yu)t";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(" yut",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = " (ja|jyu|yu)t";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("gamyut",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = "gam(ja|jyu|yu)t";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("gamyut",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "gam(ja|jyu|yu)t";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("jyutjyu",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "j(yu)tjyu";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("jyutjyu",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "j(yu)tjyu";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("zyutai",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = "z(yu)tai";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("jyungin",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "j(yu)n gin";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
 void TestCantoneseUtils::autocorrectJyutpingUnsafe()
 {
     QString result;
@@ -1671,14 +1989,14 @@ void TestCantoneseUtils::autocorrectJyutpingUnsafe()
         = CantoneseUtils::jyutpingAutocorrect("kwun",
                                               result,
                                               /* unsafeSubstitutions */ false);
-    QString expected = "kw(y!u|a|eo)n";
+    QString expected = "(g|k)w!(y!u|a|eo)n";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 
     err = CantoneseUtils::jyutpingAutocorrect("kwun",
                                               result,
                                               /* unsafeSubstitutions */ true);
-    expected = "g(y!u|a|eo)n";
+    expected = "(g|k)w!(y!u|a|eo)n";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 
@@ -1692,14 +2010,14 @@ void TestCantoneseUtils::autocorrectJyutpingUnsafe()
     err = CantoneseUtils::jyutpingAutocorrect("baakwun",
                                               result,
                                               /* unsafeSubstitutions */ true);
-    expected = "baag(y!u|a|eo)n";
+    expected = "baa(g|k)w!(y!u|a|eo)n";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 
     err = CantoneseUtils::jyutpingAutocorrect("tsuen",
                                               result,
                                               /* unsafeSubstitutions */ false);
-    expected = "ts(yu)n";
+    expected = "c(yu)n";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 
@@ -1760,202 +2078,14 @@ void TestCantoneseUtils::autocorrectJyutpingY()
     err = CantoneseUtils::jyutpingAutocorrect("yuen",
                                               result,
                                               /* unsafeSubstitutions */ false);
-    expected = "j(ja|jyu|yu)n";
+    expected = "jy(y!u|a|eo)n";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 
     err = CantoneseUtils::jyutpingAutocorrect("yuen",
                                               result,
                                               /* unsafeSubstitutions */ true);
-    expected = "j(ja|jyu|yu)n";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-}
-
-void TestCantoneseUtils::autocorrectJyutpingYuk()
-{
-    QString result;
-    bool err
-        = CantoneseUtils::jyutpingAutocorrect("yuk",
-                                              result,
-                                              /* unsafeSubstitutions */ false);
-    QString expected = "juk";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect("yuk",
-                                              result,
-                                              /* unsafeSubstitutions */ true);
-    expected = "juk";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect(" yuk",
-                                              result,
-                                              /* unsafeSubstitutions */ false);
-    expected = " juk";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect(" yuk",
-                                              result,
-                                              /* unsafeSubstitutions */ true);
-    expected = " juk";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect("geyyuk",
-                                              result,
-                                              /* unsafeSubstitutions */ false);
-    expected = "geijuk";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect("geyyuk",
-                                              result,
-                                              /* unsafeSubstitutions */ true);
-    expected = "geijuk";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-}
-
-void TestCantoneseUtils::autocorrectJyutpingYung()
-{
-    QString result;
-    bool err
-        = CantoneseUtils::jyutpingAutocorrect("yung",
-                                              result,
-                                              /* unsafeSubstitutions */ false);
-    QString expected = "j(y!u|a|eo)ng";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect("yung",
-                                              result,
-                                              /* unsafeSubstitutions */ true);
-    expected = "j(y!u|a|eo)ng";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect(" yung",
-                                              result,
-                                              /* unsafeSubstitutions */ false);
-    expected = " j(y!u|a|eo)ng";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect(" yung",
-                                              result,
-                                              /* unsafeSubstitutions */ true);
-    expected = " j(y!u|a|eo)ng";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect("gumyung",
-                                              result,
-                                              /* unsafeSubstitutions */ false);
-    expected = "gamj(y!u|a|eo)ng";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect("gumyung",
-                                              result,
-                                              /* unsafeSubstitutions */ true);
-    expected = "gamj(y!u|a|eo)ng";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-}
-
-void TestCantoneseUtils::autocorrectJyutpingYun()
-{
-    QString result;
-    bool err
-        = CantoneseUtils::jyutpingAutocorrect("yun",
-                                              result,
-                                              /* unsafeSubstitutions */ false);
-    QString expected = "jan";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect("yun",
-                                              result,
-                                              /* unsafeSubstitutions */ true);
-    expected = "jan";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect(" yun",
-                                              result,
-                                              /* unsafeSubstitutions */ false);
-    expected = " jan";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect(" yun",
-                                              result,
-                                              /* unsafeSubstitutions */ true);
-    expected = " jan";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect("gumyun",
-                                              result,
-                                              /* unsafeSubstitutions */ false);
-    expected = "gam(ja|jyu|yu)n";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect("gumyun",
-                                              result,
-                                              /* unsafeSubstitutions */ true);
-    expected = "gam(ja|jyu|yu)n";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-}
-
-void TestCantoneseUtils::autocorrectJyutpingYut()
-{
-    QString result;
-    bool err
-        = CantoneseUtils::jyutpingAutocorrect("yut",
-                                              result,
-                                              /* unsafeSubstitutions */ false);
-    QString expected = "jat";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect("yut",
-                                              result,
-                                              /* unsafeSubstitutions */ true);
-    expected = "jat";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect(" yut",
-                                              result,
-                                              /* unsafeSubstitutions */ false);
-    expected = " jat";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect(" yut",
-                                              result,
-                                              /* unsafeSubstitutions */ true);
-    expected = " jat";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect("gamyut",
-                                              result,
-                                              /* unsafeSubstitutions */ false);
-    expected = "gam(ja|yu)t";
-    QCOMPARE(result, expected);
-    QCOMPARE(err, false);
-
-    err = CantoneseUtils::jyutpingAutocorrect("gamyut",
-                                              result,
-                                              /* unsafeSubstitutions */ true);
-    expected = "gam(ja|yu)t";
+    expected = "jy(y!u|a|eo)n";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 }
@@ -2061,42 +2191,42 @@ void TestCantoneseUtils::autocorrectJyutpingUt()
         = CantoneseUtils::jyutpingAutocorrect("gut",
                                               result,
                                               /* unsafeSubstitutions */ false);
-    QString expected = "g(u|a)t";
+    QString expected = "g(a|u)t";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 
     err = CantoneseUtils::jyutpingAutocorrect("gut",
                                               result,
                                               /* unsafeSubstitutions */ true);
-    expected = "g(u|a)t";
+    expected = "g(a|u)t";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 
     err = CantoneseUtils::jyutpingAutocorrect(" gut",
                                               result,
                                               /* unsafeSubstitutions */ false);
-    expected = " g(u|a)t";
+    expected = " g(a|u)t";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 
     err = CantoneseUtils::jyutpingAutocorrect(" gut",
                                               result,
                                               /* unsafeSubstitutions */ true);
-    expected = " g(u|a)t";
+    expected = " g(a|u)t";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 
     err = CantoneseUtils::jyutpingAutocorrect("gamgut",
                                               result,
                                               /* unsafeSubstitutions */ false);
-    expected = "gamg(u|a)t";
+    expected = "gamg(a|u)t";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 
     err = CantoneseUtils::jyutpingAutocorrect("gamgut",
                                               result,
                                               /* unsafeSubstitutions */ true);
-    expected = "gamg(u|a)t";
+    expected = "gamg(a|u)t";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 }
@@ -2737,6 +2867,74 @@ void TestCantoneseUtils::soundChangeKFinal()
     err = CantoneseUtils::jyutpingSoundChanges(result);
     expected = {"buk?"};
     QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::testCasesClarence()
+{
+    QString input{"seut goh"};
+    QString output;
+    bool err = CantoneseUtils::jyutpingAutocorrect(
+        input, output, /* useUnsafeSubstitutions */ false);
+    QCOMPARE(err, false);
+    std::vector<std::string> segmentedSyllables;
+    std::ignore
+        = CantoneseUtils::segmentJyutping(output,
+                                          segmentedSyllables,
+                                          /* removeSpecialCharacters */ true,
+                                          /* removeGlobCharacters */ false,
+                                          /* removeRegexCharacters */ false);
+    err = CantoneseUtils::jyutpingSoundChanges(segmentedSyllables);
+    std::vector<std::string> expected{"s(eo|yu)(k|t)", "(g|k)w!ou"};
+    QCOMPARE(segmentedSyllables, expected);
+    QCOMPARE(err, false);
+
+    input = "gongyeun";
+    err = CantoneseUtils::jyutpingAutocorrect(input,
+                                              output,
+                                              /* useUnsafeSubstitutions */ false);
+    QCOMPARE(err, false);
+    std::ignore
+        = CantoneseUtils::segmentJyutping(output,
+                                          segmentedSyllables,
+                                          /* removeSpecialCharacters */ true,
+                                          /* removeGlobCharacters */ false,
+                                          /* removeRegexCharacters */ false);
+    err = CantoneseUtils::jyutpingSoundChanges(segmentedSyllables);
+    expected = {"(g|k)w!(o|u)ng", "j(eo|yu)n"};
+    QCOMPARE(segmentedSyllables, expected);
+    QCOMPARE(err, false);
+
+    input = "tsum4yut6";
+    err = CantoneseUtils::jyutpingAutocorrect(input,
+                                              output,
+                                              /* useUnsafeSubstitutions */ false);
+    QCOMPARE(err, false);
+    std::ignore
+        = CantoneseUtils::segmentJyutping(output,
+                                          segmentedSyllables,
+                                          /* removeSpecialCharacters */ true,
+                                          /* removeGlobCharacters */ false,
+                                          /* removeRegexCharacters */ false);
+    err = CantoneseUtils::jyutpingSoundChanges(segmentedSyllables);
+    expected = {"(c|z)aa!m4", "(jaa!|jyu|yu)(k|t)6"};
+    QCOMPARE(segmentedSyllables, expected);
+    QCOMPARE(err, false);
+
+    input = "tsum4yut6";
+    err = CantoneseUtils::jyutpingAutocorrect(input,
+                                              output,
+                                              /* useUnsafeSubstitutions */ true);
+    QCOMPARE(err, false);
+    std::ignore
+        = CantoneseUtils::segmentJyutping(output,
+                                          segmentedSyllables,
+                                          /* removeSpecialCharacters */ true,
+                                          /* removeGlobCharacters */ false,
+                                          /* removeRegexCharacters */ false);
+    err = CantoneseUtils::jyutpingSoundChanges(segmentedSyllables);
+    expected = {"(c|z)aa!m4", "(jaa!|jyu|yu)(k|t)6"};
+    QCOMPARE(segmentedSyllables, expected);
     QCOMPARE(err, false);
 }
 

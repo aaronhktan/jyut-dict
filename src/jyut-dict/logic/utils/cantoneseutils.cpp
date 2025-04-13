@@ -861,11 +861,148 @@ bool jyutpingAutocorrect(const QString &in,
         }
     }
 
+    // Check if the user intends to write an [-yː k-] or [jʊk] cluster
+    {
+        int replacementIdx = out.indexOf("yuk");
+
+        // Initials for which <initial> + "-yu k-" exist in Jyutping
+        std::unordered_set<QChar> closeFrontVowelCluster = {'z', 's', 'c', 'j'};
+
+        switch (replacementIdx) {
+        case -1: {
+            break;
+        }
+        case 0: {
+            out.replace(replacementIdx, 3, "juk");
+            break;
+        }
+        default: {
+            int initialIdx = replacementIdx - 1;
+            if (replacementIdx >= 2 && out.at(initialIdx) == ")") {
+                initialIdx = replacementIdx - 2;
+            }
+
+            if (closeFrontVowelCluster.find(out.at(initialIdx))
+                != closeFrontVowelCluster.end()) {
+                out.replace(replacementIdx, 3, "yu k");
+            } else {
+                out.replace(replacementIdx, 3, "juk");
+            }
+            break;
+        }
+        }
+    }
+
+    // Check if the user intends to write an [-yn g-] or [jʊŋ] cluster
+    {
+        int replacementIdx = out.indexOf("yung");
+
+        // Initials for which <initial> + "-yun g-" exist in Jyutping
+        std::unordered_set<QChar> closeFrontVowelCluster = {'z', 's', 'c', 'j'};
+
+        switch (replacementIdx) {
+        case -1: {
+            break;
+        }
+        case 0: {
+            out.replace(replacementIdx, 4, "jung");
+            break;
+        }
+        default: {
+            int initialIdx = replacementIdx - 1;
+            if (replacementIdx >= 2 && out.at(initialIdx) == ")") {
+                initialIdx = replacementIdx - 2;
+            }
+
+            if (closeFrontVowelCluster.find(out.at(initialIdx))
+                != closeFrontVowelCluster.end()) {
+                out.replace(replacementIdx, 4, "(yu)n g");
+            } else {
+                out.replace(replacementIdx, 4, "jung");
+            }
+            break;
+        }
+        }
+    }
+
+    // Check if the user intends to write an [-yn] or [jɐn], [jyn], [yn] cluster
+    {
+        int replacementIdx = out.indexOf("yun");
+
+        // Initials for which <initial> + "-yu n-" exist in Jyutping
+        std::unordered_set<QChar> closeFrontVowelCluster = {'z', 's', 'c', 'j'};
+
+        switch (replacementIdx) {
+        case -1: {
+            break;
+        }
+        case 0: {
+            out.replace(replacementIdx, 3, "j(a|yu)n");
+            break;
+        }
+        default: {
+            int initialIdx = replacementIdx - 1;
+            if (replacementIdx >= 2 && out.at(initialIdx) == ")") {
+                initialIdx = replacementIdx - 2;
+            }
+
+            if (closeFrontVowelCluster.find(out.at(initialIdx))
+                != closeFrontVowelCluster.end()) {
+                out.replace(replacementIdx, 3, "yun");
+            } else {
+                out.replace(replacementIdx, 3, "(ja|jyu|yu)n");
+            }
+            break;
+        }
+        }
+    }
+
+    // Check if the user intends to write an [-yt] or [jɐn], [jyn], [yn] cluster
+    {
+        int replacementIdx = out.indexOf("yut");
+
+        // Initials for which <initial> + "-yu t-" exist in Jyutping
+        std::unordered_set<QChar> closeFrontVowelCluster = {'z', 's', 'c', 'j'};
+
+        switch (replacementIdx) {
+        case -1: {
+            break;
+        }
+        case 0: {
+            out.replace(replacementIdx, 3, "j(a|yu)t");
+            break;
+        }
+        default: {
+            int initialIdx = replacementIdx - 1;
+            if (replacementIdx >= 2 && out.at(initialIdx) == ")") {
+                initialIdx = replacementIdx - 2;
+            }
+
+            if (closeFrontVowelCluster.find(out.at(initialIdx))
+                != closeFrontVowelCluster.end()) {
+                out.replace(replacementIdx, 3, "(yu)t");
+            } else {
+                out.replace(replacementIdx, 3, "(ja|jyu|yu)t");
+            }
+            break;
+        }
+        }
+    }
+
     // Unsafe because it is ambiguous whether these are final + initial
     // or a "misspelling" of an initial
+    // But unambiguous if they are at the start of a syllable
+    if (out.startsWith("ts")) {
+        out.replace(0, 2, "c");
+    }
+    out.replace(" ts", " c");
+    if (out.startsWith("kwu")) {
+        out.replace(0, 3, "(g|k)w!u");
+    }
+    out.replace(" kwu", " (g|k)w!u");
     if (unsafeSubstitutions) {
-        out.replace("kwu", "gu"); // unsafe because of baak6 wun2
-        out.replace("ts", "c");   // unsafe because of kat1 sau3
+        out.replace("ts", "c");         // unsafe because of kat1 sau3
+        out.replace("kwu", "(g|k)w!u"); // unsafe because of baak6 wun2
     }
 
     // Change any "y" that is not followed by a "u" to "j"
@@ -882,28 +1019,9 @@ bool jyutpingAutocorrect(const QString &in,
         idx = out.indexOf("y", idx + 1);
     }
 
-    out.replace("yuk", "juk");
-    out.replace("yung", "jung");
-
-    // If there is a syllable that starts with "yun", the user means
-    // to type "jan"
-    if (out.startsWith("yun")) {
-        out.replace(0, 3, "jan");
-    }
-    out.replace(" yun", " jan");
-    out.replace("yun", "(ja|jyu|yu)n");
-
-    // If there is a syllable that starts with "yut", the user means
-    // to type "jat"
-    if (out.startsWith("yut")) {
-        out.replace(0, 3, "jat");
-    }
-    out.replace(" yut", " jat");
-    out.replace("yut", "(ja|yu)t");
-
     out.replace("ui", "(eo|u)i");
     out.replace("un", "(y!u|a|eo)n");
-    out.replace("ut", "(u|a)t");
+    out.replace("ut", "(a|u)t");
 
     return 0;
 }
@@ -1002,8 +1120,8 @@ bool jyutpingSoundChanges(std::vector<std::string> &inOut)
                               .ends_with("on"))) {
             // velarization of final [n]
             syllable.replace(syllable.rfind("n"), 1, "ng!");
-        } else if ((syllable.ends_with("t") && !syllable.ends_with("it")
-                    && !syllable.ends_with("ut"))
+        } else if ((syllable.length() > 1 && syllable.ends_with("t")
+                    && !syllable.ends_with("it") && !syllable.ends_with("ut"))
                    || (syllable.length() >= 3
                        && (std::string_view{syllable.begin(), syllable.end() - 1}
                                .ends_with("t")
@@ -1015,8 +1133,8 @@ bool jyutpingSoundChanges(std::vector<std::string> &inOut)
                                    .ends_with("ut")))) {
             // velarization of final [t]
             syllable.replace(syllable.rfind("t"), 1, "(k|t)");
-        } else if ((syllable.ends_with("k") && !syllable.ends_with("ik")
-                    && !syllable.ends_with("uk"))
+        } else if ((syllable.length() > 1 && syllable.ends_with("k")
+                    && !syllable.ends_with("ik") && !syllable.ends_with("uk"))
                    || (syllable.length() >= 3
                        && (std::string_view{syllable.begin(), syllable.end() - 1}
                                .ends_with("k")
