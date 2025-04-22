@@ -123,8 +123,8 @@ private slots:
     void soundChangeKFinal();
 
     void testCasesClarence();
-    // void testCasesMichelle();
-    // void testCasesYvonne();
+    void testCasesMichelle();
+    void testCasesYvonne();
 };
 
 TestCantoneseUtils::TestCantoneseUtils() {}
@@ -2872,70 +2872,106 @@ void TestCantoneseUtils::soundChangeKFinal()
 
 void TestCantoneseUtils::testCasesClarence()
 {
-    QString input{"seut goh"};
-    QString output;
-    bool err = CantoneseUtils::jyutpingAutocorrect(
-        input, output, /* useUnsafeSubstitutions */ false);
-    QCOMPARE(err, false);
-    std::vector<std::string> segmentedSyllables;
-    std::ignore
-        = CantoneseUtils::segmentJyutping(output,
-                                          segmentedSyllables,
-                                          /* removeSpecialCharacters */ true,
-                                          /* removeGlobCharacters */ false,
-                                          /* removeRegexCharacters */ false);
-    err = CantoneseUtils::jyutpingSoundChanges(segmentedSyllables);
-    std::vector<std::string> expected{"s(eo|yu)(k|t)", "(g|k)w!ou"};
-    QCOMPARE(segmentedSyllables, expected);
-    QCOMPARE(err, false);
+    std::unordered_map<QString, std::vector<std::string>> inOut{
+        {"seut goh", {"s(eo|yu)(k|t)", "(g|k)w!ou"}},
+        {"gongyeun", {"(g|k)w!(o|u)ng", "j(eo|yu)n"}},
+        {"tsum4yut6", {"(c|z)aa!m4", "(jaa!|jyu|yu)(k|t)6"}},
+        {"tsum yut", {"(c|z)aa!m", "(jaa!|jyu|yu)(k|t)"}},
+        {"gum yut", {"(g|k)aa!m", "(jaa!|jyu|yu)(k|t)"}},
+        {"gum man", {"(g|k)aa!m", "maa!ng!"}},
+        {"sum", {"saa!m"}},
+        {"sun", {"s(y!u|aa!|eo)n"}},
+        {"cheung", {"(c|z)oeng"}},
+        {"chun", {"(c|z)(y!u|aa!|eo)n"}},
+        {"hui", {"heoi"}},
+        {"yutback", {"j(aa!|yu)(k|t)", "baa!(k|t)"}},
+    };
 
-    input = "gongyeun";
-    err = CantoneseUtils::jyutpingAutocorrect(input,
-                                              output,
-                                              /* useUnsafeSubstitutions */ false);
-    QCOMPARE(err, false);
-    std::ignore
-        = CantoneseUtils::segmentJyutping(output,
-                                          segmentedSyllables,
-                                          /* removeSpecialCharacters */ true,
-                                          /* removeGlobCharacters */ false,
-                                          /* removeRegexCharacters */ false);
-    err = CantoneseUtils::jyutpingSoundChanges(segmentedSyllables);
-    expected = {"(g|k)w!(o|u)ng", "j(eo|yu)n"};
-    QCOMPARE(segmentedSyllables, expected);
-    QCOMPARE(err, false);
+    for (const auto &i : inOut) {
+        QString input{i.first};
+        QString output;
+        std::vector<std::string> segmentedSyllables;
+        int err = CantoneseUtils::jyutpingAutocorrect(
+            input,
+            output,
+            /* useUnsafeSubstitutions */ true);
+        QCOMPARE(err, false);
+        std::ignore
+            = CantoneseUtils::segmentJyutping(output,
+                                              segmentedSyllables,
+                                              /* removeSpecialCharacters */ true,
+                                              /* removeGlobCharacters */ false,
+                                              /* removeRegexCharacters */ false);
+        err = CantoneseUtils::jyutpingSoundChanges(segmentedSyllables);
+        std::vector<std::string> expected = i.second;
+        QCOMPARE(segmentedSyllables, expected);
+        QCOMPARE(err, false);
+    }
+}
 
-    input = "tsum4yut6";
-    err = CantoneseUtils::jyutpingAutocorrect(input,
-                                              output,
-                                              /* useUnsafeSubstitutions */ false);
-    QCOMPARE(err, false);
-    std::ignore
-        = CantoneseUtils::segmentJyutping(output,
-                                          segmentedSyllables,
-                                          /* removeSpecialCharacters */ true,
-                                          /* removeGlobCharacters */ false,
-                                          /* removeRegexCharacters */ false);
-    err = CantoneseUtils::jyutpingSoundChanges(segmentedSyllables);
-    expected = {"(c|z)aa!m4", "(jaa!|jyu|yu)(k|t)6"};
-    QCOMPARE(segmentedSyllables, expected);
-    QCOMPARE(err, false);
+void TestCantoneseUtils::testCasesMichelle()
+{
+    std::unordered_map<QString, std::vector<std::string>> inOut{
+        {"xuet go", {"s(yu)(k|t)", "(g|k)w!o"}},
+        {"gong yuen", {"(g|k)w!(o|u)ng", "jy(y!u|aa!|eo)n"}},
+        {"kum yut", {"(g|k)aa!m", "(jaa!|jyu|yu)(k|t)"}},
+        {"gai suen gay", {"(g|k)aa!i", "s(yu)n", "(g|k)ei"}},
+        {"yut bak", {"j(aa!|yu)(k|t)", "baa!(k|t)"}},
+    };
 
-    input = "tsum4yut6";
-    err = CantoneseUtils::jyutpingAutocorrect(input,
-                                              output,
-                                              /* useUnsafeSubstitutions */ true);
-    QCOMPARE(err, false);
-    std::ignore
-        = CantoneseUtils::segmentJyutping(output,
-                                          segmentedSyllables,
-                                          /* removeSpecialCharacters */ true,
-                                          /* removeGlobCharacters */ false,
-                                          /* removeRegexCharacters */ false);
-    err = CantoneseUtils::jyutpingSoundChanges(segmentedSyllables);
-    expected = {"(c|z)aa!m4", "(jaa!|jyu|yu)(k|t)6"};
-    QCOMPARE(segmentedSyllables, expected);
-    QCOMPARE(err, false);
+    for (const auto &i : inOut) {
+        QString input{i.first};
+        QString output;
+        std::vector<std::string> segmentedSyllables;
+        int err = CantoneseUtils::jyutpingAutocorrect(
+            input,
+            output,
+            /* useUnsafeSubstitutions */ true);
+        QCOMPARE(err, false);
+        std::ignore
+            = CantoneseUtils::segmentJyutping(output,
+                                              segmentedSyllables,
+                                              /* removeSpecialCharacters */ true,
+                                              /* removeGlobCharacters */ false,
+                                              /* removeRegexCharacters */ false);
+        err = CantoneseUtils::jyutpingSoundChanges(segmentedSyllables);
+        std::vector<std::string> expected = i.second;
+        QCOMPARE(segmentedSyllables, expected);
+        QCOMPARE(err, false);
+    }
+}
+
+void TestCantoneseUtils::testCasesYvonne()
+{
+    std::unordered_map<QString, std::vector<std::string>> inOut{
+        {"shyut go", {"s(yu)(k|t)", "(g|k)w!o"}},
+        {"gong yun", {"(g|k)w!(o|u)ng", "(jaa!|jyu|yu)n"}},
+        {"cum yut", {"(k)aa!m", "(jaa!|jyu|yu)(k|t)"}},
+        {"cheun", {"(c|z)(eo|yu)n"}},
+        {"gai syun gei", {"(g|k)aa!i", "sy(y!u|aa!|eo)n", "(g|k)ei"}},
+        {"yut baat", {"j(aa!|yu)(k|t)", "baa!(k|t)"}},
+    };
+
+    for (const auto &i : inOut) {
+        QString input{i.first};
+        QString output;
+        std::vector<std::string> segmentedSyllables;
+        int err = CantoneseUtils::jyutpingAutocorrect(
+            input,
+            output,
+            /* useUnsafeSubstitutions */ true);
+        QCOMPARE(err, false);
+        std::ignore
+            = CantoneseUtils::segmentJyutping(output,
+                                              segmentedSyllables,
+                                              /* removeSpecialCharacters */ true,
+                                              /* removeGlobCharacters */ false,
+                                              /* removeRegexCharacters */ false);
+        err = CantoneseUtils::jyutpingSoundChanges(segmentedSyllables);
+        std::vector<std::string> expected = i.second;
+        QCOMPARE(segmentedSyllables, expected);
+        QCOMPARE(err, false);
+    }
 }
 
 QTEST_APPLESS_MAIN(TestCantoneseUtils)
