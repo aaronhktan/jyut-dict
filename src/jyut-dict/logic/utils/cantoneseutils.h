@@ -5,6 +5,9 @@
 
 #include <string>
 
+// The CantoneseUtils namespace contains static functions for working with
+// Jyutping (and other Cantonese romanizations, such as Yale/IPA).
+
 namespace CantoneseUtils {
 
 std::string convertJyutpingToYale(const std::string &jyutping,

@@ -8,7 +8,7 @@
 #include <string>
 
 // The ChineseUtils namespace contains static functions for working with
-// various romanization schemes and Chinese queries.
+// various romanization schemes and Han characters.
 
 namespace ChineseUtils {
 

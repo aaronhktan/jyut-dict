@@ -8,7 +8,7 @@
 #include <string>
 
 // The MandarinUtils namespace contains static functions for working with
-// Mandarin romanizations
+// Mandarin romanizations.
 
 namespace MandarinUtils {
 
