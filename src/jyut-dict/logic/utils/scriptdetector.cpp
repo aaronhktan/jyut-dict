@@ -1,6 +1,7 @@
 #include "scriptdetector.h"
 
-#include "logic/utils/chineseutils.h"
+#include "logic/utils/cantoneseutils.h"
+#include "logic/utils/mandarinutils.h"
 
 #include <QList>
 #include <QRegularExpression>
@@ -834,12 +835,16 @@ ScriptDetector::ScriptDetector(const QString &string)
     }
 
     std::vector<std::string> dummyVec;
-    _isValidJyutping = ChineseUtils::segmentJyutping(string, dummyVec);
+    _isValidJyutping = CantoneseUtils::segmentJyutping(string, dummyVec);
+    QString out;
+    CantoneseUtils::jyutpingAutocorrect(string, out);
+    _isValidJyutpingAfterAutocorrect = CantoneseUtils::segmentJyutping(out,
+                                                                     dummyVec);
     QString processedPinyin = string;
-    _isValidPinyin = ChineseUtils::segmentPinyin(processedPinyin
-                                                     .replace("v", "u:")
-                                                     .replace("ü", "u:"),
-                                                 dummyVec);
+    _isValidPinyin = MandarinUtils::segmentPinyin(processedPinyin
+                                                      .replace("v", "u:")
+                                                      .replace("ü", "u:"),
+                                                  dummyVec);
 }
 
 bool ScriptDetector::containsChinese()
@@ -860,6 +865,11 @@ bool ScriptDetector::containsTraditionalChinese()
 bool ScriptDetector::isValidJyutping()
 {
     return _isValidJyutping;
+}
+
+bool ScriptDetector::isValidJyutpingAfterAutocorrect()
+{
+    return _isValidJyutpingAfterAutocorrect;
 }
 
 bool ScriptDetector::isValidPinyin()

@@ -1,5 +1,6 @@
 #include "entryspeaker.h"
-#include "logic/utils/chineseutils.h"
+#include "logic/utils/cantoneseutils.h"
+#include "logic/utils/mandarinutils.h"
 
 #include <QCoreApplication>
 #include <QFileInfo>
@@ -204,12 +205,12 @@ int EntrySpeaker::speak(const QLocale::Language &language,
 
         std::vector<std::string> syllables;
         if (language == QLocale::Cantonese || country == QLocale::HongKong) {
-            ChineseUtils::segmentJyutping(string, syllables);
+            CantoneseUtils::segmentJyutping(string, syllables);
         } else {
             QString mutableString = string;
             mutableString.replace("u:", "ü");
             mutableString.replace("v", "ü");
-            ChineseUtils::segmentPinyin(mutableString, syllables);
+            MandarinUtils::segmentPinyin(mutableString, syllables);
         }
 
         for (const auto &syllable : syllables) {

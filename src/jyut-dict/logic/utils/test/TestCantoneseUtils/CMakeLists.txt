@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(TestChineseUtils LANGUAGES CXX)
+project(TestCantoneseUtils LANGUAGES CXX)
 
 enable_testing()
 
@@ -15,14 +15,13 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-add_executable(TestChineseUtils tst_chineseutils.cpp)
-add_test(NAME TestChineseUtils COMMAND TestChineseUtils)
+add_executable(TestCantoneseUtils tst_cantoneseutils.cpp)
+add_test(NAME TestCantoneseUtils COMMAND TestCantoneseUtils)
 
-target_link_libraries(TestChineseUtils PRIVATE Qt${QT_VERSION_MAJOR}::Test)
-target_include_directories(TestChineseUtils PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../../)
+target_link_libraries(TestCantoneseUtils PRIVATE Qt${QT_VERSION_MAJOR}::Test)
+target_include_directories(TestCantoneseUtils PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../../)
 
-target_sources(TestChineseUtils
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../chineseutils.cpp
+target_sources(TestCantoneseUtils
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../cantoneseutils.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../settings/settings.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../utils.cpp)
-

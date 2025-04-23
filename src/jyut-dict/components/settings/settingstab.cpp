@@ -38,7 +38,6 @@ void SettingsTab::changeEvent(QEvent *event)
         QTimer::singleShot(10, this, [=, this]() {
             _paletteRecentlyChanged = false;
         });
-
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }

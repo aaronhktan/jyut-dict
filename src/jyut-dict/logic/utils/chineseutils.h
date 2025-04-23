@@ -8,7 +8,7 @@
 #include <string>
 
 // The ChineseUtils namespace contains static functions for working with
-// various romanization schemes and Chinese queries.
+// various romanization schemes and Han characters.
 
 namespace ChineseUtils {
 
@@ -20,44 +20,27 @@ std::string applyColours(
     const EntryColourPhoneticType type = EntryColourPhoneticType::CANTONESE);
 
 // The function first converts both the simplified and traditional strings into
-// u32strings on macOS and Linux, or wstrings on Windows.
+// u32strings.
 //
-// Since there is no guarantee of byte length per "character" in each string
-// (as most Latin characters are one byte and Chinese characters are usually
-// 3 bytes due to multibyte encoding schemes of UTF-8, and several entries
-// consist of both latin and chinese character combinations), converting
-// the string to u32string/wstring allows us to advance through the string
-// "character" by "character", as a human would view it,
-// even though the actual byte array is not stored that way.
+// There is no guarantee of byte length per "character" in each string
+// (most Latin characters are one byte, Chinese characters are usually
+// 2-3 bytes due to multibyte encoding schemes of UTF-8 + several entries
+// consist of both latin and chinese character combinations). Converting
+// the string to u32string makes each index correspond to exactly one grapheme,
+// allowing us to iterate through the string grapheme by grapheme by
+// incrementing the index, which is not true of a UTF-8 or UTF-16-encoded string.
 //
-// For each character, compare each of the characters between the simplified and
-// traditional versions; if characters are different
-// add that character to the comparison string.
-// Otherwise, mark that character as the same between simplified and traditional
+// For each string, compare each of the graphemes between the simplified and
+// traditional versions; if graphemes are different, add that grapheme to the
+// comparison string.
+// Otherwise, mark that grapheme as the same between simplified and traditional
 // by concatenating a full-width dash character to the comparison string.
 //
-// Finally, concatenate the preferred option with the comparison string,
-// with the comparison string surrounded in curly braces.
-//
-// Example return values with an entry Traditional: 身體, Simplified: 身体
+// Example values with an entry Traditional: 身體, Simplified: 身体
 // With EntryCharactersOptions::PREFER_SIMPLIFIED:  "身体 {－體}"
 // With EntryCharactersOptions::PREFER_TRADITIONAL: "身體 {－体}"
 std::string compareStrings(const std::string &original,
                            const std::string &comparison);
-
-std::string convertJyutpingToYale(const std::string &jyutping,
-                                  bool useSpacesToSegment = false);
-std::string convertJyutpingToIPA(const std::string &jyutping,
-                                 bool useSpacesToSegment = false);
-
-std::string createPrettyPinyin(const std::string &pinyin);
-std::string createNumberedPinyin(const std::string &pinyin);
-std::string createPinyinWithV(const std::string &pinyin);
-
-std::string convertPinyinToZhuyin(const std::string &pinyin,
-                                  bool useSpacesToSegment = false);
-std::string convertPinyinToIPA(const std::string &pinyin,
-                               bool useSpacesToSegment = false);
 
 // constructRomanisationQuery takes a vector of strings and stitches them
 // together with a delimiter.
@@ -105,14 +88,6 @@ std::string convertPinyinToIPA(const std::string &pinyin,
 std::string constructRomanisationQuery(const std::vector<std::string> &words,
                                        const char *delimiter);
 
-bool segmentPinyin(const QString &string,
-                   std::vector<std::string> &out,
-                   bool removeSpecialCharacters = true,
-                   bool removeGlobCharacters = true);
-bool segmentJyutping(const QString &string,
-                     std::vector<std::string> &out,
-                     bool removeSpecialCharacters = true,
-                     bool removeGlobCharacters = true);
 } // namespace ChineseUtils
 
 #endif // CHINESEUTILS_H

@@ -1,6 +1,7 @@
 #include "sourcesentence.h"
 
-#include "logic/utils/chineseutils.h"
+#include "logic/utils/cantoneseutils.h"
+#include "logic/utils/mandarinutils.h"
 
 SourceSentence::SourceSentence()
 {
@@ -82,9 +83,9 @@ bool SourceSentence::generatePhonetic(CantoneseOptions cantoneseOptions,
     if ((cantoneseOptions & CantoneseOptions::PRETTY_YALE)
             == CantoneseOptions::PRETTY_YALE
         && !_isYaleValid) {
-        _yale
-            = ChineseUtils::convertJyutpingToYale(_jyutping,
-                                                  /* useSpacesToSegment */ true);
+        _yale = CantoneseUtils::convertJyutpingToYale(
+            _jyutping,
+            /* useSpacesToSegment */ true);
         _isYaleValid = true;
     }
 
@@ -92,28 +93,28 @@ bool SourceSentence::generatePhonetic(CantoneseOptions cantoneseOptions,
             == CantoneseOptions::CANTONESE_IPA
         && !_isCantoneseIPAValid) {
         _cantoneseIPA
-            = ChineseUtils::convertJyutpingToIPA(_jyutping,
-                                                 /* useSpacesToSegment */ true);
+            = CantoneseUtils::convertJyutpingToIPA(_jyutping,
+                                                   /* useSpacesToSegment */ true);
         _isCantoneseIPAValid = true;
     }
 
     if ((mandarinOptions & MandarinOptions::PRETTY_PINYIN)
             == MandarinOptions::PRETTY_PINYIN && !_isPrettyPinyinValid) {
-        _prettyPinyin = ChineseUtils::createPrettyPinyin(_pinyin);
+        _prettyPinyin = MandarinUtils::createPrettyPinyin(_pinyin);
         _isPrettyPinyinValid = true;
     }
 
     if ((mandarinOptions & MandarinOptions::NUMBERED_PINYIN)
             == MandarinOptions::NUMBERED_PINYIN && !_isNumberedPinyinValid) {
-        _numberedPinyin = ChineseUtils::createNumberedPinyin(_pinyin);
+        _numberedPinyin = MandarinUtils::createNumberedPinyin(_pinyin);
         _isNumberedPinyinValid = true;
     }
 
     if ((mandarinOptions & MandarinOptions::ZHUYIN) == MandarinOptions::ZHUYIN
         && !_isZhuyinValid) {
         _zhuyin
-            = ChineseUtils::convertPinyinToZhuyin(_pinyin,
-                                                  /* useSpacesToSegment */ true);
+            = MandarinUtils::convertPinyinToZhuyin(_pinyin,
+                                                   /* useSpacesToSegment */ true);
         _isZhuyinValid = true;
     }
 
@@ -121,8 +122,8 @@ bool SourceSentence::generatePhonetic(CantoneseOptions cantoneseOptions,
             == MandarinOptions::MANDARIN_IPA
         && !_isMandarinIPAValid) {
         _mandarinIPA
-            = ChineseUtils::convertPinyinToIPA(_pinyin,
-                                               /* useSpacesToSegment */ true);
+            = MandarinUtils::convertPinyinToIPA(_pinyin,
+                                                /* useSpacesToSegment */ true);
         _isMandarinIPAValid = true;
     }
 

@@ -3,7 +3,7 @@
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/strings/strings.h"
-#include "logic/utils/chineseutils.h"
+#include "logic/utils/mandarinutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -94,7 +94,7 @@ void SentenceViewHeaderWidget::setSourceSentence(const SourceSentence &sentence)
                                           : sentence.getTraditional());
     _jyutping = QString::fromStdString(sentence.getJyutping());
     _pinyin = QString::fromStdString(
-        ChineseUtils::createPinyinWithV(sentence.getPinyin()));
+        MandarinUtils::createPinyinWithV(sentence.getPinyin()));
 
     translateUI();
     setStyle(Utils::isDarkMode());

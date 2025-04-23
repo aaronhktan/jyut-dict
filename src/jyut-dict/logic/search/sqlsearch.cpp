@@ -2,9 +2,13 @@
 
 #include "logic/database/queryparseutils.h"
 #include "logic/search/searchqueries.h"
+#include "logic/utils/cantoneseutils.h"
 #include "logic/utils/chineseutils.h"
+#include "logic/utils/mandarinutils.h"
 #include "logic/utils/scriptdetector.h"
 #include "logic/utils/utils.h"
+
+#include <QString>
 #include <QtConcurrent/QtConcurrent>
 
 #ifdef Q_OS_WIN
@@ -13,37 +17,60 @@
 
 namespace {
 
-void prepareJyutpingBindValues(const QString &searchTerm, QString &globTerm)
+void prepareJyutpingBindValues(const QString &searchTerm, QString &regexTerm)
 {
     // When the search term is surrounded by quotes, search for only term
     // inside quotes (not the quotes themselves)
     // Unlike the simplified/traditional search, only trigger exact match
     // searching if enclosed by Western quotes (U+0022).
-    bool searchExactMatch = searchTerm.at(0) == "\""
-                            && searchTerm.at(searchTerm.size() - 1) == "\""
+    bool searchExactMatch = searchTerm.startsWith("\"")
+                            && searchTerm.endsWith("\"")
                             && searchTerm.length() >= 3;
-    bool dontAppendWildcard = searchTerm.at(searchTerm.size() - 1) == "$";
+    bool dontAppendWildcard = searchTerm.endsWith("$");
 
-    std::vector<std::string> jyutpingWords;
+    // Attempt to correct romanization issues (but not pronunciation!)
+    QString correctedSearchTerm{searchTerm};
+    if (!searchExactMatch) {
+        CantoneseUtils::jyutpingAutocorrect(searchTerm,
+                                            correctedSearchTerm,
+                                            /* unsafeSubstitutions */ true);
+    }
+
+    std::vector<std::string> jyutpingSyllables;
     if (searchExactMatch) {
-        QString searchTermWithoutQuotes = searchTerm.mid(1,
-                                                         searchTerm.size() - 2);
-        Utils::split(searchTermWithoutQuotes.toStdString(), ' ', jyutpingWords);
+        Utils::split(QStringView{correctedSearchTerm.constBegin() + 1,
+                                 correctedSearchTerm.constEnd() - 1}
+                         .toString()
+                         .toStdString(),
+                     ' ',
+                     jyutpingSyllables);
     } else {
-        ChineseUtils::segmentJyutping(searchTerm,
-                                      jyutpingWords,
-                                      /* removeSpecialCharacters */ true,
-                                      /* removeGlobCharacters */ false);
+        CantoneseUtils::segmentJyutping(correctedSearchTerm,
+                                        jyutpingSyllables,
+                                        /* removeSpecialCharacters */ true,
+                                        /* removeGlobCharacters */ false,
+                                        /* removeRegexCharacters= */ false);
+    }
+
+    if (!searchExactMatch) {
+        // Attempt to broaden search for sound changes (e.g. nei5 -> lei5)
+        CantoneseUtils::jyutpingSoundChanges(jyutpingSyllables);
     }
 
     // Don't add wildcard characters to GLOB term if searching for exact match
     const char *globJoinDelimiter = searchExactMatch ? "" : "?";
     std::string query
-        = ChineseUtils::constructRomanisationQuery(jyutpingWords,
+        = ChineseUtils::constructRomanisationQuery(jyutpingSyllables,
                                                    globJoinDelimiter);
 
-    globTerm = QString::fromStdString(query)
-               + QString{(searchExactMatch || dontAppendWildcard) ? "" : "*"};
+    regexTerm = QString{"^"}
+                + QString::fromStdString(query)
+                      .replace("*", ".*") // Convert glob characters to regex
+                      .replace("?", ".")
+                      .replace("!", "?") // Workaround for glob  replacement
+                + QString{(searchExactMatch || dontAppendWildcard) ? "$"
+                                                                   : ".*$"};
+    qDebug() << regexTerm;
 }
 
 void preparePinyinBindValues(const QString &searchTerm, QString &globTerm)
@@ -77,10 +104,10 @@ void preparePinyinBindValues(const QString &searchTerm, QString &globTerm)
             = processedSearchTerm.mid(1, processedSearchTerm.size() - 2);
         Utils::split(searchTermWithoutQuotes.toStdString(), ' ', pinyinWords);
     } else {
-        ChineseUtils::segmentPinyin(processedSearchTerm,
-                                    pinyinWords,
-                                    /* removeSpecialCharacters */ true,
-                                    /* removeGlobCharacters */ false);
+        MandarinUtils::segmentPinyin(processedSearchTerm,
+                                     pinyinWords,
+                                     /* removeSpecialCharacters */ true,
+                                     /* removeGlobCharacters */ false);
     }
 
     // Don't add wildcard characters to GLOB term if searching for exact match
@@ -502,22 +529,22 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
         searchTraditionalThread(searchTerm, queryID);
         return;
     }
-    if (sd.isValidJyutping()) {
-        QSqlQuery query{_manager->getDatabase()};
-        query.prepare(SEARCH_JYUTPING_EXISTS_QUERY);
-        QString globTerm;
-        prepareJyutpingBindValues(searchTerm, globTerm);
-        query.addBindValue(globTerm);
-        query.setForwardOnly(true);
-        query.exec();
-        bool jyutpingExists = QueryParseUtils::parseExistence(query);
 
-        if (jyutpingExists) {
-            notifyObserversIfQueryIdCurrent(SearchParameters::JYUTPING, queryID);
-            searchJyutpingThread(searchTerm, queryID);
-            return;
-        }
+    QSqlQuery query{_manager->getDatabase()};
+    query.prepare(SEARCH_JYUTPING_EXISTS_QUERY);
+    QString globTerm;
+    prepareJyutpingBindValues(searchTerm, globTerm);
+    query.addBindValue(globTerm);
+    query.setForwardOnly(true);
+    query.exec();
+    bool jyutpingExists = QueryParseUtils::parseExistence(query);
+
+    if (jyutpingExists) {
+        notifyObserversIfQueryIdCurrent(SearchParameters::JYUTPING, queryID);
+        searchJyutpingThread(searchTerm, queryID);
+        return;
     }
+
     if (sd.isValidPinyin()) {
         QSqlQuery query{_manager->getDatabase()};
         query.prepare(SEARCH_PINYIN_EXISTS_QUERY);

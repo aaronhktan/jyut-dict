@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.20)
 
 project(CantoneseDictionary VERSION 3.25.0304 LANGUAGES CXX)
 
@@ -8,6 +8,7 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS
     LinguistTools
@@ -121,7 +122,9 @@ set(PROJECT_SOURCES
         logic/settings/settings.cpp
         logic/settings/settingsutils.cpp
         logic/update/jyutdictionaryreleasechecker.cpp
+        logic/utils/cantoneseutils.cpp
         logic/utils/chineseutils.cpp
+        logic/utils/mandarinutils.cpp
         logic/utils/scriptdetector.cpp
         logic/utils/utils.cpp
         logic/utils/utils_qt.cpp
@@ -173,7 +176,9 @@ add_subdirectory(logic/search/test/TestSqlSearch)
 add_subdirectory(logic/sentence/test/TestSentenceSet)
 add_subdirectory(logic/sentence/test/TestSourceSentence)
 add_subdirectory(logic/settings/test/TestSettingsUtils)
+add_subdirectory(logic/utils/test/TestCantoneseUtils)
 add_subdirectory(logic/utils/test/TestChineseUtils)
+add_subdirectory(logic/utils/test/TestMandarinUtils)
 add_subdirectory(logic/utils/test/TestScriptDetector)
 
 set_target_properties(CantoneseDictionary PROPERTIES
