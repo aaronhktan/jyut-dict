@@ -6,8 +6,6 @@
         <file>images/x.png</file>
         <file>images/settings.png</file>
         <file>images/settings_inverted.png</file>
-        <file>images/book_inverted.png</file>
-        <file>images/book.png</file>
         <file>images/sliders_inverted.png</file>
         <file>images/sliders.png</file>
         <file>images/help_inverted.png</file>
@@ -22,7 +20,6 @@
         <file>translations/jyutdictionary-fr_CA.qm</file>
         <file>translations/jyutdictionary-en.qm</file>
         <file>translations/jyutdictionary-zh_Hant.qm</file>
-        <file>images/book_disabled.png</file>
         <file>images/help_disabled.png</file>
         <file>images/settings_disabled.png</file>
         <file>images/sliders_disabled.png</file>
@@ -57,13 +54,19 @@
         <file>images/check_box_unchecked.svg</file>
         <file>images/radio_button_checked.svg</file>
         <file>images/radio_button_unchecked.svg</file>
-        <file>images/text_disabled.png</file>
-        <file>images/text_inverted.png</file>
-        <file>images/text.png</file>
         <file>images/external_link_inverted.png</file>
         <file>images/external_link.png</file>
         <file>images/zoom_in_inverted.png</file>
         <file>images/zoom_in.png</file>
         <file>images/icon.png</file>
+        <file>images/searchtab_disabled.png</file>
+        <file>images/searchtab_inverted.png</file>
+        <file>images/searchtab.png</file>
+        <file>images/texttab_disabled.png</file>
+        <file>images/texttab_inverted.png</file>
+        <file>images/texttab.png</file>
+        <file>images/dictionarytab_disabled.png</file>
+        <file>images/dictionarytab_inverted.png</file>
+        <file>images/dictionarytab.png</file>
     </qresource>
 </RCC>

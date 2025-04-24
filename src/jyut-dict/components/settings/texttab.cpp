@@ -77,10 +77,6 @@ void TextTab::setupUI()
     _interfaceSizeLargeLabel = new QLabel{this};
     initializeInterfaceSizeWidget(*_interfaceSizeWidget);
 
-    _searchAutoDetectCheckbox = new QCheckBox{this};
-    _searchAutoDetectCheckbox->setTristate(false);
-    initializeSearchAutoDetectCheckbox(*_searchAutoDetectCheckbox);
-
     QFrame *_divider = new QFrame{this};
     _divider->setObjectName("divider");
     _divider->setFrameShape(QFrame::HLine);
@@ -102,7 +98,6 @@ void TextTab::setupUI()
     _tabLayout->addRow(_interfaceSizeDivider);
 
     _tabLayout->addRow(_interfaceSizeTitleLabel);
-    _tabLayout->addRow(" ", _searchAutoDetectCheckbox);
     _tabLayout->addRow(" ", _interfaceSizeWidget);
 
     _tabLayout->addRow(_divider);
@@ -144,8 +139,6 @@ void TextTab::translateUI()
         ->setText(tr("Interface size:"));
     _interfaceSizeSmallLabel->setText(tr("Smallest"));
     _interfaceSizeLargeLabel->setText(tr("Largest"));
-    static_cast<QLabel *>(_tabLayout->labelForField(_searchAutoDetectCheckbox))
-        ->setText(tr("Auto-detect search language:"));
 
     _colourTitleLabel->setText("<b>" + tr("Tone colouring:") + "</b>");
     static_cast<QLabel *>(_tabLayout->labelForField(_colourCombobox))
@@ -283,16 +276,6 @@ void TextTab::initializeInterfaceSizeWidget(QWidget &widget)
     });
 
     setInterfaceSizeWidgetDefault(widget);
-}
-
-void TextTab::initializeSearchAutoDetectCheckbox(QCheckBox &checkbox)
-{
-    connect(&checkbox, &QCheckBox::checkStateChanged, this, [&]() {
-        _settings->setValue("Interface/searchAutoDetect", checkbox.checkState());
-        _settings->sync();
-    });
-
-    setSearchAutoDetectCheckboxDefault(checkbox);
 }
 
 void TextTab::initializeColourComboBox(QComboBox &colourCombobox)
@@ -453,12 +436,6 @@ void TextTab::setInterfaceSizeWidgetDefault(QWidget &widget)
             .value<Settings::InterfaceSize>()));
 }
 
-void TextTab::setSearchAutoDetectCheckboxDefault(QCheckBox &checkbox)
-{
-    checkbox.setChecked(
-        _settings->value("Interface/searchAutoDetect", QVariant{true}).toBool());
-}
-
 void TextTab::setColourComboBoxDefault(QComboBox &colourCombobox)
 {
     colourCombobox.setCurrentIndex(colourCombobox.findData(
@@ -528,7 +505,6 @@ void TextTab::resetSettings(void)
 
     setCharacterComboBoxDefault(*_characterCombobox);
 
-    setSearchAutoDetectCheckboxDefault(*_searchAutoDetectCheckbox);
     setInterfaceSizeWidgetDefault(*_interfaceSizeWidget);
 
     setColourComboBoxDefault(*_colourCombobox);

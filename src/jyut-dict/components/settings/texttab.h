@@ -43,7 +43,6 @@ private:
     void initializeCharacterComboBox(QComboBox &characterCombobox);
 
     void initializeInterfaceSizeWidget(QWidget &widget);
-    void initializeSearchAutoDetectCheckbox(QCheckBox &searchAutoDetectCheckbox);
 
     void initializeColourComboBox(QComboBox &colourCombobox);
     void initializeJyutpingColourWidget(QWidget &jyutpingColourWidget);
@@ -52,7 +51,6 @@ private:
     void setCharacterComboBoxDefault(QComboBox &characterCombobox);
 
     void setInterfaceSizeWidgetDefault(QWidget &widget);
-    void setSearchAutoDetectCheckboxDefault(QCheckBox &searchAutoDetectCheckbox);
 
     void setColourComboBoxDefault(QComboBox &colourCombobox);
     void setJyutpingColourWidgetDefault(QWidget &jyutpingColourWidget);
@@ -74,7 +72,6 @@ private:
     QSlider *_interfaceSizeSlider;
     QLabel *_interfaceSizeSmallLabel;
     QLabel *_interfaceSizeLargeLabel;
-    QCheckBox *_searchAutoDetectCheckbox;
 
     QLabel *_colourTitleLabel;
     QComboBox *_colourCombobox;

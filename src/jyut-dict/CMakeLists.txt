@@ -92,6 +92,7 @@ set(PROJECT_SOURCES
         components/settings/advancedtab.cpp
         components/settings/contacttab.cpp
         components/settings/dictionarytab.cpp
+        components/settings/searchtab.cpp
         components/settings/settingstab.cpp
         components/settings/texttab.cpp
         dialogs/defaultdialog.cpp
@@ -146,6 +147,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         resources/resource.qrc
+        components/settings/searchtab.h
     )
 
 else()
