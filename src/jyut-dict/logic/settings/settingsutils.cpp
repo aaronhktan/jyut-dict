@@ -139,6 +139,17 @@ bool migrateSettingsFromOneToTwo(QSettings &settings)
     return true;
 }
 
+bool migrateSettingsFromTwoToThree(QSettings &settings)
+{
+    if (settings.contains("Interface/searchAutoDetect")) {
+        settings.setValue("Search/Search/autoDetectLanguage",
+                          settings.value("Interface/searchAutoDetect"));
+        settings.remove("Interface/searchAutoDetect");
+    }
+
+    return true;
+}
+
 QLocale getCurrentLocale()
 {
     return currentLocale;

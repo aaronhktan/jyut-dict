@@ -2,6 +2,7 @@
 
 #include "logic/database/queryparseutils.h"
 #include "logic/search/searchqueries.h"
+#include "logic/settings/settingsutils.h"
 #include "logic/utils/cantoneseutils.h"
 #include "logic/utils/chineseutils.h"
 #include "logic/utils/mandarinutils.h"
@@ -17,7 +18,10 @@
 
 namespace {
 
-void prepareJyutpingBindValues(const QString &searchTerm, QString &regexTerm)
+void prepareJyutpingBindValues(const QString &searchTerm,
+                               QString &regexTerm,
+                               bool fuzzyJyutping,
+                               bool unsafeFuzzyJyutping)
 {
     // When the search term is surrounded by quotes, search for only term
     // inside quotes (not the quotes themselves)
@@ -30,10 +34,11 @@ void prepareJyutpingBindValues(const QString &searchTerm, QString &regexTerm)
 
     // Attempt to correct romanization issues (but not pronunciation!)
     QString correctedSearchTerm{searchTerm};
-    if (!searchExactMatch) {
-        CantoneseUtils::jyutpingAutocorrect(searchTerm,
-                                            correctedSearchTerm,
-                                            /* unsafeSubstitutions */ true);
+    if (!searchExactMatch && fuzzyJyutping) {
+        CantoneseUtils::jyutpingAutocorrect(
+            searchTerm,
+            correctedSearchTerm,
+            /* unsafeSubstitutions */ unsafeFuzzyJyutping);
     }
 
     std::vector<std::string> jyutpingSyllables;
@@ -52,7 +57,7 @@ void prepareJyutpingBindValues(const QString &searchTerm, QString &regexTerm)
                                         /* removeRegexCharacters= */ false);
     }
 
-    if (!searchExactMatch) {
+    if (!searchExactMatch && fuzzyJyutping) {
         // Attempt to broaden search for sound changes (e.g. nei5 -> lei5)
         CantoneseUtils::jyutpingSoundChanges(jyutpingSyllables);
     }
@@ -63,14 +68,19 @@ void prepareJyutpingBindValues(const QString &searchTerm, QString &regexTerm)
         = ChineseUtils::constructRomanisationQuery(jyutpingSyllables,
                                                    globJoinDelimiter);
 
-    regexTerm = QString{"^"}
-                + QString::fromStdString(query)
-                      .replace("*", ".*") // Convert glob characters to regex
-                      .replace("?", ".")
-                      .replace("!", "?") // Workaround for glob  replacement
-                + QString{(searchExactMatch || dontAppendWildcard) ? "$"
-                                                                   : ".*$"};
-    qDebug() << regexTerm;
+    if (fuzzyJyutping) {
+        regexTerm = QString{"^"}
+                    + QString::fromStdString(query)
+                          .replace("*", ".*") // Convert glob characters to regex
+                          .replace("?", ".")
+                          .replace("!", "?") // Workaround for glob  replacement
+                    + QString{(searchExactMatch || dontAppendWildcard) ? "$"
+                                                                       : ".*$"};
+    } else {
+        regexTerm = QString::fromStdString(query)
+                    + QString{(searchExactMatch || dontAppendWildcard) ? ""
+                                                                       : "*"};
+    }
 }
 
 void preparePinyinBindValues(const QString &searchTerm, QString &globTerm)
@@ -126,6 +136,7 @@ SQLSearch::SQLSearch()
 {
     std::random_device rd;
     _generator = std::mt19937_64{rd()};
+    _settings = Settings::getSettings();
 }
 
 SQLSearch::SQLSearch(std::shared_ptr<SQLDatabaseManager> manager)
@@ -133,6 +144,7 @@ SQLSearch::SQLSearch(std::shared_ptr<SQLDatabaseManager> manager)
 {
     std::random_device rd;
     _generator = std::mt19937_64{rd()};
+    _settings = Settings::getSettings();
 }
 
 SQLSearch::~SQLSearch()
@@ -442,10 +454,22 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
     std::vector<Entry> results;
 
     QSqlQuery query{_manager->getDatabase()};
-    query.prepare(SEARCH_JYUTPING_QUERY);
+
+    bool fuzzyJyutping
+        = _settings->value("Search/fuzzyJyutping", QVariant{true}).toBool();
+    bool unsafeFuzzyJyutping = _settings
+                                   ->value("Search/unsafeFuzzyJyutping",
+                                           QVariant{false})
+                                   .toBool();
+
+    query.prepare(QString{SEARCH_JYUTPING_QUERY}.arg(fuzzyJyutping ? REGEXP_STR
+                                                                   : GLOB_STR));
 
     QString globTerm;
-    prepareJyutpingBindValues(searchTerm, globTerm);
+    prepareJyutpingBindValues(searchTerm,
+                              globTerm,
+                              fuzzyJyutping,
+                              unsafeFuzzyJyutping);
     query.addBindValue(globTerm);
     query.exec();
 
@@ -531,9 +555,21 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
     }
 
     QSqlQuery query{_manager->getDatabase()};
-    query.prepare(SEARCH_JYUTPING_EXISTS_QUERY);
+
+    bool fuzzyJyutping
+        = _settings->value("Search/fuzzyJyutping", QVariant{true}).toBool();
+    bool unsafeFuzzyJyutping = _settings
+                                   ->value("Search/unsafeFuzzyJyutping",
+                                           QVariant{false})
+                                   .toBool();
+
+    query.prepare(QString{SEARCH_JYUTPING_EXISTS_QUERY}.arg(
+        fuzzyJyutping ? REGEXP_STR : GLOB_STR));
     QString globTerm;
-    prepareJyutpingBindValues(searchTerm, globTerm);
+    prepareJyutpingBindValues(searchTerm,
+                              globTerm,
+                              fuzzyJyutping,
+                              unsafeFuzzyJyutping);
     query.addBindValue(globTerm);
     query.setForwardOnly(true);
     query.exec();

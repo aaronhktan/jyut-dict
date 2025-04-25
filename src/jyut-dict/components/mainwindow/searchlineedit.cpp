@@ -126,7 +126,7 @@ void SearchLineEdit::setupUI(void)
 
     connect(this, &QLineEdit::textChanged, this, [&]() {
         checkClearVisibility();
-        if (_settings->value("Interface/searchAutoDetect", QVariant{true})
+        if (_settings->value("Search/autoDetectLanguage", QVariant{true})
                 .toBool()) {
             _search->searchAutoDetect(text().trimmed());
             addSearchTermToHistory(SearchParameters::AUTO_DETECT);

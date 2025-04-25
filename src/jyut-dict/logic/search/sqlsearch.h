@@ -96,6 +96,7 @@ private:
     std::list<ISearchObserver *> _observers;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
+    std::unique_ptr<QSettings> _settings;
 
     std::atomic<unsigned long long> _queryID;
     std::mt19937_64 _generator;

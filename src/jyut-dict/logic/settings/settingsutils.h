@@ -13,7 +13,7 @@
 
 namespace Settings {
 
-constexpr auto SETTINGS_VERSION = 2;
+constexpr auto SETTINGS_VERSION = 3;
 
 extern QTranslator systemTranslator;
 extern QTranslator applicationTranslator;
@@ -24,6 +24,7 @@ bool updateSettings(QSettings &settings);
 bool clearSettings(QSettings &settings);
 
 bool migrateSettingsFromOneToTwo(QSettings &settings);
+bool migrateSettingsFromTwoToThree(QSettings &settings);
 
 QLocale getCurrentLocale();
 bool setCurrentLocale(const QLocale &locale);

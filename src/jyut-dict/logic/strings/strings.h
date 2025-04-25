@@ -125,16 +125,16 @@ constexpr auto LEARN_MANDARIN_IPA_URL = QT_TRANSLATE_NOOP(
 #ifdef Q_OS_WINDOWS
 constexpr auto FUZZY_JYUTPING_EXPLAINER = QT_TRANSLATE_NOOP(
     "strings",
-    "<p style=\"color: %1\">Fuzzy Jyutping matching finds results "
-    "for non-Jyutping spelling and Cantonese sound changes. For example, "
+    "<p style=\"color: %1\">Fuzzy Jyutping finds results for "
+    "non-Jyutping spellings and informal pronunciations. For example, "
     "\"gum yut\" will find \"今日\" (\"gam1 jat6\" in Jyutping); \"lay\" "
     "will find \"你\" (\"nei5\"). Please note that this feature will increase "
     "time before results are found.</p>");
 #else
 constexpr auto FUZZY_JYUTPING_EXPLAINER = QT_TRANSLATE_NOOP(
     "strings",
-    "<p style=\"color: %1\">Fuzzy Jyutping matching finds results "
-    "for non-Jyutping spelling and Cantonese sound changes. For example, "
+    "<p style=\"color: %1\">Fuzzy Jyutping finds results for "
+    "non-Jyutping spellings and informal pronunciations. For example, "
     "\"gum yut\" will find \"今日\" (\"gam1 jat6\" in Jyutping); \"lay\" "
     "will find \"你\" (\"nei5\").</p>");
 #endif
