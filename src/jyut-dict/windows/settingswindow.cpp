@@ -124,9 +124,9 @@ void SettingsWindow::setupUI()
             &SettingsWindow::updateStyleRequested);
 
     connect(searchTab,
-            &SearchTab::updateStyle,
+            &SearchTab::triggerSearch,
             this,
-            &SettingsWindow::updateStyleRequested);
+            &SettingsWindow::searchRequested);
 
     connect(textTab,
             &TextTab::updateStyle,
@@ -490,6 +490,11 @@ void SettingsWindow::paintWithApplicationState(Qt::ApplicationState state)
 {
     (void) (state);
     setStyle(Utils::isDarkMode());
+}
+
+void SettingsWindow::searchRequested(void)
+{
+    emit triggerSearch();
 }
 
 void SettingsWindow::updateStyleRequested(void)

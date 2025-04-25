@@ -159,6 +159,7 @@ public slots:
     void notifyDatabaseMigration(void);
     void forwardSearchHistoryItem(const searchTermHistoryItem &pair);
     void forwardViewHistoryItem(const Entry &entry);
+    void searchRequested(void);
     void updateStyleRequested(void);
 };
 

@@ -16,7 +16,7 @@
 #include <QTimer>
 
 SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(
-    ISearchOptionsMediator *mediator,
+    std::shared_ptr<ISearchOptionsMediator> mediator,
     std::shared_ptr<SQLSearch> manager,
     QWidget *parent)
     : QGroupBox(parent)

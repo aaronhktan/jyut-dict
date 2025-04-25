@@ -1243,6 +1243,10 @@ void MainWindow::openSettingsWindow(void)
             &SettingsWindow::updateStyle,
             this,
             &MainWindow::updateStyleRequested);
+    connect(_settingsWindow,
+            &SettingsWindow::triggerSearch,
+            this,
+            &MainWindow::searchRequested);
 }
 
 void MainWindow::openHistoryWindow(void)
@@ -1388,6 +1392,11 @@ void MainWindow::notifyDatabaseMigration(void)
            "This might take a few minutes.\nHang tight!"));
     _databaseMigrationDialog->setRange(0, 0);
     _databaseMigrationDialog->setValue(0);
+}
+
+void MainWindow::searchRequested(void)
+{
+    _mainToolBar->searchRequested();
 }
 
 void MainWindow::updateStyleRequested(void)

@@ -54,11 +54,13 @@ private:
     bool _paletteRecentlyChanged = false;
 
 signals:
+    void triggerSearch(void);
     void updateStyle(void);
 
 public slots:
     void paintWithApplicationState(Qt::ApplicationState state);
 
+    void searchRequested(void);
     void updateStyleRequested(void);
 };
 

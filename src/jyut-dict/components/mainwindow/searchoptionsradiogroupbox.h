@@ -23,9 +23,10 @@ class SearchOptionsRadioGroupBox : public QGroupBox, public ISearchObserver
 Q_OBJECT
 
 public:
-    explicit SearchOptionsRadioGroupBox(ISearchOptionsMediator *mediator,
-                                        std::shared_ptr<SQLSearch> manager,
-                                        QWidget *parent = nullptr);
+    explicit SearchOptionsRadioGroupBox(
+        std::shared_ptr<ISearchOptionsMediator> mediator,
+        std::shared_ptr<SQLSearch> manager,
+        QWidget *parent = nullptr);
 
     void detectedLanguage(SearchParameters) override;
     void changeEvent(QEvent *event) override;
@@ -42,7 +43,7 @@ private:
 
     bool _paletteRecentlyChanged = false;
 
-    ISearchOptionsMediator *_mediator;
+    std::shared_ptr<ISearchOptionsMediator> _mediator;
     std::shared_ptr<SQLSearch> _search;
     std::unique_ptr<QSettings> _settings;
 

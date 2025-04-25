@@ -57,7 +57,7 @@ private:
     QFormLayout *_tabLayout;
 
 signals:
-    void updateStyle(void);
+    void triggerSearch(void);
 
 public slots:
     void resetSettings(void);
