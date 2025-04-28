@@ -75,7 +75,7 @@ void SearchLineEdit::updateParameters(SearchParameters parameters)
     _parameters = parameters;
 }
 
-void SearchLineEdit::search()
+void SearchLineEdit::search(void)
 {
     switch (_parameters) {
         case SearchParameters::SIMPLIFIED: {
@@ -201,7 +201,7 @@ void SearchLineEdit::setStyle(bool use_dark)
     }
 }
 
-void SearchLineEdit::checkClearVisibility()
+void SearchLineEdit::checkClearVisibility(void)
 {
     if (text().isEmpty() || !hasFocus()) {
         // Don't add the clear line edit action if the widget doesn't have focus!
@@ -226,7 +226,7 @@ void SearchLineEdit::addSearchTermToHistory(SearchParameters parameters) const
     _timer->start(500);
 }
 
-void SearchLineEdit::searchTriggered()
+void SearchLineEdit::searchTriggered(void)
 {
     checkClearVisibility();
     if (_settings->value("Search/autoDetectLanguage", QVariant{true}).toBool()) {

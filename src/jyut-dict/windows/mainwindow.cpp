@@ -82,20 +82,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Connect signals to tell the user that database migration has occurred
     _utils = std::make_unique<SQLDatabaseUtils>(_manager);
-    connect(_utils.get(),
-            &SQLDatabaseUtils::migratingDatabase,
-            this,
-            &MainWindow::notifyDatabaseMigration);
+    connect(_utils.get(), &SQLDatabaseUtils::migratingDatabase, this, [&]() {
+        _databaseMigrating = true;
+        notifyDatabaseMigration();
+    });
     connect(_utils.get(),
             &SQLDatabaseUtils::finishedMigratingDatabase,
             this,
             [&](bool success) {
-                _databaseMigrationDialog->setLabelText(
-                    success ? tr("Database migration finished!")
-                            : tr("Database migration failed!"));
-                QTimer::singleShot(1000, this, [&] {
-                    _databaseMigrationDialog->reset();
-                });
+                finishedDatabaseMigration(success);
+                _databaseMigrating = false;
             });
 
     // Populate global source table
@@ -184,17 +180,30 @@ MainWindow::MainWindow(QWidget *parent) :
     // Translate UI
     translateUI();
 
+    // Show welcome dialog if needed
+    bool welcomed = settings
+                        ->value(QString{"Advanced/%1Welcomed"}.arg(
+                                    Utils::CURRENT_VERSION),
+                                QVariant{false})
+                        .toBool();
+    if (!welcomed) {
+        QTimer::singleShot(200, this, [&]() { openWelcomeWindow(); });
+    }
+
     // Check for updates
-    _checker = new JyutDictionaryReleaseChecker{this};
-    if (settings->value("Advanced/updateNotificationsEnabled", QVariant{true}).toBool()) {
-        QTimer::singleShot(1000, this, [&]() {
+    bool updateNotificationEnabled
+        = settings->value("Advanced/updateNotificationsEnabled", QVariant{true})
+              .toBool();
+    _checker = new JyutDictionaryReleaseChecker{
+        this, /* preConnectEnabled */ updateNotificationEnabled};
+    if (updateNotificationEnabled) {
+        QTimer::singleShot(1500, this, [&]() {
             checkForUpdate(/* showProgress = */ false);
         });
     }
 
-    // Perform database migration if needed, but delay for a bit so that
-    // the notify dialog has time to show itself
-    QTimer::singleShot(500, this, [&]() {
+    // Perform database migration if needed
+    QTimer::singleShot(1000, this, [&]() {
         std::ignore = QtConcurrent::run(&SQLDatabaseUtils::updateDatabase,
                                         _utils.get());
     });
@@ -803,6 +812,20 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
                                        std::string url, std::string description,
                                        bool showIfNoUpdate)
 {
+    qDebug() << updateAvailable;
+    if (_welcomeWindow || _databaseMigrationDialog) {
+        if (_welcomeWindow) {
+            qDebug() << "welcome window visible";
+        }
+        if (_databaseMigrationDialog) {
+            qDebug() << "database migration dialog visible";
+        }
+        return;
+    }
+
+    _updateAvailable = false;
+
+    qDebug() << updateAvailable;
     if (updateAvailable) {
         UpdateAvailableWindow *window = new UpdateAvailableWindow{this, versionNumber, url, description};
         window->show();
@@ -1297,6 +1320,39 @@ void MainWindow::openFavouritesWindow(void)
             &MainToolBar::searchQueryRequested);
 }
 
+void MainWindow::openWelcomeWindow(void)
+{
+    if (_welcomeWindow) {
+        _welcomeWindow->activateWindow();
+        _welcomeWindow->raise();
+        return;
+    }
+
+    _welcomeWindow = new WelcomeWindow{this};
+    _welcomeWindow->setAttribute(Qt::WA_DeleteOnClose);
+    _welcomeWindow->setFocus();
+    _welcomeWindow->show();
+
+    connect(_welcomeWindow, &WelcomeWindow::welcomeCompleted, this, [&]() {
+        QTimer::singleShot(100, this, [&] {
+            // These dialogs are suppressed while the welcome window is visible,
+            // so check whether they need to be shown
+            notifyDatabaseMigration();
+            notifyUpdateAvailable(_updateAvailable,
+                                  _updateVersionNumber,
+                                  _updateURL,
+                                  _updateDescription,
+                                  /* showIfNoUpdate */ false);
+        });
+
+        std::unique_ptr<QSettings> settings = Settings::getSettings();
+
+        settings->setValue(QString{"Advanced/%1Welcomed"}.arg(
+                               Utils::CURRENT_VERSION),
+                           true);
+    });
+}
+
 void MainWindow::checkForUpdate(bool showProgress)
 {
     disconnect(_checker, nullptr, nullptr, nullptr);
@@ -1350,11 +1406,17 @@ void MainWindow::checkForUpdate(bool showProgress)
                     std::string url,
                     std::string description) {
                     disconnect(_checker, nullptr, nullptr, nullptr);
+
+                    _updateAvailable = updateAvailable;
+                    _updateVersionNumber = versionNumber;
+                    _updateURL = url;
+                    _updateDescription = description;
+
                     notifyUpdateAvailable(updateAvailable,
                                           versionNumber,
                                           url,
                                           description,
-                                          /* showIfNoUpdateo = */ false);
+                                          /* showIfNoUpdate = */ false);
 
                     _recentlyCheckedForUpdates = false;
                 });
@@ -1368,6 +1430,10 @@ void MainWindow::checkForUpdate(bool showProgress)
 
 void MainWindow::notifyDatabaseMigration(void)
 {
+    if (_welcomeWindow || !_databaseMigrating) {
+        return;
+    }
+
     _databaseMigrationDialog = new QProgressDialog{"", QString(), 0, 0, this};
     _databaseMigrationDialog->setWindowModality(Qt::ApplicationModal);
     _databaseMigrationDialog->setMinimumSize(300, 75);
@@ -1385,6 +1451,7 @@ void MainWindow::notifyDatabaseMigration(void)
 #elif defined(Q_OS_LINUX)
     _databaseMigrationDialog->setWindowTitle(" ");
 #endif
+    _databaseMigrationDialog->setAutoClose(true);
     _databaseMigrationDialog->setAttribute(Qt::WA_DeleteOnClose, true);
 
     _databaseMigrationDialog->setLabelText(
@@ -1392,6 +1459,54 @@ void MainWindow::notifyDatabaseMigration(void)
            "This might take a few minutes.\nHang tight!"));
     _databaseMigrationDialog->setRange(0, 0);
     _databaseMigrationDialog->setValue(0);
+}
+
+void MainWindow::finishedDatabaseMigration(bool success)
+{
+    if (_welcomeWindow || !_databaseMigrating) {
+        return;
+    }
+
+    if (!_databaseMigrationDialog) {
+        _databaseMigrationDialog
+            = new QProgressDialog{"", QString(), 0, 0, this};
+        _databaseMigrationDialog->setWindowModality(Qt::ApplicationModal);
+        _databaseMigrationDialog->setMinimumSize(300, 75);
+        Qt::WindowFlags flags = _databaseMigrationDialog->windowFlags()
+                                | Qt::CustomizeWindowHint;
+        flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
+                   | Qt::WindowFullscreenButtonHint
+                   | Qt::WindowContextHelpButtonHint);
+        _databaseMigrationDialog->setWindowFlags(flags);
+        _databaseMigrationDialog->setMinimumDuration(0);
+#ifdef Q_OS_WIN
+        _databaseMigrationDialog->setWindowTitle(
+            QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                        Strings::PRODUCT_NAME));
+#elif defined(Q_OS_LINUX)
+        _databaseMigrationDialog->setWindowTitle(" ");
+#endif
+        _databaseMigrationDialog->setAutoClose(true);
+        _databaseMigrationDialog->setAttribute(Qt::WA_DeleteOnClose, true);
+    }
+
+    _databaseMigrationDialog->setLabelText(
+        success ? tr("Database migration finished!")
+                : tr("Database migration failed!"));
+    QTimer::singleShot(1000, this, [&] {
+        _databaseMigrationDialog->reset();
+        // This is safe cause the Qt Object Tree should delete the object
+        // that was associated with this pointer
+        _databaseMigrationDialog = nullptr;
+
+        // Since the update available notification is suppressed if the database
+        // migration is visible, check whether to show the update available dialog
+        notifyUpdateAvailable(_updateAvailable,
+                              _updateVersionNumber,
+                              _updateURL,
+                              _updateDescription,
+                              /* showIfNoUpdate = */ false);
+    });
 }
 
 void MainWindow::searchRequested(void)

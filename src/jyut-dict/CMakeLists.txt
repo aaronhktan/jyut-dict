@@ -135,6 +135,7 @@ set(PROJECT_SOURCES
         windows/mainwindow.cpp
         windows/settingswindow.cpp
         windows/updatewindow.cpp
+        windows/welcomewindow.cpp
         ${TS_FILES}
 )
 
@@ -147,7 +148,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         resources/resource.qrc
-        components/settings/searchtab.h
     )
 
 else()

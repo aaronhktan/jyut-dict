@@ -18,7 +18,8 @@ constexpr auto JYUT_DICTIONARY_UPDATE_URL
 constexpr auto VERSION_NUMBER_COMPONENTS_SIZE = 3;
 } // namespace
 
-JyutDictionaryReleaseChecker::JyutDictionaryReleaseChecker(QObject *parent)
+JyutDictionaryReleaseChecker::JyutDictionaryReleaseChecker(
+    QObject *parent, bool preConnectEnabled)
     : QObject{parent}
 {
     _manager = new QNetworkAccessManager{this};
@@ -45,9 +46,11 @@ JyutDictionaryReleaseChecker::JyutDictionaryReleaseChecker(QObject *parent)
     // so that it does not block the GUI of the app starting up.
     //
     // This primarily affects macOS devices.
-    QTimer::singleShot(100,
-                       this,
-                       &JyutDictionaryReleaseChecker::preConnectToHost);
+    if (preConnectEnabled) {
+        QTimer::singleShot(100,
+                           this,
+                           &JyutDictionaryReleaseChecker::preConnectToHost);
+    }
 }
 
 void JyutDictionaryReleaseChecker::checkForNewUpdate()

@@ -1,7 +1,6 @@
 #include "maintoolbar.h"
 
 #include "logic/search/searchoptionsmediator.h"
-#include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -288,7 +287,7 @@ void MainToolBar::searchQueryRequested(const QString &query,
     _optionsBox->setOption(parameters);
 }
 
-void MainToolBar::searchRequested() const
+void MainToolBar::searchRequested(void) const
 {
     _searchBar->searchTriggered();
 }

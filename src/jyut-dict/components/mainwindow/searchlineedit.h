@@ -40,7 +40,7 @@ private:
     void translateUI(void);
     void setStyle(bool use_dark);
 
-    void checkClearVisibility();
+    void checkClearVisibility(void);
 
     void addSearchTermToHistory(SearchParameters parameters) const;
 
@@ -58,7 +58,7 @@ private:
     bool _paletteRecentlyChanged = false;
 
 public slots:
-    void searchTriggered();
+    void searchTriggered(void);
 };
 
 #endif // SEARCHLINEEDIT_H

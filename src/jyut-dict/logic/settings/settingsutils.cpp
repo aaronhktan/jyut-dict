@@ -43,12 +43,18 @@ bool updateSettings(QSettings &settings)
     int fileSettingsVersion = settings.value("Metadata/version", QVariant{0})
                                   .toInt();
     if (fileSettingsVersion != SETTINGS_VERSION) {
-        if (fileSettingsVersion == 0) {
+        switch (fileSettingsVersion) {
+        case 0:
+        case 1: {
             // Due to an oversight, a metadata version was never written to file
             // for version 0 or version 1.
             // However, they are substantially the same, so it is safe to
             // migrate to version 2 with the same codepath.
             migrateSettingsFromOneToTwo(settings);
+        }
+        case 2: {
+            migrateSettingsFromTwoToThree(settings);
+        }
         }
         settings.setValue("Metadata/version", QVariant{SETTINGS_VERSION});
         settings.sync();
