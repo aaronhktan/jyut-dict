@@ -458,7 +458,7 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
     bool fuzzyJyutping
         = _settings->value("Search/fuzzyJyutping", QVariant{true}).toBool();
     bool unsafeFuzzyJyutping = _settings
-                                   ->value("Search/unsafeFuzzyJyutping",
+                                   ->value("Search/dangerousFuzzyJyutping",
                                            QVariant{false})
                                    .toBool();
 

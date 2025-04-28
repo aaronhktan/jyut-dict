@@ -536,9 +536,7 @@ bool jyutpingAutocorrect(const QString &in,
     out.replace("ch", "c").replace("sh", "s").replace("zh", "z");
 
     // Change "eung", "erng", "eong" -> "oeng"
-    // I think this is safe, since there aren't any entries that have
-    // "-eon g*" as a sequence of characters
-    out.replace("eung", "oeng").replace("erng", "oeng").replace("eong", "oeng");
+    out.replace("eung", "oeng").replace("erng", "oeng");
 
     out.replace("eui", "eoi");
     out.replace("euk", "oek");
@@ -554,10 +552,22 @@ bool jyutpingAutocorrect(const QString &in,
             idx = out.indexOf("oen", idx + 1);
             continue;
         }
-        out.replace("oen", "eon");
+        out.replace(idx, 3, "eon");
         idx = out.indexOf("oen", idx + 1);
     }
+    out.replace("oei", "eoi");
+    out.replace("oet", "eot");
 
+    out.replace("eong ", "oeng ");
+    out.replace("eong'", "oeng'");
+    if (out.endsWith("eong")) {
+        idx = out.lastIndexOf(("eong"));
+        out.replace(idx, 4, "oeng");
+    }
+    if (unsafeSubstitutions) {
+        out.replace("eong", "oeng"); // unsafe because of zeon6 gun2
+    }
+    out.replace("eok", "oek");
 
     out.replace("ar", "aa");      // like in "char siu"
     out.replace("ee", "i");       // like in "lai see"
