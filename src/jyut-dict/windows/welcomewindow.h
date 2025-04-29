@@ -26,14 +26,18 @@ private:
     void setStyle(bool use_dark);
 
     QLabel *_iconLabel;
+    QWidget *_leftSpacer;
+    QWidget *_rightSpacer;
+
     QLabel *_titleLabel;
     QLabel *_messageLabel;
 
-    QTextEdit *_descriptionTextEdit;
-    QWidget *_spacer;
+    QWidget *_buttonSpacer;
 
     QPushButton *_noButton;
     QPushButton *_okButton;
+
+    QWidget *_bottomSpacer;
 
     QGridLayout *_dialogLayout;
 

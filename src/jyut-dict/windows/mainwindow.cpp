@@ -812,20 +812,12 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
                                        std::string url, std::string description,
                                        bool showIfNoUpdate)
 {
-    qDebug() << updateAvailable;
     if (_welcomeWindow || _databaseMigrationDialog) {
-        if (_welcomeWindow) {
-            qDebug() << "welcome window visible";
-        }
-        if (_databaseMigrationDialog) {
-            qDebug() << "database migration dialog visible";
-        }
         return;
     }
 
     _updateAvailable = false;
 
-    qDebug() << updateAvailable;
     if (updateAvailable) {
         UpdateAvailableWindow *window = new UpdateAvailableWindow{this, versionNumber, url, description};
         window->show();

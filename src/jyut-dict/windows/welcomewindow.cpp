@@ -47,54 +47,60 @@ void WelcomeWindow::changeEvent(QEvent *event)
 void WelcomeWindow::setupUI()
 {
     _dialogLayout = new QGridLayout{this};
-    _dialogLayout->setSpacing(10);
+    _dialogLayout->setSpacing(5);
+    _dialogLayout->setContentsMargins(22, 11, 22, 22);
 
     _iconLabel = new QLabel{this};
-    _iconLabel->setFixedWidth(75);
     _iconLabel->setFixedHeight(75);
-    _iconLabel->setAlignment(Qt::AlignTop);
+    _iconLabel->setAlignment(Qt::AlignHCenter);
 
     QPixmap icon = QPixmap{":/images/icon.png"};
     icon.setDevicePixelRatio(devicePixelRatio());
-    int iconWidth = devicePixelRatio() * _iconLabel->width() - 10;
-    int iconHeight = devicePixelRatio() * _iconLabel->height() - 10;
+    int iconWidth = devicePixelRatio() * _iconLabel->height();
+    int iconHeight = devicePixelRatio() * _iconLabel->height();
     _iconLabel->setPixmap(icon.scaled(iconWidth,
                                       iconHeight,
                                       Qt::KeepAspectRatio,
                                       Qt::SmoothTransformation));
+    _iconLabel->setStyleSheet("QLabel { padding: 0px; margin-top: 0px; }");
 
     _titleLabel = new QLabel{this};
-    _titleLabel->setStyleSheet("QLabel { font-weight: bold; font-size: 16px}");
+    _titleLabel->setStyleSheet(
+        "QLabel { font-weight: bold; font-size: 16px; margin-bottom: 11px; }");
+    _titleLabel->setAlignment(Qt::AlignCenter);
 
     _messageLabel = new QLabel{this};
     _messageLabel->setWordWrap(true);
-    _messageLabel->setFixedWidth(375);
-    _messageLabel->setAlignment(Qt::AlignTop);
+    _messageLabel->setFixedWidth(350);
+    _messageLabel->setAlignment(Qt::AlignCenter);
 
-    _descriptionTextEdit = new QTextEdit{this};
-    // _descriptionTextEdit->setText(_description.c_str());
-    _descriptionTextEdit->setContentsMargins(10, 10, 0, 10);
-    _descriptionTextEdit->setTextInteractionFlags(Qt::NoTextInteraction);
-    _descriptionTextEdit->setAlignment(Qt::AlignTop);
-    _descriptionTextEdit->hide();
+    _leftSpacer = new QWidget{this};
+    _leftSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    _rightSpacer = new QWidget{this};
+    _rightSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    _spacer = new QWidget{this};
-    _spacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    _buttonSpacer = new QWidget{this};
+    _buttonSpacer->setFixedHeight(1);
+    _buttonSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     _noButton = new QPushButton{this};
+    _noButton->setFixedWidth(80);
 
     _okButton = new QPushButton{this};
     _okButton->setDefault(true);
+    _okButton->setFixedWidth(80);
 
     connect(_noButton, &QPushButton::clicked, this, &WelcomeWindow::noAction);
     connect(_okButton, &QPushButton::clicked, this, &WelcomeWindow::OKAction);
 
-    _dialogLayout->addWidget(_iconLabel, 1, 0, 3, 1);
-    _dialogLayout->addWidget(_titleLabel, 1, 1, 1, -1);
-    _dialogLayout->addWidget(_messageLabel, 2, 1, 2, -1);
-    _dialogLayout->addWidget(_spacer, 4, 1, 1, -1);
-    _dialogLayout->addWidget(_noButton, 7, 3, 1, 1);
-    _dialogLayout->addWidget(_okButton, 7, 4, 1, 1);
+    _dialogLayout->addWidget(_leftSpacer, 0, 0, 1, 2);
+    _dialogLayout->addWidget(_iconLabel, 0, 2, 1, 2);
+    _dialogLayout->addWidget(_rightSpacer, 0, 4, 1, 2);
+    _dialogLayout->addWidget(_titleLabel, 1, 0, 1, -1);
+    _dialogLayout->addWidget(_messageLabel, 2, 0, 1, -1);
+    _dialogLayout->addWidget(_buttonSpacer, 3, 0, 1, -1);
+    _dialogLayout->addWidget(_noButton, 4, 2, 1, 1);
+    _dialogLayout->addWidget(_okButton, 4, 3, 1, 1);
 
     setLayout(_dialogLayout);
 
@@ -138,9 +144,11 @@ void WelcomeWindow::setStyle(bool use_dark)
 {
     (void) (use_dark);
 #ifdef Q_OS_MAC
-    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
+    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: "
+                  "16px; }");
 #elif defined(Q_OS_WIN)
-    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 20px; }");
+    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: "
+                  "20px; }");
 #endif
 }
 
