@@ -25,7 +25,9 @@ target_sources(TestEntry
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../dictionary/dictionarysource.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../entry/definitionsset.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../entry/entry.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/cantoneseutils.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/chineseutils.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/mandarinutils.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/utils.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../sentence/sentenceset.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../sentence/sourcesentence.cpp

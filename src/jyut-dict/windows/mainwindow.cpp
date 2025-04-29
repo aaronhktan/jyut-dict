@@ -187,7 +187,11 @@ MainWindow::MainWindow(QWidget *parent) :
                                 QVariant{false})
                         .toBool();
     if (!welcomed) {
+#ifdef Q_OS_LINUX
+        QTimer::singleShot(500, this, [&]() { openWelcomeWindow(); });
+#else
         QTimer::singleShot(200, this, [&]() { openWelcomeWindow(); });
+#endif
     }
 
     // Check for updates

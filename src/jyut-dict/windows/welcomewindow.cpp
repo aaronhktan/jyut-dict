@@ -5,8 +5,6 @@
 #include "logic/utils/utils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
-#elif defined (Q_OS_LINUX)
-#include "logic/utils/utils_linux.h"
 #endif
 
 #include <QCoreApplication>
@@ -22,18 +20,18 @@ WelcomeWindow::WelcomeWindow(QWidget *parent)
 {
     _settings = Settings::getSettings();
 
-    setupUI();
-    translateUI();
-
     Qt::WindowFlags flags = windowFlags() | Qt::CustomizeWindowHint | Qt::WindowTitleHint;
     flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint | Qt::WindowFullscreenButtonHint);
     setWindowFlags(flags);
     setWindowModality(Qt::ApplicationModal);
 
+#ifndef Q_OS_LINUX
     move(parent->x() + (parent->width() - sizeHint().width()) / 2,
-      parent->y() + (parent->height() - sizeHint().height()) / 2);
+         parent->y() + (parent->height() - sizeHint().height()) / 2);
+#endif
 
-    layout()->setSizeConstraint(QLayout::SetFixedSize);
+    setupUI();
+    translateUI();
 }
 
 void WelcomeWindow::changeEvent(QEvent *event)
@@ -110,6 +108,11 @@ void WelcomeWindow::setupUI()
 #else
     setStyle(false);
 #endif
+
+#if defined(Q_OS_WIN) || defined(Q_OS_LINUX)
+    setWindowTitle(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                               Strings::PRODUCT_NAME));
+#endif
 }
 
 void WelcomeWindow::translateUI()
@@ -127,8 +130,8 @@ void WelcomeWindow::translateUI()
     _titleLabel->setText(
         tr("Welcome to %1 %2!")
             .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
-                                             Strings::PRODUCT_NAME))
-            .arg(Utils::CURRENT_VERSION));
+                                             Strings::PRODUCT_NAME),
+                 Utils::CURRENT_VERSION));
     _messageLabel->setText(
         tr("New Feature: Easier Search In Cantonese")
         + QCoreApplication::translate(Strings::STRINGS_CONTEXT,
@@ -138,6 +141,10 @@ void WelcomeWindow::translateUI()
     _okButton->setText(tr("OK"));
 
     resize(sizeHint());
+
+#ifndef Q_OS_LINUX
+    layout()->setSizeConstraint(QLayout::SetFixedSize);
+#endif
 }
 
 void WelcomeWindow::setStyle(bool use_dark)
@@ -149,6 +156,14 @@ void WelcomeWindow::setStyle(bool use_dark)
 #elif defined(Q_OS_WIN)
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: "
                   "20px; }");
+#elif defined(Q_OS_LINUX)
+    setStyleSheet("QPushButton { margin-left: 5px; margin-right: 5px; }");
+#endif
+
+    resize(sizeHint());
+
+#ifndef Q_OS_LINUX
+    layout()->setSizeConstraint(QLayout::SetFixedSize);
 #endif
 }
 
