@@ -131,10 +131,6 @@ void WelcomeWindow::translateUI()
     _noButton->setText(tr("No"));
     _okButton->setText(tr("OK"));
 
-#if defined(Q_OS_WIN) || defined(Q_OS_LINUX)
-    setWindowTitle(tr("Update Available!"));
-#endif
-
     resize(sizeHint());
 }
 
