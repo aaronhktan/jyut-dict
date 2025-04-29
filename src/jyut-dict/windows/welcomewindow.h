@@ -25,6 +25,15 @@ private:
     void translateUI(void);
     void setStyle(bool use_dark);
 
+#ifdef Q_OS_WIN
+    // On Windows, the window widget's background colour
+    // can't be changed. The workaround is to create
+    // a new QWidget (whose background colour can be changed)
+    // and then add it to the window's layout.
+    QWidget *_innerWidget;
+    QGridLayout *_outerWidgetLayout;
+#endif
+
     QLabel *_iconLabel;
     QWidget *_leftSpacer;
     QWidget *_rightSpacer;

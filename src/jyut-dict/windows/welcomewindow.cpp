@@ -25,7 +25,7 @@ WelcomeWindow::WelcomeWindow(QWidget *parent)
     setWindowFlags(flags);
     setWindowModality(Qt::ApplicationModal);
 
-#ifndef Q_OS_LINUX
+#ifdef Q_OS_MAC
     move(parent->x() + (parent->width() - sizeHint().width()) / 2,
          parent->y() + (parent->height() - sizeHint().height()) / 2);
 #endif
@@ -44,6 +44,10 @@ void WelcomeWindow::changeEvent(QEvent *event)
 
 void WelcomeWindow::setupUI()
 {
+#ifdef Q_OS_WIN
+    _innerWidget = new QWidget{this};
+#endif
+
     _dialogLayout = new QGridLayout{this};
     _dialogLayout->setSpacing(5);
     _dialogLayout->setContentsMargins(22, 11, 22, 22);
@@ -100,7 +104,14 @@ void WelcomeWindow::setupUI()
     _dialogLayout->addWidget(_noButton, 4, 2, 1, 1);
     _dialogLayout->addWidget(_okButton, 4, 3, 1, 1);
 
+#ifdef Q_OS_WIN
+    _innerWidget->setLayout(_dialogLayout);
+    _outerWidgetLayout = new QGridLayout{this};
+    _outerWidgetLayout->setContentsMargins(0, 0, 0, 0);
+    _outerWidgetLayout->addWidget(_innerWidget);
+#else
     setLayout(_dialogLayout);
+#endif
 
 #ifdef Q_OS_MAC
     // Set the style to match whether the user started dark mode
@@ -158,6 +169,29 @@ void WelcomeWindow::setStyle(bool use_dark)
                   "20px; }");
 #elif defined(Q_OS_LINUX)
     setStyleSheet("QPushButton { margin-left: 5px; margin-right: 5px; }");
+#endif
+
+#ifdef Q_OS_WIN
+    QFont font;
+    if (Settings::isCurrentLocaleTraditionalHan()) {
+        font = QFont{"Microsoft Jhenghei", 10};
+    } else if (Settings::isCurrentLocaleSimplifiedHan()) {
+        font = QFont{"Microsoft YaHei", 10};
+    } else if (Settings::isCurrentLocaleHan()) {
+        font = QFont{"Microsoft YaHei", 10};
+    } else {
+        font = QFont{"Microsoft YaHei", 10};
+    }
+    font.setStyleHint(QFont::System, QFont::PreferAntialias);
+    _messageLabel->setFont(font);
+#endif
+
+#ifndef Q_OS_MAC
+    _innerWidget->setAttribute(Qt::WA_StyledBackground);
+    _innerWidget->setObjectName("innerWidget");
+    _innerWidget->setStyleSheet("QWidget#innerWidget {"
+                  "   background-color: palette(base);"
+                  "} ");
 #endif
 
     resize(sizeHint());
