@@ -28,7 +28,7 @@ SearchLineEdit::SearchLineEdit(
     _search = sqlSearch;
     _timer = new QTimer{this};
     std::string locale{"zh_HK"};
-    _wrapper = std::make_unique<SpeechWrapper>(locale);
+    _wrapper = std::make_unique<TranscriberWrapper>(locale);
     _wrapper->subscribe(this);
 
     setupUI();

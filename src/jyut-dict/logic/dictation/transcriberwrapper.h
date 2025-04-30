@@ -7,15 +7,15 @@
 #include <string>
 #include <unordered_set>
 
-// The SpeechWrapper class presents a C++ interface for the
+// The TranscriberWrapper class presents a C++ interface for the
 // speech-to-text APIs in AVFoundation/Speech macOS frameworks.
 
-class SpeechWrapper : public ITranscriptionResultPublisher,
-                      public ITranscriptionResultSubscriber
+class TranscriberWrapper : public ITranscriptionResultPublisher,
+                           public ITranscriptionResultSubscriber
 {
 public:
-    SpeechWrapper(std::string &locale);
-    ~SpeechWrapper();
+    TranscriberWrapper(std::string &locale);
+    ~TranscriberWrapper();
 
     // We have to forward transcription results to the C++ classes
     void subscribe(ITranscriptionResultSubscriber *subscriber) override;

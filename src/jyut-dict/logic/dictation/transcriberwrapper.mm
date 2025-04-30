@@ -1,56 +1,62 @@
-#include "speechwrapper.h"
+#include "transcriberwrapper.h"
 
-#import "speech_mac.h"
+#import "transcriber.h"
 
 #include <QDebug>
 
 #import <Speech/Speech.h>
 
-SpeechWrapper::SpeechWrapper(std::string &locale)
+TranscriberWrapper::TranscriberWrapper(std::string &locale)
 {
-    // Use __bridge_retained to ensure proper ownership is transferred and not autoreleased
-    _helper = (__bridge_retained void *) [[SpeechHelper alloc]
+    // __bridge_retained allows us to treat the Objective-C object as
+    // a C-style pointer, transferring ownership to us. This means
+    // ARC no longer governs the lifecycle of the object, and we are
+    // now responsible for manually releasing the object when we are done
+    // with it.
+    _helper = (__bridge_retained void *) [[Transcriber alloc]
         initWithLocaleIdentifier:[NSString stringWithUTF8String:locale.c_str()]];
 
-    SpeechHelper *speechHelper = (__bridge SpeechHelper *) _helper;
+    // In order to use the (C-style) Transcriber pointer as an Objective-C class,
+    // we must __bridge it. No ownership is transferred in this case, so we are
+    // still responsible for releasing it ourselves.
+    Transcriber *speechHelper = (__bridge Transcriber *) _helper;
     [speechHelper subscribe:this];
 }
 
-SpeechWrapper::~SpeechWrapper()
+TranscriberWrapper::~TranscriberWrapper()
 {
     if (_helper) {
         CFRelease(_helper);
     }
 }
 
-void SpeechWrapper::subscribe(ITranscriptionResultSubscriber *subscriber)
+void TranscriberWrapper::subscribe(ITranscriptionResultSubscriber *subscriber)
 {
     _subscribers.emplace(subscriber);
 }
 
-void SpeechWrapper::unsubscribe(ITranscriptionResultSubscriber *subscriber)
+void TranscriberWrapper::unsubscribe(ITranscriptionResultSubscriber *subscriber)
 {
     _subscribers.extract(subscriber);
 }
 
-void SpeechWrapper::notifySubscribers(std::variant<bool, std::string> result)
+void TranscriberWrapper::notifySubscribers(std::variant<bool, std::string> result)
 {
     for (const auto s : _subscribers) {
         s->transcriptionResult(result);
     }
 }
 
-void SpeechWrapper::transcriptionResult(std::variant<bool, std::string> transcription)
+void TranscriberWrapper::transcriptionResult(std::variant<bool, std::string> transcription)
 {
     notifySubscribers(transcription);
 }
 
-void SpeechWrapper::startRecognition()
+void TranscriberWrapper::startRecognition()
 {
     // Check the speech recognition authorization status
     [SFSpeechRecognizer requestAuthorization:^(SFSpeechRecognizerAuthorizationStatus status) {
-        SpeechHelper *speechHelper = (__bridge SpeechHelper *)
-            _helper; // Always bridge the helper back
+        Transcriber *speechHelper = (__bridge Transcriber *) _helper;
 
         switch (status) {
         case SFSpeechRecognizerAuthorizationStatusAuthorized:
@@ -72,11 +78,11 @@ void SpeechWrapper::startRecognition()
     }];
 }
 
-void SpeechWrapper::stopRecognition()
+void TranscriberWrapper::stopRecognition()
 {
     // Ensure the helper is initialized before stopping
     if (_helper) {
-        SpeechHelper *speechHelper = (__bridge SpeechHelper *) _helper;
+        Transcriber *speechHelper = (__bridge Transcriber *) _helper;
         [speechHelper stop];
     } else {
         NSLog(@"SpeechHelper is not initialized or has been released.");

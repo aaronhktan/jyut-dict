@@ -1,4 +1,4 @@
-#import "speech_mac.h"
+#import "transcriber.h"
 
 #include "itranscriptionresultpublisher.h"
 
@@ -28,7 +28,7 @@ private:
     std::unordered_set<ITranscriptionResultSubscriber *> _subscribers;
 };
 
-@implementation SpeechHelper {
+@implementation Transcriber {
     TranscriptionResultPublisherImpl *_publisher;
 }
 

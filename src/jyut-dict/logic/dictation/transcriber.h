@@ -1,5 +1,5 @@
-#ifndef SPEECH_MAC_H
-#define SPEECH_MAC_H
+#ifndef TRANSCRIBER_H
+#define TRANSCRIBER_H
 
 #include "itranscriptionresultsubscriber.h"
 
@@ -7,10 +7,10 @@
 #import <Foundation/Foundation.h>
 #import <Speech/Speech.h>
 
-// The SpeechHelper interface is a wrapper to start and stop
+// The Transcriber interface is a wrapper to start and stop
 // speech-to-text recognition on macOS.
 
-@interface SpeechHelper : NSObject
+@interface Transcriber : NSObject
 
 @property(nonatomic, strong) SFSpeechRecognizer *recognizer;
 @property(nonatomic, strong) AVAudioEngine *audioEngine;
@@ -28,4 +28,4 @@
 
 @end
 
-#endif // SPEECH_MAC_H
+#endif // TRANSCRIBER_H

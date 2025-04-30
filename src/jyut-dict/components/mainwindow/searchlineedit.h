@@ -4,7 +4,7 @@
 #include "components/mainwindow/isearchlineedit.h"
 #include "logic/database/sqluserhistoryutils.h"
 #include "logic/dictation/itranscriptionresultsubscriber.h"
-#include "logic/dictation/speechwrapper.h"
+#include "logic/dictation/transcriberwrapper.h"
 #include "logic/search/isearch.h"
 #include "logic/search/isearchoptionsmediator.h"
 
@@ -65,7 +65,7 @@ private:
 
     SearchParameters _parameters;
 
-    std::unique_ptr<SpeechWrapper> _wrapper;
+    std::unique_ptr<TranscriberWrapper> _wrapper;
 
     bool _paletteRecentlyChanged = false;
 

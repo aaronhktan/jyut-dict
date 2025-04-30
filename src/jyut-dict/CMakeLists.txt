@@ -312,8 +312,10 @@ if (APPLE)
 
 
     TARGET_SOURCES(CantoneseDictionary
-        PRIVATE logic/dictation/speech_mac.mm
-        PRIVATE logic/dictation/speechwrapper.mm
+        PRIVATE logic/dictation/transcriber.h
+        PRIVATE logic/dictation/transcriber.mm
+        PRIVATE logic/dictation/transcriberwrapper.h
+        PRIVATE logic/dictation/transcriberwrapper.mm
         PRIVATE logic/utils/utils_mac.mm
         PRIVATE resources/db/dict.db
         PRIVATE resources/db/user.db
