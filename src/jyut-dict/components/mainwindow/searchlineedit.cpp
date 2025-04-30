@@ -27,6 +27,7 @@ SearchLineEdit::SearchLineEdit(
     _mediator = mediator;
     _search = sqlSearch;
     _timer = new QTimer{this};
+    _wrapper = std::make_unique<SpeechRecognizerWrapper>();
 
     setupUI();
     translateUI();
@@ -78,33 +79,33 @@ void SearchLineEdit::updateParameters(SearchParameters parameters)
 void SearchLineEdit::search(void)
 {
     switch (_parameters) {
-        case SearchParameters::SIMPLIFIED: {
-            _search->searchSimplified(text().trimmed());
-            break;
-        }
-        case SearchParameters::TRADITIONAL: {
-            _search->searchTraditional(text().trimmed());
-            break;
-        }
-        case SearchParameters::PINYIN: {
-            _search->searchPinyin(text().trimmed());
-            break;
-        }
-        case SearchParameters::JYUTPING: {
-            _search->searchJyutping(text().trimmed());
-            break;
-        }
-        case SearchParameters::ENGLISH: {
-            _search->searchEnglish(text().trimmed());
-            break;
-        }
-        case SearchParameters::AUTO_DETECT: {
-            _search->searchAutoDetect(text().trimmed());
-            break;
-        }
-        default: {
-            break;
-        }
+    case SearchParameters::SIMPLIFIED: {
+        _search->searchSimplified(text().trimmed());
+        break;
+    }
+    case SearchParameters::TRADITIONAL: {
+        _search->searchTraditional(text().trimmed());
+        break;
+    }
+    case SearchParameters::PINYIN: {
+        _search->searchPinyin(text().trimmed());
+        break;
+    }
+    case SearchParameters::JYUTPING: {
+        _search->searchJyutping(text().trimmed());
+        break;
+    }
+    case SearchParameters::ENGLISH: {
+        _search->searchEnglish(text().trimmed());
+        break;
+    }
+    case SearchParameters::AUTO_DETECT: {
+        _search->searchAutoDetect(text().trimmed());
+        break;
+    }
+    default: {
+        break;
+    }
     }
 
     addSearchTermToHistory(_parameters);
@@ -228,6 +229,11 @@ void SearchLineEdit::addSearchTermToHistory(SearchParameters parameters) const
 
 void SearchLineEdit::searchTriggered(void)
 {
+    _wrapper->startRecognition();
+    QTimer::singleShot(5000, [&]() {
+        _wrapper->stopRecognition();
+    });
+
     checkClearVisibility();
     if (_settings->value("Search/autoDetectLanguage", QVariant{true}).toBool()) {
         _search->searchAutoDetect(text().trimmed());

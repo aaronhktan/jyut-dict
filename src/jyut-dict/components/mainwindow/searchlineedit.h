@@ -3,6 +3,7 @@
 
 #include "components/mainwindow/isearchlineedit.h"
 #include "logic/database/sqluserhistoryutils.h"
+#include "logic/dictation/speechrecognizerwrapper.h"
 #include "logic/search/isearch.h"
 #include "logic/search/isearchoptionsmediator.h"
 
@@ -54,6 +55,8 @@ private:
     QTimer *_timer;
 
     SearchParameters _parameters;
+
+    std::unique_ptr<SpeechRecognizerWrapper> _wrapper;
 
     bool _paletteRecentlyChanged = false;
 

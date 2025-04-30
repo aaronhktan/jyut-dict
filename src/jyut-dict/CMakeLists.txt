@@ -190,8 +190,23 @@ set_target_properties(CantoneseDictionary PROPERTIES
 )
 
 if (APPLE)
+    find_library(SpeechFramework Speech)
+    find_library(AVFoundationFramework AVFoundation)
     target_link_libraries(CantoneseDictionary PRIVATE "-framework AppKit")
+    target_link_libraries(CantoneseDictionary
+        PRIVATE
+        ${SpeechFramework}
+        ${AVFoundationFramework}
+    )
+
+    target_compile_options(CantoneseDictionary PRIVATE
+        -fobjc-arc  # Enable ARC for Objective-C and Objective-C++ files
+    )
+
+
     TARGET_SOURCES(CantoneseDictionary
+        PRIVATE logic/dictation/speechhelper.mm
+        PRIVATE logic/dictation/speechrecognizerwrapper.mm
         PRIVATE logic/utils/utils_mac.mm
         PRIVATE resources/db/dict.db
         PRIVATE resources/db/user.db
