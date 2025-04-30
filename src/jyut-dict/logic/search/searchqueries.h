@@ -288,17 +288,20 @@ constexpr auto SEARCH_TRADITIONAL_QUERY
       "  definitions "
       "FROM matching_entries; ";
 
+constexpr auto GLOB_STR = "GLOB";
+constexpr auto REGEXP_STR = "REGEXP";
+
 constexpr auto SEARCH_JYUTPING_EXISTS_QUERY = "SELECT EXISTS ( "
                                               "  SELECT "
                                               "    rowid "
                                               "  FROM entries "
-                                              "  WHERE jyutping REGEXP ? "
+                                              "  WHERE jyutping %1 ? "
                                               ") AS existence ";
 
 constexpr auto SEARCH_JYUTPING_QUERY
     = "WITH "
       "  matching_entry_ids AS ( "
-      "    SELECT rowid FROM entries WHERE jyutping REGEXP ? "
+      "    SELECT rowid FROM entries WHERE jyutping %1 ? "
       "  ), "
       "  matching_definition_ids AS ( "
       "    SELECT definition_id, definition "

@@ -13,6 +13,7 @@
 #include "windows/aboutwindow.h"
 #include "windows/historywindow.h"
 #include "windows/settingswindow.h"
+#include "windows/welcomewindow.h"
 
 #include <QAction>
 #include <QEvent>
@@ -90,9 +91,10 @@ private:
     QPointer<SettingsWindow> _settingsWindow;
     QPointer<HistoryWindow> _historyWindow;
     QPointer<FavouriteSplitter> _favouritesWindow;
+    QPointer<WelcomeWindow> _welcomeWindow;
 
-    QProgressDialog *_updateDialog;
-    QProgressDialog *_databaseMigrationDialog;
+    QProgressDialog *_updateDialog = nullptr;
+    QProgressDialog *_databaseMigrationDialog = nullptr;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
     std::shared_ptr<SQLSearch> _sqlSearch;
@@ -101,6 +103,13 @@ private:
     std::unique_ptr<SQLDatabaseUtils> _utils;
 
     bool _recentlyCheckedForUpdates = false;
+
+    // Cached information for various dialogs
+    bool _databaseMigrating = false;
+    bool _updateAvailable = false;
+    std::string _updateVersionNumber;
+    std::string _updateURL;
+    std::string _updateDescription;
 
     void installTranslator(void);
     void translateUI(void);
@@ -131,6 +140,7 @@ private:
     void openSettingsWindow(void);
     void openHistoryWindow(void);
     void openFavouritesWindow(void);
+    void openWelcomeWindow(void);
 
     void checkForUpdate(bool showProgress);
 
@@ -157,8 +167,10 @@ public slots:
                                std::string description,
                                bool showIfNoUpdate = false);
     void notifyDatabaseMigration(void);
+    void finishedDatabaseMigration(bool success);
     void forwardSearchHistoryItem(const searchTermHistoryItem &pair);
     void forwardViewHistoryItem(const Entry &entry);
+    void searchRequested(void);
     void updateStyleRequested(void);
 };
 

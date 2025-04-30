@@ -30,7 +30,6 @@ public:
     explicit MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
                          std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                          QWidget *parent = nullptr);
-    ~MainToolBar() override;
 
     void changeEvent(QEvent *event) override;
     void focusInEvent(QFocusEvent *event) override;
@@ -60,7 +59,7 @@ private:
     QToolButton *_openHistoryButton;
     QToolButton *_openFavouritesButton;
     QToolButton *_openSettingsButton;
-    ISearchOptionsMediator *_searchOptions;
+    std::shared_ptr<ISearchOptionsMediator> _searchOptions;
 
 signals:
     void searchBarTextChange(void);
@@ -69,6 +68,7 @@ public slots:
     void forwardSearchHistoryItem(const searchTermHistoryItem &pair) const;
     void searchQueryRequested(const QString &query,
                               const SearchParameters &parameters) const;
+    void searchRequested(void) const;
     void updateStyleRequested(void);
 };
 

@@ -17,7 +17,7 @@
 
 // The SettingsWindow allows users to modify settings. Surprise!
 
-constexpr auto NUM_OF_TABS = 5;
+constexpr auto NUM_OF_TABS = 6;
 
 class SettingsWindow : public QMainWindow
 {
@@ -54,11 +54,13 @@ private:
     bool _paletteRecentlyChanged = false;
 
 signals:
+    void triggerSearch(void);
     void updateStyle(void);
 
 public slots:
     void paintWithApplicationState(Qt::ApplicationState state);
 
+    void searchRequested(void);
     void updateStyleRequested(void);
 };
 

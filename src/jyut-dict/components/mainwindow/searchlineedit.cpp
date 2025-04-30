@@ -16,7 +16,7 @@
 #include <vector>
 
 SearchLineEdit::SearchLineEdit(
-    ISearchOptionsMediator *mediator,
+    std::shared_ptr<ISearchOptionsMediator> mediator,
     std::shared_ptr<ISearch> sqlSearch,
     std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
     QWidget *parent)
@@ -75,7 +75,7 @@ void SearchLineEdit::updateParameters(SearchParameters parameters)
     _parameters = parameters;
 }
 
-void SearchLineEdit::search()
+void SearchLineEdit::search(void)
 {
     switch (_parameters) {
         case SearchParameters::SIMPLIFIED: {
@@ -124,16 +124,10 @@ void SearchLineEdit::setupUI(void)
     setMinimumHeight(30);
 #endif
 
-    connect(this, &QLineEdit::textChanged, this, [&]() {
-        checkClearVisibility();
-        if (_settings->value("Interface/searchAutoDetect", QVariant{true})
-                .toBool()) {
-            _search->searchAutoDetect(text().trimmed());
-            addSearchTermToHistory(SearchParameters::AUTO_DETECT);
-        } else {
-            search();
-        }
-    });
+    connect(this,
+            &QLineEdit::textChanged,
+            this,
+            &SearchLineEdit::searchTriggered);
 }
 
 void SearchLineEdit::translateUI(void)
@@ -205,10 +199,9 @@ void SearchLineEdit::setStyle(bool use_dark)
             _searchLineEdit->setIcon(search);
             _clearLineEdit->setIcon(clear);
     }
-    //#endif
 }
 
-void SearchLineEdit::checkClearVisibility()
+void SearchLineEdit::checkClearVisibility(void)
 {
     if (text().isEmpty() || !hasFocus()) {
         // Don't add the clear line edit action if the widget doesn't have focus!
@@ -231,4 +224,15 @@ void SearchLineEdit::addSearchTermToHistory(SearchParameters parameters) const
         }
     });
     _timer->start(500);
+}
+
+void SearchLineEdit::searchTriggered(void)
+{
+    checkClearVisibility();
+    if (_settings->value("Search/autoDetectLanguage", QVariant{true}).toBool()) {
+        _search->searchAutoDetect(text().trimmed());
+        addSearchTermToHistory(SearchParameters::AUTO_DETECT);
+    } else {
+        search();
+    }
 }

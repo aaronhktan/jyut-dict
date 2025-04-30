@@ -463,7 +463,7 @@ void TestMandarinUtils::segmentPinyinDigitsApostrophe()
 void TestMandarinUtils::segmentPinyinRemoveSpecialCharacters()
 {
     std::vector<std::string> result;
-    MandarinUtils::segmentPinyin("guang*dong!!", result);
+    MandarinUtils::segmentPinyin("guang。dong？", result);
     std::vector<std::string> expected = {"guang", "dong"};
     QCOMPARE(result, expected);
 }

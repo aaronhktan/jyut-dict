@@ -43,15 +43,19 @@ bool updateSettings(QSettings &settings)
     int fileSettingsVersion = settings.value("Metadata/version", QVariant{0})
                                   .toInt();
     if (fileSettingsVersion != SETTINGS_VERSION) {
-        if (fileSettingsVersion == 0) {
+        switch (fileSettingsVersion) {
+        case 0:
+        case 1: {
             // Due to an oversight, a metadata version was never written to file
             // for version 0 or version 1.
             // However, they are substantially the same, so it is safe to
             // migrate to version 2 with the same codepath.
             migrateSettingsFromOneToTwo(settings);
         }
-        settings.setValue("Metadata/version", QVariant{SETTINGS_VERSION});
-        settings.sync();
+        case 2: {
+            migrateSettingsFromTwoToThree(settings);
+        }
+        }
     }
     return true;
 }
@@ -133,7 +137,21 @@ bool migrateSettingsFromOneToTwo(QSettings &settings)
         }
     }
 
-    settings.setValue("Metadata/version", QVariant{SETTINGS_VERSION});
+    settings.setValue("Metadata/version", 2);
+    settings.sync();
+
+    return true;
+}
+
+bool migrateSettingsFromTwoToThree(QSettings &settings)
+{
+    if (settings.contains("Interface/searchAutoDetect")) {
+        settings.setValue("Search/Search/autoDetectLanguage",
+                          settings.value("Interface/searchAutoDetect"));
+        settings.remove("Interface/searchAutoDetect");
+    }
+
+    settings.setValue("Metadata/version", 3);
     settings.sync();
 
     return true;

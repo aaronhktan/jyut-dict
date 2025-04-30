@@ -40,7 +40,9 @@ target_sources(TestSqlUserDataUtils
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../sentence/sentenceset.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../sentence/sourcesentence.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../settings/settings.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/cantoneseutils.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/chineseutils.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/mandarinutils.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/scriptdetector.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/utils.cpp
 )

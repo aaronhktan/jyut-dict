@@ -92,6 +92,7 @@ set(PROJECT_SOURCES
         components/settings/advancedtab.cpp
         components/settings/contacttab.cpp
         components/settings/dictionarytab.cpp
+        components/settings/searchtab.cpp
         components/settings/settingstab.cpp
         components/settings/texttab.cpp
         dialogs/defaultdialog.cpp
@@ -134,6 +135,7 @@ set(PROJECT_SOURCES
         windows/mainwindow.cpp
         windows/settingswindow.cpp
         windows/updatewindow.cpp
+        windows/welcomewindow.cpp
         ${TS_FILES}
 )
 

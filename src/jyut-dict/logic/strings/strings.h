@@ -122,6 +122,29 @@ constexpr auto LEARN_MANDARIN_IPA_URL = QT_TRANSLATE_NOOP(
     "IPA_chart_trans/pdfs/JIPA_2011_[2007]_zho.pdf style=\"color: %1; "
     "text-decoration: none\">Learn Mandarin IPA →</a>");
 
+#ifdef Q_OS_WINDOWS
+constexpr auto FUZZY_JYUTPING_EXPLAINER = QT_TRANSLATE_NOOP(
+    "strings",
+    "<p style=\"color: %1\">Fuzzy Jyutping finds results for "
+    "non-Jyutping spellings and informal pronunciations. For example, "
+    "\"gum yut\" will find \"今日\" (\"gam1 jat6\" in Jyutping); \"lay\" "
+    "will find \"你\" (\"nei5\"). Please note that this feature will increase "
+    "time before results are found.</p>");
+#else
+constexpr auto FUZZY_JYUTPING_EXPLAINER = QT_TRANSLATE_NOOP(
+    "strings",
+    "<p style=\"color: %1\">Fuzzy Jyutping finds results for "
+    "non-Jyutping spellings and informal pronunciations. For example, "
+    "\"gum yut\" will find \"今日\" (\"gam1 jat6\" in Jyutping); \"lay\" "
+    "will find \"你\" (\"nei5\").</p>");
+#endif
+constexpr auto DANGEROUS_FUZZY_JYUTPING_EXPLAINER = QT_TRANSLATE_NOOP(
+    "strings",
+    "<p style=\"color: %1\">Several fuzzy Jyutping substitutions are "
+    "risky. These include <span>(1) ts -> c</span>, and <span>(2) kwu -> "
+    "(g|k)w?u.</span> Do not enable this setting unless you are confident that "
+    "you understand and accept the consequences.</p>");
+
 constexpr auto TTS_EXPLAINER = QT_TRANSLATE_NOOP(
     "strings",
     "<p style=\"color: %1;\">Google text-to-speech is a collection of MP3 "

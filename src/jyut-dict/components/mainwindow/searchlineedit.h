@@ -23,7 +23,7 @@ class SearchLineEdit : public QLineEdit, public ISearchLineEdit
     Q_OBJECT
 
 public:
-    explicit SearchLineEdit(ISearchOptionsMediator *mediator,
+    explicit SearchLineEdit(std::shared_ptr<ISearchOptionsMediator> mediator,
                             std::shared_ptr<ISearch> manager,
                             std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                             QWidget *parent = nullptr);
@@ -40,11 +40,11 @@ private:
     void translateUI(void);
     void setStyle(bool use_dark);
 
-    void checkClearVisibility();
+    void checkClearVisibility(void);
 
     void addSearchTermToHistory(SearchParameters parameters) const;
 
-    ISearchOptionsMediator *_mediator;
+    std::shared_ptr<ISearchOptionsMediator> _mediator;
     std::shared_ptr<ISearch> _search;
     std::shared_ptr<SQLUserHistoryUtils> _sqlHistoryUtils;
     std::unique_ptr<QSettings> _settings;
@@ -56,6 +56,9 @@ private:
     SearchParameters _parameters;
 
     bool _paletteRecentlyChanged = false;
+
+public slots:
+    void searchTriggered(void);
 };
 
 #endif // SEARCHLINEEDIT_H

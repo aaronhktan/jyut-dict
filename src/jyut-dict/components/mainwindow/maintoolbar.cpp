@@ -1,13 +1,13 @@
 #include "maintoolbar.h"
 
 #include "logic/search/searchoptionsmediator.h"
-#include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
 #include "logic/utils/utils_linux.h"
 #elif defined(Q_OS_WIN)
+#include "logic/settings/settings.h"
 #include "logic/utils/utils_windows.h"
 #endif
 #include "logic/utils/utils_qt.h"
@@ -24,7 +24,7 @@ MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
                                     sqlHistoryUtils,
                                     this);
 
-    _searchOptions = new SearchOptionsMediator{};
+    _searchOptions = std::make_shared<SearchOptionsMediator>();
     _settings = Settings::getSettings(this);
 
     _searchOptions->registerLineEdit(_searchBar);
@@ -38,11 +38,6 @@ MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
             &MainToolBar::searchBarTextChange);
 
     setupUI();
-}
-
-MainToolBar::~MainToolBar()
-{
-    delete _searchOptions;
 }
 
 void MainToolBar::setupUI(void)
@@ -291,6 +286,11 @@ void MainToolBar::searchQueryRequested(const QString &query,
 {
     _searchBar->setText(query);
     _optionsBox->setOption(parameters);
+}
+
+void MainToolBar::searchRequested(void) const
+{
+    _searchBar->searchTriggered();
 }
 
 void MainToolBar::updateStyleRequested(void)

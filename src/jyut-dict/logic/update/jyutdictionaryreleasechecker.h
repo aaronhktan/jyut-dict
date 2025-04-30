@@ -15,7 +15,8 @@ class JyutDictionaryReleaseChecker : public QObject, public IUpdateChecker
 {
     Q_OBJECT
 public:
-    explicit JyutDictionaryReleaseChecker(QObject *parent);
+    explicit JyutDictionaryReleaseChecker(QObject *parent,
+                                          bool preConnectEnabled = true);
 
     void checkForNewUpdate(void) override;
 

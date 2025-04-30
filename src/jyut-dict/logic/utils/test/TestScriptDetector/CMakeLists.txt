@@ -23,7 +23,9 @@ target_include_directories(ScriptDetector PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..
 
 target_sources(ScriptDetector
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../scriptdetector.cpp
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../chineseutils.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/cantoneseutils.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/chineseutils.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/mandarinutils.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../utils.cpp
 )
 
