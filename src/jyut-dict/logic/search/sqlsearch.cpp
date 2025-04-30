@@ -82,8 +82,6 @@ void prepareJyutpingBindValues(const QString &searchTerm,
                     + QString{(searchExactMatch || dontAppendWildcard) ? ""
                                                                        : "*"};
     }
-
-    qDebug() << regexTerm;
 }
 
 void preparePinyinBindValues(const QString &searchTerm, QString &globTerm)
