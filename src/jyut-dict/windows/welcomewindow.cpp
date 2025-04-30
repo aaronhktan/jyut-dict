@@ -59,11 +59,8 @@ void WelcomeWindow::setupUI()
                                       iconHeight,
                                       Qt::KeepAspectRatio,
                                       Qt::SmoothTransformation));
-    _iconLabel->setStyleSheet("QLabel { padding: 0px; margin-top: 0px; }");
 
     _titleLabel = new QLabel{this};
-    _titleLabel->setStyleSheet(
-        "QLabel { font-weight: bold; font-size: 16px; margin-bottom: 11px; }");
     _titleLabel->setAlignment(Qt::AlignCenter);
 
     _messageLabel = new QLabel{this};
@@ -167,6 +164,10 @@ void WelcomeWindow::setStyle(bool use_dark)
     setStyleSheet("QPushButton { margin-left: 5px; margin-right: 5px; }");
 #endif
 
+    _iconLabel->setStyleSheet("QLabel { padding: 0px; margin-top: 0px; }");
+    _titleLabel->setStyleSheet(
+        "QLabel { font-weight: bold; font-size: 16px; margin-bottom: 11px; }");
+
 #ifdef Q_OS_WIN
     QFont font;
     if (Settings::isCurrentLocaleTraditionalHan()) {
@@ -180,14 +181,12 @@ void WelcomeWindow::setStyle(bool use_dark)
     }
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
     _messageLabel->setFont(font);
-#endif
 
-#ifndef Q_OS_MAC
     _innerWidget->setAttribute(Qt::WA_StyledBackground);
     _innerWidget->setObjectName("innerWidget");
     _innerWidget->setStyleSheet("QWidget#innerWidget {"
-                  "   background-color: palette(base);"
-                  "} ");
+                                "   background-color: palette(base);"
+                                "} ");
 #endif
 
     resize(sizeHint());
