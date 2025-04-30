@@ -34,9 +34,10 @@ void prepareJyutpingBindValues(const QString &searchTerm,
 
     // Attempt to correct romanization issues (but not pronunciation!)
     QString correctedSearchTerm{searchTerm};
+
     if (!searchExactMatch && fuzzyJyutping) {
         CantoneseUtils::jyutpingAutocorrect(
-            searchTerm,
+            searchTerm.chopped(dontAppendWildcard ? 1 : 0),
             correctedSearchTerm,
             /* unsafeSubstitutions */ unsafeFuzzyJyutping);
     }
@@ -81,6 +82,8 @@ void prepareJyutpingBindValues(const QString &searchTerm,
                     + QString{(searchExactMatch || dontAppendWildcard) ? ""
                                                                        : "*"};
     }
+
+    qDebug() << regexTerm;
 }
 
 void preparePinyinBindValues(const QString &searchTerm, QString &globTerm)

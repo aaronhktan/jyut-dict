@@ -56,8 +56,6 @@ bool updateSettings(QSettings &settings)
             migrateSettingsFromTwoToThree(settings);
         }
         }
-        settings.setValue("Metadata/version", QVariant{SETTINGS_VERSION});
-        settings.sync();
     }
     return true;
 }
@@ -139,7 +137,7 @@ bool migrateSettingsFromOneToTwo(QSettings &settings)
         }
     }
 
-    settings.setValue("Metadata/version", QVariant{SETTINGS_VERSION});
+    settings.setValue("Metadata/version", 2);
     settings.sync();
 
     return true;
@@ -152,6 +150,9 @@ bool migrateSettingsFromTwoToThree(QSettings &settings)
                           settings.value("Interface/searchAutoDetect"));
         settings.remove("Interface/searchAutoDetect");
     }
+
+    settings.setValue("Metadata/version", 3);
+    settings.sync();
 
     return true;
 }

@@ -8,8 +8,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include <QDebug>
-
 namespace {
 std::unordered_set<std::string> specialCharacters
     = {".",  "。", ",",  "，", "！", "？", "%",  "－", "…",  "⋯",
