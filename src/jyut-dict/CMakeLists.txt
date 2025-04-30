@@ -39,6 +39,111 @@ set(TS_FILES
     resources/translations/jyutdictionary-zh_Hans_HK.ts
     resources/translations/jyutdictionary-zh_Hant_HK.ts)
 
+set(PROJECT_HEADERS
+        components/definitioncard/definitioncardsection.h
+        components/definitioncard/definitioncardwidget.h
+        components/definitioncard/definitioncontentwidget.h
+        components/definitioncard/definitionheaderwidget.h
+        components/definitioncard/icardheaderwidget.h
+        components/dictionarylist/dictionarylistdelegate.h
+        components/dictionarylist/dictionarylistmodel.h
+        components/dictionarylist/dictionarylistview.h
+        components/entrysearchresult/resultlistdelegate.h
+        components/entrysearchresult/resultlistmodel.h
+        components/entrysearchresult/resultlistview.h
+        components/entryview/entryactionwidget.h
+        components/entryview/entrycontentwidget.h
+        components/entryview/entryheaderwidget.h
+        components/entryview/entryscrollarea.h
+        components/entryview/entryscrollareawidget.h
+        components/entryview/entryviewsentencecardsection.h
+        components/favouritewindow/favouritesplitter.h
+        components/historyview/searchhistorylistdelegate.h
+        components/historyview/searchhistorylistmodel.h
+        components/historyview/searchhistorylistview.h
+        components/historyview/searchhistorytab.h
+        components/historyview/viewhistorylistdelegate.h
+        components/historyview/viewhistorylistmodel.h
+        components/historyview/viewhistorylistview.h
+        components/historyview/viewhistorytab.h
+        components/layouts/flowlayout.h
+        components/magnifywindow/magnifyscrollarea.h
+        components/magnifywindow/magnifyscrollareawidget.h
+        components/mainwindow/mainsplitter.h
+        components/mainwindow/maintoolbar.h
+        components/mainwindow/searchlineedit.h
+        components/mainwindow/searchoptionsradiogroupbox.h
+        components/related/relatedbutton.h
+        components/related/relatedbuttoncontentwidget.h
+        components/related/relatedbuttonheaderwidget.h
+        components/related/relatedsection.h
+        components/sentencecard/loadingwidget.h
+        components/sentencecard/sentencecardwidget.h
+        components/sentencecard/sentencecontentwidget.h
+        components/sentencecard/sentenceheaderwidget.h
+        components/sentencesearchresult/sentenceresultlistdelegate.h
+        components/sentencesearchresult/sentenceresultlistmodel.h
+        components/sentencesearchresult/sentenceresultlistview.h
+        components/sentenceview/sentencescrollarea.h
+        components/sentenceview/sentencescrollareawidget.h
+        components/sentenceview/sentenceviewcontentwidget.h
+        components/sentenceview/sentenceviewheaderwidget.h
+        components/sentenceview/sentenceviewsentencecardsection.h
+        components/sentencewindow/sentencesplitter.h
+        components/settings/advancedtab.h
+        components/settings/contacttab.h
+        components/settings/dictionarytab.h
+        components/settings/searchtab.h
+        components/settings/settingstab.h
+        components/settings/texttab.h
+        dialogs/defaultdialog.h
+        dialogs/dictionarytabfailuredialog.h
+        dialogs/downloadaudiodialog.h
+        dialogs/downloadresultdialog.h
+        dialogs/entryspeakerrordialog.h
+        dialogs/exportdatabasedialog.h
+        dialogs/noupdatedialog.h
+        dialogs/overwriteconflictingdictionarydialog.h
+        dialogs/resetsettingsdialog.h
+        dialogs/restoredatabasedialog.h
+        logic/database/queryparseutils.h
+        logic/database/sqldatabasemanager.h
+        logic/database/sqldatabaseutils.h
+        logic/database/sqluserdatautils.h
+        logic/database/sqluserhistoryutils.h
+        logic/dictation/itranscriptionresultpublisher.h
+        logic/dictation/itranscriptionresultsubscriber.h
+        logic/dictionary/dictionarymetadata.h
+        logic/dictionary/dictionarysource.h
+        logic/download/downloader.h
+        logic/entry/definitionsset.h
+        logic/entry/entry.h
+        logic/entry/entryspeaker.h
+        logic/search/isearch.h
+        logic/search/isearchobservable.h
+        logic/search/isearchobserver.h
+        logic/search/isearchoptionsmediator.h
+        logic/search/searchoptionsmediator.h
+        logic/search/sqlsearch.h
+        logic/sentence/sentenceset.h
+        logic/sentence/sourcesentence.h
+        logic/settings/settings.h
+        logic/settings/settingsutils.h
+        logic/update/jyutdictionaryreleasechecker.h
+        logic/utils/cantoneseutils.h
+        logic/utils/chineseutils.h
+        logic/utils/mandarinutils.h
+        logic/utils/scriptdetector.h
+        logic/utils/utils.h
+        logic/utils/utils_qt.h
+        windows/aboutwindow.h
+        windows/historywindow.h
+        windows/mainwindow.h
+        windows/settingswindow.h
+        windows/updatewindow.h
+        windows/welcomewindow.h
+)
+
 set(PROJECT_SOURCES
         components/definitioncard/definitioncardsection.cpp
         components/definitioncard/definitioncardwidget.cpp
@@ -146,12 +251,14 @@ include_directories(
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(CantoneseDictionary
         MANUAL_FINALIZATION
+        ${PROJECT_HEADERS}
         ${PROJECT_SOURCES}
         resources/resource.qrc
     )
 
 else()
     add_executable(CantoneseDictionary
+        ${PROJECT_HEADERS}
         ${PROJECT_SOURCES}
         resources/resource.qrc
     )
@@ -205,8 +312,8 @@ if (APPLE)
 
 
     TARGET_SOURCES(CantoneseDictionary
-        PRIVATE logic/dictation/speechhelper.mm
-        PRIVATE logic/dictation/speechrecognizerwrapper.mm
+        PRIVATE logic/dictation/speech_mac.mm
+        PRIVATE logic/dictation/speechwrapper.mm
         PRIVATE logic/utils/utils_mac.mm
         PRIVATE resources/db/dict.db
         PRIVATE resources/db/user.db

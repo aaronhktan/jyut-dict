@@ -27,13 +27,23 @@ SearchLineEdit::SearchLineEdit(
     _mediator = mediator;
     _search = sqlSearch;
     _timer = new QTimer{this};
-    _wrapper = std::make_unique<SpeechRecognizerWrapper>();
+    std::string locale{"zh_HK"};
+    _wrapper = std::make_unique<SpeechWrapper>(locale);
+    _wrapper->subscribe(this);
 
     setupUI();
     translateUI();
     setStyle(Utils::isDarkMode());
 
     setMinimumWidth(parent->width() / 4);
+
+    QTimer::singleShot(5000, [&]() { _wrapper->startRecognition(); });
+    QTimer::singleShot(10000, [&]() { _wrapper->stopRecognition(); });
+}
+
+SearchLineEdit::~SearchLineEdit()
+{
+    _wrapper->unsubscribe(this);
 }
 
 void SearchLineEdit::changeEvent(QEvent *event)
@@ -65,6 +75,15 @@ void SearchLineEdit::focusOutEvent(QFocusEvent *event)
 {
     removeAction(_clearLineEdit);
     QLineEdit::focusOutEvent(event);
+}
+
+void SearchLineEdit::transcriptionResult(std::variant<bool, std::string> result)
+{
+    if (std::string *transcription = std::get_if<std::string>(&result)) {
+        setText(transcription->c_str());
+    } else {
+        qDebug() << "error happened";
+    }
 }
 
 // Since the textChanged event happens before letters are painted,
@@ -229,11 +248,6 @@ void SearchLineEdit::addSearchTermToHistory(SearchParameters parameters) const
 
 void SearchLineEdit::searchTriggered(void)
 {
-    _wrapper->startRecognition();
-    QTimer::singleShot(5000, [&]() {
-        _wrapper->stopRecognition();
-    });
-
     checkClearVisibility();
     if (_settings->value("Search/autoDetectLanguage", QVariant{true}).toBool()) {
         _search->searchAutoDetect(text().trimmed());

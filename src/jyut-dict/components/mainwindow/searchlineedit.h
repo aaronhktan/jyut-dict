@@ -3,7 +3,8 @@
 
 #include "components/mainwindow/isearchlineedit.h"
 #include "logic/database/sqluserhistoryutils.h"
-#include "logic/dictation/speechrecognizerwrapper.h"
+#include "logic/dictation/itranscriptionresultsubscriber.h"
+#include "logic/dictation/speechwrapper.h"
 #include "logic/search/isearch.h"
 #include "logic/search/isearchoptionsmediator.h"
 
@@ -16,10 +17,14 @@
 #include <QWidget>
 
 #include <memory>
+#include <string>
+#include <variant>
 
 // The SearchLineEdit is the main search bar
 
-class SearchLineEdit : public QLineEdit, public ISearchLineEdit
+class SearchLineEdit : public QLineEdit,
+                       public ISearchLineEdit,
+                       public ITranscriptionResultSubscriber
 {
     Q_OBJECT
 
@@ -28,10 +33,14 @@ public:
                             std::shared_ptr<ISearch> manager,
                             std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                             QWidget *parent = nullptr);
+    ~SearchLineEdit();
 
     void changeEvent(QEvent *event) override;
     void focusInEvent(QFocusEvent *event) override;
     void focusOutEvent(QFocusEvent *event) override;
+
+    void transcriptionResult(
+        std::variant<bool, std::string> transcription) override;
 
     void updateParameters(SearchParameters parameters) override;
     void search() override;
@@ -56,7 +65,7 @@ private:
 
     SearchParameters _parameters;
 
-    std::unique_ptr<SpeechRecognizerWrapper> _wrapper;
+    std::unique_ptr<SpeechWrapper> _wrapper;
 
     bool _paletteRecentlyChanged = false;
 

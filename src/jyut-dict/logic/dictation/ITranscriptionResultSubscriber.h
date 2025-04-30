@@ -1,0 +1,19 @@
+#ifndef ITRANSCRIPTIONRESULTSUBSCRIBER_H
+#define ITRANSCRIPTIONRESULTSUBSCRIBER_H
+
+#include <string>
+#include <variant>
+
+// When informed of new transcription results, transcriptionResult()
+// is called
+
+class ITranscriptionResultSubscriber
+{
+public:
+    virtual ~ITranscriptionResultSubscriber() = default;
+    virtual void transcriptionResult(
+        std::variant<bool, std::string> transcription)
+        = 0;
+};
+
+#endif // ITRANSCRIPTIONRESULTSUBSCRIBER_H
