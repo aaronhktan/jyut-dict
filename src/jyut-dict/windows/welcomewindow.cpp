@@ -25,11 +25,6 @@ WelcomeWindow::WelcomeWindow(QWidget *parent)
     setWindowFlags(flags);
     setWindowModality(Qt::ApplicationModal);
 
-#ifdef Q_OS_MAC
-    move(parent->x() + (parent->width() - sizeHint().width()) / 2,
-         parent->y() + (parent->height() - sizeHint().height()) / 2);
-#endif
-
     setupUI();
     translateUI();
 }
@@ -164,6 +159,7 @@ void WelcomeWindow::setStyle(bool use_dark)
 #ifdef Q_OS_MAC
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: "
                   "16px; }");
+    _messageLabel->setStyleSheet("QLabel { margin-bottom: 6px; }");
 #elif defined(Q_OS_WIN)
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: "
                   "20px; }");
