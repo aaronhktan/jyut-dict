@@ -27,6 +27,6 @@
   <key>NSMicrophoneUsageDescription</key>
   <string>Jyut Dictionary requires access to your microphone to allow searching by dictation.</string>
   <key>NSSpeechRecognitionUsageDescription</key>
-  <string>Jyut Dictionary requires access to your microphone to allow searching by dictation.</string>
+  <string>Jyut Dictionary requires access to speech recognition to allow searching by dictation.</string>
 </dict>
 </plist>
