@@ -40,7 +40,7 @@ public:
     void focusOutEvent(QFocusEvent *event) override;
 
     void transcriptionResult(
-        std::variant<bool, std::string> transcription) override;
+        std::variant<std::system_error, std::string> transcription) override;
 
     void updateParameters(SearchParameters parameters) override;
     void search() override;
@@ -52,6 +52,9 @@ private:
 
     void checkClearVisibility(void);
 
+    void startTranscription(void);
+    void stopTranscription(void);
+
     void addSearchTermToHistory(SearchParameters parameters) const;
 
     std::shared_ptr<ISearchOptionsMediator> _mediator;
@@ -61,6 +64,8 @@ private:
 
     QAction *_searchLineEdit;
     QAction *_clearLineEdit;
+    QAction *_microphone;
+    QAction *_microphoneOff;
     QTimer *_timer;
 
     SearchParameters _parameters;

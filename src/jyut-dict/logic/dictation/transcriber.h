@@ -1,7 +1,7 @@
 #ifndef TRANSCRIBER_H
 #define TRANSCRIBER_H
 
-#include "itranscriptionresultsubscriber.h"
+#include "itranscriptionresultpublisher.h"
 
 #import <AVFoundation/AVFoundation.h>
 #import <Foundation/Foundation.h>
@@ -17,6 +17,8 @@
 @property(nonatomic, strong)
     SFSpeechAudioBufferRecognitionRequest *recognitionRequest;
 @property(nonatomic, strong) SFSpeechRecognitionTask *recognitionTask;
+@property(nonatomic, assign) NSTimeInterval silenceStart;
+@property(nonatomic, assign) BOOL isSilent;
 
 - (instancetype)initWithLocaleIdentifier:(NSString *)localeIdentifier;
 

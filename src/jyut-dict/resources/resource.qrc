@@ -2,8 +2,6 @@
     <qresource prefix="/">
         <file>images/search_inverted.png</file>
         <file>images/search.png</file>
-        <file>images/x_inverted.png</file>
-        <file>images/x.png</file>
         <file>images/settings.png</file>
         <file>images/settings_inverted.png</file>
         <file>images/sliders_inverted.png</file>
@@ -68,5 +66,11 @@
         <file>images/dictionarytab_disabled.png</file>
         <file>images/dictionarytab_inverted.png</file>
         <file>images/dictionarytab.png</file>
+        <file>images/mic_action_inverted.png</file>
+        <file>images/mic_action.png</file>
+        <file>images/x_action_inverted.png</file>
+        <file>images/x_action.png</file>
+        <file>images/mic_off_action_inverted.png</file>
+        <file>images/mic_off_action.png</file>
     </qresource>
 </RCC>

@@ -6,6 +6,14 @@
 #include <unordered_set>
 #include <variant>
 
+namespace {
+constexpr auto SILENCE_THRESHOLD = 0.0001;
+constexpr auto SILENCE_DURATION_S = 2.0;
+} // namespace
+
+// An Objective-C implementation cannot implement a C++ pure virtual class.
+// In order to implement the C++ pure virtual class, the Objective-C implementation
+// must use a pointer to a C++ object that implements the virtual class.
 class TranscriptionResultPublisherImpl : public ITranscriptionResultPublisher
 {
 public:
@@ -17,7 +25,7 @@ public:
     {
         _subscribers.extract(subscriber);
     }
-    void notifySubscribers(std::variant<bool, std::string> result) override
+    void notifySubscribers(std::variant<std::system_error, std::string> result) override
     {
         for (const auto &s : _subscribers) {
             s->transcriptionResult(result);
@@ -77,88 +85,176 @@ private:
     // a new one every time we want to start speech recognition
     _recognitionRequest = [[SFSpeechAudioBufferRecognitionRequest alloc] init];
 
-    [SFSpeechRecognizer requestAuthorization:^(SFSpeechRecognizerAuthorizationStatus status) {
-        if (status != SFSpeechRecognizerAuthorizationStatusAuthorized) {
-            NSLog(@"Speech recognition not authorized");
-            _publisher->notifySubscribers(false);
-            return;
-        }
+    // The recognizer may be unavailable for certain locales without an Internet connection
+    if (!self.recognizer.available) {
+        _publisher->notifySubscribers(
+            std::system_error{ENETDOWN,
+                              std::generic_category(),
+                              "Speech recognizer is not currently available"});
+        return;
+    }
 
-        // Create the input node for audio capture
-        AVAudioInputNode *inputNode = self.audioEngine.inputNode;
-        AVAudioFormat *format = [inputNode outputFormatForBus:0];
+    // Check authorization status
+    SFSpeechRecognizerAuthorizationStatus status = [SFSpeechRecognizer authorizationStatus];
+    switch (status) {
+    case SFSpeechRecognizerAuthorizationStatusAuthorized: {
+        break;
+    }
+    case SFSpeechRecognizerAuthorizationStatusDenied: {
+        _publisher->notifySubscribers(
+            std::system_error{EPERM,
+                              std::generic_category(),
+                              "Speech recognition permission not granted"});
+        return;
+    }
+    case SFSpeechRecognizerAuthorizationStatusRestricted: {
+        _publisher->notifySubscribers(
+            std::system_error{EPERM,
+                              std::generic_category(),
+                              "Speech recognition permission is restricted"});
+        return;
+    }
+    case SFSpeechRecognizerAuthorizationStatusNotDetermined: {
+        [SFSpeechRecognizer requestAuthorization:^(SFSpeechRecognizerAuthorizationStatus status) {
+            if (status != SFSpeechRecognizerAuthorizationStatusAuthorized) {
+                _publisher->notifySubscribers(
+                    std::system_error{EPERM,
+                                      std::generic_category(),
+                                      "Speech recognition permission denied"});
+            }
+        }];
+        break;
+    }
+    }
 
-        // Install a tap on the input node to capture audio
-        [inputNode removeTapOnBus:0]; // Remove any previous taps, otherwise things fail
-        [inputNode installTapOnBus:0
-                        bufferSize:1024
-                            format:format
-                             block:^(AVAudioPCMBuffer *buffer, AVAudioTime *when) {
-                                 // Append the audio buffer to the recognition request
-                                 [self.recognitionRequest appendAudioPCMBuffer:buffer];
-                             }];
+    // Create the input node for audio capture
+    AVAudioInputNode *inputNode = self.audioEngine.inputNode;
+    AVAudioFormat *format = [inputNode outputFormatForBus:0];
 
-        // Check that we have authorization to capture audio from the inputNode
-        AVAuthorizationStatus captureStatus = [AVCaptureDevice
-            authorizationStatusForMediaType:AVMediaTypeAudio];
+    // Install a tap on the input node to capture audio
+    [inputNode removeTapOnBus:0]; // Remove any previous taps, otherwise things fail
 
-        switch (captureStatus) {
-        case AVAuthorizationStatusAuthorized:
-            NSLog(@"Microphone access granted.");
-            break;
+    self.silenceStart = 0;
+    self.isSilent = NO;
 
-        case AVAuthorizationStatusDenied:
-            NSLog(@"Microphone access denied.");
-            _publisher->notifySubscribers(false);
-            return;
+    [inputNode
+        installTapOnBus:0
+             bufferSize:1024
+                 format:format
+                  block:^(AVAudioPCMBuffer *buffer, AVAudioTime *when) {
+                      // Append the audio buffer to the recognition request
+                      [self.recognitionRequest appendAudioPCMBuffer:buffer];
 
-        case AVAuthorizationStatusRestricted:
-            NSLog(@"Microphone access restricted.");
-            _publisher->notifySubscribers(false);
-            return;
+                      float *data = buffer.floatChannelData[0];
+                      UInt32 frameLength = buffer.frameLength;
+                      float sum = 0.0;
 
-        case AVAuthorizationStatusNotDetermined:
-            [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio
-                                     completionHandler:^(BOOL granted) {
-                                         if (granted) {
-                                             NSLog(@"Microphone access granted after request.");
-                                         } else {
-                                             NSLog(@"Microphone access denied after request.");
-                                             _publisher->notifySubscribers(false);
-                                         }
-                                     }];
-            break;
-        }
+                      for (int i = 0; i < frameLength; i++) {
+                          sum += fabsf(data[i]);
+                      }
 
-        // Prepare and start the audio engine
-        NSError *error = nil;
-        [self.audioEngine prepare];
-        [self.audioEngine startAndReturnError:&error];
+                      float avg = sum / frameLength;
 
-        if (error) {
-            NSLog(@"Failed to start audio engine: %@", error);
-            _publisher->notifySubscribers(false);
-            return;
-        }
+                      dispatch_async(dispatch_get_main_queue(), ^{
+                          if (avg < SILENCE_THRESHOLD) {
+                              if (!self.isSilent) {
+                                  self.silenceStart = [NSDate timeIntervalSinceReferenceDate];
+                                  self.isSilent = YES;
+                              } else {
+                                  NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
+                                  if (now - self.silenceStart > SILENCE_DURATION_S) {
+                                      _publisher->notifySubscribers(
+                                          std::system_error{ETIMEDOUT,
+                                                            std::generic_category(),
+                                                            "No speech detected"});
+                                  }
+                              }
+                          } else {
+                              self.isSilent = NO;
+                          }
+                      });
+                  }];
 
-        // Start the recognition task
-        self.recognitionTask = [self.recognizer
-            recognitionTaskWithRequest:self.recognitionRequest
-                         resultHandler:^(SFSpeechRecognitionResult *result, NSError *error) {
-                             if (result) {
-                                 // Handle the transcription result
-                                 NSLog(@"Transcription: %@",
-                                       result.bestTranscription.formattedString);
-                                 _publisher->notifySubscribers(std::string{
-                                     [result.bestTranscription.formattedString UTF8String]});
+    // Check that we have authorization to capture audio from the inputNode
+    AVAuthorizationStatus captureStatus = [AVCaptureDevice
+        authorizationStatusForMediaType:AVMediaTypeAudio];
+
+    switch (captureStatus) {
+    case AVAuthorizationStatusAuthorized:
+        break;
+
+    case AVAuthorizationStatusDenied:
+        _publisher->notifySubscribers(
+            std::system_error{EPERM, std::generic_category(), "Microphone permission not granted"});
+        return;
+
+    case AVAuthorizationStatusRestricted:
+        _publisher->notifySubscribers(
+            std::system_error{EPERM, std::generic_category(), "Microphone permission restricted"});
+        return;
+
+    case AVAuthorizationStatusNotDetermined:
+        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio
+                                 completionHandler:^(BOOL granted) {
+                                     if (!granted) {
+                                         _publisher->notifySubscribers(
+                                             std::system_error{EPERM,
+                                                               std::generic_category(),
+                                                               "Microphone access denied"});
+                                     }
+                                 }];
+        break;
+    }
+
+    // Prepare and start the audio engine
+    NSError *error = nil;
+    [self.audioEngine prepare];
+    [self.audioEngine startAndReturnError:&error];
+
+    if (error) {
+        _publisher->notifySubscribers(
+            std::system_error{ENOENT, std::generic_category(), "Audio engine failed to start"});
+        return;
+    }
+
+    // Start the recognition task
+    self.recognitionTask = [self.recognizer
+        recognitionTaskWithRequest:self.recognitionRequest
+                     resultHandler:^(SFSpeechRecognitionResult *result, NSError *error) {
+                         if (result && !self.recognitionTask.finishing) {
+                             std::string resultStr{
+                                 [result.bestTranscription.formattedString UTF8String]};
+                             if (!resultStr.empty()) {
+                                 _publisher->notifySubscribers(resultStr);
                              }
-                             if (error) {
-                                 // Handle any errors
-                                 NSLog(@"Recognition error: %@", error);
-                                 _publisher->notifySubscribers(false);
+                         }
+                         if (error) {
+                             switch (error.code) {
+                             case 301: {
+                                 // Transcription canceled; do nothing
+                                 break;
                              }
-                         }];
-    }];
+                             case 1110: {
+                                 // No speech detected; this is benign
+                                 _publisher->notifySubscribers(
+                                     std::system_error{ETIMEDOUT,
+                                                       std::generic_category(),
+                                                       "No speech detected"});
+                                 break;
+                             }
+                             default: {
+                                 _publisher->notifySubscribers(std::system_error{
+                                     EINVAL,
+                                     std::generic_category(),
+                                     "Could not transcribe input with error code: "
+                                         + std::string{[[NSString
+                                             stringWithFormat:@"%ld",
+                                                              (long) error.code] UTF8String]}});
+                                 break;
+                             }
+                             }
+                         }
+                     }];
 }
 
 - (void)stop

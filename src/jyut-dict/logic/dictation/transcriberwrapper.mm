@@ -13,20 +13,26 @@ TranscriberWrapper::TranscriberWrapper(std::string &locale)
     // ARC no longer governs the lifecycle of the object, and we are
     // now responsible for manually releasing the object when we are done
     // with it.
-    _helper = (__bridge_retained void *) [[Transcriber alloc]
+    _transcriber = (__bridge_retained void *) [[Transcriber alloc]
         initWithLocaleIdentifier:[NSString stringWithUTF8String:locale.c_str()]];
+
+    if (!_transcriber) {
+        throw std::system_error{ENETDOWN,
+                                std::generic_category(),
+                                "Could not initialize transcriber because language unavailable"};
+    }
 
     // In order to use the (C-style) Transcriber pointer as an Objective-C class,
     // we must __bridge it. No ownership is transferred in this case, so we are
     // still responsible for releasing it ourselves.
-    Transcriber *speechHelper = (__bridge Transcriber *) _helper;
+    Transcriber *speechHelper = (__bridge Transcriber *) _transcriber;
     [speechHelper subscribe:this];
 }
 
 TranscriberWrapper::~TranscriberWrapper()
 {
-    if (_helper) {
-        CFRelease(_helper);
+    if (_transcriber) {
+        CFRelease(_transcriber);
     }
 }
 
@@ -40,49 +46,30 @@ void TranscriberWrapper::unsubscribe(ITranscriptionResultSubscriber *subscriber)
     _subscribers.extract(subscriber);
 }
 
-void TranscriberWrapper::notifySubscribers(std::variant<bool, std::string> result)
+void TranscriberWrapper::notifySubscribers(std::variant<std::system_error, std::string> result)
 {
     for (const auto s : _subscribers) {
         s->transcriptionResult(result);
     }
 }
 
-void TranscriberWrapper::transcriptionResult(std::variant<bool, std::string> transcription)
+void TranscriberWrapper::transcriptionResult(
+    std::variant<std::system_error, std::string> transcription)
 {
     notifySubscribers(transcription);
 }
 
 void TranscriberWrapper::startRecognition()
 {
-    // Check the speech recognition authorization status
-    [SFSpeechRecognizer requestAuthorization:^(SFSpeechRecognizerAuthorizationStatus status) {
-        Transcriber *speechHelper = (__bridge Transcriber *) _helper;
-
-        switch (status) {
-        case SFSpeechRecognizerAuthorizationStatusAuthorized:
-            [speechHelper start];
-            break;
-
-        case SFSpeechRecognizerAuthorizationStatusDenied:
-            NSLog(@"Speech recognition permission denied.");
-            break;
-
-        case SFSpeechRecognizerAuthorizationStatusRestricted:
-            NSLog(@"Speech recognition is restricted.");
-            break;
-
-        case SFSpeechRecognizerAuthorizationStatusNotDetermined:
-            NSLog(@"Speech recognition permission not determined.");
-            break;
-        }
-    }];
+    Transcriber *speechHelper = (__bridge Transcriber *) _transcriber;
+    [speechHelper start];
 }
 
 void TranscriberWrapper::stopRecognition()
 {
     // Ensure the helper is initialized before stopping
-    if (_helper) {
-        Transcriber *speechHelper = (__bridge Transcriber *) _helper;
+    if (_transcriber) {
+        Transcriber *speechHelper = (__bridge Transcriber *) _transcriber;
         [speechHelper stop];
     } else {
         NSLog(@"SpeechHelper is not initialized or has been released.");
