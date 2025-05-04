@@ -681,6 +681,18 @@ void TestSqlSearch::searchJyutping()
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
+    search.searchJyutping("yuet? ????");
+    {
+        std::unique_lock lock{observer.mutex};
+        observer.resultsReady.wait(lock);
+        QCOMPARE(observer.testFailed, false);
+    }
+    search.searchJyutping("yuetshow");
+    {
+        std::unique_lock lock{observer.mutex};
+        observer.resultsReady.wait(lock);
+        QCOMPARE(observer.testFailed, false);
+    }
     search.searchJyutping("????? ????$");
     {
         std::unique_lock lock{observer.mutex};
