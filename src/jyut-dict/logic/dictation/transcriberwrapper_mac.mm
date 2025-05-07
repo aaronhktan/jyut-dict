@@ -1,6 +1,6 @@
 #include "transcriberwrapper.h"
 
-#import "transcriber.h"
+#import "transcriber_mac.h"
 
 #include <QDebug>
 
@@ -26,29 +26,57 @@ TranscriberWrapper::TranscriberWrapper(std::string &locale)
     // we must __bridge it. No ownership is transferred in this case, so we are
     // still responsible for releasing it ourselves.
     Transcriber *speechHelper = (__bridge Transcriber *) _transcriber;
-    [speechHelper subscribe:this];
+    [speechHelper subscribeForTranscript:this];
+    [speechHelper subscribeForVolume:this];
 }
 
 TranscriberWrapper::~TranscriberWrapper()
 {
+    Transcriber *speechHelper = (__bridge Transcriber *) _transcriber;
+    [speechHelper unsubscribeForTranscript:this];
+    [speechHelper unsubscribeForVolume:this];
+
     if (_transcriber) {
         CFRelease(_transcriber);
     }
 }
 
+void TranscriberWrapper::subscribe(IInputVolumeSubscriber *subscriber)
+{
+    _volumeSubscribers.emplace(subscriber);
+}
+
+void TranscriberWrapper::unsubscribe(IInputVolumeSubscriber *subscriber)
+{
+    _volumeSubscribers.extract(subscriber);
+}
+
+void TranscriberWrapper::notifyVolumeResult(std::variant<std::system_error, float> result)
+{
+    for (const auto s : _volumeSubscribers) {
+        s->volumeResult(result);
+    }
+}
+
+void TranscriberWrapper::volumeResult(std::variant<std::system_error, float> result)
+{
+    notifyVolumeResult(result);
+}
+
 void TranscriberWrapper::subscribe(ITranscriptionResultSubscriber *subscriber)
 {
-    _subscribers.emplace(subscriber);
+    _transcriptionSubscribers.emplace(subscriber);
 }
 
 void TranscriberWrapper::unsubscribe(ITranscriptionResultSubscriber *subscriber)
 {
-    _subscribers.extract(subscriber);
+    _transcriptionSubscribers.extract(subscriber);
 }
 
-void TranscriberWrapper::notifySubscribers(std::variant<std::system_error, std::string> result)
+void TranscriberWrapper::notifyTranscriptionResult(
+    std::variant<std::system_error, std::string> result)
 {
-    for (const auto s : _subscribers) {
+    for (const auto s : _transcriptionSubscribers) {
         s->transcriptionResult(result);
     }
 }
@@ -56,7 +84,7 @@ void TranscriberWrapper::notifySubscribers(std::variant<std::system_error, std::
 void TranscriberWrapper::transcriptionResult(
     std::variant<std::system_error, std::string> transcription)
 {
-    notifySubscribers(transcription);
+    notifyTranscriptionResult(transcription);
 }
 
 void TranscriberWrapper::startRecognition()

@@ -27,20 +27,12 @@ SearchLineEdit::SearchLineEdit(
     _mediator = mediator;
     _search = sqlSearch;
     _timer = new QTimer{this};
-    std::string locale{"zh_HK"};
-    _wrapper = std::make_unique<TranscriberWrapper>(locale);
-    _wrapper->subscribe(this);
 
     setupUI();
     translateUI();
     setStyle(Utils::isDarkMode());
 
     setMinimumWidth(parent->width() / 4);
-}
-
-SearchLineEdit::~SearchLineEdit()
-{
-    _wrapper->unsubscribe(this);
 }
 
 void SearchLineEdit::changeEvent(QEvent *event)
@@ -72,23 +64,6 @@ void SearchLineEdit::focusOutEvent(QFocusEvent *event)
 {
     removeAction(_clearLineEdit);
     QLineEdit::focusOutEvent(event);
-}
-
-void SearchLineEdit::transcriptionResult(
-    std::variant<std::system_error, std::string> result)
-{
-    if (std::string *transcription = std::get_if<std::string>(&result)) {
-        setText(transcription->c_str());
-    } else {
-        if (std::get<std::system_error>(result).code().value() == ETIMEDOUT) {
-            // No speech detected, stop transcription
-            stopTranscription();
-        } else {
-            stopTranscription();
-            qDebug() << std::get<std::system_error>(result).code().value()
-                     << std::get<std::system_error>(result).what();
-        }
-    }
 }
 
 // Since the textChanged event happens before letters are painted,
@@ -150,12 +125,6 @@ void SearchLineEdit::setupUI(void)
             this,
             &SearchLineEdit::startTranscription);
 
-    _microphoneOff = new QAction{"", this};
-    connect(_microphoneOff,
-            &QAction::triggered,
-            this,
-            &SearchLineEdit::stopTranscription);
-
     // Customize the look of the searchbar to fit in better with platform styles
 #ifdef Q_OS_WIN
     setMinimumHeight(30);
@@ -183,11 +152,11 @@ void SearchLineEdit::setStyle(bool use_dark)
     QIcon search = QIcon{":/images/search.png"};
     QIcon clear = QIcon{":/images/x_action.png"};
     QIcon mic = QIcon{":/images/mic_action.png"};
-    QIcon micOff = QIcon{":/images/mic_off_action.png"};
+    // QIcon micOff = QIcon{":/images/mic_off_action.png"};
     QIcon searchInverted = QIcon{":/images/search_inverted.png"};
     QIcon clearInverted = QIcon{":/images/x_action_inverted.png"};
     QIcon micInverted = QIcon{":/images/mic_action_inverted.png"};
-    QIcon micOffInverted = QIcon{":/images/mic_off_action_inverted.png"};
+    // QIcon micOffInverted = QIcon{":/images/mic_off_action_inverted.png"};
 
     int interfaceSize = static_cast<int>(
         _settings
@@ -218,7 +187,7 @@ void SearchLineEdit::setStyle(bool use_dark)
             _searchLineEdit->setIcon(searchInverted);
             _clearLineEdit->setIcon(clearInverted);
             _microphone->setIcon(micInverted);
-            _microphoneOff->setIcon(micOffInverted);
+            // _microphoneOff->setIcon(micOffInverted);
     } else {
             setStyleSheet(QString{"QLineEdit { "
                                   "   background-color: #ffffff; "
@@ -242,14 +211,14 @@ void SearchLineEdit::setStyle(bool use_dark)
             _searchLineEdit->setIcon(search);
             _clearLineEdit->setIcon(clear);
             _microphone->setIcon(mic);
-            _microphoneOff->setIcon(micOff);
+            // _microphoneOff->setIcon(micOff);
     }
 }
 
 void SearchLineEdit::checkClearVisibility(void)
 {
-    if (text().isEmpty() || !hasFocus()) {
-        // Don't add the clear line edit action if the widget doesn't have focus!
+    if (text().isEmpty()
+        || !hasFocus()) { // Don't add the clear line edit action if the widget doesn't have focus!
         // Clicking on the clear line edit action causes a crash.
         removeAction(_clearLineEdit);
     } else {
@@ -260,18 +229,18 @@ void SearchLineEdit::checkClearVisibility(void)
 void SearchLineEdit::startTranscription(void)
 {
     clear();
-    removeAction(_microphone);
-    addAction(_microphoneOff, QLineEdit::TrailingPosition);
+    // addAction(_microphoneOff, QLineEdit::TrailingPosition);
     checkClearVisibility();
-    _wrapper->startRecognition();
-}
 
-void SearchLineEdit::stopTranscription(void)
-{
-    _wrapper->stopRecognition();
-    removeAction(_microphoneOff);
-    addAction(_microphone, QLineEdit::TrailingPosition);
-    checkClearVisibility();
+    _transcriptionWindow = new TranscriptionWindow{this};
+    _transcriptionWindow->setAttribute(Qt::WA_DeleteOnClose);
+    _transcriptionWindow->setFocus();
+    _transcriptionWindow->show();
+
+    connect(_transcriptionWindow,
+            &TranscriptionWindow::transcription,
+            this,
+            [&](QString result) { setText(result); });
 }
 
 void SearchLineEdit::addSearchTermToHistory(SearchParameters parameters) const

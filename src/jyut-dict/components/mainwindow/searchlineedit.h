@@ -3,10 +3,9 @@
 
 #include "components/mainwindow/isearchlineedit.h"
 #include "logic/database/sqluserhistoryutils.h"
-#include "logic/dictation/itranscriptionresultsubscriber.h"
-#include "logic/dictation/transcriberwrapper.h"
 #include "logic/search/isearch.h"
 #include "logic/search/isearchoptionsmediator.h"
+#include "windows/transcriptionwindow.h"
 
 #include <QAction>
 #include <QEvent>
@@ -17,14 +16,10 @@
 #include <QWidget>
 
 #include <memory>
-#include <string>
-#include <variant>
 
 // The SearchLineEdit is the main search bar
 
-class SearchLineEdit : public QLineEdit,
-                       public ISearchLineEdit,
-                       public ITranscriptionResultSubscriber
+class SearchLineEdit : public QLineEdit, public ISearchLineEdit
 {
     Q_OBJECT
 
@@ -33,14 +28,10 @@ public:
                             std::shared_ptr<ISearch> manager,
                             std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                             QWidget *parent = nullptr);
-    ~SearchLineEdit();
 
     void changeEvent(QEvent *event) override;
     void focusInEvent(QFocusEvent *event) override;
     void focusOutEvent(QFocusEvent *event) override;
-
-    void transcriptionResult(
-        std::variant<std::system_error, std::string> transcription) override;
 
     void updateParameters(SearchParameters parameters) override;
     void search() override;
@@ -53,7 +44,6 @@ private:
     void checkClearVisibility(void);
 
     void startTranscription(void);
-    void stopTranscription(void);
 
     void addSearchTermToHistory(SearchParameters parameters) const;
 
@@ -67,10 +57,9 @@ private:
     QAction *_microphone;
     QAction *_microphoneOff;
     QTimer *_timer;
+    TranscriptionWindow *_transcriptionWindow = nullptr;
 
     SearchParameters _parameters;
-
-    std::unique_ptr<TranscriberWrapper> _wrapper;
 
     bool _paletteRecentlyChanged = false;
 

@@ -14,7 +14,8 @@ public:
 
     virtual void subscribe(ITranscriptionResultSubscriber *subscriber) = 0;
     virtual void unsubscribe(ITranscriptionResultSubscriber *subscriber) = 0;
-    virtual void notifySubscribers(std::variant<std::system_error, std::string>)
+    virtual void notifyTranscriptionResult(
+        std::variant<std::system_error, std::string>)
         = 0;
 };
 

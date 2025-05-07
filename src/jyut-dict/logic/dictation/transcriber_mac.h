@@ -1,6 +1,7 @@
-#ifndef TRANSCRIBER_H
-#define TRANSCRIBER_H
+#ifndef TRANSCRIBER_MAC_H
+#define TRANSCRIBER_MAC_H
 
+#include "iinputvolumepublisher.h"
 #include "itranscriptionresultpublisher.h"
 
 #import <AVFoundation/AVFoundation.h>
@@ -18,16 +19,20 @@
     SFSpeechAudioBufferRecognitionRequest *recognitionRequest;
 @property(nonatomic, strong) SFSpeechRecognitionTask *recognitionTask;
 @property(nonatomic, assign) NSTimeInterval silenceStart;
+@property(nonatomic, assign) BOOL firstSilence;
 @property(nonatomic, assign) BOOL isSilent;
 
 - (instancetype)initWithLocaleIdentifier:(NSString *)localeIdentifier;
 
-- (void)subscribe:(ITranscriptionResultSubscriber *)subscriber;
-- (void)unsubscribe:(ITranscriptionResultSubscriber *)subscriber;
+- (void)subscribeForVolume:(IInputVolumeSubscriber *)subscriber;
+- (void)unsubscribeForVolume:(IInputVolumeSubscriber *)subscriber;
+
+- (void)subscribeForTranscript:(ITranscriptionResultSubscriber *)subscriber;
+- (void)unsubscribeForTranscript:(ITranscriptionResultSubscriber *)subscriber;
 
 - (void)start;
 - (void)stop;
 
 @end
 
-#endif // TRANSCRIBER_H
+#endif // TRANSCRIBER_MAC_H

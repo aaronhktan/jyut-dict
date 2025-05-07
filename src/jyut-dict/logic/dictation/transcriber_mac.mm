@@ -1,5 +1,6 @@
-#import "transcriber.h"
+#import "transcriber_mac.h"
 
+#include "iinputvolumepublisher.h"
 #include "itranscriptionresultpublisher.h"
 
 #include <string>
@@ -7,33 +8,51 @@
 #include <variant>
 
 namespace {
-constexpr auto SILENCE_THRESHOLD = 0.0001;
-constexpr auto SILENCE_DURATION_S = 2.0;
+constexpr auto SILENCE_THRESHOLD = 0.005;
+constexpr auto FIRST_SILENCE_DURATION_S = 5.0;
+constexpr auto SILENCE_DURATION_S = 3.0;
 } // namespace
 
 // An Objective-C implementation cannot implement a C++ pure virtual class.
 // In order to implement the C++ pure virtual class, the Objective-C implementation
 // must use a pointer to a C++ object that implements the virtual class.
-class TranscriptionResultPublisherImpl : public ITranscriptionResultPublisher
+class TranscriptionResultPublisherImpl : public IInputVolumePublisher,
+                                         public ITranscriptionResultPublisher
 {
 public:
+    void subscribe(IInputVolumeSubscriber *subscriber) override
+    {
+        _volumeSubscribers.emplace(subscriber);
+    }
+    void unsubscribe(IInputVolumeSubscriber *subscriber) override
+    {
+        _volumeSubscribers.extract(subscriber);
+    }
+    void notifyVolumeResult(std::variant<std::system_error, float> result) override
+    {
+        for (const auto &s : _volumeSubscribers) {
+            s->volumeResult(result);
+        }
+    }
+
     void subscribe(ITranscriptionResultSubscriber *subscriber) override
     {
-        _subscribers.emplace(subscriber);
+        _transcriptionSubscribers.emplace(subscriber);
     }
     void unsubscribe(ITranscriptionResultSubscriber *subscriber) override
     {
-        _subscribers.extract(subscriber);
+        _transcriptionSubscribers.extract(subscriber);
     }
-    void notifySubscribers(std::variant<std::system_error, std::string> result) override
+    void notifyTranscriptionResult(std::variant<std::system_error, std::string> result) override
     {
-        for (const auto &s : _subscribers) {
+        for (const auto &s : _transcriptionSubscribers) {
             s->transcriptionResult(result);
         }
     }
 
 private:
-    std::unordered_set<ITranscriptionResultSubscriber *> _subscribers;
+    std::unordered_set<IInputVolumeSubscriber *> _volumeSubscribers;
+    std::unordered_set<ITranscriptionResultSubscriber *> _transcriptionSubscribers;
 };
 
 @implementation Transcriber {
@@ -69,12 +88,22 @@ private:
     delete _publisher;
 }
 
-- (void)subscribe:(ITranscriptionResultSubscriber *)subscriber
+- (void)subscribeForVolume:(IInputVolumeSubscriber *)subscriber
+{
+    _publisher->subscribe(static_cast<IInputVolumeSubscriber *>(subscriber));
+}
+
+- (void)unsubscribeForVolume:(IInputVolumeSubscriber *)subscriber
+{
+    _publisher->unsubscribe(static_cast<IInputVolumeSubscriber *>(subscriber));
+}
+
+- (void)subscribeForTranscript:(ITranscriptionResultSubscriber *)subscriber
 {
     _publisher->subscribe(static_cast<ITranscriptionResultSubscriber *>(subscriber));
 }
 
-- (void)unsubscribe:(ITranscriptionResultSubscriber *)subscriber
+- (void)unsubscribeForTranscript:(ITranscriptionResultSubscriber *)subscriber
 {
     _publisher->unsubscribe(static_cast<ITranscriptionResultSubscriber *>(subscriber));
 }
@@ -87,7 +116,7 @@ private:
 
     // The recognizer may be unavailable for certain locales without an Internet connection
     if (!self.recognizer.available) {
-        _publisher->notifySubscribers(
+        _publisher->notifyTranscriptionResult(
             std::system_error{ENETDOWN,
                               std::generic_category(),
                               "Speech recognizer is not currently available"});
@@ -101,14 +130,14 @@ private:
         break;
     }
     case SFSpeechRecognizerAuthorizationStatusDenied: {
-        _publisher->notifySubscribers(
+        _publisher->notifyTranscriptionResult(
             std::system_error{EPERM,
                               std::generic_category(),
                               "Speech recognition permission not granted"});
         return;
     }
     case SFSpeechRecognizerAuthorizationStatusRestricted: {
-        _publisher->notifySubscribers(
+        _publisher->notifyTranscriptionResult(
             std::system_error{EPERM,
                               std::generic_category(),
                               "Speech recognition permission is restricted"});
@@ -117,7 +146,7 @@ private:
     case SFSpeechRecognizerAuthorizationStatusNotDetermined: {
         [SFSpeechRecognizer requestAuthorization:^(SFSpeechRecognizerAuthorizationStatus status) {
             if (status != SFSpeechRecognizerAuthorizationStatusAuthorized) {
-                _publisher->notifySubscribers(
+                _publisher->notifyTranscriptionResult(
                     std::system_error{EPERM,
                                       std::generic_category(),
                                       "Speech recognition permission denied"});
@@ -136,6 +165,7 @@ private:
 
     self.silenceStart = 0;
     self.isSilent = NO;
+    self.firstSilence = YES;
 
     [inputNode
         installTapOnBus:0
@@ -155,6 +185,10 @@ private:
 
                       float avg = sum / frameLength;
 
+                      NSLog(@"%f", avg);
+
+                      _publisher->notifyVolumeResult(float(avg / SILENCE_THRESHOLD));
+
                       dispatch_async(dispatch_get_main_queue(), ^{
                           if (avg < SILENCE_THRESHOLD) {
                               if (!self.isSilent) {
@@ -162,8 +196,15 @@ private:
                                   self.isSilent = YES;
                               } else {
                                   NSTimeInterval now = [NSDate timeIntervalSinceReferenceDate];
-                                  if (now - self.silenceStart > SILENCE_DURATION_S) {
-                                      _publisher->notifySubscribers(
+                                  if (self.firstSilence
+                                      && (now - self.silenceStart > FIRST_SILENCE_DURATION_S)) {
+                                      _publisher->notifyTranscriptionResult(
+                                          std::system_error{ETIMEDOUT,
+                                                            std::generic_category(),
+                                                            "No speech detected"});
+                                  } else if (!self.firstSilence
+                                             && (now - self.silenceStart > SILENCE_DURATION_S)) {
+                                      _publisher->notifyTranscriptionResult(
                                           std::system_error{ETIMEDOUT,
                                                             std::generic_category(),
                                                             "No speech detected"});
@@ -171,6 +212,7 @@ private:
                               }
                           } else {
                               self.isSilent = NO;
+                              self.firstSilence = NO;
                           }
                       });
                   }];
@@ -184,12 +226,12 @@ private:
         break;
 
     case AVAuthorizationStatusDenied:
-        _publisher->notifySubscribers(
+        _publisher->notifyTranscriptionResult(
             std::system_error{EPERM, std::generic_category(), "Microphone permission not granted"});
         return;
 
     case AVAuthorizationStatusRestricted:
-        _publisher->notifySubscribers(
+        _publisher->notifyTranscriptionResult(
             std::system_error{EPERM, std::generic_category(), "Microphone permission restricted"});
         return;
 
@@ -197,7 +239,7 @@ private:
         [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio
                                  completionHandler:^(BOOL granted) {
                                      if (!granted) {
-                                         _publisher->notifySubscribers(
+                                         _publisher->notifyTranscriptionResult(
                                              std::system_error{EPERM,
                                                                std::generic_category(),
                                                                "Microphone access denied"});
@@ -212,7 +254,7 @@ private:
     [self.audioEngine startAndReturnError:&error];
 
     if (error) {
-        _publisher->notifySubscribers(
+        _publisher->notifyTranscriptionResult(
             std::system_error{ENOENT, std::generic_category(), "Audio engine failed to start"});
         return;
     }
@@ -225,7 +267,7 @@ private:
                              std::string resultStr{
                                  [result.bestTranscription.formattedString UTF8String]};
                              if (!resultStr.empty()) {
-                                 _publisher->notifySubscribers(resultStr);
+                                 _publisher->notifyTranscriptionResult(resultStr);
                              }
                          }
                          if (error) {
@@ -236,14 +278,14 @@ private:
                              }
                              case 1110: {
                                  // No speech detected; this is benign
-                                 _publisher->notifySubscribers(
+                                 _publisher->notifyTranscriptionResult(
                                      std::system_error{ETIMEDOUT,
                                                        std::generic_category(),
                                                        "No speech detected"});
                                  break;
                              }
                              default: {
-                                 _publisher->notifySubscribers(std::system_error{
+                                 _publisher->notifyTranscriptionResult(std::system_error{
                                      EINVAL,
                                      std::generic_category(),
                                      "Could not transcribe input with error code: "

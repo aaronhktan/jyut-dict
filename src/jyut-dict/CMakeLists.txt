@@ -111,6 +111,8 @@ set(PROJECT_HEADERS
         logic/database/sqldatabaseutils.h
         logic/database/sqluserdatautils.h
         logic/database/sqluserhistoryutils.h
+        logic/dictation/iinputvolumepublisher.h
+        logic/dictation/iinputvolumesubscriber.h
         logic/dictation/itranscriptionresultpublisher.h
         logic/dictation/itranscriptionresultsubscriber.h
         logic/dictionary/dictionarymetadata.h
@@ -140,6 +142,7 @@ set(PROJECT_HEADERS
         windows/historywindow.h
         windows/mainwindow.h
         windows/settingswindow.h
+        windows/transcriptionwindow.h
         windows/updatewindow.h
         windows/welcomewindow.h
 )
@@ -239,6 +242,7 @@ set(PROJECT_SOURCES
         windows/historywindow.cpp
         windows/mainwindow.cpp
         windows/settingswindow.cpp
+        windows/transcriptionwindow.cpp
         windows/updatewindow.cpp
         windows/welcomewindow.cpp
         ${TS_FILES}
@@ -312,10 +316,10 @@ if (APPLE)
 
 
     TARGET_SOURCES(CantoneseDictionary
-        PRIVATE logic/dictation/transcriber.h
-        PRIVATE logic/dictation/transcriber.mm
+        PRIVATE logic/dictation/transcriber_mac.h
+        PRIVATE logic/dictation/transcriber_mac.mm
         PRIVATE logic/dictation/transcriberwrapper.h
-        PRIVATE logic/dictation/transcriberwrapper.mm
+        PRIVATE logic/dictation/transcriberwrapper_mac.mm
         PRIVATE logic/utils/utils_mac.mm
         PRIVATE resources/db/dict.db
         PRIVATE resources/db/user.db
@@ -327,7 +331,8 @@ if (APPLE)
         PRIVATE platform/mac/yue_Hans.lproj/InfoPlist.strings
         PRIVATE platform/mac/yue_Hant.lproj/InfoPlist.strings
         PRIVATE platform/mac/zh_Hans.lproj/InfoPlist.strings
-        PRIVATE platform/mac/zh_Hant.lproj/InfoPlist.strings)
+        PRIVATE platform/mac/zh_Hant.lproj/InfoPlist.strings
+    )
 
     set_property(SOURCE resources/db/dict.db PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
     set_property(SOURCE resources/db/user.db PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
