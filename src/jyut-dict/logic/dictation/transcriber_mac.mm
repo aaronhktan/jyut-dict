@@ -184,10 +184,7 @@ private:
                       }
 
                       float avg = sum / frameLength;
-
-                      NSLog(@"%f", avg);
-
-                      _publisher->notifyVolumeResult(float(avg / SILENCE_THRESHOLD));
+                      _publisher->notifyVolumeResult(static_cast<float>(avg / SILENCE_THRESHOLD));
 
                       dispatch_async(dispatch_get_main_queue(), ^{
                           if (avg < SILENCE_THRESHOLD) {

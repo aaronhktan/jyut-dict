@@ -11,13 +11,20 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QGridLayout>
+#include <QKeyEvent>
 #include <QLabel>
+#include <QMetaType>
 #include <QPropertyAnimation>
 #include <QPushButton>
 #include <QSettings>
 #include <QWidget>
 
-// The Transcription Window displays UI for
+// The Transcription Window displays UI for transcription. It shows
+// a microphone with an animation to indicate that the app is listening
+// for input.
+
+enum class TranscriptionLanguage : int { CANTONESE, MANDARIN, ENGLISH };
+Q_DECLARE_METATYPE(TranscriptionLanguage)
 
 class AnimateableEllipse : public QObject, public QGraphicsEllipseItem
 {
@@ -62,6 +69,7 @@ public:
     ~TranscriptionWindow();
 
     void changeEvent(QEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
     void volumeResult(std::variant<std::system_error, float> result) override;
     void transcriptionResult(
@@ -72,7 +80,7 @@ private:
     void translateUI(void);
     void setStyle(bool use_dark);
 
-    void startTranscription(void);
+    void setTranscriptionLang(void);
     void stopTranscription(void);
 
 #ifdef Q_OS_WIN
@@ -92,12 +100,16 @@ private:
     AnimateableEllipse *_ellipse;
     QPropertyAnimation *_anim;
 
+    QPushButton *_cantoneseButton;
+    QPushButton *_mandarinButton;
+    QPushButton *_englishButton;
+
     QPushButton *_doneButton;
 
     QGridLayout *_dialogLayout;
 
     std::unique_ptr<QSettings> _settings;
-    std::unique_ptr<TranscriberWrapper> _wrapper;
+    std::unique_ptr<TranscriberWrapper> _wrapper = nullptr;
 
 signals:
     void transcription(QString result);

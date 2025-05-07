@@ -37,6 +37,15 @@ void WelcomeWindow::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
+void WelcomeWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        noAction();
+    } else if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
+        OKAction();
+    }
+}
+
 void WelcomeWindow::setupUI()
 {
 #ifdef Q_OS_WIN

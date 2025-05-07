@@ -3,6 +3,7 @@
 
 #include <QEvent>
 #include <QGridLayout>
+#include <QKeyEvent>
 #include <QLabel>
 #include <QPushButton>
 #include <QSettings>
@@ -19,6 +20,7 @@ public:
     explicit WelcomeWindow(QWidget *parent = nullptr);
 
     void changeEvent(QEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     void setupUI(void);

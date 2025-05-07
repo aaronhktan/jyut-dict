@@ -10,7 +10,6 @@
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
-//#include <QRadioButton>
 #include <QPushButton>
 #include <QSettings>
 #include <QWidget>

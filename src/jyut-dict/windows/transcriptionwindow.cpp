@@ -1,11 +1,11 @@
 #include "transcriptionwindow.h"
 
+#include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
-#include "logic/strings/strings.h"
-#include "logic/utils/utils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
+#include "logic/utils/utils_qt.h"
 
 #include <QCoreApplication>
 #include <QDesktopServices>
@@ -22,16 +22,13 @@ constexpr auto GRAPHICS_VIEW_WIDTH = 200;
 constexpr auto GRAPHICS_VIEW_HEIGHT = 100;
 constexpr auto MIN_CIRCLE_RADIUS = 25;
 constexpr auto MAX_CIRCLE_RADIUS = 50;
+
 } // namespace
 
 TranscriptionWindow::TranscriptionWindow(QWidget *parent)
     : QWidget(parent, Qt::Window)
 {
     _settings = Settings::getSettings();
-    std::string locale{"zh_HK"};
-    _wrapper = std::make_unique<TranscriberWrapper>(locale);
-    _wrapper->subscribe(static_cast<IInputVolumeSubscriber *>(this));
-    _wrapper->subscribe(static_cast<ITranscriptionResultSubscriber *>(this));
 
 #ifdef Q_OS_MAC
     setWindowFlags(Qt::Sheet);
@@ -43,12 +40,31 @@ TranscriptionWindow::TranscriptionWindow(QWidget *parent)
     setupUI();
     translateUI();
 
+#ifdef Q_OS_MAC
+    // Set the style to match whether the user started dark mode
+    setStyle(Utils::isDarkMode());
+#else
+    setStyle(false);
+#endif
+
     connect(this,
             &TranscriptionWindow::newRadius,
             this,
             &TranscriptionWindow::startAnimation);
 
-    _wrapper->startRecognition();
+    TranscriptionLanguage lastSelected
+        = _settings
+              ->value("Transcription/lastSelected",
+                      QVariant::fromValue(TranscriptionLanguage::CANTONESE))
+              .value<TranscriptionLanguage>();
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+    foreach (const auto &button, buttons) {
+        if (button->property("data").value<TranscriptionLanguage>()
+            == lastSelected) {
+            button->click();
+            break;
+        }
+    }
 }
 
 TranscriptionWindow::~TranscriptionWindow()
@@ -65,6 +81,14 @@ void TranscriptionWindow::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
+void TranscriptionWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape || event->key() == Qt::Key_Enter
+        || event->key() == Qt::Key_Return) {
+        doneAction();
+    }
+}
+
 void TranscriptionWindow::volumeResult(
     std::variant<std::system_error, float> result)
 {
@@ -75,7 +99,7 @@ void TranscriptionWindow::volumeResult(
         int radius = std::min(percentage
                                       * (MAX_CIRCLE_RADIUS - MIN_CIRCLE_RADIUS)
                                   + MIN_CIRCLE_RADIUS,
-                              float(MAX_CIRCLE_RADIUS));
+                              static_cast<float>(MAX_CIRCLE_RADIUS));
         if (radius % 2) {
             ++radius;
         }
@@ -147,6 +171,37 @@ void TranscriptionWindow::setupUI()
     _graphicsView->setBackgroundBrush(palette().brush(QPalette::Window));
     _graphicsView->setFrameStyle(0);
 
+    _cantoneseButton = new QPushButton{this};
+    _cantoneseButton->setCheckable(true);
+    _cantoneseButton->setChecked(true);
+    _cantoneseButton->setProperty("data",
+                                  QVariant::fromValue(
+                                      TranscriptionLanguage::CANTONESE));
+    _mandarinButton = new QPushButton{this};
+    _mandarinButton->setCheckable(true);
+    _mandarinButton->setProperty("data",
+                                 QVariant::fromValue(
+                                     TranscriptionLanguage::MANDARIN));
+    _englishButton = new QPushButton{this};
+    _englishButton->setCheckable(true);
+    _englishButton->setProperty("lastButton", true);
+    _englishButton->setProperty("data",
+                                QVariant::fromValue(
+                                    TranscriptionLanguage::ENGLISH));
+
+    connect(_cantoneseButton,
+            &QPushButton::clicked,
+            this,
+            &TranscriptionWindow::setTranscriptionLang);
+    connect(_mandarinButton,
+            &QPushButton::clicked,
+            this,
+            &TranscriptionWindow::setTranscriptionLang);
+    connect(_englishButton,
+            &QPushButton::clicked,
+            this,
+            &TranscriptionWindow::setTranscriptionLang);
+
     _doneButton = new QPushButton{this};
     _doneButton->setDefault(true);
     _doneButton->setFixedWidth(80);
@@ -158,7 +213,10 @@ void TranscriptionWindow::setupUI()
 
     _dialogLayout->addWidget(_titleLabel, 0, 0, 1, -1);
     _dialogLayout->addWidget(_graphicsView, 1, 0, 1, -1);
-    _dialogLayout->addWidget(_doneButton, 4, 3, 1, 1);
+    _dialogLayout->addWidget(_cantoneseButton, 2, 0, 1, -1);
+    _dialogLayout->addWidget(_mandarinButton, 3, 0, 1, -1);
+    _dialogLayout->addWidget(_englishButton, 4, 0, 1, -1);
+    _dialogLayout->addWidget(_doneButton, 5, 3, 1, 1);
 
 #ifdef Q_OS_WIN
     _innerWidget->setLayout(_dialogLayout);
@@ -167,13 +225,6 @@ void TranscriptionWindow::setupUI()
     _outerWidgetLayout->addWidget(_innerWidget);
 #else
     setLayout(_dialogLayout);
-#endif
-
-#ifdef Q_OS_MAC
-    // Set the style to match whether the user started dark mode
-    setStyle(Utils::isDarkMode());
-#else
-    setStyle(false);
 #endif
 
 #if defined(Q_OS_WIN) || defined(Q_OS_LINUX)
@@ -195,6 +246,9 @@ void TranscriptionWindow::translateUI()
     }
 
     _titleLabel->setText(tr("Listening..."));
+    _cantoneseButton->setText(tr("Cantonese"));
+    _mandarinButton->setText(tr("Mandarin"));
+    _englishButton->setText(tr("English"));
     _doneButton->setText(tr("Done"));
 
     resize(sizeHint());
@@ -206,33 +260,123 @@ void TranscriptionWindow::translateUI()
 
 void TranscriptionWindow::setStyle(bool use_dark)
 {
+    QColor borderColour = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
+                                            HEADER_BACKGROUND_COLOUR_DARK_G,
+                                            HEADER_BACKGROUND_COLOUR_DARK_B}
+                                   : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                                            CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                                            CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+#ifdef Q_OS_LINUX
+    borderColour = borderColour.lighter(200);
+#endif
+    int interfaceSize = static_cast<int>(
+        _settings
+            ->value("Interface/size",
+                    QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+            .value<Settings::InterfaceSize>());
+    int bodyFontSize = Settings::bodyFontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int borderRadius = static_cast<int>(bodyFontSize * 1);
 #ifdef Q_OS_MAC
-    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: "
-                  "16px; }");
+    int padding = bodyFontSize / 3;
+#else
+    int padding = bodyFontSize / 6;
+#endif
+    int paddingHorizontal = bodyFontSize;
+    QString styleSheet = "QPushButton { "
+                         "   background-color: transparent; "
+                         "   border: 2px solid %1; "
+                         "   border-radius: %2px; "
+                         "   font-size: %3px; "
+                         "   padding: %4px; "
+                         "   padding-left: %5px; "
+                         "   padding-right: %5px; "
+                         "} "
+                         " "
+                         "QPushButton:checked { "
+                         "   background-color: %1; "
+                         "   border: 2px solid %1; "
+                         "   border-radius: %2px; "
+                         "   font-size: %3px; "
+                         "   padding: %4px; "
+                         "   padding-left: %5px; "
+                         "   padding-right: %5px; "
+                         "} "
+                         " "
+                         "QPushButton:hover { "
+                         "   background-color: %1; "
+                         "   border: 2px solid %1; "
+                         "   border-radius: %2px; "
+                         "   font-size: %3px; "
+                         "   padding: %4px; "
+                         "   padding-left: %5px; "
+                         "   padding-right: %5px; "
+                         "} "
+                         " "
+                         "QPushButton[lastButton=\"true\"] { "
+                         "   background-color: transparent; "
+                         "   border: 2px solid %1; "
+                         "   border-radius: %2px; "
+                         "   font-size: %3px; "
+                         "   margin-bottom: 6px; "
+                         "   padding: %4px; "
+                         "   padding-left: %5px; "
+                         "   padding-right: %5px; "
+                         "} "
+                         " "
+                         "QPushButton[lastButton=\"true\"]:checked { "
+                         "   background-color: %1; "
+                         "   border: 2px solid %1; "
+                         "   border-radius: %2px; "
+                         "   font-size: %3px; "
+                         "   margin-bottom: 6px; "
+                         "   padding: %4px; "
+                         "   padding-left: %5px; "
+                         "   padding-right: %5px; "
+                         "} "
+                         " "
+                         "QPushButton[lastButton=\"true\"]:hover { "
+                         "   background-color: %1; "
+                         "   border: 2px solid %1; "
+                         "   border-radius: %2px; "
+                         "   font-size: %3px; "
+                         "   margin-bottom: 6px; "
+                         "   padding: %4px; "
+                         "   padding-left: %5px; "
+                         "   padding-right: %5px; "
+                         "} ";
+
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+    foreach (const auto &button, buttons) {
+        button->setStyleSheet(styleSheet.arg(borderColour.name())
+                                  .arg(borderRadius)
+                                  .arg(bodyFontSize)
+                                  .arg(padding)
+                                  .arg(paddingHorizontal));
+        button->setMinimumHeight(
+            std::max(borderRadius * 2,
+                     button->fontMetrics().boundingRect(button->text()).height()
+                         + 2 * padding + 2 * 2));
+    }
+
+#ifdef Q_OS_MAC
+    _doneButton->setStyleSheet("QPushButton[isHan=\"true\"] { "
+                               "   font-size: 12px; "
+                               "   height: 16px; "
+                               "} ");
 #elif defined(Q_OS_WIN)
-    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: "
-                  "20px; }");
+    _doneButton->setStyleSheet(
+        "QPushButton[isHan=\"true\"] { font-size: 12px; height: "
+        "20px; }");
 #elif defined(Q_OS_LINUX)
-    setStyleSheet("QPushButton { margin-left: 5px; margin-right: 5px; }");
+    _doneButton->setStyleSheet(
+        "QPushButton { margin-left: 5px; margin-right: 5px; }");
 #endif
 
     _titleLabel->setStyleSheet("QLabel { font-weight: bold; font-size: 16px; "
                                "margin-top: 11px; margin-bottom: 11px; }");
 
 #ifdef Q_OS_WIN
-    QFont font;
-    if (Settings::isCurrentLocaleTraditionalHan()) {
-        font = QFont{"Microsoft Jhenghei", 10};
-    } else if (Settings::isCurrentLocaleSimplifiedHan()) {
-        font = QFont{"Microsoft YaHei", 10};
-    } else if (Settings::isCurrentLocaleHan()) {
-        font = QFont{"Microsoft YaHei", 10};
-    } else {
-        font = QFont{"Microsoft YaHei", 10};
-    }
-    font.setStyleHint(QFont::System, QFont::PreferAntialias);
-    _messageLabel->setFont(font);
-
     _innerWidget->setAttribute(Qt::WA_StyledBackground);
     _innerWidget->setObjectName("innerWidget");
     _innerWidget->setStyleSheet("QWidget#innerWidget {"
@@ -257,8 +401,76 @@ void TranscriptionWindow::setStyle(bool use_dark)
 #endif
 }
 
-void TranscriptionWindow::startTranscription(void)
+void TranscriptionWindow::setTranscriptionLang(void)
 {
+    QPushButton *sender = static_cast<QPushButton *>(QObject::sender());
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+    foreach (const auto &button, buttons) {
+        button->setChecked(button == sender);
+    }
+
+    Settings::getSettings()->setValue("Transcription/lastSelected",
+                                      sender->property("data"));
+
+    TranscriptionLanguage lang
+        = sender->property("data").value<TranscriptionLanguage>();
+    std::string locale;
+    switch (lang) {
+    case TranscriptionLanguage::CANTONESE: {
+        locale = "zh_HK";
+        break;
+    }
+    case TranscriptionLanguage::MANDARIN: {
+        if (Settings::getCurrentLocale().territory() == QLocale::Taiwan) {
+            locale = "zh_TW";
+        } else {
+            locale = "zh_CN";
+        }
+        break;
+    }
+    case TranscriptionLanguage::ENGLISH: {
+        if (Settings::getCurrentLocale().language() == QLocale::French) {
+            if (Settings::getCurrentLocale().territory() == QLocale::Canada) {
+                locale = "fr_CA";
+            } else {
+                locale = "fr_FR";
+            }
+        } else {
+            if (Settings::getCurrentLocale().territory()
+                == QLocale::UnitedKingdom) {
+                locale = "en_UK";
+            } else {
+                locale = "en_US";
+            }
+        }
+        break;
+    }
+    }
+
+    if (_wrapper) {
+        _wrapper->stopRecognition();
+        _wrapper->unsubscribe(static_cast<IInputVolumeSubscriber *>(this));
+        _wrapper->unsubscribe(
+            static_cast<ITranscriptionResultSubscriber *>(this));
+    }
+
+#ifdef Q_OS_WIN
+    QFont font;
+    if (locale == "zh_TW" || locale == "zh_HK") {
+        font = QFont{"Microsoft Jhenghei", 10};
+    } else if (locale == "zh_CN") {
+        font = QFont{"Microsoft YaHei", 10};
+    } else {
+        font = QFont{"Microsoft YaHei", 10};
+    }
+    font.setStyleHint(QFont::System, QFont::PreferAntialias);
+    _titleLabel->setFont(font);
+#endif
+
+    _titleLabel->setText(tr("Listening..."));
+    _wrapper = std::make_unique<TranscriberWrapper>(locale);
+    _wrapper->subscribe(static_cast<IInputVolumeSubscriber *>(this));
+    _wrapper->subscribe(static_cast<ITranscriptionResultSubscriber *>(this));
     _wrapper->startRecognition();
 }
 

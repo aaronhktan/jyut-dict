@@ -308,8 +308,6 @@ void SearchOptionsRadioGroupBox::notifyMediator() const
         button->setChecked(button == sender);
     }
 
-    std::string language = sender->text().toStdString();
-
     Settings::getSettings()->setValue("SearchOptionsRadioGroupBox/lastSelected",
                                       sender->property("data"));
 

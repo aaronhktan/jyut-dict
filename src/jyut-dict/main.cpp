@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<MandarinOptions>("MandarinOptions");
     qRegisterMetaType<EntryColourPhoneticType>("EntryColourPhoneticType");
     qRegisterMetaType<SearchParameters>("SearchParameters");
+    qRegisterMetaType<TranscriptionLanguage>("TranscriptionLanguage");
     qRegisterMetaType<searchTermHistoryItem>("searchTermHistoryItem");
     qRegisterMetaType<conflictingDictionaryMetadata>(
         "conflictingDictionaryNamesMetadata");
