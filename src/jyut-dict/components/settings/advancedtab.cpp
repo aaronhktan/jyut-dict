@@ -34,6 +34,8 @@ constexpr auto AUDIO_DOWNLOAD_URL
 AdvancedTab::AdvancedTab(QWidget *parent)
     : QWidget{parent}
 {
+    setObjectName("AdvancedTab");
+
     _settings = Settings::getSettings();
 
     setupUI();
@@ -290,13 +292,11 @@ void AdvancedTab::setStyle(bool use_dark)
     foreach (const auto & frame, frames) {
         frame->setStyleSheet(style.arg(colour));
     }
-#ifndef Q_OS_MAC
+
     setAttribute(Qt::WA_StyledBackground);
-    setObjectName("AdvancedTab");
     setStyleSheet("QWidget#AdvancedTab { "
                   "   background-color: palette(base);"
                   "} ");
-#endif
 }
 
 void AdvancedTab::initializeUpdateCheckbox(QCheckBox &checkbox)

@@ -28,6 +28,8 @@ constexpr auto MAX_CIRCLE_RADIUS = 50;
 TranscriptionWindow::TranscriptionWindow(QWidget *parent)
     : QWidget(parent, Qt::Window)
 {
+    setObjectName("TranscriptionWindow");
+
     _settings = Settings::getSettings();
 
 #ifdef Q_OS_MAC
@@ -264,6 +266,11 @@ void TranscriptionWindow::translateUI()
 
 void TranscriptionWindow::setStyle(bool use_dark)
 {
+    setAttribute(Qt::WA_StyledBackground);
+    setStyleSheet("QWidget#TranscriptionWindow { "
+                  "   background-color: palette(base); "
+                  "} ");
+
     QColor borderColour = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
                                             HEADER_BACKGROUND_COLOUR_DARK_G,
                                             HEADER_BACKGROUND_COLOUR_DARK_B}

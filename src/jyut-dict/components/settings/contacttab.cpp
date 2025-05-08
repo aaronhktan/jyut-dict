@@ -22,6 +22,8 @@
 ContactTab::ContactTab(QWidget *parent)
     : QWidget{parent}
 {
+    setObjectName("ContactTab");
+
     setupUI();
     translateUI();
 }
@@ -167,14 +169,13 @@ void ContactTab::translateUI()
 void ContactTab::setStyle(bool use_dark)
 {
     (void) (use_dark);
-#ifndef Q_OS_MAC
     setAttribute(Qt::WA_StyledBackground);
-    setObjectName("ContactTab");
     setStyleSheet("QWidget#ContactTab { "
                   "   background-color: palette(base);"
                   "} ");
-#endif
-    _otherSources->setText(
-        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::OTHER_SOURCES).arg(palette().text().color().name()));
+
+    _otherSources->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                       Strings::OTHER_SOURCES)
+                               .arg(palette().text().color().name()));
 }
 

@@ -24,7 +24,9 @@
 SettingsTab::SettingsTab(QWidget *parent)
     : QWidget{parent}
 {
+    setObjectName("SettingsTab");
     _settings = Settings::getSettings(this);
+
     setupUI();
     translateUI();
 }
@@ -294,20 +296,10 @@ void SettingsTab::translateUI()
 
 void SettingsTab::setStyle(bool use_dark)
 {
-#ifdef Q_OS_MAC
-    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: "
-                  "13px; height: 16px; }");
-#elif defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     setAttribute(Qt::WA_StyledBackground);
-    setObjectName("DictionaryTab");
-    setStyleSheet("QPushButton[isHan=\"true\"] { "
-                  "   font-size: 12px; height: 20px; "
-                  "} "
-                  ""
-                  "QWidget#DictionaryTab { "
+    setStyleSheet("QWidget#SettingsTab { "
                   "   background-color: palette(base); "
                   "} ");
-#endif
 
     QString colour = use_dark ? "#424242" : "#d5d5d5";
     QString style = "QFrame { border: 1px solid %1; }";
