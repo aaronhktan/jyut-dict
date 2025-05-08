@@ -3,6 +3,7 @@
 
 #include <QEvent>
 #include <QMessageBox>
+#include <QSettings>
 #include <QString>
 
 class DefaultDialog : public QMessageBox
@@ -19,10 +20,13 @@ public:
 
 protected:
     void translateUI(void);
+    void setStyle(bool use_dark);
     void deselectButtons(void);
 
 private:
     void setupUI(const QString &reason, const QString &description);
+
+    std::unique_ptr<QSettings> _settings;
 };
 
 #endif // ERRORDIALOG_H

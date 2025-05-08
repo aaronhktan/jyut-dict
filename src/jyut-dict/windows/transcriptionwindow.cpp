@@ -202,9 +202,14 @@ void TranscriptionWindow::setupUI()
             this,
             &TranscriptionWindow::setTranscriptionLang);
 
+    QWidget *spacer = new QWidget{this};
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    spacer->setMinimumHeight(6);
+
     _doneButton = new QPushButton{this};
     _doneButton->setDefault(true);
     _doneButton->setFixedWidth(80);
+    _doneButton->setProperty("ignoreStyle", true);
 
     connect(_doneButton,
             &QPushButton::clicked,
@@ -216,7 +221,8 @@ void TranscriptionWindow::setupUI()
     _dialogLayout->addWidget(_cantoneseButton, 2, 0, 1, -1);
     _dialogLayout->addWidget(_mandarinButton, 3, 0, 1, -1);
     _dialogLayout->addWidget(_englishButton, 4, 0, 1, -1);
-    _dialogLayout->addWidget(_doneButton, 5, 3, 1, 1);
+    _dialogLayout->addWidget(spacer, 5, 0, 1, -1);
+    _dialogLayout->addWidget(_doneButton, 6, 3, 1, 1);
 
 #ifdef Q_OS_WIN
     _innerWidget->setLayout(_dialogLayout);
@@ -312,42 +318,13 @@ void TranscriptionWindow::setStyle(bool use_dark)
                          "   padding-left: %5px; "
                          "   padding-right: %5px; "
                          "} "
-                         " "
-                         "QPushButton[lastButton=\"true\"] { "
-                         "   background-color: transparent; "
-                         "   border: 2px solid %1; "
-                         "   border-radius: %2px; "
-                         "   font-size: %3px; "
-                         "   margin-bottom: 6px; "
-                         "   padding: %4px; "
-                         "   padding-left: %5px; "
-                         "   padding-right: %5px; "
-                         "} "
-                         " "
-                         "QPushButton[lastButton=\"true\"]:checked { "
-                         "   background-color: %1; "
-                         "   border: 2px solid %1; "
-                         "   border-radius: %2px; "
-                         "   font-size: %3px; "
-                         "   margin-bottom: 6px; "
-                         "   padding: %4px; "
-                         "   padding-left: %5px; "
-                         "   padding-right: %5px; "
-                         "} "
-                         " "
-                         "QPushButton[lastButton=\"true\"]:hover { "
-                         "   background-color: %1; "
-                         "   border: 2px solid %1; "
-                         "   border-radius: %2px; "
-                         "   font-size: %3px; "
-                         "   margin-bottom: 6px; "
-                         "   padding: %4px; "
-                         "   padding-left: %5px; "
-                         "   padding-right: %5px; "
-                         "} ";
+                         " ";
 
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     foreach (const auto &button, buttons) {
+        if (button->property("ignoreStyle").value<bool>()) {
+            continue;
+        }
         button->setStyleSheet(styleSheet.arg(borderColour.name())
                                   .arg(borderRadius)
                                   .arg(bodyFontSize)
@@ -359,22 +336,17 @@ void TranscriptionWindow::setStyle(bool use_dark)
                          + 2 * padding + 2 * 2));
     }
 
-#ifdef Q_OS_MAC
-    _doneButton->setStyleSheet("QPushButton[isHan=\"true\"] { "
-                               "   font-size: 12px; "
-                               "   height: 16px; "
-                               "} ");
-#elif defined(Q_OS_WIN)
-    _doneButton->setStyleSheet(
-        "QPushButton[isHan=\"true\"] { font-size: 12px; height: "
-        "20px; }");
-#elif defined(Q_OS_LINUX)
+#ifdef Q_OS_LINUX
     _doneButton->setStyleSheet(
         "QPushButton { margin-left: 5px; margin-right: 5px; }");
 #endif
 
-    _titleLabel->setStyleSheet("QLabel { font-weight: bold; font-size: 16px; "
-                               "margin-top: 11px; margin-bottom: 11px; }");
+    _titleLabel->setStyleSheet("QLabel { "
+                               "   font-size: 16px; "
+                               "   font-weight: bold; "
+                               "   margin-top: 11px; "
+                               "   margin-bottom: 11px; "
+                               "}");
 
 #ifdef Q_OS_WIN
     _innerWidget->setAttribute(Qt::WA_StyledBackground);
