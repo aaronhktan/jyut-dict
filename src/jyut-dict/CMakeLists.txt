@@ -108,6 +108,7 @@ set(PROJECT_HEADERS
         dialogs/overwriteconflictingdictionarydialog.h
         dialogs/resetsettingsdialog.h
         dialogs/restoredatabasedialog.h
+        dialogs/transcriptionerrordialog.h
         logic/database/queryparseutils.h
         logic/database/sqldatabasemanager.h
         logic/database/sqldatabaseutils.h
@@ -215,6 +216,7 @@ set(PROJECT_SOURCES
         dialogs/overwriteconflictingdictionarydialog.cpp
         dialogs/resetsettingsdialog.cpp
         dialogs/restoredatabasedialog.cpp
+        dialogs/transcriptionerrordialog.cpp
         logic/database/queryparseutils.cpp
         logic/database/sqldatabasemanager.cpp
         logic/database/sqldatabaseutils.cpp
@@ -334,6 +336,7 @@ if (APPLE)
         PRIVATE platform/mac/yue_Hant.lproj/InfoPlist.strings
         PRIVATE platform/mac/zh_Hans.lproj/InfoPlist.strings
         PRIVATE platform/mac/zh_Hant.lproj/InfoPlist.strings
+        dialogs/transcriptionerrordialog.h
     )
 
     set_property(SOURCE resources/db/dict.db PROPERTY MACOSX_PACKAGE_LOCATION "Resources")

@@ -14,6 +14,7 @@
 #include <QPropertyAnimation>
 #include <QSize>
 #include <QStyle>
+#include <QTimer>
 
 #include <algorithm>
 
@@ -53,6 +54,10 @@ TranscriptionWindow::TranscriptionWindow(QWidget *parent)
             &TranscriptionWindow::newRadius,
             this,
             &TranscriptionWindow::startAnimation);
+    connect(this,
+            &TranscriptionWindow::transcriptionError,
+            this,
+            &TranscriptionWindow::showErrorDialog);
 
     TranscriptionLanguage lastSelected
         = _settings
@@ -120,8 +125,10 @@ void TranscriptionWindow::transcriptionResult(
             doneAction();
         } else {
             stopTranscription();
-            qDebug() << std::get<std::system_error>(result).code().value()
-                     << std::get<std::system_error>(result).what();
+            emit transcriptionError(std::get<std::system_error>(result)
+                                        .code()
+                                        .value(),
+                                    std::get<std::system_error>(result).what());
         }
     }
 }
@@ -281,11 +288,7 @@ void TranscriptionWindow::setStyle(bool use_dark)
     borderColour = borderColour.lighter(200);
 #endif
     _graphicsView->setBackgroundBrush(palette().brush(QPalette::Window));
-    if (use_dark) {
-        _ellipse->setBrush(palette().brush(QPalette::Base));
-    } else {
-        _ellipse->setBrush(borderColour);
-    }
+    _ellipse->setBrush(borderColour);
 
     int interfaceSize = static_cast<int>(
         _settings
@@ -461,7 +464,46 @@ void TranscriptionWindow::setTranscriptionLang(void)
 
 void TranscriptionWindow::stopTranscription(void)
 {
-    _wrapper->stopRecognition();
+    if (_wrapper) {
+        _wrapper->stopRecognition();
+    }
+}
+
+void TranscriptionWindow::showErrorDialog(int err, std::string description)
+{
+    if (!isVisible()) {
+        // Only show the error dialog once the transcription window has been painted
+        QTimer::singleShot(100, this, [=, this]() {
+            showErrorDialog(err, description);
+        });
+        return;
+    }
+
+    QString reason;
+
+    switch (err) {
+    case ENETDOWN: {
+        reason = "Speech recognition service could not be started.";
+        break;
+    }
+    case EPERM: {
+        reason = "Permission to access audio for speech recognition denied.";
+        break;
+    }
+    default: {
+        reason = "An unspecified error occurred.";
+        break;
+    }
+    }
+
+    _errorDialog = new TranscriptionErrorDialog(reason, description.c_str());
+
+    connect(_errorDialog,
+            &QDialog::accepted,
+            this,
+            &TranscriptionWindow::doneAction);
+
+    _errorDialog->exec();
 }
 
 void TranscriptionWindow::startAnimation(float radius)

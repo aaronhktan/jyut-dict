@@ -55,6 +55,12 @@ constexpr auto VARIANT = "install";
                               "preference.universalaccess?TextToSpeech";
     constexpr auto TTS_HELP_LINK
         = "https://support.apple.com/guide/mac-help/mchlp2290/mac";
+    constexpr auto PRIVACY_MICROPHONE_LINK
+        = "x-apple.systempreferences:com.apple.preference.security?Privacy_"
+          "Microphone";
+    constexpr auto PRIVACY_SPEECH_LINK
+        = "x-apple.systempreferences:com.apple.preference.security?Privacy_"
+          "SpeechRecognition";
 #elif defined(Q_OS_LINUX)
     constexpr auto TTS_LINK
         = "https://packages.debian.org/stretch/libspeechd-dev";

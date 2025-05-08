@@ -1,6 +1,7 @@
 #ifndef TRANSCRIPTIONWINDOW_H
 #define TRANSCRIPTIONWINDOW_H
 
+#include "dialogs/transcriptionerrordialog.h"
 #include "logic/dictation/iinputvolumesubscriber.h"
 #include "logic/dictation/itranscriptionresultsubscriber.h"
 #include "logic/dictation/transcriberwrapper.h"
@@ -83,6 +84,8 @@ private:
     void setTranscriptionLang(void);
     void stopTranscription(void);
 
+    void showErrorDialog(int err, std::string description);
+
 #ifdef Q_OS_WIN
     // On Windows, the window widget's background colour
     // can't be changed. The workaround is to create
@@ -108,12 +111,15 @@ private:
 
     QGridLayout *_dialogLayout;
 
+    TranscriptionErrorDialog *_errorDialog;
+
     std::unique_ptr<QSettings> _settings;
     std::unique_ptr<TranscriberWrapper> _wrapper = nullptr;
 
 signals:
     void languageSelected(TranscriptionLanguage lang);
     void transcription(QString result);
+    void transcriptionError(int err, std::string description);
     void newRadius(float radius);
 
 public slots:

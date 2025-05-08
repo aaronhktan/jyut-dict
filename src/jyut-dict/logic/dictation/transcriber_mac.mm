@@ -116,10 +116,10 @@ private:
 
     // The recognizer may be unavailable for certain locales without an Internet connection
     if (!self.recognizer.available) {
-        _publisher->notifyTranscriptionResult(
-            std::system_error{ENETDOWN,
-                              std::generic_category(),
-                              "Speech recognizer is not currently available"});
+        _publisher->notifyTranscriptionResult(std::system_error{
+            ENETDOWN,
+            std::generic_category(),
+            "Speech recognizer is not currently available; may require Internet access"});
         return;
     }
 
@@ -134,14 +134,14 @@ private:
             std::system_error{EPERM,
                               std::generic_category(),
                               "Speech recognition permission not granted"});
-        return;
+        break;
     }
     case SFSpeechRecognizerAuthorizationStatusRestricted: {
         _publisher->notifyTranscriptionResult(
             std::system_error{EPERM,
                               std::generic_category(),
                               "Speech recognition permission is restricted"});
-        return;
+        break;
     }
     case SFSpeechRecognizerAuthorizationStatusNotDetermined: {
         [SFSpeechRecognizer requestAuthorization:^(SFSpeechRecognizerAuthorizationStatus status) {
@@ -154,6 +154,10 @@ private:
         }];
         break;
     }
+    }
+
+    if (status != SFSpeechRecognizerAuthorizationStatusAuthorized) {
+        return;
     }
 
     // Create the input node for audio capture
@@ -225,12 +229,12 @@ private:
     case AVAuthorizationStatusDenied:
         _publisher->notifyTranscriptionResult(
             std::system_error{EPERM, std::generic_category(), "Microphone permission not granted"});
-        return;
+        break;
 
     case AVAuthorizationStatusRestricted:
         _publisher->notifyTranscriptionResult(
             std::system_error{EPERM, std::generic_category(), "Microphone permission restricted"});
-        return;
+        break;
 
     case AVAuthorizationStatusNotDetermined:
         [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio
@@ -243,6 +247,10 @@ private:
                                      }
                                  }];
         break;
+    }
+
+    if (captureStatus != AVAuthorizationStatusAuthorized) {
+        return;
     }
 
     // Prepare and start the audio engine
