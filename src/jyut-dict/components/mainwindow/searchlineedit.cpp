@@ -229,7 +229,6 @@ void SearchLineEdit::checkClearVisibility(void)
 void SearchLineEdit::startTranscription(void)
 {
     clear();
-    // addAction(_microphoneOff, QLineEdit::TrailingPosition);
     checkClearVisibility();
 
     _transcriptionWindow = new TranscriptionWindow{this};
@@ -241,6 +240,32 @@ void SearchLineEdit::startTranscription(void)
             &TranscriptionWindow::transcription,
             this,
             [&](QString result) { setText(result); });
+    connect(_transcriptionWindow,
+            &TranscriptionWindow::languageSelected,
+            this,
+            [&](TranscriptionLanguage lang) {
+                SearchParameters params;
+                switch (lang) {
+                case TranscriptionLanguage::CANTONESE: {
+                    params = SearchParameters::TRADITIONAL;
+                    break;
+                }
+                case TranscriptionLanguage::MANDARIN: {
+                    if (Settings::getCurrentLocale().territory()
+                        == QLocale::Taiwan) {
+                        params = SearchParameters::TRADITIONAL;
+                    } else {
+                        params = SearchParameters::SIMPLIFIED;
+                    }
+                    break;
+                }
+                case TranscriptionLanguage::ENGLISH: {
+                    params = SearchParameters::ENGLISH;
+                    break;
+                }
+                }
+                _mediator->setParameters(params);
+            });
 }
 
 void SearchLineEdit::addSearchTermToHistory(SearchParameters parameters) const
@@ -266,4 +291,9 @@ void SearchLineEdit::searchTriggered(void)
     } else {
         search();
     }
+}
+
+void SearchLineEdit::dictationRequested(void)
+{
+    startTranscription();
 }

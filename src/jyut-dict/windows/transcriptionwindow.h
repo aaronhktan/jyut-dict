@@ -112,6 +112,7 @@ private:
     std::unique_ptr<TranscriberWrapper> _wrapper = nullptr;
 
 signals:
+    void languageSelected(TranscriptionLanguage lang);
     void transcription(QString result);
     void newRadius(float radius);
 

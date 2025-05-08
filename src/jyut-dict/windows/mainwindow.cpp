@@ -319,6 +319,7 @@ void MainWindow::translateUI(void)
 
     _findAction->setText(tr("Start a New Search"));
     _findAndSelectAllAction->setText(tr("Select Search Bar Contents"));
+    _dictationAction->setText(tr("Start Dictation"));
     _setFocusToResultsAction->setText(
         tr("Jump to First Item in Search Results"));
     _selectSimplifiedAction->setText(tr("Search Simplified Chinese"));
@@ -919,6 +920,11 @@ void MainWindow::createActions(void)
             &MainWindow::findAndSelectAll);
     _searchMenu->addAction(_findAndSelectAllAction);
 
+    _dictationAction = new QAction{this};
+    _dictationAction->setShortcut(QKeySequence{"Ctrl+D"});
+    connect(_dictationAction, &QAction::triggered, this, &MainWindow::dictation);
+    _searchMenu->addAction(_dictationAction);
+
     _searchMenu->addSeparator();
 
     _setFocusToResultsAction = new QAction{this};
@@ -1180,6 +1186,11 @@ void MainWindow::find(void) const
 void MainWindow::findAndSelectAll(void) const
 {
     _mainToolBar->selectAllEvent();
+}
+
+void MainWindow::dictation(void) const
+{
+    _mainToolBar->dictationRequested();
 }
 
 void MainWindow::setFocusToResults(void) const

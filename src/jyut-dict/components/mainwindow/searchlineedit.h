@@ -65,6 +65,7 @@ private:
 
 public slots:
     void searchTriggered(void);
+    void dictationRequested(void);
 };
 
 #endif // SEARCHLINEEDIT_H

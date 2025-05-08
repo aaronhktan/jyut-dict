@@ -19,18 +19,18 @@ MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
                          QWidget *parent) : QToolBar(parent)
 {
     setContextMenuPolicy(Qt::PreventContextMenu);
-    _searchBar = new SearchLineEdit(_searchOptions,
-                                    sqlSearch,
-                                    sqlHistoryUtils,
-                                    this);
 
     _searchOptions = std::make_shared<SearchOptionsMediator>();
     _settings = Settings::getSettings(this);
 
+    _searchBar
+        = new SearchLineEdit(_searchOptions, sqlSearch, sqlHistoryUtils, this);
     _searchOptions->registerLineEdit(_searchBar);
+
     _optionsBox = new SearchOptionsRadioGroupBox(_searchOptions,
                                                  sqlSearch,
                                                  this);
+    _searchOptions->registerOptionSelector(_optionsBox);
 
     connect(_searchBar,
             &QLineEdit::textChanged,
@@ -291,6 +291,11 @@ void MainToolBar::searchQueryRequested(const QString &query,
 void MainToolBar::searchRequested(void) const
 {
     _searchBar->searchTriggered();
+}
+
+void MainToolBar::dictationRequested(void) const
+{
+    _searchBar->dictationRequested();
 }
 
 void MainToolBar::updateStyleRequested(void)

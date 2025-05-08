@@ -69,6 +69,8 @@ set(PROJECT_HEADERS
         components/layouts/flowlayout.h
         components/magnifywindow/magnifyscrollarea.h
         components/magnifywindow/magnifyscrollareawidget.h
+        components/mainwindow/isearchlineedit.h
+        components/mainwindow/isearchoptionsselector.h
         components/mainwindow/mainsplitter.h
         components/mainwindow/maintoolbar.h
         components/mainwindow/searchlineedit.h

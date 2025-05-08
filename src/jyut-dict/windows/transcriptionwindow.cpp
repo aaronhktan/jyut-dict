@@ -383,9 +383,10 @@ void TranscriptionWindow::setTranscriptionLang(void)
 
     Settings::getSettings()->setValue("Transcription/lastSelected",
                                       sender->property("data"));
-
     TranscriptionLanguage lang
         = sender->property("data").value<TranscriptionLanguage>();
+    emit languageSelected(lang);
+
     std::string locale;
     switch (lang) {
     case TranscriptionLanguage::CANTONESE: {

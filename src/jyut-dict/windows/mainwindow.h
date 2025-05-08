@@ -62,6 +62,7 @@ private:
     QAction *_pasteAction;
     QAction *_findAction;
     QAction *_findAndSelectAllAction;
+    QAction *_dictationAction;
     QAction *_setFocusToResultsAction;
     QAction *_selectSimplifiedAction;
     QAction *_selectTraditionalAction;
@@ -126,6 +127,7 @@ private:
     void paste(void) const;
     void find(void) const;
     void findAndSelectAll(void) const;
+    void dictation(void) const;
     void setFocusToResults(void) const;
     void selectSimplified(void) const;
     void selectTraditional(void) const;
