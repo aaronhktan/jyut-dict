@@ -158,7 +158,6 @@ void TranscriptionWindow::setupUI()
                                  MIN_CIRCLE_RADIUS * 2,
                                  MIN_CIRCLE_RADIUS * 2);
     _ellipse->setParent(_graphicsScene);
-    _ellipse->setBrush(palette().brush(QPalette::Base));
     _ellipse->setPen(QPen{Qt::transparent});
     _graphicsScene->addItem(_ellipse);
 
@@ -168,7 +167,6 @@ void TranscriptionWindow::setupUI()
     _graphicsScene->addItem(_icon);
 
     _graphicsView->setScene(_graphicsScene);
-    _graphicsView->setBackgroundBrush(palette().brush(QPalette::Window));
     _graphicsView->setFrameStyle(0);
 
     _cantoneseButton = new QPushButton{this};
@@ -269,12 +267,19 @@ void TranscriptionWindow::setStyle(bool use_dark)
     QColor borderColour = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
                                             HEADER_BACKGROUND_COLOUR_DARK_G,
                                             HEADER_BACKGROUND_COLOUR_DARK_B}
-                                   : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
-                                            CONTENT_BACKGROUND_COLOUR_LIGHT_G,
-                                            CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+                                   : QColor{HEADER_BACKGROUND_COLOUR_LIGHT_R,
+                                            HEADER_BACKGROUND_COLOUR_LIGHT_G,
+                                            HEADER_BACKGROUND_COLOUR_LIGHT_B};
 #ifdef Q_OS_LINUX
     borderColour = borderColour.lighter(200);
 #endif
+    _graphicsView->setBackgroundBrush(palette().brush(QPalette::Window));
+    if (use_dark) {
+        _ellipse->setBrush(palette().brush(QPalette::Base));
+    } else {
+        _ellipse->setBrush(borderColour);
+    }
+
     int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",

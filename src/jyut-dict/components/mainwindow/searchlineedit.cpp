@@ -187,7 +187,6 @@ void SearchLineEdit::setStyle(bool use_dark)
             _searchLineEdit->setIcon(searchInverted);
             _clearLineEdit->setIcon(clearInverted);
             _microphone->setIcon(micInverted);
-            // _microphoneOff->setIcon(micOffInverted);
     } else {
             setStyleSheet(QString{"QLineEdit { "
                                   "   background-color: #ffffff; "
@@ -211,7 +210,6 @@ void SearchLineEdit::setStyle(bool use_dark)
             _searchLineEdit->setIcon(search);
             _clearLineEdit->setIcon(clear);
             _microphone->setIcon(mic);
-            // _microphoneOff->setIcon(micOff);
     }
 }
 
