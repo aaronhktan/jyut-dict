@@ -293,10 +293,16 @@ void AdvancedTab::setStyle(bool use_dark)
         frame->setStyleSheet(style.arg(colour));
     }
 
-    setAttribute(Qt::WA_StyledBackground);
-    setStyleSheet("QWidget#AdvancedTab { "
-                  "   background-color: palette(base);"
-                  "} ");
+#ifdef Q_OS_MAC
+    if (!use_dark) {
+#endif
+        setAttribute(Qt::WA_StyledBackground);
+        setStyleSheet("QWidget#AdvancedTab { "
+                      "   background-color: palette(base);"
+                      "} ");
+#ifdef Q_OS_MAC
+    }
+#endif
 }
 
 void AdvancedTab::initializeUpdateCheckbox(QCheckBox &checkbox)

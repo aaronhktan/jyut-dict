@@ -146,10 +146,16 @@ void DictionaryTab::translateUI()
 
 void DictionaryTab::setStyle(bool use_dark) {
     (void) (use_dark);
-    setAttribute(Qt::WA_StyledBackground);
-    setStyleSheet("QWidget#DictionaryTab { "
-                  "   background-color: palette(base); "
-                  "} ");
+#ifdef Q_OS_MAC
+    if (!use_dark) {
+#endif
+        setAttribute(Qt::WA_StyledBackground);
+        setStyleSheet("QWidget#DictionaryTab { "
+                      "   background-color: palette(base);"
+                      "} ");
+#ifdef Q_OS_MAC
+    }
+#endif
 
 #ifdef Q_OS_MAC
     _list->setStyleSheet("QListView {"

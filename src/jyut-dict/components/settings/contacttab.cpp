@@ -169,10 +169,16 @@ void ContactTab::translateUI()
 void ContactTab::setStyle(bool use_dark)
 {
     (void) (use_dark);
-    setAttribute(Qt::WA_StyledBackground);
-    setStyleSheet("QWidget#ContactTab { "
-                  "   background-color: palette(base);"
-                  "} ");
+#ifdef Q_OS_MAC
+    if (!use_dark) {
+#endif
+        setAttribute(Qt::WA_StyledBackground);
+        setStyleSheet("QWidget#ContactTab { "
+                      "   background-color: palette(base);"
+                      "} ");
+#ifdef Q_OS_MAC
+    }
+#endif
 
     _otherSources->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                                        Strings::OTHER_SOURCES)

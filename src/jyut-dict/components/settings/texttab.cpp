@@ -193,10 +193,16 @@ void TextTab::translateUI()
 
 void TextTab::setStyle(bool use_dark)
 {
-    setAttribute(Qt::WA_StyledBackground);
-    setStyleSheet("QWidget#TextTab { "
-                  "   background-color: palette(base); "
-                  "} ");
+#ifdef Q_OS_MAC
+    if (!use_dark) {
+#endif
+        setAttribute(Qt::WA_StyledBackground);
+        setStyleSheet("QWidget#TextTab { "
+                      "   background-color: palette(base);"
+                      "} ");
+#ifdef Q_OS_MAC
+    }
+#endif
 
     QString colour = use_dark ? "#424242" : "#d5d5d5";
     QString style = "QFrame { border: 1px solid %1; }";
