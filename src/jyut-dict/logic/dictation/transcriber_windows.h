@@ -1,10 +1,18 @@
-#ifndef SPEECH_WRAPPER_H
-#define SPEECH_WRAPPER_H
+#ifndef TRANSCRIBER_H
+#define TRANSCRIBER_H
 
 #include "iinputvolumepublisher.h"
 #include "iinputvolumesubscriber.h"
 #include "itranscriptionresultpublisher.h"
 #include "itranscriptionresultsubscriber.h"
+
+#define INITGUID
+#include <Windows.h>
+#include <sapi.h>
+#include <sphelper.h>
+
+#include <initguid.h>
+#include <objbase.h>
 
 #include <string>
 #include <unordered_set>
@@ -12,14 +20,14 @@
 // The TranscriberWrapper class presents a C++ interface for the
 // speech-to-text APIs in AVFoundation/Speech macOS frameworks.
 
-class TranscriberWrapper : public IInputVolumePublisher,
+class Transcriber    : public IInputVolumePublisher,
                            public IInputVolumeSubscriber,
                            public ITranscriptionResultPublisher,
                            public ITranscriptionResultSubscriber
 {
 public:
-    TranscriberWrapper(std::string &locale);
-    ~TranscriberWrapper();
+    Transcriber(std::string &locale);
+    ~Transcriber();
 
     void subscribe(IInputVolumeSubscriber *subsciber) override;
     void unsubscribe(IInputVolumeSubscriber *subscriber) override;
@@ -41,14 +49,16 @@ public:
     void stopRecognition();
 
 private:
-    // We have to use a void * pointer here since the Speech Helper
-    // is an Objective-C++ class. We can't include any Objective-C++
-    // constructs in this C++ header.
-    void *_transcriber = nullptr;
+    ISpVoice *voice = nullptr;
+    ISpRecognizer *recognizer = nullptr;
+    ISpAudio *audio = nullptr;
+    ISpRecoContext *recoContext = nullptr;
+    ISpRecoGrammar *grammar = nullptr;
+    HKL originalLayout;
 
     std::unordered_set<IInputVolumeSubscriber *> _volumeSubscribers;
     std::unordered_set<ITranscriptionResultSubscriber *>
         _transcriptionSubscribers;
 };
 
-#endif // SPEECH_WRAPPER_H
+#endif // TRANSCRIBER_H

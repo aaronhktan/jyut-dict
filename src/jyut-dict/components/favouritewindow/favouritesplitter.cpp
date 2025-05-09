@@ -95,6 +95,7 @@ void FavouriteSplitter::setupUI()
                   "   background-color: none; "
                   "} ");
 #else
+    setHandleWidth(15);
     setStyleSheet("QSplitter::handle { "
                   "   background-color: palette(alternate-base); "
                   "} ");

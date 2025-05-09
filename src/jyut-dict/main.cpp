@@ -6,6 +6,9 @@
 #include <QSysInfo>
 
 #if defined(Q_OS_WIN)
+#include <Windows.h>
+#include <sapi.h>
+
 #include <cstdio>
 #include <cstring>
 
@@ -57,6 +60,12 @@ int main(int argc, char *argv[])
     snprintf(new_dark_mode_arg, ARG_STR_LEN, "%s", darkModeArg);
     new_argv[argc + 1] = new_dark_mode_arg;
 
+    HRESULT hr = CoInitialize(NULL);
+    if (FAILED(hr)) {
+        std::cerr << "Failed to initialize COM library." << std::endl;
+        return -1;
+    }
+
     QApplication a{new_argc, new_argv};
 #else
     QApplication a{argc, argv};
@@ -65,5 +74,11 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-    return a.exec();
+    int res = a.exec();
+
+#ifdef Q_OS_WIN
+    CoUninitialize();
+#endif
+
+    return res;
 }

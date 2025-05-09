@@ -2,6 +2,7 @@
 
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif

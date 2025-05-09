@@ -118,6 +118,7 @@ set(PROJECT_HEADERS
         logic/dictation/iinputvolumesubscriber.h
         logic/dictation/itranscriptionresultpublisher.h
         logic/dictation/itranscriptionresultsubscriber.h
+        logic/dictation/transcriberwrapper.h
         logic/dictionary/dictionarymetadata.h
         logic/dictionary/dictionarysource.h
         logic/download/downloader.h
@@ -322,7 +323,6 @@ if (APPLE)
     TARGET_SOURCES(CantoneseDictionary
         PRIVATE logic/dictation/transcriber_mac.h
         PRIVATE logic/dictation/transcriber_mac.mm
-        PRIVATE logic/dictation/transcriberwrapper.h
         PRIVATE logic/dictation/transcriberwrapper_mac.mm
         PRIVATE logic/utils/utils_mac.mm
         PRIVATE resources/db/dict.db
@@ -336,7 +336,6 @@ if (APPLE)
         PRIVATE platform/mac/yue_Hant.lproj/InfoPlist.strings
         PRIVATE platform/mac/zh_Hans.lproj/InfoPlist.strings
         PRIVATE platform/mac/zh_Hant.lproj/InfoPlist.strings
-        dialogs/transcriptionerrordialog.h
     )
 
     set_property(SOURCE resources/db/dict.db PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
@@ -358,9 +357,25 @@ elseif (UNIX)
     configure_file(resources/settings/settings.ini settings.ini COPYONLY)
 elseif (WIN32)
     enable_language("RC")
-    TARGET_SOURCES(CantoneseDictionary PRIVATE
-        logic/utils/utils_windows.cpp
-        platform/windows/app.rc)
+
+    target_compile_definitions(CantoneseDictionary PRIVATE UNICODE _UNICODE _ATL_NO_AUTOMATIC_NAMESPACE)
+    target_link_libraries(CantoneseDictionary
+        PRIVATE
+        ole32
+        oleaut32
+        uuid
+        sapi
+        imm32
+    )
+
+    TARGET_SOURCES(CantoneseDictionary
+        PRIVATE logic/dictation/transcriber_windows.cpp
+        PRIVATE logic/dictation/transcriber_windows.h
+        PRIVATE logic/dictation/transcriberwrapper_windows.cpp
+        PRIVATE logic/utils/utils_windows.cpp
+        PRIVATE platform/windows/app.rc
+    )
+
     configure_file(resources/db/dict.db dict.db COPYONLY)
     configure_file(resources/db/user.db user.db COPYONLY)
     configure_file(resources/licenses/FLOW_LAYOUT_LICENSE.txt FLOW_LAYOUT_LICENSE.txt COPYONLY)

@@ -10,6 +10,8 @@
 #include "logic/utils/utils_windows.h"
 #endif
 
+#include <QApplication>
+#include <QKeyEvent>
 #include <QIcon>
 #include <QTimer>
 

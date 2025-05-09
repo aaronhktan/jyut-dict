@@ -22,6 +22,7 @@ void TranscriptionErrorDialog::setupUI()
 
     addButton(tr("OK"), QMessageBox::AcceptRole);
 
+#ifdef Q_OS_MAC
     QAbstractButton *microphonePerms = addButton(tr("Microphone access..."),
                                                  QMessageBox::HelpRole);
     disconnect(microphonePerms, nullptr, nullptr, nullptr);
@@ -35,6 +36,7 @@ void TranscriptionErrorDialog::setupUI()
     connect(speechPerms, &QAbstractButton::clicked, this, [=, this]() {
         QDesktopServices::openUrl(QUrl{Utils::PRIVACY_SPEECH_LINK});
     });
+#endif
 
     setWidth(400);
     deselectButtons();
