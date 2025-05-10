@@ -95,7 +95,6 @@ void FavouriteSplitter::setupUI()
                   "   background-color: none; "
                   "} ");
 #else
-    setHandleWidth(15);
     setStyleSheet("QSplitter::handle { "
                   "   background-color: palette(alternate-base); "
                   "} ");
@@ -116,7 +115,8 @@ void FavouriteSplitter::translateUI(void)
 void FavouriteSplitter::setStyle(bool use_dark)
 {
     (void) (use_dark);
-    setStyleSheet("QSplitter { border-top: 1px solid palette(alternate-base); }");
+    setStyleSheet(
+        "QSplitter { border-top: 1px solid palette(alternate-base); }");
 }
 #endif
 

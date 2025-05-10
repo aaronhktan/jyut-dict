@@ -6,24 +6,21 @@
 #include "itranscriptionresultpublisher.h"
 #include "itranscriptionresultsubscriber.h"
 
-#define INITGUID
-#include <Windows.h>
-#include <sapi.h>
-#include <sphelper.h>
-
-#include <initguid.h>
-#include <objbase.h>
-
 #include <string>
 #include <unordered_set>
+#include <vector>
 
-// The TranscriberWrapper class presents a C++ interface for the
-// speech-to-text APIs in AVFoundation/Speech macOS frameworks.
+#include <Windows.h>
 
-class Transcriber    : public IInputVolumePublisher,
-                           public IInputVolumeSubscriber,
-                           public ITranscriptionResultPublisher,
-                           public ITranscriptionResultSubscriber
+// The Transcriber class is kind of a misnomer on Windows.
+// On Windows, the APIs to do the kind of speech recognition like on
+// macOS don't exist. So what the Transcriber class does is instead
+// activate the correct keyboard, and then send Win+H to start dictation.
+
+class Transcriber : public IInputVolumePublisher,
+                    public IInputVolumeSubscriber,
+                    public ITranscriptionResultPublisher,
+                    public ITranscriptionResultSubscriber
 {
 public:
     Transcriber(std::string &locale);
@@ -49,16 +46,10 @@ public:
     void stopRecognition();
 
 private:
-    ISpVoice *voice = nullptr;
-    ISpRecognizer *recognizer = nullptr;
-    ISpAudio *audio = nullptr;
-    ISpRecoContext *recoContext = nullptr;
-    ISpRecoGrammar *grammar = nullptr;
-    HKL originalLayout;
+    HKL _originalLayout;
+    std::vector<std::wstring> _desiredLayoutPossibilities;
 
     std::unordered_set<IInputVolumeSubscriber *> _volumeSubscribers;
-    std::unordered_set<ITranscriptionResultSubscriber *>
-        _transcriptionSubscribers;
 };
 
 #endif // TRANSCRIBER_H

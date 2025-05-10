@@ -37,7 +37,7 @@ TranscriptionWindow::TranscriptionWindow(QWidget *parent)
 #ifdef Q_OS_MAC
     setWindowFlags(Qt::Sheet);
 #else
-    setWindowFlags(Qt::Window | Qt::FramelessWindowHint);
+    setWindowFlags(Qt::Window);
 #endif
     setWindowModality(Qt::ApplicationModal);
 
@@ -118,6 +118,7 @@ void TranscriptionWindow::volumeResult(
 void TranscriptionWindow::transcriptionResult(
     std::variant<std::system_error, std::string> result)
 {
+#ifdef Q_OS_MAC
     if (std::string *t = std::get_if<std::string>(&result)) {
         _titleLabel->setText(t->c_str());
         emit transcription(_titleLabel->text());
@@ -132,6 +133,7 @@ void TranscriptionWindow::transcriptionResult(
                                     std::get<std::system_error>(result).what());
         }
     }
+#endif
 }
 
 void TranscriptionWindow::setupUI()
@@ -149,8 +151,14 @@ void TranscriptionWindow::setupUI()
     _icon = new QGraphicsPixmapItem{icon};
     _icon->setShapeMode(QGraphicsPixmapItem::BoundingRectShape);
 
+#ifdef Q_OS_MAC
     _titleLabel = new QLabel{this};
     _titleLabel->setAlignment(Qt::AlignCenter);
+#endif
+
+#ifdef Q_OS_WIN
+    _lineEdit = new QLineEdit{this};
+#endif
 
     _graphicsScene = new QGraphicsScene{this};
     _graphicsScene->setSceneRect(0,
@@ -224,7 +232,12 @@ void TranscriptionWindow::setupUI()
             this,
             &TranscriptionWindow::doneAction);
 
+#ifdef Q_OS_MAC
     _dialogLayout->addWidget(_titleLabel, 0, 0, 1, -1);
+#endif
+#ifdef Q_OS_WIN
+    _dialogLayout->addWidget(_lineEdit, 0, 0, 1, -1);
+#endif
     _dialogLayout->addWidget(_graphicsView, 1, 0, 1, -1);
     _dialogLayout->addWidget(_cantoneseButton, 2, 0, 1, -1);
     _dialogLayout->addWidget(_mandarinButton, 3, 0, 1, -1);
@@ -259,7 +272,9 @@ void TranscriptionWindow::translateUI()
         button->style()->polish(button);
     }
 
+#ifdef Q_OS_MAC
     _titleLabel->setText(tr("Listening..."));
+#endif
     _cantoneseButton->setText(tr("Cantonese"));
     _mandarinButton->setText(tr("Mandarin"));
     _englishButton->setText(tr("English"));
@@ -357,12 +372,14 @@ void TranscriptionWindow::setStyle(bool use_dark)
         "QPushButton { margin-left: 5px; margin-right: 5px; }");
 #endif
 
+#ifdef Q_OS_MAC
     _titleLabel->setStyleSheet("QLabel { "
                                "   font-size: 16px; "
                                "   font-weight: bold; "
                                "   margin-top: 11px; "
                                "   margin-bottom: 11px; "
                                "}");
+#endif
 
 #ifdef Q_OS_WIN
     _innerWidget->setAttribute(Qt::WA_StyledBackground);
@@ -453,14 +470,31 @@ void TranscriptionWindow::setTranscriptionLang(void)
         font = QFont{"Microsoft YaHei", 10};
     }
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
-    _titleLabel->setFont(font);
+    _lineEdit->setFont(font);
 #endif
 
+#ifdef Q_OS_MAC
     _titleLabel->setText(tr("Listening..."));
+
     _wrapper = std::make_unique<TranscriberWrapper>(locale);
     _wrapper->subscribe(static_cast<IInputVolumeSubscriber *>(this));
     _wrapper->subscribe(static_cast<ITranscriptionResultSubscriber *>(this));
     _wrapper->startRecognition();
+
+#endif
+#ifdef Q_OS_WIN
+    activateWindow();
+    _lineEdit->setFocus();
+
+    _wrapper = std::make_unique<TranscriberWrapper>(locale);
+    QTimer::singleShot(1000, this, [&]() {
+        _lineEdit->setFocus();
+        _wrapper->subscribe(static_cast<IInputVolumeSubscriber *>(this));
+        _wrapper->subscribe(static_cast<ITranscriptionResultSubscriber *>(this));
+        _wrapper->startRecognition();
+    });
+
+#endif
 }
 
 void TranscriptionWindow::stopTranscription(void)
@@ -525,9 +559,14 @@ void TranscriptionWindow::startAnimation(float radius)
 
 void TranscriptionWindow::doneAction(void)
 {
+#ifdef Q_OS_MAC
     if (_titleLabel->text() != tr("Listening...")) {
         emit transcription(_titleLabel->text());
     }
+#endif
+#ifdef Q_OS_WIN
+    emit transcription(_lineEdit->text());
+#endif
     stopTranscription();
     close();
 }

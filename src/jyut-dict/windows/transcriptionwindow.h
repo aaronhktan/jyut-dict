@@ -14,6 +14,7 @@
 #include <QGridLayout>
 #include <QKeyEvent>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMetaType>
 #include <QPropertyAnimation>
 #include <QPushButton>
@@ -95,7 +96,13 @@ private:
     QGridLayout *_outerWidgetLayout;
 #endif
 
+#ifdef Q_OS_MAC
     QLabel *_titleLabel;
+#endif
+
+#ifdef Q_OS_WIN
+    QLineEdit *_lineEdit;
+#endif
 
     QGraphicsScene *_graphicsScene;
     QGraphicsView *_graphicsView;

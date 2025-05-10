@@ -2,8 +2,6 @@
 
 #include "transcriber_windows.h"
 
-#include <QDebug>
-
 TranscriberWrapper::TranscriberWrapper(std::string &locale)
 {
     _transcriber = new Transcriber(locale);
