@@ -257,6 +257,11 @@ include_directories(
     ${CMAKE_SOURCE_DIR}
 )
 
+if(UNIX AND NOT APPLE)
+    list(REMOVE_ITEM PROJECT_HEADERS windows/transcriptionwindow.h)
+    list(REMOVE_ITEM PROJECT_SOURCES windows/transcriptionwindow.cpp)
+endif()
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(CantoneseDictionary
         MANUAL_FINALIZATION
@@ -305,7 +310,7 @@ set_target_properties(CantoneseDictionary PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-if (APPLE)
+if(APPLE)
     find_library(SpeechFramework Speech)
     find_library(AVFoundationFramework AVFoundation)
     target_link_libraries(CantoneseDictionary PRIVATE "-framework AppKit")
@@ -349,13 +354,13 @@ if (APPLE)
     set_property(SOURCE platform/mac/yue_Hant.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/yue-Hant.lproj")
     set_property(SOURCE platform/mac/zh_Hans.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/zh-hans.lproj")
     set_property(SOURCE platform/mac/zh_Hant.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/zh-hant.lproj")
-elseif (UNIX)
+elseif(UNIX)
     TARGET_SOURCES(CantoneseDictionary PRIVATE logic/utils/utils_linux.cpp)
     configure_file(resources/db/dict.db dict.db COPYONLY)
     configure_file(resources/db/user.db user.db COPYONLY)
     configure_file(resources/licenses/FLOW_LAYOUT_LICENSE.txt FLOW_LAYOUT_LICENSE.txt COPYONLY)
     configure_file(resources/settings/settings.ini settings.ini COPYONLY)
-elseif (WIN32)
+elseif(WIN32)
     enable_language("RC")
 
     target_compile_definitions(CantoneseDictionary PRIVATE UNICODE _UNICODE _ATL_NO_AUTOMATIC_NAMESPACE)

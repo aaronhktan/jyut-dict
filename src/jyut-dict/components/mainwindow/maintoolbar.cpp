@@ -295,7 +295,13 @@ void MainToolBar::searchRequested(void) const
 
 void MainToolBar::dictationRequested(void) const
 {
+#ifdef Q_OS_LINUX
+    std::cerr << "MainToolbar::dictationRequested called but is not "
+                 "implemented on Linux"
+              << std::endl;
+#else
     _searchBar->dictationRequested();
+#endif
 }
 
 void MainToolBar::updateStyleRequested(void)

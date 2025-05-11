@@ -50,8 +50,8 @@ protected:
     {
         // Do nothing
     }
-#endif
 };
+#endif
 } // namespace
 
 TranscriptionWindow::TranscriptionWindow(QWidget *parent)

@@ -120,12 +120,14 @@ void SearchLineEdit::setupUI(void)
     _clearLineEdit = new QAction{"", this};
     connect(_clearLineEdit, &QAction::triggered, this, &QLineEdit::clear);
 
+#ifndef Q_OS_LINUX
     _microphone = new QAction{"", this};
     addAction(_microphone, QLineEdit::TrailingPosition);
     connect(_microphone,
             &QAction::triggered,
             this,
             &SearchLineEdit::startTranscription);
+#endif
 
     // Customize the look of the searchbar to fit in better with platform styles
 #ifdef Q_OS_WIN
@@ -188,7 +190,9 @@ void SearchLineEdit::setStyle(bool use_dark)
                               .arg(std::to_string(h6FontSize).c_str()));
             _searchLineEdit->setIcon(searchInverted);
             _clearLineEdit->setIcon(clearInverted);
+#ifndef Q_OS_LINUX
             _microphone->setIcon(micInverted);
+#endif
     } else {
             setStyleSheet(QString{"QLineEdit { "
                                   "   background-color: #ffffff; "
@@ -211,7 +215,9 @@ void SearchLineEdit::setStyle(bool use_dark)
                               .arg(std::to_string(h6FontSize).c_str()));
             _searchLineEdit->setIcon(search);
             _clearLineEdit->setIcon(clear);
+#ifndef Q_OS_LINUX
             _microphone->setIcon(mic);
+#endif
     }
 }
 
@@ -226,6 +232,7 @@ void SearchLineEdit::checkClearVisibility(void)
     }
 }
 
+#ifndef Q_OS_LINUX
 void SearchLineEdit::startTranscription(void)
 {
     clear();
@@ -267,6 +274,7 @@ void SearchLineEdit::startTranscription(void)
                 _mediator->setParameters(params);
             });
 }
+#endif
 
 void SearchLineEdit::addSearchTermToHistory(SearchParameters parameters) const
 {
@@ -293,7 +301,9 @@ void SearchLineEdit::searchTriggered(void)
     }
 }
 
+#ifndef Q_OS_LINUX
 void SearchLineEdit::dictationRequested(void)
 {
     startTranscription();
 }
+#endif
