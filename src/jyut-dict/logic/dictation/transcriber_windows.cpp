@@ -1,14 +1,13 @@
 #include "transcriber_windows.h"
 
-#include <QDebug>
-
+#include <algorithm>
 #include <iostream>
 
 namespace {
-// See https://learn.microsoft.com/en-us/globalization/windows-keyboard-layouts for more details
+// See https://learn.microsoft.com/en-us/globalization/windows-keyboard-layouts for more details/codes
+constexpr auto TRADITIONAL_CHINESE_KEYBOARD_CODE = L"00000404";
 constexpr auto CANTONESE_HONGKONG_KEYBOARD_CODE = L"00000C04";
 constexpr auto CANTONESE_MACAO_KEYBOARD_CODE = L"00001404";
-constexpr auto TRADITIONAL_CHINESE_KEYBOARD_CODE = L"00000404";
 
 constexpr auto MANDARIN_CHINA_KEYBOARD_CODE = L"00000804";
 constexpr auto MANDARIN_SINGAPORE_KEYBOARD_CODE = L"00001004";
@@ -23,16 +22,35 @@ constexpr auto FRENCH_FRANCE_KEYBOARD_CODE = L"0000040C";
 constexpr auto FRENCH_BEPO_FRANCE_KEYBOARD_CODE = L"0002040C";
 constexpr auto FRENCH_LEGACY_FRANCE_KEYBOARD_CODE = L"0001040C";
 
-constexpr auto MAX_RETRIES = 2;
-} // namespace
+bool setKeyboardLanguage(std::wstring &lang)
+{
+    wchar_t layoutName[9];
 
-std::string wcharArrayToString(const wchar_t* wideArray) {
-    return std::string(wideArray, wideArray + wcslen(wideArray));
+    HKL layout = LoadKeyboardLayout(lang.c_str(), KLF_ACTIVATE);
+    if (layout == NULL) {
+        std::cerr << "Failed to load keyboard layout" << std::endl;
+        return false;
+    }
+
+    if (!ActivateKeyboardLayout(layout, KLF_ACTIVATE)) {
+        std::cerr << "Failed to activate keyboard layout" << std::endl;
+        return false;
+    }
+
+    // Sometimes ActivateKeyboardLayout will return success even
+    // though the requested keyboard layout wasn't actually set.
+    // Check for that here.
+    GetKeyboardLayoutName(layoutName);
+    if (std::wstring{layoutName} != lang) {
+        return false;
+    }
+
+    return true;
 }
+} // namespace
 
 Transcriber::Transcriber(std::string &locale)
 {
-    std::cout << locale << std::endl;
     if (locale == "en_US" || locale == "en_UK") {
         _desiredLayoutPossibilities = {std::wstring{
                                            ENGLISH_CANADA_MS_KEYBOARD_CODE},
@@ -47,111 +65,51 @@ Transcriber::Transcriber(std::string &locale)
                std::wstring{FRENCH_LEGACY_FRANCE_KEYBOARD_CODE}};
     } else if (locale == "zh_HK") {
         _desiredLayoutPossibilities
-            = {std::wstring{CANTONESE_HONGKONG_KEYBOARD_CODE},
-               std::wstring{CANTONESE_MACAO_KEYBOARD_CODE},
-               std::wstring{TRADITIONAL_CHINESE_KEYBOARD_CODE}};
-    } else if (locale == "zh_CN") {
+            = {std::wstring{TRADITIONAL_CHINESE_KEYBOARD_CODE},
+               std::wstring{CANTONESE_HONGKONG_KEYBOARD_CODE},
+               std::wstring{CANTONESE_MACAO_KEYBOARD_CODE}};
+    } else if (locale == "zh_CN" || locale == "zh_TW") {
+        // On Windows, the Hong Kong traditional keyboard that enables
+        // dictation in Cantonese is mutually exclusive with the Taiwan
+        // keyboard (for unknown reasons). If the user's locale is zh_TW,
+        // we try to activate the simplified Chinese keyboard (if it
+        // exists) to enable dictation in Mandarin.
         _desiredLayoutPossibilities
             = {std::wstring{MANDARIN_CHINA_KEYBOARD_CODE},
                std::wstring{MANDARIN_SINGAPORE_KEYBOARD_CODE}};
-    } else if (locale == "zh_TW") {
-        //        _desiredLayoutPossibilities = {
-        //            std::wstring{MANDARIN_TAIWAN_KEYBOARD_CODE}};
     }
+
+    _originalLayout = GetKeyboardLayout(0);
 }
 
 Transcriber::~Transcriber()
 {
-}
-
-void Transcriber::subscribe(IInputVolumeSubscriber *subscriber)
-{
-    _volumeSubscribers.emplace(subscriber);
-}
-
-void Transcriber::unsubscribe(IInputVolumeSubscriber *subscriber)
-{
-    _volumeSubscribers.extract(subscriber);
-}
-
-void Transcriber::notifyVolumeResult(std::variant<std::system_error, float> result)
-{
-    for (const auto s : _volumeSubscribers) {
-        s->volumeResult(result);
-    }
-}
-
-void Transcriber::volumeResult(std::variant<std::system_error, float> result)
-{
-    notifyVolumeResult(result);
+    ActivateKeyboardLayout(_originalLayout, KLF_ACTIVATE);
 }
 
 void Transcriber::subscribe(ITranscriptionResultSubscriber *subscriber)
 {
-    // Do nothing
+    _transcriptionSubscribers.emplace(subscriber);
 }
 
 void Transcriber::unsubscribe(ITranscriptionResultSubscriber *subscriber)
 {
-    // Do nothing
+    _transcriptionSubscribers.extract(subscriber);
 }
 
 void Transcriber::notifyTranscriptionResult(
     std::variant<std::system_error, std::string> result)
 {
-    // Do nothing
-}
-
-void Transcriber::transcriptionResult(
-    std::variant<std::system_error, std::string> transcription)
-{
-    // Do nothing
-}
-
-bool setKeyboardLanguage(std::wstring &i)
-{
-    int retries = 0;
-    wchar_t layoutName[9];
-
-    while (retries < MAX_RETRIES) {
-        HKL layout = LoadKeyboardLayout(i.c_str(), KLF_ACTIVATE);
-        if (layout == NULL) {
-            std::cerr << "Failed to load keyboard layout" << std::endl;
-            ++retries;
-            continue;
-        }
-
-        if (!ActivateKeyboardLayout(layout, KLF_ACTIVATE)) {
-            std::cerr << "Failed to activate keyboard layout" << std::endl;
-            ++retries;
-            continue;
-        }
-
-        GetKeyboardLayoutName(layoutName);
-        std::wcout << "set keyboard layout " << layoutName << std::endl;
-        std::wcout << "desired keyboard layout " << i << std::endl;
-        std::wcout << (layoutName == i) << std::endl;
-        if (std::wstring{layoutName} != i) {
-            ++retries;
-            continue;
-        } else {
-            break;
-        }
+    for (const auto &s : _transcriptionSubscribers) {
+        s->transcriptionResult(result);
     }
-
-    qDebug() << "num retries:" << retries;
-    if (retries == (MAX_RETRIES)) {
-        return false;
-    }
-    return true;
 }
 
 void Transcriber::startRecognition()
 {
-    qDebug() << "hello";
     wchar_t layoutName[9]; // The layout name will never be longer than 8 wchars
+    bool layoutGood = false;
 
-    _originalLayout = GetKeyboardLayout(0);
     GetKeyboardLayoutName(layoutName);
 
     if (std::find(_desiredLayoutPossibilities.cbegin(),
@@ -161,32 +119,47 @@ void Transcriber::startRecognition()
         for (const auto &i : _desiredLayoutPossibilities) {
             std::wstring layout{i};
             if (setKeyboardLanguage(layout)) {
+                layoutGood = true;
+                std::wcout << "Set keyboard to " << layout << std::endl;
                 break;
             } else {
-                qDebug() << "failed to set keyboard, trying next possibility";
+                std::wcerr << "Failed to set keyboard " << layout
+                           << ", trying next possibility" << std::endl;
             }
         }
     } else {
-        qDebug() << "activated keyboard is already desired keyboard";
+        layoutGood = true;
+        std::wcout << "Current keyboard matches desired keyboard " << layoutName
+                   << std::endl;
+    }
+
+    if (!layoutGood) {
+        notifyTranscriptionResult(
+            std::system_error{ENXIO,
+                              std::generic_category(),
+                              "No matching keyboard layout found"});
+        return;
     }
 
     // Press and release the Win+H key combo to activate dictation
     INPUT input[2] = {};
     input[0].type = INPUT_KEYBOARD;
-    input[0].ki.wVk = VK_LWIN; // Left Windows key
+    input[0].ki.wVk = VK_LWIN;
     input[0].ki.dwFlags = 0;   // Key press
     input[1].type = INPUT_KEYBOARD;
-    input[1].ki.wVk = 'H';   // 'H' key
+    input[1].ki.wVk = 'H';
     input[1].ki.dwFlags = 0; // Key press
     SendInput(2, input, sizeof(INPUT));
 
-    input[0].ki.dwFlags = KEYEVENTF_KEYUP; // Key release
-    input[1].ki.dwFlags = KEYEVENTF_KEYUP; // Key release
+    input[0].ki.dwFlags = KEYEVENTF_KEYUP;
+    input[1].ki.dwFlags = KEYEVENTF_KEYUP;
     SendInput(2, input, sizeof(INPUT));
 }
 
 void Transcriber::stopRecognition()
 {
-    // Restore the original keyboard layout
-    ActivateKeyboardLayout(_originalLayout, KLF_ACTIVATE);
+    // There is no way to programmatically end dictation on Windows.
+    std::cerr
+        << "Transcriber::stopRecognition called but not implemented on Windows"
+        << std::endl;
 }

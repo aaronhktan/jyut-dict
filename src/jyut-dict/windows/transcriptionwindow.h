@@ -39,8 +39,8 @@ public:
                        qreal width,
                        qreal height,
                        QGraphicsItem *parent = nullptr)
-        : QGraphicsEllipseItem(x, y, width, height, parent)
-        , QObject()
+        : QGraphicsEllipseItem{x, y, width, height, parent}
+        , QObject{}
     {}
 
     bool collidesWithItem(const QGraphicsItem *other,

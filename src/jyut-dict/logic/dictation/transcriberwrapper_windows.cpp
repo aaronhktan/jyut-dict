@@ -2,6 +2,8 @@
 
 #include "transcriber_windows.h"
 
+#include <iostream>
+
 TranscriberWrapper::TranscriberWrapper(std::string &locale)
 {
     _transcriber = new Transcriber(locale);
@@ -13,26 +15,34 @@ TranscriberWrapper::~TranscriberWrapper()
     delete static_cast<Transcriber *>(_transcriber);
 }
 
+// On Windows, the input volume is not sampled, so these functions are
+// unimplemented.
 void TranscriberWrapper::subscribe(IInputVolumeSubscriber *subscriber)
 {
-    _volumeSubscribers.emplace(subscriber);
+    std::cerr
+        << "TranscriberWrapper::subscribe called but not implemented on Windows"
+        << std::endl;
 }
 
 void TranscriberWrapper::unsubscribe(IInputVolumeSubscriber *subscriber)
 {
-    _volumeSubscribers.extract(subscriber);
+    std::cerr << "TranscriberWrapper::unsubscribe called but not implemented "
+                 "on Windows"
+              << std::endl;
 }
 
 void TranscriberWrapper::notifyVolumeResult(std::variant<std::system_error, float> result)
 {
-    for (const auto s : _volumeSubscribers) {
-        s->volumeResult(result);
-    }
+    std::cerr << "TranscriberWrapper::notifyVolumeResult called but not "
+                 "implemented on Windows"
+              << std::endl;
 }
 
 void TranscriberWrapper::volumeResult(std::variant<std::system_error, float> result)
 {
-    notifyVolumeResult(result);
+    std::cerr << "TranscriberWrapper::volumeResult called but not "
+                 "implemented on Windows"
+              << std::endl;
 }
 
 void TranscriberWrapper::subscribe(ITranscriptionResultSubscriber *subscriber)

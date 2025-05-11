@@ -25,6 +25,33 @@ constexpr auto GRAPHICS_VIEW_HEIGHT = 100;
 constexpr auto MIN_CIRCLE_RADIUS = 25;
 constexpr auto MAX_CIRCLE_RADIUS = 50;
 
+#ifdef Q_OS_WIN
+class NoInteractionLineEdit : public QLineEdit
+{
+    using QLineEdit::QLineEdit;
+
+protected:
+    void keyPressEvent(QKeyEvent *event) override
+    {
+        // Do nothing
+    }
+
+    void keyReleaseEvent(QKeyEvent *event) override
+    {
+        // Do nothing
+    }
+
+    void mousePressEvent(QMouseEvent *event) override
+    {
+        // Do nothing
+    }
+
+    void mouseReleaseEvent(QMouseEvent *event) override
+    {
+        // Do nothing
+    }
+#endif
+};
 } // namespace
 
 TranscriptionWindow::TranscriptionWindow(QWidget *parent)
@@ -37,7 +64,11 @@ TranscriptionWindow::TranscriptionWindow(QWidget *parent)
 #ifdef Q_OS_MAC
     setWindowFlags(Qt::Sheet);
 #else
-    setWindowFlags(Qt::Window);
+    Qt::WindowFlags flags = windowFlags() | Qt::CustomizeWindowHint
+                            | Qt::WindowTitleHint;
+    flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
+               | Qt::WindowFullscreenButtonHint);
+    setWindowFlags(flags);
 #endif
     setWindowModality(Qt::ApplicationModal);
 
@@ -133,6 +164,14 @@ void TranscriptionWindow::transcriptionResult(
                                     std::get<std::system_error>(result).what());
         }
     }
+#elif defined(Q_OS_WIN)
+    if (std::system_error *e = std::get_if<std::system_error>(&result)) {
+        stopTranscription();
+        emit transcriptionError(std::get<std::system_error>(result)
+                                    .code()
+                                    .value(),
+                                std::get<std::system_error>(result).what());
+    }
 #endif
 }
 
@@ -157,7 +196,12 @@ void TranscriptionWindow::setupUI()
 #endif
 
 #ifdef Q_OS_WIN
-    _lineEdit = new QLineEdit{this};
+    _lineEdit = new NoInteractionLineEdit{this};
+
+    connect(_lineEdit,
+            &QLineEdit::textChanged,
+            this,
+            &TranscriptionWindow::transcription);
 #endif
 
     _graphicsScene = new QGraphicsScene{this};
@@ -274,11 +318,18 @@ void TranscriptionWindow::translateUI()
 
 #ifdef Q_OS_MAC
     _titleLabel->setText(tr("Listening..."));
+#elif defined(Q_OS_WIN)
+    _lineEdit->setPlaceholderText(tr("Listening..."));
+    _lineEdit->clear();
 #endif
     _cantoneseButton->setText(tr("Cantonese"));
     _mandarinButton->setText(tr("Mandarin"));
     _englishButton->setText(tr("English"));
     _doneButton->setText(tr("Done"));
+
+#if defined(Q_OS_WIN) || defined(Q_OS_LINUX)
+    setWindowTitle(tr("Dictation"));
+#endif
 
     resize(sizeHint());
 
@@ -458,6 +509,7 @@ void TranscriptionWindow::setTranscriptionLang(void)
         _wrapper->unsubscribe(static_cast<IInputVolumeSubscriber *>(this));
         _wrapper->unsubscribe(
             static_cast<ITranscriptionResultSubscriber *>(this));
+        _wrapper = nullptr;
     }
 
 #ifdef Q_OS_WIN
@@ -471,6 +523,7 @@ void TranscriptionWindow::setTranscriptionLang(void)
     }
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
     _lineEdit->setFont(font);
+    _lineEdit->clear();
 #endif
 
 #ifdef Q_OS_MAC
@@ -518,26 +571,25 @@ void TranscriptionWindow::showErrorDialog(int err, std::string description)
 
     switch (err) {
     case ENETDOWN: {
-        reason = "Speech recognition service could not be started.";
+        reason = tr("Speech recognition service could not be started.");
         break;
     }
     case EPERM: {
-        reason = "Permission to access audio for speech recognition denied.";
+        reason = tr(
+            "Permission to access audio for speech recognition denied.");
+        break;
+    }
+    case ENXIO: {
+        reason = tr("No keyboard for the specified language could be found.");
         break;
     }
     default: {
-        reason = "An unspecified error occurred.";
+        reason = tr("An unspecified error occurred.");
         break;
     }
     }
 
     _errorDialog = new TranscriptionErrorDialog(reason, description.c_str());
-
-    connect(_errorDialog,
-            &QDialog::accepted,
-            this,
-            &TranscriptionWindow::doneAction);
-
     _errorDialog->exec();
 }
 

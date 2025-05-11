@@ -1,5 +1,5 @@
-#ifndef SPEECH_WRAPPER_H
-#define SPEECH_WRAPPER_H
+#ifndef TRANSCRIBER_WRAPPER_H
+#define TRANSCRIBER_WRAPPER_H
 
 #include "iinputvolumepublisher.h"
 #include "iinputvolumesubscriber.h"
@@ -10,7 +10,8 @@
 #include <unordered_set>
 
 // The TranscriberWrapper class presents a C++ interface for the
-// speech-to-text APIs in AVFoundation/Speech macOS frameworks.
+// speech-to-text APIs in AVFoundation/Speech macOS frameworks
+// or Windows Keyboard settings.
 
 class TranscriberWrapper : public IInputVolumePublisher,
                            public IInputVolumeSubscriber,
@@ -28,12 +29,13 @@ public:
 
     void volumeResult(std::variant<std::system_error, float> result) override;
 
-    // We have to forward transcription results to the C++ classes
+    // We have to publish transcription results to the C++ classes...
     void subscribe(ITranscriptionResultSubscriber *subscriber) override;
     void unsubscribe(ITranscriptionResultSubscriber *subscriber) override;
     void notifyTranscriptionResult(
         std::variant<std::system_error, std::string> result) override;
 
+    // ... that we receive from the ITranscriptionResultPublisher
     void transcriptionResult(
         std::variant<std::system_error, std::string> result) override;
 
@@ -41,8 +43,8 @@ public:
     void stopRecognition();
 
 private:
-    // We have to use a void * pointer here since the Speech Helper
-    // is an Objective-C++ class. We can't include any Objective-C++
+    // We have to use a void * here since Transcriber is an
+    // Objective-C++ class on macOS. We can't include any Objective-C++
     // constructs in this C++ header.
     void *_transcriber = nullptr;
 
@@ -51,4 +53,4 @@ private:
         _transcriptionSubscribers;
 };
 
-#endif // SPEECH_WRAPPER_H
+#endif // TRANSCRIBER_WRAPPER_H

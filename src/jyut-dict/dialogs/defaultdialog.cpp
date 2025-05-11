@@ -20,6 +20,7 @@ DefaultDialog::DefaultDialog(const QString &reason,
                              QWidget *parent)
     : QMessageBox{parent}
 {
+    setObjectName("DefaultDialog");
     _settings = Settings::getSettings();
 
     setupUI(reason, description);
@@ -150,6 +151,10 @@ void DefaultDialog::setStyle(bool use_dark)
                   "QPushButton { "
                   "   font-size: %2px; "
                   "   height: 16px; "
+                  "} "
+                  " "
+                  "QWidget#DefaultDialog { "
+                  "   background-color: palette(base);"
                   "} "};
 #endif
     setStyleSheet(style.arg(std::to_string(bodyFontSizeHan).c_str(),

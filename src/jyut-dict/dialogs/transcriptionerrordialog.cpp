@@ -36,6 +36,13 @@ void TranscriptionErrorDialog::setupUI()
     connect(speechPerms, &QAbstractButton::clicked, this, [=, this]() {
         QDesktopServices::openUrl(QUrl{Utils::PRIVACY_SPEECH_LINK});
     });
+#elif defined(Q_OS_WIN)
+    QAbstractButton *microphonePerms = addButton(tr("Keyboard languages..."),
+                                                 QMessageBox::HelpRole);
+    disconnect(microphonePerms, nullptr, nullptr, nullptr);
+    connect(microphonePerms, &QAbstractButton::clicked, this, [=, this]() {
+        QDesktopServices::openUrl(QUrl{Utils::TTS_LINK});
+    });
 #endif
 
     setWidth(400);
