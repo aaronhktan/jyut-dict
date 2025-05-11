@@ -151,8 +151,12 @@ void TranscriptionWindow::transcriptionResult(
 {
 #ifdef Q_OS_MAC
     if (std::string *t = std::get_if<std::string>(&result)) {
-        _titleLabel->setText(t->c_str());
-        emit transcription(_titleLabel->text());
+        QFontMetrics metrics{_titleLabel->font()};
+        QString elidedText = metrics.elidedText(QString::fromStdString(*t),
+                                                Qt::ElideRight,
+                                                _titleLabel->width());
+        _titleLabel->setText(elidedText);
+        emit transcription(QString::fromStdString(*t));
     } else {
         if (std::get<std::system_error>(result).code().value() == ETIMEDOUT) {
             doneAction();
