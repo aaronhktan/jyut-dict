@@ -614,6 +614,10 @@ Hang tight!</source>
         <source>Database migration failed!</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Start Dictation</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NoUpdateDialog</name>
@@ -1068,6 +1072,72 @@ Hang tight!</source>
     </message>
 </context>
 <context>
+    <name>TranscriptionErrorDialog</name>
+    <message>
+        <source>Dictation could not be started!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Microphone access...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dictation access...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keyboard languages...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TranscriptionWindow</name>
+    <message>
+        <source>Listening...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cantonese</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mandarin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>English</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dictation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Speech recognition service could not be started.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Permission to access audio for speech recognition denied.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No keyboard for the specified language could be found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>An unspecified error occurred.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>UpdateAvailableWindow</name>
     <message>
         <source>A new version of %1 is available!</source>
@@ -1144,10 +1214,6 @@ Hang tight!</source>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Update Available!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

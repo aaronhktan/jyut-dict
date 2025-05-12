@@ -645,6 +645,10 @@ Hang tight!</source>
         <source>Checking for update...</source>
         <translation>正在檢查更新…</translation>
     </message>
+    <message>
+        <source>Start Dictation</source>
+        <translation>開啟「聽寫」</translation>
+    </message>
 </context>
 <context>
     <name>NoUpdateDialog</name>
@@ -929,7 +933,7 @@ Hang tight!</source>
         <translation>有風險的模糊粵拼代替：</translation>
     </message>
     <message>
-        <source>    Risky fuzzy Jyutping matches:</source>
+        <source>	Risky fuzzy Jyutping matches:</source>
         <translation>   有風險的模糊粵拼代替：</translation>
     </message>
 </context>
@@ -1147,6 +1151,72 @@ Hang tight!</source>
     <message>
         <source>Neutral</source>
         <translation>輕聲</translation>
+    </message>
+</context>
+<context>
+    <name>TranscriptionErrorDialog</name>
+    <message>
+        <source>Dictation could not be started!</source>
+        <translation>聽寫失敗！</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>明白</translation>
+    </message>
+    <message>
+        <source>Microphone access...</source>
+        <translation>控制麥克風的取用權限…</translation>
+    </message>
+    <message>
+        <source>Dictation access...</source>
+        <translation>控制語音辨識的取用權限…</translation>
+    </message>
+    <message>
+        <source>Keyboard languages...</source>
+        <translation>鍵盤語言…</translation>
+    </message>
+</context>
+<context>
+    <name>TranscriptionWindow</name>
+    <message>
+        <source>Listening...</source>
+        <translation>聆聽中…</translation>
+    </message>
+    <message>
+        <source>Cantonese</source>
+        <translation>粵語</translation>
+    </message>
+    <message>
+        <source>Mandarin</source>
+        <translation>國語</translation>
+    </message>
+    <message>
+        <source>English</source>
+        <translation>英語</translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation>完成</translation>
+    </message>
+    <message>
+        <source>Dictation</source>
+        <translation>聽寫</translation>
+    </message>
+    <message>
+        <source>Speech recognition service could not be started.</source>
+        <translation>聽寫失敗！</translation>
+    </message>
+    <message>
+        <source>Permission to access audio for speech recognition denied.</source>
+        <translation>語音辨識的取用權限被您關閉了。</translation>
+    </message>
+    <message>
+        <source>No keyboard for the specified language could be found.</source>
+        <translation>找不到這個語言的鍵盤。</translation>
+    </message>
+    <message>
+        <source>An unspecified error occurred.</source>
+        <translation>發生了問題。</translation>
     </message>
 </context>
 <context>
@@ -1416,16 +1486,16 @@ Debug: Locale: %1, Language: Chinese - Mainland</source>
         <translation>%1由譚可峰精心打造。</translation>
     </message>
     <message>
-        <source>&lt;p style=&quot;color: %1&quot;&gt;Fuzzy Jyutping finds results for non-Jyutping spellings and informal pronunciations. For example, &quot;gum yut&quot; will find &quot;今日&quot; (&quot;gam1 jat6&quot; in Jyutping); &quot;lay&quot; will find &quot;您&quot; (&quot;nei5&quot;). Please note that this feature will increase time before results are found.&lt;/p&gt;</source>
+        <source>&lt;p style=&quot;color: %1&quot;&gt;Several fuzzy Jyutping substitutions are risky. These include &lt;span&gt;(1) ts -&gt; c&lt;/span&gt;, and &lt;span&gt;(2) kwu -&gt; (g|k)w?u.&lt;/span&gt; Do not enable this setting unless you are confident that you understand and accept the consequences.&lt;/p&gt;</source>
+        <translation>&lt;p style=&quot;color: %1&quot;&gt;用模糊粵拼系統改字母有時有風險。 例如，&lt;span&gt;(1) ts -&gt; c&lt;/span&gt;，同埋 &lt;span&gt;(2) kwu -&gt; (g|k)w?u。&lt;/span&gt; 您明白這個設定的後果才啟用啊！&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;p style=&quot;color: %1&quot;&gt;Fuzzy Jyutping finds results for non-Jyutping spellings and informal pronunciations. For example, &quot;gum yut&quot; will find &quot;今日&quot; (&quot;gam1 jat6&quot; in Jyutping); &quot;lay&quot; will find &quot;你&quot; (&quot;nei5&quot;). Please note that this feature will increase time before results are found.&lt;/p&gt;</source>
         <translation>&lt;p style=&quot;color: %1&quot;&gt;如果您打了非標準粵拼，或者打了非標準發音，模糊粵拼可以幫您找到結果。例如，寫了「gum yut」都會找到「今日」 （標準粵拼寫「gam1 jat6」)， 寫了「lay」都會找到 「您」 (標準粵拼寫「nei5」)。請注意：這個功能會減慢結果顯示的速度。&lt;/p&gt;</translation>
     </message>
     <message>
-        <source>&lt;p style=&quot;color: %1&quot;&gt;Fuzzy Jyutping finds results for non-Jyutping spellings and informal pronunciations. For example, &quot;gum yut&quot; will find &quot;今日&quot; (&quot;gam1 jat6&quot; in Jyutping); &quot;lay&quot; will find &quot;您&quot; (&quot;nei5&quot;).&lt;/p&gt;</source>
+        <source>&lt;p style=&quot;color: %1&quot;&gt;Fuzzy Jyutping finds results for non-Jyutping spellings and informal pronunciations. For example, &quot;gum yut&quot; will find &quot;今日&quot; (&quot;gam1 jat6&quot; in Jyutping); &quot;lay&quot; will find &quot;你&quot; (&quot;nei5&quot;).&lt;/p&gt;</source>
         <translation>&lt;p style=&quot;color: %1&quot;&gt;如果您打了非標準粵拼，或者打了非標準發音，模糊粵拼可以幫您找到結果。例如，寫了「gum yut」都會找到「今日」 （標準粵拼寫「gam1 jat6」)， 寫了「lay」都會找到 「您」 (標準粵拼寫「nei5」)。&lt;/p&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;p style=&quot;color: %1&quot;&gt;Several fuzzy Jyutping substitutions are risky. These include &lt;span&gt;(1) ts -&gt; c&lt;/span&gt;, and &lt;span&gt;(2) kwu -&gt; (g|k)w?u.&lt;/span&gt; Do not enable this setting unless you are confident that you understand and accept the consequences.&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot;color: %1&quot;&gt;用模糊粵拼系統改字母有時有風險。 例如，&lt;span&gt;(1) ts -&gt; c&lt;/span&gt;，同埋 &lt;span&gt;(2) kwu -&gt; (g|k)w?u。&lt;/span&gt; 您明白這個設定的後果才啟用啊！&lt;/p&gt;</translation>
     </message>
 </context>
 </TS>

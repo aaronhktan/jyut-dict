@@ -646,6 +646,10 @@ Veuillez patienter quelques minutes.</translation>
         <source>Checking for update...</source>
         <translation>Recherche de mises à jour...</translation>
     </message>
+    <message>
+        <source>Start Dictation</source>
+        <translation>Activer la reconnaissance vocale</translation>
+    </message>
 </context>
 <context>
     <name>NoUpdateDialog</name>
@@ -919,19 +923,19 @@ Veuillez patienter quelques minutes.</translation>
     </message>
     <message>
         <source>Jyutping:</source>
-        <translation>Jyutping :</translation>
+        <translation>Jyutping&#xa0;:</translation>
     </message>
     <message>
         <source>Fuzzy Jyutping matching:</source>
-        <translation>Recherche avec Jyutping approximatif :</translation>
+        <translation>Recherche avec Jyutping approximatif&#xa0;:</translation>
     </message>
     <message>
         <source>Risky fuzzy Jyutping matches:</source>
-        <translation>Remplacements risqués avec Jyutping approximatif :</translation>
+        <translation>Remplacements risqués avec Jyutping approximatif&#xa0;:</translation>
     </message>
     <message>
         <source>	Risky fuzzy Jyutping matches:</source>
-        <translation>	Remplacements risqués avec Jyutping approximatif :</translation>
+        <translation>	Remplacements risqués avec Jyutping approximatif&#xa0;:</translation>
     </message>
 </context>
 <context>
@@ -1147,6 +1151,72 @@ Veuillez patienter quelques minutes.</translation>
     </message>
 </context>
 <context>
+    <name>TranscriptionErrorDialog</name>
+    <message>
+        <source>Dictation could not be started!</source>
+        <translation>La reconnaissance vocale a rencontré un problème.</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <source>Microphone access...</source>
+        <translation>Accès au micro...</translation>
+    </message>
+    <message>
+        <source>Dictation access...</source>
+        <translation>Accès à la reconnaissance vocale...</translation>
+    </message>
+    <message>
+        <source>Keyboard languages...</source>
+        <translation>Claviers...</translation>
+    </message>
+</context>
+<context>
+    <name>TranscriptionWindow</name>
+    <message>
+        <source>Listening...</source>
+        <translation>Écoute...</translation>
+    </message>
+    <message>
+        <source>Cantonese</source>
+        <translation>Cantonais</translation>
+    </message>
+    <message>
+        <source>Mandarin</source>
+        <translation>Mandarin</translation>
+    </message>
+    <message>
+        <source>English</source>
+        <translation>Français</translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <source>Dictation</source>
+        <translation>Reconnaissance vocale</translation>
+    </message>
+    <message>
+        <source>Speech recognition service could not be started.</source>
+        <translation>Le system de reconnaissance vocale a rencontré un problème lors du démarrage.</translation>
+    </message>
+    <message>
+        <source>Permission to access audio for speech recognition denied.</source>
+        <translation>L'accès au micro ou la reconnaissance vocale a été désactivé.</translation>
+    </message>
+    <message>
+        <source>No keyboard for the specified language could be found.</source>
+        <translation>Il n'existe aucun clavier pour la langue selectionnée.</translation>
+    </message>
+    <message>
+        <source>An unspecified error occurred.</source>
+        <translation>Une erreur est survenue.</translation>
+    </message>
+</context>
+<context>
     <name>UpdateAvailableWindow</name>
     <message>
         <source>A new version of %1 is available!</source>
@@ -1207,15 +1277,15 @@ Veuillez patienter quelques minutes.</translation>
     <name>WelcomeWindow</name>
     <message>
         <source>Welcome to %1 %2!</source>
-        <translation>Bienvenue à %1 %2 !</translation>
+        <translation>Bienvenue à %1 %2&#xa0;!</translation>
     </message>
     <message>
         <source>New Feature: Easier Search In Cantonese</source>
-        <translation>Nouvelle fonctionnalité : Recherche plus aisée en cantonais</translation>
+        <translation>Nouvelle fonctionnalité&#xa0;: Recherche plus aisée en cantonais</translation>
     </message>
     <message>
         <source>Would you like to enable this feature?</source>
-        <translation>Voulez-vous activer cette fonctionnalité ?</translation>
+        <translation>Voulez-vous activer cette fonctionnalité&#xa0;?</translation>
     </message>
     <message>
         <source>No</source>
@@ -1414,15 +1484,15 @@ Débogage&#xa0;: Locale&#xa0;: %1, Langue&#xa0;: Chinois - Chine continentale</t
     </message>
     <message>
         <source>&lt;p style=&quot;color: %1&quot;&gt;Fuzzy Jyutping finds results for non-Jyutping spellings and informal pronunciations. For example, &quot;gum yut&quot; will find &quot;今日&quot; (&quot;gam1 jat6&quot; in Jyutping); &quot;lay&quot; will find &quot;你&quot; (&quot;nei5&quot;). Please note that this feature will increase time before results are found.&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot;color: %1&quot;&gt;Le Jyutping approximatif trouvera des résultats pour des graphies non-Jyutping ainsi que les prononciations non-standards. Par exemple, « gum yut » trouvera « 今日 » (« gam1 jat6 » en Jyutping); « lay » trouvera « 你 » (« nei5 »). Veuillez noter que cette fonctionnalité retardera l'affichage des résultats.&lt;/p&gt;</translation>
+        <translation>&lt;p style=&quot;color: %1&quot;&gt;Le Jyutping approximatif trouvera des résultats pour des graphies non-Jyutping ainsi que les prononciations non-standards. Par exemple, «&#xa0;gum yut&#xa0;» trouvera «&#xa0;今日&#xa0;» («&#xa0;gam1 jat6&#xa0;» en Jyutping); «&#xa0;lay&#xa0;» trouvera «&#xa0;你&#xa0;» («&#xa0;nei5&#xa0;»). Veuillez noter que cette fonctionnalité retardera l&apos;affichage des résultats.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p style=&quot;color: %1&quot;&gt;Fuzzy Jyutping finds results for non-Jyutping spellings and informal pronunciations. For example, &quot;gum yut&quot; will find &quot;今日&quot; (&quot;gam1 jat6&quot; in Jyutping); &quot;lay&quot; will find &quot;你&quot; (&quot;nei5&quot;).&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot;color: %1&quot;&gt;Le Jyutping approximatif trouvera des résultats pour des graphies non-Jyutping ainsi que les prononciations non-standards. Par exemple, « gum yut » trouvera « 今日 » (« gam1 jat6 » en Jyutping); « lay » trouvera « 你 » (« nei5 »).&lt;/p&gt;</translation>
+        <translation>&lt;p style=&quot;color: %1&quot;&gt;Le Jyutping approximatif trouvera des résultats pour des graphies non-Jyutping ainsi que les prononciations non-standards. Par exemple, «&#xa0;gum yut&#xa0;» trouvera «&#xa0;今日&#xa0;» («&#xa0;gam1 jat6&#xa0;» en Jyutping); «&#xa0;lay&#xa0;» trouvera «&#xa0;你&#xa0;» («&#xa0;nei5&#xa0;»).&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p style=&quot;color: %1&quot;&gt;Several fuzzy Jyutping substitutions are risky. These include &lt;span&gt;(1) ts -&gt; c&lt;/span&gt;, and &lt;span&gt;(2) kwu -&gt; (g|k)w?u.&lt;/span&gt; Do not enable this setting unless you are confident that you understand and accept the consequences.&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot;color: %1&quot;&gt;Quelques remplacements utilisés par le Jyutping approximatif sont risqués. Ceux-ci incluent &lt;span&gt;(1) ts -&gt; c&lt;/span&gt; et &lt;span&gt;(2) kwu -&gt; (g|k)w?u.&lt;/span&gt; N'activez pas cette fonctionnalité si vous n'êtes pas sûr de comprendre les conséquences.&lt;/p&gt;</translation>
+        <translation>&lt;p style=&quot;color: %1&quot;&gt;Quelques remplacements utilisés par le Jyutping approximatif sont risqués. Ceux-ci incluent &lt;span&gt;(1) ts -&gt; c&lt;/span&gt; et &lt;span&gt;(2) kwu -&gt; (g|k)w?u.&lt;/span&gt; N&apos;activez pas cette fonctionnalité si vous n&apos;êtes pas sûr de comprendre les conséquences.&lt;/p&gt;</translation>
     </message>
 </context>
 </TS>
