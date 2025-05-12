@@ -22,6 +22,8 @@
 ContactTab::ContactTab(QWidget *parent)
     : QWidget{parent}
 {
+    setObjectName("ContactTab");
+
     setupUI();
     translateUI();
 }
@@ -168,20 +170,18 @@ void ContactTab::setStyle(bool use_dark)
 {
     (void) (use_dark);
 #ifdef Q_OS_MAC
-    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: "
-                  "13px; height: 16px; }");
-#elif defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-    setAttribute(Qt::WA_StyledBackground);
-    setObjectName("ContactTab");
-    setStyleSheet("QPushButton[isHan=\"true\"] { "
-                  "   font-size: 12px; height: 20px; "
-                  "}"
-                  ""
-                  "QWidget#ContactTab { "
-                  "   background-color: palette(base);"
-                  "} ");
+    if (!use_dark) {
 #endif
-    _otherSources->setText(
-        QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::OTHER_SOURCES).arg(palette().text().color().name()));
+        setAttribute(Qt::WA_StyledBackground);
+        setStyleSheet("QWidget#ContactTab { "
+                      "   background-color: palette(base);"
+                      "} ");
+#ifdef Q_OS_MAC
+    }
+#endif
+
+    _otherSources->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                       Strings::OTHER_SOURCES)
+                               .arg(palette().text().color().name()));
 }
 

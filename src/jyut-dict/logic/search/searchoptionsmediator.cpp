@@ -1,22 +1,31 @@
 #include "searchoptionsmediator.h"
 
-#include <components/mainwindow/searchoptionsradiogroupbox.h>
-
-SearchOptionsMediator::SearchOptionsMediator()
+void SearchOptionsMediator::registerLineEdit(ISearchLineEdit *lineEdit)
 {
-
+    _lineEdit = lineEdit;
 }
 
-void SearchOptionsMediator::registerLineEdit(ISearchLineEdit *searchEdit)
+void SearchOptionsMediator::registerOptionSelector(
+    ISearchOptionsSelector *selector)
 {
-    _searchEdit = searchEdit;
+    _selector = selector;
 }
 
 void SearchOptionsMediator::setParameters(SearchParameters parameters)
 {
+    if (_parameters == parameters) {
+        return;
+    }
+
     _parameters = parameters;
-    _searchEdit->updateParameters(parameters);
-    _searchEdit->search();
+
+    if (_lineEdit) {
+        _lineEdit->updateParameters(parameters);
+        _lineEdit->search();
+    }
+    if (_selector) {
+        _selector->setOption(parameters);
+    }
 }
 
 SearchParameters SearchOptionsMediator::getParameters()

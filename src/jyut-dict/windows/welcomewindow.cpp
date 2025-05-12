@@ -1,5 +1,6 @@
 #include "welcomewindow.h"
 
+#include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/strings/strings.h"
 #include "logic/utils/utils.h"
@@ -35,6 +36,15 @@ void WelcomeWindow::changeEvent(QEvent *event)
         translateUI();
     }
     QWidget::changeEvent(event);
+}
+
+void WelcomeWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        noAction();
+    } else if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
+        OKAction();
+    }
 }
 
 void WelcomeWindow::setupUI()
@@ -153,9 +163,62 @@ void WelcomeWindow::translateUI()
 void WelcomeWindow::setStyle(bool use_dark)
 {
     (void) (use_dark);
+
+    int interfaceSize = static_cast<int>(
+        _settings
+            ->value("Interface/size",
+                    QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+            .value<Settings::InterfaceSize>());
+    int headerFontSize = Settings::h6FontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int bodyFontSize = Settings::bodyFontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+
 #ifdef Q_OS_MAC
-    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: "
-                  "16px; }");
+    QString style{"QLabel[isHan=\"true\"] { "
+                  "   font-size: %1px; "
+                  "} "
+                  " "
+                  "QLabel { "
+                  "   font-size: %2px; "
+                  "} "
+                  " "
+                  "QPushButton[isHan=\"true\"] { "
+                  "   font-size: %1px; "
+                  //// QPushButton falls back to Fusion style on macOS when the
+                  //// height exceeds 16px. Set the maximum size to 16px.
+                  "   height: 16px; "
+                  "} "
+                  " "
+                  "QPushButton { "
+                  "   font-size: %2px; "
+                  "   height: 16px; "
+                  "} "};
+#else
+    QString style{"QLabel[isHan=\"true\"] { "
+                  "   font-size: %1px; "
+                  "} "
+                  " "
+                  "QLabel { "
+                  "   font-size: %2px; "
+                  "} "
+                  " "
+                  "QPushButton[isHan=\"true\"] { "
+                  "   font-size: %1px; "
+                  "   height: 16px; "
+                  "} "
+                  " "
+                  "QPushButton { "
+                  "   font-size: %2px; "
+                  "   height: 16px; "
+                  "} "};
+#endif
+    setStyleSheet(style.arg(std::to_string(bodyFontSizeHan).c_str(),
+                            std::to_string(bodyFontSize).c_str()));
+
+#ifdef Q_OS_MAC
     _messageLabel->setStyleSheet("QLabel { margin-bottom: 6px; }");
 #elif defined(Q_OS_WIN)
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: "
@@ -165,8 +228,9 @@ void WelcomeWindow::setStyle(bool use_dark)
 #endif
 
     _iconLabel->setStyleSheet("QLabel { padding: 0px; margin-top: 0px; }");
-    _titleLabel->setStyleSheet(
-        "QLabel { font-weight: bold; font-size: 16px; margin-bottom: 11px; }");
+    _titleLabel->setStyleSheet(QString{
+        "QLabel { font-weight: bold; font-size: %1px; margin-bottom: 11px; }"}
+                                   .arg(headerFontSize));
 
 #ifdef Q_OS_WIN
     QFont font;

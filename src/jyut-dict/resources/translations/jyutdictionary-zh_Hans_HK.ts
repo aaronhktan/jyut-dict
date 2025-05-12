@@ -645,6 +645,10 @@ Hang tight!</source>
         <source>Checking for update...</source>
         <translation>检查紧更新…</translation>
     </message>
+    <message>
+        <source>Start Dictation</source>
+        <translation>打开听写</translation>
+    </message>
 </context>
 <context>
     <name>NoUpdateDialog</name>
@@ -933,7 +937,7 @@ Hang tight!</source>
         <translation>有风险嘅模糊粤拼代替：</translation>
     </message>
     <message>
-        <source>    Risky fuzzy Jyutping matches:</source>
+        <source>	Risky fuzzy Jyutping matches:</source>
         <translation>	有风险嘅模糊粤拼代替：</translation>
     </message>
 </context>
@@ -1151,6 +1155,72 @@ Hang tight!</source>
     <message>
         <source>Neutral</source>
         <translation>轻声</translation>
+    </message>
+</context>
+<context>
+    <name>TranscriptionErrorDialog</name>
+    <message>
+        <source>Dictation could not be started!</source>
+        <translation>听写失败！</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>哦，知道啦</translation>
+    </message>
+    <message>
+        <source>Microphone access...</source>
+        <translation>控制对麦克风嘅访问…</translation>
+    </message>
+    <message>
+        <source>Dictation access...</source>
+        <translation>控制对语音识别嘅访问…</translation>
+    </message>
+    <message>
+        <source>Keyboard languages...</source>
+        <translation>键盘语言…</translation>
+    </message>
+</context>
+<context>
+    <name>TranscriptionWindow</name>
+    <message>
+        <source>Listening...</source>
+        <translation>听紧你讲…</translation>
+    </message>
+    <message>
+        <source>Cantonese</source>
+        <translation>粤语</translation>
+    </message>
+    <message>
+        <source>Mandarin</source>
+        <translation>普通话</translation>
+    </message>
+    <message>
+        <source>English</source>
+        <translation>英语</translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation>完成</translation>
+    </message>
+    <message>
+        <source>Dictation</source>
+        <translation>听写</translation>
+    </message>
+    <message>
+        <source>Speech recognition service could not be started.</source>
+        <translation>语音识别系统失败。</translation>
+    </message>
+    <message>
+        <source>Permission to access audio for speech recognition denied.</source>
+        <translation>语音识别或者麦克风嘅访问权限好似关闭咗喎。</translation>
+    </message>
+    <message>
+        <source>No keyboard for the specified language could be found.</source>
+        <translation>揾唔到呢个语言嘅键盘。</translation>
+    </message>
+    <message>
+        <source>An unspecified error occurred.</source>
+        <translation>发生咗问题。</translation>
     </message>
 </context>
 <context>

@@ -10,15 +10,17 @@
 class SearchOptionsMediator : public ISearchOptionsMediator
 {
 public:
-    SearchOptionsMediator();
+    SearchOptionsMediator() = default;
 
     void registerLineEdit(ISearchLineEdit *_searchEdit) override;
+    void registerOptionSelector(ISearchOptionsSelector *_selector) override;
 
     void setParameters(SearchParameters parameters) override;
     SearchParameters getParameters() override;
 
 private:
-    ISearchLineEdit *_searchEdit;
+    ISearchLineEdit *_lineEdit = nullptr;
+    ISearchOptionsSelector *_selector = nullptr;
     SearchParameters _parameters;
 };
 

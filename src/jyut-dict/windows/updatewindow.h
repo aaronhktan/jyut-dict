@@ -7,6 +7,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
+#include <QSettings>
 #include <QTextEdit>
 #include <QWidget>
 
@@ -47,6 +48,8 @@ private:
     QPushButton *_okButton;
 
     QGridLayout *_dialogLayout;
+
+    std::unique_ptr<QSettings> _settings;
 
 signals:
 

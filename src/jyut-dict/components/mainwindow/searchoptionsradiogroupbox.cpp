@@ -96,7 +96,7 @@ void SearchOptionsRadioGroupBox::setOption(const SearchParameters parameters)
     }
 }
 
-void SearchOptionsRadioGroupBox::setupUI()
+void SearchOptionsRadioGroupBox::setupUI(void)
 {
     setObjectName("SearchOptionsRadioGroupBox");
     setContentsMargins(0, 0, 0, 0);
@@ -175,7 +175,7 @@ void SearchOptionsRadioGroupBox::setupUI()
     setStyle(Utils::isDarkMode());
 }
 
-void SearchOptionsRadioGroupBox::translateUI()
+void SearchOptionsRadioGroupBox::translateUI(void)
 {
     // Set property so styling automatically changes
     setProperty("isHan", Settings::isCurrentLocaleHan());
@@ -300,7 +300,7 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
                               _simplifiedButton->minimumHeight()));
 }
 
-void SearchOptionsRadioGroupBox::notifyMediator() const
+void SearchOptionsRadioGroupBox::notifyMediator(void)
 {
     QPushButton *sender = static_cast<QPushButton *>(QObject::sender());
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
@@ -308,10 +308,10 @@ void SearchOptionsRadioGroupBox::notifyMediator() const
         button->setChecked(button == sender);
     }
 
-    std::string language = sender->text().toStdString();
-
     Settings::getSettings()->setValue("SearchOptionsRadioGroupBox/lastSelected",
                                       sender->property("data"));
 
-    _mediator->setParameters(sender->property("data").value<SearchParameters>());
+    SearchParameters params = sender->property("data").value<SearchParameters>();
+    _mediator->setParameters(params);
+    emit optionSelected(params);
 }

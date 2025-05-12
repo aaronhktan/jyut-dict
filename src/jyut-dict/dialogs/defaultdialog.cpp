@@ -1,7 +1,11 @@
 #include "defaultdialog.h"
 
-#include "logic/strings/strings.h"
+#include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/strings/strings.h"
+#ifdef Q_OS_MAC
+#include "logic/utils/utils_mac.h"
+#endif
 
 #include <QCoreApplication>
 #include <QAbstractButton>
@@ -16,8 +20,18 @@ DefaultDialog::DefaultDialog(const QString &reason,
                              QWidget *parent)
     : QMessageBox{parent}
 {
+    setObjectName("DefaultDialog");
+    _settings = Settings::getSettings();
+
     setupUI(reason, description);
     translateUI();
+
+#ifdef Q_OS_MAC
+    // Set the style to match whether the user started dark mode
+    setStyle(Utils::isDarkMode());
+#else
+    setStyle(false);
+#endif
 }
 
 void DefaultDialog::changeEvent(QEvent *event)
@@ -81,6 +95,70 @@ void DefaultDialog::translateUI(void)
         button->style()->unpolish(button);
         button->style()->polish(button);
     }
+}
+
+void DefaultDialog::setStyle(bool use_dark)
+{
+    (void) (use_dark);
+    int interfaceSize = static_cast<int>(
+        _settings
+            ->value("Interface/size",
+                    QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+            .value<Settings::InterfaceSize>());
+    int bodyFontSize = Settings::bodyFontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+
+#ifdef Q_OS_MAC
+    QString style{"QLabel[isHan=\"true\"] { "
+                  "   font-size: %1px; "
+                  "} "
+                  " "
+                  "QLabel { "
+                  "   font-size: %2px; "
+                  "} "
+                  " "
+                  "QRadioButton { "
+                  "   font-size: %2px; "
+                  "} "
+                  " "
+                  "QPushButton[isHan=\"true\"] { "
+                  "   font-size: %1px; "
+                  //// QPushButton falls back to Fusion style on macOS when the
+                  //// height exceeds 16px. Set the maximum size to 16px.
+                  "   height: 16px; "
+                  "} "
+                  " "
+                  "QPushButton { "
+                  "   font-size: %2px; "
+                  "   height: 16px; "
+                  "} "};
+#else
+    QString style{"QLabel[isHan=\"true\"] { "
+                  "   font-size: %1px; "
+                  "} "
+                  " "
+                  "QLabel { "
+                  "   font-size: %2px; "
+                  "} "
+                  " "
+                  "QPushButton[isHan=\"true\"] { "
+                  "   font-size: %1px; "
+                  "   height: 16px; "
+                  "} "
+                  " "
+                  "QPushButton { "
+                  "   font-size: %2px; "
+                  "   height: 16px; "
+                  "} "
+                  " "
+                  "QWidget#DefaultDialog { "
+                  "   background-color: palette(base);"
+                  "} "};
+#endif
+    setStyleSheet(style.arg(std::to_string(bodyFontSizeHan).c_str(),
+                            std::to_string(bodyFontSize).c_str()));
 }
 
 void DefaultDialog::deselectButtons(void)

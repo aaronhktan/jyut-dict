@@ -1,2 +1,4 @@
 "CFBundleDisplayName" = "Dictionnaire Jyut";
 "CFBundleName" = "Dictionnaire Jyut";
+"NSMicrophoneUsageDescription" = "Dictionnaire Jyut utilise votre microphone pour transcrire vos requêtes."
+"NSSpeechRecognitionUsageDescription" = "Dictionnaire Jyut utilise la reconnaissance automatique de la parole pour transcrire vos requêtes."

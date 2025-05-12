@@ -27,6 +27,8 @@ DictionaryTab::DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
     : QWidget{parent},
     _manager{manager}
 {
+    setObjectName("DictionaryTab");
+
     _utils = std::make_unique<SQLDatabaseUtils>(_manager);
 
     setupUI();
@@ -145,15 +147,21 @@ void DictionaryTab::translateUI()
 void DictionaryTab::setStyle(bool use_dark) {
     (void) (use_dark);
 #ifdef Q_OS_MAC
+    if (!use_dark) {
+#endif
+        setAttribute(Qt::WA_StyledBackground);
+        setStyleSheet("QWidget#DictionaryTab { "
+                      "   background-color: palette(base);"
+                      "} ");
+#ifdef Q_OS_MAC
+    }
+#endif
+
+#ifdef Q_OS_MAC
     _list->setStyleSheet("QListView {"
                          "   border: 1px solid palette(window); "
                          "} ");
 #else
-    setAttribute(Qt::WA_StyledBackground);
-    setObjectName("DictionaryTab");
-    setStyleSheet("QWidget#DictionaryTab {"
-                  "   background-color: palette(base);"
-                  "} ");
     _list->setStyleSheet("QListView {"
                          "   border: 1px solid palette(alternate-base); "
                          "} ");

@@ -10,6 +10,8 @@
 #include "logic/utils/utils_windows.h"
 #endif
 
+#include <QApplication>
+#include <QKeyEvent>
 #include <QIcon>
 #include <QTimer>
 
@@ -78,33 +80,33 @@ void SearchLineEdit::updateParameters(SearchParameters parameters)
 void SearchLineEdit::search(void)
 {
     switch (_parameters) {
-        case SearchParameters::SIMPLIFIED: {
-            _search->searchSimplified(text().trimmed());
-            break;
-        }
-        case SearchParameters::TRADITIONAL: {
-            _search->searchTraditional(text().trimmed());
-            break;
-        }
-        case SearchParameters::PINYIN: {
-            _search->searchPinyin(text().trimmed());
-            break;
-        }
-        case SearchParameters::JYUTPING: {
-            _search->searchJyutping(text().trimmed());
-            break;
-        }
-        case SearchParameters::ENGLISH: {
-            _search->searchEnglish(text().trimmed());
-            break;
-        }
-        case SearchParameters::AUTO_DETECT: {
-            _search->searchAutoDetect(text().trimmed());
-            break;
-        }
-        default: {
-            break;
-        }
+    case SearchParameters::SIMPLIFIED: {
+        _search->searchSimplified(text().trimmed());
+        break;
+    }
+    case SearchParameters::TRADITIONAL: {
+        _search->searchTraditional(text().trimmed());
+        break;
+    }
+    case SearchParameters::PINYIN: {
+        _search->searchPinyin(text().trimmed());
+        break;
+    }
+    case SearchParameters::JYUTPING: {
+        _search->searchJyutping(text().trimmed());
+        break;
+    }
+    case SearchParameters::ENGLISH: {
+        _search->searchEnglish(text().trimmed());
+        break;
+    }
+    case SearchParameters::AUTO_DETECT: {
+        _search->searchAutoDetect(text().trimmed());
+        break;
+    }
+    default: {
+        break;
+    }
     }
 
     addSearchTermToHistory(_parameters);
@@ -116,8 +118,16 @@ void SearchLineEdit::setupUI(void)
     addAction(_searchLineEdit, QLineEdit::LeadingPosition);
 
     _clearLineEdit = new QAction{"", this};
-    addAction(_clearLineEdit, QLineEdit::TrailingPosition);
     connect(_clearLineEdit, &QAction::triggered, this, &QLineEdit::clear);
+
+#ifndef Q_OS_LINUX
+    _microphone = new QAction{"", this};
+    addAction(_microphone, QLineEdit::TrailingPosition);
+    connect(_microphone,
+            &QAction::triggered,
+            this,
+            &SearchLineEdit::startTranscription);
+#endif
 
     // Customize the look of the searchbar to fit in better with platform styles
 #ifdef Q_OS_WIN
@@ -143,10 +153,14 @@ void SearchLineEdit::setStyle(bool use_dark)
     setFont(font);
 #endif
 
-    QIcon search = QIcon(":/images/search.png");
-    QIcon clear = QIcon(":/images/x.png");
-    QIcon search_inverted = QIcon(":/images/search_inverted.png");
-    QIcon clear_inverted = QIcon(":/images/x_inverted.png");
+    QIcon search = QIcon{":/images/search.png"};
+    QIcon clear = QIcon{":/images/x_action.png"};
+    QIcon mic = QIcon{":/images/mic_action.png"};
+    // QIcon micOff = QIcon{":/images/mic_off_action.png"};
+    QIcon searchInverted = QIcon{":/images/search_inverted.png"};
+    QIcon clearInverted = QIcon{":/images/x_action_inverted.png"};
+    QIcon micInverted = QIcon{":/images/mic_action_inverted.png"};
+    // QIcon micOffInverted = QIcon{":/images/mic_off_action_inverted.png"};
 
     int interfaceSize = static_cast<int>(
         _settings
@@ -174,8 +188,11 @@ void SearchLineEdit::setStyle(bool use_dark)
                                   "   border-radius: 2px; "
                                   "} "}
                               .arg(std::to_string(h6FontSize).c_str()));
-            _searchLineEdit->setIcon(search_inverted);
-            _clearLineEdit->setIcon(clear_inverted);
+            _searchLineEdit->setIcon(searchInverted);
+            _clearLineEdit->setIcon(clearInverted);
+#ifndef Q_OS_LINUX
+            _microphone->setIcon(micInverted);
+#endif
     } else {
             setStyleSheet(QString{"QLineEdit { "
                                   "   background-color: #ffffff; "
@@ -198,19 +215,66 @@ void SearchLineEdit::setStyle(bool use_dark)
                               .arg(std::to_string(h6FontSize).c_str()));
             _searchLineEdit->setIcon(search);
             _clearLineEdit->setIcon(clear);
+#ifndef Q_OS_LINUX
+            _microphone->setIcon(mic);
+#endif
     }
 }
 
 void SearchLineEdit::checkClearVisibility(void)
 {
-    if (text().isEmpty() || !hasFocus()) {
-        // Don't add the clear line edit action if the widget doesn't have focus!
+    if (text().isEmpty()
+        || !hasFocus()) { // Don't add the clear line edit action if the widget doesn't have focus!
         // Clicking on the clear line edit action causes a crash.
         removeAction(_clearLineEdit);
     } else {
         addAction(_clearLineEdit, QLineEdit::TrailingPosition);
     }
 }
+
+#ifndef Q_OS_LINUX
+void SearchLineEdit::startTranscription(void)
+{
+    clear();
+    checkClearVisibility();
+
+    _transcriptionWindow = new TranscriptionWindow{this};
+    _transcriptionWindow->setAttribute(Qt::WA_DeleteOnClose);
+    _transcriptionWindow->setFocus();
+    _transcriptionWindow->show();
+
+    connect(_transcriptionWindow,
+            &TranscriptionWindow::transcription,
+            this,
+            [&](QString result) { setText(result); });
+    connect(_transcriptionWindow,
+            &TranscriptionWindow::languageSelected,
+            this,
+            [&](TranscriptionLanguage lang) {
+                SearchParameters params;
+                switch (lang) {
+                case TranscriptionLanguage::CANTONESE: {
+                    params = SearchParameters::TRADITIONAL;
+                    break;
+                }
+                case TranscriptionLanguage::MANDARIN: {
+                    if (Settings::getCurrentLocale().territory()
+                        == QLocale::Taiwan) {
+                        params = SearchParameters::TRADITIONAL;
+                    } else {
+                        params = SearchParameters::SIMPLIFIED;
+                    }
+                    break;
+                }
+                case TranscriptionLanguage::ENGLISH: {
+                    params = SearchParameters::ENGLISH;
+                    break;
+                }
+                }
+                _mediator->setParameters(params);
+            });
+}
+#endif
 
 void SearchLineEdit::addSearchTermToHistory(SearchParameters parameters) const
 {
@@ -236,3 +300,10 @@ void SearchLineEdit::searchTriggered(void)
         search();
     }
 }
+
+#ifndef Q_OS_LINUX
+void SearchLineEdit::dictationRequested(void)
+{
+    startTranscription();
+}
+#endif

@@ -5,6 +5,9 @@
 #include "logic/database/sqluserhistoryutils.h"
 #include "logic/search/isearch.h"
 #include "logic/search/isearchoptionsmediator.h"
+#ifndef Q_OS_LINUX
+#include "windows/transcriptionwindow.h"
+#endif
 
 #include <QAction>
 #include <QEvent>
@@ -42,6 +45,10 @@ private:
 
     void checkClearVisibility(void);
 
+#ifndef Q_OS_LINUX
+    void startTranscription(void);
+#endif
+
     void addSearchTermToHistory(SearchParameters parameters) const;
 
     std::shared_ptr<ISearchOptionsMediator> _mediator;
@@ -51,7 +58,14 @@ private:
 
     QAction *_searchLineEdit;
     QAction *_clearLineEdit;
+#ifndef Q_OS_LINUX
+    QAction *_microphone;
+#endif
     QTimer *_timer;
+
+#ifndef Q_OS_LINUX
+    TranscriptionWindow *_transcriptionWindow = nullptr;
+#endif
 
     SearchParameters _parameters;
 
@@ -59,6 +73,10 @@ private:
 
 public slots:
     void searchTriggered(void);
+
+#ifndef Q_OS_LINUX
+    void dictationRequested(void);
+#endif
 };
 
 #endif // SEARCHLINEEDIT_H

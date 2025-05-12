@@ -39,6 +39,118 @@ set(TS_FILES
     resources/translations/jyutdictionary-zh_Hans_HK.ts
     resources/translations/jyutdictionary-zh_Hant_HK.ts)
 
+set(PROJECT_HEADERS
+        components/definitioncard/definitioncardsection.h
+        components/definitioncard/definitioncardwidget.h
+        components/definitioncard/definitioncontentwidget.h
+        components/definitioncard/definitionheaderwidget.h
+        components/definitioncard/icardheaderwidget.h
+        components/dictionarylist/dictionarylistdelegate.h
+        components/dictionarylist/dictionarylistmodel.h
+        components/dictionarylist/dictionarylistview.h
+        components/entrysearchresult/resultlistdelegate.h
+        components/entrysearchresult/resultlistmodel.h
+        components/entrysearchresult/resultlistview.h
+        components/entryview/entryactionwidget.h
+        components/entryview/entrycontentwidget.h
+        components/entryview/entryheaderwidget.h
+        components/entryview/entryscrollarea.h
+        components/entryview/entryscrollareawidget.h
+        components/entryview/entryviewsentencecardsection.h
+        components/favouritewindow/favouritesplitter.h
+        components/historyview/searchhistorylistdelegate.h
+        components/historyview/searchhistorylistmodel.h
+        components/historyview/searchhistorylistview.h
+        components/historyview/searchhistorytab.h
+        components/historyview/viewhistorylistdelegate.h
+        components/historyview/viewhistorylistmodel.h
+        components/historyview/viewhistorylistview.h
+        components/historyview/viewhistorytab.h
+        components/layouts/flowlayout.h
+        components/magnifywindow/magnifyscrollarea.h
+        components/magnifywindow/magnifyscrollareawidget.h
+        components/mainwindow/isearchlineedit.h
+        components/mainwindow/isearchoptionsselector.h
+        components/mainwindow/mainsplitter.h
+        components/mainwindow/maintoolbar.h
+        components/mainwindow/searchlineedit.h
+        components/mainwindow/searchoptionsradiogroupbox.h
+        components/related/relatedbutton.h
+        components/related/relatedbuttoncontentwidget.h
+        components/related/relatedbuttonheaderwidget.h
+        components/related/relatedsection.h
+        components/sentencecard/loadingwidget.h
+        components/sentencecard/sentencecardwidget.h
+        components/sentencecard/sentencecontentwidget.h
+        components/sentencecard/sentenceheaderwidget.h
+        components/sentencesearchresult/sentenceresultlistdelegate.h
+        components/sentencesearchresult/sentenceresultlistmodel.h
+        components/sentencesearchresult/sentenceresultlistview.h
+        components/sentenceview/sentencescrollarea.h
+        components/sentenceview/sentencescrollareawidget.h
+        components/sentenceview/sentenceviewcontentwidget.h
+        components/sentenceview/sentenceviewheaderwidget.h
+        components/sentenceview/sentenceviewsentencecardsection.h
+        components/sentencewindow/sentencesplitter.h
+        components/settings/advancedtab.h
+        components/settings/contacttab.h
+        components/settings/dictionarytab.h
+        components/settings/searchtab.h
+        components/settings/settingstab.h
+        components/settings/texttab.h
+        dialogs/defaultdialog.h
+        dialogs/dictionarytabfailuredialog.h
+        dialogs/downloadaudiodialog.h
+        dialogs/downloadresultdialog.h
+        dialogs/entryspeakerrordialog.h
+        dialogs/exportdatabasedialog.h
+        dialogs/noupdatedialog.h
+        dialogs/overwriteconflictingdictionarydialog.h
+        dialogs/resetsettingsdialog.h
+        dialogs/restoredatabasedialog.h
+        dialogs/transcriptionerrordialog.h
+        logic/database/queryparseutils.h
+        logic/database/sqldatabasemanager.h
+        logic/database/sqldatabaseutils.h
+        logic/database/sqluserdatautils.h
+        logic/database/sqluserhistoryutils.h
+        logic/dictation/iinputvolumepublisher.h
+        logic/dictation/iinputvolumesubscriber.h
+        logic/dictation/itranscriptionresultpublisher.h
+        logic/dictation/itranscriptionresultsubscriber.h
+        logic/dictation/transcriberwrapper.h
+        logic/dictionary/dictionarymetadata.h
+        logic/dictionary/dictionarysource.h
+        logic/download/downloader.h
+        logic/entry/definitionsset.h
+        logic/entry/entry.h
+        logic/entry/entryspeaker.h
+        logic/search/isearch.h
+        logic/search/isearchobservable.h
+        logic/search/isearchobserver.h
+        logic/search/isearchoptionsmediator.h
+        logic/search/searchoptionsmediator.h
+        logic/search/sqlsearch.h
+        logic/sentence/sentenceset.h
+        logic/sentence/sourcesentence.h
+        logic/settings/settings.h
+        logic/settings/settingsutils.h
+        logic/update/jyutdictionaryreleasechecker.h
+        logic/utils/cantoneseutils.h
+        logic/utils/chineseutils.h
+        logic/utils/mandarinutils.h
+        logic/utils/scriptdetector.h
+        logic/utils/utils.h
+        logic/utils/utils_qt.h
+        windows/aboutwindow.h
+        windows/historywindow.h
+        windows/mainwindow.h
+        windows/settingswindow.h
+        windows/transcriptionwindow.h
+        windows/updatewindow.h
+        windows/welcomewindow.h
+)
+
 set(PROJECT_SOURCES
         components/definitioncard/definitioncardsection.cpp
         components/definitioncard/definitioncardwidget.cpp
@@ -105,6 +217,7 @@ set(PROJECT_SOURCES
         dialogs/overwriteconflictingdictionarydialog.cpp
         dialogs/resetsettingsdialog.cpp
         dialogs/restoredatabasedialog.cpp
+        dialogs/transcriptionerrordialog.cpp
         logic/database/queryparseutils.cpp
         logic/database/sqldatabasemanager.cpp
         logic/database/sqldatabaseutils.cpp
@@ -134,6 +247,7 @@ set(PROJECT_SOURCES
         windows/historywindow.cpp
         windows/mainwindow.cpp
         windows/settingswindow.cpp
+        windows/transcriptionwindow.cpp
         windows/updatewindow.cpp
         windows/welcomewindow.cpp
         ${TS_FILES}
@@ -143,15 +257,22 @@ include_directories(
     ${CMAKE_SOURCE_DIR}
 )
 
+if(UNIX AND NOT APPLE)
+    list(REMOVE_ITEM PROJECT_HEADERS windows/transcriptionwindow.h)
+    list(REMOVE_ITEM PROJECT_SOURCES windows/transcriptionwindow.cpp)
+endif()
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(CantoneseDictionary
         MANUAL_FINALIZATION
+        ${PROJECT_HEADERS}
         ${PROJECT_SOURCES}
         resources/resource.qrc
     )
 
 else()
     add_executable(CantoneseDictionary
+        ${PROJECT_HEADERS}
         ${PROJECT_SOURCES}
         resources/resource.qrc
     )
@@ -189,9 +310,25 @@ set_target_properties(CantoneseDictionary PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-if (APPLE)
+if(APPLE)
+    find_library(SpeechFramework Speech)
+    find_library(AVFoundationFramework AVFoundation)
     target_link_libraries(CantoneseDictionary PRIVATE "-framework AppKit")
+    target_link_libraries(CantoneseDictionary
+        PRIVATE
+        ${SpeechFramework}
+        ${AVFoundationFramework}
+    )
+
+    target_compile_options(CantoneseDictionary PRIVATE
+        -fobjc-arc  # Enable ARC for Objective-C and Objective-C++ files
+    )
+
+
     TARGET_SOURCES(CantoneseDictionary
+        PRIVATE logic/dictation/transcriber_mac.h
+        PRIVATE logic/dictation/transcriber_mac.mm
+        PRIVATE logic/dictation/transcriberwrapper_mac.mm
         PRIVATE logic/utils/utils_mac.mm
         PRIVATE resources/db/dict.db
         PRIVATE resources/db/user.db
@@ -203,7 +340,8 @@ if (APPLE)
         PRIVATE platform/mac/yue_Hans.lproj/InfoPlist.strings
         PRIVATE platform/mac/yue_Hant.lproj/InfoPlist.strings
         PRIVATE platform/mac/zh_Hans.lproj/InfoPlist.strings
-        PRIVATE platform/mac/zh_Hant.lproj/InfoPlist.strings)
+        PRIVATE platform/mac/zh_Hant.lproj/InfoPlist.strings
+    )
 
     set_property(SOURCE resources/db/dict.db PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
     set_property(SOURCE resources/db/user.db PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
@@ -216,17 +354,33 @@ if (APPLE)
     set_property(SOURCE platform/mac/yue_Hant.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/yue-Hant.lproj")
     set_property(SOURCE platform/mac/zh_Hans.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/zh-hans.lproj")
     set_property(SOURCE platform/mac/zh_Hant.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/zh-hant.lproj")
-elseif (UNIX)
+elseif(UNIX)
     TARGET_SOURCES(CantoneseDictionary PRIVATE logic/utils/utils_linux.cpp)
     configure_file(resources/db/dict.db dict.db COPYONLY)
     configure_file(resources/db/user.db user.db COPYONLY)
     configure_file(resources/licenses/FLOW_LAYOUT_LICENSE.txt FLOW_LAYOUT_LICENSE.txt COPYONLY)
     configure_file(resources/settings/settings.ini settings.ini COPYONLY)
-elseif (WIN32)
+elseif(WIN32)
     enable_language("RC")
-    TARGET_SOURCES(CantoneseDictionary PRIVATE
-        logic/utils/utils_windows.cpp
-        platform/windows/app.rc)
+
+    target_compile_definitions(CantoneseDictionary PRIVATE UNICODE _UNICODE _ATL_NO_AUTOMATIC_NAMESPACE)
+    target_link_libraries(CantoneseDictionary
+        PRIVATE
+        ole32
+        oleaut32
+        uuid
+        sapi
+        imm32
+    )
+
+    TARGET_SOURCES(CantoneseDictionary
+        PRIVATE logic/dictation/transcriber_windows.cpp
+        PRIVATE logic/dictation/transcriber_windows.h
+        PRIVATE logic/dictation/transcriberwrapper_windows.cpp
+        PRIVATE logic/utils/utils_windows.cpp
+        PRIVATE platform/windows/app.rc
+    )
+
     configure_file(resources/db/dict.db dict.db COPYONLY)
     configure_file(resources/db/user.db user.db COPYONLY)
     configure_file(resources/licenses/FLOW_LAYOUT_LICENSE.txt FLOW_LAYOUT_LICENSE.txt COPYONLY)

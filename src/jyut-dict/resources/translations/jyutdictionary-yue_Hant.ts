@@ -645,6 +645,10 @@ Hang tight!</source>
         <source>Checking for update...</source>
         <translation>檢查緊更新…</translation>
     </message>
+    <message>
+        <source>Start Dictation</source>
+        <translation>開啟「聽寫」</translation>
+    </message>
 </context>
 <context>
     <name>NoUpdateDialog</name>
@@ -1151,6 +1155,72 @@ Hang tight!</source>
     <message>
         <source>Neutral</source>
         <translation>輕聲</translation>
+    </message>
+</context>
+<context>
+    <name>TranscriptionErrorDialog</name>
+    <message>
+        <source>Dictation could not be started!</source>
+        <translation>聽寫失敗！</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>哦，知道啦</translation>
+    </message>
+    <message>
+        <source>Microphone access...</source>
+        <translation>控制咪高風嘅取用權限…</translation>
+    </message>
+    <message>
+        <source>Dictation access...</source>
+        <translation>控制語音識別嘅取用權限…</translation>
+    </message>
+    <message>
+        <source>Keyboard languages...</source>
+        <translation>鍵盤語言…</translation>
+    </message>
+</context>
+<context>
+    <name>TranscriptionWindow</name>
+    <message>
+        <source>Listening...</source>
+        <translation>聽緊你講…</translation>
+    </message>
+    <message>
+        <source>Cantonese</source>
+        <translation>粵語</translation>
+    </message>
+    <message>
+        <source>Mandarin</source>
+        <translation>普通話</translation>
+    </message>
+    <message>
+        <source>English</source>
+        <translation>英語</translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation>完成</translation>
+    </message>
+    <message>
+        <source>Dictation</source>
+        <translation>聽寫</translation>
+    </message>
+    <message>
+        <source>Speech recognition service could not be started.</source>
+        <translation>語音識別系統失敗。</translation>
+    </message>
+    <message>
+        <source>Permission to access audio for speech recognition denied.</source>
+        <translation>咪高風或者語音識別嘅取用權限好似關閉咗喎。</translation>
+    </message>
+    <message>
+        <source>No keyboard for the specified language could be found.</source>
+        <translation>搵唔到鍵盤俾你啱啱揀咗嘅語言。</translation>
+    </message>
+    <message>
+        <source>An unspecified error occurred.</source>
+        <translation>發生咗問題。</translation>
     </message>
 </context>
 <context>

@@ -34,6 +34,8 @@ constexpr auto AUDIO_DOWNLOAD_URL
 AdvancedTab::AdvancedTab(QWidget *parent)
     : QWidget{parent}
 {
+    setObjectName("AdvancedTab");
+
     _settings = Settings::getSettings();
 
     setupUI();
@@ -290,19 +292,16 @@ void AdvancedTab::setStyle(bool use_dark)
     foreach (const auto & frame, frames) {
         frame->setStyleSheet(style.arg(colour));
     }
+
 #ifdef Q_OS_MAC
-    setStyleSheet("QPushButton[isHan=\"true\"] { font-size: "
-                  "13px; height: 16px; }");
-#elif defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-    setAttribute(Qt::WA_StyledBackground);
-    setObjectName("AdvancedTab");
-    setStyleSheet("QPushButton[isHan=\"true\"] { "
-                  "   font-size: 12px; height: 20px; "
-                  "} "
-                  ""
-                  "QWidget#AdvancedTab { "
-                  "   background-color: palette(base);"
-                  "} ");
+    if (!use_dark) {
+#endif
+        setAttribute(Qt::WA_StyledBackground);
+        setStyleSheet("QWidget#AdvancedTab { "
+                      "   background-color: palette(base);"
+                      "} ");
+#ifdef Q_OS_MAC
+    }
 #endif
 }
 

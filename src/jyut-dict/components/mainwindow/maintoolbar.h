@@ -69,6 +69,7 @@ public slots:
     void searchQueryRequested(const QString &query,
                               const SearchParameters &parameters) const;
     void searchRequested(void) const;
+    void dictationRequested(void) const;
     void updateStyleRequested(void);
 };
 

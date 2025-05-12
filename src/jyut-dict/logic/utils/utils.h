@@ -55,6 +55,12 @@ constexpr auto VARIANT = "install";
                               "preference.universalaccess?TextToSpeech";
     constexpr auto TTS_HELP_LINK
         = "https://support.apple.com/guide/mac-help/mchlp2290/mac";
+    constexpr auto PRIVACY_MICROPHONE_LINK
+        = "x-apple.systempreferences:com.apple.preference.security?Privacy_"
+          "Microphone";
+    constexpr auto PRIVACY_SPEECH_LINK
+        = "x-apple.systempreferences:com.apple.preference.security?Privacy_"
+          "SpeechRecognition";
 #elif defined(Q_OS_LINUX)
     constexpr auto TTS_LINK
         = "https://packages.debian.org/stretch/libspeechd-dev";
@@ -64,8 +70,9 @@ constexpr auto VARIANT = "install";
     constexpr auto TTS_LINK
         = "ms-settings:regionlanguage";
     constexpr auto TTS_HELP_LINK
-        = "https://support.microsoft.com/en-ca/help/22805/"
-          "windows-10-supported-narrator-languages-voices";
+        = "https://support.microsoft.com/en-us/windows/"
+          "appendix-a-supported-languages-and-voices-4486e345-7730-53da-fcfe-"
+          "55cc64300f01";
 #endif
 
     void split(const std::string &string,
