@@ -5,3 +5,5 @@ src/jyut-dict/platform/linux/deb/debian/jyutdict.doc-base.EX -linguist-detectabl
 src/jyut-dict/platform/linux/deb/debian/manpage.xml.ex -linguist-detectable
 src/jyut-dict/platform/linux/deb/debian/menu.ex -linguist-detectable
 src/jyut-dict/platform/linux/deb/debian/watch.ex -linguist-detectable
+
+src/jyut-dict/vendor/** linguist-vendored

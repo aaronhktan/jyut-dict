@@ -1,6 +1,7 @@
 #include "windows/mainwindow.h"
 
 #include "logic/settings/settings.h"
+#include "vendor/zinnia/zinnia.h"
 
 #include <QApplication>
 #include <QSysInfo>
@@ -72,6 +73,14 @@ int main(int argc, char *argv[])
 #else
     QApplication a{argc, argv};
 #endif
+
+    zinnia::Recognizer *recognizer = zinnia::Recognizer::create();
+    if (!recognizer->open(
+            "/Users/aaron/Documents/Github/jyut-dict/src/jyut-dict/vendor/"
+            "zinnia/models/handwriting-zh_TW.model")) {
+        std::cerr << recognizer->what() << std::endl;
+        return -1;
+    }
 
     MainWindow w;
     w.show();

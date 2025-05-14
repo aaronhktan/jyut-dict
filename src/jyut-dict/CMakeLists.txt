@@ -142,6 +142,17 @@ set(PROJECT_HEADERS
         logic/utils/scriptdetector.h
         logic/utils/utils.h
         logic/utils/utils_qt.h
+        vendor/zinnia/svm.h
+        vendor/zinnia/common.h
+        vendor/zinnia/config.h
+        vendor/zinnia/feature.h
+        vendor/zinnia/freelist.h
+        vendor/zinnia/mmap.h
+        vendor/zinnia/param.h
+        vendor/zinnia/scoped_ptr.h
+        vendor/zinnia/sexp.h
+        vendor/zinnia/stream_wrapper.h
+        vendor/zinnia/zinnia.h
         windows/aboutwindow.h
         windows/historywindow.h
         windows/mainwindow.h
@@ -243,6 +254,14 @@ set(PROJECT_SOURCES
         logic/utils/utils.cpp
         logic/utils/utils_qt.cpp
         main.cpp
+        vendor/zinnia/character.cpp
+        vendor/zinnia/feature.cpp
+        vendor/zinnia/libzinnia.cpp
+        vendor/zinnia/param.cpp
+        vendor/zinnia/recognizer.cpp
+        vendor/zinnia/sexp.cpp
+        vendor/zinnia/svm.cpp
+        vendor/zinnia/trainer.cpp
         windows/aboutwindow.cpp
         windows/historywindow.cpp
         windows/mainwindow.cpp
