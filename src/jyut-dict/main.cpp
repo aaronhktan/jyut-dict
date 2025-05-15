@@ -1,7 +1,6 @@
 #include "windows/mainwindow.h"
 
 #include "logic/settings/settings.h"
-#include "vendor/zinnia/zinnia.h"
 
 #include <QApplication>
 #include <QSysInfo>

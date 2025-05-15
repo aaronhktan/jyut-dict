@@ -9,8 +9,14 @@ HandwritingPanel::HandwritingPanel(QWidget *parent)
 
     _recognizer = zinnia::Recognizer::create();
     if (!_recognizer->open(
+#ifdef Q_OS_LINUX
+            "/home/aaron/Documents/Github/jyut-dict/src/jyut-dict/vendor/"
+            "zinnia/models/handwriting-zh_TW.model"
+#elif Q_OS_MAC
             "/Users/aaron/Documents/Github/jyut-dict/src/jyut-dict/vendor/"
-            "zinnia/models/handwriting-zh_TW.model")) {
+            "zinnia/models/handwriting-zh_TW.model"
+#endif
+            )) {
         std::cerr << _recognizer->what() << std::endl;
     }
 
@@ -41,12 +47,10 @@ void HandwritingPanel::mousePressEvent(QMouseEvent *event)
 void HandwritingPanel::mouseMoveEvent(QMouseEvent *event)
 {
     counter++;
-    if (counter % 5 == 0) {
         if (std::abs(event->pos().x() - _lastPos.x()) > 10
             || (std::abs(event->pos().y() - _lastPos.y()) > 10)) {
             _strokePositions.emplace_back(event->pos());
         }
-    }
     draw(event->pos());
 }
 
@@ -121,7 +125,7 @@ void HandwritingPanel::finalizeStroke(const QPoint &pos)
         return;
     }
     for (size_t i = 0; i < res->size(); ++i) {
-        std::wcout << res->value(i) << "\t" << res->score(i) << std::endl;
+        std::cout << res->value(i) << "\t" << res->score(i) << std::endl;
     }
     delete res;
 }

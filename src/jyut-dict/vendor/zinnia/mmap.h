@@ -8,6 +8,7 @@
 #ifndef zinnia_MMAP_H_
 #define zinnia_MMAP_H_
 
+#include <cstring>
 #include <errno.h>
 #include <string>
 
@@ -35,7 +36,6 @@ extern "C" {
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
 #ifdef HAVE_WINDOWS_H
-#include <cstring>
 #include <windows.h>
 #endif
 #else
