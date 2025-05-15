@@ -35,6 +35,7 @@ extern "C" {
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
 #ifdef HAVE_WINDOWS_H
+#include <cstring>
 #include <windows.h>
 #endif
 #else
@@ -108,6 +109,8 @@ public:
         this->close();
         unsigned long mode1, mode2, mode3;
         fileName = std::string(filename);
+        std::wstring fileNameWStr = std::wstring(fileName.begin(),
+                                                 fileName.end());
 
         if (std::strcmp(mode, "r") == 0) {
             mode1 = GENERIC_READ;
@@ -121,7 +124,7 @@ public:
             CHECK_CLOSE_FALSE(false) << "unknown open mode:" << filename;
         }
 
-        hFile = CreateFile(filename,
+        hFile = CreateFile(fileNameWStr.c_str(),
                            mode1,
                            FILE_SHARE_READ,
                            0,

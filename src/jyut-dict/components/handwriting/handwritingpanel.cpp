@@ -121,7 +121,7 @@ void HandwritingPanel::finalizeStroke(const QPoint &pos)
         return;
     }
     for (size_t i = 0; i < res->size(); ++i) {
-        std::cout << res->value(i) << "\t" << res->score(i) << std::endl;
+        std::wcout << res->value(i) << "\t" << res->score(i) << std::endl;
     }
     delete res;
 }

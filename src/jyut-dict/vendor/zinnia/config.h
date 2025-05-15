@@ -107,4 +107,6 @@
 /* Define if target is little endian */
 #define WORDS_LITENDIAN 1
 
-/* Define to `unsigned int' if <sys/types.h> does not define. */
+#ifdef _WIN32
+#define HAVE_WINDOWS_H
+#endif

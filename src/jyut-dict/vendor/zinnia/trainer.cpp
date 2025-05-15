@@ -11,6 +11,8 @@
 #include "scoped_ptr.h"
 #include "svm.h"
 #include "zinnia.h"
+#include <algorithm>
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <set>
