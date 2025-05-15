@@ -58,6 +58,7 @@ set(PROJECT_HEADERS
         components/entryview/entryscrollareawidget.h
         components/entryview/entryviewsentencecardsection.h
         components/favouritewindow/favouritesplitter.h
+        components/handwriting/handwritingpanel.h
         components/historyview/searchhistorylistdelegate.h
         components/historyview/searchhistorylistmodel.h
         components/historyview/searchhistorylistview.h
@@ -180,6 +181,7 @@ set(PROJECT_SOURCES
         components/entryview/entryscrollareawidget.cpp
         components/entryview/entryviewsentencecardsection.cpp
         components/favouritewindow/favouritesplitter.cpp
+        components/handwriting/handwritingpanel.cpp
         components/historyview/searchhistorylistdelegate.cpp
         components/historyview/searchhistorylistmodel.cpp
         components/historyview/searchhistorylistview.cpp
