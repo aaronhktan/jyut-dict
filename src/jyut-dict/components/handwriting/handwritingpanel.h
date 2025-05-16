@@ -1,8 +1,6 @@
 #ifndef HANDWRITINGPANEL_H
 #define HANDWRITINGPANEL_H
 
-#include "vendor/zinnia/zinnia.h"
-
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPixmap>
@@ -16,8 +14,8 @@ public:
     using QWidget::QWidget;
 
     explicit HandwritingPanel(QWidget *parent = nullptr);
-    ~HandwritingPanel();
 
+protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
@@ -27,20 +25,16 @@ public:
 
 private:
     void draw(const QPoint &pos);
-    void finalizeStroke(const QPoint &pos);
-
-    QString _characterPreamble;
-    std::vector<QPoint> _strokePositions;
-    std::vector<QString> _strokes;
-    zinnia::Recognizer *_recognizer = nullptr;
-    zinnia::Character *_character = nullptr;
-
-    int counter = 0;
 
     QPixmap _pixmap;
     QPoint _lastPos;
 
 signals:
+    void pixmapDimensions(int width, int height);
+
+    void strokeStart(int x, int y);
+    void strokeUpdate(int x, int y);
+    void strokeComplete(int x, int y);
 };
 
 #endif // HANDWRITINGPANEL_H

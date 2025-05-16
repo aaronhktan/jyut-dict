@@ -48,8 +48,6 @@ private:
     QPushButton *_noButton;
     QPushButton *_okButton;
 
-    QWidget *_bottomSpacer;
-
     QGridLayout *_dialogLayout;
 
     std::unique_ptr<QSettings> _settings;

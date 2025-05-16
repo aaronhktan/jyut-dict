@@ -126,6 +126,7 @@ set(PROJECT_HEADERS
         logic/entry/definitionsset.h
         logic/entry/entry.h
         logic/entry/entryspeaker.h
+        logic/handwriting/handwritingwrapper.h
         logic/search/isearch.h
         logic/search/isearchobservable.h
         logic/search/isearchobserver.h
@@ -155,6 +156,7 @@ set(PROJECT_HEADERS
         vendor/zinnia/stream_wrapper.h
         vendor/zinnia/zinnia.h
         windows/aboutwindow.h
+        windows/handwritingwindow.h
         windows/historywindow.h
         windows/mainwindow.h
         windows/settingswindow.h
@@ -242,6 +244,7 @@ set(PROJECT_SOURCES
         logic/entry/definitionsset.cpp
         logic/entry/entry.cpp
         logic/entry/entryspeaker.cpp
+        logic/handwriting/handwritingwrapper.cpp
         logic/search/searchoptionsmediator.cpp
         logic/search/sqlsearch.cpp
         logic/sentence/sentenceset.cpp
@@ -265,6 +268,7 @@ set(PROJECT_SOURCES
         vendor/zinnia/svm.cpp
         vendor/zinnia/trainer.cpp
         windows/aboutwindow.cpp
+        windows/handwritingwindow.cpp
         windows/historywindow.cpp
         windows/mainwindow.cpp
         windows/settingswindow.cpp
@@ -362,6 +366,7 @@ if(APPLE)
         PRIVATE platform/mac/yue_Hant.lproj/InfoPlist.strings
         PRIVATE platform/mac/zh_Hans.lproj/InfoPlist.strings
         PRIVATE platform/mac/zh_Hant.lproj/InfoPlist.strings
+        PRIVATE vendor/zinnia/models/handwriting-zh_TW.model
     )
 
     set_property(SOURCE resources/db/dict.db PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
@@ -375,6 +380,7 @@ if(APPLE)
     set_property(SOURCE platform/mac/yue_Hant.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/yue-Hant.lproj")
     set_property(SOURCE platform/mac/zh_Hans.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/zh-hans.lproj")
     set_property(SOURCE platform/mac/zh_Hant.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/zh-hant.lproj")
+    set_property(SOURCE vendor/zinnia/models/handwriting-zh_TW.model PROPERTY MACOSX_PACKAGE_LOCATION "Resources/Handwriting")
 elseif(UNIX)
     TARGET_SOURCES(CantoneseDictionary PRIVATE logic/utils/utils_linux.cpp)
     configure_file(resources/db/dict.db dict.db COPYONLY)

@@ -1,7 +1,5 @@
 ﻿#include "windows/mainwindow.h"
 
-#include "components/handwriting/handwritingpanel.h"
-
 #include "dialogs/noupdatedialog.h"
 #include "logic/dictionary/dictionarysource.h"
 #include "logic/settings/settings.h"
@@ -1262,11 +1260,6 @@ void MainWindow::openAboutWindow(void)
 
 void MainWindow::openSettingsWindow(void)
 {
-    HandwritingPanel *_panel = new HandwritingPanel{this};
-    _panel->setWindowFlag(Qt::Window);
-    _panel->show();
-    _panel->setFixedSize(500, 500);
-
     if (_settingsWindow) {
         _settingsWindow->activateWindow();
         _settingsWindow->raise();

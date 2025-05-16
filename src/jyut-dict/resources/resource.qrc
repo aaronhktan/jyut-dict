@@ -70,8 +70,7 @@
         <file>images/mic_action.png</file>
         <file>images/x_action_inverted.png</file>
         <file>images/x_action.png</file>
-        <file>images/mic_off_action_inverted.png</file>
-        <file>images/mic_off_action.png</file>
-        <file>../vendor/zinnia/models/handwriting-zh_TW.model</file>
+        <file>images/handwriting_action_inverted.png</file>
+        <file>images/handwriting_action.png</file>
     </qresource>
 </RCC>

@@ -156,10 +156,6 @@ private:
     }
     }
 
-    if (status != SFSpeechRecognizerAuthorizationStatusAuthorized) {
-        return;
-    }
-
     // Create the input node for audio capture
     AVAudioInputNode *inputNode = self.audioEngine.inputNode;
     AVAudioFormat *format = [inputNode outputFormatForBus:0];
@@ -247,10 +243,6 @@ private:
                                      }
                                  }];
         break;
-    }
-
-    if (captureStatus != AVAuthorizationStatusAuthorized) {
-        return;
     }
 
     // Prepare and start the audio engine

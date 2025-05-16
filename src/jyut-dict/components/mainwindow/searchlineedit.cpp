@@ -120,6 +120,13 @@ void SearchLineEdit::setupUI(void)
     _clearLineEdit = new QAction{"", this};
     connect(_clearLineEdit, &QAction::triggered, this, &QLineEdit::clear);
 
+    _handwriting = new QAction{"", this};
+    addAction(_handwriting, QLineEdit::TrailingPosition);
+    connect(_handwriting,
+            &QAction::triggered,
+            this,
+            &SearchLineEdit::startHandwriting);
+
 #ifndef Q_OS_LINUX
     _microphone = new QAction{"", this};
     addAction(_microphone, QLineEdit::TrailingPosition);
@@ -155,12 +162,13 @@ void SearchLineEdit::setStyle(bool use_dark)
 
     QIcon search = QIcon{":/images/search.png"};
     QIcon clear = QIcon{":/images/x_action.png"};
+    QIcon handwriting = QIcon{":/images/handwriting_action.png"};
     QIcon mic = QIcon{":/images/mic_action.png"};
-    // QIcon micOff = QIcon{":/images/mic_off_action.png"};
     QIcon searchInverted = QIcon{":/images/search_inverted.png"};
     QIcon clearInverted = QIcon{":/images/x_action_inverted.png"};
     QIcon micInverted = QIcon{":/images/mic_action_inverted.png"};
-    // QIcon micOffInverted = QIcon{":/images/mic_off_action_inverted.png"};
+    QIcon handwritingInverted = QIcon{
+        ":/images/handwriting_action_inverted.png"};
 
     int interfaceSize = static_cast<int>(
         _settings
@@ -190,6 +198,7 @@ void SearchLineEdit::setStyle(bool use_dark)
                               .arg(std::to_string(h6FontSize).c_str()));
             _searchLineEdit->setIcon(searchInverted);
             _clearLineEdit->setIcon(clearInverted);
+            _handwriting->setIcon(handwritingInverted);
 #ifndef Q_OS_LINUX
             _microphone->setIcon(micInverted);
 #endif
@@ -215,6 +224,7 @@ void SearchLineEdit::setStyle(bool use_dark)
                               .arg(std::to_string(h6FontSize).c_str()));
             _searchLineEdit->setIcon(search);
             _clearLineEdit->setIcon(clear);
+            _handwriting->setIcon(handwriting);
 #ifndef Q_OS_LINUX
             _microphone->setIcon(mic);
 #endif
@@ -230,6 +240,39 @@ void SearchLineEdit::checkClearVisibility(void)
     } else {
         addAction(_clearLineEdit, QLineEdit::TrailingPosition);
     }
+}
+
+void SearchLineEdit::startHandwriting(void)
+{
+    clear();
+    checkClearVisibility();
+
+    _handwritingWindow = new HandwritingWindow{this};
+    _handwritingWindow->setAttribute(Qt::WA_DeleteOnClose);
+    _handwritingWindow->setFocus();
+    _handwritingWindow->show();
+
+    connect(_handwritingWindow,
+            &HandwritingWindow::characterChosen,
+            this,
+            [&](QString character) { setText(character); });
+    connect(_handwritingWindow,
+            &HandwritingWindow::scriptSelected,
+            this,
+            [&](Handwriting::Script script) {
+                SearchParameters params;
+                switch (script) {
+                case Handwriting::Script::SIMPLIFIED: {
+                    params = SearchParameters::SIMPLIFIED;
+                    break;
+                }
+                case Handwriting::Script::TRADITIONAL: {
+                    params = SearchParameters::TRADITIONAL;
+                    break;
+                }
+                }
+                _mediator->setParameters(params);
+            });
 }
 
 #ifndef Q_OS_LINUX
