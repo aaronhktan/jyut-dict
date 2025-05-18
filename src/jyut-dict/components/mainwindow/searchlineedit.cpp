@@ -244,7 +244,6 @@ void SearchLineEdit::checkClearVisibility(void)
 
 void SearchLineEdit::startHandwriting(void)
 {
-    clear();
     checkClearVisibility();
 
     _handwritingWindow = new HandwritingWindow{this};
@@ -255,7 +254,15 @@ void SearchLineEdit::startHandwriting(void)
     connect(_handwritingWindow,
             &HandwritingWindow::characterChosen,
             this,
-            [&](QString character) { setText(character); });
+            [&](QString character) {
+                if (character == "\x8") {
+                    if (!text().isEmpty()) {
+                        setText(text().chopped(1));
+                    }
+                } else {
+                    setText(text() + character);
+                }
+            });
     connect(_handwritingWindow,
             &HandwritingWindow::scriptSelected,
             this,

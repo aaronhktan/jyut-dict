@@ -43,11 +43,11 @@ bool HandwritingWrapper::setRecognizerScript(Handwriting::Script script)
     std::string modelFile;
     switch (script) {
     case Handwriting::Script::SIMPLIFIED: {
-        modelFile = getModelAudioPath().toStdString() + SIMPLIFIED_MODEL;
+        modelFile = getBundleAudioPath().toStdString() + SIMPLIFIED_MODEL;
         break;
     }
     case Handwriting::Script::TRADITIONAL: {
-        modelFile = getModelAudioPath().toStdString() + TRADITIONAL_MODEL;
+        modelFile = getBundleAudioPath().toStdString() + TRADITIONAL_MODEL;
         break;
     }
     }
@@ -56,10 +56,16 @@ bool HandwritingWrapper::setRecognizerScript(Handwriting::Script script)
     return _recognizer->open(modelFile.c_str());
 }
 
+void HandwritingWrapper::clearStrokes(void)
+{
+    _strokes.clear();
+    _currentStrokePoints.clear();
+}
+
 QString HandwritingWrapper::getModelPath() const
 {
 #ifdef PORTABLE
-    return getModelAudioPath();
+    return getBundleAudioPath();
 #else
     return getLocalAudioPath();
 #endif
@@ -83,7 +89,7 @@ QString HandwritingWrapper::getLocalModelPath() const
     return localFile.absoluteFilePath();
 }
 
-QString HandwritingWrapper::getModelAudioPath() const
+QString HandwritingWrapper::getBundleAudioPath() const
 {
 #ifdef Q_OS_DARWIN
     QFileInfo bundlePath{QCoreApplication::applicationDirPath()
@@ -121,12 +127,24 @@ void HandwritingWrapper::startStroke(int x, int y)
 
 void HandwritingWrapper::updateStroke(int x, int y)
 {
-    _currentStrokePoints.emplace_back(x, y);
+    if (_currentStrokePoints.back().first != x
+        || _currentStrokePoints.back().second != y) {
+        _currentStrokePoints.emplace_back(x, y);
+    }
 }
 
 void HandwritingWrapper::completeStroke(int x, int y)
 {
-    _currentStrokePoints.emplace_back(x, y);
+    // Zinnia gets very angry if (a) a stroke ends the same place it began,
+    // or (b) when there is only one point in a stroke
+    if (_currentStrokePoints.back().first != x
+        || _currentStrokePoints.back().second != y) {
+        _currentStrokePoints.emplace_back(x, y);
+    }
+
+    if (_currentStrokePoints.size() <= 1) {
+        return;
+    }
 
     std::ostringstream stroke;
     stroke << "(";
@@ -145,7 +163,6 @@ void HandwritingWrapper::completeStroke(int x, int y)
     character_ss << CHARACTER_POSTSCRIPT;
 
     zinnia::Character *character = zinnia::Character::create();
-    qDebug() << character_ss.str().c_str();
     if (!character->parse(character_ss.str().c_str())) {
         std::cerr << "Could not parse character: " << character->what()
                   << std::endl;

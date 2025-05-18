@@ -15,6 +15,8 @@ public:
 
     explicit HandwritingPanel(QWidget *parent = nullptr);
 
+    void clearPanel(void);
+
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;

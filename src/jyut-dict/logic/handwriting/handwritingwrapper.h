@@ -27,9 +27,11 @@ public:
 
     bool setRecognizerScript(Handwriting::Script script);
 
+    void clearStrokes(void);
+
     QString getModelPath() const;
     QString getLocalModelPath() const;
-    QString getModelAudioPath() const;
+    QString getBundleAudioPath() const;
 
 private:
     zinnia::Recognizer *_recognizer = nullptr;

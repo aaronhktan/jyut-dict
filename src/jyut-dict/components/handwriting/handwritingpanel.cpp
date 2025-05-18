@@ -9,6 +9,12 @@ HandwritingPanel::HandwritingPanel(QWidget *parent)
     setMinimumSize(350, 350);
 }
 
+void HandwritingPanel::clearPanel(void)
+{
+    _pixmap.fill(palette().base().color());
+    update();
+}
+
 void HandwritingPanel::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::RightButton) {

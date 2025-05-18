@@ -32,7 +32,11 @@ private:
     void setStyle(bool use_dark);
 
     HandwritingPanel *_panel;
-    std::vector<QLabel *> _labels;
+
+    std::vector<QPushButton *> _buttons;
+    QPushButton *_clearButton;
+    QPushButton *_backspaceButton;
+    QPushButton *_doneButton;
 
     QGridLayout *_layout;
 

@@ -18,6 +18,12 @@
 
 #include <iostream>
 
+namespace {
+constexpr auto NUM_RESULTS = 10;
+constexpr auto NUM_COLUMNS = 2;
+constexpr auto NUM_RESULTS_PER_COLUMN = NUM_RESULTS / NUM_COLUMNS;
+} // namespace
+
 HandwritingWindow::HandwritingWindow(QWidget *parent)
     : QWidget{parent, Qt::Window}
 {
@@ -29,8 +35,9 @@ HandwritingWindow::HandwritingWindow(QWidget *parent)
             &HandwritingWrapper::recognizedResults,
             this,
             [&](std::vector<std::string> results) {
-                for (const auto &r : results) {
-                    std::cout << r << std::endl;
+                for (int i = 0; i < results.size(); ++i) {
+                    _buttons.at(i)->setText(
+                        QString::fromStdString(results.at(i)));
                 }
             });
 
@@ -54,11 +61,52 @@ void HandwritingWindow::changeEvent(QEvent *event)
 
 void HandwritingWindow::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Escape) {
-        // noAction();
-    } else if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
-        // OKAction();
+    switch (event->key()) {
+    case Qt::Key_Escape: {
+        close();
+        break;
     }
+    case Qt::Key_1: {
+        _buttons.at(0)->click();
+        break;
+    }
+    case Qt::Key_2: {
+        _buttons.at(1)->click();
+        break;
+    }
+    case Qt::Key_3: {
+        _buttons.at(2)->click();
+        break;
+    }
+    case Qt::Key_4: {
+        _buttons.at(3)->click();
+        break;
+    }
+    case Qt::Key_5: {
+        _buttons.at(4)->click();
+        break;
+    }
+    case Qt::Key_6: {
+        _buttons.at(5)->click();
+        break;
+    }
+    case Qt::Key_7: {
+        _buttons.at(6)->click();
+        break;
+    }
+    case Qt::Key_8: {
+        _buttons.at(7)->click();
+        break;
+    }
+    case Qt::Key_9: {
+        _buttons.at(8)->click();
+        break;
+    }
+    case Qt::Key_0: {
+        _buttons.at(9)->click();
+        break;
+    }
+    };
 }
 
 void HandwritingWindow::setupUI()
@@ -68,6 +116,7 @@ void HandwritingWindow::setupUI()
 #endif
 
     _layout = new QGridLayout{this};
+    _layout->setSpacing(0);
 
     _panel = new HandwritingPanel{this};
     connect(_panel,
@@ -87,6 +136,42 @@ void HandwritingWindow::setupUI()
             _handwritingWrapper.get(),
             &HandwritingWrapper::completeStroke);
 
+    QWidget *spacer = new QWidget{this};
+    spacer->setFixedWidth(_layout->contentsMargins().left());
+
+    for (int i = 0; i < NUM_RESULTS; ++i) {
+        _buttons.emplace_back(new QPushButton{this});
+        _buttons.back()->setFlat(true);
+        connect(_buttons.back(), &QPushButton::clicked, this, [&]() {
+            _panel->clearPanel();
+            _handwritingWrapper->clearStrokes();
+            if (static_cast<QPushButton *>(sender())->text() != "　") {
+                emit characterChosen(
+                    static_cast<QPushButton *>(sender())->text());
+            }
+            for (const auto button : _buttons) {
+                button->setText("　");
+            }
+        });
+    }
+
+    _clearButton = new QPushButton{this};
+    connect(_clearButton, &QPushButton::clicked, this, [&]() {
+        _panel->clearPanel();
+        _handwritingWrapper->clearStrokes();
+        for (const auto button : _buttons) {
+            button->setText("　");
+        }
+    });
+
+    _backspaceButton = new QPushButton{this};
+    connect(_backspaceButton, &QPushButton::clicked, this, [&]() {
+        emit characterChosen(QString::fromLocal8Bit("\x8"));
+    });
+
+    _doneButton = new QPushButton{this};
+    connect(_doneButton, &QPushButton::clicked, this, [&]() { close(); });
+
 #ifdef Q_OS_WIN
     _innerWidget->setLayout(_dialogLayout);
     _outerWidgetLayout = new QGridLayout{this};
@@ -97,6 +182,32 @@ void HandwritingWindow::setupUI()
 #endif
 
     _layout->addWidget(_panel, 0, 0, -1, 1);
+    _layout->addWidget(spacer, 0, 1, -1, 1);
+    for (int column = 0; column < NUM_COLUMNS; ++column) {
+        for (int row = 0; row < NUM_RESULTS_PER_COLUMN; ++row) {
+            _layout->addWidget(_buttons.at(NUM_RESULTS_PER_COLUMN * column
+                                           + row),
+                               row,
+                               column + 2,
+                               1,
+                               1);
+        }
+    }
+    _layout->addWidget(_clearButton,
+                       NUM_RESULTS_PER_COLUMN + 1,
+                       2,
+                       1,
+                       NUM_COLUMNS);
+    _layout->addWidget(_backspaceButton,
+                       NUM_RESULTS_PER_COLUMN + 2,
+                       2,
+                       1,
+                       NUM_COLUMNS);
+    _layout->addWidget(_doneButton,
+                       NUM_RESULTS_PER_COLUMN + 3,
+                       2,
+                       1,
+                       NUM_COLUMNS);
 
 #ifdef Q_OS_MAC
     // Set the style to match whether the user started dark mode
@@ -123,6 +234,14 @@ void HandwritingWindow::translateUI()
         button->style()->polish(button);
     }
 
+    for (const auto button : _buttons) {
+        button->setText("　");
+    }
+
+    _clearButton->setText(tr("Clear"));
+    _backspaceButton->setText(tr("Delete"));
+    _doneButton->setText(tr("Done"));
+
 #ifndef Q_OS_LINUX
     layout()->setSizeConstraint(QLayout::SetFixedSize);
 #endif
@@ -137,7 +256,7 @@ void HandwritingWindow::setStyle(bool use_dark)
             ->value("Interface/size",
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
-    int headerFontSize = Settings::h6FontSize.at(
+    int headerFontSize = Settings::h2FontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
     int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
@@ -151,18 +270,6 @@ void HandwritingWindow::setStyle(bool use_dark)
                   " "
                   "QLabel { "
                   "   font-size: %2px; "
-                  "} "
-                  " "
-                  "QPushButton[isHan=\"true\"] { "
-                  "   font-size: %1px; "
-                  //// QPushButton falls back to Fusion style on macOS when the
-                  //// height exceeds 16px. Set the maximum size to 16px.
-                  "   height: 16px; "
-                  "} "
-                  " "
-                  "QPushButton { "
-                  "   font-size: %2px; "
-                  "   height: 16px; "
                   "} "};
 #else
     QString style{"QLabel[isHan=\"true\"] { "
@@ -213,6 +320,14 @@ void HandwritingWindow::setStyle(bool use_dark)
                                 "   background-color: palette(base);"
                                 "} ");
 #endif
+
+    for (const auto &button : _buttons) {
+        button->setStyleSheet(QString{"QPushButton { "
+                                      "   border: 0px; "
+                                      "   font-size: %1px; "
+                                      "} "}
+                                  .arg(headerFontSize));
+    }
 
     resize(sizeHint());
 
