@@ -414,32 +414,14 @@ void HandwritingWindow::setStyle(bool use_dark)
                   "} "};
 #endif
     setStyleSheet(style.arg(std::to_string(bodyFontSizeHan).c_str(),
-                            std::to_string(bodyFontSize).c_str(),
-                            borderColour.name()));
+                            std::to_string(bodyFontSize).c_str()
+#ifndef Q_OS_MAC
+                                ,
+                            borderColour.name()
+#endif
+                                ));
 
-#ifdef Q_OS_MAC
-    QString buttonStyle
-        = QString{"QPushButton[isHan=\"true\"] { "
-                  "   font-size: %1px; "
-                  //// QPushButton falls back to Fusion style on macOS when the
-                  //// height exceeds 16px. Set the maximum size to 16px.
-                  "   height: 16px; "
-                  "} "
-                  " "
-                  "QPushButton { "
-                  "   font-size: %2px; "
-                  "   height: 16px; "
-                  "} "}
-              .arg(std::to_string(bodyFontSizeHan).c_str(),
-                   std::to_string(bodyFontSize).c_str());
-
-    QString characterChoiceStyle = QString{"QPushButton { "
-                                           "   border: 0px; "
-                                           "   font-size: %1px; "
-                                           "} "}
-                                       .arg(headerFontSize);
-
-#elif defined(Q_OS_WIN)
+#ifdef Q_OS_WIN
     QString characterChoiceStyle = QString{"QPushButton { "
                                            "   background: palette(base); "
                                            "   border: 0px; "
@@ -448,7 +430,7 @@ void HandwritingWindow::setStyle(bool use_dark)
                                            "} "}
                                        .arg(headerFontSize);
 
-#elif defined(Q_OS_LINUX)
+#else
     QString characterChoiceStyle = QString{"QPushButton { "
                                            "   border: 0px; "
                                            "   font-size: %1px; "
