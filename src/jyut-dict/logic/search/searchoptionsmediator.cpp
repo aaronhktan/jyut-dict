@@ -14,6 +14,7 @@ void SearchOptionsMediator::registerOptionSelector(
 void SearchOptionsMediator::setParameters(SearchParameters parameters)
 {
     if (_parameters == parameters) {
+        _lineEdit->search();
         return;
     }
 
