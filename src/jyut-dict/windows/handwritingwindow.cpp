@@ -37,9 +37,30 @@ HandwritingWindow::HandwritingWindow(QWidget *parent)
             &HandwritingWrapper::recognizedResults,
             this,
             [&](std::vector<std::string> results) {
+                int interfaceSize = static_cast<int>(
+                    _settings
+                        ->value("Interface/size",
+                                QVariant::fromValue(
+                                    Settings::InterfaceSize::NORMAL))
+                        .value<Settings::InterfaceSize>());
+#ifdef Q_OS_WIN
+                int headerFontSize = Settings::h4FontSize.at(
+                    static_cast<unsigned long>(interfaceSize - 1));
+#else
+            int headerFontSize = Settings::h2FontSize.at(
+                static_cast<unsigned long>(interfaceSize - 1));
+#endif
+                int padding = headerFontSize / 3;
+
                 for (int i = 0; i < results.size(); ++i) {
                     _buttons.at(i)->setText(
                         QString::fromStdString(results.at(i)));
+                    _buttons.at(i)->setMinimumHeight(
+                        _buttons.at(i)
+                            ->fontMetrics()
+                            .boundingRect(_buttons.at(i)->text())
+                            .height()
+                        + padding);
                 }
             });
 
@@ -263,7 +284,7 @@ void HandwritingWindow::setupUI()
 #else
     functionLayout->setSpacing(5);
 #endif
-    functionLayout->setContentsMargins(0, 0, 0, 0);
+    functionLayout->setContentsMargins(0, 22, 0, 0);
     functionWidget->setLayout(functionLayout);
     functionLayout->addWidget(_clearButton);
     functionLayout->addWidget(_backspaceButton);
