@@ -303,14 +303,17 @@ void HandwritingWindow::setStyle(bool use_dark)
                   "} "}
               .arg(std::to_string(bodyFontSizeHan).c_str(),
                    std::to_string(bodyFontSize).c_str());
+
+    QString characterChoiceStyle = QString{"QPushButton { "
+                                           "   border: 0px; "
+                                           "   font-size: %1px; "
+                                           "} "}
+                                       .arg(headerFontSize);
+
 #elif defined(Q_OS_WIN)
     QString buttonStyle
         = "QPushButton[isHan=\"true\"] { font-size: 12px; height: "
           "20px; }";
-#elif defined(Q_OS_LINUX)
-    QString buttonStyle
-        = "QPushButton { margin-left: 5px; margin-right: 5px; }";
-#endif
 
     QString characterChoiceStyle = QString{"QPushButton { "
                                            "   background: palette(base); "
@@ -318,6 +321,18 @@ void HandwritingWindow::setStyle(bool use_dark)
                                            "   font-size: %1px; "
                                            "} "}
                                        .arg(headerFontSize);
+
+#elif defined(Q_OS_LINUX)
+    QString buttonStyle
+        = "QPushButton { margin-left: 5px; margin-right: 5px; }";
+
+    QString characterChoiceStyle = QString{"QPushButton { "
+                                           "   background: palette(base); "
+                                           "   border: 0px; "
+                                           "   font-size: %1px; "
+                                           "} "}
+                                       .arg(headerFontSize);
+#endif
 
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     foreach (const auto &button, buttons) {
