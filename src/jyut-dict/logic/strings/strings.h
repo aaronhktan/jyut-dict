@@ -40,9 +40,10 @@ constexpr auto CREDITS_TEXT = QT_TRANSLATE_NOOP(
     "<a href=https://github.com/microsoft/fluentui-system-icons "
     "style=\"color: %1; text-decoration: none\">Fluent UI System Icons</a>."
     "<br>Contains FlowLayout code from <a href=\"file://%2\" style=\"color: "
-    "%1; text-decoration: none\">Qt</a> and <a href=\"https://invent.kde.org/"
-    "frameworks/karchive\" style=\"color: %1; text-decoration: none\">"
-    "KArchive</a> code from KDE."
+    "%1; text-decoration: none\">Qt</a>, <a href=\"file://%3\" style=\"color: "
+    "%1; text-decoration: none\">libzinnia</a> from the Tegaki project, and "
+    "<a href=\"https://invent.kde.org/frameworks/karchive\" "
+    "style=\"color: %1; text-decoration: none\">KArchive</a> code from KDE."
     "<br>Made with <a href=\"#\" style=\"color: %1; text-decoration: none\">"
     "Qt</a>.");
 constexpr auto CONTACT_TITLE

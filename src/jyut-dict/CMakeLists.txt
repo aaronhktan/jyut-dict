@@ -358,6 +358,7 @@ if(APPLE)
         PRIVATE resources/db/dict.db
         PRIVATE resources/db/user.db
         PRIVATE resources/licenses/FLOW_LAYOUT_LICENSE.txt
+        PRIVATE resources/licenses/ZINNIA_LICENSE.txt
         PRIVATE resources/settings/settings.ini
         PRIVATE resources/icon/icon.icns
         PRIVATE platform/mac/en.lproj/InfoPlist.strings
@@ -373,6 +374,7 @@ if(APPLE)
     set_property(SOURCE resources/db/dict.db PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
     set_property(SOURCE resources/db/user.db PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
     set_property(SOURCE resources/licenses/FLOW_LAYOUT_LICENSE.txt PROPERTY MACOSX_PACKAGE_LOCATION "Resources/Licenses")
+    set_property(SOURCE resources/licenses/ZINNIA_LICENSE.txt PROPERTY MACOSX_PACKAGE_LOCATION "Resources/Licenses")
     set_property(SOURCE resources/settings/settings.ini PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
     set_property(SOURCE resources/icon/icon.icns PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
     set_property(SOURCE platform/mac/en.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/en.lproj")
@@ -388,6 +390,7 @@ elseif(UNIX)
     configure_file(resources/db/dict.db dict.db COPYONLY)
     configure_file(resources/db/user.db user.db COPYONLY)
     configure_file(resources/licenses/FLOW_LAYOUT_LICENSE.txt FLOW_LAYOUT_LICENSE.txt COPYONLY)
+    configure_file(resources/licenses/ZINNIA_LICENSE.txt ZINNIA_LICENSE.txt COPYONLY)
     configure_file(resources/settings/settings.ini settings.ini COPYONLY)
     configure_file(vendor/zinnia/models/handwriting-zh_TW.model handwriting/handwriting-zh_TW.model COPYONLY)
     configure_file(vendor/zinnia/models/handwriting-zh_CN.model handwriting/handwriting-zh_CN.model COPYONLY)
@@ -415,6 +418,7 @@ elseif(WIN32)
     configure_file(resources/db/dict.db dict.db COPYONLY)
     configure_file(resources/db/user.db user.db COPYONLY)
     configure_file(resources/licenses/FLOW_LAYOUT_LICENSE.txt FLOW_LAYOUT_LICENSE.txt COPYONLY)
+    configure_file(resources/licenses/ZINNIA_LICENSE.txt ZINNIA_LICENSE.txt COPYONLY)
     configure_file(resources/settings/settings.ini settings.ini COPYONLY)
     configure_file(vendor/zinnia/models/handwriting-zh_TW.model Handwriting/handwriting-zh_TW.model COPYONLY)
     configure_file(vendor/zinnia/models/handwriting-zh_CN.model Handwriting/handwriting-zh_CN.model COPYONLY)

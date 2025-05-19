@@ -170,7 +170,8 @@ void AboutWindow::translateUI()
         QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                     Strings::CREDITS_TEXT)
             .arg(palette().text().color().name(),
-                 Utils::getLicenseFolderPath() + "FLOW_LAYOUT_LICENSE.txt"));
+                 Utils::getLicenseFolderPath() + "FLOW_LAYOUT_LICENSE.txt",
+                 Utils::getLicenseFolderPath() + "ZINNIA_LICENSE.txt"));
 #ifndef Q_OS_MAC
     setWindowTitle(
         tr("About %1")
