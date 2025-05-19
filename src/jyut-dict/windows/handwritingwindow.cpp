@@ -295,6 +295,7 @@ void HandwritingWindow::setupUI()
                        2,
                        1,
                        NUM_COLUMNS);
+    _layout->setRowStretch(NUM_RESULTS_PER_COLUMN + 1, 1);
 #ifdef Q_OS_MAC
     _layout->addWidget(functionWidget,
                        NUM_RESULTS_PER_COLUMN + 2,
@@ -378,8 +379,13 @@ void HandwritingWindow::setStyle(bool use_dark)
             ->value("Interface/size",
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
+#ifdef Q_OS_WIN
+    int headerFontSize = Settings::h4FontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+#else
     int headerFontSize = Settings::h2FontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
+#endif
     int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
     int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
@@ -527,11 +533,12 @@ void HandwritingWindow::setStyle(bool use_dark)
         if (button->property("characterChoice").isValid()
             && button->property("characterChoice").toBool()) {
             button->setStyleSheet(characterChoiceStyle);
-        } else if (button->property("scriptSelector").isValid()
-                   && button->property("scriptSelector").toBool()) {
-            button->setStyleSheet(scriptSelectorStyle);
         } else {
             button->setStyleSheet(scriptSelectorStyle);
+            button->setMinimumHeight(std::max(
+                borderRadius * 2,
+                button->fontMetrics().boundingRect(button->text()).height()
+                    + 2 * padding + 2 * 2));
         }
     }
 
