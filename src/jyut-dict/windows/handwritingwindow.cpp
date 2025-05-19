@@ -336,11 +336,6 @@ void HandwritingWindow::setupUI()
 
     // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
-
-#if defined(Q_OS_WIN) || defined(Q_OS_LINUX)
-    setWindowTitle(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
-                                               Strings::PRODUCT_NAME));
-#endif
 }
 
 void HandwritingWindow::translateUI()
