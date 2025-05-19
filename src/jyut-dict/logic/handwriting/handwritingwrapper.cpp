@@ -62,6 +62,11 @@ void HandwritingWrapper::clearStrokes(void)
     _currentStrokePoints.clear();
 }
 
+bool HandwritingWrapper::strokesCleared(void)
+{
+    return _strokes.empty() && _currentStrokePoints.empty();
+}
+
 QString HandwritingWrapper::getModelPath() const
 {
 #ifdef PORTABLE

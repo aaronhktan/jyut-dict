@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<MandarinOptions>("MandarinOptions");
     qRegisterMetaType<EntryColourPhoneticType>("EntryColourPhoneticType");
     qRegisterMetaType<SearchParameters>("SearchParameters");
+    qRegisterMetaType<Handwriting::Script>("HandwritingScript");
 #ifndef Q_OS_LINUX
     qRegisterMetaType<TranscriptionLanguage>("TranscriptionLanguage");
 #endif

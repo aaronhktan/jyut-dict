@@ -81,6 +81,7 @@ public slots:
 #ifndef Q_OS_LINUX
     void dictationRequested(void);
 #endif
+    void handwritingRequested(void);
 };
 
 #endif // SEARCHLINEEDIT_H

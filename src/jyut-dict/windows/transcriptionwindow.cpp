@@ -98,8 +98,9 @@ TranscriptionWindow::TranscriptionWindow(QWidget *parent)
               .value<TranscriptionLanguage>();
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     foreach (const auto &button, buttons) {
-        if (button->property("data").value<TranscriptionLanguage>()
-            == lastSelected) {
+        if (button->property("data").isValid()
+            && button->property("data").value<TranscriptionLanguage>()
+                   == lastSelected) {
             button->click();
             break;
         }
@@ -408,7 +409,8 @@ void TranscriptionWindow::setStyle(bool use_dark)
 
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     foreach (const auto &button, buttons) {
-        if (button->property("ignoreStyle").value<bool>()) {
+        if (button->property("ignoreStyle").isValid()
+            && button->property("ignoreStyle").value<bool>()) {
             continue;
         }
         button->setStyleSheet(styleSheet.arg(borderColour.name())

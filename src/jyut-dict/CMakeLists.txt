@@ -367,6 +367,7 @@ if(APPLE)
         PRIVATE platform/mac/zh_Hans.lproj/InfoPlist.strings
         PRIVATE platform/mac/zh_Hant.lproj/InfoPlist.strings
         PRIVATE vendor/zinnia/models/handwriting-zh_TW.model
+        PRIVATE vendor/zinnia/models/handwriting-zh_CN.model
     )
 
     set_property(SOURCE resources/db/dict.db PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
@@ -381,6 +382,7 @@ if(APPLE)
     set_property(SOURCE platform/mac/zh_Hans.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/zh-hans.lproj")
     set_property(SOURCE platform/mac/zh_Hant.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/zh-hant.lproj")
     set_property(SOURCE vendor/zinnia/models/handwriting-zh_TW.model PROPERTY MACOSX_PACKAGE_LOCATION "Resources/Handwriting")
+    set_property(SOURCE vendor/zinnia/models/handwriting-zh_CN.model PROPERTY MACOSX_PACKAGE_LOCATION "Resources/Handwriting")
 elseif(UNIX)
     TARGET_SOURCES(CantoneseDictionary PRIVATE logic/utils/utils_linux.cpp)
     configure_file(resources/db/dict.db dict.db COPYONLY)
@@ -388,6 +390,7 @@ elseif(UNIX)
     configure_file(resources/licenses/FLOW_LAYOUT_LICENSE.txt FLOW_LAYOUT_LICENSE.txt COPYONLY)
     configure_file(resources/settings/settings.ini settings.ini COPYONLY)
     configure_file(vendor/zinnia/models/handwriting-zh_TW.model handwriting/handwriting-zh_TW.model COPYONLY)
+    configure_file(vendor/zinnia/models/handwriting-zh_CN.model handwriting/handwriting-zh_CN.model COPYONLY)
 elseif(WIN32)
     enable_language("RC")
 
@@ -414,6 +417,7 @@ elseif(WIN32)
     configure_file(resources/licenses/FLOW_LAYOUT_LICENSE.txt FLOW_LAYOUT_LICENSE.txt COPYONLY)
     configure_file(resources/settings/settings.ini settings.ini COPYONLY)
     configure_file(vendor/zinnia/models/handwriting-zh_TW.model Handwriting/handwriting-zh_TW.model COPYONLY)
+    configure_file(vendor/zinnia/models/handwriting-zh_CN.model Handwriting/handwriting-zh_CN.model COPYONLY)
 endif()
 
 install(TARGETS CantoneseDictionary

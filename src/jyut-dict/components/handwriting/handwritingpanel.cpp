@@ -8,7 +8,7 @@ HandwritingPanel::HandwritingPanel(QWidget *parent)
     _pixmap.setDevicePixelRatio(devicePixelRatio());
     _pixmap.fill(palette().base().color());
 
-    setMinimumSize(350, 350);
+    setFixedSize(350, 350);
 }
 
 void HandwritingPanel::clearPanel(void)

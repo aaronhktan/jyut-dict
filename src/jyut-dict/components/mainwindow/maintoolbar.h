@@ -70,6 +70,7 @@ public slots:
                               const SearchParameters &parameters) const;
     void searchRequested(void) const;
     void dictationRequested(void) const;
+    void handwritingRequested(void) const;
     void updateStyleRequested(void);
 };
 

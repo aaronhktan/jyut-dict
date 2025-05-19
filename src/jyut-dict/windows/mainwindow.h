@@ -63,6 +63,7 @@ private:
     QAction *_findAction;
     QAction *_findAndSelectAllAction;
     QAction *_dictationAction;
+    QAction *_handwritingAction;
     QAction *_setFocusToResultsAction;
     QAction *_selectSimplifiedAction;
     QAction *_selectTraditionalAction;
@@ -128,6 +129,7 @@ private:
     void find(void) const;
     void findAndSelectAll(void) const;
     void dictation(void) const;
+    void handwriting(void) const;
     void setFocusToResults(void) const;
     void selectSimplified(void) const;
     void selectTraditional(void) const;

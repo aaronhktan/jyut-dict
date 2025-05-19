@@ -934,6 +934,14 @@ void MainWindow::createActions(void)
     connect(_dictationAction, &QAction::triggered, this, &MainWindow::dictation);
     _searchMenu->addAction(_dictationAction);
 
+    _handwritingAction = new QAction{this};
+    _handwritingAction->setShortcut(QKeySequence{"Ctrl+K"});
+    connect(_handwritingAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::handwriting);
+    _searchMenu->addAction(_handwritingAction);
+
     _searchMenu->addSeparator();
 
     _setFocusToResultsAction = new QAction{this};
@@ -1200,6 +1208,11 @@ void MainWindow::findAndSelectAll(void) const
 void MainWindow::dictation(void) const
 {
     _mainToolBar->dictationRequested();
+}
+
+void MainWindow::handwriting(void) const
+{
+    _mainToolBar->handwritingRequested();
 }
 
 void MainWindow::setFocusToResults(void) const

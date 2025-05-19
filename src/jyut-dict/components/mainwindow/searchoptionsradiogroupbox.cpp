@@ -37,7 +37,9 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(
               .value<SearchParameters>();
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     foreach (const auto & button, buttons) {
-        if (button->property("data").value<SearchParameters>() == lastSelected) {
+        if (button->property("data").isValid()
+            && button->property("data").value<SearchParameters>()
+                   == lastSelected) {
             button->click();
             break;
         }
@@ -48,7 +50,8 @@ void SearchOptionsRadioGroupBox::detectedLanguage(SearchParameters params)
 {
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     foreach (const auto &button, buttons) {
-        if (button->property("data") == QVariant::fromValue(params)) {
+        if (button->property("data").isValid()
+            && button->property("data") == QVariant::fromValue(params)) {
             button->setChecked(true);
             Settings::getSettings()
                 ->setValue("SearchOptionsRadioGroupBox/lastSelected",
@@ -92,7 +95,8 @@ void SearchOptionsRadioGroupBox::setOption(const SearchParameters parameters)
 {
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     foreach (const auto & button, buttons) {
-        if (button->property("data") == QVariant::fromValue(parameters)) {
+        if (button->property("data").isValid()
+            && button->property("data") == QVariant::fromValue(parameters)) {
             button->click();
         }
     }

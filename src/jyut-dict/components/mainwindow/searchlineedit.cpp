@@ -360,3 +360,8 @@ void SearchLineEdit::dictationRequested(void)
     startTranscription();
 }
 #endif
+
+void SearchLineEdit::handwritingRequested(void)
+{
+    startHandwriting();
+}

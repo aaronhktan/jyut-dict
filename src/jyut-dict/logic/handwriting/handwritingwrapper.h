@@ -17,6 +17,8 @@ enum class Script : int { SIMPLIFIED, TRADITIONAL };
 
 } // namespace Handwriting
 
+Q_DECLARE_METATYPE(Handwriting::Script)
+
 class HandwritingWrapper : public QObject
 {
     Q_OBJECT
@@ -28,6 +30,7 @@ public:
     bool setRecognizerScript(Handwriting::Script script);
 
     void clearStrokes(void);
+    bool strokesCleared(void);
 
     QString getModelPath() const;
     QString getLocalModelPath() const;

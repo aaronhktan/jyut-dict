@@ -31,6 +31,8 @@ private:
     void translateUI(void);
     void setStyle(bool use_dark);
 
+    void setScript(void);
+
 #ifdef Q_OS_WIN
     // On Windows, the window widget's background colour
     // can't be changed. The workaround is to create
@@ -41,6 +43,8 @@ private:
 #endif
 
     HandwritingPanel *_panel;
+    QPushButton *_traditionalButton;
+    QPushButton *_simplifiedButton;
 
     std::vector<QPushButton *> _buttons;
     QPushButton *_clearButton;

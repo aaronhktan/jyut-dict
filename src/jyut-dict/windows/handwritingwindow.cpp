@@ -4,6 +4,7 @@
 #include "logic/settings/settingsutils.h"
 #include "logic/strings/strings.h"
 #include "logic/utils/utils.h"
+#include "logic/utils/utils_qt.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #endif
@@ -49,6 +50,21 @@ HandwritingWindow::HandwritingWindow(QWidget *parent)
 
     setupUI();
     translateUI();
+
+    Handwriting::Script lastSelected
+        = _settings
+              ->value("Handwriting/lastSelected",
+                      QVariant::fromValue(Handwriting::Script::TRADITIONAL))
+              .value<Handwriting::Script>();
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+    foreach (const auto &button, buttons) {
+        QVariant data = button->property("data");
+        if (data.isValid()
+            && data.value<Handwriting::Script>() == lastSelected) {
+            button->click();
+            break;
+        }
+    }
 }
 
 void HandwritingWindow::changeEvent(QEvent *event)
@@ -63,9 +79,21 @@ void HandwritingWindow::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
     case Qt::Key_Escape: {
-        close();
+        if (_handwritingWrapper->strokesCleared()) {
+            _doneButton->click();
+        } else {
+            _clearButton->click();
+        }
         break;
     }
+    case Qt::Key_Backspace:
+        [[fallthrough]];
+    case Qt::Key_Delete: {
+        _backspaceButton->click();
+        break;
+    }
+    case Qt::Key_Return:
+        [[fallthrough]];
     case Qt::Key_1: {
         _buttons.at(0)->click();
         break;
@@ -106,6 +134,22 @@ void HandwritingWindow::keyPressEvent(QKeyEvent *event)
         _buttons.at(9)->click();
         break;
     }
+    case Qt::Key_T:
+        [[fallthrough]];
+    case Qt::Key_F:
+        [[fallthrough]];
+    case Qt::Key_Z: {
+        _traditionalButton->click();
+        break;
+    }
+    case Qt::Key_S:
+        [[fallthrough]];
+    case Qt::Key_G:
+        [[fallthrough]];
+    case Qt::Key_J: {
+        _simplifiedButton->click();
+        break;
+    }
     };
 }
 
@@ -117,6 +161,37 @@ void HandwritingWindow::setupUI()
 
     _layout = new QGridLayout{this};
     _layout->setSpacing(0);
+
+    _traditionalButton = new QPushButton{this};
+    _traditionalButton->setCheckable(true);
+    _traditionalButton->setChecked(true);
+    _traditionalButton->setObjectName("traditional");
+    _traditionalButton->setProperty("scriptSelector", true);
+    _traditionalButton->setProperty("data",
+                                    QVariant::fromValue(
+                                        Handwriting::Script::TRADITIONAL));
+    connect(_traditionalButton,
+            &QPushButton::clicked,
+            this,
+            &HandwritingWindow::setScript);
+    _simplifiedButton = new QPushButton{this};
+    _simplifiedButton->setCheckable(true);
+    _simplifiedButton->setObjectName("simplified");
+    _simplifiedButton->setProperty("scriptSelector", true);
+    _simplifiedButton->setProperty("data",
+                                   QVariant::fromValue(
+                                       Handwriting::Script::SIMPLIFIED));
+    connect(_simplifiedButton,
+            &QPushButton::clicked,
+            this,
+            &HandwritingWindow::setScript);
+
+    QWidget *scriptSelectorWidget = new QWidget();
+    QHBoxLayout *selectorLayout = new QHBoxLayout{scriptSelectorWidget};
+    selectorLayout->setContentsMargins(0, 0, 0, 22);
+    scriptSelectorWidget->setLayout(selectorLayout);
+    selectorLayout->addWidget(_traditionalButton);
+    selectorLayout->addWidget(_simplifiedButton);
 
     _panel = new HandwritingPanel{this};
     _panel->setObjectName("HandwritingPanel");
@@ -156,6 +231,8 @@ void HandwritingWindow::setupUI()
         });
     }
 
+    QWidget *clearButtonSpacer = new QWidget{this};
+
     _clearButton = new QPushButton{this};
     connect(_clearButton, &QPushButton::clicked, this, [&]() {
         _panel->clearPanel();
@@ -165,19 +242,22 @@ void HandwritingWindow::setupUI()
         }
     });
 
-    QWidget *clearButtonSpacer = new QWidget{this};
-    clearButtonSpacer->setFixedHeight(6);
-
     _backspaceButton = new QPushButton{this};
     connect(_backspaceButton, &QPushButton::clicked, this, [&]() {
         emit characterChosen(QString::fromLocal8Bit("\x8"));
     });
 
-    QWidget *backspaceButtonSpacer = new QWidget{this};
-    backspaceButtonSpacer->setFixedHeight(6);
-
     _doneButton = new QPushButton{this};
     connect(_doneButton, &QPushButton::clicked, this, [&]() { close(); });
+
+    QWidget *functionWidget = new QWidget{};
+    QVBoxLayout *functionLayout = new QVBoxLayout{functionWidget};
+    functionLayout->setSpacing(20);
+    functionLayout->setContentsMargins(0, 0, 0, 0);
+    functionWidget->setLayout(functionLayout);
+    functionLayout->addWidget(_clearButton);
+    functionLayout->addWidget(_backspaceButton);
+    functionLayout->addWidget(_doneButton);
 
 #ifdef Q_OS_WIN
     _innerWidget->setLayout(_layout);
@@ -188,44 +268,31 @@ void HandwritingWindow::setupUI()
     setLayout(_layout);
 #endif
 
-    _layout->addWidget(_panel, 0, 0, -1, 1);
-    _layout->addWidget(spacer, 0, 1, -1, 1);
+    _layout->addWidget(scriptSelectorWidget, 0, 0, 1, -1);
+    _layout->addWidget(_panel, 1, 0, NUM_RESULTS_PER_COLUMN + 2, 1);
+    _layout->addWidget(spacer, 1, 1, NUM_RESULTS_PER_COLUMN + 2, 1);
     for (int column = 0; column < NUM_COLUMNS; ++column) {
         for (int row = 0; row < NUM_RESULTS_PER_COLUMN; ++row) {
             _layout->addWidget(_buttons.at(NUM_RESULTS_PER_COLUMN * column
                                            + row),
-                               row,
+                               row + 1,
                                column + 2,
                                1,
                                1);
         }
     }
-    _layout->addWidget(_clearButton,
+
+    _layout->addWidget(clearButtonSpacer,
                        NUM_RESULTS_PER_COLUMN + 1,
                        2,
                        1,
                        NUM_COLUMNS);
-    _layout->addWidget(clearButtonSpacer,
+    _layout->addWidget(functionWidget,
                        NUM_RESULTS_PER_COLUMN + 2,
                        2,
                        1,
-                       NUM_COLUMNS);
-    _layout->addWidget(_backspaceButton,
-                       NUM_RESULTS_PER_COLUMN + 3,
-                       2,
-                       1,
-                       NUM_COLUMNS);
-    _layout->addWidget(backspaceButtonSpacer,
-                       NUM_RESULTS_PER_COLUMN + 4,
-                       2,
-                       1,
-                       NUM_COLUMNS);
-    _layout->addWidget(_doneButton,
-                       NUM_RESULTS_PER_COLUMN + 5,
-                       2,
-                       1,
-                       NUM_COLUMNS);
-
+                       NUM_COLUMNS,
+                       Qt::AlignBaseline);
 #ifdef Q_OS_MAC
     // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
@@ -255,6 +322,9 @@ void HandwritingWindow::translateUI()
         button->setText("　");
     }
 
+    _traditionalButton->setText(tr("Traditional Chinese"));
+    _simplifiedButton->setText(tr("Simplified Chinese"));
+
     _clearButton->setText(tr("Clear"));
     _backspaceButton->setText(tr("Backspace"));
     _doneButton->setText(tr("Done"));
@@ -270,6 +340,13 @@ void HandwritingWindow::setStyle(bool use_dark)
 {
     (void) (use_dark);
 
+    QColor borderColour = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
+                                            HEADER_BACKGROUND_COLOUR_DARK_G,
+                                            HEADER_BACKGROUND_COLOUR_DARK_B}
+                                   : QColor{HEADER_BACKGROUND_COLOUR_LIGHT_R,
+                                            HEADER_BACKGROUND_COLOUR_LIGHT_G,
+                                            HEADER_BACKGROUND_COLOUR_LIGHT_B};
+
     int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
@@ -281,6 +358,7 @@ void HandwritingWindow::setStyle(bool use_dark)
         static_cast<unsigned long>(interfaceSize - 1));
     int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
         static_cast<unsigned long>(interfaceSize - 1));
+    int borderRadius = static_cast<int>(bodyFontSize * 1);
 
 #ifdef Q_OS_MAC
     QString style{"QLabel[isHan=\"true\"] { "
@@ -376,12 +454,58 @@ void HandwritingWindow::setStyle(bool use_dark)
                                        .arg(headerFontSize);
 #endif
 
+#ifdef Q_OS_MAC
+    int padding = bodyFontSize / 3;
+#else
+    int padding = bodyFontSize / 6;
+#endif
+    int paddingHorizontal = bodyFontSize;
+    QString scriptSelectorStyle = QString{"QPushButton { "
+                                          "   background-color: transparent; "
+                                          "   border: 2px solid %1; "
+                                          "   border-radius: %2px; "
+                                          "   font-size: %3px; "
+                                          "   padding: %4px; "
+                                          "   padding-left: %5px; "
+                                          "   padding-right: %5px; "
+                                          "} "
+                                          " "
+                                          "QPushButton:checked { "
+                                          "   background-color: %1; "
+                                          "   border: 2px solid %1; "
+                                          "   border-radius: %2px; "
+                                          "   font-size: %3px; "
+                                          "   padding: %4px; "
+                                          "   padding-left: %5px; "
+                                          "   padding-right: %5px; "
+                                          "} "
+                                          " "
+                                          "QPushButton:hover { "
+                                          "   background-color: %1; "
+                                          "   border: 2px solid %1; "
+                                          "   border-radius: %2px; "
+                                          "   font-size: %3px; "
+                                          "   padding: %4px; "
+                                          "   padding-left: %5px; "
+                                          "   padding-right: %5px; "
+                                          "} "
+                                          " "}
+                                      .arg(borderColour.name())
+                                      .arg(borderRadius)
+                                      .arg(bodyFontSize)
+                                      .arg(padding)
+                                      .arg(paddingHorizontal);
+
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     foreach (const auto &button, buttons) {
-        if (button->property("characterChoice").toBool()) {
+        if (button->property("characterChoice").isValid()
+            && button->property("characterChoice").toBool()) {
             button->setStyleSheet(characterChoiceStyle);
+        } else if (button->property("scriptSelector").isValid()
+                   && button->property("scriptSelector").toBool()) {
+            button->setStyleSheet(scriptSelectorStyle);
         } else {
-            button->setStyleSheet(buttonStyle);
+            button->setStyleSheet(scriptSelectorStyle);
         }
     }
 
@@ -413,4 +537,20 @@ void HandwritingWindow::setStyle(bool use_dark)
 #ifndef Q_OS_LINUX
     layout()->setSizeConstraint(QLayout::SetFixedSize);
 #endif
+}
+
+void HandwritingWindow::setScript()
+{
+    QPushButton *sender = static_cast<QPushButton *>(QObject::sender());
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+    foreach (const auto &button, buttons) {
+        button->setChecked(button == sender);
+    }
+
+    Settings::getSettings()->setValue("Handwriting/lastSelected",
+                                      sender->property("data"));
+    Handwriting::Script script
+        = sender->property("data").value<Handwriting::Script>();
+    _handwritingWrapper->setRecognizerScript(script);
+    emit scriptSelected(script);
 }
