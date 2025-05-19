@@ -2,6 +2,7 @@
 
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/utils/utils_qt.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -158,6 +159,13 @@ void SearchLineEdit::setStyle(bool use_dark)
     QFont font = QFont{"Microsoft YaHei"};
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
     setFont(font);
+
+    QColor borderColour = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
+                                            HEADER_BACKGROUND_COLOUR_DARK_G,
+                                            HEADER_BACKGROUND_COLOUR_DARK_B}
+                                   : QColor{HEADER_BACKGROUND_COLOUR_LIGHT_R,
+                                            HEADER_BACKGROUND_COLOUR_LIGHT_G,
+                                            HEADER_BACKGROUND_COLOUR_LIGHT_B};
 #endif
 
     QIcon search = QIcon{":/images/search.png"};
@@ -203,31 +211,36 @@ void SearchLineEdit::setStyle(bool use_dark)
         _clearLineEdit->setIcon(clearInverted);
         _handwriting->setIcon(handwritingInverted);
 #ifndef Q_OS_LINUX
-            _microphone->setIcon(micInverted);
+        _microphone->setIcon(micInverted);
 #endif
     } else {
-            setStyleSheet(QString{"QLineEdit { "
-                                  "   background-color: #ffffff; "
+        setStyleSheet(
+            QString{"QLineEdit { "
+                    "   background-color: #ffffff; "
 #ifdef Q_OS_WIN
-                                  "   border: 1px solid lightgrey; "
+                    "   border: 1px solid %2; "
 #endif
-                                  "   border-radius: 3px; "
-                                  "   font-size: %1px; "
-                                  "   icon-size: %1px; "
-                                  "   padding-top: 4px; "
-                                  "   padding-bottom: 4px; "
-                                  "} "
-                                  ""
-                                  "QLineEdit:focus { "
+                    "   border-radius: 3px; "
+                    "   font-size: %1px; "
+                    "   icon-size: %1px; "
+                    "   padding-top: 4px; "
+                    "   padding-bottom: 4px; "
+                    "} "
+                    ""
+                    "QLineEdit:focus { "
 #ifdef Q_OS_WIN
-                                  "   border: 1px solid lightgrey; "
+                    "   border: 1px solid %2; "
 #endif
-                                  "   border-radius: 2px; "
-                                  "} "}
-                              .arg(std::to_string(h6FontSize).c_str()));
-            _searchLineEdit->setIcon(search);
-            _clearLineEdit->setIcon(clear);
-            _handwriting->setIcon(handwriting);
+                    "   border-radius: 2px; "
+                    "} "}
+#ifdef Q_OS_WIN
+                .arg(std::to_string(h6FontSize).c_str(), borderColour.name()));
+#else
+                .arg(std::to_string(h6FontSize).c_str()));
+#endif
+        _searchLineEdit->setIcon(search);
+        _clearLineEdit->setIcon(clear);
+        _handwriting->setIcon(handwriting);
 #ifndef Q_OS_LINUX
             _microphone->setIcon(mic);
 #endif

@@ -240,7 +240,11 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
 #endif
     QString styleSheet = "QPushButton { "
                          "   background-color: transparent; "
+#ifdef Q_OS_WIN
+                         "   border: 1px solid %1; "
+#else
                          "   border: 2px solid %1; "
+#endif
                          "   border-radius: %2px; "
                          "   font-size: %3px; "
                          "   padding: %4px; "
@@ -250,7 +254,11 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
                          " "
                          "QPushButton:checked { "
                          "   background-color: %1; "
+#ifdef Q_OS_WIN
+                         "   border: 1px solid %1; "
+#else
                          "   border: 2px solid %1; "
+#endif
                          "   border-radius: %2px; "
                          "   font-size: %3px; "
                          "   padding: %4px; "
@@ -260,7 +268,11 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
                          " "
                          "QPushButton:hover { "
                          "   background-color: %1; "
+#ifdef Q_OS_WIN
+                         "   border: 1px solid %1; "
+#else
                          "   border: 2px solid %1; "
+#endif
                          "   border-radius: %2px; "
                          "   font-size: %3px; "
                          "   padding: %4px; "

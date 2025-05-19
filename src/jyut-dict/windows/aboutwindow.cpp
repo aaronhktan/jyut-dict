@@ -143,12 +143,8 @@ void AboutWindow::setupUI()
     _windowLayout->addWidget(_messageLabel, 6, 0, 1, -1, Qt::AlignCenter);
 
     // Set style
-#ifdef Q_OS_MAC
     // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(false);
-#endif
 }
 void AboutWindow::translateUI()
 {

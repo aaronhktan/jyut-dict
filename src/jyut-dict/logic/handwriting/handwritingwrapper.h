@@ -32,11 +32,13 @@ public:
     void clearStrokes(void);
     bool strokesCleared(void);
 
-    QString getModelPath() const;
-    QString getLocalModelPath() const;
-    QString getBundleModelPath() const;
+    QString getModelPath(void) const;
+    QString getLocalModelPath(void) const;
+    QString getBundleModelPath(void) const;
 
 private:
+    void classifyCharacter(void);
+
     zinnia::Recognizer *_recognizer = nullptr;
     zinnia::Character *_character = nullptr;
 

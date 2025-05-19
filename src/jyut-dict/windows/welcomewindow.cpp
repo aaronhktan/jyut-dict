@@ -6,8 +6,11 @@
 #include "logic/utils/utils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined(Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
 #endif
-
 #include <QCoreApplication>
 #include <QDesktopServices>
 #include <QFont>
@@ -115,12 +118,7 @@ void WelcomeWindow::setupUI()
     setLayout(_dialogLayout);
 #endif
 
-#ifdef Q_OS_MAC
-    // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(false);
-#endif
 
 #if defined(Q_OS_WIN) || defined(Q_OS_LINUX)
     setWindowTitle(QCoreApplication::translate(Strings::STRINGS_CONTEXT,

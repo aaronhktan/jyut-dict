@@ -132,7 +132,11 @@ void RelatedButtonContentWidget::setStyle(bool use_dark)
     if (use_dark) {
         buttonStyleSheet = "QPushButton { "
                            "   background-color: %7; "
+#ifdef Q_OS_WIN
+                           "   border: 1px solid %1; "
+#else
                            "   border: 2px solid %1; "
+#endif
                            "   border-radius: %2px; "
                            "   color: %3; "
                            "   font-size: %4px; "
@@ -144,7 +148,11 @@ void RelatedButtonContentWidget::setStyle(bool use_dark)
                            ""
                            "QPushButton:hover { "
                            "   background-color: %8; "
+#ifdef Q_OS_WIN
+                           "   border: 1px solid %1; "
+#else
                            "   border: 2px solid %1; "
+#endif
                            "   border-radius: %2px; "
                            "   color: %3; "
                            "   font-size: %4px; "
@@ -164,7 +172,11 @@ void RelatedButtonContentWidget::setStyle(bool use_dark)
     } else {
         buttonStyleSheet = "QPushButton { "
                            "   background-color: palette(base); "
+#ifdef Q_OS_WIN
+                           "   border: 1px solid %1; "
+#else
                            "   border: 2px solid %1; "
+#endif
                            "   border-radius: %2px; "
                            "   color: %3; "
                            "   font-size: %4px; "
@@ -176,7 +188,11 @@ void RelatedButtonContentWidget::setStyle(bool use_dark)
                            ""
                            "QPushButton:hover { "
                            "   background-color: %1; "
+#ifdef Q_OS_WIN
+                           "   border: 1px solid %1; "
+#else
                            "   border: 2px solid %1; "
+#endif
                            "   border-radius: %2px; "
                            "   color: %3; "
                            "   font-size: %4px; "

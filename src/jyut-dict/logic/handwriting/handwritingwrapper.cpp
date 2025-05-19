@@ -43,17 +43,19 @@ bool HandwritingWrapper::setRecognizerScript(Handwriting::Script script)
     std::string modelFile;
     switch (script) {
     case Handwriting::Script::SIMPLIFIED: {
-        modelFile = getBundleModelPath().toStdString() + SIMPLIFIED_MODEL;
+        modelFile = getModelPath().toStdString() + SIMPLIFIED_MODEL;
         break;
     }
     case Handwriting::Script::TRADITIONAL: {
-        modelFile = getBundleModelPath().toStdString() + TRADITIONAL_MODEL;
+        modelFile = getModelPath().toStdString() + TRADITIONAL_MODEL;
         break;
     }
     }
 
     _recognizer->close();
-    return _recognizer->open(modelFile.c_str());
+    int status = _recognizer->open(modelFile.c_str());
+    classifyCharacter();
+    return status;
 }
 
 void HandwritingWrapper::clearStrokes(void)
@@ -76,7 +78,7 @@ QString HandwritingWrapper::getModelPath() const
 #endif
 }
 
-QString HandwritingWrapper::getLocalModelPath() const
+QString HandwritingWrapper::getLocalModelPath(void) const
 {
 #ifdef Q_OS_DARWIN
     QFileInfo localFile{
@@ -94,7 +96,7 @@ QString HandwritingWrapper::getLocalModelPath() const
     return localFile.absoluteFilePath();
 }
 
-QString HandwritingWrapper::getBundleModelPath() const
+QString HandwritingWrapper::getBundleModelPath(void) const
 {
 #ifdef Q_OS_DARWIN
     QFileInfo bundlePath{QCoreApplication::applicationDirPath()
@@ -116,6 +118,40 @@ QString HandwritingWrapper::getBundleModelPath() const
 #endif
 #endif
     return bundlePath.absoluteFilePath();
+}
+
+void HandwritingWrapper::classifyCharacter(void)
+{
+    if (_strokes.empty()) {
+        return;
+    }
+
+    std::ostringstream character_ss;
+    character_ss << QString{CHARACTER_PREAMBLE}.arg(_width).toStdString();
+    for (const auto &stroke : _strokes) {
+        character_ss << stroke;
+    }
+    character_ss << CHARACTER_POSTSCRIPT;
+
+    zinnia::Character *character = zinnia::Character::create();
+    if (!character->parse(character_ss.str().c_str())) {
+        std::cerr << "Could not parse character: " << character->what()
+                  << std::endl;
+        ;
+    }
+
+    zinnia::Result *res = _recognizer->classify(*character, 10);
+    if (!res) {
+        std::cerr << "Could not classify character: " << _recognizer->what()
+                  << std::endl;
+    }
+    std::vector<std::string> results;
+    for (size_t i = 0; i < res->size(); ++i) {
+        results.emplace_back(res->value(i));
+    }
+    delete character;
+
+    emit recognizedResults(results);
 }
 
 void HandwritingWrapper::setDimensions(int width, int height)
@@ -160,30 +196,5 @@ void HandwritingWrapper::completeStroke(int x, int y)
     _strokes.emplace_back(stroke.str());
     _currentStrokePoints.clear();
 
-    std::ostringstream character_ss;
-    character_ss << QString{CHARACTER_PREAMBLE}.arg(_width).toStdString();
-    for (const auto &stroke : _strokes) {
-        character_ss << stroke;
-    }
-    character_ss << CHARACTER_POSTSCRIPT;
-
-    zinnia::Character *character = zinnia::Character::create();
-    if (!character->parse(character_ss.str().c_str())) {
-        std::cerr << "Could not parse character: " << character->what()
-                  << std::endl;
-        ;
-    }
-
-    zinnia::Result *res = _recognizer->classify(*character, 10);
-    if (!res) {
-        std::cerr << "Could not classify character: " << _recognizer->what()
-                  << std::endl;
-    }
-    std::vector<std::string> results;
-    for (size_t i = 0; i < res->size(); ++i) {
-        results.emplace_back(res->value(i));
-    }
-    delete character;
-
-    emit recognizedResults(results);
+    classifyCharacter();
 }
