@@ -2,7 +2,6 @@
 
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
-#include "logic/strings/strings.h"
 #include "logic/utils/utils_qt.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -29,6 +28,7 @@ constexpr auto NUM_RESULTS_PER_COLUMN = NUM_RESULTS / NUM_COLUMNS;
 HandwritingWindow::HandwritingWindow(QWidget *parent)
     : QWidget{parent, Qt::Window}
 {
+    setObjectName("HandwritingWindow");
     _settings = Settings::getSettings();
     _handwritingWrapper = std::make_unique<HandwritingWrapper>(
         Handwriting::Script::TRADITIONAL);
@@ -506,7 +506,12 @@ void HandwritingWindow::setStyle(bool use_dark)
         }
     }
 
-#ifdef Q_OS_WIN
+#ifdef Q_OS_MAC
+    setAttribute(Qt::WA_StyledBackground);
+    setStyleSheet("QWidget#HandwritingWindow { "
+                  "   background-color: palette(base); "
+                  "} ");
+#elif defined(Q_OS_WIN)
     QFont font;
     if (Settings::isCurrentLocaleTraditionalHan()) {
         font = QFont{"Microsoft Jhenghei", 10};

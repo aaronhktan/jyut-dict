@@ -7,6 +7,9 @@
 #include <QPoint>
 #include <QWidget>
 
+// The handwriting panel tracks and displays a user's click-and-drag
+// events while they draw a character.
+
 class HandwritingPanel : public QWidget
 {
     Q_OBJECT

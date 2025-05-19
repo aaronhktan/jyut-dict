@@ -6,14 +6,22 @@ HandwritingPanel::HandwritingPanel(QWidget *parent)
     : QWidget{parent}
 {
     _pixmap.setDevicePixelRatio(devicePixelRatio());
+#ifdef Q_OS_MAC
+    _pixmap.fill(palette().window().color());
+#else
     _pixmap.fill(palette().base().color());
+#endif
 
     setFixedSize(350, 350);
 }
 
 void HandwritingPanel::clearPanel(void)
 {
+#ifdef Q_OS_MAC
+    _pixmap.fill(palette().window().color());
+#else
     _pixmap.fill(palette().base().color());
+#endif
     update();
 }
 
@@ -73,7 +81,11 @@ void HandwritingPanel::resizeEvent(QResizeEvent *event)
 
     QPixmap newPixmap{newRect.size() * devicePixelRatio()};
     QPainter painter{&newPixmap};
+#ifdef Q_OS_MAC
+    painter.fillRect(newPixmap.rect(), palette().window().color());
+#else
     painter.fillRect(newPixmap.rect(), palette().base().color());
+#endif
     painter.drawPixmap(0, 0, _pixmap);
     _pixmap = newPixmap;
     _pixmap.setDevicePixelRatio(devicePixelRatio());

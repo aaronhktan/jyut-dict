@@ -6,6 +6,10 @@
 #include <QObject>
 #include <QString>
 
+// The handwriting wrapper receives stroke data, and then
+// submits them to the backend library (currently Zinnia)
+// to recognize characters.
+
 namespace Handwriting {
 
 enum class Backend : int {
