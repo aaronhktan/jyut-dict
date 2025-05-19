@@ -1,5 +1,7 @@
 #include "handwritingpanel.h"
 
+#include <QStyleOption>
+
 HandwritingPanel::HandwritingPanel(QWidget *parent)
     : QWidget{parent}
 {
@@ -56,6 +58,10 @@ void HandwritingPanel::paintEvent(QPaintEvent *event)
 {
     QPainter painter{this};
     painter.drawPixmap(0, 0, _pixmap);
+
+    QStyleOption opt;
+    opt.initFrom(this);
+    style()->drawPrimitive(QStyle::PE_Widget, &opt, &painter, this);
 }
 
 void HandwritingPanel::resizeEvent(QResizeEvent *event)

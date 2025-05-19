@@ -119,6 +119,7 @@ void HandwritingWindow::setupUI()
     _layout->setSpacing(0);
 
     _panel = new HandwritingPanel{this};
+    _panel->setObjectName("HandwritingPanel");
     connect(_panel,
             &HandwritingPanel::pixmapDimensions,
             _handwritingWrapper.get(),
@@ -173,7 +174,7 @@ void HandwritingWindow::setupUI()
     connect(_doneButton, &QPushButton::clicked, this, [&]() { close(); });
 
 #ifdef Q_OS_WIN
-    _innerWidget->setLayout(_dialogLayout);
+    _innerWidget->setLayout(_layout);
     _outerWidgetLayout = new QGridLayout{this};
     _outerWidgetLayout->setContentsMargins(0, 0, 0, 0);
     _outerWidgetLayout->addWidget(_innerWidget);
@@ -280,20 +281,14 @@ void HandwritingWindow::setStyle(bool use_dark)
                   "   font-size: %2px; "
                   "} "
                   " "
-                  "QPushButton[isHan=\"true\"] { "
-                  "   font-size: %1px; "
-                  "   height: 16px; "
-                  "} "
-                  " "
-                  "QPushButton { "
-                  "   font-size: %2px; "
-                  "   height: 16px; "
+                  "QWidget#HandwritingPanel { "
+                  "   border: 1px solid palette(window); "
                   "} "};
 #endif
     setStyleSheet(style.arg(std::to_string(bodyFontSizeHan).c_str(),
                             std::to_string(bodyFontSize).c_str()));
 
-    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+#ifdef Q_OS_MAC
     QString buttonStyle
         = QString{"QPushButton[isHan=\"true\"] { "
                   "   font-size: %1px; "
@@ -308,7 +303,7 @@ void HandwritingWindow::setStyle(bool use_dark)
                   "} "}
               .arg(std::to_string(bodyFontSizeHan).c_str(),
                    std::to_string(bodyFontSize).c_str());
-#ifdef Q_OS_WIN
+#elif defined(Q_OS_WIN)
     QString buttonStyle
         = "QPushButton[isHan=\"true\"] { font-size: 12px; height: "
           "20px; }";
@@ -318,11 +313,13 @@ void HandwritingWindow::setStyle(bool use_dark)
 #endif
 
     QString characterChoiceStyle = QString{"QPushButton { "
+                                           "   background: palette(base); "
                                            "   border: 0px; "
                                            "   font-size: %1px; "
                                            "} "}
                                        .arg(headerFontSize);
 
+    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     foreach (const auto &button, buttons) {
         if (button->property("characterChoice").toBool()) {
             button->setStyleSheet(characterChoiceStyle);
@@ -343,7 +340,9 @@ void HandwritingWindow::setStyle(bool use_dark)
         font = QFont{"Microsoft YaHei", 10};
     }
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
-    _messageLabel->setFont(font);
+    for (const auto &button : _buttons) {
+        button->setFont(font);
+    }
 
     _innerWidget->setAttribute(Qt::WA_StyledBackground);
     _innerWidget->setObjectName("innerWidget");
