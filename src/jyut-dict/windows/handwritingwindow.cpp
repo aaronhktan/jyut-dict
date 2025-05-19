@@ -392,11 +392,11 @@ void HandwritingWindow::setStyle(bool use_dark)
             ->value("Interface/size",
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
-#ifdef Q_OS_WIN
+#ifdef Q_OS_MAC
     int headerFontSize = Settings::h4FontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
 #else
-    int headerFontSize = Settings::h2FontSize.at(
+    int headerFontSize = Settings::h4FontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
 #endif
     int bodyFontSize = Settings::bodyFontSize.at(
