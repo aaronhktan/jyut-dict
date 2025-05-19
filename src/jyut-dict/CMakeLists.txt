@@ -387,6 +387,7 @@ elseif(UNIX)
     configure_file(resources/db/user.db user.db COPYONLY)
     configure_file(resources/licenses/FLOW_LAYOUT_LICENSE.txt FLOW_LAYOUT_LICENSE.txt COPYONLY)
     configure_file(resources/settings/settings.ini settings.ini COPYONLY)
+    configure_file(vendor/zinnia/models/handwriting-zh_TW.model handwriting/handwriting-zh_TW.model COPYONLY)
 elseif(WIN32)
     enable_language("RC")
 

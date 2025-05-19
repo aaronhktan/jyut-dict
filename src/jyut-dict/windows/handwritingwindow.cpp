@@ -301,7 +301,9 @@ void HandwritingWindow::setStyle(bool use_dark)
                   " "
                   "QWidget#HandwritingPanel { "
                   "   border: 1px solid palette(window); "
+#ifdef Q_OS_WIN
                   "   border-radius: 5px; "
+#endif
                   "} "};
 #endif
     setStyleSheet(style.arg(std::to_string(bodyFontSizeHan).c_str(),
@@ -330,9 +332,18 @@ void HandwritingWindow::setStyle(bool use_dark)
                                        .arg(headerFontSize);
 
 #elif defined(Q_OS_WIN)
-    QString buttonStyle
-        = "QPushButton[isHan=\"true\"] { font-size: 12px; height: "
-          "20px; }";
+    QString buttonStyle = QString{"QPushButton[isHan=\"true\"] { "
+                                  "   font-size: %1px; "
+                                  "   height: 20px; "
+                                  "} "
+                                  " "
+                                  "QPushButton { "
+                                  "   font-size: %2px; "
+                                  "   height: 16px; "
+                                  "} "}
+                              .arg(std::to_string(bodyFontSizeHan).c_str(),
+                                   std::to_string(bodyFontSize).c_str());
+    ;
 
     QString characterChoiceStyle = QString{"QPushButton { "
                                            "   background: palette(base); "
@@ -343,11 +354,22 @@ void HandwritingWindow::setStyle(bool use_dark)
                                        .arg(headerFontSize);
 
 #elif defined(Q_OS_LINUX)
-    QString buttonStyle
-        = "QPushButton { margin-left: 5px; margin-right: 5px; }";
+    QString buttonStyle = QString{"QPushButton[isHan=\"true\"] { "
+                                  "   font-size: %1px; "
+                                  "   margin-left: 5px; "
+                                  "   margin-right: 5px; "
+                                  "} "
+                                  " "
+                                  "QPushButton { "
+                                  "   font-size: %2px; "
+                                  "   margin-left: 5px; "
+                                  "   margin-right: 5px; "
+                                  "} "}
+                              .arg(std::to_string(bodyFontSizeHan).c_str(),
+                                   std::to_string(bodyFontSize).c_str());
+    ;
 
     QString characterChoiceStyle = QString{"QPushButton { "
-                                           "   background: palette(base); "
                                            "   border: 0px; "
                                            "   font-size: %1px; "
                                            "} "}

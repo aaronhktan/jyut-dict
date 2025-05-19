@@ -43,11 +43,11 @@ bool HandwritingWrapper::setRecognizerScript(Handwriting::Script script)
     std::string modelFile;
     switch (script) {
     case Handwriting::Script::SIMPLIFIED: {
-        modelFile = getBundleAudioPath().toStdString() + SIMPLIFIED_MODEL;
+        modelFile = getBundleModelPath().toStdString() + SIMPLIFIED_MODEL;
         break;
     }
     case Handwriting::Script::TRADITIONAL: {
-        modelFile = getBundleAudioPath().toStdString() + TRADITIONAL_MODEL;
+        modelFile = getBundleModelPath().toStdString() + TRADITIONAL_MODEL;
         break;
     }
     }
@@ -65,9 +65,9 @@ void HandwritingWrapper::clearStrokes(void)
 QString HandwritingWrapper::getModelPath() const
 {
 #ifdef PORTABLE
-    return getBundleAudioPath();
+    return getBundleModelPath();
 #else
-    return getLocalAudioPath();
+    return getLocalModelPath();
 #endif
 }
 
@@ -89,7 +89,7 @@ QString HandwritingWrapper::getLocalModelPath() const
     return localFile.absoluteFilePath();
 }
 
-QString HandwritingWrapper::getBundleAudioPath() const
+QString HandwritingWrapper::getBundleModelPath() const
 {
 #ifdef Q_OS_DARWIN
     QFileInfo bundlePath{QCoreApplication::applicationDirPath()
@@ -102,7 +102,7 @@ QString HandwritingWrapper::getBundleAudioPath() const
     QFileInfo bundlePath{QCoreApplication::applicationDirPath()
                          + "/../share/jyut-dict/handwriting/"};
 #elif defined(DEBUG)
-    QFileInfo bundlePath{"./audio/"};
+    QFileInfo bundlePath{"./handwriting/"};
 #elif defined(FLATPAK)
     QFileInfo bundlePath{QCoreApplication::applicationDirPath()
                          + "/../share/jyut-dict/handwriting/"};

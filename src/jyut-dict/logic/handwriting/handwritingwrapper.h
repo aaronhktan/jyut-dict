@@ -31,7 +31,7 @@ public:
 
     QString getModelPath() const;
     QString getLocalModelPath() const;
-    QString getBundleAudioPath() const;
+    QString getBundleModelPath() const;
 
 private:
     zinnia::Recognizer *_recognizer = nullptr;
