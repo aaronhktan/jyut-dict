@@ -165,10 +165,16 @@ void HandwritingWindow::setupUI()
         }
     });
 
+    QWidget *clearButtonSpacer = new QWidget{this};
+    clearButtonSpacer->setFixedHeight(6);
+
     _backspaceButton = new QPushButton{this};
     connect(_backspaceButton, &QPushButton::clicked, this, [&]() {
         emit characterChosen(QString::fromLocal8Bit("\x8"));
     });
+
+    QWidget *backspaceButtonSpacer = new QWidget{this};
+    backspaceButtonSpacer->setFixedHeight(6);
 
     _doneButton = new QPushButton{this};
     connect(_doneButton, &QPushButton::clicked, this, [&]() { close(); });
@@ -199,13 +205,23 @@ void HandwritingWindow::setupUI()
                        2,
                        1,
                        NUM_COLUMNS);
-    _layout->addWidget(_backspaceButton,
+    _layout->addWidget(clearButtonSpacer,
                        NUM_RESULTS_PER_COLUMN + 2,
                        2,
                        1,
                        NUM_COLUMNS);
-    _layout->addWidget(_doneButton,
+    _layout->addWidget(_backspaceButton,
                        NUM_RESULTS_PER_COLUMN + 3,
+                       2,
+                       1,
+                       NUM_COLUMNS);
+    _layout->addWidget(backspaceButtonSpacer,
+                       NUM_RESULTS_PER_COLUMN + 4,
+                       2,
+                       1,
+                       NUM_COLUMNS);
+    _layout->addWidget(_doneButton,
+                       NUM_RESULTS_PER_COLUMN + 5,
                        2,
                        1,
                        NUM_COLUMNS);
@@ -242,6 +258,8 @@ void HandwritingWindow::translateUI()
     _clearButton->setText(tr("Clear"));
     _backspaceButton->setText(tr("Backspace"));
     _doneButton->setText(tr("Done"));
+
+    setWindowTitle(tr("Handwriting"));
 
 #ifndef Q_OS_LINUX
     layout()->setSizeConstraint(QLayout::SetFixedSize);
@@ -283,6 +301,7 @@ void HandwritingWindow::setStyle(bool use_dark)
                   " "
                   "QWidget#HandwritingPanel { "
                   "   border: 1px solid palette(window); "
+                  "   border-radius: 5px; "
                   "} "};
 #endif
     setStyleSheet(style.arg(std::to_string(bodyFontSizeHan).c_str(),
@@ -319,6 +338,7 @@ void HandwritingWindow::setStyle(bool use_dark)
                                            "   background: palette(base); "
                                            "   border: 0px; "
                                            "   font-size: %1px; "
+                                           "   margin: 0px; "
                                            "} "}
                                        .arg(headerFontSize);
 

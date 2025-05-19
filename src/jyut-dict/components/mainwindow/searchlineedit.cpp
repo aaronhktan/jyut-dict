@@ -180,25 +180,28 @@ void SearchLineEdit::setStyle(bool use_dark)
         static_cast<unsigned long>(interfaceSize - 1));
 
     if (use_dark) {
-            setStyleSheet(QString{"QLineEdit { "
-                                  "   background-color: #586365; "
+        setStyleSheet(QString{"QLineEdit { "
+                              "   background-color: #586365; "
 #ifdef Q_OS_WIN
-                                  "   border: 1px solid black; "
+                              "   border: 1px solid black; "
 #endif
-                                  "   border-radius: 3px; "
-                                  "   font-size: %1px; "
-                                  "   icon-size: %1px; "
-                                  "   padding-top: 4px; "
-                                  "   padding-bottom: 4px; "
-                                  "} "
-                                  ""
-                                  "QLineEdit:focus { "
-                                  "   border-radius: 2px; "
-                                  "} "}
-                              .arg(std::to_string(h6FontSize).c_str()));
-            _searchLineEdit->setIcon(searchInverted);
-            _clearLineEdit->setIcon(clearInverted);
-            _handwriting->setIcon(handwritingInverted);
+                              "   border-radius: 3px; "
+                              "   font-size: %1px; "
+                              "   icon-size: %1px; "
+                              "   padding-top: 4px; "
+                              "   padding-bottom: 4px; "
+#ifdef Q_OS_WIN
+                              "   placeholder-text-color: #999999; "
+#endif
+                              "} "
+                              ""
+                              "QLineEdit:focus { "
+                              "   border-radius: 2px; "
+                              "} "}
+                          .arg(std::to_string(h6FontSize).c_str()));
+        _searchLineEdit->setIcon(searchInverted);
+        _clearLineEdit->setIcon(clearInverted);
+        _handwriting->setIcon(handwritingInverted);
 #ifndef Q_OS_LINUX
             _microphone->setIcon(micInverted);
 #endif
