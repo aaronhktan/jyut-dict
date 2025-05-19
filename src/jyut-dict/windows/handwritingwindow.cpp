@@ -188,7 +188,11 @@ void HandwritingWindow::setupUI()
 
     QWidget *scriptSelectorWidget = new QWidget();
     QHBoxLayout *selectorLayout = new QHBoxLayout{scriptSelectorWidget};
+#ifdef Q_OS_LINUX
+    selectorLayout->setContentsMargins(0, 0, 0, 6);
+#elif defined(Q_OS_MAC)
     selectorLayout->setContentsMargins(0, 0, 0, 22);
+#endif
     scriptSelectorWidget->setLayout(selectorLayout);
     selectorLayout->addWidget(_traditionalButton);
     selectorLayout->addWidget(_simplifiedButton);
@@ -252,7 +256,11 @@ void HandwritingWindow::setupUI()
 
     QWidget *functionWidget = new QWidget{};
     QVBoxLayout *functionLayout = new QVBoxLayout{functionWidget};
+#ifdef Q_OS_MAC
     functionLayout->setSpacing(20);
+#else
+    functionLayout->setSpacing(5);
+#endif
     functionLayout->setContentsMargins(0, 0, 0, 0);
     functionWidget->setLayout(functionLayout);
     functionLayout->addWidget(_clearButton);
@@ -287,12 +295,20 @@ void HandwritingWindow::setupUI()
                        2,
                        1,
                        NUM_COLUMNS);
+#ifdef Q_OS_MAC
     _layout->addWidget(functionWidget,
                        NUM_RESULTS_PER_COLUMN + 2,
                        2,
                        1,
                        NUM_COLUMNS,
                        Qt::AlignBaseline);
+#else
+    _layout->addWidget(functionWidget,
+                       NUM_RESULTS_PER_COLUMN + 2,
+                       2,
+                       1,
+                       NUM_COLUMNS);
+#endif
 #ifdef Q_OS_MAC
     // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
@@ -340,12 +356,22 @@ void HandwritingWindow::setStyle(bool use_dark)
 {
     (void) (use_dark);
 
+#ifdef Q_OS_LINUX
+    QColor borderColour = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
+                                            HEADER_BACKGROUND_COLOUR_DARK_G,
+                                            HEADER_BACKGROUND_COLOUR_DARK_B}
+                                   : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                                            CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                                            CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+    borderColour = borderColour.lighter(200);
+#else
     QColor borderColour = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
                                             HEADER_BACKGROUND_COLOUR_DARK_G,
                                             HEADER_BACKGROUND_COLOUR_DARK_B}
                                    : QColor{HEADER_BACKGROUND_COLOUR_LIGHT_R,
                                             HEADER_BACKGROUND_COLOUR_LIGHT_G,
                                             HEADER_BACKGROUND_COLOUR_LIGHT_B};
+#endif
 
     int interfaceSize = static_cast<int>(
         _settings
