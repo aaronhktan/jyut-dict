@@ -11,8 +11,6 @@ HandwritingPanel::HandwritingPanel(QWidget *parent)
 #else
     _pixmap.fill(palette().base().color());
 #endif
-
-    setFixedSize(350, 350);
 }
 
 void HandwritingPanel::clearPanel(void)

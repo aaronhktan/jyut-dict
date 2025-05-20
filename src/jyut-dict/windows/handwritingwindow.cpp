@@ -43,24 +43,13 @@ HandwritingWindow::HandwritingWindow(QWidget *parent)
                                 QVariant::fromValue(
                                     Settings::InterfaceSize::NORMAL))
                         .value<Settings::InterfaceSize>());
-#ifdef Q_OS_WIN
-                int headerFontSize = Settings::h4FontSize.at(
+                int bodyFontSize = Settings::bodyFontSize.at(
                     static_cast<unsigned long>(interfaceSize - 1));
-#else
-            int headerFontSize = Settings::h2FontSize.at(
-                static_cast<unsigned long>(interfaceSize - 1));
-#endif
-                int padding = headerFontSize / 3;
+                int padding = bodyFontSize / 3;
 
                 for (int i = 0; i < results.size(); ++i) {
                     _buttons.at(i)->setText(
                         QString::fromStdString(results.at(i)));
-                    _buttons.at(i)->setMinimumHeight(
-                        _buttons.at(i)
-                            ->fontMetrics()
-                            .boundingRect(_buttons.at(i)->text())
-                            .height()
-                        + padding);
                 }
             });
 
@@ -259,6 +248,8 @@ void HandwritingWindow::setupUI()
     }
 
     QWidget *clearButtonSpacer = new QWidget{this};
+    clearButtonSpacer->setSizePolicy(QSizePolicy::MinimumExpanding,
+                                     QSizePolicy::MinimumExpanding);
 
     _clearButton = new QPushButton{this};
     connect(_clearButton, &QPushButton::clicked, this, [&]() {
@@ -280,7 +271,7 @@ void HandwritingWindow::setupUI()
     QWidget *functionWidget = new QWidget{};
     QVBoxLayout *functionLayout = new QVBoxLayout{functionWidget};
 #ifdef Q_OS_MAC
-    functionLayout->setSpacing(20);
+    functionLayout->setSpacing(11);
 #else
     functionLayout->setSpacing(5);
 #endif
@@ -393,7 +384,7 @@ void HandwritingWindow::setStyle(bool use_dark)
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
 #ifdef Q_OS_MAC
-    int headerFontSize = Settings::h4FontSize.at(
+    int headerFontSize = Settings::h2FontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
 #else
     int headerFontSize = Settings::h4FontSize.at(
@@ -404,6 +395,23 @@ void HandwritingWindow::setStyle(bool use_dark)
     int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
         static_cast<unsigned long>(interfaceSize - 1));
     int borderRadius = static_cast<int>(bodyFontSize * 1);
+
+    switch (_settings
+                ->value("Interface/size",
+                        QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+                .value<Settings::InterfaceSize>()) {
+    case Settings::InterfaceSize::LARGE: {
+        _panel->setFixedSize(375, 375);
+        break;
+    }
+    case Settings::InterfaceSize::LARGER: {
+        _panel->setFixedSize(400, 400);
+        break;
+    }
+    default: {
+        _panel->setFixedSize(350, 350);
+    }
+    }
 
 #ifdef Q_OS_MAC
     QString style{"QLabel[isHan=\"true\"] { "
@@ -509,10 +517,20 @@ void HandwritingWindow::setStyle(bool use_dark)
                               .arg(paddingHorizontal);
 
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
+    int i = 0;
     foreach (const auto &button, buttons) {
         if (button->property("characterChoice").isValid()
             && button->property("characterChoice").toBool()) {
+            ++i;
             button->setStyleSheet(characterChoiceStyle);
+            button->ensurePolished();
+            button
+                ->setFixedSize(button->fontMetrics().boundingRect("潑").height()
+                                   + 2 * padding,
+                               button->fontMetrics().boundingRect("潑").width()
+                                   + 2 * padding);
+            button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+            button->ensurePolished();
         } else {
             button->setStyleSheet(buttonStyle);
             button->setMinimumHeight(std::max(
