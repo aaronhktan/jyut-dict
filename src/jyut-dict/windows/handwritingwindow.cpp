@@ -37,16 +37,6 @@ HandwritingWindow::HandwritingWindow(QWidget *parent)
             &HandwritingWrapper::recognizedResults,
             this,
             [&](std::vector<std::string> results) {
-                int interfaceSize = static_cast<int>(
-                    _settings
-                        ->value("Interface/size",
-                                QVariant::fromValue(
-                                    Settings::InterfaceSize::NORMAL))
-                        .value<Settings::InterfaceSize>());
-                int bodyFontSize = Settings::bodyFontSize.at(
-                    static_cast<unsigned long>(interfaceSize - 1));
-                int padding = bodyFontSize / 3;
-
                 for (int i = 0; i < results.size(); ++i) {
                     _buttons.at(i)->setText(
                         QString::fromStdString(results.at(i)));
@@ -524,11 +514,19 @@ void HandwritingWindow::setStyle(bool use_dark)
             ++i;
             button->setStyleSheet(characterChoiceStyle);
             button->ensurePolished();
+#ifdef Q_OS_WIN
+            button
+                ->setFixedSize(button->fontMetrics().boundingRect("潑").height()
+                                   + padding * 10,
+                               button->fontMetrics().boundingRect("潑").width()
+                                   + padding * 10);
+#else
             button
                 ->setFixedSize(button->fontMetrics().boundingRect("潑").height()
                                    + 2 * padding,
                                button->fontMetrics().boundingRect("潑").width()
                                    + 2 * padding);
+#endif
             button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
             button->ensurePolished();
         } else {
