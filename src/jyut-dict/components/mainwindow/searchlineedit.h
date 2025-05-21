@@ -5,6 +5,7 @@
 #include "logic/database/sqluserhistoryutils.h"
 #include "logic/search/isearch.h"
 #include "logic/search/isearchoptionsmediator.h"
+#include "windows/handwritingwindow.h"
 #ifndef Q_OS_LINUX
 #include "windows/transcriptionwindow.h"
 #endif
@@ -45,6 +46,7 @@ private:
 
     void checkClearVisibility(void);
 
+    void startHandwriting(void);
 #ifndef Q_OS_LINUX
     void startTranscription(void);
 #endif
@@ -58,11 +60,13 @@ private:
 
     QAction *_searchLineEdit;
     QAction *_clearLineEdit;
+    QAction *_handwriting;
 #ifndef Q_OS_LINUX
     QAction *_microphone;
 #endif
     QTimer *_timer;
 
+    HandwritingWindow *_handwritingWindow = nullptr;
 #ifndef Q_OS_LINUX
     TranscriptionWindow *_transcriptionWindow = nullptr;
 #endif
@@ -77,6 +81,7 @@ public slots:
 #ifndef Q_OS_LINUX
     void dictationRequested(void);
 #endif
+    void handwritingRequested(void);
 };
 
 #endif // SEARCHLINEEDIT_H

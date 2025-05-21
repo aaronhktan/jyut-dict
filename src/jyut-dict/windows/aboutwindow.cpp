@@ -143,12 +143,8 @@ void AboutWindow::setupUI()
     _windowLayout->addWidget(_messageLabel, 6, 0, 1, -1, Qt::AlignCenter);
 
     // Set style
-#ifdef Q_OS_MAC
     // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(false);
-#endif
 }
 void AboutWindow::translateUI()
 {
@@ -174,7 +170,8 @@ void AboutWindow::translateUI()
         QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                     Strings::CREDITS_TEXT)
             .arg(palette().text().color().name(),
-                 Utils::getLicenseFolderPath() + "FLOW_LAYOUT_LICENSE.txt"));
+                 Utils::getLicenseFolderPath() + "FLOW_LAYOUT_LICENSE.txt",
+                 Utils::getLicenseFolderPath() + "ZINNIA_LICENSE.txt"));
 #ifndef Q_OS_MAC
     setWindowTitle(
         tr("About %1")

@@ -162,9 +162,10 @@ void DictionaryTab::setStyle(bool use_dark) {
                          "   border: 1px solid palette(window); "
                          "} ");
 #else
-    _list->setStyleSheet("QListView {"
-                         "   border: 1px solid palette(alternate-base); "
-                         "} ");
+        _list->setStyleSheet("QListView {"
+                             "   border: 1px solid palette(alternate-base); "
+                             "   border-radius: 3px; "
+                             "} ");
 #endif
 }
 

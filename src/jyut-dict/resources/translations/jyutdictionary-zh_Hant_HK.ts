@@ -402,6 +402,33 @@
     </message>
 </context>
 <context>
+    <name>HandwritingWindow</name>
+    <message>
+        <source>Traditional Chinese</source>
+        <translation>繁體中文</translation>
+    </message>
+    <message>
+        <source>Simplified Chinese</source>
+        <translation>簡體中文</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>清除</translation>
+    </message>
+    <message>
+        <source>Backspace</source>
+        <translation>退格</translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation>完成</translation>
+    </message>
+    <message>
+        <source>Handwriting</source>
+        <translation>手寫辨識</translation>
+    </message>
+</context>
+<context>
     <name>HistoryWindow</name>
     <message>
         <source>Search History</source>
@@ -959,10 +986,6 @@ Hang tight!</source>
         <translation>詞條拼音：</translation>
     </message>
     <message>
-        <source>    Show pronunciation for:</source>
-        <translation>   詞條拼音：</translation>
-    </message>
-    <message>
         <source>	Show pronunciation for:</source>
         <translation>	詞條拼音：</translation>
     </message>
@@ -1107,10 +1130,6 @@ Hang tight!</source>
     <message>
         <source>Largest</source>
         <translation>最大</translation>
-    </message>
-    <message>
-        <source>Auto-detect search language:</source>
-        <translation>自動偵測搵嘢語言：</translation>
     </message>
     <message>
         <source>Tone colouring:</source>
@@ -1350,14 +1369,6 @@ Hang tight!</source>
         <translation>一個免費、自由、開源及脫機嘅粵語辭典。</translation>
     </message>
     <message>
-        <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contains FlowLayout code from &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; and &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; code from KDE.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
-        <translation>圖標使用 &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Commons 古漢字計劃&lt;/a&gt; 嘅圖片創造。 &lt;br&gt;界面圖標來源：&lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; 同埋&lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;。&lt;br&gt;使用 &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 嘅 FlowLayout 同埋 KDE 嘅 &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; 編程。&lt;br&gt;使用 &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 編程。</translation>
-    </message>
-    <message>
-        <source>%1 is made with ❤️ by Aaron Tan.</source>
-        <translation>%1由譚可峰精心打造。</translation>
-    </message>
-    <message>
         <source>Donate 💵, report a bug 🐛, or just say hi 👋!</source>
         <translation>捐款 💵, 报告缺陷 🐛, 或者发送一个問候 👋!</translation>
     </message>
@@ -1500,6 +1511,10 @@ Debug: Locale: %1, Language: Chinese - Mainland</source>
     <message>
         <source>&lt;p style=&quot;color: %1&quot;&gt;Several fuzzy Jyutping substitutions are risky. These include &lt;span&gt;(1) ts -&gt; c&lt;/span&gt;, and &lt;span&gt;(2) kwu -&gt; (g|k)w?u.&lt;/span&gt; Do not enable this setting unless you are confident that you understand and accept the consequences.&lt;/p&gt;</source>
         <translation>&lt;p style=&quot;color: %1&quot;&gt;用模糊粵拼系統改字母有時有風險。 例如，&lt;span&gt;(1) ts -&gt; c&lt;/span&gt;，同埋 &lt;span&gt;(2) kwu -&gt; (g|k)w?u。&lt;/span&gt; 你明白呢個設定嘅後果先好啟用啊！&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contains FlowLayout code from &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;, &lt;a href=&quot;file://%3&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;libzinnia&lt;/a&gt; from the Tegaki project, and &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; code from KDE.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
+        <translation>圖標使用 &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Commons 古漢字計劃&lt;/a&gt; 嘅圖片創造。 &lt;br&gt;界面圖標來源：&lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; 同埋&lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;。&lt;br&gt;使用 &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 嘅 FlowLayout、Tegaki 嘅 &lt;a href=&quot;file://%3&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;libzinnia&lt;/a&gt;，同埋 KDE 嘅 &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; 編程。&lt;br&gt;使用 &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 編程。</translation>
     </message>
 </context>
 </TS>

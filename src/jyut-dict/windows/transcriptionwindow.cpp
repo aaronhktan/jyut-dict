@@ -5,6 +5,10 @@
 #include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
+#elif defined(Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
 #endif
 #include "logic/utils/utils_qt.h"
 
@@ -75,12 +79,7 @@ TranscriptionWindow::TranscriptionWindow(QWidget *parent)
     setupUI();
     translateUI();
 
-#ifdef Q_OS_MAC
-    // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(false);
-#endif
 
     connect(this,
             &TranscriptionWindow::newRadius,
@@ -98,8 +97,9 @@ TranscriptionWindow::TranscriptionWindow(QWidget *parent)
               .value<TranscriptionLanguage>();
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     foreach (const auto &button, buttons) {
-        if (button->property("data").value<TranscriptionLanguage>()
-            == lastSelected) {
+        if (button->property("data").isValid()
+            && button->property("data").value<TranscriptionLanguage>()
+                   == lastSelected) {
             button->click();
             break;
         }
@@ -408,7 +408,8 @@ void TranscriptionWindow::setStyle(bool use_dark)
 
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     foreach (const auto &button, buttons) {
-        if (button->property("ignoreStyle").value<bool>()) {
+        if (button->property("ignoreStyle").isValid()
+            && button->property("ignoreStyle").value<bool>()) {
             continue;
         }
         button->setStyleSheet(styleSheet.arg(borderColour.name())

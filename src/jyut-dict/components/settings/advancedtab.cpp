@@ -476,8 +476,9 @@ void AdvancedTab::setCantoneseTTSWidgetDefault(QWidget *widget)
 
     QList<QRadioButton *> buttons = widget->findChildren<QRadioButton *>();
     foreach (const auto &button, buttons) {
-        if (button->property("data").value<TextToSpeech::SpeakerBackend>()
-            == backend) {
+        if (button->property("data").isValid()
+            && button->property("data").value<TextToSpeech::SpeakerBackend>()
+                   == backend) {
             button->click();
 #ifdef Q_OS_MAC
             // Makes the button selection show up correctly on macOS
@@ -508,8 +509,9 @@ void AdvancedTab::setMandarinTTSWidgetDefault(QWidget *widget)
 
     QList<QRadioButton *> buttons = widget->findChildren<QRadioButton *>();
     foreach (const auto &button, buttons) {
-        if (button->property("data").value<TextToSpeech::SpeakerBackend>()
-            == backend) {
+        if (button->property("data").isValid()
+            && button->property("data").value<TextToSpeech::SpeakerBackend>()
+                   == backend) {
             button->click();
 #ifdef Q_OS_MAC
             // Makes the button selection show up correctly on macOS

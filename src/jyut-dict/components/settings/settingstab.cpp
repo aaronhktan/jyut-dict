@@ -695,7 +695,9 @@ void SettingsTab::setSearchResultsCantonesePronunciationDefault(
 
     QList<QRadioButton *> buttons = widget.findChildren<QRadioButton *>();
     foreach (const auto &button, buttons) {
-        if (button->property("data").value<CantoneseOptions>() == lastSelected) {
+        if (button->property("data").isValid()
+            && button->property("data").value<CantoneseOptions>()
+                   == lastSelected) {
             button->click();
 #ifdef Q_OS_MAC
             // Makes the button selection show up correctly on macOS
@@ -717,7 +719,9 @@ void SettingsTab::setSearchResultsMandarinPronunciationDefault(
 
     QList<QRadioButton *> buttons = widget.findChildren<QRadioButton *>();
     foreach (const auto &button, buttons) {
-        if (button->property("data").value<MandarinOptions>() == lastSelected) {
+        if (button->property("data").isValid()
+            && button->property("data").value<MandarinOptions>()
+                   == lastSelected) {
             button->click();
 #ifdef Q_OS_MAC
             // Makes the button selection show up correctly on macOS

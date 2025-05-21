@@ -37,7 +37,9 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(
               .value<SearchParameters>();
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     foreach (const auto & button, buttons) {
-        if (button->property("data").value<SearchParameters>() == lastSelected) {
+        if (button->property("data").isValid()
+            && button->property("data").value<SearchParameters>()
+                   == lastSelected) {
             button->click();
             break;
         }
@@ -48,7 +50,8 @@ void SearchOptionsRadioGroupBox::detectedLanguage(SearchParameters params)
 {
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     foreach (const auto &button, buttons) {
-        if (button->property("data") == QVariant::fromValue(params)) {
+        if (button->property("data").isValid()
+            && button->property("data") == QVariant::fromValue(params)) {
             button->setChecked(true);
             Settings::getSettings()
                 ->setValue("SearchOptionsRadioGroupBox/lastSelected",
@@ -83,14 +86,17 @@ void SearchOptionsRadioGroupBox::setOption(const Utils::ButtonOptionIndex index)
     }
 
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
-    buttons.at(index)->click();
+    if (!buttons.at(index)->isChecked()) {
+        buttons.at(index)->click();
+    }
 }
 
 void SearchOptionsRadioGroupBox::setOption(const SearchParameters parameters)
 {
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     foreach (const auto & button, buttons) {
-        if (button->property("data") == QVariant::fromValue(parameters)) {
+        if (button->property("data").isValid()
+            && button->property("data") == QVariant::fromValue(parameters)) {
             button->click();
         }
     }
@@ -234,7 +240,11 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
 #endif
     QString styleSheet = "QPushButton { "
                          "   background-color: transparent; "
+#ifdef Q_OS_WIN
+                         "   border: 1px solid %1; "
+#else
                          "   border: 2px solid %1; "
+#endif
                          "   border-radius: %2px; "
                          "   font-size: %3px; "
                          "   padding: %4px; "
@@ -244,7 +254,11 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
                          " "
                          "QPushButton:checked { "
                          "   background-color: %1; "
+#ifdef Q_OS_WIN
+                         "   border: 1px solid %1; "
+#else
                          "   border: 2px solid %1; "
+#endif
                          "   border-radius: %2px; "
                          "   font-size: %3px; "
                          "   padding: %4px; "
@@ -254,7 +268,11 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
                          " "
                          "QPushButton:hover { "
                          "   background-color: %1; "
+#ifdef Q_OS_WIN
+                         "   border: 1px solid %1; "
+#else
                          "   border: 2px solid %1; "
+#endif
                          "   border-radius: %2px; "
                          "   font-size: %3px; "
                          "   padding: %4px; "

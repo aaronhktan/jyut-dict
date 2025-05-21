@@ -5,8 +5,10 @@
 #include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
-#elif defined (Q_OS_LINUX)
+#elif defined(Q_OS_LINUX)
 #include "logic/utils/utils_linux.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
 #endif
 
 #include <QCoreApplication>
@@ -109,12 +111,7 @@ void UpdateAvailableWindow::setupUI()
 
     setLayout(_dialogLayout);
 
-#ifdef Q_OS_MAC
-    // Set the style to match whether the user started dark mode
     setStyle(Utils::isDarkMode());
-#else
-    setStyle(false);
-#endif
 }
 
 void UpdateAvailableWindow::translateUI()

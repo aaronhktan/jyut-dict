@@ -402,6 +402,33 @@
     </message>
 </context>
 <context>
+    <name>HandwritingWindow</name>
+    <message>
+        <source>Traditional Chinese</source>
+        <translation>Chinois traditionnel</translation>
+    </message>
+    <message>
+        <source>Simplified Chinese</source>
+        <translation>Chinois simplifié</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Effacer</translation>
+    </message>
+    <message>
+        <source>Backspace</source>
+        <translation>Retour arrière</translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <source>Handwriting</source>
+        <translation>Reconnaissance de l’écriture manuscrite</translation>
+    </message>
+</context>
+<context>
     <name>HistoryWindow</name>
     <message>
         <source>Search History</source>
@@ -1205,11 +1232,11 @@ Veuillez patienter quelques minutes.</translation>
     </message>
     <message>
         <source>Permission to access audio for speech recognition denied.</source>
-        <translation>L'accès au micro ou la reconnaissance vocale a été désactivé.</translation>
+        <translation>L&apos;accès au micro ou la reconnaissance vocale a été désactivé.</translation>
     </message>
     <message>
         <source>No keyboard for the specified language could be found.</source>
-        <translation>Il n'existe aucun clavier pour la langue selectionnée.</translation>
+        <translation>Il n&apos;existe aucun clavier pour la langue selectionnée.</translation>
     </message>
     <message>
         <source>An unspecified error occurred.</source>
@@ -1341,14 +1368,6 @@ Veuillez patienter quelques minutes.</translation>
     <message>
         <source>A free, open-source offline Cantonese Dictionary.</source>
         <translation>Un dictionnaire cantonais hors-ligne libre et gratuit.</translation>
-    </message>
-    <message>
-        <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contains FlowLayout code from &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; and &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; code from KDE.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
-        <translation>Icône créée avec des images originant du &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Ancient Chinese Characters project (sinogrammes anciens)&lt;/a&gt; de Wikimédia.&lt;br&gt;Icônes d&apos;interface : &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; et &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contient du code FlowLayout de &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; et &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; de KDE.&lt;br&gt;Programmé avec &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</translation>
-    </message>
-    <message>
-        <source>%1 is made with ❤️ by Aaron Tan.</source>
-        <translation>%1 est crée avec ❤️ par Aaron Tan.</translation>
     </message>
     <message>
         <source>Donate 💵, report a bug 🐛, or just say hi 👋!</source>
@@ -1493,6 +1512,10 @@ Débogage&#xa0;: Locale&#xa0;: %1, Langue&#xa0;: Chinois - Chine continentale</t
     <message>
         <source>&lt;p style=&quot;color: %1&quot;&gt;Several fuzzy Jyutping substitutions are risky. These include &lt;span&gt;(1) ts -&gt; c&lt;/span&gt;, and &lt;span&gt;(2) kwu -&gt; (g|k)w?u.&lt;/span&gt; Do not enable this setting unless you are confident that you understand and accept the consequences.&lt;/p&gt;</source>
         <translation>&lt;p style=&quot;color: %1&quot;&gt;Quelques remplacements utilisés par le Jyutping approximatif sont risqués. Ceux-ci incluent &lt;span&gt;(1) ts -&gt; c&lt;/span&gt; et &lt;span&gt;(2) kwu -&gt; (g|k)w?u.&lt;/span&gt; N&apos;activez pas cette fonctionnalité si vous n&apos;êtes pas sûr de comprendre les conséquences.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contains FlowLayout code from &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;, &lt;a href=&quot;file://%3&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;libzinnia&lt;/a&gt; from the Tegaki project, and &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; code from KDE.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
+        <translation>Icône créée avec des images originant du &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Ancient Chinese Characters project (sinogrammes anciens)&lt;/a&gt; de Wikimédia.&lt;br&gt;Icônes d&apos;interface : &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; et &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contient du code FlowLayout de &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;, &lt;a href=&quot;file://%3&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;libzinnia&lt;/a&gt; du projet Tegaki et &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; de KDE.&lt;br&gt;Programmé avec &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</translation>
     </message>
 </context>
 </TS>

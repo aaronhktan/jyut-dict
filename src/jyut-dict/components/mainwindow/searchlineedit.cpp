@@ -2,6 +2,7 @@
 
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/utils/utils_qt.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -120,6 +121,13 @@ void SearchLineEdit::setupUI(void)
     _clearLineEdit = new QAction{"", this};
     connect(_clearLineEdit, &QAction::triggered, this, &QLineEdit::clear);
 
+    _handwriting = new QAction{"", this};
+    addAction(_handwriting, QLineEdit::TrailingPosition);
+    connect(_handwriting,
+            &QAction::triggered,
+            this,
+            &SearchLineEdit::startHandwriting);
+
 #ifndef Q_OS_LINUX
     _microphone = new QAction{"", this};
     addAction(_microphone, QLineEdit::TrailingPosition);
@@ -151,16 +159,24 @@ void SearchLineEdit::setStyle(bool use_dark)
     QFont font = QFont{"Microsoft YaHei"};
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
     setFont(font);
+
+    QColor borderColour = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
+                                            HEADER_BACKGROUND_COLOUR_DARK_G,
+                                            HEADER_BACKGROUND_COLOUR_DARK_B}
+                                   : QColor{HEADER_BACKGROUND_COLOUR_LIGHT_R,
+                                            HEADER_BACKGROUND_COLOUR_LIGHT_G,
+                                            HEADER_BACKGROUND_COLOUR_LIGHT_B};
 #endif
 
     QIcon search = QIcon{":/images/search.png"};
     QIcon clear = QIcon{":/images/x_action.png"};
+    QIcon handwriting = QIcon{":/images/handwriting_action.png"};
     QIcon mic = QIcon{":/images/mic_action.png"};
-    // QIcon micOff = QIcon{":/images/mic_off_action.png"};
     QIcon searchInverted = QIcon{":/images/search_inverted.png"};
     QIcon clearInverted = QIcon{":/images/x_action_inverted.png"};
     QIcon micInverted = QIcon{":/images/mic_action_inverted.png"};
-    // QIcon micOffInverted = QIcon{":/images/mic_off_action_inverted.png"};
+    QIcon handwritingInverted = QIcon{
+        ":/images/handwriting_action_inverted.png"};
 
     int interfaceSize = static_cast<int>(
         _settings
@@ -172,49 +188,59 @@ void SearchLineEdit::setStyle(bool use_dark)
         static_cast<unsigned long>(interfaceSize - 1));
 
     if (use_dark) {
-            setStyleSheet(QString{"QLineEdit { "
-                                  "   background-color: #586365; "
+        setStyleSheet(QString{"QLineEdit { "
+                              "   background-color: #586365; "
 #ifdef Q_OS_WIN
-                                  "   border: 1px solid black; "
+                              "   border: 1px solid black; "
 #endif
-                                  "   border-radius: 3px; "
-                                  "   font-size: %1px; "
-                                  "   icon-size: %1px; "
-                                  "   padding-top: 4px; "
-                                  "   padding-bottom: 4px; "
-                                  "} "
-                                  ""
-                                  "QLineEdit:focus { "
-                                  "   border-radius: 2px; "
-                                  "} "}
-                              .arg(std::to_string(h6FontSize).c_str()));
-            _searchLineEdit->setIcon(searchInverted);
-            _clearLineEdit->setIcon(clearInverted);
+                              "   border-radius: 3px; "
+                              "   font-size: %1px; "
+                              "   icon-size: %1px; "
+                              "   padding-top: 4px; "
+                              "   padding-bottom: 4px; "
+#ifdef Q_OS_WIN
+                              "   placeholder-text-color: #999999; "
+#endif
+                              "} "
+                              ""
+                              "QLineEdit:focus { "
+                              "   border-radius: 2px; "
+                              "} "}
+                          .arg(std::to_string(h6FontSize).c_str()));
+        _searchLineEdit->setIcon(searchInverted);
+        _clearLineEdit->setIcon(clearInverted);
+        _handwriting->setIcon(handwritingInverted);
 #ifndef Q_OS_LINUX
-            _microphone->setIcon(micInverted);
+        _microphone->setIcon(micInverted);
 #endif
     } else {
-            setStyleSheet(QString{"QLineEdit { "
-                                  "   background-color: #ffffff; "
+        setStyleSheet(
+            QString{"QLineEdit { "
+                    "   background-color: #ffffff; "
 #ifdef Q_OS_WIN
-                                  "   border: 1px solid lightgrey; "
+                    "   border: 1px solid %2; "
 #endif
-                                  "   border-radius: 3px; "
-                                  "   font-size: %1px; "
-                                  "   icon-size: %1px; "
-                                  "   padding-top: 4px; "
-                                  "   padding-bottom: 4px; "
-                                  "} "
-                                  ""
-                                  "QLineEdit:focus { "
+                    "   border-radius: 3px; "
+                    "   font-size: %1px; "
+                    "   icon-size: %1px; "
+                    "   padding-top: 4px; "
+                    "   padding-bottom: 4px; "
+                    "} "
+                    ""
+                    "QLineEdit:focus { "
 #ifdef Q_OS_WIN
-                                  "   border: 1px solid lightgrey; "
+                    "   border: 1px solid %2; "
 #endif
-                                  "   border-radius: 2px; "
-                                  "} "}
-                              .arg(std::to_string(h6FontSize).c_str()));
-            _searchLineEdit->setIcon(search);
-            _clearLineEdit->setIcon(clear);
+                    "   border-radius: 2px; "
+                    "} "}
+#ifdef Q_OS_WIN
+                .arg(std::to_string(h6FontSize).c_str(), borderColour.name()));
+#else
+                .arg(std::to_string(h6FontSize).c_str()));
+#endif
+        _searchLineEdit->setIcon(search);
+        _clearLineEdit->setIcon(clear);
+        _handwriting->setIcon(handwriting);
 #ifndef Q_OS_LINUX
             _microphone->setIcon(mic);
 #endif
@@ -230,6 +256,46 @@ void SearchLineEdit::checkClearVisibility(void)
     } else {
         addAction(_clearLineEdit, QLineEdit::TrailingPosition);
     }
+}
+
+void SearchLineEdit::startHandwriting(void)
+{
+    checkClearVisibility();
+
+    _handwritingWindow = new HandwritingWindow{this};
+    _handwritingWindow->setAttribute(Qt::WA_DeleteOnClose);
+    _handwritingWindow->setFocus();
+    _handwritingWindow->show();
+
+    connect(_handwritingWindow,
+            &HandwritingWindow::characterChosen,
+            this,
+            [&](QString character) {
+                if (character == "\x8") {
+                    if (!text().isEmpty()) {
+                        setText(text().chopped(1));
+                    }
+                } else {
+                    setText(text() + character);
+                }
+            });
+    connect(_handwritingWindow,
+            &HandwritingWindow::scriptSelected,
+            this,
+            [&](Handwriting::Script script) {
+                SearchParameters params;
+                switch (script) {
+                case Handwriting::Script::SIMPLIFIED: {
+                    params = SearchParameters::SIMPLIFIED;
+                    break;
+                }
+                case Handwriting::Script::TRADITIONAL: {
+                    params = SearchParameters::TRADITIONAL;
+                    break;
+                }
+                }
+                _mediator->setParameters(params);
+            });
 }
 
 #ifndef Q_OS_LINUX
@@ -307,3 +373,8 @@ void SearchLineEdit::dictationRequested(void)
     startTranscription();
 }
 #endif
+
+void SearchLineEdit::handwritingRequested(void)
+{
+    startHandwriting();
+}

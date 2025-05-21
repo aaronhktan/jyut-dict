@@ -561,6 +561,7 @@ void MainWindow::setStyle(bool use_dark)
             "QComboBox { "
             "   background-color: palette(window); "
             "   border: 1px solid palette(alternate-base); "
+            "   border-radius: 3px; "
             "   padding: 3px; "
             "} "
             "QComboBox::drop-down { "
@@ -581,6 +582,7 @@ void MainWindow::setStyle(bool use_dark)
             ""
             "QGroupBox { "
             "   border: 1px solid palette(alternate-base); "
+            "   border-radius: 3px; "
             "} "
             ""
             "QListView { "
@@ -621,6 +623,7 @@ void MainWindow::setStyle(bool use_dark)
             "QPushButton { "
             "   background-color: palette(window); "
             "   border: 1px solid palette(alternate-base); "
+            "   border-radius: 2px; "
             "   padding: 5px; "
             "} "
             ""
@@ -726,9 +729,15 @@ void MainWindow::setStyle(bool use_dark)
             "   image: url(:/images/check_box_unchecked.svg); "
             "} "
             ""
+            "QGroupBox { "
+            "   border: 1px solid palette(alternate-base); "
+            "   border-radius: 3px; "
+            "} "
+            ""
             "QPushButton { "
             "   background-color: palette(base); "
             "   border: 1px solid palette(alternate-base); "
+            "   border-radius: 3px; "
             "   padding: 5px; "
             "} "
             ""
@@ -924,6 +933,14 @@ void MainWindow::createActions(void)
     _dictationAction->setShortcut(QKeySequence{"Ctrl+D"});
     connect(_dictationAction, &QAction::triggered, this, &MainWindow::dictation);
     _searchMenu->addAction(_dictationAction);
+
+    _handwritingAction = new QAction{this};
+    _handwritingAction->setShortcut(QKeySequence{"Ctrl+K"});
+    connect(_handwritingAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::handwriting);
+    _searchMenu->addAction(_handwritingAction);
 
     _searchMenu->addSeparator();
 
@@ -1191,6 +1208,11 @@ void MainWindow::findAndSelectAll(void) const
 void MainWindow::dictation(void) const
 {
     _mainToolBar->dictationRequested();
+}
+
+void MainWindow::handwriting(void) const
+{
+    _mainToolBar->handwritingRequested();
 }
 
 void MainWindow::setFocusToResults(void) const

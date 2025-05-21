@@ -58,6 +58,7 @@ set(PROJECT_HEADERS
         components/entryview/entryscrollareawidget.h
         components/entryview/entryviewsentencecardsection.h
         components/favouritewindow/favouritesplitter.h
+        components/handwriting/handwritingpanel.h
         components/historyview/searchhistorylistdelegate.h
         components/historyview/searchhistorylistmodel.h
         components/historyview/searchhistorylistview.h
@@ -125,6 +126,7 @@ set(PROJECT_HEADERS
         logic/entry/definitionsset.h
         logic/entry/entry.h
         logic/entry/entryspeaker.h
+        logic/handwriting/handwritingwrapper.h
         logic/search/isearch.h
         logic/search/isearchobservable.h
         logic/search/isearchobserver.h
@@ -142,7 +144,19 @@ set(PROJECT_HEADERS
         logic/utils/scriptdetector.h
         logic/utils/utils.h
         logic/utils/utils_qt.h
+        vendor/zinnia/svm.h
+        vendor/zinnia/common.h
+        vendor/zinnia/config.h
+        vendor/zinnia/feature.h
+        vendor/zinnia/freelist.h
+        vendor/zinnia/mmap.h
+        vendor/zinnia/param.h
+        vendor/zinnia/scoped_ptr.h
+        vendor/zinnia/sexp.h
+        vendor/zinnia/stream_wrapper.h
+        vendor/zinnia/zinnia.h
         windows/aboutwindow.h
+        windows/handwritingwindow.h
         windows/historywindow.h
         windows/mainwindow.h
         windows/settingswindow.h
@@ -169,6 +183,7 @@ set(PROJECT_SOURCES
         components/entryview/entryscrollareawidget.cpp
         components/entryview/entryviewsentencecardsection.cpp
         components/favouritewindow/favouritesplitter.cpp
+        components/handwriting/handwritingpanel.cpp
         components/historyview/searchhistorylistdelegate.cpp
         components/historyview/searchhistorylistmodel.cpp
         components/historyview/searchhistorylistview.cpp
@@ -229,6 +244,7 @@ set(PROJECT_SOURCES
         logic/entry/definitionsset.cpp
         logic/entry/entry.cpp
         logic/entry/entryspeaker.cpp
+        logic/handwriting/handwritingwrapper.cpp
         logic/search/searchoptionsmediator.cpp
         logic/search/sqlsearch.cpp
         logic/sentence/sentenceset.cpp
@@ -243,7 +259,16 @@ set(PROJECT_SOURCES
         logic/utils/utils.cpp
         logic/utils/utils_qt.cpp
         main.cpp
+        vendor/zinnia/character.cpp
+        vendor/zinnia/feature.cpp
+        vendor/zinnia/libzinnia.cpp
+        vendor/zinnia/param.cpp
+        vendor/zinnia/recognizer.cpp
+        vendor/zinnia/sexp.cpp
+        vendor/zinnia/svm.cpp
+        vendor/zinnia/trainer.cpp
         windows/aboutwindow.cpp
+        windows/handwritingwindow.cpp
         windows/historywindow.cpp
         windows/mainwindow.cpp
         windows/settingswindow.cpp
@@ -333,6 +358,7 @@ if(APPLE)
         PRIVATE resources/db/dict.db
         PRIVATE resources/db/user.db
         PRIVATE resources/licenses/FLOW_LAYOUT_LICENSE.txt
+        PRIVATE resources/licenses/ZINNIA_LICENSE.txt
         PRIVATE resources/settings/settings.ini
         PRIVATE resources/icon/icon.icns
         PRIVATE platform/mac/en.lproj/InfoPlist.strings
@@ -341,11 +367,14 @@ if(APPLE)
         PRIVATE platform/mac/yue_Hant.lproj/InfoPlist.strings
         PRIVATE platform/mac/zh_Hans.lproj/InfoPlist.strings
         PRIVATE platform/mac/zh_Hant.lproj/InfoPlist.strings
+        PRIVATE vendor/zinnia/models/handwriting-zh_TW.model
+        PRIVATE vendor/zinnia/models/handwriting-zh_CN.model
     )
 
     set_property(SOURCE resources/db/dict.db PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
     set_property(SOURCE resources/db/user.db PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
     set_property(SOURCE resources/licenses/FLOW_LAYOUT_LICENSE.txt PROPERTY MACOSX_PACKAGE_LOCATION "Resources/Licenses")
+    set_property(SOURCE resources/licenses/ZINNIA_LICENSE.txt PROPERTY MACOSX_PACKAGE_LOCATION "Resources/Licenses")
     set_property(SOURCE resources/settings/settings.ini PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
     set_property(SOURCE resources/icon/icon.icns PROPERTY MACOSX_PACKAGE_LOCATION "Resources")
     set_property(SOURCE platform/mac/en.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/en.lproj")
@@ -354,12 +383,17 @@ if(APPLE)
     set_property(SOURCE platform/mac/yue_Hant.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/yue-Hant.lproj")
     set_property(SOURCE platform/mac/zh_Hans.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/zh-hans.lproj")
     set_property(SOURCE platform/mac/zh_Hant.lproj/InfoPlist.strings PROPERTY MACOSX_PACKAGE_LOCATION "Resources/zh-hant.lproj")
+    set_property(SOURCE vendor/zinnia/models/handwriting-zh_TW.model PROPERTY MACOSX_PACKAGE_LOCATION "Resources/Handwriting")
+    set_property(SOURCE vendor/zinnia/models/handwriting-zh_CN.model PROPERTY MACOSX_PACKAGE_LOCATION "Resources/Handwriting")
 elseif(UNIX)
     TARGET_SOURCES(CantoneseDictionary PRIVATE logic/utils/utils_linux.cpp)
     configure_file(resources/db/dict.db dict.db COPYONLY)
     configure_file(resources/db/user.db user.db COPYONLY)
     configure_file(resources/licenses/FLOW_LAYOUT_LICENSE.txt FLOW_LAYOUT_LICENSE.txt COPYONLY)
+    configure_file(resources/licenses/ZINNIA_LICENSE.txt ZINNIA_LICENSE.txt COPYONLY)
     configure_file(resources/settings/settings.ini settings.ini COPYONLY)
+    configure_file(vendor/zinnia/models/handwriting-zh_TW.model handwriting/handwriting-zh_TW.model COPYONLY)
+    configure_file(vendor/zinnia/models/handwriting-zh_CN.model handwriting/handwriting-zh_CN.model COPYONLY)
 elseif(WIN32)
     enable_language("RC")
 
@@ -384,7 +418,10 @@ elseif(WIN32)
     configure_file(resources/db/dict.db dict.db COPYONLY)
     configure_file(resources/db/user.db user.db COPYONLY)
     configure_file(resources/licenses/FLOW_LAYOUT_LICENSE.txt FLOW_LAYOUT_LICENSE.txt COPYONLY)
+    configure_file(resources/licenses/ZINNIA_LICENSE.txt ZINNIA_LICENSE.txt COPYONLY)
     configure_file(resources/settings/settings.ini settings.ini COPYONLY)
+    configure_file(vendor/zinnia/models/handwriting-zh_TW.model Handwriting/handwriting-zh_TW.model COPYONLY)
+    configure_file(vendor/zinnia/models/handwriting-zh_CN.model Handwriting/handwriting-zh_CN.model COPYONLY)
 endif()
 
 install(TARGETS CantoneseDictionary

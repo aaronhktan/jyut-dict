@@ -304,6 +304,11 @@ void MainToolBar::dictationRequested(void) const
 #endif
 }
 
+void MainToolBar::handwritingRequested(void) const
+{
+    _searchBar->handwritingRequested();
+}
+
 void MainToolBar::updateStyleRequested(void)
 {
     QEvent event{QEvent::PaletteChange};
