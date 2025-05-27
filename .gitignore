@@ -48,6 +48,9 @@ CMakeLists.txt.user*
 # Qt Builds
 *dist/
 
+# Qt Linguist artifacts
+src/jyut-dict/resources/translations/*.json
+
 # vim
 **.swp
 
@@ -92,6 +95,7 @@ CMakeLists.txt.user*
 **/cantodict/data/*
 **/cantodict/developer/*
 **/cedict/archive_*
+**/cedict/data/YFDICT.txt
 **/cedict/developer/*
 **/cfdict-xml/archive_*
 **/cfdict-xml/data/*

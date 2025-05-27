@@ -122,9 +122,34 @@ void TranscriptionWindow::changeEvent(QEvent *event)
 
 void TranscriptionWindow::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Escape || event->key() == Qt::Key_Enter
-        || event->key() == Qt::Key_Return) {
+    switch (event->key()) {
+    case Qt::Key_Escape:
+        [[fallthrough]];
+    case Qt::Key_Enter:
+        [[fallthrough]];
+    case Qt::Key_Return: {
         doneAction();
+        break;
+    }
+    case Qt::Key_E:
+        [[fallthrough]];
+    case Qt::Key_F:
+        [[fallthrough]];
+    case Qt::Key_Y: {
+        _englishButton->click();
+        break;
+    }
+    case Qt::Key_C:
+        [[fallthrough]];
+    case Qt::Key_G: {
+        _cantoneseButton->click();
+        break;
+    }
+    case Qt::Key_M:
+        [[fallthrough]];
+    case Qt::Key_P:
+        _mandarinButton->click();
+        break;
     }
 }
 
