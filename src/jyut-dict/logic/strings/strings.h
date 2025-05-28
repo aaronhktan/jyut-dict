@@ -145,6 +145,20 @@ constexpr auto DANGEROUS_FUZZY_JYUTPING_EXPLAINER = QT_TRANSLATE_NOOP(
     "risky. These include <span>(1) ts -> c</span>, and <span>(2) kwu -> "
     "(g|k)w?u.</span> Do not enable this setting unless you are confident that "
     "you understand and accept the consequences.</p>");
+#ifdef Q_OS_WINDOWS
+constexpr auto FUZZY_PINYIN_EXPLAINER = QT_TRANSLATE_NOOP(
+    "strings",
+    "<p style=\"color: %1\">Fuzzy Pinyin finds results for non-official "
+    "pronunciations. For example, \"zong1 guo2\" will match \"zhōng guó\", "
+    "\"pin1\" will match \"pīng\". Please note that this feature will increase "
+    "time before results are found.</p>");
+#else
+constexpr auto FUZZY_PINYIN_EXPLAINER = QT_TRANSLATE_NOOP(
+    "strings",
+    "<p style=\"color: %1\">Fuzzy Pinyin finds results for non-official "
+    "pronunciations. For example, \"zong1 guo2\" will match \"zhōng guó\", "
+    "\"pin1\" will match \"pīng\".</p>");
+#endif
 
 constexpr auto TTS_EXPLAINER = QT_TRANSLATE_NOOP(
     "strings",
