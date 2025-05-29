@@ -454,31 +454,31 @@
     <name>MAC_APPLICATION_MENU</name>
     <message>
         <source>Services</source>
-        <translation>Services</translation>
+        <translation type="vanished">Services</translation>
     </message>
     <message>
         <source>Hide %1</source>
-        <translation>Masquer %1</translation>
+        <translation type="vanished">Masquer %1</translation>
     </message>
     <message>
         <source>Hide Others</source>
-        <translation>Masquer les autres</translation>
+        <translation type="vanished">Masquer les autres</translation>
     </message>
     <message>
         <source>Show All</source>
-        <translation>Tout afficher</translation>
+        <translation type="vanished">Tout afficher</translation>
     </message>
     <message>
         <source>Preferences...</source>
-        <translation>Préférences...</translation>
+        <translation type="vanished">Préférences...</translation>
     </message>
     <message>
         <source>Quit %1</source>
-        <translation>Quitter %1</translation>
+        <translation type="vanished">Quitter %1</translation>
     </message>
     <message>
         <source>About %1</source>
-        <translation>À propos de %1</translation>
+        <translation type="vanished">À propos de %1</translation>
     </message>
 </context>
 <context>
@@ -706,46 +706,46 @@ Veuillez patienter quelques minutes.</translation>
     <name>QMessageBox</name>
     <message>
         <source>Show Details...</source>
-        <translation>Montrer les détails...</translation>
+        <translation type="vanished">Montrer les détails...</translation>
     </message>
     <message>
         <source>Hide Details...</source>
-        <translation>Masquer les détails...</translation>
+        <translation type="vanished">Masquer les détails...</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="vanished">OK</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation>Aide</translation>
+        <translation type="vanished">Aide</translation>
     </message>
     <message>
         <source>&lt;h3&gt;About Qt&lt;/h3&gt;&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;</source>
-        <translation>&lt;h3&gt;À propos de Qt&lt;/h3&gt;&lt;p&gt;Ce programme utilise la version %1 de Qt.&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;h3&gt;À propos de Qt&lt;/h3&gt;&lt;p&gt;Ce programme utilise la version %1 de Qt.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p&gt;Qt is a C++ toolkit for cross-platform application development.&lt;/p&gt;&lt;p&gt;Qt provides single-source portability across all major desktop operating systems. It is also available for embedded Linux and other embedded and mobile operating systems.&lt;/p&gt;&lt;p&gt;Qt is available under three different licensing options designed to accommodate the needs of our various users.&lt;/p&gt;&lt;p&gt;Qt licensed under our commercial license agreement is appropriate for development of proprietary/commercial software where you do not want to share any source code with third parties or otherwise cannot comply with the terms of the GNU LGPL version 3 or GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU LGPL version 3 is appropriate for the development of Qt&amp;nbsp;applications provided you can comply with the terms and conditions of the GNU LGPL version 3.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU LGPL version 2.1 is appropriate for the development of Qt&amp;nbsp;applications provided you can comply with the terms and conditions of the GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Please see &lt;a href=&quot;http://%2/&quot;&gt;%2&lt;/a&gt; for an overview of Qt licensing.&lt;/p&gt;&lt;p&gt;Copyright (C) %1 The Qt Company Ltd and other contributors.&lt;/p&gt;&lt;p&gt;Qt and the Qt logo are trademarks of The Qt Company Ltd.&lt;/p&gt;&lt;p&gt;Qt is The Qt Company Ltd product developed as an open source project. See &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt; for more information.&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Qt est dédié au développement d&apos;applications C++ multiplateformes.&lt;/p&gt;&lt;p&gt;Qt offre un code source unique compatible avec les principaux systèmes d&apos;exploitation &quot;de bureau&quot; (Linux, Mac, Windows). Qt est également compatible avec des systèmes d&apos;exploitation embarqués de type Linux ou autres.&lt;/p&gt;&lt;p&gt;Qt est utilisable sous les termes de trois types de licence différents, afin de répondre aux besoins d&apos;un maximum d&apos;utilisateurs.&lt;/p&gt;&lt;p&gt;La licence commerciale de Qt est appropriée pour le développement de logiciels propriétaires/commerciaux pour lesquels vous ne souhaitez pas partager le code source avec des tierces parties ou pour lesquels les termes de la licence GNU LGPL version 3 ou GNU LGPL version 2.1 ne vous conviennent pas.&lt;/p&gt;&lt;p&gt;La licence GNU LGPL version 3 de Qt est appropriée pour le développement d&apos;applications Qt si vous acceptez les termes et conditions de la licence GNU LGPL version 3.&lt;/p&gt;&lt;p&gt;La licence GNU LGPL version 2.1 est appropriée pour le développement d&apos;applications Qt si vous acceptez les termes et conditions de la licence GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Veuillez consulter &lt;a href=&quot;http://%2/&quot;&gt;%2&lt;/a&gt; pour le détail des différents types de licence Qt.&lt;/p&gt;&lt;p&gt;Copyright (C) %1 &quot;The Qt Company Ltd&quot; et autres contributeurs.&lt;/p&gt;&lt;p&gt;Qt et le logo Qt sont des marques de &quot;The Qt Company Ltd&quot;.&lt;/p&gt;&lt;p&gt;Qt est le produit de &quot;The Qt Company Ltd&quot;, développé sous forme de projet open source. Veuillez trouver de plus amples information à &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt;.&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;p&gt;Qt est dédié au développement d&apos;applications C++ multiplateformes.&lt;/p&gt;&lt;p&gt;Qt offre un code source unique compatible avec les principaux systèmes d&apos;exploitation &quot;de bureau&quot; (Linux, Mac, Windows). Qt est également compatible avec des systèmes d&apos;exploitation embarqués de type Linux ou autres.&lt;/p&gt;&lt;p&gt;Qt est utilisable sous les termes de trois types de licence différents, afin de répondre aux besoins d&apos;un maximum d&apos;utilisateurs.&lt;/p&gt;&lt;p&gt;La licence commerciale de Qt est appropriée pour le développement de logiciels propriétaires/commerciaux pour lesquels vous ne souhaitez pas partager le code source avec des tierces parties ou pour lesquels les termes de la licence GNU LGPL version 3 ou GNU LGPL version 2.1 ne vous conviennent pas.&lt;/p&gt;&lt;p&gt;La licence GNU LGPL version 3 de Qt est appropriée pour le développement d&apos;applications Qt si vous acceptez les termes et conditions de la licence GNU LGPL version 3.&lt;/p&gt;&lt;p&gt;La licence GNU LGPL version 2.1 est appropriée pour le développement d&apos;applications Qt si vous acceptez les termes et conditions de la licence GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Veuillez consulter &lt;a href=&quot;http://%2/&quot;&gt;%2&lt;/a&gt; pour le détail des différents types de licence Qt.&lt;/p&gt;&lt;p&gt;Copyright (C) %1 &quot;The Qt Company Ltd&quot; et autres contributeurs.&lt;/p&gt;&lt;p&gt;Qt et le logo Qt sont des marques de &quot;The Qt Company Ltd&quot;.&lt;/p&gt;&lt;p&gt;Qt est le produit de &quot;The Qt Company Ltd&quot;, développé sous forme de projet open source. Veuillez trouver de plus amples information à &lt;a href=&quot;http://%3/&quot;&gt;%3&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>About Qt</source>
-        <translation>À propos de Qt</translation>
+        <translation type="vanished">À propos de Qt</translation>
     </message>
 </context>
 <context>
     <name>QPlatformTheme</name>
     <message>
         <source>Cancel</source>
-        <translation>Annuler</translation>
+        <translation type="vanished">Annuler</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
-        <translation>&amp;Oui</translation>
+        <translation type="vanished">&amp;Oui</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="vanished">OK</translation>
     </message>
 </context>
 <context>
@@ -963,6 +963,14 @@ Veuillez patienter quelques minutes.</translation>
     <message>
         <source>	Risky fuzzy Jyutping matches:</source>
         <translation>	Remplacements risqués avec Jyutping approximatif&#xa0;:</translation>
+    </message>
+    <message>
+        <source>Hanyu Pinyin:</source>
+        <translation>Hanyu Pinyin :</translation>
+    </message>
+    <message>
+        <source>Fuzzy Pinyin matching:</source>
+        <translation>Recherche avec Hanyu Pinyin approximatif&#xa0;:</translation>
     </message>
 </context>
 <context>
@@ -1322,6 +1330,10 @@ Veuillez patienter quelques minutes.</translation>
         <source>OK</source>
         <translation>OK</translation>
     </message>
+    <message>
+        <source>New Feature: Easier Search In Mandarin</source>
+        <translation>Nouvelle fonctionnalité&#xa0;: Recherche plus aisée en mandarin</translation>
+    </message>
 </context>
 <context>
     <name>strings</name>
@@ -1516,6 +1528,14 @@ Débogage&#xa0;: Locale&#xa0;: %1, Langue&#xa0;: Chinois - Chine continentale</t
     <message>
         <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contains FlowLayout code from &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;, &lt;a href=&quot;file://%3&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;libzinnia&lt;/a&gt; from the Tegaki project, and &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; code from KDE.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
         <translation>Icône créée avec des images originant du &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Ancient Chinese Characters project (sinogrammes anciens)&lt;/a&gt; de Wikimédia.&lt;br&gt;Icônes d&apos;interface : &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; et &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contient du code FlowLayout de &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;, &lt;a href=&quot;file://%3&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;libzinnia&lt;/a&gt; du projet Tegaki et &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; de KDE.&lt;br&gt;Programmé avec &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</translation>
+    </message>
+    <message>
+        <source>&lt;p style=&quot;color: %1&quot;&gt;Fuzzy Pinyin finds results for non-official pronunciations. For example, &quot;zong1 guo2&quot; will match &quot;zhōng guó&quot;, &quot;pin1&quot; will match &quot;pīng&quot;. Please note that this feature will increase time before results are found.&lt;/p&gt;</source>
+        <translation>&lt;p style=&quot;color: %1&quot;&gt;Le Hanyu Pinyin approximatif trouvera des résultats pour des graphies non-Hanyu Pinyin ainsi que les prononciations non-standards. Par exemple, «&#xa0;zong1 guo2&#xa0;» trouvera «&#xa0;中国&#xa0;» («&#xa0;zhong1 guo2&#xa0;» en Hanyu Pinyin standard); «&#xa0;pin1&#xa0;» trouvera «&#xa0;乒&#xa0;» («&#xa0;ping1&#xa0;»). Veuillez noter que cette fonctionnalité retardera l&apos;affichage des résultats.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;p style=&quot;color: %1&quot;&gt;Fuzzy Pinyin finds results for non-official pronunciations. For example, &quot;zong1 guo2&quot; will match &quot;zhōng guó&quot;, &quot;pin1&quot; will match &quot;pīng&quot;.&lt;/p&gt;</source>
+        <translation>&lt;p style=&quot;color: %1&quot;&gt;Le Hanyu Pinyin approximatif trouvera des résultats pour des graphies non-Hanyu Pinyin ainsi que les prononciations non-standards. Par exemple, «&#xa0;zong1 guo2&#xa0;» trouvera «&#xa0;中国&#xa0;» («&#xa0;zhong1 guo2&#xa0;» en Hanyu Pinyin standard); «&#xa0;pin1&#xa0;» trouvera «&#xa0;乒&#xa0;» («&#xa0;ping1&#xa0;»).&lt;/p&gt;</translation>
     </message>
 </context>
 </TS>

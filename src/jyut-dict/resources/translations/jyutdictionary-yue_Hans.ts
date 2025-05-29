@@ -967,6 +967,14 @@ Hang tight!</source>
         <source>	Risky fuzzy Jyutping matches:</source>
         <translation>	有风险嘅模糊粤拼代替：</translation>
     </message>
+    <message>
+        <source>Hanyu Pinyin:</source>
+        <translation>汉语拼音：</translation>
+    </message>
+    <message>
+        <source>Fuzzy Pinyin matching:</source>
+        <translation>模糊汉语拼音：</translation>
+    </message>
 </context>
 <context>
     <name>SentenceSplitter</name>
@@ -1325,6 +1333,10 @@ Hang tight!</source>
         <source>OK</source>
         <translation>好啊！</translation>
     </message>
+    <message>
+        <source>New Feature: Easier Search In Mandarin</source>
+        <translation>新功能：模糊汉语拼音</translation>
+    </message>
 </context>
 <context>
     <name>strings</name>
@@ -1519,6 +1531,14 @@ Debug: Locale: %1, Language: Chinese - Mainland</source>
     <message>
         <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contains FlowLayout code from &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;, &lt;a href=&quot;file://%3&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;libzinnia&lt;/a&gt; from the Tegaki project, and &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; code from KDE.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
         <translation>图标使用 &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Commons 古汉字计划&lt;/a&gt; 嘅图片创造。&lt;br&gt;界面图标来源：&lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; 同埋 &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;。&lt;br&gt;使用 &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 嘅 FlowLayout、Tegaki 嘅 &lt;a href=&quot;file://%3&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;libzinnia&lt;/a&gt;、同埋 KDE 嘅 &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; 编程。&lt;br&gt;使用 &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 编程。</translation>
+    </message>
+    <message>
+        <source>&lt;p style=&quot;color: %1&quot;&gt;Fuzzy Pinyin finds results for non-official pronunciations. For example, &quot;zong1 guo2&quot; will match &quot;zhōng guó&quot;, &quot;pin1&quot; will match &quot;pīng&quot;. Please note that this feature will increase time before results are found.&lt;/p&gt;</source>
+        <translation>&lt;p style=&quot;color: %1&quot;&gt;如果你打咗非标准汉语拼音，或者打咗非标准发音，模糊拼音可以帮你揾到结果。例如，写咗「zong1 guo2」都会揾到「中国」 （标准粤拼写「zhong1 guo2」)， 写咗「pin1」都会揾到 「乒」 (标准粤拼写「ping1」)。请注意：呢個功能会减慢结果显示嘅速度。&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;p style=&quot;color: %1&quot;&gt;Fuzzy Pinyin finds results for non-official pronunciations. For example, &quot;zong1 guo2&quot; will match &quot;zhōng guó&quot;, &quot;pin1&quot; will match &quot;pīng&quot;.&lt;/p&gt;</source>
+        <translation>&lt;p style=&quot;color: %1&quot;&gt;如果你打咗非标准汉语拼音，或者打咗非标准发音，模糊拼音可以帮你揾到结果。例如，写咗「zong1 guo2」都会揾到「中国」 （标准粤拼写「zhong1 guo2」)， 写咗「pin1」都会揾到 「乒」 (标准粤拼写「ping1」)。&lt;/p&gt;</translation>
     </message>
 </context>
 </TS>

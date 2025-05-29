@@ -963,6 +963,14 @@ Hang tight!</source>
         <source>	Risky fuzzy Jyutping matches:</source>
         <translation>   有風險的模糊粵拼代替：</translation>
     </message>
+    <message>
+        <source>Hanyu Pinyin:</source>
+        <translation>漢語拼音</translation>
+    </message>
+    <message>
+        <source>Fuzzy Pinyin matching:</source>
+        <translation>模糊漢語拼音：</translation>
+    </message>
 </context>
 <context>
     <name>SentenceSplitter</name>
@@ -1321,6 +1329,10 @@ Hang tight!</source>
         <source>OK</source>
         <translation>是</translation>
     </message>
+    <message>
+        <source>New Feature: Easier Search In Mandarin</source>
+        <translation>新功能：模糊漢語粵拼</translation>
+    </message>
 </context>
 <context>
     <name>strings</name>
@@ -1506,15 +1518,23 @@ Debug: Locale: %1, Language: Chinese - Mainland</source>
     </message>
     <message>
         <source>&lt;p style=&quot;color: %1&quot;&gt;Fuzzy Jyutping finds results for non-Jyutping spellings and informal pronunciations. For example, &quot;gum yut&quot; will find &quot;今日&quot; (&quot;gam1 jat6&quot; in Jyutping); &quot;lay&quot; will find &quot;你&quot; (&quot;nei5&quot;). Please note that this feature will increase time before results are found.&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot;color: %1&quot;&gt;如果您打了非標準粵拼，或者打了非標準發音，模糊粵拼可以幫您找到結果。例如，寫了「gum yut」都會找到「今日」 （標準粵拼寫「gam1 jat6」)， 寫了「lay」都會找到 「您」 (標準粵拼寫「nei5」)。請注意：這個功能會減慢結果顯示的速度。&lt;/p&gt;</translation>
+        <translation>&lt;p style=&quot;color: %1&quot;&gt;如果您打了非標準粵拼，或者打了非標準發音，模糊粵拼可以幫您找到結果。例如，寫了「gum yut」都會找到「今日」 （標準粵拼寫「gam1 jat6」)， 寫了「lay」都會找到 「你」 (標準粵拼寫「nei5」)。請注意：這個功能會減慢結果顯示的速度。&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p style=&quot;color: %1&quot;&gt;Fuzzy Jyutping finds results for non-Jyutping spellings and informal pronunciations. For example, &quot;gum yut&quot; will find &quot;今日&quot; (&quot;gam1 jat6&quot; in Jyutping); &quot;lay&quot; will find &quot;你&quot; (&quot;nei5&quot;).&lt;/p&gt;</source>
-        <translation>&lt;p style=&quot;color: %1&quot;&gt;如果您打了非標準粵拼，或者打了非標準發音，模糊粵拼可以幫您找到結果。例如，寫了「gum yut」都會找到「今日」 （標準粵拼寫「gam1 jat6」)， 寫了「lay」都會找到 「您」 (標準粵拼寫「nei5」)。&lt;/p&gt;</translation>
+        <translation>&lt;p style=&quot;color: %1&quot;&gt;如果您打了非標準粵拼，或者打了非標準發音，模糊粵拼可以幫您找到結果。例如，寫了「gum yut」都會找到「今日」 （標準粵拼寫「gam1 jat6」)， 寫了「lay」都會找到 「你」 (標準粵拼寫「nei5」)。&lt;/p&gt;</translation>
     </message>
     <message>
         <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contains FlowLayout code from &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;, &lt;a href=&quot;file://%3&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;libzinnia&lt;/a&gt; from the Tegaki project, and &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; code from KDE.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
         <translation>圖標使用 &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Commons 古漢字計劃&lt;/a&gt; 的圖片創造。 &lt;br&gt;界面圖標來源：&lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; 和&lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;。&lt;br&gt;使用 &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 的 FlowLayout、Tegaki 的 &lt;a href=&quot;file://%3&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;libzinnia&lt;/a&gt;、和 KDE 的 &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; 編程。&lt;br&gt;使用 &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt; 編程。</translation>
+    </message>
+    <message>
+        <source>&lt;p style=&quot;color: %1&quot;&gt;Fuzzy Pinyin finds results for non-official pronunciations. For example, &quot;zong1 guo2&quot; will match &quot;zhōng guó&quot;, &quot;pin1&quot; will match &quot;pīng&quot;. Please note that this feature will increase time before results are found.&lt;/p&gt;</source>
+        <translation>&lt;p style=&quot;color: %1&quot;&gt;如果您打了非標準漢語拼音，或者打了非標準發音，模糊漢語拼音可以幫你找到結果。例如，寫了「zong1 guo2」都會找到「中國」 （標準粵拼寫「zhong1 guo2」)， 寫了「pin1」都會找到 「乒」 (標準粵拼寫「ping1」)。請注意：這個功能會減慢結果顯示的速度。&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;p style=&quot;color: %1&quot;&gt;Fuzzy Pinyin finds results for non-official pronunciations. For example, &quot;zong1 guo2&quot; will match &quot;zhōng guó&quot;, &quot;pin1&quot; will match &quot;pīng&quot;.&lt;/p&gt;</source>
+        <translation>&lt;p style=&quot;color: %1&quot;&gt;如果您打了非標準漢語拼音，或者打了非標準發音，模糊漢語拼音可以幫你找到結果。例如，寫了「zong1 guo2」都會找到「中國」 （標準粵拼寫「zhong1 guo2」)， 寫了「pin1」都會找到 「乒」 (標準粵拼寫「ping1」)。&lt;/p&gt;</translation>
     </message>
 </context>
 </TS>
