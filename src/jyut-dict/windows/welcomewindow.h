@@ -52,6 +52,8 @@ private:
 
     std::unique_ptr<QSettings> _settings;
 
+    bool _fuzzyJyutpingDone = false;
+
 signals:
     void welcomeCompleted(void);
 
