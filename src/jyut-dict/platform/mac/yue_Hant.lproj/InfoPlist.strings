@@ -1,2 +1,4 @@
 "CFBundleDisplayName" = "粵語字典";
 "CFBundleName" = "粵語字典";
+"NSMicrophoneUsageDescription" = "粵語詞典會為咗進行聽寫功能用你嘅咪高風。"
+"NSSpeechRecognitionUsageDescription" = "粵語詞典會為咗進行聽寫功能用語音識別。"

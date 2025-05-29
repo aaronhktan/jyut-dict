@@ -1,2 +1,4 @@
 "CFBundleDisplayName" = "粤语字典";
 "CFBundleName" = "粤语字典";
+"NSMicrophoneUsageDescription" = "粤语词典会为了進行听写功能用您的麦克风。"
+"NSSpeechRecognitionUsageDescription" = "粤语词典会为了進行听写功能用语音识别。"
