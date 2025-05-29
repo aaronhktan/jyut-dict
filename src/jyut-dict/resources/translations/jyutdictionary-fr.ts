@@ -677,6 +677,10 @@ Veuillez patienter quelques minutes.</translation>
         <source>Start Dictation</source>
         <translation>Activer la reconnaissance vocale</translation>
     </message>
+    <message>
+        <source>Start Handwriting</source>
+        <translation>Activer la reconnaissance de l’écriture manuscrite</translation>
+    </message>
 </context>
 <context>
     <name>NoUpdateDialog</name>
@@ -966,7 +970,7 @@ Veuillez patienter quelques minutes.</translation>
     </message>
     <message>
         <source>Hanyu Pinyin:</source>
-        <translation>Hanyu Pinyin :</translation>
+        <translation>Hanyu Pinyin&#xa0;:</translation>
     </message>
     <message>
         <source>Fuzzy Pinyin matching:</source>

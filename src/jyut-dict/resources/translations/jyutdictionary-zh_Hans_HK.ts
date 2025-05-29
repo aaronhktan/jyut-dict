@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="yue_CN">
+<TS version="2.1" language="zh_CN">
 <context>
     <name>AboutWindow</name>
     <message>
@@ -675,6 +675,10 @@ Hang tight!</source>
     <message>
         <source>Start Dictation</source>
         <translation>打开听写</translation>
+    </message>
+    <message>
+        <source>Start Handwriting</source>
+        <translation>打开手写</translation>
     </message>
 </context>
 <context>

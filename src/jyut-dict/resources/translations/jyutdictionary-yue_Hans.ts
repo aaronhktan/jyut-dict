@@ -676,6 +676,10 @@ Hang tight!</source>
         <source>Start Dictation</source>
         <translation>打开听写</translation>
     </message>
+    <message>
+        <source>Start Handwriting</source>
+        <translation>打开手写</translation>
+    </message>
 </context>
 <context>
     <name>NoUpdateDialog</name>

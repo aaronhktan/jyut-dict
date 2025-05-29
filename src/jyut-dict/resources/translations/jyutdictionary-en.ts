@@ -645,6 +645,10 @@ Hang tight!</source>
         <source>Start Dictation</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Start Handwriting</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NoUpdateDialog</name>
