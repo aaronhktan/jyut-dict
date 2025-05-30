@@ -26,6 +26,9 @@ constexpr auto VARIANT = "install";
     constexpr auto SAME_CHARACTER_STRING = "－";
 #endif
 
+    template<class T>
+    using Result = std::variant<std::system_error, T>;
+
     // Index of buttons for Searching
     enum ButtonOptionIndex {
         SIMPLIFIED_BUTTON_INDEX,

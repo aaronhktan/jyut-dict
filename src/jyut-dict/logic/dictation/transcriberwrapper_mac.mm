@@ -51,14 +51,14 @@ void TranscriberWrapper::unsubscribe(IInputVolumeSubscriber *subscriber)
     _volumeSubscribers.extract(subscriber);
 }
 
-void TranscriberWrapper::notifyVolumeResult(std::variant<std::system_error, float> result)
+void TranscriberWrapper::notifyVolumeResult(Utils::Result<float> result)
 {
     for (const auto s : _volumeSubscribers) {
         s->volumeResult(result);
     }
 }
 
-void TranscriberWrapper::volumeResult(std::variant<std::system_error, float> result)
+void TranscriberWrapper::volumeResult(Utils::Result<float> result)
 {
     notifyVolumeResult(result);
 }
@@ -73,16 +73,14 @@ void TranscriberWrapper::unsubscribe(ITranscriptionResultSubscriber *subscriber)
     _transcriptionSubscribers.extract(subscriber);
 }
 
-void TranscriberWrapper::notifyTranscriptionResult(
-    std::variant<std::system_error, std::string> result)
+void TranscriberWrapper::notifyTranscriptionResult(Utils::Result<std::string> result)
 {
     for (const auto s : _transcriptionSubscribers) {
         s->transcriptionResult(result);
     }
 }
 
-void TranscriberWrapper::transcriptionResult(
-    std::variant<std::system_error, std::string> transcription)
+void TranscriberWrapper::transcriptionResult(Utils::Result<std::string> transcription)
 {
     notifyTranscriptionResult(transcription);
 }

@@ -153,8 +153,7 @@ void TranscriptionWindow::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void TranscriptionWindow::volumeResult(
-    std::variant<std::system_error, float> result)
+void TranscriptionWindow::volumeResult(Utils::Result<float> result)
 {
     if (std::system_error *e = std::get_if<std::system_error>(&result)) {
         emit newRadius(MIN_CIRCLE_RADIUS);
@@ -171,8 +170,7 @@ void TranscriptionWindow::volumeResult(
     }
 }
 
-void TranscriptionWindow::transcriptionResult(
-    std::variant<std::system_error, std::string> result)
+void TranscriptionWindow::transcriptionResult(Utils::Result<std::string> result)
 {
 #ifdef Q_OS_MAC
     if (std::string *t = std::get_if<std::string>(&result)) {

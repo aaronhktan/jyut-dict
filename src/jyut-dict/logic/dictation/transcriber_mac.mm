@@ -28,7 +28,7 @@ public:
     {
         _volumeSubscribers.extract(subscriber);
     }
-    void notifyVolumeResult(std::variant<std::system_error, float> result) override
+    void notifyVolumeResult(Utils::Result<float> result) override
     {
         for (const auto &s : _volumeSubscribers) {
             s->volumeResult(result);
@@ -43,7 +43,7 @@ public:
     {
         _transcriptionSubscribers.extract(subscriber);
     }
-    void notifyTranscriptionResult(std::variant<std::system_error, std::string> result) override
+    void notifyTranscriptionResult(Utils::Result<std::string> result) override
     {
         for (const auto &s : _transcriptionSubscribers) {
             s->transcriptionResult(result);
