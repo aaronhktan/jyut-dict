@@ -84,7 +84,9 @@ void prepareJyutpingBindValues(const QString &searchTerm,
     }
 }
 
-void preparePinyinBindValues(const QString &searchTerm, QString &globTerm)
+void preparePinyinBindValues(const QString &searchTerm,
+                             QString &regexTerm,
+                             bool fuzzyPinyin)
 {
     // Replace "v" and "ü" with "u:" since "ü" is stored as "u:" in the table
     QString processedSearchTerm = searchTerm;
@@ -109,26 +111,43 @@ void preparePinyinBindValues(const QString &searchTerm, QString &globTerm)
                             && processedSearchTerm.length() >= 3;
     bool dontAppendWildcard = searchTerm.at(searchTerm.size() - 1) == "$";
 
-    std::vector<std::string> pinyinWords;
+    std::vector<std::string> pinyinSyllables;
     if (searchExactMatch) {
         QString searchTermWithoutQuotes
             = processedSearchTerm.mid(1, processedSearchTerm.size() - 2);
-        Utils::split(searchTermWithoutQuotes.toStdString(), ' ', pinyinWords);
+        Utils::split(searchTermWithoutQuotes.toStdString(),
+                     ' ',
+                     pinyinSyllables);
     } else {
         MandarinUtils::segmentPinyin(processedSearchTerm,
-                                     pinyinWords,
+                                     pinyinSyllables,
                                      /* removeSpecialCharacters */ true,
                                      /* removeGlobCharacters */ false);
+    }
+
+    if (!searchExactMatch && fuzzyPinyin) {
+        MandarinUtils::pinyinSoundChanges(pinyinSyllables);
     }
 
     // Don't add wildcard characters to GLOB term if searching for exact match
     const char *globJoinDelimiter = searchExactMatch ? "" : "?";
     std::string query
-        = ChineseUtils::constructRomanisationQuery(pinyinWords,
+        = ChineseUtils::constructRomanisationQuery(pinyinSyllables,
                                                    globJoinDelimiter);
 
-    globTerm = QString::fromStdString(query)
-               + QString{(searchExactMatch || dontAppendWildcard) ? "" : "*"};
+    if (fuzzyPinyin) {
+        regexTerm = QString{"^"}
+                    + QString::fromStdString(query)
+                          .replace("*", ".*") // Convert glob characters to regex
+                          .replace("?", ".")
+                          .replace("!", "?") // Workaround for glob  replacement
+                    + QString{(searchExactMatch || dontAppendWildcard) ? "$"
+                                                                       : ".*$"};
+    } else {
+        regexTerm = QString::fromStdString(query)
+                    + QString{(searchExactMatch || dontAppendWildcard) ? ""
+                                                                       : "*"};
+    }
 }
 
 } // namespace
@@ -488,10 +507,15 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm,
     std::vector<Entry> results;
 
     QSqlQuery query{_manager->getDatabase()};
-    query.prepare(SEARCH_PINYIN_QUERY);
+
+    bool fuzzyPinyin
+        = _settings->value("Search/fuzzyPinyin", QVariant{true}).toBool();
+
+    query.prepare(
+        QString{SEARCH_PINYIN_QUERY}.arg(fuzzyPinyin ? REGEXP_STR : GLOB_STR));
 
     QString globTerm;
-    preparePinyinBindValues(searchTerm, globTerm);
+    preparePinyinBindValues(searchTerm, globTerm, fuzzyPinyin);
     query.addBindValue(globTerm);
     query.exec();
 
@@ -555,26 +579,27 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
         return;
     }
 
-    QSqlQuery query{_manager->getDatabase()};
-
     bool fuzzyJyutping
         = _settings->value("Search/fuzzyJyutping", QVariant{true}).toBool();
     bool unsafeFuzzyJyutping = _settings
                                    ->value("Search/unsafeFuzzyJyutping",
                                            QVariant{false})
                                    .toBool();
+    bool fuzzyPinyin
+        = _settings->value("Search/fuzzyPinyin", QVariant{true}).toBool();
 
-    query.prepare(QString{SEARCH_JYUTPING_EXISTS_QUERY}.arg(
+    QSqlQuery jyutpingQuery{_manager->getDatabase()};
+    jyutpingQuery.prepare(QString{SEARCH_JYUTPING_EXISTS_QUERY}.arg(
         fuzzyJyutping ? REGEXP_STR : GLOB_STR));
-    QString globTerm;
+    QString jyutpingSearchTerm;
     prepareJyutpingBindValues(searchTerm,
-                              globTerm,
+                              jyutpingSearchTerm,
                               fuzzyJyutping,
                               unsafeFuzzyJyutping);
-    query.addBindValue(globTerm);
-    query.setForwardOnly(true);
-    query.exec();
-    bool jyutpingExists = QueryParseUtils::parseExistence(query);
+    jyutpingQuery.addBindValue(jyutpingSearchTerm);
+    jyutpingQuery.setForwardOnly(true);
+    jyutpingQuery.exec();
+    bool jyutpingExists = QueryParseUtils::parseExistence(jyutpingQuery);
 
     if (jyutpingExists) {
         notifyObserversIfQueryIdCurrent(SearchParameters::JYUTPING, queryID);
@@ -582,21 +607,20 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
         return;
     }
 
-    if (sd.isValidPinyin()) {
-        QSqlQuery query{_manager->getDatabase()};
-        query.prepare(SEARCH_PINYIN_EXISTS_QUERY);
-        QString globTerm;
-        preparePinyinBindValues(searchTerm, globTerm);
-        query.addBindValue(globTerm);
-        query.setForwardOnly(true);
-        query.exec();
-        bool pinyinExists = QueryParseUtils::parseExistence(query);
+    QSqlQuery pinyinQuery{_manager->getDatabase()};
+    pinyinQuery.prepare(QString{SEARCH_PINYIN_EXISTS_QUERY}.arg(
+        fuzzyPinyin ? REGEXP_STR : GLOB_STR));
+    QString pinyinSearchTerm;
+    preparePinyinBindValues(searchTerm, pinyinSearchTerm, fuzzyPinyin);
+    pinyinQuery.addBindValue(pinyinSearchTerm);
+    pinyinQuery.setForwardOnly(true);
+    pinyinQuery.exec();
+    bool pinyinExists = QueryParseUtils::parseExistence(pinyinQuery);
 
-        if (pinyinExists) {
-            notifyObserversIfQueryIdCurrent(SearchParameters::PINYIN, queryID);
-            searchPinyinThread(searchTerm, queryID);
-            return;
-        }
+    if (pinyinExists) {
+        notifyObserversIfQueryIdCurrent(SearchParameters::PINYIN, queryID);
+        searchPinyinThread(searchTerm, queryID);
+        return;
     }
 
     notifyObserversIfQueryIdCurrent(SearchParameters::ENGLISH, queryID);

@@ -707,6 +707,83 @@ std::string convertPinyinToIPA(const std::string &pinyin,
     return result;
 }
 
+bool pinyinSoundChanges(std::vector<std::string> &inOut)
+{
+    for (auto &syllable : inOut) {
+        if (syllable.starts_with("zh")) {
+            syllable.replace(0, 2, "z(h)!");
+        } else if (syllable.starts_with("z")) {
+            syllable.replace(0, 1, "z(h)!");
+        }
+
+        if (syllable.starts_with("ch")) {
+            syllable.replace(0, 2, "c(h)!");
+        } else if (syllable.starts_with("c")) {
+            syllable.replace(0, 1, "c(h)!");
+        }
+
+        if (syllable.starts_with("sh")) {
+            syllable.replace(0, 2, "s(h)!");
+        } else if (syllable.starts_with("s")) {
+            syllable.replace(0, 1, "s(h)!");
+        }
+
+        if (syllable.starts_with("n")) {
+            syllable.replace(0, 1, "(n|l)");
+        }
+        if (syllable.starts_with("r")) {
+            syllable.replace(0, 1, "(l|r)");
+        }
+        if (syllable.starts_with("li") || syllable.starts_with("lie")
+            || syllable.starts_with("liao") || syllable.starts_with("liu")
+            || syllable.starts_with("lian") || syllable.starts_with("lin")
+            || syllable.starts_with("liang") || syllable.starts_with("ling")
+            || syllable.starts_with("lu:") || syllable.starts_with("lu:e")) {
+            // Many of these conditions are duplicated (many start with "li" for example)
+            // but for clarity and completeness' sake I leave them in
+            syllable.replace(0, 1, "(l|n)");
+        } else if (syllable.starts_with("l")) {
+            syllable.replace(0, 1, "(l|n|r)");
+        }
+
+        if (syllable.ends_with("ang")
+            || (syllable.length() >= 4
+                && std::string_view{syllable.begin(), syllable.end() - 1}
+                       .ends_with("ang"))) {
+            syllable.replace(syllable.rfind("ng"), 2, "ng!");
+        } else if (syllable.ends_with("an")
+                   || (syllable.length() >= 3
+                       && std::string_view{syllable.begin(), syllable.end() - 1}
+                              .ends_with("an"))) {
+            syllable.replace(syllable.rfind("n"), 1, "ng!");
+        }
+        if (syllable.ends_with("eng")
+            || (syllable.length() >= 4
+                && std::string_view{syllable.begin(), syllable.end() - 1}
+                       .ends_with("eng"))) {
+            syllable.replace(syllable.rfind("ng"), 2, "ng!");
+        } else if (syllable.ends_with("en")
+                   || (syllable.length() >= 3
+                       && std::string_view{syllable.begin(), syllable.end() - 1}
+                              .ends_with("en"))) {
+            syllable.replace(syllable.rfind("n"), 1, "ng!");
+        }
+        if (syllable.ends_with("ing")
+            || (syllable.length() >= 4
+                && std::string_view{syllable.begin(), syllable.end() - 1}
+                       .ends_with("ing"))) {
+            syllable.replace(syllable.rfind("ng"), 2, "ng!");
+        } else if (syllable.ends_with("in")
+                   || (syllable.length() >= 3
+                       && std::string_view{syllable.begin(), syllable.end() - 1}
+                              .ends_with("in"))) {
+            syllable.replace(syllable.rfind("n"), 1, "ng!");
+        }
+    }
+
+    return false;
+}
+
 bool segmentPinyin(const QString &string,
                    std::vector<std::string> &out,
                    bool removeSpecialCharacters,

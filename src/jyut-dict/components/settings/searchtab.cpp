@@ -67,11 +67,11 @@ void SearchTab::setupUI()
     _searchAutoDetectCheckbox->setTristate(false);
     initializeSearchAutoDetectCheckbox(*_searchAutoDetectCheckbox);
 
-    QFrame *_divider = new QFrame{this};
-    _divider->setObjectName("divider");
-    _divider->setFrameShape(QFrame::HLine);
-    _divider->setFrameShadow(QFrame::Raised);
-    _divider->setFixedHeight(1);
+    QFrame *_jyutpingDivider = new QFrame{this};
+    _jyutpingDivider->setObjectName("divider");
+    _jyutpingDivider->setFrameShape(QFrame::HLine);
+    _jyutpingDivider->setFrameShadow(QFrame::Raised);
+    _jyutpingDivider->setFixedHeight(1);
 
     _jyutpingTitleLabel = new QLabel{this};
 
@@ -89,16 +89,37 @@ void SearchTab::setupUI()
     _dangerousFuzzyJyutpingCheckbox->setTristate(false);
     _dangerousFuzzyJyutpingDescription = new QLabel{this};
 
+    QFrame *_pinyinDivider = new QFrame{this};
+    _pinyinDivider->setObjectName("divider");
+    _pinyinDivider->setFrameShape(QFrame::HLine);
+    _pinyinDivider->setFrameShadow(QFrame::Raised);
+    _pinyinDivider->setFixedHeight(1);
+
+    _pinyinTitleLabel = new QLabel{this};
+
+    _fuzzyPinyin = new QWidget{this};
+    _fuzzyPinyinLayout = new QGridLayout{_fuzzyPinyin};
+    _fuzzyPinyinLayout->setContentsMargins(0, 11, 0, 0);
+    _fuzzyPinyinCheckbox = new QCheckBox{this};
+    _fuzzyPinyinCheckbox->setTristate(false);
+    _fuzzyPinyinDescription = new QLabel{this};
+
     _tabLayout->addRow(" ", _searchAutoDetectCheckbox);
 
-    _tabLayout->addRow(_divider);
+    _tabLayout->addRow(_jyutpingDivider);
 
     _tabLayout->addRow(_jyutpingTitleLabel);
     _tabLayout->addRow(" ", _fuzzyJyutping);
     _tabLayout->addRow(" ", _dangerousFuzzyJyutping);
 
+    _tabLayout->addRow(_pinyinDivider);
+
+    _tabLayout->addRow(_pinyinTitleLabel);
+    _tabLayout->addRow(" ", _fuzzyPinyin);
+
     initializeFuzzyJyutping(*_fuzzyJyutping);
     initializeDangerousFuzzyJyutping(*_dangerousFuzzyJyutping);
+    initializeFuzzyPinyin(*_fuzzyPinyin);
 
     _dangerousFuzzyJyutpingCheckbox->setEnabled(
         _fuzzyJyutpingCheckbox->checkState());
@@ -132,6 +153,10 @@ void SearchTab::translateUI()
         ->setText(tr("\tRisky fuzzy Jyutping matches:"));
 #endif
 
+    _pinyinTitleLabel->setText("<b>" + tr("Hanyu Pinyin:") + "</b>");
+    static_cast<QLabel *>(_tabLayout->labelForField(_fuzzyPinyin))
+        ->setText(tr("Fuzzy Pinyin matching:"));
+
     QColor backgroundColour = Utils::isDarkMode()
                                   ? QColor{LABEL_TEXT_COLOUR_DARK_R,
                                            LABEL_TEXT_COLOUR_DARK_G,
@@ -150,6 +175,12 @@ void SearchTab::translateUI()
                                     Strings::DANGEROUS_FUZZY_JYUTPING_EXPLAINER)
             .arg(backgroundColour.name()));
     _dangerousFuzzyJyutpingDescription->setWordWrap(true);
+
+    _fuzzyPinyinDescription->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::FUZZY_PINYIN_EXPLAINER)
+            .arg(backgroundColour.name()));
+    _fuzzyPinyinDescription->setWordWrap(true);
 }
 
 void SearchTab::setStyle(bool use_dark)
@@ -191,6 +222,13 @@ void SearchTab::setStyle(bool use_dark)
             .arg(backgroundColour.name()));
     _dangerousFuzzyJyutpingDescription->setWordWrap(true);
     _dangerousFuzzyJyutpingDescription->setMinimumWidth(300);
+
+    _fuzzyPinyinDescription->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::FUZZY_PINYIN_EXPLAINER)
+            .arg(backgroundColour.name()));
+    _fuzzyPinyinDescription->setWordWrap(true);
+    _fuzzyPinyinDescription->setMinimumWidth(300);
 }
 
 void SearchTab::initializeSearchAutoDetectCheckbox(QCheckBox &checkbox)
@@ -242,6 +280,22 @@ void SearchTab::initializeDangerousFuzzyJyutping(QWidget &widget)
     setDangerousFuzzyJyutpingCheckboxDefault(*_dangerousFuzzyJyutpingCheckbox);
 }
 
+void SearchTab::initializeFuzzyPinyin(QWidget &widget)
+{
+    static_cast<QGridLayout *>(widget.layout())
+        ->addWidget(_fuzzyPinyinCheckbox, 0, 0, 1, -1);
+    static_cast<QGridLayout *>(widget.layout())
+        ->addWidget(_fuzzyPinyinDescription, 1, 0, 1, -1);
+
+    connect(_fuzzyPinyinCheckbox, &QCheckBox::checkStateChanged, this, [&]() {
+        _settings->setValue("Search/fuzzyPinyin",
+                            _fuzzyPinyinCheckbox->checkState());
+        _settings->sync();
+        emit triggerSearch();
+    });
+    setFuzzyPinyinCheckboxDefault(*_fuzzyPinyinCheckbox);
+}
+
 void SearchTab::setSearchAutoDetectCheckboxDefault(QCheckBox &checkbox)
 {
     checkbox.setChecked(
@@ -261,9 +315,16 @@ void SearchTab::setDangerousFuzzyJyutpingCheckboxDefault(QCheckBox &checkbox)
             .toBool());
 }
 
+void SearchTab::setFuzzyPinyinCheckboxDefault(QCheckBox &checkbox)
+{
+    checkbox.setChecked(
+        _settings->value("Search/fuzzyPinyin", QVariant{true}).toBool());
+}
+
 void SearchTab::resetSettings(void)
 {
     setSearchAutoDetectCheckboxDefault(*_searchAutoDetectCheckbox);
     setFuzzyJyutpingCheckboxDefault(*_fuzzyJyutpingCheckbox);
     setFuzzyJyutpingCheckboxDefault(*_dangerousFuzzyJyutpingCheckbox);
+    setFuzzyJyutpingCheckboxDefault(*_fuzzyPinyinCheckbox);
 }

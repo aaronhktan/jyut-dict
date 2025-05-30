@@ -320,6 +320,7 @@ void MainWindow::translateUI(void)
     _findAction->setText(tr("Start a New Search"));
     _findAndSelectAllAction->setText(tr("Select Search Bar Contents"));
     _dictationAction->setText(tr("Start Dictation"));
+    _handwritingAction->setText(tr("Start Handwriting"));
     _setFocusToResultsAction->setText(
         tr("Jump to First Item in Search Results"));
     _selectSimplifiedAction->setText(tr("Search Simplified Chinese"));

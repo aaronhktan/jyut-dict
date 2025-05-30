@@ -71,6 +71,17 @@ private slots:
     void segmentPinyinMultipleFinals();
     void segmentPinyinInvalidTone();
     void segmentPinyinGarbage();
+
+    void soundChangeZ();
+    void soundChangeC();
+    void soundChangeS();
+    void soundChangeN();
+    void soundChangeR();
+    void soundChangeLN();
+    void soundChangeLNR();
+    void soundChangeAng();
+    void soundChangeEng();
+    void soundChangeIng();
 };
 
 TestMandarinUtils::TestMandarinUtils() {}
@@ -410,6 +421,312 @@ void TestMandarinUtils::pinyinToIPAErhua()
 #else
     QCOMPARE(result, "t͡ɕʰɥɑɻ˥˥");
 #endif
+}
+
+void TestMandarinUtils::soundChangeZ()
+{
+    std::vector<std::string> result{"zuan"};
+    bool err = MandarinUtils::pinyinSoundChanges(result);
+    std::vector<std::string> expected{"z(h)!uang!"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"zuan3"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"z(h)!uang!3"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"zuan?"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"z(h)!uang!?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestMandarinUtils::soundChangeC()
+{
+    std::vector<std::string> result{"cong"};
+    bool err = MandarinUtils::pinyinSoundChanges(result);
+    std::vector<std::string> expected{"c(h)!ong"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"cong1"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"c(h)!ong1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"chong?"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"c(h)!ong?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestMandarinUtils::soundChangeS()
+{
+    std::vector<std::string> result{"se"};
+    bool err = MandarinUtils::pinyinSoundChanges(result);
+    std::vector<std::string> expected{"s(h)!e"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"se2"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"s(h)!e2"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"se?"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"s(h)!e?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestMandarinUtils::soundChangeN()
+{
+    std::vector<std::string> result{"ni"};
+    bool err = MandarinUtils::pinyinSoundChanges(result);
+    std::vector<std::string> expected{"(n|l)i"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"ni3"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"(n|l)i3"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"ni?"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"(n|l)i?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestMandarinUtils::soundChangeR()
+{
+    std::vector<std::string> result{"re"};
+    bool err = MandarinUtils::pinyinSoundChanges(result);
+    std::vector<std::string> expected{"(l|r)e"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"re4"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"(l|r)e4"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"re?"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"(l|r)e?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestMandarinUtils::soundChangeLN()
+{
+    std::vector<std::string> result{"li"};
+    bool err = MandarinUtils::pinyinSoundChanges(result);
+    std::vector<std::string> expected{"(l|n)i"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"lie4"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"(l|n)ie4"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"liao?"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"(l|n)iao?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"liu"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"(l|n)iu"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"lian2"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"(l|n)iang!2"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"lin?"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"(l|n)ing!?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"liang"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"(l|n)iang!"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"ling1"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"(l|n)ing!1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"lu:?"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"(l|n)u:?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"lu:e"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"(l|n)u:e"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestMandarinUtils::soundChangeLNR()
+{
+    std::vector<std::string> result{"lang"};
+    bool err = MandarinUtils::pinyinSoundChanges(result);
+    std::vector<std::string> expected{"(l|n|r)ang!"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"lang4"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"(l|n|r)ang!4"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"lang?"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"(l|n|r)ang!?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestMandarinUtils::soundChangeAng()
+{
+    std::vector<std::string> result{"bang"};
+    bool err = MandarinUtils::pinyinSoundChanges(result);
+    std::vector<std::string> expected{"bang!"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"bang1"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"bang!1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"bang?"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"bang!?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"ban"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"bang!"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"ban2"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"bang!2"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"ban?"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"bang!?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestMandarinUtils::soundChangeEng()
+{
+    std::vector<std::string> result{"peng"};
+    bool err = MandarinUtils::pinyinSoundChanges(result);
+    std::vector<std::string> expected{"peng!"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"peng4"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"peng!4"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"peng?"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"peng!?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"pen"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"peng!"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"pen1"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"peng!1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"pen?"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"peng!?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestMandarinUtils::soundChangeIng()
+{
+    std::vector<std::string> result{"bing"};
+    bool err = MandarinUtils::pinyinSoundChanges(result);
+    std::vector<std::string> expected{"bing!"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"bing3"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"bing!3"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"bing?"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"bing!?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"pin"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"ping!"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"pin1"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"ping!1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"pin?"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"ping!?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
 }
 
 void TestMandarinUtils::segmentPinyinSimple()

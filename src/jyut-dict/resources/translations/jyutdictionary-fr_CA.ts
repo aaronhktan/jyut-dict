@@ -677,6 +677,10 @@ Veuillez patienter quelques minutes.</translation>
         <source>Start Dictation</source>
         <translation>Activer la reconnaissance vocale</translation>
     </message>
+    <message>
+        <source>Start Handwriting</source>
+        <translation>Activer la reconnaissance de l’écriture manuscrite</translation>
+    </message>
 </context>
 <context>
     <name>NoUpdateDialog</name>
@@ -963,6 +967,14 @@ Veuillez patienter quelques minutes.</translation>
     <message>
         <source>	Risky fuzzy Jyutping matches:</source>
         <translation>	Remplacements risqués avec Jyutping approximatif&#xa0;:</translation>
+    </message>
+    <message>
+        <source>Hanyu Pinyin:</source>
+        <translation>Hanyu Pinyin&#xa0;:</translation>
+    </message>
+    <message>
+        <source>Fuzzy Pinyin matching:</source>
+        <translation>Recherche avec Hanyu Pinyin approximatif&#xa0;:</translation>
     </message>
 </context>
 <context>
@@ -1322,6 +1334,10 @@ Veuillez patienter quelques minutes.</translation>
         <source>OK</source>
         <translation>OK</translation>
     </message>
+    <message>
+        <source>New Feature: Easier Search In Mandarin</source>
+        <translation>Nouvelle fonctionnalité&#xa0;: Recherche plus aisée en mandarin</translation>
+    </message>
 </context>
 <context>
     <name>strings</name>
@@ -1516,6 +1532,14 @@ Débogage&#xa0;: Locale&#xa0;: %1, Langue&#xa0;: Chinois - Chine continentale</t
     <message>
         <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contains FlowLayout code from &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;, &lt;a href=&quot;file://%3&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;libzinnia&lt;/a&gt; from the Tegaki project, and &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; code from KDE.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
         <translation>Icône créée avec des images originant du &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Ancient Chinese Characters project (sinogrammes anciens)&lt;/a&gt; de Wikimédia.&lt;br&gt;Icônes d&apos;interface : &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; et &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contient du code FlowLayout de &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;, &lt;a href=&quot;file://%3&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;libzinnia&lt;/a&gt; du projet Tegaki et &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; de KDE.&lt;br&gt;Programmé avec &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</translation>
+    </message>
+    <message>
+        <source>&lt;p style=&quot;color: %1&quot;&gt;Fuzzy Pinyin finds results for non-official pronunciations. For example, &quot;zong1 guo2&quot; will match &quot;zhōng guó&quot;, &quot;pin1&quot; will match &quot;pīng&quot;. Please note that this feature will increase time before results are found.&lt;/p&gt;</source>
+        <translation>&lt;p style=&quot;color: %1&quot;&gt;Le Hanyu Pinyin approximatif trouvera des résultats pour des graphies non-Hanyu Pinyin ainsi que les prononciations non-standards. Par exemple, «&#xa0;zong1 guo2&#xa0;» trouvera «&#xa0;中国&#xa0;» («&#xa0;zhong1 guo2&#xa0;» en Hanyu Pinyin standard); «&#xa0;pin1&#xa0;» trouvera «&#xa0;乒&#xa0;» («&#xa0;ping1&#xa0;»). Veuillez noter que cette fonctionnalité retardera l&apos;affichage des résultats.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;p style=&quot;color: %1&quot;&gt;Fuzzy Pinyin finds results for non-official pronunciations. For example, &quot;zong1 guo2&quot; will match &quot;zhōng guó&quot;, &quot;pin1&quot; will match &quot;pīng&quot;.&lt;/p&gt;</source>
+        <translation>&lt;p style=&quot;color: %1&quot;&gt;Le Hanyu Pinyin approximatif trouvera des résultats pour des graphies non-Hanyu Pinyin ainsi que les prononciations non-standards. Par exemple, «&#xa0;zong1 guo2&#xa0;» trouvera «&#xa0;中国&#xa0;» («&#xa0;zhong1 guo2&#xa0;» en Hanyu Pinyin standard); «&#xa0;pin1&#xa0;» trouvera «&#xa0;乒&#xa0;» («&#xa0;ping1&#xa0;»).&lt;/p&gt;</translation>
     </message>
 </context>
 </TS>

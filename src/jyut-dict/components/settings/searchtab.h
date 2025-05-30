@@ -31,11 +31,13 @@ private:
     void initializeSearchAutoDetectCheckbox(QCheckBox &searchAutoDetectCheckbox);
     void initializeFuzzyJyutping(QWidget &widget);
     void initializeDangerousFuzzyJyutping(QWidget &widget);
+    void initializeFuzzyPinyin(QWidget &widget);
 
     void setSearchAutoDetectCheckboxDefault(QCheckBox &searchAutoDetectCheckbox);
     void setFuzzyJyutpingCheckboxDefault(QCheckBox &fuzzyJyutpingCheckbox);
     void setDangerousFuzzyJyutpingCheckboxDefault(
         QCheckBox &dangerouFuzzyJyutpingCheckbox);
+    void setFuzzyPinyinCheckboxDefault(QCheckBox &fuzzyPinyinCheckbox);
 
     bool _paletteRecentlyChanged = false;
 
@@ -53,6 +55,12 @@ private:
     QGridLayout *_dangerousFuzzyJyutpingLayout;
     QCheckBox *_dangerousFuzzyJyutpingCheckbox;
     QLabel *_dangerousFuzzyJyutpingDescription;
+
+    QLabel *_pinyinTitleLabel;
+    QWidget *_fuzzyPinyin;
+    QGridLayout *_fuzzyPinyinLayout;
+    QCheckBox *_fuzzyPinyinCheckbox;
+    QLabel *_fuzzyPinyinDescription;
 
     QFormLayout *_tabLayout;
 

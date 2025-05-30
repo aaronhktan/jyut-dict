@@ -447,7 +447,7 @@ constexpr auto SEARCH_PINYIN_EXISTS_QUERY = "SELECT EXISTS ( "
                                             "  SELECT "
                                             "    rowid "
                                             "  FROM entries "
-                                            "  WHERE pinyin GLOB ? "
+                                            "  WHERE pinyin %1 ? "
                                             ") AS existence ";
 
 constexpr auto SEARCH_PINYIN_QUERY
@@ -456,7 +456,7 @@ constexpr auto SEARCH_PINYIN_QUERY
       "    SELECT "
       "      rowid "
       "    FROM entries "
-      "    WHERE pinyin GLOB ? "
+      "    WHERE pinyin %1 ? "
       "  ), "
       "  matching_definition_ids AS ( "
       "    SELECT "

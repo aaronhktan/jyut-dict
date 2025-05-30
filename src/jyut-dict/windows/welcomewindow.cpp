@@ -260,14 +260,34 @@ void WelcomeWindow::setStyle(bool use_dark)
 
 void WelcomeWindow::noAction(void)
 {
-    _settings->setValue("Search/fuzzyJyutping", false);
-    emit welcomeCompleted();
-    close();
+    if (_fuzzyJyutpingDone) {
+        _settings->setValue("Search/fuzzyPinyin", false);
+        emit welcomeCompleted();
+        close();
+    } else {
+        _settings->setValue("Search/fuzzyJyutping", false);
+        _messageLabel->setText(
+            tr("New Feature: Easier Search In Mandarin")
+            + QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                          Strings::FUZZY_PINYIN_EXPLAINER)
+            + tr("Would you like to enable this feature?"));
+        _fuzzyJyutpingDone = true;
+    }
 }
 
 void WelcomeWindow::OKAction(void)
 {
-    _settings->setValue("Search/fuzzyJyutping", true);
-    emit welcomeCompleted();
-    close();
+    if (_fuzzyJyutpingDone) {
+        _settings->setValue("Search/fuzzyPinyin", true);
+        emit welcomeCompleted();
+        close();
+    } else {
+        _settings->setValue("Search/fuzzyJyutping", true);
+        _messageLabel->setText(
+            tr("New Feature: Easier Search In Mandarin")
+            + QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                          Strings::FUZZY_PINYIN_EXPLAINER)
+            + tr("Would you like to enable this feature?"));
+        _fuzzyJyutpingDone = true;
+    }
 }

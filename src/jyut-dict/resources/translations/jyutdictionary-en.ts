@@ -645,6 +645,10 @@ Hang tight!</source>
         <source>Start Dictation</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Start Handwriting</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NoUpdateDialog</name>
@@ -883,6 +887,14 @@ Hang tight!</source>
     </message>
     <message>
         <source>	Risky fuzzy Jyutping matches:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hanyu Pinyin:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fuzzy Pinyin matching:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1243,6 +1255,10 @@ Hang tight!</source>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>New Feature: Easier Search In Mandarin</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>strings</name>
@@ -1430,6 +1446,14 @@ Debug: Locale: %1, Language: Chinese - Mainland</source>
     </message>
     <message>
         <source>Icon based on &lt;a href=https://commons.wikimedia.org/wiki/Commons:Ancient_Chinese_characters_project style=&quot;color: %1; text-decoration: none&quot;&gt;Wikimedia Ancient Chinese characters project&lt;/a&gt; files.&lt;br&gt;UI icons from &lt;a href=https://feathericons.com style=&quot;color: %1; text-decoration: none&quot;&gt;Feather Icons&lt;/a&gt; and &lt;a href=https://github.com/microsoft/fluentui-system-icons style=&quot;color: %1; text-decoration: none&quot;&gt;Fluent UI System Icons&lt;/a&gt;.&lt;br&gt;Contains FlowLayout code from &lt;a href=&quot;file://%2&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;, &lt;a href=&quot;file://%3&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;libzinnia&lt;/a&gt; from the Tegaki project, and &lt;a href=&quot;https://invent.kde.org/frameworks/karchive&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;KArchive&lt;/a&gt; code from KDE.&lt;br&gt;Made with &lt;a href=&quot;#&quot; style=&quot;color: %1; text-decoration: none&quot;&gt;Qt&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p style=&quot;color: %1&quot;&gt;Fuzzy Pinyin finds results for non-official pronunciations. For example, &quot;zong1 guo2&quot; will match &quot;zhōng guó&quot;, &quot;pin1&quot; will match &quot;pīng&quot;. Please note that this feature will increase time before results are found.&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p style=&quot;color: %1&quot;&gt;Fuzzy Pinyin finds results for non-official pronunciations. For example, &quot;zong1 guo2&quot; will match &quot;zhōng guó&quot;, &quot;pin1&quot; will match &quot;pīng&quot;.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

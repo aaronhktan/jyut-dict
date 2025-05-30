@@ -25,6 +25,7 @@ bool segmentPinyin(const QString &string,
                    std::vector<std::string> &out,
                    bool removeSpecialCharacters = true,
                    bool removeGlobCharacters = true);
+bool pinyinSoundChanges(std::vector<std::string> &inOut);
 } // namespace MandarinUtils
 
 #endif // MANDARINUTILS_H
