@@ -1,5 +1,7 @@
 #include "dictionarylistmodel.h"
 
+#include <iostream>
+
 DictionaryListModel::DictionaryListModel(QObject *parent)
     : QAbstractListModel(parent)
 {
@@ -14,9 +16,6 @@ void DictionaryListModel::setDictionaries(
     endResetModel();
 }
 
-// Currently, setData ignores the index.
-// TODO: the data should set the data at index.row() instead of just pushing
-// to the back of the dictionaries vector.
 bool DictionaryListModel::setData(const QModelIndex &index,
                                   const QVariant &value,
                                   int role)
@@ -26,9 +25,13 @@ bool DictionaryListModel::setData(const QModelIndex &index,
     }
 
     try {
-        _dictionaries.push_back(value.value<DictionaryMetadata>());
-    } catch (std::exception &/*e*/) {
-        //        qDebug() << e.what();
+        if (_dictionaries.size() >= index.row()) {
+            _dictionaries.at(index.row()) = value.value<DictionaryMetadata>();
+        } else {
+            _dictionaries.push_back(value.value<DictionaryMetadata>());
+        }
+    } catch (std::exception &e) {
+        std::cerr << e.what() << std::endl;
         return false;
     }
 
@@ -74,18 +77,18 @@ int DictionaryListModel::rowCount(const QModelIndex &parent) const
 QVariant DictionaryListModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
-        return QVariant();
+        return QVariant{};
     }
 
     if (static_cast<unsigned long>(index.row()) >= _dictionaries.size()) {
-        return QVariant();
+        return QVariant{};
     }
 
     if (role == Qt::DisplayRole) {
-        QVariant var = QVariant::fromValue(_dictionaries.at(static_cast<unsigned long>(index.row())));
-        return var;
+        return QVariant::fromValue(
+            _dictionaries.at(static_cast<unsigned long>(index.row())));
     } else {
-        return QVariant();
+        return QVariant{};
     }
 }
 
@@ -93,12 +96,12 @@ QVariant DictionaryListModel::headerData(int section, Qt::Orientation orientatio
                                          int role) const
 {
     if (role != Qt::DisplayRole) {
-        return QVariant();
+        return QVariant{};
     }
 
     if (orientation == Qt::Vertical) {
-        return QString("Row %1").arg(section);
+        return QString{"Row %1"}.arg(section);
     } else {
-        return QVariant();
+        return QVariant{};
     }
 }

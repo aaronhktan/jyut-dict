@@ -2,8 +2,6 @@
 
 #import "transcriber_mac.h"
 
-#include <QDebug>
-
 #import <Speech/Speech.h>
 
 TranscriberWrapper::TranscriberWrapper(std::string &locale)

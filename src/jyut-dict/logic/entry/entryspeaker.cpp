@@ -8,6 +8,7 @@
 #include <QVector>
 
 #include <cerrno>
+#include <iostream>
 
 EntrySpeaker::EntrySpeaker()
     : _tts{new QTextToSpeech}
@@ -221,7 +222,8 @@ int EntrySpeaker::speak(const QLocale::Language &language,
                                           TextToSpeech::voiceNames[voice],
                                           QString::fromStdString(syllable));
             if (!QFileInfo::exists(filepath)) {
-                qDebug() << "File " << filepath << " does not exist";
+                std::cerr << "File " << filepath.toStdString()
+                          << " does not exist" << std::endl;
             }
             QUrl url = QUrl::fromLocalFile(filepath);
             _player->setSource(url);
