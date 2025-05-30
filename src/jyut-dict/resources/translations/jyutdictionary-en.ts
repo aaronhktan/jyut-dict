@@ -402,6 +402,17 @@
     </message>
 </context>
 <context>
+    <name>HandwritingErrorDialog</name>
+    <message>
+        <source>Handwriting could not be started!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>HandwritingWindow</name>
     <message>
         <source>Traditional Chinese</source>
@@ -425,6 +436,25 @@
     </message>
     <message>
         <source>Handwriting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Handwriting models could not be copied.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A folder for handwriting models could not be created.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>An unspecified error occurred.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>HandwritingWrapper</name>
+    <message>
+        <source>Preparing handwriting models...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

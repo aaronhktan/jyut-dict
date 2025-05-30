@@ -402,6 +402,17 @@
     </message>
 </context>
 <context>
+    <name>HandwritingErrorDialog</name>
+    <message>
+        <source>Handwriting could not be started!</source>
+        <translation>Échec de la reconnaissance de l’écriture manuscrite</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+</context>
+<context>
     <name>HandwritingWindow</name>
     <message>
         <source>Traditional Chinese</source>
@@ -426,6 +437,25 @@
     <message>
         <source>Handwriting</source>
         <translation>Reconnaissance de l’écriture manuscrite</translation>
+    </message>
+    <message>
+        <source>Handwriting models could not be copied.</source>
+        <translation>Échec de la copie des modèles de la reconnaissance de l’écriture manuscrite.</translation>
+    </message>
+    <message>
+        <source>A folder for handwriting models could not be created.</source>
+        <translation>Échec de la création du dossier pour les modèles de la reconnaissance de l’écriture manuscrite.</translation>
+    </message>
+    <message>
+        <source>An unspecified error occurred.</source>
+        <translation>Une erreur est survenue.</translation>
+    </message>
+</context>
+<context>
+    <name>HandwritingWrapper</name>
+    <message>
+        <source>Preparing handwriting models...</source>
+        <translation>Préparation des modèles de la reconnaissance de l'écriture manuscrite...</translation>
     </message>
 </context>
 <context>
