@@ -18,6 +18,7 @@
 #include <QPropertyAnimation>
 #include <QSize>
 #include <QStyle>
+#include <QTimer>
 
 namespace {
 constexpr auto NUM_RESULTS = 10;
@@ -41,6 +42,12 @@ HandwritingWindow::HandwritingWindow(QWidget *parent)
                     _buttons.at(i)->setText(
                         QString::fromStdString(results.at(i)));
                 }
+            });
+    connect(_handwritingWrapper.get(),
+            &HandwritingWrapper::modelError,
+            this,
+            [&](std::system_error &e) {
+                showErrorDialog(e.code().value(), e.what());
             });
 
     Qt::WindowFlags flags = windowFlags() | Qt::CustomizeWindowHint
@@ -587,4 +594,36 @@ void HandwritingWindow::setScript()
         = sender->property("data").value<Handwriting::Script>();
     _handwritingWrapper->setRecognizerScript(script);
     emit scriptSelected(script);
+}
+
+void HandwritingWindow::showErrorDialog(int err, std::string description)
+{
+    if (!isVisible()) {
+        // Only show the error dialog once the handwriting window has been painted
+        QTimer::singleShot(100, this, [=, this]() {
+            showErrorDialog(err, description);
+        });
+        return;
+    }
+
+    QString reason;
+
+    switch (err) {
+    case ENOENT: {
+        reason = tr("Handwriting models could not be copied.");
+        break;
+    }
+    case ENOTDIR: {
+        reason = tr("A folder for handwriting models could not be created.");
+        break;
+    }
+    default: {
+        reason = tr("An unspecified error occurred.");
+        break;
+    }
+    }
+
+    _errorDialog = new HandwritingErrorDialog(reason, description.c_str());
+    _errorDialog->exec();
+    close();
 }
