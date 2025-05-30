@@ -1,5 +1,9 @@
 #include "handwritingwrapper.h"
 
+#ifdef Q_OS_WIN
+#include "logic/strings/strings.h"
+#endif
+
 #include <QCoreApplication>
 #include <QFileInfo>
 #include <QStandardPaths>
