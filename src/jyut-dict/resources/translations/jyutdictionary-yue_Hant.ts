@@ -402,6 +402,17 @@
     </message>
 </context>
 <context>
+    <name>HandwritingErrorDialog</name>
+    <message>
+        <source>Handwriting could not be started!</source>
+        <translation>手寫辨識失敗！</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>哦</translation>
+    </message>
+</context>
+<context>
     <name>HandwritingWindow</name>
     <message>
         <source>Traditional Chinese</source>
@@ -426,6 +437,25 @@
     <message>
         <source>Handwriting</source>
         <translation>手寫辨識</translation>
+    </message>
+    <message>
+        <source>Handwriting models could not be copied.</source>
+        <translation>無法複製手寫模型至目標資料夾。</translation>
+    </message>
+    <message>
+        <source>A folder for handwriting models could not be created.</source>
+        <translation>無法建立手寫模型照料夾。</translation>
+    </message>
+    <message>
+        <source>An unspecified error occurred.</source>
+        <translation>發生咗問題。</translation>
+    </message>
+</context>
+<context>
+    <name>HandwritingWrapper</name>
+    <message>
+        <source>Preparing handwriting models...</source>
+        <translation>複製緊手寫模型…</translation>
     </message>
 </context>
 <context>
@@ -1039,7 +1069,7 @@ Hang tight!</source>
     </message>
     <message>
         <source>	Show Mandarin:</source>
-        <translation>   普通話顯示下列拼音：</translation>
+        <translation>	普通話顯示下列拼音：</translation>
     </message>
     <message>
         <source>Pinyin</source>
@@ -1109,7 +1139,7 @@ Hang tight!</source>
     </message>
     <message>
         <source>	Show simplified/traditional characters:</source>
-        <translation>   詞條字體：</translation>
+        <translation>	詞條字體：</translation>
     </message>
     <message>
         <source>Only Simplified</source>
@@ -1173,7 +1203,7 @@ Hang tight!</source>
     </message>
     <message>
         <source>	Mandarin tone colours:</source>
-        <translation>   拼音聲調嘅對應顏色（普通話）：</translation>
+        <translation>	拼音聲調嘅對應顏色（普通話）：</translation>
     </message>
     <message>
         <source>No Tone</source>

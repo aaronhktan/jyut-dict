@@ -2,6 +2,7 @@
 #define HANDWRITINGWINDOW_H
 
 #include "components/handwriting/handwritingpanel.h"
+#include "dialogs/handwritingerrordialog.h"
 #include "logic/handwriting/handwritingwrapper.h"
 
 #include <QEvent>
@@ -53,6 +54,8 @@ private:
 
     QGridLayout *_layout;
 
+    HandwritingErrorDialog *_errorDialog;
+
     std::unique_ptr<QSettings> _settings;
     std::unique_ptr<HandwritingWrapper> _handwritingWrapper;
 
@@ -61,6 +64,7 @@ signals:
     void characterChosen(QString character);
 
 public slots:
+    void showErrorDialog(int err, std::string description);
 };
 
 #endif // HANDWRITINGWINDOW_H

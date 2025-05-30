@@ -1,8 +1,13 @@
 #include "handwritingwrapper.h"
 
+#ifdef Q_OS_WIN
+#include "logic/strings/strings.h"
+#endif
+
 #include <QCoreApplication>
 #include <QFileInfo>
 #include <QStandardPaths>
+#include <QtConcurrent/QtConcurrent>
 
 #include <iostream>
 #include <sstream>
@@ -19,9 +24,25 @@ HandwritingWrapper::HandwritingWrapper(Handwriting::Script script)
     : QObject()
     , _recognizer{zinnia::Recognizer::create()}
 {
-    if (!setRecognizerScript(script)) {
-        std::cerr << _recognizer->what() << std::endl;
-    }
+    setRecognizerScript(script);
+
+    showProgressDialog(tr("Preparing handwriting models..."));
+    _boolReturnWatcher = new QFutureWatcher<Utils::Result<bool>>{this};
+    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    connect(_boolReturnWatcher,
+            &QFutureWatcher<Utils::Result<bool>>::finished,
+            this,
+            [=, this]() {
+                _progressDialog->reset();
+                Utils::Result<bool> result = _boolReturnWatcher->result();
+                if (std::system_error *e = std::get_if<std::system_error>(
+                        &result)) {
+                    emit modelError(*e);
+                }
+            });
+    QFuture<Utils::Result<bool>> future = QtConcurrent::run(
+        [=, this]() { return copyModels(); });
+    _boolReturnWatcher->setFuture(future);
 }
 
 HandwritingWrapper::~HandwritingWrapper()
@@ -54,8 +75,16 @@ bool HandwritingWrapper::setRecognizerScript(Handwriting::Script script)
 
     _recognizer->close();
     int status = _recognizer->open(modelFile.c_str());
+    if (!status) {
+        std::system_error e{ENOENT,
+                            std::generic_category(),
+                            _recognizer->what()};
+        emit modelError(e);
+        return false;
+    }
+
     classifyCharacter();
-    return status;
+    return true;
 }
 
 void HandwritingWrapper::clearStrokes(void)
@@ -120,7 +149,110 @@ QString HandwritingWrapper::getBundleModelPath(void) const
     return bundlePath.absoluteFilePath();
 }
 
-void HandwritingWrapper::classifyCharacter(void)
+void HandwritingWrapper::showProgressDialog(QString text)
+{
+    _progressDialog = new QProgressDialog{"", QString(), 0, 0};
+    _progressDialog->setWindowModality(Qt::ApplicationModal);
+    _progressDialog->setMinimumSize(300, 75);
+    Qt::WindowFlags flags = _progressDialog->windowFlags()
+                            | Qt::CustomizeWindowHint;
+    flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
+               | Qt::WindowFullscreenButtonHint
+               | Qt::WindowContextHelpButtonHint);
+    _progressDialog->setWindowFlags(flags);
+    _progressDialog->setMinimumDuration(500);
+#ifdef Q_OS_WIN
+    _progressDialog->setWindowTitle(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::PRODUCT_NAME));
+#elif defined(Q_OS_LINUX)
+    _progressDialog->setWindowTitle(" ");
+#endif
+    _progressDialog->setAttribute(Qt::WA_DeleteOnClose, true);
+    _progressDialog->setLabelText(text);
+    _progressDialog->setRange(0, 0);
+    _progressDialog->setValue(0);
+}
+
+Utils::Result<bool> HandwritingWrapper::copyModels(void) const
+{
+#ifdef PORTABLE
+    QFileInfo traditionalFile{getModelPath() + TRADITIONAL_MODEL};
+    QFileInfo simplifiedFile{getModelPath() + SIMPLIFIED_MODEL};
+    if (!traditionalFile.exists() || !traditionalFile.isFile()) {
+        return std::system_error{
+            ENOENT,
+            std::generic_category(),
+            "Traditional handwriting model could not be found"};
+    }
+    if (!simplifiedFile.exists() || !simplifiedFile.isFile()) {
+        return std::system_error{
+            ENOENT,
+            std::generic_category(),
+            "Simplified handwriting model could not be found"};
+    }
+    return true;
+#else
+    QFileInfo localDir{getLocalModelPath()};
+    QFileInfo bundleDir{getBundleModelPath()};
+
+    // Make path for model storage
+    if (!localDir.exists()) {
+        if (!QDir().mkpath(localDir.absolutePath())) {
+            return std::system_error{
+                ENOTDIR,
+                std::generic_category(),
+                "Could not create directory for handwriting model storage"};
+        }
+    }
+
+    QFileInfo traditionalLocalFile{getLocalModelPath() + TRADITIONAL_MODEL};
+    QFileInfo traditionalBundleFile{getBundleModelPath() + TRADITIONAL_MODEL};
+    QFileInfo simplifiedLocalFile{getLocalModelPath() + SIMPLIFIED_MODEL};
+    QFileInfo simplifiedBundleFile{getBundleModelPath() + SIMPLIFIED_MODEL};
+    // Copy file from bundle to Application Support
+    if (!traditionalLocalFile.exists() || !traditionalLocalFile.isFile()) {
+        if (!QFile::copy(traditionalBundleFile.absoluteFilePath(),
+                         traditionalLocalFile.absoluteFilePath())) {
+            return std::system_error{
+                ENOENT,
+                std::generic_category(),
+                "Failed to copy traditional handwriting model to "
+                "Application Support location"};
+        }
+    }
+    if (!simplifiedLocalFile.exists() || !simplifiedLocalFile.isFile()) {
+        if (!QFile::copy(simplifiedBundleFile.absoluteFilePath(),
+                         simplifiedLocalFile.absoluteFilePath())) {
+            return std::system_error{
+                ENOENT,
+                std::generic_category(),
+                "Failed to copy simplified handwriting model to "
+                "Application Support location"};
+        }
+    }
+
+    // Delete file in bundle
+    if (traditionalBundleFile.exists() && traditionalBundleFile.isFile()) {
+        if (!QFile::remove(traditionalBundleFile.absoluteFilePath())) {
+            std::cout << "Could not delete bundled traditional handwriting "
+                         "model, non-fatal"
+                      << std::endl;
+        }
+    }
+    if (simplifiedBundleFile.exists() && simplifiedBundleFile.isFile()) {
+        if (!QFile::remove(simplifiedBundleFile.absoluteFilePath())) {
+            std::cout << "Could not delete bundled simplified handwriting "
+                         "model, non-fatal"
+                      << std::endl;
+        }
+    }
+
+    return true;
+#endif
+}
+
+void HandwritingWrapper::classifyCharacter(void) const
 {
     if (_strokes.empty()) {
         return;
@@ -137,7 +269,6 @@ void HandwritingWrapper::classifyCharacter(void)
     if (!character->parse(character_ss.str().c_str())) {
         std::cerr << "Could not parse character: " << character->what()
                   << std::endl;
-        ;
     }
 
     zinnia::Result *res = _recognizer->classify(*character, 10);

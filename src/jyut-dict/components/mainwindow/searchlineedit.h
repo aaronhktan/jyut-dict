@@ -37,7 +37,8 @@ public:
     void focusOutEvent(QFocusEvent *event) override;
 
     void updateParameters(SearchParameters parameters) override;
-    void search() override;
+    void search(std::optional<SearchParameters>
+                = std::optional<SearchParameters>{}) override;
 
 private:
     void setupUI(void);

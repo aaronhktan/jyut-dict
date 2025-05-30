@@ -13,8 +13,9 @@ public:
     virtual ~ISearchLineEdit() = default;
 
     virtual void updateParameters(SearchParameters parameters) = 0;
-    virtual void search() = 0;
-
+    virtual void search(std::optional<SearchParameters>
+                        = std::optional<SearchParameters>{})
+        = 0;
 };
 
 #endif // ISEARCHLINEEDIT_H

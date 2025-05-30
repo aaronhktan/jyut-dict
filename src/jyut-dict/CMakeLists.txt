@@ -105,6 +105,7 @@ set(PROJECT_HEADERS
         dialogs/downloadresultdialog.h
         dialogs/entryspeakerrordialog.h
         dialogs/exportdatabasedialog.h
+        dialogs/handwritingerrordialog.h
         dialogs/noupdatedialog.h
         dialogs/overwriteconflictingdictionarydialog.h
         dialogs/resetsettingsdialog.h
@@ -228,6 +229,7 @@ set(PROJECT_SOURCES
         dialogs/downloadresultdialog.cpp
         dialogs/entryspeakerrordialog.cpp
         dialogs/exportdatabasedialog.cpp
+        dialogs/handwritingerrordialog.cpp
         dialogs/noupdatedialog.cpp
         dialogs/overwriteconflictingdictionarydialog.cpp
         dialogs/resetsettingsdialog.cpp

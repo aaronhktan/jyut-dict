@@ -277,8 +277,9 @@ void MainToolBar::setOpenFavouritesAction(QAction *action) const
 
 void MainToolBar::forwardSearchHistoryItem(const searchTermHistoryItem &pair) const
 {
-    _searchBar->setText(pair.first.c_str());
     _optionsBox->setOption(static_cast<SearchParameters>(pair.second));
+    _searchBar->setText(pair.first.c_str());
+    _searchBar->search(static_cast<SearchParameters>(pair.second));
 }
 
 void MainToolBar::searchQueryRequested(const QString &query,

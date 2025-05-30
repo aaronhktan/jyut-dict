@@ -24,20 +24,17 @@ public:
 
     void subscribe(IInputVolumeSubscriber *subsciber) override;
     void unsubscribe(IInputVolumeSubscriber *subscriber) override;
-    void notifyVolumeResult(
-        std::variant<std::system_error, float> result) override;
+    void notifyVolumeResult(Utils::Result<float> result) override;
 
-    void volumeResult(std::variant<std::system_error, float> result) override;
+    void volumeResult(Utils::Result<float> result) override;
 
     // We have to publish transcription results to the C++ classes...
     void subscribe(ITranscriptionResultSubscriber *subscriber) override;
     void unsubscribe(ITranscriptionResultSubscriber *subscriber) override;
-    void notifyTranscriptionResult(
-        std::variant<std::system_error, std::string> result) override;
+    void notifyTranscriptionResult(Utils::Result<std::string> result) override;
 
     // ... that we receive from the ITranscriptionResultPublisher
-    void transcriptionResult(
-        std::variant<std::system_error, std::string> result) override;
+    void transcriptionResult(Utils::Result<std::string> result) override;
 
     void startRecognition();
     void stopRecognition();
