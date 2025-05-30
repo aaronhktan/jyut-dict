@@ -3,6 +3,7 @@
 #include <QCoreApplication>
 #include <QFileInfo>
 #include <QStandardPaths>
+#include <QtConcurrent/QtConcurrent>
 
 #include <iostream>
 #include <sstream>
@@ -20,6 +21,24 @@ HandwritingWrapper::HandwritingWrapper(Handwriting::Script script)
     , _recognizer{zinnia::Recognizer::create()}
 {
     setRecognizerScript(script);
+
+    showProgressDialog(tr("Preparing handwriting models..."));
+    _boolReturnWatcher = new QFutureWatcher<Utils::Result<bool>>{this};
+    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    connect(_boolReturnWatcher,
+            &QFutureWatcher<Utils::Result<bool>>::finished,
+            this,
+            [=, this]() {
+                _progressDialog->reset();
+                Utils::Result<bool> result = _boolReturnWatcher->result();
+                if (std::system_error *e = std::get_if<std::system_error>(
+                        &result)) {
+                    emit modelError(*e);
+                }
+            });
+    QFuture<Utils::Result<bool>> future = QtConcurrent::run(
+        [=, this]() { return copyModels(); });
+    _boolReturnWatcher->setFuture(future);
 }
 
 HandwritingWrapper::~HandwritingWrapper()
@@ -35,22 +54,6 @@ HandwritingWrapper::~HandwritingWrapper()
 bool HandwritingWrapper::setRecognizerScript(Handwriting::Script script)
 {
     if (!_recognizer) {
-        return false;
-    }
-
-    try {
-        Utils::Result<bool> result = copyModels();
-        if (std::system_error *e = std::get_if<std::system_error>(&result)) {
-            emit modelError(*e);
-            return false;
-        } else {
-            bool succeeded = std::get<bool>(result);
-            if (!succeeded) {
-                return false;
-            }
-        }
-    } catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
         return false;
     }
 
@@ -140,6 +143,31 @@ QString HandwritingWrapper::getBundleModelPath(void) const
 #endif
 #endif
     return bundlePath.absoluteFilePath();
+}
+
+void HandwritingWrapper::showProgressDialog(QString text)
+{
+    _progressDialog = new QProgressDialog{"", QString(), 0, 0};
+    _progressDialog->setWindowModality(Qt::ApplicationModal);
+    _progressDialog->setMinimumSize(300, 75);
+    Qt::WindowFlags flags = _progressDialog->windowFlags()
+                            | Qt::CustomizeWindowHint;
+    flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
+               | Qt::WindowFullscreenButtonHint
+               | Qt::WindowContextHelpButtonHint);
+    _progressDialog->setWindowFlags(flags);
+    _progressDialog->setMinimumDuration(500);
+#ifdef Q_OS_WIN
+    _progressDialog->setWindowTitle(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::PRODUCT_NAME));
+#elif defined(Q_OS_LINUX)
+    _progressDialog->setWindowTitle(" ");
+#endif
+    _progressDialog->setAttribute(Qt::WA_DeleteOnClose, true);
+    _progressDialog->setLabelText(text);
+    _progressDialog->setRange(0, 0);
+    _progressDialog->setValue(0);
 }
 
 Utils::Result<bool> HandwritingWrapper::copyModels(void) const

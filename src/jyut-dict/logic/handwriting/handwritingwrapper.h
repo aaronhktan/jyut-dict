@@ -5,7 +5,9 @@
 
 #include "vendor/zinnia/zinnia.h"
 
+#include <QFutureWatcher>
 #include <QObject>
+#include <QProgressDialog>
 #include <QString>
 
 // The handwriting wrapper receives stroke data, and then
@@ -44,10 +46,14 @@ public:
 
 private:
     Utils::Result<bool> copyModels(void) const;
+    void showProgressDialog(QString text);
     void classifyCharacter(void) const;
 
     zinnia::Recognizer *_recognizer = nullptr;
     zinnia::Character *_character = nullptr;
+
+    QFutureWatcher<Utils::Result<bool>> *_boolReturnWatcher;
+    QProgressDialog *_progressDialog;
 
     std::vector<std::pair<int, int>> _currentStrokePoints;
     std::vector<std::string> _strokes;
