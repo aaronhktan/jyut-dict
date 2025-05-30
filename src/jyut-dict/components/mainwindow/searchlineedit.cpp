@@ -24,11 +24,11 @@ SearchLineEdit::SearchLineEdit(
     std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
     QWidget *parent)
     : QLineEdit(parent)
+    , _mediator{mediator}
+    , _search{sqlSearch}
     , _sqlHistoryUtils{sqlHistoryUtils}
 {
     _settings = Settings::getSettings(this);
-    _mediator = mediator;
-    _search = sqlSearch;
     _timer = new QTimer{this};
 
     setupUI();
@@ -78,9 +78,10 @@ void SearchLineEdit::updateParameters(SearchParameters parameters)
     _parameters = parameters;
 }
 
-void SearchLineEdit::search(void)
+void SearchLineEdit::search(std::optional<SearchParameters> paramOverride)
 {
-    switch (_parameters) {
+    SearchParameters params = paramOverride.value_or(_parameters);
+    switch (params) {
     case SearchParameters::SIMPLIFIED: {
         _search->searchSimplified(text().trimmed());
         break;
@@ -242,7 +243,7 @@ void SearchLineEdit::setStyle(bool use_dark)
         _clearLineEdit->setIcon(clear);
         _handwriting->setIcon(handwriting);
 #ifndef Q_OS_LINUX
-            _microphone->setIcon(mic);
+        _microphone->setIcon(mic);
 #endif
     }
 }
