@@ -4,6 +4,7 @@
 #include <qglobal.h>
 
 #include <string>
+#include <system_error>
 #include <vector>
 
 // The Utils class provides a set of utilities and defines useful
