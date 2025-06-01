@@ -70,6 +70,7 @@ private:
     QAction *_selectJyutpingAction;
     QAction *_selectPinyinAction;
     QAction *_selectEnglishAction;
+    QAction *_autoDetectLanguageAction;
     QAction *_fuzzyJyutpingAction;
     QAction *_fuzzyPinyinAction;
 
@@ -139,6 +140,7 @@ private:
     void selectJyutping(void) const;
     void selectPinyin(void) const;
     void selectEnglish(void) const;
+    void autoDetectLanguage(void) const;
     void fuzzyJyutping(void) const;
     void fuzzyPinyin(void) const;
 

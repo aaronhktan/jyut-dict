@@ -344,6 +344,13 @@ void MainWindow::translateUI(void)
     _searchWordsEndingAction->setText(
         tr("Find Entries That End With Current Entry"));
 
+    if (_settings->value("Search/autoDetectLanguage", QVariant{true}).toBool()) {
+        _autoDetectLanguageAction->setText(
+            tr("Disable Automatic Search Language Switching"));
+    } else {
+        _autoDetectLanguageAction->setText(
+            tr("Enable Automatic Search Language Switching"));
+    }
     if (_settings->value("Search/fuzzyJyutping", QVariant{true}).toBool()) {
         _fuzzyJyutpingAction->setText(tr("Disable Fuzzy Jyutping"));
     } else {
@@ -1006,6 +1013,16 @@ void MainWindow::createActions(void)
 
     _searchMenu->addSeparator();
 
+    _autoDetectLanguageAction = new QAction{this};
+    _autoDetectLanguageAction->setShortcut(QKeySequence{"Ctrl+Shift+A"});
+    connect(_autoDetectLanguageAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::autoDetectLanguage);
+    _searchMenu->addAction(_autoDetectLanguageAction);
+
+    _searchMenu->addSeparator();
+
     _fuzzyJyutpingAction = new QAction{this};
     _fuzzyJyutpingAction->setShortcut(QKeySequence{"Ctrl+Shift+J"});
     connect(_fuzzyJyutpingAction,
@@ -1276,6 +1293,20 @@ void MainWindow::selectEnglish(void) const
 {
     _mainToolBar->changeOptionEvent(Utils::ENGLISH_BUTTON_INDEX);
     _mainToolBar->setFocus();
+}
+
+void MainWindow::autoDetectLanguage(void) const
+{
+    if (_settings->value("Search/autoDetectLanguage", QVariant{true}).toBool()) {
+        _settings->setValue("Search/autoDetectLanguage", false);
+        _autoDetectLanguageAction->setText(
+            tr("Enable Automatic Search Language Switching"));
+    } else {
+        _settings->setValue("Search/autoDetectLanguage", true);
+        _autoDetectLanguageAction->setText(
+            tr("Disable Automatic Search Language Switching"));
+    }
+    _mainToolBar->searchRequested();
 }
 
 void MainWindow::fuzzyJyutping(void) const
