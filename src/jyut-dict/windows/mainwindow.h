@@ -70,6 +70,8 @@ private:
     QAction *_selectJyutpingAction;
     QAction *_selectPinyinAction;
     QAction *_selectEnglishAction;
+    QAction *_fuzzyJyutpingAction;
+    QAction *_fuzzyPinyinAction;
 
     QAction *_favouriteCurrentEntryAction;
     QAction *_shareCurrentEntryAction;
@@ -103,6 +105,7 @@ private:
     std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
     std::shared_ptr<SQLUserHistoryUtils> _sqlHistoryUtils;
     std::unique_ptr<SQLDatabaseUtils> _utils;
+    std::unique_ptr<QSettings> _settings;
 
     bool _recentlyCheckedForUpdates = false;
 
@@ -136,6 +139,8 @@ private:
     void selectJyutping(void) const;
     void selectPinyin(void) const;
     void selectEnglish(void) const;
+    void fuzzyJyutping(void) const;
+    void fuzzyPinyin(void) const;
 
     void toggleMinimized(void);
     void toggleMaximized(void);
