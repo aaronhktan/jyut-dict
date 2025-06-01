@@ -62,18 +62,13 @@ void ResultListModel::copyEntries(const std::vector<Entry> &entries, bool emptyQ
     }
 }
 
-void ResultListModel::setEntries(const std::vector<Entry> &entries)
-{
-    setEntries(entries, false);
-}
-
 void ResultListModel::setEntries(const std::vector<Entry> &entries, bool emptyQuery) {
     beginResetModel();
     _entries = entries;
+    endResetModel();
     if (_entries.empty() && !emptyQuery) {
         setEmpty();
     }
-    endResetModel();
 }
 
 void ResultListModel::setWelcome()

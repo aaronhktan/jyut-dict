@@ -33,8 +33,7 @@ public:
     ~ResultListModel() override;
 
     void callback(const std::vector<Entry> &entries, bool emptyQuery) override;
-    void setEntries(const std::vector<Entry> &entries);
-    void setEntries(const std::vector<Entry> &entries, bool emptyQuery);
+    void setEntries(const std::vector<Entry> &entries, bool emptyQuery = false);
     void setWelcome();
     void setEmpty();
 

@@ -31,10 +31,10 @@ void SearchHistoryListModel::setEntries(
 {
     beginResetModel();
     _searchTerms = searchTerms;
+    endResetModel();
     if (_searchTerms.empty() && !emptyQuery) {
         setEmpty();
     }
-    endResetModel();
 }
 
 void SearchHistoryListModel::setEmpty(void)
