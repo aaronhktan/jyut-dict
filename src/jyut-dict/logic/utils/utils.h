@@ -4,6 +4,7 @@
 #include <qglobal.h>
 
 #include <string>
+#include <system_error>
 #include <vector>
 
 // The Utils class provides a set of utilities and defines useful
@@ -25,6 +26,9 @@ constexpr auto VARIANT = "install";
 #else
     constexpr auto SAME_CHARACTER_STRING = "－";
 #endif
+
+    template<class T>
+    using Result = std::variant<std::system_error, T>;
 
     // Index of buttons for Searching
     enum ButtonOptionIndex {

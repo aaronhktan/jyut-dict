@@ -6,6 +6,7 @@
 #include <QtConcurrent/QtConcurrent>
 
 #include <cerrno>
+#include <iostream>
 
 Downloader::Downloader(QUrl url,
                        QString outputPath,
@@ -51,13 +52,15 @@ void Downloader::fileDownloaded(QNetworkReply *reply)
         file.remove();
     }
     if (!file.open(QIODevice::ReadWrite)) {
-        qDebug() << "Couldn't open file" << _outputPath;
+        std::cerr << "Couldn't open file " << _outputPath.toStdString()
+                  << std::endl;
         emit error(EPERM);
         return;
     }
     int numBytes = _downloadedData.size();
     if (file.write(_downloadedData) != numBytes) {
-        qDebug() << "Couldn't write to file";
+        std::cerr << "Couldn't write to file " << _outputPath.toStdString()
+                  << std::endl;
         emit error(ENOSPC);
         return;
     }

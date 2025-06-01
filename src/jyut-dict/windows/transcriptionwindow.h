@@ -73,9 +73,8 @@ public:
     void changeEvent(QEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
 
-    void volumeResult(std::variant<std::system_error, float> result) override;
-    void transcriptionResult(
-        std::variant<std::system_error, std::string> result) override;
+    void volumeResult(Utils::Result<float> result) override;
+    void transcriptionResult(Utils::Result<std::string> result) override;
 
 private:
     void setupUI(void);

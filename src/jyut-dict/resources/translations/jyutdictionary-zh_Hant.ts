@@ -402,6 +402,17 @@
     </message>
 </context>
 <context>
+    <name>HandwritingErrorDialog</name>
+    <message>
+        <source>Handwriting could not be started!</source>
+        <translation>手寫辨識失敗！</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>確定</translation>
+    </message>
+</context>
+<context>
     <name>HandwritingWindow</name>
     <message>
         <source>Traditional Chinese</source>
@@ -426,6 +437,25 @@
     <message>
         <source>Handwriting</source>
         <translation>手寫辨識</translation>
+    </message>
+    <message>
+        <source>Handwriting models could not be copied.</source>
+        <translation>無法複製手寫模型至目標資料夾。</translation>
+    </message>
+    <message>
+        <source>A folder for handwriting models could not be created.</source>
+        <translation>無法建立手寫模型照料夾。</translation>
+    </message>
+    <message>
+        <source>An unspecified error occurred.</source>
+        <translation>未預期的錯誤。</translation>
+    </message>
+</context>
+<context>
+    <name>HandwritingWrapper</name>
+    <message>
+        <source>Preparing handwriting models...</source>
+        <translation>正在準備手寫模型…</translation>
     </message>
 </context>
 <context>
@@ -965,7 +995,7 @@ Hang tight!</source>
     </message>
     <message>
         <source>	Risky fuzzy Jyutping matches:</source>
-        <translation>   有風險的模糊粵拼代替：</translation>
+        <translation>	有風險的模糊粵拼代替：</translation>
     </message>
     <message>
         <source>Hanyu Pinyin:</source>
@@ -1251,7 +1281,7 @@ Hang tight!</source>
     </message>
     <message>
         <source>An unspecified error occurred.</source>
-        <translation>發生了問題。</translation>
+        <translation>未預期的錯誤。</translation>
     </message>
 </context>
 <context>

@@ -1,9 +1,13 @@
 #ifndef HANDWRITINGWRAPPER_H
 #define HANDWRITINGWRAPPER_H
 
+#include "logic/utils/utils.h"
+
 #include "vendor/zinnia/zinnia.h"
 
+#include <QFutureWatcher>
 #include <QObject>
+#include <QProgressDialog>
 #include <QString>
 
 // The handwriting wrapper receives stroke data, and then
@@ -41,10 +45,15 @@ public:
     QString getBundleModelPath(void) const;
 
 private:
-    void classifyCharacter(void);
+    Utils::Result<bool> copyModels(void) const;
+    void showProgressDialog(QString text);
+    void classifyCharacter(void) const;
 
     zinnia::Recognizer *_recognizer = nullptr;
     zinnia::Character *_character = nullptr;
+
+    QFutureWatcher<Utils::Result<bool>> *_boolReturnWatcher;
+    QProgressDialog *_progressDialog;
 
     std::vector<std::pair<int, int>> _currentStrokePoints;
     std::vector<std::string> _strokes;
@@ -52,7 +61,8 @@ private:
     int _height;
 
 signals:
-    void recognizedResults(std::vector<std::string> &results);
+    void recognizedResults(std::vector<std::string> &results) const;
+    void modelError(std::system_error &e) const;
 
 public slots:
     void setDimensions(int width, int height);

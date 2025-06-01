@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<TS version="2.1" language="yue_CN">
 <context>
     <name>AboutWindow</name>
     <message>
@@ -402,6 +402,17 @@
     </message>
 </context>
 <context>
+    <name>HandwritingErrorDialog</name>
+    <message>
+        <source>Handwriting could not be started!</source>
+        <translation>手写识别失败！</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>哦</translation>
+    </message>
+</context>
+<context>
     <name>HandwritingWindow</name>
     <message>
         <source>Traditional Chinese</source>
@@ -426,6 +437,25 @@
     <message>
         <source>Handwriting</source>
         <translation>手写识别</translation>
+    </message>
+    <message>
+        <source>Handwriting models could not be copied.</source>
+        <translation>无法复制手写模型至目标文件夹。</translation>
+    </message>
+    <message>
+        <source>A folder for handwriting models could not be created.</source>
+        <translation>无法创建手写模型文件夹。</translation>
+    </message>
+    <message>
+        <source>An unspecified error occurred.</source>
+        <translation>发生咗问题。</translation>
+    </message>
+</context>
+<context>
+    <name>HandwritingWrapper</name>
+    <message>
+        <source>Preparing handwriting models...</source>
+        <translation>准备紧手写模型…</translation>
     </message>
 </context>
 <context>
