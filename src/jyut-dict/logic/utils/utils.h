@@ -30,16 +30,6 @@ constexpr auto VARIANT = "install";
     template<class T>
     using Result = std::variant<std::system_error, T>;
 
-    // Index of buttons for Searching
-    enum ButtonOptionIndex {
-        SIMPLIFIED_BUTTON_INDEX,
-        TRADITIONAL_BUTTON_INDEX,
-        JYUTPING_BUTTON_INDEX,
-        PINYIN_BUTTON_INDEX,
-        ENGLISH_BUTTON_INDEX,
-        MAXIMUM_BUTTON_INDEX
-    };
-
     // Strings that are not language dependent should go here.
     // If they need to be translated, put them in strings.h
     constexpr auto CURRENT_VERSION = "3.25.0304";

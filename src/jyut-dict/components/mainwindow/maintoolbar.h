@@ -35,7 +35,7 @@ public:
     void focusInEvent(QFocusEvent *event) override;
 
     void selectAllEvent(void) const;
-    void changeOptionEvent(const Utils::ButtonOptionIndex option) const;
+    void changeSearchParameters(const SearchParameters params) const;
 
     void setOpenHistoryAction(QAction *action) const;
     void setOpenFavouritesAction(QAction *action) const;

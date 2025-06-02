@@ -1267,31 +1267,31 @@ void MainWindow::setFocusToResults(void) const
 
 void MainWindow::selectSimplified(void) const
 {
-    _mainToolBar->changeOptionEvent(Utils::SIMPLIFIED_BUTTON_INDEX);
+    _mainToolBar->changeSearchParameters(SearchParameters::SIMPLIFIED);
     _mainToolBar->setFocus();
 }
 
 void MainWindow::selectTraditional(void) const
 {
-    _mainToolBar->changeOptionEvent(Utils::TRADITIONAL_BUTTON_INDEX);
+    _mainToolBar->changeSearchParameters(SearchParameters::TRADITIONAL);
     _mainToolBar->setFocus();
 }
 
 void MainWindow::selectJyutping(void) const
 {
-    _mainToolBar->changeOptionEvent(Utils::JYUTPING_BUTTON_INDEX);
+    _mainToolBar->changeSearchParameters(SearchParameters::JYUTPING);
     _mainToolBar->setFocus();
 }
 
 void MainWindow::selectPinyin(void) const
 {
-    _mainToolBar->changeOptionEvent(Utils::PINYIN_BUTTON_INDEX);
+    _mainToolBar->changeSearchParameters(SearchParameters::PINYIN);
     _mainToolBar->setFocus();
 }
 
 void MainWindow::selectEnglish(void) const
 {
-    _mainToolBar->changeOptionEvent(Utils::ENGLISH_BUTTON_INDEX);
+    _mainToolBar->changeSearchParameters(SearchParameters::ENGLISH);
     _mainToolBar->setFocus();
 }
 
@@ -1301,12 +1301,18 @@ void MainWindow::autoDetectLanguage(void) const
         _settings->setValue("Search/autoDetectLanguage", false);
         _autoDetectLanguageAction->setText(
             tr("Enable Automatic Search Language Switching"));
+        SearchParameters lastSelected
+            = _settings
+                  ->value("SearchOptionsRadioGroupBox/lastSelected",
+                          QVariant::fromValue(SearchParameters::ENGLISH))
+                  .value<SearchParameters>();
+        _mainToolBar->changeSearchParameters(lastSelected);
     } else {
         _settings->setValue("Search/autoDetectLanguage", true);
         _autoDetectLanguageAction->setText(
             tr("Disable Automatic Search Language Switching"));
+        _mainToolBar->searchRequested();
     }
-    _mainToolBar->searchRequested();
 }
 
 void MainWindow::fuzzyJyutping(void) const
