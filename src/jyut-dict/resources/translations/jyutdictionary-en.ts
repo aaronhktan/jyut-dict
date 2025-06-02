@@ -679,6 +679,30 @@ Hang tight!</source>
         <source>Start Handwriting</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Disable Automatic Search Language Switching</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Automatic Search Language Switching</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disable Fuzzy Jyutping</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Fuzzy Jyutping</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disable Fuzzy Pinyin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable Fuzzy Pinyin</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NoUpdateDialog</name>

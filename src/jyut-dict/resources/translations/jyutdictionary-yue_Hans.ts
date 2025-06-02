@@ -710,6 +710,30 @@ Hang tight!</source>
         <source>Start Handwriting</source>
         <translation>打开手写</translation>
     </message>
+    <message>
+        <source>Disable Automatic Search Language Switching</source>
+        <translation>停用自动检测揾嘢语言</translation>
+    </message>
+    <message>
+        <source>Enable Automatic Search Language Switching</source>
+        <translation>启用自动检测揾嘢语言</translation>
+    </message>
+    <message>
+        <source>Disable Fuzzy Jyutping</source>
+        <translation>停用模糊粤拼</translation>
+    </message>
+    <message>
+        <source>Enable Fuzzy Jyutping</source>
+        <translation>启用模糊粤拼</translation>
+    </message>
+    <message>
+        <source>Disable Fuzzy Pinyin</source>
+        <translation>停用模糊汉语拼音</translation>
+    </message>
+    <message>
+        <source>Enable Fuzzy Pinyin</source>
+        <translation>启用模糊汉语拼音</translation>
+    </message>
 </context>
 <context>
     <name>NoUpdateDialog</name>

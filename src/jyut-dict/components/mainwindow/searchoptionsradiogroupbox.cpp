@@ -79,18 +79,6 @@ void SearchOptionsRadioGroupBox::changeEvent(QEvent *event)
     QGroupBox::changeEvent(event);
 }
 
-void SearchOptionsRadioGroupBox::setOption(const Utils::ButtonOptionIndex index)
-{
-    if (index >= Utils::MAXIMUM_BUTTON_INDEX) {
-        return;
-    }
-
-    QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
-    if (!buttons.at(index)->isChecked()) {
-        buttons.at(index)->click();
-    }
-}
-
 void SearchOptionsRadioGroupBox::setOption(const SearchParameters parameters)
 {
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();

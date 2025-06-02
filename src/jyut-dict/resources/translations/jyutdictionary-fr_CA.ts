@@ -455,7 +455,7 @@
     <name>HandwritingWrapper</name>
     <message>
         <source>Preparing handwriting models...</source>
-        <translation>Préparation des modèles de la reconnaissance de l'écriture manuscrite...</translation>
+        <translation>Préparation des modèles de la reconnaissance de l&apos;écriture manuscrite...</translation>
     </message>
 </context>
 <context>
@@ -633,11 +633,11 @@ Veuillez patienter quelques minutes.</translation>
     </message>
     <message>
         <source>Search Jyutping</source>
-        <translation>Rechercher avec jyutping</translation>
+        <translation>Rechercher avec Jyutping</translation>
     </message>
     <message>
         <source>Search Pinyin</source>
-        <translation>Rechercher avec pinyin</translation>
+        <translation>Rechercher avec Pinyin</translation>
     </message>
     <message>
         <source>Search English</source>
@@ -710,6 +710,30 @@ Veuillez patienter quelques minutes.</translation>
     <message>
         <source>Start Handwriting</source>
         <translation>Activer la reconnaissance de l’écriture manuscrite</translation>
+    </message>
+    <message>
+        <source>Disable Automatic Search Language Switching</source>
+        <translation>Désactiver la détection automatique de la langue de recherche</translation>
+    </message>
+    <message>
+        <source>Enable Automatic Search Language Switching</source>
+        <translation>Activer la détection automatique de la langue de recherche</translation>
+    </message>
+    <message>
+        <source>Disable Fuzzy Jyutping</source>
+        <translation>Désactiver le Jyutping approximatif</translation>
+    </message>
+    <message>
+        <source>Enable Fuzzy Jyutping</source>
+        <translation>Activer le Jyutping approximatif</translation>
+    </message>
+    <message>
+        <source>Disable Fuzzy Pinyin</source>
+        <translation>Désactiver le pinyin approximatif</translation>
+    </message>
+    <message>
+        <source>Enable Fuzzy Pinyin</source>
+        <translation>Activer le Pinyin approximatif</translation>
     </message>
 </context>
 <context>

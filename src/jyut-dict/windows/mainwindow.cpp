@@ -51,34 +51,34 @@ MainWindow::MainWindow(QWidget *parent) :
     _sqlHistoryUtils = std::make_shared<SQLUserHistoryUtils>(_manager);
 
     // Get colours from QSettings
-    std::unique_ptr<QSettings> settings = Settings::getSettings();
-    settings->beginReadArray("jyutpingColours");
+    _settings = Settings::getSettings();
+    _settings->beginReadArray("jyutpingColours");
     for (std::vector<std::string>::size_type i = 0;
          i < Settings::jyutpingToneColours.size();
          ++i) {
-        settings->setArrayIndex(static_cast<int>(i));
-        QColor color = settings
-                           ->value("colour",
-                                   QColor{
-                                       Settings::jyutpingToneColours[i].c_str()})
-                           .value<QColor>();
+        _settings->setArrayIndex(static_cast<int>(i));
+        QColor color
+            = _settings
+                  ->value("colour",
+                          QColor{Settings::jyutpingToneColours[i].c_str()})
+                  .value<QColor>();
         Settings::jyutpingToneColours[i] = color.name().toStdString();
     }
-    settings->endArray();
+    _settings->endArray();
 
-    settings->beginReadArray("pinyinColours");
+    _settings->beginReadArray("pinyinColours");
     for (std::vector<std::string>::size_type i = 0;
          i < Settings::pinyinToneColours.size();
          ++i) {
-        settings->setArrayIndex(static_cast<int>(i));
-        QColor color = settings
+        _settings->setArrayIndex(static_cast<int>(i));
+        QColor color = _settings
                            ->value("colour",
                                    QColor{
                                        Settings::pinyinToneColours[i].c_str()})
                            .value<QColor>();
         Settings::pinyinToneColours[i] = color.name().toStdString();
     }
-    settings->endArray();
+    _settings->endArray();
 
     // Connect signals to tell the user that database migration has occurred
     _utils = std::make_unique<SQLDatabaseUtils>(_manager);
@@ -181,7 +181,7 @@ MainWindow::MainWindow(QWidget *parent) :
     translateUI();
 
     // Show welcome dialog if needed
-    bool welcomed = settings
+    bool welcomed = _settings
                         ->value(QString{"Advanced/%1Welcomed"}.arg(
                                     Utils::CURRENT_VERSION),
                                 QVariant{false})
@@ -196,7 +196,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Check for updates
     bool updateNotificationEnabled
-        = settings->value("Advanced/updateNotificationsEnabled", QVariant{true})
+        = _settings->value("Advanced/updateNotificationsEnabled", QVariant{true})
               .toBool();
     _checker = new JyutDictionaryReleaseChecker{
         this, /* preConnectEnabled */ updateNotificationEnabled};
@@ -343,6 +343,24 @@ void MainWindow::translateUI(void)
         tr("Find Entries That Contain Current Entry"));
     _searchWordsEndingAction->setText(
         tr("Find Entries That End With Current Entry"));
+
+    if (_settings->value("Search/autoDetectLanguage", QVariant{true}).toBool()) {
+        _autoDetectLanguageAction->setText(
+            tr("Disable Automatic Search Language Switching"));
+    } else {
+        _autoDetectLanguageAction->setText(
+            tr("Enable Automatic Search Language Switching"));
+    }
+    if (_settings->value("Search/fuzzyJyutping", QVariant{true}).toBool()) {
+        _fuzzyJyutpingAction->setText(tr("Disable Fuzzy Jyutping"));
+    } else {
+        _fuzzyJyutpingAction->setText(tr("Enable Fuzzy Jyutping"));
+    }
+    if (_settings->value("Search/fuzzyPinyin", QVariant{true}).toBool()) {
+        _fuzzyPinyinAction->setText(tr("Disable Fuzzy Pinyin"));
+    } else {
+        _fuzzyPinyinAction->setText(tr("Enable Fuzzy Pinyin"));
+    }
 
     _historyWindowAction->setText(tr("View Search History"));
     _favouritesWindowAction->setText(tr("Open List of Saved Words"));
@@ -953,8 +971,6 @@ void MainWindow::createActions(void)
             &MainWindow::setFocusToResults);
     _searchMenu->addAction(_setFocusToResultsAction);
 
-    _searchMenu->addSeparator();
-
     _selectSimplifiedAction = new QAction{this};
     _selectSimplifiedAction->setShortcut(QKeySequence{"Ctrl+1"});
     connect(_selectSimplifiedAction,
@@ -994,6 +1010,34 @@ void MainWindow::createActions(void)
             this,
             &MainWindow::selectEnglish);
     _searchMenu->addAction(_selectEnglishAction);
+
+    _searchMenu->addSeparator();
+
+    _autoDetectLanguageAction = new QAction{this};
+    _autoDetectLanguageAction->setShortcut(QKeySequence{"Ctrl+Shift+A"});
+    connect(_autoDetectLanguageAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::autoDetectLanguage);
+    _searchMenu->addAction(_autoDetectLanguageAction);
+
+    _searchMenu->addSeparator();
+
+    _fuzzyJyutpingAction = new QAction{this};
+    _fuzzyJyutpingAction->setShortcut(QKeySequence{"Ctrl+Shift+J"});
+    connect(_fuzzyJyutpingAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::fuzzyJyutping);
+    _searchMenu->addAction(_fuzzyJyutpingAction);
+
+    _fuzzyPinyinAction = new QAction{this};
+    _fuzzyPinyinAction->setShortcut(QKeySequence{"Ctrl+Shift+P"});
+    connect(_fuzzyPinyinAction,
+            &QAction::triggered,
+            this,
+            &MainWindow::fuzzyPinyin);
+    _searchMenu->addAction(_fuzzyPinyinAction);
 
     _favouriteCurrentEntryAction = new QAction{this};
     _favouriteCurrentEntryAction->setShortcut(QKeySequence{"Ctrl+S"});
@@ -1223,32 +1267,76 @@ void MainWindow::setFocusToResults(void) const
 
 void MainWindow::selectSimplified(void) const
 {
-    _mainToolBar->changeOptionEvent(Utils::SIMPLIFIED_BUTTON_INDEX);
+    _mainToolBar->changeSearchParameters(SearchParameters::SIMPLIFIED);
     _mainToolBar->setFocus();
 }
 
 void MainWindow::selectTraditional(void) const
 {
-    _mainToolBar->changeOptionEvent(Utils::TRADITIONAL_BUTTON_INDEX);
+    _mainToolBar->changeSearchParameters(SearchParameters::TRADITIONAL);
     _mainToolBar->setFocus();
 }
 
 void MainWindow::selectJyutping(void) const
 {
-    _mainToolBar->changeOptionEvent(Utils::JYUTPING_BUTTON_INDEX);
+    _mainToolBar->changeSearchParameters(SearchParameters::JYUTPING);
     _mainToolBar->setFocus();
 }
 
 void MainWindow::selectPinyin(void) const
 {
-    _mainToolBar->changeOptionEvent(Utils::PINYIN_BUTTON_INDEX);
+    _mainToolBar->changeSearchParameters(SearchParameters::PINYIN);
     _mainToolBar->setFocus();
 }
 
 void MainWindow::selectEnglish(void) const
 {
-    _mainToolBar->changeOptionEvent(Utils::ENGLISH_BUTTON_INDEX);
+    _mainToolBar->changeSearchParameters(SearchParameters::ENGLISH);
     _mainToolBar->setFocus();
+}
+
+void MainWindow::autoDetectLanguage(void) const
+{
+    if (_settings->value("Search/autoDetectLanguage", QVariant{true}).toBool()) {
+        _settings->setValue("Search/autoDetectLanguage", false);
+        _autoDetectLanguageAction->setText(
+            tr("Enable Automatic Search Language Switching"));
+        SearchParameters lastSelected
+            = _settings
+                  ->value("SearchOptionsRadioGroupBox/lastSelected",
+                          QVariant::fromValue(SearchParameters::ENGLISH))
+                  .value<SearchParameters>();
+        _mainToolBar->changeSearchParameters(lastSelected);
+    } else {
+        _settings->setValue("Search/autoDetectLanguage", true);
+        _autoDetectLanguageAction->setText(
+            tr("Disable Automatic Search Language Switching"));
+        _mainToolBar->searchRequested();
+    }
+}
+
+void MainWindow::fuzzyJyutping(void) const
+{
+    if (_settings->value("Search/fuzzyJyutping", QVariant{true}).toBool()) {
+        _settings->setValue("Search/fuzzyJyutping", false);
+        _fuzzyJyutpingAction->setText(tr("Enable Fuzzy Jyutping"));
+    } else {
+        _settings->setValue("Search/fuzzyJyutping", true);
+        _fuzzyJyutpingAction->setText(tr("Disable Fuzzy Jyutping"));
+    }
+    _mainToolBar->searchRequested();
+}
+
+void MainWindow::fuzzyPinyin(void) const
+{
+    if (_settings->value("Search/fuzzyPinyin", QVariant{true}).toBool()) {
+        _settings->setValue("Search/fuzzyPinyin", false);
+        _fuzzyPinyinAction->setText(tr("Enable Fuzzy Pinyin"));
+    } else {
+        _settings->setValue("Search/fuzzyPinyin", true);
+        _fuzzyPinyinAction->setText(tr("Disable Fuzzy Pinyin"));
+    }
+    _mainToolBar->searchRequested();
 }
 
 void MainWindow::toggleMinimized(void)
@@ -1375,11 +1463,9 @@ void MainWindow::openWelcomeWindow(void)
                                   /* showIfNoUpdate */ false);
         });
 
-        std::unique_ptr<QSettings> settings = Settings::getSettings();
-
-        settings->setValue(QString{"Advanced/%1Welcomed"}.arg(
-                               Utils::CURRENT_VERSION),
-                           true);
+        _settings->setValue(QString{"Advanced/%1Welcomed"}.arg(
+                                Utils::CURRENT_VERSION),
+                            true);
     });
 }
 

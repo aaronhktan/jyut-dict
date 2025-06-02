@@ -249,9 +249,9 @@ void MainToolBar::selectAllEvent(void) const
     _searchBar->selectAll();
 }
 
-void MainToolBar::changeOptionEvent(const Utils::ButtonOptionIndex index) const
+void MainToolBar::changeSearchParameters(const SearchParameters params) const
 {
-    _optionsBox->setOption(index);
+    _optionsBox->setOption(params);
 }
 
 void MainToolBar::setOpenHistoryAction(QAction *action) const

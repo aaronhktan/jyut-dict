@@ -5,7 +5,6 @@
 #include "logic/search/isearchoptionsmediator.h"
 #include "logic/search/searchparameters.h"
 #include "logic/search/sqlsearch.h"
-#include "logic/utils/utils.h"
 
 #include <QEvent>
 #include <QGroupBox>
@@ -33,7 +32,6 @@ public:
     void detectedLanguage(SearchParameters) override;
     void changeEvent(QEvent *event) override;
 
-    void setOption(const Utils::ButtonOptionIndex index);
     void setOption(const SearchParameters parameters) override;
 
 private:
