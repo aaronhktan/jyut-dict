@@ -26,10 +26,10 @@ void ViewHistoryListModel::setEntries(const std::vector<Entry> &entries)
 void ViewHistoryListModel::setEntries(const std::vector<Entry> &entries, bool emptyQuery) {
     beginResetModel();
     _entries = entries;
+    endResetModel();
     if (_entries.empty() && !emptyQuery) {
         setEmpty();
     }
-    endResetModel();
 }
 
 void ViewHistoryListModel::setEmpty(void)
