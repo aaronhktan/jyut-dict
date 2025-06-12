@@ -5,6 +5,11 @@
 
 #include <iostream>
 
+// NSSpeechSynthesizer is deprecated, but AVSpeechSynthesizer
+// doesn't work for Cantonese/Mandarin co-existing in the same
+// application.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @interface Synthesizer : NSObject <NSSpeechSynthesizerDelegate>
 
 @property(nonatomic, strong) NSSpeechSynthesizer *synthesizer;
@@ -92,3 +97,5 @@ void SynthesizerWrapper::speak(std::string text)
     Synthesizer *synthesizer = (__bridge Synthesizer *) _synthesizerImpl;
     [synthesizer speak:[NSString stringWithUTF8String:text.c_str()]];
 }
+
+#pragma clang diagnostic pop
