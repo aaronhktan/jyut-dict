@@ -3,9 +3,16 @@
 
 #include <QMediaPlayer>
 #include <QtGlobal>
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
 #include <QString>
 #include <QTextToSpeech>
+
+extern "C" {
+#include "vendor/miniaudio/miniaudio.h"
+}
+
+#ifdef Q_OS_MAC
+#include "logic/audio/synthesizer_mac.h"
+#endif
 
 namespace TextToSpeech {
 
@@ -96,12 +103,15 @@ private:
                           QVoice &voice) const;
 #endif
 
+#ifdef Q_OS_MAC
+    std::unique_ptr<SynthesizerWrapper> _synthesizer;
+#endif
+
     QTextToSpeech *_tts;
-    QMediaPlayer *_player;
+    ma_engine *_engine;
 };
 
 Q_DECLARE_METATYPE(TextToSpeech::SpeakerBackend);
 Q_DECLARE_METATYPE(TextToSpeech::SpeakerVoice);
 
-#endif
 #endif // ENTRYSPEAKER_H

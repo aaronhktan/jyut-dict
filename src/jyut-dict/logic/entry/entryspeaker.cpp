@@ -2,34 +2,39 @@
 #include "logic/utils/cantoneseutils.h"
 #include "logic/utils/mandarinutils.h"
 
+#ifdef Q_OS_MAC
+#include "logic/audio/synthesizer_mac.h"
+#endif
+
 #include <QCoreApplication>
 #include <QFileInfo>
 #include <QStandardPaths>
 #include <QVector>
+#include <QtConcurrent/QtConcurrent>
 
 #include <cerrno>
 #include <iostream>
+#include <thread>
 
 EntrySpeaker::EntrySpeaker()
     : _tts{new QTextToSpeech}
-    , _player{new QMediaPlayer}
 {
-#ifdef Q_OS_MAC
-    // The AVSpeechSynthesizer backend for macOS does not properly
-    // select voices if the Siri voice is set to Cantonese (QTBUG-135010).
-    // As a workaround, manually select the NSSpeechSynthesizer backend if
-    // available.
-    for (const QString &engine : QTextToSpeech::availableEngines()) {
-        if (engine == "macos") {
-            _tts->setEngine(engine);
-        }
+    _engine = (ma_engine *) malloc(sizeof(*_engine));
+    ma_result result = ma_engine_init(NULL, _engine);
+    if (result != MA_SUCCESS) {
+        std::cerr << "Failed to initialize miniaudio engine!" << std::endl;
     }
+
+#ifdef Q_OS_MAC
+    _synthesizer = std::make_unique<SynthesizerWrapper>();
 #endif
 }
 
 EntrySpeaker::~EntrySpeaker()
 {
     delete _tts;
+    ma_engine_uninit(_engine);
+    delete _engine;
 }
 
 EntrySpeaker::EntrySpeaker(EntrySpeaker &other)
@@ -126,7 +131,9 @@ bool EntrySpeaker::filterVoiceNames(const QLocale::Language &language,
 }
 #endif
 
-int EntrySpeaker::speakWithVoice(const QVoice &voice, const QString &string) const {
+int EntrySpeaker::speakWithVoice(const QVoice &voice,
+                                 const QString &string) const
+{
     _tts->setVoice(voice);
     _tts->setRate(-0.25);
     _tts->say(string);
@@ -157,6 +164,36 @@ int EntrySpeaker::speak(const QLocale::Language &language,
 
     switch (backend) {
     case TextToSpeech::SpeakerBackend::QT_TTS: {
+#ifdef Q_OS_MAC
+        // It seems like QLocale::Country is broken for China and Taiwan
+        bool res = false;
+        switch (country) {
+        case QLocale::China: {
+            res = _synthesizer->setLocale(
+                QLocale{language}.bcp47Name().toStdString() + "_CN");
+            break;
+        }
+        case QLocale::Taiwan: {
+            res = _synthesizer->setLocale(
+                QLocale{language}.bcp47Name().toStdString() + "_TW");
+            break;
+        }
+        case QLocale::HongKong: {
+            res = _synthesizer->setLocale(
+                QLocale{language}.bcp47Name().toStdString() + "_HK");
+            break;
+        }
+        default:
+            break;
+        }
+
+        if (!res) {
+            return -ENOENT;
+        }
+
+        _synthesizer->speak(string.toStdString());
+        break;
+#endif
         auto voices = getListOfVoices(language, country);
         if (voices.isEmpty()) {
             return -ENOENT;
@@ -167,33 +204,6 @@ int EntrySpeaker::speak(const QLocale::Language &language,
         if (!filterVoiceNames(language, country, voices, voice)) {
             return -ENOENT;
         }
-#elif defined(Q_OS_MAC)
-        // Filter out "Eloquence" voices from macOS, which sound much more
-        // robotic. Fall back to using the first voice in voices list if
-        // the better voices are not available.
-        if (language == QLocale::Chinese && country == QLocale::Taiwan) {
-            for (const auto &v : voices) {
-                if (v.name() == "Meijia") {
-                    voice = v;
-                }
-            }
-        } else if (language == QLocale::Chinese && country == QLocale::China) {
-            for (const auto &v : voices) {
-                if (v.name() == "Tingting") {
-                    voice = v;
-                }
-            }
-        } else if (language == QLocale::Chinese
-                   && country == QLocale::HongKong) {
-            for (const auto &v : voices) {
-                if (v.name() == "Sinji") {
-                    voice = v;
-                }
-            }
-        }
-        if (!voices.contains(voice)) {
-            voice = voices.at(0);
-        }
 #else
         voice = voices.at(0);
 #endif
@@ -202,7 +212,9 @@ int EntrySpeaker::speak(const QLocale::Language &language,
     }
     case TextToSpeech::SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS: {
         QString languageName = QLocale::languageToString(language) + "_"
-                               + QLocale::territoryToString(country);
+                               + (country == QLocale::HongKong
+                                      ? "Hong Kong"
+                                      : QLocale::territoryToString(country));
 
         std::vector<std::string> syllables;
         if (language == QLocale::Cantonese || country == QLocale::HongKong) {
@@ -214,21 +226,42 @@ int EntrySpeaker::speak(const QLocale::Language &language,
             MandarinUtils::segmentPinyin(mutableString, syllables);
         }
 
-        for (const auto &syllable : syllables) {
-            QString filepath = getAudioPath()
-                               + QString{"%1/%2/%3/%4.mp3"}
-                                     .arg(TextToSpeech::backendNames[backend],
-                                          languageName,
-                                          TextToSpeech::voiceNames[voice],
-                                          QString::fromStdString(syllable));
-            if (!QFileInfo::exists(filepath)) {
-                std::cerr << "File " << filepath.toStdString()
-                          << " does not exist" << std::endl;
+        std::ignore = QtConcurrent::run([=, this]() {
+            for (const auto &syllable : syllables) {
+                QString filepath
+                    = getAudioPath()
+                      + QString{"%1/%2/%3/%4.mp3"}
+                            .arg(TextToSpeech::backendNames[backend],
+                                 languageName,
+                                 TextToSpeech::voiceNames[voice],
+                                 QString::fromStdString(syllable));
+                if (!QFileInfo::exists(filepath)) {
+                    std::cerr << "File " << filepath.toStdString()
+                              << " does not exist" << std::endl;
+                }
+
+                ma_sound sound;
+                ma_result result
+                    = ma_sound_init_from_file(_engine,
+                                              filepath.toStdString().c_str(),
+                                              0,
+                                              NULL,
+                                              NULL,
+                                              &sound);
+
+                if (result != MA_SUCCESS) {
+                    continue;
+                }
+
+                ma_sound_start(&sound);
+                while (ma_sound_is_playing(&sound)) {
+                    std::this_thread::sleep_for(std::chrono::milliseconds{100});
+                    continue;
+                }
+
+                ma_sound_uninit(&sound);
             }
-            QUrl url = QUrl::fromLocalFile(filepath);
-            _player->setSource(url);
-            _player->play();
-        }
+        });
         break;
     }
     }
