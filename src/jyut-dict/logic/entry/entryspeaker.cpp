@@ -2,6 +2,10 @@
 #include "logic/utils/cantoneseutils.h"
 #include "logic/utils/mandarinutils.h"
 
+#ifdef Q_OS_MAC
+#include "logic/audio/synthesizer_mac.h"
+#endif
+
 #include <QCoreApplication>
 #include <QFileInfo>
 #include <QStandardPaths>
@@ -15,15 +19,7 @@ EntrySpeaker::EntrySpeaker()
     , _player{new QMediaPlayer}
 {
 #ifdef Q_OS_MAC
-    // The AVSpeechSynthesizer backend for macOS does not properly
-    // select voices if the Siri voice is set to Cantonese (QTBUG-135010).
-    // As a workaround, manually select the NSSpeechSynthesizer backend if
-    // available.
-    for (const QString &engine : QTextToSpeech::availableEngines()) {
-        if (engine == "macos") {
-            _tts->setEngine(engine);
-        }
-    }
+    _synthesizer = std::make_unique<SynthesizerWrapper>();
 #endif
 }
 
@@ -126,7 +122,9 @@ bool EntrySpeaker::filterVoiceNames(const QLocale::Language &language,
 }
 #endif
 
-int EntrySpeaker::speakWithVoice(const QVoice &voice, const QString &string) const {
+int EntrySpeaker::speakWithVoice(const QVoice &voice,
+                                 const QString &string) const
+{
     _tts->setVoice(voice);
     _tts->setRate(-0.25);
     _tts->say(string);
@@ -157,6 +155,31 @@ int EntrySpeaker::speak(const QLocale::Language &language,
 
     switch (backend) {
     case TextToSpeech::SpeakerBackend::QT_TTS: {
+#ifdef Q_OS_MAC
+        // It seems like QLocale::Country is broken for China and Taiwan
+        switch (country) {
+        case QLocale::China: {
+            _synthesizer->setLocale(QLocale{language}.bcp47Name().toStdString()
+                                    + "-CN");
+            break;
+        }
+        case QLocale::Taiwan: {
+            _synthesizer->setLocale(QLocale{language}.bcp47Name().toStdString()
+                                    + "-TW");
+            break;
+        }
+        case QLocale::HongKong: {
+            _synthesizer->setLocale(QLocale{language}.bcp47Name().toStdString()
+                                    + "-TW");
+            break;
+        }
+        default:
+            break;
+        }
+
+        _synthesizer->speak(string.toStdString());
+        break;
+#endif
         auto voices = getListOfVoices(language, country);
         if (voices.isEmpty()) {
             return -ENOENT;
@@ -167,33 +190,6 @@ int EntrySpeaker::speak(const QLocale::Language &language,
         if (!filterVoiceNames(language, country, voices, voice)) {
             return -ENOENT;
         }
-#elif defined(Q_OS_MAC)
-        // Filter out "Eloquence" voices from macOS, which sound much more
-        // robotic. Fall back to using the first voice in voices list if
-        // the better voices are not available.
-        if (language == QLocale::Chinese && country == QLocale::Taiwan) {
-            for (const auto &v : voices) {
-                if (v.name() == "Meijia") {
-                    voice = v;
-                }
-            }
-        } else if (language == QLocale::Chinese && country == QLocale::China) {
-            for (const auto &v : voices) {
-                if (v.name() == "Tingting") {
-                    voice = v;
-                }
-            }
-        } else if (language == QLocale::Chinese
-                   && country == QLocale::HongKong) {
-            for (const auto &v : voices) {
-                if (v.name() == "Sinji") {
-                    voice = v;
-                }
-            }
-        }
-        if (!voices.contains(voice)) {
-            voice = voices.at(0);
-        }
 #else
         voice = voices.at(0);
 #endif
@@ -202,7 +198,9 @@ int EntrySpeaker::speak(const QLocale::Language &language,
     }
     case TextToSpeech::SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS: {
         QString languageName = QLocale::languageToString(language) + "_"
-                               + QLocale::territoryToString(country);
+                               + (country == QLocale::HongKong
+                                      ? "Hong Kong"
+                                      : QLocale::territoryToString(country));
 
         std::vector<std::string> syllables;
         if (language == QLocale::Cantonese || country == QLocale::HongKong) {

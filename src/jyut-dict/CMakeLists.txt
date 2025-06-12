@@ -353,6 +353,8 @@ if(APPLE)
 
 
     TARGET_SOURCES(CantoneseDictionary
+        PRIVATE logic/audio/synthesizer_mac.h
+        PRIVATE logic/audio/synthesizer_mac.mm
         PRIVATE logic/dictation/transcriber_mac.h
         PRIVATE logic/dictation/transcriber_mac.mm
         PRIVATE logic/dictation/transcriberwrapper_mac.mm
