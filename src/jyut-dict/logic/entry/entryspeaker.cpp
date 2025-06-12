@@ -10,14 +10,21 @@
 #include <QFileInfo>
 #include <QStandardPaths>
 #include <QVector>
+#include <QtConcurrent/QtConcurrent>
 
 #include <cerrno>
 #include <iostream>
+#include <thread>
 
 EntrySpeaker::EntrySpeaker()
     : _tts{new QTextToSpeech}
-    , _player{new QMediaPlayer}
 {
+    _engine = (ma_engine *) malloc(sizeof(*_engine));
+    ma_result result = ma_engine_init(NULL, _engine);
+    if (result != MA_SUCCESS) {
+        std::cerr << "Failed to initialize miniaudio engine!" << std::endl;
+    }
+
 #ifdef Q_OS_MAC
     _synthesizer = std::make_unique<SynthesizerWrapper>();
 #endif
@@ -26,6 +33,8 @@ EntrySpeaker::EntrySpeaker()
 EntrySpeaker::~EntrySpeaker()
 {
     delete _tts;
+    ma_engine_uninit(_engine);
+    delete _engine;
 }
 
 EntrySpeaker::EntrySpeaker(EntrySpeaker &other)
@@ -157,24 +166,29 @@ int EntrySpeaker::speak(const QLocale::Language &language,
     case TextToSpeech::SpeakerBackend::QT_TTS: {
 #ifdef Q_OS_MAC
         // It seems like QLocale::Country is broken for China and Taiwan
+        bool res = false;
         switch (country) {
         case QLocale::China: {
-            _synthesizer->setLocale(QLocale{language}.bcp47Name().toStdString()
-                                    + "-CN");
+            res = _synthesizer->setLocale(
+                QLocale{language}.bcp47Name().toStdString() + "_CN");
             break;
         }
         case QLocale::Taiwan: {
-            _synthesizer->setLocale(QLocale{language}.bcp47Name().toStdString()
-                                    + "-TW");
+            res = _synthesizer->setLocale(
+                QLocale{language}.bcp47Name().toStdString() + "_TW");
             break;
         }
         case QLocale::HongKong: {
-            _synthesizer->setLocale(QLocale{language}.bcp47Name().toStdString()
-                                    + "-TW");
+            res = _synthesizer->setLocale(
+                QLocale{language}.bcp47Name().toStdString() + "_HK");
             break;
         }
         default:
             break;
+        }
+
+        if (!res) {
+            return -ENOENT;
         }
 
         _synthesizer->speak(string.toStdString());
@@ -212,21 +226,42 @@ int EntrySpeaker::speak(const QLocale::Language &language,
             MandarinUtils::segmentPinyin(mutableString, syllables);
         }
 
-        for (const auto &syllable : syllables) {
-            QString filepath = getAudioPath()
-                               + QString{"%1/%2/%3/%4.mp3"}
-                                     .arg(TextToSpeech::backendNames[backend],
-                                          languageName,
-                                          TextToSpeech::voiceNames[voice],
-                                          QString::fromStdString(syllable));
-            if (!QFileInfo::exists(filepath)) {
-                std::cerr << "File " << filepath.toStdString()
-                          << " does not exist" << std::endl;
+        std::ignore = QtConcurrent::run([=, this]() {
+            for (const auto &syllable : syllables) {
+                QString filepath
+                    = getAudioPath()
+                      + QString{"%1/%2/%3/%4.mp3"}
+                            .arg(TextToSpeech::backendNames[backend],
+                                 languageName,
+                                 TextToSpeech::voiceNames[voice],
+                                 QString::fromStdString(syllable));
+                if (!QFileInfo::exists(filepath)) {
+                    std::cerr << "File " << filepath.toStdString()
+                              << " does not exist" << std::endl;
+                }
+
+                ma_sound sound;
+                ma_result result
+                    = ma_sound_init_from_file(_engine,
+                                              filepath.toStdString().c_str(),
+                                              0,
+                                              NULL,
+                                              NULL,
+                                              &sound);
+
+                if (result != MA_SUCCESS) {
+                    continue;
+                }
+
+                ma_sound_start(&sound);
+                while (ma_sound_is_playing(&sound)) {
+                    std::this_thread::sleep_for(std::chrono::milliseconds{100});
+                    continue;
+                }
+
+                ma_sound_uninit(&sound);
             }
-            QUrl url = QUrl::fromLocalFile(filepath);
-            _player->setSource(url);
-            _player->play();
-        }
+        });
         break;
     }
     }

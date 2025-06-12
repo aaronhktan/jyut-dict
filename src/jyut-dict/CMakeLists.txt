@@ -12,7 +12,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS
     LinguistTools
-    Multimedia
     Network
     Sql
     Svg
@@ -20,7 +19,6 @@ find_package(QT NAMES Qt6 REQUIRED COMPONENTS
     Widgets)
 find_package(Qt6 REQUIRED COMPONENTS
     LinguistTools
-    Multimedia
     Network
     Sql
     Svg
@@ -145,6 +143,7 @@ set(PROJECT_HEADERS
         logic/utils/scriptdetector.h
         logic/utils/utils.h
         logic/utils/utils_qt.h
+        vendor/miniaudio/miniaudio.h
         vendor/zinnia/svm.h
         vendor/zinnia/common.h
         vendor/zinnia/config.h
@@ -261,6 +260,7 @@ set(PROJECT_SOURCES
         logic/utils/utils.cpp
         logic/utils/utils_qt.cpp
         main.cpp
+        vendor/miniaudio/miniaudio.cpp
         vendor/zinnia/character.cpp
         vendor/zinnia/feature.cpp
         vendor/zinnia/libzinnia.cpp
@@ -308,7 +308,6 @@ endif()
 
 target_link_libraries(CantoneseDictionary
     PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
-    PRIVATE Qt${QT_VERSION_MAJOR}::Multimedia
     PRIVATE Qt${QT_VERSION_MAJOR}::Network
     PRIVATE Qt${QT_VERSION_MAJOR}::Sql
     PRIVATE Qt${QT_VERSION_MAJOR}::Svg
@@ -340,7 +339,7 @@ set_target_properties(CantoneseDictionary PROPERTIES
 if(APPLE)
     find_library(SpeechFramework Speech)
     find_library(AVFoundationFramework AVFoundation)
-    target_link_libraries(CantoneseDictionary PRIVATE "-framework AppKit")
+    target_link_libraries(CantoneseDictionary PRIVATE "-framework AppKit -framework CoreAudio -framework CoreFoundation")
     target_link_libraries(CantoneseDictionary
         PRIVATE
         ${SpeechFramework}

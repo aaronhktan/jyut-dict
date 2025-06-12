@@ -1,15 +1,13 @@
 #include "synthesizer_mac.h"
 
-#import <AVFoundation/AVFoundation.h>
+#import <AppKit/AppKit.h>
 #import <Foundation/Foundation.h>
-#import <Speech/Speech.h>
 
 #include <iostream>
 
-@interface Synthesizer : NSObject <AVSpeechSynthesizerDelegate>
+@interface Synthesizer : NSObject <NSSpeechSynthesizerDelegate>
 
-@property(nonatomic, strong) AVSpeechSynthesizer *synthesizer;
-@property(nonatomic, strong) AVSpeechSynthesisVoice *voice;
+@property(nonatomic, strong) NSSpeechSynthesizer *synthesizer;
 
 - (bool)setLocale:(NSString *)locale;
 - (void)speak:(NSString *)text;
@@ -21,28 +19,52 @@
 - (instancetype)init
 {
     self = [super init];
-    if (self) {
-        _synthesizer = [[AVSpeechSynthesizer alloc] init];
+
+    // NSSpeechSynthesizer init requires having a voice, otherwise it silently fails
+    NSArray *voices = [NSSpeechSynthesizer availableVoices];
+    if (voices.count > 0) {
+        _synthesizer = [[NSSpeechSynthesizer alloc] initWithVoice:voices[0]];
+    }
+    if (!_synthesizer) {
+        NSLog(@"[ERROR] Failed to allocate NSSpeechSynthesizer");
     }
     return self;
 }
 
 - (bool)setLocale:(NSString *)locale
 {
-    _voice = [AVSpeechSynthesisVoice voiceWithLanguage:locale];
-    NSLog(@"%@ %@ %@", locale, _voice.name, _voice.identifier);
-    return !(_voice == nil);
+    NSArray<NSString *> *filteredVoices = [[NSSpeechSynthesizer availableVoices]
+        filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id object,
+                                                                          NSDictionary *bindings) {
+            if ([locale
+                    caseInsensitiveCompare:[NSSpeechSynthesizer
+                                               attributesForVoice:object][@"VoiceLocaleIdentifier"]]
+                != NSOrderedSame) {
+                return NO;
+            }
+
+            if ([[NSSpeechSynthesizer attributesForVoice:object][@"VoiceIdentifier"]
+                    containsString:@"eloquence"]) {
+                // Eloquence voices sound like garbage
+                return NO;
+            }
+
+            return YES;
+        }]];
+
+    if (![filteredVoices count]) {
+        NSLog(@"No voices found");
+        return false; // No voices were found for this locale
+    }
+
+    return [_synthesizer setVoice:filteredVoices[0]];
 }
 
 - (void)speak:(NSString *)text
 {
-    AVSpeechUtterance *utterance = [AVSpeechUtterance speechUtteranceWithString:text];
-    utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.75;
-    utterance.voice = _voice;
-    NSLog(@"Speaking!");
-
     _synthesizer.delegate = self;
-    [_synthesizer speakUtterance:utterance];
+    [_synthesizer setRate:_synthesizer.rate * 0.75];
+    [_synthesizer startSpeakingString:text];
 }
 
 @end
@@ -54,7 +76,6 @@ SynthesizerWrapper::SynthesizerWrapper()
 
 SynthesizerWrapper::~SynthesizerWrapper()
 {
-    std::cout << "destroying" << std::endl;
     if (_synthesizerImpl) {
         CFRelease(_synthesizerImpl);
     }

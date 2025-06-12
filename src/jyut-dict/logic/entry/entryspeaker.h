@@ -6,6 +6,10 @@
 #include <QString>
 #include <QTextToSpeech>
 
+extern "C" {
+#include "vendor/miniaudio/miniaudio.h"
+}
+
 #ifdef Q_OS_MAC
 #include "logic/audio/synthesizer_mac.h"
 #endif
@@ -104,7 +108,7 @@ private:
 #endif
 
     QTextToSpeech *_tts;
-    QMediaPlayer *_player;
+    ma_engine *_engine;
 };
 
 Q_DECLARE_METATYPE(TextToSpeech::SpeakerBackend);
