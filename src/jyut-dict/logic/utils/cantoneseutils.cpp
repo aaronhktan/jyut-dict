@@ -592,7 +592,6 @@ bool jyutpingAutocorrect(const QString &in,
             out.replace(out.length() - 2, 2, "ei");
         }
 
-        int replacementIdx = out.indexOf("ey");
         // Initials for which <initial> + "-ei" exist in Jyutping
         std::unordered_set<QChar> closeFrontVowelCluster
             = {'p', 'f', 'd', 'n', 'l', 'h', 'w'};
@@ -601,6 +600,8 @@ bool jyutpingAutocorrect(const QString &in,
         // Initials for which both exist in Jyutping
         std::unordered_set<QChar> ambiguousVowelCluster
             = {'b', 'm', 'g', 'k', 'z', 's'};
+
+        int replacementIdx = out.indexOf("ey");
         switch (replacementIdx) {
         case -1: {
             break;
