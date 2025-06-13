@@ -963,7 +963,7 @@ bool jyutpingAutocorrect(const QString &in,
         }
     }
 
-    // Check if the user intends to write an [-yt] or [jɐn], [jyn], [yn] cluster
+    // Check if the user intends to write an [-yt] or [jɐt], [jyt], [yt] cluster
     {
         // Initials for which <initial> + "-yu t-" exist in Jyutping
         std::unordered_set<QChar> closeFrontVowelCluster = {'z', 's', 'c', 'j'};
