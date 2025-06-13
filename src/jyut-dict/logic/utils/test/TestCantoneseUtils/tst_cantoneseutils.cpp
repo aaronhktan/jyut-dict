@@ -1455,6 +1455,20 @@ void TestCantoneseUtils::autocorrectJyutpingOw()
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 
+    err = CantoneseUtils::jyutpingAutocorrect("gowcat",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = "gaucat";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("gowcat",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "gaucat";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
     // Test with ambiguous initial + non-initial after the "ow"
     err = CantoneseUtils::jyutpingAutocorrect("howu",
                                               result,

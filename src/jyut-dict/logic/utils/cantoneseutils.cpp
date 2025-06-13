@@ -602,46 +602,46 @@ bool jyutpingAutocorrect(const QString &in,
             = {'b', 'm', 'g', 'k', 'z', 's'};
 
         int replacementIdx = out.indexOf("ey");
-        switch (replacementIdx) {
-        case -1: {
-            break;
-        }
-        case 0: {
-            out.replace(replacementIdx, 2, "ei");
-            break;
-        }
-        default: {
-            int initialIdx = replacementIdx - 1;
-            if (replacementIdx >= 2 && out.at(initialIdx) == ")") {
-                initialIdx = replacementIdx - 2;
-            }
-
-            if (closeFrontVowelCluster.find(out.at(initialIdx))
-                != closeFrontVowelCluster.end()) {
+        while (replacementIdx != -1) {
+            switch (replacementIdx) {
+            case 0: {
                 out.replace(replacementIdx, 2, "ei");
-            } else if (openMidFrontVowelCluster.find(out.at(initialIdx))
-                       != openMidFrontVowelCluster.end()) {
-                out.replace(replacementIdx, 2, "e j");
-            } else if (ambiguousVowelCluster.find(out.at(initialIdx))
-                       != ambiguousVowelCluster.end()) {
-                // The [j-] cluster can only occur if what follows is not an initial
-                bool initialFound = false;
-                for (int initial_len = 2; initial_len > 0; initial_len--) {
-                    QString s{out.constBegin() + replacementIdx + 2,
-                              initial_len};
-                    if (initials.find(s.toStdString()) != initials.end()
-                        || s.toStdString() == "y") {
-                        initialFound = true;
+                break;
+            }
+            default: {
+                int initialIdx = replacementIdx - 1;
+                if (replacementIdx >= 2 && out.at(initialIdx) == ")") {
+                    initialIdx = replacementIdx - 2;
+                }
+
+                if (closeFrontVowelCluster.find(out.at(initialIdx))
+                    != closeFrontVowelCluster.end()) {
+                    out.replace(replacementIdx, 2, "ei");
+                } else if (openMidFrontVowelCluster.find(out.at(initialIdx))
+                           != openMidFrontVowelCluster.end()) {
+                    out.replace(replacementIdx, 2, "e j");
+                } else if (ambiguousVowelCluster.find(out.at(initialIdx))
+                           != ambiguousVowelCluster.end()) {
+                    // The [j-] cluster can only occur if what follows is not an initial
+                    bool initialFound = false;
+                    for (int initial_len = 2; initial_len > 0; initial_len--) {
+                        QString s{out.constBegin() + replacementIdx + 2,
+                                  initial_len};
+                        if (initials.find(s.toStdString()) != initials.end()
+                            || s.toStdString() == "y") {
+                            initialFound = true;
+                        }
+                    }
+                    if (initialFound) {
+                        out.replace(replacementIdx, 2, "ei");
+                    } else {
+                        out.replace(replacementIdx, 2, "e j");
                     }
                 }
-                if (initialFound) {
-                    out.replace(replacementIdx, 2, "ei");
-                } else {
-                    out.replace(replacementIdx, 2, "e j");
-                }
+                break;
             }
-            break;
-        }
+            }
+            replacementIdx = out.indexOf("ey", replacementIdx + 1);
         }
     }
 
@@ -710,7 +710,7 @@ bool jyutpingAutocorrect(const QString &in,
         std::unordered_set<QChar> closeBackVowelCluster = {'b', 'm', 'k', 's'};
         // Initials for which both exist in Jyutping
         std::unordered_set<QChar> ambiguousVowelCluster
-            = {'p', 'm', 'f', 'd', 't', 'n', 'l', 'h', 'z', 'c', 's'};
+            = {'p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'h', 'z', 'c', 's'};
         int replacementIdx = out.indexOf("ow");
         while (replacementIdx != -1) {
             switch (replacementIdx) {
