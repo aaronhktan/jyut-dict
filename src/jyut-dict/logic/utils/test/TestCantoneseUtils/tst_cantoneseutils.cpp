@@ -1383,6 +1383,14 @@ void TestCantoneseUtils::autocorrectJyutpingOh()
     expected = "lo hon";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(
+        "mohmohmohlohonlohonlohjannohdoimoh moh",
+        result,
+        /* unsafeSubstitutions */ true);
+    expected = "moumoumoulo honlo honloujannoudoimou mou";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
 }
 
 void TestCantoneseUtils::autocorrectJyutpingOw()
@@ -1461,6 +1469,20 @@ void TestCantoneseUtils::autocorrectJyutpingOw()
     expected = "ho wu";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("mowmowmowhowuho wu towgai",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = "maumaumauho wuho wu taugai";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("mowmowmowhowuho wu towgai",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "maumaumauho wuho wu taugai";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
 }
 
 void TestCantoneseUtils::autocorrectJyutpingUm()
@@ -1510,6 +1532,13 @@ void TestCantoneseUtils::autocorrectJyutpingUm()
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 
+    err = CantoneseUtils::jyutpingAutocorrect("bumbumbumbum",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "bambambambam";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
     // Test with an initial that is only valid for the -u m- combo
     err = CantoneseUtils::jyutpingAutocorrect("wumit",
                                               result,
@@ -1552,6 +1581,20 @@ void TestCantoneseUtils::autocorrectJyutpingUm()
                                               result,
                                               /* unsafeSubstitutions */ true);
     expected = "gu man";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("gumangumzauwumitbumbumbumbum",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = "gu mangamzauwumitbambambambam";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("gumangumzauwumitbumbumbumbum",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "gu mangamzauwumitbambambambam";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 }
@@ -1617,6 +1660,20 @@ void TestCantoneseUtils::autocorrectJyutpingYum()
     expected = "syujam";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("cyumatcyumatcyumatsyuyumyumyum",
+                                              result,
+                                              /* unsafeSubstitutions */ false);
+    expected = "cyu matcyu matcyu matsyujamjamjam";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect("cyumatcyumatcyumatsyuyumyumyum",
+                                              result,
+                                              /* unsafeSubstitutions */ true);
+    expected = "cyu matcyu matcyu macyujamjamjam";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
 }
 
 void TestCantoneseUtils::autocorrectJyutpingYup()
@@ -1678,6 +1735,22 @@ void TestCantoneseUtils::autocorrectJyutpingYup()
                                               result,
                                               /* unsafeSubstitutions */ true);
     expected = "zeonjap";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(
+        "zeonyupzeonyupsyupeisyupeiyupyupzeonyup",
+        result,
+        /* unsafeSubstitutions */ false);
+    expected = "zeonjapzeonjapsyu peisyu peijapjapzeonjap";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(
+        "zeonyupzeonyupsyupeisyupeiyupyupzeonyup",
+        result,
+        /* unsafeSubstitutions */ true);
+    expected = "zeonjapzeonjapsyu peisyu peijapjapzeonjap";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 }
@@ -1769,6 +1842,22 @@ void TestCantoneseUtils::autocorrectJyutpingYuk()
     expected = "jyu kap";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(
+        "jyu kapgey yukgeyyukyukyukyukyuk yuk",
+        result,
+        /* unsafeSubstitutions */ false);
+    expected = "jyu kapgei jukgeijukjukjukjukjuk juk";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(
+        "jyu kapgey yukgeyyukyukyukyukyuk yuk",
+        result,
+        /* unsafeSubstitutions */ true);
+    expected = "jyu kapgei jukgeijukjukjukjukjuk juk";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
 }
 
 void TestCantoneseUtils::autocorrectJyutpingYung()
@@ -1844,6 +1933,24 @@ void TestCantoneseUtils::autocorrectJyutpingYung()
     expected = "j(yu)n gin";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(
+        "jyungingumyung yungyungyungzyungaa",
+        result,
+        /* unsafeSubstitutions */ false);
+    expected = "j(yu)n gingamj(y!u|a|eo)ng "
+               "j(y!u|a|eo)ngj(y!u|a|eo)ngj(y!u|a|eo)ngz(yu)n gaa";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(
+        "jyungingumyung yungyungyungzyungaa",
+        result,
+        /* unsafeSubstitutions */ true);
+    expected = "j(yu)n gingamj(y!u|a|eo)ng "
+               "j(y!u|a|eo)ngj(y!u|a|eo)ngj(y!u|a|eo)ngz(yu)n gaa";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
 }
 
 void TestCantoneseUtils::autocorrectJyutpingYun()
@@ -1894,7 +2001,7 @@ void TestCantoneseUtils::autocorrectJyutpingYun()
 
     err = CantoneseUtils::jyutpingAutocorrect("syuntau",
                                               result,
-                                              /* unsafeSubstitutions */ true);
+                                              /* unsafeSubstitutions */ false);
     expected = "sy(y!u|a|eo)ntau";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
@@ -1903,6 +2010,24 @@ void TestCantoneseUtils::autocorrectJyutpingYun()
                                               result,
                                               /* unsafeSubstitutions */ true);
     expected = "sy(y!u|a|eo)ntau";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(
+        "syuntausyuntaugumyunyun yunyunyun",
+        result,
+        /* unsafeSubstitutions */ false);
+    expected = "sy(y!u|a|eo)ntausy(y!u|a|eo)ntaugam(ja|jyu|yu)n("
+               "ja|jyu|yu)n (ja|jyu|yu)n(ja|jyu|yu)n(ja|jyu|yu)n";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(
+        "syuntausyuntaugumyunyun yunyunyun",
+        result,
+        /* unsafeSubstitutions */ true);
+    expected = "sy(y!u|a|eo)ntausy(y!u|a|eo)ntaugam(ja|jyu|yu)n("
+               "ja|jyu|yu)n (ja|jyu|yu)n(ja|jyu|yu)n(ja|jyu|yu)n";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 }
@@ -1978,6 +2103,24 @@ void TestCantoneseUtils::autocorrectJyutpingYut()
                                               result,
                                               /* unsafeSubstitutions */ true);
     expected = "j(yu)n gin";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(
+        "jyunginjyutjyugamyut yut yutyutyut",
+        result,
+        /* unsafeSubstitutions */ false);
+    expected = "j(yu)n ginj(yu)tjyugam(ja|jyu|yu)t (ja|jyu|yu)t "
+               "(ja|jyu|yu)t(ja|jyu|yu)t(ja|jyu|yu)t";
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    err = CantoneseUtils::jyutpingAutocorrect(
+        "jyunginjyutjyugamyut yut yutyutyut",
+        result,
+        /* unsafeSubstitutions */ true);
+    expected = "j(yu)n ginj(yu)tjyugam(ja|jyu|yu)t (ja|jyu|yu)t "
+               "(ja|jyu|yu)t(ja|jyu|yu)t(ja|jyu|yu)t";
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 }
