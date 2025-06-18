@@ -152,13 +152,16 @@ bool unfoldJyutpingRegex(const QString &string, std::vector<QString> &out)
         if (regexIdx == -1) {
             out.push_back(s);
         } else if (regexIdx == 0) {
-            QString tmp = s;
+            QString tmp{s};
             out.push_back(tmp.replace(0, 1, ""));
         } else {
-            QString tmp = s;
+            QString tmp{s};
             out.push_back(tmp.replace(regexIdx - 1, 2, ""));
+            tmp = s;
+            out.push_back(tmp.replace(regexIdx, 1, ""));
         }
     }
+
     return true;
 }
 
@@ -1294,20 +1297,27 @@ bool segmentJyutping(const QString &string,
                                                     end_idx - start_idx)
                                                .toLower();
 
-                // Regex characters need to be handled in a special way;
-                // essentially, we need to check every possibility. If at
-                // least one possibility is a valid final, then the Jyutping
-                // can be considered valid.
-                std::vector<QString> stringsToSearch;
-                QString stringToSearch = previous_initial;
-                unfoldJyutpingRegex(stringToSearch, stringsToSearch);
-
                 bool isValidFinal = false;
-                for (const auto &s : stringsToSearch) {
-                    auto searchResult = finals.find(s.toStdString());
-                    isValidFinal = isValidFinal
-                                   || (searchResult != finals.end());
+                if (removeRegexCharacters) {
+                    isValidFinal = finals.find(previous_initial.toStdString())
+                                   != finals.end();
+                } else {
+                    // Regex characters need to be handled in a special way;
+                    // essentially, we need to check every possibility. If at
+                    // least one possibility is a valid final, then the Jyutping
+                    // can be considered valid.
+                    std::vector<QString> stringsToSearch;
+                    QString stringToSearch = previous_initial;
+                    unfoldJyutpingRegex(stringToSearch, stringsToSearch);
+
+                    bool isValidFinal = false;
+                    for (const auto &s : stringsToSearch) {
+                        auto searchResult = finals.find(s.toStdString());
+                        isValidFinal = isValidFinal
+                                       || (searchResult != finals.end());
+                    }
                 }
+
                 if (isValidFinal) {
                     end_idx++;
                     previous_initial = processedString
@@ -1344,15 +1354,20 @@ bool segmentJyutping(const QString &string,
              initial_len--) {
             currentString = processedString.mid(end_idx, initial_len).toLower();
 
-            std::vector<QString> stringsToSearch;
-            QString stringToSearch = currentString;
-            unfoldJyutpingRegex(stringToSearch, stringsToSearch);
-
             bool isValidInitial = false;
-            for (const auto &s : stringsToSearch) {
-                auto searchResult = initials.find(s.toStdString());
-                isValidInitial = isValidInitial
-                                 || (searchResult != initials.end());
+            if (removeRegexCharacters) {
+                isValidInitial = initials.find(currentString.toStdString())
+                                 != initials.end();
+            } else {
+                std::vector<QString> stringsToSearch;
+                QString stringToSearch = currentString;
+                unfoldJyutpingRegex(stringToSearch, stringsToSearch);
+
+                for (const auto &s : stringsToSearch) {
+                    auto searchResult = initials.find(s.toStdString());
+                    isValidInitial = isValidInitial
+                                     || (searchResult != initials.end());
+                }
             }
 
             if (!isValidInitial) {
@@ -1366,17 +1381,25 @@ bool segmentJyutping(const QString &string,
                                               .mid(start_idx,
                                                    end_idx - start_idx)
                                               .toLower();
-                stringsToSearch.clear();
-                QString stringToSearch = previousInitial;
-                unfoldJyutpingRegex(stringToSearch, stringsToSearch);
 
                 bool previousInitialIsValidFinal = false;
-                for (const auto &s : stringsToSearch) {
-                    auto searchResult = finals.find(s.toStdString());
-                    previousInitialIsValidFinal = previousInitialIsValidFinal
-                                                  || (searchResult
-                                                      != initials.end());
+                if (removeRegexCharacters) {
+                    previousInitialIsValidFinal
+                        = finals.find(previousInitial.toStdString())
+                          != initials.end();
+                } else {
+                    std::vector<QString> stringsToSearch;
+                    QString stringToSearch = previousInitial;
+                    unfoldJyutpingRegex(stringToSearch, stringsToSearch);
+
+                    for (const auto &s : stringsToSearch) {
+                        auto searchResult = finals.find(s.toStdString());
+                        previousInitialIsValidFinal = previousInitialIsValidFinal
+                                                      || (searchResult
+                                                          != initials.end());
+                    }
                 }
+
                 if (previousInitialIsValidFinal) {
                     syllables.push_back(previousInitial.toStdString());
                     start_idx = end_idx;
@@ -1409,14 +1432,20 @@ bool segmentJyutping(const QString &string,
              final_len--) {
             currentString = processedString.mid(end_idx, final_len).toLower();
 
-            std::vector<QString> stringsToSearch;
-            QString stringToSearch = currentString;
-            unfoldJyutpingRegex(stringToSearch, stringsToSearch);
-
             bool isValidFinal = false;
-            for (const auto &s : stringsToSearch) {
-                auto searchResult = finals.find(s.toStdString());
-                isValidFinal = isValidFinal || (searchResult != finals.end());
+            if (removeRegexCharacters) {
+                isValidFinal = finals.find(currentString.toStdString())
+                               != finals.end();
+            } else {
+                std::vector<QString> stringsToSearch;
+                QString stringToSearch = currentString;
+                unfoldJyutpingRegex(stringToSearch, stringsToSearch);
+
+                for (const auto &s : stringsToSearch) {
+                    auto searchResult = finals.find(s.toStdString());
+                    isValidFinal = isValidFinal
+                                   || (searchResult != finals.end());
+                }
             }
 
             if (isValidFinal) {
