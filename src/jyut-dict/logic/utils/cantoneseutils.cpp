@@ -570,6 +570,16 @@ bool jyutpingAutocorrect(const QString &in,
     }
     out.replace("eok", "oek");
 
+    out.replace("ao ", "au ");
+    out.replace("ao'", "au'");
+    if (out.endsWith("ao")) {
+        idx = out.lastIndexOf(("ao"));
+        out.replace(idx, 2, "au");
+    }
+    if (unsafeSubstitutions) {
+        out.replace("ao", "au"); // unsafe because of maa5 on1
+    }
+
     out.replace("ar", "aa");      // like in "char siu"
     out.replace("ee", "i");       // like in "lai see"
     out.replace("ay", "ei");      // like in "gong hay fat choy"
@@ -1029,7 +1039,7 @@ bool jyutpingAutocorrect(const QString &in,
 
     out.replace("ui", "(eo|u)i");
     out.replace("un", "(y!u|a|eo)n");
-    out.replace("ut", "(a|u)t");
+    out.replace("ut", "(a|y!u)t");
 
     return 0;
 }
