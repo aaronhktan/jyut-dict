@@ -51,11 +51,12 @@ void prepareJyutpingBindValues(const QString &searchTerm,
                      ' ',
                      jyutpingSyllables);
     } else {
-        CantoneseUtils::segmentJyutping(correctedSearchTerm,
-                                        jyutpingSyllables,
-                                        /* removeSpecialCharacters */ true,
-                                        /* removeGlobCharacters */ false,
-                                        /* removeRegexCharacters= */ false);
+        CantoneseUtils::segmentJyutping(
+            correctedSearchTerm,
+            jyutpingSyllables,
+            /* removeSpecialCharacters */ true,
+            /* removeGlobCharacters */ false,
+            /* removeRegexCharacters= */ !fuzzyJyutping);
     }
 
     if (!searchExactMatch && fuzzyJyutping) {
