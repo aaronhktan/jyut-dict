@@ -1347,6 +1347,9 @@ bool segmentJyutping(const QString &string,
             } else {
                 // If there was no initial found, then the Jyutping isn't valid
                 valid_jyutping = false;
+                syllables.push_back(currentString.toStdString());
+                start_idx++;
+                end_idx++;
                 continue;
             }
         }

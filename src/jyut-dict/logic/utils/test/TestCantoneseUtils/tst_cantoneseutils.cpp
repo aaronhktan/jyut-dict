@@ -22,6 +22,7 @@ private slots:
     void jyutpingToYaleSpecialSyllable();
     void jyutpingToYaleTones();
     void jyutpingToYaleNoTone();
+    void jyutpingToYaleMalformedTone();
 
     void jyutpingToIPASimple();
     void jyutpingToIPARejectNoTone();
@@ -201,6 +202,12 @@ void TestCantoneseUtils::jyutpingToYaleNoTone()
     QCOMPARE(result, "mit");
 }
 
+void TestCantoneseUtils::jyutpingToYaleMalformedTone()
+{
+    std::string result = CantoneseUtils::convertJyutpingToIPA("mat 6");
+    QCOMPARE(result, "x");
+}
+
 void TestCantoneseUtils::jyutpingToIPASimple()
 {
     std::string result = CantoneseUtils::convertJyutpingToIPA("joeng4 sing4");
@@ -291,6 +298,7 @@ void TestCantoneseUtils::jyutpingToIPASpecialFinal()
     QCOMPARE(result, "ʊk̚˥  kʰei̯˧˥  jɐn˨˩");
 #endif
 }
+
 void TestCantoneseUtils::jyutpingToIPATones()
 {
     std::string result = CantoneseUtils::convertJyutpingToIPA(
@@ -304,6 +312,7 @@ void TestCantoneseUtils::jyutpingToIPATones()
              "säːm˥  kɐu̯˧˥  sei̯˧  lɪŋ˨˩  ŋ̍˩˧  jiː˨  t͡sʰɐt̚˥  päːt̚˧  lʊk̚˨");
 #endif
 }
+
 void TestCantoneseUtils::jyutpingToIPANoTone()
 {
     std::string result = CantoneseUtils::convertJyutpingToIPA("mok");
