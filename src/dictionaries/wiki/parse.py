@@ -25,6 +25,7 @@ JYUTPING_REGEX = re.compile(r"(.*?)（粵拼：(.*?)[）|；|，|/]")
 LITERARY_CANTONESE_READING_REGEX_PATTERN = re.compile(r"\d\*")
 HAN_REGEX = re.compile(r"[\u4e00-\u9fff]")
 
+logging.getLogger().setLevel(logging.INFO)
 
 def insert_words(c, words):
     for key in words:
@@ -301,7 +302,7 @@ if __name__ == "__main__":
                 '"Wikipedia is a free-content online encyclopedia, written and maintained '
                 "by a community of volunteers, collectively known as Wikipedians, through open "
                 'collaboration and the use of wiki-based editing system MediaWiki." '
-                '"Text is available under the Creative Commons Attribution-ShareAlike License 4.0."'
+                '"Text is available under the Creative Commons Attribution-ShareAlike License 4.0." '
                 '"https://www.wikipedia.org/" "" "words"'
             )
         )
