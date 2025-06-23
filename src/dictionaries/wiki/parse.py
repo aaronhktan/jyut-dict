@@ -21,6 +21,8 @@ yue_converter = opencc.OpenCC("hk2s.json")
 zh_converter = opencc.OpenCC("tw2s.json")
 
 SUPERSCRIPT_EQUIVALENT = str.maketrans("¹²³⁴⁵⁶⁷⁸⁹⁰", "1234567890", "")
+NUMBER_TO_COPTIC= str.maketrans("1234567890", "ⲁⲃⲅⲇⲉⲋⲍⲏⲑⲓ", "")
+COPTIC_TO_WIDE_NUMBER = str.maketrans("ⲁⲃⲅⲇⲉⲋⲍⲏⲑⲓ", "１２３４５６７８９０", "")
 JYUTPING_REGEX = re.compile(r"(.*?)（粵拼：(.*?)[）|；|，|/]")
 LITERARY_CANTONESE_READING_REGEX_PATTERN = re.compile(r"\d\*")
 HAN_REGEX = re.compile(r"[\u4e00-\u9fff]")
@@ -237,11 +239,16 @@ def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
                     jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN.sub("", jyut)
                     jyut = jyut.replace("ﾠ", " ")
             if not jyutping_match or not jyut:
+                processed_characters = trad.replace("·", "")
+                processed_characters = processed_characters.replace("(", "")
+                processed_characters = processed_characters.replace(")", "")
+                processed_characters = processed_characters.translate(NUMBER_TO_COPTIC)
                 jyut = pinyin_jyutping_sentence.jyutping(
-                    trad.replace("·", ""),
+                    processed_characters,
                     tone_numbers=True,
                     spaces=True,
                 )
+                jyut = jyut.translate(COPTIC_TO_WIDE_NUMBER)
 
                 # If pinyin_jyutping_sentences cannot convert to Jyutping, use
                 # pycantonese to convert the character instead
@@ -251,10 +258,14 @@ def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
                     if char_jyutping:
                         jyut = jyut.replace(char, char_jyutping)
 
+            processed_characters = simp.replace("·", "")
+            processed_characters = processed_characters.replace("(", "")
+            processed_characters = processed_characters.replace(")", "")
+            processed_characters = processed_characters.translate(NUMBER_TO_COPTIC)
             pin = (
                 " ".join(
                     lazy_pinyin(
-                        simp.replace("·", ""),
+                        processed_characters,
                         style=Style.TONE3,
                         neutral_tone_with_five=True,
                         v_to_u=True,
@@ -263,6 +274,7 @@ def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
                 .lower()
                 .replace("ü", "u:")
             )
+            pin = pin.translate(COPTIC_TO_WIDE_NUMBER)
 
             definition_components = []
             dest_key = correspondences[trad]
