@@ -6,6 +6,8 @@
 #include "logic/audio/synthesizer_mac.h"
 #endif
 
+#include <KZip>
+
 #include <QCoreApplication>
 #include <QFileInfo>
 #include <QStandardPaths>
@@ -27,6 +29,19 @@ EntrySpeaker::EntrySpeaker()
 
 #ifdef Q_OS_MAC
     _synthesizer = std::make_unique<SynthesizerWrapper>();
+#endif
+
+#ifdef Q_OS_LINUX
+    std::ignore = QtConcurrent::run([=, this]() {
+        KZip zip{getBundleAudioPath() + "audio.zip"};
+        if (!zip.open(QIODevice::ReadOnly)) {
+            return false;
+        }
+        if (!zip.directory()->copyTo(getAudioPath())) {
+            return false;
+        }
+        return true;
+    });
 #endif
 }
 

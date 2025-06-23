@@ -24,8 +24,6 @@ HandwritingWrapper::HandwritingWrapper(Handwriting::Script script)
     : QObject()
     , _recognizer{zinnia::Recognizer::create()}
 {
-    setRecognizerScript(script);
-
     showProgressDialog(tr("Preparing handwriting models..."));
     _boolReturnWatcher = new QFutureWatcher<Utils::Result<bool>>{this};
     disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
@@ -43,6 +41,8 @@ HandwritingWrapper::HandwritingWrapper(Handwriting::Script script)
     QFuture<Utils::Result<bool>> future = QtConcurrent::run(
         [=, this]() { return copyModels(); });
     _boolReturnWatcher->setFuture(future);
+
+    setRecognizerScript(script);
 }
 
 HandwritingWrapper::~HandwritingWrapper()
@@ -71,6 +71,10 @@ bool HandwritingWrapper::setRecognizerScript(Handwriting::Script script)
         modelFile = getModelPath().toStdString() + TRADITIONAL_MODEL;
         break;
     }
+    }
+
+    while (_boolReturnWatcher && _boolReturnWatcher->isRunning()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds{50});
     }
 
     _recognizer->close();
@@ -120,7 +124,7 @@ QString HandwritingWrapper::getLocalModelPath(void) const
 #else
     QFileInfo localFile{
         QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
-        + "/Handwriting/"};
+        + "/handwriting/"};
 #endif
     return localFile.absoluteFilePath();
 }
@@ -194,7 +198,6 @@ Utils::Result<bool> HandwritingWrapper::copyModels(void) const
     return true;
 #else
     QFileInfo localDir{getLocalModelPath()};
-    QFileInfo bundleDir{getBundleModelPath()};
 
     // Make path for model storage
     if (!localDir.exists()) {

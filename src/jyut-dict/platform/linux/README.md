@@ -7,5 +7,8 @@ To build for Linux:
 		- Copy the built executable to `<folder>`/usr/bin and rename it to "jyut-dict".
 		- Copy dict.db to `<folder>`/usr/share/jyut-dict/dictionaries/
 		- Copy user.db to `<folder>`/usr/share/jyut-dict/dictionaries/
+                - Copy audio.zip to `<folder>`/usr/share/jyut-dict/audio/
+                - Copy handwriting models to `<folder>`/usr/share/jyut-dict/handwriting/
+                - Copy licenses to `<folder>`/usr/share/jyut-dict/licenses/
 	- Run `linuxdeployqt <folder>/usr/share/applications/jyut-dict.desktop -appimage`.
 	- You should have an AppImage that works now.

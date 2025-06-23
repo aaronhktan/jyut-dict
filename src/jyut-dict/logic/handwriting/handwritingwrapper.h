@@ -52,8 +52,8 @@ private:
     zinnia::Recognizer *_recognizer = nullptr;
     zinnia::Character *_character = nullptr;
 
-    QFutureWatcher<Utils::Result<bool>> *_boolReturnWatcher;
-    QProgressDialog *_progressDialog;
+    QFutureWatcher<Utils::Result<bool>> *_boolReturnWatcher = nullptr;
+    QProgressDialog *_progressDialog = nullptr;
 
     std::vector<std::pair<int, int>> _currentStrokePoints;
     std::vector<std::string> _strokes;

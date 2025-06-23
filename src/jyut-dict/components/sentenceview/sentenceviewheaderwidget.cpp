@@ -172,8 +172,13 @@ void SentenceViewHeaderWidget::translateUI(void)
         TextToSpeech::SpeakerBackend backend
             = Settings::getSettings()
                   ->value("Advanced/CantoneseTextToSpeech::SpeakerBackend",
+#ifdef Q_OS_LINUX
+                          QVariant::fromValue(TextToSpeech::SpeakerBackend::
+                                                  GOOGLE_OFFLINE_SYLLABLE_TTS))
+#else
                           QVariant::fromValue(
                               TextToSpeech::SpeakerBackend::QT_TTS))
+#endif
                   .value<TextToSpeech::SpeakerBackend>();
         TextToSpeech::SpeakerVoice voice
             = Settings::getSettings()
@@ -207,8 +212,14 @@ void SentenceViewHeaderWidget::translateUI(void)
             TextToSpeech::SpeakerBackend backend
                 = Settings::getSettings()
                       ->value("Advanced/MandarinTextToSpeech::SpeakerBackend",
+#ifdef Q_OS_LINUX
                               QVariant::fromValue(
-                                  TextToSpeech::SpeakerBackend::QT_TTS))
+                                  TextToSpeech::SpeakerBackend::
+                                      GOOGLE_OFFLINE_SYLLABLE_TTS))
+#else
+                          QVariant::fromValue(
+                              TextToSpeech::SpeakerBackend::QT_TTS))
+#endif
                       .value<TextToSpeech::SpeakerBackend>();
             TextToSpeech::SpeakerVoice voice
                 = Settings::getSettings()
