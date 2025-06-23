@@ -9,16 +9,10 @@
 namespace ChineseUtils {
 
 const static std::unordered_set<std::string> specialCharacters = {
-    ".",  "。", ",",  "，", "！", "？", "%",  "－", "…",  "⋯",
-    ".",  "·",  "\"", "“",  "”",  "$",  "｜", "：", "１", "２",
-    "３", "４", "５", "６", "７", "８", "９", "０",
-};
-
-const static std::unordered_set<std::string> regexCharacters = {
-    "!",
-    "(",
-    ")",
-    "|",
+    ".",  "。", ",",  "，", "！", "？", "%",  "－", "…",  "⋯",  ".",
+    "·",  "\"", "“",  "”",  "$",  "｜", "：", "１", "２", "３", "４",
+    "５", "６", "７", "８", "９", "０", " ",  "!",  "(",  ")",  "|",
+    "1",  "2",  "3",  "4",  "5",  "6",  "7",  "8",  "9",  "0",
 };
 
 std::string applyColours(const std::string original,
@@ -35,6 +29,8 @@ std::string applyColours(const std::string original,
     for (const auto codepoint : data) {
         std::string originalStr
             = QString::fromStdU32String(std::u32string{codepoint}).toStdString();
+
+        std::cout << originalStr << " " << pos << std::endl;
 
         // Skip same character string; they have no colour
         // However, increment to the next tone position
