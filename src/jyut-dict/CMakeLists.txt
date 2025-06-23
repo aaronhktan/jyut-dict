@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(CantoneseDictionary VERSION 3.25.0304 LANGUAGES CXX)
+project(CantoneseDictionary VERSION 4.25.0623 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)

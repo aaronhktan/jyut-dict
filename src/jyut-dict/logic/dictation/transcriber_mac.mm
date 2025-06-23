@@ -125,11 +125,15 @@ private:
 
     // Check authorization status
     SFSpeechRecognizerAuthorizationStatus status = [SFSpeechRecognizer authorizationStatus];
+    dispatch_semaphore_t speech_recognizer_sema = dispatch_semaphore_create(0);
+
     switch (status) {
     case SFSpeechRecognizerAuthorizationStatusAuthorized: {
+        dispatch_semaphore_signal(speech_recognizer_sema);
         break;
     }
     case SFSpeechRecognizerAuthorizationStatusDenied: {
+        dispatch_semaphore_signal(speech_recognizer_sema);
         _publisher->notifyTranscriptionResult(
             std::system_error{EPERM,
                               std::generic_category(),
@@ -137,6 +141,7 @@ private:
         break;
     }
     case SFSpeechRecognizerAuthorizationStatusRestricted: {
+        dispatch_semaphore_signal(speech_recognizer_sema);
         _publisher->notifyTranscriptionResult(
             std::system_error{EPERM,
                               std::generic_category(),
@@ -145,6 +150,7 @@ private:
     }
     case SFSpeechRecognizerAuthorizationStatusNotDetermined: {
         [SFSpeechRecognizer requestAuthorization:^(SFSpeechRecognizerAuthorizationStatus status) {
+            dispatch_semaphore_signal(speech_recognizer_sema);
             if (status != SFSpeechRecognizerAuthorizationStatusAuthorized) {
                 _publisher->notifyTranscriptionResult(
                     std::system_error{EPERM,
@@ -154,6 +160,15 @@ private:
         }];
         break;
     }
+    }
+
+    while (dispatch_semaphore_wait(speech_recognizer_sema, DISPATCH_TIME_NOW)) {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:0]];
+    }
+    status = [SFSpeechRecognizer authorizationStatus];
+    if (status != SFSpeechRecognizerAuthorizationStatusAuthorized) {
+        return;
     }
 
     // Create the input node for audio capture
@@ -217,17 +232,21 @@ private:
     // Check that we have authorization to capture audio from the inputNode
     AVAuthorizationStatus captureStatus = [AVCaptureDevice
         authorizationStatusForMediaType:AVMediaTypeAudio];
+    dispatch_semaphore_t capture_sema = dispatch_semaphore_create(0);
 
     switch (captureStatus) {
     case AVAuthorizationStatusAuthorized:
+        dispatch_semaphore_signal(capture_sema);
         break;
 
     case AVAuthorizationStatusDenied:
+        dispatch_semaphore_signal(capture_sema);
         _publisher->notifyTranscriptionResult(
             std::system_error{EPERM, std::generic_category(), "Microphone permission not granted"});
         break;
 
     case AVAuthorizationStatusRestricted:
+        dispatch_semaphore_signal(capture_sema);
         _publisher->notifyTranscriptionResult(
             std::system_error{EPERM, std::generic_category(), "Microphone permission restricted"});
         break;
@@ -235,14 +254,25 @@ private:
     case AVAuthorizationStatusNotDetermined:
         [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio
                                  completionHandler:^(BOOL granted) {
+                                     dispatch_semaphore_signal(capture_sema);
                                      if (!granted) {
                                          _publisher->notifyTranscriptionResult(
                                              std::system_error{EPERM,
                                                                std::generic_category(),
                                                                "Microphone access denied"});
+                                         return;
                                      }
                                  }];
         break;
+    }
+
+    while (dispatch_semaphore_wait(capture_sema, DISPATCH_TIME_NOW)) {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:0]];
+    }
+    captureStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeAudio];
+    if (captureStatus != AVAuthorizationStatusAuthorized) {
+        return;
     }
 
     // Prepare and start the audio engine

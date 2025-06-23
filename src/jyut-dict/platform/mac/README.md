@@ -7,7 +7,7 @@ To build for Mac:
 Codesigning and Notarizing
 (See https://ahmad.ltd/How-To-Deploy-Your-Qt-macOS-App-Properly/ for instructions)
 - Use XCode to generate a Developer ID certificate: Preferences > Accounts > Manage Certificates... > + (lower left corner) > Developer ID Application.
-- BEFORE GENERATING THE DMG: codesign the generated .app bundle: `codesign -f --deep -v --options runtime -s 'Developer ID Application: {name of developer ID}' {app_name}.app`. You can find the name of the developer ID in Keychain, under `Certificates`; it'll have the format `Developer ID Application: <name> (<alphanumeric string>)`.
+- BEFORE GENERATING THE DMG: codesign the generated .app bundle: `codesign -f --deep -v --options runtime --entitlements jyut-dict/src/jyut-dict/platform/mac/Entitlements.plist -s 'Developer ID Application: {name of developer ID}' {app_name}.app`. You can find the name of the developer ID in Keychain, under `Certificates`; it'll have the format `Developer ID Application: <name> (<alphanumeric string>)`.
 - AFTER GENERATING THE DMG: codesign the .dmg: `codesign -f --deep -v --options runtime -s 'Developer ID Application: {name of developer ID}' {app_name}.dmg`.
 - Upload the codesigned .dmg file: `xcrun notarytool store-credentials` (on first run), and then `xcrun notarytool submit {app_name}.dmg --keychain-profile "{credential name}"`.
 - Staple the notarization info to the .dmg: `xcrun stapler staple {app_name}.dmg`.
