@@ -21,7 +21,6 @@ yue_converter = opencc.OpenCC("hk2s.json")
 zh_converter = opencc.OpenCC("tw2s.json")
 
 SUPERSCRIPT_EQUIVALENT = str.maketrans("¹²³⁴⁵⁶⁷⁸⁹⁰", "1234567890", "")
-WIDE_DIGIT_EQUIVALENT = str.maketrans("1234567890", "１２３４５６７８９０", "")
 JYUTPING_REGEX = re.compile(r"(.*?)（粵拼：(.*?)[）|；|，|/]")
 LITERARY_CANTONESE_READING_REGEX_PATTERN = re.compile(r"\d\*")
 HAN_REGEX = re.compile(r"[\u4e00-\u9fff]")
@@ -238,7 +237,7 @@ def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
                     jyut = jyut.replace("ﾠ", " ")
             if not jyutping_match or not jyut:
                 jyut = pinyin_jyutping_sentence.jyutping(
-                    trad.translate(WIDE_DIGIT_EQUIVALENT),
+                    trad.replace("·", ""),
                     tone_numbers=True,
                     spaces=True,
                 )
@@ -254,7 +253,7 @@ def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
             pin = (
                 " ".join(
                     lazy_pinyin(
-                        simp,
+                        simp.replace("·", ""),
                         style=Style.TONE3,
                         neutral_tone_with_five=True,
                         v_to_u=True,
