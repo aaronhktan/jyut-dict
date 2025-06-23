@@ -260,7 +260,6 @@ private:
                                              std::system_error{EPERM,
                                                                std::generic_category(),
                                                                "Microphone access denied"});
-                                         return;
                                      }
                                  }];
         break;

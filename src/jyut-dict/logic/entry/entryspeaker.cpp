@@ -35,12 +35,11 @@ EntrySpeaker::EntrySpeaker()
     std::ignore = QtConcurrent::run([=, this]() {
         KZip zip{getBundleAudioPath() + "audio.zip"};
         if (!zip.open(QIODevice::ReadOnly)) {
-            return false;
+            std::cerr << "Failed to read audio zip file!" << std::endl;
         }
         if (!zip.directory()->copyTo(getAudioPath())) {
-            return false;
+            std::cerr << "Failed to unzip audio files!" << std::endl;
         }
-        return true;
     });
 #endif
 }
