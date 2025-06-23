@@ -30,8 +30,6 @@ std::string applyColours(const std::string original,
         std::string originalStr
             = QString::fromStdU32String(std::u32string{codepoint}).toStdString();
 
-        std::cout << originalStr << " " << pos << std::endl;
-
         // Skip same character string; they have no colour
         // However, increment to the next tone position
         // since they represent characters that are the same between simplified
