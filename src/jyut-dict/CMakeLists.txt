@@ -406,9 +406,6 @@ elseif(WIN32)
         PRIVATE
         ole32
         oleaut32
-        uuid
-        sapi
-        imm32
     )
 
     TARGET_SOURCES(CantoneseDictionary
