@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(CantoneseDictionary VERSION 3.25.0304 LANGUAGES CXX)
+project(CantoneseDictionary VERSION 4.25.0623 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -392,6 +392,7 @@ elseif(UNIX)
     TARGET_SOURCES(CantoneseDictionary PRIVATE logic/utils/utils_linux.cpp)
     configure_file(resources/db/dict.db dict.db COPYONLY)
     configure_file(resources/db/user.db user.db COPYONLY)
+    configure_file(resources/audio/audio.zip audio.zip COPYONLY)
     configure_file(resources/licenses/FLOW_LAYOUT_LICENSE.txt FLOW_LAYOUT_LICENSE.txt COPYONLY)
     configure_file(resources/licenses/ZINNIA_LICENSE.txt ZINNIA_LICENSE.txt COPYONLY)
     configure_file(resources/settings/settings.ini settings.ini COPYONLY)
@@ -405,9 +406,6 @@ elseif(WIN32)
         PRIVATE
         ole32
         oleaut32
-        uuid
-        sapi
-        imm32
     )
 
     TARGET_SOURCES(CantoneseDictionary

@@ -1,10 +1,10 @@
 #ifndef ENTRYSPEAKER_H
 #define ENTRYSPEAKER_H
 
-#include <QMediaPlayer>
-#include <QtGlobal>
+#include <QFutureWatcher>
 #include <QString>
 #include <QTextToSpeech>
+#include <QtGlobal>
 
 extern "C" {
 #include "vendor/miniaudio/miniaudio.h"
@@ -49,7 +49,7 @@ static QMap<TextToSpeech::SpeakerVoice, QString> voiceNames{
 
 } // namespace TextToSpeech
 
-class EntrySpeaker
+class EntrySpeaker : QObject
 {
 public:
     EntrySpeaker();
@@ -105,6 +105,10 @@ private:
 
 #ifdef Q_OS_MAC
     std::unique_ptr<SynthesizerWrapper> _synthesizer;
+#endif
+
+#ifdef Q_OS_LINUX
+    QFutureWatcher<bool> *_boolReturnWatcher = nullptr;
 #endif
 
     QTextToSpeech *_tts;

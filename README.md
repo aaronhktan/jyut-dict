@@ -90,7 +90,8 @@ craft karchive
 ```
 3. Set up Qt Creator with a kit from Craft, following instructions [here](https://community.kde.org/Craft#Using_Craft_with_an_IDE).
 4. Open CMakeLists.txt in Qt Creator, and define `CMAKE_CXX_FLAGS` as `-DPORTABLE -DDEBUG` in the CMake configuration if you would like to isolate your debug build from any system files.
-5. Compile and run!
+5. Also in `CMAKE_CXX_FLAGS`, define `-DHAVE_CONFIG_H` to allow miniaudio to compile.
+6. Compile and run!
 
 ## Packaging for release
 

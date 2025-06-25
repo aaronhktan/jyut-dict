@@ -6,6 +6,8 @@
 #include "logic/audio/synthesizer_mac.h"
 #endif
 
+#include <KZip>
+
 #include <QCoreApplication>
 #include <QFileInfo>
 #include <QStandardPaths>
@@ -17,7 +19,8 @@
 #include <thread>
 
 EntrySpeaker::EntrySpeaker()
-    : _tts{new QTextToSpeech}
+    : QObject{}
+    , _tts{new QTextToSpeech}
 {
     _engine = (ma_engine *) malloc(sizeof(*_engine));
     ma_result result = ma_engine_init(NULL, _engine);
@@ -27,6 +30,23 @@ EntrySpeaker::EntrySpeaker()
 
 #ifdef Q_OS_MAC
     _synthesizer = std::make_unique<SynthesizerWrapper>();
+#endif
+
+#ifdef Q_OS_LINUX
+    _boolReturnWatcher = new QFutureWatcher<bool>{this};
+    QFuture<bool> future = QtConcurrent::run([=, this]() {
+        KZip zip{getBundleAudioPath() + "audio.zip"};
+        if (!zip.open(QIODevice::ReadOnly)) {
+            std::cerr << "Failed to read audio zip file!" << std::endl;
+            return false;
+        }
+        if (!zip.directory()->copyTo(getAudioPath())) {
+            std::cerr << "Failed to unzip audio files!" << std::endl;
+            return false;
+        }
+        return true;
+    });
+    _boolReturnWatcher->setFuture(future);
 #endif
 }
 
@@ -227,6 +247,12 @@ int EntrySpeaker::speak(const QLocale::Language &language,
         }
 
         std::ignore = QtConcurrent::run([=, this]() {
+#ifdef Q_OS_LINUX
+            while (_boolReturnWatcher && _boolReturnWatcher->isRunning()) {
+                std::this_thread::sleep_for(std::chrono::milliseconds{50});
+            }
+#endif
+
             for (const auto &syllable : syllables) {
                 QString filepath
                     = getAudioPath()
