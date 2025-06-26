@@ -20,9 +20,9 @@ In general, you should test your changes on the latest release of macOS, Windows
 
 ## Pull Request
 
-Once you've made some changes and are ready to get it into the main codebase, create a pull request! Follow the pull request template as best as possible. In general, PRs should be titled using the imperative conjugation, e.g. `Fix colours in macOS`.
+Once you've made some changes and are ready to get it into the main codebase, create a pull request! Follow the pull request template as best as possible. In general, PRs should be titled using the imperative conjugation, e.g. `#<issue name>: Fix colours in macOS`.
 
-After getting the PR reviewed and approved, submit it! Use a squashed merge, with the commit message as `Fix/Address/Resolve #<issue number>: <short description>`.
+After getting the PR reviewed and approved, submit it! Use a squashed merge, with the commit message as `#<issue number>: <short description>`.
 
 ## Merged!
 
