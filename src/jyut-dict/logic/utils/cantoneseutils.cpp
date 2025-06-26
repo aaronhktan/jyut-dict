@@ -588,7 +588,7 @@ bool jyutpingAutocorrect(const QString &in,
     out.replace("ong", "(o|u)ng");
     out.replace("young", "jung"); // like in "foo young"
 
-    out.replace("yue", "jyu"); // like "yuet yue" (粵語)
+    out.replace("yue", "(j)yu"); // like "yuet yue" (粵語)
     out.replace("ue", "(yu)"); // like "tsuen wan" (轉彎)
     out.replace("tsz", "zi");  // like "tsat tsz mui" (七姊妹)
     out.replace("ck", "k");    // like "back" (白)
@@ -597,66 +597,6 @@ bool jyutpingAutocorrect(const QString &in,
     // they are final + initial or a "misspelling" of a final
     // However, it is unambiguous if there is a separator at the end of the
     // syllable, or it is the end of the string
-
-    // Check if the user intends to write an [-ɛː j-] or [-ei̯] cluster
-    {
-        out.replace("ey ", "ei ").replace("ey'", "ei'");
-        if (out.endsWith("ey")) {
-            out.replace(out.length() - 2, 2, "ei");
-        }
-
-        // Initials for which <initial> + "-ei" exist in Jyutping
-        std::unordered_set<QChar> closeFrontVowelCluster
-            = {'p', 'f', 'd', 'n', 'l', 'h', 'w'};
-        // Initials for which <initial> + "-e j-" exist in Jyutping
-        std::unordered_set<QChar> openMidFrontVowelCluster = {'c', 'j', 'y'};
-        // Initials for which both exist in Jyutping
-        std::unordered_set<QChar> ambiguousVowelCluster
-            = {'b', 'm', 'g', 'k', 'z', 's'};
-
-        int replacementIdx = out.indexOf("ey");
-        while (replacementIdx != -1) {
-            switch (replacementIdx) {
-            case 0: {
-                out.replace(replacementIdx, 2, "ei");
-                break;
-            }
-            default: {
-                int initialIdx = replacementIdx - 1;
-                if (replacementIdx >= 2 && out.at(initialIdx) == ")") {
-                    initialIdx = replacementIdx - 2;
-                }
-
-                if (closeFrontVowelCluster.find(out.at(initialIdx))
-                    != closeFrontVowelCluster.end()) {
-                    out.replace(replacementIdx, 2, "ei");
-                } else if (openMidFrontVowelCluster.find(out.at(initialIdx))
-                           != openMidFrontVowelCluster.end()) {
-                    out.replace(replacementIdx, 2, "e j");
-                } else if (ambiguousVowelCluster.find(out.at(initialIdx))
-                           != ambiguousVowelCluster.end()) {
-                    // The [j-] cluster can only occur if what follows is not an initial
-                    bool initialFound = false;
-                    for (int initial_len = 2; initial_len > 0; initial_len--) {
-                        QString s{out.constBegin() + replacementIdx + 2,
-                                  initial_len};
-                        if (initials.find(s.toStdString()) != initials.end()
-                            || s.toStdString() == "y") {
-                            initialFound = true;
-                        }
-                    }
-                    if (initialFound) {
-                        out.replace(replacementIdx, 2, "ei");
-                    } else {
-                        out.replace(replacementIdx, 2, "e j");
-                    }
-                }
-                break;
-            }
-            }
-            replacementIdx = out.indexOf("ey", replacementIdx + 1);
-        }
-    }
 
     // Check if the user intends to write an [-ɔː h-] or [-ou̯] cluster
     {
@@ -822,6 +762,66 @@ bool jyutpingAutocorrect(const QString &in,
         }
     }
 
+    // Check if the user intends to write an [-ɛː j-] or [-ei̯] cluster
+    {
+        out.replace("ey ", "ei ").replace("ey'", "ei'");
+        if (out.endsWith("ey")) {
+            out.replace(out.length() - 2, 2, "ei");
+        }
+
+        // Initials for which <initial> + "-ei" exist in Jyutping
+        std::unordered_set<QChar> closeFrontVowelCluster
+            = {'p', 'f', 'd', 'n', 'l', 'h', 'w'};
+        // Initials for which <initial> + "-e j-" exist in Jyutping
+        std::unordered_set<QChar> openMidFrontVowelCluster = {'c', 'j', 'y'};
+        // Initials for which both exist in Jyutping
+        std::unordered_set<QChar> ambiguousVowelCluster
+            = {'b', 'm', 'g', 'k', 'z', 's'};
+
+        int replacementIdx = out.indexOf("ey");
+        while (replacementIdx != -1) {
+            switch (replacementIdx) {
+            case 0: {
+                out.replace(replacementIdx, 2, "ei");
+                break;
+            }
+            default: {
+                int initialIdx = replacementIdx - 1;
+                if (replacementIdx >= 2 && out.at(initialIdx) == ")") {
+                    initialIdx = replacementIdx - 2;
+                }
+
+                if (closeFrontVowelCluster.find(out.at(initialIdx))
+                    != closeFrontVowelCluster.end()) {
+                    out.replace(replacementIdx, 2, "ei");
+                } else if (openMidFrontVowelCluster.find(out.at(initialIdx))
+                           != openMidFrontVowelCluster.end()) {
+                    out.replace(replacementIdx, 2, "e (j)");
+                } else if (ambiguousVowelCluster.find(out.at(initialIdx))
+                           != ambiguousVowelCluster.end()) {
+                    // The [j-] cluster can only occur if what follows is not an initial
+                    bool initialFound = false;
+                    for (int initial_len = 2; initial_len > 0; initial_len--) {
+                        QString s{out.constBegin() + replacementIdx + 2,
+                                  initial_len};
+                        if (initials.find(s.toStdString()) != initials.end()
+                            || s.toStdString() == "y") {
+                            initialFound = true;
+                        }
+                    }
+                    if (initialFound) {
+                        out.replace(replacementIdx, 2, "ei");
+                    } else {
+                        out.replace(replacementIdx, 2, "e (j)");
+                    }
+                }
+                break;
+            }
+            }
+            replacementIdx = out.indexOf("ey", replacementIdx + 1);
+        }
+    }
+
     // Check if the user intends to write an [-yː j-] or [-ɐm] cluster
     {
         // Initials for which <initial> + "-yu m-" exist in Jyutping
@@ -830,7 +830,7 @@ bool jyutpingAutocorrect(const QString &in,
         while (replacementIdx != -1) {
             switch (replacementIdx) {
             case 0: {
-                out.replace(replacementIdx, 3, "jam");
+                out.replace(replacementIdx, 3, "(j)am");
                 break;
             }
             default: {
@@ -843,7 +843,7 @@ bool jyutpingAutocorrect(const QString &in,
                     != closeFrontVowelCluster.end()) {
                     out.replace(replacementIdx, 3, "yu m");
                 } else {
-                    out.replace(replacementIdx, 3, "jam");
+                    out.replace(replacementIdx, 3, "(j)am");
                 }
                 break;
             }
@@ -861,7 +861,7 @@ bool jyutpingAutocorrect(const QString &in,
         while (replacementIdx != -1) {
             switch (replacementIdx) {
             case 0: {
-                out.replace(replacementIdx, 3, "jap");
+                out.replace(replacementIdx, 3, "(j)ap");
                 break;
             }
             default: {
@@ -874,7 +874,7 @@ bool jyutpingAutocorrect(const QString &in,
                     != closeFrontVowelCluster.end()) {
                     out.replace(replacementIdx, 3, "yu p");
                 } else {
-                    out.replace(replacementIdx, 3, "jap");
+                    out.replace(replacementIdx, 3, "(j)ap");
                 }
                 break;
             }
@@ -892,7 +892,7 @@ bool jyutpingAutocorrect(const QString &in,
         while (replacementIdx != -1) {
             switch (replacementIdx) {
             case 0: {
-                out.replace(replacementIdx, 3, "juk");
+                out.replace(replacementIdx, 3, "(j)uk");
                 break;
             }
             default: {
@@ -905,7 +905,7 @@ bool jyutpingAutocorrect(const QString &in,
                     != closeFrontVowelCluster.end()) {
                     out.replace(replacementIdx, 3, "yu k");
                 } else {
-                    out.replace(replacementIdx, 3, "juk");
+                    out.replace(replacementIdx, 3, "(j)uk");
                 }
                 break;
             }
@@ -923,7 +923,7 @@ bool jyutpingAutocorrect(const QString &in,
         while (replacementIdx != -1) {
             switch (replacementIdx) {
             case 0: {
-                out.replace(replacementIdx, 4, "jung");
+                out.replace(replacementIdx, 4, "(j)ung");
                 break;
             }
             default: {
@@ -936,7 +936,7 @@ bool jyutpingAutocorrect(const QString &in,
                     != closeFrontVowelCluster.end()) {
                     out.replace(replacementIdx, 4, "(yu)n g");
                 } else {
-                    out.replace(replacementIdx, 4, "jung");
+                    out.replace(replacementIdx, 4, "(j)ung");
                 }
                 break;
             }
@@ -954,7 +954,7 @@ bool jyutpingAutocorrect(const QString &in,
         while (replacementIdx != -1) {
             switch (replacementIdx) {
             case 0: {
-                out.replace(replacementIdx, 3, "j(a|yu)n");
+                out.replace(replacementIdx, 3, "(j)(a|yu)n");
                 break;
             }
             default: {
@@ -985,7 +985,7 @@ bool jyutpingAutocorrect(const QString &in,
         while (replacementIdx != -1) {
             switch (replacementIdx) {
             case 0: {
-                out.replace(replacementIdx, 3, "j(a|yu)t");
+                out.replace(replacementIdx, 3, "(j)(a|yu)t");
                 break;
             }
             default: {
@@ -1033,13 +1033,31 @@ bool jyutpingAutocorrect(const QString &in,
             idx = out.indexOf("y", idx + 1);
             continue;
         }
-        out.replace(idx, 1, 'j');
+        out.replace(idx, 1, "(j)");
         idx = out.indexOf("y", idx + 1);
     }
 
     out.replace("ui", "(eo|u)i");
     out.replace("un", "(y!u|a|eo)n");
     out.replace("ut", "(a|y!u)t");
+
+    out.replace("o ", "(ou!) ");
+    out.replace("o'", "(ou!)'");
+    if (out.endsWith("o")) {
+        out.replace(out.size() - 1, 1, "(ou!)");
+    }
+    idx = out.indexOf("o");
+    while (idx != -1) {
+        if (out.at(idx + 1) != 'k' && out.at(idx + 1) != 't'
+            && out.at(idx + 1) != 'e' && out.at(idx + 1) != 'i'
+            && out.at(idx + 1) != 'u' && out.at(idx + 1) != 'n'
+            && out.at(idx + 1) != ')' && out.at(idx + 1) != '|') {
+            out.replace(idx, 1, "(ou!)");
+            idx = out.indexOf("o", idx + 1);
+            continue;
+        }
+        idx = out.indexOf("o", idx + 1);
+    }
 
     return 0;
 }
@@ -1094,6 +1112,11 @@ bool jyutpingSoundChanges(std::vector<std::string> &inOut)
             syllable.replace(0, 1, "(c|z)");
         } else if (syllable.starts_with("g") || syllable.starts_with("k")) {
             syllable.replace(0, 1, "(g|k)");
+        }
+
+        // Palatization of alveolar affricate
+        if (syllable.starts_with("j")) {
+            syllable.replace(0, 1, "(j|z)");
         }
 
         // Nucleus sound changes
