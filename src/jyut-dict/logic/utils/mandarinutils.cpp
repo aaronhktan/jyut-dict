@@ -748,34 +748,34 @@ bool pinyinSoundChanges(std::vector<std::string> &inOut)
 
         if (syllable.ends_with("ang")
             || (syllable.length() >= 4
-                && std::string_view{syllable.begin(), syllable.end() - 1}
+                && std::string_view{syllable.data(), syllable.size() - 1}
                        .ends_with("ang"))) {
             syllable.replace(syllable.rfind("ng"), 2, "ng!");
         } else if (syllable.ends_with("an")
                    || (syllable.length() >= 3
-                       && std::string_view{syllable.begin(), syllable.end() - 1}
+                       && std::string_view{syllable.data(), syllable.size() - 1}
                               .ends_with("an"))) {
             syllable.replace(syllable.rfind("n"), 1, "ng!");
         }
         if (syllable.ends_with("eng")
             || (syllable.length() >= 4
-                && std::string_view{syllable.begin(), syllable.end() - 1}
+                && std::string_view{syllable.data(), syllable.size() - 1}
                        .ends_with("eng"))) {
             syllable.replace(syllable.rfind("ng"), 2, "ng!");
         } else if (syllable.ends_with("en")
                    || (syllable.length() >= 3
-                       && std::string_view{syllable.begin(), syllable.end() - 1}
+                       && std::string_view{syllable.data(), syllable.size() - 1}
                               .ends_with("en"))) {
             syllable.replace(syllable.rfind("n"), 1, "ng!");
         }
         if (syllable.ends_with("ing")
             || (syllable.length() >= 4
-                && std::string_view{syllable.begin(), syllable.end() - 1}
+                && std::string_view{syllable.data(), syllable.size() - 1}
                        .ends_with("ing"))) {
             syllable.replace(syllable.rfind("ng"), 2, "ng!");
         } else if (syllable.ends_with("in")
                    || (syllable.length() >= 3
-                       && std::string_view{syllable.begin(), syllable.end() - 1}
+                       && std::string_view{syllable.data(), syllable.size() - 1}
                               .ends_with("in"))) {
             syllable.replace(syllable.rfind("n"), 1, "ng!");
         }
