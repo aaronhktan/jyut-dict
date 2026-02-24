@@ -211,6 +211,42 @@ bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(void)
     return true;
 }
 
+// Database differences from version 3 to version 4:
+// - Added indexes on simplified, jyutping, and pinyin
+// - Added indexes on sentence links
+bool SQLDatabaseUtils::migrateDatabaseFromThreeToFour(void)
+{
+    QSqlQuery query{_manager->getDatabase()};
+
+    query.exec("CREATE INDEX IF NOT EXISTS entries_simplified_idx ON "
+               "entries(simplified);");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("CREATE INDEX IF NOT EXISTS entries_jyutping_idx ON "
+               "entries(jyutping);");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec(
+        "CREATE INDEX IF NOT EXISTS entries_pinyin_idx ON entries(pinyin);");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("CREATE INDEX IF NOT EXISTS dcsl_fk_chinese_sentence_idx ON "
+               "definitions_chinese_sentences_links(fk_chinese_sentence_id);");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("CREATE INDEX IF NOT EXISTS sentence_links_fk_non_chinese_idx "
+               "ON sentence_links(fk_non_chinese_sentence_id);");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
+    return true;
+}
+
 // Update the database to whatever the current version is.
 bool SQLDatabaseUtils::updateDatabase(void)
 {
@@ -228,16 +264,25 @@ bool SQLDatabaseUtils::updateDatabase(void)
         bool success = true;
         switch (version) {
         case -1:
+            [[fallthrough]];
         case 1:
             if (!migrateDatabaseFromOneToTwo()) {
                 success = false;
                 break;
             }
+            [[fallthrough]];
         case 2:
             if (!migrateDatabaseFromTwoToThree()) {
                 success = false;
                 break;
             }
+            [[fallthrough]];
+        case 3:
+            if (!migrateDatabaseFromThreeToFour()) {
+                success = false;
+                break;
+            }
+            [[fallthrough]];
         default:
             break;
         }
@@ -260,7 +305,8 @@ bool SQLDatabaseUtils::updateDatabase(void)
 
 // Reads a mapping of sourcename / sourceshortname from the database
 // so they can later be converted between the two.
-bool SQLDatabaseUtils::readSources(std::vector<std::pair<std::string,std::string>> &sources)
+bool SQLDatabaseUtils::readSources(
+    std::vector<std::pair<std::string, std::string>> &sources)
 {
     QSqlQuery query{_manager->getDatabase()};
     query.exec("SELECT sourcename, sourceshortname FROM sources");
@@ -333,6 +379,31 @@ bool SQLDatabaseUtils::dropIndices(void)
         return false;
     }
 
+    query.exec("DROP INDEX entries_simplified_idx");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
+    query.exec("DROP INDEX entries_jyutping_idx");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
+    query.exec("DROP INDEX entries_pinyin_idx");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
+    query.exec("DROP INDEX dcsl_fk_chinese_sentence_idx");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
+    query.exec("DROP INDEX sentence_links_fk_non_chinese_idx");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
     query.exec("DELETE FROM definitions_fts");
     if (query.lastError().isValid()) {
         return false;
@@ -360,7 +431,36 @@ bool SQLDatabaseUtils::rebuildIndices(void)
     }
 
     query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
-    return !query.lastError().isValid();
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("CREATE INDEX IF NOT EXISTS entries_simplified_idx ON "
+               "entries(simplified);");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("CREATE INDEX IF NOT EXISTS entries_jyutping_idx ON "
+               "entries(jyutping);");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec(
+        "CREATE INDEX IF NOT EXISTS entries_pinyin_idx ON entries(pinyin);");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("CREATE INDEX IF NOT EXISTS dcsl_fk_chinese_sentence_idx ON "
+               "definitions_chinese_sentences_links(fk_chinese_sentence_id);");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("CREATE INDEX IF NOT EXISTS sentence_links_fk_non_chinese_idx "
+               "ON sentence_links(fk_non_chinese_sentence_id);");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
+    return true;
 }
 
 bool SQLDatabaseUtils::deleteSourceFromDatabase(const std::string &source)
@@ -445,19 +545,22 @@ bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
     // fk_chinese_sentence_id referencing it, and DELETE FROM chinese_sentences.
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    query.exec("DELETE FROM chinese_sentences "
-               "WHERE chinese_sentences.chinese_sentence_id IN "
-               "(SELECT chinese_sentences.chinese_sentence_id "
-               "   FROM chinese_sentences "
-               "   LEFT JOIN sentence_links "
-               "     ON chinese_sentences.chinese_sentence_id = "
-               "       sentence_links.fk_chinese_sentence_id "
-               "   LEFT JOIN definitions_chinese_sentences_links "
-               "     ON chinese_sentences.chinese_sentence_id = "
-               "       definitions_chinese_sentences_links.fk_chinese_sentence_id "
-               "   WHERE sentence_links.fk_chinese_sentence_id IS NULL "
-               "     AND definitions_chinese_sentences_links.fk_chinese_sentence_id IS NULL "
-               ")");
+    query.exec(
+        "DELETE FROM chinese_sentences "
+        "WHERE chinese_sentences.chinese_sentence_id IN "
+        "(SELECT chinese_sentences.chinese_sentence_id "
+        "   FROM chinese_sentences "
+        "   LEFT JOIN sentence_links "
+        "     ON chinese_sentences.chinese_sentence_id = "
+        "       sentence_links.fk_chinese_sentence_id "
+        "   LEFT JOIN definitions_chinese_sentences_links "
+        "     ON chinese_sentences.chinese_sentence_id = "
+        "       definitions_chinese_sentences_links.fk_chinese_sentence_id "
+        "   WHERE sentence_links.fk_chinese_sentence_id IS NULL "
+        "     AND "
+        "definitions_chinese_sentences_links.fk_chinese_sentence_id IS "
+        "NULL "
+        ")");
 
     // Remove non-Chinese sentences that are no longer linked with the same
     // principles as above
@@ -594,7 +697,8 @@ std::pair<bool, std::string> SQLDatabaseUtils::insertSourcesIntoDatabase(
         QString updateURL{query.value(updateURLIndex).toString()};
         QString other{query.value(otherIndex).toString()};
 
-        if (old_source_ids.find(sourcename.toStdString()) != old_source_ids.end()) {
+        if (old_source_ids.find(sourcename.toStdString())
+            != old_source_ids.end()) {
             // If the sourcename is in the old_source_ids map, it means that it
             // already existed in the database. Since we want to preserve
             // dictionary order, we will need to insert at the old dictionary ID
@@ -699,27 +803,27 @@ bool SQLDatabaseUtils::addDefinitionSource(void)
     // Because we can match trad/simp/jp/py, fk_entry_id is assigned 6130
     // and because we can match CC-CEDICT, fk_source_id is assigned 6.
 
-    query.exec(
-        "WITH definitions_tmp AS ( "
-        "  SELECT entries.traditional AS traditional, "
-        "    entries.simplified AS simplified, "
-        "    entries.pinyin AS pinyin, entries.jyutping AS jyutping, "
-        "    sources.sourcename AS sourcename, "
-        "    definitions.definition AS definition, "
-        "    definitions.label AS label "
-        "  FROM db.entries, db.definitions, db.sources "
-        "  WHERE db.definitions.fk_entry_id = db.entries.entry_id "
-        "  AND db.definitions.fk_source_id = db.sources.source_id "
-        ") "
-        " "
-        "INSERT INTO definitions(definition, label, fk_entry_id, fk_source_id) "
-        "  SELECT d.definition, d.label, e.entry_id, s.source_id "
-        "  FROM definitions_tmp AS d, sources AS s, entries AS e "
-        "  WHERE d.sourcename = s.sourcename "
-        "    AND d.traditional = e.traditional "
-        "    AND d.simplified = e.simplified "
-        "    AND d.pinyin = e.pinyin "
-        "    AND d.jyutping = e.jyutping");
+    query.exec("WITH definitions_tmp AS ( "
+               "  SELECT entries.traditional AS traditional, "
+               "    entries.simplified AS simplified, "
+               "    entries.pinyin AS pinyin, entries.jyutping AS jyutping, "
+               "    sources.sourcename AS sourcename, "
+               "    definitions.definition AS definition, "
+               "    definitions.label AS label "
+               "  FROM db.entries, db.definitions, db.sources "
+               "  WHERE db.definitions.fk_entry_id = db.entries.entry_id "
+               "  AND db.definitions.fk_source_id = db.sources.source_id "
+               ") "
+               " "
+               "INSERT INTO definitions(definition, label, fk_entry_id, "
+               "fk_source_id) "
+               "  SELECT d.definition, d.label, e.entry_id, s.source_id "
+               "  FROM definitions_tmp AS d, sources AS s, entries AS e "
+               "  WHERE d.sourcename = s.sourcename "
+               "    AND d.traditional = e.traditional "
+               "    AND d.simplified = e.simplified "
+               "    AND d.pinyin = e.pinyin "
+               "    AND d.jyutping = e.jyutping");
 
     return !query.lastError().isValid();
 }
@@ -754,13 +858,14 @@ bool SQLDatabaseUtils::addSentenceSource(void)
 {
     QSqlQuery query{_manager->getDatabase()};
 
-    query.exec(
-        "INSERT INTO chinese_sentences "
-        "  (chinese_sentence_id, traditional, simplified, pinyin, jyutping, "
-        "    language) "
-        "SELECT chinese_sentence_id, traditional, simplified, pinyin, jyutping,"
-        "   language "
-        "FROM db.chinese_sentences");
+    query.exec("INSERT INTO chinese_sentences "
+               "  (chinese_sentence_id, traditional, simplified, pinyin, "
+               "jyutping, "
+               "    language) "
+               "SELECT chinese_sentence_id, traditional, simplified, "
+               "pinyin, jyutping,"
+               "   language "
+               "FROM db.chinese_sentences");
     if (query.lastError().isValid()) {
         return false;
     }
@@ -798,37 +903,36 @@ bool SQLDatabaseUtils::addSentenceSource(void)
     //
     // Because we can match Tatoeba—Cantonese-English, fk_source_id is assigned 6.
 
-    query.exec(
-        "WITH sentence_links_with_source AS ( "
-        "  SELECT sentence_links.fk_chinese_sentence_id as fk_csi, "
-        "    sentence_links.fk_non_chinese_sentence_id as fk_ncsi, "
-        "    sources.sourcename AS sourcename, "
-        "    sentence_links.direct as direct "
-        "  FROM db.sentence_links, db.sources "
-        "  WHERE db.sentence_links.fk_source_id = db.sources.source_id "
-        "), "
-        " "
-        "sentence_links_with_foreign_key AS ( "
-        "  SELECT traditional, simplified, pinyin, jyutping, language, "
-        "    fk_ncsi, direct, sourcename "
-        "  FROM sentence_links_with_source as slws, "
-        "    db.chinese_sentences AS cs "
-        "  WHERE slws.fk_csi = cs.chinese_sentence_id "
-        ") "
-        " "
-        "INSERT INTO sentence_links( "
-        "  fk_chinese_sentence_id, fk_non_chinese_sentence_id, "
-        "  fk_source_id, direct) "
-        "SELECT cs.chinese_sentence_id, slwfk.fk_ncsi, "
-        "  s.source_id, slwfk.direct "
-        "FROM sentence_links_with_foreign_key AS slwfk, sources as s, "
-        "  chinese_sentences AS cs "
-        "WHERE s.sourcename = slwfk.sourcename "
-        "  AND cs.traditional = slwfk.traditional "
-        "  AND cs.simplified = slwfk.simplified "
-        "  AND cs.pinyin = slwfk.pinyin "
-        "  AND cs.jyutping = slwfk.jyutping "
-        "  AND cs.language = slwfk.language ");
+    query.exec("WITH sentence_links_with_source AS ( "
+               "  SELECT sentence_links.fk_chinese_sentence_id as fk_csi, "
+               "    sentence_links.fk_non_chinese_sentence_id as fk_ncsi, "
+               "    sources.sourcename AS sourcename, "
+               "    sentence_links.direct as direct "
+               "  FROM db.sentence_links, db.sources "
+               "  WHERE db.sentence_links.fk_source_id = db.sources.source_id "
+               "), "
+               " "
+               "sentence_links_with_foreign_key AS ( "
+               "  SELECT traditional, simplified, pinyin, jyutping, language, "
+               "    fk_ncsi, direct, sourcename "
+               "  FROM sentence_links_with_source as slws, "
+               "    db.chinese_sentences AS cs "
+               "  WHERE slws.fk_csi = cs.chinese_sentence_id "
+               ") "
+               " "
+               "INSERT INTO sentence_links( "
+               "  fk_chinese_sentence_id, fk_non_chinese_sentence_id, "
+               "  fk_source_id, direct) "
+               "SELECT cs.chinese_sentence_id, slwfk.fk_ncsi, "
+               "  s.source_id, slwfk.direct "
+               "FROM sentence_links_with_foreign_key AS slwfk, sources as s, "
+               "  chinese_sentences AS cs "
+               "WHERE s.sourcename = slwfk.sourcename "
+               "  AND cs.traditional = slwfk.traditional "
+               "  AND cs.simplified = slwfk.simplified "
+               "  AND cs.pinyin = slwfk.pinyin "
+               "  AND cs.jyutping = slwfk.jyutping "
+               "  AND cs.language = slwfk.language ");
     if (query.lastError().isValid()) {
         return false;
     }
@@ -959,7 +1063,8 @@ bool SQLDatabaseUtils::addSource(const std::string &filepath,
             emit finishedAddition(
                 false,
                 tr("Could not add new dictionaries. We couldn't remove a "
-                   "dictionary that you already had installed with the same "
+                   "dictionary that you already had installed with the "
+                   "same "
                    "name."),
                 tr("Try manually deleting the dictionaries yourself before "
                    "adding the new dictionary."));
