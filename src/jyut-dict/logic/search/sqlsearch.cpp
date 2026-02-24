@@ -170,8 +170,10 @@ SQLSearch::SQLSearch(std::shared_ptr<SQLDatabaseManager> manager)
 
 SQLSearch::~SQLSearch()
 {
-    foreach (auto future, _futures) {
-        future.waitForFinished();
+    std::lock_guard lock(_watchers.mut);
+    for (const auto watcher : _watchers.set) {
+        watcher->future().waitForFinished();
+        delete watcher;
     }
 }
 
@@ -338,15 +340,29 @@ void SQLSearch::searchByUnique(const QString &simplified,
     }
 
     unsigned long long queryID = generateAndSetQueryID();
-    auto future
-        = QtConcurrent::run(&SQLSearch::searchByUniqueThread,
-                            this,
-                            simplified.normalized(QString::NormalizationForm_C),
-                            traditional.normalized(QString::NormalizationForm_C),
-                            jyutping.normalized(QString::NormalizationForm_C),
-                            pinyin.normalized(QString::NormalizationForm_C),
-                            queryID);
-    _futures.append(future);
+    QFutureWatcher<void> *watcher = new QFutureWatcher<void>();
+    QObject::connect(watcher,
+                     &QFutureWatcher<void>::finished,
+                     watcher,
+                     [this, watcher]() {
+                         {
+                             std::lock_guard lock(_watchers.mut);
+                             _watchers.set.erase(watcher);
+                         }
+                         delete watcher;
+                     });
+    {
+        std::lock_guard lock(_watchers.mut);
+        _watchers.set.emplace(watcher);
+    }
+    watcher->setFuture(
+        QtConcurrent::run(&SQLSearch::searchByUniqueThread,
+                          this,
+                          simplified.normalized(QString::NormalizationForm_C),
+                          traditional.normalized(QString::NormalizationForm_C),
+                          jyutping.normalized(QString::NormalizationForm_C),
+                          pinyin.normalized(QString::NormalizationForm_C),
+                          queryID));
 }
 
 void SQLSearch::searchTraditionalSentences(const QString &searchTerm)
@@ -370,8 +386,23 @@ void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString &searc
         return;
     }
 
-    auto future = QtConcurrent::run(threadFunction, this, searchTerm, queryID);
-    _futures.append(future);
+    QFutureWatcher<void> *watcher = new QFutureWatcher<void>();
+    QObject::connect(watcher,
+                     &QFutureWatcher<void>::finished,
+                     watcher,
+                     [this, watcher]() {
+                         {
+                             std::lock_guard lock(_watchers.mut);
+                             _watchers.set.erase(watcher);
+                         }
+                         delete watcher;
+                     });
+    {
+        std::lock_guard lock(_watchers.mut);
+        _watchers.set.emplace(watcher);
+    }
+    watcher->setFuture(
+        QtConcurrent::run(threadFunction, this, searchTerm, queryID));
 }
 
 // NOTE: If you are modifying these functions, you may also want to modify
