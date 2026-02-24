@@ -440,6 +440,7 @@ void SQLSearch::searchSimplifiedThread(const QString &searchTerm,
     } else {
         query.addBindValue(searchTerm + "*");
     }
+    query.setForwardOnly(true);
     query.exec();
 
     // Do not parse results if new query has been made
@@ -482,6 +483,7 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
     } else {
         query.addBindValue(searchTerm + "*");
     }
+    query.setForwardOnly(true);
     query.exec();
 
     // Do not parse results if new query has been made
@@ -523,6 +525,7 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
                               fuzzyJyutping,
                               unsafeFuzzyJyutping);
     query.addBindValue(globTerm);
+    query.setForwardOnly(true);
     query.exec();
 
     // Do not parse results if new query has been made
@@ -549,6 +552,7 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm,
     QString globTerm;
     preparePinyinBindValues(searchTerm, globTerm, fuzzyPinyin);
     query.addBindValue(globTerm);
+    query.setForwardOnly(true);
     query.exec();
 
     // Do not parse results if new query has been made
@@ -700,6 +704,7 @@ void SQLSearch::searchTraditionalSentencesThread(const QString &searchTerm,
     QSqlQuery query{_manager->getDatabase()};
     query.prepare(SEARCH_TRADITIONAL_SENTENCES_QUERY);
     query.addBindValue("%" + searchTerm + "%");
+    query.setForwardOnly(true);
     query.exec();
 
     if (!checkQueryIDCurrent(queryID)) {
