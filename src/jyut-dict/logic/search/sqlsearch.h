@@ -18,6 +18,12 @@
 
 // SQLSearch searches the database provided by SQLDatabaseManager.
 
+struct FutureList
+{
+    std::mutex mut;
+    std::unordered_set<QFutureWatcher<void> *> set;
+};
+
 class SQLSearch : virtual public ISearch,
                   virtual public ISearchObservable
 {
@@ -102,7 +108,7 @@ private:
     std::mt19937_64 _generator;
     std::uniform_int_distribution<unsigned long long> _dist;
 
-    QList<QFuture<void>> _futures;
+    FutureList _watchers;
 };
 
 #endif // SQLSEARCH_H
