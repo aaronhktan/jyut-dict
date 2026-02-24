@@ -14,7 +14,7 @@
 // database. This is differentiated from the SQLDatabaseManager class,
 // which is only responsible for opening and closing a connection to a database.
 
-constexpr auto CURRENT_DATABASE_VERSION = 3;
+constexpr auto CURRENT_DATABASE_VERSION = 4;
 using conflictingDictionaryMetadata
     = std::vector<std::tuple<std::string, std::string, std::string>>;
 
@@ -42,6 +42,7 @@ private:
 
     bool migrateDatabaseFromOneToTwo(void);
     bool migrateDatabaseFromTwoToThree(void);
+    bool migrateDatabaseFromThreeToFour(void);
 
     bool deleteSourceFromDatabase(const std::string &source);
     bool removeDefinitionsFromDatabase(void);
