@@ -142,7 +142,7 @@ void TestEntry::cantoneseToneNumbers()
     Entry entry{"", "", jyutping, "", {}};
 
     auto result = entry.getJyutpingNumbers();
-    std::vector<int> expected{4, 1, 2};
+    std::vector<uint8_t> expected{4, 1, 2};
     QCOMPARE(result, expected);
 
     entry.setJyutping("mei5 gwok3");
@@ -196,7 +196,7 @@ void TestEntry::mandarinToneNumbers()
     Entry entry{"", "", "", pinyin, {}};
 
     auto result = entry.getPinyinNumbers();
-    std::vector<int> expected{2, 1, 4};
+    std::vector<uint8_t> expected{2, 1, 4};
     QCOMPARE(result, expected);
 
     entry.setPinyin("mei3 guo2");

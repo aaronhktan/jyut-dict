@@ -16,7 +16,7 @@ const static std::unordered_set<std::string> specialCharacters = {
 };
 
 std::string applyColours(const std::string original,
-                         const std::vector<int> &tones,
+                         const std::vector<uint8_t> &tones,
                          const std::vector<std::string> &jyutpingToneColours,
                          const std::vector<std::string> &pinyinToneColours,
                          const EntryColourPhoneticType type)

@@ -2,11 +2,9 @@
 #define DEFINITIONS_H
 
 #include "logic/entry/entryphoneticoptions.h"
-#include "logic/dictionary/dictionarysource.h"
 #include "logic/sentence/sourcesentence.h"
 
 #include <iostream>
-#include <unordered_map>
 #include <vector>
 
 namespace Definition {
@@ -56,14 +54,16 @@ public:
     void generatePhonetic(CantoneseOptions cantoneseOptions,
                           MandarinOptions mandarinOptions);
 
-    std::string getSource() const;
-    std::string getSourceLongString() const;
-    std::string getSourceShortString() const;
-    std::string getDefinitionsSnippet() const;
-    std::vector<Definition::Definition> getDefinitions(void) const;
+    const std::string &getSource() const;
+    const std::string &getSourceLongString() const;
+    const std::string &getSourceShortString() const;
+    const std::string &getDefinitionsSnippet() const;
+    const std::vector<Definition::Definition> &getDefinitions(void) const;
 
 private:
     std::string _source;
+    std::string _sourceShortString;
+    mutable std::string _snippet;
     std::vector<Definition::Definition> _definitions;
 };
 

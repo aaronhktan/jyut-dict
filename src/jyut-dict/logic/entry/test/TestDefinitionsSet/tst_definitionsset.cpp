@@ -2,6 +2,8 @@
 
 #include "logic/entry/definitionsset.h"
 
+#include "logic/dictionary/dictionarysource.h"
+
 class TestDefinitionsSet : public QObject
 {
     Q_OBJECT

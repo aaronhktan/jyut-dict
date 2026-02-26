@@ -4,12 +4,14 @@
 
 SentenceSet::SentenceSet(const std::string &source)
     : _source{source}
+    , _sourceShortString{DictionarySourceUtils::getSourceShortString(source)}
 {
 }
 
 SentenceSet::SentenceSet(const std::string &source,
                          const std::vector<Sentence::TargetSentence> &sentences)
     : _source{source}
+    , _sourceShortString{DictionarySourceUtils::getSourceShortString(source)}
     , _sentences{sentences}
 {
 }
@@ -43,35 +45,37 @@ bool SentenceSet::pushSentence(const Sentence::TargetSentence &sentence)
     return true;
 }
 
-std::string SentenceSet::getSource(void) const
+const std::string &SentenceSet::getSource(void) const
 {
     return _source;
 }
 
-std::string SentenceSet::getSourceLongString(void) const
+const std::string &SentenceSet::getSourceLongString(void) const
 {
     return _source;
 }
 
-std::string SentenceSet::getSourceShortString() const
+const std::string &SentenceSet::getSourceShortString(void) const
 {
-    return DictionarySourceUtils::getSourceShortString(_source);
+    return _sourceShortString;
 }
 
-std::vector<Sentence::TargetSentence> SentenceSet::getSentenceSnippet(void) const
+const std::vector<Sentence::TargetSentence> &SentenceSet::getSentenceSnippet(
+    void) const
 {
-    if (_sentences.empty()) {
-        return {};
+    if (!_snippet.empty()) {
+        return _snippet;
     }
-    std::vector<Sentence::TargetSentence> snippet;
-    std::size_t size = _sentences.size() >= 5 ? 5 : _sentences.size();
-    std::copy(_sentences.begin(),
-              _sentences.begin() + size,
-              std::back_inserter(snippet));
-    return snippet;
+
+    for (int i = 0; i < std::min(static_cast<size_t>(5), _sentences.size());
+         ++i) {
+        _snippet.emplace_back(_sentences.at(i));
+    }
+
+    return _snippet;
 }
 
-std::vector<Sentence::TargetSentence> SentenceSet::getSentences() const
+const std::vector<Sentence::TargetSentence> &SentenceSet::getSentences() const
 {
     return _sentences;
 }

@@ -34,7 +34,7 @@ std::ostream &operator<<(std::ostream &out, const SourceSentence &sourceSentence
     return out;
 }
 
-std::string SourceSentence::getSourceLanguage(void) const
+const std::string &SourceSentence::getSourceLanguage(void) const
 {
     return _sourceLanguage;
 }
@@ -44,7 +44,8 @@ void SourceSentence::setSourceLanguage(std::string sourceLanguage)
     _sourceLanguage = sourceLanguage;
 }
 
-std::string SourceSentence::getCharacters(EntryCharactersOptions options) const
+const std::string &SourceSentence::getCharacters(
+    EntryCharactersOptions options) const
 {
     switch (options) {
     case EntryCharactersOptions::ONLY_SIMPLIFIED:
@@ -57,7 +58,7 @@ std::string SourceSentence::getCharacters(EntryCharactersOptions options) const
     return _traditional;
 }
 
-std::string SourceSentence::getSimplified(void) const
+const std::string &SourceSentence::getSimplified(void) const
 {
     return _simplified;
 }
@@ -67,7 +68,7 @@ void SourceSentence::setSimplified(std::string simplified)
     _simplified = simplified;
 }
 
-std::string SourceSentence::getTraditional(void) const
+const std::string &SourceSentence::getTraditional(void) const
 {
     return _traditional;
 }
@@ -131,9 +132,10 @@ bool SourceSentence::generatePhonetic(CantoneseOptions cantoneseOptions,
 
 }
 
-std::string SourceSentence::getPhonetic(EntryPhoneticOptions options,
-                                        CantoneseOptions cantoneseOptions,
-                                        MandarinOptions mandarinOptions) const
+const std::string &SourceSentence::getPhonetic(
+    EntryPhoneticOptions options,
+    CantoneseOptions cantoneseOptions,
+    MandarinOptions mandarinOptions) const
 {
     switch (options) {
     case EntryPhoneticOptions::ONLY_CANTONESE:
@@ -146,7 +148,7 @@ std::string SourceSentence::getPhonetic(EntryPhoneticOptions options,
     return getCantonesePhonetic(cantoneseOptions);
 }
 
-std::string SourceSentence::getCantonesePhonetic(
+const std::string &SourceSentence::getCantonesePhonetic(
     CantoneseOptions cantoneseOptions) const
 {
     switch (cantoneseOptions) {
@@ -162,7 +164,7 @@ std::string SourceSentence::getCantonesePhonetic(
     }
 }
 
-std::string SourceSentence::getMandarinPhonetic(
+const std::string &SourceSentence::getMandarinPhonetic(
     MandarinOptions mandarinOptions) const
 {
     switch (mandarinOptions) {
@@ -184,7 +186,7 @@ std::string SourceSentence::getMandarinPhonetic(
     }
 }
 
-std::string SourceSentence::getJyutping(void) const
+const std::string &SourceSentence::getJyutping(void) const
 {
     return _jyutping;
 }
@@ -194,12 +196,12 @@ void SourceSentence::setJyutping(const std::string &jyutping)
     _jyutping = jyutping;
 }
 
-std::string SourceSentence::getPinyin(void) const
+const std::string &SourceSentence::getPinyin(void) const
 {
     return _pinyin;
 }
 
-std::string SourceSentence::getPrettyPinyin(void) const
+const std::string &SourceSentence::getPrettyPinyin(void) const
 {
     return _prettyPinyin;
 }
@@ -209,7 +211,7 @@ void SourceSentence::setPinyin(const std::string &pinyin)
     _pinyin = pinyin;
 }
 
-std::vector<SentenceSet> SourceSentence::getSentenceSets(void) const
+const std::vector<SentenceSet> &SourceSentence::getSentenceSets(void) const
 {
     return _sentences;
 }

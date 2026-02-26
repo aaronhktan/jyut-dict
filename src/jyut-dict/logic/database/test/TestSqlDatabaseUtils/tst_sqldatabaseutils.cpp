@@ -22,6 +22,7 @@ public:
 private slots:
     void updateDatabaseFromV1();
     void updateDatabaseFromV2();
+    void updateDatabaseFromV3();
 
     void addAndRemoveSources();
     void readSources();
@@ -30,6 +31,7 @@ private:
     void createV1Database(const QString &dbPath);
     void createV2Database(const QString &dbPath);
     void createV3Database(const QString &dbPath);
+    void createV4Database(const QString &dbPath);
     void removeDatabase();
 
     std::shared_ptr<SQLDatabaseManager> _manager;
@@ -350,6 +352,157 @@ void TestSqlDatabaseUtils::createV3Database(const QString &dbPath)
     QSqlDatabase::removeDatabase(dbCreateConnName);
 }
 
+void TestSqlDatabaseUtils::createV4Database(const QString &dbPath)
+{
+    QFile databaseFile{dbPath};
+    QDir databaseDir{QFileInfo{databaseFile.fileName()}.absolutePath()};
+    QCOMPARE(databaseDir.mkpath(
+                 QFileInfo{databaseFile.fileName()}.absolutePath()),
+             true);
+    if (databaseFile.exists()) {
+        QFile::remove(databaseFile.fileName());
+    }
+    QCOMPARE(databaseFile.open(QIODevice::ReadWrite), true);
+    QCOMPARE(databaseFile.exists(), true);
+    databaseFile.close();
+
+    QSqlDatabase::addDatabase("QSQLITE", dbCreateConnName);
+    QSqlDatabase::database(dbCreateConnName).setDatabaseName(dbPath);
+    QSqlDatabase::database(dbCreateConnName).open();
+    QSqlQuery query{QSqlDatabase::database(dbCreateConnName)};
+    query.exec("CREATE TABLE chinese_sentences( "
+               "  chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
+               "  traditional TEXT, "
+               "  simplified TEXT, "
+               "  pinyin TEXT, "
+               "  jyutping TEXT, "
+               "  language TEXT, "
+               "  UNIQUE(traditional, simplified, pinyin, jyutping, language) "
+               "    ON CONFLICT IGNORE "
+               ") ");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec("CREATE TABLE definitions( "
+               "  definition_id INTEGER PRIMARY KEY, "
+               "  definition TEXT, "
+               "  label TEXT, "
+               "  fk_entry_id INTEGER, "
+               "  fk_source_id INTEGER, "
+               "  FOREIGN KEY(fk_entry_id) REFERENCES entries(entry_id) ON "
+               "    UPDATE CASCADE, "
+               "  FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON "
+               "    DELETE CASCADE, "
+               "  UNIQUE(definition, label, fk_entry_id, fk_source_id) ON "
+               "    CONFLICT IGNORE "
+               ") ");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec(
+        "CREATE TABLE definitions_chinese_sentences_links( "
+        "  fk_definition_id INTEGER, "
+        "  fk_chinese_sentence_id INTEGER, "
+        "  FOREIGN KEY(fk_definition_id) REFERENCES definitions(definition_id) "
+        "ON DELETE CASCADE, "
+        "  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES "
+        "    chinese_sentences(chinese_sentence_id) "
+        "  UNIQUE(fk_definition_id, fk_chinese_sentence_id) ON CONFLICT IGNORE "
+        ") ");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec("CREATE TABLE entries( "
+               "  entry_id INTEGER PRIMARY KEY, "
+               "  traditional TEXT, "
+               "  simplified TEXT, "
+               "  pinyin TEXT, "
+               "  jyutping TEXT, "
+               "  frequency REAL, "
+               "  UNIQUE(traditional, simplified, pinyin, jyutping) ON "
+               "    CONFLICT IGNORE "
+               ") ");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec("CREATE TABLE sources( "
+               "  source_id INTEGER PRIMARY KEY, "
+               "  sourcename TEXT UNIQUE ON CONFLICT ABORT, "
+               "  sourceshortname TEXT, "
+               "  version TEXT, "
+               "  description TEXT, "
+               "  legal TEXT, "
+               "  link TEXT, "
+               "  update_url TEXT, "
+               "  other TEXT "
+               ") ");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec(
+        "CREATE TABLE nonchinese_sentences( "
+        "  non_chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
+        "  sentence TEXT, "
+        "  language TEXT, "
+        "  UNIQUE(non_chinese_sentence_id, sentence) ON CONFLICT IGNORE "
+        ") ");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec("CREATE TABLE sentence_links( "
+               "  fk_chinese_sentence_id INTEGER, "
+               "  fk_non_chinese_sentence_id INTEGER, "
+               "  fk_source_id INTEGER, "
+               "  direct BOOLEAN, "
+               "  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES "
+               "    chinese_sentences(chinese_sentence_id), "
+               "  FOREIGN KEY(fk_non_chinese_sentence_id) REFERENCES "
+               "    nonchinese_sentences(non_chinese_sentence_id), "
+               "  FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON "
+               "    DELETE CASCADE "
+               "  UNIQUE(fk_chinese_sentence_id, fk_non_chinese_sentence_id) "
+               "    ON CONFLICT IGNORE "
+               ") ");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec("CREATE VIRTUAL TABLE definitions_fts using fts5(definition)");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec("CREATE VIRTUAL TABLE entries_fts using fts5(pinyin, jyutping)");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+
+    // Insert small amounts of data
+    query.exec("INSERT INTO entries (traditional, simplified, pinyin, "
+               "  jyutping, frequency) "
+               "VALUES ('白雲山', '白云山', 'bai2 yun2 shan1', 'baak6 wan4 "
+               "  saan1', '0.00')");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec("INSERT INTO sources (sourcename, sourceshortname, version, "
+               "  description, legal, link, update_url, other) "
+               "VALUES ('CC-CANTO', 'CCY', '2024-03-13', 'dictionary',"
+               "  'CC-BY-SA 3.0', '', '', 'words')");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec("INSERT INTO definitions (definition, label, fk_entry_id, "
+               "  fk_source_id) "
+               "VALUES ('Baiyun Mountain', 'noun', 1, 1)");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+
+    query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec("CREATE INDEX IF NOT EXISTS entries_simplified_idx ON "
+               "entries(simplified);");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec("CREATE INDEX IF NOT EXISTS entries_jyutping_idx ON "
+               "entries(jyutping);");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec(
+        "CREATE INDEX IF NOT EXISTS entries_pinyin_idx ON entries(pinyin);");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec("CREATE INDEX IF NOT EXISTS dcsl_fk_chinese_sentence_idx ON "
+               "definitions_chinese_sentences_links(fk_chinese_sentence_id);");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec("CREATE INDEX IF NOT EXISTS sentence_links_fk_non_chinese_idx "
+               "ON sentence_links(fk_non_chinese_sentence_id);");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec("INSERT INTO entries_fts (rowid, pinyin, jyutping) SELECT "
+               "rowid, pinyin, jyutping FROM entries");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec("INSERT INTO definitions_fts (rowid, definition) "
+               "SELECT rowid, definition FROM definitions");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+    query.exec("PRAGMA user_version=4");
+    QCOMPARE(query.lastError().type(), QSqlError::NoError);
+
+    QSqlDatabase::database(dbCreateConnName).close();
+    QSqlDatabase::removeDatabase(dbCreateConnName);
+}
+
 void TestSqlDatabaseUtils::removeDatabase()
 {
     _manager->closeAndRemoveDatabaseConnection();
@@ -417,6 +570,32 @@ void TestSqlDatabaseUtils::updateDatabaseFromV1()
     }
     QCOMPARE(expected_columns.empty(), true);
 
+    // Check stuff added in v4
+    query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
+               "name='entries_simplified_idx'");
+    QCOMPARE(query.first(), true);
+    QCOMPARE(query.value(0).toString(), "entries_simplified_idx");
+
+    query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
+               "name='entries_jyutping_idx'");
+    QCOMPARE(query.first(), true);
+    QCOMPARE(query.value(0).toString(), "entries_jyutping_idx");
+
+    query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
+               "name='entries_pinyin_idx'");
+    QCOMPARE(query.first(), true);
+    QCOMPARE(query.value(0).toString(), "entries_pinyin_idx");
+
+    query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
+               "name='dcsl_fk_chinese_sentence_idx'");
+    QCOMPARE(query.first(), true);
+    QCOMPARE(query.value(0).toString(), "dcsl_fk_chinese_sentence_idx");
+
+    query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
+               "name='sentence_links_fk_non_chinese_idx'");
+    QCOMPARE(query.first(), true);
+    QCOMPARE(query.value(0).toString(), "sentence_links_fk_non_chinese_idx");
+
     removeDatabase();
 }
 
@@ -434,6 +613,7 @@ void TestSqlDatabaseUtils::updateDatabaseFromV2()
     }
     QCOMPARE(version, CURRENT_DATABASE_VERSION);
 
+    // Check stuff added in v3
     query.exec("SELECT name FROM sqlite_master WHERE type='table' AND "
                "name='definitions_chinese_sentences_links'");
     QCOMPARE(query.first(), true);
@@ -464,13 +644,81 @@ void TestSqlDatabaseUtils::updateDatabaseFromV2()
     }
     QCOMPARE(expected_columns.empty(), true);
 
+    // Check stuff added in v4
+    query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
+               "name='entries_simplified_idx'");
+    QCOMPARE(query.first(), true);
+    QCOMPARE(query.value(0).toString(), "entries_simplified_idx");
+
+    query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
+               "name='entries_jyutping_idx'");
+    QCOMPARE(query.first(), true);
+    QCOMPARE(query.value(0).toString(), "entries_jyutping_idx");
+
+    query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
+               "name='entries_pinyin_idx'");
+    QCOMPARE(query.first(), true);
+    QCOMPARE(query.value(0).toString(), "entries_pinyin_idx");
+
+    query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
+               "name='dcsl_fk_chinese_sentence_idx'");
+    QCOMPARE(query.first(), true);
+    QCOMPARE(query.value(0).toString(), "dcsl_fk_chinese_sentence_idx");
+
+    query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
+               "name='sentence_links_fk_non_chinese_idx'");
+    QCOMPARE(query.first(), true);
+    QCOMPARE(query.value(0).toString(), "sentence_links_fk_non_chinese_idx");
+
+    removeDatabase();
+}
+
+void TestSqlDatabaseUtils::updateDatabaseFromV3()
+{
+    removeDatabase();
+    createV3Database(_manager->getDictionaryDatabasePath());
+    _utils->updateDatabase();
+
+    QSqlQuery query{_manager->getDatabase()};
+    query.exec("PRAGMA user_version");
+    int version = -1;
+    while (query.next()) {
+        version = query.value(0).toInt();
+    }
+    QCOMPARE(version, CURRENT_DATABASE_VERSION);
+
+    query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
+               "name='entries_simplified_idx'");
+    QCOMPARE(query.first(), true);
+    QCOMPARE(query.value(0).toString(), "entries_simplified_idx");
+
+    query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
+               "name='entries_jyutping_idx'");
+    QCOMPARE(query.first(), true);
+    QCOMPARE(query.value(0).toString(), "entries_jyutping_idx");
+
+    query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
+               "name='entries_pinyin_idx'");
+    QCOMPARE(query.first(), true);
+    QCOMPARE(query.value(0).toString(), "entries_pinyin_idx");
+
+    query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
+               "name='dcsl_fk_chinese_sentence_idx'");
+    QCOMPARE(query.first(), true);
+    QCOMPARE(query.value(0).toString(), "dcsl_fk_chinese_sentence_idx");
+
+    query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
+               "name='sentence_links_fk_non_chinese_idx'");
+    QCOMPARE(query.first(), true);
+    QCOMPARE(query.value(0).toString(), "sentence_links_fk_non_chinese_idx");
+
     removeDatabase();
 }
 
 void TestSqlDatabaseUtils::addAndRemoveSources()
 {
     removeDatabase();
-    createV3Database(_manager->getDictionaryDatabasePath());
+    createV4Database(_manager->getDictionaryDatabasePath());
 
     QSqlQuery query{_manager->getDatabase()};
     query.exec("PRAGMA user_version");
