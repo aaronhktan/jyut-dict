@@ -55,14 +55,14 @@ public:
     const std::string &getSource(void) const;
     const std::string &getSourceLongString(void) const;
     const std::string &getSourceShortString(void) const;
-    const std::vector<Sentence::TargetSentence> &getSentenceSnippet(void);
+    const std::vector<Sentence::TargetSentence> &getSentenceSnippet(void) const;
     const std::vector<Sentence::TargetSentence> &getSentences(void) const;
 
 private:
     std::string _source;
     std::string _sourceShortString;
+    mutable std::vector<Sentence::TargetSentence> _snippet;
     std::vector<Sentence::TargetSentence> _sentences;
-    std::vector<Sentence::TargetSentence> _snippet;
 };
 
 #endif // SENTENCESET_H

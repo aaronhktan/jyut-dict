@@ -75,7 +75,7 @@ public:
     const std::vector<uint8_t> &getPinyinNumbers();
 
     const std::vector<DefinitionsSet> &getDefinitionsSets(void) const;
-    std::string getDefinitionSnippet(void) const;
+    const std::string &getDefinitionSnippet(void);
     void addDefinitions(const std::string &source,
                         const std::vector<Definition::Definition> &definitions);
 
@@ -125,6 +125,7 @@ private:
     std::vector<uint8_t> _pinyinNumbers;
 
     std::vector<DefinitionsSet> _definitions;
+    std::string _definitionSnippet;
 
     bool _isWelcome = false;
     bool _isEmpty = false;

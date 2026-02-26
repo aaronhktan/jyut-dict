@@ -470,6 +470,7 @@ void Entry::setJyutping(const std::string &jyutping)
                    _jyutping.cend(),
                    _jyutping.begin(),
                    [](unsigned char c) { return std::tolower(c); });
+    _isJyutpingNumbersValid = false;
 }
 
 const std::vector<uint8_t> &Entry::getJyutpingNumbers()
@@ -479,6 +480,7 @@ const std::vector<uint8_t> &Entry::getJyutpingNumbers()
     }
 
     if (!_isJyutpingNumbersValid) {
+        _jyutpingNumbers.clear();
         size_t pos = _jyutping.find_first_of("0123456");
         while (pos != std::string::npos) {
             _jyutpingNumbers.push_back(_jyutping.at(pos) - '0');
@@ -499,6 +501,7 @@ void Entry::setPinyin(const std::string &pinyin)
 {
     _pinyin = pinyin;
     std::transform(_pinyin.begin(), _pinyin.end(), _pinyin.begin(), ::tolower);
+    _isPinyinNumbersValid = false;
 }
 
 const std::vector<uint8_t> &Entry::getPinyinNumbers()
@@ -508,6 +511,7 @@ const std::vector<uint8_t> &Entry::getPinyinNumbers()
     }
 
     if (!_isPinyinNumbersValid) {
+        _pinyinNumbers.clear();
         size_t pos = _pinyin.find_first_of("012345");
         while (pos != std::string::npos) {
             _pinyinNumbers.push_back(_pinyin.at(pos) - '0');
@@ -524,19 +528,22 @@ const std::vector<DefinitionsSet> &Entry::getDefinitionsSets(void) const
     return _definitions;
 }
 
-std::string Entry::getDefinitionSnippet(void) const
+const std::string &Entry::getDefinitionSnippet(void)
 {
     if (_definitions.empty()) {
-        return "";
+        return _definitionSnippet;
     }
 
-    for (const auto &definition: _definitions) {
-        if (!definition.isEmpty()) {
-            return definition.getDefinitionsSnippet();
+    if (_definitionSnippet.empty()) {
+        for (const auto &definition : _definitions) {
+            if (!definition.isEmpty()) {
+                _definitionSnippet = definition.getDefinitionsSnippet();
+                break;
+            }
         }
     }
 
-    return "";
+    return _definitionSnippet;
 }
 
 void Entry::addDefinitions(const std::string &source,

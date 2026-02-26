@@ -1,11 +1,14 @@
 #include "definitionsset.h"
 
+#include "logic/dictionary/dictionarysource.h"
+
 #include <sstream>
 
 DefinitionsSet::DefinitionsSet(std::string source,
                                std::vector<Definition::Definition> definitions)
-    : _source{source},
-      _definitions{definitions}
+    : _source{source}
+    , _sourceShortString{DictionarySourceUtils::getSourceShortString(source)}
+    , _definitions{definitions}
 {
 
 }
@@ -44,42 +47,49 @@ void DefinitionsSet::generatePhonetic(CantoneseOptions cantoneseOptions,
     }
 }
 
-std::string DefinitionsSet::getSource() const
+const std::string &DefinitionsSet::getSource() const
 {
     return _source;
 }
 
-std::string DefinitionsSet::getSourceLongString() const
+const std::string &DefinitionsSet::getSourceLongString() const
 {
     return _source;
 }
 
-std::string DefinitionsSet::getSourceShortString() const
+const std::string &DefinitionsSet::getSourceShortString() const
 {
-    return DictionarySourceUtils::getSourceShortString(_source);
+    return _sourceShortString;
 }
 
 // getDefinitionSnippet() returns a string that shows the definitions contained
 // in a DefinitionsSet object, in one line, separated by semicolons.
 // This is useful for the search results list view, where the snippet
 // essentially functions as a "preview" of the definitions for a word.
-std::string DefinitionsSet::getDefinitionsSnippet() const
+const std::string &DefinitionsSet::getDefinitionsSnippet() const
 {
     if (isEmpty()) {
-        return "";
+        return _snippet;
     }
 
-    std::ostringstream definitions;
-    for (size_t i = 0; i < _definitions.size() - 1; i++) {
-        auto location = _definitions[i].definitionContent.find_first_of("\r\n");
-        definitions << _definitions[i].definitionContent.substr(0, location) << "; ";
+    if (_snippet.empty()) {
+        std::ostringstream definitions;
+        for (size_t i = 0; i < _definitions.size() - 1; i++) {
+            auto location = _definitions[i].definitionContent.find_first_of(
+                "\r\n");
+            definitions << _definitions[i].definitionContent.substr(0, location)
+                        << "; ";
+        }
+        auto location = _definitions.back().definitionContent.find_first_of(
+            "\r\n");
+        definitions << _definitions.back().definitionContent.substr(0, location);
+        _snippet = definitions.str();
     }
-    auto location = _definitions.back().definitionContent.find_first_of("\r\n");
-    definitions << _definitions.back().definitionContent.substr(0, location);
-    return definitions.str();
+
+    return _snippet;
 }
 
-std::vector<Definition::Definition> DefinitionsSet::getDefinitions() const
+const std::vector<Definition::Definition> &DefinitionsSet::getDefinitions() const
 {
     return _definitions;
 }
