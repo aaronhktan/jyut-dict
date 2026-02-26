@@ -5,6 +5,7 @@
 
 #include <QString>
 
+#include <span>
 #include <string>
 
 // The ChineseUtils namespace contains static functions for working with
@@ -13,9 +14,9 @@
 namespace ChineseUtils {
 
 std::string applyColours(const std::string original,
-                         const std::vector<uint8_t> &tones,
-                         const std::vector<std::string> &jyutpingToneColours,
-                         const std::vector<std::string> &pinyinToneColours,
+                         std::span<const uint8_t> tones,
+                         std::span<const std::string> jyutpingToneColours,
+                         std::span<const std::string> pinyinToneColours,
                          const EntryColourPhoneticType type
                          = EntryColourPhoneticType::CANTONESE);
 
@@ -42,7 +43,7 @@ std::string applyColours(const std::string original,
 std::string compareStrings(const std::string &original,
                            const std::string &comparison);
 
-// constructRomanisationQuery takes a vector of strings and stitches them
+// constructRomanisationQuery takes a sequence of strings and stitches them
 // together with a delimiter.
 //
 // Since this is used for searching, we check whether to add a single wildcard
@@ -85,7 +86,7 @@ std::string compareStrings(const std::string &original,
 //    wildcard, as it is terminated by a digit. The second one is not, so it
 //    is affixed with the single character wildcard. The return value is
 //    ke3 ai?.
-std::string constructRomanisationQuery(const std::vector<std::string> &words,
+std::string constructRomanisationQuery(std::span<const std::string> words,
                                        const char *delimiter);
 
 } // namespace ChineseUtils

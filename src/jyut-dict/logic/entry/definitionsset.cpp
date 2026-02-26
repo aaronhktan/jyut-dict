@@ -89,7 +89,7 @@ const std::string &DefinitionsSet::getDefinitionsSnippet() const
     return _snippet;
 }
 
-const std::vector<Definition::Definition> &DefinitionsSet::getDefinitions() const
+std::span<const Definition::Definition> DefinitionsSet::getDefinitions() const
 {
     return _definitions;
 }

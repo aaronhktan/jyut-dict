@@ -92,7 +92,7 @@ void SentenceSplitter::setStyle(bool use_dark)
 #endif
 
 void SentenceSplitter::setSourceSentences(
-    const std::vector<SourceSentence> &sourceSentences)
+    std::span<const SourceSentence> sourceSentences)
 {
     static_cast<SentenceResultListModel *>(_model)->setSentences(sourceSentences);
     _size = static_cast<int>(sourceSentences.size());

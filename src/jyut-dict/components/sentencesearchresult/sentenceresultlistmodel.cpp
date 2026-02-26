@@ -22,10 +22,11 @@ void SentenceResultListModel::callback(const std::vector<SourceSentence> &senten
     setSentences(sentences);
 }
 
-void SentenceResultListModel::setSentences(const std::vector<SourceSentence> &sentences)
+void SentenceResultListModel::setSentences(
+    std::span<const SourceSentence> sentences)
 {
     beginResetModel();
-    _sentences = sentences;
+    _sentences.assign(sentences.begin(), sentences.end());
     endResetModel();
 }
 

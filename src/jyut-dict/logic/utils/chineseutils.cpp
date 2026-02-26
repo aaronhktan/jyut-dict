@@ -16,9 +16,9 @@ const static std::unordered_set<std::string> specialCharacters = {
 };
 
 std::string applyColours(const std::string original,
-                         const std::vector<uint8_t> &tones,
-                         const std::vector<std::string> &jyutpingToneColours,
-                         const std::vector<std::string> &pinyinToneColours,
+                         std::span<const uint8_t> tones,
+                         std::span<const std::string> jyutpingToneColours,
+                         std::span<const std::string> pinyinToneColours,
                          const EntryColourPhoneticType type)
 {
     std::string coloured_string;
@@ -68,26 +68,31 @@ std::string applyColours(const std::string original,
         }
 
         // Get the tone...
-        int tone = 0;
-        try {
-            tone = tones.at(pos);
-        } catch ([[maybe_unused]] const std::out_of_range &e) {
+        if (pos >= tones.size()) {
             coloured_string += originalStr;
             continue;
         }
+        size_t tone = tones[pos];
 
         // ... and apply tone colour formatting to the string
         switch (type) {
         case EntryColourPhoneticType::CANTONESE: {
+            if (tone >= jyutpingToneColours.size()) {
+                coloured_string += originalStr;
+                continue;
+            }
             coloured_string += "<font color=\""
-                               + jyutpingToneColours.at(
-                                   static_cast<size_t>(tone))
+                               + jyutpingToneColours[tone]
                                + "\">";
             break;
         }
         case EntryColourPhoneticType::MANDARIN: {
+            if (tone >= pinyinToneColours.size()) {
+                coloured_string += originalStr;
+                continue;
+            }
             coloured_string += "<font color=\""
-                               + pinyinToneColours.at(static_cast<size_t>(tone))
+                               + pinyinToneColours[tone]
                                + "\">";
             break;
         }
@@ -142,7 +147,7 @@ std::string compareStrings(const std::string &original,
     return result;
 }
 
-std::string constructRomanisationQuery(const std::vector<std::string> &words,
+std::string constructRomanisationQuery(std::span<const std::string> words,
                                        const char *delimiter)
 {
     if (words.empty()) {

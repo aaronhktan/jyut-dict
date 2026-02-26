@@ -9,8 +9,7 @@
 #include <QSettings>
 #include <QWidget>
 
-#include <string>
-#include <vector>
+#include <span>
 
 // The DefinitionContentWidget shows all the definitions
 // It contains a collection of QLabels, one for each definition
@@ -25,7 +24,7 @@ public:
 
     void changeEvent(QEvent *event) override;
 
-    void setEntry(const std::vector<Definition::Definition> &definitions);
+    void setEntry(std::span<const Definition::Definition> definitions);
 
 private:
     void setStyle(bool use_dark);

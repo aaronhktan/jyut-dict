@@ -579,11 +579,11 @@ bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
 bool SQLDatabaseUtils::removeSource(const std::string &source, bool skipCleanup)
 {
     backupDatabase();
-    return removeSources({source}, skipCleanup);
+    return removeSources(std::vector<std::string>{source}, skipCleanup);
 }
 
 // Method to remove multiple sources from the database, based on the name of the sources.
-bool SQLDatabaseUtils::removeSources(const std::vector<std::string> &sources,
+bool SQLDatabaseUtils::removeSources(std::span<const std::string> sources,
                                      bool skipCleanup)
 {
     QSqlQuery query{_manager->getDatabase()};

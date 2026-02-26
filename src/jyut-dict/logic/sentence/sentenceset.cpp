@@ -60,7 +60,7 @@ const std::string &SentenceSet::getSourceShortString(void) const
     return _sourceShortString;
 }
 
-const std::vector<Sentence::TargetSentence> &SentenceSet::getSentenceSnippet(
+std::span<const Sentence::TargetSentence> SentenceSet::getSentenceSnippet(
     void) const
 {
     if (!_snippet.empty()) {
@@ -75,7 +75,7 @@ const std::vector<Sentence::TargetSentence> &SentenceSet::getSentenceSnippet(
     return _snippet;
 }
 
-const std::vector<Sentence::TargetSentence> &SentenceSet::getSentences() const
+std::span<const Sentence::TargetSentence> SentenceSet::getSentences() const
 {
     return _sentences;
 }

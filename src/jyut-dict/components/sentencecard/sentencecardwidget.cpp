@@ -49,16 +49,17 @@ void SentenceCardWidget::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
-void SentenceCardWidget::displaySentences(const std::vector<SourceSentence> &sentences)
+void SentenceCardWidget::displaySentences(
+    std::span<const SourceSentence> sentences)
 {
     if (sentences.empty()) {
         return;
     }
 
-    _sourceSentences = sentences;
+    _sourceSentences.assign(sentences.begin(), sentences.end());
     _sourceSentencesIsValid = true;
 
-    _source = sentences.at(0).getSentenceSets().at(0).getSourceShortString();
+    _source = sentences[0].getSentenceSets()[0].getSourceShortString();
     _sentenceHeaderWidget->setCardTitle(
         QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                     Strings::SENTENCES_ALL_CAPS)

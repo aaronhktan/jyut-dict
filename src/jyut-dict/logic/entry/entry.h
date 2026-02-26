@@ -9,6 +9,7 @@
 #include <QVariant>
 
 #include <ostream>
+#include <span>
 #include <string>
 #include <vector>
 
@@ -74,7 +75,7 @@ public:
     void setPinyin(const std::string &pinyin);
     const std::vector<uint8_t> &getPinyinNumbers();
 
-    const std::vector<DefinitionsSet> &getDefinitionsSets(void) const;
+    std::span<const DefinitionsSet> getDefinitionsSets(void) const;
     const std::string &getDefinitionSnippet(void);
     void addDefinitions(const std::string &source,
                         const std::vector<Definition::Definition> &definitions);

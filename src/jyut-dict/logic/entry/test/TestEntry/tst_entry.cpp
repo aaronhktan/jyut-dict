@@ -286,7 +286,9 @@ void TestEntry::definitions()
     std::string pinyin = "tang2 ren2 jie1";
     Entry entry{simplified, traditional, jyutping, pinyin, {definitionsSet}};
 
-    QCOMPARE(entry.getDefinitionsSets(), {definitionsSet});
+    QCOMPARE(std::vector<DefinitionsSet>(entry.getDefinitionsSets().begin(),
+                                         entry.getDefinitionsSets().end()),
+             std::vector<DefinitionsSet>{definitionsSet});
     QCOMPARE(entry.getDefinitionSnippet(),
              "Chinatown; CL:條|条[tiao2],座[zuo4]");
 
@@ -302,7 +304,9 @@ void TestEntry::definitions()
     entry.addDefinitions("粵典-words.hk", {additionalDefinition});
 
     std::vector<DefinitionsSet> sets{definitionsSet, additionalDefinitionsSet};
-    QCOMPARE(entry.getDefinitionsSets(), sets);
+    QCOMPARE(std::vector<DefinitionsSet>(entry.getDefinitionsSets().begin(),
+                                         entry.getDefinitionsSets().end()),
+             sets);
 }
 
 void TestEntry::refreshColours()

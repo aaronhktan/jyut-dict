@@ -53,7 +53,7 @@ void SentenceContentWidget::setSentenceSet(const SentenceSet &set)
 
     _sentenceLayout->setContentsMargins(10, 0, 10, 10);
 
-    std::vector<Sentence::TargetSentence> sentences = set.getSentences();
+    std::span<const Sentence::TargetSentence> sentences = set.getSentences();
     for (size_t i = 0; i < sentences.size(); i++) {
         std::string number = std::to_string(i + 1);
         _sentenceNumberLabels.push_back(new QLabel{number.c_str(), this});
@@ -84,7 +84,7 @@ void SentenceContentWidget::setSentenceSet(const SentenceSet &set)
 }
 
 void SentenceContentWidget::setSourceSentenceVector(
-    const std::vector<SourceSentence> &sourceSentences)
+    std::span<const SourceSentence> sourceSentences)
 {
     cleanupLabels();
 
@@ -105,7 +105,7 @@ void SentenceContentWidget::setSourceSentenceVector(
                                         .width();
         _sentenceNumberLabels.back()->setFixedWidth(definitionNumberWidth);
 
-        SourceSentence sourceSentence = sourceSentences.at(i);
+        SourceSentence sourceSentence = sourceSentences[i];
 
         QString simplified
             = QString::fromStdString(sourceSentence.getSimplified()).trimmed();

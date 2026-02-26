@@ -8,7 +8,7 @@
 #include <QEvent>
 #include <QWidget>
 
-#include <vector>
+#include <span>
 
 // A SentenceCardWidget contains a header (showing that this card is used for
 // sentences), and content (showing the actual content of the sentences)
@@ -21,7 +21,7 @@ public:
 
     void changeEvent(QEvent *event) override;
 
-    void displaySentences(const std::vector<SourceSentence> &sentences);
+    void displaySentences(std::span<const SourceSentence> sentences);
     void displaySentences(const SentenceSet &set);
 
 private:

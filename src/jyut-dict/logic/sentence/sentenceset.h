@@ -2,6 +2,7 @@
 #define SENTENCESET_H
 
 #include <ostream>
+#include <span>
 #include <string>
 #include <vector>
 
@@ -55,8 +56,8 @@ public:
     const std::string &getSource(void) const;
     const std::string &getSourceLongString(void) const;
     const std::string &getSourceShortString(void) const;
-    const std::vector<Sentence::TargetSentence> &getSentenceSnippet(void) const;
-    const std::vector<Sentence::TargetSentence> &getSentences(void) const;
+    std::span<const Sentence::TargetSentence> getSentenceSnippet(void) const;
+    std::span<const Sentence::TargetSentence> getSentences(void) const;
 
 private:
     std::string _source;

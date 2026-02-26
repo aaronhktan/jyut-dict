@@ -211,7 +211,7 @@ void SourceSentence::setPinyin(const std::string &pinyin)
     _pinyin = pinyin;
 }
 
-const std::vector<SentenceSet> &SourceSentence::getSentenceSets(void) const
+std::span<const SentenceSet> SourceSentence::getSentenceSets(void) const
 {
     return _sentences;
 }
@@ -228,8 +228,9 @@ std::string SourceSentence::getSentenceSnippet(void) const
         return "";
     }
 
-    std::vector<Sentence::TargetSentence> snippets = sentenceSet
-                                                         .getSentenceSnippet();
+    std::vector<Sentence::TargetSentence>
+        snippets{sentenceSet.getSentenceSnippet().begin(),
+                 sentenceSet.getSentenceSnippet().end()};
 
     if (snippets.empty()) {
         return "";
@@ -250,8 +251,9 @@ std::string SourceSentence::getSentenceSnippetLanguage(void) const
         return "";
     }
 
-    std::vector<Sentence::TargetSentence> snippets = sentenceSet
-                                                         .getSentenceSnippet();
+    std::vector<Sentence::TargetSentence>
+        snippets{sentenceSet.getSentenceSnippet().begin(),
+                 sentenceSet.getSentenceSnippet().end()};
 
     if (snippets.empty()) {
         return "";

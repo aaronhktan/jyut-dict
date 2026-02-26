@@ -5,6 +5,7 @@
 #include "logic/entry/entryphoneticoptions.h"
 #include "sentenceset.h"
 
+#include <span>
 #include <string>
 
 // The SourceSentence represents a Chinese sentence.
@@ -60,7 +61,7 @@ public:
     const std::string &getPrettyPinyin(void) const;
     void setPinyin(const std::string &pinyin);
 
-    const std::vector<SentenceSet> &getSentenceSets(void) const;
+    std::span<const SentenceSet> getSentenceSets(void) const;
     std::string getSentenceSnippet(void) const;
     std::string getSentenceSnippetLanguage(void) const;
 
