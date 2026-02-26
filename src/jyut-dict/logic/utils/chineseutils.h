@@ -12,12 +12,12 @@
 
 namespace ChineseUtils {
 
-std::string applyColours(
-    const std::string original,
-    const std::vector<int> &tones,
-    const std::vector<std::string> &jyutpingToneColours,
-    const std::vector<std::string> &pinyinToneColours,
-    const EntryColourPhoneticType type = EntryColourPhoneticType::CANTONESE);
+std::string applyColours(const std::string original,
+                         const std::vector<uint8_t> &tones,
+                         const std::vector<std::string> &jyutpingToneColours,
+                         const std::vector<std::string> &pinyinToneColours,
+                         const EntryColourPhoneticType type
+                         = EntryColourPhoneticType::CANTONESE);
 
 // The function first converts both the simplified and traditional strings into
 // u32strings.

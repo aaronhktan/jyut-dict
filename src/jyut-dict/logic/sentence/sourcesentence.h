@@ -32,34 +32,35 @@ public:
                && _sentences == other._sentences;
     }
 
-    std::string getSourceLanguage(void) const;
+    const std::string &getSourceLanguage(void) const;
     void setSourceLanguage(std::string sourceLanguage);
 
-    std::string getCharacters(EntryCharactersOptions options) const;
+    const std::string &getCharacters(EntryCharactersOptions options) const;
 
-    std::string getSimplified(void) const;
+    const std::string &getSimplified(void) const;
     void setSimplified(std::string simplified);
 
-    std::string getTraditional(void) const;
+    const std::string &getTraditional(void) const;
     void setTraditional(std::string traditional);
 
     bool generatePhonetic(CantoneseOptions cantoneseOptions,
                           MandarinOptions mandarinOptions);
 
-    std::string getPhonetic(EntryPhoneticOptions options,
-                            CantoneseOptions cantoneseOptions,
-                            MandarinOptions mandarinOptions) const;
-    std::string getCantonesePhonetic(CantoneseOptions cantoneseOptions) const;
-    std::string getMandarinPhonetic(MandarinOptions mandarinOptions) const;
+    const std::string &getPhonetic(EntryPhoneticOptions options,
+                                   CantoneseOptions cantoneseOptions,
+                                   MandarinOptions mandarinOptions) const;
+    const std::string &getCantonesePhonetic(
+        CantoneseOptions cantoneseOptions) const;
+    const std::string &getMandarinPhonetic(MandarinOptions mandarinOptions) const;
 
-    std::string getJyutping(void) const;
+    const std::string &getJyutping(void) const;
     void setJyutping(const std::string &jyutping);
 
-    std::string getPinyin(void) const;
-    std::string getPrettyPinyin(void) const;
+    const std::string &getPinyin(void) const;
+    const std::string &getPrettyPinyin(void) const;
     void setPinyin(const std::string &pinyin);
 
-    std::vector<SentenceSet> getSentenceSets(void) const;
+    const std::vector<SentenceSet> &getSentenceSets(void) const;
     std::string getSentenceSnippet(void) const;
     std::string getSentenceSnippetLanguage(void) const;
 

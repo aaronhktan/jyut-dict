@@ -37,15 +37,15 @@ public:
     bool operator!=(const Entry &other) const;
     friend std::ostream &operator<<(std::ostream &out, const Entry &entry);
 
-    std::string getCharacters(EntryCharactersOptions options,
-                              bool useColours) const;
-    std::string getCharactersNoSecondary(EntryCharactersOptions options,
-                                         bool useColours) const;
+    const std::string &getCharacters(EntryCharactersOptions options,
+                                     bool useColours) const;
+    const std::string &getCharactersNoSecondary(EntryCharactersOptions options,
+                                                bool useColours) const;
 
-    std::string getSimplified(void) const;
+    const std::string &getSimplified(void) const;
     void setSimplified(std::string simplified);
 
-    std::string getTraditional(void) const;
+    const std::string &getTraditional(void) const;
     void setTraditional(std::string traditional);
 
     bool generatePhonetic(CantoneseOptions cantoneseOptions,
@@ -62,18 +62,19 @@ public:
                             CantoneseOptions cantoneseOptions,
                             MandarinOptions mandarinOptions) const;
 
-    std::string getCantonesePhonetic(CantoneseOptions cantoneseOptions) const;
-    std::string getMandarinPhonetic(MandarinOptions mandarinOptions) const;
+    const std::string &getCantonesePhonetic(
+        CantoneseOptions cantoneseOptions) const;
+    const std::string &getMandarinPhonetic(MandarinOptions mandarinOptions) const;
 
-    std::string getJyutping(void) const;
+    const std::string &getJyutping(void) const;
     void setJyutping(const std::string &jyutping);
-    std::vector<int> getJyutpingNumbers() const;
+    const std::vector<uint8_t> &getJyutpingNumbers();
 
-    std::string getPinyin(void) const;
+    const std::string &getPinyin(void) const;
     void setPinyin(const std::string &pinyin);
-    std::vector<int> getPinyinNumbers() const;
+    const std::vector<uint8_t> &getPinyinNumbers();
 
-    std::vector<DefinitionsSet> getDefinitionsSets(void) const;
+    const std::vector<DefinitionsSet> &getDefinitionsSets(void) const;
     std::string getDefinitionSnippet(void) const;
     void addDefinitions(const std::string &source,
                         const std::vector<Definition::Definition> &definitions);
@@ -89,19 +90,26 @@ public:
 private:
     std::string _simplified;
     std::string _simplifiedDifference;
+    std::string _preferSimplified;
     std::string _traditional;
     std::string _traditionalDifference;
+    std::string _preferTraditional;
 
     std::string _colouredSimplified;
     std::string _colouredSimplifiedDifference;
+    std::string _colouredPreferSimplified;
     std::string _colouredTraditional;
     std::string _colouredTraditionalDifference;
+    std::string _colouredPreferTraditional;
 
     std::string _jyutping;
     std::string _yale;
     bool _isYaleValid = false;
     std::string _cantoneseIPA;
     bool _isCantoneseIPAValid = false;
+
+    bool _isJyutpingNumbersValid = false;
+    std::vector<uint8_t> _jyutpingNumbers;
 
     std::string _pinyin;
     std::string _prettyPinyin;
@@ -112,6 +120,9 @@ private:
     bool _isZhuyinValid = false;
     std::string _mandarinIPA;
     bool _isMandarinIPAValid = false;
+
+    bool _isPinyinNumbersValid = false;
+    std::vector<uint8_t> _pinyinNumbers;
 
     std::vector<DefinitionsSet> _definitions;
 

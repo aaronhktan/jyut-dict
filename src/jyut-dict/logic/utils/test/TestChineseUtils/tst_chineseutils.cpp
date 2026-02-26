@@ -36,7 +36,7 @@ TestChineseUtils::~TestChineseUtils() {}
 void TestChineseUtils::applyColoursJyutping()
 {
     std::string text = "唔係";
-    std::vector<int> tones = {4, 6};
+    std::vector<uint8_t> tones = {4, 6};
     std::string result
         = ChineseUtils::applyColours(text,
                                      tones,
@@ -53,7 +53,7 @@ void TestChineseUtils::applyColoursJyutping()
 void TestChineseUtils::applyColoursPinyin()
 {
     std::string text = "不是";
-    std::vector<int> tones = {2, 4};
+    std::vector<uint8_t> tones = {2, 4};
     std::string result
         = ChineseUtils::applyColours(text,
                                      tones,

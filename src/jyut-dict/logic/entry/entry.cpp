@@ -27,57 +27,83 @@ Entry::Entry(const std::string &simplified, const std::string &traditional,
     // Create comparison versions of traditional and simplified entries
     _traditionalDifference = ChineseUtils::compareStrings(_simplified, _traditional);
     _simplifiedDifference = ChineseUtils::compareStrings(_traditional, _simplified);
+    _preferSimplified = _simplified + " [" + _traditionalDifference + "]";
+    _preferTraditional = _traditional + " [" + _simplifiedDifference + "]";
 }
 
 Entry::Entry(const Entry &entry)
-    : QObject(), _simplified{entry._simplified},
-      _simplifiedDifference{entry._simplifiedDifference},
-      _traditional{entry._traditional},
-      _traditionalDifference{entry._traditionalDifference},
-      _colouredSimplified{entry._colouredSimplified},
-      _colouredSimplifiedDifference{entry._colouredSimplifiedDifference},
-      _colouredTraditional{entry._colouredTraditional},
-      _colouredTraditionalDifference{entry._colouredTraditionalDifference},
-      _jyutping{entry._jyutping}, _yale{entry._yale},
-      _isYaleValid{entry._isYaleValid}, _cantoneseIPA{entry._cantoneseIPA},
-      _isCantoneseIPAValid{entry._isCantoneseIPAValid}, _pinyin{entry._pinyin},
-      _prettyPinyin{entry._prettyPinyin},
-      _isPrettyPinyinValid{entry._isPrettyPinyinValid},
-      _numberedPinyin{entry._numberedPinyin},
-      _isNumberedPinyinValid{entry._isNumberedPinyinValid},
-      _zhuyin{entry._zhuyin}, _isZhuyinValid{entry._isZhuyinValid},
-      _mandarinIPA{entry._mandarinIPA},
-      _isMandarinIPAValid{entry._isMandarinIPAValid},
-      _definitions{entry._definitions},
-      _isWelcome{entry._isWelcome}, _isEmpty{entry._isEmpty}
+    : QObject()
+    , _simplified{entry._simplified}
+    , _simplifiedDifference{entry._simplifiedDifference}
+    , _preferSimplified{entry._preferSimplified}
+    , _traditional{entry._traditional}
+    , _traditionalDifference{entry._traditionalDifference}
+    , _preferTraditional{entry._preferTraditional}
+    , _colouredSimplified{entry._colouredSimplified}
+    , _colouredSimplifiedDifference{entry._colouredSimplifiedDifference}
+    , _colouredPreferSimplified{entry._colouredPreferSimplified}
+    , _colouredTraditional{entry._colouredTraditional}
+    , _colouredTraditionalDifference{entry._colouredTraditionalDifference}
+    , _colouredPreferTraditional{entry._colouredPreferTraditional}
+    , _jyutping{entry._jyutping}
+    , _yale{entry._yale}
+    , _isYaleValid{entry._isYaleValid}
+    , _cantoneseIPA{entry._cantoneseIPA}
+    , _isCantoneseIPAValid{entry._isCantoneseIPAValid}
+    , _isJyutpingNumbersValid{entry._isJyutpingNumbersValid}
+    , _jyutpingNumbers{entry._jyutpingNumbers}
+    , _pinyin{entry._pinyin}
+    , _prettyPinyin{entry._prettyPinyin}
+    , _isPrettyPinyinValid{entry._isPrettyPinyinValid}
+    , _numberedPinyin{entry._numberedPinyin}
+    , _isNumberedPinyinValid{entry._isNumberedPinyinValid}
+    , _zhuyin{entry._zhuyin}
+    , _isZhuyinValid{entry._isZhuyinValid}
+    , _mandarinIPA{entry._mandarinIPA}
+    , _isMandarinIPAValid{entry._isMandarinIPAValid}
+    , _isPinyinNumbersValid{entry._isPinyinNumbersValid}
+    , _pinyinNumbers{entry._pinyinNumbers}
+    , _definitions{entry._definitions}
+    , _isWelcome{entry._isWelcome}
+    , _isEmpty{entry._isEmpty}
 {}
 
 Entry::Entry(Entry &&entry)
-    : _simplified{std::move(entry._simplified)},
-      _simplifiedDifference{std::move(entry._simplifiedDifference)},
-      _traditional{std::move(entry._traditional)},
-      _traditionalDifference{std::move(entry._traditionalDifference)},
-      _colouredSimplified{std::move(entry._colouredSimplified)},
-      _colouredSimplifiedDifference{
-          std::move(entry._colouredSimplifiedDifference)},
-      _colouredTraditional{std::move(entry._colouredTraditional)},
-      _colouredTraditionalDifference{
-          std::move(entry._colouredTraditionalDifference)},
-      _jyutping{std::move(entry._jyutping)}, _yale{std::move(entry._yale)},
-      _isYaleValid{entry._isYaleValid}, _cantoneseIPA{std::move(
-                                            entry._cantoneseIPA)},
-      _isCantoneseIPAValid{entry._isCantoneseIPAValid}, _pinyin{std::move(
-                                                            entry._pinyin)},
-      _prettyPinyin{std::move(entry._prettyPinyin)},
-      _isPrettyPinyinValid{entry._isPrettyPinyinValid},
-      _numberedPinyin{std::move(entry._numberedPinyin)},
-      _isNumberedPinyinValid{entry._isNumberedPinyinValid}, _zhuyin{std::move(
-                                                                entry._zhuyin)},
-      _isZhuyinValid{entry._isZhuyinValid}, _mandarinIPA{std::move(
-                                                entry._mandarinIPA)},
-      _isMandarinIPAValid{entry._isMandarinIPAValid}, _definitions{std::move(
-                                                          entry._definitions)},
-      _isWelcome{entry._isWelcome}, _isEmpty{entry._isEmpty}
+    : _simplified{std::move(entry._simplified)}
+    , _simplifiedDifference{std::move(entry._simplifiedDifference)}
+    , _preferSimplified{std::move(entry._preferSimplified)}
+    , _traditional{std::move(entry._traditional)}
+    , _traditionalDifference{std::move(entry._traditionalDifference)}
+    , _preferTraditional{std::move(entry._preferTraditional)}
+    , _colouredSimplified{std::move(entry._colouredSimplified)}
+    , _colouredSimplifiedDifference{std::move(
+          entry._colouredSimplifiedDifference)}
+    , _colouredPreferSimplified{std::move(entry._colouredPreferSimplified)}
+    , _colouredTraditional{std::move(entry._colouredTraditional)}
+    , _colouredTraditionalDifference{std::move(
+          entry._colouredTraditionalDifference)}
+    , _colouredPreferTraditional{std::move(entry._colouredPreferTraditional)}
+    , _jyutping{std::move(entry._jyutping)}
+    , _yale{std::move(entry._yale)}
+    , _isYaleValid{entry._isYaleValid}
+    , _cantoneseIPA{std::move(entry._cantoneseIPA)}
+    , _isCantoneseIPAValid{entry._isCantoneseIPAValid}
+    , _isJyutpingNumbersValid{entry._isJyutpingNumbersValid}
+    , _jyutpingNumbers{std::move(entry._jyutpingNumbers)}
+    , _pinyin{std::move(entry._pinyin)}
+    , _prettyPinyin{std::move(entry._prettyPinyin)}
+    , _isPrettyPinyinValid{entry._isPrettyPinyinValid}
+    , _numberedPinyin{std::move(entry._numberedPinyin)}
+    , _isNumberedPinyinValid{entry._isNumberedPinyinValid}
+    , _zhuyin{std::move(entry._zhuyin)}
+    , _isZhuyinValid{entry._isZhuyinValid}
+    , _mandarinIPA{std::move(entry._mandarinIPA)}
+    , _isMandarinIPAValid{entry._isMandarinIPAValid}
+    , _isPinyinNumbersValid{entry._isPinyinNumbersValid}
+    , _pinyinNumbers{std::move(entry._pinyinNumbers)}
+    , _definitions{std::move(entry._definitions)}
+    , _isWelcome{entry._isWelcome}
+    , _isEmpty{entry._isEmpty}
 {}
 
 Entry &Entry::operator=(const Entry &entry)
@@ -88,17 +114,23 @@ Entry &Entry::operator=(const Entry &entry)
 
     _simplified = entry._simplified;
     _simplifiedDifference = entry._simplifiedDifference;
+    _preferSimplified = entry._preferSimplified;
     _traditional = entry._traditional;
     _traditionalDifference = entry._traditionalDifference;
+    _preferTraditional = entry._preferTraditional;
     _colouredSimplified = entry._colouredSimplified;
     _colouredSimplifiedDifference = entry._colouredSimplifiedDifference;
+    _colouredPreferSimplified = entry._colouredPreferSimplified;
     _colouredTraditional = entry._colouredTraditional;
     _colouredTraditionalDifference = entry._colouredTraditionalDifference;
+    _colouredPreferTraditional = entry._colouredPreferTraditional;
     _jyutping = entry._jyutping;
     _yale = entry._yale;
     _isYaleValid = entry._isYaleValid;
     _cantoneseIPA = entry._cantoneseIPA;
     _isCantoneseIPAValid = entry._isCantoneseIPAValid;
+    _isJyutpingNumbersValid = entry._isJyutpingNumbersValid;
+    _jyutpingNumbers = entry._jyutpingNumbers;
     _pinyin = entry._pinyin;
     _prettyPinyin = entry._prettyPinyin;
     _isPrettyPinyinValid = entry._isPrettyPinyinValid;
@@ -108,6 +140,8 @@ Entry &Entry::operator=(const Entry &entry)
     _isZhuyinValid = entry._isZhuyinValid;
     _mandarinIPA = entry._mandarinIPA;
     _isMandarinIPAValid = entry._isMandarinIPAValid;
+    _isPinyinNumbersValid = entry._isPinyinNumbersValid;
+    _pinyinNumbers = entry._pinyinNumbers;
     _definitions = entry._definitions;
     _isWelcome = entry._isWelcome;
     _isEmpty = entry._isEmpty;
@@ -123,17 +157,23 @@ Entry &Entry::operator=(Entry &&entry)
 
     _simplified = std::move(entry._simplified);
     _simplifiedDifference = std::move(entry._simplifiedDifference);
+    _preferSimplified = std::move(entry._preferSimplified);
     _traditional = std::move(entry._traditional);
     _traditionalDifference = std::move(entry._traditionalDifference);
+    _preferTraditional = std::move(entry._preferTraditional);
     _colouredSimplified = std::move(entry._colouredSimplified);
     _colouredSimplifiedDifference = std::move(entry._colouredSimplifiedDifference);
+    _colouredPreferSimplified = std::move(entry._colouredPreferSimplified);
     _colouredTraditional = std::move(entry._colouredTraditional);
     _colouredTraditionalDifference = std::move(entry._colouredTraditionalDifference);
+    _colouredPreferTraditional = std::move(entry._colouredPreferTraditional);
     _jyutping = std::move(entry._jyutping);
     _yale = std::move(entry._yale);
     _isYaleValid = entry._isYaleValid;
     _cantoneseIPA = std::move(entry._cantoneseIPA);
     _isCantoneseIPAValid = entry._isCantoneseIPAValid;
+    _isJyutpingNumbersValid = entry._isJyutpingNumbersValid;
+    _jyutpingNumbers = std::move(entry._jyutpingNumbers);
     _pinyin = std::move(entry._pinyin);
     _prettyPinyin = std::move(entry._prettyPinyin);
     _isPrettyPinyinValid = entry._isPrettyPinyinValid;
@@ -143,6 +183,8 @@ Entry &Entry::operator=(Entry &&entry)
     _isZhuyinValid = entry._isZhuyinValid;
     _mandarinIPA = std::move(entry._mandarinIPA);
     _isMandarinIPAValid = entry._isMandarinIPAValid;
+    _isPinyinNumbersValid = entry._isPinyinNumbersValid;
+    _pinyinNumbers = std::move(entry._pinyinNumbers);
     _definitions = std::move(entry._definitions);
     _isWelcome = entry._isWelcome;
     _isEmpty = entry._isEmpty;
@@ -182,8 +224,8 @@ std::ostream &operator<<(std::ostream &out, const Entry &entry)
     return out;
 }
 
-std::string Entry::getCharacters(EntryCharactersOptions options,
-                                 bool useColours) const
+const std::string &Entry::getCharacters(EntryCharactersOptions options,
+                                        bool useColours) const
 {
     switch (options) {
         case (EntryCharactersOptions::ONLY_SIMPLIFIED): {
@@ -200,23 +242,23 @@ std::string Entry::getCharacters(EntryCharactersOptions options,
         }
         case (EntryCharactersOptions::PREFER_SIMPLIFIED): {
             if (useColours) {
-                return _colouredSimplified + " [" + _colouredTraditionalDifference + "]";
+                return _colouredPreferSimplified;
             }
-            return _simplified + " [" + _traditionalDifference + "]";
+            return _preferSimplified;
         }
         case (EntryCharactersOptions::PREFER_TRADITIONAL): {
             if (useColours) {
-                return _colouredTraditional + " [" + _colouredSimplifiedDifference + "]";
+                return _colouredPreferTraditional;
             }
-            return _traditional + " [" + _simplifiedDifference + "]";
+            return _preferTraditional;
         }
     }
 
     return _simplified;
 }
 
-std::string Entry::getCharactersNoSecondary(EntryCharactersOptions options,
-                                            bool useColours) const
+const std::string &Entry::getCharactersNoSecondary(
+    EntryCharactersOptions options, bool useColours) const
 {
     switch (options) {
         case (EntryCharactersOptions::PREFER_SIMPLIFIED):
@@ -236,7 +278,7 @@ std::string Entry::getCharactersNoSecondary(EntryCharactersOptions options,
     return _simplified;
 }
 
-std::string Entry::getSimplified(void) const
+const std::string &Entry::getSimplified(void) const
 {
     return _simplified;
 }
@@ -248,9 +290,11 @@ void Entry::setSimplified(std::string simplified)
     // Create comparison versions of traditional and simplified entries
     _traditionalDifference = ChineseUtils::compareStrings(_simplified, _traditional);
     _simplifiedDifference = ChineseUtils::compareStrings(_traditional, _simplified);
+    _preferSimplified = _simplified + " [" + _traditionalDifference + "]";
+    _preferTraditional = _traditional + " [" + _simplifiedDifference + "]";
 }
 
-std::string Entry::getTraditional(void) const
+const std::string &Entry::getTraditional(void) const
 {
     return _traditional;
 }
@@ -262,6 +306,8 @@ void Entry::setTraditional(std::string traditional)
     // Create comparison versions of traditional and simplified entries
     _traditionalDifference = ChineseUtils::compareStrings(_simplified, _traditional);
     _simplifiedDifference = ChineseUtils::compareStrings(_traditional, _simplified);
+    _preferTraditional = _traditional + " [" + _simplifiedDifference + "]";
+    _preferSimplified = _simplified + " [" + _traditionalDifference + "]";
 }
 
 bool Entry::generatePhonetic(CantoneseOptions cantoneseOptions,
@@ -347,8 +393,9 @@ std::string Entry::getPhonetic(EntryPhoneticOptions options,
             return getMandarinPhonetic(mandarinOptions);
         }
         case EntryPhoneticOptions::PREFER_CANTONESE: {
-            std::string cantonese = getCantonesePhonetic(cantoneseOptions);
-            std::string mandarin = getMandarinPhonetic(mandarinOptions);
+            const std::string &cantonese = getCantonesePhonetic(
+                cantoneseOptions);
+            const std::string &mandarin = getMandarinPhonetic(mandarinOptions);
             if (cantonese.empty()) {
                 return mandarin.empty() ? "" : "(" + mandarin + ")";
             } else if (mandarin.empty()) {
@@ -358,8 +405,9 @@ std::string Entry::getPhonetic(EntryPhoneticOptions options,
             }
         }
         case EntryPhoneticOptions::PREFER_MANDARIN: {
-            std::string cantonese = getCantonesePhonetic(cantoneseOptions);
-            std::string mandarin = getMandarinPhonetic(mandarinOptions);
+            const std::string &cantonese = getCantonesePhonetic(
+                cantoneseOptions);
+            const std::string &mandarin = getMandarinPhonetic(mandarinOptions);
             if (mandarin.empty()) {
                 return cantonese.empty() ? "" : "(" + cantonese + ")";
             } else if (cantonese.empty()) {
@@ -372,7 +420,8 @@ std::string Entry::getPhonetic(EntryPhoneticOptions options,
     return _jyutping;
 }
 
-std::string Entry::getCantonesePhonetic(CantoneseOptions cantoneseOptions) const
+const std::string &Entry::getCantonesePhonetic(
+    CantoneseOptions cantoneseOptions) const
 {
     switch (cantoneseOptions) {
     case CantoneseOptions::PRETTY_YALE: {
@@ -387,7 +436,8 @@ std::string Entry::getCantonesePhonetic(CantoneseOptions cantoneseOptions) const
     }
 }
 
-std::string Entry::getMandarinPhonetic(MandarinOptions mandarinOptions) const
+const std::string &Entry::getMandarinPhonetic(
+    MandarinOptions mandarinOptions) const
 {
     switch (mandarinOptions) {
     case MandarinOptions::PRETTY_PINYIN: {
@@ -408,7 +458,7 @@ std::string Entry::getMandarinPhonetic(MandarinOptions mandarinOptions) const
     }
 }
 
-std::string Entry::getJyutping(void) const
+const std::string &Entry::getJyutping(void) const
 {
     return _jyutping;
 }
@@ -422,24 +472,25 @@ void Entry::setJyutping(const std::string &jyutping)
                    [](unsigned char c) { return std::tolower(c); });
 }
 
-std::vector<int> Entry::getJyutpingNumbers() const
+const std::vector<uint8_t> &Entry::getJyutpingNumbers()
 {
-    std::vector<int> jyutpingNumbers;
-
     if (_jyutping.empty()) {
-        return jyutpingNumbers;
+        return _jyutpingNumbers;
     }
 
-    size_t pos = _jyutping.find_first_of("0123456");
-    while (pos != std::string::npos) {
-        jyutpingNumbers.push_back(_jyutping.at(pos) - '0');
-        pos = _jyutping.find_first_of("0123456", pos + 1);
+    if (!_isJyutpingNumbersValid) {
+        size_t pos = _jyutping.find_first_of("0123456");
+        while (pos != std::string::npos) {
+            _jyutpingNumbers.push_back(_jyutping.at(pos) - '0');
+            pos = _jyutping.find_first_of("0123456", pos + 1);
+        }
+        _isJyutpingNumbersValid = true;
     }
 
-    return jyutpingNumbers;
+    return _jyutpingNumbers;
 }
 
-std::string Entry::getPinyin(void) const
+const std::string &Entry::getPinyin(void) const
 {
     return _pinyin;
 }
@@ -450,24 +501,25 @@ void Entry::setPinyin(const std::string &pinyin)
     std::transform(_pinyin.begin(), _pinyin.end(), _pinyin.begin(), ::tolower);
 }
 
-std::vector<int> Entry::getPinyinNumbers() const
+const std::vector<uint8_t> &Entry::getPinyinNumbers()
 {
-    std::vector<int> pinyinNumbers;
-
     if (_pinyin.empty()) {
-        return pinyinNumbers;
+        return _pinyinNumbers;
     }
 
-    size_t pos = _pinyin.find_first_of("012345");
-    while (pos != std::string::npos) {
-        pinyinNumbers.push_back(_pinyin.at(pos) - '0');
-        pos = _pinyin.find_first_of("012345", pos + 1);
+    if (!_isPinyinNumbersValid) {
+        size_t pos = _pinyin.find_first_of("012345");
+        while (pos != std::string::npos) {
+            _pinyinNumbers.push_back(_pinyin.at(pos) - '0');
+            pos = _pinyin.find_first_of("012345", pos + 1);
+        }
+        _isPinyinNumbersValid = true;
     }
 
-    return pinyinNumbers;
+    return _pinyinNumbers;
 }
 
-std::vector<DefinitionsSet> Entry::getDefinitionsSets(void) const
+const std::vector<DefinitionsSet> &Entry::getDefinitionsSets(void) const
 {
     return _definitions;
 }
@@ -495,13 +547,17 @@ void Entry::addDefinitions(const std::string &source,
 
 void Entry::refreshColours(const EntryColourPhoneticType type)
 {
-    std::vector<int> tones;
+    std::vector<uint8_t> tones;
     switch (type) {
     case EntryColourPhoneticType::NONE: {
         _colouredSimplified = _simplified;
         _colouredTraditional = _traditional;
         _colouredSimplifiedDifference = _simplifiedDifference;
         _colouredTraditionalDifference = _traditionalDifference;
+        _colouredPreferSimplified = _colouredSimplified + " ["
+                                    + _colouredTraditionalDifference + "]";
+        _colouredPreferTraditional = _colouredTraditional + " ["
+                                     + _colouredSimplifiedDifference + "]";
         return;
     }
     case EntryColourPhoneticType::CANTONESE: {
@@ -539,6 +595,10 @@ void Entry::refreshColours(const EntryColourPhoneticType type)
                                      Settings::jyutpingToneColours,
                                      Settings::pinyinToneColours,
                                      type);
+    _colouredPreferSimplified = _colouredSimplified + " ["
+                                + _colouredTraditionalDifference + "]";
+    _colouredPreferTraditional = _colouredPreferTraditional
+        = _colouredTraditional + " [" + _colouredSimplifiedDifference + "]";
 }
 
 void Entry::setIsWelcome(const bool isWelcome)

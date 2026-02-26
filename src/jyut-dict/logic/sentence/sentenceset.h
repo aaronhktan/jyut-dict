@@ -52,15 +52,17 @@ public:
 
     bool pushSentence(const Sentence::TargetSentence &sentence);
 
-    std::string getSource(void) const;
-    std::string getSourceLongString(void) const;
-    std::string getSourceShortString(void) const;
-    std::vector<Sentence::TargetSentence> getSentenceSnippet(void) const;
-    std::vector<Sentence::TargetSentence> getSentences(void) const;
+    const std::string &getSource(void) const;
+    const std::string &getSourceLongString(void) const;
+    const std::string &getSourceShortString(void) const;
+    const std::vector<Sentence::TargetSentence> &getSentenceSnippet(void);
+    const std::vector<Sentence::TargetSentence> &getSentences(void) const;
 
 private:
     std::string _source;
+    std::string _sourceShortString;
     std::vector<Sentence::TargetSentence> _sentences;
+    std::vector<Sentence::TargetSentence> _snippet;
 };
 
 #endif // SENTENCESET_H
