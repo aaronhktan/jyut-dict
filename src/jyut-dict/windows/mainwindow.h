@@ -25,6 +25,8 @@
 #include <QWidget>
 
 #include <memory>
+#include <optional>
+#include <string>
 
 // As its name suggests, is the main window of the application
 // Contains a toolbar (for searching), and splitter (for results/detail)
@@ -113,9 +115,9 @@ private:
     // Cached information for various dialogs
     bool _databaseMigrating = false;
     bool _updateAvailable = false;
-    std::string _updateVersionNumber;
-    std::string _updateURL;
-    std::string _updateDescription;
+    std::optional<std::string> _updateVersionNumber;
+    std::optional<std::string> _updateURL;
+    std::optional<std::string> _updateDescription;
 
     void installTranslator(void);
     void translateUI(void);
@@ -173,9 +175,9 @@ signals:
 
 public slots:
     void notifyUpdateAvailable(bool updateAvailable,
-                               std::string versionNumber,
-                               std::string url,
-                               std::string description,
+                               std::optional<std::string> versionNumber,
+                               std::optional<std::string> url,
+                               std::optional<std::string> description,
                                bool showIfNoUpdate = false);
     void notifyDatabaseMigration(void);
     void finishedDatabaseMigration(bool success);

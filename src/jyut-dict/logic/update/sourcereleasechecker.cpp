@@ -1,112 +1,29 @@
-#include "jyutdictionaryreleasechecker.h"
+#include "sourcereleasechecker.h"
 
 #include "logic/utils/utils.h"
 
 #include <QJsonObject>
-#include <QLibraryInfo>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QSysInfo>
 #include <QTimer>
 
 #include <iostream>
-#include <optional>
 
 namespace {
-constexpr auto JYUT_DICTIONARY_UPDATE_URL
-    = "https://jyutdictionary.com/static/updates/v1/versions_info.json";
+constexpr auto DEFAULT_SOURCE_UPDATE_URL
+    = "https://jyutdictionary.com/static/updates/v1/sources_manifest.json";
 
 constexpr auto VERSION_NUMBER_COMPONENTS_SIZE = 3;
-} // namespace
 
-JyutDictionaryReleaseChecker::JyutDictionaryReleaseChecker(
-    QObject *parent, bool preConnectEnabled)
-    : QObject{parent}
-{
-    _manager = new QNetworkAccessManager{this};
-
-    // Force SSL initialization to prevent GUI freeze
-    // If not done, first GET will lazily load many OpenSSL
-    // libraries, causing a significant slowdown.
-    // https://bugreports.qt.io/browse/QTBUG-61497
-
-    // If this gives you an error, make sure to install
-    // the appropriate OpenSSL for your operating system
-    // (version <1.1.0, e.g. 1.0.2, since 1.1.0 breaks Qt)
-    // and then copy the libeay.dll and ssleay.dll
-    // files to the Qt compiler bin directories.
-    //
-    // This primarily affects Windows devices.
-    QSslSocket::supportsSsl();
-
-    // QNetworkAccessManager does a lazy load of a library the first time
-    // it connects to a host, leading to the first GET feeling slow.
-    // By connecting to a host first, we avoid this problem.
-    //
-    // Although, we wait for a few milliseconds before doing this
-    // so that it does not block the GUI of the app starting up.
-    //
-    // This primarily affects macOS devices.
-    if (preConnectEnabled) {
-        QTimer::singleShot(100,
-                           this,
-                           &JyutDictionaryReleaseChecker::preConnectToHost);
-    }
-}
-
-void JyutDictionaryReleaseChecker::checkForNewUpdate()
-{
-    QNetworkRequest _request{QUrl{JYUT_DICTIONARY_UPDATE_URL}};
-    disconnect(_manager, nullptr, nullptr, nullptr);
-    connect(_manager,
-            &QNetworkAccessManager::finished,
-            this,
-            &JyutDictionaryReleaseChecker::parseReply);
-    _reply = _manager->get(_request);
-    QTimer::singleShot(15000, this, [&]() {
-        emit foundUpdate(IUpdateChecker::AppUpdateAvailability{
-            .updateAvailable = false,
-            .versionNumber = std::nullopt,
-            .url = std::nullopt,
-            .description = std::nullopt,
-        });
-    });
-}
-
-void JyutDictionaryReleaseChecker::preConnectToHost() const
-{
-    _manager->connectToHostEncrypted(QUrl{JYUT_DICTIONARY_UPDATE_URL}.host());
-}
-
-void JyutDictionaryReleaseChecker::parseReply(QNetworkReply *reply)
-{
-    std::string content = reply->readAll().toStdString();
-    // ConnectToHostEncrypted gets an empty string reply, can safely ignore
-    if (content.empty()) {
-        return;
-    }
-
-    bool updateAvailable;
-    std::string url, versionNumber, description;
-    if (parseJSON(content, updateAvailable, versionNumber, url, description)) {
-        emit foundUpdate(IUpdateChecker::AppUpdateAvailability{
-            .updateAvailable = updateAvailable,
-            .versionNumber = versionNumber,
-            .url = url,
-            .description = description,
-        });
-    }
-}
-
-bool JyutDictionaryReleaseChecker::parseJSON(const std::string &data,
-                                             bool &updateAvailable,
-                                             std::string &versionNumber,
-                                             std::string &url,
-                                             std::string &description) const
+bool parseJSON(const std::string &data,
+               bool &updateAvailable,
+               std::string &versionNumber,
+               std::string &url,
+               std::string &description)
 {
     std::vector<std::string> localVersionNumberComponents;
     Utils::split(std::string{Utils::CURRENT_VERSION},
-                 ".",
+                 "-",
                  localVersionNumberComponents);
     if (localVersionNumberComponents.size() != 3) {
         std::cerr << "Expected current versionNumber to have "
@@ -243,4 +160,45 @@ bool JyutDictionaryReleaseChecker::parseJSON(const std::string &data,
 
     updateAvailable = false;
     return true;
+}
+
+} // namespace
+
+SourceReleaseChecker::SourceReleaseChecker(QObject *parent)
+    : QObject{parent}
+{
+    _manager = new QNetworkAccessManager{this};
+
+    QSslSocket::supportsSsl();
+}
+
+void SourceReleaseChecker::checkForNewUpdate()
+{
+    QNetworkRequest _request{QUrl{DEFAULT_SOURCE_UPDATE_URL}};
+    disconnect(_manager, nullptr, nullptr, nullptr);
+    connect(_manager,
+            &QNetworkAccessManager::finished,
+            this,
+            &SourceReleaseChecker::parseReply);
+    _reply = _manager->get(_request);
+    QTimer::singleShot(15000, this, [&]() { emit foundUpdate({}); });
+}
+
+void SourceReleaseChecker::parseReply(QNetworkReply *reply)
+{
+    std::string content = reply->readAll().toStdString();
+    if (content.empty()) {
+        return;
+    }
+
+    bool updateAvailable;
+    std::string url, versionNumber, description;
+    if (parseJSON(content, updateAvailable, versionNumber, url, description)) {
+        emit foundUpdate(IUpdateChecker::AppUpdateAvailability{
+            .updateAvailable = updateAvailable,
+            .versionNumber = versionNumber,
+            .url = url,
+            .description = description,
+        });
+    }
 }
