@@ -840,8 +840,9 @@ void MainWindow::setStyle(bool use_dark)
 }
 
 void MainWindow::notifyUpdateAvailable(bool updateAvailable,
-                                       std::string versionNumber,
-                                       std::string url, std::string description,
+                                       std::optional<std::string> versionNumber,
+                                       std::optional<std::string> url,
+                                       std::optional<std::string> description,
                                        bool showIfNoUpdate)
 {
     if (_welcomeWindow || _databaseMigrationDialog) {
@@ -851,7 +852,11 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
     _updateAvailable = false;
 
     if (updateAvailable) {
-        UpdateAvailableWindow *window = new UpdateAvailableWindow{this, versionNumber, url, description};
+        UpdateAvailableWindow *window
+            = new UpdateAvailableWindow{this,
+                                        versionNumber.value(),
+                                        url.value(),
+                                        description.value()};
         window->show();
     } else if (showIfNoUpdate) {
         QString currentVersion = QString{Utils::CURRENT_VERSION};
@@ -1475,18 +1480,25 @@ void MainWindow::checkForUpdate(bool showProgress)
         connect(_checker,
                 &JyutDictionaryReleaseChecker::foundUpdate,
                 this,
-                [&](bool updateAvailable,
-                    std::string versionNumber,
-                    std::string url,
-                    std::string description) {
+                [&](const IUpdateChecker::UpdateVariant &v) {
                     _updateDialog->reset();
 
                     disconnect(_checker, nullptr, nullptr, nullptr);
-                    notifyUpdateAvailable(updateAvailable,
-                                          versionNumber,
-                                          url,
-                                          description,
-                                          /* showIfNoUpdate = */ true);
+
+                    if (!std::holds_alternative<
+                            IUpdateChecker::AppUpdateAvailability>(v)) {
+                        std::cerr << "Jyut Dictionary Release Checker did not "
+                                     "return correct type!"
+                                  << std::endl;
+                    } else {
+                        IUpdateChecker::AppUpdateAvailability a
+                            = std::get<IUpdateChecker::AppUpdateAvailability>(v);
+                        notifyUpdateAvailable(a.updateAvailable,
+                                              a.versionNumber,
+                                              a.url,
+                                              a.description,
+                                              /* showIfNoUpdate = */ true);
+                    }
 
                     _recentlyCheckedForUpdates = false;
                 });
@@ -1516,22 +1528,29 @@ void MainWindow::checkForUpdate(bool showProgress)
         connect(_checker,
                 &JyutDictionaryReleaseChecker::foundUpdate,
                 this,
-                [&](bool updateAvailable,
-                    std::string versionNumber,
-                    std::string url,
-                    std::string description) {
+                [&](const IUpdateChecker::UpdateVariant &v) {
                     disconnect(_checker, nullptr, nullptr, nullptr);
 
-                    _updateAvailable = updateAvailable;
-                    _updateVersionNumber = versionNumber;
-                    _updateURL = url;
-                    _updateDescription = description;
+                    if (!std::holds_alternative<
+                            IUpdateChecker::AppUpdateAvailability>(v)) {
+                        std::cerr << "Jyut Dictionary Release Checker did not "
+                                     "return correct type!"
+                                  << std::endl;
+                    } else {
+                        IUpdateChecker::AppUpdateAvailability a
+                            = std::get<IUpdateChecker::AppUpdateAvailability>(v);
 
-                    notifyUpdateAvailable(updateAvailable,
-                                          versionNumber,
-                                          url,
-                                          description,
-                                          /* showIfNoUpdate = */ false);
+                        _updateAvailable = a.updateAvailable;
+                        _updateVersionNumber = a.versionNumber;
+                        _updateURL = a.url;
+                        _updateDescription = a.description;
+
+                        notifyUpdateAvailable(a.updateAvailable,
+                                              a.versionNumber,
+                                              a.url,
+                                              a.description,
+                                              /* showIfNoUpdate = */ false);
+                    }
 
                     _recentlyCheckedForUpdates = false;
                 });

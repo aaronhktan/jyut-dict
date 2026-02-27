@@ -139,6 +139,7 @@ set(PROJECT_HEADERS
         logic/settings/settings.h
         logic/settings/settingsutils.h
         logic/update/jyutdictionaryreleasechecker.h
+        logic/update/sourcereleasechecker.h
         logic/utils/cantoneseutils.h
         logic/utils/chineseutils.h
         logic/utils/mandarinutils.h
@@ -255,6 +256,7 @@ set(PROJECT_SOURCES
         logic/settings/settings.cpp
         logic/settings/settingsutils.cpp
         logic/update/jyutdictionaryreleasechecker.cpp
+        logic/update/sourcereleasechecker.cpp
         logic/utils/cantoneseutils.cpp
         logic/utils/chineseutils.cpp
         logic/utils/mandarinutils.cpp
