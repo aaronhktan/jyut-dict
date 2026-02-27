@@ -12,6 +12,8 @@
 #include <QSplitter>
 #include <QWidget>
 
+#include <span>
+
 // The SentenceSplitter contains a "master" listview and a "detail" scrollarea
 //
 // It handles the model changed signal that the master listview emits,
@@ -30,7 +32,7 @@ public:
     void changeEvent(QEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
 
-    void setSourceSentences(const std::vector<SourceSentence> &sourceSentences);
+    void setSourceSentences(std::span<const SourceSentence> sourceSentences);
     void setSearchTerm(const QString &searchTerm);
 
 private:

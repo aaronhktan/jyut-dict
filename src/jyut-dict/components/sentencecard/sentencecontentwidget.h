@@ -13,7 +13,7 @@
 #include <QSettings>
 #include <QWidget>
 
-#include <vector>
+#include <span>
 
 // The SentenceContentWidget displays sentences.
 // When used with setSentenceSet, it will display a list of
@@ -32,8 +32,7 @@ public:
     void changeEvent(QEvent *event) override;
 
     void setSentenceSet(const SentenceSet &set);
-    void setSourceSentenceVector(
-        const std::vector<SourceSentence> &sourceSentences);
+    void setSourceSentenceVector(std::span<const SourceSentence> sourceSentences);
 
 private:
     void translateUI(void);

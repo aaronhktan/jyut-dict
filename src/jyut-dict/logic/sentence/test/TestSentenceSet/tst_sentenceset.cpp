@@ -79,9 +79,14 @@ void TestSentenceSet::getSentences()
     };
     SentenceSet set{"粵典—words.hk", targetSentences};
     QCOMPARE(set.isEmpty(), false);
-    QCOMPARE(set.getSentences(), targetSentences);
+    QCOMPARE(std::vector<Sentence::TargetSentence>(set.getSentences().begin(),
+                                                   set.getSentences().end()),
+             targetSentences);
     QCOMPARE(set.getSentences().size(), targetSentences.size());
-    QCOMPARE(set.getSentenceSnippet(), targetSentences);
+    QCOMPARE(
+        std::vector<Sentence::TargetSentence>(set.getSentenceSnippet().begin(),
+                                              set.getSentenceSnippet().end()),
+        targetSentences);
     QCOMPARE(set.getSentenceSnippet().size(), targetSentences.size());
 
     std::vector<Sentence::TargetSentence> additionalTargetSentences = {
@@ -98,9 +103,14 @@ void TestSentenceSet::getSentences()
     allSentences.insert(allSentences.end(),
                         additionalTargetSentences.begin(),
                         additionalTargetSentences.end());
-    QCOMPARE(set.getSentences(), allSentences);
+    QCOMPARE(std::vector<Sentence::TargetSentence>(set.getSentences().begin(),
+                                                   set.getSentences().end()),
+             allSentences);
     QCOMPARE(set.getSentences().size(), allSentences.size());
-    QCOMPARE(set.getSentenceSnippet(), targetSentences);
+    QCOMPARE(
+        std::vector<Sentence::TargetSentence>(set.getSentenceSnippet().begin(),
+                                              set.getSentenceSnippet().end()),
+        targetSentences);
     QCOMPARE(set.getSentenceSnippet().size(), targetSentences.size());
 }
 

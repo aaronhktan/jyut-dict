@@ -10,7 +10,9 @@ void SentenceViewSentenceCardSection::setSourceSentence(const SourceSentence &se
 {
     cleanup();
 
-    std::vector<SentenceSet> sentenceSets = sentence.getSentenceSets();
+    std::vector<SentenceSet> sentenceSets;
+    sentenceSets.assign(sentence.getSentenceSets().begin(),
+                        sentence.getSentenceSets().end());
 
     // This prevents an extra space from being added at the bottom when there
     // is nothing to display in the sentence card section.

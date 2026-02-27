@@ -523,7 +523,7 @@ const std::vector<uint8_t> &Entry::getPinyinNumbers()
     return _pinyinNumbers;
 }
 
-const std::vector<DefinitionsSet> &Entry::getDefinitionsSets(void) const
+std::span<const DefinitionsSet> Entry::getDefinitionsSets(void) const
 {
     return _definitions;
 }

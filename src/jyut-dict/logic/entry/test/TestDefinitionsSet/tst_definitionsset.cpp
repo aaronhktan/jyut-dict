@@ -85,7 +85,9 @@ void TestDefinitionsSet::getDefinitions()
     };
     DefinitionsSet set{"粵典—words.hk", definitions};
     QCOMPARE(set.isEmpty(), false);
-    QCOMPARE(set.getDefinitions(), definitions);
+    QCOMPARE(std::vector<Definition::Definition>(set.getDefinitions().begin(),
+                                                 set.getDefinitions().end()),
+             definitions);
     QCOMPARE(set.getDefinitions().size(), definitions.size());
     QCOMPARE(
         set.getDefinitionsSnippet(),

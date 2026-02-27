@@ -5,6 +5,7 @@
 #include "logic/sentence/sourcesentence.h"
 
 #include <iostream>
+#include <span>
 #include <vector>
 
 namespace Definition {
@@ -58,7 +59,7 @@ public:
     const std::string &getSourceLongString() const;
     const std::string &getSourceShortString() const;
     const std::string &getDefinitionsSnippet() const;
-    const std::vector<Definition::Definition> &getDefinitions(void) const;
+    std::span<const Definition::Definition> getDefinitions(void) const;
 
 private:
     std::string _source;

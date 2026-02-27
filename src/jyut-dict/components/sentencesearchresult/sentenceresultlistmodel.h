@@ -11,6 +11,7 @@
 #include <QObject>
 #include <QVariant>
 
+#include <span>
 #include <vector>
 
 // The SentenceResultListModel contains data (a vector of SourceSentence objects)
@@ -31,7 +32,7 @@ public:
     void callback(const std::vector<Entry> &entries, bool emptyQuery) override;
     void callback(const std::vector<SourceSentence> &sentences,
                   bool emptyQuery) override;
-    void setSentences(const std::vector<SourceSentence> &sentences);
+    void setSentences(std::span<const SourceSentence> sentences);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role) const override;

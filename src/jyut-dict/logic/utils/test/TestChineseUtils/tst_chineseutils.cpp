@@ -103,58 +103,70 @@ void TestChineseUtils::compareStringsCompatibilityVariantNormalization()
 
 void TestChineseUtils::constructRomanisationQuerySingleSyllable()
 {
-    std::string result = ChineseUtils::constructRomanisationQuery({"se"}, "?");
+    std::string result = ChineseUtils::constructRomanisationQuery(
+        std::vector<std::string>{"se"}, "?");
     QCOMPARE(result, "se?");
 
-    result = ChineseUtils::constructRomanisationQuery({"se2"}, "?");
+    result = ChineseUtils::constructRomanisationQuery(
+        std::vector<std::string>{"se2"}, "?");
     QCOMPARE(result, "se2");
 
-    result = ChineseUtils::constructRomanisationQuery({"se*"}, "?");
+    result = ChineseUtils::constructRomanisationQuery(
+        std::vector<std::string>{"se*"}, "?");
     QCOMPARE(result, "se*?");
 
-    result = ChineseUtils::constructRomanisationQuery({"se?"}, "?");
+    result = ChineseUtils::constructRomanisationQuery(
+        std::vector<std::string>{"se?"}, "?");
     QCOMPARE(result, "se??");
 }
 
 void TestChineseUtils::constructRomanisationQueryMultiSyllable()
 {
-    std::string result = ChineseUtils::constructRomanisationQuery({"se", "dak"},
-                                                                  "?");
+    std::string result = ChineseUtils::constructRomanisationQuery(
+        std::vector<std::string>{"se", "dak"}, "?");
     QCOMPARE(result, "se? dak?");
 
-    result = ChineseUtils::constructRomanisationQuery({"se2", "dak1"}, "?");
+    result = ChineseUtils::constructRomanisationQuery(
+        std::vector<std::string>{"se2", "dak1"}, "?");
     QCOMPARE(result, "se2 dak1");
 
-    result = ChineseUtils::constructRomanisationQuery({"se*", "dak*"}, "?");
+    result = ChineseUtils::constructRomanisationQuery(
+        std::vector<std::string>{"se*", "dak*"}, "?");
     QCOMPARE(result, "se*? dak*?");
 
-    result = ChineseUtils::constructRomanisationQuery({"se?", "dak?"}, "?");
+    result = ChineseUtils::constructRomanisationQuery(
+        std::vector<std::string>{"se?", "dak?"}, "?");
     QCOMPARE(result, "se?? dak??");
 }
 
 void TestChineseUtils::constructRomanisationQueryGlobCharacters()
 {
-    std::string result = ChineseUtils::constructRomanisationQuery({"se", " *"},
-                                                                  "?");
+    std::string result = ChineseUtils::constructRomanisationQuery(
+        std::vector<std::string>{"se", " *"}, "?");
     QCOMPARE(result, "se? *");
 
-    result = ChineseUtils::constructRomanisationQuery({"se", " ?", "?", "?"},
-                                                      "?");
+    result = ChineseUtils::constructRomanisationQuery(
+        std::vector<std::string>{"se", " ?", "?", "?"}, "?");
     QCOMPARE(result, "se? ???");
 
-    result = ChineseUtils::constructRomanisationQuery({"se",
-                                                       " ?",
-                                                       "?",
-                                                       "? ",
-                                                       "dak"},
-                                                      "?");
+    result = ChineseUtils::constructRomanisationQuery(
+        std::vector<std::string>{"se", " ?", "?", "? ", "dak"}, "?");
     QCOMPARE(result, "se? ??? dak?");
 }
 
 void TestChineseUtils::constructRomanisationQueryOnlyGlobCharacters()
 {
     std::string result = ChineseUtils::constructRomanisationQuery(
-        {"?", "?", "?", "?", "? ", "?", "?", "?", "?"}, "?");
+        std::vector<std::string>{"?",
+                                 "?",
+                                 "?",
+                                 "?",
+                                 "? ",
+                                 "?",
+                                 "?",
+                                 "?",
+                                 "?"},
+        "?");
     QCOMPARE(QString::fromStdString(result), "????? ????");
 }
 
