@@ -346,6 +346,7 @@ bool SQLDatabaseUtils::readSources(std::vector<DictionaryMetadata> &sources)
     int descriptionIndex = query.record().indexOf("description");
     int legalIndex = query.record().indexOf("legal");
     int linkIndex = query.record().indexOf("link");
+    int updateURLIndex = query.record().indexOf("update_url");
     int otherIndex = query.record().indexOf("other");
 
     while (query.next()) {
@@ -356,6 +357,8 @@ bool SQLDatabaseUtils::readSources(std::vector<DictionaryMetadata> &sources)
             = query.value(descriptionIndex).toString().toStdString();
         std::string legal = query.value(legalIndex).toString().toStdString();
         std::string link = query.value(linkIndex).toString().toStdString();
+        std::string updateURL
+            = query.value(updateURLIndex).toString().toStdString();
         std::string other = query.value(otherIndex).toString().toStdString();
 
         DictionaryMetadata dictionary{source,
@@ -363,6 +366,7 @@ bool SQLDatabaseUtils::readSources(std::vector<DictionaryMetadata> &sources)
                                       description,
                                       legal,
                                       link,
+                                      updateURL,
                                       other};
 
         sources.push_back(dictionary);

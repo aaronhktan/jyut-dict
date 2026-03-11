@@ -16,14 +16,16 @@ public:
                        const std::string &description,
                        const std::string &legal,
                        const std::string &link,
+                       const std::string &updateURL,
                        const std::string &other);
 
-    std::string getName() const;
-    std::string getVersion() const;
-    std::string getDescription() const;
-    std::string getLegal() const;
-    std::string getLink() const;
-    std::string getOther() const;
+    const std::string &getName() const;
+    const std::string &getVersion() const;
+    const std::string &getDescription() const;
+    const std::string &getLegal() const;
+    const std::string &getLink() const;
+    const std::string &getUpdateURL() const;
+    const std::string &getOther() const;
 
 private:
     std::string _name;
@@ -31,6 +33,7 @@ private:
     std::string _description;
     std::string _legal;
     std::string _link;
+    std::string _updateURL;
     std::string _other;
 };
 
