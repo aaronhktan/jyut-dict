@@ -10,43 +10,50 @@ DictionaryMetadata::DictionaryMetadata(const std::string &name,
                                        const std::string &description,
                                        const std::string &legal,
                                        const std::string &link,
+                                       const std::string &updateURL,
                                        const std::string &other)
-    : _name{name},
-    _version{version},
-    _description{description},
-    _legal{legal},
-    _link{link},
-    _other{other}
+    : _name{name}
+    , _version{version}
+    , _description{description}
+    , _legal{legal}
+    , _link{link}
+    , _updateURL{updateURL}
+    , _other{other}
 {
 
 }
 
-std::string DictionaryMetadata::getName() const
+const std::string &DictionaryMetadata::getName() const
 {
     return _name;
 }
 
-std::string DictionaryMetadata::getVersion() const
+const std::string &DictionaryMetadata::getVersion() const
 {
     return _version;
 }
 
-std::string DictionaryMetadata::getDescription() const
+const std::string &DictionaryMetadata::getDescription() const
 {
     return _description;
 }
 
-std::string DictionaryMetadata::getLegal() const
+const std::string &DictionaryMetadata::getLegal() const
 {
     return _legal;
 }
 
-std::string DictionaryMetadata::getLink() const
+const std::string &DictionaryMetadata::getLink() const
 {
     return _link;
 }
 
-std::string DictionaryMetadata::getOther() const
+const std::string &DictionaryMetadata::getUpdateURL() const
+{
+    return _updateURL;
+}
+
+const std::string &DictionaryMetadata::getOther() const
 {
     return _other;
 }

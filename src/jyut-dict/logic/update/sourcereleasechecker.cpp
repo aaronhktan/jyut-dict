@@ -15,6 +15,7 @@ constexpr auto DEFAULT_SOURCE_UPDATE_URL
 
 constexpr auto VERSION_NUMBER_COMPONENTS_SIZE = 3;
 
+// TODO: Actually implement this section
 bool parseJSON(const std::string &data,
                bool &updateAvailable,
                std::string &versionNumber,
@@ -39,7 +40,7 @@ bool parseJSON(const std::string &data,
     QJsonDocument doc = QJsonDocument::fromJson(
         QString::fromStdString(data.c_str()).toUtf8());
     QJsonValue version;
-    foreach (version, doc.array()) {
+    for (const auto &version : doc.array()) {
         QJsonObject versionObject = version.toObject();
 
         // Check if the version on the web is for the correct channel
@@ -94,7 +95,7 @@ bool parseJSON(const std::string &data,
         }
 
         QJsonValue link;
-        foreach (link, versionObject.value("links").toArray()) {
+        for (const auto &link : versionObject.value("links").toArray()) {
             QJsonObject linkObject = link.toObject();
 
             // Target kernel must match
@@ -123,7 +124,7 @@ bool parseJSON(const std::string &data,
             // At least one architecture must match the local architecture
             bool matchesArch = false;
             QJsonValue webArch;
-            foreach (webArch, linkObject.value("arch").toArray()) {
+            for (const auto &webArch : linkObject.value("arch").toArray()) {
                 if (webArch.toString() == QSysInfo::buildCpuArchitecture()) {
                     matchesArch = true;
                     break;
@@ -164,24 +165,40 @@ bool parseJSON(const std::string &data,
 
 } // namespace
 
-SourceReleaseChecker::SourceReleaseChecker(QObject *parent)
-    : QObject{parent}
+SourceReleaseChecker::SourceReleaseChecker(
+    std::shared_ptr<SQLDatabaseManager> manager, QObject *parent)
+    : _databaseManager{manager}
+    , QObject{parent}
 {
-    _manager = new QNetworkAccessManager{this};
+    _utils = std::make_unique<SQLDatabaseUtils>(_databaseManager);
+    _networkManager = new QNetworkAccessManager{this};
 
     QSslSocket::supportsSsl();
 }
 
 void SourceReleaseChecker::checkForNewUpdate()
 {
-    QNetworkRequest _request{QUrl{DEFAULT_SOURCE_UPDATE_URL}};
-    disconnect(_manager, nullptr, nullptr, nullptr);
-    connect(_manager,
-            &QNetworkAccessManager::finished,
-            this,
-            &SourceReleaseChecker::parseReply);
-    _reply = _manager->get(_request);
-    QTimer::singleShot(15000, this, [&]() { emit foundUpdate({}); });
+    std::vector<DictionaryMetadata> sources;
+    _utils->readSources(sources);
+
+    for (const auto &s : sources) {
+        _sourceMetadata[s.getName()] = s;
+        _sourceUpdateURLs.emplace(s.getUpdateURL().empty()
+                                      ? DEFAULT_SOURCE_UPDATE_URL
+                                      : s.getUpdateURL());
+    }
+
+    // TODO: fix this part; how to do multiple requests at same time + coalesce results?
+    for (const auto &u : _sourceUpdateURLs) {
+        QNetworkRequest _request{QUrl{u.c_str()}};
+        disconnect(_networkManager, nullptr, nullptr, nullptr);
+        connect(_networkManager,
+                &QNetworkAccessManager::finished,
+                this,
+                &SourceReleaseChecker::parseReply);
+        _reply = _networkManager->get(_request);
+        QTimer::singleShot(15000, this, [&]() { emit foundUpdate({}); });
+    }
 }
 
 void SourceReleaseChecker::parseReply(QNetworkReply *reply)
