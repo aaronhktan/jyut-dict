@@ -43,16 +43,13 @@ void SourceReleaseChecker::checkForNewUpdate()
         QNetworkRequest request{QUrl{u.c_str()}};
         QNetworkReply *reply = _networkManager->get(request);
         _replies.emplace(reply);
-        connect(reply,
-                &QNetworkReply::finished,
-                this,
-                [this, u](QNetworkReply *reply) {
-                    parseReply(reply);
-                    _sourceUpdateURLs.erase(u);
-                    if (_sourceUpdateURLs.empty()) {
-                        emit foundUpdate(_updates);
-                    }
-                });
+        connect(reply, &QNetworkReply::finished, this, [this, u, reply]() {
+            parseReply(reply);
+            _sourceUpdateURLs.erase(u);
+            if (_sourceUpdateURLs.empty()) {
+                emit foundUpdate(_updates);
+            }
+        });
 
         // Time out after 15 seconds
         QTimer::singleShot(15000, this, [this, u, reply]() {
@@ -80,12 +77,24 @@ bool SourceReleaseChecker::parseJSON(
         QJsonObject sourceObject = source.toObject();
 
         // Check if the user_version is supported
+        if (!sourceObject.contains("userVersion")) {
+            std::cerr
+                << "Fetched object does not contain userVersion field, skipping"
+                << std::endl;
+            continue;
+        }
         int userVersion{sourceObject.value("userVersion").toInt()};
         if (userVersion > CURRENT_DATABASE_VERSION) {
             continue;
         }
 
         // Check if sourceName corresponds to an installed dictionary
+        if (!sourceObject.contains("sourceName")) {
+            std::cerr
+                << "Fetched object does not contain sourceName field, skipping"
+                << std::endl;
+            continue;
+        }
         std::string sourceName
             = sourceObject.value("sourceName").toString().toStdString();
         if (!_sourceMetadata.contains(sourceName)) {
@@ -102,7 +111,7 @@ bool SourceReleaseChecker::parseJSON(
             std::cerr << "Expected current versionNumber to have "
                       << VERSION_NUMBER_COMPONENTS_SIZE << ", got "
                       << sourceVersionNumberComponents.size();
-            return false;
+            continue;
         }
         auto [year, month, day] = std::array<int, 3>(
             {std::stoi(sourceVersionNumberComponents[0]),
@@ -110,6 +119,12 @@ bool SourceReleaseChecker::parseJSON(
              std::stoi(sourceVersionNumberComponents[2])});
 
         // Check if version on the web is larger than local version
+        if (!sourceObject.contains("versionNumber")) {
+            std::cerr << "Fetched object does not contain versionNumber field, "
+                         "skipping"
+                      << std::endl;
+            continue;
+        }
         bool webVersionIsGreater = false;
         std::string webVersionNumber{
             sourceObject.value("versionNumber").toString().toStdString()};
@@ -167,17 +182,24 @@ bool SourceReleaseChecker::parseJSON(
             continue;
         }
 
+        if (!sourceObject.contains("updateLink")) {
+            std::cerr
+                << "Fetched object does not contain updateLink field, skipping"
+                << std::endl;
+            continue;
+        }
         std::string updateLink
             = sourceObject.value("updateLink").toString().toStdString();
-        std::string description
-            = sourceObject.value("description").toString().toStdString();
+        QJsonValue desc = sourceObject.value("description");
 
         availability[sourceName] = {
             .updateAvailable = true,
             .sourceName = sourceName,
             .versionNumber = webVersionNumber,
             .url = updateLink,
-            .description = description,
+            .description = (desc == QJsonValue::Undefined)
+                               ? std::nullopt
+                               : std::optional{desc.toString().toStdString()},
         };
     }
 
