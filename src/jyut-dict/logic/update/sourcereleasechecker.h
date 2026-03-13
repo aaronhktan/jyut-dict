@@ -21,16 +21,20 @@ public:
     void checkForNewUpdate(void) override;
 
 private:
-    bool parseResponse(const std::string &data);
+    bool parseJSON(
+        const std::string &data,
+        std::unordered_map<std::string, IUpdateChecker::SourceUpdateAvailability>
+            &availability);
 
     QNetworkAccessManager *_networkManager;
     std::shared_ptr<SQLDatabaseManager> _databaseManager;
     std::unique_ptr<SQLDatabaseUtils> _utils;
 
-    QNetworkReply *_reply;
+    std::unordered_set<QNetworkReply *> _replies;
 
     std::unordered_map<std::string, DictionaryMetadata> _sourceMetadata;
     std::unordered_set<std::string> _sourceUpdateURLs;
+    std::vector<SourceUpdateAvailability> _updates;
 
 public slots:
     void parseReply(QNetworkReply *request);
