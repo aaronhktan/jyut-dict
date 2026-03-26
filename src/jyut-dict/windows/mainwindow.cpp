@@ -206,6 +206,18 @@ MainWindow::MainWindow(QWidget *parent) :
         });
     }
 
+    bool sourceUpdateNotificationEnabled
+        = _settings
+              ->value("Advanced/sourceUpdateNotificationsEnabled",
+                      QVariant{true})
+              .toBool();
+    _sourceChecker = new SourceReleaseChecker{_manager, this};
+    if (sourceUpdateNotificationEnabled) {
+        QTimer::singleShot(1500, this, [&]() {
+            checkForSourceUpdate(/* showProgress = */ false);
+        });
+    }
+
     // Perform database migration if needed
     QTimer::singleShot(1000, this, [&]() {
         std::ignore = QtConcurrent::run(&SQLDatabaseUtils::updateDatabase,
@@ -1565,6 +1577,87 @@ void MainWindow::checkForUpdate(bool showProgress)
     if (!_recentlyCheckedForUpdates) {
         _checker->checkForNewUpdate();
         _recentlyCheckedForUpdates = true;
+    }
+}
+
+void MainWindow::checkForSourceUpdate(bool showProgress)
+{
+    disconnect(_sourceChecker, nullptr, nullptr, nullptr);
+    if (showProgress) {
+        connect(_sourceChecker,
+                &SourceReleaseChecker::foundUpdate,
+                this,
+                [&](const IUpdateChecker::UpdateVariant &v) {
+                    // _updateDialog->reset();
+
+                    disconnect(_sourceChecker, nullptr, nullptr, nullptr);
+
+                    if (!std::holds_alternative<std::vector<
+                            IUpdateChecker::SourceUpdateAvailability>>(v)) {
+                        std::cerr << "Source Release Checker did not "
+                                     "return correct type!"
+                                  << std::endl;
+                    } else {
+                        std::vector<IUpdateChecker::SourceUpdateAvailability> a
+                            = std::get<std::vector<
+                                IUpdateChecker::SourceUpdateAvailability>>(v);
+                        // notifySourceUpdateAvailable(a,
+                        // /* showIfNoUpdate = */ true);
+                    }
+
+                    _recentlyCheckedForSourceUpdates = false;
+                });
+
+        _updateDialog = new QProgressDialog{"", QString(), 0, 0, this};
+        _updateDialog->setWindowModality(Qt::ApplicationModal);
+        _updateDialog->setMinimumSize(300, 75);
+        Qt::WindowFlags flags = _updateDialog->windowFlags()
+                                | Qt::CustomizeWindowHint;
+        flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
+                   | Qt::WindowFullscreenButtonHint
+                   | Qt::WindowContextHelpButtonHint);
+        _updateDialog->setWindowFlags(flags);
+        _updateDialog->setMinimumDuration(0);
+#ifdef Q_OS_WIN
+        _updateDialog->setWindowTitle(
+            QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                        Strings::PRODUCT_NAME));
+#elif defined(Q_OS_LINUX)
+        _updateDialog->setWindowTitle(" ");
+#endif
+        _updateDialog->setAttribute(Qt::WA_DeleteOnClose, true);
+
+        _updateDialog->setLabelText(
+            tr("Checking for updates to dictionaries..."));
+        _updateDialog->setRange(0, 0);
+        _updateDialog->setValue(0);
+    } else {
+        connect(_checker,
+                &JyutDictionaryReleaseChecker::foundUpdate,
+                this,
+                [&](const IUpdateChecker::UpdateVariant &v) {
+                    disconnect(_checker, nullptr, nullptr, nullptr);
+
+                    if (!std::holds_alternative<std::vector<
+                            IUpdateChecker::SourceUpdateAvailability>>(v)) {
+                        std::cerr << "Source Release Checker did not "
+                                     "return correct type!"
+                                  << std::endl;
+                    } else {
+                        std::vector<IUpdateChecker::SourceUpdateAvailability> a
+                            = std::get<std::vector<
+                                IUpdateChecker::SourceUpdateAvailability>>(v);
+                        // notifySourceUpdateAvailable(a,
+                        // /* showIfNoUpdate = */ false);
+                    }
+
+                    _recentlyCheckedForUpdates = false;
+                });
+    }
+
+    if (!_recentlyCheckedForSourceUpdates) {
+        _sourceChecker->checkForNewUpdate();
+        _recentlyCheckedForSourceUpdates = true;
     }
 }
 

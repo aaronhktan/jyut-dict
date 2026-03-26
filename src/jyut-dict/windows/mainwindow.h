@@ -10,6 +10,7 @@
 #include "logic/database/sqluserhistoryutils.h"
 #include "logic/search/sqlsearch.h"
 #include "logic/update/jyutdictionaryreleasechecker.h"
+#include "logic/update/sourcereleasechecker.h"
 #include "windows/aboutwindow.h"
 #include "windows/historywindow.h"
 #include "windows/settingswindow.h"
@@ -42,6 +43,7 @@ public:
 
 private:
     JyutDictionaryReleaseChecker *_checker;
+    SourceReleaseChecker *_sourceChecker;
 
     MainToolBar *_mainToolBar;
     MainSplitter *_mainSplitter;
@@ -111,6 +113,7 @@ private:
     std::unique_ptr<QSettings> _settings;
 
     bool _recentlyCheckedForUpdates = false;
+    bool _recentlyCheckedForSourceUpdates = false;
 
     // Cached information for various dialogs
     bool _databaseMigrating = false;
@@ -158,6 +161,7 @@ private:
     void openWelcomeWindow(void);
 
     void checkForUpdate(bool showProgress);
+    void checkForSourceUpdate(bool showProgress);
 
     void closeEvent(QCloseEvent *event) override;
 
