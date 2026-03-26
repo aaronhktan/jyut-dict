@@ -846,6 +846,13 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
                                        bool showIfNoUpdate)
 {
     if (_welcomeWindow || _databaseMigrationDialog) {
+        _dialogQueue.push_back([=, this]() {
+            notifyUpdateAvailable(updateAvailable,
+                                  versionNumber,
+                                  url,
+                                  description,
+                                  showIfNoUpdate);
+        });
         return;
     }
 
@@ -1457,14 +1464,13 @@ void MainWindow::openWelcomeWindow(void)
 
     connect(_welcomeWindow, &WelcomeWindow::welcomeCompleted, this, [&]() {
         QTimer::singleShot(100, this, [&] {
-            // These dialogs are suppressed while the welcome window is visible,
-            // so check whether they need to be shown
-            notifyDatabaseMigration();
-            notifyUpdateAvailable(_updateAvailable,
-                                  _updateVersionNumber,
-                                  _updateURL,
-                                  _updateDescription,
-                                  /* showIfNoUpdate */ false);
+            // Dialogs may be suppressed while the welcome window is visible,
+            // so check whether they need to be shown (it's assumed that each
+            // call will "chain" to the next one)
+            if (!_dialogQueue.empty()) {
+                _dialogQueue.front()();
+                _dialogQueue.pop_front();
+            }
         });
 
         _settings->setValue(QString{"Advanced/%1Welcomed"}.arg(
@@ -1564,7 +1570,10 @@ void MainWindow::checkForUpdate(bool showProgress)
 
 void MainWindow::notifyDatabaseMigration(void)
 {
-    if (_welcomeWindow || !_databaseMigrating) {
+    if (_welcomeWindow) {
+        _dialogQueue.push_back([this]() { notifyDatabaseMigration(); });
+        return;
+    } else if (!_databaseMigrating) {
         return;
     }
 
@@ -1597,7 +1606,10 @@ void MainWindow::notifyDatabaseMigration(void)
 
 void MainWindow::finishedDatabaseMigration(bool success)
 {
-    if (_welcomeWindow || !_databaseMigrating) {
+    if (_welcomeWindow) {
+        _dialogQueue.push_back(
+            [=, this]() { finishedDatabaseMigration(success); });
+    } else if (!_databaseMigrating) {
         return;
     }
 
@@ -1633,13 +1645,10 @@ void MainWindow::finishedDatabaseMigration(bool success)
         // that was associated with this pointer
         _databaseMigrationDialog = nullptr;
 
-        // Since the update available notification is suppressed if the database
-        // migration is visible, check whether to show the update available dialog
-        notifyUpdateAvailable(_updateAvailable,
-                              _updateVersionNumber,
-                              _updateURL,
-                              _updateDescription,
-                              /* showIfNoUpdate = */ false);
+        if (!_dialogQueue.empty()) {
+            _dialogQueue.front()();
+            _dialogQueue.pop_front();
+        }
     });
 }
 

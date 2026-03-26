@@ -119,6 +119,8 @@ private:
     std::optional<std::string> _updateURL;
     std::optional<std::string> _updateDescription;
 
+    std::deque<std::function<void()>> _dialogQueue;
+
     void installTranslator(void);
     void translateUI(void);
 
