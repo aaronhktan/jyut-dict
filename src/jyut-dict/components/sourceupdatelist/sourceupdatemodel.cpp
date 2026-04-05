@@ -1,0 +1,158 @@
+#include "sourceupdatemodel.h"
+
+#include "logic/utils/utils_qt.h"
+
+#include <QApplication>
+#include <QGuiApplication>
+#include <QPalette>
+
+namespace {
+// Source name | installed version | new version | selected
+constexpr auto kNumColumns = 4;
+constexpr auto kNameColumn = 0;
+constexpr auto kInstalledVersionColumn = 1;
+constexpr auto kNewVersionColumn = 2;
+constexpr auto kCheckColumn = 3;
+} // namespace
+
+SourceUpdateModel::SourceUpdateModel(QObject *parent)
+    : QAbstractTableModel(parent)
+{}
+
+int SourceUpdateModel::rowCount(const QModelIndex &parent) const
+{
+    // This is a table, not a tree, so the rowCount of anything with a parent is 0.
+    if (parent.isValid()) {
+        return 0;
+    }
+
+    // If the parent is invalid, then we are at the root, so we return the number of rows in the table.
+    return _metadata.size();
+}
+
+int SourceUpdateModel::columnCount(const QModelIndex &parent) const
+{
+    if (parent.isValid()) {
+        return 0;
+    }
+
+    return kNumColumns;
+}
+
+QVariant SourceUpdateModel::data(const QModelIndex &index, int role) const
+{
+    if (!index.isValid() || index.row() < 0 || index.row() >= _metadata.size()) {
+        return {};
+    }
+
+    const MetadataWrapper &metadata = _metadata.at(index.row());
+
+    if (role == Qt::DisplayRole) {
+        switch (index.column()) {
+        case kNameColumn: {
+            return QString::fromStdString(metadata.current.getName());
+        }
+        case kInstalledVersionColumn: {
+            return QString::fromStdString(metadata.current.getVersion());
+        }
+        case kNewVersionColumn: {
+            return QString::fromStdString(metadata.upgrade.getVersion());
+        }
+        default: {
+            return {};
+        }
+        }
+    }
+
+    if (role == Qt::CheckStateRole && index.column() == kCheckColumn) {
+        return metadata.checked ? Qt::Checked : Qt::Unchecked;
+    }
+
+    if (metadata.checked && role == Qt::BackgroundRole) {
+        if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
+            return QApplication::palette().brush(QPalette::Inactive,
+                                                 QPalette::Highlight);
+        } else {
+            return QApplication::palette().brush(QPalette::Active,
+                                                 QPalette::Highlight);
+        }
+    }
+
+    if (metadata.checked && role == Qt::ForegroundRole) {
+        QColor backgroundColour;
+        if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
+            backgroundColour = QApplication::palette()
+                                   .brush(QPalette::Inactive,
+                                          QPalette::Highlight)
+                                   .color();
+        } else {
+            backgroundColour = QApplication::palette()
+                                   .brush(QPalette::Active, QPalette::Highlight)
+                                   .color();
+        }
+        return QBrush{Utils::getContrastingColour(backgroundColour)};
+    }
+
+    if (role == Qt::TextAlignmentRole && index.column() == kCheckColumn) {
+        return Qt::AlignCenter;
+    }
+
+    return {};
+}
+
+bool SourceUpdateModel::setData(const QModelIndex &index,
+                                const QVariant &value,
+                                int role)
+{
+    // Currently only handles setting data for whether something was checked or unchecked
+    if (!index.isValid() || index.column() != kCheckColumn
+        || role != Qt::CheckStateRole) {
+        return false;
+    }
+
+    const bool checked = value.toInt() == Qt::Checked;
+    MetadataWrapper &metadata = _metadata.at(index.row());
+
+    if (metadata.checked == checked) {
+        return true;
+    }
+
+    metadata.checked = checked;
+    emit dataChanged(this->index(index.row(), 0),
+                     this->index(index.row(), columnCount() - 1),
+                     {Qt::CheckStateRole,
+                      Qt::BackgroundRole,
+                      Qt::ForegroundRole});
+    return true;
+}
+
+Qt::ItemFlags SourceUpdateModel::flags(const QModelIndex &index) const
+{
+    if (!index.isValid()) {
+        return Qt::NoItemFlags;
+    }
+
+    return Qt::ItemIsEnabled;
+}
+
+QVariant SourceUpdateModel::headerData(int section,
+                                       Qt::Orientation orientation,
+                                       int role) const
+{
+    if (orientation != Qt::Horizontal || role != Qt::DisplayRole) {
+        return {};
+    }
+
+    switch (section) {
+    case kNameColumn:
+        return tr("Source Name");
+    case kInstalledVersionColumn:
+        return tr("Installed Version");
+    case kNewVersionColumn:
+        return tr("Available Version");
+    case kCheckColumn:
+        return tr("Install New Version");
+    default:
+        return {};
+    }
+}

@@ -1480,8 +1480,9 @@ void MainWindow::openWelcomeWindow(void)
             // so check whether they need to be shown (it's assumed that each
             // call will "chain" to the next one)
             if (!_dialogQueue.empty()) {
-                _dialogQueue.front()();
+                auto func = _dialogQueue.front();
                 _dialogQueue.pop_front();
+                func();
             }
         });
 
@@ -1739,8 +1740,9 @@ void MainWindow::finishedDatabaseMigration(bool success)
         _databaseMigrationDialog = nullptr;
 
         if (!_dialogQueue.empty()) {
-            _dialogQueue.front()();
+            auto func = _dialogQueue.front();
             _dialogQueue.pop_front();
+            func();
         }
     });
 }

@@ -99,6 +99,7 @@ set(PROJECT_HEADERS
         components/settings/searchtab.h
         components/settings/settingstab.h
         components/settings/texttab.h
+        components/sourceupdatelist/sourceupdatemodel.h
         dialogs/defaultdialog.h
         dialogs/dictionarytabfailuredialog.h
         dialogs/downloadaudiodialog.h
@@ -225,6 +226,7 @@ set(PROJECT_SOURCES
         components/settings/searchtab.cpp
         components/settings/settingstab.cpp
         components/settings/texttab.cpp
+        components/sourceupdatelist/sourceupdatemodel.cpp
         dialogs/defaultdialog.cpp
         dialogs/dictionarytabfailuredialog.cpp
         dialogs/downloadaudiodialog.cpp
