@@ -5,6 +5,7 @@
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/strings/strings.h"
+#include "windows/sourceupdatewindow.h"
 #include "windows/updatewindow.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -868,19 +869,40 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
         return;
     }
 
-    _updateAvailable = false;
-
     if (updateAvailable) {
-        UpdateAvailableWindow *window
-            = new UpdateAvailableWindow{this,
-                                        versionNumber.value(),
-                                        url.value(),
-                                        description.value()};
-        window->show();
+        _updateAvailableWindow = new UpdateAvailableWindow{this,
+                                                           versionNumber.value(),
+                                                           url.value(),
+                                                           description.value()};
+        _updateAvailableWindow->show();
     } else if (showIfNoUpdate) {
         QString currentVersion = QString{Utils::CURRENT_VERSION};
         NoUpdateDialog *_message = new NoUpdateDialog{currentVersion, this};
         _message->exec();
+    }
+}
+
+void MainWindow::notifySourceUpdateAvailable(
+    std::vector<IUpdateChecker::SourceUpdateAvailability> &a,
+    bool showIfNoUpdate)
+{
+    if (_welcomeWindow || _databaseMigrationDialog || _updateAvailableWindow) {
+        _dialogQueue.push_back([a, showIfNoUpdate, this]() mutable {
+            notifySourceUpdateAvailable(a, showIfNoUpdate);
+        });
+        return;
+    }
+
+    if (std::any_of(a.begin(),
+                    a.end(),
+                    [](IUpdateChecker::SourceUpdateAvailability s) {
+                        return s.updateAvailable;
+                    })) {
+        _sourceUpdateWindow = new SourceUpdateWindow{this};
+        _sourceUpdateWindow->show();
+    } else if (showIfNoUpdate) {
+        std::cout << "no updates were found" << std::endl;
+        // TODO: Implement
     }
 }
 
@@ -1559,11 +1581,6 @@ void MainWindow::checkForUpdate(bool showProgress)
                         IUpdateChecker::AppUpdateAvailability a
                             = std::get<IUpdateChecker::AppUpdateAvailability>(v);
 
-                        _updateAvailable = a.updateAvailable;
-                        _updateVersionNumber = a.versionNumber;
-                        _updateURL = a.url;
-                        _updateDescription = a.description;
-
                         notifyUpdateAvailable(a.updateAvailable,
                                               a.versionNumber,
                                               a.url,
@@ -1602,8 +1619,8 @@ void MainWindow::checkForSourceUpdate(bool showProgress)
                         std::vector<IUpdateChecker::SourceUpdateAvailability> a
                             = std::get<std::vector<
                                 IUpdateChecker::SourceUpdateAvailability>>(v);
-                        // notifySourceUpdateAvailable(a,
-                        // /* showIfNoUpdate = */ true);
+                        notifySourceUpdateAvailable(a,
+                                                    /* showIfNoUpdate = */ true);
                     }
 
                     _recentlyCheckedForSourceUpdates = false;
@@ -1633,11 +1650,11 @@ void MainWindow::checkForSourceUpdate(bool showProgress)
         _updateDialog->setRange(0, 0);
         _updateDialog->setValue(0);
     } else {
-        connect(_checker,
-                &JyutDictionaryReleaseChecker::foundUpdate,
+        connect(_sourceChecker,
+                &SourceReleaseChecker::foundUpdate,
                 this,
                 [&](const IUpdateChecker::UpdateVariant &v) {
-                    disconnect(_checker, nullptr, nullptr, nullptr);
+                    disconnect(_sourceChecker, nullptr, nullptr, nullptr);
 
                     if (!std::holds_alternative<std::vector<
                             IUpdateChecker::SourceUpdateAvailability>>(v)) {
@@ -1648,8 +1665,8 @@ void MainWindow::checkForSourceUpdate(bool showProgress)
                         std::vector<IUpdateChecker::SourceUpdateAvailability> a
                             = std::get<std::vector<
                                 IUpdateChecker::SourceUpdateAvailability>>(v);
-                        // notifySourceUpdateAvailable(a,
-                        // /* showIfNoUpdate = */ false);
+                        notifySourceUpdateAvailable(a,
+                                                    /* showIfNoUpdate = */ false);
                     }
 
                     _recentlyCheckedForUpdates = false;

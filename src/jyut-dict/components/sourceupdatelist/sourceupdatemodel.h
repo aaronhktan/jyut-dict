@@ -23,6 +23,14 @@ public:
                         Qt::Orientation orientation,
                         int role) const override;
 
+    enum Columns {
+        kNameColumn = 0,
+        kInstalledVersionColumn = 1,
+        kNewVersionColumn = 2,
+        kCheckColumn = 3,
+        kNumColumns,
+    };
+
 private:
     struct MetadataWrapper
     {

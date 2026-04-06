@@ -32,6 +32,9 @@
 // As its name suggests, is the main window of the application
 // Contains a toolbar (for searching), and splitter (for results/detail)
 
+class UpdateAvailableWindow;
+class SourceUpdateWindow;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -102,6 +105,9 @@ private:
     QPointer<FavouriteSplitter> _favouritesWindow;
     QPointer<WelcomeWindow> _welcomeWindow;
 
+    UpdateAvailableWindow *_updateAvailableWindow;
+    SourceUpdateWindow *_sourceUpdateWindow;
+
     QProgressDialog *_updateDialog = nullptr;
     QProgressDialog *_databaseMigrationDialog = nullptr;
 
@@ -115,12 +121,7 @@ private:
     bool _recentlyCheckedForUpdates = false;
     bool _recentlyCheckedForSourceUpdates = false;
 
-    // Cached information for various dialogs
     bool _databaseMigrating = false;
-    bool _updateAvailable = false;
-    std::optional<std::string> _updateVersionNumber;
-    std::optional<std::string> _updateURL;
-    std::optional<std::string> _updateDescription;
 
     std::deque<std::function<void()>> _dialogQueue;
 
@@ -185,6 +186,9 @@ public slots:
                                std::optional<std::string> url,
                                std::optional<std::string> description,
                                bool showIfNoUpdate = false);
+    void notifySourceUpdateAvailable(
+        std::vector<IUpdateChecker::SourceUpdateAvailability> &a,
+        bool showIfNoUpdate = false);
     void notifyDatabaseMigration(void);
     void finishedDatabaseMigration(bool success);
     void forwardSearchHistoryItem(const searchTermHistoryItem &pair);

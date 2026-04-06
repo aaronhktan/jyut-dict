@@ -44,23 +44,33 @@ void SourceReleaseChecker::checkForNewUpdate()
         QNetworkReply *reply = _networkManager->get(request);
         _replies.emplace(reply);
         connect(reply, &QNetworkReply::finished, this, [this, u, reply]() {
-            parseReply(reply);
+            if (reply->error() == QNetworkReply::NoError) {
+                parseReply(reply);
+            } else {
+                std::cerr << "Network request failed with error "
+                          << reply->error() << std::endl;
+            }
             _sourceUpdateURLs.erase(u);
             if (_sourceUpdateURLs.empty()) {
                 emit foundUpdate(_updates);
             }
-        });
 
-        // Time out after 15 seconds
-        QTimer::singleShot(15000, this, [this, u, reply]() {
-            _sourceUpdateURLs.erase(u);
             disconnect(reply, nullptr, nullptr, nullptr);
             reply->deleteLater();
             _replies.erase(reply);
+        });
 
+        // Time out after 15 seconds
+        QTimer::singleShot(15000, reply, [this, u, reply]() {
+            _sourceUpdateURLs.erase(u);
             if (_sourceUpdateURLs.empty()) {
                 emit foundUpdate(_updates);
             }
+
+            disconnect(reply, nullptr, nullptr, nullptr);
+            reply->abort();
+            reply->deleteLater();
+            _replies.erase(reply);
         });
     }
 }

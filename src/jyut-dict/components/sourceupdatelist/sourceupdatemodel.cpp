@@ -6,15 +6,6 @@
 #include <QGuiApplication>
 #include <QPalette>
 
-namespace {
-// Source name | installed version | new version | selected
-constexpr auto kNumColumns = 4;
-constexpr auto kNameColumn = 0;
-constexpr auto kInstalledVersionColumn = 1;
-constexpr auto kNewVersionColumn = 2;
-constexpr auto kCheckColumn = 3;
-} // namespace
-
 SourceUpdateModel::SourceUpdateModel(QObject *parent)
     : QAbstractTableModel(parent)
 {}
