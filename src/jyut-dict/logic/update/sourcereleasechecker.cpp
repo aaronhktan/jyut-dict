@@ -10,8 +10,10 @@
 #include <iostream>
 
 namespace {
+// TODO: change this back!!
 constexpr auto DEFAULT_SOURCE_UPDATE_URL
-    = "https://jyutdictionary.com/static/updates/v1/sources_manifest.json";
+    // = "https://jyutdictionary.com/static/updates/v1/sources_manifest.json";
+    = "http://127.0.0.1:8081/static/updates/v1/sources_manifest.json";
 
 constexpr auto VERSION_NUMBER_COMPONENTS_SIZE = 3;
 } // namespace
@@ -168,8 +170,7 @@ bool SourceReleaseChecker::parseJSON(
         // Also check that the web version is greater than any version we already parsed
         if (availability.contains(sourceName)) {
             std::vector<std::string> parsedVersionNumberComponents;
-            Utils::split(availability.at(sourceName)
-                             .versionNumber.value_or("0-0-0"),
+            Utils::split(availability.at(sourceName).versionNumber,
                          "-",
                          parsedVersionNumberComponents);
             auto [parsedYear, parsedMonth, parsedDay] = std::array<int, 3>(
@@ -231,7 +232,4 @@ void SourceReleaseChecker::parseReply(QNetworkReply *reply)
             _updates.emplace_back(u);
         }
     }
-
-    reply->deleteLater();
-    _replies.erase(reply);
 }

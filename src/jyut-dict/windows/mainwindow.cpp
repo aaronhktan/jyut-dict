@@ -898,10 +898,9 @@ void MainWindow::notifySourceUpdateAvailable(
                     [](IUpdateChecker::SourceUpdateAvailability s) {
                         return s.updateAvailable;
                     })) {
-        _sourceUpdateWindow = new SourceUpdateWindow{this};
+        _sourceUpdateWindow = new SourceUpdateWindow{a, _manager, this};
         _sourceUpdateWindow->show();
     } else if (showIfNoUpdate) {
-        std::cout << "no updates were found" << std::endl;
         // TODO: Implement
     }
 }

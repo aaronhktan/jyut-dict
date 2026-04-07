@@ -6,8 +6,10 @@
 #include <QGuiApplication>
 #include <QPalette>
 
-SourceUpdateModel::SourceUpdateModel(QObject *parent)
+SourceUpdateModel::SourceUpdateModel(std::vector<MetadataWrapper> &w,
+                                     QObject *parent)
     : QAbstractTableModel(parent)
+    , _metadata(w)
 {}
 
 int SourceUpdateModel::rowCount(const QModelIndex &parent) const
@@ -47,7 +49,7 @@ QVariant SourceUpdateModel::data(const QModelIndex &index, int role) const
             return QString::fromStdString(metadata.current.getVersion());
         }
         case kNewVersionColumn: {
-            return QString::fromStdString(metadata.upgrade.getVersion());
+            return QString::fromStdString(metadata.newVersion);
         }
         default: {
             return {};
@@ -138,11 +140,11 @@ QVariant SourceUpdateModel::headerData(int section,
     case kNameColumn:
         return tr("Source Name");
     case kInstalledVersionColumn:
-        return tr("Installed Version");
+        return tr("Installed");
     case kNewVersionColumn:
-        return tr("Available Version");
+        return tr("Available");
     case kCheckColumn:
-        return tr("Install New Version");
+        return tr("Update?");
     default:
         return {};
     }

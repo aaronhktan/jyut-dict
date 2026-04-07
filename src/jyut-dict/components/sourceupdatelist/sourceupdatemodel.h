@@ -10,7 +10,15 @@
 class SourceUpdateModel : public QAbstractTableModel
 {
 public:
-    explicit SourceUpdateModel(QObject *parent = nullptr);
+    struct MetadataWrapper
+    {
+        DictionaryMetadata current;
+        std::string newVersion;
+        bool checked = true;
+    };
+
+    explicit SourceUpdateModel(std::vector<MetadataWrapper> &w,
+                               QObject *parent = nullptr);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -32,13 +40,6 @@ public:
     };
 
 private:
-    struct MetadataWrapper
-    {
-        DictionaryMetadata current;
-        DictionaryMetadata upgrade;
-        bool checked = true;
-    };
-
     std::vector<MetadataWrapper> _metadata;
 };
 

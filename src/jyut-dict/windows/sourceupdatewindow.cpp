@@ -1,6 +1,8 @@
 #include "sourceupdatewindow.h"
 
 #include "components/sourceupdatelist/sourceupdatemodel.h"
+#include "logic/database/sqldatabasemanager.h"
+#include "logic/database/sqldatabaseutils.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
@@ -17,6 +19,8 @@
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QKeyEvent>
+#include <QPaintEvent>
+#include <QPainter>
 #include <QPushButton>
 #include <QTableView>
 #include <QTimer>
@@ -27,14 +31,89 @@
 namespace {
 constexpr auto kWindowWidth = 600;
 constexpr auto kWindowHeight = 400;
+
+// Without overriding the paintEvent of QTableView, there is a small vertical
+// gutter in the rightmost cell of each row. This subclass fixes the issue.
+class SourceUpdateTableView : public QTableView
+{
+public:
+    using QTableView::QTableView;
+
+protected:
+    void paintEvent(QPaintEvent *event) override
+    {
+        QTableView::paintEvent(event);
+
+        if (model() == nullptr) {
+            return;
+        }
+
+        QPainter painter(viewport());
+        const QColor lineColor = palette().color(QPalette::Base);
+        const QRect clip = event->rect();
+
+        // Draw vertical separators at the same x positions the header uses.
+        for (int col = 0; col < model()->columnCount() - 1; ++col) {
+            if (isColumnHidden(col)) {
+                continue;
+            }
+
+            const int x = columnViewportPosition(col) + columnWidth(col) - 1;
+            painter.fillRect(QRect{x, clip.top(), 1, clip.height()}, lineColor);
+        }
+
+        // Draw horizontal row separators too.
+        int firstRow = rowAt(clip.top());
+        if (firstRow < 0) {
+            firstRow = 0;
+        }
+
+        int lastRow = rowAt(clip.bottom());
+        if (lastRow < 0) {
+            lastRow = model()->rowCount() - 1;
+        }
+
+        for (int row = firstRow; row < lastRow; ++row) {
+            if (isRowHidden(row)) {
+                continue;
+            }
+
+            const int y = rowViewportPosition(row) + rowHeight(row) - 1;
+            painter.fillRect(QRect{clip.left(), y, clip.width(), 1}, lineColor);
+        }
+    }
+};
 } // namespace
 
-SourceUpdateWindow::SourceUpdateWindow(QWidget *parent)
-    : QWidget{parent}
-    , _model{new SourceUpdateModel{this}}
-    , _widget{new QWidget{this}}
+SourceUpdateWindow::SourceUpdateWindow(
+    std::vector<IUpdateChecker::SourceUpdateAvailability> &a,
+    std::shared_ptr<SQLDatabaseManager> manager,
+    QWidget *parent)
+    : QWidget{parent, Qt::Window}
+    , _manager{manager}
+    , _utils{new SQLDatabaseUtils{manager}}
     , _settings{Settings::getSettings()}
 {
+    // Get list of existing sources
+    std::vector<DictionaryMetadata> sources;
+    _utils->readSources(sources);
+    std::unordered_map<std::string, DictionaryMetadata> sourceMetadata;
+    for (const auto &s : sources) {
+        sourceMetadata[s.getName()] = s;
+    }
+
+    // Find intersection of existing sources + ones that have update available
+    std::vector<SourceUpdateModel::MetadataWrapper> updateMetadata;
+    for (const auto &s : a) {
+        const std::string &name = s.sourceName;
+        updateMetadata.emplace_back(sourceMetadata.at(name),
+                                    s.versionNumber,
+                                    /* checked */ true);
+    }
+
+    // Put that data into the model
+    _model = new SourceUpdateModel{updateMetadata, this};
+
     setupUI();
     translateUI();
 
@@ -77,15 +156,16 @@ void SourceUpdateWindow::setupUI()
     resize(kWindowWidth, kWindowHeight);
     setFixedSize(kWindowWidth, kWindowHeight);
 
-    _widget = new QWidget(this);
-    _tableView = new QTableView(_widget);
-    _toggleAllButton = new QPushButton(_widget);
-    _okButton = new QPushButton(_widget);
+    _widget = new QWidget{this};
+    _tableView = new SourceUpdateTableView{_widget};
+    _toggleAllButton = new QPushButton{_widget};
+    _okButton = new QPushButton{_widget};
 
     _tableView->setModel(_model);
     _tableView->setAlternatingRowColors(true);
     _tableView->setSelectionMode(QAbstractItemView::NoSelection);
     _tableView->setFocusPolicy(Qt::NoFocus);
+    _tableView->setShowGrid(false);
     _tableView->horizontalHeader()
         ->setSectionResizeMode(SourceUpdateModel::kNameColumn,
                                QHeaderView::Stretch);
@@ -97,16 +177,26 @@ void SourceUpdateWindow::setupUI()
                                QHeaderView::Stretch);
     _tableView->horizontalHeader()
         ->setSectionResizeMode(SourceUpdateModel::kCheckColumn,
-                               QHeaderView::ResizeToContents);
+                               QHeaderView::Interactive);
+    _tableView->horizontalHeader()->setSectionsClickable(false);
+    _tableView->horizontalHeader()->setSectionsMovable(false);
+    _tableView->horizontalHeader()->setHighlightSections(false);
+    _tableView->horizontalHeader()->setFocusPolicy(Qt::NoFocus);
     _tableView->verticalHeader()->setVisible(false);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;
+    buttonLayout->setContentsMargins(0, 0, 0, 0);
     buttonLayout->addWidget(_toggleAllButton);
     buttonLayout->addWidget(_okButton);
 
     QVBoxLayout *widgetLayout = new QVBoxLayout{_widget};
+    widgetLayout->setContentsMargins(0, 0, 0, 0);
     widgetLayout->addWidget(_tableView);
     widgetLayout->addLayout(buttonLayout);
+
+    _layout = new QVBoxLayout{this};
+    _layout->setSpacing(5);
+    _layout->addWidget(_widget);
 
     connect(_tableView,
             &QTableView::clicked,
@@ -124,6 +214,8 @@ void SourceUpdateWindow::setupUI()
             &QAbstractItemModel::dataChanged,
             this,
             &SourceUpdateWindow::updateToggleAllButtonText);
+
+    setStyle(Utils::isDarkMode());
 }
 
 void SourceUpdateWindow::translateUI()
@@ -151,118 +243,77 @@ void SourceUpdateWindow::setStyle(bool use_dark)
     int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
         static_cast<unsigned long>(interfaceSize - 1));
 
-    // Set background color of tabs in toolbar
-    QColor selectedBackgroundColour;
-    QColor currentTextColour;
-    QColor otherTextColour;
-    if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
-        selectedBackgroundColour
-            = QGuiApplication::palette().color(QPalette::Inactive,
-                                               QPalette::Highlight);
-        currentTextColour = use_dark
-                                ? QColor{TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_R,
-                                         TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_G,
-                                         TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_B}
-                                : QColor{TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_R,
-                                         TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_G,
-                                         TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_B};
-        otherTextColour = use_dark
-                              ? QColor{TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_R,
-                                       TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_G,
-                                       TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_B}
-                              : QColor{TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_R,
-                                       TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_G,
-                                       TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_B};
-    } else {
-#ifdef Q_OS_MAC
-        selectedBackgroundColour = Utils::getAppleControlAccentColor();
-#else
-        selectedBackgroundColour = use_dark
-                                       ? QColor{LIST_ITEM_ACTIVE_COLOUR_DARK_R,
-                                                LIST_ITEM_ACTIVE_COLOUR_DARK_G,
-                                                LIST_ITEM_ACTIVE_COLOUR_DARK_B}
-                                       : QColor{LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
-                                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
-                                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_B};
-#endif
-        currentTextColour = Utils::getContrastingColour(
-            selectedBackgroundColour);
-#ifdef Q_OS_MAC
-        otherTextColour = QGuiApplication::palette().color(QPalette::Active,
-                                                           QPalette::Text);
-#else
-        otherTextColour = use_dark
-                              ? QColor{TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_R,
-                                       TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_G,
-                                       TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_B}
-                              : QColor{TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_R,
-                                       TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_G,
-                                       TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_B};
-#endif
-    }
+    QString colour = use_dark ? "#424242" : "#d5d5d5";
 
 #ifdef Q_OS_MAC
     QString style{"QLabel[isHan=\"true\"] { "
-                  "   font-size: %6px; "
+                  "   font-size: %1px; "
                   "} "
                   " "
                   "QLabel { "
-                  "   font-size: %7px; "
+                  "   font-size: %2px; "
                   "} "
                   " "
                   "QCheckBox[isHan=\"true\"] { "
-                  "   font-size: %6px; "
+                  "   font-size: %1px; "
                   "} "
                   " "
                   "QCheckBox { "
-                  "   font-size: %7px; "
+                  "   font-size: %2px; "
                   "} "
                   " "
                   "QPushButton[isHan=\"true\"] { "
-                  "   font-size: %6px; "
+                  "   font-size: %1px; "
                   //// QPushButton falls back to Fusion style on macOS when the
                   //// height exceeds 16px. Set the maximum size to 16px.
                   "   height: 16px; "
                   "} "
                   " "
                   "QPushButton { "
-                  "   font-size: %7px; "
+                  "   font-size: %2px; "
                   "   height: 16px; "
                   "} "};
+
 #else
     QString style{"QLabel[isHan=\"true\"] { "
-                  "   font-size: %6px; "
+                  "   font-size: %1px; "
                   "} "
                   " "
                   "QLabel { "
-                  "   font-size: %7px; "
+                  "   font-size: %2px; "
                   "} "
                   " "
                   "QCheckBox[isHan=\"true\"] { "
-                  "   font-size: %6px; "
+                  "   font-size: %1px; "
                   "} "
                   " "
                   "QCheckBox { "
-                  "   font-size: %7px; "
+                  "   font-size: %2px; "
                   "} "
                   " "
                   "QPushButton[isHan=\"true\"] { "
-                  "   font-size: %6px; "
+                  "   font-size: %1px; "
                   "   height: 16px; "
                   "} "
                   " "
                   "QPushButton { "
-                  "   font-size: %7px; "
+                  "   font-size: %2px; "
                   "   height: 16px; "
                   "} "};
 #endif
-    setStyleSheet(style.arg(selectedBackgroundColour.name(),
-                            std::to_string(uiFontSizeHan).c_str(),
-                            std::to_string(uiFontSize).c_str(),
-                            currentTextColour.name(),
-                            otherTextColour.name(),
-                            std::to_string(bodyFontSizeHan).c_str(),
+    setStyleSheet(style.arg(std::to_string(bodyFontSizeHan).c_str(),
                             std::to_string(bodyFontSize).c_str()));
+
+    QString headerStyle{"QHeaderView::section { "
+                        "   border: none; "
+                        "   border-right: 1px solid palette(base); "
+                        "} "
+                        " "
+                        "QHeaderView::section:last { "
+                        "   border-right: none; "
+                        "} "};
+
+    _tableView->horizontalHeader()->setStyleSheet(headerStyle);
 }
 
 void SourceUpdateWindow::toggleRowCheckState(const QModelIndex &index)

@@ -22,8 +22,8 @@ public:
     struct SourceUpdateAvailability
     {
         bool updateAvailable;
-        std::optional<std::string> sourceName;
-        std::optional<std::string> versionNumber;
+        std::string sourceName;
+        std::string versionNumber;
         std::optional<std::string> url;
         std::optional<std::string> description;
     };

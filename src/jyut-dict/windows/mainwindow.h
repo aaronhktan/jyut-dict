@@ -105,8 +105,8 @@ private:
     QPointer<FavouriteSplitter> _favouritesWindow;
     QPointer<WelcomeWindow> _welcomeWindow;
 
-    UpdateAvailableWindow *_updateAvailableWindow;
-    SourceUpdateWindow *_sourceUpdateWindow;
+    UpdateAvailableWindow *_updateAvailableWindow = nullptr;
+    SourceUpdateWindow *_sourceUpdateWindow = nullptr;
 
     QProgressDialog *_updateDialog = nullptr;
     QProgressDialog *_databaseMigrationDialog = nullptr;
