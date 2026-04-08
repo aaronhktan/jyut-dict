@@ -2,7 +2,7 @@
 #define SQLDATABASEUTILS_H
 
 #include "logic/database/sqldatabasemanager.h"
-#include "logic/dictionary/dictionarymetadata.h"
+#include "logic/source/sourcemetadata.h"
 
 #include <QObject>
 
@@ -16,7 +16,7 @@
 // which is only responsible for opening and closing a connection to a database.
 
 constexpr auto CURRENT_DATABASE_VERSION = 4;
-using conflictingDictionaryMetadata
+using conflictingSourceMetadata
     = std::vector<std::tuple<std::string, std::string, std::string>>;
 
 class SQLDatabaseUtils : public QObject
@@ -34,7 +34,7 @@ public:
                    bool overwriteConflictingSource = false);
 
     bool readSources(std::vector<std::pair<std::string, std::string>> &sources);
-    bool readSources(std::vector<DictionaryMetadata> &sources);
+    bool readSources(std::vector<SourceMetadata> &sources);
 
 private:
     std::shared_ptr<SQLDatabaseManager> _manager;
@@ -76,8 +76,7 @@ signals:
 
     void deletingSentences();
 
-    void conflictingDictionaryNamesExist(
-        conflictingDictionaryMetadata dictionaries);
+    void conflictingDictionaryNamesExist(conflictingSourceMetadata dictionaries);
     void insertingSource();
     void insertingEntries();
     void insertingDefinitions();
@@ -89,6 +88,6 @@ signals:
     void finishedMigratingDatabase(bool success);
 };
 
-Q_DECLARE_METATYPE(conflictingDictionaryMetadata);
+Q_DECLARE_METATYPE(conflictingSourceMetadata);
 
 #endif // SQLDATABASEUTILS_H

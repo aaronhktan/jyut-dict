@@ -29,9 +29,9 @@ set_target_properties(TestSqlDatabaseUtils PROPERTIES
 )
 
 target_sources(TestSqlDatabaseUtils
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../source/sourcemetadata.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../sqldatabasemanager.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../sqldatabaseutils.cpp
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../dictionary/dictionarymetadata.cpp
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG -DPORTABLE")

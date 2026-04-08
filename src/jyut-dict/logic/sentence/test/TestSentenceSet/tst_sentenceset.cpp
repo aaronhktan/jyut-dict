@@ -1,6 +1,6 @@
 #include <QtTest>
 
-#include "logic/dictionary/dictionarysource.h"
+#include "logic/source/sourceutils.h"
 #include "logic/sentence/sentenceset.h"
 
 class TestSentenceSet : public QObject
@@ -47,7 +47,7 @@ void TestSentenceSet::getSources()
     std::string sourceName = "粵典—words.hk";
     std::string sourceShortName = "WHK";
 
-    QCOMPARE(DictionarySourceUtils::addSource(sourceName, sourceShortName),
+    QCOMPARE(SourceUtils::addSource(sourceName, sourceShortName),
              true);
 
     std::vector<Sentence::TargetSentence> targetSentences{
@@ -61,7 +61,7 @@ void TestSentenceSet::getSources()
     QCOMPARE(QString::fromStdString(set.getSourceShortString()),
              QString::fromStdString(sourceShortName));
 
-    QCOMPARE(DictionarySourceUtils::removeSource(sourceName), true);
+    QCOMPARE(SourceUtils::removeSource(sourceName), true);
 }
 
 void TestSentenceSet::getSentences()

@@ -826,8 +826,8 @@ void TestSqlDatabaseUtils::readSources()
     QCOMPARE(sources.size(), 1);
     QCOMPARE(QString::fromStdString(sources.at(0).first), "CC-CANTO");
     QCOMPARE(QString::fromStdString(sources.at(0).second), "CCY");
-
-    std::vector<DictionaryMetadata> metadata;
+    
+    std::vector<SourceMetadata> metadata;
     _utils->readSources(metadata);
     QCOMPARE(metadata.size(), 1);
     QCOMPARE(QString::fromStdString(metadata.at(0).getName()), "CC-CANTO");

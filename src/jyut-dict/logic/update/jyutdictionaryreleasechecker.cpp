@@ -122,7 +122,7 @@ bool JyutDictionaryReleaseChecker::parseJSON(const std::string &data,
     QJsonDocument doc = QJsonDocument::fromJson(
         QString::fromStdString(data.c_str()).toUtf8());
     QJsonValue version;
-    foreach (version, doc.array()) {
+    for (const auto &version : doc.array()) {
         QJsonObject versionObject = version.toObject();
 
         // Check if the version on the web is for the correct channel
@@ -177,7 +177,7 @@ bool JyutDictionaryReleaseChecker::parseJSON(const std::string &data,
         }
 
         QJsonValue link;
-        foreach (link, versionObject.value("links").toArray()) {
+        for (const auto &link : versionObject.value("links").toArray()) {
             QJsonObject linkObject = link.toObject();
 
             // Target kernel must match
@@ -206,7 +206,7 @@ bool JyutDictionaryReleaseChecker::parseJSON(const std::string &data,
             // At least one architecture must match the local architecture
             bool matchesArch = false;
             QJsonValue webArch;
-            foreach (webArch, linkObject.value("arch").toArray()) {
+            for (const auto &webArch : linkObject.value("arch").toArray()) {
                 if (webArch.toString() == QSysInfo::buildCpuArchitecture()) {
                     matchesArch = true;
                     break;

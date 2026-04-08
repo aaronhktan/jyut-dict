@@ -1,9 +1,9 @@
-#include "logic/dictionary/dictionarysource.h"
+#include "logic/source/sourceutils.h"
 
 #include <algorithm>
 #include <shared_mutex>
 
-namespace DictionarySourceUtils {
+namespace SourceUtils {
 
 std::unordered_map<std::string, std::string> name_to_short_name;
 std::shared_mutex map_mutex;

@@ -1,7 +1,7 @@
 #ifndef SOURCEUPDATEMODEL_H
 #define SOURCEUPDATEMODEL_H
 
-#include "logic/dictionary/dictionarymetadata.h"
+#include "logic/source/sourcemetadata.h"
 #include "logic/update/iupdatechecker.h"
 
 #include <QAbstractTableModel>
@@ -13,7 +13,7 @@ class SourceUpdateModel : public QAbstractTableModel
 public:
     struct MetadataWrapper
     {
-        DictionaryMetadata current;
+        SourceMetadata current;
         IUpdateChecker::SourceManifestMetadata available;
         bool checked = true;
     };

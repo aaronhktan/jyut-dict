@@ -1,5 +1,5 @@
-#ifndef DICTIONARYLISTDELEGATE_H
-#define DICTIONARYLISTDELEGATE_H
+#ifndef SOURCELISTDELEGATE_H
+#define SOURCELISTDELEGATE_H
 
 #include <QModelIndex>
 #include <QPainter>
@@ -8,14 +8,14 @@
 #include <QStyledItemDelegate>
 #include <QWidget>
 
-// The DictionaryListDelegate is responsible for painting dictionaries
+// The SourceListDelegate is responsible for painting sources
 // in a listview.
 
-class DictionaryListDelegate : public QStyledItemDelegate
+class SourceListDelegate : public QStyledItemDelegate
 {
     Q_OBJECT
 public:
-    explicit DictionaryListDelegate(QWidget *parent = nullptr);
+    explicit SourceListDelegate(QWidget *parent = nullptr);
 
     void paint(QPainter *painter,
                const QStyleOptionViewItem &option,
@@ -27,4 +27,4 @@ private:
     std::unique_ptr<QSettings> _settings;
 };
 
-#endif // DICTIONARYLISTDELEGATE_H
+#endif // SOURCELISTDELEGATE_H

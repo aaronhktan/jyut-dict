@@ -1,7 +1,7 @@
-#include "dictionarylistview.h"
+#include "sourcelistview.h"
 
-#include "components/dictionarylist/dictionarylistdelegate.h"
-#include "components/dictionarylist/dictionarylistmodel.h"
+#include "components/sourcelist/sourcelistdelegate.h"
+#include "components/sourcelist/sourcelistmodel.h"
 
 #include <QGuiApplication>
 
@@ -9,23 +9,23 @@
 #include <QScrollBar>
 #endif
 
-DictionaryListView::DictionaryListView(QWidget *parent)
+SourceListView::SourceListView(QWidget *parent)
     : QListView(parent)
 {
     setFrameShape(QFrame::NoFrame);
     setMinimumWidth(150);
-
-    _model = new DictionaryListModel{this};
+    
+    _model = new SourceListModel{this};
     setModel(_model);
-
-    _delegate = new DictionaryListDelegate{this};
+    
+    _delegate = new SourceListDelegate{this};
     setItemDelegate(_delegate);
 
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     connect(qApp,
             &QGuiApplication::applicationStateChanged,
             this,
-            &DictionaryListView::paintWithApplicationState);
+            &SourceListView::paintWithApplicationState);
 }
 
 // On Windows, because of a bug in Qt (see QTBUG-7232), every time mouse
@@ -41,13 +41,13 @@ void DictionaryListView::wheelEvent(QWheelEvent *event)
 }
 #endif
 
-void DictionaryListView::paintWithApplicationState()
+void SourceListView::paintWithApplicationState()
 {
     viewport()->update();
 }
 
 #ifdef Q_OS_MAC
-void DictionaryListView::mousePressEvent(QMouseEvent *event)
+void SourceListView::mousePressEvent(QMouseEvent *event)
 {
     // Don't change item selection on mouse press.
     // The window size changes before the user releases the mouse, which causes

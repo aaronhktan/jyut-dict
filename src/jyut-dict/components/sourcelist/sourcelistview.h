@@ -1,5 +1,5 @@
-#ifndef DICTIONARYLISTVIEW_H
-#define DICTIONARYLISTVIEW_H
+#ifndef SOURCELISTVIEW_H
+#define SOURCELISTVIEW_H
 
 #include <QAbstractListModel>
 #include <QListView>
@@ -9,13 +9,13 @@
 #endif
 #include <QWidget>
 
-// The DictionaryListView displays the dictionaries that a user has installed
+// The SourceListView displays the source that a user has installed
 
-class DictionaryListView : public QListView
+class SourceListView : public QListView
 {
     Q_OBJECT
 public:
-    explicit DictionaryListView(QWidget *parent = nullptr);
+    explicit SourceListView(QWidget *parent = nullptr);
 
 #ifdef Q_OS_WIN
     void wheelEvent(QWheelEvent *event) override;
@@ -33,4 +33,4 @@ protected:
 #endif
 };
 
-#endif // DICTIONARYLISTVIEW_H
+#endif // SOURCELISTVIEW_H

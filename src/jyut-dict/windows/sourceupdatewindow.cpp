@@ -99,9 +99,9 @@ SourceUpdateWindow::SourceUpdateWindow(
     , _settings{Settings::getSettings()}
 {
     // Get list of existing sources
-    std::vector<DictionaryMetadata> sources;
+    std::vector<SourceMetadata> sources;
     _utils->readSources(sources);
-    std::unordered_map<std::string, DictionaryMetadata> sourceMetadata;
+    std::unordered_map<std::string, SourceMetadata> sourceMetadata;
     for (const auto &s : sources) {
         sourceMetadata[s.getName()] = s;
     }

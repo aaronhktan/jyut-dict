@@ -3,7 +3,7 @@
 
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqldatabaseutils.h"
-#include "logic/dictionary/dictionarymetadata.h"
+#include "logic/source/sourcemetadata.h"
 #include "logic/update/iupdatechecker.h"
 
 #include <QObject>
@@ -32,7 +32,7 @@ private:
 
     std::unordered_set<QNetworkReply *> _replies;
 
-    std::unordered_map<std::string, DictionaryMetadata> _sourceMetadata;
+    std::unordered_map<std::string, SourceMetadata> _sourceMetadata;
     std::unordered_set<std::string> _sourceUpdateURLs;
     std::vector<SourceManifestMetadata> _updates;
 

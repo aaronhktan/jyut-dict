@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<TranscriptionLanguage>("TranscriptionLanguage");
 #endif
     qRegisterMetaType<searchTermHistoryItem>("searchTermHistoryItem");
-    qRegisterMetaType<conflictingDictionaryMetadata>(
+    qRegisterMetaType<conflictingSourceMetadata>(
         "conflictingDictionaryNamesMetadata");
     qRegisterMetaType<Settings::InterfaceSize>();
     qRegisterMetaType<TextToSpeech::SpeakerBackend>();

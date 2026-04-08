@@ -10,11 +10,11 @@ class OverwriteConflictingDictionaryDialog : public DefaultDialog
     Q_OBJECT
 public:
     explicit OverwriteConflictingDictionaryDialog(
-        conflictingDictionaryMetadata conflictingDictionaries,
+        conflictingSourceMetadata conflictingDictionaries,
         QWidget *parent = nullptr);
 
 private:
-    void setupUI(conflictingDictionaryMetadata conflictingDictionaries);
+    void setupUI(conflictingSourceMetadata conflictingDictionaries);
 };
 
 #endif // OVERWRITECONFLICTINGDICTIONARYDIALOG_H

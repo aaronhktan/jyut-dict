@@ -5,7 +5,7 @@
 #include "dialogs/overwriteconflictingdictionarydialog.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqldatabaseutils.h"
-#include "logic/dictionary/dictionarymetadata.h"
+#include "logic/source/sourcemetadata.h"
 
 #include <QEvent>
 #include <QGridLayout>
@@ -38,13 +38,13 @@ private:
 
     void setStyle(bool use_dark);
 
-    void setDictionaryMetadata(const QModelIndex &index);
+    void setSourceMetadata(const QModelIndex &index);
 
     void clearDictionaryList();
     void populateDictionaryList();
     void addDictionary(const QString &dictionaryFile);
     void forceAddDictionary(const QString &dictionaryFile);
-    void removeDictionary(DictionaryMetadata metadata);
+    void removeDictionary(SourceMetadata metadata);
     void populateDictionarySourceUtils() const;
 
     void failureMessage(const QString &reason, const QString &description);

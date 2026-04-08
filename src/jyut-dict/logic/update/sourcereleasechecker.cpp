@@ -31,7 +31,7 @@ SourceReleaseChecker::SourceReleaseChecker(
 
 void SourceReleaseChecker::checkForNewUpdate()
 {
-    std::vector<DictionaryMetadata> sources;
+    std::vector<SourceMetadata> sources;
     _utils->readSources(sources);
 
     for (const auto &s : sources) {

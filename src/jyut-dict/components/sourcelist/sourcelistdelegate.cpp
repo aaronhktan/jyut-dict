@@ -1,29 +1,29 @@
-#include "dictionarylistdelegate.h"
+#include "sourcelistdelegate.h"
 
-#include "logic/dictionary/dictionarymetadata.h"
+#include "logic/source/sourcemetadata.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/utils/utils_qt.h"
 
 #include <QGuiApplication>
 
-DictionaryListDelegate::DictionaryListDelegate(QWidget *parent)
+SourceListDelegate::SourceListDelegate(QWidget *parent)
     : QStyledItemDelegate(parent)
 {
     _settings = Settings::getSettings(this);
 }
 
-void DictionaryListDelegate::paint(QPainter *painter,
-                                   const QStyleOptionViewItem &option,
-                                   const QModelIndex &index) const
+void SourceListDelegate::paint(QPainter *painter,
+                               const QStyleOptionViewItem &option,
+                               const QModelIndex &index) const
 {
-    if (!index.data().canConvert<DictionaryMetadata>()) {
+    if (!index.data().canConvert<SourceMetadata>()) {
         return;
     }
 
     painter->save();
-
-    DictionaryMetadata source = qvariant_cast<DictionaryMetadata>(index.data());
+    
+    SourceMetadata source = qvariant_cast<SourceMetadata>(index.data());
 
     QColor backgroundColour;
     if (option.state & QStyle::State_Selected) {
@@ -77,8 +77,8 @@ void DictionaryListDelegate::paint(QPainter *painter,
     painter->restore();
 }
 
-QSize DictionaryListDelegate::sizeHint(const QStyleOptionViewItem &option,
-                                       const QModelIndex &index) const
+QSize SourceListDelegate::sizeHint(const QStyleOptionViewItem &option,
+                                   const QModelIndex &index) const
 {
     (void) (option);
     (void) (index);

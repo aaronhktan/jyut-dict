@@ -331,7 +331,7 @@ bool SQLDatabaseUtils::readSources(
 }
 
 // Reads all the metadata about the sources.
-bool SQLDatabaseUtils::readSources(std::vector<DictionaryMetadata> &sources)
+bool SQLDatabaseUtils::readSources(std::vector<SourceMetadata> &sources)
 {
     QSqlQuery query{_manager->getDatabase()};
     query.setForwardOnly(true);
@@ -363,13 +363,13 @@ bool SQLDatabaseUtils::readSources(std::vector<DictionaryMetadata> &sources)
             = query.value(updateURLIndex).toString().toStdString();
         std::string other = query.value(otherIndex).toString().toStdString();
 
-        DictionaryMetadata dictionary{source,
-                                      version,
-                                      description,
-                                      legal,
-                                      link,
-                                      updateURL,
-                                      other};
+        SourceMetadata dictionary{source,
+                                  version,
+                                  description,
+                                  legal,
+                                  link,
+                                  updateURL,
+                                  other};
 
         sources.push_back(dictionary);
     }
@@ -1089,7 +1089,7 @@ bool SQLDatabaseUtils::addSource(const std::string &filepath,
         int inDatabaseVersionIndex = query.record().indexOf(
             "in_database_version");
         int newFileVersionIndex = query.record().indexOf("new_file_version");
-        conflictingDictionaryMetadata matchingDictionaryNames;
+        conflictingSourceMetadata matchingDictionaryNames;
         while (query.next()) {
             matchingDictionaryNames.emplace_back(
                 query.value(sourcenameIndex).toString().toStdString(),

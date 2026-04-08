@@ -1,7 +1,7 @@
-#ifndef DICTIONARYLISTMODEL_H
-#define DICTIONARYLISTMODEL_H
+#ifndef SOURCELISTMODEL_H
+#define SOURCELISTMODEL_H
 
-#include "logic/dictionary/dictionarymetadata.h"
+#include "logic/source/sourcemetadata.h"
 
 #include <QAbstractListModel>
 #include <QModelIndex>
@@ -10,17 +10,17 @@
 
 #include <vector>
 
-// The DictionaryListModel contains a list of all currently installed
-// dictionaries.
+// The SourceListModel contains a list of all currently installed
+// sources.
 
-class DictionaryListModel : public QAbstractListModel
+class SourceListModel : public QAbstractListModel
 {
     Q_OBJECT
 
 public:
-    explicit DictionaryListModel(QObject *parent = nullptr);
+    explicit SourceListModel(QObject *parent = nullptr);
 
-    void setDictionaries(std::vector<DictionaryMetadata> dictionaries);
+    void setDictionaries(std::vector<SourceMetadata> dictionaries);
     bool setData(const QModelIndex &index,
                  const QVariant &value,
                  int role = Qt::EditRole) override;
@@ -34,7 +34,7 @@ public:
                         int role = Qt::DisplayRole) const override;
 
 private:
-    std::vector<DictionaryMetadata> _dictionaries;
+    std::vector<SourceMetadata> _dictionaries;
 };
 
-#endif // DICTIONARYLISTMODEL_H
+#endif // SOURCELISTMODEL_H

@@ -1,9 +1,9 @@
 ﻿#include "windows/mainwindow.h"
 
 #include "dialogs/noupdatedialog.h"
-#include "logic/dictionary/dictionarysource.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/source/sourceutils.h"
 #include "logic/strings/strings.h"
 #include "windows/sourceupdatewindow.h"
 #include "windows/updatewindow.h"
@@ -99,7 +99,7 @@ MainWindow::MainWindow(QWidget *parent) :
     std::vector<std::pair<std::string, std::string>> sources;
     _utils->readSources(sources);
     for (const auto &source : sources) {
-        DictionarySourceUtils::addSource(source.first, source.second);
+        SourceUtils::addSource(source.first, source.second);
     }
 
     // Install translator

@@ -1,17 +1,17 @@
 #include "sentenceset.h"
 
-#include "logic/dictionary/dictionarysource.h"
+#include "logic/source/sourceutils.h"
 
 SentenceSet::SentenceSet(const std::string &source)
     : _source{source}
-    , _sourceShortString{DictionarySourceUtils::getSourceShortString(source)}
+    , _sourceShortString{SourceUtils::getSourceShortString(source)}
 {
 }
 
 SentenceSet::SentenceSet(const std::string &source,
                          const std::vector<Sentence::TargetSentence> &sentences)
     : _source{source}
-    , _sourceShortString{DictionarySourceUtils::getSourceShortString(source)}
+    , _sourceShortString{SourceUtils::getSourceShortString(source)}
     , _sentences{sentences}
 {
 }

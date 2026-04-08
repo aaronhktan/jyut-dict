@@ -1,7 +1,7 @@
 #include "overwriteconflictingdictionarydialog.h"
 
 OverwriteConflictingDictionaryDialog::OverwriteConflictingDictionaryDialog(
-    conflictingDictionaryMetadata conflictingDictionaries, QWidget *parent)
+    conflictingSourceMetadata conflictingDictionaries, QWidget *parent)
     : DefaultDialog{"", "", parent}
 {
     setupUI(conflictingDictionaries);
@@ -9,7 +9,7 @@ OverwriteConflictingDictionaryDialog::OverwriteConflictingDictionaryDialog(
 }
 
 void OverwriteConflictingDictionaryDialog::setupUI(
-    conflictingDictionaryMetadata conflictingDictionaries)
+    conflictingSourceMetadata conflictingDictionaries)
 {
     setText(tr("Would you like to overwrite dictionaries you already have?"));
     QStringList dictionariesList;

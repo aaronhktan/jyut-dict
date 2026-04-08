@@ -103,7 +103,7 @@ SOURCES += \
     main.cpp \
     logic/database/sqldatabasemanager.cpp \
     logic/database/sqldatabaseutils.cpp \
-    logic/dictionary/dictionarymetadata.cpp \
+    logic/dictionary/SourceMetadata.cpp \
     logic/dictionary/dictionarysource.cpp \
     logic/entry/definitionsset.cpp \
     logic/entry/entry.cpp \
@@ -191,7 +191,7 @@ HEADERS += \
     logic/database/sqldatabaseutils.h \
     logic/database/sqluserdatautils.h \
     logic/database/sqluserhistoryutils.h \
-    logic/dictionary/dictionarymetadata.h \
+    logic/dictionary/SourceMetadata.h \
     logic/dictionary/dictionarysource.h \
     logic/entry/definitionsset.h \
     logic/entry/entry.h \

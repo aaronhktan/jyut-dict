@@ -1,22 +1,22 @@
-#include "dictionarylistmodel.h"
+#include "sourcelistmodel.h"
 
 #include <iostream>
 
-DictionaryListModel::DictionaryListModel(QObject *parent)
+SourceListModel::SourceListModel(QObject *parent)
     : QAbstractListModel(parent)
 {
     _dictionaries = {};
 }
 
-void DictionaryListModel::setDictionaries(
-    std::vector<DictionaryMetadata> dictionaries)
+void SourceListModel::setDictionaries(
+    std::vector<SourceMetadata> dictionaries)
 {
     beginResetModel();
     _dictionaries = dictionaries;
     endResetModel();
 }
 
-bool DictionaryListModel::setData(const QModelIndex &index,
+bool SourceListModel::setData(const QModelIndex &index,
                                   const QVariant &value,
                                   int role)
 {
@@ -26,9 +26,9 @@ bool DictionaryListModel::setData(const QModelIndex &index,
 
     try {
         if (_dictionaries.size() >= index.row()) {
-            _dictionaries.at(index.row()) = value.value<DictionaryMetadata>();
+            _dictionaries.at(index.row()) = value.value<SourceMetadata>();
         } else {
-            _dictionaries.push_back(value.value<DictionaryMetadata>());
+            _dictionaries.push_back(value.value<SourceMetadata>());
         }
     } catch (std::exception &e) {
         std::cerr << e.what() << std::endl;
@@ -39,7 +39,7 @@ bool DictionaryListModel::setData(const QModelIndex &index,
     return true;
 }
 
-bool DictionaryListModel::removeRows(int row,
+bool SourceListModel::removeRows(int row,
                                      int count,
                                      const QModelIndex &parent)
 {
@@ -52,7 +52,7 @@ bool DictionaryListModel::removeRows(int row,
     return true;
 }
 
-QModelIndex DictionaryListModel::index(int row,
+QModelIndex SourceListModel::index(int row,
                                        int column,
                                        const QModelIndex &parent) const
 {
@@ -60,7 +60,7 @@ QModelIndex DictionaryListModel::index(int row,
                        column);
 }
 
-int DictionaryListModel::rowCount(const QModelIndex &parent) const
+int SourceListModel::rowCount(const QModelIndex &parent) const
 {
     if (!parent.isValid()) {
         return static_cast<int>(_dictionaries.size());
@@ -74,7 +74,7 @@ int DictionaryListModel::rowCount(const QModelIndex &parent) const
                             - static_cast<unsigned long>(parent.row()));
 }
 
-QVariant DictionaryListModel::data(const QModelIndex &index, int role) const
+QVariant SourceListModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
         return QVariant{};
@@ -92,7 +92,7 @@ QVariant DictionaryListModel::data(const QModelIndex &index, int role) const
     }
 }
 
-QVariant DictionaryListModel::headerData(int section, Qt::Orientation orientation,
+QVariant SourceListModel::headerData(int section, Qt::Orientation orientation,
                                          int role) const
 {
     if (role != Qt::DisplayRole) {

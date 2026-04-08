@@ -22,7 +22,6 @@ target_link_libraries(TestEntry PRIVATE Qt${QT_VERSION_MAJOR}::Test)
 target_include_directories(TestEntry PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../../)
 
 target_sources(TestEntry
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../dictionary/dictionarysource.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../entry/definitionsset.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../entry/entry.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/cantoneseutils.cpp
@@ -33,5 +32,6 @@ target_sources(TestEntry
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../sentence/sourcesentence.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../settings/settings.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../settings/settingsutils.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../source/sourceutils.cpp
 )
 

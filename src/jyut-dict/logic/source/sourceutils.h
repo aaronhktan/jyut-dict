@@ -1,5 +1,5 @@
-#ifndef DICTIONARYSOURCE_H
-#define DICTIONARYSOURCE_H
+#ifndef SOURCEUTILS_H
+#define SOURCEUTILS_H
 
 #include <QObject>
 
@@ -12,7 +12,7 @@
 // It should be populated upon startup by reading sources in the database,
 // and modified whenever sources are added or removed.
 
-namespace DictionarySourceUtils {
+namespace SourceUtils {
 
 extern std::unordered_map<std::string, std::string> name_to_short_name;
 
@@ -21,6 +21,6 @@ bool addSource(const std::string &sourcename,
                const std::string &shortsourcename);
 bool removeSource(const std::string &sourcename);
 
-}
+} // namespace SourceUtils
 
-#endif // DICTIONARYSOURCE_H
+#endif // SOURCEUTILS_H

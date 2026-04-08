@@ -1,13 +1,13 @@
 #include "definitionsset.h"
 
-#include "logic/dictionary/dictionarysource.h"
+#include "logic/source/sourceutils.h"
 
 #include <sstream>
 
 DefinitionsSet::DefinitionsSet(std::string source,
                                std::vector<Definition::Definition> definitions)
     : _source{source}
-    , _sourceShortString{DictionarySourceUtils::getSourceShortString(source)}
+    , _sourceShortString{SourceUtils::getSourceShortString(source)}
     , _definitions{definitions}
 {
 

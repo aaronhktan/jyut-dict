@@ -1,7 +1,7 @@
 #include "dictionarytab.h"
 
-#include "components/dictionarylist/dictionarylistview.h"
-#include "logic/dictionary/dictionarysource.h"
+#include "components/sourcelist/sourcelistview.h"
+#include "logic/source/sourceutils.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/utils/utils.h"
 #ifdef Q_OS_MAC
@@ -56,7 +56,7 @@ void DictionaryTab::setupUI()
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     _explanatory->setStyleSheet("QLabel { margin: 5px 0 5px 0; }");
 #endif
-    _list = new DictionaryListView{this};
+    _list = new SourceListView{this};
     _list->setFixedWidth(200);
     _add = new QPushButton{this};
     _findMore = new QPushButton{this};
@@ -102,7 +102,7 @@ void DictionaryTab::setupUI()
     connect(_list->selectionModel(),
             &QItemSelectionModel::currentChanged,
             this,
-            &DictionaryTab::setDictionaryMetadata);
+            &DictionaryTab::setSourceMetadata);
 
     connect(_add, &QPushButton::clicked, this, [=, this] {
         QFileDialog *_fileDialog = new QFileDialog{this};
@@ -169,9 +169,9 @@ void DictionaryTab::setStyle(bool use_dark) {
 #endif
 }
 
-void DictionaryTab::setDictionaryMetadata(const QModelIndex &index)
+void DictionaryTab::setSourceMetadata(const QModelIndex &index)
 {
-    DictionaryMetadata metadata = qvariant_cast<DictionaryMetadata>(
+    SourceMetadata metadata = qvariant_cast<SourceMetadata>(
         index.data());
     _description->setText(metadata.getDescription().c_str());
     _legal->setText(metadata.getLegal().c_str());
@@ -196,10 +196,10 @@ void DictionaryTab::clearDictionaryList()
 
 void DictionaryTab::populateDictionaryList()
 {
-    std::vector<DictionaryMetadata> sources;
+    std::vector<SourceMetadata> sources;
     _utils->readSources(sources);
-
-    for (std::vector<DictionaryMetadata>::size_type row = 0;
+    
+    for (std::vector<SourceMetadata>::size_type row = 0;
          row < sources.size();
          row++) {
         _list->model()->setData(_list->model()->index(static_cast<int>(row), 0),
@@ -249,7 +249,7 @@ void DictionaryTab::addDictionary(const QString &dictionaryFile)
     connect(_utils.get(),
             &SQLDatabaseUtils::conflictingDictionaryNamesExist,
             this,
-            [=, this](conflictingDictionaryMetadata dictionaries) {
+            [=, this](conflictingSourceMetadata dictionaries) {
 #ifdef Q_OS_LINUX
                 // Without this delay, a ghost dialog pops up.
                 // I think it's because the _dialog has not yet had time to
@@ -373,7 +373,7 @@ void DictionaryTab::forceAddDictionary(const QString &dictionaryFile)
                              /* overwriteConflictingDictionaries */ true);
 }
 
-void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
+void DictionaryTab::removeDictionary(SourceMetadata metadata)
 {
     _dialog = new QProgressDialog{"", QString(), 0, 0, this};
     _dialog->setWindowModality(Qt::ApplicationModal);
@@ -437,7 +437,7 @@ void DictionaryTab::removeDictionary(DictionaryMetadata metadata)
                     std::vector<std::pair<std::string, std::string>> sources;
                     _utils->readSources(sources);
                     for (const auto &source : sources) {
-                        DictionarySourceUtils::addSource(source.first, source.second);
+                        SourceUtils::addSource(source.first, source.second);
                     }
                 }
 
@@ -460,7 +460,7 @@ void DictionaryTab::populateDictionarySourceUtils() const
     std::vector<std::pair<std::string, std::string>> sources;
     _utils->readSources(sources);
     for (const auto &source : sources) {
-        DictionarySourceUtils::addSource(source.first,
+        SourceUtils::addSource(source.first,
                                          source.second);
     }
 }
