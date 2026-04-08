@@ -11,6 +11,7 @@
 #include "logic/utils/utils_windows.h"
 #endif
 
+#include <QStyleHints>
 #include <QTimer>
 
 EntryScrollAreaWidget::EntryScrollAreaWidget(
@@ -110,6 +111,19 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(
             &EntryContentWidget::searchQuery,
             this,
             &EntryScrollAreaWidget::searchQueryRequested);
+
+    connect(qApp->styleHints(),
+            &QStyleHints::colorSchemeChanged,
+            this,
+            [this](Qt::ColorScheme scheme) {
+                // This workaround with Qt::QueuedConnection is needed in order to
+                // get the palette _after_ the colour scheme has changed, rather
+                // than _before_.
+                QMetaObject::invokeMethod(
+                    this,
+                    [this] { setStyle(Utils::isDarkMode()); },
+                    Qt::QueuedConnection);
+            });
 }
 
 void EntryScrollAreaWidget::changeEvent(QEvent *event)

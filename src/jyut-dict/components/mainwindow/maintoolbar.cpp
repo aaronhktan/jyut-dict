@@ -13,6 +13,7 @@
 #include "logic/utils/utils_qt.h"
 
 #include <QGuiApplication>
+#include <QStyleHints>
 
 MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
                          std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
@@ -86,6 +87,13 @@ void MainToolBar::setupUI(void)
         }
     });
 
+    // On newer versions of macOS, QEvent::PaletteChange doesn't properly propagate.
+    // This is a workaround.
+    connect(qApp->styleHints(),
+            &QStyleHints::colorSchemeChanged,
+            this,
+            [this](Qt::ColorScheme scheme) { setStyle(Utils::isDarkMode()); });
+
     _searchBar->setFocus();
 }
 
@@ -95,7 +103,9 @@ void MainToolBar::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [=, this]() {
+            _paletteRecentlyChanged = false;
+        });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
