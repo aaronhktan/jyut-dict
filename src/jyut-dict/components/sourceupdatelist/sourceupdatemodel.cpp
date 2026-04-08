@@ -49,7 +49,7 @@ QVariant SourceUpdateModel::data(const QModelIndex &index, int role) const
             return QString::fromStdString(metadata.current.getVersion());
         }
         case kNewVersionColumn: {
-            return QString::fromStdString(metadata.newVersion);
+            return QString::fromStdString(metadata.available.versionNumber);
         }
         default: {
             return {};
@@ -88,6 +88,11 @@ QVariant SourceUpdateModel::data(const QModelIndex &index, int role) const
 
     if (role == Qt::TextAlignmentRole && index.column() == kCheckColumn) {
         return Qt::AlignCenter;
+    }
+
+    if (role == SourceUpdateModel::UserRoles::kUpdateInfo) {
+        qDebug() << "returning variant for update info";
+        return QVariant::fromValue(&metadata.available);
     }
 
     return {};
@@ -138,7 +143,7 @@ QVariant SourceUpdateModel::headerData(int section,
 
     switch (section) {
     case kNameColumn:
-        return tr("Source Name");
+        return tr("Name");
     case kInstalledVersionColumn:
         return tr("Installed");
     case kNewVersionColumn:

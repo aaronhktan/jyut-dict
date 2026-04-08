@@ -334,7 +334,9 @@ bool SQLDatabaseUtils::readSources(
 bool SQLDatabaseUtils::readSources(std::vector<DictionaryMetadata> &sources)
 {
     QSqlQuery query{_manager->getDatabase()};
-    query.exec("SELECT sourcename, version, description, legal, link, other "
+    query.setForwardOnly(true);
+    query.exec("SELECT sourcename, version, description, legal, link, "
+               "  update_url, other "
                "FROM sources");
 
     if (query.lastError().isValid()) {

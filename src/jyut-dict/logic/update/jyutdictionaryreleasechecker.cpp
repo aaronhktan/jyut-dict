@@ -64,7 +64,7 @@ void JyutDictionaryReleaseChecker::checkForNewUpdate()
             &JyutDictionaryReleaseChecker::parseReply);
     _reply = _manager->get(_request);
     QTimer::singleShot(15000, this, [&]() {
-        emit foundUpdate(IUpdateChecker::AppUpdateAvailability{
+        emit foundUpdate(IUpdateChecker::AppManifestMetadata{
             .updateAvailable = false,
             .versionNumber = std::nullopt,
             .url = std::nullopt,
@@ -89,7 +89,7 @@ void JyutDictionaryReleaseChecker::parseReply(QNetworkReply *reply)
     bool updateAvailable;
     std::string url, versionNumber, description;
     if (parseJSON(content, updateAvailable, versionNumber, url, description)) {
-        emit foundUpdate(IUpdateChecker::AppUpdateAvailability{
+        emit foundUpdate(IUpdateChecker::AppManifestMetadata{
             .updateAvailable = updateAvailable,
             .versionNumber = versionNumber,
             .url = url,

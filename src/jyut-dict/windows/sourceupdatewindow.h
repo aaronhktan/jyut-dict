@@ -5,10 +5,14 @@
 
 #include <QWidget>
 
+#include <deque>
+
+class Downloader;
 class SQLDatabaseManager;
 class SQLDatabaseUtils;
 class SourceUpdateModel;
 
+class QLabel;
 class QPushButton;
 class QSettings;
 class QTableView;
@@ -18,7 +22,7 @@ class SourceUpdateWindow : public QWidget
 {
 public:
     explicit SourceUpdateWindow(
-        std::vector<IUpdateChecker::SourceUpdateAvailability> &a,
+        std::vector<IUpdateChecker::SourceManifestMetadata> &a,
         std::shared_ptr<SQLDatabaseManager> manager,
         QWidget *parent = nullptr);
 
@@ -41,8 +45,12 @@ private:
     QVBoxLayout *_layout;
 
     QTableView *_tableView;
+    QLabel *_description;
     QPushButton *_toggleAllButton;
-    QPushButton *_okButton;
+    QPushButton *_skipButton;
+    QPushButton *_downloadButton;
+
+    std::deque<Downloader *> _downloaders;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
     std::unique_ptr<SQLDatabaseUtils> _utils;

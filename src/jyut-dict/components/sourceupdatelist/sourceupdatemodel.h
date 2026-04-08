@@ -2,6 +2,7 @@
 #define SOURCEUPDATEMODEL_H
 
 #include "logic/dictionary/dictionarymetadata.h"
+#include "logic/update/iupdatechecker.h"
 
 #include <QAbstractTableModel>
 
@@ -13,8 +14,20 @@ public:
     struct MetadataWrapper
     {
         DictionaryMetadata current;
-        std::string newVersion;
+        IUpdateChecker::SourceManifestMetadata available;
         bool checked = true;
+    };
+
+    enum Columns {
+        kNameColumn = 0,
+        kInstalledVersionColumn = 1,
+        kNewVersionColumn = 2,
+        kCheckColumn = 3,
+        kNumColumns,
+    };
+
+    enum UserRoles {
+        kUpdateInfo = Qt::UserRole,
     };
 
     explicit SourceUpdateModel(std::vector<MetadataWrapper> &w,
@@ -30,14 +43,6 @@ public:
     QVariant headerData(int section,
                         Qt::Orientation orientation,
                         int role) const override;
-
-    enum Columns {
-        kNameColumn = 0,
-        kInstalledVersionColumn = 1,
-        kNewVersionColumn = 2,
-        kCheckColumn = 3,
-        kNumColumns,
-    };
 
 private:
     std::vector<MetadataWrapper> _metadata;

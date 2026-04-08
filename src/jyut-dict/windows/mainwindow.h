@@ -187,7 +187,7 @@ public slots:
                                std::optional<std::string> description,
                                bool showIfNoUpdate = false);
     void notifySourceUpdateAvailable(
-        std::vector<IUpdateChecker::SourceUpdateAvailability> &a,
+        std::vector<IUpdateChecker::SourceManifestMetadata> &a,
         bool showIfNoUpdate = false);
     void notifyDatabaseMigration(void);
     void finishedDatabaseMigration(bool success);

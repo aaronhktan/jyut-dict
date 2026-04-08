@@ -79,7 +79,7 @@ void SourceReleaseChecker::checkForNewUpdate()
 
 bool SourceReleaseChecker::parseJSON(
     const std::string &data,
-    std::unordered_map<std::string, IUpdateChecker::SourceUpdateAvailability>
+    std::unordered_map<std::string, IUpdateChecker::SourceManifestMetadata>
         &availability)
 {
     QJsonDocument doc = QJsonDocument::fromJson(
@@ -204,7 +204,6 @@ bool SourceReleaseChecker::parseJSON(
         QJsonValue desc = sourceObject.value("description");
 
         availability[sourceName] = {
-            .updateAvailable = true,
             .sourceName = sourceName,
             .versionNumber = webVersionNumber,
             .url = updateLink,
@@ -225,7 +224,7 @@ void SourceReleaseChecker::parseReply(QNetworkReply *reply)
     }
 
     bool updateAvailable;
-    std::unordered_map<std::string, IUpdateChecker::SourceUpdateAvailability>
+    std::unordered_map<std::string, IUpdateChecker::SourceManifestMetadata>
         updates;
     if (parseJSON(content, updates)) {
         for (const auto &[s, u] : updates) {

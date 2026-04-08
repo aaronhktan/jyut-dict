@@ -883,8 +883,7 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
 }
 
 void MainWindow::notifySourceUpdateAvailable(
-    std::vector<IUpdateChecker::SourceUpdateAvailability> &a,
-    bool showIfNoUpdate)
+    std::vector<IUpdateChecker::SourceManifestMetadata> &a, bool showIfNoUpdate)
 {
     if (_welcomeWindow || _databaseMigrationDialog || _updateAvailableWindow) {
         _dialogQueue.push_back([a, showIfNoUpdate, this]() mutable {
@@ -893,11 +892,7 @@ void MainWindow::notifySourceUpdateAvailable(
         return;
     }
 
-    if (std::any_of(a.begin(),
-                    a.end(),
-                    [](IUpdateChecker::SourceUpdateAvailability s) {
-                        return s.updateAvailable;
-                    })) {
+    if (!a.empty()) {
         _sourceUpdateWindow = new SourceUpdateWindow{a, _manager, this};
         _sourceUpdateWindow->show();
     } else if (showIfNoUpdate) {
@@ -1526,13 +1521,13 @@ void MainWindow::checkForUpdate(bool showProgress)
                     disconnect(_checker, nullptr, nullptr, nullptr);
 
                     if (!std::holds_alternative<
-                            IUpdateChecker::AppUpdateAvailability>(v)) {
+                            IUpdateChecker::AppManifestMetadata>(v)) {
                         std::cerr << "Jyut Dictionary Release Checker did not "
                                      "return correct type!"
                                   << std::endl;
                     } else {
-                        IUpdateChecker::AppUpdateAvailability a
-                            = std::get<IUpdateChecker::AppUpdateAvailability>(v);
+                        IUpdateChecker::AppManifestMetadata a
+                            = std::get<IUpdateChecker::AppManifestMetadata>(v);
                         notifyUpdateAvailable(a.updateAvailable,
                                               a.versionNumber,
                                               a.url,
@@ -1572,13 +1567,13 @@ void MainWindow::checkForUpdate(bool showProgress)
                     disconnect(_checker, nullptr, nullptr, nullptr);
 
                     if (!std::holds_alternative<
-                            IUpdateChecker::AppUpdateAvailability>(v)) {
+                            IUpdateChecker::AppManifestMetadata>(v)) {
                         std::cerr << "Jyut Dictionary Release Checker did not "
                                      "return correct type!"
                                   << std::endl;
                     } else {
-                        IUpdateChecker::AppUpdateAvailability a
-                            = std::get<IUpdateChecker::AppUpdateAvailability>(v);
+                        IUpdateChecker::AppManifestMetadata a
+                            = std::get<IUpdateChecker::AppManifestMetadata>(v);
 
                         notifyUpdateAvailable(a.updateAvailable,
                                               a.versionNumber,
@@ -1609,15 +1604,16 @@ void MainWindow::checkForSourceUpdate(bool showProgress)
 
                     disconnect(_sourceChecker, nullptr, nullptr, nullptr);
 
-                    if (!std::holds_alternative<std::vector<
-                            IUpdateChecker::SourceUpdateAvailability>>(v)) {
+                    if (!std::holds_alternative<
+                            std::vector<IUpdateChecker::SourceManifestMetadata>>(
+                            v)) {
                         std::cerr << "Source Release Checker did not "
                                      "return correct type!"
                                   << std::endl;
                     } else {
-                        std::vector<IUpdateChecker::SourceUpdateAvailability> a
+                        std::vector<IUpdateChecker::SourceManifestMetadata> a
                             = std::get<std::vector<
-                                IUpdateChecker::SourceUpdateAvailability>>(v);
+                                IUpdateChecker::SourceManifestMetadata>>(v);
                         notifySourceUpdateAvailable(a,
                                                     /* showIfNoUpdate = */ true);
                     }
@@ -1655,15 +1651,16 @@ void MainWindow::checkForSourceUpdate(bool showProgress)
                 [&](const IUpdateChecker::UpdateVariant &v) {
                     disconnect(_sourceChecker, nullptr, nullptr, nullptr);
 
-                    if (!std::holds_alternative<std::vector<
-                            IUpdateChecker::SourceUpdateAvailability>>(v)) {
+                    if (!std::holds_alternative<
+                            std::vector<IUpdateChecker::SourceManifestMetadata>>(
+                            v)) {
                         std::cerr << "Source Release Checker did not "
                                      "return correct type!"
                                   << std::endl;
                     } else {
-                        std::vector<IUpdateChecker::SourceUpdateAvailability> a
+                        std::vector<IUpdateChecker::SourceManifestMetadata> a
                             = std::get<std::vector<
-                                IUpdateChecker::SourceUpdateAvailability>>(v);
+                                IUpdateChecker::SourceManifestMetadata>>(v);
                         notifySourceUpdateAvailable(a,
                                                     /* showIfNoUpdate = */ false);
                     }

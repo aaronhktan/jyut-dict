@@ -3,6 +3,7 @@
 #include "components/sourceupdatelist/sourceupdatemodel.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqldatabaseutils.h"
+#include "logic/download/downloader.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
@@ -12,18 +13,20 @@
 #elif defined(Q_OS_WIN)
 #include "logic/utils/utils_windows.h"
 #endif
-#include "logic/utils/utils_qt.h"
 
 #include <QAbstractItemView>
 #include <QGuiApplication>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QKeyEvent>
+#include <QLabel>
 #include <QPaintEvent>
 #include <QPainter>
 #include <QPushButton>
+#include <QStandardPaths>
 #include <QTableView>
 #include <QTimer>
+#include <QUuid>
 #include <QVBoxLayout>
 
 #include <ranges>
@@ -31,6 +34,7 @@
 namespace {
 constexpr auto kWindowWidth = 600;
 constexpr auto kWindowHeight = 400;
+constexpr auto kMaxSimultaneousDownloads = 3;
 
 // Without overriding the paintEvent of QTableView, there is a small vertical
 // gutter in the rightmost cell of each row. This subclass fixes the issue.
@@ -48,11 +52,11 @@ protected:
             return;
         }
 
-        QPainter painter(viewport());
-        const QColor lineColor = palette().color(QPalette::Base);
-        const QRect clip = event->rect();
+        QPainter painter{viewport()};
+        const QColor lineColor{palette().color(QPalette::Base)};
+        const QRect clip{event->rect()};
 
-        // Draw vertical separators at the same x positions the header uses.
+        // At the right border of each column except the last, draw a vertical line
         for (int col = 0; col < model()->columnCount() - 1; ++col) {
             if (isColumnHidden(col)) {
                 continue;
@@ -62,7 +66,7 @@ protected:
             painter.fillRect(QRect{x, clip.top(), 1, clip.height()}, lineColor);
         }
 
-        // Draw horizontal row separators too.
+        // At the bottom border of each row, draw a horizontal grid line
         int firstRow = rowAt(clip.top());
         if (firstRow < 0) {
             firstRow = 0;
@@ -73,7 +77,7 @@ protected:
             lastRow = model()->rowCount() - 1;
         }
 
-        for (int row = firstRow; row < lastRow; ++row) {
+        for (int row = firstRow; row <= lastRow; ++row) {
             if (isRowHidden(row)) {
                 continue;
             }
@@ -86,7 +90,7 @@ protected:
 } // namespace
 
 SourceUpdateWindow::SourceUpdateWindow(
-    std::vector<IUpdateChecker::SourceUpdateAvailability> &a,
+    std::vector<IUpdateChecker::SourceManifestMetadata> &a,
     std::shared_ptr<SQLDatabaseManager> manager,
     QWidget *parent)
     : QWidget{parent, Qt::Window}
@@ -107,7 +111,7 @@ SourceUpdateWindow::SourceUpdateWindow(
     for (const auto &s : a) {
         const std::string &name = s.sourceName;
         updateMetadata.emplace_back(sourceMetadata.at(name),
-                                    s.versionNumber,
+                                    s,
                                     /* checked */ true);
     }
 
@@ -157,10 +161,10 @@ void SourceUpdateWindow::setupUI()
     setFixedSize(kWindowWidth, kWindowHeight);
 
     _widget = new QWidget{this};
-    _tableView = new SourceUpdateTableView{_widget};
-    _toggleAllButton = new QPushButton{_widget};
-    _okButton = new QPushButton{_widget};
 
+    _description = new QLabel{_widget};
+
+    _tableView = new SourceUpdateTableView{_widget};
     _tableView->setModel(_model);
     _tableView->setAlternatingRowColors(true);
     _tableView->setSelectionMode(QAbstractItemView::NoSelection);
@@ -184,19 +188,28 @@ void SourceUpdateWindow::setupUI()
     _tableView->horizontalHeader()->setFocusPolicy(Qt::NoFocus);
     _tableView->verticalHeader()->setVisible(false);
 
+    _toggleAllButton = new QPushButton{_widget};
+
+    _skipButton = new QPushButton{_widget};
+    _downloadButton = new QPushButton{_widget};
+    _downloadButton->setDefault(true);
+
     QHBoxLayout *buttonLayout = new QHBoxLayout;
     buttonLayout->setContentsMargins(0, 0, 0, 0);
-    buttonLayout->addWidget(_toggleAllButton);
-    buttonLayout->addWidget(_okButton);
+    buttonLayout->addWidget(_skipButton);
+    buttonLayout->addWidget(_downloadButton);
 
     QVBoxLayout *widgetLayout = new QVBoxLayout{_widget};
-    widgetLayout->setContentsMargins(0, 0, 0, 0);
+    widgetLayout->setContentsMargins(0, 11, 0, 0);
+    widgetLayout->setSpacing(2);
     widgetLayout->addWidget(_tableView);
-    widgetLayout->addLayout(buttonLayout);
+    widgetLayout->addWidget(_toggleAllButton);
 
     _layout = new QVBoxLayout{this};
-    _layout->setSpacing(5);
+    _layout->setContentsMargins(22, 22, 22, 22);
+    _layout->addWidget(_description);
     _layout->addWidget(_widget);
+    _layout->addLayout(buttonLayout);
 
     connect(_tableView,
             &QTableView::clicked,
@@ -206,7 +219,8 @@ void SourceUpdateWindow::setupUI()
             &QPushButton::clicked,
             this,
             &SourceUpdateWindow::toggleAllRows);
-    connect(_okButton,
+    connect(_skipButton, &QPushButton::clicked, this, [this]() { close(); });
+    connect(_downloadButton,
             &QPushButton::clicked,
             this,
             &SourceUpdateWindow::updateSources);
@@ -222,8 +236,14 @@ void SourceUpdateWindow::translateUI()
 {
     // Set property so styling automatically changes
     setProperty("isHan", Settings::isCurrentLocaleHan());
+    _description->setText(
+        _model->rowCount() > 1
+            ? tr(
+                "New versions of your dictionaries are available for download!")
+            : tr("A new version of a dictionary is available for download!"));
     updateToggleAllButtonText();
-    _okButton->setText(tr("OK"));
+    _skipButton->setText(tr("Skip"));
+    _downloadButton->setText(tr("Download Updates..."));
     setWindowTitle(tr("Dictionary Updates"));
 }
 
@@ -380,7 +400,57 @@ void SourceUpdateWindow::updateToggleAllButtonText()
 
 void SourceUpdateWindow::updateSources()
 {
-    // TODO: implement
+    // Get information for checked items
+    std::vector<const IUpdateChecker::SourceManifestMetadata *> sourcesToUpdate;
+    for (const auto row : std::views::iota(0, _model->rowCount())) {
+        const QModelIndex checkboxIndex
+            = _model->index(row, SourceUpdateModel::Columns::kCheckColumn);
+        const Qt::CheckState checkState = static_cast<Qt::CheckState>(
+            _model->data(checkboxIndex, Qt::CheckStateRole).toInt());
+
+        if (checkState == Qt::Checked) {
+            const QModelIndex genericIndex = _model->index(row, 0);
+            auto x = _model->data(genericIndex,
+                                  SourceUpdateModel::UserRoles::kUpdateInfo);
+            qDebug() << x.canConvert<
+                const IUpdateChecker::SourceManifestMetadata *>();
+            sourcesToUpdate.emplace_back(
+                x.value<const IUpdateChecker::SourceManifestMetadata *>());
+        }
+    }
+
+    _downloaders.clear();
+    for (const auto s : sourcesToUpdate) {
+        QString outPath = QStandardPaths::standardLocations(
+                              QStandardPaths::TempLocation)
+                              .at(0)
+                          + "/"
+                          + QUuid::createUuid().toString(QUuid::WithoutBraces);
+        _downloaders.emplace_back(
+            new Downloader{QUrl{QString::fromStdString(s->url)}, outPath, this});
+        connect(_downloaders.back(),
+                &Downloader::downloaded,
+                this,
+                [this](QString outputPath) {
+                    if (!_downloaders.empty()) {
+                        Downloader *front = _downloaders.front();
+                        _downloaders.pop_front();
+                        front->startDownload();
+                    }
+                });
+    }
+
+    for (int i = 0; i < kMaxSimultaneousDownloads; ++i) {
+        if (!_downloaders.empty()) {
+            Downloader *front = _downloaders.front();
+            _downloaders.pop_front();
+            front->startDownload();
+        } else {
+            break;
+        }
+    }
+
+    // TODO: Merge downloaded dictionaries with the existing codebase
 }
 
 void SourceUpdateWindow::paintWithApplicationState(Qt::ApplicationState state)

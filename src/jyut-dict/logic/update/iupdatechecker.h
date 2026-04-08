@@ -11,7 +11,7 @@
 class IUpdateChecker
 {
 public:
-    struct AppUpdateAvailability
+    struct AppManifestMetadata
     {
         bool updateAvailable;
         std::optional<std::string> versionNumber;
@@ -19,17 +19,16 @@ public:
         std::optional<std::string> description;
     };
 
-    struct SourceUpdateAvailability
+    struct SourceManifestMetadata
     {
-        bool updateAvailable;
         std::string sourceName;
         std::string versionNumber;
-        std::optional<std::string> url;
+        std::string url;
         std::optional<std::string> description;
     };
 
-    using UpdateVariant = std::variant<AppUpdateAvailability,
-                                       std::vector<SourceUpdateAvailability>>;
+    using UpdateVariant
+        = std::variant<AppManifestMetadata, std::vector<SourceManifestMetadata>>;
 
     virtual void checkForNewUpdate(void) = 0;
 
@@ -38,5 +37,7 @@ public:
 signals:
     virtual void foundUpdate(const UpdateVariant &v) = 0;
 };
+
+Q_DECLARE_METATYPE(const IUpdateChecker::SourceManifestMetadata *)
 
 #endif // IUPDATECHECKER_H

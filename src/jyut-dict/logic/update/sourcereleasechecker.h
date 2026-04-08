@@ -23,7 +23,7 @@ public:
 private:
     bool parseJSON(
         const std::string &data,
-        std::unordered_map<std::string, IUpdateChecker::SourceUpdateAvailability>
+        std::unordered_map<std::string, IUpdateChecker::SourceManifestMetadata>
             &availability);
 
     QNetworkAccessManager *_networkManager;
@@ -34,7 +34,7 @@ private:
 
     std::unordered_map<std::string, DictionaryMetadata> _sourceMetadata;
     std::unordered_set<std::string> _sourceUpdateURLs;
-    std::vector<SourceUpdateAvailability> _updates;
+    std::vector<SourceManifestMetadata> _updates;
 
 public slots:
     void parseReply(QNetworkReply *request);
