@@ -14,6 +14,7 @@ class SourceUpdateModel;
 
 class QLabel;
 class QPushButton;
+class QProgressDialog;
 class QSettings;
 class QTableView;
 class QVBoxLayout;
@@ -51,6 +52,8 @@ private:
     QPushButton *_downloadButton;
 
     std::deque<Downloader *> _downloaders;
+    std::vector<std::string> _downloadedFiles;
+    QProgressDialog *_dialog;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
     std::unique_ptr<SQLDatabaseUtils> _utils;
@@ -59,6 +62,7 @@ private:
     bool _paletteRecentlyChanged = false;
 
 public slots:
+    void finishedAllSourceDownloads();
     void paintWithApplicationState(Qt::ApplicationState state);
 };
 

@@ -1,11 +1,13 @@
 #include "sourceupdatewindow.h"
 
 #include "components/sourceupdatelist/sourceupdatemodel.h"
+// #include "dialogs/downloadresultdialog.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqldatabaseutils.h"
 #include "logic/download/downloader.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/source/sourceutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined(Q_OS_LINUX)
@@ -22,12 +24,14 @@
 #include <QLabel>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QProgressDialog>
 #include <QPushButton>
 #include <QStandardPaths>
 #include <QTableView>
 #include <QTimer>
 #include <QUuid>
 #include <QVBoxLayout>
+#include <QtConcurrent/QtConcurrent>
 
 #include <ranges>
 
@@ -432,12 +436,22 @@ void SourceUpdateWindow::updateSources()
                 &Downloader::downloaded,
                 this,
                 [this](QString outputPath) {
-                    if (!_downloaders.empty()) {
+                    _downloadedFiles.emplace_back(outputPath.toStdString());
+                    if (_downloaders.empty()) {
+                        // We're done downloading!
+                        finishedAllSourceDownloads();
+                    } else {
                         Downloader *front = _downloaders.front();
                         _downloaders.pop_front();
                         front->startDownload();
                     }
                 });
+
+        connect(_downloaders.back(), &Downloader::error, this, [this](int err) {
+            // auto downloadResultDialog = new DownloadResultDialog{tr("Failed to download update for source"),
+            // "",
+            // this};
+        });
     }
 
     for (int i = 0; i < kMaxSimultaneousDownloads; ++i) {
@@ -449,8 +463,97 @@ void SourceUpdateWindow::updateSources()
             break;
         }
     }
+}
 
-    // TODO: Merge downloaded dictionaries with the existing codebase
+void SourceUpdateWindow::finishedAllSourceDownloads()
+{
+    // All files should now be merged into the first item
+    SQLDatabaseUtils::mergeDatabases(_downloadedFiles);
+
+    _dialog = new QProgressDialog{"", QString(), 0, 0, this};
+    _dialog->setWindowModality(Qt::ApplicationModal);
+    _dialog->setMinimumSize(300, 75);
+    Qt::WindowFlags flags = _dialog->windowFlags() | Qt::CustomizeWindowHint;
+    flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
+               | Qt::WindowFullscreenButtonHint
+               | Qt::WindowContextHelpButtonHint);
+    _dialog->setWindowFlags(flags);
+    _dialog->setMinimumDuration(0);
+#ifdef Q_OS_WIN
+    _dialog->setWindowTitle(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                        Strings::PRODUCT_NAME));
+#elif defined(Q_OS_LINUX)
+    _dialog->setWindowTitle(" ");
+#endif
+    _dialog->setAttribute(Qt::WA_DeleteOnClose, true);
+
+    _dialog->setLabelText(tr("Removing old dictionary version..."));
+    _dialog->setRange(0, 0);
+    _dialog->setValue(0);
+
+    disconnect(_utils.get(), nullptr, nullptr, nullptr);
+
+    connect(_utils.get(), &SQLDatabaseUtils::deletingDefinitions, this, [&] {
+        _dialog->setLabelText(tr("Removing old dictionary definitions..."));
+    });
+
+    connect(_utils.get(),
+            &SQLDatabaseUtils::totalToDelete,
+            this,
+            [&](int numToDelete) {
+                _dialog->setRange(0, numToDelete + 1);
+                _dialog->setLabelText(
+                    QString{tr("Deleted entry 0 of %1")}.arg(numToDelete));
+            });
+
+    connect(_utils.get(),
+            &SQLDatabaseUtils::deletionProgress,
+            this,
+            [&](int deleted, int total) {
+                _dialog->setLabelText(
+                    QString{tr("Deleted entry %1 of %2")}.arg(deleted).arg(
+                        total));
+                _dialog->setValue(deleted);
+            });
+
+    connect(_utils.get(), &SQLDatabaseUtils::insertingSource, this, [&] {
+        _dialog->setValue(0);
+        _dialog->setRange(0, 0);
+        _dialog->setLabelText(tr("Adding new dictionary..."));
+    });
+
+    connect(_utils.get(), &SQLDatabaseUtils::insertingEntries, this, [&] {
+        _dialog->setLabelText(tr("Adding new entries..."));
+    });
+
+    connect(_utils.get(), &SQLDatabaseUtils::insertingDefinitions, this, [&] {
+        _dialog->setLabelText(tr("Adding new definitions..."));
+    });
+
+    connect(_utils.get(), &SQLDatabaseUtils::rebuildingIndexes, this, [&] {
+        _dialog->setLabelText(tr("Rebuilding search indexes..."));
+    });
+
+    connect(_utils.get(),
+            &SQLDatabaseUtils::finishedAddition,
+            this,
+            [&](bool success, QString reason, QString description) {
+                _dialog->reset();
+                std::vector<std::pair<std::string, std::string>> sources;
+                _utils->readSources(sources);
+                for (const auto &source : sources) {
+                    SourceUtils::addSource(source.first, source.second);
+                }
+
+                if (!success) {
+                    // failureMessage(reason, description);
+                }
+            });
+
+    (void) QtConcurrent::run(&SQLDatabaseUtils::addSource,
+                             _utils.get(),
+                             _downloadedFiles[0],
+                             /* overwriteConflictingDictionaries */ true);
 }
 
 void SourceUpdateWindow::paintWithApplicationState(Qt::ApplicationState state)

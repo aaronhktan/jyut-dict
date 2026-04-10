@@ -36,6 +36,8 @@ public:
     bool readSources(std::vector<std::pair<std::string, std::string>> &sources);
     bool readSources(std::vector<SourceMetadata> &sources);
 
+    static bool mergeDatabases(const std::vector<std::string> &paths);
+
 private:
     std::shared_ptr<SQLDatabaseManager> _manager;
 

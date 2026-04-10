@@ -1,5 +1,7 @@
 #include "sqldatabaseutils.h"
 
+#include <QFile>
+#include <QUuid>
 #include <QtSql>
 
 #include <chrono>
@@ -1158,4 +1160,250 @@ bool SQLDatabaseUtils::addSource(const std::string &filepath,
 
     query.exec("DETACH DATABASE db");
     return success;
+}
+
+bool SQLDatabaseUtils::mergeDatabases(const std::vector<std::string> &paths)
+{
+    if (paths.size() <= 1) {
+        return true;
+    }
+
+    const auto &outputDatabasePath = paths[0];
+    QFile databaseFile{QString::fromStdString(outputDatabasePath)};
+    if (!databaseFile.open(QIODevice::ReadWrite)) {
+        return false;
+    }
+
+    QString outputConnectionName{
+        QUuid::createUuid().toString(QUuid::WithoutBraces)};
+    QSqlDatabase::addDatabase("QSQLITE", outputConnectionName);
+    QSqlDatabase::database(outputConnectionName)
+        .setDatabaseName(QString::fromStdString(outputDatabasePath));
+    QSqlDatabase::database(outputConnectionName).open();
+    QSqlDatabase outputDatabase = QSqlDatabase::database(outputConnectionName);
+
+    // TODO: Check for user version number of database
+
+    QSqlQuery query{outputDatabase};
+    query.exec("DROP INDEX fk_entry_id_index");
+    query.exec("DROP INDEX entries_simplified_idx");
+    query.exec("DROP INDEX entries_jyutping_idx");
+    query.exec("DROP INDEX entries_pinyin_idx");
+    query.exec("DROP INDEX dcsl_fk_chinese_sentence_idx");
+    query.exec("DROP INDEX sentence_links_fk_non_chinese_idx");
+    query.exec("DELETE FROM definitions_fts");
+    query.exec("DELETE FROM entries_fts");
+
+    for (const auto &p : paths) {
+        if (p == outputDatabasePath) {
+            continue;
+        }
+
+        query.prepare("ATTACH DATABASE ? AS db");
+        query.addBindValue(p.c_str());
+        query.exec();
+
+        query.exec("PRAGMA db.user_version");
+        int version = -1;
+        while (query.next()) {
+            version = query.value(0).toInt();
+        }
+        if (version != CURRENT_DATABASE_VERSION) {
+            // TODO: Could probably update the database here instead of detaching
+            query.exec("DETACH DATABASE db");
+            return false;
+        }
+
+        query.exec("SAVEPOINT source_addition");
+        query.exec(
+            "SELECT sourcename, sourceshortname, version, description, legal, "
+            "  link, update_url, other "
+            "FROM db.sources");
+        int sourcenameIndex = query.record().indexOf("sourcename");
+        int sourceshortnameIndex = query.record().indexOf("sourceshortname");
+        int versionIndex = query.record().indexOf("version");
+        int descriptionIndex = query.record().indexOf("description");
+        int legalIndex = query.record().indexOf("legal");
+        int linkIndex = query.record().indexOf("link");
+        int updateURLIndex = query.record().indexOf("update_url");
+        int otherIndex = query.record().indexOf("other");
+
+        while (query.next()) {
+            QString sourcename{query.value(sourcenameIndex).toString()};
+            QString sourceshortname{
+                query.value(sourceshortnameIndex).toString()};
+            QString version{query.value(versionIndex).toString()};
+            QString description{query.value(descriptionIndex).toString()};
+            QString legal{query.value(legalIndex).toString()};
+            QString link{query.value(linkIndex).toString()};
+            QString updateURL{query.value(updateURLIndex).toString()};
+            QString other{query.value(otherIndex).toString()};
+
+            QSqlQuery insertQuery{outputDatabase};
+            insertQuery.prepare("INSERT INTO sources "
+                                "  (sourcename, sourceshortname, version, "
+                                "   description, legal, link, update_url, "
+                                "   other) "
+                                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            insertQuery.addBindValue(sourcename);
+            insertQuery.addBindValue(sourceshortname);
+            insertQuery.addBindValue(version);
+            insertQuery.addBindValue(description);
+            insertQuery.addBindValue(legal);
+            insertQuery.addBindValue(link);
+            insertQuery.addBindValue(updateURL);
+            insertQuery.addBindValue(other);
+
+            insertQuery.exec();
+            if (insertQuery.lastError().isValid()) {
+                QString error = insertQuery.lastError().text();
+                query.exec("DETACH DATABASE db");
+                query.exec("ROLLBACK");
+                // TODO: revisit failing at any dictionary failing
+                return false;
+            }
+        }
+
+        query.exec(
+            "INSERT INTO entries(traditional, simplified, pinyin, "
+            "  jyutping, frequency)"
+            "SELECT traditional, simplified, pinyin, jyutping, frequency "
+            "FROM db.entries");
+        query.exec(
+            "WITH definitions_tmp AS ( "
+            "  SELECT entries.traditional AS traditional, "
+            "    entries.simplified AS simplified, "
+            "    entries.pinyin AS pinyin, entries.jyutping AS jyutping, "
+            "    sources.sourcename AS sourcename, "
+            "    definitions.definition AS definition, "
+            "    definitions.label AS label "
+            "  FROM db.entries, db.definitions, db.sources "
+            "  WHERE db.definitions.fk_entry_id = db.entries.entry_id "
+            "  AND db.definitions.fk_source_id = db.sources.source_id "
+            ") "
+            " "
+            "INSERT INTO definitions(definition, label, fk_entry_id, "
+            "fk_source_id) "
+            "  SELECT d.definition, d.label, e.entry_id, s.source_id "
+            "  FROM definitions_tmp AS d, sources AS s, entries AS e "
+            "  WHERE d.sourcename = s.sourcename "
+            "    AND d.traditional = e.traditional "
+            "    AND d.simplified = e.simplified "
+            "    AND d.pinyin = e.pinyin "
+            "    AND d.jyutping = e.jyutping");
+        query.exec("INSERT INTO chinese_sentences "
+                   "  (chinese_sentence_id, traditional, simplified, pinyin, "
+                   "jyutping, "
+                   "    language) "
+                   "SELECT chinese_sentence_id, traditional, simplified, "
+                   "pinyin, jyutping,"
+                   "   language "
+                   "FROM db.chinese_sentences");
+        query.exec("INSERT INTO nonchinese_sentences( "
+                   "  non_chinese_sentence_id, sentence, language) "
+                   "SELECT non_chinese_sentence_id, sentence, language "
+                   "FROM db.nonchinese_sentences");
+        query.exec(
+            "WITH sentence_links_with_source AS ( "
+            "  SELECT sentence_links.fk_chinese_sentence_id as fk_csi, "
+            "    sentence_links.fk_non_chinese_sentence_id as fk_ncsi, "
+            "    sources.sourcename AS sourcename, "
+            "    sentence_links.direct as direct "
+            "  FROM db.sentence_links, db.sources "
+            "  WHERE db.sentence_links.fk_source_id = db.sources.source_id "
+            "), "
+            " "
+            "sentence_links_with_foreign_key AS ( "
+            "  SELECT traditional, simplified, pinyin, jyutping, language, "
+            "    fk_ncsi, direct, sourcename "
+            "  FROM sentence_links_with_source as slws, "
+            "    db.chinese_sentences AS cs "
+            "  WHERE slws.fk_csi = cs.chinese_sentence_id "
+            ") "
+            " "
+            "INSERT INTO sentence_links( "
+            "  fk_chinese_sentence_id, fk_non_chinese_sentence_id, "
+            "  fk_source_id, direct) "
+            "SELECT cs.chinese_sentence_id, slwfk.fk_ncsi, "
+            "  s.source_id, slwfk.direct "
+            "FROM sentence_links_with_foreign_key AS slwfk, sources as s, "
+            "  chinese_sentences AS cs "
+            "WHERE s.sourcename = slwfk.sourcename "
+            "  AND cs.traditional = slwfk.traditional "
+            "  AND cs.simplified = slwfk.simplified "
+            "  AND cs.pinyin = slwfk.pinyin "
+            "  AND cs.jyutping = slwfk.jyutping "
+            "  AND cs.language = slwfk.language ");
+        query.exec(
+            "WITH entry_and_definitions AS ( "
+            "  SELECT entries.traditional AS traditional, "
+            "    entries.simplified AS simplified, "
+            "    entries.pinyin AS pinyin, "
+            "    entries.jyutping AS jyutping, "
+            "    definitions.definition AS definition, "
+            "    definitions.label AS label, "
+            "    definitions.definition_id AS definition_id, "
+            "    sources.sourcename AS source "
+            "  FROM db.entries, db.definitions, db.sources "
+            "  WHERE db.definitions.fk_entry_id = db.entries.entry_id "
+            "    AND db.definitions.fk_source_id = db.sources.source_id "
+            "), "
+            " "
+            "defs_s_links_tmp AS ( "
+            "  SELECT "
+            "    cs.traditional AS sentence_traditional, "
+            "    cs.simplified AS sentence_simplified, "
+            "    cs.pinyin AS sentence_pinyin, "
+            "    cs.jyutping AS sentence_jyutping, "
+            "    cs.language AS sentence_language, "
+            "    ed.definition AS definition, "
+            "    ed.label AS label, "
+            "    ed.traditional AS traditional, "
+            "    ed.simplified AS simplified, "
+            "    ed.pinyin AS pinyin, "
+            "    ed.jyutping AS jyutping, "
+            "    ed.source AS source "
+            "  FROM db.definitions_chinese_sentences_links AS dsl, "
+            "    db.chinese_sentences AS cs, "
+            "    entry_and_definitions AS ed "
+            "  WHERE dsl.fk_definition_id = ed.definition_id "
+            "    AND dsl.fk_chinese_sentence_id = cs.chinese_sentence_id "
+            "), "
+            " "
+            "new_entry_and_definitions AS ( "
+            "  SELECT entries.traditional AS traditional, "
+            "    entries.simplified AS simplified, "
+            "    entries.pinyin AS pinyin, "
+            "    entries.jyutping AS jyutping, "
+            "    definitions.definition AS definition, "
+            "    definitions.label AS label, "
+            "    definitions.definition_id AS definition_id, "
+            "    sources.sourcename AS source "
+            "  FROM entries, definitions, sources "
+            "  WHERE definitions.fk_entry_id = entries.entry_id "
+            "    AND definitions.fk_source_id = sources.source_id "
+            ") "
+            " "
+            "INSERT INTO definitions_chinese_sentences_links( "
+            "  fk_definition_id, fk_chinese_sentence_id) "
+            "SELECT ned.definition_id, cs.chinese_sentence_id "
+            "FROM defs_s_links_tmp AS dsl, "
+            "  new_entry_and_definitions AS ned, "
+            "  chinese_sentences AS cs "
+            "WHERE dsl.sentence_traditional = cs.traditional "
+            "  AND dsl.sentence_simplified = cs.simplified "
+            "  AND dsl.sentence_pinyin = cs.pinyin "
+            "  AND dsl.sentence_jyutping = cs.jyutping "
+            "  AND dsl.sentence_language = cs.language "
+            "  AND dsl.definition = ned.definition "
+            "  AND dsl.label = ned.label "
+            "  AND dsl.traditional = ned.traditional "
+            "  AND dsl.simplified = ned.simplified "
+            "  AND dsl.pinyin = ned.pinyin "
+            "  AND dsl.jyutping = ned.jyutping "
+            "  AND dsl.source = ned.source");
+        query.exec("RELEASE source_addition");
+        query.exec("DETACH DATABASE db");
+    }
+    return true;
 }
