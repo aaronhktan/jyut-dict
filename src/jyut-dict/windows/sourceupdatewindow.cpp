@@ -99,12 +99,13 @@ SourceUpdateWindow::SourceUpdateWindow(
     QWidget *parent)
     : QWidget{parent, Qt::Window}
     , _manager{manager}
-    , _utils{new SQLDatabaseUtils{manager}}
+    , _utils{new SQLDatabaseUtils}
     , _settings{Settings::getSettings()}
 {
     // Get list of existing sources
     std::vector<SourceMetadata> sources;
-    _utils->readSources(sources);
+    QSqlDatabase db = _manager->getDatabase();
+    _utils->readSources(db, sources);
     std::unordered_map<std::string, SourceMetadata> sourceMetadata;
     for (const auto &s : sources) {
         sourceMetadata[s.getName()] = s;
@@ -468,7 +469,7 @@ void SourceUpdateWindow::updateSources()
 void SourceUpdateWindow::finishedAllSourceDownloads()
 {
     // All files should now be merged into the first item
-    SQLDatabaseUtils::mergeDatabases(_downloadedFiles);
+    _utils->mergeDatabases(_downloadedFiles);
 
     _dialog = new QProgressDialog{"", QString(), 0, 0, this};
     _dialog->setWindowModality(Qt::ApplicationModal);
@@ -540,7 +541,8 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
             [&](bool success, QString reason, QString description) {
                 _dialog->reset();
                 std::vector<std::pair<std::string, std::string>> sources;
-                _utils->readSources(sources);
+                QSqlDatabase db = _manager->getDatabase();
+                _utils->readSources(db, sources);
                 for (const auto &source : sources) {
                     SourceUtils::addSource(source.first, source.second);
                 }
@@ -550,14 +552,17 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
                 }
             });
 
-    (void) QtConcurrent::run(&SQLDatabaseUtils::addSource,
-                             _utils.get(),
-                             _downloadedFiles[0],
-                             /* overwriteConflictingDictionaries */ true);
+    std::ignore = QtConcurrent::run([this]() {
+        QSqlDatabase db = _manager->getDatabase();
+        _utils->addSource(db,
+                          _downloadedFiles[0],
+                          _manager,
+                          /* overwriteConflictingDictionaries */ true);
+    });
 }
 
-void SourceUpdateWindow::paintWithApplicationState(Qt::ApplicationState state)
+void SourceUpdateWindow::paintWithApplicationState(
+    [[maybe_unused]] Qt::ApplicationState state)
 {
-    (void) (state);
     setStyle(Utils::isDarkMode());
 }

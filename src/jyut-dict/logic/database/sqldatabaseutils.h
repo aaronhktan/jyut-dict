@@ -11,6 +11,8 @@
 #include <string>
 #include <unordered_map>
 
+class QSqlDatabase;
+
 // The SQLDatabaseUtils class has functions that read and write from the
 // database. This is differentiated from the SQLDatabaseManager class,
 // which is only responsible for opening and closing a connection to a database.
@@ -23,48 +25,51 @@ class SQLDatabaseUtils : public QObject
 {
 Q_OBJECT
 public:
-    SQLDatabaseUtils(std::shared_ptr<SQLDatabaseManager> manager);
-
-    bool updateDatabase(void);
+    bool updateDatabase(QSqlDatabase &db);
 
     // Note: when adding or removing sources, make sure to update the map in
     // DictionarySourceUtils!
-    bool removeSource(const std::string &source, bool skipCleanup = false);
-    bool addSource(const std::string &filepath,
+    bool removeSource(QSqlDatabase &db,
+                      const std::string &source,
+                      const std::shared_ptr<SQLDatabaseManager> &manager
+                      = nullptr,
+                      bool skipCleanup = false);
+    bool addSource(QSqlDatabase &db,
+                   const std::string &filepath,
+                   const std::shared_ptr<SQLDatabaseManager> &manager = nullptr,
                    bool overwriteConflictingSource = false);
 
-    bool readSources(std::vector<std::pair<std::string, std::string>> &sources);
-    bool readSources(std::vector<SourceMetadata> &sources);
+    bool readSources(QSqlDatabase &db,
+                     std::vector<std::pair<std::string, std::string>> &sources);
+    bool readSources(QSqlDatabase &db, std::vector<SourceMetadata> &sources);
 
-    static bool mergeDatabases(const std::vector<std::string> &paths);
+    bool mergeDatabases(const std::vector<std::string> &paths);
 
 private:
-    std::shared_ptr<SQLDatabaseManager> _manager;
+    bool migrateDatabaseFromOneToTwo(QSqlDatabase &db);
+    bool migrateDatabaseFromTwoToThree(QSqlDatabase &db);
+    bool migrateDatabaseFromThreeToFour(QSqlDatabase &db);
 
-    bool backupDatabase(void);
-
-    bool migrateDatabaseFromOneToTwo(void);
-    bool migrateDatabaseFromTwoToThree(void);
-    bool migrateDatabaseFromThreeToFour(void);
-
-    bool deleteSourceFromDatabase(const std::string &source);
-    bool removeDefinitionsFromDatabase(void);
-    bool removeSentencesFromDatabase(void);
+    bool deleteSourceFromDatabase(QSqlDatabase &db, const std::string &source);
+    bool removeDefinitionsFromDatabase(QSqlDatabase &db);
+    bool removeSentencesFromDatabase(QSqlDatabase &db);
     // Note to callers: There CANNOT be a transaction running when this method
     // is called! It does PRAGMA foreign_keys = ON, which is a no-op inside
     // a transaction.
     // If skipCleanup is set to true, the caller MUST call rebuildIndices()
     // after this method returns if indices are desired.
-    bool removeSources(std::span<const std::string> sources,
+    bool removeSources(QSqlDatabase &db,
+                       std::span<const std::string> sources,
                        bool skipCleanup = false);
 
     std::pair<bool, std::string> insertSourcesIntoDatabase(
+        QSqlDatabase &db,
         std::unordered_map<std::string, std::string> old_source_ids);
-    bool addDefinitionSource(void);
-    bool addSentenceSource(void);
+    bool addDefinitionSource(QSqlDatabase &db);
+    bool addSentenceSource(QSqlDatabase &db);
 
-    bool dropIndices(void);
-    bool rebuildIndices(void);
+    bool dropIndices(QSqlDatabase &db);
+    bool rebuildIndices(QSqlDatabase &db);
 
 signals:
     void deletingDefinitions();

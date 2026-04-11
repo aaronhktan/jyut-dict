@@ -24,12 +24,11 @@
 
 DictionaryTab::DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
                              QWidget *parent)
-    : QWidget{parent},
-    _manager{manager}
+    : QWidget{parent}
+    , _manager{manager}
+    , _utils{new SQLDatabaseUtils}
 {
     setObjectName("DictionaryTab");
-
-    _utils = std::make_unique<SQLDatabaseUtils>(_manager);
 
     setupUI();
     translateUI();
@@ -197,10 +196,10 @@ void DictionaryTab::clearDictionaryList()
 void DictionaryTab::populateDictionaryList()
 {
     std::vector<SourceMetadata> sources;
-    _utils->readSources(sources);
-    
-    for (std::vector<SourceMetadata>::size_type row = 0;
-         row < sources.size();
+    QSqlDatabase db = _manager->getDatabase();
+    _utils->readSources(db, sources);
+
+    for (std::vector<SourceMetadata>::size_type row = 0; row < sources.size();
          row++) {
         _list->model()->setData(_list->model()->index(static_cast<int>(row), 0),
                                 QVariant::fromValue(sources.at(row)));
@@ -281,10 +280,13 @@ void DictionaryTab::addDictionary(const QString &dictionaryFile)
                 }
             });
 
-    (void) QtConcurrent::run(&SQLDatabaseUtils::addSource,
-                             _utils.get(),
-                             dictionaryFile.toStdString(),
-                             /* overwriteConflictingDictionaries */ false);
+    std::ignore = QtConcurrent::run([this, dictionaryFile]() {
+        QSqlDatabase db = _manager->getDatabase();
+        _utils->addSource(db,
+                          dictionaryFile.toStdString(),
+                          _manager,
+                          /* overwriteConflictingDictionaries */ false);
+    });
 }
 
 void DictionaryTab::forceAddDictionary(const QString &dictionaryFile)
@@ -367,10 +369,13 @@ void DictionaryTab::forceAddDictionary(const QString &dictionaryFile)
                 }
             });
 
-    (void) QtConcurrent::run(&SQLDatabaseUtils::addSource,
-                             _utils.get(),
-                             dictionaryFile.toStdString(),
-                             /* overwriteConflictingDictionaries */ true);
+    std::ignore = QtConcurrent::run([this, dictionaryFile]() {
+        QSqlDatabase db = _manager->getDatabase();
+        _utils->addSource(db,
+                          dictionaryFile.toStdString(),
+                          _manager,
+                          /* overwriteConflictingDictionaries */ true);
+    });
 }
 
 void DictionaryTab::removeDictionary(SourceMetadata metadata)
@@ -435,7 +440,8 @@ void DictionaryTab::removeDictionary(SourceMetadata metadata)
                 _dialog->setLabelText(success ? tr("Done!") : tr("Failed!"));
                 if (success) {
                     std::vector<std::pair<std::string, std::string>> sources;
-                    _utils->readSources(sources);
+                    QSqlDatabase db = _manager->getDatabase();
+                    _utils->readSources(db, sources);
                     for (const auto &source : sources) {
                         SourceUtils::addSource(source.first, source.second);
                     }
@@ -449,16 +455,20 @@ void DictionaryTab::removeDictionary(SourceMetadata metadata)
                 });
             });
 
-    (void) QtConcurrent::run(&SQLDatabaseUtils::removeSource,
-                             _utils.get(),
+    (void) QtConcurrent::run([this, metadata]() {
+        QSqlDatabase db = _manager->getDatabase();
+        _utils->removeSource(db,
                              metadata.getName(),
+                             _manager,
                              /* skipCleanup */ false);
+    });
 }
 
 void DictionaryTab::populateDictionarySourceUtils() const
 {
     std::vector<std::pair<std::string, std::string>> sources;
-    _utils->readSources(sources);
+    QSqlDatabase db = _manager->getDatabase();
+    _utils->readSources(db, sources);
     for (const auto &source : sources) {
         SourceUtils::addSource(source.first,
                                          source.second);

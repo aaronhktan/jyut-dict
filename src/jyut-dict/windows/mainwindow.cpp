@@ -82,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _settings->endArray();
 
     // Connect signals to tell the user that database migration has occurred
-    _utils = std::make_unique<SQLDatabaseUtils>(_manager);
+    _utils = std::make_unique<SQLDatabaseUtils>();
     connect(_utils.get(), &SQLDatabaseUtils::migratingDatabase, this, [&]() {
         _databaseMigrating = true;
         notifyDatabaseMigration();
@@ -96,8 +96,9 @@ MainWindow::MainWindow(QWidget *parent) :
             });
 
     // Populate global source table
+    QSqlDatabase db = _manager->getDatabase();
     std::vector<std::pair<std::string, std::string>> sources;
-    _utils->readSources(sources);
+    _utils->readSources(db, sources);
     for (const auto &source : sources) {
         SourceUtils::addSource(source.first, source.second);
     }
@@ -221,8 +222,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Perform database migration if needed
     QTimer::singleShot(1000, this, [&]() {
-        std::ignore = QtConcurrent::run(&SQLDatabaseUtils::updateDatabase,
-                                        _utils.get());
+        std::ignore = QtConcurrent::run([this]() {
+            QSqlDatabase dictionaryDB = _manager->getDatabase();
+            _utils->updateDatabase(dictionaryDB);
+        });
     });
 }
 

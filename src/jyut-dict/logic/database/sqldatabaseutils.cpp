@@ -7,22 +7,12 @@
 #include <chrono>
 #include <thread>
 
-SQLDatabaseUtils::SQLDatabaseUtils(std::shared_ptr<SQLDatabaseManager> manager)
-{
-    _manager = manager;
-}
-
-bool SQLDatabaseUtils::backupDatabase(void)
-{
-    return _manager->backupDictionaryDatabase();
-}
-
 // Database differences from version 1 to version 2:
 // - Added chinese_sentences, nonchinese_sentences, and sentence_links tables
 //   to properly support showing sentences in the GUI.
-bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(void)
+bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(QSqlDatabase &db)
 {
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
 
     query.exec(
         "CREATE TABLE IF NOT EXISTS chinese_sentences( "
@@ -65,9 +55,9 @@ bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(void)
 // - Added label to definitions table, to display parts of speech or other label
 // - Added fk_entry_id to definitions_fts for faster lookup
 // - Added unique constraint on sentence links
-bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(void)
+bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(QSqlDatabase &db)
 {
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
 
     // Add new definitions->chinese_sentence link table
     query.exec(
@@ -216,9 +206,9 @@ bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(void)
 // Database differences from version 3 to version 4:
 // - Added indexes on simplified, jyutping, and pinyin
 // - Added indexes on sentence links
-bool SQLDatabaseUtils::migrateDatabaseFromThreeToFour(void)
+bool SQLDatabaseUtils::migrateDatabaseFromThreeToFour(QSqlDatabase &db)
 {
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
 
     query.exec("CREATE INDEX IF NOT EXISTS entries_simplified_idx ON "
                "entries(simplified);");
@@ -250,9 +240,9 @@ bool SQLDatabaseUtils::migrateDatabaseFromThreeToFour(void)
 }
 
 // Update the database to whatever the current version is.
-bool SQLDatabaseUtils::updateDatabase(void)
+bool SQLDatabaseUtils::updateDatabase(QSqlDatabase &db)
 {
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
 
     query.exec("PRAGMA user_version");
     int version = -1;
@@ -268,19 +258,19 @@ bool SQLDatabaseUtils::updateDatabase(void)
         case -1:
             [[fallthrough]];
         case 1:
-            if (!migrateDatabaseFromOneToTwo()) {
+            if (!migrateDatabaseFromOneToTwo(db)) {
                 success = false;
                 break;
             }
             [[fallthrough]];
         case 2:
-            if (!migrateDatabaseFromTwoToThree()) {
+            if (!migrateDatabaseFromTwoToThree(db)) {
                 success = false;
                 break;
             }
             [[fallthrough]];
         case 3:
-            if (!migrateDatabaseFromThreeToFour()) {
+            if (!migrateDatabaseFromThreeToFour(db)) {
                 success = false;
                 break;
             }
@@ -308,9 +298,9 @@ bool SQLDatabaseUtils::updateDatabase(void)
 // Reads a mapping of sourcename / sourceshortname from the database
 // so they can later be converted between the two.
 bool SQLDatabaseUtils::readSources(
-    std::vector<std::pair<std::string, std::string>> &sources)
+    QSqlDatabase &db, std::vector<std::pair<std::string, std::string>> &sources)
 {
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
     query.exec("SELECT sourcename, sourceshortname FROM sources");
 
     if (query.lastError().isValid()) {
@@ -333,9 +323,10 @@ bool SQLDatabaseUtils::readSources(
 }
 
 // Reads all the metadata about the sources.
-bool SQLDatabaseUtils::readSources(std::vector<SourceMetadata> &sources)
+bool SQLDatabaseUtils::readSources(QSqlDatabase &db,
+                                   std::vector<SourceMetadata> &sources)
 {
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
     query.setForwardOnly(true);
     query.exec("SELECT sourcename, version, description, legal, link, "
                "  update_url, other "
@@ -379,9 +370,9 @@ bool SQLDatabaseUtils::readSources(std::vector<SourceMetadata> &sources)
     return true;
 }
 
-bool SQLDatabaseUtils::dropIndices(void)
+bool SQLDatabaseUtils::dropIndices(QSqlDatabase &db)
 {
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
     query.exec("DROP INDEX fk_entry_id_index");
     if (query.lastError().isValid()) {
         return false;
@@ -421,9 +412,9 @@ bool SQLDatabaseUtils::dropIndices(void)
     return !query.lastError().isValid();
 }
 
-bool SQLDatabaseUtils::rebuildIndices(void)
+bool SQLDatabaseUtils::rebuildIndices(QSqlDatabase &db)
 {
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
     emit rebuildingIndexes();
 
     query.exec("INSERT INTO entries_fts (rowid, pinyin, jyutping) "
@@ -471,9 +462,10 @@ bool SQLDatabaseUtils::rebuildIndices(void)
     return true;
 }
 
-bool SQLDatabaseUtils::deleteSourceFromDatabase(const std::string &source)
+bool SQLDatabaseUtils::deleteSourceFromDatabase(QSqlDatabase &db,
+                                                const std::string &source)
 {
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
 
     query.prepare("DELETE FROM sources WHERE sourcename = ?");
     query.addBindValue(source.c_str());
@@ -488,9 +480,9 @@ bool SQLDatabaseUtils::deleteSourceFromDatabase(const std::string &source)
 // - Deleting those entries
 // - Re-creating the FTS5 tables
 // - Re-creating indices that were previously invalidated.
-bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void)
+bool SQLDatabaseUtils::removeDefinitionsFromDatabase(QSqlDatabase &db)
 {
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
 
     emit deletingDefinitions();
 
@@ -535,9 +527,9 @@ bool SQLDatabaseUtils::removeDefinitionsFromDatabase(void)
 //   linked to any other sentences, and delete them.
 // - Use the same LEFT JOIN (but on nonchinese_sentences) to delete
 //   nonchinese_sentences that are also no longer linked to any sentences.
-bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
+bool SQLDatabaseUtils::removeSentencesFromDatabase(QSqlDatabase &db)
 {
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
 
     emit deletingSentences();
 
@@ -584,17 +576,24 @@ bool SQLDatabaseUtils::removeSentencesFromDatabase(void)
 }
 
 // Method to remove a source from the database, based on the name of the source.
-bool SQLDatabaseUtils::removeSource(const std::string &source, bool skipCleanup)
+bool SQLDatabaseUtils::removeSource(
+    QSqlDatabase &db,
+    const std::string &source,
+    const std::shared_ptr<SQLDatabaseManager> &manager,
+    bool skipCleanup)
 {
-    backupDatabase();
-    return removeSources(std::vector<std::string>{source}, skipCleanup);
+    if (manager) {
+        manager->backupDictionaryDatabase();
+    }
+    return removeSources(db, std::vector<std::string>{source}, skipCleanup);
 }
 
 // Method to remove multiple sources from the database, based on the name of the sources.
-bool SQLDatabaseUtils::removeSources(std::span<const std::string> sources,
+bool SQLDatabaseUtils::removeSources(QSqlDatabase &db,
+                                     std::span<const std::string> sources,
                                      bool skipCleanup)
 {
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
 
     // Foreign keys cannnot be turned on inside a SAVEPOINT!
     // Turn on before this savepoint.
@@ -621,7 +620,7 @@ bool SQLDatabaseUtils::removeSources(std::span<const std::string> sources,
             type += query.value(otherIndex).toString().toStdString() + ",";
         }
 
-        if (!deleteSourceFromDatabase(source)) {
+        if (!deleteSourceFromDatabase(db, source)) {
             emit finishedDeletion(
                 false, tr("Failed to delete source from database..."));
             query.exec("ROLLBACK");
@@ -637,23 +636,23 @@ bool SQLDatabaseUtils::removeSources(std::span<const std::string> sources,
     // sentences is a sentences source.
     bool success = false;
     try {
-        dropIndices();
+        dropIndices(db);
 
         if (type.length() == 0 || type.find("words") != std::string::npos) {
-            if (!removeDefinitionsFromDatabase()) {
+            if (!removeDefinitionsFromDatabase(db)) {
                 throw std::runtime_error(
                     tr("Failed to remove definitions...").toStdString());
             }
         }
         if (type.find("sentences") != std::string::npos) {
-            if (!removeSentencesFromDatabase()) {
+            if (!removeSentencesFromDatabase(db)) {
                 throw std::runtime_error(
                     tr("Failed to remove sentences...").toStdString());
             }
         }
 
         if (!skipCleanup) {
-            rebuildIndices();
+            rebuildIndices(db);
         }
 
         query.exec("RELEASE source_removal");
@@ -676,9 +675,10 @@ bool SQLDatabaseUtils::removeSources(std::span<const std::string> sources,
 // Inserting into the database loops through all the sources in the attached
 // database and attempts to insert each one into the database.
 std::pair<bool, std::string> SQLDatabaseUtils::insertSourcesIntoDatabase(
+    QSqlDatabase &db,
     std::unordered_map<std::string, std::string> old_source_ids)
 {
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
 
     query.exec(
         "SELECT sourcename, sourceshortname, version, description, legal, "
@@ -694,7 +694,7 @@ std::pair<bool, std::string> SQLDatabaseUtils::insertSourcesIntoDatabase(
     int otherIndex = query.record().indexOf("other");
 
     while (query.next()) {
-        QSqlQuery insertQuery{_manager->getDatabase()};
+        QSqlQuery insertQuery{db};
 
         QString sourcename{query.value(sourcenameIndex).toString()};
         QString sourceshortname{query.value(sourceshortnameIndex).toString()};
@@ -762,9 +762,9 @@ std::pair<bool, std::string> SQLDatabaseUtils::insertSourcesIntoDatabase(
 //     - Matches the fk_entry_id (from the attached db) to the new entry_id
 //       in the main database.
 // - Insert all the entries from the CTE into the main table.
-bool SQLDatabaseUtils::addDefinitionSource(void)
+bool SQLDatabaseUtils::addDefinitionSource(QSqlDatabase &db)
 {
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
 
     emit insertingEntries();
 
@@ -862,9 +862,9 @@ bool SQLDatabaseUtils::addDefinitionSource(void)
 //   identifies corresponding defnitions (aka entry / definition / label / source), join
 //   the definition -> Chinese sentence links from defs_s_links_tmp using that
 //   information
-bool SQLDatabaseUtils::addSentenceSource(void)
+bool SQLDatabaseUtils::addSentenceSource(QSqlDatabase &db)
 {
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
 
     query.exec("INSERT INTO chinese_sentences "
                "  (chinese_sentence_id, traditional, simplified, pinyin, "
@@ -1016,12 +1016,17 @@ bool SQLDatabaseUtils::addSentenceSource(void)
     return !query.lastError().isValid();
 }
 
-bool SQLDatabaseUtils::addSource(const std::string &filepath,
-                                 bool overwriteConflictingSource)
+bool SQLDatabaseUtils::addSource(
+    QSqlDatabase &db,
+    const std::string &filepath,
+    const std::shared_ptr<SQLDatabaseManager> &manager,
+    bool overwriteConflictingSource)
 {
-    backupDatabase();
+    if (manager) {
+        manager->backupDictionaryDatabase();
+    }
 
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
 
     query.prepare("ATTACH DATABASE ? AS db");
     query.addBindValue(filepath.c_str());
@@ -1065,9 +1070,11 @@ bool SQLDatabaseUtils::addSource(const std::string &filepath,
             old_source_ids[query.value(sourcenameIndex).toString().toStdString()]
                 = query.value(sourceIdIndex).toString().toStdString();
         }
-        if (!removeSources(sourcesToRemove, /* skipCleanup */ true)) {
+        if (!removeSources(db,
+                           sourcesToRemove,
+                           /* skipCleanup */ true)) {
             query.exec("DETACH DATABASE db");
-            rebuildIndices();
+            rebuildIndices(db);
             emit finishedAddition(
                 false,
                 tr("Could not add new dictionaries. We couldn't remove a "
@@ -1115,18 +1122,19 @@ bool SQLDatabaseUtils::addSource(const std::string &filepath,
     // otherwise, indices would not be dropped. To avoid this state, we always
     // drop indices before the savepoint, so indices are always dropped after
     // a rollback.
-    dropIndices();
+    dropIndices(db);
 
     query.exec("SAVEPOINT source_addition");
     // Insert the sources from the new database file into the database
     emit insertingSource();
     bool success;
     std::string errorMessage;
-    std::tie(success, errorMessage) = insertSourcesIntoDatabase(old_source_ids);
+    std::tie(success, errorMessage) = insertSourcesIntoDatabase(db,
+                                                                old_source_ids);
     if (!success) {
         query.exec("DETACH DATABASE db");
         query.exec("ROLLBACK");
-        rebuildIndices();
+        rebuildIndices(db);
         emit finishedAddition(
             false,
             tr("Could not insert source. Could it be a duplicate of a "
@@ -1139,22 +1147,22 @@ bool SQLDatabaseUtils::addSource(const std::string &filepath,
     // Then, insert the definitions and sentences
     success = false;
     try {
-        if (!addDefinitionSource()) {
+        if (!addDefinitionSource(db)) {
             throw std::runtime_error(
                 tr("Unable to add definitions...").toStdString());
         }
-        if (!addSentenceSource()) {
+        if (!addSentenceSource(db)) {
             throw std::runtime_error(
                 tr("Unable to add sentences...").toStdString());
         }
 
         query.exec("RELEASE source_addition");
-        rebuildIndices();
+        rebuildIndices(db);
         success = true;
         emit finishedAddition(success);
     } catch (std::exception &e) {
         query.exec("ROLLBACK");
-        rebuildIndices();
+        rebuildIndices(db);
         emit finishedAddition(success, e.what());
     }
 
@@ -1182,228 +1190,27 @@ bool SQLDatabaseUtils::mergeDatabases(const std::vector<std::string> &paths)
     QSqlDatabase::database(outputConnectionName).open();
     QSqlDatabase outputDatabase = QSqlDatabase::database(outputConnectionName);
 
-    // TODO: Check for user version number of database
-
-    QSqlQuery query{outputDatabase};
-    query.exec("DROP INDEX fk_entry_id_index");
-    query.exec("DROP INDEX entries_simplified_idx");
-    query.exec("DROP INDEX entries_jyutping_idx");
-    query.exec("DROP INDEX entries_pinyin_idx");
-    query.exec("DROP INDEX dcsl_fk_chinese_sentence_idx");
-    query.exec("DROP INDEX sentence_links_fk_non_chinese_idx");
-    query.exec("DELETE FROM definitions_fts");
-    query.exec("DELETE FROM entries_fts");
+    updateDatabase(outputDatabase);
+    dropIndices(outputDatabase);
 
     for (const auto &p : paths) {
         if (p == outputDatabasePath) {
             continue;
         }
 
-        query.prepare("ATTACH DATABASE ? AS db");
-        query.addBindValue(p.c_str());
-        query.exec();
+        QString tmpConnectionName{
+            QUuid::createUuid().toString(QUuid::WithoutBraces)};
+        QSqlDatabase::addDatabase("QSQLITE", tmpConnectionName);
+        QSqlDatabase::database(tmpConnectionName)
+            .setDatabaseName(QString::fromStdString(p));
+        QSqlDatabase::database(tmpConnectionName).open();
+        QSqlDatabase tmpDatabase = QSqlDatabase::database(tmpConnectionName);
+        updateDatabase(tmpDatabase);
+        tmpDatabase.close();
 
-        query.exec("PRAGMA db.user_version");
-        int version = -1;
-        while (query.next()) {
-            version = query.value(0).toInt();
-        }
-        if (version != CURRENT_DATABASE_VERSION) {
-            // TODO: Could probably update the database here instead of detaching
-            query.exec("DETACH DATABASE db");
-            return false;
-        }
-
-        query.exec("SAVEPOINT source_addition");
-        query.exec(
-            "SELECT sourcename, sourceshortname, version, description, legal, "
-            "  link, update_url, other "
-            "FROM db.sources");
-        int sourcenameIndex = query.record().indexOf("sourcename");
-        int sourceshortnameIndex = query.record().indexOf("sourceshortname");
-        int versionIndex = query.record().indexOf("version");
-        int descriptionIndex = query.record().indexOf("description");
-        int legalIndex = query.record().indexOf("legal");
-        int linkIndex = query.record().indexOf("link");
-        int updateURLIndex = query.record().indexOf("update_url");
-        int otherIndex = query.record().indexOf("other");
-
-        while (query.next()) {
-            QString sourcename{query.value(sourcenameIndex).toString()};
-            QString sourceshortname{
-                query.value(sourceshortnameIndex).toString()};
-            QString version{query.value(versionIndex).toString()};
-            QString description{query.value(descriptionIndex).toString()};
-            QString legal{query.value(legalIndex).toString()};
-            QString link{query.value(linkIndex).toString()};
-            QString updateURL{query.value(updateURLIndex).toString()};
-            QString other{query.value(otherIndex).toString()};
-
-            QSqlQuery insertQuery{outputDatabase};
-            insertQuery.prepare("INSERT INTO sources "
-                                "  (sourcename, sourceshortname, version, "
-                                "   description, legal, link, update_url, "
-                                "   other) "
-                                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            insertQuery.addBindValue(sourcename);
-            insertQuery.addBindValue(sourceshortname);
-            insertQuery.addBindValue(version);
-            insertQuery.addBindValue(description);
-            insertQuery.addBindValue(legal);
-            insertQuery.addBindValue(link);
-            insertQuery.addBindValue(updateURL);
-            insertQuery.addBindValue(other);
-
-            insertQuery.exec();
-            if (insertQuery.lastError().isValid()) {
-                QString error = insertQuery.lastError().text();
-                query.exec("DETACH DATABASE db");
-                query.exec("ROLLBACK");
-                // TODO: revisit failing at any dictionary failing
-                return false;
-            }
-        }
-
-        query.exec(
-            "INSERT INTO entries(traditional, simplified, pinyin, "
-            "  jyutping, frequency)"
-            "SELECT traditional, simplified, pinyin, jyutping, frequency "
-            "FROM db.entries");
-        query.exec(
-            "WITH definitions_tmp AS ( "
-            "  SELECT entries.traditional AS traditional, "
-            "    entries.simplified AS simplified, "
-            "    entries.pinyin AS pinyin, entries.jyutping AS jyutping, "
-            "    sources.sourcename AS sourcename, "
-            "    definitions.definition AS definition, "
-            "    definitions.label AS label "
-            "  FROM db.entries, db.definitions, db.sources "
-            "  WHERE db.definitions.fk_entry_id = db.entries.entry_id "
-            "  AND db.definitions.fk_source_id = db.sources.source_id "
-            ") "
-            " "
-            "INSERT INTO definitions(definition, label, fk_entry_id, "
-            "fk_source_id) "
-            "  SELECT d.definition, d.label, e.entry_id, s.source_id "
-            "  FROM definitions_tmp AS d, sources AS s, entries AS e "
-            "  WHERE d.sourcename = s.sourcename "
-            "    AND d.traditional = e.traditional "
-            "    AND d.simplified = e.simplified "
-            "    AND d.pinyin = e.pinyin "
-            "    AND d.jyutping = e.jyutping");
-        query.exec("INSERT INTO chinese_sentences "
-                   "  (chinese_sentence_id, traditional, simplified, pinyin, "
-                   "jyutping, "
-                   "    language) "
-                   "SELECT chinese_sentence_id, traditional, simplified, "
-                   "pinyin, jyutping,"
-                   "   language "
-                   "FROM db.chinese_sentences");
-        query.exec("INSERT INTO nonchinese_sentences( "
-                   "  non_chinese_sentence_id, sentence, language) "
-                   "SELECT non_chinese_sentence_id, sentence, language "
-                   "FROM db.nonchinese_sentences");
-        query.exec(
-            "WITH sentence_links_with_source AS ( "
-            "  SELECT sentence_links.fk_chinese_sentence_id as fk_csi, "
-            "    sentence_links.fk_non_chinese_sentence_id as fk_ncsi, "
-            "    sources.sourcename AS sourcename, "
-            "    sentence_links.direct as direct "
-            "  FROM db.sentence_links, db.sources "
-            "  WHERE db.sentence_links.fk_source_id = db.sources.source_id "
-            "), "
-            " "
-            "sentence_links_with_foreign_key AS ( "
-            "  SELECT traditional, simplified, pinyin, jyutping, language, "
-            "    fk_ncsi, direct, sourcename "
-            "  FROM sentence_links_with_source as slws, "
-            "    db.chinese_sentences AS cs "
-            "  WHERE slws.fk_csi = cs.chinese_sentence_id "
-            ") "
-            " "
-            "INSERT INTO sentence_links( "
-            "  fk_chinese_sentence_id, fk_non_chinese_sentence_id, "
-            "  fk_source_id, direct) "
-            "SELECT cs.chinese_sentence_id, slwfk.fk_ncsi, "
-            "  s.source_id, slwfk.direct "
-            "FROM sentence_links_with_foreign_key AS slwfk, sources as s, "
-            "  chinese_sentences AS cs "
-            "WHERE s.sourcename = slwfk.sourcename "
-            "  AND cs.traditional = slwfk.traditional "
-            "  AND cs.simplified = slwfk.simplified "
-            "  AND cs.pinyin = slwfk.pinyin "
-            "  AND cs.jyutping = slwfk.jyutping "
-            "  AND cs.language = slwfk.language ");
-        query.exec(
-            "WITH entry_and_definitions AS ( "
-            "  SELECT entries.traditional AS traditional, "
-            "    entries.simplified AS simplified, "
-            "    entries.pinyin AS pinyin, "
-            "    entries.jyutping AS jyutping, "
-            "    definitions.definition AS definition, "
-            "    definitions.label AS label, "
-            "    definitions.definition_id AS definition_id, "
-            "    sources.sourcename AS source "
-            "  FROM db.entries, db.definitions, db.sources "
-            "  WHERE db.definitions.fk_entry_id = db.entries.entry_id "
-            "    AND db.definitions.fk_source_id = db.sources.source_id "
-            "), "
-            " "
-            "defs_s_links_tmp AS ( "
-            "  SELECT "
-            "    cs.traditional AS sentence_traditional, "
-            "    cs.simplified AS sentence_simplified, "
-            "    cs.pinyin AS sentence_pinyin, "
-            "    cs.jyutping AS sentence_jyutping, "
-            "    cs.language AS sentence_language, "
-            "    ed.definition AS definition, "
-            "    ed.label AS label, "
-            "    ed.traditional AS traditional, "
-            "    ed.simplified AS simplified, "
-            "    ed.pinyin AS pinyin, "
-            "    ed.jyutping AS jyutping, "
-            "    ed.source AS source "
-            "  FROM db.definitions_chinese_sentences_links AS dsl, "
-            "    db.chinese_sentences AS cs, "
-            "    entry_and_definitions AS ed "
-            "  WHERE dsl.fk_definition_id = ed.definition_id "
-            "    AND dsl.fk_chinese_sentence_id = cs.chinese_sentence_id "
-            "), "
-            " "
-            "new_entry_and_definitions AS ( "
-            "  SELECT entries.traditional AS traditional, "
-            "    entries.simplified AS simplified, "
-            "    entries.pinyin AS pinyin, "
-            "    entries.jyutping AS jyutping, "
-            "    definitions.definition AS definition, "
-            "    definitions.label AS label, "
-            "    definitions.definition_id AS definition_id, "
-            "    sources.sourcename AS source "
-            "  FROM entries, definitions, sources "
-            "  WHERE definitions.fk_entry_id = entries.entry_id "
-            "    AND definitions.fk_source_id = sources.source_id "
-            ") "
-            " "
-            "INSERT INTO definitions_chinese_sentences_links( "
-            "  fk_definition_id, fk_chinese_sentence_id) "
-            "SELECT ned.definition_id, cs.chinese_sentence_id "
-            "FROM defs_s_links_tmp AS dsl, "
-            "  new_entry_and_definitions AS ned, "
-            "  chinese_sentences AS cs "
-            "WHERE dsl.sentence_traditional = cs.traditional "
-            "  AND dsl.sentence_simplified = cs.simplified "
-            "  AND dsl.sentence_pinyin = cs.pinyin "
-            "  AND dsl.sentence_jyutping = cs.jyutping "
-            "  AND dsl.sentence_language = cs.language "
-            "  AND dsl.definition = ned.definition "
-            "  AND dsl.label = ned.label "
-            "  AND dsl.traditional = ned.traditional "
-            "  AND dsl.simplified = ned.simplified "
-            "  AND dsl.pinyin = ned.pinyin "
-            "  AND dsl.jyutping = ned.jyutping "
-            "  AND dsl.source = ned.source");
-        query.exec("RELEASE source_addition");
-        query.exec("DETACH DATABASE db");
+        addSource(outputDatabase, p);
     }
+
+    outputDatabase.close();
     return true;
 }

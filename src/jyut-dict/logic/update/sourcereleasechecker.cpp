@@ -21,9 +21,9 @@ constexpr auto VERSION_NUMBER_COMPONENTS_SIZE = 3;
 SourceReleaseChecker::SourceReleaseChecker(
     std::shared_ptr<SQLDatabaseManager> manager, QObject *parent)
     : _databaseManager{manager}
+    , _utils{new SQLDatabaseUtils}
     , QObject{parent}
 {
-    _utils = std::make_unique<SQLDatabaseUtils>(_databaseManager);
     _networkManager = new QNetworkAccessManager{this};
 
     QSslSocket::supportsSsl();
@@ -32,7 +32,8 @@ SourceReleaseChecker::SourceReleaseChecker(
 void SourceReleaseChecker::checkForNewUpdate()
 {
     std::vector<SourceMetadata> sources;
-    _utils->readSources(sources);
+    QSqlDatabase db = _databaseManager->getDatabase();
+    _utils->readSources(db, sources);
 
     for (const auto &s : sources) {
         _sourceMetadata[s.getName()] = s;

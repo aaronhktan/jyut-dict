@@ -41,7 +41,7 @@ private:
 TestSqlDatabaseUtils::TestSqlDatabaseUtils()
 {
     _manager = std::make_shared<SQLDatabaseManager>();
-    _utils = new SQLDatabaseUtils{_manager};
+    _utils = new SQLDatabaseUtils;
 }
 
 TestSqlDatabaseUtils::~TestSqlDatabaseUtils()
@@ -513,9 +513,10 @@ void TestSqlDatabaseUtils::updateDatabaseFromV1()
 {
     removeDatabase();
     createV1Database(_manager->getDictionaryDatabasePath());
-    _utils->updateDatabase();
+    QSqlDatabase db = _manager->getDatabase();
+    _utils->updateDatabase(db);
 
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
     query.exec("PRAGMA user_version");
     int version = -1;
     while (query.next()) {
@@ -603,9 +604,10 @@ void TestSqlDatabaseUtils::updateDatabaseFromV2()
 {
     removeDatabase();
     createV2Database(_manager->getDictionaryDatabasePath());
-    _utils->updateDatabase();
+    QSqlDatabase db = _manager->getDatabase();
+    _utils->updateDatabase(db);
 
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
     query.exec("PRAGMA user_version");
     int version = -1;
     while (query.next()) {
@@ -677,9 +679,10 @@ void TestSqlDatabaseUtils::updateDatabaseFromV3()
 {
     removeDatabase();
     createV3Database(_manager->getDictionaryDatabasePath());
-    _utils->updateDatabase();
+    QSqlDatabase db = _manager->getDatabase();
+    _utils->updateDatabase(db);
 
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
     query.exec("PRAGMA user_version");
     int version = -1;
     while (query.next()) {
@@ -719,8 +722,9 @@ void TestSqlDatabaseUtils::addAndRemoveSources()
 {
     removeDatabase();
     createV4Database(_manager->getDictionaryDatabasePath());
+    QSqlDatabase db = _manager->getDatabase();
 
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlQuery query{db};
     query.exec("PRAGMA user_version");
     int version = -1;
     while (query.next()) {
@@ -740,7 +744,7 @@ void TestSqlDatabaseUtils::addAndRemoveSources()
     QCOMPARE(query.first(), true);
     QCOMPARE(query.value(0).toString(), "Baiyun Mountain");
 
-    _utils->removeSource("CC-CANTO");
+    _utils->removeSource(db, "CC-CANTO");
 
     query.exec("SELECT COUNT(*) FROM sources");
     QCOMPARE(query.first(), true);
@@ -784,7 +788,7 @@ void TestSqlDatabaseUtils::addAndRemoveSources()
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
 
     // Add source to original database
-    _utils->addSource(secondDatabaseFile.fileName().toStdString());
+    _utils->addSource(db, secondDatabaseFile.fileName().toStdString());
 
     // Contents of the original database should now match the second database
     query.exec("SELECT sourcename FROM sources");
@@ -819,16 +823,17 @@ void TestSqlDatabaseUtils::readSources()
 {
     removeDatabase();
     createV3Database(_manager->getDictionaryDatabasePath());
+    QSqlDatabase db = _manager->getDatabase();
 
     std::vector<std::pair<std::string, std::string>> sources;
-    _utils->readSources(sources);
+    _utils->readSources(db, sources);
 
     QCOMPARE(sources.size(), 1);
     QCOMPARE(QString::fromStdString(sources.at(0).first), "CC-CANTO");
     QCOMPARE(QString::fromStdString(sources.at(0).second), "CCY");
     
     std::vector<SourceMetadata> metadata;
-    _utils->readSources(metadata);
+    _utils->readSources(db, metadata);
     QCOMPARE(metadata.size(), 1);
     QCOMPARE(QString::fromStdString(metadata.at(0).getName()), "CC-CANTO");
     QCOMPARE(QString::fromStdString(metadata.at(0).getVersion()), "2024-03-13");
