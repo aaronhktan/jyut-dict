@@ -44,7 +44,8 @@ set(PROJECT_HEADERS
         components/definitioncard/definitioncardwidget.h
         components/definitioncard/definitioncontentwidget.h
         components/definitioncard/definitionheaderwidget.h
-        components/definitioncard/icardheaderwidget.h        components/entrysearchresult/resultlistdelegate.h
+        components/definitioncard/icardheaderwidget.h
+        components/entrysearchresult/resultlistdelegate.h
         components/entrysearchresult/resultlistmodel.h
         components/entrysearchresult/resultlistview.h
         components/entryview/entryactionwidget.h
