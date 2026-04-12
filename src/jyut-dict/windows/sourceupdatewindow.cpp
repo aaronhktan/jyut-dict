@@ -417,8 +417,6 @@ void SourceUpdateWindow::updateSources()
             const QModelIndex genericIndex = _model->index(row, 0);
             auto x = _model->data(genericIndex,
                                   SourceUpdateModel::UserRoles::kUpdateInfo);
-            qDebug() << x.canConvert<
-                const IUpdateChecker::SourceManifestMetadata *>();
             sourcesToUpdate.emplace_back(
                 x.value<const IUpdateChecker::SourceManifestMetadata *>());
         }
@@ -471,6 +469,8 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
     // All files should now be merged into the first item
     _utils->mergeDatabases(_downloadedFiles);
 
+    // TODO: should check that downloaded file contains the expected dictionary name
+
     _dialog = new QProgressDialog{"", QString(), 0, 0, this};
     _dialog->setWindowModality(Qt::ApplicationModal);
     _dialog->setMinimumSize(300, 75);
@@ -495,7 +495,7 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
     disconnect(_utils.get(), nullptr, nullptr, nullptr);
 
     connect(_utils.get(), &SQLDatabaseUtils::deletingDefinitions, this, [&] {
-        _dialog->setLabelText(tr("Removing old dictionary definitions..."));
+        _dialog->setLabelText(tr("Removing old dictionary..."));
     });
 
     connect(_utils.get(),
@@ -504,7 +504,8 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
             [&](int numToDelete) {
                 _dialog->setRange(0, numToDelete + 1);
                 _dialog->setLabelText(
-                    QString{tr("Deleted entry 0 of %1")}.arg(numToDelete));
+                    QString{tr("Deleted entry 0 of %1 from old dictionary")}.arg(
+                        numToDelete));
             });
 
     connect(_utils.get(),
@@ -512,8 +513,9 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
             this,
             [&](int deleted, int total) {
                 _dialog->setLabelText(
-                    QString{tr("Deleted entry %1 of %2")}.arg(deleted).arg(
-                        total));
+                    QString{tr("Deleted entry %1 of %2 from old dictionary")}
+                        .arg(deleted)
+                        .arg(total));
                 _dialog->setValue(deleted);
             });
 

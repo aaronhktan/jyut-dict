@@ -1127,10 +1127,7 @@ bool SQLDatabaseUtils::addSource(
     query.exec("SAVEPOINT source_addition");
     // Insert the sources from the new database file into the database
     emit insertingSource();
-    bool success;
-    std::string errorMessage;
-    std::tie(success, errorMessage) = insertSourcesIntoDatabase(db,
-                                                                old_source_ids);
+    auto [success, errorMessage] = insertSourcesIntoDatabase(db, old_source_ids);
     if (!success) {
         query.exec("DETACH DATABASE db");
         query.exec("ROLLBACK");
@@ -1172,7 +1169,7 @@ bool SQLDatabaseUtils::addSource(
 
 bool SQLDatabaseUtils::mergeDatabases(const std::vector<std::string> &paths)
 {
-    if (paths.size() <= 1) {
+    if (paths.empty()) {
         return true;
     }
 

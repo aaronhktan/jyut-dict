@@ -91,7 +91,6 @@ QVariant SourceUpdateModel::data(const QModelIndex &index, int role) const
     }
 
     if (role == SourceUpdateModel::UserRoles::kUpdateInfo) {
-        qDebug() << "returning variant for update info";
         return QVariant::fromValue(&metadata.available);
     }
 
