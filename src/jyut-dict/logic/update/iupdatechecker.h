@@ -24,6 +24,7 @@ public:
         std::string sourceName;
         std::string versionNumber;
         std::string url;
+        std::string checksum;
         std::optional<std::string> description;
     };
 

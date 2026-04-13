@@ -202,12 +202,23 @@ bool SourceReleaseChecker::parseJSON(
         }
         std::string updateLink
             = sourceObject.value("updateLink").toString().toStdString();
+
+        if (!sourceObject.contains("checksum")) {
+            std::cerr
+                << "Fetched object does not contain checksum field, skipping"
+                << std::endl;
+            continue;
+        }
+        std::string checksum
+            = sourceObject.value("checksum").toString().toStdString();
+
         QJsonValue desc = sourceObject.value("description");
 
         availability[sourceName] = {
             .sourceName = sourceName,
             .versionNumber = webVersionNumber,
             .url = updateLink,
+            .checksum = checksum,
             .description = (desc == QJsonValue::Undefined)
                                ? std::nullopt
                                : std::optional{desc.toString().toStdString()},
