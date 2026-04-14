@@ -1,7 +1,6 @@
 #include "sourceupdatewindow.h"
 
 #include "components/sourceupdatelist/sourceupdatemodel.h"
-// #include "dialogs/downloadresultdialog.h"
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqldatabaseutils.h"
 #include "logic/download/downloader.h"
@@ -229,7 +228,7 @@ void SourceUpdateWindow::setupUI()
     connect(_downloadButton,
             &QPushButton::clicked,
             this,
-            &SourceUpdateWindow::updateSources);
+            &SourceUpdateWindow::downloadSourceUpdates);
     connect(_model,
             &QAbstractItemModel::dataChanged,
             this,
@@ -404,7 +403,7 @@ void SourceUpdateWindow::updateToggleAllButtonText()
                                          : tr("Select All"));
 }
 
-void SourceUpdateWindow::updateSources()
+void SourceUpdateWindow::downloadSourceUpdates()
 {
     // Get information for checked items
     std::vector<const IUpdateChecker::SourceManifestMetadata *> sourcesToUpdate;
@@ -421,6 +420,10 @@ void SourceUpdateWindow::updateSources()
             sourcesToUpdate.emplace_back(
                 x.value<const IUpdateChecker::SourceManifestMetadata *>());
         }
+    }
+
+    if (sourcesToUpdate.empty()) {
+        close();
     }
 
     _downloaders.clear();
@@ -442,63 +445,69 @@ void SourceUpdateWindow::updateSources()
                 &Downloader::downloaded,
                 this,
                 [this, s](QString outputPath) {
-                    std::vector<std::pair<std::string, std::string>> sources;
                     const auto &outputDatabasePath = outputPath;
                     QFile databaseFile{outputDatabasePath};
                     if (!databaseFile.open(QIODevice::ReadWrite)) {
-                        // TODO: Handle error if we're unable to read the database
+                        _updateStatus
+                            .emplace(s->sourceName,
+                                     SourceUpdateStatus::kSourceReadWriteError);
+                        startNextDownload();
+                        return;
                     }
 
                     QCryptographicHash hash{QCryptographicHash::Sha256};
                     hash.addData(&databaseFile);
                     if (hash.result().toHex().toStdString() != s->checksum) {
-                        // TODO: Handle error if database checksum does not match
-                        std::cerr << "downloaded checksum: "
+                        _updateStatus
+                            .emplace(s->sourceName,
+                                     SourceUpdateStatus::kChecksumMismatch);
+                        std::cerr << "Downloaded checksum: "
                                   << hash.result().toHex().toStdString()
                                   << " does not match expected checksum "
                                   << s->checksum << " on file "
                                   << outputPath.toStdString() << std::endl;
-                    } else {
-                        QString outputConnectionName{
-                            QUuid::createUuid().toString(QUuid::WithoutBraces)};
-                        QSqlDatabase::addDatabase("QSQLITE",
-                                                  outputConnectionName);
-                        QSqlDatabase::database(outputConnectionName)
-                            .setDatabaseName(outputDatabasePath);
-                        QSqlDatabase::database(outputConnectionName).open();
-                        QSqlDatabase outputDatabase = QSqlDatabase::database(
-                            outputConnectionName);
-
-                        _utils->updateDatabase(outputDatabase);
-                        _utils->readSources(outputDatabase, sources);
-
-                        if (sources.size() != 1
-                            || sources[0].first != s->sourceName) {
-                            // TODO: Handle error if database does not contain expected source name
-                            std::cerr
-                                << sources[0].first
-                                << " downloaded source name does not match "
-                                   "expected source name: "
-                                << s->sourceName << std::endl;
-                        } else {
-                            _downloadedFiles.emplace_back(
-                                outputPath.toStdString());
-                        }
-
-                        if (_downloaders.empty()) {
-                            // We're done downloading!
-                            finishedAllSourceDownloads();
-                        } else {
-                            Downloader *front = _downloaders.front();
-                            _downloaders.pop_front();
-                            front->startDownload();
-                        }
+                        startNextDownload();
+                        return;
                     }
+
+                    QString outputConnectionName{
+                        QUuid::createUuid().toString(QUuid::WithoutBraces)};
+                    QSqlDatabase::addDatabase("QSQLITE", outputConnectionName);
+                    QSqlDatabase::database(outputConnectionName)
+                        .setDatabaseName(outputDatabasePath);
+                    QSqlDatabase::database(outputConnectionName).open();
+                    QSqlDatabase outputDatabase = QSqlDatabase::database(
+                        outputConnectionName);
+
+                    std::vector<std::pair<std::string, std::string>> sources;
+                    _utils->updateDatabase(outputDatabase);
+                    _utils->readSources(outputDatabase, sources);
+
+                    if (sources.size() != 1
+                        || sources[0].first != s->sourceName) {
+                        _updateStatus
+                            .emplace(s->sourceName,
+                                     SourceUpdateStatus::kSourcenameMismatch);
+                        std::cerr << sources[0].first
+                                  << " downloaded source name does not match "
+                                     "expected source name: "
+                                  << s->sourceName << std::endl;
+                        startNextDownload();
+                        return;
+                    }
+
+                    _downloadedFiles.emplace_back(outputPath.toStdString());
+                    startNextDownload();
                 });
 
-        connect(_downloaders.back(), &Downloader::error, this, [this](int err) {
-            // TODO: Handle download errors
-        });
+        connect(_downloaders.back(),
+                &Downloader::error,
+                this,
+                [this, s](int err) {
+                    _updateStatus.emplace(s->sourceName,
+                                          SourceUpdateStatus::kDownloadError);
+                    startNextDownload();
+                });
     }
 
     for (int i = 0; i < kMaxSimultaneousDownloads; ++i) {
@@ -533,17 +542,41 @@ void SourceUpdateWindow::updateSources()
     _dialog->setValue(0);
 }
 
+void SourceUpdateWindow::startNextDownload()
+{
+    if (_downloaders.empty()) {
+        finishedAllSourceDownloads();
+    } else {
+        Downloader *front = _downloaders.front();
+        _downloaders.pop_front();
+        front->startDownload();
+    }
+}
+
+void SourceUpdateWindow::notifyUpdateStatus()
+{
+    // TODO: implement something like UpdateWindow.cpp to show the final status
+    // of the source updates.
+    if (_dialog) {
+        _dialog->close();
+    }
+
+    close();
+}
+
 void SourceUpdateWindow::finishedAllSourceDownloads()
 {
     if (_downloadedFiles.empty()) {
-        // TODO: Handle case where all downloads failed or did not match source names
         if (_dialog) {
             _dialog->close();
         }
+        notifyUpdateStatus();
         return;
     }
 
     // All files should now be merged into the first item
+    // This lets us bulk-add definitions/sentences/etc. without having
+    // to remove and re-create indexes for each source that gets updated.
     auto future = QtConcurrent::run(
         [this] { _utils->mergeDatabases(_downloadedFiles); });
 
@@ -571,7 +604,7 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
 #endif
         _dialog->setAttribute(Qt::WA_DeleteOnClose, true);
 
-        _dialog->setLabelText(tr("Removing old dictionary version..."));
+        _dialog->setLabelText(tr("Removing old version..."));
         _dialog->setRange(0, 0);
         _dialog->setValue(0);
 
@@ -579,7 +612,7 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
 
         connect(_utils.get(), &SQLDatabaseUtils::deletingDefinitions, this, [&] {
             _dialog->setLabelText(
-                tr("Removing definitions from old dictionary..."));
+                tr("Removing definitions from old version..."));
         });
 
         connect(_utils.get(),
@@ -588,7 +621,7 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
                 [&](int numToDelete) {
                     _dialog->setRange(0, numToDelete + 1);
                     _dialog->setLabelText(
-                        QString{tr("Deleted entry 0 of %1 from old dictionary")}
+                        QString{tr("Deleted entry 0 of %1 from old version")}
                             .arg(numToDelete));
                 });
 
@@ -596,17 +629,17 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
                 &SQLDatabaseUtils::deletionProgress,
                 this,
                 [&](int deleted, int total) {
-                    _dialog->setLabelText(QString{
-                        tr("Deleted entry %1 of %2 from old dictionary")}
-                                              .arg(deleted)
-                                              .arg(total));
+                    _dialog->setLabelText(
+                        QString{tr("Deleted entry %1 of %2 from old version")}
+                            .arg(deleted)
+                            .arg(total));
                     _dialog->setValue(deleted);
                 });
 
         connect(_utils.get(), &SQLDatabaseUtils::insertingSource, this, [&] {
             _dialog->setValue(0);
             _dialog->setRange(0, 0);
-            _dialog->setLabelText(tr("Adding new dictionary..."));
+            _dialog->setLabelText(tr("Adding new version..."));
         });
 
         connect(_utils.get(), &SQLDatabaseUtils::insertingEntries, this, [&] {
@@ -624,7 +657,7 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
         connect(_utils.get(),
                 &SQLDatabaseUtils::finishedAddition,
                 this,
-                [&](bool success, QString reason, QString description) {
+                [this](bool success, QString reason, QString description) {
                     _dialog->reset();
                     std::vector<std::pair<std::string, std::string>> sources;
                     QSqlDatabase db = _manager->getDatabase();
@@ -633,9 +666,13 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
                         SourceUtils::addSource(source.first, source.second);
                     }
 
-                    if (!success) {
-                        // TODO: Handle failure in adding sources
-                    }
+                    _updateStatus
+                        .emplace("all",
+                                 success
+                                     ? SourceUpdateStatus::kSuccess
+                                     : SourceUpdateStatus::kSourceMergeFailure);
+
+                    notifyUpdateStatus();
                 });
 
         std::ignore = QtConcurrent::run([this]() {
