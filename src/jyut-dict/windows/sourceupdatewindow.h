@@ -12,6 +12,7 @@ class SQLDatabaseManager;
 class SQLDatabaseUtils;
 class SourceUpdateModel;
 
+class QCheckBox;
 class QLabel;
 class QPushButton;
 class QProgressDialog;
@@ -67,6 +68,7 @@ private:
     QTableView *_tableView;
     QLabel *_description;
     QPushButton *_toggleAllButton;
+    QCheckBox *_disableNotifications;
     QPushButton *_skipButton;
     QPushButton *_downloadButton;
 

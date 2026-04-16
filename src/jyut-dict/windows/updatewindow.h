@@ -21,9 +21,10 @@ class UpdateAvailableWindow : public QWidget
 
 public:
     explicit UpdateAvailableWindow(QWidget *parent = nullptr,
-                          std::string versionNumber=Utils::CURRENT_VERSION,
-                          std::string url=Utils::GITHUB_LINK,
-                          std::string description="");
+                                   std::string versionNumber
+                                   = Utils::CURRENT_VERSION,
+                                   std::string url = Utils::GITHUB_LINK,
+                                   std::string description = "");
 
     void changeEvent(QEvent *event) override;
 

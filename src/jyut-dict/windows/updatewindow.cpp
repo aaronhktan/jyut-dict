@@ -20,8 +20,9 @@
 #include <QStyle>
 
 UpdateAvailableWindow::UpdateAvailableWindow(QWidget *parent,
-                           std::string versionNumber,
-                           std::string url, std::string description)
+                                             std::string versionNumber,
+                                             std::string url,
+                                             std::string description)
     : QWidget(parent, Qt::Window)
 {
     _settings = Settings::getSettings();
@@ -135,9 +136,9 @@ void UpdateAvailableWindow::translateUI()
            "have version %3. "
            "Click \"Download\" to get the new version.")
             .arg(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
-                                             Strings::PRODUCT_NAME))
-            .arg(QString::fromStdString(_versionNumber))
-            .arg(Utils::CURRENT_VERSION));
+                                             Strings::PRODUCT_NAME),
+                 QString::fromStdString(_versionNumber),
+                 Utils::CURRENT_VERSION));
     _noButton->setText(tr("Cancel"));
     _showMoreButton->setText(tr("Show Details"));
     _okButton->setText(tr("Download"));

@@ -141,7 +141,7 @@ bool EntrySpeaker::filterVoiceNames(const QLocale::Language &language,
                                     const QLocale::Country &country,
                                     const QVector<QVoice> &voices,
                                     QVoice &voice) const {
-    for (auto checkVoice : voices) {
+    for (auto &checkVoice : voices) {
         if (checkVoiceName(language, country, checkVoice.name())) {
             voice = checkVoice;
             return true;

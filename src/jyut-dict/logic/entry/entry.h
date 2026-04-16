@@ -44,10 +44,10 @@ public:
                                                 bool useColours) const;
 
     const std::string &getSimplified(void) const;
-    void setSimplified(std::string simplified);
+    void setSimplified(const std::string &simplified);
 
     const std::string &getTraditional(void) const;
-    void setTraditional(std::string traditional);
+    void setTraditional(const std::string &traditional);
 
     bool generatePhonetic(CantoneseOptions cantoneseOptions,
                           MandarinOptions mandarinOptions);

@@ -232,7 +232,7 @@ void SentenceContentWidget::setStyle(bool use_dark)
                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R,
                                           LABEL_TEXT_COLOUR_LIGHT_R};
-    for (auto label : _sentenceNumberLabels) {
+    for (const auto &label : _sentenceNumberLabels) {
         label->setStyleSheet(
             sentenceNumberStyleSheet.arg(textColour.name()).arg(bodyFontSize));
     }

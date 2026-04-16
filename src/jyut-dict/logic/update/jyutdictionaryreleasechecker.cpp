@@ -187,19 +187,26 @@ bool JyutDictionaryReleaseChecker::parseJSON(const std::string &data,
             }
 
             // OS must be compatible
-            bool doubleConversionStatus;
-            auto webOSVersion = linkObject.value("minOSVersionNumber")
-                                    .toString()
-                                    .toDouble(&doubleConversionStatus);
-            if (!doubleConversionStatus) {
-                continue;
+            auto webOSVersion
+                = linkObject.value("minOSVersionNumber").toString().split(".");
+            auto currentOSVersion = QSysInfo::productVersion().split(".");
+            bool webOSVersionTooHigh = false;
+            for (size_t i = 0;
+                 i < std::max(webOSVersion.size(), currentOSVersion.size());
+                 ++i) {
+                if (webOSVersion.size() > i && currentOSVersion.size() > i) {
+                    if (currentOSVersion[i].toUInt()
+                        < webOSVersion[i].toUInt()) {
+                        webOSVersionTooHigh = true;
+                        break;
+                    }
+                } else if (webOSVersion.size() > i) {
+                    webOSVersionTooHigh = true;
+                    break;
+                }
             }
-            auto currentOSVersion = QSysInfo::productVersion().toDouble(
-                &doubleConversionStatus);
-            if (!doubleConversionStatus) {
-                continue;
-            }
-            if (currentOSVersion < webOSVersion) {
+
+            if (webOSVersionTooHigh) {
                 continue;
             }
 

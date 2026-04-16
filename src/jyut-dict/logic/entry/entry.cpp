@@ -283,7 +283,7 @@ const std::string &Entry::getSimplified(void) const
     return _simplified;
 }
 
-void Entry::setSimplified(std::string simplified)
+void Entry::setSimplified(const std::string &simplified)
 {
     _simplified = simplified;
 
@@ -299,7 +299,7 @@ const std::string &Entry::getTraditional(void) const
     return _traditional;
 }
 
-void Entry::setTraditional(std::string traditional)
+void Entry::setTraditional(const std::string &traditional)
 {
     _traditional = traditional;
 

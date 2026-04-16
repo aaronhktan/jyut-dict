@@ -72,15 +72,15 @@ void prepareJyutpingBindValues(const QString &searchTerm,
 
     if (fuzzyJyutping) {
         regexTerm = QString{"^"}
-                    + QString::fromStdString(query)
+                    % QString::fromStdString(query)
                           .replace("*", ".*") // Convert glob characters to regex
                           .replace("?", ".")
                           .replace("!", "?") // Workaround for glob  replacement
-                    + QString{(searchExactMatch || dontAppendWildcard) ? "$"
+                    % QString{(searchExactMatch || dontAppendWildcard) ? "$"
                                                                        : ".*$"};
     } else {
         regexTerm = QString::fromStdString(query)
-                    + QString{(searchExactMatch || dontAppendWildcard) ? ""
+                    % QString{(searchExactMatch || dontAppendWildcard) ? ""
                                                                        : "*"};
     }
 }
@@ -138,15 +138,15 @@ void preparePinyinBindValues(const QString &searchTerm,
 
     if (fuzzyPinyin) {
         regexTerm = QString{"^"}
-                    + QString::fromStdString(query)
+                    % QString::fromStdString(query)
                           .replace("*", ".*") // Convert glob characters to regex
                           .replace("?", ".")
                           .replace("!", "?") // Workaround for glob  replacement
-                    + QString{(searchExactMatch || dontAppendWildcard) ? "$"
+                    % QString{(searchExactMatch || dontAppendWildcard) ? "$"
                                                                        : ".*$"};
     } else {
         regexTerm = QString::fromStdString(query)
-                    + QString{(searchExactMatch || dontAppendWildcard) ? ""
+                    % QString{(searchExactMatch || dontAppendWildcard) ? ""
                                                                        : "*"};
     }
 }
