@@ -13,11 +13,17 @@
 
 #include <QCoreApplication>
 #include <QDesktopServices>
+#include <QEvent>
 #include <QFont>
+#include <QGridLayout>
+#include <QLabel>
 #include <QPixmap>
 #include <QPropertyAnimation>
+#include <QPushButton>
+#include <QSettings>
 #include <QSize>
 #include <QStyle>
+#include <QTextEdit>
 
 UpdateAvailableWindow::UpdateAvailableWindow(QWidget *parent,
                                              std::string versionNumber,

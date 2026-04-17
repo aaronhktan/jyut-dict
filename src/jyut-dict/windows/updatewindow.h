@@ -3,15 +3,16 @@
 
 #include "logic/utils/utils.h"
 
-#include <QEvent>
-#include <QGridLayout>
-#include <QLabel>
-#include <QPushButton>
-#include <QSettings>
-#include <QTextEdit>
 #include <QWidget>
 
 #include <string>
+
+class QEvent;
+class QGridLayout;
+class QLabel;
+class QPushButton;
+class QSettings;
+class QTextEdit;
 
 // The Update Available Window displays an update notification to the user.
 
@@ -51,8 +52,6 @@ private:
     QGridLayout *_dialogLayout;
 
     std::unique_ptr<QSettings> _settings;
-
-signals:
 
 public slots:
     void showDetails();
