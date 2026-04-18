@@ -16,14 +16,7 @@
 #include "windows/settingswindow.h"
 #include "windows/welcomewindow.h"
 
-#include <QAction>
-#include <QEvent>
 #include <QMainWindow>
-#include <QMenu>
-#include <QMenuBar>
-#include <QProgressDialog>
-#include <QTranslator>
-#include <QWidget>
 
 #include <memory>
 #include <optional>
@@ -32,8 +25,18 @@
 // As its name suggests, is the main window of the application
 // Contains a toolbar (for searching), and splitter (for results/detail)
 
+// TODO:
+// Implement menu item to manually check for source updates
+
 class UpdateAvailableWindow;
 class SourceUpdateWindow;
+
+class QAction;
+class QEvent;
+class QMenu;
+class QMenuBar;
+class QProgressDialog;
+class QWidget;
 
 class MainWindow : public QMainWindow
 {

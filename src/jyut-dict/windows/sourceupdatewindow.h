@@ -20,7 +20,7 @@ class QVBoxLayout;
 
 // TODO:
 // Implement keyboard shortcuts (return/enter, esc)
-// Implement update status notification window
+// Add checkbox to disable automatic checking for sources
 
 class SourceUpdateWindow : public QWidget
 {

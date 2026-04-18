@@ -16,20 +16,27 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QAction>
 #include <QApplication>
 #include <QClipboard>
-#include <QtConcurrent/QtConcurrent>
-#include <QCoreApplication>
 #include <QColor>
+#include <QCoreApplication>
 #include <QDesktopServices>
+#include <QEvent>
 #include <QGuiApplication>
 #include <QIcon>
+#include <QMenu>
+#include <QMenuBar>
 #include <QMessageBox>
+#include <QProgressDialog>
 #include <QSettings>
 #include <QSpacerItem>
-#include <QtSvg>
 #include <QTimer>
+#include <QTranslator>
 #include <QUrl>
+#include <QWidget>
+#include <QtConcurrent/QtConcurrent>
+#include <QtSvg>
 
 #include <memory>
 
