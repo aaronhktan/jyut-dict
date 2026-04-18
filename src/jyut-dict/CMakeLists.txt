@@ -165,6 +165,7 @@ set(PROJECT_HEADERS
         windows/mainwindow.h
         windows/settingswindow.h
         windows/sourceupdatewindow.h
+        windows/sourceupdateresultwindow.h
         windows/transcriptionwindow.h
         windows/updatewindow.h
         windows/welcomewindow.h
@@ -281,6 +282,7 @@ set(PROJECT_SOURCES
         windows/mainwindow.cpp
         windows/settingswindow.cpp
         windows/sourceupdatewindow.cpp
+        windows/sourceupdateresultwindow.cpp
         windows/transcriptionwindow.cpp
         windows/updatewindow.cpp
         windows/welcomewindow.cpp

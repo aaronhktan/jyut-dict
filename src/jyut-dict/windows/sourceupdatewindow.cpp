@@ -14,6 +14,7 @@
 #elif defined(Q_OS_WIN)
 #include "logic/utils/utils_windows.h"
 #endif
+#include "windows/sourceupdateresultwindow.h"
 
 #include <QAbstractItemView>
 #include <QGuiApplication>
@@ -445,6 +446,8 @@ void SourceUpdateWindow::downloadSourceUpdates()
                 &Downloader::downloaded,
                 this,
                 [this, s](QString outputPath) {
+                    ++_completedDownloaders;
+
                     const auto &outputDatabasePath = outputPath;
                     QFile databaseFile{outputDatabasePath};
                     if (!databaseFile.open(QIODevice::ReadWrite)) {
@@ -506,14 +509,15 @@ void SourceUpdateWindow::downloadSourceUpdates()
                 [this, s](int err) {
                     _updateStatus.emplace(s->sourceName,
                                           SourceUpdateStatus::kDownloadError);
+                    ++_completedDownloaders;
                     startNextDownload();
                 });
     }
 
+    _nextDownloader = _downloaders.begin();
     for (int i = 0; i < kMaxSimultaneousDownloads; ++i) {
-        if (!_downloaders.empty()) {
-            Downloader *front = _downloaders.front();
-            _downloaders.pop_front();
+        if (_nextDownloader != _downloaders.end()) {
+            Downloader *front = *_nextDownloader++;
             front->startDownload();
         } else {
             break;
@@ -540,35 +544,95 @@ void SourceUpdateWindow::downloadSourceUpdates()
     _dialog->setLabelText(tr("Downloading source updates..."));
     _dialog->setRange(0, 0);
     _dialog->setValue(0);
+
+    hide();
 }
 
 void SourceUpdateWindow::startNextDownload()
 {
-    if (_downloaders.empty()) {
+    if (_downloaders.size() == _completedDownloaders) {
         finishedAllSourceDownloads();
-    } else {
-        Downloader *front = _downloaders.front();
-        _downloaders.pop_front();
+    } else if (_nextDownloader != _downloaders.end()) {
+        Downloader *front = *_nextDownloader++;
         front->startDownload();
     }
 }
 
 void SourceUpdateWindow::notifyUpdateStatus()
 {
-    // TODO: implement something like UpdateWindow.cpp to show the final status
-    // of the source updates.
-    if (_dialog) {
-        _dialog->close();
+    std::ostringstream oss;
+    SourceUpdateResultWindow::UpdateResult result
+        = SourceUpdateResultWindow::UpdateResult::kNoneSucceeded;
+    bool allSucceeded = true;
+    for (const auto &[k, v] : _updateStatus) {
+        switch (v) {
+        case kSuccess: {
+            result = SourceUpdateResultWindow::UpdateResult::kSomeSucceeded;
+            oss << k << ": succeeded\n";
+            break;
+        }
+        case kDownloadError: {
+            oss << k << ": failed due to download error\n";
+            allSucceeded = false;
+            break;
+        }
+        case kChecksumMismatch: {
+            oss << k << ": failed due to checksum mismatch\n";
+            allSucceeded = false;
+            break;
+        }
+        case kSourcenameMismatch: {
+            oss << k
+                << ": failed because downloaded file did not contain expected "
+                   "sourcename\n";
+            allSucceeded = false;
+            break;
+        }
+        case kSourceReadWriteError: {
+            oss << k
+                << ": failed because downloaded file was not read/write "
+                   "accessible\n";
+            allSucceeded = false;
+            break;
+        }
+        case kSourceMergeFailure: {
+            oss << k << ": failed because databases could not be merged\n";
+            allSucceeded = false;
+            break;
+        }
+        }
     }
 
-    close();
+    if (allSucceeded
+        && result == SourceUpdateResultWindow::UpdateResult::kSomeSucceeded) {
+        result = SourceUpdateResultWindow::UpdateResult::kAllSucceeded;
+    }
+    std::string description{oss.str()};
+
+    QTimer::singleShot(200, this, [this, result, description] {
+        if (_dialog) {
+            _dialog->hide();
+            _dialog->deleteLater();
+            _dialog = nullptr;
+        }
+
+        SourceUpdateResultWindow *window
+            = new SourceUpdateResultWindow(result, description, this);
+        window->setAttribute(Qt::WA_DeleteOnClose, true);
+        connect(window, &SourceUpdateWindow::destroyed, this, [this] {
+            close();
+        });
+        window->show();
+    });
 }
 
 void SourceUpdateWindow::finishedAllSourceDownloads()
 {
     if (_downloadedFiles.empty()) {
         if (_dialog) {
-            _dialog->close();
+            _dialog->hide();
+            _dialog->deleteLater();
+            _dialog = nullptr;
         }
         notifyUpdateStatus();
         return;
@@ -582,7 +646,9 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
 
     future.then(this, [this] {
         if (_dialog) {
-            _dialog->close();
+            _dialog->hide();
+            _dialog->deleteLater();
+            _dialog = nullptr;
         }
 
         _dialog = new QProgressDialog{"", QString(), 0, 0, this};
@@ -602,7 +668,6 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
 #elif defined(Q_OS_LINUX)
         _dialog->setWindowTitle(" ");
 #endif
-        _dialog->setAttribute(Qt::WA_DeleteOnClose, true);
 
         _dialog->setLabelText(tr("Removing old version..."));
         _dialog->setRange(0, 0);
@@ -667,7 +732,7 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
                     }
 
                     _updateStatus
-                        .emplace("all",
+                        .emplace("others",
                                  success
                                      ? SourceUpdateStatus::kSuccess
                                      : SourceUpdateStatus::kSourceMergeFailure);

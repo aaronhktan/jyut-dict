@@ -5,8 +5,6 @@
 
 #include <QWidget>
 
-#include <deque>
-
 class Downloader;
 class SQLDatabaseManager;
 class SQLDatabaseUtils;
@@ -34,7 +32,6 @@ public:
         kSourcenameMismatch,
         kSourceReadWriteError,
         kSourceMergeFailure,
-        kNumStatuses
     };
 
     explicit SourceUpdateWindow(
@@ -72,9 +69,11 @@ private:
     QPushButton *_skipButton;
     QPushButton *_downloadButton;
 
-    std::deque<Downloader *> _downloaders;
+    std::vector<Downloader *> _downloaders;
+    std::vector<Downloader *>::iterator _nextDownloader;
+    size_t _completedDownloaders;
     std::vector<std::string> _downloadedFiles;
-    QProgressDialog *_dialog;
+    QProgressDialog *_dialog = nullptr;
     std::unordered_map<std::string, SourceUpdateStatus> _updateStatus;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
