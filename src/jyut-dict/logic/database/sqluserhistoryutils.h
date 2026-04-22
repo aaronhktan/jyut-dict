@@ -17,7 +17,7 @@
 // The SQLUserHistoryUtils class searches the user database
 // for items regarding history (search history and view history).
 
-using searchTermHistoryItem = std::pair<std::string, long>;
+using SearchTermHistoryItem = std::pair<std::string, long>;
 
 class SQLUserHistoryUtils : public QObject,
                             virtual public ISearchObservable
@@ -39,7 +39,7 @@ public:
 
 private:
     using ISearchObservable::notifyObservers;
-    void notifyObservers(const std::vector<searchTermHistoryItem> &results,
+    void notifyObservers(const std::vector<SearchTermHistoryItem> &results,
                          bool emptyQuery);
     void notifyObservers(const std::vector<Entry> &results,
                          bool emptyQuery) override;
@@ -60,6 +60,6 @@ private:
     std::shared_ptr<SQLDatabaseManager> _manager;
 };
 
-Q_DECLARE_METATYPE(searchTermHistoryItem);
+Q_DECLARE_METATYPE(SearchTermHistoryItem);
 
 #endif // SQLUSERHISTORYUTILS_H

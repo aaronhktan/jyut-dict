@@ -22,10 +22,9 @@ SourceReleaseChecker::SourceReleaseChecker(
     std::shared_ptr<SQLDatabaseManager> manager, QObject *parent)
     : _databaseManager{manager}
     , _utils{new SQLDatabaseUtils}
+    , _networkManager{new QNetworkAccessManager{this}}
     , QObject{parent}
 {
-    _networkManager = new QNetworkAccessManager{this};
-
     QSslSocket::supportsSsl();
 }
 

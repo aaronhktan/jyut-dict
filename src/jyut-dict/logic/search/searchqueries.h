@@ -607,7 +607,7 @@ constexpr auto SEARCH_PINYIN_QUERY
 
 constexpr auto SEARCH_ENGLISH_QUERY
     = "WITH "
-      "  matching_entry_ids AS ( "
+      "  matching_entry_ids AS MATERIALIZED ( "
       "    SELECT "
       "      fk_entry_id, "
       "      rowid AS definition_id, "

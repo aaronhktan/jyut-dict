@@ -15,19 +15,19 @@ SearchHistoryListModel::~SearchHistoryListModel()
 }
 
 void SearchHistoryListModel::callback(
-    const std::vector<searchTermHistoryItem> &searchTerms, bool emptyQuery)
+    const std::vector<SearchTermHistoryItem> &searchTerms, bool emptyQuery)
 {
     setEntries(searchTerms, emptyQuery);
 }
 
 void SearchHistoryListModel::setEntries(
-    const std::vector<searchTermHistoryItem> &searchTerms)
+    const std::vector<SearchTermHistoryItem> &searchTerms)
 {
     setEntries(searchTerms, false);
 }
 
 void SearchHistoryListModel::setEntries(
-    const std::vector<searchTermHistoryItem> &searchTerms, bool emptyQuery)
+    const std::vector<SearchTermHistoryItem> &searchTerms, bool emptyQuery)
 {
     beginResetModel();
     _searchTerms = searchTerms;
@@ -39,9 +39,9 @@ void SearchHistoryListModel::setEntries(
 
 void SearchHistoryListModel::setEmpty(void)
 {
-    searchTermHistoryItem pair{tr("No search history...").toStdString(), -1};
+    SearchTermHistoryItem pair{tr("No search history...").toStdString(), -1};
 
-    setEntries(std::vector<searchTermHistoryItem>{pair});
+    setEntries(std::vector<SearchTermHistoryItem>{pair});
 }
 
 void SearchHistoryListModel::translateUI(void)

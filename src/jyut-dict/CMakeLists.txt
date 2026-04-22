@@ -304,6 +304,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_HEADERS}
         ${PROJECT_SOURCES}
         resources/resource.qrc
+        dialogs/nosourceupdatesdialog.h dialogs/nosourceupdatesdialog.cpp
     )
 
 else()

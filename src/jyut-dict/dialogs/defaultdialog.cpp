@@ -2,7 +2,6 @@
 
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
-#include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined(Q_OS_LINUX)
@@ -74,12 +73,6 @@ void DefaultDialog::setupUI(const QString &reason, const QString &description)
 #elif defined(Q_OS_LINUX)
     setWindowTitle(" ");
 #endif
-
-    QList<QLabel *> labels = this->findChildren<QLabel *>();
-    foreach (const auto &label, labels) {
-        label->setTextInteractionFlags(Qt::NoTextInteraction);
-    }
-
     setWidth(400);
     deselectButtons();
 }
@@ -109,6 +102,11 @@ void DefaultDialog::setStyle(bool use_dark)
         static_cast<unsigned long>(interfaceSize - 1));
     int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
         static_cast<unsigned long>(interfaceSize - 1));
+
+    QList<QLabel *> labels = this->findChildren<QLabel *>();
+    foreach (const auto &label, labels) {
+        label->setTextInteractionFlags(Qt::NoTextInteraction);
+    }
 
 #ifdef Q_OS_MAC
     QString style{"QLabel[isHan=\"true\"] { "

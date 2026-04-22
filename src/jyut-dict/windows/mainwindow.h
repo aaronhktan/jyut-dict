@@ -1,20 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "components/favouritewindow/favouritesplitter.h"
-#include "components/mainwindow/mainsplitter.h"
-#include "components/mainwindow/maintoolbar.h"
-#include "logic/database/sqldatabasemanager.h"
-#include "logic/database/sqldatabaseutils.h"
-#include "logic/database/sqluserdatautils.h"
 #include "logic/database/sqluserhistoryutils.h"
-#include "logic/search/sqlsearch.h"
-#include "logic/update/jyutdictionaryreleasechecker.h"
-#include "logic/update/sourcereleasechecker.h"
-#include "windows/aboutwindow.h"
-#include "windows/historywindow.h"
-#include "windows/settingswindow.h"
-#include "windows/welcomewindow.h"
+#include "logic/update/iupdatechecker.h"
 
 #include <QMainWindow>
 
@@ -25,17 +13,30 @@
 // As its name suggests, is the main window of the application
 // Contains a toolbar (for searching), and splitter (for results/detail)
 
-// TODO:
-// Implement menu item to manually check for source updates
-
-class UpdateAvailableWindow;
+class AboutWindow;
+class Entry;
+class FavouriteSplitter;
+class HistoryWindow;
+class JyutDictionaryReleaseChecker;
+class MainSplitter;
+class MainToolBar;
+class SettingsWindow;
 class SourceUpdateWindow;
+class SourceReleaseChecker;
+class SQLDatabaseManager;
+class SQLDatabaseUtils;
+class SQLSearch;
+class SQLUserHistoryUtils;
+class SQLUserDataUtils;
+class UpdateAvailableWindow;
+class WelcomeWindow;
 
 class QAction;
 class QEvent;
 class QMenu;
 class QMenuBar;
 class QProgressDialog;
+class QSettings;
 class QWidget;
 
 class MainWindow : public QMainWindow
@@ -101,17 +102,18 @@ private:
 
     QAction *_helpAction;
     QAction *_updateAction;
+    QAction *_updateSourcesAction;
 
-    QPointer<AboutWindow> _aboutWindow;
-    QPointer<SettingsWindow> _settingsWindow;
-    QPointer<HistoryWindow> _historyWindow;
-    QPointer<FavouriteSplitter> _favouritesWindow;
-    QPointer<WelcomeWindow> _welcomeWindow;
+    AboutWindow *_aboutWindow = nullptr;
+    SettingsWindow *_settingsWindow = nullptr;
+    HistoryWindow *_historyWindow = nullptr;
+    FavouriteSplitter *_favouritesWindow = nullptr;
+    WelcomeWindow *_welcomeWindow = nullptr;
 
     UpdateAvailableWindow *_updateAvailableWindow = nullptr;
     SourceUpdateWindow *_sourceUpdateWindow = nullptr;
 
-    QProgressDialog *_updateDialog = nullptr;
+    QProgressDialog *_updateCheckProgressDialog = nullptr;
     QProgressDialog *_databaseMigrationDialog = nullptr;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
@@ -170,7 +172,7 @@ private:
     void closeEvent(QCloseEvent *event) override;
 
 signals:
-    void searchHistoryClicked(const searchTermHistoryItem &pair);
+    void searchHistoryClicked(const SearchTermHistoryItem &pair);
     void viewHistoryClicked(const Entry &entry);
 
     void favouriteCurrentEntry(void);
@@ -194,7 +196,7 @@ public slots:
         bool showIfNoUpdate = false);
     void notifyDatabaseMigration(void);
     void finishedDatabaseMigration(bool success);
-    void forwardSearchHistoryItem(const searchTermHistoryItem &pair);
+    void forwardSearchHistoryItem(const SearchTermHistoryItem &pair);
     void forwardViewHistoryItem(const Entry &entry);
     void searchRequested(void);
     void updateStyleRequested(void);

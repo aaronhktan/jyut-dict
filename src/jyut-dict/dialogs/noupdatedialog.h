@@ -3,8 +3,6 @@
 
 #include "dialogs/defaultdialog.h"
 
-#include <QString>
-
 class NoUpdateDialog : public DefaultDialog
 {
     Q_OBJECT

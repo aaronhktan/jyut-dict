@@ -1,5 +1,5 @@
-#ifndef ERRORDIALOG_H
-#define ERRORDIALOG_H
+#ifndef DEFAULTDIALOG_H
+#define DEFAULTDIALOG_H
 
 #include <QEvent>
 #include <QMessageBox>
@@ -29,4 +29,4 @@ private:
     std::unique_ptr<QSettings> _settings;
 };
 
-#endif // ERRORDIALOG_H
+#endif // DEFAULTDIALOG_H

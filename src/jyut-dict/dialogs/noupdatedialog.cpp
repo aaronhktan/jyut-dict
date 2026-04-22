@@ -1,7 +1,7 @@
 #include "noupdatedialog.h"
 
 NoUpdateDialog::NoUpdateDialog(QString &version, QWidget *parent)
-    : DefaultDialog("", "", parent)
+    : DefaultDialog{"", "", parent}
 {
     setupUI(version);
     translateUI();

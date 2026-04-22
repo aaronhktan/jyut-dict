@@ -38,11 +38,11 @@ private:
     QWidget *_viewHistoryTab;
 
 signals:
-    void searchHistoryClicked(const searchTermHistoryItem &pair);
+    void searchHistoryClicked(const SearchTermHistoryItem &pair);
     void viewHistoryClicked(const Entry &entry);
 
 public slots:
-    void forwardSearchHistoryItem(const searchTermHistoryItem &pair);
+    void forwardSearchHistoryItem(const SearchTermHistoryItem &pair);
     void forwardViewHistoryItem(const Entry &entry);
     void updateStyleRequested(void);
 };

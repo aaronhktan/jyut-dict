@@ -1,12 +1,20 @@
 ﻿#include "windows/mainwindow.h"
 
+#include "components/favouritewindow/favouritesplitter.h"
+#include "components/mainwindow/mainsplitter.h"
+#include "components/mainwindow/maintoolbar.h"
+#include "dialogs/nosourceupdatesdialog.h"
 #include "dialogs/noupdatedialog.h"
+#include "logic/database/sqldatabasemanager.h"
+#include "logic/database/sqldatabaseutils.h"
+#include "logic/database/sqluserdatautils.h"
+#include "logic/search/sqlsearch.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/source/sourceutils.h"
 #include "logic/strings/strings.h"
-#include "windows/sourceupdatewindow.h"
-#include "windows/updatewindow.h"
+#include "logic/update/jyutdictionaryreleasechecker.h"
+#include "logic/update/sourcereleasechecker.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined(Q_OS_LINUX)
@@ -15,6 +23,12 @@
 #include "logic/utils/utils_windows.h"
 #endif
 #include "logic/utils/utils_qt.h"
+#include "windows/aboutwindow.h"
+#include "windows/historywindow.h"
+#include "windows/settingswindow.h"
+#include "windows/sourceupdatewindow.h"
+#include "windows/updatewindow.h"
+#include "windows/welcomewindow.h"
 
 #include <QAction>
 #include <QApplication>
@@ -394,6 +408,7 @@ void MainWindow::translateUI(void)
     _helpAction->setText(tr("%1 Help").arg(
         QCoreApplication::translate("strings", Strings::PRODUCT_NAME)));
     _updateAction->setText(tr("Check for Updates..."));
+    _updateSourcesAction->setText(tr("Check for Dictionary Updates..."));
 
     Utils::refreshLanguageMap();
 
@@ -906,11 +921,12 @@ void MainWindow::notifySourceUpdateAvailable(
         _sourceUpdateWindow = new SourceUpdateWindow{a, _manager, this};
         _sourceUpdateWindow->show();
     } else if (showIfNoUpdate) {
-        // TODO: Implement
+        NoSourceUpdatesDialog *_message = new NoSourceUpdatesDialog{this};
+        _message->exec();
     }
 }
 
-void MainWindow::forwardSearchHistoryItem(const searchTermHistoryItem &pair)
+void MainWindow::forwardSearchHistoryItem(const SearchTermHistoryItem &pair)
 {
     emit searchHistoryClicked(pair);
 }
@@ -1202,6 +1218,12 @@ void MainWindow::createActions(void)
         checkForUpdate(/* showProgress = */ true);
     });
     _helpMenu->addAction(_updateAction);
+
+    _updateSourcesAction = new QAction{this};
+    connect(_updateSourcesAction, &QAction::triggered, this, [this] {
+        checkForSourceUpdate(/* showProgress = */ true);
+    });
+    _helpMenu->addAction(_updateSourcesAction);
 }
 
 void MainWindow::undo(void) const
@@ -1526,7 +1548,7 @@ void MainWindow::checkForUpdate(bool showProgress)
                 &JyutDictionaryReleaseChecker::foundUpdate,
                 this,
                 [&](const IUpdateChecker::UpdateVariant &v) {
-                    _updateDialog->reset();
+                    _updateCheckProgressDialog->reset();
 
                     disconnect(_checker, nullptr, nullptr, nullptr);
 
@@ -1548,27 +1570,28 @@ void MainWindow::checkForUpdate(bool showProgress)
                     _recentlyCheckedForUpdates = false;
                 });
 
-        _updateDialog = new QProgressDialog{"", QString(), 0, 0, this};
-        _updateDialog->setWindowModality(Qt::ApplicationModal);
-        _updateDialog->setMinimumSize(300, 75);
-        Qt::WindowFlags flags = _updateDialog->windowFlags()
+        _updateCheckProgressDialog
+            = new QProgressDialog{"", QString(), 0, 0, this};
+        _updateCheckProgressDialog->setWindowModality(Qt::ApplicationModal);
+        _updateCheckProgressDialog->setMinimumSize(300, 75);
+        Qt::WindowFlags flags = _updateCheckProgressDialog->windowFlags()
                                 | Qt::CustomizeWindowHint;
         flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
                    | Qt::WindowFullscreenButtonHint
                    | Qt::WindowContextHelpButtonHint);
-        _updateDialog->setWindowFlags(flags);
-        _updateDialog->setMinimumDuration(0);
+        _updateCheckProgressDialog->setWindowFlags(flags);
+        _updateCheckProgressDialog->setMinimumDuration(0);
 #ifdef Q_OS_WIN
         _updateDialog->setWindowTitle(
             QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
 #elif defined(Q_OS_LINUX)
         _updateDialog->setWindowTitle(" ");
 #endif
-        _updateDialog->setAttribute(Qt::WA_DeleteOnClose, true);
+        _updateCheckProgressDialog->setAttribute(Qt::WA_DeleteOnClose, true);
 
-        _updateDialog->setLabelText(tr("Checking for update..."));
-        _updateDialog->setRange(0, 0);
-        _updateDialog->setValue(0);
+        _updateCheckProgressDialog->setLabelText(tr("Checking for update..."));
+        _updateCheckProgressDialog->setRange(0, 0);
+        _updateCheckProgressDialog->setValue(0);
     } else {
         connect(_checker,
                 &JyutDictionaryReleaseChecker::foundUpdate,
@@ -1609,8 +1632,9 @@ void MainWindow::checkForSourceUpdate(bool showProgress)
         connect(_sourceChecker,
                 &SourceReleaseChecker::foundUpdate,
                 this,
-                [&](const IUpdateChecker::UpdateVariant &v) {
-                    // _updateDialog->reset();
+                [this](const IUpdateChecker::UpdateVariant &v) {
+                    _recentlyCheckedForSourceUpdates = false;
+                    _updateCheckProgressDialog->reset();
 
                     disconnect(_sourceChecker, nullptr, nullptr, nullptr);
 
@@ -1627,20 +1651,19 @@ void MainWindow::checkForSourceUpdate(bool showProgress)
                         notifySourceUpdateAvailable(a,
                                                     /* showIfNoUpdate = */ true);
                     }
-
-                    _recentlyCheckedForSourceUpdates = false;
                 });
 
-        _updateDialog = new QProgressDialog{"", QString(), 0, 0, this};
-        _updateDialog->setWindowModality(Qt::ApplicationModal);
-        _updateDialog->setMinimumSize(300, 75);
-        Qt::WindowFlags flags = _updateDialog->windowFlags()
+        _updateCheckProgressDialog
+            = new QProgressDialog{"", QString(), 0, 0, this};
+        _updateCheckProgressDialog->setWindowModality(Qt::ApplicationModal);
+        _updateCheckProgressDialog->setMinimumSize(300, 75);
+        Qt::WindowFlags flags = _updateCheckProgressDialog->windowFlags()
                                 | Qt::CustomizeWindowHint;
         flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint
                    | Qt::WindowFullscreenButtonHint
                    | Qt::WindowContextHelpButtonHint);
-        _updateDialog->setWindowFlags(flags);
-        _updateDialog->setMinimumDuration(0);
+        _updateCheckProgressDialog->setWindowFlags(flags);
+        _updateCheckProgressDialog->setMinimumDuration(0);
 #ifdef Q_OS_WIN
         _updateDialog->setWindowTitle(
             QCoreApplication::translate(Strings::STRINGS_CONTEXT,
@@ -1648,18 +1671,19 @@ void MainWindow::checkForSourceUpdate(bool showProgress)
 #elif defined(Q_OS_LINUX)
         _updateDialog->setWindowTitle(" ");
 #endif
-        _updateDialog->setAttribute(Qt::WA_DeleteOnClose, true);
+        _updateCheckProgressDialog->setAttribute(Qt::WA_DeleteOnClose, true);
 
-        _updateDialog->setLabelText(
+        _updateCheckProgressDialog->setLabelText(
             tr("Checking for updates to dictionaries..."));
-        _updateDialog->setRange(0, 0);
-        _updateDialog->setValue(0);
+        _updateCheckProgressDialog->setRange(0, 0);
+        _updateCheckProgressDialog->setValue(0);
     } else {
         connect(_sourceChecker,
                 &SourceReleaseChecker::foundUpdate,
                 this,
-                [&](const IUpdateChecker::UpdateVariant &v) {
+                [this](const IUpdateChecker::UpdateVariant &v) {
                     disconnect(_sourceChecker, nullptr, nullptr, nullptr);
+                    _recentlyCheckedForSourceUpdates = false;
 
                     if (!std::holds_alternative<
                             std::vector<IUpdateChecker::SourceManifestMetadata>>(
@@ -1674,14 +1698,12 @@ void MainWindow::checkForSourceUpdate(bool showProgress)
                         notifySourceUpdateAvailable(a,
                                                     /* showIfNoUpdate = */ false);
                     }
-
-                    _recentlyCheckedForUpdates = false;
                 });
     }
 
     if (!_recentlyCheckedForSourceUpdates) {
-        _sourceChecker->checkForNewUpdate();
         _recentlyCheckedForSourceUpdates = true;
+        _sourceChecker->checkForNewUpdate();
     }
 }
 
