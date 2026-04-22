@@ -1521,7 +1521,6 @@ void MainWindow::openWelcomeWindow(void)
     }
 
     _welcomeWindow = new WelcomeWindow{this};
-    _welcomeWindow->setAttribute(Qt::WA_DeleteOnClose);
     _welcomeWindow->setFocus();
     _welcomeWindow->show();
 
@@ -1530,6 +1529,7 @@ void MainWindow::openWelcomeWindow(void)
             // Dialogs may be suppressed while the welcome window is visible,
             // so check whether they need to be shown (it's assumed that each
             // call will "chain" to the next one)
+            _welcomeWindow = nullptr;
             if (!_dialogQueue.empty()) {
                 auto func = _dialogQueue.front();
                 _dialogQueue.pop_front();
@@ -1632,8 +1632,7 @@ void MainWindow::checkForSourceUpdate(bool showProgress)
 {
     disconnect(_sourceChecker, nullptr, nullptr, nullptr);
     if (_sourceUpdateWindow) {
-        _sourceUpdateWindow->hide();
-        _sourceUpdateWindow->deleteLater();
+        _sourceUpdateWindow->close();
     }
 
     if (showProgress) {
@@ -1721,6 +1720,11 @@ void MainWindow::notifyDatabaseMigration(void)
         _dialogQueue.push_back([this]() { notifyDatabaseMigration(); });
         return;
     } else if (!_databaseMigrating) {
+        if (!_dialogQueue.empty()) {
+            auto func = _dialogQueue.front();
+            _dialogQueue.pop_front();
+            func();
+        }
         return;
     }
 
@@ -1755,8 +1759,13 @@ void MainWindow::finishedDatabaseMigration(bool success)
 {
     if (_welcomeWindow) {
         _dialogQueue.push_back(
-            [=, this]() { finishedDatabaseMigration(success); });
+            [success, this]() { finishedDatabaseMigration(success); });
     } else if (!_databaseMigrating) {
+        if (!_dialogQueue.empty()) {
+            auto func = _dialogQueue.front();
+            _dialogQueue.pop_front();
+            func();
+        }
         return;
     }
 

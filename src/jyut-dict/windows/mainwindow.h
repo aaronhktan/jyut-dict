@@ -5,6 +5,7 @@
 #include "logic/update/iupdatechecker.h"
 
 #include <QMainWindow>
+#include <QPointer>
 
 #include <memory>
 #include <optional>
@@ -104,14 +105,14 @@ private:
     QAction *_updateAction;
     QAction *_updateSourcesAction;
 
-    AboutWindow *_aboutWindow = nullptr;
-    SettingsWindow *_settingsWindow = nullptr;
-    HistoryWindow *_historyWindow = nullptr;
-    FavouriteSplitter *_favouritesWindow = nullptr;
-    WelcomeWindow *_welcomeWindow = nullptr;
+    QPointer<AboutWindow> _aboutWindow = nullptr;
+    QPointer<SettingsWindow> _settingsWindow = nullptr;
+    QPointer<HistoryWindow> _historyWindow = nullptr;
+    QPointer<FavouriteSplitter> _favouritesWindow = nullptr;
+    QPointer<WelcomeWindow> _welcomeWindow = nullptr;
 
-    UpdateAvailableWindow *_updateAvailableWindow = nullptr;
-    SourceUpdateWindow *_sourceUpdateWindow = nullptr;
+    QPointer<UpdateAvailableWindow> _updateAvailableWindow = nullptr;
+    QPointer<SourceUpdateWindow> _sourceUpdateWindow = nullptr;
 
     QProgressDialog *_updateCheckProgressDialog = nullptr;
     QProgressDialog *_databaseMigrationDialog = nullptr;

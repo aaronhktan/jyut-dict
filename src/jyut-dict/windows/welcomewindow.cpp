@@ -28,6 +28,7 @@ WelcomeWindow::WelcomeWindow(QWidget *parent)
     flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint | Qt::WindowFullscreenButtonHint);
     setWindowFlags(flags);
     setWindowModality(Qt::ApplicationModal);
+    setAttribute(Qt::WA_DeleteOnClose);
 
     setupUI();
     translateUI();
