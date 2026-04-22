@@ -577,10 +577,12 @@ void SourceUpdateWindow::downloadSourceUpdates()
 #endif
     _dialog->setAttribute(Qt::WA_DeleteOnClose, true);
 
-    _dialog->setLabelText(tr("Downloading source updates..."));
+    _dialog->setLabelText(tr("Downloading dictionary updates..."));
     _dialog->setRange(0, 0);
     _dialog->setValue(0);
 
+    // The window is closed later, when the results of the update are displayed
+    // to the user. See SourceUpdateWindow::notifyUpdateStatus().
     hide();
 }
 
