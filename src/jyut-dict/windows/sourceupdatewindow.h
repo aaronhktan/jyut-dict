@@ -3,6 +3,8 @@
 
 #include "logic/update/iupdatechecker.h"
 
+#include <QEvent>
+#include <QMouseEvent>
 #include <QWidget>
 
 class Downloader;
@@ -11,19 +13,44 @@ class SQLDatabaseUtils;
 class SourceUpdateModel;
 
 class QCheckBox;
+class QGridLayout;
 class QLabel;
 class QPushButton;
 class QProgressDialog;
 class QSettings;
 class QTableView;
-class QVBoxLayout;
 
 // TODO:
 // Implement keyboard shortcuts (return/enter, esc)
-// Add checkbox to disable automatic checking for sources
+
+// Modified from https://stackoverflow.com/questions/32018941/qlabel-click-event-using-qt
+class ClickSignaler : public QObject
+{
+    Q_OBJECT
+
+    bool eventFilter(QObject *obj, QEvent *ev) override
+    {
+        if (ev->type() == QEvent::MouseButtonRelease && obj->isWidgetType()) {
+            emit mouseButtonEvent(static_cast<QWidget *>(obj),
+                                  static_cast<QMouseEvent *>(ev));
+        }
+        return false;
+    }
+
+public:
+    ClickSignaler(QObject *parent = nullptr)
+        : QObject{parent}
+    {}
+    void installOn(QWidget *widget) { widget->installEventFilter(this); }
+
+signals:
+    void mouseButtonEvent(QWidget *, QMouseEvent *);
+};
 
 class SourceUpdateWindow : public QWidget
 {
+    Q_OBJECT
+
 public:
     enum SourceUpdateStatus {
         kSuccess,
@@ -52,20 +79,20 @@ private:
     void updateToggleAllButtonText();
 
     void downloadSourceUpdates();
-    // Note: This function should only be called in the lambda associated
-    // with Downloader::downloaded
+    // Note: This function should only be called in the slot wired to
+    // Downloader::downloaded
     void startNextDownload();
 
     void notifyUpdateStatus();
 
     SourceUpdateModel *_model;
-    QWidget *_widget;
-    QVBoxLayout *_layout;
+    QGridLayout *_layout;
 
     QTableView *_tableView;
     QLabel *_description;
     QPushButton *_toggleAllButton;
     QCheckBox *_disableNotifications;
+    QLabel *_disableNotificationsLabel;
     QPushButton *_skipButton;
     QPushButton *_downloadButton;
 
@@ -76,6 +103,7 @@ private:
     QProgressDialog *_dialog = nullptr;
     std::unordered_map<std::string, SourceUpdateStatus> _updateStatus;
 
+    ClickSignaler *_clickSignaler;
     std::shared_ptr<SQLDatabaseManager> _manager;
     std::unique_ptr<SQLDatabaseUtils> _utils;
     std::shared_ptr<QSettings> _settings;

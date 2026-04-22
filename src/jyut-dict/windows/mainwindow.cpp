@@ -1459,6 +1459,9 @@ void MainWindow::openSettingsWindow(void)
             &SettingsWindow::triggerSearch,
             this,
             &MainWindow::searchRequested);
+    connect(_settingsWindow, &SettingsWindow::destroyed, this, [this] {
+        _settingsWindow = nullptr;
+    });
 }
 
 void MainWindow::openHistoryWindow(void)
@@ -1628,6 +1631,11 @@ void MainWindow::checkForUpdate(bool showProgress)
 void MainWindow::checkForSourceUpdate(bool showProgress)
 {
     disconnect(_sourceChecker, nullptr, nullptr, nullptr);
+    if (_sourceUpdateWindow) {
+        _sourceUpdateWindow->hide();
+        _sourceUpdateWindow->deleteLater();
+    }
+
     if (showProgress) {
         connect(_sourceChecker,
                 &SourceReleaseChecker::foundUpdate,

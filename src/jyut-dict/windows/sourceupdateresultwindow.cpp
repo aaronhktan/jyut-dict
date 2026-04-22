@@ -148,7 +148,9 @@ void SourceUpdateResultWindow::translateUI()
     }
 
     _titleLabel->setText(titleLabelText);
-    _messageLabel->setText(tr("Click 'Show Details' for more information."));
+    _messageLabel->setText(
+        tr("Click 'Show Details' for more information. Please report errors to "
+           "the developer of the application."));
     _showMoreButton->setText(tr("Show Details"));
     _okButton->setText(tr("OK"));
 

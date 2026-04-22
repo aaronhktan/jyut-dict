@@ -17,6 +17,7 @@
 #include "windows/sourceupdateresultwindow.h"
 
 #include <QAbstractItemView>
+#include <QCheckBox>
 #include <QGuiApplication>
 #include <QHBoxLayout>
 #include <QHeaderView>
@@ -99,6 +100,7 @@ SourceUpdateWindow::SourceUpdateWindow(
     std::shared_ptr<SQLDatabaseManager> manager,
     QWidget *parent)
     : QWidget{parent, Qt::Window}
+    , _clickSignaler{new ClickSignaler}
     , _manager{manager}
     , _utils{new SQLDatabaseUtils}
     , _settings{Settings::getSettings()}
@@ -166,11 +168,11 @@ void SourceUpdateWindow::setupUI()
     resize(kWindowWidth, kWindowHeight);
     setFixedSize(kWindowWidth, kWindowHeight);
 
-    _widget = new QWidget{this};
+    QWidget *tableWidget = new QWidget{this};
 
-    _description = new QLabel{_widget};
+    _description = new QLabel{tableWidget};
 
-    _tableView = new SourceUpdateTableView{_widget};
+    _tableView = new SourceUpdateTableView{tableWidget};
     _tableView->setModel(_model);
     _tableView->setAlternatingRowColors(true);
     _tableView->setSelectionMode(QAbstractItemView::NoSelection);
@@ -194,28 +196,42 @@ void SourceUpdateWindow::setupUI()
     _tableView->horizontalHeader()->setFocusPolicy(Qt::NoFocus);
     _tableView->verticalHeader()->setVisible(false);
 
-    _toggleAllButton = new QPushButton{_widget};
+    _toggleAllButton = new QPushButton{tableWidget};
 
-    _skipButton = new QPushButton{_widget};
-    _downloadButton = new QPushButton{_widget};
+    QVBoxLayout *tableWidgetLayout = new QVBoxLayout{tableWidget};
+    tableWidgetLayout->setContentsMargins(0, 11, 0, 0);
+    tableWidgetLayout->setSpacing(2);
+    tableWidgetLayout->addWidget(_tableView);
+    tableWidgetLayout->addWidget(_toggleAllButton);
+
+    QWidget *disableNotificationsWidget = new QWidget{this};
+    _disableNotifications = new QCheckBox{disableNotificationsWidget};
+    _disableNotifications->setTristate(false);
+    _disableNotifications->setChecked(
+        !_settings
+             ->value("Advanced/sourceUpdateNotificationsEnabled", QVariant{true})
+             .toBool());
+    _disableNotificationsLabel = new QLabel{disableNotificationsWidget};
+    _clickSignaler->installOn(_disableNotificationsLabel);
+
+    QHBoxLayout *disableNotificationsWidgetLayout = new QHBoxLayout{
+        disableNotificationsWidget};
+    disableNotificationsWidgetLayout->setContentsMargins(0, 0, 0, 0);
+    disableNotificationsWidgetLayout->addWidget(_disableNotifications);
+    disableNotificationsWidgetLayout->addWidget(_disableNotificationsLabel);
+    disableNotificationsWidgetLayout->addStretch();
+
+    _skipButton = new QPushButton{this};
+    _downloadButton = new QPushButton{this};
     _downloadButton->setDefault(true);
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout;
-    buttonLayout->setContentsMargins(0, 0, 0, 0);
-    buttonLayout->addWidget(_skipButton);
-    buttonLayout->addWidget(_downloadButton);
-
-    QVBoxLayout *widgetLayout = new QVBoxLayout{_widget};
-    widgetLayout->setContentsMargins(0, 11, 0, 0);
-    widgetLayout->setSpacing(2);
-    widgetLayout->addWidget(_tableView);
-    widgetLayout->addWidget(_toggleAllButton);
-
-    _layout = new QVBoxLayout{this};
+    _layout = new QGridLayout{this};
     _layout->setContentsMargins(22, 22, 22, 22);
-    _layout->addWidget(_description);
-    _layout->addWidget(_widget);
-    _layout->addLayout(buttonLayout);
+    _layout->addWidget(_description, 0, 0, 1, 2);
+    _layout->addWidget(tableWidget, 1, 0, 1, 2);
+    _layout->addWidget(disableNotificationsWidget, 3, 0, 1, 2);
+    _layout->addWidget(_skipButton, 4, 0, 1, 1);
+    _layout->addWidget(_downloadButton, 4, 1, 1, 1);
 
     connect(_tableView,
             &QTableView::clicked,
@@ -225,7 +241,24 @@ void SourceUpdateWindow::setupUI()
             &QPushButton::clicked,
             this,
             &SourceUpdateWindow::toggleAllRows);
-    connect(_skipButton, &QPushButton::clicked, this, [this]() { close(); });
+    connect(_disableNotifications, &QCheckBox::checkStateChanged, this, [&] {
+        _settings->setValue("Advanced/sourceUpdateNotificationsEnabled",
+                            !_disableNotifications->checkState());
+        _settings->sync();
+    });
+    connect(_clickSignaler,
+            &ClickSignaler::mouseButtonEvent,
+            this,
+            [this](QWidget *w, QMouseEvent *e) {
+                if (w != _disableNotificationsLabel) {
+                    return;
+                }
+
+                if (e->type() == QEvent::MouseButtonRelease) {
+                    _disableNotifications->toggle();
+                }
+            });
+    connect(_skipButton, &QPushButton::clicked, this, [this] { close(); });
     connect(_downloadButton,
             &QPushButton::clicked,
             this,
@@ -248,9 +281,13 @@ void SourceUpdateWindow::translateUI()
                 "New versions of your dictionaries are available for download!")
             : tr("A new version of a dictionary is available for download!"));
     updateToggleAllButtonText();
+    _disableNotificationsLabel->setText(
+        tr("Disable automatic checking for dictionary updates"));
     _skipButton->setText(tr("Skip"));
     _downloadButton->setText(tr("Download Updates..."));
+#ifndef Q_OS_MAC
     setWindowTitle(tr("Dictionary Updates"));
+#endif
 }
 
 void SourceUpdateWindow::setStyle(bool use_dark)
@@ -260,10 +297,6 @@ void SourceUpdateWindow::setStyle(bool use_dark)
             ->value("Interface/size",
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
-    int uiFontSize = Settings::uiFontSize.at(
-        static_cast<unsigned long>(interfaceSize - 1));
-    int uiFontSizeHan = Settings::uiFontSizeHan.at(
-        static_cast<unsigned long>(interfaceSize - 1));
     int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
     int bodyFontSizeHan = Settings::bodyFontSizeHan.at(

@@ -1,27 +1,28 @@
 #ifndef ADVANCEDTAB_H
 #define ADVANCEDTAB_H
 
-#include "dialogs/downloadaudiodialog.h"
-#include "dialogs/downloadresultdialog.h"
-#include "dialogs/exportdatabasedialog.h"
-#include "dialogs/restoredatabasedialog.h"
-#include "logic/download/downloader.h"
 #include "logic/entry/entryspeaker.h"
 
-#include <QCheckBox>
-#include <QComboBox>
-#include <QEvent>
-#include <QFormLayout>
-#include <QFutureWatcher>
-#include <QLabel>
-#include <QProgressDialog>
-#include <QPushButton>
-#include <QRadioButton>
-#include <QSettings>
-#include <QTranslator>
 #include <QWidget>
 
 #include <functional>
+
+class DownloadAudioDialog;
+class Downloader;
+class DownloadResultDialog;
+class ExportDatabaseDialog;
+class RestoreDatabaseDialog;
+
+class QCheckBox;
+class QComboBox;
+class QEvent;
+class QFormLayout;
+class QLabel;
+class QProgressDialog;
+class QPushButton;
+class QRadioButton;
+class QSettings;
+class QTranslator;
 
 // The advanced tab displays advanced options in the settings window.
 
@@ -53,6 +54,7 @@ private:
     void setStyle(bool use_dark);
 
     void initializeUpdateCheckbox(QCheckBox &checkbox);
+    void initializeSourceUpdateCheckbox(QCheckBox &checkbox);
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     void initializeForceDarkModeCheckbox(QCheckBox &checkbox);
 #endif
@@ -62,6 +64,7 @@ private:
     void initializeResetButton(QPushButton &resetButton);
 
     void setUpdateCheckboxDefault(QCheckBox &checkbox);
+    void setSourceUpdateCheckboxDefault(QCheckBox &checkbox);
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     void setForceDarkModeCheckboxDefault(QCheckBox &checkbox);
 #endif
@@ -99,6 +102,7 @@ private:
     bool _paletteRecentlyChanged = false;
 
     QCheckBox *_updateCheckbox;
+    QCheckBox *_sourceUpdateCheckbox;
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     QCheckBox *_forceDarkModeCheckbox;
 #endif

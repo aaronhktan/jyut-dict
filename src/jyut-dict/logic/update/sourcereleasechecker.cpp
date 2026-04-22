@@ -30,6 +30,7 @@ SourceReleaseChecker::SourceReleaseChecker(
 
 void SourceReleaseChecker::checkForNewUpdate()
 {
+    _updates.clear();
     std::vector<SourceMetadata> sources;
     QSqlDatabase db = _databaseManager->getDatabase();
     _utils->readSources(db, sources);
@@ -39,6 +40,11 @@ void SourceReleaseChecker::checkForNewUpdate()
         _sourceUpdateURLs.emplace(s.getUpdateURL().empty()
                                       ? DEFAULT_SOURCE_UPDATE_URL
                                       : s.getUpdateURL());
+    }
+
+    if (_sourceUpdateURLs.empty()) {
+        emit foundUpdate(_updates);
+        return;
     }
 
     for (const auto &u : _sourceUpdateURLs) {
