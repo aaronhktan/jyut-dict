@@ -108,6 +108,7 @@ set(PROJECT_HEADERS
         dialogs/exportdatabasedialog.h
         dialogs/handwritingerrordialog.h
         dialogs/noupdatedialog.h
+        dialogs/nosourceupdatesdialog.h
         dialogs/overwriteconflictingdictionarydialog.h
         dialogs/resetsettingsdialog.h
         dialogs/restoredatabasedialog.h
@@ -236,6 +237,7 @@ set(PROJECT_SOURCES
         dialogs/exportdatabasedialog.cpp
         dialogs/handwritingerrordialog.cpp
         dialogs/noupdatedialog.cpp
+        dialogs/nosourceupdatesdialog.cpp
         dialogs/overwriteconflictingdictionarydialog.cpp
         dialogs/resetsettingsdialog.cpp
         dialogs/restoredatabasedialog.cpp
@@ -304,7 +306,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_HEADERS}
         ${PROJECT_SOURCES}
         resources/resource.qrc
-        dialogs/nosourceupdatesdialog.h dialogs/nosourceupdatesdialog.cpp
     )
 
 else()
