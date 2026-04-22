@@ -20,8 +20,9 @@ class QProgressDialog;
 class QSettings;
 class QTableView;
 
-// TODO:
-// Implement keyboard shortcuts (return/enter, esc)
+// The SourceUpdateWindow displays available source updates (a.k.a. dictionary updates)
+// to the user. This window allows a user to select which updates to download, then
+// downloads and applies the updates.
 
 // Modified from https://stackoverflow.com/questions/32018941/qlabel-click-event-using-qt
 class ClickSignaler : public QObject
