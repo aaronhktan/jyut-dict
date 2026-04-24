@@ -10,6 +10,8 @@
 
 class SourceUpdateModel : public QAbstractTableModel
 {
+    Q_OBJECT
+
 public:
     struct MetadataWrapper
     {

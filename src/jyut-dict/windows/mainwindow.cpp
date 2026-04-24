@@ -407,7 +407,7 @@ void MainWindow::translateUI(void)
 
     _helpAction->setText(tr("%1 Help").arg(
         QCoreApplication::translate("strings", Strings::PRODUCT_NAME)));
-    _updateAction->setText(tr("Check for Updates..."));
+    _updateAction->setText(tr("Check for App Updates..."));
     _updateSourcesAction->setText(tr("Check for Dictionary Updates..."));
 
     Utils::refreshLanguageMap();
