@@ -7,6 +7,7 @@
 #include <QMainWindow>
 #include <QPointer>
 
+#include <deque>
 #include <memory>
 #include <optional>
 #include <string>

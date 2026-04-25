@@ -1585,10 +1585,11 @@ void MainWindow::checkForUpdate(bool showProgress)
         _updateCheckProgressDialog->setWindowFlags(flags);
         _updateCheckProgressDialog->setMinimumDuration(0);
 #ifdef Q_OS_WIN
-        _updateDialog->setWindowTitle(
-            QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PRODUCT_NAME));
+        _updateCheckProgressDialog->setWindowTitle(
+            QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                        Strings::PRODUCT_NAME));
 #elif defined(Q_OS_LINUX)
-        _updateDialog->setWindowTitle(" ");
+        _updateCheckProgressDialog->setWindowTitle(" ");
 #endif
         _updateCheckProgressDialog->setAttribute(Qt::WA_DeleteOnClose, true);
 
@@ -1672,11 +1673,11 @@ void MainWindow::checkForSourceUpdate(bool showProgress)
         _updateCheckProgressDialog->setWindowFlags(flags);
         _updateCheckProgressDialog->setMinimumDuration(0);
 #ifdef Q_OS_WIN
-        _updateDialog->setWindowTitle(
+        _updateCheckProgressDialog->setWindowTitle(
             QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                         Strings::PRODUCT_NAME));
 #elif defined(Q_OS_LINUX)
-        _updateDialog->setWindowTitle(" ");
+        _updateCheckProgressDialog->setWindowTitle(" ");
 #endif
         _updateCheckProgressDialog->setAttribute(Qt::WA_DeleteOnClose, true);
 
