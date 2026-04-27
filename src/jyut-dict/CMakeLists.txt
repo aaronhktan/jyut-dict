@@ -323,6 +323,7 @@ add_subdirectory(logic/database/test/TestSqlUserDataUtils)
 add_subdirectory(logic/database/test/TestSqlUserHistoryUtils)
 add_subdirectory(logic/entry/test/TestDefinitionsSet)
 add_subdirectory(logic/entry/test/TestEntry)
+add_subdirectory(logic/search/test/TestQRegularExpressionBenchmark)
 add_subdirectory(logic/search/test/TestSqlSearch)
 add_subdirectory(logic/sentence/test/TestSentenceSet)
 add_subdirectory(logic/sentence/test/TestSourceSentence)
@@ -434,4 +435,3 @@ install(TARGETS CantoneseDictionary
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(CantoneseDictionary)
 endif()
-
