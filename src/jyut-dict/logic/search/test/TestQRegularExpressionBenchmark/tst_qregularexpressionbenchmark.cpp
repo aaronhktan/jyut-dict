@@ -2,6 +2,7 @@
 #include "logic/utils/chineseutils.h"
 #include "logic/utils/mandarinutils.h"
 
+#include <QFileInfo>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
@@ -126,6 +127,16 @@ bool executeSingleValueQuery(QSqlDatabase &db,
     return true;
 }
 
+bool executeNonQuery(QSqlDatabase &db, const QString &sql)
+{
+    QSqlQuery query{db};
+    if (!query.exec(sql)) {
+        qWarning() << "exec failed:" << query.lastError() << sql;
+        return false;
+    }
+    return true;
+}
+
 QStringList getExplainQueryPlan(QSqlDatabase &db,
                                 const QString &sql,
                                 const QString &bindValue)
@@ -165,15 +176,21 @@ private slots:
     void sqliteBenchmark();
     void explainQueryPlan_data();
     void explainQueryPlan();
+    void realDatabaseExistsBenchmark_data();
+    void realDatabaseExistsBenchmark();
 
 private:
     bool createBenchmarkDatabase();
+    bool hasRealDatabase() const;
+    bool openRealDatabase(const QString &connectionName, bool copyToMemory);
+    void closeDatabaseConnection(const QString &connectionName);
 
     QStringList _jyutpingCorpus;
     QStringList _pinyinCorpus;
     Utf8Corpus _jyutpingUtf8Corpus;
     Utf8Corpus _pinyinUtf8Corpus;
     QString _connectionName;
+    QString _realDatabasePath;
 };
 
 void TestQRegularExpressionBenchmark::initTestCase()
@@ -226,16 +243,16 @@ void TestQRegularExpressionBenchmark::initTestCase()
     for (const QString &entry : _pinyinCorpus) {
         _pinyinUtf8Corpus.push_back(entry.toUtf8());
     }
+    _realDatabasePath = qEnvironmentVariable("JYUT_DICT_REAL_DB_PATH");
 
     QVERIFY(createBenchmarkDatabase());
 }
 
 void TestQRegularExpressionBenchmark::cleanupTestCase()
 {
-    if (!_connectionName.isEmpty()) {
-        QSqlDatabase::database(_connectionName, /* open = */ false).close();
-        QSqlDatabase::removeDatabase(_connectionName);
-    }
+    closeDatabaseConnection(_connectionName);
+    closeDatabaseConnection("RealFileDb");
+    closeDatabaseConnection("RealMemoryDb");
 }
 
 bool TestQRegularExpressionBenchmark::createBenchmarkDatabase()
@@ -292,6 +309,65 @@ bool TestQRegularExpressionBenchmark::createBenchmarkDatabase()
     }
 
     return true;
+}
+
+bool TestQRegularExpressionBenchmark::hasRealDatabase() const
+{
+    return !_realDatabasePath.isEmpty() && QFileInfo::exists(_realDatabasePath);
+}
+
+bool TestQRegularExpressionBenchmark::openRealDatabase(const QString &connectionName,
+                                                       bool copyToMemory)
+{
+    closeDatabaseConnection(connectionName);
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", connectionName);
+    db.setConnectOptions("QSQLITE_ENABLE_REGEXP");
+    db.setDatabaseName(copyToMemory ? ":memory:" : _realDatabasePath);
+    if (!db.open()) {
+        qWarning() << "Failed to open database:" << db.lastError();
+        return false;
+    }
+
+    if (!copyToMemory) {
+        return true;
+    }
+
+    const QString escapedPath = QString{_realDatabasePath}.replace("'", "''");
+    if (!executeNonQuery(db,
+                         "ATTACH DATABASE '" + escapedPath + "' AS disk_db")) {
+        return false;
+    }
+    if (!executeNonQuery(db,
+                         "CREATE TABLE entries AS "
+                         "SELECT entry_id, jyutping, pinyin FROM disk_db.entries")) {
+        return false;
+    }
+    if (!executeNonQuery(db,
+                         "CREATE INDEX entries_jyutping_idx ON entries(jyutping)")) {
+        return false;
+    }
+    if (!executeNonQuery(db,
+                         "CREATE INDEX entries_pinyin_idx ON entries(pinyin)")) {
+        return false;
+    }
+    if (!executeNonQuery(db, "DETACH DATABASE disk_db")) {
+        return false;
+    }
+
+    return true;
+}
+
+void TestQRegularExpressionBenchmark::closeDatabaseConnection(
+    const QString &connectionName)
+{
+    if (connectionName.isEmpty()) {
+        return;
+    }
+    if (QSqlDatabase::contains(connectionName)) {
+        QSqlDatabase::database(connectionName, /* open = */ false).close();
+        QSqlDatabase::removeDatabase(connectionName);
+    }
 }
 
 void TestQRegularExpressionBenchmark::rawQRegularExpressionBenchmark_data()
@@ -466,6 +542,100 @@ void TestQRegularExpressionBenchmark::explainQueryPlan()
     for (const QString &line : planLines) {
         qInfo().noquote() << "  " << line;
     }
+}
+
+void TestQRegularExpressionBenchmark::realDatabaseExistsBenchmark_data()
+{
+    QTest::addColumn<QString>("connectionName");
+    QTest::addColumn<bool>("copyToMemory");
+    QTest::addColumn<QString>("sql");
+    QTest::addColumn<QString>("bindValue");
+
+    const QString jyutpingTomor = buildFuzzyJyutpingRegex("tomor");
+    const QString pinyinTomor = buildFuzzyPinyinRegex("tomor");
+    const QString jyutpingTomorrow = buildFuzzyJyutpingRegex("tomorrow");
+    const QString pinyinTomorrow = buildFuzzyPinyinRegex("tomorrow");
+
+    QTest::newRow("real-file-jyutping-tomor")
+        << QString{"RealFileDb"}
+        << false
+        << QString{"SELECT EXISTS (SELECT rowid FROM entries WHERE jyutping REGEXP ?)"}
+        << jyutpingTomor;
+    QTest::newRow("real-memory-jyutping-tomor")
+        << QString{"RealMemoryDb"}
+        << true
+        << QString{"SELECT EXISTS (SELECT rowid FROM entries WHERE jyutping REGEXP ?)"}
+        << jyutpingTomor;
+    QTest::newRow("real-file-pinyin-tomor")
+        << QString{"RealFileDb"}
+        << false
+        << QString{"SELECT EXISTS (SELECT rowid FROM entries WHERE pinyin REGEXP ?)"}
+        << pinyinTomor;
+    QTest::newRow("real-memory-pinyin-tomor")
+        << QString{"RealMemoryDb"}
+        << true
+        << QString{"SELECT EXISTS (SELECT rowid FROM entries WHERE pinyin REGEXP ?)"}
+        << pinyinTomor;
+    QTest::newRow("real-file-jyutping-tomorrow")
+        << QString{"RealFileDb"}
+        << false
+        << QString{"SELECT EXISTS (SELECT rowid FROM entries WHERE jyutping REGEXP ?)"}
+        << jyutpingTomorrow;
+    QTest::newRow("real-memory-jyutping-tomorrow")
+        << QString{"RealMemoryDb"}
+        << true
+        << QString{"SELECT EXISTS (SELECT rowid FROM entries WHERE jyutping REGEXP ?)"}
+        << jyutpingTomorrow;
+    QTest::newRow("real-file-pinyin-tomorrow")
+        << QString{"RealFileDb"}
+        << false
+        << QString{"SELECT EXISTS (SELECT rowid FROM entries WHERE pinyin REGEXP ?)"}
+        << pinyinTomorrow;
+    QTest::newRow("real-memory-pinyin-tomorrow")
+        << QString{"RealMemoryDb"}
+        << true
+        << QString{"SELECT EXISTS (SELECT rowid FROM entries WHERE pinyin REGEXP ?)"}
+        << pinyinTomorrow;
+}
+
+void TestQRegularExpressionBenchmark::realDatabaseExistsBenchmark()
+{
+    if (!hasRealDatabase()) {
+        QSKIP("Set JYUT_DICT_REAL_DB_PATH to the real dict.db to run this test.");
+    }
+
+    QFETCH(QString, connectionName);
+    QFETCH(bool, copyToMemory);
+    QFETCH(QString, sql);
+    QFETCH(QString, bindValue);
+
+    QVERIFY(openRealDatabase(connectionName, copyToMemory));
+    QSqlDatabase db = QSqlDatabase::database(connectionName);
+    QVERIFY(db.isOpen());
+
+    const QStringList planLines = getExplainQueryPlan(db, sql, bindValue);
+    QVERIFY(!planLines.isEmpty());
+    qInfo().noquote() << "REAL DB PLAN" << connectionName
+                      << (copyToMemory ? "memory" : "file");
+    for (const QString &line : planLines) {
+        qInfo().noquote() << "  " << line;
+    }
+
+    int result = 0;
+    QBENCHMARK {
+        QVERIFY(executeSingleValueQuery(db, sql, bindValue, result));
+    }
+
+    qInfo().noquote()
+        << "REAL DB RESULT"
+        << connectionName
+        << (copyToMemory ? "memory" : "file")
+        << "bindValue="
+        << bindValue
+        << "result="
+        << result;
+
+    closeDatabaseConnection(connectionName);
 }
 
 QTEST_MAIN(TestQRegularExpressionBenchmark)
