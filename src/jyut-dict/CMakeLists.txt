@@ -176,7 +176,8 @@ set(PROJECT_SOURCES
         components/definitioncard/definitioncardsection.cpp
         components/definitioncard/definitioncardwidget.cpp
         components/definitioncard/definitioncontentwidget.cpp
-        components/definitioncard/definitionheaderwidget.cpp        components/entrysearchresult/resultlistdelegate.cpp
+        components/definitioncard/definitionheaderwidget.cpp
+        components/entrysearchresult/resultlistdelegate.cpp
         components/entrysearchresult/resultlistmodel.cpp
         components/entrysearchresult/resultlistview.cpp
         components/entryview/entryactionwidget.cpp
