@@ -53,6 +53,7 @@ private:
 #endif
 
     void addSearchTermToHistory(SearchParameters parameters) const;
+    void performTriggeredSearch();
 
     std::shared_ptr<ISearchOptionsMediator> _mediator;
     std::shared_ptr<ISearch> _search;
@@ -65,7 +66,8 @@ private:
 #ifndef Q_OS_LINUX
     QAction *_microphone;
 #endif
-    QTimer *_timer;
+    QTimer *_historyTimer;
+    QTimer *_searchTimer;
 
     HandwritingWindow *_handwritingWindow = nullptr;
 #ifndef Q_OS_LINUX

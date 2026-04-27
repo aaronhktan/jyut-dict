@@ -29,7 +29,10 @@ SearchLineEdit::SearchLineEdit(
     , _sqlHistoryUtils{sqlHistoryUtils}
 {
     _settings = Settings::getSettings(this);
-    _timer = new QTimer{this};
+    _historyTimer = new QTimer{this};
+    _searchTimer = new QTimer{this};
+    _historyTimer->setSingleShot(true);
+    _searchTimer->setSingleShot(true);
 
     setupUI();
     translateUI();
@@ -147,6 +150,10 @@ void SearchLineEdit::setupUI(void)
             &QLineEdit::textChanged,
             this,
             &SearchLineEdit::searchTriggered);
+    connect(_searchTimer,
+            &QTimer::timeout,
+            this,
+            &SearchLineEdit::performTriggeredSearch);
 }
 
 void SearchLineEdit::translateUI(void)
@@ -345,21 +352,25 @@ void SearchLineEdit::startTranscription(void)
 
 void SearchLineEdit::addSearchTermToHistory(SearchParameters parameters) const
 {
-    _timer->stop();
-    disconnect(_timer, nullptr, nullptr, nullptr);
-    _timer->setSingleShot(true);
-    connect(_timer, &QTimer::timeout, this, [=, this]() {
+    _historyTimer->stop();
+    disconnect(_historyTimer, nullptr, nullptr, nullptr);
+    connect(_historyTimer, &QTimer::timeout, this, [=, this]() {
         if (!text().isEmpty()) {
             _sqlHistoryUtils->addSearchToHistory(text().toStdString(),
                                                  static_cast<int>(parameters));
         }
     });
-    _timer->start(500);
+    _historyTimer->start(500);
 }
 
 void SearchLineEdit::searchTriggered(void)
 {
     checkClearVisibility();
+    _searchTimer->start(200);
+}
+
+void SearchLineEdit::performTriggeredSearch()
+{
     if (_settings->value("Search/autoDetectLanguage", QVariant{true}).toBool()) {
         _search->searchAutoDetect(text().trimmed());
         addSearchTermToHistory(SearchParameters::AUTO_DETECT);
