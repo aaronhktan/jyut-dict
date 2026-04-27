@@ -9,11 +9,17 @@
 #elif defined(Q_OS_WIN)
 #include "logic/utils/utils_windows.h"
 #endif
+#include "logic/search/sqlsearch.h"
 #include "logic/utils/utils_qt.h"
 
+#include <QEvent>
+#include <QHBoxLayout>
+#include <QLabel>
 #include <QLocale>
+#include <QPushButton>
 #include <QStyle>
 #include <QTimer>
+#include <QWidget>
 
 SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(
     std::shared_ptr<ISearchOptionsMediator> mediator,
@@ -203,9 +209,6 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
                                    : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
                                             CONTENT_BACKGROUND_COLOUR_LIGHT_G,
                                             CONTENT_BACKGROUND_COLOUR_LIGHT_B};
-#ifdef Q_OS_LINUX
-    borderColour = borderColour.lighter(200);
-#endif
     int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
@@ -226,12 +229,13 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
                   "   border: 0; "
                   "} ");
 #endif
+
     QString styleSheet = "QPushButton { "
                          "   background-color: transparent; "
-#ifdef Q_OS_WIN
-                         "   border: 1px solid %1; "
-#else
+#ifdef Q_OS_MAC
                          "   border: 2px solid %1; "
+#else
+                         "   border: 1px solid %1; "
 #endif
                          "   border-radius: %2px; "
                          "   font-size: %3px; "
@@ -242,10 +246,10 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
                          " "
                          "QPushButton:checked { "
                          "   background-color: %1; "
-#ifdef Q_OS_WIN
-                         "   border: 1px solid %1; "
-#else
+#ifdef Q_OS_MAC
                          "   border: 2px solid %1; "
+#else
+                         "   border: 1px solid %1; "
 #endif
                          "   border-radius: %2px; "
                          "   font-size: %3px; "
@@ -256,10 +260,10 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
                          " "
                          "QPushButton:hover { "
                          "   background-color: %1; "
-#ifdef Q_OS_WIN
-                         "   border: 1px solid %1; "
-#else
+#ifdef Q_OS_MAC
                          "   border: 2px solid %1; "
+#else
+                         "   border: 1px solid %1; "
 #endif
                          "   border-radius: %2px; "
                          "   font-size: %3px; "

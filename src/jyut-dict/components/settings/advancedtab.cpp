@@ -374,7 +374,7 @@ void AdvancedTab::initializeCantoneseTTSWidget(QWidget *widget)
     static_cast<QGridLayout *>(widget->layout())
         ->addWidget(_useCantoneseGoogleOfflineSyllableTTSBackend, 0, 1, 1, 1);
 
-    connect(_useCantoneseQtTTSBackend, &QRadioButton::clicked, this, [&]() {
+    connect(_useCantoneseQtTTSBackend, &QRadioButton::clicked, this, [&] {
         setCantoneseTTSSettings(TextToSpeech::SpeakerBackend::QT_TTS,
                                 TextToSpeech::SpeakerVoice::NONE);
     });
@@ -391,7 +391,7 @@ void AdvancedTab::initializeCantoneseTTSWidget(QWidget *widget)
     connect(_useCantoneseGoogleOfflineSyllableTTSBackend,
             &QRadioButton::clicked,
             this,
-            [&]() { startAudioDownload(_cantoneseTTSCallbacks); });
+            [&] { startAudioDownload(_cantoneseTTSCallbacks); });
 
     setCantoneseTTSWidgetDefault(widget);
 }
@@ -889,6 +889,15 @@ void AdvancedTab::startAudioDownload(std::shared_ptr<TextToSpeechCallbacks> cbs)
     if (!sender()) {
         return;
     }
+
+#ifdef Q_OS_LINUX
+    // On Linux, this prevents the first launch of the settings window from
+    // popping up the prompt to download audio files.
+    if (!_settings->contains(
+            "Advanced/CantoneseTextToSpeech::SpeakerBackend")) {
+        return;
+    }
+#endif
 
     auto backend
         = sender()->property("data").value<TextToSpeech::SpeakerBackend>();

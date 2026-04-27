@@ -2,23 +2,25 @@
 #define SEARCHLINEEDIT_H
 
 #include "components/mainwindow/isearchlineedit.h"
-#include "logic/database/sqluserhistoryutils.h"
-#include "logic/search/isearch.h"
-#include "logic/search/isearchoptionsmediator.h"
-#include "windows/handwritingwindow.h"
-#ifndef Q_OS_LINUX
-#include "windows/transcriptionwindow.h"
-#endif
 
-#include <QAction>
-#include <QEvent>
-#include <QFocusEvent>
 #include <QLineEdit>
 #include <QSettings>
-#include <QTimer>
-#include <QWidget>
 
 #include <memory>
+
+class HandwritingWindow;
+class ISearch;
+class ISearchOptionsMediator;
+class SQLUserHistoryUtils;
+#ifndef Q_OS_LINUX
+class TranscriptionWindow;
+#endif
+
+class QAction;
+class QEvent;
+class QFocusEvent;
+class QTimer;
+class QWidget;
 
 // The SearchLineEdit is the main search bar
 

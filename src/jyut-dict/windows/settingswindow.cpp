@@ -6,6 +6,7 @@
 #include "components/settings/searchtab.h"
 #include "components/settings/settingstab.h"
 #include "components/settings/texttab.h"
+#include "logic/database/sqldatabasemanager.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
@@ -404,14 +405,15 @@ void SettingsWindow::setStyle(bool use_dark)
 #elif defined(Q_OS_LINUX)
     if (Utils::isDarkMode()) {
         _toolBar->setStyleSheet("QToolBar { "
-                                "   background-color: palette(alternate-base); "
+                                "   background-color: #2E2E32; "
                                 "   border-bottom: 1px solid palette(window); "
                                 "} ");
     } else {
-        _toolBar->setStyleSheet("QToolBar { "
-                                "   background-color: palette(window); "
-                                "   border-bottom: 1px solid palette(alternate-base); "
-                                "} ");
+        _toolBar->setStyleSheet(
+            "QToolBar { "
+            "   background-color: white; "
+            "   border-bottom: 1px solid palette(alternate-base); "
+            "} ");
     }
 #endif
 }

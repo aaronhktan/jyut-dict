@@ -2,17 +2,20 @@
 #define SEARCHOPTIONSRADIOGROUPBOX_H
 
 #include "isearchoptionsselector.h"
+#include "logic/search/isearchobserver.h"
 #include "logic/search/isearchoptionsmediator.h"
 #include "logic/search/searchparameters.h"
-#include "logic/search/sqlsearch.h"
 
-#include <QEvent>
 #include <QGroupBox>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QPushButton>
 #include <QSettings>
-#include <QWidget>
+
+class SQLSearch;
+
+class QEvent;
+class QHBoxLayout;
+class QLabel;
+class QPushButton;
+class QWidget;
 
 // The SearchOptionsRadioGroupBox allows users to change search parameters
 // Currently, there are five options for searching, more may be added

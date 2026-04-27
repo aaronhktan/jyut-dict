@@ -1,6 +1,9 @@
 #include "maintoolbar.h"
 
+#include "components/mainwindow/searchlineedit.h"
+#include "components/mainwindow/searchoptionsradiogroupbox.h"
 #include "logic/search/searchoptionsmediator.h"
+#include "logic/search/sqlsearch.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -10,10 +13,18 @@
 #include "logic/settings/settings.h"
 #include "logic/utils/utils_windows.h"
 #endif
+#include "logic/utils/utils.h"
 #include "logic/utils/utils_qt.h"
 
+#include <QAction>
+#include <QEvent>
+#include <QFocusEvent>
+#include <QGridLayout>
 #include <QGuiApplication>
+#include <QMenu>
 #include <QStyleHints>
+#include <QToolButton>
+#include <QWidget>
 
 MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
                          std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
@@ -210,12 +221,12 @@ void MainToolBar::setStyle(bool use_dark)
 #ifdef Q_OS_LINUX
     if (Utils::isDarkMode()) {
         setStyleSheet("QToolBar { "
-                      "   background-color: palette(alternate-base); "
+                      "   background-color: #2E2E32; "
                       "   border-bottom: 1px solid palette(window); "
                       "}");
     } else {
         setStyleSheet("QToolBar { "
-                      "   background: palette(window); "
+                      "   background: white; "
                       "   border-bottom: 1px solid palette(alternate-base); "
                       "}");
     }

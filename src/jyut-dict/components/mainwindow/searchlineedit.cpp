@@ -1,5 +1,8 @@
 #include "searchlineedit.h"
 
+#include "logic/database/sqluserhistoryutils.h"
+#include "logic/search/isearch.h"
+#include "logic/search/isearchoptionsmediator.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/utils/utils_qt.h"
@@ -10,11 +13,19 @@
 #elif defined(Q_OS_WIN)
 #include "logic/utils/utils_windows.h"
 #endif
+#include "windows/handwritingwindow.h"
+#ifndef Q_OS_LINUX
+#include "windows/transcriptionwindow.h"
+#endif
 
+#include <QAction>
 #include <QApplication>
-#include <QKeyEvent>
+#include <QEvent>
+#include <QFocusEvent>
 #include <QIcon>
+#include <QKeyEvent>
 #include <QTimer>
+#include <QWidget>
 
 #include <vector>
 
@@ -160,7 +171,9 @@ void SearchLineEdit::setStyle(bool use_dark)
     QFont font = QFont{"Microsoft YaHei"};
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
     setFont(font);
+#endif
 
+#ifndef Q_OS_MAC
     QColor borderColour = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
                                             HEADER_BACKGROUND_COLOUR_DARK_G,
                                             HEADER_BACKGROUND_COLOUR_DARK_B}
@@ -218,7 +231,7 @@ void SearchLineEdit::setStyle(bool use_dark)
         setStyleSheet(
             QString{"QLineEdit { "
                     "   background-color: #ffffff; "
-#ifdef Q_OS_WIN
+#ifndef Q_OS_MAC
                     "   border: 1px solid %2; "
 #endif
                     "   border-radius: 3px; "
@@ -229,12 +242,12 @@ void SearchLineEdit::setStyle(bool use_dark)
                     "} "
                     ""
                     "QLineEdit:focus { "
-#ifdef Q_OS_WIN
+#ifndef Q_OS_MAC
                     "   border: 1px solid %2; "
 #endif
                     "   border-radius: 2px; "
                     "} "}
-#ifdef Q_OS_WIN
+#ifndef Q_OS_MAC
                 .arg(std::to_string(h6FontSize).c_str(), borderColour.name()));
 #else
                 .arg(std::to_string(h6FontSize).c_str()));

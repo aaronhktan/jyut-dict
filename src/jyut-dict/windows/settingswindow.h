@@ -1,12 +1,12 @@
 #ifndef SETTINGSWINDOW_H
 #define SETTINGSWINDOW_H
 
-#include "logic/database/sqldatabasemanager.h"
-
 #include <QMainWindow>
 
 #include <memory>
 #include <vector>
+
+class SQLDatabaseManager;
 
 class QAction;
 class QEvent;

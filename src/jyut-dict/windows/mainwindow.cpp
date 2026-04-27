@@ -507,8 +507,7 @@ void MainWindow::setStyle(bool use_dark)
 #ifdef Q_OS_LINUX
     if (use_dark) {
         menuBar()->setStyleSheet("QMenuBar { "
-                                 "   background-color: palette(alternate-base); "
-                                 "   border-bottom: 1px solid palette(window);"
+                                 "   background-color: #2E2E32; "
                                  "} ");
         qApp->setStyleSheet(
             "QCheckBox::indicator { "
@@ -549,10 +548,11 @@ void MainWindow::setStyle(bool use_dark)
             "   image: url(:/images/radio_button_unchecked_inverted.png); "
             "} ");
     } else {
-        menuBar()->setStyleSheet("QMenuBar { "
-                                 "   background-color: palette(window); "
-                                 "   border-bottom: 1px solid palette(alternate-base);"
-                                 "} ");
+        menuBar()->setStyleSheet(
+            "QMenuBar { "
+            "   background-color: white; "
+            "   border-bottom: 1px solid palette(alternate-base);"
+            "} ");
         qApp->setStyleSheet(
             "QCheckBox::indicator { "
             "   height: 20px; "
@@ -915,7 +915,6 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
     } else if (showIfNoUpdate) {
         QString currentVersion = QString{Utils::CURRENT_VERSION};
         NoUpdateDialog *message = new NoUpdateDialog{currentVersion, this};
-        message->exec();
         connect(message, &NoUpdateDialog::destroyed, this, [this, &message] {
             message = nullptr;
             if (!_dialogQueue.empty()) {
@@ -924,6 +923,7 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
                 func();
             }
         });
+        message->exec();
     }
 }
 
