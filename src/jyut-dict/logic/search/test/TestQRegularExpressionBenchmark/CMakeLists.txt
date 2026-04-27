@@ -4,8 +4,8 @@ project(TestQRegularExpressionBenchmark LANGUAGES CXX)
 
 enable_testing()
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Test)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Test)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Sql Test)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Sql Test)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -19,6 +19,7 @@ add_executable(TestQRegularExpressionBenchmark tst_qregularexpressionbenchmark.c
 add_test(NAME TestQRegularExpressionBenchmark COMMAND TestQRegularExpressionBenchmark)
 
 target_link_libraries(TestQRegularExpressionBenchmark
+    PRIVATE Qt${QT_VERSION_MAJOR}::Sql
     PRIVATE Qt${QT_VERSION_MAJOR}::Test
 )
 target_include_directories(TestQRegularExpressionBenchmark PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../../)
