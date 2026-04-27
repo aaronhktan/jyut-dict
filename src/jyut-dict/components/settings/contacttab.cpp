@@ -183,5 +183,14 @@ void ContactTab::setStyle(bool use_dark)
     _otherSources->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                                        Strings::OTHER_SOURCES)
                                .arg(palette().text().color().name()));
+
+#ifdef Q_OS_WIN
+    QString colour = use_dark ? "#424242" : "#d5d5d5";
+    QString style = "QGroupBox { border: 1px solid %1; }";
+    QList<QGroupBox *> frames = this->findChildren<QGroupBox *>();
+    foreach (const auto &frame, frames) {
+        frame->setStyleSheet(style.arg(colour));
+    }
+#endif
 }
 

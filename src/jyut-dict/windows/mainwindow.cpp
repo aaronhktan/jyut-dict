@@ -441,9 +441,10 @@ void MainWindow::setStyle(bool use_dark)
 #elif defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     if (!use_dark) {
         QPalette palette = QApplication::style()->standardPalette();
-        palette.setColor(QPalette::Window, QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
-                                                  CONTENT_BACKGROUND_COLOUR_LIGHT_G,
-                                                  CONTENT_BACKGROUND_COLOUR_LIGHT_B});
+        palette.setColor(QPalette::Window,
+                         QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                                CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                                CONTENT_BACKGROUND_COLOUR_LIGHT_B});
         palette.setColor(QPalette::Base, Qt::white);
         palette.setColor(QPalette::AlternateBase, QColor{HEADER_BACKGROUND_COLOUR_LIGHT_R,
                                                          HEADER_BACKGROUND_COLOUR_LIGHT_G,
@@ -899,11 +900,30 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
                                                            versionNumber.value(),
                                                            url.value(),
                                                            description.value()};
+        connect(_updateAvailableWindow,
+                &UpdateAvailableWindow::destroyed,
+                this,
+                [this] {
+                    _updateAvailableWindow = nullptr;
+                    if (!_dialogQueue.empty()) {
+                        auto func = _dialogQueue.front();
+                        _dialogQueue.pop_front();
+                        func();
+                    }
+                });
         _updateAvailableWindow->show();
     } else if (showIfNoUpdate) {
         QString currentVersion = QString{Utils::CURRENT_VERSION};
-        NoUpdateDialog *_message = new NoUpdateDialog{currentVersion, this};
-        _message->exec();
+        NoUpdateDialog *message = new NoUpdateDialog{currentVersion, this};
+        message->exec();
+        connect(message, &NoUpdateDialog::destroyed, this, [this, &message] {
+            message = nullptr;
+            if (!_dialogQueue.empty()) {
+                auto func = _dialogQueue.front();
+                _dialogQueue.pop_front();
+                func();
+            }
+        });
     }
 }
 

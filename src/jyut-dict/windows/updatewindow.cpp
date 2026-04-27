@@ -43,6 +43,7 @@ UpdateAvailableWindow::UpdateAvailableWindow(QWidget *parent,
     Qt::WindowFlags flags = windowFlags() | Qt::CustomizeWindowHint | Qt::WindowTitleHint;
     flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint | Qt::WindowFullscreenButtonHint);
     setWindowFlags(flags);
+    setAttribute(Qt::WA_DeleteOnClose);
 
     move(parent->x() + (parent->width() - sizeHint().width()) / 2,
       parent->y() + (parent->height() - sizeHint().height()) / 2);

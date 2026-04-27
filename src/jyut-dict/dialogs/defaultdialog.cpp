@@ -26,6 +26,7 @@ DefaultDialog::DefaultDialog(const QString &reason,
 {
     setObjectName("DefaultDialog");
     _settings = Settings::getSettings();
+    setAttribute(Qt::WA_DeleteOnClose);
 
     setupUI(reason, description);
     translateUI();

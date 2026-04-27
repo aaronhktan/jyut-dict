@@ -29,6 +29,7 @@
 #include <QProgressDialog>
 #include <QPushButton>
 #include <QStandardPaths>
+#include <QStyledItemDelegate>
 #include <QTableView>
 #include <QTimer>
 #include <QUuid>
@@ -94,6 +95,26 @@ protected:
         }
     }
 };
+
+// On Windows, hovering over a cell in the QTableView causes the entire cell
+// to be highlighted with a distracting colour. Disable this behaviour with
+// a custom QStyledItemDelegate that removes the MouseOver state.
+#ifdef Q_OS_WIN
+class NoHoverItemDelegate : public QStyledItemDelegate
+{
+public:
+    using QStyledItemDelegate::QStyledItemDelegate;
+
+    void paint(QPainter *painter,
+               const QStyleOptionViewItem &option,
+               const QModelIndex &index) const override
+    {
+        QStyleOptionViewItem viewOption{option};
+        viewOption.state &= ~QStyle::State_MouseOver;
+        QStyledItemDelegate::paint(painter, viewOption, index);
+    }
+};
+#endif
 } // namespace
 
 SourceUpdateWindow::SourceUpdateWindow(
@@ -106,6 +127,8 @@ SourceUpdateWindow::SourceUpdateWindow(
     , _utils{new SQLDatabaseUtils}
     , _settings{Settings::getSettings()}
 {
+    setObjectName("SourceUpdateWindow");
+
     // Get list of existing sources
     std::vector<SourceMetadata> sources;
     QSqlDatabase db = _manager->getDatabase();
@@ -199,6 +222,9 @@ void SourceUpdateWindow::setupUI()
     _tableView->horizontalHeader()->setHighlightSections(false);
     _tableView->horizontalHeader()->setFocusPolicy(Qt::NoFocus);
     _tableView->verticalHeader()->setVisible(false);
+#ifdef Q_OS_WIN
+    _tableView->setItemDelegate(new NoHoverItemDelegate{_tableView});
+#endif
 
     _toggleAllButton = new QPushButton{tableWidget};
 
@@ -362,7 +388,11 @@ void SourceUpdateWindow::setStyle(bool use_dark)
                   "QPushButton { "
                   "   font-size: %2px; "
                   "   height: 16px; "
+                  "} "
+                  "QWidget#SourceUpdateWindow { "
+                  "   background-color: palette(base);"
                   "} "};
+    setAttribute(Qt::WA_StyledBackground);
 #endif
     setStyleSheet(style.arg(std::to_string(bodyFontSizeHan).c_str(),
                             std::to_string(bodyFontSize).c_str()));

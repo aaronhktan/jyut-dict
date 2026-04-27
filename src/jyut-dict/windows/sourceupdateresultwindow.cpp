@@ -32,6 +32,7 @@ SourceUpdateResultWindow::SourceUpdateResultWindow(UpdateResult result,
     , _settings{Settings::getSettings()}
     , QWidget{parent, Qt::Dialog}
 {
+    setObjectName("SourceUpdateResultWindow");
     setupUI();
     translateUI();
 
@@ -211,7 +212,11 @@ void SourceUpdateResultWindow::setStyle(bool use_dark)
                   "QPushButton { "
                   "   font-size: %2px; "
                   "   height: 16px; "
+                  "} "
+                  "QWidget#SourceUpdateResultWindow { "
+                  "   background-color: palette(base);"
                   "} "};
+    setAttribute(Qt::WA_StyledBackground);
 #endif
     setStyleSheet(style.arg(std::to_string(bodyFontSizeHan).c_str(),
                             std::to_string(bodyFontSize).c_str()));
