@@ -3,17 +3,18 @@
 
 #include "logic/database/sqldatabasemanager.h"
 
-#include <QAction>
-#include <QEvent>
-#include <QLayout>
 #include <QMainWindow>
-#include <QSettings>
-#include <QStackedWidget>
-#include <QToolBar>
-#include <QToolButton>
 
 #include <memory>
 #include <vector>
+
+class QAction;
+class QEvent;
+class QLayout;
+class QSettings;
+class QStackedWidget;
+class QToolBar;
+class QToolButton;
 
 // The SettingsWindow allows users to modify settings. Surprise!
 

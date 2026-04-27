@@ -29,13 +29,13 @@ UpdateAvailableWindow::UpdateAvailableWindow(QWidget *parent,
                                              std::string versionNumber,
                                              std::string url,
                                              std::string description)
-    : QWidget(parent, Qt::Window)
+    : QWidget{parent, Qt::Window}
+    , _versionNumber{versionNumber}
+    , _url{url}
+    , _description{description}
+    , _settings{Settings::getSettings()}
 {
-    _settings = Settings::getSettings();
-
-    _versionNumber = versionNumber;
-    _url = url;
-    _description = description;
+    setObjectName("UpdateAvailableWindow");
 
     setupUI();
     translateUI();
@@ -207,7 +207,11 @@ void UpdateAvailableWindow::setStyle(bool use_dark)
                   "QPushButton { "
                   "   font-size: %2px; "
                   "   height: 16px; "
+                  "} "
+                  "QWidget#UpdateAvailableWindow { "
+                  "   background-color: palette(base);"
                   "} "};
+    setAttribute(Qt::WA_StyledBackground);
 #endif
     setStyleSheet(style.arg(std::to_string(bodyFontSizeHan).c_str(),
                             std::to_string(bodyFontSize).c_str()));

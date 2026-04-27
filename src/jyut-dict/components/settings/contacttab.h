@@ -1,14 +1,15 @@
 #ifndef CONTACTTAB_H
 #define CONTACTTAB_H
 
-#include <QEvent>
-#include <QGridLayout>
-#include <QGroupBox>
-#include <QLabel>
-#include <QPushButton>
 #include <QWidget>
 
-// THe contact tab displays contact and donations information.
+// The contact tab displays contact and donations information.
+
+class QEvent;
+class QGridLayout;
+class QGroupBox;
+class QLabel;
+class QPushButton;
 
 class ContactTab : public QWidget
 {

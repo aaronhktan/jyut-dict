@@ -54,8 +54,8 @@
 
 #include <memory>
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent)
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow{parent}
 {
     // Set window size
 #if defined(Q_OS_WIN) || defined(Q_OS_LINUX)
@@ -592,7 +592,7 @@ void MainWindow::setStyle(bool use_dark)
     // Some additional stylesheet overrides for Windows
     if (use_dark) {
         menuBar()->setStyleSheet("QMenuBar { "
-                                 "   background-color: black; "
+                                 "   background-color: #202020; "
                                  "} "
                                  ""
                                  "QMenuBar::item:selected { "

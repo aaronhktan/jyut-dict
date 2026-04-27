@@ -11,21 +11,23 @@
 #include "logic/utils/utils_windows.h"
 #endif
 
-#include <QCoreApplication>
 #include <QAbstractButton>
+#include <QCoreApplication>
+#include <QEvent>
 #include <QGridLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QSpacerItem>
+#include <QString>
 #include <QStyle>
 
 DefaultDialog::DefaultDialog(const QString &reason,
                              const QString &description,
                              QWidget *parent)
-    : QMessageBox{parent}
+    : _settings{Settings::getSettings()}
+    , QMessageBox{parent}
 {
     setObjectName("DefaultDialog");
-    _settings = Settings::getSettings();
     setAttribute(Qt::WA_DeleteOnClose);
 
     setupUI(reason, description);

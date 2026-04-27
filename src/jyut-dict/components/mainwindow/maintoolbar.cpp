@@ -224,8 +224,9 @@ void MainToolBar::setStyle(bool use_dark)
 #ifdef Q_OS_WIN
     if (use_dark) {
         setStyleSheet("QToolBar { "
-                      "   background-color: black; "
-                      "   border-top: 1px solid black; "
+                      "   background-color: #202020; "
+                      "   border-top: 1px solid #202020; "
+                      "   border-bottom: 1px solid palette(alternate-base); "
                       "}");
     } else {
         setStyleSheet("QToolBar { "

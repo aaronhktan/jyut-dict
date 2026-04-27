@@ -13,8 +13,13 @@
 
 #include <QCoreApplication>
 #include <QDesktopServices>
+#include <QEvent>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QLabel>
 #include <QLocale>
 #include <QPixmap>
+#include <QPushButton>
 #include <QStyle>
 #include <QTimer>
 #include <QUrl>

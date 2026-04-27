@@ -1,10 +1,15 @@
 #ifndef DEFAULTDIALOG_H
 #define DEFAULTDIALOG_H
 
-#include <QEvent>
 #include <QMessageBox>
 #include <QSettings>
-#include <QString>
+
+class QEvent;
+class QString;
+
+// The DefaultDialog class is the base class for many dialogs
+// in the application. It provides basic shared functionatlity,
+// such as setting the style of buttons and displaying text.
 
 class DefaultDialog : public QMessageBox
 {

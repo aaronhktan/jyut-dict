@@ -27,10 +27,10 @@
 SourceUpdateResultWindow::SourceUpdateResultWindow(UpdateResult result,
                                                    std::string description,
                                                    QWidget *parent)
-    : _result{result}
+    : QWidget{parent, Qt::Dialog}
+    , _result{result}
     , _description{description}
     , _settings{Settings::getSettings()}
-    , QWidget{parent, Qt::Dialog}
 {
     setObjectName("SourceUpdateResultWindow");
     setupUI();
