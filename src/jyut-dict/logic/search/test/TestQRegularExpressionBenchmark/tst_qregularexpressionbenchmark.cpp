@@ -2,16 +2,13 @@
 #include "logic/utils/chineseutils.h"
 #include "logic/utils/mandarinutils.h"
 
-#include <QFile>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QRegularExpression>
-#include <QTemporaryDir>
 #include <QtTest>
 
 #include <array>
-#include <optional>
 #include <span>
 #include <string>
 #include <vector>
@@ -176,8 +173,6 @@ private:
     QStringList _pinyinCorpus;
     Utf8Corpus _jyutpingUtf8Corpus;
     Utf8Corpus _pinyinUtf8Corpus;
-    std::optional<QTemporaryDir> _databaseDir;
-    QString _databasePath;
     QString _connectionName;
 };
 
@@ -245,17 +240,10 @@ void TestQRegularExpressionBenchmark::cleanupTestCase()
 
 bool TestQRegularExpressionBenchmark::createBenchmarkDatabase()
 {
-    _databaseDir.emplace();
-    if (!_databaseDir->isValid()) {
-        qWarning() << "Failed to create temporary directory";
-        return false;
-    }
-
-    _databasePath = _databaseDir->path() + "/benchmark.db";
     _connectionName = "TestQRegularExpressionBenchmark";
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", _connectionName);
-    db.setDatabaseName(_databasePath);
+    db.setDatabaseName(":memory:");
     db.setConnectOptions("QSQLITE_ENABLE_REGEXP");
     if (!db.open()) {
         qWarning() << "Failed to open database:" << db.lastError();
@@ -271,6 +259,29 @@ bool TestQRegularExpressionBenchmark::createBenchmarkDatabase()
         qWarning() << query.lastError();
         return false;
     }
+    if (!query.prepare("INSERT INTO entries (jyutping, pinyin) VALUES (?, ?)")) {
+        qWarning() << query.lastError();
+        return false;
+    }
+
+    if (!db.transaction()) {
+        qWarning() << "failed to start transaction:" << db.lastError();
+        return false;
+    }
+    for (int i = 0; i < _jyutpingCorpus.size() && i < _pinyinCorpus.size(); ++i) {
+        query.addBindValue(_jyutpingCorpus.at(i));
+        query.addBindValue(_pinyinCorpus.at(i));
+        if (!query.exec()) {
+            qWarning() << "insert failed:" << query.lastError();
+            db.rollback();
+            return false;
+        }
+    }
+    if (!db.commit()) {
+        qWarning() << "failed to commit transaction:" << db.lastError();
+        return false;
+    }
+
     if (!query.exec("CREATE INDEX entries_jyutping_idx ON entries(jyutping)")) {
         qWarning() << query.lastError();
         return false;
@@ -278,19 +289,6 @@ bool TestQRegularExpressionBenchmark::createBenchmarkDatabase()
     if (!query.exec("CREATE INDEX entries_pinyin_idx ON entries(pinyin)")) {
         qWarning() << query.lastError();
         return false;
-    }
-    if (!query.prepare("INSERT INTO entries (jyutping, pinyin) VALUES (?, ?)")) {
-        qWarning() << query.lastError();
-        return false;
-    }
-
-    for (int i = 0; i < _jyutpingCorpus.size() && i < _pinyinCorpus.size(); ++i) {
-        query.addBindValue(_jyutpingCorpus.at(i));
-        query.addBindValue(_pinyinCorpus.at(i));
-        if (!query.exec()) {
-            qWarning() << "insert failed:" << query.lastError();
-            return false;
-        }
     }
 
     return true;
