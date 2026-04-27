@@ -9,6 +9,9 @@
 #include "logic/utils/scriptdetector.h"
 #include "logic/utils/utils.h"
 
+#include <QElapsedTimer>
+#include <QSqlError>
+#include <QSqlRecord>
 #include <QString>
 #include <QtConcurrent/QtConcurrent>
 
@@ -17,6 +20,76 @@
 #endif
 
 namespace {
+
+bool sqlSearchProfilingEnabled()
+{
+    static const bool enabled
+        = qEnvironmentVariableIsSet("JYUT_DICT_SQLSEARCH_PROFILE");
+    return enabled;
+}
+
+void logSqlSearchProfile(const QString &stage,
+                         const QString &operatorName,
+                         const QString &searchTerm,
+                         const QString &bindValue,
+                         qint64 execMs,
+                         qint64 parseMs,
+                         int resultCount)
+{
+    if (!sqlSearchProfilingEnabled()) {
+        return;
+    }
+
+    qInfo().noquote()
+        << "[SQLSearchProfile]"
+        << "stage=" << stage
+        << "operator=" << operatorName
+        << "searchTerm=" << searchTerm
+        << "bindValue=" << bindValue
+        << "execMs=" << execMs
+        << "parseMs=" << parseMs
+        << "resultCount=" << resultCount;
+}
+
+void logSqlSearchPlan(QSqlDatabase &db,
+                      const QString &label,
+                      const QString &sql,
+                      const QString &bindValue)
+{
+    if (!sqlSearchProfilingEnabled()) {
+        return;
+    }
+
+    QSqlQuery planQuery{db};
+    if (!planQuery.prepare("EXPLAIN QUERY PLAN " + sql)) {
+        qWarning().noquote()
+            << "[SQLSearchProfile]"
+            << "planPrepareFailed"
+            << label
+            << planQuery.lastError().text();
+        return;
+    }
+    planQuery.addBindValue(bindValue);
+    if (!planQuery.exec()) {
+        qWarning().noquote()
+            << "[SQLSearchProfile]"
+            << "planExecFailed"
+            << label
+            << planQuery.lastError().text();
+        return;
+    }
+
+    while (planQuery.next()) {
+        const int detailIndex = planQuery.record().indexOf("detail");
+        const QString detail = detailIndex >= 0 ? planQuery.value(detailIndex).toString()
+                                                : planQuery.value(3).toString();
+        qInfo().noquote()
+            << "[SQLSearchProfile]"
+            << "plan"
+            << label
+            << detail;
+    }
+}
 
 void prepareJyutpingBindValues(const QString &searchTerm,
                                QString &regexTerm,
@@ -507,7 +580,8 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
 {
     std::vector<Entry> results;
 
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlDatabase db = _manager->getDatabase();
+    QSqlQuery query{db};
 
     bool fuzzyJyutping
         = _settings->value("Search/fuzzyJyutping", QVariant{true}).toBool();
@@ -526,11 +600,30 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
                               unsafeFuzzyJyutping);
     query.addBindValue(globTerm);
     query.setForwardOnly(true);
+    logSqlSearchPlan(db,
+                     QString{"searchJyutpingThread"}
+                         + (fuzzyJyutping ? "-REGEXP" : "-GLOB"),
+                     QString{SEARCH_JYUTPING_QUERY}.arg(fuzzyJyutping ? REGEXP_STR
+                                                                      : GLOB_STR),
+                     globTerm);
+    QElapsedTimer execTimer;
+    execTimer.start();
     query.exec();
+    const qint64 execMs = execTimer.elapsed();
 
     // Do not parse results if new query has been made
     if (!checkQueryIDCurrent(queryID)) { return; }
+    QElapsedTimer parseTimer;
+    parseTimer.start();
     results = QueryParseUtils::parseEntries(query);
+    const qint64 parseMs = parseTimer.elapsed();
+    logSqlSearchProfile("searchJyutpingThread",
+                        fuzzyJyutping ? REGEXP_STR : GLOB_STR,
+                        searchTerm,
+                        globTerm,
+                        execMs,
+                        parseMs,
+                        static_cast<int>(results.size()));
 
     if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
@@ -541,7 +634,8 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm,
 {
     std::vector<Entry> results;
 
-    QSqlQuery query{_manager->getDatabase()};
+    QSqlDatabase db = _manager->getDatabase();
+    QSqlQuery query{db};
 
     bool fuzzyPinyin
         = _settings->value("Search/fuzzyPinyin", QVariant{true}).toBool();
@@ -553,11 +647,30 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm,
     preparePinyinBindValues(searchTerm, globTerm, fuzzyPinyin);
     query.addBindValue(globTerm);
     query.setForwardOnly(true);
+    logSqlSearchPlan(db,
+                     QString{"searchPinyinThread"}
+                         + (fuzzyPinyin ? "-REGEXP" : "-GLOB"),
+                     QString{SEARCH_PINYIN_QUERY}.arg(fuzzyPinyin ? REGEXP_STR
+                                                                  : GLOB_STR),
+                     globTerm);
+    QElapsedTimer execTimer;
+    execTimer.start();
     query.exec();
+    const qint64 execMs = execTimer.elapsed();
 
     // Do not parse results if new query has been made
     if (!checkQueryIDCurrent(queryID)) { return; }
+    QElapsedTimer parseTimer;
+    parseTimer.start();
     results = QueryParseUtils::parseEntries(query);
+    const qint64 parseMs = parseTimer.elapsed();
+    logSqlSearchProfile("searchPinyinThread",
+                        fuzzyPinyin ? REGEXP_STR : GLOB_STR,
+                        searchTerm,
+                        globTerm,
+                        execMs,
+                        parseMs,
+                        static_cast<int>(results.size()));
 
     if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
@@ -624,9 +737,13 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
     bool fuzzyPinyin
         = _settings->value("Search/fuzzyPinyin", QVariant{true}).toBool();
 
-    QSqlQuery jyutpingQuery{_manager->getDatabase()};
-    jyutpingQuery.prepare(QString{SEARCH_JYUTPING_EXISTS_QUERY}.arg(
-        fuzzyJyutping ? REGEXP_STR : GLOB_STR));
+    QSqlDatabase db = _manager->getDatabase();
+
+    const QString jyutpingExistsSql
+        = QString{SEARCH_JYUTPING_EXISTS_QUERY}.arg(fuzzyJyutping ? REGEXP_STR
+                                                                  : GLOB_STR);
+    QSqlQuery jyutpingQuery{db};
+    jyutpingQuery.prepare(jyutpingExistsSql);
     QString jyutpingSearchTerm;
     prepareJyutpingBindValues(searchTerm,
                               jyutpingSearchTerm,
@@ -634,8 +751,26 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
                               unsafeFuzzyJyutping);
     jyutpingQuery.addBindValue(jyutpingSearchTerm);
     jyutpingQuery.setForwardOnly(true);
+    logSqlSearchPlan(db,
+                     QString{"searchAutoDetectThread-jyutping-exists"}
+                         + (fuzzyJyutping ? "-REGEXP" : "-GLOB"),
+                     jyutpingExistsSql,
+                     jyutpingSearchTerm);
+    QElapsedTimer jyutpingExecTimer;
+    jyutpingExecTimer.start();
     jyutpingQuery.exec();
+    const qint64 jyutpingExecMs = jyutpingExecTimer.elapsed();
+    QElapsedTimer jyutpingParseTimer;
+    jyutpingParseTimer.start();
     bool jyutpingExists = QueryParseUtils::parseExistence(jyutpingQuery);
+    const qint64 jyutpingParseMs = jyutpingParseTimer.elapsed();
+    logSqlSearchProfile("searchAutoDetectThread-jyutping-exists",
+                        fuzzyJyutping ? REGEXP_STR : GLOB_STR,
+                        searchTerm,
+                        jyutpingSearchTerm,
+                        jyutpingExecMs,
+                        jyutpingParseMs,
+                        jyutpingExists ? 1 : 0);
 
     if (jyutpingExists) {
         notifyObserversIfQueryIdCurrent(SearchParameters::JYUTPING, queryID);
@@ -643,15 +778,35 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
         return;
     }
 
-    QSqlQuery pinyinQuery{_manager->getDatabase()};
-    pinyinQuery.prepare(QString{SEARCH_PINYIN_EXISTS_QUERY}.arg(
-        fuzzyPinyin ? REGEXP_STR : GLOB_STR));
+    const QString pinyinExistsSql
+        = QString{SEARCH_PINYIN_EXISTS_QUERY}.arg(fuzzyPinyin ? REGEXP_STR
+                                                              : GLOB_STR);
+    QSqlQuery pinyinQuery{db};
+    pinyinQuery.prepare(pinyinExistsSql);
     QString pinyinSearchTerm;
     preparePinyinBindValues(searchTerm, pinyinSearchTerm, fuzzyPinyin);
     pinyinQuery.addBindValue(pinyinSearchTerm);
     pinyinQuery.setForwardOnly(true);
+    logSqlSearchPlan(db,
+                     QString{"searchAutoDetectThread-pinyin-exists"}
+                         + (fuzzyPinyin ? "-REGEXP" : "-GLOB"),
+                     pinyinExistsSql,
+                     pinyinSearchTerm);
+    QElapsedTimer pinyinExecTimer;
+    pinyinExecTimer.start();
     pinyinQuery.exec();
+    const qint64 pinyinExecMs = pinyinExecTimer.elapsed();
+    QElapsedTimer pinyinParseTimer;
+    pinyinParseTimer.start();
     bool pinyinExists = QueryParseUtils::parseExistence(pinyinQuery);
+    const qint64 pinyinParseMs = pinyinParseTimer.elapsed();
+    logSqlSearchProfile("searchAutoDetectThread-pinyin-exists",
+                        fuzzyPinyin ? REGEXP_STR : GLOB_STR,
+                        searchTerm,
+                        pinyinSearchTerm,
+                        pinyinExecMs,
+                        pinyinParseMs,
+                        pinyinExists ? 1 : 0);
 
     if (pinyinExists) {
         notifyObserversIfQueryIdCurrent(SearchParameters::PINYIN, queryID);
