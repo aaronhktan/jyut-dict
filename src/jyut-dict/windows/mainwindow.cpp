@@ -884,15 +884,17 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
                                        std::optional<std::string> description,
                                        bool showIfNoUpdate)
 {
-    if (_welcomeWindow || _databaseMigrationDialog) {
-        _dialogQueue.push_back([=, this]() {
-            notifyUpdateAvailable(updateAvailable,
-                                  versionNumber,
-                                  url,
-                                  description,
-                                  showIfNoUpdate);
-        });
-        return;
+    if (updateAvailable || showIfNoUpdate) {
+        if (_welcomeWindow || _databaseMigrationDialog) {
+            _dialogQueue.push_back([=, this]() {
+                notifyUpdateAvailable(updateAvailable,
+                                      versionNumber,
+                                      url,
+                                      description,
+                                      showIfNoUpdate);
+            });
+            return;
+        }
     }
 
     if (updateAvailable) {
@@ -930,19 +932,22 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
 void MainWindow::notifySourceUpdateAvailable(
     std::vector<IUpdateChecker::SourceManifestMetadata> &a, bool showIfNoUpdate)
 {
-    if (_welcomeWindow || _databaseMigrationDialog || _updateAvailableWindow) {
-        _dialogQueue.push_back([a, showIfNoUpdate, this]() mutable {
-            notifySourceUpdateAvailable(a, showIfNoUpdate);
-        });
-        return;
+    if (!a.empty() || showIfNoUpdate) {
+        if (_welcomeWindow || _databaseMigrationDialog
+            || _updateAvailableWindow) {
+            _dialogQueue.push_back([a, showIfNoUpdate, this]() mutable {
+                notifySourceUpdateAvailable(a, showIfNoUpdate);
+            });
+            return;
+        }
     }
 
     if (!a.empty()) {
         _sourceUpdateWindow = new SourceUpdateWindow{a, _manager, this};
         _sourceUpdateWindow->show();
     } else if (showIfNoUpdate) {
-        NoSourceUpdatesDialog *_message = new NoSourceUpdatesDialog{this};
-        _message->exec();
+        NoSourceUpdatesDialog *message = new NoSourceUpdatesDialog{this};
+        message->exec();
     }
 }
 
@@ -1545,7 +1550,7 @@ void MainWindow::openWelcomeWindow(void)
     _welcomeWindow->show();
 
     connect(_welcomeWindow, &WelcomeWindow::welcomeCompleted, this, [&]() {
-        QTimer::singleShot(100, this, [&] {
+        QTimer::singleShot(100, this, [this] {
             // Dialogs may be suppressed while the welcome window is visible,
             // so check whether they need to be shown (it's assumed that each
             // call will "chain" to the next one)
