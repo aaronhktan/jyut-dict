@@ -31,7 +31,7 @@ public:
     using UpdateVariant
         = std::variant<AppManifestMetadata, std::vector<SourceManifestMetadata>>;
 
-    virtual void checkForNewUpdate(void) = 0;
+    virtual void checkForNewUpdate() = 0;
 
     virtual ~IUpdateChecker() = default;
 

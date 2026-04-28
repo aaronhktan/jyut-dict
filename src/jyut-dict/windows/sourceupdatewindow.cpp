@@ -56,7 +56,7 @@ protected:
     {
         QTableView::paintEvent(event);
 
-        if (model() == nullptr) {
+        if (!model()) {
             return;
         }
 
@@ -212,7 +212,7 @@ void SourceUpdateWindow::setupUI()
         ->setSectionResizeMode(SourceUpdateModel::kInstalledVersionColumn,
                                QHeaderView::Stretch);
     _tableView->horizontalHeader()
-        ->setSectionResizeMode(SourceUpdateModel::kNewVersionColumn,
+        ->setSectionResizeMode(SourceUpdateModel::kAvailableVersionColumn,
                                QHeaderView::Stretch);
     _tableView->horizontalHeader()
         ->setSectionResizeMode(SourceUpdateModel::kCheckColumn,

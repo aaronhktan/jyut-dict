@@ -8,8 +8,8 @@
 
 SourceUpdateModel::SourceUpdateModel(std::vector<MetadataWrapper> &w,
                                      QObject *parent)
-    : QAbstractTableModel(parent)
-    , _metadata(w)
+    : QAbstractTableModel{parent}
+    , _metadata{w}
 {}
 
 int SourceUpdateModel::rowCount(const QModelIndex &parent) const
@@ -43,13 +43,15 @@ QVariant SourceUpdateModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DisplayRole) {
         switch (index.column()) {
         case kNameColumn: {
-            return QString::fromStdString(metadata.current.getName());
+            return QString::fromStdString(metadata.installedMetadata.getName());
         }
         case kInstalledVersionColumn: {
-            return QString::fromStdString(metadata.current.getVersion());
+            return QString::fromStdString(
+                metadata.installedMetadata.getVersion());
         }
-        case kNewVersionColumn: {
-            return QString::fromStdString(metadata.available.versionNumber);
+        case kAvailableVersionColumn: {
+            return QString::fromStdString(
+                metadata.availableMetadata.versionNumber);
         }
         default: {
             return {};
@@ -91,7 +93,7 @@ QVariant SourceUpdateModel::data(const QModelIndex &index, int role) const
     }
 
     if (role == SourceUpdateModel::UserRoles::kUpdateInfo) {
-        return QVariant::fromValue(&metadata.available);
+        return QVariant::fromValue(&metadata.availableMetadata);
     }
 
     return {};
@@ -116,7 +118,7 @@ bool SourceUpdateModel::setData(const QModelIndex &index,
 
     metadata.checked = checked;
     emit dataChanged(this->index(index.row(), 0),
-                     this->index(index.row(), columnCount() - 1),
+                     this->index(index.row(), kNumColumns - 1),
                      {Qt::CheckStateRole,
                       Qt::BackgroundRole,
                       Qt::ForegroundRole});
@@ -145,7 +147,7 @@ QVariant SourceUpdateModel::headerData(int section,
         return tr("Name");
     case kInstalledVersionColumn:
         return tr("Installed");
-    case kNewVersionColumn:
+    case kAvailableVersionColumn:
         return tr("Available");
     case kCheckColumn:
         return tr("Update?");

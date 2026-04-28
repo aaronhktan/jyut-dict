@@ -23,15 +23,15 @@ class SourceUpdateModel : public QAbstractTableModel
 public:
     struct MetadataWrapper
     {
-        SourceMetadata current;
-        IUpdateChecker::SourceManifestMetadata available;
+        SourceMetadata installedMetadata;
+        IUpdateChecker::SourceManifestMetadata availableMetadata;
         bool checked = true;
     };
 
     enum Columns {
         kNameColumn = 0,
         kInstalledVersionColumn = 1,
-        kNewVersionColumn = 2,
+        kAvailableVersionColumn = 2,
         kCheckColumn = 3,
         kNumColumns,
     };
