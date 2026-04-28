@@ -4,9 +4,11 @@
 #include "logic/update/iupdatechecker.h"
 
 #include <QObject>
-#include <QtNetwork>
 
 #include <string>
+
+class QNetworkAccessManager;
+class QNetworkReply;
 
 // The JyutDictionaryReleaseChecker checks the Jyut Dictionary website
 // for updates to the application

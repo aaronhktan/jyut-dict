@@ -8,8 +8,16 @@
 
 #include <vector>
 
+// The SourceUpdateModel is the backing model for metadata about sources
+// that can be updated.
+
 class SourceUpdateModel : public QAbstractTableModel
 {
+    // This is required in order for the headers in the table to be
+    // properly translated. In order for tr() to work, Qt must have
+    // a "context" for the translated string, and Q_OBJECT allows Qt
+    // to generate that context.
+    // https://doc.qt.io/qt-6/qtranslator.html#looking-up-translations
     Q_OBJECT
 
 public:

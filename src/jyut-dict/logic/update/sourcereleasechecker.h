@@ -1,19 +1,28 @@
 #ifndef SOURCERELEASECHECKER_H
 #define SOURCERELEASECHECKER_H
 
-#include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqldatabaseutils.h"
 #include "logic/source/sourcemetadata.h"
 #include "logic/update/iupdatechecker.h"
 
 #include <QObject>
-#include <QtNetwork>
 
 #include <unordered_map>
+
+class SQLDatabaseManager;
+
+class QNetworkAccessManager;
+class QNetworkReply;
+
+// SourceReleaseChecker downloads one or more source manifests, and then
+// checks each downloaded manifest for available updates. These are decided
+// on the basis of the installed version vs available version declared in
+// the manifest.
 
 class SourceReleaseChecker : public QObject, public IUpdateChecker
 {
     Q_OBJECT
+
 public:
     explicit SourceReleaseChecker(std::shared_ptr<SQLDatabaseManager> manager,
                                   QObject *parent = nullptr);

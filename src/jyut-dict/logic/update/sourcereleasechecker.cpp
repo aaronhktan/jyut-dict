@@ -1,29 +1,29 @@
 #include "sourcereleasechecker.h"
 
+#include "logic/database/sqldatabasemanager.h"
 #include "logic/utils/utils.h"
 
 #include <QJsonObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QTimer>
+#include <QtNetwork>
 
 #include <iostream>
 
 namespace {
-// TODO: change this back!!
 constexpr auto DEFAULT_SOURCE_UPDATE_URL
-    // = "https://jyutdictionary.com/static/updates/v1/sources_manifest.json";
-    = "http://127.0.0.1:8081/static/updates/v1/sources_manifest.json";
+    = "https://jyutdictionary.com/static/updates/v1/sources_manifest.json";
 
 constexpr auto VERSION_NUMBER_COMPONENTS_SIZE = 3;
 } // namespace
 
 SourceReleaseChecker::SourceReleaseChecker(
     std::shared_ptr<SQLDatabaseManager> manager, QObject *parent)
-    : _databaseManager{manager}
+    : QObject{parent}
+    , _databaseManager{manager}
     , _utils{new SQLDatabaseUtils}
     , _networkManager{new QNetworkAccessManager{this}}
-    , QObject{parent}
 {
     QSslSocket::supportsSsl();
 }

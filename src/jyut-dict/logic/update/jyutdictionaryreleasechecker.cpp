@@ -8,6 +8,7 @@
 #include <QNetworkReply>
 #include <QSysInfo>
 #include <QTimer>
+#include <QtNetwork>
 
 #include <iostream>
 #include <optional>
