@@ -1,25 +1,27 @@
 #ifndef TRANSCRIPTIONWINDOW_H
 #define TRANSCRIPTIONWINDOW_H
 
-#include "dialogs/transcriptionerrordialog.h"
 #include "logic/dictation/iinputvolumesubscriber.h"
 #include "logic/dictation/itranscriptionresultsubscriber.h"
 #include "logic/dictation/transcriberwrapper.h"
 
-#include <QEvent>
 #include <QGraphicsEllipseItem>
-#include <QGraphicsPixmapItem>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QGridLayout>
-#include <QKeyEvent>
-#include <QLabel>
-#include <QLineEdit>
 #include <QMetaType>
-#include <QPropertyAnimation>
-#include <QPushButton>
 #include <QSettings>
 #include <QWidget>
+
+class TranscriptionErrorDialog;
+
+class QEvent;
+class QGraphicsPixmapItem;
+class QGraphicsScene;
+class QGraphicsView;
+class QGridLayout;
+class QKeyEvent;
+class QLineEdit;
+class QLabel;
+class QPropertyAnimation;
+class QPushButton;
 
 // The Transcription Window displays UI for transcription. It shows
 // a microphone with an animation to indicate that the app is listening

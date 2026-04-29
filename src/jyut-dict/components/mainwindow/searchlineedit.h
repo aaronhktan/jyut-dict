@@ -67,7 +67,10 @@ private:
 #ifndef Q_OS_LINUX
     QAction *_microphone;
 #endif
-    QTimer *_timer;
+    QTimer *_searchHistoryDelayTimer;
+#ifdef Q_OS_WIN
+    QTimer *_searchDelayTimer;
+#endif
 
     HandwritingWindow *_handwritingWindow = nullptr;
 #ifndef Q_OS_LINUX

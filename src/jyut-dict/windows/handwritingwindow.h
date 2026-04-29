@@ -1,18 +1,20 @@
 #ifndef HANDWRITINGWINDOW_H
 #define HANDWRITINGWINDOW_H
 
-#include "components/handwriting/handwritingpanel.h"
-#include "dialogs/handwritingerrordialog.h"
 #include "logic/handwriting/handwritingwrapper.h"
 
-#include <QEvent>
-#include <QGridLayout>
-#include <QKeyEvent>
-#include <QLabel>
-#include <QPushButton>
 #include <QSettings>
-#include <QTextEdit>
 #include <QWidget>
+
+class HandwritingPanel;
+class HandwritingErrorDialog;
+
+class QEvent;
+class QGridLayout;
+class QKeyEvent;
+class QLabel;
+class QPushButton;
+class QTextEdit;
 
 // The Handwriting Window displays a panel to write a character,
 // and a list of possible results.

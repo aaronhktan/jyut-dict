@@ -1,5 +1,6 @@
 #include "transcriptionwindow.h"
 
+#include "dialogs/transcriptionerrordialog.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/strings/strings.h"
@@ -14,9 +15,18 @@
 
 #include <QCoreApplication>
 #include <QDesktopServices>
+#include <QEvent>
 #include <QFont>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QGridLayout>
+#include <QKeyEvent>
+#include <QLabel>
+#include <QLineEdit>
 #include <QPixmap>
 #include <QPropertyAnimation>
+#include <QPushButton>
 #include <QSize>
 #include <QStyle>
 #include <QTimer>

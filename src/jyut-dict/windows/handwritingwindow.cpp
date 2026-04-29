@@ -1,5 +1,7 @@
 #include "handwritingwindow.h"
 
+#include "components/handwriting/handwritingpanel.h"
+#include "dialogs/handwritingerrordialog.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/utils/utils_qt.h"
@@ -13,11 +15,17 @@
 
 #include <QCoreApplication>
 #include <QDesktopServices>
+#include <QEvent>
 #include <QFont>
+#include <QGridLayout>
+#include <QKeyEvent>
+#include <QLabel>
 #include <QPixmap>
 #include <QPropertyAnimation>
+#include <QPushButton>
 #include <QSize>
 #include <QStyle>
+#include <QTextEdit>
 #include <QTimer>
 
 namespace {
@@ -28,11 +36,11 @@ constexpr auto NUM_RESULTS_PER_COLUMN = NUM_RESULTS / NUM_COLUMNS;
 
 HandwritingWindow::HandwritingWindow(QWidget *parent)
     : QWidget{parent, Qt::Window}
+    , _settings{Settings::getSettings()}
+    , _handwritingWrapper{
+          new HandwritingWrapper(Handwriting::Script::TRADITIONAL)}
 {
     setObjectName("HandwritingWindow");
-    _settings = Settings::getSettings();
-    _handwritingWrapper = std::make_unique<HandwritingWrapper>(
-        Handwriting::Script::TRADITIONAL);
 
     connect(_handwritingWrapper.get(),
             &HandwritingWrapper::recognizedResults,
@@ -55,6 +63,7 @@ HandwritingWindow::HandwritingWindow(QWidget *parent)
     flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowFullscreenButtonHint);
     setWindowFlags(flags);
     setWindowModality(Qt::ApplicationModal);
+    setAttribute(Qt::WA_DeleteOnClose);
 
     setupUI();
     translateUI();

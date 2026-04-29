@@ -38,10 +38,12 @@ SearchLineEdit::SearchLineEdit(
     , _mediator{mediator}
     , _search{sqlSearch}
     , _sqlHistoryUtils{sqlHistoryUtils}
+    , _settings{Settings::getSettings(this)}
+    , _searchHistoryDelayTimer(new QTimer{this})
+#ifdef Q_OS_WIN
+    , _searchDelayTimer(new QTimer{this})
+#endif
 {
-    _settings = Settings::getSettings(this);
-    _timer = new QTimer{this};
-
     setupUI();
     translateUI();
     setStyle(Utils::isDarkMode());
@@ -113,10 +115,8 @@ void SearchLineEdit::search(std::optional<SearchParameters> paramOverride)
         _search->searchEnglish(text().trimmed());
         break;
     }
-    case SearchParameters::AUTO_DETECT: {
-        _search->searchAutoDetect(text().trimmed());
-        break;
-    }
+    case SearchParameters::AUTO_DETECT:
+        [[fallthrough]];
     default: {
         break;
     }
@@ -154,10 +154,26 @@ void SearchLineEdit::setupUI(void)
     setMinimumHeight(30);
 #endif
 
+#ifdef Q_OS_WIN
+    // Windows penalizes having multiple searches running concurrently a _lot_.
+    // As a result, setting searches on a delay helps with making the app feel
+    // much faster.
+    connect(this, &QLineEdit::textChanged, this, [this] {
+        _searchDelayTimer->stop();
+        disconnect(_searchDelayTimer, nullptr, nullptr, nullptr);
+        _searchDelayTimer->setSingleShot(true);
+        connect(_searchDelayTimer,
+                &QTimer::timeout,
+                this,
+                &SearchLineEdit::searchTriggered);
+        _searchDelayTimer->start(200);
+    });
+#else
     connect(this,
             &QLineEdit::textChanged,
             this,
             &SearchLineEdit::searchTriggered);
+#endif
 }
 
 void SearchLineEdit::translateUI(void)
@@ -277,7 +293,6 @@ void SearchLineEdit::startHandwriting(void)
     checkClearVisibility();
 
     _handwritingWindow = new HandwritingWindow{this};
-    _handwritingWindow->setAttribute(Qt::WA_DeleteOnClose);
     _handwritingWindow->setFocus();
     _handwritingWindow->show();
 
@@ -358,22 +373,25 @@ void SearchLineEdit::startTranscription(void)
 
 void SearchLineEdit::addSearchTermToHistory(SearchParameters parameters) const
 {
-    _timer->stop();
-    disconnect(_timer, nullptr, nullptr, nullptr);
-    _timer->setSingleShot(true);
-    connect(_timer, &QTimer::timeout, this, [=, this]() {
+    _searchHistoryDelayTimer->stop();
+    disconnect(_searchHistoryDelayTimer, nullptr, nullptr, nullptr);
+    _searchHistoryDelayTimer->setSingleShot(true);
+    connect(_searchHistoryDelayTimer, &QTimer::timeout, this, [=, this]() {
         if (!text().isEmpty()) {
             _sqlHistoryUtils->addSearchToHistory(text().toStdString(),
                                                  static_cast<int>(parameters));
         }
     });
-    _timer->start(500);
+    _searchHistoryDelayTimer->start(500);
 }
 
 void SearchLineEdit::searchTriggered(void)
 {
     checkClearVisibility();
     if (_settings->value("Search/autoDetectLanguage", QVariant{true}).toBool()) {
+        // Since auto-detect is a setting independent of the SearchParameter specified
+        // by the search options group box, it must be handled separately from the
+        // other options.
         _search->searchAutoDetect(text().trimmed());
         addSearchTermToHistory(SearchParameters::AUTO_DETECT);
     } else {
