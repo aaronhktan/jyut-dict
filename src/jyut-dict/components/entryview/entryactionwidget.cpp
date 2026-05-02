@@ -1,5 +1,7 @@
 ﻿#include "entryactionwidget.h"
 
+#include "components/layouts/flowlayout.h"
+#include "logic/database/sqluserdatautils.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
@@ -12,14 +14,15 @@
 #include "logic/utils/utils_qt.h"
 
 #include <QFileDialog>
+#include <QHBoxLayout>
+#include <QPushButton>
 
-EntryActionWidget::EntryActionWidget(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
-                                     QWidget *parent)
-    : QWidget(parent)
+EntryActionWidget::EntryActionWidget(
+    std::shared_ptr<SQLUserDataUtils> sqlUserUtils, QWidget *parent)
+    : QWidget{parent}
     , _sqlUserUtils{sqlUserUtils}
+    , _settings{Settings::getSettings(this)}
 {
-    _settings = Settings::getSettings(this);
-
     _sqlUserUtils->registerObserver(this);
 
     setupUI();
@@ -227,7 +230,7 @@ void EntryActionWidget::refreshBookmarkButton(void)
     setStyle(Utils::isDarkMode());
     translateUI();
 
-    disconnect(_bookmarkButton, nullptr, nullptr, nullptr);
+    disconnect(_bookmarkButton, nullptr, this, nullptr);
     if (!_bookmarkButton->property("saved").toBool()) {
         QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [=, this]() {
             addEntryToFavourites(_entry);

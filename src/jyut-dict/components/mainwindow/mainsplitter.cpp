@@ -186,7 +186,7 @@ void MainSplitter::prepareEntry(Entry &entry, bool addToHistory) const
     if (addToHistory) {
         // Only add to history after a few seconds of viewing an entry
         _addToHistoryTimer->stop();
-        disconnect(_addToHistoryTimer, nullptr, nullptr, nullptr);
+        disconnect(_addToHistoryTimer, nullptr, this, nullptr);
         _addToHistoryTimer->setSingleShot(true);
         connect(_addToHistoryTimer, &QTimer::timeout, this, [=, this]() {
             _sqlHistoryUtils->addViewToHistory(entry);

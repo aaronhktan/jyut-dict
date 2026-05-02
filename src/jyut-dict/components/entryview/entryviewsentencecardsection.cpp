@@ -1,6 +1,10 @@
 #include "entryviewsentencecardsection.h"
 
+#include "components/sentencecard/loadingwidget.h"
+#include "components/sentencecard/sentencecardwidget.h"
 #include "components/sentencewindow/sentencesplitter.h"
+#include "logic/database/sqldatabasemanager.h"
+#include "logic/search/sqlsearch.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
@@ -12,17 +16,21 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
-EntryViewSentenceCardSection::EntryViewSentenceCardSection(std::shared_ptr<SQLDatabaseManager> manager,
-                                         QWidget *parent)
-    : QWidget(parent),
-    _manager{manager}
+#include <QEvent>
+#include <QString>
+#include <QTimer>
+#include <QToolButton>
+#include <QVBoxLayout>
+
+EntryViewSentenceCardSection::EntryViewSentenceCardSection(
+    std::shared_ptr<SQLDatabaseManager> manager, QWidget *parent)
+    : QWidget{parent}
+    , _manager{manager}
+    , _search{new SQLSearch(_manager)}
+    , _settings{Settings::getSettings(this)}
+    , _enableUIUpdateTimer{new QTimer{this}}
+    , _updateUITimer{new QTimer{this}}
 {
-    _settings = Settings::getSettings(this);
-
-    _enableUIUpdateTimer = new QTimer{this};
-    _updateUITimer = new QTimer{this};
-
-    _search = std::make_unique<SQLSearch>(_manager);
     _search->registerObserver(this);
 
     setupUI();
@@ -45,9 +53,9 @@ EntryViewSentenceCardSection::EntryViewSentenceCardSection(QWidget *parent)
 }
 
 void EntryViewSentenceCardSection::callback(
-    const std::vector<SourceSentence> &sourceSentences, bool emptyQuery)
+    const std::vector<SourceSentence> &sourceSentences,
+    [[maybe_unused]] bool emptyQuery)
 {
-    (void) (emptyQuery);
     std::lock_guard<std::mutex> update{updateMutex};
     sentenceSamples samples = getSamplesForEachSource(sourceSentences);
     emit callbackInvoked(sourceSentences, samples);
@@ -238,7 +246,7 @@ void EntryViewSentenceCardSection::updateUI(
     _sentenceCardsLayout->setAlignment(_viewAllSentencesButton, Qt::AlignRight);
     _viewAllSentencesButton->setVisible(true);
 
-    disconnect(_viewAllSentencesButton, nullptr, nullptr, nullptr);
+    disconnect(_viewAllSentencesButton, nullptr, this, nullptr);
     connect(_viewAllSentencesButton, &QToolButton::clicked, this, [&]() {
         openSentenceWindow(_sentences);
     });
@@ -249,7 +257,7 @@ void EntryViewSentenceCardSection::stallSentenceUIUpdate(void)
 {
     _enableUIUpdate = false;
     _enableUIUpdateTimer->stop();
-    disconnect(_enableUIUpdateTimer, nullptr, nullptr, nullptr);
+    disconnect(_enableUIUpdateTimer, nullptr, this, nullptr);
 #ifdef Q_OS_WIN
     _enableUIUpdateTimer->setInterval(800);
 #else
@@ -288,7 +296,7 @@ void EntryViewSentenceCardSection::pauseBeforeUpdatingUI(const std::vector<Sourc
                                                          const sentenceSamples &samples)
 {
     _updateUITimer->stop();
-    disconnect(_updateUITimer, nullptr, nullptr, nullptr);
+    disconnect(_updateUITimer, nullptr, this, nullptr);
 
 #ifdef Q_OS_WIN
     _updateUITimer->setInterval(400);
@@ -298,7 +306,7 @@ void EntryViewSentenceCardSection::pauseBeforeUpdatingUI(const std::vector<Sourc
     QObject::connect(_updateUITimer, &QTimer::timeout, this, [=, this]() {
         if (_enableUIUpdate) {
             _updateUITimer->stop();
-            disconnect(_updateUITimer, nullptr, nullptr, nullptr);
+            disconnect(_updateUITimer, nullptr, this, nullptr);
             updateUI(sourceSentences, samples);
         }
     });

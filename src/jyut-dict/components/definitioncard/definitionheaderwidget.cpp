@@ -2,6 +2,7 @@
 
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/strings/strings.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -11,20 +12,23 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QCoreApplication>
+#include <QEvent>
+#include <QLabel>
 #include <QTimer>
+#include <QVBoxLayout>
 
 DefinitionHeaderWidget::DefinitionHeaderWidget(QWidget *parent)
-    : QWidget(parent)
+    : QWidget{parent}
+    , _settings{Settings::getSettings(this)}
+    , _layout{new QVBoxLayout{this}}
+    , _titleLabel{new QLabel{this}}
 {
     setObjectName("DefinitionHeaderWidget");
 
-    _settings = Settings::getSettings(this);
-
-    _layout = new QVBoxLayout{this};
     _layout->setContentsMargins(10, 10, 10, 10);
     _layout->setSpacing(10);
 
-    _titleLabel = new QLabel{this};
     _titleLabel->setObjectName("DefinitionHeaderWidgetTitleLabel");
     _titleLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
 
@@ -44,16 +48,28 @@ void DefinitionHeaderWidget::changeEvent(QEvent *event)
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
     QWidget::changeEvent(event);
 }
 
-void DefinitionHeaderWidget::setSectionTitle(const std::string &title)
+void DefinitionHeaderWidget::setSource(const std::string &source)
 {
     setStyle(Utils::isDarkMode());
-    _titleLabel->setText(title.c_str());
+    _source = source;
+    _titleLabel->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::DEFINITIONS_ALL_CAPS)
+        % " (" % QString::fromStdString(source) % ")");
     _titleLabel->setFixedHeight(
         _titleLabel->fontMetrics().boundingRect(_titleLabel->text()).height());
     resize(minimumSizeHint());
+}
+
+void DefinitionHeaderWidget::translateUI()
+{
+    setSource(_source);
 }
 
 void DefinitionHeaderWidget::setStyle(bool use_dark)

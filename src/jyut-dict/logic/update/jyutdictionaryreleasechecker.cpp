@@ -58,7 +58,7 @@ JyutDictionaryReleaseChecker::JyutDictionaryReleaseChecker(
 void JyutDictionaryReleaseChecker::checkForNewUpdate()
 {
     QNetworkRequest _request{QUrl{JYUT_DICTIONARY_UPDATE_URL}};
-    disconnect(_manager, nullptr, nullptr, nullptr);
+    disconnect(_manager, nullptr, this, nullptr);
     connect(_manager,
             &QNetworkAccessManager::finished,
             this,

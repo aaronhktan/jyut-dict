@@ -1570,7 +1570,7 @@ void MainWindow::openWelcomeWindow(void)
 
 void MainWindow::checkForUpdate(bool showProgress)
 {
-    disconnect(_checker, nullptr, nullptr, nullptr);
+    disconnect(_checker, nullptr, this, nullptr);
     if (showProgress) {
         connect(_checker,
                 &JyutDictionaryReleaseChecker::foundUpdate,
@@ -1578,7 +1578,7 @@ void MainWindow::checkForUpdate(bool showProgress)
                 [&](const IUpdateChecker::UpdateVariant &v) {
                     _updateCheckProgressDialog->reset();
 
-                    disconnect(_checker, nullptr, nullptr, nullptr);
+                    disconnect(_checker, nullptr, this, nullptr);
 
                     if (!std::holds_alternative<
                             IUpdateChecker::AppManifestMetadata>(v)) {
@@ -1626,7 +1626,7 @@ void MainWindow::checkForUpdate(bool showProgress)
                 &JyutDictionaryReleaseChecker::foundUpdate,
                 this,
                 [&](const IUpdateChecker::UpdateVariant &v) {
-                    disconnect(_checker, nullptr, nullptr, nullptr);
+                    disconnect(_checker, nullptr, this, nullptr);
 
                     if (!std::holds_alternative<
                             IUpdateChecker::AppManifestMetadata>(v)) {
@@ -1656,7 +1656,7 @@ void MainWindow::checkForUpdate(bool showProgress)
 
 void MainWindow::checkForSourceUpdate(bool showProgress)
 {
-    disconnect(_sourceChecker, nullptr, nullptr, nullptr);
+    disconnect(_sourceChecker, nullptr, this, nullptr);
     if (_sourceUpdateWindow) {
         _sourceUpdateWindow->close();
     }
@@ -1669,7 +1669,7 @@ void MainWindow::checkForSourceUpdate(bool showProgress)
                     _recentlyCheckedForSourceUpdates = false;
                     _updateCheckProgressDialog->reset();
 
-                    disconnect(_sourceChecker, nullptr, nullptr, nullptr);
+                    disconnect(_sourceChecker, nullptr, this, nullptr);
 
                     if (!std::holds_alternative<
                             std::vector<IUpdateChecker::SourceManifestMetadata>>(
@@ -1715,7 +1715,7 @@ void MainWindow::checkForSourceUpdate(bool showProgress)
                 &SourceReleaseChecker::foundUpdate,
                 this,
                 [this](const IUpdateChecker::UpdateVariant &v) {
-                    disconnect(_sourceChecker, nullptr, nullptr, nullptr);
+                    disconnect(_sourceChecker, nullptr, this, nullptr);
                     _recentlyCheckedForSourceUpdates = false;
 
                     if (!std::holds_alternative<

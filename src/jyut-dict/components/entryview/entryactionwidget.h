@@ -1,16 +1,18 @@
 #ifndef ENTRYACTIONWIDGET_H
 #define ENTRYACTIONWIDGET_H
 
-#include "components/layouts/flowlayout.h"
-
-#include "logic/database/sqluserdatautils.h"
 #include "logic/entry/entry.h"
 #include "logic/search/isearchobserver.h"
 
-#include <QHBoxLayout>
-#include <QPushButton>
 #include <QSettings>
 #include <QWidget>
+
+class Entry;
+class FlowLayout;
+class SQLUserDataUtils;
+
+class QHBoxLayout;
+class QPushButton;
 
 // The EntryActionWidget provides some actions related to the EntryView.
 // This includes saving the entry to a list of saved words, and

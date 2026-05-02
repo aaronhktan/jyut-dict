@@ -1,22 +1,20 @@
 #ifndef ENTRYSCROLLAREA_H
 #define ENTRYSCROLLAREA_H
 
-#include "components/entryview/entryscrollareawidget.h"
-#include "logic/database/sqldatabasemanager.h"
-#include "logic/entry/entry.h"
+#include "logic/search/searchparameters.h"
 
-#include <QResizeEvent>
 #include <QScrollArea>
-#include <QVBoxLayout>
-#include <QWidget>
 
-// The EntryScrollArea is the "detail" view
-// It displays an Entry object in the user interface
+class Entry;
+class SQLDatabaseManager;
+class SQLUserDataUtils;
+class EntryScrollAreaWidget;
 
-// The layout of the EntryScrollArea is:
-// EntryHeader - shows word in chinese, pronunciation guides
-// EntryContentWidget - contains all the definitions and sentences related
-//                      to that entry.
+class QVBoxLayout;
+class QResizeEvent;
+
+// The EntryScrollArea is the "detail" view for a selected Entry
+// (The actual logic is in EntryScrollAreaWidget.cpp)
 
 class EntryScrollArea : public QScrollArea
 {

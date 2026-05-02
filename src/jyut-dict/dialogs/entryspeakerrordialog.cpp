@@ -24,13 +24,13 @@ void EntrySpeakErrorDialog::setupUI()
 
     QAbstractButton *addVoices = addButton(tr("Add voice"),
                                            QMessageBox::AcceptRole);
-    disconnect(addVoices, nullptr, nullptr, nullptr);
+    disconnect(addVoices, nullptr, this, nullptr);
     connect(addVoices, &QAbstractButton::clicked, this, [=, this]() {
         QDesktopServices::openUrl(QUrl{Utils::TTS_LINK});
     });
 
     QAbstractButton *helpVoices = addButton(tr("Help"), QMessageBox::HelpRole);
-    disconnect(helpVoices, nullptr, nullptr, nullptr);
+    disconnect(helpVoices, nullptr, this, nullptr);
     connect(helpVoices, &QAbstractButton::clicked, this, [=, this]() {
         QDesktopServices::openUrl(QUrl{Utils::TTS_HELP_LINK});
     });

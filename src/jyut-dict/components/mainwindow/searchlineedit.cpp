@@ -160,7 +160,7 @@ void SearchLineEdit::setupUI(void)
     // much faster.
     connect(this, &QLineEdit::textChanged, this, [this] {
         _searchDelayTimer->stop();
-        disconnect(_searchDelayTimer, nullptr, nullptr, nullptr);
+        disconnect(_searchDelayTimer, nullptr, this, nullptr);
         _searchDelayTimer->setSingleShot(true);
         connect(_searchDelayTimer,
                 &QTimer::timeout,
@@ -374,7 +374,7 @@ void SearchLineEdit::startTranscription(void)
 void SearchLineEdit::addSearchTermToHistory(SearchParameters parameters) const
 {
     _searchHistoryDelayTimer->stop();
-    disconnect(_searchHistoryDelayTimer, nullptr, nullptr, nullptr);
+    disconnect(_searchHistoryDelayTimer, nullptr, this, nullptr);
     _searchHistoryDelayTimer->setSingleShot(true);
     connect(_searchHistoryDelayTimer, &QTimer::timeout, this, [=, this]() {
         if (!text().isEmpty()) {

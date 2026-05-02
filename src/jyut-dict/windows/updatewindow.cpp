@@ -221,7 +221,7 @@ void UpdateAvailableWindow::showDetails()
 {
     _dialogLayout->replaceWidget(_spacer, _descriptionTextEdit);
     _showMoreButton->setText(tr("Hide details"));
-    disconnect(_showMoreButton, nullptr, nullptr, nullptr);
+    disconnect(_showMoreButton, nullptr, this, nullptr);
     connect(_showMoreButton, &QPushButton::clicked, this, &UpdateAvailableWindow::hideDetails);
 
     QPropertyAnimation *animation = new QPropertyAnimation{this, "size", this};
@@ -240,7 +240,7 @@ void UpdateAvailableWindow::hideDetails()
     _descriptionTextEdit->hide();
 
     _showMoreButton->setText(tr("Show details"));
-    disconnect(_showMoreButton, nullptr, nullptr, nullptr);
+    disconnect(_showMoreButton, nullptr, this, nullptr);
     connect(_showMoreButton, &QPushButton::clicked, this, &UpdateAvailableWindow::showDetails);
 
     QPropertyAnimation *animation = new QPropertyAnimation{this, "size", this};

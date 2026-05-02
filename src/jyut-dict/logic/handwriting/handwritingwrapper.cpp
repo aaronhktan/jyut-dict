@@ -26,7 +26,7 @@ HandwritingWrapper::HandwritingWrapper(Handwriting::Script script)
 {
     showProgressDialog(tr("Preparing handwriting models..."));
     _boolReturnWatcher = new QFutureWatcher<Utils::Result<bool>>{this};
-    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    disconnect(_boolReturnWatcher, nullptr, this, nullptr);
     connect(_boolReturnWatcher,
             &QFutureWatcher<Utils::Result<bool>>::finished,
             this,

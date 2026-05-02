@@ -3,13 +3,14 @@
 
 #include "components/definitioncard/icardheaderwidget.h"
 
-#include <QEvent>
-#include <QLabel>
 #include <QSettings>
-#include <QVBoxLayout>
 #include <QWidget>
 
 #include <string>
+
+class QEvent;
+class QLabel;
+class QVBoxLayout;
 
 // The DefinitionHeaderWidget shows the source of definitions
 // It contains a frame as a divider and the ability to set the source to display
@@ -21,12 +22,14 @@ public:
 
     void changeEvent(QEvent *event) override;
 
-    void setSectionTitle(const std::string &title) override;
+    void setSource(const std::string &title) override;
 
 private:
+    void translateUI();
     void setStyle(bool use_dark);
 
     bool _paletteRecentlyChanged = false;
+    std::string _source;
 
     std::unique_ptr<QSettings> _settings;
 

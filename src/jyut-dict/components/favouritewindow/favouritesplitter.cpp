@@ -2,19 +2,28 @@
 
 #include "components/entrysearchresult/resultlistmodel.h"
 #include "components/entrysearchresult/resultlistview.h"
+#include "components/entryview/entryscrollarea.h"
+#include "logic/database/sqldatabasemanager.h"
+#include "logic/database/sqluserdatautils.h"
+#include "logic/entry/entry.h"
 #include "logic/entry/entryphoneticoptions.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_WIN
 #include "logic/utils/utils_windows.h"
 #endif
 
+#include <QAbstractListModel>
+#include <QEvent>
+#include <QKeyEvent>
 #include <QList>
+#include <QModelIndex>
 #include <QVariant>
 
-FavouriteSplitter::FavouriteSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
-                                     std::shared_ptr<SQLDatabaseManager> manager,
-                                     QWidget *parent)
-    : QSplitter(parent)
+FavouriteSplitter::FavouriteSplitter(
+    std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
+    std::shared_ptr<SQLDatabaseManager> manager,
+    QWidget *parent)
+    : QSplitter{parent}
     , _sqlUserUtils{sqlUserUtils}
     , _manager{manager}
 {

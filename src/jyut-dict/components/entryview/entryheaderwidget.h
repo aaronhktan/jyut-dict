@@ -1,20 +1,21 @@
 #ifndef ENTRYHEADERWIDGET_H
 #define ENTRYHEADERWIDGET_H
 
-#include "dialogs/entryspeakerrordialog.h"
-#include "logic/entry/entry.h"
 #include "logic/entry/entryphoneticoptions.h"
 #include "logic/entry/entryspeaker.h"
 
-#include <QEvent>
-#include <QGridLayout>
-#include <QLabel>
-#include <QPushButton>
 #include <QSettings>
 #include <QWidget>
 
-#include <string>
 #include <vector>
+
+class EntrySpeakErrorDialog;
+class Entry;
+
+class QEvent;
+class QGridLayout;
+class QLabel;
+class QPushButton;
 
 // The EntryHeaderWidget displays basic information about the entry
 // at the top of the entry detail view

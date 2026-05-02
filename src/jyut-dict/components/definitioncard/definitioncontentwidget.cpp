@@ -11,12 +11,16 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QEvent>
+#include <QGridLayout>
+#include <QLabel>
 #include <QTimer>
 
-DefinitionContentWidget::DefinitionContentWidget(QWidget *parent) : QWidget(parent)
+DefinitionContentWidget::DefinitionContentWidget(QWidget *parent)
+    : QWidget{parent}
+    , _settings{Settings::getSettings(this)}
+    , _definitionLayout{new QGridLayout{this}}
 {
-    _settings = Settings::getSettings(this);
-    _definitionLayout = new QGridLayout{this};
     _definitionLayout->setVerticalSpacing(1);
     _definitionLayout->setContentsMargins(10, 0, 10, 0);
     _definitionLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
@@ -44,7 +48,7 @@ void DefinitionContentWidget::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
-void DefinitionContentWidget::setEntry(
+void DefinitionContentWidget::setDefinitions(
     std::span<const Definition::Definition> definitions)
 {
     cleanupLabels();

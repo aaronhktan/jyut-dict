@@ -226,7 +226,7 @@ void SourceUpdateResultWindow::showDetails()
 {
     _dialogLayout->replaceWidget(_spacer, _descriptionTextEdit);
     _showMoreButton->setText(tr("Hide details"));
-    disconnect(_showMoreButton, nullptr, nullptr, nullptr);
+    disconnect(_showMoreButton, nullptr, this, nullptr);
     connect(_showMoreButton,
             &QPushButton::clicked,
             this,
@@ -248,7 +248,7 @@ void SourceUpdateResultWindow::hideDetails()
     _descriptionTextEdit->hide();
 
     _showMoreButton->setText(tr("Show details"));
-    disconnect(_showMoreButton, nullptr, nullptr, nullptr);
+    disconnect(_showMoreButton, nullptr, this, nullptr);
     connect(_showMoreButton,
             &QPushButton::clicked,
             this,

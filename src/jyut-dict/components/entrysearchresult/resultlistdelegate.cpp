@@ -9,16 +9,19 @@
 
 #include <QAbstractTextDocumentLayout>
 #include <QGuiApplication>
+#include <QModelIndex>
+#include <QPainter>
 #include <QRectF>
+#include <QStyleOptionViewItem>
 #include <QTextDocument>
 #include <QTextLayout>
 #include <QVariant>
+#include <QWidget>
 
 ResultListDelegate::ResultListDelegate(QWidget *parent)
-    : QStyledItemDelegate (parent)
-{
-    _settings = Settings::getSettings(this);
-}
+    : QStyledItemDelegate(parent)
+    , _settings{Settings::getSettings(this)}
+{}
 
 void ResultListDelegate::paint(QPainter *painter,
                                const QStyleOptionViewItem &option,
@@ -30,13 +33,14 @@ void ResultListDelegate::paint(QPainter *painter,
 
     painter->save();
 
-    Entry entry = qvariant_cast<Entry>(index.data());
+    Entry entry{qvariant_cast<Entry>(index.data())};
 
     bool isWelcomeEntry = entry.isWelcome();
     bool isEmptyEntry = entry.isEmpty();
 
     QColor backgroundColour;
-    if (option.state & QStyle::State_Selected && !isWelcomeEntry && !isEmptyEntry) {
+    if (option.state & QStyle::State_Selected && !isWelcomeEntry
+        && !isEmptyEntry) {
         if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
             backgroundColour = option.palette
                                    .brush(QPalette::Inactive,
@@ -44,8 +48,7 @@ void ResultListDelegate::paint(QPainter *painter,
                                    .color();
         } else {
             backgroundColour = option.palette
-                                   .brush(QPalette::Active,
-                                          QPalette::Highlight)
+                                   .brush(QPalette::Active, QPalette::Highlight)
                                    .color();
         }
         painter->fillRect(option.rect, backgroundColour);
@@ -73,47 +76,48 @@ void ResultListDelegate::paint(QPainter *painter,
                           QVariant::fromValue(
                               EntryCharactersOptions::PREFER_TRADITIONAL))
                   .value<EntryCharactersOptions>();
-        phoneticOptions = _settings
-                              ->value("Preview/phoneticOptions",
+        phoneticOptions
+            = _settings
+                  ->value("Preview/phoneticOptions",
+                          QVariant::fromValue(
+                              EntryPhoneticOptions::PREFER_CANTONESE))
+                  .value<EntryPhoneticOptions>();
+        cantoneseOptions = Settings::getSettings()
+                               ->value("Preview/cantonesePronunciationOptions",
+                                       QVariant::fromValue(
+                                           CantoneseOptions::RAW_JYUTPING))
+                               .value<CantoneseOptions>();
+        mandarinOptions = Settings::getSettings()
+                              ->value("Preview/mandarinPronunciationOptions",
                                       QVariant::fromValue(
-                                          EntryPhoneticOptions::PREFER_CANTONESE))
-                              .value<EntryPhoneticOptions>();
-        cantoneseOptions
-            = Settings::getSettings()
-                  ->value("Preview/cantonesePronunciationOptions",
-                          QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
-                  .value<CantoneseOptions>();
-        mandarinOptions
-            = Settings::getSettings()
-                  ->value("Preview/mandarinPronunciationOptions",
-                          QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
-                  .value<MandarinOptions>();
+                                          MandarinOptions::PRETTY_PINYIN))
+                              .value<MandarinOptions>();
         use_colours = !(option.state & QStyle::State_Selected);
     }
     entry.generatePhonetic(cantoneseOptions, mandarinOptions);
 
-    QRect r = option.rect;
+    QRect r{option.rect};
     QRect boundingRect;
-    QFont font = painter->font();
-    int interfaceSize = static_cast<int>(
+    QFont font{painter->font()};
+    const int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
-    int h4FontSize = Settings::h4FontSize.at(
+    const int h4FontSize = Settings::h4FontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int bodyFontSize = Settings::bodyFontSize.at(
+    const int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
+    const int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int cellTopPadding = bodyFontSize;
-    int cellLeftPadding = bodyFontSize;
-    int contentSpacingMargin = bodyFontSize / 2;
+    const int cellTopPadding = bodyFontSize;
+    const int cellLeftPadding = bodyFontSize;
+    const int contentSpacingMargin = bodyFontSize / 2;
 
     // Chinese characters
 #ifdef Q_OS_WIN
     QFont oldFont = font;
-    font = QFont("Microsoft Yahei");
+    font = QFont{"Microsoft Yahei"};
 #endif
     font.setPixelSize(h4FontSize);
     painter->setFont(font);
@@ -122,8 +126,6 @@ void ResultListDelegate::paint(QPainter *painter,
                              -cellLeftPadding,
                              0);
 
-    // Use QTextDocument for rich text
-    QTextDocument *doc = new QTextDocument{};
     entry.refreshColours(
         _settings
             ->value("entryColourPhoneticType",
@@ -131,22 +133,27 @@ void ResultListDelegate::paint(QPainter *painter,
             .value<EntryColourPhoneticType>());
     // Can't elide this text because QFontMetrics tries to elide the rich text
     // HTML annotations.
-    QString characters
-        = entry.getCharacters(characterOptions, use_colours).c_str();
+    const QString characters{
+        entry.getCharacters(characterOptions, use_colours).c_str()};
+
+    // Use QTextDocument for rich text
+    QTextDocument *doc = new QTextDocument;
     doc->setHtml(characters);
     doc->setTextWidth(r.width());
     doc->setDefaultFont(font);
     doc->setDocumentMargin(0);
-    QAbstractTextDocumentLayout *documentLayout = doc->documentLayout();
+    QAbstractTextDocumentLayout *documentLayout{doc->documentLayout()};
     auto ctx = QAbstractTextDocumentLayout::PaintContext();
     ctx.palette.setColor(QPalette::Text, painter->pen().color());
-    QRectF bounds = QRectF(0, 0, r.width(), h4FontSize);
+    QRectF bounds{0,
+                  0,
+                  static_cast<double>(r.width()),
+                  static_cast<double>(h4FontSize)};
     ctx.clip = bounds;
     painter->translate(cellLeftPadding, r.y());
     documentLayout->draw(painter, ctx);
     painter->translate(-cellLeftPadding, -r.y());
     r = r.adjusted(0, h4FontSize + contentSpacingMargin * 2, 0, 0);
-
     delete doc;
 
     // Phonetic and definition snippets
@@ -160,9 +167,9 @@ void ResultListDelegate::paint(QPainter *painter,
         font.setPixelSize(bodyFontSize + 2);
         painter->setFont(font);
         metrics = QFontMetrics(font);
-        QString phonetic = metrics.elidedText(entry.getJyutping().c_str(),
-                                              Qt::ElideRight,
-                                              r.width());
+        const QString phonetic{metrics.elidedText(entry.getJyutping().c_str(),
+                                                  Qt::ElideRight,
+                                                  r.width())};
         painter->drawText(r, 0, phonetic, &boundingRect);
         r = r.adjusted(0, bodyFontSize + 2 + contentSpacingMargin * 2, 0, 0);
 
@@ -173,7 +180,7 @@ void ResultListDelegate::paint(QPainter *painter,
         }
         painter->setFont(font);
         painter->save();
-        painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
+        painter->setPen(QPen{option.palette.color(QPalette::PlaceholderText)});
 
         // Do custom text layout to get eliding double-line label
         snippet = entry.getDefinitionSnippet().c_str();
@@ -183,7 +190,7 @@ void ResultListDelegate::paint(QPainter *painter,
         // Define start and end y coordinates
         // max height of label is five lines, so height * 5
         int y = r.y();
-        int height = y + metrics.height() * 5;
+        const int maxHeight = y + metrics.height() * 5;
 
         for (;;) {
             QTextLine line = textLayout->createLine();
@@ -195,14 +202,13 @@ void ResultListDelegate::paint(QPainter *painter,
             line.setLineWidth(r.width());
             int nextLineY = y + metrics.lineSpacing();
 
-            if (height >= nextLineY + metrics.lineSpacing()) {
-                line.draw(painter, QPoint(r.x(), y));
+            if (nextLineY + metrics.lineSpacing() <= maxHeight) {
+                line.draw(painter, QPoint{r.x(), y});
                 y = nextLineY;
             } else {
-                QString lastLine = snippet.mid(line.textStart());
-                QString elidedLastLine = metrics.elidedText(lastLine,
-                                                            Qt::ElideRight,
-                                                            r.width());
+                const QString lastLine = snippet.mid(line.textStart());
+                const QString elidedLastLine
+                    = metrics.elidedText(lastLine, Qt::ElideRight, r.width());
                 // For some reason at small font sizes, -4 is necessary to make
                 // it look right (except in Chinese fonts). *shrug*
                 if (Settings::isCurrentLocaleHan()) {
@@ -227,13 +233,13 @@ void ResultListDelegate::paint(QPainter *painter,
         // so we have to manually adjust the location where the painter draws
         // phonetic + definition snippets
         metrics = QFontMetrics{font};
-        QString phonetic = metrics.elidedText(entry
-                                                  .getPhonetic(phoneticOptions,
-                                                               cantoneseOptions,
-                                                               mandarinOptions)
-                                                  .c_str(),
-                                              Qt::ElideRight,
-                                              r.width());
+        QString phonetic{metrics.elidedText(entry
+                                                .getPhonetic(phoneticOptions,
+                                                             cantoneseOptions,
+                                                             mandarinOptions)
+                                                .c_str(),
+                                            Qt::ElideRight,
+                                            r.width())};
         if (phonetic.isEmpty()) {
             phonetic = "-";
         }
@@ -254,12 +260,11 @@ void ResultListDelegate::paint(QPainter *painter,
     painter->restore();
 }
 
-QSize ResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
-                                   const QModelIndex &index) const
+QSize ResultListDelegate::sizeHint(
+    [[maybe_unused]] const QStyleOptionViewItem &option,
+    const QModelIndex &index) const
 {
-    (void) (option);
-
-    Entry entry = qvariant_cast<Entry>(index.data());
+    const Entry entry = qvariant_cast<Entry>(index.data());
     bool isEmptyEntry = entry.isEmpty();
 
     Settings::InterfaceSize interfaceSize

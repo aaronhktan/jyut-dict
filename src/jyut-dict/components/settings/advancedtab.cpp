@@ -628,7 +628,7 @@ void AdvancedTab::exportDictionaryDatabase(void)
     showProgressDialog(tr("Exporting dictionaries..."));
 
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
-    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    disconnect(_boolReturnWatcher, nullptr, this, nullptr);
     connect(_boolReturnWatcher,
             &QFutureWatcher<bool>::finished,
             this,
@@ -676,7 +676,7 @@ void AdvancedTab::exportUserDatabase(void)
     showProgressDialog(tr("Exporting saved words and history..."));
 
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
-    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    disconnect(_boolReturnWatcher, nullptr, this, nullptr);
     connect(_boolReturnWatcher,
             &QFutureWatcher<bool>::finished,
             this,
@@ -733,7 +733,7 @@ void AdvancedTab::restoreBackedUpDictionaryDatabase(void)
     showProgressDialog(tr("Restoring dictionary..."));
 
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
-    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    disconnect(_boolReturnWatcher, nullptr, this, nullptr);
     connect(_boolReturnWatcher,
             &QFutureWatcher<bool>::finished,
             this,
@@ -784,7 +784,7 @@ void AdvancedTab::restoreExportedDictionaryDatabase(void)
     showProgressDialog(tr("Restoring dictionary..."));
 
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
-    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    disconnect(_boolReturnWatcher, nullptr, this, nullptr);
     connect(_boolReturnWatcher,
             &QFutureWatcher<bool>::finished,
             this,
@@ -840,7 +840,7 @@ void AdvancedTab::restoreExportedUserDatabase(void)
     showProgressDialog(tr("Restoring saved words and history..."));
 
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
-    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    disconnect(_boolReturnWatcher, nullptr, this, nullptr);
     connect(_boolReturnWatcher,
             &QFutureWatcher<bool>::finished,
             this,
@@ -924,7 +924,7 @@ void AdvancedTab::startAudioDownload(std::shared_ptr<TextToSpeechCallbacks> cbs)
 
     _downloader = new Downloader(url, zipFile, this);
 
-    disconnect(_downloader, nullptr, nullptr, nullptr);
+    disconnect(_downloader, nullptr, this, nullptr);
     connect(_downloader, &Downloader::downloaded, this, [=, this](QString outputPath) {
         // Since the std::shared_ptr cbs goes out of scope once this function ends,
         // it must be captured by value instead of by reference

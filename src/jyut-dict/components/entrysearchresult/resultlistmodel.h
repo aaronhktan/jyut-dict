@@ -1,19 +1,18 @@
 #ifndef RESULTLISTMODEL_H
 #define RESULTLISTMODEL_H
 
-#include "logic/entry/entry.h"
-#include "logic/search/isearchobservable.h"
 #include "logic/search/isearchobserver.h"
-#include "logic/search/sqlsearch.h"
 
 #include <QAbstractListModel>
-#include <QModelIndex>
-#include <QObject>
-#include <QTimer>
-#include <QVariant>
 
-#include <string>
 #include <vector>
+
+class Entry;
+class ISearchObservable;
+
+class QModelIndex;
+class QTimer;
+class QVariant;
 
 // The ResultListModel contains data (a vector of Entry objects)
 // It is populated with the results of a search, being a searchobserver
@@ -24,7 +23,6 @@
 class ResultListModel : public QAbstractListModel, public ISearchObserver
 {
     Q_OBJECT
-
 public:
     explicit ResultListModel(std::shared_ptr<ISearchObservable> sqlSearch,
                              std::vector<Entry> entries,

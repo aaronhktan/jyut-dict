@@ -185,13 +185,13 @@ void DictionaryTab::setSourceMetadata(const QModelIndex &index)
     _legal->setText(metadata.getLegal().c_str());
     _version->setText((tr("Version: %1")).arg(metadata.getVersion().c_str()));
 
-    disconnect(_link, nullptr, nullptr, nullptr);
+    disconnect(_link, nullptr, this, nullptr);
     connect(_link, &QPushButton::clicked, this, [=, this] {
         QDesktopServices::openUrl(QUrl{metadata.getLink().c_str()});
     });
 
     _remove->setEnabled(_list->model()->rowCount() > 1);
-    disconnect(_remove, nullptr, nullptr, nullptr);
+    disconnect(_remove, nullptr, this, nullptr);
     connect(_remove, &QPushButton::clicked, this, [=, this] {
         removeDictionary(metadata);
     });
@@ -237,7 +237,7 @@ void DictionaryTab::addDictionary(const QString &dictionaryFile)
     _dialog->setRange(0, 0);
     _dialog->setValue(0);
 
-    disconnect(_utils.get(), nullptr, nullptr, nullptr);
+    disconnect(_utils.get(), nullptr, this, nullptr);
     connect(_utils.get(), &SQLDatabaseUtils::insertingSource, this, [&] {
         _dialog->setLabelText(tr("Adding source..."));
     });
@@ -320,7 +320,7 @@ void DictionaryTab::forceAddDictionary(const QString &dictionaryFile)
     _dialog->setRange(0, 0);
     _dialog->setValue(0);
 
-    disconnect(_utils.get(), nullptr, nullptr, nullptr);
+    disconnect(_utils.get(), nullptr, this, nullptr);
 
     connect(_utils.get(), &SQLDatabaseUtils::deletingDefinitions, this, [&] {
         _dialog->setLabelText(tr("Removing definitions..."));
@@ -409,7 +409,7 @@ void DictionaryTab::removeDictionary(SourceMetadata metadata)
     _dialog->setRange(0, 0);
     _dialog->setValue(0);
 
-    disconnect(_utils.get(), nullptr, nullptr, nullptr);
+    disconnect(_utils.get(), nullptr, this, nullptr);
     connect(_utils.get(), &SQLDatabaseUtils::deletingDefinitions, this, [&] {
         _dialog->setLabelText(tr("Removing definitions..."));
     });

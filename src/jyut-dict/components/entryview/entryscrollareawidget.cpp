@@ -1,5 +1,8 @@
 #include "entryscrollareawidget.h"
 
+#include "components/entryview/entryactionwidget.h"
+#include "components/entryview/entrycontentwidget.h"
+#include "components/entryview/entryheaderwidget.h"
 #include "components/entryview/entryscrollarea.h"
 #include "components/magnifywindow/magnifyscrollarea.h"
 #include "logic/settings/settingsutils.h"
@@ -11,6 +14,8 @@
 #include "logic/utils/utils_windows.h"
 #endif
 
+#include <QEvent>
+#include <QGridLayout>
 #include <QStyleHints>
 #include <QTimer>
 
@@ -143,15 +148,13 @@ void EntryScrollAreaWidget::changeEvent(QEvent *event)
 void EntryScrollAreaWidget::setEntry(const Entry &entry)
 {
     _entry = entry;
-    _entryIsValid = true;
     _entryHeaderWidget->setEntry(entry);
     _entryActionWidget->setEntry(entry);
     _entryContentWidget->setEntry(entry);
 }
 
-void EntryScrollAreaWidget::setStyle(bool use_dark)
+void EntryScrollAreaWidget::setStyle([[maybe_unused]] bool use_dark)
 {
-    (void) (use_dark);
     setAttribute(Qt::WA_StyledBackground);
     setStyleSheet("QWidget#EntryScrollAreaWidget { "
                   "   background-color: palette(base); "
@@ -160,8 +163,8 @@ void EntryScrollAreaWidget::setStyle(bool use_dark)
 
 void EntryScrollAreaWidget::updateStyleRequested(void)
 {
-    if (_entryIsValid) {
-        _entry.refreshColours(
+    if (_entry.has_value()) {
+        _entry.value().refreshColours(
             _settings
                 ->value("entryColourPhoneticType",
                         QVariant::fromValue(EntryColourPhoneticType::CANTONESE))
@@ -177,8 +180,8 @@ void EntryScrollAreaWidget::updateStyleRequested(void)
                   ->value("Entry/mandarinPronunciationOptions",
                           QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
                   .value<MandarinOptions>();
-        _entry.generatePhonetic(cantoneseOptions, mandarinOptions);
-        _entryHeaderWidget->setEntry(_entry);
+        _entry.value().generatePhonetic(cantoneseOptions, mandarinOptions);
+        _entryHeaderWidget->setEntry(_entry.value());
     }
 
     QEvent event{QEvent::PaletteChange};
@@ -205,7 +208,7 @@ void EntryScrollAreaWidget::shareCurrentEntryRequested(void)
 
 void EntryScrollAreaWidget::openInNewWindow(void)
 {
-    if (!_entryIsValid) {
+    if (!_entry.has_value()) {
         return;
     }
 
@@ -214,7 +217,7 @@ void EntryScrollAreaWidget::openInNewWindow(void)
                                                 nullptr};
     area->setParent(this, Qt::Window);
     area->setAttribute(Qt::WA_DeleteOnClose);
-    area->setEntry(_entry);
+    area->setEntry(_entry.value());
 #ifndef Q_OS_MAC
     area->setWindowTitle(" ");
 #endif
@@ -224,14 +227,14 @@ void EntryScrollAreaWidget::openInNewWindow(void)
 
 void EntryScrollAreaWidget::openMagnifyWindow(void)
 {
-    if (!_entryIsValid) {
+    if (!_entry.has_value()) {
         return;
     }
 
     MagnifyScrollArea *area = new MagnifyScrollArea{nullptr};
     area->setParent(this, Qt::Window);
     area->setAttribute(Qt::WA_DeleteOnClose);
-    area->setEntry(_entry);
+    area->setEntry(_entry.value());
 #ifndef Q_OS_MAC
     area->setWindowTitle(" ");
 #endif

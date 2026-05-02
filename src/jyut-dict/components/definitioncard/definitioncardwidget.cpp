@@ -1,6 +1,8 @@
 #include "definitioncardwidget.h"
 
-#include "logic/strings/strings.h"
+#include "components/definitioncard/definitioncontentwidget.h"
+#include "components/definitioncard/definitionheaderwidget.h"
+#include "logic/entry/definitionsset.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined(Q_OS_LINUX)
@@ -11,19 +13,21 @@
 #include "logic/utils/utils_qt.h"
 
 #include <QCoreApplication>
+#include <QEvent>
 #include <QStyle>
 #include <QTimer>
+#include <QVBoxLayout>
 
-DefinitionCardWidget::DefinitionCardWidget(QWidget *parent) : QWidget(parent)
+DefinitionCardWidget::DefinitionCardWidget(QWidget *parent)
+    : QWidget{parent}
+    , _definitionAreaLayout{new QVBoxLayout{this}}
+    , _definitionHeaderWidget{new DefinitionHeaderWidget{this}}
+    , _definitionContentWidget{new DefinitionContentWidget{this}}
 {
     setObjectName("DefinitionCardWidget");
 
-    _definitionAreaLayout = new QVBoxLayout{this};
     _definitionAreaLayout->setContentsMargins(0, 0, 0, 0);
     _definitionAreaLayout->setSpacing(11);
-
-    _definitionHeaderWidget = new DefinitionHeaderWidget{this};
-    _definitionContentWidget = new DefinitionContentWidget{this};
 
     _definitionAreaLayout->addWidget(_definitionHeaderWidget);
     _definitionAreaLayout->addWidget(_definitionContentWidget);
@@ -42,32 +46,13 @@ void DefinitionCardWidget::changeEvent(QEvent *event)
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }
-    if (event->type() == QEvent::LanguageChange) {
-        translateUI();
-    }
     QWidget::changeEvent(event);
 }
 
-void DefinitionCardWidget::setEntry(const DefinitionsSet &definitionsSet)
+void DefinitionCardWidget::setDefinitions(const DefinitionsSet &definitionsSet)
 {
-    _source = definitionsSet.getSourceShortString();
-
-    _definitionHeaderWidget->setSectionTitle(
-        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
-                                    Strings::DEFINITIONS_ALL_CAPS)
-            .toStdString()
-        + " (" + _source + ")");
-
-    _definitionContentWidget->setEntry(definitionsSet.getDefinitions());
-}
-
-void DefinitionCardWidget::translateUI()
-{
-    _definitionHeaderWidget->setSectionTitle(
-        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
-                                    Strings::DEFINITIONS_ALL_CAPS)
-            .toStdString()
-        + " (" + _source + ")");
+    _definitionHeaderWidget->setSource(definitionsSet.getSourceShortString());
+    _definitionContentWidget->setDefinitions(definitionsSet.getDefinitions());
 }
 
 void DefinitionCardWidget::setStyle(bool use_dark)

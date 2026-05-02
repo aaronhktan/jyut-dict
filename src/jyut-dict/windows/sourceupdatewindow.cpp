@@ -742,7 +742,7 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
         _dialog->setRange(0, 0);
         _dialog->setValue(0);
 
-        disconnect(_utils.get(), nullptr, nullptr, nullptr);
+        disconnect(_utils.get(), nullptr, this, nullptr);
 
         connect(_utils.get(), &SQLDatabaseUtils::deletingDefinitions, this, [&] {
             _dialog->setLabelText(

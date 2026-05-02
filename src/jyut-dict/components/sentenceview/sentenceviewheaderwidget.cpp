@@ -167,7 +167,7 @@ void SentenceViewHeaderWidget::translateUI(void)
         label->setVisible(true);
     }
 
-    disconnect(_cantoneseTTS, nullptr, nullptr, nullptr);
+    disconnect(_cantoneseTTS, nullptr, this, nullptr);
     connect(_cantoneseTTS, &QPushButton::clicked, this, [=, this]() {
         TextToSpeech::SpeakerBackend backend
             = Settings::getSettings()
@@ -206,7 +206,7 @@ void SentenceViewHeaderWidget::translateUI(void)
                       .arg(Settings::getCurrentLocale().bcp47Name()));
     });
 
-    disconnect(_mandarinTTS, nullptr, nullptr, nullptr);
+    disconnect(_mandarinTTS, nullptr, this, nullptr);
     if (Settings::getCurrentLocale().territory() == QLocale::Taiwan) {
         connect(_mandarinTTS, &QPushButton::clicked, this, [=, this]() {
             TextToSpeech::SpeakerBackend backend

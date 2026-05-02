@@ -1,18 +1,26 @@
 #ifndef ENTRYSCROLLAREAWIDGET_H
 #define ENTRYSCROLLAREAWIDGET_H
 
-#include "components/entryview/entryactionwidget.h"
-#include "components/entryview/entrycontentwidget.h"
-#include "components/entryview/entryheaderwidget.h"
 #include "logic/database/sqldatabasemanager.h"
+#include "logic/entry/entry.h"
+#include "logic/search/searchparameters.h"
 
-#include <QEvent>
-#include <QGridLayout>
 #include <QSettings>
 #include <QWidget>
 
-// The DefinitionScrollAreaWidget is the widget that contains other widgets
-// for the DefinitionScrollArea to pan and view.
+#include <optional>
+
+class EntryActionWidget;
+class EntryContentWidget;
+class EntryHeaderWidget;
+class SQLDatabaseManager;
+class SQLUserDataUtils;
+
+class QEvent;
+class QGridLayout;
+
+// The EntryScrollAreaWidget is the widget that contains other widgets
+// for the EntryScrollArea to pan and view.
 
 class EntryScrollAreaWidget : public QWidget
 {
@@ -34,8 +42,7 @@ private:
     std::shared_ptr<SQLUserDataUtils> _sqlUserUtils;
     std::shared_ptr<SQLDatabaseManager> _manager;
     std::unique_ptr<QSettings> _settings;
-    Entry _entry;
-    bool _entryIsValid = false;
+    std::optional<Entry> _entry = std::nullopt;
 
     QGridLayout *_scrollAreaLayout;
 

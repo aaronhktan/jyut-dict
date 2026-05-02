@@ -8,7 +8,7 @@
 class ICardHeaderWidget
 {
 public:
-    virtual void setSectionTitle(const std::string &name) = 0;
+    virtual void setSource(const std::string &name) = 0;
 
     virtual ~ICardHeaderWidget() = default;
 };

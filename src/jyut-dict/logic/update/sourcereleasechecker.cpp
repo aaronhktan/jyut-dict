@@ -63,7 +63,7 @@ void SourceReleaseChecker::checkForNewUpdate()
                 emit foundUpdate(_updates);
             }
 
-            disconnect(reply, nullptr, nullptr, nullptr);
+            disconnect(reply, nullptr, this, nullptr);
             reply->deleteLater();
             _replies.erase(reply);
         });
@@ -75,7 +75,7 @@ void SourceReleaseChecker::checkForNewUpdate()
                 emit foundUpdate(_updates);
             }
 
-            disconnect(reply, nullptr, nullptr, nullptr);
+            disconnect(reply, nullptr, this, nullptr);
             reply->abort();
             reply->deleteLater();
             _replies.erase(reply);
