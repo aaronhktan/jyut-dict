@@ -65,7 +65,7 @@ This folder contains several Python3 scripts that convert the various online Can
 
 ### jyut-dict
 
-This folder contains the source code for the program, and a Qt Creator project file. Files are divided into several subdirectories:
+This folder contains the source code for the program + tests, as well as a CMakeLists.txt file. Files are divided into several subdirectories:
 - `components`: UI components, such as the list view or search bar.
 - `dialogs`: dialogs, such as the "update available" notification dialog.
 - `logic`: definitions for search and entry classes, as well as other backend logic.
