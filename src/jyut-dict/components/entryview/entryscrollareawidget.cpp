@@ -14,6 +14,7 @@
 #include "logic/utils/utils_windows.h"
 #endif
 
+#include <QApplication>
 #include <QEvent>
 #include <QGridLayout>
 #include <QStyleHints>
@@ -23,27 +24,26 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(
     std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     std::shared_ptr<SQLDatabaseManager> manager,
     QWidget *parent)
-    : QWidget(parent)
+    : QWidget{parent}
     , _sqlUserUtils{sqlUserUtils}
     , _manager{manager}
+    , _settings{Settings::getSettings(this)}
+    , _scrollAreaLayout{new QGridLayout(this)}
+    , _entryHeaderWidget{new EntryHeaderWidget{this}}
+    , _entryActionWidget{new EntryActionWidget{_sqlUserUtils, this}}
+    , _entryContentWidget{
+          new EntryContentWidget{_manager,
+                                 /* showRelatedSection */ !parent->isWindow(),
+                                 this}}
 {
     setObjectName("EntryScrollAreaWidget");
 
-    _settings = Settings::getSettings(this);
-
     // Entire Scroll Area
-    _scrollAreaLayout = new QGridLayout{this};
     _scrollAreaLayout->setContentsMargins(11, 11, 11, 11);
     _scrollAreaLayout->setSpacing(0);
 
-    _entryHeaderWidget = new EntryHeaderWidget{this};
     _entryHeaderWidget->setMaximumWidth(800);
-    _entryActionWidget = new EntryActionWidget{sqlUserUtils, this};
     _entryActionWidget->setMaximumWidth(800);
-    _entryContentWidget
-        = new EntryContentWidget{manager,
-                                 /* showRelatedSection */ !parent->isWindow(),
-                                 this};
     _entryContentWidget->setMaximumWidth(800);
 
     // Add all widgets to main layout

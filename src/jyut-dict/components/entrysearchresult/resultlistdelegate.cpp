@@ -92,9 +92,9 @@ void ResultListDelegate::paint(QPainter *painter,
                                       QVariant::fromValue(
                                           MandarinOptions::PRETTY_PINYIN))
                               .value<MandarinOptions>();
+        entry.generatePhonetic(cantoneseOptions, mandarinOptions);
         use_colours = !(option.state & QStyle::State_Selected);
     }
-    entry.generatePhonetic(cantoneseOptions, mandarinOptions);
 
     QRect r{option.rect};
     QRect boundingRect;
@@ -253,7 +253,7 @@ void ResultListDelegate::paint(QPainter *painter,
     }
 
     // Bottom divider
-    QRect rct = option.rect;
+    QRect rct{option.rect};
     rct.setY(rct.bottom());
     painter->fillRect(rct, option.palette.alternateBase());
 

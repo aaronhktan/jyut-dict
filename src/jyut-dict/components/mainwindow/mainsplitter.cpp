@@ -2,9 +2,19 @@
 
 #include "components/entrysearchresult/resultlistmodel.h"
 #include "components/entrysearchresult/resultlistview.h"
+#include "components/entryview/entryscrollarea.h"
+#include "logic/database/sqldatabasemanager.h"
+#include "logic/database/sqluserdatautils.h"
+#include "logic/database/sqluserhistoryutils.h"
+#include "logic/entry/entry.h"
+#include "logic/search/sqlsearch.h"
 #include "logic/settings/settingsutils.h"
 
+#include <QAbstractListModel>
+#include <QEvent>
 #include <QList>
+#include <QModelIndex>
+#include <QTimer>
 #include <QVariant>
 
 MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
@@ -12,17 +22,16 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
                            std::shared_ptr<SQLSearch> sqlSearch,
                            std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                            QWidget *parent)
-    : QSplitter(parent)
+    : QSplitter{parent}
+    , _addToHistoryTimer{new QTimer{this}}
     , _sqlUserUtils{sqlUserUtils}
     , _manager{manager}
     , _search{sqlSearch}
     , _sqlHistoryUtils{sqlHistoryUtils}
+    , _entryScrollArea{new EntryScrollArea{_sqlUserUtils, _manager, this}}
+    , _resultListView{new ResultListView{this}}
+    , _model{new ResultListModel{_search, {}, false, this}}
 {
-    _addToHistoryTimer = new QTimer{this};
-
-    _entryScrollArea = new EntryScrollArea{sqlUserUtils, manager, this};
-    _resultListView = new ResultListView{this};
-    _model = new ResultListModel{sqlSearch, {}, false, this};
     _resultListView->setModel(_model);
 
     addWidget(_resultListView);

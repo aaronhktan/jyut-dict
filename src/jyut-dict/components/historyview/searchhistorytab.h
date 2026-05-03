@@ -1,14 +1,16 @@
 #ifndef SEARCHHISTORYTAB_H
 #define SEARCHHISTORYTAB_H
 
-#include "components/historyview/searchhistorylistmodel.h"
-#include "components/historyview/searchhistorylistview.h"
 #include "logic/database/sqluserhistoryutils.h"
 
-#include <QEvent>
-#include <QPushButton>
-#include <QVBoxLayout>
 #include <QWidget>
+
+class SearchHistoryListModel;
+class SearchHistoryListView;
+
+class QEvent;
+class QPushButton;
+class QVBoxLayout;
 
 // The SearchHistoryTab is a widget that contains the SearchHistoryListView
 // as well as a button that allows the user to clear the search history

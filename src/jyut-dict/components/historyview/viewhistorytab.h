@@ -1,14 +1,16 @@
 #ifndef VIEWHISTORYTAB_H
 #define VIEWHISTORYTAB_H
 
-#include "components/historyview/viewhistorylistmodel.h"
-#include "components/historyview/viewhistorylistview.h"
-#include "logic/database/sqluserhistoryutils.h"
-
-#include <QEvent>
-#include <QPushButton>
-#include <QVBoxLayout>
 #include <QWidget>
+
+class ViewHistoryListModel;
+class ViewHistoryListView;
+class SQLUserHistoryUtils;
+
+class Entry;
+class QEvent;
+class QPushButton;
+class QVBoxLayout;
 
 // The ViewHistoryTab is a widget that contains the ViewHistoryListView
 // as well as a button that allows the user to clear the viewed entry history
@@ -42,7 +44,7 @@ private:
     QPushButton *_clearAllViewHistoryButton;
 
 signals:
-    void viewHistoryClicked(Entry &pair);
+    void viewHistoryClicked(Entry &);
 
 public slots:
     void updateStyleRequested(void);

@@ -34,7 +34,7 @@ SearchLineEdit::SearchLineEdit(
     std::shared_ptr<ISearch> sqlSearch,
     std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
     QWidget *parent)
-    : QLineEdit(parent)
+    : QLineEdit{parent}
     , _mediator{mediator}
     , _search{sqlSearch}
     , _sqlHistoryUtils{sqlHistoryUtils}

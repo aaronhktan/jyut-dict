@@ -1,5 +1,7 @@
 #include "searchhistorytab.h"
 
+#include "components/historyview/searchhistorylistmodel.h"
+#include "components/historyview/searchhistorylistview.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -10,15 +12,18 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QEvent>
+#include <QPushButton>
 #include <QTimer>
+#include <QVBoxLayout>
 
 SearchHistoryTab::SearchHistoryTab(
     std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils, QWidget *parent)
-    : QWidget(parent)
+    : QWidget{parent}
     , _sqlHistoryUtils{sqlHistoryUtils}
+    , _listView{new SearchHistoryListView{this}}
+    , _model{new SearchHistoryListModel{_sqlHistoryUtils, this}}
 {
-    _listView = new SearchHistoryListView{this};
-    _model = new SearchHistoryListModel{_sqlHistoryUtils, this};
     _listView->setModel(_model);
 
     connect(_listView,
@@ -51,7 +56,7 @@ void SearchHistoryTab::changeEvent(QEvent *event)
 void SearchHistoryTab::setupUI(void)
 {
     _clearAllSearchHistoryButton = new QPushButton{this};
-    connect(_clearAllSearchHistoryButton, &QPushButton::clicked, this, [=, this]() {
+    connect(_clearAllSearchHistoryButton, &QPushButton::clicked, this, [this] {
         _sqlHistoryUtils->clearAllSearchHistory();
     });
 

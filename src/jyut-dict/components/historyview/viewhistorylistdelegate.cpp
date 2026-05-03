@@ -7,16 +7,20 @@
 #include "logic/settings/settingsutils.h"
 #include "logic/utils/utils_qt.h"
 
-#include <QGuiApplication>
 #include <QAbstractTextDocumentLayout>
+#include <QGuiApplication>
+#include <QModelIndex>
+#include <QPainter>
+#include <QStyleOptionViewItem>
 #include <QTextDocument>
 #include <QTextLayout>
 #include <QVariant>
+#include <QWidget>
 
 ViewHistoryListDelegate::ViewHistoryListDelegate(QWidget *parent)
-    : QStyledItemDelegate (parent)
+    : QStyledItemDelegate{parent}
+    , _settings{Settings::getSettings(this)}
 {
-    _settings = Settings::getSettings(this);
 }
 
 void ViewHistoryListDelegate::paint(QPainter *painter,
@@ -87,27 +91,26 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
                           QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
                   .value<MandarinOptions>();
         entry.generatePhonetic(cantoneseOptions, mandarinOptions);
-
         use_colours = !(option.state & QStyle::State_Selected);
     }
 
-    QRect r = option.rect;
+    QRect r{option.rect};
     QRect boundingRect;
-    QFont font = painter->font();
-    int interfaceSize = static_cast<int>(
+    QFont font{painter->font()};
+    const int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
-    int h4FontSize = Settings::h4FontSize.at(
+    const int h4FontSize = Settings::h4FontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int bodyFontSize = Settings::bodyFontSize.at(
+    const int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
+    const int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int cellTopPadding = bodyFontSize * 2 / 3;
-    int cellLeftPadding = bodyFontSize * 2 / 3;
-    int contentSpacingMargin = bodyFontSize / 2;
+    const int cellTopPadding = bodyFontSize * 2 / 3;
+    const int cellLeftPadding = bodyFontSize * 2 / 3;
+    const int contentSpacingMargin = bodyFontSize / 2;
 
     // Chinese characters
 #ifdef Q_OS_WIN
@@ -121,26 +124,31 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
                              -cellLeftPadding,
                              0);
 
-    QTextDocument *doc = new QTextDocument{};
-    entry.refreshColours(_settings
-                             ->value("entryColourPhoneticType",
-                                     QVariant::fromValue(
-                                         EntryColourPhoneticType::CANTONESE))
-                             .value<EntryColourPhoneticType>());
-    doc->setHtml(QString(entry.getCharacters(characterOptions, use_colours).c_str()));
+    entry.refreshColours(
+        _settings
+            ->value("entryColourPhoneticType",
+                    QVariant::fromValue(EntryColourPhoneticType::CANTONESE))
+            .value<EntryColourPhoneticType>());
+    const QString characters{
+        entry.getCharacters(characterOptions, use_colours).c_str()};
+
+    QTextDocument *doc = new QTextDocument;
+    doc->setHtml(characters);
     doc->setTextWidth(r.width());
     doc->setDefaultFont(font);
     doc->setDocumentMargin(0);
     QAbstractTextDocumentLayout *documentLayout = doc->documentLayout();
     auto ctx = QAbstractTextDocumentLayout::PaintContext();
     ctx.palette.setColor(QPalette::Text, painter->pen().color());
-    QRectF bounds = QRectF(0, 0, r.width(), h4FontSize);
+    QRectF bounds{0,
+                  0,
+                  static_cast<double>(r.width()),
+                  static_cast<double>(h4FontSize)};
     ctx.clip = bounds;
     painter->translate(cellLeftPadding, r.y());
     documentLayout->draw(painter, ctx);
     painter->translate(-cellLeftPadding, -r.y());
     r = r.adjusted(0, h4FontSize + contentSpacingMargin * 2, 0, 0);
-
     delete doc;
 
     // Phonetic
@@ -153,9 +161,9 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
         font.setPixelSize(bodyFontSize + 2);
         painter->setFont(font);
         metrics = QFontMetrics(font);
-        QString phonetic = metrics.elidedText(entry.getJyutping().c_str(),
-                                              Qt::ElideRight,
-                                              r.width());
+        const QString phonetic = metrics.elidedText(entry.getJyutping().c_str(),
+                                                    Qt::ElideRight,
+                                                    r.width());
         painter->drawText(r, 0, phonetic, &boundingRect);
         r = r.adjusted(0, bodyFontSize + 2 + contentSpacingMargin, 0, 0);
 
@@ -176,7 +184,7 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
         // Define start and end y coordinates
         // max height of label is four lines, so height * 4
         int y = r.y();
-        int height = y + metrics.height() * 4;
+        const int maxHeight = y + metrics.height() * 4;
 
         for (;;) {
             QTextLine line = textLayout->createLine();
@@ -188,14 +196,13 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
             line.setLineWidth(r.width());
             int nextLineY = y + metrics.lineSpacing();
 
-            if (height >= nextLineY + metrics.lineSpacing()) {
+            if (nextLineY + metrics.lineSpacing() <= maxHeight) {
                 line.draw(painter, QPoint(r.x(), y));
                 y = nextLineY;
             } else {
-                QString lastLine = snippet.mid(line.textStart());
-                QString elidedLastLine = metrics.elidedText(lastLine,
-                                                            Qt::ElideRight,
-                                                            r.width());
+                const QString lastLine = snippet.mid(line.textStart());
+                const QString elidedLastLine
+                    = metrics.elidedText(lastLine, Qt::ElideRight, r.width());
                 // For some reason at small font sizes, -4 is necessary to make
                 // it look right (except in Chinese fonts). *shrug*
                 if (Settings::isCurrentLocaleHan()) {
@@ -217,30 +224,30 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
         font.setPixelSize(bodyFontSize);
         painter->setFont(font);
         metrics = QFontMetrics(font);
-        QString phonetic = metrics.elidedText(entry
-                                                  .getPhonetic(phoneticOptions,
-                                                               cantoneseOptions,
-                                                               mandarinOptions)
-                                                  .c_str(),
-                                              Qt::ElideRight,
-                                              r.width());
+        const QString phonetic{
+            metrics.elidedText(entry
+                                   .getPhonetic(phoneticOptions,
+                                                cantoneseOptions,
+                                                mandarinOptions)
+                                   .c_str(),
+                               Qt::ElideRight,
+                               r.width())};
         painter->drawText(r, 0, phonetic, &boundingRect);
     }
 
     // Bottom divider
-    QRect rct = option.rect;
+    QRect rct{option.rect};
     rct.setY(rct.bottom() - 1);
     painter->fillRect(rct, option.palette.alternateBase());
 
     painter->restore();
 }
 
-QSize ViewHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
-                                   const QModelIndex &index) const
+QSize ViewHistoryListDelegate::sizeHint(
+    [[maybe_unused]] const QStyleOptionViewItem &option,
+    const QModelIndex &index) const
 {
-    (void) (option);
-
-    Entry entry = qvariant_cast<Entry>(index.data());
+    const Entry entry = qvariant_cast<Entry>(index.data());
     bool isEmptyEntry = entry.isEmpty();
 
     Settings::InterfaceSize interfaceSize

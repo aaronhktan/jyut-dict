@@ -27,7 +27,6 @@ class QWidget;
 class SearchLineEdit : public QLineEdit, public ISearchLineEdit
 {
     Q_OBJECT
-
 public:
     explicit SearchLineEdit(std::shared_ptr<ISearchOptionsMediator> mediator,
                             std::shared_ptr<ISearch> manager,

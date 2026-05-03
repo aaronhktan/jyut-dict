@@ -1,13 +1,16 @@
 #ifndef SEARCHHISTORYLISTVIEW_H
 #define SEARCHHISTORYLISTVIEW_H
 
-#include <QEvent>
 #include <QListView>
-#include <QStyledItemDelegate>
 #ifdef Q_OS_WIN
 #include <QWheelEvent>
 #endif
-#include <QWidget>
+
+class QEvent;
+class QStyledItemDelegate;
+#ifdef Q_OS_WIN
+class QWheelEvent;
+#endif
 
 // The ResultListView displays results of a search
 // It populates itself with a QAbstractListModel
@@ -16,7 +19,6 @@
 class SearchHistoryListView : public QListView
 {
     Q_OBJECT
-
 public:
     explicit SearchHistoryListView(QWidget *parent = nullptr);
 

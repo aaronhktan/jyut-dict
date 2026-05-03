@@ -27,7 +27,8 @@
 
 MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
                          std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
-                         QWidget *parent) : QToolBar(parent)
+                         QWidget *parent)
+    : QToolBar{parent}
 {
     setContextMenuPolicy(Qt::PreventContextMenu);
 

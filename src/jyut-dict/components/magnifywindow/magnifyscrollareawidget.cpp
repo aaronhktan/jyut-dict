@@ -1,5 +1,6 @@
 #include "magnifyscrollareawidget.h"
 
+#include "logic/entry/entry.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/utils/utils_qt.h"
@@ -12,36 +13,37 @@
 #endif
 
 #include <QEvent>
+#include <QLabel>
 #include <QTimer>
+#include <QVBoxLayout>
 
 MagnifyScrollAreaWidget::MagnifyScrollAreaWidget(QWidget *parent)
-    : QWidget(parent)
+    : QWidget{parent}
+    , _settings{Settings::getSettings(this)}
+    , _scrollAreaLayout{new QVBoxLayout{this}}
+    , _widget{new QWidget{this}}
+    , _widgetLayout{new QVBoxLayout{_widget}}
+    , _traditionalLabelLabel{new QLabel{_widget}}
+    , _traditionalLabel{new QLabel{_widget}}
+    , _simplifiedLabelLabel{new QLabel{_widget}}
+    , _simplifiedLabel{new QLabel{_widget}}
 {
     setObjectName("MagnifyScrollAreaWidget");
 
-    _settings = Settings::getSettings(this);
-
-    _scrollAreaLayout = new QVBoxLayout{this};
     _scrollAreaLayout->setSpacing(0);
     _scrollAreaLayout->setContentsMargins(0, 0, 0, 0);
     setLayout(_scrollAreaLayout);
 
     // For some really weird reason, putting the labels inside another widget
     // helps with word wrapping issues. I'm not sure exactly why.
-    _widget = new QWidget{this};
-    _widgetLayout = new QVBoxLayout{_widget};
     _widgetLayout->setSpacing(0);
     _widgetLayout->setContentsMargins(11, 11, 11, 11);
     _scrollAreaLayout->addWidget(_widget);
 
-    _traditionalLabelLabel = new QLabel{_widget};
     _traditionalLabelLabel->setAlignment(Qt::AlignCenter);
-    _traditionalLabel = new QLabel{_widget};
     _traditionalLabel->setAlignment(Qt::AlignCenter);
     _traditionalLabel->setWordWrap(true);
-    _simplifiedLabelLabel = new QLabel{_widget};
     _simplifiedLabelLabel->setAlignment(Qt::AlignCenter);
-    _simplifiedLabel = new QLabel{_widget};
     _simplifiedLabel->setAlignment(Qt::AlignCenter);
     _simplifiedLabel->setWordWrap(true);
 
@@ -156,10 +158,8 @@ void MagnifyScrollAreaWidget::translateUI(void)
                                          QSizePolicy::Maximum);
 }
 
-void MagnifyScrollAreaWidget::setStyle(bool use_dark)
+void MagnifyScrollAreaWidget::setStyle([[maybe_unused]] bool use_dark)
 {
-    (void) (use_dark);
-
 #ifdef Q_OS_WIN
     QFont font = QFont{"Microsoft YaHei"};
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
@@ -179,34 +179,34 @@ void MagnifyScrollAreaWidget::setStyle(bool use_dark)
                                     "   font-size: 120px; "
                                     "}");
 
-    QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                          LABEL_TEXT_COLOUR_DARK_G,
-                                          LABEL_TEXT_COLOUR_DARK_B}
-                                 : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                          LABEL_TEXT_COLOUR_LIGHT_G,
-                                          LABEL_TEXT_COLOUR_LIGHT_B};
-    QColor borderColour = use_dark ? textColour.darker(300)
-                                   : textColour.lighter(200);
-    int interfaceSize = static_cast<int>(
+    const QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
+                                                LABEL_TEXT_COLOUR_DARK_G,
+                                                LABEL_TEXT_COLOUR_DARK_B}
+                                       : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
+                                                LABEL_TEXT_COLOUR_LIGHT_G,
+                                                LABEL_TEXT_COLOUR_LIGHT_B};
+    const QColor borderColour = use_dark ? textColour.darker(300)
+                                         : textColour.lighter(200);
+    const int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
-    int bodyFontSize = Settings::bodyFontSize.at(
+    const int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int borderRadius = static_cast<int>(bodyFontSize * 1);
-    int padding = bodyFontSize / 6;
-    int paddingHorizontal = bodyFontSize;
-    QString styleSheet = "QLabel { "
-                         "   border: 2px solid %1; "
-                         "   border-radius: %2px; "
-                         "   color: %3; "
-                         "   font-size: %4px; "
-                         "   icon-size: %4px; "
-                         "   padding: %5px; "
-                         "   padding-left: %6px; "
-                         "   padding-right: %6px; "
-                         "} ";
+    const int borderRadius = static_cast<int>(bodyFontSize * 1);
+    const int padding = bodyFontSize / 6;
+    const int paddingHorizontal = bodyFontSize;
+    const QString styleSheet = "QLabel { "
+                               "   border: 2px solid %1; "
+                               "   border-radius: %2px; "
+                               "   color: %3; "
+                               "   font-size: %4px; "
+                               "   icon-size: %4px; "
+                               "   padding: %5px; "
+                               "   padding-left: %6px; "
+                               "   padding-right: %6px; "
+                               "} ";
     _traditionalLabelLabel->setStyleSheet(styleSheet.arg(borderColour.name())
                                               .arg(borderRadius)
                                               .arg(textColour.name())

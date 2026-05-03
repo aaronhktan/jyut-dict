@@ -1,5 +1,7 @@
 #include "handwritingpanel.h"
 
+#include <QMouseEvent>
+#include <QPainter>
 #include <QStyleOption>
 
 HandwritingPanel::HandwritingPanel(QWidget *parent)
