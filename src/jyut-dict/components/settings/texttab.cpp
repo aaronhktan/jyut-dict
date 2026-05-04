@@ -12,17 +12,42 @@
 #include "logic/utils/utils_windows.h"
 #endif
 
+#include <QCheckBox>
 #include <QColorDialog>
+#include <QComboBox>
+#include <QEvent>
+#include <QFormLayout>
 #include <QFrame>
+#include <QGridLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QSlider>
 #include <QStyle>
 #include <QTimer>
 
+namespace {
+constexpr auto COLOUR_BUTTON_STYLE
+    = "QPushButton { "
+      "   background: %1; border: 1px solid darkgrey; "
+      "   border-radius: 3px; "
+      "   margin: 0px; "
+      "   padding: 0px; "
+      "} "
+      " "
+      "QPushButton:pressed { "
+      "   background: %1; border: 2px solid lightgrey; "
+      "   border-radius: 3px; "
+      "   margin: 0px; "
+      "   padding: 0px; "
+      "} ";
+}
+
 TextTab::TextTab(QWidget *parent)
     : QWidget{parent}
+    , _settings{Settings::getSettings(this)}
 {
     setObjectName("TextTab");
 
-    _settings = Settings::getSettings(this);
     setupUI();
     translateUI();
 }

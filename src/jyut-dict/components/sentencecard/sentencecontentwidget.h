@@ -1,19 +1,21 @@
 #ifndef SENTENCECONTENTWIDGET_H
 #define SENTENCECONTENTWIDGET_H
 
-#include "logic/sentence/sentenceset.h"
-#include "logic/sentence/sourcesentence.h"
 #include "logic/entry/entrycharactersoptions.h"
 #include "logic/entry/entryphoneticoptions.h"
 
-#include <QEvent>
-#include <QGridLayout>
-#include <QLabel>
-#include <QResizeEvent>
 #include <QSettings>
 #include <QWidget>
 
 #include <span>
+
+class SentenceSet;
+class SourceSentence;
+
+class QEvent;
+class QGridLayout;
+class QLabel;
+class QResizeEvent;
 
 // The SentenceContentWidget displays sentences.
 // When used with setSentenceSet, it will display a list of

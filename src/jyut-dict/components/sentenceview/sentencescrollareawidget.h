@@ -1,14 +1,18 @@
 #ifndef SENTENCESCROLLAREAWIDGET_H
 #define SENTENCESCROLLAREAWIDGET_H
 
-#include "components/sentenceview/sentenceviewcontentwidget.h"
-#include "components/sentenceview/sentenceviewheaderwidget.h"
 #include "logic/sentence/sourcesentence.h"
 
-#include <QEvent>
 #include <QSettings>
-#include <QVBoxLayout>
 #include <QWidget>
+
+#include <optional>
+
+class SentenceViewContentWidget;
+class SentenceViewHeaderWidget;
+
+class QEvent;
+class QVBoxLayout;
 
 // The SentenceScrollAreaWidget is the widget that contains other widgets
 // for the SentenceScrollArea to pan and view.
@@ -28,8 +32,7 @@ private:
     bool _paletteRecentlyChanged = false;
 
     std::unique_ptr<QSettings> _settings;
-    SourceSentence _sentence;
-    bool _sentenceIsValid = false;
+    std::optional<SourceSentence> _sentence;
 
     QVBoxLayout *_scrollAreaLayout;
 

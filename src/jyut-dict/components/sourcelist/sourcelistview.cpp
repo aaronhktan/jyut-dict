@@ -3,22 +3,24 @@
 #include "components/sourcelist/sourcelistdelegate.h"
 #include "components/sourcelist/sourcelistmodel.h"
 
+#include <QAbstractListModel>
 #include <QGuiApplication>
+#include <QStyledItemDelegate>
 
 #ifdef Q_OS_WIN
 #include <QScrollBar>
+#include <QWheelEvent>
 #endif
 
 SourceListView::SourceListView(QWidget *parent)
-    : QListView(parent)
+    : QListView{parent}
+    , _model{new SourceListModel{this}}
+    , _delegate{new SourceListDelegate{this}}
 {
     setFrameShape(QFrame::NoFrame);
     setMinimumWidth(150);
-    
-    _model = new SourceListModel{this};
+
     setModel(_model);
-    
-    _delegate = new SourceListDelegate{this};
     setItemDelegate(_delegate);
 
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);

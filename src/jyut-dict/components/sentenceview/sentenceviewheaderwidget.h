@@ -1,20 +1,22 @@
 #ifndef SENTENCEVIEWHEADERWIDGET_H
 #define SENTENCEVIEWHEADERWIDGET_H
 
-#include "dialogs/entryspeakerrordialog.h"
 #include "logic/entry/entrycharactersoptions.h"
 #include "logic/entry/entryphoneticoptions.h"
-#include "logic/entry/entryspeaker.h"
-#include "logic/sentence/sourcesentence.h"
 
-#include <QEvent>
-#include <QGridLayout>
-#include <QLabel>
-#include <QPushButton>
 #include <QSettings>
 #include <QWidget>
 
 #include <memory>
+
+class EntrySpeakErrorDialog;
+class EntrySpeaker;
+class SourceSentence;
+
+class QEvent;
+class QGridLayout;
+class QLabel;
+class QPushButton;
 
 // The SentenceViewHeaderWidget displays basic information about the sourceSentence
 // at the top of the detail view

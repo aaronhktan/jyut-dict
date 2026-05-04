@@ -12,9 +12,14 @@
 #include "logic/utils/utils_qt.h"
 
 #include <QApplication>
+#include <QCheckBox>
+#include <QComboBox>
 #include <QDesktopServices>
+#include <QEvent>
+#include <QFormLayout>
 #include <QFrame>
 #include <QGridLayout>
+#include <QLabel>
 #include <QPushButton>
 #include <QStyle>
 #include <QTimer>
@@ -23,10 +28,10 @@
 
 SearchTab::SearchTab(QWidget *parent)
     : QWidget{parent}
+    , _settings{Settings::getSettings(this)}
 {
     setObjectName("SearchTab");
 
-    _settings = Settings::getSettings(this);
     setupUI();
     translateUI();
 }
@@ -157,13 +162,13 @@ void SearchTab::translateUI()
     static_cast<QLabel *>(_tabLayout->labelForField(_fuzzyPinyin))
         ->setText(tr("Fuzzy Pinyin matching:"));
 
-    QColor backgroundColour = Utils::isDarkMode()
-                                  ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                           LABEL_TEXT_COLOUR_DARK_G,
-                                           LABEL_TEXT_COLOUR_DARK_B}
-                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                           LABEL_TEXT_COLOUR_LIGHT_R,
-                                           LABEL_TEXT_COLOUR_LIGHT_R};
+    const QColor backgroundColour = Utils::isDarkMode()
+                                        ? QColor{LABEL_TEXT_COLOUR_DARK_R,
+                                                 LABEL_TEXT_COLOUR_DARK_G,
+                                                 LABEL_TEXT_COLOUR_DARK_B}
+                                        : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
+                                                 LABEL_TEXT_COLOUR_LIGHT_R,
+                                                 LABEL_TEXT_COLOUR_LIGHT_R};
 
     _fuzzyJyutpingDescription->setText(
         QCoreApplication::translate(Strings::STRINGS_CONTEXT,
@@ -203,12 +208,13 @@ void SearchTab::setStyle(bool use_dark)
         frame->setStyleSheet(style.arg(colour));
     }
 
-    QColor backgroundColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                                LABEL_TEXT_COLOUR_DARK_G,
-                                                LABEL_TEXT_COLOUR_DARK_B}
-                                       : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                                LABEL_TEXT_COLOUR_LIGHT_R,
-                                                LABEL_TEXT_COLOUR_LIGHT_R};
+    const QColor backgroundColour = use_dark
+                                        ? QColor{LABEL_TEXT_COLOUR_DARK_R,
+                                                 LABEL_TEXT_COLOUR_DARK_G,
+                                                 LABEL_TEXT_COLOUR_DARK_B}
+                                        : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
+                                                 LABEL_TEXT_COLOUR_LIGHT_R,
+                                                 LABEL_TEXT_COLOUR_LIGHT_R};
 
     _fuzzyJyutpingDescription->setText(
         QCoreApplication::translate(Strings::STRINGS_CONTEXT,

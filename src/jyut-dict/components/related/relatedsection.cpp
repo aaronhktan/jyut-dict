@@ -1,5 +1,11 @@
 #include "relatedsection.h"
 
+#include "components/related/relatedbutton.h"
+#include "logic/entry/entry.h"
+
+#include <QEvent>
+#include <QGridLayout>
+#include <QPushButton>
 #include <QTimer>
 
 RelatedSection::RelatedSection(QWidget *parent)

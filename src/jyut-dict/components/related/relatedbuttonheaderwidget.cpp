@@ -13,20 +13,22 @@
 #include "logic/utils/utils_qt.h"
 
 #include <QCoreApplication>
+#include <QEvent>
+#include <QLabel>
 #include <QTimer>
+#include <QVBoxLayout>
 
 RelatedButtonHeaderWidget::RelatedButtonHeaderWidget(QWidget *parent)
-    : QWidget(parent)
+    : QWidget{parent}
+    , _settings{Settings::getSettings(this)}
+    , _titleLabel{new QLabel{this}}
+    , _layout{new QVBoxLayout{this}}
 {
     setObjectName("RelatedButtonHeaderWidget");
 
-    _settings = Settings::getSettings(this);
-
-    _layout = new QVBoxLayout{this};
     _layout->setContentsMargins(10, 10, 10, 10);
     _layout->setSpacing(10);
 
-    _titleLabel = new QLabel{this};
     _titleLabel->setObjectName("RelatedButtonHeaderWidgetTitleLabel");
     _titleLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
     _titleLabel->setAlignment(Qt::AlignCenter);
@@ -42,7 +44,7 @@ void RelatedButtonHeaderWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [&] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -66,41 +68,42 @@ void RelatedButtonHeaderWidget::translateUI()
 void RelatedButtonHeaderWidget::setStyle(bool use_dark)
 {
     // Style the main background
-    QString widgetStyleSheet = "QWidget#RelatedButtonHeaderWidget { "
-                               " background: %1; "
-                               " border-top-left-radius: 10px; "
-                               " border-top-right-radius: 10px; "
-                               " border-bottom-left-radius: 0px; "
-                               " border-bottom-right-radius: 0px; "
-                               "}";
-    QColor backgroundColour = use_dark
-                                  ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
-                                           HEADER_BACKGROUND_COLOUR_DARK_G,
-                                           HEADER_BACKGROUND_COLOUR_DARK_B}
-                                  : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
-                                           CONTENT_BACKGROUND_COLOUR_LIGHT_G,
-                                           CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+    const QString widgetStyleSheet = "QWidget#RelatedButtonHeaderWidget { "
+                                     " background: %1; "
+                                     " border-top-left-radius: 10px; "
+                                     " border-top-right-radius: 10px; "
+                                     " border-bottom-left-radius: 0px; "
+                                     " border-bottom-right-radius: 0px; "
+                                     "}";
+    const QColor backgroundColour
+        = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
+                            HEADER_BACKGROUND_COLOUR_DARK_G,
+                            HEADER_BACKGROUND_COLOUR_DARK_B}
+                   : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                            CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                            CONTENT_BACKGROUND_COLOUR_LIGHT_B};
     setStyleSheet(widgetStyleSheet.arg(backgroundColour.name()));
 
     // Style the label text
-    int interfaceSize = static_cast<int>(
+    const int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
-    int bodyFontSize = Settings::bodyFontSize.at(
+    const int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
 
-    QString textStyleSheet = "QLabel#RelatedButtonHeaderWidgetTitleLabel { "
-                             "   color: %1; "
-                             "   font-size: %2px; "
-                             "}";
-    QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                          LABEL_TEXT_COLOUR_DARK_G,
-                                          LABEL_TEXT_COLOUR_DARK_B}
-                                 : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                          LABEL_TEXT_COLOUR_LIGHT_R,
-                                          LABEL_TEXT_COLOUR_LIGHT_R};
+    const QString textStyleSheet
+        = "QLabel#RelatedButtonHeaderWidgetTitleLabel { "
+          "   color: %1; "
+          "   font-size: %2px; "
+          "}";
+    const QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
+                                                LABEL_TEXT_COLOUR_DARK_G,
+                                                LABEL_TEXT_COLOUR_DARK_B}
+                                       : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
+                                                LABEL_TEXT_COLOUR_LIGHT_R,
+                                                LABEL_TEXT_COLOUR_LIGHT_R};
     _titleLabel->setStyleSheet(
         textStyleSheet.arg(textColour.name()).arg(bodyFontSize));
     _titleLabel->setFixedHeight(

@@ -48,10 +48,9 @@ constexpr auto AUDIO_DOWNLOAD_URL
 
 AdvancedTab::AdvancedTab(QWidget *parent)
     : QWidget{parent}
+    , _settings{Settings::getSettings(this)}
 {
     setObjectName("AdvancedTab");
-
-    _settings = Settings::getSettings();
 
     setupUI();
     translateUI();

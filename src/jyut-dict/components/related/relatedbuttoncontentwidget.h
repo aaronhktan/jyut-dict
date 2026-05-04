@@ -1,15 +1,17 @@
 #ifndef RELATEDBUTTONCONTENTWIDGET_H
 #define RELATEDBUTTONCONTENTWIDGET_H
 
-#include "logic/entry/entry.h"
 #include "logic/search/searchparameters.h"
 
-#include <QEvent>
-#include <QLabel>
-#include <QPushButton>
 #include <QSettings>
-#include <QVBoxLayout>
 #include <QWidget>
+
+class Entry;
+
+class QEvent;
+class QLabel;
+class QPushButton;
+class QVBoxLayout;
 
 enum class RelatedType {
     SearchBeginning,

@@ -1,5 +1,7 @@
 #include "relatedbutton.h"
 
+#include "components/related/relatedbuttonheaderwidget.h"
+#include "logic/entry/entry.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined(Q_OS_LINUX)
@@ -10,7 +12,9 @@
 #include "logic/utils/utils_qt.h"
 
 #include <QCoreApplication>
+#include <QEvent>
 #include <QTimer>
+#include <QVBoxLayout>
 
 RelatedButton::RelatedButton(RelatedType type, QWidget *parent)
     : QWidget{parent}
@@ -29,7 +33,7 @@ void RelatedButton::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [&] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());

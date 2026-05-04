@@ -1,13 +1,17 @@
 #include "sentencescrollarea.h"
 
+#include "components/sentenceview/sentencescrollareawidget.h"
+#include "logic/sentence/sourcesentence.h"
+
+#include <QResizeEvent>
 #include <QScrollBar>
+#include <QVBoxLayout>
 
 SentenceScrollArea::SentenceScrollArea(QWidget *parent)
-    : QScrollArea(parent)
+    : QScrollArea{parent}
+    , _scrollAreaWidget{new SentenceScrollAreaWidget{this}}
 {
     setFrameShape(QFrame::NoFrame);
-
-    _scrollAreaWidget = new SentenceScrollAreaWidget{this};
 
     setWidget(_scrollAreaWidget);
     setWidgetResizable(true); // IMPORTANT! This makes the scrolling widget resize correctly.

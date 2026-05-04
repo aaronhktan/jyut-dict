@@ -4,11 +4,11 @@
 #include "logic/source/sourcemetadata.h"
 
 #include <QAbstractListModel>
-#include <QModelIndex>
-#include <QObject>
-#include <QVariant>
 
 #include <vector>
+
+class QModelIndex;
+class QVariant;
 
 // The SourceListModel contains a list of all currently installed
 // sources.
@@ -16,11 +16,10 @@
 class SourceListModel : public QAbstractListModel
 {
     Q_OBJECT
-
 public:
     explicit SourceListModel(QObject *parent = nullptr);
 
-    void setDictionaries(std::vector<SourceMetadata> dictionaries);
+    void setDictionaries(const std::vector<SourceMetadata> &dictionaries);
     bool setData(const QModelIndex &index,
                  const QVariant &value,
                  int role = Qt::EditRole) override;

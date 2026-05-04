@@ -1,23 +1,24 @@
 #ifndef DICTIONARYTAB_H
 #define DICTIONARYTAB_H
 
-#include "dialogs/dictionarytabfailuredialog.h"
-#include "dialogs/overwriteconflictingdictionarydialog.h"
-#include "logic/database/sqldatabasemanager.h"
-#include "logic/database/sqldatabaseutils.h"
-#include "logic/source/sourcemetadata.h"
-
-#include <QEvent>
-#include <QGridLayout>
-#include <QGroupBox>
-#include <QLabel>
-#include <QListView>
-#include <QModelIndex>
-#include <QProgressDialog>
-#include <QPushButton>
 #include <QWidget>
 
 #include <memory>
+
+class DictionaryTabFailureDialog;
+class OverwriteConflictingDictionaryDialog;
+class SQLDatabaseManager;
+class SQLDatabaseUtils;
+class SourceMetadata;
+
+class QEvent;
+class QGridLayout;
+class QGroupBox;
+class QLabel;
+class QListView;
+class QModelIndex;
+class QProgressDialog;
+class QPushButton;
 
 // The DictionaryTab is the widget displayed in the settings window
 // when a user clicks on the "Dictionaries" icon in the toolbar.
@@ -25,7 +26,6 @@
 class DictionaryTab : public QWidget
 {
     Q_OBJECT
-
 public:
     explicit DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
                            QWidget *parent = nullptr);

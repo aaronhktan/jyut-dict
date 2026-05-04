@@ -1,11 +1,12 @@
 #ifndef SENTENCEHEADERWIDGET_H
 #define SENTENCEHEADERWIDGET_H
 
-#include <QEvent>
-#include <QLabel>
 #include <QSettings>
-#include <QVBoxLayout>
 #include <QWidget>
+
+class QEvent;
+class QLabel;
+class QVBoxLayout;
 
 // The SentenceHeaderWidget provides a header for the sentence card
 
@@ -16,12 +17,15 @@ public:
 
     void changeEvent(QEvent *event) override;
 
-    void setCardTitle(const std::string &title);
+    void setSource(const std::string &title);
 
 private:
+    void translateUI();
     void setStyle(bool use_dark);
 
     bool _paletteRecentlyChanged = false;
+
+    std::string _source;
 
     std::unique_ptr<QSettings> _settings;
 

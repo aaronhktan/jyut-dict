@@ -3,16 +3,17 @@
 
 #include "logic/search/isearchobservable.h"
 #include "logic/search/isearchobserver.h"
-#include "logic/search/sqlsearch.h"
 #include "logic/sentence/sourcesentence.h"
 
 #include <QAbstractListModel>
-#include <QModelIndex>
-#include <QObject>
-#include <QVariant>
 
 #include <span>
 #include <vector>
+
+class SQLSearch;
+
+class QModelIndex;
+class QVariant;
 
 // The SentenceResultListModel contains data (a vector of SourceSentence objects)
 // It is populated with the results of a search, being a searchobserver
@@ -23,7 +24,6 @@
 class SentenceResultListModel : public QAbstractListModel, public ISearchObserver
 {
     Q_OBJECT
-
 public:
     explicit SentenceResultListModel(std::shared_ptr<SQLSearch> sqlSearch,
                                      std::vector<SourceSentence> sentences,

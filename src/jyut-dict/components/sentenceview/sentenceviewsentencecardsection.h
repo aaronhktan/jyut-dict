@@ -1,12 +1,14 @@
 #ifndef SENTENCEVIEWSENTENCECARDSECTION_H
 #define SENTENCEVIEWSENTENCECARDSECTION_H
 
-#include "components/sentencecard/sentencecardwidget.h"
+#include "logic/sentence/sourcesentence.h"
 
 #include <QVBoxLayout>
 #include <QWidget>
 
 #include <vector>
+
+class SentenceCardWidget;
 
 // The SentenceViewSentenceCardSection displays several SentenceCardWidgets,
 // one for each SentenceSet in the SourceSentence.

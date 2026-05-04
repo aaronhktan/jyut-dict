@@ -106,12 +106,12 @@ namespace Utils {
 
 // The following is used to calculate a contrasting colour
 // https://stackoverflow.com/questions/946544/good-text-foreground-color-for-a-given-background-color
-QColor getContrastingColour(const QColor backgroundColour);
+QColor getContrastingColour(const QColor &backgroundColour);
 
-QColor getLanguageColour(std::string language);
+QColor getLanguageColour(const std::string &language);
 
-QString getLanguageFromISO639(std::string language);
-std::string getISO639FromLanguage(QString language);
+QString getLanguageFromISO639(const std::string &language);
+std::string getISO639FromLanguage(const QString &language);
 
 std::string getStringFromSearchParameter(SearchParameters parameter);
 

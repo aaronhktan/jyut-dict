@@ -1,15 +1,17 @@
 #include "sourcelistmodel.h"
 
+#include <QModelIndex>
+#include <QVariant>
+
 #include <iostream>
 
 SourceListModel::SourceListModel(QObject *parent)
-    : QAbstractListModel(parent)
+    : QAbstractListModel{parent}
 {
-    _dictionaries = {};
 }
 
 void SourceListModel::setDictionaries(
-    std::vector<SourceMetadata> dictionaries)
+    const std::vector<SourceMetadata> &dictionaries)
 {
     beginResetModel();
     _dictionaries = dictionaries;
@@ -17,8 +19,8 @@ void SourceListModel::setDictionaries(
 }
 
 bool SourceListModel::setData(const QModelIndex &index,
-                                  const QVariant &value,
-                                  int role)
+                              const QVariant &value,
+                              int role)
 {
     if (role != Qt::EditRole) {
         return false;
@@ -31,7 +33,8 @@ bool SourceListModel::setData(const QModelIndex &index,
             _dictionaries.push_back(value.value<SourceMetadata>());
         }
     } catch (std::exception &e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << "SourceListModel::setData() error: " << e.what()
+                  << std::endl;
         return false;
     }
 
@@ -77,31 +80,23 @@ int SourceListModel::rowCount(const QModelIndex &parent) const
 QVariant SourceListModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
-        return QVariant{};
+        return {};
     }
 
     if (static_cast<unsigned long>(index.row()) >= _dictionaries.size()) {
-        return QVariant{};
+        return {};
     }
 
     if (role == Qt::DisplayRole) {
         return QVariant::fromValue(
             _dictionaries.at(static_cast<unsigned long>(index.row())));
     } else {
-        return QVariant{};
+        return {};
     }
 }
 
 QVariant SourceListModel::headerData(int section, Qt::Orientation orientation,
                                          int role) const
 {
-    if (role != Qt::DisplayRole) {
-        return QVariant{};
-    }
-
-    if (orientation == Qt::Vertical) {
-        return QString{"Row %1"}.arg(section);
-    } else {
-        return QVariant{};
-    }
+    return {};
 }

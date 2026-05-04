@@ -2,13 +2,16 @@
 #define RELATEDBUTTON_H
 
 #include "components/related/relatedbuttoncontentwidget.h"
-#include "components/related/relatedbuttonheaderwidget.h"
-#include "logic/entry/entry.h"
 #include "logic/search/searchparameters.h"
 
-#include <QEvent>
-#include <QVBoxLayout>
 #include <QWidget>
+
+class Entry;
+class RelatedButtonContentWidget;
+class RelatedButtonHeaderWidget;
+
+class QEvent;
+class QVBoxLayout;
 
 class RelatedButton : public QWidget
 {

@@ -2,6 +2,7 @@
 #define ENTRYVIEWSENTENCECARDSECTION_H
 
 #include "logic/search/isearchobserver.h"
+#include "logic/search/sqlsearch.h"
 
 #include <QSettings>
 #include <QWidget>
@@ -13,7 +14,6 @@
 class LoadingWidget;
 class SentenceCardWidget;
 class SQLDatabaseManager;
-class SQLSearch;
 
 class QEvent;
 class QString;

@@ -1,31 +1,17 @@
 #ifndef TEXTTAB_H
 #define TEXTTAB_H
 
-#include <QCheckBox>
-#include <QComboBox>
-#include <QEvent>
-#include <QFormLayout>
-#include <QGridLayout>
-#include <QLabel>
-#include <QPushButton>
 #include <QSettings>
-#include <QSlider>
 #include <QWidget>
 
-constexpr auto COLOUR_BUTTON_STYLE
-    = "QPushButton { "
-      "   background: %1; border: 1px solid darkgrey; "
-      "   border-radius: 3px; "
-      "   margin: 0px; "
-      "   padding: 0px; "
-      "} "
-      " "
-      "QPushButton:pressed { "
-      "   background: %1; border: 2px solid lightgrey; "
-      "   border-radius: 3px; "
-      "   margin: 0px; "
-      "   padding: 0px; "
-      "} ";
+class QCheckBox;
+class QComboBox;
+class QEvent;
+class QFormLayout;
+class QGridLayout;
+class QLabel;
+class QPushButton;
+class QSlider;
 
 class TextTab : public QWidget
 {

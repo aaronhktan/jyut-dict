@@ -13,9 +13,18 @@
 #include "logic/utils/utils_qt.h"
 
 #include <QApplication>
+#include <QCheckBox>
+#include <QColor>
+#include <QComboBox>
 #include <QDesktopServices>
+#include <QEvent>
+#include <QFormLayout>
 #include <QFrame>
 #include <QGridLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QRadioButton>
 #include <QStyle>
 #include <QTimer>
 #include <QUrl>

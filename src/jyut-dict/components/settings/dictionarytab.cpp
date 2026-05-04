@@ -1,8 +1,14 @@
 #include "dictionarytab.h"
 
+#include "components/sourcelist/sourcelistmodel.h"
 #include "components/sourcelist/sourcelistview.h"
-#include "logic/source/sourceutils.h"
+#include "dialogs/dictionarytabfailuredialog.h"
+#include "dialogs/overwriteconflictingdictionarydialog.h"
+#include "logic/database/sqldatabasemanager.h"
+#include "logic/database/sqldatabaseutils.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/source/sourcemetadata.h"
+#include "logic/source/sourceutils.h"
 #include "logic/utils/utils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -13,13 +19,23 @@
 #include "logic/utils/utils_windows.h"
 #endif
 
+#ifdef Q_OS_LINUX
 #include <thread>
+#endif
 
-#include <QtConcurrent/QtConcurrent>
 #include "QCoreApplication"
 #include <QDesktopServices>
 #include <QDir>
+#include <QEvent>
 #include <QFileDialog>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QLabel>
+#include <QListView>
+#include <QModelIndex>
+#include <QProgressDialog>
+#include <QPushButton>
+#include <QtConcurrent/QtConcurrent>
 #include <QtSql>
 
 DictionaryTab::DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
@@ -208,11 +224,7 @@ void DictionaryTab::populateDictionaryList()
     QSqlDatabase db = _manager->getDatabase();
     _utils->readSources(db, sources);
 
-    for (std::vector<SourceMetadata>::size_type row = 0; row < sources.size();
-         row++) {
-        _list->model()->setData(_list->model()->index(static_cast<int>(row), 0),
-                                QVariant::fromValue(sources.at(row)));
-    }
+    static_cast<SourceListModel *>(_list->model())->setDictionaries(sources);
 }
 
 void DictionaryTab::addDictionary(const QString &dictionaryFile)

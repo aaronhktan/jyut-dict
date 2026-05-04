@@ -73,7 +73,7 @@ static QMap<SearchParameters, std::string> searchParameterMap = {
          .toStdString()},
 };
 
-QColor getContrastingColour(const QColor backgroundColour)
+QColor getContrastingColour(const QColor &backgroundColour)
 {
     auto brightness = backgroundColour.redF() * 0.299
                       + backgroundColour.greenF() * 0.587
@@ -81,18 +81,18 @@ QColor getContrastingColour(const QColor backgroundColour)
     return (brightness > 0.65) ? QColor{0, 0, 0} : QColor{0xFF, 0xFF, 0xFF};
 }
 
-QColor getLanguageColour(std::string language)
+QColor getLanguageColour(const std::string &language)
 {
     QColor colour;
     try {
         colour = colourMap.at(language);
-    } catch (std::out_of_range &e) {
+    } catch ([[maybe_unused]] std::out_of_range &e) {
         colour = QColor{"slategrey"};
     }
     return colour;
 }
 
-QString getLanguageFromISO639(std::string language)
+QString getLanguageFromISO639(const std::string &language)
 {
     QString result;
     try {
@@ -104,7 +104,7 @@ QString getLanguageFromISO639(std::string language)
     return result;
 }
 
-std::string getISO639FromLanguage(QString language)
+std::string getISO639FromLanguage(const QString &language)
 {
     std::string result;
     if (reverseLanguageMap.contains(language)) {

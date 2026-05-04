@@ -29,7 +29,6 @@ class QTranslator;
 class AdvancedTab : public QWidget
 {
     Q_OBJECT
-
 public:
     explicit AdvancedTab(QWidget *parent = nullptr);
 

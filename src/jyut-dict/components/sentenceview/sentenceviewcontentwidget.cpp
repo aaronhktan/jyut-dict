@@ -1,13 +1,17 @@
 #include "sentenceviewcontentwidget.h"
 
+#include "components/sentenceview/sentenceviewsentencecardsection.h"
+#include "logic/sentence/sourcesentence.h"
+
+#include <QVBoxLayout>
+
 SentenceViewContentWidget::SentenceViewContentWidget(QWidget *parent)
-    : QWidget(parent)
+    : QWidget{parent}
+    , _entryContentLayout{new QVBoxLayout{this}}
+    , _sentenceSection{new SentenceViewSentenceCardSection{this}}
 {
-    _entryContentLayout = new QVBoxLayout{this};
     _entryContentLayout->setContentsMargins(0, 0, 0, 0);
     _entryContentLayout->setSpacing(0);
-
-    _sentenceSection = new SentenceViewSentenceCardSection{this};
 
     _entryContentLayout->addWidget(_sentenceSection);
 

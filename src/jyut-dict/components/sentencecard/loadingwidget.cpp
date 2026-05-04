@@ -9,8 +9,12 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QEvent>
+#include <QLabel>
+#include <QMovie>
 #include <QSize>
 #include <QTimer>
+#include <QVBoxLayout>
 
 LoadingWidget::LoadingWidget(QWidget *parent)
     : QWidget{parent}
@@ -31,7 +35,7 @@ void LoadingWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [&] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
