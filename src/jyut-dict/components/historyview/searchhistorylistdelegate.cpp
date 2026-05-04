@@ -201,11 +201,10 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
     painter->restore();
 }
 
-QSize SearchHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
-                                          const QModelIndex &index) const
+QSize SearchHistoryListDelegate::sizeHint(
+    [[maybe_unused]] const QStyleOptionViewItem &option,
+    const QModelIndex &index) const
 {
-    (void) (option);
-    
     SearchTermHistoryItem pair
         = qvariant_cast<SearchTermHistoryItem>(index.data());
     bool isEmptyPair = (pair.second == -1);

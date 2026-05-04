@@ -11,6 +11,8 @@
 #include <QThread>
 #include <QVariant>
 
+#include <iostream>
+
 // Watch out!
 // On Linux, define DEBUG and PORTABLE to find the database in the same directory as executable,
 // or APPIMAGE for one directory above.
@@ -183,7 +185,8 @@ bool SQLDatabaseManager::openDatabaseConnection(const QString &connectionName)
             _openConnectionNames.emplace(connectionName.toStdString());
         }
     } catch (std::exception &e) {
-        (void) (e);
+        std::cerr << "Could not open database, error: " << e.what()
+                  << std::endl;
         return false;
     }
 

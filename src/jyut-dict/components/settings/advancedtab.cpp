@@ -453,17 +453,18 @@ void AdvancedTab::initializeLanguageCombobox(QComboBox &combobox)
                 Settings::setCurrentLocale(newLocale);
 
                 qApp->removeTranslator(&Settings::systemTranslator);
-                (void) Settings::systemTranslator
-                    .load("qt_" + newLocale.name(),
-                          QLibraryInfo::path(QLibraryInfo::TranslationsPath));
+                std::ignore = Settings::systemTranslator
+                                  .load("qt_" + newLocale.name(),
+                                        QLibraryInfo::path(
+                                            QLibraryInfo::TranslationsPath));
                 qApp->installTranslator(&Settings::systemTranslator);
 
                 qApp->removeTranslator(&Settings::applicationTranslator);
-                (void) Settings::applicationTranslator
-                    .load(/* QLocale */ newLocale,
-                          /* filename */ "jyutdictionary",
-                          /* prefix */ "-",
-                          /* directory */ ":/translations");
+                std::ignore = Settings::applicationTranslator
+                                  .load(/* QLocale */ newLocale,
+                                        /* filename */ "jyutdictionary",
+                                        /* prefix */ "-",
+                                        /* directory */ ":/translations");
                 qApp->installTranslator(&Settings::applicationTranslator);
             });
 

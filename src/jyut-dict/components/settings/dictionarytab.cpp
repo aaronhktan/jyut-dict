@@ -476,7 +476,7 @@ void DictionaryTab::removeDictionary(SourceMetadata metadata)
                 });
             });
 
-    (void) QtConcurrent::run([this, metadata]() {
+    std::ignore = QtConcurrent::run([this, metadata]() {
         QSqlDatabase db = _manager->getDatabase();
         _utils->removeSource(db,
                              metadata.getName(),

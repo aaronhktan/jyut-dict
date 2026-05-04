@@ -261,12 +261,10 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     painter->restore();
 }
 
-QSize SentenceResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
-                                   const QModelIndex &index) const
+QSize SentenceResultListDelegate::sizeHint(
+    [[maybe_unused]] const QStyleOptionViewItem &option,
+    [[maybe_unused]] const QModelIndex &index) const
 {
-    (void) (option);
-    (void) (index);
-
     Settings::InterfaceSize interfaceSize
         = _settings
               ->value("Interface/size",
@@ -275,42 +273,42 @@ QSize SentenceResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     switch (interfaceSize) {
     case Settings::InterfaceSize::SMALLER: {
-        return QSize(100, 93);
+        return QSize{100, 93};
     }
     case Settings::InterfaceSize::SMALL: {
-        return QSize(100, 100);
+        return QSize{100, 100};
     }
     case Settings::InterfaceSize::NORMAL: {
-        return QSize(100, 115);
+        return QSize{100, 115};
     }
     case Settings::InterfaceSize::LARGE: {
-        return QSize(100, 135);
+        return QSize{100, 135};
     }
     case Settings::InterfaceSize::LARGER: {
-        return QSize(100, 155);
+        return QSize{100, 155};
     }
     }
 #else
     switch (interfaceSize) {
     case Settings::InterfaceSize::SMALLER: {
-        return QSize(100, 88);
+        return QSize{100, 88};
     }
     case Settings::InterfaceSize::SMALL: {
-        return QSize(100, 95);
+        return QSize{100, 95};
     }
     case Settings::InterfaceSize::NORMAL: {
-        return QSize(100, 115);
+        return QSize{100, 115};
     }
     case Settings::InterfaceSize::LARGE: {
-        return QSize(100, 130);
+        return QSize{100, 130};
     }
     case Settings::InterfaceSize::LARGER: {
-        return QSize(100, 150);
+        return QSize{100, 150};
     }
     }
 #endif
 
     // All cases should be handled and the function should
     // never reach here.
-    return QSize(100, 100);
+    return QSize{100, 100};
 }

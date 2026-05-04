@@ -496,9 +496,9 @@ void SettingsWindow::openTab(int tabIndex)
     _contentStackedWidget->setCurrentIndex(tabIndex);
 }
 
-void SettingsWindow::paintWithApplicationState(Qt::ApplicationState state)
+void SettingsWindow::paintWithApplicationState(
+    [[maybe_unused]] Qt::ApplicationState state)
 {
-    (void) (state);
     setStyle(Utils::isDarkMode());
 }
 

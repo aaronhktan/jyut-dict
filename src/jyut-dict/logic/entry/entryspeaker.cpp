@@ -62,12 +62,11 @@ EntrySpeaker::~EntrySpeaker()
     delete _engine;
 }
 
-EntrySpeaker::EntrySpeaker(EntrySpeaker &other)
+EntrySpeaker::EntrySpeaker([[maybe_unused]] EntrySpeaker &other)
     : _tts{new QTextToSpeech}
 {
     // Qt classes cannot be copy-constructed, so just create a new one
     // instead of copying from other.
-    (void) (other);
 }
 
 EntrySpeaker::EntrySpeaker(EntrySpeaker &&other)
