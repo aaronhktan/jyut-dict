@@ -203,12 +203,13 @@ void SearchOptionsRadioGroupBox::translateUI(void)
 
 void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
 {
-    QColor borderColour = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
-                                            HEADER_BACKGROUND_COLOUR_DARK_G,
-                                            HEADER_BACKGROUND_COLOUR_DARK_B}
-                                   : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
-                                            CONTENT_BACKGROUND_COLOUR_LIGHT_G,
-                                            CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+    QColor borderColour = use_dark
+                              ? QColor{Utils::HEADER_BACKGROUND_COLOUR_DARK_R,
+                                       Utils::HEADER_BACKGROUND_COLOUR_DARK_G,
+                                       Utils::HEADER_BACKGROUND_COLOUR_DARK_B}
+                              : QColor{Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_B};
     int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",

@@ -13,17 +13,22 @@
 #endif
 #include <QCoreApplication>
 #include <QDesktopServices>
+#include <QEvent>
 #include <QFont>
+#include <QGridLayout>
+#include <QKeyEvent>
+#include <QLabel>
 #include <QPixmap>
 #include <QPropertyAnimation>
+#include <QPushButton>
 #include <QSize>
 #include <QStyle>
+#include <QTextEdit>
 
 WelcomeWindow::WelcomeWindow(QWidget *parent)
-    : QWidget(parent, Qt::Window)
+    : QWidget{parent, Qt::Window}
+    , _settings{Settings::getSettings(this)}
 {
-    _settings = Settings::getSettings();
-
     Qt::WindowFlags flags = windowFlags() | Qt::CustomizeWindowHint | Qt::WindowTitleHint;
     flags &= ~(Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint | Qt::WindowFullscreenButtonHint);
     setWindowFlags(flags);
@@ -159,60 +164,59 @@ void WelcomeWindow::translateUI()
 #endif
 }
 
-void WelcomeWindow::setStyle(bool use_dark)
+void WelcomeWindow::setStyle([[maybe_unused]] bool use_dark)
 {
-    (void) (use_dark);
-
-    int interfaceSize = static_cast<int>(
+    const int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
-    int headerFontSize = Settings::h6FontSize.at(
+    const int headerFontSize = Settings::h6FontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int bodyFontSize = Settings::bodyFontSize.at(
+    const int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
+    const int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
         static_cast<unsigned long>(interfaceSize - 1));
 
 #ifdef Q_OS_MAC
-    QString style{"QLabel[isHan=\"true\"] { "
-                  "   font-size: %1px; "
-                  "} "
-                  " "
-                  "QLabel { "
-                  "   font-size: %2px; "
-                  "} "
-                  " "
-                  "QPushButton[isHan=\"true\"] { "
-                  "   font-size: %1px; "
-                  //// QPushButton falls back to Fusion style on macOS when the
-                  //// height exceeds 16px. Set the maximum size to 16px.
-                  "   height: 16px; "
-                  "} "
-                  " "
-                  "QPushButton { "
-                  "   font-size: %2px; "
-                  "   height: 16px; "
-                  "} "};
+    const QString style{
+        "QLabel[isHan=\"true\"] { "
+        "   font-size: %1px; "
+        "} "
+        " "
+        "QLabel { "
+        "   font-size: %2px; "
+        "} "
+        " "
+        "QPushButton[isHan=\"true\"] { "
+        "   font-size: %1px; "
+        //// QPushButton falls back to Fusion style on macOS when the
+        //// height exceeds 16px. Set the maximum size to 16px.
+        "   height: 16px; "
+        "} "
+        " "
+        "QPushButton { "
+        "   font-size: %2px; "
+        "   height: 16px; "
+        "} "};
 #else
-    QString style{"QLabel[isHan=\"true\"] { "
-                  "   font-size: %1px; "
-                  "} "
-                  " "
-                  "QLabel { "
-                  "   font-size: %2px; "
-                  "} "
-                  " "
-                  "QPushButton[isHan=\"true\"] { "
-                  "   font-size: %1px; "
-                  "   height: 16px; "
-                  "} "
-                  " "
-                  "QPushButton { "
-                  "   font-size: %2px; "
-                  "   height: 16px; "
-                  "} "};
+    const QString style{"QLabel[isHan=\"true\"] { "
+                        "   font-size: %1px; "
+                        "} "
+                        " "
+                        "QLabel { "
+                        "   font-size: %2px; "
+                        "} "
+                        " "
+                        "QPushButton[isHan=\"true\"] { "
+                        "   font-size: %1px; "
+                        "   height: 16px; "
+                        "} "
+                        " "
+                        "QPushButton { "
+                        "   font-size: %2px; "
+                        "   height: 16px; "
+                        "} "};
 #endif
     setStyleSheet(style.arg(std::to_string(bodyFontSizeHan).c_str(),
                             std::to_string(bodyFontSize).c_str()));

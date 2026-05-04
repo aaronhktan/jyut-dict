@@ -122,9 +122,8 @@ void FavouriteSplitter::translateUI(void)
 }
 
 #ifdef Q_OS_WIN
-void FavouriteSplitter::setStyle(bool use_dark)
+void FavouriteSplitter::setStyle([[maybe_unused]] bool use_dark)
 {
-    (void) (use_dark);
     setStyleSheet(
         "QSplitter { border-top: 1px solid palette(alternate-base); }");
 }

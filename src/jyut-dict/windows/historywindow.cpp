@@ -2,6 +2,7 @@
 
 #include "components/historyview/searchhistorytab.h"
 #include "components/historyview/viewhistorytab.h"
+#include "logic/entry/entry.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -10,12 +11,15 @@
 #include "logic/utils/utils_windows.h"
 #endif
 
+#include <QEvent>
 #include <QKeyEvent>
+#include <QTabWidget>
 #include <QTimer>
+#include <QVBoxLayout>
 
 HistoryWindow::HistoryWindow(
     std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils, QWidget *parent)
-    : QWidget(parent)
+    : QWidget{parent}
 {
     setObjectName("HistoryWindow");
 
@@ -80,24 +84,26 @@ void HistoryWindow::translateUI(void)
     _tabWidget->setTabText(1, tr("Viewed Entries"));
 }
 
-void HistoryWindow::setStyle(bool use_dark)
+void HistoryWindow::setStyle([[maybe_unused]] bool use_dark)
 {
-    (void)(use_dark);
 #ifdef Q_OS_MAC
-    QString styleSheet = "QWidget#HistoryWindow { "
-                         "   background-color: palette(base); "
-                         "   border-top: 1px solid palette(alternate-base); "
-                         "} ";
+    const QString styleSheet
+        = "QWidget#HistoryWindow { "
+          "   background-color: palette(base); "
+          "   border-top: 1px solid palette(alternate-base); "
+          "} ";
 #elif defined(Q_OS_LINUX)
-    QString styleSheet = "QWidget#HistoryWindow { "
-                         "   background-color: palette(alternate-base); "
-                         "   border-top: 1px solid palette(alternate-base); "
-                         "} ";
+    const QString styleSheet
+        = "QWidget#HistoryWindow { "
+          "   background-color: palette(alternate-base); "
+          "   border-top: 1px solid palette(alternate-base); "
+          "} ";
 #elif defined(Q_OS_WINDOWS)
-    QString styleSheet = "QWidget#HistoryWindow { "
-                         "   background-color: palette(base); "
-                         "   border-top: 1px solid palette(alternate-base); "
-                         "} ";
+    const QString styleSheet
+        = "QWidget#HistoryWindow { "
+          "   background-color: palette(base); "
+          "   border-top: 1px solid palette(alternate-base); "
+          "} ";
 #endif
     setStyleSheet(styleSheet);
     setAttribute(Qt::WA_StyledBackground);
@@ -105,30 +111,31 @@ void HistoryWindow::setStyle(bool use_dark)
 // QTabWidget is really weird on Windows, and the -1px stylesheet is a workaround:
 // See https://stackoverflow.com/questions/38369015/customuzing-qtabwidget-with-style-sheets
 #if defined(Q_OS_WIN)
-    QString tabStyleSheet = "QTabBar::tab { "
-                            "   background-color: palette(alternate-base); "
-                            "   border: 1px solid palette(base); "
-                            "   padding: 7px; "
-                            "} "
-                            ""
-                            "QTabBar::tab:selected { "
-                            "   border: 0px; "
-                            "   margin-bottom: -1px; "
-                            "} "
-                            ""
-                            "QTabBar::tab:!selected { "
-                            "   border: 1px solid palette(base); "
-                            "   padding: 7px; "
-                            "} "
-                            ""
-                            "QTabWidget::tab-bar { "
-                            "   alignment: center; "
-                            "} "
-                            ""
-                            "QTabWidget::pane { "
-                            "   border: 1px solid palette(base); "
-                            "   top: -1px; "
-                            "} ";
+    const QString tabStyleSheet
+        = "QTabBar::tab { "
+          "   background-color: palette(alternate-base); "
+          "   border: 1px solid palette(base); "
+          "   padding: 7px; "
+          "} "
+          ""
+          "QTabBar::tab:selected { "
+          "   border: 0px; "
+          "   margin-bottom: -1px; "
+          "} "
+          ""
+          "QTabBar::tab:!selected { "
+          "   border: 1px solid palette(base); "
+          "   padding: 7px; "
+          "} "
+          ""
+          "QTabWidget::tab-bar { "
+          "   alignment: center; "
+          "} "
+          ""
+          "QTabWidget::pane { "
+          "   border: 1px solid palette(base); "
+          "   top: -1px; "
+          "} ";
     _tabWidget->setStyleSheet(tabStyleSheet);
 #endif
 }

@@ -171,9 +171,8 @@ void ContactTab::translateUI()
                                .arg(palette().text().color().name()));
 }
 
-void ContactTab::setStyle(bool use_dark)
+void ContactTab::setStyle([[maybe_unused]] bool use_dark)
 {
-    (void) (use_dark);
 #ifdef Q_OS_MAC
     if (!use_dark) {
 #endif

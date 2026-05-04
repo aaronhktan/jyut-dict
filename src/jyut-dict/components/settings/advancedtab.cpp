@@ -259,12 +259,12 @@ void AdvancedTab::translateUI()
     _useMandarinGoogleOfflineSyllableTTSBackend->setText(tr("Google"));
 
     QColor backgroundColour = Utils::isDarkMode()
-                                  ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                           LABEL_TEXT_COLOUR_DARK_G,
-                                           LABEL_TEXT_COLOUR_DARK_B}
-                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                           LABEL_TEXT_COLOUR_LIGHT_R,
-                                           LABEL_TEXT_COLOUR_LIGHT_R};
+                                  ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                  : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R};
     _ttsExplainer->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                                        Strings::TTS_EXPLAINER)
                                .arg(backgroundColour.name()));

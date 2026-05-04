@@ -74,12 +74,13 @@ void RelatedButton::setupUI()
 
 void RelatedButton::setStyle(bool use_dark)
 {
-    QColor borderColour = use_dark ? QColor{CONTENT_BACKGROUND_COLOUR_DARK_R,
-                                            CONTENT_BACKGROUND_COLOUR_DARK_G,
-                                            CONTENT_BACKGROUND_COLOUR_DARK_B}
-                                   : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
-                                            CONTENT_BACKGROUND_COLOUR_LIGHT_G,
-                                            CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+    QColor borderColour = use_dark
+                              ? QColor{Utils::CONTENT_BACKGROUND_COLOUR_DARK_R,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_DARK_G,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_DARK_B}
+                              : QColor{Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_B};
     QString widgetStyleSheet;
     if (use_dark) {
         widgetStyleSheet = "QWidget#RelatedButton { "

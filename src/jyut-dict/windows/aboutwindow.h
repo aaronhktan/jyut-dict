@@ -1,11 +1,12 @@
 #ifndef ABOUTWINDOW_H
 #define ABOUTWINDOW_H
 
-#include <QEvent>
-#include <QGridLayout>
-#include <QLabel>
-#include <QPushButton>
 #include <QWidget>
+
+class QEvent;
+class QGridLayout;
+class QLabel;
+class QPushButton;
 
 // The about window displays information about the program.
 

@@ -179,12 +179,13 @@ void MagnifyScrollAreaWidget::setStyle([[maybe_unused]] bool use_dark)
                                     "   font-size: 120px; "
                                     "}");
 
-    const QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                                LABEL_TEXT_COLOUR_DARK_G,
-                                                LABEL_TEXT_COLOUR_DARK_B}
-                                       : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                                LABEL_TEXT_COLOUR_LIGHT_G,
-                                                LABEL_TEXT_COLOUR_LIGHT_B};
+    const QColor textColour = use_dark
+                                  ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                  : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_G,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_B};
     const QColor borderColour = use_dark ? textColour.darker(300)
                                          : textColour.lighter(200);
     const int interfaceSize = static_cast<int>(

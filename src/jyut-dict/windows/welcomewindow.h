@@ -1,14 +1,15 @@
 #ifndef WELCOMEWINDOW_H
 #define WELCOMEWINDOW_H
 
-#include <QEvent>
-#include <QGridLayout>
-#include <QKeyEvent>
-#include <QLabel>
-#include <QPushButton>
 #include <QSettings>
-#include <QTextEdit>
 #include <QWidget>
+
+class QEvent;
+class QGridLayout;
+class QKeyEvent;
+class QLabel;
+class QPushButton;
+class QTextEdit;
 
 // The Welcome Window displays setup options for a new user.
 

@@ -39,10 +39,12 @@
 #include <QEvent>
 #include <QGuiApplication>
 #include <QIcon>
+#include <QLabel>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QProgressDialog>
+#include <QPushButton>
 #include <QSettings>
 #include <QSpacerItem>
 #include <QSqlDatabase>
@@ -75,7 +77,7 @@ MainWindow::MainWindow(QWidget *parent)
     _sqlHistoryUtils = std::make_shared<SQLUserHistoryUtils>(_manager);
 
     // Get colours from QSettings
-    _settings = Settings::getSettings();
+    _settings = Settings::getSettings(this);
     _settings->beginReadArray("jyutpingColours");
     for (std::vector<std::string>::size_type i = 0;
          i < Settings::jyutpingToneColours.size();
@@ -433,11 +435,9 @@ void MainWindow::translateUI(void)
 #endif
 }
 
-void MainWindow::setStyle(bool use_dark)
+void MainWindow::setStyle([[maybe_unused]] bool use_dark)
 {
 #ifdef Q_OS_MAC
-    (void) (use_dark);
-
     setStyleSheet(
         "QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
 #elif defined(Q_OS_LINUX) || defined(Q_OS_WIN)

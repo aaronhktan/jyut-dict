@@ -209,30 +209,30 @@ void SettingsWindow::setStyle(bool use_dark)
         selectedBackgroundColour = QGuiApplication::palette()
             .color(QPalette::Inactive, QPalette::Highlight);
         currentTextColour
-            = use_dark ? QColor{TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_R,
-                                TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_G,
-                                TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_B}
-                       : QColor{TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_R,
-                                TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_G,
-                                TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_B};
+            = use_dark ? QColor{Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_R,
+                                Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_G,
+                                Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_B}
+                       : QColor{Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_R,
+                                Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_G,
+                                Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_B};
         otherTextColour
-            = use_dark ? QColor{TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_R,
-                                TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_G,
-                                TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_B}
-                       : QColor{TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_R,
-                                TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_G,
-                                TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_B};
+            = use_dark ? QColor{Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_R,
+                                Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_G,
+                                Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_B}
+                       : QColor{Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_R,
+                                Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_G,
+                                Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_B};
     } else {
 #ifdef Q_OS_MAC
         selectedBackgroundColour = Utils::getAppleControlAccentColor();
 #else
         selectedBackgroundColour
-            = use_dark ? QColor{LIST_ITEM_ACTIVE_COLOUR_DARK_R,
-                                LIST_ITEM_ACTIVE_COLOUR_DARK_G,
-                                LIST_ITEM_ACTIVE_COLOUR_DARK_B}
-                       : QColor{LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
-                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
-                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_B};
+            = use_dark ? QColor{Utils::LIST_ITEM_ACTIVE_COLOUR_DARK_R,
+                                Utils::LIST_ITEM_ACTIVE_COLOUR_DARK_G,
+                                Utils::LIST_ITEM_ACTIVE_COLOUR_DARK_B}
+                       : QColor{Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
+                                Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
+                                Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT_B};
 #endif
         currentTextColour = Utils::getContrastingColour(selectedBackgroundColour);
 #ifdef Q_OS_MAC
@@ -240,12 +240,12 @@ void SettingsWindow::setStyle(bool use_dark)
                                                            QPalette::Text);
 #else
         otherTextColour
-            = use_dark ? QColor{TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_R,
-                                TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_G,
-                                TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_B}
-                       : QColor{TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_R,
-                                TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_G,
-                                TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_B};
+            = use_dark ? QColor{Utils::TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_R,
+                                Utils::TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_G,
+                                Utils::TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_B}
+                       : QColor{Utils::TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_R,
+                                Utils::TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_G,
+                                Utils::TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_B};
 #endif
     }
 

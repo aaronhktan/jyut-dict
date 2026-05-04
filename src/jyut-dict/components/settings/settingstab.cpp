@@ -265,12 +265,12 @@ void SettingsTab::translateUI()
     _entryMandarinIPA->setText(tr("Mandarin IPA"));
 
     QColor backgroundColour = Utils::isDarkMode()
-                                  ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                           LABEL_TEXT_COLOUR_DARK_G,
-                                           LABEL_TEXT_COLOUR_DARK_B}
-                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                           LABEL_TEXT_COLOUR_LIGHT_R,
-                                           LABEL_TEXT_COLOUR_LIGHT_R};
+                                  ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                  : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R};
     _cantoneseReference->setText(
         QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                     Strings::CANTONESE_REFERENCE_URL)
@@ -323,12 +323,13 @@ void SettingsTab::setStyle(bool use_dark)
         frame->setStyleSheet(style.arg(colour));
     }
 
-    QColor backgroundColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                                LABEL_TEXT_COLOUR_DARK_G,
-                                                LABEL_TEXT_COLOUR_DARK_B}
-                                       : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                                LABEL_TEXT_COLOUR_LIGHT_R,
-                                                LABEL_TEXT_COLOUR_LIGHT_R};
+    QColor backgroundColour = use_dark
+                                  ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                  : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R};
     _cantoneseReference->setText(
         QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                     Strings::CANTONESE_REFERENCE_URL)

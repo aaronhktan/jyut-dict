@@ -2,14 +2,14 @@
 #define HISTORYWINDOW_H
 
 #include "logic/database/sqluserhistoryutils.h"
-#include "logic/entry/entry.h"
 
-#include <QEvent>
-#include <QVBoxLayout>
-#include <QTabWidget>
+#include <QWidget>
 
-#include <string>
-#include <utility>
+class Entry;
+
+class QEvent;
+class QVBoxLayout;
+class QTabWidget;
 
 // The HistoryWindow contains a TabWidget, allowing a user to view
 // history of past searches and history of viewed entries.

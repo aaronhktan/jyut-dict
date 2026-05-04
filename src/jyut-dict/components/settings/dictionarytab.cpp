@@ -159,8 +159,8 @@ void DictionaryTab::translateUI()
     _link->setText(tr("Website"));
 }
 
-void DictionaryTab::setStyle(bool use_dark) {
-    (void) (use_dark);
+void DictionaryTab::setStyle([[maybe_unused]] bool use_dark)
+{
 #ifdef Q_OS_MAC
     if (!use_dark) {
 #endif

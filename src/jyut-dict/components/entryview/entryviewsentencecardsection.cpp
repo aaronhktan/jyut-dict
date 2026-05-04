@@ -131,20 +131,21 @@ void EntryViewSentenceCardSection::setStyle(bool use_dark)
     int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
 
-    QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                          LABEL_TEXT_COLOUR_DARK_G,
-                                          LABEL_TEXT_COLOUR_DARK_B}
-                                 : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                          LABEL_TEXT_COLOUR_LIGHT_G,
-                                          LABEL_TEXT_COLOUR_LIGHT_B};
+    QColor textColour = use_dark ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                          Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                          Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                 : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                          Utils::LABEL_TEXT_COLOUR_LIGHT_G,
+                                          Utils::LABEL_TEXT_COLOUR_LIGHT_B};
     int borderRadius = static_cast<int>(bodyFontSize * 1.5);
     QString radiusString = QString::number(borderRadius);
-    QColor borderColour = use_dark ? QColor{CONTENT_BACKGROUND_COLOUR_DARK_R,
-                                            CONTENT_BACKGROUND_COLOUR_DARK_G,
-                                            CONTENT_BACKGROUND_COLOUR_DARK_B}
-                                   : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
-                                            CONTENT_BACKGROUND_COLOUR_LIGHT_G,
-                                            CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+    QColor borderColour = use_dark
+                              ? QColor{Utils::CONTENT_BACKGROUND_COLOUR_DARK_R,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_DARK_G,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_DARK_B}
+                              : QColor{Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_B};
     QString styleSheet = "QToolButton { "
 #ifdef Q_OS_WIN
                          "   border: 1px solid %1; "

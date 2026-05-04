@@ -157,9 +157,8 @@ void UpdateAvailableWindow::translateUI()
     resize(sizeHint());
 }
 
-void UpdateAvailableWindow::setStyle(bool use_dark)
+void UpdateAvailableWindow::setStyle([[maybe_unused]] bool use_dark)
 {
-    (void) (use_dark);
     int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",

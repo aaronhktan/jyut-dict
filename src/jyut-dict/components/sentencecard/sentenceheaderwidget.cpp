@@ -81,12 +81,12 @@ void SentenceHeaderWidget::setStyle(bool use_dark)
                                      " border-bottom-right-radius: 0px; "
                                      "}";
     const QColor backgroundColour
-        = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
-                            HEADER_BACKGROUND_COLOUR_DARK_G,
-                            HEADER_BACKGROUND_COLOUR_DARK_B}
-                   : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
-                            CONTENT_BACKGROUND_COLOUR_LIGHT_G,
-                            CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+        = use_dark ? QColor{Utils::HEADER_BACKGROUND_COLOUR_DARK_R,
+                            Utils::HEADER_BACKGROUND_COLOUR_DARK_G,
+                            Utils::HEADER_BACKGROUND_COLOUR_DARK_B}
+                   : QColor{Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                            Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                            Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_B};
     setStyleSheet(widgetStyleSheet.arg(backgroundColour.name()));
 
     // Style the label text
@@ -102,12 +102,13 @@ void SentenceHeaderWidget::setStyle(bool use_dark)
                                    "   color: %1; "
                                    "   font-size: %2px; "
                                    "}";
-    const QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                                LABEL_TEXT_COLOUR_DARK_G,
-                                                LABEL_TEXT_COLOUR_DARK_B}
-                                       : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                                LABEL_TEXT_COLOUR_LIGHT_R,
-                                                LABEL_TEXT_COLOUR_LIGHT_R};
+    const QColor textColour = use_dark
+                                  ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                  : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R};
     _titleLabel->setStyleSheet(
         textStyleSheet.arg(textColour.name()).arg(bodyFontSize));
     _titleLabel->setFixedHeight(

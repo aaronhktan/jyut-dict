@@ -162,9 +162,8 @@ void SourceUpdateResultWindow::translateUI()
     resize(sizeHint());
 }
 
-void SourceUpdateResultWindow::setStyle(bool use_dark)
+void SourceUpdateResultWindow::setStyle([[maybe_unused]] bool use_dark)
 {
-    (void) (use_dark);
     int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",

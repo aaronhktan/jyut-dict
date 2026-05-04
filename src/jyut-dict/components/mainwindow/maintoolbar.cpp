@@ -128,26 +128,27 @@ void MainToolBar::changeEvent(QEvent *event)
 void MainToolBar::setStyle(bool use_dark)
 {
 #ifdef Q_OS_MAC
-    QColor backgroundColour = use_dark
-                                  ? QColor{TITLE_BAR_BACKGROUND_COLOR_DARK_R,
-                                           TITLE_BAR_BACKGROUND_COLOR_DARK_G,
-                                           TITLE_BAR_BACKGROUND_COLOR_DARK_B}
-                                  : QColor{TITLE_BAR_BACKGROUND_COLOR_R,
-                                           TITLE_BAR_BACKGROUND_COLOR_G,
-                                           TITLE_BAR_BACKGROUND_COLOR_B};
+    QColor backgroundColour
+        = use_dark ? QColor{Utils::TITLE_BAR_BACKGROUND_COLOR_DARK_R,
+                            Utils::TITLE_BAR_BACKGROUND_COLOR_DARK_G,
+                            Utils::TITLE_BAR_BACKGROUND_COLOR_DARK_B}
+                   : QColor{Utils::TITLE_BAR_BACKGROUND_COLOR_R,
+                            Utils::TITLE_BAR_BACKGROUND_COLOR_G,
+                            Utils::TITLE_BAR_BACKGROUND_COLOR_B};
     QColor backgroundColourInactive
-        = use_dark ? QColor{TITLE_BAR_INACTIVE_BACKGROUND_COLOR_DARK_R,
-                            TITLE_BAR_INACTIVE_BACKGROUND_COLOR_DARK_G,
-                            TITLE_BAR_INACTIVE_BACKGROUND_COLOR_DARK_B}
-                   : QColor{TITLE_BAR_INACTIVE_BACKGROUND_COLOR_R,
-                            TITLE_BAR_INACTIVE_BACKGROUND_COLOR_G,
-                            TITLE_BAR_INACTIVE_BACKGROUND_COLOR_B};
-    QColor borderColour = use_dark ? QColor{TITLE_BAR_BORDER_COLOR_DARK_R,
-                                            TITLE_BAR_BORDER_COLOR_DARK_G,
-                                            TITLE_BAR_BORDER_COLOR_DARK_B}
-                                   : QColor{TITLE_BAR_BORDER_COLOR_R,
-                                            TITLE_BAR_BORDER_COLOR_G,
-                                            TITLE_BAR_BORDER_COLOR_B};
+        = use_dark ? QColor{Utils::TITLE_BAR_INACTIVE_BACKGROUND_COLOR_DARK_R,
+                            Utils::TITLE_BAR_INACTIVE_BACKGROUND_COLOR_DARK_G,
+                            Utils::TITLE_BAR_INACTIVE_BACKGROUND_COLOR_DARK_B}
+                   : QColor{Utils::TITLE_BAR_INACTIVE_BACKGROUND_COLOR_R,
+                            Utils::TITLE_BAR_INACTIVE_BACKGROUND_COLOR_G,
+                            Utils::TITLE_BAR_INACTIVE_BACKGROUND_COLOR_B};
+    QColor borderColour = use_dark
+                              ? QColor{Utils::TITLE_BAR_BORDER_COLOR_DARK_R,
+                                       Utils::TITLE_BAR_BORDER_COLOR_DARK_G,
+                                       Utils::TITLE_BAR_BORDER_COLOR_DARK_B}
+                              : QColor{Utils::TITLE_BAR_BORDER_COLOR_R,
+                                       Utils::TITLE_BAR_BORDER_COLOR_G,
+                                       Utils::TITLE_BAR_BORDER_COLOR_B};
     if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
         _inactiveCount++;
         if (_inactiveCount > 2) {
