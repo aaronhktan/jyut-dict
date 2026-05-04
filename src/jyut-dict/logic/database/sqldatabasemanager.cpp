@@ -4,6 +4,7 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QStandardPaths>
@@ -12,8 +13,7 @@
 
 // Watch out!
 // On Linux, define DEBUG and PORTABLE to find the database in the same directory as executable,
-// FLATPAK or APPIMAGE for the image one directory above,
-// or nothing for the .deb
+// or APPIMAGE for one directory above.
 
 namespace {
 constexpr auto DICTIONARY_DATABASE_NAME = "dict.db";

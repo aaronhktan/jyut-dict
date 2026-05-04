@@ -1,9 +1,7 @@
 #include "resetsettingsdialog.h"
 
-#include "logic/utils/utils.h"
-
 ResetSettingsDialog::ResetSettingsDialog(QWidget *parent)
-    : DefaultDialog("", "", parent)
+    : DefaultDialog{"", "", parent}
 {
     setupUI();
     translateUI();

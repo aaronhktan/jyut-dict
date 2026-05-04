@@ -1,7 +1,6 @@
 #ifndef SQLDATABASEUTILS_H
 #define SQLDATABASEUTILS_H
 
-#include "logic/database/sqldatabasemanager.h"
 #include "logic/source/sourcemetadata.h"
 
 #include <QObject>
@@ -10,6 +9,8 @@
 #include <span>
 #include <string>
 #include <unordered_map>
+
+class SQLDatabaseManager;
 
 class QSqlDatabase;
 
@@ -23,7 +24,7 @@ using conflictingSourceMetadata
 
 class SQLDatabaseUtils : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 public:
     bool updateDatabase(QSqlDatabase &db);
 

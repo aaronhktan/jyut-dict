@@ -1,9 +1,12 @@
 #include "exportdatabasedialog.h"
 
+#include <QEvent>
+#include <QString>
+
 ExportDatabaseDialog::ExportDatabaseDialog(const QString &reason,
-                                            const QString &description,
+                                           const QString &description,
                                            QWidget *parent)
-    : DefaultDialog(reason, description, parent)
+    : DefaultDialog{reason, description, parent}
 {
     setupUI();
     translateUI();

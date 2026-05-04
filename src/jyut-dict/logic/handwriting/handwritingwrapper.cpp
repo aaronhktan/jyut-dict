@@ -6,7 +6,9 @@
 
 #include <QCoreApplication>
 #include <QFileInfo>
+#include <QProgressDialog>
 #include <QStandardPaths>
+#include <QString>
 #include <QtConcurrent/QtConcurrent>
 
 #include <iostream>
@@ -21,11 +23,11 @@ constexpr auto CHARACTER_POSTSCRIPT = "))";
 } // namespace
 
 HandwritingWrapper::HandwritingWrapper(Handwriting::Script script)
-    : QObject()
+    : QObject{}
     , _recognizer{zinnia::Recognizer::create()}
+    , _boolReturnWatcher{new QFutureWatcher<Utils::Result<bool>>(this)}
 {
     showProgressDialog(tr("Preparing handwriting models..."));
-    _boolReturnWatcher = new QFutureWatcher<Utils::Result<bool>>{this};
     disconnect(_boolReturnWatcher, nullptr, this, nullptr);
     connect(_boolReturnWatcher,
             &QFutureWatcher<Utils::Result<bool>>::finished,

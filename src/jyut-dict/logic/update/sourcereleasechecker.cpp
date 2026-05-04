@@ -6,6 +6,7 @@
 #include <QJsonObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QSqlDatabase>
 #include <QTimer>
 #include <QtNetwork>
 

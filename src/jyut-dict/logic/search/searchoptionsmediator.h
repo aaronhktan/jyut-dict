@@ -16,7 +16,7 @@ public:
     void registerOptionSelector(ISearchOptionsSelector *_selector) override;
 
     void setParameters(SearchParameters parameters) override;
-    SearchParameters getParameters() override;
+    SearchParameters getParameters() const override;
 
 private:
     ISearchLineEdit *_lineEdit = nullptr;

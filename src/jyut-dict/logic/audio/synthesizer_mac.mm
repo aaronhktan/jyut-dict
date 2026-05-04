@@ -3,8 +3,6 @@
 #import <AppKit/AppKit.h>
 #import <Foundation/Foundation.h>
 
-#include <iostream>
-
 // NSSpeechSynthesizer is deprecated, but AVSpeechSynthesizer
 // doesn't work for Cantonese/Mandarin co-existing in the same
 // application.
@@ -86,13 +84,13 @@ SynthesizerWrapper::~SynthesizerWrapper()
     }
 }
 
-bool SynthesizerWrapper::setLocale(std::string locale)
+bool SynthesizerWrapper::setLocale(const std::string &locale)
 {
     Synthesizer *synthesizer = (__bridge Synthesizer *) _synthesizerImpl;
     return [synthesizer setLocale:[NSString stringWithUTF8String:locale.c_str()]];
 }
 
-void SynthesizerWrapper::speak(std::string text)
+void SynthesizerWrapper::speak(const std::string &text)
 {
     Synthesizer *synthesizer = (__bridge Synthesizer *) _synthesizerImpl;
     [synthesizer speak:[NSString stringWithUTF8String:text.c_str()]];

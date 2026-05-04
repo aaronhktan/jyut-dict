@@ -1,8 +1,12 @@
 #include "queryparseutils.h"
 
+#include "logic/entry/entry.h"
+#include "logic/sentence/sourcesentence.h"
+
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QSqlQuery>
 #include <QSqlRecord>
 
 namespace QueryParseUtils {
@@ -11,23 +15,25 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
 {
     std::vector<Entry> entries;
 
-    int simplifiedIndex = query.record().indexOf("simplified");
-    int traditionalIndex = query.record().indexOf("traditional");
-    int jyutpingIndex = query.record().indexOf("jyutping");
-    int pinyinIndex = query.record().indexOf("pinyin");
-    int definitionIndex = parseDefinitions ?
-                query.record().indexOf("definitions") : 0;
+    const int simplifiedIndex = query.record().indexOf("simplified");
+    const int traditionalIndex = query.record().indexOf("traditional");
+    const int jyutpingIndex = query.record().indexOf("jyutping");
+    const int pinyinIndex = query.record().indexOf("pinyin");
+    const int definitionIndex = parseDefinitions
+                                    ? query.record().indexOf("definitions")
+                                    : 0;
 
     while (query.next()) {
         // Get fields from table
-        std::string simplified
+        const std::string simplified
             = query.value(simplifiedIndex).toString().toStdString();
-        std::string traditional
+        const std::string traditional
             = query.value(traditionalIndex).toString().toStdString();
-        std::string jyutping
+        const std::string jyutping
             = query.value(jyutpingIndex).toString().toStdString();
-        std::string pinyin = query.value(pinyinIndex).toString().toStdString();
-        std::string definition
+        const std::string pinyin
+            = query.value(pinyinIndex).toString().toStdString();
+        const std::string definition
             = query.value(definitionIndex).toString().toStdString();
         if (definition.empty()) {
             continue;
@@ -44,14 +50,15 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
             // that are all from the same source
             // We can ignore the C++ range-loop error because Qt no longer supports
             // using foreach with QJsonValue
-            for (const QJsonValue definitionGroup : doc.array()) {
-                std::string sourceName = definitionGroup["source"].toString().toStdString();
+            for (const QJsonValue &definitionGroup : doc.array()) {
+                const std::string sourceName
+                    = definitionGroup["source"].toString().toStdString();
                 std::vector<Definition::Definition> definitions;
 
-                for (const QJsonValue definition :
+                for (const QJsonValue &definition :
                      definitionGroup["definitions"].toArray()) {
                     std::vector<SourceSentence> sentences;
-                    for (const QJsonValue sentence :
+                    for (const QJsonValue &sentence :
                          definition["sentences"].toArray()) {
                         std::vector<SentenceSet> sentence_translations;
 
@@ -60,7 +67,7 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
                             std::vector<Sentence::TargetSentence> targetSentences;
                             if (!sentence["translations"].isNull()) {
                                 // Parse each of the sentence translations
-                                for (const QJsonValue translation :
+                                for (const QJsonValue &translation :
                                      sentence["translations"].toArray()) {
                                     targetSentences.emplace_back(
                                         translation["sentence"]
@@ -112,28 +119,29 @@ std::vector<SourceSentence> parseSentences(QSqlQuery &query)
 {
     std::vector<SourceSentence> sentences;
 
-    int simplifiedIndex = query.record().indexOf("simplified");
-    int traditionalIndex = query.record().indexOf("traditional");
-    int jyutpingIndex = query.record().indexOf("jyutping");
-    int pinyinIndex = query.record().indexOf("pinyin");
-    int sourceLanguageIndex = query.record().indexOf("language");
-    int translationsIndex = query.record().indexOf("translations");
-    int definitionSourceNameIndex = query.record().indexOf("sourcename");
+    const int simplifiedIndex = query.record().indexOf("simplified");
+    const int traditionalIndex = query.record().indexOf("traditional");
+    const int jyutpingIndex = query.record().indexOf("jyutping");
+    const int pinyinIndex = query.record().indexOf("pinyin");
+    const int sourceLanguageIndex = query.record().indexOf("language");
+    const int translationsIndex = query.record().indexOf("translations");
+    const int definitionSourceNameIndex = query.record().indexOf("sourcename");
 
     while (query.next()) {
         // Get fields from table
-        std::string simplified
+        const std::string simplified
             = query.value(simplifiedIndex).toString().toStdString();
-        std::string traditional
+        const std::string traditional
             = query.value(traditionalIndex).toString().toStdString();
-        std::string jyutping
+        const std::string jyutping
             = query.value(jyutpingIndex).toString().toStdString();
-        std::string pinyin = query.value(pinyinIndex).toString().toStdString();
-        std::string sourceLanguage
+        const std::string pinyin
+            = query.value(pinyinIndex).toString().toStdString();
+        const std::string sourceLanguage
             = query.value(sourceLanguageIndex).toString().toStdString();
-        std::string combinedTargetSentencesData
+        const std::string combinedTargetSentencesData
             = query.value(translationsIndex).toString().toStdString();
-        std::string definitionSourceName
+        const std::string definitionSourceName
             = query.value(definitionSourceNameIndex).toString().toStdString();
 
         // Each sentence will have a vector of SentenceSets that represents
@@ -145,8 +153,8 @@ std::vector<SourceSentence> parseSentences(QSqlQuery &query)
             QJsonDocument doc = QJsonDocument::fromJson(
                 QString::fromStdString(combinedTargetSentencesData).toUtf8());
             // Parse each of the sentence translation groups
-            for (const QJsonValue translation_set : doc.array()) {
-                std::string sentenceSourceName
+            for (const QJsonValue &translation_set : doc.array()) {
+                const std::string sentenceSourceName
                     = translation_set["source"].toString().toStdString();
 
                 // If the sentence has the source it comes from, use it
@@ -156,7 +164,7 @@ std::vector<SourceSentence> parseSentences(QSqlQuery &query)
                     sentenceSourceName.empty() ? definitionSourceName
                                                : sentenceSourceName);
 
-                for (const QJsonValue translation :
+                for (const QJsonValue &translation :
                      translation_set["translations"].toArray()) {
                     // Parse each translation in this group
                     std::vector<Sentence::TargetSentence> targetSentences;
@@ -183,12 +191,11 @@ bool parseExistence(QSqlQuery &query)
 {
     bool existence = false;
 
-    int existenceIndex = query.record().indexOf("existence");
+    const int existenceIndex = query.record().indexOf("existence");
 
     while (query.next()) {
         existence = query.value(existenceIndex).toInt() == 1;
     }
-
     return existence;
 }
 
@@ -196,8 +203,8 @@ std::vector<searchTermHistoryItem> parseHistoryItems(QSqlQuery &query)
 {
     std::vector<searchTermHistoryItem> results;
 
-    int textIndex = query.record().indexOf("text");
-    int optionsIndex = query.record().indexOf("options");
+    const int textIndex = query.record().indexOf("text");
+    const int optionsIndex = query.record().indexOf("options");
 
     while (query.next()) {
         std::string text = query.value(textIndex).toString().toStdString();

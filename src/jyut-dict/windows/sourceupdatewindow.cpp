@@ -28,6 +28,7 @@
 #include <QPainter>
 #include <QProgressDialog>
 #include <QPushButton>
+#include <QSqlDatabase>
 #include <QStandardPaths>
 #include <QStyledItemDelegate>
 #include <QTableView>

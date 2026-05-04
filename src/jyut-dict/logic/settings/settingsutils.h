@@ -1,13 +1,14 @@
 #ifndef SETTINGSUTILS_H
 #define SETTINGSUTILS_H
 
-#include <QLocale>
-#include <QObject>
 #include <QSettings>
-#include <QTranslator>
 
 #include <memory>
 #include <string>
+
+class QObject;
+class QLocale;
+class QTranslator;
 
 // SettingsUtils should contain all non-STL functions related to settings
 

@@ -12,8 +12,8 @@ class ITranscriptionResultPublisher
 public:
     virtual ~ITranscriptionResultPublisher() = default;
 
-    virtual void subscribe(ITranscriptionResultSubscriber *subscriber) = 0;
-    virtual void unsubscribe(ITranscriptionResultSubscriber *subscriber) = 0;
+    virtual void subscribe(ITranscriptionResultSubscriber *) = 0;
+    virtual void unsubscribe(ITranscriptionResultSubscriber *) = 0;
     virtual void notifyTranscriptionResult(Utils::Result<std::string>) = 0;
 };
 

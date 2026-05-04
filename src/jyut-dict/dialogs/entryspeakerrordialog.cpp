@@ -4,13 +4,15 @@
 
 #include <QAbstractButton>
 #include <QDesktopServices>
+#include <QEvent>
 #include <QPushButton>
+#include <QString>
 #include <QUrl>
 
 EntrySpeakErrorDialog::EntrySpeakErrorDialog(const QString &reason,
                                              const QString &description,
                                              QWidget *parent)
-    : DefaultDialog(reason, description, parent)
+    : DefaultDialog{reason, description, parent}
 {
     setupUI();
     translateUI();

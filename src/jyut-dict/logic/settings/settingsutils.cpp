@@ -4,10 +4,12 @@
 #include "logic/entry/entryphoneticoptions.h"
 
 #include <QCoreApplication>
+#include <QLocale>
+#include <QObject>
+#include <QTranslator>
 
 namespace Settings
 {
-
 QTranslator systemTranslator;
 QTranslator applicationTranslator;
 

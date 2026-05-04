@@ -19,20 +19,18 @@ struct Definition
     std::string label;
     std::vector<SourceSentence> sentences;
 
-    Definition(std::string definitionContent, std::string label, std::vector<SourceSentence> sentences):
-        definitionContent{definitionContent},
-        label{label},
-        sentences(sentences)
+    Definition(std::string definitionContent,
+               std::string label,
+               std::vector<SourceSentence> sentences)
+        : definitionContent{definitionContent}
+        , label{label}
+        , sentences(sentences)
     {}
 
-    bool operator==(const Definition &other) const
-    {
-        return definitionContent == other.definitionContent
-               && label == other.label && sentences == other.sentences;
-    }
+    bool operator==(const Definition &other) const = default;
 };
 
-}
+} // namespace Definition
 
 // The DefinitionsSet class contains a grouping of definitions from one source
 
@@ -48,7 +46,6 @@ public:
     {
         return _source == other._source && _definitions == other._definitions;
     }
-
     bool isEmpty() const;
 
     void pushDefinition(const Definition::Definition definition);

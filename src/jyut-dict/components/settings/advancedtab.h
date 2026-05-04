@@ -3,9 +3,12 @@
 
 #include "logic/entry/entryspeaker.h"
 
+#include <QFutureWatcher>
+#include <QString>
 #include <QWidget>
 
 #include <functional>
+#include <memory>
 
 class DownloadAudioDialog;
 class Downloader;
@@ -144,9 +147,9 @@ private:
 
 private slots:
     void unzipFile(QString outputPath,
-                   std::shared_ptr<TextToSpeechCallbacks> cbs);
+                   std::shared_ptr<AdvancedTab::TextToSpeechCallbacks> cbs);
     void unzipComplete(bool completed,
-                       std::shared_ptr<TextToSpeechCallbacks> cbs);
+                       std::shared_ptr<AdvancedTab::TextToSpeechCallbacks> cbs);
 
 signals:
     void settingsReset(void);

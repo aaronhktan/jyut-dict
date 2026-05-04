@@ -17,6 +17,7 @@
 #include <QKeyEvent>
 #include <QList>
 #include <QModelIndex>
+#include <QTimer>
 #include <QVariant>
 
 FavouriteSplitter::FavouriteSplitter(

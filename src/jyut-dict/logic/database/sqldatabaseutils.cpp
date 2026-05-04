@@ -1,5 +1,7 @@
 #include "sqldatabaseutils.h"
 
+#include "logic/database/sqldatabasemanager.h"
+
 #include <QFile>
 #include <QUuid>
 #include <QtSql>

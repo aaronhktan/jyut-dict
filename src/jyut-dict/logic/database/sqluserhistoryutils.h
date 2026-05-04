@@ -1,8 +1,6 @@
 #ifndef SQLUSERHISTORYUTILS_H
 #define SQLUSERHISTORYUTILS_H
 
-#include "logic/database/sqldatabasemanager.h"
-#include "logic/entry/entry.h"
 #include "logic/search/isearchobservable.h"
 
 #include <QObject>
@@ -13,6 +11,9 @@
 #include <string>
 #include <utility>
 #include <vector>
+
+class Entry;
+class SQLDatabaseManager;
 
 // The SQLUserHistoryUtils class searches the user database
 // for items regarding history (search history and view history).

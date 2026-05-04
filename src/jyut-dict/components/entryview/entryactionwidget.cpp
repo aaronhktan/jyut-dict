@@ -13,9 +13,11 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QEvent>
 #include <QFileDialog>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QTimer>
 
 EntryActionWidget::EntryActionWidget(
     std::shared_ptr<SQLUserDataUtils> sqlUserUtils, QWidget *parent)

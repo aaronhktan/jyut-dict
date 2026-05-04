@@ -10,7 +10,12 @@
 
 #include <QCoreApplication>
 #include <QFileInfo>
+#ifdef Q_OS_LINUX
+#include <QFutureWatcher>
+#endif
 #include <QStandardPaths>
+#include <QString>
+#include <QTextToSpeech>
 #include <QVector>
 #include <QtConcurrent/QtConcurrent>
 

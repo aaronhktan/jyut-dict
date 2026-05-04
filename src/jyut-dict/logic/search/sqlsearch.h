@@ -1,13 +1,11 @@
 #ifndef SQLSEARCH_H
 #define SQLSEARCH_H
 
-#include "logic/database/sqldatabasemanager.h"
-#include "logic/entry/entry.h"
 #include "logic/search/isearch.h"
 #include "logic/search/isearchobservable.h"
 
-#include <QList>
-#include <QtSql>
+#include <QFutureWatcher>
+#include <QSettings>
 
 #include <atomic>
 #include <list>
@@ -15,6 +13,9 @@
 #include <mutex>
 #include <random>
 #include <vector>
+
+class Entry;
+class SQLDatabaseManager;
 
 // SQLSearch searches the database provided by SQLDatabaseManager.
 

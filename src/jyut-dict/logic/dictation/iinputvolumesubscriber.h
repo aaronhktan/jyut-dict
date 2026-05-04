@@ -7,7 +7,7 @@ class IInputVolumeSubscriber
 {
 public:
     virtual ~IInputVolumeSubscriber() = default;
-    virtual void volumeResult(Utils::Result<float> volumeLevel) = 0;
+    virtual void volumeResult(Utils::Result<float>) = 0;
 };
 
 #endif // IINPUTVOLUMESUBSCRIBER_H

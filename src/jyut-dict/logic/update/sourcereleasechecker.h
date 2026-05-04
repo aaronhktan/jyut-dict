@@ -8,6 +8,7 @@
 #include <QObject>
 
 #include <unordered_map>
+#include <unordered_set>
 
 class SQLDatabaseManager;
 

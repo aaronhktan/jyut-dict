@@ -2,6 +2,8 @@
 
 #include "logic/utils/utils.h"
 
+#include <QString>
+
 #include <iostream>
 #include <regex>
 #include <sstream>
@@ -9,18 +11,18 @@
 #include <unordered_set>
 
 namespace {
-std::unordered_set<std::string> specialCharacters
+const std::unordered_set<std::string> specialCharacters
     = {".",  "。", ",",  "，", "！", "？", "%",  "－", "…",  "⋯",
        ".",  "·",  "\"", "“",  "”",  "$",  "｜", "：", "１", "２",
        "３", "４", "５", "６", "７", "８", "９", "０"};
 
-std::unordered_set<std::string> regexCharacters = {"!", "(", ")", "|"};
+const std::unordered_set<std::string> regexCharacters = {"!", "(", ")", "|"};
 
-std::unordered_set<std::string> initials = {"b",  "p", "m",  "f",  "d",
-                                            "t",  "n", "l",  "g",  "k",
-                                            "ng", "h", "gw", "kw", "w",
-                                            "z",  "c", "s",  "j",  "m"};
-std::unordered_set<std::string> finals
+const std::unordered_set<std::string> initials = {"b",  "p", "m",  "f",  "d",
+                                                  "t",  "n", "l",  "g",  "k",
+                                                  "ng", "h", "gw", "kw", "w",
+                                                  "z",  "c", "s",  "j",  "m"};
+const std::unordered_set<std::string> finals
     = {"a",   "aa",   "aai", "aau", "aam", "aan", "aang", "aap", "aat", "aak",
        "ai",  "au",   "am",  "an",  "ang", "ap",  "at",   "ak",  "e",   "ei",
        "eu",  "em",   "en",  "eng", "ep",  "ek",  "i",    "iu",  "im",  "in",
@@ -28,13 +30,15 @@ std::unordered_set<std::string> finals
        "ok",  "u",    "ui",  "un",  "ung", "ut",  "uk",   "oe",  "oet", "eoi",
        "eon", "oeng", "eot", "oek", "yu",  "yun", "yut",  "m",   "ng"};
 
-std::unordered_map<std::string, std::vector<std::string>>
+const std::regex jyutpingFinalRegex{"([aeiou][aeiou]?[iumngptk]?[g]?)([1-6])"};
+
+const std::unordered_map<std::string, std::vector<std::string>>
     jyutpingToYaleSpecialSyllables = {
         {"m", {"m̄", "ḿ", "m", "m̀h", "ḿh", "mh"}},
         {"ng", {"n̄g", "ńg", "ng", "ǹgh", "ńgh", "ngh"}},
 };
 
-std::unordered_map<std::string, std::string> jyutpingToYaleSpecialFinals = {
+const std::unordered_map<std::string, std::string> jyutpingToYaleSpecialFinals = {
     {"aa", "a"},
     {"oe", "eu"},
     {"oeng", "eung"},
@@ -44,27 +48,33 @@ std::unordered_map<std::string, std::string> jyutpingToYaleSpecialFinals = {
     {"eot", "eut"},
 };
 
-std::unordered_map<std::string, std::vector<std::string>> yaleToneReplacements = {
-    {"a", {"ā", "á", "a", "à", "á", "a"}},
-    {"e", {"ē", "é", "e", "è", "é", "e"}},
-    {"i", {"ī", "í", "i", "ì", "í", "i"}},
-    {"o", {"ō", "ó", "o", "ò", "ó", "o"}},
-    {"u", {"ū", "ú", "u", "ù", "ú", "u"}},
+const std::unordered_map<std::string, std::vector<std::string>>
+    yaleToneReplacements = {
+        {"a", {"ā", "á", "a", "à", "á", "a"}},
+        {"e", {"ē", "é", "e", "è", "é", "e"}},
+        {"i", {"ī", "í", "i", "ì", "í", "i"}},
+        {"o", {"ō", "ó", "o", "ò", "ó", "o"}},
+        {"u", {"ū", "ú", "u", "ù", "ú", "u"}},
 };
 
-std::vector<std::pair<std::string, std::string>> cantoneseIPASpecialSyllables
-    = {{"a", "@"},
-       {"yu", "y"},
-       {"@@", "a"},
-       {"uk", "^k"},
-       {"ik", "|k"},
-       {"ou", "~u"},
-       {"eoi", "eoy"},
-       {"ung", "^ng"},
-       {"ing", "|ng"},
-       {"ei", ">i"}};
+const std::regex yaleYInitialRegex{"jy?"};
+const std::regex yaleJInitialRegex{"z"};
+const std::regex yaleChInitialRegex{"c"};
+const std::regex yaleLightToneClusterRegex{"([ptkmn]?g?)[123456]$"};
 
-std::unordered_map<std::string, std::string> cantoneseIPAInitials
+const std::vector<std::pair<std::string, std::string>>
+    cantoneseIPASpecialSyllables = {{"a", "@"},
+                                    {"yu", "y"},
+                                    {"@@", "a"},
+                                    {"uk", "^k"},
+                                    {"ik", "|k"},
+                                    {"ou", "~u"},
+                                    {"eoi", "eoy"},
+                                    {"ung", "^ng"},
+                                    {"ing", "|ng"},
+                                    {"ei", ">i"}};
+
+const std::unordered_map<std::string, std::string> cantoneseIPAInitials
     = {{"b", "p"},
        {"p", "pʰ"},
        {"d", "t"},
@@ -80,27 +90,41 @@ std::unordered_map<std::string, std::string> cantoneseIPAInitials
        {"z", "t͡s"},
        {"c", "t͡sʰ"}};
 
-std::unordered_map<std::string, std::string> cantoneseIPANuclei = {{"a", "äː"},
-                                                                   {"@", "ɐ"},
-                                                                   {"e", "ɛː"},
-                                                                   {">", "e"},
-                                                                   {"i", "iː"},
-                                                                   {"|", "ɪ"},
-                                                                   {"o", "ɔː"},
-                                                                   {"~", "o"},
-                                                                   {"oe", "œ̽ː"},
-                                                                   {"eo", "ɵ"},
-                                                                   {"u", "uː"},
-                                                                   {"^", "ʊ"},
-                                                                   {"y", "yː"}};
+const std::unordered_map<std::string, std::string> cantoneseIPANuclei
+    = {{"a", "äː"},
+       {"@", "ɐ"},
+       {"e", "ɛː"},
+       {">", "e"},
+       {"i", "iː"},
+       {"|", "ɪ"},
+       {"o", "ɔː"},
+       {"~", "o"},
+       {"oe", "œ̽ː"},
+       {"eo", "ɵ"},
+       {"u", "uː"},
+       {"^", "ʊ"},
+       {"y", "yː"}};
 
-std::unordered_map<std::string, std::string> cantoneseIPACodas = {{"i", "i̯"},
-                                                                  {"u", "u̯"},
-                                                                  {"y", "y̯"},
-                                                                  {"ng", "ŋ"},
-                                                                  {"p", "p̚"},
-                                                                  {"t", "t̚"},
-                                                                  {"k", "k̚"}};
+const std::unordered_map<std::string, std::string> cantoneseIPACodas
+    = {{"i", "i̯"},
+       {"u", "u̯"},
+       {"y", "y̯"},
+       {"ng", "ŋ"},
+       {"p", "p̚"},
+       {"t", "t̚"},
+       {"k", "k̚"}};
+
+const std::regex cantoneseIPASyllableRegex{
+    "([bcdfghjklmnpqrstvwxyz]?[bcdfghjklmnpqrstvwxyz]"
+    "?)([a@e>i|o~u^y][eo]?)([iuymngptk]?g?)([1-9])"};
+const std::regex cantoneseIPAHyuRegex{"([zcs])yu"};
+const std::regex cantoneseIPAHoeRegex{"([zc])oe"};
+const std::regex cantoneseIPAHeoRegex{"([zc])eo"};
+const std::regex cantoneseIPASpecialSyllableRegex{"^(h?)([mn]g?)([1-6])$"};
+const std::regex cantoneseIPAMSpeciallSyllableRegex{"m"};
+const std::regex cantoneseIPANgSpecialSyllableRegex{"ng"};
+const std::regex cantoneseIPAToneRegex{"[1-6]"};
+const std::regex cantoneseIPACheckedToneRegex{"([ptk])([136])"};
 
 // The original Wiktionary module uses breves to indicate a special letter (e.g.
 // ă), but the base C++ regex engine can't match against chars outside of the
@@ -108,10 +132,10 @@ std::unordered_map<std::string, std::string> cantoneseIPACodas = {{"i", "i̯"},
 #if defined(Q_OS_MAC)
 // Added a six-per-em space (U+2006) between adjacent tone markers, because Qt's
 // kerning squishes them too close together
-std::vector<std::string> jyutpingToIPATones
+const std::vector<std::string> jyutpingToIPATones
     = {"˥", "˧ ˥", "˧", "˨ ˩", "˩ ˧", "˨", "˥", "˧", "˨"};
 #else
-std::vector<std::string> jyutpingToIPATones
+const std::vector<std::string> jyutpingToIPATones
     = {"˥", "˧˥", "˧", "˨˩", "˩˧", "˨", "˥", "˧", "˨"};
 #endif
 
@@ -168,9 +192,9 @@ bool unfoldJyutpingRegex(const QString &string, std::vector<QString> &out)
 std::string convertYaleInitial(const std::string &syllable)
 {
     std::string yale_syllable{syllable};
-    yale_syllable = std::regex_replace(yale_syllable, std::regex{"jy?"}, "y");
-    yale_syllable = std::regex_replace(yale_syllable, std::regex{"z"}, "j");
-    yale_syllable = std::regex_replace(yale_syllable, std::regex{"c"}, "ch");
+    yale_syllable = std::regex_replace(yale_syllable, yaleYInitialRegex, "y");
+    yale_syllable = std::regex_replace(yale_syllable, yaleJInitialRegex, "j");
+    yale_syllable = std::regex_replace(yale_syllable, yaleChInitialRegex, "ch");
     return yale_syllable;
 }
 
@@ -179,23 +203,23 @@ std::string convertYaleFinal(const std::string &syllable)
     std::string yale_syllable{syllable};
 
     // Attempt to isolate the part of the Jyutping syllable that is the final
-    std::regex final_regex{"([aeiou][aeiou]?[iumngptk]?[g]?)([1-6])"};
     std::smatch match;
-    auto regex_res = std::regex_search(syllable, match, final_regex);
+    auto regex_res = std::regex_search(syllable, match, jyutpingFinalRegex);
 
     if (!regex_res) {
         std::cerr << "No final found!" << std::endl;
         return yale_syllable;
     }
 
-    std::string final = match[1].str();
-    int tone = std::stoi(match[2]);
+    const std::string final = match[1].str();
+    const int tone = std::stoi(match[2]);
 
-    auto final_location = yale_syllable.find(final);
+    const auto final_location = yale_syllable.find(final);
 
     // Some Jyutping finals have significant differences when mapped to Yale.
     // Switch it out here.
-    auto replacement_final_search = jyutpingToYaleSpecialFinals.find(final);
+    const auto replacement_final_search = jyutpingToYaleSpecialFinals.find(
+        final);
     if (replacement_final_search != jyutpingToYaleSpecialFinals.end()) {
         yale_syllable.erase(final_location, final.length());
         yale_syllable.insert(final_location, replacement_final_search->second);
@@ -205,19 +229,20 @@ std::string convertYaleFinal(const std::string &syllable)
     // as they are indicated in Yale
     if (tone == 4 || tone == 5 || tone == 6) {
         yale_syllable = std::regex_replace(yale_syllable,
-                                           std::regex{"([ptkmn]?g?)[123456]$"},
+                                           yaleLightToneClusterRegex,
                                            "h$&");
     }
 
     // Replace the first vowel in the final with its accented version
-    auto replacement_location = yale_syllable.find_first_of("aeiou");
-    std::string first_vowel = yale_syllable.substr(replacement_location, 1);
-    auto replacement_vowel_search = yaleToneReplacements.find(first_vowel);
-    std::string replacement_vowel = (replacement_vowel_search
-                                     == yaleToneReplacements.end())
-                                        ? first_vowel
-                                        : replacement_vowel_search->second.at(
-                                            static_cast<size_t>(tone - 1));
+    const auto replacement_location = yale_syllable.find_first_of("aeiou");
+    const std::string first_vowel = yale_syllable.substr(replacement_location,
+                                                         1);
+    const auto replacement_vowel_search = yaleToneReplacements.find(first_vowel);
+    const std::string replacement_vowel
+        = (replacement_vowel_search == yaleToneReplacements.end())
+              ? first_vowel
+              : replacement_vowel_search->second.at(
+                    static_cast<size_t>(tone - 1));
     yale_syllable.erase(replacement_location, first_vowel.length());
     yale_syllable.insert(replacement_location, replacement_vowel);
 
@@ -250,9 +275,9 @@ std::string convertJyutpingToYale(const std::string &jyutping,
                                                 QString::NormalizationForm_C)
                                             .toStdU32String();
         for (const auto &character : jyutping_utf32) {
-            std::string character_utf8 = QString::fromStdU32String(
-                                             std::u32string{character})
-                                             .toStdString();
+            const std::string character_utf8 = QString::fromStdU32String(
+                                                   std::u32string{character})
+                                                   .toStdString();
             if (specialCharacters.find(character_utf8)
                 != specialCharacters.end()) {
                 jyutpingCopy += " " + character_utf8 + " ";
@@ -289,18 +314,19 @@ std::string convertJyutpingToYale(const std::string &jyutping,
         }
 
         // Skip syllables that don't have tone
-        auto location = syllable.find_first_of("123456");
+        const auto location = syllable.find_first_of("123456");
         if (location == std::string::npos) {
             yale_syllables.push_back(syllable);
             continue;
         }
 
         // Handle special-case syllables
-        std::string syllable_without_tone
+        const std::string syllable_without_tone
             = syllable.substr(0, syllable.length() - 1);
-        int tone = std::stoi(
+        const int tone = std::stoi(
             syllable.substr(syllable.find_first_of("123456"), 1));
-        auto search = jyutpingToYaleSpecialSyllables.find(syllable_without_tone);
+        const auto search = jyutpingToYaleSpecialSyllables.find(
+            syllable_without_tone);
         if (search != jyutpingToYaleSpecialSyllables.end()) {
             yale_syllables.emplace_back(
                 search->second.at(static_cast<size_t>(tone) - 1));
@@ -333,11 +359,10 @@ std::string convertIPACantoneseSyllable(const std::string &syllable)
     std::string coda;
     std::string tone;
 
-    std::regex syllable_regex{"([bcdfghjklmnpqrstvwxyz]?[bcdfghjklmnpqrstvwxyz]"
-                              "?)([a@e>i|o~u^y][eo]?)([iuymngptk]?g?)([1-9])"};
     std::smatch match;
-
-    auto regex_res = std::regex_match(syllable, match, syllable_regex);
+    const auto regex_res = std::regex_match(syllable,
+                                            match,
+                                            cantoneseIPASyllableRegex);
 
     if (!regex_res) {
         // No valid Jyutping found
@@ -377,12 +402,12 @@ std::string convertIPACantoneseSyllable(const std::string &syllable)
             static_cast<size_t>(std::stoi(match[4]) - 1));
     }
 
-#if defined(Q_OS_MAC)
+#ifdef Q_OS_MAC
     // Added a thin space (U+2009) before tone to better distinguish unreleased
     // stop marker and tone markers
-    std::string ipa_syllable = initial + nucleus + coda + " " + tone;
+    const std::string ipa_syllable = initial + nucleus + coda + " " + tone;
 #else
-    std::string ipa_syllable = initial + nucleus + coda + tone;
+    const std::string ipa_syllable = initial + nucleus + coda + tone;
 #endif
     return ipa_syllable;
 }
@@ -399,14 +424,14 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
         std::string jyutpingCopy;
         // Insert a space before and after every special character, so that the
         // IPA conversion doesn't attempt to convert special characters.
-        std::u32string jyutping_utf32 = QString::fromStdString(jyutping)
-                                            .normalized(
-                                                QString::NormalizationForm_C)
-                                            .toStdU32String();
+        const std::u32string jyutping_utf32
+            = QString::fromStdString(jyutping)
+                  .normalized(QString::NormalizationForm_C)
+                  .toStdU32String();
         for (const auto &character : jyutping_utf32) {
-            std::string character_utf8 = QString::fromStdU32String(
-                                             std::u32string{character})
-                                             .toStdString();
+            const std::string character_utf8 = QString::fromStdU32String(
+                                                   std::u32string{character})
+                                                   .toStdString();
             if (specialCharacters.find(character_utf8)
                 != specialCharacters.end()) {
                 jyutpingCopy += " " + character_utf8 + " ";
@@ -442,7 +467,7 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
         }
 
         // Skip syllables that don't have tone
-        auto location = syllable.find_first_of("123456");
+        const auto location = syllable.find_first_of("123456");
         if (location == std::string::npos) {
             ipa_syllables.push_back(syllable);
             continue;
@@ -451,30 +476,30 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
         // Do some pre-processing
         std::string ipa_syllable{syllable};
         ipa_syllable = std::regex_replace(ipa_syllable,
-                                          std::regex{"([zcs])yu"},
+                                          cantoneseIPAHyuRegex,
                                           "$1hyu");
         ipa_syllable = std::regex_replace(ipa_syllable,
-                                          std::regex{"([zc])oe"},
+                                          cantoneseIPAHoeRegex,
                                           "$1hoe");
         ipa_syllable = std::regex_replace(ipa_syllable,
-                                          std::regex{"([zc])eo"},
+                                          cantoneseIPAHeoRegex,
                                           "$1heo");
 
         // Convert special syllables
         std::smatch match;
         if (std::regex_match(ipa_syllable,
                              match,
-                             std::regex{"^(h?)([mn]g?)([1-6])$"})) {
+                             cantoneseIPASpecialSyllableRegex)) {
             int tone = std::stoi(match[3]);
             ipa_syllable = std::regex_replace(ipa_syllable,
-                                              std::regex{"m"},
+                                              cantoneseIPAMSpeciallSyllableRegex,
                                               "m̩");
             ipa_syllable = std::regex_replace(ipa_syllable,
-                                              std::regex{"ng"},
+                                              cantoneseIPANgSpecialSyllableRegex,
                                               "ŋ̍");
             ipa_syllable = std::regex_replace(
                 ipa_syllable,
-                std::regex{"[1-6]"},
+                cantoneseIPAToneRegex,
 #if defined(Q_OS_MAC)
                 // Only macOS needs this space to fix weird kerning
                 " " +
@@ -485,7 +510,7 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
         // Replace checked tones
         if (std::regex_search(ipa_syllable,
                               match,
-                              std::regex{"([ptk])([136])"})) {
+                              cantoneseIPACheckedToneRegex)) {
             std::replace(ipa_syllable.begin(), ipa_syllable.end(), '1', '7');
             std::replace(ipa_syllable.begin(), ipa_syllable.end(), '3', '8');
             std::replace(ipa_syllable.begin(), ipa_syllable.end(), '6', '9');
@@ -502,7 +527,7 @@ std::string convertJyutpingToIPA(const std::string &jyutping,
     }
 
     std::ostringstream ipa;
-    std::string double_space = "  ";
+    const std::string double_space = "  ";
     for (const auto &ipa_syllable : ipa_syllables) {
         ipa << ipa_syllable << double_space;
     }
@@ -1201,13 +1226,13 @@ bool segmentJyutping(const QString &string,
 {
     std::vector<std::string> syllables;
 
-    bool valid_jyutping = true;
+    bool validJyutping = true;
     // Keep track of indices for current segmented word; [start_index, end_index)
     // Greedily try to expand end_index by checking for valid sequences
     // of characters
-    int start_idx = 0;
-    int end_idx = 0;
-    bool initial_found = false;
+    int startIdx = 0;
+    int endIdx = 0;
+    bool initialFound = false;
 
     // Invariant: There are no graphemes in the initial Jyutping string larger
     // than a single byte when encoded using UTF-16.
@@ -1244,10 +1269,10 @@ bool segmentJyutping(const QString &string,
     // and we maintain the invariant that no graphemes are larger than a
     // single byte when encoded in UTF-16, it is safe to iterate QChar by
     // QChar.
-    while (end_idx < processedString.length()) {
-        bool component_found = false;
+    while (endIdx < processedString.length()) {
+        bool componentFound = false;
 
-        QString currentString = processedString.mid(end_idx, 1).toLower();
+        QString currentString = processedString.mid(endIdx, 1).toLower();
         bool isSpecialCharacter = (specialCharacters.find(
                                        currentString.toStdString())
                                    != specialCharacters.end());
@@ -1257,65 +1282,62 @@ bool segmentJyutping(const QString &string,
             || isGlobCharacter) {
             // The presence of a space, apostrophe, special character, or
             // glob character indicates that a syllable is completed.
-            if (initial_found) {
+            if (initialFound) {
                 // If a valid initial was previously found, then the Jyutping
                 // sequence [initial] + [separator] is only valid Jyutping if the
                 // initial is also a valid final (i.e. [final] + [separator] is
                 // OK, but [initial] + [separator] is not).
-                QString previous_initial = processedString
-                                               .mid(start_idx,
-                                                    end_idx - start_idx)
-                                               .toLower();
-                syllables.push_back(previous_initial.toStdString());
-                if (finals.find(previous_initial.toStdString())
-                    == finals.end()) {
-                    valid_jyutping = false;
+                const QString previousInitial
+                    = processedString.mid(startIdx, endIdx - startIdx).toLower();
+                syllables.push_back(previousInitial.toStdString());
+                if (finals.find(previousInitial.toStdString()) == finals.end()) {
+                    validJyutping = false;
                 }
-                start_idx = end_idx;
-                initial_found = false;
+                startIdx = endIdx;
+                initialFound = false;
             }
             if (isGlobCharacter) {
                 // Similar logic to the block above
-                if (end_idx >= 1 && (end_idx - start_idx >= 1)) {
-                    QString previous_initial = processedString
-                                                   .mid(start_idx,
-                                                        end_idx - start_idx)
-                                                   .toLower();
-                    syllables.push_back(previous_initial.toStdString());
-                    if (finals.find(previous_initial.toStdString())
+                if (endIdx >= 1 && (endIdx - startIdx >= 1)) {
+                    const QString previousInitial = processedString
+                                                        .mid(startIdx,
+                                                             endIdx - startIdx)
+                                                        .toLower();
+                    syllables.push_back(previousInitial.toStdString());
+                    if (finals.find(previousInitial.toStdString())
                         == finals.end()) {
-                        valid_jyutping = false;
+                        validJyutping = false;
                     }
-                    initial_found = false;
+                    initialFound = false;
                 }
 
                 // Since whitespace matters for glob and regex, consume the
                 // next or previous whitespace if it exists (and was not
                 // already consumed by another glob character).
-                int glob_start_idx = end_idx;
+                int globStartIdx = endIdx;
                 int length = 1;
-                if ((end_idx >= 1) && (processedString.at(end_idx - 1) == ' ')
+                if ((endIdx >= 1) && (processedString.at(endIdx - 1) == ' ')
                     && (!syllables.empty()) && syllables.back().back() != ' ') {
                     // Add preceding whitespace to this word
-                    glob_start_idx--;
+                    globStartIdx--;
                     length++;
                 }
-                if ((processedString.length() > end_idx + 1)
-                    && (processedString.at(end_idx + 1) == ' ')) {
+                if ((processedString.length() > endIdx + 1)
+                    && (processedString.at(endIdx + 1) == ' ')) {
                     // Add succeeding whitespace to this word
                     length++;
-                    end_idx++;
+                    endIdx++;
                 }
-                QString glob
-                    = processedString.mid(glob_start_idx, length).toLower();
+                const QString glob
+                    = processedString.mid(globStartIdx, length).toLower();
                 syllables.push_back(glob.toStdString());
 
-                start_idx = end_idx;
+                startIdx = endIdx;
             } else if (isSpecialCharacter) {
                 syllables.push_back(currentString.toStdString());
             }
-            start_idx++;
-            end_idx++;
+            startIdx++;
+            endIdx++;
             continue;
         }
 
@@ -1324,15 +1346,13 @@ bool segmentJyutping(const QString &string,
         // OR after an initial (that is also a final), like m or ng.
         // This block checks for the latter case.
         if (currentString.at(0).isDigit()) {
-            if (initial_found) {
-                QString previous_initial = processedString
-                                               .mid(start_idx,
-                                                    end_idx - start_idx)
-                                               .toLower();
+            if (initialFound) {
+                QString previousInitial
+                    = processedString.mid(startIdx, endIdx - startIdx).toLower();
 
                 bool isValidFinal = false;
                 if (removeRegexCharacters) {
-                    isValidFinal = finals.find(previous_initial.toStdString())
+                    isValidFinal = finals.find(previousInitial.toStdString())
                                    != finals.end();
                 } else {
                     // Regex characters need to be handled in a special way;
@@ -1340,39 +1360,39 @@ bool segmentJyutping(const QString &string,
                     // least one possibility is a valid final, then the Jyutping
                     // can be considered valid.
                     std::vector<QString> stringsToSearch;
-                    QString stringToSearch = previous_initial;
+                    const QString stringToSearch = previousInitial;
                     unfoldJyutpingRegex(stringToSearch, stringsToSearch);
 
                     bool isValidFinal = false;
                     for (const auto &s : stringsToSearch) {
-                        auto searchResult = finals.find(s.toStdString());
+                        const auto searchResult = finals.find(s.toStdString());
                         isValidFinal = isValidFinal
                                        || (searchResult != finals.end());
                     }
                 }
 
                 if (isValidFinal) {
-                    end_idx++;
-                    previous_initial = processedString
-                                           .mid(start_idx, end_idx - start_idx)
-                                           .toLower();
-                    syllables.push_back(previous_initial.toStdString());
-                    start_idx = end_idx;
-                    initial_found = false;
+                    endIdx++;
+                    previousInitial = processedString
+                                          .mid(startIdx, endIdx - startIdx)
+                                          .toLower();
+                    syllables.push_back(previousInitial.toStdString());
+                    startIdx = endIdx;
+                    initialFound = false;
 
                     if (currentString.at(0).digitValue() < 1
                         || currentString.at(0).digitValue() > 6) {
-                        valid_jyutping = false;
+                        validJyutping = false;
                     }
 
                     continue;
                 }
             } else {
                 // If there was no initial found, then the Jyutping isn't valid
-                valid_jyutping = false;
+                validJyutping = false;
                 syllables.push_back(currentString.toStdString());
-                start_idx++;
-                end_idx++;
+                startIdx++;
+                endIdx++;
                 continue;
             }
         }
@@ -1380,15 +1400,14 @@ bool segmentJyutping(const QString &string,
         // If initial is valid, then extend the end_index for length of initial
         // cluster of consonants.
         // The longest length of an initial with unfolded regex is 16 UTF-16 bytes.
-        for (int initial_len = removeRegexCharacters
-                                   ? 2
-                                   : std::min(16,
-                                              static_cast<int>(
-                                                  processedString.size())
-                                                  - end_idx);
-             initial_len > 0;
-             initial_len--) {
-            currentString = processedString.mid(end_idx, initial_len).toLower();
+        for (int initialLen
+             = removeRegexCharacters
+                   ? 2
+                   : std::min(16,
+                              static_cast<int>(processedString.size()) - endIdx);
+             initialLen > 0;
+             initialLen--) {
+            currentString = processedString.mid(endIdx, initialLen).toLower();
 
             bool isValidInitial = false;
             if (removeRegexCharacters) {
@@ -1396,11 +1415,11 @@ bool segmentJyutping(const QString &string,
                                  != initials.end();
             } else {
                 std::vector<QString> stringsToSearch;
-                QString stringToSearch = currentString;
+                const QString stringToSearch = currentString;
                 unfoldJyutpingRegex(stringToSearch, stringsToSearch);
 
                 for (const auto &s : stringsToSearch) {
-                    auto searchResult = initials.find(s.toStdString());
+                    const auto searchResult = initials.find(s.toStdString());
                     isValidInitial = isValidInitial
                                      || (searchResult != initials.end());
                 }
@@ -1410,13 +1429,11 @@ bool segmentJyutping(const QString &string,
                 continue;
             }
 
-            if (initial_found) {
+            if (initialFound) {
                 // Multiple initials in a row are only valid if previous "initial"
                 // was actually a final (like m or ng)
-                QString previousInitial = processedString
-                                              .mid(start_idx,
-                                                   end_idx - start_idx)
-                                              .toLower();
+                const QString previousInitial
+                    = processedString.mid(startIdx, endIdx - startIdx).toLower();
 
                 bool previousInitialIsValidFinal = false;
                 if (removeRegexCharacters) {
@@ -1425,11 +1442,11 @@ bool segmentJyutping(const QString &string,
                           != initials.end();
                 } else {
                     std::vector<QString> stringsToSearch;
-                    QString stringToSearch = previousInitial;
+                    const QString stringToSearch = previousInitial;
                     unfoldJyutpingRegex(stringToSearch, stringsToSearch);
 
                     for (const auto &s : stringsToSearch) {
-                        auto searchResult = finals.find(s.toStdString());
+                        const auto searchResult = finals.find(s.toStdString());
                         previousInitialIsValidFinal = previousInitialIsValidFinal
                                                       || (searchResult
                                                           != initials.end());
@@ -1438,18 +1455,18 @@ bool segmentJyutping(const QString &string,
 
                 if (previousInitialIsValidFinal) {
                     syllables.push_back(previousInitial.toStdString());
-                    start_idx = end_idx;
+                    startIdx = endIdx;
                 } else {
-                    valid_jyutping = false;
+                    validJyutping = false;
                 }
             }
 
-            end_idx += initial_len;
-            component_found = true;
-            initial_found = true;
+            endIdx += initialLen;
+            componentFound = true;
+            initialFound = true;
         }
 
-        if (component_found) {
+        if (componentFound) {
             continue;
         }
 
@@ -1458,15 +1475,14 @@ bool segmentJyutping(const QString &string,
         //
         // Then add the substring from [start_index, end_index) to vector
         // and reset start_index, so we can start searching after the end_index.
-        for (int final_len = removeRegexCharacters
-                                 ? 4
-                                 : std::min(16,
-                                            static_cast<int>(
-                                                processedString.size())
-                                                - end_idx);
-             final_len > 0;
-             final_len--) {
-            currentString = processedString.mid(end_idx, final_len).toLower();
+        for (int finalLen
+             = removeRegexCharacters
+                   ? 4
+                   : std::min(16,
+                              static_cast<int>(processedString.size()) - endIdx);
+             finalLen > 0;
+             finalLen--) {
+            currentString = processedString.mid(endIdx, finalLen).toLower();
 
             bool isValidFinal = false;
             if (removeRegexCharacters) {
@@ -1474,60 +1490,59 @@ bool segmentJyutping(const QString &string,
                                != finals.end();
             } else {
                 std::vector<QString> stringsToSearch;
-                QString stringToSearch = currentString;
+                const QString stringToSearch = currentString;
                 unfoldJyutpingRegex(stringToSearch, stringsToSearch);
 
                 for (const auto &s : stringsToSearch) {
-                    auto searchResult = finals.find(s.toStdString());
+                    const auto searchResult = finals.find(s.toStdString());
                     isValidFinal = isValidFinal
                                    || (searchResult != finals.end());
                 }
             }
 
             if (isValidFinal) {
-                end_idx += final_len;
-                if (end_idx < processedString.length()) {
-                    if (processedString.at(end_idx).isDigit()) {
-                        if (processedString.at(end_idx).digitValue() < 1
-                            || processedString.at(end_idx).digitValue() > 6) {
-                            valid_jyutping = false;
+                endIdx += finalLen;
+                if (endIdx < processedString.length()) {
+                    if (processedString.at(endIdx).isDigit()) {
+                        if (processedString.at(endIdx).digitValue() < 1
+                            || processedString.at(endIdx).digitValue() > 6) {
+                            validJyutping = false;
                         }
 
-                        end_idx++;
+                        endIdx++;
                     }
                 }
-                QString syllable = processedString
-                                       .mid(start_idx, end_idx - start_idx)
-                                       .toLower();
+                const QString syllable
+                    = processedString.mid(startIdx, endIdx - startIdx).toLower();
                 syllables.push_back(syllable.toStdString());
-                start_idx = end_idx;
-                component_found = true;
-                initial_found = false;
+                startIdx = endIdx;
+                componentFound = true;
+                initialFound = false;
                 break;
             }
         }
 
-        if (component_found) {
+        if (componentFound) {
             continue;
         } else {
-            valid_jyutping = false;
+            validJyutping = false;
         }
 
-        end_idx++;
+        endIdx++;
     }
 
     // Then add whatever's left in the search term, minus whitespace.
     QString lastSyllable
-        = string.mid(start_idx, end_idx - start_idx).simplified().toLower();
+        = string.mid(startIdx, endIdx - startIdx).simplified().toLower();
     if (!lastSyllable.isEmpty() && lastSyllable != "'") {
         syllables.push_back(lastSyllable.toStdString());
         if (finals.find(lastSyllable.toStdString()) == finals.end()) {
-            valid_jyutping = false;
+            validJyutping = false;
         }
     }
 
     out = syllables;
-    return valid_jyutping;
+    return validJyutping;
 }
 
 } // namespace CantoneseUtils

@@ -3,8 +3,8 @@
 
 #include "dialogs/defaultdialog.h"
 
-#include <QEvent>
-#include <QString>
+class QEvent;
+class QString;
 
 class EntrySpeakErrorDialog : public DefaultDialog
 {

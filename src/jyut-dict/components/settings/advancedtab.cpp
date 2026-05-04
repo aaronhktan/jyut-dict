@@ -27,7 +27,6 @@
 #include <QFileDialog>
 #include <QFormLayout>
 #include <QFrame>
-#include <QFutureWatcher>
 #include <QLabel>
 #include <QLibraryInfo>
 #include <QProgressDialog>

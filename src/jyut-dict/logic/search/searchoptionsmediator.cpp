@@ -29,7 +29,7 @@ void SearchOptionsMediator::setParameters(SearchParameters parameters)
     }
 }
 
-SearchParameters SearchOptionsMediator::getParameters()
+SearchParameters SearchOptionsMediator::getParameters() const
 {
     return _parameters;
 }

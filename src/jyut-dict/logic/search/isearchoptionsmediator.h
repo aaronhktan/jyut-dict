@@ -13,11 +13,11 @@ class ISearchOptionsMediator {
 public:
     virtual ~ISearchOptionsMediator() = default;
 
-    virtual void registerLineEdit(ISearchLineEdit *_searchEdit) = 0;
-    virtual void registerOptionSelector(ISearchOptionsSelector *_selector) = 0;
+    virtual void registerLineEdit(ISearchLineEdit *) = 0;
+    virtual void registerOptionSelector(ISearchOptionsSelector *) = 0;
 
-    virtual void setParameters(SearchParameters parameters) = 0;
-    virtual SearchParameters getParameters() = 0;
+    virtual void setParameters(SearchParameters) = 0;
+    virtual SearchParameters getParameters() const = 0;
 };
 
 #endif // ISEARCHOPTIONSMEDIATOR_H

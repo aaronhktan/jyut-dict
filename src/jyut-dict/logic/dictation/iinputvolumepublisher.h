@@ -10,8 +10,8 @@ class IInputVolumePublisher
 public:
     virtual ~IInputVolumePublisher() = default;
 
-    virtual void subscribe(IInputVolumeSubscriber *subscriber) = 0;
-    virtual void unsubscribe(IInputVolumeSubscriber *subscriber) = 0;
+    virtual void subscribe(IInputVolumeSubscriber *) = 0;
+    virtual void unsubscribe(IInputVolumeSubscriber *) = 0;
     virtual void notifyVolumeResult(Utils::Result<float>) = 0;
 };
 

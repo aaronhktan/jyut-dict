@@ -9,9 +9,7 @@ DefinitionsSet::DefinitionsSet(std::string source,
     : _source{source}
     , _sourceShortString{SourceUtils::getSourceShortString(source)}
     , _definitions{definitions}
-{
-
-}
+{}
 
 std::ostream &operator<<(std::ostream &out, DefinitionsSet const &definitions)
 {

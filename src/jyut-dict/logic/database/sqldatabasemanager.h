@@ -1,10 +1,12 @@
 #ifndef SQLDATABASEMANAGER_H
 #define SQLDATABASEMANAGER_H
 
-#include <QSqlDatabase>
+#include <QString>
 
 #include <shared_mutex>
 #include <unordered_set>
+
+class QSqlDatabase;
 
 // SQLDatabaseManager provides one or more connections to databases
 // that contain dictionaries and translations

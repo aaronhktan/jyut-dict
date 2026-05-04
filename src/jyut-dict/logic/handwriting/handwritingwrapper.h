@@ -7,8 +7,9 @@
 
 #include <QFutureWatcher>
 #include <QObject>
-#include <QProgressDialog>
-#include <QString>
+
+class QProgressDialog;
+class QString;
 
 // The handwriting wrapper receives stroke data, and then
 // submits them to the backend library (currently Zinnia)

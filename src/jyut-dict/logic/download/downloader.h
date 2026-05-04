@@ -2,14 +2,18 @@
 #define DOWNLOADER_H
 
 #include <QByteArray>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QNetworkRequest>
 #include <QObject>
+#include <QString>
+#include <QUrl>
 
 // The Downloader class provides a simple interface to download a file
 // from a URL to a specified location on disk in a background thread.
 // This class is NOT thread-safe!
+
+class QNetworkAccessManager;
+class QNetworkReply;
+class QNetworkRequest;
+class QUrl;
 
 class Downloader : public QObject
 {

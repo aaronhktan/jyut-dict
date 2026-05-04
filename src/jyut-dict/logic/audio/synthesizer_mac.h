@@ -15,8 +15,8 @@ public:
     SynthesizerWrapper(void);
     ~SynthesizerWrapper(void);
 
-    bool setLocale(std::string locale);
-    void speak(std::string text);
+    bool setLocale(const std::string &locale);
+    void speak(const std::string &text);
 
 private:
     void *_synthesizerImpl;

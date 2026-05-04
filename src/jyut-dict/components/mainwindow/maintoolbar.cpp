@@ -22,6 +22,7 @@
 #include <QGuiApplication>
 #include <QMenu>
 #include <QStyleHints>
+#include <QTimer>
 #include <QToolButton>
 #include <QWidget>
 

@@ -1,8 +1,12 @@
-#include <QCoreApplication>
 #include <QtTest>
 
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqluserdatautils.h"
+
+#include <QCoreApplication>
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QSqlQuery>
 
 namespace {
 constexpr auto dbCreateConnName = "dbCreateConn";

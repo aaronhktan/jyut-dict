@@ -1,6 +1,7 @@
 #include "logic/source/sourceutils.h"
 
 #include <algorithm>
+#include <mutex>
 #include <shared_mutex>
 
 namespace SourceUtils {

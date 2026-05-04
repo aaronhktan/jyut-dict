@@ -11,7 +11,7 @@
 
 namespace Utils {
 
-static std::unordered_map<std::string, QColor> colourMap = {
+std::unordered_map<std::string, QColor> colourMap = {
     {"cmn", QColor{14, 139, 83}},
     {"eng", QColor{100, 76, 143}},
     {"fra", QColor{0, 48, 143}},
@@ -19,7 +19,7 @@ static std::unordered_map<std::string, QColor> colourMap = {
     {"yue", QColor{173, 31, 90}},
 };
 
-static std::unordered_map<std::string, QString> languageMap = {
+std::unordered_map<std::string, QString> languageMap = {
     {"cmn",
      QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CMN_STRING)},
     {"eng",
@@ -34,7 +34,7 @@ static std::unordered_map<std::string, QString> languageMap = {
      QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::ZHO_STRING)},
 };
 
-static QMap<QString, std::string> reverseLanguageMap = {
+QMap<QString, std::string> reverseLanguageMap = {
     {QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CMN_STRING),
      "cmn"},
     {QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::ENG_STRING),
@@ -49,7 +49,7 @@ static QMap<QString, std::string> reverseLanguageMap = {
      "zho"},
 };
 
-static QMap<SearchParameters, std::string> searchParameterMap = {
+QMap<SearchParameters, std::string> searchParameterMap = {
     {SearchParameters::SIMPLIFIED,
      QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::SC_STRING)
          .toStdString()},

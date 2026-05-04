@@ -45,6 +45,8 @@
 #include <QProgressDialog>
 #include <QSettings>
 #include <QSpacerItem>
+#include <QSqlDatabase>
+#include <QStyle>
 #include <QTimer>
 #include <QTranslator>
 #include <QUrl>

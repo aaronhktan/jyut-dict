@@ -6,12 +6,14 @@
 #include "logic/entry/entryphoneticoptions.h"
 
 #include <QObject>
-#include <QVariant>
 
+#include <optional>
 #include <ostream>
 #include <span>
 #include <string>
 #include <vector>
+
+class QVariant;
 
 // The Entry class is very important, as it is the representation
 // of an entry in the dictionary.
@@ -21,9 +23,11 @@
 class Entry : public QObject
 {
 public:
-    Entry() = default;
-    Entry(const std::string &simplified, const std::string &traditional,
-          const std::string &jyutping, const std::string &pinyin,
+    explicit Entry() = default;
+    Entry(const std::string &simplified,
+          const std::string &traditional,
+          const std::string &jyutping,
+          const std::string &pinyin,
           const std::vector<DefinitionsSet> &definitions);
 
     // Must define rule-of-five functions to allow registering this class
@@ -104,26 +108,16 @@ private:
     std::string _colouredPreferTraditional;
 
     std::string _jyutping;
-    std::string _yale;
-    bool _isYaleValid = false;
-    std::string _cantoneseIPA;
-    bool _isCantoneseIPAValid = false;
-
-    bool _isJyutpingNumbersValid = false;
-    std::vector<uint8_t> _jyutpingNumbers;
+    std::optional<std::string> _yale = std::nullopt;
+    std::optional<std::string> _cantoneseIPA = std::nullopt;
+    std::optional<std::vector<uint8_t>> _jyutpingNumbers = std::nullopt;
 
     std::string _pinyin;
-    std::string _prettyPinyin;
-    bool _isPrettyPinyinValid = false;
-    std::string _numberedPinyin;
-    bool _isNumberedPinyinValid = false;
-    std::string _zhuyin;
-    bool _isZhuyinValid = false;
-    std::string _mandarinIPA;
-    bool _isMandarinIPAValid = false;
-
-    bool _isPinyinNumbersValid = false;
-    std::vector<uint8_t> _pinyinNumbers;
+    std::optional<std::string> _prettyPinyin = std::nullopt;
+    std::optional<std::string> _numberedPinyin = std::nullopt;
+    std::optional<std::string> _zhuyin = std::nullopt;
+    std::optional<std::string> _mandarinIPA = std::nullopt;
+    std::optional<std::vector<uint8_t>> _pinyinNumbers = std::nullopt;
 
     std::vector<DefinitionsSet> _definitions;
     std::string _definitionSnippet;
