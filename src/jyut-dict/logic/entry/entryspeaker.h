@@ -13,7 +13,7 @@ extern "C" {
 #endif
 
 #ifdef Q_OS_LINUX
-class QFutureWatcher;
+#include <QFutureWatcher>
 #endif
 
 class QString;

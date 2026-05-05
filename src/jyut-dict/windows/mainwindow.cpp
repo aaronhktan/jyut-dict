@@ -444,21 +444,23 @@ void MainWindow::setStyle([[maybe_unused]] bool use_dark)
     if (!use_dark) {
         QPalette palette = QApplication::style()->standardPalette();
         palette.setColor(QPalette::Window,
-                         QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
-                                CONTENT_BACKGROUND_COLOUR_LIGHT_G,
-                                CONTENT_BACKGROUND_COLOUR_LIGHT_B});
+                         QColor{Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                                Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                                Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_B});
         palette.setColor(QPalette::Base, Qt::white);
-        palette.setColor(QPalette::AlternateBase, QColor{HEADER_BACKGROUND_COLOUR_LIGHT_R,
-                                                         HEADER_BACKGROUND_COLOUR_LIGHT_G,
-                                                         HEADER_BACKGROUND_COLOUR_LIGHT_B});
+        palette.setColor(QPalette::AlternateBase,
+                         QColor{Utils::HEADER_BACKGROUND_COLOUR_LIGHT_R,
+                                Utils::HEADER_BACKGROUND_COLOUR_LIGHT_G,
+                                Utils::HEADER_BACKGROUND_COLOUR_LIGHT_B});
         palette.setColor(QPalette::Highlight,
-                         QColor{LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
-                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
-                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_B});
-        palette.setColor(QPalette::Inactive, QPalette::Highlight,
-                         QColor{LIST_ITEM_INACTIVE_COLOUR_LIGHT_R,
-                                LIST_ITEM_INACTIVE_COLOUR_LIGHT_G,
-                                LIST_ITEM_INACTIVE_COLOUR_LIGHT_B});
+                         QColor{Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
+                                Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
+                                Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT_B});
+        palette.setColor(QPalette::Inactive,
+                         QPalette::Highlight,
+                         QColor{Utils::LIST_ITEM_INACTIVE_COLOUR_LIGHT_R,
+                                Utils::LIST_ITEM_INACTIVE_COLOUR_LIGHT_G,
+                                Utils::LIST_ITEM_INACTIVE_COLOUR_LIGHT_B});
         qApp->setPalette(palette);
         setStyleSheet("");
     } else {
@@ -466,16 +468,19 @@ void MainWindow::setStyle([[maybe_unused]] bool use_dark)
         QColor gray{128, 128, 128};
 
         QPalette darkPalette;
-        darkPalette.setColor(QPalette::Window, QColor{CONTENT_BACKGROUND_COLOUR_DARK_R,
-                                                      CONTENT_BACKGROUND_COLOUR_DARK_G,
-                                                      CONTENT_BACKGROUND_COLOUR_DARK_B});
+        darkPalette.setColor(QPalette::Window,
+                             QColor{Utils::CONTENT_BACKGROUND_COLOUR_DARK_R,
+                                    Utils::CONTENT_BACKGROUND_COLOUR_DARK_G,
+                                    Utils::CONTENT_BACKGROUND_COLOUR_DARK_B});
         darkPalette.setColor(QPalette::WindowText, Qt::white);
-        darkPalette.setColor(QPalette::Base, QColor{BACKGROUND_COLOUR_DARK_R,
-                                                    BACKGROUND_COLOUR_DARK_G,
-                                                    BACKGROUND_COLOUR_DARK_B});
-        darkPalette.setColor(QPalette::AlternateBase, QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
-                                                             HEADER_BACKGROUND_COLOUR_DARK_G,
-                                                             HEADER_BACKGROUND_COLOUR_DARK_B});
+        darkPalette.setColor(QPalette::Base,
+                             QColor{Utils::BACKGROUND_COLOUR_DARK_R,
+                                    Utils::BACKGROUND_COLOUR_DARK_G,
+                                    Utils::BACKGROUND_COLOUR_DARK_B});
+        darkPalette.setColor(QPalette::AlternateBase,
+                             QColor{Utils::HEADER_BACKGROUND_COLOUR_DARK_R,
+                                    Utils::HEADER_BACKGROUND_COLOUR_DARK_G,
+                                    Utils::HEADER_BACKGROUND_COLOUR_DARK_B});
         darkPalette.setColor(QPalette::ToolTipBase, darkGray);
         darkPalette.setColor(QPalette::ToolTipText, Qt::white);
         darkPalette.setColor(QPalette::Text, Qt::white);
@@ -483,17 +488,17 @@ void MainWindow::setStyle([[maybe_unused]] bool use_dark)
         darkPalette.setColor(QPalette::ButtonText, Qt::white);
         darkPalette.setColor(QPalette::Link, Qt::blue);
         darkPalette.setColor(QPalette::Highlight,
-                             QColor{LIST_ITEM_ACTIVE_COLOUR_DARK_R,
-                                    LIST_ITEM_ACTIVE_COLOUR_DARK_G,
-                                    LIST_ITEM_ACTIVE_COLOUR_DARK_B});
+                             QColor{Utils::LIST_ITEM_ACTIVE_COLOUR_DARK_R,
+                                    Utils::LIST_ITEM_ACTIVE_COLOUR_DARK_G,
+                                    Utils::LIST_ITEM_ACTIVE_COLOUR_DARK_B});
         darkPalette.setColor(QPalette::HighlightedText, Qt::white);
 
         darkPalette.setColor(QPalette::Active, QPalette::Button, gray.darker());
         darkPalette.setColor(QPalette::Inactive,
                              QPalette::Highlight,
-                             QColor{LIST_ITEM_INACTIVE_COLOUR_DARK_R,
-                                    LIST_ITEM_INACTIVE_COLOUR_DARK_G,
-                                    LIST_ITEM_INACTIVE_COLOUR_DARK_B});
+                             QColor{Utils::LIST_ITEM_INACTIVE_COLOUR_DARK_R,
+                                    Utils::LIST_ITEM_INACTIVE_COLOUR_DARK_G,
+                                    Utils::LIST_ITEM_INACTIVE_COLOUR_DARK_B});
         darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, gray);
         darkPalette.setColor(QPalette::Disabled, QPalette::WindowText, gray);
         darkPalette.setColor(QPalette::Disabled, QPalette::Text, gray);

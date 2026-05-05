@@ -190,12 +190,13 @@ void SearchLineEdit::setStyle(bool use_dark)
 #endif
 
 #ifndef Q_OS_MAC
-    QColor borderColour = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
-                                            HEADER_BACKGROUND_COLOUR_DARK_G,
-                                            HEADER_BACKGROUND_COLOUR_DARK_B}
-                                   : QColor{HEADER_BACKGROUND_COLOUR_LIGHT_R,
-                                            HEADER_BACKGROUND_COLOUR_LIGHT_G,
-                                            HEADER_BACKGROUND_COLOUR_LIGHT_B};
+    QColor borderColour = use_dark
+                              ? QColor{Utils::HEADER_BACKGROUND_COLOUR_DARK_R,
+                                       Utils::HEADER_BACKGROUND_COLOUR_DARK_G,
+                                       Utils::HEADER_BACKGROUND_COLOUR_DARK_B}
+                              : QColor{Utils::HEADER_BACKGROUND_COLOUR_LIGHT_R,
+                                       Utils::HEADER_BACKGROUND_COLOUR_LIGHT_G,
+                                       Utils::HEADER_BACKGROUND_COLOUR_LIGHT_B};
 #endif
 
     QIcon search = QIcon{":/images/search.png"};

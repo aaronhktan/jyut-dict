@@ -1,7 +1,14 @@
 #ifndef QUERYPARSEUTILS_H
 #define QUERYPARSEUTILS_H
 
+#include <QtSystemDetection>
+
 #include <vector>
+
+#ifdef Q_OS_LINUX
+#include "logic/database/sqluserhistoryutils.h"
+#include <string>
+#endif
 
 class Entry;
 class SourceSentence;
