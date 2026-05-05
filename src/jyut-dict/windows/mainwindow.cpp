@@ -492,6 +492,9 @@ void MainWindow::setStyle([[maybe_unused]] bool use_dark)
                                     Utils::LIST_ITEM_ACTIVE_COLOUR_DARK_G,
                                     Utils::LIST_ITEM_ACTIVE_COLOUR_DARK_B});
         darkPalette.setColor(QPalette::HighlightedText, Qt::white);
+#ifdef Q_OS_LINUX
+        darkPalette.setColor(QPalette::PlaceholderText, Qt::lightGray);
+#endif
 
         darkPalette.setColor(QPalette::Active, QPalette::Button, gray.darker());
         darkPalette.setColor(QPalette::Inactive,
