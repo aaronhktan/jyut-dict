@@ -57,7 +57,7 @@ void ViewHistoryTab::changeEvent(QEvent *event)
 void ViewHistoryTab::setupUI(void)
 {
     _clearAllViewHistoryButton = new QPushButton{this};
-    connect(_clearAllViewHistoryButton, &QPushButton::clicked, this, [=, this]() {
+    connect(_clearAllViewHistoryButton, &QPushButton::clicked, this, [&] {
         _sqlHistoryUtils->clearAllViewHistory();
     });
 

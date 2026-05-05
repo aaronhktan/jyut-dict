@@ -75,7 +75,7 @@ void DictionaryTab::setupUI()
     _list->setFixedWidth(200);
     _add = new QPushButton{this};
     _findMore = new QPushButton{this};
-    connect(_findMore, &QPushButton::clicked, this, [&]() {
+    connect(_findMore, &QPushButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::DICTIONARY_DOWNLOAD_LINK});
     });
     _groupbox = new QGroupBox{this};
@@ -301,7 +301,7 @@ void DictionaryTab::addDictionary(const QString &dictionaryFile)
                 }
             });
 
-    std::ignore = QtConcurrent::run([this, dictionaryFile]() {
+    std::ignore = QtConcurrent::run([dictionaryFile, this] {
         QSqlDatabase db = _manager->getDatabase();
         _utils->addSource(db,
                           dictionaryFile.toStdString(),
@@ -341,7 +341,7 @@ void DictionaryTab::forceAddDictionary(const QString &dictionaryFile)
     connect(_utils.get(),
             &SQLDatabaseUtils::totalToDelete,
             this,
-            [&](int numToDelete) {
+            [&](const int numToDelete) {
                 _dialog->setRange(0, numToDelete + 1);
                 _dialog->setLabelText(
                     QString{tr("Deleted entry 0 of %1")}.arg(numToDelete));
@@ -350,7 +350,7 @@ void DictionaryTab::forceAddDictionary(const QString &dictionaryFile)
     connect(_utils.get(),
             &SQLDatabaseUtils::deletionProgress,
             this,
-            [&](int deleted, int total) {
+            [&](const int deleted, const int total) {
                 _dialog->setLabelText(
                     QString{tr("Deleted entry %1 of %2")}.arg(deleted).arg(
                         total));
@@ -390,7 +390,7 @@ void DictionaryTab::forceAddDictionary(const QString &dictionaryFile)
                 }
             });
 
-    std::ignore = QtConcurrent::run([this, dictionaryFile]() {
+    std::ignore = QtConcurrent::run([dictionaryFile, this] {
         QSqlDatabase db = _manager->getDatabase();
         _utils->addSource(db,
                           dictionaryFile.toStdString(),
@@ -476,7 +476,7 @@ void DictionaryTab::removeDictionary(SourceMetadata metadata)
                 });
             });
 
-    std::ignore = QtConcurrent::run([this, metadata]() {
+    std::ignore = QtConcurrent::run([metadata, this] {
         QSqlDatabase db = _manager->getDatabase();
         _utils->removeSource(db,
                              metadata.getName(),

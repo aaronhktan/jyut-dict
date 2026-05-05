@@ -377,7 +377,7 @@ void SearchLineEdit::addSearchTermToHistory(SearchParameters parameters) const
     _searchHistoryDelayTimer->stop();
     disconnect(_searchHistoryDelayTimer, nullptr, this, nullptr);
     _searchHistoryDelayTimer->setSingleShot(true);
-    connect(_searchHistoryDelayTimer, &QTimer::timeout, this, [=, this]() {
+    connect(_searchHistoryDelayTimer, &QTimer::timeout, this, [parameters, this] {
         if (!text().isEmpty()) {
             _sqlHistoryUtils->addSearchToHistory(text().toStdString(),
                                                  static_cast<int>(parameters));

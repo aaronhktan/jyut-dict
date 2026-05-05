@@ -197,7 +197,7 @@ void FavouriteSplitter::handleDoubleClick(const QModelIndex &selection)
 
     prepareEntry(entry);
 
-    QTimer::singleShot(50, this, [&]() {
+    QTimer::singleShot(50, this, [entry, this] {
         EntryScrollArea *area = new EntryScrollArea{_sqlUserUtils, _manager, nullptr};
         area->setParent(this, Qt::Window);
         area->setEntry(entry);

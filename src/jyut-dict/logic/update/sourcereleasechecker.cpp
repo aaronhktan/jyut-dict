@@ -52,7 +52,7 @@ void SourceReleaseChecker::checkForNewUpdate()
         QNetworkRequest request{QUrl{u.c_str()}};
         QNetworkReply *reply = _networkManager->get(request);
         _replies.emplace(reply);
-        connect(reply, &QNetworkReply::finished, this, [this, u, reply]() {
+        connect(reply, &QNetworkReply::finished, this, [u, reply, this] {
             if (reply->error() == QNetworkReply::NoError) {
                 parseReply(reply);
             } else {
@@ -70,7 +70,7 @@ void SourceReleaseChecker::checkForNewUpdate()
         });
 
         // Time out after 15 seconds
-        QTimer::singleShot(15000, reply, [this, u, reply]() {
+        QTimer::singleShot(15000, reply, [u, reply, this] {
             _sourceUpdateURLs.erase(u);
             if (_sourceUpdateURLs.empty()) {
                 emit foundUpdate(_updates);

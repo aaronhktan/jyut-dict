@@ -26,8 +26,8 @@
 EntrySpeaker::EntrySpeaker()
     : QObject{}
     , _tts{new QTextToSpeech}
+    , _engine{(ma_engine *) malloc(sizeof(*_engine))}
 {
-    _engine = (ma_engine *) malloc(sizeof(*_engine));
     ma_result result = ma_engine_init(NULL, _engine);
     if (result != MA_SUCCESS) {
         std::cerr << "Failed to initialize miniaudio engine!" << std::endl;
@@ -39,7 +39,7 @@ EntrySpeaker::EntrySpeaker()
 
 #ifdef Q_OS_LINUX
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
-    QFuture<bool> future = QtConcurrent::run([=, this]() {
+    QFuture<bool> future = QtConcurrent::run([&] {
         KZip zip{getBundleAudioPath() + "audio.zip"};
         if (!zip.open(QIODevice::ReadOnly)) {
             std::cerr << "Failed to read audio zip file!" << std::endl;
@@ -250,7 +250,11 @@ int EntrySpeaker::speak(const QLocale::Language &language,
             MandarinUtils::segmentPinyin(mutableString, syllables);
         }
 
-        std::ignore = QtConcurrent::run([=, this]() {
+        std::ignore = QtConcurrent::run([backend,
+                                         voice,
+                                         languageName,
+                                         syllables,
+                                         this] {
 #ifdef Q_OS_LINUX
             while (_boolReturnWatcher && _boolReturnWatcher->isRunning()) {
                 std::this_thread::sleep_for(std::chrono::milliseconds{50});

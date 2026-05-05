@@ -133,14 +133,14 @@ void EntryScrollArea::setEntry(const Entry &entry)
     disconnect(_updateUITimer, nullptr, this, nullptr);
 
     _updateUITimer->setInterval(25);
-    QObject::connect(_updateUITimer, &QTimer::timeout, this, [=, this]() {
+    QObject::connect(_updateUITimer, &QTimer::timeout, this, [entry, this] {
         if (_enableUIUpdate) {
             _updateUITimer->stop();
             disconnect(_updateUITimer, nullptr, this, nullptr);
             _scrollAreaWidget->setEntry(entry);
             _scrollAreaWidget->setVisible(false);
-            int largerHeight = std::max(_scrollAreaWidget->sizeHint().height(),
-                                        height());
+            const int largerHeight
+                = std::max(_scrollAreaWidget->sizeHint().height(), height());
             _scrollAreaWidget->resize(width()
                                           - (verticalScrollBar()->isVisible()
                                                  ? verticalScrollBar()->width()
@@ -187,7 +187,7 @@ void EntryScrollArea::stallEntryUIUpdate(void)
     disconnect(_enableUIUpdateTimer, nullptr, this, nullptr);
     _enableUIUpdateTimer->setInterval(200);
     _enableUIUpdateTimer->setSingleShot(true);
-    QObject::connect(_enableUIUpdateTimer, &QTimer::timeout, this, [=, this]() {
+    QObject::connect(_enableUIUpdateTimer, &QTimer::timeout, this, [&] {
         _enableUIUpdate = true;
     });
     _enableUIUpdateTimer->start();

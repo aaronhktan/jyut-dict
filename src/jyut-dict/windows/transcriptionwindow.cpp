@@ -579,7 +579,7 @@ void TranscriptionWindow::setTranscriptionLang(void)
     _lineEdit->setFocus();
 
     _wrapper = std::make_unique<TranscriberWrapper>(locale);
-    QTimer::singleShot(1000, this, [&]() {
+    QTimer::singleShot(1000, this, [&] {
         _lineEdit->setFocus();
         _wrapper->subscribe(static_cast<IInputVolumeSubscriber *>(this));
         _wrapper->subscribe(static_cast<ITranscriptionResultSubscriber *>(this));

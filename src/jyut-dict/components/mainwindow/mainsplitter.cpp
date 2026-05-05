@@ -197,7 +197,7 @@ void MainSplitter::prepareEntry(Entry &entry, bool addToHistory) const
         _addToHistoryTimer->stop();
         disconnect(_addToHistoryTimer, nullptr, this, nullptr);
         _addToHistoryTimer->setSingleShot(true);
-        connect(_addToHistoryTimer, &QTimer::timeout, this, [=, this]() {
+        connect(_addToHistoryTimer, &QTimer::timeout, this, [entry, this] {
             _sqlHistoryUtils->addViewToHistory(entry);
         });
         _addToHistoryTimer->start(1000);
@@ -271,7 +271,7 @@ void MainSplitter::handleDoubleClick(const QModelIndex &selection)
 
     prepareEntry(entry, _addToHistory);
 
-    QTimer::singleShot(50, this, [=, this]() {
+    QTimer::singleShot(50, this, [entry, this] {
         EntryScrollArea *area = new EntryScrollArea{_sqlUserUtils,
                                                     _manager,
                                                     nullptr};

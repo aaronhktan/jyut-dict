@@ -28,21 +28,21 @@ void TranscriptionErrorDialog::setupUI()
     QAbstractButton *microphonePerms = addButton(tr("Microphone access..."),
                                                  QMessageBox::HelpRole);
     disconnect(microphonePerms, nullptr, this, nullptr);
-    connect(microphonePerms, &QAbstractButton::clicked, this, [=, this]() {
+    connect(microphonePerms, &QAbstractButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::PRIVACY_MICROPHONE_LINK});
     });
 
     QAbstractButton *speechPerms = addButton(tr("Dictation access..."),
                                              QMessageBox::HelpRole);
     disconnect(speechPerms, nullptr, this, nullptr);
-    connect(speechPerms, &QAbstractButton::clicked, this, [=, this]() {
+    connect(speechPerms, &QAbstractButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::PRIVACY_SPEECH_LINK});
     });
 #elif defined(Q_OS_WIN)
     QAbstractButton *microphonePerms = addButton(tr("Keyboard languages..."),
                                                  QMessageBox::HelpRole);
     disconnect(microphonePerms, nullptr, this, nullptr);
-    connect(microphonePerms, &QAbstractButton::clicked, this, [=, this]() {
+    connect(microphonePerms, &QAbstractButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::TTS_LINK});
     });
 #endif

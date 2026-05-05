@@ -159,7 +159,6 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
 
         textLayout->endLayout();
         delete textLayout;
-        painter->restore();
     } else {
         font.setPixelSize(bodyFontSize);
         painter->setFont(font);

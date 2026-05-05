@@ -129,12 +129,12 @@ void AboutWindow::setupUI()
             });
 
     _websiteButton = new QPushButton{tr("Visit website..."), this};
-    connect(_websiteButton, &QPushButton::clicked, this, [&]() {
+    connect(_websiteButton, &QPushButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::WEBSITE_LINK});
     });
 
     _githubButton = new QPushButton{tr("View on Github..."), this};
-    connect(_githubButton, &QPushButton::clicked, this, [&]() {
+    connect(_githubButton, &QPushButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::GITHUB_LINK});
     });
 

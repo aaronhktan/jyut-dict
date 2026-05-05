@@ -42,9 +42,7 @@ void SearchTab::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() {
-            _paletteRecentlyChanged = false;
-        });
+        QTimer::singleShot(10, this, [&] { _paletteRecentlyChanged = false; });
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }
@@ -239,7 +237,7 @@ void SearchTab::setStyle(bool use_dark)
 
 void SearchTab::initializeSearchAutoDetectCheckbox(QCheckBox &checkbox)
 {
-    connect(&checkbox, &QCheckBox::checkStateChanged, this, [&]() {
+    connect(&checkbox, &QCheckBox::checkStateChanged, this, [&] {
         _settings->setValue("Search/autoDetectLanguage", checkbox.checkState());
         _settings->sync();
         emit triggerSearch();
@@ -255,7 +253,7 @@ void SearchTab::initializeFuzzyJyutping(QWidget &widget)
     static_cast<QGridLayout *>(widget.layout())
         ->addWidget(_fuzzyJyutpingDescription, 1, 0, 1, -1);
 
-    connect(_fuzzyJyutpingCheckbox, &QCheckBox::checkStateChanged, this, [&]() {
+    connect(_fuzzyJyutpingCheckbox, &QCheckBox::checkStateChanged, this, [&] {
         _settings->setValue("Search/fuzzyJyutping",
                             _fuzzyJyutpingCheckbox->checkState());
         _settings->sync();
@@ -276,7 +274,7 @@ void SearchTab::initializeDangerousFuzzyJyutping(QWidget &widget)
     connect(_dangerousFuzzyJyutpingCheckbox,
             &QCheckBox::checkStateChanged,
             this,
-            [&]() {
+            [&] {
                 _settings
                     ->setValue("Search/dangerousFuzzyJyutping",
                                _dangerousFuzzyJyutpingCheckbox->checkState());
@@ -293,7 +291,7 @@ void SearchTab::initializeFuzzyPinyin(QWidget &widget)
     static_cast<QGridLayout *>(widget.layout())
         ->addWidget(_fuzzyPinyinDescription, 1, 0, 1, -1);
 
-    connect(_fuzzyPinyinCheckbox, &QCheckBox::checkStateChanged, this, [&]() {
+    connect(_fuzzyPinyinCheckbox, &QCheckBox::checkStateChanged, this, [&] {
         _settings->setValue("Search/fuzzyPinyin",
                             _fuzzyPinyinCheckbox->checkState());
         _settings->sync();

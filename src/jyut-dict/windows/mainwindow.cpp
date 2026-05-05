@@ -108,7 +108,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Connect signals to tell the user that database migration has occurred
     _utils = std::make_unique<SQLDatabaseUtils>();
-    connect(_utils.get(), &SQLDatabaseUtils::migratingDatabase, this, [&]() {
+    connect(_utils.get(), &SQLDatabaseUtils::migratingDatabase, this, [&] {
         _databaseMigrating = true;
         notifyDatabaseMigration();
     });
@@ -215,9 +215,9 @@ MainWindow::MainWindow(QWidget *parent)
                         .toBool();
     if (!welcomed) {
 #ifdef Q_OS_LINUX
-        QTimer::singleShot(500, this, [&]() { openWelcomeWindow(); });
+        QTimer::singleShot(500, this, [&] { openWelcomeWindow(); });
 #else
-        QTimer::singleShot(200, this, [&]() { openWelcomeWindow(); });
+        QTimer::singleShot(200, this, [&] { openWelcomeWindow(); });
 #endif
     }
 
@@ -228,7 +228,7 @@ MainWindow::MainWindow(QWidget *parent)
     _checker = new JyutDictionaryReleaseChecker{
         this, /* preConnectEnabled */ updateNotificationEnabled};
     if (updateNotificationEnabled) {
-        QTimer::singleShot(1500, this, [&]() {
+        QTimer::singleShot(1500, this, [&] {
             checkForUpdate(/* showProgress = */ false);
         });
     }
@@ -240,14 +240,14 @@ MainWindow::MainWindow(QWidget *parent)
               .toBool();
     _sourceChecker = new SourceReleaseChecker{_manager, this};
     if (sourceUpdateNotificationEnabled) {
-        QTimer::singleShot(1500, this, [&]() {
+        QTimer::singleShot(1500, this, [&] {
             checkForSourceUpdate(/* showProgress = */ false);
         });
     }
 
     // Perform database migration if needed
-    QTimer::singleShot(1000, this, [&]() {
-        std::ignore = QtConcurrent::run([this]() {
+    QTimer::singleShot(1000, this, [&] {
+        std::ignore = QtConcurrent::run([&] {
             QSqlDatabase dictionaryDB = _manager->getDatabase();
             _utils->updateDatabase(dictionaryDB);
         });
@@ -893,7 +893,12 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
 {
     if (updateAvailable || showIfNoUpdate) {
         if (_welcomeWindow || _databaseMigrationDialog) {
-            _dialogQueue.push_back([=, this]() {
+            _dialogQueue.push_back([updateAvailable,
+                                    versionNumber,
+                                    url,
+                                    description,
+                                    showIfNoUpdate,
+                                    this] {
                 notifyUpdateAvailable(updateAvailable,
                                       versionNumber,
                                       url,
@@ -1138,29 +1143,28 @@ void MainWindow::createActions(void)
 
     _favouriteCurrentEntryAction = new QAction{this};
     _favouriteCurrentEntryAction->setShortcut(QKeySequence{"Ctrl+S"});
-    connect(_favouriteCurrentEntryAction, &QAction::triggered, this, [&]() {
+    connect(_favouriteCurrentEntryAction, &QAction::triggered, this, [&] {
         emit favouriteCurrentEntry();
     });
     _entryMenu->addAction(_favouriteCurrentEntryAction);
 
     _shareCurrentEntryAction = new QAction{this};
     _shareCurrentEntryAction->setShortcut(QKeySequence{"Ctrl+P"});
-    connect(_shareCurrentEntryAction, &QAction::triggered, this, [&]() {
+    connect(_shareCurrentEntryAction, &QAction::triggered, this, [&] {
         emit shareCurrentEntry();
     });
     _entryMenu->addAction(_shareCurrentEntryAction);
 
     _openCurrentEntryInNewWindowAction = new QAction{this};
     _openCurrentEntryInNewWindowAction->setShortcut(QKeySequence{"Ctrl+N"});
-    connect(_openCurrentEntryInNewWindowAction,
-            &QAction::triggered,
-            this,
-            [&]() { emit openCurrentEntryInNewWindow(); });
+    connect(_openCurrentEntryInNewWindowAction, &QAction::triggered, this, [&] {
+        emit openCurrentEntryInNewWindow();
+    });
     _entryMenu->addAction(_openCurrentEntryInNewWindowAction);
 
     _magnifyCurrentEntryAction = new QAction{this};
     _magnifyCurrentEntryAction->setShortcut(QKeySequence{"Ctrl+G"});
-    connect(_magnifyCurrentEntryAction, &QAction::triggered, this, [&]() {
+    connect(_magnifyCurrentEntryAction, &QAction::triggered, this, [&] {
         emit magnifyCurrentEntry();
     });
     _entryMenu->addAction(_magnifyCurrentEntryAction);
@@ -1169,7 +1173,7 @@ void MainWindow::createActions(void)
 
     _viewAllSentencesAction = new QAction{this};
     _viewAllSentencesAction->setShortcut(QKeySequence{"Ctrl+T"});
-    connect(_viewAllSentencesAction, &QAction::triggered, this, [&]() {
+    connect(_viewAllSentencesAction, &QAction::triggered, this, [&] {
         emit viewAllSentences();
     });
     _entryMenu->addAction(_viewAllSentencesAction);
@@ -1178,21 +1182,21 @@ void MainWindow::createActions(void)
 
     _searchWordsBeginningAction = new QAction{this};
     _searchWordsBeginningAction->setShortcut(QKeySequence{"Ctrl+U"});
-    connect(_searchWordsBeginningAction, &QAction::triggered, this, [&]() {
+    connect(_searchWordsBeginningAction, &QAction::triggered, this, [&] {
         emit searchEntriesBeginning();
     });
     _entryMenu->addAction(_searchWordsBeginningAction);
 
     _searchWordsContainingAction = new QAction{this};
     _searchWordsContainingAction->setShortcut(QKeySequence{"Ctrl+I"});
-    connect(_searchWordsContainingAction, &QAction::triggered, this, [&]() {
+    connect(_searchWordsContainingAction, &QAction::triggered, this, [&] {
         emit searchEntriesContaining();
     });
     _entryMenu->addAction(_searchWordsContainingAction);
 
     _searchWordsEndingAction = new QAction{this};
     _searchWordsEndingAction->setShortcut(QKeySequence{"Ctrl+O"});
-    connect(_searchWordsEndingAction, &QAction::triggered, this, [&]() {
+    connect(_searchWordsEndingAction, &QAction::triggered, this, [&] {
         emit searchEntriesEnding();
     });
     _entryMenu->addAction(_searchWordsEndingAction);
@@ -1240,13 +1244,13 @@ void MainWindow::createActions(void)
     _windowMenu->addAction(_bringAllToFrontAction);
 
     _helpAction = new QAction{this};
-    connect(_helpAction, &QAction::triggered, this, []() {
+    connect(_helpAction, &QAction::triggered, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::GITHUB_LINK});
     });
     _helpMenu->addAction(_helpAction);
 
     _updateAction = new QAction{this};
-    connect(_updateAction, &QAction::triggered, [&]() {
+    connect(_updateAction, &QAction::triggered, [&] {
         checkForUpdate(/* showProgress = */ true);
     });
     _helpMenu->addAction(_updateAction);
@@ -1556,7 +1560,7 @@ void MainWindow::openWelcomeWindow(void)
     _welcomeWindow->setFocus();
     _welcomeWindow->show();
 
-    connect(_welcomeWindow, &WelcomeWindow::welcomeCompleted, this, [&]() {
+    connect(_welcomeWindow, &WelcomeWindow::welcomeCompleted, this, [&] {
         QTimer::singleShot(100, this, [this] {
             // Dialogs may be suppressed while the welcome window is visible,
             // so check whether they need to be shown (it's assumed that each
@@ -1750,7 +1754,7 @@ void MainWindow::checkForSourceUpdate(bool showProgress)
 void MainWindow::notifyDatabaseMigration(void)
 {
     if (_welcomeWindow) {
-        _dialogQueue.push_back([this]() { notifyDatabaseMigration(); });
+        _dialogQueue.push_back([&] { notifyDatabaseMigration(); });
         return;
     } else if (!_databaseMigrating) {
         if (!_dialogQueue.empty()) {

@@ -92,17 +92,17 @@ void ContactTab::setupUI()
     _messageLabel = new QLabel{_box};
 
     _emailButton = new QPushButton{_box};
-    connect(_emailButton, &QPushButton::clicked, this, [&]() {
+    connect(_emailButton, &QPushButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::AUTHOR_EMAIL});
     });
 
     _donateButton = new QPushButton{_box};
-    connect(_donateButton, &QPushButton::clicked, this, [&]() {
+    connect(_donateButton, &QPushButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::DONATE_LINK});
     });
 
     _githubButton = new QPushButton{_box};
-    connect(_githubButton, &QPushButton::clicked, this, [&]() {
+    connect(_githubButton, &QPushButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::AUTHOR_GITHUB_LINK});
     });
 

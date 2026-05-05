@@ -64,7 +64,7 @@ void JyutDictionaryReleaseChecker::checkForNewUpdate()
             this,
             &JyutDictionaryReleaseChecker::parseReply);
     _reply = _manager->get(_request);
-    QTimer::singleShot(15000, this, [&]() {
+    QTimer::singleShot(15000, this, [&] {
         emit foundUpdate(IUpdateChecker::AppManifestMetadata{
             .updateAvailable = false,
             .versionNumber = std::nullopt,

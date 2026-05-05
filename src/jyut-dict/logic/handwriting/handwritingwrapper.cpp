@@ -32,7 +32,7 @@ HandwritingWrapper::HandwritingWrapper(Handwriting::Script script)
     connect(_boolReturnWatcher,
             &QFutureWatcher<Utils::Result<bool>>::finished,
             this,
-            [=, this]() {
+            [&] {
                 _progressDialog->reset();
                 Utils::Result<bool> result = _boolReturnWatcher->result();
                 if (std::system_error *e = std::get_if<std::system_error>(
@@ -41,7 +41,7 @@ HandwritingWrapper::HandwritingWrapper(Handwriting::Script script)
                 }
             });
     QFuture<Utils::Result<bool>> future = QtConcurrent::run(
-        [=, this]() { return copyModels(); });
+        [&] { return copyModels(); });
     _boolReturnWatcher->setFuture(future);
 
     setRecognizerScript(script);

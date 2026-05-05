@@ -235,11 +235,11 @@ void EntryActionWidget::refreshBookmarkButton(void)
 
     disconnect(_bookmarkButton, nullptr, this, nullptr);
     if (!_bookmarkButton->property("saved").toBool()) {
-        QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [=, this]() {
+        QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [&] {
             addEntryToFavourites(_entry);
         });
     } else {
-        QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [=, this]() {
+        QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [&] {
             removeEntryFromFavourites(_entry);
         });
     }

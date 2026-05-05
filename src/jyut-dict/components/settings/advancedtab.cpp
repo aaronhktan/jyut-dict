@@ -62,9 +62,7 @@ void AdvancedTab::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() {
-            _paletteRecentlyChanged = false;
-        });
+        QTimer::singleShot(10, this, [&] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -327,7 +325,7 @@ void AdvancedTab::setStyle(bool use_dark)
 
 void AdvancedTab::initializeUpdateCheckbox(QCheckBox &checkbox)
 {
-    connect(&checkbox, &QCheckBox::checkStateChanged, this, [&]() {
+    connect(&checkbox, &QCheckBox::checkStateChanged, this, [&] {
         _settings->setValue("Advanced/updateNotificationsEnabled",
                             checkbox.checkState());
         _settings->sync();
@@ -338,7 +336,7 @@ void AdvancedTab::initializeUpdateCheckbox(QCheckBox &checkbox)
 
 void AdvancedTab::initializeSourceUpdateCheckbox(QCheckBox &checkbox)
 {
-    connect(&checkbox, &QCheckBox::checkStateChanged, this, [&]() {
+    connect(&checkbox, &QCheckBox::checkStateChanged, this, [&] {
         _settings->setValue("Advanced/sourceUpdateNotificationsEnabled",
                             checkbox.checkState());
         _settings->sync();
@@ -352,7 +350,7 @@ void AdvancedTab::initializeForceDarkModeCheckbox(QCheckBox &checkbox)
 {
     setForceDarkModeCheckboxDefault(checkbox);
 
-    connect(&checkbox, &QCheckBox::checkStateChanged, this, [&]() {
+    connect(&checkbox, &QCheckBox::checkStateChanged, this, [&] {
         _settings->setValue("Advanced/forceDarkMode",
                             checkbox.checkState());
         _settings->sync();
@@ -401,7 +399,7 @@ void AdvancedTab::initializeMandarinTTSWidget(QWidget *widget)
     static_cast<QGridLayout *>(widget->layout())
         ->addWidget(_useMandarinGoogleOfflineSyllableTTSBackend, 0, 1, 1, 1);
 
-    connect(_useMandarinQtTTSBackend, &QRadioButton::clicked, this, [&]() {
+    connect(_useMandarinQtTTSBackend, &QRadioButton::clicked, this, [&] {
         setMandarinTTSSettings(TextToSpeech::SpeakerBackend::QT_TTS,
                                TextToSpeech::SpeakerVoice::NONE);
     });
@@ -418,7 +416,7 @@ void AdvancedTab::initializeMandarinTTSWidget(QWidget *widget)
     connect(_useMandarinGoogleOfflineSyllableTTSBackend,
             &QRadioButton::clicked,
             this,
-            [&]() { startAudioDownload(_mandarinTTSCallbacks); });
+            [&] { startAudioDownload(_mandarinTTSCallbacks); });
 
     setMandarinTTSWidgetDefault(widget);
 }
@@ -473,7 +471,7 @@ void AdvancedTab::initializeLanguageCombobox(QComboBox &combobox)
 
 void AdvancedTab::initializeResetButton(QPushButton &resetButton)
 {
-    connect(&resetButton, &QPushButton::clicked, this, [&]() {
+    connect(&resetButton, &QPushButton::clicked, this, [&] {
         ResetSettingsDialog *_message = new ResetSettingsDialog{this};
         if (_message->exec() == QMessageBox::Yes) {
             resetSettings(*_settings);
@@ -631,13 +629,13 @@ void AdvancedTab::exportDictionaryDatabase(void)
     connect(_boolReturnWatcher,
             &QFutureWatcher<bool>::finished,
             this,
-            [=, this]() {
+            [successText, failureText, this] {
                 _progressDialog->reset();
                 exportDatabaseResult(_boolReturnWatcher->result(),
                                      successText,
                                      failureText);
             });
-    QFuture<bool> future = QtConcurrent::run([=, this]() {
+    QFuture<bool> future = QtConcurrent::run([destinationFileName] {
         SQLDatabaseManager manager;
 
         // Do not attempt to replace database with itself
@@ -679,13 +677,13 @@ void AdvancedTab::exportUserDatabase(void)
     connect(_boolReturnWatcher,
             &QFutureWatcher<bool>::finished,
             this,
-            [=, this]() {
+            [successText, failureText, this] {
                 _progressDialog->reset();
                 exportDatabaseResult(_boolReturnWatcher->result(),
                                      successText,
                                      failureText);
             });
-    QFuture<bool> future = QtConcurrent::run([=, this]() {
+    QFuture<bool> future = QtConcurrent::run([destinationFileName] {
         SQLDatabaseManager manager;
 
         // Do not attempt to replace database with itself
@@ -736,13 +734,13 @@ void AdvancedTab::restoreBackedUpDictionaryDatabase(void)
     connect(_boolReturnWatcher,
             &QFutureWatcher<bool>::finished,
             this,
-            [=, this]() {
+            [successText, failureText, this] {
                 _progressDialog->reset();
                 restoreDatabaseResult(_boolReturnWatcher->result(),
                                       successText,
                                       failureText);
             });
-    QFuture<bool> future = QtConcurrent::run([]() {
+    QFuture<bool> future = QtConcurrent::run([] {
         SQLDatabaseManager manager;
         return manager.restoreBackedUpDictionaryDatabase();
     });
@@ -787,13 +785,13 @@ void AdvancedTab::restoreExportedDictionaryDatabase(void)
     connect(_boolReturnWatcher,
             &QFutureWatcher<bool>::finished,
             this,
-            [=, this]() {
+            [successText, failureText, this] {
                 _progressDialog->reset();
                 restoreDatabaseResult(_boolReturnWatcher->result(),
                                       successText,
                                       failureText);
             });
-    auto future = QtConcurrent::run([=, this]() {
+    auto future = QtConcurrent::run([sourceFileName] {
         SQLDatabaseManager manager;
 
         // Do not attempt to replace database with itself
@@ -843,13 +841,13 @@ void AdvancedTab::restoreExportedUserDatabase(void)
     connect(_boolReturnWatcher,
             &QFutureWatcher<bool>::finished,
             this,
-            [=, this]() {
+            [successText, failureText, this] {
                 _progressDialog->reset();
                 restoreDatabaseResult(_boolReturnWatcher->result(),
                                       successText,
                                       failureText);
             });
-    auto future = QtConcurrent::run([=, this]() {
+    auto future = QtConcurrent::run([sourceFileName] {
         SQLDatabaseManager manager;
 
         // Do not attempt to replace database with itself
@@ -924,12 +922,15 @@ void AdvancedTab::startAudioDownload(std::shared_ptr<TextToSpeechCallbacks> cbs)
     _downloader = new Downloader(url, zipFile, this);
 
     disconnect(_downloader, nullptr, this, nullptr);
-    connect(_downloader, &Downloader::downloaded, this, [=, this](QString outputPath) {
-        // Since the std::shared_ptr cbs goes out of scope once this function ends,
-        // it must be captured by value instead of by reference
-        unzipFile(outputPath, cbs);
-    });
-    connect(_downloader, &Downloader::error, this, [=, this](int error) {
+    connect(_downloader,
+            &Downloader::downloaded,
+            this,
+            [cbs, this](QString outputPath) {
+                // Since the std::shared_ptr cbs goes out of scope once this function ends,
+                // it must be captured by value instead of by reference
+                unzipFile(outputPath, cbs);
+            });
+    connect(_downloader, &Downloader::error, this, [cbs, this](int error) {
         _progressDialog->reset();
         downloadAudioResult(!error,
                             tr("Audio downloaded successfully!"),
@@ -987,7 +988,7 @@ void AdvancedTab::unzipFile(QString outputPath,
     _progressDialog->setLabelText(tr("Installing downloaded files..."));
 
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
-    QFuture<bool> future = QtConcurrent::run([=, this]() {
+    QFuture<bool> future = QtConcurrent::run([outputPath, outputFolder, this] {
         KZip zip{outputPath};
         if (!zip.open(QIODevice::ReadOnly)) {
             return false;
@@ -998,7 +999,7 @@ void AdvancedTab::unzipFile(QString outputPath,
         return true;
     });
     _boolReturnWatcher->setFuture(future);
-    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=, this]() {
+    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [cbs, this] {
         // Since the std::shared_ptr cbs goes out of scope once this function ends,
         // it must be captured by value instead of by reference
         unzipComplete(static_cast<QFutureWatcher<bool> *>(sender())->result(),

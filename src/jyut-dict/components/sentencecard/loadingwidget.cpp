@@ -16,6 +16,10 @@
 #include <QTimer>
 #include <QVBoxLayout>
 
+namespace {
+constexpr QSize DEFAULT_SIZE{25, 25};
+}
+
 LoadingWidget::LoadingWidget(QWidget *parent)
     : QWidget{parent}
 {
@@ -88,7 +92,16 @@ void LoadingWidget::setStyle(bool use_dark)
     _movie = new QMovie{this};
     _movie->setFileName(use_dark ? ":/images/loading_inverted.gif"
                                  : ":/images/loading.gif");
-    _movie->setScaledSize(QSize{25, 25});
+    _movie->setScaledSize(DEFAULT_SIZE * devicePixelRatio());
     _movie->start();
+
+    auto pixelRatio = devicePixelRatio();
+    connect(_movie, &QMovie::frameChanged, this, [pixelRatio, this]() {
+        QPixmap pixmap{_movie->currentPixmap()};
+        pixmap.setDevicePixelRatio(pixelRatio);
+        _movieLabel->setPixmap(pixmap);
+    });
+
+    _movieLabel->setFixedSize(DEFAULT_SIZE);
     _movieLabel->setMovie(_movie);
 }
