@@ -4,7 +4,7 @@
 
 #include <QtSystemDetection>
 
-#ifdef Q_OS_LINUX
+#ifndef Q_OS_MAC
 #include <algorithm>
 #endif
 

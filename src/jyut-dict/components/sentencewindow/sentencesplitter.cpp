@@ -17,6 +17,9 @@
 #include <QList>
 #include <QListView>
 #include <QModelIndex>
+#ifdef Q_OS_WIN
+#include <QTimer>
+#endif
 #include <QVariant>
 
 SentenceSplitter::SentenceSplitter(std::shared_ptr<SQLDatabaseManager> manager,

@@ -5,7 +5,7 @@
 
 #include <vector>
 
-#ifdef Q_OS_LINUX
+#ifndef Q_OS_MAC
 #include "logic/database/sqluserhistoryutils.h"
 #include <string>
 #endif
