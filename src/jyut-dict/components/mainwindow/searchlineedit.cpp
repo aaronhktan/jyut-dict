@@ -57,7 +57,7 @@ void SearchLineEdit::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [&] { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -300,7 +300,7 @@ void SearchLineEdit::startHandwriting(void)
     connect(_handwritingWindow,
             &HandwritingWindow::characterChosen,
             this,
-            [&](QString character) {
+            [&](const QString &character) {
                 if (character == "\x8") {
                     if (!text().isEmpty()) {
                         setText(text().chopped(1));
@@ -377,7 +377,7 @@ void SearchLineEdit::addSearchTermToHistory(SearchParameters parameters) const
     _searchHistoryDelayTimer->stop();
     disconnect(_searchHistoryDelayTimer, nullptr, this, nullptr);
     _searchHistoryDelayTimer->setSingleShot(true);
-    connect(_searchHistoryDelayTimer, &QTimer::timeout, this, [parameters, this] {
+    connect(_searchHistoryDelayTimer, &QTimer::timeout, this, [this, parameters] {
         if (!text().isEmpty()) {
             _sqlHistoryUtils->addSearchToHistory(text().toStdString(),
                                                  static_cast<int>(parameters));

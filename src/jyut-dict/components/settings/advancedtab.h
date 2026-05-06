@@ -55,18 +55,18 @@ private:
 
     void setStyle(bool use_dark);
 
-    void initializeUpdateCheckbox(QCheckBox &checkbox);
-    void initializeSourceUpdateCheckbox(QCheckBox &checkbox);
+    void initializeUpdateCheckbox(QCheckBox *checkbox);
+    void initializeSourceUpdateCheckbox(QCheckBox *checkbox);
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-    void initializeForceDarkModeCheckbox(QCheckBox &checkbox);
+    void initializeForceDarkModeCheckbox(QCheckBox *checkbox);
 #endif
     void initializeCantoneseTTSWidget(QWidget *widget);
     void initializeMandarinTTSWidget(QWidget *widget);
-    void initializeLanguageCombobox(QComboBox &combobox);
-    void initializeResetButton(QPushButton &resetButton);
+    void initializeLanguageCombobox(QComboBox *combobox);
+    void initializeResetButton(QPushButton *resetButton);
 
-    void setUpdateCheckboxDefault(QCheckBox &checkbox);
-    void setSourceUpdateCheckboxDefault(QCheckBox &checkbox);
+    void setUpdateCheckboxDefault(QCheckBox *checkbox);
+    void setSourceUpdateCheckboxDefault(QCheckBox *checkbox);
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     void setForceDarkModeCheckboxDefault(QCheckBox &checkbox);
 #endif
@@ -76,7 +76,7 @@ private:
     void setMandarinTTSWidgetDefault(QWidget *widget);
     void setMandarinTTSSettings(TextToSpeech::SpeakerBackend backend,
                                 TextToSpeech::SpeakerVoice voice);
-    void setLanguageComboboxDefault(QComboBox &combobox);
+    void setLanguageComboboxDefault(QComboBox *combobox);
 
     void exportDictionaryDatabase(void);
     void exportUserDatabase(void);

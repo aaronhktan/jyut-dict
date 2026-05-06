@@ -240,7 +240,7 @@ void HandwritingWindow::setupUI()
     for (int i = 0; i < NUM_RESULTS; ++i) {
         _buttons.emplace_back(new QPushButton{this});
         _buttons.back()->setProperty("characterChoice", true);
-        connect(_buttons.back(), &QPushButton::clicked, this, [&] {
+        connect(_buttons.back(), &QPushButton::clicked, this, [this] {
             _panel->clearPanel();
             _handwritingWrapper->clearStrokes();
             if (static_cast<QPushButton *>(sender())->text() != "　") {
@@ -258,7 +258,7 @@ void HandwritingWindow::setupUI()
                                      QSizePolicy::MinimumExpanding);
 
     _clearButton = new QPushButton{this};
-    connect(_clearButton, &QPushButton::clicked, this, [&] {
+    connect(_clearButton, &QPushButton::clicked, this, [this] {
         _panel->clearPanel();
         _handwritingWrapper->clearStrokes();
         for (const auto button : _buttons) {
@@ -267,12 +267,12 @@ void HandwritingWindow::setupUI()
     });
 
     _backspaceButton = new QPushButton{this};
-    connect(_backspaceButton, &QPushButton::clicked, this, [&] {
+    connect(_backspaceButton, &QPushButton::clicked, this, [this] {
         emit characterChosen(QString::fromLocal8Bit("\x8"));
     });
 
     _doneButton = new QPushButton{this};
-    connect(_doneButton, &QPushButton::clicked, this, [&] { close(); });
+    connect(_doneButton, &QPushButton::clicked, this, [this] { close(); });
 
     QWidget *functionWidget = new QWidget{};
     QVBoxLayout *functionLayout = new QVBoxLayout{functionWidget};
@@ -608,11 +608,12 @@ void HandwritingWindow::setScript()
     emit scriptSelected(script);
 }
 
-void HandwritingWindow::showErrorDialog(int err, std::string description)
+void HandwritingWindow::showErrorDialog(const int err,
+                                        const std::string &description)
 {
     if (!isVisible()) {
         // Only show the error dialog once the handwriting window has been painted
-        QTimer::singleShot(100, this, [err, description, this] {
+        QTimer::singleShot(100, this, [this, err, description] {
             showErrorDialog(err, description);
         });
         return;

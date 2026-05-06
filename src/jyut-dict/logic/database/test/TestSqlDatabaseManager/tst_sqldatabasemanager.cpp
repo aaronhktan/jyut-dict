@@ -55,7 +55,7 @@ void TestSqlDatabaseManager::removeAllDatabaseConnections()
     QCOMPARE(database.isValid(), true);
     QString mainThreadConnectionName = database.connectionName();
 
-    auto future = std::async([&] {
+    auto future = std::async([&cv, &mainThreadConnectionName, &manager, &mutex] {
         QSqlDatabase database = manager->getDatabase();
         QCOMPARE(database.isOpen(), true);
         QCOMPARE(database.connectionName() != mainThreadConnectionName, true);

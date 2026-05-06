@@ -28,16 +28,16 @@ private:
     void translateUI();
     void setStyle(bool use_dark);
 
-    void initializeSearchAutoDetectCheckbox(QCheckBox &searchAutoDetectCheckbox);
-    void initializeFuzzyJyutping(QWidget &widget);
-    void initializeDangerousFuzzyJyutping(QWidget &widget);
-    void initializeFuzzyPinyin(QWidget &widget);
+    void initializeSearchAutoDetectCheckbox(QCheckBox *searchAutoDetectCheckbox);
+    void initializeFuzzyJyutping(QWidget *widget);
+    void initializeDangerousFuzzyJyutping(QWidget *widget);
+    void initializeFuzzyPinyin(QWidget *widget);
 
-    void setSearchAutoDetectCheckboxDefault(QCheckBox &searchAutoDetectCheckbox);
-    void setFuzzyJyutpingCheckboxDefault(QCheckBox &fuzzyJyutpingCheckbox);
+    void setSearchAutoDetectCheckboxDefault(QCheckBox *searchAutoDetectCheckbox);
+    void setFuzzyJyutpingCheckboxDefault(QCheckBox *fuzzyJyutpingCheckbox);
     void setDangerousFuzzyJyutpingCheckboxDefault(
-        QCheckBox &dangerouFuzzyJyutpingCheckbox);
-    void setFuzzyPinyinCheckboxDefault(QCheckBox &fuzzyPinyinCheckbox);
+        QCheckBox *dangerouFuzzyJyutpingCheckbox);
+    void setFuzzyPinyinCheckboxDefault(QCheckBox *fuzzyPinyinCheckbox);
 
     bool _paletteRecentlyChanged = false;
 

@@ -347,7 +347,7 @@ void SQLSearch::searchByUnique(const QString &simplified,
     QObject::connect(watcher,
                      &QFutureWatcher<void>::finished,
                      watcher,
-                     [watcher, this] {
+                     [this, watcher] {
                          {
                              std::lock_guard lock(_watchers.mut);
                              _watchers.set.erase(watcher);
@@ -393,7 +393,7 @@ void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString &searc
     QObject::connect(watcher,
                      &QFutureWatcher<void>::finished,
                      watcher,
-                     [watcher, this] {
+                     [this, watcher] {
                          {
                              std::lock_guard lock(_watchers.mut);
                              _watchers.set.erase(watcher);

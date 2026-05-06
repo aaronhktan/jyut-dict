@@ -168,7 +168,7 @@ void SourceUpdateWindow::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [&] { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -270,7 +270,7 @@ void SourceUpdateWindow::setupUI()
             &QPushButton::clicked,
             this,
             &SourceUpdateWindow::toggleAllRows);
-    connect(_disableNotifications, &QCheckBox::checkStateChanged, this, [&] {
+    connect(_disableNotifications, &QCheckBox::checkStateChanged, this, [this] {
         _settings->setValue("Advanced/sourceUpdateNotificationsEnabled",
                             !_disableNotifications->checkState());
         _settings->sync();
@@ -743,15 +743,18 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
 
         disconnect(_utils.get(), nullptr, this, nullptr);
 
-        connect(_utils.get(), &SQLDatabaseUtils::deletingDefinitions, this, [&] {
-            _dialog->setLabelText(
-                tr("Removing definitions from old version..."));
-        });
+        connect(_utils.get(),
+                &SQLDatabaseUtils::deletingDefinitions,
+                this,
+                [this] {
+                    _dialog->setLabelText(
+                        tr("Removing definitions from old version..."));
+                });
 
         connect(_utils.get(),
                 &SQLDatabaseUtils::totalToDelete,
                 this,
-                [&](int numToDelete) {
+                [this](const int numToDelete) {
                     _dialog->setRange(0, numToDelete + 1);
                     _dialog->setLabelText(
                         QString{tr("Deleted entry 0 of %1 from old version")}
@@ -761,7 +764,7 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
         connect(_utils.get(),
                 &SQLDatabaseUtils::deletionProgress,
                 this,
-                [&](int deleted, int total) {
+                [&](const int deleted, const int total) {
                     _dialog->setLabelText(
                         QString{tr("Deleted entry %1 of %2 from old version")}
                             .arg(deleted)
@@ -769,21 +772,24 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
                     _dialog->setValue(deleted);
                 });
 
-        connect(_utils.get(), &SQLDatabaseUtils::insertingSource, this, [&] {
+        connect(_utils.get(), &SQLDatabaseUtils::insertingSource, this, [this] {
             _dialog->setValue(0);
             _dialog->setRange(0, 0);
             _dialog->setLabelText(tr("Adding new version..."));
         });
 
-        connect(_utils.get(), &SQLDatabaseUtils::insertingEntries, this, [&] {
+        connect(_utils.get(), &SQLDatabaseUtils::insertingEntries, this, [this] {
             _dialog->setLabelText(tr("Adding new entries..."));
         });
 
-        connect(_utils.get(), &SQLDatabaseUtils::insertingDefinitions, this, [&] {
-            _dialog->setLabelText(tr("Adding new definitions..."));
-        });
+        connect(_utils.get(),
+                &SQLDatabaseUtils::insertingDefinitions,
+                this,
+                [this] {
+                    _dialog->setLabelText(tr("Adding new definitions..."));
+                });
 
-        connect(_utils.get(), &SQLDatabaseUtils::rebuildingIndexes, this, [&] {
+        connect(_utils.get(), &SQLDatabaseUtils::rebuildingIndexes, this, [this] {
             _dialog->setLabelText(tr("Rebuilding search indexes..."));
         });
 
@@ -808,7 +814,7 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
                     notifyUpdateStatus();
                 });
 
-        std::ignore = QtConcurrent::run([&] {
+        std::ignore = QtConcurrent::run([this] {
             QSqlDatabase db = _manager->getDatabase();
             _utils->addSource(db,
                               _downloadedFiles[0],

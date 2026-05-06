@@ -41,7 +41,9 @@ void FavouriteSplitter::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [&] { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] {
+            _paletteRecentlyChanged = false;
+        });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -197,7 +199,7 @@ void FavouriteSplitter::handleDoubleClick(const QModelIndex &selection)
 
     prepareEntry(entry);
 
-    QTimer::singleShot(50, this, [entry, this] {
+    QTimer::singleShot(50, this, [this, entry] {
         EntryScrollArea *area = new EntryScrollArea{_sqlUserUtils, _manager, nullptr};
         area->setParent(this, Qt::Window);
         area->setEntry(entry);

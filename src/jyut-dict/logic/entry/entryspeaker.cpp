@@ -39,7 +39,7 @@ EntrySpeaker::EntrySpeaker()
 
 #ifdef Q_OS_LINUX
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
-    QFuture<bool> future = QtConcurrent::run([&] {
+    QFuture<bool> future = QtConcurrent::run([this] {
         KZip zip{getBundleAudioPath() + "audio.zip"};
         if (!zip.open(QIODevice::ReadOnly)) {
             std::cerr << "Failed to read audio zip file!" << std::endl;

@@ -46,7 +46,7 @@ void EntryActionWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [&] { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -235,11 +235,11 @@ void EntryActionWidget::refreshBookmarkButton(void)
 
     disconnect(_bookmarkButton, nullptr, this, nullptr);
     if (!_bookmarkButton->property("saved").toBool()) {
-        QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [&] {
+        QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [this] {
             addEntryToFavourites(_entry);
         });
     } else {
-        QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [&] {
+        QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [this] {
             removeEntryFromFavourites(_entry);
         });
     }

@@ -62,9 +62,12 @@ void ResultListModel::copyEntries(const std::vector<Entry> &entries, bool emptyQ
     if (entries.empty() && !emptyQuery) {
         _updateModelTimer->setInterval(500);
         _updateModelTimer->setSingleShot(true);
-        QObject::connect(_updateModelTimer, &QTimer::timeout, this, [=, this] {
-            setEntries(entries, emptyQuery);
-        });
+        QObject::connect(_updateModelTimer,
+                         &QTimer::timeout,
+                         this,
+                         [this, entries, emptyQuery] {
+                             setEntries(entries, emptyQuery);
+                         });
         _updateModelTimer->start();
     } else {
         setEntries(entries, emptyQuery);
