@@ -102,7 +102,7 @@ void AdvancedTab::setupUI()
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     _forceDarkModeCheckbox = new QCheckBox{this};
     _forceDarkModeCheckbox->setTristate(false);
-    initializeForceDarkModeCheckbox(*_forceDarkModeCheckbox);
+    initializeForceDarkModeCheckbox(_forceDarkModeCheckbox);
 #endif
 
     QFrame *_ttsDivider = new QFrame{this};
