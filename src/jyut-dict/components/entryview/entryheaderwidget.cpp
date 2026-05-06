@@ -150,7 +150,7 @@ void EntryHeaderWidget::translateUI()
     }
 
     disconnect(_cantoneseTTS, nullptr, this, nullptr);
-    connect(_cantoneseTTS, &QPushButton::clicked, this, [&] {
+    connect(_cantoneseTTS, &QPushButton::clicked, this, [this] {
         const TextToSpeech::SpeakerBackend backend
             = Settings::getSettings()
                   ->value("Advanced/CantoneseTextToSpeech::SpeakerBackend",
@@ -187,26 +187,27 @@ void EntryHeaderWidget::translateUI()
                       .arg(Settings::getCurrentLocale().bcp47Name()));
     });
 
-    const TextToSpeech::SpeakerBackend backend
-        = Settings::getSettings()
-              ->value(
-                  "Advanced/MandarinTextToSpeech::SpeakerBackend",
+    disconnect(_mandarinTTS, nullptr, this, nullptr);
+    if (Settings::getCurrentLocale().territory() == QLocale::Taiwan) {
+        connect(_mandarinTTS, &QPushButton::clicked, this, [this] {
+            const TextToSpeech::SpeakerBackend backend
+                = Settings::getSettings()
+                      ->value("Advanced/MandarinTextToSpeech::SpeakerBackend",
 #ifdef Q_OS_LINUX
-                  QVariant::fromValue(
-                      TextToSpeech::SpeakerBackend::GOOGLE_OFFLINE_SYLLABLE_TTS))
+                              QVariant::fromValue(
+                                  TextToSpeech::SpeakerBackend::
+                                      GOOGLE_OFFLINE_SYLLABLE_TTS))
 #else
                   QVariant::fromValue(TextToSpeech::SpeakerBackend::QT_TTS))
 #endif
-              .value<TextToSpeech::SpeakerBackend>();
-    const TextToSpeech::SpeakerVoice voice
-        = Settings::getSettings()
-              ->value("Advanced/MandarinTextToSpeech::SpeakerVoice",
-                      QVariant::fromValue(TextToSpeech::SpeakerVoice::NONE))
-              .value<TextToSpeech::SpeakerVoice>();
+                      .value<TextToSpeech::SpeakerBackend>();
+            const TextToSpeech::SpeakerVoice voice
+                = Settings::getSettings()
+                      ->value("Advanced/MandarinTextToSpeech::SpeakerVoice",
+                              QVariant::fromValue(
+                                  TextToSpeech::SpeakerVoice::NONE))
+                      .value<TextToSpeech::SpeakerVoice>();
 
-    disconnect(_mandarinTTS, nullptr, this, nullptr);
-    if (Settings::getCurrentLocale().territory() == QLocale::Taiwan) {
-        connect(_mandarinTTS, &QPushButton::clicked, this, [backend, voice, this] {
 #ifdef Q_OS_MAC
             if (!_speaker->speakTaiwaneseMandarin(_pinyin, backend, voice)) {
                 return;
@@ -227,7 +228,25 @@ void EntryHeaderWidget::translateUI()
                           .arg(Settings::getCurrentLocale().bcp47Name()));
         });
     } else {
-        connect(_mandarinTTS, &QPushButton::clicked, this, [backend, voice, this] {
+        connect(_mandarinTTS, &QPushButton::clicked, this, [this] {
+            const TextToSpeech::SpeakerBackend backend
+                = Settings::getSettings()
+                      ->value("Advanced/MandarinTextToSpeech::SpeakerBackend",
+#ifdef Q_OS_LINUX
+                              QVariant::fromValue(
+                                  TextToSpeech::SpeakerBackend::
+                                      GOOGLE_OFFLINE_SYLLABLE_TTS))
+#else
+                  QVariant::fromValue(TextToSpeech::SpeakerBackend::QT_TTS))
+#endif
+                      .value<TextToSpeech::SpeakerBackend>();
+            const TextToSpeech::SpeakerVoice voice
+                = Settings::getSettings()
+                      ->value("Advanced/MandarinTextToSpeech::SpeakerVoice",
+                              QVariant::fromValue(
+                                  TextToSpeech::SpeakerVoice::NONE))
+                      .value<TextToSpeech::SpeakerVoice>();
+
 #ifdef Q_OS_MAC
             if (!_speaker->speakMainlandMandarin(_pinyin, backend, voice)) {
                 return;
