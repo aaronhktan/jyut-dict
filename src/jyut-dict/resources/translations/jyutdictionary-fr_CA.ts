@@ -210,7 +210,7 @@
     <message>
         <location filename="../../components/settings/advancedtab.cpp" line="296"/>
         <source>Use system language</source>
-        <translation>Langue par défault du système</translation>
+        <translation>Langue par défaut du système</translation>
     </message>
     <message>
         <location filename="../../components/settings/advancedtab.cpp" line="247"/>
