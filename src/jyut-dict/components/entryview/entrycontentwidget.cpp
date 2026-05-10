@@ -1,10 +1,17 @@
 #include "entrycontentwidget.h"
 
+#include "components/definitioncard/definitioncardsection.h"
+#include "components/entryview/entryviewsentencecardsection.h"
+#include "components/related/relatedsection.h"
+#include "logic/database/sqldatabasemanager.h"
+
+#include <QVBoxLayout>
+
 EntryContentWidget::EntryContentWidget(
     std::shared_ptr<SQLDatabaseManager> manager,
     bool showRelatedSection,
     QWidget *parent)
-    : QWidget(parent)
+    : QWidget{parent}
 {
     _entryContentLayout = new QVBoxLayout{this};
     _entryContentLayout->setContentsMargins(0, 0, 0, 0);
@@ -89,7 +96,6 @@ EntryContentWidget::EntryContentWidget(
 void EntryContentWidget::setEntry(const Entry &entry)
 {
     _entry = entry;
-    _entryIsValid = true;
 
     _definitionSection->setEntry(entry);
     _sentenceSection->setEntry(entry);
@@ -131,12 +137,12 @@ void EntryContentWidget::showRelatedSection(void)
 
 void EntryContentWidget::updateStyleRequested(void)
 {
-    if (_entryIsValid) {
+    if (_entry.has_value()) {
         bool relatedSectionIsVisible = _relatedSection->isVisible();
         // For some reason, setting the entry here makes the application not
         // flash when updating the style. Setting it in the individual definition
         // cards does.
-        _definitionSection->setEntry(_entry);
+        _definitionSection->setEntry(_entry.value());
         _relatedSection->setVisible(relatedSectionIsVisible);
     }
 

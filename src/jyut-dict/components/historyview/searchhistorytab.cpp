@@ -1,5 +1,7 @@
 #include "searchhistorytab.h"
 
+#include "components/historyview/searchhistorylistmodel.h"
+#include "components/historyview/searchhistorylistview.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -10,15 +12,18 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QEvent>
+#include <QPushButton>
 #include <QTimer>
+#include <QVBoxLayout>
 
 SearchHistoryTab::SearchHistoryTab(
     std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils, QWidget *parent)
-    : QWidget(parent)
+    : QWidget{parent}
     , _sqlHistoryUtils{sqlHistoryUtils}
+    , _listView{new SearchHistoryListView{this}}
+    , _model{new SearchHistoryListModel{_sqlHistoryUtils, this}}
 {
-    _listView = new SearchHistoryListView{this};
-    _model = new SearchHistoryListModel{_sqlHistoryUtils, this};
     _listView->setModel(_model);
 
     connect(_listView,
@@ -38,7 +43,7 @@ void SearchHistoryTab::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -51,7 +56,7 @@ void SearchHistoryTab::changeEvent(QEvent *event)
 void SearchHistoryTab::setupUI(void)
 {
     _clearAllSearchHistoryButton = new QPushButton{this};
-    connect(_clearAllSearchHistoryButton, &QPushButton::clicked, this, [=, this]() {
+    connect(_clearAllSearchHistoryButton, &QPushButton::clicked, this, [this] {
         _sqlHistoryUtils->clearAllSearchHistory();
     });
 
@@ -86,7 +91,7 @@ void SearchHistoryTab::translateUI(void)
     _model->translateUI();
 }
 
-void SearchHistoryTab::setStyle(bool use_dark)
+void SearchHistoryTab::setStyle([[maybe_unused]] bool use_dark)
 {
     _clearAllSearchHistoryButton->setFixedSize(
         _clearAllSearchHistoryButton->minimumSizeHint());
@@ -105,7 +110,6 @@ void SearchHistoryTab::setStyle(bool use_dark)
     setStyleSheet(use_dark ? "QListView { border: none; }"
                            : "QListView { border: 1px solid lightgrey; }");
 #elif defined(Q_OS_LINUX)
-    (void) use_dark;
     _listView->setStyleSheet("QListView { border: 1px solid palette(alternate-base); }");
 #elif defined(Q_OS_WIN)
     setStyleSheet(use_dark ? "QListView { border: none; }"

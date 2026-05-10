@@ -1,8 +1,13 @@
 #include "viewhistorylistmodel.h"
 
-ViewHistoryListModel::ViewHistoryListModel(std::shared_ptr<ISearchObservable> sqlHistoryUtils,
-                                           QObject *parent)
-    : QAbstractListModel(parent)
+#include "logic/entry/entry.h"
+
+#include <QModelIndex>
+#include <QVariant>
+
+ViewHistoryListModel::ViewHistoryListModel(
+    std::shared_ptr<ISearchObservable> sqlHistoryUtils, QObject *parent)
+    : QAbstractListModel{parent}
     , _search{sqlHistoryUtils}
 {
     _search->registerObserver(this);
@@ -57,8 +62,7 @@ void ViewHistoryListModel::translateUI(void)
         if (_entries.at(0).isEmpty()) {
             setEmpty();
         }
-    } catch (std::exception &e) {
-        (void) (e);
+    } catch ([[maybe_unused]] std::exception &e) {
         setEmpty();
     }
 }
@@ -80,11 +84,11 @@ int ViewHistoryListModel::rowCount(const QModelIndex &parent) const
 QVariant ViewHistoryListModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) {
-        return QVariant();
+        return {};
     }
 
     if (static_cast<unsigned long>(index.row()) >= _entries.size()) {
-        return QVariant();
+        return {};
     }
 
     if (role == Qt::DisplayRole) {
@@ -92,20 +96,12 @@ QVariant ViewHistoryListModel::data(const QModelIndex &index, int role) const
         var.setValue(_entries.at(static_cast<unsigned long>(index.row())));
         return var;
     } else {
-        return QVariant();
+        return {};
     }
 }
 
 QVariant ViewHistoryListModel::headerData(int section, Qt::Orientation orientation,
                                     int role) const
 {
-    if (role != Qt::DisplayRole) {
-        return QVariant();
-    }
-
-    if (orientation == Qt::Vertical) {
-        return QString("Row %1").arg(section);
-    } else {
-        return QVariant();
-    }
+    return {};
 }

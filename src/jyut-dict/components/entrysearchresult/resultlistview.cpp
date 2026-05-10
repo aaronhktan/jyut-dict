@@ -2,19 +2,23 @@
 
 #include "components/entrysearchresult/resultlistdelegate.h"
 
+#include <QEvent>
 #include <QGuiApplication>
-
+#ifdef Q_OS_WIN
+#include <QWheelEvent>
+#endif
 #ifdef Q_OS_WIN
 #include <QScrollBar>
 #endif
+#include <QStyledItemDelegate>
 
 ResultListView::ResultListView(QWidget *parent)
-    : QListView(parent)
+    : QListView{parent}
+    , _delegate{new ResultListDelegate{this}}
 {
     setFrameShape(QFrame::NoFrame);
     setMinimumWidth(275);
 
-    _delegate = new ResultListDelegate{this};
     setItemDelegate(_delegate);
 
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);

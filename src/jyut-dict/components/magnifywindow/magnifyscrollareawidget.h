@@ -1,12 +1,13 @@
 #ifndef MAGNIFYSCROLLAREAWIDGET_H
 #define MAGNIFYSCROLLAREAWIDGET_H
 
-#include "logic/entry/entry.h"
-
-#include <QLabel>
 #include <QSettings>
-#include <QVBoxLayout>
 #include <QWidget>
+
+class Entry;
+
+class QLabel;
+class QVBoxLayout;
 
 // MagnifyScrollAreaWidget contains the widgets that are displayed in the
 // MagnifyScrollArea. This is the window that shows an enlarged version of the

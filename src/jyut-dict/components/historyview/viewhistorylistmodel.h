@@ -1,18 +1,17 @@
 #ifndef VIEWHISTORYLISTMODEL_H
 #define VIEWHISTORYLISTMODEL_H
 
-#include "logic/entry/entry.h"
-#include "logic/database/sqluserhistoryutils.h"
 #include "logic/search/isearchobservable.h"
 #include "logic/search/isearchobserver.h"
 
 #include <QAbstractListModel>
-#include <QModelIndex>
-#include <QObject>
-#include <QVariant>
 
-#include <string>
 #include <vector>
+
+class Entry;
+
+class QModelIndex;
+class QVariant;
 
 // The ViewHistoryListModel contains data (a vector of
 // searchTermHistoryItem pairs) that represents past searches
@@ -24,7 +23,6 @@
 class ViewHistoryListModel : public QAbstractListModel, public ISearchObserver
 {
     Q_OBJECT
-
 public:
     explicit ViewHistoryListModel(
         std::shared_ptr<ISearchObservable> sqlHistoryUtils,

@@ -15,7 +15,11 @@
 #include <QApplication>
 #include <QCoreApplication>
 #include <QDesktopServices>
+#include <QEvent>
+#include <QGridLayout>
+#include <QLabel>
 #include <QPixmap>
+#include <QPushButton>
 #include <QString>
 #include <QStyle>
 #include <QTimer>
@@ -51,7 +55,7 @@ void AboutWindow::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -125,12 +129,12 @@ void AboutWindow::setupUI()
             });
 
     _websiteButton = new QPushButton{tr("Visit website..."), this};
-    connect(_websiteButton, &QPushButton::clicked, this, [&]() {
+    connect(_websiteButton, &QPushButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::WEBSITE_LINK});
     });
 
     _githubButton = new QPushButton{tr("View on Github..."), this};
-    connect(_githubButton, &QPushButton::clicked, this, [&]() {
+    connect(_githubButton, &QPushButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::GITHUB_LINK});
     });
 
@@ -181,9 +185,8 @@ void AboutWindow::translateUI()
     resize(sizeHint());
 }
 
-void AboutWindow::setStyle(bool use_dark)
+void AboutWindow::setStyle([[maybe_unused]] bool use_dark)
 {
-    (void) (use_dark);
 #ifdef Q_OS_MAC
     setStyleSheet("QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
 #elif defined(Q_OS_WIN)

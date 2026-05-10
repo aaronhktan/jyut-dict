@@ -8,7 +8,8 @@
 #include <QString>
 
 // These are characters that 100% only exist in simplified form
-const static QList<QString> SIMPLIFIED_CHINESE_CHARS = {
+namespace {
+const QList<QString> SIMPLIFIED_CHINESE_CHARS = {
     "\u343d", "\u3447", "\u3448", "\u3454", "\u3469", "\u34e5", "\u3509",
     "\u358a", "\u359e", "\u360e", "\u36af", "\u36c0", "\u36df", "\u36e0",
     "\u36e3", "\u36e4", "\u36ff", "\u37c6", "\u37dc", "\u3918", "\u39cf",
@@ -353,7 +354,7 @@ const static QList<QString> SIMPLIFIED_CHINESE_CHARS = {
 
 // These are characters that technically exist in traditional Chinese, but
 // are rare, rare variants, literary, or used only in specific place names
-const static QList<QString> MOSTLY_SIMPLIFIED_CHINESE_CHARS = {
+const QList<QString> MOSTLY_SIMPLIFIED_CHINESE_CHARS = {
     "\u3cfd", "\u4e07", "\u4e22", "\u4e24", "\u4e2a", "\u4e30", "\u4e48",
     "\u4e49", "\u4e50", "\u4e71", "\u4e89", "\u4e8e", "\u4e8f", "\u4e91",
     "\u4ec5", "\u4ece", "\u4eea", "\u4ef7", "\u4f17", "\u4f18", "\u4f1a",
@@ -393,7 +394,7 @@ const static QList<QString> MOSTLY_SIMPLIFIED_CHINESE_CHARS = {
     "\u9ea6", "\u9ec4", "\u9efe", "\u9f39",
 };
 
-const static QList<QString> TRADITIONAL_CHINESE_CHARS = {
+const QList<QString> TRADITIONAL_CHINESE_CHARS = {
     "\u346F", "\u3473", "\u3493", "\u34E8", "\u35F2", "\u361A", "\u3704",
     "\u370F", "\u3722", "\u3737", "\u379E", "\u380F", "\u389D", "\u396E",
     "\u398E", "\u3A5C", "\u3A73", "\u3DFF", "\u3E8F", "\u3FE7", "\u4039",
@@ -806,6 +807,7 @@ const static QList<QString> TRADITIONAL_CHINESE_CHARS = {
     "\u9F6A", "\u9F6C", "\u9F72", "\u9F76", "\u9F77", "\u9F8D", "\u9F8E",
     "\u9F90", "\u9F91", "\u9F94", "\u9F95", "\u9F9C", "\u9FAD", "\u9FAF",
 };
+} // namespace
 
 Q_GLOBAL_STATIC_WITH_ARGS(QRegularExpression, hanExpression, {".*(\\p{Han}).*"});
 Q_GLOBAL_STATIC_WITH_ARGS(
@@ -823,21 +825,21 @@ Q_GLOBAL_STATIC_WITH_ARGS(
 
 ScriptDetector::ScriptDetector(const QString &string)
 {
-    QRegularExpressionMatch traditionalMatch = traditionalExpression->match(
-        string);
+    const QRegularExpressionMatch traditionalMatch
+        = traditionalExpression->match(string);
     if (traditionalMatch.hasMatch()) {
         _containsTraditionalChinese = true;
     }
 
-    QRegularExpressionMatch simplifiedMatch = simplifiedExpression->match(
+    const QRegularExpressionMatch simplifiedMatch = simplifiedExpression->match(
         string);
-    QRegularExpressionMatch mostlySimplifiedMatch
+    const QRegularExpressionMatch mostlySimplifiedMatch
         = mostlySimplifiedExpression->match(string);
     if (simplifiedMatch.hasMatch() || mostlySimplifiedMatch.hasMatch()) {
         _containsSimplifiedChinese = true;
     }
 
-    QRegularExpressionMatch match = hanExpression->match(string);
+    const QRegularExpressionMatch match = hanExpression->match(string);
     if (match.hasMatch()) {
         _containsChinese = true;
     }

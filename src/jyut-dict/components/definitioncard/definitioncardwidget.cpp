@@ -1,6 +1,8 @@
 #include "definitioncardwidget.h"
 
-#include "logic/strings/strings.h"
+#include "components/definitioncard/definitioncontentwidget.h"
+#include "components/definitioncard/definitionheaderwidget.h"
+#include "logic/entry/definitionsset.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined(Q_OS_LINUX)
@@ -11,19 +13,21 @@
 #include "logic/utils/utils_qt.h"
 
 #include <QCoreApplication>
+#include <QEvent>
 #include <QStyle>
 #include <QTimer>
+#include <QVBoxLayout>
 
-DefinitionCardWidget::DefinitionCardWidget(QWidget *parent) : QWidget(parent)
+DefinitionCardWidget::DefinitionCardWidget(QWidget *parent)
+    : QWidget{parent}
+    , _definitionAreaLayout{new QVBoxLayout{this}}
+    , _definitionHeaderWidget{new DefinitionHeaderWidget{this}}
+    , _definitionContentWidget{new DefinitionContentWidget{this}}
 {
     setObjectName("DefinitionCardWidget");
 
-    _definitionAreaLayout = new QVBoxLayout{this};
     _definitionAreaLayout->setContentsMargins(0, 0, 0, 0);
     _definitionAreaLayout->setSpacing(11);
-
-    _definitionHeaderWidget = new DefinitionHeaderWidget{this};
-    _definitionContentWidget = new DefinitionContentWidget{this};
 
     _definitionAreaLayout->addWidget(_definitionHeaderWidget);
     _definitionAreaLayout->addWidget(_definitionContentWidget);
@@ -37,37 +41,20 @@ void DefinitionCardWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [&]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] {
+            _paletteRecentlyChanged = false;
+        });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }
-    if (event->type() == QEvent::LanguageChange) {
-        translateUI();
-    }
     QWidget::changeEvent(event);
 }
 
-void DefinitionCardWidget::setEntry(const DefinitionsSet &definitionsSet)
+void DefinitionCardWidget::setDefinitions(const DefinitionsSet &definitionsSet)
 {
-    _source = definitionsSet.getSourceShortString();
-
-    _definitionHeaderWidget->setSectionTitle(
-        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
-                                    Strings::DEFINITIONS_ALL_CAPS)
-            .toStdString()
-        + " (" + _source + ")");
-
-    _definitionContentWidget->setEntry(definitionsSet.getDefinitions());
-}
-
-void DefinitionCardWidget::translateUI()
-{
-    _definitionHeaderWidget->setSectionTitle(
-        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
-                                    Strings::DEFINITIONS_ALL_CAPS)
-            .toStdString()
-        + " (" + _source + ")");
+    _definitionHeaderWidget->setSource(definitionsSet.getSourceShortString());
+    _definitionContentWidget->setDefinitions(definitionsSet.getDefinitions());
 }
 
 void DefinitionCardWidget::setStyle(bool use_dark)
@@ -84,12 +71,13 @@ void DefinitionCardWidget::setStyle(bool use_dark)
                      " border-radius: 10px; "
                      "}";
     }
-    QColor backgroundColour = use_dark ? QColor{CONTENT_BACKGROUND_COLOUR_DARK_R,
-                                                CONTENT_BACKGROUND_COLOUR_DARK_G,
-                                                CONTENT_BACKGROUND_COLOUR_DARK_B}
-                                       : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
-                                                CONTENT_BACKGROUND_COLOUR_LIGHT_G,
-                                                CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+    QColor backgroundColour
+        = use_dark ? QColor{Utils::CONTENT_BACKGROUND_COLOUR_DARK_R,
+                            Utils::CONTENT_BACKGROUND_COLOUR_DARK_G,
+                            Utils::CONTENT_BACKGROUND_COLOUR_DARK_B}
+                   : QColor{Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                            Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                            Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_B};
     setStyleSheet(styleSheet.arg(backgroundColour.name()));
 }
 

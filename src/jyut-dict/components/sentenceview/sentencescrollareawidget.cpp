@@ -1,5 +1,7 @@
 #include "sentencescrollareawidget.h"
 
+#include "components/sentenceview/sentenceviewcontentwidget.h"
+#include "components/sentenceview/sentenceviewheaderwidget.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -10,24 +12,23 @@
 #endif
 
 #include <QCoreApplication>
+#include <QEvent>
 #include <QTimer>
+#include <QVBoxLayout>
 
 SentenceScrollAreaWidget::SentenceScrollAreaWidget(QWidget *parent)
-    : QWidget(parent)
+    : QWidget{parent}
+    , _settings{Settings::getSettings(this)}
+    , _scrollAreaLayout{new QVBoxLayout{this}}
+    , _sentenceViewHeaderWidget{new SentenceViewHeaderWidget{this}}
+    , _sentenceViewContentWidget{new SentenceViewContentWidget{this}}
 {
     setObjectName("SentenceScrollAreaWidget");
+    setAttribute(Qt::WA_StyledBackground);
 
-    _settings = Settings::getSettings(this);
-
-    // Entire Scroll Area
-    _scrollAreaLayout = new QVBoxLayout{this};
     _scrollAreaLayout->setSpacing(0);
     _scrollAreaLayout->setContentsMargins(11, 11, 11, 11);
 
-    _sentenceViewHeaderWidget = new SentenceViewHeaderWidget{this};
-    _sentenceViewContentWidget = new SentenceViewContentWidget{this};
-
-    // Add all widgets to main layout
     _scrollAreaLayout->addWidget(_sentenceViewHeaderWidget);
     _scrollAreaLayout->addWidget(_sentenceViewContentWidget);
     _scrollAreaLayout->addStretch(2);
@@ -40,7 +41,7 @@ void SentenceScrollAreaWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -51,16 +52,13 @@ void SentenceScrollAreaWidget::changeEvent(QEvent *event)
 void SentenceScrollAreaWidget::setSourceSentence(const SourceSentence &sentence)
 {
     _sentence = sentence;
-    _sentenceIsValid = true;
 
-    _sentenceViewHeaderWidget->setSourceSentence(_sentence);
-    _sentenceViewContentWidget->setSourceSentence(_sentence);
+    _sentenceViewHeaderWidget->setSourceSentence(_sentence.value());
+    _sentenceViewContentWidget->setSourceSentence(_sentence.value());
 }
 
-void SentenceScrollAreaWidget::setStyle(bool use_dark)
+void SentenceScrollAreaWidget::setStyle([[maybe_unused]] bool use_dark)
 {
-    (void) (use_dark);
-    setAttribute(Qt::WA_StyledBackground);
     setStyleSheet("QWidget#SentenceScrollAreaWidget { "
                   "   background-color: palette(base); "
                   "} ");
@@ -68,7 +66,7 @@ void SentenceScrollAreaWidget::setStyle(bool use_dark)
 
 void SentenceScrollAreaWidget::updateStyleRequested(void)
 {
-    if (_sentenceIsValid) {
+    if (_sentence.has_value()) {
         CantoneseOptions cantoneseOptions
             = _settings
                   ->value("Entry/cantonesePronunciationOptions",
@@ -79,8 +77,8 @@ void SentenceScrollAreaWidget::updateStyleRequested(void)
                   ->value("Entry/mandarinPronunciationOptions",
                           QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
                   .value<MandarinOptions>();
-        _sentence.generatePhonetic(cantoneseOptions, mandarinOptions);
-        _sentenceViewHeaderWidget->setSourceSentence(_sentence);
+        _sentence.value().generatePhonetic(cantoneseOptions, mandarinOptions);
+        _sentenceViewHeaderWidget->setSourceSentence(_sentence.value());
     }
     QEvent event{QEvent::PaletteChange};
     QCoreApplication::sendEvent(_sentenceViewHeaderWidget, &event);

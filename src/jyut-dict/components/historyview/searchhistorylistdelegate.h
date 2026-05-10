@@ -1,14 +1,15 @@
 #ifndef SEARCHHISTORYLISTDELEGATE_H
 #define SEARCHHISTORYLISTDELEGATE_H
 
-#include <QModelIndex>
-#include <QPainter>
 #include <QSettings>
 #include <QStyledItemDelegate>
-#include <QStyleOptionViewItem>
-#include <QWidget>
 
 #include <memory>
+
+class QModelIndex;
+class QPainter;
+class QStyleOptionViewItem;
+class QWidget;
 
 // The SearchHistoryListDelegate is responsible for painting elements in the
 // SearchHistoryListView
@@ -16,8 +17,7 @@
 
 class SearchHistoryListDelegate : public QStyledItemDelegate
 {
-Q_OBJECT
-
+    Q_OBJECT
 public:
     explicit SearchHistoryListDelegate(QWidget *parent = nullptr);
 

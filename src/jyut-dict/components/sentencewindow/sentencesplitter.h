@@ -1,18 +1,20 @@
 #ifndef SENTENCESPLITTER_H
 #define SENTENCESPLITTER_H
 
-#include "components/sentenceview/sentencescrollarea.h"
-#include "logic/database/sqldatabasemanager.h"
-#include "logic/search/sqlsearch.h"
-#include "logic/sentence/sourcesentence.h"
-
-#include <QAbstractListModel>
-#include <QEvent>
-#include <QModelIndex>
 #include <QSplitter>
-#include <QWidget>
 
 #include <span>
+
+class SentenceScrollArea;
+class SQLDatabaseManager;
+class SQLSearch;
+class SourceSentence;
+
+class QAbstractListModel;
+class QEvent;
+class QKeyEvent;
+class QListView;
+class QModelIndex;
 
 // The SentenceSplitter contains a "master" listview and a "detail" scrollarea
 //
@@ -23,8 +25,7 @@
 
 class SentenceSplitter : public QSplitter
 {
-Q_OBJECT
-
+    Q_OBJECT
 public:
     explicit SentenceSplitter(std::shared_ptr<SQLDatabaseManager> manager,
                               QWidget *parent = nullptr);

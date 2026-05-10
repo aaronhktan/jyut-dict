@@ -2,18 +2,22 @@
 
 #include "components/historyview/searchhistorylistdelegate.h"
 
+#include <QEvent>
 #include <QGuiApplication>
+#include <QStyledItemDelegate>
+#include <QWheelEvent>
+#include <QWidget>
 
 #ifdef Q_OS_WIN
 #include <QScrollBar>
 #endif
 
 SearchHistoryListView::SearchHistoryListView(QWidget *parent)
-    : QListView(parent)
+    : QListView{parent}
+    , _delegate{new SearchHistoryListDelegate{this}}
 {
     setFrameShape(QFrame::NoFrame);
 
-    _delegate = new SearchHistoryListDelegate{this};
     setItemDelegate(_delegate);
 
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);

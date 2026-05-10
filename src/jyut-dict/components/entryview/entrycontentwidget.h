@@ -1,14 +1,19 @@
 #ifndef ENTRYCONTENTWIDGET_H
 #define ENTRYCONTENTWIDGET_H
 
-#include "components/definitioncard/definitioncardsection.h"
-#include "components/entryview/entryviewsentencecardsection.h"
-#include "components/related/relatedsection.h"
-#include "logic/database/sqldatabasemanager.h"
 #include "logic/entry/entry.h"
+#include "logic/search/searchparameters.h"
 
-#include <QVBoxLayout>
 #include <QWidget>
+
+#include <optional>
+
+class SQLDatabaseManager;
+class RelatedSection;
+class DefinitionCardSection;
+class EntryViewSentenceCardSection;
+
+class QVBoxLayout;
 
 // The EntryContentWidget displays data about an Entry (that is not in its header)
 // It contains section for definition cards, and another section for
@@ -25,8 +30,7 @@ public:
     void setEntry(const Entry &entry);
 
 private:
-    Entry _entry;
-    bool _entryIsValid = false;
+    std::optional<Entry> _entry = std::nullopt;
 
     QVBoxLayout *_entryContentLayout;
     DefinitionCardSection *_definitionSection;

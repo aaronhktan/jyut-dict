@@ -2,12 +2,24 @@
 
 #include "components/sentencesearchresult/sentenceresultlistmodel.h"
 #include "components/sentencesearchresult/sentenceresultlistview.h"
+#include "components/sentenceview/sentencescrollarea.h"
+#include "logic/database/sqldatabasemanager.h"
+#include "logic/search/sqlsearch.h"
+#include "logic/sentence/sourcesentence.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_WIN
 #include "logic/utils/utils_windows.h"
 #endif
 
+#include <QAbstractListModel>
+#include <QEvent>
+#include <QKeyEvent>
 #include <QList>
+#include <QListView>
+#include <QModelIndex>
+#ifdef Q_OS_WIN
+#include <QTimer>
+#endif
 #include <QVariant>
 
 SentenceSplitter::SentenceSplitter(std::shared_ptr<SQLDatabaseManager> manager,
@@ -64,7 +76,7 @@ void SentenceSplitter::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -84,9 +96,8 @@ void SentenceSplitter::keyPressEvent(QKeyEvent *event)
 }
 
 #ifdef Q_OS_WIN
-void SentenceSplitter::setStyle(bool use_dark)
+void SentenceSplitter::setStyle([[maybe_unused]] bool use_dark)
 {
-    (void) (use_dark);
     setStyleSheet("QSplitter { border-top: 1px solid palette(alternate-base); }");
 }
 #endif

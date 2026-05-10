@@ -1,11 +1,12 @@
 #ifndef HANDWRITINGPANEL_H
 #define HANDWRITINGPANEL_H
 
-#include <QMouseEvent>
-#include <QPainter>
 #include <QPixmap>
 #include <QPoint>
 #include <QWidget>
+
+class QMouseEvent;
+class QPainter;
 
 // The handwriting panel tracks and displays a user's click-and-drag
 // events while they draw a character.
@@ -35,11 +36,11 @@ private:
     QPoint _lastPos;
 
 signals:
-    void pixmapDimensions(int width, int height);
+    void pixmapDimensions(const int width, const int height);
 
-    void strokeStart(int x, int y);
-    void strokeUpdate(int x, int y);
-    void strokeComplete(int x, int y);
+    void strokeStart(const int x, const int y);
+    void strokeUpdate(const int x, const int y);
+    void strokeComplete(const int x, const int y);
 };
 
 #endif // HANDWRITINGPANEL_H

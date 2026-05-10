@@ -1,22 +1,22 @@
 #ifndef RESULTLISTDELEGATE_H
 #define RESULTLISTDELEGATE_H
 
-#include <QModelIndex>
-#include <QPainter>
 #include <QSettings>
 #include <QStyledItemDelegate>
-#include <QStyleOptionViewItem>
-#include <QWidget>
 
 #include <memory>
+
+class QModelIndex;
+class QPainter;
+class QStyleOptionViewItem;
+class QWidget;
 
 // The ResultListDelegate is responsible for painting elements in the ResultListView
 // It also provides a sizehint for each element
 
 class ResultListDelegate : public QStyledItemDelegate
 {
-Q_OBJECT
-
+    Q_OBJECT
 public:
     explicit ResultListDelegate(QWidget *parent = nullptr);
 

@@ -12,17 +12,42 @@
 #include "logic/utils/utils_windows.h"
 #endif
 
+#include <QCheckBox>
 #include <QColorDialog>
+#include <QComboBox>
+#include <QEvent>
+#include <QFormLayout>
 #include <QFrame>
+#include <QGridLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QSlider>
 #include <QStyle>
 #include <QTimer>
 
+namespace {
+constexpr auto COLOUR_BUTTON_STYLE
+    = "QPushButton { "
+      "   background: %1; border: 1px solid darkgrey; "
+      "   border-radius: 3px; "
+      "   margin: 0px; "
+      "   padding: 0px; "
+      "} "
+      " "
+      "QPushButton:pressed { "
+      "   background: %1; border: 2px solid lightgrey; "
+      "   border-radius: 3px; "
+      "   margin: 0px; "
+      "   padding: 0px; "
+      "} ";
+}
+
 TextTab::TextTab(QWidget *parent)
     : QWidget{parent}
+    , _settings{Settings::getSettings(this)}
 {
     setObjectName("TextTab");
 
-    _settings = Settings::getSettings(this);
     setupUI();
     translateUI();
 }
@@ -33,9 +58,7 @@ void TextTab::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() {
-            _paletteRecentlyChanged = false;
-        });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }
@@ -327,11 +350,11 @@ void TextTab::initializeJyutpingColourWidget(QWidget &jyutpingColourWidget)
                                   static_cast<int>(i),
                                   Qt::AlignCenter);
 
-        connect(button, &QPushButton::clicked, this, [&]() {
+        connect(button, &QPushButton::clicked, this, [this] {
             QPushButton *sender = static_cast<QPushButton *>(QObject::sender());
 
             // Get new colour from dialog
-            QColor newColour = getNewColour(sender->palette().button().color());
+            QColor newColour{getNewColour(sender->palette().button().color())};
             if (!newColour.isValid()) {
                 return;
             }
@@ -392,9 +415,9 @@ void TextTab::initializePinyinColourWidget(QWidget &pinyinColourWidget)
         button->setProperty("tone", static_cast<int>(i));
         pinyinLayout->addWidget(button, 0, static_cast<int>(i), Qt::AlignCenter);
 
-        connect(button, &QPushButton::clicked, this, [&]() {
+        connect(button, &QPushButton::clicked, this, [this] {
             QPushButton *sender = static_cast<QPushButton *>(QObject::sender());
-            QColor newColour = getNewColour(sender->palette().button().color());
+            QColor newColour{getNewColour(sender->palette().button().color())};
             if (!newColour.isValid()) {
                 return;
             }

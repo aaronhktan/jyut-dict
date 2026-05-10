@@ -63,10 +63,10 @@ private:
 
 signals:
     void scriptSelected(Handwriting::Script script);
-    void characterChosen(QString character);
+    void characterChosen(const QString &character);
 
 public slots:
-    void showErrorDialog(int err, std::string description);
+    void showErrorDialog(const int err, const std::string &description);
 };
 
 #endif // HANDWRITINGWINDOW_H

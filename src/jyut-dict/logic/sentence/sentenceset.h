@@ -27,13 +27,8 @@ struct TargetSentence
         directTarget(directTarget)
     {}
 
-    bool operator==(const TargetSentence &other) const
-    {
-        return sentence == other.sentence && language == other.language
-               && directTarget == other.directTarget;
-    }
+    bool operator==(const TargetSentence &other) const = default;
 };
-
 }
 
 class SentenceSet
@@ -48,7 +43,6 @@ public:
     {
         return _source == other._source && _sentences == other._sentences;
     }
-
     bool isEmpty(void) const;
 
     bool pushSentence(const Sentence::TargetSentence &sentence);

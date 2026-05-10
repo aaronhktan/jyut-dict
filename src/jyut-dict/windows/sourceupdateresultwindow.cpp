@@ -162,9 +162,8 @@ void SourceUpdateResultWindow::translateUI()
     resize(sizeHint());
 }
 
-void SourceUpdateResultWindow::setStyle(bool use_dark)
+void SourceUpdateResultWindow::setStyle([[maybe_unused]] bool use_dark)
 {
-    (void) (use_dark);
     int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
@@ -226,7 +225,7 @@ void SourceUpdateResultWindow::showDetails()
 {
     _dialogLayout->replaceWidget(_spacer, _descriptionTextEdit);
     _showMoreButton->setText(tr("Hide details"));
-    disconnect(_showMoreButton, nullptr, nullptr, nullptr);
+    disconnect(_showMoreButton, nullptr, this, nullptr);
     connect(_showMoreButton,
             &QPushButton::clicked,
             this,
@@ -248,7 +247,7 @@ void SourceUpdateResultWindow::hideDetails()
     _descriptionTextEdit->hide();
 
     _showMoreButton->setText(tr("Show details"));
-    disconnect(_showMoreButton, nullptr, nullptr, nullptr);
+    disconnect(_showMoreButton, nullptr, this, nullptr);
     connect(_showMoreButton,
             &QPushButton::clicked,
             this,

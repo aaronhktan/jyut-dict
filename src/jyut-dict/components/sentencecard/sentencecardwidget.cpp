@@ -1,6 +1,7 @@
 #include "sentencecardwidget.h"
 
-#include "logic/strings/strings.h"
+#include "components/sentencecard/sentencecontentwidget.h"
+#include "components/sentencecard/sentenceheaderwidget.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -11,20 +12,21 @@
 #include "logic/utils/utils_qt.h"
 
 #include <QCoreApplication>
+#include <QEvent>
 #include <QTimer>
+#include <QVBoxLayout>
 
 SentenceCardWidget::SentenceCardWidget(QWidget *parent)
-    : QWidget(parent)
+    : QWidget{parent}
+    , _sentenceCardLayout{new QVBoxLayout{this}}
+    , _sentenceHeaderWidget{new SentenceHeaderWidget{this}}
+    , _sentenceContentWidget{new SentenceContentWidget{this}}
 {
     setObjectName("SentenceCardWidget");
     setAttribute(Qt::WA_StyledBackground, true);
 
-    _sentenceCardLayout = new QVBoxLayout{this};
     _sentenceCardLayout->setContentsMargins(0, 0, 0, 0);
     _sentenceCardLayout->setSpacing(11);
-
-    _sentenceHeaderWidget = new SentenceHeaderWidget{this};
-    _sentenceContentWidget = new SentenceContentWidget{this};
 
     _sentenceCardLayout->addWidget(_sentenceHeaderWidget);
     _sentenceCardLayout->addWidget(_sentenceContentWidget);
@@ -38,13 +40,10 @@ void SentenceCardWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [&]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
-    }
-    if (event->type() == QEvent::LanguageChange) {
-        translateUI();
     }
     QWidget::changeEvent(event);
 }
@@ -56,16 +55,12 @@ void SentenceCardWidget::displaySentences(
         return;
     }
 
-    _sourceSentences.assign(sentences.begin(), sentences.end());
-    _sourceSentencesIsValid = true;
+    _sourceSentences = std::vector<SourceSentence>();
+    _sourceSentences.value().assign(sentences.begin(), sentences.end());
 
-    _source = sentences[0].getSentenceSets()[0].getSourceShortString();
-    _sentenceHeaderWidget->setCardTitle(
-        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
-                                    Strings::SENTENCES_ALL_CAPS)
-            .toStdString()
-        + " (" + _source + ")");
-    _sentenceContentWidget->setSourceSentenceVector(_sourceSentences);
+    _sentenceHeaderWidget->setSource(
+        sentences[0].getSentenceSets()[0].getSourceShortString());
+    _sentenceContentWidget->setSourceSentenceVector(_sourceSentences.value());
 
     setStyle(Utils::isDarkMode());
 }
@@ -76,24 +71,10 @@ void SentenceCardWidget::displaySentences(const SentenceSet &set)
         return;
     }
 
-    _source = set.getSourceShortString();
-    _sentenceHeaderWidget->setCardTitle(
-        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
-                                    Strings::SENTENCES_ALL_CAPS)
-            .toStdString()
-        + " (" + _source + ")");
+    _sentenceHeaderWidget->setSource(set.getSourceShortString());
     _sentenceContentWidget->setSentenceSet(set);
 
     setStyle(Utils::isDarkMode());
-}
-
-void SentenceCardWidget::translateUI()
-{
-    _sentenceHeaderWidget->setCardTitle(
-        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
-                                    Strings::SENTENCES_ALL_CAPS)
-            .toStdString()
-        + " (" + _source + ")");
 }
 
 void SentenceCardWidget::setStyle(bool use_dark)
@@ -110,19 +91,21 @@ void SentenceCardWidget::setStyle(bool use_dark)
                      " border-radius: 10px; "
                      "}";
     }
-    QColor backgroundColour = use_dark ? QColor{CONTENT_BACKGROUND_COLOUR_DARK_R,
-                                                CONTENT_BACKGROUND_COLOUR_DARK_G,
-                                                CONTENT_BACKGROUND_COLOUR_DARK_B}
-                                       : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
-                                                CONTENT_BACKGROUND_COLOUR_LIGHT_G,
-                                                CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+    const QColor backgroundColour
+        = use_dark ? QColor{Utils::CONTENT_BACKGROUND_COLOUR_DARK_R,
+                            Utils::CONTENT_BACKGROUND_COLOUR_DARK_G,
+                            Utils::CONTENT_BACKGROUND_COLOUR_DARK_B}
+                   : QColor{Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                            Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                            Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_B};
     setStyleSheet(styleSheet.arg(backgroundColour.name()));
 }
 
 void SentenceCardWidget::updateStyleRequested(void)
 {
-    if (_sourceSentencesIsValid) {
-        _sentenceContentWidget->setSourceSentenceVector(_sourceSentences);
+    if (_sourceSentences.has_value()) {
+        _sentenceContentWidget->setSourceSentenceVector(
+            _sourceSentences.value());
     }
 
     QEvent event{QEvent::PaletteChange};

@@ -1,7 +1,7 @@
 #ifndef SCRIPTDETECTOR_H
 #define SCRIPTDETECTOR_H
 
-#include <QString>
+class QString;
 
 class ScriptDetector
 {

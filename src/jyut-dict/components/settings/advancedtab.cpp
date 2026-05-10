@@ -27,7 +27,6 @@
 #include <QFileDialog>
 #include <QFormLayout>
 #include <QFrame>
-#include <QFutureWatcher>
 #include <QLabel>
 #include <QLibraryInfo>
 #include <QProgressDialog>
@@ -48,10 +47,9 @@ constexpr auto AUDIO_DOWNLOAD_URL
 
 AdvancedTab::AdvancedTab(QWidget *parent)
     : QWidget{parent}
+    , _settings{Settings::getSettings(this)}
 {
     setObjectName("AdvancedTab");
-
-    _settings = Settings::getSettings();
 
     setupUI();
     translateUI();
@@ -64,7 +62,7 @@ void AdvancedTab::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() {
+        QTimer::singleShot(10, this, [this] {
             _paletteRecentlyChanged = false;
         });
 
@@ -95,16 +93,16 @@ void AdvancedTab::setupUI()
 
     _updateCheckbox = new QCheckBox{this};
     _updateCheckbox->setTristate(false);
-    initializeUpdateCheckbox(*_updateCheckbox);
+    initializeUpdateCheckbox(_updateCheckbox);
 
     _sourceUpdateCheckbox = new QCheckBox{this};
     _sourceUpdateCheckbox->setTristate(false);
-    initializeSourceUpdateCheckbox(*_sourceUpdateCheckbox);
+    initializeSourceUpdateCheckbox(_sourceUpdateCheckbox);
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     _forceDarkModeCheckbox = new QCheckBox{this};
     _forceDarkModeCheckbox->setTristate(false);
-    initializeForceDarkModeCheckbox(*_forceDarkModeCheckbox);
+    initializeForceDarkModeCheckbox(_forceDarkModeCheckbox);
 #endif
 
     QFrame *_ttsDivider = new QFrame{this};
@@ -192,7 +190,7 @@ void AdvancedTab::setupUI()
 
     _languageCombobox = new QComboBox{this};
     _languageCombobox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-    initializeLanguageCombobox(*_languageCombobox);
+    initializeLanguageCombobox(_languageCombobox);
 
     QFrame *_resetDivider = new QFrame{this};
     _resetDivider->setObjectName("divider");
@@ -202,7 +200,7 @@ void AdvancedTab::setupUI()
 
     _resetButton = new QPushButton{this};
     _resetButton->setObjectName("reset button");
-    initializeResetButton(*_resetButton);
+    initializeResetButton(_resetButton);
 
     _tabLayout->addRow(" ", _updateCheckbox);
     _tabLayout->addRow(" ", _sourceUpdateCheckbox);
@@ -261,12 +259,12 @@ void AdvancedTab::translateUI()
     _useMandarinGoogleOfflineSyllableTTSBackend->setText(tr("Google"));
 
     QColor backgroundColour = Utils::isDarkMode()
-                                  ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                           LABEL_TEXT_COLOUR_DARK_G,
-                                           LABEL_TEXT_COLOUR_DARK_B}
-                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                           LABEL_TEXT_COLOUR_LIGHT_R,
-                                           LABEL_TEXT_COLOUR_LIGHT_R};
+                                  ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                  : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R};
     _ttsExplainer->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                                        Strings::TTS_EXPLAINER)
                                .arg(backgroundColour.name()));
@@ -327,22 +325,22 @@ void AdvancedTab::setStyle(bool use_dark)
 #endif
 }
 
-void AdvancedTab::initializeUpdateCheckbox(QCheckBox &checkbox)
+void AdvancedTab::initializeUpdateCheckbox(QCheckBox *checkbox)
 {
-    connect(&checkbox, &QCheckBox::checkStateChanged, this, [&]() {
+    connect(checkbox, &QCheckBox::checkStateChanged, this, [this, checkbox] {
         _settings->setValue("Advanced/updateNotificationsEnabled",
-                            checkbox.checkState());
+                            checkbox->checkState());
         _settings->sync();
     });
 
     setUpdateCheckboxDefault(checkbox);
 }
 
-void AdvancedTab::initializeSourceUpdateCheckbox(QCheckBox &checkbox)
+void AdvancedTab::initializeSourceUpdateCheckbox(QCheckBox *checkbox)
 {
-    connect(&checkbox, &QCheckBox::checkStateChanged, this, [&]() {
+    connect(checkbox, &QCheckBox::checkStateChanged, this, [this, checkbox] {
         _settings->setValue("Advanced/sourceUpdateNotificationsEnabled",
-                            checkbox.checkState());
+                            checkbox->checkState());
         _settings->sync();
     });
 
@@ -354,7 +352,7 @@ void AdvancedTab::initializeForceDarkModeCheckbox(QCheckBox &checkbox)
 {
     setForceDarkModeCheckboxDefault(checkbox);
 
-    connect(&checkbox, &QCheckBox::checkStateChanged, this, [&]() {
+    connect(&checkbox, &QCheckBox::checkStateChanged, this, [this, checkbox] {
         _settings->setValue("Advanced/forceDarkMode",
                             checkbox.checkState());
         _settings->sync();
@@ -374,7 +372,7 @@ void AdvancedTab::initializeCantoneseTTSWidget(QWidget *widget)
     static_cast<QGridLayout *>(widget->layout())
         ->addWidget(_useCantoneseGoogleOfflineSyllableTTSBackend, 0, 1, 1, 1);
 
-    connect(_useCantoneseQtTTSBackend, &QRadioButton::clicked, this, [&] {
+    connect(_useCantoneseQtTTSBackend, &QRadioButton::clicked, this, [this] {
         setCantoneseTTSSettings(TextToSpeech::SpeakerBackend::QT_TTS,
                                 TextToSpeech::SpeakerVoice::NONE);
     });
@@ -391,7 +389,7 @@ void AdvancedTab::initializeCantoneseTTSWidget(QWidget *widget)
     connect(_useCantoneseGoogleOfflineSyllableTTSBackend,
             &QRadioButton::clicked,
             this,
-            [&] { startAudioDownload(_cantoneseTTSCallbacks); });
+            [this] { startAudioDownload(_cantoneseTTSCallbacks); });
 
     setCantoneseTTSWidgetDefault(widget);
 }
@@ -403,7 +401,7 @@ void AdvancedTab::initializeMandarinTTSWidget(QWidget *widget)
     static_cast<QGridLayout *>(widget->layout())
         ->addWidget(_useMandarinGoogleOfflineSyllableTTSBackend, 0, 1, 1, 1);
 
-    connect(_useMandarinQtTTSBackend, &QRadioButton::clicked, this, [&]() {
+    connect(_useMandarinQtTTSBackend, &QRadioButton::clicked, this, [this] {
         setMandarinTTSSettings(TextToSpeech::SpeakerBackend::QT_TTS,
                                TextToSpeech::SpeakerVoice::NONE);
     });
@@ -420,80 +418,81 @@ void AdvancedTab::initializeMandarinTTSWidget(QWidget *widget)
     connect(_useMandarinGoogleOfflineSyllableTTSBackend,
             &QRadioButton::clicked,
             this,
-            [&]() { startAudioDownload(_mandarinTTSCallbacks); });
+            [this] { startAudioDownload(_mandarinTTSCallbacks); });
 
     setMandarinTTSWidgetDefault(widget);
 }
 
-void AdvancedTab::initializeLanguageCombobox(QComboBox &combobox)
+void AdvancedTab::initializeLanguageCombobox(QComboBox *combobox)
 {
-    combobox.addItem("0", "system");
-    combobox.addItem("1", "en");
-    combobox.addItem("2", "fr_CA");
-    combobox.addItem("3", "fr");
-    combobox.addItem("4", "yue_Hans");
-    combobox.addItem("5", "yue_Hant");
-    combobox.addItem("6", "zh_Hans");
-    combobox.addItem("7", "zh_Hant");
+    combobox->addItem("0", "system");
+    combobox->addItem("1", "en");
+    combobox->addItem("2", "fr_CA");
+    combobox->addItem("3", "fr");
+    combobox->addItem("4", "yue_Hans");
+    combobox->addItem("5", "yue_Hant");
+    combobox->addItem("6", "zh_Hans");
+    combobox->addItem("7", "zh_Hant");
 
-    connect(&combobox,
+    connect(combobox,
             QOverload<int>::of(&QComboBox::activated),
             this,
-            [&](int index) {
-                QString localeName = combobox.itemData(index).toString();
+            [this, combobox](int index) {
+                const QString localeName = combobox->itemData(index).toString();
                 QLocale newLocale = Settings::getCurrentLocale();
                 if (localeName == "system") {
                     newLocale = QLocale{};
                     _settings->remove("Advanced/locale");
                 } else {
-                    newLocale = QLocale{combobox.itemData(index).toString()};
+                    newLocale = QLocale{combobox->itemData(index).toString()};
                     _settings->setValue("Advanced/locale",
-                                        combobox.itemData(index));
+                                        combobox->itemData(index));
                 }
 
                 _settings->sync();
                 Settings::setCurrentLocale(newLocale);
 
                 qApp->removeTranslator(&Settings::systemTranslator);
-                (void) Settings::systemTranslator
-                    .load("qt_" + newLocale.name(),
-                          QLibraryInfo::path(QLibraryInfo::TranslationsPath));
+                std::ignore = Settings::systemTranslator
+                                  .load("qt_" + newLocale.name(),
+                                        QLibraryInfo::path(
+                                            QLibraryInfo::TranslationsPath));
                 qApp->installTranslator(&Settings::systemTranslator);
 
                 qApp->removeTranslator(&Settings::applicationTranslator);
-                (void) Settings::applicationTranslator
-                    .load(/* QLocale */ newLocale,
-                          /* filename */ "jyutdictionary",
-                          /* prefix */ "-",
-                          /* directory */ ":/translations");
+                std::ignore = Settings::applicationTranslator
+                                  .load(/* QLocale */ newLocale,
+                                        /* filename */ "jyutdictionary",
+                                        /* prefix */ "-",
+                                        /* directory */ ":/translations");
                 qApp->installTranslator(&Settings::applicationTranslator);
             });
 
     setLanguageComboboxDefault(combobox);
 }
 
-void AdvancedTab::initializeResetButton(QPushButton &resetButton)
+void AdvancedTab::initializeResetButton(QPushButton *resetButton)
 {
-    connect(&resetButton, &QPushButton::clicked, this, [&]() {
+    connect(resetButton, &QPushButton::clicked, this, [this] {
         ResetSettingsDialog *_message = new ResetSettingsDialog{this};
         if (_message->exec() == QMessageBox::Yes) {
             resetSettings(*_settings);
         }
     });
 
-    resetButton.setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+    resetButton->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 }
 
-void AdvancedTab::setUpdateCheckboxDefault(QCheckBox &checkbox)
+void AdvancedTab::setUpdateCheckboxDefault(QCheckBox *checkbox)
 {
-    checkbox.setChecked(
+    checkbox->setChecked(
         _settings->value("Advanced/updateNotificationsEnabled", QVariant{true})
             .toBool());
 }
 
-void AdvancedTab::setSourceUpdateCheckboxDefault(QCheckBox &checkbox)
+void AdvancedTab::setSourceUpdateCheckboxDefault(QCheckBox *checkbox)
 {
-    checkbox.setChecked(
+    checkbox->setChecked(
         _settings
             ->value("Advanced/sourceUpdateNotificationsEnabled", QVariant{true})
             .toBool());
@@ -585,9 +584,9 @@ void AdvancedTab::setMandarinTTSSettings(TextToSpeech::SpeakerBackend backend,
     _settings->sync();
 }
 
-void AdvancedTab::setLanguageComboboxDefault(QComboBox &combobox)
+void AdvancedTab::setLanguageComboboxDefault(QComboBox *combobox)
 {
-    combobox.setCurrentIndex(combobox.findData(
+    combobox->setCurrentIndex(combobox->findData(
         _settings->value("Advanced/locale", QVariant{"system"}).toString()));
 }
 
@@ -595,13 +594,13 @@ void AdvancedTab::resetSettings(QSettings &settings)
 {
     Settings::clearSettings(settings);
 
-    setUpdateCheckboxDefault(*_updateCheckbox);
+    setUpdateCheckboxDefault(_updateCheckbox);
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     setForceDarkModeCheckboxDefault(*_forceDarkModeCheckbox);
 #endif
     setCantoneseTTSWidgetDefault(_cantoneseTTSWidget);
     setMandarinTTSWidgetDefault(_cantoneseTTSWidget);
-    setLanguageComboboxDefault(*_languageCombobox);
+    setLanguageComboboxDefault(_languageCombobox);
 
     emit settingsReset();
 }
@@ -628,17 +627,17 @@ void AdvancedTab::exportDictionaryDatabase(void)
     showProgressDialog(tr("Exporting dictionaries..."));
 
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
-    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    disconnect(_boolReturnWatcher, nullptr, this, nullptr);
     connect(_boolReturnWatcher,
             &QFutureWatcher<bool>::finished,
             this,
-            [=, this]() {
+            [this, successText, failureText] {
                 _progressDialog->reset();
                 exportDatabaseResult(_boolReturnWatcher->result(),
                                      successText,
                                      failureText);
             });
-    QFuture<bool> future = QtConcurrent::run([=, this]() {
+    QFuture<bool> future = QtConcurrent::run([destinationFileName] {
         SQLDatabaseManager manager;
 
         // Do not attempt to replace database with itself
@@ -676,17 +675,17 @@ void AdvancedTab::exportUserDatabase(void)
     showProgressDialog(tr("Exporting saved words and history..."));
 
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
-    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    disconnect(_boolReturnWatcher, nullptr, this, nullptr);
     connect(_boolReturnWatcher,
             &QFutureWatcher<bool>::finished,
             this,
-            [=, this]() {
+            [this, successText, failureText] {
                 _progressDialog->reset();
                 exportDatabaseResult(_boolReturnWatcher->result(),
                                      successText,
                                      failureText);
             });
-    QFuture<bool> future = QtConcurrent::run([=, this]() {
+    QFuture<bool> future = QtConcurrent::run([destinationFileName] {
         SQLDatabaseManager manager;
 
         // Do not attempt to replace database with itself
@@ -733,17 +732,17 @@ void AdvancedTab::restoreBackedUpDictionaryDatabase(void)
     showProgressDialog(tr("Restoring dictionary..."));
 
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
-    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    disconnect(_boolReturnWatcher, nullptr, this, nullptr);
     connect(_boolReturnWatcher,
             &QFutureWatcher<bool>::finished,
             this,
-            [=, this]() {
+            [this, successText, failureText] {
                 _progressDialog->reset();
                 restoreDatabaseResult(_boolReturnWatcher->result(),
                                       successText,
                                       failureText);
             });
-    QFuture<bool> future = QtConcurrent::run([]() {
+    QFuture<bool> future = QtConcurrent::run([] {
         SQLDatabaseManager manager;
         return manager.restoreBackedUpDictionaryDatabase();
     });
@@ -784,17 +783,17 @@ void AdvancedTab::restoreExportedDictionaryDatabase(void)
     showProgressDialog(tr("Restoring dictionary..."));
 
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
-    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    disconnect(_boolReturnWatcher, nullptr, this, nullptr);
     connect(_boolReturnWatcher,
             &QFutureWatcher<bool>::finished,
             this,
-            [=, this]() {
+            [this, successText, failureText] {
                 _progressDialog->reset();
                 restoreDatabaseResult(_boolReturnWatcher->result(),
                                       successText,
                                       failureText);
             });
-    auto future = QtConcurrent::run([=, this]() {
+    auto future = QtConcurrent::run([sourceFileName] {
         SQLDatabaseManager manager;
 
         // Do not attempt to replace database with itself
@@ -840,17 +839,17 @@ void AdvancedTab::restoreExportedUserDatabase(void)
     showProgressDialog(tr("Restoring saved words and history..."));
 
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
-    disconnect(_boolReturnWatcher, nullptr, nullptr, nullptr);
+    disconnect(_boolReturnWatcher, nullptr, this, nullptr);
     connect(_boolReturnWatcher,
             &QFutureWatcher<bool>::finished,
             this,
-            [=, this]() {
+            [this, successText, failureText] {
                 _progressDialog->reset();
                 restoreDatabaseResult(_boolReturnWatcher->result(),
                                       successText,
                                       failureText);
             });
-    auto future = QtConcurrent::run([=, this]() {
+    auto future = QtConcurrent::run([sourceFileName] {
         SQLDatabaseManager manager;
 
         // Do not attempt to replace database with itself
@@ -924,13 +923,16 @@ void AdvancedTab::startAudioDownload(std::shared_ptr<TextToSpeechCallbacks> cbs)
 
     _downloader = new Downloader(url, zipFile, this);
 
-    disconnect(_downloader, nullptr, nullptr, nullptr);
-    connect(_downloader, &Downloader::downloaded, this, [=, this](QString outputPath) {
-        // Since the std::shared_ptr cbs goes out of scope once this function ends,
-        // it must be captured by value instead of by reference
-        unzipFile(outputPath, cbs);
-    });
-    connect(_downloader, &Downloader::error, this, [=, this](int error) {
+    disconnect(_downloader, nullptr, this, nullptr);
+    connect(_downloader,
+            &Downloader::downloaded,
+            this,
+            [cbs, this](QString outputPath) {
+                // Since the std::shared_ptr cbs goes out of scope once this function ends,
+                // it must be captured by value instead of by reference
+                unzipFile(outputPath, cbs);
+            });
+    connect(_downloader, &Downloader::error, this, [cbs, this](int error) {
         _progressDialog->reset();
         downloadAudioResult(!error,
                             tr("Audio downloaded successfully!"),
@@ -988,7 +990,7 @@ void AdvancedTab::unzipFile(QString outputPath,
     _progressDialog->setLabelText(tr("Installing downloaded files..."));
 
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
-    QFuture<bool> future = QtConcurrent::run([=, this]() {
+    QFuture<bool> future = QtConcurrent::run([this, outputPath, outputFolder] {
         KZip zip{outputPath};
         if (!zip.open(QIODevice::ReadOnly)) {
             return false;
@@ -999,7 +1001,7 @@ void AdvancedTab::unzipFile(QString outputPath,
         return true;
     });
     _boolReturnWatcher->setFuture(future);
-    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [=, this]() {
+    connect(_boolReturnWatcher, &QFutureWatcher<bool>::finished, this, [this, cbs] {
         // Since the std::shared_ptr cbs goes out of scope once this function ends,
         // it must be captured by value instead of by reference
         unzipComplete(static_cast<QFutureWatcher<bool> *>(sender())->result(),

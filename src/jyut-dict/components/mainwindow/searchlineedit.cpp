@@ -34,7 +34,7 @@ SearchLineEdit::SearchLineEdit(
     std::shared_ptr<ISearch> sqlSearch,
     std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
     QWidget *parent)
-    : QLineEdit(parent)
+    : QLineEdit{parent}
     , _mediator{mediator}
     , _search{sqlSearch}
     , _sqlHistoryUtils{sqlHistoryUtils}
@@ -57,7 +57,7 @@ void SearchLineEdit::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -160,7 +160,7 @@ void SearchLineEdit::setupUI(void)
     // much faster.
     connect(this, &QLineEdit::textChanged, this, [this] {
         _searchDelayTimer->stop();
-        disconnect(_searchDelayTimer, nullptr, nullptr, nullptr);
+        disconnect(_searchDelayTimer, nullptr, this, nullptr);
         _searchDelayTimer->setSingleShot(true);
         connect(_searchDelayTimer,
                 &QTimer::timeout,
@@ -190,12 +190,13 @@ void SearchLineEdit::setStyle(bool use_dark)
 #endif
 
 #ifndef Q_OS_MAC
-    QColor borderColour = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
-                                            HEADER_BACKGROUND_COLOUR_DARK_G,
-                                            HEADER_BACKGROUND_COLOUR_DARK_B}
-                                   : QColor{HEADER_BACKGROUND_COLOUR_LIGHT_R,
-                                            HEADER_BACKGROUND_COLOUR_LIGHT_G,
-                                            HEADER_BACKGROUND_COLOUR_LIGHT_B};
+    QColor borderColour = use_dark
+                              ? QColor{Utils::HEADER_BACKGROUND_COLOUR_DARK_R,
+                                       Utils::HEADER_BACKGROUND_COLOUR_DARK_G,
+                                       Utils::HEADER_BACKGROUND_COLOUR_DARK_B}
+                              : QColor{Utils::HEADER_BACKGROUND_COLOUR_LIGHT_R,
+                                       Utils::HEADER_BACKGROUND_COLOUR_LIGHT_G,
+                                       Utils::HEADER_BACKGROUND_COLOUR_LIGHT_B};
 #endif
 
     QIcon search = QIcon{":/images/search.png"};
@@ -299,7 +300,7 @@ void SearchLineEdit::startHandwriting(void)
     connect(_handwritingWindow,
             &HandwritingWindow::characterChosen,
             this,
-            [&](QString character) {
+            [&](const QString &character) {
                 if (character == "\x8") {
                     if (!text().isEmpty()) {
                         setText(text().chopped(1));
@@ -374,9 +375,9 @@ void SearchLineEdit::startTranscription(void)
 void SearchLineEdit::addSearchTermToHistory(SearchParameters parameters) const
 {
     _searchHistoryDelayTimer->stop();
-    disconnect(_searchHistoryDelayTimer, nullptr, nullptr, nullptr);
+    disconnect(_searchHistoryDelayTimer, nullptr, this, nullptr);
     _searchHistoryDelayTimer->setSingleShot(true);
-    connect(_searchHistoryDelayTimer, &QTimer::timeout, this, [=, this]() {
+    connect(_searchHistoryDelayTimer, &QTimer::timeout, this, [this, parameters] {
         if (!text().isEmpty()) {
             _sqlHistoryUtils->addSearchToHistory(text().toStdString(),
                                                  static_cast<int>(parameters));

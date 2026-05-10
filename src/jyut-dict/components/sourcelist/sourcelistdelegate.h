@@ -1,12 +1,12 @@
 #ifndef SOURCELISTDELEGATE_H
 #define SOURCELISTDELEGATE_H
 
-#include <QModelIndex>
-#include <QPainter>
 #include <QSettings>
-#include <QStyleOptionViewItem>
 #include <QStyledItemDelegate>
-#include <QWidget>
+
+class QModelIndex;
+class QPainter;
+class QStyledOptionViewItem;
 
 // The SourceListDelegate is responsible for painting sources
 // in a listview.

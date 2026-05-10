@@ -1,7 +1,10 @@
 #include "sqluserdatautils.h"
 
 #include "logic/database/queryparseutils.h"
+#include "logic/database/sqldatabasemanager.h"
+#include "logic/entry/entry.h"
 
+#include <QSqlQuery>
 #include <QtConcurrent/QtConcurrent>
 
 SQLUserDataUtils::SQLUserDataUtils(std::shared_ptr<SQLDatabaseManager> manager)

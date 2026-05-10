@@ -2,18 +2,21 @@
 
 #include "components/historyview/viewhistorylistdelegate.h"
 
+#include <QEvent>
 #include <QGuiApplication>
-
+#include <QStyledItemDelegate>
 #ifdef Q_OS_WIN
 #include <QScrollBar>
 #endif
+#include <QWheelEvent>
+#include <QWidget>
 
 ViewHistoryListView::ViewHistoryListView(QWidget *parent)
-    : QListView(parent)
+    : QListView{parent}
+    , _delegate{new ViewHistoryListDelegate{this}}
 {
     setFrameShape(QFrame::NoFrame);
 
-    _delegate = new ViewHistoryListDelegate{this};
     setItemDelegate(_delegate);
 
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);

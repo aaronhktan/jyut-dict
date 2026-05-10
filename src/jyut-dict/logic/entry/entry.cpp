@@ -5,6 +5,8 @@
 #include "logic/utils/chineseutils.h"
 #include "logic/utils/mandarinutils.h"
 
+#include <QVariant>
+
 Entry::Entry(const std::string &simplified, const std::string &traditional,
              const std::string &jyutping, const std::string &pinyin,
              const std::vector<DefinitionsSet> &definitions)
@@ -47,21 +49,13 @@ Entry::Entry(const Entry &entry)
     , _colouredPreferTraditional{entry._colouredPreferTraditional}
     , _jyutping{entry._jyutping}
     , _yale{entry._yale}
-    , _isYaleValid{entry._isYaleValid}
     , _cantoneseIPA{entry._cantoneseIPA}
-    , _isCantoneseIPAValid{entry._isCantoneseIPAValid}
-    , _isJyutpingNumbersValid{entry._isJyutpingNumbersValid}
     , _jyutpingNumbers{entry._jyutpingNumbers}
     , _pinyin{entry._pinyin}
     , _prettyPinyin{entry._prettyPinyin}
-    , _isPrettyPinyinValid{entry._isPrettyPinyinValid}
     , _numberedPinyin{entry._numberedPinyin}
-    , _isNumberedPinyinValid{entry._isNumberedPinyinValid}
     , _zhuyin{entry._zhuyin}
-    , _isZhuyinValid{entry._isZhuyinValid}
     , _mandarinIPA{entry._mandarinIPA}
-    , _isMandarinIPAValid{entry._isMandarinIPAValid}
-    , _isPinyinNumbersValid{entry._isPinyinNumbersValid}
     , _pinyinNumbers{entry._pinyinNumbers}
     , _definitions{entry._definitions}
     , _isWelcome{entry._isWelcome}
@@ -85,21 +79,13 @@ Entry::Entry(Entry &&entry)
     , _colouredPreferTraditional{std::move(entry._colouredPreferTraditional)}
     , _jyutping{std::move(entry._jyutping)}
     , _yale{std::move(entry._yale)}
-    , _isYaleValid{entry._isYaleValid}
     , _cantoneseIPA{std::move(entry._cantoneseIPA)}
-    , _isCantoneseIPAValid{entry._isCantoneseIPAValid}
-    , _isJyutpingNumbersValid{entry._isJyutpingNumbersValid}
     , _jyutpingNumbers{std::move(entry._jyutpingNumbers)}
     , _pinyin{std::move(entry._pinyin)}
     , _prettyPinyin{std::move(entry._prettyPinyin)}
-    , _isPrettyPinyinValid{entry._isPrettyPinyinValid}
     , _numberedPinyin{std::move(entry._numberedPinyin)}
-    , _isNumberedPinyinValid{entry._isNumberedPinyinValid}
     , _zhuyin{std::move(entry._zhuyin)}
-    , _isZhuyinValid{entry._isZhuyinValid}
     , _mandarinIPA{std::move(entry._mandarinIPA)}
-    , _isMandarinIPAValid{entry._isMandarinIPAValid}
-    , _isPinyinNumbersValid{entry._isPinyinNumbersValid}
     , _pinyinNumbers{std::move(entry._pinyinNumbers)}
     , _definitions{std::move(entry._definitions)}
     , _isWelcome{entry._isWelcome}
@@ -126,21 +112,13 @@ Entry &Entry::operator=(const Entry &entry)
     _colouredPreferTraditional = entry._colouredPreferTraditional;
     _jyutping = entry._jyutping;
     _yale = entry._yale;
-    _isYaleValid = entry._isYaleValid;
     _cantoneseIPA = entry._cantoneseIPA;
-    _isCantoneseIPAValid = entry._isCantoneseIPAValid;
-    _isJyutpingNumbersValid = entry._isJyutpingNumbersValid;
     _jyutpingNumbers = entry._jyutpingNumbers;
     _pinyin = entry._pinyin;
     _prettyPinyin = entry._prettyPinyin;
-    _isPrettyPinyinValid = entry._isPrettyPinyinValid;
     _numberedPinyin = entry._numberedPinyin;
-    _isNumberedPinyinValid = entry._isNumberedPinyinValid;
     _zhuyin = entry._zhuyin;
-    _isZhuyinValid = entry._isZhuyinValid;
     _mandarinIPA = entry._mandarinIPA;
-    _isMandarinIPAValid = entry._isMandarinIPAValid;
-    _isPinyinNumbersValid = entry._isPinyinNumbersValid;
     _pinyinNumbers = entry._pinyinNumbers;
     _definitions = entry._definitions;
     _isWelcome = entry._isWelcome;
@@ -169,21 +147,13 @@ Entry &Entry::operator=(Entry &&entry)
     _colouredPreferTraditional = std::move(entry._colouredPreferTraditional);
     _jyutping = std::move(entry._jyutping);
     _yale = std::move(entry._yale);
-    _isYaleValid = entry._isYaleValid;
     _cantoneseIPA = std::move(entry._cantoneseIPA);
-    _isCantoneseIPAValid = entry._isCantoneseIPAValid;
-    _isJyutpingNumbersValid = entry._isJyutpingNumbersValid;
     _jyutpingNumbers = std::move(entry._jyutpingNumbers);
     _pinyin = std::move(entry._pinyin);
     _prettyPinyin = std::move(entry._prettyPinyin);
-    _isPrettyPinyinValid = entry._isPrettyPinyinValid;
     _numberedPinyin = std::move(entry._numberedPinyin);
-    _isNumberedPinyinValid = entry._isNumberedPinyinValid;
     _zhuyin = std::move(entry._zhuyin);
-    _isZhuyinValid = entry._isZhuyinValid;
     _mandarinIPA = std::move(entry._mandarinIPA);
-    _isMandarinIPAValid = entry._isMandarinIPAValid;
-    _isPinyinNumbersValid = entry._isPinyinNumbersValid;
     _pinyinNumbers = std::move(entry._pinyinNumbers);
     _definitions = std::move(entry._definitions);
     _isWelcome = entry._isWelcome;
@@ -315,41 +285,37 @@ bool Entry::generatePhonetic(CantoneseOptions cantoneseOptions,
 {
     if ((cantoneseOptions & CantoneseOptions::PRETTY_YALE)
             == CantoneseOptions::PRETTY_YALE
-        && !_isYaleValid) {
-            _yale = CantoneseUtils::convertJyutpingToYale(_jyutping);
-            _isYaleValid = true;
+        && !_yale.has_value()) {
+        _yale = CantoneseUtils::convertJyutpingToYale(_jyutping);
     }
 
     if ((cantoneseOptions & CantoneseOptions::CANTONESE_IPA)
             == CantoneseOptions::CANTONESE_IPA
-        && !_isCantoneseIPAValid) {
-            _cantoneseIPA = CantoneseUtils::convertJyutpingToIPA(_jyutping);
-            _isCantoneseIPAValid = true;
+        && !_cantoneseIPA.has_value()) {
+        _cantoneseIPA = CantoneseUtils::convertJyutpingToIPA(_jyutping);
     }
 
     if ((mandarinOptions & MandarinOptions::PRETTY_PINYIN)
-            == MandarinOptions::PRETTY_PINYIN && !_isPrettyPinyinValid) {
+            == MandarinOptions::PRETTY_PINYIN
+        && !_prettyPinyin.has_value()) {
         _prettyPinyin = MandarinUtils::createPrettyPinyin(_pinyin);
-        _isPrettyPinyinValid = true;
     }
 
     if ((mandarinOptions & MandarinOptions::NUMBERED_PINYIN)
-            == MandarinOptions::NUMBERED_PINYIN && !_isNumberedPinyinValid) {
+            == MandarinOptions::NUMBERED_PINYIN
+        && !_numberedPinyin.has_value()) {
         _numberedPinyin = MandarinUtils::createNumberedPinyin(_pinyin);
-        _isNumberedPinyinValid = true;
     }
 
     if ((mandarinOptions & MandarinOptions::ZHUYIN) == MandarinOptions::ZHUYIN
-        && !_isZhuyinValid) {
+        && !_zhuyin.has_value()) {
         _zhuyin = MandarinUtils::convertPinyinToZhuyin(_pinyin);
-        _isZhuyinValid = true;
     }
 
     if ((mandarinOptions & MandarinOptions::MANDARIN_IPA)
             == MandarinOptions::MANDARIN_IPA
-        && !_isMandarinIPAValid) {
+        && !_mandarinIPA.has_value()) {
         _mandarinIPA = MandarinUtils::convertPinyinToIPA(_pinyin);
-        _isMandarinIPAValid = true;
     }
 
     return true;
@@ -425,10 +391,10 @@ const std::string &Entry::getCantonesePhonetic(
 {
     switch (cantoneseOptions) {
     case CantoneseOptions::PRETTY_YALE: {
-        return _yale;
+        return _yale.value();
     }
     case CantoneseOptions::CANTONESE_IPA: {
-        return _cantoneseIPA;
+        return _cantoneseIPA.value();
     }
     case CantoneseOptions::RAW_JYUTPING:
     default:
@@ -441,16 +407,16 @@ const std::string &Entry::getMandarinPhonetic(
 {
     switch (mandarinOptions) {
     case MandarinOptions::PRETTY_PINYIN: {
-        return _prettyPinyin;
+        return _prettyPinyin.value();
     }
     case MandarinOptions::NUMBERED_PINYIN: {
-        return _numberedPinyin;
+        return _numberedPinyin.value();
     }
     case MandarinOptions::ZHUYIN: {
-        return _zhuyin;
+        return _zhuyin.value();
     }
     case MandarinOptions::MANDARIN_IPA: {
-        return _mandarinIPA;
+        return _mandarinIPA.value();
     }
     default: {
         return _pinyin;
@@ -470,26 +436,21 @@ void Entry::setJyutping(const std::string &jyutping)
                    _jyutping.cend(),
                    _jyutping.begin(),
                    [](unsigned char c) { return std::tolower(c); });
-    _isJyutpingNumbersValid = false;
+    _jyutpingNumbers = std::nullopt;
 }
 
 const std::vector<uint8_t> &Entry::getJyutpingNumbers()
 {
-    if (_jyutping.empty()) {
-        return _jyutpingNumbers;
-    }
-
-    if (!_isJyutpingNumbersValid) {
-        _jyutpingNumbers.clear();
+    if (!_jyutpingNumbers.has_value()) {
+        _jyutpingNumbers = std::vector<uint8_t>{};
         size_t pos = _jyutping.find_first_of("0123456");
         while (pos != std::string::npos) {
-            _jyutpingNumbers.push_back(_jyutping.at(pos) - '0');
+            _jyutpingNumbers.value().push_back(_jyutping.at(pos) - '0');
             pos = _jyutping.find_first_of("0123456", pos + 1);
         }
-        _isJyutpingNumbersValid = true;
     }
 
-    return _jyutpingNumbers;
+    return _jyutpingNumbers.value();
 }
 
 const std::string &Entry::getPinyin(void) const
@@ -501,26 +462,21 @@ void Entry::setPinyin(const std::string &pinyin)
 {
     _pinyin = pinyin;
     std::transform(_pinyin.begin(), _pinyin.end(), _pinyin.begin(), ::tolower);
-    _isPinyinNumbersValid = false;
+    _pinyinNumbers = std::nullopt;
 }
 
 const std::vector<uint8_t> &Entry::getPinyinNumbers()
 {
-    if (_pinyin.empty()) {
-        return _pinyinNumbers;
-    }
-
-    if (!_isPinyinNumbersValid) {
-        _pinyinNumbers.clear();
+    if (!_pinyinNumbers.has_value()) {
+        _pinyinNumbers = std::vector<uint8_t>{};
         size_t pos = _pinyin.find_first_of("012345");
         while (pos != std::string::npos) {
-            _pinyinNumbers.push_back(_pinyin.at(pos) - '0');
+            _pinyinNumbers.value().push_back(_pinyin.at(pos) - '0');
             pos = _pinyin.find_first_of("012345", pos + 1);
         }
-        _isPinyinNumbersValid = true;
     }
 
-    return _pinyinNumbers;
+    return _pinyinNumbers.value();
 }
 
 std::span<const DefinitionsSet> Entry::getDefinitionsSets(void) const

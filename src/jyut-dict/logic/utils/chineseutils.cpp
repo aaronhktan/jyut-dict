@@ -15,19 +15,19 @@ const static std::unordered_set<std::string> specialCharacters = {
     "1",  "2",  "3",  "4",  "5",  "6",  "7",  "8",  "9",  "0",
 };
 
-std::string applyColours(const std::string original,
+std::string applyColours(const std::string &original,
                          std::span<const uint8_t> tones,
                          std::span<const std::string> jyutpingToneColours,
                          std::span<const std::string> pinyinToneColours,
                          const EntryColourPhoneticType type)
 {
     std::string coloured_string;
-    auto data = QString::fromStdString(original)
-                    .normalized(QString::NormalizationForm_C)
-                    .toStdU32String();
+    const auto data = QString::fromStdString(original)
+                          .normalized(QString::NormalizationForm_C)
+                          .toStdU32String();
     size_t pos = 0;
     for (const auto codepoint : data) {
-        std::string originalStr
+        const std::string originalStr
             = QString::fromStdU32String(std::u32string{codepoint}).toStdString();
 
         // Skip same character string; they have no colour
@@ -45,9 +45,9 @@ std::string applyColours(const std::string original,
         // Skip any special characters
         // but do not increment to next tone position,
         // since special characters do not have any tones associated with them
-        auto isSpecialCharacter = specialCharacters.find(originalStr)
-                                  != specialCharacters.end();
-        bool isIdeograph
+        const auto isSpecialCharacter = specialCharacters.find(originalStr)
+                                        != specialCharacters.end();
+        const bool isIdeograph
             = (codepoint >= 0x4E00
                && codepoint <= 0x9FFF) // CJK Unified Ideographs
               || (codepoint >= 0x3400
@@ -72,7 +72,7 @@ std::string applyColours(const std::string original,
             coloured_string += originalStr;
             continue;
         }
-        size_t tone = tones[pos];
+        const size_t tone = tones[pos];
 
         // ... and apply tone colour formatting to the string
         switch (type) {
@@ -115,26 +115,26 @@ std::string compareStrings(const std::string &original,
                            const std::string &comparison)
 {
     std::string result;
-    std::u32string convertedOriginal = QString::fromStdString(original)
-                                           .normalized(
-                                               QString::NormalizationForm_C)
-                                           .toStdU32String();
-    std::u32string convertedComparison = QString::fromStdString(comparison)
-                                             .normalized(
-                                                 QString::NormalizationForm_C)
-                                             .toStdU32String();
+    const std::u32string convertedOriginal
+        = QString::fromStdString(original)
+              .normalized(QString::NormalizationForm_C)
+              .toStdU32String();
+    const std::u32string convertedComparison
+        = QString::fromStdString(comparison)
+              .normalized(QString::NormalizationForm_C)
+              .toStdU32String();
 
     if (convertedOriginal.size() != convertedComparison.size()) {
         return result;
     }
 
     for (size_t i = 0; i < convertedOriginal.size(); i++) {
-        std::string currentCharacter
+        const std::string currentCharacter
             = QString::fromStdU32String(std::u32string{convertedComparison[i]})
                   .toStdString();
 
-        auto isSpecialCharacter = specialCharacters.find(currentCharacter)
-                                  != specialCharacters.end();
+        const auto isSpecialCharacter = specialCharacters.find(currentCharacter)
+                                        != specialCharacters.end();
         if (isSpecialCharacter
             || convertedOriginal[i] != convertedComparison[i]) {
             result += currentCharacter;

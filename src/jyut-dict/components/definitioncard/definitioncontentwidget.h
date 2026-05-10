@@ -3,13 +3,16 @@
 
 #include "logic/entry/definitionsset.h"
 
-#include <QEvent>
-#include <QGridLayout>
-#include <QLabel>
 #include <QSettings>
 #include <QWidget>
 
 #include <span>
+
+class DefinitionsSet;
+
+class QEvent;
+class QGridLayout;
+class QLabel;
 
 // The DefinitionContentWidget shows all the definitions
 // It contains a collection of QLabels, one for each definition
@@ -24,7 +27,7 @@ public:
 
     void changeEvent(QEvent *event) override;
 
-    void setEntry(std::span<const Definition::Definition> definitions);
+    void setDefinitions(std::span<const Definition::Definition> definitions);
 
 private:
     void setStyle(bool use_dark);

@@ -6,13 +6,11 @@
 #include "logic/search/isearchobserver.h"
 
 #include <QAbstractListModel>
-#include <QModelIndex>
-#include <QObject>
-#include <QVariant>
 
-#include <string>
-#include <utility>
 #include <vector>
+
+class QModelIndex;
+class QVariant;
 
 // The SearchHistoryListModel contains data (a vector of Entry objects)
 // that represents entries that were viewed in the past by a user.
@@ -24,7 +22,6 @@
 class SearchHistoryListModel : public QAbstractListModel, public ISearchObserver
 {
     Q_OBJECT
-
 public:
     explicit SearchHistoryListModel(std::shared_ptr<ISearchObservable> sqlHistoryUtils,
                                     QObject *parent = nullptr);

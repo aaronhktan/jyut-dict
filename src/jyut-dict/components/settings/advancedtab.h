@@ -3,9 +3,12 @@
 
 #include "logic/entry/entryspeaker.h"
 
+#include <QFutureWatcher>
+#include <QString>
 #include <QWidget>
 
 #include <functional>
+#include <memory>
 
 class DownloadAudioDialog;
 class Downloader;
@@ -29,7 +32,6 @@ class QTranslator;
 class AdvancedTab : public QWidget
 {
     Q_OBJECT
-
 public:
     explicit AdvancedTab(QWidget *parent = nullptr);
 
@@ -53,18 +55,18 @@ private:
 
     void setStyle(bool use_dark);
 
-    void initializeUpdateCheckbox(QCheckBox &checkbox);
-    void initializeSourceUpdateCheckbox(QCheckBox &checkbox);
+    void initializeUpdateCheckbox(QCheckBox *checkbox);
+    void initializeSourceUpdateCheckbox(QCheckBox *checkbox);
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-    void initializeForceDarkModeCheckbox(QCheckBox &checkbox);
+    void initializeForceDarkModeCheckbox(QCheckBox *checkbox);
 #endif
     void initializeCantoneseTTSWidget(QWidget *widget);
     void initializeMandarinTTSWidget(QWidget *widget);
-    void initializeLanguageCombobox(QComboBox &combobox);
-    void initializeResetButton(QPushButton &resetButton);
+    void initializeLanguageCombobox(QComboBox *combobox);
+    void initializeResetButton(QPushButton *resetButton);
 
-    void setUpdateCheckboxDefault(QCheckBox &checkbox);
-    void setSourceUpdateCheckboxDefault(QCheckBox &checkbox);
+    void setUpdateCheckboxDefault(QCheckBox *checkbox);
+    void setSourceUpdateCheckboxDefault(QCheckBox *checkbox);
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     void setForceDarkModeCheckboxDefault(QCheckBox &checkbox);
 #endif
@@ -74,7 +76,7 @@ private:
     void setMandarinTTSWidgetDefault(QWidget *widget);
     void setMandarinTTSSettings(TextToSpeech::SpeakerBackend backend,
                                 TextToSpeech::SpeakerVoice voice);
-    void setLanguageComboboxDefault(QComboBox &combobox);
+    void setLanguageComboboxDefault(QComboBox *combobox);
 
     void exportDictionaryDatabase(void);
     void exportUserDatabase(void);
@@ -145,9 +147,9 @@ private:
 
 private slots:
     void unzipFile(QString outputPath,
-                   std::shared_ptr<TextToSpeechCallbacks> cbs);
+                   std::shared_ptr<AdvancedTab::TextToSpeechCallbacks> cbs);
     void unzipComplete(bool completed,
-                       std::shared_ptr<TextToSpeechCallbacks> cbs);
+                       std::shared_ptr<AdvancedTab::TextToSpeechCallbacks> cbs);
 
 signals:
     void settingsReset(void);

@@ -16,39 +16,15 @@ class ISearchObservable
 public:
     virtual ~ISearchObservable() = default;
 
-    virtual void registerObserver(ISearchObserver *observer)
-    {
-        (void) (observer);
-    }
-    virtual void deregisterObserver(ISearchObserver *observer)
-    {
-        (void) (observer);
-    }
-    virtual void notifyObservers(SearchParameters params) { (void) (params); }
-    virtual void notifyObservers(const std::vector<Entry> &results,
-                                 bool emptyQuery)
-    {
-        (void) (results);
-        (void) (emptyQuery);
-    }
-    virtual void notifyObservers(const std::vector<SourceSentence> &results,
-                                 bool emptyQuery)
-    {
-        (void) (results);
-        (void) (emptyQuery);
-    }
+    virtual void registerObserver(ISearchObserver *) {}
+    virtual void deregisterObserver(ISearchObserver *) {}
+    virtual void notifyObservers(SearchParameters) {}
+    virtual void notifyObservers(const std::vector<Entry> &, bool) {}
+    virtual void notifyObservers(const std::vector<SourceSentence> &, bool) {}
     virtual void notifyObservers(
-        const std::vector<std::pair<std::string, int>> &results, bool emptyQuery)
-    {
-        (void) (results);
-        (void) (emptyQuery);
-    }
-
-    virtual void notifyObservers(bool entryExists, const Entry &entry)
-    {
-        (void) (entryExists);
-        (void) (entry);
-    }
+        const std::vector<std::pair<std::string, int>> &, bool)
+    {}
+    virtual void notifyObservers(bool, const Entry &) {}
 };
 
 #endif // ISEARCHOBSERVABLE_H

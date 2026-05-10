@@ -11,7 +11,7 @@
 
 namespace Utils {
 
-static std::unordered_map<std::string, QColor> colourMap = {
+std::unordered_map<std::string, QColor> colourMap = {
     {"cmn", QColor{14, 139, 83}},
     {"eng", QColor{100, 76, 143}},
     {"fra", QColor{0, 48, 143}},
@@ -19,7 +19,7 @@ static std::unordered_map<std::string, QColor> colourMap = {
     {"yue", QColor{173, 31, 90}},
 };
 
-static std::unordered_map<std::string, QString> languageMap = {
+std::unordered_map<std::string, QString> languageMap = {
     {"cmn",
      QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CMN_STRING)},
     {"eng",
@@ -34,7 +34,7 @@ static std::unordered_map<std::string, QString> languageMap = {
      QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::ZHO_STRING)},
 };
 
-static QMap<QString, std::string> reverseLanguageMap = {
+QMap<QString, std::string> reverseLanguageMap = {
     {QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CMN_STRING),
      "cmn"},
     {QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::ENG_STRING),
@@ -49,7 +49,7 @@ static QMap<QString, std::string> reverseLanguageMap = {
      "zho"},
 };
 
-static QMap<SearchParameters, std::string> searchParameterMap = {
+QMap<SearchParameters, std::string> searchParameterMap = {
     {SearchParameters::SIMPLIFIED,
      QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::SC_STRING)
          .toStdString()},
@@ -73,7 +73,7 @@ static QMap<SearchParameters, std::string> searchParameterMap = {
          .toStdString()},
 };
 
-QColor getContrastingColour(const QColor backgroundColour)
+QColor getContrastingColour(const QColor &backgroundColour)
 {
     auto brightness = backgroundColour.redF() * 0.299
                       + backgroundColour.greenF() * 0.587
@@ -81,18 +81,18 @@ QColor getContrastingColour(const QColor backgroundColour)
     return (brightness > 0.65) ? QColor{0, 0, 0} : QColor{0xFF, 0xFF, 0xFF};
 }
 
-QColor getLanguageColour(std::string language)
+QColor getLanguageColour(const std::string &language)
 {
     QColor colour;
     try {
         colour = colourMap.at(language);
-    } catch (std::out_of_range &e) {
+    } catch ([[maybe_unused]] std::out_of_range &e) {
         colour = QColor{"slategrey"};
     }
     return colour;
 }
 
-QString getLanguageFromISO639(std::string language)
+QString getLanguageFromISO639(const std::string &language)
 {
     QString result;
     try {
@@ -104,7 +104,7 @@ QString getLanguageFromISO639(std::string language)
     return result;
 }
 
-std::string getISO639FromLanguage(QString language)
+std::string getISO639FromLanguage(const QString &language)
 {
     std::string result;
     if (reverseLanguageMap.contains(language)) {

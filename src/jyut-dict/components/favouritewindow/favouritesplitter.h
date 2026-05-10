@@ -1,16 +1,19 @@
 #ifndef FAVOURITESPLITTER_H
 #define FAVOURITESPLITTER_H
 
-#include "components/entryview/entryscrollarea.h"
-#include "logic/database/sqldatabasemanager.h"
-#include "logic/database/sqluserdatautils.h"
-#include "logic/entry/entry.h"
+#include "logic/search/searchparameters.h"
 
-#include <QAbstractListModel>
-#include <QEvent>
-#include <QModelIndex>
 #include <QSplitter>
-#include <QWidget>
+
+class Entry;
+class EntryScrollArea;
+class SQLUserDataUtils;
+class SQLDatabaseManager;
+
+class QAbstractListModel;
+class QEvent;
+class QListView;
+class QModelIndex;
 
 // The FavouriteSplitter contains a "master" listview and a "detail" scrollarea
 //
@@ -22,8 +25,7 @@
 
 class FavouriteSplitter : public QSplitter
 {
-Q_OBJECT
-
+    Q_OBJECT
 public:
     explicit FavouriteSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
                                std::shared_ptr<SQLDatabaseManager> manager,

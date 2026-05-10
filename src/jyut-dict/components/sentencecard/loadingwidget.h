@@ -1,11 +1,12 @@
 #ifndef LOADINGWIDGET_H
 #define LOADINGWIDGET_H
 
-#include <QEvent>
-#include <QLabel>
-#include <QMovie>
-#include <QVBoxLayout>
 #include <QWidget>
+
+class QEvent;
+class QLabel;
+class QMovie;
+class QVBoxLayout;
 
 // The LoadingWidget displays a sentence and a circular spinner.
 

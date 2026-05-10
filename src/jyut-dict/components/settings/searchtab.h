@@ -1,23 +1,23 @@
 #ifndef SEARCHTAB_H
 #define SEARCHTAB_H
 
-#include <QCheckBox>
-#include <QComboBox>
-#include <QEvent>
-#include <QFormLayout>
-#include <QGridLayout>
-#include <QLabel>
 #include <QSettings>
 #include <QWidget>
 
 #include <memory>
+
+class QCheckBox;
+class QComboBox;
+class QEvent;
+class QFormLayout;
+class QGridLayout;
+class QLabel;
 
 // The search settings tab displays settings related to searching.
 
 class SearchTab : public QWidget
 {
     Q_OBJECT
-
 public:
     explicit SearchTab(QWidget *parent = nullptr);
 
@@ -28,16 +28,16 @@ private:
     void translateUI();
     void setStyle(bool use_dark);
 
-    void initializeSearchAutoDetectCheckbox(QCheckBox &searchAutoDetectCheckbox);
-    void initializeFuzzyJyutping(QWidget &widget);
-    void initializeDangerousFuzzyJyutping(QWidget &widget);
-    void initializeFuzzyPinyin(QWidget &widget);
+    void initializeSearchAutoDetectCheckbox(QCheckBox *searchAutoDetectCheckbox);
+    void initializeFuzzyJyutping(QWidget *widget);
+    void initializeDangerousFuzzyJyutping(QWidget *widget);
+    void initializeFuzzyPinyin(QWidget *widget);
 
-    void setSearchAutoDetectCheckboxDefault(QCheckBox &searchAutoDetectCheckbox);
-    void setFuzzyJyutpingCheckboxDefault(QCheckBox &fuzzyJyutpingCheckbox);
+    void setSearchAutoDetectCheckboxDefault(QCheckBox *searchAutoDetectCheckbox);
+    void setFuzzyJyutpingCheckboxDefault(QCheckBox *fuzzyJyutpingCheckbox);
     void setDangerousFuzzyJyutpingCheckboxDefault(
-        QCheckBox &dangerouFuzzyJyutpingCheckbox);
-    void setFuzzyPinyinCheckboxDefault(QCheckBox &fuzzyPinyinCheckbox);
+        QCheckBox *dangerouFuzzyJyutpingCheckbox);
+    void setFuzzyPinyinCheckboxDefault(QCheckBox *fuzzyPinyinCheckbox);
 
     bool _paletteRecentlyChanged = false;
 

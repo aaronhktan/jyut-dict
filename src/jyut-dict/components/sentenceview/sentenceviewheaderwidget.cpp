@@ -1,5 +1,6 @@
 #include "sentenceviewheaderwidget.h"
 
+#include "dialogs/entryspeakerrordialog.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/strings/strings.h"
@@ -11,20 +12,25 @@
 #elif defined(Q_OS_WIN)
 #include "logic/utils/utils_windows.h"
 #endif
+#include "logic/entry/entryspeaker.h"
+#include "logic/sentence/sourcesentence.h"
 #include "logic/utils/utils_qt.h"
 
-#include <QtGlobal>
 #include <QCoreApplication>
+#include <QEvent>
+#include <QGridLayout>
 #include <QIcon>
+#include <QLabel>
+#include <QPushButton>
 #include <QTimer>
 #include <QVariant>
+#include <QtGlobal>
 
-SentenceViewHeaderWidget::SentenceViewHeaderWidget(QWidget *parent) : QWidget(parent)
+SentenceViewHeaderWidget::SentenceViewHeaderWidget(QWidget *parent)
+    : QWidget{parent}
+    , _settings{Settings::getSettings(this)}
+    , _speaker{new EntrySpeaker}
 {
-    _settings = Settings::getSettings(this);
-
-    _speaker = std::make_unique<EntrySpeaker>();
-
     setupUI();
     translateUI();
     setStyle(Utils::isDarkMode());
@@ -42,7 +48,9 @@ void SentenceViewHeaderWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] {
+            _paletteRecentlyChanged = false;
+        });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -167,8 +175,8 @@ void SentenceViewHeaderWidget::translateUI(void)
         label->setVisible(true);
     }
 
-    disconnect(_cantoneseTTS, nullptr, nullptr, nullptr);
-    connect(_cantoneseTTS, &QPushButton::clicked, this, [=, this]() {
+    disconnect(_cantoneseTTS, nullptr, this, nullptr);
+    connect(_cantoneseTTS, &QPushButton::clicked, this, [this] {
         TextToSpeech::SpeakerBackend backend
             = Settings::getSettings()
                   ->value("Advanced/CantoneseTextToSpeech::SpeakerBackend",
@@ -206,9 +214,9 @@ void SentenceViewHeaderWidget::translateUI(void)
                       .arg(Settings::getCurrentLocale().bcp47Name()));
     });
 
-    disconnect(_mandarinTTS, nullptr, nullptr, nullptr);
+    disconnect(_mandarinTTS, nullptr, this, nullptr);
     if (Settings::getCurrentLocale().territory() == QLocale::Taiwan) {
-        connect(_mandarinTTS, &QPushButton::clicked, this, [=, this]() {
+        connect(_mandarinTTS, &QPushButton::clicked, this, [this] {
             TextToSpeech::SpeakerBackend backend
                 = Settings::getSettings()
                       ->value("Advanced/MandarinTextToSpeech::SpeakerBackend",
@@ -217,8 +225,7 @@ void SentenceViewHeaderWidget::translateUI(void)
                                   TextToSpeech::SpeakerBackend::
                                       GOOGLE_OFFLINE_SYLLABLE_TTS))
 #else
-                          QVariant::fromValue(
-                              TextToSpeech::SpeakerBackend::QT_TTS))
+                  QVariant::fromValue(TextToSpeech::SpeakerBackend::QT_TTS))
 #endif
                       .value<TextToSpeech::SpeakerBackend>();
             TextToSpeech::SpeakerVoice voice
@@ -227,6 +234,7 @@ void SentenceViewHeaderWidget::translateUI(void)
                               QVariant::fromValue(
                                   TextToSpeech::SpeakerVoice::NONE))
                       .value<TextToSpeech::SpeakerVoice>();
+
             if ((backend != TextToSpeech::SpeakerBackend::QT_TTS)) {
                 if (!_speaker->speakTaiwaneseMandarin(_pinyin, backend, voice)) {
                     return;
@@ -243,19 +251,25 @@ void SentenceViewHeaderWidget::translateUI(void)
                           .arg(Settings::getCurrentLocale().bcp47Name()));
         });
     } else {
-        connect(_mandarinTTS, &QPushButton::clicked, this, [=, this]() {
-            TextToSpeech::SpeakerBackend backend
+        connect(_mandarinTTS, &QPushButton::clicked, this, [this] {
+            const TextToSpeech::SpeakerBackend backend
                 = Settings::getSettings()
                       ->value("Advanced/MandarinTextToSpeech::SpeakerBackend",
+#ifdef Q_OS_LINUX
                               QVariant::fromValue(
-                                  TextToSpeech::SpeakerBackend::QT_TTS))
+                                  TextToSpeech::SpeakerBackend::
+                                      GOOGLE_OFFLINE_SYLLABLE_TTS))
+#else
+                  QVariant::fromValue(TextToSpeech::SpeakerBackend::QT_TTS))
+#endif
                       .value<TextToSpeech::SpeakerBackend>();
-            TextToSpeech::SpeakerVoice voice
+            const TextToSpeech::SpeakerVoice voice
                 = Settings::getSettings()
                       ->value("Advanced/MandarinTextToSpeech::SpeakerVoice",
                               QVariant::fromValue(
                                   TextToSpeech::SpeakerVoice::NONE))
                       .value<TextToSpeech::SpeakerVoice>();
+
             if ((backend != TextToSpeech::SpeakerBackend::QT_TTS)) {
                 if (!_speaker->speakMainlandMandarin(_pinyin, backend, voice)) {
                     return;
@@ -283,32 +297,33 @@ void SentenceViewHeaderWidget::setStyle(bool use_dark)
     _traditionalLabel->setFont(font);
 #endif
 
-    int interfaceSize = static_cast<int>(
+    const int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
-    int h2FontSize = Settings::h2FontSize.at(
+    const int h2FontSize = Settings::h2FontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int bodyFontSize = Settings::bodyFontSize.at(
+    const int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
 
-    int borderRadius = static_cast<int>(bodyFontSize * 5 / 6);
-    int padding = bodyFontSize / 6;
-    int paddingHorizontal = bodyFontSize / 4;
+    const int borderRadius = static_cast<int>(bodyFontSize * 5 / 6);
+    const int padding = bodyFontSize / 6;
+    const int paddingHorizontal = bodyFontSize / 4;
 
-    QString sourceStyleSheet = "QLabel  {"
-                               "   background: %1; "
-                               "   border-radius: %2px; "
-                               "   color: %3; "
-                               "   font-size: %4px; "
-                               "   padding: %5px; "
-                               "   padding-left: %6px; "
-                               "   padding-right: %6px; "
-                               "} ";
-    QColor languageColour = Utils::getLanguageColour(
+    const QString sourceStyleSheet = "QLabel  {"
+                                     "   background: %1; "
+                                     "   border-radius: %2px; "
+                                     "   color: %3; "
+                                     "   font-size: %4px; "
+                                     "   padding: %5px; "
+                                     "   padding-left: %6px; "
+                                     "   padding-right: %6px; "
+                                     "} ";
+    const QColor languageColour = Utils::getLanguageColour(
         Utils::getISO639FromLanguage(_sourceLanguageLabel->text().trimmed()));
-    QColor languageTextColour = Utils::getContrastingColour(languageColour);
+    const QColor languageTextColour = Utils::getContrastingColour(
+        languageColour);
     _sourceLanguageLabel->setStyleSheet(
         sourceStyleSheet.arg(languageColour.name())
             .arg(borderRadius)
@@ -327,16 +342,17 @@ void SentenceViewHeaderWidget::setStyle(bool use_dark)
                                              "}"}
                                          .arg(h2FontSize));
 
-    QString pronunciationTypeStyleSheet = QString{"QLabel { "
-                                                  "   color: %1; "
-                                                  "   font-size: %2px; "
-                                                  "}"};
-    QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                          LABEL_TEXT_COLOUR_DARK_G,
-                                          LABEL_TEXT_COLOUR_DARK_B}
-                                 : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                          LABEL_TEXT_COLOUR_LIGHT_R,
-                                          LABEL_TEXT_COLOUR_LIGHT_R};
+    const QString pronunciationTypeStyleSheet = QString{"QLabel { "
+                                                        "   color: %1; "
+                                                        "   font-size: %2px; "
+                                                        "}"};
+    const QColor textColour = use_dark
+                                  ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                  : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R};
     for (const auto &label : _pronunciationTypeLabels) {
         label->setAttribute(Qt::WA_TranslucentBackground);
         label->setStyleSheet(pronunciationTypeStyleSheet.arg(textColour.name())
@@ -345,9 +361,9 @@ void SentenceViewHeaderWidget::setStyle(bool use_dark)
             label->fontMetrics().boundingRect(label->text()).width());
     }
 
-    QString pronunciationStyleSheet = QString{"QLabel { "
-                                              "   font-size: %1px; "
-                                              "}"};
+    const QString pronunciationStyleSheet = QString{"QLabel { "
+                                                    "   font-size: %1px; "
+                                                    "}"};
     for (const auto &label : _pronunciationLabels) {
         label->setTextInteractionFlags(Qt::TextSelectableByMouse);
         label->setWordWrap(true);

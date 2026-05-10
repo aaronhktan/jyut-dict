@@ -13,9 +13,18 @@
 #include "logic/utils/utils_qt.h"
 
 #include <QApplication>
+#include <QCheckBox>
+#include <QColor>
+#include <QComboBox>
 #include <QDesktopServices>
+#include <QEvent>
+#include <QFormLayout>
 #include <QFrame>
 #include <QGridLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QRadioButton>
 #include <QStyle>
 #include <QTimer>
 #include <QUrl>
@@ -37,9 +46,7 @@ void SettingsTab::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() {
-            _paletteRecentlyChanged = false;
-        });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
     }
@@ -256,12 +263,12 @@ void SettingsTab::translateUI()
     _entryMandarinIPA->setText(tr("Mandarin IPA"));
 
     QColor backgroundColour = Utils::isDarkMode()
-                                  ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                           LABEL_TEXT_COLOUR_DARK_G,
-                                           LABEL_TEXT_COLOUR_DARK_B}
-                                  : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                           LABEL_TEXT_COLOUR_LIGHT_R,
-                                           LABEL_TEXT_COLOUR_LIGHT_R};
+                                  ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                  : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R};
     _cantoneseReference->setText(
         QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                     Strings::CANTONESE_REFERENCE_URL)
@@ -314,12 +321,13 @@ void SettingsTab::setStyle(bool use_dark)
         frame->setStyleSheet(style.arg(colour));
     }
 
-    QColor backgroundColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                                LABEL_TEXT_COLOUR_DARK_G,
-                                                LABEL_TEXT_COLOUR_DARK_B}
-                                       : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                                LABEL_TEXT_COLOUR_LIGHT_R,
-                                                LABEL_TEXT_COLOUR_LIGHT_R};
+    QColor backgroundColour = use_dark
+                                  ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                  : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R};
     _cantoneseReference->setText(
         QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                     Strings::CANTONESE_REFERENCE_URL)
@@ -391,7 +399,7 @@ void SettingsTab::initializeSearchResultsCantonesePronunciation(
     cantonesePronunciationWidget.layout()->addWidget(_previewYale);
     cantonesePronunciationWidget.layout()->addWidget(_previewCantoneseIPA);
 
-    connect(_previewJyutping, &QRadioButton::clicked, this, [&]() {
+    connect(_previewJyutping, &QRadioButton::clicked, this, [this] {
         _settings->setValue("Preview/cantonesePronunciationOptions",
                             QVariant::fromValue<CantoneseOptions>(
                                 CantoneseOptions::RAW_JYUTPING));
@@ -400,7 +408,7 @@ void SettingsTab::initializeSearchResultsCantonesePronunciation(
         emit updateStyle();
     });
 
-    connect(_previewYale, &QRadioButton::clicked, this, [&]() {
+    connect(_previewYale, &QRadioButton::clicked, this, [this] {
         _settings->setValue("Preview/cantonesePronunciationOptions",
                             QVariant::fromValue<CantoneseOptions>(
                                 CantoneseOptions::PRETTY_YALE));
@@ -409,7 +417,7 @@ void SettingsTab::initializeSearchResultsCantonesePronunciation(
         emit updateStyle();
     });
 
-    connect(_previewCantoneseIPA, &QRadioButton::clicked, this, [&]() {
+    connect(_previewCantoneseIPA, &QRadioButton::clicked, this, [this] {
         _settings->setValue("Preview/cantonesePronunciationOptions",
                             QVariant::fromValue<CantoneseOptions>(
                                 CantoneseOptions::CANTONESE_IPA));
@@ -429,7 +437,7 @@ void SettingsTab::initializeSearchResultsMandarinPronunciation(
     mandarinPronunciationWidget.layout()->addWidget(_previewZhuyin);
     mandarinPronunciationWidget.layout()->addWidget(_previewMandarinIPA);
 
-    connect(_previewPinyin, &QRadioButton::clicked, this, [&]() {
+    connect(_previewPinyin, &QRadioButton::clicked, this, [this] {
         _settings->setValue("Preview/mandarinPronunciationOptions",
                             QVariant::fromValue<MandarinOptions>(
                                 MandarinOptions::PRETTY_PINYIN));
@@ -438,7 +446,7 @@ void SettingsTab::initializeSearchResultsMandarinPronunciation(
         emit updateStyle();
     });
 
-    connect(_previewNumberedPinyin, &QRadioButton::clicked, this, [&]() {
+    connect(_previewNumberedPinyin, &QRadioButton::clicked, this, [this] {
         _settings->setValue("Preview/mandarinPronunciationOptions",
                             QVariant::fromValue<MandarinOptions>(
                                 MandarinOptions::NUMBERED_PINYIN));
@@ -447,7 +455,7 @@ void SettingsTab::initializeSearchResultsMandarinPronunciation(
         emit updateStyle();
     });
 
-    connect(_previewZhuyin, &QRadioButton::clicked, this, [&]() {
+    connect(_previewZhuyin, &QRadioButton::clicked, this, [this] {
         _settings->setValue("Preview/mandarinPronunciationOptions",
                             QVariant::fromValue<MandarinOptions>(
                                 MandarinOptions::ZHUYIN));
@@ -456,7 +464,7 @@ void SettingsTab::initializeSearchResultsMandarinPronunciation(
         emit updateStyle();
     });
 
-    connect(_previewMandarinIPA, &QRadioButton::clicked, this, [&]() {
+    connect(_previewMandarinIPA, &QRadioButton::clicked, this, [this] {
         _settings->setValue("Preview/mandarinPronunciationOptions",
                             QVariant::fromValue<MandarinOptions>(
                                 MandarinOptions::MANDARIN_IPA));
@@ -492,7 +500,7 @@ void SettingsTab::initializeEntryCantonesePronunciation(
     static_cast<QGridLayout *>(cantonesePronunciationWidget.layout())
         ->addWidget(_cantoneseReference, 3, 0, 1, -1);
 
-    connect(_entryJyutping, &QCheckBox::checkStateChanged, this, [&]() {
+    connect(_entryJyutping, &QCheckBox::checkStateChanged, this, [this] {
         CantoneseOptions options
             = _settings
                   ->value("Entry/cantonesePronunciationOptions",
@@ -514,7 +522,7 @@ void SettingsTab::initializeEntryCantonesePronunciation(
         emit updateStyle();
     });
 
-    connect(_entryYale, &QCheckBox::checkStateChanged, this, [&]() {
+    connect(_entryYale, &QCheckBox::checkStateChanged, this, [this] {
         CantoneseOptions options
             = _settings
                   ->value("Entry/cantonesePronunciationOptions",
@@ -536,7 +544,7 @@ void SettingsTab::initializeEntryCantonesePronunciation(
         emit updateStyle();
     });
 
-    connect(_entryCantoneseIPA, &QCheckBox::checkStateChanged, this, [&]() {
+    connect(_entryCantoneseIPA, &QCheckBox::checkStateChanged, this, [this] {
         CantoneseOptions options
             = _settings
                   ->value("Entry/cantonesePronunciationOptions",
@@ -587,7 +595,7 @@ void SettingsTab::initializeEntryMandarinPronunciation(
     static_cast<QGridLayout *>(mandarinPronunciationWidget.layout())
         ->addWidget(_mandarinReference, 4, 0, 1, -1);
 
-    connect(_entryPinyin, &QCheckBox::checkStateChanged, this, [&]() {
+    connect(_entryPinyin, &QCheckBox::checkStateChanged, this, [this] {
         MandarinOptions options
             = _settings
                   ->value("Entry/mandarinPronunciationOptions",
@@ -609,7 +617,7 @@ void SettingsTab::initializeEntryMandarinPronunciation(
         emit updateStyle();
     });
 
-    connect(_entryNumberedPinyin, &QCheckBox::checkStateChanged, this, [&]() {
+    connect(_entryNumberedPinyin, &QCheckBox::checkStateChanged, this, [this] {
         MandarinOptions options
             = _settings
                   ->value("Entry/mandarinPronunciationOptions",
@@ -631,7 +639,7 @@ void SettingsTab::initializeEntryMandarinPronunciation(
         emit updateStyle();
     });
 
-    connect(_entryZhuyin, &QCheckBox::checkStateChanged, this, [&]() {
+    connect(_entryZhuyin, &QCheckBox::checkStateChanged, this, [this] {
         MandarinOptions options
             = _settings
                   ->value("Entry/mandarinPronunciationOptions",
@@ -653,7 +661,7 @@ void SettingsTab::initializeEntryMandarinPronunciation(
         emit updateStyle();
     });
 
-    connect(_entryMandarinIPA, &QCheckBox::checkStateChanged, this, [&]() {
+    connect(_entryMandarinIPA, &QCheckBox::checkStateChanged, this, [this] {
         MandarinOptions options
             = _settings
                   ->value("Entry/mandarinPronunciationOptions",

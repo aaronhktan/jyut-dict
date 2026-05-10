@@ -1,17 +1,17 @@
 #ifndef SQLUSERDATAUTILS_H
 #define SQLUSERDATAUTILS_H
 
-#include "logic/database/sqldatabasemanager.h"
-#include "logic/entry/entry.h"
 #include "logic/search/isearchobservable.h"
 
 #include <QObject>
-#include <QtSql>
 
 #include <list>
 #include <memory>
 #include <mutex>
 #include <vector>
+
+class Entry;
+class SQLDatabaseManager;
 
 // The SQLUserDataUtils class searches the user database
 // It offers convenient functions like searching for all saved words,

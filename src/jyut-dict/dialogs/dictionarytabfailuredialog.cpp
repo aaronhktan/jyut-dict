@@ -1,11 +1,11 @@
 #include "dictionarytabfailuredialog.h"
 
-#include "logic/utils/utils.h"
+#include <QEvent>
+#include <QString>
 
-DictionaryTabFailureDialog::DictionaryTabFailureDialog(const QString &reason,
-                                             const QString &description,
-                                             QWidget *parent)
-    : DefaultDialog(reason, description, parent)
+DictionaryTabFailureDialog::DictionaryTabFailureDialog(
+    const QString &reason, const QString &description, QWidget *parent)
+    : DefaultDialog{reason, description, parent}
 {
     setupUI();
     translateUI();

@@ -1,15 +1,13 @@
 #ifndef RESULTLISTVIEW_H
 #define RESULTLISTVIEW_H
 
-#include <QEvent>
 #include <QListView>
-#include <QStyledItemDelegate>
-#ifdef Q_OS_WIN
-#include <QWheelEvent>
-#endif
-#include <QWidget>
 
-#include <vector>
+class QEvent;
+class QStyledItemDelegate;
+#ifdef Q_OS_WIN
+class QWheelEvent;
+#endif
 
 // The ResultListView displays results of a search
 // It populates itself with a QAbstractListModel
@@ -18,7 +16,6 @@
 class ResultListView : public QListView
 {
     Q_OBJECT
-
 public:
     explicit ResultListView(QWidget *parent = nullptr);
 

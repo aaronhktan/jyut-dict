@@ -1,13 +1,13 @@
 #ifndef SENTENCESCROLLAREA_H
 #define SENTENCESCROLLAREA_H
 
-#include "components/sentenceview/sentencescrollareawidget.h"
-#include "logic/sentence/sourcesentence.h"
-
-#include <QResizeEvent>
 #include <QScrollArea>
-#include <QVBoxLayout>
-#include <QWidget>
+
+class SentenceScrollAreaWidget;
+class SourceSentence;
+
+class QResizeEvent;
+class QVBoxLayout;
 
 // The SentenceScrollArea is the "detail" view
 // It displays an SourceSentence object in the user interface

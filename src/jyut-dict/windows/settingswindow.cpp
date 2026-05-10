@@ -27,6 +27,7 @@
 #include <QPalette>
 #include <QSettings>
 #include <QStackedWidget>
+#include <QStyle>
 #include <QTimer>
 #include <QToolBar>
 #include <QToolButton>
@@ -62,7 +63,7 @@ void SettingsWindow::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -95,7 +96,9 @@ void SettingsWindow::setupUI()
     for (int i = 0; i < NUM_OF_TABS; i++) {
         _actions.push_back(new QAction{this});
         _actions.back()->setCheckable(true);
-        connect(_actions.back(), &QAction::triggered, this, [=, this] { openTab(i); });
+        connect(_actions.back(), &QAction::triggered, this, [this, i] {
+            openTab(i);
+        });
         _navigationActionGroup->addAction(_actions.back());
 
         _toolButtons.push_back(new QToolButton{this});
@@ -208,30 +211,30 @@ void SettingsWindow::setStyle(bool use_dark)
         selectedBackgroundColour = QGuiApplication::palette()
             .color(QPalette::Inactive, QPalette::Highlight);
         currentTextColour
-            = use_dark ? QColor{TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_R,
-                                TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_G,
-                                TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_B}
-                       : QColor{TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_R,
-                                TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_G,
-                                TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_B};
+            = use_dark ? QColor{Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_R,
+                                Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_G,
+                                Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_B}
+                       : QColor{Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_R,
+                                Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_G,
+                                Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_B};
         otherTextColour
-            = use_dark ? QColor{TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_R,
-                                TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_G,
-                                TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_B}
-                       : QColor{TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_R,
-                                TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_G,
-                                TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_B};
+            = use_dark ? QColor{Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_R,
+                                Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_G,
+                                Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_DARK_B}
+                       : QColor{Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_R,
+                                Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_G,
+                                Utils::TOOLBAR_TEXT_INACTIVE_COLOUR_LIGHT_B};
     } else {
 #ifdef Q_OS_MAC
         selectedBackgroundColour = Utils::getAppleControlAccentColor();
 #else
         selectedBackgroundColour
-            = use_dark ? QColor{LIST_ITEM_ACTIVE_COLOUR_DARK_R,
-                                LIST_ITEM_ACTIVE_COLOUR_DARK_G,
-                                LIST_ITEM_ACTIVE_COLOUR_DARK_B}
-                       : QColor{LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
-                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
-                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_B};
+            = use_dark ? QColor{Utils::LIST_ITEM_ACTIVE_COLOUR_DARK_R,
+                                Utils::LIST_ITEM_ACTIVE_COLOUR_DARK_G,
+                                Utils::LIST_ITEM_ACTIVE_COLOUR_DARK_B}
+                       : QColor{Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
+                                Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
+                                Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT_B};
 #endif
         currentTextColour = Utils::getContrastingColour(selectedBackgroundColour);
 #ifdef Q_OS_MAC
@@ -239,12 +242,12 @@ void SettingsWindow::setStyle(bool use_dark)
                                                            QPalette::Text);
 #else
         otherTextColour
-            = use_dark ? QColor{TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_R,
-                                TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_G,
-                                TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_B}
-                       : QColor{TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_R,
-                                TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_G,
-                                TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_B};
+            = use_dark ? QColor{Utils::TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_R,
+                                Utils::TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_G,
+                                Utils::TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_DARK_B}
+                       : QColor{Utils::TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_R,
+                                Utils::TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_G,
+                                Utils::TOOLBAR_TEXT_NOT_FOCUSED_COLOUR_LIGHT_B};
 #endif
     }
 
@@ -495,9 +498,9 @@ void SettingsWindow::openTab(int tabIndex)
     _contentStackedWidget->setCurrentIndex(tabIndex);
 }
 
-void SettingsWindow::paintWithApplicationState(Qt::ApplicationState state)
+void SettingsWindow::paintWithApplicationState(
+    [[maybe_unused]] Qt::ApplicationState state)
 {
-    (void) (state);
     setStyle(Utils::isDarkMode());
 }
 

@@ -5,6 +5,7 @@
 #include "logic/entry/entryphoneticoptions.h"
 #include "sentenceset.h"
 
+#include <optional>
 #include <span>
 #include <string>
 
@@ -14,7 +15,7 @@
 class SourceSentence
 {
 public:
-    SourceSentence();
+    explicit SourceSentence() = default;
     SourceSentence(const std::string &sourceLanguage,
                    const std::string &simplified,
                    const std::string &traditional,
@@ -76,20 +77,14 @@ private:
     std::string _traditional;
 
     std::string _jyutping;
-    std::string _yale;
-    bool _isYaleValid = false;
-    std::string _cantoneseIPA;
-    bool _isCantoneseIPAValid = false;
+    std::optional<std::string> _yale = std::nullopt;
+    std::optional<std::string> _cantoneseIPA = std::nullopt;
 
     std::string _pinyin;
-    std::string _prettyPinyin;
-    bool _isPrettyPinyinValid = false;
-    std::string _numberedPinyin;
-    bool _isNumberedPinyinValid = false;
-    std::string _zhuyin;
-    bool _isZhuyinValid = false;
-    std::string _mandarinIPA;
-    bool _isMandarinIPAValid = false;
+    std::optional<std::string> _prettyPinyin = std::nullopt;
+    std::optional<std::string> _numberedPinyin = std::nullopt;
+    std::optional<std::string> _zhuyin = std::nullopt;
+    std::optional<std::string> _mandarinIPA = std::nullopt;
 
     std::vector<SentenceSet> _sentences;
 

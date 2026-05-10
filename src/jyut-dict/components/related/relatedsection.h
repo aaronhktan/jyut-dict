@@ -1,15 +1,17 @@
 #ifndef RELATEDSECTION_H
 #define RELATEDSECTION_H
 
-#include "components/related/relatedbutton.h"
-#include "logic/entry/entry.h"
 #include "logic/search/searchparameters.h"
 
-#include <QEvent>
-#include <QGridLayout>
-#include <QPushButton>
 #include <QSettings>
 #include <QWidget>
+
+class Entry;
+class RelatedButton;
+
+class QEvent;
+class QGridLayout;
+class QPushButton;
 
 class RelatedSection : public QWidget
 {

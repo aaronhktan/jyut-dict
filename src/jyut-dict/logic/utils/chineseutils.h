@@ -3,17 +3,17 @@
 
 #include "logic/entry/entryphoneticoptions.h"
 
-#include <QString>
-
 #include <span>
 #include <string>
+
+class QString;
 
 // The ChineseUtils namespace contains static functions for working with
 // various romanization schemes and Han characters.
 
 namespace ChineseUtils {
 
-std::string applyColours(const std::string original,
+std::string applyColours(const std::string &original,
                          std::span<const uint8_t> tones,
                          std::span<const std::string> jyutpingToneColours,
                          std::span<const std::string> pinyinToneColours,

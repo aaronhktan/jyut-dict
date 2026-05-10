@@ -1,5 +1,7 @@
 #include "sentenceviewsentencecardsection.h"
 
+#include "components/sentencecard/sentencecardwidget.h"
+
 SentenceViewSentenceCardSection::SentenceViewSentenceCardSection(QWidget *parent)
     : QWidget{parent}
 {

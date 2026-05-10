@@ -39,12 +39,16 @@
 #include <QEvent>
 #include <QGuiApplication>
 #include <QIcon>
+#include <QLabel>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QProgressDialog>
+#include <QPushButton>
 #include <QSettings>
 #include <QSpacerItem>
+#include <QSqlDatabase>
+#include <QStyle>
 #include <QTimer>
 #include <QTranslator>
 #include <QUrl>
@@ -73,7 +77,7 @@ MainWindow::MainWindow(QWidget *parent)
     _sqlHistoryUtils = std::make_shared<SQLUserHistoryUtils>(_manager);
 
     // Get colours from QSettings
-    _settings = Settings::getSettings();
+    _settings = Settings::getSettings(this);
     _settings->beginReadArray("jyutpingColours");
     for (std::vector<std::string>::size_type i = 0;
          i < Settings::jyutpingToneColours.size();
@@ -104,14 +108,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Connect signals to tell the user that database migration has occurred
     _utils = std::make_unique<SQLDatabaseUtils>();
-    connect(_utils.get(), &SQLDatabaseUtils::migratingDatabase, this, [&]() {
+    connect(_utils.get(), &SQLDatabaseUtils::migratingDatabase, this, [this] {
         _databaseMigrating = true;
         notifyDatabaseMigration();
     });
     connect(_utils.get(),
             &SQLDatabaseUtils::finishedMigratingDatabase,
             this,
-            [&](bool success) {
+            [this](const bool success) {
                 finishedDatabaseMigration(success);
                 _databaseMigrating = false;
             });
@@ -211,9 +215,9 @@ MainWindow::MainWindow(QWidget *parent)
                         .toBool();
     if (!welcomed) {
 #ifdef Q_OS_LINUX
-        QTimer::singleShot(500, this, [&]() { openWelcomeWindow(); });
+        QTimer::singleShot(500, this, [this] { openWelcomeWindow(); });
 #else
-        QTimer::singleShot(200, this, [&]() { openWelcomeWindow(); });
+        QTimer::singleShot(200, this, [this] { openWelcomeWindow(); });
 #endif
     }
 
@@ -224,7 +228,7 @@ MainWindow::MainWindow(QWidget *parent)
     _checker = new JyutDictionaryReleaseChecker{
         this, /* preConnectEnabled */ updateNotificationEnabled};
     if (updateNotificationEnabled) {
-        QTimer::singleShot(1500, this, [&]() {
+        QTimer::singleShot(1500, this, [this] {
             checkForUpdate(/* showProgress = */ false);
         });
     }
@@ -236,14 +240,14 @@ MainWindow::MainWindow(QWidget *parent)
               .toBool();
     _sourceChecker = new SourceReleaseChecker{_manager, this};
     if (sourceUpdateNotificationEnabled) {
-        QTimer::singleShot(1500, this, [&]() {
+        QTimer::singleShot(1500, this, [this] {
             checkForSourceUpdate(/* showProgress = */ false);
         });
     }
 
     // Perform database migration if needed
-    QTimer::singleShot(1000, this, [&]() {
-        std::ignore = QtConcurrent::run([this]() {
+    QTimer::singleShot(1000, this, [this] {
+        std::ignore = QtConcurrent::run([this] {
             QSqlDatabase dictionaryDB = _manager->getDatabase();
             _utils->updateDatabase(dictionaryDB);
         });
@@ -431,32 +435,32 @@ void MainWindow::translateUI(void)
 #endif
 }
 
-void MainWindow::setStyle(bool use_dark)
+void MainWindow::setStyle([[maybe_unused]] bool use_dark)
 {
 #ifdef Q_OS_MAC
-    (void) (use_dark);
-
     setStyleSheet(
         "QPushButton[isHan=\"true\"] { font-size: 12px; height: 16px; }");
 #elif defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     if (!use_dark) {
         QPalette palette = QApplication::style()->standardPalette();
         palette.setColor(QPalette::Window,
-                         QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
-                                CONTENT_BACKGROUND_COLOUR_LIGHT_G,
-                                CONTENT_BACKGROUND_COLOUR_LIGHT_B});
+                         QColor{Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                                Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                                Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_B});
         palette.setColor(QPalette::Base, Qt::white);
-        palette.setColor(QPalette::AlternateBase, QColor{HEADER_BACKGROUND_COLOUR_LIGHT_R,
-                                                         HEADER_BACKGROUND_COLOUR_LIGHT_G,
-                                                         HEADER_BACKGROUND_COLOUR_LIGHT_B});
+        palette.setColor(QPalette::AlternateBase,
+                         QColor{Utils::HEADER_BACKGROUND_COLOUR_LIGHT_R,
+                                Utils::HEADER_BACKGROUND_COLOUR_LIGHT_G,
+                                Utils::HEADER_BACKGROUND_COLOUR_LIGHT_B});
         palette.setColor(QPalette::Highlight,
-                         QColor{LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
-                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
-                                LIST_ITEM_ACTIVE_COLOUR_LIGHT_B});
-        palette.setColor(QPalette::Inactive, QPalette::Highlight,
-                         QColor{LIST_ITEM_INACTIVE_COLOUR_LIGHT_R,
-                                LIST_ITEM_INACTIVE_COLOUR_LIGHT_G,
-                                LIST_ITEM_INACTIVE_COLOUR_LIGHT_B});
+                         QColor{Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT_R,
+                                Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT_G,
+                                Utils::LIST_ITEM_ACTIVE_COLOUR_LIGHT_B});
+        palette.setColor(QPalette::Inactive,
+                         QPalette::Highlight,
+                         QColor{Utils::LIST_ITEM_INACTIVE_COLOUR_LIGHT_R,
+                                Utils::LIST_ITEM_INACTIVE_COLOUR_LIGHT_G,
+                                Utils::LIST_ITEM_INACTIVE_COLOUR_LIGHT_B});
         qApp->setPalette(palette);
         setStyleSheet("");
     } else {
@@ -464,16 +468,19 @@ void MainWindow::setStyle(bool use_dark)
         QColor gray{128, 128, 128};
 
         QPalette darkPalette;
-        darkPalette.setColor(QPalette::Window, QColor{CONTENT_BACKGROUND_COLOUR_DARK_R,
-                                                      CONTENT_BACKGROUND_COLOUR_DARK_G,
-                                                      CONTENT_BACKGROUND_COLOUR_DARK_B});
+        darkPalette.setColor(QPalette::Window,
+                             QColor{Utils::CONTENT_BACKGROUND_COLOUR_DARK_R,
+                                    Utils::CONTENT_BACKGROUND_COLOUR_DARK_G,
+                                    Utils::CONTENT_BACKGROUND_COLOUR_DARK_B});
         darkPalette.setColor(QPalette::WindowText, Qt::white);
-        darkPalette.setColor(QPalette::Base, QColor{BACKGROUND_COLOUR_DARK_R,
-                                                    BACKGROUND_COLOUR_DARK_G,
-                                                    BACKGROUND_COLOUR_DARK_B});
-        darkPalette.setColor(QPalette::AlternateBase, QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
-                                                             HEADER_BACKGROUND_COLOUR_DARK_G,
-                                                             HEADER_BACKGROUND_COLOUR_DARK_B});
+        darkPalette.setColor(QPalette::Base,
+                             QColor{Utils::BACKGROUND_COLOUR_DARK_R,
+                                    Utils::BACKGROUND_COLOUR_DARK_G,
+                                    Utils::BACKGROUND_COLOUR_DARK_B});
+        darkPalette.setColor(QPalette::AlternateBase,
+                             QColor{Utils::HEADER_BACKGROUND_COLOUR_DARK_R,
+                                    Utils::HEADER_BACKGROUND_COLOUR_DARK_G,
+                                    Utils::HEADER_BACKGROUND_COLOUR_DARK_B});
         darkPalette.setColor(QPalette::ToolTipBase, darkGray);
         darkPalette.setColor(QPalette::ToolTipText, Qt::white);
         darkPalette.setColor(QPalette::Text, Qt::white);
@@ -481,17 +488,20 @@ void MainWindow::setStyle(bool use_dark)
         darkPalette.setColor(QPalette::ButtonText, Qt::white);
         darkPalette.setColor(QPalette::Link, Qt::blue);
         darkPalette.setColor(QPalette::Highlight,
-                             QColor{LIST_ITEM_ACTIVE_COLOUR_DARK_R,
-                                    LIST_ITEM_ACTIVE_COLOUR_DARK_G,
-                                    LIST_ITEM_ACTIVE_COLOUR_DARK_B});
+                             QColor{Utils::LIST_ITEM_ACTIVE_COLOUR_DARK_R,
+                                    Utils::LIST_ITEM_ACTIVE_COLOUR_DARK_G,
+                                    Utils::LIST_ITEM_ACTIVE_COLOUR_DARK_B});
         darkPalette.setColor(QPalette::HighlightedText, Qt::white);
+#ifdef Q_OS_LINUX
+        darkPalette.setColor(QPalette::PlaceholderText, Qt::lightGray);
+#endif
 
         darkPalette.setColor(QPalette::Active, QPalette::Button, gray.darker());
         darkPalette.setColor(QPalette::Inactive,
                              QPalette::Highlight,
-                             QColor{LIST_ITEM_INACTIVE_COLOUR_DARK_R,
-                                    LIST_ITEM_INACTIVE_COLOUR_DARK_G,
-                                    LIST_ITEM_INACTIVE_COLOUR_DARK_B});
+                             QColor{Utils::LIST_ITEM_INACTIVE_COLOUR_DARK_R,
+                                    Utils::LIST_ITEM_INACTIVE_COLOUR_DARK_G,
+                                    Utils::LIST_ITEM_INACTIVE_COLOUR_DARK_B});
         darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, gray);
         darkPalette.setColor(QPalette::Disabled, QPalette::WindowText, gray);
         darkPalette.setColor(QPalette::Disabled, QPalette::Text, gray);
@@ -886,7 +896,12 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
 {
     if (updateAvailable || showIfNoUpdate) {
         if (_welcomeWindow || _databaseMigrationDialog) {
-            _dialogQueue.push_back([=, this]() {
+            _dialogQueue.push_back([updateAvailable,
+                                    versionNumber,
+                                    url,
+                                    description,
+                                    showIfNoUpdate,
+                                    this] {
                 notifyUpdateAvailable(updateAvailable,
                                       versionNumber,
                                       url,
@@ -1131,14 +1146,14 @@ void MainWindow::createActions(void)
 
     _favouriteCurrentEntryAction = new QAction{this};
     _favouriteCurrentEntryAction->setShortcut(QKeySequence{"Ctrl+S"});
-    connect(_favouriteCurrentEntryAction, &QAction::triggered, this, [&]() {
+    connect(_favouriteCurrentEntryAction, &QAction::triggered, this, [this] {
         emit favouriteCurrentEntry();
     });
     _entryMenu->addAction(_favouriteCurrentEntryAction);
 
     _shareCurrentEntryAction = new QAction{this};
     _shareCurrentEntryAction->setShortcut(QKeySequence{"Ctrl+P"});
-    connect(_shareCurrentEntryAction, &QAction::triggered, this, [&]() {
+    connect(_shareCurrentEntryAction, &QAction::triggered, this, [this] {
         emit shareCurrentEntry();
     });
     _entryMenu->addAction(_shareCurrentEntryAction);
@@ -1148,12 +1163,12 @@ void MainWindow::createActions(void)
     connect(_openCurrentEntryInNewWindowAction,
             &QAction::triggered,
             this,
-            [&]() { emit openCurrentEntryInNewWindow(); });
+            [this] { emit openCurrentEntryInNewWindow(); });
     _entryMenu->addAction(_openCurrentEntryInNewWindowAction);
 
     _magnifyCurrentEntryAction = new QAction{this};
     _magnifyCurrentEntryAction->setShortcut(QKeySequence{"Ctrl+G"});
-    connect(_magnifyCurrentEntryAction, &QAction::triggered, this, [&]() {
+    connect(_magnifyCurrentEntryAction, &QAction::triggered, this, [this] {
         emit magnifyCurrentEntry();
     });
     _entryMenu->addAction(_magnifyCurrentEntryAction);
@@ -1162,7 +1177,7 @@ void MainWindow::createActions(void)
 
     _viewAllSentencesAction = new QAction{this};
     _viewAllSentencesAction->setShortcut(QKeySequence{"Ctrl+T"});
-    connect(_viewAllSentencesAction, &QAction::triggered, this, [&]() {
+    connect(_viewAllSentencesAction, &QAction::triggered, this, [this] {
         emit viewAllSentences();
     });
     _entryMenu->addAction(_viewAllSentencesAction);
@@ -1171,21 +1186,21 @@ void MainWindow::createActions(void)
 
     _searchWordsBeginningAction = new QAction{this};
     _searchWordsBeginningAction->setShortcut(QKeySequence{"Ctrl+U"});
-    connect(_searchWordsBeginningAction, &QAction::triggered, this, [&]() {
+    connect(_searchWordsBeginningAction, &QAction::triggered, this, [this] {
         emit searchEntriesBeginning();
     });
     _entryMenu->addAction(_searchWordsBeginningAction);
 
     _searchWordsContainingAction = new QAction{this};
     _searchWordsContainingAction->setShortcut(QKeySequence{"Ctrl+I"});
-    connect(_searchWordsContainingAction, &QAction::triggered, this, [&]() {
+    connect(_searchWordsContainingAction, &QAction::triggered, this, [this] {
         emit searchEntriesContaining();
     });
     _entryMenu->addAction(_searchWordsContainingAction);
 
     _searchWordsEndingAction = new QAction{this};
     _searchWordsEndingAction->setShortcut(QKeySequence{"Ctrl+O"});
-    connect(_searchWordsEndingAction, &QAction::triggered, this, [&]() {
+    connect(_searchWordsEndingAction, &QAction::triggered, this, [this] {
         emit searchEntriesEnding();
     });
     _entryMenu->addAction(_searchWordsEndingAction);
@@ -1233,13 +1248,13 @@ void MainWindow::createActions(void)
     _windowMenu->addAction(_bringAllToFrontAction);
 
     _helpAction = new QAction{this};
-    connect(_helpAction, &QAction::triggered, this, []() {
+    connect(_helpAction, &QAction::triggered, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::GITHUB_LINK});
     });
     _helpMenu->addAction(_helpAction);
 
     _updateAction = new QAction{this};
-    connect(_updateAction, &QAction::triggered, [&]() {
+    connect(_updateAction, &QAction::triggered, [this] {
         checkForUpdate(/* showProgress = */ true);
     });
     _helpMenu->addAction(_updateAction);
@@ -1549,7 +1564,7 @@ void MainWindow::openWelcomeWindow(void)
     _welcomeWindow->setFocus();
     _welcomeWindow->show();
 
-    connect(_welcomeWindow, &WelcomeWindow::welcomeCompleted, this, [&]() {
+    connect(_welcomeWindow, &WelcomeWindow::welcomeCompleted, this, [this] {
         QTimer::singleShot(100, this, [this] {
             // Dialogs may be suppressed while the welcome window is visible,
             // so check whether they need to be shown (it's assumed that each
@@ -1570,7 +1585,7 @@ void MainWindow::openWelcomeWindow(void)
 
 void MainWindow::checkForUpdate(bool showProgress)
 {
-    disconnect(_checker, nullptr, nullptr, nullptr);
+    disconnect(_checker, nullptr, this, nullptr);
     if (showProgress) {
         connect(_checker,
                 &JyutDictionaryReleaseChecker::foundUpdate,
@@ -1578,7 +1593,7 @@ void MainWindow::checkForUpdate(bool showProgress)
                 [&](const IUpdateChecker::UpdateVariant &v) {
                     _updateCheckProgressDialog->reset();
 
-                    disconnect(_checker, nullptr, nullptr, nullptr);
+                    disconnect(_checker, nullptr, this, nullptr);
 
                     if (!std::holds_alternative<
                             IUpdateChecker::AppManifestMetadata>(v)) {
@@ -1626,7 +1641,7 @@ void MainWindow::checkForUpdate(bool showProgress)
                 &JyutDictionaryReleaseChecker::foundUpdate,
                 this,
                 [&](const IUpdateChecker::UpdateVariant &v) {
-                    disconnect(_checker, nullptr, nullptr, nullptr);
+                    disconnect(_checker, nullptr, this, nullptr);
 
                     if (!std::holds_alternative<
                             IUpdateChecker::AppManifestMetadata>(v)) {
@@ -1656,7 +1671,7 @@ void MainWindow::checkForUpdate(bool showProgress)
 
 void MainWindow::checkForSourceUpdate(bool showProgress)
 {
-    disconnect(_sourceChecker, nullptr, nullptr, nullptr);
+    disconnect(_sourceChecker, nullptr, this, nullptr);
     if (_sourceUpdateWindow) {
         _sourceUpdateWindow->close();
     }
@@ -1669,7 +1684,7 @@ void MainWindow::checkForSourceUpdate(bool showProgress)
                     _recentlyCheckedForSourceUpdates = false;
                     _updateCheckProgressDialog->reset();
 
-                    disconnect(_sourceChecker, nullptr, nullptr, nullptr);
+                    disconnect(_sourceChecker, nullptr, this, nullptr);
 
                     if (!std::holds_alternative<
                             std::vector<IUpdateChecker::SourceManifestMetadata>>(
@@ -1715,7 +1730,7 @@ void MainWindow::checkForSourceUpdate(bool showProgress)
                 &SourceReleaseChecker::foundUpdate,
                 this,
                 [this](const IUpdateChecker::UpdateVariant &v) {
-                    disconnect(_sourceChecker, nullptr, nullptr, nullptr);
+                    disconnect(_sourceChecker, nullptr, this, nullptr);
                     _recentlyCheckedForSourceUpdates = false;
 
                     if (!std::holds_alternative<
@@ -1743,7 +1758,7 @@ void MainWindow::checkForSourceUpdate(bool showProgress)
 void MainWindow::notifyDatabaseMigration(void)
 {
     if (_welcomeWindow) {
-        _dialogQueue.push_back([this]() { notifyDatabaseMigration(); });
+        _dialogQueue.push_back([this] { notifyDatabaseMigration(); });
         return;
     } else if (!_databaseMigrating) {
         if (!_dialogQueue.empty()) {
@@ -1821,7 +1836,7 @@ void MainWindow::finishedDatabaseMigration(bool success)
     _databaseMigrationDialog->setLabelText(
         success ? tr("Database migration finished!")
                 : tr("Database migration failed!"));
-    QTimer::singleShot(1000, this, [&] {
+    QTimer::singleShot(1000, this, [this] {
         _databaseMigrationDialog->reset();
         // This is safe cause the Qt Object Tree should delete the object
         // that was associated with this pointer

@@ -1,8 +1,6 @@
 #ifndef SOURCEUTILS_H
 #define SOURCEUTILS_H
 
-#include <QObject>
-
 #include <string>
 #include <unordered_map>
 

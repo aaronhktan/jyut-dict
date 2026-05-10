@@ -1,12 +1,19 @@
 #ifndef QUERYPARSEUTILS_H
 #define QUERYPARSEUTILS_H
 
-#include "logic/entry/entry.h"
-#include "logic/sentence/sourcesentence.h"
-
-#include <QSqlQuery>
+#include <QtSystemDetection>
 
 #include <vector>
+
+#ifndef Q_OS_MAC
+#include "logic/database/sqluserhistoryutils.h"
+#include <string>
+#endif
+
+class Entry;
+class SourceSentence;
+
+class QSqlQuery;
 
 // The QueryParseUtils namespace contains static functions to parse the rows
 // that are returned from a query on the database.

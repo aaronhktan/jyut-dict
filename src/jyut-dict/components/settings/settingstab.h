@@ -1,22 +1,23 @@
 #ifndef SETTINGSTAB_H
 #define SETTINGSTAB_H
 
-#include <QCheckBox>
-#include <QColor>
-#include <QComboBox>
-#include <QEvent>
-#include <QFormLayout>
-#include <QGridLayout>
-#include <QLabel>
-#include <QPushButton>
-#include <QRadioButton>
 #include <QSettings>
-#include <QVBoxLayout>
 #include <QWidget>
 
 #include <memory>
 
-// The settings tab displays settings to a user.
+class QCheckBox;
+class QColor;
+class QComboBox;
+class QEvent;
+class QFormLayout;
+class QGridLayout;
+class QHBoxLayout;
+class QLabel;
+class QPushButton;
+class QRadioButton;
+
+// The settings tab displays settings to a user. It's actually the "general" tab.
 
 class SettingsTab : public QWidget
 {

@@ -1,13 +1,13 @@
 #ifndef SOURCELISTVIEW_H
 #define SOURCELISTVIEW_H
 
-#include <QAbstractListModel>
 #include <QListView>
-#include <QStyledItemDelegate>
+
+class QAbstractListModel;
+class QStyledItemDelegate;
 #ifdef Q_OS_WIN
-#include <QWheelEvent>
+class QWheelEvent;
 #endif
-#include <QWidget>
 
 // The SourceListView displays the source that a user has installed
 

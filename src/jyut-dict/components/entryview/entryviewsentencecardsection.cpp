@@ -1,6 +1,10 @@
 #include "entryviewsentencecardsection.h"
 
+#include "components/sentencecard/loadingwidget.h"
+#include "components/sentencecard/sentencecardwidget.h"
 #include "components/sentencewindow/sentencesplitter.h"
+#include "logic/database/sqldatabasemanager.h"
+#include "logic/search/sqlsearch.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
@@ -12,17 +16,21 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
-EntryViewSentenceCardSection::EntryViewSentenceCardSection(std::shared_ptr<SQLDatabaseManager> manager,
-                                         QWidget *parent)
-    : QWidget(parent),
-    _manager{manager}
+#include <QEvent>
+#include <QString>
+#include <QTimer>
+#include <QToolButton>
+#include <QVBoxLayout>
+
+EntryViewSentenceCardSection::EntryViewSentenceCardSection(
+    std::shared_ptr<SQLDatabaseManager> manager, QWidget *parent)
+    : QWidget{parent}
+    , _manager{manager}
+    , _search{new SQLSearch(_manager)}
+    , _settings{Settings::getSettings(this)}
+    , _enableUIUpdateTimer{new QTimer{this}}
+    , _updateUITimer{new QTimer{this}}
 {
-    _settings = Settings::getSettings(this);
-
-    _enableUIUpdateTimer = new QTimer{this};
-    _updateUITimer = new QTimer{this};
-
-    _search = std::make_unique<SQLSearch>(_manager);
     _search->registerObserver(this);
 
     setupUI();
@@ -45,9 +53,9 @@ EntryViewSentenceCardSection::EntryViewSentenceCardSection(QWidget *parent)
 }
 
 void EntryViewSentenceCardSection::callback(
-    const std::vector<SourceSentence> &sourceSentences, bool emptyQuery)
+    const std::vector<SourceSentence> &sourceSentences,
+    [[maybe_unused]] bool emptyQuery)
 {
-    (void) (emptyQuery);
     std::lock_guard<std::mutex> update{updateMutex};
     sentenceSamples samples = getSamplesForEachSource(sourceSentences);
     emit callbackInvoked(sourceSentences, samples);
@@ -102,7 +110,9 @@ void EntryViewSentenceCardSection::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] {
+            _paletteRecentlyChanged = false;
+        });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -123,20 +133,21 @@ void EntryViewSentenceCardSection::setStyle(bool use_dark)
     int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
 
-    QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                          LABEL_TEXT_COLOUR_DARK_G,
-                                          LABEL_TEXT_COLOUR_DARK_B}
-                                 : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                          LABEL_TEXT_COLOUR_LIGHT_G,
-                                          LABEL_TEXT_COLOUR_LIGHT_B};
+    QColor textColour = use_dark ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                          Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                          Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                 : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                          Utils::LABEL_TEXT_COLOUR_LIGHT_G,
+                                          Utils::LABEL_TEXT_COLOUR_LIGHT_B};
     int borderRadius = static_cast<int>(bodyFontSize * 1.5);
     QString radiusString = QString::number(borderRadius);
-    QColor borderColour = use_dark ? QColor{CONTENT_BACKGROUND_COLOUR_DARK_R,
-                                            CONTENT_BACKGROUND_COLOUR_DARK_G,
-                                            CONTENT_BACKGROUND_COLOUR_DARK_B}
-                                   : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
-                                            CONTENT_BACKGROUND_COLOUR_LIGHT_G,
-                                            CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+    QColor borderColour = use_dark
+                              ? QColor{Utils::CONTENT_BACKGROUND_COLOUR_DARK_R,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_DARK_G,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_DARK_B}
+                              : QColor{Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_B};
     QString styleSheet = "QToolButton { "
 #ifdef Q_OS_WIN
                          "   border: 1px solid %1; "
@@ -181,7 +192,7 @@ void EntryViewSentenceCardSection::setEntry(const Entry &entry)
     _showLoadingIconTimer->stop();
     _showLoadingIconTimer->setInterval(1500);
     _showLoadingIconTimer->setSingleShot(true);
-    QObject::connect(_showLoadingIconTimer, &QTimer::timeout, this, [=, this]() {
+    QObject::connect(_showLoadingIconTimer, &QTimer::timeout, this, [this] {
         if (!_calledBack && _enableUIUpdate) {
             showLoadingWidget();
         }
@@ -238,8 +249,8 @@ void EntryViewSentenceCardSection::updateUI(
     _sentenceCardsLayout->setAlignment(_viewAllSentencesButton, Qt::AlignRight);
     _viewAllSentencesButton->setVisible(true);
 
-    disconnect(_viewAllSentencesButton, nullptr, nullptr, nullptr);
-    connect(_viewAllSentencesButton, &QToolButton::clicked, this, [&]() {
+    disconnect(_viewAllSentencesButton, nullptr, this, nullptr);
+    connect(_viewAllSentencesButton, &QToolButton::clicked, this, [this] {
         openSentenceWindow(_sentences);
     });
     emit finishedAddingCards();
@@ -249,14 +260,14 @@ void EntryViewSentenceCardSection::stallSentenceUIUpdate(void)
 {
     _enableUIUpdate = false;
     _enableUIUpdateTimer->stop();
-    disconnect(_enableUIUpdateTimer, nullptr, nullptr, nullptr);
+    disconnect(_enableUIUpdateTimer, nullptr, this, nullptr);
 #ifdef Q_OS_WIN
     _enableUIUpdateTimer->setInterval(800);
 #else
     _enableUIUpdateTimer->setInterval(250);
 #endif
     _enableUIUpdateTimer->setSingleShot(true);
-    QObject::connect(_enableUIUpdateTimer, &QTimer::timeout, this, [=, this]() {
+    QObject::connect(_enableUIUpdateTimer, &QTimer::timeout, this, [this] {
         _enableUIUpdate = true;
     });
     _enableUIUpdateTimer->start();
@@ -288,20 +299,23 @@ void EntryViewSentenceCardSection::pauseBeforeUpdatingUI(const std::vector<Sourc
                                                          const sentenceSamples &samples)
 {
     _updateUITimer->stop();
-    disconnect(_updateUITimer, nullptr, nullptr, nullptr);
+    disconnect(_updateUITimer, nullptr, this, nullptr);
 
 #ifdef Q_OS_WIN
     _updateUITimer->setInterval(400);
 #else
     _updateUITimer->setInterval(25);
 #endif
-    QObject::connect(_updateUITimer, &QTimer::timeout, this, [=, this]() {
-        if (_enableUIUpdate) {
-            _updateUITimer->stop();
-            disconnect(_updateUITimer, nullptr, nullptr, nullptr);
-            updateUI(sourceSentences, samples);
-        }
-    });
+    QObject::connect(_updateUITimer,
+                     &QTimer::timeout,
+                     this,
+                     [this, samples, sourceSentences] {
+                         if (_enableUIUpdate) {
+                             _updateUITimer->stop();
+                             disconnect(_updateUITimer, nullptr, this, nullptr);
+                             updateUI(sourceSentences, samples);
+                         }
+                     });
     _updateUITimer->start();
 }
 

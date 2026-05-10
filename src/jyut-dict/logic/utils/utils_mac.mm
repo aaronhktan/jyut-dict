@@ -1,6 +1,7 @@
 #include "utils_mac.h"
 
 #include <QApplication>
+#include <QColor>
 #include <QPalette>
 
 #import <AppKit/AppKit.h>

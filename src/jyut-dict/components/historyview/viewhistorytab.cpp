@@ -1,5 +1,8 @@
 #include "viewhistorytab.h"
 
+#include "components/historyview/viewhistorylistmodel.h"
+#include "components/historyview/viewhistorylistview.h"
+#include "logic/database/sqluserhistoryutils.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -10,15 +13,18 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QEvent>
+#include <QPushButton>
 #include <QTimer>
+#include <QVBoxLayout>
 
 ViewHistoryTab::ViewHistoryTab(
     std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils, QWidget *parent)
     : QWidget(parent)
     , _sqlHistoryUtils{sqlHistoryUtils}
+    , _listView{new ViewHistoryListView{this}}
+    , _model{new ViewHistoryListModel{_sqlHistoryUtils, this}}
 {
-    _listView = new ViewHistoryListView{this};
-    _model = new ViewHistoryListModel{_sqlHistoryUtils, this};
     _listView->setModel(_model);
 
     connect(_listView,
@@ -38,7 +44,7 @@ void ViewHistoryTab::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -51,7 +57,7 @@ void ViewHistoryTab::changeEvent(QEvent *event)
 void ViewHistoryTab::setupUI(void)
 {
     _clearAllViewHistoryButton = new QPushButton{this};
-    connect(_clearAllViewHistoryButton, &QPushButton::clicked, this, [=, this]() {
+    connect(_clearAllViewHistoryButton, &QPushButton::clicked, this, [this] {
         _sqlHistoryUtils->clearAllViewHistory();
     });
 
@@ -86,7 +92,7 @@ void ViewHistoryTab::translateUI(void)
     _model->translateUI();
 }
 
-void ViewHistoryTab::setStyle(bool use_dark)
+void ViewHistoryTab::setStyle([[maybe_unused]] bool use_dark)
 {
     _clearAllViewHistoryButton->setFixedSize(
         _clearAllViewHistoryButton->minimumSizeHint());
@@ -104,7 +110,6 @@ void ViewHistoryTab::setStyle(bool use_dark)
     setStyleSheet(use_dark ? "QListView { border: none; }"
                            : "QListView { border: 1px solid lightgrey; }");
 #elif defined(Q_OS_LINUX)
-    (void) (use_dark);
     _listView->setStyleSheet("QListView { border: 1px solid palette(alternate-base); }");
 #elif defined(Q_OS_WIN)
     setStyleSheet(use_dark ? "QListView { border: none; }"

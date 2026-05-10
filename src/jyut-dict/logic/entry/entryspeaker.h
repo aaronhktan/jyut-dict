@@ -1,9 +1,7 @@
 #ifndef ENTRYSPEAKER_H
 #define ENTRYSPEAKER_H
 
-#include <QFutureWatcher>
-#include <QString>
-#include <QTextToSpeech>
+#include <QLocale>
 #include <QtGlobal>
 
 extern "C" {
@@ -13,6 +11,14 @@ extern "C" {
 #ifdef Q_OS_MAC
 #include "logic/audio/synthesizer_mac.h"
 #endif
+
+#ifdef Q_OS_LINUX
+#include <QFutureWatcher>
+#endif
+
+class QString;
+class QTextToSpeech;
+class QVoice;
 
 namespace TextToSpeech {
 

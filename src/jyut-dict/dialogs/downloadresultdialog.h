@@ -3,8 +3,8 @@
 
 #include "dialogs/defaultdialog.h"
 
-#include <QEvent>
-#include <QString>
+class QEvent;
+class QString;
 
 // The DownloadResultDialog shows whether a download succeeded or failed,
 // with a reason.

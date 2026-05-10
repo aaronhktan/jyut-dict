@@ -3,6 +3,9 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 #include <QtConcurrent/QtConcurrent>
 
 #include <cerrno>
@@ -18,7 +21,7 @@ Downloader::Downloader(QUrl url,
 
 void Downloader::startDownload()
 {
-    std::ignore = QtConcurrent::run([&]() {
+    std::ignore = QtConcurrent::run([this] {
         QEventLoop loop;
 
         _manager = new QNetworkAccessManager;

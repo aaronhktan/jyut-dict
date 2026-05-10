@@ -2,9 +2,19 @@
 
 #include "components/entrysearchresult/resultlistmodel.h"
 #include "components/entrysearchresult/resultlistview.h"
+#include "components/entryview/entryscrollarea.h"
+#include "logic/database/sqldatabasemanager.h"
+#include "logic/database/sqluserdatautils.h"
+#include "logic/database/sqluserhistoryutils.h"
+#include "logic/entry/entry.h"
+#include "logic/search/sqlsearch.h"
 #include "logic/settings/settingsutils.h"
 
+#include <QAbstractListModel>
+#include <QEvent>
 #include <QList>
+#include <QModelIndex>
+#include <QTimer>
 #include <QVariant>
 
 MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
@@ -12,17 +22,16 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
                            std::shared_ptr<SQLSearch> sqlSearch,
                            std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
                            QWidget *parent)
-    : QSplitter(parent)
+    : QSplitter{parent}
+    , _addToHistoryTimer{new QTimer{this}}
     , _sqlUserUtils{sqlUserUtils}
     , _manager{manager}
     , _search{sqlSearch}
     , _sqlHistoryUtils{sqlHistoryUtils}
+    , _entryScrollArea{new EntryScrollArea{_sqlUserUtils, _manager, this}}
+    , _resultListView{new ResultListView{this}}
+    , _model{new ResultListModel{_search, {}, false, this}}
 {
-    _addToHistoryTimer = new QTimer{this};
-
-    _entryScrollArea = new EntryScrollArea{sqlUserUtils, manager, this};
-    _resultListView = new ResultListView{this};
-    _model = new ResultListModel{sqlSearch, {}, false, this};
     _resultListView->setModel(_model);
 
     addWidget(_resultListView);
@@ -186,9 +195,9 @@ void MainSplitter::prepareEntry(Entry &entry, bool addToHistory) const
     if (addToHistory) {
         // Only add to history after a few seconds of viewing an entry
         _addToHistoryTimer->stop();
-        disconnect(_addToHistoryTimer, nullptr, nullptr, nullptr);
+        disconnect(_addToHistoryTimer, nullptr, this, nullptr);
         _addToHistoryTimer->setSingleShot(true);
-        connect(_addToHistoryTimer, &QTimer::timeout, this, [=, this]() {
+        connect(_addToHistoryTimer, &QTimer::timeout, this, [this, entry] {
             _sqlHistoryUtils->addViewToHistory(entry);
         });
         _addToHistoryTimer->start(1000);
@@ -262,7 +271,7 @@ void MainSplitter::handleDoubleClick(const QModelIndex &selection)
 
     prepareEntry(entry, _addToHistory);
 
-    QTimer::singleShot(50, this, [=, this]() {
+    QTimer::singleShot(50, this, [this, entry] {
         EntryScrollArea *area = new EntryScrollArea{_sqlUserUtils,
                                                     _manager,
                                                     nullptr};

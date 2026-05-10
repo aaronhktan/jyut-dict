@@ -1,14 +1,15 @@
 #ifndef DEFINITIONCARDSECTION_H
 #define DEFINITIONCARDSECTION_H
 
-#include "components/definitioncard/definitioncardwidget.h"
-#include "logic/entry/entry.h"
-
-#include <QVBoxLayout>
 #include <QWidget>
 
+class DefinitionCardWidget;
+class Entry;
+
+class QVBoxLayout;
+
 // The DefinitionCardSection contains DefinitionCardWidgets, one for
-// each DefinitionSet in the Entry that is set.
+// each DefinitionSet in the Entry that is being displayed.
 
 class DefinitionCardSection : public QWidget
 {

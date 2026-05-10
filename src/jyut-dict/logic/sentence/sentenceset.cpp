@@ -2,6 +2,12 @@
 
 #include "logic/source/sourceutils.h"
 
+#include <QtSystemDetection>
+
+#ifndef Q_OS_MAC
+#include <algorithm>
+#endif
+
 SentenceSet::SentenceSet(const std::string &source)
     : _source{source}
     , _sourceShortString{SourceUtils::getSourceShortString(source)}

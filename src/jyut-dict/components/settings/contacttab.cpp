@@ -39,7 +39,7 @@ void ContactTab::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -92,17 +92,17 @@ void ContactTab::setupUI()
     _messageLabel = new QLabel{_box};
 
     _emailButton = new QPushButton{_box};
-    connect(_emailButton, &QPushButton::clicked, this, [&]() {
+    connect(_emailButton, &QPushButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::AUTHOR_EMAIL});
     });
 
     _donateButton = new QPushButton{_box};
-    connect(_donateButton, &QPushButton::clicked, this, [&]() {
+    connect(_donateButton, &QPushButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::DONATE_LINK});
     });
 
     _githubButton = new QPushButton{_box};
-    connect(_githubButton, &QPushButton::clicked, this, [&]() {
+    connect(_githubButton, &QPushButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::AUTHOR_GITHUB_LINK});
     });
 
@@ -171,9 +171,8 @@ void ContactTab::translateUI()
                                .arg(palette().text().color().name()));
 }
 
-void ContactTab::setStyle(bool use_dark)
+void ContactTab::setStyle([[maybe_unused]] bool use_dark)
 {
-    (void) (use_dark);
 #ifdef Q_OS_MAC
     if (!use_dark) {
 #endif

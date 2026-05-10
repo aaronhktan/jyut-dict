@@ -1,14 +1,19 @@
 #ifndef SENTENCECARDWIDGET_H
 #define SENTENCECARDWIDGET_H
 
-#include "components/sentencecard/sentenceheaderwidget.h"
-#include "components/sentencecard/sentencecontentwidget.h"
 #include "logic/sentence/sourcesentence.h"
 
-#include <QEvent>
 #include <QWidget>
 
+#include <optional>
 #include <span>
+
+class SentenceHeaderWidget;
+class SentenceContentWidget;
+class SourceSentence;
+
+class QEvent;
+class QVBoxLayout;
 
 // A SentenceCardWidget contains a header (showing that this card is used for
 // sentences), and content (showing the actual content of the sentences)
@@ -25,14 +30,11 @@ public:
     void displaySentences(const SentenceSet &set);
 
 private:
-    void translateUI();
     void setStyle(bool use_dark);
 
     bool _paletteRecentlyChanged = false;
 
-    std::vector<SourceSentence> _sourceSentences;
-    bool _sourceSentencesIsValid = false;
-    std::string _source;
+    std::optional<std::vector<SourceSentence>> _sourceSentences = std::nullopt;
 
     QVBoxLayout *_sentenceCardLayout;
     SentenceHeaderWidget *_sentenceHeaderWidget;

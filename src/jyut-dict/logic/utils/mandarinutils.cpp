@@ -8,22 +8,21 @@
 #include <unordered_map>
 #include <unordered_set>
 
-namespace MandarinUtils {
-
-const static std::unordered_set<std::string> specialCharacters = {
+namespace {
+const std::unordered_set<std::string> specialCharacters = {
     ".",  "。", ",",  "，", "！", "？", "%",  "－", "…",  "⋯",
     ".",  "·",  "\"", "“",  "”",  "$",  "｜", "：", "１", "２",
     "３", "４", "５", "６", "７", "８", "９", "０",
 };
 
-const static std::unordered_set<std::string> regexCharacters = {
+const std::unordered_set<std::string> regexCharacters = {
     "!",
     "(",
     ")",
     "|",
 };
 
-const static std::unordered_map<std::string, std::vector<std::string>>
+const std::unordered_map<std::string, std::vector<std::string>>
     pinyinToneReplacements = {
         {"a", {"ā", "á", "ǎ", "à", "a"}},
         {"e", {"ē", "é", "ě", "è", "e"}},
@@ -33,7 +32,10 @@ const static std::unordered_map<std::string, std::vector<std::string>>
         {"ü", {"ǖ", "ǘ", "ǚ", "ǜ", "ü"}},
 };
 
-const static std::unordered_map<std::string, std::string> zhuyinInitials = {
+const std::regex pinyinVRegex{"u\\:"};
+const std::regex pinyinVPrecederRegex{"([jqx])u"};
+
+const std::unordered_map<std::string, std::string> zhuyinInitials = {
     {"b", "ㄅ"},  {"p", "ㄆ"}, {"m", "ㄇ"}, {"f", "ㄈ"},  {"d", "ㄉ"},
     {"t", "ㄊ"},  {"n", "ㄋ"}, {"l", "ㄌ"}, {"g", "ㄍ"},  {"k", "ㄎ"},
     {"h", "ㄏ"},  {"j", "ㄐ"}, {"q", "ㄑ"}, {"x", "ㄒ"},  {"z", "ㄗ"},
@@ -41,7 +43,7 @@ const static std::unordered_map<std::string, std::string> zhuyinInitials = {
     {"sh", "ㄕ"},
 };
 
-const static std::unordered_map<std::string, std::string> zhuyinFinals
+const std::unordered_map<std::string, std::string> zhuyinFinals
     = {{"yuan", "ㄩㄢ"}, {"iang", "ㄧㄤ"}, {"yang", "ㄧㄤ"}, {"uang", "ㄨㄤ"},
        {"wang", "ㄨㄤ"}, {"ying", "ㄧㄥ"}, {"weng", "ㄨㄥ"}, {"iong", "ㄩㄥ"},
        {"yong", "ㄩㄥ"}, {"uai", "ㄨㄞ"},  {"wai", "ㄨㄞ"},  {"yai", "ㄧㄞ"},
@@ -59,12 +61,22 @@ const static std::unordered_map<std::string, std::string> zhuyinFinals
        {"e", "ㄜ"},      {"o", "ㄛ"},      {"i", "ㄧ"},      {"u", "ㄨ"},
        {"v", "ㄩ"},      {"ê", "ㄝ"}};
 
-const static std::vector<std::string> zhuyinTones = {"", "", "ˊ", "ˇ", "ˋ", "˙"};
+const std::vector<std::string> zhuyinTones = {"", "", "ˊ", "ˇ", "ˋ", "˙"};
 
-const static std::unordered_set<std::string> mandarinIPAGlottal = {
+const std::regex zhuyinIPrecederRegex{"([zcs]h?)i"};
+const std::regex zhuyinRRegex{"([r])i"};
+const std::regex zhuyinNgSpecialCaseRegex{"^ng([012345])$"};
+const std::regex zhuyinHmSpecialCaseRegex{"^hm([012345])$"};
+const std::regex zhuyinHngSpecialCaseRegex{"^hng([012345])$"};
+const std::regex zhuyinErSpecialCaseRegex{"^er([012345])$"};
+const std::regex zhuyinInitialRegex{"^([bpmfdtnlgkhjqxzcsr]?h?)"};
+const std::regex zhuyinFinalRegex{
+    "([aeiouêvyw]?[aeioun]?[aeioung]?[ng]?)(r?)([012345])$"};
+
+const std::unordered_set<std::string> mandarinIPAGlottal = {
     "a", "o", "e", "ai", "ei", "ao", "ou", "an", "en", "er", "ang", "ong", "eng"};
 
-const static std::unordered_map<std::string, std::string> mandarinIPAInitials = {
+const std::unordered_map<std::string, std::string> mandarinIPAInitials = {
     {"b", "p"},  {"c", "t͡sʰ"}, {"ch", "ʈ͡ʂʰ"}, {"d", "t"},  {"f", "f"},
     {"g", "k"},  {"h", "x"},   {"j", "t͡ɕ"},   {"k", "kʰ"}, {"l", "l"},
     {"m", "m"},  {"n", "n"},   {"ng", "ŋ"},   {"p", "pʰ"}, {"q", "t͡ɕʰ"},
@@ -72,7 +84,7 @@ const static std::unordered_map<std::string, std::string> mandarinIPAInitials = 
     {"z", "t͡s"}, {"zh", "ʈ͡ʂ"},
 };
 
-const static std::unordered_map<std::string, std::string> mandarinIPAFinals = {
+const std::unordered_map<std::string, std::string> mandarinIPAFinals = {
     {"a", "ä"},       {"ai", "aɪ̯"},      {"air", "ɑɻ"},     {"an", "än"},
     {"ang", "ɑŋ"},    {"angr", "ɑ̃ɻ"},    {"anr", "ɑɻ"},     {"ao", "ɑʊ̯"},
     {"aor", "aʊ̯ɻʷ"},  {"ar", "ɑɻ"},      {"e", "ɤ"},        {"ei", "eɪ̯"},
@@ -106,8 +118,8 @@ const static std::unordered_map<std::string, std::string> mandarinIPAFinals = {
     {"yunr", "yə̯ɻ"},  {"yur", "yə̯ɻ"},
 };
 
-const static std::unordered_map<std::string, std::string>
-    mandarinIPAVoicelessInitials = {
+const std::unordered_map<std::string, std::string> mandarinIPAVoicelessInitials
+    = {
         {"k", "g̊"},
         {"p", "b̥"},
         {"t", "d̥"},
@@ -119,44 +131,46 @@ const static std::unordered_map<std::string, std::string>
 #if defined(Q_OS_WIN)
 // For consistency with other reasonings below, use superscript numbers instead
 // of tone letters on Windows.
-const static std::vector<std::string> mandarinIPANeutralTone
+const std::vector<std::string> mandarinIPANeutralTone
     = {"²", "³", "⁴", "¹", "¹"};
 #else
-const static std::vector<std::string> mandarinIPANeutralTone
+const std::vector<std::string> mandarinIPANeutralTone
     = {"˨", "˧", "˦", "˩", "˩"};
 #endif
 
 #if defined(Q_OS_MAC)
 // Added a six-per-em space (U+2006) between adjacent tone markers, because Qt's
 // kerning squishes them too close together
-const static std::vector<std::string> mandarinIPAThirdTone
+const std::vector<std::string> mandarinIPAThirdTone
     = {"˨ ˩ ˦ ꜕ ꜖ ꜖", "˨ ˩ ˦ ꜕ ꜖ ꜖", "˨ ˩ ˦ ꜔ ꜒", "˨ ˩ ˦ ꜕ ꜖ ꜖", "˨ ˩ ˦"};
 #elif defined(Q_OS_WIN)
 // On Windows, the reverse tone letters are not the same height as the "normal"
 // tone letters. In addition, the Segoe UI font cannot handle three tone-letter
 // ligatures. As such, use superscript numbers instead.
-const static std::vector<std::string> mandarinIPAThirdTone
+const std::vector<std::string> mandarinIPAThirdTone
     = {"²¹⁴⁻²¹¹", "²¹⁴⁻²¹¹", "²¹⁴⁻³⁵", "²¹⁴⁻²¹¹", "²¹⁴"};
 #else
-const static std::vector<std::string> mandarinIPAThirdTone
+const std::vector<std::string> mandarinIPAThirdTone
     = {"˨˩˦꜕꜖꜖", "˨˩˦꜕꜖꜖", "˨˩˦꜔꜒", "˨˩˦꜕꜖꜖", "˨˩˦"};
 #endif
 
 #if defined(Q_OS_MAC)
 // Added a six-per-em space (U+2006) between adjacent tone markers, because Qt's
 // kerning squishes them too close together
-const static std::vector<std::string> mandarinIPATones
+const std::vector<std::string> mandarinIPATones
     = {"˥ ˥", "˧ ˥", "˨ ˩ ˦", "˥ ˩", ""};
 #elif defined(Q_OS_WIN)
 // The Segoe UI font cannot handle three tone-letter ligatures. As such, use
 // superscript numbers instead.
-const static std::vector<std::string> mandarinIPATones
-    = {"⁵⁵", "³⁵", "²¹⁴", "⁵¹", ""};
+const std::vector<std::string> mandarinIPATones = {"⁵⁵", "³⁵", "²¹⁴", "⁵¹", ""};
 #else
-const static std::vector<std::string> mandarinIPATones
-    = {"˥˥", "˧˥", "˨˩˦", "˥˩", ""};
+const std::vector<std::string> mandarinIPATones = {"˥˥", "˧˥", "˨˩˦", "˥˩", ""};
 #endif
 
+const std::regex mandarinIPASyllableRegex{"^([bcdfghjklmnpqrstxz]?h?)(.+)$"};
+} // namespace
+
+namespace MandarinUtils {
 std::string createPrettyPinyin(const std::string &pinyin)
 {
     if (pinyin.empty()) {
@@ -368,50 +382,47 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
             std::stoi(syllable.substr(location, 1)));
 
         std::string zhuyin_syllable{syllable};
+        zhuyin_syllable = std::regex_replace(zhuyin_syllable, pinyinVRegex, "v");
         zhuyin_syllable = std::regex_replace(zhuyin_syllable,
-                                             std::regex{"u\\:"},
-                                             "v");
-        zhuyin_syllable = std::regex_replace(zhuyin_syllable,
-                                             std::regex{"([jqx])u"},
+                                             pinyinVPrecederRegex,
                                              "$1v");
         zhuyin_syllable = std::regex_replace(zhuyin_syllable,
-                                             std::regex{"([zcs]h?)i"},
+                                             zhuyinIPrecederRegex,
                                              "$1");
         zhuyin_syllable = std::regex_replace(zhuyin_syllable,
-                                             std::regex{"([r])i"},
+                                             zhuyinRRegex,
                                              "$1");
 
         // Handle special cases
         zhuyin_syllable = std::regex_replace(zhuyin_syllable,
-                                             std::regex{"^ng([012345])$"},
+                                             zhuyinNgSpecialCaseRegex,
                                              "ㄫ$1");
         zhuyin_syllable = std::regex_replace(zhuyin_syllable,
-                                             std::regex{"^hm([012345])$"},
+                                             zhuyinHmSpecialCaseRegex,
                                              "ㄏㄇ$1");
         zhuyin_syllable = std::regex_replace(zhuyin_syllable,
-                                             std::regex{"^hng([012345])$"},
+                                             zhuyinHngSpecialCaseRegex,
                                              "ㄏㄫ$1");
         zhuyin_syllable = std::regex_replace(zhuyin_syllable,
-                                             std::regex{"^er([012345])$"},
+                                             zhuyinErSpecialCaseRegex,
                                              "ㄦ$1");
 
         // Handle general case
         // Convert Pinyin initial
         std::smatch initial_match;
-        std::regex pinyin_initial = std::regex{"^([bpmfdtnlgkhjqxzcsr]?h?)"};
-        if (std::regex_search(zhuyin_syllable, initial_match, pinyin_initial)) {
+        if (std::regex_search(zhuyin_syllable,
+                              initial_match,
+                              zhuyinInitialRegex)) {
             if (initial_match[1].length()) {
                 zhuyin_syllable = std::regex_replace(zhuyin_syllable,
-                                                     pinyin_initial,
+                                                     zhuyinInitialRegex,
                                                      zhuyinInitials.at(
                                                          initial_match[1]));
             }
         }
         // Convert Pinyin final
         std::smatch final_match;
-        std::regex pinyin_final = std::regex{
-            "([aeiouêvyw]?[aeioun]?[aeioung]?[ng]?)(r?)([012345])$"};
-        if (std::regex_search(zhuyin_syllable, final_match, pinyin_final)) {
+        if (std::regex_search(zhuyin_syllable, final_match, zhuyinFinalRegex)) {
             std::string final;
             std::string er;
             if (final_match[1].length()) {
@@ -427,7 +438,7 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
                 er = "ㄦ";
             }
             zhuyin_syllable = std::regex_replace(zhuyin_syllable,
-                                                 pinyin_final,
+                                                 zhuyinFinalRegex,
                                                  final + er);
         }
 
@@ -468,13 +479,11 @@ std::tuple<std::string, std::string> convertIPAMandarinSyllable(
     if (syllable == "ng") {
         ipa_final = mandarinIPAFinals.at("ng");
     } else {
-        std::regex initial_final_regex{"^([bcdfghjklmnpqrstxz]?h?)(.+)$"};
         std::smatch ipa_match;
 
-        auto regex_res = std::regex_match(syllable,
-                                          ipa_match,
-                                          initial_final_regex);
-
+        const auto regex_res = std::regex_match(syllable,
+                                                ipa_match,
+                                                mandarinIPASyllableRegex);
         if (!regex_res) {
             std::cerr << "Invalid pinyin for IPA conversion!" << std::endl;
             return std::make_tuple("", syllable);
@@ -538,14 +547,14 @@ std::string convertPinyinToIPA(const std::string &pinyin,
         std::string pinyinCopy;
         // Insert a space before and after every special character, so that the
         // IPA conversion doesn't attempt to convert special characters.
-        std::u32string pinyin_utf32 = QString::fromStdString(pinyin)
-                                          .normalized(
-                                              QString::NormalizationForm_C)
-                                          .toStdU32String();
+        const std::u32string pinyin_utf32
+            = QString::fromStdString(pinyin)
+                  .normalized(QString::NormalizationForm_C)
+                  .toStdU32String();
         for (const auto &character : pinyin_utf32) {
-            std::string character_utf8 = QString::fromStdU32String(
-                                             std::u32string{character})
-                                             .toStdString();
+            const std::string character_utf8 = QString::fromStdU32String(
+                                                   std::u32string{character})
+                                                   .toStdString();
             if (specialCharacters.find(character_utf8)
                 != specialCharacters.end()) {
                 pinyinCopy += " " + character_utf8 + " ";
@@ -595,7 +604,7 @@ std::string convertPinyinToIPA(const std::string &pinyin,
         }
 
         // Get syllable without tone
-        auto tone_location = syllable_tones[i].second;
+        const auto tone_location = syllable_tones[i].second;
         if (tone_location < 0) {
             ipa_syllables.emplace_back(syllable);
             continue;
@@ -611,10 +620,10 @@ std::string convertPinyinToIPA(const std::string &pinyin,
 
         // Mark close front rounded vowel with v instead of "u" or "u:"
         syllable_without_tone = std::regex_replace(syllable_without_tone,
-                                                   std::regex{"u\\:"},
+                                                   pinyinVRegex,
                                                    "v");
         syllable_without_tone = std::regex_replace(syllable_without_tone,
-                                                   std::regex{"([jqx])u"},
+                                                   pinyinVPrecederRegex,
                                                    "$1v");
 
         // Convert initial and final
@@ -801,99 +810,99 @@ bool segmentPinyin(const QString &string,
            "ian", "in",  "iang", "ing",  "iong", "u",  "ua", "uo",  "uai",
            "ui",  "uan", "un",   "uang", "u",    "u:", "ue", "u:e", "o"};
 
-    bool valid_pinyin = true;
+    bool validPinyin = true;
     // Keep track of indices for current segmented word; [start_index, end_index)
     // Greedily try to expand end_index by checking for valid sequences
     // of characters
-    int start_idx = 0;
-    int end_idx = 0;
-    bool initial_found = false;
+    int startIdx = 0;
+    int endIdx = 0;
+    bool initialFound = false;
 
-    while (end_idx < string.length()) {
-        bool next_iteration = false;
+    while (endIdx < string.length()) {
+        bool nextIteration = false;
         // Ignore separation characters; these are special.
-        QString currentString = string.mid(end_idx, 1).toLower();
-        bool isSpecialCharacter = (specialCharacters.find(
-                                       currentString.toStdString())
-                                   != specialCharacters.end());
-        bool isGlobCharacter = currentString.trimmed() == "*"
-                               || currentString.trimmed() == "?";
+        QString currentString = string.mid(endIdx, 1).toLower();
+        const bool isSpecialCharacter = (specialCharacters.find(
+                                             currentString.toStdString())
+                                         != specialCharacters.end());
+        const bool isGlobCharacter = currentString.trimmed() == "*"
+                                     || currentString.trimmed() == "?";
         if (currentString == " " || currentString == "'" || isSpecialCharacter
             || isGlobCharacter) {
-            if (initial_found) { // Add any incomplete word to the vector
-                QString previous_initial
-                    = string.mid(start_idx, end_idx - start_idx).toLower();
+            if (initialFound) { // Add any incomplete word to the vector
+                const QString previous_initial
+                    = string.mid(startIdx, endIdx - startIdx).toLower();
                 syllables.push_back(previous_initial.toStdString());
                 if (finals.find(previous_initial.toStdString())
                     == finals.end()) {
-                    valid_pinyin = false;
+                    validPinyin = false;
                 }
-                start_idx = end_idx;
-                initial_found = false;
+                startIdx = endIdx;
+                initialFound = false;
             }
             if (!removeGlobCharacters && isGlobCharacter) {
                 // Add anything before the current glob character
-                if (end_idx >= 1 && (end_idx - start_idx >= 1)) {
-                    QString previous_initial
-                        = string.mid(start_idx, end_idx - start_idx).toLower();
-                    syllables.push_back(previous_initial.toStdString());
-                    if (finals.find(previous_initial.toStdString())
+                if (endIdx >= 1 && (endIdx - startIdx >= 1)) {
+                    const QString previousInitial
+                        = string.mid(startIdx, endIdx - startIdx).toLower();
+                    syllables.push_back(previousInitial.toStdString());
+                    if (finals.find(previousInitial.toStdString())
                         == finals.end()) {
-                        valid_pinyin = false;
+                        validPinyin = false;
                     }
-                    initial_found = false;
+                    initialFound = false;
                 }
 
                 // Since whitespace matters for glob characters, consume the
                 // next or previous whitespace if it exists (and was not
                 // already consumed by another glob character).
-                int new_end_index = end_idx;
+                int newEndIndex = endIdx;
                 int length = 1;
-                if ((end_idx >= 1) && (string.at(end_idx - 1) == ' ')
+                if ((endIdx >= 1) && (string.at(endIdx - 1) == ' ')
                     && syllables.back().back() != ' ') {
                     // Add preceding whitespace to this word
-                    new_end_index--;
+                    newEndIndex--;
                     length++;
                 }
-                if ((string.length() > end_idx + 1)
-                    && (string.at(end_idx + 1) == ' ')) {
+                if ((string.length() > endIdx + 1)
+                    && (string.at(endIdx + 1) == ' ')) {
                     // Add succeeding whitespace to this word
                     length++;
-                    end_idx++;
+                    endIdx++;
                 }
-                QString glob = string.mid(new_end_index, length).toLower();
+                const QString glob = string.mid(newEndIndex, length).toLower();
                 syllables.push_back(glob.toStdString());
 
-                start_idx = end_idx;
+                startIdx = endIdx;
             } else if (!removeSpecialCharacters && isSpecialCharacter) {
                 syllables.push_back(currentString.toStdString());
             }
 
-            start_idx++;
-            end_idx++;
+            startIdx++;
+            endIdx++;
             continue;
         }
 
         // First, check for initials
         // If initial is valid, then extend the end_index for length of initial
         // cluster of consonants.
-        for (int initial_len = 2; initial_len > 0; initial_len--) {
-            currentString = string.mid(end_idx, initial_len).toLower();
-            auto searchResult = initials.find(currentString.toStdString());
+        for (int initialLen = 2; initialLen > 0; initialLen--) {
+            currentString = string.mid(endIdx, initialLen).toLower();
+            const auto searchResult = initials.find(currentString.toStdString());
             if (searchResult != initials.end()
-                && currentString.length() == initial_len) {
-                if (initial_found) {
+                && currentString.length() == initialLen) {
+                if (initialFound) {
                     // Two initials in a row are invalid Pinyin.
-                    valid_pinyin = false;
+                    validPinyin = false;
                 }
-                end_idx += initial_len;
-                next_iteration = true;
-                initial_found = true;
+                endIdx += initialLen;
+                nextIteration = true;
+                initialFound = true;
                 break;
             }
         }
 
-        if (next_iteration) {
+        if (nextIteration) {
             continue;
         }
 
@@ -903,54 +912,54 @@ bool segmentPinyin(const QString &string,
         //
         // Then add the substring from [start_index, end_index) to vector
         // and reset start_index, so we can start searching after the end_index.
-        for (int final_len = 4; final_len > 0; final_len--) {
-            currentString = string.mid(end_idx, final_len).toLower();
-            auto searchResult = finals.find(currentString.toStdString());
+        for (int finalLen = 4; finalLen > 0; finalLen--) {
+            currentString = string.mid(endIdx, finalLen).toLower();
+            const auto searchResult = finals.find(currentString.toStdString());
             if (searchResult != finals.end()
-                && currentString.length() == final_len) {
-                end_idx += final_len;
+                && currentString.length() == finalLen) {
+                endIdx += finalLen;
 
                 // Append erhua "r" and tone digit to the syllable
-                if (end_idx < string.length() && string.at(end_idx) == 'r') {
-                    end_idx++;
+                if (endIdx < string.length() && string.at(endIdx) == 'r') {
+                    endIdx++;
                 }
-                if (end_idx < string.length() && string.at(end_idx).isDigit()) {
-                    if (string.at(end_idx).digitValue() < 1
-                        || string.at(end_idx).digitValue() > 5) {
-                        valid_pinyin = false;
+                if (endIdx < string.length() && string.at(endIdx).isDigit()) {
+                    if (string.at(endIdx).digitValue() < 1
+                        || string.at(endIdx).digitValue() > 5) {
+                        validPinyin = false;
                     }
-                    end_idx++;
+                    endIdx++;
                 }
 
-                QString syllable
-                    = string.mid(start_idx, end_idx - start_idx).toLower();
+                const QString syllable
+                    = string.mid(startIdx, endIdx - startIdx).toLower();
                 syllables.push_back(syllable.toStdString());
-                start_idx = end_idx;
-                next_iteration = true;
-                initial_found = false;
+                startIdx = endIdx;
+                nextIteration = true;
+                initialFound = false;
                 break;
             }
         }
 
-        if (next_iteration) {
+        if (nextIteration) {
             continue;
         }
 
-        end_idx++;
+        endIdx++;
     }
 
     // Then add whatever's left in the search term, minus whitespace.
-    QString lastSyllable
-        = string.mid(start_idx, end_idx - start_idx).simplified().toLower();
+    const QString lastSyllable
+        = string.mid(startIdx, endIdx - startIdx).simplified().toLower();
     if (!lastSyllable.isEmpty() && lastSyllable != "'") {
         syllables.push_back(lastSyllable.toStdString());
         if (finals.find(lastSyllable.toStdString()) == finals.end()) {
-            valid_pinyin = false;
+            validPinyin = false;
         }
     }
 
     out = syllables;
-    return valid_pinyin;
+    return validPinyin;
 }
 
 } // namespace MandarinUtils

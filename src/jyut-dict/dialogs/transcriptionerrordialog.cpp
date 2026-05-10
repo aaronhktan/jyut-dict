@@ -4,13 +4,15 @@
 
 #include <QAbstractButton>
 #include <QDesktopServices>
+#include <QEvent>
 #include <QPushButton>
+#include <QString>
 #include <QUrl>
 
 TranscriptionErrorDialog::TranscriptionErrorDialog(const QString &reason,
                                                    const QString &description,
                                                    QWidget *parent)
-    : DefaultDialog(reason, description, parent)
+    : DefaultDialog{reason, description, parent}
 {
     setupUI();
     translateUI();
@@ -25,22 +27,22 @@ void TranscriptionErrorDialog::setupUI()
 #ifdef Q_OS_MAC
     QAbstractButton *microphonePerms = addButton(tr("Microphone access..."),
                                                  QMessageBox::HelpRole);
-    disconnect(microphonePerms, nullptr, nullptr, nullptr);
-    connect(microphonePerms, &QAbstractButton::clicked, this, [=, this]() {
+    disconnect(microphonePerms, nullptr, this, nullptr);
+    connect(microphonePerms, &QAbstractButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::PRIVACY_MICROPHONE_LINK});
     });
 
     QAbstractButton *speechPerms = addButton(tr("Dictation access..."),
                                              QMessageBox::HelpRole);
-    disconnect(speechPerms, nullptr, nullptr, nullptr);
-    connect(speechPerms, &QAbstractButton::clicked, this, [=, this]() {
+    disconnect(speechPerms, nullptr, this, nullptr);
+    connect(speechPerms, &QAbstractButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::PRIVACY_SPEECH_LINK});
     });
 #elif defined(Q_OS_WIN)
     QAbstractButton *microphonePerms = addButton(tr("Keyboard languages..."),
                                                  QMessageBox::HelpRole);
-    disconnect(microphonePerms, nullptr, nullptr, nullptr);
-    connect(microphonePerms, &QAbstractButton::clicked, this, [=, this]() {
+    disconnect(microphonePerms, nullptr, this, nullptr);
+    connect(microphonePerms, &QAbstractButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::TTS_LINK});
     });
 #endif

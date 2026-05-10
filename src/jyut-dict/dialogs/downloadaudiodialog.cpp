@@ -1,7 +1,7 @@
 #include "downloadaudiodialog.h"
 
 DownloadAudioDialog::DownloadAudioDialog(QWidget *parent)
-    : DefaultDialog("", "", parent)
+    : DefaultDialog{"", "", parent}
 {
     setupUI();
     translateUI();

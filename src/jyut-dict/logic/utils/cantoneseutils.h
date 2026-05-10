@@ -1,9 +1,10 @@
 #ifndef CANTONESEUTILS_H
 #define CANTONESEUTILS_H
 
-#include <QString>
-
 #include <string>
+#include <vector>
+
+class QString;
 
 // The CantoneseUtils namespace contains static functions for working with
 // Jyutping (and other Cantonese romanizations, such as Yale/IPA).

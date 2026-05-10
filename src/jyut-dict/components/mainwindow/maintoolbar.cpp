@@ -22,12 +22,14 @@
 #include <QGuiApplication>
 #include <QMenu>
 #include <QStyleHints>
+#include <QTimer>
 #include <QToolButton>
 #include <QWidget>
 
 MainToolBar::MainToolBar(std::shared_ptr<SQLSearch> sqlSearch,
                          std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
-                         QWidget *parent) : QToolBar(parent)
+                         QWidget *parent)
+    : QToolBar{parent}
 {
     setContextMenuPolicy(Qt::PreventContextMenu);
 
@@ -91,7 +93,7 @@ void MainToolBar::setupUI(void)
 
     setStyle(Utils::isDarkMode());
 
-    connect(qGuiApp, &QGuiApplication::applicationStateChanged, this, [&]() {
+    connect(qGuiApp, &QGuiApplication::applicationStateChanged, this, [this] {
         if (!_paletteRecentlyChanged) {
             setStyle(Utils::isDarkMode());
         }
@@ -113,9 +115,7 @@ void MainToolBar::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() {
-            _paletteRecentlyChanged = false;
-        });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -126,26 +126,27 @@ void MainToolBar::changeEvent(QEvent *event)
 void MainToolBar::setStyle(bool use_dark)
 {
 #ifdef Q_OS_MAC
-    QColor backgroundColour = use_dark
-                                  ? QColor{TITLE_BAR_BACKGROUND_COLOR_DARK_R,
-                                           TITLE_BAR_BACKGROUND_COLOR_DARK_G,
-                                           TITLE_BAR_BACKGROUND_COLOR_DARK_B}
-                                  : QColor{TITLE_BAR_BACKGROUND_COLOR_R,
-                                           TITLE_BAR_BACKGROUND_COLOR_G,
-                                           TITLE_BAR_BACKGROUND_COLOR_B};
+    QColor backgroundColour
+        = use_dark ? QColor{Utils::TITLE_BAR_BACKGROUND_COLOR_DARK_R,
+                            Utils::TITLE_BAR_BACKGROUND_COLOR_DARK_G,
+                            Utils::TITLE_BAR_BACKGROUND_COLOR_DARK_B}
+                   : QColor{Utils::TITLE_BAR_BACKGROUND_COLOR_R,
+                            Utils::TITLE_BAR_BACKGROUND_COLOR_G,
+                            Utils::TITLE_BAR_BACKGROUND_COLOR_B};
     QColor backgroundColourInactive
-        = use_dark ? QColor{TITLE_BAR_INACTIVE_BACKGROUND_COLOR_DARK_R,
-                            TITLE_BAR_INACTIVE_BACKGROUND_COLOR_DARK_G,
-                            TITLE_BAR_INACTIVE_BACKGROUND_COLOR_DARK_B}
-                   : QColor{TITLE_BAR_INACTIVE_BACKGROUND_COLOR_R,
-                            TITLE_BAR_INACTIVE_BACKGROUND_COLOR_G,
-                            TITLE_BAR_INACTIVE_BACKGROUND_COLOR_B};
-    QColor borderColour = use_dark ? QColor{TITLE_BAR_BORDER_COLOR_DARK_R,
-                                            TITLE_BAR_BORDER_COLOR_DARK_G,
-                                            TITLE_BAR_BORDER_COLOR_DARK_B}
-                                   : QColor{TITLE_BAR_BORDER_COLOR_R,
-                                            TITLE_BAR_BORDER_COLOR_G,
-                                            TITLE_BAR_BORDER_COLOR_B};
+        = use_dark ? QColor{Utils::TITLE_BAR_INACTIVE_BACKGROUND_COLOR_DARK_R,
+                            Utils::TITLE_BAR_INACTIVE_BACKGROUND_COLOR_DARK_G,
+                            Utils::TITLE_BAR_INACTIVE_BACKGROUND_COLOR_DARK_B}
+                   : QColor{Utils::TITLE_BAR_INACTIVE_BACKGROUND_COLOR_R,
+                            Utils::TITLE_BAR_INACTIVE_BACKGROUND_COLOR_G,
+                            Utils::TITLE_BAR_INACTIVE_BACKGROUND_COLOR_B};
+    QColor borderColour = use_dark
+                              ? QColor{Utils::TITLE_BAR_BORDER_COLOR_DARK_R,
+                                       Utils::TITLE_BAR_BORDER_COLOR_DARK_G,
+                                       Utils::TITLE_BAR_BORDER_COLOR_DARK_B}
+                              : QColor{Utils::TITLE_BAR_BORDER_COLOR_R,
+                                       Utils::TITLE_BAR_BORDER_COLOR_G,
+                                       Utils::TITLE_BAR_BORDER_COLOR_B};
     if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
         _inactiveCount++;
         if (_inactiveCount > 2) {
@@ -277,21 +278,21 @@ void MainToolBar::changeSearchParameters(const SearchParameters params) const
 
 void MainToolBar::setOpenHistoryAction(QAction *action) const
 {
-    connect(_openHistoryButton, &QToolButton::pressed, this, [=, this]() {
+    connect(_openHistoryButton, &QToolButton::pressed, this, [this, action] {
         action->trigger();
     });
 }
 
 void MainToolBar::setOpenSettingsAction(QAction *action) const
 {
-    connect(_openSettingsButton, &QToolButton::pressed, this, [=, this]() {
+    connect(_openSettingsButton, &QToolButton::pressed, this, [this, action] {
         action->trigger();
     });
 }
 
 void MainToolBar::setOpenFavouritesAction(QAction *action) const
 {
-    connect(_openFavouritesButton, &QToolButton::pressed, this, [=, this]() {
+    connect(_openFavouritesButton, &QToolButton::pressed, this, [this, action] {
         action->trigger();
     });
 }

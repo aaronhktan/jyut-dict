@@ -1,22 +1,25 @@
 #ifndef ENTRYVIEWSENTENCECARDSECTION_H
 #define ENTRYVIEWSENTENCECARDSECTION_H
 
-#include "components/sentencecard/loadingwidget.h"
-#include "components/sentencecard/sentencecardwidget.h"
-#include "logic/database/sqldatabasemanager.h"
 #include "logic/search/isearchobserver.h"
 #include "logic/search/sqlsearch.h"
 
-#include <QEvent>
-#include <QString>
-#include <QTimer>
-#include <QToolButton>
-#include <QVBoxLayout>
+#include <QSettings>
 #include <QWidget>
 
 #include <memory>
 #include <unordered_map>
 #include <vector>
+
+class LoadingWidget;
+class SentenceCardWidget;
+class SQLDatabaseManager;
+
+class QEvent;
+class QString;
+class QTimer;
+class QToolButton;
+class QVBoxLayout;
 
 // The EntryViewSentenceCardSection displays cards for each set of sentences,
 // where each set of sentences belongs to a particular source.

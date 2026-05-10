@@ -1,13 +1,12 @@
 #ifndef SENTENCEVIEWCONTENTWIDGET_H
 #define SENTENCEVIEWCONTENTWIDGET_H
 
-#include "components/sentenceview/sentenceviewsentencecardsection.h"
-#include "logic/sentence/sourcesentence.h"
-
-#include <QVBoxLayout>
 #include <QWidget>
 
-#include <vector>
+class SentenceViewSentenceCardSection;
+class SourceSentence;
+
+class QVBoxLayout;
 
 // The SentenceViewContentWidget displays data about an Sentence (that is not in its header)
 // It contains a SentenceSection that displays cards for sentences

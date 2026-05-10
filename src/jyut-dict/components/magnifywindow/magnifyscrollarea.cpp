@@ -1,19 +1,20 @@
 #include "magnifyscrollarea.h"
 
-#include "logic/entry/entry.h"
+#include "components/magnifywindow/magnifyscrollareawidget.h"
 #include "logic/settings/settingsutils.h"
 
 #include <QCoreApplication>
+#include <QResizeEvent>
 #include <QScrollBar>
+#include <QVBoxLayout>
+#include <QWidget>
 
 MagnifyScrollArea::MagnifyScrollArea(QWidget *parent)
-    : QScrollArea(parent)
+    : QScrollArea{parent}
+    , _settings{Settings::getSettings(this)}
+    , _scrollAreaWidget{new MagnifyScrollAreaWidget{this}}
 {
     setFrameShape(QFrame::NoFrame);
-
-    _settings = Settings::getSettings(this);
-
-    _scrollAreaWidget = new MagnifyScrollAreaWidget{this};
 
     setWidget(_scrollAreaWidget);
     setWidgetResizable(

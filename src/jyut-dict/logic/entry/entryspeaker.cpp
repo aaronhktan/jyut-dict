@@ -10,7 +10,12 @@
 
 #include <QCoreApplication>
 #include <QFileInfo>
+#ifdef Q_OS_LINUX
+#include <QFutureWatcher>
+#endif
 #include <QStandardPaths>
+#include <QString>
+#include <QTextToSpeech>
 #include <QVector>
 #include <QtConcurrent/QtConcurrent>
 
@@ -21,8 +26,8 @@
 EntrySpeaker::EntrySpeaker()
     : QObject{}
     , _tts{new QTextToSpeech}
+    , _engine{(ma_engine *) malloc(sizeof(*_engine))}
 {
-    _engine = (ma_engine *) malloc(sizeof(*_engine));
     ma_result result = ma_engine_init(NULL, _engine);
     if (result != MA_SUCCESS) {
         std::cerr << "Failed to initialize miniaudio engine!" << std::endl;
@@ -34,7 +39,7 @@ EntrySpeaker::EntrySpeaker()
 
 #ifdef Q_OS_LINUX
     _boolReturnWatcher = new QFutureWatcher<bool>{this};
-    QFuture<bool> future = QtConcurrent::run([=, this]() {
+    QFuture<bool> future = QtConcurrent::run([this] {
         KZip zip{getBundleAudioPath() + "audio.zip"};
         if (!zip.open(QIODevice::ReadOnly)) {
             std::cerr << "Failed to read audio zip file!" << std::endl;
@@ -57,12 +62,11 @@ EntrySpeaker::~EntrySpeaker()
     delete _engine;
 }
 
-EntrySpeaker::EntrySpeaker(EntrySpeaker &other)
+EntrySpeaker::EntrySpeaker([[maybe_unused]] EntrySpeaker &other)
     : _tts{new QTextToSpeech}
 {
     // Qt classes cannot be copy-constructed, so just create a new one
     // instead of copying from other.
-    (void) (other);
 }
 
 EntrySpeaker::EntrySpeaker(EntrySpeaker &&other)
@@ -246,7 +250,11 @@ int EntrySpeaker::speak(const QLocale::Language &language,
             MandarinUtils::segmentPinyin(mutableString, syllables);
         }
 
-        std::ignore = QtConcurrent::run([=, this]() {
+        std::ignore = QtConcurrent::run([backend,
+                                         voice,
+                                         languageName,
+                                         syllables,
+                                         this] {
 #ifdef Q_OS_LINUX
             while (_boolReturnWatcher && _boolReturnWatcher->isRunning()) {
                 std::this_thread::sleep_for(std::chrono::milliseconds{50});

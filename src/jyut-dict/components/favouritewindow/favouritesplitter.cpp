@@ -2,19 +2,29 @@
 
 #include "components/entrysearchresult/resultlistmodel.h"
 #include "components/entrysearchresult/resultlistview.h"
+#include "components/entryview/entryscrollarea.h"
+#include "logic/database/sqldatabasemanager.h"
+#include "logic/database/sqluserdatautils.h"
+#include "logic/entry/entry.h"
 #include "logic/entry/entryphoneticoptions.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_WIN
 #include "logic/utils/utils_windows.h"
 #endif
 
+#include <QAbstractListModel>
+#include <QEvent>
+#include <QKeyEvent>
 #include <QList>
+#include <QModelIndex>
+#include <QTimer>
 #include <QVariant>
 
-FavouriteSplitter::FavouriteSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
-                                     std::shared_ptr<SQLDatabaseManager> manager,
-                                     QWidget *parent)
-    : QSplitter(parent)
+FavouriteSplitter::FavouriteSplitter(
+    std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
+    std::shared_ptr<SQLDatabaseManager> manager,
+    QWidget *parent)
+    : QSplitter{parent}
     , _sqlUserUtils{sqlUserUtils}
     , _manager{manager}
 {
@@ -31,7 +41,9 @@ void FavouriteSplitter::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] {
+            _paletteRecentlyChanged = false;
+        });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -112,9 +124,8 @@ void FavouriteSplitter::translateUI(void)
 }
 
 #ifdef Q_OS_WIN
-void FavouriteSplitter::setStyle(bool use_dark)
+void FavouriteSplitter::setStyle([[maybe_unused]] bool use_dark)
 {
-    (void) (use_dark);
     setStyleSheet(
         "QSplitter { border-top: 1px solid palette(alternate-base); }");
 }
@@ -188,7 +199,7 @@ void FavouriteSplitter::handleDoubleClick(const QModelIndex &selection)
 
     prepareEntry(entry);
 
-    QTimer::singleShot(50, this, [&]() {
+    QTimer::singleShot(50, this, [this, entry] {
         EntryScrollArea *area = new EntryScrollArea{_sqlUserUtils, _manager, nullptr};
         area->setParent(this, Qt::Window);
         area->setEntry(entry);

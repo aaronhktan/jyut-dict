@@ -2,19 +2,22 @@
 
 #include "components/sentencesearchresult/sentenceresultlistdelegate.h"
 
+#include <QEvent>
 #include <QGuiApplication>
+#include <QStyledItemDelegate>
 
 #ifdef Q_OS_WIN
 #include <QScrollBar>
+#include <QWheelEvent>
 #endif
 
 SentenceResultListView::SentenceResultListView(QWidget *parent)
-    : QListView(parent)
+    : QListView{parent}
+    , _delegate{new SentenceResultListDelegate{this}}
 {
     setFrameShape(QFrame::NoFrame);
     setMinimumWidth(250);
 
-    _delegate = new SentenceResultListDelegate{this};
     setItemDelegate(_delegate);
 
     setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);

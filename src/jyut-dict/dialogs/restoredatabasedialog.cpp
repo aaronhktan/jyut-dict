@@ -1,9 +1,12 @@
 #include "restoredatabasedialog.h"
 
+#include <QEvent>
+#include <QString>
+
 RestoreDatabaseDialog::RestoreDatabaseDialog(const QString &reason,
                                              const QString &description,
                                              QWidget *parent)
-    : DefaultDialog(reason, description, parent)
+    : DefaultDialog{reason, description, parent}
 {
     setupUI();
     translateUI();

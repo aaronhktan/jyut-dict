@@ -1,9 +1,12 @@
 #include "downloadresultdialog.h"
 
+#include <QEvent>
+#include <QString>
+
 DownloadResultDialog::DownloadResultDialog(const QString &reason,
                                            const QString &description,
                                            QWidget *parent)
-    : DefaultDialog(reason, description, parent)
+    : DefaultDialog{reason, description, parent}
 {
     setupUI();
     translateUI();

@@ -7,32 +7,34 @@
 #include "logic/settings/settingsutils.h"
 #include "logic/utils/utils_qt.h"
 
-#include <QGuiApplication>
 #include <QAbstractTextDocumentLayout>
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+#include <QGuiApplication>
+#include <QModelIndex>
+#include <QPainter>
 #include <QPainterPath>
-#endif
 #include <QRectF>
+#include <QStyleOptionViewItem>
 #include <QTextDocument>
 #include <QVariant>
+#include <QWidget>
 
 SentenceResultListDelegate::SentenceResultListDelegate(QWidget *parent)
-    : QStyledItemDelegate (parent)
-{
-    _settings = Settings::getSettings(this);
-}
+    : QStyledItemDelegate{parent}
+    , _settings{Settings::getSettings(this)}
+{}
 
 void SentenceResultListDelegate::paint(QPainter *painter,
-                               const QStyleOptionViewItem &option,
-                               const QModelIndex &index) const
+                                       const QStyleOptionViewItem &option,
+                                       const QModelIndex &index) const
 {
     // Get the sentence to paint
     if (!index.data().canConvert<SourceSentence>()) {
         return;
     }
-    SourceSentence sentence = qvariant_cast<SourceSentence>(index.data());
 
     painter->save();
+
+    SourceSentence sentence = qvariant_cast<SourceSentence>(index.data());
 
     // Draw the rectangle behind each cell in the result view
     QColor backgroundColour;
@@ -84,26 +86,26 @@ void SentenceResultListDelegate::paint(QPainter *painter,
                           .value<MandarinOptions>();
     sentence.generatePhonetic(cantoneseOptions, mandarinOptions);
 
-    QRect r = option.rect;
+    QRect r{option.rect};
     QRect boundingRect;
-    QFont font = painter->font();
-    int interfaceSize = static_cast<int>(
+    QFont font{painter->font()};
+    const int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
-    int h4FontSize = Settings::h4FontSize.at(
+    const int h4FontSize = Settings::h4FontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int bodyFontSize = Settings::bodyFontSize.at(
+    const int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int sourceLanguageIndicatorHorizontalMargin = 4;
-    int cellTopPadding = bodyFontSize * 8 / 6;
-    int cellLeftPadding = bodyFontSize;
-    int contentSpacingMargin = bodyFontSize / 2;
+    const int sourceLanguageIndicatorHorizontalMargin = 4;
+    const int cellTopPadding = bodyFontSize * 8 / 6;
+    const int cellLeftPadding = bodyFontSize;
+    const int contentSpacingMargin = bodyFontSize / 2;
 
     // Draw language indicator
-    std::string language = sentence.getSourceLanguage();
-    QColor colour = Utils::getLanguageColour(language);
+    const std::string &language = sentence.getSourceLanguage();
+    const QColor colour = Utils::getLanguageColour(language);
     // Adjust a few extra pixels to the left so that the rounded corners of
     // the "pill" look right
     r = r.adjusted(cellLeftPadding + sourceLanguageIndicatorHorizontalMargin,
@@ -125,9 +127,9 @@ void SentenceResultListDelegate::paint(QPainter *painter,
 
     // Then draw the actual rounded rectangle that contains the language
     QPainterPath path;
-    int sourceLanguageIndicatorBorderRadius = bodyFontSize * 7 / 8;
-    int sourceLanguageIndicatorVerticalPadding = bodyFontSize / 4;
-    int sourceLanguageIndicatorHorizontalPadding = bodyFontSize / 2;
+    const int sourceLanguageIndicatorBorderRadius = bodyFontSize * 7 / 8;
+    const int sourceLanguageIndicatorVerticalPadding = bodyFontSize / 4;
+    const int sourceLanguageIndicatorHorizontalPadding = bodyFontSize / 2;
     boundingRect
         = boundingRect.adjusted(-sourceLanguageIndicatorHorizontalPadding,
                                 -sourceLanguageIndicatorVerticalPadding,
@@ -165,9 +167,9 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     }
 
     // Use QTextDocument for rich text
-    QTextDocument *doc = new QTextDocument{};
+    QTextDocument *doc = new QTextDocument;
     metrics = QFontMetrics{font};
-    QString characters
+    const QString characters
         = metrics
               .elidedText(sentence.getCharacters(characterOptions).c_str(),
                           Qt::ElideRight,
@@ -180,14 +182,16 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     QAbstractTextDocumentLayout *documentLayout = doc->documentLayout();
     auto ctx = QAbstractTextDocumentLayout::PaintContext();
     ctx.palette.setColor(QPalette::Text, painter->pen().color());
-    QRectF bounds = QRectF(0, 0, r.width(), h4FontSize);
+    QRectF bounds{0,
+                  0,
+                  static_cast<double>(r.width()),
+                  static_cast<double>(h4FontSize)};
     ctx.clip = bounds;
     painter->translate(cellLeftPadding, r.y());
     documentLayout->draw(painter, ctx);
     painter->translate(-cellLeftPadding, -r.y());
     painter->restore();
     r = r.adjusted(0, h4FontSize + contentSpacingMargin, 0, 0);
-
     delete doc;
 
     // Phonetic and definition snippets
@@ -257,12 +261,10 @@ void SentenceResultListDelegate::paint(QPainter *painter,
     painter->restore();
 }
 
-QSize SentenceResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
-                                   const QModelIndex &index) const
+QSize SentenceResultListDelegate::sizeHint(
+    [[maybe_unused]] const QStyleOptionViewItem &option,
+    [[maybe_unused]] const QModelIndex &index) const
 {
-    (void) (option);
-    (void) (index);
-
     Settings::InterfaceSize interfaceSize
         = _settings
               ->value("Interface/size",
@@ -271,42 +273,42 @@ QSize SentenceResultListDelegate::sizeHint(const QStyleOptionViewItem &option,
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     switch (interfaceSize) {
     case Settings::InterfaceSize::SMALLER: {
-        return QSize(100, 93);
+        return QSize{100, 93};
     }
     case Settings::InterfaceSize::SMALL: {
-        return QSize(100, 100);
+        return QSize{100, 100};
     }
     case Settings::InterfaceSize::NORMAL: {
-        return QSize(100, 115);
+        return QSize{100, 115};
     }
     case Settings::InterfaceSize::LARGE: {
-        return QSize(100, 135);
+        return QSize{100, 135};
     }
     case Settings::InterfaceSize::LARGER: {
-        return QSize(100, 155);
+        return QSize{100, 155};
     }
     }
 #else
     switch (interfaceSize) {
     case Settings::InterfaceSize::SMALLER: {
-        return QSize(100, 88);
+        return QSize{100, 88};
     }
     case Settings::InterfaceSize::SMALL: {
-        return QSize(100, 95);
+        return QSize{100, 95};
     }
     case Settings::InterfaceSize::NORMAL: {
-        return QSize(100, 115);
+        return QSize{100, 115};
     }
     case Settings::InterfaceSize::LARGE: {
-        return QSize(100, 130);
+        return QSize{100, 130};
     }
     case Settings::InterfaceSize::LARGER: {
-        return QSize(100, 150);
+        return QSize{100, 150};
     }
     }
 #endif
 
     // All cases should be handled and the function should
     // never reach here.
-    return QSize(100, 100);
+    return QSize{100, 100};
 }

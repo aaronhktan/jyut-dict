@@ -1,5 +1,6 @@
 #include <QtTest>
 
+#include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqldatabaseutils.h"
 
 #include <QSqlError>

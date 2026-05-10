@@ -6,6 +6,7 @@
 #include <QJsonObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QSqlDatabase>
 #include <QTimer>
 #include <QtNetwork>
 
@@ -51,7 +52,7 @@ void SourceReleaseChecker::checkForNewUpdate()
         QNetworkRequest request{QUrl{u.c_str()}};
         QNetworkReply *reply = _networkManager->get(request);
         _replies.emplace(reply);
-        connect(reply, &QNetworkReply::finished, this, [this, u, reply]() {
+        connect(reply, &QNetworkReply::finished, this, [this, u, reply] {
             if (reply->error() == QNetworkReply::NoError) {
                 parseReply(reply);
             } else {
@@ -63,19 +64,19 @@ void SourceReleaseChecker::checkForNewUpdate()
                 emit foundUpdate(_updates);
             }
 
-            disconnect(reply, nullptr, nullptr, nullptr);
+            disconnect(reply, nullptr, this, nullptr);
             reply->deleteLater();
             _replies.erase(reply);
         });
 
         // Time out after 15 seconds
-        QTimer::singleShot(15000, reply, [this, u, reply]() {
+        QTimer::singleShot(15000, reply, [this, u, reply] {
             _sourceUpdateURLs.erase(u);
             if (_sourceUpdateURLs.empty()) {
                 emit foundUpdate(_updates);
             }
 
-            disconnect(reply, nullptr, nullptr, nullptr);
+            disconnect(reply, nullptr, this, nullptr);
             reply->abort();
             reply->deleteLater();
             _replies.erase(reply);

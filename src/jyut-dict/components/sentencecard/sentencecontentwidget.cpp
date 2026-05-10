@@ -1,5 +1,7 @@
 #include "sentencecontentwidget.h"
 
+#include "logic/sentence/sentenceset.h"
+#include "logic/sentence/sourcesentence.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
@@ -11,12 +13,17 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QEvent>
+#include <QGridLayout>
+#include <QLabel>
+#include <QResizeEvent>
 #include <QTimer>
 
-SentenceContentWidget::SentenceContentWidget(QWidget *parent) : QWidget(parent)
+SentenceContentWidget::SentenceContentWidget(QWidget *parent)
+    : QWidget{parent}
+    , _settings{Settings::getSettings(this)}
+    , _sentenceLayout{new QGridLayout{this}}
 {
-    _settings = Settings::getSettings(this);
-    _sentenceLayout = new QGridLayout{this};
     _sentenceLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
 }
 
@@ -31,7 +38,7 @@ void SentenceContentWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -212,47 +219,49 @@ void SentenceContentWidget::translateUI(void)
 
 void SentenceContentWidget::setStyle(bool use_dark)
 {
-    int interfaceSize = static_cast<int>(
+    const int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
-    int bodyFontSize = Settings::bodyFontSize.at(
+    const int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
+    const int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
         static_cast<unsigned long>(interfaceSize - 1));
 
-    QString sentenceNumberStyleSheet = "QLabel { "
-                                       "   color: %1; "
-                                       "   font-size: %2px; "
-                                       "}";
-    QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                          LABEL_TEXT_COLOUR_DARK_G,
-                                          LABEL_TEXT_COLOUR_DARK_B}
-                                 : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                          LABEL_TEXT_COLOUR_LIGHT_R,
-                                          LABEL_TEXT_COLOUR_LIGHT_R};
+    const QString sentenceNumberStyleSheet = "QLabel { "
+                                             "   color: %1; "
+                                             "   font-size: %2px; "
+                                             "}";
+    const QColor textColour = use_dark
+                                  ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                  : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R};
     for (const auto &label : _sentenceNumberLabels) {
         label->setStyleSheet(
             sentenceNumberStyleSheet.arg(textColour.name()).arg(bodyFontSize));
     }
 
-    int borderRadius = static_cast<int>(bodyFontSize * 5 / 6);
-    int padding = bodyFontSize / 6;
-    int paddingHorizontal = bodyFontSize / 4;
+    const int borderRadius = static_cast<int>(bodyFontSize * 5 / 6);
+    const int padding = bodyFontSize / 6;
+    const int paddingHorizontal = bodyFontSize / 4;
     for (const auto &label : _sourceSentenceLanguage) {
-        QString sourceStyleSheet = "QLabel { "
-                                   "   background: %1; "
-                                   "   border-radius: %2px; "
-                                   "   color: %3; "
-                                   "   font-size: %4px; "
-                                   "   padding: %5px; "
-                                   "   padding-left: %6px; "
-                                   "   padding-right: %6px; "
-                                   "} ";
-        QColor languageColour = Utils::getLanguageColour(
+        const QString sourceStyleSheet = "QLabel { "
+                                         "   background: %1; "
+                                         "   border-radius: %2px; "
+                                         "   color: %3; "
+                                         "   font-size: %4px; "
+                                         "   padding: %5px; "
+                                         "   padding-left: %6px; "
+                                         "   padding-right: %6px; "
+                                         "} ";
+        const QColor languageColour = Utils::getLanguageColour(
             Utils::getISO639FromLanguage(label->text().trimmed()));
-        QColor languageTextColour = Utils::getContrastingColour(languageColour);
+        const QColor languageTextColour = Utils::getContrastingColour(
+            languageColour);
         label->setStyleSheet(sourceStyleSheet.arg(languageColour.name())
                                  .arg(borderRadius)
                                  .arg(languageTextColour.name())
@@ -266,10 +275,10 @@ void SentenceContentWidget::setStyle(bool use_dark)
         label->resize(label->sizeHint());
     }
 
-    QString chineseStyleSheet = "QLabel { "
-                                "   font-size: %1px; "
-                                "   padding-left: 2px; "
-                                "}";
+    const QString chineseStyleSheet = "QLabel { "
+                                      "   font-size: %1px; "
+                                      "   padding-left: 2px; "
+                                      "}";
     for (const auto &label : _simplifiedLabels) {
 #ifdef Q_OS_WIN
         QFont font = QFont{"Microsoft YaHei", bodyFontSizeHan};
@@ -287,11 +296,11 @@ void SentenceContentWidget::setStyle(bool use_dark)
         label->setStyleSheet(chineseStyleSheet.arg(bodyFontSizeHan));
     }
 
-    QString pronunciationStyleSheet = "QLabel { "
-                                      "   color: %1; "
-                                      "   font-size: %2px; "
-                                      "   padding-left: 2px; "
-                                      "}";
+    const QString pronunciationStyleSheet = "QLabel { "
+                                            "   color: %1; "
+                                            "   font-size: %2px; "
+                                            "   padding-left: 2px; "
+                                            "}";
     for (const auto &label : _cantoneseLabels) {
         label->setStyleSheet(
             pronunciationStyleSheet.arg(textColour.name()).arg(bodyFontSize));
@@ -301,10 +310,10 @@ void SentenceContentWidget::setStyle(bool use_dark)
             pronunciationStyleSheet.arg(textColour.name()).arg(bodyFontSize));
     }
 
-    QString sentenceStyleSheet = "QLabel { "
-                                 "   font-size: %1px; "
-                                 "   padding-left: 2px; "
-                                 "}";
+    const QString sentenceStyleSheet = "QLabel { "
+                                       "   font-size: %1px; "
+                                       "   padding-left: 2px; "
+                                       "}";
     for (const auto &label : _sentenceLabels) {
         if (label->property("language").toString().trimmed() == "cmn"
             || label->property("language").toString().trimmed() == "yue") {

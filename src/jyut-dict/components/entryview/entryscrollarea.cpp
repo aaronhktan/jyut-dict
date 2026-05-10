@@ -1,21 +1,24 @@
 ﻿#include "entryscrollarea.h"
 
+#include "components/entryview/entryscrollareawidget.h"
+#include "logic/database/sqldatabasemanager.h"
 #include "logic/entry/entry.h"
 
+#include <QResizeEvent>
 #include <QScrollBar>
+#include <QTimer>
+#include <QVBoxLayout>
 
 EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
                                  std::shared_ptr<SQLDatabaseManager> manager,
                                  QWidget *parent)
-    : QScrollArea(parent)
+    : QScrollArea{parent}
+    , _enableUIUpdateTimer{new QTimer{this}}
+    , _updateUITimer{new QTimer{this}}
+    , _scrollAreaWidget{new EntryScrollAreaWidget{sqlUserUtils, manager, this}}
 {
-    _enableUIUpdateTimer = new QTimer{this};
-    _updateUITimer = new QTimer{this};
-
     setFrameShape(QFrame::NoFrame);
     verticalScrollBar()->setFocusPolicy(Qt::StrongFocus);
-
-    _scrollAreaWidget = new EntryScrollAreaWidget{sqlUserUtils, manager, this};
 
     setWidget(_scrollAreaWidget);
     setWidgetResizable(
@@ -127,17 +130,17 @@ void EntryScrollArea::keyPressEvent(QKeyEvent *event)
 void EntryScrollArea::setEntry(const Entry &entry)
 {
     _updateUITimer->stop();
-    disconnect(_updateUITimer, nullptr, nullptr, nullptr);
+    disconnect(_updateUITimer, nullptr, this, nullptr);
 
     _updateUITimer->setInterval(25);
-    QObject::connect(_updateUITimer, &QTimer::timeout, this, [=, this]() {
+    QObject::connect(_updateUITimer, &QTimer::timeout, this, [this, entry] {
         if (_enableUIUpdate) {
             _updateUITimer->stop();
-            disconnect(_updateUITimer, nullptr, nullptr, nullptr);
+            disconnect(_updateUITimer, nullptr, this, nullptr);
             _scrollAreaWidget->setEntry(entry);
             _scrollAreaWidget->setVisible(false);
-            int largerHeight = std::max(_scrollAreaWidget->sizeHint().height(),
-                                        height());
+            const int largerHeight
+                = std::max(_scrollAreaWidget->sizeHint().height(), height());
             _scrollAreaWidget->resize(width()
                                           - (verticalScrollBar()->isVisible()
                                                  ? verticalScrollBar()->width()
@@ -181,10 +184,10 @@ void EntryScrollArea::stallEntryUIUpdate(void)
 {
     _enableUIUpdate = false;
     _enableUIUpdateTimer->stop();
-    disconnect(_enableUIUpdateTimer, nullptr, nullptr, nullptr);
+    disconnect(_enableUIUpdateTimer, nullptr, this, nullptr);
     _enableUIUpdateTimer->setInterval(200);
     _enableUIUpdateTimer->setSingleShot(true);
-    QObject::connect(_enableUIUpdateTimer, &QTimer::timeout, this, [=, this]() {
+    QObject::connect(_enableUIUpdateTimer, &QTimer::timeout, this, [this] {
         _enableUIUpdate = true;
     });
     _enableUIUpdateTimer->start();

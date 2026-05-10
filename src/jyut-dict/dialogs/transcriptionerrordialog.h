@@ -3,8 +3,8 @@
 
 #include "dialogs/defaultdialog.h"
 
-#include <QEvent>
-#include <QString>
+class QString;
+class QEvent;
 
 class TranscriptionErrorDialog : public DefaultDialog
 {

@@ -3,10 +3,6 @@
 #include "logic/utils/cantoneseutils.h"
 #include "logic/utils/mandarinutils.h"
 
-SourceSentence::SourceSentence()
-{
-}
-
 SourceSentence::SourceSentence(const std::string &sourceLanguage,
                                const std::string &simplified,
                                const std::string &traditional,
@@ -19,8 +15,7 @@ SourceSentence::SourceSentence(const std::string &sourceLanguage,
     , _jyutping{jyutping}
     , _pinyin{pinyin}
     , _sentences{sentences}
-{
-}
+{}
 
 std::ostream &operator<<(std::ostream &out, const SourceSentence &sourceSentence)
 {
@@ -83,49 +78,45 @@ bool SourceSentence::generatePhonetic(CantoneseOptions cantoneseOptions,
 {
     if ((cantoneseOptions & CantoneseOptions::PRETTY_YALE)
             == CantoneseOptions::PRETTY_YALE
-        && !_isYaleValid) {
+        && !_yale.has_value()) {
         _yale = CantoneseUtils::convertJyutpingToYale(
             _jyutping,
             /* useSpacesToSegment */ true);
-        _isYaleValid = true;
     }
 
     if ((cantoneseOptions & CantoneseOptions::CANTONESE_IPA)
             == CantoneseOptions::CANTONESE_IPA
-        && !_isCantoneseIPAValid) {
+        && !_cantoneseIPA.has_value()) {
         _cantoneseIPA
             = CantoneseUtils::convertJyutpingToIPA(_jyutping,
                                                    /* useSpacesToSegment */ true);
-        _isCantoneseIPAValid = true;
     }
 
     if ((mandarinOptions & MandarinOptions::PRETTY_PINYIN)
-            == MandarinOptions::PRETTY_PINYIN && !_isPrettyPinyinValid) {
+            == MandarinOptions::PRETTY_PINYIN
+        && !_prettyPinyin.has_value()) {
         _prettyPinyin = MandarinUtils::createPrettyPinyin(_pinyin);
-        _isPrettyPinyinValid = true;
     }
 
     if ((mandarinOptions & MandarinOptions::NUMBERED_PINYIN)
-            == MandarinOptions::NUMBERED_PINYIN && !_isNumberedPinyinValid) {
+            == MandarinOptions::NUMBERED_PINYIN
+        && !_numberedPinyin.has_value()) {
         _numberedPinyin = MandarinUtils::createNumberedPinyin(_pinyin);
-        _isNumberedPinyinValid = true;
     }
 
     if ((mandarinOptions & MandarinOptions::ZHUYIN) == MandarinOptions::ZHUYIN
-        && !_isZhuyinValid) {
+        && !_zhuyin.has_value()) {
         _zhuyin
             = MandarinUtils::convertPinyinToZhuyin(_pinyin,
                                                    /* useSpacesToSegment */ true);
-        _isZhuyinValid = true;
     }
 
     if ((mandarinOptions & MandarinOptions::MANDARIN_IPA)
             == MandarinOptions::MANDARIN_IPA
-        && !_isMandarinIPAValid) {
+        && !_mandarinIPA.has_value()) {
         _mandarinIPA
             = MandarinUtils::convertPinyinToIPA(_pinyin,
                                                 /* useSpacesToSegment */ true);
-        _isMandarinIPAValid = true;
     }
 
     return true;
@@ -153,10 +144,10 @@ const std::string &SourceSentence::getCantonesePhonetic(
 {
     switch (cantoneseOptions) {
     case CantoneseOptions::PRETTY_YALE: {
-        return _yale;
+        return _yale.value();
     }
     case CantoneseOptions::CANTONESE_IPA: {
-        return _cantoneseIPA;
+        return _cantoneseIPA.value();
     }
     case CantoneseOptions::RAW_JYUTPING:
     default:
@@ -169,16 +160,16 @@ const std::string &SourceSentence::getMandarinPhonetic(
 {
     switch (mandarinOptions) {
     case MandarinOptions::PRETTY_PINYIN: {
-        return _prettyPinyin;
+        return _prettyPinyin.value();
     }
     case MandarinOptions::NUMBERED_PINYIN: {
-        return _numberedPinyin;
+        return _numberedPinyin.value();
     }
     case MandarinOptions::ZHUYIN: {
-        return _zhuyin;
+        return _zhuyin.value();
     }
     case MandarinOptions::MANDARIN_IPA: {
-        return _mandarinIPA;
+        return _mandarinIPA.value();
     }
     default: {
         return _pinyin;
@@ -203,7 +194,7 @@ const std::string &SourceSentence::getPinyin(void) const
 
 const std::string &SourceSentence::getPrettyPinyin(void) const
 {
-    return _prettyPinyin;
+    return _prettyPinyin.value();
 }
 
 void SourceSentence::setPinyin(const std::string &pinyin)

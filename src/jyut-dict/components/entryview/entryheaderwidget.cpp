@@ -1,5 +1,7 @@
 #include "entryheaderwidget.h"
 
+#include "dialogs/entryspeakerrordialog.h"
+#include "logic/entry/entry.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/strings/strings.h"
@@ -13,32 +15,36 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
-#include <QtGlobal>
 #include <QCoreApplication>
+#include <QEvent>
+#include <QGridLayout>
 #include <QIcon>
+#include <QLabel>
+#include <QPushButton>
 #include <QTimer>
 #include <QVariant>
+#include <QtGlobal>
 
-EntryHeaderWidget::EntryHeaderWidget(QWidget *parent) : QWidget(parent)
+EntryHeaderWidget::EntryHeaderWidget(QWidget *parent)
+    : QWidget{parent}
+    , _settings{Settings::getSettings(this)}
+    , _entryHeaderLayout{new QGridLayout(this)}
+    , _wordLabel{new QLabel(this)}
+    , _cantoneseTTS{new QPushButton(this)}
+    , _mandarinTTS{new QPushButton(this)}
 {
-    _settings = Settings::getSettings(this);
-
-    _entryHeaderLayout = new QGridLayout{this};
     _entryHeaderLayout->setContentsMargins(0, 0, 0, 0);
     _entryHeaderLayout->setSpacing(5);
 
     _speaker = std::make_unique<EntrySpeaker>();
 
-    _wordLabel = new QLabel{this};
     _wordLabel->setAttribute(Qt::WA_TranslucentBackground);
     _wordLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
     _wordLabel->setWordWrap(true);
 
-    _cantoneseTTS = new QPushButton{this};
     _cantoneseTTS->setAttribute(Qt::WA_TranslucentBackground);
     _cantoneseTTS->setVisible(false);
 
-    _mandarinTTS = new QPushButton{this};
     _mandarinTTS->setAttribute(Qt::WA_TranslucentBackground);
     _mandarinTTS->setVisible(false);
 
@@ -60,7 +66,9 @@ void EntryHeaderWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] {
+            _paletteRecentlyChanged = false;
+        });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -86,12 +94,12 @@ void EntryHeaderWidget::setEntry(const Entry &entry)
                 true)
             .c_str());
 
-    CantoneseOptions cantoneseOptions
+    const CantoneseOptions cantoneseOptions
         = Settings::getSettings()
               ->value("Entry/cantonesePronunciationOptions",
                       QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
               .value<CantoneseOptions>();
-    MandarinOptions mandarinOptions
+    const MandarinOptions mandarinOptions
         = Settings::getSettings()
               ->value("Entry/mandarinPronunciationOptions",
                       QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
@@ -143,9 +151,9 @@ void EntryHeaderWidget::translateUI()
         label->setVisible(true);
     }
 
-    disconnect(_cantoneseTTS, nullptr, nullptr, nullptr);
-    connect(_cantoneseTTS, &QPushButton::clicked, this, [=, this]() {
-        TextToSpeech::SpeakerBackend backend
+    disconnect(_cantoneseTTS, nullptr, this, nullptr);
+    connect(_cantoneseTTS, &QPushButton::clicked, this, [this] {
+        const TextToSpeech::SpeakerBackend backend
             = Settings::getSettings()
                   ->value("Advanced/CantoneseTextToSpeech::SpeakerBackend",
 #ifdef Q_OS_LINUX
@@ -181,25 +189,27 @@ void EntryHeaderWidget::translateUI()
                       .arg(Settings::getCurrentLocale().bcp47Name()));
     });
 
-    disconnect(_mandarinTTS, nullptr, nullptr, nullptr);
+    disconnect(_mandarinTTS, nullptr, this, nullptr);
     if (Settings::getCurrentLocale().territory() == QLocale::Taiwan) {
-        TextToSpeech::SpeakerBackend backend
-            = Settings::getSettings()
-                  ->value("Advanced/MandarinTextToSpeech::SpeakerBackend",
+        connect(_mandarinTTS, &QPushButton::clicked, this, [this] {
+            const TextToSpeech::SpeakerBackend backend
+                = Settings::getSettings()
+                      ->value("Advanced/MandarinTextToSpeech::SpeakerBackend",
 #ifdef Q_OS_LINUX
-                          QVariant::fromValue(TextToSpeech::SpeakerBackend::
-                                                  GOOGLE_OFFLINE_SYLLABLE_TTS))
+                              QVariant::fromValue(
+                                  TextToSpeech::SpeakerBackend::
+                                      GOOGLE_OFFLINE_SYLLABLE_TTS))
 #else
-                          QVariant::fromValue(
-                              TextToSpeech::SpeakerBackend::QT_TTS))
+                  QVariant::fromValue(TextToSpeech::SpeakerBackend::QT_TTS))
 #endif
-                  .value<TextToSpeech::SpeakerBackend>();
-        TextToSpeech::SpeakerVoice voice
-            = Settings::getSettings()
-                  ->value("Advanced/MandarinTextToSpeech::SpeakerVoice",
-                          QVariant::fromValue(TextToSpeech::SpeakerVoice::NONE))
-                  .value<TextToSpeech::SpeakerVoice>();
-        connect(_mandarinTTS, &QPushButton::clicked, this, [=, this]() {
+                      .value<TextToSpeech::SpeakerBackend>();
+            const TextToSpeech::SpeakerVoice voice
+                = Settings::getSettings()
+                      ->value("Advanced/MandarinTextToSpeech::SpeakerVoice",
+                              QVariant::fromValue(
+                                  TextToSpeech::SpeakerVoice::NONE))
+                      .value<TextToSpeech::SpeakerVoice>();
+
 #ifdef Q_OS_MAC
             if (!_speaker->speakTaiwaneseMandarin(_pinyin, backend, voice)) {
                 return;
@@ -220,19 +230,25 @@ void EntryHeaderWidget::translateUI()
                           .arg(Settings::getCurrentLocale().bcp47Name()));
         });
     } else {
-        connect(_mandarinTTS, &QPushButton::clicked, this, [=, this]() {
-            TextToSpeech::SpeakerBackend backend
+        connect(_mandarinTTS, &QPushButton::clicked, this, [this] {
+            const TextToSpeech::SpeakerBackend backend
                 = Settings::getSettings()
                       ->value("Advanced/MandarinTextToSpeech::SpeakerBackend",
+#ifdef Q_OS_LINUX
                               QVariant::fromValue(
-                                  TextToSpeech::SpeakerBackend::QT_TTS))
+                                  TextToSpeech::SpeakerBackend::
+                                      GOOGLE_OFFLINE_SYLLABLE_TTS))
+#else
+                  QVariant::fromValue(TextToSpeech::SpeakerBackend::QT_TTS))
+#endif
                       .value<TextToSpeech::SpeakerBackend>();
-            TextToSpeech::SpeakerVoice voice
+            const TextToSpeech::SpeakerVoice voice
                 = Settings::getSettings()
                       ->value("Advanced/MandarinTextToSpeech::SpeakerVoice",
                               QVariant::fromValue(
                                   TextToSpeech::SpeakerVoice::NONE))
                       .value<TextToSpeech::SpeakerVoice>();
+
 #ifdef Q_OS_MAC
             if (!_speaker->speakMainlandMandarin(_pinyin, backend, voice)) {
                 return;
@@ -258,19 +274,19 @@ void EntryHeaderWidget::translateUI()
 void EntryHeaderWidget::setStyle(bool use_dark)
 {
 #ifdef Q_OS_WIN
-    QFont font = QFont{"Microsoft YaHei"};
+    QFont font{"Microsoft YaHei"};
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
     _wordLabel->setFont(font);
 #endif
 
-    int interfaceSize = static_cast<int>(
+    const int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
-    int h2FontSize = Settings::h2FontSize.at(
+    const int h2FontSize = Settings::h2FontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int bodyFontSize = Settings::bodyFontSize.at(
+    const int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
 
     _wordLabel->setStyleSheet(QString{"QLabel { "
@@ -278,16 +294,17 @@ void EntryHeaderWidget::setStyle(bool use_dark)
                                       "}"}
                                   .arg(h2FontSize));
 
-    QString pronunciationTypeStyleSheet = QString{"QLabel { "
-                                                  "   color: %1; "
-                                                  "   font-size: %2px; "
-                                                  "}"};
-    QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                          LABEL_TEXT_COLOUR_DARK_G,
-                                          LABEL_TEXT_COLOUR_DARK_B}
-                                 : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                          LABEL_TEXT_COLOUR_LIGHT_R,
-                                          LABEL_TEXT_COLOUR_LIGHT_R};
+    const QString pronunciationTypeStyleSheet = QString{"QLabel { "
+                                                        "   color: %1; "
+                                                        "   font-size: %2px; "
+                                                        "}"};
+    const QColor textColour = use_dark
+                                  ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                  : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R};
     for (const auto& label : _pronunciationTypeLabels) {
         label->setAttribute(Qt::WA_TranslucentBackground);
         label->setStyleSheet(pronunciationTypeStyleSheet.arg(textColour.name())
@@ -296,9 +313,9 @@ void EntryHeaderWidget::setStyle(bool use_dark)
             label->fontMetrics().boundingRect(label->text()).width());
     }
 
-    QString pronunciationStyleSheet = QString{"QLabel { "
-                                              "   font-size: %1px; "
-                                              "}"};
+    const QString pronunciationStyleSheet{"QLabel { "
+                                          "   font-size: %1px; "
+                                          "}"};
     for (const auto& label : _pronunciationLabels) {
         label->setTextInteractionFlags(Qt::TextSelectableByMouse);
         label->setWordWrap(true);
@@ -351,7 +368,7 @@ void EntryHeaderWidget::setStyle(bool use_dark)
 }
 
 void EntryHeaderWidget::displayPronunciationLabels(
-    const Entry& entry,
+    const Entry &entry,
     const CantoneseOptions &cantoneseOptions,
     const MandarinOptions &mandarinOptions)
 {

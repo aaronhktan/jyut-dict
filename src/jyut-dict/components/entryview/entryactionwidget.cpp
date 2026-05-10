@@ -1,5 +1,7 @@
 ﻿#include "entryactionwidget.h"
 
+#include "components/layouts/flowlayout.h"
+#include "logic/database/sqluserdatautils.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
@@ -11,15 +13,18 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QEvent>
 #include <QFileDialog>
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QTimer>
 
-EntryActionWidget::EntryActionWidget(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
-                                     QWidget *parent)
-    : QWidget(parent)
+EntryActionWidget::EntryActionWidget(
+    std::shared_ptr<SQLUserDataUtils> sqlUserUtils, QWidget *parent)
+    : QWidget{parent}
     , _sqlUserUtils{sqlUserUtils}
+    , _settings{Settings::getSettings(this)}
 {
-    _settings = Settings::getSettings(this);
-
     _sqlUserUtils->registerObserver(this);
 
     setupUI();
@@ -41,7 +46,7 @@ void EntryActionWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -129,18 +134,19 @@ void EntryActionWidget::translateUI(void)
 
 void EntryActionWidget::setStyle(bool use_dark)
 {
-    QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                          LABEL_TEXT_COLOUR_DARK_G,
-                                          LABEL_TEXT_COLOUR_DARK_B}
-                                 : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                          LABEL_TEXT_COLOUR_LIGHT_G,
-                                          LABEL_TEXT_COLOUR_LIGHT_B};
-    QColor borderColour = use_dark ? QColor{CONTENT_BACKGROUND_COLOUR_DARK_R,
-                                            CONTENT_BACKGROUND_COLOUR_DARK_G,
-                                            CONTENT_BACKGROUND_COLOUR_DARK_B}
-                                   : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
-                                            CONTENT_BACKGROUND_COLOUR_LIGHT_G,
-                                            CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+    QColor textColour = use_dark ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                          Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                          Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                 : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                          Utils::LABEL_TEXT_COLOUR_LIGHT_G,
+                                          Utils::LABEL_TEXT_COLOUR_LIGHT_B};
+    QColor borderColour = use_dark
+                              ? QColor{Utils::CONTENT_BACKGROUND_COLOUR_DARK_R,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_DARK_G,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_DARK_B}
+                              : QColor{Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_B};
 
     int interfaceSize = static_cast<int>(
         _settings
@@ -227,13 +233,13 @@ void EntryActionWidget::refreshBookmarkButton(void)
     setStyle(Utils::isDarkMode());
     translateUI();
 
-    disconnect(_bookmarkButton, nullptr, nullptr, nullptr);
+    disconnect(_bookmarkButton, nullptr, this, nullptr);
     if (!_bookmarkButton->property("saved").toBool()) {
-        QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [=, this]() {
+        QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [this] {
             addEntryToFavourites(_entry);
         });
     } else {
-        QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [=, this]() {
+        QObject::connect(_bookmarkButton, &QPushButton::clicked, this, [this] {
             removeEntryFromFavourites(_entry);
         });
     }

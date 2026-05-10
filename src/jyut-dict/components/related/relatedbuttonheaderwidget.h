@@ -1,11 +1,12 @@
 #ifndef RELATEDBUTTONHEADERWIDGET_H
 #define RELATEDBUTTONHEADERWIDGET_H
 
-#include <QEvent>
-#include <QLabel>
 #include <QSettings>
-#include <QVBoxLayout>
 #include <QWidget>
+
+class QVBoxLayout;
+class QEvent;
+class QLabel;
 
 // The RelatedButtonHeaderWidget is a header for the related button
 

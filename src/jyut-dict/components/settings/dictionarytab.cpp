@@ -1,8 +1,14 @@
 #include "dictionarytab.h"
 
+#include "components/sourcelist/sourcelistmodel.h"
 #include "components/sourcelist/sourcelistview.h"
-#include "logic/source/sourceutils.h"
+#include "dialogs/dictionarytabfailuredialog.h"
+#include "dialogs/overwriteconflictingdictionarydialog.h"
+#include "logic/database/sqldatabasemanager.h"
+#include "logic/database/sqldatabaseutils.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/source/sourcemetadata.h"
+#include "logic/source/sourceutils.h"
 #include "logic/utils/utils.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
@@ -13,13 +19,23 @@
 #include "logic/utils/utils_windows.h"
 #endif
 
+#ifdef Q_OS_LINUX
 #include <thread>
+#endif
 
-#include <QtConcurrent/QtConcurrent>
 #include "QCoreApplication"
 #include <QDesktopServices>
 #include <QDir>
+#include <QEvent>
 #include <QFileDialog>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QLabel>
+#include <QListView>
+#include <QModelIndex>
+#include <QProgressDialog>
+#include <QPushButton>
+#include <QtConcurrent/QtConcurrent>
 #include <QtSql>
 
 DictionaryTab::DictionaryTab(std::shared_ptr<SQLDatabaseManager> manager,
@@ -59,7 +75,7 @@ void DictionaryTab::setupUI()
     _list->setFixedWidth(200);
     _add = new QPushButton{this};
     _findMore = new QPushButton{this};
-    connect(_findMore, &QPushButton::clicked, this, [&]() {
+    connect(_findMore, &QPushButton::clicked, this, [] {
         QDesktopServices::openUrl(QUrl{Utils::DICTIONARY_DOWNLOAD_LINK});
     });
     _groupbox = new QGroupBox{this};
@@ -103,7 +119,7 @@ void DictionaryTab::setupUI()
             this,
             &DictionaryTab::setSourceMetadata);
 
-    connect(_add, &QPushButton::clicked, this, [=, this] {
+    connect(_add, &QPushButton::clicked, this, [this] {
         QFileDialog *_fileDialog = new QFileDialog{this};
         _fileDialog->setFileMode(QFileDialog::ExistingFile);
         _fileDialog->setAcceptMode(QFileDialog::AcceptOpen);
@@ -143,8 +159,8 @@ void DictionaryTab::translateUI()
     _link->setText(tr("Website"));
 }
 
-void DictionaryTab::setStyle(bool use_dark) {
-    (void) (use_dark);
+void DictionaryTab::setStyle([[maybe_unused]] bool use_dark)
+{
 #ifdef Q_OS_MAC
     if (!use_dark) {
 #endif
@@ -185,14 +201,14 @@ void DictionaryTab::setSourceMetadata(const QModelIndex &index)
     _legal->setText(metadata.getLegal().c_str());
     _version->setText((tr("Version: %1")).arg(metadata.getVersion().c_str()));
 
-    disconnect(_link, nullptr, nullptr, nullptr);
-    connect(_link, &QPushButton::clicked, this, [=, this] {
+    disconnect(_link, nullptr, this, nullptr);
+    connect(_link, &QPushButton::clicked, this, [metadata] {
         QDesktopServices::openUrl(QUrl{metadata.getLink().c_str()});
     });
 
     _remove->setEnabled(_list->model()->rowCount() > 1);
-    disconnect(_remove, nullptr, nullptr, nullptr);
-    connect(_remove, &QPushButton::clicked, this, [=, this] {
+    disconnect(_remove, nullptr, this, nullptr);
+    connect(_remove, &QPushButton::clicked, this, [this, metadata] {
         removeDictionary(metadata);
     });
 }
@@ -208,11 +224,7 @@ void DictionaryTab::populateDictionaryList()
     QSqlDatabase db = _manager->getDatabase();
     _utils->readSources(db, sources);
 
-    for (std::vector<SourceMetadata>::size_type row = 0; row < sources.size();
-         row++) {
-        _list->model()->setData(_list->model()->index(static_cast<int>(row), 0),
-                                QVariant::fromValue(sources.at(row)));
-    }
+    static_cast<SourceListModel *>(_list->model())->setDictionaries(sources);
 }
 
 void DictionaryTab::addDictionary(const QString &dictionaryFile)
@@ -237,20 +249,20 @@ void DictionaryTab::addDictionary(const QString &dictionaryFile)
     _dialog->setRange(0, 0);
     _dialog->setValue(0);
 
-    disconnect(_utils.get(), nullptr, nullptr, nullptr);
-    connect(_utils.get(), &SQLDatabaseUtils::insertingSource, this, [&] {
+    disconnect(_utils.get(), nullptr, this, nullptr);
+    connect(_utils.get(), &SQLDatabaseUtils::insertingSource, this, [this] {
         _dialog->setLabelText(tr("Adding source..."));
     });
 
-    connect(_utils.get(), &SQLDatabaseUtils::insertingEntries, this, [&] {
+    connect(_utils.get(), &SQLDatabaseUtils::insertingEntries, this, [this] {
         _dialog->setLabelText(tr("Adding new entries..."));
     });
 
-    connect(_utils.get(), &SQLDatabaseUtils::insertingDefinitions, this, [&] {
+    connect(_utils.get(), &SQLDatabaseUtils::insertingDefinitions, this, [this] {
         _dialog->setLabelText(tr("Adding new definitions..."));
     });
 
-    connect(_utils.get(), &SQLDatabaseUtils::rebuildingIndexes, this, [&] {
+    connect(_utils.get(), &SQLDatabaseUtils::rebuildingIndexes, this, [this] {
         _dialog->setLabelText(tr("Rebuilding search indexes..."));
     });
 
@@ -289,7 +301,7 @@ void DictionaryTab::addDictionary(const QString &dictionaryFile)
                 }
             });
 
-    std::ignore = QtConcurrent::run([this, dictionaryFile]() {
+    std::ignore = QtConcurrent::run([this, dictionaryFile] {
         QSqlDatabase db = _manager->getDatabase();
         _utils->addSource(db,
                           dictionaryFile.toStdString(),
@@ -320,16 +332,16 @@ void DictionaryTab::forceAddDictionary(const QString &dictionaryFile)
     _dialog->setRange(0, 0);
     _dialog->setValue(0);
 
-    disconnect(_utils.get(), nullptr, nullptr, nullptr);
+    disconnect(_utils.get(), nullptr, this, nullptr);
 
-    connect(_utils.get(), &SQLDatabaseUtils::deletingDefinitions, this, [&] {
+    connect(_utils.get(), &SQLDatabaseUtils::deletingDefinitions, this, [this] {
         _dialog->setLabelText(tr("Removing definitions..."));
     });
 
     connect(_utils.get(),
             &SQLDatabaseUtils::totalToDelete,
             this,
-            [&](int numToDelete) {
+            [&](const int numToDelete) {
                 _dialog->setRange(0, numToDelete + 1);
                 _dialog->setLabelText(
                     QString{tr("Deleted entry 0 of %1")}.arg(numToDelete));
@@ -338,28 +350,28 @@ void DictionaryTab::forceAddDictionary(const QString &dictionaryFile)
     connect(_utils.get(),
             &SQLDatabaseUtils::deletionProgress,
             this,
-            [&](int deleted, int total) {
+            [&](const int deleted, const int total) {
                 _dialog->setLabelText(
                     QString{tr("Deleted entry %1 of %2")}.arg(deleted).arg(
                         total));
                 _dialog->setValue(deleted);
             });
 
-    connect(_utils.get(), &SQLDatabaseUtils::insertingSource, this, [&] {
+    connect(_utils.get(), &SQLDatabaseUtils::insertingSource, this, [this] {
         _dialog->setValue(0);
         _dialog->setRange(0, 0);
         _dialog->setLabelText(tr("Adding source..."));
     });
 
-    connect(_utils.get(), &SQLDatabaseUtils::insertingEntries, this, [&] {
+    connect(_utils.get(), &SQLDatabaseUtils::insertingEntries, this, [this] {
         _dialog->setLabelText(tr("Adding new entries..."));
     });
 
-    connect(_utils.get(), &SQLDatabaseUtils::insertingDefinitions, this, [&] {
+    connect(_utils.get(), &SQLDatabaseUtils::insertingDefinitions, this, [this] {
         _dialog->setLabelText(tr("Adding new definitions..."));
     });
 
-    connect(_utils.get(), &SQLDatabaseUtils::rebuildingIndexes, this, [&] {
+    connect(_utils.get(), &SQLDatabaseUtils::rebuildingIndexes, this, [this] {
         _dialog->setLabelText(tr("Rebuilding search indexes..."));
     });
 
@@ -378,7 +390,7 @@ void DictionaryTab::forceAddDictionary(const QString &dictionaryFile)
                 }
             });
 
-    std::ignore = QtConcurrent::run([this, dictionaryFile]() {
+    std::ignore = QtConcurrent::run([this, dictionaryFile] {
         QSqlDatabase db = _manager->getDatabase();
         _utils->addSource(db,
                           dictionaryFile.toStdString(),
@@ -409,15 +421,15 @@ void DictionaryTab::removeDictionary(SourceMetadata metadata)
     _dialog->setRange(0, 0);
     _dialog->setValue(0);
 
-    disconnect(_utils.get(), nullptr, nullptr, nullptr);
-    connect(_utils.get(), &SQLDatabaseUtils::deletingDefinitions, this, [&] {
+    disconnect(_utils.get(), nullptr, this, nullptr);
+    connect(_utils.get(), &SQLDatabaseUtils::deletingDefinitions, this, [this] {
         _dialog->setLabelText(tr("Removing definitions..."));
     });
 
     connect(_utils.get(),
             &SQLDatabaseUtils::totalToDelete,
             this,
-            [&](int numToDelete) {
+            [this](const int numToDelete) {
                 _dialog->setRange(0, numToDelete + 1);
                 _dialog->setLabelText(
                     QString{tr("Deleted entry 0 of %1")}.arg(numToDelete));
@@ -426,26 +438,26 @@ void DictionaryTab::removeDictionary(SourceMetadata metadata)
     connect(_utils.get(),
             &SQLDatabaseUtils::deletionProgress,
             this,
-            [&](int deleted, int total) {
+            [this](const int deleted, const int total) {
                 _dialog->setLabelText(
                     QString{tr("Deleted entry %1 of %2")}.arg(deleted).arg(
                         total));
                 _dialog->setValue(deleted);
             });
 
-    connect(_utils.get(), &SQLDatabaseUtils::rebuildingIndexes, this, [&] {
+    connect(_utils.get(), &SQLDatabaseUtils::rebuildingIndexes, this, [this] {
         _dialog->setLabelText(tr("Rebuilding search indexes..."));
         _dialog->setRange(0, 0);
     });
 
-    connect(_utils.get(), &SQLDatabaseUtils::cleaningUp, this, [&] {
+    connect(_utils.get(), &SQLDatabaseUtils::cleaningUp, this, [this] {
         _dialog->setLabelText(tr("Cleaning up..."));
     });
 
     connect(_utils.get(),
             &SQLDatabaseUtils::finishedDeletion,
             this,
-            [&](bool success) {
+            [this](const bool success) {
                 _dialog->setLabelText(success ? tr("Done!") : tr("Failed!"));
                 if (success) {
                     std::vector<std::pair<std::string, std::string>> sources;
@@ -456,7 +468,7 @@ void DictionaryTab::removeDictionary(SourceMetadata metadata)
                     }
                 }
 
-                QTimer::singleShot(500, this, [&] {
+                QTimer::singleShot(500, this, [this] {
                     _dialog->reset();
                     clearDictionaryList();
                     populateDictionaryList();
@@ -464,7 +476,7 @@ void DictionaryTab::removeDictionary(SourceMetadata metadata)
                 });
             });
 
-    (void) QtConcurrent::run([this, metadata]() {
+    std::ignore = QtConcurrent::run([this, metadata] {
         QSqlDatabase db = _manager->getDatabase();
         _utils->removeSource(db,
                              metadata.getName(),

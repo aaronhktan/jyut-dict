@@ -1,14 +1,15 @@
 #ifndef VIEWHISTORYLISTDELEGATE_H
 #define VIEWHISTORYLISTDELEGATE_H
 
-#include <QModelIndex>
-#include <QPainter>
 #include <QSettings>
 #include <QStyledItemDelegate>
-#include <QStyleOptionViewItem>
-#include <QWidget>
 
 #include <memory>
+
+class QModelIndex;
+class QPainter;
+class QStyleOptionViewItem;
+class QWidget;
 
 // The ViewHistoryListDelegate is responsible for painting elements in the
 // ViewHistoryListView
@@ -16,8 +17,7 @@
 
 class ViewHistoryListDelegate : public QStyledItemDelegate
 {
-Q_OBJECT
-
+    Q_OBJECT
 public:
     explicit ViewHistoryListDelegate(QWidget *parent = nullptr);
 

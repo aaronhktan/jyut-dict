@@ -1,13 +1,13 @@
 #ifndef SENTENCERESULTLISTVIEW_H
 #define SENTENCERESULTLISTVIEW_H
 
-#include <QEvent>
 #include <QListView>
-#include <QStyledItemDelegate>
+
+class QEvent;
+class QStyledItemDelegate;
 #ifdef Q_OS_WIN
-#include <QWheelEvent>
+class QWheelEvent;
 #endif
-#include <QWidget>
 
 // The SentenceResultListView displays results of a search
 // It populates itself with a QAbstractListModel
@@ -16,7 +16,6 @@
 class SentenceResultListView : public QListView
 {
     Q_OBJECT
-
 public:
     explicit SentenceResultListView(QWidget *parent = nullptr);
 

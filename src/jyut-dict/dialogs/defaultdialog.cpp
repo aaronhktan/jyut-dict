@@ -24,8 +24,8 @@
 DefaultDialog::DefaultDialog(const QString &reason,
                              const QString &description,
                              QWidget *parent)
-    : _settings{Settings::getSettings()}
-    , QMessageBox{parent}
+    : QMessageBox{parent}
+    , _settings{Settings::getSettings()}
 {
     setObjectName("DefaultDialog");
     setAttribute(Qt::WA_DeleteOnClose);
@@ -94,9 +94,8 @@ void DefaultDialog::translateUI(void)
     }
 }
 
-void DefaultDialog::setStyle(bool use_dark)
+void DefaultDialog::setStyle([[maybe_unused]] bool use_dark)
 {
-    (void) (use_dark);
     int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",

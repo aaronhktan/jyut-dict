@@ -1,5 +1,6 @@
 #include "relatedbuttoncontentwidget.h"
 
+#include "logic/entry/entry.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
 #ifdef Q_OS_MAC
@@ -11,16 +12,19 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QEvent>
+#include <QLabel>
+#include <QPushButton>
 #include <QTimer>
+#include <QVBoxLayout>
 
 RelatedButtonContentWidget::RelatedButtonContentWidget(RelatedType type,
                                                        QWidget *parent)
     : QWidget{parent}
+    , _settings{Settings::getSettings(this)}
     , _buttonType{type}
 {
     setObjectName("RelatedButtonContentWidget");
-
-    _settings = Settings::getSettings(this);
 
     setupUI();
     translateUI();
@@ -33,7 +37,7 @@ void RelatedButtonContentWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -93,39 +97,41 @@ void RelatedButtonContentWidget::translateUI()
 
 void RelatedButtonContentWidget::setStyle(bool use_dark)
 {
-    QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                          LABEL_TEXT_COLOUR_DARK_G,
-                                          LABEL_TEXT_COLOUR_DARK_B}
-                                 : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                          LABEL_TEXT_COLOUR_LIGHT_G,
-                                          LABEL_TEXT_COLOUR_LIGHT_B};
-    QColor borderColour = use_dark ? QColor{CONTENT_BACKGROUND_COLOUR_DARK_R,
-                                            CONTENT_BACKGROUND_COLOUR_DARK_G,
-                                            CONTENT_BACKGROUND_COLOUR_DARK_B}
-                                   : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
-                                            CONTENT_BACKGROUND_COLOUR_LIGHT_G,
-                                            CONTENT_BACKGROUND_COLOUR_LIGHT_B};
-    QColor backgroundColor = use_dark
-                                 ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
-                                          HEADER_BACKGROUND_COLOUR_DARK_G,
-                                          HEADER_BACKGROUND_COLOUR_DARK_B}
-                                 : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
-                                          CONTENT_BACKGROUND_COLOUR_LIGHT_G,
-                                          CONTENT_BACKGROUND_COLOUR_LIGHT_B};
-    int interfaceSize = static_cast<int>(
+    const QColor textColour = use_dark
+                                  ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                  : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_G,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_B};
+    const QColor borderColour
+        = use_dark ? QColor{Utils::CONTENT_BACKGROUND_COLOUR_DARK_R,
+                            Utils::CONTENT_BACKGROUND_COLOUR_DARK_G,
+                            Utils::CONTENT_BACKGROUND_COLOUR_DARK_B}
+                   : QColor{Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                            Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                            Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+    const QColor backgroundColor
+        = use_dark ? QColor{Utils::HEADER_BACKGROUND_COLOUR_DARK_R,
+                            Utils::HEADER_BACKGROUND_COLOUR_DARK_G,
+                            Utils::HEADER_BACKGROUND_COLOUR_DARK_B}
+                   : QColor{Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                            Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                            Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+    const int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
-    int bodyFontSize = Settings::bodyFontSize.at(
+    const int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int borderRadius = static_cast<int>(bodyFontSize * 1.5);
-    int padding = bodyFontSize / 6;
-    int paddingHorizontal = bodyFontSize / 3;
+    const int borderRadius = static_cast<int>(bodyFontSize * 1.5);
+    const int padding = bodyFontSize / 6;
+    const int paddingHorizontal = bodyFontSize / 3;
 
-    QString descriptionLabelStyleSheet = "QLabel { "
-                                         "   font-size: %2px; "
-                                         "}";
+    const QString descriptionLabelStyleSheet = "QLabel { "
+                                               "   font-size: %2px; "
+                                               "}";
     _description->setStyleSheet(descriptionLabelStyleSheet.arg(bodyFontSize));
 
     QString buttonStyleSheet;

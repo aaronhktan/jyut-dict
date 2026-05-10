@@ -1,6 +1,8 @@
 #include "sqlsearch.h"
 
 #include "logic/database/queryparseutils.h"
+#include "logic/database/sqldatabasemanager.h"
+#include "logic/entry/entry.h"
 #include "logic/search/searchqueries.h"
 #include "logic/settings/settingsutils.h"
 #include "logic/utils/cantoneseutils.h"
@@ -9,6 +11,7 @@
 #include "logic/utils/scriptdetector.h"
 #include "logic/utils/utils.h"
 
+#include <QSqlQuery>
 #include <QString>
 #include <QtConcurrent/QtConcurrent>
 
@@ -344,7 +347,7 @@ void SQLSearch::searchByUnique(const QString &simplified,
     QObject::connect(watcher,
                      &QFutureWatcher<void>::finished,
                      watcher,
-                     [this, watcher]() {
+                     [this, watcher] {
                          {
                              std::lock_guard lock(_watchers.mut);
                              _watchers.set.erase(watcher);
@@ -390,7 +393,7 @@ void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString &searc
     QObject::connect(watcher,
                      &QFutureWatcher<void>::finished,
                      watcher,
-                     [this, watcher]() {
+                     [this, watcher] {
                          {
                              std::lock_guard lock(_watchers.mut);
                              _watchers.set.erase(watcher);

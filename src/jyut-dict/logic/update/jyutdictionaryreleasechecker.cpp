@@ -58,13 +58,13 @@ JyutDictionaryReleaseChecker::JyutDictionaryReleaseChecker(
 void JyutDictionaryReleaseChecker::checkForNewUpdate()
 {
     QNetworkRequest _request{QUrl{JYUT_DICTIONARY_UPDATE_URL}};
-    disconnect(_manager, nullptr, nullptr, nullptr);
+    disconnect(_manager, nullptr, this, nullptr);
     connect(_manager,
             &QNetworkAccessManager::finished,
             this,
             &JyutDictionaryReleaseChecker::parseReply);
     _reply = _manager->get(_request);
-    QTimer::singleShot(15000, this, [&]() {
+    QTimer::singleShot(15000, this, [this] {
         emit foundUpdate(IUpdateChecker::AppManifestMetadata{
             .updateAvailable = false,
             .versionNumber = std::nullopt,

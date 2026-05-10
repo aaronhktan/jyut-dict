@@ -6,16 +6,20 @@
 #include "logic/utils/utils_qt.h"
 
 #include <QGuiApplication>
+#include <QModelIndex>
+#include <QPainter>
+#include <QStyleOptionViewItem>
 #include <QTextLayout>
 #include <QVariant>
+#include <QWidget>
 
 #include <string>
 #include <utility>
 
 SearchHistoryListDelegate::SearchHistoryListDelegate(QWidget *parent)
-    : QStyledItemDelegate (parent)
+    : QStyledItemDelegate{parent}
+    , _settings{Settings::getSettings(this)}
 {
-    _settings = Settings::getSettings(this);
 }
 
 void SearchHistoryListDelegate::paint(QPainter *painter,
@@ -27,9 +31,9 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
     }
 
     painter->save();
-    
-    SearchTermHistoryItem pair
-        = qvariant_cast<SearchTermHistoryItem>(index.data());
+
+    const SearchTermHistoryItem pair = qvariant_cast<SearchTermHistoryItem>(
+        index.data());
 
     // Use -1 to indicate that this is not a valid history item
     bool isEmptyPair = (pair.second == -1);
@@ -57,27 +61,27 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
 
     painter->setRenderHint(QPainter::Antialiasing, true);
 
-    QRect r = option.rect;
+    QRect r{option.rect};
     QRect boundingRect;
-    QFont font = painter->font();
-    int interfaceSize = static_cast<int>(
+    QFont font{painter->font()};
+    const int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
-    int h4FontSize = Settings::h4FontSize.at(
+    const int h4FontSize = Settings::h4FontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int bodyFontSize = Settings::bodyFontSize.at(
+    const int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
+    const int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int cellTopPadding = bodyFontSize * 2 / 3;
-    int cellLeftPadding = bodyFontSize * 2 / 3;
-    int contentSpacingMargin = bodyFontSize / 2;
+    const int cellTopPadding = bodyFontSize * 2 / 3;
+    const int cellLeftPadding = bodyFontSize * 2 / 3;
+    const int contentSpacingMargin = bodyFontSize / 2;
 
 #ifdef Q_OS_WIN
     QFont oldFont{font};
-    font = QFont("Microsoft Yahei");
+    font = QFont{"Microsoft Yahei"};
 #endif
 
     if (isEmptyPair) {
@@ -98,7 +102,7 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
         font.setPixelSize(bodyFontSize + 2);
         painter->setFont(font);
         QFontMetrics metrics{font};
-        QString phonetic = "—";
+        const QString phonetic{"—"};
         painter->drawText(r, 0, phonetic, &boundingRect);
         r = r.adjusted(0, bodyFontSize + 2 + contentSpacingMargin, 0, 0);
 
@@ -111,16 +115,16 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
         painter->setPen(QPen(option.palette.color(QPalette::PlaceholderText)));
 
         // Do custom text layout to get eliding double-line label
-        QString snippet = tr("After searching for a word, you will find it "
-                             "in this list. Selecting a word will allow you "
-                             "to do the same search again.");
+        QString snippet{tr("After searching for a word, you will find it "
+                           "in this list. Selecting a word will allow you "
+                           "to do the same search again.")};
         QTextLayout *textLayout = new QTextLayout{snippet, painter->font()};
         textLayout->beginLayout();
 
         // Define start and end y coordinates
         // max height of label is four lines, so height * 4
         int y = r.y();
-        int height = y + metrics.height() * 4;
+        const int maxHeight = y + metrics.height() * 4;
 
         for (;;) {
             QTextLine line = textLayout->createLine();
@@ -132,14 +136,13 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
             line.setLineWidth(r.width());
             int nextLineY = y + metrics.lineSpacing();
 
-            if (height >= nextLineY + metrics.lineSpacing()) {
-                line.draw(painter, QPoint(r.x(), y));
+            if (nextLineY + metrics.lineSpacing() <= maxHeight) {
+                line.draw(painter, QPoint{r.x(), y});
                 y = nextLineY;
             } else {
-                QString lastLine = snippet.mid(line.textStart());
-                QString elidedLastLine = metrics.elidedText(lastLine,
-                                                            Qt::ElideRight,
-                                                            r.width());
+                const QString lastLine = snippet.mid(line.textStart());
+                const QString elidedLastLine
+                    = metrics.elidedText(lastLine, Qt::ElideRight, r.width());
                 // For some reason at small font sizes, -4 is necessary to make
                 // it look right (except in Chinese fonts). *shrug*
                 if (Settings::isCurrentLocaleHan()) {
@@ -165,15 +168,17 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
                        -cellLeftPadding);
 
         QFontMetrics metrics{font};
-        QString searchOption = Utils::getStringFromSearchParameter(
-                                   static_cast<SearchParameters>(pair.second))
-                                   .c_str();
-        int searchOptionWidth = metrics.horizontalAdvance(searchOption);
-        QString searchTerm = metrics.elidedText(pair.first.c_str(),
-                                                Qt::ElideRight,
-                                                r.width() - 2 * cellLeftPadding
-                                                    - searchOptionWidth);
-        QRect rectangle = r;
+        const QString searchOption{
+            Utils::getStringFromSearchParameter(
+                static_cast<SearchParameters>(pair.second))
+                .c_str()};
+        const int searchOptionWidth = metrics.horizontalAdvance(searchOption);
+        const QString searchTerm{metrics.elidedText(pair.first.c_str(),
+                                                    Qt::ElideRight,
+                                                    r.width()
+                                                        - 2 * cellLeftPadding
+                                                        - searchOptionWidth)};
+        QRect rectangle{r};
         rectangle.setHeight(metrics.height());
         painter->drawText(rectangle, 0, searchTerm, &boundingRect);
 
@@ -188,18 +193,17 @@ void SearchHistoryListDelegate::paint(QPainter *painter,
     }
 
     // Bottom divider
-    QRect rct = option.rect;
+    QRect rct{option.rect};
     rct.setY(rct.bottom() - 1);
     painter->fillRect(rct, option.palette.alternateBase());
 
     painter->restore();
 }
 
-QSize SearchHistoryListDelegate::sizeHint(const QStyleOptionViewItem &option,
-                                          const QModelIndex &index) const
+QSize SearchHistoryListDelegate::sizeHint(
+    [[maybe_unused]] const QStyleOptionViewItem &option,
+    const QModelIndex &index) const
 {
-    (void) (option);
-    
     SearchTermHistoryItem pair
         = qvariant_cast<SearchTermHistoryItem>(index.data());
     bool isEmptyPair = (pair.second == -1);

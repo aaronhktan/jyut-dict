@@ -11,12 +11,16 @@
 #endif
 #include "logic/utils/utils_qt.h"
 
+#include <QEvent>
+#include <QGridLayout>
+#include <QLabel>
 #include <QTimer>
 
-DefinitionContentWidget::DefinitionContentWidget(QWidget *parent) : QWidget(parent)
+DefinitionContentWidget::DefinitionContentWidget(QWidget *parent)
+    : QWidget{parent}
+    , _settings{Settings::getSettings(this)}
+    , _definitionLayout{new QGridLayout{this}}
 {
-    _settings = Settings::getSettings(this);
-    _definitionLayout = new QGridLayout{this};
     _definitionLayout->setVerticalSpacing(1);
     _definitionLayout->setContentsMargins(10, 0, 10, 0);
     _definitionLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
@@ -33,7 +37,7 @@ void DefinitionContentWidget::changeEvent(QEvent *event)
         // QWidget emits a palette changed event when setting the stylesheet
         // So prevent it from going into an infinite loop with this timer
         _paletteRecentlyChanged = true;
-        QTimer::singleShot(10, this, [=, this]() { _paletteRecentlyChanged = false; });
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
 
         // Set the style to match whether the user started dark mode
         setStyle(Utils::isDarkMode());
@@ -44,7 +48,7 @@ void DefinitionContentWidget::changeEvent(QEvent *event)
     QWidget::changeEvent(event);
 }
 
-void DefinitionContentWidget::setEntry(
+void DefinitionContentWidget::setDefinitions(
     std::span<const Definition::Definition> definitions)
 {
     cleanupLabels();
@@ -240,12 +244,12 @@ void DefinitionContentWidget::setEntry(
 
 void DefinitionContentWidget::setStyle(bool use_dark)
 {
-    QColor textColour = use_dark ? QColor{LABEL_TEXT_COLOUR_DARK_R,
-                                          LABEL_TEXT_COLOUR_DARK_G,
-                                          LABEL_TEXT_COLOUR_DARK_B}
-                                 : QColor{LABEL_TEXT_COLOUR_LIGHT_R,
-                                          LABEL_TEXT_COLOUR_LIGHT_R,
-                                          LABEL_TEXT_COLOUR_LIGHT_R};
+    QColor textColour = use_dark ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                          Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                          Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                 : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                          Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                          Utils::LABEL_TEXT_COLOUR_LIGHT_R};
     int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",

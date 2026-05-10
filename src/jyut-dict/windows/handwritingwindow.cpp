@@ -240,7 +240,7 @@ void HandwritingWindow::setupUI()
     for (int i = 0; i < NUM_RESULTS; ++i) {
         _buttons.emplace_back(new QPushButton{this});
         _buttons.back()->setProperty("characterChoice", true);
-        connect(_buttons.back(), &QPushButton::clicked, this, [&]() {
+        connect(_buttons.back(), &QPushButton::clicked, this, [this] {
             _panel->clearPanel();
             _handwritingWrapper->clearStrokes();
             if (static_cast<QPushButton *>(sender())->text() != "　") {
@@ -258,7 +258,7 @@ void HandwritingWindow::setupUI()
                                      QSizePolicy::MinimumExpanding);
 
     _clearButton = new QPushButton{this};
-    connect(_clearButton, &QPushButton::clicked, this, [&]() {
+    connect(_clearButton, &QPushButton::clicked, this, [this] {
         _panel->clearPanel();
         _handwritingWrapper->clearStrokes();
         for (const auto button : _buttons) {
@@ -267,12 +267,12 @@ void HandwritingWindow::setupUI()
     });
 
     _backspaceButton = new QPushButton{this};
-    connect(_backspaceButton, &QPushButton::clicked, this, [&]() {
+    connect(_backspaceButton, &QPushButton::clicked, this, [this] {
         emit characterChosen(QString::fromLocal8Bit("\x8"));
     });
 
     _doneButton = new QPushButton{this};
-    connect(_doneButton, &QPushButton::clicked, this, [&]() { close(); });
+    connect(_doneButton, &QPushButton::clicked, this, [this] { close(); });
 
     QWidget *functionWidget = new QWidget{};
     QVBoxLayout *functionLayout = new QVBoxLayout{functionWidget};
@@ -368,39 +368,41 @@ void HandwritingWindow::translateUI()
 void HandwritingWindow::setStyle(bool use_dark)
 {
 #ifdef Q_OS_LINUX
-    QColor borderColour = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
-                                            HEADER_BACKGROUND_COLOUR_DARK_G,
-                                            HEADER_BACKGROUND_COLOUR_DARK_B}
-                                   : QColor{CONTENT_BACKGROUND_COLOUR_LIGHT_R,
-                                            CONTENT_BACKGROUND_COLOUR_LIGHT_G,
-                                            CONTENT_BACKGROUND_COLOUR_LIGHT_B};
+    QColor borderColour = use_dark
+                              ? QColor{Utils::HEADER_BACKGROUND_COLOUR_DARK_R,
+                                       Utils::HEADER_BACKGROUND_COLOUR_DARK_G,
+                                       Utils::HEADER_BACKGROUND_COLOUR_DARK_B}
+                              : QColor{Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_R,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_G,
+                                       Utils::CONTENT_BACKGROUND_COLOUR_LIGHT_B};
     borderColour = borderColour.lighter(200);
 #else
-    QColor borderColour = use_dark ? QColor{HEADER_BACKGROUND_COLOUR_DARK_R,
-                                            HEADER_BACKGROUND_COLOUR_DARK_G,
-                                            HEADER_BACKGROUND_COLOUR_DARK_B}
-                                   : QColor{HEADER_BACKGROUND_COLOUR_LIGHT_R,
-                                            HEADER_BACKGROUND_COLOUR_LIGHT_G,
-                                            HEADER_BACKGROUND_COLOUR_LIGHT_B};
+    const QColor borderColour
+        = use_dark ? QColor{Utils::HEADER_BACKGROUND_COLOUR_DARK_R,
+                            Utils::HEADER_BACKGROUND_COLOUR_DARK_G,
+                            Utils::HEADER_BACKGROUND_COLOUR_DARK_B}
+                   : QColor{Utils::HEADER_BACKGROUND_COLOUR_LIGHT_R,
+                            Utils::HEADER_BACKGROUND_COLOUR_LIGHT_G,
+                            Utils::HEADER_BACKGROUND_COLOUR_LIGHT_B};
 #endif
 
-    int interfaceSize = static_cast<int>(
+    const int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",
                     QVariant::fromValue(Settings::InterfaceSize::NORMAL))
             .value<Settings::InterfaceSize>());
 #ifdef Q_OS_MAC
-    int headerFontSize = Settings::h2FontSize.at(
+    const int headerFontSize = Settings::h2FontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
 #else
-    int headerFontSize = Settings::h4FontSize.at(
+    const int headerFontSize = Settings::h4FontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
 #endif
-    int bodyFontSize = Settings::bodyFontSize.at(
+    const int bodyFontSize = Settings::bodyFontSize.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
+    const int bodyFontSizeHan = Settings::bodyFontSizeHan.at(
         static_cast<unsigned long>(interfaceSize - 1));
-    int borderRadius = static_cast<int>(bodyFontSize * 1);
+    const int borderRadius = static_cast<int>(bodyFontSize * 1);
 
     switch (_settings
                 ->value("Interface/size",
@@ -420,28 +422,28 @@ void HandwritingWindow::setStyle(bool use_dark)
     }
 
 #ifdef Q_OS_MAC
-    QString style{"QLabel[isHan=\"true\"] { "
-                  "   font-size: %1px; "
-                  "} "
-                  " "
-                  "QLabel { "
-                  "   font-size: %2px; "
-                  "} "};
+    const QString style{"QLabel[isHan=\"true\"] { "
+                        "   font-size: %1px; "
+                        "} "
+                        " "
+                        "QLabel { "
+                        "   font-size: %2px; "
+                        "} "};
 #else
-    QString style{"QLabel[isHan=\"true\"] { "
-                  "   font-size: %1px; "
-                  "} "
-                  " "
-                  "QLabel { "
-                  "   font-size: %2px; "
-                  "} "
-                  " "
-                  "QWidget#HandwritingPanel { "
-                  "   border: 1px solid %3; "
+    const QString style{"QLabel[isHan=\"true\"] { "
+                        "   font-size: %1px; "
+                        "} "
+                        " "
+                        "QLabel { "
+                        "   font-size: %2px; "
+                        "} "
+                        " "
+                        "QWidget#HandwritingPanel { "
+                        "   border: 1px solid %3; "
 #ifdef Q_OS_WIN
-                  "   border-radius: 5px; "
+                        "   border-radius: 5px; "
 #endif
-                  "} "};
+                        "} "};
 #endif
     setStyleSheet(style.arg(std::to_string(bodyFontSizeHan).c_str(),
                             std::to_string(bodyFontSize).c_str()
@@ -452,75 +454,76 @@ void HandwritingWindow::setStyle(bool use_dark)
                                 ));
 
 #ifdef Q_OS_WIN
-    QString characterChoiceStyle = QString{"QPushButton { "
-                                           "   background: palette(base); "
-                                           "   border: 0px; "
-                                           "   font-size: %1px; "
-                                           "   margin: 0px; "
-                                           "} "}
-                                       .arg(headerFontSize);
+    const QString characterChoiceStyle
+        = QString{"QPushButton { "
+                  "   background: palette(base); "
+                  "   border: 0px; "
+                  "   font-size: %1px; "
+                  "   margin: 0px; "
+                  "} "}
+              .arg(headerFontSize);
 
 #else
-    QString characterChoiceStyle = QString{"QPushButton { "
-                                           "   border: 0px; "
-                                           "   font-size: %1px; "
-                                           "} "}
-                                       .arg(headerFontSize);
+    const QString characterChoiceStyle = QString{"QPushButton { "
+                                                 "   border: 0px; "
+                                                 "   font-size: %1px; "
+                                                 "} "}
+                                             .arg(headerFontSize);
 #endif
 
 #ifdef Q_OS_MAC
-    int padding = bodyFontSize / 3;
+    const int padding = bodyFontSize / 3;
 #else
-    int padding = bodyFontSize / 6;
+    const int padding = bodyFontSize / 6;
 #endif
-    int paddingHorizontal = bodyFontSize;
-    QString buttonStyle = QString{"QPushButton { "
-                                  "   background-color: transparent; "
+    const int paddingHorizontal = bodyFontSize;
+    const QString buttonStyle = QString{"QPushButton { "
+                                        "   background-color: transparent; "
 #ifdef Q_OS_WIN
-                                  "   border: 1px solid %1; "
+                                        "   border: 1px solid %1; "
 #else
-                                  "   border: 2px solid %1; "
+                                        "   border: 2px solid %1; "
 #endif
-                                  "   border-radius: %2px; "
-                                  "   font-size: %3px; "
-                                  "   padding: %4px; "
-                                  "   padding-left: %5px; "
-                                  "   padding-right: %5px; "
-                                  "} "
-                                  " "
-                                  "QPushButton:checked { "
-                                  "   background-color: %1; "
+                                        "   border-radius: %2px; "
+                                        "   font-size: %3px; "
+                                        "   padding: %4px; "
+                                        "   padding-left: %5px; "
+                                        "   padding-right: %5px; "
+                                        "} "
+                                        " "
+                                        "QPushButton:checked { "
+                                        "   background-color: %1; "
 #ifdef Q_OS_WIN
-                                  "   border: 1px solid %1; "
+                                        "   border: 1px solid %1; "
 #else
-                                  "   border: 2px solid %1; "
+                                        "   border: 2px solid %1; "
 #endif
-                                  "   border-radius: %2px; "
-                                  "   font-size: %3px; "
-                                  "   padding: %4px; "
-                                  "   padding-left: %5px; "
-                                  "   padding-right: %5px; "
-                                  "} "
-                                  " "
-                                  "QPushButton:hover { "
-                                  "   background-color: %1; "
+                                        "   border-radius: %2px; "
+                                        "   font-size: %3px; "
+                                        "   padding: %4px; "
+                                        "   padding-left: %5px; "
+                                        "   padding-right: %5px; "
+                                        "} "
+                                        " "
+                                        "QPushButton:hover { "
+                                        "   background-color: %1; "
 #ifdef Q_OS_WIN
-                                  "   border: 1px solid %1; "
+                                        "   border: 1px solid %1; "
 #else
-                                  "   border: 2px solid %1; "
+                                        "   border: 2px solid %1; "
 #endif
-                                  "   border-radius: %2px; "
-                                  "   font-size: %3px; "
-                                  "   padding: %4px; "
-                                  "   padding-left: %5px; "
-                                  "   padding-right: %5px; "
-                                  "} "
-                                  " "}
-                              .arg(borderColour.name())
-                              .arg(borderRadius)
-                              .arg(bodyFontSize)
-                              .arg(padding)
-                              .arg(paddingHorizontal);
+                                        "   border-radius: %2px; "
+                                        "   font-size: %3px; "
+                                        "   padding: %4px; "
+                                        "   padding-left: %5px; "
+                                        "   padding-right: %5px; "
+                                        "} "
+                                        " "}
+                                    .arg(borderColour.name())
+                                    .arg(borderRadius)
+                                    .arg(bodyFontSize)
+                                    .arg(padding)
+                                    .arg(paddingHorizontal);
 
     QList<QPushButton *> buttons = this->findChildren<QPushButton *>();
     int i = 0;
@@ -605,11 +608,12 @@ void HandwritingWindow::setScript()
     emit scriptSelected(script);
 }
 
-void HandwritingWindow::showErrorDialog(int err, std::string description)
+void HandwritingWindow::showErrorDialog(const int err,
+                                        const std::string &description)
 {
     if (!isVisible()) {
         // Only show the error dialog once the handwriting window has been painted
-        QTimer::singleShot(100, this, [=, this]() {
+        QTimer::singleShot(100, this, [this, err, description] {
             showErrorDialog(err, description);
         });
         return;
