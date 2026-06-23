@@ -1,5 +1,5 @@
 jieba==0.42.1
-msgpack==1.0.2
+msgpack==1.2.1
 opencc==1.1.6
 pypinyin==0.43.0
 pypinyin-dict==0.1.0
