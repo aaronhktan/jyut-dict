@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		93DCCF0B3049F49B009A62D3 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 93DCCF0A3049F49B009A62D3 /* GRDB */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		932E3925304918A800FC8504 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93DCCF0B3049F49B009A62D3 /* GRDB in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = CantoneseDictionary;
 			packageProductDependencies = (
+				93DCCF0A3049F49B009A62D3 /* GRDB */,
 			);
 			productName = CantoneseDictionary;
 			productReference = 932E3917304918A700FC8504 /* CantoneseDictionary.app */;
@@ -195,6 +201,9 @@
 			);
 			mainGroup = 932E390E304918A700FC8504;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				93DCCF093049F49B009A62D3 /* XCRemoteSwiftPackageReference "GRDB.swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 932E3918304918A700FC8504 /* Products */;
 			projectDirPath = "";
@@ -615,6 +624,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		93DCCF093049F49B009A62D3 /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		93DCCF0A3049F49B009A62D3 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 93DCCF093049F49B009A62D3 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 932E390F304918A700FC8504 /* Project object */;
 }
