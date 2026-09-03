@@ -51,6 +51,23 @@ CMakeLists.txt.user*
 # Qt Linguist artifacts
 src/jyut-dict/resources/translations/*.json
 
+# User settings
+xcuserdata/
+*.xcuserstate
+project.xcworkspace/
+
+# Obj-C/Swift specific
+*.hmap
+
+# App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
 # vim
 **.swp
 
