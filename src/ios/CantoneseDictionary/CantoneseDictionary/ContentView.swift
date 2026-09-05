@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var searchText: String = ""
+    @State private var showTranscription: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -38,10 +39,15 @@ struct ContentView: View {
                     ToolbarItem(placement: .bottomBar) {
                         ControlGroup {
                             Button(action: {
-                                print("clicked microphone")
+                                showTranscription = true
                             }) {
                                 Image(systemName: "microphone")
                             }
+                            .sheet(isPresented: $showTranscription) {
+                                TranscriptionView()
+                                    .presentationDetents([.medium])
+                            }
+
                             Button(action: {
                                 print("clicked pencil")
                             }
@@ -80,9 +86,11 @@ struct SearchingView: View {
                         ),
                     id: \.self
                 ) { word in
-                    if (searchText == "") {
+                    if searchText == "" {
                         Text(word)
-                    } else if word.lowercased().contains(searchText.lowercased()) {
+                    } else if word.lowercased().contains(
+                        searchText.lowercased()
+                    ) {
                         Text(word)
                     }
                 }
@@ -97,12 +105,17 @@ struct SearchingView: View {
             }
         } else {
             ContentUnavailableView {
-                Label(
-                    "Welcome to Jyut Dictionary",
-                    systemImage: "bubble.left.and.bubble.right"
-                )
-                .foregroundStyle(Color.red)
+                Label {
+                    Text("Welcome to Jyut Dictionary")
+                } icon: {
+                    Image("AppIconImage")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 200)
+                }
                 Text("A Project by Aaron Tan")
+                    .padding(.top, 10)
+                    .foregroundStyle(Color.secondary)
             }
         }
     }
