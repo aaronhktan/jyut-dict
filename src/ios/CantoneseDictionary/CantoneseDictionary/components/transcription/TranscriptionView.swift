@@ -1,5 +1,5 @@
 //
-//  TranscriptionSheet.swift
+//  TranscriptionView.swift
 //  CantoneseDictionary
 //
 //  Created by Aaron on 2026-09-04.

@@ -8,8 +8,14 @@
 import SwiftUI
 
 struct ContentView: View {
+    enum Sheet: String, Identifiable {
+        case transcription, handwriting, saved, history, settings
+
+        var id: String { rawValue }
+    }
+
+    @State var presentedSheet: Sheet?
     @State private var searchText: String = ""
-    @State private var showTranscription: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -17,19 +23,19 @@ struct ContentView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         ControlGroup {
-                            Button(
-                                action: { print("clicked history") }
-                            ) {
+                            Button(action: {
+                                presentedSheet = .history
+                            }) {
                                 Image(systemName: "clock")
                             }
-                            Button(
-                                action: { print("clicked saved") }
-                            ) {
+                            Button(action: {
+                                presentedSheet = .saved
+                            }) {
                                 Image(systemName: "star")
                             }
-                            Button(
-                                action: { print("clicked settings") }
-                            ) {
+                            Button(action: {
+                                presentedSheet = .settings
+                            }) {
                                 Image(systemName: "gearshape")
                             }
                         }
@@ -39,24 +45,41 @@ struct ContentView: View {
                     ToolbarItem(placement: .bottomBar) {
                         ControlGroup {
                             Button(action: {
-                                showTranscription = true
+                                presentedSheet = .transcription
                             }) {
                                 Image(systemName: "microphone")
                             }
-                            .sheet(isPresented: $showTranscription) {
-                                TranscriptionView()
-                                    .presentationDetents([.medium])
-                            }
 
                             Button(action: {
-                                print("clicked pencil")
-                            }
-                            ) {
+                                presentedSheet = .handwriting
+                            }) {
                                 Image(systemName: "pencil.and.scribble")
                             }
                         }
                     }
                 }
+                .sheet(
+                    item: $presentedSheet,
+                    content: { sheet in
+                        switch sheet {
+                        case .transcription:
+                            TranscriptionView()
+                                .presentationDetents([.medium])
+                        case .handwriting:
+                            TranscriptionView()
+                                .presentationDetents([.medium])
+                        case .saved:
+                            SavedView()
+                                .presentationDetents([.large])
+                        case .history:
+                            HistoryView()
+                                .presentationDetents([.large])
+                        case .settings:
+                            SettingsView()
+                                .presentationDetents([.large])
+                        }
+                    }
+                )
                 .searchable(
                     text: $searchText,
                     prompt: "Search"
