@@ -21,7 +21,7 @@ class SourceSentence {
     private var _mandarinIPA: String?
 
     private var _sentences: [SentenceSet]
-    
+
     private var _isWelcome: Bool = false
     private var _isEmpty: Bool = false
 
@@ -50,9 +50,13 @@ class SourceSentence {
         }
     }
 
-    func getCharacters() -> String {
-        // TODO: Implement with options
-        ""
+    func getCharacters(options: EntryCharactersOptions) -> String {
+        switch options {
+        case .onlySimplified, .preferSimplified:
+            return _simplified
+        case .onlyTraditional, .preferTraditional:
+            return _traditional
+        }
     }
 
     var simplified: String {
@@ -73,24 +77,87 @@ class SourceSentence {
         }
     }
 
-    func generatePhonetic() -> Bool {
-        // TODO: Implement
-        return false
+    func generatePhonetic(
+        cantoneseOptions: CantoneseOptions,
+        mandarinOptions: MandarinOptions
+    ) -> Bool {
+        if (cantoneseOptions.rawValue & CantoneseOptions.prettyYale.rawValue
+            == CantoneseOptions.prettyYale.rawValue) && _yale == nil
+        {
+            // TODO: Implement
+        }
+        if (cantoneseOptions.rawValue & CantoneseOptions.cantoneseIPA.rawValue
+            == CantoneseOptions.cantoneseIPA.rawValue) && _cantoneseIPA == nil
+        {
+            // TODO: Implement
+        }
+
+        if (mandarinOptions.rawValue & MandarinOptions.prettyPinyin.rawValue
+            == MandarinOptions.prettyPinyin.rawValue) && _prettyPinyin == nil
+        {
+            // TODO: Implement
+        }
+        if (mandarinOptions.rawValue & MandarinOptions.numberedPinyin.rawValue
+            == MandarinOptions.numberedPinyin.rawValue)
+            && _numberedPinyin == nil
+        {
+            // TODO: Implement
+        }
+        if (mandarinOptions.rawValue & MandarinOptions.zhuyin.rawValue
+            == MandarinOptions.zhuyin.rawValue) && _zhuyin == nil
+        {
+            // TODO: Implement
+        }
+        if (mandarinOptions.rawValue & MandarinOptions.mandarinIPA.rawValue
+            == MandarinOptions.mandarinIPA.rawValue) && _mandarinIPA == nil
+        {
+            // TODO: Implement
+        }
+
+        return true
     }
 
-    func getPhonetic() -> String {
-        // TODO: Implement
-        ""
+    func getPhonetic(
+        options: EntryPhoneticOptions,
+        cantoneseOptions: CantoneseOptions,
+        mandarinOptions: MandarinOptions
+    ) -> String {
+        switch options {
+        case .onlyCantonese, .preferCantonese:
+            return getCantonesePhonetic(cantoneseOptions: cantoneseOptions)
+        case .onlyMandarin, .preferMandarin:
+            return getMandarinPhonetic(mandarinOptions: mandarinOptions)
+        }
     }
 
-    func getCantonesePhonetic() -> String {
-        // TODO: Implement
-        ""
+    func getCantonesePhonetic(cantoneseOptions: CantoneseOptions) -> String {
+        switch cantoneseOptions {
+        case .prettyYale:
+            return _yale!
+        case .cantoneseIPA:
+            return _cantoneseIPA!
+        case .rawJyutping:
+            fallthrough
+        default:
+            return _jyutping
+        }
     }
 
-    func getMandarinPhonetic() -> String {
-        // TODO: Implement
-        ""
+    func getMandarinPhonetic(mandarinOptions: MandarinOptions) -> String {
+        switch mandarinOptions {
+        case .prettyPinyin:
+            return _prettyPinyin!
+        case .numberedPinyin:
+            return _numberedPinyin!
+        case .zhuyin:
+            return _zhuyin!
+        case .mandarinIPA:
+            return _mandarinIPA!
+        case .rawPinyin:
+            fallthrough
+        default:
+            return _pinyin
+        }
     }
 
     var jyutping: String {
@@ -118,45 +185,45 @@ class SourceSentence {
     func getSentenceSets() -> [SentenceSet] {
         _sentences
     }
-    
+
     func getSentenceSnippet() -> String {
-        if (_sentences.isEmpty) {
+        if _sentences.isEmpty {
             return ""
         }
-        
+
         let sentenceSet: SentenceSet = _sentences[0]
-        if (sentenceSet.getSentenceSnippet().isEmpty) {
+        if sentenceSet.getSentenceSnippet().isEmpty {
             return ""
         }
-        
+
         let snippets: [TargetSentence] = sentenceSet.getSentenceSnippet()
-        
-        if (snippets.isEmpty) {
+
+        if snippets.isEmpty {
             return ""
         }
-        
+
         return snippets[0].sentence
     }
-    
+
     func getSentenceSnippetLanguage() -> String {
-        if (_sentences.isEmpty) {
+        if _sentences.isEmpty {
             return ""
         }
-        
+
         let sentenceSet: SentenceSet = _sentences[0]
-        if (sentenceSet.getSentenceSnippet().isEmpty) {
+        if sentenceSet.getSentenceSnippet().isEmpty {
             return ""
         }
-        
+
         let snippets: [TargetSentence] = sentenceSet.getSentenceSnippet()
-        
-        if (snippets.isEmpty) {
+
+        if snippets.isEmpty {
             return ""
         }
-        
+
         return snippets[0].language
     }
-    
+
     var isWelcome: Bool {
         get {
             _isWelcome
@@ -165,7 +232,7 @@ class SourceSentence {
             _isWelcome = newValue
         }
     }
-    
+
     var isEmpty: Bool {
         get {
             _isEmpty

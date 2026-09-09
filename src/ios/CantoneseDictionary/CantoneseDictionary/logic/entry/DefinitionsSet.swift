@@ -33,9 +33,18 @@ class DefinitionsSet {
         _definitions.append(definition)
     }
 
-    func generatePhonetic() -> String {
-        // TODO: Implement
-        ""
+    func generatePhonetic(
+        _ cantoneseOptions: CantoneseOptions,
+        _ mandarinOptions: MandarinOptions
+    ) {
+        _definitions.forEach { definition in
+            definition.sentences.forEach { sentence in
+                _ = sentence.generatePhonetic(
+                    cantoneseOptions: cantoneseOptions,
+                    mandarinOptions: mandarinOptions
+                )
+            }
+        }
     }
 
     var source: String {
