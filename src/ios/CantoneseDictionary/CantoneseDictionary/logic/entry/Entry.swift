@@ -43,7 +43,7 @@ enum MandarinOptions: UInt8, CaseIterable {
     case mandarinIPA = 0x10
 }
 
-class Entry {
+class Entry: Sendable {
     private var simplified: String
     private var simplifiedDifference: String?
     private var preferSimplified: String?

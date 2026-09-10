@@ -293,9 +293,317 @@ func segmentJyutping(
     removeSpecialCharacters: Bool = true,
     removeGlobCharacters: Bool = true,
     removeRegexCharacters: Bool = true
-) -> [String] {
-    // TODO: Implement
-    [text]
+) -> (Bool, [String]) {
+    var processedText = text
+    var syllables: [String] = []
+
+    var validJyutping = true
+
+    if removeSpecialCharacters {
+        specialCharacters.forEach { c in
+            processedText = processedText.split(separator: c).joined(
+                separator: " "
+            )
+        }
+    }
+    if removeGlobCharacters {
+        ["*", "?"].forEach { c in
+            processedText = processedText.split(separator: c).joined(
+                separator: " "
+            )
+        }
+    }
+    if removeRegexCharacters {
+        regexCharacters.forEach { c in
+            processedText = processedText.split(separator: c).joined(
+                separator: " "
+            )
+        }
+    }
+
+    // Keep track of indices for current segmented word; [start_index, end_index)
+    // Greedily try to expand end_index by checking for valid sequences
+    // of characters
+    var startIdx = processedText.startIndex
+    var endIdx = processedText.startIndex
+    var initialFound = false
+
+    while endIdx < processedText.endIndex {
+        var componentFound = false
+
+        var currentString = String(
+            processedText[startIdx..<processedText.index(after: startIdx)]
+        )
+        var isSpecialCharacter = specialCharacters.contains(currentString)
+        var isGlobCharacter =
+            currentString.trimmingCharacters(in: .whitespacesAndNewlines) == "*"
+            || currentString.trimmingCharacters(in: .whitespacesAndNewlines)
+                == "?"
+        if currentString == " " || currentString == "'" || isSpecialCharacter
+            || isGlobCharacter
+        {
+            // The presence of a space, apostrophe, special character, or
+            // glob character indicates that a syllable is completed.
+            if initialFound {
+                // If a valid initial was previously found, then the Jyutping
+                // sequence [initial] + [separator] is only valid Jyutping if the
+                // initial is also a valid final (i.e. [final] + [separator] is
+                // OK, but [initial] + [separator] is not).
+                let previousInitial = String(processedText[startIdx..<endIdx])
+                    .lowercased()
+                syllables.append(previousInitial)
+                if !finals.contains(previousInitial) {
+                    validJyutping = false
+                }
+                startIdx = endIdx
+                initialFound = false
+            }
+            if isGlobCharacter {
+                if endIdx > processedText.startIndex && endIdx > startIdx {
+                    let previousInitial = String(
+                        processedText[startIdx..<endIdx]
+                    ).lowercased()
+                    syllables.append(previousInitial)
+                    if !finals.contains(previousInitial) {
+                        validJyutping = false
+                    }
+                    initialFound = false
+                }
+
+                // Since whitespace matters for glob and regex, consume the
+                // next or previous whitespace if it exists (and was not
+                // already consumed by another glob character).
+                var globStartIdx = endIdx
+                var length = 1
+                if endIdx > processedText.startIndex
+                    && processedText[processedText.index(before: endIdx)] == " "
+                    && !syllables.isEmpty
+                    && syllables.last!.last != " "
+                {
+                    // Add preceding whitespace to this word
+                    globStartIdx = processedText.index(before: endIdx)
+                    length += 1
+                }
+                if processedText.index(after: endIdx) < processedText.endIndex
+                    && processedText[processedText.index(after: endIdx)] == " "
+                {
+                    // Add succeeding whitespace to this word
+                    length += 1
+                    endIdx = processedText.index(after: endIdx)
+                }
+                let glob = String(processedText[globStartIdx..<endIdx])
+                    .lowercased()
+                syllables.append(glob)
+            } else if isSpecialCharacter {
+                syllables.append(currentString)
+            }
+            startIdx = processedText.index(after: startIdx)
+            endIdx = processedText.index(after: endIdx)
+            continue
+        }
+
+        // Digits are only valid after a final (which should be handled in the
+        // final-checking code)
+        // OR after an initial (that is also a final), like m or ng.
+        // This block checks for the latter case.
+        if currentString[currentString.startIndex].isNumber {
+            if initialFound {
+                var previousInitial = String(processedText[startIdx..<endIdx])
+                    .lowercased()
+
+                var isValidFinal = false
+                if removeRegexCharacters {
+                    isValidFinal = finals.contains(previousInitial)
+                } else {
+                    // Regex characters need to be handled in a special way;
+                    // essentially, we need to check every possibility. If at
+                    // least one possibility is a valid final, then the Jyutping
+                    // can be considered valid.
+                    var stringsToSearch: [String] = unfoldJyutpingRegex(
+                        jyutping: previousInitial
+                    )
+
+                    stringsToSearch.forEach { s in
+                        isValidFinal = isValidFinal || finals.contains(s)
+                    }
+                }
+
+                if isValidFinal {
+                    endIdx = processedText.index(after: endIdx)
+                    previousInitial = String(processedText[startIdx..<endIdx])
+                        .lowercased()
+                    syllables.append(previousInitial)
+                    startIdx = endIdx
+                    initialFound = false
+
+                    if Int(String(currentString[currentString.startIndex])) ?? 0
+                        < 1
+                        || Int(String(currentString[currentString.startIndex]))
+                            ?? 7 > 6
+                    {
+                        validJyutping = false
+                    }
+
+                    continue
+                }
+            } else {
+                // If there was no initial found, then the Jyutping isn't valid
+                validJyutping = false
+                syllables.append(currentString)
+                startIdx = processedText.index(after: startIdx)
+                endIdx = processedText.index(after: endIdx)
+                continue
+            }
+        }
+
+        // If initial is valid, then extend the end_index for length of initial
+        // cluster of consonants.
+        // The longest length of an initial with unfolded regex is 16 UTF-16 bytes.
+        let maxInitialLength: Int =
+            removeRegexCharacters
+            ? 2
+            : min(
+                16,
+                processedText.count - endIdx.utf16Offset(in: processedText)
+            )
+        for initialLen in (1...maxInitialLength).reversed() {
+            currentString = String(
+                processedText[
+                    endIdx..<processedText.index(endIdx, offsetBy: initialLen)
+                ]
+            ).lowercased()
+
+            var isValidInitial = false
+            if removeRegexCharacters {
+                isValidInitial = initials.contains(currentString)
+            } else {
+                var stringsToSearch: [String] = unfoldJyutpingRegex(
+                    jyutping: currentString
+                )
+                stringsToSearch.forEach { s in
+                    isValidInitial = isValidInitial || finals.contains(s)
+                }
+            }
+
+            if !isValidInitial {
+                continue
+            }
+
+            if initialFound {
+                // Multiple initials in a row are only valid if previous "initial"
+                // was actually a final (like m or ng)
+                let previousInitial = processedText[startIdx..<endIdx]
+                    .lowercased()
+
+                var previousInitialIsValidFinal = false
+                if removeRegexCharacters {
+                    previousInitialIsValidFinal = finals.contains(
+                        previousInitial
+                    )
+                } else {
+                    var stringsToSearch: [String] = unfoldJyutpingRegex(
+                        jyutping: previousInitial
+                    )
+                    stringsToSearch.forEach { s in
+                        previousInitialIsValidFinal =
+                            previousInitialIsValidFinal || finals.contains(s)
+                    }
+                }
+
+                if previousInitialIsValidFinal {
+                    syllables.append(previousInitial)
+                    startIdx = endIdx
+                } else {
+                    validJyutping = false
+                }
+            }
+
+            endIdx = processedText.index(endIdx, offsetBy: initialLen)
+            componentFound = true
+            initialFound = true
+        }
+
+        if componentFound {
+            continue
+        }
+
+        // If final is valid, then extend end_index for length of final.
+        // Check for number at end of word as well (this represents tone number).
+        //
+        // Then add the substring from [start_index, end_index) to vector
+        // and reset start_index, so we can start searching after the end_index.
+        let maxFinalLength: Int =
+            removeRegexCharacters
+            ? 4
+            : min(
+                16,
+                processedText.count - endIdx.utf16Offset(in: processedText)
+            )
+        for finalLen in (1...maxFinalLength).reversed() {
+            currentString = String(
+                processedText[
+                    endIdx..<processedText.index(endIdx, offsetBy: finalLen)
+                ]
+            ).lowercased()
+
+            var isValidFinal = false
+            if removeRegexCharacters {
+                isValidFinal = finals.contains(currentString)
+            } else {
+                var stringsToSearch: [String] = unfoldJyutpingRegex(
+                    jyutping: currentString
+                )
+                stringsToSearch.forEach { s in
+                    isValidFinal = isValidFinal || finals.contains(s)
+                }
+            }
+
+            if isValidFinal {
+                endIdx = processedText.index(endIdx, offsetBy: finalLen)
+                if endIdx < processedText.endIndex {
+                    if processedText[endIdx].isNumber {
+                        if Int(String(processedText[endIdx])) ?? 0
+                            < 1
+                            || Int(String(processedText[endIdx]))
+                                ?? 7 > 6
+                        {
+                            validJyutping = false
+                        }
+
+                        endIdx = processedText.index(after: endIdx)
+                    }
+                }
+
+                var syllable = processedText[startIdx..<endIdx].lowercased()
+                syllables.append(syllable)
+                startIdx = endIdx
+                componentFound = true
+                initialFound = false
+                break
+            }
+        }
+
+        if componentFound {
+            continue
+        } else {
+            validJyutping = false
+        }
+
+        endIdx = processedText.index(after: endIdx)
+    }
+
+    // Then add whatever's left in the search term, minus whitespace.
+    let lastSyllable = processedText[startIdx..<endIdx].trimmingCharacters(
+        in: .whitespacesAndNewlines
+    ).lowercased()
+    if !lastSyllable.isEmpty && lastSyllable != "'" {
+        syllables.append(lastSyllable)
+        if !finals.contains(lastSyllable) {
+            validJyutping = false
+        }
+    }
+
+    return (validJyutping, syllables)
 }
 
 func jyutpingAutocorrect(text: String, unsafeSubstitutions: Bool = false)
