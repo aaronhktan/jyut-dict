@@ -1439,7 +1439,7 @@ bool segmentJyutping(const QString &string,
                 if (removeRegexCharacters) {
                     previousInitialIsValidFinal
                         = finals.find(previousInitial.toStdString())
-                          != initials.end();
+                          != finals.end();
                 } else {
                     std::vector<QString> stringsToSearch;
                     const QString stringToSearch = previousInitial;
@@ -1449,7 +1449,7 @@ bool segmentJyutping(const QString &string,
                         const auto searchResult = finals.find(s.toStdString());
                         previousInitialIsValidFinal = previousInitialIsValidFinal
                                                       || (searchResult
-                                                          != initials.end());
+                                                          != finals.end());
                     }
                 }
 
