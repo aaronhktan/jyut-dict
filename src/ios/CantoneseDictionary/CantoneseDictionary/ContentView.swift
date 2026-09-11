@@ -18,7 +18,7 @@ struct ContentView: View {
     @State private var searchText: String = ""
 
     var body: some View {
-        NavigationStack {
+        NavigationSplitView {
             SearchingView(searchText: $searchText)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
@@ -85,6 +85,8 @@ struct ContentView: View {
                     prompt: "Search"
                 )
                 .searchDictationBehavior(.inline(activation: .onSelect))
+        } detail: {
+            Text("Hi")
         }
     }
 }
