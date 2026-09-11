@@ -8,22 +8,22 @@
 import Foundation
 import os
 
-let logger = Logger()
+nonisolated let logger = Logger()
 
-let specialCharacters: Set = [
+nonisolated let specialCharacters: Set = [
     ".", "。", ",", "，", "！", "？", "%", "－", "…", "⋯",
     ".", "·", "\"", "“", "”", "$", "｜", "：", "１", "２",
     "３", "４", "５", "６", "７", "８", "９", "０",
 ]
-let regexCharacters: Set = ["!", "(", ")", "|"]
+nonisolated let regexCharacters: Set = ["!", "(", ")", "|"]
 
-let initials: Set = [
+nonisolated let initials: Set = [
     "b", "p", "m", "f", "d",
     "t", "n", "l", "g", "k",
     "ng", "h", "gw", "kw", "w",
     "z", "c", "s", "j", "m",
 ]
-let finals: Set = [
+nonisolated let finals: Set = [
     "a", "aa", "aai", "aau", "aam", "aan", "aang", "aap", "aat", "aak",
     "ai", "au", "am", "an", "ang", "ap", "at", "ak", "e", "ei",
     "eu", "em", "en", "eng", "ep", "ek", "i", "iu", "im", "in",
@@ -35,11 +35,11 @@ let jyutpingFinalRegex: Regex = try! Regex(
     "([aeiou][aeiou]?[iumngptk]?[g]?)([1-6])"
 )
 
-let jyutpingToYaleSpecialSyllables: [String: [String]] = [
+nonisolated let jyutpingToYaleSpecialSyllables: [String: [String]] = [
     "m": ["m̄", "ḿ", "m", "m̀h", "ḿh", "mh"],
     "ng": ["n̄g", "ńg", "ng", "ǹgh", "ńgh", "ngh"],
 ]
-let jyutpingToYaleSpecialFinals: [String: String] = [
+nonisolated let jyutpingToYaleSpecialFinals: [String: String] = [
     "aa": "a",
     "oe": "eu",
     "oeng": "eung",
@@ -48,21 +48,21 @@ let jyutpingToYaleSpecialFinals: [String: String] = [
     "eon": "eun",
     "eot": "eut",
 ]
-let yaleToneReplacements: [String: [String]] = [
+nonisolated let yaleToneReplacements: [String: [String]] = [
     "a": ["ā", "á", "a", "à", "á", "a"],
     "e": ["ē", "é", "e", "è", "é", "e"],
     "i": ["ī", "í", "i", "ì", "í", "i"],
     "o": ["ō", "ó", "o", "ò", "ó", "o"],
     "u": ["ū", "ú", "u", "ù", "ú", "u"],
 ]
-let yaleYInitialRegex: String = "jy?"
-let yaleJInitialRegex: String = "z"
-let yaleChInitialRegex: String = "c"
-let yaleLightToneClusterRegex: NSRegularExpression = try! NSRegularExpression(
+nonisolated let yaleYInitialRegex: String = "jy?"
+nonisolated let yaleJInitialRegex: String = "z"
+nonisolated let yaleChInitialRegex: String = "c"
+nonisolated let yaleLightToneClusterRegex: NSRegularExpression = try! NSRegularExpression(
     pattern: "([ptkmn]?g?)[123456]$"
 )
 
-let cantoneseIPASpecialSyllables: [(String, String)] = [
+nonisolated let cantoneseIPASpecialSyllables: [(String, String)] = [
     ("a", "@"),
     ("yu", "y"),
     ("@@", "a"),
@@ -74,7 +74,7 @@ let cantoneseIPASpecialSyllables: [(String, String)] = [
     ("ing", "|ng"),
     ("ei", ">i"),
 ]
-let cantoneseIPAInitials: [String: String] = [
+nonisolated let cantoneseIPAInitials: [String: String] = [
     "b": "p",
     "p": "pʰ",
     "d": "t",
@@ -90,7 +90,7 @@ let cantoneseIPAInitials: [String: String] = [
     "z": "t͡s",
     "c": "t͡sʰ",
 ]
-let cantoneseIPANuclei: [String: String] = [
+nonisolated let cantoneseIPANuclei: [String: String] = [
     "a": "äː",
     "@": "ɐ",
     "e": "ɛː",
@@ -105,7 +105,7 @@ let cantoneseIPANuclei: [String: String] = [
     "^": "ʊ",
     "y": "yː",
 ]
-let cantoneseIPACodas: [String: String] = [
+nonisolated let cantoneseIPACodas: [String: String] = [
     "i": "i̯",
     "u": "u̯",
     "y": "y̯",
@@ -131,7 +131,7 @@ let jyutpingToIPATones: [String] = [
     "˥", "˧˥", "˧", "˨˩", "˩˧", "˨", "˥", "˧", "˨",
 ]
 
-private func unfoldJyutpingRegex(jyutping: String) -> [String] {
+private nonisolated func unfoldJyutpingRegex(jyutping: String) -> [String] {
     var out: [String] = []
     var stringPossibilities: [String] = []
 
@@ -288,7 +288,7 @@ func convertJyutpingToIPA(jyutping: String, useSpacesToSegment: Bool) -> String
     jyutping
 }
 
-func segmentJyutping(
+nonisolated func segmentJyutping(
     text: String,
     removeSpecialCharacters: Bool = true,
     removeGlobCharacters: Bool = true,
@@ -334,8 +334,8 @@ func segmentJyutping(
         var currentString = String(
             processedText[startIdx..<processedText.index(after: startIdx)]
         )
-        var isSpecialCharacter = specialCharacters.contains(currentString)
-        var isGlobCharacter =
+        let isSpecialCharacter = specialCharacters.contains(currentString)
+        let isGlobCharacter =
             currentString.trimmingCharacters(in: .whitespacesAndNewlines) == "*"
             || currentString.trimmingCharacters(in: .whitespacesAndNewlines)
                 == "?"
@@ -419,7 +419,7 @@ func segmentJyutping(
                     // essentially, we need to check every possibility. If at
                     // least one possibility is a valid final, then the Jyutping
                     // can be considered valid.
-                    var stringsToSearch: [String] = unfoldJyutpingRegex(
+                    let stringsToSearch: [String] = unfoldJyutpingRegex(
                         jyutping: previousInitial
                     )
 
@@ -459,12 +459,16 @@ func segmentJyutping(
         // If initial is valid, then extend the end_index for length of initial
         // cluster of consonants.
         // The longest length of an initial with unfolded regex is 16 UTF-16 bytes.
+        var remainingLength: Int = processedText.distance(
+            from: endIdx,
+            to: processedText.endIndex
+        )
         let maxInitialLength: Int =
             removeRegexCharacters
-            ? 2
+            ? min(2, remainingLength)
             : min(
                 16,
-                processedText.count - endIdx.utf16Offset(in: processedText)
+                remainingLength
             )
         for initialLen in (1...maxInitialLength).reversed() {
             currentString = String(
@@ -477,7 +481,7 @@ func segmentJyutping(
             if removeRegexCharacters {
                 isValidInitial = initials.contains(currentString)
             } else {
-                var stringsToSearch: [String] = unfoldJyutpingRegex(
+                let stringsToSearch: [String] = unfoldJyutpingRegex(
                     jyutping: currentString
                 )
                 stringsToSearch.forEach { s in
@@ -501,7 +505,7 @@ func segmentJyutping(
                         previousInitial
                     )
                 } else {
-                    var stringsToSearch: [String] = unfoldJyutpingRegex(
+                    let stringsToSearch: [String] = unfoldJyutpingRegex(
                         jyutping: previousInitial
                     )
                     stringsToSearch.forEach { s in
@@ -532,12 +536,16 @@ func segmentJyutping(
         //
         // Then add the substring from [start_index, end_index) to vector
         // and reset start_index, so we can start searching after the end_index.
+        remainingLength = processedText.distance(
+            from: endIdx,
+            to: processedText.endIndex
+        )
         let maxFinalLength: Int =
             removeRegexCharacters
-            ? 4
+            ? min(4, remainingLength)
             : min(
                 16,
-                processedText.count - endIdx.utf16Offset(in: processedText)
+                remainingLength
             )
         for finalLen in (1...maxFinalLength).reversed() {
             currentString = String(
@@ -550,7 +558,7 @@ func segmentJyutping(
             if removeRegexCharacters {
                 isValidFinal = finals.contains(currentString)
             } else {
-                var stringsToSearch: [String] = unfoldJyutpingRegex(
+                let stringsToSearch: [String] = unfoldJyutpingRegex(
                     jyutping: currentString
                 )
                 stringsToSearch.forEach { s in
@@ -574,7 +582,7 @@ func segmentJyutping(
                     }
                 }
 
-                var syllable = processedText[startIdx..<endIdx].lowercased()
+                let syllable = processedText[startIdx..<endIdx].lowercased()
                 syllables.append(syllable)
                 startIdx = endIdx
                 componentFound = true

@@ -9,7 +9,7 @@ import Foundation
 
 // 
 extension String {
-    func firstIndex(of: String, at: String.Index) -> String.Index? {
+    nonisolated func firstIndex(of: String, at: String.Index) -> String.Index? {
         return self[at...].range(of: of)?.lowerBound
     }
 }
