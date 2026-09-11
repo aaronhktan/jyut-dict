@@ -92,7 +92,7 @@ nonisolated let cantoneseIPANuclei: [String: String] = [
     "a": "äː",
     "@": "ɐ",
     "e": "ɛː",
-    ">": "ɛː",
+    ">": "e",
     "i": "iː",
     "|": "ɪ",
     "o": "ɔː",
@@ -115,17 +115,13 @@ nonisolated let cantoneseIPACodas: [String: String] = [
 nonisolated(unsafe) let cantoneseIPASyllableRegex: Regex = try! Regex(
     "([bcdfghjklmnpqrstvwxyz]?[bcdfghjklmnpqrstvwxyz]?)([a@e>i|o~u^y][eo]?)([iuymngptk]?g?)([1-9])"
 )
-nonisolated(unsafe) let cantoneseIPAHyuRegex: Regex = try! Regex("([zcs])yu")
-nonisolated(unsafe) let cantoneseIPAHoeRegex: Regex = try! Regex("([zc])oe")
-nonisolated(unsafe) let cantoneseIPAHeoRegex: Regex = try! Regex("([zc])eo")
+nonisolated let cantoneseIPAHyuRegex: String = "([zcs])yu"
+nonisolated let cantoneseIPAHoeRegex: String = "([zc])oe"
+nonisolated let cantoneseIPAHeoRegex: String = "([zc])eo"
 nonisolated(unsafe) let cantoneseIPASpecialSyllableRegex: Regex = try! Regex(
     "^(h?)([mn]g?)([1-6])$"
-)
-nonisolated(unsafe) let cantoneseIPASpecialMSpecialSyllableSyllableRegex:
-    Regex = try! Regex("m")
-nonisolated(unsafe) let cantoneseIPASpecialNgSpecialSyllableSyllableRegex:
-    Regex = try! Regex("ng")
-nonisolated(unsafe) let cantoneseIPAToneRegex: Regex = try! Regex("[1-6]")
+    )
+nonisolated let cantoneseIPAToneRegex: String = "[1-6]"
 nonisolated(unsafe) let cantoneseIPACheckedToneRegex: Regex = try! Regex(
     "([ptk])([136])"
 )
@@ -297,15 +293,15 @@ nonisolated func convertJyutpingToYale(
         }
         syllables = jyutpingCopy.split(separator: " ").map(String.init)
     } else {
-        let result = segmentJyutping(
+        let (validJyutping, result) = segmentJyutping(
             text: jyutping,
             removeSpecialCharacters: false,
             removeGlobCharacters: false
         )
-        if !result.0 {
+        if !validJyutping {
             return "x"
         }
-        syllables = result.1
+        syllables = result
     }
 
     var yaleSyllables: [String] = []
@@ -355,10 +351,165 @@ nonisolated func convertJyutpingToYale(
     return yaleSyllables.joined(separator: " ")
 }
 
-func convertJyutpingToIPA(jyutping: String, useSpacesToSegment: Bool) -> String
+nonisolated private func convertIPACantoneseSyllable(_ jyutping: String)
+    -> String
 {
-    // TODO: Implement
-    jyutping
+    guard let match = jyutping.firstMatch(of: cantoneseIPASyllableRegex) else {
+        logger.error("Invalid jyutping found in IPA conversion: \(jyutping)")
+        return jyutping
+    }
+
+    var initial: String = ""
+    if let matchedInitial = match[1].substring {
+        if cantoneseIPAInitials.contains(where: { $0.key == matchedInitial }) {
+            initial = cantoneseIPAInitials[String(matchedInitial)]!
+        } else {
+            initial = String(matchedInitial)
+        }
+    }
+
+    var nucleus: String = ""
+    if let matchedNucleus = match[2].substring {
+        if cantoneseIPANuclei.contains(where: { $0.key == matchedNucleus }) {
+            nucleus = cantoneseIPANuclei[String(matchedNucleus)]!
+        } else {
+            nucleus = String(matchedNucleus)
+        }
+    }
+
+    var coda: String = ""
+    if let matchedCoda = match[3].substring {
+        if cantoneseIPACodas.contains(where: { $0.key == matchedCoda }) {
+            coda = cantoneseIPACodas[String(matchedCoda)]!
+        } else {
+            coda = String(matchedCoda)
+        }
+    }
+
+    var tone: String = ""
+    if let matchedTone = match[4].substring {
+        tone = jyutpingToIPATones[Int(String(matchedTone))! - 1]
+    }
+
+    return initial + nucleus + coda + tone
+}
+
+nonisolated func convertJyutpingToIPA(
+    jyutping: String,
+    useSpacesToSegment: Bool = false
+) -> String {
+    if jyutping.isEmpty {
+        return jyutping
+    }
+
+    var syllables: [String] = []
+    var jyutpingCopy = ""
+    if useSpacesToSegment {
+        // Insert a space before and after every special character, so that the
+        // IPA conversion doesn't attempt to convert special characters.
+        specialCharacters.forEach { c in
+            jyutpingCopy = jyutping.split(separator: c).joined(
+                separator: " " + c + " "
+            )
+        }
+        syllables = jyutpingCopy.split(separator: " ").map(String.init)
+    } else {
+        let (validJyutping, result) = segmentJyutping(
+            text: jyutping,
+            removeSpecialCharacters: false,
+            removeGlobCharacters: false
+        )
+        if !validJyutping {
+            return "x"
+        }
+        syllables = result
+    }
+
+    var ipaSyllables: [String] = []
+    for syllable in syllables {
+        // Most numbers, single characters, etc. are not Jyutping.
+        // Filter those out.
+        if syllable.count == 1 {
+            ipaSyllables.append(syllable)
+            continue
+        }
+
+        // Skip syllables that are just punctuation
+        if specialCharacters.contains(syllable) {
+            ipaSyllables.append(syllable)
+            continue
+        }
+
+        // Skip syllables that don't have tone
+        let tones = ["1", "2", "3", "4", "5", "6"]
+        guard
+            syllable.firstIndex(where: {
+                tones.contains(String($0))
+            }) != nil
+        else {
+            ipaSyllables.append(syllable)
+            continue
+        }
+
+        // Do some pre-processing
+        var ipaSyllable = syllable
+        ipaSyllable = ipaSyllable.replacingOccurrences(
+            of: cantoneseIPAHyuRegex,
+            with: "$1hyu",
+            options: [.regularExpression]
+        )
+        ipaSyllable = ipaSyllable.replacingOccurrences(
+            of: cantoneseIPAHoeRegex,
+            with: "$1hoe",
+            options: [.regularExpression]
+        )
+        ipaSyllable = ipaSyllable.replacingOccurrences(
+            of: cantoneseIPAHeoRegex,
+            with: "$1heo",
+            options: [.regularExpression]
+        )
+
+        // Convert special syllables
+        if let specialMatch = ipaSyllable.firstMatch(
+            of: cantoneseIPASpecialSyllableRegex
+        ) {
+            guard let tone = Int(String(specialMatch[3].substring!)) else {
+                return ipaSyllable
+            }
+            ipaSyllable = ipaSyllable.replacingOccurrences(
+                of: "m",
+                with: "m̩",
+            )
+            ipaSyllable = ipaSyllable.replacingOccurrences(
+                of: "ng",
+                with: "ŋ̍",
+            )
+            ipaSyllable = ipaSyllable.replacingOccurrences(
+                of: cantoneseIPAToneRegex,
+                with: jyutpingToIPATones[tone - 1],
+                options: [.regularExpression]
+            )
+        }
+
+        // Replace checked tones
+        if ipaSyllable.firstMatch(of: cantoneseIPACheckedToneRegex) != nil {
+            ipaSyllable = ipaSyllable.replacingOccurrences(of: "1", with: "7")
+            ipaSyllable = ipaSyllable.replacingOccurrences(of: "3", with: "8")
+            ipaSyllable = ipaSyllable.replacingOccurrences(of: "6", with: "9")
+        }
+
+        // Do some more preprocessing
+        for (from, to) in cantoneseIPASpecialSyllables {
+            ipaSyllable = ipaSyllable.replacingOccurrences(
+                of: from,
+                with: to
+            )
+        }
+
+        ipaSyllables.append(convertIPACantoneseSyllable(ipaSyllable))
+    }
+
+    return ipaSyllables.joined(separator: " ")
 }
 
 nonisolated func segmentJyutping(
