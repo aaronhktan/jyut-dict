@@ -515,12 +515,14 @@ void TestCantoneseUtils::segmentJyutpingMultipleFinalsVowelsOnly()
 void TestCantoneseUtils::segmentJyutpingMultipleFinalsConsonantsOnly()
 {
     std::vector<std::string> result;
-    CantoneseUtils::segmentJyutping("ngng",
-                                    result,
-                                    /* removeSpecialCharacters = */ true,
-                                    /* removeGlobCharacters = */ false);
+    bool valid
+        = CantoneseUtils::segmentJyutping("ngng",
+                                          result,
+                                          /* removeSpecialCharacters = */ true,
+                                          /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"ng", "ng"};
     QCOMPARE(result, expected);
+    QCOMPARE(valid, true);
 }
 
 void TestCantoneseUtils::segmentJyutpingMultipleFinals()

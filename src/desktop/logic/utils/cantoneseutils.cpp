@@ -1464,6 +1464,10 @@ bool segmentJyutping(const QString &string,
             endIdx += initialLen;
             componentFound = true;
             initialFound = true;
+
+            if (isValidInitial) {
+                break;
+            }
         }
 
         if (componentFound) {
