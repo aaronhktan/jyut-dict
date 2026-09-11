@@ -31,7 +31,7 @@ nonisolated let finals: Set = [
     "ok", "u", "ui", "un", "ung", "ut", "uk", "oe", "oet", "eoi",
     "eon", "oeng", "eot", "oek", "yu", "yun", "yut", "m", "ng",
 ]
-let jyutpingFinalRegex: Regex = try! Regex(
+nonisolated(unsafe) let jyutpingFinalRegex: Regex = try! Regex(
     "([aeiou][aeiou]?[iumngptk]?[g]?)([1-6])"
 )
 
@@ -58,10 +58,7 @@ nonisolated let yaleToneReplacements: [String: [String]] = [
 nonisolated let yaleYInitialRegex: String = "jy?"
 nonisolated let yaleJInitialRegex: String = "z"
 nonisolated let yaleChInitialRegex: String = "c"
-nonisolated let yaleLightToneClusterRegex: NSRegularExpression =
-    try! NSRegularExpression(
-        pattern: "([ptkmn]?g?)[123456]$"
-    )
+nonisolated let yaleLightToneClusterRegex: String = "([ptkmn]?g?)[123456]$"
 
 nonisolated let cantoneseIPASpecialSyllables: [(String, String)] = [
     ("a", "@"),
@@ -115,24 +112,28 @@ nonisolated let cantoneseIPACodas: [String: String] = [
     "t": "t̚",
     "k": "k̚",
 ]
-let cantoneseIPASyllableRegex: Regex = try! Regex(
+nonisolated(unsafe) let cantoneseIPASyllableRegex: Regex = try! Regex(
     "([bcdfghjklmnpqrstvwxyz]?[bcdfghjklmnpqrstvwxyz]?)([a@e>i|o~u^y][eo]?)([iuymngptk]?g?)([1-9])"
 )
-let cantoneseIPAHyuRegex: Regex = try! Regex("([zcs])yu")
-let cantoneseIPAHoeRegex: Regex = try! Regex("([zc])oe")
-let cantoneseIPAHeoRegex: Regex = try! Regex("([zc])eo")
-let cantoneseIPASpecialSyllableRegex: Regex = try! Regex(
+nonisolated(unsafe) let cantoneseIPAHyuRegex: Regex = try! Regex("([zcs])yu")
+nonisolated(unsafe) let cantoneseIPAHoeRegex: Regex = try! Regex("([zc])oe")
+nonisolated(unsafe) let cantoneseIPAHeoRegex: Regex = try! Regex("([zc])eo")
+nonisolated(unsafe) let cantoneseIPASpecialSyllableRegex: Regex = try! Regex(
     "^(h?)([mn]g?)([1-6])$"
 )
-let cantoneseIPASpecialMSpecialSyllableSyllableRegex: Regex = try! Regex("m")
-let cantoneseIPASpecialNgSpecialSyllableSyllableRegex: Regex = try! Regex("ng")
-let cantoneseIPAToneRegex: Regex = try! Regex("[1-6]")
-let cantoneseIPACheckedToneRegex: Regex = try! Regex("([ptk])([136])")
-let jyutpingToIPATones: [String] = [
+nonisolated(unsafe) let cantoneseIPASpecialMSpecialSyllableSyllableRegex:
+    Regex = try! Regex("m")
+nonisolated(unsafe) let cantoneseIPASpecialNgSpecialSyllableSyllableRegex:
+    Regex = try! Regex("ng")
+nonisolated(unsafe) let cantoneseIPAToneRegex: Regex = try! Regex("[1-6]")
+nonisolated(unsafe) let cantoneseIPACheckedToneRegex: Regex = try! Regex(
+    "([ptk])([136])"
+)
+nonisolated let jyutpingToIPATones: [String] = [
     "˥", "˧˥", "˧", "˨˩", "˩˧", "˨", "˥", "˧", "˨",
 ]
 
-private nonisolated func unfoldJyutpingRegex(jyutping: String) -> [String] {
+nonisolated private func unfoldJyutpingRegex(jyutping: String) -> [String] {
     var out: [String] = []
     var stringPossibilities: [String] = []
 
@@ -195,7 +196,7 @@ private nonisolated func unfoldJyutpingRegex(jyutping: String) -> [String] {
     return out
 }
 
-private func convertYaleInitial(syllable: String) -> String {
+nonisolated private func convertYaleInitial(syllable: String) -> String {
     var yaleSyllable = syllable
     yaleSyllable = yaleSyllable.replacingOccurrences(
         of: yaleYInitialRegex,
@@ -215,7 +216,7 @@ private func convertYaleInitial(syllable: String) -> String {
     return yaleSyllable
 }
 
-private func convertYaleFinal(syllable: String) -> String {
+nonisolated private func convertYaleFinal(syllable: String) -> String {
     var yaleSyllable = syllable
 
     // Attempt to isolate the part of the Jyutping syllable that is the final
@@ -241,11 +242,10 @@ private func convertYaleFinal(syllable: String) -> String {
     // Insert an "h" before the last consonant cluster for the light tones,
     // as they are indicated in Yale
     if tone == 4 || tone == 5 || tone == 6 {
-        let range = NSRange(yaleSyllable.startIndex..., in: yaleSyllable)
-        yaleSyllable = yaleLightToneClusterRegex.stringByReplacingMatches(
-            in: yaleSyllable,
-            range: range,
-            withTemplate: "h$&"
+        yaleSyllable = yaleSyllable.replacingOccurrences(
+            of: yaleLightToneClusterRegex,
+            with: "h$0",
+            options: [.regularExpression]
         )
     }
 
@@ -277,10 +277,82 @@ private func convertYaleFinal(syllable: String) -> String {
 // Note that the majority of this function and the convertToIPA function
 // is derivative of Wiktionary's conversion code, contained in the module
 // "yue-pron" (https://en.wiktionary.org/wiki/Module:yue-pron)
-func convertJyutpingToYale(jyutping: String, useSpacesToSegment: Bool) -> String
-{
-    // TODO: Implement
-    jyutping
+nonisolated func convertJyutpingToYale(
+    jyutping: String,
+    useSpacesToSegment: Bool = false
+) -> String {
+    if jyutping.isEmpty {
+        return jyutping
+    }
+
+    var syllables: [String] = []
+    var jyutpingCopy = ""
+    if useSpacesToSegment {
+        // Insert a space before and after every special character, so that the
+        // IPA conversion doesn't attempt to convert special characters.
+        specialCharacters.forEach { c in
+            jyutpingCopy = jyutping.split(separator: c).joined(
+                separator: " " + c + " "
+            )
+        }
+        syllables = jyutpingCopy.split(separator: " ").map(String.init)
+    } else {
+        let result = segmentJyutping(
+            text: jyutping,
+            removeSpecialCharacters: false,
+            removeGlobCharacters: false
+        )
+        if !result.0 {
+            return "x"
+        }
+        syllables = result.1
+    }
+
+    var yaleSyllables: [String] = []
+    for syllable in syllables {
+        // Most numbers, single characters, etc. are not Jyutping.
+        // Filter those out.
+        if syllable.count == 1 {
+            yaleSyllables.append(syllable)
+            continue
+        }
+
+        // Skip syllables that are just punctuation
+        if specialCharacters.contains(syllable) {
+            yaleSyllables.append(syllable)
+            continue
+        }
+
+        // Skip syllables that don't have tone
+        let tones = ["1", "2", "3", "4", "5", "6"]
+        guard
+            let toneIdx = syllable.firstIndex(where: {
+                tones.contains(String($0))
+            })
+        else {
+            yaleSyllables.append(syllable)
+            continue
+        }
+
+        // Handle special-case syllables
+        let syllableWithoutTone = String(syllable[..<toneIdx])
+        let tone = Int(String(syllable[toneIdx]))!
+        if jyutpingToYaleSpecialSyllables.contains(where: {
+            $0.key == syllableWithoutTone
+        }) {
+            yaleSyllables.append(
+                jyutpingToYaleSpecialSyllables[syllableWithoutTone]![tone - 1]
+            )
+            continue
+        }
+
+        var yaleSyllable = syllable
+        yaleSyllable = convertYaleFinal(syllable: yaleSyllable)
+        yaleSyllable = convertYaleInitial(syllable: yaleSyllable)
+        yaleSyllables.append(yaleSyllable)
+    }
+
+    return yaleSyllables.joined(separator: " ")
 }
 
 func convertJyutpingToIPA(jyutping: String, useSpacesToSegment: Bool) -> String
