@@ -81,6 +81,54 @@ struct CantoneseUtilsTests {
             convertJyutpingToYale(jyutping: "mat 7") == "x"
         )
     }
+    
+    @Test func jyutpingToIPASimple() async throws {
+        #expect(convertJyutpingToIPA(jyutping: "joeng4 sing4") == "jœ̽ːŋ˨˩ sɪŋ˨˩")
+    }
+    
+    @Test func jyutpingToIPARejectNoTone() async throws {
+        #expect(convertJyutpingToIPA(jyutping: "joeng") == "joeng")
+    }
+    
+    @Test func jyutpingToIPARejectSingleLetter() async throws {
+        #expect(convertJyutpingToIPA(jyutping: "a") == "a")
+    }
+    
+    @Test func jyutpingToIPARejectSpecialCharacter() async throws {
+        #expect(convertJyutpingToIPA(jyutping: "-") == "x")
+    }
+    
+    @Test func jyutpingToIPANoSpaces() async throws {
+        #expect(convertJyutpingToIPA(jyutping: "faa1sing4") == "fäː˥ sɪŋ˨˩")
+    }
+    
+    @Test func jyutpingToIPASpacesToSegment() async throws {
+        #expect(convertJyutpingToIPA(jyutping: "joeng4 sing4", useSpacesToSegment: true) == "jœ̽ːŋ˨˩ sɪŋ˨˩")
+    }
+    
+    @Test func jyutpingToIPAPreprocessInitial() async throws {
+        #expect(convertJyutpingToIPA(jyutping: "zyu2 sung3") == "t͡ʃyː˧˥ sʊŋ˧")
+    }
+    
+    @Test func jyutpingToIPASpecialSyllable() async throws {
+        #expect(convertJyutpingToIPA(jyutping: "m4") == "m̩˨˩")
+    }
+    
+    @Test func jyutpingToIPACheckedTone() async throws {
+        #expect(convertJyutpingToIPA(jyutping: "sik6 si2 o1 faan6") == "sɪk̚˨ siː˧˥ ɔː˥ fäːn˨")
+    }
+    
+    @Test func jyutpingToIPASpecialFinal() async throws {
+        #expect(convertJyutpingToIPA(jyutping: "uk1 kei2 jan4") == "ʊk̚˥ kʰei̯˧˥ jɐn˨˩")
+    }
+    
+    @Test func jyutpingToIPATones() async throws {
+        #expect(convertJyutpingToIPA(jyutping: "saam1 gau2 sei3 ling4 ng5 ji6 cat1 baat3 luk6") == "säːm˥ kɐu̯˧˥ sei̯˧ lɪŋ˨˩ ŋ̍˩˧ jiː˨ t͡sʰɐt̚˥ päːt̚˧ lʊk̚˨")
+    }
+    
+    @Test func jyutpingToIPANoTone() async throws {
+        #expect(convertJyutpingToIPA(jyutping: "mok") == "mok")
+    }
 
     @Test func segmentJyutpingSimple() async throws {
         #expect(segmentJyutping(text: "m4 goi1") == (true, ["m4", "goi1"]))
