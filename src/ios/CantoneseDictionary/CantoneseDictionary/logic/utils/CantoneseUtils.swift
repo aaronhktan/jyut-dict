@@ -58,9 +58,10 @@ nonisolated let yaleToneReplacements: [String: [String]] = [
 nonisolated let yaleYInitialRegex: String = "jy?"
 nonisolated let yaleJInitialRegex: String = "z"
 nonisolated let yaleChInitialRegex: String = "c"
-nonisolated let yaleLightToneClusterRegex: NSRegularExpression = try! NSRegularExpression(
-    pattern: "([ptkmn]?g?)[123456]$"
-)
+nonisolated let yaleLightToneClusterRegex: NSRegularExpression =
+    try! NSRegularExpression(
+        pattern: "([ptkmn]?g?)[123456]$"
+    )
 
 nonisolated let cantoneseIPASpecialSyllables: [(String, String)] = [
     ("a", "@"),
@@ -332,7 +333,7 @@ nonisolated func segmentJyutping(
         var componentFound = false
 
         var currentString = String(
-            processedText[startIdx..<processedText.index(after: startIdx)]
+            processedText[endIdx..<processedText.index(after: endIdx)]
         )
         let isSpecialCharacter = specialCharacters.contains(currentString)
         let isGlobCharacter =
@@ -374,7 +375,6 @@ nonisolated func segmentJyutping(
                 // next or previous whitespace if it exists (and was not
                 // already consumed by another glob character).
                 var globStartIdx = endIdx
-                var length = 1
                 if endIdx > processedText.startIndex
                     && processedText[processedText.index(before: endIdx)] == " "
                     && !syllables.isEmpty
@@ -382,18 +382,17 @@ nonisolated func segmentJyutping(
                 {
                     // Add preceding whitespace to this word
                     globStartIdx = processedText.index(before: endIdx)
-                    length += 1
                 }
                 if processedText.index(after: endIdx) < processedText.endIndex
                     && processedText[processedText.index(after: endIdx)] == " "
                 {
                     // Add succeeding whitespace to this word
-                    length += 1
                     endIdx = processedText.index(after: endIdx)
                 }
-                let glob = String(processedText[globStartIdx..<endIdx])
+                let glob = String(processedText[globStartIdx...endIdx])
                     .lowercased()
                 syllables.append(glob)
+                startIdx = endIdx
             } else if isSpecialCharacter {
                 syllables.append(currentString)
             }
@@ -525,6 +524,10 @@ nonisolated func segmentJyutping(
             endIdx = processedText.index(endIdx, offsetBy: initialLen)
             componentFound = true
             initialFound = true
+
+            if isValidInitial {
+                break
+            }
         }
 
         if componentFound {
