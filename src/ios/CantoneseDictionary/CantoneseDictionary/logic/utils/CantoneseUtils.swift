@@ -180,7 +180,7 @@ nonisolated private func unfoldJyutpingRegex(jyutping: String) -> [String] {
         } else {
             var tmp = s
             tmp.removeSubrange(
-                s.index(before: regexIdx!)...s.index(after: regexIdx!)
+                s.index(before: regexIdx!)..<s.index(after: regexIdx!)
             )
             out.append(tmp)
             tmp = s
@@ -707,7 +707,7 @@ nonisolated func segmentJyutping(
                     jyutping: currentString
                 )
                 stringsToSearch.forEach { s in
-                    isValidInitial = isValidInitial || finals.contains(s)
+                    isValidInitial = isValidInitial || initials.contains(s)
                 }
             }
 
@@ -1472,12 +1472,26 @@ func jyutpingAutocorrect(text: String, unsafeSubstitutions: Bool = false)
         if String(
             out[yIdx!.lowerBound..<out.index(yIdx!.lowerBound, offsetBy: 2)]
         ) == "yu"
-            || String(
-                out[yIdx!.lowerBound..<out.index(yIdx!.lowerBound, offsetBy: 3)]
-            ) == "y!u"
-            || String(
-                out[yIdx!.lowerBound..<out.index(yIdx!.lowerBound, offsetBy: 3)]
-            ) == "y)u"
+            || (out.distance(from: yIdx!.lowerBound, to: out.endIndex) >= 3
+                && String(
+                    out[
+                        yIdx!
+                            .lowerBound..<out.index(
+                                yIdx!.lowerBound,
+                                offsetBy: 3
+                            )
+                    ]
+                ) == "y!u")
+            || (out.distance(from: yIdx!.lowerBound, to: out.endIndex) >= 3
+                && String(
+                    out[
+                        yIdx!
+                            .lowerBound..<out.index(
+                                yIdx!.lowerBound,
+                                offsetBy: 3
+                            )
+                    ]
+                ) == "y)u")
         {
             yIdx = out.range(
                 of: "y",
@@ -1525,5 +1539,201 @@ func jyutpingAutocorrect(text: String, unsafeSubstitutions: Bool = false)
 }
 
 func jyutpingSoundChanges(text: [String]) -> [String] {
-    text
+    var changedSyllables: [String] = []
+
+    for syllable in text {
+        if syllable.isEmpty {
+            changedSyllables.append(syllable)
+            continue
+        }
+
+        if syllable == "ng"
+            || (syllable.count == 3
+                && syllable[..<syllable.index(before: syllable.endIndex)]
+                    == "ng"
+                && (syllable.last!.isNumber || syllable.last == "?"))
+        {
+            changedSyllables.append(
+                syllable.replacingOccurrences(of: "ng", with: "(ng|m)")
+            )
+            continue
+        } else if syllable == "m"
+            || (syllable.count == 2 && syllable.first! == "m"
+                && (syllable.last!.isNumber || syllable.last == "?"))
+        {
+            changedSyllables.append(
+                syllable.replacingOccurrences(of: "m", with: "(ng|m)")
+            )
+            continue
+        }
+
+        // Initial sound changes
+        // "Lazy" pronunciations
+        var changedSyllable = syllable
+        if syllable.count >= 3 && syllable.hasPrefix("ng")
+            && !syllable[syllable.index(syllable.startIndex, offsetBy: 2)]
+                .isNumber
+            && syllable[syllable.index(syllable.startIndex, offsetBy: 2)] != "?"
+        {
+            // loss of [ŋ] initial, replacement with null initial
+            changedSyllable.replaceSubrange(
+                syllable.range(of: "ng")!,
+                with: "(ng)!"
+            )
+        } else if syllable[syllable.startIndex] == "a"
+            || syllable[syllable.startIndex] == "o"
+            || syllable[syllable.startIndex] == "u"
+        {
+            // merging of null initial with initial [ŋ] before [a, ɐ, ɔ, o]
+            changedSyllable.insert(
+                contentsOf: "(ng)!",
+                at: changedSyllable.startIndex
+            )
+        } else if syllable[syllable.startIndex] == "n"
+            || syllable[syllable.startIndex] == "l"
+        {
+            // merge of [n] and [l] initials
+            changedSyllable.replaceSubrange(
+                syllable
+                    .startIndex..<syllable.index(after: syllable.startIndex),
+                with: "(n|l)"
+            )
+        } else if syllable.hasPrefix("go") || syllable.hasPrefix("ko")
+            || syllable.hasPrefix("g(o") || syllable.hasPrefix("k(o")
+        {
+            // merging of [k]/[kʷ] and [kʰ]/[kʷʰ] initials before [ɔ]
+            if syllable[syllable.startIndex] == "g" {
+                changedSyllable.replaceSubrange(
+                    syllable
+                        .startIndex..<syllable.index(after: syllable.startIndex),
+                    with: "gw!"
+                )
+            } else if syllable[syllable.startIndex] == "k" {
+                changedSyllable.replaceSubrange(
+                    syllable
+                        .startIndex..<syllable.index(after: syllable.startIndex),
+                    with: "kw!"
+                )
+            }
+        }
+
+        // Lack of distinction between aspirated and unaspirated initials
+        if changedSyllable.hasPrefix("d") || syllable.hasPrefix("t") {
+            changedSyllable.replaceSubrange(
+                syllable
+                    .startIndex..<syllable.index(after: syllable.startIndex),
+                with: "(d|t)"
+            )
+        } else if changedSyllable.hasPrefix("c") || syllable.hasPrefix("z") {
+            changedSyllable.replaceSubrange(
+                syllable
+                    .startIndex..<syllable.index(after: syllable.startIndex),
+                with: "(c|z)"
+            )
+        } else if changedSyllable.hasPrefix("g") || syllable.hasPrefix("k") {
+            changedSyllable.replaceSubrange(
+                syllable
+                    .startIndex..<syllable.index(after: syllable.startIndex),
+                with: "(g|k)"
+            )
+        }
+
+        // Palatization of alveolar affricate
+        if changedSyllable.hasPrefix("j") {
+            changedSyllable.replaceSubrange(
+                syllable
+                    .startIndex..<syllable.index(after: syllable.startIndex),
+                with: "(j|z)"
+            )
+        }
+
+        // Nucleus sound changes
+        // Merge between [aː] and [ɐ]
+        var aIdx = changedSyllable.firstIndex(of: "a")
+        while aIdx != nil {
+            if changedSyllable.distance(
+                from: aIdx!,
+                to: changedSyllable.endIndex
+            ) >= 2
+                && changedSyllable[
+                    aIdx!..<changedSyllable.index(aIdx!, offsetBy: 2)
+                ] == "aa"
+            {
+                changedSyllable.insert(
+                    "!",
+                    at: changedSyllable.index(aIdx!, offsetBy: 2)
+                )
+                aIdx = changedSyllable.firstIndex(
+                    of: "a",
+                    at: changedSyllable.index(aIdx!, offsetBy: 3)
+                )
+            } else {
+                changedSyllable.insert(
+                    contentsOf: "a!",
+                    at: changedSyllable.index(after: aIdx!)
+                )
+                aIdx = changedSyllable.firstIndex(
+                    of: "a",
+                    at: changedSyllable.index(aIdx!, offsetBy: 2)
+                )
+            }
+        }
+
+        // Final sound changes
+        let choppedSyllable = changedSyllable.prefix(
+            upTo: changedSyllable.index(before: changedSyllable.endIndex)
+        )
+        if changedSyllable.hasSuffix("ang") || changedSyllable.hasSuffix("a!ng")
+            || changedSyllable.hasSuffix("ong")
+            || choppedSyllable.hasSuffix("ang")
+            || choppedSyllable.hasSuffix("a!ng")
+            || choppedSyllable.hasSuffix("ong")
+        {
+            // alveolarization of final [ŋ]
+            changedSyllable.replaceSubrange(
+                changedSyllable.range(of: "ng", options: [.backwards])!,
+                with: "ng!"
+            )
+        } else if changedSyllable.hasSuffix("an")
+            || changedSyllable.hasSuffix("a!n")
+            || changedSyllable.hasSuffix("on")
+            || choppedSyllable.hasSuffix("an")
+            || choppedSyllable.hasSuffix("a!n")
+            || choppedSyllable.hasSuffix("on")
+        {
+            // velarization of final [n]
+            changedSyllable.replaceSubrange(
+                changedSyllable.range(of: "n", options: [.backwards])!,
+                with: "ng!"
+            )
+        } else if (changedSyllable.hasSuffix("t")
+            && !changedSyllable.hasSuffix("it")
+            && !changedSyllable.hasSuffix("ut"))
+            || (choppedSyllable.hasSuffix("t")
+                && !choppedSyllable.hasSuffix("it")
+                && !choppedSyllable.hasSuffix("ut"))
+        {
+            // velarization of final [t]
+            changedSyllable.replaceSubrange(
+                changedSyllable.range(of: "t", options: [.backwards])!,
+                with: "(k|t)"
+            )
+        } else if (changedSyllable.hasSuffix("k")
+            && !changedSyllable.hasSuffix("ik")
+            && !changedSyllable.hasSuffix("uk"))
+            || (choppedSyllable.hasSuffix("k")
+                && !choppedSyllable.hasSuffix("ik")
+                && !choppedSyllable.hasSuffix("uk"))
+        {
+            // velarization of final [k]
+            changedSyllable.replaceSubrange(
+                changedSyllable.range(of: "k", options: [.backwards])!,
+                with: "(k|t)"
+            )
+        }
+
+        changedSyllables.append(changedSyllable)
+    }
+
+    return changedSyllables
 }
