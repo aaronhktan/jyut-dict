@@ -1167,7 +1167,7 @@ bool jyutpingSoundChanges(std::vector<std::string> &inOut)
                        .ends_with("ang"))
             || (syllable.length() >= 5
                 && std::string_view{syllable.begin(), syllable.end() - 1}
-                       .ends_with("aa!ng"))
+                       .ends_with("a!ng"))
             || (syllable.length() >= 4
                 && std::string_view{syllable.begin(), syllable.end() - 1}
                        .ends_with("ong"))) {
