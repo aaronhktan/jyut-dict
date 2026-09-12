@@ -120,7 +120,7 @@ nonisolated let cantoneseIPAHoeRegex: String = "([zc])oe"
 nonisolated let cantoneseIPAHeoRegex: String = "([zc])eo"
 nonisolated(unsafe) let cantoneseIPASpecialSyllableRegex: Regex = try! Regex(
     "^(h?)([mn]g?)([1-6])$"
-    )
+)
 nonisolated let cantoneseIPAToneRegex: String = "[1-6]"
 nonisolated(unsafe) let cantoneseIPACheckedToneRegex: Regex = try! Regex(
     "([ptk])([136])"
@@ -843,7 +843,685 @@ nonisolated func segmentJyutping(
 func jyutpingAutocorrect(text: String, unsafeSubstitutions: Bool = false)
     -> String
 {
-    text
+    var out: String = text
+
+    // This is for some romanizations like "shui" for 水
+    // And needs to happen before the "sh" -> "s" conversion
+    out = out.replacingOccurrences(of: "hui", with: "heoi")
+
+    // The initial + nucleus "cu-" never appears in Jyutping, so the user
+    // probably intended to make the IPA [kʰɐ] sound
+    // Surround the k with capturing group to prevent replacement with (g|k)
+    // if sound changes are enabled
+    out = out.replacingOccurrences(of: "cu", with: "(k)u")
+
+    // "x" never appears in Jyutping, the user might be more familiar
+    // with Pinyin and assume that it's an "s" sound
+    out = out.replacingOccurrences(of: "x", with: "s")
+
+    out = out.replacingOccurrences(of: "ch", with: "c").replacingOccurrences(
+        of: "sh",
+        with: "s"
+    ).replacingOccurrences(of: "zh", with: "z")
+
+    // Change "eung", "erng", "eong" -> "oeng"
+    out = out.replacingOccurrences(of: "eung", with: "oeng")
+        .replacingOccurrences(of: "erng", with: "oeng")
+
+    out = out.replacingOccurrences(of: "eui", with: "eoi")
+    out = out.replacingOccurrences(of: "euk", with: "oek")
+    out = out.replacingOccurrences(of: "eun", with: "(eo|yu)n")
+    out = out.replacingOccurrences(of: "eut", with: "(eo|yu)t")
+    out = out.replacingOccurrences(of: "eu", with: "(e|y)u")
+    out = out.replacingOccurrences(of: "ern", with: "eon")
+
+    // Change "-oen" -> "-eon"
+    var idx = out.range(of: "oen")
+    while idx != nil {
+        if idx!.upperBound < out.endIndex && out[idx!.upperBound] == "g" {
+            idx = out.range(of: "oen", range: idx!.upperBound..<out.endIndex)
+            continue
+        }
+        out.replaceSubrange(idx!, with: "eon")
+        idx = out.range(of: "oen", range: idx!.upperBound..<out.endIndex)
+    }
+    out = out.replacingOccurrences(of: "oei", with: "eoi")
+    out = out.replacingOccurrences(of: "oet", with: "eot")
+
+    out = out.replacingOccurrences(of: "eong ", with: "oeng ")
+    out = out.replacingOccurrences(of: "eong'", with: "oeng'")
+    if out.hasSuffix("eong") {
+        out.replaceSubrange(
+            out.range(of: "eong", options: [.backwards])!,
+            with: "oeng"
+        )
+    }
+    if unsafeSubstitutions {
+        out = out.replacingOccurrences(of: "eong", with: "oeng")  // unsafe because of zeon6 gun2
+    }
+    out = out.replacingOccurrences(of: "eok", with: "oek")
+
+    out = out.replacingOccurrences(of: "ao ", with: "au ")
+    out = out.replacingOccurrences(of: "ao'", with: "au'")
+    if out.hasSuffix("ao") {
+        out.replaceSubrange(
+            out.range(of: "ao", options: [.backwards])!,
+            with: "au"
+        )
+    }
+    if unsafeSubstitutions {
+        out = out.replacingOccurrences(of: "ao", with: "au")  // unsafe because of maa5 on1
+    }
+
+    out = out.replacingOccurrences(of: "ar", with: "aa")  // like in "char siu"
+    out = out.replacingOccurrences(of: "ee", with: "i")  // like in "lai see"
+    out = out.replacingOccurrences(of: "ay", with: "ei")  // like in "gong hay fat choy"
+    out = out.replacingOccurrences(of: "oy", with: "oi")  // like in "choy sum"
+    out = out.replacingOccurrences(of: "oo", with: "(y!u)")  // like in "soot goh"
+    out = out.replacingOccurrences(of: "ong", with: "(o|u)ng")
+    out = out.replacingOccurrences(of: "young", with: "jung")  // like in "foo young"
+    out = out.replacingOccurrences(of: "yue", with: "(j)yu")  // like "yuet yue" (粵語)
+    out = out.replacingOccurrences(of: "ue", with: "(yu)")  // like "tsuen wan" (轉彎)
+    out = out.replacingOccurrences(of: "tsz", with: "zi")  // like "tsat tsz mui" (七姊妹)
+    out = out.replacingOccurrences(of: "ck", with: "k")  // like "back" (白)
+
+    // The following changes may be unsafe because it is ambiguous whether
+    // they are final + initial or a "misspelling" of a final
+    // However, it is unambiguous if there is a separator at the end of the
+    // syllable, or it is the end of the string
+
+    // Check if the user intends to write an [-ɔː h-] or [-ou̯] cluster
+    do {
+        out = out.replacingOccurrences(of: "oh ", with: "ou ")
+            .replacingOccurrences(of: "oh'", with: "ou'")
+        if out.hasSuffix("oh") {
+            out.replaceSubrange(
+                out.range(of: "oh", options: [.backwards])!,
+                with: "ou"
+            )
+        }
+
+        // Initials for which <initial> + "-ou" exist in Jyutping
+        let closeBackVowelCluster: Set = ["n", "j"]
+        // Initials for which both "-ou" and "-o h-" exist in Jyutping
+        let ambiguousVowelCluster: Set = [
+            "b", "p", "m", "f", "d", "t", "l", "g", "h", "w", "z", "c", "s",
+        ]
+
+        var replacementIdx = out.range(of: "oh")
+        while replacementIdx != nil {
+            switch replacementIdx!.lowerBound {
+            case out.startIndex:
+                out.replaceSubrange(replacementIdx!, with: "ou")
+                break
+            default:
+                var initialIdx = out.index(before: replacementIdx!.lowerBound)
+                if replacementIdx!.lowerBound.utf16Offset(in: out) > 1
+                    && out[initialIdx] == ")"
+                {
+                    initialIdx = out.index(before: initialIdx)
+                }
+
+                if closeBackVowelCluster.contains(String(out[initialIdx])) {
+                    out.replaceSubrange(replacementIdx!, with: "ou")
+                } else if ambiguousVowelCluster.contains(
+                    String(out[initialIdx])
+                ) {
+                    // The [h-] cluster can only occur if what follows is not an initial
+                    var initialFound = false
+                    for initialLen in (1...2).reversed() {
+                        let offset = min(
+                            out.distance(
+                                from: replacementIdx!.lowerBound,
+                                to: out.endIndex
+                            ),
+                            2 + initialLen
+                        )
+                        let endIdx = out.index(
+                            replacementIdx!.lowerBound,
+                            offsetBy: offset
+                        )
+                        let s = String(
+                            out[
+                                out.index(
+                                    replacementIdx!.lowerBound,
+                                    offsetBy: 2
+                                )..<endIdx
+                            ]
+                        )
+                        if initials.contains(s) || s == "y" {
+                            initialFound = true
+                        }
+                    }
+
+                    if initialFound {
+                        out.replaceSubrange(replacementIdx!, with: "ou")
+                    } else {
+                        out.replaceSubrange(replacementIdx!, with: "o h")
+                    }
+                }
+                break
+            }
+            replacementIdx = out.range(
+                of: "oh",
+                range: replacementIdx!.upperBound..<out.endIndex
+            )
+        }
+    }
+
+    // Check if the user intends to write an [-ɔː w-] or [-auː] cluster
+    do {
+        out = out.replacingOccurrences(of: "ow ", with: "au ")
+            .replacingOccurrences(of: "ow'", with: "au'")
+        if out.hasSuffix("ow") {
+            out.replaceSubrange(
+                out.range(of: "ow", options: [.backwards])!,
+                with: "au"
+            )
+        }
+
+        // Initials for which <initial> + "-(a)au" exist in Jyutping
+        let closeBackVowelCluster: Set = ["b", "m", "k", "s"]
+        // Initials for which both exist in Jyutping
+        let ambiguousVowelCluster: Set = [
+            "p", "m", "f", "d", "t", "n", "l", "g", "h", "z", "c", "s",
+        ]
+
+        var replacementIdx = out.range(of: "ow")
+        while replacementIdx != nil {
+            switch replacementIdx!.lowerBound {
+            case out.startIndex:
+                out.replaceSubrange(replacementIdx!, with: "au")
+                break
+            default:
+                var initialIdx = out.index(before: replacementIdx!.lowerBound)
+                if replacementIdx!.lowerBound.utf16Offset(in: out) > 1
+                    && out[initialIdx] == ")"
+                {
+                    initialIdx = out.index(before: initialIdx)
+                }
+
+                if closeBackVowelCluster.contains(String(out[initialIdx])) {
+                    out.replaceSubrange(replacementIdx!, with: "au")
+                } else if ambiguousVowelCluster.contains(
+                    String(out[initialIdx])
+                ) {
+                    // The [w-] cluster can only occur if what follows is not an initial
+                    var initialFound = false
+                    for initialLen in (1...2).reversed() {
+                        let offset = min(
+                            out.distance(
+                                from: replacementIdx!.lowerBound,
+                                to: out.endIndex
+                            ),
+                            2 + initialLen
+                        )
+                        let endIdx = out.index(
+                            replacementIdx!.lowerBound,
+                            offsetBy: offset
+                        )
+                        let s = String(
+                            out[
+                                out.index(
+                                    replacementIdx!.lowerBound,
+                                    offsetBy: 2
+                                )..<endIdx
+                            ]
+                        )
+                        if initials.contains(s) || s == "y" {
+                            initialFound = true
+                        }
+                    }
+
+                    if initialFound {
+                        out.replaceSubrange(replacementIdx!, with: "au")
+                    } else {
+                        out.replaceSubrange(replacementIdx!, with: "o w")
+                    }
+                }
+                break
+            }
+            replacementIdx = out.range(
+                of: "ow",
+                range: replacementIdx!.upperBound..<out.endIndex
+            )
+        }
+    }
+
+    // Check if the user intends to write an [ɐm] or [-uː  m-] cluster
+    do {
+        out = out.replacingOccurrences(of: "um ", with: "am ")
+            .replacingOccurrences(of: "um'", with: "am'")
+        if out.hasSuffix("um") {
+            out.replaceSubrange(
+                out.range(of: "um", options: [.backwards])!,
+                with: "am"
+            )
+        }
+
+        // Initials for which <initial> + "am" exist in Jyutping
+        let openMidCentralVowelCluster: Set = [
+            "b", "p", "m", "d", "t", "n", "l", "k", "h", "z", "c", "s", "j",
+        ]
+        // Initials for which <initial> + "-u m-" exist in Jyutping
+        let closeBackVowelCluster: Set = ["f", "w", "a", "e", "i", "o"]
+
+        var replacementIdx = out.range(of: "um")
+        while replacementIdx != nil {
+            switch replacementIdx!.lowerBound {
+            case out.startIndex:
+                out.replaceSubrange(replacementIdx!, with: "am")
+                break
+            default:
+                var initialIdx = out.index(before: replacementIdx!.lowerBound)
+                if replacementIdx!.lowerBound.utf16Offset(in: out) > 1
+                    && out[initialIdx] == ")"
+                {
+                    initialIdx = out.index(before: initialIdx)
+                }
+
+                if openMidCentralVowelCluster.contains(String(out[initialIdx]))
+                {
+                    out.replaceSubrange(replacementIdx!, with: "am")
+                } else if closeBackVowelCluster.contains(
+                    String(out[initialIdx])
+                ) {
+                    ()
+                } else if String(out[initialIdx]) == "g" {
+                    // The [m-] cluster can only occur if what follows is not an initial
+                    var initialFound = false
+                    for initialLen in (1...2).reversed() {
+                        let offset = min(
+                            out.distance(
+                                from: replacementIdx!.lowerBound,
+                                to: out.endIndex
+                            ),
+                            2 + initialLen
+                        )
+                        let endIdx = out.index(
+                            replacementIdx!.lowerBound,
+                            offsetBy: offset
+                        )
+                        let s = String(
+                            out[
+                                out.index(
+                                    replacementIdx!.lowerBound,
+                                    offsetBy: 2
+                                )..<endIdx
+                            ]
+                        )
+                        if initials.contains(s) || s == "y" {
+                            initialFound = true
+                        }
+                    }
+
+                    if initialFound {
+                        out.replaceSubrange(replacementIdx!, with: "am")
+                    } else {
+                        out.replaceSubrange(replacementIdx!, with: "u m")
+                    }
+                }
+                break
+            }
+            replacementIdx = out.range(
+                of: "um",
+                range: replacementIdx!.upperBound..<out.endIndex
+            )
+        }
+    }
+
+    // Check if the user intends to write an [-ɛː j-] or [-ei̯] cluster
+    do {
+        out = out.replacingOccurrences(of: "ey ", with: "ei ")
+            .replacingOccurrences(of: "ey'", with: "ei'")
+        if out.hasSuffix("ey") {
+            out.replaceSubrange(
+                out.range(of: "ey", options: [.backwards])!,
+                with: "ei"
+            )
+        }
+
+        // Initials for which <initial> + "-ei" exist in Jyutping
+        let closeFrontVowelCluster: Set = ["p", "f", "d", "n", "l", "h", "w"]
+        // Initials for which <initial> + "-e j-" exist in Jyutping
+        let openMidFrontVowelCluster: Set = ["c", "j", "y"]
+        // Initials for which <initial> + "-u m-" exist in Jyutping
+        let ambiguousVowelCluster: Set = ["b", "m", "g", "k", "z", "s"]
+
+        var replacementIdx = out.range(of: "ey")
+        while replacementIdx != nil {
+            switch replacementIdx!.lowerBound {
+            case out.startIndex:
+                out.replaceSubrange(replacementIdx!, with: "ei")
+                break
+            default:
+                var initialIdx = out.index(before: replacementIdx!.lowerBound)
+                if replacementIdx!.lowerBound.utf16Offset(in: out) > 1
+                    && out[initialIdx] == ")"
+                {
+                    initialIdx = out.index(before: initialIdx)
+                }
+
+                if closeFrontVowelCluster.contains(String(out[initialIdx])) {
+                    out.replaceSubrange(replacementIdx!, with: "ei")
+                } else if openMidFrontVowelCluster.contains(
+                    String(out[initialIdx])
+                ) {
+                    out.replaceSubrange(replacementIdx!, with: "e (j)")
+                } else if ambiguousVowelCluster.contains(
+                    String(out[initialIdx])
+                ) {
+                    // The [j-] cluster can only occur if what follows is not an initial
+                    var initialFound = false
+                    for initialLen in (1...2).reversed() {
+                        let offset = min(
+                            out.distance(
+                                from: replacementIdx!.lowerBound,
+                                to: out.endIndex
+                            ),
+                            2 + initialLen
+                        )
+                        let endIdx = out.index(
+                            replacementIdx!.lowerBound,
+                            offsetBy: offset
+                        )
+                        let s = String(
+                            out[
+                                out.index(
+                                    replacementIdx!.lowerBound,
+                                    offsetBy: 2
+                                )..<endIdx
+                            ]
+                        )
+                        if initials.contains(s) || s == "y" {
+                            initialFound = true
+                        }
+                    }
+
+                    if initialFound {
+                        out.replaceSubrange(replacementIdx!, with: "ei")
+                    } else {
+                        out.replaceSubrange(replacementIdx!, with: "e (j)")
+                    }
+                }
+                break
+            }
+            replacementIdx = out.range(
+                of: "ey",
+                range: replacementIdx!.upperBound..<out.endIndex
+            )
+        }
+    }
+
+    // Check if the user intends to write an [-yː j-] or [-ɐm] cluster
+    do {
+        // Initials for which <initial> + "-yu m-" exist in Jyutping
+        let closeFrontVowelCluster: Set = ["z", "c", "s", "j"]
+        var replacementIdx = out.range(of: "yum")
+        while replacementIdx != nil {
+            switch replacementIdx!.lowerBound {
+            case out.startIndex:
+                out.replaceSubrange(replacementIdx!, with: "(j)am")
+                break
+            default:
+                var initialIdx = out.index(before: replacementIdx!.lowerBound)
+                if replacementIdx!.lowerBound.utf16Offset(in: out) > 1
+                    && out[initialIdx] == ")"
+                {
+                    initialIdx = out.index(before: initialIdx)
+                }
+
+                if closeFrontVowelCluster.contains(String(out[initialIdx])) {
+                    out.replaceSubrange(replacementIdx!, with: "yu m")
+                } else {
+                    out.replaceSubrange(replacementIdx!, with: "(j)am")
+                }
+                break
+            }
+            replacementIdx = out.range(
+                of: "yum",
+                range: replacementIdx!.upperBound..<out.endIndex
+            )
+        }
+    }
+
+    // Check if the user intends to write an [-yː p-] or [-ɐp] cluster
+    do {
+        // Initials for which <initial> + "-yu p-" exist in Jyutping
+        let closeFrontVowelCluster: Set = ["z", "s", "j"]
+        var replacementIdx = out.range(of: "yup")
+        while replacementIdx != nil {
+            switch replacementIdx!.lowerBound {
+            case out.startIndex:
+                out.replaceSubrange(replacementIdx!, with: "(j)ap")
+                break
+            default:
+                var initialIdx = out.index(before: replacementIdx!.lowerBound)
+                if replacementIdx!.lowerBound.utf16Offset(in: out) > 1
+                    && out[initialIdx] == ")"
+                {
+                    initialIdx = out.index(before: initialIdx)
+                }
+
+                if closeFrontVowelCluster.contains(String(out[initialIdx])) {
+                    out.replaceSubrange(replacementIdx!, with: "yu p")
+                } else {
+                    out.replaceSubrange(replacementIdx!, with: "(j)ap")
+                }
+                break
+            }
+            replacementIdx = out.range(
+                of: "yup",
+                range: replacementIdx!.upperBound..<out.endIndex
+            )
+        }
+    }
+
+    // Check if the user intends to write an [-yː k-] or [jʊk] cluster
+    do {
+        // Initials for which <initial> + "-yu k-" exist in Jyutping
+        let closeFrontVowelCluster: Set = ["z", "s", "c", "j"]
+        var replacementIdx = out.range(of: "yuk")
+        while replacementIdx != nil {
+            switch replacementIdx!.lowerBound {
+            case out.startIndex:
+                out.replaceSubrange(replacementIdx!, with: "(j)uk")
+                break
+            default:
+                var initialIdx = out.index(before: replacementIdx!.lowerBound)
+                if replacementIdx!.lowerBound.utf16Offset(in: out) > 1
+                    && out[initialIdx] == ")"
+                {
+                    initialIdx = out.index(before: initialIdx)
+                }
+
+                if closeFrontVowelCluster.contains(String(out[initialIdx])) {
+                    out.replaceSubrange(replacementIdx!, with: "yu k")
+                } else {
+                    out.replaceSubrange(replacementIdx!, with: "(j)uk")
+                }
+                break
+            }
+            replacementIdx = out.range(
+                of: "yuk",
+                range: replacementIdx!.upperBound..<out.endIndex
+            )
+        }
+    }
+
+    // Check if the user intends to write an [-yn g-] or [jʊŋ] cluster
+    do {
+        // Initials for which <initial> + "-yun g-" exist in Jyutping
+        let closeFrontVowelCluster: Set = ["z", "s", "c", "j"]
+        var replacementIdx = out.range(of: "yung")
+        while replacementIdx != nil {
+            switch replacementIdx!.lowerBound {
+            case out.startIndex:
+                out.replaceSubrange(replacementIdx!, with: "(j)ung")
+                break
+            default:
+                var initialIdx = out.index(before: replacementIdx!.lowerBound)
+                if replacementIdx!.lowerBound.utf16Offset(in: out) > 1
+                    && out[initialIdx] == ")"
+                {
+                    initialIdx = out.index(before: initialIdx)
+                }
+
+                if closeFrontVowelCluster.contains(String(out[initialIdx])) {
+                    out.replaceSubrange(replacementIdx!, with: "(yu)n g")
+                } else {
+                    out.replaceSubrange(replacementIdx!, with: "(j)ung")
+                }
+                break
+            }
+            replacementIdx = out.range(
+                of: "yung",
+                range: replacementIdx!.upperBound..<out.endIndex
+            )
+        }
+    }
+
+    // Check if the user intends to write an [-yn] or [jɐn], [jyn], [yn] cluster
+    do {
+        // Initials for which <initial> + "-yu n-" exist in Jyutping
+        let closeFrontVowelCluster: Set = ["z", "s", "c", "j"]
+        var replacementIdx = out.range(of: "yun")
+        while replacementIdx != nil {
+            switch replacementIdx!.lowerBound {
+            case out.startIndex:
+                out.replaceSubrange(replacementIdx!, with: "(j)(a|yu)n")
+                break
+            default:
+                var initialIdx = out.index(before: replacementIdx!.lowerBound)
+                if replacementIdx!.lowerBound.utf16Offset(in: out) > 1
+                    && out[initialIdx] == ")"
+                {
+                    initialIdx = out.index(before: initialIdx)
+                }
+
+                if closeFrontVowelCluster.contains(String(out[initialIdx])) {
+                    out.replaceSubrange(replacementIdx!, with: "yun")
+                } else {
+                    out.replaceSubrange(replacementIdx!, with: "(ja|jyu|yu)n")
+                }
+                break
+            }
+            replacementIdx = out.range(
+                of: "yun",
+                range: replacementIdx!.upperBound..<out.endIndex
+            )
+        }
+    }
+
+    // Check if the user intends to write an [-yt] or [jɐt], [jyt], [yt] cluster
+    do {
+        // Initials for which <initial> + "-yu n-" exist in Jyutping
+        let closeFrontVowelCluster: Set = ["z", "s", "c", "j"]
+        var replacementIdx = out.range(of: "yut")
+        while replacementIdx != nil {
+            switch replacementIdx!.lowerBound {
+            case out.startIndex:
+                out.replaceSubrange(replacementIdx!, with: "(j)(a|yu)t")
+                break
+            default:
+                var initialIdx = out.index(before: replacementIdx!.lowerBound)
+                if replacementIdx!.lowerBound.utf16Offset(in: out) > 1
+                    && out[initialIdx] == ")"
+                {
+                    initialIdx = out.index(before: initialIdx)
+                }
+
+                if closeFrontVowelCluster.contains(String(out[initialIdx])) {
+                    out.replaceSubrange(replacementIdx!, with: "(yu)t")
+                } else {
+                    out.replaceSubrange(replacementIdx!, with: "(ja|jyu|yu)t")
+                }
+                break
+            }
+            replacementIdx = out.range(
+                of: "yut",
+                range: replacementIdx!.upperBound..<out.endIndex
+            )
+        }
+    }
+
+    // Unsafe because it is ambiguous whether these are final + initial
+    // or a "misspelling" of an initial
+    // But unambiguous if they are at the start of a syllable
+    if let r = out.range(of: "ts") {
+        if r.lowerBound == out.startIndex {
+            out.replaceSubrange(r, with: "c")
+        }
+    }
+    out = out.replacingOccurrences(of: " ts", with: " c")
+    if let r = out.range(of: "kwu") {
+        if r.lowerBound == out.startIndex {
+            out.replaceSubrange(r, with: "(g|k)w!u")
+        }
+    }
+    out = out.replacingOccurrences(of: " kwu", with: " (g|k)w!u")
+    if unsafeSubstitutions {
+        out = out.replacingOccurrences(of: "ts", with: "c")
+        out = out.replacingOccurrences(of: "kwu", with: "(g|k)w!u")
+    }
+
+    // Change any "y" that is not followed by a "u" to "j"
+    // This needs to happen before the final replacements
+    var yIdx = out.range(of: "y")
+    while yIdx != nil {
+        if String(
+            out[yIdx!.lowerBound..<out.index(yIdx!.lowerBound, offsetBy: 2)]
+        ) == "yu"
+            || String(
+                out[yIdx!.lowerBound..<out.index(yIdx!.lowerBound, offsetBy: 3)]
+            ) == "y!u"
+            || String(
+                out[yIdx!.lowerBound..<out.index(yIdx!.lowerBound, offsetBy: 3)]
+            ) == "y)u"
+        {
+            yIdx = out.range(
+                of: "y",
+                range: out.index(after: yIdx!.lowerBound)..<out.endIndex
+            )
+            continue
+        }
+        out.replaceSubrange(yIdx!, with: "(j)")
+        yIdx = out.range(
+            of: "y",
+            range: out.index(after: yIdx!.lowerBound)..<out.endIndex
+        )
+    }
+
+    out = out.replacingOccurrences(of: "ui", with: "(eo|u)i")
+    out = out.replacingOccurrences(of: "un", with: "(y!u|a|eo)n")
+    out = out.replacingOccurrences(of: "ut", with: "(a|y!u)t")
+
+    out = out.replacingOccurrences(of: "o ", with: "(ou!) ")
+    out = out.replacingOccurrences(of: "o'", with: "(ou!)'")
+    if out.hasSuffix("o") {
+        out.replaceSubrange(
+            out.index(before: out.endIndex)..<out.endIndex,
+            with: "(ou!)"
+        )
+    }
+    var oIdx = out.range(of: "o")
+    while oIdx != nil {
+        let letterAfter = String(out[out.index(after: oIdx!.lowerBound)])
+        if !["k", "t", "e", "i", "u", "n", ")", "|"].contains(letterAfter) {
+            out.replaceSubrange(oIdx!, with: "(ou!)")
+            oIdx = out.range(
+                of: "o",
+                range: out.index(after: oIdx!.lowerBound)..<out.endIndex
+            )
+            continue
+        }
+        oIdx = out.range(
+            of: "o",
+            range: out.index(after: oIdx!.lowerBound)..<out.endIndex
+        )
+    }
+
+    return out
 }
 
 func jyutpingSoundChanges(text: [String]) -> [String] {
