@@ -1469,9 +1469,10 @@ func jyutpingAutocorrect(text: String, unsafeSubstitutions: Bool = false)
     // This needs to happen before the final replacements
     var yIdx = out.range(of: "y")
     while yIdx != nil {
-        if String(
-            out[yIdx!.lowerBound..<out.index(yIdx!.lowerBound, offsetBy: 2)]
-        ) == "yu"
+        if (out.distance(from: yIdx!.lowerBound, to: out.endIndex) >= 2
+            && String(
+                out[yIdx!.lowerBound..<out.index(yIdx!.lowerBound, offsetBy: 2)]
+            ) == "yu")
             || (out.distance(from: yIdx!.lowerBound, to: out.endIndex) >= 3
                 && String(
                     out[
