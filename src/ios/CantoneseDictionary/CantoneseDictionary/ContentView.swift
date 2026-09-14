@@ -160,10 +160,15 @@ struct SearchingView: View {
                     .opacity(isPickerTextVisible ? 1 : 0)
                     .glassEffect()
                     .onChange(of: searchText) {
+                        guard selectedOption == .autoDetect else { return }
                         animationToken += 1
                         let currentToken = animationToken
                         isPickerTextVisible = false
                         withAnimation(.snappy(duration: 0.1)) {
+                            if searchText.isEmpty {
+                                options[.autoDetect] = "Auto-detect language"
+                                return
+                            }
                             switch searchText.count % 7 {
                             case 0:
                                 options[.autoDetect] = "Detected input: English"
