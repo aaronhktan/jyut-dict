@@ -10,11 +10,6 @@ import os
 
 nonisolated let logger = Logger()
 
-nonisolated let specialCharacters: Set = [
-    ".", "。", ",", "，", "！", "？", "%", "－", "…", "⋯",
-    ".", "·", "\"", "“", "”", "$", "｜", "：", "１", "２",
-    "３", "４", "５", "６", "７", "８", "９", "０",
-]
 nonisolated let regexCharacters: Set = ["!", "(", ")", "|"]
 
 nonisolated let initials: Set = [
@@ -840,7 +835,7 @@ nonisolated func segmentJyutping(
     return (validJyutping, syllables)
 }
 
-func jyutpingAutocorrect(text: String, unsafeSubstitutions: Bool = false)
+nonisolated func jyutpingAutocorrect(text: String, unsafeSubstitutions: Bool = false)
     -> String
 {
     var out: String = text
@@ -1539,7 +1534,7 @@ func jyutpingAutocorrect(text: String, unsafeSubstitutions: Bool = false)
     return out
 }
 
-func jyutpingSoundChanges(text: [String]) -> [String] {
+nonisolated func jyutpingSoundChanges(text: [String]) -> [String] {
     var changedSyllables: [String] = []
 
     for syllable in text {
