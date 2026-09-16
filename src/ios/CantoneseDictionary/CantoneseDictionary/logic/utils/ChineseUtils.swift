@@ -15,7 +15,7 @@ nonisolated let specialCharacters: Set = [
 
 nonisolated func applyColours(
     text: String,
-    tones: [UInt8],
+    tones: [Int],
     jyutpingToneColours: [String],
     pinyinToneColours: [String],
     type: EntryColourPhoneticType
@@ -24,7 +24,7 @@ nonisolated func applyColours(
 
     var toneIdx = 0
     for c in text {
-        let currentString = String(c)
+        let currentString = String(c).precomposedStringWithCanonicalMapping
         let codepoints = c.unicodeScalars
 
         if currentString == sameCharacterString || codepoints.count > 1 {
@@ -59,7 +59,7 @@ nonisolated func applyColours(
             colouredString += currentString
             continue
         }
-        let tone = Int(tones[toneIdx])
+        let tone = tones[toneIdx]
 
         // ... and apply tone colour formatting to the string
         switch type {
@@ -129,9 +129,11 @@ nonisolated func constructRomanisationQuery(
 
     var result: String = ""
     for s in syllables {
-        var trimmedSyllable = s.trimmingCharacters(in: .whitespacesAndNewlines)
-        if s.suffix(1).first!.isNumber {
-            result += space + s
+        let trimmedSyllable = s.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmedSyllable.suffix(1).first!.isNumber {
+            result += space + trimmedSyllable
+            space = " "
+            addedDelimiter = false
         } else if ["*", "?"].contains(trimmedSyllable) {
             if ["*", "?", "* ", "? "].contains(s) && addedDelimiter {
                 // Replace delimiter with GLOB wildcard if GLOB wildcard
