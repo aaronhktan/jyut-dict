@@ -10,15 +10,13 @@ import os
 
 nonisolated let logger = Logger()
 
-nonisolated let regexCharacters: Set = ["!", "(", ")", "|"]
-
-nonisolated let initials: Set = [
+nonisolated let jyutpingInitials: Set = [
     "b", "p", "m", "f", "d",
     "t", "n", "l", "g", "k",
     "ng", "h", "gw", "kw", "w",
     "z", "c", "s", "j", "m",
 ]
-nonisolated let finals: Set = [
+nonisolated let jyutpingFinals: Set = [
     "a", "aa", "aai", "aau", "aam", "aan", "aang", "aap", "aat", "aak",
     "ai", "au", "am", "an", "ang", "ap", "at", "ak", "e", "ei",
     "eu", "em", "en", "eng", "ep", "ek", "i", "iu", "im", "in",
@@ -550,9 +548,7 @@ nonisolated func segmentJyutping(
     while endIdx < processedText.endIndex {
         var componentFound = false
 
-        var currentString = String(
-            processedText[endIdx..<processedText.index(after: endIdx)]
-        )
+        var currentString = String(processedText[endIdx]).lowercased()
         let isSpecialCharacter = specialCharacters.contains(currentString)
         let isGlobCharacter =
             currentString.trimmingCharacters(in: .whitespacesAndNewlines) == "*"
@@ -571,7 +567,7 @@ nonisolated func segmentJyutping(
                 let previousInitial = String(processedText[startIdx..<endIdx])
                     .lowercased()
                 syllables.append(previousInitial)
-                if !finals.contains(previousInitial) {
+                if !jyutpingFinals.contains(previousInitial) {
                     validJyutping = false
                 }
                 startIdx = endIdx
@@ -583,7 +579,7 @@ nonisolated func segmentJyutping(
                         processedText[startIdx..<endIdx]
                     ).lowercased()
                     syllables.append(previousInitial)
-                    if !finals.contains(previousInitial) {
+                    if !jyutpingFinals.contains(previousInitial) {
                         validJyutping = false
                     }
                     initialFound = false
@@ -596,7 +592,7 @@ nonisolated func segmentJyutping(
                 if endIdx > processedText.startIndex
                     && processedText[processedText.index(before: endIdx)] == " "
                     && !syllables.isEmpty
-                    && syllables.last!.last != " "
+                    && syllables.last?.last != " "
                 {
                     // Add preceding whitespace to this word
                     globStartIdx = processedText.index(before: endIdx)
@@ -630,7 +626,7 @@ nonisolated func segmentJyutping(
 
                 var isValidFinal = false
                 if removeRegexCharacters {
-                    isValidFinal = finals.contains(previousInitial)
+                    isValidFinal = jyutpingFinals.contains(previousInitial)
                 } else {
                     // Regex characters need to be handled in a special way;
                     // essentially, we need to check every possibility. If at
@@ -641,7 +637,8 @@ nonisolated func segmentJyutping(
                     )
 
                     stringsToSearch.forEach { s in
-                        isValidFinal = isValidFinal || finals.contains(s)
+                        isValidFinal =
+                            isValidFinal || jyutpingFinals.contains(s)
                     }
                 }
 
@@ -696,13 +693,14 @@ nonisolated func segmentJyutping(
 
             var isValidInitial = false
             if removeRegexCharacters {
-                isValidInitial = initials.contains(currentString)
+                isValidInitial = jyutpingInitials.contains(currentString)
             } else {
                 let stringsToSearch: [String] = unfoldJyutpingRegex(
                     jyutping: currentString
                 )
                 stringsToSearch.forEach { s in
-                    isValidInitial = isValidInitial || initials.contains(s)
+                    isValidInitial =
+                        isValidInitial || jyutpingInitials.contains(s)
                 }
             }
 
@@ -718,7 +716,7 @@ nonisolated func segmentJyutping(
 
                 var previousInitialIsValidFinal = false
                 if removeRegexCharacters {
-                    previousInitialIsValidFinal = finals.contains(
+                    previousInitialIsValidFinal = jyutpingFinals.contains(
                         previousInitial
                     )
                 } else {
@@ -727,7 +725,8 @@ nonisolated func segmentJyutping(
                     )
                     stringsToSearch.forEach { s in
                         previousInitialIsValidFinal =
-                            previousInitialIsValidFinal || finals.contains(s)
+                            previousInitialIsValidFinal
+                            || jyutpingFinals.contains(s)
                     }
                 }
 
@@ -777,13 +776,13 @@ nonisolated func segmentJyutping(
 
             var isValidFinal = false
             if removeRegexCharacters {
-                isValidFinal = finals.contains(currentString)
+                isValidFinal = jyutpingFinals.contains(currentString)
             } else {
                 let stringsToSearch: [String] = unfoldJyutpingRegex(
                     jyutping: currentString
                 )
                 stringsToSearch.forEach { s in
-                    isValidFinal = isValidFinal || finals.contains(s)
+                    isValidFinal = isValidFinal || jyutpingFinals.contains(s)
                 }
             }
 
@@ -827,7 +826,7 @@ nonisolated func segmentJyutping(
     ).lowercased()
     if !lastSyllable.isEmpty && lastSyllable != "'" {
         syllables.append(lastSyllable)
-        if !finals.contains(lastSyllable) {
+        if !jyutpingFinals.contains(lastSyllable) {
             validJyutping = false
         }
     }
@@ -835,7 +834,10 @@ nonisolated func segmentJyutping(
     return (validJyutping, syllables)
 }
 
-nonisolated func jyutpingAutocorrect(text: String, unsafeSubstitutions: Bool = false)
+nonisolated func jyutpingAutocorrect(
+    text: String,
+    unsafeSubstitutions: Bool = false
+)
     -> String
 {
     var out: String = text
@@ -984,7 +986,7 @@ nonisolated func jyutpingAutocorrect(text: String, unsafeSubstitutions: Bool = f
                                 )..<endIdx
                             ]
                         )
-                        if initials.contains(s) || s == "y" {
+                        if jyutpingInitials.contains(s) || s == "y" {
                             initialFound = true
                         }
                     }
@@ -1063,7 +1065,7 @@ nonisolated func jyutpingAutocorrect(text: String, unsafeSubstitutions: Bool = f
                                 )..<endIdx
                             ]
                         )
-                        if initials.contains(s) || s == "y" {
+                        if jyutpingInitials.contains(s) || s == "y" {
                             initialFound = true
                         }
                     }
@@ -1145,7 +1147,7 @@ nonisolated func jyutpingAutocorrect(text: String, unsafeSubstitutions: Bool = f
                                 )..<endIdx
                             ]
                         )
-                        if initials.contains(s) || s == "y" {
+                        if jyutpingInitials.contains(s) || s == "y" {
                             initialFound = true
                         }
                     }
@@ -1228,7 +1230,7 @@ nonisolated func jyutpingAutocorrect(text: String, unsafeSubstitutions: Bool = f
                                 )..<endIdx
                             ]
                         )
-                        if initials.contains(s) || s == "y" {
+                        if jyutpingInitials.contains(s) || s == "y" {
                             initialFound = true
                         }
                     }
