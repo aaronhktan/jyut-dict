@@ -1,0 +1,414 @@
+//
+//  MandarinUtils.swift
+//  CantoneseDictionary
+//
+//  Created by Aaron on 2026-09-15.
+//
+
+import Foundation
+
+nonisolated let pinyinInitials: [String] = [
+    "b", "p", "m", "f", "d", "t",
+    "n", "l", "g", "k", "h", "j",
+    "q", "x", "zh", "ch", "sh", "r",
+    "z", "c", "s", "y",
+]
+nonisolated let pinyinFinals: [String] = [
+    "a", "e", "ai", "ei", "ao", "ou", "an", "ang", "en",
+    "ang", "eng", "ong", "er", "i", "ia", "ie", "iao", "iu",
+    "ian", "in", "iang", "ing", "iong", "u", "ua", "uo", "uai",
+    "ui", "uan", "un", "uang", "u", "u:", "ue", "u:e", "o",
+]
+
+nonisolated let pinyinToneReplacements: [String: [String]] = [
+    "a": ["ā", "á", "ǎ", "à", "a"],
+    "e": ["ē", "é", "ě", "è", "e"],
+    "i": ["ī", "í", "ǐ", "ì", "i"],
+    "o": ["ō", "ó", "ǒ", "ò", "o"],
+    "u": ["ū", "ú", "ǔ", "ù", "u"],
+    "ü": ["ǖ", "ǘ", "ǚ", "ǜ", "ü"],
+]
+
+nonisolated let pinyinVPrecederRegex: String = "([jqx])u"
+
+nonisolated let zhuyinInitials: [String: String] = [
+    "b": "ㄅ", "p": "ㄆ", "m": "ㄇ", "f": "ㄈ", "d": "ㄉ",
+    "t": "ㄊ", "n": "ㄋ", "l": "ㄌ", "g": "ㄍ", "k": "ㄎ",
+    "h": "ㄏ", "j": "ㄐ", "q": "ㄑ", "x": "ㄒ", "z": "ㄗ",
+    "c": "ㄘ", "s": "ㄙ", "r": "ㄖ", "zh": "ㄓ", "ch": "ㄔ",
+    "sh": "ㄕ",
+]
+nonisolated let zhuyinFinals: [String: String] = [
+    "yuan": "ㄩㄢ", "iang": "ㄧㄤ", "yang": "ㄧㄤ", "uang": "ㄨㄤ",
+    "wang": "ㄨㄤ", "ying": "ㄧㄥ", "weng": "ㄨㄥ", "iong": "ㄩㄥ",
+    "yong": "ㄩㄥ", "uai": "ㄨㄞ", "wai": "ㄨㄞ", "yai": "ㄧㄞ",
+    "iao": "ㄧㄠ", "yao": "ㄧㄠ", "ian": "ㄧㄢ", "yan": "ㄧㄢ",
+    "uan": "ㄨㄢ", "wan": "ㄨㄢ", "van": "ㄩㄢ", "ang": "ㄤ",
+    "yue": "ㄩㄝ", "wei": "ㄨㄟ", "you": "ㄧㄡ", "yin": "ㄧㄣ",
+    "wen": "ㄨㄣ", "yun": "ㄩㄣ", "eng": "ㄥ", "ing": "ㄧㄥ",
+    "ong": "ㄨㄥ", "io": "ㄧㄛ", "yo": "ㄧㄛ", "ia": "ㄧㄚ",
+    "ya": "ㄧㄚ", "ua": "ㄨㄚ", "wa": "ㄨㄚ", "ai": "ㄞ",
+    "ao": "ㄠ", "an": "ㄢ", "ie": "ㄧㄝ", "ye": "ㄧㄝ",
+    "uo": "ㄨㄛ", "wo": "ㄨㄛ", "ue": "ㄩㄝ", "ve": "ㄩㄝ",
+    "ei": "ㄟ", "ui": "ㄨㄟ", "ou": "ㄡ", "iu": "ㄧㄡ",
+    "en": "ㄣ", "in": "ㄧㄣ", "un": "ㄨㄣ", "vn": "ㄩㄣ",
+    "yi": "ㄧ", "wu": "ㄨ", "yu": "ㄩ", "a": "ㄚ",
+    "e": "ㄜ", "o": "ㄛ", "i": "ㄧ", "u": "ㄨ",
+    "v": "ㄩ", "ê": "ㄝ",
+]
+nonisolated let zhuyinTones: [String] = ["", "", "ˊ", "ˇ", "ˋ", "˙"]
+
+nonisolated let zhuyinIPrecederRegex: String = "([zcs]h?)i"
+nonisolated let zhuyinRRgegex: String = "([r])i"
+nonisolated let zhuyingNgSpecialCaseRegex: String = "^ng([012345])$"
+nonisolated let zhuyingHmSpecialCaseRegex: String = "^hm([012345])$"
+nonisolated let zhuyinHngSpecialCaseRegex: String = "^hng([012345])$"
+nonisolated let zhuyinErSpecialCaseRegex: String = "^er([012345])$"
+nonisolated let zhuyinInitialRegex: String = "^([bpmfdtnlgkhjqxzcsr]?h?)"
+nonisolated let zhuyinFinalRegex: String =
+    "([aeiouêvyw]?[aeioun]?[aeioung]?[ng]?)(r?)([012345])$"
+
+nonisolated let mandarinIPAGlottal: Set = [
+    "a", "o", "e", "ai", "ei", "ao", "ou", "an", "en", "er", "ang", "ong",
+    "eng",
+]
+
+nonisolated let mandarinIPAInitials: [String: String] = [
+    "b": "p", "c": "t͡sʰ", "ch": "ʈ͡ʂʰ", "d": "t", "f": "f",
+    "g": "k", "h": "x", "j": "t͡ɕ", "k": "kʰ", "l": "l",
+    "m": "m", "n": "n", "ng": "ŋ", "p": "pʰ", "q": "t͡ɕʰ",
+    "r": "ʐ", "s": "s", "sh": "ʂ", "t": "tʰ", "x": "ɕ",
+    "z": "t͡s", "zh": "ʈ͡ʂ",
+]
+nonisolated let mandarinIPAFinals: [String: String] = [
+    "a": "ä", "ai": "aɪ̯", "air": "ɑɻ", "an": "än",
+    "ang": "ɑŋ", "angr": "ɑ̃ɻ", "anr": "ɑɻ", "ao": "ɑʊ̯",
+    "aor": "aʊ̯ɻʷ", "ar": "ɑɻ", "e": "ɤ", "ei": "eɪ̯",
+    "eir": "əɻ", "en": "ən", "eng": "ɤŋ", "engr": "ɤ̃ɻ",
+    "enr": "əɻ", "er": "ɤɻ", "i": "i", "ia": "jä",
+    "ian": "jɛn", "iang": "jɑŋ", "iangr": "jɑ̃ɻ", "ianr": "jɑɻ",
+    "iao": "jɑʊ̯", "iaor": "jaʊ̯ɻʷ", "iar": "jɑɻ", "ie": "jɛ",
+    "ier": "jɛɻ", "in": "in", "ing": "iŋ", "ingr": "iɤ̯̃ɻ",
+    "inr": "iə̯ɻ", "io": "jɔ", "iong": "jʊŋ", "iongr": "jʊ̃ɻ",
+    "ir": "iə̯ɻ", "iu": "joʊ̯", "iur": "jɤʊ̯ɻʷ", "m": "m̩",
+    "n": "n̩", "ng": "ŋ̍", "o": "wɔ", "ong": "ʊŋ",
+    "ongr": "ʊ̃ɻ", "or": "wɔɻ", "ou": "oʊ̯", "our": "ɤʊ̯ɻʷ",
+    "u": "u", "ua": "wä", "uai": "waɪ̯", "uair": "wɑɻ",
+    "uan": "wän", "uang": "wɑŋ", "uangr": "wɑ̃ɻ", "uanr": "wɑɻ",
+    "uar": "u̯ɑɻ", "ue": "ɥɛ", "ui": "weɪ̯", "uir": "wəɻ",
+    "un": "wən", "unr": "wəɻ", "uo": "wɔ", "uor": "wɔɻ",
+    "ur": "uɻʷ", "v": "y", "van": "ɥɛn", "vanr": "ɥɑɻ",
+    "ve": "ɥɛ", "ver": "ɥɛɻ", "vn": "yn", "vnr": "yə̯ɻ",
+    "vr": "yə̯ɻ", "wa": "wä", "wai": "waɪ̯", "wair": "wɑɻ",
+    "wan": "wän", "wang": "wɑŋ", "wangr": "wɑ̃ɻ", "wanr": "wɑɻ",
+    "war": "wɑɻ", "wei": "weɪ̯", "weir": "wəɻ", "wen": "wən",
+    "weng": "wəŋ", "wengr": "ʊ̃ɻ", "wenr": "wəɻ", "wo": "wɔ",
+    "wor": "wɔɻ", "wu": "u", "wur": "uɻʷ", "ya": "jä",
+    "yai": "jaɪ̯", "yan": "jɛn", "yang": "jɑŋ", "yangr": "jɑ̃ɻ",
+    "yanr": "jɑɻ", "yao": "jɑʊ̯", "yaor": "jaʊ̯ɻʷ", "yar": "jɑɻ",
+    "ye": "jɛ", "yer": "jɛɻ", "yi": "i", "yin": "in",
+    "ying": "iŋ", "yingr": "iɤ̯̃ɻ", "yinr": "iə̯ɻ", "yir": "iə̯ɻ",
+    "yo": "jɔ", "yong": "jʊŋ", "yongr": "jʊ̃ɻ", "yor": "jɔɻ",
+    "you": "joʊ̯", "your": "jɤʊ̯ɻʷ", "yu": "y", "yuan": "ɥɛn",
+    "yuanr": "ɥɑɻ", "yue": "ɥɛ", "yuer": "ɥɛɻ", "yun": "yn",
+    "yunr": "yə̯ɻ", "yur": "yə̯ɻ",
+]
+nonisolated let mandarinIPAVoicelessInitials: [String: String] = [
+    "k": "g̊",
+    "p": "b̥",
+    "t": "d̥",
+    "t͡s": "d͡z̥",
+    "t͡ɕ": "d͡ʑ̥",
+    "ʈ͡ʂ": "ɖ͡ʐ̥",
+]
+nonisolated let mandarinIPANeutralTone: [String] = ["˨", "˧", "˦", "˩", "˩"]
+nonisolated let mandarinIPAThirdTone: [String] = [
+    "˨˩˦꜕꜖꜖", "˨˩˦꜕꜖꜖", "˨˩˦꜔꜒", "˨˩˦꜕꜖꜖", "˨˩˦",
+]
+nonisolated let mandarinIPATones: [String] = ["˥˥", "˧˥", "˨˩˦", "˥˩", ""]
+nonisolated let mandarinIPASyllableRegex: String =
+    "^([bcdfghjklmnpqrstxz]?h?)(.+)$"
+
+nonisolated func createPrettyPinyin(pinyin: String) -> String {
+    if pinyin.isEmpty {
+        return ""
+    }
+
+    var result = ""
+    return result
+}
+
+nonisolated func createNumberedPinyin(pinyin: String) -> String {
+    return ""
+}
+
+nonisolated func createPinyinWithV(pinyin: String) -> String {
+    return ""
+}
+
+nonisolated func convertPinyinToZhuyin(
+    pinyin: String,
+    useSpacesToSegment: Bool = false
+) -> String {
+    return ""
+}
+
+nonisolated func convertPinyinToIPA(
+    pinyin: String,
+    useSpacesToSegment: Bool = false
+) -> String {
+    return ""
+}
+
+nonisolated func segmentPinyin(
+    text: String,
+    removeSpecialCharacters: Bool = true,
+    removeGlobCharacters: Bool = true
+) -> (Bool, [String]) {
+    let processedText = text
+    var syllables: [String] = []
+
+    var validPinyin = true
+    var startIdx = processedText.startIndex
+    var endIdx = processedText.startIndex
+    var initialFound = false
+
+    while endIdx < processedText.endIndex {
+        var nextIteration = false
+        var currentString = String(processedText[endIdx]).lowercased()
+        let isSpecialCharacter = specialCharacters.contains(currentString)
+        let isGlobCharacter =
+            currentString.trimmingCharacters(in: .whitespacesAndNewlines) == "*"
+            || currentString.trimmingCharacters(in: .whitespacesAndNewlines)
+                == "?"
+
+        if currentString == " " || currentString == "'" || isSpecialCharacter
+            || isGlobCharacter
+        {
+            if initialFound {
+                let previousInitial = String(processedText[startIdx..<endIdx])
+                    .lowercased()
+                syllables.append(previousInitial)
+
+                if !pinyinFinals.contains(previousInitial) {
+                    validPinyin = false
+                }
+                startIdx = endIdx
+                initialFound = false
+            }
+            if !removeGlobCharacters && isGlobCharacter {
+                if endIdx > processedText.startIndex
+                    && processedText.distance(from: startIdx, to: endIdx) >= 1
+                {
+                    let previousInitial = String(
+                        processedText[startIdx..<endIdx]
+                    ).lowercased()
+                    syllables.append(previousInitial)
+                    if !pinyinFinals.contains(previousInitial) {
+                        validPinyin = false
+                    }
+                    initialFound = false
+                }
+
+                var globStartIdx = endIdx
+                if endIdx > processedText.startIndex
+                    && processedText[processedText.index(before: endIdx)] == " "
+                    && syllables.last?.last != " "
+                {
+                    globStartIdx = processedText.index(before: globStartIdx)
+                }
+                if processedText.distance(
+                    from: endIdx,
+                    to: processedText.endIndex
+                ) > 1
+                    && processedText[processedText.index(after: endIdx)] == " "
+                {
+                    endIdx = processedText.index(after: endIdx)
+                }
+                let glob = String(processedText[globStartIdx...endIdx])
+                    .lowercased()
+                syllables.append(glob)
+                startIdx = endIdx
+            } else if !removeSpecialCharacters && isSpecialCharacter {
+                syllables.append(currentString)
+            }
+
+            startIdx = processedText.index(after: startIdx)
+            endIdx = processedText.index(after: endIdx)
+            continue
+        }
+
+        // First, check for initials
+        // If initial is valid, then extend the end_index for length of initial
+        // cluster of consonants.
+        for initialLen in [1, 2].reversed() {
+            let offset = min(
+                processedText.distance(
+                    from: endIdx,
+                    to: processedText.endIndex
+                ),
+                initialLen
+            )
+            currentString = String(
+                processedText[
+                    endIdx..<processedText.index(endIdx, offsetBy: offset)
+                ]
+            ).lowercased()
+            if pinyinInitials.contains(currentString) {
+                if initialFound {
+                    validPinyin = false
+                }
+                endIdx = processedText.index(endIdx, offsetBy: offset)
+                nextIteration = true
+                initialFound = true
+                break
+            }
+        }
+
+        if nextIteration {
+            continue
+        }
+
+        // Then, check for finals
+        // If final is valid, then extend end_index for length of final.
+        // Check for number at end of word as well (this represents tone number).
+        //
+        // Then add the substring from [start_index, end_index) to list
+        // and reset start_index, so we can start searching after the end_index.
+        for finalLen in (1...4).reversed() {
+            let offset = min(
+                processedText.distance(
+                    from: endIdx,
+                    to: processedText.endIndex
+                ),
+                finalLen
+            )
+            currentString = String(
+                processedText[
+                    endIdx..<processedText.index(endIdx, offsetBy: offset)
+                ]
+            ).lowercased()
+            if pinyinFinals.contains(currentString) {
+                endIdx = processedText.index(endIdx, offsetBy: offset)
+
+                if endIdx < processedText.endIndex
+                    && String(processedText[endIdx]) == "r"
+                {
+                    endIdx = processedText.index(after: endIdx)
+                }
+                if endIdx < processedText.endIndex
+                    && processedText[endIdx].isNumber
+                {
+                    let tone = Int(String(processedText[endIdx]))
+                    if tone == nil || tone! < 1 || tone! > 5 {
+                        validPinyin = false
+                    }
+                    endIdx = processedText.index(after: endIdx)
+                }
+
+                let syllable = processedText[startIdx..<endIdx].lowercased()
+                syllables.append(syllable)
+                startIdx = endIdx
+                nextIteration = true
+                initialFound = false
+                break
+            }
+        }
+
+        if nextIteration {
+            continue
+        }
+
+        endIdx = processedText.index(after: endIdx)
+    }
+
+    // Then add whatever's left in the search term, minus whitespace
+    let lastSyllable = processedText[startIdx..<endIdx].trimmingCharacters(
+        in: .whitespacesAndNewlines
+    ).lowercased()
+    if !lastSyllable.isEmpty && lastSyllable != "'" {
+        syllables.append(lastSyllable)
+        if !pinyinFinals.contains(lastSyllable) {
+            validPinyin = false
+        }
+    }
+
+    return (validPinyin, syllables)
+}
+
+nonisolated func pinyinSoundChanges(text: [String]) -> [String] {
+    var syllables: [String] = []
+    
+    for s in text {
+        var syllable = s
+        if syllable.hasPrefix("zh"), let range = syllable.range(of: "zh") {
+            syllable.replaceSubrange(range, with: "z(h)!")
+        } else if syllable.hasPrefix("z"), let range = syllable.range(of: "z") {
+            syllable.replaceSubrange(range, with: "z(h)!")
+        }
+        if syllable.hasPrefix("ch"), let range = syllable.range(of: "ch") {
+            syllable.replaceSubrange(range, with: "c(h)!")
+        } else if syllable.hasPrefix("c"), let range = syllable.range(of: "c") {
+            syllable.replaceSubrange(range, with: "c(h)!")
+        }
+        if syllable.hasPrefix("sh"), let range = syllable.range(of: "sh") {
+            syllable.replaceSubrange(range, with: "s(h)!")
+        } else if syllable.hasPrefix("s"), let range = syllable.range(of: "s") {
+            syllable.replaceSubrange(range, with: "s(h)!")
+        }
+        if syllable.hasPrefix("n"), let range = syllable.range(of: "n") {
+            syllable.replaceSubrange(range, with: "(n|l)")
+        } else if syllable.hasPrefix("r"), let range = syllable.range(of: "r") {
+            syllable.replaceSubrange(range, with: "(l|r)")
+        }
+        if syllable.hasPrefix("li") || syllable.hasPrefix("lu:"),
+            let range = syllable.range(of: "l")
+        {
+            syllable.replaceSubrange(range, with: "(l|n)")
+        } else if syllable.hasPrefix("l"), let range = syllable.range(of: "l") {
+            syllable.replaceSubrange(range, with: "(l|n|r)")
+        }
+
+        if syllable.hasSuffix("ang")
+            || syllable[..<syllable.index(before: syllable.endIndex)].hasSuffix(
+                "ang"
+            ), let range = syllable.range(of: "ng", options: [.backwards])
+        {
+            syllable.replaceSubrange(range, with: "ng!")
+        } else if syllable.hasSuffix("an")
+            || syllable[..<syllable.index(before: syllable.endIndex)].hasSuffix(
+                "an"
+            ), let range = syllable.range(of: "n", options: [.backwards])
+        {
+            syllable.replaceSubrange(range, with: "ng!")
+        }
+        if syllable.hasSuffix("eng")
+            || syllable[..<syllable.index(before: syllable.endIndex)].hasSuffix(
+                "eng"
+            ), let range = syllable.range(of: "ng", options: [.backwards])
+        {
+            syllable.replaceSubrange(range, with: "ng!")
+        } else if syllable.hasSuffix("en")
+                    || syllable[..<syllable.index(before: syllable.endIndex)].hasSuffix(
+                        "en"
+                    ), let range = syllable.range(of: "n", options: [.backwards]) {
+            syllable.replaceSubrange(range, with: "ng!")
+        }
+        if syllable.hasSuffix("ing")
+            || syllable[..<syllable.index(before: syllable.endIndex)].hasSuffix(
+                "ing"
+            ), let range = syllable.range(of: "ng", options: [.backwards])
+        {
+            syllable.replaceSubrange(range, with: "ng!")
+        } else if syllable.hasSuffix("in")
+                    || syllable[..<syllable.index(before: syllable.endIndex)].hasSuffix(
+                        "in"
+                    ), let range = syllable.range(of: "n", options: [.backwards]) {
+            syllable.replaceSubrange(range, with: "ng!")
+        }
+        
+        syllables.append(syllable)
+    }
+
+    return syllables
+}

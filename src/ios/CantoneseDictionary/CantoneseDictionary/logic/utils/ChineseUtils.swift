@@ -12,6 +12,7 @@ nonisolated let specialCharacters: Set = [
     ".", "·", "\"", "“", "”", "$", "｜", "：", "１", "２",
     "３", "４", "５", "６", "７", "８", "９", "０",
 ]
+nonisolated let regexCharacters: Set = ["!", "(", ")", "|"]
 
 nonisolated func applyColours(
     text: String,
