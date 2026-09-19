@@ -94,21 +94,6 @@ struct ContentView: View {
                 prompt: "Search",
             )
             .searchPresentationToolbarBehavior(.avoidHidingContent)
-            .onChange(of: searchText) {
-                let intermediate = jyutpingAutocorrect(
-                    text: searchText,
-                    unsafeSubstitutions: true
-                )
-                let (_, segmented) =
-                    segmentJyutping(
-                        text: intermediate,
-                        removeSpecialCharacters: true,
-                        removeGlobCharacters: false,
-                        removeRegexCharacters: false
-                    )
-                let result = jyutpingSoundChanges(text: segmented)
-                processedSearchText = result
-            }
         } detail: {
             Text("Hi")
         }
@@ -159,6 +144,9 @@ struct SearchingView: View {
                     }
                     .opacity(isPickerTextVisible ? 1 : 0)
                     .glassEffect()
+                    .onChange(of: selectedOption) {
+                        triggerSearch()
+                    }
                     .onChange(of: searchText) {
                         guard selectedOption == .autoDetect else { return }
                         animationToken += 1
@@ -200,6 +188,9 @@ struct SearchingView: View {
                         }
                     }
                 }
+                .onChange(of: searchText) {
+                    triggerSearch()
+                }
             } else {
                 ContentUnavailableView {
                     Label {
@@ -221,6 +212,33 @@ struct SearchingView: View {
             if !isSearchActive {
                 options[.autoDetect] = "Auto-detect language"
             }
+        }
+    }
+    
+    private func triggerSearch() {
+        if selectedOption == .pinyin {
+            let (_, segmented) =
+            segmentPinyin(
+                text: searchText.lowercased(),
+                removeSpecialCharacters: true,
+                removeGlobCharacters: false
+            )
+            let result = pinyinSoundChanges(text: segmented)
+            processedSearchText = result
+        } else {
+            let intermediate = jyutpingAutocorrect(
+                text: searchText.lowercased(),
+                unsafeSubstitutions: true
+            )
+            let (_, segmented) =
+            segmentJyutping(
+                text: intermediate,
+                removeSpecialCharacters: true,
+                removeGlobCharacters: false,
+                removeRegexCharacters: false
+            )
+            let result = jyutpingSoundChanges(text: segmented)
+            processedSearchText = result
         }
     }
 }
