@@ -211,6 +211,7 @@ struct SearchingView: View {
         .onChange(of: isSearchActive) {
             if !isSearchActive {
                 options[.autoDetect] = "Auto-detect language"
+                processedSearchText = []
             }
         }
     }
