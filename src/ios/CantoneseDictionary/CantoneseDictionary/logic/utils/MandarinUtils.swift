@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 
 nonisolated let pinyinInitials: [String] = [
     "b", "p", "m", "f", "d", "t",
@@ -60,13 +61,16 @@ nonisolated let zhuyinTones: [String] = ["", "", "ˊ", "ˇ", "ˋ", "˙"]
 
 nonisolated let zhuyinIPrecederRegex: String = "([zcs]h?)i"
 nonisolated let zhuyinRRgegex: String = "([r])i"
-nonisolated let zhuyingNgSpecialCaseRegex: String = "^ng([012345])$"
-nonisolated let zhuyingHmSpecialCaseRegex: String = "^hm([012345])$"
+nonisolated let zhuyinNgSpecialCaseRegex: String = "^ng([012345])$"
+nonisolated let zhuyinHmSpecialCaseRegex: String = "^hm([012345])$"
 nonisolated let zhuyinHngSpecialCaseRegex: String = "^hng([012345])$"
 nonisolated let zhuyinErSpecialCaseRegex: String = "^er([012345])$"
-nonisolated let zhuyinInitialRegex: String = "^([bpmfdtnlgkhjqxzcsr]?h?)"
-nonisolated let zhuyinFinalRegex: String =
+nonisolated(unsafe) let zhuyinInitialRegex: Regex = try! Regex(
+    "^([bpmfdtnlgkhjqxzcsr]?h?)"
+)
+nonisolated(unsafe) let zhuyinFinalRegex: Regex = try! Regex(
     "([aeiouêvyw]?[aeioun]?[aeioung]?[ng]?)(r?)([012345])$"
+)
 
 nonisolated let mandarinIPAGlottal: Set = [
     "a", "o", "e", "ai", "ei", "ao", "ou", "an", "en", "er", "ang", "ong",
@@ -134,23 +138,251 @@ nonisolated func createPrettyPinyin(pinyin: String) -> String {
         return ""
     }
 
-    var result = ""
-    return result
+    var processedSyllables: [String] = []
+    let (_, syllables) = segmentPinyin(text: pinyin)
+    if syllables.isEmpty {
+        return pinyin
+    }
+
+    for s in syllables {
+        var syllable = s
+        if specialCharacters.contains(syllable) {
+            processedSyllables.append(syllable)
+            continue
+        }
+
+        let tones = ["0", "1", "2", "3", "4", "5"]
+        guard
+            var toneIdx = syllable.firstIndex(where: {
+                tones.contains(String($0))
+            })
+        else {
+            processedSyllables.append(syllable)
+            continue
+        }
+        var tone = Int(syllable[toneIdx..<syllable.index(after: toneIdx)]) ?? 0
+        if tone < 1 || tone > 5 {
+            tone = 5
+        }
+
+        syllable = syllable.replacingOccurrences(of: "u:", with: "ü")
+
+        let firstVowels = ["a", "e", "o"]
+        var vowelIdx: Range<String.Index>? = nil
+        for v in firstVowels {
+            vowelIdx = syllable.range(of: v)
+            if vowelIdx != nil {
+                break
+            }
+        }
+        if vowelIdx == nil {
+            let lastVowels = ["i", "u", "ü"]
+            for v in lastVowels {
+                vowelIdx = syllable.range(of: v, options: [.backwards])
+                if vowelIdx != nil {
+                    break
+                }
+            }
+        }
+        guard vowelIdx != nil else {
+            processedSyllables.append(syllable)
+            continue
+        }
+
+        syllable.replaceSubrange(
+            vowelIdx!,
+            with: pinyinToneReplacements[String(syllable[vowelIdx!])]![tone - 1]
+        )
+
+        toneIdx = syllable.firstIndex(where: {
+            tones.contains(String($0))
+        })!
+        syllable.replaceSubrange(
+            toneIdx..<syllable.index(after: toneIdx),
+            with: ""
+        )
+        processedSyllables.append(syllable)
+    }
+
+    return processedSyllables.joined(separator: " ")
 }
 
 nonisolated func createNumberedPinyin(pinyin: String) -> String {
-    return ""
+    return pinyin.replacingOccurrences(of: "u:", with: "ü")
 }
 
 nonisolated func createPinyinWithV(pinyin: String) -> String {
-    return ""
+    return pinyin.replacingOccurrences(of: "u:", with: "v")
 }
 
+// Note that the majority of this code is derivative of Wiktionary's conversion
+// code, contained in the module cmn-pron
+// (https://en.wiktionary.org/wiki/Module:cmn-pron)
 nonisolated func convertPinyinToZhuyin(
     pinyin: String,
     useSpacesToSegment: Bool = false
 ) -> String {
-    return ""
+    if pinyin.isEmpty {
+        return pinyin
+    }
+
+    var syllables: [String] = []
+    var pinyinCopy = ""
+    if useSpacesToSegment {
+        // Insert a space before and after every special character, so that the
+        // IPA conversion doesn't attempt to convert special characters.
+        specialCharacters.forEach { c in
+            pinyinCopy = pinyin.split(separator: c).joined(
+                separator: " " + c + " "
+            )
+        }
+        syllables = pinyinCopy.split(separator: " ").map(String.init)
+    } else {
+        let (_, result) = segmentPinyin(
+            text: pinyin,
+            removeSpecialCharacters: false,
+            removeGlobCharacters: false
+        )
+        syllables = result
+    }
+
+    var zhuyinSyllables: [String] = []
+    for syllable in syllables {
+        if syllable.count == 1 {
+            zhuyinSyllables.append(syllable)
+            continue
+        }
+
+        // Skip syllables that are just punctuation
+        if specialCharacters.contains(syllable) {
+            zhuyinSyllables.append(syllable)
+            continue
+        }
+
+        // Skip syllables that don't have tone
+        let tones = ["0", "1", "2", "3", "4", "5"]
+        guard
+            let toneIdx = syllable.firstIndex(where: {
+                tones.contains(String($0))
+            })
+        else {
+            zhuyinSyllables.append(syllable)
+            continue
+        }
+        let tone = Int(syllable[toneIdx..<syllable.index(after: toneIdx)]) ?? 5
+
+        var zhuyinSyllable = syllable
+        zhuyinSyllable = zhuyinSyllable.replacingOccurrences(
+            of: "u:",
+            with: "v"
+        )
+        zhuyinSyllable = zhuyinSyllable.replacingOccurrences(
+            of: pinyinVPrecederRegex,
+            with: "$1v",
+            options: [.regularExpression]
+        )
+        zhuyinSyllable = zhuyinSyllable.replacingOccurrences(
+            of: zhuyinIPrecederRegex,
+            with: "$1",
+            options: [.regularExpression]
+        )
+        zhuyinSyllable = zhuyinSyllable.replacingOccurrences(
+            of: zhuyinRRgegex,
+            with: "$1",
+            options: [.regularExpression]
+        )
+
+        // Handle special cases
+        zhuyinSyllable = zhuyinSyllable.replacingOccurrences(
+            of: zhuyinNgSpecialCaseRegex,
+            with: "ㄫ$1$1",
+            options: [.regularExpression]
+        )
+        zhuyinSyllable = zhuyinSyllable.replacingOccurrences(
+            of: zhuyinHmSpecialCaseRegex,
+            with: "ㄏㄇ$1",
+            options: [.regularExpression]
+        )
+        zhuyinSyllable = zhuyinSyllable.replacingOccurrences(
+            of: zhuyinHngSpecialCaseRegex,
+            with: "ㄏㄫ$1",
+            options: [.regularExpression]
+        )
+        zhuyinSyllable = zhuyinSyllable.replacingOccurrences(
+            of: zhuyinErSpecialCaseRegex,
+            with: "ㄦ$1",
+            options: [.regularExpression]
+        )
+
+        // Handle general case
+        // Convert Pinyin initial
+        guard
+            let initialMatch = zhuyinSyllable.firstMatch(of: zhuyinInitialRegex)
+        else {
+            logger.error(
+                "Invalid pinyin initial found in zhuyin conversion: \(pinyin)"
+            )
+            return pinyin
+        }
+        if let initial = initialMatch[1].substring, String(initial).count > 0 {
+            zhuyinSyllable.replaceSubrange(
+                initialMatch.range,
+                with: zhuyinInitials[String(initial)]!
+            )
+        }
+
+        // Convert Pinyin final
+        guard let finalMatch = zhuyinSyllable.firstMatch(of: zhuyinFinalRegex)
+        else {
+            logger.error(
+                "Invalid pinyin final found in zhuyin conversion: \(pinyin)"
+            )
+            zhuyinSyllables.append(syllable)
+            return pinyin
+        }
+        var final: String? = nil
+        if let finalComponent = finalMatch[1].substring,
+            String(finalComponent).count > 0
+        {
+            final = zhuyinFinals[String(finalComponent)]
+            guard final != nil else {
+                logger.error(
+                    "Pinyin final had no valid zhuyin conversion: \(finalComponent)"
+                )
+                zhuyinSyllables.append(syllable)
+                continue
+            }
+        }
+        var er: String = ""
+        if let hasErSuffix = finalMatch[2].substring,
+            String(hasErSuffix).count > 0
+        {
+            er = "ㄦ"
+        }
+        zhuyinSyllable.replaceSubrange(
+            finalMatch.range,
+            with: (final ?? "") + er
+        )
+
+        // Add tone to Zhuyin syllable
+        if tone == 5 {
+            zhuyinSyllable = zhuyinTones[tone] + zhuyinSyllable
+        } else {
+            if let erIdx = zhuyinSyllable.range(of: "ㄦ"), zhuyinSyllable != "ㄦ"
+            {
+                zhuyinSyllable.insert(
+                    contentsOf: zhuyinTones[tone],
+                    at: erIdx.lowerBound
+                )
+            } else {
+                zhuyinSyllable = zhuyinSyllable + zhuyinTones[tone]
+            }
+        }
+
+        zhuyinSyllables.append(zhuyinSyllable)
+    }
+
+    return zhuyinSyllables.joined(separator: " ")
 }
 
 nonisolated func convertPinyinToIPA(
@@ -338,7 +570,7 @@ nonisolated func segmentPinyin(
 
 nonisolated func pinyinSoundChanges(text: [String]) -> [String] {
     var syllables: [String] = []
-    
+
     for s in text {
         var syllable = s
         if syllable.hasPrefix("zh"), let range = syllable.range(of: "zh") {
@@ -389,9 +621,10 @@ nonisolated func pinyinSoundChanges(text: [String]) -> [String] {
         {
             syllable.replaceSubrange(range, with: "ng!")
         } else if syllable.hasSuffix("en")
-                    || syllable[..<syllable.index(before: syllable.endIndex)].hasSuffix(
-                        "en"
-                    ), let range = syllable.range(of: "n", options: [.backwards]) {
+            || syllable[..<syllable.index(before: syllable.endIndex)].hasSuffix(
+                "en"
+            ), let range = syllable.range(of: "n", options: [.backwards])
+        {
             syllable.replaceSubrange(range, with: "ng!")
         }
         if syllable.hasSuffix("ing")
@@ -401,12 +634,13 @@ nonisolated func pinyinSoundChanges(text: [String]) -> [String] {
         {
             syllable.replaceSubrange(range, with: "ng!")
         } else if syllable.hasSuffix("in")
-                    || syllable[..<syllable.index(before: syllable.endIndex)].hasSuffix(
-                        "in"
-                    ), let range = syllable.range(of: "n", options: [.backwards]) {
+            || syllable[..<syllable.index(before: syllable.endIndex)].hasSuffix(
+                "in"
+            ), let range = syllable.range(of: "n", options: [.backwards])
+        {
             syllable.replaceSubrange(range, with: "ng!")
         }
-        
+
         syllables.append(syllable)
     }
 
