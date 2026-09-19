@@ -8,8 +8,6 @@
 import Foundation
 import os
 
-nonisolated let logger = Logger()
-
 nonisolated let jyutpingInitials: Set = [
     "b", "p", "m", "f", "d",
     "t", "n", "l", "g", "k",

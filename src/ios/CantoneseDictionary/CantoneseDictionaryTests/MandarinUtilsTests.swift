@@ -10,6 +10,140 @@ import Testing
 @testable import CantoneseDictionary
 
 struct MandarinUtilsTests {
+    @Test func prettyPinyinSimple() async throws {
+        #expect(
+            createPrettyPinyin(pinyin: "shuai4 ge1") == "shuài gē"
+        )
+    }
+    
+    @Test func prettyPinyinRejectNoTone() async throws {
+        #expect(
+            createPrettyPinyin(pinyin: "ba") == "ba"
+        )
+        
+        #expect(
+            createPrettyPinyin(pinyin: "nu") == "nu"
+        )
+    }
+    
+    @Test func prettyPinyinRejectSingleLetter() async throws {
+        #expect(
+            createPrettyPinyin(pinyin: "a") == "a"
+        )
+    }
+    
+    @Test func prettyPinyinRejectSpecialCharacter() async throws {
+        #expect(
+            createPrettyPinyin(pinyin: "-") == "-"
+        )
+    }
+    
+    @Test func prettyPinyinSecondaryVowel() async throws {
+        #expect(
+            createPrettyPinyin(pinyin: "hui4 tu2") == "huì tú"
+        )
+    }
+    
+    @Test func prettyPinyinUmlaut() async throws {
+        #expect(
+            createPrettyPinyin(pinyin: "nu:3 hai2") == "nǚ hái"
+        )
+    }
+    
+    @Test func prettyPinyinTones() async throws {
+        #expect(
+            createPrettyPinyin(pinyin: "ma1 ma2 ma3 ma4 ma5") == "mā má mǎ mà ma"
+        )
+    }
+    
+    @Test func numberedPinyinSimple() async throws {
+        #expect(
+            createNumberedPinyin(pinyin: "nu:3 hai2") == "nü3 hai2"
+        )
+    }
+    
+    @Test func pinyinWithVSimple() async throws {
+        #expect(
+            createPinyinWithV(pinyin: "nu:3 hai2") == "nv3 hai2"
+        )
+    }
+    
+    @Test func pinyinToZhuyinSimple() async throws {
+        #expect(
+            convertPinyinToZhuyin(pinyin: "ba1 da2 tong1") == "ㄅㄚ ㄉㄚˊ ㄊㄨㄥ"
+        )
+    }
+    
+    @Test func pinyinToZhuyinRejectNoTone() async throws {
+        #expect(
+            convertPinyinToZhuyin(pinyin: "ba") == "ba"
+        )
+    }
+    
+    @Test func pinyinToZhuyinRejectSingleLetter() async throws {
+        #expect(
+            convertPinyinToZhuyin(pinyin: "a") == "a"
+        )
+    }
+    
+    @Test func pinyinToZhuyinRejectSpecialCharacter() async throws {
+        #expect(
+            convertPinyinToZhuyin(pinyin: "-") == "-"
+        )
+    }
+    
+    @Test func pinyinToZhuyinNoSpaces() async throws {
+        #expect(
+            convertPinyinToZhuyin(pinyin: "ba1da2tong1") == "ㄅㄚ ㄉㄚˊ ㄊㄨㄥ"
+        )
+    }
+    
+    @Test func pinyinToZhuyinSpacesToSegment() async throws {
+        #expect(
+            convertPinyinToZhuyin(pinyin: "ba1 da2 tong1", useSpacesToSegment: true) == "ㄅㄚ ㄉㄚˊ ㄊㄨㄥ"
+        )
+    }
+    
+    @Test func pinyinToZhuyinSpecialInitial() async throws {
+        #expect(
+            convertPinyinToZhuyin(pinyin: "qu4") == "ㄑㄩˋ"
+        )
+        
+        #expect(
+            convertPinyinToZhuyin(pinyin: "chi1") == "ㄔ"
+        )
+        
+        #expect(
+            convertPinyinToZhuyin(pinyin: "ri4") == "ㄖˋ"
+        )
+    }
+    
+    @Test func pinyinToZhuyinSpecialFinals() async throws {
+        #expect(
+            convertPinyinToZhuyin(pinyin: "hm5") == "˙ㄏㄇ"
+        )
+        
+        #expect(
+            convertPinyinToZhuyin(pinyin: "hng5") == "˙ㄏㄫ"
+        )
+        
+        #expect(
+            convertPinyinToZhuyin(pinyin: "er2") == "ㄦˊ"
+        )
+    }
+    
+    @Test func pinyinToZhuyinErhua() async throws {
+        #expect(
+            convertPinyinToZhuyin(pinyin: "quanr1") == "ㄑㄩㄢㄦ"
+        )
+    }
+    
+    @Test func pinyinToZhuyinMalformed() async throws {
+        #expect(
+            convertPinyinToZhuyin(pinyin: "chzng2 quanr1") == "chzng2 ㄑㄩㄢㄦ"
+        )
+    }
+    
     @Test func segmentPinyinSimple() async throws {
         #expect(
             segmentPinyin(text: "guang3 dong1") == (true, ["guang3", "dong1"])

@@ -98,6 +98,9 @@ void TestMandarinUtils::prettyPinyinRejectNoTone()
 {
     std::string result = MandarinUtils::createPrettyPinyin("ba");
     QCOMPARE(result, "ba");
+
+    std::string result = MandarinUtils::createPrettyPinyin("nu");
+    QCOMPARE(result, "nu");
 }
 
 void TestMandarinUtils::prettyPinyinRejectSingleLetter()
@@ -129,11 +132,6 @@ void TestMandarinUtils::prettyPinyinTones()
     std::string result = MandarinUtils::createPrettyPinyin(
         "ma1 ma2 ma3 ma4 ma5");
     QCOMPARE(result, "mā má mǎ mà ma");
-}
-void TestMandarinUtils::prettyPinyinNoTone()
-{
-    std::string result = MandarinUtils::createPrettyPinyin("nu");
-    QCOMPARE(result, "nu");
 }
 
 void TestMandarinUtils::numberedPinyinSimple()
