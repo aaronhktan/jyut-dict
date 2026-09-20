@@ -131,59 +131,60 @@ struct SearchingView: View {
                         destination: EntryView.init
                     )
                     .listStyle(.automatic)
-
-                    Picker("Search Options", selection: $selectedOption) {
-                        ForEach(
-                            options.sorted(by: {
-                                $0.key.rawValue < $1.key.rawValue
-                            }),
-                            id: \.key
-                        ) { option, label in
-                            Text(label).tag(option)
+                    .safeAreaInset(edge: .bottom) {
+                        Picker("Search Options", selection: $selectedOption) {
+                            ForEach(
+                                options.sorted(by: {
+                                    $0.key.rawValue < $1.key.rawValue
+                                }),
+                                id: \.key
+                            ) { option, label in
+                                Text(label).tag(option)
+                            }
                         }
-                    }
-                    .opacity(isPickerTextVisible ? 1 : 0)
-                    .glassEffect()
-                    .onChange(of: selectedOption) {
-                        triggerSearch()
-                    }
-                    .onChange(of: searchText) {
-                        guard selectedOption == .autoDetect else { return }
-                        animationToken += 1
-                        let currentToken = animationToken
-                        isPickerTextVisible = false
-                        withAnimation(.snappy(duration: 0.1)) {
-                            if searchText.isEmpty {
-                                options[.autoDetect] = "Auto-detect language"
-                                return
-                            }
-                            switch searchText.count % 7 {
-                            case 0:
-                                options[.autoDetect] = "Detected input: English"
-                            case 1:
-                                options[.autoDetect] =
+                        .opacity(isPickerTextVisible ? 1 : 0)
+                        .glassEffect()
+                        .onChange(of: selectedOption) {
+                            triggerSearch()
+                        }
+                        .onChange(of: searchText) {
+                            guard selectedOption == .autoDetect else { return }
+                            animationToken += 1
+                            let currentToken = animationToken
+                            isPickerTextVisible = false
+                            withAnimation(.snappy(duration: 0.1)) {
+                                if searchText.isEmpty {
+                                    options[.autoDetect] = "Auto-detect language"
+                                    return
+                                }
+                                switch searchText.count % 7 {
+                                case 0:
+                                    options[.autoDetect] = "Detected input: English"
+                                case 1:
+                                    options[.autoDetect] =
                                     "Detected input: Simplified Chinese"
-                            case 2:
-                                options[.autoDetect] =
+                                case 2:
+                                    options[.autoDetect] =
                                     "Detected input: Traditional Chinese"
-                            case 3:
-                                options[.autoDetect] =
+                                case 3:
+                                    options[.autoDetect] =
                                     "Detected input: Fuzzy Jyutping"
-                            case 4:
-                                options[.autoDetect] =
+                                case 4:
+                                    options[.autoDetect] =
                                     "Detected input: Jyutping"
-                            case 5:
-                                options[.autoDetect] =
+                                case 5:
+                                    options[.autoDetect] =
                                     "Detected input: Fuzzy Pinyin"
-                            case 6:
-                                options[.autoDetect] = "Detected input: Pinyin"
-                            default:
-                                options[.autoDetect] = "???"
-                            }
-                        } completion: {
-                            guard animationToken == currentToken else { return }
-                            withAnimation(.easeIn(duration: 0.05)) {
-                                isPickerTextVisible = true
+                                case 6:
+                                    options[.autoDetect] = "Detected input: Pinyin"
+                                default:
+                                    options[.autoDetect] = "???"
+                                }
+                            } completion: {
+                                guard animationToken == currentToken else { return }
+                                withAnimation(.easeIn(duration: 0.05)) {
+                                    isPickerTextVisible = true
+                                }
                             }
                         }
                     }
@@ -215,15 +216,15 @@ struct SearchingView: View {
             }
         }
     }
-    
+
     private func triggerSearch() {
         if selectedOption == .pinyin {
             let (_, segmented) =
-            segmentPinyin(
-                text: searchText.lowercased(),
-                removeSpecialCharacters: true,
-                removeGlobCharacters: false
-            )
+                segmentPinyin(
+                    text: searchText.lowercased(),
+                    removeSpecialCharacters: true,
+                    removeGlobCharacters: false
+                )
             let result = pinyinSoundChanges(text: segmented)
             processedSearchText = result
         } else {
@@ -232,12 +233,12 @@ struct SearchingView: View {
                 unsafeSubstitutions: true
             )
             let (_, segmented) =
-            segmentJyutping(
-                text: intermediate,
-                removeSpecialCharacters: true,
-                removeGlobCharacters: false,
-                removeRegexCharacters: false
-            )
+                segmentJyutping(
+                    text: intermediate,
+                    removeSpecialCharacters: true,
+                    removeGlobCharacters: false,
+                    removeRegexCharacters: false
+                )
             let result = jyutpingSoundChanges(text: segmented)
             processedSearchText = result
         }
