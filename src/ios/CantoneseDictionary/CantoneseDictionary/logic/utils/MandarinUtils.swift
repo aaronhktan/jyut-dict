@@ -130,8 +130,9 @@ nonisolated let mandarinIPAThirdTone: [String] = [
     "˨˩˦꜕꜖꜖", "˨˩˦꜕꜖꜖", "˨˩˦꜔꜒", "˨˩˦꜕꜖꜖", "˨˩˦",
 ]
 nonisolated let mandarinIPATones: [String] = ["˥˥", "˧˥", "˨˩˦", "˥˩", ""]
-nonisolated let mandarinIPASyllableRegex: String =
+nonisolated(unsafe) let mandarinIPASyllableRegex: Regex = try! Regex(
     "^([bcdfghjklmnpqrstxz]?h?)(.+)$"
+)
 
 nonisolated func createPrettyPinyin(pinyin: String) -> String {
     if pinyin.isEmpty {
@@ -385,11 +386,190 @@ nonisolated func convertPinyinToZhuyin(
     return zhuyinSyllables.joined(separator: " ")
 }
 
+private nonisolated func convertIPAMandarinSyllable(
+    syllable: String
+) -> (String, String) {
+    var ipaInitial: String = ""
+    var ipaFinal: String = ""
+
+    if syllable == "ng" {
+        ipaFinal = mandarinIPAFinals["ng"]!
+    } else {
+        guard let match = syllable.firstMatch(of: mandarinIPASyllableRegex)
+        else {
+            logger.error("Invalid pinyin for IPA conversion: \(syllable)")
+            return ("", syllable)
+        }
+
+        ipaInitial = mandarinIPAInitials[String(match[1].substring!)] ?? ""
+        ipaFinal = mandarinIPAFinals[String(match[2].substring!)] ?? ""
+
+        if ipaInitial == "" && ipaFinal == "" {
+            logger.error("Could not find initial or final in: \(syllable)")
+            return ("", syllable)
+        }
+    }
+
+    // Replace close front unrounded vowel with syllabic retroflex sibilant
+    // fricative (+ voiced retroflex approximant if erhua)
+    // in Pinyin starting with ch, sh, zh, or r
+    if ipaInitial == "ʈ͡ʂʰ" || ipaInitial == "ʂ" || ipaInitial == "ʈ͡ʂ"
+        || ipaInitial == "ʐ"
+    {
+        if ipaFinal == "ir" {
+            ipaFinal = "ʐ̩ɻ"
+        } else if ipaFinal == "i" {
+            ipaFinal = "ʐ̩"
+        }
+    }
+
+    // Replace close front unrounded vowel with syllabic alveolar sibilant
+    // fricative (+ voiced retroflex approximant if erhua)
+    // in Pinyin starting with c, s, or z
+    if ipaInitial == "t͡sʰ" || ipaInitial == "s" || ipaInitial == "t͡s" {
+        if ipaFinal == "ir" {
+            ipaFinal = "z̩ɻ"
+        } else if ipaFinal == "i" {
+            ipaFinal = "z̩"
+        }
+    }
+
+    // Do some cleanup for Pinyin like "ri"
+    if ipaInitial == "ʐ" && ipaFinal == "ʐ̩" {
+        ipaInitial = ""
+    }
+
+    return (ipaInitial, ipaFinal)
+}
+
 nonisolated func convertPinyinToIPA(
     pinyin: String,
     useSpacesToSegment: Bool = false
 ) -> String {
-    return ""
+    if pinyin.isEmpty {
+        return pinyin
+    }
+
+    var syllables: [String] = []
+    var pinyinCopy = ""
+    if useSpacesToSegment {
+        // Insert a space before and after every special character, so that the
+        // IPA conversion doesn't attempt to convert special characters.
+        specialCharacters.forEach { c in
+            pinyinCopy = pinyin.split(separator: c).joined(
+                separator: " " + c + " "
+            )
+        }
+        syllables = pinyinCopy.split(separator: " ").map(String.init)
+    } else {
+        let (_, result) = segmentPinyin(
+            text: pinyin,
+            removeSpecialCharacters: false,
+            removeGlobCharacters: false
+        )
+        syllables = result
+    }
+
+    // Pre-compute list of tones corresponding to each syllable
+    // This is used for tone sandhi reasons (3->3 sandhi, x->5 sandhi, etc.)
+    var syllableTones: [(Int, String.Index?)] = []
+    let tones = ["0", "1", "2", "3", "4", "5"]
+    for syllable in syllables {
+        let toneIdx = syllable.firstIndex(where: {
+            tones.contains(String($0))
+        })
+        if toneIdx == nil {
+            syllableTones.append((-1, nil))
+            continue
+        } else {
+            let tone =
+                Int(syllable[toneIdx!..<syllable.index(after: toneIdx!)]) ?? 5
+            syllableTones.append((tone, toneIdx))
+        }
+    }
+
+    var ipaSyllables: [String] = []
+    for (i, syllable) in syllables.enumerated() {
+        var ipaGlottal: String = ""
+        var ipaInitial: String = ""
+        var ipaFinal: String = ""
+        var ipaTone: String = ""
+
+        if syllable.count == 1 {
+            ipaSyllables.append(syllable)
+            continue
+        }
+
+        // Skip syllables that are just punctuation
+        if specialCharacters.contains(syllable) {
+            ipaSyllables.append(syllable)
+            continue
+        }
+
+        // Get syllable without tone
+        let (tone, toneIdx) = syllableTones[i]
+        guard toneIdx != nil else {
+            ipaSyllables.append(syllable)
+            continue
+        }
+        var tonelessSyllable = String(syllable[..<toneIdx!])
+
+        // Figure out whether this syllable needs a glottal stop
+        if mandarinIPAGlottal.contains(tonelessSyllable) {
+            ipaGlottal = "ˀ"
+        }
+
+        // Mark close front rounded vowel with v instead of "u" or "u:"
+        tonelessSyllable = tonelessSyllable.replacingOccurrences(
+            of: "u:",
+            with: "v"
+        )
+        tonelessSyllable = tonelessSyllable.replacingOccurrences(
+            of: pinyinVPrecederRegex,
+            with: "$1v",
+            options: [.regularExpression]
+        )
+
+        // Convert initial and final
+        (ipaInitial, ipaFinal) = convertIPAMandarinSyllable(syllable: tonelessSyllable)
+
+        // Convert tones
+        let nextTone = (i == syllables.count - 1) ? -1 : syllableTones[i + 1].0
+        var previousTone = (i == 0) ? -1 : syllableTones[i - 1].0
+
+        switch tone {
+        case 5:
+            // When neutral tone, replace some initials with voiceless versions
+            ipaInitial = mandarinIPAVoicelessInitials[ipaInitial] ?? ipaInitial
+            ipaFinal = (ipaFinal == "ɤ") ? "ə" : ipaFinal
+            ipaTone =
+                (previousTone == -1)
+                ? "" : mandarinIPANeutralTone[previousTone - 1]
+        case 3:
+            if i == syllables.count - 1 {
+                ipaTone = (i == 0) ? "˨˩˦" : "˨˩˦꜕꜖(꜓)"
+            } else {
+                // If next syllable doesn't have tone, default to no tone sandhi
+                // (which is also what happens when the following tone is tone #5
+                ipaTone =
+                    nextTone == -1
+                    ? mandarinIPAThirdTone[4]
+                    : mandarinIPAThirdTone[nextTone - 1]
+            }
+        case 4:
+            if nextTone == 4 {
+                ipaTone = "˥˩꜒꜔"
+            } else {
+                ipaTone = mandarinIPATones[tone - 1]
+            }
+        default:
+            ipaTone = mandarinIPATones[tone - 1]
+        }
+
+        ipaSyllables.append(ipaGlottal + ipaInitial + ipaFinal + ipaTone)
+    }
+
+    return ipaSyllables.joined(separator: " ")
 }
 
 nonisolated func segmentPinyin(

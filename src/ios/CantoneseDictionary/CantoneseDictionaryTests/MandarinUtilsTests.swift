@@ -144,6 +144,118 @@ struct MandarinUtilsTests {
         )
     }
     
+    @Test func pinyinToIPASimple() async throws {
+        #expect(
+            convertPinyinToIPA(pinyin: "ba1 da2 tong1") == "pä˥˥ tä˧˥ tʰʊŋ˥˥"
+        )
+    }
+    
+    @Test func pinyinToIPARejectNoTone() async throws {
+        #expect(
+            convertPinyinToIPA(pinyin: "ba") == "ba"
+        )
+    }
+    
+    @Test func pinyinToIPARejectSingleLetter() async throws {
+        #expect(
+            convertPinyinToIPA(pinyin: "a") == "a"
+        )
+    }
+    
+    @Test func pinyinToIPARejectSpecialCharacter() async throws {
+        #expect(
+            convertPinyinToIPA(pinyin: "-") == "-"
+        )
+    }
+    
+    @Test func pinyinToIPANoSpaces() async throws {
+        #expect(
+            convertPinyinToIPA(pinyin: "ba1da2tong1") == "pä˥˥ tä˧˥ tʰʊŋ˥˥"
+        )
+    }
+    
+    @Test func pinyinToIPASpacesToSegment() async throws {
+        #expect(
+            convertPinyinToIPA(pinyin: "ba1 da2 tong1", useSpacesToSegment: true) == "pä˥˥ tä˧˥ tʰʊŋ˥˥"
+        )
+    }
+    
+    @Test func pinyinToIPASpecialCaseNg() async throws {
+        #expect(
+            convertPinyinToIPA(pinyin: "ng5") == "ŋ̍"
+        )
+    }
+    
+    @Test func pinyinToIPASpecialCaseRi() async throws {
+        #expect(
+            convertPinyinToIPA(pinyin: "ri4") == "ʐ̩˥˩"
+        )
+    }
+    
+    @Test func pinyinToIPASyllableWithV() async throws {
+        #expect(
+            convertPinyinToIPA(pinyin: "nv3") == "ny˨˩˦"
+        )
+        
+        #expect(
+            convertPinyinToIPA(pinyin: "qu4") == "t͡ɕʰy˥˩"
+        )
+    }
+    
+    @Test func pinyinToIPAVoicelessInitial() async throws {
+        #expect(
+            convertPinyinToIPA(pinyin: "ge5") == "g̊ə"
+        )
+        
+        #expect(
+            convertPinyinToIPA(pinyin: "yi1 ge5") == "i˥˥ g̊ə˨"
+        )
+    }
+    
+    @Test func pinyinToIPAToneThree() async throws {
+        #expect(
+            convertPinyinToIPA(pinyin: "ke3") == "kʰɤ˨˩˦"
+        )
+        
+        #expect(
+            convertPinyinToIPA(pinyin: "ke3 yi3") == "kʰɤ˨˩˦꜔꜒ i˨˩˦꜕꜖(꜓)"
+        )
+    }
+    
+    @Test func pinyinToIPAToneFour() async throws {
+        #expect(
+            convertPinyinToIPA(pinyin: "xia4 qu4") == "ɕjä˥˩꜒꜔ t͡ɕʰy˥˩"
+        )
+        
+        #expect(
+            convertPinyinToIPA(pinyin: "xia4") == "ɕjä˥˩"
+        )
+    }
+    
+    @Test func pinyinToIPAOtherTone() async throws {
+        #expect(
+            convertPinyinToIPA(pinyin: "ma1") == "mä˥˥"
+        )
+        
+        #expect(
+            convertPinyinToIPA(pinyin: "ma2") == "mä˧˥"
+        )
+        
+        #expect(
+            convertPinyinToIPA(pinyin: "ma5") == "mä"
+        )
+    }
+    
+    @Test func pinyinToIPAErhua() async throws {
+        #expect(
+            convertPinyinToIPA(pinyin: "huar1") == "xu̯ɑɻ˥˥"
+        )
+        
+        #expect(
+            convertPinyinToIPA(pinyin: "quanr1") == "t͡ɕʰɥɑɻ˥˥"
+        )
+    }
+    
     @Test func segmentPinyinSimple() async throws {
         #expect(
             segmentPinyin(text: "guang3 dong1") == (true, ["guang3", "dong1"])
