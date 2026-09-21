@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct CantoneseDictionaryApp: App {
+    @State var databaseManager = DatabaseManager()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(databaseManager)
         }
     }
 }
