@@ -535,7 +535,7 @@ nonisolated func convertPinyinToIPA(
 
         // Convert tones
         let nextTone = (i == syllables.count - 1) ? -1 : syllableTones[i + 1].0
-        var previousTone = (i == 0) ? -1 : syllableTones[i - 1].0
+        let previousTone = (i == 0) ? -1 : syllableTones[i - 1].0
 
         switch tone {
         case 5:

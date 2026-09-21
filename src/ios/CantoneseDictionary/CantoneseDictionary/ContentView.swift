@@ -14,6 +14,7 @@ struct ContentView: View {
         var id: String { rawValue }
     }
 
+    @Environment(DatabaseManager.self) private var databaseManager
     @State var presentedSheet: Sheet?
     @State private var searchText: String = ""
     @State private var searchIsActive = false
