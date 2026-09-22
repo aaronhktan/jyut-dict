@@ -23,3 +23,7 @@ nonisolated let defaultPinyinToneColours: [String] = [
     "#9e77ff",
     "grey",
 ]
+
+actor Settings {
+    
+}
