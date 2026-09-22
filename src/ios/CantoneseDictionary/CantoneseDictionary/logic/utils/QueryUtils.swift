@@ -81,6 +81,66 @@ nonisolated func prepareJyutpingBindValues(
     return result
 }
 
+nonisolated func preparePinyinBindValues(
+    pinyin: String,
+    useFuzzyPinyin: Bool
+) -> String {
+    let searchExactMatch =
+        pinyin.count >= 3 && pinyin.hasPrefix("\"")
+        && pinyin.hasSuffix("\"")
+    let appendWildcard = !pinyin.hasSuffix("$")
+
+    var pinyinSyllables: [String] = []
+    if searchExactMatch {
+        pinyinSyllables = String(
+            pinyin[
+                pinyin.index(
+                    after: pinyin.startIndex
+                )..<pinyin.index(before: pinyin.endIndex)
+            ]
+        ).components(separatedBy: " ")
+    } else {
+        (_, pinyinSyllables) = segmentPinyin(
+            text: pinyin,
+            removeSpecialCharacters: true,
+            removeGlobCharacters: false
+        )
+    }
+
+    if !searchExactMatch && useFuzzyPinyin {
+        pinyinSyllables = pinyinSoundChanges(text: pinyinSyllables)
+    }
+
+    var result: String
+    if searchExactMatch {
+        result = pinyinSyllables.joined(separator: " ")
+    } else {
+        result = constructRomanisationQuery(
+            syllables: pinyinSyllables,
+            delimiter: "?"
+        )
+    }
+
+    if useFuzzyPinyin {
+        result = result.replacingOccurrences(of: "*", with: ".*")
+            .replacingOccurrences(of: "?", with: ".").replacingOccurrences(
+                of: "!",
+                with: "?"
+            )
+        if searchExactMatch || !appendWildcard {
+            result += "$"
+        } else {
+            result += ".*"
+        }
+    } else {
+        if appendWildcard && !searchExactMatch {
+            result += "*"
+        }
+    }
+
+    return result
+}
+
 nonisolated func parseReturnedRecords(rows: [Row]) -> [Entry] {
     var result: [Entry] = []
 

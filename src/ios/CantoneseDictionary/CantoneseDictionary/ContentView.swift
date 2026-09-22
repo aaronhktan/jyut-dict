@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  Test
+//  CantoneseDictionary
 //
 //  Created by Aaron on 2026-09-01.
 //
@@ -103,7 +103,7 @@ struct ContentView: View {
 
 struct SearchingView: View {
     @Environment(DatabaseManager.self) private var databaseManager
-    
+
     @Binding var searchText: String
     @Binding var isSearchActive: Bool
     @Binding var processedSearchText: [String]
@@ -121,7 +121,7 @@ struct SearchingView: View {
     @State private var selectedOption: SearchParameters = .autoDetect
     @State private var isPickerTextVisible = true
     @State private var animationToken: Int = 0
-    
+
     struct SearchQuery: Equatable {
         let text: String
         let option: SearchParameters
@@ -153,12 +153,17 @@ struct SearchingView: View {
                         }
                         .opacity(isPickerTextVisible ? 1 : 0)
                         .glassEffect()
-                        .task(id: SearchQuery(text: searchText, option: selectedOption)) {
+                        .task(
+                            id: SearchQuery(
+                                text: searchText,
+                                option: selectedOption
+                            )
+                        ) {
                             guard !searchText.isEmpty else {
                                 processedSearchText = []
                                 return
                             }
-                            
+
                             await triggerSearch()
                         }
                         .onChange(of: searchText) {
@@ -168,34 +173,39 @@ struct SearchingView: View {
                             isPickerTextVisible = false
                             withAnimation(.snappy(duration: 0.1)) {
                                 if searchText.isEmpty {
-                                    options[.autoDetect] = "Auto-detect language"
+                                    options[.autoDetect] =
+                                        "Auto-detect language"
                                     return
                                 }
                                 switch searchText.count % 7 {
                                 case 0:
-                                    options[.autoDetect] = "Detected input: English"
+                                    options[.autoDetect] =
+                                        "Detected input: English"
                                 case 1:
                                     options[.autoDetect] =
-                                    "Detected input: Simplified Chinese"
+                                        "Detected input: Simplified Chinese"
                                 case 2:
                                     options[.autoDetect] =
-                                    "Detected input: Traditional Chinese"
+                                        "Detected input: Traditional Chinese"
                                 case 3:
                                     options[.autoDetect] =
-                                    "Detected input: Fuzzy Jyutping"
+                                        "Detected input: Fuzzy Jyutping"
                                 case 4:
                                     options[.autoDetect] =
-                                    "Detected input: Jyutping"
+                                        "Detected input: Jyutping"
                                 case 5:
                                     options[.autoDetect] =
-                                    "Detected input: Fuzzy Pinyin"
+                                        "Detected input: Fuzzy Pinyin"
                                 case 6:
-                                    options[.autoDetect] = "Detected input: Pinyin"
+                                    options[.autoDetect] =
+                                        "Detected input: Pinyin"
                                 default:
                                     options[.autoDetect] = "???"
                                 }
                             } completion: {
-                                guard animationToken == currentToken else { return }
+                                guard animationToken == currentToken else {
+                                    return
+                                }
                                 withAnimation(.easeIn(duration: 0.05)) {
                                     isPickerTextVisible = true
                                 }
@@ -203,12 +213,13 @@ struct SearchingView: View {
                         }
                     }
                 }
-                .task(id: SearchQuery(text: searchText, option: selectedOption)) {
+                .task(id: SearchQuery(text: searchText, option: selectedOption))
+                {
                     guard !searchText.isEmpty else {
                         processedSearchText = []
                         return
                     }
-                    
+
                     await triggerSearch()
                 }
             } else {
@@ -237,23 +248,25 @@ struct SearchingView: View {
     }
 
     private func triggerSearch() async {
-        if selectedOption == .pinyin {
-            let (_, segmented) =
-                segmentPinyin(
-                    text: searchText.lowercased(),
-                    removeSpecialCharacters: true,
-                    removeGlobCharacters: false
-                )
-            let result = pinyinSoundChanges(text: segmented)
-            processedSearchText = result
-        } else {
-            guard let pool = databaseManager.dbPool else { return }
-            let searcher = SQLSearch(pool: pool)
-            let results = await searcher.searchJyutping(searchTerm: searchText.lowercased())
-            processedSearchText = []
-            for result in results {
-                processedSearchText.append(result.simplified)
-            }
+        guard let pool = databaseManager.dbPool else { return }
+        let searcher = SQLSearch(pool: pool)
+        var results: [Entry] = []
+        switch selectedOption {
+        case .pinyin:
+            results = await searcher.searchPinyin(
+                searchTerm: searchText.lowercased()
+            )
+        case .jyutping:
+            fallthrough
+        default:
+            results = await searcher.searchJyutping(
+                searchTerm: searchText.lowercased()
+            )
+        }
+
+        processedSearchText = []
+        for result in results {
+            processedSearchText.append(result.simplified)
         }
     }
 }
