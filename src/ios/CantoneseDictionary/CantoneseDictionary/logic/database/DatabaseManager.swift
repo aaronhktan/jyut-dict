@@ -9,11 +9,15 @@ import Foundation
 import SwiftUI
 import os
 
+import GRDB
+
 @Observable
 class DatabaseManager {
     private let fileManager = FileManager.default
     private let bundleURL = Bundle.main.url(forResource: "dict", withExtension: "db")
     private let localURL = URL.applicationSupportDirectory.appending(components: "dictionaries", "dict.db")
+    
+    private var pool: DatabasePool? = nil
     
     public init() {
         if fileManager.fileExists(atPath: localURL.absoluteString) {
@@ -34,9 +38,20 @@ class DatabaseManager {
         }
         
         logger.info("Successfully copied dictionary database to \(self.localURL.absoluteString)!")
+        
+        do {
+            pool = try DatabasePool(path: localURL.absoluteString)
+        } catch {
+            logger.error("Could not open database pool for db \(self.localURL.absoluteString)!")
+            return
+        }
     }
     
     var dbURL: URL {
         return localURL
+    }
+    
+    var dbPool: DatabasePool? {
+        return pool
     }
 }
