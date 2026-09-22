@@ -139,6 +139,7 @@ struct SearchingView: View {
                         destination: EntryView.init
                     )
                     .listStyle(.automatic)
+                    .scrollDismissesKeyboard(.immediately)
                     .safeAreaInset(edge: .bottom) {
                         Picker("Search Options", selection: $selectedOption) {
                             ForEach(
