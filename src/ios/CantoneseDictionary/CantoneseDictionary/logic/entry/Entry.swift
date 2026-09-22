@@ -43,51 +43,54 @@ enum MandarinOptions: UInt8, CaseIterable {
     case mandarinIPA = 0x10
 }
 
-class Entry: Sendable {
-    private var simplified: String
-    private var simplifiedDifference: String?
-    private var preferSimplified: String?
-    private var traditional: String
-    private var traditionalDifference: String?
-    private var preferTraditional: String?
+nonisolated class Entry : @unchecked Sendable {
+    private var _simplified: String
+    private var _simplifiedDifference: String?
+    private var _preferSimplified: String?
+    private var _traditional: String
+    private var _traditionalDifference: String?
+    private var _preferTraditional: String?
 
-    private var colouredSimplified: String?
-    private var colouredSimplifiedDifference: String?
-    private var colouredPreferSimplified: String?
-    private var colouredTraditional: String?
-    private var colouredTraditionalDifference: String?
-    private var colouredPreferTraditional: String?
+    private var _colouredSimplified: String?
+    private var _colouredSimplifiedDifference: String?
+    private var _colouredPreferSimplified: String?
+    private var _colouredTraditional: String?
+    private var _colouredTraditionalDifference: String?
+    private var _colouredPreferTraditional: String?
 
-    private var jyutping: String
-    private var yale: String?
-    private var cantoneseIPA: String?
-    private var jyutpingNumbers: [UInt8]?
+    private var _jyutping: String
+    private var _yale: String?
+    private var _cantoneseIPA: String?
+    private var _jyutpingNumbers: [UInt8]?
 
-    private var pinyin: String
-    private var prettyPinyin: String?
-    private var numberedPinyin: String?
-    private var zhuyin: String?
-    private var mandarinIPA: String?
-    private var pinyinNumbers: [UInt8]?
+    private var _pinyin: String
+    private var _prettyPinyin: String?
+    private var _numberedPinyin: String?
+    private var _zhuyin: String?
+    private var _mandarinIPA: String?
+    private var _pinyinNumbers: [UInt8]?
 
-    private var definitions: [DefinitionsSet]?
-    private var definitionSnippet: String?
+    private var _definitions: [DefinitionsSet]?
+    private var _definitionSnippet: String?
 
-    private var isWelcome: Bool = false
-    private var isEmpty: Bool = false
+    private var _isWelcome: Bool = false
+    private var _isEmpty: Bool = false
 
-    public init(
+    init(
         simplified: String,
         traditional: String,
         jyutping: String,
         pinyin: String,
         definitions: [DefinitionsSet]
     ) {
-        self.simplified = simplified
-        self.traditional = traditional
-        self.jyutping = jyutping
-        self.pinyin = pinyin
-        self.definitions = definitions
+        self._simplified = simplified
+        self._traditional = traditional
+        self._jyutping = jyutping
+        self._pinyin = pinyin
+        self._definitions = definitions
     }
 
+    var simplified: String {
+        _simplified
+    }
 }

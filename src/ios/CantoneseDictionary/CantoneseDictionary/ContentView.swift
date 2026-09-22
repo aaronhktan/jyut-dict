@@ -15,7 +15,7 @@ struct ContentView: View {
     }
 
     @Environment(DatabaseManager.self) private var databaseManager
-    @State var presentedSheet: Sheet?
+    @State private var presentedSheet: Sheet?
     @State private var searchText: String = ""
     @State private var searchIsActive = false
     @State private var processedSearchText: [String] = []
@@ -25,7 +25,7 @@ struct ContentView: View {
             SearchingView(
                 searchText: $searchText,
                 isSearchActive: $searchIsActive,
-                processedSearchText: $processedSearchText
+                processedSearchText: $processedSearchText,
             )
             .toolbar {
                 if !searchIsActive {
@@ -102,6 +102,8 @@ struct ContentView: View {
 }
 
 struct SearchingView: View {
+    @Environment(DatabaseManager.self) private var databaseManager
+    
     @Binding var searchText: String
     @Binding var isSearchActive: Bool
     @Binding var processedSearchText: [String]
@@ -119,6 +121,11 @@ struct SearchingView: View {
     @State private var selectedOption: SearchParameters = .autoDetect
     @State private var isPickerTextVisible = true
     @State private var animationToken: Int = 0
+    
+    struct SearchQuery: Equatable {
+        let text: String
+        let option: SearchParameters
+    }
 
     var body: some View {
         Group {
@@ -145,8 +152,13 @@ struct SearchingView: View {
                         }
                         .opacity(isPickerTextVisible ? 1 : 0)
                         .glassEffect()
-                        .onChange(of: selectedOption) {
-                            triggerSearch()
+                        .task(id: SearchQuery(text: searchText, option: selectedOption)) {
+                            guard !searchText.isEmpty else {
+                                processedSearchText = []
+                                return
+                            }
+                            
+                            await triggerSearch()
                         }
                         .onChange(of: searchText) {
                             guard selectedOption == .autoDetect else { return }
@@ -190,8 +202,13 @@ struct SearchingView: View {
                         }
                     }
                 }
-                .onChange(of: searchText) {
-                    triggerSearch()
+                .task(id: SearchQuery(text: searchText, option: selectedOption)) {
+                    guard !searchText.isEmpty else {
+                        processedSearchText = []
+                        return
+                    }
+                    
+                    await triggerSearch()
                 }
             } else {
                 ContentUnavailableView {
@@ -218,7 +235,7 @@ struct SearchingView: View {
         }
     }
 
-    private func triggerSearch() {
+    private func triggerSearch() async {
         if selectedOption == .pinyin {
             let (_, segmented) =
                 segmentPinyin(
@@ -229,19 +246,13 @@ struct SearchingView: View {
             let result = pinyinSoundChanges(text: segmented)
             processedSearchText = result
         } else {
-            let intermediate = jyutpingAutocorrect(
-                text: searchText.lowercased(),
-                unsafeSubstitutions: true
-            )
-            let (_, segmented) =
-                segmentJyutping(
-                    text: intermediate,
-                    removeSpecialCharacters: true,
-                    removeGlobCharacters: false,
-                    removeRegexCharacters: false
-                )
-            let result = jyutpingSoundChanges(text: segmented)
-            processedSearchText = result
+            guard let pool = databaseManager.dbPool else { return }
+            let searcher = SQLSearch(pool: pool)
+            let results = await searcher.searchJyutping(searchTerm: searchText.lowercased())
+            processedSearchText = []
+            for result in results {
+                processedSearchText.append(result.simplified)
+            }
         }
     }
 }

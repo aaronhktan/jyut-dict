@@ -1,41 +1,41 @@
 //
-//  SentenceSet.swift
+//  TranslationSet.swift
 //  CantoneseDictionary
 //
 //  Created by Aaron on 2026-09-04.
 //
 
-struct TargetSentence {
-    var sentence: String
+struct Translation {
+    var content: String
     var language: String
     var directTarget: Bool
 }
 
-class SentenceSet {
+nonisolated class TranslationSet : @unchecked Sendable {
     private var _source: String
     private var _sourceShortString: String
-    private var _snippet: [TargetSentence]?
-    private var _sentences: [TargetSentence]
+    private var _snippet: [Translation]?
+    private var _translations: [Translation]
 
-    init(source: String, sentences: [TargetSentence]) {
+    init(source: String, translations: [Translation]) {
         self._source = source
         // TODO: Actually implement sourceShortString
         self._sourceShortString = String(
             source.split(separator: " ").first ?? ""
         )
-        self._sentences = sentences
+        self._translations = translations
     }
 
     func isEmpty() -> Bool {
-        _sentences.isEmpty
-            || _sentences.allSatisfy({
-                $0.sentence.isEmpty && $0.language.isEmpty
+        _translations.isEmpty
+            || _translations.allSatisfy({
+                $0.content.isEmpty && $0.language.isEmpty
                     && $0.directTarget == false
             })
     }
 
-    func appendSentence(_ sentence: TargetSentence) {
-        _sentences.append(sentence)
+    func appendTranslation(_ translation: Translation) {
+        _translations.append(translation)
     }
 
     func getSource() -> String {
@@ -46,20 +46,20 @@ class SentenceSet {
         _sourceShortString
     }
 
-    func getSentenceSnippet() -> [TargetSentence] {
+    func getTranslationSnippet() -> [Translation] {
         if let snippet = _snippet {
             return snippet
         }
 
         _snippet = []
         for i in 0...4 {
-            _snippet?.append(_sentences[i])
+            _snippet?.append(_translations[i])
         }
 
         return _snippet ?? []
     }
 
-    func getSentences() -> [TargetSentence] {
-        _sentences
+    func getTranslations() -> [Translation] {
+        _translations
     }
 }

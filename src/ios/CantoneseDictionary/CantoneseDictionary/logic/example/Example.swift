@@ -1,11 +1,11 @@
 //
-//  SourceSentence.swift
+//  Example.swift
 //  CantoneseDictionary
 //
 //  Created by Aaron on 2026-09-04.
 //
 
-class SourceSentence {
+nonisolated class Example : @unchecked Sendable {
     private var _sourceLanguage: String
     private var _simplified: String
     private var _traditional: String
@@ -20,7 +20,7 @@ class SourceSentence {
     private var _zhuyin: String?
     private var _mandarinIPA: String?
 
-    private var _sentences: [SentenceSet]
+    private var _translations: [TranslationSet]
 
     private var _isWelcome: Bool = false
     private var _isEmpty: Bool = false
@@ -31,14 +31,14 @@ class SourceSentence {
         traditional: String,
         jyutping: String,
         pinyin: String,
-        sentences: [SentenceSet]
+        translations: [TranslationSet]
     ) {
         self._sourceLanguage = sourceLanguage
         self._simplified = simplified
         self._traditional = traditional
         self._jyutping = jyutping
         self._pinyin = pinyin
-        self._sentences = sentences
+        self._translations = translations
     }
 
     var sourceLanguage: String {
@@ -84,7 +84,7 @@ class SourceSentence {
         if (cantoneseOptions.rawValue & CantoneseOptions.prettyYale.rawValue
             == CantoneseOptions.prettyYale.rawValue) && _yale == nil
         {
-            // TODO: Implement
+            
         }
         if (cantoneseOptions.rawValue & CantoneseOptions.cantoneseIPA.rawValue
             == CantoneseOptions.cantoneseIPA.rawValue) && _cantoneseIPA == nil
@@ -182,40 +182,40 @@ class SourceSentence {
         _prettyPinyin ?? ""
     }
 
-    func getSentenceSets() -> [SentenceSet] {
-        _sentences
+    func getTranslationSets() -> [TranslationSet] {
+        _translations
     }
 
-    func getSentenceSnippet() -> String {
-        if _sentences.isEmpty {
+    func getTranslationSnippet() -> String {
+        if _translations.isEmpty {
             return ""
         }
 
-        let sentenceSet: SentenceSet = _sentences[0]
-        if sentenceSet.getSentenceSnippet().isEmpty {
+        let translationSet: TranslationSet = _translations[0]
+        if translationSet.getTranslationSnippet().isEmpty {
             return ""
         }
 
-        let snippets: [TargetSentence] = sentenceSet.getSentenceSnippet()
+        let snippets: [Translation] = translationSet.getTranslationSnippet()
 
         if snippets.isEmpty {
             return ""
         }
 
-        return snippets[0].sentence
+        return snippets[0].content
     }
 
     func getSentenceSnippetLanguage() -> String {
-        if _sentences.isEmpty {
+        if _translations.isEmpty {
             return ""
         }
 
-        let sentenceSet: SentenceSet = _sentences[0]
-        if sentenceSet.getSentenceSnippet().isEmpty {
+        let translationSet: TranslationSet = _translations[0]
+        if translationSet.getTranslationSnippet().isEmpty {
             return ""
         }
 
-        let snippets: [TargetSentence] = sentenceSet.getSentenceSnippet()
+        let snippets: [Translation] = translationSet.getTranslationSnippet()
 
         if snippets.isEmpty {
             return ""

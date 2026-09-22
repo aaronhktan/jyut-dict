@@ -7,7 +7,7 @@
 
 nonisolated let searchJyutpingQuery: String = """
     WITH matching_entry_ids AS (
-      SELECT rowid FROM entries WHERE jyutping {operator} ?
+      SELECT rowid FROM entries WHERE jyutping REGEXP ?
     ),
 
     matching_definition_ids AS (
