@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct Definition {
+nonisolated struct Definition {
     var definitionContent: String
     var label: String
-    var sentences: [SourceSentence]
+    var examples: [Example]
 }
 
-class DefinitionsSet {
+nonisolated class DefinitionsSet : @unchecked Sendable {
     private var _source: String
     private var _sourceShortString: String
     private var _snippet: String?
@@ -38,8 +38,8 @@ class DefinitionsSet {
         _ mandarinOptions: MandarinOptions
     ) {
         _definitions.forEach { definition in
-            definition.sentences.forEach { sentence in
-                _ = sentence.generatePhonetic(
+            definition.examples.forEach { example in
+                _ = example.generatePhonetic(
                     cantoneseOptions: cantoneseOptions,
                     mandarinOptions: mandarinOptions
                 )
