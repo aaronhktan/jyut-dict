@@ -43,7 +43,7 @@ enum MandarinOptions: UInt8, CaseIterable {
     case mandarinIPA = 0x10
 }
 
-nonisolated class Entry : @unchecked Sendable {
+nonisolated class Entry : @unchecked Sendable, Identifiable {
     private var _simplified: String
     private var _simplifiedDifference: String?
     private var _preferSimplified: String?
@@ -75,19 +75,27 @@ nonisolated class Entry : @unchecked Sendable {
 
     private var _isWelcome: Bool = false
     private var _isEmpty: Bool = false
+    
+    private var _rowid: Int = -1
 
     init(
+        rowid: Int,
         simplified: String,
         traditional: String,
         jyutping: String,
         pinyin: String,
         definitions: [DefinitionsSet]
     ) {
+        self._rowid = rowid
         self._simplified = simplified
         self._traditional = traditional
         self._jyutping = jyutping
         self._pinyin = pinyin
         self._definitions = definitions
+    }
+    
+    var id: Int {
+        _rowid
     }
 
     var simplified: String {
