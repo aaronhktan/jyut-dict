@@ -6,58 +6,128 @@
 //
 
 import Foundation
-import os
-import SwiftUI
-
 import GRDB
+import SwiftUI
+import os
 
 actor SQLSearch {
     private var pool: DatabasePool
-    
+
     public init(pool: DatabasePool) {
         self.pool = pool
     }
     
-    func searchJyutping(searchTerm: String) async -> [Entry] {
-        // TODO: Actually implement checking for option
-        let fuzzyJyutping = true
-        let unsafeFuzzyJyutping = true
-        
-        let globTerm = prepareJyutpingBindValues(jyutping: searchTerm, useFuzzyJyutping: fuzzyJyutping)
+    func searchTraditional(searchTerm: String) async -> [Entry]
+    {
+        let globTerm = prepareCharacterBindValues(
+            characters: searchTerm
+        )
         print("globTerm: '\(globTerm)'")
-        
+
         var results: [Entry] = []
         do {
             results = try await pool.read { db in
-                let rows = try Row.fetchAll(db, sql: searchJyutpingQuery, arguments: [globTerm])
+                let rows = try Row.fetchAll(
+                    db,
+                    sql: searchTraditionalQuery,
+                    arguments: [globTerm]
+                )
                 return parseReturnedRecords(rows: rows)
             }
         } catch {
             // TODO: Handle errors
             logger.error("Error happened when trying to read from db")
         }
-        
+
         return results
     }
     
-    func searchPinyin(searchTerm: String) async -> [Entry] {
-        // TODO: Actually implement checking for option
-        let fuzzyPinyin = true
-        
-        let globTerm = preparePinyinBindValues(pinyin: searchTerm, useFuzzyPinyin: fuzzyPinyin)
+    func searchSimplified(searchTerm: String) async -> [Entry]
+    {
+        let globTerm = prepareCharacterBindValues(
+            characters: searchTerm
+        )
         print("globTerm: '\(globTerm)'")
-        
+
         var results: [Entry] = []
         do {
             results = try await pool.read { db in
-                let rows = try Row.fetchAll(db, sql: searchPinyinQuery, arguments: [globTerm])
+                let rows = try Row.fetchAll(
+                    db,
+                    sql: searchSimplifiedQuery,
+                    arguments: [globTerm]
+                )
                 return parseReturnedRecords(rows: rows)
             }
         } catch {
             // TODO: Handle errors
             logger.error("Error happened when trying to read from db")
         }
-        
+
+        return results
+    }
+
+    func searchJyutping(searchTerm: String, useFuzzyJyutping: Bool) async
+        -> [Entry]
+    {
+        // TODO: Actually implement checking for option
+        let unsafeFuzzyJyutping = true
+
+        let globTerm = prepareJyutpingBindValues(
+            jyutping: searchTerm,
+            useFuzzyJyutping: useFuzzyJyutping
+        )
+        print("globTerm: '\(globTerm)'")
+        let query = String(
+            format: searchJyutpingQuery,
+            arguments: [useFuzzyJyutping ? REGEXP_OPERATOR : GLOB_OPERATOR]
+        )
+
+        var results: [Entry] = []
+        do {
+            results = try await pool.read { db in
+                let rows = try Row.fetchAll(
+                    db,
+                    sql: query,
+                    arguments: [globTerm]
+                )
+                return parseReturnedRecords(rows: rows)
+            }
+        } catch {
+            // TODO: Handle errors
+            logger.error("Error happened when trying to read from db")
+        }
+
+        return results
+    }
+
+    func searchPinyin(searchTerm: String, useFuzzyPinyin: Bool) async -> [Entry]
+    {
+        let globTerm = preparePinyinBindValues(
+            pinyin: searchTerm,
+            useFuzzyPinyin: useFuzzyPinyin
+        )
+        print("globTerm: '\(globTerm)'")
+        let query = String(
+            format: searchPinyinQuery,
+            arguments: [useFuzzyPinyin ? REGEXP_OPERATOR : GLOB_OPERATOR]
+        )
+
+        var results: [Entry] = []
+        do {
+            results = try await pool.read { db in
+                let rows = try Row.fetchAll(
+                    db,
+                    sql: query,
+                    arguments: [globTerm]
+                )
+                return parseReturnedRecords(rows: rows)
+            }
+        } catch {
+            // TODO: Handle errors
+            logger.error("Error happened when trying to read from db")
+        }
+
         return results
     }
 }

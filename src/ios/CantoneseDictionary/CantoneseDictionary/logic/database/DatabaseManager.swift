@@ -10,6 +10,26 @@ import GRDB
 import SwiftUI
 import os
 
+nonisolated private final class RegexCache: @unchecked Sendable {
+    private let cache = NSCache<NSString, NSRegularExpression>()
+    
+    init(maxEntries: Int = 64) {
+        cache.countLimit = maxEntries
+    }
+    
+    func regex(for pattern: String) -> NSRegularExpression? {
+        let key = pattern as NSString
+        if let cached = cache.object(forKey: key) {
+            return cached
+        }
+        guard let newRegex = try? NSRegularExpression(pattern: pattern) else {
+            return nil
+        }
+        cache.setObject(newRegex, forKey: key)
+        return newRegex
+    }
+}
+
 @Observable
 class DatabaseManager {
     private let fileManager = FileManager.default
@@ -50,16 +70,19 @@ class DatabaseManager {
             }
         }
         
+        let regexCache = RegexCache()
         let regexpFunction = DatabaseFunction("REGEXP", argumentCount: 2, pure: true) { values in
             guard let pattern = String.fromDatabaseValue(values[0]),
                   let text = String.fromDatabaseValue(values[1]) else {
                 return false
             }
-            guard let regex = try? NSRegularExpression(pattern: pattern) else {
+
+            guard let regex = regexCache.regex(for: pattern) else {
                 return false
             }
-            let range = NSRange(location: 0, length: (text as NSString).length)
-            return regex.firstMatch(in: text, options: [.anchored], range: range) != nil
+
+            let range = NSRange(location: 0, length: text.utf16.count)
+            return regex.rangeOfFirstMatch(in: text, options: [.anchored], range: range).location != NSNotFound
         }
         
         var config = Configuration()

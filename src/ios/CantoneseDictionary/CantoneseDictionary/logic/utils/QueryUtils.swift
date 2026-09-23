@@ -9,6 +9,32 @@ import Foundation
 import GRDB
 import os
 
+nonisolated func prepareCharacterBindValues(
+    characters: String,
+) -> String {
+    let searchExactMatch =
+        characters.count >= 3 && characters.hasPrefix("\"")
+        && characters.hasSuffix("\"")
+    let appendWildcard = !characters.hasSuffix("$")
+
+    var result: String
+    if searchExactMatch {
+        result = String(
+            characters[
+                characters.index(
+                    after: characters.startIndex
+                )..<characters.index(before: characters.endIndex)
+            ]
+        )
+    } else if !appendWildcard {
+        result = String(characters.prefix(characters.count - 1))
+    } else {
+        result = characters + "*"
+    }
+
+    return result
+}
+
 nonisolated func prepareJyutpingBindValues(
     jyutping: String,
     useFuzzyJyutping: Bool
@@ -257,6 +283,7 @@ nonisolated func parseReturnedRecords(rows: [Row]) -> [Entry] {
 
         result.append(
             Entry(
+                rowid: row["entry_id"],
                 simplified: row["simplified"],
                 traditional: row["traditional"],
                 jyutping: row["jyutping"],
