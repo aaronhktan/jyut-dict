@@ -19,13 +19,7 @@ nonisolated func prepareCharacterBindValues(
 
     var result: String
     if searchExactMatch {
-        result = String(
-            characters[
-                characters.index(
-                    after: characters.startIndex
-                )..<characters.index(before: characters.endIndex)
-            ]
-        )
+        result = String(characters.dropFirst().dropLast())
     } else if !appendWildcard {
         result = String(characters.prefix(characters.count - 1))
     } else {
@@ -58,11 +52,7 @@ nonisolated func prepareJyutpingBindValues(
     var jyutpingSyllables: [String] = []
     if searchExactMatch {
         jyutpingSyllables = String(
-            correctedTerm[
-                correctedTerm.index(
-                    after: correctedTerm.startIndex
-                )..<correctedTerm.index(before: correctedTerm.endIndex)
-            ]
+            correctedTerm.dropFirst().dropLast()
         ).components(separatedBy: " ")
     } else {
         (_, jyutpingSyllables) = segmentJyutping(
@@ -119,11 +109,7 @@ nonisolated func preparePinyinBindValues(
     var pinyinSyllables: [String] = []
     if searchExactMatch {
         pinyinSyllables = String(
-            pinyin[
-                pinyin.index(
-                    after: pinyin.startIndex
-                )..<pinyin.index(before: pinyin.endIndex)
-            ]
+            pinyin.dropFirst().dropLast()
         ).components(separatedBy: " ")
     } else {
         (_, pinyinSyllables) = segmentPinyin(
@@ -202,63 +188,67 @@ nonisolated func parseReturnedRecords(rows: [Row]) -> [Entry] {
                         ? (definitionJSON["label"] as! String) : ""
 
                     var examples: [Example] = []
-                    guard
-                        let examplesJSON = definitionJSON["sentences"]
-                            as? [[String: Any]]
-                    else {
-                        logger.warning("Sentences was not an array of dicts")
-                        continue
-                    }
-                    for exampleJSON in examplesJSON {
-                        let traditional = exampleJSON["traditional"] as! String
-                        let simplified = exampleJSON["simplified"] as! String
-                        let pinyin = exampleJSON["pinyin"] as! String
-                        let jyutping = exampleJSON["jyutping"] as! String
-                        let language = exampleJSON["language"] as! String
+                    if let examplesJSON = definitionJSON["sentences"]
+                        as? [[String: Any]]
+                    {
+                        for exampleJSON in examplesJSON {
+                            let traditional =
+                                exampleJSON["traditional"] as! String
+                            let simplified =
+                                exampleJSON["simplified"] as! String
+                            let pinyin = exampleJSON["pinyin"] as! String
+                            let jyutping = exampleJSON["jyutping"] as! String
+                            let language = exampleJSON["language"] as! String
 
-                        guard
-                            let translationsJSON = exampleJSON["translations"]
-                                as? [[String: Any]]
-                        else {
-                            logger.error(
-                                "Translations was not an array of dicts"
+                            guard
+                                let translationsJSON = exampleJSON[
+                                    "translations"
+                                ]
+                                    as? [[String: Any]]
+                            else {
+                                logger.error(
+                                    "Translations was not an array of dicts"
+                                )
+                                continue
+                            }
+
+                            var translations: [Translation] = []
+                            for translationJSON in translationsJSON {
+                                let sentence =
+                                    translationJSON["sentence"] as! String
+                                let language =
+                                    translationJSON["language"] as! String
+                                let direct =
+                                    translationJSON["direct"] as! String == "1"
+                                translations.append(
+                                    Translation(
+                                        content: sentence,
+                                        language: language,
+                                        directTarget: direct
+                                    )
+                                )
+                            }
+
+                            let translationSet = TranslationSet(
+                                source: source,
+                                translations: translations
                             )
-                            continue
-                        }
 
-                        var translations: [Translation] = []
-                        for translationJSON in translationsJSON {
-                            let sentence =
-                                translationJSON["sentence"] as! String
-                            let language =
-                                translationJSON["language"] as! String
-                            let direct =
-                                translationJSON["direct"] as! String == "1"
-                            translations.append(
-                                Translation(
-                                    content: sentence,
-                                    language: language,
-                                    directTarget: direct
+                            examples.append(
+                                Example(
+                                    sourceLanguage: language,
+                                    simplified: simplified,
+                                    traditional: traditional,
+                                    jyutping: jyutping,
+                                    pinyin: pinyin,
+                                    translations: [translationSet]
                                 )
                             )
                         }
-
-                        let translationSet = TranslationSet(
-                            source: source,
-                            translations: translations
-                        )
-
-                        examples.append(
-                            Example(
-                                sourceLanguage: language,
-                                simplified: simplified,
-                                traditional: traditional,
-                                jyutping: jyutping,
-                                pinyin: pinyin,
-                                translations: [translationSet]
-                            )
-                        )
+                    } else {
+                        logger.warning("Sentences was not an array of dicts")
                     }
+                    
                     definitions.append(
                         Definition(
                             definitionContent: content,
@@ -284,8 +274,8 @@ nonisolated func parseReturnedRecords(rows: [Row]) -> [Entry] {
         result.append(
             Entry(
                 rowid: row["entry_id"],
-                simplified: row["simplified"],
                 traditional: row["traditional"],
+                simplified: row["simplified"],
                 jyutping: row["jyutping"],
                 pinyin: row["pinyin"],
                 definitions: definitionsSets

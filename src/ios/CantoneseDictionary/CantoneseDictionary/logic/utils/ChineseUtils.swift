@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 nonisolated let specialCharacters: Set = [
     ".", "。", ",", "，", "！", "？", "%", "－", "…", "⋯",
@@ -17,11 +18,11 @@ nonisolated let regexCharacters: Set = ["!", "(", ")", "|"]
 nonisolated func applyColours(
     text: String,
     tones: [Int],
-    jyutpingToneColours: [String],
-    pinyinToneColours: [String],
+    jyutpingToneColours: [Color],
+    pinyinToneColours: [Color],
     type: EntryColourPhoneticType
-) -> String {
-    var colouredString: String = ""
+) -> AttributedString {
+    var colouredString: AttributedString = ""
 
     var toneIdx = 0
     for c in text {
@@ -29,7 +30,7 @@ nonisolated func applyColours(
         let codepoints = c.unicodeScalars
 
         if currentString == sameCharacterString || codepoints.count > 1 {
-            colouredString += currentString
+            colouredString.append(AttributedString(currentString))
             toneIdx += 1
             continue
         }
@@ -52,45 +53,43 @@ nonisolated func applyColours(
             || (codepoint >= 0x2CEB0
                 && codepoint <= 0x2EBEF)  // CJK Unified Ideographs Extension F
         if isSpecialCharacter || !isIdeograph {
-            colouredString += currentString
+            colouredString.append(AttributedString(currentString))
             continue
         }
 
         if toneIdx >= tones.count {
-            colouredString += currentString
+            colouredString.append(AttributedString(currentString))
             continue
         }
         let tone = tones[toneIdx]
 
         // ... and apply tone colour formatting to the string
+        var colour: Color? = nil
         switch type {
         case .cantonese:
             if tone >= jyutpingToneColours.count {
-                colouredString += currentString
+                colouredString.append(AttributedString(currentString))
                 continue
             }
-            colouredString +=
-                "<font color=\""
-                + jyutpingToneColours[tone]
-                + "\">"
+            
+            colour = jyutpingToneColours[tone]
             break
         case .mandarin:
             if tone >= pinyinToneColours.count {
-                colouredString += currentString
+                colouredString.append(AttributedString(currentString))
                 continue
             }
-            colouredString +=
-                "<font color=\""
-                + pinyinToneColours[tone]
-                + "\">"
+
+            colour = pinyinToneColours[tone]
             break
         default:
-            colouredString += "<font>"
             break
         }
 
-        colouredString += currentString
-        colouredString += "</font>"
+        var colouredCurrentString = AttributedString(currentString)
+        colouredCurrentString.foregroundColor = colour
+        colouredString.append(colouredCurrentString)
+
         toneIdx += 1
     }
 

@@ -12,7 +12,7 @@ struct SearchingView: View {
 
     @Binding var searchText: String
     @Binding var isSearchActive: Bool
-    @Binding var processedSearchText: [String]
+    @Binding var searchResults: [Entry]
 
     @State private var options: [SearchParameters: String] = [
         .autoDetect: "Auto-detect language",
@@ -27,6 +27,7 @@ struct SearchingView: View {
     @State private var selectedOption: SearchParameters = .autoDetect
     @State private var isPickerTextVisible = true
     @State private var animationToken: Int = 0
+    @State private var showEmptyState = false
 
     struct SearchQuery: Equatable {
         let text: String
@@ -37,15 +38,25 @@ struct SearchingView: View {
         Group {
             if isSearchActive {
                 ZStack(alignment: .bottom) {
-                    List(processedSearchText, id: \.self) { word in
-                        NavigationLink(word, value: word)
+                    List(searchResults) { entry in
+                        NavigationLink(value: entry) {
+                            EntryRow(entry: entry)
+                        }
                     }
                     .navigationDestination(
-                        for: String.self,
-                        destination: EntryView.init
-                    )
+                        for: Entry.self,
+                    ) { entry in
+                        EntryDetail(entry: entry)
+                    }
                     .listStyle(.automatic)
                     .scrollDismissesKeyboard(.immediately)
+                    .overlay {
+                        if showEmptyState {
+                            ContentUnavailableView {
+                                Text("No search results were found.")
+                            }
+                        }
+                    }
                     .safeAreaInset(edge: .bottom) {
                         Picker("Search Options", selection: $selectedOption) {
                             ForEach(
@@ -59,19 +70,6 @@ struct SearchingView: View {
                         }
                         .opacity(isPickerTextVisible ? 1 : 0)
                         .glassEffect()
-                        .task(
-                            id: SearchQuery(
-                                text: searchText,
-                                option: selectedOption
-                            )
-                        ) {
-                            guard !searchText.isEmpty else {
-                                processedSearchText = []
-                                return
-                            }
-
-                            await triggerSearch()
-                        }
                         .onChange(of: searchText) {
                             guard selectedOption == .autoDetect else { return }
                             animationToken += 1
@@ -121,12 +119,22 @@ struct SearchingView: View {
                 }
                 .task(id: SearchQuery(text: searchText, option: selectedOption))
                 {
+                    showEmptyState = false
                     guard !searchText.isEmpty else {
-                        processedSearchText = []
+                        searchResults = []
                         return
                     }
 
-                    await triggerSearch()
+                    let results = await triggerSearch()
+                    guard !Task.isCancelled else { return }
+                    searchResults = results
+
+                    guard !results.isEmpty else {
+                        try? await Task.sleep(for: .milliseconds(500))
+                        guard !Task.isCancelled else { return }
+                        showEmptyState = searchResults.isEmpty
+                        return
+                    }
                 }
             } else {
                 ContentUnavailableView {
@@ -148,13 +156,13 @@ struct SearchingView: View {
         .onChange(of: isSearchActive) {
             if !isSearchActive {
                 options[.autoDetect] = "Auto-detect language"
-                processedSearchText = []
+                searchResults = []
             }
         }
     }
 
-    private func triggerSearch() async {
-        guard let pool = databaseManager.dbPool else { return }
+    private func triggerSearch() async -> [Entry] {
+        guard let pool = databaseManager.dbPool else { return [] }
         let searcher = SQLSearch(pool: pool)
         var results: [Entry] = []
         switch selectedOption {
@@ -190,23 +198,20 @@ struct SearchingView: View {
             )
         }
 
-        processedSearchText = []
-        for result in results {
-            processedSearchText.append(result.simplified)
-        }
+        return results
     }
 }
 
 #Preview {
     @Previewable @State var databaseManager = DatabaseManager()
-    
+
     @Previewable @State var searchText: String = ""
     @Previewable @State var isSearchActive: Bool = true
-    @Previewable @State var processedSearchText: [String] = []
+    @Previewable @State var searchResults: [Entry] = []
     SearchingView(
         searchText: $searchText,
         isSearchActive: $isSearchActive,
-        processedSearchText: $processedSearchText
+        searchResults: $searchResults
     )
     .environment(databaseManager)
 }

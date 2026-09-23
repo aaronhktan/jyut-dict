@@ -5,25 +5,37 @@
 //  Created by Aaron on 2026-09-04.
 //
 
+import Foundation
+
 struct Translation {
     var content: String
     var language: String
     var directTarget: Bool
 }
 
-nonisolated class TranslationSet : @unchecked Sendable {
+nonisolated class TranslationSet : Hashable, Identifiable, @unchecked Sendable {
+    let id: UUID
     private var _source: String
     private var _sourceShortString: String
     private var _snippet: [Translation]?
     private var _translations: [Translation]
 
     init(source: String, translations: [Translation]) {
+        self.id = UUID()
         self._source = source
         // TODO: Actually implement sourceShortString
         self._sourceShortString = String(
             source.split(separator: " ").first ?? ""
         )
         self._translations = translations
+    }
+    
+    public static func == (lhs: TranslationSet, rhs: TranslationSet) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 
     func isEmpty() -> Bool {
