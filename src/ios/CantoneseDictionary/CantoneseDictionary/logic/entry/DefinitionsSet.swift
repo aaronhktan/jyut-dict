@@ -7,22 +7,32 @@
 
 import Foundation
 
-nonisolated struct Definition {
+nonisolated struct Definition: Hashable {
     var definitionContent: String
     var label: String
     var examples: [Example]
 }
 
-nonisolated class DefinitionsSet : @unchecked Sendable {
+nonisolated class DefinitionsSet : Hashable, Identifiable, @unchecked Sendable {
+    let id: UUID
     private var _source: String
     private var _sourceShortString: String
     private var _snippet: String?
     private var _definitions: [Definition]
 
     init(source: String, sourceShortString: String, definitions: [Definition]) {
+        self.id = UUID()
         self._source = source
         self._sourceShortString = sourceShortString
         self._definitions = definitions
+    }
+    
+    public static func == (lhs: DefinitionsSet, rhs: DefinitionsSet) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 
     var isEmpty: Bool {
@@ -85,5 +95,9 @@ nonisolated class DefinitionsSet : @unchecked Sendable {
             )
         }
         return _snippet ?? ""
+    }
+    
+    var definitions: [Definition] {
+        _definitions
     }
 }

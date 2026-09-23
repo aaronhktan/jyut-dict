@@ -18,14 +18,14 @@ struct ContentView: View {
     @State private var presentedSheet: Sheet?
     @State private var searchText: String = ""
     @State private var searchIsActive = false
-    @State private var processedSearchText: [String] = []
+    @State private var searchResults: [Entry] = []
 
     var body: some View {
         NavigationSplitView {
             SearchingView(
                 searchText: $searchText,
                 isSearchActive: $searchIsActive,
-                processedSearchText: $processedSearchText,
+                searchResults: $searchResults,
             )
             .toolbar {
                 if !searchIsActive {

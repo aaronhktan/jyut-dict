@@ -5,7 +5,10 @@
 //  Created by Aaron on 2026-09-04.
 //
 
-nonisolated class Example : @unchecked Sendable {
+import Foundation
+
+nonisolated class Example : Hashable, Identifiable, @unchecked Sendable {
+    let id: UUID
     private var _sourceLanguage: String
     private var _simplified: String
     private var _traditional: String
@@ -33,12 +36,21 @@ nonisolated class Example : @unchecked Sendable {
         pinyin: String,
         translations: [TranslationSet]
     ) {
+        self.id = UUID()
         self._sourceLanguage = sourceLanguage
         self._simplified = simplified
         self._traditional = traditional
         self._jyutping = jyutping
         self._pinyin = pinyin
         self._translations = translations
+    }
+    
+    public static func == (lhs: Example, rhs: Example) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 
     var sourceLanguage: String {
