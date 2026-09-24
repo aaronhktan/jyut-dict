@@ -41,6 +41,13 @@ struct SearchingView: View {
       false
     #endif
   }
+  private var isMacIdiom: Bool {
+    #if os(macOS)
+      true
+    #else
+      false
+    #endif
+  }
   private var shouldHideToolbar: Bool {
     !isPadIdiom && (isSearchActive || isSearchFocused)
   }
@@ -84,9 +91,10 @@ struct SearchingView: View {
                 Text(label).tag(option)
               }
             }
+            .labelsHidden()
             .opacity(isPickerTextVisible ? 1 : 0)
             .glassEffect()
-            .padding(.bottom, isPadIdiom ? 10 : 0)
+            .padding(.bottom, (isPadIdiom || isMacIdiom) ? 10 : 0)
             .onChange(of: detectedInputMethod) { oldMethod, newMethod in
               guard selectedOption == .autoDetect else { return }
               if !searchText.isEmpty && newMethod == oldMethod {
@@ -136,25 +144,28 @@ struct SearchingView: View {
             searchResults = results
           }
         }
-        #if os(iOS)
-          .toolbar {
-            Group {
-              if isPadIdiom {
-                ToolbarItem(placement: .topBarTrailing) {
-                  Button("Close search", systemImage: "xmark") {
-                    withAnimation(.snappy(duration: 0.4)) {
-                      isSearchFocused = false
-                      isSearchActive = false
-                      dismissSearch()
-                    }
+        .toolbar {
+          Group {
+            #if os(iOS)
+              let placement: ToolbarItemPlacement = .topBarTrailing
+            #else
+              let placement: ToolbarItemPlacement = .navigation
+            #endif
+            if isPadIdiom || isMacIdiom {
+              ToolbarItem(placement: placement) {
+                Button("Close search", systemImage: "xmark") {
+                  withAnimation(.snappy(duration: 0.4)) {
+                    isSearchFocused = false
+                    isSearchActive = false
+                    dismissSearch()
                   }
-                  .labelsHidden()
-                  .glassEffect()
                 }
+                .labelsHidden()
+                .glassEffect()
               }
             }
           }
-        #endif
+        }
       } else {
         ContentUnavailableView {
           Label {
