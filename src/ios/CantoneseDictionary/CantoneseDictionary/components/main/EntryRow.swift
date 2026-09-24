@@ -23,6 +23,8 @@ struct EntryRow: View {
       .lineLimit(1)
       .truncationMode(.tail)
       Text(
+        // Experimented with making this async, but then it led to undesirable flashes when
+        // entries were being updated in the list
         entry.getPhonetic(
           options: .preferCantonese,
           cantoneseOptions: .rawJyutping,

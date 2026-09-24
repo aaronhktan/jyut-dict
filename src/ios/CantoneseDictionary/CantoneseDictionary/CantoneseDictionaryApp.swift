@@ -15,6 +15,7 @@ struct CantoneseDictionaryApp: App {
     WindowGroup {
       ContentView()
         .environment(databaseManager)
+        .tint(Color.accentColor)
     }
   }
 }

@@ -17,6 +17,25 @@ actor SQLSearch {
     self.pool = pool
   }
 
+  @concurrent func searchByRowId(rowid: String) async -> Entry? {
+    var result: Entry?
+    do {
+      result = try await pool.read { db in
+        let rows = try Row.fetchAll(
+          db,
+          sql: getEntryByRowId,
+          arguments: [rowid]
+        )
+        return parseReturnedRecords(rows: rows)[0]
+      }
+    } catch {
+      // TODO: Handle errors
+      logger.error("Error happened when trying to read from db")
+    }
+
+    return result
+  }
+
   @concurrent func searchTraditional(searchTerm: String) async -> [Entry] {
     let globTerm = prepareCharacterBindValues(
       characters: searchTerm
