@@ -120,7 +120,8 @@ nonisolated let jyutpingToIPATones: [String] = [
     "˥", "˧˥", "˧", "˨˩", "˩˧", "˨", "˥", "˧", "˨",
 ]
 
-nonisolated private func unfoldJyutpingRegex(jyutping: String) -> [String] {
+@concurrent private func unfoldJyutpingRegex(jyutping: String) async -> [String]
+{
     var out: [String] = []
     var stringPossibilities: [String] = []
 
@@ -183,7 +184,7 @@ nonisolated private func unfoldJyutpingRegex(jyutping: String) -> [String] {
     return out
 }
 
-nonisolated private func convertYaleInitial(syllable: String) -> String {
+@concurrent private func convertYaleInitial(syllable: String) async -> String {
     var yaleSyllable = syllable
     yaleSyllable = yaleSyllable.replacingOccurrences(
         of: yaleYInitialRegex,
@@ -203,7 +204,7 @@ nonisolated private func convertYaleInitial(syllable: String) -> String {
     return yaleSyllable
 }
 
-nonisolated private func convertYaleFinal(syllable: String) -> String {
+@concurrent private func convertYaleFinal(syllable: String) async -> String {
     var yaleSyllable = syllable
 
     // Attempt to isolate the part of the Jyutping syllable that is the final
@@ -264,10 +265,10 @@ nonisolated private func convertYaleFinal(syllable: String) -> String {
 // Note that the majority of this function and the convertToIPA function
 // is derivative of Wiktionary's conversion code, contained in the module
 // "yue-pron" (https://en.wiktionary.org/wiki/Module:yue-pron)
-nonisolated func convertJyutpingToYale(
+@concurrent func convertJyutpingToYale(
     jyutping: String,
     useSpacesToSegment: Bool = false
-) -> String {
+) async -> String {
     if jyutping.isEmpty {
         return jyutping
     }
@@ -284,7 +285,7 @@ nonisolated func convertJyutpingToYale(
         }
         syllables = jyutpingCopy.split(separator: " ").map(String.init)
     } else {
-        let (validJyutping, result) = segmentJyutping(
+        let (validJyutping, result) = await segmentJyutping(
             text: jyutping,
             removeSpecialCharacters: false,
             removeGlobCharacters: false
@@ -334,16 +335,16 @@ nonisolated func convertJyutpingToYale(
         }
 
         var yaleSyllable = syllable
-        yaleSyllable = convertYaleFinal(syllable: yaleSyllable)
-        yaleSyllable = convertYaleInitial(syllable: yaleSyllable)
+        yaleSyllable = await convertYaleFinal(syllable: yaleSyllable)
+        yaleSyllable = await convertYaleInitial(syllable: yaleSyllable)
         yaleSyllables.append(yaleSyllable)
     }
 
     return yaleSyllables.joined(separator: " ")
 }
 
-nonisolated private func convertIPACantoneseSyllable(_ jyutping: String)
-    -> String
+@concurrent private func convertIPACantoneseSyllable(_ jyutping: String)
+    async -> String
 {
     guard let match = jyutping.firstMatch(of: cantoneseIPASyllableRegex) else {
         logger.error("Invalid jyutping found in IPA conversion: \(jyutping)")
@@ -385,10 +386,10 @@ nonisolated private func convertIPACantoneseSyllable(_ jyutping: String)
     return initial + nucleus + coda + tone
 }
 
-nonisolated func convertJyutpingToIPA(
+@concurrent func convertJyutpingToIPA(
     jyutping: String,
     useSpacesToSegment: Bool = false
-) -> String {
+) async -> String {
     if jyutping.isEmpty {
         return jyutping
     }
@@ -405,7 +406,7 @@ nonisolated func convertJyutpingToIPA(
         }
         syllables = jyutpingCopy.split(separator: " ").map(String.init)
     } else {
-        let (validJyutping, result) = segmentJyutping(
+        let (validJyutping, result) = await segmentJyutping(
             text: jyutping,
             removeSpecialCharacters: false,
             removeGlobCharacters: false
@@ -497,18 +498,18 @@ nonisolated func convertJyutpingToIPA(
             )
         }
 
-        ipaSyllables.append(convertIPACantoneseSyllable(ipaSyllable))
+        ipaSyllables.append(await convertIPACantoneseSyllable(ipaSyllable))
     }
 
     return ipaSyllables.joined(separator: " ")
 }
 
-nonisolated func segmentJyutping(
+@concurrent func segmentJyutping(
     text: String,
     removeSpecialCharacters: Bool = true,
     removeGlobCharacters: Bool = true,
     removeRegexCharacters: Bool = true
-) -> (Bool, [String]) {
+) async -> (Bool, [String]) {
     var processedText = text
     var syllables: [String] = []
 
@@ -630,7 +631,7 @@ nonisolated func segmentJyutping(
                     // essentially, we need to check every possibility. If at
                     // least one possibility is a valid final, then the Jyutping
                     // can be considered valid.
-                    let stringsToSearch: [String] = unfoldJyutpingRegex(
+                    let stringsToSearch: [String] = await unfoldJyutpingRegex(
                         jyutping: previousInitial
                     )
 
@@ -693,7 +694,7 @@ nonisolated func segmentJyutping(
             if removeRegexCharacters {
                 isValidInitial = jyutpingInitials.contains(currentString)
             } else {
-                let stringsToSearch: [String] = unfoldJyutpingRegex(
+                let stringsToSearch: [String] = await unfoldJyutpingRegex(
                     jyutping: currentString
                 )
                 stringsToSearch.forEach { s in
@@ -718,7 +719,7 @@ nonisolated func segmentJyutping(
                         previousInitial
                     )
                 } else {
-                    let stringsToSearch: [String] = unfoldJyutpingRegex(
+                    let stringsToSearch: [String] = await unfoldJyutpingRegex(
                         jyutping: previousInitial
                     )
                     stringsToSearch.forEach { s in
@@ -776,7 +777,7 @@ nonisolated func segmentJyutping(
             if removeRegexCharacters {
                 isValidFinal = jyutpingFinals.contains(currentString)
             } else {
-                let stringsToSearch: [String] = unfoldJyutpingRegex(
+                let stringsToSearch: [String] = await unfoldJyutpingRegex(
                     jyutping: currentString
                 )
                 stringsToSearch.forEach { s in
@@ -832,11 +833,11 @@ nonisolated func segmentJyutping(
     return (validJyutping, syllables)
 }
 
-nonisolated func jyutpingAutocorrect(
+@concurrent func jyutpingAutocorrect(
     text: String,
     unsafeSubstitutions: Bool = false
 )
-    -> String
+    async -> String
 {
     var out: String = text
 
@@ -1534,7 +1535,7 @@ nonisolated func jyutpingAutocorrect(
     return out
 }
 
-nonisolated func jyutpingSoundChanges(text: [String]) -> [String] {
+@concurrent func jyutpingSoundChanges(text: [String]) async -> [String] {
     var changedSyllables: [String] = []
 
     for syllable in text {

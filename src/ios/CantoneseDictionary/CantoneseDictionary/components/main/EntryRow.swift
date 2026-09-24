@@ -9,6 +9,8 @@ import SwiftUI
 
 struct EntryRow: View {
     let entry: Entry
+    
+    @State private var phonetic: String? = nil
 
     var body: some View {
         VStack {
@@ -23,21 +25,25 @@ struct EntryRow: View {
             .lineLimit(1)
             .truncationMode(.tail)
             Text(
-                entry.getPhonetic(
-                    options: .preferCantonese,
-                    cantoneseOptions: .rawJyutping,
-                    mandarinOptions: .prettyPinyin
-                )
+                phonetic ?? "placeholder text"
             )
             .frame(maxWidth: .infinity, alignment: .leading)
             .lineLimit(1)
             .truncationMode(.tail)
+            .redacted(reason: phonetic == nil ? .placeholder : [])
             Text(
                 entry.getDefinitionSnippet()
             )
             .frame(maxWidth: .infinity, alignment: .leading)
             .lineLimit(1)
             .truncationMode(.tail)
+        }
+        .task {
+            phonetic = await entry.getPhonetic(
+                options: .preferCantonese,
+                cantoneseOptions: .rawJyutping,
+                mandarinOptions: .prettyPinyin
+            )
         }
     }
 }

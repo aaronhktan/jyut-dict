@@ -17,7 +17,7 @@ actor SQLSearch {
         self.pool = pool
     }
     
-    func searchTraditional(searchTerm: String) async -> [Entry]
+    @concurrent func searchTraditional(searchTerm: String) async -> [Entry]
     {
         let globTerm = prepareCharacterBindValues(
             characters: searchTerm
@@ -42,7 +42,7 @@ actor SQLSearch {
         return results
     }
     
-    func searchSimplified(searchTerm: String) async -> [Entry]
+    @concurrent func searchSimplified(searchTerm: String) async -> [Entry]
     {
         let globTerm = prepareCharacterBindValues(
             characters: searchTerm
@@ -67,13 +67,13 @@ actor SQLSearch {
         return results
     }
 
-    func searchJyutping(searchTerm: String, useFuzzyJyutping: Bool) async
+    @concurrent func searchJyutping(searchTerm: String, useFuzzyJyutping: Bool) async
         -> [Entry]
     {
         // TODO: Actually implement checking for option
         let unsafeFuzzyJyutping = true
 
-        let globTerm = prepareJyutpingBindValues(
+        let globTerm = await prepareJyutpingBindValues(
             jyutping: searchTerm,
             useFuzzyJyutping: useFuzzyJyutping
         )
@@ -101,9 +101,9 @@ actor SQLSearch {
         return results
     }
 
-    func searchPinyin(searchTerm: String, useFuzzyPinyin: Bool) async -> [Entry]
+    @concurrent func searchPinyin(searchTerm: String, useFuzzyPinyin: Bool) async -> [Entry]
     {
-        let globTerm = preparePinyinBindValues(
+        let globTerm = await preparePinyinBindValues(
             pinyin: searchTerm,
             useFuzzyPinyin: useFuzzyPinyin
         )
@@ -126,6 +126,28 @@ actor SQLSearch {
         } catch {
             // TODO: Handle errors
             logger.error("Error happened when trying to read from db")
+        }
+
+        return results
+    }
+    
+    @concurrent func searchEnglish(searchTerm: String) async -> [Entry]
+    {
+        let (ftsParam, likeParam) = await prepareEnglishBindValues(english: searchTerm)
+        var results: [Entry] = []
+        do {
+            results = try await pool.read { db in
+                let rows = try Row.fetchAll(
+                    db,
+                    sql: searchEnglishQuery,
+                    arguments: [ftsParam, likeParam]
+                )
+                print("Last error message: \(db.lastErrorMessage)")
+                return parseReturnedRecords(rows: rows)
+            }
+        } catch {
+            // TODO: Handle errors
+            logger.error("Error happened when trying to read from db: \(error)")
         }
 
         return results

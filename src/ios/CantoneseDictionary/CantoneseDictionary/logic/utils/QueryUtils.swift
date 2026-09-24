@@ -29,21 +29,23 @@ nonisolated func prepareCharacterBindValues(
     return result
 }
 
-nonisolated func prepareJyutpingBindValues(
+@concurrent func prepareJyutpingBindValues(
     jyutping: String,
     useFuzzyJyutping: Bool
-) -> String {
+) async -> String {
     let searchExactMatch =
-        jyutping.count >= 3 && jyutping.hasPrefix("\"")
-        && jyutping.hasSuffix("\"")
+        jyutping.count >= 3
+        && ((jyutping.hasPrefix("\"")
+            && jyutping.hasSuffix("\""))
+            || (jyutping.hasPrefix("“") && jyutping.hasSuffix("”")))
     let appendWildcard = !jyutping.hasSuffix("$")
 
     var correctedTerm = jyutping
     if !searchExactMatch && useFuzzyJyutping {
         if appendWildcard {
-            correctedTerm = jyutpingAutocorrect(text: jyutping)
+            correctedTerm = await jyutpingAutocorrect(text: jyutping)
         } else {
-            correctedTerm = jyutpingAutocorrect(
+            correctedTerm = await jyutpingAutocorrect(
                 text: String(jyutping.prefix(jyutping.count - 1))
             )
         }
@@ -55,7 +57,7 @@ nonisolated func prepareJyutpingBindValues(
             correctedTerm.dropFirst().dropLast()
         ).components(separatedBy: " ")
     } else {
-        (_, jyutpingSyllables) = segmentJyutping(
+        (_, jyutpingSyllables) = await segmentJyutping(
             text: correctedTerm,
             removeSpecialCharacters: true,
             removeGlobCharacters: false,
@@ -64,7 +66,7 @@ nonisolated func prepareJyutpingBindValues(
     }
 
     if !searchExactMatch && useFuzzyJyutping {
-        jyutpingSyllables = jyutpingSoundChanges(text: jyutpingSyllables)
+        jyutpingSyllables = await jyutpingSoundChanges(text: jyutpingSyllables)
     }
 
     var result: String
@@ -97,13 +99,15 @@ nonisolated func prepareJyutpingBindValues(
     return result
 }
 
-nonisolated func preparePinyinBindValues(
+@concurrent func preparePinyinBindValues(
     pinyin: String,
     useFuzzyPinyin: Bool
-) -> String {
+) async -> String {
     let searchExactMatch =
-        pinyin.count >= 3 && pinyin.hasPrefix("\"")
-        && pinyin.hasSuffix("\"")
+        pinyin.count >= 3
+        && ((pinyin.hasPrefix("\"")
+            && pinyin.hasSuffix("\""))
+            || (pinyin.hasPrefix("“") && pinyin.hasSuffix("”")))
     let appendWildcard = !pinyin.hasSuffix("$")
 
     var pinyinSyllables: [String] = []
@@ -151,6 +155,26 @@ nonisolated func preparePinyinBindValues(
     }
 
     return result
+}
+
+@concurrent func prepareEnglishBindValues(
+    english: String,
+) async -> (String, String) {
+    let searchExactMatch =
+        english.count >= 3
+        && ((english.hasPrefix("\"")
+            && english.hasSuffix("\""))
+            || (english.hasPrefix("“") && english.hasSuffix("”")))
+
+    let ftsParam = "\"\(english)\""
+    var likeParam = english
+    if searchExactMatch {
+        likeParam = "\(String(likeParam.dropFirst().dropLast()))"
+    } else {
+        likeParam = "%\(english)%"
+    }
+
+    return (ftsParam, likeParam)
 }
 
 nonisolated func parseReturnedRecords(rows: [Row]) -> [Entry] {
@@ -248,7 +272,7 @@ nonisolated func parseReturnedRecords(rows: [Row]) -> [Entry] {
                     } else {
                         logger.warning("Sentences was not an array of dicts")
                     }
-                    
+
                     definitions.append(
                         Definition(
                             definitionContent: content,

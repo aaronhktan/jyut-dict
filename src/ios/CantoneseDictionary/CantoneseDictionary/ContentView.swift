@@ -8,17 +8,17 @@
 import SwiftUI
 
 struct ContentView: View {
-    enum Sheet: String, Identifiable {
-        case transcription, handwriting, saved, history, settings
-
-        var id: String { rawValue }
-    }
-
     @Environment(DatabaseManager.self) private var databaseManager
     @State private var presentedSheet: Sheet?
     @State private var searchText: String = ""
     @State private var searchIsActive = false
     @State private var searchResults: [Entry] = []
+    
+    private enum Sheet: String, Identifiable {
+        case transcription, handwriting, saved, history, settings
+
+        var id: String { rawValue }
+    }
 
     var body: some View {
         NavigationSplitView {
@@ -96,7 +96,7 @@ struct ContentView: View {
             )
             .searchPresentationToolbarBehavior(.avoidHidingContent)
         } detail: {
-            Text("Hi")
+            Spacer()
         }
     }
 }

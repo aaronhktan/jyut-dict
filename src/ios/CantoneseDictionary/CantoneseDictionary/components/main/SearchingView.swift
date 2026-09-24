@@ -29,7 +29,13 @@ struct SearchingView: View {
     @State private var animationToken: Int = 0
     @State private var showEmptyState = false
 
-    struct SearchQuery: Equatable {
+    private var shouldHideToolbar: Bool {
+        // Would be better to use HorizontalSizeClass, but causes bugs on iPad
+        // right now :(
+        UIDevice.current.userInterfaceIdiom == .phone && isSearchActive
+    }
+
+    private struct SearchQuery: Equatable {
         let text: String
         let option: SearchParameters
     }
@@ -42,11 +48,6 @@ struct SearchingView: View {
                         NavigationLink(value: entry) {
                             EntryRow(entry: entry)
                         }
-                    }
-                    .navigationDestination(
-                        for: Entry.self,
-                    ) { entry in
-                        EntryDetail(entry: entry)
                     }
                     .listStyle(.automatic)
                     .scrollDismissesKeyboard(.immediately)
@@ -152,7 +153,12 @@ struct SearchingView: View {
                 }
             }
         }
-        .toolbar(isSearchActive ? .hidden : .visible, for: .navigationBar)
+        .navigationDestination(
+            for: Entry.self,
+        ) { entry in
+            EntryDetail(entry: entry)
+        }
+        .toolbar(shouldHideToolbar ? .hidden : .visible, for: .navigationBar)
         .onChange(of: isSearchActive) {
             if !isSearchActive {
                 options[.autoDetect] = "Auto-detect language"
@@ -190,7 +196,14 @@ struct SearchingView: View {
                 useFuzzyJyutping: false
             )
         case .fuzzyJyutping:
-            fallthrough
+            results = await searcher.searchJyutping(
+                searchTerm: searchText.lowercased(),
+                useFuzzyJyutping: true
+            )
+        case .english:
+            results = await searcher.searchEnglish(
+                searchTerm: searchText.lowercased()
+            )
         default:
             results = await searcher.searchJyutping(
                 searchTerm: searchText.lowercased(),
