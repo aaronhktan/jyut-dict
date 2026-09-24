@@ -81,6 +81,8 @@ struct EntryDetail: View {
   }
 
   private struct DefinitionsSetView: View {
+    @Environment(\.colorScheme) var colorScheme
+
     let set: DefinitionsSet
 
     var body: some View {
@@ -92,7 +94,7 @@ struct EntryDetail: View {
           .padding(.vertical, 12)
           .background(
             UnevenRoundedRectangle(topLeadingRadius: 15, topTrailingRadius: 15)
-              .fill(.quinary)
+              .fill((colorScheme == .dark) ? AnyShapeStyle(.quinary) : AnyShapeStyle(.gray.opacity(0.1)))
           )
           .onTapGesture {
             #if os(iOS)
@@ -121,7 +123,7 @@ struct EntryDetail: View {
       }
       .background {
         RoundedRectangle(cornerRadius: 15)
-          .fill(.quinary)
+          .fill((colorScheme == .dark) ? AnyShapeStyle(.quinary) : AnyShapeStyle(.gray.opacity(0.1)))
           .onTapGesture {
             // Makes deselecting text possible
             #if os(iOS)
