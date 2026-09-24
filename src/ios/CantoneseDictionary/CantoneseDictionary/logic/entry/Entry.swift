@@ -215,19 +215,19 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
         }
     }
 
-    func generatePhonetic(
+    @concurrent func generatePhonetic(
         cantoneseOptions: CantoneseOptions,
         mandarinOptions: MandarinOptions
-    ) {
+    ) async {
         if (cantoneseOptions.rawValue & CantoneseOptions.prettyYale.rawValue
             == CantoneseOptions.prettyYale.rawValue) && _yale == nil
         {
-            _yale = convertJyutpingToYale(jyutping: _jyutping)
+            _yale = await convertJyutpingToYale(jyutping: _jyutping)
         }
         if (cantoneseOptions.rawValue & CantoneseOptions.cantoneseIPA.rawValue
             == CantoneseOptions.cantoneseIPA.rawValue) && _cantoneseIPA == nil
         {
-            _cantoneseIPA = convertJyutpingToIPA(jyutping: _jyutping)
+            _cantoneseIPA = await convertJyutpingToIPA(jyutping: _jyutping)
         }
 
         if (mandarinOptions.rawValue & MandarinOptions.prettyPinyin.rawValue
@@ -262,21 +262,26 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
         }
     }
 
-    func getPhonetic(
+    @concurrent func getPhonetic(
         options: EntryPhoneticOptions,
         cantoneseOptions: CantoneseOptions,
         mandarinOptions: MandarinOptions
-    ) -> String {
+    ) async -> String {
         switch options {
         case .onlyCantonese:
-            return getCantonesePhonetic(cantoneseOptions: cantoneseOptions)
-        case .onlyMandarin:
-            return getMandarinPhonetic(mandarinOptions: mandarinOptions)
-        case .preferCantonese:
-            let cantonese = getCantonesePhonetic(
+            return await getCantonesePhonetic(
                 cantoneseOptions: cantoneseOptions
             )
-            let mandarin = getMandarinPhonetic(mandarinOptions: mandarinOptions)
+        case .onlyMandarin:
+            return await getMandarinPhonetic(mandarinOptions: mandarinOptions)
+        case .preferCantonese:
+            async let cantoneseResult = getCantonesePhonetic(
+                cantoneseOptions: cantoneseOptions
+            )
+            async let mandarinResult = getMandarinPhonetic(
+                mandarinOptions: mandarinOptions
+            )
+            let (cantonese, mandarin) = await (cantoneseResult, mandarinResult)
             if cantonese.isEmpty {
                 return mandarin.isEmpty ? "" : "(\(mandarin))"
             } else if mandarin.isEmpty {
@@ -285,10 +290,13 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
                 return "\(cantonese) (\(mandarin))"
             }
         case .preferMandarin:
-            let cantonese = getCantonesePhonetic(
+            async let cantoneseResult = getCantonesePhonetic(
                 cantoneseOptions: cantoneseOptions
             )
-            let mandarin = getMandarinPhonetic(mandarinOptions: mandarinOptions)
+            async let mandarinResult = getMandarinPhonetic(
+                mandarinOptions: mandarinOptions
+            )
+            let (cantonese, mandarin) = await (cantoneseResult, mandarinResult)
             if mandarin.isEmpty {
                 return cantonese.isEmpty ? "" : "(\(cantonese))"
             } else if cantonese.isEmpty {
@@ -299,11 +307,13 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
         }
     }
 
-    func getCantonesePhonetic(cantoneseOptions: CantoneseOptions) -> String {
+    @concurrent func getCantonesePhonetic(cantoneseOptions: CantoneseOptions)
+        async -> String
+    {
         switch cantoneseOptions {
         case .prettyYale:
             if _yale == nil {
-                generatePhonetic(
+                await generatePhonetic(
                     cantoneseOptions: .prettyYale,
                     mandarinOptions: .none
                 )
@@ -311,7 +321,7 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
             return _yale ?? "Yale not available"
         case .cantoneseIPA:
             if _cantoneseIPA == nil {
-                generatePhonetic(
+                await generatePhonetic(
                     cantoneseOptions: .cantoneseIPA,
                     mandarinOptions: .none
                 )
@@ -324,11 +334,13 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
         }
     }
 
-    func getMandarinPhonetic(mandarinOptions: MandarinOptions) -> String {
+    @concurrent func getMandarinPhonetic(mandarinOptions: MandarinOptions) async
+        -> String
+    {
         switch mandarinOptions {
         case .prettyPinyin:
             if _prettyPinyin == nil {
-                generatePhonetic(
+                await generatePhonetic(
                     cantoneseOptions: .none,
                     mandarinOptions: .prettyPinyin
                 )
@@ -336,7 +348,7 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
             return _prettyPinyin ?? "Pretty pinyin not available"
         case .numberedPinyin:
             if _numberedPinyin == nil {
-                generatePhonetic(
+                await generatePhonetic(
                     cantoneseOptions: .none,
                     mandarinOptions: .numberedPinyin
                 )
@@ -344,7 +356,7 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
             return _numberedPinyin ?? "Numbered pinyin not available"
         case .zhuyin:
             if _zhuyin == nil {
-                generatePhonetic(
+                await generatePhonetic(
                     cantoneseOptions: .none,
                     mandarinOptions: .zhuyin
                 )
@@ -352,7 +364,7 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
             return _zhuyin ?? "Zhuyin not available"
         case .mandarinIPA:
             if _mandarinIPA == nil {
-                generatePhonetic(
+                await generatePhonetic(
                     cantoneseOptions: .none,
                     mandarinOptions: .mandarinIPA
                 )

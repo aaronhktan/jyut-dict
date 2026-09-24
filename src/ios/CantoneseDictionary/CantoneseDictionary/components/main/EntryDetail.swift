@@ -9,6 +9,9 @@ import SwiftUI
 
 struct EntryDetail: View {
     let entry: Entry
+    
+    @State var cantonesePhonetic = ""
+    @State var mandarinPhonetic = ""
 
     var body: some View {
         ScrollView {
@@ -32,11 +35,7 @@ struct EntryDetail: View {
                                     alignment: .leading
                                 )
                             Text(
-                                entry.getPhonetic(
-                                    options: .onlyCantonese,
-                                    cantoneseOptions: .rawJyutping,
-                                    mandarinOptions: .prettyPinyin
-                                )
+                                cantonesePhonetic
                             )
                             .padding(.trailing)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -49,11 +48,7 @@ struct EntryDetail: View {
                                 .foregroundStyle(.placeholder)
                                 .frame(width: 30, alignment: .leading)
                             Text(
-                                entry.getPhonetic(
-                                    options: .onlyMandarin,
-                                    cantoneseOptions: .rawJyutping,
-                                    mandarinOptions: .prettyPinyin
-                                )
+                                mandarinPhonetic
                             )
                             .padding(.trailing)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -143,6 +138,18 @@ struct EntryDetail: View {
                     }
                 }
             }
+        }
+        .task {
+            cantonesePhonetic = await entry.getPhonetic(
+                options: .onlyCantonese,
+                cantoneseOptions: .rawJyutping,
+                mandarinOptions: .prettyPinyin
+            )
+            mandarinPhonetic = await entry.getPhonetic(
+                options: .onlyMandarin,
+                cantoneseOptions: .rawJyutping,
+                mandarinOptions: .prettyPinyin
+            )
         }
     }
 }
