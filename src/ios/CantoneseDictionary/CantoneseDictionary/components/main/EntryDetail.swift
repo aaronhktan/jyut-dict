@@ -236,9 +236,8 @@ struct EntryDetail: View {
       return
     }
     let searcher = SQLSearch(pool: pool)
-    entry = await searcher.searchByRowId(rowid: String(rowId))
 
-    //    entry = await searcher.searchByRowId(rowid: String(rowId))
+    entry = await searcher.searchByRowId(rowid: String(rowId))
     headerCharacters =
       entry?.getCharacters(
         options: .preferTraditional,

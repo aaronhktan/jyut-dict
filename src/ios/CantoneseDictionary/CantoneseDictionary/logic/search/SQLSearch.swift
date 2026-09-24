@@ -30,7 +30,7 @@ actor SQLSearch {
       }
     } catch {
       // TODO: Handle errors
-      logger.error("Error happened when trying to read from db")
+      logger.error("Error happened when trying to read from db: \(error)")
     }
 
     return result
@@ -54,7 +54,7 @@ actor SQLSearch {
       }
     } catch {
       // TODO: Handle errors
-      logger.error("Error happened when trying to read from db")
+      logger.error("Error happened when trying to read from db: \(error)")
     }
 
     return results
@@ -78,7 +78,7 @@ actor SQLSearch {
       }
     } catch {
       // TODO: Handle errors
-      logger.error("Error happened when trying to read from db")
+      logger.error("Error happened when trying to read from db: \(error)")
     }
 
     return results
