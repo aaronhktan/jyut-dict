@@ -5,6 +5,7 @@
 //  Created by Aaron on 2026-09-22.
 //
 
+import GRDB
 import SwiftUI
 
 struct SearchingView: View {
@@ -12,17 +13,19 @@ struct SearchingView: View {
 
   @Binding var searchText: String
   @Binding var isSearchActive: Bool
+  @Binding var isSearchFocused: Bool
   @Binding var searchResults: [Entry]
+  @Binding var selectedRowId: Int?
 
   @State private var options: [InputMethod: String] = [
-    .autoDetect: "Auto-detect language",
-    .traditional: "Traditional Chinese",
-    .simplified: "Simplified Chinese",
-    .fuzzyJyutping: "Fuzzy Jyutping",
-    .jyutping: "Jyutping",
-    .fuzzyPinyin: "Fuzzy Pinyin",
-    .pinyin: "Pinyin",
-    .english: "English",
+    .autoDetect: InputMethodNames[.autoDetect]!,
+    .traditional: InputMethodNames[.traditional]!,
+    .simplified: InputMethodNames[.simplified]!,
+    .fuzzyJyutping: InputMethodNames[.fuzzyJyutping]!,
+    .jyutping: InputMethodNames[.jyutping]!,
+    .fuzzyPinyin: InputMethodNames[.fuzzyPinyin]!,
+    .pinyin: InputMethodNames[.pinyin]!,
+    .english: InputMethodNames[.english]!,
   ]
   @State private var selectedOption: InputMethod = .autoDetect
   @State private var detectedInputMethod: InputMethod = .none
@@ -31,12 +34,14 @@ struct SearchingView: View {
   @State private var showEmptyState = false
 
   private var isIPad: Bool {
-    UIDevice.current.userInterfaceIdiom == .pad
+    #if os(iOS)
+      UIDevice.current.userInterfaceIdiom == .pad
+    #else
+      false
+    #endif
   }
   private var shouldHideToolbar: Bool {
-    // Would be better to use HorizontalSizeClass, but causes bugs on iPad
-    // right now :(
-    !isIPad && isSearchActive
+    !isIPad && (isSearchActive || isSearchFocused)
   }
 
   private struct SearchQuery: Equatable {
@@ -48,16 +53,21 @@ struct SearchingView: View {
     Group {
       if isSearchActive {
         ZStack(alignment: .bottom) {
-          List(searchResults) { entry in
-            NavigationLink(value: entry) {
-              EntryRow(entry: entry)
-            }
+          List(searchResults, selection: $selectedRowId) { entry in
+            EntryRow(entry: entry)
           }
           .listStyle(.automatic)
           .scrollDismissesKeyboard(.immediately)
           .overlay {
             if showEmptyState {
               ContentUnavailableView {
+                Image(systemName: "flag.slash")
+                  .resizable()
+                  .scaledToFit()
+                  .frame(width: 50)
+                  .foregroundStyle(.accent)
+                  .opacity(0.5)
+                  .padding()
                 Text("No search results were found.")
               }
             }
@@ -115,6 +125,7 @@ struct SearchingView: View {
           guard !Task.isCancelled else { return }
 
           if results.isEmpty {
+            // Delay showing empty screen to avoid flash in interface
             try? await Task.sleep(for: .milliseconds(500))
             guard !Task.isCancelled else { return }
             searchResults = []
@@ -124,6 +135,22 @@ struct SearchingView: View {
             searchResults = results
           }
         }
+        #if os(iOS)
+          .toolbar {
+            Group {
+              if isIPad {
+                ToolbarItem(placement: .topBarTrailing) {
+                  Button("Close search", systemImage: "xmark") {
+                    isSearchActive = false
+                    isSearchFocused = false
+                  }
+                  .labelsHidden()
+                  .glassEffect()
+                }
+              }
+            }
+          }
+        #endif
       } else {
         ContentUnavailableView {
           Label {
@@ -140,12 +167,9 @@ struct SearchingView: View {
         }
       }
     }
-    .navigationDestination(
-      for: Entry.self,
-    ) { entry in
-      EntryDetail(rowId: entry.id)
-    }
-    .toolbar(shouldHideToolbar ? .hidden : .visible, for: .navigationBar)
+    #if os(iOS)
+      .toolbar(shouldHideToolbar ? .hidden : .visible, for: .navigationBar)
+    #endif
     .onChange(of: isSearchActive) {
       if !isSearchActive {
         options[.autoDetect] = "Auto-detect language"
@@ -258,11 +282,16 @@ struct SearchingView: View {
 
   @Previewable @State var searchText: String = ""
   @Previewable @State var isSearchActive: Bool = true
+  @Previewable @State var isSearchFocused: Bool = true
   @Previewable @State var searchResults: [Entry] = []
+  @Previewable @State var selectedRowId: Int? = 1
+
   SearchingView(
     searchText: $searchText,
     isSearchActive: $isSearchActive,
-    searchResults: $searchResults
+    isSearchFocused: $isSearchFocused,
+    searchResults: $searchResults,
+    selectedRowId: $selectedRowId,
   )
   .environment(databaseManager)
 }

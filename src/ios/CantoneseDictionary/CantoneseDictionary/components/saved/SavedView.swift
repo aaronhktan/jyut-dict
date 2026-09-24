@@ -14,12 +14,21 @@ struct SavedView: View {
     NavigationStack {
       Text("Saved words here")
         .toolbar {
-          ToolbarItem(placement: .topBarTrailing) {
-            Button("Close saved words", systemImage: "xmark") {
-              dismiss()
+          #if os(iOS)
+            ToolbarItem(placement: .topBarTrailing) {
+              Button("Close saved words", systemImage: "xmark") {
+                dismiss()
+              }
+              .labelsHidden()
             }
-            .labelsHidden()
-          }
+          #else
+            ToolbarItem(placement: .navigation) {
+              Button("Close saved words", systemImage: "xmark") {
+                dismiss()
+              }
+              .labelsHidden()
+            }
+          #endif
         }
     }
 
