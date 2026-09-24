@@ -11,145 +11,201 @@ import SwiftUI
 import os
 
 actor SQLSearch {
-    private var pool: DatabasePool
+  private var pool: DatabasePool
 
-    public init(pool: DatabasePool) {
-        self.pool = pool
-    }
-    
-    @concurrent func searchTraditional(searchTerm: String) async -> [Entry]
-    {
-        let globTerm = prepareCharacterBindValues(
-            characters: searchTerm
+  public init(pool: DatabasePool) {
+    self.pool = pool
+  }
+
+  @concurrent func searchTraditional(searchTerm: String) async -> [Entry] {
+    let globTerm = prepareCharacterBindValues(
+      characters: searchTerm
+    )
+    print("globTerm: '\(globTerm)'")
+
+    var results: [Entry] = []
+    do {
+      results = try await pool.read { db in
+        let rows = try Row.fetchAll(
+          db,
+          sql: searchTraditionalQuery,
+          arguments: [globTerm]
         )
-        print("globTerm: '\(globTerm)'")
-
-        var results: [Entry] = []
-        do {
-            results = try await pool.read { db in
-                let rows = try Row.fetchAll(
-                    db,
-                    sql: searchTraditionalQuery,
-                    arguments: [globTerm]
-                )
-                return parseReturnedRecords(rows: rows)
-            }
-        } catch {
-            // TODO: Handle errors
-            logger.error("Error happened when trying to read from db")
-        }
-
-        return results
-    }
-    
-    @concurrent func searchSimplified(searchTerm: String) async -> [Entry]
-    {
-        let globTerm = prepareCharacterBindValues(
-            characters: searchTerm
-        )
-        print("globTerm: '\(globTerm)'")
-
-        var results: [Entry] = []
-        do {
-            results = try await pool.read { db in
-                let rows = try Row.fetchAll(
-                    db,
-                    sql: searchSimplifiedQuery,
-                    arguments: [globTerm]
-                )
-                return parseReturnedRecords(rows: rows)
-            }
-        } catch {
-            // TODO: Handle errors
-            logger.error("Error happened when trying to read from db")
-        }
-
-        return results
+        return parseReturnedRecords(rows: rows)
+      }
+    } catch {
+      // TODO: Handle errors
+      logger.error("Error happened when trying to read from db")
     }
 
-    @concurrent func searchJyutping(searchTerm: String, useFuzzyJyutping: Bool) async
-        -> [Entry]
-    {
-        // TODO: Actually implement checking for option
-        let unsafeFuzzyJyutping = true
+    return results
+  }
 
-        let globTerm = await prepareJyutpingBindValues(
-            jyutping: searchTerm,
-            useFuzzyJyutping: useFuzzyJyutping
+  @concurrent func searchSimplified(searchTerm: String) async -> [Entry] {
+    let globTerm = prepareCharacterBindValues(
+      characters: searchTerm
+    )
+    print("globTerm: '\(globTerm)'")
+
+    var results: [Entry] = []
+    do {
+      results = try await pool.read { db in
+        let rows = try Row.fetchAll(
+          db,
+          sql: searchSimplifiedQuery,
+          arguments: [globTerm]
         )
-        print("globTerm: '\(globTerm)'")
-        let query = String(
-            format: searchJyutpingQuery,
-            arguments: [useFuzzyJyutping ? REGEXP_OPERATOR : GLOB_OPERATOR]
-        )
-
-        var results: [Entry] = []
-        do {
-            results = try await pool.read { db in
-                let rows = try Row.fetchAll(
-                    db,
-                    sql: query,
-                    arguments: [globTerm]
-                )
-                return parseReturnedRecords(rows: rows)
-            }
-        } catch {
-            // TODO: Handle errors
-            logger.error("Error happened when trying to read from db")
-        }
-
-        return results
+        return parseReturnedRecords(rows: rows)
+      }
+    } catch {
+      // TODO: Handle errors
+      logger.error("Error happened when trying to read from db")
     }
 
-    @concurrent func searchPinyin(searchTerm: String, useFuzzyPinyin: Bool) async -> [Entry]
-    {
-        let globTerm = await preparePinyinBindValues(
-            pinyin: searchTerm,
-            useFuzzyPinyin: useFuzzyPinyin
+    return results
+  }
+
+  @concurrent func searchJyutpingExistence(searchTerm: String, useFuzzyJyutping: Bool) async -> Bool
+  {
+    let unsafeFuzzyJyutping = false
+
+    let globTerm = await prepareJyutpingBindValues(
+      jyutping: searchTerm,
+      useFuzzyJyutping: useFuzzyJyutping
+    )
+    print("globTerm: '\(globTerm)'")
+    let query = String(
+      format: jyutpingExistenceQuery,
+      arguments: [useFuzzyJyutping ? REGEXP_OPERATOR : GLOB_OPERATOR]
+    )
+
+    var result: Bool = false
+    do {
+      result = try await pool.read { db in
+        let rows = try Row.fetchAll(
+          db,
+          sql: query,
+          arguments: [globTerm]
         )
-        print("globTerm: '\(globTerm)'")
-        let query = String(
-            format: searchPinyinQuery,
-            arguments: [useFuzzyPinyin ? REGEXP_OPERATOR : GLOB_OPERATOR]
+        return parseExistenceRecords(rows: rows)
+      }
+    } catch {
+      // TODO: Handle errors
+      logger.error("Error happened when trying to read from db: \(error)")
+    }
+
+    return result
+  }
+
+  @concurrent func searchJyutping(searchTerm: String, useFuzzyJyutping: Bool) async
+    -> [Entry]
+  {
+    // TODO: Actually implement checking for option
+    let unsafeFuzzyJyutping = false
+
+    let globTerm = await prepareJyutpingBindValues(
+      jyutping: searchTerm,
+      useFuzzyJyutping: useFuzzyJyutping
+    )
+    print("globTerm: '\(globTerm)'")
+    let query = String(
+      format: searchJyutpingQuery,
+      arguments: [useFuzzyJyutping ? REGEXP_OPERATOR : GLOB_OPERATOR]
+    )
+
+    var results: [Entry] = []
+    do {
+      results = try await pool.read { db in
+        let rows = try Row.fetchAll(
+          db,
+          sql: query,
+          arguments: [globTerm]
         )
-
-        var results: [Entry] = []
-        do {
-            results = try await pool.read { db in
-                let rows = try Row.fetchAll(
-                    db,
-                    sql: query,
-                    arguments: [globTerm]
-                )
-                return parseReturnedRecords(rows: rows)
-            }
-        } catch {
-            // TODO: Handle errors
-            logger.error("Error happened when trying to read from db")
-        }
-
-        return results
+        return parseReturnedRecords(rows: rows)
+      }
+    } catch {
+      // TODO: Handle errors
+      logger.error("Error happened when trying to read from db: \(error)")
     }
-    
-    @concurrent func searchEnglish(searchTerm: String) async -> [Entry]
-    {
-        let (ftsParam, likeParam) = await prepareEnglishBindValues(english: searchTerm)
-        var results: [Entry] = []
-        do {
-            results = try await pool.read { db in
-                let rows = try Row.fetchAll(
-                    db,
-                    sql: searchEnglishQuery,
-                    arguments: [ftsParam, likeParam]
-                )
-                print("Last error message: \(db.lastErrorMessage)")
-                return parseReturnedRecords(rows: rows)
-            }
-        } catch {
-            // TODO: Handle errors
-            logger.error("Error happened when trying to read from db: \(error)")
-        }
 
-        return results
+    return results
+  }
+
+  @concurrent func searchPinyinExistence(searchTerm: String, useFuzzyPinyin: Bool) async -> Bool {
+    let globTerm = await preparePinyinBindValues(
+      pinyin: searchTerm,
+      useFuzzyPinyin: useFuzzyPinyin
+    )
+    print("globTerm: '\(globTerm)'")
+    let query = String(
+      format: pinyinExistenceQuery,
+      arguments: [useFuzzyPinyin ? REGEXP_OPERATOR : GLOB_OPERATOR]
+    )
+
+    var result: Bool = false
+    do {
+      result = try await pool.read { db in
+        let rows = try Row.fetchAll(
+          db,
+          sql: query,
+          arguments: [globTerm]
+        )
+        return parseExistenceRecords(rows: rows)
+      }
+    } catch {
+      // TODO: Handle errors
+      logger.error("Error happened when trying to read from db: \(error)")
     }
+
+    return result
+  }
+
+  @concurrent func searchPinyin(searchTerm: String, useFuzzyPinyin: Bool) async -> [Entry] {
+    let globTerm = await preparePinyinBindValues(
+      pinyin: searchTerm,
+      useFuzzyPinyin: useFuzzyPinyin
+    )
+    print("globTerm: '\(globTerm)'")
+    let query = String(
+      format: searchPinyinQuery,
+      arguments: [useFuzzyPinyin ? REGEXP_OPERATOR : GLOB_OPERATOR]
+    )
+
+    var results: [Entry] = []
+    do {
+      results = try await pool.read { db in
+        let rows = try Row.fetchAll(
+          db,
+          sql: query,
+          arguments: [globTerm]
+        )
+        return parseReturnedRecords(rows: rows)
+      }
+    } catch {
+      // TODO: Handle errors
+      logger.error("Error happened when trying to read from db: \(error)")
+    }
+
+    return results
+  }
+
+  @concurrent func searchEnglish(searchTerm: String) async -> [Entry] {
+    let (ftsParam, likeParam) = await prepareEnglishBindValues(english: searchTerm)
+    var results: [Entry] = []
+    do {
+      results = try await pool.read { db in
+        let rows = try Row.fetchAll(
+          db,
+          sql: searchEnglishQuery,
+          arguments: [ftsParam, likeParam]
+        )
+        return parseReturnedRecords(rows: rows)
+      }
+    } catch {
+      // TODO: Handle errors
+      logger.error("Error happened when trying to read from db: \(error)")
+    }
+
+    return results
+  }
 }

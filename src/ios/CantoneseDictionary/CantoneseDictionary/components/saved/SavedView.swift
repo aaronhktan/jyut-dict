@@ -8,24 +8,24 @@
 import SwiftUI
 
 struct SavedView: View {
-    @Environment(\.dismiss) var dismiss
+  @Environment(\.dismiss) var dismiss
 
-    var body: some View {
-        NavigationStack {
-            Text("Saved words here")
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button("Close saved words", systemImage: "xmark") {
-                            dismiss()
-                        }
-                        .labelsHidden()
-                    }
-                }
+  var body: some View {
+    NavigationStack {
+      Text("Saved words here")
+        .toolbar {
+          ToolbarItem(placement: .topBarTrailing) {
+            Button("Close saved words", systemImage: "xmark") {
+              dismiss()
+            }
+            .labelsHidden()
+          }
         }
-
     }
+
+  }
 }
 
 #Preview {
-    SavedView()
+  SavedView()
 }
