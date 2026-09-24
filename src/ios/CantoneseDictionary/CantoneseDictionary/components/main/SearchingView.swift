@@ -10,6 +10,7 @@ import SwiftUI
 
 struct SearchingView: View {
   @Environment(DatabaseManager.self) private var databaseManager
+  @Environment(\.dismissSearch) private var dismissSearch
 
   @Binding var searchText: String
   @Binding var isSearchActive: Bool
@@ -33,7 +34,7 @@ struct SearchingView: View {
   @State private var animationToken: Int = 0
   @State private var showEmptyState = false
 
-  private var isIPad: Bool {
+  private var isPadIdiom: Bool {
     #if os(iOS)
       UIDevice.current.userInterfaceIdiom == .pad
     #else
@@ -41,7 +42,7 @@ struct SearchingView: View {
     #endif
   }
   private var shouldHideToolbar: Bool {
-    !isIPad && (isSearchActive || isSearchFocused)
+    !isPadIdiom && (isSearchActive || isSearchFocused)
   }
 
   private struct SearchQuery: Equatable {
@@ -85,7 +86,7 @@ struct SearchingView: View {
             }
             .opacity(isPickerTextVisible ? 1 : 0)
             .glassEffect()
-            .padding(.bottom, isIPad ? 10 : 0)
+            .padding(.bottom, isPadIdiom ? 10 : 0)
             .onChange(of: detectedInputMethod) { oldMethod, newMethod in
               guard selectedOption == .autoDetect else { return }
               if !searchText.isEmpty && newMethod == oldMethod {
@@ -138,11 +139,14 @@ struct SearchingView: View {
         #if os(iOS)
           .toolbar {
             Group {
-              if isIPad {
+              if isPadIdiom {
                 ToolbarItem(placement: .topBarTrailing) {
                   Button("Close search", systemImage: "xmark") {
-                    isSearchActive = false
-                    isSearchFocused = false
+                    withAnimation(.snappy(duration: 0.4)) {
+                      isSearchFocused = false
+                      isSearchActive = false
+                      dismissSearch()
+                    }
                   }
                   .labelsHidden()
                   .glassEffect()
@@ -286,12 +290,15 @@ struct SearchingView: View {
   @Previewable @State var searchResults: [Entry] = []
   @Previewable @State var selectedRowId: Int? = 1
 
-  SearchingView(
-    searchText: $searchText,
-    isSearchActive: $isSearchActive,
-    isSearchFocused: $isSearchFocused,
-    searchResults: $searchResults,
-    selectedRowId: $selectedRowId,
-  )
-  .environment(databaseManager)
+  NavigationStack {
+    SearchingView(
+      searchText: $searchText,
+      isSearchActive: $isSearchActive,
+      isSearchFocused: $isSearchFocused,
+      searchResults: $searchResults,
+      selectedRowId: $selectedRowId,
+    )
+    .environment(databaseManager)
+  }
+  .searchable(text: .constant(""))
 }

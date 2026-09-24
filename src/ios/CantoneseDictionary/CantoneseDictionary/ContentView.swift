@@ -16,24 +16,18 @@ extension View {
   func searchableWithPresentedOniPhoneOnly(text: Binding<String>, isPresented: Binding<Bool>)
     -> some View
   {
+    if isPhoneIdiom {
+      self.searchable(text: text, isPresented: isPresented, prompt: "Search")
+    } else {
+      self.searchable(text: text, prompt: "Search")
+    }
+  }
+
+  private var isPhoneIdiom: Bool {
     #if os(iOS)
-      if UIDevice.current.userInterfaceIdiom == .phone {
-        self.searchable(
-          text: text,
-          isPresented: isPresented,
-          prompt: "Search",
-        )
-      } else {
-        self.searchable(
-          text: text,
-          prompt: "Search",
-        )
-      }
+      UIDevice.current.userInterfaceIdiom == .phone
     #else
-      self.searchable(
-        text: text,
-        prompt: "Search",
-      )
+      false
     #endif
   }
 }
@@ -51,7 +45,7 @@ struct ContentView: View {
   // tapping the input method picker.
   @FocusState private var isSearchFocused: Bool
 
-  private var isIPad: Bool {
+  private var isPadIdiom: Bool {
     #if os(iOS)
       UIDevice.current.userInterfaceIdiom == .pad
     #else
@@ -80,84 +74,47 @@ struct ContentView: View {
       .toolbar {
         if !isSearchActive {
           #if os(iOS)
-            ToolbarItem(placement: .topBarTrailing) {
-              ControlGroup {
-                Button(action: {
-                  presentedSheet = .history
-                }) {
-                  Image(systemName: "clock")
-                }
-                Button(action: {
-                  presentedSheet = .saved
-                }) {
-                  Image(systemName: "star")
-                }
-                Button(action: {
-                  presentedSheet = .settings
-                }) {
-                  Image(systemName: "gearshape")
-                }
-              }
-            }
+            let placement: ToolbarItemPlacement = .topBarTrailing
           #else
-            ToolbarItem(placement: .navigation) {
-              ControlGroup {
-                Button(action: {
-                  presentedSheet = .history
-                }) {
-                  Image(systemName: "clock")
-                }
-                Button(action: {
-                  presentedSheet = .saved
-                }) {
-                  Image(systemName: "star")
-                }
-                Button(action: {
-                  presentedSheet = .settings
-                }) {
-                  Image(systemName: "gearshape")
-                }
+            let placement: ToolbarItemPlacement = .navigation
+          #endif
+
+          ToolbarItem(placement: placement) {
+            ControlGroup {
+              Button(action: { presentedSheet = .history }) {
+                Image(systemName: "clock")
+              }
+              Button(action: { presentedSheet = .saved }) {
+                Image(systemName: "star")
+              }
+              Button(action: { presentedSheet = .settings }) {
+                Image(systemName: "gearshape")
               }
             }
-          #endif
+          }
         }
         #if os(iOS)
-          DefaultToolbarItem(kind: .search, placement: .bottomBar)
-          ToolbarSpacer(.fixed, placement: .bottomBar)
-          ToolbarItem(placement: .bottomBar) {
-            ControlGroup {
-              Button(action: {
-                presentedSheet = .transcription
-              }) {
-                Image(systemName: "microphone")
-              }
-
-              Button(action: {
-                presentedSheet = .handwriting
-              }) {
-                Image(systemName: "pencil.and.scribble")
-              }
-            }
-          }
+          let placement: ToolbarItemPlacement = .bottomBar
         #else
-          DefaultToolbarItem(kind: .search)
-          ToolbarSpacer(.fixed)
-          ToolbarItem(placement: .navigation) {
-            ControlGroup {
-              Button(action: {
-                presentedSheet = .transcription
-              }) {
-                Image(systemName: "microphone")
-              }
+          let placement: ToolbarItemPlacement = .navigation
+        #endif
+        DefaultToolbarItem(kind: .search, placement: placement)
+        ToolbarSpacer(.fixed, placement: placement)
+        ToolbarItem(placement: placement) {
+          ControlGroup {
+            Button(action: {
+              presentedSheet = .transcription
+            }) {
+              Image(systemName: "microphone")
+            }
 
-              Button(action: {
-                presentedSheet = .handwriting
-              }) {
-                Image(systemName: "pencil.and.scribble")
-              }
+            Button(action: {
+              presentedSheet = .handwriting
+            }) {
+              Image(systemName: "pencil.and.scribble")
             }
           }
-        #endif
+        }
       }
       .sheet(
         item: $presentedSheet,
@@ -181,17 +138,30 @@ struct ContentView: View {
           }
         }
       )
-      .searchableWithPresentedOniPhoneOnly(
-        text: $searchText,
-        isPresented: $isSearchActive,
-      )
+      #if os(iOS)
+        .searchableWithPresentedOniPhoneOnly(
+          text: $searchText,
+          isPresented: $isSearchActive,
+        )
+      #else
+        .searchable(
+          text: $searchText,
+          isPresented: $isSearchActive,
+          placement: .sidebar,
+          prompt: "Search",
+        )
+      #endif
       .searchFocused($isSearchFocused)
       .onChange(of: isSearchFocused) { _, focused in
-        if isIPad && focused {
+        if isPadIdiom && focused {
           isSearchActive = true
         }
       }
       .searchPresentationToolbarBehavior(.avoidHidingContent)
+      .navigationSplitViewColumnWidth(
+        min: 350, ideal: 350, max: 600
+      )
+      .toolbar(removing: .sidebarToggle)
     } detail: {
       NavigationStack {
         if let selectedRowId {
