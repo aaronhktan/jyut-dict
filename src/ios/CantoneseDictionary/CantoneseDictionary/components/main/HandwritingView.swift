@@ -14,12 +14,21 @@ struct HandwritingView: View {
     NavigationStack {
       Text("Handwriting interface here")
         .toolbar {
-          ToolbarItem(placement: .topBarTrailing) {
-            Button("Close handwriting view", systemImage: "xmark") {
-              dismiss()
+          #if os(iOS)
+            ToolbarItem(placement: .topBarTrailing) {
+              Button("Close handwriting view", systemImage: "xmark") {
+                dismiss()
+              }
+              .labelsHidden()
             }
-            .labelsHidden()
-          }
+          #else
+            ToolbarItem(placement: .navigation) {
+              Button("Close handwriting view", systemImage: "xmark") {
+                dismiss()
+              }
+              .labelsHidden()
+            }
+          #endif
         }
     }
 

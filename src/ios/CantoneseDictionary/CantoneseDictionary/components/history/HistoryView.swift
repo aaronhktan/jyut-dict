@@ -14,12 +14,21 @@ struct HistoryView: View {
     NavigationStack {
       Text("Search history here")
         .toolbar {
-          ToolbarItem(placement: .topBarTrailing) {
-            Button("Close history", systemImage: "xmark") {
-              dismiss()
+          #if os(iOS)
+            ToolbarItem(placement: .topBarTrailing) {
+              Button("Close history", systemImage: "xmark") {
+                dismiss()
+              }
+              .labelsHidden()
             }
-            .labelsHidden()
-          }
+          #else
+            ToolbarItem(placement: .navigation) {
+              Button("Close history", systemImage: "xmark") {
+                dismiss()
+              }
+              .labelsHidden()
+            }
+          #endif
         }
     }
 

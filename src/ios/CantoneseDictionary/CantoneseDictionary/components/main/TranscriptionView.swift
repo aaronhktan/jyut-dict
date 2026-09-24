@@ -14,12 +14,21 @@ struct TranscriptionView: View {
     NavigationStack {
       Text("Transcription animation here")
         .toolbar {
-          ToolbarItem(placement: .topBarTrailing) {
-            Button("Close transcription", systemImage: "xmark") {
-              dismiss()
+          #if os(iOS)
+            ToolbarItem(placement: .topBarTrailing) {
+              Button("Close transcription", systemImage: "xmark") {
+                dismiss()
+              }
+              .labelsHidden()
             }
-            .labelsHidden()
-          }
+          #else
+            ToolbarItem(placement: .navigation) {
+              Button("Close transcription", systemImage: "xmark") {
+                dismiss()
+              }
+              .labelsHidden()
+            }
+          #endif
         }
     }
 

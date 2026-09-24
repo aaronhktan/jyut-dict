@@ -14,12 +14,21 @@ struct SettingsView: View {
     NavigationStack {
       Text("Settings screen")
         .toolbar {
-          ToolbarItem(placement: .topBarTrailing) {
-            Button("Close settings", systemImage: "xmark") {
-              dismiss()
+          #if os(iOS)
+            ToolbarItem(placement: .topBarTrailing) {
+              Button("Close settings", systemImage: "xmark") {
+                dismiss()
+              }
+              .labelsHidden()
             }
-            .labelsHidden()
-          }
+          #else
+            ToolbarItem(placement: .navigation) {
+              Button("Close settings", systemImage: "xmark") {
+                dismiss()
+              }
+              .labelsHidden()
+            }
+          #endif
         }
         .navigationTitle("Settings")
     }

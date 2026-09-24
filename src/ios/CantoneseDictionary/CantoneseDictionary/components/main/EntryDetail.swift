@@ -92,11 +92,14 @@ struct EntryDetail: View {
           .padding(.vertical, 12)
           .background(
             UnevenRoundedRectangle(topLeadingRadius: 15, topTrailingRadius: 15)
-              .fill(.quinary))
+              .fill(.quinary)
+          )
           .onTapGesture {
-            // Makes deselecting text possible
-            UIApplication.shared.sendAction(
-              #selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            #if os(iOS)
+              // Makes deselecting text possible
+              UIApplication.shared.sendAction(
+                #selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            #endif
           }
         VStack(alignment: .leading) {
           ForEach(
@@ -121,8 +124,10 @@ struct EntryDetail: View {
           .fill(.quinary)
           .onTapGesture {
             // Makes deselecting text possible
-            UIApplication.shared.sendAction(
-              #selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            #if os(iOS)
+              UIApplication.shared.sendAction(
+                #selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            #endif
           }
       }
       .padding(.horizontal)
@@ -159,82 +164,100 @@ struct EntryDetail: View {
   }
 
   var body: some View {
-    List {
-      VStack(alignment: .leading) {
-        Text(headerCharacters)
-          .font(.largeTitle)
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .textSelection(.enabled)
-        Grid {
-          GridRow {
-            HStack {
-              Text("JP")
-                .foregroundStyle(.placeholder)
-                .frame(
-                  width: 30,
-                  alignment: .leading
-                )
-              Text(jyutping)
-                .padding(.trailing)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .textSelection(.enabled)
-              Spacer()
+    Group {
+      if entry != nil {
+        List {
+          VStack(alignment: .leading) {
+            Text(headerCharacters)
+              .font(.largeTitle)
+              .frame(maxWidth: .infinity, alignment: .leading)
+              .textSelection(.enabled)
+            Grid {
+              GridRow {
+                HStack {
+                  Text("JP")
+                    .foregroundStyle(.placeholder)
+                    .frame(
+                      width: 30,
+                      alignment: .leading
+                    )
+                  Text(jyutping)
+                    .padding(.trailing)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .textSelection(.enabled)
+                  Spacer()
+                }
+              }
+              GridRow {
+                HStack {
+                  Text("PY")
+                    .foregroundStyle(.placeholder)
+                    .frame(width: 30, alignment: .leading)
+                  Text(pinyin)
+                    .padding(.trailing)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .textSelection(.enabled)
+                  Spacer()
+                }
+              }
             }
           }
-          GridRow {
-            HStack {
-              Text("PY")
-                .foregroundStyle(.placeholder)
-                .frame(width: 30, alignment: .leading)
-              Text(pinyin)
-                .padding(.trailing)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .textSelection(.enabled)
-              Spacer()
-            }
-          }
-        }
-      }
-      .padding(.horizontal)
-      .listRowSeparator(.hidden)
-      .listRowBackground(Color.clear)
-      .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
-
-      ForEach(definitionsSets, id: \.id) { set in
-        DefinitionsSetView(set: set)
+          .padding(.horizontal)
           .listRowSeparator(.hidden)
           .listRowBackground(Color.clear)
-          .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
+
+          ForEach(definitionsSets, id: \.id) { set in
+            DefinitionsSetView(set: set)
+              .listRowSeparator(.hidden)
+              .listRowBackground(Color.clear)
+              .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+          }
+        }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+      } else {
+        Spacer()
       }
     }
-    .listStyle(.plain)
-    .scrollContentBackground(.hidden)
-    .task {
-      guard entry == nil else { return }
-      guard let pool = databaseManager.dbPool else { return }
-      let searcher = SQLSearch(pool: pool)
-
-      entry = await searcher.searchByRowId(rowid: String(rowId))
-      headerCharacters =
-        entry?.getCharacters(
-          options: .preferTraditional,
-          useColours: true
-        ) ?? "Error fetching entry header"
-      jyutping =
-        entry?.getPhonetic(
-          options: .onlyCantonese,
-          cantoneseOptions: .rawJyutping,
-          mandarinOptions: .prettyPinyin
-        ) ?? "Error fetching Jyutping"
-      pinyin =
-        entry?.getPhonetic(
-          options: .onlyMandarin,
-          cantoneseOptions: .rawJyutping,
-          mandarinOptions: .prettyPinyin
-        ) ?? "Error fetching Pinyin"
-
-      definitionsSets = entry?.getDefinitionsSets() ?? []
+    .onChange(of: rowId) {
+      Task {
+        await fetchEntry(rowId: rowId)
+      }
     }
+    .task {
+      guard self.entry == nil else { return }
+      await fetchEntry(rowId: rowId)
+    }
+  }
+
+  private func fetchEntry(rowId: Int) async {
+    guard let pool = databaseManager.dbPool else {
+      return
+    }
+    let searcher = SQLSearch(pool: pool)
+    entry = await searcher.searchByRowId(rowid: String(rowId))
+
+    //    entry = await searcher.searchByRowId(rowid: String(rowId))
+    headerCharacters =
+      entry?.getCharacters(
+        options: .preferTraditional,
+        useColours: true
+      ) ?? "Error fetching entry header"
+    jyutping =
+      entry?.getPhonetic(
+        options: .onlyCantonese,
+        cantoneseOptions: .rawJyutping,
+        mandarinOptions: .prettyPinyin
+      ) ?? "Error fetching Jyutping"
+    pinyin =
+      entry?.getPhonetic(
+        options: .onlyMandarin,
+        cantoneseOptions: .rawJyutping,
+        mandarinOptions: .prettyPinyin
+      ) ?? "Error fetching Pinyin"
+
+    definitionsSets = entry?.getDefinitionsSets() ?? []
   }
 }
 
@@ -255,13 +278,19 @@ struct EntryDetail: View {
             label: "noun",
             examples: [
               Example(
-                sourceLanguage: "yue", simplified: "听日", traditional: "聽日", jyutping: "ting1 jat6",
+                sourceLanguage: "yue", simplified: "我唔理，总之我听朝返到公司要见到你份报告。",
+                traditional: "我唔理，總之我聽朝返到公司要見到你份報告。",
+                jyutping:
+                  "ngo5 m4 lei5, zung2 zi1 ngo5 ting1 ziu1 faan1 dou3 gung1 si1 jiu3 gin3 dou2 nei5 fan6 bou3 gou3.",
                 pinyin: "ting1 ri4",
                 translations: [
                   TranslationSet(
                     source: "CCY",
                     translations: [
-                      Translation(content: "tomorrow", language: "eng", directTarget: true)
+                      Translation(
+                        content:
+                          "I don't give a damn about anything else but your report on my desk tomorrow morning.",
+                        language: "eng", directTarget: true)
                     ])
                 ])
             ]
