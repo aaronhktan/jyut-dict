@@ -57,7 +57,7 @@ nonisolated func prepareCharacterBindValues(
       correctedTerm.dropFirst().dropLast()
     ).components(separatedBy: " ")
   } else {
-    (_, jyutpingSyllables) = await segmentJyutping(
+    (_, jyutpingSyllables) = segmentJyutping(
       text: correctedTerm,
       removeSpecialCharacters: true,
       removeGlobCharacters: false,
@@ -243,7 +243,7 @@ nonisolated func parseReturnedRecords(rows: [Row]) -> [Entry] {
                 let language =
                   translationJSON["language"] as! String
                 let direct =
-                  translationJSON["direct"] as! String == "1"
+                  translationJSON["direct"] as! Int64 == 1
                 translations.append(
                   Translation(
                     content: sentence,

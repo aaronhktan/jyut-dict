@@ -49,7 +49,7 @@ nonisolated class DefinitionsSet: Hashable, Identifiable, @unchecked Sendable {
   ) {
     _definitions.forEach { definition in
       definition.examples.forEach { example in
-        _ = example.generatePhonetic(
+        example.generatePhonetic(
           cantoneseOptions: cantoneseOptions,
           mandarinOptions: mandarinOptions
         )

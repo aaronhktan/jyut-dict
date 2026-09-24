@@ -143,7 +143,7 @@ struct SearchingView: View {
     .navigationDestination(
       for: Entry.self,
     ) { entry in
-      EntryDetail(entry: entry)
+      EntryDetail(rowId: entry.id)
     }
     .toolbar(shouldHideToolbar ? .hidden : .visible, for: .navigationBar)
     .onChange(of: isSearchActive) {
