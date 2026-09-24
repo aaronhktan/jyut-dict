@@ -22,11 +22,8 @@ struct HandwritingView: View {
               .labelsHidden()
             }
           #else
-            ToolbarItem(placement: .navigation) {
-              Button("Close handwriting view", systemImage: "xmark") {
-                dismiss()
-              }
-              .labelsHidden()
+            Button("Close handwriting view", systemImage: "xmark") {
+              dismiss()
             }
           #endif
         }

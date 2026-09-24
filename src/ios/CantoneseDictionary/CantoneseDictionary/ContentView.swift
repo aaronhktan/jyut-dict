@@ -124,7 +124,7 @@ struct ContentView: View {
             TranscriptionView()
               .presentationDetents([.medium])
           case .handwriting:
-            TranscriptionView()
+            HandwritingView()
               .presentationDetents([.medium])
           case .saved:
             SavedView()
