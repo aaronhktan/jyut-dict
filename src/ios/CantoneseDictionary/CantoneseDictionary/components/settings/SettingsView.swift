@@ -8,25 +8,25 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @Environment(\.dismiss) var dismiss
+  @Environment(\.dismiss) var dismiss
 
-    var body: some View {
-        NavigationStack {
-            Text("Settings screen")
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button("Close settings", systemImage: "xmark") {
-                            dismiss()
-                        }
-                        .labelsHidden()
-                    }
-                }
-                .navigationTitle("Settings")
+  var body: some View {
+    NavigationStack {
+      Text("Settings screen")
+        .toolbar {
+          ToolbarItem(placement: .topBarTrailing) {
+            Button("Close settings", systemImage: "xmark") {
+              dismiss()
+            }
+            .labelsHidden()
+          }
         }
-
+        .navigationTitle("Settings")
     }
+
+  }
 }
 
 #Preview {
-    SettingsView()
+  SettingsView()
 }

@@ -8,24 +8,24 @@
 import SwiftUI
 
 struct HistoryView: View {
-    @Environment(\.dismiss) var dismiss
+  @Environment(\.dismiss) var dismiss
 
-    var body: some View {
-        NavigationStack {
-            Text("Search history here")
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button("Close history", systemImage: "xmark") {
-                            dismiss()
-                        }
-                        .labelsHidden()
-                    }
-                }
+  var body: some View {
+    NavigationStack {
+      Text("Search history here")
+        .toolbar {
+          ToolbarItem(placement: .topBarTrailing) {
+            Button("Close history", systemImage: "xmark") {
+              dismiss()
+            }
+            .labelsHidden()
+          }
         }
-
     }
+
+  }
 }
 
 #Preview {
-    HistoryView()
+  HistoryView()
 }
