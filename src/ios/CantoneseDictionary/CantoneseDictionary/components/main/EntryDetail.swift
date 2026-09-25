@@ -13,10 +13,18 @@ struct EntryDetail: View {
   let rowId: Int
 
   @State private var entry: Entry? = nil
-  @State private var headerCharacters: AttributedString = ""
-  @State private var jyutping: String = ""
-  @State private var pinyin: String = ""
-  @State private var definitionsSets: [DefinitionsSet] = []
+  private var headerCharacters: AttributedString {
+    entry?.getCharacters(options: .preferTraditional, useColours: true) ?? "Error fetching entry header"
+  }
+  private var jyutping: String {
+    entry?.getPhonetic(options: .onlyCantonese, cantoneseOptions: .rawJyutping, mandarinOptions: .prettyPinyin) ?? "Error fetching Jyutping"
+  }
+  private var pinyin: String {
+    entry?.getPhonetic(options: .onlyMandarin, cantoneseOptions: .rawJyutping, mandarinOptions: .prettyPinyin) ?? "Error fetching Pinyin"
+  }
+  private var definitionsSets: [DefinitionsSet] {
+    entry?.getDefinitionsSets() ?? []
+  }
 
   private struct ExampleView: View {
     let example: Example
@@ -50,9 +58,11 @@ struct EntryDetail: View {
           }
 
           ForEach(example.getTranslationSets(), id: \.id) { translationSet in
-            Text(translationSet.getTranslations()[0].content)
-              .fixedSize(horizontal: false, vertical: true)
-              .textSelection(.enabled)
+            if let first =  translationSet.getTranslations().first {
+              Text(first.content)
+                .fixedSize(horizontal: false, vertical: true)
+                .textSelection(.enabled)
+            }
           }
         }
       }
@@ -140,29 +150,6 @@ struct EntryDetail: View {
   init(rowId: Int, previewEntry: Entry? = nil) {
     self.rowId = rowId
     _entry = State(initialValue: previewEntry)
-    _headerCharacters =
-      State(
-        initialValue: previewEntry?.getCharacters(
-          options: .preferTraditional,
-          useColours: true
-        ) ?? "Error fetching entry header")
-    _jyutping =
-      State(
-        initialValue: previewEntry?.getPhonetic(
-          options: .onlyCantonese,
-          cantoneseOptions: .rawJyutping,
-          mandarinOptions: .prettyPinyin
-        ) ?? "Error fetching Jyutping")
-    _pinyin =
-      State(
-        initialValue: previewEntry?.getPhonetic(
-          options: .onlyMandarin,
-          cantoneseOptions: .rawJyutping,
-          mandarinOptions: .prettyPinyin
-        ) ?? "Error fetching Pinyin"
-      )
-
-    _definitionsSets = State(initialValue: previewEntry?.getDefinitionsSets() ?? [])
   }
 
   var body: some View {
@@ -187,7 +174,6 @@ struct EntryDetail: View {
                     .padding(.trailing)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .textSelection(.enabled)
-                  Spacer()
                 }
               }
               GridRow {
@@ -199,7 +185,6 @@ struct EntryDetail: View {
                     .padding(.trailing)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .textSelection(.enabled)
-                  Spacer()
                 }
               }
             }
@@ -222,12 +207,7 @@ struct EntryDetail: View {
         Spacer()
       }
     }
-    .onChange(of: rowId) {
-      Task {
-        await fetchEntry(rowId: rowId)
-      }
-    }
-    .task {
+    .task(id: rowId) {
       guard self.entry == nil else { return }
       await fetchEntry(rowId: rowId)
     }
@@ -240,25 +220,6 @@ struct EntryDetail: View {
     let searcher = SQLSearch(pool: pool)
 
     entry = await searcher.searchByRowId(rowid: String(rowId))
-    headerCharacters =
-      entry?.getCharacters(
-        options: .preferTraditional,
-        useColours: true
-      ) ?? "Error fetching entry header"
-    jyutping =
-      entry?.getPhonetic(
-        options: .onlyCantonese,
-        cantoneseOptions: .rawJyutping,
-        mandarinOptions: .prettyPinyin
-      ) ?? "Error fetching Jyutping"
-    pinyin =
-      entry?.getPhonetic(
-        options: .onlyMandarin,
-        cantoneseOptions: .rawJyutping,
-        mandarinOptions: .prettyPinyin
-      ) ?? "Error fetching Pinyin"
-
-    definitionsSets = entry?.getDefinitionsSets() ?? []
   }
 }
 

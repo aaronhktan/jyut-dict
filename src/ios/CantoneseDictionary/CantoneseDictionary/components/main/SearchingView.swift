@@ -12,160 +12,27 @@ struct SearchingView: View {
   @Environment(DatabaseManager.self) private var databaseManager
   @Environment(\.dismissSearch) private var dismissSearch
 
-  @Binding var searchText: String
+  @Bindable var searchContext: SearchContext
+
   @Binding var isSearchActive: Bool
-  @Binding var isSearchFocused: Bool
-  @Binding var searchResults: [Entry]
-  @Binding var selectedRowId: Int?
+  var isSearchFocused: FocusState<Bool>.Binding
 
-  @State private var options: [InputMethod: String] = [
-    .autoDetect: InputMethodNames[.autoDetect]!,
-    .traditional: InputMethodNames[.traditional]!,
-    .simplified: InputMethodNames[.simplified]!,
-    .fuzzyJyutping: InputMethodNames[.fuzzyJyutping]!,
-    .jyutping: InputMethodNames[.jyutping]!,
-    .fuzzyPinyin: InputMethodNames[.fuzzyPinyin]!,
-    .pinyin: InputMethodNames[.pinyin]!,
-    .english: InputMethodNames[.english]!,
+  @State private var selectedOptionLabel: String = "Auto-detect language"
+  @State private var isPickerTextVisible: Bool = true
+
+  static let options: [InputMethod] = [
+    .autoDetect, .traditional, .simplified, .fuzzyJyutping,
+    .jyutping, .fuzzyPinyin, .pinyin, .english,
   ]
-  @State private var selectedOption: InputMethod = .autoDetect
-  @State private var detectedInputMethod: InputMethod = .none
-  @State private var isPickerTextVisible = true
-  @State private var animationToken: Int = 0
-  @State private var showEmptyState = false
 
-  private var isPadIdiom: Bool {
-    #if os(iOS)
-      UIDevice.current.userInterfaceIdiom == .pad
-    #else
-      false
-    #endif
-  }
-  private var isMacIdiom: Bool {
-    #if os(macOS)
-      true
-    #else
-      false
-    #endif
-  }
   private var shouldHideToolbar: Bool {
-    !isPadIdiom && (isSearchActive || isSearchFocused)
-  }
-
-  private struct SearchQuery: Equatable {
-    let text: String
-    let option: InputMethod
+    appIdiom != .pad && (isSearchActive || isSearchFocused.wrappedValue)
   }
 
   var body: some View {
     Group {
       if isSearchActive {
-        ZStack(alignment: .bottom) {
-          List(searchResults, selection: $selectedRowId) { entry in
-            EntryRow(entry: entry)
-          }
-          .listStyle(.automatic)
-          .scrollDismissesKeyboard(.immediately)
-          .overlay {
-            if showEmptyState {
-              ContentUnavailableView {
-                Image(systemName: "flag.slash")
-                  .resizable()
-                  .scaledToFit()
-                  .frame(width: 50)
-                  .foregroundStyle(.accent)
-                  .opacity(0.5)
-                  .padding()
-                Text("No search results were found.")
-              }
-            }
-          }
-          .safeAreaInset(edge: .bottom) {
-            Picker("Search Options", selection: $selectedOption) {
-              ForEach(
-                options.sorted(by: {
-                  $0.key.rawValue < $1.key.rawValue
-                }),
-                id: \.key
-              ) { option, label in
-                Text(label).tag(option)
-              }
-            }
-            .labelsHidden()
-            .opacity(isPickerTextVisible ? 1 : 0)
-            .glassEffect()
-            .padding(.bottom, (isPadIdiom || isMacIdiom) ? 10 : 0)
-            .onChange(of: detectedInputMethod) { oldMethod, newMethod in
-              guard selectedOption == .autoDetect else { return }
-              if !searchText.isEmpty && newMethod == oldMethod {
-                return
-              }
-              animationToken += 1
-              let currentToken = animationToken
-              isPickerTextVisible = false
-              withAnimation(.snappy(duration: 0.1)) {
-                if searchText.isEmpty {
-                  options[.autoDetect] =
-                    "Auto-detect language"
-                  return
-                }
-                options[.autoDetect] =
-                  "Detected input: \(InputMethodNames[detectedInputMethod]!)"
-              } completion: {
-                guard animationToken == currentToken else {
-                  return
-                }
-                withAnimation(.easeIn(duration: 0.05)) {
-                  isPickerTextVisible = true
-                }
-              }
-            }
-          }
-        }
-        .task(id: SearchQuery(text: searchText, option: selectedOption)) {
-          showEmptyState = false
-          guard !searchText.isEmpty else {
-            searchResults = []
-            detectedInputMethod = .autoDetect
-            return
-          }
-
-          let results = await triggerSearch()
-          guard !Task.isCancelled else { return }
-
-          if results.isEmpty {
-            // Delay showing empty screen to avoid flash in interface
-            try? await Task.sleep(for: .milliseconds(500))
-            guard !Task.isCancelled else { return }
-            searchResults = []
-            showEmptyState = searchResults.isEmpty
-            return
-          } else {
-            searchResults = results
-          }
-        }
-        .toolbar {
-          Group {
-            #if os(iOS)
-              let placement: ToolbarItemPlacement = .topBarTrailing
-            #else
-              let placement: ToolbarItemPlacement = .navigation
-            #endif
-            if isPadIdiom || isMacIdiom {
-              ToolbarItem(placement: placement) {
-                Button("Close search", systemImage: "xmark") {
-                  withAnimation(.snappy(duration: 0.4)) {
-                    isSearchFocused = false
-                    isSearchActive = false
-                    dismissSearch()
-                  }
-                }
-                .labelsHidden()
-                .glassEffect()
-              }
-            }
-          }
-        }
+        searchResultView()
       } else {
         ContentUnavailableView {
           Label {
@@ -187,8 +54,7 @@ struct SearchingView: View {
     #endif
     .onChange(of: isSearchActive) {
       if !isSearchActive {
-        options[.autoDetect] = "Auto-detect language"
-        searchResults = []
+        searchContext.searchResults = []
       }
     }
   }
@@ -196,10 +62,10 @@ struct SearchingView: View {
   private func triggerSearch() async -> [Entry] {
     guard let pool = databaseManager.dbPool else { return [] }
     let searcher = SQLSearch(pool: pool)
-    let searchTerm = searchText.lowercased()
+    let searchTerm = searchContext.searchText.lowercased()
 
     var results: [Entry] = []
-    switch selectedOption {
+    switch searchContext.selectedOption {
     case .traditional:
       results = await searcher.searchTraditional(
         searchTerm: searchTerm,
@@ -239,19 +105,19 @@ struct SearchingView: View {
       async let isCharacters = detector.hasHanCharacters(text: searchTerm)
 
       if await isSimplified {
-        detectedInputMethod = .simplified
+        searchContext.detectedInputMethod = .simplified
         results = await searcher.searchSimplified(
           searchTerm: searchTerm
         )
         break
       } else if await isTraditional {
-        detectedInputMethod = .traditional
+        searchContext.detectedInputMethod = .traditional
         results = await searcher.searchTraditional(
           searchTerm: searchTerm
         )
         break
       } else if await isCharacters {
-        detectedInputMethod = .traditional
+        searchContext.detectedInputMethod = .traditional
         results = await searcher.searchTraditional(
           searchTerm: searchTerm
         )
@@ -262,14 +128,14 @@ struct SearchingView: View {
       async let isPinyin = detector.hasPinyin(text: searchTerm)
 
       if let method = await isJyutping {
-        detectedInputMethod = method
+        searchContext.detectedInputMethod = method
         results = await searcher.searchJyutping(
           searchTerm: searchTerm,
           useFuzzyJyutping: method == .fuzzyJyutping
         )
         break
       } else if let method = await isPinyin {
-        detectedInputMethod = method
+        searchContext.detectedInputMethod = method
         results = await searcher.searchPinyin(
           searchTerm: searchTerm,
           useFuzzyPinyin: method == .fuzzyPinyin
@@ -277,7 +143,7 @@ struct SearchingView: View {
         break
       }
 
-      detectedInputMethod = .english
+      searchContext.detectedInputMethod = .english
       results = await searcher.searchEnglish(
         searchTerm: searchTerm
       )
@@ -292,24 +158,121 @@ struct SearchingView: View {
   }
 }
 
-#Preview {
-  @Previewable @State var databaseManager = DatabaseManager()
-
-  @Previewable @State var searchText: String = ""
-  @Previewable @State var isSearchActive: Bool = true
-  @Previewable @State var isSearchFocused: Bool = true
-  @Previewable @State var searchResults: [Entry] = []
-  @Previewable @State var selectedRowId: Int? = 1
-
-  NavigationStack {
-    SearchingView(
-      searchText: $searchText,
-      isSearchActive: $isSearchActive,
-      isSearchFocused: $isSearchFocused,
-      searchResults: $searchResults,
-      selectedRowId: $selectedRowId,
-    )
-    .environment(databaseManager)
+extension SearchingView {
+  // MARK: - Toolbar
+  private var topPlacement: ToolbarItemPlacement {
+    #if os(iOS)
+      .topBarTrailing
+    #else
+      .navigation
+    #endif
   }
-  .searchable(text: .constant(""))
+
+  @ToolbarContentBuilder
+  private var toolbarContent: some ToolbarContent {
+    if appIdiom == .pad || appIdiom == .mac {
+      ToolbarItem(placement: topPlacement) {
+        Button("Close search", systemImage: "xmark") {
+          withAnimation(.snappy(duration: 0.4)) {
+            isSearchFocused.wrappedValue = false
+            isSearchActive = false
+            dismissSearch()
+          }
+        }
+        .labelsHidden()
+        .glassEffect()
+      }
+    }
+  }
+
+  // MARK: - Search Result View
+  private var autoDetectLabel: String {
+    guard searchContext.selectedOption == .autoDetect, !searchContext.searchText.isEmpty else {
+      return "Auto-detect language"
+    }
+    return "Detected input: \(InputMethodNames[searchContext.detectedInputMethod] ?? "")"
+  }
+
+  @ViewBuilder
+  private func searchResultView() -> some View {
+    ZStack(alignment: .bottom) {
+      List(searchContext.searchResults, selection: $searchContext.selectedRowId) { entry in
+        EntryRow(entry: entry)
+      }
+      .listStyle(.automatic)
+      .scrollDismissesKeyboard(.immediately)
+      .overlay {
+        if searchContext.showEmptyState {
+          ContentUnavailableView {
+            Image(systemName: "flag.slash")
+              .resizable()
+              .scaledToFit()
+              .frame(width: 50)
+              .foregroundStyle(.accent)
+              .opacity(0.5)
+              .padding()
+            Text("No search results were found.")
+          }
+        }
+      }
+      .safeAreaInset(edge: .bottom) {
+        Picker("Search Options", selection: $searchContext.selectedOption) {
+          ForEach(
+            Self.options.sorted(by: {
+              $0.rawValue < $1.rawValue
+            }),
+            id: \.self
+          ) { option in
+            Text(option == .autoDetect ? selectedOptionLabel : InputMethodNames[option] ?? "")
+              .tag(option)
+          }
+        }
+        .labelsHidden()
+        .opacity(isPickerTextVisible ? 1 : 0)
+        .glassEffect()
+        .task(id: autoDetectLabel) {
+          let target = autoDetectLabel
+          guard target != selectedOptionLabel, searchContext.selectedOption == .autoDetect
+          else {
+            return
+          }
+          isPickerTextVisible = false
+          withAnimation(.snappy(duration: 0.2)) {
+            selectedOptionLabel = target
+          } completion: {
+            guard target == autoDetectLabel, searchContext.selectedOption == .autoDetect else {
+              return
+            }
+            isPickerTextVisible = true
+          }
+        }
+        .padding(.bottom, (appIdiom == .pad || appIdiom == .mac) ? 10 : 0)
+      }
+    }
+    .task(id: searchContext.query) {
+      searchContext.showEmptyState = false
+      guard !searchContext.searchText.isEmpty else {
+        searchContext.searchResults = []
+        searchContext.detectedInputMethod = .autoDetect
+        return
+      }
+
+      let results = await triggerSearch()
+      guard !Task.isCancelled else { return }
+
+      if results.isEmpty {
+        // Delay showing empty screen to avoid flash in interface
+        try? await Task.sleep(for: .milliseconds(500))
+        guard !Task.isCancelled else { return }
+        searchContext.searchResults = []
+        searchContext.showEmptyState = true
+        return
+      } else {
+        searchContext.searchResults = results
+      }
+    }
+    .toolbar {
+      toolbarContent
+    }
+  }
 }

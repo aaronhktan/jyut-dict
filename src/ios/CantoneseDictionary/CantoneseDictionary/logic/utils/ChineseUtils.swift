@@ -8,12 +8,12 @@
 import Foundation
 import SwiftUI
 
-nonisolated let specialCharacters: Set = [
+nonisolated let specialCharacters: Set<Character> = [
   ".", "。", ",", "，", "！", "？", "%", "－", "…", "⋯",
-  ".", "·", "\"", "“", "”", "$", "｜", "：", "１", "２",
-  "３", "４", "５", "６", "７", "８", "９", "０",
+  "·", "\"", "“", "”", "$", "｜", "：", "１", "２", "３",
+  "４", "５", "６", "７", "８", "９", "０",
 ]
-nonisolated let regexCharacters: Set = ["!", "(", ")", "|"]
+nonisolated let regexCharacters: Set<Character> = ["!", "(", ")", "|"]
 
 nonisolated func applyColours(
   text: String,
@@ -104,7 +104,7 @@ nonisolated func compareStrings(original: String, comparison: String) -> String 
   }
 
   for (x, y) in zip(original, comparison) {
-    if specialCharacters.contains(String(y)) || x != y {
+    if specialCharacters.contains(y) || x != y {
       result += String(y)
       continue
     }
@@ -138,7 +138,7 @@ nonisolated func constructRomanisationQuery(
         // Replace delimiter with GLOB wildcard if GLOB wildcard
         // was attached to end of previous word (i.e. wildcard did not
         // start with a space)
-        result = String(result.prefix(result.count - 1))
+        result = String(result.dropLast(delimiter.count))
       }
       result += s
       // GLOB characters handle their own spacing, so don't insert any

@@ -11,7 +11,7 @@ struct EntryRow: View {
   let entry: Entry
 
   var body: some View {
-    VStack {
+    VStack(alignment: .leading) {
       Text(
         entry.getCharacters(
           options: .preferTraditional,
@@ -19,9 +19,7 @@ struct EntryRow: View {
         )
       )
       .font(.title)
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .lineLimit(1)
-      .truncationMode(.tail)
+      .rowLine()
       Text(
         // Experimented with making this async, but then it led to undesirable flashes when
         // entries were being updated in the list
@@ -31,21 +29,15 @@ struct EntryRow: View {
           mandarinOptions: .prettyPinyin
         )
       )
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .lineLimit(1)
-      .truncationMode(.tail)
-      Text(
-        entry.getDefinitionSnippet()
-      )
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .lineLimit(1)
-      .truncationMode(.tail)
+      .rowLine()
+      Text(entry.getDefinitionSnippet())
+      .rowLine()
     }
   }
 }
 
 #Preview {
-  @Previewable @State var entry = Entry(
+  let entry = Entry(
     rowid: 0,
     traditional: "聽日",
     simplified: "听日",

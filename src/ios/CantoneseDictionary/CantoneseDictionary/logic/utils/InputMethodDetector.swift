@@ -5,7 +5,7 @@
 //  Created by Aaron on 2026-09-23.
 //
 
-nonisolated let simplifiedChineseCharacters: [String] = [
+nonisolated let simplifiedChineseCharacters: Set<Character> = [
   "\u{343d}", "\u{3447}", "\u{3448}", "\u{3454}", "\u{3469}", "\u{34e5}",
   "\u{3509}", "\u{358a}", "\u{359e}", "\u{360e}", "\u{36af}", "\u{36c0}",
   "\u{36df}", "\u{36e0}", "\u{36e3}", "\u{36e4}", "\u{36ff}", "\u{37c6}",
@@ -405,7 +405,7 @@ nonisolated let simplifiedChineseCharacters: [String] = [
   "\u{9f99}", "\u{9f9a}", "\u{9f9b}", "\u{9f9f}",
 ]
 
-nonisolated let mostlySimplifiedChineseCharacters: [String] = [
+nonisolated let mostlySimplifiedChineseCharacters: Set<Character> = [
   "\u{3cfd}", "\u{4e07}", "\u{4e22}", "\u{4e24}", "\u{4e2a}", "\u{4e30}",
   "\u{4e48}", "\u{4e49}", "\u{4e50}", "\u{4e71}", "\u{4e89}", "\u{4e8e}",
   "\u{4e8f}", "\u{4e91}", "\u{4ec5}", "\u{4ece}", "\u{4eea}", "\u{4ef7}",
@@ -448,7 +448,7 @@ nonisolated let mostlySimplifiedChineseCharacters: [String] = [
   "\u{9ec4}", "\u{9efe}", "\u{9f39}",
 ]
 
-nonisolated let traditionalChineseCharacters: [String] = [
+nonisolated let traditionalChineseCharacters: Set<Character> = [
   "\u{346F}", "\u{3473}", "\u{3493}", "\u{34E8}", "\u{35F2}", "\u{361A}",
   "\u{3704}", "\u{370F}", "\u{3722}", "\u{3737}", "\u{379E}", "\u{380F}",
   "\u{389D}", "\u{396E}", "\u{398E}", "\u{3A5C}", "\u{3A73}", "\u{3DFF}",
@@ -932,14 +932,6 @@ nonisolated let traditionalChineseCharacters: [String] = [
 ]
 
 nonisolated(unsafe) let hanRegex: Regex = try! Regex(".*(\\p{Han}).*")
-nonisolated(unsafe) let traditionalRegex: Regex =
-  try! Regex(".*(\(traditionalChineseCharacters.joined(separator: "|"))).*")
-nonisolated(unsafe) let simplifiedRegex: Regex =
-  try! Regex(".*(\(simplifiedChineseCharacters.joined(separator: "|"))).*")
-nonisolated(unsafe) let mostlySimplifiedRegex: Regex =
-  try! Regex(
-    ".*(\(mostlySimplifiedChineseCharacters.joined(separator: "|"))).*"
-  )
 
 actor InputMethodDetector {
   private let _searcher: SQLSearch
@@ -948,20 +940,21 @@ actor InputMethodDetector {
     self._searcher = searcher
   }
 
-  @concurrent func hasTraditional(text: String) async -> Bool {
-    return text.contains(traditionalRegex)
+  func hasTraditional(text: String) -> Bool {
+    return text.contains(where: { traditionalChineseCharacters.contains($0) })
   }
 
-  @concurrent func hasSimplified(text: String) async -> Bool {
-    return text.contains(simplifiedRegex)
-      || text.contains(mostlySimplifiedRegex)
+  func hasSimplified(text: String) -> Bool {
+    return text.contains(where: { simplifiedChineseCharacters.contains($0) })
+      || text.contains(where: { mostlySimplifiedChineseCharacters.contains($0) })
   }
 
-  @concurrent func hasHanCharacters(text: String) async -> Bool {
+  func hasHanCharacters(text: String) -> Bool {
     return text.contains(hanRegex)
   }
 
-  @concurrent func hasJyutping(text: String) async -> InputMethod? {
+  @concurrent
+  func hasJyutping(text: String) async -> InputMethod? {
     async let isJyutping = _searcher.searchJyutpingExistence(
       searchTerm: text,
       useFuzzyJyutping: false
@@ -980,7 +973,8 @@ actor InputMethodDetector {
     }
   }
 
-  @concurrent func hasPinyin(text: String) async -> InputMethod? {
+  @concurrent
+  func hasPinyin(text: String) async -> InputMethod? {
     async let isPinyin = _searcher.searchPinyinExistence(
       searchTerm: text,
       useFuzzyPinyin: false

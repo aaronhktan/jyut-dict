@@ -6,19 +6,20 @@
 //
 
 import Testing
+import SwiftUI
 
 @testable import CantoneseDictionary
 
 struct ChineseUtilsTests {
   @Test func applyColoursJyutping() async throws {
+    var firstChar = AttributedString("唔")
+    firstChar.foregroundColor = defaultJyutpingToneColours[4]
+    var secondChar = AttributedString("係")
+    secondChar.foregroundColor = defaultJyutpingToneColours[6]
+
     let text = "唔係"
     let tones = [4, 6]
-    let expected =
-      "<font color=\""
-      + defaultJyutpingToneColours[4]
-      + "\">唔</font>" + "<font color=\""
-      + defaultJyutpingToneColours[6]
-      + "\">係</font>"
+    let expected = firstChar + secondChar
     #expect(
       applyColours(
         text: text,
@@ -31,14 +32,14 @@ struct ChineseUtilsTests {
   }
 
   @Test func applyColoursPinyin() async throws {
+    var firstChar = AttributedString("不")
+    firstChar.foregroundColor = defaultPinyinToneColours[2]
+    var secondChar = AttributedString("是")
+    secondChar.foregroundColor = defaultPinyinToneColours[4]
+
     let text = "不是"
     let tones = [2, 4]
-    let expected =
-      "<font color=\""
-      + defaultPinyinToneColours[2]
-      + "\">不</font>" + "<font color=\""
-      + defaultPinyinToneColours[4]
-      + "\">是</font>"
+    let expected = firstChar + secondChar
     #expect(
       applyColours(
         text: text,

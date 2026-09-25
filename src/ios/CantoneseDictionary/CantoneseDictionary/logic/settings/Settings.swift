@@ -27,5 +27,22 @@ nonisolated let defaultPinyinToneColours: [Color] = [
 ]
 
 actor Settings {
+  private var jyutpingToneColours = defaultJyutpingToneColours
+  private var pinyinToneColours = defaultPinyinToneColours
 
+  func jyutpingToneColourHash() -> Int {
+    var hasher = Hasher()
+    for colour in jyutpingToneColours {
+      hasher.combine(colour)
+    }
+    return hasher.finalize()
+  }
+
+  func pinyinToneColourHash() -> Int {
+    var hasher = Hasher()
+    for colour in pinyinToneColours {
+      hasher.combine(colour)
+    }
+    return hasher.finalize()
+  }
 }
