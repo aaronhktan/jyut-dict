@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
   @Environment(DatabaseManager.self) private var databaseManager
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
   @State private var presentedSheet: Sheet?
   @State private var isSearchActive: Bool = false
@@ -58,6 +59,12 @@ struct ContentView: View {
           EntryDetail(rowId: rowId)
         }
       }
+    }
+    .onAppear {
+      searchContext.sizeClass = horizontalSizeClass ?? .compact
+    }
+    .onChange(of: horizontalSizeClass) { _, newValue in
+      searchContext.sizeClass = newValue ?? .compact
     }
   }
 }
@@ -148,6 +155,7 @@ final class SearchContext {
   var selectedRowId: Int?
   var detectedInputMethod: InputMethod = .none
   var showEmptyState: Bool = false
+  var sizeClass: UserInterfaceSizeClass = .regular
 
   struct Query: Equatable {
     let text: String
