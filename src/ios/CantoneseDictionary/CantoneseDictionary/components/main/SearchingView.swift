@@ -265,6 +265,11 @@ extension SearchingView {
         return
       } else {
         searchContext.searchResults = results
+        if (appIdiom != .phone) && (searchContext.sizeClass != .compact) {
+          try? await Task.sleep(for: .milliseconds(200))
+          guard !Task.isCancelled else { return }
+          searchContext.selectedRowId = results.first?.id
+        }
       }
     }
     .toolbar {
