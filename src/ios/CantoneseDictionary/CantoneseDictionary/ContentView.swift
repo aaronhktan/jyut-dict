@@ -50,7 +50,7 @@ struct ContentView: View {
       }
       .searchPresentationToolbarBehavior(.avoidHidingContent)
       .navigationSplitViewColumnWidth(
-        min: 350, ideal: 350, max: 600
+        min: 300, ideal: 350, max: 600
       )
     } detail: {
       NavigationStack {

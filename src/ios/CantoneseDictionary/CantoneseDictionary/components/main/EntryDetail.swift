@@ -14,13 +14,18 @@ struct EntryDetail: View {
 
   @State private var entry: Entry? = nil
   private var headerCharacters: AttributedString {
-    entry?.getCharacters(options: .preferTraditional, useColours: true) ?? "Error fetching entry header"
+    entry?.getCharacters(options: .preferTraditional, useColours: true)
+      ?? "Error fetching entry header"
   }
   private var jyutping: String {
-    entry?.getPhonetic(options: .onlyCantonese, cantoneseOptions: .rawJyutping, mandarinOptions: .prettyPinyin) ?? "Error fetching Jyutping"
+    entry?.getPhonetic(
+      options: .onlyCantonese, cantoneseOptions: .rawJyutping, mandarinOptions: .prettyPinyin)
+      ?? "Error fetching Jyutping"
   }
   private var pinyin: String {
-    entry?.getPhonetic(options: .onlyMandarin, cantoneseOptions: .rawJyutping, mandarinOptions: .prettyPinyin) ?? "Error fetching Pinyin"
+    entry?.getPhonetic(
+      options: .onlyMandarin, cantoneseOptions: .rawJyutping, mandarinOptions: .prettyPinyin)
+      ?? "Error fetching Pinyin"
   }
   private var definitionsSets: [DefinitionsSet] {
     entry?.getDefinitionsSets() ?? []
@@ -58,7 +63,7 @@ struct EntryDetail: View {
           }
 
           ForEach(example.getTranslationSets(), id: \.id) { translationSet in
-            if let first =  translationSet.getTranslations().first {
+            if let first = translationSet.getTranslations().first {
               Text(first.content)
                 .fixedSize(horizontal: false, vertical: true)
                 .textSelection(.enabled)
@@ -104,7 +109,9 @@ struct EntryDetail: View {
           .padding(.vertical, 12)
           .background(
             UnevenRoundedRectangle(topLeadingRadius: 15, topTrailingRadius: 15)
-              .fill((colorScheme == .dark) ? AnyShapeStyle(.quinary) : AnyShapeStyle(.gray.opacity(0.1)))
+              .fill(
+                (colorScheme == .dark) ? AnyShapeStyle(.quinary) : AnyShapeStyle(.gray.opacity(0.1))
+              )
           )
           .onTapGesture {
             #if os(iOS)
@@ -133,7 +140,9 @@ struct EntryDetail: View {
       }
       .background {
         RoundedRectangle(cornerRadius: 15)
-          .fill((colorScheme == .dark) ? AnyShapeStyle(.quinary) : AnyShapeStyle(.gray.opacity(0.1)))
+          .fill(
+            (colorScheme == .dark) ? AnyShapeStyle(.quinary) : AnyShapeStyle(.gray.opacity(0.1))
+          )
           .onTapGesture {
             // Makes deselecting text possible
             #if os(iOS)
@@ -208,7 +217,7 @@ struct EntryDetail: View {
       }
     }
     .task(id: rowId) {
-      guard self.entry == nil else { return }
+      guard rowId != -1 else { return }
       await fetchEntry(rowId: rowId)
     }
   }
@@ -263,6 +272,6 @@ struct EntryDetail: View {
   )
   @Previewable @State var databaseManager = DatabaseManager()
 
-  EntryDetail(rowId: 1, previewEntry: entry)
+  EntryDetail(rowId: -1, previewEntry: entry)
     .environment(databaseManager)
 }
