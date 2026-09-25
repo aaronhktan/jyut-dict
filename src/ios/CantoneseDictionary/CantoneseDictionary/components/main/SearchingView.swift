@@ -100,23 +100,19 @@ struct SearchingView: View {
       )
     case .autoDetect:
       let detector = InputMethodDetector(searcher: searcher)
-      async let isSimplified = detector.hasSimplified(text: searchTerm)
-      async let isTraditional = detector.hasTraditional(text: searchTerm)
-      async let isCharacters = detector.hasHanCharacters(text: searchTerm)
-
-      if await isSimplified {
+      if detector.hasSimplified(text: searchTerm) {
         searchContext.detectedInputMethod = .simplified
         results = await searcher.searchSimplified(
           searchTerm: searchTerm
         )
         break
-      } else if await isTraditional {
+      } else if detector.hasTraditional(text: searchTerm) {
         searchContext.detectedInputMethod = .traditional
         results = await searcher.searchTraditional(
           searchTerm: searchTerm
         )
         break
-      } else if await isCharacters {
+      } else if detector.hasHanCharacters(text: searchTerm) {
         searchContext.detectedInputMethod = .traditional
         results = await searcher.searchTraditional(
           searchTerm: searchTerm

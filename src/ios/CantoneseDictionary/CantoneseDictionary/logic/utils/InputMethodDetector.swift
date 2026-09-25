@@ -933,60 +933,58 @@ nonisolated let traditionalChineseCharacters: Set<Character> = [
 
 nonisolated(unsafe) let hanRegex: Regex = try! Regex(".*(\\p{Han}).*")
 
-actor InputMethodDetector {
-  private let _searcher: SQLSearch
+struct InputMethodDetector {
+  private let _searcher: SQLSearch?
 
-  init(searcher: SQLSearch) {
+  init(searcher: SQLSearch?) {
     self._searcher = searcher
   }
 
-  func hasTraditional(text: String) -> Bool {
+  nonisolated func hasTraditional(text: String) -> Bool {
     return text.contains(where: { traditionalChineseCharacters.contains($0) })
   }
 
-  func hasSimplified(text: String) -> Bool {
+  nonisolated func hasSimplified(text: String) -> Bool {
     return text.contains(where: { simplifiedChineseCharacters.contains($0) })
       || text.contains(where: { mostlySimplifiedChineseCharacters.contains($0) })
   }
 
-  func hasHanCharacters(text: String) -> Bool {
+  nonisolated func hasHanCharacters(text: String) -> Bool {
     return text.contains(hanRegex)
   }
 
-  @concurrent
   func hasJyutping(text: String) async -> InputMethod? {
-    async let isJyutping = _searcher.searchJyutpingExistence(
+    async let isJyutping = _searcher?.searchJyutpingExistence(
       searchTerm: text,
       useFuzzyJyutping: false
     )
-    async let isFuzzyJyutping = _searcher.searchJyutpingExistence(
+    async let isFuzzyJyutping = _searcher?.searchJyutpingExistence(
       searchTerm: text,
       useFuzzyJyutping: true
     )
 
-    if await isJyutping {
+    if let j = await isJyutping, j {
       return .jyutping
-    } else if await isFuzzyJyutping {
+    } else if let f = await isFuzzyJyutping, f {
       return .fuzzyJyutping
     } else {
       return nil
     }
   }
 
-  @concurrent
   func hasPinyin(text: String) async -> InputMethod? {
-    async let isPinyin = _searcher.searchPinyinExistence(
+    async let isPinyin = _searcher?.searchPinyinExistence(
       searchTerm: text,
       useFuzzyPinyin: false
     )
-    async let isFuzzyPinyin = _searcher.searchPinyinExistence(
+    async let isFuzzyPinyin = _searcher?.searchPinyinExistence(
       searchTerm: text,
       useFuzzyPinyin: true
     )
 
-    if await isPinyin {
+    if let p = await isPinyin, p {
       return .pinyin
-    } else if await isFuzzyPinyin {
+    } else if let f = await isFuzzyPinyin, f {
       return .fuzzyPinyin
     } else {
       return nil
