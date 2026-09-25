@@ -88,7 +88,7 @@ actor SQLSearch {
   {
     let unsafeFuzzyJyutping = false
 
-    let globTerm = await prepareJyutpingBindValues(
+    let globTerm = prepareJyutpingBindValues(
       jyutping: searchTerm,
       useFuzzyJyutping: useFuzzyJyutping
     )
@@ -122,7 +122,7 @@ actor SQLSearch {
     // TODO: Actually implement checking for option
     let unsafeFuzzyJyutping = false
 
-    let globTerm = await prepareJyutpingBindValues(
+    let globTerm = prepareJyutpingBindValues(
       jyutping: searchTerm,
       useFuzzyJyutping: useFuzzyJyutping
     )
@@ -151,7 +151,7 @@ actor SQLSearch {
   }
 
   @concurrent func searchPinyinExistence(searchTerm: String, useFuzzyPinyin: Bool) async -> Bool {
-    let globTerm = await preparePinyinBindValues(
+    let globTerm = preparePinyinBindValues(
       pinyin: searchTerm,
       useFuzzyPinyin: useFuzzyPinyin
     )
@@ -180,7 +180,7 @@ actor SQLSearch {
   }
 
   @concurrent func searchPinyin(searchTerm: String, useFuzzyPinyin: Bool) async -> [Entry] {
-    let globTerm = await preparePinyinBindValues(
+    let globTerm = preparePinyinBindValues(
       pinyin: searchTerm,
       useFuzzyPinyin: useFuzzyPinyin
     )
@@ -209,7 +209,7 @@ actor SQLSearch {
   }
 
   @concurrent func searchEnglish(searchTerm: String) async -> [Entry] {
-    let (ftsParam, likeParam) = await prepareEnglishBindValues(english: searchTerm)
+    let (ftsParam, likeParam) = prepareEnglishBindValues(english: searchTerm)
     var results: [Entry] = []
     do {
       results = try await pool.read { db in

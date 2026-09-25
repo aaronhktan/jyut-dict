@@ -11,7 +11,7 @@
 namespace {
 const std::unordered_set<std::string> specialCharacters = {
     ".",  "。", ",",  "，", "！", "？", "%",  "－", "…",  "⋯",
-    ".",  "·",  "\"", "“",  "”",  "$",  "｜", "：", "１", "２",
+    ·",  "\"", "“",  "”",  "$",  "｜", "：", "１", "２",
     "３", "４", "５", "６", "７", "８", "９", "０",
 };
 
@@ -806,9 +806,9 @@ bool segmentPinyin(const QString &string,
                                                 "z", "c", "s",  "y"};
     std::unordered_set<std::string> finals
         = {"a",   "e",   "ai",   "ei",   "ao",   "ou", "an", "ang", "en",
-           "ang", "eng", "ong",  "er",   "i",    "ia", "ie", "iao", "iu",
-           "ian", "in",  "iang", "ing",  "iong", "u",  "ua", "uo",  "uai",
-           "ui",  "uan", "un",   "uang", "u",    "u:", "ue", "u:e", "o"};
+           "eng", "ong",  "er",   "i",    "ia", "ie", "iao", "iu", "ian",
+           "in",  "iang", "ing",  "iong", "ua", "uo",  "uai", "ui",  "uan",
+           "un",   "uang", "u",    "u:", "ue", "u:e", "o"};
 
     bool validPinyin = true;
     // Keep track of indices for current segmented word; [start_index, end_index)

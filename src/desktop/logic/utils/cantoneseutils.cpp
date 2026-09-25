@@ -13,7 +13,7 @@
 namespace {
 const std::unordered_set<std::string> specialCharacters
     = {".",  "。", ",",  "，", "！", "？", "%",  "－", "…",  "⋯",
-       ".",  "·",  "\"", "“",  "”",  "$",  "｜", "：", "１", "２",
+       "·",  "\"", "“",  "”",  "$",  "｜", "：", "１", "２",
        "３", "４", "５", "６", "７", "８", "９", "０"};
 
 const std::unordered_set<std::string> regexCharacters = {"!", "(", ")", "|"};
@@ -21,7 +21,7 @@ const std::unordered_set<std::string> regexCharacters = {"!", "(", ")", "|"};
 const std::unordered_set<std::string> initials = {"b",  "p", "m",  "f",  "d",
                                                   "t",  "n", "l",  "g",  "k",
                                                   "ng", "h", "gw", "kw", "w",
-                                                  "z",  "c", "s",  "j",  "m"};
+                                                  "z",  "c", "s",  "j"};
 const std::unordered_set<std::string> finals
     = {"a",   "aa",   "aai", "aau", "aam", "aan", "aang", "aap", "aat", "aak",
        "ai",  "au",   "am",  "an",  "ang", "ap",  "at",   "ak",  "e",   "ei",

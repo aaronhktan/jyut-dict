@@ -8,16 +8,16 @@
 import Foundation
 import os
 
-nonisolated let pinyinInitials: [String] = [
+nonisolated let pinyinInitials: Set<String> = [
   "b", "p", "m", "f", "d", "t",
   "n", "l", "g", "k", "h", "j",
   "q", "x", "zh", "ch", "sh", "r",
   "z", "c", "s", "y",
 ]
-nonisolated let pinyinFinals: [String] = [
+nonisolated let pinyinFinals: Set<String> = [
   "a", "e", "ai", "ei", "ao", "ou", "an", "ang", "en",
-  "ang", "eng", "ong", "er", "i", "ia", "ie", "iao", "iu",
-  "ian", "in", "iang", "ing", "iong", "u", "ua", "uo", "uai",
+  "eng", "ong", "er", "i", "ia", "ie", "iao", "iu",
+  "ian", "in", "iang", "ing", "iong", "ua", "uo", "uai",
   "ui", "uan", "un", "uang", "u", "u:", "ue", "u:e", "o",
 ]
 
@@ -60,7 +60,7 @@ nonisolated let zhuyinFinals: [String: String] = [
 nonisolated let zhuyinTones: [String] = ["", "", "ˊ", "ˇ", "ˋ", "˙"]
 
 nonisolated let zhuyinIPrecederRegex: String = "([zcs]h?)i"
-nonisolated let zhuyinRRgegex: String = "([r])i"
+nonisolated let zhuyinRRegex: String = "([r])i"
 nonisolated let zhuyinNgSpecialCaseRegex: String = "^ng([012345])$"
 nonisolated let zhuyinHmSpecialCaseRegex: String = "^hm([012345])$"
 nonisolated let zhuyinHngSpecialCaseRegex: String = "^hng([012345])$"
@@ -153,11 +153,7 @@ nonisolated func createPrettyPinyin(pinyin: String) -> String {
     }
 
     let tones = ["0", "1", "2", "3", "4", "5"]
-    guard
-      var toneIdx = syllable.firstIndex(where: {
-        tones.contains(String($0))
-      })
-    else {
+    guard var toneIdx = syllable.firstIndex(where: { tones.contains(String($0)) }) else {
       processedSyllables.append(syllable)
       continue
     }
@@ -234,7 +230,7 @@ nonisolated func convertPinyinToZhuyin(
     // IPA conversion doesn't attempt to convert special characters.
     specialCharacters.forEach { c in
       pinyinCopy = pinyin.split(separator: c).joined(
-        separator: " " + c + " "
+        separator: " " + String(c) + " "
       )
     }
     syllables = pinyinCopy.split(separator: " ").map(String.init)
@@ -288,7 +284,7 @@ nonisolated func convertPinyinToZhuyin(
       options: [.regularExpression]
     )
     zhuyinSyllable = zhuyinSyllable.replacingOccurrences(
-      of: zhuyinRRgegex,
+      of: zhuyinRRegex,
       with: "$1",
       options: [.regularExpression]
     )
@@ -325,7 +321,7 @@ nonisolated func convertPinyinToZhuyin(
       )
       return pinyin
     }
-    if let initial = initialMatch[1].substring, String(initial).count > 0 {
+    if let initial = initialMatch[1].substring, !initial.isEmpty {
       zhuyinSyllable.replaceSubrange(
         initialMatch.range,
         with: zhuyinInitials[String(initial)]!
@@ -342,9 +338,7 @@ nonisolated func convertPinyinToZhuyin(
       return pinyin
     }
     var final: String? = nil
-    if let finalComponent = finalMatch[1].substring,
-      String(finalComponent).count > 0
-    {
+    if let finalComponent = finalMatch[1].substring, !finalComponent.isEmpty {
       final = zhuyinFinals[String(finalComponent)]
       guard final != nil else {
         logger.error(
@@ -355,9 +349,7 @@ nonisolated func convertPinyinToZhuyin(
       }
     }
     var er: String = ""
-    if let hasErSuffix = finalMatch[2].substring,
-      String(hasErSuffix).count > 0
-    {
+    if let hasErSuffix = finalMatch[2].substring, !hasErSuffix.isEmpty {
       er = "ㄦ"
     }
     zhuyinSyllable.replaceSubrange(
@@ -387,7 +379,7 @@ nonisolated func convertPinyinToZhuyin(
 
 private nonisolated func convertIPAMandarinSyllable(
   syllable: String
-) -> (String, String) {
+) -> (initial: String, final: String) {
   var ipaInitial: String = ""
   var ipaFinal: String = ""
 
@@ -403,7 +395,7 @@ private nonisolated func convertIPAMandarinSyllable(
     ipaInitial = mandarinIPAInitials[String(match[1].substring!)] ?? ""
     ipaFinal = mandarinIPAFinals[String(match[2].substring!)] ?? ""
 
-    if ipaInitial == "" && ipaFinal == "" {
+    if ipaInitial.isEmpty && ipaFinal.isEmpty {
       logger.error("Could not find initial or final in: \(syllable)")
       return ("", syllable)
     }
@@ -456,7 +448,7 @@ nonisolated func convertPinyinToIPA(
     // IPA conversion doesn't attempt to convert special characters.
     specialCharacters.forEach { c in
       pinyinCopy = pinyin.split(separator: c).joined(
-        separator: " " + c + " "
+        separator: " " + String(c) + " "
       )
     }
     syllables = pinyinCopy.split(separator: " ").map(String.init)
@@ -752,70 +744,56 @@ nonisolated func pinyinSoundChanges(text: [String]) -> [String] {
 
   for s in text {
     var syllable = s
-    if syllable.hasPrefix("zh"), let range = syllable.range(of: "zh") {
-      syllable.replaceSubrange(range, with: "z(h)!")
-    } else if syllable.hasPrefix("z"), let range = syllable.range(of: "z") {
-      syllable.replaceSubrange(range, with: "z(h)!")
+    if syllable.hasPrefix("zh") {
+      syllable = "z(h)!" + syllable.dropFirst(2)
+    } else if syllable.hasPrefix("z") {
+      syllable = "z(h)!" + syllable.dropFirst()
     }
-    if syllable.hasPrefix("ch"), let range = syllable.range(of: "ch") {
-      syllable.replaceSubrange(range, with: "c(h)!")
-    } else if syllable.hasPrefix("c"), let range = syllable.range(of: "c") {
-      syllable.replaceSubrange(range, with: "c(h)!")
+    if syllable.hasPrefix("ch") {
+      syllable = "c(h)!" + syllable.dropFirst(2)
+    } else if syllable.hasPrefix("c") {
+      syllable = "c(h)!" + syllable.dropFirst()
     }
-    if syllable.hasPrefix("sh"), let range = syllable.range(of: "sh") {
-      syllable.replaceSubrange(range, with: "s(h)!")
-    } else if syllable.hasPrefix("s"), let range = syllable.range(of: "s") {
-      syllable.replaceSubrange(range, with: "s(h)!")
+    if syllable.hasPrefix("sh") {
+      syllable = "s(h)!" + syllable.dropFirst(2)
+    } else if syllable.hasPrefix("s") {
+      syllable = "s(h)!" + syllable.dropFirst()
     }
-    if syllable.hasPrefix("n"), let range = syllable.range(of: "n") {
-      syllable.replaceSubrange(range, with: "(n|l)")
-    } else if syllable.hasPrefix("r"), let range = syllable.range(of: "r") {
-      syllable.replaceSubrange(range, with: "(l|r)")
+    if syllable.hasPrefix("n") {
+      syllable = "(n|l)" + syllable.dropFirst()
+    } else if syllable.hasPrefix("r") {
+      syllable = "(l|r)" + syllable.dropFirst()
     }
-    if syllable.hasPrefix("li") || syllable.hasPrefix("lu:"),
-      let range = syllable.range(of: "l")
-    {
-      syllable.replaceSubrange(range, with: "(l|n)")
-    } else if syllable.hasPrefix("l"), let range = syllable.range(of: "l") {
-      syllable.replaceSubrange(range, with: "(l|n|r)")
+    if syllable.hasPrefix("li") || syllable.hasPrefix("lu:") {
+      syllable = "(l|n)" + syllable.dropFirst()
+    } else if syllable.hasPrefix("l") {
+      syllable = "(l|n|r)" + syllable.dropFirst()
     }
 
-    if syllable.hasSuffix("ang")
-      || syllable[..<syllable.index(before: syllable.endIndex)].hasSuffix(
-        "ang"
-      ), let range = syllable.range(of: "ng", options: [.backwards])
+    if syllable.hasSuffix("ang") || syllable.dropLast().hasSuffix("ang"),
+      let range = syllable.range(of: "ng", options: [.backwards])
     {
       syllable.replaceSubrange(range, with: "ng!")
-    } else if syllable.hasSuffix("an")
-      || syllable[..<syllable.index(before: syllable.endIndex)].hasSuffix(
-        "an"
-      ), let range = syllable.range(of: "n", options: [.backwards])
+    } else if syllable.hasSuffix("an") || syllable.dropLast().hasSuffix("an"),
+      let range = syllable.range(of: "n", options: [.backwards])
     {
       syllable.replaceSubrange(range, with: "ng!")
     }
-    if syllable.hasSuffix("eng")
-      || syllable[..<syllable.index(before: syllable.endIndex)].hasSuffix(
-        "eng"
-      ), let range = syllable.range(of: "ng", options: [.backwards])
+    if syllable.hasSuffix("eng") || syllable.dropLast().hasSuffix("eng"),
+      let range = syllable.range(of: "ng", options: [.backwards])
     {
       syllable.replaceSubrange(range, with: "ng!")
-    } else if syllable.hasSuffix("en")
-      || syllable[..<syllable.index(before: syllable.endIndex)].hasSuffix(
-        "en"
-      ), let range = syllable.range(of: "n", options: [.backwards])
+    } else if syllable.hasSuffix("en") || syllable.dropLast().hasSuffix("en"),
+      let range = syllable.range(of: "n", options: [.backwards])
     {
       syllable.replaceSubrange(range, with: "ng!")
     }
-    if syllable.hasSuffix("ing")
-      || syllable[..<syllable.index(before: syllable.endIndex)].hasSuffix(
-        "ing"
-      ), let range = syllable.range(of: "ng", options: [.backwards])
+    if syllable.hasSuffix("ing") || syllable.dropLast().hasSuffix("ing"),
+      let range = syllable.range(of: "ng", options: [.backwards])
     {
       syllable.replaceSubrange(range, with: "ng!")
-    } else if syllable.hasSuffix("in")
-      || syllable[..<syllable.index(before: syllable.endIndex)].hasSuffix(
-        "in"
-      ), let range = syllable.range(of: "n", options: [.backwards])
+    } else if syllable.hasSuffix("in") || syllable.dropLast().hasSuffix("in"),
+      let range = syllable.range(of: "n", options: [.backwards])
     {
       syllable.replaceSubrange(range, with: "ng!")
     }

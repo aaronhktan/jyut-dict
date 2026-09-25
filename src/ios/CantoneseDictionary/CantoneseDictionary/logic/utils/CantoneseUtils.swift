@@ -8,13 +8,13 @@
 import Foundation
 import os
 
-nonisolated let jyutpingInitials: Set = [
+nonisolated let jyutpingInitials: Set<String> = [
   "b", "p", "m", "f", "d",
   "t", "n", "l", "g", "k",
   "ng", "h", "gw", "kw", "w",
-  "z", "c", "s", "j", "m",
+  "z", "c", "s", "j",
 ]
-nonisolated let jyutpingFinals: Set = [
+nonisolated let jyutpingFinals: Set<String> = [
   "a", "aa", "aai", "aau", "aam", "aan", "aang", "aap", "aat", "aak",
   "ai", "au", "am", "an", "ang", "ap", "at", "ak", "e", "ei",
   "eu", "em", "en", "eng", "ep", "ek", "i", "iu", "im", "in",
@@ -125,9 +125,9 @@ nonisolated private func unfoldJyutpingRegex(jyutping: String) -> [String] {
   var stringPossibilities: [String] = []
 
   // Invariant: there must be only one set of parentheses and one exclamation
-  if jyutping.filter({ $0 == "(" }).count > 1
-    || jyutping.filter({ $0 == ")" }).count > 1
-    || jyutping.filter({ $0 == "!" }).count > 1
+  if jyutping.count(where: { $0 == "(" }) > 1
+    || jyutping.count(where: { $0 == ")" }) > 1
+    || jyutping.count(where: { $0 == "!" }) > 1
   {
     return out
   }
@@ -136,12 +136,13 @@ nonisolated private func unfoldJyutpingRegex(jyutping: String) -> [String] {
   if jyutping.firstIndex(of: "(") != nil
     && jyutping.firstIndex(of: ")") != nil
   {
-    var startIdx = jyutping.index(after: jyutping.firstIndex(of: "(")!)
+    let openParenIdx = jyutping.firstIndex(of: "(")
+    var startIdx = jyutping.index(after: openParenIdx!)
     let endIdx = jyutping.firstIndex(of: ")")
     var orIdx = jyutping.firstIndex(of: "|")
 
     while orIdx != nil {
-      let preParen = jyutping[..<jyutping.firstIndex(of: "(")!]
+      let preParen = jyutping[..<openParenIdx!]
       let possibility = jyutping[startIdx..<orIdx!]
       let postParen = jyutping[jyutping.index(after: endIdx!)...]
       stringPossibilities.append(
@@ -150,7 +151,7 @@ nonisolated private func unfoldJyutpingRegex(jyutping: String) -> [String] {
       startIdx = jyutping.index(after: orIdx!)
       orIdx = jyutping.firstIndex(of: "|", at: startIdx)
     }
-    let preParen = jyutping[..<jyutping.firstIndex(of: "(")!]
+    let preParen = jyutping[..<openParenIdx!]
     let possibility = jyutping[startIdx..<endIdx!]
     let postParen = jyutping[jyutping.index(after: endIdx!)...]
     stringPossibilities.append(
@@ -162,7 +163,7 @@ nonisolated private func unfoldJyutpingRegex(jyutping: String) -> [String] {
 
   // If there is a "!", then the initial with and the initial without
   // that optional character should be considered
-  stringPossibilities.forEach { s in
+  for s in stringPossibilities {
     let regexIdx = s.firstIndex(of: "!")
     if regexIdx == nil {
       out.append(s)
@@ -219,10 +220,10 @@ nonisolated private func convertYaleFinal(syllable: String) -> String {
 
   // Some Jyutping finals have significant differences when mapped to Yale.
   // Switch it out here.
-  if jyutpingToYaleSpecialFinals.contains(where: { $0.key == final }) {
+  if let f = jyutpingToYaleSpecialFinals[final] {
     yaleSyllable.replaceSubrange(
       finalIdx!..<yaleSyllable.index(finalIdx!, offsetBy: final.count),
-      with: jyutpingToYaleSpecialFinals[final]!
+      with: f
     )
   }
 
@@ -279,7 +280,7 @@ nonisolated func convertJyutpingToYale(
     // IPA conversion doesn't attempt to convert special characters.
     specialCharacters.forEach { c in
       jyutpingCopy = jyutping.split(separator: c).joined(
-        separator: " " + c + " "
+        separator: " " + String(c) + " "
       )
     }
     syllables = jyutpingCopy.split(separator: " ").map(String.init)
@@ -324,12 +325,8 @@ nonisolated func convertJyutpingToYale(
     // Handle special-case syllables
     let syllableWithoutTone = String(syllable[..<toneIdx])
     let tone = Int(String(syllable[toneIdx]))!
-    if jyutpingToYaleSpecialSyllables.contains(where: {
-      $0.key == syllableWithoutTone
-    }) {
-      yaleSyllables.append(
-        jyutpingToYaleSpecialSyllables[syllableWithoutTone]![tone - 1]
-      )
+    if let s = jyutpingToYaleSpecialSyllables[syllableWithoutTone] {
+      yaleSyllables.append(s[tone - 1])
       continue
     }
 
@@ -352,8 +349,8 @@ nonisolated private func convertIPACantoneseSyllable(_ jyutping: String)
 
   var initial: String = ""
   if let matchedInitial = match[1].substring {
-    if cantoneseIPAInitials.contains(where: { $0.key == matchedInitial }) {
-      initial = cantoneseIPAInitials[String(matchedInitial)]!
+    if let i = cantoneseIPAInitials[String(matchedInitial)] {
+      initial = i
     } else {
       initial = String(matchedInitial)
     }
@@ -361,8 +358,8 @@ nonisolated private func convertIPACantoneseSyllable(_ jyutping: String)
 
   var nucleus: String = ""
   if let matchedNucleus = match[2].substring {
-    if cantoneseIPANuclei.contains(where: { $0.key == matchedNucleus }) {
-      nucleus = cantoneseIPANuclei[String(matchedNucleus)]!
+    if let n = cantoneseIPANuclei[String(matchedNucleus)] {
+      nucleus = n
     } else {
       nucleus = String(matchedNucleus)
     }
@@ -370,8 +367,8 @@ nonisolated private func convertIPACantoneseSyllable(_ jyutping: String)
 
   var coda: String = ""
   if let matchedCoda = match[3].substring {
-    if cantoneseIPACodas.contains(where: { $0.key == matchedCoda }) {
-      coda = cantoneseIPACodas[String(matchedCoda)]!
+    if let c = cantoneseIPACodas[String(matchedCoda)] {
+      coda = c
     } else {
       coda = String(matchedCoda)
     }
@@ -400,7 +397,7 @@ nonisolated func convertJyutpingToIPA(
     // IPA conversion doesn't attempt to convert special characters.
     specialCharacters.forEach { c in
       jyutpingCopy = jyutping.split(separator: c).joined(
-        separator: " " + c + " "
+        separator: " " + String(c) + " "
       )
     }
     syllables = jyutpingCopy.split(separator: " ").map(String.init)
@@ -634,7 +631,7 @@ nonisolated func segmentJyutping(
             jyutping: previousInitial
           )
 
-          stringsToSearch.forEach { s in
+          for s in stringsToSearch {
             isValidFinal =
               isValidFinal || jyutpingFinals.contains(s)
           }
@@ -648,11 +645,7 @@ nonisolated func segmentJyutping(
           startIdx = endIdx
           initialFound = false
 
-          if Int(String(currentString[currentString.startIndex])) ?? 0
-            < 1
-            || Int(String(currentString[currentString.startIndex]))
-              ?? 7 > 6
-          {
+          if !("1"..."6").contains(String(currentString.first?.description ?? "")) {
             validJyutping = false
           }
 
@@ -696,7 +689,7 @@ nonisolated func segmentJyutping(
         let stringsToSearch: [String] = unfoldJyutpingRegex(
           jyutping: currentString
         )
-        stringsToSearch.forEach { s in
+        for s in stringsToSearch {
           isValidInitial =
             isValidInitial || jyutpingInitials.contains(s)
         }
@@ -739,10 +732,7 @@ nonisolated func segmentJyutping(
       endIdx = processedText.index(endIdx, offsetBy: initialLen)
       componentFound = true
       initialFound = true
-
-      if isValidInitial {
-        break
-      }
+      break
     }
 
     if componentFound {
@@ -788,14 +778,9 @@ nonisolated func segmentJyutping(
         endIdx = processedText.index(endIdx, offsetBy: finalLen)
         if endIdx < processedText.endIndex {
           if processedText[endIdx].isNumber {
-            if Int(String(processedText[endIdx])) ?? 0
-              < 1
-              || Int(String(processedText[endIdx]))
-                ?? 7 > 6
-            {
+            if !("1"..."6").contains(String(processedText[endIdx])) {
               validJyutping = false
             }
-
             endIdx = processedText.index(after: endIdx)
           }
         }
@@ -836,7 +821,7 @@ nonisolated func jyutpingAutocorrect(
   text: String,
   unsafeSubstitutions: Bool = false
 )
-  async -> String
+  -> String
 {
   var out: String = text
 
@@ -945,11 +930,9 @@ nonisolated func jyutpingAutocorrect(
 
     var replacementIdx = out.range(of: "oh")
     while replacementIdx != nil {
-      switch replacementIdx!.lowerBound {
-      case out.startIndex:
+      if replacementIdx!.lowerBound == out.startIndex {
         out.replaceSubrange(replacementIdx!, with: "ou")
-        break
-      default:
+      } else {
         var initialIdx = out.index(before: replacementIdx!.lowerBound)
         if replacementIdx!.lowerBound.utf16Offset(in: out) > 1
           && out[initialIdx] == ")"
@@ -995,7 +978,6 @@ nonisolated func jyutpingAutocorrect(
             out.replaceSubrange(replacementIdx!, with: "o h")
           }
         }
-        break
       }
       replacementIdx = out.range(
         of: "oh",
@@ -1024,11 +1006,9 @@ nonisolated func jyutpingAutocorrect(
 
     var replacementIdx = out.range(of: "ow")
     while replacementIdx != nil {
-      switch replacementIdx!.lowerBound {
-      case out.startIndex:
+      if replacementIdx!.lowerBound == out.startIndex {
         out.replaceSubrange(replacementIdx!, with: "au")
-        break
-      default:
+      } else {
         var initialIdx = out.index(before: replacementIdx!.lowerBound)
         if replacementIdx!.lowerBound.utf16Offset(in: out) > 1
           && out[initialIdx] == ")"
@@ -1074,7 +1054,6 @@ nonisolated func jyutpingAutocorrect(
             out.replaceSubrange(replacementIdx!, with: "o w")
           }
         }
-        break
       }
       replacementIdx = out.range(
         of: "ow",
@@ -1533,7 +1512,7 @@ nonisolated func jyutpingAutocorrect(
   return out
 }
 
-@concurrent func jyutpingSoundChanges(text: [String]) async -> [String] {
+nonisolated func jyutpingSoundChanges(text: [String]) -> [String] {
   var changedSyllables: [String] = []
 
   for syllable in text {

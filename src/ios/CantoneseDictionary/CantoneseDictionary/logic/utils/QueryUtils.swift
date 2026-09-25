@@ -29,10 +29,10 @@ nonisolated func prepareCharacterBindValues(
   return result
 }
 
-@concurrent func prepareJyutpingBindValues(
+nonisolated func prepareJyutpingBindValues(
   jyutping: String,
   useFuzzyJyutping: Bool
-) async -> String {
+) -> String {
   let searchExactMatch =
     jyutping.count >= 3
     && ((jyutping.hasPrefix("\"")
@@ -43,9 +43,9 @@ nonisolated func prepareCharacterBindValues(
   var correctedTerm = jyutping
   if !searchExactMatch && useFuzzyJyutping {
     if appendWildcard {
-      correctedTerm = await jyutpingAutocorrect(text: jyutping)
+      correctedTerm = jyutpingAutocorrect(text: jyutping)
     } else {
-      correctedTerm = await jyutpingAutocorrect(
+      correctedTerm = jyutpingAutocorrect(
         text: String(jyutping.prefix(jyutping.count - 1))
       )
     }
@@ -66,7 +66,7 @@ nonisolated func prepareCharacterBindValues(
   }
 
   if !searchExactMatch && useFuzzyJyutping {
-    jyutpingSyllables = await jyutpingSoundChanges(text: jyutpingSyllables)
+    jyutpingSyllables = jyutpingSoundChanges(text: jyutpingSyllables)
   }
 
   var result: String
@@ -99,10 +99,10 @@ nonisolated func prepareCharacterBindValues(
   return result
 }
 
-@concurrent func preparePinyinBindValues(
+nonisolated func preparePinyinBindValues(
   pinyin: String,
   useFuzzyPinyin: Bool
-) async -> String {
+) -> String {
   let searchExactMatch =
     pinyin.count >= 3
     && ((pinyin.hasPrefix("\"")
@@ -157,9 +157,9 @@ nonisolated func prepareCharacterBindValues(
   return result
 }
 
-@concurrent func prepareEnglishBindValues(
+nonisolated func prepareEnglishBindValues(
   english: String,
-) async -> (String, String) {
+) -> (String, String) {
   let searchExactMatch =
     english.count >= 3
     && ((english.hasPrefix("\"")
@@ -169,7 +169,7 @@ nonisolated func prepareCharacterBindValues(
   let ftsParam = "\"\(english)\""
   var likeParam = english
   if searchExactMatch {
-    likeParam = "\(String(likeParam.dropFirst().dropLast()))"
+    likeParam = String(likeParam.dropFirst().dropLast())
   } else {
     likeParam = "%\(english)%"
   }
@@ -207,9 +207,7 @@ nonisolated func parseReturnedRecords(rows: [Row]) -> [Entry] {
         var definitions: [Definition] = []
         for definitionJSON in definitionsJSON {
           let content = definitionJSON["definition"] as! String
-          let label =
-            definitionJSON.keys.contains("label")
-            ? (definitionJSON["label"] as! String) : ""
+          let label = definitionJSON["label"] as? String ?? ""
 
           var examples: [Example] = []
           if let examplesJSON = definitionJSON["sentences"]
@@ -311,11 +309,5 @@ nonisolated func parseReturnedRecords(rows: [Row]) -> [Entry] {
 }
 
 nonisolated func parseExistenceRecords(rows: [Row]) -> Bool {
-  var exists = false
-
-  for row in rows {
-    exists = row["existence"] as! Int64 == 1
-  }
-
-  return exists
+  rows.last.map { ($0["existence"] as? Int64) == 1 } ?? false
 }
