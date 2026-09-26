@@ -19,6 +19,7 @@ import traceback
 
 yue_converter = opencc.OpenCC("hk2s.json")
 zh_converter = opencc.OpenCC("tw2s.json")
+trad_converter = opencc.OpenCC("s2hk.json")
 
 SUPERSCRIPT_EQUIVALENT = str.maketrans("¹²³⁴⁵⁶⁷⁸⁹⁰", "1234567890", "")
 NUMBER_TO_COPTIC= str.maketrans("1234567890", "ⲁⲃⲅⲇⲉⲋⲍⲏⲑⲓ", "")
@@ -228,6 +229,7 @@ def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
 
             summary = src_summaries[trad]
 
+            converted_trad = trad_converter.convert(trad)
             simp = converter.convert(trad)
             jyutping_match = JYUTPING_REGEX.search(summary) if summary else None
             jyut = ""
@@ -284,14 +286,14 @@ def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
                 dest_summary = dest_summaries[dest_key]
                 if dest_summary:
                     if lang_dest not in ("zh", "zh-yue"):
-                        dest_summary = dest_summary.replace(" ", "ﾠ")
+                        dest_summary = dest_summary.replace(" ", "")
                     definition_components.append(dest_summary)
 
             definition = objects.Definition(definition="\n".join(definition_components))
             freq = zipf_frequency(trad, "zh")
 
             entry = objects.Entry(
-                trad=trad, simp=simp, jyut=jyut, pin=pin, freq=freq, defs=[definition]
+                trad=converted_trad, simp=simp, jyut=jyut, pin=pin, freq=freq, defs=[definition]
             )
             words[trad].append(entry)
 
