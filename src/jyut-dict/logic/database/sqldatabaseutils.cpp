@@ -29,21 +29,21 @@ bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(QSqlDatabase &db)
 
     query.exec(
         "CREATE TABLE IF NOT EXISTS nonchinese_sentences( "
-        "  non_chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
+        "  example_translation_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
         "  sentence TEXT, "
         "  language TEXT, "
-        "  UNIQUE(non_chinese_sentence_id, sentence) ON CONFLICT IGNORE"
+        "  UNIQUE(example_translation_id, sentence) ON CONFLICT IGNORE"
         ")");
 
     query.exec("CREATE TABLE IF NOT EXISTS sentence_links( "
-               "  fk_chinese_sentence_id INTEGER, "
-               "  fk_non_chinese_sentence_id INTEGER, "
+               "  fk_example_id INTEGER, "
+               "  fk_example_translation_id INTEGER, "
                "  fk_source_id INTEGER, "
                "  direct BOOLEAN, "
-               "  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES "
+               "  FOREIGN KEY(fk_example_id) REFERENCES "
                "    chinese_sentences(chinese_sentence_id), "
-               "  FOREIGN KEY(fk_non_chinese_sentence_id) REFERENCES "
-               "    nonchinese_sentences(non_chinese_sentence_id), "
+               "  FOREIGN KEY(fk_example_translation_id) REFERENCES "
+               "    nonchinese_sentences(example_translation_id), "
                "  FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON "
                "    DELETE CASCADE "
                ")");
@@ -63,14 +63,14 @@ bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(QSqlDatabase &db)
 
     // Add new definitions->chinese_sentence link table
     query.exec(
-        "CREATE TABLE definitions_chinese_sentences_links( "
+        "CREATE TABLE definitions_examples_links( "
         "  fk_definition_id INTEGER, "
-        "  fk_chinese_sentence_id INTEGER, "
+        "  fk_example_id INTEGER, "
         "  FOREIGN KEY(fk_definition_id) REFERENCES definitions(definition_id) "
         "    ON DELETE CASCADE, "
-        "  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES "
+        "  FOREIGN KEY(fk_example_id) REFERENCES "
         "    chinese_sentences(chinese_sentence_id) "
-        "  UNIQUE(fk_definition_id, fk_chinese_sentence_id) ON CONFLICT IGNORE "
+        "  UNIQUE(fk_definition_id, fk_example_id) ON CONFLICT IGNORE "
         ") ");
     if (query.lastError().isValid()) {
         return false;
@@ -168,26 +168,26 @@ bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(QSqlDatabase &db)
 
     // Delete and recreate the sentence links table to add new UNIQUE constraint
     query.exec("CREATE TABLE sentence_links_new( "
-               "  fk_chinese_sentence_id INTEGER, "
-               "  fk_non_chinese_sentence_id INTEGER, "
+               "  fk_example_id INTEGER, "
+               "  fk_example_translation_id INTEGER, "
                "  fk_source_id INTEGER, "
                "  direct BOOLEAN, "
-               "  FOREIGN KEY(fk_chinese_sentence_id) "
+               "  FOREIGN KEY(fk_example_id) "
                "    REFERENCES chinese_sentences(chinese_sentence_id), "
-               "  FOREIGN KEY(fk_non_chinese_sentence_id) "
-               "    REFERENCES nonchinese_sentences(non_chinese_sentence_id), "
+               "  FOREIGN KEY(fk_example_translation_id) "
+               "    REFERENCES nonchinese_sentences(example_translation_id), "
                "  FOREIGN KEY(fk_source_id) "
                "    REFERENCES sources(source_id) ON DELETE CASCADE "
                "  UNIQUE( "
-               "    fk_chinese_sentence_id, fk_non_chinese_sentence_id "
+               "    fk_example_id, fk_example_translation_id "
                "  ) ON CONFLICT IGNORE "
                ")");
     if (query.lastError().isValid()) {
         return false;
     }
-    query.exec("INSERT INTO sentence_links_new(fk_chinese_sentence_id, "
-               "  fk_non_chinese_sentence_id, fk_source_id, direct) "
-               "SELECT fk_chinese_sentence_id, fk_non_chinese_sentence_id, "
+    query.exec("INSERT INTO sentence_links_new(fk_example_id, "
+               "  fk_example_translation_id, fk_source_id, direct) "
+               "SELECT fk_example_id, fk_example_translation_id, "
                "  fk_source_id, direct "
                "FROM sentence_links ");
     if (query.lastError().isValid()) {
