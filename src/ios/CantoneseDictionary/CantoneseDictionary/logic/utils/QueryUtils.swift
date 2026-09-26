@@ -177,7 +177,7 @@ nonisolated func prepareEnglishBindValues(
   return (ftsParam, likeParam)
 }
 
-nonisolated func parseReturnedRecords(rows: [Row]) -> [Entry] {
+nonisolated func parseReturnedEntryRecords(rows: [Row]) -> [Entry] {
   var result: [Entry] = []
 
   for row in rows {
@@ -259,8 +259,8 @@ nonisolated func parseReturnedRecords(rows: [Row]) -> [Entry] {
               examples.append(
                 Example(
                   sourceLanguage: language,
-                  simplified: simplified,
                   traditional: traditional,
+                  simplified: simplified,
                   jyutping: jyutping,
                   pinyin: pinyin,
                   translations: [translationSet]
@@ -306,6 +306,82 @@ nonisolated func parseReturnedRecords(rows: [Row]) -> [Entry] {
   }
 
   return result
+}
+
+nonisolated func parseReturnedExampleRecords(rows: [Row]) -> [Example] {
+  var results: [Example] = []
+  for row in rows {
+    let traditional = row["traditional"] as! String
+    let simplified = row["simplified"] as! String
+    let pinyin = row["pinyin"] as! String
+    let jyutping = row["jyutping"] as! String
+    let language = row["language"] as! String
+
+    var translationSets: [TranslationSet] = []
+    do {
+      guard
+        let translationSetsJSON = try JSONSerialization.jsonObject(
+          with: Data(String(row["translations"]).utf8)
+        ) as? [[String: Any]]
+      else {
+        logger.error(
+          "Could not parse translations \(String(row["translations"])) as JSON"
+        )
+        continue
+      }
+
+      for translationSetJSON in translationSetsJSON {
+        guard let source = translationSetJSON["source"] as? String else {
+          continue
+        }
+        guard
+          let translationsJSON = translationSetJSON["translations"]
+            as? [[String: Any]]
+        else {
+          logger.error("Translations set was not a dict")
+          continue
+        }
+
+        var translations: [Translation] = []
+        for translationJSON in translationsJSON {
+          let sentence =
+            translationJSON["sentence"] as! String
+          let language =
+            translationJSON["language"] as! String
+          let direct =
+            translationJSON["direct"] as! Int64 == 1
+          translations.append(
+            Translation(
+              content: sentence,
+              language: language,
+              directTarget: direct
+            )
+          )
+        }
+
+        translationSets.append(
+          TranslationSet(source: source, translations: translations)
+        )
+      }
+    } catch {
+      logger.error(
+        "Could not parse translations \(String(row["translations"])) as JSON"
+      )
+    }
+
+    results.append(
+      Example(
+        sourceLanguage: language,
+        traditional: traditional.trimmingCharacters(in: .whitespacesAndNewlines),
+        simplified: simplified.trimmingCharacters(in: .whitespacesAndNewlines),
+        jyutping: jyutping.trimmingCharacters(in: .whitespacesAndNewlines),
+        pinyin: pinyin.trimmingCharacters(in: .whitespacesAndNewlines),
+        translations: translationSets
+      )
+    )
+  }
+
+  return results
 }
 
 nonisolated func parseExistenceRecords(rows: [Row]) -> Bool {

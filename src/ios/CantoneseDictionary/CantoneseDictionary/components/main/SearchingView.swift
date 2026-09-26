@@ -183,7 +183,9 @@ extension SearchingView {
 
   // MARK: - Search Result View
   private var autoDetectLabel: String {
-    guard searchContext.selectedOption == .autoDetect, !searchContext.searchText.isEmpty else {
+    if searchContext.selectedOption != .autoDetect || searchContext.searchText.isEmpty
+      || searchContext.detectedInputMethod == .none
+    {
       return "Auto-detect language"
     }
     return "Detected input: \(InputMethodNames[searchContext.detectedInputMethod] ?? "")"
@@ -249,7 +251,7 @@ extension SearchingView {
       searchContext.showEmptyState = false
       guard !searchContext.searchText.isEmpty else {
         searchContext.searchResults = []
-        searchContext.detectedInputMethod = .autoDetect
+        searchContext.detectedInputMethod = .none
         return
       }
 
