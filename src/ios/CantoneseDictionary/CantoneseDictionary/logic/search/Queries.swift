@@ -378,3 +378,101 @@ nonisolated let searchEnglishQuery: String = """
   SELECT entry_id, traditional, simplified, jyutping, pinyin, definitions FROM
     matching_entries
   """
+
+nonisolated let searchExamplesQuery: String = """
+  WITH
+    matching_chinese_sentence_ids AS (
+      SELECT chinese_sentence_id
+      FROM chinese_sentences
+      WHERE traditional LIKE ? ESCAPE '\\'
+    ),
+    translations_with_source AS (
+      SELECT
+        s.sourcename AS source,
+        mcsi.chinese_sentence_id AS chinese_sentence_id,
+        json_group_array(
+          DISTINCT json_object(
+            'sentence',
+            sentence,
+            'language',
+            language,
+            'direct',
+            direct
+          )
+        ) AS translation
+      FROM
+        matching_chinese_sentence_ids AS mcsi
+        LEFT JOIN sentence_links AS sl
+          ON mcsi.chinese_sentence_id = sl.fk_chinese_sentence_id
+        LEFT JOIN nonchinese_sentences AS ncs
+          ON ncs.non_chinese_sentence_id = sl.fk_non_chinese_sentence_id
+        LEFT JOIN sources AS s
+          ON s.source_id = sl.fk_source_id
+      GROUP BY s.sourcename, mcsi.chinese_sentence_id
+    ),
+    matching_translations AS (
+      SELECT
+        chinese_sentence_id,
+        json_group_array(
+          json_object(
+            'source',
+            source,
+            'translations',
+            json(translation)
+          )
+        ) AS translations
+      FROM translations_with_source AS tws
+      GROUP BY chinese_sentence_id
+    ),
+    matching_sentences AS (
+      SELECT
+        chinese_sentence_id,
+        traditional,
+        simplified,
+        pinyin,
+        jyutping,
+        language
+      FROM chinese_sentences AS cs
+      WHERE
+        chinese_sentence_id IN (
+          SELECT chinese_sentence_id
+          FROM matching_chinese_sentence_ids
+        )
+    ),
+    matching_sentences_with_translations AS (
+      SELECT
+        max(sourcename) AS sourcename,
+        traditional,
+        simplified,
+        pinyin,
+        jyutping,
+        language,
+        translations
+      FROM
+        matching_sentences AS ms
+        LEFT JOIN matching_translations AS mt
+          ON ms.chinese_sentence_id = mt.chinese_sentence_id
+        LEFT JOIN definitions_chinese_sentences_links AS dcsl
+          ON ms.chinese_sentence_id = dcsl.fk_chinese_sentence_id
+        LEFT JOIN definitions AS d
+          ON dcsl.fk_definition_id = d.definition_id
+        LEFT JOIN sources AS s ON d.fk_source_id = s.source_id
+      GROUP BY
+        traditional,
+        simplified,
+        pinyin,
+        jyutping,
+        language,
+        translations
+      ORDER BY ms.chinese_sentence_id
+    )
+  SELECT
+    sourcename,
+    traditional,
+    simplified,
+    pinyin,
+    jyutping,
+    language,
+    translations
+  FROM matching_sentences_with_translations
+"""

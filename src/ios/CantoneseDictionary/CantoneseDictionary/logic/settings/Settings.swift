@@ -26,6 +26,14 @@ nonisolated let defaultPinyinToneColours: [Color] = [
   .gray,
 ]
 
+nonisolated let languageColours: [String: Color] = [
+  "cmn": Color(red: 14/255, green: 139/255, blue: 83/255),
+  "deu": Color(red: 186/255, green: 200/255, blue: 95/255),
+  "eng": Color(red: 100/255, green: 76/255, blue: 143/255),
+  "fra": Color(red: 0, green: 48/255, blue: 143/255),
+  "yue": Color(red: 173/255, green: 31/255, blue: 90/255),
+]
+
 actor Settings {
   private var jyutpingToneColours = defaultJyutpingToneColours
   private var pinyinToneColours = defaultPinyinToneColours

@@ -30,16 +30,16 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
 
   init(
     sourceLanguage: String,
-    simplified: String,
     traditional: String,
+    simplified: String,
     jyutping: String,
     pinyin: String,
     translations: [TranslationSet]
   ) {
     self.id = UUID()
     self._sourceLanguage = sourceLanguage
-    self._simplified = simplified
     self._traditional = traditional
+    self._simplified = simplified
     self._jyutping = jyutping
     self._pinyin = pinyin
     self._translations = translations
@@ -64,10 +64,18 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
 
   func getCharacters(options: EntryCharactersOptions) -> String {
     switch options {
-    case .onlySimplified, .preferSimplified:
-      return _simplified
     case .onlyTraditional, .preferTraditional:
       return _traditional
+    case .onlySimplified, .preferSimplified:
+      return _simplified
+    }
+  }
+  var traditional: String {
+    get {
+      _traditional
+    }
+    set {
+      _traditional = newValue
     }
   }
 
@@ -77,15 +85,6 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
     }
     set {
       _simplified = newValue
-    }
-  }
-
-  var traditional: String {
-    get {
-      _traditional
-    }
-    set {
-      _traditional = newValue
     }
   }
 

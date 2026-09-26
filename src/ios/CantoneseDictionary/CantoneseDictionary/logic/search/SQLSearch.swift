@@ -26,7 +26,7 @@ actor SQLSearch {
           sql: getEntryByRowId,
           arguments: [rowid]
         )
-        return parseReturnedRecords(rows: rows)[0]
+        return parseReturnedEntryRecords(rows: rows)[0]
       }
     } catch {
       // TODO: Handle errors
@@ -50,7 +50,7 @@ actor SQLSearch {
           sql: searchTraditionalQuery,
           arguments: [globTerm]
         )
-        return parseReturnedRecords(rows: rows)
+        return parseReturnedEntryRecords(rows: rows)
       }
     } catch {
       // TODO: Handle errors
@@ -74,7 +74,7 @@ actor SQLSearch {
           sql: searchSimplifiedQuery,
           arguments: [globTerm]
         )
-        return parseReturnedRecords(rows: rows)
+        return parseReturnedEntryRecords(rows: rows)
       }
     } catch {
       // TODO: Handle errors
@@ -140,7 +140,7 @@ actor SQLSearch {
           sql: query,
           arguments: [globTerm]
         )
-        return parseReturnedRecords(rows: rows)
+        return parseReturnedEntryRecords(rows: rows)
       }
     } catch {
       // TODO: Handle errors
@@ -198,7 +198,7 @@ actor SQLSearch {
           sql: query,
           arguments: [globTerm]
         )
-        return parseReturnedRecords(rows: rows)
+        return parseReturnedEntryRecords(rows: rows)
       }
     } catch {
       // TODO: Handle errors
@@ -218,10 +218,30 @@ actor SQLSearch {
           sql: searchEnglishQuery,
           arguments: [ftsParam, likeParam]
         )
-        return parseReturnedRecords(rows: rows)
+        return parseReturnedEntryRecords(rows: rows)
       }
     } catch {
       // TODO: Handle errors
+      logger.error("Error happened when trying to read from db: \(error)")
+    }
+
+    return results
+  }
+
+  @concurrent func searchExamplesByTraditional(searchTerm: String) async -> [Example] {
+    var results: [Example] = []
+    let likeTerm = "%\(searchTerm)%"
+
+    do {
+       results = try await pool.read { db in
+        let rows = try Row.fetchAll(
+          db,
+          sql: searchExamplesQuery,
+          arguments: [likeTerm]
+        )
+        return parseReturnedExampleRecords(rows: rows)
+      }
+    } catch {
       logger.error("Error happened when trying to read from db: \(error)")
     }
 
