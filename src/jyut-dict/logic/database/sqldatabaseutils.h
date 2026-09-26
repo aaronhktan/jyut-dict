@@ -82,7 +82,7 @@ signals:
                           QString reason = "",
                           QString description = "");
 
-    void deletingSentences();
+    void deletingExamples();
 
     void conflictingDictionaryNamesExist(conflictingSourceMetadata dictionaries);
     void insertingSource();

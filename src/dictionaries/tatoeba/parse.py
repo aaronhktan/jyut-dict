@@ -39,7 +39,7 @@ def write(chinese_sentences, nonchinese_sentences, links, db_name):
     # Add sentences to tables
     for key in chinese_sentences:
         sentence = chinese_sentences[key]
-        database.insert_chinese_sentence(
+        database.insert_example(
             c,
             sentence.traditional,
             sentence.simplified,
@@ -51,7 +51,7 @@ def write(chinese_sentences, nonchinese_sentences, links, db_name):
 
     for key in nonchinese_sentences:
         sentence = nonchinese_sentences[key]
-        database.insert_nonchinese_sentence(
+        database.insert_translation(
             c,
             sentence.sentence,
             sentence.language,
@@ -62,7 +62,7 @@ def write(chinese_sentences, nonchinese_sentences, links, db_name):
     for source_sentence_id in links:
         for target_sentence_id in links[source_sentence_id]:
             direct = links[source_sentence_id][target_sentence_id]
-            database.insert_sentence_link(
+            database.insert_example_link(
                 c,
                 source_sentence_id,
                 target_sentence_id,

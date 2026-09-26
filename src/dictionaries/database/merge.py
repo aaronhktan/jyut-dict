@@ -87,31 +87,31 @@ if __name__ == "__main__":
             FROM db1.chinese_sentences"""
     )
     c.execute(
-        """INSERT INTO nonchinese_sentences(non_chinese_sentence_id,
+        """INSERT INTO nonchinese_sentences(example_translation_id,
                 sentence,
                 language)
-            SELECT non_chinese_sentence_id,
+            SELECT example_translation_id,
                 sentence,
                 language
             FROM db1.nonchinese_sentences"""
     )
     c.execute(
-        """INSERT INTO sentence_links(fk_chinese_sentence_id,
-                fk_non_chinese_sentence_id,
+        """INSERT INTO sentence_links(fk_example_id,
+                fk_example_translation_id,
                 fk_source_id,
                 direct)
-            SELECT fk_chinese_sentence_id,
-                fk_non_chinese_sentence_id,
+            SELECT fk_example_id,
+                fk_example_translation_id,
                 fk_source_id,
                 direct
             FROM db1.sentence_links"""
     )
     c.execute(
-        """INSERT INTO definitions_chinese_sentences_links(fk_definition_id,
-                fk_chinese_sentence_id)
+        """INSERT INTO definitions_examples_links(fk_definition_id,
+                fk_example_id)
             SELECT fk_definition_id,
-                fk_chinese_sentence_id
-            FROM db1.definitions_chinese_sentences_links"""
+                fk_example_id
+            FROM db1.definitions_examples_links"""
     )
 
     # Insert from second database
@@ -163,10 +163,10 @@ if __name__ == "__main__":
             FROM db2.chinese_sentences"""
     )
     c.execute(
-        """INSERT INTO nonchinese_sentences(non_chinese_sentence_id,
+        """INSERT INTO nonchinese_sentences(example_translation_id,
                 sentence,
                 language)
-            SELECT non_chinese_sentence_id,
+            SELECT example_translation_id,
                 sentence,
                 language
             FROM db2.nonchinese_sentences"""
@@ -204,8 +204,8 @@ if __name__ == "__main__":
     # Insert sentence links separate, as their chinese_sentence_id and source foreign keys need to be rewritten
     c.execute(
         """WITH sentence_links_with_source AS (
-                    SELECT sentence_links.fk_chinese_sentence_id AS fk_csi,
-                        sentence_links.fk_non_chinese_sentence_id AS fk_ncsi,
+                    SELECT sentence_links.fk_example_id AS fk_csi,
+                        sentence_links.fk_example_translation_id AS fk_ncsi,
                         sentence_links.direct AS direct,
                         sources.sourcename AS sourcename
                     FROM db2.sentence_links, db2.sources
@@ -226,8 +226,8 @@ if __name__ == "__main__":
                     WHERE slws.fk_csi = cs.chinese_sentence_id
             )
 
-        INSERT INTO sentence_links(fk_chinese_sentence_id,
-                fk_non_chinese_sentence_id,
+        INSERT INTO sentence_links(fk_example_id,
+                fk_example_translation_id,
                 fk_source_id,
                 direct)
             SELECT cs.chinese_sentence_id,
@@ -290,11 +290,11 @@ if __name__ == "__main__":
                         ed.pinyin AS pinyin,
                         ed.jyutping AS jyutping,
                         ed.source AS source
-                    FROM db2.definitions_chinese_sentences_links AS dsl,
+                    FROM db2.definitions_examples_links AS dsl,
                         db2.chinese_sentences AS cs,
                         entry_and_definitions AS ed
                     WHERE dsl.fk_definition_id = ed.definition_id
-                        AND dsl.fk_chinese_sentence_id = cs.chinese_sentence_id
+                        AND dsl.fk_example_id = cs.chinese_sentence_id
             ),
 
             new_entry_and_definitions AS (
@@ -311,8 +311,8 @@ if __name__ == "__main__":
                     AND definitions.fk_source_id = sources.source_id
             )
 
-            INSERT INTO definitions_chinese_sentences_links(fk_definition_id,
-                        fk_chinese_sentence_id)
+            INSERT INTO definitions_examples_links(fk_definition_id,
+                        fk_example_id)
                     SELECT ned.definition_id,
                         cs.chinese_sentence_id
                     FROM defs_s_links_tmp AS dsl, new_entry_and_definitions AS ned,

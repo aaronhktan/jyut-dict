@@ -698,7 +698,7 @@ void SQLSearch::searchByUniqueThread(const QString &simplified,
 }
 
 // To search for sentences, use the sentence_links table to JOIN
-// between the chinese and non_chinese_sentences tables.
+// between the chinese and example_translations tables.
 void SQLSearch::searchTraditionalSentencesThread(const QString &searchTerm,
                                                  const unsigned long long queryID)
 {

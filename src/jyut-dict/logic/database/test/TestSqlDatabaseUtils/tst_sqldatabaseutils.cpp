@@ -185,16 +185,16 @@ void TestSqlDatabaseUtils::createV2Database(const QString &dbPath)
                ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec(
-        "CREATE TABLE nonchinese_sentences( non_chinese_sentence_id INTEGER "
+        "CREATE TABLE nonchinese_sentences( example_translation_id INTEGER "
         "PRIMARY KEY ON CONFLICT IGNORE, sentence TEXT, language TEXT, "
-        "UNIQUE(non_chinese_sentence_id, sentence) ON CONFLICT IGNORE)");
+        "UNIQUE(example_translation_id, sentence) ON CONFLICT IGNORE)");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
-    query.exec("CREATE TABLE sentence_links( fk_chinese_sentence_id INTEGER, "
-               "fk_non_chinese_sentence_id INTEGER, fk_source_id INTEGER, "
-               "direct BOOLEAN, FOREIGN KEY(fk_chinese_sentence_id) REFERENCES "
+    query.exec("CREATE TABLE sentence_links( fk_example_id INTEGER, "
+               "fk_example_translation_id INTEGER, fk_source_id INTEGER, "
+               "direct BOOLEAN, FOREIGN KEY(fk_example_id) REFERENCES "
                "    chinese_sentences(chinese_sentence_id), FOREIGN "
-               "KEY(fk_non_chinese_sentence_id) REFERENCES     "
-               "nonchinese_sentences(non_chinese_sentence_id), FOREIGN "
+               "KEY(fk_example_translation_id) REFERENCES     "
+               "nonchinese_sentences(example_translation_id), FOREIGN "
                "KEY(fk_source_id) REFERENCES sources(source_id) ON     DELETE "
                "CASCADE )");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
@@ -261,14 +261,14 @@ void TestSqlDatabaseUtils::createV3Database(const QString &dbPath)
                ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec(
-        "CREATE TABLE definitions_chinese_sentences_links( "
+        "CREATE TABLE definitions_examples_links( "
         "  fk_definition_id INTEGER, "
-        "  fk_chinese_sentence_id INTEGER, "
+        "  fk_example_id INTEGER, "
         "  FOREIGN KEY(fk_definition_id) REFERENCES definitions(definition_id) "
         "ON DELETE CASCADE, "
-        "  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES "
+        "  FOREIGN KEY(fk_example_id) REFERENCES "
         "    chinese_sentences(chinese_sentence_id) "
-        "  UNIQUE(fk_definition_id, fk_chinese_sentence_id) ON CONFLICT IGNORE "
+        "  UNIQUE(fk_definition_id, fk_example_id) ON CONFLICT IGNORE "
         ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec("CREATE TABLE entries( "
@@ -296,24 +296,24 @@ void TestSqlDatabaseUtils::createV3Database(const QString &dbPath)
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec(
         "CREATE TABLE nonchinese_sentences( "
-        "  non_chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
+        "  example_translation_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
         "  sentence TEXT, "
         "  language TEXT, "
-        "  UNIQUE(non_chinese_sentence_id, sentence) ON CONFLICT IGNORE "
+        "  UNIQUE(example_translation_id, sentence) ON CONFLICT IGNORE "
         ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec("CREATE TABLE sentence_links( "
-               "  fk_chinese_sentence_id INTEGER, "
-               "  fk_non_chinese_sentence_id INTEGER, "
+               "  fk_example_id INTEGER, "
+               "  fk_example_translation_id INTEGER, "
                "  fk_source_id INTEGER, "
                "  direct BOOLEAN, "
-               "  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES "
+               "  FOREIGN KEY(fk_example_id) REFERENCES "
                "    chinese_sentences(chinese_sentence_id), "
-               "  FOREIGN KEY(fk_non_chinese_sentence_id) REFERENCES "
-               "    nonchinese_sentences(non_chinese_sentence_id), "
+               "  FOREIGN KEY(fk_example_translation_id) REFERENCES "
+               "    nonchinese_sentences(example_translation_id), "
                "  FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON "
                "    DELETE CASCADE "
-               "  UNIQUE(fk_chinese_sentence_id, fk_non_chinese_sentence_id) "
+               "  UNIQUE(fk_example_id, fk_example_translation_id) "
                "    ON CONFLICT IGNORE "
                ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
@@ -397,14 +397,14 @@ void TestSqlDatabaseUtils::createV4Database(const QString &dbPath)
                ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec(
-        "CREATE TABLE definitions_chinese_sentences_links( "
+        "CREATE TABLE definitions_examples_links( "
         "  fk_definition_id INTEGER, "
-        "  fk_chinese_sentence_id INTEGER, "
+        "  fk_example_id INTEGER, "
         "  FOREIGN KEY(fk_definition_id) REFERENCES definitions(definition_id) "
         "ON DELETE CASCADE, "
-        "  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES "
+        "  FOREIGN KEY(fk_example_id) REFERENCES "
         "    chinese_sentences(chinese_sentence_id) "
-        "  UNIQUE(fk_definition_id, fk_chinese_sentence_id) ON CONFLICT IGNORE "
+        "  UNIQUE(fk_definition_id, fk_example_id) ON CONFLICT IGNORE "
         ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec("CREATE TABLE entries( "
@@ -432,24 +432,24 @@ void TestSqlDatabaseUtils::createV4Database(const QString &dbPath)
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec(
         "CREATE TABLE nonchinese_sentences( "
-        "  non_chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
+        "  example_translation_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
         "  sentence TEXT, "
         "  language TEXT, "
-        "  UNIQUE(non_chinese_sentence_id, sentence) ON CONFLICT IGNORE "
+        "  UNIQUE(example_translation_id, sentence) ON CONFLICT IGNORE "
         ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec("CREATE TABLE sentence_links( "
-               "  fk_chinese_sentence_id INTEGER, "
-               "  fk_non_chinese_sentence_id INTEGER, "
+               "  fk_example_id INTEGER, "
+               "  fk_example_translation_id INTEGER, "
                "  fk_source_id INTEGER, "
                "  direct BOOLEAN, "
-               "  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES "
+               "  FOREIGN KEY(fk_example_id) REFERENCES "
                "    chinese_sentences(chinese_sentence_id), "
-               "  FOREIGN KEY(fk_non_chinese_sentence_id) REFERENCES "
-               "    nonchinese_sentences(non_chinese_sentence_id), "
+               "  FOREIGN KEY(fk_example_translation_id) REFERENCES "
+               "    nonchinese_sentences(example_translation_id), "
                "  FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON "
                "    DELETE CASCADE "
-               "  UNIQUE(fk_chinese_sentence_id, fk_non_chinese_sentence_id) "
+               "  UNIQUE(fk_example_id, fk_example_translation_id) "
                "    ON CONFLICT IGNORE "
                ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
@@ -485,11 +485,11 @@ void TestSqlDatabaseUtils::createV4Database(const QString &dbPath)
     query.exec(
         "CREATE INDEX IF NOT EXISTS entries_pinyin_idx ON entries(pinyin);");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
-    query.exec("CREATE INDEX IF NOT EXISTS dcsl_fk_chinese_sentence_idx ON "
-               "definitions_chinese_sentences_links(fk_chinese_sentence_id);");
+    query.exec("CREATE INDEX IF NOT EXISTS del_fk_example_idx ON "
+               "definitions_examples_links(fk_example_id);");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec("CREATE INDEX IF NOT EXISTS sentence_links_fk_non_chinese_idx "
-               "ON sentence_links(fk_non_chinese_sentence_id);");
+               "ON sentence_links(fk_example_translation_id);");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec("INSERT INTO entries_fts (rowid, pinyin, jyutping) SELECT "
                "rowid, pinyin, jyutping FROM entries");
@@ -543,9 +543,9 @@ void TestSqlDatabaseUtils::updateDatabaseFromV1()
 
     // Check stuff added in v3
     query.exec("SELECT name FROM sqlite_master WHERE type='table' AND "
-               "name='definitions_chinese_sentences_links'");
+               "name='definitions_examples_links'");
     QCOMPARE(query.first(), true);
-    QCOMPARE(query.value(0).toString(), "definitions_chinese_sentences_links");
+    QCOMPARE(query.value(0).toString(), "definitions_examples_links");
 
     query.exec(
         "SELECT * FROM pragma_table_info('definitions_fts') AS table_info");
@@ -589,9 +589,9 @@ void TestSqlDatabaseUtils::updateDatabaseFromV1()
     QCOMPARE(query.value(0).toString(), "entries_pinyin_idx");
 
     query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
-               "name='dcsl_fk_chinese_sentence_idx'");
+               "name='del_fk_example_idx'");
     QCOMPARE(query.first(), true);
-    QCOMPARE(query.value(0).toString(), "dcsl_fk_chinese_sentence_idx");
+    QCOMPARE(query.value(0).toString(), "del_fk_example_idx");
 
     query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
                "name='sentence_links_fk_non_chinese_idx'");
@@ -618,9 +618,9 @@ void TestSqlDatabaseUtils::updateDatabaseFromV2()
 
     // Check stuff added in v3
     query.exec("SELECT name FROM sqlite_master WHERE type='table' AND "
-               "name='definitions_chinese_sentences_links'");
+               "name='definitions_examples_links'");
     QCOMPARE(query.first(), true);
-    QCOMPARE(query.value(0).toString(), "definitions_chinese_sentences_links");
+    QCOMPARE(query.value(0).toString(), "definitions_examples_links");
 
     query.exec(
         "SELECT * FROM pragma_table_info('definitions_fts') AS table_info");
@@ -664,9 +664,9 @@ void TestSqlDatabaseUtils::updateDatabaseFromV2()
     QCOMPARE(query.value(0).toString(), "entries_pinyin_idx");
 
     query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
-               "name='dcsl_fk_chinese_sentence_idx'");
+               "name='del_fk_example_idx'");
     QCOMPARE(query.first(), true);
-    QCOMPARE(query.value(0).toString(), "dcsl_fk_chinese_sentence_idx");
+    QCOMPARE(query.value(0).toString(), "del_fk_example_idx");
 
     query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
                "name='sentence_links_fk_non_chinese_idx'");
@@ -707,9 +707,9 @@ void TestSqlDatabaseUtils::updateDatabaseFromV3()
     QCOMPARE(query.value(0).toString(), "entries_pinyin_idx");
 
     query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
-               "name='dcsl_fk_chinese_sentence_idx'");
+               "name='del_fk_example_idx'");
     QCOMPARE(query.first(), true);
-    QCOMPARE(query.value(0).toString(), "dcsl_fk_chinese_sentence_idx");
+    QCOMPARE(query.value(0).toString(), "del_fk_example_idx");
 
     query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
                "name='sentence_links_fk_non_chinese_idx'");

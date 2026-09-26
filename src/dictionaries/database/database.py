@@ -39,12 +39,13 @@ def create_tables(c):
             )"""
     )
     c.execute(
-        "CREATE VIRTUAL TABLE definitions_fts using fts5(fk_entry_id UNINDEXED, definition)"
+        """CREATE VIRTUAL TABLE definitions_fts using fts5(fk_entry_id UNINDEXED, definition,
+                  tokenize = "unicode61 tokenchars ''")"""
     )
 
     c.execute(
-        """CREATE TABLE chinese_sentences(
-                  chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE,
+        """CREATE TABLE examples(
+                  example_id INTEGER PRIMARY KEY ON CONFLICT IGNORE,
                   traditional TEXT,
                   simplified TEXT,
                   pinyin TEXT,
@@ -55,34 +56,34 @@ def create_tables(c):
     )
 
     c.execute(
-        """CREATE TABLE nonchinese_sentences(
-                  non_chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE,
-                  sentence TEXT,
+        """CREATE TABLE example_translations(
+                  example_translation_id INTEGER PRIMARY KEY ON CONFLICT IGNORE,
+                  translation TEXT,
                   language TEXT,
-                  UNIQUE(non_chinese_sentence_id, sentence) ON CONFLICT IGNORE
+                  UNIQUE(translation_id, translation) ON CONFLICT IGNORE
             )"""
     )
 
     c.execute(
-        """CREATE TABLE sentence_links(
-                  fk_chinese_sentence_id INTEGER,
-                  fk_non_chinese_sentence_id INTEGER,
+        """CREATE TABLE example_links(
+                  fk_example_id INTEGER,
+                  fk_example_translation_id INTEGER,
                   fk_source_id INTEGER,
                   direct BOOLEAN,
-                  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES chinese_sentences(chinese_sentence_id),
-                  FOREIGN KEY(fk_non_chinese_sentence_id) REFERENCES nonchinese_sentences(non_chinese_sentence_id),
+                  FOREIGN KEY(fk_example_id) REFERENCES examples(example_id),
+                  FOREIGN KEY(fk_example_translation_id) REFERENCES example_translations(example_translation_id),
                   FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON DELETE CASCADE
-                  UNIQUE(fk_chinese_sentence_id, fk_non_chinese_sentence_id) ON CONFLICT IGNORE
+                  UNIQUE(fk_example_id, fk_example_translation_id) ON CONFLICT IGNORE
             )"""
     )
 
     c.execute(
-        """CREATE TABLE definitions_chinese_sentences_links(
+        """CREATE TABLE definitions_examples_links(
                   fk_definition_id INTEGER,
-                  fk_chinese_sentence_id INTEGER,
+                  fk_example_id INTEGER,
                   FOREIGN KEY(fk_definition_id) REFERENCES definitions(definition_id) ON DELETE CASCADE,
-                  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES chinese_sentences(chinese_sentence_id)
-                  UNIQUE(fk_definition_id, fk_chinese_sentence_id) ON CONFLICT IGNORE
+                  FOREIGN KEY(fk_example_id) REFERENCES examples(example_id)
+                  UNIQUE(fk_definition_id, fk_example_id) ON CONFLICT IGNORE
             )"""
     )
 
@@ -95,17 +96,17 @@ def drop_tables(c):
     c.execute("DROP TABLE IF EXISTS definitions_fts")
     c.execute("DROP INDEX IF EXISTS fk_entry_id_index")
 
-    c.execute("DROP TABLE IF EXISTS chinese_sentences")
-    c.execute("DROP TABLE IF EXISTS nonchinese_sentences")
-    c.execute("DROP TABLE IF EXISTS sentence_links")
-    c.execute("DROP INDEX IF EXISTS fk_chinese_sentence_id_index")
-    c.execute("DROP INDEX IF EXISTS fk_non_chinese_sentence_id_index")
+    c.execute("DROP TABLE IF EXISTS examples")
+    c.execute("DROP TABLE IF EXISTS example_translations")
+    c.execute("DROP TABLE IF EXISTS example_links")
+    c.execute("DROP INDEX IF EXISTS fk_example_id_index")
+    c.execute("DROP INDEX IF EXISTS fk_example_translation_id_index")
 
-    c.execute("DROP TABLE IF EXISTS definitions_chinese_sentences_links")
+    c.execute("DROP TABLE IF EXISTS definitions_examples_links")
 
 
 def write_database_version(c):
-    c.execute("PRAGMA user_version=3")
+    c.execute("PRAGMA user_version=4")
 
 
 def generate_indices(c):
@@ -117,6 +118,11 @@ def generate_indices(c):
     )
 
     c.execute("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)")
+    c.execute("CREATE INDEX entries_simplified_idx ON entries(simplified)")
+    c.execute("CREATE INDEX entries_jyutping_idx ON entries(jyutping)")
+    c.execute("CREATE INDEX entries_pinyin_idx ON entries(pinyin)")
+    c.execute("CREATE INDEX del_fk_example_idx ON definitions_examples_links(fk_example_id);")
+    c.execute("CREATE INDEX example_links_fk_example_translation_idx ON example_links(fk_example_translation_id);")
 
 
 def insert_source(
@@ -173,93 +179,93 @@ def insert_definition(c, definition, label, entry_id, source_id, id_=None):
     return -1
 
 
-def insert_definition_chinese_sentence_link(c, definition_id, chinese_sentence_id):
-    c.execute("SELECT max(rowid) FROM definitions_chinese_sentences_links")
+def insert_definition_example_link(c, definition_id, example_id):
+    c.execute("SELECT max(rowid) FROM definitions_examples_links")
     before_id = -1
     result = c.fetchone()
     if result:
         before_id = result[0]
 
     c.execute(
-        "INSERT INTO definitions_chinese_sentences_links values (?,?)",
-        (definition_id, chinese_sentence_id),
+        "INSERT INTO definitions_examples_links values (?,?)",
+        (definition_id, example_id),
     )
 
-    c.execute("SELECT max(rowid) FROM definitions_chinese_sentences_links")
+    c.execute("SELECT max(rowid) FROM definitions_examples_links")
     result = c.fetchone()
     if result:
         after_id = result[0]
 
-    # Compare before and after id to see if we sucessfully inserted a definition<->sentence link
+    # Compare before and after id to see if we sucessfully inserted a definition<->example link
     if after_id != before_id:
         return after_id
     return -1
 
 
-def insert_chinese_sentence(c, trad, simp, pin, jyut, lang, id_=None):
-    c.execute("SELECT max(rowid) FROM chinese_sentences")
+def insert_example(c, trad, simp, pin, jyut, lang, id_=None):
+    c.execute("SELECT max(rowid) FROM examples")
     before_id = -1
     result = c.fetchone()
     if result:
         before_id = result[0]
 
     c.execute(
-        "INSERT INTO chinese_sentences values (?,?,?,?,?,?)",
+        "INSERT INTO examples values (?,?,?,?,?,?)",
         (id_, trad, simp, pin, jyut, lang),
     )
 
-    c.execute("SELECT max(rowid) FROM chinese_sentences")
+    c.execute("SELECT max(rowid) FROM examples")
     result = c.fetchone()
     if result:
         after_id = result[0]
 
-    # Compare before and after id to see if we sucessfully inserted a Chinese sentence
+    # Compare before and after id to see if we sucessfully inserted an example
     if after_id != before_id:
         return after_id
     return -1
 
 
-def insert_nonchinese_sentence(c, sentence, lang, id_=None):
-    c.execute("SELECT max(rowid) FROM nonchinese_sentences")
+def insert_translation(c, translation, lang, id_=None):
+    c.execute("SELECT max(rowid) FROM example_translations")
     before_id = -1
     result = c.fetchone()
     if result:
         before_id = result[0]
 
     c.execute(
-        "INSERT INTO nonchinese_sentences values (?,?,?)",
-        (id_, sentence, lang),
+        "INSERT INTO example_translations values (?,?,?)",
+        (id_, translation, lang),
     )
 
-    c.execute("SELECT max(rowid) FROM nonchinese_sentences")
+    c.execute("SELECT max(rowid) FROM example_translations")
     result = c.fetchone()
     if result:
         after_id = result[0]
 
-    # Compare before and after id to see if we sucessfully inserted a non-Chinese sentence
+    # Compare before and after id to see if we sucessfully inserted a translation
     if after_id != before_id:
         return after_id
     return -1
 
 
-def insert_sentence_link(c, sentence_id, translation_id, source_id, direct):
-    c.execute("SELECT max(rowid) FROM sentence_links")
+def insert_example_link(c, example_id, translation_id, source_id, direct):
+    c.execute("SELECT max(rowid) FROM example_links")
     before_id = -1
     result = c.fetchone()
     if result:
         before_id = result[0]
 
     c.execute(
-        "INSERT INTO sentence_links values (?,?,?,?)",
-        (sentence_id, translation_id, source_id, direct),
+        "INSERT INTO example_links values (?,?,?,?)",
+        (example_id, translation_id, source_id, direct),
     )
 
-    c.execute("SELECT max(rowid) FROM sentence_links")
+    c.execute("SELECT max(rowid) FROM example_links")
     result = c.fetchone()
     if result:
         after_id = result[0]
 
-    # Compare before and after id to see if we sucessfully inserted a sentence<->translation link
+    # Compare before and after id to see if we sucessfully inserted an example<->translation link
     if after_id != before_id:
         return after_id
     return -1
@@ -300,9 +306,9 @@ def get_definition_id(c, definition, label, entry_id, source_id):
     return row[0]
 
 
-def get_chinese_sentence_id(c, trad, simp, pin, jyut, lang):
+def get_example_id(c, trad, simp, pin, jyut, lang):
     c.execute(
-        """SELECT rowid FROM chinese_sentences WHERE traditional=?
+        """SELECT rowid FROM examples WHERE traditional=?
             AND simplified=? AND pinyin=? AND jyutping=? AND language=?""",
         (trad, simp, pin, jyut, lang),
     )
@@ -312,10 +318,10 @@ def get_chinese_sentence_id(c, trad, simp, pin, jyut, lang):
     return row[0]
 
 
-def get_nonchinese_sentence_id(c, sentence, lang):
+def get_translation_id(c, translation, lang):
     c.execute(
-        "SELECT rowid FROM nonchinese_sentences WHERE sentence=? AND language=?",
-        (sentence, lang),
+        "SELECT rowid FROM example_translations WHERE translation=? AND language=?",
+        (translation, lang),
     )
     translation_row = c.fetchone()
 
@@ -324,10 +330,10 @@ def get_nonchinese_sentence_id(c, sentence, lang):
     return -1
 
 
-def get_sentence_link(c, sentence_id, translation_id):
+def get_example_link(c, example_id, translation_id):
     c.execute(
-        "SELECT rowid FROM sentence_links WHERE fk_chinese_sentence_id=? AND fk_non_chinese_sentence_id=?",
-        (sentence_id, translation_id),
+        "SELECT rowid FROM example_links WHERE fk_example_id=? AND fk_example_translation_id=?",
+        (example_id, translation_id),
     )
     link_row = c.fetchone()
 

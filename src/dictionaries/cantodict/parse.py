@@ -213,7 +213,7 @@ def write(db_name, source, entries, sentences, translations):
                 continue
 
     for sentence in sentences:
-        database.insert_chinese_sentence(
+        database.insert_example(
             c,
             sentence.traditional,
             sentence.simplified,
@@ -224,7 +224,7 @@ def write(db_name, source, entries, sentences, translations):
         )
         # In CantoDict, a sentence ID and its corresponding translation ID are separated by 500000000
         # (See parse_sentence_file())
-        database.insert_sentence_link(
+        database.insert_example_link(
             c,
             sentence.id,
             sentence.id + 500000000,
@@ -233,7 +233,7 @@ def write(db_name, source, entries, sentences, translations):
         )
 
     for translation in translations:
-        database.insert_nonchinese_sentence(
+        database.insert_translation(
             c,
             translation.sentence,
             translation.language,
