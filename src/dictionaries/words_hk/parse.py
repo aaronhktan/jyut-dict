@@ -77,9 +77,7 @@ def insert_example(c, definition_id, starting_example_id, example):
         else:
             # If insertion failed, it's probably because the example already exists
             # Get its rowid, so we can link it to this definition
-            example_id = database.get_example_id(
-                c, trad, simp, pin, jyut, lang
-            )
+            example_id = database.get_example_id(c, trad, simp, pin, jyut, lang)
             if example_id == -1:  # Something went wrong if example_id is still -1
                 return 0
     else:

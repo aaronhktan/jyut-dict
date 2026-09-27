@@ -22,13 +22,14 @@ zh_converter = opencc.OpenCC("tw2s.json")
 trad_converter = opencc.OpenCC("s2hk.json")
 
 SUPERSCRIPT_EQUIVALENT = str.maketrans("¹²³⁴⁵⁶⁷⁸⁹⁰", "1234567890", "")
-NUMBER_TO_COPTIC= str.maketrans("1234567890", "ⲁⲃⲅⲇⲉⲋⲍⲏⲑⲓ", "")
+NUMBER_TO_COPTIC = str.maketrans("1234567890", "ⲁⲃⲅⲇⲉⲋⲍⲏⲑⲓ", "")
 COPTIC_TO_WIDE_NUMBER = str.maketrans("ⲁⲃⲅⲇⲉⲋⲍⲏⲑⲓ", "１２３４５６７８９０", "")
 JYUTPING_REGEX = re.compile(r"(.*?)（粵拼：(.*?)[）|；|，|/]")
 LITERARY_CANTONESE_READING_REGEX_PATTERN = re.compile(r"\d\*")
 HAN_REGEX = re.compile(r"[\u4e00-\u9fff]")
 
 logging.getLogger().setLevel(logging.INFO)
+
 
 def insert_words(c, words):
     for key in words:
@@ -293,7 +294,12 @@ def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
             freq = zipf_frequency(trad, "zh")
 
             entry = objects.Entry(
-                trad=converted_trad, simp=simp, jyut=jyut, pin=pin, freq=freq, defs=[definition]
+                trad=converted_trad,
+                simp=simp,
+                jyut=jyut,
+                pin=pin,
+                freq=freq,
+                defs=[definition],
             )
             words[trad].append(entry)
 

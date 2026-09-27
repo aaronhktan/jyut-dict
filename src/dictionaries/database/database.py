@@ -120,8 +120,12 @@ def generate_indices(c):
     c.execute("CREATE INDEX entries_simplified_idx ON entries(simplified)")
     c.execute("CREATE INDEX entries_jyutping_idx ON entries(jyutping)")
     c.execute("CREATE INDEX entries_pinyin_idx ON entries(pinyin)")
-    c.execute("CREATE INDEX del_fk_example_idx ON definitions_examples_links(fk_example_id);")
-    c.execute("CREATE INDEX example_links_fk_example_translation_idx ON example_links(fk_example_translation_id);")
+    c.execute(
+        "CREATE INDEX del_fk_example_idx ON definitions_examples_links(fk_example_id);"
+    )
+    c.execute(
+        "CREATE INDEX example_links_fk_example_translation_idx ON example_links(fk_example_translation_id);"
+    )
 
 
 def insert_source(
