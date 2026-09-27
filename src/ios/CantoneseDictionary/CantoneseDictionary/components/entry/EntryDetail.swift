@@ -14,6 +14,7 @@ struct EntryDetail: View {
 
   @State private var entry: Entry? = nil
   @State private var examples: [String: [Example]] = [:]
+
   private var headerCharacters: AttributedString {
     entry?.getCharacters(options: .preferTraditional, useColours: true)
       ?? "Error fetching entry header"
@@ -116,17 +117,19 @@ struct EntryDetail: View {
     let searcher = SQLSearch(pool: pool)
 
     entry = await searcher.searchByRowId(rowid: String(rowId))
+
+    examples = [:]
     if entry != nil {
       let allExamples = await searcher.searchExamplesByTraditional(searchTerm: entry!.traditional)
 
       var examplesBySource: [String: [Example]] = [:]
       for example in allExamples {
         if let source = example.getTranslationSets().first?.getSource() {
-          if examplesBySource[source, default:[]].count >= 2 {
+          if examplesBySource[source, default: []].count >= 2 {
             // Limit to showing two examples per source for now
             continue
           } else {
-            examplesBySource[source, default:[]].append(example)
+            examplesBySource[source, default: []].append(example)
           }
         }
       }
