@@ -642,7 +642,7 @@ if __name__ == "__main__":
                 "cantodict/data/scraped_sentences/ CantoDict CD 2021-07-18 "
                 '"CantoDict is a collaborative Chinese Dictionary project started in November 2003. '
                 'Entries are added and mistakes corrected by a team of kind volunteers from around the world." '
-                '"https://www.cantonese.sheik.co.uk/copyright.htm" "https://www.cantonese.sheik.co.uk/" "" "" '
+                '"https://www.cantonese.sheik.co.uk/copyright.htm" "https://www.cantonese.sheik.co.uk/" "" "words,examples" '
                 "cantodict/logging.log"
             )
         )

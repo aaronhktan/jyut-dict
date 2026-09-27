@@ -423,7 +423,7 @@ if __name__ == "__main__":
                 "e.g. python3 -m words_hk.parse words_hk/developer/words_hk.db "
                 "words_hk/data/all.csv 粵典–words.hk WHK 2021-12-23 "
                 '"《粵典》係一個大型嘅粵語辭典計劃。我哋會用Crowd-sourcing嘅方法，整一本大型、可持續發展嘅粵語辭典。" '
-                '"https://words.hk/base/hoifong/" "https://words.hk/" "" ""'
+                '"https://words.hk/base/hoifong/" "https://words.hk/" "" "words,examples"'
             )
         )
         sys.exit(1)

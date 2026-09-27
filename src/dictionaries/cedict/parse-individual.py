@@ -102,6 +102,7 @@ def parse_file(filename, entries):
                     jyut = jyut.replace(char, char_jyutping)
             definitions = line[line.index("/") + 1 : -2].split("/")
             entry = objects.Entry(trad=trad, simp=simp, pin=pin, defs=definitions)
+            entry.add_fuzzy_jyutping(jyut)
 
             if trad in entries:
                 entries[trad].append(entry)
@@ -158,7 +159,7 @@ if __name__ == "__main__":
                 "cedict/data/CEDICT.txt cedict/data/READINGS.txt "
                 'CC-CEDICT CC 2018-07-09 "CC-CEDICT is a dictionary." '
                 '"This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License." '
-                '"http://www.mdbg.net/chindict/chindict.php?page=cc-cedict" "" ""'
+                '"http://www.mdbg.net/chindict/chindict.php?page=cc-cedict" "" "words"'
             )
         )
         sys.exit(1)

@@ -1043,7 +1043,7 @@ if __name__ == "__main__":
                 '"Wiktionary is a collaborative project to produce a free-content multilingual dictionary. '
                 'It aims to describe all words of all languages using definitions and descriptions in English." '
                 '"Text is available under the Creative Commons Attribution-ShareAlike License; additional terms may apply." '
-                '"https://en.wiktionary.org/wiki/Wiktionary:Main_Page" "" "words,sentences"'
+                '"https://en.wiktionary.org/wiki/Wiktionary:Main_Page" "" "words,examples"'
             )
         )
         sys.exit(1)

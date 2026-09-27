@@ -1,11 +1,16 @@
+import pinyin_jyutping_sentence
+import pycantonese
 from wordfreq import zipf_frequency
 
 from database import database, objects
 
 import logging
+import re
 import sqlite3
 import sys
 import xml.etree.ElementTree as ET
+
+HAN_REGEX = re.compile(r"[\u4e00-\u9fff]")
 
 
 def write(db_name, source, entries):
@@ -93,7 +98,23 @@ def parse_file(filename, entries):
                     pass
                 case other:
                     print(f"another attrib found, tag: {attrib.tag}")
+        jyut = pinyin_jyutping_sentence.jyutping(
+            trad,
+            tone_numbers=True,
+            spaces=True,
+        )
+
+        # If pinyin_jyutping_sentences cannot convert to Jyutping, use
+        # pycantonese to convert the character instead
+        han_chars = HAN_REGEX.findall(jyut)
+        for char in han_chars:
+            char_jyutping = pycantonese.characters_to_jyutping(char)[0][1]
+            if char_jyutping:
+                jyut = jyut.replace(char, char_jyutping)
+
         entry = objects.Entry(trad=trad, simp=simp, pin=pin, defs=definitions)
+        entry.add_fuzzy_jyutping(jyut)
+
         if trad in entries:
             entries[trad].append(entry)
         else:

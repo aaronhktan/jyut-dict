@@ -844,7 +844,8 @@ if __name__ == "__main__":
         )
         print(
             (
-                "e.g. python3 -m abc_.parse abc.db abc/data/cidian.u8 "
+                "e.g. python3 -m abc_.parse abc/developer/abc.db "
+                "abc/data/cidian.u8 "
                 '"ABC Chinese-English Dictionary" ABC 2015-12-18 '
                 '"This dictionary is an expansion of the ground breaking '
                 "ABC Chinese-English Dictionary, the first strictly "
@@ -853,7 +854,7 @@ if __name__ == "__main__":
                 "entries of the earlier work, making it the most "
                 'comprehensive one-volume dictionary of Chinese." '
                 '"Copyright © 1996-2019 University of Hawai‘i Press, All Rights Reserved" '
-                '"https://wenlin.com/abc" "" "words,sentences"'
+                '"https://wenlin.com/abc" "" "words,examples"'
             )
         )
         sys.exit(1)
