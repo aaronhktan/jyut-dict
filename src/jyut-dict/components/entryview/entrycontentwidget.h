@@ -11,13 +11,13 @@
 class SQLDatabaseManager;
 class RelatedSection;
 class DefinitionCardSection;
-class EntryViewSentenceCardSection;
+class EntryViewExampleCardSection;
 
 class QVBoxLayout;
 
 // The EntryContentWidget displays data about an Entry (that is not in its header)
 // It contains section for definition cards, and another section for
-// sentence cards.
+// example cards.
 
 class EntryContentWidget : public QWidget
 {
@@ -34,13 +34,13 @@ private:
 
     QVBoxLayout *_entryContentLayout;
     DefinitionCardSection *_definitionSection;
-    EntryViewSentenceCardSection *_sentenceSection;
+    EntryViewExampleCardSection *_exampleSection;
     RelatedSection *_relatedSection;
 
 signals:
-    void stallSentenceUIUpdate(void);
+    void stallExampleUIUpdate(void);
 
-    void viewAllSentences(void);
+    void viewAllExamples(void);
 
     void searchEntriesBeginning(void);
     void searchEntriesContaining(void);
@@ -52,15 +52,15 @@ public slots:
     void hideDefinitionSection(void);
     void showDefinitionSection(void);
 
-    void hideSentenceSection(void);
-    void showSentenceSection(void);
+    void hideExampleSection(void);
+    void showExampleSection(void);
 
     void hideRelatedSection(void);
     void showRelatedSection(void);
 
     void updateStyleRequested(void);
 
-    void viewAllSentencesRequested(void);
+    void viewAllExamplesRequested(void);
 
     void searchEntriesBeginningRequested(void);
     void searchEntriesContainingRequested(void);

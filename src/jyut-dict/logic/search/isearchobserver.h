@@ -17,7 +17,7 @@ public:
 
     virtual void detectedLanguage(SearchParameters) {}
     virtual void callback(const std::vector<Entry> &, bool) {}
-    virtual void callback(const std::vector<SourceSentence> &, bool) {}
+    virtual void callback(const std::vector<Example> &, bool) {}
     virtual void callback(const std::vector<std::pair<std::string, long>> &,
                           bool)
     {}

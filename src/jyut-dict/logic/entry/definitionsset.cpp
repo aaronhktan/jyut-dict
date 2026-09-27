@@ -17,8 +17,8 @@ std::ostream &operator<<(std::ostream &out, DefinitionsSet const &definitions)
     for (const auto &definition : definitions.getDefinitions()) {
         out << "== definition\n" << definition.definitionContent << "\n";
         out << "== label\n" << definition.label << "\n";
-        for (const auto &e : definition.sentences) {
-            out << "===== sentence\n" << e << "\n";
+        for (const auto &e : definition.examples) {
+            out << "===== example\n" << e << "\n";
         }
     }
 
@@ -39,8 +39,8 @@ void DefinitionsSet::generatePhonetic(CantoneseOptions cantoneseOptions,
                                       MandarinOptions mandarinOptions)
 {
     for (auto &definition : _definitions) {
-        for (auto &sentence : definition.sentences) {
-            sentence.generatePhonetic(cantoneseOptions, mandarinOptions);
+        for (auto &example : definition.examples) {
+            example.generatePhonetic(cantoneseOptions, mandarinOptions);
         }
     }
 }

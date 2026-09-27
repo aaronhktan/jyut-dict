@@ -63,7 +63,7 @@ signals:
     void shareCurrentEntry(void);
     void openCurrentEntryInNewWindow(void);
     void magnifyCurrentEntry(void);
-    void viewAllSentences(void);
+    void viewAllExamples(void);
 
     void searchEntriesBeginning(void);
     void searchEntriesContaining(void);
@@ -79,7 +79,7 @@ public slots:
     void shareCurrentEntryRequested(void);
     void openCurrentEntryInNewWindowRequested(void);
     void magnifyCurrentEntryRequested(void);
-    void viewAllSentencesRequested(void);
+    void viewAllExamplesRequested(void);
 
     void searchEntriesBeginningRequested(void);
     void searchEntriesContainingRequested(void);

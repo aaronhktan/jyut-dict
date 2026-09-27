@@ -91,7 +91,7 @@ private:
     QAction *_shareCurrentEntryAction;
     QAction *_openCurrentEntryInNewWindowAction;
     QAction *_magnifyCurrentEntryAction;
-    QAction *_viewAllSentencesAction;
+    QAction *_viewAllExamplesAction;
     QAction *_searchWordsBeginningAction;
     QAction *_searchWordsContainingAction;
     QAction *_searchWordsEndingAction;
@@ -181,7 +181,7 @@ signals:
     void shareCurrentEntry(void);
     void openCurrentEntryInNewWindow(void);
     void magnifyCurrentEntry(void);
-    void viewAllSentences(void);
+    void viewAllExamples(void);
 
     void searchEntriesBeginning(void);
     void searchEntriesContaining(void);

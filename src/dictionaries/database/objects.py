@@ -125,9 +125,9 @@ ExampleTuple = namedtuple("ExampleTuple", ["lang", "pron", "content"])
 # More complicated structure for an example:
 # - specifies an ID + may contain pronunciation for Mandarin and Cantonese +
 #   may contain traditional and simplified variants
-# - may be linked to one or more NonChineseSentence tuples
-ChineseSentence = namedtuple(
-    "ChineseSentence",
+# - may be linked to one or more TranslationTuple tuples
+BigExampleTuple = namedtuple(
+    "BigExampleTuple",
     [
         "id",
         "traditional",
@@ -138,11 +138,11 @@ ChineseSentence = namedtuple(
     ],
 )
 
-NonChineseSentence = namedtuple(
-    "NonChineseSentence",
+TranslationTuple = namedtuple(
+    "TranslationTuple",
     [
         "id",
-        "sentence",
+        "translation",
         "language",
     ],
 )

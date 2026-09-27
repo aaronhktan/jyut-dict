@@ -28,8 +28,8 @@ target_sources(TestEntry
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/chineseutils.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/mandarinutils.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/utils.cpp
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../sentence/sentenceset.cpp
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../sentence/sourcesentence.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../example/translationset.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../example/example.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../settings/settings.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../settings/settingsutils.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../source/sourceutils.cpp

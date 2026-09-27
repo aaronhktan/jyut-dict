@@ -30,9 +30,9 @@ EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
 #endif
 
     connect(this,
-            &EntryScrollArea::stallSentenceUIUpdate,
+            &EntryScrollArea::stallExampleUIUpdate,
             _scrollAreaWidget,
-            &EntryScrollAreaWidget::stallUISentenceUpdate);
+            &EntryScrollAreaWidget::stallUIExampleUpdate);
 
     connect(this,
             &EntryScrollArea::favouriteCurrentEntry,
@@ -55,9 +55,9 @@ EntryScrollArea::EntryScrollArea(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
             &EntryScrollAreaWidget::openMagnifyWindow);
 
     connect(this,
-            &EntryScrollArea::viewAllSentences,
+            &EntryScrollArea::viewAllExamples,
             _scrollAreaWidget,
-            &EntryScrollAreaWidget::viewAllSentencesRequested);
+            &EntryScrollAreaWidget::viewAllExamplesRequested);
 
     connect(this,
             &EntryScrollArea::searchEntriesBeginning,
@@ -223,9 +223,9 @@ void EntryScrollArea::magnifyCurrentEntryRequested(void)
     emit magnifyCurrentEntry();
 }
 
-void EntryScrollArea::viewAllSentencesRequested(void)
+void EntryScrollArea::viewAllExamplesRequested(void)
 {
-    emit viewAllSentences();
+    emit viewAllExamples();
 }
 
 void EntryScrollArea::searchEntriesBeginningRequested(void)

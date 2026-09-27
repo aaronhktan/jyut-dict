@@ -57,7 +57,7 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     connect(this,
             &MainSplitter::forwardSearchBarTextChange,
             _entryScrollArea,
-            &EntryScrollArea::stallSentenceUIUpdate);
+            &EntryScrollArea::stallExampleUIUpdate);
 
     connect(this,
             &MainSplitter::forwardSearchBarTextChange,
@@ -67,7 +67,7 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
     connect(_resultListView->selectionModel(),
             &QItemSelectionModel::currentChanged,
             _entryScrollArea,
-            &EntryScrollArea::stallSentenceUIUpdate);
+            &EntryScrollArea::stallExampleUIUpdate);
 
     connect(this,
             &MainSplitter::favouriteCurrentEntry,
@@ -90,9 +90,9 @@ MainSplitter::MainSplitter(std::shared_ptr<SQLUserDataUtils> sqlUserUtils,
             &EntryScrollArea::magnifyCurrentEntryRequested);
 
     connect(this,
-            &MainSplitter::viewAllSentences,
+            &MainSplitter::viewAllExamples,
             _entryScrollArea,
-            &EntryScrollArea::viewAllSentencesRequested);
+            &EntryScrollArea::viewAllExamplesRequested);
 
     connect(this,
             &MainSplitter::searchEntriesBeginning,
@@ -280,7 +280,7 @@ void MainSplitter::handleDoubleClick(const QModelIndex &selection)
 #ifndef Q_OS_MAC
         area->setWindowTitle(" ");
 #endif
-        emit area->stallSentenceUIUpdate();
+        emit area->stallExampleUIUpdate();
         area->show();
     });
 }
@@ -305,9 +305,9 @@ void MainSplitter::magnifyCurrentEntryRequested(void)
     emit magnifyCurrentEntry();
 }
 
-void MainSplitter::viewAllSentencesRequested(void)
+void MainSplitter::viewAllExamplesRequested(void)
 {
-    emit viewAllSentences();
+    emit viewAllExamples();
 }
 
 void MainSplitter::searchEntriesBeginningRequested(void)

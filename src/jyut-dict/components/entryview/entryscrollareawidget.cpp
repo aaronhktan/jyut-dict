@@ -68,9 +68,9 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(
     setStyle(Utils::isDarkMode());
 
     connect(this,
-            &EntryScrollAreaWidget::stallUISentenceUpdate,
+            &EntryScrollAreaWidget::stallUIExampleUpdate,
             _entryContentWidget,
-            &EntryContentWidget::stallSentenceUIUpdate);
+            &EntryContentWidget::stallExampleUIUpdate);
 
     connect(this,
             &EntryScrollAreaWidget::favouriteCurrentEntry,
@@ -83,9 +83,9 @@ EntryScrollAreaWidget::EntryScrollAreaWidget(
             &EntryActionWidget::shareCurrentEntryRequested);
 
     connect(this,
-            &EntryScrollAreaWidget::viewAllSentences,
+            &EntryScrollAreaWidget::viewAllExamples,
             _entryContentWidget,
-            &EntryContentWidget::viewAllSentencesRequested);
+            &EntryContentWidget::viewAllExamplesRequested);
 
     connect(this,
             &EntryScrollAreaWidget::searchEntriesBeginning,
@@ -221,7 +221,7 @@ void EntryScrollAreaWidget::openInNewWindow(void)
 #ifndef Q_OS_MAC
     area->setWindowTitle(" ");
 #endif
-    emit area->stallSentenceUIUpdate();
+    emit area->stallExampleUIUpdate();
     area->show();
 }
 
@@ -241,9 +241,9 @@ void EntryScrollAreaWidget::openMagnifyWindow(void)
     area->show();
 }
 
-void EntryScrollAreaWidget::viewAllSentencesRequested(void)
+void EntryScrollAreaWidget::viewAllExamplesRequested(void)
 {
-    emit viewAllSentences();
+    emit viewAllExamples();
 }
 
 void EntryScrollAreaWidget::searchEntriesBeginningRequested(void)

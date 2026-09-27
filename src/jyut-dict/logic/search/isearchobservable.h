@@ -20,7 +20,7 @@ public:
     virtual void deregisterObserver(ISearchObserver *) {}
     virtual void notifyObservers(SearchParameters) {}
     virtual void notifyObservers(const std::vector<Entry> &, bool) {}
-    virtual void notifyObservers(const std::vector<SourceSentence> &, bool) {}
+    virtual void notifyObservers(const std::vector<Example> &, bool) {}
     virtual void notifyObservers(
         const std::vector<std::pair<std::string, int>> &, bool)
     {}

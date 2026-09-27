@@ -1,7 +1,7 @@
 #include "queryparseutils.h"
 
 #include "logic/entry/entry.h"
-#include "logic/sentence/sourcesentence.h"
+#include "logic/example/example.h"
 
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -57,20 +57,20 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
 
                 for (const QJsonValue &definition :
                      definitionGroup["definitions"].toArray()) {
-                    std::vector<SourceSentence> sentences;
-                    for (const QJsonValue &sentence :
-                         definition["sentences"].toArray()) {
-                        std::vector<SentenceSet> sentence_translations;
+                    std::vector<Example> examples;
+                    for (const QJsonValue &example :
+                         definition["examples"].toArray()) {
+                        std::vector<TranslationSet> example_translations;
 
-                        // Parse each sentence
-                        if (!sentence.isNull()) {
-                            std::vector<Sentence::TargetSentence> targetSentences;
-                            if (!sentence["translations"].isNull()) {
-                                // Parse each of the sentence translations
+                        // Parse each example
+                        if (!example.isNull()) {
+                            std::vector<Translation::Translation> targetTranslations;
+                            if (!example["translations"].isNull()) {
+                                // Parse each of the example translations
                                 for (const QJsonValue &translation :
-                                     sentence["translations"].toArray()) {
-                                    targetSentences.emplace_back(
-                                        translation["sentence"]
+                                     example["translations"].toArray()) {
+                                    targetTranslations.emplace_back(
+                                        translation["translation"]
                                             .toString()
                                             .toStdString(),
                                         translation["language"]
@@ -78,15 +78,15 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
                                             .toStdString(),
                                         translation["direct"].toInt() == 1);
                                 }
-                                sentence_translations.emplace_back(sourceName, targetSentences);
+                                example_translations.emplace_back(sourceName, targetTranslations);
                             }
 
-                            sentences.emplace_back(sentence["language"].toString().toStdString(),
-                                                   sentence["simplified"].toString().toStdString(),
-                                                   sentence["traditional"].toString().toStdString(),
-                                                   sentence["jyutping"].toString().toStdString(),
-                                                   sentence["pinyin"].toString().toStdString(),
-                                                   sentence_translations);
+                            examples.emplace_back(example["language"].toString().toStdString(),
+                                                   example["simplified"].toString().toStdString(),
+                                                   example["traditional"].toString().toStdString(),
+                                                   example["jyutping"].toString().toStdString(),
+                                                   example["pinyin"].toString().toStdString(),
+                                                   example_translations);
                         }
                     }
 
@@ -97,7 +97,7 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
                                              definition["label"]
                                                  .toString()
                                                  .toStdString(),
-                                             sentences);
+                                             examples);
                 }
 
                 definitionsSets.emplace_back(sourceName,
@@ -115,9 +115,9 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
     return entries;
 }
 
-std::vector<SourceSentence> parseSentences(QSqlQuery &query)
+std::vector<Example> parseExamples(QSqlQuery &query)
 {
-    std::vector<SourceSentence> sentences;
+    std::vector<Example> examples;
 
     const int simplifiedIndex = query.record().indexOf("simplified");
     const int traditionalIndex = query.record().indexOf("traditional");
@@ -139,52 +139,51 @@ std::vector<SourceSentence> parseSentences(QSqlQuery &query)
             = query.value(pinyinIndex).toString().toStdString();
         const std::string sourceLanguage
             = query.value(sourceLanguageIndex).toString().toStdString();
-        const std::string combinedTargetSentencesData
+        const std::string combinedTargetTranslationsData
             = query.value(translationsIndex).toString().toStdString();
         const std::string definitionSourceName
             = query.value(definitionSourceNameIndex).toString().toStdString();
 
-        // Each sentence will have a vector of SentenceSets that represents
+        // Each example will have a vector of TranslationSets that represents
         // a group of translations that are from the same source
-        std::vector<SentenceSet> sentence_translation_sets;
+        std::vector<TranslationSet> translationSets;
 
-        if (!combinedTargetSentencesData.empty()) {
+        if (!combinedTargetTranslationsData.empty()) {
             // Parse JSON returned by query
             QJsonDocument doc = QJsonDocument::fromJson(
-                QString::fromStdString(combinedTargetSentencesData).toUtf8());
-            // Parse each of the sentence translation groups
+                QString::fromStdString(combinedTargetTranslationsData).toUtf8());
             for (const QJsonValue &translation_set : doc.array()) {
-                const std::string sentenceSourceName
+                const std::string translationSourceName
                     = translation_set["source"].toString().toStdString();
 
-                // If the sentence has the source it comes from, use it
+                // If the example has the source it comes from, use it
                 // Otherwise, assume it comes from the same source as the
                 // definition it is linked to (if any)
-                sentence_translation_sets.emplace_back(
-                    sentenceSourceName.empty() ? definitionSourceName
-                                               : sentenceSourceName);
+                translationSets.emplace_back(translationSourceName.empty()
+                                                 ? definitionSourceName
+                                                 : translationSourceName);
 
                 for (const QJsonValue &translation :
                      translation_set["translations"].toArray()) {
                     // Parse each translation in this group
-                    std::vector<Sentence::TargetSentence> targetSentences;
-                    sentence_translation_sets.back().pushSentence(
-                        {translation["sentence"].toString().toStdString(),
+                    std::vector<Translation::Translation> targetTranslations;
+                    translationSets.back().pushTranslation(
+                        {translation["translation"].toString().toStdString(),
                          translation["language"].toString().toStdString(),
                          translation["direct"].toInt() == 1});
                 }
             }
         }
 
-        sentences.emplace_back(sourceLanguage,
-                               simplified,
-                               traditional,
-                               jyutping,
-                               pinyin,
-                               sentence_translation_sets);
+        examples.emplace_back(sourceLanguage,
+                              simplified,
+                              traditional,
+                              jyutping,
+                              pinyin,
+                              translationSets);
     }
 
-    return sentences;
+    return examples;
 }
 
 bool parseExistence(QSqlQuery &query)

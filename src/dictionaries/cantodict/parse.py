@@ -235,7 +235,7 @@ def write(db_name, source, entries, sentences, translations):
     for translation in translations:
         database.insert_translation(
             c,
-            translation.sentence,
+            translation.translation,
             translation.language,
             translation.id,
         )
@@ -580,7 +580,7 @@ def parse_sentence_file(file_name, sentences, translations):
         if mandarin_element:
             lang = "cmn"
 
-        sentence = objects.ChineseSentence(
+        sentence = objects.BigExampleTuple(
             sentence_id,
             trad,
             simp,
@@ -601,7 +601,7 @@ def parse_sentence_file(file_name, sentences, translations):
 
         if translation_element:
             translation = translation_element.get_text().strip()
-            sentence_translation = objects.NonChineseSentence(
+            sentence_translation = objects.TranslationTuple(
                 500000000 + sentence_id, translation, "eng"
             )
             translations.append(sentence_translation)

@@ -188,9 +188,9 @@ MainWindow::MainWindow(QWidget *parent)
             _mainSplitter,
             &MainSplitter::magnifyCurrentEntryRequested);
     connect(this,
-            &MainWindow::viewAllSentences,
+            &MainWindow::viewAllExamples,
             _mainSplitter,
-            &MainSplitter::viewAllSentencesRequested);
+            &MainSplitter::viewAllExamplesRequested);
     connect(this,
             &MainWindow::searchEntriesBeginning,
             _mainSplitter,
@@ -376,8 +376,8 @@ void MainWindow::translateUI(void)
         tr("Open Current Entry in New Window..."));
     _magnifyCurrentEntryAction->setText(
         tr("View Large Version of Current Entry..."));
-    _viewAllSentencesAction->setText(
-        tr("View All Sentences for Current Entry..."));
+    _viewAllExamplesAction->setText(
+        tr("View All Examples for Current Entry..."));
     _searchWordsBeginningAction->setText(
         tr("Find Entries That Begin With Current Entry"));
     _searchWordsContainingAction->setText(
@@ -1175,12 +1175,12 @@ void MainWindow::createActions(void)
 
     _entryMenu->addSeparator();
 
-    _viewAllSentencesAction = new QAction{this};
-    _viewAllSentencesAction->setShortcut(QKeySequence{"Ctrl+T"});
-    connect(_viewAllSentencesAction, &QAction::triggered, this, [this] {
-        emit viewAllSentences();
+    _viewAllExamplesAction = new QAction{this};
+    _viewAllExamplesAction->setShortcut(QKeySequence{"Ctrl+T"});
+    connect(_viewAllExamplesAction, &QAction::triggered, this, [this] {
+        emit viewAllExamples();
     });
-    _entryMenu->addAction(_viewAllSentencesAction);
+    _entryMenu->addAction(_viewAllExamplesAction);
 
     _entryMenu->addSeparator();
 

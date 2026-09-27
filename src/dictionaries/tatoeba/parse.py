@@ -53,7 +53,7 @@ def write(chinese_sentences, nonchinese_sentences, links, db_name):
         sentence = nonchinese_sentences[key]
         database.insert_translation(
             c,
-            sentence.sentence,
+            sentence.translation,
             sentence.language,
             sentence.id,
         )
@@ -126,7 +126,7 @@ def parse_sentence_file(
                     jyut = pinyin_jyutping_sentence.jyutping(
                         trad, tone_numbers=True, spaces=True
                     )
-                sentence_row = objects.ChineseSentence(
+                sentence_row = objects.BigExampleTuple(
                     sentence_id,
                     trad,
                     simp,
@@ -140,7 +140,7 @@ def parse_sentence_file(
 
             if lang == target:
                 sentence = line[sentence_start:].strip()
-                sentence_translation = objects.NonChineseSentence(
+                sentence_translation = objects.TranslationTuple(
                     sentence_id, sentence, lang
                 )
                 nonchinese_sentences[sentence_id] = sentence_translation

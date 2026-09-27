@@ -89,7 +89,7 @@ void DefinitionContentWidget::setDefinitions(
                                      1,
                                      Qt::AlignTop);
 
-        for (size_t j = 0; j < definitions[i].sentences.size(); j++) {
+        for (size_t j = 0; j < definitions[i].examples.size(); j++) {
             QString exampleText;
             switch (Settings::getSettings()
                         ->value("characterOptions",
@@ -97,25 +97,25 @@ void DefinitionContentWidget::setDefinitions(
                                     EntryCharactersOptions::PREFER_TRADITIONAL))
                         .value<EntryCharactersOptions>()) {
             case EntryCharactersOptions::ONLY_SIMPLIFIED:
-                exampleText = definitions[i].sentences[j].getSimplified().c_str();
+                exampleText = definitions[i].examples[j].getSimplified().c_str();
                 break;
             case EntryCharactersOptions::PREFER_SIMPLIFIED:
                 exampleText = QString::fromStdString(
-                                  definitions[i].sentences[j].getSimplified())
+                                  definitions[i].examples[j].getSimplified())
                               + "<br>"
                               + QString::fromStdString(
-                                  definitions[i].sentences[j].getTraditional());
+                                  definitions[i].examples[j].getTraditional());
                 break;
             case EntryCharactersOptions::ONLY_TRADITIONAL:
                 exampleText
-                    = definitions[i].sentences[j].getTraditional().c_str();
+                    = definitions[i].examples[j].getTraditional().c_str();
                 break;
             case EntryCharactersOptions::PREFER_TRADITIONAL:
                 exampleText = QString::fromStdString(
-                                  definitions[i].sentences[j].getTraditional())
+                                  definitions[i].examples[j].getTraditional())
                               + "<br>"
                               + QString::fromStdString(
-                                  definitions[i].sentences[j].getSimplified());
+                                  definitions[i].examples[j].getSimplified());
                 break;
             }
 
@@ -148,15 +148,15 @@ void DefinitionContentWidget::setDefinitions(
                                   MandarinOptions::PRETTY_PINYIN))
                       .value<MandarinOptions>();
 
-            SourceSentence sentence = definitions[i].sentences[j];
-            sentence.generatePhonetic(cantoneseOptions, mandarinOptions);
+            Example example = definitions[i].examples[j];
+            example.generatePhonetic(cantoneseOptions, mandarinOptions);
 
             QString cantonese = QString::fromStdString(
-                                    sentence.getCantonesePhonetic(
+                                    example.getCantonesePhonetic(
                                         cantoneseOptions))
                                     .trimmed();
             QString mandarin = QString::fromStdString(
-                                   sentence.getMandarinPhonetic(mandarinOptions))
+                                   example.getMandarinPhonetic(mandarinOptions))
                                    .trimmed();
 
             switch (Settings::getSettings()
@@ -201,12 +201,11 @@ void DefinitionContentWidget::setDefinitions(
                                              Qt::AlignTop);
             }
 
-            auto sets = definitions[i].sentences[j].getSentenceSets();
+            auto sets = definitions[i].examples[j].getTranslationSets();
             if (!sets.empty()) {
-                auto set = sets[0].getSentences();
+                auto set = sets[0].getTranslations();
                 if (!set.empty()) {
-                    QString translation = QString::fromStdString(
-                        set[0].sentence);
+                    QString translation = QString::fromStdString(set[0].content);
                     _exampleTranslationLabels.push_back(
                         new QLabel{"<ul style=\"list-style-type:none;\"><li>"
                                        + translation + "</li></ul>",

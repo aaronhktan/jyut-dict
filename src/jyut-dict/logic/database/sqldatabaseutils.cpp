@@ -29,21 +29,21 @@ bool SQLDatabaseUtils::migrateDatabaseFromOneToTwo(QSqlDatabase &db)
 
     query.exec(
         "CREATE TABLE IF NOT EXISTS nonchinese_sentences( "
-        "  example_translation_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
+        "  non_chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
         "  sentence TEXT, "
         "  language TEXT, "
-        "  UNIQUE(example_translation_id, sentence) ON CONFLICT IGNORE"
+        "  UNIQUE(non_chinese_sentence_id, sentence) ON CONFLICT IGNORE"
         ")");
 
     query.exec("CREATE TABLE IF NOT EXISTS sentence_links( "
-               "  fk_example_id INTEGER, "
-               "  fk_example_translation_id INTEGER, "
+               "  fk_chinese_sentence_id INTEGER, "
+               "  fk_non_chinese_sentence_id INTEGER, "
                "  fk_source_id INTEGER, "
                "  direct BOOLEAN, "
-               "  FOREIGN KEY(fk_example_id) REFERENCES "
+               "  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES "
                "    chinese_sentences(chinese_sentence_id), "
-               "  FOREIGN KEY(fk_example_translation_id) REFERENCES "
-               "    nonchinese_sentences(example_translation_id), "
+               "  FOREIGN KEY(fk_non_chinese_sentence_id) REFERENCES "
+               "    nonchinese_sentences(non_chinese_sentence_id), "
                "  FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON "
                "    DELETE CASCADE "
                ")");
@@ -63,14 +63,14 @@ bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(QSqlDatabase &db)
 
     // Add new definitions->chinese_sentence link table
     query.exec(
-        "CREATE TABLE definitions_examples_links( "
+        "CREATE TABLE definitions_chinese_sentences_links( "
         "  fk_definition_id INTEGER, "
-        "  fk_example_id INTEGER, "
+        "  fk_chinese_sentence_id INTEGER, "
         "  FOREIGN KEY(fk_definition_id) REFERENCES definitions(definition_id) "
         "    ON DELETE CASCADE, "
-        "  FOREIGN KEY(fk_example_id) REFERENCES "
+        "  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES "
         "    chinese_sentences(chinese_sentence_id) "
-        "  UNIQUE(fk_definition_id, fk_example_id) ON CONFLICT IGNORE "
+        "  UNIQUE(fk_definition_id, fk_chinese_sentence_id) ON CONFLICT IGNORE "
         ") ");
     if (query.lastError().isValid()) {
         return false;
@@ -168,26 +168,26 @@ bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(QSqlDatabase &db)
 
     // Delete and recreate the sentence links table to add new UNIQUE constraint
     query.exec("CREATE TABLE sentence_links_new( "
-               "  fk_example_id INTEGER, "
-               "  fk_example_translation_id INTEGER, "
+               "  fk_chinese_sentence_id INTEGER, "
+               "  fk_non_chinese_sentence_id INTEGER, "
                "  fk_source_id INTEGER, "
                "  direct BOOLEAN, "
-               "  FOREIGN KEY(fk_example_id) "
+               "  FOREIGN KEY(fk_chinese_sentence_id) "
                "    REFERENCES chinese_sentences(chinese_sentence_id), "
-               "  FOREIGN KEY(fk_example_translation_id) "
-               "    REFERENCES nonchinese_sentences(example_translation_id), "
+               "  FOREIGN KEY(fk_non_chinese_sentence_id) "
+               "    REFERENCES nonchinese_sentences(non_chinese_sentence_id), "
                "  FOREIGN KEY(fk_source_id) "
                "    REFERENCES sources(source_id) ON DELETE CASCADE "
                "  UNIQUE( "
-               "    fk_example_id, fk_example_translation_id "
+               "    fk_chinese_sentence_id, fk_non_chinese_sentence_id "
                "  ) ON CONFLICT IGNORE "
                ")");
     if (query.lastError().isValid()) {
         return false;
     }
-    query.exec("INSERT INTO sentence_links_new(fk_example_id, "
-               "  fk_example_translation_id, fk_source_id, direct) "
-               "SELECT fk_example_id, fk_example_translation_id, "
+    query.exec("INSERT INTO sentence_links_new(fk_chinese_sentence_id, "
+               "  fk_non_chinese_sentence_id, fk_source_id, direct) "
+               "SELECT fk_chinese_sentence_id, fk_non_chinese_sentence_id, "
                "  fk_source_id, direct "
                "FROM sentence_links ");
     if (query.lastError().isValid()) {
@@ -208,6 +208,7 @@ bool SQLDatabaseUtils::migrateDatabaseFromTwoToThree(QSqlDatabase &db)
 // Database differences from version 3 to version 4:
 // - Added indexes on simplified, jyutping, and pinyin
 // - Added indexes on sentence links
+// - Renamed sentence -> example
 bool SQLDatabaseUtils::migrateDatabaseFromThreeToFour(QSqlDatabase &db)
 {
     QSqlQuery query{db};
@@ -228,16 +229,56 @@ bool SQLDatabaseUtils::migrateDatabaseFromThreeToFour(QSqlDatabase &db)
         return false;
     }
 
-    query.exec("ALTER TABLE 'chinese_sentences' RENAME TO 'examples'")
-    query.exec("ALTER TABLE 'examples' RENAME COLUMN 'chinese_sentence_id' TO 'example_id'")
-    query.exec("ALTER TABLE 'non_chinese_sentences' RENAME TO 'example_translations'")
-    query.exec("ALTER TABLE 'example_translations' RENAME COLUMN 'non_chinese_sentence_id' TO 'example_translation_id'")
-    query.exec("ALTER TABLE 'example_translations' RENAME COLUMN 'sentence' TO 'translation'")
-    query.exec("ALTER TABLE 'sentence_links' RENAME TO 'example_links'")
-    query.exec("ALTER TABLE 'example_links' RENAME COLUMN 'fk_chinese_sentence_id' TO 'fk_example_id'")
-    query.exec("ALTER TABLE 'example_links' RENAME COLUMN 'fk_example_translation_id' TO 'fk_example_translation_id'")
-    query.exec("ALTER TABLE 'definitions_chinese_sentences_links' RENAME TO 'definitions_examples_links'")
-    query.exec("ALTER TABLE 'definitions_examples_links' RENAME COLUMN 'fk_example_id' TO 'fk_example_id'")
+    query.exec("ALTER TABLE 'chinese_sentences' RENAME TO 'examples'");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("ALTER TABLE 'examples' RENAME COLUMN 'chinese_sentence_id' TO "
+               "'example_id'");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec(
+        "ALTER TABLE 'nonchinese_sentences' RENAME TO 'example_translations'");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("ALTER TABLE 'example_translations' RENAME COLUMN "
+               "'non_chinese_sentence_id' TO 'example_translation_id'");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("ALTER TABLE 'example_translations' RENAME COLUMN 'sentence' TO "
+               "'translation'");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("ALTER TABLE 'sentence_links' RENAME TO 'example_links'");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("ALTER TABLE 'example_links' RENAME COLUMN "
+               "'fk_chinese_sentence_id' TO 'fk_example_id'");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("ALTER TABLE 'example_links' RENAME COLUMN "
+               "'fk_non_chinese_sentence_id' TO 'fk_example_translation_id'");
+    if (query.lastError().isValid()) {
+        qDebug() << query.lastError();
+        return false;
+    }
+    query.exec("ALTER TABLE 'definitions_chinese_sentences_links' RENAME TO "
+               "'definitions_examples_links'");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+    query.exec("ALTER TABLE 'definitions_examples_links' RENAME COLUMN "
+               "'fk_chinese_sentence_id' TO 'fk_example_id'");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
     query.exec("CREATE INDEX IF NOT EXISTS del_fk_example_idx ON "
                "definitions_examples_links(fk_example_id);");
     if (query.lastError().isValid()) {
@@ -245,6 +286,13 @@ bool SQLDatabaseUtils::migrateDatabaseFromThreeToFour(QSqlDatabase &db)
     }
     query.exec("CREATE INDEX IF NOT EXISTS example_links_fk_example_translation_idx "
                "ON example_links(fk_example_translation_id);");
+    if (query.lastError().isValid()) {
+        return false;
+    }
+
+    query.exec(
+        "UPDATE sources SET other = REPLACE(other, 'sentences', 'examples') "
+        "WHERE other LIKE '%sentences%';");
     if (query.lastError().isValid()) {
         return false;
     }
@@ -466,8 +514,9 @@ bool SQLDatabaseUtils::rebuildIndices(QSqlDatabase &db)
     if (query.lastError().isValid()) {
         return false;
     }
-    query.exec("CREATE INDEX IF NOT EXISTS sentence_links_fk_non_chinese_idx "
-               "ON example_links(fk_example_translation_id);");
+    query.exec(
+        "CREATE INDEX IF NOT EXISTS example_links_fk_example_translation_idx "
+        "ON example_links(fk_example_translation_id);");
     if (query.lastError().isValid()) {
         return false;
     }
@@ -558,30 +607,29 @@ bool SQLDatabaseUtils::removeExamplesFromDatabase(QSqlDatabase &db)
     // fk_example_id referencing it, and DELETE FROM examples.
 
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    query.exec(
-        "DELETE FROM examples "
-        "WHERE examples.example_id IN "
-        "(SELECT examples.example_id "
-        "   FROM examples "
-        "   LEFT JOIN example_links "
-        "     ON examples.example_links = "
-        "       example_links.fk_example_id "
-        "   LEFT JOIN definitions_examples_links "
-        "     ON examples.example_id = "
-        "       definitions_examples_links.fk_example_id "
-        "   WHERE example_links.fk_example_id IS NULL "
-        "     AND "
-        "definitions_examples_links.fk_example_id IS "
-        "NULL "
-        ")");
+    query.exec("DELETE FROM examples "
+               "WHERE examples.example_id IN "
+               "(SELECT examples.example_id "
+               "   FROM examples "
+               "   LEFT JOIN example_links "
+               "     ON examples.example_id = "
+               "       example_links.fk_example_id "
+               "   LEFT JOIN definitions_examples_links "
+               "     ON examples.example_id = "
+               "       definitions_examples_links.fk_example_id "
+               "   WHERE example_links.fk_example_id IS NULL "
+               "     AND "
+               "definitions_examples_links.fk_example_id IS "
+               "NULL "
+               ")");
 
-    // Remove non-Chinese sentences that are no longer linked with the same
+    // Remove example translations that are no longer linked with the same
     // principles as above
-    query.exec("DELETE FROM examples_translations "
-               "WHERE examples_translations.example_translation_id IN "
-               "(SELECT examples_translations.example_translation_id "
-               "   FROM examples_translations LEFT JOIN example_links "
-               "   ON examples_translations.example_translation_id = "
+    query.exec("DELETE FROM example_translations "
+               "WHERE example_translations.example_translation_id IN "
+               "(SELECT example_translations.example_translation_id "
+               "   FROM example_translations LEFT JOIN example_links "
+               "   ON example_translations.example_translation_id = "
                "     example_links.fk_example_translation_id "
                "   WHERE example_links.fk_example_translation_id IS NULL)");
 
@@ -598,7 +646,8 @@ bool SQLDatabaseUtils::removeSource(
     if (manager) {
         manager->backupDictionaryDatabase();
     }
-    return removeSources(db, std::vector<std::string>{source}, skipCleanup);
+    std::vector<std::string> sources{source};
+    return removeSources(db, sources, skipCleanup);
 }
 
 // Method to remove multiple sources from the database, based on the name of the sources.
@@ -658,7 +707,7 @@ bool SQLDatabaseUtils::removeSources(QSqlDatabase &db,
             }
         }
         if (type.find("examples") != std::string::npos) {
-            if (!removeSentencesFromDatabase(db)) {
+            if (!removeExamplesFromDatabase(db)) {
                 throw std::runtime_error(
                     tr("Failed to remove examples...").toStdString());
             }
@@ -875,7 +924,7 @@ bool SQLDatabaseUtils::addDefinitionSource(QSqlDatabase &db)
 //   identifies corresponding defnitions (aka entry / definition / label / source), join
 //   the definition -> example links from defs_s_links_tmp using that
 //   information
-bool SQLDatabaseUtils::addSentenceSource(QSqlDatabase &db)
+bool SQLDatabaseUtils::addExampleSource(QSqlDatabase &db)
 {
     QSqlQuery query{db};
 
@@ -892,9 +941,9 @@ bool SQLDatabaseUtils::addSentenceSource(QSqlDatabase &db)
     }
 
     query.exec("INSERT INTO examples_translations( "
-               "  example_translation_id, sentence, language) "
-               "SELECT example_translation_id, sentence, language "
-               "FROM db.examples_translations");
+               "  example_translation_id, translation, language) "
+               "SELECT example_translation_id, translation, language "
+               "FROM db.example_translations");
     if (query.lastError().isValid()) {
         return false;
     }
@@ -949,11 +998,11 @@ bool SQLDatabaseUtils::addSentenceSource(QSqlDatabase &db)
                "FROM example_links_with_foreign_key AS elwfk, sources as s, "
                "  examples AS e "
                "WHERE s.sourcename = elwfk.sourcename "
-               "  AND cs.traditional = elwfk.traditional "
-               "  AND cs.simplified = elwfk.simplified "
-               "  AND cs.pinyin = elwfk.pinyin "
-               "  AND cs.jyutping = elwfk.jyutping "
-               "  AND cs.language = elwfk.language ");
+               "  AND e.traditional = elwfk.traditional "
+               "  AND e.simplified = elwfk.simplified "
+               "  AND e.pinyin = elwfk.pinyin "
+               "  AND e.jyutping = elwfk.jyutping "
+               "  AND e.language = elwfk.language ");
     if (query.lastError().isValid()) {
         return false;
     }
@@ -972,13 +1021,13 @@ bool SQLDatabaseUtils::addSentenceSource(QSqlDatabase &db)
                "    AND db.definitions.fk_source_id = db.sources.source_id "
                "), "
                " "
-               "defs_s_links_tmp AS ( "
+               "defs_e_links_tmp AS ( "
                "  SELECT "
-               "    cs.traditional AS sentence_traditional, "
-               "    cs.simplified AS sentence_simplified, "
-               "    cs.pinyin AS sentence_pinyin, "
-               "    cs.jyutping AS sentence_jyutping, "
-               "    cs.language AS sentence_language, "
+               "    e.traditional AS sentence_traditional, "
+               "    e.simplified AS sentence_simplified, "
+               "    e.pinyin AS sentence_pinyin, "
+               "    e.jyutping AS sentence_jyutping, "
+               "    e.language AS sentence_language, "
                "    ed.definition AS definition, "
                "    ed.label AS label, "
                "    ed.traditional AS traditional, "
@@ -987,10 +1036,10 @@ bool SQLDatabaseUtils::addSentenceSource(QSqlDatabase &db)
                "    ed.jyutping AS jyutping, "
                "    ed.source AS source "
                "  FROM db.definitions_examples_links AS dsl, "
-               "    db.chinese_sentences AS cs, "
+               "    db.examples AS e, "
                "    entry_and_definitions AS ed "
                "  WHERE dsl.fk_definition_id = ed.definition_id "
-               "    AND dsl.fk_example_id = cs.chinese_sentence_id "
+               "    AND dsl.fk_example_id = e.example_id "
                "), "
                " "
                "new_entry_and_definitions AS ( "
@@ -1009,15 +1058,15 @@ bool SQLDatabaseUtils::addSentenceSource(QSqlDatabase &db)
                " "
                "INSERT INTO definitions_examples_links( "
                "  fk_definition_id, fk_example_id) "
-               "SELECT ned.definition_id, cs.chinese_sentence_id "
-               "FROM defs_s_links_tmp AS dsl, "
+               "SELECT ned.definition_id, e.example_id "
+               "FROM defs_e_links_tmp AS dsl, "
                "  new_entry_and_definitions AS ned, "
-               "  chinese_sentences AS cs "
-               "WHERE dsl.sentence_traditional = cs.traditional "
-               "  AND dsl.sentence_simplified = cs.simplified "
-               "  AND dsl.sentence_pinyin = cs.pinyin "
-               "  AND dsl.sentence_jyutping = cs.jyutping "
-               "  AND dsl.sentence_language = cs.language "
+               "  examples AS e "
+               "WHERE dsl.sentence_traditional = e.traditional "
+               "  AND dsl.sentence_simplified = e.simplified "
+               "  AND dsl.sentence_pinyin = e.pinyin "
+               "  AND dsl.sentence_jyutping = e.jyutping "
+               "  AND dsl.sentence_language = e.language "
                "  AND dsl.definition = ned.definition "
                "  AND dsl.label = ned.label "
                "  AND dsl.traditional = ned.traditional "
@@ -1161,7 +1210,7 @@ bool SQLDatabaseUtils::addSource(
             throw std::runtime_error(
                 tr("Unable to add definitions...").toStdString());
         }
-        if (!addSentenceSource(db)) {
+        if (!addExampleSource(db)) {
             throw std::runtime_error(
                 tr("Unable to add sentences...").toStdString());
         }

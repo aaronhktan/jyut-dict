@@ -39,8 +39,7 @@ def create_tables(c):
             )"""
     )
     c.execute(
-        """CREATE VIRTUAL TABLE definitions_fts using fts5(fk_entry_id UNINDEXED, definition,
-                  tokenize = "unicode61 tokenchars ''")"""
+        "CREATE VIRTUAL TABLE definitions_fts using fts5(fk_entry_id UNINDEXED, definition)"
     )
 
     c.execute(
@@ -60,7 +59,7 @@ def create_tables(c):
                   example_translation_id INTEGER PRIMARY KEY ON CONFLICT IGNORE,
                   translation TEXT,
                   language TEXT,
-                  UNIQUE(translation_id, translation) ON CONFLICT IGNORE
+                  UNIQUE(example_translation_id, translation) ON CONFLICT IGNORE
             )"""
     )
 
