@@ -10,6 +10,7 @@ from wordfreq import zipf_frequency
 from collections import defaultdict
 from database import database, objects
 import datetime
+import json
 import logging
 import re
 import sqlite3
@@ -113,9 +114,18 @@ def get_summaries(wiki_lang, titles):
     timeouts = 0
     while True:
         try:
-            resp = requests.get(url=url, params=params, timeout=30)
+            resp = requests.get(url=url, params=params, timeout=30, headers={
+                "User-Agent": "JyutDictionary/1.0 (https://github.com/aaronhktan/jyut-dict; hi@jyutdictionary.com)"
+            })
+            time.sleep(0.5)
+
+            data = resp.json()
+            if "batchcomplete" not in data:
+                logging.warning(f"Batch complete was not available in response {resp.url}")
+                raise ValueError('Batch was not complete!')
+
             break
-        except (requests.ConnectionError, requests.Timeout):
+        except (requests.ConnectionError, requests.Timeout, ValueError):
             logging.warning(f"Timed out for words {titles}, retrying")
             timeouts += 1
             time.sleep(120 * timeouts)
@@ -124,10 +134,7 @@ def get_summaries(wiki_lang, titles):
             break
 
     data = resp.json()
-
     parsed = dict()
-    if "batchcomplete" not in data:
-        logging.warning(f"Batch complete was not available in response {resp.url}")
 
     for page_id in data["query"]["pages"]:
         page = data["query"]["pages"][page_id]
@@ -151,7 +158,21 @@ def get_summaries(wiki_lang, titles):
     return parsed
 
 
-def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
+def parse_fetched_summaries(src_dump_filepath, dest_dump_filepath, existing_src_summaries, existing_dest_summaries):
+    with open(src_dump_filepath, "r", encoding="utf8") as f:
+        for line in f:
+            summaries = json.loads(line)
+            for k, v in summaries.items():
+                existing_src_summaries[k] = v
+
+    with open(dest_dump_filepath, "r", encoding="utf8") as f:
+        for line in f:
+            summaries = json.loads(line)
+            for k, v in summaries.items():
+                existing_dest_summaries[k] = v
+
+
+def parse_file(page_filepath, langlinks_filepath, src_dump_filepath, dest_dump_filepath, existing_src_summaries, existing_dest_summaries, lang_src, lang_dest, words):
     match lang_src:
         case "zh-yue":
             converter = yue_converter
@@ -218,11 +239,34 @@ def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
                 f"Processed entry #{i} at time {datetime.datetime.now().time()}"
             )
 
-        src_summaries = get_summaries(lang_src, "|".join(src_strings))
-        if lang_src != lang_dest:
-            dest_summaries = get_summaries(lang_dest, "|".join(dest_strings))
-        else:
-            dest_summaries = src_summaries
+        src_summaries = dict()
+        for trad in src_strings:
+            if trad in existing_src_summaries:
+                print(f"Cache hit: {trad}")
+                src_summaries[trad] = existing_src_summaries[trad]
+            src_strings.remove(trad)
+
+        if src_strings:
+            new_src_summaries = get_summaries(lang_src, "|".join(src_strings))
+            with open(src_dump_filepath, "a") as f:
+                f.write(f"{json.dumps(new_src_summaries)}\n")
+            src_summaries |= new_src_summaries
+
+        dest_summaries = dict()
+        for dest in dest_strings:
+            if dest in existing_dest_summaries:
+                print(f"Cache hit: {dest}")
+                dest_summaries[dest] = existing_dest_summaries[dest]
+            dest_strings.remove(dest)
+        
+        if dest_strings:
+            if lang_src != lang_dest:
+                new_dest_summaries = get_summaries(lang_dest, "|".join(dest_strings))
+                with open(dest_dump_filepath, "a") as f:
+                    f.write(f"{json.dumps(new_dest_summaries)}\n")
+                dest_summaries |= new_dest_summaries
+            else:
+                dest_summaries = src_summaries
 
         for trad in src_strings:
             if trad not in src_summaries:
@@ -305,11 +349,12 @@ def parse_file(page_filepath, langlinks_filepath, lang_src, lang_dest, words):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 14:
+    if len(sys.argv) != 16:
         print(
             (
                 "Usage: python3 -m wiki.parse <database filename> "
-                "<page.db file> <langlinks.db file> <source language> "
+                "<page.db file> <langlinks.db file> <src summary dump file> "
+                "<dest summary dump file> <source language> "
                 "<destination language> <source name> <source short name> "
                 "<source version> <source description> <source legal> "
                 "<source link> <source update url> <source contents>"
@@ -318,7 +363,8 @@ if __name__ == "__main__":
         print(
             (
                 "e.g. python3 -m wiki.parse wikipedia/developer/wikipedia.db "
-                "wikipedia/data/page.db wikipedia/data/langlinks.db zh-yue en Wikipedia WK 2024-01-01 "
+                "wikipedia/data/page.db wikipedia/data/langlinks.db wikipedia/data/src.txt "
+                "wikipedia/data/dest.txt zh-yue en Wikipedia WK 2024-01-01 "
                 '"Wikipedia is a free-content online encyclopedia, written and maintained '
                 "by a community of volunteers, collectively known as Wikipedians, through open "
                 'collaboration and the use of wiki-based editing system MediaWiki." '
@@ -331,16 +377,19 @@ if __name__ == "__main__":
     cc_cedict.load()
 
     source = objects.SourceTuple(
-        sys.argv[6],
-        sys.argv[7],
         sys.argv[8],
         sys.argv[9],
         sys.argv[10],
         sys.argv[11],
         sys.argv[12],
         sys.argv[13],
+        sys.argv[14],
+        sys.argv[15],
     )
     # logging.basicConfig(level='INFO') # Uncomment to enable debug logging
     parsed_words = defaultdict(list)
-    parse_file(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], parsed_words)
+    existing_src_summaries = dict()
+    existing_dest_summaries = dict()
+    parse_fetched_summaries(sys.argv[4], sys.argv[5], existing_src_summaries, existing_dest_summaries)
+    parse_file(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], existing_src_summaries, existing_dest_summaries, sys.argv[6], sys.argv[7], parsed_words)
     write(sys.argv[1], source, parsed_words)
