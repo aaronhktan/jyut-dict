@@ -436,45 +436,47 @@ def parse_file(filename, words):
                 if "tags" not in pron:
                     continue
 
-                if pron["tags"] == ["Mandarin", "Pinyin", "standard"] or pron[
+                if pron["tags"] == ["Mandarin", "Pinyin", "Standard-Chinese"] or pron[
                     "tags"
                 ] == [
                     "Mandarin",
                     "Pinyin",
-                    "standard",
+                    "Standard-Chinese",
                     "toneless-final-syllable-variant",
                 ]:
-                    pin = pron["zh-pron"]
-                    pin_match = PINYIN_EXTRA_ANNOTATION_REGEX.match(pin)
-                    if pin_match:
-                        pin = pin_match.group(1)
-                    pinyin_list.append(process_mandarin_romanization(pin))
-                elif pron["tags"] == ["Mandarin", "bopomofo", "standard"] or pron[
+                    if "zh_pron" in pron:
+                        pin = pron["zh_pron"]
+                        pin_match = PINYIN_EXTRA_ANNOTATION_REGEX.match(pin)
+                        if pin_match:
+                            pin = pin_match.group(1)
+                        pinyin_list.append(process_mandarin_romanization(pin))
+                elif pron["tags"] == ["Mandarin", "Bopomofo", "Standard-Chinese"] or pron[
                     "tags"
                 ] == [
                     "Mandarin",
-                    "bopomofo",
-                    "standard",
+                    "Bopomofo",
+                    "Standard-Chinese",
                     "toneless-final-syllable-variant",
                 ]:
-                    bopomofo = pron["zh-pron"]
-                    bopomofo_to_pinyin_list.append(
-                        process_mandarin_romanization(bopomofo)
-                    )
+                    if "zh_pron" in pron:
+                        bopomofo = pron["zh_pron"]
+                        bopomofo_to_pinyin_list.append(
+                            process_mandarin_romanization(bopomofo)
+                        )
                 elif (
                     pron["tags"]
                     == [
                         "Mainland-China",
                         "Mandarin",
                         "Standard-Chinese",
-                        "bopomofo",
+                        "Bopomofo",
                     ]
                     or pron["tags"]
                     == [
                         "Mainland-China",
                         "Mandarin",
                         "Standard-Chinese",
-                        "bopomofo",
+                        "Bopomofo",
                         "toneless-final-syllable-variant",
                     ]
                     or pron["tags"]
@@ -482,23 +484,25 @@ def parse_file(filename, words):
                         "Mandarin",
                         "Standard-Chinese",
                         "Taiwan",
-                        "bopomofo",
+                        "Bopomofo",
                     ]
                     or pron["tags"]
                     == [
                         "Mandarin",
                         "Standard-Chinese",
                         "Taiwan",
-                        "bopomofo",
+                        "Bopomofo",
                         "toneless-final-syllable-variant",
                     ]
                 ):
-                    bopomofo = pron["zh-pron"]
-                    mainland_taiwain_pinyin_list.append(
-                        process_mandarin_romanization(bopomofo)
-                    )
+                    if "zh_pron" in pron:
+                        bopomofo = pron["zh_pron"]
+                        mainland_taiwain_pinyin_list.append(
+                            process_mandarin_romanization(bopomofo)
+                        )
                 elif pron["tags"] == ["Cantonese", "Guangzhou", "Jyutping"]:
-                    jyutping_list.append(parse_cantonese_romanization(pron["zh-pron"]))
+                    if "zh_pron" in pron:
+                        jyutping_list.append(parse_cantonese_romanization(pron["zh_pron"]))
 
         if len(mainland_taiwain_pinyin_list) > len(pinyin_list):
             # There is a variance in pronunciation between Mainland China and Taiwan
@@ -518,7 +522,7 @@ def parse_file(filename, words):
             pin = (
                 " ".join(
                     lazy_pinyin(
-                        generated_pinyin,
+                        simp,
                         style=Style.TONE3,
                         neutral_tone_with_five=True,
                         v_to_u=True,
@@ -527,7 +531,7 @@ def parse_file(filename, words):
                 .lower()
                 .replace("ü", "u:")
             )
-            pinyin_list = [generated_pinyin]
+            pinyin_list = [pin]
 
         freq = zipf_frequency(trad, "zh")
 
@@ -834,7 +838,9 @@ def parse_file(filename, words):
                         if match:
                             found_example = True
                             example_text = match.group(1)
-                            example_romanization = match.group(2)
+                            example_romanization = (
+                                match.group(2) if match.group(2) else ""
+                            )
                             example_romanization = process_mandarin_romanization(
                                 example_romanization
                             )
