@@ -1212,7 +1212,7 @@ bool SQLDatabaseUtils::addSource(
         }
         if (!addExampleSource(db)) {
             throw std::runtime_error(
-                tr("Unable to add sentences...").toStdString());
+                tr("Unable to add examples...").toStdString());
         }
 
         query.exec("RELEASE source_addition");
