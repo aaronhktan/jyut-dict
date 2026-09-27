@@ -39,8 +39,7 @@ def create_tables(c):
             )"""
     )
     c.execute(
-        """CREATE VIRTUAL TABLE definitions_fts using fts5(fk_entry_id UNINDEXED, definition,
-                  tokenize = "unicode61 tokenchars ''")"""
+        "CREATE VIRTUAL TABLE definitions_fts using fts5(fk_entry_id UNINDEXED, definition)"
     )
 
     c.execute(

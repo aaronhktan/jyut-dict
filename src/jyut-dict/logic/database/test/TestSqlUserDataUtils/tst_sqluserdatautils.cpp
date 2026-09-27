@@ -131,11 +131,7 @@ void TestSqlUserDataUtils::createV4Database(const QString &dbPath)
         "  FOREIGN KEY(fk_definition_id) REFERENCES definitions(definition_id) "
         "ON DELETE CASCADE, "
         "  FOREIGN KEY(fk_example_id) REFERENCES "
-<<<<<<< HEAD
         "    examples(example_id), "
-=======
-        "    chinese_sentences(chinese_sentence_id) "
->>>>>>> 1ec70d9b (Rename chinese_sentences, nonchinese_sentences)
         "  UNIQUE(fk_definition_id, fk_example_id) ON CONFLICT IGNORE "
         ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
@@ -163,7 +159,6 @@ void TestSqlUserDataUtils::createV4Database(const QString &dbPath)
                ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec(
-<<<<<<< HEAD
         "CREATE TABLE example_translations( "
         "  example_translation_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
         "  translation TEXT, "
@@ -172,30 +167,21 @@ void TestSqlUserDataUtils::createV4Database(const QString &dbPath)
         ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec("CREATE TABLE example_links( "
-=======
-        "CREATE TABLE nonchinese_sentences( "
         "  example_translation_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
-        "  sentence TEXT, "
+        "  translation TEXT, "
         "  language TEXT, "
-        "  UNIQUE(example_translation_id, sentence) ON CONFLICT IGNORE "
+        "  UNIQUE(example_translation_id, translation) ON CONFLICT IGNORE "
         ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec("CREATE TABLE sentence_links( "
->>>>>>> 1ec70d9b (Rename chinese_sentences, nonchinese_sentences)
                "  fk_example_id INTEGER, "
                "  fk_example_translation_id INTEGER, "
                "  fk_source_id INTEGER, "
                "  direct BOOLEAN, "
                "  FOREIGN KEY(fk_example_id) REFERENCES "
-<<<<<<< HEAD
                "    examples(example_id), "
                "  FOREIGN KEY(fk_example_translation_id) REFERENCES "
                "    example_translations(example_translation_id), "
-=======
-               "    chinese_sentences(chinese_sentence_id), "
-               "  FOREIGN KEY(fk_example_translation_id) REFERENCES "
-               "    nonchinese_sentences(example_translation_id), "
->>>>>>> 1ec70d9b (Rename chinese_sentences, nonchinese_sentences)
                "  FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON "
                "    DELETE CASCADE "
                "  UNIQUE(fk_example_id, fk_example_translation_id) "
@@ -261,7 +247,6 @@ void TestSqlUserDataUtils::createV4Database(const QString &dbPath)
         "VALUES ('How long does it take to walk from here to Yuexiu Park?', "
         "  'eng') ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
-<<<<<<< HEAD
     query.exec("INSERT INTO example_links_links (fk_example_id, "
                "  fk_example_translation_id, fk_source_id, direct) "
                "VALUES (1, 1, 2, 1)");
@@ -269,16 +254,6 @@ void TestSqlUserDataUtils::createV4Database(const QString &dbPath)
     query.exec("INSERT INTO definitions_examples_links (fk_definition_id, "
                "  fk_example_id) "
                "VALUES (3, 1)");
-=======
-    query.exec("INSERT INTO sentence_links (fk_example_id, "
-               "  fk_example_translation_id, fk_source_id, direct) "
-               "VALUES (1, 1, 2, 1)");
-    QCOMPARE(query.lastError().type(), QSqlError::NoError);
-    query.exec(
-        "INSERT INTO definitions_examples_links (fk_definition_id, "
-        "  fk_example_id) "
-        "VALUES (3, 1)");
->>>>>>> 1ec70d9b (Rename chinese_sentences, nonchinese_sentences)
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
 
     query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
