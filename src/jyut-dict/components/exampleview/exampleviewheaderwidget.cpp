@@ -1,0 +1,731 @@
+#include "exampleviewheaderwidget.h"
+
+#include "dialogs/entryspeakerrordialog.h"
+#include "logic/settings/settings.h"
+#include "logic/settings/settingsutils.h"
+#include "logic/strings/strings.h"
+#include "logic/utils/mandarinutils.h"
+#ifdef Q_OS_MAC
+#include "logic/utils/utils_mac.h"
+#elif defined (Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
+#endif
+#include "logic/entry/entryspeaker.h"
+#include "logic/example/example.h"
+#include "logic/utils/utils_qt.h"
+
+#include <QCoreApplication>
+#include <QEvent>
+#include <QGridLayout>
+#include <QIcon>
+#include <QLabel>
+#include <QPushButton>
+#include <QTimer>
+#include <QVariant>
+#include <QtGlobal>
+
+ExampleViewHeaderWidget::ExampleViewHeaderWidget(QWidget *parent)
+    : QWidget{parent}
+    , _settings{Settings::getSettings(this)}
+    , _speaker{new EntrySpeaker}
+{
+    setupUI();
+    translateUI();
+    setStyle(Utils::isDarkMode());
+}
+
+void ExampleViewHeaderWidget::changeEvent(QEvent *event)
+{
+#ifdef Q_OS_WIN
+    if (event->type() == QEvent::FontChange) {
+        // This is just to correctly resize the JP/PY etc. labels
+        translateUI();
+    }
+#endif
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(10, this, [this] {
+            _paletteRecentlyChanged = false;
+        });
+
+        // Set the style to match whether the user started dark mode
+        setStyle(Utils::isDarkMode());
+    }
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
+    QWidget::changeEvent(event);
+}
+
+void ExampleViewHeaderWidget::setExample(const Example &example)
+{
+    clearPronunciationLabels();
+
+    _sourceLanguageLabel->setProperty("language",
+                                      QString::fromStdString(
+                                          example.getSourceLanguage()));
+    _sourceLanguageLabel->setText(
+        Utils::getLanguageFromISO639(example.getSourceLanguage()).trimmed());
+
+    _simplifiedLabel->setText(
+        QString::fromStdString(example.getSimplified()).trimmed());
+    _traditionalLabel->setText(
+        QString::fromStdString(example.getTraditional()).trimmed());
+
+    CantoneseOptions cantoneseOptions
+        = Settings::getSettings()
+              ->value("Entry/cantonesePronunciationOptions",
+                      QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
+              .value<CantoneseOptions>();
+    MandarinOptions mandarinOptions
+        = Settings::getSettings()
+              ->value("Entry/mandarinPronunciationOptions",
+                      QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
+              .value<MandarinOptions>();
+
+    displayExampleLabels(
+        Settings::getSettings()
+            ->value("characterOptions",
+                    QVariant::fromValue(
+                        EntryCharactersOptions::PREFER_TRADITIONAL))
+            .value<EntryCharactersOptions>());
+    displayPronunciationLabels(example, cantoneseOptions, mandarinOptions);
+
+    _chinese = QString::fromStdString(example.getSimplified().empty()
+                                          ? example.getSimplified()
+                                          : example.getTraditional());
+    _jyutping = QString::fromStdString(example.getJyutping());
+    _pinyin = QString::fromStdString(
+        MandarinUtils::createPinyinWithV(example.getPinyin()));
+
+    translateUI();
+    setStyle(Utils::isDarkMode());
+}
+
+void ExampleViewHeaderWidget::setupUI(void)
+{
+    _exampleHeaderLayout = new QGridLayout{this};
+    _exampleHeaderLayout->setContentsMargins(0, 0, 0, 0);
+    _exampleHeaderLayout->setSpacing(5);
+
+    _sourceLanguageLabel = new QLabel{this};
+    _sourceLanguageLabel->setVisible(false);
+
+    _simplifiedLabel = new QLabel{this};
+    _simplifiedLabel->setAttribute(Qt::WA_TranslucentBackground);
+    _simplifiedLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    _simplifiedLabel->setWordWrap(true);
+
+    _traditionalLabel = new QLabel{this};
+    _traditionalLabel->setAttribute(Qt::WA_TranslucentBackground);
+    _traditionalLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    _traditionalLabel->setWordWrap(true);
+
+    _cantoneseTTS = new QPushButton{this};
+    _cantoneseTTS->setAttribute(Qt::WA_TranslucentBackground);
+    _cantoneseTTS->setVisible(false);
+
+    _mandarinTTS = new QPushButton{this};
+    _mandarinTTS->setAttribute(Qt::WA_TranslucentBackground);
+    _mandarinTTS->setVisible(false);
+
+    _exampleHeaderLayout
+        ->addWidget(_sourceLanguageLabel, 0, 0, 1, -1, Qt::AlignLeft);
+    _exampleHeaderLayout->addWidget(_simplifiedLabel, 1, 0, 1, -1);
+    _exampleHeaderLayout->addWidget(_traditionalLabel, 2, 0, 1, -1);
+}
+
+void ExampleViewHeaderWidget::translateUI(void)
+{
+    _sourceLanguageLabel->setText(
+        Utils::getLanguageFromISO639(
+            _sourceLanguageLabel->property("language").toString().toStdString())
+            .trimmed());
+    _sourceLanguageLabel->resize(_sourceLanguageLabel->sizeHint());
+
+    for (const auto &label : _pronunciationTypeLabels) {
+        if (label->objectName() == "jyutpingTypeLabel") {
+            label->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                       Strings::JYUTPING_SHORT));
+        } else if (label->objectName() == "yaleTypeLabel") {
+            label->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                       Strings::YALE_SHORT));
+        } else if (label->objectName() == "cantoneseIPATypeLabel") {
+            label->setText(
+                QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                            Strings::CANTONESE_IPA_SHORT));
+        } else if (label->objectName() == "numberedPinyinTypeLabel"
+                   || label->objectName() == "prettyPinyinTypeLabel") {
+            label->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                       Strings::PINYIN_SHORT));
+        } else if (label->objectName() == "zhuyinTypeLabel") {
+            label->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                       Strings::ZHUYIN_SHORT));
+        } else if (label->objectName() == "mandarinIPATypeLabel") {
+            label->setText(
+                QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                            Strings::MANDARIN_IPA_SHORT));
+        }
+
+        label->setVisible(true);
+    }
+
+    disconnect(_cantoneseTTS, nullptr, this, nullptr);
+    connect(_cantoneseTTS, &QPushButton::clicked, this, [this] {
+        TextToSpeech::SpeakerBackend backend
+            = Settings::getSettings()
+                  ->value("Advanced/CantoneseTextToSpeech::SpeakerBackend",
+#ifdef Q_OS_LINUX
+                          QVariant::fromValue(TextToSpeech::SpeakerBackend::
+                                                  GOOGLE_OFFLINE_SYLLABLE_TTS))
+#else
+                          QVariant::fromValue(
+                              TextToSpeech::SpeakerBackend::QT_TTS))
+#endif
+                  .value<TextToSpeech::SpeakerBackend>();
+        TextToSpeech::SpeakerVoice voice
+            = Settings::getSettings()
+                  ->value("Advanced/CantoneseTextToSpeech::SpeakerVoice",
+                          QVariant::fromValue(TextToSpeech::SpeakerVoice::NONE))
+                  .value<TextToSpeech::SpeakerVoice>();
+        if ((backend != TextToSpeech::SpeakerBackend::QT_TTS)) {
+            QString transcription;
+            std::remove_copy_if(_jyutping.begin(),
+                                _jyutping.end(),
+                                std::back_inserter(transcription),
+                                [](QChar c) { return c.isPunct(); });
+            if (!_speaker->speakCantonese(transcription, backend, voice)) {
+                return;
+            }
+        } else {
+            if (!_speaker->speakCantonese(_chinese, backend, voice)) {
+                return;
+            }
+        }
+        showError(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                              Strings::YUE_ERROR_STRING),
+                  QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                              Strings::YUE_DESCRIPTION_STRING)
+                      .arg(Settings::getCurrentLocale().bcp47Name()));
+    });
+
+    disconnect(_mandarinTTS, nullptr, this, nullptr);
+    if (Settings::getCurrentLocale().territory() == QLocale::Taiwan) {
+        connect(_mandarinTTS, &QPushButton::clicked, this, [this] {
+            TextToSpeech::SpeakerBackend backend
+                = Settings::getSettings()
+                      ->value("Advanced/MandarinTextToSpeech::SpeakerBackend",
+#ifdef Q_OS_LINUX
+                              QVariant::fromValue(
+                                  TextToSpeech::SpeakerBackend::
+                                      GOOGLE_OFFLINE_SYLLABLE_TTS))
+#else
+                  QVariant::fromValue(TextToSpeech::SpeakerBackend::QT_TTS))
+#endif
+                      .value<TextToSpeech::SpeakerBackend>();
+            TextToSpeech::SpeakerVoice voice
+                = Settings::getSettings()
+                      ->value("Advanced/MandarinTextToSpeech::SpeakerVoice",
+                              QVariant::fromValue(
+                                  TextToSpeech::SpeakerVoice::NONE))
+                      .value<TextToSpeech::SpeakerVoice>();
+
+            if ((backend != TextToSpeech::SpeakerBackend::QT_TTS)) {
+                if (!_speaker->speakTaiwaneseMandarin(_pinyin, backend, voice)) {
+                    return;
+                }
+            } else {
+                if (!_speaker->speakTaiwaneseMandarin(_chinese, backend, voice)) {
+                    return;
+                }
+            }
+            showError(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                  Strings::ZH_TW_ERROR_STRING),
+                      QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                  Strings::ZH_TW_DESCRIPTION_STRING)
+                          .arg(Settings::getCurrentLocale().bcp47Name()));
+        });
+    } else {
+        connect(_mandarinTTS, &QPushButton::clicked, this, [this] {
+            const TextToSpeech::SpeakerBackend backend
+                = Settings::getSettings()
+                      ->value("Advanced/MandarinTextToSpeech::SpeakerBackend",
+#ifdef Q_OS_LINUX
+                              QVariant::fromValue(
+                                  TextToSpeech::SpeakerBackend::
+                                      GOOGLE_OFFLINE_SYLLABLE_TTS))
+#else
+                  QVariant::fromValue(TextToSpeech::SpeakerBackend::QT_TTS))
+#endif
+                      .value<TextToSpeech::SpeakerBackend>();
+            const TextToSpeech::SpeakerVoice voice
+                = Settings::getSettings()
+                      ->value("Advanced/MandarinTextToSpeech::SpeakerVoice",
+                              QVariant::fromValue(
+                                  TextToSpeech::SpeakerVoice::NONE))
+                      .value<TextToSpeech::SpeakerVoice>();
+
+            if ((backend != TextToSpeech::SpeakerBackend::QT_TTS)) {
+                if (!_speaker->speakMainlandMandarin(_pinyin, backend, voice)) {
+                    return;
+                }
+            } else {
+                if (!_speaker->speakMainlandMandarin(_chinese, backend, voice)) {
+                    return;
+                }
+            }
+            showError(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                  Strings::ZH_CN_ERROR_STRING),
+                      QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                  Strings::ZH_CN_DESCRIPTION_STRING)
+                          .arg(Settings::getCurrentLocale().bcp47Name()));
+        });
+    }
+}
+
+void ExampleViewHeaderWidget::setStyle(bool use_dark)
+{
+#ifdef Q_OS_WIN
+    QFont font = QFont{"Microsoft YaHei"};
+    font.setStyleHint(QFont::System, QFont::PreferAntialias);
+    _simplifiedLabel->setFont(font);
+    _traditionalLabel->setFont(font);
+#endif
+
+    const int interfaceSize = static_cast<int>(
+        _settings
+            ->value("Interface/size",
+                    QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+            .value<Settings::InterfaceSize>());
+    const int h2FontSize = Settings::h2FontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+    const int bodyFontSize = Settings::bodyFontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+
+    const int borderRadius = static_cast<int>(bodyFontSize * 5 / 6);
+    const int padding = bodyFontSize / 6;
+    const int paddingHorizontal = bodyFontSize / 4;
+
+    const QString sourceStyleSheet = "QLabel  {"
+                                     "   background: %1; "
+                                     "   border-radius: %2px; "
+                                     "   color: %3; "
+                                     "   font-size: %4px; "
+                                     "   padding: %5px; "
+                                     "   padding-left: %6px; "
+                                     "   padding-right: %6px; "
+                                     "} ";
+    const QColor languageColour = Utils::getLanguageColour(
+        Utils::getISO639FromLanguage(_sourceLanguageLabel->text().trimmed()));
+    const QColor languageTextColour = Utils::getContrastingColour(
+        languageColour);
+    _sourceLanguageLabel->setStyleSheet(
+        sourceStyleSheet.arg(languageColour.name())
+            .arg(borderRadius)
+            .arg(languageTextColour.name())
+            .arg(bodyFontSize)
+            .arg(padding)
+            .arg(paddingHorizontal));
+    _sourceLanguageLabel->setMinimumHeight(borderRadius * 2);
+
+    _simplifiedLabel->setStyleSheet(QString{"QLabel { "
+                                            "   font-size: %1px "
+                                            "}"}
+                                        .arg(h2FontSize));
+    _traditionalLabel->setStyleSheet(QString{"QLabel { "
+                                             "   font-size: %1px "
+                                             "}"}
+                                         .arg(h2FontSize));
+
+    const QString pronunciationTypeStyleSheet = QString{"QLabel { "
+                                                        "   color: %1; "
+                                                        "   font-size: %2px; "
+                                                        "}"};
+    const QColor textColour = use_dark
+                                  ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                  : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R};
+    for (const auto &label : _pronunciationTypeLabels) {
+        label->setAttribute(Qt::WA_TranslucentBackground);
+        label->setStyleSheet(pronunciationTypeStyleSheet.arg(textColour.name())
+                                 .arg(bodyFontSize));
+        label->setFixedWidth(
+            label->fontMetrics().boundingRect(label->text()).width());
+    }
+
+    const QString pronunciationStyleSheet = QString{"QLabel { "
+                                                    "   font-size: %1px; "
+                                                    "}"};
+    for (const auto &label : _pronunciationLabels) {
+        label->setTextInteractionFlags(Qt::TextSelectableByMouse);
+        label->setWordWrap(true);
+        label->setStyleSheet(pronunciationStyleSheet.arg(bodyFontSize));
+    }
+
+    _cantoneseTTS->setIcon(use_dark ? QIcon{":/images/speak_inverted.png"}
+                                   : QIcon{":/images/speak.png"});
+    _cantoneseTTS->setFlat(true);
+    _cantoneseTTS->setObjectName("cantoneseTTS");
+    _cantoneseTTS->setStyleSheet(QString{"QPushButton#cantoneseTTS { "
+                                         "   background-color: none;"
+                                         "   border: 1px solid transparent; "
+                                         "   font-size: %1px; "
+                                         "   padding: 0px; "
+                                         "} "
+                                         ""
+                                         "QPushButton:pressed#cantoneseTTS { "
+                                         "   background-color: none; "
+                                         "   border: 1px solid transparent; "
+                                         "   font-size: %1px; "
+                                         "} "}
+                                     .arg(bodyFontSize));
+    _cantoneseTTS->setCursor(Qt::PointingHandCursor);
+    _cantoneseTTS->setFixedWidth(bodyFontSize);
+    _cantoneseTTS->setFixedHeight(
+        _cantoneseTTS->fontMetrics().boundingRect("123xyz").height());
+
+    _mandarinTTS->setIcon(use_dark ? QIcon{":/images/speak_inverted.png"}
+                                 : QIcon{":/images/speak.png"});
+    _mandarinTTS->setFlat(true);
+    _mandarinTTS->setObjectName("mandarinTTS");
+    _mandarinTTS->setStyleSheet(QString{"QPushButton#mandarinTTS { "
+                                        "   background-color: none;"
+                                        "   border: 1px solid transparent; "
+                                        "   font-size: %1px; "
+                                        "   padding: 0px; "
+                                        "} "
+                                        ""
+                                        "QPushButton:pressed#mandarinTTS { "
+                                        "   background-color: none; "
+                                        "   border: 1px solid transparent; "
+                                        "   font-size: %1px; "
+                                        "} "}
+                                    .arg(bodyFontSize));
+    _mandarinTTS->setCursor(Qt::PointingHandCursor);
+    _mandarinTTS->setFixedWidth(bodyFontSize);
+    _mandarinTTS->setFixedHeight(
+        _mandarinTTS->fontMetrics().boundingRect("123xyz").height());
+}
+
+void ExampleViewHeaderWidget::displayExampleLabels(
+    const EntryCharactersOptions options)
+{
+    _sourceLanguageLabel->setVisible(true);
+
+    // Display the first label
+    switch (options) {
+    case EntryCharactersOptions::ONLY_SIMPLIFIED:
+    case EntryCharactersOptions::PREFER_SIMPLIFIED:
+        _exampleHeaderLayout->addWidget(_simplifiedLabel, 1, 0, 1, -1);
+        _simplifiedLabel->setVisible(true);
+        break;
+    case EntryCharactersOptions::ONLY_TRADITIONAL:
+    case EntryCharactersOptions::PREFER_TRADITIONAL:
+        _exampleHeaderLayout->addWidget(_traditionalLabel, 1, 0, 1, -1);
+        _traditionalLabel->setVisible(true);
+        break;
+    }
+
+    // Display the second label
+    switch (options) {
+    case EntryCharactersOptions::ONLY_SIMPLIFIED:
+        _traditionalLabel->setVisible(false);
+        break;
+    case EntryCharactersOptions::ONLY_TRADITIONAL:
+        _simplifiedLabel->setVisible(false);
+        break;
+    case EntryCharactersOptions::PREFER_SIMPLIFIED:
+        _exampleHeaderLayout->addWidget(_traditionalLabel, 2, 0, 1, -1);
+        _traditionalLabel->setVisible(true);
+        break;
+    case EntryCharactersOptions::PREFER_TRADITIONAL:
+        _exampleHeaderLayout->addWidget(_simplifiedLabel, 2, 0, 1, -1);
+        _simplifiedLabel->setVisible(true);
+        break;
+    }
+}
+
+void ExampleViewHeaderWidget::displayPronunciationLabels(
+    const Example &example,
+    const CantoneseOptions &cantoneseOptions,
+    const MandarinOptions &mandarinOptions)
+{
+    // The language pill is the first row, and the example is the
+    // second row (and third row, if simplified and traditional display are
+    // both enabled), so we start adding labels starting from the fourth row
+
+    // But for some reason, starting from the fourth row makes the Yale (and
+    // only Yale) pronunciation labels super thick? So start from fifth row as
+    // a workaround.
+    int row = 4;
+
+    if ((cantoneseOptions & CantoneseOptions::RAW_JYUTPING)
+        == CantoneseOptions::RAW_JYUTPING) {
+        _pronunciationTypeLabels.emplace_back(new QLabel{this});
+        _pronunciationTypeLabels.back()->setObjectName("jyutpingTypeLabel");
+        _exampleHeaderLayout->addWidget(_pronunciationTypeLabels.back(),
+                                        row,
+                                        0,
+                                        1,
+                                        1,
+                                        Qt::AlignTop);
+        _pronunciationTypeLabels.back()->setVisible(true);
+
+        _pronunciationLabels.emplace_back(new QLabel{this});
+        _pronunciationLabels.back()->setText(
+            example.getCantonesePhonetic(CantoneseOptions::RAW_JYUTPING).c_str());
+        _exampleHeaderLayout->addWidget(_pronunciationLabels.back(),
+                                        row,
+                                        2,
+                                        1,
+                                        1,
+                                        Qt::AlignTop);
+        _pronunciationLabels.back()->setVisible(true);
+
+        if (!_cantoneseTTSVisible) {
+            _exampleHeaderLayout
+                ->addWidget(_cantoneseTTS, row, 1, 1, 1, Qt::AlignTop);
+            _cantoneseTTS->setVisible(true);
+            _cantoneseTTSVisible = true;
+        }
+
+        row++;
+    }
+
+    if ((cantoneseOptions & CantoneseOptions::PRETTY_YALE)
+        == CantoneseOptions::PRETTY_YALE) {
+        _pronunciationTypeLabels.emplace_back(new QLabel{this});
+        _pronunciationTypeLabels.back()->setObjectName("yaleTypeLabel");
+        _exampleHeaderLayout->addWidget(_pronunciationTypeLabels.back(),
+                                        row,
+                                        0,
+                                        1,
+                                        1,
+                                        Qt::AlignTop);
+        _pronunciationTypeLabels.back()->setVisible(true);
+
+        _pronunciationLabels.emplace_back(new QLabel{this});
+        _pronunciationLabels.back()->setText(
+            example.getCantonesePhonetic(CantoneseOptions::PRETTY_YALE).c_str());
+        _exampleHeaderLayout->addWidget(_pronunciationLabels.back(),
+                                        row,
+                                        2,
+                                        1,
+                                        1,
+                                        Qt::AlignTop);
+        _pronunciationLabels.back()->setVisible(true);
+
+        if (!_cantoneseTTSVisible) {
+            _exampleHeaderLayout
+                ->addWidget(_cantoneseTTS, row, 1, 1, 1, Qt::AlignTop);
+            _cantoneseTTS->setVisible(true);
+            _cantoneseTTSVisible = true;
+        }
+
+        row++;
+    }
+
+    if ((cantoneseOptions & CantoneseOptions::CANTONESE_IPA)
+        == CantoneseOptions::CANTONESE_IPA) {
+        _pronunciationTypeLabels.emplace_back(new QLabel{this});
+        _pronunciationTypeLabels.back()->setObjectName("cantoneseIPATypeLabel");
+        _exampleHeaderLayout->addWidget(_pronunciationTypeLabels.back(),
+                                        row,
+                                        0,
+                                        1,
+                                        1,
+                                        Qt::AlignTop);
+        _pronunciationTypeLabels.back()->setVisible(true);
+
+        _pronunciationLabels.emplace_back(new QLabel{this});
+        _pronunciationLabels.back()->setText(
+            example.getCantonesePhonetic(CantoneseOptions::CANTONESE_IPA)
+                .c_str());
+        _exampleHeaderLayout->addWidget(_pronunciationLabels.back(),
+                                        row,
+                                        2,
+                                        1,
+                                        1,
+                                        Qt::AlignTop);
+        _pronunciationLabels.back()->setVisible(true);
+
+        if (!_cantoneseTTSVisible) {
+            _exampleHeaderLayout
+                ->addWidget(_cantoneseTTS, row, 1, 1, 1, Qt::AlignTop);
+            _cantoneseTTS->setVisible(true);
+            _cantoneseTTSVisible = true;
+        }
+
+        row++;
+    }
+
+    if ((mandarinOptions & MandarinOptions::PRETTY_PINYIN)
+        == MandarinOptions::PRETTY_PINYIN) {
+        _pronunciationTypeLabels.emplace_back(new QLabel{this});
+        _pronunciationTypeLabels.back()->setObjectName("prettyPinyinTypeLabel");
+        _exampleHeaderLayout->addWidget(_pronunciationTypeLabels.back(),
+                                        row,
+                                        0,
+                                        1,
+                                        1,
+                                        Qt::AlignTop);
+        _pronunciationTypeLabels.back()->setVisible(true);
+
+        _pronunciationLabels.emplace_back(new QLabel{this});
+        _pronunciationLabels.back()->setText(
+            example.getMandarinPhonetic(MandarinOptions::PRETTY_PINYIN).c_str());
+        _exampleHeaderLayout->addWidget(_pronunciationLabels.back(),
+                                        row,
+                                        2,
+                                        1,
+                                        1,
+                                        Qt::AlignTop);
+        _pronunciationLabels.back()->setVisible(true);
+
+        if (!_mandarinTTSVisible) {
+            _exampleHeaderLayout
+                ->addWidget(_mandarinTTS, row, 1, 1, 1, Qt::AlignTop);
+            _mandarinTTS->setVisible(true);
+            _mandarinTTSVisible = true;
+        }
+
+        row++;
+    }
+
+    if ((mandarinOptions & MandarinOptions::NUMBERED_PINYIN)
+        == MandarinOptions::NUMBERED_PINYIN) {
+        _pronunciationTypeLabels.emplace_back(new QLabel{this});
+        _pronunciationTypeLabels.back()->setObjectName(
+            "numberedPinyinTypeLabel");
+        _exampleHeaderLayout->addWidget(_pronunciationTypeLabels.back(),
+                                        row,
+                                        0,
+                                        1,
+                                        1,
+                                        Qt::AlignTop);
+        _pronunciationTypeLabels.back()->setVisible(true);
+
+        _pronunciationLabels.emplace_back(new QLabel{this});
+        _pronunciationLabels.back()->setText(
+            example.getMandarinPhonetic(MandarinOptions::NUMBERED_PINYIN)
+                .c_str());
+        _exampleHeaderLayout->addWidget(_pronunciationLabels.back(),
+                                        row,
+                                        2,
+                                        1,
+                                        1,
+                                        Qt::AlignTop);
+        _pronunciationLabels.back()->setVisible(true);
+
+        if (!_mandarinTTSVisible) {
+            _exampleHeaderLayout
+                ->addWidget(_mandarinTTS, row, 1, 1, 1, Qt::AlignTop);
+            _mandarinTTS->setVisible(true);
+            _mandarinTTSVisible = true;
+        }
+
+        row++;
+    }
+
+    if ((mandarinOptions & MandarinOptions::ZHUYIN)
+        == MandarinOptions::ZHUYIN) {
+        _pronunciationTypeLabels.emplace_back(new QLabel{this});
+        _pronunciationTypeLabels.back()->setObjectName("zhuyinTypeLabel");
+        _exampleHeaderLayout->addWidget(_pronunciationTypeLabels.back(),
+                                        row,
+                                        0,
+                                        1,
+                                        1,
+                                        Qt::AlignTop);
+        _pronunciationTypeLabels.back()->setVisible(true);
+
+        _pronunciationLabels.emplace_back(new QLabel{this});
+        _pronunciationLabels.back()->setText(
+            example.getMandarinPhonetic(MandarinOptions::ZHUYIN).c_str());
+        _exampleHeaderLayout->addWidget(_pronunciationLabels.back(),
+                                        row,
+                                        2,
+                                        1,
+                                        1,
+                                        Qt::AlignTop);
+        _pronunciationLabels.back()->setVisible(true);
+
+        if (!_mandarinTTSVisible) {
+            _exampleHeaderLayout
+                ->addWidget(_mandarinTTS, row, 1, 1, 1, Qt::AlignTop);
+            _mandarinTTS->setVisible(true);
+            _mandarinTTSVisible = true;
+        }
+
+        row++;
+    }
+
+    if ((mandarinOptions & MandarinOptions::MANDARIN_IPA)
+        == MandarinOptions::MANDARIN_IPA) {
+        _pronunciationTypeLabels.emplace_back(new QLabel{this});
+        _pronunciationTypeLabels.back()->setObjectName(
+            "numberedPinyinTypeLabel");
+        _exampleHeaderLayout->addWidget(_pronunciationTypeLabels.back(),
+                                        row,
+                                        0,
+                                        1,
+                                        1,
+                                        Qt::AlignTop);
+        _pronunciationTypeLabels.back()->setVisible(true);
+
+        _pronunciationLabels.emplace_back(new QLabel{this});
+        _pronunciationLabels.back()->setText(
+            example.getMandarinPhonetic(MandarinOptions::MANDARIN_IPA).c_str());
+        _exampleHeaderLayout->addWidget(_pronunciationLabels.back(),
+                                        row,
+                                        2,
+                                        1,
+                                        1,
+                                        Qt::AlignTop);
+        _pronunciationLabels.back()->setVisible(true);
+
+        if (!_mandarinTTSVisible) {
+            _exampleHeaderLayout
+                ->addWidget(_mandarinTTS, row, 1, 1, 1, Qt::AlignTop);
+            _mandarinTTS->setVisible(true);
+            _mandarinTTSVisible = true;
+        }
+
+        row++;
+    }
+}
+
+void ExampleViewHeaderWidget::clearPronunciationLabels(void)
+{
+    for (auto const &label : _pronunciationTypeLabels) {
+        _exampleHeaderLayout->removeWidget(label);
+        delete label;
+    }
+    _pronunciationTypeLabels.clear();
+
+    for (auto const &label : _pronunciationLabels) {
+        _exampleHeaderLayout->removeWidget(label);
+        delete label;
+    }
+    _pronunciationLabels.clear();
+
+    _cantoneseTTS->setVisible(false);
+    _cantoneseTTSVisible = false;
+
+    _mandarinTTS->setVisible(false);
+    _mandarinTTSVisible = false;
+}
+
+void ExampleViewHeaderWidget::showError(const QString &reason,
+                                        const QString &description)
+{
+    _message = new EntrySpeakErrorDialog{reason, description, this};
+    _message->exec();
+}

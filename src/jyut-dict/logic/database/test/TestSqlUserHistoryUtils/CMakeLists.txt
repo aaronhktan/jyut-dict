@@ -36,8 +36,8 @@ target_sources(TestSqlUserHistoryUtils
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../sqldatabaseutils.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../entry/definitionsset.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../entry/entry.cpp
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../sentence/sentenceset.cpp
-    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../sentence/sourcesentence.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../example/translationset.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../example/example.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../settings/settings.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../source/sourcemetadata.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../source/sourceutils.cpp

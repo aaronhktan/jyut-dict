@@ -391,7 +391,7 @@ QString EntrySpeaker::getBundleAudioPath()
     QFileInfo bundlePath{QCoreApplication::applicationDirPath()
                          + "/../share/jyut-dict/audio/"};
 #elif defined(DEBUG)
-    QFileInfo bundlePath{"./audio/"};
+    QFileInfo bundlePath{QCoreApplication::applicationDirPath() + "/audio/"};
 #elif defined(FLATPAK)
     QFileInfo bundlePath{QCoreApplication::applicationDirPath()
                          + "/../share/jyut-dict/audio/"};

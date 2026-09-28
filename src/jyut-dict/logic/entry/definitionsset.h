@@ -2,7 +2,7 @@
 #define DEFINITIONS_H
 
 #include "logic/entry/entryphoneticoptions.h"
-#include "logic/sentence/sourcesentence.h"
+#include "logic/example/example.h"
 
 #include <iostream>
 #include <span>
@@ -12,19 +12,19 @@ namespace Definition {
 
 // The Definition struct provides:
 // the definition itself, as well as
-// a vector of SourceSentences that shows how it is used in context
+// a vector of Examples that shows how it is used in context
 struct Definition
 {
     std::string definitionContent;
     std::string label;
-    std::vector<SourceSentence> sentences;
+    std::vector<Example> examples;
 
     Definition(std::string definitionContent,
                std::string label,
-               std::vector<SourceSentence> sentences)
+               std::vector<Example> examples)
         : definitionContent{definitionContent}
         , label{label}
-        , sentences(sentences)
+        , examples(examples)
     {}
 
     bool operator==(const Definition &other) const = default;

@@ -213,7 +213,7 @@ void SQLSearch::notifyObservers(const std::vector<Entry> &results, bool emptyQue
 }
 
 // Do not call this function without first acquiring the _notifyMutex!
-void SQLSearch::notifyObservers(const std::vector<SourceSentence> &results,
+void SQLSearch::notifyObservers(const std::vector<Example> &results,
                                 bool emptyQuery)
 {
     std::list<ISearchObserver *>::const_iterator it = _observers.begin();
@@ -259,9 +259,10 @@ void SQLSearch::notifyObserversIfQueryIdCurrent(const std::vector<Entry> &result
     notifyObservers(results, emptyQuery);
 }
 
-void SQLSearch::notifyObserversIfQueryIdCurrent(const std::vector<SourceSentence> &results,
-                                                bool emptyQuery,
-                                                const unsigned long long queryID)
+void SQLSearch::notifyObserversIfQueryIdCurrent(
+    const std::vector<Example> &results,
+    bool emptyQuery,
+    const unsigned long long queryID)
 {
     std::lock_guard<std::mutex> notifyLock{_notifyMutex};
     if (queryID != _queryID) {
@@ -368,10 +369,10 @@ void SQLSearch::searchByUnique(const QString &simplified,
                           queryID));
 }
 
-void SQLSearch::searchTraditionalSentences(const QString &searchTerm)
+void SQLSearch::searchTraditionalExamples(const QString &searchTerm)
 {
     unsigned long long queryID = generateAndSetQueryID();
-    runThread(&SQLSearch::searchTraditionalSentencesThread,
+    runThread(&SQLSearch::searchTraditionalExamplesThread,
               searchTerm.normalized(QString::NormalizationForm_C),
               queryID);
 }
@@ -697,15 +698,15 @@ void SQLSearch::searchByUniqueThread(const QString &simplified,
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
 }
 
-// To search for sentences, use the sentence_links table to JOIN
-// between the chinese and non_chinese_sentences tables.
-void SQLSearch::searchTraditionalSentencesThread(const QString &searchTerm,
-                                                 const unsigned long long queryID)
+// To search for examples, use the example_links table to JOIN
+// between the example and example_translations tables.
+void SQLSearch::searchTraditionalExamplesThread(const QString &searchTerm,
+                                                const unsigned long long queryID)
 {
-    std::vector<SourceSentence> results;
+    std::vector<Example> results;
 
     QSqlQuery query{_manager->getDatabase()};
-    query.prepare(SEARCH_TRADITIONAL_SENTENCES_QUERY);
+    query.prepare(SEARCH_TRADITIONAL_EXAMPLES_QUERY);
     query.addBindValue("%" + searchTerm + "%");
     query.setForwardOnly(true);
     query.exec();
@@ -713,7 +714,7 @@ void SQLSearch::searchTraditionalSentencesThread(const QString &searchTerm,
     if (!checkQueryIDCurrent(queryID)) {
         return;
     }
-    results = QueryParseUtils::parseSentences(query);
+    results = QueryParseUtils::parseExamples(query);
 
     if (!checkQueryIDCurrent(queryID)) { return; }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);

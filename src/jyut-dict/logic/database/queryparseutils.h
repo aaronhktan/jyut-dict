@@ -11,7 +11,7 @@
 #endif
 
 class Entry;
-class SourceSentence;
+class Example;
 
 class QSqlQuery;
 
@@ -23,7 +23,7 @@ namespace QueryParseUtils {
 using searchTermHistoryItem = std::pair<std::string, long>;
 
 std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions = true);
-std::vector<SourceSentence> parseSentences(QSqlQuery &query);
+std::vector<Example> parseExamples(QSqlQuery &query);
 
 bool parseExistence(QSqlQuery &query);
 std::vector<searchTermHistoryItem> parseHistoryItems(QSqlQuery &query);

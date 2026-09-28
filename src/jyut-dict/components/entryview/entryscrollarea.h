@@ -33,7 +33,7 @@ private:
 
     QTimer *_enableUIUpdateTimer;
     QTimer *_updateUITimer;
-    // Unlike EntryViewSentenceCardSection, this is set to true by default
+    // Unlike EntryViewExampleCardSection, this is set to true by default
     // because there are situations where setEntry() is called _without_
     // the stallEntryUIUpdate slot being called (which would set this variable
     // to true), such as the Favourites window.
@@ -42,13 +42,13 @@ private:
     EntryScrollAreaWidget *_scrollAreaWidget;
 
 signals:
-    void stallSentenceUIUpdate(void);
+    void stallExampleUIUpdate(void);
 
     void favouriteCurrentEntry(void);
     void shareCurrentEntry(void);
     void openCurrentEntryInNewWindow(void);
     void magnifyCurrentEntry(void);
-    void viewAllSentences(void);
+    void viewAllExamples(void);
 
     void searchEntriesBeginning(void);
     void searchEntriesContaining(void);
@@ -64,7 +64,7 @@ public slots:
     void shareCurrentEntryRequested(void);
     void openCurrentEntryInNewWindowRequested(void);
     void magnifyCurrentEntryRequested(void);
-    void viewAllSentencesRequested(void);
+    void viewAllExamplesRequested(void);
 
     void searchEntriesBeginningRequested(void);
     void searchEntriesContainingRequested(void);

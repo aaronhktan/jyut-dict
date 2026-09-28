@@ -51,11 +51,11 @@ private:
     EntryContentWidget *_entryContentWidget;
 
 signals:
-    void stallUISentenceUpdate(void);
+    void stallUIExampleUpdate(void);
 
     void favouriteCurrentEntry(void);
     void shareCurrentEntry(void);
-    void viewAllSentences(void);
+    void viewAllExamples(void);
 
     void searchEntriesBeginning(void);
     void searchEntriesContaining(void);
@@ -70,7 +70,7 @@ public slots:
     void shareCurrentEntryRequested(void);
     void openInNewWindow(void);
     void openMagnifyWindow(void);
-    void viewAllSentencesRequested(void);
+    void viewAllExamplesRequested(void);
 
     void searchEntriesBeginningRequested(void);
     void searchEntriesContainingRequested(void);

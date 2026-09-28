@@ -53,7 +53,20 @@ set(PROJECT_HEADERS
         components/entryview/entryheaderwidget.h
         components/entryview/entryscrollarea.h
         components/entryview/entryscrollareawidget.h
-        components/entryview/entryviewsentencecardsection.h
+        components/entryview/entryviewexamplecardsection.h
+        components/examplecard/loadingwidget.h
+        components/examplecard/examplecardwidget.h
+        components/examplecard/examplecontentwidget.h
+        components/examplecard/exampleheaderwidget.h
+        components/examplesearchresult/exampleresultlistdelegate.h
+        components/examplesearchresult/exampleresultlistmodel.h
+        components/examplesearchresult/exampleresultlistview.h
+        components/exampleview/examplescrollarea.h
+        components/exampleview/examplescrollareawidget.h
+        components/exampleview/exampleviewcontentwidget.h
+        components/exampleview/exampleviewheaderwidget.h
+        components/exampleview/exampleviewexamplecardsection.h
+        components/examplewindow/examplesplitter.h
         components/favouritewindow/favouritesplitter.h
         components/handwriting/handwritingpanel.h
         components/historyview/searchhistorylistdelegate.h
@@ -77,19 +90,6 @@ set(PROJECT_HEADERS
         components/related/relatedbuttoncontentwidget.h
         components/related/relatedbuttonheaderwidget.h
         components/related/relatedsection.h
-        components/sentencecard/loadingwidget.h
-        components/sentencecard/sentencecardwidget.h
-        components/sentencecard/sentencecontentwidget.h
-        components/sentencecard/sentenceheaderwidget.h
-        components/sentencesearchresult/sentenceresultlistdelegate.h
-        components/sentencesearchresult/sentenceresultlistmodel.h
-        components/sentencesearchresult/sentenceresultlistview.h
-        components/sentenceview/sentencescrollarea.h
-        components/sentenceview/sentencescrollareawidget.h
-        components/sentenceview/sentenceviewcontentwidget.h
-        components/sentenceview/sentenceviewheaderwidget.h
-        components/sentenceview/sentenceviewsentencecardsection.h
-        components/sentencewindow/sentencesplitter.h
         components/settings/advancedtab.h
         components/settings/contacttab.h
         components/settings/dictionarytab.h
@@ -127,6 +127,8 @@ set(PROJECT_HEADERS
         logic/entry/definitionsset.h
         logic/entry/entry.h
         logic/entry/entryspeaker.h
+        logic/example/translationset.h
+        logic/example/example.h
         logic/handwriting/handwritingwrapper.h
         logic/search/isearch.h
         logic/search/isearchobservable.h
@@ -134,8 +136,6 @@ set(PROJECT_HEADERS
         logic/search/isearchoptionsmediator.h
         logic/search/searchoptionsmediator.h
         logic/search/sqlsearch.h
-        logic/sentence/sentenceset.h
-        logic/sentence/sourcesentence.h
         logic/settings/settings.h
         logic/settings/settingsutils.h
         logic/source/sourcemetadata.h
@@ -185,7 +185,20 @@ set(PROJECT_SOURCES
         components/entryview/entryheaderwidget.cpp
         components/entryview/entryscrollarea.cpp
         components/entryview/entryscrollareawidget.cpp
-        components/entryview/entryviewsentencecardsection.cpp
+        components/entryview/entryviewexamplecardsection.cpp
+        components/examplecard/loadingwidget.cpp
+        components/examplecard/examplecardwidget.cpp
+        components/examplecard/examplecontentwidget.cpp
+        components/examplecard/exampleheaderwidget.cpp
+        components/examplesearchresult/exampleresultlistdelegate.cpp
+        components/examplesearchresult/exampleresultlistmodel.cpp
+        components/examplesearchresult/exampleresultlistview.cpp
+        components/exampleview/examplescrollarea.cpp
+        components/exampleview/examplescrollareawidget.cpp
+        components/exampleview/exampleviewcontentwidget.cpp
+        components/exampleview/exampleviewheaderwidget.cpp
+        components/exampleview/exampleviewexamplecardsection.cpp
+        components/examplewindow/examplesplitter.cpp
         components/favouritewindow/favouritesplitter.cpp
         components/handwriting/handwritingpanel.cpp
         components/historyview/searchhistorylistdelegate.cpp
@@ -207,19 +220,6 @@ set(PROJECT_SOURCES
         components/related/relatedbuttoncontentwidget.cpp
         components/related/relatedbuttonheaderwidget.cpp
         components/related/relatedsection.cpp
-        components/sentencecard/loadingwidget.cpp
-        components/sentencecard/sentencecardwidget.cpp
-        components/sentencecard/sentencecontentwidget.cpp
-        components/sentencecard/sentenceheaderwidget.cpp
-        components/sentencesearchresult/sentenceresultlistdelegate.cpp
-        components/sentencesearchresult/sentenceresultlistmodel.cpp
-        components/sentencesearchresult/sentenceresultlistview.cpp
-        components/sentenceview/sentencescrollarea.cpp
-        components/sentenceview/sentencescrollareawidget.cpp
-        components/sentenceview/sentenceviewcontentwidget.cpp
-        components/sentenceview/sentenceviewheaderwidget.cpp
-        components/sentenceview/sentenceviewsentencecardsection.cpp
-        components/sentencewindow/sentencesplitter.cpp
         components/settings/advancedtab.cpp
         components/settings/contacttab.cpp
         components/settings/dictionarytab.cpp
@@ -252,11 +252,11 @@ set(PROJECT_SOURCES
         logic/entry/definitionsset.cpp
         logic/entry/entry.cpp
         logic/entry/entryspeaker.cpp
+        logic/example/translationset.cpp
+        logic/example/example.cpp
         logic/handwriting/handwritingwrapper.cpp
         logic/search/searchoptionsmediator.cpp
         logic/search/sqlsearch.cpp
-        logic/sentence/sentenceset.cpp
-        logic/sentence/sourcesentence.cpp
         logic/settings/settings.cpp
         logic/settings/settingsutils.cpp
         logic/source/sourcemetadata.cpp
@@ -334,8 +334,8 @@ add_subdirectory(logic/database/test/TestSqlUserHistoryUtils)
 add_subdirectory(logic/entry/test/TestDefinitionsSet)
 add_subdirectory(logic/entry/test/TestEntry)
 add_subdirectory(logic/search/test/TestSqlSearch)
-add_subdirectory(logic/sentence/test/TestSentenceSet)
-add_subdirectory(logic/sentence/test/TestSourceSentence)
+add_subdirectory(logic/example/test/TestExample)
+add_subdirectory(logic/example/test/TestTranslationSet)
 add_subdirectory(logic/settings/test/TestSettingsUtils)
 add_subdirectory(logic/utils/test/TestCantoneseUtils)
 add_subdirectory(logic/utils/test/TestChineseUtils)

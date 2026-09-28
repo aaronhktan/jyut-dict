@@ -75,7 +75,7 @@ def insert_example(c, definition_id, starting_example_id, example):
     pin = example[0].pron
     lang = example[0].lang
 
-    example_id = database.insert_chinese_sentence(
+    example_id = database.insert_example(
         c, trad, simp, pin, jyut, lang, starting_example_id
     )
 
@@ -87,15 +87,13 @@ def insert_example(c, definition_id, starting_example_id, example):
         else:
             # If insertion failed, it's probably because the example already exists
             # Get its rowid, so we can link it to this definition
-            example_id = database.get_chinese_sentence_id(
-                c, trad, simp, pin, jyut, lang
-            )
+            example_id = database.get_example_id(c, trad, simp, pin, jyut, lang)
             if example_id == -1:  # Something went wrong if example_id is still -1
                 return 0
     else:
         examples_inserted += 1
 
-    database.insert_definition_chinese_sentence_link(c, definition_id, example_id)
+    database.insert_definition_example_link(c, definition_id, example_id)
 
     for translation in example[1:]:
         sentence = translation.content
@@ -103,18 +101,18 @@ def insert_example(c, definition_id, starting_example_id, example):
 
         # Check if translation already exists before trying to insert
         # Insert a translation only if the translation doesn't already exist in the database
-        translation_id = database.get_nonchinese_sentence_id(c, sentence, lang)
+        translation_id = database.get_translation_id(c, sentence, lang)
 
         if translation_id == -1:
             translation_id = starting_example_id + examples_inserted
-            database.insert_nonchinese_sentence(c, sentence, lang, translation_id)
+            database.insert_translation(c, sentence, lang, translation_id)
             examples_inserted += 1
 
         # Then, link the translation to the example only if the link doesn't already exist
-        link_id = database.get_sentence_link(c, example_id, translation_id)
+        link_id = database.get_example_link(c, example_id, translation_id)
 
         if link_id == -1:
-            database.insert_sentence_link(c, example_id, translation_id, 1, True)
+            database.insert_example_link(c, example_id, translation_id, 1, True)
 
     return examples_inserted
 

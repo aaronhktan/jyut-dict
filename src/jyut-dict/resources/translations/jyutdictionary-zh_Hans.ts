@@ -490,11 +490,11 @@
     </message>
 </context>
 <context>
-    <name>EntryViewSentenceCardSection</name>
+    <name>EntryViewExampleCardSection</name>
     <message>
-        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="85"/>
-        <source>View all sentences →</source>
-        <translation>查看所有例句 →</translation>
+        <location filename="../../components/entryview/entryviewexamplecardsection.cpp" line="85"/>
+        <source>View all examples →</source>
+        <translation>查看所有例子 →</translation>
     </message>
 </context>
 <context>
@@ -610,9 +610,9 @@
 <context>
     <name>LoadingWidget</name>
     <message>
-        <location filename="../../components/sentencecard/loadingwidget.cpp" line="66"/>
-        <source>Searching for example sentences...</source>
-        <translation>搜索例句…</translation>
+        <location filename="../../components/examplecard/loadingwidget.cpp" line="66"/>
+        <source>Searching for examples...</source>
+        <translation>搜索例子…</translation>
     </message>
 </context>
 <context>
@@ -789,8 +789,8 @@
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="376"/>
-        <source>View All Sentences for Current Entry...</source>
-        <translation>查看这条词条的所有例句…</translation>
+        <source>View All Examples for Current Entry...</source>
+        <translation>查看这条词条的所有例子…</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="411"/>
@@ -1139,8 +1139,8 @@ Hang tight!</source>
     </message>
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="650"/>
-        <source>Failed to remove sentences...</source>
-        <translation>未能移除例句…</translation>
+        <source>Failed to remove examples...</source>
+        <translation>未能移除例子…</translation>
     </message>
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="1044"/>
@@ -1169,8 +1169,8 @@ Hang tight!</source>
     </message>
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="1153"/>
-        <source>Unable to add sentences...</source>
-        <translation>未能添加例句…</translation>
+        <source>Unable to add examples...</source>
+        <translation>未能添加例子…</translation>
     </message>
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="1137"/>
@@ -1307,16 +1307,16 @@ Hang tight!</source>
     </message>
 </context>
 <context>
-    <name>SentenceSplitter</name>
+    <name>ExampleSplitter</name>
     <message>
-        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="111"/>
-        <source>Sentences for %1 (%2 result)</source>
-        <translation>用“%1“造句：（%2 条结果）</translation>
+        <location filename="../../components/examplewindow/examplesplitter.cpp" line="111"/>
+        <source>Examples for %1 (%2 result)</source>
+        <translation>用“%1“举例子：（%2 条结果）</translation>
     </message>
     <message>
-        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="115"/>
-        <source>Sentences for %1 (%2 results)</source>
-        <translation>用“%1“造句：（%2 条结果）</translation>
+        <location filename="../../components/examplewindow/examplesplitter.cpp" line="115"/>
+        <source>Examples for %1 (%2 results)</source>
+        <translation>用“%1“举例子：（%2 条结果）</translation>
     </message>
 </context>
 <context>
@@ -1969,8 +1969,8 @@ Hang tight!</source>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="24"/>
-        <source>SENTENCES</source>
-        <translation>例句</translation>
+        <source>EXAMPLES</source>
+        <translation>例子</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="25"/>

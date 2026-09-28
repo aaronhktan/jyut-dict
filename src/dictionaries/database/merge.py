@@ -72,46 +72,46 @@ if __name__ == "__main__":
             FROM db1.definitions"""
     )
     c.execute(
-        """INSERT INTO chinese_sentences(chinese_sentence_id,
+        """INSERT INTO examples(example_id,
                 traditional,
                 simplified,
                 pinyin,
                 jyutping,
                 language)
-            SELECT chinese_sentence_id,
+            SELECT example_id,
                 traditional,
                 simplified,
                 pinyin,
                 jyutping,
                 language
-            FROM db1.chinese_sentences"""
+            FROM db1.examples"""
     )
     c.execute(
-        """INSERT INTO nonchinese_sentences(non_chinese_sentence_id,
-                sentence,
+        """INSERT INTO example_translations(example_translation_id,
+                translation,
                 language)
-            SELECT non_chinese_sentence_id,
-                sentence,
+            SELECT example_translation_id,
+                translation,
                 language
-            FROM db1.nonchinese_sentences"""
+            FROM db1.example_translations"""
     )
     c.execute(
-        """INSERT INTO sentence_links(fk_chinese_sentence_id,
-                fk_non_chinese_sentence_id,
+        """INSERT INTO example_links(fk_example_id,
+                fk_example_translation_id,
                 fk_source_id,
                 direct)
-            SELECT fk_chinese_sentence_id,
-                fk_non_chinese_sentence_id,
+            SELECT fk_example_id,
+                fk_example_translation_id,
                 fk_source_id,
                 direct
-            FROM db1.sentence_links"""
+            FROM db1.example_links"""
     )
     c.execute(
-        """INSERT INTO definitions_chinese_sentences_links(fk_definition_id,
-                fk_chinese_sentence_id)
+        """INSERT INTO definitions_examples_links(fk_definition_id,
+                fk_example_id)
             SELECT fk_definition_id,
-                fk_chinese_sentence_id
-            FROM db1.definitions_chinese_sentences_links"""
+                fk_example_id
+            FROM db1.definitions_examples_links"""
     )
 
     # Insert from second database
@@ -148,28 +148,28 @@ if __name__ == "__main__":
             FROM db2.sources"""
     )
     c.execute(
-        """INSERT INTO chinese_sentences(chinese_sentence_id,
+        """INSERT INTO examples(example_id,
                 traditional,
                 simplified,
                 pinyin,
                 jyutping,
                 language)
-            SELECT chinese_sentence_id,
+            SELECT example_id,
                 traditional,
                 simplified,
                 pinyin,
                 jyutping,
                 language
-            FROM db2.chinese_sentences"""
+            FROM db2.examples"""
     )
     c.execute(
-        """INSERT INTO nonchinese_sentences(non_chinese_sentence_id,
-                sentence,
+        """INSERT INTO example_translations(example_translation_id,
+                translation,
                 language)
-            SELECT non_chinese_sentence_id,
-                sentence,
+            SELECT example_translation_id,
+                translation,
                 language
-            FROM db2.nonchinese_sentences"""
+            FROM db2.example_translations"""
     )
 
     # Insert definitions separately, as their foreign key references need to be re-written
@@ -201,64 +201,64 @@ if __name__ == "__main__":
         """
     )
 
-    # Insert sentence links separate, as their chinese_sentence_id and source foreign keys need to be rewritten
+    # Insert example links separately, as their example and source foreign keys need to be rewritten
     c.execute(
-        """WITH sentence_links_with_source AS (
-                    SELECT sentence_links.fk_chinese_sentence_id AS fk_csi,
-                        sentence_links.fk_non_chinese_sentence_id AS fk_ncsi,
-                        sentence_links.direct AS direct,
+        """WITH example_links_with_source AS (
+                    SELECT example_links.fk_example_id AS fk_ei,
+                        example_links.fk_example_translation_id AS fk_eti,
+                        example_links.direct AS direct,
                         sources.sourcename AS sourcename
-                    FROM db2.sentence_links, db2.sources
-                    WHERE sentence_links.fk_source_id = db2.sources.source_id
+                    FROM db2.example_links, db2.sources
+                    WHERE example_links.fk_source_id = db2.sources.source_id
             ),
 
-            sentence_links_with_foreign_key AS (
+            example_links_with_foreign_key AS (
                     SELECT traditional,
                         simplified,
                         pinyin,
                         jyutping,
                         language,
-                        fk_ncsi,
+                        fk_eti,
                         direct,
                         sourcename
-                    FROM sentence_links_with_source as slws,
-                        db2.chinese_sentences AS cs
-                    WHERE slws.fk_csi = cs.chinese_sentence_id
+                    FROM example_links_with_source as elws,
+                        db2.examples AS e
+                    WHERE elws.fk_ei = e.example_id
             )
 
-        INSERT INTO sentence_links(fk_chinese_sentence_id,
-                fk_non_chinese_sentence_id,
+        INSERT INTO example_links(fk_example_id,
+                fk_example_translation_id,
                 fk_source_id,
                 direct)
-            SELECT cs.chinese_sentence_id,
-                slwfk.fk_ncsi,
+            SELECT e.example_id,
+                elwfk.fk_eti,
                 s.source_id,
-                slwfk.direct
-            FROM sentence_links_with_foreign_key AS slwfk,
+                elwfk.direct
+            FROM example_links_with_foreign_key AS elwfk,
                 sources AS s,
-                chinese_sentences AS cs
-            WHERE s.sourcename = slwfk.sourcename
-                AND cs.traditional = slwfk.traditional
-                AND cs.simplified = slwfk.simplified
-                AND cs.pinyin = slwfk.pinyin
-                AND cs.jyutping = slwfk.jyutping
-                AND cs.language = slwfk.language
+                examples AS e
+            WHERE s.sourcename = elwfk.sourcename
+                AND e.traditional = elwfk.traditional
+                AND e.simplified = elwfk.simplified
+                AND e.pinyin = elwfk.pinyin
+                AND e.jyutping = elwfk.jyutping
+                AND e.language = elwfk.language
         """
     )
 
-    # Insert definitions => sentence links
+    # Insert definitions => example links
 
     # entry_and_definitions: [traditional | simplified | pinyin | jyutping | definition | label | source]
     # for each definition in db2, since this uniquely identifies the definition
 
-    # Match that up with sentences, so that we get defs_s_links_tmp:
-    #      [sentence/entry traditional | sentence/entry simplified | sentence/entry pinyin | sentence/entry jyutping |
+    # Match that up with examples, so that we get defs_e_links_tmp:
+    #      [example/entry traditional | example/entry simplified | example/entry pinyin | example/entry jyutping |
     #       definition_id | definition_label | definition | definition_source | sentence_language]
-    # for each sentence in db2, since this uniquely identifies the sentence
+    # for each example in db2, since this uniquely identifies the example
 
-    # In current database, get new_entry_and_defnitions: [traditional | simplified | pinyin | jyutping | definition | label | source]
+    # In current database, get new_entry_and_definitions: [traditional | simplified | pinyin | jyutping | definition | label | source]
 
-    # And replace the fk_definition_id for each sentence link when traditional/simplified/pinyin/jyutping/definition/label/source all match for a sentence.
+    # And replace the fk_definition_id for each example link when traditional/simplified/pinyin/jyutping/definition/label/source all match for a sentence.
     c.execute(
         """WITH entry_and_definitions AS (
                     SELECT entries.traditional AS traditional,
@@ -276,13 +276,13 @@ if __name__ == "__main__":
                         AND db2.definitions.fk_source_id = db2.sources.source_id
             ),
 
-            defs_s_links_tmp AS (
+            defs_e_links_tmp AS (
                     SELECT
-                        cs.traditional AS sentence_traditional,
-                        cs.simplified AS sentence_simplified,
-                        cs.pinyin AS sentence_pinyin,
-                        cs.jyutping AS sentence_jyutping,
-                        cs.language AS sentence_language,
+                        e.traditional AS example_traditional,
+                        e.simplified AS example_simplified,
+                        e.pinyin AS example_pinyin,
+                        e.jyutping AS example_jyutping,
+                        e.language AS example_language,
                         ed.definition AS definition,
                         ed.label AS label,
                         ed.traditional AS traditional,
@@ -290,11 +290,11 @@ if __name__ == "__main__":
                         ed.pinyin AS pinyin,
                         ed.jyutping AS jyutping,
                         ed.source AS source
-                    FROM db2.definitions_chinese_sentences_links AS dsl,
-                        db2.chinese_sentences AS cs,
+                    FROM db2.definitions_examples_links AS del,
+                        db2.examples AS e,
                         entry_and_definitions AS ed
-                    WHERE dsl.fk_definition_id = ed.definition_id
-                        AND dsl.fk_chinese_sentence_id = cs.chinese_sentence_id
+                    WHERE del.fk_definition_id = ed.definition_id
+                        AND del.fk_example_id = e.example_id
             ),
 
             new_entry_and_definitions AS (
@@ -311,24 +311,24 @@ if __name__ == "__main__":
                     AND definitions.fk_source_id = sources.source_id
             )
 
-            INSERT INTO definitions_chinese_sentences_links(fk_definition_id,
-                        fk_chinese_sentence_id)
+            INSERT INTO definitions_examples_links(fk_definition_id,
+                        fk_example_id)
                     SELECT ned.definition_id,
-                        cs.chinese_sentence_id
-                    FROM defs_s_links_tmp AS dsl, new_entry_and_definitions AS ned,
-                        chinese_sentences AS cs
-                    WHERE dsl.sentence_traditional = cs.traditional
-                        AND dsl.sentence_simplified = cs.simplified
-                        AND dsl.sentence_pinyin = cs.pinyin
-                        AND dsl.sentence_jyutping = cs.jyutping
-                        AND dsl.sentence_language = cs.language
-                        AND dsl.definition = ned.definition
-                        AND dsl.label = ned.label
-                        AND dsl.traditional = ned.traditional
-                        AND dsl.simplified = ned.simplified
-                        AND dsl.pinyin = ned.pinyin
-                        AND dsl.jyutping = ned.jyutping
-                        AND dsl.source = ned.source
+                        e.example_id
+                    FROM defs_e_links_tmp AS del, new_entry_and_definitions AS ned,
+                        examples AS e
+                    WHERE del.example_traditional = e.traditional
+                        AND del.example_simplified = e.simplified
+                        AND del.example_pinyin = e.pinyin
+                        AND del.example_jyutping = e.jyutping
+                        AND del.example_language = e.language
+                        AND del.definition = ned.definition
+                        AND del.label = ned.label
+                        AND del.traditional = ned.traditional
+                        AND del.simplified = ned.simplified
+                        AND del.pinyin = ned.pinyin
+                        AND del.jyutping = ned.jyutping
+                        AND del.source = ned.source
         """
     )
 

@@ -64,7 +64,7 @@ def insert_example(c, definition_id, starting_example_id, example):
     pin = example.pron
     lang = example.lang
 
-    example_id = database.insert_chinese_sentence(
+    example_id = database.insert_example(
         c, trad, simp, pin, jyut, lang, starting_example_id
     )
 
@@ -72,7 +72,7 @@ def insert_example(c, definition_id, starting_example_id, example):
     if example_id == -1:
         # If insertion was not successful, it might be because the example already exists in the database
         # Attempt to get the id of the row that contains that example
-        example_id = database.get_chinese_sentence_id(c, trad, simp, pin, jyut, lang)
+        example_id = database.get_example_id(c, trad, simp, pin, jyut, lang)
 
         # Something has gone wrong if unable to insert and unable to retrieve the id - bail out here
         if example_id == -1:
@@ -80,7 +80,7 @@ def insert_example(c, definition_id, starting_example_id, example):
     else:
         examples_inserted += 1
 
-    database.insert_definition_chinese_sentence_link(c, definition_id, example_id)
+    database.insert_definition_example_link(c, definition_id, example_id)
 
     return examples_inserted
 

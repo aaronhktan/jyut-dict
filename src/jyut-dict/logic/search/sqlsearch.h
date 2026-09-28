@@ -12,6 +12,7 @@
 #include <memory>
 #include <mutex>
 #include <random>
+#include <unordered_set>
 #include <vector>
 
 class Entry;
@@ -53,12 +54,12 @@ public:
                         const QString &jyutping,
                         const QString &pinyin) override;
 
-    void searchTraditionalSentences(const QString &searchTerm);
+    void searchTraditionalExamples(const QString &searchTerm);
 
 private:
     void notifyObservers(SearchParameters params) override;
     void notifyObservers(const std::vector<Entry> &results, bool emptyQuery) override;
-    void notifyObservers(const std::vector<SourceSentence> &results,
+    void notifyObservers(const std::vector<Example> &results,
                          bool emptyQuery) override;
     void notifyObserversOfEmptySet(bool emptyQuery,
                                    const unsigned long long queryID);
@@ -67,7 +68,7 @@ private:
     void notifyObserversIfQueryIdCurrent(const std::vector<Entry> &results,
                                          bool emptyQuery,
                                          const unsigned long long queryID);
-    void notifyObserversIfQueryIdCurrent(const std::vector<SourceSentence> &results,
+    void notifyObserversIfQueryIdCurrent(const std::vector<Example> &results,
                                          bool emptyQuery,
                                          const unsigned long long queryID);
 
@@ -96,8 +97,8 @@ private:
                               const QString &pinyin,
                               const unsigned long long queryID);
 
-    void searchTraditionalSentencesThread(const QString &searchTerm,
-                                          const unsigned long long queryID);
+    void searchTraditionalExamplesThread(const QString &searchTerm,
+                                         const unsigned long long queryID);
 
     std::mutex _notifyMutex;
     std::list<ISearchObserver *> _observers;

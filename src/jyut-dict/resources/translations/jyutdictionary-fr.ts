@@ -490,11 +490,11 @@
     </message>
 </context>
 <context>
-    <name>EntryViewSentenceCardSection</name>
+    <name>EntryViewExampleCardSection</name>
     <message>
-        <location filename="../../components/entryview/entryviewsentencecardsection.cpp" line="85"/>
-        <source>View all sentences →</source>
-        <translation>Voir toutes les phrases →</translation>
+        <location filename="../../components/entryview/entryviewexamplecardsection.cpp" line="85"/>
+        <source>View all examples →</source>
+        <translation>Voir tous les exemples →</translation>
     </message>
 </context>
 <context>
@@ -610,9 +610,9 @@
 <context>
     <name>LoadingWidget</name>
     <message>
-        <location filename="../../components/sentencecard/loadingwidget.cpp" line="66"/>
-        <source>Searching for example sentences...</source>
-        <translation>Recherche de phrases...</translation>
+        <location filename="../../components/examplecard/loadingwidget.cpp" line="66"/>
+        <source>Searching for examples...</source>
+        <translation>Recherche d'exemples...</translation>
     </message>
 </context>
 <context>
@@ -789,8 +789,8 @@
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="376"/>
-        <source>View All Sentences for Current Entry...</source>
-        <translation>Voir toutes les phrases pour cette entrée...</translation>
+        <source>View All Examples for Current Entry...</source>
+        <translation>Voir tous les exemples pour cette entrée...</translation>
     </message>
     <message>
         <location filename="../../windows/mainwindow.cpp" line="411"/>
@@ -1144,8 +1144,8 @@ Veuillez patienter quelques minutes.</translation>
     </message>
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="650"/>
-        <source>Failed to remove sentences...</source>
-        <translation>Échec de la suppression des phrases</translation>
+        <source>Failed to remove examples...</source>
+        <translation>Échec de la suppression des exemples</translation>
     </message>
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="1044"/>
@@ -1174,8 +1174,8 @@ Veuillez patienter quelques minutes.</translation>
     </message>
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="1153"/>
-        <source>Unable to add sentences...</source>
-        <translation>Échec de l&apos;ajout de phrases</translation>
+        <source>Unable to add examples...</source>
+        <translation>Échec de l&apos;ajout de exemples</translation>
     </message>
     <message>
         <location filename="../../logic/database/sqldatabaseutils.cpp" line="1137"/>
@@ -1312,16 +1312,16 @@ Veuillez patienter quelques minutes.</translation>
     </message>
 </context>
 <context>
-    <name>SentenceSplitter</name>
+    <name>ExampleSplitter</name>
     <message>
-        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="111"/>
-        <source>Sentences for %1 (%2 result)</source>
-        <translation>Phrases contenant le mot %1 (%2 résultat)</translation>
+        <location filename="../../components/examplewindow/examplesplitter.cpp" line="111"/>
+        <source>Examples for %1 (%2 result)</source>
+        <translation>Exemples contenant le mot %1 (%2 résultat)</translation>
     </message>
     <message>
-        <location filename="../../components/sentencewindow/sentencesplitter.cpp" line="115"/>
-        <source>Sentences for %1 (%2 results)</source>
-        <translation>Phrases contenant le mot %1 (%2 résultats)</translation>
+        <location filename="../../components/examplewindow/examplesplitter.cpp" line="115"/>
+        <source>Examples for %1 (%2 results)</source>
+        <translation>Exemples contenant le mot %1 (%2 résultats)</translation>
     </message>
 </context>
 <context>
@@ -1974,8 +1974,8 @@ Veuillez patienter quelques minutes.</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="24"/>
-        <source>SENTENCES</source>
-        <translation>PHRASES</translation>
+        <source>EXAMPLES</source>
+        <translation>EXEMPLES</translation>
     </message>
     <message>
         <location filename="../../logic/strings/strings.h" line="25"/>

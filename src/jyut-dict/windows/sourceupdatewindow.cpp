@@ -707,7 +707,7 @@ void SourceUpdateWindow::finishedAllSourceDownloads()
     }
 
     // All files should now be merged into the first item
-    // This lets us bulk-add definitions/sentences/etc. without having
+    // This lets us bulk-add definitions/examples/etc. without having
     // to remove and re-create indexes for each source that gets updated.
     auto future = QtConcurrent::run(
         [this] { _utils->mergeDatabases(_downloadedFiles); });

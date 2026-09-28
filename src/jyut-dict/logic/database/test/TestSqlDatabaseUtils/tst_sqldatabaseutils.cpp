@@ -371,8 +371,8 @@ void TestSqlDatabaseUtils::createV4Database(const QString &dbPath)
     QSqlDatabase::database(dbCreateConnName).setDatabaseName(dbPath);
     QSqlDatabase::database(dbCreateConnName).open();
     QSqlQuery query{QSqlDatabase::database(dbCreateConnName)};
-    query.exec("CREATE TABLE chinese_sentences( "
-               "  chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
+    query.exec("CREATE TABLE examples( "
+               "  example_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
                "  traditional TEXT, "
                "  simplified TEXT, "
                "  pinyin TEXT, "
@@ -397,14 +397,14 @@ void TestSqlDatabaseUtils::createV4Database(const QString &dbPath)
                ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec(
-        "CREATE TABLE definitions_chinese_sentences_links( "
+        "CREATE TABLE definitions_examples_links( "
         "  fk_definition_id INTEGER, "
-        "  fk_chinese_sentence_id INTEGER, "
+        "  fk_example_id INTEGER, "
         "  FOREIGN KEY(fk_definition_id) REFERENCES definitions(definition_id) "
         "ON DELETE CASCADE, "
-        "  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES "
-        "    chinese_sentences(chinese_sentence_id) "
-        "  UNIQUE(fk_definition_id, fk_chinese_sentence_id) ON CONFLICT IGNORE "
+        "  FOREIGN KEY(fk_example_id) REFERENCES "
+        "    examples(example_id), "
+        "  UNIQUE(fk_definition_id, fk_example_id) ON CONFLICT IGNORE "
         ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec("CREATE TABLE entries( "
@@ -431,29 +431,30 @@ void TestSqlDatabaseUtils::createV4Database(const QString &dbPath)
                ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec(
-        "CREATE TABLE nonchinese_sentences( "
-        "  non_chinese_sentence_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
-        "  sentence TEXT, "
+        "CREATE TABLE example_translations( "
+        "  example_translation_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
+        "  translation TEXT, "
         "  language TEXT, "
-        "  UNIQUE(non_chinese_sentence_id, sentence) ON CONFLICT IGNORE "
+        "  UNIQUE(example_translation_id, translation) ON CONFLICT IGNORE "
         ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
-    query.exec("CREATE TABLE sentence_links( "
-               "  fk_chinese_sentence_id INTEGER, "
-               "  fk_non_chinese_sentence_id INTEGER, "
+    query.exec("CREATE TABLE example_links( "
+               "  fk_example_id INTEGER, "
+               "  fk_example_translation_id INTEGER, "
                "  fk_source_id INTEGER, "
                "  direct BOOLEAN, "
-               "  FOREIGN KEY(fk_chinese_sentence_id) REFERENCES "
-               "    chinese_sentences(chinese_sentence_id), "
-               "  FOREIGN KEY(fk_non_chinese_sentence_id) REFERENCES "
-               "    nonchinese_sentences(non_chinese_sentence_id), "
+               "  FOREIGN KEY(fk_example_id) REFERENCES "
+               "    examples(example_id), "
+               "  FOREIGN KEY(fk_example_translation_id) REFERENCES "
+               "    example_translations(example_translation_id), "
                "  FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON "
                "    DELETE CASCADE "
-               "  UNIQUE(fk_chinese_sentence_id, fk_non_chinese_sentence_id) "
+               "  UNIQUE(fk_example_id, fk_example_translation_id) "
                "    ON CONFLICT IGNORE "
                ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
-    query.exec("CREATE VIRTUAL TABLE definitions_fts using fts5(definition)");
+    query.exec("CREATE VIRTUAL TABLE definitions_fts using fts5( "
+               "	fk_entry_id UNINDEXED, definition)");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec("CREATE VIRTUAL TABLE entries_fts using fts5(pinyin, jyutping)");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
@@ -485,17 +486,18 @@ void TestSqlDatabaseUtils::createV4Database(const QString &dbPath)
     query.exec(
         "CREATE INDEX IF NOT EXISTS entries_pinyin_idx ON entries(pinyin);");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
-    query.exec("CREATE INDEX IF NOT EXISTS dcsl_fk_chinese_sentence_idx ON "
-               "definitions_chinese_sentences_links(fk_chinese_sentence_id);");
+    query.exec("CREATE INDEX IF NOT EXISTS del_fk_example_idx ON "
+               "definitions_examples_links(fk_example_id);");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
-    query.exec("CREATE INDEX IF NOT EXISTS sentence_links_fk_non_chinese_idx "
-               "ON sentence_links(fk_non_chinese_sentence_id);");
+    query.exec(
+        "CREATE INDEX IF NOT EXISTS example_links_fk_example_translation_idx "
+        "ON example_links(fk_example_translation_id);");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec("INSERT INTO entries_fts (rowid, pinyin, jyutping) SELECT "
                "rowid, pinyin, jyutping FROM entries");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
-    query.exec("INSERT INTO definitions_fts (rowid, definition) "
-               "SELECT rowid, definition FROM definitions");
+    query.exec("INSERT INTO definitions_fts (rowid, fk_entry_id, definition) "
+               "SELECT rowid, fk_entry_id, definition FROM definitions");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec("PRAGMA user_version=4");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
@@ -526,26 +528,27 @@ void TestSqlDatabaseUtils::updateDatabaseFromV1()
     QCOMPARE(version, CURRENT_DATABASE_VERSION);
 
     // Check stuff added in v2
+
+    // Added in v2 but removed in v4:
     query.exec("SELECT name FROM sqlite_master WHERE type='table' AND "
                "name='chinese_sentences'");
-    QCOMPARE(query.first(), true);
-    QCOMPARE(query.value(0).toString(), "chinese_sentences");
+    QCOMPARE(query.first(), false);
 
+    // Added in v2 but removed in v4:
     query.exec("SELECT name FROM sqlite_master WHERE type='table' AND "
                "name='nonchinese_sentences'");
-    QCOMPARE(query.first(), true);
-    QCOMPARE(query.value(0).toString(), "nonchinese_sentences");
+    QCOMPARE(query.first(), false);
 
+    // Added in v2 but removed in v4:
     query.exec("SELECT name FROM sqlite_master WHERE type='table' AND "
                "name='sentence_links'");
-    QCOMPARE(query.first(), true);
-    QCOMPARE(query.value(0).toString(), "sentence_links");
+    QCOMPARE(query.first(), false);
 
     // Check stuff added in v3
     query.exec("SELECT name FROM sqlite_master WHERE type='table' AND "
-               "name='definitions_chinese_sentences_links'");
+               "name='definitions_examples_links'");
     QCOMPARE(query.first(), true);
-    QCOMPARE(query.value(0).toString(), "definitions_chinese_sentences_links");
+    QCOMPARE(query.value(0).toString(), "definitions_examples_links");
 
     query.exec(
         "SELECT * FROM pragma_table_info('definitions_fts') AS table_info");
@@ -573,6 +576,70 @@ void TestSqlDatabaseUtils::updateDatabaseFromV1()
     QCOMPARE(expected_columns.empty(), true);
 
     // Check stuff added in v4
+    query.exec("SELECT * FROM pragma_table_info('examples') AS table_info");
+    std::unordered_set<QString> exampleExpectedColumns{
+        "example_id",
+        "traditional",
+        "simplified",
+        "pinyin",
+        "jyutping",
+        "language",
+    };
+    while (query.next()) {
+        QCOMPARE(exampleExpectedColumns.find(query.value(1).toString())
+                     == exampleExpectedColumns.end(),
+                 false);
+        exampleExpectedColumns.erase(query.value(1).toString());
+    }
+    QCOMPARE(exampleExpectedColumns.empty(), true);
+
+    query.exec("SELECT * FROM pragma_table_info('example_translations') AS "
+               "table_info");
+    std::unordered_set<QString> exampleTranslationsExpectedColumns{
+        "example_translation_id",
+        "translation",
+        "language",
+    };
+    while (query.next()) {
+        QCOMPARE(exampleTranslationsExpectedColumns.find(
+                     query.value(1).toString())
+                     == exampleTranslationsExpectedColumns.end(),
+                 false);
+        exampleTranslationsExpectedColumns.erase(query.value(1).toString());
+    }
+    QCOMPARE(exampleTranslationsExpectedColumns.empty(), true);
+
+    query.exec(
+        "SELECT * FROM pragma_table_info('example_links') AS table_info");
+    std::unordered_set<QString> exampleLinksExpectedColumns{
+        "fk_example_id",
+        "fk_example_translation_id",
+        "fk_source_id",
+        "direct",
+    };
+    while (query.next()) {
+        QCOMPARE(exampleLinksExpectedColumns.find(query.value(1).toString())
+                     == exampleLinksExpectedColumns.end(),
+                 false);
+        exampleLinksExpectedColumns.erase(query.value(1).toString());
+    }
+    QCOMPARE(exampleLinksExpectedColumns.empty(), true);
+
+    query.exec("SELECT * FROM pragma_table_info('definitions_examples_links') "
+               "AS table_info");
+    std::unordered_set<QString> definitionsExamplesLinksExpectedColumns{
+        "fk_definition_id",
+        "fk_example_id",
+    };
+    while (query.next()) {
+        QCOMPARE(definitionsExamplesLinksExpectedColumns.find(
+                     query.value(1).toString())
+                     == definitionsExamplesLinksExpectedColumns.end(),
+                 false);
+        definitionsExamplesLinksExpectedColumns.erase(query.value(1).toString());
+    }
+    QCOMPARE(definitionsExamplesLinksExpectedColumns.empty(), true);
+
     query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
                "name='entries_simplified_idx'");
     QCOMPARE(query.first(), true);
@@ -589,14 +656,15 @@ void TestSqlDatabaseUtils::updateDatabaseFromV1()
     QCOMPARE(query.value(0).toString(), "entries_pinyin_idx");
 
     query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
-               "name='dcsl_fk_chinese_sentence_idx'");
+               "name='del_fk_example_idx'");
     QCOMPARE(query.first(), true);
-    QCOMPARE(query.value(0).toString(), "dcsl_fk_chinese_sentence_idx");
+    QCOMPARE(query.value(0).toString(), "del_fk_example_idx");
 
     query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
-               "name='sentence_links_fk_non_chinese_idx'");
+               "name='example_links_fk_example_translation_idx'");
     QCOMPARE(query.first(), true);
-    QCOMPARE(query.value(0).toString(), "sentence_links_fk_non_chinese_idx");
+    QCOMPARE(query.value(0).toString(),
+             "example_links_fk_example_translation_idx");
 
     removeDatabase();
 }
@@ -618,9 +686,9 @@ void TestSqlDatabaseUtils::updateDatabaseFromV2()
 
     // Check stuff added in v3
     query.exec("SELECT name FROM sqlite_master WHERE type='table' AND "
-               "name='definitions_chinese_sentences_links'");
+               "name='definitions_examples_links'");
     QCOMPARE(query.first(), true);
-    QCOMPARE(query.value(0).toString(), "definitions_chinese_sentences_links");
+    QCOMPARE(query.value(0).toString(), "definitions_examples_links");
 
     query.exec(
         "SELECT * FROM pragma_table_info('definitions_fts') AS table_info");
@@ -648,6 +716,70 @@ void TestSqlDatabaseUtils::updateDatabaseFromV2()
     QCOMPARE(expected_columns.empty(), true);
 
     // Check stuff added in v4
+    query.exec("SELECT * FROM pragma_table_info('examples') AS table_info");
+    std::unordered_set<QString> exampleExpectedColumns{
+        "example_id",
+        "traditional",
+        "simplified",
+        "pinyin",
+        "jyutping",
+        "language",
+    };
+    while (query.next()) {
+        QCOMPARE(exampleExpectedColumns.find(query.value(1).toString())
+                     == exampleExpectedColumns.end(),
+                 false);
+        exampleExpectedColumns.erase(query.value(1).toString());
+    }
+    QCOMPARE(exampleExpectedColumns.empty(), true);
+
+    query.exec("SELECT * FROM pragma_table_info('example_translations') AS "
+               "table_info");
+    std::unordered_set<QString> exampleTranslationsExpectedColumns{
+        "example_translation_id",
+        "translation",
+        "language",
+    };
+    while (query.next()) {
+        QCOMPARE(exampleTranslationsExpectedColumns.find(
+                     query.value(1).toString())
+                     == exampleTranslationsExpectedColumns.end(),
+                 false);
+        exampleTranslationsExpectedColumns.erase(query.value(1).toString());
+    }
+    QCOMPARE(exampleTranslationsExpectedColumns.empty(), true);
+
+    query.exec(
+        "SELECT * FROM pragma_table_info('example_links') AS table_info");
+    std::unordered_set<QString> exampleLinksExpectedColumns{
+        "fk_example_id",
+        "fk_example_translation_id",
+        "fk_source_id",
+        "direct",
+    };
+    while (query.next()) {
+        QCOMPARE(exampleLinksExpectedColumns.find(query.value(1).toString())
+                     == exampleLinksExpectedColumns.end(),
+                 false);
+        exampleLinksExpectedColumns.erase(query.value(1).toString());
+    }
+    QCOMPARE(exampleLinksExpectedColumns.empty(), true);
+
+    query.exec("SELECT * FROM pragma_table_info('definitions_examples_links') "
+               "AS table_info");
+    std::unordered_set<QString> definitionsExamplesLinksExpectedColumns{
+        "fk_definition_id",
+        "fk_example_id",
+    };
+    while (query.next()) {
+        QCOMPARE(definitionsExamplesLinksExpectedColumns.find(
+                     query.value(1).toString())
+                     == definitionsExamplesLinksExpectedColumns.end(),
+                 false);
+        definitionsExamplesLinksExpectedColumns.erase(query.value(1).toString());
+    }
+    QCOMPARE(definitionsExamplesLinksExpectedColumns.empty(), true);
+
     query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
                "name='entries_simplified_idx'");
     QCOMPARE(query.first(), true);
@@ -664,14 +796,15 @@ void TestSqlDatabaseUtils::updateDatabaseFromV2()
     QCOMPARE(query.value(0).toString(), "entries_pinyin_idx");
 
     query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
-               "name='dcsl_fk_chinese_sentence_idx'");
+               "name='del_fk_example_idx'");
     QCOMPARE(query.first(), true);
-    QCOMPARE(query.value(0).toString(), "dcsl_fk_chinese_sentence_idx");
+    QCOMPARE(query.value(0).toString(), "del_fk_example_idx");
 
     query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
-               "name='sentence_links_fk_non_chinese_idx'");
+               "name='example_links_fk_example_translation_idx'");
     QCOMPARE(query.first(), true);
-    QCOMPARE(query.value(0).toString(), "sentence_links_fk_non_chinese_idx");
+    QCOMPARE(query.value(0).toString(),
+             "example_links_fk_example_translation_idx");
 
     removeDatabase();
 }
@@ -691,6 +824,70 @@ void TestSqlDatabaseUtils::updateDatabaseFromV3()
     }
     QCOMPARE(version, CURRENT_DATABASE_VERSION);
 
+    query.exec("SELECT * FROM pragma_table_info('examples') AS table_info");
+    std::unordered_set<QString> exampleExpectedColumns{
+        "example_id",
+        "traditional",
+        "simplified",
+        "pinyin",
+        "jyutping",
+        "language",
+    };
+    while (query.next()) {
+        QCOMPARE(exampleExpectedColumns.find(query.value(1).toString())
+                     == exampleExpectedColumns.end(),
+                 false);
+        exampleExpectedColumns.erase(query.value(1).toString());
+    }
+    QCOMPARE(exampleExpectedColumns.empty(), true);
+
+    query.exec("SELECT * FROM pragma_table_info('example_translations') AS "
+               "table_info");
+    std::unordered_set<QString> exampleTranslationsExpectedColumns{
+        "example_translation_id",
+        "translation",
+        "language",
+    };
+    while (query.next()) {
+        QCOMPARE(exampleTranslationsExpectedColumns.find(
+                     query.value(1).toString())
+                     == exampleTranslationsExpectedColumns.end(),
+                 false);
+        exampleTranslationsExpectedColumns.erase(query.value(1).toString());
+    }
+    QCOMPARE(exampleTranslationsExpectedColumns.empty(), true);
+
+    query.exec(
+        "SELECT * FROM pragma_table_info('example_links') AS table_info");
+    std::unordered_set<QString> exampleLinksExpectedColumns{
+        "fk_example_id",
+        "fk_example_translation_id",
+        "fk_source_id",
+        "direct",
+    };
+    while (query.next()) {
+        QCOMPARE(exampleLinksExpectedColumns.find(query.value(1).toString())
+                     == exampleLinksExpectedColumns.end(),
+                 false);
+        exampleLinksExpectedColumns.erase(query.value(1).toString());
+    }
+    QCOMPARE(exampleLinksExpectedColumns.empty(), true);
+
+    query.exec("SELECT * FROM pragma_table_info('definitions_examples_links') "
+               "AS table_info");
+    std::unordered_set<QString> definitionsExamplesLinksExpectedColumns{
+        "fk_definition_id",
+        "fk_example_id",
+    };
+    while (query.next()) {
+        QCOMPARE(definitionsExamplesLinksExpectedColumns.find(
+                     query.value(1).toString())
+                     == definitionsExamplesLinksExpectedColumns.end(),
+                 false);
+        definitionsExamplesLinksExpectedColumns.erase(query.value(1).toString());
+    }
+    QCOMPARE(definitionsExamplesLinksExpectedColumns.empty(), true);
+
     query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
                "name='entries_simplified_idx'");
     QCOMPARE(query.first(), true);
@@ -707,14 +904,15 @@ void TestSqlDatabaseUtils::updateDatabaseFromV3()
     QCOMPARE(query.value(0).toString(), "entries_pinyin_idx");
 
     query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
-               "name='dcsl_fk_chinese_sentence_idx'");
+               "name='del_fk_example_idx'");
     QCOMPARE(query.first(), true);
-    QCOMPARE(query.value(0).toString(), "dcsl_fk_chinese_sentence_idx");
+    QCOMPARE(query.value(0).toString(), "del_fk_example_idx");
 
     query.exec("SELECT name FROM sqlite_master WHERE type='index' AND "
-               "name='sentence_links_fk_non_chinese_idx'");
+               "name='example_links_fk_example_translation_idx'");
     QCOMPARE(query.first(), true);
-    QCOMPARE(query.value(0).toString(), "sentence_links_fk_non_chinese_idx");
+    QCOMPARE(query.value(0).toString(),
+             "example_links_fk_example_translation_idx");
 
     removeDatabase();
 }

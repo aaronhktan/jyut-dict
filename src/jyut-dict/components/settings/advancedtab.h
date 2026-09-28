@@ -68,7 +68,7 @@ private:
     void setUpdateCheckboxDefault(QCheckBox *checkbox);
     void setSourceUpdateCheckboxDefault(QCheckBox *checkbox);
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-    void setForceDarkModeCheckboxDefault(QCheckBox &checkbox);
+    void setForceDarkModeCheckboxDefault(QCheckBox *checkbox);
 #endif
     void setCantoneseTTSWidgetDefault(QWidget *widget);
     void setCantoneseTTSSettings(TextToSpeech::SpeakerBackend backend,

@@ -53,7 +53,7 @@ private:
 
     bool deleteSourceFromDatabase(QSqlDatabase &db, const std::string &source);
     bool removeDefinitionsFromDatabase(QSqlDatabase &db);
-    bool removeSentencesFromDatabase(QSqlDatabase &db);
+    bool removeExamplesFromDatabase(QSqlDatabase &db);
     // Note to callers: There CANNOT be a transaction running when this method
     // is called! It does PRAGMA foreign_keys = ON, which is a no-op inside
     // a transaction.
@@ -67,7 +67,7 @@ private:
         QSqlDatabase &db,
         std::unordered_map<std::string, std::string> old_source_ids);
     bool addDefinitionSource(QSqlDatabase &db);
-    bool addSentenceSource(QSqlDatabase &db);
+    bool addExampleSource(QSqlDatabase &db);
 
     bool dropIndices(QSqlDatabase &db);
     bool rebuildIndices(QSqlDatabase &db);
@@ -82,7 +82,7 @@ signals:
                           QString reason = "",
                           QString description = "");
 
-    void deletingSentences();
+    void deletingExamples();
 
     void conflictingDictionaryNamesExist(conflictingSourceMetadata dictionaries);
     void insertingSource();

@@ -1,7 +1,7 @@
 #include "entrycontentwidget.h"
 
 #include "components/definitioncard/definitioncardsection.h"
-#include "components/entryview/entryviewsentencecardsection.h"
+#include "components/entryview/entryviewexamplecardsection.h"
 #include "components/related/relatedsection.h"
 #include "logic/database/sqldatabasemanager.h"
 
@@ -18,11 +18,11 @@ EntryContentWidget::EntryContentWidget(
     _entryContentLayout->setSpacing(0);
 
     _definitionSection = new DefinitionCardSection{this};
-    _sentenceSection = new EntryViewSentenceCardSection{manager, this};
+    _exampleSection = new EntryViewExampleCardSection{manager, this};
     _relatedSection = new RelatedSection{this};
 
     _entryContentLayout->addWidget(_definitionSection);
-    _entryContentLayout->addWidget(_sentenceSection);
+    _entryContentLayout->addWidget(_exampleSection);
     _entryContentLayout->addWidget(_relatedSection);
 
     connect(_definitionSection,
@@ -35,15 +35,15 @@ EntryContentWidget::EntryContentWidget(
             this,
             &EntryContentWidget::showDefinitionSection);
 
-    connect(_sentenceSection,
-            &EntryViewSentenceCardSection::addingCards,
+    connect(_exampleSection,
+            &EntryViewExampleCardSection::addingCards,
             this,
-            &EntryContentWidget::hideSentenceSection);
+            &EntryContentWidget::hideExampleSection);
 
-    connect(_sentenceSection,
-            &EntryViewSentenceCardSection::finishedAddingCards,
+    connect(_exampleSection,
+            &EntryViewExampleCardSection::finishedAddingCards,
             this,
-            &EntryContentWidget::showSentenceSection);
+            &EntryContentWidget::showExampleSection);
 
     connect(_definitionSection,
             &DefinitionCardSection::addingCards,
@@ -51,26 +51,26 @@ EntryContentWidget::EntryContentWidget(
             &EntryContentWidget::hideRelatedSection);
 
     if (showRelatedSection) {
-        connect(_sentenceSection,
-                &EntryViewSentenceCardSection::finishedAddingCards,
+        connect(_exampleSection,
+                &EntryViewExampleCardSection::finishedAddingCards,
                 this,
                 &EntryContentWidget::showRelatedSection);
 
-        connect(_sentenceSection,
-                &EntryViewSentenceCardSection::noCardsAdded,
+        connect(_exampleSection,
+                &EntryViewExampleCardSection::noCardsAdded,
                 this,
                 &EntryContentWidget::showRelatedSection);
     }
 
     connect(this,
-            &EntryContentWidget::stallSentenceUIUpdate,
-            _sentenceSection,
-            &EntryViewSentenceCardSection::stallSentenceUIUpdate);
+            &EntryContentWidget::stallExampleUIUpdate,
+            _exampleSection,
+            &EntryViewExampleCardSection::stallExampleUIUpdate);
 
     connect(this,
-            &EntryContentWidget::viewAllSentences,
-            _sentenceSection,
-            &EntryViewSentenceCardSection::viewAllSentencesRequested);
+            &EntryContentWidget::viewAllExamples,
+            _exampleSection,
+            &EntryViewExampleCardSection::viewAllExamplesRequested);
 
     connect(this,
             &EntryContentWidget::searchEntriesBeginning,
@@ -98,7 +98,7 @@ void EntryContentWidget::setEntry(const Entry &entry)
     _entry = entry;
 
     _definitionSection->setEntry(entry);
-    _sentenceSection->setEntry(entry);
+    _exampleSection->setEntry(entry);
     _relatedSection->setEntry(entry);
 }
 
@@ -115,14 +115,14 @@ void EntryContentWidget::showDefinitionSection(void)
     _definitionSection->setVisible(true);
 }
 
-void EntryContentWidget::hideSentenceSection(void)
+void EntryContentWidget::hideExampleSection(void)
 {
-    _sentenceSection->setVisible(false);
+    _exampleSection->setVisible(false);
 }
 
-void EntryContentWidget::showSentenceSection(void)
+void EntryContentWidget::showExampleSection(void)
 {
-    _sentenceSection->setVisible(true);
+    _exampleSection->setVisible(true);
 }
 
 void EntryContentWidget::hideRelatedSection(void)
@@ -147,13 +147,13 @@ void EntryContentWidget::updateStyleRequested(void)
     }
 
     _definitionSection->updateStyleRequested();
-    _sentenceSection->updateStyleRequested();
+    _exampleSection->updateStyleRequested();
     _relatedSection->updateStyleRequested();
 }
 
-void EntryContentWidget::viewAllSentencesRequested(void)
+void EntryContentWidget::viewAllExamplesRequested(void)
 {
-    emit viewAllSentences();
+    emit viewAllExamples();
 }
 
 void EntryContentWidget::searchEntriesBeginningRequested(void)
