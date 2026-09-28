@@ -225,7 +225,8 @@ QString SQLDatabaseManager::getBundleDictionaryDatabasePath()
                          + "/../share/jyut-dict/dictionaries/"
                          + DICTIONARY_DATABASE_NAME};
 #elif defined(DEBUG)
-    QFileInfo bundleFile{"./" + QString{DICTIONARY_DATABASE_NAME}};
+    QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/"
+                         + QString{DICTIONARY_DATABASE_NAME}};
 #elif defined(FLATPAK)
     QFileInfo bundleFile{QCoreApplication::applicationDirPath() + "/../share/jyut-dict/dictionaries/"
                          + DICTIONARY_DATABASE_NAME};

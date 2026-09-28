@@ -348,13 +348,12 @@ void AdvancedTab::initializeSourceUpdateCheckbox(QCheckBox *checkbox)
 }
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-void AdvancedTab::initializeForceDarkModeCheckbox(QCheckBox &checkbox)
+void AdvancedTab::initializeForceDarkModeCheckbox(QCheckBox *checkbox)
 {
     setForceDarkModeCheckboxDefault(checkbox);
 
-    connect(&checkbox, &QCheckBox::checkStateChanged, this, [this, checkbox] {
-        _settings->setValue("Advanced/forceDarkMode",
-                            checkbox.checkState());
+    connect(checkbox, &QCheckBox::checkStateChanged, this, [this, checkbox] {
+        _settings->setValue("Advanced/forceDarkMode", checkbox->checkState());
         _settings->sync();
 
         QEvent event{QEvent::PaletteChange};
@@ -499,9 +498,9 @@ void AdvancedTab::setSourceUpdateCheckboxDefault(QCheckBox *checkbox)
 }
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-void AdvancedTab::setForceDarkModeCheckboxDefault(QCheckBox &checkbox)
+void AdvancedTab::setForceDarkModeCheckboxDefault(QCheckBox *checkbox)
 {
-    checkbox.setChecked(
+    checkbox->setChecked(
         _settings->value("Advanced/forceDarkMode", QVariant{false}).toBool());
 }
 #endif
@@ -596,7 +595,7 @@ void AdvancedTab::resetSettings(QSettings &settings)
 
     setUpdateCheckboxDefault(_updateCheckbox);
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
-    setForceDarkModeCheckboxDefault(*_forceDarkModeCheckbox);
+    setForceDarkModeCheckboxDefault(_forceDarkModeCheckbox);
 #endif
     setCantoneseTTSWidgetDefault(_cantoneseTTSWidget);
     setMandarinTTSWidgetDefault(_cantoneseTTSWidget);

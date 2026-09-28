@@ -4,7 +4,7 @@
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/entry/entry.h"
 
-#include <QSQLError>
+#include <QSqlError>
 #include <QSqlQuery>
 #include <QtConcurrent/QtConcurrent>
 
