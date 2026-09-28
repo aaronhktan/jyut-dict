@@ -1,4 +1,4 @@
-dragonmapper==0.2.6
+dragonmapper==0.3.0
 jieba==0.42.1
 msgpack==1.2.2
 opencc==1.4.2

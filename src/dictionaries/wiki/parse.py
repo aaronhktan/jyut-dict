@@ -240,36 +240,46 @@ def parse_file(page_filepath, langlinks_filepath, src_dump_filepath, dest_dump_f
             )
 
         src_summaries = dict()
+        src_strings_to_fetch = []
         for trad in src_strings:
             if trad in existing_src_summaries:
                 print(f"Cache hit: {trad}")
                 src_summaries[trad] = existing_src_summaries[trad]
-            src_strings.remove(trad)
+            else:
+                src_strings_to_fetch.append(trad)
 
-        if src_strings:
-            new_src_summaries = get_summaries(lang_src, "|".join(src_strings))
-            with open(src_dump_filepath, "a") as f:
-                f.write(f"{json.dumps(new_src_summaries)}\n")
+        if src_strings_to_fetch:
+            new_src_summaries = get_summaries(lang_src, "|".join(src_strings_to_fetch))
+            if new_src_summaries:
+                with open(src_dump_filepath, "a") as f:
+                    f.write(f"{json.dumps(new_src_summaries)}\n")
             src_summaries |= new_src_summaries
 
         dest_summaries = dict()
+        dest_strings_to_fetch = []
         for dest in dest_strings:
             if dest in existing_dest_summaries:
                 print(f"Cache hit: {dest}")
                 dest_summaries[dest] = existing_dest_summaries[dest]
-            dest_strings.remove(dest)
+            else:
+                dest_strings_to_fetch.append(dest)
         
-        if dest_strings:
+        if dest_strings_to_fetch:
             if lang_src != lang_dest:
-                new_dest_summaries = get_summaries(lang_dest, "|".join(dest_strings))
-                with open(dest_dump_filepath, "a") as f:
-                    f.write(f"{json.dumps(new_dest_summaries)}\n")
+                new_dest_summaries = get_summaries(lang_dest, "|".join(dest_strings_to_fetch))
+                if new_dest_summaries:
+                    with open(dest_dump_filepath, "a") as f:
+                        f.write(f"{json.dumps(new_dest_summaries)}\n")
                 dest_summaries |= new_dest_summaries
             else:
                 dest_summaries = src_summaries
 
         for trad in src_strings:
             if trad not in src_summaries:
+                with open(src_dump_filepath, "a") as f:
+                    f.write(f"{json.dumps({trad: "␕"})}\n")
+                continue
+            elif src_summaries[trad] == "␕":
                 continue
 
             summary = src_summaries[trad]
@@ -329,10 +339,15 @@ def parse_file(page_filepath, langlinks_filepath, src_dump_filepath, dest_dump_f
                 definition_components.append(dest_key)
             if dest_key in dest_summaries:
                 dest_summary = dest_summaries[dest_key]
-                if dest_summary:
+                if dest_summary and dest_summary != "␕":
                     if lang_dest not in ("zh", "zh-yue"):
                         dest_summary = dest_summary.replace(" ", "")
                     definition_components.append(dest_summary)
+            else:
+                with open(dest_dump_filepath, "a") as f:
+                    f.write(f"{json.dumps({dest_key: "␕"})}\n")
+                continue
+
 
             definition = objects.Definition(definition="\n".join(definition_components))
             freq = zipf_frequency(trad, "zh")

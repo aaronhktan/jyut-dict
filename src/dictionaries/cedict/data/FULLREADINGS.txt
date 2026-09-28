@@ -809,7 +809,7 @@
 乖豬 乖猪 [guai1 zhu1] {gwaai1 zyu1}
 乘搭 乘搭 [cheng2 da1] {sing4 daap3}
 乙部 乙部 [yi3 bu4] {jyut3 bou6}
-乜 乜 [mie1] {mat1 / me1 /mi1}
+乜 乜 [mie1] {mat1}
 乜 乜 [mie1] {me1}
 乜 乜 [mie1] {me2}
 乜 乜 [mie1] {me5}
@@ -1504,7 +1504,7 @@
 來人 来人 [lai2 ren2] {loi4 jan4}
 來勢 来势 [lai2 shi4] {loi4 sai3}
 來料加工 来料加工 [lai2 liao4 jia1 gong1] {loi4 liu2 gaa1 gung1}
-來 來 [lai2] {lai4 / loi4}
+來 來 [lai2] {loi4}
 來 来 [lai2] {loi6}
 來 来 [lai2] {loi4}
 來檬 来檬 [lai2 meng2] {loi4 mung1}
@@ -1911,7 +1911,8 @@
 傾電話 倾电话 [qing1 dian4 hua4] {king1 din6 waa2}
 僅次於 仅次于 [jin3 ci4 yu2] {gan2 ci3 jyu1}
 僆仔 僆仔 [lian2 zi3] {leng1 zai2}
-僆 僆 [lian4] {lin5 / lin4}
+僆 僆 [lian4] {lin5}
+僆 僆 [lian4] {lin4}
 僆 𫢪 [lian4] {leng1}
 僆女 僆女 [lian2 nu:3] {leng1 neoi5}
 僆妹 僆妹 [lian2 mei4] {leng1 mui6}
@@ -2934,7 +2935,6 @@
 勻循 匀循 [yun2 xun2] {wan4 ceon4}
 勻巡 匀巡 [yun2 xun2] {wan4 ceon4}
 勻速運動 匀速运动 [yun2 su4 yun4 dong4] {wan4 cuk1 wan6 dung6}
-勼 勼 [jiu1] {gau1 / kau1}
 勼 勼 [jiu1] {gau1}
 勼 勼 [jiu1] {kau1}
 勾佬 勾佬 [gou1 lao3] {ngau1 lou2}
@@ -3667,7 +3667,8 @@
 吳松街 吴松街 [wu2 song1 jie1] {ng4 cung4 gaai1}
 吳浩康 吴浩康 [wu2 hao4 kang1] {ng4 hou6 hong1}
 吵耳 吵耳 [chao3 er3] {caau2 ji5}
-吷 吷 [xue4] {hyut3 / kyut3}
+吷 吷 [xue4] {hyut3}
+吷 吷 [xue4] {kyut3}
 吸塵 吸尘 [xi1 chen2] {kap1 can4}
 吸塵機 吸尘机 [xi1 chen2 ji1] {kap1 can4 gei1}
 吸引 吸引 [xi1 yin3] {kap1 jan5}
@@ -4423,13 +4424,14 @@
 喼頓 喼顿 [ji2 dun4] {gip1 deon6}
 㗎仔 㗎仔 [jia4 zi3] {gaa4 zai2}
 㗎佬 㗎佬 [jia4 lao3] {gaa4 lou2}
-㗎咋 㗎咋 [jia4 za3] {gaa3 zaa3 / zaa4}
+㗎咋 㗎咋 [jia4 za3] {gaa3 zaa3}
+㗎咋 㗎咋 [jia4 za3] {gaa3 zaa4}
 㗎啦 㗎啦 [jia4 la5] {gaa3 laa1}
 㗎啦 㗎啦 [jia4 la5] {gaa3 laa3}
 㗎啦 㗎啦 [jia4 la5] {gaa3 laa4}
 㗎喇 㗎喇 [jia4 la3] {gaa2 laa1}
 㗎妹 㗎妹 [jia4 mei4] {gaa2 mui6}
-㗎話 㗎话 [jia4 hua4] {gaa3 waa2 / gaa4 waa2}
+㗎話 㗎话 [jia4 hua4] {gaa3 waa2}
 𠸎埋 𠸎埋 [na2 mai2] {naa1 maai4}
 𠸎耕 𠸎耕 [na2 geng1] {naa1 gaang1}
 嗋 嗋 [xie2] {hip3}
@@ -4572,7 +4574,9 @@
 噆 噆 [zan3] {zaam1}
 噆 噆 [zan3] {zaap3}
 噆氣 噆气 [can3 qi4] {cam3 hei3}
-噈 噈 [cu4] {zaap3 / hap6 / zuk1}
+噈 噈 [cu4] {zaap3}
+噈 噈 [cu4] {hap6}
+噈 噈 [cu4] {zuk1}
 噉又係 啖又系 [dan4 you4 xi4] {gam2 jau6 hai6}
 噉又得 啖又得 [dan4 you4 de5] {gam2 jau6 dak1}
 噉唔係 啖唔系 [dan4 n2 xi4] {gam2 m4 hai6}
@@ -5050,7 +5054,8 @@
 基金 基金 [ji1 jin1] {gei1 gam1}
 埻 埻 [zhun3] {zeon2}
 埼玉縣 埼玉县 [qi2 yu4 xian4] {kei4 juk6 jyun6}
-堁 堁 [ke4] {fo2 / fo3}
+堁 堁 [ke4] {fo2}
+堁 堁 [ke4] {fo3}
 堂口 堂口 [tang2 kou3] {tong4 hau2}
 堂喫 堂吃 [tang2 chi1] {tong4 jaak3}
 堂 堂 [tang2] {tong4}
@@ -5117,7 +5122,9 @@
 填鴨 填鸭 [tian2 ya1] {tin4 aap3}
 填鴨 填鸭 [tian2 ya1] {tin4 aap2}
 填鴨式教育 填鸭式教育 [tian2 ya1 shi4 jiao4 yu4] {tin4 aap3 sik1 gaau3 juk6}
-塴 塴 [beng4] {bang1 / baang6 / bing3}
+塴 塴 [beng4] {bang1}
+塴 塴 [beng4] {baang6}
+塴 塴 [beng4] {bing3}
 塵俗 尘俗 [chen2 su2] {can4 zuk6}
 塵土飛揚 尘土飞扬 [chen2 tu3 fei1 yang2] {can4 tou2 fei1 joeng4}
 塵垢 尘垢 [chen2 gou4] {can4 gau3}
@@ -5202,7 +5209,8 @@
 夏禮輔循環 夏礼辅循环 [xia4 li3 fu3 xun2 huan2] {haa6 lai5 fu6 ceon4 waan4}
 夏節 夏节 [xia4 jie2] {haa6 zit3}
 夏門 夏门 [xia4 men2] {haa6 mun4}
-夒 夒 [nao2] {naau4 / nou4}
+夒 夒 [nao2] {naau4}
+夒 夒 [nao2] {nou4}
 夕陽工業 夕阳工业 [xi1 yang2 gong1 ye4] {zik6 joeng4 gung1 jip6}
 外交使節 外交使节 [wai4 jiao1 shi3 jie2] {ngoi6 gaau1 si3 zit3}
 外交界 外交界 [wai4 jiao1 jie4] {ngoi6 gaau1 gaai3}
@@ -6053,7 +6061,8 @@
 妊娠期 妊娠期 [ren4 shen1 qi1] {jam6 san1 kei4}
 妊娠紋 妊娠纹 [ren4 shen1 wen2] {jam6 san1 man4}
 妊神星 妊神星 [ren4 shen2 xing1] {jam4 san4 sing1}
-妎 妎 [xi4] {hai6 / gaai3}
+妎 妎 [xi4] {hai6}
+妎 妎 [xi4] {gaai3}
 妒恨 妒恨 [du4 hen4] {dou3 han6}
 妒火中燒 妒火中烧 [du4 huo3 zhong1 shao1] {dou3 fo2 zung1 siu1}
 妖怪 妖怪 [yao1 guai4] {jiu2 gwaai3}
@@ -6130,7 +6139,8 @@
 姨表 姨表 [yi2 biao3] {ji4 biu2}
 姪仔 侄仔 [zhi2 zi3] {zat6 zai2}
 姻婭 姻娅 [yin1 ya4] {jan1 aa3}
-姼 姼 [shi2] {ci2 / si4}
+姼 姼 [shi2] {ci2}
+姼 姼 [shi2] {si4}
 姿整 姿整 [zi1 zheng3] {zi1 zing2}
 威也 威也 [wei1 ye3] {wai1 jaa5}
 威到盡 威到尽 [wei1 dao4 jin4] {wai1 dou3 zeon6}
@@ -6173,11 +6183,14 @@
 婆媽 婆妈 [po2 ma1] {po4 maa1}
 婆媽數 婆妈数 [po2 ma1 shu4] {po4 maa1 sou3}
 婆髻山 婆髻山 [po2 ji4 shan1] {po4 gai3 saan1}
-婑 婑 [wo3] {wo2 / wo1}
+婑 婑 [wo3] {wo2}
+婑 婑 [wo3] {wo1}
 婕妤 婕妤 [jie2 yu2] {zit6 jyu4}
-婘 婘 [quan2] {gyun3 / kyun4}
+婘 婘 [quan2] {gyun3}
+婘 婘 [quan2] {kyun4}
 婚書 婚书 [hun1 shu1] {fan1 syu1}
-婠 婠 [wan1] {waan1 / wun1}
+婠 婠 [wan1] {waan1}
+婠 婠 [wan1] {wun1}
 婦女事務委員會 妇女事务委员会 [fu4 nu:3 shi4 wu4 wei3 yuan2 hui4] {fu5 neoi5 si6 mou6 wai2 jyun4 wui2}
 婦女組織 妇女组织 [fu4 nu:3 zu3 zhi1] {fu5 neoi5 zou2 zik1}
 婦孺 妇孺 [fu4 ru2] {fu5 jyu4}
@@ -6196,7 +6209,9 @@
 媽閣廟 妈阁庙 [ma1 ge2 miao4] {maa1 gok3 miu6}
 媾女 媾女 [gou4 nu:3] {kau1 neoi2}
 嫁唔出 嫁唔出 [jia4 n2 chu1] {gaa3 m4 ceot1}
-嫇 嫇 [meng2] {ming4 / ming5 / mang4}
+嫇 嫇 [meng2] {ming4}
+嫇 嫇 [meng2] {ming5}
+嫇 嫇 [meng2] {mang4}
 嫉惡如仇 嫉恶如仇 [ji2 e4 ru2 chou2] {zat6 ok3 jyu4 sau4}
 嫌米貴 嫌米贵 [xian2 mi3 gui4] {jim4 mai5 gwai3}
 嫌錢腥 嫌钱腥 [xian2 qian2 xing1] {jim4 cin2 seng1}
@@ -6917,12 +6932,14 @@
 山高皇帝遠 山高皇帝远 [shan1 gao1 huang2 di4 yuan3] {saan1 gou1 wong4 dai3 jyun5}
 山魈 山魈 [shan1 xiao1] {saan1 siu1}
 屹然 屹然 [yi4 ran2] {ngat6 jin4}
-岈 岈 [xia1] {haa1 / ngaa1}
+岈 岈 [xia1] {haa1}
+岈 岈 [xia1] {ngaa1}
 岋 岋 [e4] {ngap6}
 岋 岋 [e4] {ap6}
 岌岌貢 岌岌贡 [ji2 ji2 gong4] {kap1 kap1 gung3}
 岌頭 岌头 [ji2 tou2] {ngap6 tau2}
-岞 岞 [zuo2] {zok3 / zok6}
+岞 岞 [zuo2] {zok3}
+岞 岞 [zuo2] {zok6}
 岞 岞 [zuo4] {zok3}
 岞 岞 [zuo4] {zok6}
 岡巒 冈峦 [gang1 luan2] {gong1 lyun4}
@@ -6955,18 +6972,22 @@
 崲 崲 [huang2] {wong4}
 崷 崷 [qiu2] {cau4}
 崽子 崽子 [zai3 zi5] {zoi2 zi2}
-嵑 嵑 [ke3] {hot3 / kit3}
+嵑 嵑 [ke3] {hot3}
+嵑 嵑 [ke3] {kit3}
 嵱 嵱 [yong3] {jung4}
 嵲 嵲 [nie4] {jit6}
 嵷 嵷 [song3] {sung2}
 嵹 嵹 [jiang4] {koeng4}
 嵺 嵺 [liao2] {liu4}
-嵽 嵽 [die2] {dai6 / dai3 / dit6}
+嵽 嵽 [die2] {dai6}
+嵽 嵽 [die2] {dai3}
+嵽 嵽 [die2] {dit6}
 嶄新 崭新 [zhan3 xin1] {zaam2 san1}
 嶅 嶅 [ao2] {ngou4}
 嶍 嶍 [xi2] {zaap6}
 嶕 嶕 [jiao1] {ciu4}
-嶱 嶱 [ke3] {got3 / ho1}
+嶱 嶱 [ke3] {got3}
+嶱 嶱 [ke3] {ho1}
 嶺上開花 岭上开花 [ling3 shang4 kai1 hua1] {leng5 soeng6 hoi1 faa1}
 嶺南大學 岭南大学 [ling3 nan2 da4 xue2] {ling5 naam4 daai6 hok6}
 嶺南文化 岭南文化 [ling3 nan2 wen2 hua4] {ling5 naam4 man4 faa3}
@@ -7430,7 +7451,8 @@
 彈結他 弹结他 [dan4 jie2 ta1] {daan2 git3 taa1}
 彈道學 弹道学 [dan4 dao4 xue2] {daan2 dou6 hok6}
 彈開 弹开 [dan4 kai1] {daan2 hoi1}
-彋 彋 [hong2] {wang4 / gwang1}
+彋 彋 [hong2] {wang4}
+彋 彋 [hong2] {gwang1}
 彌天大罪 弥天大罪 [mi2 tian1 da4 zui4] {nei4 tin1 daai6 zeoi6}
 彌敦道 弥敦道 [mi2 dun1 dao4] {nei4 deon1 dou6}
 彎刀 弯刀 [wan1 dao1] {waan1 dou1}
@@ -7720,13 +7742,16 @@
 快錢 快钱 [kuai4 qian2] {faai3 cin2}
 快馬 快马 [kuai4 ma3] {faai3 maa5}
 快高長大 快高长大 [kuai4 gao1 chang2 da4] {faai3 gou1 zoeng2 daai6}
-忳 忳 [tun2] {tyun4 / zeon1 / tan4}
+忳 忳 [tun2] {tyun4}
+忳 忳 [tun2] {zeon1}
+忳 忳 [tun2] {tan4}
 念口黃 念口黄 [nian4 kou3 huang2] {nim6 hau2 wong2}
 忺 忺 [xian1] {him1}
 忽得 忽得 [hu1 de2] {fat1 dak1}
 忽然間 忽然间 [hu1 ran2 jian1] {fat1 jin4 gaan1}
 忿氣 忿气 [fen4 qi4] {fan6 hei3}
-怊 怊 [chao1] {ciu1 / tiu4}
+怊 怊 [chao1] {ciu1}
+怊 怊 [chao1] {tiu4}
 怎搞 怎搞 [zen3 gao3] {zam2 gaau2}
 怒火中燒 怒火中烧 [nu4 huo3 zhong1 shao1] {nou6 fo2 zung1 siu1}
 怒號 怒号 [nu4 hao2] {nou6 hou4}
@@ -7825,7 +7850,8 @@
 悔之莫及 悔之莫及 [hui3 zhi1 mo4 ji2] {fui3 zi1 mok6 kap6}
 悟道 悟道 [wu4 dao4] {ng6 dou6}
 悠悠蕩蕩 悠悠荡荡 [you1 you5 dang4 dang4] {jau4 jau4 dong6 dong6}
-悢 悢 [liang4] {loeng6 / long5}
+悢 悢 [liang4] {loeng6}
+悢 悢 [liang4] {long5}
 您們 您们 [nin2 men5] {nei5 mun4}
 悱惻 悱恻 [fei3 ce4] {fei2 cak1}
 悲從中來 悲从中来 [bei1 cong2 zhong1 lai2] {bei1 cung4 zung1 loi4}
@@ -8042,7 +8068,8 @@
 懿範 懿范 [yi4 fan4] {ji3 faan6}
 懿行 懿行 [yi4 xing2] {ji3 hang6}
 戀童 恋童 [lian4 tong2] {lyun2 tung4}
-戃 戃 [tang3] {cong2 / tong2}
+戃 戃 [tang3] {cong2}
+戃 戃 [tang3] {tong2}
 戇居 戆居 [zhuang4 ju1] {ngong6 geoi1}
 戇喪 戆丧 [zhuang4 sang4] {ngong6 song3}
 戇居佬 戆居佬 [zhuang4 ju1 lao3] {ngong6 geoi1 lou2}
@@ -8446,7 +8473,10 @@
 托故 托故 [tuo1 gu4] {tok3 gu3}
 托水龍 托水龙 [tuo1 shui3 long2] {tok3 seoi2 lung4}
 托賴 托赖 [tuo1 lai4] {tok3 laai6}
-扚 扚 [di2] {dik1 / lik6 / diu2 / joek6}
+扚 扚 [di2] {dik1}
+扚 扚 [di2] {diu2}
+扚 扚 [di2] {lik6}
+扚 扚 [di2] {joek6}
 扛槍 扛枪 [kang2 qiang1] {kong1 coeng1}
 扣喉 扣喉 [kou4 hou2] {kau3 hau4}
 扣數 扣数 [kou4 shu4] {kau3 sou3}
@@ -8642,7 +8672,8 @@
 抽象概念 抽象概念 [chou1 xiang4 gai4 nian4] {cau1 zoeng6 koi3 nim6}
 抽象派 抽象派 [chou1 xiang4 pai4] {cau1 zoeng6 paai1}
 抽頭 抽头 [chou1 tou2] {cau1 tau4}
-抾 抾 [qie4] {gip3 / keoi1}
+抾 抾 [qie4] {gip3}
+抾 抾 [qie4] {keoi1}
 拃亂戈柄 拃乱戈柄 [zha2 luan4 ge1 bing3] {zaa6 lyun6 gwo1 beng3}
 拃亂歌柄 拃乱歌柄 [zha2 luan4 ge1 bing3] {zaa6 lyun6 go1 beng3}
 拆家 拆家 [chai1 jia1] {caak3 gaa1}
@@ -8775,7 +8806,7 @@
 拾 拾 [she4] {sap6}
 拾 拾 [she4] {sip3}
 拾 拾 [shi2] {sap6}
-拿到 拿到 [na2 dao4] {naa4 dou3 / dou2}
+拿到 拿到 [na2 dao4] {naa4 dou2}
 拿拿林 拿拿林 [na2 na2 lin2] {naa4 naa4 lam4}
 拿拿淋 拿拿淋 [na2 na2 lin2] {naa4 naa4 lam4}
 拿拿聲 拿拿声 [na2 na2 sheng1] {naa4 naa4 sing1}
@@ -8869,7 +8900,8 @@
 捨我其誰 舍我其谁 [she3 wo3 qi2 shui2] {se2 ngo5 kei4 seoi4}
 捨身圖報 舍身图报 [she3 shen1 tu2 bao4] {se2 san1 tou4 bou3}
 捨近求遠 舍近求远 [she3 jin4 qiu2 yuan3] {se2 gan6 kau4 jyun5}
-捯 捯 [dao2] {dou3 / dou2}
+捯 捯 [dao2] {dou3}
+捯 捯 [dao2] {dou2}
 捱世界 挨世界 [ai1 shi4 jie4] {ngaai4 sai3 gaai3}
 捱夜 挨夜 [ai1 ye4] {ngaai4 je2}
 捱得 挨得 [ai1 de5] {ngaai4 dak1}
@@ -8884,7 +8916,8 @@
 捲煙 卷烟 [juan3 yan1] {gyun2 jin1}
 捲粉 卷粉 [juan3 fen3] {gyun2 fan2}
 捲閘 卷闸 [juan3 zha2] {gyun2 zaap6}
-捳 捳 [yue4] {ngok6 / ok6}
+捳 捳 [yue4] {ngok6}
+捳 捳 [yue4] {ok6}
 捷泳 捷泳 [jie2 yong3] {zit3 wing6}
 捻死 捻死 [nian3 si3] {nin2 sei2}
 捽碟 捽碟 [cu4 die2] {zeot1 dip2}
@@ -9022,7 +9055,7 @@
 提子乾 提子干 [ti2 zi5 gan1] {tai4 zi2 gon1}
 提 提 [ti2] {tai4}
 提 提 [ti2] {si4}
-提 提 [ti2] {tai4 /dai3}
+提 提 [ti2] {dai3}
 提款咭 提款咭 [ti2 kuan3 ji1] {tai4 fun2 kaat1}
 提水 提水 [ti2 shui3] {tai4 seoi2}
 提示 提示 [ti2 shi4] {tai4 si6}
@@ -9052,7 +9085,8 @@
 揞住嘴笑 揞住嘴笑 [an3 zhu4 zui3 xiao4] {ngam2 zyu6 zeoi2 siu3}
 揞住 揞住 [an3 zhu4] {ngam2 zyu6}
 揞脈 揞脉 [an3 mai4] {ngam2 mak6}
-揤 揤 [ji2] {zat1 / zeot1}
+揤 揤 [ji2] {zat1}
+揤 揤 [ji2] {zeot1}
 揦住 揦住 [la2 zhu4] {laa2 zyu6}
 揦埋口面 揦埋口面 [la2 mai2 kou3 mian4] {laa2 maai4 hau2 min6}
 揦埋 揦埋 [la2 mai2] {laa2 maai4}
@@ -12806,7 +12840,7 @@
 燒雞 烧鸡 [shao1 ji1] {siu1 gai1}
 燒青 烧青 [shao1 qing1] {siu1 ceng1}
 燒骨 烧骨 [shao1 gu3] {siu1 gwat1}
-燒鴨 烧鸭 [shao1 ya1] {siu1 aap3 / aap2}
+燒鴨 烧鸭 [shao1 ya1] {siu1 aap2}
 燒鵝 烧鹅 [shao1 e2] {siu1 ngo2}
 燕塘站 燕塘站 [yan4 tang2 zhan4] {jin3 tong2 zaam6}
 燕崗 燕岗 [yan4 gang3] {jin3 gong1}
@@ -13939,7 +13973,8 @@
 皇帝 皇帝 [huang2 di4] {wong4 dai3}
 皇氣 皇气 [huang2 qi4] {wong4 hei3}
 皓皓 皓皓 [hao4 hao4] {hou6 hou6}
-皛 皛 [xiao3] {kiu5 / jiu5}
+皛 皛 [xiao3] {kiu5}
+皛 皛 [xiao3] {jiu5}
 皮光肉滑 皮光肉滑 [pi2 guang1 rou4 hua2] {pei4 gwong1 juk6 waat6}
 皮包骨 皮包骨 [pi2 bao1 gu3] {pei4 baau1 gwat1}
 皮喼 皮喼 [pi2 ji2] {pei4 gip1}
@@ -14393,7 +14428,8 @@
 矯飾 矫饰 [jiao3 shi4] {giu2 sik1}
 石井 石井 [shi2 jing3] {sek6 zeng2}
 石仔 石仔 [shi2 zi3] {sek6 zai2}
-石叻 石叻 [shi2 le4] {sek6 lik1 / sek6 nit1}
+石叻 石叻 [shi2 le4] {sek6 lik1}
+石叻 石叻 [shi2 le4] {sek6 nit1}
 石圍塘 石围塘 [shi2 wei2 tang2] {sek6 wai4 tong4}
 石圍角 石围角 [shi2 wei2 jiao3] {sek6 wai4 gok3}
 石堅 石坚 [shi2 jian1] {sek6 gin1}
@@ -14743,7 +14779,7 @@
 科技 科技 [ke1 ji4] {fo1 gei6}
 科技興農 科技兴农 [ke1 ji4 xing1 nong2] {fo1 gei6 hing1 nung4}
 科技體制 科技体制 [ke1 ji4 ti3 zhi4] {fo1 gei6 tai2 zai3}
-科文 科文 [ke1 wen2] {fo1 man4 / man2}
+科文 科文 [ke1 wen2] {fo1 man2}
 科 科 [ke1] {fo1}
 科蘇 科苏 [ke1 su1] {fo1 sou1}
 科錢 科钱 [ke1 qian2] {fo1 cin4}
@@ -15204,7 +15240,8 @@
 糯米酒 糯米酒 [nuo4 mi3 jiu3] {no6 mai5 zau2}
 糯米雞 糯米鸡 [nuo4 mi3 ji1] {no6 mai5 gai1}
 糴米 籴米 [di2 mi3] {dek6 mai5}
-糷 糷 [lan4] {laan4 / laan6}
+糷 糷 [lan4] {laan4}
+糷 糷 [lan4] {laan6}
 系列 系列 [xi4 lie4] {hai6 lit6}
 系統 系统 [xi4 tong3] {hai6 tung2}
 紀元後 纪元后 [ji4 yuan2 hou4] {gei2 jyun4 hau6}
@@ -15464,7 +15501,8 @@
 綽頭 绰头 [chuo4 tou2] {coek3 tau4}
 綾羅綢緞 绫罗绸缎 [ling2 luo2 chou2 duan4] {ling4 lo4 cau4 dyun6}
 綿羊仔 绵羊仔 [mian2 yang2 zi3] {min4 joeng2 zai2}
-緉 緉 [liang3] {loeng5 / loeng6}
+緉 緉 [liang3] {loeng5}
+緉 緉 [liang3] {loeng6}
 緊張大師 紧张大师 [jin3 zhang1 da4 shi1] {gan2 zoeng1 daai6 si1}
 緊張 紧张 [jin3 zhang1] {gan2 zoeng1}
 緊要事 紧要事 [jin3 yao4 shi4] {gan2 jiu3 si6}
@@ -15495,7 +15533,9 @@
 練習生 练习生 [lian4 xi2 sheng1] {lin6 zaap6 sang1}
 練習簿 练习簿 [lian4 xi2 bu4] {lin6 zaap6 bou6}
 練馬師 练马师 [lian4 ma3 shi1] {lin6 maa5 si1}
-緺 緺 [gua1] {gwaa1 / waa1 / gwo1}
+緺 緺 [gua1] {gwaa1}
+緺 緺 [gua1] {waa1}
+緺 緺 [gua1] {gwo1}
 縈懷 萦怀 [ying2 huai2] {jing4 waai4}
 縉紳 缙绅 [jin4 shen1] {zeon3 san1}
 縣份 县份 [xian4 fen4] {jyun6 fan6}
@@ -15636,7 +15676,8 @@
 美育 美育 [mei3 yu4] {mei5 juk6}
 美言 美言 [mei3 yan2] {mei5 jin4}
 美麗華酒店 美丽华酒店 [mei3 li4 hua2 jiu3 dian4] {mei5 lai6 waa4 zau2 dim3}
-羒 羒 [fen2] {fan1 / fan4}
+羒 羒 [fen2] {fan1}
+羒 羒 [fen2] {fan4}
 羕 羕 [yang4] {joeng6}
 羞人 羞人 [xiu1 ren2] {sau1 jan4}
 羞家 羞家 [xiu1 jia1] {sau1 gaa1}
@@ -15826,7 +15867,8 @@
 耐 耐 [nai4] {nang4}
 耐耐 耐耐 [nai4 nai4] {noi6 noi6}
 耕田佬 耕田佬 [geng1 tian2 lao3] {gaang1 tin4 lou2}
-耖 耖 [chao4] {caau3 / caau2}
+耖 耖 [chao4] {caau3}
+耖 耖 [chao4] {caau2}
 耘田 耘田 [yun2 tian2] {wan4 tin4}
 耥耙 耥耙 [tang1 ba4] {tong2 paa3}
 耨喉 耨喉 [nou4 hou2] {nau6 hau4}
@@ -15903,7 +15945,7 @@
 聽教聽話 听教听话 [ting1 jiao4 ting1 hua4] {teng1 gaau3 teng1 waa6}
 聽日 听日 [ting1 ri4] {ting1 jat6}
 聽早 听早 [ting1 zao3] {ting1 zou2}
-聽晚 听晚 [ting1 wan3] {ting1 maan5 / maan1}
+聽晚 听晚 [ting1 wan3] {ting1 maan1}
 聽暇 听暇 [ting1 xia2] {ting1 haa6}
 聽朝 听朝 [ting1 chao2] {ting1 ziu1}
 聽朝早 听朝早 [ting1 chao2 zao3] {ting1 ciu4 zou2}
@@ -16433,7 +16475,8 @@
 花螺 花螺 [hua1 luo2] {faa1 lo2}
 花蟹 花蟹 [hua1 xie4] {faa1 haai5}
 花貓 花猫 [hua1 mao1] {faa1 maau1}
-花門 花门 [hua1 men2] {faa1 mun4 / faa1 mun2}
+花門 花门 [hua1 men2] {faa1 mun4}
+花門 花门 [hua1 men2] {faa1 mun2}
 花階磚 花阶砖 [hua1 jie1 zhuan1] {faa1 gaai1 zyun1}
 花靚仔 花靓仔 [hua1 liang4 zai3] {faa1 leng3 zai2}
 花靚 花靓 [hua1 jing4] {faa1 leng1}
@@ -16754,7 +16797,8 @@
 蔡少芬 蔡少芬 [cai4 shao3 fen1] {coi3 siu2 fan1}
 蔡瀾 蔡澜 [cai4 lan2] {coi3 laan4}
 蔣麗芸 蒋丽芸 [jiang3 li4 yun2] {zoeng2 lai6 wan4}
-蔧 蔧 [hui4] {seoi6 / wai6}
+蔧 蔧 [hui4] {seoi6}
+蔧 蔧 [hui4] {wai6}
 蔫韌 蔫韧 [nian1 ren4] {jin1 ngan6}
 蔭庇 荫庇 [yin4 bi4] {jam3 bei3}
 蔽塞 蔽塞 [bi4 se4] {bai3 sak1}
@@ -16941,7 +16985,9 @@
 蜜糖 蜜糖 [mi4 tang2] {mat6 tong4}
 蜜蜂竇 蜜蜂窦 [mi4 feng1 dou4] {mat6 fung1 dau3}
 蜞乸 蜞乸 [qi2 na2] {kei4 naa2}
-蜰 蜰 [fei2] {fei4 / fai6 / fei2}
+蜰 蜰 [fei2] {fei4}
+蜰 蜰 [fei2] {fai6}
+蜰 蜰 [fei2] {fei2}
 蜱蟲 蜱虫 [pi2 chong2] {pei4 cung4}
 蝕底 蚀底 [shi2 di3] {sit6 dai2}
 蝕本 蚀本 [shi2 ben3] {sit6 bun2}
@@ -18279,7 +18325,8 @@
 越南國家航空 越南国家航空 [yue4 nan2 guo2 jia1 hang2 kong1] {jyut6 naam4 gwok3 gaa1 hong4 hung1}
 越南航空 越南航空 [yue4 nan2 hang2 kong1] {jyut6 naam4 hong4 hung1}
 越南話 越南话 [yue4 nan2 hua4] {jyut6 naam4 waa2}
-越嚟越 越嚟越 [yue4 li2 yue4] {jyut6 lai4 jyut6 / jyut6 lei4 jyut6}
+越嚟越 越嚟越 [yue4 li2 yue4] {jyut6 lai4 jyut6}
+越嚟越 越嚟越 [yue4 li2 yue4] {jyut6 lei4 jyut6}
 越秀公園站 越秀公园站 [yue4 xiu4 gong1 yuan2 zhan4] {jyut6 sau3 gung1 jyun4 zaam6}
 越秀公園 越秀公园 [yue4 xiu4 gong1 yuan2] {jyut6 sau3 gung1 jyun2}
 越秀山 越秀山 [yue4 xiu4 shan1] {jyut6 sau3 saan1}
@@ -18706,7 +18753,8 @@
 返頭嫁 返头嫁 [fan3 tou2 jia4] {faan1 tau4 gaa3}
 迢迢 迢迢 [tiao2 tiao2] {tiu4 tiu4}
 迫人 迫人 [po4 ren2] {bik1 jan4}
-迫力 迫力 [po4 li4] {bik1 lik6 / bik6 lik1}
+迫力 迫力 [po4 li4] {bik1 lik6}
+迫力 迫力 [po4 li4] {bik6 lik1}
 迫紐 迫纽 [po4 niu3] {baak1 nau2}
 迫車 迫车 [po4 che1] {bik1 ce1}
 迫鈕 迫钮 [po4 niu3] {baak1 nau2}
@@ -20373,7 +20421,7 @@
 靜雞雞 静鸡鸡 [jing4 ji1 ji1] {zing6 gai1 gai1}
 靜電感應 静电感应 [jing4 dian4 gan3 ying1] {zing6 din6 gam2 jing3}
 靜 静 [jing4] {zing6}
-靜靜地 静静地 [jing4 jing5 de5] {zing6 zing6 dei6/ dei2}
+靜靜地 静静地 [jing4 jing5 de5] {zing6 zing6 dei2}
 靜靜雞 静静鸡 [jing4 jing4 ji1] {zing6 zing6 gai1}
 非……不可 非……不可 [fei1… … bu4 ke3] {fei1 ……bat1 ho2}
 非士 非士 [fei1 shi4] {fei1 si2}
@@ -21633,7 +21681,8 @@
 黃驊 黄骅 [huang2 hua2] {wong4 waa4}
 黃 黄 [huang2] {wong4}
 黃 黄 [huang2] {wong2}
-黃黚黚 黄黚黚 [huang2 jian1 jian1] {wong4 gam4 gam4 / wong4 kam4 kam4}
+黃黚黚 黄黚黚 [huang2 jian1 jian1] {wong4 gam4 gam4}
+黃黚黚 黄黚黚 [huang2 jian1 jian1] {wong4 kam4 kam4}
 黄芽白 黄芽白 [huang2 ya2 bai2] {wong4 ngaa4 baak6}
 黄金海岸 黄金海岸 [huang2 jin1 hai3 an4] {wong4 gam1 hoi2 ngon6}
 黎克特制 黎克特制 [li2 ke4 te4 zhi4] {lai4 haak1 dak6 zai3}
@@ -21872,9 +21921,9 @@
 人手 人手 [ren2 shou3] {jan4 sau2}
 人道 人道 [ren2 dao4] {jan4 dou6}
 僅僅 仅仅 [jin3 jin3] {gan2 gan2}
-仆 仆 [pu1] {puk1 / fu6}
-仆 仆 [pu1] {buk6}
 仆 仆 [pu1] {puk1}
+仆 仆 [pu1] {fu6}
+仆 仆 [pu1] {buk6}
 從 从 [cong2] {cung4}
 從 从 [cong2] {sung1}
 從 从 [cong2] {cung1}
@@ -22518,7 +22567,8 @@
 胺 胺 [an4] {on1}
 胺 胺 [an4] {aat3}
 胺 胺 [an4] {ngaat3}
-胺 胺 [an4] {on3/ ngon1}
+胺 胺 [an4] {on3}
+胺 胺 [an4] {ngon1}
 臉 脸 [lian3] {lim5}
 腐爛 腐烂 [fu3 lan4] {fu6 laan6}
 腐蝕 腐蚀 [fu3 shi2] {fu6 sik6}
@@ -23928,7 +23978,7 @@
 仆到去 仆到去 [pu2 dao4 qu4] {puk1 dou3 heoi3}
 仆崩鼻 仆崩鼻 [pu2 beng1 bi2] {puk1 bang1 bei6}
 仆硬街 仆硬街 [pu2 ying4 jie1] {puk1 ngaang6 gaai1}
-仆街死 仆街死 [pu1jie1 si3] {puk1 gaai1 sei2}
+仆街死 仆街死 [pu1 jie1 si3] {puk1 gaai1 sei2}
 仆街貨 仆街货 [pu1jie1 huo4] {puk1 gaai1 fo3}
 仆開 仆开 [pu2 kai1] {puk1 hoi1}
 仆開啦 仆开啦 [pu2 kai1 la5] {puk1 hoi1 laa1}
@@ -24580,7 +24630,7 @@
 多層泊車場 多层泊车场 [duo1ceng2 bo2 che1chang3] {do1 cang4 paak3 ce1 coeng4}
 多年以來 多年以来 [duo1nian2 yi3lai2] {do1 nin4 ji5 loi4}
 多得嗮 多得嗮 [duo1 de2 sai4] {do1 dak1 saai3}
-多水 多水 [duo1shui3] {do1 seoi2}
+多水 多水 [duo1 shui3] {do1 seoi2}
 多謝你咁好介紹 多谢你咁好介绍 [duo1xie4 ni3 gan1 hao3 jie4shao4] {do1 ze6 nei5 gam3 hou2 gaai3 siu6}
 多謝嗮 多谢嗮 [duo1xie4 sai4] {do1 ze6 saai3}
 多謝嗮你 多谢嗮你 [duo1xie4 sai4 ni3] {do1 ze6 saai3 nei5}
@@ -24741,9 +24791,9 @@
 孤男寡女 孤男寡女 [gu1 nan2 gua3 nu:3] {gu1 naam4 gwaa2 neoi5}
 孭周身債 孭周身债 [mie1 zhou1shen1 zhai4] {me1 zau1 san1 zaai3}
 孭鐵 孭铁 [mie1 tie3] {me1 tit3}
-學到 学到 [xue2 dao4] {hok6 dou3*2}
-孻仔拉心肝孻女拉五臟 孻仔拉心肝孻女拉五脏 [lai2 zi3 la1 xin1 gan1 lai2 nu:3 la1 wu3zang4] {laai1 zai2 laai1 sam1 gon1 laai1 neoi5 laai1 ng5 zong6}
-它們自己 它们自己 [ta1men5 zi4ji3] {taa1 mun4 zi6 gei2}
+學到 学到 [xue2 dao4] {hok6 dou2}
+孻仔拉心肝孻女拉五臟 孻仔拉心肝孻女拉五脏 [lai2 zi3 la1 xin1 gan1 lai2 nu:3 la1 wu3 zang4] {laai1 zai2 laai1 sam1 gon1 laai1 neoi5 laai1 ng5 zong6}
+它們自己 它们自己 [ta1 men5 zi4 ji3] {taa1 mun4 zi6 gei2}
 定要 定要 [ding4 yao4] {ding6 jiu3}
 家基冷 家基冷 [jia1 ji1 leng3] {gaa1 gei1 laang5}
 密瓜 密瓜 [mi4 gua1] {mat6 gwaa1}
@@ -25063,8 +25113,8 @@
 扯落水 扯落水 [che3 luo4shui3] {ce2 lok6 seoi2}
 批㬹 批㬹 [pi1 zheng1] {pai1 zaang1}
 技人 技人 [ji4 ren2] {gei6 jan4}
-抄字典 抄字典 [chao1 zi4dian3] {caau1 zi6 din2}
-抄字典 抄字典 [chao1 zi4dian3] {caau3 zi6 din2}
+抄字典 抄字典 [chao1 zi4 dian3] {caau1 zi6 din2}
+抄字典 抄字典 [chao1 zi4 dian3] {caau3 zi6 din2}
 抄醒 抄醒 [chao1 xing3] {caau3 seng2}
 把乜春 把乜春 [ba3 mie1 chun1] {baa2 mat1 ceon1}
 把口瑯過油 把口琅过油 [ba3 kou3 lang2 guo4 you2] {baa2 hau2 long2 gwo3 jau4}
@@ -25837,13 +25887,13 @@
 畀人賣豬仔 畀人卖猪仔 [bi4 ren2 mai4 zhu1 zai3] {bei2 jan4 maai6 zyu1 zai2}
 畀人食咗雙豬 畀人食咗双猪 [bi4 ren2 shi2 zuo5 shuang1 zhu1] {bei2 jan4 sik6 zo2 soeng1 zyu1}
 畀你 畀你 [bi4 ni3] {bei2 nei5}
-畀佢 畀佢 [bi4 qu2] {bei2 keoi4}
+畀佢 畀佢 [bi4 qu2] {bei2 keoi5}
 畀我 畀我 [bi4 wo3] {bei2 ngo5}
 畀稅 畀税 [bi4 shui4] {bei2 seoi3}
 畀龜逗 畀龟逗 [bi4 gui1 dou4] {bei2 gwai1 dau6}
 留番拜山先講 留番拜山先讲 [liu2 fan1 bai4 shan1 xian1 jiang3] {lau4 faan1 baai3 saan1 sin1 gong2}
 番薯兵 番薯兵 [fan1shu3 bing1] {faan1 syu2 bing1}
-番薯頭 番薯头 [fan1 shu3 tou2] {faan1 syu2 / syu4 tau4}
+番薯頭 番薯头 [fan1 shu3 tou2] {faan1 syu2 tau4}
 畫公仔唔駛畫出腸 画公仔唔驶画出肠 [hua4 gong1zai3 wu2 shi3 hua4 chu1 chang2] {waak6 gung1 zai2 m4 sai2 waak6 ceot1 coeng2}
 當...係神主牌 当...系神主牌 [dang1… xi4 shen2 zhu3 pai2] {dong3… hai6 san4 zyu2 paai2}
 當我 当我 [dang1 wo3] {dong1 ngo5}
@@ -26457,15 +26507,15 @@
 趁風 趁风 [chen4 feng1] {can3 fung1}
 超低能 超低能 [chao1 di1neng2] {ciu1 dai1 nang4}
 超住 超住 [chao1 zhu4] {ciu1 zyu6}
-超級子彈人 超级子弹人 [chao1ji2 zi3dan4 ren2] {ciu1 kap1 zi2 daan2 jan4}
+超級子彈人 超级子弹人 [chao1ji2 zi3 dan4 ren2] {ciu1 kap1 zi2 daan2 jan4}
 超級金手指 超级金手指 [chao1ji2 jin1 shou3 zhi3] {ciu1 kap1 gam1 sau2 zi2}
 趌開 趌开 [ji2 kai1] {gat6 hoi1}
-趕住去死咩 赶住去死咩 [gan3 zhu4 qu4si3 mie1] {gon2 zyu6 heoi3 sei2 me1}
-趕咁快去死咩 赶咁快去死咩 [gan3 gan1 kuai4 qu4si3 mie1] {gon2 gam3 faai3 heoi3 sei2 me1}
+趕住去死咩 赶住去死咩 [gan3 zhu4 qu4 si3 mie1] {gon2 zyu6 heoi3 sei2 me1}
+趕咁快去死咩 赶咁快去死咩 [gan3 gan1 kuai4 qu4 si3 mie1] {gon2 gam3 faai3 heoi3 sei2 me1}
 趴底 趴底 [pa1 di3] {paa1 dai1}
 趴街 趴街 [pa1 jie1] {paa1 gaai1}
 䟕落 䟕落 [cha4 luo4] {caa3 lok6}
-跌咗落地嗱番乍沙 跌咗落地嗱番乍沙 [die1 zuo5 luo4di4 na2 fan1 zha4 sha1] {dit3 zo2 lok6 dei6 naa4 faan1 zaa3 saa1}
+跌咗落地嗱番乍沙 跌咗落地嗱番乍沙 [die1 zuo5 luo4 di4 na2 fan1 zha4 sha1] {dit3 zo2 lok6 dei6 naa4 faan1 zaa3 saa1}
 跎仔 跎仔 [tuo2 zi3] {to4 zai2}
 跎槍 跎枪 [tuo2 qiang1] {to4 coeng1}
 跎炮 跎炮 [tuo2 pao4] {to4 paau3}
@@ -26583,7 +26633,7 @@
 釐埋 厘埋 [li2 mai2] {lei1 maai4}
 金梳 金梳 [jin1 shu1] {gam1 so1}
 金牌打仔 金牌打仔 [jin1pai2 da3 zi5] {gam1 paai4 daa2 zai2}
-金牌隻花紅棍 金牌只花红棍 [jin1pai2 zhi1 hua1 hong2 gun4] {gam1 paai4 zek3 faa1 hung4 gwan3}
+金牌隻花紅棍 金牌只花红棍 [jin1 pai2 zhi1 hua1 hong2 gun4] {gam1 paai4 zek3 faa1 hung4 gwan3}
 金食 金食 [jin1 shi2] {gam1 sik6}
 釘上釘 钉上钉 [ding1 shang4 ding1] {deng1 soeng6 deng1}
 釘倉 钉仓 [ding1 cang1] {deng1 cong1}
@@ -26620,44 +26670,44 @@
 鐘房 钟房 [zhong1 fang2] {zung1 fong2}
 鐵竇 铁窦 [tie3 dou4] {tit3 dau3}
 鑊仔 镬仔 [huo4 zi3] {wok6 zai2}
-鑰匙圈 钥匙圈 [yao4shi5 quan1] {joek6 si4 hyun1}
+鑰匙圈 钥匙圈 [yao4 shi5 quan1] {joek6 si4 hyun1}
 長倉 长仓 [zhang3 cang1] {coeng4 cong1}
 門口兒 门口兒 [men2kou3 ni2] {mun4 hau2 ji4}
 閂火 闩火 [shuan1 huo3] {saan1 fo2}
 開Ｂａｎｄ 开Ｂａｎｄ [kai1ｂａｎｄ] {hoi1 ben1}
 開Ｐ 开Ｐ [kai1ｐ] {hoi1 pi1}
-開倉 开仓 [kai1cang1-] {hoi1 cong1}
-開口及著脷 开口及着脷 [kai1kou3 ji2 zhe5 li4] {hoi1 hau2 gap6 zoek6 lei6}
+開倉 开仓 [kai1 cang1] {hoi1 cong1}
+開口及著脷 开口及着脷 [kai1 kou3 ji2 zhe5 li4] {hoi1 hau2 gap6 zoek6 lei6}
 開啲 开啲 [kai1 di1] {hoi1 di1}
 開大片 开大片 [kai1 da4 pian4] {hoi1 daai6 pin2}
 開晒巷 开晒巷 [kai1 shai4 xiang4] {hoi1 saai3 hong6}
-開水喉 开水喉 [kai1shui3 hou2] {hoi1 seoi2 hau4}
+開水喉 开水喉 [kai1 shui3 hou2] {hoi1 seoi2 hau4}
 開片劈友 开片劈友 [kai1 pian4 pi1 you3] {hoi1 pin2 pek3 jau2}
-開盤口 开盘口 [kai1pan2 kou3] {hoi1 pun4 hau2}
-開胃口 开胃口 [kai1wei4 kou3] {hoi1 wai6 hau2}
+開盤口 开盘口 [kai1 pan2 kou3] {hoi1 pun4 hau2}
+開胃口 开胃口 [kai1 wei4 kou3] {hoi1 wai6 hau2}
 開賭 开赌 [kai1 du3] {hoi1 dou2}
-開門見山講 开门见山讲 [kai1men2 jian4 shan1 jiang3] {hoi1 mun4 gin3 saan1 gong2}
+開門見山講 开门见山讲 [kai1 men2 jian4 shan1 jiang3] {hoi1 mun4 gin3 saan1 gong2}
 開雞竇 开鸡窦 [kai1 ji1 dou4] {hoi1 gai1 dau3}
 開香堂 开香堂 [kai1 xiang1 tang2] {hoi1 hoeng1 tong4}
 閒時 间时 [jian1 shi2] {haan4 si4*2}
 間房 间房 [jian1 fang2] {gaan3 fong2}
-間歇性 间歇性 [jian4xie1 xing4] {gaan3 hit3 sing3}
+間歇性 间歇性 [jian4 xie1 xing4] {gaan3 hit3 sing3}
 閪毛 閪毛 [se1 mao2] {hai1 mou4}
 閪水 閪水 [se1 shui3] {hai1 seoi2}
 閪鳩撚屌呀 閪鸠撚屌呀 [se1 jiu1 nian3 diao3 ya5] {hai1 gau1 lan2 diu2 aa3}
 關你叉事 关你叉事 [guan1 ni3 cha1 shi4] {gwaan1 nei5 caa1 si6}
 關你咩事 关你咩事 [guan1 ni3 mie1 shi4] {gwaan1 nei5 me1 si6}
-關你屁事 关你屁事 [guan1 ni3 pi4shi4] {gwaan1 nei5 pei3 si6}
-關你春事 关你春事 [guan1 ni3 chun1shi4] {gwaan1 nei5 ceon1 si6}
+關你屁事 关你屁事 [guan1 ni3 pi4 shi4] {gwaan1 nei5 pei3 si6}
+關你春事 关你春事 [guan1 ni3 chun1 shi4] {gwaan1 nei5 ceon1 si6}
 關你柒事 关你柒事 [guan1 ni3 qi1 shi4] {gwaan1 nei5 cat6 si6}
 關燈 关灯 [guan1 deng1] {gwaan1 dang1}
-阻住個地球轉 阻住个地球转 [zu3 zhu4 ge4 di4qiu2 zhuan3] {zo2 zyu6 go3 dei6 kau4 zyun3}
+阻住個地球轉 阻住个地球转 [zu3 zhu4 ge4 di4 qiu2 zhuan3] {zo2 zyu6 go3 dei6 kau4 zyun3}
 阻撚鳩柒住晒 阻撚鸠柒住晒 [zu3 nian3 jiu1 qi1 zhu4 shai4] {zo2 lan2 gau1 cat6 zyu6 saai3}
 阿一 阿一 [a1 yi1] {aa3 jat1}
 阿一哥 阿一哥 [a1 yi1 ge1] {aa3 jat1 go1}
 阿濃 阿浓 [a1 nong2] {aa3 nung4}
-阿公嘅 阿公嘅 [a1gong1 ge3] {aa3 gung1 ge3}
-阿婆賽跑 阿婆赛跑 [a1po2 sai4pao3] {aa3 po4 coi3 paau2}
+阿公嘅 阿公嘅 [a1 gong1 ge3] {aa3 gung1 ge3}
+阿婆賽跑 阿婆赛跑 [a1 po2 sai4 pao3] {aa3 po4 coi3 paau2}
 阿寶 阿宝 [a1 bao3] {aa3 bou2}
 阿毛 阿毛 [a1 mao2] {aa3 mou4}
 阿生 阿生 [a1 sheng1] {aa3 saang1}
@@ -26678,7 +26728,7 @@
 隊硬嘢 队硬嘢 [dui4 ying4 ye3] {deoi6 ngaang6 je5}
 隊硬嘢 队硬嘢 [dui4 ying4 ye3] {deoi2 ngaang6 je5}
 隊酒 队酒 [dui4 jiu3] {deoi6 zau2}
-隻ｄｕｐ 只ｄｕｐ [zhi1ｄｕｐ] {zek3 dap1 / dap6}
+隻ｄｕｐ 只ｄｕｐ [zhi1ｄｕｐ] {zek3 dap6}
 隻ｌｉｎ好大 只ｌｉｎ好大 [zhi1ｌｉｎ hao3 da4] {zek3 lin4 hou2 daai6}
 隻嘢 只嘢 [zhi1 ye3] {zek3 je5}
 雀粟 雀粟 [que4 su4] {zoek3 suk1}
@@ -26769,7 +26819,7 @@
 食到盡 食到尽 [shi2 dao4 jin4] {sik6 dou6 zeon6}
 食北姑 食北姑 [shi2 bei3 gu1] {sik6 bak1 gu1}
 食咗屎 食咗屎 [shi2 zuo5 shi3] {sik6 zo2 si2}
-食咗蒜頭 食咗蒜头 [shi2 zuo5 suan4tou2] {sik6 zo2 syun3 tau4}
+食咗蒜頭 食咗蒜头 [shi2 zuo5 suan4 tou2] {sik6 zo2 syun3 tau4}
 食唔晒 食唔晒 [shi2 wu2 shai4] {sik6 m4 saai3}
 食唔曬 食唔晒 [shi2 wu2 shai4] {sik6 m4 saai3}
 食四方飯 食四方饭 [shi2 si4fang1 fan4] {sik6 sei3 fong1 faan6}
@@ -27872,7 +27922,7 @@
 喻 喻 [yu4] {jyu6}
 㗎 㗎 [jia4] {gaa4}
 㗎 㗎 [jia4] {gaa2}
-㗎 㗎 [jia4] {gaa3/ gaa4}
+㗎 㗎 [jia4] {gaa3}
 嗄 嗄 [a2] {aa2}
 嗄 嗄 [a2] {haa2}
 嗄 嗄 [a2] {saa3}
@@ -28001,13 +28051,15 @@
 器 器 [qi4] {hei3}
 噩 噩 [e4] {ngok6}
 噪 噪 [zao4] {cou3}
-噫 噫 [yi1] {aai3 /ngaai3}
+噫 噫 [yi1] {aai3}
+噫 噫 [yi1] {ngaai3}
 噫 噫 [yi1] {ji1}
 噬 噬 [shi4] {sai6}
 噯 嗳 [ai3] {aai1}
 噯 嗳 [ai3] {oi2}
 噯 嗳 [ai3] {oi3}
-噯 嗳 [ai3] {ngoi2 /ngoi3}
+噯 嗳 [ai3] {ngoi2}
+噯 嗳 [ai3] {ngoi3}
 噱 噱 [jue2] {coek3}
 噱 噱 [jue2] {kek3}
 噱 噱 [jue2] {kek6}
@@ -28570,7 +28622,8 @@
 導 导 [dao3] {dou6}
 尐 尐 [jie2] {zik1}
 尐 尐 [jie2] {zit3}
-尐 尐 [jie2] {dit1 /di1}
+尐 尐 [jie2] {dit1}
+尐 尐 [jie2] {di1}
 尚 尚 [shang4] {soeng6}
 尢 尢 [wang1] {jau4}
 尢 尢 [wang1] {wong1}
@@ -29310,7 +29363,8 @@
 捵 捵 [chen1] {nin2}
 捺 捺 [na4] {naat6}
 捻 捻 [nian3] {nim1}
-捻 捻 [nian3] {nim2 /nim5}
+捻 捻 [nian3] {nim2}
+捻 捻 [nian3] {nim5}
 捻 捻 [nian3] {nin2}
 捻 捻 [nian3] {nip6}
 掀 掀 [xian1] {hin1}
@@ -29594,7 +29648,8 @@
 敞 敞 [chang3] {cong2}
 敢 敢 [gan3] {gam2}
 敦 敦 [dun1] {deoi1}
-敦 敦 [dun1] {deoi3 /deoi6}
+敦 敦 [dun1] {deoi3}
+敦 敦 [dun1] {deoi6}
 敦 敦 [dun1] {deon1}
 敦 敦 [dun1] {deon6}
 敦 敦 [dun1] {diu1}
@@ -29620,8 +29675,8 @@
 斜 斜 [xie2] {ce4}
 斜 斜 [xie2] {je4}
 斡 斡 [wo4] {gun2}
-斡 斡 [wo4] {waat3 /wat3}
 斡 斡 [wo4] {waat3}
+斡 斡 [wo4] {wat3}
 斤 斤 [jin1] {gan1}
 斤 斤 [jin1] {gan3}
 斥 斥 [chi4] {cik1}
@@ -29772,7 +29827,8 @@
 朵 朵 [duo3] {do2}
 朵 朵 [duo3] {doe2}
 朽 朽 [xiu3] {jau2}
-朽 朽 [xiu3] {nau2/ nau5}
+朽 朽 [xiu3] {nau2}
+朽 朽 [xiu3] {nau5}
 杆 杆 [gan1] {gon1}
 杈 杈 [cha1] {caa1}
 杈 杈 [cha1] {caa3}
@@ -31238,7 +31294,8 @@
 砰 砰 [peng1] {ping1}
 砰 砰 [peng1] {paang1}
 砰 砰 [peng1] {ping4}
-砲 砲 [pao4] {baau1/ baau3}
+砲 砲 [pao4] {baau1}
+砲 砲 [pao4] {baau3}
 砲 砲 [pao4] {paau3}
 砲 砲 [pao4] {paau4}
 砵 砵 [bo1] {but1}
@@ -32626,9 +32683,9 @@
 裸 裸 [luo3] {lo2}
 裸 裸 [luo3] {lo5}
 裹 裹 [guo3] {gwo2}
-裼 裼 [ti4] {sik3 /tik1}
-裼 裼 [ti4] {tai3}
+裼 裼 [ti4] {sik3}
 裼 裼 [ti4] {tik1}
+裼 裼 [ti4] {tai3}
 製 制 [zhi4] {zai3}
 褂 褂 [gua4] {gwaa3}
 褂 褂 [gua4] {kwaa2}
