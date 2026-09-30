@@ -439,13 +439,6 @@ void TestSqlDatabaseUtils::createV4Database(const QString &dbPath)
         ") ");
     QCOMPARE(query.lastError().type(), QSqlError::NoError);
     query.exec("CREATE TABLE example_links( "
-        "  example_translation_id INTEGER PRIMARY KEY ON CONFLICT IGNORE, "
-        "  translation TEXT, "
-        "  language TEXT, "
-        "  UNIQUE(example_translation_id, translation) ON CONFLICT IGNORE "
-        ") ");
-    QCOMPARE(query.lastError().type(), QSqlError::NoError);
-    query.exec("CREATE TABLE example_links( "
                "  fk_example_id INTEGER, "
                "  fk_example_translation_id INTEGER, "
                "  fk_source_id INTEGER, "
