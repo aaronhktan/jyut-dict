@@ -90,7 +90,7 @@ def parse_file(filename, entries):
 
             parsed_jyutping = ""
             generated_jyutping = ""
-            if '{' in line:
+            if "{" in line:
                 parsed_jyutping = line[line.index("{") + 1 : line.index("}")].lower()
             else:
                 generated_jyutping = pinyin_jyutping_sentence.jyutping(
@@ -105,10 +105,14 @@ def parse_file(filename, entries):
                 for char in han_chars:
                     char_jyutping = pycantonese.characters_to_jyutping(char)[0][1]
                     if char_jyutping:
-                        generated_jyutping = generated_jyutping.replace(char, char_jyutping)
+                        generated_jyutping = generated_jyutping.replace(
+                            char, char_jyutping
+                        )
 
             definitions = line[line.index("/") + 1 : line.rindex("/")].split("/")
-            entry = objects.Entry(trad=trad, simp=simp, jyut=parsed_jyutping, pin=pin, defs=definitions)
+            entry = objects.Entry(
+                trad=trad, simp=simp, jyut=parsed_jyutping, pin=pin, defs=definitions
+            )
             entry.add_fuzzy_jyutping(generated_jyutping)
 
             if trad in entries:
@@ -135,7 +139,11 @@ def parse_cc_cedict_canto_readings(filename, entries):
 
             for entry in entries[trad]:
                 # If it's an exact match, then set jyutping
-                if entry.simplified == simp and "".join(entry.pinyin.split()) == pin and not entry.jyutping:
+                if (
+                    entry.simplified == simp
+                    and "".join(entry.pinyin.split()) == pin
+                    and not entry.jyutping
+                ):
                     entry.add_jyutping(jyut)
                 # Otherwise, add as fuzzy
                 else:

@@ -114,15 +114,22 @@ def get_summaries(wiki_lang, titles):
     timeouts = 0
     while True:
         try:
-            resp = requests.get(url=url, params=params, timeout=30, headers={
-                "User-Agent": "JyutDictionary/1.0 (https://github.com/aaronhktan/jyut-dict; hi@jyutdictionary.com)"
-            })
+            resp = requests.get(
+                url=url,
+                params=params,
+                timeout=30,
+                headers={
+                    "User-Agent": "JyutDictionary/1.0 (https://github.com/aaronhktan/jyut-dict; hi@jyutdictionary.com)"
+                },
+            )
             time.sleep(0.5)
 
             data = resp.json()
             if "batchcomplete" not in data:
-                logging.warning(f"Batch complete was not available in response {resp.url}")
-                raise ValueError('Batch was not complete!')
+                logging.warning(
+                    f"Batch complete was not available in response {resp.url}"
+                )
+                raise ValueError("Batch was not complete!")
 
             break
         except (requests.ConnectionError, requests.Timeout, ValueError):
@@ -158,7 +165,12 @@ def get_summaries(wiki_lang, titles):
     return parsed
 
 
-def parse_fetched_summaries(src_dump_filepath, dest_dump_filepath, existing_src_summaries, existing_dest_summaries):
+def parse_fetched_summaries(
+    src_dump_filepath,
+    dest_dump_filepath,
+    existing_src_summaries,
+    existing_dest_summaries,
+):
     with open(src_dump_filepath, "r", encoding="utf8") as f:
         for line in f:
             summaries = json.loads(line)
@@ -172,7 +184,17 @@ def parse_fetched_summaries(src_dump_filepath, dest_dump_filepath, existing_src_
                 existing_dest_summaries[k] = v
 
 
-def parse_file(page_filepath, langlinks_filepath, src_dump_filepath, dest_dump_filepath, existing_src_summaries, existing_dest_summaries, lang_src, lang_dest, words):
+def parse_file(
+    page_filepath,
+    langlinks_filepath,
+    src_dump_filepath,
+    dest_dump_filepath,
+    existing_src_summaries,
+    existing_dest_summaries,
+    lang_src,
+    lang_dest,
+    words,
+):
     match lang_src:
         case "zh-yue":
             converter = yue_converter
@@ -190,8 +212,7 @@ def parse_file(page_filepath, langlinks_filepath, src_dump_filepath, dest_dump_f
 
         # Get the list of all non-redirect article pages in this Wikipedia
         c.execute(
-            (
-                """SELECT 
+            ("""SELECT 
                page_title, l.ll_title 
              FROM 
                page AS p
@@ -204,15 +225,12 @@ def parse_file(page_filepath, langlinks_filepath, src_dump_filepath, dest_dump_f
              AND 
                page_is_redirect = 0 
              AND 
-               ll_lang = ?"""
-            ),
+               ll_lang = ?"""),
             (lang_dest,),
         )
         rows = c.fetchall()
     else:
-        c.execute(
-            (
-                """SELECT 
+        c.execute(("""SELECT 
                p.page_title, o.page_title 
              FROM 
                page AS p
@@ -223,9 +241,7 @@ def parse_file(page_filepath, langlinks_filepath, src_dump_filepath, dest_dump_f
              WHERE 
                p.page_namespace = 0 
              AND 
-               p.page_is_redirect = 0"""
-            )
-        )
+               p.page_is_redirect = 0"""))
         rows = c.fetchall()
 
     for i in range(0, len(rows), 20):
@@ -263,10 +279,12 @@ def parse_file(page_filepath, langlinks_filepath, src_dump_filepath, dest_dump_f
                 dest_summaries[dest] = existing_dest_summaries[dest]
             else:
                 dest_strings_to_fetch.append(dest)
-        
+
         if dest_strings_to_fetch:
             if lang_src != lang_dest:
-                new_dest_summaries = get_summaries(lang_dest, "|".join(dest_strings_to_fetch))
+                new_dest_summaries = get_summaries(
+                    lang_dest, "|".join(dest_strings_to_fetch)
+                )
                 if new_dest_summaries:
                     with open(dest_dump_filepath, "a") as f:
                         f.write(f"{json.dumps(new_dest_summaries)}\n")
@@ -348,7 +366,6 @@ def parse_file(page_filepath, langlinks_filepath, src_dump_filepath, dest_dump_f
                     f.write(f"{json.dumps({dest_key: "␕"})}\n")
                 continue
 
-
             definition = objects.Definition(definition="\n".join(definition_components))
             freq = zipf_frequency(trad, "zh")
 
@@ -405,6 +422,18 @@ if __name__ == "__main__":
     parsed_words = defaultdict(list)
     existing_src_summaries = dict()
     existing_dest_summaries = dict()
-    parse_fetched_summaries(sys.argv[4], sys.argv[5], existing_src_summaries, existing_dest_summaries)
-    parse_file(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], existing_src_summaries, existing_dest_summaries, sys.argv[6], sys.argv[7], parsed_words)
+    parse_fetched_summaries(
+        sys.argv[4], sys.argv[5], existing_src_summaries, existing_dest_summaries
+    )
+    parse_file(
+        sys.argv[2],
+        sys.argv[3],
+        sys.argv[4],
+        sys.argv[5],
+        existing_src_summaries,
+        existing_dest_summaries,
+        sys.argv[6],
+        sys.argv[7],
+        parsed_words,
+    )
     write(sys.argv[1], source, parsed_words)

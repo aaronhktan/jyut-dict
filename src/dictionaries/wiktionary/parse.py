@@ -362,9 +362,11 @@ def parse_file(filename, words):
                         if pin_match:
                             pin = pin_match.group(1)
                         pinyin_list.append(process_mandarin_romanization(pin))
-                elif pron["tags"] == ["Mandarin", "Bopomofo", "Standard-Chinese"] or pron[
-                    "tags"
-                ] == [
+                elif pron["tags"] == [
+                    "Mandarin",
+                    "Bopomofo",
+                    "Standard-Chinese",
+                ] or pron["tags"] == [
                     "Mandarin",
                     "Bopomofo",
                     "Standard-Chinese",
@@ -414,7 +416,9 @@ def parse_file(filename, words):
                         )
                 elif pron["tags"] == ["Cantonese", "Guangzhou", "Jyutping"]:
                     if "zh_pron" in pron:
-                        jyutping_list.append(parse_cantonese_romanization(pron["zh_pron"]))
+                        jyutping_list.append(
+                            parse_cantonese_romanization(pron["zh_pron"])
+                        )
 
         if len(mainland_taiwain_pinyin_list) > len(pinyin_list):
             # There is a variance in pronunciation between Mainland China and Taiwan
@@ -542,11 +546,16 @@ def parse_file(filename, words):
                         objects.Example(lang="eng", content=example_translation)
                     )
                 else:
-                    if ("tags" in example
+                    if (
+                        "tags" in example
                         and "Traditional-Chinese" in example["tags"]
-                        and not any(ignored in example["tags"] for ignored in IGNORED_TEXT)
+                        and not any(
+                            ignored in example["tags"] for ignored in IGNORED_TEXT
+                        )
                     ):
-                        if "raw_tags" in example and not any(ignored in example["raw_tags"] for ignored in IGNORED_TEXT):
+                        if "raw_tags" in example and not any(
+                            ignored in example["raw_tags"] for ignored in IGNORED_TEXT
+                        ):
                             logging.warning(f"no match found for example: {example}")
 
         for jyutping in jyutping_list[1:]:

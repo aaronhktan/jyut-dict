@@ -28,8 +28,7 @@ if __name__ == "__main__":
     c.execute("ATTACH DATABASE '{}' AS db2".format(sys.argv[3]))
 
     # Insert from first database
-    c.execute(
-        """INSERT INTO entries(traditional,
+    c.execute("""INSERT INTO entries(traditional,
                 simplified,
                 pinyin,
                 jyutping,
@@ -39,10 +38,8 @@ if __name__ == "__main__":
                 pinyin,
                 jyutping,
                 frequency
-            FROM db1.entries"""
-    )
-    c.execute(
-        """INSERT INTO sources(sourcename,
+            FROM db1.entries""")
+    c.execute("""INSERT INTO sources(sourcename,
                 sourceshortname,
                 version,
                 description,
@@ -58,10 +55,8 @@ if __name__ == "__main__":
                 link,
                 update_url,
                 other
-            FROM db1.sources"""
-    )
-    c.execute(
-        """INSERT INTO definitions(definition,
+            FROM db1.sources""")
+    c.execute("""INSERT INTO definitions(definition,
                 label,
                 fk_entry_id,
                 fk_source_id)
@@ -69,10 +64,8 @@ if __name__ == "__main__":
                 label,
                 fk_entry_id,
                 fk_source_id
-            FROM db1.definitions"""
-    )
-    c.execute(
-        """INSERT INTO examples(example_id,
+            FROM db1.definitions""")
+    c.execute("""INSERT INTO examples(example_id,
                 traditional,
                 simplified,
                 pinyin,
@@ -84,19 +77,15 @@ if __name__ == "__main__":
                 pinyin,
                 jyutping,
                 language
-            FROM db1.examples"""
-    )
-    c.execute(
-        """INSERT INTO example_translations(example_translation_id,
+            FROM db1.examples""")
+    c.execute("""INSERT INTO example_translations(example_translation_id,
                 translation,
                 language)
             SELECT example_translation_id,
                 translation,
                 language
-            FROM db1.example_translations"""
-    )
-    c.execute(
-        """INSERT INTO example_links(fk_example_id,
+            FROM db1.example_translations""")
+    c.execute("""INSERT INTO example_links(fk_example_id,
                 fk_example_translation_id,
                 fk_source_id,
                 direct)
@@ -104,19 +93,15 @@ if __name__ == "__main__":
                 fk_example_translation_id,
                 fk_source_id,
                 direct
-            FROM db1.example_links"""
-    )
-    c.execute(
-        """INSERT INTO definitions_examples_links(fk_definition_id,
+            FROM db1.example_links""")
+    c.execute("""INSERT INTO definitions_examples_links(fk_definition_id,
                 fk_example_id)
             SELECT fk_definition_id,
                 fk_example_id
-            FROM db1.definitions_examples_links"""
-    )
+            FROM db1.definitions_examples_links""")
 
     # Insert from second database
-    c.execute(
-        """INSERT INTO entries(traditional, 
+    c.execute("""INSERT INTO entries(traditional, 
                 simplified, 
                 pinyin, 
                 jyutping, 
@@ -126,10 +111,8 @@ if __name__ == "__main__":
                 pinyin,
                 jyutping, 
                 frequency 
-            FROM db2.entries"""
-    )
-    c.execute(
-        """INSERT INTO sources(sourcename,
+            FROM db2.entries""")
+    c.execute("""INSERT INTO sources(sourcename,
                 sourceshortname,
                 version,
                 description,
@@ -145,10 +128,8 @@ if __name__ == "__main__":
                 link,
                 update_url,
                 other
-            FROM db2.sources"""
-    )
-    c.execute(
-        """INSERT INTO examples(example_id,
+            FROM db2.sources""")
+    c.execute("""INSERT INTO examples(example_id,
                 traditional,
                 simplified,
                 pinyin,
@@ -160,21 +141,17 @@ if __name__ == "__main__":
                 pinyin,
                 jyutping,
                 language
-            FROM db2.examples"""
-    )
-    c.execute(
-        """INSERT INTO example_translations(example_translation_id,
+            FROM db2.examples""")
+    c.execute("""INSERT INTO example_translations(example_translation_id,
                 translation,
                 language)
             SELECT example_translation_id,
                 translation,
                 language
-            FROM db2.example_translations"""
-    )
+            FROM db2.example_translations""")
 
     # Insert definitions separately, as their foreign key references need to be re-written
-    c.execute(
-        """WITH definitions_tmp AS (
+    c.execute("""WITH definitions_tmp AS (
                     SELECT entries.traditional AS traditional,
                         entries.simplified AS simplified,
                         entries.pinyin AS pinyin,
@@ -198,12 +175,10 @@ if __name__ == "__main__":
                 AND d.simplified = e.simplified
                 AND d.pinyin = e.pinyin
                 AND d.jyutping = e.jyutping
-        """
-    )
+        """)
 
     # Insert example links separately, as their example and source foreign keys need to be rewritten
-    c.execute(
-        """WITH example_links_with_source AS (
+    c.execute("""WITH example_links_with_source AS (
                     SELECT example_links.fk_example_id AS fk_ei,
                         example_links.fk_example_translation_id AS fk_eti,
                         example_links.direct AS direct,
@@ -243,8 +218,7 @@ if __name__ == "__main__":
                 AND e.pinyin = elwfk.pinyin
                 AND e.jyutping = elwfk.jyutping
                 AND e.language = elwfk.language
-        """
-    )
+        """)
 
     # Insert definitions => example links
 
@@ -259,8 +233,7 @@ if __name__ == "__main__":
     # In current database, get new_entry_and_definitions: [traditional | simplified | pinyin | jyutping | definition | label | source]
 
     # And replace the fk_definition_id for each example link when traditional/simplified/pinyin/jyutping/definition/label/source all match for a sentence.
-    c.execute(
-        """WITH entry_and_definitions AS (
+    c.execute("""WITH entry_and_definitions AS (
                     SELECT entries.traditional AS traditional,
                         entries.simplified AS simplified,
                         entries.pinyin AS pinyin,
@@ -329,8 +302,7 @@ if __name__ == "__main__":
                         AND del.pinyin = ned.pinyin
                         AND del.jyutping = ned.jyutping
                         AND del.source = ned.source
-        """
-    )
+        """)
 
     # Populate FTS versions of tables
     database.generate_indices(c)

@@ -6,7 +6,6 @@ import re
 import sys
 import time
 
-
 FIXUP_REGEX_PATTERN = re.compile(
     r"ERROR:root:Hmm, looks like the parsed word (.*) doesn't match the file name (.*)\."
 )
