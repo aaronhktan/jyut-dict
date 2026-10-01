@@ -269,9 +269,10 @@ def parse_file(
         src_strings_to_fetch = []
         for trad in src_strings:
             if trad in existing_src_summaries:
-                print(f"Cache hit: {trad}")
+                logging.info(f"Source cache hit: {trad}")
                 src_summaries[trad] = existing_src_summaries[trad]
             else:
+                logging.info(f"Source cache miss: {trad}")
                 src_strings_to_fetch.append(trad)
 
         if src_strings_to_fetch:
@@ -279,15 +280,23 @@ def parse_file(
             if new_src_summaries:
                 with open(src_dump_filepath, "a") as f:
                     f.write(f"{json.dumps(new_src_summaries)}\n")
+
+            with open(src_dump_filepath, "a") as f:
+                for src_string in src_strings_to_fetch:
+                    if src_string not in new_src_summaries:
+                        f.write(f"{json.dumps({src_string: "␕"})}\n")
+                        new_src_summaries[src_string] = "␕"
+
             src_summaries |= new_src_summaries
 
         dest_summaries = dict()
         dest_strings_to_fetch = []
         for dest in dest_strings:
             if dest in existing_dest_summaries:
-                print(f"Cache hit: {dest}")
+                logging.info(f"Dest cache hit: {dest}")
                 dest_summaries[dest] = existing_dest_summaries[dest]
             else:
+                logging.info(f"Dest cache miss: {dest}")
                 dest_strings_to_fetch.append(dest)
 
         if dest_strings_to_fetch:
@@ -298,16 +307,19 @@ def parse_file(
                 if new_dest_summaries:
                     with open(dest_dump_filepath, "a") as f:
                         f.write(f"{json.dumps(new_dest_summaries)}\n")
+
+                with open(dest_dump_filepath, "a") as f:
+                    for dest_string in dest_strings_to_fetch:
+                        if dest_string not in new_dest_summaries:
+                            f.write(f"{json.dumps({dest_string: "␕"})}\n")
+                            new_dest_summaries[dest_string] = "␕"
+
                 dest_summaries |= new_dest_summaries
             else:
                 dest_summaries = src_summaries
 
         for trad in src_strings:
-            if trad not in src_summaries:
-                with open(src_dump_filepath, "a") as f:
-                    f.write(f"{json.dumps({trad: "␕"})}\n")
-                continue
-            elif src_summaries[trad] == "␕":
+            if src_summaries[trad] == "␕":
                 continue
 
             summary = src_summaries[trad]
@@ -371,10 +383,6 @@ def parse_file(
                     if lang_dest not in ("zh", "zh-yue"):
                         dest_summary = dest_summary.replace(" ", "")
                     definition_components.append(dest_summary)
-            else:
-                with open(dest_dump_filepath, "a") as f:
-                    f.write(f"{json.dumps({dest_key: "␕"})}\n")
-                continue
 
             definition = objects.Definition(definition="\n".join(definition_components))
             freq = zipf_frequency(trad, "zh")
