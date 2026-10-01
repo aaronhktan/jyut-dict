@@ -100,6 +100,9 @@ def write(db_name, source, words):
 
 
 def get_summaries(wiki_lang, titles):
+    if not titles:
+        return dict()
+
     url = f"https://{wiki_lang}.wikipedia.org/w/api.php?exintro&explaintext&redirects"
 
     params = {
@@ -138,10 +141,17 @@ def get_summaries(wiki_lang, titles):
             time.sleep(120 * timeouts)
         except Exception as e:
             logging.error(e)
-            break
+            timeouts += 1
+            time.sleep(120 * timeouts)
 
     data = resp.json()
     parsed = dict()
+
+    if "query" not in data:
+        logging.error(
+            f"Query was not available in response {resp.url}"
+        )
+        return parsed
 
     for page_id in data["query"]["pages"]:
         page = data["query"]["pages"][page_id]
