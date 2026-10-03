@@ -215,7 +215,7 @@ void TestScriptDetector::noValidJyutping()
     QCOMPARE(detector.isValidJyutping(), false);
     QCOMPARE(detector.isValidPinyin(), false);
 
-    detector = {"ngngngngngngngngngngngngng"};
+    detector = {"ngngngngngngngngngngngngngg"};
     QCOMPARE(detector.containsSimplifiedChinese(), false);
     QCOMPARE(detector.containsTraditionalChinese(), false);
     QCOMPARE(detector.containsChinese(), false);
