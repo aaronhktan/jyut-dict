@@ -321,7 +321,7 @@ def parse_word_file(file_name, words):
         jyut_element = soup.find("span", class_="cardjyutping")
         jyut = jyut_element.get_text() if jyut_element else ""
         jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN.sub("", jyut)
-        jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN_VARIANT.sub("\g<2>", jyut)
+        jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN_VARIANT.sub(r"\g<2>", jyut)
         jyut = jyut.replace("  ", " ")  # Remove double-spaces
         jyut = jyut.strip()
 
@@ -438,7 +438,7 @@ def parse_word_file(file_name, words):
                     jyut = result.group(1)
                     jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN.sub("", jyut)
                     jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN_VARIANT.sub(
-                        "\g<2>", jyut
+                        r"\g<2>", jyut
                     )
                     pin = result.group(2) if result.group(2) else ""
                     meanings = []
@@ -468,7 +468,7 @@ def parse_word_file(file_name, words):
                     jyut = result.group(1)
                     jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN.sub("", jyut)
                     jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN_VARIANT.sub(
-                        "\g<2>", jyut
+                        r"\g<2>", jyut
                     )
                     meanings = []
                     variants_handled = True
@@ -563,7 +563,7 @@ def parse_sentence_file(file_name, sentences, translations):
         jyut_element = soup.find("span", class_="cardjyutping")
         jyut = jyut_element.get_text() if jyut_element else ""
         jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN.sub("", jyut)
-        jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN_VARIANT.sub("\g<2>", jyut)
+        jyut = LITERARY_CANTONESE_READING_REGEX_PATTERN_VARIANT.sub(r"\g<2>", jyut)
         jyut = jyut.strip()
 
         pin_element = soup.find("span", class_="cardpinyin")
@@ -642,7 +642,7 @@ if __name__ == "__main__":
                 "cantodict/data/scraped_sentences/ CantoDict CD 2021-07-18 "
                 '"CantoDict is a collaborative Chinese Dictionary project started in November 2003. '
                 'Entries are added and mistakes corrected by a team of kind volunteers from around the world." '
-                '"https://www.cantonese.sheik.co.uk/copyright.htm" "https://www.cantonese.sheik.co.uk/" "" "" '
+                '"https://www.cantonese.sheik.co.uk/copyright.htm" "https://www.cantonese.sheik.co.uk/" "" "words,examples" '
                 "cantodict/logging.log"
             )
         )

@@ -8,6 +8,7 @@ from database import database, objects
 import ast
 import csv
 import logging
+import re
 import sqlite3
 import sys
 
@@ -88,6 +89,13 @@ def parse_file(filename_traditional, filename_simplified_jyutping, entries):
     last_line = ""
     with open(filename_simplified_jyutping, "r", encoding="utf8") as f:
         last_line = f.readlines()[-1]
+    # The Jyutping data contains JavaScript-style unicode escapes (e.g. \u{2C0A9})
+    # for rare characters. Convert them to actual characters before evaluating.
+    last_line = re.sub(
+        r"\\u\{([0-9A-Fa-f]+)\}",
+        lambda m: chr(int(m.group(1), 16)),
+        last_line,
+    )
     simplified = ast.literal_eval(last_line)
 
     index = 0
@@ -193,7 +201,7 @@ if __name__ == "__main__":
                 "kaifangcidian/data/cidian_zhyue-jt-kfcd-yp-2019623.txt Kaifangcidian KFCD 2019-06-23 "
                 '"Kaifangcidian is a dictionary" '
                 '"本词典以创作共用“署名 3.0”许可协议授权发布（详见 http://creativecommons.org/licenses/by/3.0/）" '
-                '"http://www.kaifangcidian.com/han/yue" "" ""'
+                '"http://www.kaifangcidian.com/han/yue" "" "words"'
             )
         )
         sys.exit(1)

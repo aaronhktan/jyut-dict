@@ -1,5 +1,5 @@
-dragonmapper==0.2.6
-opencc==1.1.6
+dragonmapper==0.3.0
+opencc==1.4.2
 jieba==0.42.1
 pinyin_jyutping_sentence==1.0
-wordfreq==2.5.1
+wordfreq==3.1.1

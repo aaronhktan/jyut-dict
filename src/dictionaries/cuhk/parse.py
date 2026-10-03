@@ -28,7 +28,7 @@ JYUTPING_LETTERS_ID_REGEX = re.compile("MainContent_repeaterRecord_lbl粵語拼�
 JYUTPING_NUMBERS_ID_REGEX = re.compile("MainContent_repeaterRecord_lbl聲調_*")
 # CUHK indicates differences in literary and colloquial pronunciation [0-9]\*[0-9].
 # We don't want the literary pronunciation, so discard the first capturing group.
-JYUTPING_NUMBERS_REGEX = re.compile("(?:\d\*)*(\d+)")
+JYUTPING_NUMBERS_REGEX = re.compile(r"(?:\d\*)*(\d+)")
 MEANING_REGEX = re.compile(
     "MainContent_repeaterRecord_repeaterTranslation_0_lblTranslation_*"
 )

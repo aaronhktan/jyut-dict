@@ -16,115 +16,7 @@ import sys
 import sqlite3
 import unicodedata
 
-# Useful test words:
-# - 太: secondary mandarin pronunciation in parentheses
-# - 孫子: mandarin neutral tone
-# - 磚坯: multiple mandarin pronunciations
-# - 浣熊: Taiwan and Mainland China pronunciations
-# - 哎喲: Mandarin yo1 as syllable
-# - 三Q: Mandarin kiu1 as syllable
-# - M: Mandarin aim2 as syllable
-# - K: Mandarin kei1 as syllable
-# - 哦: Mandarin o2 as syllable
-# - 噷: Mandarin hm5 as syllable
-# - 呵: Mandarin o1 as syllable
-# - 哼: Mandarin 哼 as syllable
-# - 學生: Multiple pronunciations in Cantonese and Mandarin
-# - 佢哋: Basic Cantonese test
-# - 綠: ǜ in Pinyin
-# - 澳洲: example with numbers in Pinyin
-# - 2019冠狀病毒病: example with numbers in Pinyin
-# - 芒: duplicate definition
-# - 奇異筆: Basic Cantonese and Mandarin test
-# - 回去: Mandarin neutral tone
-# - 閪: Basic Cantonese test
-# - 女媧: has ü in Pinyin
-
-# Useful test examples:
-# - 呢度好閪热呀！ [Cantonese, simp.]nei¹ dou⁶ hou² hai¹ jit⁶ aa³! [Jyutping]
-# - 驚閪咩？／惊閪咩？ [Cantonese] ― geng¹ hai¹ me¹? [Jyutping] ― What the fuck I am afraid of?
-# - 有閪用！ [Cantonese] ― jau⁵ hai¹ jung⁶! [Jyutping] ― There is no effing use of it!
-# - 撚狗行动 [Cantonese, simp.]From: 2019, https://hk.news.appledaily.com/local/realtime/article/20190621/59740269\nlan² gau² hang⁴ dung⁶ [Jyutping]
-# - 佢识得话人唔识得话自己。 [Guangzhou Cantonese, simp.]keoi⁵ sik¹ dak¹ waa⁶ jan⁴ m⁴ sik¹ dak¹ waa⁶ zi⁶ gei². [Jyutping]
-# - 冬天捐咗入被窦度就唔愿起身。 [Cantonese, simp.]From: 開放詞典 [Kaifang Cidian]\ndung¹ tin¹ gyun¹ zo² jap⁶ pei⁵ dau³ dou⁶ zau⁶ m⁴ jyun⁶ hei² san¹. [Jyutping]
-# - 我而家喺香港。 [Cantonese, trad. and simp.]ngo⁵ ji⁴ gaa¹ hai² hoeng¹ gong². [Jyutping]
-# - 情義已失去，恩愛都失去 [Literary Cantonese, trad.]
-# - 扮示威者 [Cantonese, trad. and simp.]From: 2019, 便衣警扮示威者偷拍人群, in Apple Daily https://hk.news.appledaily.com/local/daily/article/20190627/20714653
-# - C：边队band先？\nA：系\U0003154c。冇讲到系边队band。 [Cantonese, simp.]From: 1998, 收音機1 (Radio 1), Hong Kong Cantonese Corpus (HKCanCor)\nC: Bin¹ deoi⁶ ben¹ sin¹?\nA: Hai⁶ lo¹. mou⁵ gong² dou³ hai⁶ bin¹ deoi⁶ ben¹. [Jyutping]
-# - 扮示威者 [Cantonese, trad. and simp.]From: 2019, 便衣警扮示威者偷拍人群, in Apple Daily https://hk.news.appledaily.com/local/daily/article/20190627/2071465
-# - 佢哋係學生。／佢哋系学生。 [Guangzhou Cantonese] ― keoi⁵ dei⁶ hai⁶ hok⁶ saang¹. [Jyutping] ― They are students.
-# - 达到高效、稳定、安全 [MSC, simp.]dádào gāoxiào, wěndìng, ānquán [Pinyin]
-# - 阿Q被抬上了一辆没有蓬的车，几个短衣人物也和他同坐在一处。 [MSC, simp.]From: Lu Xun, 1922. The True Story of Ah Q (《阿Q正傳》)\nĀqiū bèi tái shàng le yī liàng méiyǒu péng de chē, jǐ ge duǎnyī rénwù yě hé tā tóng zuò zài yī chù. [Pinyin]
-# - 我被机构投资者割韭菜了。 [MSC, simp.]From:\n10 February 2021, ““割韭菜”“韭菜”用英语怎么说？
-# - 你把事情搞糟了，卻倒轉來怪我。 [MSC, trad.]\n你把事情搞糟了，却倒转来怪我。 [MSC, simp.]Nǐ bǎ shìqíng gǎo zāo le, què dàozhuǎn lái guài wǒ. [Pinyin]
-# - 江干 ― jiānggān
-# - 腰圍／腰围 ― yāowéi ― waistline
-# - zhǐshì wēixiǎo de guāng, zhào bù liàng yī mǐ de dìfāng [Pinyin]
-# - 那是一深夜 [Beijing Mandarin, trad. and simp.]From: 2000, 梁左 and 梁欢, 《闲人马大姐》, episode 7, 18:30
-# - 她最近跑到上海去了。 [MSC, trad. and simp.]Tā zuìjìn pǎo dào Shànghǎi qù le. [Pinyin]
-# - 只是微小的光 照不亮一米的地方 [MSC, trad. and simp.]From: 2020, 曹楊／曹杨 (Young), 微光 (Glimmer)
-# - 這桌椅板凳都得從新打，太麻煩。 [Beijing Mandarin, trad.]\n这桌椅板凳都得从新打，太麻烦。 [Beijing Mandarin, simp.]Zhè zhuōyǐbǎndèng dōu děi cóngxīn dǎ, tài máfan. [Pinyin]
-# - 现在的孩子们啊嘴都刁着呢，啊。 [Beijing Mandarin, simp.]From: 2004, 《家有儿女》, episode 68\nXiànzài de háizimen a zuǐ dōu diāo zhe ne, ā. [Pinyin]
-# - 那是一深夜 [Beijing Mandarin, trad. and simp.]From: 2000, 梁左 and 梁欢, 《闲人马大姐》, episode 7, 18:30
-# - 奴才替天下百姓感激皇太后恩典！ [MSC, trad. and simp.]From: 2010, The Firmament of the Pleiades Núcái tì tiānxià bǎixìng gǎnjī huángtàihòu ēndiǎn! [Pinyin]
-# - 有一個人，是從神那裡差來的，名叫約翰。 [MSC, trad.]
-# - 有一个人，是从神那里差来的，名叫约翰。 [MSC, simp.]Yǒu yī ge rén, shì cóng shén nàlǐ chā lái de, míng jiào Yuēhàn. [Pinyin]
-# - 据英国《每日邮报》5月9日报导，不久前，意大利海关在从中国运过来的集装箱里发现一只小橘猫。 [MSC, simp.]From:\n2019, “中国小猫被困在集装箱 “漂流”40多天到意大利”, in sina:\nJù Yīngguó “Měirì Yóubào” 5 yuè 9 rì bàodǎo, bùjiǔqián, Yìdàlì hǎiguān zài cóng zhōngguó yùnguòlái de jízhuāngxiānglǐ fāxiàn yī zhī xiǎo júmāo. [Pinyin]
-# - 甲：为啥你穿校服？\n乙：去上课呗。 [MSC, simp.]Jiǎ: Wèishá nǐ chuān xiàofú?\nYǐ: Qù shàngkè bei. [Pinyin]
-# - 而现在\n乡愁是一湾浅浅的海峡\n我在这头\n大陆在那头 [MSC, simp.]From: 1972, 余光中 (Yu Kwang-chung), 鄉愁\nér xiànzài\nxiāngchóu shì yī wān qiǎn qiǎn de hǎixiá\nwǒ zài zhè tóu\nDàlù zài nà tóu [Pinyin]
-# - 这孙子成绩好是因为丫老给老师舔屁眼。 [Beijing Mandarin, simp.]Zhè sūnzi chéngjì hǎo shì yīnwèi yā lǎo gěi lǎoshī tiǎn pìyǎn. [Pinyin]
-
-CANTONESE_REGEX_0 = re.compile(
-    r"(.*)\s\[(?:.* )?Cantonese.*?\]\s―\s(.*?)\s\[Jyutping\]\s―\s(.*)"
-)
-CANTONESE_REGEX_1 = re.compile(
-    r"((?:.|\n)*) \[(?:.* )?Cantonese.*?\](?:From:\s.*?\n)?((?:.|\n)*) \[Jyutping\]"
-)
-CANTONESE_REGEX_2 = re.compile(r"(.*?) \[Cantonese, trad. and simp.\](From:\s.*?\\n)?")
-CANTONESE_REGEX_3 = re.compile(r"(.*)\s\[Cantonese.*?\]")
-
 JYUTPING_COLLOQUIAL_PRONUNCIATION = re.compile(r".⁻(.)")
-JYUTPING_REGEX_0 = re.compile(r"(.*)\[Jyutping\]")
-
-MANDARIN_REGEX_0 = re.compile(
-    r"(.*?) \[MSC, trad\.\]\n(?:.*?) \[MSC, simp.\](.*) \[Pinyin\](?:\n)?((?:.|\n)*)?"
-)
-MANDARIN_REGEX_1 = re.compile(
-    r"((?:.|\n)*) \[MSC, simp\.\](?:From:(?:.*|\n*)\n)?((?:.|\n)*) \[Pinyin\](?:\n)?((?:.|\n)*)?"
-)
-MANDARIN_REGEX_2 = re.compile(
-    r"((?:.|\n)*) \[MSC, trad\.\](?:From:(?:.*|\n*)\n)?((?:.|\n)*) \[Pinyin\](?:\n)?((?:.|\n)*)?"
-)
-MANDARIN_REGEX_3 = re.compile(
-    r"(.*?) \[MSC, trad\. and simp\.\](?:From:.*\n?.*\n?)?(.*?) \[Pinyin\](?:\n)?((?:.|\n)*)?"
-)
-MANDARIN_REGEX_4 = re.compile(r"(.*?) \[MSC, trad\. and simp\.\](.*)")
-MANDARIN_REGEX_5 = re.compile(
-    r"(.*?) \[Beijing Mandarin, trad\.\].* \[Beijing Mandarin, simp.\](?:(.*)*?(?: \[Pinyin\]))?"
-)
-MANDARIN_REGEX_6 = re.compile(
-    r"(.*?) \[Beijing Mandarin, simp\.\](?:From: .*?\n)?(?:(.*)*?(?: \[Pinyin\]))?"
-)
-MANDARIN_REGEX_7 = re.compile(
-    r"(.*?) \[Beijing Mandarin, trad\.\](?:From: .*?\n)?(?:(.*)*?(?: \[Pinyin\]))?"
-)
-MANDARIN_REGEX_8 = re.compile(
-    r"(.*?) \[Beijing Mandarin, trad\. and simp.\](?:From: .*?\n)?(?:(.*)(?: \[Pinyin\]))?"
-)
-MANDARIN_REGEX_9 = re.compile(
-    r"(.*?) \[Taiwanese Mandarin, simp\.\](From: .*?\n)?(?:(.*)*?(?: \[Pinyin\]))?"
-)
-MANDARIN_REGEX_10 = re.compile(
-    r"(.*?) \[Taiwanese Mandarin, trad\.\](From: .*?\n)?(?:(.*)*?(?: \[Pinyin\]))?"
-)
-MANDARIN_REGEX_11 = re.compile(
-    r"(.*?) \[Taiwanese Mandarin, trad\. and simp\.\](?:From:(?:.*|\n*)(?:\n|” ))(.*?) \[Pinyin\]"
-)
-MANDARIN_REGEX_12 = re.compile(
-    r"((?:.|\n)*)? \[Taiwanese Mandarin\] ― ((?:.|\n)*)? \[Pinyin\] ― ((?:.|\n)*)?"
-)
-MANDARIN_REGEX_13 = re.compile(r"(.*)\s―\s(.*)\s―\s(.*)")
-MANDARIN_REGEX_14 = re.compile(r"(.*?)\s―\s(.*)")
 
 PINYIN_TONELESS_SYLLABLE_PRONUNCIATION = re.compile(
     r"(?:.*)→ (.*) \(toneless final syllable variant\)"
@@ -160,12 +52,6 @@ for i in range(sys.maxunicode):
         PUNCTUATION_TABLE[i] = " " + chr(i) + " "
         PUNCTUATION_SET.add(chr(i))
 
-LANGUAGE_INDICATOR = (
-    "Cantonese",
-    "MSC",
-    "Mandarin",
-)
-
 IGNORED_TEXT = (
     # We should eventually parse Literary and Classical Chinese, but ignore for now
     "Literary Chinese",
@@ -177,6 +63,7 @@ IGNORED_TEXT = (
     "dialectal Mandarin",
     "Central Plains Mandarin",
     "Guilin Mandarin",
+    "Hakka Transliteration Scheme",
     "Lanyin Mandarin",
     "Malaysian Mandarin",
     "Nanjing Mandarin",
@@ -186,22 +73,44 @@ IGNORED_TEXT = (
     "Tianjin Mandarin",
     "Yangzhou Mandarin",
     # Other Sinitic languages or writing systems
-    "Gan, simp.",
+    "Bàng-uâ-cê / IPA",
+    "Eastern Min",
     "Fangyan",
+    "Gan, simp.",
+    "Guangdong Romanization",
     "Hainanese",
     "Hakka",
+    "Hakka Common Romanization Scheme",
+    "Hakka Transliteration Scheme",
+    "Hangzhounese",
     "Hokkien",
+    "IPA",
+    "Jyutping++",
+    "Kienning Colloquial Romanized",
+    "Meixian Hakka",
     "Min Bei",
     "Min Dong",
+    "Nankinese Pinyin",
+    "Nanning Pinghua",
+    "Northern Wu",
+    "Pha̍k-fa-sṳ",
     "Pe̍h-ōe-jī",
+    "Pouseng Ping'ing",
     "Shanghainese",
     "Sichuanese",
+    "Sichuanese Pinyin",
     "Sino-Korean",
     "Sino-Vietnamese",
+    "Sixian Hakka",
     "Suzhounese",
     "Taishanese",
+    "Taiwanese Hakka Romanization System",
     "Teochow",
     "Teochew",
+    "Waxiang",
+    "Wenzhounese",
+    "Wugniu",
+    "Wiktionary",
     # Wiktionary stuff
     "alt. forms:",
     "Citations:man",
@@ -424,6 +333,9 @@ def parse_file(filename, words):
 
         data = json.loads(line)
 
+        if "lang_code" not in data or data["lang_code"] != "zh":
+            continue
+
         trad = data["word"]
         simp = traditional_to_simplified_converter.convert(trad)
 
@@ -436,45 +348,49 @@ def parse_file(filename, words):
                 if "tags" not in pron:
                     continue
 
-                if pron["tags"] == ["Mandarin", "Pinyin", "standard"] or pron[
+                if pron["tags"] == ["Mandarin", "Pinyin", "Standard-Chinese"] or pron[
                     "tags"
                 ] == [
                     "Mandarin",
                     "Pinyin",
-                    "standard",
+                    "Standard-Chinese",
                     "toneless-final-syllable-variant",
                 ]:
-                    pin = pron["zh-pron"]
-                    pin_match = PINYIN_EXTRA_ANNOTATION_REGEX.match(pin)
-                    if pin_match:
-                        pin = pin_match.group(1)
-                    pinyin_list.append(process_mandarin_romanization(pin))
-                elif pron["tags"] == ["Mandarin", "bopomofo", "standard"] or pron[
-                    "tags"
-                ] == [
+                    if "zh_pron" in pron:
+                        pin = pron["zh_pron"]
+                        pin_match = PINYIN_EXTRA_ANNOTATION_REGEX.match(pin)
+                        if pin_match:
+                            pin = pin_match.group(1)
+                        pinyin_list.append(process_mandarin_romanization(pin))
+                elif pron["tags"] == [
                     "Mandarin",
-                    "bopomofo",
-                    "standard",
+                    "Bopomofo",
+                    "Standard-Chinese",
+                ] or pron["tags"] == [
+                    "Mandarin",
+                    "Bopomofo",
+                    "Standard-Chinese",
                     "toneless-final-syllable-variant",
                 ]:
-                    bopomofo = pron["zh-pron"]
-                    bopomofo_to_pinyin_list.append(
-                        process_mandarin_romanization(bopomofo)
-                    )
+                    if "zh_pron" in pron:
+                        bopomofo = pron["zh_pron"]
+                        bopomofo_to_pinyin_list.append(
+                            process_mandarin_romanization(bopomofo)
+                        )
                 elif (
                     pron["tags"]
                     == [
                         "Mainland-China",
                         "Mandarin",
                         "Standard-Chinese",
-                        "bopomofo",
+                        "Bopomofo",
                     ]
                     or pron["tags"]
                     == [
                         "Mainland-China",
                         "Mandarin",
                         "Standard-Chinese",
-                        "bopomofo",
+                        "Bopomofo",
                         "toneless-final-syllable-variant",
                     ]
                     or pron["tags"]
@@ -482,23 +398,27 @@ def parse_file(filename, words):
                         "Mandarin",
                         "Standard-Chinese",
                         "Taiwan",
-                        "bopomofo",
+                        "Bopomofo",
                     ]
                     or pron["tags"]
                     == [
                         "Mandarin",
                         "Standard-Chinese",
                         "Taiwan",
-                        "bopomofo",
+                        "Bopomofo",
                         "toneless-final-syllable-variant",
                     ]
                 ):
-                    bopomofo = pron["zh-pron"]
-                    mainland_taiwain_pinyin_list.append(
-                        process_mandarin_romanization(bopomofo)
-                    )
+                    if "zh_pron" in pron:
+                        bopomofo = pron["zh_pron"]
+                        mainland_taiwain_pinyin_list.append(
+                            process_mandarin_romanization(bopomofo)
+                        )
                 elif pron["tags"] == ["Cantonese", "Guangzhou", "Jyutping"]:
-                    jyutping_list.append(parse_cantonese_romanization(pron["zh-pron"]))
+                    if "zh_pron" in pron:
+                        jyutping_list.append(
+                            parse_cantonese_romanization(pron["zh_pron"])
+                        )
 
         if len(mainland_taiwain_pinyin_list) > len(pinyin_list):
             # There is a variance in pronunciation between Mainland China and Taiwan
@@ -518,7 +438,7 @@ def parse_file(filename, words):
             pin = (
                 " ".join(
                     lazy_pinyin(
-                        generated_pinyin,
+                        simp,
                         style=Style.TONE3,
                         neutral_tone_with_five=True,
                         v_to_u=True,
@@ -527,7 +447,7 @@ def parse_file(filename, words):
                 .lower()
                 .replace("ü", "u:")
             )
-            pinyin_list = [generated_pinyin]
+            pinyin_list = [pin]
 
         freq = zipf_frequency(trad, "zh")
 
@@ -586,8 +506,10 @@ def parse_file(filename, words):
                 found_example = False
                 if (
                     "roman" in example
-                    and "english" in example
                     and transcriptions.is_pinyin_compatible(example["roman"])
+                    and "tags" in example
+                    and "Traditional-Chinese" in example["tags"]
+                    and not any(ignored in example["tags"] for ignored in IGNORED_TEXT)
                 ):
                     found_example = True
                     example_text = example["text"].split("／")[0]
@@ -595,407 +517,25 @@ def parse_file(filename, words):
                         example["roman"]
                     )
                     example_translation = (
-                        example["english"] if "english" in example else ""
+                        example["english"] if "english" in example else "x"
                     )
                     lang = "cmn"
-                elif "text" in example:
-                    if all(
-                        language not in example["text"]
-                        for language in LANGUAGE_INDICATOR
-                    ):
-                        if "ref" not in example:
-                            continue
-                        elif all(
-                            language not in example["ref"]
-                            for language in LANGUAGE_INDICATOR
-                        ):
-                            continue
-                    if any(ignored in example["text"] for ignored in IGNORED_TEXT):
-                        continue
-                    elif "ref" in example and any(
-                        ignored in example["ref"] for ignored in IGNORED_TEXT
-                    ):
-                        continue
-
-                    # Generally, the Chinese sentence is in example["text"]
-                    # But sometimes, it is in example["ref"]
-                    if not found_example:
-                        match = CANTONESE_REGEX_0.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = match.group(1).split("／")[0]
-                            example_romanization = parse_cantonese_romanization(
-                                match.group(2)
-                            )
-                            example_translation = match.group(3)
-                            lang = "yue"
-
-                    if not found_example:
-                        match = CANTONESE_REGEX_1.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = match.group(1)
-                            example_romanization = parse_cantonese_romanization(
-                                match.group(2)
-                            )
-                            example_translation = (
-                                example["english"] if "english" in example else ""
-                            )
-                            lang = "yue"
-                        elif "ref" in example:
-                            match = CANTONESE_REGEX_1.match(example["ref"])
-                            if match:
-                                found_example = True
-                                example_text = match.group(1)
-                                example_romanization = parse_cantonese_romanization(
-                                    match.group(2)
-                                )
-                                example_translation = (
-                                    example["text"] if "text" in example else ""
-                                )
-                                lang = "yue"
-
-                    if not found_example:
-                        match = CANTONESE_REGEX_2.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = match.group(1)
-                            example_romanization = ""
-                            example_translation = (
-                                example["english"] if "english" in example else ""
-                            )
-                            lang = "yue"
-                        elif "ref" in example:
-                            match = CANTONESE_REGEX_2.match(example["ref"])
-                            if match:
-                                found_example = True
-                                example_text = match.group(1)
-                                jyutping_match = JYUTPING_REGEX_0.match(example["text"])
-                                example_romanization = (
-                                    jyutping_match.group(1) if jyutping_match else ""
-                                )
-                                example_romanization = example_romanization.translate(
-                                    SUPERSCRIPT_EQUIVALENT
-                                )
-                                example_translation = (
-                                    example["english"] if "english" in example else ""
-                                )
-                                lang = "yue"
-
-                    if not found_example:
-                        match = CANTONESE_REGEX_3.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = match.group(1)
-                            example_romanization = ""
-                            example_translation = (
-                                example["english"] if "english" in example else ""
-                            )
-                            lang = "yue"
-
-                    if not found_example:
-                        match = MANDARIN_REGEX_0.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = match.group(1)
-                            example_romanization = match.group(2)
-                            example_romanization = process_mandarin_romanization(
-                                example_romanization
-                            )
-                            example_translation = (
-                                example["english"]
-                                if "english" in example
-                                else match.group(3)
-                            )
-                            lang = "cmn"
-
-                    if not found_example:
-                        match = MANDARIN_REGEX_1.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = simplified_to_traditional_converter.convert(
-                                match.group(1)
-                            )
-                            example_romanization = match.group(2)
-                            example_romanization = process_mandarin_romanization(
-                                example_romanization
-                            )
-                            example_translation = (
-                                example["english"]
-                                if "english" in example
-                                else match.group(3)
-                            )
-                            lang = "cmn"
-
-                    if not found_example:
-                        match = MANDARIN_REGEX_2.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = match.group(1)
-                            example_romanization = match.group(2)
-                            example_romanization = process_mandarin_romanization(
-                                example_romanization
-                            )
-                            example_translation = (
-                                example["english"]
-                                if "english" in example
-                                else match.group(3)
-                            )
-                            lang = "cmn"
-
-                    if not found_example:
-                        match = MANDARIN_REGEX_3.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = match.group(1)
-                            example_romanization = match.group(2)
-                            example_romanization = process_mandarin_romanization(
-                                example_romanization
-                            )
-                            example_translation = (
-                                example["english"]
-                                if "english" in example
-                                else match.group(3)
-                            )
-                            lang = "cmn"
-                        else:
-                            match = (
-                                MANDARIN_REGEX_3.match(example["ref"])
-                                if "ref" in example
-                                else None
-                            )
-                            if match:
-                                found_example = True
-                                example_text = match.group(1)
-                                example_romanization = match.group(2)
-                                example_romanization = process_mandarin_romanization(
-                                    example_romanization
-                                )
-                                example_translation = (
-                                    example["english"]
-                                    if "english" in example
-                                    else match.group(3)
-                                )
-                                lang = "cmn"
-
-                    if not found_example:
-                        match = MANDARIN_REGEX_4.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = match.group(1)
-                            example_romanization = match.group(2)
-                            example_romanization = process_mandarin_romanization(
-                                example_romanization
-                            )
-                            example_translation = (
-                                example["english"] if "english" in example else ""
-                            )
-                            lang = "cmn"
-                        else:
-                            match = (
-                                MANDARIN_REGEX_4.match(example["ref"])
-                                if "ref" in example
-                                else None
-                            )
-                            if match:
-                                found_example = True
-                                example_text = match.group(1)
-                                example_romanization = example["ref"]
-                                pinyin_match = PINYIN_REGEX_0.match(
-                                    example_romanization
-                                )
-                                example_romanization = (
-                                    pinyin_match.group(1) if pinyin_match else ""
-                                )
-                                example_romanization = process_mandarin_romanization(
-                                    example_romanization
-                                )
-                                example_translation = (
-                                    example["english"] if "english" in example else ""
-                                )
-                                lang = "cmn"
-
-                    if not found_example:
-                        match = MANDARIN_REGEX_5.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = match.group(1)
-                            example_romanization = match.group(2)
-                            example_romanization = process_mandarin_romanization(
-                                example_romanization
-                            )
-                            example_translation = (
-                                example["english"] if "english" in example else ""
-                            )
-                            lang = "cmn"
-
-                    if not found_example:
-                        match = MANDARIN_REGEX_6.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = match.group(1)
-                            example_romanization = match.group(2)
-                            example_romanization = process_mandarin_romanization(
-                                example_romanization
-                            )
-                            example_translation = (
-                                example["english"] if "english" in example else ""
-                            )
-                            lang = "cmn"
-
-                    if not found_example:
-                        match = MANDARIN_REGEX_7.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = match.group(1)
-                            example_romanization = (
-                                match.group(2) if match.group(2) else ""
-                            )
-                            example_romanization = process_mandarin_romanization(
-                                example_romanization
-                            )
-                            example_translation = (
-                                example["english"] if "english" in example else ""
-                            )
-                            lang = "cmn"
-
-                    if not found_example:
-                        match = MANDARIN_REGEX_8.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = match.group(1)
-                            example_romanization = match.group(2)
-                            example_romanization = process_mandarin_romanization(
-                                example_romanization
-                            )
-                            example_translation = (
-                                example["english"] if "english" in example else ""
-                            )
-                            lang = "cmn"
-                        else:
-                            match = (
-                                MANDARIN_REGEX_8.match(example["ref"])
-                                if "ref" in example
-                                else None
-                            )
-                            if match:
-                                found_example = True
-                                example_text = match.group(1)
-                                example_romanization = (
-                                    match.group(2) if match.group(2) else ""
-                                )
-                                example_romanization = process_mandarin_romanization(
-                                    example_romanization
-                                )
-                                example_translation = (
-                                    example["english"] if "english" in example else ""
-                                )
-                                lang = "cmn"
-
-                    if not found_example:
-                        match = MANDARIN_REGEX_9.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = match.group(1)
-                            example_romanization = (
-                                match.group(2) if match.group(2) else ""
-                            )
-                            example_romanization = process_mandarin_romanization(
-                                example_romanization
-                            )
-                            example_translation = (
-                                example["english"] if "english" in example else ""
-                            )
-                            lang = "cmn"
-
-                    if not found_example:
-                        match = MANDARIN_REGEX_10.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = match.group(1)
-                            example_romanization = (
-                                match.group(2) if match.group(2) else ""
-                            )
-                            example_romanization = process_mandarin_romanization(
-                                example_romanization
-                            )
-                            example_translation = (
-                                example["english"] if "english" in example else ""
-                            )
-                            lang = "cmn"
-
-                    if not found_example:
-                        match = MANDARIN_REGEX_11.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = match.group(1)
-                            example_romanization = (
-                                match.group(2) if match.group(2) else ""
-                            )
-                            example_romanization = process_mandarin_romanization(
-                                example_romanization
-                            )
-                            example_translation = (
-                                example["english"] if "english" in example else ""
-                            )
-                            lang = "cmn"
-                        else:
-                            match = (
-                                MANDARIN_REGEX_11.match(example["ref"])
-                                if "ref" in example
-                                else None
-                            )
-                            if match:
-                                found_example = True
-                                example_text = match.group(1)
-                                example_romanization = (
-                                    match.group(2) if match.group(2) else ""
-                                )
-                                example_romanization = process_mandarin_romanization(
-                                    example_romanization
-                                )
-                                example_translation = (
-                                    example["text"] if "text" in example else ""
-                                )
-                                lang = "cmn"
-
-                    if not found_example:
-                        match = MANDARIN_REGEX_12.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = match.group(1)
-                            example_romanization = match.group(2)
-                            example_romanization = process_mandarin_romanization(
-                                example_romanization
-                            )
-                            example_translation = match.group(3)
-                            lang = "cmn"
-
-                    if not found_example:
-                        match = MANDARIN_REGEX_13.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = match.group(1)
-                            example_romanization = match.group(2)
-                            example_romanization = process_mandarin_romanization(
-                                example_romanization
-                            )
-                            example_translation = match.group(3)
-                            lang = "cmn"
-
-                    if not found_example:
-                        match = MANDARIN_REGEX_14.match(example["text"])
-                        if match:
-                            found_example = True
-                            example_text = match.group(1)
-                            example_romanization = match.group(2)
-                            example_romanization = process_mandarin_romanization(
-                                example_romanization
-                            )
-                            example_translation = (
-                                ""  # This regex does not have pronunciation
-                            )
-                            lang = "cmn"
+                elif (
+                    "roman" in example
+                    and "tags" in example
+                    and "Jyutping" in example["tags"]
+                    and "Traditional-Chinese" in example["tags"]
+                    and not any(ignored in example["tags"] for ignored in IGNORED_TEXT)
+                ):
+                    found_example = True
+                    example_text = example["text"]
+                    example_romanization = parse_cantonese_romanization(
+                        example["roman"]
+                    )
+                    example_translation = (
+                        example["english"] if "english" in example else "x"
+                    )
+                    lang = "yue"
 
                 if found_example:
                     definition.examples.append([])
@@ -1006,7 +546,17 @@ def parse_file(filename, words):
                         objects.Example(lang="eng", content=example_translation)
                     )
                 else:
-                    logging.warning("no match found for example", example)
+                    if (
+                        "tags" in example
+                        and "Traditional-Chinese" in example["tags"]
+                        and not any(
+                            ignored in example["tags"] for ignored in IGNORED_TEXT
+                        )
+                    ):
+                        if "raw_tags" in example and not any(
+                            ignored in example["raw_tags"] for ignored in IGNORED_TEXT
+                        ):
+                            logging.warning(f"no match found for example: {example}")
 
         for jyutping in jyutping_list[1:]:
             new_entry = copy.deepcopy(entry)
@@ -1037,7 +587,7 @@ if __name__ == "__main__":
                 '"Wiktionary is a collaborative project to produce a free-content multilingual dictionary. '
                 'It aims to describe all words of all languages using definitions and descriptions in English." '
                 '"Text is available under the Creative Commons Attribution-ShareAlike License; additional terms may apply." '
-                '"https://en.wiktionary.org/wiki/Wiktionary:Main_Page" "" "words,sentences"'
+                '"https://en.wiktionary.org/wiki/Wiktionary:Main_Page" "" "words,examples"'
             )
         )
         sys.exit(1)

@@ -1,6 +1,5 @@
 def create_tables(c):
-    c.execute(
-        """CREATE TABLE entries(
+    c.execute("""CREATE TABLE entries(
                   entry_id INTEGER PRIMARY KEY,
                   traditional TEXT,
                   simplified TEXT,
@@ -8,12 +7,10 @@ def create_tables(c):
                   jyutping TEXT,
                   frequency REAL,
                   UNIQUE(traditional, simplified, pinyin, jyutping) ON CONFLICT IGNORE
-            )"""
-    )
+            )""")
     c.execute("CREATE VIRTUAL TABLE entries_fts using fts5(pinyin, jyutping)")
 
-    c.execute(
-        """CREATE TABLE sources(
+    c.execute("""CREATE TABLE sources(
                   source_id INTEGER PRIMARY KEY,
                   sourcename TEXT UNIQUE ON CONFLICT ABORT,
                   sourceshortname TEXT,
@@ -23,11 +20,9 @@ def create_tables(c):
                   link TEXT,
                   update_url TEXT,
                   other TEXT
-            )"""
-    )
+            )""")
 
-    c.execute(
-        """CREATE TABLE definitions(
+    c.execute("""CREATE TABLE definitions(
                   definition_id INTEGER PRIMARY KEY,
                   definition TEXT,
                   label TEXT,
@@ -36,14 +31,12 @@ def create_tables(c):
                   FOREIGN KEY(fk_entry_id) REFERENCES entries(entry_id) ON UPDATE CASCADE,
                   FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON DELETE CASCADE,
                   UNIQUE(definition, label, fk_entry_id, fk_source_id) ON CONFLICT IGNORE
-            )"""
-    )
+            )""")
     c.execute(
         "CREATE VIRTUAL TABLE definitions_fts using fts5(fk_entry_id UNINDEXED, definition)"
     )
 
-    c.execute(
-        """CREATE TABLE examples(
+    c.execute("""CREATE TABLE examples(
                   example_id INTEGER PRIMARY KEY ON CONFLICT IGNORE,
                   traditional TEXT,
                   simplified TEXT,
@@ -51,20 +44,16 @@ def create_tables(c):
                   jyutping TEXT,
                   language TEXT,
                   UNIQUE(traditional, simplified, pinyin, jyutping, language) ON CONFLICT IGNORE
-            )"""
-    )
+            )""")
 
-    c.execute(
-        """CREATE TABLE example_translations(
+    c.execute("""CREATE TABLE example_translations(
                   example_translation_id INTEGER PRIMARY KEY ON CONFLICT IGNORE,
                   translation TEXT,
                   language TEXT,
                   UNIQUE(example_translation_id, translation) ON CONFLICT IGNORE
-            )"""
-    )
+            )""")
 
-    c.execute(
-        """CREATE TABLE example_links(
+    c.execute("""CREATE TABLE example_links(
                   fk_example_id INTEGER,
                   fk_example_translation_id INTEGER,
                   fk_source_id INTEGER,
@@ -73,18 +62,15 @@ def create_tables(c):
                   FOREIGN KEY(fk_example_translation_id) REFERENCES example_translations(example_translation_id),
                   FOREIGN KEY(fk_source_id) REFERENCES sources(source_id) ON DELETE CASCADE
                   UNIQUE(fk_example_id, fk_example_translation_id) ON CONFLICT IGNORE
-            )"""
-    )
+            )""")
 
-    c.execute(
-        """CREATE TABLE definitions_examples_links(
+    c.execute("""CREATE TABLE definitions_examples_links(
                   fk_definition_id INTEGER,
                   fk_example_id INTEGER,
                   FOREIGN KEY(fk_definition_id) REFERENCES definitions(definition_id) ON DELETE CASCADE,
                   FOREIGN KEY(fk_example_id) REFERENCES examples(example_id)
                   UNIQUE(fk_definition_id, fk_example_id) ON CONFLICT IGNORE
-            )"""
-    )
+            )""")
 
 
 def drop_tables(c):

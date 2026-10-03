@@ -351,7 +351,7 @@ def parse_file(filename, words):
                             quote_pinyin_list = (
                                 " ".join(
                                     lazy_pinyin(
-                                        converter.convert(example_text),
+                                        converter.convert(quote),
                                         style=Style.TONE3,
                                         neutral_tone_with_five=True,
                                         v_to_u=True,
@@ -429,7 +429,7 @@ if __name__ == "__main__":
                 '"本典為一部歷史語言辭典，記錄中古至現代各類詞語，並大量引用古典文獻書證，字 音部分則兼收現代及傳統音讀。" '
                 '"中華民國教育部《重編國語辭典修訂本》資料採「創用CC-姓名標示- 禁止改作 3.0 臺灣授權條款」釋出'
                 '本授權條款允許使用者重製、散布、傳輸著作（包括商業性利用），但不得修改該著作，使用時必須遵照「使用說明」之內容要求。" '
-                '"https://language.moe.gov.tw/001/Upload/Files/site_content/M0001/respub/dict_reviseddict_download.html" "" "words,sentences"'
+                '"https://language.moe.gov.tw/001/Upload/Files/site_content/M0001/respub/dict_reviseddict_download.html" "" "words,examples"'
             )
         )
         sys.exit(1)

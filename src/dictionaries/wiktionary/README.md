@@ -5,5 +5,5 @@
 
 #### Scripts:
 - `parse.py`
-  - This script generates a SQLite database from the `wiktionary.json` file provided by Kaikki's wiktextract project. See [Kaikki's webpage](https://kaikki.org/dictionary/Chinese/nonsenses.html) or the [Github project](https://github.com/tatuylonen/wiktextract) for more details.
+  - This script generates a SQLite database from the `wiktionary.json` file provided by Kaikki's wiktextract project. See [Kaikki's webpage](https://kaikki.org/dictionary/rawdata.html) or the [Github project](https://github.com/tatuylonen/wiktextract) for more details.
   - Run `python3 -m wiktionary.parse help` to view instructions.

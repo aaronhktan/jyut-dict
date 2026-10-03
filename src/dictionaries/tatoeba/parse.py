@@ -238,7 +238,7 @@ if __name__ == "__main__":
                 "yue eng Tatoeba TTB 2018-07-09 "
                 '"Tatoeba is a collection of sentences." '
                 '"These files are released under CC BY 2.0 FR." '
-                '"https://tatoeba.org/eng/downloads" "" ""'
+                '"https://tatoeba.org/eng/downloads" "" "examples" '
                 "enable_jyutping disable_pinyin"
             )
         )

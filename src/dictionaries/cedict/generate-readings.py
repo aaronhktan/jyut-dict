@@ -98,7 +98,7 @@ if __name__ == "__main__":
         )
         print(
             "e.g. python3 -m cedict.generate-readings cedict/data/FULLREADINGS.txt "
-            "cedict/data/CC-CANTO.txt cedict/dataREADINGS.txt"
+            "cedict/data/CC-CANTO.txt cedict/data/READINGS.txt"
         )
         sys.exit(1)
 

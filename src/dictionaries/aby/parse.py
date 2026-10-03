@@ -783,7 +783,7 @@ if __name__ == "__main__":
                 "and native speakers striding the sidewalks of Hong Kong to "
                 'capture concretely contemporary Cantonese." '
                 '"Copyright © 2017–2021 Wenlin Institute, Inc. SPC, All Rights Reserved" '
-                '"https://wenlin.co/wow/Project:Jyut" "" "words,sentences"'
+                '"https://wenlin.co/wow/Project:Jyut" "" "words,examples"'
             )
         )
         sys.exit(1)

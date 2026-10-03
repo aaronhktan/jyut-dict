@@ -1,7 +1,7 @@
 #### Usage:
 - To install required packages: `pip install -r requirements.txt`
 - Specific usage instructions for the script are provided by the script itself.
-- **Run the scripts from the `dictionaries` folder, e.g. `python3 -m wiki.parse <database filename> <page.db file> <langlinks.db file> <source language> <destination language> <source name> <source short name> <source version> <source description> <source legal> <source link> <source update url> <source contents>`.**
+- **Run the scripts from the `dictionaries` folder, e.g. `python3 -m wiki.parse <database filename> <page.db file> <langlinks.db file> <src summary dump file> <dest summary dump file> <source language> <destination language> <source name> <source short name> <source version> <source description> <source legal> <source link> <source update url> <source contents>`.**
 
 #### Scripts:
 - `parse.py`
