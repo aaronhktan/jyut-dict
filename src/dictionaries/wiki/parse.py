@@ -148,9 +148,7 @@ def get_summaries(wiki_lang, titles):
     parsed = dict()
 
     if "query" not in data:
-        logging.error(
-            f"Query was not available in response {resp.url}"
-        )
+        logging.error(f"Query was not available in response {resp.url}")
         return parsed
 
     for page_id in data["query"]["pages"]:
