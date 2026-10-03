@@ -18,7 +18,6 @@ private slots:
     void prettyPinyinSecondaryVowel();
     void prettyPinyinUmlaut();
     void prettyPinyinTones();
-    void prettyPinyinNoTone();
 
     void numberedPinyinSimple();
 
@@ -99,7 +98,7 @@ void TestMandarinUtils::prettyPinyinRejectNoTone()
     std::string result = MandarinUtils::createPrettyPinyin("ba");
     QCOMPARE(result, "ba");
 
-    std::string result = MandarinUtils::createPrettyPinyin("nu");
+    result = MandarinUtils::createPrettyPinyin("nu");
     QCOMPARE(result, "nu");
 }
 

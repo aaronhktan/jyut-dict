@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		937055673060ED8C008069CE /* dict.db in Resources */ = {isa = PBXBuildFile; fileRef = 937055663060ED8C008069CE /* dict.db */; };
+		93B3FD7E306E26DC00797DCF /* MLKitDigitalInkRecognition in Frameworks */ = {isa = PBXBuildFile; productRef = 93B3FD7D306E26DC00797DCF /* MLKitDigitalInkRecognition */; };
+		93B3FD80306E26DC00797DCF /* MLKitTextRecognitionChinese in Frameworks */ = {isa = PBXBuildFile; productRef = 93B3FD7F306E26DC00797DCF /* MLKitTextRecognitionChinese */; };
+		93B3FD82306E27BA00797DCF /* ChineseOCRResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 93B3FD81306E27BA00797DCF /* ChineseOCRResources.bundle */; };
+		93B3FD84306E27D600797DCF /* MLKitDigitalInkRecognition_resource.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 93B3FD83306E27D600797DCF /* MLKitDigitalInkRecognition_resource.bundle */; };
 		93DCCF0B3049F49B009A62D3 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 93DCCF0A3049F49B009A62D3 /* GRDB */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +37,8 @@
 		932E3924304918A800FC8504 /* CantoneseDictionaryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CantoneseDictionaryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		932E392E304918A800FC8504 /* CantoneseDictionaryUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CantoneseDictionaryUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		937055663060ED8C008069CE /* dict.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = dict.db; sourceTree = "<group>"; };
+		93B3FD81306E27BA00797DCF /* ChineseOCRResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ChineseOCRResources.bundle; sourceTree = "<group>"; };
+		93B3FD83306E27D600797DCF /* MLKitDigitalInkRecognition_resource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = MLKitDigitalInkRecognition_resource.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -58,7 +64,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93B3FD7E306E26DC00797DCF /* MLKitDigitalInkRecognition in Frameworks */,
 				93DCCF0B3049F49B009A62D3 /* GRDB in Frameworks */,
+				93B3FD80306E26DC00797DCF /* MLKitTextRecognitionChinese in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -86,6 +94,8 @@
 				932E3919304918A700FC8504 /* CantoneseDictionary */,
 				932E3927304918A800FC8504 /* CantoneseDictionaryTests */,
 				932E3931304918A800FC8504 /* CantoneseDictionaryUITests */,
+				93B3FD81306E27BA00797DCF /* ChineseOCRResources.bundle */,
+				93B3FD83306E27D600797DCF /* MLKitDigitalInkRecognition_resource.bundle */,
 				932E3918304918A700FC8504 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -121,6 +131,8 @@
 			name = CantoneseDictionary;
 			packageProductDependencies = (
 				93DCCF0A3049F49B009A62D3 /* GRDB */,
+				93B3FD7D306E26DC00797DCF /* MLKitDigitalInkRecognition */,
+				93B3FD7F306E26DC00797DCF /* MLKitTextRecognitionChinese */,
 			);
 			productName = CantoneseDictionary;
 			productReference = 932E3917304918A700FC8504 /* CantoneseDictionary.app */;
@@ -206,6 +218,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				93DCCF093049F49B009A62D3 /* XCRemoteSwiftPackageReference "GRDB.swift" */,
+				93B3FD7C306E26DC00797DCF /* XCRemoteSwiftPackageReference "google-mlkit-swiftpm" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 932E3918304918A700FC8504 /* Products */;
@@ -224,7 +237,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				93B3FD82306E27BA00797DCF /* ChineseOCRResources.bundle in Resources */,
 				937055673060ED8C008069CE /* dict.db in Resources */,
+				93B3FD84306E27D600797DCF /* MLKitDigitalInkRecognition_resource.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -646,6 +661,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		93B3FD7C306E26DC00797DCF /* XCRemoteSwiftPackageReference "google-mlkit-swiftpm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/d-date/google-mlkit-swiftpm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.2;
+			};
+		};
 		93DCCF093049F49B009A62D3 /* XCRemoteSwiftPackageReference "GRDB.swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/groue/GRDB.swift.git";
@@ -657,6 +680,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		93B3FD7D306E26DC00797DCF /* MLKitDigitalInkRecognition */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 93B3FD7C306E26DC00797DCF /* XCRemoteSwiftPackageReference "google-mlkit-swiftpm" */;
+			productName = MLKitDigitalInkRecognition;
+		};
+		93B3FD7F306E26DC00797DCF /* MLKitTextRecognitionChinese */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 93B3FD7C306E26DC00797DCF /* XCRemoteSwiftPackageReference "google-mlkit-swiftpm" */;
+			productName = MLKitTextRecognitionChinese;
+		};
 		93DCCF0A3049F49B009A62D3 /* GRDB */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 93DCCF093049F49B009A62D3 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
