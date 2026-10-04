@@ -10,6 +10,7 @@ import SwiftUI
 
 struct SearchingView: View {
   @Environment(DatabaseManager.self) private var databaseManager
+  @Environment(Settings.self) private var settings
   @Environment(\.dismissSearch) private var dismissSearch
 
   @Bindable var searchContext: SearchContext
@@ -87,12 +88,14 @@ struct SearchingView: View {
     case .jyutping:
       results = await searcher.searchJyutping(
         searchTerm: searchTerm,
-        useFuzzyJyutping: false
+        useFuzzyJyutping: false,
+        unsafeFuzzyJyutping: settings.unsafeFuzzyJyutping
       )
     case .fuzzyJyutping:
       results = await searcher.searchJyutping(
         searchTerm: searchTerm,
-        useFuzzyJyutping: true
+        useFuzzyJyutping: true,
+        unsafeFuzzyJyutping: settings.unsafeFuzzyJyutping
       )
     case .english:
       results = await searcher.searchEnglish(
@@ -120,14 +123,16 @@ struct SearchingView: View {
         break
       }
 
-      async let isJyutping = detector.hasJyutping(text: searchTerm)
+      async let isJyutping = detector.hasJyutping(
+        text: searchTerm, unsafeFuzzyJyutping: settings.unsafeFuzzyJyutping)
       async let isPinyin = detector.hasPinyin(text: searchTerm)
 
       if let method = await isJyutping {
         searchContext.detectedInputMethod = method
         results = await searcher.searchJyutping(
           searchTerm: searchTerm,
-          useFuzzyJyutping: method == .fuzzyJyutping
+          useFuzzyJyutping: method == .fuzzyJyutping,
+          unsafeFuzzyJyutping: settings.unsafeFuzzyJyutping
         )
         break
       } else if let method = await isPinyin {
@@ -146,7 +151,8 @@ struct SearchingView: View {
     default:
       results = await searcher.searchJyutping(
         searchTerm: searchTerm,
-        useFuzzyJyutping: true
+        useFuzzyJyutping: true,
+        unsafeFuzzyJyutping: settings.unsafeFuzzyJyutping
       )
     }
 

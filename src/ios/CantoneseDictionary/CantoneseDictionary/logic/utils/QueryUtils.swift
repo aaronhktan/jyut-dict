@@ -31,7 +31,8 @@ nonisolated func prepareCharacterBindValues(
 
 nonisolated func prepareJyutpingBindValues(
   jyutping: String,
-  useFuzzyJyutping: Bool
+  useFuzzyJyutping: Bool,
+  unsafeFuzzyJyutping: Bool
 ) -> String {
   let searchExactMatch =
     jyutping.count >= 3
@@ -43,10 +44,11 @@ nonisolated func prepareJyutpingBindValues(
   var correctedTerm = jyutping
   if !searchExactMatch && useFuzzyJyutping {
     if appendWildcard {
-      correctedTerm = jyutpingAutocorrect(text: jyutping)
+      correctedTerm = jyutpingAutocorrect(text: jyutping, unsafeSubstitutions: unsafeFuzzyJyutping)
     } else {
       correctedTerm = jyutpingAutocorrect(
-        text: String(jyutping.prefix(jyutping.count - 1))
+        text: String(jyutping.prefix(jyutping.count - 1)),
+        unsafeSubstitutions: unsafeFuzzyJyutping
       )
     }
   }

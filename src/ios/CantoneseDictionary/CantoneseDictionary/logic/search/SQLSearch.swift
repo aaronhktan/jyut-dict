@@ -84,13 +84,14 @@ actor SQLSearch {
     return results
   }
 
-  @concurrent func searchJyutpingExistence(searchTerm: String, useFuzzyJyutping: Bool) async -> Bool
+  @concurrent func searchJyutpingExistence(searchTerm: String, useFuzzyJyutping: Bool, unsafeFuzzyJyutping: Bool) async -> Bool
   {
     let unsafeFuzzyJyutping = false
 
     let globTerm = prepareJyutpingBindValues(
       jyutping: searchTerm,
-      useFuzzyJyutping: useFuzzyJyutping
+      useFuzzyJyutping: useFuzzyJyutping,
+      unsafeFuzzyJyutping: unsafeFuzzyJyutping
     )
     print("globTerm: '\(globTerm)'")
     let query = String(
@@ -116,15 +117,13 @@ actor SQLSearch {
     return result
   }
 
-  @concurrent func searchJyutping(searchTerm: String, useFuzzyJyutping: Bool) async
+  @concurrent func searchJyutping(searchTerm: String, useFuzzyJyutping: Bool, unsafeFuzzyJyutping: Bool) async
     -> [Entry]
   {
-    // TODO: Actually implement checking for option
-    let unsafeFuzzyJyutping = false
-
     let globTerm = prepareJyutpingBindValues(
       jyutping: searchTerm,
-      useFuzzyJyutping: useFuzzyJyutping
+      useFuzzyJyutping: useFuzzyJyutping,
+      unsafeFuzzyJyutping: unsafeFuzzyJyutping
     )
     print("globTerm: '\(globTerm)'")
     let query = String(

@@ -106,6 +106,9 @@ struct SettingsView: View {
           ColorPicker("Pinyin Tone 4", selection: $settings.pinyinToneColours[4])
           ColorPicker("Pinyin Tone 5", selection: $settings.pinyinToneColours[5])
         }
+        Section(header: Text("Danger Zone")) {
+          Toggle("Enable Unsafe Fuzzy Jyutping", isOn: $settings.unsafeFuzzyJyutping)
+        }
       }
       .toolbar {
         #if os(iOS)

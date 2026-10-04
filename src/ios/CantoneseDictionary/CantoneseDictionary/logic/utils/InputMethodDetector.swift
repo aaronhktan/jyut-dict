@@ -953,14 +953,16 @@ struct InputMethodDetector {
     return text.contains(hanRegex)
   }
 
-  func hasJyutping(text: String) async -> InputMethod? {
+  func hasJyutping(text: String, unsafeFuzzyJyutping: Bool) async -> InputMethod? {
     async let isJyutping = _searcher?.searchJyutpingExistence(
       searchTerm: text,
-      useFuzzyJyutping: false
+      useFuzzyJyutping: false,
+      unsafeFuzzyJyutping: false
     )
     async let isFuzzyJyutping = _searcher?.searchJyutpingExistence(
       searchTerm: text,
-      useFuzzyJyutping: true
+      useFuzzyJyutping: true,
+      unsafeFuzzyJyutping: unsafeFuzzyJyutping
     )
 
     if let j = await isJyutping, j {
