@@ -24,6 +24,7 @@ nonisolated let iso693ToLanguageName: [String: String] = [
   "fra": "French",
   "yue": "Cantonese",
   "zh": "Chinese",
+  "zho": "Chinese",
 ]
 
 // Nabbed from https://forums.swift.org/t/find-multiple-substrings-from-specified-index/28667/4

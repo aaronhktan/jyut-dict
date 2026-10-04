@@ -5,8 +5,8 @@
 //  Created by Aaron on 2026-09-15.
 //
 
-import Testing
 import SwiftUI
+import Testing
 
 @testable import CantoneseDictionary
 

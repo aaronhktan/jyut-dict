@@ -59,10 +59,14 @@ class DatabaseManager {
       }
 
       do {
-        try fileManager.copyItem(at: self.bundleURL!, to: self.localURL)
-        logger.info(
-          "Successfully copied dictionary database to \(self.localURL.absoluteString)!"
-        )
+        if let bundleURL = self.bundleURL {
+          try fileManager.copyItem(at: bundleURL, to: self.localURL)
+          logger.info(
+            "Successfully copied dictionary database to \(self.localURL.absoluteString)!"
+          )
+        } else {
+          logger.warning("No bundle URL found, skipping database copy!")
+        }
       } catch {
         logger.error(
           "Could not copy dictionary database to \(self.localURL.absoluteString), error: \(error)!"

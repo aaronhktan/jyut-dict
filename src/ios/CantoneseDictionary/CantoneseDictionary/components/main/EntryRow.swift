@@ -8,14 +8,19 @@
 import SwiftUI
 
 struct EntryRow: View {
+  @Environment(Settings.self) private var settings
+
   let entry: Entry
 
   var body: some View {
     VStack(alignment: .leading) {
       Text(
         entry.getCharacters(
-          options: .preferTraditional,
-          useColours: true
+          options: settings.entryCharactersOptions,
+          useColours: true,
+          colourPhoneticType: settings.entryColourPhoneticType,
+          jyutpingToneColours: settings.jyutpingToneColours,
+          pinyinToneColours: settings.pinyinToneColours
         )
       )
       .font(.title)
@@ -24,19 +29,21 @@ struct EntryRow: View {
         // Experimented with making this async, but then it led to undesirable flashes when
         // entries were being updated in the list
         entry.getPhonetic(
-          options: .preferCantonese,
-          cantoneseOptions: .rawJyutping,
-          mandarinOptions: .prettyPinyin
+          options: settings.previewPhoneticOptions,
+          cantoneseOptions: settings.previewCantonesePhoneticOptions,
+          mandarinOptions: settings.previewMandarinPhoneticOptions
         )
       )
       .rowLine()
       Text(entry.getDefinitionSnippet())
-      .rowLine()
+        .rowLine()
     }
   }
 }
 
 #Preview {
+  @Previewable @State var settings = Settings()
+
   let entry = Entry(
     rowid: 0,
     traditional: "聽日",
@@ -45,5 +52,7 @@ struct EntryRow: View {
     pinyin: "ting1 ri4",
     definitions: []
   )
+
   EntryRow(entry: entry)
+    .environment(settings)
 }

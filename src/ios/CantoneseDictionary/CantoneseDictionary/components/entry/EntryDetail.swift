@@ -9,26 +9,13 @@ import SwiftUI
 
 struct EntryDetail: View {
   @Environment(DatabaseManager.self) private var databaseManager
+  @Environment(Settings.self) private var settings
 
   let rowId: Int
 
   @State private var entry: Entry? = nil
   @State private var examples: [String: [Example]] = [:]
 
-  private var headerCharacters: AttributedString {
-    entry?.getCharacters(options: .preferTraditional, useColours: true)
-      ?? "Error fetching entry header"
-  }
-  private var jyutping: String {
-    entry?.getPhonetic(
-      options: .onlyCantonese, cantoneseOptions: .rawJyutping, mandarinOptions: .prettyPinyin)
-      ?? "Error fetching Jyutping"
-  }
-  private var pinyin: String {
-    entry?.getPhonetic(
-      options: .onlyMandarin, cantoneseOptions: .rawJyutping, mandarinOptions: .prettyPinyin)
-      ?? "Error fetching Pinyin"
-  }
   private var definitionsSets: [DefinitionsSet] {
     entry?.getDefinitionsSets() ?? []
   }
@@ -44,35 +31,26 @@ struct EntryDetail: View {
       if entry != nil {
         List {
           VStack(alignment: .leading) {
-            Text(headerCharacters)
-              .font(.largeTitle)
-              .frame(maxWidth: .infinity, alignment: .leading)
-              .textSelection(.enabled)
+            Text(
+              entry?.getCharacters(
+                options: settings.entryCharactersOptions, useColours: true,
+                colourPhoneticType: settings.entryColourPhoneticType,
+                jyutpingToneColours: settings.jyutpingToneColours,
+                pinyinToneColours: settings.pinyinToneColours
+              )
+                ?? "Error fetching entry header"
+            )
+            .font(.largeTitle)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .textSelection(.enabled)
             Grid {
-              GridRow {
-                HStack {
-                  Text("JP")
-                    .foregroundStyle(.placeholder)
-                    .frame(
-                      width: 30,
-                      alignment: .leading
-                    )
-                  Text(jyutping)
-                    .padding(.trailing)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .textSelection(.enabled)
-                }
-              }
-              GridRow {
-                HStack {
-                  Text("PY")
-                    .foregroundStyle(.placeholder)
-                    .frame(width: 30, alignment: .leading)
-                  Text(pinyin)
-                    .padding(.trailing)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .textSelection(.enabled)
-                }
+              switch settings.previewPhoneticOptions {
+              case .onlyCantonese, .preferCantonese:
+                cantonesePronunciationView()
+                mandarinPronunicationView()
+              case .onlyMandarin, .preferMandarin:
+                mandarinPronunicationView()
+                cantonesePronunciationView()
               }
             }
           }
@@ -138,6 +116,152 @@ struct EntryDetail: View {
   }
 }
 
+extension EntryDetail {
+  @ViewBuilder
+  private func cantonesePronunciationView() -> some View {
+    if settings.entryCantonesePhoneticOptions.contains(.rawJyutping) {
+      GridRow {
+        HStack {
+          Text("JP")
+            .foregroundStyle(.placeholder)
+            .frame(
+              width: 45,
+              alignment: .leading
+            )
+          Text(
+            entry?.getPhonetic(
+              options: .onlyCantonese, cantoneseOptions: .rawJyutping,
+              mandarinOptions: .prettyPinyin)
+              ?? "Error fetching Jyutping"
+          )
+          .padding(.trailing)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .textSelection(.enabled)
+        }
+      }
+    }
+    if settings.entryCantonesePhoneticOptions.contains(.prettyYale) {
+      GridRow {
+        HStack {
+          Text("YL")
+            .foregroundStyle(.placeholder)
+            .frame(
+              width: 45,
+              alignment: .leading
+            )
+          Text(
+            entry?.getPhonetic(
+              options: .onlyCantonese, cantoneseOptions: .prettyYale,
+              mandarinOptions: .prettyPinyin)
+              ?? "Error fetching Yale"
+          )
+          .padding(.trailing)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .textSelection(.enabled)
+
+        }
+      }
+    }
+    if settings.entryCantonesePhoneticOptions.contains(.cantoneseIPA) {
+      GridRow {
+        HStack {
+          Text("CIPA")
+            .foregroundStyle(.placeholder)
+            .frame(
+              width: 45,
+              alignment: .leading
+            )
+          Text(
+            entry?.getPhonetic(
+              options: .onlyCantonese, cantoneseOptions: .cantoneseIPA,
+              mandarinOptions: .prettyPinyin)
+              ?? "Error fetching Cantonese IPA"
+          )
+          .padding(.trailing)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .textSelection(.enabled)
+        }
+      }
+    }
+  }
+
+  @ViewBuilder
+  private func mandarinPronunicationView() -> some View {
+    if settings.entryMandarinPhoneticOptions.contains(.prettyPinyin) {
+      GridRow {
+        HStack {
+          Text("PY")
+            .foregroundStyle(.placeholder)
+            .frame(width: 45, alignment: .leading)
+          Text(
+            entry?.getPhonetic(
+              options: .onlyMandarin, cantoneseOptions: .rawJyutping,
+              mandarinOptions: .prettyPinyin)
+              ?? "Error fetching Pinyin"
+          )
+          .padding(.trailing)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .textSelection(.enabled)
+        }
+      }
+    }
+    if settings.entryMandarinPhoneticOptions.contains(.rawPinyin) {
+      GridRow {
+        HStack {
+          Text("PY")
+            .foregroundStyle(.placeholder)
+            .frame(width: 45, alignment: .leading)
+          Text(
+            entry?.getPhonetic(
+              options: .onlyMandarin, cantoneseOptions: .rawJyutping,
+              mandarinOptions: .rawPinyin)
+              ?? "Error fetching Pinyin with digits"
+          )
+          .padding(.trailing)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .textSelection(.enabled)
+        }
+      }
+    }
+    if settings.entryMandarinPhoneticOptions.contains(.zhuyin) {
+      GridRow {
+        HStack {
+          Text("ZY")
+            .foregroundStyle(.placeholder)
+            .frame(width: 45, alignment: .leading)
+          Text(
+            entry?.getPhonetic(
+              options: .onlyMandarin, cantoneseOptions: .rawJyutping,
+              mandarinOptions: .zhuyin)
+              ?? "Error fetching Zhuyin"
+          )
+          .padding(.trailing)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .textSelection(.enabled)
+        }
+      }
+    }
+    if settings.entryMandarinPhoneticOptions.contains(.mandarinIPA) {
+      GridRow {
+        HStack {
+          Text("MIPA")
+            .foregroundStyle(.placeholder)
+            .frame(width: 45, alignment: .leading)
+          Text(
+            entry?.getPhonetic(
+              options: .onlyMandarin, cantoneseOptions: .rawJyutping,
+              mandarinOptions: .mandarinIPA)
+              ?? "Error fetching Mandarin IPA"
+          )
+          .padding(.trailing)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .textSelection(.enabled)
+        }
+      }
+    }
+  }
+}
+
 #Preview {
   @Previewable @State var entry = Entry(
     rowid: 0,
@@ -178,7 +302,9 @@ struct EntryDetail: View {
     ]
   )
   @Previewable @State var databaseManager = DatabaseManager()
+  @Previewable @State var settings = Settings()
 
   EntryDetail(rowId: -1, previewEntry: entry)
     .environment(databaseManager)
+    .environment(settings)
 }

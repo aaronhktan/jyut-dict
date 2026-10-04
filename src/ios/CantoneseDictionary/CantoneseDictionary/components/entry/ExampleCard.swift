@@ -69,6 +69,8 @@ struct ExampleCard: View {
 }
 
 private struct ExampleView: View {
+  @Environment(Settings.self) private var settings
+
   let example: Example
 
   var body: some View {
@@ -86,25 +88,8 @@ private struct ExampleView: View {
       )
       .fixedSize(horizontal: false, vertical: true)
 
-      Text(example.traditional)
-        .fixedSize(horizontal: false, vertical: true)
-        .textSelection(.enabled)
-      Text(example.simplified)
-        .fixedSize(horizontal: false, vertical: true)
-        .textSelection(.enabled)
-
-      if !example.jyutping.isEmpty {
-        Text(example.jyutping)
-          .fixedSize(horizontal: false, vertical: true)
-          .foregroundStyle(.placeholder)
-          .textSelection(.enabled)
-      }
-      if !example.pinyin.isEmpty {
-        Text(example.getMandarinPhonetic(mandarinOptions: .prettyPinyin))
-          .fixedSize(horizontal: false, vertical: true)
-          .foregroundStyle(.placeholder)
-          .textSelection(.enabled)
-      }
+      characterDisplay()
+      pronunicationDisplay()
 
       ForEach(example.getTranslationSets(), id: \.id) { translationSet in
         if let first = translationSet.getTranslations().first {
@@ -113,6 +98,137 @@ private struct ExampleView: View {
             .textSelection(.enabled)
         }
       }
+    }
+  }
+}
+
+extension ExampleView {
+  @ViewBuilder
+  private func characterDisplay() -> some View {
+    switch settings.entryCharactersOptions {
+    case .onlyTraditional:
+      Text(example.traditional)
+        .fixedSize(horizontal: false, vertical: true)
+        .textSelection(.enabled)
+    case .onlySimplified:
+      Text(example.simplified)
+        .fixedSize(horizontal: false, vertical: true)
+        .textSelection(.enabled)
+    case .preferTraditional:
+      Text(example.traditional)
+        .fixedSize(horizontal: false, vertical: true)
+        .textSelection(.enabled)
+      Text(example.simplified)
+        .fixedSize(horizontal: false, vertical: true)
+        .textSelection(.enabled)
+    case .preferSimplified:
+      Text(example.simplified)
+        .fixedSize(horizontal: false, vertical: true)
+        .textSelection(.enabled)
+      Text(example.traditional)
+        .fixedSize(horizontal: false, vertical: true)
+        .textSelection(.enabled)
+    }
+  }
+
+  @ViewBuilder
+  private func pronunicationDisplay() -> some View {
+    switch settings.previewPhoneticOptions {
+    case .onlyCantonese:
+      cantonesePronunicationDisplay()
+    case .onlyMandarin:
+      mandarinPronunicationDisplay()
+    case .preferCantonese:
+      cantonesePronunicationDisplay()
+      mandarinPronunicationDisplay()
+    case .preferMandarin:
+      mandarinPronunicationDisplay()
+      cantonesePronunicationDisplay()
+    }
+  }
+
+  @ViewBuilder
+  private func cantonesePronunicationDisplay() -> some View {
+    switch settings.previewCantonesePhoneticOptions {
+    case .rawJyutping:
+      if !example.jyutping.isEmpty {
+        Text(example.jyutping)
+          .fixedSize(horizontal: false, vertical: true)
+          .foregroundStyle(.placeholder)
+          .textSelection(.enabled)
+      }
+    case .prettyYale:
+      if !example.jyutping.isEmpty {
+        Text(
+          example.getPhonetic(
+            options: .onlyCantonese, cantoneseOptions: .prettyYale,
+            mandarinOptions: .prettyPinyin)
+        )
+        .fixedSize(horizontal: false, vertical: true)
+        .foregroundStyle(.placeholder)
+        .textSelection(.enabled)
+      }
+    case .cantoneseIPA:
+      if !example.jyutping.isEmpty {
+        Text(
+          example.getPhonetic(
+            options: .onlyCantonese, cantoneseOptions: .cantoneseIPA,
+            mandarinOptions: .prettyPinyin)
+        )
+        .fixedSize(horizontal: false, vertical: true)
+        .foregroundStyle(.placeholder)
+        .textSelection(.enabled)
+      }
+    default:
+      EmptyView()
+    }
+  }
+
+  @ViewBuilder
+  private func mandarinPronunicationDisplay() -> some View {
+    switch settings.previewMandarinPhoneticOptions {
+    case .prettyPinyin:
+      if !example.pinyin.isEmpty {
+        Text(
+          example.getPhonetic(
+            options: .onlyMandarin, cantoneseOptions: .rawJyutping,
+            mandarinOptions: .prettyPinyin)
+        )
+        .fixedSize(horizontal: false, vertical: true)
+        .foregroundStyle(.placeholder)
+        .textSelection(.enabled)
+      }
+    case .numberedPinyin:
+      if !example.pinyin.isEmpty {
+        Text(example.pinyin)
+          .fixedSize(horizontal: false, vertical: true)
+          .foregroundStyle(.placeholder)
+          .textSelection(.enabled)
+      }
+    case .zhuyin:
+      if !example.pinyin.isEmpty {
+        Text(
+          example.getPhonetic(
+            options: .onlyMandarin, cantoneseOptions: .rawJyutping,
+            mandarinOptions: .zhuyin)
+        )
+        .fixedSize(horizontal: false, vertical: true)
+        .foregroundStyle(.placeholder)
+        .textSelection(.enabled)
+      }
+    case .mandarinIPA:
+      if !example.pinyin.isEmpty {
+        Text(
+          example.getPhonetic(
+            options: .onlyMandarin, cantoneseOptions: .rawJyutping,
+            mandarinOptions: .mandarinIPA)
+        )
+        .fixedSize(horizontal: false, vertical: true)
+        .foregroundStyle(.placeholder)
+        .textSelection(.enabled)
+      }
+    default:
+      EmptyView()
     }
   }
 }

@@ -233,7 +233,7 @@ actor SQLSearch {
     let likeTerm = "%\(searchTerm)%"
 
     do {
-       results = try await pool.read { db in
+      results = try await pool.read { db in
         let rows = try Row.fetchAll(
           db,
           sql: searchExamplesQuery,

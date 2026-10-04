@@ -6,41 +6,67 @@
 //
 
 import Foundation
+import SwiftUI
 
-enum EntryCharactersOptions: CaseIterable {
-  case onlySimplified
+nonisolated enum EntryCharactersOptions: Int, CaseIterable, Codable, Equatable, Hashable,
+  Identifiable, Sendable
+{
   case onlyTraditional
+  case onlySimplified
   case preferSimplified
   case preferTraditional
+
+  var id: Self { self }
 }
 
-enum EntryPhoneticOptions: CaseIterable {
+nonisolated enum EntryPhoneticOptions: Int, CaseIterable, Codable, Equatable, Hashable,
+  Identifiable, Sendable
+{
   case onlyCantonese
   case onlyMandarin
   case preferCantonese
   case preferMandarin
+
+  var id: Self { self }
 }
 
-enum EntryColourPhoneticType: CaseIterable {
+nonisolated enum EntryColourPhoneticType: Int, CaseIterable, Codable, Equatable, Hashable,
+  Identifiable, Sendable
+{
   case none
   case cantonese
   case mandarin
+
+  var id: Self { self }
 }
 
-enum CantoneseOptions: UInt8, CaseIterable {
-  case none = 0x0
-  case rawJyutping = 0x1
-  case prettyYale = 0x2
-  case cantoneseIPA = 0x4
+nonisolated struct CantoneseOptions: OptionSet, Hashable, Sendable {
+  let rawValue: UInt8
+  static let rawJyutping = Self(rawValue: 0x1)
+  static let prettyYale = Self(rawValue: 0x2)
+  static let cantoneseIPA = Self(rawValue: 0x4)
+
+  mutating func set(_ member: Self, enabled: Bool) {
+    if enabled { insert(member) } else { remove(member) }
+  }
+
+  var id: Self { self }
 }
 
-enum MandarinOptions: UInt8, CaseIterable {
-  case none = 0x0
-  case rawPinyin = 0x1
-  case prettyPinyin = 0x2
-  case numberedPinyin = 0x4
-  case zhuyin = 0x8
-  case mandarinIPA = 0x10
+nonisolated struct MandarinOptions: OptionSet, Hashable, Sendable {
+  let rawValue: UInt8
+
+  static let rawPinyin = Self(rawValue: 0x1)
+  static let prettyPinyin = Self(rawValue: 0x2)
+  static let numberedPinyin = Self(rawValue: 0x4)
+  static let zhuyin = Self(rawValue: 0x8)
+  static let mandarinIPA = Self(rawValue: 0x10)
+
+  mutating func set(_ member: Self, enabled: Bool) {
+    if enabled { insert(member) } else { remove(member) }
+  }
+
+  var id: Self { self }
 }
 
 nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
@@ -57,6 +83,7 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
   private var _colouredSimplified: AttributedString?
   private var _colouredSimplifiedDifference: AttributedString?
   private var _colouredPreferSimplified: AttributedString?
+  private var _cachedCharacterHash: Int?
 
   private var _jyutping: String
   private var _yale: String?
@@ -114,12 +141,30 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
     hasher.combine(id)
   }
 
-  func getCharacters(options: EntryCharactersOptions, useColours: Bool)
+  func getCharacters(
+    options: EntryCharactersOptions,
+    useColours: Bool,
+    colourPhoneticType: EntryColourPhoneticType,
+    jyutpingToneColours: [Color],
+    pinyinToneColours: [Color]
+  )
     -> AttributedString
   {
-    // TODO: Hook into settings to respect user settings
-    if useColours {
-      refreshColours(type: .cantonese)
+    var hasher = Hasher()
+    hasher.combine(options)
+    hasher.combine(useColours)
+    hasher.combine(colourPhoneticType)
+    let colours = (colourPhoneticType == .mandarin) ? pinyinToneColours : jyutpingToneColours
+    for colour in colours {
+      hasher.combine(colour)
+    }
+    let hash = hasher.finalize()
+
+    if _cachedCharacterHash == nil || _cachedCharacterHash != hash {
+      refreshColours(
+        type: colourPhoneticType, jyutpingToneColours: jyutpingToneColours,
+        pinyinToneColours: pinyinToneColours)
+      _cachedCharacterHash = hash
     }
 
     switch options {
@@ -148,13 +193,28 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
 
   func getCharactersNoSecondary(
     options: EntryCharactersOptions,
-    useColours: Bool
+    useColours: Bool,
+    colourPhoneticType: EntryColourPhoneticType,
+    jyutpingToneColours: [Color],
+    pinyinToneColours: [Color]
   )
     -> AttributedString
   {
-    // TODO: Hook into settings to respect user settings
-    if useColours {
-      refreshColours(type: .cantonese)
+    var hasher = Hasher()
+    hasher.combine(options)
+    hasher.combine(useColours)
+    hasher.combine(colourPhoneticType)
+    let colours = (colourPhoneticType == .mandarin) ? pinyinToneColours : jyutpingToneColours
+    for colour in colours {
+      hasher.combine(colour)
+    }
+    let hash = hasher.finalize()
+
+    if _cachedCharacterHash == nil || _cachedCharacterHash != hash {
+      refreshColours(
+        type: colourPhoneticType, jyutpingToneColours: jyutpingToneColours,
+        pinyinToneColours: pinyinToneColours)
+      _cachedCharacterHash = hash
     }
 
     switch options {
@@ -311,7 +371,7 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
       if _yale == nil {
         generatePhonetic(
           cantoneseOptions: .prettyYale,
-          mandarinOptions: .none
+          mandarinOptions: []
         )
       }
       return _yale ?? "Yale not available"
@@ -319,7 +379,7 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
       if _cantoneseIPA == nil {
         generatePhonetic(
           cantoneseOptions: .cantoneseIPA,
-          mandarinOptions: .none
+          mandarinOptions: []
         )
       }
       return _cantoneseIPA ?? "Cantonese IPA not available"
@@ -337,7 +397,7 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
     case .prettyPinyin:
       if _prettyPinyin == nil {
         generatePhonetic(
-          cantoneseOptions: .none,
+          cantoneseOptions: [],
           mandarinOptions: .prettyPinyin
         )
       }
@@ -345,7 +405,7 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
     case .numberedPinyin:
       if _numberedPinyin == nil {
         generatePhonetic(
-          cantoneseOptions: .none,
+          cantoneseOptions: [],
           mandarinOptions: .numberedPinyin
         )
       }
@@ -353,7 +413,7 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
     case .zhuyin:
       if _zhuyin == nil {
         generatePhonetic(
-          cantoneseOptions: .none,
+          cantoneseOptions: [],
           mandarinOptions: .zhuyin
         )
       }
@@ -361,7 +421,7 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
     case .mandarinIPA:
       if _mandarinIPA == nil {
         generatePhonetic(
-          cantoneseOptions: .none,
+          cantoneseOptions: [],
           mandarinOptions: .mandarinIPA
         )
       }
@@ -460,7 +520,11 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
     return _definitionSnippet ?? ""
   }
 
-  func refreshColours(type: EntryColourPhoneticType) {
+  func refreshColours(
+    type: EntryColourPhoneticType,
+    jyutpingToneColours: [Color],
+    pinyinToneColours: [Color]
+  ) {
     var tones: [Int]
     switch type {
     case .none:
@@ -487,29 +551,29 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
     _colouredTraditional = applyColours(
       text: _traditional,
       tones: tones,
-      jyutpingToneColours: defaultJyutpingToneColours,
-      pinyinToneColours: defaultPinyinToneColours,
+      jyutpingToneColours: jyutpingToneColours,
+      pinyinToneColours: pinyinToneColours,
       type: type
     )
     _colouredSimplified = applyColours(
       text: _simplified,
       tones: tones,
-      jyutpingToneColours: defaultJyutpingToneColours,
-      pinyinToneColours: defaultPinyinToneColours,
+      jyutpingToneColours: jyutpingToneColours,
+      pinyinToneColours: pinyinToneColours,
       type: type
     )
     _colouredTraditionalDifference = applyColours(
       text: _traditionalDifference,
       tones: tones,
-      jyutpingToneColours: defaultJyutpingToneColours,
-      pinyinToneColours: defaultPinyinToneColours,
+      jyutpingToneColours: jyutpingToneColours,
+      pinyinToneColours: pinyinToneColours,
       type: type
     )
     _colouredSimplifiedDifference = applyColours(
       text: _simplifiedDifference,
       tones: tones,
-      jyutpingToneColours: defaultJyutpingToneColours,
-      pinyinToneColours: defaultPinyinToneColours,
+      jyutpingToneColours: jyutpingToneColours,
+      pinyinToneColours: pinyinToneColours,
       type: type
     )
 

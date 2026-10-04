@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ContentView: View {
-  @Environment(DatabaseManager.self) private var databaseManager
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
   @State private var presentedSheet: Sheet?
@@ -168,6 +167,8 @@ final class SearchContext {
 
 #Preview {
   @Previewable @State var databaseManager = DatabaseManager()
+  @Previewable @State var settings = Settings()
   ContentView()
     .environment(databaseManager)
+    .environment(settings)
 }

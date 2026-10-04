@@ -145,7 +145,7 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
       if _yale == nil {
         generatePhonetic(
           cantoneseOptions: .prettyYale,
-          mandarinOptions: .none
+          mandarinOptions: []
         )
       }
       return _yale ?? "Yale not available"
@@ -153,7 +153,7 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
       if _cantoneseIPA == nil {
         generatePhonetic(
           cantoneseOptions: .cantoneseIPA,
-          mandarinOptions: .none
+          mandarinOptions: []
         )
       }
       return _cantoneseIPA ?? "Cantonese IPA not available"
@@ -169,7 +169,7 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
     case .prettyPinyin:
       if _prettyPinyin == nil {
         generatePhonetic(
-          cantoneseOptions: .none,
+          cantoneseOptions: [],
           mandarinOptions: .prettyPinyin
         )
       }
@@ -177,7 +177,7 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
     case .numberedPinyin:
       if _numberedPinyin == nil {
         generatePhonetic(
-          cantoneseOptions: .none,
+          cantoneseOptions: [],
           mandarinOptions: .numberedPinyin
         )
       }
@@ -185,7 +185,7 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
     case .zhuyin:
       if _zhuyin == nil {
         generatePhonetic(
-          cantoneseOptions: .none,
+          cantoneseOptions: [],
           mandarinOptions: .zhuyin
         )
       }
@@ -193,7 +193,7 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
     case .mandarinIPA:
       if _mandarinIPA == nil {
         generatePhonetic(
-          cantoneseOptions: .none,
+          cantoneseOptions: [],
           mandarinOptions: .mandarinIPA
         )
       }
