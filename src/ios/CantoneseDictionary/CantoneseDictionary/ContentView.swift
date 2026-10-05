@@ -128,8 +128,11 @@ extension ContentView {
   private func sheetView(for sheet: Sheet) -> some View {
     switch sheet {
     case .transcription:
-      TranscriptionView()
-        .presentationDetents([.medium])
+      TranscriptionView(
+        searchContext: searchContext,
+        isSearchActive: $isSearchActive
+      )
+      .presentationDetents([.medium])
     case .handwriting:
       HandwritingView()
         .presentationDetents([.medium])
