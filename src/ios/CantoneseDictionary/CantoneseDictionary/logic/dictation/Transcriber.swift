@@ -113,8 +113,16 @@ final class Transcriber {
   var downloadProgress: Progress?
 
   var transcript: String = ""
-  var audioLevel: Float = -50.0
+  var audioLevel: Float = 0.0
   var isTranscribing: Bool = false
+  var downloadState: DownloadState = .idle
+
+  enum DownloadState {
+    case idle
+    case inProgress
+    case cancelled
+    case finished
+  }
 
   func setUpTranscriber(locales: [Locale]) async throws {
     let preset = DictationTranscriber.Preset.progressiveShortDictation
@@ -122,6 +130,7 @@ final class Transcriber {
     for l in locales {
       if await supported(locale: l) {
         localeCandidate = l
+        break
       }
     }
 
@@ -148,10 +157,6 @@ final class Transcriber {
       try await ensureModel(transcriber: transcriber, locale: locale)
     } catch let error as TranscriptionError {
       logger.error("\(error)")
-      for l in await DictationTranscriber.supportedLocales {
-        logger.info("\(l.identifier)")
-      }
-      logger.info("\(locale.identifier)")
       return
     }
 
@@ -235,8 +240,10 @@ extension Transcriber {
 
   func downloadIfNeeded(for module: DictationTranscriber) async throws {
     if let downloader = try await AssetInventory.assetInstallationRequest(supporting: [module]) {
+      downloadState = .inProgress
       self.downloadProgress = downloader.progress
       try await downloader.downloadAndInstall()
+      downloadState = .finished
     }
   }
 
@@ -274,6 +281,7 @@ class Recorder: @unchecked Sendable {
       logger.error("User denied mic permission")
       throw TranscriptionError.micPermissionDenied
     }
+    await transcriber.releaseLocales()
     #if os(iOS)
       try setUpAudioSession()
     #endif
@@ -285,7 +293,7 @@ class Recorder: @unchecked Sendable {
     lastSpeech = recordingStarted
     didTimeout = false
 
-    logger.info("Starting recording")
+    logger.info("Started recording")
 
     for await wrapped in try await audioStream() {
       try await transcriber.streamAudioToTranscriber(wrapped.buffer)
@@ -332,17 +340,10 @@ class Recorder: @unchecked Sendable {
 
       let src = UnsafeMutableAudioBufferListPointer(buffer.mutableAudioBufferList)
       let dst = UnsafeMutableAudioBufferListPointer(copy.mutableAudioBufferList)
-      guard src.count == dst.count else { return }
-      for i in 0..<src.count {
-        guard let s = src[i].mData, let d = dst[i].mData else { continue }
-        let bytes = Int(src[i].mDataByteSize)
-        guard
-          bytes <= Int(dst[i].mDataByteSize)
-            || bytes <= Int(copy.frameCapacity) * MemoryLayout<Float>.size
-        else { continue }
-        dst[i].mNumberChannels = src[i].mNumberChannels
-        dst[i].mDataByteSize = src[i].mDataByteSize
-        d.copyMemory(from: s, byteCount: bytes)
+
+      for (s, d) in zip(src, dst) {
+        guard let sp = s.mData, let dp = d.mData else { continue }
+        dp.copyMemory(from: sp, byteCount: min(Int(s.mDataByteSize), Int(d.mDataByteSize)))
       }
 
       let level = rms(of: SendableBuffer(buffer: copy))
@@ -366,7 +367,7 @@ class Recorder: @unchecked Sendable {
           try? await self.stop()
         }
       } else if !didTimeout,
-        lastSpeech.timeIntervalSince(recordingStarted) > 0,
+        lastSpeech.timeIntervalSince(recordingStarted) > 0.5,
         Date().timeIntervalSince(lastSpeech) > silenceTimeout
       {
         didTimeout = true

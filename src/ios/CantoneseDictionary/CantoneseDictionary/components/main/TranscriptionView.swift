@@ -45,6 +45,7 @@ struct TranscriptionView: View {
       switch self {
       case .cantonese:
         return [
+          Locale(components: .init(languageCode: .chinese, script: nil, languageRegion: .hongKong)),
           Locale(components: .init(languageCode: .cantonese, script: nil, languageRegion: nil)),
           Locale(
             components: .init(languageCode: .cantonese, script: nil, languageRegion: .hongKong)),
@@ -97,27 +98,39 @@ struct TranscriptionView: View {
   var body: some View {
     NavigationStack {
       VStack {
-        ZStack {
-          Circle()
-            .fill(.background)
-            .frame(width: min(CGFloat(transcriber.audioLevel * 150 + 75), 150))
-            .animation(.easeInOut(duration: 0.10), value: transcriber.audioLevel)
-          Image(systemName: "microphone.fill")
-            .resizable()
-            .scaledToFit()
-            .frame(width: 30)
-            .foregroundStyle(transcriber.isTranscribing ? .accent : .secondary)
-            .padding()
-        }
-        .frame(height: 150)
-        .onTapGesture {
-          if !transcriber.isTranscribing {
-            Task {
-              do {
-                try await recorder.start(locales: languageSelection.locale)
-              } catch {
-                logger.error("\(error)")
-                showTranscriptionFailure = true
+        Spacer()
+        if transcriber.downloadState != .idle,
+           transcriber.downloadState != .finished
+        {
+          ContentUnavailableView {
+            ProgressView()
+              .scaleEffect(2.0)
+            Text("Downloading and installing speech model...")
+          }
+        } else {
+          ZStack {
+            Circle()
+              .fill(.background)
+              .frame(width: min(CGFloat(transcriber.audioLevel * 150 + 75), 150))
+              .animation(.easeInOut(duration: 0.10), value: transcriber.audioLevel)
+            Image(systemName: "microphone.fill")
+              .resizable()
+              .scaledToFit()
+              .frame(width: 30)
+              .foregroundStyle(transcriber.isTranscribing ? .accent : .secondary)
+              .padding()
+          }
+          .offset(y: -15)
+          .frame(height: 150)
+          .onTapGesture {
+            if !transcriber.isTranscribing {
+              Task {
+                do {
+                  try await recorder.start(locales: languageSelection.locale)
+                } catch {
+                  logger.error("\(error)")
+                  showTranscriptionFailure = true
+                }
               }
             }
           }
@@ -126,7 +139,7 @@ struct TranscriptionView: View {
         Button {
           if !transcriber.transcript.isEmpty {
             searchContext.searchText = transcriber.transcript
-            if (languageSelection == .english || languageSelection == .french) {
+            if languageSelection == .english || languageSelection == .french {
               searchContext.selectedOption = .english
             } else {
               searchContext.selectedOption = .autoDetect
