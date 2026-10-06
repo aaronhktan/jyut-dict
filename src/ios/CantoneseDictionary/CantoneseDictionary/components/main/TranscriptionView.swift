@@ -105,6 +105,7 @@ struct TranscriptionView: View {
           ContentUnavailableView {
             ProgressView()
               .scaleEffect(2.0)
+              .padding()
             Text("Downloading and installing speech model...")
           }
         } else {

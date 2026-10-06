@@ -221,8 +221,29 @@ extension Transcriber {
     if !(await AssetInventory.reservedLocales
       .map({ $0.identifier(.bcp47) }).contains(locale.identifier(.bcp47)))
     {
-      _ = try await AssetInventory.reserve(locale: locale)
+      var localeReserved = false
+      var localesReleased = false
+
+      while !localeReserved {
+        do {
+          localeReserved = try await AssetInventory.reserve(locale: locale)
+          if localeReserved {
+            break
+          }
+        } catch {
+          logger.warning("Could not reserve locale, error: \(error)")
+        }
+
+        if localesReleased {
+          logger.error("Could not reserve locale even after releasing locales!")
+          throw TranscriptionError.couldNotDownloadModel
+        }
+
+        await releaseLocales()
+        localesReleased = true
+      }
     }
+
     if !(await installed(locale: locale)) {
       try await downloadIfNeeded(for: transcriber)
     }
@@ -281,7 +302,6 @@ class Recorder: @unchecked Sendable {
       logger.error("User denied mic permission")
       throw TranscriptionError.micPermissionDenied
     }
-    await transcriber.releaseLocales()
     #if os(iOS)
       try setUpAudioSession()
     #endif
@@ -333,6 +353,9 @@ class Recorder: @unchecked Sendable {
       format: audioEngine.inputNode.outputFormat(forBus: 0)
     ) { [weak self] buffer, _ in
       guard let self else { return }
+
+      // Copying the buffer is needed to jump between actor boundaries in Swift.
+      // Once iOS 27+ support is possible, we can probably move to installAudioTap(onBus:bufferSize:format:tapProvider:)
       guard let copy = AVAudioPCMBuffer(pcmFormat: buffer.format, frameCapacity: buffer.frameLength)
       else { return }
 
