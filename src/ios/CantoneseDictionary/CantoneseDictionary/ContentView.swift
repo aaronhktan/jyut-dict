@@ -135,7 +135,7 @@ extension ContentView {
       .presentationDetents([.medium])
     case .handwriting:
       HandwritingView()
-        .presentationDetents([.medium])
+        .presentationDetents([.large])
     case .saved:
       SavedView()
         .presentationDetents([.large])
