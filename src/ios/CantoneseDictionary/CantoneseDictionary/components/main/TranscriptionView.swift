@@ -160,6 +160,7 @@ struct TranscriptionView: View {
         .buttonBorderShape(.capsule)
         .controlSize(.extraLarge)
         .padding(.horizontal)
+        .disabled(transcriber.transcript.isEmpty)
       }
       .toolbar {
         #if os(iOS)
