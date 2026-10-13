@@ -178,7 +178,7 @@ extension HandwritingView {
   private func CandidatesView() -> some View {
     ScrollView(.horizontal) {
       HStack {
-        ForEach((0...4), id: \.self) { index in
+        ForEach((0...9), id: \.self) { index in
           if canvasState.candidates.count > index {
             Button {
               searchText.append(canvasState.candidates[index])
@@ -192,6 +192,13 @@ extension HandwritingView {
             .font(.title)
             .padding(.horizontal)
             .glassEffect()
+          } else {
+            // Just here to reserve space
+            Button("大", action: {})
+              .font(.title)
+              .padding(.horizontal)
+              .glassEffect()
+              .hidden()
           }
         }
       }
