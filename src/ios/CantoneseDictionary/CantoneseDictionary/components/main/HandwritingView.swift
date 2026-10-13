@@ -115,62 +115,95 @@ extension HandwritingView {
   // MARK: - Canvas
   @ViewBuilder
   private func CanvasView() -> some View {
-    Canvas { context, size in
-      for path in canvasState.paths {
-        if path.isFilled {
-          context.fill(path.path, with: .color(.primary))
-        } else {
-          context.stroke(path.path, with: .color(.primary), lineWidth: lineWidth)
+    ZStack(alignment: .top) {
+      Canvas { context, size in
+        for path in canvasState.paths {
+          if path.isFilled {
+            context.fill(path.path, with: .color(.primary))
+          } else {
+            context.stroke(path.path, with: .color(.primary), lineWidth: lineWidth)
+          }
         }
+        context.stroke(canvasState.currentPath, with: .color(.primary), lineWidth: lineWidth)
       }
-      context.stroke(canvasState.currentPath, with: .color(.primary), lineWidth: lineWidth)
-    }
-    .background(.quinary)
-    .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
-    .clipShape(
-      .rect(
-        topLeadingRadius: 20,
-        bottomLeadingRadius: 20,
-        bottomTrailingRadius: 20,
-        topTrailingRadius: 20
+      .background(.quinary)
+      .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
+      .clipShape(
+        .rect(
+          topLeadingRadius: 20,
+          bottomLeadingRadius: 20,
+          bottomTrailingRadius: 20,
+          topTrailingRadius: 20
+        )
       )
-    )
-    .padding([.horizontal])
-    .gesture(
-      DragGesture(minimumDistance: 0, coordinateSpace: .local)
-        .onChanged { value in
-          if canvasState.currentPath.isEmpty {
-            canvasState.currentPath.move(to: value.startLocation)
-            canvasState.startLocation = value.startLocation
-          } else {
-            canvasState.currentPath.addLine(to: value.location)
+      .padding([.horizontal])
+      .gesture(
+        DragGesture(minimumDistance: 0, coordinateSpace: .local)
+          .onChanged { value in
+            if canvasState.currentPath.isEmpty {
+              canvasState.currentPath.move(to: value.startLocation)
+              canvasState.startLocation = value.startLocation
+            } else {
+              canvasState.currentPath.addLine(to: value.location)
+            }
+
+            canvasState.points.append(
+              StrokePoint.init(
+                x: Float(value.location.x),
+                y: Float(value.location.y),
+                t: Int(Date.now.timeIntervalSince1970 * 1000)))
           }
+          .onEnded { value in
+            if CGPointDistanceSquared(from: canvasState.startLocation, to: value.location) ?? 0
+                < (epsilon * epsilon)
+            {
+              canvasState.currentPath.addEllipse(
+                in: CGRect(x: value.location.x - 3, y: value.location.y - 3, width: 6, height: 6))
+              canvasState.paths.append((path: canvasState.currentPath, isFilled: true))
+            } else {
+              canvasState.paths.append((path: canvasState.currentPath, isFilled: false))
+            }
 
-          canvasState.points.append(
-            StrokePoint.init(
-              x: Float(value.location.x),
-              y: Float(value.location.y),
-              t: Int(Date.now.timeIntervalSince1970 * 1000)))
-        }
-        .onEnded { value in
-          if CGPointDistanceSquared(from: canvasState.startLocation, to: value.location) ?? 0
-            < (epsilon * epsilon)
-          {
-            canvasState.currentPath.addEllipse(
-              in: CGRect(x: value.location.x - 3, y: value.location.y - 3, width: 6, height: 6))
-            canvasState.paths.append((path: canvasState.currentPath, isFilled: true))
-          } else {
-            canvasState.paths.append((path: canvasState.currentPath, isFilled: false))
+            canvasState.strokes.append(Stroke.init(points: canvasState.points))
+            canvasState.points = []
+            canvasState.currentPath = Path()
+            canvasState.startLocation = nil
+
+            canvasState.doRecognition()
           }
+      )
 
-          canvasState.strokes.append(Stroke.init(points: canvasState.points))
-          canvasState.points = []
-          canvasState.currentPath = Path()
-          canvasState.startLocation = nil
-
-          canvasState.doRecognition()
+      HStack {
+        Button("Reset canvas", systemImage: "trash") {
+          canvasState.clear()
         }
-    )
+        .labelStyle(.iconOnly)
+        .padding()
+        .buttonBorderShape(.circle)
+        .buttonStyle(.glass)
+        .frame(alignment: .leading)
+        .disabled(canvasState.paths.isEmpty)
+
+        Spacer()
+
+        Button("Undo", systemImage: "arrow.uturn.backward") {
+          canvasState.paths = canvasState.paths.dropLast()
+          canvasState.strokes = canvasState.strokes.dropLast()
+          if canvasState.paths.isEmpty {
+            canvasState.clear()
+          } else {
+            canvasState.doRecognition()
+          }
+        }
+        .labelStyle(.iconOnly)
+        .padding()
+        .buttonBorderShape(.circle)
+        .buttonStyle(.glass)
+        .frame(alignment: .trailing)
+        .disabled(canvasState.paths.isEmpty)
+      }
+      .padding(.horizontal)
+    }
   }
 
   // MARK: - Candidates
@@ -211,20 +244,6 @@ extension HandwritingView {
   @ViewBuilder
   private func ButtonView() -> some View {
     Button {
-      canvasState.clear()
-    } label: {
-      Text("Reset canvas")
-        .lineLimit(1)
-        .truncationMode(.middle)
-        .frame(maxWidth: .infinity)
-    }
-    .buttonStyle(.bordered)
-    .buttonBorderShape(.capsule)
-    .controlSize(.extraLarge)
-    .padding(.horizontal)
-    .disabled(canvasState.paths.isEmpty)
-
-    Button {
       searchText = String(searchText.dropLast())
       if searchText.isEmpty {
         buttonText = "Search"
@@ -232,9 +251,10 @@ extension HandwritingView {
         buttonText = "Search for: \(searchText)"
       }
     } label: {
-      Text("Backspace")
+      Label("Delete last character", systemImage: "delete.backward")
         .frame(maxWidth: .infinity)
     }
+    .labelStyle(.iconOnly)
     .buttonStyle(.bordered)
     .buttonBorderShape(.capsule)
     .controlSize(.extraLarge)

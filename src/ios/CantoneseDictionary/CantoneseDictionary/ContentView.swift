@@ -113,7 +113,7 @@ extension ContentView {
         )
         .labelStyle(.iconOnly)
         Button(
-          "Search with handwriting", systemImage: "pencil.and.scribble",
+          "Search with handwriting", systemImage: "highlighter",
           action: {
             presentedSheet = .handwriting
           }
