@@ -7,6 +7,7 @@
 
 import MLKitDigitalInkRecognition
 import SwiftUI
+import os
 
 struct HandwritingView: View {
   @Environment(\.dismiss) var dismiss
@@ -15,9 +16,12 @@ struct HandwritingView: View {
 
   @Binding var isSearchActive: Bool
 
-  @State private var handwritingState = HandwritingState()
+  @State private var canvasState = CanvasState()
   @State private var searchText = ""
   @State private var buttonText = "Search"
+
+  @State private var modelIsAvailable = false
+  @State private var showModelDownloadFailure = false
 
   let lineWidth = 5.0
   let epsilon = 5.0
@@ -25,7 +29,7 @@ struct HandwritingView: View {
   var body: some View {
     NavigationStack {
       VStack {
-        if handwritingState.recognizer == nil {
+        if !modelIsAvailable {
           ContentUnavailableView {
             ProgressView()
               .scaleEffect(2.0)
@@ -55,26 +59,50 @@ struct HandwritingView: View {
       }
     }
     .task {
+      let nc = NotificationCenter.default
+      nc.addObserver(forName: NSNotification.Name.mlkitModelDownloadDidSucceed, object: nil, queue: nil, using: { _ in
+        Task { @MainActor in
+          logger.info("Model download completed")
+          modelIsAvailable = true
+        }
+      })
+      nc.addObserver(forName: NSNotification.Name.mlkitModelDownloadDidFail, object: nil, queue: nil, using: { _ in
+        Task { @MainActor in
+          logger.error("Model download failed")
+          showModelDownloadFailure = true
+        }
+      })
       let languageTag = "zh-Hani-HK"
       let identifier = DigitalInkRecognitionModelIdentifier(forLanguageTag: languageTag)
       guard let identifier else {
-        print("Couldn't find identifier!")
+        logger.error("Couldn't find identifier: \(languageTag)!")
+        showModelDownloadFailure = true
         return
       }
       let model = DigitalInkRecognitionModel(modelIdentifier: identifier)
       let modelManager = ModelManager.modelManager()
-      if !modelManager.isModelDownloaded(model) {
+      if modelManager.isModelDownloaded(model) {
+        modelIsAvailable = true
+      } else {
         let conditions = ModelDownloadConditions.init(
           allowsCellularAccess: true,
           allowsBackgroundDownloading: false)
         modelManager.download(model, conditions: conditions)
       }
-      handwritingState.recognizer = DigitalInkRecognizer.digitalInkRecognizer(
+      canvasState.recognizer = DigitalInkRecognizer.digitalInkRecognizer(
         options: DigitalInkRecognizerOptions(model: model))
+    }
+    .alert(
+      "Jyut Dictionary could not locate the handwriting model.",
+      isPresented: $showModelDownloadFailure
+    ) {
+      Button("OK", role: .cancel) {
+        dismiss()
+      }
     }
   }
 
-  func CGPointDistanceSquared(from: CGPoint?, to: CGPoint?) -> CGFloat? {
+  private func CGPointDistanceSquared(from: CGPoint?, to: CGPoint?) -> CGFloat? {
     if let from, let to {
       return (from.x - to.x) * (from.x - to.x) + (from.y - to.y) * (from.y - to.y)
     }
@@ -86,16 +114,16 @@ struct HandwritingView: View {
 extension HandwritingView {
   // MARK: - Canvas
   @ViewBuilder
-  func CanvasView() -> some View {
+  private func CanvasView() -> some View {
     Canvas { context, size in
-      for path in handwritingState.paths {
+      for path in canvasState.paths {
         if path.isFilled {
           context.fill(path.path, with: .color(.primary))
         } else {
           context.stroke(path.path, with: .color(.primary), lineWidth: lineWidth)
         }
       }
-      context.stroke(handwritingState.currentPath, with: .color(.primary), lineWidth: lineWidth)
+      context.stroke(canvasState.currentPath, with: .color(.primary), lineWidth: lineWidth)
     }
     .background(.quinary)
     .aspectRatio(CGSize(width: 1, height: 1), contentMode: .fit)
@@ -111,53 +139,53 @@ extension HandwritingView {
     .gesture(
       DragGesture(minimumDistance: 0, coordinateSpace: .local)
         .onChanged { value in
-          if handwritingState.currentPath.isEmpty {
-            handwritingState.currentPath.move(to: value.startLocation)
-            handwritingState.startLocation = value.startLocation
+          if canvasState.currentPath.isEmpty {
+            canvasState.currentPath.move(to: value.startLocation)
+            canvasState.startLocation = value.startLocation
           } else {
-            handwritingState.currentPath.addLine(to: value.location)
+            canvasState.currentPath.addLine(to: value.location)
           }
 
-          handwritingState.points.append(
+          canvasState.points.append(
             StrokePoint.init(
               x: Float(value.location.x),
               y: Float(value.location.y),
               t: Int(Date.now.timeIntervalSince1970 * 1000)))
         }
         .onEnded { value in
-          if CGPointDistanceSquared(from: handwritingState.startLocation, to: value.location) ?? 0
+          if CGPointDistanceSquared(from: canvasState.startLocation, to: value.location) ?? 0
             < (epsilon * epsilon)
           {
-            handwritingState.currentPath.addEllipse(
+            canvasState.currentPath.addEllipse(
               in: CGRect(x: value.location.x - 3, y: value.location.y - 3, width: 6, height: 6))
-            handwritingState.paths.append((path: handwritingState.currentPath, isFilled: true))
+            canvasState.paths.append((path: canvasState.currentPath, isFilled: true))
           } else {
-            handwritingState.paths.append((path: handwritingState.currentPath, isFilled: false))
+            canvasState.paths.append((path: canvasState.currentPath, isFilled: false))
           }
 
-          handwritingState.strokes.append(Stroke.init(points: handwritingState.points))
-          handwritingState.points = []
-          handwritingState.currentPath = Path()
-          handwritingState.startLocation = nil
+          canvasState.strokes.append(Stroke.init(points: canvasState.points))
+          canvasState.points = []
+          canvasState.currentPath = Path()
+          canvasState.startLocation = nil
 
-          handwritingState.doRecognition()
+          canvasState.doRecognition()
         }
     )
   }
 
   // MARK: - Candidates
   @ViewBuilder
-  func CandidatesView() -> some View {
+  private func CandidatesView() -> some View {
     ScrollView(.horizontal) {
       HStack {
         ForEach((0...4), id: \.self) { index in
-          if handwritingState.candidates.count > index {
+          if canvasState.candidates.count > index {
             Button {
-              searchText.append(handwritingState.candidates[index])
+              searchText.append(canvasState.candidates[index])
               buttonText = "Search for: \(searchText)"
-              handwritingState.clear()
+              canvasState.clear()
             } label: {
-              Text(handwritingState.candidates[index])
+              Text(canvasState.candidates[index])
                 .lineLimit(1)
                 .truncationMode(.middle)
             }
@@ -174,9 +202,9 @@ extension HandwritingView {
 
   // MARK: - Buttons
   @ViewBuilder
-  func ButtonView() -> some View {
+  private func ButtonView() -> some View {
     Button {
-      handwritingState.clear()
+      canvasState.clear()
     } label: {
       Text("Reset canvas")
         .lineLimit(1)
@@ -187,7 +215,7 @@ extension HandwritingView {
     .buttonBorderShape(.capsule)
     .controlSize(.extraLarge)
     .padding(.horizontal)
-    .disabled(handwritingState.paths.isEmpty)
+    .disabled(canvasState.paths.isEmpty)
 
     Button {
       searchText = String(searchText.dropLast())
@@ -229,7 +257,7 @@ extension HandwritingView {
   }
 }
 
-@Observable @MainActor final class HandwritingState {
+@Observable @MainActor final class CanvasState {
   // For drawing on canvas
   var currentPath: Path = Path()
   var startLocation: CGPoint?

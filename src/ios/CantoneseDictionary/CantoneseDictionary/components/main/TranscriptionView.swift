@@ -100,7 +100,7 @@ struct TranscriptionView: View {
       VStack {
         Spacer()
         if transcriber.downloadState != .idle,
-           transcriber.downloadState != .finished
+          transcriber.downloadState != .finished
         {
           ContentUnavailableView {
             ProgressView()
@@ -109,93 +109,13 @@ struct TranscriptionView: View {
             Text("Downloading and installing speech model...")
           }
         } else {
-          ZStack {
-            Circle()
-              .fill(.background)
-              .frame(width: min(CGFloat(transcriber.audioLevel * 150 + 75), 150))
-              .animation(.easeInOut(duration: 0.10), value: transcriber.audioLevel)
-            Image(systemName: "microphone.fill")
-              .resizable()
-              .scaledToFit()
-              .frame(width: 30)
-              .foregroundStyle(transcriber.isTranscribing ? .accent : .secondary)
-              .padding()
-          }
-          .offset(y: -15)
-          .frame(height: 150)
-          .onTapGesture {
-            if !transcriber.isTranscribing {
-              Task {
-                do {
-                  try await recorder.start(locales: languageSelection.locale)
-                } catch {
-                  logger.error("\(error)")
-                  showTranscriptionFailure = true
-                }
-              }
-            }
-          }
+          microphoneView()
         }
         Spacer()
-        Button {
-          if !transcriber.transcript.isEmpty {
-            searchContext.searchText = transcriber.transcript
-            if languageSelection == .english || languageSelection == .french {
-              searchContext.selectedOption = .english
-            } else {
-              searchContext.selectedOption = .autoDetect
-            }
-            isSearchActive = true
-          }
-          dismiss()
-        } label: {
-          Text(buttonText)
-            .lineLimit(1)
-            .truncationMode(.middle)
-            .frame(maxWidth: .infinity)
-            .contentTransition(.opacity)
-            .animation(.easeInOut(duration: 0.3), value: buttonText)
-        }
-        .buttonStyle(.borderedProminent)
-        .buttonBorderShape(.capsule)
-        .controlSize(.extraLarge)
-        .padding(.horizontal)
-        .disabled(transcriber.transcript.isEmpty)
+        searchView()
       }
       .toolbar {
-        #if os(iOS)
-          ToolbarItem(placement: .principal) {
-            Menu {
-              Picker("Language", selection: $languageSelection) {
-                Text("Cantonese").tag(DictationLanguage.cantonese)
-                Text("Mandarin").tag(DictationLanguage.mandarin)
-                Text("English").tag(DictationLanguage.english)
-              }
-            } label: {
-              HStack(spacing: 4) {
-                Text(languageSelection.descriptionString)
-                  .font(.title3)
-                Image(systemName: "chevron.up.chevron.down")
-                  .imageScale(.small)
-                  .foregroundStyle(.accent)
-              }
-            }
-            .tint(.primary)
-          }
-          ToolbarItem(placement: .topBarTrailing) {
-            Button("Close transcription", systemImage: "xmark") {
-              dismiss()
-            }
-            .labelsHidden()
-          }
-        #else
-          ToolbarItem(placement: .navigation) {
-            Button("Close transcription", systemImage: "xmark") {
-              dismiss()
-            }
-            .labelsHidden()
-          }
-        #endif
+        toolbarContent
       }
     }
     .onChange(of: languageSelection) {
@@ -242,5 +162,105 @@ struct TranscriptionView: View {
         dismiss()
       }
     }
+  }
+}
+
+extension TranscriptionView {
+  // MARK: - Microphone animation
+  @ViewBuilder
+  private func microphoneView() -> some View {
+    ZStack {
+      Circle()
+        .fill(.background)
+        .frame(width: min(CGFloat(transcriber.audioLevel * 150 + 75), 150))
+        .animation(.easeInOut(duration: 0.10), value: transcriber.audioLevel)
+      Image(systemName: "microphone.fill")
+        .resizable()
+        .scaledToFit()
+        .frame(width: 30)
+        .foregroundStyle(transcriber.isTranscribing ? .accent : .secondary)
+        .padding()
+    }
+    .offset(y: -15)
+    .frame(height: 150)
+    .onTapGesture {
+      if !transcriber.isTranscribing {
+        Task {
+          do {
+            try await recorder.start(locales: languageSelection.locale)
+          } catch {
+            logger.error("\(error)")
+            showTranscriptionFailure = true
+          }
+        }
+      }
+    }
+  }
+
+  // MARK: - Search button
+  @ViewBuilder
+  private func searchView() -> some View {
+    Button {
+      if !transcriber.transcript.isEmpty {
+        searchContext.searchText = transcriber.transcript
+        if languageSelection == .english || languageSelection == .french {
+          searchContext.selectedOption = .english
+        } else {
+          searchContext.selectedOption = .autoDetect
+        }
+        isSearchActive = true
+      }
+      dismiss()
+    } label: {
+      Text(buttonText)
+        .lineLimit(1)
+        .truncationMode(.middle)
+        .frame(maxWidth: .infinity)
+        .contentTransition(.opacity)
+        .animation(.easeInOut(duration: 0.3), value: buttonText)
+    }
+    .buttonStyle(.borderedProminent)
+    .buttonBorderShape(.capsule)
+    .controlSize(.extraLarge)
+    .padding(.horizontal)
+    .disabled(transcriber.transcript.isEmpty)
+  }
+
+  // MARK: - Toolbar
+  @ToolbarContentBuilder
+  private var toolbarContent: some ToolbarContent {
+    #if os(iOS)
+      ToolbarItem(placement: .principal) {
+        Menu {
+          Picker("Language", selection: $languageSelection) {
+            Text("Cantonese").tag(DictationLanguage.cantonese)
+            Text("Mandarin").tag(DictationLanguage.mandarin)
+            Text("English").tag(DictationLanguage.english)
+          }
+        } label: {
+          HStack(spacing: 4) {
+            Text(languageSelection.descriptionString)
+              .font(.title3)
+            Image(systemName: "chevron.up.chevron.down")
+              .imageScale(.small)
+              .foregroundStyle(.accent)
+          }
+        }
+        .tint(.primary)
+      }
+      ToolbarItem(placement: .topBarTrailing) {
+        Button("Close transcription", systemImage: "xmark") {
+          dismiss()
+        }
+        .labelsHidden()
+      }
+    #else
+      ToolbarItem(placement: .navigation) {
+        Button("Close transcription", systemImage: "xmark") {
+          dismiss()
+        }
+        .labelsHidden()
+      }
+    #endif
   }
 }
