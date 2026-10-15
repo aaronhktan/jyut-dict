@@ -29,8 +29,6 @@ struct SearchHistoryRow: View {
 }
 
 #Preview {
-  @Previewable @State var settings = Settings()
-
   let searchHistoryItem = SearchHistoryItem(
     searchTerm: "hello",
     inputMethod: .autoDetect
