@@ -41,6 +41,14 @@ class DatabaseManager {
     components: "dictionaries",
     "dict.db"
   )
+  private let bundleUserURL = Bundle.main.url(
+    forResource: "user",
+    withExtension: "db"
+  )
+  private let localUserURL = URL.applicationSupportDirectory.appending(
+    components: "dictionaries",
+    "user.db"
+  )
 
   private var pool: DatabasePool? = nil
 
@@ -74,6 +82,23 @@ class DatabaseManager {
       }
     }
 
+    if !fileManager.fileExists(atPath: self.localUserURL.path) {
+      do {
+        if let bundleUserURL = self.bundleUserURL {
+          try fileManager.copyItem(at: bundleUserURL, to: self.localUserURL)
+          logger.info(
+            "Successfully copied user database to \(self.localUserURL.absoluteString)!"
+          )
+        } else {
+          logger.warning("No bundle URL found, skipping user database copy!")
+        }
+      } catch {
+        logger.error(
+          "Could not copy user database to \(self.localUserURL.absoluteString), error: \(error)!"
+        )
+      }
+    }
+
     let regexCache = RegexCache()
     let regexpFunction = DatabaseFunction("REGEXP", argumentCount: 2, pure: true) { values in
       guard let pattern = String.fromDatabaseValue(values[0]),
@@ -94,6 +119,9 @@ class DatabaseManager {
     var config = Configuration()
     config.prepareDatabase { db in
       db.add(function: regexpFunction)
+      try db.execute(sql: """
+          ATTACH DATABASE ? AS user
+          """, arguments: [self.localUserURL.path])
       try db.execute(sql: "PRAGMA cache_size = -64000")
       try db.execute(sql: "PRAGMA mmap_size = 268435456")
       try db.execute(sql: "PRAGMA temp_store = MEMORY")

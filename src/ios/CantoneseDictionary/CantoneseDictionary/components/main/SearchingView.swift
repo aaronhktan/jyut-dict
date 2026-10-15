@@ -194,7 +194,7 @@ extension SearchingView {
     {
       return "Auto-detect language"
     }
-    return "Detected input: \(InputMethodNames[searchContext.detectedInputMethod] ?? "")"
+    return "Detected input: \(searchContext.detectedInputMethod.descriptionString)"
   }
 
   @ViewBuilder
@@ -227,7 +227,7 @@ extension SearchingView {
             }),
             id: \.self
           ) { option in
-            Text(option == .autoDetect ? selectedOptionLabel : InputMethodNames[option] ?? "")
+            Text(option == .autoDetect ? selectedOptionLabel : option.descriptionString)
               .tag(option)
           }
         }
@@ -273,11 +273,18 @@ extension SearchingView {
         return
       } else {
         searchContext.searchResults = results
+        try? await Task.sleep(for: .milliseconds(200))
+        guard !Task.isCancelled else { return }
+
         if (appIdiom != .phone) && (searchContext.sizeClass != .compact) {
-          try? await Task.sleep(for: .milliseconds(200))
-          guard !Task.isCancelled else { return }
           searchContext.selectedRowId = results.first?.id
         }
+
+        guard let pool = databaseManager.dbPool else { return }
+        let userHistory = SQLUserHistory(pool: pool)
+        let searchTerm = searchContext.searchText.lowercased()
+        let option = searchContext.selectedOption
+        await userHistory.addSearchToHistory(searchTerm: searchTerm, option: option)
       }
     }
     .toolbar {

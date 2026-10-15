@@ -19,17 +19,28 @@ enum InputMethod: Int, CaseIterable, Identifiable {
   case autoDetect = 1000
   case none = 1001
 
+  var descriptionString: String {
+    switch self {
+    case .simplified:
+      return "Simplified"
+    case .traditional:
+      return "Traditional"
+    case .jyutping:
+      return "Jyutping"
+    case .fuzzyJyutping:
+      return "Fuzzy Jyutping"
+    case .pinyin:
+      return "Pinyin"
+    case .fuzzyPinyin:
+      return "Fuzzy Pinyin"
+    case .english:
+      return "English"
+    case .autoDetect:
+      return "Auto-detect language"
+    case .none:
+      return "None"
+    }
+  }
+
   var id: Int { rawValue }
 }
-
-nonisolated let InputMethodNames: [InputMethod: String] = [
-  .simplified: "Simplified Chinese",
-  .traditional: "Traditional Chinese",
-  .jyutping: "Jyutping",
-  .fuzzyJyutping: "Fuzzy Jyutping",
-  .pinyin: "Pinyin",
-  .fuzzyPinyin: "Fuzzy Pinyin",
-  .english: "English",
-  .autoDetect: "Auto-detect language",
-  .none: "None",
-]

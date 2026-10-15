@@ -85,6 +85,13 @@ struct EntryDetail: View {
     .task(id: rowId) {
       guard rowId != -1 else { return }
       await fetchEntry(rowId: rowId)
+
+      try? await Task.sleep(for: .milliseconds(200))
+      guard !Task.isCancelled else { return }
+
+      guard let pool = databaseManager.dbPool else { return }
+      let userHistory = SQLUserHistory(pool: pool)
+      await userHistory.addViewToHistory(entry: entry!)
     }
   }
 

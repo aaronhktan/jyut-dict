@@ -143,7 +143,10 @@ extension ContentView {
       SavedView()
         .presentationDetents([.large])
     case .history:
-      HistoryView()
+      HistoryView(
+        searchContext: searchContext,
+        isSearchActive: $isSearchActive
+      )
         .presentationDetents([.large])
     case .settings:
       SettingsView()
