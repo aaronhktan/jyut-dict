@@ -15,6 +15,7 @@ struct EntryDetail: View {
 
   @State private var entry: Entry? = nil
   @State private var examples: [String: [Example]] = [:]
+  @State private var saved: Bool = false
 
   private var definitionsSets: [DefinitionsSet] {
     entry?.getDefinitionsSets() ?? []
@@ -78,6 +79,9 @@ struct EntryDetail: View {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
+        .toolbar {
+          toolbarContent
+        }
       } else {
         Spacer()
       }
@@ -89,9 +93,16 @@ struct EntryDetail: View {
       try? await Task.sleep(for: .milliseconds(200))
       guard !Task.isCancelled else { return }
 
-      guard let pool = databaseManager.dbPool else { return }
-      let userHistory = SQLUserHistory(pool: pool)
-      await userHistory.addViewToHistory(entry: entry!)
+      if let entry {
+        guard let pool = databaseManager.dbPool else { return }
+        let userHistory = SQLUserHistory(pool: pool)
+        await userHistory.addViewToHistory(entry: entry)
+
+        let userData = SQLUserData(pool: pool)
+        saved = await userData.fetchSavedByUnique(
+          traditional: entry.traditional, simplified: entry.simplified, jyutping: entry.jyutping,
+          pinyin: entry.pinyin)
+      }
     }
   }
 
@@ -265,6 +276,45 @@ extension EntryDetail {
           .textSelection(.enabled)
         }
       }
+    }
+  }
+
+  // MARK: - Toolbar
+  private var topPlacement: ToolbarItemPlacement {
+    #if os(iOS)
+      .topBarTrailing
+    #else
+      .navigation
+    #endif
+  }
+
+  @ToolbarContentBuilder
+  private var toolbarContent: some ToolbarContent {
+    ToolbarItem(placement: topPlacement) {
+      Button("Save entry", systemImage: saved ? "star.fill" : "star") {
+        guard let pool = databaseManager.dbPool else { return }
+
+        if let entry {
+          let userData = SQLUserData(pool: pool)
+          Task {
+            if saved {
+              await userData.removeSaved(
+                traditional: entry.traditional, simplified: entry.simplified,
+                jyutping: entry.jyutping, pinyin: entry.pinyin)
+            } else {
+              await userData.addSaved(
+                traditional: entry.traditional, simplified: entry.simplified,
+                jyutping: entry.jyutping, pinyin: entry.pinyin)
+            }
+            saved = await userData.fetchSavedByUnique(
+              traditional: entry.traditional, simplified: entry.simplified,
+              jyutping: entry.jyutping,
+              pinyin: entry.pinyin)
+          }
+        }
+      }
+      .labelsHidden()
+      .glassEffect()
     }
   }
 }

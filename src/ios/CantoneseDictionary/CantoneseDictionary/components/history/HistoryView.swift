@@ -59,15 +59,20 @@ struct HistoryView: View {
             }
           } else {
             List(historyContext.searchedTerms) { item in
-              SearchHistoryRow(historyItem: item)
-                .onTapGesture {
-                  searchContext.searchText = item.searchTerm
-                  searchContext.selectedOption = item.inputMethod
-                  isSearchActive = true
+              Button {
+                searchContext.searchText = item.searchTerm
+                searchContext.selectedOption = item.inputMethod
+                isSearchActive = true
 
-                  dismiss()
-                }
+                dismiss()
+              } label: {
+                SearchHistoryRow(historyItem: item)
+                  .frame(maxWidth: .infinity, alignment: .leading)
+                  .contentShape(Rectangle())
+              }
+              .buttonStyle(.plain)
             }
+            .contentMargins(.top, 0)
           }
         case .viewHistory:
           if historyContext.viewedEntries.isEmpty {
@@ -89,9 +94,11 @@ struct HistoryView: View {
                 EntryRow(entry: entry)
               }
             }
+            .contentMargins(.top, 0)
           }
         }
       }
+      .navigationTitle("History")
       .toolbar {
         #if os(iOS)
           ToolbarItem(placement: .topBarTrailing) {

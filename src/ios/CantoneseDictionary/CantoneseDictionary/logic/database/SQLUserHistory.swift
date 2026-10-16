@@ -30,6 +30,13 @@ nonisolated let fetchSearchesSQL: String = """
       LIMIT 1000
   """
 
+nonisolated let fetchMostRecentSearchSQL: String = """
+      SELECT search_text as text, search_options AS options, timestamp
+      FROM user.search_history
+      ORDER BY timestamp DESC
+      LIMIT 1
+  """
+
 nonisolated let fetchViewsSQL: String = """
       WITH matching_entry_ids AS (
         SELECT entry_id, timestamp
@@ -78,14 +85,14 @@ nonisolated let fetchViewsSQL: String = """
         LEFT JOIN entries ON entries.entry_id = mdg.fk_entry_id
         LEFT JOIN matching_entry_ids AS mei on mei.entry_id = mdg.fk_entry_id
         GROUP BY entries.entry_id
-        ORDER BY timestamp DESC
+        ORDER BY max(timestamp) DESC
       )
 
       SELECT entry_id, traditional, simplified, jyutping, pinyin, definitions FROM
         matching_entries
   """
 
-struct SearchHistoryItem: Identifiable {
+struct SearchHistoryItem: Identifiable, Hashable {
   var id = UUID()
   var searchTerm: String
   var inputMethod: InputMethod
@@ -142,6 +149,24 @@ actor SQLUserHistory {
     }
 
     return results
+  }
+
+  @concurrent func fetchMostRecentSearch() async -> SearchHistoryItem? {
+    var results: [SearchHistoryItem] = []
+    do {
+      results = try await pool.read { db in
+        let rows = try Row.fetchAll(
+          db,
+          sql: fetchMostRecentSearchSQL
+        )
+        return parseReturnedSearchHistoryRecords(rows: rows)
+      }
+    } catch {
+      // TODO: Handle errors
+      logger.error("Error happened when trying to read from db: \(error)")
+    }
+
+    return results.first
   }
 
   @concurrent func fetchViewHistory() async -> [Entry] {

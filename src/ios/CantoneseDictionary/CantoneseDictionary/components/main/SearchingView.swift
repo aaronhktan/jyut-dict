@@ -7,6 +7,7 @@
 
 import GRDB
 import SwiftUI
+import os
 
 struct SearchingView: View {
   @Environment(DatabaseManager.self) private var databaseManager
@@ -205,10 +206,11 @@ extension SearchingView {
       }
       .listStyle(.automatic)
       .scrollDismissesKeyboard(.immediately)
+      .contentMargins(.top, 0)
       .overlay {
         if searchContext.showEmptyState {
           ContentUnavailableView {
-            Image(systemName: "flag.slash")
+            Image(systemName: "exclamationmark.magnifyingglass")
               .resizable()
               .scaledToFit()
               .frame(width: 50)
@@ -284,7 +286,15 @@ extension SearchingView {
         let userHistory = SQLUserHistory(pool: pool)
         let searchTerm = searchContext.searchText.lowercased()
         let option = searchContext.selectedOption
-        await userHistory.addSearchToHistory(searchTerm: searchTerm, option: option)
+
+        let mostRecentSearch = await userHistory.fetchMostRecentSearch()
+        if let mostRecentSearch {
+          if mostRecentSearch.searchTerm != searchTerm || mostRecentSearch.inputMethod != option {
+            await userHistory.addSearchToHistory(searchTerm: searchTerm, option: option)
+          }
+        } else {
+          await userHistory.addSearchToHistory(searchTerm: searchTerm, option: option)
+        }
       }
     }
     .toolbar {
