@@ -408,7 +408,7 @@ extension EntryDetail {
       }
       let utterance = AVSpeechUtterance(string: words)
 
-      var voice = AVSpeechSynthesisVoice(identifier: "com.apple.voice.super-compact.zh-TW.Meijia")
+      var voice = AVSpeechSynthesisVoice(identifier: "com.apple.voice.compact.zh-TW.Meijia")
       if voice == nil {
         for v in AVSpeechSynthesisVoice.speechVoices() {
           if v.language == "zh-TW" {
