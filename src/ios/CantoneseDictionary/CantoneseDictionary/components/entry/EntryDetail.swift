@@ -5,7 +5,9 @@
 //  Created by Aaron on 2026-09-22.
 //
 
+import AVFoundation
 import SwiftUI
+import os
 
 struct EntryDetail: View {
   @Environment(DatabaseManager.self) private var databaseManager
@@ -16,6 +18,9 @@ struct EntryDetail: View {
   @State private var entry: Entry? = nil
   @State private var examples: [String: [Example]] = [:]
   @State private var saved: Bool = false
+  @State private var animateCantoneseSpeaker = false
+  @State private var animateMandarinSpeaker = false
+  @State private var player = BufferedSpeechPlayer()
 
   private var definitionsSets: [DefinitionsSet] {
     entry?.getDefinitionsSets() ?? []
@@ -31,7 +36,7 @@ struct EntryDetail: View {
     Group {
       if entry != nil {
         List {
-          VStack(alignment: .leading) {
+          VStack(alignment: .leading, spacing: 4) {
             Text(
               entry?.getCharacters(
                 options: settings.entryCharactersOptions, useColours: true,
@@ -104,6 +109,29 @@ struct EntryDetail: View {
           pinyin: entry.pinyin)
       }
     }
+    .onAppear {
+      #if os(iOS)
+        let audioSession = AVAudioSession.sharedInstance()
+        do {
+          try audioSession.setCategory(.playback, mode: .default)
+          try audioSession.setActive(true)
+        } catch {
+          logger.error("Failed to activate audio session, \(error)")
+          return
+        }
+      #endif
+    }
+    .onDisappear {
+      #if os(iOS)
+        let audioSession = AVAudioSession.sharedInstance()
+        do {
+          try audioSession.setActive(false)
+        } catch {
+          logger.error("Failed to deactivate audio session, \(error)")
+          return
+        }
+      #endif
+    }
   }
 
   private func fetchEntry(rowId: Int) async {
@@ -139,13 +167,11 @@ extension EntryDetail {
   private func cantonesePronunciationView() -> some View {
     if settings.entryCantonesePhoneticOptions.contains(.rawJyutping) {
       GridRow {
-        HStack {
-          Text("JP")
+        cantonesePronunciationButton()
+
+        HStack(alignment: .firstTextBaseline) {
+          Text("Jyutping")
             .foregroundStyle(.placeholder)
-            .frame(
-              width: 45,
-              alignment: .leading
-            )
           Text(
             entry?.getPhonetic(
               options: .onlyCantonese, cantoneseOptions: .rawJyutping,
@@ -154,19 +180,22 @@ extension EntryDetail {
           )
           .padding(.trailing)
           .frame(maxWidth: .infinity, alignment: .leading)
+          .fixedSize(horizontal: false, vertical: true)
           .textSelection(.enabled)
         }
       }
     }
     if settings.entryCantonesePhoneticOptions.contains(.prettyYale) {
       GridRow {
-        HStack {
-          Text("YL")
+        if !settings.entryCantonesePhoneticOptions.contains(.rawJyutping) {
+          cantonesePronunciationButton()
+        } else {
+          Spacer()
+        }
+
+        HStack(alignment: .firstTextBaseline) {
+          Text("Yale")
             .foregroundStyle(.placeholder)
-            .frame(
-              width: 45,
-              alignment: .leading
-            )
           Text(
             entry?.getPhonetic(
               options: .onlyCantonese, cantoneseOptions: .prettyYale,
@@ -175,6 +204,7 @@ extension EntryDetail {
           )
           .padding(.trailing)
           .frame(maxWidth: .infinity, alignment: .leading)
+          .fixedSize(horizontal: false, vertical: true)
           .textSelection(.enabled)
 
         }
@@ -182,13 +212,17 @@ extension EntryDetail {
     }
     if settings.entryCantonesePhoneticOptions.contains(.cantoneseIPA) {
       GridRow {
-        HStack {
-          Text("CIPA")
+        if !settings.entryCantonesePhoneticOptions.contains(.rawJyutping),
+          !settings.entryCantonesePhoneticOptions.contains(.prettyYale)
+        {
+          cantonesePronunciationButton()
+        } else {
+          Spacer()
+        }
+
+        HStack(alignment: .firstTextBaseline) {
+          Text("Cantonese IPA")
             .foregroundStyle(.placeholder)
-            .frame(
-              width: 45,
-              alignment: .leading
-            )
           Text(
             entry?.getPhonetic(
               options: .onlyCantonese, cantoneseOptions: .cantoneseIPA,
@@ -197,6 +231,7 @@ extension EntryDetail {
           )
           .padding(.trailing)
           .frame(maxWidth: .infinity, alignment: .leading)
+          .fixedSize(horizontal: false, vertical: true)
           .textSelection(.enabled)
         }
       }
@@ -204,13 +239,62 @@ extension EntryDetail {
   }
 
   @ViewBuilder
+  private func cantonesePronunciationButton() -> some View {
+    Button {
+      animateCantoneseSpeaker.toggle()
+
+      var words =
+        entry?.getPhonetic(
+          options: .onlyCantonese, cantoneseOptions: .rawJyutping,
+          mandarinOptions: .prettyPinyin) ?? entry?.traditional
+      if let w = words, w.isEmpty {
+        words = entry?.traditional
+      }
+      guard let words else {
+        // TODO: Handle error if no words to pronounce are found
+        if let entry {
+          logger.error("Nothing could be pronounced in Cantonese for entry \(entry.traditional)")
+        }
+        return
+      }
+      let utterance = AVSpeechUtterance(string: words)
+
+      var voice = AVSpeechSynthesisVoice(identifier: "com.apple.voice.compact.zh-HK.Sinji")
+      if voice == nil {
+        for v in AVSpeechSynthesisVoice.speechVoices() {
+          if v.language == "yue-HK" {
+            voice = v
+            break
+          }
+        }
+      }
+      guard let voice else {
+        // TODO: Handle error if no appropriate voice is found
+        logger.error("No Cantonese voice could be found!")
+        return
+      }
+      utterance.voice = voice
+
+      player.speak(utterance)
+    } label: {
+      Label("Pronounce in Cantonese", systemImage: "speaker.wave.2")
+      .symbolEffect(.variableColor.iterative, value: animateCantoneseSpeaker)
+    }
+    .labelStyle(.iconOnly)
+    .buttonBorderShape(.circle)
+    .buttonStyle(.glass)
+    .controlSize(.mini)
+  }
+
+  @ViewBuilder
   private func mandarinPronunicationView() -> some View {
     if settings.entryMandarinPhoneticOptions.contains(.prettyPinyin) {
       GridRow {
-        HStack {
-          Text("PY")
+        mandarinPronunciationButton()
+
+        HStack(alignment: .firstTextBaseline) {
+          Text("Pinyin")
             .foregroundStyle(.placeholder)
-            .frame(width: 45, alignment: .leading)
           Text(
             entry?.getPhonetic(
               options: .onlyMandarin, cantoneseOptions: .rawJyutping,
@@ -219,16 +303,22 @@ extension EntryDetail {
           )
           .padding(.trailing)
           .frame(maxWidth: .infinity, alignment: .leading)
+          .fixedSize(horizontal: false, vertical: true)
           .textSelection(.enabled)
         }
       }
     }
     if settings.entryMandarinPhoneticOptions.contains(.rawPinyin) {
       GridRow {
-        HStack {
-          Text("PY")
+        if !settings.entryMandarinPhoneticOptions.contains(.prettyPinyin) {
+          mandarinPronunciationButton()
+        } else {
+          Spacer()
+        }
+
+        HStack(alignment: .firstTextBaseline) {
+          Text("Raw Pinyin")
             .foregroundStyle(.placeholder)
-            .frame(width: 45, alignment: .leading)
           Text(
             entry?.getPhonetic(
               options: .onlyMandarin, cantoneseOptions: .rawJyutping,
@@ -237,16 +327,24 @@ extension EntryDetail {
           )
           .padding(.trailing)
           .frame(maxWidth: .infinity, alignment: .leading)
+          .fixedSize(horizontal: false, vertical: true)
           .textSelection(.enabled)
         }
       }
     }
     if settings.entryMandarinPhoneticOptions.contains(.zhuyin) {
       GridRow {
-        HStack {
-          Text("ZY")
+        if !settings.entryMandarinPhoneticOptions.contains(.prettyPinyin),
+          settings.entryMandarinPhoneticOptions.contains(.rawPinyin)
+        {
+          mandarinPronunciationButton()
+        } else {
+          Spacer()
+        }
+
+        HStack(alignment: .firstTextBaseline) {
+          Text("Zhuyin")
             .foregroundStyle(.placeholder)
-            .frame(width: 45, alignment: .leading)
           Text(
             entry?.getPhonetic(
               options: .onlyMandarin, cantoneseOptions: .rawJyutping,
@@ -255,16 +353,25 @@ extension EntryDetail {
           )
           .padding(.trailing)
           .frame(maxWidth: .infinity, alignment: .leading)
+          .fixedSize(horizontal: false, vertical: true)
           .textSelection(.enabled)
         }
       }
     }
     if settings.entryMandarinPhoneticOptions.contains(.mandarinIPA) {
       GridRow {
-        HStack {
-          Text("MIPA")
+        if !settings.entryMandarinPhoneticOptions.contains(.prettyPinyin),
+          settings.entryMandarinPhoneticOptions.contains(.rawPinyin),
+          settings.entryMandarinPhoneticOptions.contains(.zhuyin)
+        {
+          mandarinPronunciationButton()
+        } else {
+          Spacer()
+        }
+
+        HStack(alignment: .firstTextBaseline) {
+          Text("Mandarin IPA")
             .foregroundStyle(.placeholder)
-            .frame(width: 45, alignment: .leading)
           Text(
             entry?.getPhonetic(
               options: .onlyMandarin, cantoneseOptions: .rawJyutping,
@@ -273,10 +380,67 @@ extension EntryDetail {
           )
           .padding(.trailing)
           .frame(maxWidth: .infinity, alignment: .leading)
+          .fixedSize(horizontal: false, vertical: true)
           .textSelection(.enabled)
         }
       }
     }
+  }
+
+  @ViewBuilder
+  private func mandarinPronunciationButton() -> some View {
+    Button {
+      animateMandarinSpeaker.toggle()
+
+      var words =
+        entry?.getPhonetic(
+          options: .onlyMandarin, cantoneseOptions: .rawJyutping,
+          mandarinOptions: .rawPinyin) ?? entry?.traditional
+      if let w = words, w.isEmpty {
+        words = entry?.traditional
+      }
+      guard let words else {
+        // TODO: Handle error if no words to pronounce are found
+        if let entry {
+          logger.error("Nothing could be pronounced in Mandarin for entry \(entry.traditional)")
+        }
+        return
+      }
+      let utterance = AVSpeechUtterance(string: words)
+
+      var voice = AVSpeechSynthesisVoice(identifier: "com.apple.voice.super-compact.zh-TW.Meijia")
+      if voice == nil {
+        for v in AVSpeechSynthesisVoice.speechVoices() {
+          if v.language == "zh-TW" {
+            voice = v
+            break
+          }
+        }
+      }
+      if voice == nil {
+        for v in AVSpeechSynthesisVoice.speechVoices() {
+          if v.language == "zh-CN" {
+            voice = v
+            break
+          }
+        }
+      }
+      guard let voice else {
+        // TODO: Handle error if no appropriate voice is found
+        logger.error("No Mandarin voice could be found!")
+        return
+      }
+      utterance.voice = voice
+
+      player.speak(utterance)
+    } label: {
+      Label("Pronounce in Mandarin", systemImage: "speaker.wave.2")
+      .symbolEffect(.variableColor.iterative, value: animateMandarinSpeaker)
+    }
+    .labelStyle(.iconOnly)
+    .buttonBorderShape(.circle)
+    .buttonStyle(.glass)
+    .controlSize(.mini)
   }
 
   // MARK: - Toolbar

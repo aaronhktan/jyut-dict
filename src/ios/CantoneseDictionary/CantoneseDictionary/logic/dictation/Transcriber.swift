@@ -323,6 +323,9 @@ class Recorder: @unchecked Sendable {
   func stop() async throws {
     try await transcriber.finishTranscribing()
     audioEngine.stop()
+    #if os(iOS)
+      try tearDownAudioSession()
+    #endif
   }
 
   #if os(iOS)
@@ -330,6 +333,11 @@ class Recorder: @unchecked Sendable {
       let audioSession = AVAudioSession.sharedInstance()
       try audioSession.setCategory(.record, mode: .measurement)
       try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+    }
+
+    nonisolated func tearDownAudioSession() throws {
+      let audioSession = AVAudioSession.sharedInstance()
+      try audioSession.setActive(false)
     }
   #endif
 

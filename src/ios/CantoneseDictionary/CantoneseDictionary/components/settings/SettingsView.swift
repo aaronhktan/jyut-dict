@@ -73,13 +73,13 @@ struct SettingsView: View {
           Toggle(
             "Show Pinyin",
             isOn: Binding(
-              get: { settings.entryMandarinPhoneticOptions.contains(.rawPinyin) },
-              set: { settings.entryMandarinPhoneticOptions.set(.rawPinyin, enabled: $0) }))
+              get: { settings.entryMandarinPhoneticOptions.contains(.prettyPinyin) },
+              set: { settings.entryMandarinPhoneticOptions.set(.prettyPinyin, enabled: $0) }))
           Toggle(
             "Show Pinyin with Digits",
             isOn: Binding(
-              get: { settings.entryMandarinPhoneticOptions.contains(.prettyPinyin) },
-              set: { settings.entryMandarinPhoneticOptions.set(.prettyPinyin, enabled: $0) }))
+              get: { settings.entryMandarinPhoneticOptions.contains(.rawPinyin) },
+              set: { settings.entryMandarinPhoneticOptions.set(.rawPinyin, enabled: $0) }))
           Toggle(
             "Show Zhuyin",
             isOn: Binding(
