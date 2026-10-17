@@ -109,29 +109,6 @@ struct EntryDetail: View {
           pinyin: entry.pinyin)
       }
     }
-    .onAppear {
-      #if os(iOS)
-        let audioSession = AVAudioSession.sharedInstance()
-        do {
-          try audioSession.setCategory(.playback, mode: .default)
-          try audioSession.setActive(true)
-        } catch {
-          logger.error("Failed to activate audio session, \(error)")
-          return
-        }
-      #endif
-    }
-    .onDisappear {
-      #if os(iOS)
-        let audioSession = AVAudioSession.sharedInstance()
-        do {
-          try audioSession.setActive(false)
-        } catch {
-          logger.error("Failed to deactivate audio session, \(error)")
-          return
-        }
-      #endif
-    }
   }
 
   private func fetchEntry(rowId: Int) async {
@@ -166,7 +143,7 @@ extension EntryDetail {
   @ViewBuilder
   private func cantonesePronunciationView() -> some View {
     if settings.entryCantonesePhoneticOptions.contains(.rawJyutping) {
-      GridRow {
+      GridRow(alignment: .firstTextBaseline) {
         cantonesePronunciationButton()
 
         HStack(alignment: .firstTextBaseline) {
@@ -186,7 +163,7 @@ extension EntryDetail {
       }
     }
     if settings.entryCantonesePhoneticOptions.contains(.prettyYale) {
-      GridRow {
+      GridRow(alignment: .firstTextBaseline) {
         if !settings.entryCantonesePhoneticOptions.contains(.rawJyutping) {
           cantonesePronunciationButton()
         } else {
@@ -211,7 +188,7 @@ extension EntryDetail {
       }
     }
     if settings.entryCantonesePhoneticOptions.contains(.cantoneseIPA) {
-      GridRow {
+      GridRow(alignment: .firstTextBaseline) {
         if !settings.entryCantonesePhoneticOptions.contains(.rawJyutping),
           !settings.entryCantonesePhoneticOptions.contains(.prettyYale)
         {
@@ -275,7 +252,9 @@ extension EntryDetail {
       }
       utterance.voice = voice
 
-      player.speak(utterance)
+      Task {
+        await player.speak(utterance)
+      }
     } label: {
       Label("Pronounce in Cantonese", systemImage: "speaker.wave.2")
       .symbolEffect(.variableColor.iterative, value: animateCantoneseSpeaker)
@@ -289,7 +268,7 @@ extension EntryDetail {
   @ViewBuilder
   private func mandarinPronunicationView() -> some View {
     if settings.entryMandarinPhoneticOptions.contains(.prettyPinyin) {
-      GridRow {
+      GridRow(alignment: .firstTextBaseline) {
         mandarinPronunciationButton()
 
         HStack(alignment: .firstTextBaseline) {
@@ -309,7 +288,7 @@ extension EntryDetail {
       }
     }
     if settings.entryMandarinPhoneticOptions.contains(.rawPinyin) {
-      GridRow {
+      GridRow(alignment: .firstTextBaseline) {
         if !settings.entryMandarinPhoneticOptions.contains(.prettyPinyin) {
           mandarinPronunciationButton()
         } else {
@@ -333,7 +312,7 @@ extension EntryDetail {
       }
     }
     if settings.entryMandarinPhoneticOptions.contains(.zhuyin) {
-      GridRow {
+      GridRow(alignment: .firstTextBaseline) {
         if !settings.entryMandarinPhoneticOptions.contains(.prettyPinyin),
           settings.entryMandarinPhoneticOptions.contains(.rawPinyin)
         {
@@ -359,7 +338,7 @@ extension EntryDetail {
       }
     }
     if settings.entryMandarinPhoneticOptions.contains(.mandarinIPA) {
-      GridRow {
+      GridRow(alignment: .firstTextBaseline) {
         if !settings.entryMandarinPhoneticOptions.contains(.prettyPinyin),
           settings.entryMandarinPhoneticOptions.contains(.rawPinyin),
           settings.entryMandarinPhoneticOptions.contains(.zhuyin)
@@ -432,7 +411,9 @@ extension EntryDetail {
       }
       utterance.voice = voice
 
-      player.speak(utterance)
+      Task {
+        await player.speak(utterance)
+      }
     } label: {
       Label("Pronounce in Mandarin", systemImage: "speaker.wave.2")
       .symbolEffect(.variableColor.iterative, value: animateMandarinSpeaker)
