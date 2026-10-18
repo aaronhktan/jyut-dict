@@ -139,6 +139,9 @@ struct TranscriptionView: View {
     }
     .task {
       guard await AVCaptureDevice.requestAccess(for: .audio) else {
+        logger.error(
+          "Could not get access to microphone, status: \(AVCaptureDevice.authorizationStatus(for: .audio).rawValue)"
+        )
         showTranscriptionFailure = true
         return
       }
