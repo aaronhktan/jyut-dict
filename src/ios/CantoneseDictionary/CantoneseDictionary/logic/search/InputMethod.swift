@@ -22,9 +22,9 @@ enum InputMethod: Int, CaseIterable, Identifiable {
   var descriptionString: String {
     switch self {
     case .simplified:
-      return "Simplified"
+      return "Simplified Chinese"
     case .traditional:
-      return "Traditional"
+      return "Traditional Chinese"
     case .jyutping:
       return "Jyutping"
     case .fuzzyJyutping:

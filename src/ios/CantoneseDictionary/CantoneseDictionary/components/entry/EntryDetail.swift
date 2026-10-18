@@ -257,7 +257,7 @@ extension EntryDetail {
       }
     } label: {
       Label("Pronounce in Cantonese", systemImage: "speaker.wave.2")
-      .symbolEffect(.variableColor.iterative, value: animateCantoneseSpeaker)
+        .symbolEffect(.variableColor.iterative, value: animateCantoneseSpeaker)
     }
     .labelStyle(.iconOnly)
     .buttonBorderShape(.circle)
@@ -416,7 +416,7 @@ extension EntryDetail {
       }
     } label: {
       Label("Pronounce in Mandarin", systemImage: "speaker.wave.2")
-      .symbolEffect(.variableColor.iterative, value: animateMandarinSpeaker)
+        .symbolEffect(.variableColor.iterative, value: animateMandarinSpeaker)
     }
     .labelStyle(.iconOnly)
     .buttonBorderShape(.circle)
@@ -436,7 +436,7 @@ extension EntryDetail {
   @ToolbarContentBuilder
   private var toolbarContent: some ToolbarContent {
     ToolbarItem(placement: topPlacement) {
-      Button("Save entry", systemImage: saved ? "star.fill" : "star") {
+      Button {
         guard let pool = databaseManager.dbPool else { return }
 
         if let entry {
@@ -457,6 +457,9 @@ extension EntryDetail {
               pinyin: entry.pinyin)
           }
         }
+      } label: {
+        Label("Save entry", systemImage: saved ? "star.fill" : "star")
+          .contentTransition(.symbolEffect(.replace, options: .speed(0.1)))
       }
       .labelsHidden()
       .glassEffect()
