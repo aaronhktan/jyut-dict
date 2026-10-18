@@ -19,7 +19,7 @@ struct SearchingView: View {
   @Binding var isSearchActive: Bool
   var isSearchFocused: FocusState<Bool>.Binding
 
-  @State private var selectedOptionLabel: String = "Auto-detect language"
+  @State private var autoDetectOptionLabel: String = "Auto-detect language"
   @State private var isPickerTextVisible: Bool = true
 
   static let options: [InputMethod] = [
@@ -229,7 +229,7 @@ extension SearchingView {
             }),
             id: \.self
           ) { option in
-            Text(option == .autoDetect ? selectedOptionLabel : option.descriptionString)
+            Text(option == .autoDetect ? autoDetectOptionLabel : option.descriptionString)
               .tag(option)
           }
         }
@@ -238,18 +238,23 @@ extension SearchingView {
         .glassEffect()
         .task(id: autoDetectLabel) {
           let target = autoDetectLabel
-          guard target != selectedOptionLabel, searchContext.selectedOption == .autoDetect
+          guard target != autoDetectOptionLabel, searchContext.selectedOption == .autoDetect
           else {
             return
           }
           isPickerTextVisible = false
           withAnimation(.snappy(duration: 0.2)) {
-            selectedOptionLabel = target
+            autoDetectOptionLabel = target
           } completion: {
             guard target == autoDetectLabel, searchContext.selectedOption == .autoDetect else {
               return
             }
             isPickerTextVisible = true
+          }
+        }
+        .onChange(of: searchContext.selectedOption) {
+          if searchContext.selectedOption != .autoDetect {
+            autoDetectOptionLabel = InputMethod.autoDetect.descriptionString
           }
         }
         .padding(.bottom, (appIdiom == .pad || appIdiom == .mac) ? 10 : 0)
