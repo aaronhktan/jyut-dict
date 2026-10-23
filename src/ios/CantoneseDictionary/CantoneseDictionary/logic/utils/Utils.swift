@@ -5,6 +5,7 @@
 //  Created by Aaron on 2026-09-09.
 //
 
+import AVFoundation
 import Foundation
 import SwiftUI
 import os
@@ -118,5 +119,24 @@ extension View {
   func rowLine() -> some View {
     self.frame(maxWidth: .infinity, alignment: .leading)
       .lineLimit(1)
+  }
+}
+
+extension AVAudioPCMBuffer {
+  nonisolated func deepCopy() -> AVAudioPCMBuffer? {
+    guard let dest = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameLength) else {
+      return nil
+    }
+    dest.frameLength = frameLength
+
+    let src = UnsafeMutableAudioBufferListPointer(mutableAudioBufferList)
+    let dst = UnsafeMutableAudioBufferListPointer(dest.mutableAudioBufferList)
+    for (s, d) in zip(src, dst) {
+      guard let sData = s.mData, let dData = d.mData else {
+        return nil
+      }
+      memcpy(dData, sData, Int(s.mDataByteSize))
+    }
+    return dest
   }
 }

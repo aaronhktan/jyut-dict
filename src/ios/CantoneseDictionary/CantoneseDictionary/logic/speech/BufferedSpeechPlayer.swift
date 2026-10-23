@@ -29,7 +29,7 @@ final class BufferedSpeechPlayer {
       let audioSession = AVAudioSession.sharedInstance()
       do {
         try audioSession.setCategory(
-          .playback, mode: .voicePrompt, options: [.duckOthers, .mixWithOthers])
+          .playback, mode: .default, options: [.duckOthers, .mixWithOthers])
         if #available(iOS 27, *) {
           try await audioSession.activate()
         } else {
@@ -92,60 +92,42 @@ final class BufferedSpeechPlayer {
       engine.connect(player, to: engine.mainMixerNode, format: format)
 
       try engine.start()
-
-      numBuffersRemaining = buffers.count
-      for b in buffers {
-        player.scheduleBuffer(
-          b,
-          completionCallbackType: .dataPlayedBack,
-          completionHandler: { _ in
-            // The completion handler only checks that _one_ buffer's playback is complete
-            // So we need to keep track of the total number of buffers, and deactivate the
-            // audio session once the number of buffers completed matches the total number
-            // of buffers
-            Task { @MainActor in
-              self.numBuffersRemaining -= 1
-              if self.numBuffersRemaining == 0 {
-                #if os(iOS)
-                  let audioSession = AVAudioSession.sharedInstance()
-                  do {
-                    if #available(iOS 27, *) {
-                      try await audioSession.deactivate()
-                    } else {
-                      try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
-                    }
-                  } catch {
-                    logger.error("Failed to deactivate audio session, \(error)")
-                    return
-                  }
-                #endif
-              }
-            }
-          })
-      }
-      buffers.removeAll()
-      player.play()
     } catch {
       logger.error("Could not start speech audio engine: \(error)")
+      return
     }
-  }
-}
 
-extension AVAudioPCMBuffer {
-  fileprivate func deepCopy() -> AVAudioPCMBuffer? {
-    guard let dest = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameLength) else {
-      return nil
+    numBuffersRemaining = buffers.count
+    for b in buffers {
+      player.scheduleBuffer(
+        b,
+        completionCallbackType: .dataPlayedBack,
+        completionHandler: { _ in
+          // The completion handler only checks that _one_ buffer's playback is complete
+          // So we need to keep track of the total number of buffers, and deactivate the
+          // audio session once the number of buffers completed matches the total number
+          // of buffers
+          Task { @MainActor in
+            self.numBuffersRemaining -= 1
+            if self.numBuffersRemaining == 0 {
+              #if os(iOS)
+                let audioSession = AVAudioSession.sharedInstance()
+                do {
+                  if #available(iOS 27, *) {
+                    try await audioSession.deactivate()
+                  } else {
+                    try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+                  }
+                } catch {
+                  logger.error("Failed to deactivate audio session, \(error)")
+                  return
+                }
+              #endif
+            }
+          }
+        })
     }
-    dest.frameLength = frameLength
-
-    let src = UnsafeMutableAudioBufferListPointer(mutableAudioBufferList)
-    let dst = UnsafeMutableAudioBufferListPointer(dest.mutableAudioBufferList)
-    for (s, d) in zip(src, dst) {
-      guard let sData = s.mData, let dData = d.mData else {
-        return nil
-      }
-      memcpy(dData, sData, Int(s.mDataByteSize))
-    }
-    return dest
+    buffers.removeAll()
+    player.play()
   }
 }

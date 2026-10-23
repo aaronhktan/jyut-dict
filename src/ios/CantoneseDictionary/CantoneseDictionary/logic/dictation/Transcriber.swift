@@ -303,7 +303,7 @@ class Recorder: @unchecked Sendable {
       throw TranscriptionError.micPermissionDenied
     }
     #if os(iOS)
-      try setUpAudioSession()
+      try await setUpAudioSession()
     #endif
     try await transcriber.setUpTranscriber(locales: locales)
     transcriber.resetTranscription()
@@ -324,26 +324,39 @@ class Recorder: @unchecked Sendable {
     try await transcriber.finishTranscribing()
     audioEngine.stop()
     #if os(iOS)
-      try tearDownAudioSession()
+      try await tearDownAudioSession()
     #endif
   }
 
   #if os(iOS)
-    nonisolated func setUpAudioSession() throws {
+    nonisolated func setUpAudioSession() async throws {
       let audioSession = AVAudioSession.sharedInstance()
       try audioSession.setCategory(.record, mode: .measurement)
-      try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+      if #available(iOS 27, *) {
+        try await audioSession.activate()
+      } else {
+        try audioSession.setActive(true)
+      }
     }
 
-    nonisolated func tearDownAudioSession() throws {
+    nonisolated func tearDownAudioSession() async throws {
       let audioSession = AVAudioSession.sharedInstance()
-      try audioSession.setActive(false)
+      do {
+        if #available(iOS 27, *) {
+          try await audioSession.deactivate()
+        } else {
+          try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+        }
+      } catch {
+        logger.error("Failed to deactivate audio session, \(error)")
+        return
+      }
     }
   #endif
 
-  nonisolated func rms(of buffer: SendableBuffer) -> Float {
-    guard let ch = buffer.buffer.floatChannelData else { return 0 }
-    let n = Int(buffer.buffer.frameLength)
+  nonisolated func rms(of buffer: AVAudioPCMBuffer) -> Float {
+    guard let ch = buffer.floatChannelData else { return 0 }
+    let n = Int(buffer.frameLength)
     guard n > 0 else { return 0 }
     var sum: Float = 0
     for i in 0..<n {
@@ -362,22 +375,7 @@ class Recorder: @unchecked Sendable {
     ) { [weak self] buffer, _ in
       guard let self else { return }
 
-      // Copying the buffer is needed to jump between actor boundaries in Swift.
-      // Once iOS 27+ support is possible, we can probably move to installAudioTap(onBus:bufferSize:format:tapProvider:)
-      guard let copy = AVAudioPCMBuffer(pcmFormat: buffer.format, frameCapacity: buffer.frameLength)
-      else { return }
-
-      copy.frameLength = buffer.frameLength
-
-      let src = UnsafeMutableAudioBufferListPointer(buffer.mutableAudioBufferList)
-      let dst = UnsafeMutableAudioBufferListPointer(copy.mutableAudioBufferList)
-
-      for (s, d) in zip(src, dst) {
-        guard let sp = s.mData, let dp = d.mData else { continue }
-        dp.copyMemory(from: sp, byteCount: min(Int(s.mDataByteSize), Int(d.mDataByteSize)))
-      }
-
-      let level = rms(of: SendableBuffer(buffer: copy))
+      let level = rms(of: buffer)
 
       if Date().timeIntervalSince(lastLevelUpdate) > 0.1 {
         lastLevelUpdate = Date()
@@ -408,6 +406,10 @@ class Recorder: @unchecked Sendable {
         }
       }
 
+      let copy = buffer.frameLength > 0 ? buffer.deepCopy() : nil
+      guard let copy else {
+        return
+      }
       self.outputContinuation?.yield(SendableBuffer(buffer: copy))
     }
 
