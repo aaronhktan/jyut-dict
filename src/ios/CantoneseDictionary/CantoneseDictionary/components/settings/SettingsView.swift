@@ -106,6 +106,13 @@ struct SettingsView: View {
           ColorPicker("Pinyin Tone 4", selection: $settings.pinyinToneColours[4])
           ColorPicker("Pinyin Tone 5", selection: $settings.pinyinToneColours[5])
         }
+        Section(header: Text("Sources")) {
+          NavigationLink {
+            SourceManagementView()
+          } label: {
+            Text("Manage Sources")
+          }
+        }
         Section {
           Toggle("Enable Unsafe Fuzzy Jyutping", isOn: $settings.unsafeFuzzyJyutping)
         } header: {

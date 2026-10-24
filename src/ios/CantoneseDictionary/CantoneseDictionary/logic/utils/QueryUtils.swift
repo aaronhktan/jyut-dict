@@ -190,7 +190,7 @@ nonisolated func parseReturnedEntryRecords(rows: [Row]) -> [Entry] {
           let definitionsListJSON = try JSONSerialization.jsonObject(
             with: Data(String(row["definitions"]).utf8)
           ) as? [[String: Any]]
-            else {
+        else {
           logger.error(
             "Could not parse definitions \(String(row["definitions"])) as JSON"
           )
@@ -202,7 +202,7 @@ nonisolated func parseReturnedEntryRecords(rows: [Row]) -> [Entry] {
           guard
             let definitionsJSON = definitionGroupsJSON["definitions"]
               as? [[String: Any]]
-              else {
+          else {
             logger.error("Definition set was not a dict")
             continue
           }
@@ -214,13 +214,13 @@ nonisolated func parseReturnedEntryRecords(rows: [Row]) -> [Entry] {
 
             var examples: [Example] = []
             if let examplesJSON = definitionJSON["sentences"]
-                as? [[String: Any]]
+              as? [[String: Any]]
             {
               for exampleJSON in examplesJSON {
                 let traditional =
-                exampleJSON["traditional"] as! String
+                  exampleJSON["traditional"] as! String
                 let simplified =
-                exampleJSON["simplified"] as! String
+                  exampleJSON["simplified"] as! String
                 let pinyin = exampleJSON["pinyin"] as! String
                 let jyutping = exampleJSON["jyutping"] as! String
                 let language = exampleJSON["language"] as! String
@@ -230,7 +230,7 @@ nonisolated func parseReturnedEntryRecords(rows: [Row]) -> [Entry] {
                     "translations"
                   ]
                     as? [[String: Any]]
-                    else {
+                else {
                   logger.error(
                     "Translations was not an array of dicts"
                   )
@@ -240,11 +240,11 @@ nonisolated func parseReturnedEntryRecords(rows: [Row]) -> [Entry] {
                 var translations: [Translation] = []
                 for translationJSON in translationsJSON {
                   let sentence =
-                  translationJSON["sentence"] as! String
+                    translationJSON["sentence"] as! String
                   let language =
-                  translationJSON["language"] as! String
+                    translationJSON["language"] as! String
                   let direct =
-                  translationJSON["direct"] as! Int64 == 1
+                    translationJSON["direct"] as! Int64 == 1
                   translations.append(
                     Translation(
                       content: sentence,
@@ -397,7 +397,28 @@ nonisolated func parseReturnedSearchHistoryRecords(rows: [Row]) -> [SearchHistor
   for row in rows {
     let searchTerm = row["text"] as! String
     let method = row["options"] as! Int64
-    results.append(SearchHistoryItem(searchTerm: searchTerm, inputMethod: InputMethod(rawValue: Int(method)) ?? .autoDetect))
+    results.append(
+      SearchHistoryItem(
+        searchTerm: searchTerm, inputMethod: InputMethod(rawValue: Int(method)) ?? .autoDetect))
+  }
+  return results
+}
+
+nonisolated func parseSourceRecords(rows: [Row]) -> [SourceMetadata] {
+  var results: [SourceMetadata] = []
+  for row in rows {
+    let name = row["sourcename"] as! String
+    let version = row["version"] as! String
+    let description = row["description"] as! String
+    let legal = row["legal"] as! String
+    let link = row["link"] as! String
+    let updateURL = row["update_url"] as! String
+    let other = row["other"] as! String
+    results.append(
+      SourceMetadata(
+        name: name, version: version, description: description, legal: legal, link: link,
+        updateURL: updateURL, other: other)
+    )
   }
   return results
 }

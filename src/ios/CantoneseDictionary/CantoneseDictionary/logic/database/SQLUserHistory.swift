@@ -93,7 +93,7 @@ nonisolated let fetchViewsSQL: String = """
   """
 
 struct SearchHistoryItem: Identifiable, Hashable {
-  var id = UUID()
+  let id = UUID()
   var searchTerm: String
   var inputMethod: InputMethod
 }
