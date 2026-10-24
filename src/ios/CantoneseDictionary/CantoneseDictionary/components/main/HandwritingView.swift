@@ -255,7 +255,8 @@ extension HandwritingView {
         .frame(maxWidth: .infinity)
     }
     .labelStyle(.iconOnly)
-    .buttonStyle(.bordered)
+    .buttonStyle(.glass)
+    .tint(.accent)
     .buttonBorderShape(.capsule)
     .controlSize(.extraLarge)
     .padding(.horizontal)
@@ -276,7 +277,8 @@ extension HandwritingView {
         .contentTransition(.opacity)
         .animation(.easeInOut(duration: 0.3), value: buttonText)
     }
-    .buttonStyle(.borderedProminent)
+    .buttonStyle(.glassProminent)
+    .tint(.accent)
     .buttonBorderShape(.capsule)
     .controlSize(.extraLarge)
     .padding(.horizontal)

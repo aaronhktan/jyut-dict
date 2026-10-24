@@ -222,7 +222,8 @@ extension TranscriptionView {
         .contentTransition(.opacity)
         .animation(.easeInOut(duration: 0.3), value: buttonText)
     }
-    .buttonStyle(.borderedProminent)
+    .buttonStyle(.glassProminent)
+    .tint(.accent)
     .buttonBorderShape(.capsule)
     .controlSize(.extraLarge)
     .padding(.horizontal)
