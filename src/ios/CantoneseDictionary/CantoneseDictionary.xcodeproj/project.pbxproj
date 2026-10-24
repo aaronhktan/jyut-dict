@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9345C7AB308C807200249037 /* MLKitLicence.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9345C7AA308C807200249037 /* MLKitLicence.txt */; };
+		9345C7AD308C825100249037 /* JyutDictionaryLicence.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9345C7AC308C825100249037 /* JyutDictionaryLicence.txt */; };
 		937055673060ED8C008069CE /* dict.db in Resources */ = {isa = PBXBuildFile; fileRef = 937055663060ED8C008069CE /* dict.db */; };
 		93B3FD7E306E26DC00797DCF /* MLKitDigitalInkRecognition in Frameworks */ = {isa = PBXBuildFile; productRef = 93B3FD7D306E26DC00797DCF /* MLKitDigitalInkRecognition */; };
 		93B3FD80306E26DC00797DCF /* MLKitTextRecognitionChinese in Frameworks */ = {isa = PBXBuildFile; productRef = 93B3FD7F306E26DC00797DCF /* MLKitTextRecognitionChinese */; };
@@ -38,6 +40,8 @@
 		932E3917304918A700FC8504 /* CantoneseDictionary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CantoneseDictionary.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		932E3924304918A800FC8504 /* CantoneseDictionaryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CantoneseDictionaryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		932E392E304918A800FC8504 /* CantoneseDictionaryUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CantoneseDictionaryUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9345C7AA308C807200249037 /* MLKitLicence.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = MLKitLicence.txt; sourceTree = "<group>"; };
+		9345C7AC308C825100249037 /* JyutDictionaryLicence.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = JyutDictionaryLicence.txt; sourceTree = "<group>"; };
 		937055663060ED8C008069CE /* dict.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = dict.db; sourceTree = "<group>"; };
 		93B3FD81306E27BA00797DCF /* ChineseOCRResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ChineseOCRResources.bundle; sourceTree = "<group>"; };
 		93B3FD83306E27D600797DCF /* MLKitDigitalInkRecognition_resource.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = MLKitDigitalInkRecognition_resource.bundle; sourceTree = "<group>"; };
@@ -103,6 +107,8 @@
 				93B3FD81306E27BA00797DCF /* ChineseOCRResources.bundle */,
 				93B3FD83306E27D600797DCF /* MLKitDigitalInkRecognition_resource.bundle */,
 				93B3FDDA307DB5F800797DCF /* Frameworks */,
+				9345C7AA308C807200249037 /* MLKitLicence.txt */,
+				9345C7AC308C825100249037 /* JyutDictionaryLicence.txt */,
 				932E3918304918A700FC8504 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -253,7 +259,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				93B3FD82306E27BA00797DCF /* ChineseOCRResources.bundle in Resources */,
+				9345C7AD308C825100249037 /* JyutDictionaryLicence.txt in Resources */,
 				937055673060ED8C008069CE /* dict.db in Resources */,
+				9345C7AB308C807200249037 /* MLKitLicence.txt in Resources */,
 				93B3FDE13080483B00797DCF /* user.db in Resources */,
 				93B3FD84306E27D600797DCF /* MLKitDigitalInkRecognition_resource.bundle in Resources */,
 			);

@@ -113,6 +113,18 @@ struct SettingsView: View {
         } footer: {
           Text("Several fuzzy Jyutping substitutions are risky. These include (1) ts -> c, and (2) kwu ->(g|k)w?u. Do not enable this setting unless you are confident that you understand and accept the consequences.")
         }
+        Section(header: Text("More")) {
+          NavigationLink {
+            AboutView()
+          } label: {
+            Text("About Jyut Dictionary")
+          }
+          NavigationLink {
+            LicenceView()
+          } label: {
+            Text("Code Licences")
+          }
+        }
       }
       .toolbar {
         #if os(iOS)
