@@ -73,7 +73,7 @@ struct SourceManagementView: View {
               }
               .padding(.horizontal)
 
-              Spacer()
+              Spacer(minLength: 50)
 
               Button {
                 openURL(URL(string: source.link)!)

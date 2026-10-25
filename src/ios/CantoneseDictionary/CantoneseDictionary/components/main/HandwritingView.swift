@@ -45,7 +45,7 @@ struct HandwritingView: View {
       }
       .toolbar {
         #if os(iOS)
-          ToolbarItem(placement: .topBarTrailing) {
+          ToolbarItem(placement: .topBarLeading) {
             Button("Close handwriting view", systemImage: "xmark") {
               dismiss()
             }

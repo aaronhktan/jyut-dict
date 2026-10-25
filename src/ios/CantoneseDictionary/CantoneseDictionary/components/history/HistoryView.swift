@@ -72,7 +72,7 @@ struct HistoryView: View {
               }
               .buttonStyle(.plain)
             }
-            .contentMargins(.top, 0)
+            .contentMargins(.top, 5)
           }
         case .viewHistory:
           if historyContext.viewedEntries.isEmpty {
@@ -94,14 +94,14 @@ struct HistoryView: View {
                 EntryRow(entry: entry)
               }
             }
-            .contentMargins(.top, 0)
+            .contentMargins(.top, 5)
           }
         }
       }
       .navigationTitle("History")
       .toolbar {
         #if os(iOS)
-          ToolbarItem(placement: .topBarTrailing) {
+          ToolbarItem(placement: .topBarLeading) {
             Button("Close history", systemImage: "xmark") {
               dismiss()
             }

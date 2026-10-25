@@ -135,7 +135,7 @@ struct SettingsView: View {
       }
       .toolbar {
         #if os(iOS)
-          ToolbarItem(placement: .topBarTrailing) {
+          ToolbarItem(placement: .topBarLeading) {
             Button("Close settings", systemImage: "xmark") {
               dismiss()
             }

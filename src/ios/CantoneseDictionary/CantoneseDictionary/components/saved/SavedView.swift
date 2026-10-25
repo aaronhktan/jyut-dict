@@ -40,7 +40,7 @@ struct SavedView: View {
       .navigationTitle("Saved Entries")
       .toolbar {
         #if os(iOS)
-          ToolbarItem(placement: .topBarTrailing) {
+          ToolbarItem(placement: .topBarLeading) {
             Button("Close saved words", systemImage: "xmark") {
               dismiss()
             }

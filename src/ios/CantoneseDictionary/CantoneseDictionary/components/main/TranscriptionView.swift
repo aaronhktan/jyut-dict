@@ -252,7 +252,7 @@ extension TranscriptionView {
         }
         .tint(.primary)
       }
-      ToolbarItem(placement: .topBarTrailing) {
+      ToolbarItem(placement: .topBarLeading) {
         Button("Close transcription", systemImage: "xmark") {
           dismiss()
         }
