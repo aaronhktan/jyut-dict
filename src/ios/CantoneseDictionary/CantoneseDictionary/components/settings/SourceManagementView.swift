@@ -19,74 +19,44 @@ struct SourceManagementView: View {
     NavigationStack {
       List(sourceModel.sources, selection: $selectedSource) { source in
         NavigationLink {
-          ScrollView {
-            VStack {
-              ZStack(alignment: .topLeading) {
-                RoundedRectangle(cornerRadius: 20)
-                  .fill(.quinary)
-
-                VStack(alignment: .leading, spacing: 2) {
-                  Text("About")
-                    .font(.body.smallCaps(true))
-                    .fontWeight(.bold)
-                    .padding([.top, .horizontal])
-                    .foregroundStyle(.placeholder)
-                  Text(source.description)
-                    .multilineTextAlignment(.leading)
-                    .padding([.bottom, .horizontal])
-                }
+          VStack {
+            List {
+              VStack(alignment: .leading, spacing: 2) {
+                Text("About")
+                  .fontWeight(.bold)
+                  .foregroundStyle(.placeholder)
+                Text(source.description)
+                  .multilineTextAlignment(.leading)
               }
-              .padding(.horizontal)
 
-              ZStack(alignment: .topLeading) {
-                RoundedRectangle(cornerRadius: 20)
-                  .fill(.quinary)
-
-                VStack(alignment: .leading, spacing: 2) {
-                  Text("Licence")
-                    .font(.body.smallCaps(true))
-                    .fontWeight(.bold)
-                    .padding([.top, .horizontal])
-                    .foregroundStyle(.placeholder)
-                  Text(source.legal)
-                    .multilineTextAlignment(.leading)
-                    .padding([.bottom, .horizontal])
-                }
+              VStack(alignment: .leading, spacing: 2) {
+                Text("Licence")
+                  .fontWeight(.bold)
+                  .foregroundStyle(.placeholder)
+                Text(source.legal)
+                  .multilineTextAlignment(.leading)
               }
-              .padding(.horizontal)
 
-              ZStack(alignment: .topLeading) {
-                RoundedRectangle(cornerRadius: 20)
-                  .fill(.quinary)
-
-
-                VStack(alignment: .leading, spacing: 2) {
-                  Text("Version")
-                    .font(.body.smallCaps(true))
-                    .fontWeight(.bold)
-                    .padding([.top, .horizontal])
-                    .foregroundStyle(.placeholder)
-                  Text(source.version)
-                    .multilineTextAlignment(.leading)
-                    .padding([.bottom, .horizontal])
-                }
+              VStack(alignment: .leading, spacing: 2) {
+                Text("Version")
+                  .fontWeight(.bold)
+                  .foregroundStyle(.placeholder)
+                Text(source.version)
+                  .multilineTextAlignment(.leading)
               }
-              .padding(.horizontal)
-
-              Spacer(minLength: 50)
-
-              Button {
-                openURL(URL(string: source.link)!)
-              } label: {
-                Label("Visit website", systemImage: "globe")
-                  .frame(maxWidth: .infinity)
-              }
-              .buttonStyle(.glass)
-              .tint(.accent)
-              .buttonBorderShape(.capsule)
-              .controlSize(.extraLarge)
-              .padding(.horizontal)
             }
+
+            Button {
+              openURL(URL(string: source.link)!)
+            } label: {
+              Label("Visit website", systemImage: "globe")
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.glass)
+            .tint(.accent)
+            .buttonBorderShape(.capsule)
+            .controlSize(.extraLarge)
+            .padding(.horizontal)
           }
           .navigationTitle(source.name)
         } label: {
