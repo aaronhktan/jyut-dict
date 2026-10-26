@@ -5,9 +5,11 @@
 //  Created by Aaron on 2026-09-21.
 //
 
+import AppleArchive
 import Foundation
 import GRDB
 import SwiftUI
+import System
 import os
 
 nonisolated private final class RegexCache: @unchecked Sendable {
@@ -34,8 +36,8 @@ nonisolated private final class RegexCache: @unchecked Sendable {
 class DatabaseManager {
   private let fileManager = FileManager.default
   private let bundleURL = Bundle.main.url(
-    forResource: "dict",
-    withExtension: "db"
+    forResource: "dict.db",
+    withExtension: "aar"
   )
   private let localURL = URL.applicationSupportDirectory.appending(
     components: "dictionaries",
@@ -51,9 +53,14 @@ class DatabaseManager {
   )
 
   private var pool: DatabasePool? = nil
+  var databaseExists = false
 
   public init() {
-    if !fileManager.fileExists(atPath: self.localURL.path) {
+    if fileManager.fileExists(atPath: self.localURL.path) {
+      databaseExists = true
+    }
+
+    if !fileManager.fileExists(atPath: self.localUserURL.path) {
       do {
         try fileManager.createDirectory(
           at: self.localURL.deletingLastPathComponent(),
@@ -66,23 +73,6 @@ class DatabaseManager {
         )
       }
 
-      do {
-        if let bundleURL = self.bundleURL {
-          try fileManager.copyItem(at: bundleURL, to: self.localURL)
-          logger.info(
-            "Successfully copied dictionary database to \(self.localURL.absoluteString)!"
-          )
-        } else {
-          logger.warning("No bundle URL found, skipping database copy!")
-        }
-      } catch {
-        logger.error(
-          "Could not copy dictionary database to \(self.localURL.absoluteString), error: \(error)!"
-        )
-      }
-    }
-
-    if !fileManager.fileExists(atPath: self.localUserURL.path) {
       do {
         if let bundleUserURL = self.bundleUserURL {
           try fileManager.copyItem(at: bundleUserURL, to: self.localUserURL)
@@ -98,7 +88,92 @@ class DatabaseManager {
         )
       }
     }
+  }
 
+  var dbURL: URL {
+    return localURL
+  }
+
+  var dbPool: DatabasePool? {
+    return pool
+  }
+
+  @concurrent func copyDatabaseIfNeeded() async {
+    // In order to generate the file, run `aa archive -i dict.db -o dict.db.aar -a lzfse -b 1m`
+    do {
+      guard let bundleURL = self.bundleURL else {
+        logger.warning("No bundle URL found, skipping database copy!")
+        return
+      }
+
+      guard
+        let readFileStream = ArchiveByteStream.fileStream(
+          path: FilePath(bundleURL.path),
+          mode: .readOnly,
+          options: [],
+          permissions: FilePermissions(rawValue: 0o644))
+      else {
+        logger.error("Unable to create read stream")
+        return
+      }
+      defer {
+        try? readFileStream.close()
+      }
+
+      guard
+        let writeFileStream = ArchiveByteStream.fileStream(
+          path: FilePath(self.localURL.path),
+          mode: .writeOnly,
+          options: [.create],
+          permissions: FilePermissions(rawValue: 0o644))
+      else {
+        logger.error("Unable to create write stream")
+        return
+      }
+      defer {
+        try? writeFileStream.close()
+      }
+
+      guard
+        let decompressStream = ArchiveByteStream.decompressionStream(readingFrom: readFileStream)
+      else {
+        logger.error("Unable to create compress stream")
+        return
+      }
+      defer {
+        try? decompressStream.close()
+      }
+
+      let decoded = ArchiveStream.decodeStream(readingFrom: decompressStream)!
+      let extracted = ArchiveStream.extractStream(
+        extractingTo: FilePath(self.localURL.deletingLastPathComponent().path)
+      )!
+
+      let i = try ArchiveStream.process(
+        readingFrom: decoded,
+        writingTo: extracted)
+
+      if FileManager.default.fileExists(atPath: self.localURL.path) {
+        let attr = try FileManager.default.attributesOfItem(atPath: self.localURL.path)
+        let fileSize = attr[FileAttributeKey.size] as! UInt64
+        logger.info("Expanded dictionary database is \(fileSize) bytes")
+        logger.info(
+          "Successfully copied dictionary database from \(i) bytes to \(fileSize) bytes at \(self.localURL.absoluteString)!"
+        )
+        Task { @MainActor in
+          databaseExists = true
+        }
+      } else {
+        logger.info("Database does not exist after copy!!")
+      }
+    } catch {
+      logger.error(
+        "Could not copy dictionary database to \(self.localURL.absoluteString), error: \(error)!"
+      )
+    }
+  }
+
+  func setupDatabase() {
     let regexCache = RegexCache()
     let regexpFunction = DatabaseFunction("REGEXP", argumentCount: 2, pure: true) { values in
       guard let pattern = String.fromDatabaseValue(values[0]),
@@ -119,7 +194,8 @@ class DatabaseManager {
     var config = Configuration()
     config.prepareDatabase { db in
       db.add(function: regexpFunction)
-      try db.execute(sql: """
+      try db.execute(
+        sql: """
           ATTACH DATABASE ? AS user
           """, arguments: [self.localUserURL.path])
       try db.execute(sql: "PRAGMA cache_size = -64000")
@@ -133,17 +209,9 @@ class DatabaseManager {
       self.pool = try DatabasePool(path: localURL.absoluteString, configuration: config)
     } catch {
       logger.error(
-        "Could not open database pool for db \(self.localURL.absoluteString)!"
+        "Could not open database pool for db \(self.localURL.absoluteString), error: \(error)!"
       )
       return
     }
-  }
-
-  var dbURL: URL {
-    return localURL
-  }
-
-  var dbPool: DatabasePool? {
-    return pool
   }
 }

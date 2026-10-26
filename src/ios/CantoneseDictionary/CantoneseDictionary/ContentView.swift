@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
+  @Environment(DatabaseManager.self) private var databaseManager
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
   @State private var presentedSheet: Sheet?
@@ -25,45 +26,73 @@ struct ContentView: View {
   }
 
   var body: some View {
-    NavigationSplitView {
-      SearchingView(
-        searchContext: searchContext,
-        isSearchActive: $isSearchActive,
-        isSearchFocused: $isSearchFocused
-      )
-      .toolbar {
-        toolbarContent
-      }
-      .toolbar(removing: .sidebarToggle)
-      .sheet(item: $presentedSheet) {
-        sheetView(for: $0)
-      }
-      .customSearchable(
-        text: $searchContext.searchText,
-        isPresented: $isSearchActive,
-      )
-      .searchFocused($isSearchFocused)
-      .onChange(of: isSearchFocused) { _, focused in
-        if appIdiom == .pad && focused {
-          isSearchActive = true
+    Group {
+      if databaseManager.databaseExists {
+        NavigationSplitView {
+          SearchingView(
+            searchContext: searchContext,
+            isSearchActive: $isSearchActive,
+            isSearchFocused: $isSearchFocused
+          )
+          .toolbar {
+            toolbarContent
+          }
+          .toolbar(removing: .sidebarToggle)
+          .sheet(item: $presentedSheet) {
+            sheetView(for: $0)
+          }
+          .customSearchable(
+            text: $searchContext.searchText,
+            isPresented: $isSearchActive,
+          )
+          .searchFocused($isSearchFocused)
+          .onChange(of: isSearchFocused) { _, focused in
+            if appIdiom == .pad && focused {
+              isSearchActive = true
+            }
+          }
+          .searchPresentationToolbarBehavior(.avoidHidingContent)
+          .navigationSplitViewColumnWidth(
+            min: 300, ideal: 350, max: 600
+          )
+        } detail: {
+          NavigationStack {
+            if let rowId = searchContext.selectedRowId {
+              EntryDetail(rowId: rowId)
+            }
+          }
         }
-      }
-      .searchPresentationToolbarBehavior(.avoidHidingContent)
-      .navigationSplitViewColumnWidth(
-        min: 300, ideal: 350, max: 600
-      )
-    } detail: {
-      NavigationStack {
-        if let rowId = searchContext.selectedRowId {
-          EntryDetail(rowId: rowId)
+        .onAppear {
+          searchContext.sizeClass = horizontalSizeClass ?? .compact
+        }
+        .onChange(of: horizontalSizeClass) { _, newValue in
+          searchContext.sizeClass = newValue ?? .compact
+        }
+      } else {
+        ContentUnavailableView {
+          VStack(spacing: 30) {
+            Label {
+              Text("Preparing dictionaries for first launch...")
+            } icon: {
+              Image("AppIconImage")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 200)
+            }
+            ProgressView()
+              .progressViewStyle(CircularProgressViewStyle(tint: .accent))
+              .scaleEffect(2.0, anchor: .center)
+          }
         }
       }
     }
     .onAppear {
-      searchContext.sizeClass = horizontalSizeClass ?? .compact
-    }
-    .onChange(of: horizontalSizeClass) { _, newValue in
-      searchContext.sizeClass = newValue ?? .compact
+      Task {
+        if !databaseManager.databaseExists {
+          await databaseManager.copyDatabaseIfNeeded()
+        }
+        databaseManager.setupDatabase()
+      }
     }
   }
 }
@@ -147,7 +176,7 @@ extension ContentView {
         searchContext: searchContext,
         isSearchActive: $isSearchActive
       )
-        .presentationDetents([.large])
+      .presentationDetents([.large])
     case .settings:
       SettingsView()
         .presentationDetents([.large])

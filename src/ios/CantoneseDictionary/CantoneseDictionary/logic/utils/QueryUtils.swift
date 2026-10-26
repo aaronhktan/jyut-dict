@@ -213,7 +213,7 @@ nonisolated func parseReturnedEntryRecords(rows: [Row]) -> [Entry] {
             let label = definitionJSON["label"] as? String ?? ""
 
             var examples: [Example] = []
-            if let examplesJSON = definitionJSON["sentences"]
+            if let examplesJSON = definitionJSON["examples"]
               as? [[String: Any]]
             {
               for exampleJSON in examplesJSON {
@@ -239,15 +239,15 @@ nonisolated func parseReturnedEntryRecords(rows: [Row]) -> [Entry] {
 
                 var translations: [Translation] = []
                 for translationJSON in translationsJSON {
-                  let sentence =
-                    translationJSON["sentence"] as! String
+                  let translation =
+                    translationJSON["translation"] as! String
                   let language =
                     translationJSON["language"] as! String
                   let direct =
                     translationJSON["direct"] as! Int64 == 1
                   translations.append(
                     Translation(
-                      content: sentence,
+                      content: translation,
                       language: language,
                       directTarget: direct
                     )
@@ -348,15 +348,15 @@ nonisolated func parseReturnedExampleRecords(rows: [Row]) -> [Example] {
 
         var translations: [Translation] = []
         for translationJSON in translationsJSON {
-          let sentence =
-            translationJSON["sentence"] as! String
+          let translation =
+            translationJSON["translation"] as! String
           let language =
             translationJSON["language"] as! String
           let direct =
             translationJSON["direct"] as! Int64 == 1
           translations.append(
             Translation(
-              content: sentence,
+              content: translation,
               language: language,
               directTarget: direct
             )

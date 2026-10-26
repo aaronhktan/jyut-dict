@@ -88,6 +88,7 @@ playground.xcworkspace
 
 # Generated databases
 *.db
+*.aar
 
 # Flatpak builds
 *.flatpak-builder/
