@@ -18,6 +18,9 @@ struct SettingsView: View {
   @State private var showDatabaseImport = false
   @State private var showUserDatabaseExport = false
   @State private var showUserDatabaseImport = false
+  @State private var exportLogsText = "Export logs"
+  @State private var showExportLogs = false
+  @State private var logs = LogStore()
 
   var body: some View {
     @Bindable var settings = settings
@@ -205,6 +208,20 @@ struct SettingsView: View {
                 logger.error("User database file import failed: \(error)")
               }
             }
+            Button(exportLogsText) {
+              exportLogsText = "Gathering logs..."
+              Task {
+                await logs.export()
+                showExportLogs = true
+                exportLogsText = "Logs gathered!"
+              }
+            }
+            .tint(.primary)
+            if showExportLogs {
+              ShareLink(item: String(logs.entries.joined(separator: "\n"))) {
+                Text("Share logs")
+              }
+            }
           }
         }
         Section {
@@ -250,10 +267,4 @@ struct SettingsView: View {
     }
 
   }
-}
-
-#Preview {
-  @Previewable @State var settings = Settings()
-  SettingsView()
-    .environment(settings)
 }

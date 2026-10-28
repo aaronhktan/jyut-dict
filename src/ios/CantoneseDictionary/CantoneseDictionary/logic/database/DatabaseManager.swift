@@ -161,7 +161,7 @@ class DatabaseManager {
           try FileManager.default.removeItem(atPath: path)
         }
       }
-      await MainActor.run {
+      Task { @MainActor in
         databaseExists = false
       }
       logger.info("Deleted database from filesystem!")

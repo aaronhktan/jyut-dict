@@ -17,7 +17,10 @@ import os
 #endif
 
 nonisolated let sameCharacterString = "－"
-nonisolated let logger = Logger()
+nonisolated let logger = Logger(
+  subsystem: Bundle.main.bundleIdentifier!,
+  category: String(describing: LogStore.self)
+)
 nonisolated let iso693ToLanguageName: [String: String] = [
   "cmn": "Mandarin",
   "deu": "German",
