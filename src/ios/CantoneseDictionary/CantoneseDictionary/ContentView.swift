@@ -72,7 +72,7 @@ struct ContentView: View {
         ContentUnavailableView {
           VStack(spacing: 30) {
             Label {
-              Text("Preparing dictionaries for first launch...")
+              Text("Preparing dictionaries...")
             } icon: {
               Image("AppIconImage")
                 .resizable()
@@ -89,9 +89,15 @@ struct ContentView: View {
     .onAppear {
       Task {
         if !databaseManager.databaseExists {
-          await databaseManager.copyDatabaseIfNeeded()
+          await databaseManager.copyDatabase()
         }
         databaseManager.setupDatabase()
+
+        if databaseManager.databaseVersion != currentDatabaseVersion {
+          await databaseManager.deleteDatabase()
+          await databaseManager.copyDatabase()
+          databaseManager.setupDatabase()
+        }
       }
     }
   }
@@ -161,7 +167,7 @@ extension ContentView {
         searchContext: searchContext,
         isSearchActive: $isSearchActive
       )
-      .presentationDetents([.medium])
+      .presentationDetents([.fraction(0.75)])
     case .handwriting:
       HandwritingView(
         searchContext: searchContext,

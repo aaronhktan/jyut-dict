@@ -20,7 +20,8 @@ struct TranscriptionView: View {
   @State private var recorder: Recorder
   @State private var languageSelection: DictationLanguage = .cantonese
   @State private var showTranscriptionFailure = false
-  @State private var buttonText = "Search"
+  @State private var copyButtonText = "Copy"
+  @State private var searchButtonText = "Search"
 
   private enum DictationLanguage {
     case cantonese
@@ -112,6 +113,7 @@ struct TranscriptionView: View {
           microphoneView()
         }
         Spacer()
+        copyView()
         searchView()
       }
       .toolbar {
@@ -121,7 +123,8 @@ struct TranscriptionView: View {
     .onChange(of: languageSelection) {
       Task {
         do {
-          buttonText = "Search"
+          copyButtonText = "Copy"
+          searchButtonText = "Search"
           try await recorder.stop()
           try await recorder.start(locales: languageSelection.locale)
         } catch {
@@ -132,9 +135,11 @@ struct TranscriptionView: View {
     }
     .onChange(of: transcriber.transcript) {
       if transcriber.transcript.isEmpty {
-        buttonText = "Search"
+        copyButtonText = "Copy"
+        searchButtonText = "Search"
       } else {
-        buttonText = "Search for: \(transcriber.transcript)"
+        copyButtonText = "Copy text: \(transcriber.transcript)"
+        searchButtonText = "Search for: \(transcriber.transcript)"
       }
     }
     .task {
@@ -200,6 +205,31 @@ extension TranscriptionView {
     }
   }
 
+  // MARK: - Copy button
+  @ViewBuilder
+  private func copyView() -> some View {
+    Button {
+      if !transcriber.transcript.isEmpty {
+        let pasteboard = UIPasteboard.general
+        pasteboard.string = transcriber.transcript
+      }
+      copyButtonText = "Copied!"
+    } label: {
+      Text(copyButtonText)
+        .lineLimit(1)
+        .truncationMode(.middle)
+        .frame(maxWidth: .infinity)
+        .contentTransition(.opacity)
+        .animation(.easeInOut(duration: 0.3), value: copyButtonText)
+    }
+    .buttonStyle(.glass)
+    .tint(.accent)
+    .buttonBorderShape(.capsule)
+    .controlSize(.extraLarge)
+    .padding(.horizontal)
+    .disabled(transcriber.transcript.isEmpty)
+  }
+
   // MARK: - Search button
   @ViewBuilder
   private func searchView() -> some View {
@@ -215,12 +245,12 @@ extension TranscriptionView {
       }
       dismiss()
     } label: {
-      Text(buttonText)
+      Text(searchButtonText)
         .lineLimit(1)
         .truncationMode(.middle)
         .frame(maxWidth: .infinity)
         .contentTransition(.opacity)
-        .animation(.easeInOut(duration: 0.3), value: buttonText)
+        .animation(.easeInOut(duration: 0.3), value: searchButtonText)
     }
     .buttonStyle(.glassProminent)
     .tint(.accent)

@@ -12,6 +12,8 @@ import SwiftUI
 import System
 import os
 
+nonisolated let currentDatabaseVersion = 4
+
 nonisolated private final class RegexCache: @unchecked Sendable {
   private let cache = NSCache<NSString, NSRegularExpression>()
 
@@ -98,7 +100,43 @@ class DatabaseManager {
     return pool
   }
 
-  @concurrent func copyDatabaseIfNeeded() async {
+  var databaseVersion: Int? {
+    // Must have already called setupDatabase() before trying to access this variable!
+    guard self.pool != nil else {
+      return nil
+    }
+    do {
+      return try self.pool?.read { db in
+        return try Int.fetchOne(db, sql: "PRAGMA user_version")!
+      }
+    } catch {
+      logger.error(
+        "Could get user_version for \(self.localURL.absoluteString), error: \(error)!"
+      )
+    }
+
+    return nil
+  }
+
+  @concurrent func deleteDatabase() async {
+    do {
+      Task { @MainActor in
+        do {
+          try self.dbPool?.close()
+        } catch {
+          logger.error("Could not close database pool!")
+        }
+      }
+      try FileManager.default.removeItem(atPath: self.localURL.path)
+      Task { @MainActor in
+        databaseExists = false
+      }
+    } catch {
+      logger.error("Could not delete database from filesystem!")
+    }
+  }
+
+  @concurrent func copyDatabase() async {
     // In order to generate the file, run `aa archive -i dict.db -o dict.db.aar -a lzfse -b 1m`
     do {
       guard let bundleURL = self.bundleURL else {

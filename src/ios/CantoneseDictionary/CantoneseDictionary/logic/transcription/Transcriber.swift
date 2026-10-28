@@ -368,6 +368,14 @@ class Recorder: @unchecked Sendable {
 
   nonisolated private func audioStream() async throws -> AsyncStream<SendableBuffer> {
     try await setupAudioEngine()
+
+    let input = audioEngine.inputNode
+    let format = input.outputFormat(forBus: 0)
+    guard format.sampleRate > 0, format.channelCount > 0 else {
+      logger.error("Invalid audio input format: \(format)")
+      throw TranscriptionError.couldNotCaptureMicrophone
+    }
+
     audioEngine.inputNode.installTap(
       onBus: 0,
       bufferSize: 1024,

@@ -11,6 +11,7 @@ struct AboutView: View {
   @Environment(\.openURL) var openURL
 
   let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+  let appBuild = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
   let developerURL = URL(string: "https://www.aaronhktan.com")!
   let websiteURL = URL(string: "https://www.jyutdictionary.com")!
   let githubURL = URL(string: "https://www.github.com/aaronhktan/jyut-dict")!
@@ -35,7 +36,7 @@ struct AboutView: View {
           .dynamicTypeSize(.xxxLarge)
           .padding(.horizontal)
 
-        Text("Build \(appVersion ?? "0.0")")
+        Text("Build \(appVersion ?? "0.0") (\(appBuild ?? "0")")
           .font(.subheadline)
           .foregroundStyle(Color.secondary)
 
