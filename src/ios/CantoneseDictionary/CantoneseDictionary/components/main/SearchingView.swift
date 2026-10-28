@@ -283,7 +283,7 @@ extension SearchingView {
         try? await Task.sleep(for: .milliseconds(200))
         guard !Task.isCancelled else { return }
 
-        if (appIdiom != .phone) && (searchContext.sizeClass != .compact) {
+        if searchContext.sizeClass != .compact {
           searchContext.selectedRowId = results.first?.id
         }
 

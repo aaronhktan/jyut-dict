@@ -6,10 +6,18 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
+import os
 
 struct SettingsView: View {
+  @Environment(DatabaseManager.self) private var databaseManager
   @Environment(\.dismiss) var dismiss
   @Environment(Settings.self) private var settings
+
+  @State private var showDatabaseExport = false
+  @State private var showDatabaseImport = false
+  @State private var showUserDatabaseExport = false
+  @State private var showUserDatabaseImport = false
 
   var body: some View {
     @Bindable var settings = settings
@@ -113,12 +121,100 @@ struct SettingsView: View {
             Text("Manage Sources")
           }
         }
+        Section(header: Text("Advanced")) {
+          List {
+            Button("Export dictionary database") {
+              Task {
+                await databaseManager.checkpointDatabase()
+                showDatabaseExport = true
+              }
+            }
+            .tint(.primary)
+            .fileExporter(
+              isPresented: $showDatabaseExport,
+              document: DatabaseDocument(url: databaseManager.dbURL),
+              defaultFilename: "dict.db"
+            ) { result in
+              switch result {
+              case .success(let url):
+                logger.info("Saved database to \(url)")
+              case .failure(let error):
+                logger.warning("Export failed: \(error)")
+              }
+            }
+            Button("Import dictionary database") {
+              showDatabaseImport = true
+            }
+            .tint(.primary)
+            .fileImporter(
+              isPresented: $showDatabaseImport, allowedContentTypes: [.data]
+            ) { result in
+              switch result {
+              case .success(let url):
+                Task {
+                  guard url.startAccessingSecurityScopedResource() else {
+                    return
+                  }
+                  defer { url.stopAccessingSecurityScopedResource() }
+                  await databaseManager.deleteDatabase()
+                  await databaseManager.importDatabase(from: url)
+                  databaseManager.setupDatabase()
+                }
+              case .failure(let error):
+                logger.error("User database file import failed: \(error)")
+              }
+            }
+            Button("Export search, view, and favourites database") {
+              Task {
+                await databaseManager.checkpointUserDatabase()
+                showUserDatabaseExport = true
+              }
+            }
+            .tint(.primary)
+            .fileExporter(
+              isPresented: $showUserDatabaseExport,
+              document: DatabaseDocument(url: databaseManager.userURL),
+              defaultFilename: "user.db"
+            ) { result in
+              switch result {
+              case .success(let url):
+                logger.info("Saved user database to \(url)")
+              case .failure(let error):
+                logger.warning("Export failed: \(error)")
+              }
+            }
+            Button("Import search, view, and favourites database") {
+              showUserDatabaseImport = true
+            }
+            .tint(.primary)
+            .fileImporter(
+              isPresented: $showUserDatabaseImport, allowedContentTypes: [.data]
+            ) { result in
+              switch result {
+              case .success(let url):
+                Task {
+                  guard url.startAccessingSecurityScopedResource() else {
+                    return
+                  }
+                  defer { url.stopAccessingSecurityScopedResource() }
+                  await databaseManager.deleteUserDatabase()
+                  await databaseManager.importUserDatabase(from: url)
+                  databaseManager.setupDatabase()
+                }
+              case .failure(let error):
+                logger.error("User database file import failed: \(error)")
+              }
+            }
+          }
+        }
         Section {
           Toggle("Enable Unsafe Fuzzy Jyutping", isOn: $settings.unsafeFuzzyJyutping)
         } header: {
           Text("Danger Zone")
         } footer: {
-          Text("Several fuzzy Jyutping substitutions are risky. These include (1) ts -> c, and (2) kwu ->(g|k)w?u. Do not enable this setting unless you are confident that you understand and accept the consequences.")
+          Text(
+            "Several fuzzy Jyutping substitutions are risky. These include (1) ts -> c, and (2) kwu ->(g|k)w?u. Do not enable this setting unless you are confident that you understand and accept the consequences."
+          )
         }
         Section(header: Text("More")) {
           NavigationLink {

@@ -276,7 +276,7 @@ nonisolated func parseReturnedEntryRecords(rows: [Row]) -> [Entry] {
 
             definitions.append(
               Definition(
-                definitionContent: content,
+                definitionContent: content.replacingOccurrences(of: "ﾠ", with: " "),
                 label: label,
                 examples: examples
               )

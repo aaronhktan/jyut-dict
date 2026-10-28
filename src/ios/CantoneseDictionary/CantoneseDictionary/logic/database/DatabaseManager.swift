@@ -96,6 +96,10 @@ class DatabaseManager {
     return localURL
   }
 
+  var userURL: URL {
+    return localUserURL
+  }
+
   var dbPool: DatabasePool? {
     return pool
   }
@@ -116,6 +120,27 @@ class DatabaseManager {
     }
 
     return nil
+  }
+
+  @concurrent func checkpointDatabase() async {
+    do {
+      try await self.dbPool?.writeWithoutTransaction { db in
+        guard
+          let row = try Row.fetchOne(
+            db,
+            sql: "PRAGMA wal_checkpoint(TRUNCATE)"
+          )
+        else {
+          logger.error("Could not checkpoint user database!")
+          return
+        }
+        logger.info(
+          "busy: \(row["busy"] as! Int64), log: \(row["log"] as! Int64), checkpointed: \(row["checkpointed"] as! Int64)"
+        )
+      }
+    } catch {
+      logger.error("Could not checkpoint database!")
+    }
   }
 
   @concurrent func deleteDatabase() async {
@@ -143,6 +168,23 @@ class DatabaseManager {
     } catch {
       logger.error("Could not delete database from filesystem!")
     }
+  }
+
+  @concurrent func importDatabase(from: URL) async {
+    if FileManager.default.fileExists(atPath: self.localURL.path) {
+      logger.warning("Database import attempted when database already exists, no-op!")
+      return
+    }
+
+    do {
+      try FileManager.default.copyItem(atPath: from.path, toPath: self.localURL.path)
+      Task { @MainActor in
+        databaseExists = true
+      }
+    } catch {
+      logger.error("Database import failed: \(error)")
+    }
+    logger.info("Imported database from filesystem: \(from.absoluteString)")
   }
 
   @concurrent func copyDatabase() async {
@@ -218,6 +260,65 @@ class DatabaseManager {
         "Could not copy dictionary database to \(self.localURL.absoluteString), error: \(error)!"
       )
     }
+  }
+
+  @concurrent func checkpointUserDatabase() async {
+    do {
+      try await self.dbPool?.writeWithoutTransaction { db in
+        guard
+          let row = try Row.fetchOne(
+            db,
+            sql: "PRAGMA user.wal_checkpoint(TRUNCATE)"
+          )
+        else {
+          logger.error("Could not checkpoint user database!")
+          return
+        }
+        logger.info(
+          "busy: \(row["busy"] as! Int64), log: \(row["log"] as! Int64), checkpointed: \(row["checkpointed"] as! Int64)"
+        )
+      }
+    } catch {
+      logger.error("Could not checkpoint user database, error: \(error)")
+    }
+  }
+
+  @concurrent func deleteUserDatabase() async {
+    do {
+      await MainActor.run {
+        do {
+          self.pool?.interrupt()
+          try self.pool?.close()
+          self.pool = nil
+        } catch {
+          logger.error("Could not close database pool!")
+        }
+      }
+      let base = self.localUserURL.path
+      for suffix in ["", "-wal", "-shm", "-journal"] {
+        let path = base + suffix
+        if FileManager.default.fileExists(atPath: path) {
+          try FileManager.default.removeItem(atPath: path)
+        }
+      }
+      logger.info("Deleted user database from filesystem!")
+    } catch {
+      logger.error("Could not delete user database from filesystem!")
+    }
+  }
+
+  @concurrent func importUserDatabase(from: URL) async {
+    if FileManager.default.fileExists(atPath: self.localUserURL.path) {
+      logger.warning("User database import attempted when user database already exists, no-op!")
+      return
+    }
+
+    do {
+      try FileManager.default.copyItem(atPath: from.path, toPath: self.localUserURL.path)
+    } catch {
+      logger.error("User database import failed: \(error)")
+    }
+    logger.info("Imported user database from filesystem: \(from.absoluteString)")
   }
 
   func setupDatabase() {
