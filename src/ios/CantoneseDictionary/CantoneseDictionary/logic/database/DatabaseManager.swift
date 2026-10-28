@@ -122,7 +122,8 @@ class DatabaseManager {
     do {
       Task { @MainActor in
         do {
-          try self.dbPool?.close()
+          try self.pool?.close()
+          self.pool = nil
         } catch {
           logger.error("Could not close database pool!")
         }
