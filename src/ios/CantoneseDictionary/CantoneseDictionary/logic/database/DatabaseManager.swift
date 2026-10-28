@@ -120,18 +120,26 @@ class DatabaseManager {
 
   @concurrent func deleteDatabase() async {
     do {
-      Task { @MainActor in
+      await MainActor.run {
         do {
+          self.pool?.interrupt()
           try self.pool?.close()
           self.pool = nil
         } catch {
           logger.error("Could not close database pool!")
         }
       }
-      try FileManager.default.removeItem(atPath: self.localURL.path)
-      Task { @MainActor in
+      let base = self.localURL.path
+      for suffix in ["", "-wal", "-shm", "-journal"] {
+        let path = base + suffix
+        if FileManager.default.fileExists(atPath: path) {
+          try FileManager.default.removeItem(atPath: path)
+        }
+      }
+      await MainActor.run {
         databaseExists = false
       }
+      logger.info("Deleted database from filesystem!")
     } catch {
       logger.error("Could not delete database from filesystem!")
     }
@@ -163,7 +171,7 @@ class DatabaseManager {
         let writeFileStream = ArchiveByteStream.fileStream(
           path: FilePath(self.localURL.path),
           mode: .writeOnly,
-          options: [.create],
+          options: [.create, .truncate],
           permissions: FilePermissions(rawValue: 0o644))
       else {
         logger.error("Unable to create write stream")
