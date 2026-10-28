@@ -36,7 +36,7 @@ struct AboutView: View {
           .dynamicTypeSize(.xxxLarge)
           .padding(.horizontal)
 
-        Text("Build \(appVersion ?? "0.0") (\(appBuild ?? "0")")
+        Text("Build \(appVersion ?? "0.0") (\(appBuild ?? "0"))")
           .font(.subheadline)
           .foregroundStyle(Color.secondary)
 
