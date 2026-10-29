@@ -495,28 +495,28 @@ bool SQLDatabaseUtils::rebuildIndices(QSqlDatabase &db)
         return false;
     }
     query.exec("CREATE INDEX IF NOT EXISTS entries_simplified_idx ON "
-               "entries(simplified);");
+               "entries(simplified)");
     if (query.lastError().isValid()) {
         return false;
     }
     query.exec("CREATE INDEX IF NOT EXISTS entries_jyutping_idx ON "
-               "entries(jyutping);");
+               "entries(jyutping)");
     if (query.lastError().isValid()) {
         return false;
     }
     query.exec(
-        "CREATE INDEX IF NOT EXISTS entries_pinyin_idx ON entries(pinyin);");
+        "CREATE INDEX IF NOT EXISTS entries_pinyin_idx ON entries(pinyin)");
     if (query.lastError().isValid()) {
         return false;
     }
     query.exec("CREATE INDEX IF NOT EXISTS del_fk_example_idx ON "
-               "definitions_examples_links(fk_example_id);");
+               "definitions_examples_links(fk_example_id)");
     if (query.lastError().isValid()) {
         return false;
     }
     query.exec(
         "CREATE INDEX IF NOT EXISTS example_links_fk_example_translation_idx "
-        "ON example_links(fk_example_translation_id);");
+        "ON example_links(fk_example_translation_id)");
     if (query.lastError().isValid()) {
         return false;
     }

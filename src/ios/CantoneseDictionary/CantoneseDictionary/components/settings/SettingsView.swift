@@ -11,6 +11,8 @@ struct SettingsView: View {
   @Environment(\.dismiss) var dismiss
   @Environment(Settings.self) private var settings
 
+  @State private var isConfirmationShown = false
+
   var body: some View {
     @Bindable var settings = settings
 
@@ -148,19 +150,21 @@ struct SettingsView: View {
             }
             .labelsHidden()
           }
-        ToolbarItem(placement: .topBarTrailing) {
-          Menu("Reset settings", systemImage: "arrow.counterclockwise") {
-            VStack {
-              Text("This will reset all settings. Are you sure?")
-                .font(.caption)
-              Button("Reset all settings", role: .destructive) {
+          ToolbarItem(placement: .topBarTrailing) {
+            Button("Reset settings", systemImage: "arrow.counterclockwise") {
+              isConfirmationShown = true
+            }
+            .confirmationDialog(
+              "This will reset all settings. Are you sure?", isPresented: $isConfirmationShown,
+              titleVisibility: .visible
+            ) {
+              Button("Yes", role: .destructive) {
                 settings.resetAllSettings()
               }
             }
+            .labelsHidden()
+            .menuStyle(.button)
           }
-          .labelsHidden()
-          .menuStyle(.button)
-        }
         #else
           ToolbarItem(placement: .navigation) {
             Button("Close settings", systemImage: "xmark") {
