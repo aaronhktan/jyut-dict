@@ -7,10 +7,15 @@
 
 import Foundation
 
-struct Translation {
+struct Translation: Hashable, Identifiable {
+  let id = UUID()
   var content: String
   var language: String
   var directTarget: Bool
+
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(id)
+  }
 }
 
 nonisolated class TranslationSet: Hashable, Identifiable, @unchecked Sendable {
@@ -50,11 +55,11 @@ nonisolated class TranslationSet: Hashable, Identifiable, @unchecked Sendable {
     _translations.append(translation)
   }
 
-  func getSource() -> String {
+  var source: String {
     _source
   }
 
-  func getSourceShortString() -> String {
+  var sourceShortString: String {
     _sourceShortString
   }
 
@@ -65,13 +70,15 @@ nonisolated class TranslationSet: Hashable, Identifiable, @unchecked Sendable {
 
     _snippet = []
     for i in 0...4 {
-      _snippet?.append(_translations[i])
+      if i < _translations.count {
+        _snippet?.append(_translations[i])
+      }
     }
 
     return _snippet ?? []
   }
 
-  func getTranslations() -> [Translation] {
+  var translations: [Translation] {
     _translations
   }
 }

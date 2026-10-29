@@ -8,7 +8,7 @@
 import Foundation
 
 nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
-  let id: UUID
+  let id = UUID()
   private var _sourceLanguage: String
   private var _simplified: String
   private var _traditional: String
@@ -36,7 +36,6 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
     pinyin: String,
     translations: [TranslationSet]
   ) {
-    self.id = UUID()
     self._sourceLanguage = sourceLanguage
     self._traditional = traditional
     self._simplified = simplified

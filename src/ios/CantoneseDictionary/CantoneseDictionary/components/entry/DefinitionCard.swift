@@ -105,7 +105,7 @@ private struct ExampleView: View {
         pronunicationDisplay()
 
         ForEach(example.getTranslationSets(), id: \.id) { translationSet in
-          if let first = translationSet.getTranslations().first {
+          if let first = translationSet.translations.first {
             Text(first.content)
               .fixedSize(horizontal: false, vertical: true)
               .textSelection(.enabled)

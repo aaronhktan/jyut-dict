@@ -16,10 +16,12 @@ struct EntryDetail: View {
   let rowId: Int
 
   @State private var entry: Entry? = nil
-  @State private var examples: [String: [Example]] = [:]
+  @State private var allExamples: [Example] = []
+  @State private var examplesSnippet: [String: [Example]] = [:]
   @State private var saved: Bool = false
   @State private var animateCantoneseSpeaker = false
   @State private var animateMandarinSpeaker = false
+  @State private var showExampleList = false
   @State private var player = BufferedSpeechPlayer()
 
   private var definitionsSets: [DefinitionsSet] {
@@ -33,7 +35,7 @@ struct EntryDetail: View {
   }
 
   var body: some View {
-    Group {
+    NavigationStack {
       if entry != nil {
         List {
           VStack(alignment: .leading, spacing: 4) {
@@ -73,7 +75,7 @@ struct EntryDetail: View {
           }
 
           ForEach(
-            examples.sorted { $0.key > $1.key },
+            examplesSnippet.sorted { $0.key > $1.key },
             id: \.key
           ) { source, examples in
             ExampleCard(source: source, examples: examples)
@@ -81,6 +83,25 @@ struct EntryDetail: View {
               .listRowBackground(Color.clear)
               .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
           }
+
+          if !allExamples.isEmpty {
+            Button {
+              showExampleList = true
+            } label: {
+              Text("View all examples")
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.glass)
+            .tint(.accent)
+            .buttonBorderShape(.capsule)
+            .controlSize(.extraLarge)
+            .listRowSeparator(.hidden)
+            .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 10, trailing: 0))
+            .padding(.horizontal)
+          }
+        }
+        .navigationDestination(isPresented: $showExampleList) {
+          ExampleList(examples: allExamples)
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
@@ -119,13 +140,13 @@ struct EntryDetail: View {
 
     entry = await searcher.searchByRowId(rowid: String(rowId))
 
-    examples = [:]
+    examplesSnippet = [:]
     if entry != nil {
-      let allExamples = await searcher.searchExamplesByTraditional(searchTerm: entry!.traditional)
+      allExamples = await searcher.searchExamplesByTraditional(searchTerm: entry!.traditional)
 
       var examplesBySource: [String: [Example]] = [:]
       for example in allExamples {
-        if let source = example.getTranslationSets().first?.getSource() {
+        if let source = example.getTranslationSets().first?.source {
           if examplesBySource[source, default: []].count >= 2 {
             // Limit to showing two examples per source for now
             continue
@@ -134,7 +155,7 @@ struct EntryDetail: View {
           }
         }
       }
-      examples = examplesBySource
+      examplesSnippet = examplesBySource
     }
   }
 }
