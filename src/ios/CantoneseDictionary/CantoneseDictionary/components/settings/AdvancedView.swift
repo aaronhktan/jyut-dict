@@ -16,7 +16,7 @@ struct AdvancedView: View {
   @State private var showDatabaseImport = false
   @State private var showUserDatabaseExport = false
   @State private var showUserDatabaseImport = false
-  @State private var exportLogsText = "Export logs"
+  @State private var isGatheringLogs = false
   @State private var showExportLogs = false
   @State private var logs = LogStore()
 
@@ -120,17 +120,29 @@ struct AdvancedView: View {
         }
       }
       .tint(.primary)
-      Button(exportLogsText) {
-        exportLogsText = "Gathering logs..."
+      Button {
+        isGatheringLogs = true
         Task {
           await logs.export()
+          isGatheringLogs = false
           showExportLogs = true
-          exportLogsText = "Logs gathered!"
+        }
+      } label: {
+        if isGatheringLogs {
+          HStack {
+            Text("Gathering logs...")
+            ProgressView()
+              .controlSize(.small)
+          }
+        } else if showExportLogs {
+          Text("Logs gathered!")
+        } else {
+          Text("Export logs")
         }
       }
       .tint(.primary)
-      if showExportLogs {
-        ShareLink(item: String(logs.entries.joined(separator: "\n"))) {
+      if showExportLogs, let path = logs.filteredLogPath {
+        ShareLink(item: path) {
           Text("Share logs")
         }
       }

@@ -35,6 +35,7 @@ struct LicenceView: View {
         }
       }
     }
+    .contentMargins(.top, 0)
     .navigationTitle("Code Licences")
   }
 }
