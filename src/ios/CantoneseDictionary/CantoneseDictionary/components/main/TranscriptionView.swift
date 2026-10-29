@@ -123,6 +123,7 @@ struct TranscriptionView: View {
     .onChange(of: languageSelection) {
       Task {
         do {
+          transcriber.transcript = ""
           copyButtonText = "Copy"
           searchButtonText = "Search"
           try await recorder.stop()
