@@ -260,6 +260,8 @@ extension SearchingView {
         .padding(.bottom, (appIdiom == .pad || appIdiom == .mac) ? 10 : 0)
       }
     }
+    .navigationTitle("Search Results")
+    .navigationBarTitleDisplayMode(.inline)
     .task(id: searchContext.query) {
       searchContext.showEmptyState = false
       guard !searchContext.searchText.isEmpty else {
@@ -303,6 +305,11 @@ extension SearchingView {
       }
     }
     .toolbar {
+      ToolbarItem(placement: .principal) {
+        Color.clear
+          .frame(width: 0, height: 0)
+      }
+      
       toolbarContent
     }
   }

@@ -99,6 +99,7 @@ struct HistoryView: View {
         }
       }
       .navigationTitle("History")
+      .navigationBarTitleDisplayMode(.inline)
       .toolbar {
         #if os(iOS)
           ToolbarItem(placement: .topBarLeading) {

@@ -16,9 +16,10 @@ struct EntryDetail: View {
   let rowId: Int
 
   @State private var entry: Entry? = nil
+  @State private var title = ""
   @State private var allExamples: [Example] = []
   @State private var examplesSnippet: [String: [Example]] = [:]
-  @State private var saved: Bool = false
+  @State private var saved = false
   @State private var animateCantoneseSpeaker = false
   @State private var animateMandarinSpeaker = false
   @State private var showExampleList = false
@@ -105,12 +106,19 @@ struct EntryDetail: View {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .toolbar {
-          toolbarContent
-        }
       } else {
         Spacer()
       }
+    }
+    .navigationTitle(title)
+    .navigationBarTitleDisplayMode(.inline)
+    .toolbar {
+      ToolbarItem(placement: .principal) {
+        Color.clear
+          .frame(width: 0, height: 0)
+      }
+
+      toolbarContent
     }
     .task(id: rowId) {
       guard rowId != -1 else { return }
@@ -128,6 +136,14 @@ struct EntryDetail: View {
         saved = await userData.fetchSavedByUnique(
           traditional: entry.traditional, simplified: entry.simplified, jyutping: entry.jyutping,
           pinyin: entry.pinyin)
+
+        title = String(
+          entry.getCharacters(
+            options: settings.entryCharactersOptions, useColours: false,
+            colourPhoneticType: settings.entryColourPhoneticType,
+            jyutpingToneColours: settings.jyutpingToneColours,
+            pinyinToneColours: settings.pinyinToneColours
+          ).characters[...])
       }
     }
   }

@@ -35,9 +35,11 @@ struct SavedView: View {
               EntryRow(entry: entry)
             }
           }
+          .contentMargins(.top, 0)
         }
       }
       .navigationTitle("Saved Entries")
+      .navigationBarTitleDisplayMode(.inline)
       .toolbar {
         #if os(iOS)
           ToolbarItem(placement: .topBarLeading) {

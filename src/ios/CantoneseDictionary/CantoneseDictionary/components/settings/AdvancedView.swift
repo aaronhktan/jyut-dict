@@ -135,6 +135,7 @@ struct AdvancedView: View {
         }
       }
     }
+    .contentMargins(.top, 0)
     .navigationTitle("Advanced")
   }
 }

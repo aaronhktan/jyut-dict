@@ -171,6 +171,7 @@ struct SettingsView: View {
         #endif
       }
       .navigationTitle("Settings")
+      .navigationBarTitleDisplayMode(.inline)
     }
 
   }
