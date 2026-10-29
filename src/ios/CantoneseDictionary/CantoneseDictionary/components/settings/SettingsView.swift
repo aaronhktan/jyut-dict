@@ -148,6 +148,19 @@ struct SettingsView: View {
             }
             .labelsHidden()
           }
+        ToolbarItem(placement: .topBarTrailing) {
+          Menu("Reset settings", systemImage: "arrow.counterclockwise") {
+            VStack {
+              Text("This will reset all settings. Are you sure?")
+                .font(.caption)
+              Button("Reset all settings", role: .destructive) {
+                settings.resetAllSettings()
+              }
+            }
+          }
+          .labelsHidden()
+          .menuStyle(.button)
+        }
         #else
           ToolbarItem(placement: .navigation) {
             Button("Close settings", systemImage: "xmark") {

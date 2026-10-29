@@ -63,7 +63,15 @@ struct AdvancedView: View {
           logger.error("User database file import failed: \(error)")
         }
       }
-      Button("Export search, view, and favourites database") {
+      Button("Restore dictionary database to default") {
+        Task {
+          await databaseManager.deleteDatabase()
+          await databaseManager.copyDatabase()
+          databaseManager.setupDatabase()
+        }
+      }
+      .tint(.primary)
+      Button("Export history and favourites database") {
         Task {
           await databaseManager.checkpointUserDatabase()
           showUserDatabaseExport = true
@@ -82,7 +90,7 @@ struct AdvancedView: View {
           logger.warning("Export failed: \(error)")
         }
       }
-      Button("Import search, view, and favourites database") {
+      Button("Import history and favourites database") {
         showUserDatabaseImport = true
       }
       .tint(.primary)
@@ -104,6 +112,14 @@ struct AdvancedView: View {
           logger.error("User database file import failed: \(error)")
         }
       }
+      Button("Erase all history and favourites") {
+        Task {
+          await databaseManager.deleteUserDatabase()
+          await databaseManager.copyUserDatabase()
+          databaseManager.setupDatabase()
+        }
+      }
+      .tint(.primary)
       Button(exportLogsText) {
         exportLogsText = "Gathering logs..."
         Task {

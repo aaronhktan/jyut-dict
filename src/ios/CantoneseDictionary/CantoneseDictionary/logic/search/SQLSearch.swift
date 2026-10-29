@@ -40,7 +40,7 @@ actor SQLSearch {
     let globTerm = prepareCharacterBindValues(
       characters: searchTerm
     )
-    print("globTerm: '\(globTerm)'")
+    logger.info("globTerm: '\(globTerm)'")
 
     var results: [Entry] = []
     do {
@@ -64,7 +64,7 @@ actor SQLSearch {
     let globTerm = prepareCharacterBindValues(
       characters: searchTerm
     )
-    print("globTerm: '\(globTerm)'")
+    logger.info("globTerm: '\(globTerm)'")
 
     var results: [Entry] = []
     do {
@@ -93,7 +93,7 @@ actor SQLSearch {
       useFuzzyJyutping: useFuzzyJyutping,
       unsafeFuzzyJyutping: unsafeFuzzyJyutping
     )
-    print("globTerm: '\(globTerm)'")
+    logger.info("globTerm: '\(globTerm)'")
     let query = String(
       format: jyutpingExistenceQuery,
       arguments: [useFuzzyJyutping ? REGEXP_OPERATOR : GLOB_OPERATOR]
@@ -125,7 +125,7 @@ actor SQLSearch {
       useFuzzyJyutping: useFuzzyJyutping,
       unsafeFuzzyJyutping: unsafeFuzzyJyutping
     )
-    print("globTerm: '\(globTerm)'")
+    logger.info("globTerm: '\(globTerm)'")
     let query = String(
       format: searchJyutpingQuery,
       arguments: [useFuzzyJyutping ? REGEXP_OPERATOR : GLOB_OPERATOR]
@@ -154,7 +154,7 @@ actor SQLSearch {
       pinyin: searchTerm,
       useFuzzyPinyin: useFuzzyPinyin
     )
-    print("globTerm: '\(globTerm)'")
+    logger.info("globTerm: '\(globTerm)'")
     let query = String(
       format: pinyinExistenceQuery,
       arguments: [useFuzzyPinyin ? REGEXP_OPERATOR : GLOB_OPERATOR]
@@ -183,7 +183,7 @@ actor SQLSearch {
       pinyin: searchTerm,
       useFuzzyPinyin: useFuzzyPinyin
     )
-    print("globTerm: '\(globTerm)'")
+    logger.info("globTerm: '\(globTerm)'")
     let query = String(
       format: searchPinyinQuery,
       arguments: [useFuzzyPinyin ? REGEXP_OPERATOR : GLOB_OPERATOR]

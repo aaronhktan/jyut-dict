@@ -177,15 +177,18 @@ extension ContentView {
     case .saved:
       SavedView()
         .presentationDetents([.large])
+        .interactiveDismissDisabled()
     case .history:
       HistoryView(
         searchContext: searchContext,
         isSearchActive: $isSearchActive
       )
       .presentationDetents([.large])
+      .interactiveDismissDisabled()
     case .settings:
       SettingsView()
         .presentationDetents([.large])
+        .interactiveDismissDisabled()
     }
   }
 }

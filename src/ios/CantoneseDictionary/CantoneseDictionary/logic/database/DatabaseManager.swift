@@ -62,33 +62,8 @@ class DatabaseManager {
       databaseExists = true
     }
 
-    if !fileManager.fileExists(atPath: self.localUserURL.path) {
-      do {
-        try fileManager.createDirectory(
-          at: self.localURL.deletingLastPathComponent(),
-          withIntermediateDirectories: true,
-          attributes: nil
-        )
-      } catch {
-        logger.error(
-          "Could not create directory at \(self.localURL.deletingLastPathComponent().absoluteString)!"
-        )
-      }
-
-      do {
-        if let bundleUserURL = self.bundleUserURL {
-          try fileManager.copyItem(at: bundleUserURL, to: self.localUserURL)
-          logger.info(
-            "Successfully copied user database to \(self.localUserURL.absoluteString)!"
-          )
-        } else {
-          logger.warning("No bundle URL found, skipping user database copy!")
-        }
-      } catch {
-        logger.error(
-          "Could not copy user database to \(self.localUserURL.absoluteString), error: \(error)!"
-        )
-      }
+    Task {
+      await copyUserDatabase()
     }
   }
 
@@ -319,6 +294,37 @@ class DatabaseManager {
       logger.error("User database import failed: \(error)")
     }
     logger.info("Imported user database from filesystem: \(from.absoluteString)")
+  }
+
+  @concurrent func copyUserDatabase() async {
+    if !FileManager.default.fileExists(atPath: self.localUserURL.path) {
+      do {
+        try FileManager.default.createDirectory(
+          at: self.localURL.deletingLastPathComponent(),
+          withIntermediateDirectories: true,
+          attributes: nil
+        )
+      } catch {
+        logger.error(
+          "Could not create directory at \(self.localURL.deletingLastPathComponent().absoluteString)!"
+        )
+      }
+
+      do {
+        if let bundleUserURL = self.bundleUserURL {
+          try FileManager.default.copyItem(at: bundleUserURL, to: self.localUserURL)
+          logger.info(
+            "Successfully copied user database to \(self.localUserURL.absoluteString)!"
+          )
+        } else {
+          logger.warning("No bundle URL found, skipping user database copy!")
+        }
+      } catch {
+        logger.error(
+          "Could not copy user database to \(self.localUserURL.absoluteString), error: \(error)!"
+        )
+      }
+    }
   }
 
   func setupDatabase() {

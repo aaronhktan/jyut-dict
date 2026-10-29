@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import os
 
 nonisolated let defaultJyutpingToneColours: [Color] = [
   Color(red: 0.5, green: 0.5, blue: 0.5),
@@ -107,6 +108,32 @@ nonisolated enum CodingError: Error {
     self.entryColourPhoneticType = Self.loadEntryColourPhoneticType()
 
     self.checkForUpdates = Self.loadCheckForUpdates()
+  }
+
+  func loadAllSettings() {
+    self.jyutpingToneColours = Self.loadJyutpingToneColours()
+    self.pinyinToneColours = Self.loadPinyinToneColours()
+
+    self.previewPhoneticOptions = Self.loadPreviewPhoneticOptions()
+    self.previewCantonesePhoneticOptions = Self.loadPreviewCantonesePhoneticOptions()
+    self.previewMandarinPhoneticOptions = Self.loadPreviewMandarinPhoneticOptions()
+
+    self.entryCantonesePhoneticOptions = Self.loadEntryCantonesePhoneticOptions()
+    self.entryMandarinPhoneticOptions = Self.loadEntryMandarinPhoneticOptions()
+
+    self.unsafeFuzzyJyutping = Self.loadUnsafeFuzzyJyutping()
+
+    self.entryCharactersOptions = Self.loadEntryCharactersOptions()
+    self.entryColourPhoneticType = Self.loadEntryColourPhoneticType()
+
+    self.checkForUpdates = Self.loadCheckForUpdates()
+  }
+
+  func resetAllSettings() {
+    logger.info("Resetting all settings...")
+    let domain = Bundle.main.bundleIdentifier!
+    UserDefaults.standard.removePersistentDomain(forName: domain)
+    loadAllSettings()
   }
 
   static func loadJyutpingToneColours() -> [Color] {
