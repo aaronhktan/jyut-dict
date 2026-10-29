@@ -35,7 +35,7 @@ struct EntryDetail: View {
   }
 
   var body: some View {
-    NavigationStack {
+    Group {
       if entry != nil {
         List {
           VStack(alignment: .leading, spacing: 4) {
