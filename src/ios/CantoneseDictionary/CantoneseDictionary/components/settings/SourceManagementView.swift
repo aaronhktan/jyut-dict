@@ -71,6 +71,8 @@ struct SourceDetailView: View {
             .multilineTextAlignment(.leading)
         }
       }
+      .listStyle(.automatic)
+      .contentMargins(.top, 0)
 
       Button {
         openURL(URL(string: source.link)!)
@@ -151,7 +153,9 @@ extension SourceDetailView {
       if utils.state == .removeSourceFailed || utils.state == .removeSourceSucceeded {
         Button {
           isSheetPresented = false
-          dismiss()
+          if utils.state == .removeSourceSucceeded {
+            dismiss()
+          }
         } label: {
           Text("OK")
             .frame(maxWidth: .infinity)

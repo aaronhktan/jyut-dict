@@ -180,79 +180,110 @@ import os
   }
 
   @concurrent func removeSources(sources: [String], skipCleanup: Bool) async {
-    Task { @MainActor in
+    if sources.isEmpty {
+      logger.warning("Attempted to remove zero sources!")
+      return
+    }
+
+    await MainActor.run {
       self.state = .removingSource
     }
 
+    logger.info("Beginning to remove sources \(sources)")
+
+    guard let pool = await MainActor.run(body: { self.pool }) else {
+      logger.error("Attempted to remove sources when pool was nil")
+      await MainActor.run {
+        self.state = .removeSourceFailed
+      }
+      return
+    }
+
     do {
-      try await pool?.writeWithoutTransaction { db in
+      try await pool.writeWithoutTransaction { db in
         try db.execute(literal: "PRAGMA foreign_keys = ON")
-        try db.execute(literal: "SAVEPOINT source_deletion")
-
-        var types: Set<String> = []
-        for source in sources {
-          guard
-            let row = try Row.fetchOne(
-              db,
-              sql: "SELECT other FROM sources WHERE sourcename = ?",
-              arguments: [source]
-            )
-          else {
-            logger.error("Could not get source type from database")
-            return
-          }
-
-          let other = row["other"] as! String
-          for type in other.components(separatedBy: ",") {
-            types.insert(type)
-          }
-
-          do {
-            try db.execute(sql: "DELETE FROM sources WHERE sourcename = ?", arguments: [source])
-          } catch {
-            try db.execute(literal: "ROLLBACK")
-            try db.execute(literal: "PRAGMA foreign_keys = OFF")
-            logger.error("Could not delete source \(source), error: \(error)!")
-            Task { @MainActor in
-              self.state = .removeSourceFailed
-            }
-            return
-          }
-        }
-
-        try db.execute(literal: "RELEASE source_deletion")
-        try db.execute(literal: "PRAGMA foreign_keys = OFF")
-
         try db.execute(literal: "SAVEPOINT source_removal")
-        if !dropIndices(db) {
-          failCleanup(db, error: "Could not drop indices!")
-          return
-        }
 
-        if types.isEmpty || types.contains("words") {
-          if !removeDefinitions(from: db) {
-            failCleanup(db, error: "Could not remove definitions!")
+        do {
+          var types: Set<String> = []
+          for source in sources {
+            guard
+              let row = try Row.fetchOne(
+                db,
+                sql: "SELECT other FROM sources WHERE sourcename = ?",
+                arguments: [source]
+              )
+            else {
+              failCleanup(db, error: "Could not get source types from database!")
+              return
+            }
+
+            if let other = row["other"] as? String {
+              if other.isEmpty {
+                types.insert("words")
+              }
+
+              for type in other.components(separatedBy: ",") {
+                types.insert(type)
+              }
+            } else {
+              types.insert("words")
+            }
+
+            do {
+              try db.execute(sql: "DELETE FROM sources WHERE sourcename = ?", arguments: [source])
+            } catch {
+              failCleanup(db, error: "Could not delete source \(source), error: \(error)!")
+              return
+            }
+          }
+
+          if !dropIndices(db) {
+            failCleanup(db, error: "Could not drop indices!")
             return
           }
-        }
-        if types.contains("examples") {
-          if !removeExamples(from: db) {
-            failCleanup(db, error: "Could not remove examples!")
-            return
-          }
-        }
 
-        if !skipCleanup {
-          if !rebuildIndices(db) {
+          if types.isEmpty || types.contains("words") {
+            if !removeDefinitions(from: db) {
+              failCleanup(db, error: "Could not remove definitions!")
+              return
+            }
+          }
+          if types.contains("examples") {
+            if !removeExamples(from: db) {
+              failCleanup(db, error: "Could not remove examples!")
+              return
+            }
+          }
+
+          if !skipCleanup, !rebuildIndices(db) {
             failCleanup(db, error: "Could not rebuild indices!")
             return
           }
+        } catch {
+          failCleanup(db, error: "Fatal failure while attempting to remove sources: \(error)")
+          return
         }
 
-        try db.execute(literal: "RELEASE source_removal")
+        do {
+          try db.execute(literal: "RELEASE source_removal")
+        } catch {
+          failCleanup(db, error: "Could not commit source_removal savepoint: \(error)")
+          return
+        }
+
+        do {
+          try db.execute(literal: "PRAGMA foreign_keys = OFF")
+        } catch {
+          logger.warning("Non-fatal error: could not set foreign_keys off after removing source!")
+        }
 
         if !skipCleanup {
-          try db.execute(literal: "VACUUM")
+          do {
+            try db.execute(literal: "VACUUM")
+          } catch {
+            logger.warning("Non-fatal error: could not vacuum after removing sources!")
+          }
         }
 
         Task { @MainActor in
@@ -261,8 +292,9 @@ import os
         }
       }
     } catch {
-      logger.error("Failed to remove sources, error: \(error)!")
-      Task { @MainActor in
+      logger.error(
+        "Failed to start write without transaction while removing sources, error: \(error)!")
+      await MainActor.run {
         self.state = .removeSourceFailed
       }
     }

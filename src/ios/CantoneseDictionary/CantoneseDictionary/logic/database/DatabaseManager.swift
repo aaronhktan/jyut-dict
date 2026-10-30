@@ -355,7 +355,6 @@ class DatabaseManager {
       try db.execute(sql: "PRAGMA cache_size = -64000")
       try db.execute(sql: "PRAGMA mmap_size = 268435456")
       try db.execute(sql: "PRAGMA temp_store = MEMORY")
-      try db.execute(sql: "PRAGMA foreign_keys = ON")
       try db.execute(sql: "PRAGMA synchronous = NORMAL")
     }
 
