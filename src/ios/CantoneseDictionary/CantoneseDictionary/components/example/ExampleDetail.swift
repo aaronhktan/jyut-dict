@@ -198,6 +198,7 @@ extension ExampleDetail {
       utterance.voice = voice
 
       Task {
+        await player.setupAudioSession()
         await player.speak(utterance)
       }
     } label: {
@@ -346,6 +347,7 @@ extension ExampleDetail {
       utterance.voice = voice
 
       Task {
+        await player.setupAudioSession()
         await player.speak(utterance)
       }
     } label: {

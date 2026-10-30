@@ -22,7 +22,7 @@ final class BufferedSpeechPlayer {
     synthesizer.usesApplicationAudioSession = true
   }
 
-  func speak(_ utterance: AVSpeechUtterance) async {
+  func setupAudioSession() async {
     // Must set category for audio session in order to get playback
     // working correctly on AirPods and internal speakers
     #if os(iOS)
@@ -40,6 +40,10 @@ final class BufferedSpeechPlayer {
         return
       }
     #endif
+  }
+
+  func speak(_ utterance: AVSpeechUtterance) async {
+    await setupAudioSession()
 
     stop()
     isGenerating = true
