@@ -66,7 +66,7 @@ struct AdvancedView: View {
       Button("Restore dictionary database to default") {
         Task {
           await databaseManager.deleteDatabase()
-          await databaseManager.copyDatabase()
+          await databaseManager.expandDatabaseFromBundle()
           databaseManager.setupDatabase()
         }
       }

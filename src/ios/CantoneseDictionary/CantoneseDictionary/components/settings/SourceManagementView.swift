@@ -6,12 +6,16 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
 import os
 
 struct SourceManagementView: View {
   @Environment(DatabaseManager.self) private var databaseManager
 
   @State private var sourceModel = SourceModel()
+  @State private var utils = SQLDatabaseUtils()
+  @State private var isFileImportPresented = false
+  @State private var isSheetPresented = false
   @State private var selectedSource: Int?
 
   var body: some View {
@@ -25,11 +29,128 @@ struct SourceManagementView: View {
       }
       .listStyle(.automatic)
       .contentMargins(.top, 0)
+      .toolbar {
+        ToolbarItem(placement: .topBarTrailing) {
+          Button("Add source", systemImage: "plus") {
+            isFileImportPresented = true
+          }
+          .labelsHidden()
+        }
+      }
+      .fileImporter(
+        isPresented: $isFileImportPresented, allowedContentTypes: [.data]
+      ) { result in
+        switch result {
+        case .success(let url):
+          Task {
+            guard url.startAccessingSecurityScopedResource() else {
+              return
+            }
+            defer { url.stopAccessingSecurityScopedResource() }
+            if let pool = databaseManager.dbPool {
+              utils.setPool(pool: pool)
+              isSheetPresented = true
+              let succeeded = await utils.addSource(from: url, overwriteConflictingSource: false)
+              if !succeeded, utils.state == .addSourceFailed, !utils.conflictingSources.isEmpty {
+                guard url.startAccessingSecurityScopedResource() else {
+                  return
+                }
+              }
+              await sourceModel.loadSources(databaseManager)
+            }
+          }
+        case .failure(let error):
+          logger.error("User database file import failed: \(error)")
+        }
+      }
+      .sheet(isPresented: $isSheetPresented) {
+        sheetView()
+          .presentationDetents([.large])
+          .interactiveDismissDisabled()
+      }
     }
     .task {
       await sourceModel.loadSources(databaseManager)
     }
     .navigationTitle("Sources")
+  }
+}
+
+extension SourceManagementView {
+  @ViewBuilder
+  private func sheetView() -> some View {
+    VStack {
+      ContentUnavailableView {
+        VStack(spacing: 30) {
+          Spacer()
+
+          Label {
+            Text(utils.state.descriptionString)
+          } icon: {
+            Image("AppIconImage")
+              .resizable()
+              .scaledToFit()
+              .frame(width: 200)
+          }
+
+          if utils.state != .idle, utils.state != .addSourceFailed,
+            utils.state != .addSourceSucceeded
+          {
+            ProgressView()
+              .progressViewStyle(CircularProgressViewStyle(tint: .accent))
+              .scaleEffect(2.0, anchor: .center)
+          }
+
+          if utils.state == .addSourceFailed && !utils.conflictingSources.isEmpty {
+            Text(
+              "At least once source you tried to add (\(utils.conflictingSources.map({ $0.name}).joined(separator: ","))) conflicts with existing sources already in your database."
+            )
+            .foregroundStyle(.placeholder)
+            .multilineTextAlignment(.center)
+            .padding()
+          }
+
+          Spacer()
+        }
+        .frame(height: .infinity)
+      }
+
+      if utils.state == .addSourceFailed && !utils.conflictingSources.isEmpty {
+        Button {
+          Task {
+            if let url = utils.url {
+              defer { url.stopAccessingSecurityScopedResource() }
+              _ = await utils.addSource(from: url, overwriteConflictingSource: true)
+            }
+          }
+        } label: {
+          Text("Overwrite existing sources")
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.glass)
+        .tint(.accent)
+        .buttonBorderShape(.capsule)
+        .controlSize(.extraLarge)
+        .padding(.horizontal)
+      }
+
+      if utils.state == .addSourceFailed || utils.state == .addSourceSucceeded {
+        Button {
+          isSheetPresented = false
+          if let url = utils.url {
+            url.stopAccessingSecurityScopedResource()
+          }
+        } label: {
+          Text("OK")
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.glassProminent)
+        .tint(.accent)
+        .buttonBorderShape(.capsule)
+        .controlSize(.extraLarge)
+        .padding(.horizontal)
+      }
+    }
   }
 }
 

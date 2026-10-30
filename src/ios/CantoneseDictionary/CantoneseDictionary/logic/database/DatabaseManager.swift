@@ -162,7 +162,38 @@ class DatabaseManager {
     logger.info("Imported database from filesystem: \(from.absoluteString)")
   }
 
-  @concurrent func copyDatabase() async {
+  @concurrent func backupDatabase() async {
+    for i in (2...3).reversed() {
+      let oldFilePath = self.localURL.deletingLastPathComponent().appendingPathComponent(
+        "dict_\(i - 1).db")
+      let newFilePath = self.localURL.deletingLastPathComponent().appendingPathComponent(
+        "dict_\(i).db")
+      if FileManager.default.fileExists(atPath: newFilePath.path) {
+        do {
+          try FileManager.default.removeItem(atPath: newFilePath.path)
+        } catch {
+          logger.info("Could not delete backup at \(newFilePath), error: \(error)")
+          return
+        }
+        do {
+          try FileManager.default.moveItem(atPath: oldFilePath.path, toPath: newFilePath.path)
+        } catch {
+          logger.info("Could not move file from \(oldFilePath) to \(newFilePath), error: \(error)")
+          return
+        }
+      }
+    }
+
+    let backupFilePath = self.localURL.deletingLastPathComponent().appendingPathComponent(
+      "dict_1.db")
+    do {
+      try FileManager.default.copyItem(atPath: self.localURL.path, toPath: backupFilePath.path)
+    } catch {
+      logger.info("Could not back database up from \(self.localURL.path) to \(backupFilePath), error: \(error)")
+    }
+  }
+
+  @concurrent func expandDatabaseFromBundle() async {
     // In order to generate the file, run `aa archive -i dict.db -o dict.db.aar -a lzfse -b 1m`
     do {
       guard let bundleURL = self.bundleURL else {

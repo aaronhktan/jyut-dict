@@ -89,13 +89,13 @@ struct ContentView: View {
     .onAppear {
       Task {
         if !databaseManager.databaseExists {
-          await databaseManager.copyDatabase()
+          await databaseManager.expandDatabaseFromBundle()
         }
         databaseManager.setupDatabase()
 
         if databaseManager.databaseVersion != currentDatabaseVersion {
           await databaseManager.deleteDatabase()
-          await databaseManager.copyDatabase()
+          await databaseManager.expandDatabaseFromBundle()
           databaseManager.setupDatabase()
         }
       }

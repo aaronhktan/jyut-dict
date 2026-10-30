@@ -940,7 +940,7 @@ bool SQLDatabaseUtils::addExampleSource(QSqlDatabase &db)
         return false;
     }
 
-    query.exec("INSERT INTO examples_translations( "
+    query.exec("INSERT INTO example_translations( "
                "  example_translation_id, translation, language) "
                "SELECT example_translation_id, translation, language "
                "FROM db.example_translations");
