@@ -88,7 +88,7 @@ import os
     case databaseSourceInvalid
     case databaseSourceConflict
 
-    var errorDescription: String {
+    var errorDescription: String? {
       switch self {
       case .sourceContentsInvalid:
         return "Could not get source types from database!"

@@ -81,7 +81,7 @@ struct ContentView: View {
             }
             ProgressView()
               .progressViewStyle(CircularProgressViewStyle(tint: .accent))
-              .scaleEffect(2.0, anchor: .center)
+              .controlSize(.extraLarge)
           }
         }
       }
@@ -210,12 +210,4 @@ final class SearchContext {
   var query: Query {
     Query(text: searchText, option: selectedOption)
   }
-}
-
-#Preview {
-  @Previewable @State var databaseManager = DatabaseManager()
-  @Previewable @State var settings = Settings()
-  ContentView()
-    .environment(databaseManager)
-    .environment(settings)
 }

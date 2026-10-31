@@ -17,22 +17,19 @@ struct EntryDetail: View {
 
   @State private var entry: Entry? = nil
   @State private var title = ""
-  @State private var allExamples: [Example] = []
-  @State private var examplesSnippet: [String: [Example]] = [:]
   @State private var saved = false
+
   @State private var animateCantoneseSpeaker = false
   @State private var animateMandarinSpeaker = false
-  @State private var showExampleList = false
+  @State private var speakErrorState: (showAlert: Bool, error: String) = (false, "")
   @State private var player = BufferedSpeechPlayer()
+
+  @State private var allExamples: [Example] = []
+  @State private var examplesSnippet: [String: [Example]] = [:]
+  @State private var showExampleList = false
 
   private var definitionsSets: [DefinitionsSet] {
     entry?.getDefinitionsSets() ?? []
-  }
-
-  // Used only for preview
-  init(rowId: Int, previewEntry: Entry? = nil) {
-    self.rowId = rowId
-    _entry = State(initialValue: previewEntry)
   }
 
   var body: some View {
@@ -113,12 +110,18 @@ struct EntryDetail: View {
     .navigationTitle(title)
     .navigationBarTitleDisplayMode(.inline)
     .toolbar {
+      // This is used to hide the navigation title
       ToolbarItem(placement: .principal) {
         Color.clear
           .frame(width: 0, height: 0)
       }
-
       toolbarContent
+    }
+    .alert(isPresented: $speakErrorState.showAlert) {
+      Alert(
+        title: Text("Couldn't speak entry!"),
+        message: Text(speakErrorState.error),
+        dismissButton: .default(Text("OK")))
     }
     .task(id: rowId) {
       guard rowId != -1 else { return }
@@ -265,7 +268,7 @@ extension EntryDetail {
         words = entry?.traditional
       }
       guard let words else {
-        // TODO: Handle error if no words to pronounce are found
+        speakErrorState = (true, "No words were found to pronounce!")
         if let entry {
           logger.error("Nothing could be pronounced in Cantonese for entry \(entry.traditional)")
         }
@@ -283,7 +286,7 @@ extension EntryDetail {
         }
       }
       guard let voice else {
-        // TODO: Handle error if no appropriate voice is found
+        speakErrorState = (true, "Couldn't load a Cantonese voice!")
         logger.error("No Cantonese voice could be found!")
         return
       }
@@ -417,7 +420,7 @@ extension EntryDetail {
         words = entry?.traditional
       }
       guard let words else {
-        // TODO: Handle error if no words to pronounce are found
+        speakErrorState = (true, "No words were found to pronounce!")
         if let entry {
           logger.error("Nothing could be pronounced in Mandarin for entry \(entry.traditional)")
         }
@@ -443,7 +446,7 @@ extension EntryDetail {
         }
       }
       guard let voice else {
-        // TODO: Handle error if no appropriate voice is found
+        speakErrorState = (true, "Couldn't load a Mandarin voice!")
         logger.error("No Mandarin voice could be found!")
         return
       }
@@ -498,57 +501,9 @@ extension EntryDetail {
         }
       } label: {
         Label("Save entry", systemImage: saved ? "star.fill" : "star")
-          .contentTransition(.symbolEffect(.replace, options: .speed(0.1)))
       }
       .labelsHidden()
       .glassEffect()
     }
   }
-}
-
-#Preview {
-  @Previewable @State var entry = Entry(
-    rowid: 0,
-    traditional: "聽日",
-    simplified: "听日",
-    jyutping: "ting1 jat6",
-    pinyin: "ting1 ri4",
-    definitions: [
-      DefinitionsSet(
-        source: "CC-CANTO",
-        sourceShortString: "CCY",
-        definitions: [
-          Definition(
-            definitionContent: "tomorrow",
-            label: "noun",
-            examples: [
-              Example(
-                sourceLanguage: "yue",
-                traditional: "我唔理，總之我聽朝返到公司要見到你份報告。",
-                simplified: "我唔理，总之我听朝返到公司要见到你份报告。",
-                jyutping:
-                  "ngo5 m4 lei5, zung2 zi1 ngo5 ting1 ziu1 faan1 dou3 gung1 si1 jiu3 gin3 dou2 nei5 fan6 bou3 gou3.",
-                pinyin: "ting1 ri4",
-                translations: [
-                  TranslationSet(
-                    source: "CCY",
-                    translations: [
-                      Translation(
-                        content:
-                          "I don't give a damn about anything else but your report on my desk tomorrow morning.",
-                        language: "eng", directTarget: true)
-                    ])
-                ])
-            ]
-          )
-        ]
-      )
-    ]
-  )
-  @Previewable @State var databaseManager = DatabaseManager()
-  @Previewable @State var settings = Settings()
-
-  EntryDetail(rowId: -1, previewEntry: entry)
-    .environment(databaseManager)
-    .environment(settings)
 }

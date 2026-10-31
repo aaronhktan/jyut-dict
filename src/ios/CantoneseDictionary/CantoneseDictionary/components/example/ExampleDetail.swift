@@ -16,6 +16,7 @@ struct ExampleDetail: View {
 
   @State private var animateCantoneseSpeaker = false
   @State private var animateMandarinSpeaker = false
+  @State private var speakErrorState: (showAlert: Bool, error: String) = (false, "")
   @State private var player = BufferedSpeechPlayer()
 
   var body: some View {
@@ -63,6 +64,12 @@ struct ExampleDetail: View {
     }
     .listStyle(.plain)
     .scrollContentBackground(.hidden)
+    .alert(isPresented: $speakErrorState.showAlert) {
+      Alert(
+        title: Text("Couldn't speak example!"),
+        message: Text(speakErrorState.error),
+        dismissButton: .default(Text("OK")))
+    }
   }
 }
 
@@ -191,7 +198,7 @@ extension ExampleDetail {
         }
       }
       guard let voice else {
-        // TODO: Handle error if no appropriate voice is found
+        speakErrorState = (true, "Couldn't load a Cantonese voice!")
         logger.error("No Cantonese voice could be found!")
         return
       }
@@ -340,7 +347,7 @@ extension ExampleDetail {
         }
       }
       guard let voice else {
-        // TODO: Handle error if no appropriate voice is found
+        speakErrorState = (true, "Couldn't load a Mandarin voice!")
         logger.error("No Mandarin voice could be found!")
         return
       }

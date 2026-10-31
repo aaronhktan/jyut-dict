@@ -52,6 +52,8 @@ struct SourceManagementView: View {
               isSheetPresented = true
               let succeeded = await utils.addSource(from: url, overwriteConflictingSource: false)
               if !succeeded, utils.state == .addSourceFailed, !utils.conflictingSources.isEmpty {
+                // This extends the lifetime of the URL, so the user can
+                // choose to overwrite the conflicting source
                 guard url.startAccessingSecurityScopedResource() else {
                   return
                 }
@@ -80,39 +82,48 @@ extension SourceManagementView {
   @ViewBuilder
   private func sheetView() -> some View {
     VStack {
-      ContentUnavailableView {
-        VStack(spacing: 30) {
-          Spacer()
+      VStack(spacing: 30) {
+        Spacer()
 
-          Label {
-            Text(utils.state.descriptionString)
-          } icon: {
-            Image("AppIconImage")
-              .resizable()
-              .scaledToFit()
-              .frame(width: 200)
-          }
+        Image("AppIconImage")
+          .resizable()
+          .scaledToFit()
+          .frame(width: 200)
+        Text(utils.state.descriptionString)
+          .font(.title3.weight(.semibold))
+          .multilineTextAlignment(.center)
+          .padding(.horizontal)
 
-          if utils.state != .idle, utils.state != .addSourceFailed,
-            utils.state != .addSourceSucceeded
-          {
-            ProgressView()
-              .progressViewStyle(CircularProgressViewStyle(tint: .accent))
-              .scaleEffect(2.0, anchor: .center)
-          }
+        if utils.state != .idle, utils.state != .addSourceFailed,
+          utils.state != .addSourceSucceeded
+        {
+          ProgressView()
+            .progressViewStyle(CircularProgressViewStyle(tint: .accent))
+            .controlSize(.extraLarge)
+            .transition(.scale(scale: 0.8).combined(with: .opacity))
+        }
 
-          if utils.state == .addSourceFailed && !utils.conflictingSources.isEmpty {
-            Text(
-              "At least once source you tried to add (\(utils.conflictingSources.map({ $0.name}).joined(separator: ","))) conflicts with existing sources already in your database."
-            )
+        if utils.state == .addSourceFailed && !utils.conflictingSources.isEmpty {
+          Text(
+            "At least once source you tried to add (\(utils.conflictingSources.map({ $0.name}).joined(separator: ","))) conflicts with existing sources already in your database."
+          )
+          .foregroundStyle(.placeholder)
+          .multilineTextAlignment(.center)
+          .padding()
+        } else if utils.state == .addSourceFailed, let reason = utils.reason {
+          Text("\(reason.errorDescription ?? "")")
             .foregroundStyle(.placeholder)
             .multilineTextAlignment(.center)
-            .padding()
-          }
-
-          Spacer()
+            .padding(.horizontal)
         }
-        .frame(height: .infinity)
+
+        if utils.state == .addSourceSucceeded {
+          Image(systemName: "checkmark.seal")
+            .font(.system(size: 48))
+            .transition(.symbolEffect(.drawOn.byLayer, options: .speed(0.1)))
+        }
+
+        Spacer()
       }
 
       if utils.state == .addSourceFailed && !utils.conflictingSources.isEmpty {
@@ -140,6 +151,7 @@ extension SourceManagementView {
           if let url = utils.url {
             url.stopAccessingSecurityScopedResource()
           }
+          utils.state = .idle
         } label: {
           Text("OK")
             .frame(maxWidth: .infinity)
@@ -151,6 +163,7 @@ extension SourceManagementView {
         .padding(.horizontal)
       }
     }
+    .animation(.snappy, value: utils.state)
   }
 }
 
@@ -161,6 +174,7 @@ struct SourceDetailView: View {
 
   @State private var utils = SQLDatabaseUtils()
   @State private var isSheetPresented = false
+  @State private var isBookDrawn = false
   @State private var isConfirmationShown = false
 
   let source: SourceMetadata
@@ -245,30 +259,37 @@ extension SourceDetailView {
   @ViewBuilder
   private func sheetView() -> some View {
     VStack {
-      ContentUnavailableView {
-        VStack(spacing: 30) {
-          Spacer()
+      VStack(spacing: 30) {
+        Spacer()
 
-          Label {
-            Text(utils.state.descriptionString)
-          } icon: {
-            Image("AppIconImage")
-              .resizable()
-              .scaledToFit()
-              .frame(width: 200)
-          }
+        Image("AppIconImage")
+          .resizable()
+          .scaledToFit()
+          .frame(width: 200)
+        Text(utils.state.descriptionString)
+          .font(.title3.weight(.semibold))
+          .multilineTextAlignment(.center)
 
-          if utils.state != .idle, utils.state != .removeSourceFailed,
-            utils.state != .removeSourceSucceeded
-          {
-            ProgressView()
-              .progressViewStyle(CircularProgressViewStyle(tint: .accent))
-              .scaleEffect(2.0, anchor: .center)
-          }
-
-          Spacer()
+        if utils.state != .idle, utils.state != .removeSourceFailed,
+          utils.state != .removeSourceSucceeded
+        {
+          ProgressView()
+            .progressViewStyle(CircularProgressViewStyle(tint: .accent))
+            .controlSize(.extraLarge)
+            .transition(.scale(scale: 0.8).combined(with: .opacity))
         }
-        .frame(height: .infinity)
+
+        if utils.state == .removeSourceSucceeded {
+          Image(systemName: "book.pages")
+            .font(.system(size: 48))
+            .symbolEffect(.drawOff, options: .speed(0.1), isActive: isBookDrawn)
+            .task {
+              try? await Task.sleep(for: .seconds(0.45))
+              isBookDrawn = true
+            }
+        }
+
+        Spacer()
       }
 
       if utils.state == .removeSourceFailed || utils.state == .removeSourceSucceeded {
@@ -277,6 +298,7 @@ extension SourceDetailView {
           if utils.state == .removeSourceSucceeded {
             dismiss()
           }
+          utils.state = .idle
         } label: {
           Text("OK")
             .frame(maxWidth: .infinity)
@@ -288,6 +310,7 @@ extension SourceDetailView {
         .padding(.horizontal)
       }
     }
+    .animation(.snappy, value: utils.state)
   }
 }
 
