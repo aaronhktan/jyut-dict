@@ -270,8 +270,6 @@ nonisolated func parseReturnedEntryRecords(rows: [Row]) -> [Entry] {
                   )
                 )
               }
-            } else {
-              logger.warning("Sentences was not an array of dicts")
             }
 
             definitions.append(
