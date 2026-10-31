@@ -47,6 +47,8 @@ struct SourceManagementView: View {
               return
             }
             defer { url.stopAccessingSecurityScopedResource() }
+            await databaseManager.checkpointDatabase()
+            await databaseManager.backupDatabase()
             if let pool = databaseManager.dbPool {
               utils.setPool(pool: pool)
               isSheetPresented = true
@@ -236,11 +238,15 @@ struct SourceDetailView: View {
           titleVisibility: .visible
         ) {
           Button("Yes", role: .destructive) {
-            if let pool = databaseManager.dbPool {
-              utils.setPool(pool: pool)
-              isSheetPresented = true
-              Task {
-                await utils.removeSources(sources: [source.name], skipCleanup: false)
+            Task {
+              await databaseManager.checkpointDatabase()
+              await databaseManager.backupDatabase()
+              if let pool = databaseManager.dbPool {
+                utils.setPool(pool: pool)
+                isSheetPresented = true
+                Task {
+                  await utils.removeSources(sources: [source.name], skipCleanup: false)
+                }
               }
             }
           }

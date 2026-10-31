@@ -490,7 +490,8 @@ bool SQLDatabaseUtils::rebuildIndices(QSqlDatabase &db)
         return false;
     }
 
-    query.exec("CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)");
+    query.exec("CREATE INDEX IF NOT EXISTS fk_entry_id_index ON "
+               "definitions(fk_entry_id)");
     if (query.lastError().isValid()) {
         return false;
     }

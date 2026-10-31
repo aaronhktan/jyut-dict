@@ -145,10 +145,10 @@ class DatabaseManager {
     }
   }
 
-  @concurrent func importDatabase(from: URL) async {
+  @concurrent func importDatabase(from: URL) async -> Bool {
     if FileManager.default.fileExists(atPath: self.localURL.path) {
       logger.warning("Database import attempted when database already exists, no-op!")
-      return
+      return false
     }
 
     do {
@@ -158,8 +158,10 @@ class DatabaseManager {
       }
     } catch {
       logger.error("Database import failed: \(error)")
+      return false
     }
     logger.info("Imported database from filesystem: \(from.absoluteString)")
+    return true
   }
 
   @concurrent func backupDatabase() async {
@@ -175,6 +177,8 @@ class DatabaseManager {
           logger.info("Could not delete backup at \(newFilePath), error: \(error)")
           return
         }
+      }
+      if FileManager.default.fileExists(atPath: oldFilePath.path) {
         do {
           try FileManager.default.moveItem(atPath: oldFilePath.path, toPath: newFilePath.path)
         } catch {
@@ -189,8 +193,31 @@ class DatabaseManager {
     do {
       try FileManager.default.copyItem(atPath: self.localURL.path, toPath: backupFilePath.path)
     } catch {
-      logger.info("Could not back database up from \(self.localURL.path) to \(backupFilePath), error: \(error)")
+      logger.info(
+        "Could not back database up from \(self.localURL.path) to \(backupFilePath), error: \(error)"
+      )
     }
+    logger.info("Backed up database to \(backupFilePath)")
+  }
+
+  @concurrent func restoreDatabase() async -> Bool {
+    let backupFilePath = self.localURL.deletingLastPathComponent().appendingPathComponent(
+      "dict_1.db")
+    if !FileManager.default.fileExists(atPath: backupFilePath.path) {
+      return false
+    }
+    do {
+      await deleteDatabase()
+      try FileManager.default.copyItem(atPath: backupFilePath.path, toPath: self.localURL.path)
+      Task { @MainActor in
+        databaseExists = true
+      }
+    } catch {
+      logger.info("Could not restore database from \(backupFilePath), error: \(error)")
+      return false
+    }
+    logger.info("Restored database from \(backupFilePath)")
+    return true
   }
 
   @concurrent func expandDatabaseFromBundle() async {

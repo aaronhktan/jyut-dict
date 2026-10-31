@@ -29,6 +29,7 @@ import os
     case insertingDefinitions
     case removingExamples
     case insertingExamples
+    case cleaningUp
     case removeSourceFailed
     case removeSourceSucceeded
     case addSourceFailed
@@ -58,6 +59,8 @@ import os
         return "Inserting examples..."
       case .removeSourceFailed:
         return "Failed to remove source!"
+      case .cleaningUp:
+        return "Cleaning up..."
       case .removeSourceSucceeded:
         return "Source successfully removed!"
       case .addSourceFailed:
@@ -174,7 +177,7 @@ import os
           INSERT INTO definitions_fts (rowid, fk_entry_id, definition) 
           SELECT rowid, fk_entry_id, definition FROM definitions
           """)
-      try db.execute(literal: "CREATE INDEX fk_entry_id_index ON definitions(fk_entry_id)")
+      try db.execute(literal: "CREATE INDEX IF NOT EXISTS fk_entry_id_index ON definitions(fk_entry_id)")
       try db.execute(
         literal: "CREATE INDEX IF NOT EXISTS entries_simplified_idx ON entries(simplified)")
       try db.execute(
@@ -189,7 +192,7 @@ import os
           "CREATE INDEX IF NOT EXISTS example_links_fk_example_translation_idx ON example_links(fk_example_translation_id)"
       )
     } catch {
-      logger.error("Could not drop indices, error: \(error)")
+      logger.error("Could not rebuild indices, error: \(error)")
       return false
     }
     return true
@@ -264,6 +267,8 @@ import os
     }
 
     do {
+      // Turn off foreign keys, since the only place where we write is in this file
+      // and we don't need it for any of the reads
       try db.execute(literal: "PRAGMA foreign_keys = OFF")
     } catch {
       logger.error("Unable to disable foreign keys!")
@@ -278,6 +283,7 @@ import os
       return
     }
 
+    // Turn on foreign keys so the CASCADE triggers work correctly
     try db.execute(literal: "PRAGMA foreign_keys = ON")
     try db.execute(literal: "SAVEPOINT source_removal")
 
@@ -319,6 +325,8 @@ import os
     }
 
     do {
+      // Turn off foreign keys, since the writes after this point don't need
+      // the constraint to be enforced, and performance suffers if they are on.
       try db.execute(literal: "PRAGMA foreign_keys = OFF")
       try db.execute(literal: "SAVEPOINT source_deletion")
     } catch {
@@ -352,6 +360,9 @@ import os
 
     if !skipCleanup {
       do {
+        Task { @MainActor in
+          self.state = .cleaningUp
+        }
         try db.execute(literal: "VACUUM")
       } catch {
         logger.warning("Non-fatal error: could not vacuum after removing sources!")
@@ -407,8 +418,7 @@ import os
     }
   }
 
-  nonisolated private func insertSources(_ db: Database, existingSources: [String: Int64]) -> Bool
-  {
+  nonisolated private func insertSources(_ db: Database, existingSources: [String: Int64]) -> Bool {
     do {
       let rows = try Row.fetchAll(
         db,
@@ -524,7 +534,7 @@ import os
 
   nonisolated private func insertExamples(_ db: Database) -> Bool {
     Task { @MainActor in
-      state = .removingExamples
+      state = .insertingExamples
     }
 
     do {
@@ -670,7 +680,13 @@ import os
       logger.error("Failed to detach database, error: \(error)")
     }
 
+    if !rebuildIndices(db) {
+      logger.error("Failed to rebuild indices after source addition failure!")
+    }
+
     do {
+      // Turn off foreign keys, since the only place where we write is in this file
+      // and we don't need it for any of the reads
       try db.execute(literal: "PRAGMA foreign_keys = OFF")
     } catch {
       logger.error("Unable to disable foreign keys!")
@@ -748,6 +764,10 @@ import os
         if !rows.isEmpty {
           throw SQLError.databaseSourceConflict
         }
+      } catch SQLError.databaseSourceConflict {
+        throw SQLError.databaseSourceConflict
+      } catch {
+        throw error
       }
     }
 
@@ -777,14 +797,14 @@ import os
       throw SQLError.exampleInsertFailure
     }
 
-    if !rebuildIndices(db) {
-      throw SQLError.indexRebuildFailure
-    }
-
     do {
       try db.execute(literal: "RELEASE source_addition")
     } catch {
       throw SQLError.savepointReleaseFailure
+    }
+
+    if !rebuildIndices(db) {
+      throw SQLError.indexRebuildFailure
     }
 
     do {
@@ -796,7 +816,8 @@ import os
 
   @concurrent func addSource(from path: URL, overwriteConflictingSource: Bool) async -> Bool {
     if !FileManager.default.fileExists(atPath: path.path) {
-      logger.warning("Attempted to add source from path (\(path.path)) that did not point to a file!")
+      logger.warning(
+        "Attempted to add source from path (\(path.path)) that did not point to a file!")
       await MainActor.run {
         self.state = .addSourceFailed
       }

@@ -18,6 +18,7 @@ struct AdvancedView: View {
   @State private var showUserDatabaseImport = false
   @State private var isGatheringLogs = false
   @State private var showExportLogs = false
+  @State private var isFailureShown = false
   @State private var logs = LogStore()
 
   var body: some View {
@@ -56,13 +57,28 @@ struct AdvancedView: View {
             }
             defer { url.stopAccessingSecurityScopedResource() }
             await databaseManager.deleteDatabase()
-            await databaseManager.importDatabase(from: url)
-            databaseManager.setupDatabase()
+            let success = await databaseManager.importDatabase(from: url)
+            if success {
+              databaseManager.setupDatabase()
+            } else {
+              isFailureShown = true
+            }
           }
         case .failure(let error):
           logger.error("User database file import failed: \(error)")
         }
       }
+      Button("Restore from most recent dictionary database backup") {
+        Task {
+          let success = await databaseManager.restoreDatabase()
+          if success {
+            databaseManager.setupDatabase()
+          } else {
+            isFailureShown = true
+          }
+        }
+      }
+      .tint(.primary)
       Button("Restore dictionary database to default") {
         Task {
           await databaseManager.deleteDatabase()
@@ -148,6 +164,11 @@ struct AdvancedView: View {
       }
     }
     .contentMargins(.top, 0)
+    .alert(isPresented: $isFailureShown) {
+      Alert(
+        title: Text("Operation failed"),
+        dismissButton: .default(Text("OK")))
+    }
     .navigationTitle("Advanced")
   }
 }
