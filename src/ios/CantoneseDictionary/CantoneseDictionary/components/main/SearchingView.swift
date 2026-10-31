@@ -309,7 +309,7 @@ extension SearchingView {
         Color.clear
           .frame(width: 0, height: 0)
       }
-      
+
       toolbarContent
     }
   }

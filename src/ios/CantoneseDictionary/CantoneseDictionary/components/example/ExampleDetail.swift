@@ -38,9 +38,9 @@ struct ExampleDetail: View {
         .fixedSize(horizontal: false, vertical: true)
 
         characterDisplay()
-        .font(.largeTitle)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .textSelection(.enabled)
+          .font(.largeTitle)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .textSelection(.enabled)
         Grid {
           switch settings.previewPhoneticOptions {
           case .onlyCantonese, .preferCantonese:

@@ -84,8 +84,9 @@ actor SQLSearch {
     return results
   }
 
-  @concurrent func searchJyutpingExistence(searchTerm: String, useFuzzyJyutping: Bool, unsafeFuzzyJyutping: Bool) async -> Bool
-  {
+  @concurrent func searchJyutpingExistence(
+    searchTerm: String, useFuzzyJyutping: Bool, unsafeFuzzyJyutping: Bool
+  ) async -> Bool {
     let unsafeFuzzyJyutping = false
 
     let globTerm = prepareJyutpingBindValues(
@@ -117,7 +118,9 @@ actor SQLSearch {
     return result
   }
 
-  @concurrent func searchJyutping(searchTerm: String, useFuzzyJyutping: Bool, unsafeFuzzyJyutping: Bool) async
+  @concurrent func searchJyutping(
+    searchTerm: String, useFuzzyJyutping: Bool, unsafeFuzzyJyutping: Bool
+  ) async
     -> [Entry]
   {
     let globTerm = prepareJyutpingBindValues(

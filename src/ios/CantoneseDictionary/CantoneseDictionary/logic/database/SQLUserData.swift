@@ -178,7 +178,9 @@ actor SQLUserData {
     }
   }
 
-  @concurrent func fetchSavedByUnique(traditional: String, simplified: String, jyutping: String, pinyin: String) async -> Bool {
+  @concurrent func fetchSavedByUnique(
+    traditional: String, simplified: String, jyutping: String, pinyin: String
+  ) async -> Bool {
     var result: Bool = false
     do {
       result = try await pool.read { db in

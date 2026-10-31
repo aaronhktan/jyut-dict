@@ -38,9 +38,9 @@ struct ExampleRow: View {
       .rowLine()
 
       Text(phonetic)
-      .foregroundStyle(.placeholder)
-      .rowLine()
-      
+        .foregroundStyle(.placeholder)
+        .rowLine()
+
       Text(example.getTranslationSnippet())
         .rowLine()
     }

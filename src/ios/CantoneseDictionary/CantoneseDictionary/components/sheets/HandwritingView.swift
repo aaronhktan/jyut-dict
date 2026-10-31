@@ -60,18 +60,22 @@ struct HandwritingView: View {
     }
     .task {
       let nc = NotificationCenter.default
-      nc.addObserver(forName: NSNotification.Name.mlkitModelDownloadDidSucceed, object: nil, queue: nil, using: { _ in
-        Task { @MainActor in
-          logger.info("Model download completed")
-          modelIsAvailable = true
-        }
-      })
-      nc.addObserver(forName: NSNotification.Name.mlkitModelDownloadDidFail, object: nil, queue: nil, using: { _ in
-        Task { @MainActor in
-          logger.error("Model download failed")
-          showModelDownloadFailure = true
-        }
-      })
+      nc.addObserver(
+        forName: NSNotification.Name.mlkitModelDownloadDidSucceed, object: nil, queue: nil,
+        using: { _ in
+          Task { @MainActor in
+            logger.info("Model download completed")
+            modelIsAvailable = true
+          }
+        })
+      nc.addObserver(
+        forName: NSNotification.Name.mlkitModelDownloadDidFail, object: nil, queue: nil,
+        using: { _ in
+          Task { @MainActor in
+            logger.error("Model download failed")
+            showModelDownloadFailure = true
+          }
+        })
       let languageTag = "zh-Hani-HK"
       let identifier = DigitalInkRecognitionModelIdentifier(forLanguageTag: languageTag)
       guard let identifier else {
@@ -155,7 +159,7 @@ extension HandwritingView {
           }
           .onEnded { value in
             if CGPointDistanceSquared(from: canvasState.startLocation, to: value.location) ?? 0
-                < (epsilon * epsilon)
+              < (epsilon * epsilon)
             {
               canvasState.currentPath.addEllipse(
                 in: CGRect(x: value.location.x - 3, y: value.location.y - 3, width: 6, height: 6))

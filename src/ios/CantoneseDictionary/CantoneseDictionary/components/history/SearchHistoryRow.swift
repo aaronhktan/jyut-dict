@@ -17,7 +17,7 @@ struct SearchHistoryRow: View {
       )
       .font(.title)
       .rowLine()
-      
+
       Text(
         historyItem.inputMethod.descriptionString
       )

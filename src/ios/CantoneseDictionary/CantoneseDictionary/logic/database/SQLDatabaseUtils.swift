@@ -24,8 +24,8 @@ import os
     case addingSource
     case droppingIndices
     case rebuildingIndices
+    case removingEntries
     case insertingEntries
-    case removingDefinitions
     case insertingDefinitions
     case removingExamples
     case insertingExamples
@@ -47,10 +47,10 @@ import os
         return "Dropping search indices..."
       case .rebuildingIndices:
         return "Rebuilding search indices..."
+      case .removingEntries:
+        return "Removing entries..."
       case .insertingEntries:
         return "Inserting entries..."
-      case .removingDefinitions:
-        return "Removing definitions..."
       case .insertingDefinitions:
         return "Inserting definitions..."
       case .removingExamples:
@@ -79,8 +79,8 @@ import os
     case savepointCreateFailure
     case indexDropFailure
     case indexRebuildFailure
+    case entryRemoveFailure
     case entryInsertFailure
-    case definitionRemoveFailure
     case definitionInsertFailure
     case exampleRemoveFailure
     case exampleInsertFailure
@@ -89,7 +89,7 @@ import os
     case databaseDetachFailure
     case databaseAttachFailure
     case databaseSourceInvalid
-    case databaseSourceConflict
+    case databaseSourceConflict([ConflictingSource])
 
     var errorDescription: String? {
       switch self {
@@ -107,10 +107,10 @@ import os
         return "Could not drop search indices!"
       case .indexRebuildFailure:
         return "Could not rebuild search indices!"
+      case .entryRemoveFailure:
+        return "Could not remove entries!"
       case .entryInsertFailure:
         return "Could not insert entries!"
-      case .definitionRemoveFailure:
-        return "Could not remove definitions!"
       case .definitionInsertFailure:
         return "Could not insert definitions!"
       case .exampleRemoveFailure:
@@ -169,28 +169,29 @@ import os
     do {
       try db.execute(
         literal: """
-          INSERT INTO entries_fts (rowid, pinyin, jyutping) 
+          INSERT INTO main.entries_fts (rowid, pinyin, jyutping) 
           SELECT rowid, pinyin, jyutping FROM entries
           """)
       try db.execute(
         literal: """
-          INSERT INTO definitions_fts (rowid, fk_entry_id, definition) 
+          INSERT INTO main.definitions_fts (rowid, fk_entry_id, definition) 
           SELECT rowid, fk_entry_id, definition FROM definitions
           """)
       try db.execute(
-        literal: "CREATE INDEX IF NOT EXISTS fk_entry_id_index ON definitions(fk_entry_id)")
+        literal: "CREATE INDEX IF NOT EXISTS main.fk_entry_id_index ON definitions(fk_entry_id)")
       try db.execute(
-        literal: "CREATE INDEX IF NOT EXISTS entries_simplified_idx ON entries(simplified)")
+        literal: "CREATE INDEX IF NOT EXISTS main.entries_simplified_idx ON entries(simplified)")
       try db.execute(
-        literal: "CREATE INDEX IF NOT EXISTS entries_jyutping_idx ON entries(jyutping)")
-      try db.execute(literal: "CREATE INDEX IF NOT EXISTS entries_pinyin_idx ON entries(pinyin)")
+        literal: "CREATE INDEX IF NOT EXISTS main.entries_jyutping_idx ON entries(jyutping)")
+      try db.execute(
+        literal: "CREATE INDEX IF NOT EXISTS main.entries_pinyin_idx ON entries(pinyin)")
       try db.execute(
         literal:
-          "CREATE INDEX IF NOT EXISTS del_fk_example_idx ON definitions_examples_links(fk_example_id)"
+          "CREATE INDEX IF NOT EXISTS main.del_fk_example_idx ON definitions_examples_links(fk_example_id)"
       )
       try db.execute(
         literal:
-          "CREATE INDEX IF NOT EXISTS example_links_fk_example_translation_idx ON example_links(fk_example_translation_id)"
+          "CREATE INDEX IF NOT EXISTS main.example_links_fk_example_translation_idx ON example_links(fk_example_translation_id)"
       )
     } catch {
       logger.error("Could not rebuild indices, error: \(error)")
@@ -199,10 +200,10 @@ import os
     return true
   }
 
-  nonisolated private func removeDefinitions(
+  nonisolated private func removeEntries(
     from db: Database, updateState: @escaping @Sendable (State) -> Void
   ) -> Bool {
-    updateState(.removingDefinitions)
+    updateState(.removingEntries)
     do {
       try db.execute(
         literal: """
@@ -213,7 +214,7 @@ import os
               WHERE definitions.fk_entry_id IS NULL)
           """)
     } catch {
-      logger.error("Could not remove definitions, error: \(error)")
+      logger.error("Could not remove entries, error: \(error)")
       return false
     }
     return true
@@ -344,8 +345,8 @@ import os
     }
 
     if types.isEmpty || types.contains("words") {
-      if !removeDefinitions(from: db, updateState: updateState) {
-        throw SQLError.definitionRemoveFailure
+      if !removeEntries(from: db, updateState: updateState) {
+        throw SQLError.entryRemoveFailure
       }
     }
     if types.contains("examples") {
@@ -366,9 +367,7 @@ import os
 
     if !skipCleanup {
       do {
-        Task { @MainActor in
-          self.state = .cleaningUp
-        }
+        updateState(.cleaningUp)
         try db.execute(literal: "VACUUM")
       } catch {
         logger.warning("Non-fatal error: could not vacuum after removing sources!")
@@ -376,10 +375,10 @@ import os
     }
   }
 
-  @concurrent func removeSources(sources: [String], skipCleanup: Bool) async {
+  @concurrent func removeSources(sources: [String], skipCleanup: Bool) async -> Bool {
     if sources.isEmpty {
       logger.warning("Attempted to remove zero sources!")
-      return
+      return false
     }
 
     await MainActor.run {
@@ -396,7 +395,7 @@ import os
       await MainActor.run {
         self.state = .removeSourceFailed
       }
-      return
+      return false
     }
 
     let (states, continuation) = AsyncStream.makeStream(of: State.self)
@@ -429,7 +428,10 @@ import os
         self.reason = error as? SQLError
       }
       logger.error("Failed to remove sources \(sources)")
+      return false
     }
+
+    return true
   }
 
   nonisolated private func insertSources(_ db: Database, existingSources: [String: Int64]) -> Bool {
@@ -450,7 +452,7 @@ import os
         let legal = row["legal"] as! String
         let link = row["link"] as! String
         let updateURL = row["update_url"] as! String
-        let other = row["other"] as! String
+        let other = row["other"] as? String ?? "words"
         if let sourceid = existingSources[sourcename] {
           try db.execute(
             sql: """
@@ -716,21 +718,18 @@ import os
     throws
   {
     do {
-      try db.execute(sql: "ATTACH DATABASE ? as db", arguments: [path.path])
+      try db.execute(sql: "ATTACH DATABASE ? as db", arguments: [path.path(percentEncoded: false)])
     } catch {
       logger.error("Couldn't attach database from file, error: \(error)")
       throw SQLError.databaseAttachFailure
     }
 
-    do {
-      let version = try Int.fetchOne(db, sql: "PRAGMA db.user_version")!
-      if version != currentDatabaseVersion {
-        throw SQLError.versionInvalid
-      }
-    } catch SQLError.versionInvalid {
-      throw SQLError.versionInvalid
-    } catch {
+    let version = try? Int.fetchOne(db, sql: "PRAGMA db.user_version")
+    guard let version else {
       throw SQLError.versionReadFailure
+    }
+    if version != currentDatabaseVersion {
+      throw SQLError.versionInvalid
     }
 
     var existingSources: [String: Int64] = [:]
@@ -759,46 +758,39 @@ import os
         throw SQLError.sourceDeletionFailure
       }
     } else {
-      do {
-        let rows = try Row.fetchAll(
-          db,
-          sql: """
-            SELECT s.sourcename, s.version AS in_database_version, 
-              dbs.version AS new_file_version 
-              FROM sources AS s, db.sources AS dbs 
-            WHERE s.sourcename IN 
-              (SELECT sourcename FROM db.sources) 
-              AND s.sourcename = dbs.sourcename
-            """)
+      let rows = try Row.fetchAll(
+        db,
+        sql: """
+          SELECT s.sourcename, s.version AS in_database_version, 
+            dbs.version AS new_file_version 
+            FROM sources AS s, db.sources AS dbs 
+          WHERE s.sourcename IN 
+            (SELECT sourcename FROM db.sources) 
+            AND s.sourcename = dbs.sourcename
+          """)
 
-        for row in rows {
-          let source = ConflictingSource(
-            name: row["sourcename"] as! String,
-            existingVersion: row["in_database_version"] as! String,
-            newVersion: row["new_file_version"] as! String)
-          Task { @MainActor in
-            self.conflictingSources.append(source)
-          }
-        }
-
-        if !rows.isEmpty {
-          throw SQLError.databaseSourceConflict
-        }
-      } catch SQLError.databaseSourceConflict {
-        throw SQLError.databaseSourceConflict
-      } catch {
-        throw error
+      var conflicts: [ConflictingSource] = []
+      for row in rows {
+        let source = ConflictingSource(
+          name: row["sourcename"] as! String,
+          existingVersion: row["in_database_version"] as! String,
+          newVersion: row["new_file_version"] as! String)
+        conflicts.append(source)
       }
+
+      if !rows.isEmpty {
+        throw SQLError.databaseSourceConflict(conflicts)
+      }
+    }
+
+    if !dropIndices(db, updateState: updateState) {
+      throw SQLError.indexDropFailure
     }
 
     do {
       try db.execute(literal: "SAVEPOINT source_addition")
     } catch {
       throw SQLError.savepointCreateFailure
-    }
-
-    if !dropIndices(db, updateState: updateState) {
-      throw SQLError.indexDropFailure
     }
 
     if !insertSources(db, existingSources: existingSources) {
@@ -835,9 +827,10 @@ import os
   }
 
   @concurrent func addSource(from path: URL, overwriteConflictingSource: Bool) async -> Bool {
-    if !FileManager.default.fileExists(atPath: path.path) {
+    if !FileManager.default.fileExists(atPath: path.path(percentEncoded: false)) {
       logger.warning(
-        "Attempted to add source from path (\(path.path)) that did not point to a file!")
+        "Attempted to add source from path (\(path.path(percentEncoded: false)) that did not point to a file!"
+      )
       await MainActor.run {
         self.state = .addSourceFailed
       }
@@ -851,7 +844,7 @@ import os
       self.conflictingSources = []
     }
 
-    logger.info("Beginning to add sources from \(path.path)")
+    logger.info("Beginning to add sources from \(path.path(percentEncoded: false))")
 
     guard let pool = await MainActor.run(body: { self.pool }) else {
       logger.error("Attempted to add sources when pool was nil")
@@ -884,7 +877,7 @@ import os
       continuation.yield(.addSourceSucceeded)
       continuation.finish()
       await consumer.value
-      logger.info("Added sources from \(path.path)")
+      logger.info("Added sources from \(path.path(percentEncoded: false))")
       return true
     } catch {
       continuation.yield(.addSourceFailed)
@@ -892,6 +885,9 @@ import os
       await consumer.value
       await MainActor.run {
         self.reason = error as? SQLError
+        if case .databaseSourceConflict(let conflicts) = self.reason {
+          self.conflictingSources = conflicts
+        }
       }
       return false
     }

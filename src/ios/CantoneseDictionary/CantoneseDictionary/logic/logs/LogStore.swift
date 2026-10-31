@@ -22,7 +22,7 @@ final class LogStore: Observable {
       let position = store.position(date: date)
 
       let filtered =
-      try store
+        try store
         .getEntries(at: position)
         .compactMap { $0 as? OSLogEntryLog }
         .filter { $0.subsystem == Bundle.main.bundleIdentifier! }

@@ -129,7 +129,7 @@ nonisolated enum CodingError: Error {
     self.entryColourPhoneticType = Self.loadEntryColourPhoneticType()
 
     self.checkForUpdates = Self.loadCheckForUpdates()
-    
+
     self.voiceWarningShown = Self.loadVoiceWarningShown()
   }
 

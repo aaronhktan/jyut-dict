@@ -58,7 +58,7 @@ class DatabaseManager {
   var databaseExists = false
 
   public init() {
-    if fileManager.fileExists(atPath: self.localURL.path) {
+    if fileManager.fileExists(atPath: self.localURL.path(percentEncoded: false)) {
       databaseExists = true
     }
 
@@ -129,7 +129,7 @@ class DatabaseManager {
           logger.error("Could not close database pool!")
         }
       }
-      let base = self.localURL.path
+      let base = self.localURL.path(percentEncoded: false)
       for suffix in ["", "-wal", "-shm", "-journal"] {
         let path = base + suffix
         if FileManager.default.fileExists(atPath: path) {
@@ -146,13 +146,14 @@ class DatabaseManager {
   }
 
   @concurrent func importDatabase(from: URL) async -> Bool {
-    if FileManager.default.fileExists(atPath: self.localURL.path) {
+    if FileManager.default.fileExists(atPath: self.localURL.path(percentEncoded: false)) {
       logger.warning("Database import attempted when database already exists, no-op!")
       return false
     }
 
     do {
-      try FileManager.default.copyItem(atPath: from.path, toPath: self.localURL.path)
+      try FileManager.default.copyItem(
+        atPath: from.path(percentEncoded: false), toPath: self.localURL.path(percentEncoded: false))
       Task { @MainActor in
         databaseExists = true
       }
@@ -170,17 +171,19 @@ class DatabaseManager {
         "dict_\(i - 1).db")
       let newFilePath = self.localURL.deletingLastPathComponent().appendingPathComponent(
         "dict_\(i).db")
-      if FileManager.default.fileExists(atPath: newFilePath.path) {
+      if FileManager.default.fileExists(atPath: newFilePath.path(percentEncoded: false)) {
         do {
-          try FileManager.default.removeItem(atPath: newFilePath.path)
+          try FileManager.default.removeItem(atPath: newFilePath.path(percentEncoded: false))
         } catch {
           logger.info("Could not delete backup at \(newFilePath), error: \(error)")
           return
         }
       }
-      if FileManager.default.fileExists(atPath: oldFilePath.path) {
+      if FileManager.default.fileExists(atPath: oldFilePath.path(percentEncoded: false)) {
         do {
-          try FileManager.default.moveItem(atPath: oldFilePath.path, toPath: newFilePath.path)
+          try FileManager.default.moveItem(
+            atPath: oldFilePath.path(percentEncoded: false),
+            toPath: newFilePath.path(percentEncoded: false))
         } catch {
           logger.info("Could not move file from \(oldFilePath) to \(newFilePath), error: \(error)")
           return
@@ -191,10 +194,12 @@ class DatabaseManager {
     let backupFilePath = self.localURL.deletingLastPathComponent().appendingPathComponent(
       "dict_1.db")
     do {
-      try FileManager.default.copyItem(atPath: self.localURL.path, toPath: backupFilePath.path)
+      try FileManager.default.copyItem(
+        atPath: self.localURL.path(percentEncoded: false),
+        toPath: backupFilePath.path(percentEncoded: false))
     } catch {
       logger.info(
-        "Could not back database up from \(self.localURL.path) to \(backupFilePath), error: \(error)"
+        "Could not back database up from \(self.localURL.path(percentEncoded: false)) to \(backupFilePath), error: \(error)"
       )
     }
     logger.info("Backed up database to \(backupFilePath)")
@@ -205,9 +210,9 @@ class DatabaseManager {
     for i in 1...3 {
       let filePath = self.localURL.deletingLastPathComponent().appendingPathComponent(
         "dict_\(i).db")
-      if FileManager.default.fileExists(atPath: filePath.path) {
+      if FileManager.default.fileExists(atPath: filePath.path(percentEncoded: false)) {
         do {
-          try FileManager.default.removeItem(atPath: filePath.path)
+          try FileManager.default.removeItem(atPath: filePath.path(percentEncoded: false))
         } catch {
           logger.info("Could not delete backup at \(filePath), error: \(error)")
           return false
@@ -221,12 +226,14 @@ class DatabaseManager {
   @concurrent func restoreDatabase() async -> Bool {
     let backupFilePath = self.localURL.deletingLastPathComponent().appendingPathComponent(
       "dict_1.db")
-    if !FileManager.default.fileExists(atPath: backupFilePath.path) {
+    if !FileManager.default.fileExists(atPath: backupFilePath.path(percentEncoded: false)) {
       return false
     }
     do {
       await deleteDatabase()
-      try FileManager.default.copyItem(atPath: backupFilePath.path, toPath: self.localURL.path)
+      try FileManager.default.copyItem(
+        atPath: backupFilePath.path(percentEncoded: false),
+        toPath: self.localURL.path(percentEncoded: false))
       Task { @MainActor in
         databaseExists = true
       }
@@ -248,7 +255,7 @@ class DatabaseManager {
 
       guard
         let readFileStream = ArchiveByteStream.fileStream(
-          path: FilePath(bundleURL.path),
+          path: FilePath(bundleURL.path(percentEncoded: false)),
           mode: .readOnly,
           options: [],
           permissions: FilePermissions(rawValue: 0o644))
@@ -262,7 +269,7 @@ class DatabaseManager {
 
       guard
         let writeFileStream = ArchiveByteStream.fileStream(
-          path: FilePath(self.localURL.path),
+          path: FilePath(self.localURL.path(percentEncoded: false)),
           mode: .writeOnly,
           options: [.create, .truncate],
           permissions: FilePermissions(rawValue: 0o644))
@@ -286,15 +293,17 @@ class DatabaseManager {
 
       let decoded = ArchiveStream.decodeStream(readingFrom: decompressStream)!
       let extracted = ArchiveStream.extractStream(
-        extractingTo: FilePath(self.localURL.deletingLastPathComponent().path)
+        extractingTo: FilePath(
+          self.localURL.deletingLastPathComponent().path(percentEncoded: false))
       )!
 
       let i = try ArchiveStream.process(
         readingFrom: decoded,
         writingTo: extracted)
 
-      if FileManager.default.fileExists(atPath: self.localURL.path) {
-        let attr = try FileManager.default.attributesOfItem(atPath: self.localURL.path)
+      if FileManager.default.fileExists(atPath: self.localURL.path(percentEncoded: false)) {
+        let attr = try FileManager.default.attributesOfItem(
+          atPath: self.localURL.path(percentEncoded: false))
         let fileSize = attr[FileAttributeKey.size] as! UInt64
         logger.info("Expanded dictionary database is \(fileSize) bytes")
         logger.info(
@@ -359,13 +368,15 @@ class DatabaseManager {
   }
 
   @concurrent func importUserDatabase(from: URL) async {
-    if FileManager.default.fileExists(atPath: self.localUserURL.path) {
+    if FileManager.default.fileExists(atPath: self.localUserURL.path(percentEncoded: false)) {
       logger.warning("User database import attempted when user database already exists, no-op!")
       return
     }
 
     do {
-      try FileManager.default.copyItem(atPath: from.path, toPath: self.localUserURL.path)
+      try FileManager.default.copyItem(
+        atPath: from.path(percentEncoded: false),
+        toPath: self.localUserURL.path(percentEncoded: false))
     } catch {
       logger.error("User database import failed: \(error)")
     }
@@ -373,7 +384,7 @@ class DatabaseManager {
   }
 
   @concurrent func copyUserDatabase() async {
-    if !FileManager.default.fileExists(atPath: self.localUserURL.path) {
+    if !FileManager.default.fileExists(atPath: self.localUserURL.path(percentEncoded: false)) {
       do {
         try FileManager.default.createDirectory(
           at: self.localURL.deletingLastPathComponent(),
@@ -427,7 +438,7 @@ class DatabaseManager {
       try db.execute(
         sql: """
           ATTACH DATABASE ? AS user
-          """, arguments: [self.localUserURL.path])
+          """, arguments: [self.localUserURL.path(percentEncoded: false)])
       try db.execute(sql: "PRAGMA cache_size = -64000")
       try db.execute(sql: "PRAGMA mmap_size = 268435456")
       try db.execute(sql: "PRAGMA temp_store = MEMORY")

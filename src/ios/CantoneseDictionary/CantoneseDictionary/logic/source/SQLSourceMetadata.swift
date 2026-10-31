@@ -41,7 +41,7 @@ actor SQLSourceMetadata {
   }
 }
 
-struct SourceMetadata : Identifiable {
+struct SourceMetadata: Identifiable {
   let id = UUID()
 
   var name: String
