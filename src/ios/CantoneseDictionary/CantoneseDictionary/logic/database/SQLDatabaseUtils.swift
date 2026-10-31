@@ -285,7 +285,7 @@ import os
 
     // Turn on foreign keys so the CASCADE triggers work correctly
     try db.execute(literal: "PRAGMA foreign_keys = ON")
-    try db.execute(literal: "SAVEPOINT source_removal")
+    try db.execute(literal: "SAVEPOINT source_deletion")
 
     var types: Set<String> = []
     for source in sources {
@@ -319,7 +319,7 @@ import os
     }
 
     do {
-      try db.execute(literal: "RELEASE source_removal")
+      try db.execute(literal: "RELEASE source_deletion")
     } catch {
       throw SQLError.savepointReleaseFailure
     }
@@ -327,8 +327,10 @@ import os
     do {
       // Turn off foreign keys, since the writes after this point don't need
       // the constraint to be enforced, and performance suffers if they are on.
+      // Unfortunately, we can't turn off foreign keys inside a savepoint, so
+      // we have to create a new savepoint.
       try db.execute(literal: "PRAGMA foreign_keys = OFF")
-      try db.execute(literal: "SAVEPOINT source_deletion")
+      try db.execute(literal: "SAVEPOINT source_removal")
     } catch {
       throw SQLError.savepointCreateFailure
     }
@@ -353,7 +355,7 @@ import os
     }
 
     do {
-      try db.execute(literal: "RELEASE source_deletion")
+      try db.execute(literal: "RELEASE source_removal")
     } catch {
       throw SQLError.savepointReleaseFailure
     }
