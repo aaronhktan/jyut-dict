@@ -104,7 +104,7 @@ nonisolated func compareStrings(original: String, comparison: String) -> String 
   }
 
   for (x, y) in zip(original, comparison) {
-    if specialCharacters.contains(y) || x != y {
+    if specialCharacters.contains(y) || y.isPunctuation || y.isNumber || y.isWhitespace || x != y {
       result += String(y)
       continue
     }
