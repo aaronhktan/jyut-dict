@@ -701,6 +701,7 @@ import os
     do {
       try db.execute(sql: "ATTACH DATABASE ? as db", arguments: [path.path])
     } catch {
+      logger.error("Couldn't attach database from file, error: \(error)")
       throw SQLError.databaseAttachFailure
     }
 
