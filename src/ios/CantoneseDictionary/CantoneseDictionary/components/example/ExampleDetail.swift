@@ -11,12 +11,14 @@ import os
 
 struct ExampleDetail: View {
   @Environment(Settings.self) private var settings
+  @Environment(\.openURL) private var openURL
 
   let example: Example
 
   @State private var animateCantoneseSpeaker = false
   @State private var animateMandarinSpeaker = false
   @State private var speakErrorState: (showAlert: Bool, error: String) = (false, "")
+  @State private var showVoiceWarning = false
   @State private var player = BufferedSpeechPlayer()
 
   var body: some View {
@@ -69,6 +71,23 @@ struct ExampleDetail: View {
         title: Text("Couldn't speak example!"),
         message: Text(speakErrorState.error),
         dismissButton: .default(Text("OK")))
+    }
+    .alert(isPresented: $showVoiceWarning) {
+      Alert(
+        title: Text("Voice may need to be downloaded!"),
+        message: Text(
+          "Go to Settings > Accessibility > Read and Speak > Voices > Chinese to download additional voices."
+        ),
+        primaryButton: .default(
+          Text("Open Settings"),
+          action: {
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+              openURL(url)
+            }
+          }
+        ),
+        secondaryButton: .default(Text("OK"))
+      )
     }
   }
 }
@@ -207,6 +226,11 @@ extension ExampleDetail {
       Task {
         await player.setupAudioSession()
         await player.speak(utterance)
+      }
+
+      if !settings.voiceWarningShown {
+        showVoiceWarning = true
+        settings.voiceWarningShown = true
       }
     } label: {
       Label("Pronounce in Cantonese", systemImage: "speaker.wave.2")
@@ -356,6 +380,11 @@ extension ExampleDetail {
       Task {
         await player.setupAudioSession()
         await player.speak(utterance)
+      }
+
+      if !settings.voiceWarningShown {
+        showVoiceWarning = true
+        settings.voiceWarningShown = true
       }
     } label: {
       Label("Pronounce in Mandarin", systemImage: "speaker.wave.2")

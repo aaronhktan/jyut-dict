@@ -16,6 +16,7 @@ struct AdvancedView: View {
   @State private var showDatabaseImport = false
   @State private var showUserDatabaseExport = false
   @State private var showUserDatabaseImport = false
+  @State private var eraseBackupText = "Erase all dictionary database backups"
   @State private var isGatheringLogs = false
   @State private var showExportLogs = false
   @State private var isFailureShown = false
@@ -79,11 +80,11 @@ struct AdvancedView: View {
         }
       }
       .tint(.primary)
-      Button("Erase all dictionary database backups") {
+      Button(eraseBackupText) {
         Task {
           let success = await databaseManager.deleteBackups()
           if success {
-            databaseManager.setupDatabase()
+            eraseBackupText = "Backups erased!"
           } else {
             isFailureShown = true
           }

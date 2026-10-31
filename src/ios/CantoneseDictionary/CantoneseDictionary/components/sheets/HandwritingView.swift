@@ -32,7 +32,7 @@ struct HandwritingView: View {
         if !modelIsAvailable {
           ContentUnavailableView {
             ProgressView()
-              .scaleEffect(2.0)
+              .controlSize(.extraLarge)
               .padding()
             Text("Downloading and installing handwriting model...")
           }

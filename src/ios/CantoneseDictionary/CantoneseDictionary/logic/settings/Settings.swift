@@ -108,6 +108,8 @@ nonisolated enum CodingError: Error {
     self.entryColourPhoneticType = Self.loadEntryColourPhoneticType()
 
     self.checkForUpdates = Self.loadCheckForUpdates()
+
+    self.voiceWarningShown = Self.loadVoiceWarningShown()
   }
 
   func loadAllSettings() {
@@ -127,6 +129,8 @@ nonisolated enum CodingError: Error {
     self.entryColourPhoneticType = Self.loadEntryColourPhoneticType()
 
     self.checkForUpdates = Self.loadCheckForUpdates()
+    
+    self.voiceWarningShown = Self.loadVoiceWarningShown()
   }
 
   func resetAllSettings() {
@@ -333,6 +337,20 @@ nonisolated enum CodingError: Error {
   var checkForUpdates: Bool {
     didSet {
       UserDefaults.standard.set(checkForUpdates, forKey: "checkForUpdates")
+    }
+  }
+
+  static func loadVoiceWarningShown() -> Bool {
+    guard UserDefaults.standard.object(forKey: "voiceWarningShown") != nil else {
+      return false
+    }
+    let unsafeFuzzyJyutping = UserDefaults.standard.bool(forKey: "voiceWarningShown")
+    return unsafeFuzzyJyutping
+  }
+
+  var voiceWarningShown: Bool {
+    didSet {
+      UserDefaults.standard.set(voiceWarningShown, forKey: "voiceWarningShown")
     }
   }
 }

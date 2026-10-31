@@ -12,6 +12,7 @@ import os
 struct EntryDetail: View {
   @Environment(DatabaseManager.self) private var databaseManager
   @Environment(Settings.self) private var settings
+  @Environment(\.openURL) private var openURL
 
   let rowId: Int
 
@@ -22,6 +23,7 @@ struct EntryDetail: View {
   @State private var animateCantoneseSpeaker = false
   @State private var animateMandarinSpeaker = false
   @State private var speakErrorState: (showAlert: Bool, error: String) = (false, "")
+  @State private var showVoiceWarning = false
   @State private var player = BufferedSpeechPlayer()
 
   @State private var allExamples: [Example] = []
@@ -122,6 +124,23 @@ struct EntryDetail: View {
         title: Text("Couldn't speak entry!"),
         message: Text(speakErrorState.error),
         dismissButton: .default(Text("OK")))
+    }
+    .alert(isPresented: $showVoiceWarning) {
+      Alert(
+        title: Text("Voice may need to be downloaded!"),
+        message: Text(
+          "Go to Settings > Accessibility > Read and Speak > Voices > Chinese to download additional voices."
+        ),
+        primaryButton: .default(
+          Text("Open Settings"),
+          action: {
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+              openURL(url)
+            }
+          }
+        ),
+        secondaryButton: .default(Text("OK"))
+      )
     }
     .task(id: rowId) {
       guard rowId != -1 else { return }
@@ -296,6 +315,11 @@ extension EntryDetail {
         await player.setupAudioSession()
         await player.speak(utterance)
       }
+
+      if !settings.voiceWarningShown {
+        showVoiceWarning = true
+        settings.voiceWarningShown = true
+      }
     } label: {
       Label("Pronounce in Cantonese", systemImage: "speaker.wave.2")
         .symbolEffect(.variableColor.iterative, value: animateCantoneseSpeaker)
@@ -428,18 +452,19 @@ extension EntryDetail {
       }
       let utterance = AVSpeechUtterance(string: words)
 
-      var voice = AVSpeechSynthesisVoice(identifier: "com.apple.voice.compact.zh-TW.Meijia")
-      if voice == nil {
-        for v in AVSpeechSynthesisVoice.speechVoices() {
-          if v.language == "zh-TW" {
-            voice = v
-            break
-          }
+      var voice: AVSpeechSynthesisVoice? = nil
+      for v in AVSpeechSynthesisVoice.speechVoices() {
+        if v.identifier == "com.apple.voice.compact.zh-TW.Meijia" {
+          voice = v
+          break
+        }
+        if v.language == "zh-TW", !v.identifier.contains("eloquence") {
+          voice = v
         }
       }
       if voice == nil {
         for v in AVSpeechSynthesisVoice.speechVoices() {
-          if v.language == "zh-CN" {
+          if v.language == "zh-CN", !v.identifier.contains("eloquence") {
             voice = v
             break
           }
@@ -455,6 +480,11 @@ extension EntryDetail {
       Task {
         await player.setupAudioSession()
         await player.speak(utterance)
+      }
+
+      if !settings.voiceWarningShown {
+        showVoiceWarning = true
+        settings.voiceWarningShown = true
       }
     } label: {
       Label("Pronounce in Mandarin", systemImage: "speaker.wave.2")
