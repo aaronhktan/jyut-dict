@@ -42,6 +42,22 @@ final class BufferedSpeechPlayer {
     #endif
   }
 
+  func teardownAudioSession() async {
+    #if os(iOS)
+      let audioSession = AVAudioSession.sharedInstance()
+      do {
+        if #available(iOS 27, *) {
+          try await audioSession.deactivate()
+        } else {
+          try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+        }
+      } catch {
+        logger.error("Failed to deactivate audio session, \(error)")
+        return
+      }
+    #endif
+  }
+
   func speak(_ utterance: AVSpeechUtterance) async {
     await setupAudioSession()
 
@@ -114,19 +130,7 @@ final class BufferedSpeechPlayer {
           Task { @MainActor in
             self.numBuffersRemaining -= 1
             if self.numBuffersRemaining == 0 {
-              #if os(iOS)
-                let audioSession = AVAudioSession.sharedInstance()
-                do {
-                  if #available(iOS 27, *) {
-                    try await audioSession.deactivate()
-                  } else {
-                    try audioSession.setActive(false, options: .notifyOthersOnDeactivation)
-                  }
-                } catch {
-                  logger.error("Failed to deactivate audio session, \(error)")
-                  return
-                }
-              #endif
+              await self.teardownAudioSession()
             }
           }
         })
