@@ -74,7 +74,7 @@ struct ExampleDetail: View {
     }
     .alert(isPresented: $showVoiceWarning) {
       Alert(
-        title: Text("Voice may need to be downloaded!"),
+        title: Text("Didn't hear what you expected?"),
         message: Text(
           "Go to Settings > Accessibility > Read and Speak > Voices > Chinese to download additional voices."
         ),

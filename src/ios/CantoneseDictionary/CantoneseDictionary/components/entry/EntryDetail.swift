@@ -126,8 +126,13 @@ struct EntryDetail: View {
         dismissButton: .default(Text("OK")))
     }
     .alert(isPresented: $showVoiceWarning) {
+      // This warning is necessary because there's no way to check
+      // if a voice is actually available on the system.
+      // e.g. Even if "com.apple.voice.compact.zh-TW.Meijia" is in
+      // AVSpeechSynthesisVoice.speechVoices(), it doesn't mean
+      // that it's downloaded!
       Alert(
-        title: Text("Voice may need to be downloaded!"),
+        title: Text("Didn't hear what you expected?"),
         message: Text(
           "Go to Settings > Accessibility > Read and Speak > Voices > Chinese to download additional voices."
         ),
