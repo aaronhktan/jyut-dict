@@ -142,10 +142,10 @@ import os
     self.pool = pool
   }
 
-  nonisolated private func dropIndices(_ db: Database) -> Bool {
-    Task { @MainActor in
-      self.state = .droppingIndices
-    }
+  nonisolated private func dropIndices(
+    _ db: Database, updateState: @escaping @Sendable (State) -> Void
+  ) -> Bool {
+    updateState(.droppingIndices)
     do {
       try db.execute(literal: "DROP INDEX IF EXISTS main.fk_entry_id_index")
       try db.execute(literal: "DROP INDEX IF EXISTS main.entries_simplified_idx")
@@ -162,10 +162,10 @@ import os
     return true
   }
 
-  nonisolated private func rebuildIndices(_ db: Database) -> Bool {
-    Task { @MainActor in
-      self.state = .rebuildingIndices
-    }
+  nonisolated private func rebuildIndices(
+    _ db: Database, updateState: @escaping @Sendable (State) -> Void
+  ) -> Bool {
+    updateState(.rebuildingIndices)
     do {
       try db.execute(
         literal: """
@@ -177,7 +177,8 @@ import os
           INSERT INTO definitions_fts (rowid, fk_entry_id, definition) 
           SELECT rowid, fk_entry_id, definition FROM definitions
           """)
-      try db.execute(literal: "CREATE INDEX IF NOT EXISTS fk_entry_id_index ON definitions(fk_entry_id)")
+      try db.execute(
+        literal: "CREATE INDEX IF NOT EXISTS fk_entry_id_index ON definitions(fk_entry_id)")
       try db.execute(
         literal: "CREATE INDEX IF NOT EXISTS entries_simplified_idx ON entries(simplified)")
       try db.execute(
@@ -198,10 +199,10 @@ import os
     return true
   }
 
-  nonisolated private func removeDefinitions(from db: Database) -> Bool {
-    Task { @MainActor in
-      self.state = .removingDefinitions
-    }
+  nonisolated private func removeDefinitions(
+    from db: Database, updateState: @escaping @Sendable (State) -> Void
+  ) -> Bool {
+    updateState(.removingDefinitions)
     do {
       try db.execute(
         literal: """
@@ -218,10 +219,10 @@ import os
     return true
   }
 
-  nonisolated private func removeExamples(from db: Database) -> Bool {
-    Task { @MainActor in
-      self.state = .removingExamples
-    }
+  nonisolated private func removeExamples(
+    from db: Database, updateState: @escaping @Sendable (State) -> Void
+  ) -> Bool {
+    updateState(.removingExamples)
     do {
       try db.execute(
         literal: """
@@ -275,7 +276,10 @@ import os
     }
   }
 
-  nonisolated private func removeSources(_ db: Database, sources: [String], skipCleanup: Bool)
+  nonisolated private func removeSources(
+    _ db: Database, sources: [String], skipCleanup: Bool,
+    updateState: @escaping @Sendable (State) -> Void
+  )
     throws
   {
     if sources.isEmpty {
@@ -335,22 +339,22 @@ import os
       throw SQLError.savepointCreateFailure
     }
 
-    if !dropIndices(db) {
+    if !dropIndices(db, updateState: updateState) {
       throw SQLError.indexDropFailure
     }
 
     if types.isEmpty || types.contains("words") {
-      if !removeDefinitions(from: db) {
+      if !removeDefinitions(from: db, updateState: updateState) {
         throw SQLError.definitionRemoveFailure
       }
     }
     if types.contains("examples") {
-      if !removeExamples(from: db) {
+      if !removeExamples(from: db, updateState: updateState) {
         throw SQLError.exampleRemoveFailure
       }
     }
 
-    if !skipCleanup, !rebuildIndices(db) {
+    if !skipCleanup, !rebuildIndices(db, updateState: updateState) {
       throw SQLError.indexRebuildFailure
     }
 
@@ -395,28 +399,36 @@ import os
       return
     }
 
+    let (states, continuation) = AsyncStream.makeStream(of: State.self)
+    let consumer = Task { @MainActor in
+      for await s in states {
+        self.state = s
+      }
+    }
+
     do {
       try await pool.writeWithoutTransaction { db in
         do {
-          try removeSources(db, sources: sources, skipCleanup: skipCleanup)
+          try removeSources(
+            db, sources: sources, skipCleanup: skipCleanup, updateState: { continuation.yield($0) })
         } catch {
           removeFailCleanup(db, error: error.localizedDescription)
           throw error
         }
       }
 
-      await MainActor.run {
-        self.state = .removeSourceSucceeded
-        logger.info("Removed sources \(sources)")
-      }
+      continuation.yield(.removeSourceSucceeded)
+      continuation.finish()
+      await consumer.value
+      logger.info("Removed sources \(sources)")
     } catch {
-      logger.error("Failed to remove sources \(sources)")
+      continuation.yield(.removeSourceFailed)
+      continuation.finish()
+      await consumer.value
       await MainActor.run {
-        self.state = .removeSourceFailed
-        if let sqlError = error as? SQLError {
-          self.reason = sqlError
-        }
+        self.reason = error as? SQLError
       }
+      logger.error("Failed to remove sources \(sources)")
     }
   }
 
@@ -476,10 +488,10 @@ import os
     return true
   }
 
-  nonisolated private func insertEntries(_ db: Database) -> Bool {
-    Task { @MainActor in
-      state = .insertingEntries
-    }
+  nonisolated private func insertEntries(
+    _ db: Database, updateState: @escaping @Sendable (State) -> Void
+  ) -> Bool {
+    updateState(.insertingEntries)
 
     do {
       try db.execute(
@@ -496,10 +508,10 @@ import os
     return true
   }
 
-  nonisolated private func insertDefinitions(_ db: Database) -> Bool {
-    Task { @MainActor in
-      state = .insertingDefinitions
-    }
+  nonisolated private func insertDefinitions(
+    _ db: Database, updateState: @escaping @Sendable (State) -> Void
+  ) -> Bool {
+    updateState(.insertingDefinitions)
 
     do {
       try db.execute(
@@ -534,10 +546,10 @@ import os
     return true
   }
 
-  nonisolated private func insertExamples(_ db: Database) -> Bool {
-    Task { @MainActor in
-      state = .insertingExamples
-    }
+  nonisolated private func insertExamples(
+    _ db: Database, updateState: @escaping @Sendable (State) -> Void
+  ) -> Bool {
+    updateState(.insertingExamples)
 
     do {
       try db.execute(
@@ -667,7 +679,9 @@ import os
     return true
   }
 
-  nonisolated private func addFailCleanup(_ db: Database, error: String) {
+  nonisolated private func addFailCleanup(
+    _ db: Database, error: String, updateState: @escaping @Sendable (State) -> Void
+  ) {
     logger.error("Cleaning up after failing to add database, \(error)")
 
     do {
@@ -682,7 +696,7 @@ import os
       logger.error("Failed to detach database, error: \(error)")
     }
 
-    if !rebuildIndices(db) {
+    if !rebuildIndices(db, updateState: updateState) {
       logger.error("Failed to rebuild indices after source addition failure!")
     }
 
@@ -695,7 +709,10 @@ import os
     }
   }
 
-  nonisolated func addSource(_ db: Database, from path: URL, overwriteConflictingSource: Bool)
+  nonisolated func addSource(
+    _ db: Database, from path: URL, overwriteConflictingSource: Bool,
+    updateState: @escaping @Sendable (State) -> Void
+  )
     throws
   {
     do {
@@ -737,7 +754,7 @@ import os
       }
 
       do {
-        try removeSources(db, sources: sourcesToRemove, skipCleanup: true)
+        try removeSources(db, sources: sourcesToRemove, skipCleanup: true, updateState: updateState)
       } catch {
         throw SQLError.sourceDeletionFailure
       }
@@ -780,7 +797,7 @@ import os
       throw SQLError.savepointCreateFailure
     }
 
-    if !dropIndices(db) {
+    if !dropIndices(db, updateState: updateState) {
       throw SQLError.indexDropFailure
     }
 
@@ -788,15 +805,15 @@ import os
       throw SQLError.sourceInsertionFailure
     }
 
-    if !insertEntries(db) {
+    if !insertEntries(db, updateState: updateState) {
       throw SQLError.entryInsertFailure
     }
 
-    if !insertDefinitions(db) {
+    if !insertDefinitions(db, updateState: updateState) {
       throw SQLError.definitionInsertFailure
     }
 
-    if !insertExamples(db) {
+    if !insertExamples(db, updateState: updateState) {
       throw SQLError.exampleInsertFailure
     }
 
@@ -806,7 +823,7 @@ import os
       throw SQLError.savepointReleaseFailure
     }
 
-    if !rebuildIndices(db) {
+    if !rebuildIndices(db, updateState: updateState) {
       throw SQLError.indexRebuildFailure
     }
 
@@ -844,27 +861,37 @@ import os
       return false
     }
 
+    let (states, continuation) = AsyncStream.makeStream(of: State.self)
+    let consumer = Task { @MainActor in
+      for await s in states {
+        self.state = s
+      }
+    }
+
     do {
       try await pool.writeWithoutTransaction { db in
         do {
-          try addSource(db, from: path, overwriteConflictingSource: overwriteConflictingSource)
+          try addSource(
+            db, from: path, overwriteConflictingSource: overwriteConflictingSource,
+            updateState: { continuation.yield($0) })
         } catch {
-          addFailCleanup(db, error: error.localizedDescription)
+          addFailCleanup(
+            db, error: error.localizedDescription, updateState: { continuation.yield($0) })
           throw error
         }
       }
 
-      await MainActor.run {
-        self.state = .addSourceSucceeded
-        logger.info("Added sources from \(path.path)")
-      }
+      continuation.yield(.addSourceSucceeded)
+      continuation.finish()
+      await consumer.value
+      logger.info("Added sources from \(path.path)")
       return true
     } catch {
+      continuation.yield(.addSourceFailed)
+      continuation.finish()
+      await consumer.value
       await MainActor.run {
-        self.state = .addSourceFailed
-        if let sqlError = error as? SQLError {
-          self.reason = sqlError
-        }
+        self.reason = error as? SQLError
       }
       return false
     }

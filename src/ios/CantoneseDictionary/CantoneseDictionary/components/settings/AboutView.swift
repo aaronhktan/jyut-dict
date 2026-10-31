@@ -64,40 +64,52 @@ struct AboutView: View {
         }
         .padding()
 
-        Button {
-          openURL(websiteURL)
-        } label: {
-          Label("Visit website", systemImage: "globe")
+        HStack(spacing: 5) {
+          Button {
+            openURL(websiteURL)
+          } label: {
+            VStack(spacing: 7) {
+              Image(systemName: "globe")
+              Text("Visit website")
+                .font(.caption)
+            }
+            .padding(.vertical, 5)
             .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.glass)
-        .tint(.accent)
-        .buttonBorderShape(.capsule)
-        .controlSize(.extraLarge)
-        .padding(.horizontal)
+          }
+          .buttonStyle(.bordered)
+          .tint(.accent)
+          .buttonBorderShape(.roundedRectangle)
 
-        Button {
-          openURL(githubURL)
-        } label: {
-          Label("GitHub repo", systemImage: "chevron.left.forwardslash.chevron.right")
+          Button {
+            openURL(githubURL)
+          } label: {
+            VStack(spacing: 7) {
+              Image(systemName: "chevron.left.forwardslash.chevron.right")
+              Text("GitHub repo")
+                .font(.caption)
+            }
+            .padding(.vertical, 5)
             .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.glass)
-        .tint(.accent)
-        .buttonBorderShape(.capsule)
-        .controlSize(.extraLarge)
-        .padding(.horizontal)
+          }
+          .buttonStyle(.bordered)
+          .tint(.accent)
+          .buttonBorderShape(.roundedRectangle)
 
-        Button {
-          openURL(emailURL)
-        } label: {
-          Label("Report an issue or just say hi!", systemImage: "envelope")
+          Button {
+            openURL(emailURL)
+          } label: {
+            VStack(spacing: 7) {
+              Image(systemName: "envelope")
+              Text("Say hi!")
+                .font(.caption)
+            }
+            .padding(.vertical, 5)
             .frame(maxWidth: .infinity)
+          }
+          .buttonStyle(.bordered)
+          .tint(.accent)
+          .buttonBorderShape(.roundedRectangle)
         }
-        .buttonStyle(.glass)
-        .tint(.accent)
-        .buttonBorderShape(.capsule)
-        .controlSize(.extraLarge)
         .padding(.horizontal)
 
         Spacer()

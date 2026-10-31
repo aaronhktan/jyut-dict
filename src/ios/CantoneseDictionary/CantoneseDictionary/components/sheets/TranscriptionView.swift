@@ -207,6 +207,11 @@ extension TranscriptionView {
   }
 
   // MARK: - Copy button
+  private var useGlass: Bool {
+    if #available(iOS 27, *) { return true }
+    return false
+  }
+
   @ViewBuilder
   private func copyView() -> some View {
     Button {
@@ -223,7 +228,7 @@ extension TranscriptionView {
         .contentTransition(.opacity)
         .animation(.easeInOut(duration: 0.3), value: copyButtonText)
     }
-    .buttonStyle(.glass)
+    .useGlassProminentButtonStyle(enabled: useGlass)
     .tint(.accent)
     .buttonBorderShape(.capsule)
     .controlSize(.extraLarge)

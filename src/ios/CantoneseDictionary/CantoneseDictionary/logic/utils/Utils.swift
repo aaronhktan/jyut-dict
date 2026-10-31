@@ -123,6 +123,16 @@ extension View {
     self.frame(maxWidth: .infinity, alignment: .leading)
       .lineLimit(1)
   }
+
+  // MARK: - Liquid glass button workaround for iOS 26
+  @ViewBuilder
+  func useGlassProminentButtonStyle(enabled: Bool) -> some View {
+    if #available(iOS 27, *), enabled {
+      self.buttonStyle(.glass)
+    } else {
+      self.buttonStyle(.bordered)
+    }
+  }
 }
 
 extension AVAudioPCMBuffer {
