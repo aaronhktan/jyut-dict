@@ -79,6 +79,17 @@ struct AdvancedView: View {
         }
       }
       .tint(.primary)
+      Button("Erase all dictionary database backups") {
+        Task {
+          let success = await databaseManager.deleteBackups()
+          if success {
+            databaseManager.setupDatabase()
+          } else {
+            isFailureShown = true
+          }
+        }
+      }
+      .tint(.primary)
       Button("Restore dictionary database to default") {
         Task {
           await databaseManager.deleteDatabase()

@@ -200,6 +200,24 @@ class DatabaseManager {
     logger.info("Backed up database to \(backupFilePath)")
   }
 
+  @concurrent func deleteBackups() async -> Bool {
+    logger.info("Deleting all backups...")
+    for i in 1...3 {
+      let filePath = self.localURL.deletingLastPathComponent().appendingPathComponent(
+        "dict_\(i).db")
+      if FileManager.default.fileExists(atPath: filePath.path) {
+        do {
+          try FileManager.default.removeItem(atPath: filePath.path)
+        } catch {
+          logger.info("Could not delete backup at \(filePath), error: \(error)")
+          return false
+        }
+      }
+    }
+    logger.info("Successfully deleted all backups!")
+    return true
+  }
+
   @concurrent func restoreDatabase() async -> Bool {
     let backupFilePath = self.localURL.deletingLastPathComponent().appendingPathComponent(
       "dict_1.db")
