@@ -1,6 +1,7 @@
 #ifndef SOURCEMETADATA_H
 #define SOURCEMETADATA_H
 
+#include <QHash>
 #include <QObject>
 
 #include <string>
@@ -36,6 +37,18 @@ private:
     std::string _updateURL;
     std::string _other;
 };
+
+inline uint qHash(const SourceMetadata &key, uint seed)
+{
+    return qHashMulti(seed,
+                      QString::fromStdString(key.getName()),
+                      QString::fromStdString(key.getVersion()),
+                      QString::fromStdString(key.getDescription()),
+                      QString::fromStdString(key.getLegal()),
+                      QString::fromStdString(key.getLink()),
+                      QString::fromStdString(key.getUpdateURL()),
+                      QString::fromStdString(key.getOther()));
+}
 
 Q_DECLARE_METATYPE(SourceMetadata)
 

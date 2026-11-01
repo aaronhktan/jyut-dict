@@ -12,6 +12,7 @@
 #include <memory>
 #include <mutex>
 #include <random>
+#include <shared_mutex>
 #include <unordered_set>
 #include <vector>
 
@@ -75,9 +76,20 @@ private:
     unsigned long long generateAndSetQueryID(void);
     bool checkQueryIDCurrent(const unsigned long long queryID) const;
 
-    void runThread(void (SQLSearch::*threadFunction)(const QString &searchTerm,
-                                                     const unsigned long long queryID),
-                   const QString &searchTerm, const unsigned long long queryID);
+    void populateJyutpingCache(unsigned int hash);
+    void populatePinyinCache(unsigned int hash);
+
+    std::vector<QString> jyutpingFilteredBy(const QString &prefix);
+    std::vector<QString> pinyinFilteredBy(const QString &prefix);
+
+    std::span<QString> allJyutping();
+    std::span<QString> allPinyin();
+
+    void runThread(
+        void (SQLSearch::*threadFunction)(const QString &searchTerm,
+                                          const unsigned long long queryID),
+        const QString &searchTerm,
+        const unsigned long long queryID);
     void searchSimplifiedThread(const QString &searchTerm,
                                 const unsigned long long queryID);
     void searchTraditionalThread(const QString &searchTerm,
@@ -99,6 +111,13 @@ private:
 
     void searchTraditionalExamplesThread(const QString &searchTerm,
                                          const unsigned long long queryID);
+
+    std::shared_mutex _jyutpingCacheMutex;
+    std::optional<std::tuple<unsigned int, std::vector<QString>>> _jyutpingCache
+        = std::nullopt;
+    std::shared_mutex _pinyinCacheMutex;
+    std::optional<std::tuple<unsigned int, std::vector<QString>>> _pinyinCache
+        = std::nullopt;
 
     std::mutex _notifyMutex;
     std::list<ISearchObserver *> _observers;

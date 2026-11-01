@@ -2,9 +2,11 @@
 
 #include "logic/database/queryparseutils.h"
 #include "logic/database/sqldatabasemanager.h"
+#include "logic/database/sqldatabaseutils.h"
 #include "logic/entry/entry.h"
 #include "logic/search/searchqueries.h"
 #include "logic/settings/settingsutils.h"
+#include "logic/source/sourcemetadata.h"
 #include "logic/utils/cantoneseutils.h"
 #include "logic/utils/chineseutils.h"
 #include "logic/utils/mandarinutils.h"
@@ -12,8 +14,11 @@
 #include "logic/utils/utils.h"
 
 #include <QSqlQuery>
+#include <QSqlRecord>
 #include <QString>
 #include <QtConcurrent/QtConcurrent>
+
+#include <numeric>
 
 #ifdef Q_OS_WIN
 #include <cctype>
@@ -154,6 +159,30 @@ void preparePinyinBindValues(const QString &searchTerm,
     }
 }
 
+QString literalPrefix(const QString &regex)
+{
+    QString prefix;
+
+    QString::const_iterator it;
+    for (it = regex.cbegin(); it != regex.cend(); it++) {
+        if (!(*it).isLetterOrNumber()) {
+            break;
+        }
+        prefix += *it;
+    }
+
+    if (it == regex.cend()) {
+        return prefix;
+    }
+
+    if (*it == '*' || *it == '?') {
+        if (!prefix.isEmpty()) {
+            prefix = prefix.chopped(1);
+        }
+    }
+    return prefix;
+}
+
 } // namespace
 
 SQLSearch::SQLSearch()
@@ -283,6 +312,142 @@ bool SQLSearch::checkQueryIDCurrent(const unsigned long long queryID) const {
         return false;
     }
     return true;
+}
+
+void SQLSearch::populateJyutpingCache(unsigned int hash)
+{
+    QSqlQuery query{_manager->getDatabase()};
+    query.prepare(FETCH_ALL_JYUTPING_QUERY);
+    query.setForwardOnly(true);
+    query.exec();
+
+    std::vector<QString> jyutping;
+    const int jyutpingIndex = query.record().indexOf("jyutping");
+    while (query.next()) {
+        jyutping.emplace_back(query.value(jyutpingIndex).toString());
+    }
+
+    qDebug() << "Populating jyutping cache";
+    _jyutpingCache = std::make_tuple(hash, std::move(jyutping));
+}
+
+void SQLSearch::populatePinyinCache(unsigned int hash)
+{
+    QSqlQuery query{_manager->getDatabase()};
+    query.prepare(FETCH_ALL_PINYIN_QUERY);
+    query.setForwardOnly(true);
+    query.exec();
+
+    std::vector<QString> pinyin;
+    const int jyutpingIndex = query.record().indexOf("pinyin");
+    while (query.next()) {
+        pinyin.emplace_back(query.value(jyutpingIndex).toString());
+    }
+
+    qDebug() << "Populating pinyin cache";
+    _pinyinCache = std::make_tuple(hash, std::move(pinyin));
+}
+
+std::vector<QString> SQLSearch::jyutpingFilteredBy(const QString &prefix)
+{
+    QSqlQuery query{_manager->getDatabase()};
+    query.prepare(FETCH_JYUTPING_WITH_PREFIX_QUERY);
+    query.addBindValue(prefix + "*");
+    query.setForwardOnly(true);
+    query.exec();
+
+    std::vector<QString> jyutping;
+    const int jyutpingIndex = query.record().indexOf("jyutping");
+    while (query.next()) {
+        jyutping.emplace_back(query.value(jyutpingIndex).toString());
+    }
+
+    return jyutping;
+}
+
+std::vector<QString> SQLSearch::pinyinFilteredBy(const QString &prefix)
+{
+    QSqlQuery query{_manager->getDatabase()};
+    query.prepare(FETCH_PINYIN_WITH_PREFIX_QUERY);
+    query.addBindValue(prefix + "*");
+    query.setForwardOnly(true);
+    query.exec();
+
+    std::vector<QString> pinyin;
+    const int jyutpingIndex = query.record().indexOf("pinyin");
+    while (query.next()) {
+        pinyin.emplace_back(query.value(jyutpingIndex).toString());
+    }
+
+    return pinyin;
+}
+
+std::span<QString> SQLSearch::allJyutping()
+{
+    std::vector<SourceMetadata> sources;
+    SQLDatabaseUtils utils;
+    QSqlDatabase db{_manager->getDatabase()};
+    utils.readSources(db, sources);
+
+    unsigned int hash = std::reduce(sources.cbegin(),
+                                    sources.cend(),
+                                    0,
+                                    [](unsigned int a, const SourceMetadata &b) {
+                                        return qHashMulti(0, a, b);
+                                    });
+
+    std::shared_lock lock(_jyutpingCacheMutex);
+    if (_jyutpingCache.has_value()) {
+        if (hash != std::get<0>(_jyutpingCache.value())) {
+            lock.unlock();
+            std::lock_guard lock{_jyutpingCacheMutex};
+            if (hash != std::get<0>(_jyutpingCache.value())) {
+                populateJyutpingCache(hash);
+            }
+        }
+    } else {
+        lock.unlock();
+        std::lock_guard lock{_jyutpingCacheMutex};
+        if (!_jyutpingCache.has_value()) {
+            populateJyutpingCache(hash);
+        }
+    }
+
+    return std::get<1>(_jyutpingCache.value());
+}
+
+std::span<QString> SQLSearch::allPinyin()
+{
+    std::vector<SourceMetadata> sources;
+    SQLDatabaseUtils utils;
+    QSqlDatabase db{_manager->getDatabase()};
+    utils.readSources(db, sources);
+
+    unsigned int hash = std::reduce(sources.cbegin(),
+                                    sources.cend(),
+                                    0,
+                                    [](unsigned int a, const SourceMetadata &b) {
+                                        return qHashMulti(0, a, b);
+                                    });
+
+    std::shared_lock lock(_pinyinCacheMutex);
+    if (_pinyinCache.has_value()) {
+        if (hash != std::get<0>(_pinyinCache.value())) {
+            lock.unlock();
+            std::lock_guard lock{_pinyinCacheMutex};
+            if (hash != std::get<0>(_pinyinCache.value())) {
+                populatePinyinCache(hash);
+            }
+        }
+    } else {
+        lock.unlock();
+        std::lock_guard lock{_pinyinCacheMutex};
+        if (!_pinyinCache.has_value()) {
+            populatePinyinCache(hash);
+        }
+    }
+
+    return std::get<1>(_pinyinCache.value());
 }
 
 void SQLSearch::searchSimplified(const QString &searchTerm)
@@ -629,17 +794,41 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
         = _settings->value("Search/fuzzyPinyin", QVariant{true}).toBool();
 
     QSqlQuery jyutpingQuery{_manager->getDatabase()};
-    jyutpingQuery.prepare(QString{SEARCH_JYUTPING_EXISTS_QUERY}.arg(
-        fuzzyJyutping ? REGEXP_STR : GLOB_STR));
+    bool jyutpingExists = false;
     QString jyutpingSearchTerm;
     prepareJyutpingBindValues(searchTerm,
                               jyutpingSearchTerm,
                               fuzzyJyutping,
                               unsafeFuzzyJyutping);
-    jyutpingQuery.addBindValue(jyutpingSearchTerm);
-    jyutpingQuery.setForwardOnly(true);
-    jyutpingQuery.exec();
-    bool jyutpingExists = QueryParseUtils::parseExistence(jyutpingQuery);
+    if (!fuzzyJyutping) {
+        jyutpingQuery.prepare(
+            QString{SEARCH_JYUTPING_EXISTS_QUERY}.arg(GLOB_STR));
+        jyutpingQuery.addBindValue(jyutpingSearchTerm);
+        jyutpingQuery.setForwardOnly(true);
+        jyutpingQuery.exec();
+        jyutpingExists = QueryParseUtils::parseExistence(jyutpingQuery);
+    } else {
+        QRegularExpression r{jyutpingSearchTerm.sliced(1)};
+        std::span<QString> candidates;
+        std::vector<QString> filteredJyutping;
+        QString prefix = literalPrefix(jyutpingSearchTerm.sliced(1));
+        if (prefix.isEmpty()) {
+            candidates = allJyutping();
+        } else {
+            filteredJyutping = jyutpingFilteredBy(prefix);
+            candidates = filteredJyutping;
+        }
+        if (!checkQueryIDCurrent(queryID)) {
+            return;
+        }
+        std::shared_lock lock(_jyutpingCacheMutex);
+        for (const auto &c : candidates) {
+            if (r.match(c).hasMatch()) {
+                jyutpingExists = true;
+                break;
+            }
+        }
+    }
 
     if (jyutpingExists) {
         notifyObserversIfQueryIdCurrent(SearchParameters::JYUTPING, queryID);
@@ -647,15 +836,39 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
         return;
     }
 
-    QSqlQuery pinyinQuery{_manager->getDatabase()};
-    pinyinQuery.prepare(QString{SEARCH_PINYIN_EXISTS_QUERY}.arg(
-        fuzzyPinyin ? REGEXP_STR : GLOB_STR));
+    bool pinyinExists = false;
     QString pinyinSearchTerm;
     preparePinyinBindValues(searchTerm, pinyinSearchTerm, fuzzyPinyin);
-    pinyinQuery.addBindValue(pinyinSearchTerm);
-    pinyinQuery.setForwardOnly(true);
-    pinyinQuery.exec();
-    bool pinyinExists = QueryParseUtils::parseExistence(pinyinQuery);
+    if (!fuzzyPinyin) {
+        QSqlQuery pinyinQuery{_manager->getDatabase()};
+        pinyinQuery.prepare(QString{SEARCH_PINYIN_EXISTS_QUERY}.arg(
+            fuzzyPinyin ? REGEXP_STR : GLOB_STR));
+        pinyinQuery.addBindValue(pinyinSearchTerm);
+        pinyinQuery.setForwardOnly(true);
+        pinyinQuery.exec();
+        pinyinExists = QueryParseUtils::parseExistence(pinyinQuery);
+    } else {
+        QRegularExpression r{pinyinSearchTerm.sliced(1)};
+        std::span<QString> candidates;
+        std::vector<QString> filteredPinyin;
+        QString prefix = literalPrefix(pinyinSearchTerm.sliced(1));
+        if (prefix.isEmpty()) {
+            candidates = allPinyin();
+        } else {
+            filteredPinyin = pinyinFilteredBy(prefix);
+            candidates = filteredPinyin;
+        }
+        if (!checkQueryIDCurrent(queryID)) {
+            return;
+        }
+        std::shared_lock lock(_pinyinCacheMutex);
+        for (const auto &c : candidates) {
+            if (r.match(c).hasMatch()) {
+                pinyinExists = true;
+                break;
+            }
+        }
+    }
 
     if (pinyinExists) {
         notifyObserversIfQueryIdCurrent(SearchParameters::PINYIN, queryID);

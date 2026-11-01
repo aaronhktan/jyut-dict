@@ -291,6 +291,15 @@ constexpr auto SEARCH_TRADITIONAL_QUERY
 constexpr auto GLOB_STR = "GLOB";
 constexpr auto REGEXP_STR = "REGEXP";
 
+constexpr auto FETCH_ALL_JYUTPING_QUERY
+    = "SELECT jyutping "
+      "FROM entries "
+      "WHERE jyutping IS NOT NULL AND jyutping != ''";
+
+constexpr auto FETCH_JYUTPING_WITH_PREFIX_QUERY = "SELECT jyutping "
+                                                  "FROM entries "
+                                                  "WHERE jyutping GLOB ?";
+
 constexpr auto SEARCH_JYUTPING_EXISTS_QUERY = "SELECT EXISTS ( "
                                               "  SELECT "
                                               "    rowid "
@@ -442,6 +451,15 @@ constexpr auto SEARCH_JYUTPING_QUERY
       "  pinyin, "
       "  definitions "
       "FROM matching_entries; ";
+
+constexpr auto FETCH_ALL_PINYIN_QUERY
+    = "SELECT pinyin "
+      "FROM entries "
+      "WHERE pinyin IS NOT NULL AND pinyin != ''";
+
+constexpr auto FETCH_PINYIN_WITH_PREFIX_QUERY = "SELECT pinyin "
+                                                "FROM entries "
+                                                "WHERE pinyin GLOB ?";
 
 constexpr auto SEARCH_PINYIN_EXISTS_QUERY = "SELECT EXISTS ( "
                                             "  SELECT "
