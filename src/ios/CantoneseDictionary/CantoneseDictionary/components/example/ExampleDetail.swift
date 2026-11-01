@@ -6,6 +6,7 @@
 //
 
 import AVFoundation
+import Intents
 import SwiftUI
 import os
 
@@ -73,20 +74,14 @@ struct ExampleDetail: View {
         dismissButton: .default(Text("OK")))
     }
     .alert(isPresented: $showVoiceWarning) {
+      // This warning is necessary on iOS 26 because speech synthesis is broken
+      // for Mandarin if the user's Siri voice is set to Cantonese.
       Alert(
-        title: Text("Didn't hear what you expected?"),
+        title: Text("Mandarin voice unavailable!"),
         message: Text(
-          "Go to Settings > Accessibility > Read and Speak > Voices > Chinese to download additional voices."
+          "Mandarin is unavailable when Siri is Cantonese on iOS 26. Update to iOS 27 or newer to enable."
         ),
-        primaryButton: .default(
-          Text("Open Settings"),
-          action: {
-            if let url = URL(string: UIApplication.openSettingsURLString) {
-              openURL(url)
-            }
-          }
-        ),
-        secondaryButton: .default(Text("OK"))
+        dismissButton: .default(Text("OK"))
       )
     }
   }
@@ -226,11 +221,6 @@ extension ExampleDetail {
       Task {
         await player.setupAudioSession()
         await player.speak(utterance)
-      }
-
-      if !settings.voiceWarningShown {
-        showVoiceWarning = true
-        settings.voiceWarningShown = true
       }
     } label: {
       Label("Pronounce in Cantonese", systemImage: "speaker.wave.2")
@@ -377,14 +367,27 @@ extension ExampleDetail {
       }
       utterance.voice = voice
 
-      Task {
-        await player.setupAudioSession()
-        await player.speak(utterance)
-      }
-
-      if !settings.voiceWarningShown {
-        showVoiceWarning = true
-        settings.voiceWarningShown = true
+      if #unavailable(iOS 27) {
+        INPreferences.requestSiriAuthorization { status in
+          switch status {
+          case .authorized:
+            if ["zh-HK", "yue-CN"].contains(INPreferences.siriLanguageCode()) {
+              showVoiceWarning = true
+            } else {
+              Task {
+                await player.setupAudioSession()
+                await player.speak(utterance)
+              }
+            }
+          default:
+            showVoiceWarning = true
+          }
+        }
+      } else {
+        Task {
+          await player.setupAudioSession()
+          await player.speak(utterance)
+        }
       }
     } label: {
       Label("Pronounce in Mandarin", systemImage: "speaker.wave.2")
