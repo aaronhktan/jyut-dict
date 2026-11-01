@@ -19,6 +19,9 @@ struct SearchingView: View {
   @Binding var isSearchActive: Bool
   var isSearchFocused: FocusState<Bool>.Binding
 
+  @State private var searcher: SQLSearch?
+  @State private var searcherPool: DatabasePool?
+
   @State private var autoDetectOptionLabel: String = "Auto-detect language"
   @State private var isPickerTextVisible: Bool = true
 
@@ -61,9 +64,19 @@ struct SearchingView: View {
     }
   }
 
+  private func searcher(for pool: DatabasePool) -> SQLSearch {
+    if let searcher, let searcherPool, searcherPool === pool {
+      return searcher
+    }
+    let newSearcher = SQLSearch(pool: pool)
+    self.searcher = newSearcher
+    self.searcherPool = pool
+    return newSearcher
+  }
+
   private func triggerSearch() async -> [Entry] {
     guard let pool = databaseManager.dbPool else { return [] }
-    let searcher = SQLSearch(pool: pool)
+    let searcher = searcher(for: pool)
     let searchTerm = searchContext.searchText.lowercased()
 
     var results: [Entry] = []
@@ -105,18 +118,21 @@ struct SearchingView: View {
     case .autoDetect:
       let detector = InputMethodDetector(searcher: searcher)
       if detector.hasSimplified(text: searchTerm) {
+        guard !Task.isCancelled else { return [] }
         searchContext.detectedInputMethod = .simplified
         results = await searcher.searchSimplified(
           searchTerm: searchTerm
         )
         break
       } else if detector.hasTraditional(text: searchTerm) {
+        guard !Task.isCancelled else { return [] }
         searchContext.detectedInputMethod = .traditional
         results = await searcher.searchTraditional(
           searchTerm: searchTerm
         )
         break
       } else if detector.hasHanCharacters(text: searchTerm) {
+        guard !Task.isCancelled else { return [] }
         searchContext.detectedInputMethod = .traditional
         results = await searcher.searchTraditional(
           searchTerm: searchTerm
@@ -129,6 +145,7 @@ struct SearchingView: View {
       async let isPinyin = detector.hasPinyin(text: searchTerm)
 
       if let method = await isJyutping {
+        guard !Task.isCancelled else { return [] }
         searchContext.detectedInputMethod = method
         results = await searcher.searchJyutping(
           searchTerm: searchTerm,
@@ -137,6 +154,7 @@ struct SearchingView: View {
         )
         break
       } else if let method = await isPinyin {
+        guard !Task.isCancelled else { return [] }
         searchContext.detectedInputMethod = method
         results = await searcher.searchPinyin(
           searchTerm: searchTerm,
@@ -145,6 +163,7 @@ struct SearchingView: View {
         break
       }
 
+      guard !Task.isCancelled else { return [] }
       searchContext.detectedInputMethod = .english
       results = await searcher.searchEnglish(
         searchTerm: searchTerm

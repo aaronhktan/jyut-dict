@@ -194,13 +194,25 @@ nonisolated let searchSimplifiedQuery: String = """
         matching_entries
   """
 
+nonisolated let fetchAllJyutpingQuery: String = """
+  SELECT jyutping
+  FROM entries
+  WHERE jyutping IS NOT NULL AND jyutping != ''
+  """
+
+nonisolated let fetchJyutpingWithPrefixQuery: String = """
+  SELECT jyutping
+  FROM entries
+  WHERE jyutping GLOB ?
+  """
+
 nonisolated let jyutpingExistenceQuery: String = """
-      SELECT EXISTS (
-        SELECT
-          rowid
-        FROM entries
-        WHERE jyutping %@ ?
-      ) AS existence
+  SELECT EXISTS (
+    SELECT
+      rowid
+    FROM entries
+    WHERE jyutping %@ ?
+  ) AS existence
   """
 
 nonisolated let searchJyutpingQuery: String = """
@@ -244,6 +256,18 @@ nonisolated let searchJyutpingQuery: String = """
 
   SELECT entry_id, traditional, simplified, jyutping, pinyin, definitions FROM
     matching_entries
+  """
+
+nonisolated let fetchAllPinyinQuery: String = """
+  SELECT pinyin
+  FROM entries
+  WHERE pinyin IS NOT NULL AND pinyin != ''
+  """
+
+nonisolated let fetchPinyinWithPrefixQuery: String = """
+  SELECT pinyin
+  FROM entries
+  WHERE pinyin GLOB ?
   """
 
 nonisolated let pinyinExistenceQuery: String = """

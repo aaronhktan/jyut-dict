@@ -41,7 +41,7 @@ actor SQLSourceMetadata {
   }
 }
 
-struct SourceMetadata: Identifiable {
+nonisolated struct SourceMetadata: Identifiable, Hashable {
   let id = UUID()
 
   var name: String
@@ -51,4 +51,14 @@ struct SourceMetadata: Identifiable {
   var link: String
   var updateURL: String
   var other: String
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(name)
+    hasher.combine(version)
+    hasher.combine(description)
+    hasher.combine(legal)
+    hasher.combine(link)
+    hasher.combine(updateURL)
+    hasher.combine(other)
+  }
 }

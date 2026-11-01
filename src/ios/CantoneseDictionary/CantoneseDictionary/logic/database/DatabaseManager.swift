@@ -427,6 +427,8 @@ class DatabaseManager {
         return false
       }
 
+      // If this is updated, you will likely want to update the implementation
+      // in searchJyutpingExistence and searchPinyinExistence!
       let range = NSRange(location: 0, length: text.utf16.count)
       return regex.rangeOfFirstMatch(in: text, options: [.anchored], range: range).location
         != NSNotFound

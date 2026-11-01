@@ -13,8 +13,117 @@ import os
 actor SQLSearch {
   private var pool: DatabasePool
 
+  private var jyutpingCache: (sourceHash: Int, cache: [String])? = nil
+  private var pinyinCache: (sourceHash: Int, cache: [String])? = nil
+
   public init(pool: DatabasePool) {
     self.pool = pool
+  }
+
+  private func populateJyutpingCache() async -> [String] {
+    logger.info("Populating jyutping cache")
+    do {
+      return try await pool.read { db in
+        return try String.fetchAll(db, sql: fetchAllJyutpingQuery)
+      }
+    } catch {
+      logger.error("Failed to populate jyutping cache, error: \(error)")
+    }
+    return []
+  }
+
+  private func populatePinyinCache() async -> [String] {
+    logger.info("Populating pinyin cache")
+    do {
+      return try await pool.read { db in
+        return try String.fetchAll(db, sql: fetchAllPinyinQuery)
+      }
+    } catch {
+      logger.error("Failed to populate pinyin cache, error: \(error)")
+    }
+    return []
+  }
+
+  private func jyutpingFilteredBy(prefix: String) async -> [String] {
+    do {
+      return try await pool.read { db in
+        try String.fetchAll(
+          db,
+          sql: fetchJyutpingWithPrefixQuery,
+          arguments: ["\(prefix)*"]
+        )
+      }
+    } catch {
+      logger.error("Failed to fetch jyutping with prefix, error: \(error)")
+    }
+    return []
+  }
+
+  private func pinyinFilteredBy(prefix: String) async -> [String] {
+    do {
+      return try await pool.read { db in
+        try String.fetchAll(
+          db,
+          sql: fetchPinyinWithPrefixQuery,
+          arguments: ["\(prefix)*"]
+        )
+      }
+    } catch {
+      logger.error("Failed to fetch pinyin with prefix, error: \(error)")
+    }
+    return []
+  }
+
+  private func allJyutping() async -> [String] {
+    let searcher = SQLSourceMetadata(pool: pool)
+    let sources = await searcher.getSources()
+    let hash = sources.reduce(into: Hasher()) { $0.combine($1) }.finalize()
+    if let jyutpingCache = self.jyutpingCache {
+      if hash != jyutpingCache.sourceHash {
+        // The only time the list of all Jyutping changes is when a source
+        // is added or removed.
+        self.jyutpingCache = (hash, await populateJyutpingCache())
+      }
+    } else {
+      self.jyutpingCache = (hash, await populateJyutpingCache())
+    }
+    return self.jyutpingCache?.cache ?? []
+  }
+
+  private func allPinyin() async -> [String] {
+    let searcher = SQLSourceMetadata(pool: pool)
+    let sources = await searcher.getSources()
+    let hash = sources.reduce(into: Hasher()) { $0.combine($1) }.finalize()
+    if let pinyinCache = self.pinyinCache {
+      if hash != pinyinCache.sourceHash {
+        self.pinyinCache = (hash, await populatePinyinCache())
+      }
+    } else {
+      self.pinyinCache = (hash, await populatePinyinCache())
+    }
+    return self.pinyinCache?.cache ?? []
+  }
+
+  nonisolated private func literalPrefix(ofRegex pattern: String) -> String {
+    var prefix = ""
+    for character in pattern {
+      guard character.isLetter || character.isNumber else {
+        break
+      }
+      prefix.append(character)
+    }
+
+    guard let next = pattern.dropFirst(prefix.count).first else {
+      return prefix
+    }
+
+    switch next {
+    case "?", "*":
+      prefix.removeLast()
+    default:
+      break
+    }
+    return prefix
   }
 
   @concurrent func searchByRowId(rowid: String) async -> Entry? {
@@ -29,7 +138,6 @@ actor SQLSearch {
         return parseReturnedEntryRecords(rows: rows)[0]
       }
     } catch {
-      // TODO: Handle errors
       logger.error("Error happened when trying to read from db: \(error)")
     }
 
@@ -37,10 +145,10 @@ actor SQLSearch {
   }
 
   @concurrent func searchTraditional(searchTerm: String) async -> [Entry] {
-    let globTerm = prepareCharacterBindValues(
+    let pattern = prepareCharacterBindValues(
       characters: searchTerm
     )
-    logger.info("globTerm: '\(globTerm)'")
+    logger.info("searchTraditional pattern: '\(pattern)'")
 
     var results: [Entry] = []
     do {
@@ -48,12 +156,11 @@ actor SQLSearch {
         let rows = try Row.fetchAll(
           db,
           sql: searchTraditionalQuery,
-          arguments: [globTerm]
+          arguments: [pattern]
         )
         return parseReturnedEntryRecords(rows: rows)
       }
     } catch {
-      // TODO: Handle errors
       logger.error("Error happened when trying to read from db: \(error)")
     }
 
@@ -61,10 +168,10 @@ actor SQLSearch {
   }
 
   @concurrent func searchSimplified(searchTerm: String) async -> [Entry] {
-    let globTerm = prepareCharacterBindValues(
+    let pattern = prepareCharacterBindValues(
       characters: searchTerm
     )
-    logger.info("globTerm: '\(globTerm)'")
+    logger.info("searchSimplified pattern: '\(pattern)'")
 
     var results: [Entry] = []
     do {
@@ -72,12 +179,11 @@ actor SQLSearch {
         let rows = try Row.fetchAll(
           db,
           sql: searchSimplifiedQuery,
-          arguments: [globTerm]
+          arguments: [pattern]
         )
         return parseReturnedEntryRecords(rows: rows)
       }
     } catch {
-      // TODO: Handle errors
       logger.error("Error happened when trying to read from db: \(error)")
     }
 
@@ -87,35 +193,64 @@ actor SQLSearch {
   @concurrent func searchJyutpingExistence(
     searchTerm: String, useFuzzyJyutping: Bool, unsafeFuzzyJyutping: Bool
   ) async -> Bool {
-    let unsafeFuzzyJyutping = false
-
-    let globTerm = prepareJyutpingBindValues(
+    let pattern = prepareJyutpingBindValues(
       jyutping: searchTerm,
       useFuzzyJyutping: useFuzzyJyutping,
       unsafeFuzzyJyutping: unsafeFuzzyJyutping
     )
-    logger.info("globTerm: '\(globTerm)'")
-    let query = String(
-      format: jyutpingExistenceQuery,
-      arguments: [useFuzzyJyutping ? REGEXP_OPERATOR : GLOB_OPERATOR]
-    )
+    logger.info("searchJyutpingExistence pattern: '\(pattern)', useFuzzyJyutping: \(useFuzzyJyutping)")
 
-    var result: Bool = false
-    do {
-      result = try await pool.read { db in
-        let rows = try Row.fetchAll(
-          db,
-          sql: query,
-          arguments: [globTerm]
-        )
-        return parseExistenceRecords(rows: rows)
+    if !useFuzzyJyutping {
+      let query = String(
+        format: jyutpingExistenceQuery,
+        arguments: [GLOB_OPERATOR]
+      )
+
+      var result: Bool = false
+      do {
+        result = try await pool.read { db in
+          let rows = try Row.fetchAll(
+            db,
+            sql: query,
+            arguments: [pattern]
+          )
+          return parseExistenceRecords(rows: rows)
+        }
+      } catch {
+        logger.error("Error happened when trying to read from db: \(error)")
       }
-    } catch {
-      // TODO: Handle errors
-      logger.error("Error happened when trying to read from db: \(error)")
+
+      logger.info("glob Jyutping match result: \(result)")
+      return result
     }
 
-    return result
+    guard let regex = try? NSRegularExpression(pattern: pattern) else {
+      logger.error("Failed to compile regex in Jyutping existence check")
+      return false
+    }
+    let prefix = literalPrefix(ofRegex: pattern)
+    logger.info("prefix: \(prefix)")
+    var candidates: [String]
+    if prefix.isEmpty {
+      candidates = await allJyutping()
+    } else {
+      candidates = await jyutpingFilteredBy(prefix: prefix)
+    }
+    for text in candidates {
+      // If this is updated, you will likely want to update the implementation
+      // in DatabaseManager!
+      let range = NSRange(location: 0, length: text.utf16.count)
+      if regex.rangeOfFirstMatch(
+        in: text,
+        options: [.anchored],
+        range: range
+      ).location != NSNotFound {
+        logger.info("Found fuzzy Jyutping match for pattern \(pattern): \(text)")
+        return true
+      }
+    }
+    logger.info("Failed to fuzzy Jyutping match for pattern \(pattern)")
+    return false
   }
 
   @concurrent func searchJyutping(
@@ -123,12 +258,12 @@ actor SQLSearch {
   ) async
     -> [Entry]
   {
-    let globTerm = prepareJyutpingBindValues(
+    let pattern = prepareJyutpingBindValues(
       jyutping: searchTerm,
       useFuzzyJyutping: useFuzzyJyutping,
       unsafeFuzzyJyutping: unsafeFuzzyJyutping
     )
-    logger.info("globTerm: '\(globTerm)'")
+    logger.info("searchJyutping pattern: '\(pattern)'")
     let query = String(
       format: searchJyutpingQuery,
       arguments: [useFuzzyJyutping ? REGEXP_OPERATOR : GLOB_OPERATOR]
@@ -140,12 +275,11 @@ actor SQLSearch {
         let rows = try Row.fetchAll(
           db,
           sql: query,
-          arguments: [globTerm]
+          arguments: [pattern]
         )
         return parseReturnedEntryRecords(rows: rows)
       }
     } catch {
-      // TODO: Handle errors
       logger.error("Error happened when trying to read from db: \(error)")
     }
 
@@ -153,40 +287,66 @@ actor SQLSearch {
   }
 
   @concurrent func searchPinyinExistence(searchTerm: String, useFuzzyPinyin: Bool) async -> Bool {
-    let globTerm = preparePinyinBindValues(
+    let pattern = preparePinyinBindValues(
       pinyin: searchTerm,
       useFuzzyPinyin: useFuzzyPinyin
     )
-    logger.info("globTerm: '\(globTerm)'")
-    let query = String(
-      format: pinyinExistenceQuery,
-      arguments: [useFuzzyPinyin ? REGEXP_OPERATOR : GLOB_OPERATOR]
-    )
+    logger.info("searchPinyinExistence pattern: '\(pattern)'")
 
-    var result: Bool = false
-    do {
-      result = try await pool.read { db in
-        let rows = try Row.fetchAll(
-          db,
-          sql: query,
-          arguments: [globTerm]
-        )
-        return parseExistenceRecords(rows: rows)
+    if !useFuzzyPinyin {
+      let query = String(
+        format: pinyinExistenceQuery,
+        arguments: [GLOB_OPERATOR]
+      )
+
+      var result: Bool = false
+      do {
+        result = try await pool.read { db in
+          let rows = try Row.fetchAll(
+            db,
+            sql: query,
+            arguments: [pattern]
+          )
+          return parseExistenceRecords(rows: rows)
+        }
+      } catch {
+        // TODO: Handle errors
+        logger.error("Error happened when trying to read from db: \(error)")
       }
-    } catch {
-      // TODO: Handle errors
-      logger.error("Error happened when trying to read from db: \(error)")
+
+      return result
     }
 
-    return result
+    let prefix = literalPrefix(ofRegex: pattern)
+    guard let regex = try? NSRegularExpression(pattern: pattern) else {
+      logger.error("Failed to compile regex in pinyin existence check")
+      return false
+    }
+    var candidates: [String]
+    if prefix.isEmpty {
+      candidates = await allPinyin()
+    } else {
+      candidates = await pinyinFilteredBy(prefix: prefix)
+    }
+    for text in candidates {
+      let range = NSRange(location: 0, length: text.utf16.count)
+      if regex.rangeOfFirstMatch(
+        in: text,
+        options: [.anchored],
+        range: range
+      ).location != NSNotFound {
+        return true
+      }
+    }
+    return false
   }
 
   @concurrent func searchPinyin(searchTerm: String, useFuzzyPinyin: Bool) async -> [Entry] {
-    let globTerm = preparePinyinBindValues(
+    let pattern = preparePinyinBindValues(
       pinyin: searchTerm,
       useFuzzyPinyin: useFuzzyPinyin
     )
-    logger.info("globTerm: '\(globTerm)'")
+    logger.info("searchPinyin pattern: '\(pattern)'")
     let query = String(
       format: searchPinyinQuery,
       arguments: [useFuzzyPinyin ? REGEXP_OPERATOR : GLOB_OPERATOR]
@@ -198,12 +358,11 @@ actor SQLSearch {
         let rows = try Row.fetchAll(
           db,
           sql: query,
-          arguments: [globTerm]
+          arguments: [pattern]
         )
         return parseReturnedEntryRecords(rows: rows)
       }
     } catch {
-      // TODO: Handle errors
       logger.error("Error happened when trying to read from db: \(error)")
     }
 
@@ -212,6 +371,7 @@ actor SQLSearch {
 
   @concurrent func searchEnglish(searchTerm: String) async -> [Entry] {
     let (ftsParam, likeParam) = prepareEnglishBindValues(english: searchTerm)
+    logger.info("searchEnglish patterns: '\(ftsParam)', '\(likeParam)'")
     var results: [Entry] = []
     do {
       results = try await pool.read { db in
@@ -223,7 +383,6 @@ actor SQLSearch {
         return parseReturnedEntryRecords(rows: rows)
       }
     } catch {
-      // TODO: Handle errors
       logger.error("Error happened when trying to read from db: \(error)")
     }
 
@@ -233,6 +392,7 @@ actor SQLSearch {
   @concurrent func searchExamplesByTraditional(searchTerm: String) async -> [Example] {
     var results: [Example] = []
     let likeTerm = "%\(searchTerm)%"
+    logger.info("searchExamplesByTraditional pattern: '\(likeTerm)'")
 
     do {
       results = try await pool.read { db in
