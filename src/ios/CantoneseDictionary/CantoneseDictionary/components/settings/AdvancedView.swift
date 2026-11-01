@@ -13,11 +13,16 @@ struct AdvancedView: View {
   @Environment(DatabaseManager.self) private var databaseManager
 
   @State private var showDatabaseExport = false
+  @State private var isPreparingDatabaseForExport = false
   @State private var showDatabaseImport = false
+  @State private var showRestoreBackupConfirmation = false
+  @State private var eraseBackupText = "Erase all dictionary database backups"
+  @State private var showEraseBackupConfirmation = false
+  @State private var showRestoreDefaultConfirmation = false
   @State private var showUserDatabaseExport = false
   @State private var showUserDatabaseImport = false
-  @State private var eraseBackupText = "Erase all dictionary database backups"
   @State private var eraseUserText = "Erase all history and favourites"
+  @State private var showEraseUserConfirmation = false
   @State private var isGatheringLogs = false
   @State private var showExportLogs = false
   @State private var isFailureShown = false
@@ -26,13 +31,25 @@ struct AdvancedView: View {
   var body: some View {
     List {
       Section(header: Text("Dictionary Database")) {
-        Button("Export dictionary database") {
+        Button {
           Task {
+            isPreparingDatabaseForExport = true
             await databaseManager.checkpointDatabase()
             showDatabaseExport = true
           }
+        } label: {
+          if isPreparingDatabaseForExport {
+            HStack {
+              Text("Preparing for export...")
+              ProgressView()
+                .controlSize(.small)
+            }
+          } else {
+            Text("Export dictionary database")
+          }
         }
         .tint(.primary)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .fileExporter(
           isPresented: $showDatabaseExport,
           document: DatabaseDocument(url: databaseManager.dbURL),
@@ -45,10 +62,16 @@ struct AdvancedView: View {
             logger.warning("Export failed: \(error)")
           }
         }
+        .onChange(of: showDatabaseExport) { _, newValue in
+          if !newValue {
+            isPreparingDatabaseForExport = false
+          }
+        }
         Button("Import dictionary database") {
           showDatabaseImport = true
         }
         .tint(.primary)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .fileImporter(
           isPresented: $showDatabaseImport, allowedContentTypes: [.data]
         ) { result in
@@ -72,35 +95,62 @@ struct AdvancedView: View {
           }
         }
         Button("Restore from most recent dictionary database backup") {
-          Task {
-            let success = await databaseManager.restoreDatabase()
-            if success {
-              databaseManager.setupDatabase()
-            } else {
-              isFailureShown = true
-            }
-          }
+          showRestoreBackupConfirmation = true
         }
         .tint(.primary)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .confirmationDialog("Are you sure?", isPresented: $showRestoreBackupConfirmation, titleVisibility: .visible) {
+          Button("Restore", role: .destructive) {
+            Task {
+              let success = await databaseManager.restoreDatabase()
+              if success {
+                databaseManager.setupDatabase()
+              } else {
+                isFailureShown = true
+              }
+            }
+          }
+          Button("Cancel", role: .cancel) {
+            showRestoreBackupConfirmation = false
+          }
+        }
         Button(eraseBackupText) {
-          Task {
-            let success = await databaseManager.deleteBackups()
-            if success {
-              eraseBackupText = "Backups erased!"
-            } else {
-              isFailureShown = true
+          showEraseBackupConfirmation = true
+        }
+        .tint(.primary)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .confirmationDialog("Are you sure?", isPresented: $showEraseBackupConfirmation, titleVisibility: .visible) {
+          Button("Erase", role: .destructive) {
+            Task {
+              let success = await databaseManager.deleteBackups()
+              if success {
+                eraseBackupText = "Backups erased!"
+              } else {
+                isFailureShown = true
+              }
             }
           }
-        }
-        .tint(.primary)
-        Button("Restore dictionary database to default") {
-          Task {
-            await databaseManager.deleteDatabase()
-            await databaseManager.expandDatabaseFromBundle()
-            databaseManager.setupDatabase()
+          Button("Cancel", role: .cancel) {
+            showEraseBackupConfirmation = false
           }
         }
+        Button("Restore dictionary database to default") {
+          showRestoreDefaultConfirmation = true
+        }
         .tint(.primary)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .confirmationDialog("Are you sure?", isPresented: $showRestoreDefaultConfirmation, titleVisibility: .visible) {
+          Button("Restore", role: .destructive) {
+            Task {
+              await databaseManager.deleteDatabase()
+              await databaseManager.expandDatabaseFromBundle()
+              databaseManager.setupDatabase()
+            }
+          }
+          Button("Cancel", role: .cancel) {
+            showRestoreDefaultConfirmation = false
+          }
+        }
       }
 
       Section(header: Text("History and Favourites")) {
@@ -111,6 +161,7 @@ struct AdvancedView: View {
           }
         }
         .tint(.primary)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .fileExporter(
           isPresented: $showUserDatabaseExport,
           document: DatabaseDocument(url: databaseManager.userURL),
@@ -127,6 +178,7 @@ struct AdvancedView: View {
           showUserDatabaseImport = true
         }
         .tint(.primary)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .fileImporter(
           isPresented: $showUserDatabaseImport, allowedContentTypes: [.data]
         ) { result in
@@ -146,14 +198,23 @@ struct AdvancedView: View {
           }
         }
         Button(eraseUserText) {
-          Task {
-            await databaseManager.deleteUserDatabase()
-            await databaseManager.copyUserDatabase()
-            databaseManager.setupDatabase()
-            eraseUserText = "History and favourites erased!"
-          }
+          showEraseUserConfirmation = true
         }
         .tint(.primary)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .confirmationDialog("Are you sure?", isPresented: $showEraseUserConfirmation, titleVisibility: .visible) {
+          Button("Erase", role: .destructive) {
+            Task {
+              await databaseManager.deleteUserDatabase()
+              await databaseManager.copyUserDatabase()
+              databaseManager.setupDatabase()
+              eraseUserText = "History and favourites erased!"
+            }
+          }
+          Button("Cancel", role: .cancel) {
+            showEraseUserConfirmation = false
+          }
+        }
       }
 
       Section(header: Text("Logs")) {
@@ -178,6 +239,7 @@ struct AdvancedView: View {
           }
         }
         .tint(.primary)
+        .frame(maxWidth: .infinity, alignment: .leading)
         if showExportLogs, let path = logs.filteredLogPath {
           ShareLink(item: path) {
             Text("Share logs")
