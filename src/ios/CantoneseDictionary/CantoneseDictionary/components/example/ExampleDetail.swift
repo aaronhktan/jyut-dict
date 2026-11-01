@@ -79,7 +79,7 @@ struct ExampleDetail: View {
       Alert(
         title: Text("Mandarin voice unavailable!"),
         message: Text(
-          "Mandarin is unavailable when Siri is Cantonese on iOS 26. Update to iOS 27 or newer to enable."
+          "Mandarin is unavailable when Siri uses Cantonese. Update to a newer software version to enable."
         ),
         dismissButton: .default(Text("OK"))
       )
