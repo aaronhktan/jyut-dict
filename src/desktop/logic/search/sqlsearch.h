@@ -85,6 +85,10 @@ private:
     std::shared_ptr<std::vector<QString>> allJyutping();
     std::shared_ptr<std::vector<QString>> allPinyin();
 
+    std::vector<int> allRowIds();
+    std::vector<int> rowIdFilteredByJyutping(const QString &jyutping);
+    std::vector<int> rowIdFilteredByPinyin(const QString &pinyin);
+
     void runThread(
         void (SQLSearch::*threadFunction)(const QString &searchTerm,
                                           const unsigned long long queryID),

@@ -12,7 +12,9 @@
 #include "logic/utils/mandarinutils.h"
 #include "logic/utils/scriptdetector.h"
 #include "logic/utils/utils.h"
+#include "logic/utils/utils_qt.h"
 
+#include <QSqlError>
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QString>
@@ -159,28 +161,63 @@ void preparePinyinBindValues(const QString &searchTerm,
     }
 }
 
-QString literalPrefix(const QString &regex)
+std::vector<QString> literalPrefixes(const QString &regex)
 {
-    QString prefix;
-
-    QString::const_iterator it;
-    for (it = regex.cbegin(); it != regex.cend(); it++) {
-        if (!(*it).isLetterOrNumber()) {
-            break;
+    // Truncate string to right before a second "?" or "(", whichever occurs
+    // earlier. (The limitation of unfoldBasicRegex is that we only support
+    // one set of parentheses and one question mark.)
+    qsizetype endIdx = regex.size();
+    qsizetype firstIdx = regex.indexOf("(");
+    if (firstIdx != -1) {
+        qsizetype secondIdx = regex.indexOf("(", firstIdx + 1);
+        if (secondIdx != -1) {
+            endIdx = secondIdx;
         }
-        prefix += *it;
+    }
+    firstIdx = regex.indexOf("?");
+    if (firstIdx != -1) {
+        qsizetype secondIdx = regex.indexOf("?", firstIdx + 1);
+        if (secondIdx != -1) {
+            endIdx = std::min(endIdx, secondIdx);
+        }
     }
 
-    if (it == regex.cend()) {
-        return prefix;
-    }
+    std::vector<QString> possibilities;
+    Utils::unfoldBasicRegex(regex.first(endIdx), possibilities);
 
-    if (*it == '*' || *it == '?') {
+    std::unordered_set<QString> prefixes;
+    for (const auto &p : possibilities) {
+        QString prefix;
+
+        QString::const_iterator it;
+        for (it = p.cbegin(); it != p.cend(); it++) {
+            if (!(*it).isLetterOrNumber()) {
+                break;
+            }
+            prefix += *it;
+        }
+
+        if (it == p.cend()) {
+            if (!prefix.isEmpty()) {
+                prefixes.insert(prefix);
+            }
+            continue;
+        }
+
+        if (*it == '*' || *it == '?') {
+            if (!prefix.isEmpty()) {
+                prefix = prefix.chopped(1);
+            }
+            continue;
+        }
+
         if (!prefix.isEmpty()) {
-            prefix = prefix.chopped(1);
+            prefixes.insert(prefix);
         }
     }
-    return prefix;
+
+    std::vector<QString> ret{prefixes.begin(), prefixes.end()};
+    return ret;
 }
 
 } // namespace
@@ -327,7 +364,6 @@ void SQLSearch::populateJyutpingCache(unsigned int hash)
         newCache->emplace_back(query.value(jyutpingIndex).toString());
     }
 
-    qDebug() << "Populating jyutping cache";
     _jyutpingCache = std::make_tuple(hash, newCache);
 }
 
@@ -344,7 +380,6 @@ void SQLSearch::populatePinyinCache(unsigned int hash)
         newCache->emplace_back(query.value(pinyinIndex).toString());
     }
 
-    qDebug() << "Populating pinyin cache";
     _pinyinCache = std::make_tuple(hash, newCache);
 }
 
@@ -443,6 +478,56 @@ std::shared_ptr<std::vector<QString>> SQLSearch::allPinyin()
     }
 
     return std::get<1>(_pinyinCache.value());
+}
+
+std::vector<int> SQLSearch::allRowIds()
+{
+    QSqlQuery query{_manager->getDatabase()};
+    query.prepare(FETCH_ALL_ROW_ID_QUERY);
+    query.setForwardOnly(true);
+    query.exec();
+
+    std::vector<int> entryIds;
+    const int entryIdIndex = query.record().indexOf("entry_id");
+    while (query.next()) {
+        entryIds.emplace_back(query.value(entryIdIndex).toInt());
+    }
+
+    return entryIds;
+}
+
+std::vector<int> SQLSearch::rowIdFilteredByJyutping(const QString &jyutping)
+{
+    QSqlQuery query{_manager->getDatabase()};
+    query.prepare(FETCH_ROW_ID_WITH_JYUTPING_PREFIX_QUERY);
+    query.addBindValue(jyutping + "*");
+    query.setForwardOnly(true);
+    query.exec();
+
+    std::vector<int> entryIds;
+    const int entryIdIndex = query.record().indexOf("entry_id");
+    while (query.next()) {
+        entryIds.emplace_back(query.value(entryIdIndex).toInt());
+    }
+
+    return entryIds;
+}
+
+std::vector<int> SQLSearch::rowIdFilteredByPinyin(const QString &pinyin)
+{
+    QSqlQuery query{_manager->getDatabase()};
+    query.prepare(FETCH_ROW_ID_WITH_PINYIN_PREFIX_QUERY);
+    query.addBindValue(pinyin + "*");
+    query.setForwardOnly(true);
+    query.exec();
+
+    std::vector<int> entryIds;
+    const int entryIdIndex = query.record().indexOf("entry_id");
+    while (query.next()) {
+        entryIds.emplace_back(query.value(entryIdIndex).toInt());
+    }
+
+    return entryIds;
 }
 
 void SQLSearch::searchSimplified(const QString &searchTerm)
@@ -680,23 +765,52 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
                                            QVariant{false})
                                    .toBool();
 
-    query.prepare(QString{SEARCH_JYUTPING_QUERY}.arg(fuzzyJyutping ? REGEXP_STR
-                                                                   : GLOB_STR));
-
-    QString globTerm;
+    QString pattern;
     prepareJyutpingBindValues(searchTerm,
-                              globTerm,
+                              pattern,
                               fuzzyJyutping,
                               unsafeFuzzyJyutping);
-    query.addBindValue(globTerm);
-    query.setForwardOnly(true);
-    query.exec();
 
+    if (!fuzzyJyutping) {
+        query.prepare(SEARCH_JYUTPING_QUERY);
+        query.addBindValue(pattern);
+        query.setForwardOnly(true);
+        query.exec();
+    } else {
+        std::vector<QString> prefixes = literalPrefixes(pattern.sliced(1));
+        std::unordered_set<int> filteredRowIds;
+        if (prefixes.empty()) {
+            std::vector<int> temp{allRowIds()};
+            filteredRowIds.insert(temp.cbegin(), temp.cend());
+        } else {
+            for (const auto &prefix : prefixes) {
+                std::vector<int> temp{rowIdFilteredByJyutping(prefix)};
+                filteredRowIds.insert(temp.cbegin(), temp.cend());
+            }
+        }
+
+        QJsonArray arr;
+        for (const auto &x : filteredRowIds) {
+            arr.append(x);
+        }
+
+        QJsonDocument doc(arr);
+        QString json = QString::fromUtf8(doc.toJson(QJsonDocument::Compact));
+
+        query.prepare(SEARCH_FUZZY_JYUTPING_QUERY);
+        query.addBindValue(json);
+        query.addBindValue(pattern);
+        query.setForwardOnly(true);
+        query.exec();
+    }
     // Do not parse results if new query has been made
-    if (!checkQueryIDCurrent(queryID)) { return; }
+    if (!checkQueryIDCurrent(queryID)) {
+        return;
+    }
     results = QueryParseUtils::parseEntries(query);
-
-    if (!checkQueryIDCurrent(queryID)) { return; }
+    if (!checkQueryIDCurrent(queryID)) {
+        return;
+    }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
 }
 
@@ -709,21 +823,49 @@ void SQLSearch::searchPinyinThread(const QString &searchTerm,
 
     bool fuzzyPinyin
         = _settings->value("Search/fuzzyPinyin", QVariant{true}).toBool();
+    QString pattern;
+    preparePinyinBindValues(searchTerm, pattern, fuzzyPinyin);
 
-    query.prepare(
-        QString{SEARCH_PINYIN_QUERY}.arg(fuzzyPinyin ? REGEXP_STR : GLOB_STR));
+    if (!fuzzyPinyin) {
+        query.prepare(SEARCH_PINYIN_QUERY);
+        query.addBindValue(pattern);
+        query.setForwardOnly(true);
+        query.exec();
+    } else {
+        std::vector<QString> prefixes = literalPrefixes(pattern.sliced(1));
+        std::unordered_set<int> filteredRowIds;
+        if (prefixes.empty()) {
+            std::vector<int> temp{allRowIds()};
+            filteredRowIds.insert(temp.cbegin(), temp.cend());
+        } else {
+            for (const auto &prefix : prefixes) {
+                std::vector<int> temp{rowIdFilteredByPinyin(prefix)};
+                filteredRowIds.insert(temp.cbegin(), temp.cend());
+            }
+        }
 
-    QString globTerm;
-    preparePinyinBindValues(searchTerm, globTerm, fuzzyPinyin);
-    query.addBindValue(globTerm);
-    query.setForwardOnly(true);
-    query.exec();
+        QJsonArray arr;
+        for (const auto &x : filteredRowIds) {
+            arr.append(x);
+        }
 
+        QJsonDocument doc(arr);
+        QByteArray json = doc.toJson(QJsonDocument::Compact);
+
+        query.prepare(SEARCH_FUZZY_PINYIN_QUERY);
+        query.addBindValue(QString::fromUtf8(json));
+        query.addBindValue(pattern);
+        query.setForwardOnly(true);
+        query.exec();
+    }
     // Do not parse results if new query has been made
-    if (!checkQueryIDCurrent(queryID)) { return; }
+    if (!checkQueryIDCurrent(queryID)) {
+        return;
+    }
     results = QueryParseUtils::parseEntries(query);
-
-    if (!checkQueryIDCurrent(queryID)) { return; }
+    if (!checkQueryIDCurrent(queryID)) {
+        return;
+    }
     notifyObserversIfQueryIdCurrent(results, /*emptyQuery=*/false, queryID);
 }
 
@@ -796,30 +938,30 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
                               fuzzyJyutping,
                               unsafeFuzzyJyutping);
     if (!fuzzyJyutping) {
-        jyutpingQuery.prepare(
-            QString{SEARCH_JYUTPING_EXISTS_QUERY}.arg(GLOB_STR));
+        jyutpingQuery.prepare(SEARCH_JYUTPING_EXISTS_QUERY);
         jyutpingQuery.addBindValue(jyutpingSearchTerm);
         jyutpingQuery.setForwardOnly(true);
         jyutpingQuery.exec();
         jyutpingExists = QueryParseUtils::parseExistence(jyutpingQuery);
     } else {
         QRegularExpression r{jyutpingSearchTerm.sliced(1)};
-        std::shared_ptr<std::vector<QString>> jyutping;
-        std::vector<QString> filteredJyutping;
-        QString prefix = literalPrefix(jyutpingSearchTerm.sliced(1));
-        if (prefix.isEmpty()) {
-            jyutping = allJyutping();
+        std::unordered_set<QString> filteredJyutping;
+        std::vector<QString> prefixes = literalPrefixes(
+            jyutpingSearchTerm.sliced(1));
+        if (prefixes.empty()) {
+            std::shared_ptr<std::vector<QString>> jyutping = allJyutping();
+            filteredJyutping.insert(jyutping->cbegin(), jyutping->cend());
         } else {
-            filteredJyutping = jyutpingFilteredBy(prefix);
+            for (const auto &prefix : prefixes) {
+                std::vector<QString> temp{jyutpingFilteredBy(prefix)};
+                filteredJyutping.insert(temp.cbegin(), temp.cend());
+            }
         }
-        const std::vector<QString> &candidates = prefix.isEmpty()
-                                                     ? *jyutping
-                                                     : filteredJyutping;
         if (!checkQueryIDCurrent(queryID)) {
             return;
         }
-        for (const auto &c : candidates) {
-            if (r.match(c).hasMatch()) {
+        for (const auto &candidate : filteredJyutping) {
+            if (r.match(candidate).hasMatch()) {
                 jyutpingExists = true;
                 break;
             }
@@ -844,22 +986,24 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
         pinyinExists = QueryParseUtils::parseExistence(pinyinQuery);
     } else {
         QRegularExpression r{pinyinSearchTerm.sliced(1)};
-        std::shared_ptr<std::vector<QString>> pinyin;
-        std::vector<QString> filteredPinyin;
-        QString prefix = literalPrefix(pinyinSearchTerm.sliced(1));
-        if (prefix.isEmpty()) {
+        std::unordered_set<QString> filteredPinyin;
+        std::vector<QString> prefixes = literalPrefixes(
+            pinyinSearchTerm.sliced(1));
+        if (prefixes.empty()) {
+            std::shared_ptr<std::vector<QString>> pinyin;
             pinyin = allPinyin();
+            filteredPinyin.insert(pinyin->cbegin(), pinyin->cend());
         } else {
-            filteredPinyin = pinyinFilteredBy(prefix);
+            for (const auto &prefix : prefixes) {
+                std::vector<QString> temp{pinyinFilteredBy(prefix)};
+                filteredPinyin.insert(temp.cbegin(), temp.cend());
+            }
         }
-        const std::vector<QString> &candidates = prefix.isEmpty()
-                                                     ? *pinyin
-                                                     : filteredPinyin;
         if (!checkQueryIDCurrent(queryID)) {
             return;
         }
-        for (const auto &c : candidates) {
-            if (r.match(c).hasMatch()) {
+        for (const auto &candidate : filteredPinyin) {
+            if (r.match(candidate).hasMatch()) {
                 pinyinExists = true;
                 break;
             }

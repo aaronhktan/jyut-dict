@@ -116,6 +116,8 @@ std::string getStringFromSearchParameter(SearchParameters parameter);
 
 void refreshLanguageMap();
 
+bool unfoldBasicRegex(const QString &string, std::vector<QString> &out);
+
 QString getLicenseFolderPath();
 } // namespace Utils
 

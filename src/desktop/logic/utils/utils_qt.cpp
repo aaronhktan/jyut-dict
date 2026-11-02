@@ -203,6 +203,56 @@ void refreshLanguageMap()
     };
 }
 
+bool unfoldBasicRegex(const QString &string, std::vector<QString> &out)
+{
+    std::vector<QString> stringPossibilities;
+    // Invariant: there must be only one set of parentheses and one question mark
+    if (string.count("(") > 1 || string.count(")") > 1
+        || string.count("?") > 1) {
+        return false;
+    }
+
+    // If there is a parenthesis, then all of the options must be checked
+    if (string.indexOf("(") != -1 && string.indexOf(")") != -1) {
+        int startIdx = string.indexOf("(") + 1;
+        int endIdx = string.indexOf(")");
+
+        int orIdx = string.indexOf("|");
+        while (orIdx != -1) {
+            stringPossibilities.push_back(
+                string.mid(0, string.indexOf("("))
+                + string.mid(startIdx, orIdx - startIdx)
+                + string.mid(string.indexOf(")") + 1));
+            startIdx = orIdx + 1;
+            orIdx = string.indexOf("|", startIdx);
+        }
+        stringPossibilities.push_back(string.mid(0, string.indexOf("("))
+                                      + string.mid(startIdx, endIdx - startIdx)
+                                      + string.mid(string.indexOf(")") + 1));
+    } else {
+        stringPossibilities.push_back(string);
+    }
+
+    // If there is a "?", then the initial with and the initial without
+    // that optional character should be considered
+    for (const auto &s : stringPossibilities) {
+        int regexIdx = s.indexOf("?");
+        if (regexIdx == -1) {
+            out.push_back(s);
+        } else if (regexIdx == 0) {
+            QString tmp{s};
+            out.push_back(tmp.replace(0, 1, ""));
+        } else {
+            QString tmp{s};
+            out.push_back(tmp.replace(regexIdx - 1, 2, ""));
+            tmp = s;
+            out.push_back(tmp.replace(regexIdx, 1, ""));
+        }
+    }
+
+    return true;
+}
+
 QString getLocalLicenseFolderPath()
 {
 #ifdef Q_OS_DARWIN

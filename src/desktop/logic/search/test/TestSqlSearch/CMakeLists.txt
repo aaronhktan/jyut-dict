@@ -19,6 +19,7 @@ add_executable(TestSqlSearch tst_sqlsearch.cpp)
 add_test(NAME TestSqlSearch COMMAND TestSqlSearch)
 
 target_link_libraries(TestSqlSearch
+    PRIVATE Qt${QT_VERSION_MAJOR}::Gui
     PRIVATE Qt${QT_VERSION_MAJOR}::Sql
     PRIVATE Qt${QT_VERSION_MAJOR}::Test
 )
@@ -46,6 +47,7 @@ target_sources(TestSqlSearch
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/mandarinutils.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/scriptdetector.cpp
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/utils.cpp
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../../utils/utils_qt.cpp
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG -DPORTABLE")

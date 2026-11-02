@@ -180,6 +180,12 @@ bool SQLDatabaseManager::openDatabaseConnection(const QString &connectionName)
             throw std::runtime_error{"Couldn't attach user database..."};
         }
 
+        QSqlQuery pragmaQuery{db};
+        pragmaQuery.exec("PRAGMA cache_size = -64000;");
+        pragmaQuery.exec("PRAGMA mmap_size = 268435456;");
+        pragmaQuery.exec("PRAGMA temp_store = MEMORY;");
+        pragmaQuery.exec("PRAGMA synchronous = NORMAL;");
+
         {
             std::lock_guard lock{_mutex};
             _openConnectionNames.emplace(connectionName.toStdString());
