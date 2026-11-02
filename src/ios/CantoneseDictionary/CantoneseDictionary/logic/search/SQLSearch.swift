@@ -21,29 +21,29 @@ actor SQLSearch {
   }
 
   private func populateJyutpingCache() async -> Result<[String], Error> {
-    logger.info("Populating jyutping cache...")
+    logger.info("Populating Jyutping cache...")
     do {
       let results = try await pool.read { db in
         return try String.fetchAll(db, sql: fetchAllJyutpingQuery)
       }
-      logger.info("Populated jyutping cache")
+      logger.info("Populated Jyutping cache")
       return .success(results)
     } catch {
-      logger.error("Failed to populate jyutping cache, error: \(error)")
+      logger.error("Failed to populate Jyutping cache, error: \(error)")
       return .failure(error)
     }
   }
 
   private func populatePinyinCache() async -> Result<[String], Error> {
-    logger.info("Populating pinyin cache")
+    logger.info("Populating Pinyin cache")
     do {
       let results = try await pool.read { db in
         return try String.fetchAll(db, sql: fetchAllPinyinQuery)
       }
-      logger.info("Populated pinyin cache")
+      logger.info("Populated Pinyin cache")
       return .success(results)
     } catch {
-      logger.error("Failed to populate pinyin cache, error: \(error)")
+      logger.error("Failed to populate Pinyin cache, error: \(error)")
       return .failure(error)
     }
   }
@@ -58,7 +58,7 @@ actor SQLSearch {
         )
       }
     } catch {
-      logger.error("Failed to fetch jyutping with prefix, error: \(error)")
+      logger.error("Failed to fetch Jyutping with prefix, error: \(error)")
     }
     return []
   }
@@ -73,7 +73,7 @@ actor SQLSearch {
         )
       }
     } catch {
-      logger.error("Failed to fetch pinyin with prefix, error: \(error)")
+      logger.error("Failed to fetch Pinyin with prefix, error: \(error)")
     }
     return []
   }
@@ -86,12 +86,12 @@ actor SQLSearch {
       if hash != jyutpingCache.sourceHash {
         // The only time the list of all Jyutping changes is when a source
         // is added or removed.
-        if case let .success(cache) = await populateJyutpingCache() {
+        if case .success(let cache) = await populateJyutpingCache() {
           self.jyutpingCache = (hash, cache)
         }
       }
     } else {
-      if case let .success(cache) = await populateJyutpingCache() {
+      if case .success(let cache) = await populateJyutpingCache() {
         self.jyutpingCache = (hash, cache)
       }
     }
@@ -104,38 +104,111 @@ actor SQLSearch {
     let hash = sources.reduce(into: Hasher()) { $0.combine($1) }.finalize()
     if let pinyinCache = self.pinyinCache {
       if hash != pinyinCache.sourceHash {
-        if case let .success(cache) = await populatePinyinCache() {
+        if case .success(let cache) = await populatePinyinCache() {
           self.pinyinCache = (hash, cache)
         }
       }
     } else {
-      if case let .success(cache) = await populatePinyinCache() {
+      if case .success(let cache) = await populatePinyinCache() {
         self.pinyinCache = (hash, cache)
       }
     }
     return self.pinyinCache?.cache ?? []
   }
 
-  nonisolated private func literalPrefix(ofRegex pattern: String) -> String {
-    var prefix = ""
-    for character in pattern {
-      guard character.isLetter || character.isNumber else {
+  private func allRowIds() async -> [Int] {
+    // This is called rarely enough that it's not necessary to cache.
+    do {
+      let results = try await pool.read { db in
+        return try Int.fetchAll(db, sql: fetchAllRowId)
+      }
+      return results
+    } catch {
+      logger.error("Failed to fetch all rowIds, error: \(error)")
+    }
+    return []
+  }
+
+  private func rowIdFilteredByJyutping(prefix: String) async -> [Int] {
+    do {
+      return try await pool.read { db in
+        try Int.fetchAll(
+          db,
+          sql: fetchRowIdWithJyutpingPrefixQuery,
+          arguments: ["\(prefix)*"]
+        )
+      }
+    } catch {
+      logger.error("Failed to fetch rowIds with prefix Jyutping, error: \(error)")
+    }
+    return []
+  }
+
+  private func rowIdFilteredByPinyin(prefix: String) async -> [Int] {
+    do {
+      return try await pool.read { db in
+        try Int.fetchAll(
+          db,
+          sql: fetchRowIdWithPinyinPrefixQuery,
+          arguments: ["\(prefix)*"]
+        )
+      }
+    } catch {
+      logger.error("Failed to fetch rowIds with prefix Pinyin, error: \(error)")
+    }
+    return []
+  }
+
+  nonisolated private func literalPrefixes(of pattern: String) -> [String] {
+    // Truncate string to right before a second "?" or "(", whichever occurs
+    // earlier. (The limitation of unfoldBasicRegex is that we only support
+    // one set of parentheses and one question mark.)
+    var endIdx = pattern.endIndex
+    if let first = pattern.firstIndex(of: "(") {
+      let afterFirst = pattern.index(after: first)
+      if let second = pattern[afterFirst...].firstIndex(of: "(") {
+        endIdx = second
+      }
+    }
+    if let first = pattern.firstIndex(of: "?") {
+      let afterFirst = pattern.index(after: first)
+      if let second = pattern[afterFirst...].firstIndex(of: "?"), second < endIdx {
+        endIdx = second
+      }
+    }
+
+    let possibilities = unfoldBasicRegex(for: String(pattern[..<endIdx]))
+
+    var prefixes: Set<String> = []
+    for p in possibilities {
+      var prefix = ""
+      for character in p {
+        guard character.isLetter || character.isNumber else {
+          break
+        }
+        prefix.append(character)
+      }
+
+      guard let next = pattern.dropFirst(prefix.count).first else {
+        if !prefix.isEmpty {
+          prefixes.insert(prefix)
+        }
+        continue
+      }
+
+      switch next {
+      case "?", "*":
+        prefix.removeLast()
+      default:
         break
       }
-      prefix.append(character)
+
+      if !prefix.isEmpty {
+        prefixes.insert(prefix)
+      }
     }
 
-    guard let next = pattern.dropFirst(prefix.count).first else {
-      return prefix
-    }
-
-    switch next {
-    case "?", "*":
-      prefix.removeLast()
-    default:
-      break
-    }
-    return prefix
+    return Array(prefixes)
   }
 
   @concurrent func searchByRowId(rowid: String) async -> Entry? {
@@ -210,20 +283,16 @@ actor SQLSearch {
       useFuzzyJyutping: useFuzzyJyutping,
       unsafeFuzzyJyutping: unsafeFuzzyJyutping
     )
-    logger.info("searchJyutpingExistence pattern: '\(pattern)', useFuzzyJyutping: \(useFuzzyJyutping)")
+    logger.info(
+      "searchJyutpingExistence pattern: '\(pattern)', useFuzzyJyutping: \(useFuzzyJyutping)")
 
-    if !useFuzzyJyutping {
-      let query = String(
-        format: jyutpingExistenceQuery,
-        arguments: [GLOB_OPERATOR]
-      )
-
-      var result: Bool = false
+    guard useFuzzyJyutping else {
+      var result = false
       do {
         result = try await pool.read { db in
           let rows = try Row.fetchAll(
             db,
-            sql: query,
+            sql: jyutpingExistenceQuery,
             arguments: [pattern]
           )
           return parseExistenceRecords(rows: rows)
@@ -232,23 +301,38 @@ actor SQLSearch {
         logger.error("Error happened when trying to read from db: \(error)")
       }
 
-      logger.info("glob Jyutping match result: \(result)")
+      logger.info("Found non-fuzzy Jyutping match: \(result)")
       return result
     }
 
+    // General idea: use GLOB to filter out as many rows as possible before
+    // running REGEXP on those rows. GLOB can take advantage of SQLITE's
+    // indices, whereas REGEXP, being a user-defined function, can't.
     guard let regex = try? NSRegularExpression(pattern: pattern) else {
       logger.error("Failed to compile regex in Jyutping existence check")
       return false
     }
-    let prefix = literalPrefix(ofRegex: pattern)
-    logger.info("prefix: \(prefix)")
-    var candidates: [String]
-    if prefix.isEmpty {
+    // GLOB can't handle the parentheses that we use in the regex patterns,
+    // so unfold them as much as possible.
+    let prefixes = literalPrefixes(of: pattern)
+    logger.info("Jyutping prefixes for pattern \(pattern): \(prefixes)")
+    var candidates: [String] = []
+    if prefixes.isEmpty {
       candidates = await allJyutping()
     } else {
-      candidates = await jyutpingFilteredBy(prefix: prefix)
+      for p in prefixes {
+        candidates += await jyutpingFilteredBy(prefix: p)
+      }
     }
-    for text in candidates {
+    guard !Task.isCancelled else {
+      return false
+    }
+    for (index, text) in candidates.enumerated() {
+      if index % 25000 == 0 {
+        guard !Task.isCancelled else {
+          return false
+        }
+      }
       // If this is updated, you will likely want to update the implementation
       // in DatabaseManager!
       let range = NSRange(location: 0, length: text.utf16.count)
@@ -276,18 +360,50 @@ actor SQLSearch {
       unsafeFuzzyJyutping: unsafeFuzzyJyutping
     )
     logger.info("searchJyutping pattern: '\(pattern)'")
-    let query = String(
-      format: searchJyutpingQuery,
-      arguments: [useFuzzyJyutping ? REGEXP_OPERATOR : GLOB_OPERATOR]
-    )
 
     var results: [Entry] = []
+    guard useFuzzyJyutping else {
+      do {
+        results = try await pool.read { db in
+          let rows = try Row.fetchAll(
+            db,
+            sql: searchJyutpingGlobQuery,
+            arguments: [pattern]
+          )
+          return parseReturnedEntryRecords(rows: rows)
+        }
+      } catch {
+        logger.error("Error happened when trying to read from db: \(error)")
+      }
+
+      return results
+    }
+
+    let prefixes = literalPrefixes(of: pattern)
+    var candidates: [Int] = []
+    if prefixes.isEmpty {
+      candidates = await allRowIds()
+    } else {
+      for p in prefixes {
+        candidates += await rowIdFilteredByJyutping(prefix: p)
+      }
+    }
+
+    // Using JSON lets us get around the bound parameter limit in SQLITE:
+    // https://sqlite.org/c3ref/c_limit_attached.html#sqlitelimitvariablenumber
+    guard let data = try? JSONEncoder().encode(candidates),
+      let json = String(data: data, encoding: .utf8)
+    else {
+      logger.error("Couldn't turn candidates into JSON!")
+      return []
+    }
+
     do {
       results = try await pool.read { db in
         let rows = try Row.fetchAll(
           db,
-          sql: query,
-          arguments: [pattern]
+          sql: searchJyutpingRegexQuery,
+          arguments: [json, pattern]
         )
         return parseReturnedEntryRecords(rows: rows)
       }
@@ -303,15 +419,15 @@ actor SQLSearch {
       pinyin: searchTerm,
       useFuzzyPinyin: useFuzzyPinyin
     )
-    logger.info("searchPinyinExistence pattern: '\(pattern)'")
+    logger.info("searchPinyinExistence pattern: '\(pattern)', useFuzzyPinyin: \(useFuzzyPinyin)")
 
-    if !useFuzzyPinyin {
+    guard useFuzzyPinyin else {
       let query = String(
         format: pinyinExistenceQuery,
         arguments: [GLOB_OPERATOR]
       )
 
-      var result: Bool = false
+      var result = false
       do {
         result = try await pool.read { db in
           let rows = try Row.fetchAll(
@@ -322,25 +438,34 @@ actor SQLSearch {
           return parseExistenceRecords(rows: rows)
         }
       } catch {
-        // TODO: Handle errors
         logger.error("Error happened when trying to read from db: \(error)")
       }
 
       return result
     }
 
-    let prefix = literalPrefix(ofRegex: pattern)
     guard let regex = try? NSRegularExpression(pattern: pattern) else {
-      logger.error("Failed to compile regex in pinyin existence check")
+      logger.error("Failed to compile regex in Pinyin existence check")
       return false
     }
-    var candidates: [String]
-    if prefix.isEmpty {
+    let prefixes = literalPrefixes(of: pattern)
+    var candidates: [String] = []
+    if prefixes.isEmpty {
       candidates = await allPinyin()
     } else {
-      candidates = await pinyinFilteredBy(prefix: prefix)
+      for p in prefixes {
+        candidates += await pinyinFilteredBy(prefix: p)
+      }
     }
-    for text in candidates {
+    guard !Task.isCancelled else {
+      return false
+    }
+    for (index, text) in candidates.enumerated() {
+      if index % 25000 == 0 {
+        guard !Task.isCancelled else {
+          return false
+        }
+      }
       let range = NSRange(location: 0, length: text.utf16.count)
       if regex.rangeOfFirstMatch(
         in: text,
@@ -351,7 +476,8 @@ actor SQLSearch {
         return true
       }
     }
-    logger.info("Failed to fuzzy Pinyin match for pattern \(pattern) in \(candidates.count) candidates")
+    logger.info(
+      "Failed to fuzzy Pinyin match for pattern \(pattern) in \(candidates.count) candidates")
     return false
   }
 
@@ -361,18 +487,49 @@ actor SQLSearch {
       useFuzzyPinyin: useFuzzyPinyin
     )
     logger.info("searchPinyin pattern: '\(pattern)'")
-    let query = String(
-      format: searchPinyinQuery,
-      arguments: [useFuzzyPinyin ? REGEXP_OPERATOR : GLOB_OPERATOR]
-    )
+
+    guard useFuzzyPinyin else {
+      var results: [Entry] = []
+      do {
+        results = try await pool.read { db in
+          let rows = try Row.fetchAll(
+            db,
+            sql: searchPinyinGlobQuery,
+            arguments: [pattern]
+          )
+          return parseReturnedEntryRecords(rows: rows)
+        }
+      } catch {
+        logger.error("Error happened when trying to read from db: \(error)")
+      }
+      return results
+    }
+
+    let prefixes = literalPrefixes(of: pattern)
+    logger.info("Pinyin prefixes: '\(prefixes)'")
+    var candidates: [Int] = []
+    if prefixes.isEmpty {
+      candidates = await allRowIds()
+    } else {
+      for p in prefixes {
+        candidates += await rowIdFilteredByPinyin(prefix: p)
+      }
+    }
+
+    guard let data = try? JSONEncoder().encode(candidates),
+      let json = String(data: data, encoding: .utf8)
+    else {
+      logger.error("Couldn't turn candidates into JSON!")
+      return []
+    }
 
     var results: [Entry] = []
     do {
       results = try await pool.read { db in
         let rows = try Row.fetchAll(
           db,
-          sql: query,
-          arguments: [pattern]
+          sql: searchPinyinRegexQuery,
+          arguments: [json, pattern]
         )
         return parseReturnedEntryRecords(rows: rows)
       }
