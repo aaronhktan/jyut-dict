@@ -82,8 +82,8 @@ private:
     std::vector<QString> jyutpingFilteredBy(const QString &prefix);
     std::vector<QString> pinyinFilteredBy(const QString &prefix);
 
-    std::span<QString> allJyutping();
-    std::span<QString> allPinyin();
+    std::shared_ptr<std::vector<QString>> allJyutping();
+    std::shared_ptr<std::vector<QString>> allPinyin();
 
     void runThread(
         void (SQLSearch::*threadFunction)(const QString &searchTerm,
@@ -113,11 +113,11 @@ private:
                                          const unsigned long long queryID);
 
     std::shared_mutex _jyutpingCacheMutex;
-    std::optional<std::tuple<unsigned int, std::vector<QString>>> _jyutpingCache
-        = std::nullopt;
+    std::optional<std::tuple<unsigned int, std::shared_ptr<std::vector<QString>>>>
+        _jyutpingCache = std::nullopt;
     std::shared_mutex _pinyinCacheMutex;
-    std::optional<std::tuple<unsigned int, std::vector<QString>>> _pinyinCache
-        = std::nullopt;
+    std::optional<std::tuple<unsigned int, std::shared_ptr<std::vector<QString>>>>
+        _pinyinCache = std::nullopt;
 
     std::mutex _notifyMutex;
     std::list<ISearchObserver *> _observers;

@@ -321,14 +321,14 @@ void SQLSearch::populateJyutpingCache(unsigned int hash)
     query.setForwardOnly(true);
     query.exec();
 
-    std::vector<QString> jyutping;
+    auto newCache = std::make_shared<std::vector<QString>>();
     const int jyutpingIndex = query.record().indexOf("jyutping");
     while (query.next()) {
-        jyutping.emplace_back(query.value(jyutpingIndex).toString());
+        newCache->emplace_back(query.value(jyutpingIndex).toString());
     }
 
     qDebug() << "Populating jyutping cache";
-    _jyutpingCache = std::make_tuple(hash, std::move(jyutping));
+    _jyutpingCache = std::make_tuple(hash, newCache);
 }
 
 void SQLSearch::populatePinyinCache(unsigned int hash)
@@ -338,14 +338,14 @@ void SQLSearch::populatePinyinCache(unsigned int hash)
     query.setForwardOnly(true);
     query.exec();
 
-    std::vector<QString> pinyin;
-    const int jyutpingIndex = query.record().indexOf("pinyin");
+    auto newCache = std::make_shared<std::vector<QString>>();
+    const int pinyinIndex = query.record().indexOf("pinyin");
     while (query.next()) {
-        pinyin.emplace_back(query.value(jyutpingIndex).toString());
+        newCache->emplace_back(query.value(pinyinIndex).toString());
     }
 
     qDebug() << "Populating pinyin cache";
-    _pinyinCache = std::make_tuple(hash, std::move(pinyin));
+    _pinyinCache = std::make_tuple(hash, newCache);
 }
 
 std::vector<QString> SQLSearch::jyutpingFilteredBy(const QString &prefix)
@@ -374,15 +374,15 @@ std::vector<QString> SQLSearch::pinyinFilteredBy(const QString &prefix)
     query.exec();
 
     std::vector<QString> pinyin;
-    const int jyutpingIndex = query.record().indexOf("pinyin");
+    const int pinyinIndex = query.record().indexOf("pinyin");
     while (query.next()) {
-        pinyin.emplace_back(query.value(jyutpingIndex).toString());
+        pinyin.emplace_back(query.value(pinyinIndex).toString());
     }
 
     return pinyin;
 }
 
-std::span<QString> SQLSearch::allJyutping()
+std::shared_ptr<std::vector<QString>> SQLSearch::allJyutping()
 {
     std::vector<SourceMetadata> sources;
     SQLDatabaseUtils utils;
@@ -396,27 +396,25 @@ std::span<QString> SQLSearch::allJyutping()
                                         return qHashMulti(0, a, b);
                                     });
 
-    std::shared_lock lock(_jyutpingCacheMutex);
-    if (_jyutpingCache.has_value()) {
-        if (hash != std::get<0>(_jyutpingCache.value())) {
-            lock.unlock();
-            std::lock_guard lock{_jyutpingCacheMutex};
-            if (hash != std::get<0>(_jyutpingCache.value())) {
-                populateJyutpingCache(hash);
+    {
+        std::shared_lock lock(_jyutpingCacheMutex);
+        if (_jyutpingCache.has_value()) {
+            if (hash == std::get<0>(_jyutpingCache.value())) {
+                return std::get<1>(_jyutpingCache.value());
             }
         }
-    } else {
-        lock.unlock();
-        std::lock_guard lock{_jyutpingCacheMutex};
-        if (!_jyutpingCache.has_value()) {
-            populateJyutpingCache(hash);
-        }
+    }
+
+    std::lock_guard lock{_jyutpingCacheMutex};
+    if (!_jyutpingCache.has_value()
+        || hash != std::get<0>(_jyutpingCache.value())) {
+        populateJyutpingCache(hash);
     }
 
     return std::get<1>(_jyutpingCache.value());
 }
 
-std::span<QString> SQLSearch::allPinyin()
+std::shared_ptr<std::vector<QString>> SQLSearch::allPinyin()
 {
     std::vector<SourceMetadata> sources;
     SQLDatabaseUtils utils;
@@ -430,21 +428,18 @@ std::span<QString> SQLSearch::allPinyin()
                                         return qHashMulti(0, a, b);
                                     });
 
-    std::shared_lock lock(_pinyinCacheMutex);
-    if (_pinyinCache.has_value()) {
-        if (hash != std::get<0>(_pinyinCache.value())) {
-            lock.unlock();
-            std::lock_guard lock{_pinyinCacheMutex};
-            if (hash != std::get<0>(_pinyinCache.value())) {
-                populatePinyinCache(hash);
+    {
+        std::shared_lock lock(_pinyinCacheMutex);
+        if (_pinyinCache.has_value()) {
+            if (hash == std::get<0>(_pinyinCache.value())) {
+                return std::get<1>(_pinyinCache.value());
             }
         }
-    } else {
-        lock.unlock();
-        std::lock_guard lock{_pinyinCacheMutex};
-        if (!_pinyinCache.has_value()) {
-            populatePinyinCache(hash);
-        }
+    }
+
+    std::lock_guard lock{_pinyinCacheMutex};
+    if (!_pinyinCache.has_value() || hash != std::get<0>(_pinyinCache.value())) {
+        populatePinyinCache(hash);
     }
 
     return std::get<1>(_pinyinCache.value());
@@ -809,19 +804,20 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
         jyutpingExists = QueryParseUtils::parseExistence(jyutpingQuery);
     } else {
         QRegularExpression r{jyutpingSearchTerm.sliced(1)};
-        std::span<QString> candidates;
+        std::shared_ptr<std::vector<QString>> jyutping;
         std::vector<QString> filteredJyutping;
         QString prefix = literalPrefix(jyutpingSearchTerm.sliced(1));
         if (prefix.isEmpty()) {
-            candidates = allJyutping();
+            jyutping = allJyutping();
         } else {
             filteredJyutping = jyutpingFilteredBy(prefix);
-            candidates = filteredJyutping;
         }
+        const std::vector<QString> &candidates = prefix.isEmpty()
+                                                     ? *jyutping
+                                                     : filteredJyutping;
         if (!checkQueryIDCurrent(queryID)) {
             return;
         }
-        std::shared_lock lock(_jyutpingCacheMutex);
         for (const auto &c : candidates) {
             if (r.match(c).hasMatch()) {
                 jyutpingExists = true;
@@ -849,19 +845,20 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
         pinyinExists = QueryParseUtils::parseExistence(pinyinQuery);
     } else {
         QRegularExpression r{pinyinSearchTerm.sliced(1)};
-        std::span<QString> candidates;
+        std::shared_ptr<std::vector<QString>> pinyin;
         std::vector<QString> filteredPinyin;
         QString prefix = literalPrefix(pinyinSearchTerm.sliced(1));
         if (prefix.isEmpty()) {
-            candidates = allPinyin();
+            pinyin = allPinyin();
         } else {
             filteredPinyin = pinyinFilteredBy(prefix);
-            candidates = filteredPinyin;
         }
+        const std::vector<QString> &candidates = prefix.isEmpty()
+                                                     ? *pinyin
+                                                     : filteredPinyin;
         if (!checkQueryIDCurrent(queryID)) {
             return;
         }
-        std::shared_lock lock(_pinyinCacheMutex);
         for (const auto &c : candidates) {
             if (r.match(c).hasMatch()) {
                 pinyinExists = true;
