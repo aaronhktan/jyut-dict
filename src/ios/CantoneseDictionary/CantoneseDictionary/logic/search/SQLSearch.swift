@@ -20,28 +20,32 @@ actor SQLSearch {
     self.pool = pool
   }
 
-  private func populateJyutpingCache() async -> [String] {
-    logger.info("Populating jyutping cache")
+  private func populateJyutpingCache() async -> Result<[String], Error> {
+    logger.info("Populating jyutping cache...")
     do {
-      return try await pool.read { db in
+      let results = try await pool.read { db in
         return try String.fetchAll(db, sql: fetchAllJyutpingQuery)
       }
+      logger.info("Populated jyutping cache")
+      return .success(results)
     } catch {
       logger.error("Failed to populate jyutping cache, error: \(error)")
+      return .failure(error)
     }
-    return []
   }
 
-  private func populatePinyinCache() async -> [String] {
+  private func populatePinyinCache() async -> Result<[String], Error> {
     logger.info("Populating pinyin cache")
     do {
-      return try await pool.read { db in
+      let results = try await pool.read { db in
         return try String.fetchAll(db, sql: fetchAllPinyinQuery)
       }
+      logger.info("Populated pinyin cache")
+      return .success(results)
     } catch {
       logger.error("Failed to populate pinyin cache, error: \(error)")
+      return .failure(error)
     }
-    return []
   }
 
   private func jyutpingFilteredBy(prefix: String) async -> [String] {
@@ -82,10 +86,14 @@ actor SQLSearch {
       if hash != jyutpingCache.sourceHash {
         // The only time the list of all Jyutping changes is when a source
         // is added or removed.
-        self.jyutpingCache = (hash, await populateJyutpingCache())
+        if case let .success(cache) = await populateJyutpingCache() {
+          self.jyutpingCache = (hash, cache)
+        }
       }
     } else {
-      self.jyutpingCache = (hash, await populateJyutpingCache())
+      if case let .success(cache) = await populateJyutpingCache() {
+        self.jyutpingCache = (hash, cache)
+      }
     }
     return self.jyutpingCache?.cache ?? []
   }
@@ -96,10 +104,14 @@ actor SQLSearch {
     let hash = sources.reduce(into: Hasher()) { $0.combine($1) }.finalize()
     if let pinyinCache = self.pinyinCache {
       if hash != pinyinCache.sourceHash {
-        self.pinyinCache = (hash, await populatePinyinCache())
+        if case let .success(cache) = await populatePinyinCache() {
+          self.pinyinCache = (hash, cache)
+        }
       }
     } else {
-      self.pinyinCache = (hash, await populatePinyinCache())
+      if case let .success(cache) = await populatePinyinCache() {
+        self.pinyinCache = (hash, cache)
+      }
     }
     return self.pinyinCache?.cache ?? []
   }
@@ -335,9 +347,11 @@ actor SQLSearch {
         options: [.anchored],
         range: range
       ).location != NSNotFound {
+        logger.info("Found fuzzy Pinyin match for pattern \(pattern): \(text)")
         return true
       }
     }
+    logger.info("Failed to fuzzy Pinyin match for pattern \(pattern) in \(candidates.count) candidates")
     return false
   }
 
