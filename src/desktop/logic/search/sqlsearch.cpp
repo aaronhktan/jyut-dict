@@ -837,8 +837,7 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
     preparePinyinBindValues(searchTerm, pinyinSearchTerm, fuzzyPinyin);
     if (!fuzzyPinyin) {
         QSqlQuery pinyinQuery{_manager->getDatabase()};
-        pinyinQuery.prepare(QString{SEARCH_PINYIN_EXISTS_QUERY}.arg(
-            fuzzyPinyin ? REGEXP_STR : GLOB_STR));
+        pinyinQuery.prepare(QString{SEARCH_PINYIN_EXISTS_QUERY}.arg(GLOB_STR));
         pinyinQuery.addBindValue(pinyinSearchTerm);
         pinyinQuery.setForwardOnly(true);
         pinyinQuery.exec();
