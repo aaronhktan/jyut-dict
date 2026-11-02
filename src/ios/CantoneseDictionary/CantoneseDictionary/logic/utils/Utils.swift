@@ -35,7 +35,7 @@ nonisolated func unfoldBasicRegex(for pattern: String) -> [String] {
   var out: [String] = []
   var stringPossibilities: [String] = []
 
-  // Invariant: there must be only one set of parentheses and one exclamation
+  // Invariant: there must be only one set of parentheses and one question mark
   if pattern.count(where: { $0 == "(" }) > 1
     || pattern.count(where: { $0 == ")" }) > 1
     || pattern.count(where: { $0 == "?" }) > 1

@@ -189,7 +189,7 @@ actor SQLSearch {
         prefix.append(character)
       }
 
-      guard let next = pattern.dropFirst(prefix.count).first else {
+      guard let next = p.dropFirst(prefix.count).first else {
         if !prefix.isEmpty {
           prefixes.insert(prefix)
         }
@@ -316,12 +316,12 @@ actor SQLSearch {
     // so unfold them as much as possible.
     let prefixes = literalPrefixes(of: pattern)
     logger.info("Jyutping prefixes for pattern \(pattern): \(prefixes)")
-    var candidates: [String] = []
+    var candidates: Set<String> = []
     if prefixes.isEmpty {
-      candidates = await allJyutping()
+      candidates.formUnion(await allJyutping())
     } else {
       for p in prefixes {
-        candidates += await jyutpingFilteredBy(prefix: p)
+        candidates.formUnion(await jyutpingFilteredBy(prefix: p))
       }
     }
     guard !Task.isCancelled else {
@@ -380,12 +380,12 @@ actor SQLSearch {
     }
 
     let prefixes = literalPrefixes(of: pattern)
-    var candidates: [Int] = []
+    var candidates: Set<Int> = []
     if prefixes.isEmpty {
-      candidates = await allRowIds()
+      candidates.formUnion(await allRowIds())
     } else {
       for p in prefixes {
-        candidates += await rowIdFilteredByJyutping(prefix: p)
+        candidates.formUnion(await rowIdFilteredByJyutping(prefix: p))
       }
     }
 
@@ -449,12 +449,12 @@ actor SQLSearch {
       return false
     }
     let prefixes = literalPrefixes(of: pattern)
-    var candidates: [String] = []
+    var candidates: Set<String> = []
     if prefixes.isEmpty {
-      candidates = await allPinyin()
+      candidates.formUnion(await allPinyin())
     } else {
       for p in prefixes {
-        candidates += await pinyinFilteredBy(prefix: p)
+        candidates.formUnion(await pinyinFilteredBy(prefix: p))
       }
     }
     guard !Task.isCancelled else {
@@ -507,12 +507,12 @@ actor SQLSearch {
 
     let prefixes = literalPrefixes(of: pattern)
     logger.info("Pinyin prefixes: '\(prefixes)'")
-    var candidates: [Int] = []
+    var candidates: Set<Int> = []
     if prefixes.isEmpty {
-      candidates = await allRowIds()
+      candidates.formUnion(await allRowIds())
     } else {
       for p in prefixes {
-        candidates += await rowIdFilteredByPinyin(prefix: p)
+        candidates.formUnion(await rowIdFilteredByPinyin(prefix: p))
       }
     }
 

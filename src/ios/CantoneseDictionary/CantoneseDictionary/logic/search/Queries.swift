@@ -197,7 +197,6 @@ nonisolated let searchSimplifiedQuery: String = """
 nonisolated let fetchAllRowId: String = """
   SELECT entry_id
   FROM entries
-  WHERE jyutping IS NOT NULL AND jyutping != ''
   """
 
 nonisolated let fetchAllJyutpingQuery: String = """
