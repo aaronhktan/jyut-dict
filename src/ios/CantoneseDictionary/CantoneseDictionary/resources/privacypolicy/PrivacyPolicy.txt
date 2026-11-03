@@ -1,0 +1,21 @@
+Privacy Policy for Jyut Dictionary
+
+Effective date: 2026-10-14
+
+Data collection
+Jyut Dictionary does not collect, store, transmit, or share any personal data. All information you enter or create in the app stays on your device.
+Third parties
+
+The app uses Google ML Kit to provide handwriting recognition functionality. Google ML Kit may collect device information, application information, performance metrics, and usage analytics as described in Google's Privacy Policy.
+
+Data retention and deletion
+Because we collect no data, we have none to retain or delete on our servers. Data stored locally on your device can be removed by deleting the app.
+
+Children's privacy
+The app does not collect personal information from anyone, including children under 13.
+
+Changes
+If this policy changes, we will post the updated version here with a new effective date.
+
+Contact
+Questions? Email help@jyutdictionary.com.

@@ -1,5 +1,5 @@
 //
-//  LicenceView.swift
+//  LegalView.swift
 //  CantoneseDictionary
 //
 //  Created by Aaron on 2026-10-24.
@@ -8,15 +8,15 @@
 import SwiftUI
 import os
 
-struct LicenceView: View {
-  @State var licences = Licences()
+struct LegalView: View {
+  @State var documents = Documents()
 
   var body: some View {
     NavigationStack {
       List {
         NavigationLink {
           ScrollView {
-            Text(licences.MLKitLicence)
+            Text(documents.MLKitLicence)
               .font(.caption.monospaced(true))
               .padding()
           }
@@ -26,24 +26,35 @@ struct LicenceView: View {
 
         NavigationLink {
           ScrollView {
-            Text(licences.JyutDictionaryLicence)
+            Text(documents.JyutDictionaryLicence)
               .font(.caption.monospaced(true))
               .padding()
           }
         } label: {
-          Text("Jyut Dictionary")
+          Text("Jyut Dictionary Licence")
+        }
+
+        NavigationLink {
+          ScrollView {
+            Text(documents.PrivacyPolicy)
+              .font(.caption.monospaced(true))
+              .padding()
+          }
+        } label: {
+          Text("Jyut Dictionary Privacy Policy")
         }
       }
     }
     .contentMargins(.top, 0)
-    .navigationTitle("Code Licences")
+    .navigationTitle("Legal")
   }
 }
 
 @Observable
-class Licences {
+class Documents {
   var MLKitLicence: String = ""
   var JyutDictionaryLicence: String = ""
+  var PrivacyPolicy: String = ""
 
   @ObservationIgnored private var MLKitLicenceFilePath = Bundle.main.url(
     forResource: "MLKitLicence",
@@ -55,9 +66,15 @@ class Licences {
     withExtension: "txt"
   )!
 
+  @ObservationIgnored private var PrivacyPolicyFilePath = Bundle.main.url(
+    forResource: "PrivacyPolicy",
+    withExtension: "txt"
+  )!
+
   init() {
     MLKitLicence = self.load(MLKitLicenceFilePath)
     JyutDictionaryLicence = self.load(JyutDictionaryLicenceFilePath)
+    PrivacyPolicy = self.load(PrivacyPolicyFilePath)
   }
 
   func load(_ url: URL) -> String {

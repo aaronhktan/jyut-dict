@@ -136,9 +136,9 @@ struct SettingsView: View {
             Text("Advanced")
           }
           NavigationLink {
-            LicenceView()
+            LegalView()
           } label: {
-            Text("Code Licences")
+            Text("Legal")
           }
         }
       }
