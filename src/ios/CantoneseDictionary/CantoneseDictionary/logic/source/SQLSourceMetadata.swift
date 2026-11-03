@@ -33,7 +33,6 @@ actor SQLSourceMetadata {
         return parseSourceRecords(rows: rows)
       }
     } catch {
-      // TODO: Handle errors
       logger.error("Error happened when trying to read sources from db: \(error)")
     }
 

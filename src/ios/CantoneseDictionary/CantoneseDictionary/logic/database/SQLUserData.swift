@@ -157,7 +157,6 @@ actor SQLUserData {
         )
       }
     } catch {
-      // TODO: Handle errors
       logger.error("Error happened when trying to write to user db: \(error)")
     }
   }
@@ -173,7 +172,6 @@ actor SQLUserData {
         )
       }
     } catch {
-      // TODO: Handle errors
       logger.error("Error happened when trying to write to user db: \(error)")
     }
   }
@@ -192,7 +190,6 @@ actor SQLUserData {
         return parseExistenceRecords(rows: rows)
       }
     } catch {
-      // TODO: Handle errors
       logger.error("Error happened when trying to read from db: \(error)")
     }
 
@@ -210,7 +207,6 @@ actor SQLUserData {
         return parseReturnedEntryRecords(rows: rows)
       }
     } catch {
-      // TODO: Handle errors
       logger.error("Error happened when trying to read from db: \(error)")
     }
 

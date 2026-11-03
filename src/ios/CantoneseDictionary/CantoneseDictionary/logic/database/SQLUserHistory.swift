@@ -114,7 +114,6 @@ actor SQLUserHistory {
         )
       }
     } catch {
-      // TODO: Handle errors
       logger.error("Error happened when trying to write to user db: \(error)")
     }
   }
@@ -128,7 +127,6 @@ actor SQLUserHistory {
         )
       }
     } catch {
-      // TODO: Handle errors
       logger.error("Error happened when trying to write to user db: \(error)")
     }
   }
@@ -144,7 +142,6 @@ actor SQLUserHistory {
         return parseReturnedSearchHistoryRecords(rows: rows)
       }
     } catch {
-      // TODO: Handle errors
       logger.error("Error happened when trying to read from db: \(error)")
     }
 
@@ -162,7 +159,6 @@ actor SQLUserHistory {
         return parseReturnedSearchHistoryRecords(rows: rows)
       }
     } catch {
-      // TODO: Handle errors
       logger.error("Error happened when trying to read from db: \(error)")
     }
 
@@ -180,7 +176,6 @@ actor SQLUserHistory {
         return parseReturnedEntryRecords(rows: rows)
       }
     } catch {
-      // TODO: Handle errors
       logger.error("Error happened when trying to read from db: \(error)")
     }
 

@@ -25,6 +25,8 @@ struct SearchingView: View {
   @State private var autoDetectOptionLabel: String = "Auto-detect language"
   @State private var isPickerTextVisible: Bool = true
 
+  @State private var hasHinge = false
+
   static let options: [InputMethod] = [
     .autoDetect, .traditional, .simplified, .fuzzyJyutping,
     .jyutping, .fuzzyPinyin, .pinyin, .english,
@@ -32,6 +34,20 @@ struct SearchingView: View {
 
   private var shouldHideToolbar: Bool {
     appIdiom != .pad && (isSearchActive || isSearchFocused.wrappedValue)
+  }
+
+  private var pickerBottomPadding: CGFloat {
+    if appIdiom == .pad || appIdiom == .mac {
+      return 10
+    }
+
+    if hasHinge {
+      // This is a workaround for the iPhone Duo drawing the search bar
+      // outside of the list's safe area >:(
+      return 20
+    }
+
+    return 0
   }
 
   var body: some View {
@@ -57,6 +73,7 @@ struct SearchingView: View {
     #if os(iOS)
       .toolbar(shouldHideToolbar ? .hidden : .visible, for: .navigationBar)
     #endif
+    .observeHinge($hasHinge)
     .onChange(of: isSearchActive) {
       if !isSearchActive {
         searchContext.searchResults = []
@@ -223,9 +240,9 @@ extension SearchingView {
       List(searchContext.searchResults, selection: $searchContext.selectedRowId) { entry in
         EntryRow(entry: entry)
       }
-      .listStyle(.automatic)
+      .listStyle(.insetGrouped)
       .scrollDismissesKeyboard(.immediately)
-      .contentMargins(.top, 0)
+      .contentMargins(.top, hasHinge ? nil : 0)
       .overlay {
         if searchContext.showEmptyState {
           ContentUnavailableView {
@@ -276,7 +293,7 @@ extension SearchingView {
             autoDetectOptionLabel = InputMethod.autoDetect.descriptionString
           }
         }
-        .padding(.bottom, (appIdiom == .pad || appIdiom == .mac) ? 10 : 0)
+        .padding(.bottom, pickerBottomPadding)
       }
     }
     .navigationTitle("Search Results")

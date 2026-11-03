@@ -153,6 +153,21 @@ enum AppIdiom {
   }
 }
 
+private struct HingeObserver: ViewModifier {
+  @Binding var hasHinge: Bool
+
+  func body(content: Content) -> some View {
+    if #available(iOS 27.1, *) {
+      content
+        .onHingeChange { _, newContext in
+        hasHinge = newContext.hinge != nil
+      }
+    } else {
+      content
+    }
+  }
+}
+
 extension View {
   // MARK: - Device that app is running on
   var appIdiom: AppIdiom { AppIdiom.current }
@@ -196,6 +211,11 @@ extension View {
     } else {
       self.buttonStyle(.bordered)
     }
+  }
+
+  // MARK: - Check for hinge availability
+  func observeHinge(_ hasHinge: Binding<Bool>) -> some View {
+    modifier(HingeObserver(hasHinge: hasHinge))
   }
 }
 

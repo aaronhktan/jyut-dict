@@ -21,17 +21,12 @@ struct Translation: Hashable, Identifiable {
 nonisolated class TranslationSet: Hashable, Identifiable, @unchecked Sendable {
   let id: UUID
   private var _source: String
-  private var _sourceShortString: String
   private var _snippet: [Translation]?
   private var _translations: [Translation]
 
   init(source: String, translations: [Translation]) {
     self.id = UUID()
     self._source = source
-    // TODO: Actually implement sourceShortString
-    self._sourceShortString = String(
-      source.split(separator: " ").first ?? ""
-    )
     self._translations = translations
   }
 
@@ -57,10 +52,6 @@ nonisolated class TranslationSet: Hashable, Identifiable, @unchecked Sendable {
 
   var source: String {
     _source
-  }
-
-  var sourceShortString: String {
-    _sourceShortString
   }
 
   func getTranslationSnippet() -> [Translation] {
