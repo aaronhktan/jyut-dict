@@ -16,26 +16,42 @@ struct SavedView: View {
   var body: some View {
     NavigationStack {
       VStack {
-        if savedContext.savedEntries.isEmpty {
-          ContentUnavailableView {
-            Image(systemName: "star.slash")
-              .resizable()
-              .scaledToFit()
-              .frame(width: 50)
-              .foregroundStyle(.accent)
-              .opacity(0.5)
-              .padding()
-            Text("No entries have been saved yet!")
+        if let savedEntries = savedContext.savedEntries {
+          if savedEntries.isEmpty {
+            ContentUnavailableView {
+              Image(systemName: "star.slash")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 50)
+                .foregroundStyle(.accent)
+                .opacity(0.5)
+                .padding()
+              Text("No entries have been saved yet!")
+            }
+          } else {
+            List(savedEntries, selection: $savedContext.selectedRowId) { entry in
+              NavigationLink {
+                EntryDetail(rowId: entry.id)
+              } label: {
+                EntryRow(entry: entry)
+              }
+            }
+            .contentMargins(.top, 0)
           }
         } else {
-          List(savedContext.savedEntries, selection: $savedContext.selectedRowId) { entry in
-            NavigationLink {
-              EntryDetail(rowId: entry.id)
-            } label: {
-              EntryRow(entry: entry)
+          if savedContext.showLoading {
+            ContentUnavailableView {
+              VStack {
+                Text("Loading saved entries...")
+                ProgressView()
+                  .progressViewStyle(CircularProgressViewStyle(tint: .accent))
+                  .controlSize(.extraLarge)
+                  .transition(.scale(scale: 0.8).combined(with: .opacity))
+              }
             }
+          } else {
+            Spacer()
           }
-          .contentMargins(.top, 0)
         }
       }
       .navigationTitle("Saved Entries")
@@ -63,12 +79,22 @@ struct SavedView: View {
       let userData = SQLUserData(pool: pool)
       savedContext.savedEntries = await userData.fetchSaved()
     }
+    .onAppear {
+      Task {
+        try! await Task.sleep(for: .seconds(1))
+        if savedContext.savedEntries != nil {
+          return
+        }
+        savedContext.showLoading = true
+      }
+    }
 
   }
 }
 
 @Observable @MainActor
 final class SavedContext {
-  var savedEntries: [Entry] = []
+  var savedEntries: [Entry]? = nil
   var selectedRowId: Int?
+  var showLoading = false
 }

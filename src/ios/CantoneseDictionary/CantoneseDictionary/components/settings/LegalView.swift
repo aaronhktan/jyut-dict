@@ -21,7 +21,7 @@ struct LegalView: View {
               .padding()
           }
         } label: {
-          Text("Google ML Kit")
+          Text("Google ML Kit Licence")
         }
 
         NavigationLink {

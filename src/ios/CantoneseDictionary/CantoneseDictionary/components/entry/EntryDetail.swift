@@ -19,6 +19,8 @@ struct EntryDetail: View {
 
   @State private var entry: Entry? = nil
   @State private var title = ""
+  @State private var copied = false
+  @State private var hideSavedIcon = true
   @State private var saved = false
 
   @State private var animateCantoneseSpeaker = false
@@ -38,74 +40,54 @@ struct EntryDetail: View {
   var body: some View {
     Group {
       if entry != nil {
-        List {
-          VStack(alignment: .leading, spacing: 4) {
-            Text(
-              entry?.getCharacters(
-                options: settings.entryCharactersOptions, useColours: true,
-                colourPhoneticType: settings.entryColourPhoneticType,
-                jyutpingToneColours: settings.jyutpingToneColours,
-                pinyinToneColours: settings.pinyinToneColours
-              )
-                ?? "Error fetching entry header"
-            )
-            .font(.largeTitle)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .textSelection(.enabled)
-            Grid {
-              switch settings.previewPhoneticOptions {
-              case .onlyCantonese, .preferCantonese:
-                cantonesePronunciationView()
-                mandarinPronunicationView()
-              case .onlyMandarin, .preferMandarin:
-                mandarinPronunicationView()
-                cantonesePronunciationView()
+        ScrollView {
+          LazyVStack(spacing: 10) {
+            header()
+
+            ForEach(definitionsSets, id: \.id) { set in
+              DefinitionCard(set: set)
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+            }
+
+            ForEach(
+              examplesSnippet.sorted { $0.key > $1.key },
+              id: \.key
+            ) { source, examples in
+              ExampleCard(source: source, examples: examples)
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+                .transition(
+                  .move(edge: .bottom)
+                  .combined(with: .opacity)
+                )
+            }
+
+            if !allExamples.isEmpty {
+              Button {
+                showExampleList = true
+              } label: {
+                Text("View all examples")
+                  .frame(maxWidth: .infinity)
               }
+              .buttonStyle(.glass)
+              .tint(.accent)
+              .buttonBorderShape(.capsule)
+              .controlSize(.extraLarge)
+              .padding(.horizontal)
+              .transition(
+                .move(edge: .bottom)
+                .combined(with: .opacity)
+              )
             }
           }
-          .padding(.horizontal)
-          .listRowSeparator(.hidden)
-          .listRowBackground(Color.clear)
-          .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
-
-          ForEach(definitionsSets, id: \.id) { set in
-            DefinitionCard(set: set)
-              .listRowSeparator(.hidden)
-              .listRowBackground(Color.clear)
-              .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+          .navigationDestination(isPresented: $showExampleList) {
+            ExampleList(examples: allExamples)
           }
-
-          ForEach(
-            examplesSnippet.sorted { $0.key > $1.key },
-            id: \.key
-          ) { source, examples in
-            ExampleCard(source: source, examples: examples)
-              .listRowSeparator(.hidden)
-              .listRowBackground(Color.clear)
-              .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
-          }
-
-          if !allExamples.isEmpty {
-            Button {
-              showExampleList = true
-            } label: {
-              Text("View all examples")
-                .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.glass)
-            .tint(.accent)
-            .buttonBorderShape(.capsule)
-            .controlSize(.extraLarge)
-            .listRowSeparator(.hidden)
-            .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 10, trailing: 0))
-            .padding(.horizontal)
-          }
+          .scrollContentBackground(.hidden)
         }
-        .navigationDestination(isPresented: $showExampleList) {
-          ExampleList(examples: allExamples)
-        }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
       } else {
         Spacer()
       }
@@ -153,6 +135,7 @@ struct EntryDetail: View {
         saved = await userData.fetchSavedByUnique(
           traditional: entry.traditional, simplified: entry.simplified, jyutping: entry.jyutping,
           pinyin: entry.pinyin)
+        hideSavedIcon = false
 
         title = String(
           entry.getCharacters(
@@ -171,14 +154,15 @@ struct EntryDetail: View {
     }
     let searcher = SQLSearch(pool: pool)
 
+    allExamples = []
+    examplesSnippet = [:]
     entry = await searcher.searchByRowId(rowid: String(rowId))
 
-    examplesSnippet = [:]
     if entry != nil {
-      allExamples = await searcher.searchExamplesByTraditional(searchTerm: entry!.traditional)
+      let examples = await searcher.searchExamplesByTraditional(searchTerm: entry!.traditional)
 
       var examplesBySource: [String: [Example]] = [:]
-      for example in allExamples {
+      for example in examples {
         if let source = example.getTranslationSets().first?.source {
           if examplesBySource[source, default: []].count >= 2 {
             // Limit to showing two examples per source for now
@@ -188,12 +172,44 @@ struct EntryDetail: View {
           }
         }
       }
-      examplesSnippet = examplesBySource
+      withAnimation(.spring(duration: 0.2)) {
+        examplesSnippet = examplesBySource
+        allExamples = examples
+      }
     }
   }
 }
 
 extension EntryDetail {
+  @ViewBuilder
+  private func header() -> some View {
+    VStack(alignment: .leading, spacing: 4) {
+      Text(
+        entry?.getCharacters(
+          options: settings.entryCharactersOptions, useColours: true,
+          colourPhoneticType: settings.entryColourPhoneticType,
+          jyutpingToneColours: settings.jyutpingToneColours,
+          pinyinToneColours: settings.pinyinToneColours
+        )
+        ?? "Error fetching entry header"
+      )
+      .font(.largeTitle)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .textSelection(.enabled)
+      Grid {
+        switch settings.previewPhoneticOptions {
+        case .onlyCantonese, .preferCantonese:
+          cantonesePronunciationView()
+          mandarinPronunicationView()
+        case .onlyMandarin, .preferMandarin:
+          mandarinPronunicationView()
+          cantonesePronunciationView()
+        }
+      }
+    }
+    .padding(.horizontal)
+  }
+
   @ViewBuilder
   private func cantonesePronunciationView() -> some View {
     if settings.entryCantonesePhoneticOptions.contains(.rawJyutping) {
@@ -508,7 +524,146 @@ extension EntryDetail {
 
   @ToolbarContentBuilder
   private var toolbarContent: some ToolbarContent {
-    ToolbarItem(placement: topPlacement) {
+
+    ToolbarItem {
+      Menu {
+        let pasteboard = UIPasteboard.general
+        Button {
+          pasteboard.string = entry?.traditional
+          copied = true
+          Task {
+            try? await Task.sleep(for: .seconds(1))
+            copied = false
+          }
+        } label: {
+          Text("Copy traditional Chinese")
+        }
+        Button {
+          pasteboard.string = entry?.simplified
+          copied = true
+          Task {
+            try? await Task.sleep(for: .seconds(1))
+            copied = false
+          }
+        } label: {
+          Text("Copy simplified Chinese")
+        }
+
+        Divider()
+
+        Button {
+          pasteboard.string = entry?.jyutping
+          copied = true
+          Task {
+            try? await Task.sleep(for: .seconds(1))
+            copied = false
+          }
+        } label: {
+          Text("Copy Jyutping")
+        }
+        Button {
+          pasteboard.string = entry?.getPhonetic(
+            options: .onlyCantonese, cantoneseOptions: .prettyYale,
+            mandarinOptions: .prettyPinyin)
+          copied = true
+          Task {
+            try? await Task.sleep(for: .seconds(1))
+            copied = false
+          }
+        } label: {
+          Text("Copy Yale")
+        }
+        Button {
+          pasteboard.string = entry?.getPhonetic(
+            options: .onlyCantonese, cantoneseOptions: .cantoneseIPA,
+            mandarinOptions: .prettyPinyin)
+          copied = true
+          Task {
+            try? await Task.sleep(for: .seconds(1))
+            copied = false
+          }
+        } label: {
+          Text("Copy Cantonese IPA")
+        }
+
+        Divider()
+
+        Button {
+          pasteboard.string = entry?.getPhonetic(
+            options: .onlyMandarin, cantoneseOptions: .rawJyutping,
+            mandarinOptions: .prettyPinyin)
+          copied = true
+          Task {
+            try? await Task.sleep(for: .seconds(1))
+            copied = false
+          }
+        } label: {
+          Text("Copy Pinyin")
+        }
+        Button {
+          pasteboard.string = entry?.getPhonetic(
+            options: .onlyMandarin, cantoneseOptions: .rawJyutping,
+            mandarinOptions: .rawPinyin)
+          copied = true
+          Task {
+            try? await Task.sleep(for: .seconds(1))
+            copied = false
+          }
+        } label: {
+          Text("Copy Pinyin with digits")
+        }
+        Button {
+          pasteboard.string = entry?.getPhonetic(
+            options: .onlyMandarin, cantoneseOptions: .rawJyutping,
+            mandarinOptions: .zhuyin)
+          copied = true
+          Task {
+            try? await Task.sleep(for: .seconds(1))
+            copied = false
+          }
+        } label: {
+          Text("Copy Zhuyin")
+        }
+        Button {
+          pasteboard.string = entry?.getPhonetic(
+            options: .onlyMandarin, cantoneseOptions: .rawJyutping,
+            mandarinOptions: .mandarinIPA)
+          copied = true
+          Task {
+            try? await Task.sleep(for: .seconds(1))
+            copied = false
+          }
+        } label: {
+          Text("Copy Mandarin IPA")
+        }
+      } label: {
+        Image(systemName: copied ? "checkmark" : "document.on.document")
+          .contentTransition(.symbolEffect(.replace))
+      } primaryAction: {
+        let pasteboard = UIPasteboard.general
+
+        switch settings.entryCharactersOptions {
+        case .onlyTraditional, .preferTraditional:
+          pasteboard.string = entry?.traditional
+        case .onlySimplified, .preferSimplified:
+          pasteboard.string = entry?.simplified
+        }
+
+        copied = true
+
+        Task {
+          try? await Task.sleep(for: .seconds(1))
+          copied = false
+        }
+      }
+      .accessibilityLabel(Text("Copy headword"))
+      .buttonBorderShape(.circle)
+      .animation(.snappy, value: copied)
+    }
+
+    ToolbarSpacer()
+
+    ToolbarItem {
       Button {
         guard let pool = databaseManager.dbPool else { return }
 
@@ -531,10 +686,19 @@ extension EntryDetail {
           }
         }
       } label: {
-        Label("Save entry", systemImage: saved ? "star.fill" : "star")
+        // This is a workaround for a weird appearance bug. In a saved
+        // entry, the unfilled star would appear, off-centre, in the
+        // corner of the button before the filled star would replace it
+        // in the centre. Hiding the icon until the save state is fetched
+        // prevents this from occurring.
+        if !hideSavedIcon {
+          Image(systemName: saved ? "star.fill" : "star")
+            .contentTransition(.symbolEffect(.replace))
+        }
       }
-      .labelsHidden()
-      .glassEffect()
+      .accessibilityLabel(Text("Save entry"))
+      .buttonBorderShape(.circle)
+      .animation(.snappy, value: saved)
     }
   }
 }

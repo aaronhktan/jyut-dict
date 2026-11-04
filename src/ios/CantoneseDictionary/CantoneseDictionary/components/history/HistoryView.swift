@@ -46,55 +46,87 @@ struct HistoryView: View {
 
         switch selectedHistoryType {
         case .searchHistory:
-          if historyContext.searchedTerms.isEmpty {
-            ContentUnavailableView {
-              Image(systemName: "exclamationmark.magnifyingglass")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 50)
-                .foregroundStyle(.accent)
-                .opacity(0.5)
-                .padding()
-              Text("No searches have been made yet!")
+          if let searchedTerms = historyContext.searchedTerms {
+            if searchedTerms.isEmpty {
+              ContentUnavailableView {
+                Image(systemName: "exclamationmark.magnifyingglass")
+                  .resizable()
+                  .scaledToFit()
+                  .frame(width: 50)
+                  .foregroundStyle(.accent)
+                  .opacity(0.5)
+                  .padding()
+                Text("No searches have been made yet!")
+              }
+            } else {
+              List(searchedTerms) { item in
+                Button {
+                  searchContext.searchText = item.searchTerm
+                  searchContext.selectedOption = item.inputMethod
+                  isSearchActive = true
+
+                  dismiss()
+                } label: {
+                  SearchHistoryRow(historyItem: item)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+              }
+              .contentMargins(.top, 5)
             }
           } else {
-            List(historyContext.searchedTerms) { item in
-              Button {
-                searchContext.searchText = item.searchTerm
-                searchContext.selectedOption = item.inputMethod
-                isSearchActive = true
-
-                dismiss()
-              } label: {
-                SearchHistoryRow(historyItem: item)
-                  .frame(maxWidth: .infinity, alignment: .leading)
-                  .contentShape(Rectangle())
+            if historyContext.showLoading {
+              ContentUnavailableView {
+                VStack {
+                  Text("Loading history...")
+                  ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .accent))
+                    .controlSize(.extraLarge)
+                    .transition(.scale(scale: 0.8).combined(with: .opacity))
+                }
               }
-              .buttonStyle(.plain)
+            } else {
+              Spacer()
             }
-            .contentMargins(.top, 5)
           }
         case .viewHistory:
-          if historyContext.viewedEntries.isEmpty {
-            ContentUnavailableView {
-              Image(systemName: "eye.slash")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 50)
-                .foregroundStyle(.accent)
-                .opacity(0.5)
-                .padding()
-              Text("No entries have been viewed yet!")
+          if let viewedEntries = historyContext.viewedEntries {
+            if viewedEntries.isEmpty {
+              ContentUnavailableView {
+                Image(systemName: "eye.slash")
+                  .resizable()
+                  .scaledToFit()
+                  .frame(width: 50)
+                  .foregroundStyle(.accent)
+                  .opacity(0.5)
+                  .padding()
+                Text("No entries have been viewed yet!")
+              }
+            } else {
+              List(viewedEntries, selection: $historyContext.selectedRowId) { entry in
+                NavigationLink {
+                  EntryDetail(rowId: entry.id)
+                } label: {
+                  EntryRow(entry: entry)
+                }
+              }
+              .contentMargins(.top, 5)
             }
           } else {
-            List(historyContext.viewedEntries, selection: $historyContext.selectedRowId) { entry in
-              NavigationLink {
-                EntryDetail(rowId: entry.id)
-              } label: {
-                EntryRow(entry: entry)
+            if historyContext.showLoading {
+              ContentUnavailableView {
+                VStack {
+                  Text("Loading history...")
+                  ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .accent))
+                    .controlSize(.extraLarge)
+                    .transition(.scale(scale: 0.8).combined(with: .opacity))
+                }
               }
+            } else {
+              Spacer()
             }
-            .contentMargins(.top, 5)
           }
         }
       }
@@ -127,13 +159,23 @@ struct HistoryView: View {
         searchHistory, viewedEntries
       )
     }
+    .onAppear {
+      Task {
+        try! await Task.sleep(for: .seconds(1))
+        if historyContext.searchedTerms != nil {
+          return
+        }
+        historyContext.showLoading = true
+      }
+    }
 
   }
 }
 
 @Observable @MainActor
 final class HistoryContext {
-  var searchedTerms: [SearchHistoryItem] = []
-  var viewedEntries: [Entry] = []
+  var showLoading = false
+  var searchedTerms: [SearchHistoryItem]? = nil
+  var viewedEntries: [Entry]? = nil
   var selectedRowId: Int?
 }

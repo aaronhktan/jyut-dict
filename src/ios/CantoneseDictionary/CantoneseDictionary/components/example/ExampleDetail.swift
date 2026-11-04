@@ -23,50 +23,18 @@ struct ExampleDetail: View {
   @State private var player = BufferedSpeechPlayer()
 
   var body: some View {
-    List {
-      VStack(alignment: .leading, spacing: 4) {
-        Text(
-          iso693ToLanguageName[example.sourceLanguage] ?? example.sourceLanguage
-        )
-        .padding(.horizontal, 6)
-        .foregroundStyle(
-          getContrastingColour(backgroundColour: languageColours[example.sourceLanguage] ?? .gray)
-        )
-        .background(
-          Capsule()
-            .fill(languageColours[example.sourceLanguage] ?? .gray)
-        )
-        .fixedSize(horizontal: false, vertical: true)
+    ScrollView {
+      LazyVStack(spacing: 10) {
+        header()
 
-        characterDisplay()
-          .font(.largeTitle)
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .textSelection(.enabled)
-        Grid {
-          switch settings.previewPhoneticOptions {
-          case .onlyCantonese, .preferCantonese:
-            cantonesePronunciationView()
-            mandarinPronunicationView()
-          case .onlyMandarin, .preferMandarin:
-            mandarinPronunicationView()
-            cantonesePronunciationView()
-          }
+        ForEach(example.getTranslationSets(), id: \.id) { set in
+          TranslationCard(set: set)
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
         }
       }
-      .padding(.horizontal)
-      .listRowSeparator(.hidden)
-      .listRowBackground(Color.clear)
-      .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
-
-      ForEach(example.getTranslationSets(), id: \.id) { set in
-        TranslationCard(set: set)
-          .listRowSeparator(.hidden)
-          .listRowBackground(Color.clear)
-          .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
-      }
     }
-    .listStyle(.plain)
-    .scrollContentBackground(.hidden)
     .alert(isPresented: $speakErrorState.showAlert) {
       Alert(
         title: Text("Couldn't speak example!"),
@@ -88,6 +56,40 @@ struct ExampleDetail: View {
 }
 
 extension ExampleDetail {
+  @ViewBuilder
+  private func header() -> some View {
+    VStack(alignment: .leading, spacing: 4) {
+      Text(
+        iso693ToLanguageName[example.sourceLanguage] ?? example.sourceLanguage
+      )
+      .padding(.horizontal, 6)
+      .foregroundStyle(
+        getContrastingColour(backgroundColour: languageColours[example.sourceLanguage] ?? .gray)
+      )
+      .background(
+        Capsule()
+          .fill(languageColours[example.sourceLanguage] ?? .gray)
+      )
+      .fixedSize(horizontal: false, vertical: true)
+
+      characterDisplay()
+        .font(.largeTitle)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .textSelection(.enabled)
+      Grid {
+        switch settings.previewPhoneticOptions {
+        case .onlyCantonese, .preferCantonese:
+          cantonesePronunciationView()
+          mandarinPronunicationView()
+        case .onlyMandarin, .preferMandarin:
+          mandarinPronunicationView()
+          cantonesePronunciationView()
+        }
+      }
+    }
+    .padding(.horizontal)
+  }
+
   @ViewBuilder
   private func characterDisplay() -> some View {
     switch settings.entryCharactersOptions {

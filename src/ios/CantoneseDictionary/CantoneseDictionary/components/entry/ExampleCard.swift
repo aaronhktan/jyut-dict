@@ -23,7 +23,7 @@ struct ExampleCard: View {
         .background(
           UnevenRoundedRectangle(topLeadingRadius: 15, topTrailingRadius: 15)
             .fill(
-              (colorScheme == .dark) ? AnyShapeStyle(.quinary) : AnyShapeStyle(.gray.opacity(0.1))
+              (colorScheme == .dark) ? AnyShapeStyle(.quaternary) : AnyShapeStyle(.gray.opacity(0.1))
             )
         )
         .onTapGesture {
@@ -54,7 +54,7 @@ struct ExampleCard: View {
     .background {
       RoundedRectangle(cornerRadius: 15)
         .fill(
-          (colorScheme == .dark) ? AnyShapeStyle(.quinary) : AnyShapeStyle(.gray.opacity(0.1))
+          (colorScheme == .dark) ? AnyShapeStyle(.quaternary) : AnyShapeStyle(.gray.opacity(0.1))
         )
         .onTapGesture {
           // Makes deselecting text possible

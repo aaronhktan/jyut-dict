@@ -347,7 +347,7 @@ nonisolated func parseReturnedExampleRecords(rows: [Row]) -> [Example] {
         var translations: [Translation] = []
         for translationJSON in translationsJSON {
           let translation =
-            translationJSON["translation"] as! String
+            translationJSON["translation"] as? String ?? "x"
           let language =
             translationJSON["language"] as! String
           let direct =
