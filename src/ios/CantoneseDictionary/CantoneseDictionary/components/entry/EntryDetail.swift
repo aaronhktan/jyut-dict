@@ -24,7 +24,7 @@ struct EntryDetail: View {
   @State private var animateCantoneseSpeaker = false
   @State private var animateMandarinSpeaker = false
   @State private var speakErrorState: (showAlert: Bool, error: String) = (false, "")
-  @State private var showVoiceWarning = false
+  @State private var showVoiceError = false
   @State private var player = BufferedSpeechPlayer()
 
   @State private var allExamples: [Example] = []
@@ -126,8 +126,8 @@ struct EntryDetail: View {
         message: Text(speakErrorState.error),
         dismissButton: .default(Text("OK")))
     }
-    .alert(isPresented: $showVoiceWarning) {
-      // This warning is necessary on iOS 26 because speech synthesis is broken
+    .alert(isPresented: $showVoiceError) {
+      // This error is necessary on iOS 26 because speech synthesis is broken
       // for Mandarin if the user's Siri voice is set to Cantonese.
       Alert(
         title: Text("Mandarin voice unavailable!"),
@@ -469,18 +469,16 @@ extension EntryDetail {
 
       if #unavailable(iOS 27) {
         INPreferences.requestSiriAuthorization { status in
-          switch status {
-          case .authorized:
+          if status == .authorized {
             if ["zh-HK", "yue-CN"].contains(INPreferences.siriLanguageCode()) {
-              showVoiceWarning = true
-            } else {
-              Task {
-                await player.setupAudioSession()
-                await player.speak(utterance)
-              }
+              showVoiceError = true
+              return
             }
-          default:
-            showVoiceWarning = true
+          }
+
+          Task {
+            await player.setupAudioSession()
+            await player.speak(utterance)
           }
         }
       } else {
