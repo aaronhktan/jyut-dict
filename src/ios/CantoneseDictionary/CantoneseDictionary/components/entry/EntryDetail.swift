@@ -61,7 +61,7 @@ struct EntryDetail: View {
                 .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
                 .transition(
                   .move(edge: .bottom)
-                  .combined(with: .opacity)
+                    .combined(with: .opacity)
                 )
             }
 
@@ -79,7 +79,7 @@ struct EntryDetail: View {
               .padding(.horizontal)
               .transition(
                 .move(edge: .bottom)
-                .combined(with: .opacity)
+                  .combined(with: .opacity)
               )
             }
           }
@@ -191,7 +191,7 @@ extension EntryDetail {
           jyutpingToneColours: settings.jyutpingToneColours,
           pinyinToneColours: settings.pinyinToneColours
         )
-        ?? "Error fetching entry header"
+          ?? "Error fetching entry header"
       )
       .font(.largeTitle)
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -524,7 +524,6 @@ extension EntryDetail {
 
   @ToolbarContentBuilder
   private var toolbarContent: some ToolbarContent {
-
     ToolbarItem {
       Menu {
         let pasteboard = UIPasteboard.general
