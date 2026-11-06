@@ -35,9 +35,22 @@
 		93B3FDDB307DB5F900797DCF /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS27.1.sdk/System/Library/Frameworks/Accelerate.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		93B0CF2C309DA7C100ED0E5B /* Exceptions for "CantoneseDictionary" folder in "CantoneseDictionary" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 932E3916304918A700FC8504 /* CantoneseDictionary */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		932E3919304918A700FC8504 /* CantoneseDictionary */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				93B0CF2C309DA7C100ED0E5B /* Exceptions for "CantoneseDictionary" folder in "CantoneseDictionary" target */,
+			);
 			path = CantoneseDictionary;
 			sourceTree = "<group>";
 		};
@@ -429,6 +442,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CantoneseDictionary/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Jyut Dictionary";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
@@ -486,6 +500,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CantoneseDictionary/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Jyut Dictionary";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";

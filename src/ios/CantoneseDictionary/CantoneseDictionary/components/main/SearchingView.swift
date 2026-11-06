@@ -94,7 +94,7 @@ struct SearchingView: View {
   private func triggerSearch() async -> [Entry] {
     guard let pool = databaseManager.dbPool else { return [] }
     let searcher = searcher(for: pool)
-    let searchTerm = searchContext.searchText.lowercased()
+    let searchTerm = searchContext.searchText.lowercased().replacingOccurrences(of: "’", with: "'")
 
     var results: [Entry] = []
     switch searchContext.selectedOption {
@@ -238,7 +238,106 @@ extension SearchingView {
   private func searchResultView() -> some View {
     ZStack(alignment: .bottom) {
       List(searchContext.searchResults, selection: $searchContext.selectedRowId) { entry in
-        EntryRow(entry: entry)
+        Button {
+          searchContext.selectedRowId = entry.id
+        } label: {
+          EntryRow(entry: entry)
+        }
+        .buttonStyle(.plain)
+        .contentShape(Rectangle())
+        .contextMenu {
+          let pasteboard = UIPasteboard.general
+          Button {
+            pasteboard.string = entry.traditional
+            Task {
+              try? await Task.sleep(for: .seconds(1))
+            }
+          } label: {
+            Text("Copy traditional Chinese")
+          }
+          Button {
+            pasteboard.string = entry.simplified
+            Task {
+              try? await Task.sleep(for: .seconds(1))
+            }
+          } label: {
+            Text("Copy simplified Chinese")
+          }
+
+          Divider()
+
+          Button {
+            pasteboard.string = entry.jyutping
+            Task {
+              try? await Task.sleep(for: .seconds(1))
+            }
+          } label: {
+            Text("Copy Jyutping")
+          }
+          Button {
+            pasteboard.string = entry.getPhonetic(
+              options: .onlyCantonese, cantoneseOptions: .prettyYale,
+              mandarinOptions: .prettyPinyin)
+            Task {
+              try? await Task.sleep(for: .seconds(1))
+            }
+          } label: {
+            Text("Copy Yale")
+          }
+          Button {
+            pasteboard.string = entry.getPhonetic(
+              options: .onlyCantonese, cantoneseOptions: .cantoneseIPA,
+              mandarinOptions: .prettyPinyin)
+            Task {
+              try? await Task.sleep(for: .seconds(1))
+            }
+          } label: {
+            Text("Copy Cantonese IPA")
+          }
+
+          Divider()
+
+          Button {
+            pasteboard.string = entry.getPhonetic(
+              options: .onlyMandarin, cantoneseOptions: .rawJyutping,
+              mandarinOptions: .prettyPinyin)
+            Task {
+              try? await Task.sleep(for: .seconds(1))
+            }
+          } label: {
+            Text("Copy Pinyin")
+          }
+          Button {
+            pasteboard.string = entry.getPhonetic(
+              options: .onlyMandarin, cantoneseOptions: .rawJyutping,
+              mandarinOptions: .rawPinyin)
+            Task {
+              try? await Task.sleep(for: .seconds(1))
+            }
+          } label: {
+            Text("Copy Pinyin with digits")
+          }
+          Button {
+            pasteboard.string = entry.getPhonetic(
+              options: .onlyMandarin, cantoneseOptions: .rawJyutping,
+              mandarinOptions: .zhuyin)
+            Task {
+              try? await Task.sleep(for: .seconds(1))
+            }
+          } label: {
+            Text("Copy Zhuyin")
+          }
+          Button {
+            pasteboard.string = entry.getPhonetic(
+              options: .onlyMandarin, cantoneseOptions: .rawJyutping,
+              mandarinOptions: .mandarinIPA)
+            Task {
+              try? await Task.sleep(for: .seconds(1))
+            }
+          } label: {
+            Text("Copy Mandarin IPA")
+          }
+        }
       }
       .listStyle(.insetGrouped)
       .scrollDismissesKeyboard(.immediately)

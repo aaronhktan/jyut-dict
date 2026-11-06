@@ -24,7 +24,7 @@ struct ExampleDetail: View {
 
   var body: some View {
     ScrollView {
-      LazyVStack(spacing: 10) {
+      VStack(spacing: 10) {
         header()
 
         ForEach(example.getTranslationSets(), id: \.id) { set in
