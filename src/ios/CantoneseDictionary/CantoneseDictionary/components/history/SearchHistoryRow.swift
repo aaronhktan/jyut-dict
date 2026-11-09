@@ -27,12 +27,3 @@ struct SearchHistoryRow: View {
     }
   }
 }
-
-#Preview {
-  let searchHistoryItem = SearchHistoryItem(
-    searchTerm: "hello",
-    inputMethod: .autoDetect
-  )
-
-  SearchHistoryRow(historyItem: searchHistoryItem)
-}

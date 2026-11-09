@@ -51,7 +51,7 @@ struct EntryRow: View {
           pinyin: entry.pinyin)
       }
     }
-    .swipeActions(edge: .trailing) {
+    .swipeActions(edge: .leading) {
       Button {
         guard let pool = databaseManager.dbPool else { return }
         let userData = SQLUserData(pool: pool)

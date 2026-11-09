@@ -16,11 +16,21 @@ nonisolated let addSearchSQL: String = """
         (?, ?, datetime('now'))
   """
 
+nonisolated let removeSearchSQL: String = """
+      DELETE FROM user.search_history
+      WHERE search_text = ? AND search_options = ? AND timestamp = ?
+  """
+
 nonisolated let addViewSQL: String = """
       INSERT INTO user.view_history
         (traditional, simplified, jyutping, pinyin, timestamp)
       VALUES
         (?, ?, ?, ?, datetime('now'))
+  """
+
+nonisolated let removeViewSQL: String = """
+      DELETE FROM user.view_history
+      WHERE traditional = ? AND simplified = ? AND jyutping = ? AND pinyin = ?
   """
 
 nonisolated let fetchSearchesSQL: String = """
@@ -96,6 +106,7 @@ struct SearchHistoryItem: Identifiable, Hashable {
   let id = UUID()
   var searchTerm: String
   var inputMethod: InputMethod
+  var timestamp: String
 }
 
 actor SQLUserHistory {
@@ -118,11 +129,37 @@ actor SQLUserHistory {
     }
   }
 
+  @concurrent func removeSearchFromHistory(search: SearchHistoryItem) async {
+    do {
+      try await pool.write { db in
+        try db.execute(
+          sql: removeSearchSQL,
+          arguments: [search.searchTerm, search.inputMethod.rawValue, search.timestamp]
+        )
+      }
+    } catch {
+      logger.error("Error happened when trying to write to user db: \(error)")
+    }
+  }
+
   @concurrent func addViewToHistory(entry: Entry) async {
     do {
       try await pool.write { db in
         try db.execute(
           sql: addViewSQL,
+          arguments: [entry.traditional, entry.simplified, entry.jyutping, entry.pinyin]
+        )
+      }
+    } catch {
+      logger.error("Error happened when trying to write to user db: \(error)")
+    }
+  }
+
+  @concurrent func removeViewFromHistory(entry: Entry) async {
+    do {
+      try await pool.write { db in
+        try db.execute(
+          sql: removeViewSQL,
           arguments: [entry.traditional, entry.simplified, entry.jyutping, entry.pinyin]
         )
       }

@@ -395,9 +395,10 @@ nonisolated func parseReturnedSearchHistoryRecords(rows: [Row]) -> [SearchHistor
   for row in rows {
     let searchTerm = row["text"] as! String
     let method = row["options"] as! Int64
+    let timestamp = row["timestamp"] as! String
     results.append(
       SearchHistoryItem(
-        searchTerm: searchTerm, inputMethod: InputMethod(rawValue: Int(method)) ?? .autoDetect))
+        searchTerm: searchTerm, inputMethod: InputMethod(rawValue: Int(method)) ?? .autoDetect, timestamp: timestamp))
   }
   return results
 }

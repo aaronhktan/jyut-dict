@@ -72,6 +72,17 @@ struct HistoryView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .swipeActions(edge: .trailing) {
+                  Button(role: .destructive) {
+                    guard let pool = databaseManager.dbPool else { return }
+                    let userHistory = SQLUserHistory(pool: pool)
+                    Task {
+                      await userHistory.removeSearchFromHistory(search: item)
+                    }
+                  } label: {
+                    Label("Remove from history", systemImage: "trash")
+                  }
+                }
               }
               .contentMargins(.top, 5)
             }
@@ -109,6 +120,17 @@ struct HistoryView: View {
                   EntryDetail(rowId: entry.id)
                 } label: {
                   EntryRow(entry: entry)
+                }
+                .swipeActions(edge: .trailing) {
+                  Button(role: .destructive) {
+                    guard let pool = databaseManager.dbPool else { return }
+                    let userHistory = SQLUserHistory(pool: pool)
+                    Task {
+                      await userHistory.removeViewFromHistory(entry: entry)
+                    }
+                  } label: {
+                    Label("Remove from history", systemImage: "trash")
+                  }
                 }
               }
               .contentMargins(.top, 5)
