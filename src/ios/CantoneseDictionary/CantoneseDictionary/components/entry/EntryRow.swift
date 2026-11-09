@@ -14,6 +14,7 @@ struct EntryRow: View {
   @State private var saved = false
 
   let entry: Entry
+  var isDeletable = false
 
   var body: some View {
     VStack(alignment: .leading) {
@@ -52,7 +53,7 @@ struct EntryRow: View {
       }
     }
     .swipeActions(edge: .leading) {
-      Button {
+      Button(role: (isDeletable && saved) ? .destructive : nil) {
         guard let pool = databaseManager.dbPool else { return }
         let userData = SQLUserData(pool: pool)
         Task {

@@ -33,7 +33,7 @@ struct SavedView: View {
               NavigationLink {
                 EntryDetail(rowId: entry.id)
               } label: {
-                EntryRow(entry: entry)
+                EntryRow(entry: entry, isDeletable: true)
               }
             }
             .contentMargins(.top, 0)
