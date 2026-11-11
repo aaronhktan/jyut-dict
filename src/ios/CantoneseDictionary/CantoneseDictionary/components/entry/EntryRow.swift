@@ -110,8 +110,7 @@ struct EntryRow: View {
       }
       Button {
         pasteboard.string = entry.getPhonetic(
-          options: .onlyCantonese, cantoneseOptions: .prettyYale,
-          mandarinOptions: .prettyPinyin)
+          options: .onlyCantonese, cantoneseOptions: .prettyYale)
         Task {
           try? await Task.sleep(for: .seconds(1))
         }
@@ -120,8 +119,7 @@ struct EntryRow: View {
       }
       Button {
         pasteboard.string = entry.getPhonetic(
-          options: .onlyCantonese, cantoneseOptions: .cantoneseIPA,
-          mandarinOptions: .prettyPinyin)
+          options: .onlyCantonese, cantoneseOptions: .cantoneseIPA)
         Task {
           try? await Task.sleep(for: .seconds(1))
         }
@@ -133,8 +131,7 @@ struct EntryRow: View {
 
       Button {
         pasteboard.string = entry.getPhonetic(
-          options: .onlyMandarin, cantoneseOptions: .rawJyutping,
-          mandarinOptions: .prettyPinyin)
+          options: .onlyMandarin, mandarinOptions: .prettyPinyin)
         Task {
           try? await Task.sleep(for: .seconds(1))
         }
@@ -143,8 +140,7 @@ struct EntryRow: View {
       }
       Button {
         pasteboard.string = entry.getPhonetic(
-          options: .onlyMandarin, cantoneseOptions: .rawJyutping,
-          mandarinOptions: .rawPinyin)
+          options: .onlyMandarin, mandarinOptions: .rawPinyin)
         Task {
           try? await Task.sleep(for: .seconds(1))
         }
@@ -153,8 +149,7 @@ struct EntryRow: View {
       }
       Button {
         pasteboard.string = entry.getPhonetic(
-          options: .onlyMandarin, cantoneseOptions: .rawJyutping,
-          mandarinOptions: .zhuyin)
+          options: .onlyMandarin, mandarinOptions: .zhuyin)
         Task {
           try? await Task.sleep(for: .seconds(1))
         }
@@ -163,8 +158,7 @@ struct EntryRow: View {
       }
       Button {
         pasteboard.string = entry.getPhonetic(
-          options: .onlyMandarin, cantoneseOptions: .rawJyutping,
-          mandarinOptions: .mandarinIPA)
+          options: .onlyMandarin, mandarinOptions: .mandarinIPA)
         Task {
           try? await Task.sleep(for: .seconds(1))
         }

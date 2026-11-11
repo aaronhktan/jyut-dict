@@ -464,7 +464,7 @@ nonisolated func convertPinyinToIPA(
   // Pre-compute list of tones corresponding to each syllable
   // This is used for tone sandhi reasons (3->3 sandhi, x->5 sandhi, etc.)
   var syllableTones: [(Int, String.Index?)] = []
-  let tones = ["0", "1", "2", "3", "4", "5"]
+  let tones = ["1", "2", "3", "4", "5"]
   for syllable in syllables {
     let toneIdx = syllable.firstIndex(where: {
       tones.contains(String($0))

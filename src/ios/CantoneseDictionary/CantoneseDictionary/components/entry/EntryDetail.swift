@@ -225,9 +225,7 @@ extension EntryDetail {
           Text("Jyutping")
             .foregroundStyle(.placeholder)
           Text(
-            entry?.getPhonetic(
-              options: .onlyCantonese, cantoneseOptions: .rawJyutping,
-              mandarinOptions: .prettyPinyin)
+            entry?.getPhonetic(options: .onlyCantonese, cantoneseOptions: .rawJyutping)
               ?? "Error fetching Jyutping"
           )
           .padding(.trailing)
@@ -249,9 +247,7 @@ extension EntryDetail {
           Text("Yale")
             .foregroundStyle(.placeholder)
           Text(
-            entry?.getPhonetic(
-              options: .onlyCantonese, cantoneseOptions: .prettyYale,
-              mandarinOptions: .prettyPinyin)
+            entry?.getPhonetic(options: .onlyCantonese, cantoneseOptions: .prettyYale)
               ?? "Error fetching Yale"
           )
           .padding(.trailing)
@@ -276,9 +272,7 @@ extension EntryDetail {
           Text("Cantonese IPA")
             .foregroundStyle(.placeholder)
           Text(
-            entry?.getPhonetic(
-              options: .onlyCantonese, cantoneseOptions: .cantoneseIPA,
-              mandarinOptions: .prettyPinyin)
+            entry?.getPhonetic(options: .onlyCantonese, cantoneseOptions: .cantoneseIPA)
               ?? "Error fetching Cantonese IPA"
           )
           .padding(.trailing)
@@ -297,8 +291,7 @@ extension EntryDetail {
 
       var words =
         entry?.getPhonetic(
-          options: .onlyCantonese, cantoneseOptions: .rawJyutping,
-          mandarinOptions: .prettyPinyin) ?? entry?.traditional
+          options: .onlyCantonese, cantoneseOptions: .rawJyutping) ?? entry?.traditional
       if let w = words, w.isEmpty {
         words = entry?.traditional
       }
@@ -351,9 +344,7 @@ extension EntryDetail {
           Text("Pinyin")
             .foregroundStyle(.placeholder)
           Text(
-            entry?.getPhonetic(
-              options: .onlyMandarin, cantoneseOptions: .rawJyutping,
-              mandarinOptions: .prettyPinyin)
+            entry?.getPhonetic(options: .onlyMandarin, mandarinOptions: .prettyPinyin)
               ?? "Error fetching Pinyin"
           )
           .padding(.trailing)
@@ -375,9 +366,7 @@ extension EntryDetail {
           Text("Raw Pinyin")
             .foregroundStyle(.placeholder)
           Text(
-            entry?.getPhonetic(
-              options: .onlyMandarin, cantoneseOptions: .rawJyutping,
-              mandarinOptions: .rawPinyin)
+            entry?.getPhonetic(options: .onlyMandarin, mandarinOptions: .rawPinyin)
               ?? "Error fetching Pinyin with digits"
           )
           .padding(.trailing)
@@ -401,9 +390,7 @@ extension EntryDetail {
           Text("Zhuyin")
             .foregroundStyle(.placeholder)
           Text(
-            entry?.getPhonetic(
-              options: .onlyMandarin, cantoneseOptions: .rawJyutping,
-              mandarinOptions: .zhuyin)
+            entry?.getPhonetic(options: .onlyMandarin, mandarinOptions: .zhuyin)
               ?? "Error fetching Zhuyin"
           )
           .padding(.trailing)
@@ -428,9 +415,7 @@ extension EntryDetail {
           Text("Mandarin IPA")
             .foregroundStyle(.placeholder)
           Text(
-            entry?.getPhonetic(
-              options: .onlyMandarin, cantoneseOptions: .rawJyutping,
-              mandarinOptions: .mandarinIPA)
+            entry?.getPhonetic(options: .onlyMandarin, mandarinOptions: .mandarinIPA)
               ?? "Error fetching Mandarin IPA"
           )
           .padding(.trailing)
@@ -449,8 +434,7 @@ extension EntryDetail {
 
       var words =
         entry?.getPhonetic(
-          options: .onlyMandarin, cantoneseOptions: .rawJyutping,
-          mandarinOptions: .rawPinyin) ?? entry?.traditional
+          options: .onlyMandarin, mandarinOptions: .rawPinyinWithV) ?? entry?.traditional
       if let w = words, w.isEmpty {
         words = entry?.traditional
       }
@@ -567,8 +551,7 @@ extension EntryDetail {
         }
         Button {
           pasteboard.string = entry?.getPhonetic(
-            options: .onlyCantonese, cantoneseOptions: .prettyYale,
-            mandarinOptions: .prettyPinyin)
+            options: .onlyCantonese, cantoneseOptions: .prettyYale)
           copied = true
           Task {
             try? await Task.sleep(for: .seconds(1))
@@ -579,8 +562,7 @@ extension EntryDetail {
         }
         Button {
           pasteboard.string = entry?.getPhonetic(
-            options: .onlyCantonese, cantoneseOptions: .cantoneseIPA,
-            mandarinOptions: .prettyPinyin)
+            options: .onlyCantonese, cantoneseOptions: .cantoneseIPA)
           copied = true
           Task {
             try? await Task.sleep(for: .seconds(1))
@@ -594,8 +576,7 @@ extension EntryDetail {
 
         Button {
           pasteboard.string = entry?.getPhonetic(
-            options: .onlyMandarin, cantoneseOptions: .rawJyutping,
-            mandarinOptions: .prettyPinyin)
+            options: .onlyMandarin, mandarinOptions: .prettyPinyin)
           copied = true
           Task {
             try? await Task.sleep(for: .seconds(1))
@@ -606,8 +587,7 @@ extension EntryDetail {
         }
         Button {
           pasteboard.string = entry?.getPhonetic(
-            options: .onlyMandarin, cantoneseOptions: .rawJyutping,
-            mandarinOptions: .rawPinyin)
+            options: .onlyMandarin, mandarinOptions: .rawPinyin)
           copied = true
           Task {
             try? await Task.sleep(for: .seconds(1))
@@ -618,8 +598,7 @@ extension EntryDetail {
         }
         Button {
           pasteboard.string = entry?.getPhonetic(
-            options: .onlyMandarin, cantoneseOptions: .rawJyutping,
-            mandarinOptions: .zhuyin)
+            options: .onlyMandarin, mandarinOptions: .zhuyin)
           copied = true
           Task {
             try? await Task.sleep(for: .seconds(1))
@@ -630,8 +609,7 @@ extension EntryDetail {
         }
         Button {
           pasteboard.string = entry?.getPhonetic(
-            options: .onlyMandarin, cantoneseOptions: .rawJyutping,
-            mandarinOptions: .mandarinIPA)
+            options: .onlyMandarin, mandarinOptions: .mandarinIPA)
           copied = true
           Task {
             try? await Task.sleep(for: .seconds(1))

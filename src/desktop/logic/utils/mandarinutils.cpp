@@ -668,7 +668,7 @@ std::string convertPinyinToIPA(const std::string &pinyin,
                 ipa_tone = next_tone == -1
                                ? mandarinIPAThirdTone[4]
                                : mandarinIPAThirdTone
-                                   [static_cast<unsigned long>(next_tone) - 1];
+                                     [static_cast<unsigned long>(next_tone) - 1];
             }
             break;
         }

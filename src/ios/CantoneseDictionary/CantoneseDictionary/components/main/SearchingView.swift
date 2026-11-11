@@ -94,7 +94,11 @@ struct SearchingView: View {
   private func triggerSearch() async -> [Entry] {
     guard let pool = databaseManager.dbPool else { return [] }
     let searcher = searcher(for: pool)
-    let searchTerm = searchContext.searchText.lowercased().replacingOccurrences(of: "’", with: "'")
+    let searchTerm = searchContext.searchText
+      .lowercased()
+      .replacingOccurrences(of: "’", with: "'")
+      .replacingOccurrences(of: "“", with: "\"")
+      .replacingOccurrences(of: "”", with: "\"")
 
     var results: [Entry] = []
     switch searchContext.selectedOption {

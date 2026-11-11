@@ -128,9 +128,7 @@ extension ExampleDetail {
           Text("Jyutping")
             .foregroundStyle(.placeholder)
           Text(
-            example.getPhonetic(
-              options: .onlyCantonese, cantoneseOptions: .rawJyutping,
-              mandarinOptions: .prettyPinyin)
+            example.getPhonetic(options: .onlyCantonese, cantoneseOptions: .rawJyutping)
           )
           .padding(.trailing)
           .frame(maxWidth: .infinity, alignment: .leading)
@@ -151,9 +149,7 @@ extension ExampleDetail {
           Text("Yale")
             .foregroundStyle(.placeholder)
           Text(
-            example.getPhonetic(
-              options: .onlyCantonese, cantoneseOptions: .prettyYale,
-              mandarinOptions: .prettyPinyin)
+            example.getPhonetic(options: .onlyCantonese, cantoneseOptions: .prettyYale)
           )
           .padding(.trailing)
           .frame(maxWidth: .infinity, alignment: .leading)
@@ -177,9 +173,7 @@ extension ExampleDetail {
           Text("Cantonese IPA")
             .foregroundStyle(.placeholder)
           Text(
-            example.getPhonetic(
-              options: .onlyCantonese, cantoneseOptions: .cantoneseIPA,
-              mandarinOptions: .prettyPinyin)
+            example.getPhonetic(options: .onlyCantonese, cantoneseOptions: .cantoneseIPA)
           )
           .padding(.trailing)
           .frame(maxWidth: .infinity, alignment: .leading)
@@ -197,8 +191,7 @@ extension ExampleDetail {
 
       var words =
         example.getPhonetic(
-          options: .onlyCantonese, cantoneseOptions: .rawJyutping,
-          mandarinOptions: .prettyPinyin)
+          options: .onlyCantonese, cantoneseOptions: .rawJyutping)
       if words.isEmpty {
         words = example.traditional
       }
@@ -244,9 +237,7 @@ extension ExampleDetail {
           Text("Pinyin")
             .foregroundStyle(.placeholder)
           Text(
-            example.getPhonetic(
-              options: .onlyMandarin, cantoneseOptions: .rawJyutping,
-              mandarinOptions: .prettyPinyin)
+            example.getPhonetic(options: .onlyMandarin, mandarinOptions: .prettyPinyin)
           )
           .padding(.trailing)
           .frame(maxWidth: .infinity, alignment: .leading)
@@ -267,9 +258,7 @@ extension ExampleDetail {
           Text("Raw Pinyin")
             .foregroundStyle(.placeholder)
           Text(
-            example.getPhonetic(
-              options: .onlyMandarin, cantoneseOptions: .rawJyutping,
-              mandarinOptions: .rawPinyin)
+            example.getPhonetic(options: .onlyMandarin, mandarinOptions: .rawPinyin)
           )
           .padding(.trailing)
           .frame(maxWidth: .infinity, alignment: .leading)
@@ -292,9 +281,7 @@ extension ExampleDetail {
           Text("Zhuyin")
             .foregroundStyle(.placeholder)
           Text(
-            example.getPhonetic(
-              options: .onlyMandarin, cantoneseOptions: .rawJyutping,
-              mandarinOptions: .zhuyin)
+            example.getPhonetic(options: .onlyMandarin, mandarinOptions: .zhuyin)
           )
           .padding(.trailing)
           .frame(maxWidth: .infinity, alignment: .leading)
@@ -318,9 +305,7 @@ extension ExampleDetail {
           Text("Mandarin IPA")
             .foregroundStyle(.placeholder)
           Text(
-            example.getPhonetic(
-              options: .onlyMandarin, cantoneseOptions: .rawJyutping,
-              mandarinOptions: .mandarinIPA)
+            example.getPhonetic(options: .onlyMandarin, mandarinOptions: .mandarinIPA)
           )
           .padding(.trailing)
           .frame(maxWidth: .infinity, alignment: .leading)

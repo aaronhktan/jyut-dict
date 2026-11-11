@@ -22,6 +22,7 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
   private var _numberedPinyin: String?
   private var _zhuyin: String?
   private var _mandarinIPA: String?
+  private var _pinyinWithV: String?
 
   private var _translations: [TranslationSet]
 
@@ -88,8 +89,8 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
   }
 
   func generatePhonetic(
-    cantoneseOptions: CantoneseOptions,
-    mandarinOptions: MandarinOptions
+    cantoneseOptions: CantoneseOptions = [],
+    mandarinOptions: MandarinOptions = []
   ) {
     if (cantoneseOptions.rawValue & CantoneseOptions.prettyYale.rawValue
       == CantoneseOptions.prettyYale.rawValue) && _yale == nil
@@ -123,12 +124,17 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
     {
       _mandarinIPA = convertPinyinToIPA(pinyin: _pinyin)
     }
+    if (mandarinOptions.rawValue & MandarinOptions.rawPinyinWithV.rawValue
+      == MandarinOptions.rawPinyinWithV.rawValue) && _pinyinWithV == nil
+    {
+      _pinyinWithV = createPinyinWithV(pinyin: _pinyin)
+    }
   }
 
   func getPhonetic(
     options: EntryPhoneticOptions,
-    cantoneseOptions: CantoneseOptions,
-    mandarinOptions: MandarinOptions
+    cantoneseOptions: CantoneseOptions = [],
+    mandarinOptions: MandarinOptions = []
   ) -> String {
     switch options {
     case .onlyCantonese, .preferCantonese:
@@ -142,18 +148,12 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
     switch cantoneseOptions {
     case .prettyYale:
       if _yale == nil {
-        generatePhonetic(
-          cantoneseOptions: .prettyYale,
-          mandarinOptions: []
-        )
+        generatePhonetic(cantoneseOptions: .prettyYale)
       }
       return _yale ?? "Yale not available"
     case .cantoneseIPA:
       if _cantoneseIPA == nil {
-        generatePhonetic(
-          cantoneseOptions: .cantoneseIPA,
-          mandarinOptions: []
-        )
+        generatePhonetic(cantoneseOptions: .cantoneseIPA)
       }
       return _cantoneseIPA ?? "Cantonese IPA not available"
     case .rawJyutping:
@@ -167,36 +167,29 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
     switch mandarinOptions {
     case .prettyPinyin:
       if _prettyPinyin == nil {
-        generatePhonetic(
-          cantoneseOptions: [],
-          mandarinOptions: .prettyPinyin
-        )
+        generatePhonetic(mandarinOptions: .prettyPinyin)
       }
       return _prettyPinyin ?? "Pretty pinyin not available"
     case .numberedPinyin:
       if _numberedPinyin == nil {
-        generatePhonetic(
-          cantoneseOptions: [],
-          mandarinOptions: .numberedPinyin
-        )
+        generatePhonetic(mandarinOptions: .numberedPinyin)
       }
       return _numberedPinyin ?? "Numbered pinyin not available"
     case .zhuyin:
       if _zhuyin == nil {
-        generatePhonetic(
-          cantoneseOptions: [],
-          mandarinOptions: .zhuyin
-        )
+        generatePhonetic(mandarinOptions: .zhuyin)
       }
       return _zhuyin ?? "Zhuyin not available"
     case .mandarinIPA:
       if _mandarinIPA == nil {
-        generatePhonetic(
-          cantoneseOptions: [],
-          mandarinOptions: .mandarinIPA
-        )
+        generatePhonetic(mandarinOptions: .mandarinIPA)
       }
       return _mandarinIPA ?? "Mandarin IPA not available"
+    case .rawPinyinWithV:
+      if _pinyinWithV == nil {
+        generatePhonetic(mandarinOptions: .rawPinyinWithV)
+      }
+      return _pinyinWithV ?? "Pinyin with V not available"
     default:
       return _pinyin
     }
