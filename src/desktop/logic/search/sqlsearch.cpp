@@ -424,12 +424,13 @@ std::shared_ptr<std::vector<QString>> SQLSearch::allJyutping()
     QSqlDatabase db{_manager->getDatabase()};
     utils.readSources(db, sources);
 
-    unsigned int hash = std::reduce(sources.cbegin(),
-                                    sources.cend(),
-                                    0,
-                                    [](unsigned int a, const SourceMetadata &b) {
-                                        return qHashMulti(0, a, b);
-                                    });
+    unsigned int hash = std::accumulate(sources.cbegin(),
+                                        sources.cend(),
+                                        0,
+                                        [](unsigned int a,
+                                           const SourceMetadata &b) {
+                                            return qHashMulti(0, a, b);
+                                        });
 
     {
         std::shared_lock lock(_jyutpingCacheMutex);
@@ -456,12 +457,13 @@ std::shared_ptr<std::vector<QString>> SQLSearch::allPinyin()
     QSqlDatabase db{_manager->getDatabase()};
     utils.readSources(db, sources);
 
-    unsigned int hash = std::reduce(sources.cbegin(),
-                                    sources.cend(),
-                                    0,
-                                    [](unsigned int a, const SourceMetadata &b) {
-                                        return qHashMulti(0, a, b);
-                                    });
+    unsigned int hash = std::accumulate(sources.cbegin(),
+                                        sources.cend(),
+                                        0,
+                                        [](unsigned int a,
+                                           const SourceMetadata &b) {
+                                            return qHashMulti(0, a, b);
+                                        });
 
     {
         std::shared_lock lock(_pinyinCacheMutex);
