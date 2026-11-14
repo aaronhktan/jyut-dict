@@ -23,9 +23,7 @@ struct EntryDetail: View {
   @State private var hideSavedIcon = true
   @State private var saved = false
 
-  @State private var animateCantoneseSpeaker = false
-  @State private var animateMandarinSpeaker = false
-  @State private var speakErrorState: (showAlert: Bool, error: String) = (false, "")
+  @State private var speakErrorState = SpeakErrorState(showAlert: false, error: "")
   @State private var showVoiceError = false
   @State private var player = BufferedSpeechPlayer()
 
@@ -102,23 +100,8 @@ struct EntryDetail: View {
       }
       toolbarContent
     }
-    .alert(isPresented: $speakErrorState.showAlert) {
-      Alert(
-        title: Text("Couldn't speak entry!"),
-        message: Text(speakErrorState.error),
-        dismissButton: .default(Text("OK")))
-    }
-    .alert(isPresented: $showVoiceError) {
-      // This error is necessary on iOS 26 because speech synthesis is broken
-      // for Mandarin if the user's Siri voice is set to Cantonese.
-      Alert(
-        title: Text("Mandarin voice unavailable!"),
-        message: Text(
-          "Mandarin is unavailable when Siri uses Cantonese. Update to a newer software version to enable."
-        ),
-        dismissButton: .default(Text("OK"))
-      )
-    }
+    .speakErrorAlert(error: $speakErrorState)
+    .voiceErrorAlert(isPresented: $showVoiceError)
     .task(id: rowId) {
       guard rowId != -1 else { return }
       await fetchEntry(rowId: rowId)
@@ -219,7 +202,13 @@ extension EntryDetail {
   private func cantonesePronunciationView() -> some View {
     if settings.entryCantonesePhoneticOptions.contains(.rawJyutping) {
       GridRow(alignment: .firstTextBaseline) {
-        cantonesePronunciationButton()
+        CantonesePronunciationButton(
+          speakErrorState: $speakErrorState,
+          player: $player,
+          showVoiceError: $showVoiceError
+        ) {
+          getCantoneseWords()
+        }
 
         HStack(alignment: .firstTextBaseline) {
           Text("Jyutping")
@@ -238,7 +227,13 @@ extension EntryDetail {
     if settings.entryCantonesePhoneticOptions.contains(.prettyYale) {
       GridRow(alignment: .firstTextBaseline) {
         if !settings.entryCantonesePhoneticOptions.contains(.rawJyutping) {
-          cantonesePronunciationButton()
+          CantonesePronunciationButton(
+            speakErrorState: $speakErrorState,
+            player: $player,
+            showVoiceError: $showVoiceError
+          ) {
+            getCantoneseWords()
+          }
         } else {
           Spacer()
         }
@@ -263,7 +258,13 @@ extension EntryDetail {
         if !settings.entryCantonesePhoneticOptions.contains(.rawJyutping),
           !settings.entryCantonesePhoneticOptions.contains(.prettyYale)
         {
-          cantonesePronunciationButton()
+          CantonesePronunciationButton(
+            speakErrorState: $speakErrorState,
+            player: $player,
+            showVoiceError: $showVoiceError
+          ) {
+            getCantoneseWords()
+          }
         } else {
           Spacer()
         }
@@ -284,61 +285,34 @@ extension EntryDetail {
     }
   }
 
-  @ViewBuilder
-  private func cantonesePronunciationButton() -> some View {
-    Button {
-      animateCantoneseSpeaker.toggle()
-
-      var words =
-        entry?.getPhonetic(
-          options: .onlyCantonese, cantoneseOptions: .rawJyutping) ?? entry?.traditional
-      if let w = words, w.isEmpty {
-        words = entry?.traditional
-      }
-      guard let words else {
-        speakErrorState = (true, "No words were found to pronounce!")
-        if let entry {
-          logger.error("Nothing could be pronounced in Cantonese for entry \(entry.traditional)")
-        }
-        return
-      }
-      let utterance = AVSpeechUtterance(string: words)
-
-      var voice = AVSpeechSynthesisVoice(identifier: "com.apple.voice.compact.zh-HK.Sinji")
-      if voice == nil {
-        for v in AVSpeechSynthesisVoice.speechVoices() {
-          if v.language == "yue-HK" {
-            voice = v
-            break
-          }
-        }
-      }
-      guard let voice else {
-        speakErrorState = (true, "Couldn't load a Cantonese voice!")
-        logger.error("No Cantonese voice could be found!")
-        return
-      }
-      utterance.voice = voice
-
-      Task {
-        await player.setupAudioSession()
-        await player.speak(utterance)
-      }
-    } label: {
-      Label("Pronounce in Cantonese", systemImage: "speaker.wave.2")
-        .symbolEffect(.variableColor.iterative, value: animateCantoneseSpeaker)
+  private func getCantoneseWords() -> Result<String, SpeakErrorState> {
+    var words =
+      entry?.getPhonetic(
+        options: .onlyCantonese, cantoneseOptions: .rawJyutping) ?? entry?.traditional
+    if let w = words, w.isEmpty {
+      words = entry?.traditional
     }
-    .labelStyle(.iconOnly)
-    .buttonBorderShape(.circle)
-    .buttonStyle(.glass)
-    .controlSize(.mini)
+    guard let words else {
+      if let entry {
+        logger.error("Nothing could be pronounced in Cantonese for entry \(entry.traditional)")
+      }
+      return .failure(SpeakErrorState(showAlert: true, error: "No words were found to pronounce!"))
+    }
+
+    return .success(words)
   }
 
   @ViewBuilder
   private func mandarinPronunicationView() -> some View {
     if settings.entryMandarinPhoneticOptions.contains(.prettyPinyin) {
       GridRow(alignment: .firstTextBaseline) {
-        mandarinPronunciationButton()
+        MandarinPronunciationButton(
+          speakErrorState: $speakErrorState,
+          player: $player,
+          showVoiceError: $showVoiceError
+        ) {
+          getMandarinWords()
+        }
 
         HStack(alignment: .firstTextBaseline) {
           Text("Pinyin")
@@ -357,7 +331,13 @@ extension EntryDetail {
     if settings.entryMandarinPhoneticOptions.contains(.rawPinyin) {
       GridRow(alignment: .firstTextBaseline) {
         if !settings.entryMandarinPhoneticOptions.contains(.prettyPinyin) {
-          mandarinPronunciationButton()
+          MandarinPronunciationButton(
+            speakErrorState: $speakErrorState,
+            player: $player,
+            showVoiceError: $showVoiceError
+          ) {
+            getMandarinWords()
+          }
         } else {
           Spacer()
         }
@@ -381,7 +361,13 @@ extension EntryDetail {
         if !settings.entryMandarinPhoneticOptions.contains(.prettyPinyin),
           settings.entryMandarinPhoneticOptions.contains(.rawPinyin)
         {
-          mandarinPronunciationButton()
+          MandarinPronunciationButton(
+            speakErrorState: $speakErrorState,
+            player: $player,
+            showVoiceError: $showVoiceError
+          ) {
+            getMandarinWords()
+          }
         } else {
           Spacer()
         }
@@ -406,7 +392,13 @@ extension EntryDetail {
           settings.entryMandarinPhoneticOptions.contains(.rawPinyin),
           settings.entryMandarinPhoneticOptions.contains(.zhuyin)
         {
-          mandarinPronunciationButton()
+          MandarinPronunciationButton(
+            speakErrorState: $speakErrorState,
+            player: $player,
+            showVoiceError: $showVoiceError
+          ) {
+            getMandarinWords()
+          }
         } else {
           Spacer()
         }
@@ -427,79 +419,22 @@ extension EntryDetail {
     }
   }
 
-  @ViewBuilder
-  private func mandarinPronunciationButton() -> some View {
-    Button {
-      animateMandarinSpeaker.toggle()
-
-      var words =
-        entry?.getPhonetic(
-          options: .onlyMandarin, mandarinOptions: .rawPinyinWithV) ?? entry?.traditional
-      if let w = words, w.isEmpty {
-        words = entry?.traditional
-      }
-      guard let words else {
-        speakErrorState = (true, "No words were found to pronounce!")
-        if let entry {
-          logger.error("Nothing could be pronounced in Mandarin for entry \(entry.traditional)")
-        }
-        return
-      }
-      let utterance = AVSpeechUtterance(string: words)
-
-      var voice: AVSpeechSynthesisVoice? = nil
-      for v in AVSpeechSynthesisVoice.speechVoices() {
-        if v.identifier == "com.apple.voice.compact.zh-TW.Meijia" {
-          voice = v
-          break
-        }
-        if v.language == "zh-TW", !v.identifier.contains("eloquence") {
-          voice = v
-        }
-      }
-      if voice == nil {
-        for v in AVSpeechSynthesisVoice.speechVoices() {
-          if v.language == "zh-CN", !v.identifier.contains("eloquence") {
-            voice = v
-            break
-          }
-        }
-      }
-      guard let voice else {
-        speakErrorState = (true, "Couldn't load a Mandarin voice!")
-        logger.error("No Mandarin voice could be found!")
-        return
-      }
-      utterance.voice = voice
-
-      if #unavailable(iOS 27) {
-        INPreferences.requestSiriAuthorization { status in
-          if status == .authorized {
-            if ["zh-HK", "yue-CN"].contains(INPreferences.siriLanguageCode()) {
-              showVoiceError = true
-              return
-            }
-          }
-
-          Task {
-            await player.setupAudioSession()
-            await player.speak(utterance)
-          }
-        }
-      } else {
-        Task {
-          await player.setupAudioSession()
-          await player.speak(utterance)
-        }
-      }
-    } label: {
-      Label("Pronounce in Mandarin", systemImage: "speaker.wave.2")
-        .symbolEffect(.variableColor.iterative, value: animateMandarinSpeaker)
+  private func getMandarinWords() -> Result<String, SpeakErrorState> {
+    var words =
+      entry?.getPhonetic(
+        options: .onlyMandarin, mandarinOptions: .rawPinyinWithV)
+      ?? entry?.traditional
+    if let w = words, w.isEmpty {
+      words = entry?.traditional
     }
-    .labelStyle(.iconOnly)
-    .buttonBorderShape(.circle)
-    .buttonStyle(.glass)
-    .controlSize(.mini)
+    guard let words else {
+      if let entry {
+        logger.error(
+          "Nothing could be pronounced in Mandarin for entry \(entry.traditional)")
+      }
+      return .failure(SpeakErrorState(showAlert: true, error: "No words were found to pronounce!"))
+    }
+    return .success(words)
   }
 
   // MARK: - Toolbar

@@ -76,6 +76,39 @@ private struct CopyEntryContextMenu<MenuContent: View>: ViewModifier {
   }
 }
 
+private struct SpeakErrorAlert: ViewModifier {
+  let error: Binding<SpeakErrorState>
+
+  func body(content: Content) -> some View {
+    content
+      .alert(isPresented: error.showAlert) {
+        Alert(
+          title: Text("Couldn't speak example!"),
+          message: Text(error.wrappedValue.error),
+          dismissButton: .default(Text("OK")))
+      }
+  }
+}
+
+private struct VoiceErrorAlert: ViewModifier {
+  var presented: Binding<Bool>
+
+  func body(content: Content) -> some View {
+    content
+      .alert(isPresented: presented) {
+        // This warning is necessary on iOS 26 because speech synthesis is broken
+        // for Mandarin if the user's Siri voice is set to Cantonese.
+        Alert(
+          title: Text("Mandarin voice unavailable!"),
+          message: Text(
+            "Mandarin is unavailable when Siri uses Cantonese. Update to a newer software version to enable."
+          ),
+          dismissButton: .default(Text("OK"))
+        )
+      }
+  }
+}
+
 private struct HingeObserver: ViewModifier {
   @Binding var hasHinge: Bool
 
@@ -202,6 +235,15 @@ extension View {
     } label: {
       Text("Copy Mandarin IPA")
     }
+  }
+
+  // MARK: - Speaker errors and alerts
+  func speakErrorAlert(error: Binding<SpeakErrorState>) -> some View {
+    modifier(SpeakErrorAlert(error: error))
+  }
+
+  func voiceErrorAlert(isPresented: Binding<Bool>) -> some View {
+    modifier(VoiceErrorAlert(presented: isPresented))
   }
 
   // MARK: - Device that app is running on
