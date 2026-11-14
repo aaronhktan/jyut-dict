@@ -4,8 +4,8 @@ Effective date: 2026-10-14
 
 Data collection
 Jyut Dictionary does not collect, store, transmit, or share any personal data. All information you enter or create in the app stays on your device.
-Third parties
 
+Third parties
 The app uses Google ML Kit to provide handwriting recognition functionality. Google ML Kit may collect device information, application information, performance metrics, and usage analytics as described in Google's Privacy Policy.
 
 Data retention and deletion
