@@ -116,7 +116,6 @@ void ResultListDelegate::paint(QPainter *painter,
 
     // Chinese characters
 #ifdef Q_OS_WIN
-    QFont oldFont = font;
     font = QFont{"Microsoft Yahei"};
 #endif
     font.setPixelSize(h4FontSize);
@@ -157,9 +156,6 @@ void ResultListDelegate::paint(QPainter *painter,
     delete doc;
 
     // Phonetic and definition snippets
-#ifdef Q_OS_WIN
-    font = oldFont;
-#endif
     QFontMetrics metrics{font};
     QString snippet;
     if (isEmptyEntry) {

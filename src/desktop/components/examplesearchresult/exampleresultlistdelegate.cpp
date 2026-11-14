@@ -157,7 +157,6 @@ void ExampleResultListDelegate::paint(QPainter *painter,
     // Chinese characters
     painter->save();
 #ifdef Q_OS_WIN
-    QFont oldFont = font;
     font = QFont("Microsoft Yahei");
 #endif
     font.setPixelSize(h4FontSize);
@@ -195,9 +194,6 @@ void ExampleResultListDelegate::paint(QPainter *painter,
     delete doc;
 
     // Phonetic and definition snippets
-#ifdef Q_OS_WIN
-    font = oldFont;
-#endif
     QString snippet;
     font.setPixelSize(bodyFontSize);
     painter->setFont(font);
@@ -229,17 +225,7 @@ void ExampleResultListDelegate::paint(QPainter *painter,
     if (option.state & QStyle::State_Selected) {
         painter->setPen(Utils::getContrastingColour(backgroundColour));
     }
-#ifdef Q_OS_WIN
-    oldFont = font;
-    QString snippetLanguage = QString::fromStdString(
-                                  example.getTranslationSnippetLanguage())
-                                  .trimmed();
-    if (snippetLanguage == "cmn" || snippetLanguage == "yue") {
-        font = QFont{"Microsoft Yahei"};
-    } else {
-        font = oldFont;
-    }
-#endif
+
     font.setPixelSize(bodyFontSize);
     painter->setFont(font);
     snippet = metrics
@@ -255,9 +241,6 @@ void ExampleResultListDelegate::paint(QPainter *painter,
     rct.setY(rct.bottom());
     painter->fillRect(rct, option.palette.alternateBase());
 
-#ifdef Q_OS_WIN
-    font = oldFont;
-#endif
     painter->restore();
 }
 

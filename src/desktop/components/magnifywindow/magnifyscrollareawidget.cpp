@@ -161,7 +161,7 @@ void MagnifyScrollAreaWidget::translateUI(void)
 void MagnifyScrollAreaWidget::setStyle([[maybe_unused]] bool use_dark)
 {
 #ifdef Q_OS_WIN
-    QFont font = QFont{"Microsoft YaHei"};
+    QFont font{"Microsoft YaHei"};
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
     _traditionalLabel->setFont(font);
     _simplifiedLabel->setFont(font);

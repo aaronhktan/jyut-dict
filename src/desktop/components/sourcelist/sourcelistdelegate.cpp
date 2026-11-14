@@ -54,6 +54,10 @@ void SourceListDelegate::paint(QPainter *painter,
     QRect r{option.rect};
     QRect boundingRect;
     QFont font{painter->font()};
+
+#ifdef Q_OS_WIN
+    font = QFont{"Microsoft Yahei"};
+#endif
     const int interfaceSize = static_cast<int>(
         _settings
             ->value("Interface/size",

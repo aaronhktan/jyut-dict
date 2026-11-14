@@ -185,11 +185,17 @@ void DictionaryTab::setStyle([[maybe_unused]] bool use_dark)
 
 #ifdef Q_OS_WIN
     QString colour = use_dark ? "#424242" : "#d5d5d5";
-    QString style = "QGroupBox { border: 1px solid %1; }";
+    QString style{"QGroupBox { border: 1px solid %1; }"};
     QList<QGroupBox *> frames = this->findChildren<QGroupBox *>();
     foreach (const auto &frame, frames) {
         frame->setStyleSheet(style.arg(colour));
     }
+
+    QFont font{"Microsoft YaHei"};
+    font.setStyleHint(QFont::System, QFont::PreferAntialias);
+    _description->setFont(font);
+    _legal->setFont(font);
+    _version->setFont(font);
 #endif
 }
 

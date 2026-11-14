@@ -283,7 +283,7 @@ void ExampleContentWidget::setStyle(bool use_dark)
                                       "}";
     for (const auto &label : _simplifiedLabels) {
 #ifdef Q_OS_WIN
-        QFont font = QFont{"Microsoft YaHei", bodyFontSizeHan};
+        QFont font{"Microsoft YaHei", bodyFontSizeHan};
         font.setStyleHint(QFont::System, QFont::PreferAntialias);
         label->setFont(font);
 #endif
@@ -291,7 +291,7 @@ void ExampleContentWidget::setStyle(bool use_dark)
     }
     for (const auto &label : _traditionalLabels) {
 #ifdef Q_OS_WIN
-        QFont font = QFont{"Microsoft YaHei", bodyFontSizeHan};
+        QFont font{"Microsoft YaHei", bodyFontSizeHan};
         font.setStyleHint(QFont::System, QFont::PreferAntialias);
         label->setFont(font);
 #endif
@@ -321,14 +321,14 @@ void ExampleContentWidget::setStyle(bool use_dark)
             || label->property("language").toString().trimmed() == "yue") {
             label->setStyleSheet(exampleStyleSheet.arg(bodyFontSizeHan));
 #ifdef Q_OS_WIN
-            QFont font = QFont{"Microsoft YaHei", bodyFontSizeHan};
+            QFont font{"Microsoft YaHei", bodyFontSizeHan};
             font.setStyleHint(QFont::System, QFont::PreferAntialias);
             label->setFont(font);
 #endif
         } else {
             label->setStyleSheet(exampleStyleSheet.arg(bodyFontSize));
 #ifdef Q_OS_WIN
-            QFont font = QFont{"Microsoft YaHei", bodyFontSize};
+            QFont font{"Microsoft YaHei", bodyFontSize};
             font.setStyleHint(QFont::System, QFont::PreferAntialias);
             label->setFont(font);
 #endif

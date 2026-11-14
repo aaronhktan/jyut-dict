@@ -184,7 +184,7 @@ void SearchLineEdit::translateUI(void)
 void SearchLineEdit::setStyle(bool use_dark)
 {
 #ifdef Q_OS_WIN
-    QFont font = QFont{"Microsoft YaHei"};
+    QFont font{"Microsoft YaHei"};
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
     setFont(font);
 #endif

@@ -290,7 +290,7 @@ void ExampleViewHeaderWidget::translateUI(void)
 void ExampleViewHeaderWidget::setStyle(bool use_dark)
 {
 #ifdef Q_OS_WIN
-    QFont font = QFont{"Microsoft YaHei"};
+    QFont font{"Microsoft YaHei"};
     font.setStyleHint(QFont::System, QFont::PreferAntialias);
     _simplifiedLabel->setFont(font);
     _traditionalLabel->setFont(font);
