@@ -4,9 +4,8 @@
 
 Look up words from multiple dictionaries in Cantonese or Mandarin, with Traditional Chinese, Simplified Chinese, Jyutping, Pinyin, and English input.
 
-### [Download now!](https://jyutdictionary.com/#download-program)
-
-Available for macOS, Windows, and Ubuntu.
+### [Download now for macOS, Windows, and Ubuntu!](https://jyutdictionary.com/#download-program)
+### [Download from Testflight for iPhone!](https://testflight.apple.com/join/nG7saQ9b)
 
 ## Features
 
