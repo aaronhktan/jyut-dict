@@ -29,7 +29,8 @@ Please describe the tests that you ran to verify your changes. Provide instructi
 # Checklist:
 
 - [ ] My code follows the style guidelines of this project (`black` for Python
-  code, `.clang-format` in the `src/jyut-dict` directory for C++)
+  code, `.clang-format` in the `src/desktop` directory for C++,
+  `.swift-format` in the `src/ios/CantoneseDictionary` directory for iOS)
 - [ ] I have performed a self-review of my own code
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have translated my user-facing strings to all currently-supported languages
