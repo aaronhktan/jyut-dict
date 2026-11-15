@@ -242,13 +242,10 @@ extension SearchingView {
   private func searchResultView() -> some View {
     ZStack(alignment: .bottom) {
       List(searchContext.searchResults, selection: $searchContext.selectedRowId) { entry in
-        Button {
-          searchContext.selectedRowId = entry.id
-        } label: {
-          EntryRow(entry: entry)
-        }
-        .buttonStyle(.plain)
-        .contentShape(Rectangle())
+        EntryRow(entry: entry)
+          .contentShape(Rectangle())
+          .accessibilityElement(children: .combine)
+          .accessibilityAddTraits(.isButton)
       }
       .listStyle(.insetGrouped)
       .scrollDismissesKeyboard(.immediately)

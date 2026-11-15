@@ -223,7 +223,7 @@ actor SQLSearch {
         return parseReturnedEntryRecords(rows: rows)[0]
       }
     } catch {
-      logger.error("Error happened when trying to read from db: \(error)")
+      logger.error("\(#function): Error happened when trying to read from db: \(error)")
     }
 
     return result
@@ -246,7 +246,7 @@ actor SQLSearch {
         return parseReturnedEntryRecords(rows: rows)
       }
     } catch {
-      logger.error("Error happened when trying to read from db: \(error)")
+      logger.error("\(#function): Error happened when trying to read from db: \(error)")
     }
 
     return results
@@ -269,7 +269,7 @@ actor SQLSearch {
         return parseReturnedEntryRecords(rows: rows)
       }
     } catch {
-      logger.error("Error happened when trying to read from db: \(error)")
+      logger.error("\(#function): Error happened when trying to read from db: \(error)")
     }
 
     return results
@@ -298,7 +298,7 @@ actor SQLSearch {
           return parseExistenceRecords(rows: rows)
         }
       } catch {
-        logger.error("Error happened when trying to read from db: \(error)")
+        logger.error("\(#function): Error happened when trying to read from db: \(error)")
       }
 
       logger.info("Found non-fuzzy Jyutping match: \(result)")
@@ -373,7 +373,7 @@ actor SQLSearch {
           return parseReturnedEntryRecords(rows: rows)
         }
       } catch {
-        logger.error("Error happened when trying to read from db: \(error)")
+        logger.error("\(#function): Error happened when trying to read from db: \(error)")
       }
 
       return results
@@ -408,7 +408,7 @@ actor SQLSearch {
         return parseReturnedEntryRecords(rows: rows)
       }
     } catch {
-      logger.error("Error happened when trying to read from db: \(error)")
+      logger.error("\(#function): Error happened when trying to read from db: \(error)")
     }
 
     return results
@@ -438,7 +438,7 @@ actor SQLSearch {
           return parseExistenceRecords(rows: rows)
         }
       } catch {
-        logger.error("Error happened when trying to read from db: \(error)")
+        logger.error("\(#function): Error happened when trying to read from db: \(error)")
       }
 
       return result
@@ -500,7 +500,7 @@ actor SQLSearch {
           return parseReturnedEntryRecords(rows: rows)
         }
       } catch {
-        logger.error("Error happened when trying to read from db: \(error)")
+        logger.error("\(#function): Error happened when trying to read from db: \(error)")
       }
       return results
     }
@@ -534,7 +534,7 @@ actor SQLSearch {
         return parseReturnedEntryRecords(rows: rows)
       }
     } catch {
-      logger.error("Error happened when trying to read from db: \(error)")
+      logger.error("\(#function): Error happened when trying to read from db: \(error)")
     }
 
     return results
@@ -554,7 +554,7 @@ actor SQLSearch {
         return parseReturnedEntryRecords(rows: rows)
       }
     } catch {
-      logger.error("Error happened when trying to read from db: \(error)")
+      logger.error("\(#function): Error happened when trying to read from db: \(error)")
     }
 
     return results
@@ -575,7 +575,7 @@ actor SQLSearch {
         return parseReturnedExampleRecords(rows: rows)
       }
     } catch {
-      logger.error("Error happened when trying to read from db: \(error)")
+      logger.error("\(#function): Error happened when trying to read from db: \(error)")
     }
 
     return results

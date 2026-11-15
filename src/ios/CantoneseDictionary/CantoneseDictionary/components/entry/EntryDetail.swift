@@ -122,14 +122,10 @@ struct EntryDetail: View {
             jyutpingToneColours: settings.jyutpingToneColours,
             pinyinToneColours: settings.pinyinToneColours
           ).characters[...])
-      }
-    }
-    .task(id: rowId) {
-      try? await Task.sleep(for: .milliseconds(200))
-      guard !Task.isCancelled else { return }
 
-      if let entry {
-        guard let pool = databaseManager.dbPool else { return }
+        try? await Task.sleep(for: .milliseconds(200))
+        guard !Task.isCancelled else { return }
+
         let userHistory = SQLUserHistory(pool: pool)
         await userHistory.addViewToHistory(entry: entry)
       }
