@@ -1,7 +1,7 @@
 beautifulsoup4==4.10.0
 hkscs_unicode_converter==1.1.0
 jieba==0.42.1
-msgpack==1.2.2
+msgpack==1.2.3
 opencc==1.4.2
 pypinyin==0.43.0
 pypinyin-dict==0.1.0
