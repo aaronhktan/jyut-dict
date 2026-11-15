@@ -1,0 +1,9 @@
+//
+//  Config.xcconfig
+//  CantoneseDictionary
+//
+//  Created by Aaron on 2026-11-15.
+//
+
+VERSION = 1.26.1114
+BUILD_NUMBER = 2611151

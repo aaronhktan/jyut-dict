@@ -1,0 +1,413 @@
+#include "searchlineedit.h"
+
+#include "logic/database/sqluserhistoryutils.h"
+#include "logic/search/isearch.h"
+#include "logic/search/isearchoptionsmediator.h"
+#include "logic/settings/settings.h"
+#include "logic/settings/settingsutils.h"
+#include "logic/utils/utils_qt.h"
+#ifdef Q_OS_MAC
+#include "logic/utils/utils_mac.h"
+#elif defined (Q_OS_LINUX)
+#include "logic/utils/utils_linux.h"
+#elif defined(Q_OS_WIN)
+#include "logic/utils/utils_windows.h"
+#endif
+#include "windows/handwritingwindow.h"
+#ifndef Q_OS_LINUX
+#include "windows/transcriptionwindow.h"
+#endif
+
+#include <QAction>
+#include <QApplication>
+#include <QEvent>
+#include <QFocusEvent>
+#include <QIcon>
+#include <QKeyEvent>
+#include <QTimer>
+#include <QWidget>
+
+#include <vector>
+
+SearchLineEdit::SearchLineEdit(
+    std::shared_ptr<ISearchOptionsMediator> mediator,
+    std::shared_ptr<ISearch> sqlSearch,
+    std::shared_ptr<SQLUserHistoryUtils> sqlHistoryUtils,
+    QWidget *parent)
+    : QLineEdit{parent}
+    , _mediator{mediator}
+    , _search{sqlSearch}
+    , _sqlHistoryUtils{sqlHistoryUtils}
+    , _settings{Settings::getSettings(this)}
+    , _searchHistoryDelayTimer(new QTimer{this})
+#ifdef Q_OS_WIN
+    , _searchDelayTimer(new QTimer{this})
+#endif
+{
+    setupUI();
+    translateUI();
+    setStyle(Utils::isDarkMode());
+
+    setMinimumWidth(parent->width() / 4);
+}
+
+void SearchLineEdit::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::PaletteChange && !_paletteRecentlyChanged) {
+        // QWidget emits a palette changed event when setting the stylesheet
+        // So prevent it from going into an infinite loop with this timer
+        _paletteRecentlyChanged = true;
+        QTimer::singleShot(10, this, [this] { _paletteRecentlyChanged = false; });
+
+        // Set the style to match whether the user started dark mode
+        setStyle(Utils::isDarkMode());
+    }
+    if (event->type() == QEvent::LanguageChange) {
+        translateUI();
+    }
+    QLineEdit::changeEvent(event);
+}
+
+// When in focus and text present, the clear button should be visible
+void SearchLineEdit::focusInEvent(QFocusEvent *event)
+{
+    checkClearVisibility();
+    QLineEdit::focusInEvent(event);
+}
+
+// When out of focus, the clear button should never be visible
+void SearchLineEdit::focusOutEvent(QFocusEvent *event)
+{
+    removeAction(_clearLineEdit);
+    QLineEdit::focusOutEvent(event);
+}
+
+// Since the textChanged event happens before letters are painted,
+// it feels slow.
+// Thus, only use the signals and slots mechanism on Windows, and only
+// when inputting Chinese.
+void SearchLineEdit::updateParameters(SearchParameters parameters)
+{
+    _parameters = parameters;
+}
+
+void SearchLineEdit::search(std::optional<SearchParameters> paramOverride)
+{
+    SearchParameters params = paramOverride.value_or(_parameters);
+    switch (params) {
+    case SearchParameters::SIMPLIFIED: {
+        _search->searchSimplified(text().trimmed());
+        break;
+    }
+    case SearchParameters::TRADITIONAL: {
+        _search->searchTraditional(text().trimmed());
+        break;
+    }
+    case SearchParameters::PINYIN: {
+        _search->searchPinyin(text().trimmed());
+        break;
+    }
+    case SearchParameters::JYUTPING: {
+        _search->searchJyutping(text().trimmed());
+        break;
+    }
+    case SearchParameters::ENGLISH: {
+        _search->searchEnglish(text().trimmed());
+        break;
+    }
+    case SearchParameters::AUTO_DETECT:
+        [[fallthrough]];
+    default: {
+        break;
+    }
+    }
+
+    addSearchTermToHistory(_parameters);
+}
+
+void SearchLineEdit::setupUI(void)
+{
+    _searchLineEdit = new QAction{"", this};
+    addAction(_searchLineEdit, QLineEdit::LeadingPosition);
+
+    _clearLineEdit = new QAction{"", this};
+    connect(_clearLineEdit, &QAction::triggered, this, &QLineEdit::clear);
+
+    _handwriting = new QAction{"", this};
+    addAction(_handwriting, QLineEdit::TrailingPosition);
+    connect(_handwriting,
+            &QAction::triggered,
+            this,
+            &SearchLineEdit::startHandwriting);
+
+#ifndef Q_OS_LINUX
+    _microphone = new QAction{"", this};
+    addAction(_microphone, QLineEdit::TrailingPosition);
+    connect(_microphone,
+            &QAction::triggered,
+            this,
+            &SearchLineEdit::startTranscription);
+#endif
+
+    // Customize the look of the searchbar to fit in better with platform styles
+#ifdef Q_OS_WIN
+    setMinimumHeight(30);
+#endif
+
+#ifdef Q_OS_WIN
+    // Windows penalizes having multiple searches running concurrently a _lot_.
+    // As a result, setting searches on a delay helps with making the app feel
+    // much faster.
+    connect(this, &QLineEdit::textChanged, this, [this] {
+        _searchDelayTimer->stop();
+        disconnect(_searchDelayTimer, nullptr, this, nullptr);
+        _searchDelayTimer->setSingleShot(true);
+        connect(_searchDelayTimer,
+                &QTimer::timeout,
+                this,
+                &SearchLineEdit::searchTriggered);
+        _searchDelayTimer->start(200);
+    });
+#else
+    connect(this,
+            &QLineEdit::textChanged,
+            this,
+            &SearchLineEdit::searchTriggered);
+#endif
+}
+
+void SearchLineEdit::translateUI(void)
+{
+    setPlaceholderText(tr("Search"));
+}
+
+void SearchLineEdit::setStyle(bool use_dark)
+{
+#ifdef Q_OS_WIN
+    QFont font{"Microsoft YaHei"};
+    font.setStyleHint(QFont::System, QFont::PreferAntialias);
+    setFont(font);
+#endif
+
+#ifndef Q_OS_MAC
+    QColor borderColour = use_dark
+                              ? QColor{Utils::HEADER_BACKGROUND_COLOUR_DARK_R,
+                                       Utils::HEADER_BACKGROUND_COLOUR_DARK_G,
+                                       Utils::HEADER_BACKGROUND_COLOUR_DARK_B}
+                              : QColor{Utils::HEADER_BACKGROUND_COLOUR_LIGHT_R,
+                                       Utils::HEADER_BACKGROUND_COLOUR_LIGHT_G,
+                                       Utils::HEADER_BACKGROUND_COLOUR_LIGHT_B};
+#endif
+
+    QIcon search = QIcon{":/images/search.png"};
+    QIcon clear = QIcon{":/images/x_action.png"};
+    QIcon handwriting = QIcon{":/images/handwriting_action.png"};
+    QIcon mic = QIcon{":/images/mic_action.png"};
+    QIcon searchInverted = QIcon{":/images/search_inverted.png"};
+    QIcon clearInverted = QIcon{":/images/x_action_inverted.png"};
+    QIcon micInverted = QIcon{":/images/mic_action_inverted.png"};
+    QIcon handwritingInverted = QIcon{
+        ":/images/handwriting_action_inverted.png"};
+
+    int interfaceSize = static_cast<int>(
+        _settings
+            ->value("Interface/size",
+                    QVariant::fromValue(Settings::InterfaceSize::NORMAL))
+            .value<Settings::InterfaceSize>());
+
+    int h6FontSize = Settings::h6FontSize.at(
+        static_cast<unsigned long>(interfaceSize - 1));
+
+    if (use_dark) {
+        setStyleSheet(QString{"QLineEdit { "
+                              "   background-color: #586365; "
+#ifdef Q_OS_WIN
+                              "   border: 1px solid black; "
+#endif
+                              "   border-radius: 3px; "
+                              "   font-size: %1px; "
+                              "   icon-size: %1px; "
+                              "   padding-top: 4px; "
+                              "   padding-bottom: 4px; "
+#ifdef Q_OS_WIN
+                              "   placeholder-text-color: #999999; "
+#endif
+                              "} "
+                              ""
+                              "QLineEdit:focus { "
+                              "   border-radius: 2px; "
+                              "} "}
+                          .arg(std::to_string(h6FontSize).c_str()));
+        _searchLineEdit->setIcon(searchInverted);
+        _clearLineEdit->setIcon(clearInverted);
+        _handwriting->setIcon(handwritingInverted);
+#ifndef Q_OS_LINUX
+        _microphone->setIcon(micInverted);
+#endif
+    } else {
+        setStyleSheet(
+            QString{"QLineEdit { "
+                    "   background-color: #ffffff; "
+#ifndef Q_OS_MAC
+                    "   border: 1px solid %2; "
+#endif
+                    "   border-radius: 3px; "
+                    "   font-size: %1px; "
+                    "   icon-size: %1px; "
+                    "   padding-top: 4px; "
+                    "   padding-bottom: 4px; "
+                    "} "
+                    ""
+                    "QLineEdit:focus { "
+#ifndef Q_OS_MAC
+                    "   border: 1px solid %2; "
+#endif
+                    "   border-radius: 2px; "
+                    "} "}
+#ifndef Q_OS_MAC
+                .arg(std::to_string(h6FontSize).c_str(), borderColour.name()));
+#else
+                .arg(std::to_string(h6FontSize).c_str()));
+#endif
+        _searchLineEdit->setIcon(search);
+        _clearLineEdit->setIcon(clear);
+        _handwriting->setIcon(handwriting);
+#ifndef Q_OS_LINUX
+        _microphone->setIcon(mic);
+#endif
+    }
+}
+
+void SearchLineEdit::checkClearVisibility(void)
+{
+    if (text().isEmpty()
+        || !hasFocus()) { // Don't add the clear line edit action if the widget doesn't have focus!
+        // Clicking on the clear line edit action causes a crash.
+        removeAction(_clearLineEdit);
+    } else {
+        addAction(_clearLineEdit, QLineEdit::TrailingPosition);
+    }
+}
+
+void SearchLineEdit::startHandwriting(void)
+{
+    checkClearVisibility();
+
+    _handwritingWindow = new HandwritingWindow{this};
+    _handwritingWindow->setFocus();
+    _handwritingWindow->show();
+
+    connect(_handwritingWindow,
+            &HandwritingWindow::characterChosen,
+            this,
+            [&](const QString &character) {
+                if (character == "\x8") {
+                    if (!text().isEmpty()) {
+                        setText(text().chopped(1));
+                    }
+                } else {
+                    setText(text() + character);
+                }
+            });
+    connect(_handwritingWindow,
+            &HandwritingWindow::scriptSelected,
+            this,
+            [&](Handwriting::Script script) {
+                SearchParameters params;
+                switch (script) {
+                case Handwriting::Script::SIMPLIFIED: {
+                    params = SearchParameters::SIMPLIFIED;
+                    break;
+                }
+                case Handwriting::Script::TRADITIONAL: {
+                    params = SearchParameters::TRADITIONAL;
+                    break;
+                }
+                }
+                _mediator->setParameters(params);
+            });
+}
+
+#ifndef Q_OS_LINUX
+void SearchLineEdit::startTranscription(void)
+{
+    clear();
+    checkClearVisibility();
+
+    _transcriptionWindow = new TranscriptionWindow{this};
+    _transcriptionWindow->setAttribute(Qt::WA_DeleteOnClose);
+    _transcriptionWindow->setFocus();
+    _transcriptionWindow->show();
+
+    connect(_transcriptionWindow,
+            &TranscriptionWindow::transcription,
+            this,
+            [&](QString result) { setText(result); });
+    connect(_transcriptionWindow,
+            &TranscriptionWindow::languageSelected,
+            this,
+            [&](TranscriptionLanguage lang) {
+                SearchParameters params;
+                switch (lang) {
+                case TranscriptionLanguage::CANTONESE: {
+                    params = SearchParameters::TRADITIONAL;
+                    break;
+                }
+                case TranscriptionLanguage::MANDARIN: {
+                    if (Settings::getCurrentLocale().territory()
+                        == QLocale::Taiwan) {
+                        params = SearchParameters::TRADITIONAL;
+                    } else {
+                        params = SearchParameters::SIMPLIFIED;
+                    }
+                    break;
+                }
+                case TranscriptionLanguage::ENGLISH: {
+                    params = SearchParameters::ENGLISH;
+                    break;
+                }
+                }
+                _mediator->setParameters(params);
+            });
+}
+#endif
+
+void SearchLineEdit::addSearchTermToHistory(SearchParameters parameters) const
+{
+    _searchHistoryDelayTimer->stop();
+    disconnect(_searchHistoryDelayTimer, nullptr, this, nullptr);
+    _searchHistoryDelayTimer->setSingleShot(true);
+    connect(_searchHistoryDelayTimer, &QTimer::timeout, this, [this, parameters] {
+        if (!text().isEmpty()) {
+            _sqlHistoryUtils->addSearchToHistory(text().toStdString(),
+                                                 static_cast<int>(parameters));
+        }
+    });
+    _searchHistoryDelayTimer->start(500);
+}
+
+void SearchLineEdit::searchTriggered(void)
+{
+    checkClearVisibility();
+    if (_settings->value("Search/autoDetectLanguage", QVariant{true}).toBool()) {
+        // Since auto-detect is a setting independent of the SearchParameter specified
+        // by the search options group box, it must be handled separately from the
+        // other options.
+        _search->searchAutoDetect(text().trimmed());
+        addSearchTermToHistory(SearchParameters::AUTO_DETECT);
+    } else {
+        search();
+    }
+}
+
+#ifndef Q_OS_LINUX
+void SearchLineEdit::dictationRequested(void)
+{
+    startTranscription();
+}
+#endif
+
+void SearchLineEdit::handwritingRequested(void)
+{
+    startHandwriting();
+}

@@ -1,0 +1,306 @@
+//
+//  TranscriptionView.swift
+//  CantoneseDictionary
+//
+//  Created by Aaron on 2026-09-04.
+//
+
+import Speech
+import SwiftUI
+import os
+
+struct TranscriptionView: View {
+  @Environment(\.dismiss) var dismiss
+
+  @Bindable var searchContext: SearchContext
+
+  @Binding var isSearchActive: Bool
+
+  @State private var transcriber: Transcriber
+  @State private var recorder: Recorder
+  @State private var languageSelection: DictationLanguage = .cantonese
+  @State private var showTranscriptionFailure = false
+  @State private var copyButtonText = "Copy"
+  @State private var searchButtonText = "Search"
+
+  private enum DictationLanguage {
+    case cantonese
+    case mandarin
+    case english
+    case french
+
+    var descriptionString: String {
+      switch self {
+      case .cantonese:
+        return "Cantonese"
+      case .mandarin:
+        return "Mandarin"
+      case .english:
+        return "English"
+      case .french:
+        return "French"
+      }
+    }
+
+    var locale: [Locale] {
+      switch self {
+      case .cantonese:
+        return [
+          Locale(components: .init(languageCode: .chinese, script: nil, languageRegion: .hongKong)),
+          Locale(components: .init(languageCode: .cantonese, script: nil, languageRegion: nil)),
+          Locale(
+            components: .init(languageCode: .cantonese, script: nil, languageRegion: .hongKong)),
+          Locale(
+            components: .init(languageCode: .cantonese, script: nil, languageRegion: .chinaMainland),
+          ),
+        ]
+      case .mandarin:
+        return [
+          Locale(components: .init(languageCode: .chinese, script: nil, languageRegion: nil)),
+          Locale(components: .init(languageCode: .chinese, script: nil, languageRegion: .taiwan)),
+          Locale(
+            components: .init(languageCode: .chinese, script: nil, languageRegion: .chinaMainland)),
+        ]
+      case .english:
+        return [
+          Locale(components: .init(languageCode: .english, script: nil, languageRegion: .canada)),
+          Locale(
+            components: .init(languageCode: .english, script: nil, languageRegion: .unitedKingdom)),
+          Locale(
+            components: .init(languageCode: .english, script: nil, languageRegion: .unitedStates)),
+          Locale(
+            components: .init(languageCode: .english, script: nil, languageRegion: .australia)),
+          Locale(
+            components: .init(languageCode: .english, script: nil, languageRegion: .newZealand)),
+          Locale(components: .init(languageCode: .english, script: nil, languageRegion: .india)),
+          Locale(components: .init(languageCode: .english, script: nil, languageRegion: .nigeria)),
+        ]
+      case .french:
+        return [
+          Locale(components: .init(languageCode: .french, script: nil, languageRegion: .canada)),
+          Locale(components: .init(languageCode: .french, script: nil, languageRegion: .france)),
+          Locale(components: .init(languageCode: .french, script: nil, languageRegion: .belgium)),
+          Locale(
+            components: .init(languageCode: .french, script: nil, languageRegion: .switzerland)),
+          Locale(components: .init(languageCode: .french, script: nil, languageRegion: .algeria)),
+        ]
+      }
+    }
+  }
+
+  init(searchContext: SearchContext, isSearchActive: Binding<Bool>) {
+    self.searchContext = searchContext
+    self._isSearchActive = isSearchActive
+    let transcriber = Transcriber()
+    recorder = Recorder(transcriber: transcriber)
+    self.transcriber = transcriber
+  }
+
+  var body: some View {
+    NavigationStack {
+      VStack {
+        Spacer()
+        if transcriber.downloadState != .idle,
+          transcriber.downloadState != .finished
+        {
+          ContentUnavailableView {
+            ProgressView()
+              .controlSize(.extraLarge)
+              .padding()
+            Text("Downloading and installing speech model...")
+          }
+        } else {
+          microphoneView()
+        }
+        Spacer()
+        copyView()
+        searchView()
+      }
+      .toolbar {
+        toolbarContent
+      }
+    }
+    .onChange(of: languageSelection) {
+      Task {
+        do {
+          transcriber.transcript = ""
+          copyButtonText = "Copy"
+          searchButtonText = "Search"
+          try await recorder.stop()
+          try await recorder.start(locales: languageSelection.locale)
+        } catch {
+          logger.error("\(error)")
+          showTranscriptionFailure = true
+        }
+      }
+    }
+    .onChange(of: transcriber.transcript) {
+      if transcriber.transcript.isEmpty {
+        copyButtonText = "Copy"
+        searchButtonText = "Search"
+      } else {
+        copyButtonText = "Copy text: \(transcriber.transcript)"
+        searchButtonText = "Search for: \(transcriber.transcript)"
+      }
+    }
+    .task {
+      guard await AVCaptureDevice.requestAccess(for: .audio) else {
+        logger.error(
+          "Could not get access to microphone, status: \(AVCaptureDevice.authorizationStatus(for: .audio).rawValue)"
+        )
+        showTranscriptionFailure = true
+        return
+      }
+      do {
+        try await recorder.start(locales: languageSelection.locale)
+      } catch {
+        logger.error("\(error)")
+        showTranscriptionFailure = true
+      }
+    }
+    .onDisappear {
+      Task {
+        try? await recorder.stop()
+      }
+    }
+    .alert(
+      "Jyut Dictionary was unable to access your microphone.",
+      isPresented: $showTranscriptionFailure
+    ) {
+      Button("OK", role: .cancel) {
+        dismiss()
+      }
+    }
+  }
+}
+
+extension TranscriptionView {
+  // MARK: - Microphone animation
+  @ViewBuilder
+  private func microphoneView() -> some View {
+    ZStack {
+      Circle()
+        .fill(.background)
+        .frame(width: min(CGFloat(transcriber.audioLevel * 150 + 75), 150))
+        .animation(.easeInOut(duration: 0.10), value: transcriber.audioLevel)
+      Image(systemName: "microphone.fill")
+        .resizable()
+        .scaledToFit()
+        .frame(width: 30)
+        .foregroundStyle(transcriber.isTranscribing ? .accent : .secondary)
+        .padding()
+    }
+    .offset(y: -15)
+    .frame(height: 150)
+    .onTapGesture {
+      if !transcriber.isTranscribing {
+        Task {
+          do {
+            try await recorder.start(locales: languageSelection.locale)
+          } catch {
+            logger.error("\(error)")
+            showTranscriptionFailure = true
+          }
+        }
+      }
+    }
+  }
+
+  // MARK: - Copy button
+  private var useGlass: Bool {
+    if #available(iOS 27, *) { return true }
+    return false
+  }
+
+  @ViewBuilder
+  private func copyView() -> some View {
+    Button {
+      if !transcriber.transcript.isEmpty {
+        let pasteboard = UIPasteboard.general
+        pasteboard.string = transcriber.transcript
+      }
+      copyButtonText = "Copied!"
+    } label: {
+      Text(copyButtonText)
+        .lineLimit(1)
+        .truncationMode(.middle)
+        .frame(maxWidth: .infinity)
+        .contentTransition(.opacity)
+        .animation(.easeInOut(duration: 0.3), value: copyButtonText)
+    }
+    .useGlassProminentButtonStyle(enabled: useGlass)
+    .tint(.accent)
+    .buttonBorderShape(.capsule)
+    .controlSize(.extraLarge)
+    .padding(.horizontal)
+    .disabled(transcriber.transcript.isEmpty)
+  }
+
+  // MARK: - Search button
+  @ViewBuilder
+  private func searchView() -> some View {
+    Button {
+      if !transcriber.transcript.isEmpty {
+        searchContext.searchText = transcriber.transcript
+        if languageSelection == .english || languageSelection == .french {
+          searchContext.selectedOption = .english
+        } else {
+          searchContext.selectedOption = .autoDetect
+        }
+        isSearchActive = true
+      }
+      dismiss()
+    } label: {
+      Text(searchButtonText)
+        .lineLimit(1)
+        .truncationMode(.middle)
+        .frame(maxWidth: .infinity)
+        .contentTransition(.opacity)
+        .animation(.easeInOut(duration: 0.3), value: searchButtonText)
+    }
+    .buttonStyle(.glassProminent)
+    .tint(.accent)
+    .buttonBorderShape(.capsule)
+    .controlSize(.extraLarge)
+    .padding(.horizontal)
+    .disabled(transcriber.transcript.isEmpty)
+  }
+
+  // MARK: - Toolbar
+  @ToolbarContentBuilder
+  private var toolbarContent: some ToolbarContent {
+    #if os(iOS)
+      ToolbarItem(placement: .principal) {
+        Menu {
+          Picker("Language", selection: $languageSelection) {
+            Text("Cantonese").tag(DictationLanguage.cantonese)
+            Text("Mandarin").tag(DictationLanguage.mandarin)
+            Text("English").tag(DictationLanguage.english)
+          }
+        } label: {
+          HStack(spacing: 4) {
+            Text(languageSelection.descriptionString)
+              .font(.title3)
+            Image(systemName: "chevron.up.chevron.down")
+              .imageScale(.small)
+              .foregroundStyle(.accent)
+          }
+        }
+        .tint(.primary)
+      }
+      ToolbarItem(placement: .topBarLeading) {
+        Button("Close transcription", systemImage: "xmark") {
+          dismiss()
+        }
+        .labelsHidden()
+      }
+    #else
+      ToolbarItem(placement: .navigation) {
+        Button("Close transcription", systemImage: "xmark") {
+          dismiss()
+        }
+        .labelsHidden()
+      }
+    #endif
+  }
+}

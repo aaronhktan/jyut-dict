@@ -4,9 +4,8 @@
 
 Look up words from multiple dictionaries in Cantonese or Mandarin, with Traditional Chinese, Simplified Chinese, Jyutping, Pinyin, and English input.
 
-### [Download now!](https://jyutdictionary.com/#download-program)
-
-Available for macOS, Windows, and Ubuntu.
+### [Download now for macOS, Windows, and Ubuntu!](https://jyutdictionary.com/#download-program)
+### [Download from Testflight for iPhone!](https://testflight.apple.com/join/nG7saQ9b)
 
 ## Features
 
@@ -37,7 +36,7 @@ Prefer to see only Traditional Chinese? Maybe hide Pinyin? Change the colours of
 
 ## Project structure
 
-The project contains two subdirectories under `src`: `dictionaries`, and `jyut-dict`.
+The project contains three subdirectories under `src`: `dictionaries`, `desktop`, and `ios`.
 
 ### dictionaries
 
@@ -63,9 +62,9 @@ This folder contains several Python3 scripts that convert the various online Can
 - **[Wiktionary - English](https://en.wiktionary.org/wiki/Wiktionary:Main_Page)**
 - **[words.hk 粵典](https://words.hk/)**
 
-### jyut-dict
+### desktop
 
-This folder contains the source code for the program + tests, as well as a CMakeLists.txt file. Files are divided into several subdirectories:
+This folder contains the source code for the desktop program + tests, as well as a CMakeLists.txt file. Files are divided into several subdirectories:
 - `components`: UI components, such as the list view or search bar.
 - `dialogs`: dialogs, such as the "update available" notification dialog.
 - `logic`: definitions for search and entry classes, as well as other backend logic.
@@ -73,15 +72,24 @@ This folder contains the source code for the program + tests, as well as a CMake
 - `resources`: databases, icons, and images.
 - `windows`: UI windows of the program, such as the main window.
 
+### ios
+
+This folder contains the source code for the iPhone app + tests. Files are divided into several subdirectories under `CantoneseDictionary`:
+- `components`: UI components, such as the list view or search bar.
+- `logic`: definitions for search and entry classes, as well as other backend logic.
+- `resources`: databases, icons, and images.
+
 ## Build and run
+
+### desktop
 
 This project requires Qt 6.8 or above.
 
 **Before building the application, you must provide a dictionary database. Download one from [the website](https://jyutdictionary.com/#download-addon), or build the dictionary database using `parse-set.py` (for CEDICT + CC-CANTO) or `parse-individual.py` (for CFDICT/HanDeDict).**
 
-Place the database, named `dict.db`, in `src/jyut-dict/resources/db/`
+Place the database, named `dict.db`, in `src/desktop/resources/db/`
 
-### macOS, Windows, Linux: Craft + Qt Creator
+#### macOS, Windows, Linux: Craft + Qt Creator
 1. Install [Craft](https://community.kde.org/Craft).
 2. Install various dependencies using Craft:
 ```
@@ -93,9 +101,19 @@ craft karchive
 5. Also in `CMAKE_CXX_FLAGS`, define `-DHAVE_CONFIG_H` to allow miniaudio to compile.
 6. Compile and run!
 
-## Packaging for release
+#### Packaging for release
 
-See the READMEs for each platform under `src/jyut-dict/platform/<platform>` for instructions on packaging the built executable.
+See the READMEs for each platform under `src/desktop/platform/<platform>` for instructions on packaging the built executable.
+
+### ios
+
+This project targets iOS 26 or above. For iPhone Duo support, Xcode 27.2 or above is required.
+
+**Before building the application, you must provide a dictionary database. Download one from [the website](https://jyutdictionary.com/#download-addon), or build the dictionary database using `parse-set.py` (for CEDICT + CC-CANTO) or `parse-individual.py` (for CFDICT/HanDeDict).**
+
+Compress the database using the following command: `aa archive -i dict.db -o dict.db.aar -a lzfse -b 1m` and then place the database, named `dict.db.aar`, in `src/ios/CantoneseDictionary/CantoneseDictionary/resources/db/`.
+
+Then, open `CantoneseDictionary.xcodeproj` and build in Xcode.
 
 ## On the roadmap
 See the Github issues and projects for more information!

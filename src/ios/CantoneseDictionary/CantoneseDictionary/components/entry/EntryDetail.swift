@@ -1,0 +1,515 @@
+//
+//  EntryDetail.swift
+//  CantoneseDictionary
+//
+//  Created by Aaron on 2026-09-22.
+//
+
+import AVFoundation
+import Intents
+import SwiftUI
+import os
+
+struct EntryDetail: View {
+  @Environment(DatabaseManager.self) private var databaseManager
+  @Environment(Settings.self) private var settings
+  @Environment(\.openURL) private var openURL
+
+  let rowId: Int
+
+  @State private var entry: Entry? = nil
+  @State private var title = ""
+  @State private var copied = false
+  @State private var hideSavedIcon = true
+  @State private var saved = false
+
+  @State private var speakErrorState = SpeakErrorState(showAlert: false, error: "")
+  @State private var showVoiceError = false
+  @State private var player = BufferedSpeechPlayer()
+
+  @State private var allExamples: [Example] = []
+  @State private var examplesSnippet: [String: [Example]] = [:]
+  @State private var showExampleList = false
+
+  private var definitionsSets: [DefinitionsSet] {
+    entry?.getDefinitionsSets() ?? []
+  }
+
+  var body: some View {
+    Group {
+      if entry != nil {
+        ScrollView {
+          VStack(spacing: 10) {
+            header()
+
+            ForEach(definitionsSets, id: \.id) { set in
+              DefinitionCard(set: set)
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+            }
+
+            ForEach(
+              examplesSnippet.sorted { $0.key > $1.key },
+              id: \.key
+            ) { source, examples in
+              ExampleCard(source: source, examples: examples)
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+                .transition(
+                  .move(edge: .bottom)
+                    .combined(with: .opacity)
+                )
+            }
+
+            if !allExamples.isEmpty {
+              Button {
+                showExampleList = true
+              } label: {
+                Text("View all examples")
+                  .frame(maxWidth: .infinity)
+              }
+              .buttonStyle(.glass)
+              .tint(.accent)
+              .buttonBorderShape(.capsule)
+              .controlSize(.extraLarge)
+              .padding(.horizontal)
+              .transition(
+                .move(edge: .bottom)
+                  .combined(with: .opacity)
+              )
+            }
+          }
+          .navigationDestination(isPresented: $showExampleList) {
+            ExampleList(examples: allExamples)
+          }
+          .scrollContentBackground(.hidden)
+        }
+      } else {
+        Spacer()
+      }
+    }
+    .navigationTitle(title)
+    .navigationBarTitleDisplayMode(.inline)
+    .toolbar {
+      // This is used to hide the navigation title
+      ToolbarItem(placement: .principal) {
+        Color.clear
+          .frame(width: 0, height: 0)
+      }
+      toolbarContent
+    }
+    .speakErrorAlert(error: $speakErrorState)
+    .voiceErrorAlert(isPresented: $showVoiceError)
+    .task(id: rowId) {
+      guard rowId != -1 else { return }
+      await fetchEntry(rowId: rowId)
+
+      if let entry {
+        guard let pool = databaseManager.dbPool else { return }
+
+        let userData = SQLUserData(pool: pool)
+        saved = await userData.fetchSavedByUnique(
+          traditional: entry.traditional, simplified: entry.simplified, jyutping: entry.jyutping,
+          pinyin: entry.pinyin)
+        hideSavedIcon = false
+
+        title = String(
+          entry.getCharacters(
+            options: settings.entryCharactersOptions, useColours: false,
+            colourPhoneticType: settings.entryColourPhoneticType,
+            jyutpingToneColours: settings.jyutpingToneColours,
+            pinyinToneColours: settings.pinyinToneColours
+          ).characters[...])
+
+        try? await Task.sleep(for: .milliseconds(200))
+        guard !Task.isCancelled else { return }
+
+        let userHistory = SQLUserHistory(pool: pool)
+        await userHistory.addViewToHistory(entry: entry)
+      }
+    }
+  }
+
+  private func fetchEntry(rowId: Int) async {
+    guard let pool = databaseManager.dbPool else {
+      return
+    }
+    let searcher = SQLSearch(pool: pool)
+
+    allExamples = []
+    examplesSnippet = [:]
+    entry = await searcher.searchByRowId(rowid: String(rowId))
+
+    if entry != nil {
+      let examples = await searcher.searchExamplesByTraditional(searchTerm: entry!.traditional)
+
+      var examplesBySource: [String: [Example]] = [:]
+      for example in examples {
+        if let source = example.getTranslationSets().first?.source {
+          if examplesBySource[source, default: []].count >= 2 {
+            // Limit to showing two examples per source for now
+            continue
+          } else {
+            examplesBySource[source, default: []].append(example)
+          }
+        }
+      }
+      withAnimation(.spring(duration: 0.2)) {
+        examplesSnippet = examplesBySource
+        allExamples = examples
+      }
+    }
+  }
+}
+
+extension EntryDetail {
+  @ViewBuilder
+  private func header() -> some View {
+    VStack(alignment: .leading, spacing: 4) {
+      Text(
+        entry?.getCharacters(
+          options: settings.entryCharactersOptions, useColours: true,
+          colourPhoneticType: settings.entryColourPhoneticType,
+          jyutpingToneColours: settings.jyutpingToneColours,
+          pinyinToneColours: settings.pinyinToneColours
+        )
+          ?? "Error fetching entry header"
+      )
+      .font(.largeTitle)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .textSelection(.enabled)
+      Grid {
+        switch settings.previewPhoneticOptions {
+        case .onlyCantonese, .preferCantonese:
+          cantonesePronunciationView()
+          mandarinPronunicationView()
+        case .onlyMandarin, .preferMandarin:
+          mandarinPronunicationView()
+          cantonesePronunciationView()
+        }
+      }
+    }
+    .padding(.horizontal)
+  }
+
+  @ViewBuilder
+  private func cantonesePronunciationView() -> some View {
+    if settings.entryCantonesePhoneticOptions.contains(.rawJyutping) {
+      GridRow(alignment: .firstTextBaseline) {
+        CantonesePronunciationButton(
+          speakErrorState: $speakErrorState,
+          player: $player,
+          showVoiceError: $showVoiceError
+        ) {
+          getCantoneseWords()
+        }
+
+        HStack(alignment: .firstTextBaseline) {
+          Text("Jyutping")
+            .foregroundStyle(.placeholder)
+          Text(
+            entry?.getPhonetic(options: .onlyCantonese, cantoneseOptions: .rawJyutping)
+              ?? "Error fetching Jyutping"
+          )
+          .padding(.trailing)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .fixedSize(horizontal: false, vertical: true)
+          .textSelection(.enabled)
+        }
+      }
+    }
+    if settings.entryCantonesePhoneticOptions.contains(.prettyYale) {
+      GridRow(alignment: .firstTextBaseline) {
+        if !settings.entryCantonesePhoneticOptions.contains(.rawJyutping) {
+          CantonesePronunciationButton(
+            speakErrorState: $speakErrorState,
+            player: $player,
+            showVoiceError: $showVoiceError
+          ) {
+            getCantoneseWords()
+          }
+        } else {
+          Spacer()
+        }
+
+        HStack(alignment: .firstTextBaseline) {
+          Text("Yale")
+            .foregroundStyle(.placeholder)
+          Text(
+            entry?.getPhonetic(options: .onlyCantonese, cantoneseOptions: .prettyYale)
+              ?? "Error fetching Yale"
+          )
+          .padding(.trailing)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .fixedSize(horizontal: false, vertical: true)
+          .textSelection(.enabled)
+
+        }
+      }
+    }
+    if settings.entryCantonesePhoneticOptions.contains(.cantoneseIPA) {
+      GridRow(alignment: .firstTextBaseline) {
+        if !settings.entryCantonesePhoneticOptions.contains(.rawJyutping),
+          !settings.entryCantonesePhoneticOptions.contains(.prettyYale)
+        {
+          CantonesePronunciationButton(
+            speakErrorState: $speakErrorState,
+            player: $player,
+            showVoiceError: $showVoiceError
+          ) {
+            getCantoneseWords()
+          }
+        } else {
+          Spacer()
+        }
+
+        HStack(alignment: .firstTextBaseline) {
+          Text("Cantonese IPA")
+            .foregroundStyle(.placeholder)
+          Text(
+            entry?.getPhonetic(options: .onlyCantonese, cantoneseOptions: .cantoneseIPA)
+              ?? "Error fetching Cantonese IPA"
+          )
+          .padding(.trailing)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .fixedSize(horizontal: false, vertical: true)
+          .textSelection(.enabled)
+        }
+      }
+    }
+  }
+
+  private func getCantoneseWords() -> Result<String, SpeakErrorState> {
+    var words =
+      entry?.getPhonetic(
+        options: .onlyCantonese, cantoneseOptions: .rawJyutping) ?? entry?.traditional
+    if let w = words, w.isEmpty {
+      words = entry?.traditional
+    }
+    guard let words else {
+      if let entry {
+        logger.error("Nothing could be pronounced in Cantonese for entry \(entry.traditional)")
+      }
+      return .failure(SpeakErrorState(showAlert: true, error: "No words were found to pronounce!"))
+    }
+
+    return .success(words)
+  }
+
+  @ViewBuilder
+  private func mandarinPronunicationView() -> some View {
+    if settings.entryMandarinPhoneticOptions.contains(.prettyPinyin) {
+      GridRow(alignment: .firstTextBaseline) {
+        MandarinPronunciationButton(
+          speakErrorState: $speakErrorState,
+          player: $player,
+          showVoiceError: $showVoiceError
+        ) {
+          getMandarinWords()
+        }
+
+        HStack(alignment: .firstTextBaseline) {
+          Text("Pinyin")
+            .foregroundStyle(.placeholder)
+          Text(
+            entry?.getPhonetic(options: .onlyMandarin, mandarinOptions: .prettyPinyin)
+              ?? "Error fetching Pinyin"
+          )
+          .padding(.trailing)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .fixedSize(horizontal: false, vertical: true)
+          .textSelection(.enabled)
+        }
+      }
+    }
+    if settings.entryMandarinPhoneticOptions.contains(.rawPinyin) {
+      GridRow(alignment: .firstTextBaseline) {
+        if !settings.entryMandarinPhoneticOptions.contains(.prettyPinyin) {
+          MandarinPronunciationButton(
+            speakErrorState: $speakErrorState,
+            player: $player,
+            showVoiceError: $showVoiceError
+          ) {
+            getMandarinWords()
+          }
+        } else {
+          Spacer()
+        }
+
+        HStack(alignment: .firstTextBaseline) {
+          Text("Raw Pinyin")
+            .foregroundStyle(.placeholder)
+          Text(
+            entry?.getPhonetic(options: .onlyMandarin, mandarinOptions: .rawPinyin)
+              ?? "Error fetching Pinyin with digits"
+          )
+          .padding(.trailing)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .fixedSize(horizontal: false, vertical: true)
+          .textSelection(.enabled)
+        }
+      }
+    }
+    if settings.entryMandarinPhoneticOptions.contains(.zhuyin) {
+      GridRow(alignment: .firstTextBaseline) {
+        if !settings.entryMandarinPhoneticOptions.contains(.prettyPinyin),
+          settings.entryMandarinPhoneticOptions.contains(.rawPinyin)
+        {
+          MandarinPronunciationButton(
+            speakErrorState: $speakErrorState,
+            player: $player,
+            showVoiceError: $showVoiceError
+          ) {
+            getMandarinWords()
+          }
+        } else {
+          Spacer()
+        }
+
+        HStack(alignment: .firstTextBaseline) {
+          Text("Zhuyin")
+            .foregroundStyle(.placeholder)
+          Text(
+            entry?.getPhonetic(options: .onlyMandarin, mandarinOptions: .zhuyin)
+              ?? "Error fetching Zhuyin"
+          )
+          .padding(.trailing)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .fixedSize(horizontal: false, vertical: true)
+          .textSelection(.enabled)
+        }
+      }
+    }
+    if settings.entryMandarinPhoneticOptions.contains(.mandarinIPA) {
+      GridRow(alignment: .firstTextBaseline) {
+        if !settings.entryMandarinPhoneticOptions.contains(.prettyPinyin),
+          settings.entryMandarinPhoneticOptions.contains(.rawPinyin),
+          settings.entryMandarinPhoneticOptions.contains(.zhuyin)
+        {
+          MandarinPronunciationButton(
+            speakErrorState: $speakErrorState,
+            player: $player,
+            showVoiceError: $showVoiceError
+          ) {
+            getMandarinWords()
+          }
+        } else {
+          Spacer()
+        }
+
+        HStack(alignment: .firstTextBaseline) {
+          Text("Mandarin IPA")
+            .foregroundStyle(.placeholder)
+          Text(
+            entry?.getPhonetic(options: .onlyMandarin, mandarinOptions: .mandarinIPA)
+              ?? "Error fetching Mandarin IPA"
+          )
+          .padding(.trailing)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .fixedSize(horizontal: false, vertical: true)
+          .textSelection(.enabled)
+        }
+      }
+    }
+  }
+
+  private func getMandarinWords() -> Result<String, SpeakErrorState> {
+    var words =
+      entry?.getPhonetic(
+        options: .onlyMandarin, mandarinOptions: .rawPinyinWithV)
+      ?? entry?.traditional
+    if let w = words, w.isEmpty {
+      words = entry?.traditional
+    }
+    guard let words else {
+      if let entry {
+        logger.error(
+          "Nothing could be pronounced in Mandarin for entry \(entry.traditional)")
+      }
+      return .failure(SpeakErrorState(showAlert: true, error: "No words were found to pronounce!"))
+    }
+    return .success(words)
+  }
+
+  // MARK: - Toolbar
+  private var topPlacement: ToolbarItemPlacement {
+    #if os(iOS)
+      .topBarTrailing
+    #else
+      .navigation
+    #endif
+  }
+
+  @ToolbarContentBuilder
+  private var toolbarContent: some ToolbarContent {
+    ToolbarItem {
+      Menu {
+        copyEntryMenu(entry: entry, copied: $copied)
+      } label: {
+        Image(systemName: copied ? "checkmark" : "document.on.document")
+          .contentTransition(.symbolEffect(.replace))
+      } primaryAction: {
+        let pasteboard = UIPasteboard.general
+
+        switch settings.entryCharactersOptions {
+        case .onlyTraditional, .preferTraditional:
+          pasteboard.string = entry?.traditional
+        case .onlySimplified, .preferSimplified:
+          pasteboard.string = entry?.simplified
+        }
+
+        copied = true
+
+        Task {
+          try? await Task.sleep(for: .seconds(1))
+          copied = false
+        }
+      }
+      .accessibilityLabel(Text("Copy headword"))
+      .buttonBorderShape(.circle)
+      .animation(.snappy, value: copied)
+    }
+
+    ToolbarSpacer()
+
+    ToolbarItem {
+      Button {
+        guard let pool = databaseManager.dbPool else { return }
+
+        if let entry {
+          let userData = SQLUserData(pool: pool)
+          Task {
+            if saved {
+              await userData.removeSaved(
+                traditional: entry.traditional, simplified: entry.simplified,
+                jyutping: entry.jyutping, pinyin: entry.pinyin)
+            } else {
+              await userData.addSaved(
+                traditional: entry.traditional, simplified: entry.simplified,
+                jyutping: entry.jyutping, pinyin: entry.pinyin)
+            }
+            saved = await userData.fetchSavedByUnique(
+              traditional: entry.traditional, simplified: entry.simplified,
+              jyutping: entry.jyutping,
+              pinyin: entry.pinyin)
+          }
+        }
+      } label: {
+        // This is a workaround for a weird appearance bug. In a saved
+        // entry, the unfilled star would appear, off-centre, in the
+        // corner of the button before the filled star would replace it
+        // in the centre. Hiding the icon until the save state is fetched
+        // prevents this from occurring.
+        if !hideSavedIcon {
+          Image(systemName: saved ? "star.fill" : "star")
+            .contentTransition(.symbolEffect(.replace))
+        }
+      }
+      .accessibilityLabel(Text("Save entry"))
+      .buttonBorderShape(.circle)
+      .animation(.snappy, value: saved)
+    }
+  }
+}
