@@ -23,9 +23,9 @@ private fun unfoldJyutpingRegex(jyutping: String): List<String> {
     var stringPossibilities: MutableList<String> = mutableListOf<String>()
 
     // Invariant: there must be only one set of parentheses and one exclamation
-    if (jyutping.count({ it == '(' }) > 1
-        || jyutping.count({ it == ')' }) > 1
-        || jyutping.count({ it == '!' }) > 1
+    if (jyutping.count { it == '(' } > 1
+        || jyutping.count { it == ')' } > 1
+        || jyutping.count { it == '!' } > 1
     ) {
         return out
     }
@@ -37,7 +37,7 @@ private fun unfoldJyutpingRegex(jyutping: String): List<String> {
         val endIdx = jyutping.indexOf(')')
         var orIdx = jyutping.indexOf('|')
 
-        while (orIdx != -1 && orIdx > startIdx) {
+        while (orIdx != -1 && orIdx > startIdx && orIdx < endIdx) {
             val preParen = jyutping.substring(0, openParenIdx)
             val possibility = jyutping.substring(startIdx, orIdx)
             val postParen = jyutping.substring(endIdx + 1)

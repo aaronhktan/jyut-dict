@@ -141,7 +141,7 @@ nonisolated private func unfoldJyutpingRegex(jyutping: String) -> [String] {
     let endIdx = jyutping.firstIndex(of: ")")
     var orIdx = jyutping.firstIndex(of: "|")
 
-    while orIdx != nil && orIdx! > startIdx {
+    while orIdx != nil && startIdx < orIdx! && orIdx! < endIdx! {
       let preParen = jyutping[..<openParenIdx!]
       let possibility = jyutping[startIdx..<orIdx!]
       let postParen = jyutping[jyutping.index(after: endIdx!)...]

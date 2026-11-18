@@ -154,7 +154,7 @@ bool unfoldJyutpingRegex(const QString &string, std::vector<QString> &out)
         int endIdx = string.indexOf(")");
 
         int orIdx = string.indexOf("|");
-        while (orIdx != -1) {
+        while (orIdx != -1 && startIdx < orIdx && orIdx < endIdx) {
             stringPossibilities.push_back(
                 string.mid(0, string.indexOf("("))
                 + string.mid(startIdx, orIdx - startIdx)

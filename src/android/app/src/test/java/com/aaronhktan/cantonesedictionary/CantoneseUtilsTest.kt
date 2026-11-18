@@ -59,6 +59,16 @@ class CantoneseUtilsUnitTest {
     }
 
     @Test
+    fun cantoneseUtils_segmentJyutping_keepGlobCharactersInvalidPreviousInitial() {
+        val expected = Pair(false, listOf("x", "*"))
+        assertEquals(
+            expected, segmentJyutping(
+                "x*", removeGlobCharacters = false
+            )
+        )
+    }
+
+    @Test
     fun cantoneseUtils_segmentJyutping_keepGlobCharactersNoWhitespace() {
         val expected = Pair(true, listOf("m", "*", "goi"))
         assertEquals(
@@ -74,6 +84,16 @@ class CantoneseUtilsUnitTest {
         assertEquals(
             expected, segmentJyutping(
                 "m?* goi", removeSpecialCharacters = true, removeGlobCharacters = false
+            )
+        )
+    }
+
+    @Test
+    fun cantoneseUtils_segmentJyutping_keepMultipleGlobCharactersNoLetters() {
+        val expected = Pair(true, listOf("*", "*", "*", "*"))
+        assertEquals(
+            expected, segmentJyutping(
+                "****", removeSpecialCharacters = true, removeGlobCharacters = false
             )
         )
     }
@@ -140,6 +160,40 @@ class CantoneseUtilsUnitTest {
     }
 
     @Test
+    fun cantoneseUtils_segmentJyutping_unfoldBasicRegex() {
+        var expected = Pair(false, listOf("(m|ng)", "goi"))
+        assertEquals(
+            expected, segmentJyutping("(m|ng) goi", removeRegexCharacters = false)
+        )
+
+        expected = Pair(true, listOf("mang!"))
+        assertEquals(
+            expected, segmentJyutping("mang!", removeRegexCharacters = false)
+        )
+    }
+
+    @Test
+    fun cantoneseUtils_segmentJyutping_unfoldPreviousInitial() {
+        var expected = Pair(true, listOf("ng4"))
+        assertEquals(
+            expected, segmentJyutping("ng4", removeRegexCharacters = false)
+        )
+    }
+
+    @Test
+    fun cantoneseUtils_segmentJyutping_unfoldRegexFail() {
+        var expected = Pair(false, listOf("((m)|ng)", "goi"))
+        assertEquals(
+            expected, segmentJyutping("((m)|ng) goi", removeRegexCharacters = false)
+        )
+
+        expected = Pair(false, listOf("(m!!!)", "goi"))
+        assertEquals(
+            expected, segmentJyutping("(m!!!) goi", removeRegexCharacters = false)
+        )
+    }
+
+    @Test
     fun cantoneseUtils_segmentJyutping_removeWhitespace() {
         val expected = Pair(true, listOf("m", "goi"))
         assertEquals(
@@ -172,19 +226,31 @@ class CantoneseUtilsUnitTest {
 
     @Test
     fun cantoneseUtils_segmentJyutping_multipleFinalVowelsOnly() {
-        val expected = Pair(true, listOf("aa", "aa"))
+        var expected = Pair(true, listOf("aa", "aa"))
         assertEquals(
             expected,
             segmentJyutping("aaaa", removeSpecialCharacters = true, removeGlobCharacters = false)
+        )
+
+        expected = Pair(true, listOf("aa", "aa"))
+        assertEquals(
+            expected,
+            segmentJyutping("aaaa", removeRegexCharacters = false)
         )
     }
 
     @Test
     fun cantoneseUtils_segmentJyutping_multipleFinalConsonantsOnly() {
-        val expected = Pair(true, listOf("ng", "ng"))
+        var expected = Pair(true, listOf("ng", "ng"))
         assertEquals(
             expected,
             segmentJyutping("ngng", removeSpecialCharacters = true, removeGlobCharacters = false)
+        )
+
+        expected = Pair(true, listOf("ng", "ng"))
+        assertEquals(
+            expected,
+            segmentJyutping("ngng", removeRegexCharacters = false)
         )
     }
 
@@ -199,10 +265,28 @@ class CantoneseUtilsUnitTest {
 
     @Test
     fun cantoneseUtils_segmentJyutping_invalidTone() {
-        val expected = Pair(false, listOf("hang0"))
+        var expected = Pair(false, listOf("hang0"))
         assertEquals(
             expected,
             segmentJyutping("hang0", removeSpecialCharacters = true, removeGlobCharacters = false)
+        )
+
+        expected = Pair(false, listOf("hang7"))
+        assertEquals(
+            expected,
+            segmentJyutping("hang7", removeSpecialCharacters = true, removeGlobCharacters = false)
+        )
+
+        expected = Pair(false, listOf("0"))
+        assertEquals(
+            expected,
+            segmentJyutping("0")
+        )
+
+        expected = Pair(false, listOf("ng0"))
+        assertEquals(
+            expected,
+            segmentJyutping("ng0")
         )
     }
 

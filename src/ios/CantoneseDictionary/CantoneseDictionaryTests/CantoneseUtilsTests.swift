@@ -190,6 +190,15 @@ struct CantoneseUtilsTests {
     )
   }
 
+  @Test func segmentJyutpingKeepGlobCharactersInvalidPreviousInitial() async throws {
+    #expect(
+      segmentJyutping(
+        text: "x*",
+        removeGlobCharacters: false
+      ) == (false, ["x", "*"])
+    )
+  }
+
   @Test func segmentJyutpingKeepGlobCharactersNoWhitespace() async throws {
     #expect(
       segmentJyutping(
@@ -207,6 +216,16 @@ struct CantoneseUtilsTests {
         removeSpecialCharacters: true,
         removeGlobCharacters: false
       ) == (true, ["m", "?", "* ", "goi"])
+    )
+  }
+
+  @Test func segmentJyutpingKeepMultipleGlobCharactersNoLetters() async throws {
+    #expect(
+      segmentJyutping(
+        text: "****",
+        removeSpecialCharacters: true,
+        removeGlobCharacters: false
+      ) == (true, ["*", "*", "*", "*"])
     )
   }
 
@@ -276,6 +295,42 @@ struct CantoneseUtilsTests {
     )
   }
 
+  @Test func segmentJyutpingUnfoldBasicRegex() async throws {
+    #expect(
+      segmentJyutping(text: "(m|ng) goi", removeRegexCharacters: false) == (
+        false, ["(m|ng)", "goi"]
+      )
+    )
+
+    #expect(
+      segmentJyutping(text: "mang!", removeRegexCharacters: false) == (
+        true, ["mang!"]
+      )
+    )
+  }
+
+  @Test func segmentJyutpingUnfoldPreviousInitial() async throws {
+    #expect(
+      segmentJyutping(text: "ng4", removeRegexCharacters: false) == (
+        true, ["ng4"]
+      )
+    )
+  }
+
+  @Test func segmentJyutpingUnfoldRegexFail() async throws {
+    #expect(
+      segmentJyutping(text: "((m)|ng) goi", removeRegexCharacters: false) == (
+        false, ["((m)|ng)", "goi"]
+      )
+    )
+
+    #expect(
+      segmentJyutping(text: "(m!!!) goi", removeRegexCharacters: false) == (
+        false, ["(m!!!)", "goi"]
+      )
+    )
+  }
+
   @Test func segmentJyutpingRemoveWhitespace() async throws {
     #expect(
       segmentJyutping(
@@ -302,6 +357,13 @@ struct CantoneseUtilsTests {
         removeGlobCharacters: false
       ) == (true, ["aa", "aa"])
     )
+
+    #expect(
+      segmentJyutping(
+        text: "aaaa",
+        removeRegexCharacters: false
+      ) == (true, ["aa", "aa"])
+    )
   }
 
   @Test func segmentJyutpingMultipleFinalsConsonantsOnly() async throws {
@@ -310,6 +372,13 @@ struct CantoneseUtilsTests {
         text: "ngng",
         removeSpecialCharacters: true,
         removeGlobCharacters: false
+      ) == (true, ["ng", "ng"])
+    )
+
+    #expect(
+      segmentJyutping(
+        text: "ngng",
+        removeRegexCharacters: false
       ) == (true, ["ng", "ng"])
     )
   }
@@ -339,6 +408,18 @@ struct CantoneseUtilsTests {
         removeSpecialCharacters: true,
         removeGlobCharacters: false
       ) == (false, ["hang7"])
+    )
+
+    #expect(
+      segmentJyutping(
+        text: "0",
+      ) == (false, ["0"])
+    )
+
+    #expect(
+      segmentJyutping(
+        text: "ng0",
+      ) == (false, ["ng0"])
     )
   }
 

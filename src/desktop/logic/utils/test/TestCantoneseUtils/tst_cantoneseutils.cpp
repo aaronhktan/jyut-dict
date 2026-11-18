@@ -45,12 +45,17 @@ private slots:
     void segmentJyutpingDigitsApostrophe();
     void segmentJyutpingRemoveSpecialCharacters();
     void segmentJyutpingKeepGlobCharacters();
+    void segmentJyutpingKeepGlobCharactersInvalidPreviousInitial();
     void segmentJyutpingKeepGlobCharactersNoWhitespace();
     void segmentJyutpingKeepMultipleGlobCharacters();
+    void segmentJyutpingKeepMultipleGlobCharactersNoLetters();
     void segmentJyutpingKeepMultipleGlobCharactersWhitespace();
     void segmentJyutpingKeepMultipleGlobCharactersWhitespaceSurround();
     void segmentJyutpingGlobCharactersTrimWhitespace();
     void segmentJyutpingKeepSpecialCharacters();
+    void segmentJyutpingUnfoldBasicRegex();
+    void segmentJyutpingUnfoldPreviousInitial();
+    void segmentJyutpingUnfoldRegexFail();
     void segmentJyutpingRemoveWhitespace();
     void segmentJyutpingLower();
     void segmentJyutpingLowerWithDigits();
@@ -387,6 +392,17 @@ void TestCantoneseUtils::segmentJyutpingKeepGlobCharacters()
     QCOMPARE(result, expected);
 }
 
+void TestCantoneseUtils::segmentJyutpingKeepGlobCharactersInvalidPreviousInitial()
+{
+    std::vector<std::string> result;
+    CantoneseUtils::segmentJyutping("x*",
+                                    result,
+                                    /* removeSpecialCharacters = */ true,
+                                    /* removeGlobCharacters = */ false);
+    std::vector<std::string> expected = {"x", "*"};
+    QCOMPARE(result, expected);
+}
+
 void TestCantoneseUtils::segmentJyutpingKeepGlobCharactersNoWhitespace()
 {
     std::vector<std::string> result;
@@ -406,6 +422,17 @@ void TestCantoneseUtils::segmentJyutpingKeepMultipleGlobCharacters()
                                     /* removeSpecialCharacters = */ true,
                                     /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"m", "?", "* ", "goi"};
+    QCOMPARE(result, expected);
+}
+
+void TestCantoneseUtils::segmentJyutpingKeepMultipleGlobCharactersNoLetters()
+{
+    std::vector<std::string> result;
+    CantoneseUtils::segmentJyutping("****",
+                                    result,
+                                    /* removeSpecialCharacters = */ true,
+                                    /* removeGlobCharacters = */ false);
+    std::vector<std::string> expected = {"*", "*", "*", "*"};
     QCOMPARE(result, expected);
 }
 
@@ -474,6 +501,58 @@ void TestCantoneseUtils::segmentJyutpingKeepSpecialCharacters()
     QCOMPARE(result, expected);
 }
 
+void TestCantoneseUtils::segmentJyutpingUnfoldBasicRegex()
+{
+    std::vector<std::string> result;
+    CantoneseUtils::segmentJyutping("(m|ng) goi",
+                                    result,
+                                    /* removeSpecialCharacters = */ true,
+                                    /* removeGlobCharacters */ true,
+                                    /* removeRegexCharacters */ false);
+    std::vector<std::string> expected = {"(m|ng)", "goi"};
+    QCOMPARE(result, expected);
+
+    expected = {"mang!"};
+    CantoneseUtils::segmentJyutping("mang!",
+                                    result,
+                                    /* removeSpecialCharacters = */ true,
+                                    /* removeGlobCharacters */ true,
+                                    /* removeRegexCharacters */ false);
+    QCOMPARE(result, expected);
+}
+
+void TestCantoneseUtils::segmentJyutpingUnfoldPreviousInitial()
+{
+    std::vector<std::string> result;
+    CantoneseUtils::segmentJyutping("ng4",
+                                    result,
+                                    /* removeSpecialCharacters = */ true,
+                                    /* removeGlobCharacters */ true,
+                                    /* removeRegexCharacters */ false);
+    std::vector<std::string> expected = {"ng4"};
+    QCOMPARE(result, expected);
+}
+
+void TestCantoneseUtils::segmentJyutpingUnfoldRegexFail()
+{
+    std::vector<std::string> result;
+    CantoneseUtils::segmentJyutping("((m)|ng) goi",
+                                    result,
+                                    /* removeSpecialCharacters = */ true,
+                                    /* removeGlobCharacters */ true,
+                                    /* removeRegexCharacters */ false);
+    std::vector<std::string> expected = {"((m)|ng)", "goi"};
+    QCOMPARE(result, expected);
+
+    expected = {"(m!!!)", "goi"};
+    CantoneseUtils::segmentJyutping("(m!!!) goi",
+                                    result,
+                                    /* removeSpecialCharacters = */ true,
+                                    /* removeGlobCharacters */ true,
+                                    /* removeRegexCharacters */ false);
+    QCOMPARE(result, expected);
+}
+
 void TestCantoneseUtils::segmentJyutpingRemoveWhitespace()
 {
     std::vector<std::string> result;
@@ -510,6 +589,14 @@ void TestCantoneseUtils::segmentJyutpingMultipleFinalsVowelsOnly()
                                     /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"aa", "aa"};
     QCOMPARE(result, expected);
+
+    expected = {"aa", "aa"};
+    CantoneseUtils::segmentJyutping("aaaa",
+                                    result,
+                                    /* removeSpecialCharacters = */ true,
+                                    /* removeGlobCharacters */ true,
+                                    /* removeRegexCharacters */ false);
+    QCOMPARE(result, expected);
 }
 
 void TestCantoneseUtils::segmentJyutpingMultipleFinalsConsonantsOnly()
@@ -523,6 +610,14 @@ void TestCantoneseUtils::segmentJyutpingMultipleFinalsConsonantsOnly()
     std::vector<std::string> expected = {"ng", "ng"};
     QCOMPARE(result, expected);
     QCOMPARE(valid, true);
+
+    expected = {"ng", "ng"};
+    CantoneseUtils::segmentJyutping("ngng",
+                                    result,
+                                    /* removeSpecialCharacters = */ true,
+                                    /* removeGlobCharacters */ true,
+                                    /* removeRegexCharacters */ false);
+    QCOMPARE(result, expected);
 }
 
 void TestCantoneseUtils::segmentJyutpingMultipleFinals()
@@ -553,6 +648,16 @@ void TestCantoneseUtils::segmentJyutpingInvalidTone()
                                             /* removeSpecialCharacters = */ true,
                                             /* removeGlobCharacters = */ false);
     expected = {"hang7"};
+    QCOMPARE(result, expected);
+    QCOMPARE(valid, false);
+
+    valid = CantoneseUtils::segmentJyutping("0", result);
+    expected = {"0"};
+    QCOMPARE(result, expected);
+    QCOMPARE(valid, false);
+
+    valid = CantoneseUtils::segmentJyutping("ng0", result);
+    expected = {"ng0"};
     QCOMPARE(result, expected);
     QCOMPARE(valid, false);
 }
