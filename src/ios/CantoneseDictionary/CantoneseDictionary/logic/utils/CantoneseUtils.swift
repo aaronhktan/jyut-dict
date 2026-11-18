@@ -255,9 +255,7 @@ nonisolated private func convertYaleFinal(syllable: String) -> String {
   )
 
   // Remove the tone number, as Yale doesn't use those
-  yaleSyllable = String(
-    yaleSyllable[..<yaleSyllable.index(before: yaleSyllable.endIndex)]
-  )
+  yaleSyllable = String(yaleSyllable.dropLast(1))
 
   return yaleSyllable
 }

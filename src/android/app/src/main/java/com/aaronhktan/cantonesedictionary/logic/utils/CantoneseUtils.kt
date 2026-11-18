@@ -1,6 +1,9 @@
 package com.aaronhktan.cantonesedictionary.logic.utils
 
+import android.util.Log
 import kotlin.math.min
+
+private const val LOG_TAG = "CantoneseUtils"
 
 private val jyutpingInitials: Set<String> = setOf(
     "b", "p", "m", "f", "d",
@@ -17,6 +20,33 @@ private val jyutpingFinals: Set<String> = setOf(
     "ok", "u", "ui", "un", "ung", "ut", "uk", "oe", "oet", "eoi",
     "eon", "oeng", "eot", "oek", "yu", "yun", "yut", "m", "ng",
 )
+
+private val jyutpingFinalRegex = Regex(pattern = "([aeiou][aeiou]?[iumngptk]?[g]?)([1-6])")
+
+private val jyutpingToYaleSpecialSyllables: Map<String, List<String>> = mapOf(
+    "m" to listOf("m̄", "ḿ", "m", "m̀h", "ḿh", "mh"),
+    "ng" to listOf("n̄g", "ńg", "ng", "ǹgh", "ńgh", "ngh"),
+)
+private val jyutpingToYaleSpecialFinals: Map<String, String> = mapOf(
+    "aa" to "a",
+    "oe" to "eu",
+    "oeng" to "eung",
+    "oek" to "euk",
+    "eoi" to "eui",
+    "eon" to "eun",
+    "eot" to "eut",
+)
+private val yaleToneReplacements: Map<Char, List<String>> = mapOf(
+    'a' to listOf("ā", "á", "a", "à", "á", "a"),
+    'e' to listOf("ē", "é", "e", "è", "é", "e"),
+    'i' to listOf("ī", "í", "i", "ì", "í", "i"),
+    'o' to listOf("ō", "ó", "o", "ò", "ó", "o"),
+    'u' to listOf("ū", "ú", "u", "ù", "ú", "u"),
+)
+private val yaleYInitialRegex = Regex(pattern = "jy?")
+private val yaleJInitialRegex = Regex(pattern = "z")
+private val yaleChInitialRegex = Regex(pattern = "c")
+private val yaleLightToneClusterRegex = Regex(pattern = "([ptkmn]?g?)[123456]$")
 
 private fun unfoldJyutpingRegex(jyutping: String): List<String> {
     var out: MutableList<String> = mutableListOf<String>()
@@ -72,6 +102,109 @@ private fun unfoldJyutpingRegex(jyutping: String): List<String> {
     }
 
     return out
+}
+
+private fun convertYaleInitial(syllable: String): String {
+    return syllable.replace(yaleYInitialRegex, "y")
+        .replace(yaleJInitialRegex, "j")
+        .replace(yaleChInitialRegex, "ch")
+}
+
+private fun convertYaleFinal(syllable: String): String {
+    var yaleSyllable = syllable
+    val match = jyutpingFinalRegex.find(yaleSyllable)
+    if (match == null) {
+        Log.e(LOG_TAG, "Could not find final in syllable $yaleSyllable")
+        return yaleSyllable
+    }
+
+    val (final, tone) = match.destructured
+
+    // Some Jyutping finals have significant differences when mapped to Yale.
+    // Switch it out here.
+    jyutpingToYaleSpecialFinals[final]?.let {
+        yaleSyllable = yaleSyllable.replace(final, it)
+    }
+
+    // Insert an "h" before the last consonant cluster for the light tones,
+    // as they are indicated in Yale
+    if (("4".."6").contains(tone)) {
+        yaleSyllable = yaleSyllable.replace(yaleLightToneClusterRegex, "h\$0")
+    }
+
+    // Replace the first vowel in the final with its accented version
+    val vowels = listOf('a', 'e', 'i', 'o', 'u')
+    val replacementIdx = yaleSyllable.indexOfFirst { vowels.contains(it) }
+    val firstVowel = yaleSyllable[replacementIdx]
+    yaleToneReplacements[firstVowel]?.get(tone.toInt() - 1)?.let {
+        yaleSyllable = yaleSyllable.replaceRange(replacementIdx..<replacementIdx + 1, it)
+    }
+
+    // Remove the tone number, as Yale doesn't use those
+    yaleSyllable = yaleSyllable.dropLast(1)
+
+    return yaleSyllable
+}
+
+fun convertJyutpingToYale(jyutping: String, useSpacesToSegment: Boolean = false): String {
+    if (jyutping.isEmpty()) {
+        return jyutping
+    }
+
+    var syllables = mutableListOf<String>()
+    var jyutpingCopy = ""
+    if (useSpacesToSegment) {
+        // Insert a space before and after every special character, so that the
+        // IPA conversion doesn't attempt to convert special characters.
+        for (c in specialCharacters) {
+            jyutpingCopy = jyutping.split(c).joinToString(" $c ")
+        }
+        syllables = jyutpingCopy.split(" ").toMutableList()
+    } else {
+        val (validJyutping, result) = segmentJyutping(
+            text = jyutping,
+            removeSpecialCharacters = false,
+            removeGlobCharacters = false,
+        )
+        if (!validJyutping) {
+            return "x"
+        }
+        syllables = result.toMutableList()
+    }
+
+    var yaleSyllables = mutableListOf<String>()
+    for (syllable in syllables) {
+        // Most numbers, single characters, etc. are not Jyutping.
+        // Also skip syllables that are just punctuation.
+        if (syllable.length == 1 || specialCharacters.contains(syllable)) {
+            yaleSyllables.add(syllable)
+            continue
+        }
+
+        // Skip syllables that don't have tone
+        val toneIdx = syllable.indexOfFirst { it in '1'..'6' }
+        if (toneIdx == -1) {
+            yaleSyllables.add(syllable)
+            continue
+        }
+
+        // Handle special-case syllables
+        val syllableWithoutTone = syllable.substring(0, toneIdx)
+        val tone = syllable[toneIdx].toString().toInt()
+        jyutpingToYaleSpecialSyllables[syllableWithoutTone].let { syllable ->
+            syllable?.get(tone - 1)?.let {
+                yaleSyllables.add(it)
+                continue
+            }
+        }
+
+        var yaleSyllable = syllable
+        yaleSyllable = convertYaleFinal(yaleSyllable)
+        yaleSyllable = convertYaleInitial(yaleSyllable)
+        yaleSyllables.add(yaleSyllable)
+    }
+
+    return yaleSyllables.joinToString(" ")
 }
 
 fun segmentJyutping(

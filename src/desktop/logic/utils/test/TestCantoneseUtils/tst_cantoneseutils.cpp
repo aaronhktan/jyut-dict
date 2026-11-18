@@ -12,12 +12,14 @@ public:
 
 private slots:
     void jyutpingToYaleSimple();
+    void jyutpingToYaleEmpty();
     void jyutpingToYaleRejectNoTone();
     void jyutpingToYaleRejectSingleLetter();
     void jyutpingToYaleRejectSpecialCharacter();
     void jyutpingToYaleNoSpaces();
     void jyutpingToYaleSpacesToSegment();
     void jyutpingToYaleSpecialFinal();
+    void jyutpingToYaleInvalidFinal();
     void jyutpingToYaleLightTone();
     void jyutpingToYaleSpecialSyllable();
     void jyutpingToYaleTones();
@@ -145,6 +147,12 @@ void TestCantoneseUtils::jyutpingToYaleSimple()
     QCOMPARE(result, "sī jí sāan");
 }
 
+void TestCantoneseUtils::jyutpingToYaleEmpty()
+{
+    std::string result = CantoneseUtils::convertJyutpingToYale("");
+    QCOMPARE(result, "");
+}
+
 void TestCantoneseUtils::jyutpingToYaleRejectNoTone()
 {
     std::string result = CantoneseUtils::convertJyutpingToYale("joeng");
@@ -181,6 +189,14 @@ void TestCantoneseUtils::jyutpingToYaleSpecialFinal()
 {
     std::string result = CantoneseUtils::convertJyutpingToYale("goek3jyun5");
     QCOMPARE(result, "geuk yúhn");
+}
+
+void TestCantoneseUtils::jyutpingToYaleInvalidFinal()
+{
+    std::string result
+        = CantoneseUtils::convertJyutpingToYale("bt1",
+                                                /* useSpacesToSegment */ true);
+    QCOMPARE(result, "bt1");
 }
 
 void TestCantoneseUtils::jyutpingToYaleLightTone()

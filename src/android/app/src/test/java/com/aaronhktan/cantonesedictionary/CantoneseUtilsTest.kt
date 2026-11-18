@@ -1,11 +1,94 @@
 package com.aaronhktan.cantonesedictionary
 
+import com.aaronhktan.cantonesedictionary.logic.utils.convertJyutpingToYale
 import com.aaronhktan.cantonesedictionary.logic.utils.segmentJyutping
 import org.junit.Test
 
 import org.junit.Assert.*
 
 class CantoneseUtilsUnitTest {
+    @Test
+    fun cantoneseUtils_jyutpingToYale_simple() {
+        assertEquals("sī jí sāan", convertJyutpingToYale("si1 zi2 saan1"))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToYale_empty() {
+        assertEquals("", convertJyutpingToYale(""))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToYale_rejectNoTone() {
+        assertEquals("joeng", convertJyutpingToYale("joeng"))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToYale_rejectSingleLetter() {
+        assertEquals("a", convertJyutpingToYale("a"))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToYale_rejectSpecialCharacter() {
+        assertEquals("x", convertJyutpingToYale("-"))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToYale_noSpaces() {
+        assertEquals("sī jí sāan", convertJyutpingToYale("si1zi2saan1"))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToYale_spacesToSegment() {
+        assertEquals(
+            "sī jí sāan",
+            convertJyutpingToYale("si1 zi2 saan1", useSpacesToSegment = true)
+        )
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToYale_specialFinal() {
+        assertEquals("geuk yúhn", convertJyutpingToYale("goek3jyun5"))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToYale_invalidFinal() {
+        assertEquals(
+            "bt1", convertJyutpingToYale("bt1", useSpacesToSegment = true)
+        )
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToYale_lightTone() {
+        assertEquals("lohk yúh", convertJyutpingToYale("lok6 jyu5"))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToYale_specialSyllable() {
+        assertEquals("m̀h haih", convertJyutpingToYale("m4 hai6"))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToYale_tones() {
+        assertEquals(
+            "sāam gáu sei lìhng ńgh yih chāt baat luhk",
+            convertJyutpingToYale("saam1 gau2 sei3 ling4 ng5 ji6 cat1 baat3 luk6")
+        )
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToYale_noTone() {
+        assertEquals(
+            "mit", convertJyutpingToYale("mit")
+        )
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToYale_malformedTone() {
+        assertEquals(
+            "x", convertJyutpingToYale("mat 7")
+        )
+    }
+
     @Test
     fun cantoneseUtils_segmentJyutping_simple() {
         val expected = Pair(true, listOf("m4", "goi1"))
@@ -295,7 +378,11 @@ class CantoneseUtilsUnitTest {
         val expected = Pair(false, listOf("kljnxclkjvnl"))
         assertEquals(
             expected,
-            segmentJyutping("kljnxclkjvnl", removeSpecialCharacters = true, removeGlobCharacters = false)
+            segmentJyutping(
+                "kljnxclkjvnl",
+                removeSpecialCharacters = true,
+                removeGlobCharacters = false
+            )
         )
     }
 }

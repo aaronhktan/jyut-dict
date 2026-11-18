@@ -16,6 +16,12 @@ struct CantoneseUtilsTests {
     )
   }
 
+  @Test func jyutpingToYaleEmpty() async throws {
+    #expect(
+      convertJyutpingToYale(jyutping: "") == ""
+    )
+  }
+
   @Test func jyutpingToYaleRejectNoTone() async throws {
     #expect(
       convertJyutpingToYale(jyutping: "joeng") == "joeng"
@@ -52,6 +58,12 @@ struct CantoneseUtilsTests {
   @Test func jyutpingToYaleSpecialFinal() async throws {
     #expect(
       convertJyutpingToYale(jyutping: "goek3jyun5") == "geuk yúhn"
+    )
+  }
+
+  @Test func jyutpingToYaleInvalidFinal() async throws {
+    #expect(
+      convertJyutpingToYale(jyutping: "bt1", useSpacesToSegment: true) == "bt1"
     )
   }
 
