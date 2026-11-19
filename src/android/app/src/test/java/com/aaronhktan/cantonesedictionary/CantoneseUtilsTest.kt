@@ -1,5 +1,6 @@
 package com.aaronhktan.cantonesedictionary
 
+import com.aaronhktan.cantonesedictionary.logic.utils.convertJyutpingToIPA
 import com.aaronhktan.cantonesedictionary.logic.utils.convertJyutpingToYale
 import com.aaronhktan.cantonesedictionary.logic.utils.segmentJyutping
 import org.junit.Test
@@ -87,6 +88,85 @@ class CantoneseUtilsUnitTest {
         assertEquals(
             "x", convertJyutpingToYale("mat 7")
         )
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToIPA_simple() {
+        assertEquals("jœ̽ːŋ˨˩ sɪŋ˨˩", convertJyutpingToIPA("joeng4 sing4"))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToIPA_empty() {
+        assertEquals("", convertJyutpingToIPA(""))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToIPA_rejectNoTone() {
+        assertEquals("joeng", convertJyutpingToIPA("joeng"))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToIPA_rejectSingleLetter() {
+        assertEquals("a", convertJyutpingToIPA("a"))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToIPA_rejectSpecialCharacter() {
+        assertEquals("x", convertJyutpingToIPA("-"))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToIPA_noSpaces() {
+        assertEquals("fäː˥ sɪŋ˨˩", convertJyutpingToIPA("faa1sing4"))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToIPA_spacesToSegment() {
+        assertEquals(
+            "jœ̽ːŋ˨˩ sɪŋ˨˩",
+            convertJyutpingToIPA("joeng4 sing4", useSpacesToSegment = true)
+        )
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToIPA_preprocessInitial() {
+        assertEquals("t͡ʃyː˧˥ sʊŋ˧", convertJyutpingToIPA("zyu2 sung3"))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToIPA_specialSyllable() {
+        assertEquals("m̩˨˩", convertJyutpingToIPA("m4"))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToIPA_checkedTone() {
+        assertEquals("sɪk̚˨ siː˧˥ ɔː˥ fäːn˨", convertJyutpingToIPA("sik6 si2 o1 faan6"))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToIPA_invalidNucleus() {
+        assertEquals(
+            "p@o˥",
+            convertJyutpingToIPA("bao1", useSpacesToSegment = true)
+        )
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToIPA_specialFinal() {
+        assertEquals("ʊk̚˥ kʰei̯˧˥ jɐn˨˩", convertJyutpingToIPA("uk1 kei2 jan4"))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToIPA_tones() {
+        assertEquals(
+            "säːm˥ kɐu̯˧˥ sei̯˧ lɪŋ˨˩ ŋ̍˩˧ jiː˨ t͡sʰɐt̚˥ päːt̚˧ lʊk̚˨",
+            convertJyutpingToIPA("saam1 gau2 sei3 ling4 ng5 ji6 cat1 baat3 luk6")
+        )
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingToIPA_noTone() {
+        assertEquals("mok", convertJyutpingToIPA("mok"))
     }
 
     @Test

@@ -105,6 +105,12 @@ struct CantoneseUtilsTests {
     )
   }
 
+  @Test func jyutpingToIPAEmpty() async throws {
+    #expect(
+      convertJyutpingToIPA(jyutping: "") == ""
+    )
+  }
+
   @Test func jyutpingToIPARejectNoTone() async throws {
     #expect(convertJyutpingToIPA(jyutping: "joeng") == "joeng")
   }
@@ -142,6 +148,13 @@ struct CantoneseUtilsTests {
     #expect(
       convertJyutpingToIPA(jyutping: "sik6 si2 o1 faan6")
         == "sɪk̚˨ siː˧˥ ɔː˥ fäːn˨"
+    )
+  }
+
+  @Test func jyutpingToIPAInvalidNucleus() async throws {
+    #expect(
+      convertJyutpingToIPA(jyutping: "bao1", useSpacesToSegment: true)
+        == "p@o˥"
     )
   }
 

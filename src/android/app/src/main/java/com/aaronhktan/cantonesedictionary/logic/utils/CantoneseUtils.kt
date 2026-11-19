@@ -1,6 +1,7 @@
 package com.aaronhktan.cantonesedictionary.logic.utils
 
 import android.util.Log
+import androidx.core.text.isDigitsOnly
 import kotlin.math.min
 
 private const val LOG_TAG = "CantoneseUtils"
@@ -47,6 +48,70 @@ private val yaleYInitialRegex = Regex(pattern = "jy?")
 private val yaleJInitialRegex = Regex(pattern = "z")
 private val yaleChInitialRegex = Regex(pattern = "c")
 private val yaleLightToneClusterRegex = Regex(pattern = "([ptkmn]?g?)[123456]$")
+
+private val cantoneseIPASpecialSyllables: List<Pair<String, String>> = listOf(
+    Pair("a", "@"),
+    Pair("yu", "y"),
+    Pair("@@", "a"),
+    Pair("uk", "^k"),
+    Pair("ik", "|k"),
+    Pair("ou", "~u"),
+    Pair("eoi", "eoy"),
+    Pair("ung", "^ng"),
+    Pair("ing", "|ng"),
+    Pair("ei", ">i"),
+)
+private val cantoneseIPAInitials: Map<String, String> = mapOf(
+    "b" to "p",
+    "p" to "pʰ",
+    "d" to "t",
+    "t" to "tʰ",
+    "g" to "k",
+    "k" to "kʰ",
+    "ng" to "ŋ",
+    "gw" to "kʷ",
+    "kw" to "kʷʰ",
+    "zh" to "t͡ʃ",
+    "ch" to "t͡ʃʰ",
+    "sh" to "ʃ",
+    "z" to "t͡s",
+    "c" to "t͡sʰ",
+)
+private val cantoneseIPANuclei: Map<String, String> = mapOf(
+    "a" to "äː",
+    "@" to "ɐ",
+    "e" to "ɛː",
+    ">" to "e",
+    "i" to "iː",
+    "|" to "ɪ",
+    "o" to "ɔː",
+    "~" to "o",
+    "oe" to "œ̽ː",
+    "eo" to "ɵ",
+    "u" to "uː",
+    "^" to "ʊ",
+    "y" to "yː",
+)
+private val cantoneseIPACodas: Map<String, String> = mapOf(
+    "i" to "i̯",
+    "u" to "u̯",
+    "y" to "y̯",
+    "ng" to "ŋ",
+    "p" to "p̚",
+    "t" to "t̚",
+    "k" to "k̚",
+)
+private val cantoneseIPASyllableRegex =
+    Regex("([bcdfghjklmnpqrstvwxyz]?[bcdfghjklmnpqrstvwxyz]?)([a@e>i|o~u^y][eo]?)([iuymngptk]?g?)([1-9])")
+private val cantoneseIPAHyuRegex = Regex("([zcs])yu")
+private val cantoneseIPAHoeRegex = Regex("([zc])oe")
+private val cantoneseIPAHeoRegex = Regex("([zc])eo")
+private val cantoneseIPASPecialSyllableRegex = Regex("^(h?)([mn]g?)([1-6])$")
+private val cantoneseIPAToneRegex = Regex("[1-6]")
+private val cantoneseIPACheckedToneRegex = Regex("([ptk])([136])")
+private val jyutpingToIPATones: List<String> = listOf(
+    "˥", "˧˥", "˧", "˨˩", "˩˧", "˨", "˥", "˧", "˨",
+)
 
 private fun unfoldJyutpingRegex(jyutping: String): List<String> {
     var out: MutableList<String> = mutableListOf<String>()
@@ -205,6 +270,127 @@ fun convertJyutpingToYale(jyutping: String, useSpacesToSegment: Boolean = false)
     }
 
     return yaleSyllables.joinToString(" ")
+}
+
+private fun convertIPACantoneseSyllable(jyutping: String): String {
+    val match = cantoneseIPASyllableRegex.find(jyutping)
+    if (match == null) {
+        Log.e(LOG_TAG, "Invalid jyutping found in IPA conversion: $jyutping")
+        return jyutping
+    }
+
+    val (matchedInitial, matchedNucleus, matchedCoda, matchedTone) = match.destructured
+
+    var initial = ""
+    if (!matchedInitial.isEmpty()) {
+        cantoneseIPAInitials[matchedInitial]?.let {
+            initial = it
+        } ?: run {
+            initial = matchedInitial
+        }
+    }
+
+    var nucleus = ""
+    if (!matchedNucleus.isEmpty()) {
+        cantoneseIPANuclei[matchedNucleus]?.let {
+            nucleus = it
+        } ?: run {
+            nucleus = matchedNucleus
+        }
+    }
+
+    var coda = ""
+    if (!matchedCoda.isEmpty()) {
+        cantoneseIPACodas[matchedCoda]?.let {
+            coda = it
+        } ?: run {
+            coda = matchedCoda
+        }
+    }
+
+    var tone = ""
+    if (!matchedTone.isEmpty()) {
+        tone = jyutpingToIPATones[matchedTone.toInt() - 1]
+    }
+
+    return initial + nucleus + coda + tone
+}
+
+fun convertJyutpingToIPA(jyutping: String, useSpacesToSegment: Boolean = false): String {
+    if (jyutping.isEmpty()) {
+        return jyutping
+    }
+
+    var syllables = mutableListOf<String>()
+    var jyutpingCopy = ""
+    if (useSpacesToSegment) {
+        // Insert a space before and after every special character, so that the
+        // IPA conversion doesn't attempt to convert special characters.
+        for (c in specialCharacters) {
+            jyutpingCopy = jyutping.split(c).joinToString(" $c ")
+        }
+        syllables = jyutpingCopy.split(" ").toMutableList()
+    } else {
+        val (validJyutping, result) = segmentJyutping(
+            text = jyutping,
+            removeSpecialCharacters = false,
+            removeGlobCharacters = false,
+        )
+        if (!validJyutping) {
+            return "x"
+        }
+        syllables = result.toMutableList()
+    }
+
+    var ipaSyllables = mutableListOf<String>()
+    for (syllable in syllables) {
+        // Most numbers, single characters, etc. are not Jyutping.
+        // Also skip syllables that are just punctuation.
+        if (syllable.length == 1 || specialCharacters.contains(syllable)) {
+            ipaSyllables.add(syllable)
+            continue
+        }
+
+        // Skip syllables that don't have tone
+        val toneIdx = syllable.indexOfFirst { it in '1'..'6' }
+        if (toneIdx == -1) {
+            ipaSyllables.add(syllable)
+            continue
+        }
+
+        // Do some pre-processing
+        var ipaSyllable = syllable
+        ipaSyllable = ipaSyllable
+            .replace(cantoneseIPAHyuRegex, "$1hyu")
+            .replace(cantoneseIPAHoeRegex, "$1hoe")
+            .replace(cantoneseIPAHeoRegex, "$1heo")
+
+        // Convert special syllables
+        cantoneseIPASPecialSyllableRegex.find(ipaSyllable)?.let { specialMatch ->
+            val tone = specialMatch.destructured.component3()
+            ipaSyllable = ipaSyllable
+                .replace("m", "m̩")
+                .replace("ng", "ŋ̍")
+                .replace(cantoneseIPAToneRegex, jyutpingToIPATones[tone.toInt() - 1])
+        }
+
+        // Replace checked tones
+        cantoneseIPACheckedToneRegex.find(ipaSyllable)?.let {
+            ipaSyllable = ipaSyllable
+                .replace("1", "7")
+                .replace("3", "8")
+                .replace("6", "9")
+        }
+
+        // Do some more preprocessing
+        for ((from, to) in cantoneseIPASpecialSyllables) {
+            ipaSyllable = ipaSyllable.replace(from, to)
+        }
+
+        ipaSyllables.add(convertIPACantoneseSyllable((ipaSyllable)))
+    }
+
+    return ipaSyllables.joinToString(" ")
 }
 
 fun segmentJyutping(

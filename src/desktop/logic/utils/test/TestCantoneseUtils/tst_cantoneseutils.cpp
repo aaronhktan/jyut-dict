@@ -27,6 +27,7 @@ private slots:
     void jyutpingToYaleMalformedTone();
 
     void jyutpingToIPASimple();
+    void jyutpingToIPAEmpty();
     void jyutpingToIPARejectNoTone();
     void jyutpingToIPARejectSingleLetter();
     void jyutpingToIPARejectSpecialCharacter();
@@ -35,6 +36,7 @@ private slots:
     void jyutpingToIPAPreprocessInitial();
     void jyutpingToIPASpecialSyllable();
     void jyutpingToIPACheckedTone();
+    void jyutpingToIPAInvalidNucleus();
     void jyutpingToIPASpecialFinal();
     void jyutpingToIPATones();
     void jyutpingToIPANoTone();
@@ -240,6 +242,12 @@ void TestCantoneseUtils::jyutpingToIPASimple()
 #endif
 }
 
+void TestCantoneseUtils::jyutpingToIPAEmpty()
+{
+    std::string result = CantoneseUtils::convertJyutpingToIPA("");
+    QCOMPARE(result, "");
+}
+
 void TestCantoneseUtils::jyutpingToIPARejectNoTone()
 {
     std::string result = CantoneseUtils::convertJyutpingToIPA("joeng");
@@ -308,6 +316,18 @@ void TestCantoneseUtils::jyutpingToIPACheckedTone()
     QCOMPARE(result, "sɪk̚ ˨  siː ˧ ˥  ɔː ˥  fäːn ˨");
 #else
     QCOMPARE(result, "sɪk̚˨  siː˧˥  ɔː˥  fäːn˨");
+#endif
+}
+
+void TestCantoneseUtils::jyutpingToIPAInvalidNucleus()
+{
+    std::string result
+        = CantoneseUtils::convertJyutpingToIPA("bao1",
+                                               /* useSpacesToSegment */ true);
+#ifdef Q_OS_MAC
+    QCOMPARE(result, "p@o ˥");
+#else
+    QCOMPARE(result, "p@o˥");
 #endif
 }
 
