@@ -917,6 +917,16 @@ struct CantoneseUtilsTests {
       )
         == "ge (j)ege (j)e beicaam(j)e (j)e (j)e (j)e (j)e (j)e (j)epeilougeiheigeigei'gei"
     )
+
+    // Test at beginning of string
+    #expect(
+      jyutpingAutocorrect(text: "eyb") == "eib"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "eyb", unsafeSubstitutions: true)
+        == "eib"
+    )
   }
 
   @Test func autocorrectJyutpingOh() async throws {
@@ -1074,6 +1084,26 @@ struct CantoneseUtilsTests {
         unsafeSubstitutions: true
       ) == "maumaumauh(ou!) wuh(ou!) wu taugai"
     )
+
+    // Test at beginning of string
+    #expect(
+      jyutpingAutocorrect(text: "owgai") == "augai"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "owgai", unsafeSubstitutions: true)
+        == "augai"
+    )
+
+    // Test with ) after initial
+    #expect(
+      jyutpingAutocorrect(text: "ooowg") == "(y!u)(ou!)wg"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "ooowg", unsafeSubstitutions: true)
+        == "(y!u)(ou!)wg"
+    )
   }
 
   @Test func autocorrectJyutpingUm() async throws {
@@ -1158,6 +1188,25 @@ struct CantoneseUtilsTests {
         unsafeSubstitutions: true
       ) == "gu mangamzauwumitbambambambam"
     )
+
+    #expect(
+      jyutpingAutocorrect(text: "umzau") == "amzau"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "umzau", unsafeSubstitutions: true)
+        == "amzau"
+    )
+
+    // Test with ) after initial
+    #expect(
+      jyutpingAutocorrect(text: "cuman") == "(k)aman"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "cuman", unsafeSubstitutions: true)
+        == "(k)aman"
+    )
   }
 
   @Test func autocorrectJyutpingYum() async throws {
@@ -1219,6 +1268,16 @@ struct CantoneseUtilsTests {
         unsafeSubstitutions: true
       ) == "cyu matcyu matcyu macyu(j)am(j)am(j)am"
     )
+
+    // Test with ) after initial
+    #expect(
+      jyutpingAutocorrect(text: "(z)yumb") == "(z)yu mb"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "(z)yumb", unsafeSubstitutions: true)
+        == "(z)yu mb"
+    )
   }
 
   @Test func autocorrectJyutpingYup() async throws {
@@ -1279,6 +1338,16 @@ struct CantoneseUtilsTests {
         text: "zeonyupzeonyupsyupeisyupeiyupyupzeonyup",
         unsafeSubstitutions: true
       ) == "zeon(j)apzeon(j)apsyu peisyu pei(j)ap(j)apzeon(j)ap"
+    )
+
+    // Test with ) after initial
+    #expect(
+      jyutpingAutocorrect(text: "(s)yup") == "(s)yu p"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "(s)yup", unsafeSubstitutions: true)
+        == "(s)yu p"
     )
   }
 
@@ -1348,6 +1417,16 @@ struct CantoneseUtilsTests {
         unsafeSubstitutions: true
       ) == "jyu kapgei (j)ukgei(j)uk(j)uk(j)uk(j)uk(j)uk (j)uk"
     )
+
+    // Test with ) after initial
+    #expect(
+      jyutpingAutocorrect(text: "(z)yuk") == "(z)yu k"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "(z)yuk", unsafeSubstitutions: true)
+        == "(z)yu k"
+    )
   }
 
   @Test func autocorrectJyutpingYung() async throws {
@@ -1407,6 +1486,16 @@ struct CantoneseUtilsTests {
         unsafeSubstitutions: true
       )
         == "j(yu)n gingam(j)(y!u|a|eo)ng (j)(y!u|a|eo)ng(j)(y!u|a|eo)ng(j)(y!u|a|eo)ngz(yu)n gaa"
+    )
+
+    // Test with ) after initial
+    #expect(
+      jyutpingAutocorrect(text: "(j)yung") == "(j)(yu)n g"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "(j)yung", unsafeSubstitutions: true)
+        == "(j)(yu)n g"
     )
   }
 
@@ -1672,6 +1761,37 @@ struct CantoneseUtilsTests {
     #expect(
       jyutpingAutocorrect(text: "gumgut", unsafeSubstitutions: true)
         == "gamg(a|y!u)t"
+    )
+  }
+
+  @Test func autocorrectJyutpingOhAfterRegexFinal() async throws {
+    #expect(
+      jyutpingAutocorrect(text: "(n)oha") == "(n)oua"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "(n)oha", unsafeSubstitutions: true)
+        == "(n)oua"
+    )
+  }
+
+  @Test func autocorrectJyutpingFinalO() async throws {
+    #expect(
+      jyutpingAutocorrect(text: "lo") == "l(ou!)"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "lo", unsafeSubstitutions: true)
+        == "l(ou!)"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "o") == "(ou!)"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "o", unsafeSubstitutions: true)
+        == "(ou!)"
     )
   }
 

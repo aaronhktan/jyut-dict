@@ -1,7 +1,6 @@
 package com.aaronhktan.cantonesedictionary.logic.utils
 
 import android.util.Log
-import androidx.core.text.isDigitsOnly
 import kotlin.math.min
 
 private const val LOG_TAG = "CantoneseUtils"
@@ -644,4 +643,529 @@ fun segmentJyutping(
     }
 
     return Pair(validJyutping, syllables)
+}
+
+fun jyutpingAutocorrect(text: String, unsafeSubstitutions: Boolean = false): String {
+    var out = text
+
+    out = out
+        // This is for some romanizations like "shui" for 水
+        // And needs to happen before the "sh" -> "s" conversion
+        .replace("hui", "heoi")
+        // The initial + nucleus "cu-" never appears in Jyutping, so the user
+        // probably intended to make the IPA [kʰɐ] sound
+        // Surround the k with capturing group to prevent replacement with (g|k)
+        // if sound changes are enabled
+        .replace("cu", "(k)u")
+        // "x" never appears in Jyutping, the user might be more familiar
+        // with Pinyin and assume that it's an "s" sound
+        .replace("x", "s")
+        .replace("ch", "c")
+        .replace("sh", "s")
+        .replace("zh", "z")
+        // Change "eung", "erng", "eong" -> "oeng"
+        .replace("eung", "oeng")
+        .replace("erng", "oeng")
+        .replace("eui", "eoi")
+        .replace("euk", "oek")
+        .replace("eun", "(eo|yu)n")
+        .replace("eut", "(eo|yu)t")
+        .replace("eu", "(e|y)u")
+        .replace("ern", "eon")
+
+    // Change "-oen" -> "-eon"
+    var idx = out.indexOf("oen")
+    while (idx != -1) {
+        if (out[min(out.length - 1, idx + 4)] == 'g') {
+            idx = out.indexOf("oen", min(out.length - 1, idx + 4))
+            continue
+        }
+        out = out.replaceRange(idx..<idx + 3, "eon")
+        idx = out.indexOf("oen", idx + 3)
+    }
+
+    out = out
+        .replace("oei", "eoi")
+        .replace("oet", "eot")
+
+    out = out
+        .replace("eong ", "oeng ")
+        .replace("eong'", "oeng'")
+    if (out.endsWith("eong")) {
+        out = out.replaceRange(out.length - 4..<out.length, "oeng")
+    }
+    if (unsafeSubstitutions) {
+        out = out.replace("eong", "oeng") // unsafe because of zeon6 gun2
+    }
+
+    out = out
+        .replace("eok", "oek")
+
+    out = out
+        .replace("ao ", "au ")
+        .replace("ao'", "au'")
+    if (out.endsWith("ao")) {
+        out = out.replaceRange(out.length - 2..<out.length, "au")
+    }
+    if (unsafeSubstitutions) {
+        out = out.replace("ao", "au") // unsafe because of maa5 on1
+    }
+
+    out = out
+        .replace("ar", "aa") // like in "char siu"
+        .replace("ee", "i") // like in "lai see"
+        .replace("ay", "ei") // like in "gong hay fat choy"
+        .replace("oy", "oi") // like in "choy sum"
+        .replace("oo", "(y!u)") // like in "soot goh"
+        .replace("ong", "(o|u)ng")
+        .replace("young", "jung") // like in "foo young"
+        .replace("yue", "(j)yu") // like "yuet yue" (粵語)
+        .replace("ue", "(yu)") // like "tsuen wan" (轉彎)
+        .replace("tsz", "zi") // like "tsat tsz mui" (七姊妹)
+        .replace("ck", "k") // like "back" (白)
+
+    // The following changes may be unsafe because it is ambiguous whether
+    // they are final + initial or a "misspelling" of a final
+    // However, it is unambiguous if there is a separator at the end of the
+    // syllable, or it is the end of the string
+
+    // Check if the user intends to write an [-ɔː h-] or [-ou̯] cluster
+    run {
+        out = out
+            .replace("oh ", "ou ")
+            .replace("oh'", "ou'")
+        if (out.endsWith("oh")) {
+            out = out.replaceRange(out.length - 2..<out.length, "ou")
+        }
+
+        // Initials for which <initial> + "-ou" exist in Jyutping
+        val closeBackVowelCluster = setOf('n', 'j')
+        val ambiguousVowelCluster =
+            setOf('b', 'p', 'm', 'f', 'd', 't', 'l', 'g', 'h', 'w', 'z', 'c', 's')
+
+        var replacementIdx = out.indexOf("oh")
+        while (replacementIdx != -1) {
+            if (replacementIdx == 0) {
+                out = out.replaceRange(0..<2, "ou")
+            } else {
+                var initialIdx = replacementIdx - 1
+                if (replacementIdx > 1 && out[initialIdx] == ')') {
+                    --initialIdx
+                }
+
+                if (closeBackVowelCluster.contains(out[initialIdx])) {
+                    out = out.replaceRange(replacementIdx..<replacementIdx + 2, "ou")
+                } else if (ambiguousVowelCluster.contains(out[initialIdx])) {
+                    // The [h-] cluster can only occur if what follows is not an initial
+                    var initialFound = false
+                    for (initialLen in (1..2).reversed()) {
+                        val offset = min(out.length - replacementIdx, 2 + initialLen)
+                        val endIdx = replacementIdx + offset
+                        val s = out.substring(replacementIdx + 2..<endIdx)
+                        if (jyutpingInitials.contains(s) || s == "y") {
+                            initialFound = true
+                        }
+                    }
+
+                    if (initialFound) {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 2, "ou")
+                    } else {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 2, "o h")
+                    }
+                }
+            }
+
+            replacementIdx = out.indexOf("oh", replacementIdx + 2)
+        }
+    }
+
+    // Check if the user intends to write an [-ɔː w-] or [-auː] cluster
+    run {
+        out = out
+            .replace("ow ", "au ")
+            .replace("ow'", "au'")
+        if (out.endsWith("ow")) {
+            out = out.replaceRange(out.length - 2..<out.length, "au")
+        }
+
+        // Initials for which <initial> + "-(a)au" exist in Jyutping
+        val closeBackVowelCluster = setOf('b', 'm', 'k', 's')
+        val ambiguousVowelCluster =
+            setOf('p', 'm', 'f', 'd', 't', 'n', 'l', 'g', 'h', 'z', 'c', 's')
+
+        var replacementIdx = out.indexOf("ow")
+        while (replacementIdx != -1) {
+            if (replacementIdx == 0) {
+                out = out.replaceRange(0..<2, "au")
+            } else {
+                var initialIdx = replacementIdx - 1
+                if (replacementIdx > 1 && out[initialIdx] == ')') {
+                    --initialIdx
+                }
+
+                if (closeBackVowelCluster.contains(out[initialIdx])) {
+                    out = out.replaceRange(replacementIdx..<replacementIdx + 2, "au")
+                } else if (ambiguousVowelCluster.contains(out[initialIdx])) {
+                    var initialFound = false
+                    for (initialLen in (1..2).reversed()) {
+                        val offset = min(out.length - replacementIdx, 2 + initialLen)
+                        val endIdx = replacementIdx + offset
+                        val s = out.substring(replacementIdx + 2..<endIdx)
+                        if (jyutpingInitials.contains(s) || s == "y") {
+                            initialFound = true
+                        }
+                    }
+
+                    if (initialFound) {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 2, "au")
+                    } else {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 2, "o w")
+                    }
+                }
+            }
+
+            replacementIdx = out.indexOf("ow", replacementIdx + 2)
+        }
+    }
+
+    // Check if the user intends to write an [ɐm] or [-uː  m-] cluster
+    run {
+        out = out
+            .replace("um ", "am ")
+            .replace("um'", "am'")
+        if (out.endsWith("um")) {
+            out = out.replaceRange(out.length - 2..<out.length, "am")
+        }
+
+        // Initials for which <initial> + "am" exist in Jyutping
+        val openMidCentralVowelCluster =
+            setOf('b', 'p', 'm', 'd', 't', 'n', 'l', 'k', 'h', 'z', 'c', 's', 'j')
+        // Initials for which <initial> + "-u m-" exist in Jyutping
+        val closeBackVowelCluster =
+            setOf('f', 'w', 'a', 'e', 'i', 'o')
+
+        var replacementIdx = out.indexOf("um")
+        while (replacementIdx != -1) {
+            when (replacementIdx) {
+                0 -> {
+                    out = out.replaceRange(replacementIdx..<replacementIdx + 2, "am")
+                }
+
+                else -> {
+                    var initialIdx = replacementIdx - 1
+                    if (replacementIdx > 1 && out[initialIdx] == ')') {
+                        --initialIdx
+                    }
+                    if (openMidCentralVowelCluster.contains(out[initialIdx])) {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 2, "am")
+                    } else if (closeBackVowelCluster.contains(out[initialIdx])) {
+                        Unit
+                    } else if (out[initialIdx] == 'g') {
+                        // The [m-] cluster can only occur if what follows is not an initial
+                        var initialFound = false
+                        for (initialLen in (1..2).reversed()) {
+                            val offset = min(out.length - replacementIdx, 2 + initialLen)
+                            val endIdx = replacementIdx + offset
+                            val s = out.substring(replacementIdx + 2..<endIdx)
+                            if (jyutpingInitials.contains(s) || s == "y") {
+                                initialFound = true
+                            }
+                        }
+
+                        if (initialFound) {
+                            out = out.replaceRange(replacementIdx..<replacementIdx + 2, "am")
+                        } else {
+                            out = out.replaceRange(replacementIdx..<replacementIdx + 2, "u m")
+                        }
+                    }
+                }
+            }
+
+            replacementIdx = out.indexOf("um", replacementIdx + 2)
+        }
+    }
+
+    // Check if the user intends to write an [-ɛː j-] or [-ei̯] cluster
+    run {
+        out = out
+            .replace("ey ", "ei ")
+            .replace("ey'", "ei'")
+        if (out.endsWith("ey")) {
+            out = out.replaceRange(out.length - 2..<out.length, "ei")
+        }
+
+        // Initials for which <initial> + "-ei" exist in Jyutping
+        val closeFrontVowelCluster = setOf('p', 'f', 'd', 'n', 'l', 'h', 'w')
+        // Initials for which <initial> + "-e j-" exist in Jyutping
+        val openMidFrontVowelCluster = setOf('c', 'j', 'y')
+        // Initials for which <initial> + "-u m-" exist in Jyutping
+        val ambiguousVowelCluster = setOf('b', 'm', 'g', 'k', 'z', 's')
+
+        var replacementIdx = out.indexOf("ey")
+        while (replacementIdx != -1) {
+            when (replacementIdx) {
+                0 -> {
+                    out = out.replaceRange(0..<2, "ei")
+                }
+
+                else -> {
+                    var initialIdx = replacementIdx - 1
+                    if (replacementIdx > 1 && out[initialIdx] == ')') {
+                        --initialIdx
+                    }
+
+                    if (closeFrontVowelCluster.contains(out[initialIdx])) {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 2, "ei")
+                    } else if (openMidFrontVowelCluster.contains(out[initialIdx])) {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 2, "e (j)")
+                    } else if (ambiguousVowelCluster.contains(out[initialIdx])) {
+                        // The [j-] cluster can only occur if what follows is not an initial
+                        var initialFound = false
+                        for (initialLen in (1..2).reversed()) {
+                            val offset = min(out.length - replacementIdx, 2 + initialLen)
+                            val endIdx = replacementIdx + offset
+                            val s = out.substring(replacementIdx + 2..<endIdx)
+                            if (jyutpingInitials.contains(s) || s == "y") {
+                                initialFound = true
+                            }
+                        }
+
+                        if (initialFound) {
+                            out = out.replaceRange(replacementIdx..<replacementIdx + 2, "ei")
+                        } else {
+                            out = out.replaceRange(replacementIdx..<replacementIdx + 2, "e (j)")
+                        }
+                    }
+                }
+            }
+
+            replacementIdx = out.indexOf("ey", replacementIdx + 2)
+        }
+    }
+
+    // Check if the user intends to write an [-yː j-] or [-ɐm] cluster
+    run {
+        // Initials for which <initial> + "-yu m-" exist in Jyutping
+        val closeFrontVowelCluster = setOf('z', 'c', 's', 'j')
+        var replacementIdx = out.indexOf("yum")
+        while (replacementIdx != -1) {
+            when (replacementIdx) {
+                0 -> {
+                    out = out.replaceRange(0..<3, "(j)am")
+                }
+
+                else -> {
+                    var initialIdx = replacementIdx - 1
+                    if (replacementIdx > 1 && out[initialIdx] == ')') {
+                        --initialIdx
+                    }
+
+                    if (closeFrontVowelCluster.contains(out[initialIdx])) {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "yu m")
+                    } else {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "(j)am")
+                    }
+                }
+            }
+
+            replacementIdx = out.indexOf("yum", replacementIdx + 3)
+        }
+    }
+
+    // Check if the user intends to write an [-yː p-] or [-ɐp] cluster
+    run {
+        // Initials for which <initial> + "-yu p-" exist in Jyutping
+        val closeFrontVowelCluster = setOf('z', 's', 'j')
+        var replacementIdx = out.indexOf("yup")
+        while (replacementIdx != -1) {
+            when (replacementIdx) {
+                0 -> {
+                    out = out.replaceRange(0..<3, "(j)ap")
+                }
+
+                else -> {
+                    var initialIdx = replacementIdx - 1
+                    if (replacementIdx > 1 && out[initialIdx] == ')') {
+                        --initialIdx
+                    }
+
+                    if (closeFrontVowelCluster.contains(out[initialIdx])) {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "yu p")
+                    } else {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "(j)ap")
+                    }
+                }
+            }
+
+            replacementIdx = out.indexOf("yup", replacementIdx + 3)
+        }
+    }
+
+    // Check if the user intends to write an [-yː k-] or [jʊk] cluster
+    run {
+        // Initials for which <initial> + "-yu k-" exist in Jyutping
+        val closeFrontVowelCluster = setOf('z', 's', 'c', 'j')
+        var replacementIdx = out.indexOf("yuk")
+        while (replacementIdx != -1) {
+            when (replacementIdx) {
+                0 -> {
+                    out = out.replaceRange(0..<3, "(j)uk")
+                }
+
+                else -> {
+                    var initialIdx = replacementIdx - 1
+                    if (replacementIdx > 1 && out[initialIdx] == ')') {
+                        --initialIdx
+                    }
+
+                    if (closeFrontVowelCluster.contains(out[initialIdx])) {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "yu k")
+                    } else {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "(j)uk")
+                    }
+                }
+            }
+
+            replacementIdx = out.indexOf("yuk", replacementIdx + 3)
+        }
+    }
+
+    // Check if the user intends to write an [-yn g-] or [jʊŋ] cluster
+    run {
+        // Initials for which <initial> + "-yun g-" exist in Jyutping
+        val closeFrontVowelCluster = setOf('z', 's', 'c', 'j')
+        var replacementIdx = out.indexOf("yung")
+        while (replacementIdx != -1) {
+            when (replacementIdx) {
+                0 -> {
+                    out = out.replaceRange(0..<4, "(j)ung")
+                }
+
+                else -> {
+                    var initialIdx = replacementIdx - 1
+                    if (replacementIdx > 1 && out[initialIdx] == ')') {
+                        --initialIdx
+                    }
+
+                    if (closeFrontVowelCluster.contains(out[initialIdx])) {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 4, "(yu)n g")
+                    } else {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 4, "(j)ung")
+                    }
+                }
+            }
+
+            replacementIdx = out.indexOf("yung", replacementIdx + 3)
+        }
+    }
+
+    // Check if the user intends to write an [-yn] or [jɐn], [jyn], [yn] cluster
+    run {
+        // Initials for which <initial> + "-yu n-" exist in Jyutping
+        val closeFrontVowelCluster = setOf('z', 's', 'c', 'j')
+        var replacementIdx = out.indexOf("yun")
+        while (replacementIdx != -1) {
+            when (replacementIdx) {
+                0 -> {
+                    out = out.replaceRange(0..<3, "(j)(a|yu)n")
+                }
+
+                else -> {
+                    var initialIdx = replacementIdx - 1
+                    if (replacementIdx > 1 && out[initialIdx] == ')') {
+                        --initialIdx
+                    }
+
+                    if (closeFrontVowelCluster.contains(out[initialIdx])) {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "yun")
+                    } else {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "(ja|jyu|yu)n")
+                    }
+                }
+            }
+
+            replacementIdx = out.indexOf("yun", replacementIdx + 3)
+        }
+    }
+
+    // Check if the user intends to write an [-yt] or [jɐt], [jyt], [yt] cluster
+    run {
+        // Initials for which <initial> + "-yu t-" exist in Jyutping
+        val closeFrontVowelCluster = setOf('z', 's', 'c', 'j')
+        var replacementIdx = out.indexOf("yut")
+        while (replacementIdx != -1) {
+            when (replacementIdx) {
+                0 -> {
+                    out = out.replaceRange(0..<3, "(j)(a|yu)t")
+                }
+
+                else -> {
+                    var initialIdx = replacementIdx - 1
+                    if (replacementIdx > 1 && out[initialIdx] == ')') {
+                        --initialIdx
+                    }
+
+                    if (closeFrontVowelCluster.contains(out[initialIdx])) {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "(yu)t")
+                    } else {
+                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "(ja|jyu|yu)t")
+                    }
+                }
+            }
+
+            replacementIdx = out.indexOf("yut", replacementIdx + 3)
+        }
+    }
+
+    // Unsafe because it is ambiguous whether these are final + initial
+    // or a "misspelling" of an initial
+    // But unambiguous if they are at the start of a syllable
+    if (out.startsWith("ts")) {
+        out = out.replaceRange(0..<2, "c")
+    }
+    out = out.replace(" ts", "c")
+    if (out.startsWith("kwu")) {
+        out = out.replaceRange(0..<3, "(g|k)w!u")
+    }
+    out = out.replace(" kwu", " (g|k)w!u")
+    if (unsafeSubstitutions) {
+        out = out.replace("ts", "c")
+        out = out.replace("kwu", "(g|k)w!u")
+    }
+
+    // Change any "y" that is not followed by a "u" to "j"
+    // This needs to happen before the final replacements
+    var yIdx = out.indexOf("y")
+    while (yIdx != -1) {
+        val substr = out.substring(yIdx)
+        if (substr.startsWith("yu") || substr.startsWith("y!u") || substr.startsWith("y)u")) {
+            yIdx = out.indexOf("y", yIdx + 1)
+            continue
+        }
+        out = out.replaceRange(yIdx..<yIdx + 1, "(j)")
+        yIdx = out.indexOf("y", yIdx + 1)
+    }
+
+    out = out
+        .replace("ui", "(eo|u)i")
+        .replace("un", "(y!u|a|eo)n")
+        .replace("ut", "(a|y!u)t")
+
+    out = out.replace("o ", "(ou!) ")
+    out = out.replace("o'", "(ou!)'")
+    if (out.endsWith("o")) {
+        out = out.replaceRange(out.length - 1..<out.length, "(ou!)")
+    }
+    var oIdx = out.indexOf("o")
+    while (oIdx != -1) {
+        val letterAfter = out[oIdx + 1]
+        if (!setOf('k', 't', 'e', 'i', 'u', 'n', ')', '|').contains(letterAfter)) {
+            out = out.replaceRange(oIdx..<oIdx + 1, "(ou!)")
+            oIdx = out.indexOf("o", oIdx + 1)
+            continue
+        }
+        oIdx = out.indexOf("o", oIdx + 1)
+    }
+
+    return out
 }

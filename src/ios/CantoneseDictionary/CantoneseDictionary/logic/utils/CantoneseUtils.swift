@@ -1386,7 +1386,7 @@ nonisolated func jyutpingAutocorrect(
 
   // Check if the user intends to write an [-yt] or [jɐt], [jyt], [yt] cluster
   do {
-    // Initials for which <initial> + "-yu n-" exist in Jyutping
+    // Initials for which <initial> + "-yu t-" exist in Jyutping
     let closeFrontVowelCluster: Set = ["z", "s", "c", "j"]
     var replacementIdx = out.range(of: "yut")
     while replacementIdx != nil {
