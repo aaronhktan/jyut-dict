@@ -1521,8 +1521,7 @@ nonisolated func jyutpingSoundChanges(text: [String]) -> [String] {
 
     if syllable == "ng"
       || (syllable.count == 3
-        && syllable[..<syllable.index(before: syllable.endIndex)]
-          == "ng"
+        && syllable.dropLast() == "ng"
         && (syllable.last!.isNumber || syllable.last == "?"))
     {
       changedSyllables.append(
@@ -1652,9 +1651,7 @@ nonisolated func jyutpingSoundChanges(text: [String]) -> [String] {
     }
 
     // Final sound changes
-    let choppedSyllable = changedSyllable.prefix(
-      upTo: changedSyllable.index(before: changedSyllable.endIndex)
-    )
+    let choppedSyllable = changedSyllable.dropLast()
     if changedSyllable.hasSuffix("ang") || changedSyllable.hasSuffix("a!ng")
       || changedSyllable.hasSuffix("ong")
       || choppedSyllable.hasSuffix("ang")

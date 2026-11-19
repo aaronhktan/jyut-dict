@@ -113,6 +113,7 @@ private slots:
     void autocorrectJyutpingOhAfterRegexFinal();
     void autocorrectJyutpingFinalO();
 
+    void soundChangeEmpty();
     void soundChangeNg();
     void soundChangeM();
     void soundChangeNgInitial();
@@ -127,6 +128,7 @@ private slots:
     void soundChangeZ();
     void soundChangeG();
     void soundChangeKInitial();
+    void soundChangeJInitial();
     void soundChangeAa();
     void soundChangeAng();
     void soundChangeOng();
@@ -2790,6 +2792,15 @@ void TestCantoneseUtils::autocorrectJyutpingFinalO()
     QCOMPARE(err, false);
 }
 
+void TestCantoneseUtils::soundChangeEmpty()
+{
+    std::vector<std::string> result{""};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{""};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
 void TestCantoneseUtils::soundChangeNg()
 {
     std::vector<std::string> result{"ng"};
@@ -3152,6 +3163,27 @@ void TestCantoneseUtils::soundChangeKInitial()
     result = {"king?"};
     err = CantoneseUtils::jyutpingSoundChanges(result);
     expected = {"(g|k)ing?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+}
+
+void TestCantoneseUtils::soundChangeJInitial()
+{
+    std::vector<std::string> result{"jyut"};
+    bool err = CantoneseUtils::jyutpingSoundChanges(result);
+    std::vector<std::string> expected{"(j|z)yut"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"jyut6"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(j|z)yut6"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"jyut?"};
+    err = CantoneseUtils::jyutpingSoundChanges(result);
+    expected = {"(j|z)yut?"};
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
 }

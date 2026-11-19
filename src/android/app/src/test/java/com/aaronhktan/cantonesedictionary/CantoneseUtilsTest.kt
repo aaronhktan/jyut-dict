@@ -1,8 +1,11 @@
+@file:Suppress("SpellCheckingInspection")
+
 package com.aaronhktan.cantonesedictionary
 
 import com.aaronhktan.cantonesedictionary.logic.utils.convertJyutpingToIPA
 import com.aaronhktan.cantonesedictionary.logic.utils.convertJyutpingToYale
 import com.aaronhktan.cantonesedictionary.logic.utils.jyutpingAutocorrect
+import com.aaronhktan.cantonesedictionary.logic.utils.jyutpingSoundChanges
 import com.aaronhktan.cantonesedictionary.logic.utils.segmentJyutping
 import org.junit.Test
 
@@ -338,7 +341,7 @@ class CantoneseUtilsUnitTest {
 
     @Test
     fun cantoneseUtils_segmentJyutping_unfoldPreviousInitial() {
-        var expected = Pair(true, listOf("ng4"))
+        val expected = Pair(true, listOf("ng4"))
         assertEquals(
             expected, segmentJyutping("ng4", removeRegexCharacters = false)
         )
@@ -1074,5 +1077,208 @@ class CantoneseUtilsUnitTest {
         assertEquals("l(ou!)", jyutpingAutocorrect("lo", unsafeSubstitutions = true))
         assertEquals("(ou!)", jyutpingAutocorrect("o"))
         assertEquals("(ou!)", jyutpingAutocorrect("o", unsafeSubstitutions = true))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_empty() {
+        assertEquals(listOf(""), jyutpingSoundChanges(listOf("")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_ng() {
+        assertEquals(listOf("(ng|m)"), jyutpingSoundChanges(listOf("ng")))
+        assertEquals(listOf("(ng|m)4"), jyutpingSoundChanges(listOf("ng4")))
+        assertEquals(listOf("(ng|m)?"), jyutpingSoundChanges(listOf("ng?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_m() {
+        assertEquals(listOf("(ng|m)"), jyutpingSoundChanges(listOf("m")))
+        assertEquals(listOf("(ng|m)4"), jyutpingSoundChanges(listOf("m4")))
+        assertEquals(listOf("(ng|m)?"), jyutpingSoundChanges(listOf("m?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_ngInitial() {
+        assertEquals(listOf("(ng)!o"), jyutpingSoundChanges(listOf("ngo")))
+        assertEquals(listOf("(ng)!o5"), jyutpingSoundChanges(listOf("ngo5")))
+        assertEquals(listOf("(ng)!o?"), jyutpingSoundChanges(listOf("ngo?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_nullInitial() {
+        assertEquals(listOf("(ng)!o"), jyutpingSoundChanges(listOf("o")))
+        assertEquals(listOf("(ng)!o5"), jyutpingSoundChanges(listOf("o5")))
+        assertEquals(listOf("(ng)!o?"), jyutpingSoundChanges(listOf("o?")))
+
+        assertEquals(listOf("(ng)!aa!ng!"), jyutpingSoundChanges(listOf("ang")))
+        assertEquals(listOf("(ng)!aa!ng!2"), jyutpingSoundChanges(listOf("ang2")))
+        assertEquals(listOf("(ng)!aa!ng!?"), jyutpingSoundChanges(listOf("ang?")))
+
+        assertEquals(listOf("(ng)!uk"), jyutpingSoundChanges(listOf("uk")))
+        assertEquals(listOf("(ng)!uk1"), jyutpingSoundChanges(listOf("uk1")))
+        assertEquals(listOf("(ng)!uk?"), jyutpingSoundChanges(listOf("uk?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_nInitial() {
+        assertEquals(listOf("(n|l)ei"), jyutpingSoundChanges(listOf("nei")))
+        assertEquals(listOf("(n|l)ei5"), jyutpingSoundChanges(listOf("nei5")))
+        assertEquals(listOf("(n|l)ei?"), jyutpingSoundChanges(listOf("nei?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_lInitial() {
+        assertEquals(listOf("(n|l)ei"), jyutpingSoundChanges(listOf("lei")))
+        assertEquals(listOf("(n|l)ei5"), jyutpingSoundChanges(listOf("lei5")))
+        assertEquals(listOf("(n|l)ei?"), jyutpingSoundChanges(listOf("lei?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_gw() {
+        assertEquals(listOf("(g|k)w!o(k|t)"), jyutpingSoundChanges(listOf("gok")))
+        assertEquals(listOf("(g|k)w!o(k|t)3"), jyutpingSoundChanges(listOf("gok3")))
+        assertEquals(listOf("(g|k)w!o(k|t)?"), jyutpingSoundChanges(listOf("gok?")))
+
+        assertEquals(listOf("(g|k)w!(o|u)ng"), jyutpingSoundChanges(listOf("g(o|u)ng")))
+        assertEquals(listOf("(g|k)w!(o|u)ng3"), jyutpingSoundChanges(listOf("g(o|u)ng3")))
+        assertEquals(listOf("(g|k)w!(o|u)ng?"), jyutpingSoundChanges(listOf("g(o|u)ng?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_kw() {
+        assertEquals(listOf("(g|k)w!o(k|t)"), jyutpingSoundChanges(listOf("kok")))
+        assertEquals(listOf("(g|k)w!o(k|t)3"), jyutpingSoundChanges(listOf("kok3")))
+        assertEquals(listOf("(g|k)w!o(k|t)?"), jyutpingSoundChanges(listOf("kok?")))
+
+        assertEquals(listOf("(g|k)w!(o|u)ng"), jyutpingSoundChanges(listOf("k(o|u)ng")))
+        assertEquals(listOf("(g|k)w!(o|u)ng3"), jyutpingSoundChanges(listOf("k(o|u)ng3")))
+        assertEquals(listOf("(g|k)w!(o|u)ng?"), jyutpingSoundChanges(listOf("k(o|u)ng?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_d() {
+        assertEquals(listOf("(d|t)eng"), jyutpingSoundChanges(listOf("deng")))
+        assertEquals(listOf("(d|t)eng1"), jyutpingSoundChanges(listOf("deng1")))
+        assertEquals(listOf("(d|t)eng?"), jyutpingSoundChanges(listOf("deng?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_tInitial() {
+        assertEquals(listOf("(d|t)eng"), jyutpingSoundChanges(listOf("teng")))
+        assertEquals(listOf("(d|t)eng1"), jyutpingSoundChanges(listOf("teng1")))
+        assertEquals(listOf("(d|t)eng?"), jyutpingSoundChanges(listOf("teng?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_c() {
+        assertEquals(listOf("(c|z)eng"), jyutpingSoundChanges(listOf("ceng")))
+        assertEquals(listOf("(c|z)eng1"), jyutpingSoundChanges(listOf("ceng1")))
+        assertEquals(listOf("(c|z)eng?"), jyutpingSoundChanges(listOf("ceng?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_z() {
+        assertEquals(listOf("(c|z)eng"), jyutpingSoundChanges(listOf("zeng")))
+        assertEquals(listOf("(c|z)eng1"), jyutpingSoundChanges(listOf("zeng1")))
+        assertEquals(listOf("(c|z)eng?"), jyutpingSoundChanges(listOf("zeng?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_g() {
+        assertEquals(listOf("(g|k)ing"), jyutpingSoundChanges(listOf("ging")))
+        assertEquals(listOf("(g|k)ing1"), jyutpingSoundChanges(listOf("ging1")))
+        assertEquals(listOf("(g|k)ing?"), jyutpingSoundChanges(listOf("ging?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_kInitial() {
+        assertEquals(listOf("(g|k)ing"), jyutpingSoundChanges(listOf("king")))
+        assertEquals(listOf("(g|k)ing1"), jyutpingSoundChanges(listOf("king1")))
+        assertEquals(listOf("(g|k)ing?"), jyutpingSoundChanges(listOf("king?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_jInitial() {
+        assertEquals(listOf("(j|z)yut"), jyutpingSoundChanges(listOf("jyut")))
+        assertEquals(listOf("(j|z)yut6"), jyutpingSoundChanges(listOf("jyut6")))
+        assertEquals(listOf("(j|z)yut?"), jyutpingSoundChanges(listOf("jyut?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_aa() {
+        assertEquals(listOf("maa!(k|t)"), jyutpingSoundChanges(listOf("mak")))
+        assertEquals(listOf("maa!(k|t)6"), jyutpingSoundChanges(listOf("mak6")))
+        assertEquals(listOf("maa!(k|t)?"), jyutpingSoundChanges(listOf("mak?")))
+
+        assertEquals(listOf("maa!(k|t)"), jyutpingSoundChanges(listOf("maak")))
+        assertEquals(listOf("maa!(k|t)1"), jyutpingSoundChanges(listOf("maak1")))
+        assertEquals(listOf("maa!(k|t)?"), jyutpingSoundChanges(listOf("maak?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_ang() {
+        assertEquals(listOf("maa!ng!"), jyutpingSoundChanges(listOf("maang")))
+        assertEquals(listOf("maa!ng!1"), jyutpingSoundChanges(listOf("maang1")))
+        assertEquals(listOf("maa!ng!?"), jyutpingSoundChanges(listOf("maang?")))
+
+        assertEquals(listOf("maa!ng!"), jyutpingSoundChanges(listOf("mang")))
+        assertEquals(listOf("maa!ng!1"), jyutpingSoundChanges(listOf("mang1")))
+        assertEquals(listOf("maa!ng!?"), jyutpingSoundChanges(listOf("mang?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_ong() {
+        assertEquals(listOf("bong!"), jyutpingSoundChanges(listOf("bong")))
+        assertEquals(listOf("bong!2"), jyutpingSoundChanges(listOf("bong2")))
+        assertEquals(listOf("bong!?"), jyutpingSoundChanges(listOf("bong?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_an() {
+        assertEquals(listOf("maa!ng!"), jyutpingSoundChanges(listOf("maan")))
+        assertEquals(listOf("maa!ng!4"), jyutpingSoundChanges(listOf("maan4")))
+        assertEquals(listOf("maa!ng!?"), jyutpingSoundChanges(listOf("maan?")))
+
+        assertEquals(listOf("maa!ng!"), jyutpingSoundChanges(listOf("man")))
+        assertEquals(listOf("maa!ng!1"), jyutpingSoundChanges(listOf("man1")))
+        assertEquals(listOf("maa!ng!?"), jyutpingSoundChanges(listOf("man?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_on() {
+        assertEquals(listOf("mong!"), jyutpingSoundChanges(listOf("mon")))
+        assertEquals(listOf("mong!1"), jyutpingSoundChanges(listOf("mon1")))
+        assertEquals(listOf("mong!?"), jyutpingSoundChanges(listOf("mon?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_tFinal() {
+        assertEquals(listOf("(g|k)w!o(k|t)"), jyutpingSoundChanges(listOf("got")))
+        assertEquals(listOf("(g|k)w!o(k|t)3"), jyutpingSoundChanges(listOf("got3")))
+        assertEquals(listOf("(g|k)w!o(k|t)?"), jyutpingSoundChanges(listOf("got?")))
+
+        assertEquals(listOf("bit"), jyutpingSoundChanges(listOf("bit")))
+        assertEquals(listOf("bit6"), jyutpingSoundChanges(listOf("bit6")))
+        assertEquals(listOf("bit?"), jyutpingSoundChanges(listOf("bit?")))
+
+        assertEquals(listOf("but"), jyutpingSoundChanges(listOf("but")))
+        assertEquals(listOf("but6"), jyutpingSoundChanges(listOf("but6")))
+        assertEquals(listOf("but?"), jyutpingSoundChanges(listOf("but?")))
+    }
+
+    @Test
+    fun cantoneseUtils_jyutpingSoundChanges_kFinal() {
+        assertEquals(listOf("(g|k)w!o(k|t)"), jyutpingSoundChanges(listOf("gok")))
+        assertEquals(listOf("(g|k)w!o(k|t)3"), jyutpingSoundChanges(listOf("gok3")))
+        assertEquals(listOf("(g|k)w!o(k|t)?"), jyutpingSoundChanges(listOf("gok?")))
+
+        assertEquals(listOf("bik"), jyutpingSoundChanges(listOf("bik")))
+        assertEquals(listOf("bik1"), jyutpingSoundChanges(listOf("bik1")))
+        assertEquals(listOf("bik?"), jyutpingSoundChanges(listOf("bik?")))
+
+        assertEquals(listOf("buk"), jyutpingSoundChanges(listOf("buk")))
+        assertEquals(listOf("buk1"), jyutpingSoundChanges(listOf("buk1")))
+        assertEquals(listOf("buk?"), jyutpingSoundChanges(listOf("buk?")))
     }
 }

@@ -12,6 +12,7 @@ private val jyutpingInitials: Set<String> = setOf(
     "z", "c", "s", "j",
 )
 
+@Suppress("SpellCheckingInspection")
 private val jyutpingFinals: Set<String> = setOf(
     "a", "aa", "aai", "aau", "aam", "aan", "aang", "aap", "aat", "aak",
     "ai", "au", "am", "an", "ang", "ap", "at", "ak", "e", "ei",
@@ -21,12 +22,14 @@ private val jyutpingFinals: Set<String> = setOf(
     "eon", "oeng", "eot", "oek", "yu", "yun", "yut", "m", "ng",
 )
 
-private val jyutpingFinalRegex = Regex(pattern = "([aeiou][aeiou]?[iumngptk]?[g]?)([1-6])")
+private val jyutpingFinalRegex = Regex(pattern = "([aeiou][aeiou]?[iumngptk]?g?)([1-6])")
 
 private val jyutpingToYaleSpecialSyllables: Map<String, List<String>> = mapOf(
     "m" to listOf("m̄", "ḿ", "m", "m̀h", "ḿh", "mh"),
     "ng" to listOf("n̄g", "ńg", "ng", "ǹgh", "ńgh", "ngh"),
 )
+
+@Suppress("SpellCheckingInspection")
 private val jyutpingToYaleSpecialFinals: Map<String, String> = mapOf(
     "aa" to "a",
     "oe" to "eu",
@@ -105,7 +108,7 @@ private val cantoneseIPASyllableRegex =
 private val cantoneseIPAHyuRegex = Regex("([zcs])yu")
 private val cantoneseIPAHoeRegex = Regex("([zc])oe")
 private val cantoneseIPAHeoRegex = Regex("([zc])eo")
-private val cantoneseIPASPecialSyllableRegex = Regex("^(h?)([mn]g?)([1-6])$")
+private val cantoneseIPASpecialSyllableRegex = Regex("^(h?)([mn]g?)([1-6])$")
 private val cantoneseIPAToneRegex = Regex("[1-6]")
 private val cantoneseIPACheckedToneRegex = Regex("([ptk])([136])")
 private val jyutpingToIPATones: List<String> = listOf(
@@ -113,8 +116,8 @@ private val jyutpingToIPATones: List<String> = listOf(
 )
 
 private fun unfoldJyutpingRegex(jyutping: String): List<String> {
-    var out: MutableList<String> = mutableListOf<String>()
-    var stringPossibilities: MutableList<String> = mutableListOf<String>()
+    val out: MutableList<String> = mutableListOf()
+    val stringPossibilities: MutableList<String> = mutableListOf()
 
     // Invariant: there must be only one set of parentheses and one exclamation
     if (jyutping.count { it == '(' } > 1
@@ -124,7 +127,7 @@ private fun unfoldJyutpingRegex(jyutping: String): List<String> {
         return out
     }
 
-    // If there is a parenthesis, then all of the options must be checked
+    // If there is a parenthesis, then all options must be checked
     if (jyutping.indexOf('(') != -1 && jyutping.indexOf(')') != -1) {
         val openParenIdx = jyutping.indexOf('(')
         var startIdx = openParenIdx + 1
@@ -150,18 +153,23 @@ private fun unfoldJyutpingRegex(jyutping: String): List<String> {
     // If there is a "!", then the initial with and the initial without
     // that optional character should be considered
     for (s in stringPossibilities) {
-        val regexIdx = s.indexOf('!')
-        if (regexIdx == -1) {
-            out.add(s)
-        } else if (regexIdx == 0) {
-            out.add(s.substring(1))
-        } else {
-            var tmp = s
-            tmp = tmp.removeRange(regexIdx - 1..<regexIdx + 1)
-            out.add(tmp)
-            tmp = s
-            tmp = tmp.removeRange(regexIdx..<regexIdx + 1)
-            out.add(tmp)
+        when (val regexIdx = s.indexOf('!')) {
+            -1 -> {
+                out.add(s)
+            }
+
+            0 -> {
+                out.add(s.substring(1))
+            }
+
+            else -> {
+                var tmp = s
+                tmp = tmp.removeRange(regexIdx - 1..<regexIdx + 1)
+                out.add(tmp)
+                tmp = s
+                tmp = tmp.removeRange(regexIdx..<regexIdx + 1)
+                out.add(tmp)
+            }
         }
     }
 
@@ -193,7 +201,7 @@ private fun convertYaleFinal(syllable: String): String {
     // Insert an "h" before the last consonant cluster for the light tones,
     // as they are indicated in Yale
     if (("4".."6").contains(tone)) {
-        yaleSyllable = yaleSyllable.replace(yaleLightToneClusterRegex, "h\$0")
+        yaleSyllable = yaleSyllable.replace(yaleLightToneClusterRegex, $$"h$0")
     }
 
     // Replace the first vowel in the final with its accented version
@@ -215,7 +223,7 @@ fun convertJyutpingToYale(jyutping: String, useSpacesToSegment: Boolean = false)
         return jyutping
     }
 
-    var syllables = mutableListOf<String>()
+    var syllables: MutableList<String>
     var jyutpingCopy = ""
     if (useSpacesToSegment) {
         // Insert a space before and after every special character, so that the
@@ -236,7 +244,7 @@ fun convertJyutpingToYale(jyutping: String, useSpacesToSegment: Boolean = false)
         syllables = result.toMutableList()
     }
 
-    var yaleSyllables = mutableListOf<String>()
+    val yaleSyllables = mutableListOf<String>()
     for (syllable in syllables) {
         // Most numbers, single characters, etc. are not Jyutping.
         // Also skip syllables that are just punctuation.
@@ -271,6 +279,7 @@ fun convertJyutpingToYale(jyutping: String, useSpacesToSegment: Boolean = false)
     return yaleSyllables.joinToString(" ")
 }
 
+@Suppress("SpellCheckingInspection")
 private fun convertIPACantoneseSyllable(jyutping: String): String {
     val match = cantoneseIPASyllableRegex.find(jyutping)
     if (match == null) {
@@ -281,7 +290,7 @@ private fun convertIPACantoneseSyllable(jyutping: String): String {
     val (matchedInitial, matchedNucleus, matchedCoda, matchedTone) = match.destructured
 
     var initial = ""
-    if (!matchedInitial.isEmpty()) {
+    if (matchedInitial.isNotEmpty()) {
         cantoneseIPAInitials[matchedInitial]?.let {
             initial = it
         } ?: run {
@@ -290,7 +299,7 @@ private fun convertIPACantoneseSyllable(jyutping: String): String {
     }
 
     var nucleus = ""
-    if (!matchedNucleus.isEmpty()) {
+    if (matchedNucleus.isNotEmpty()) {
         cantoneseIPANuclei[matchedNucleus]?.let {
             nucleus = it
         } ?: run {
@@ -299,7 +308,7 @@ private fun convertIPACantoneseSyllable(jyutping: String): String {
     }
 
     var coda = ""
-    if (!matchedCoda.isEmpty()) {
+    if (matchedCoda.isNotEmpty()) {
         cantoneseIPACodas[matchedCoda]?.let {
             coda = it
         } ?: run {
@@ -308,7 +317,7 @@ private fun convertIPACantoneseSyllable(jyutping: String): String {
     }
 
     var tone = ""
-    if (!matchedTone.isEmpty()) {
+    if (matchedTone.isNotEmpty()) {
         tone = jyutpingToIPATones[matchedTone.toInt() - 1]
     }
 
@@ -320,7 +329,7 @@ fun convertJyutpingToIPA(jyutping: String, useSpacesToSegment: Boolean = false):
         return jyutping
     }
 
-    var syllables = mutableListOf<String>()
+    var syllables: MutableList<String>
     var jyutpingCopy = ""
     if (useSpacesToSegment) {
         // Insert a space before and after every special character, so that the
@@ -341,7 +350,7 @@ fun convertJyutpingToIPA(jyutping: String, useSpacesToSegment: Boolean = false):
         syllables = result.toMutableList()
     }
 
-    var ipaSyllables = mutableListOf<String>()
+    val ipaSyllables = mutableListOf<String>()
     for (syllable in syllables) {
         // Most numbers, single characters, etc. are not Jyutping.
         // Also skip syllables that are just punctuation.
@@ -365,7 +374,7 @@ fun convertJyutpingToIPA(jyutping: String, useSpacesToSegment: Boolean = false):
             .replace(cantoneseIPAHeoRegex, "$1heo")
 
         // Convert special syllables
-        cantoneseIPASPecialSyllableRegex.find(ipaSyllable)?.let { specialMatch ->
+        cantoneseIPASpecialSyllableRegex.find(ipaSyllable)?.let { specialMatch ->
             val tone = specialMatch.destructured.component3()
             ipaSyllable = ipaSyllable
                 .replace("m", "m̩")
@@ -399,7 +408,7 @@ fun segmentJyutping(
     removeRegexCharacters: Boolean = true
 ): Pair<Boolean, List<String>> {
     var processedText = text
-    var syllables: MutableList<String> = mutableListOf<String>()
+    val syllables: MutableList<String> = mutableListOf()
     var validJyutping = true
 
     if (removeSpecialCharacters) {
@@ -459,7 +468,7 @@ fun segmentJyutping(
                 var globStartIdx = endIdx
                 if (endIdx > 0
                     && processedText[endIdx - 1] == ' '
-                    && !syllables.isEmpty()
+                    && syllables.isNotEmpty()
                     && syllables.last().last() != ' '
                 ) {
                     // Add preceding whitespace to this word
@@ -635,7 +644,7 @@ fun segmentJyutping(
 
     // Then add whatever's left in the search term, minus whitespace.
     val lastSyllable = processedText.substring(startIdx, endIdx).trim().lowercase()
-    if (!lastSyllable.isEmpty() && lastSyllable != "'") {
+    if (lastSyllable.isNotEmpty() && lastSyllable != "'") {
         syllables.add(lastSyllable)
         if (!jyutpingFinals.contains(lastSyllable)) {
             validJyutping = false
@@ -645,6 +654,7 @@ fun segmentJyutping(
     return Pair(validJyutping, syllables)
 }
 
+@Suppress("SpellCheckingInspection")
 fun jyutpingAutocorrect(text: String, unsafeSubstitutions: Boolean = false): String {
     var out = text
 
@@ -767,10 +777,10 @@ fun jyutpingAutocorrect(text: String, unsafeSubstitutions: Boolean = false): Str
                         }
                     }
 
-                    if (initialFound) {
-                        out = out.replaceRange(replacementIdx..<replacementIdx + 2, "ou")
+                    out = if (initialFound) {
+                        out.replaceRange(replacementIdx..<replacementIdx + 2, "ou")
                     } else {
-                        out = out.replaceRange(replacementIdx..<replacementIdx + 2, "o h")
+                        out.replaceRange(replacementIdx..<replacementIdx + 2, "o h")
                     }
                 }
             }
@@ -816,10 +826,10 @@ fun jyutpingAutocorrect(text: String, unsafeSubstitutions: Boolean = false): Str
                         }
                     }
 
-                    if (initialFound) {
-                        out = out.replaceRange(replacementIdx..<replacementIdx + 2, "au")
+                    out = if (initialFound) {
+                        out.replaceRange(replacementIdx..<replacementIdx + 2, "au")
                     } else {
-                        out = out.replaceRange(replacementIdx..<replacementIdx + 2, "o w")
+                        out.replaceRange(replacementIdx..<replacementIdx + 2, "o w")
                     }
                 }
             }
@@ -848,7 +858,7 @@ fun jyutpingAutocorrect(text: String, unsafeSubstitutions: Boolean = false): Str
         while (replacementIdx != -1) {
             when (replacementIdx) {
                 0 -> {
-                    out = out.replaceRange(replacementIdx..<replacementIdx + 2, "am")
+                    out = out.replaceRange(0..<2, "am")
                 }
 
                 else -> {
@@ -859,7 +869,7 @@ fun jyutpingAutocorrect(text: String, unsafeSubstitutions: Boolean = false): Str
                     if (openMidCentralVowelCluster.contains(out[initialIdx])) {
                         out = out.replaceRange(replacementIdx..<replacementIdx + 2, "am")
                     } else if (closeBackVowelCluster.contains(out[initialIdx])) {
-                        Unit
+                        @Suppress("UNUSED_EXPRESSION") Unit
                     } else if (out[initialIdx] == 'g') {
                         // The [m-] cluster can only occur if what follows is not an initial
                         var initialFound = false
@@ -872,10 +882,10 @@ fun jyutpingAutocorrect(text: String, unsafeSubstitutions: Boolean = false): Str
                             }
                         }
 
-                        if (initialFound) {
-                            out = out.replaceRange(replacementIdx..<replacementIdx + 2, "am")
+                        out = if (initialFound) {
+                            out.replaceRange(replacementIdx..<replacementIdx + 2, "am")
                         } else {
-                            out = out.replaceRange(replacementIdx..<replacementIdx + 2, "u m")
+                            out.replaceRange(replacementIdx..<replacementIdx + 2, "u m")
                         }
                     }
                 }
@@ -930,10 +940,10 @@ fun jyutpingAutocorrect(text: String, unsafeSubstitutions: Boolean = false): Str
                             }
                         }
 
-                        if (initialFound) {
-                            out = out.replaceRange(replacementIdx..<replacementIdx + 2, "ei")
+                        out = if (initialFound) {
+                            out.replaceRange(replacementIdx..<replacementIdx + 2, "ei")
                         } else {
-                            out = out.replaceRange(replacementIdx..<replacementIdx + 2, "e (j)")
+                            out.replaceRange(replacementIdx..<replacementIdx + 2, "e (j)")
                         }
                     }
                 }
@@ -960,10 +970,10 @@ fun jyutpingAutocorrect(text: String, unsafeSubstitutions: Boolean = false): Str
                         --initialIdx
                     }
 
-                    if (closeFrontVowelCluster.contains(out[initialIdx])) {
-                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "yu m")
+                    out = if (closeFrontVowelCluster.contains(out[initialIdx])) {
+                        out.replaceRange(replacementIdx..<replacementIdx + 3, "yu m")
                     } else {
-                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "(j)am")
+                        out.replaceRange(replacementIdx..<replacementIdx + 3, "(j)am")
                     }
                 }
             }
@@ -989,10 +999,10 @@ fun jyutpingAutocorrect(text: String, unsafeSubstitutions: Boolean = false): Str
                         --initialIdx
                     }
 
-                    if (closeFrontVowelCluster.contains(out[initialIdx])) {
-                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "yu p")
+                    out = if (closeFrontVowelCluster.contains(out[initialIdx])) {
+                        out.replaceRange(replacementIdx..<replacementIdx + 3, "yu p")
                     } else {
-                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "(j)ap")
+                        out.replaceRange(replacementIdx..<replacementIdx + 3, "(j)ap")
                     }
                 }
             }
@@ -1018,10 +1028,10 @@ fun jyutpingAutocorrect(text: String, unsafeSubstitutions: Boolean = false): Str
                         --initialIdx
                     }
 
-                    if (closeFrontVowelCluster.contains(out[initialIdx])) {
-                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "yu k")
+                    out = if (closeFrontVowelCluster.contains(out[initialIdx])) {
+                        out.replaceRange(replacementIdx..<replacementIdx + 3, "yu k")
                     } else {
-                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "(j)uk")
+                        out.replaceRange(replacementIdx..<replacementIdx + 3, "(j)uk")
                     }
                 }
             }
@@ -1047,10 +1057,10 @@ fun jyutpingAutocorrect(text: String, unsafeSubstitutions: Boolean = false): Str
                         --initialIdx
                     }
 
-                    if (closeFrontVowelCluster.contains(out[initialIdx])) {
-                        out = out.replaceRange(replacementIdx..<replacementIdx + 4, "(yu)n g")
+                    out = if (closeFrontVowelCluster.contains(out[initialIdx])) {
+                        out.replaceRange(replacementIdx..<replacementIdx + 4, "(yu)n g")
                     } else {
-                        out = out.replaceRange(replacementIdx..<replacementIdx + 4, "(j)ung")
+                        out.replaceRange(replacementIdx..<replacementIdx + 4, "(j)ung")
                     }
                 }
             }
@@ -1076,10 +1086,10 @@ fun jyutpingAutocorrect(text: String, unsafeSubstitutions: Boolean = false): Str
                         --initialIdx
                     }
 
-                    if (closeFrontVowelCluster.contains(out[initialIdx])) {
-                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "yun")
+                    out = if (closeFrontVowelCluster.contains(out[initialIdx])) {
+                        out.replaceRange(replacementIdx..<replacementIdx + 3, "yun")
                     } else {
-                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "(ja|jyu|yu)n")
+                        out.replaceRange(replacementIdx..<replacementIdx + 3, "(ja|jyu|yu)n")
                     }
                 }
             }
@@ -1105,10 +1115,10 @@ fun jyutpingAutocorrect(text: String, unsafeSubstitutions: Boolean = false): Str
                         --initialIdx
                     }
 
-                    if (closeFrontVowelCluster.contains(out[initialIdx])) {
-                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "(yu)t")
+                    out = if (closeFrontVowelCluster.contains(out[initialIdx])) {
+                        out.replaceRange(replacementIdx..<replacementIdx + 3, "(yu)t")
                     } else {
-                        out = out.replaceRange(replacementIdx..<replacementIdx + 3, "(ja|jyu|yu)t")
+                        out.replaceRange(replacementIdx..<replacementIdx + 3, "(ja|jyu|yu)t")
                     }
                 }
             }
@@ -1161,11 +1171,162 @@ fun jyutpingAutocorrect(text: String, unsafeSubstitutions: Boolean = false): Str
         val letterAfter = out[oIdx + 1]
         if (!setOf('k', 't', 'e', 'i', 'u', 'n', ')', '|').contains(letterAfter)) {
             out = out.replaceRange(oIdx..<oIdx + 1, "(ou!)")
-            oIdx = out.indexOf("o", oIdx + 1)
-            continue
         }
         oIdx = out.indexOf("o", oIdx + 1)
     }
 
     return out
+}
+
+fun jyutpingSoundChanges(syllables: List<String>): List<String> {
+    val changedSyllables: MutableList<String> = mutableListOf()
+
+    for (syllable in syllables) {
+        if (syllable.isEmpty()) {
+            changedSyllables.add(syllable)
+            continue
+        }
+
+        // Whole-syllable sound changes
+        if (syllable == "ng" ||
+            (syllable.length == 3 && syllable.dropLast(1) == "ng" &&
+                    (syllable.last() == '?' || syllable.last().isDigit()))
+        ) {
+            val replacementIdx = syllable.lastIndexOf("ng")
+            changedSyllables.add(
+                syllable.replaceRange(
+                    replacementIdx..<replacementIdx + 2,
+                    "(ng|m)"
+                )
+            )
+            continue
+        } else if (syllable == "m" ||
+            (syllable.length == 2 && syllable.dropLast(1) == "m" &&
+                    (syllable.last() == '?' || syllable.last().isDigit()))
+        ) {
+            val replacementIdx = syllable.indexOf("m")
+            changedSyllables.add(
+                syllable.replaceRange(
+                    replacementIdx..<replacementIdx + 1,
+                    "(ng|m)"
+                )
+            )
+            continue
+        }
+
+        // Initial sound changes
+        // "Lazy" pronunciations
+        var changedSyllable = syllable
+        if (changedSyllable.length >= 3 && changedSyllable.startsWith("ng") && !changedSyllable[2].isDigit() && changedSyllable[2] != '?') {
+            // loss of [ŋ] initial, replacement with null initial
+            changedSyllable = changedSyllable.replaceRange(0..<2, "(ng)!")
+        } else if (setOf('a', 'o', 'u').contains(changedSyllable[0])) {
+            // merging of null initial with initial [ŋ] before [a, ɐ, ɔ, o]
+            changedSyllable = "(ng)!$changedSyllable"
+        } else if (setOf('n', 'l').contains(changedSyllable[0])) {
+            // merge of [n] and [l] initials
+            changedSyllable = changedSyllable.replaceRange(0..<1, "(n|l)")
+        } else if (changedSyllable.startsWith("go")
+            || changedSyllable.startsWith("ko")
+            || changedSyllable.startsWith("g(o")
+            || changedSyllable.startsWith("k(o")
+        ) {
+            // merging of [k]/[kʷ] and [kʰ]/[kʷʰ] initials before [ɔ]
+            if (changedSyllable[0] == 'g') {
+                changedSyllable = changedSyllable.replaceRange(0..<1, "gw!")
+            } else if (changedSyllable[0] == 'k') {
+                changedSyllable = changedSyllable.replaceRange(0..<1, "kw!")
+            }
+        }
+
+        // Lack of distinction between aspirated and unaspirated initials
+        if (setOf('d', 't').contains(changedSyllable[0])) {
+            changedSyllable = changedSyllable.replaceRange(0..<1, "(d|t)")
+        } else if (setOf('c', 'z').contains(changedSyllable[0])) {
+            changedSyllable = changedSyllable.replaceRange(0..<1, "(c|z)")
+        } else if (setOf('g', 'k').contains(changedSyllable[0])) {
+            changedSyllable = changedSyllable.replaceRange(0..<1, "(g|k)")
+        }
+
+        // Palatization of alveolar affricate
+        if (changedSyllable[0] == 'j') {
+            changedSyllable = changedSyllable.replaceRange(0..<1, "(j|z)")
+        }
+
+        // Nucleus sound changes
+        // Merge between [aː] and [ɐ]
+        var idx = changedSyllable.indexOf("a")
+        while (idx != -1) {
+            val endIdx = min(changedSyllable.length, idx + 2)
+            if (changedSyllable.substring(idx..<endIdx) == "aa") {
+                changedSyllable = "${changedSyllable.substring(0..<endIdx)}!${
+                    changedSyllable.substring(
+                        endIdx..<changedSyllable.length
+                    )
+                }"
+                idx = changedSyllable.indexOf("a", startIndex = endIdx + 1)
+            } else {
+                changedSyllable = "${changedSyllable.substring(0..<idx + 1)}a!${
+                    changedSyllable.substring(
+                        idx + 1..<changedSyllable.length
+                    )
+                }"
+                idx = changedSyllable.indexOf("a", startIndex = idx + 2)
+            }
+        }
+
+        // Final sound changes
+        val choppedSyllable = changedSyllable.dropLast(1)
+        if (changedSyllable.endsWith("ang")
+            || changedSyllable.endsWith("a!ng")
+            || changedSyllable.endsWith("ong")
+            || choppedSyllable.endsWith("ang")
+            || choppedSyllable.endsWith("a!ng")
+            || choppedSyllable.endsWith("ong")
+        ) {
+            // alveolarization of final [ŋ]
+            val replacementIdx = changedSyllable.lastIndexOf("ng")
+            changedSyllable =
+                changedSyllable.replaceRange(replacementIdx..<replacementIdx + 2, "ng!")
+        } else if (changedSyllable.endsWith("an")
+            || changedSyllable.endsWith("a!n")
+            || changedSyllable.endsWith("on")
+            || choppedSyllable.endsWith("an")
+            || choppedSyllable.endsWith("a!n")
+            || choppedSyllable.endsWith("on")
+        ) {
+            // velarization of final [n]
+            val replacementIdx = changedSyllable.lastIndexOf("n")
+            changedSyllable =
+                changedSyllable.replaceRange(replacementIdx..<replacementIdx + 1, "ng!")
+        } else if (
+            (changedSyllable.endsWith("t")
+                    && !changedSyllable.endsWith("it")
+                    && !changedSyllable.endsWith("ut"))
+            || (choppedSyllable.endsWith("t")
+                    && !choppedSyllable.endsWith("it")
+                    && !choppedSyllable.endsWith("ut"))
+        ) {
+            // velarization of final [t]
+            val replacementIdx = changedSyllable.lastIndexOf("t")
+            changedSyllable =
+                changedSyllable.replaceRange(replacementIdx..<replacementIdx + 1, "(k|t)")
+        } else if (
+            (changedSyllable.endsWith("k")
+                    && !changedSyllable.endsWith("ik")
+                    && !changedSyllable.endsWith("uk"))
+            || (choppedSyllable.endsWith("k")
+                    && !choppedSyllable.endsWith("ik")
+                    && !choppedSyllable.endsWith("uk"))
+        ) {
+            // velarization of final [k]
+            val replacementIdx = changedSyllable.lastIndexOf("k")
+            changedSyllable =
+                changedSyllable.replaceRange(replacementIdx..<replacementIdx + 1, "(k|t)")
+        }
+
+        changedSyllables.add(changedSyllable)
+    }
+
+    return changedSyllables.toList()
 }

@@ -1795,6 +1795,12 @@ struct CantoneseUtilsTests {
     )
   }
 
+  @Test func soundChangeEmpty() async throws {
+    #expect(
+      jyutpingSoundChanges(text: [""]) == [""]
+    )
+  }
+
   @Test func soundChangeNg() async throws {
     #expect(
       jyutpingSoundChanges(text: ["ng"]) == ["(ng|m)"]
@@ -2036,6 +2042,20 @@ struct CantoneseUtilsTests {
 
     #expect(
       jyutpingSoundChanges(text: ["king?"]) == ["(g|k)ing?"]
+    )
+  }
+
+  @Test func soundChangeJInitial() async throws {
+    #expect(
+      jyutpingSoundChanges(text: ["jyut"]) == ["(j|z)yut"]
+    )
+
+    #expect(
+      jyutpingSoundChanges(text: ["jyut6"]) == ["(j|z)yut6"]
+    )
+
+    #expect(
+      jyutpingSoundChanges(text: ["jyut?"]) == ["(j|z)yut?"]
     )
   }
 

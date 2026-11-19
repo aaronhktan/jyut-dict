@@ -1159,7 +1159,6 @@ bool jyutpingSoundChanges(std::vector<std::string> &inOut)
             }
         }
 
-        // Final sound changes
         if ((syllable.ends_with("ang") || syllable.ends_with("a!ng")
              || syllable.ends_with("ong"))
             || (syllable.length() >= 4
