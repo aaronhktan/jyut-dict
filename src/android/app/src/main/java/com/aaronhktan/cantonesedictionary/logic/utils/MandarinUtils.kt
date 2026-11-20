@@ -578,3 +578,62 @@ fun segmentPinyin(
 
     return Pair(validPinyin, syllables)
 }
+
+fun pinyinSoundChanges(text: List<String>): List<String> {
+    var syllables: MutableList<String> = mutableListOf()
+
+    for (s in text) {
+        var syllable = s
+        if (syllable.startsWith("zh")) {
+            syllable = "z(h)!${syllable.drop(2)}"
+        } else if (syllable.startsWith("z")) {
+            syllable = "z(h)!${syllable.drop(1)}"
+        }
+        if (syllable.startsWith("ch")) {
+            syllable = "c(h)!${syllable.drop(2)}"
+        } else if (syllable.startsWith("c")) {
+            syllable = "c(h)!${syllable.drop(1)}"
+        }
+        if (syllable.startsWith("sh")) {
+            syllable = "s(h)!${syllable.drop(2)}"
+        } else if (syllable.startsWith("s")) {
+            syllable = "s(h)!${syllable.drop(1)}"
+        }
+        if (syllable.startsWith("n")) {
+            syllable = "(n|l)${syllable.drop(1)}"
+        } else if (syllable.startsWith("r")) {
+            syllable = "(l|r)${syllable.drop(1)}"
+        }
+        if (syllable.startsWith("li") || syllable.startsWith("lu:")) {
+            syllable = "(l|n)${syllable.drop(1)}"
+        } else if (syllable.startsWith("l")) {
+            syllable = "(l|n|r)${syllable.drop(1)}"
+        }
+
+        if (syllable.endsWith("ang") || syllable.dropLast(1).endsWith("ang")) {
+            val idx = syllable.lastIndexOf("ng")
+            syllable = syllable.replaceRange(idx..<idx+2, "ng!")
+        } else if (syllable.endsWith("an") || syllable.dropLast(1).endsWith("an")) {
+            val idx = syllable.lastIndexOf("n")
+            syllable = syllable.replaceRange(idx..<idx+1, "ng!")
+        }
+        if (syllable.endsWith("eng") || syllable.dropLast(1).endsWith("eng")) {
+            val idx = syllable.lastIndexOf("ng")
+            syllable = syllable.replaceRange(idx..<idx+2, "ng!")
+        } else if (syllable.endsWith("en") || syllable.dropLast(1).endsWith("en")) {
+            val idx = syllable.lastIndexOf("n")
+            syllable = syllable.replaceRange(idx..<idx + 1, "ng!")
+        }
+        if (syllable.endsWith("ing") || syllable.dropLast(1).endsWith("ing")) {
+            val idx = syllable.lastIndexOf("ng")
+            syllable = syllable.replaceRange(idx..<idx+2, "ng!")
+        } else if (syllable.endsWith("in") || syllable.dropLast(1).endsWith("in")) {
+            val idx = syllable.lastIndexOf("n")
+            syllable = syllable.replaceRange(idx..<idx+1, "ng!")
+        }
+
+        syllables.add(syllable)
+    }
+
+    return syllables.toList()
+}

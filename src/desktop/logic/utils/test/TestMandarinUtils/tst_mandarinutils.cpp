@@ -573,6 +573,24 @@ void TestMandarinUtils::soundChangeZ()
     expected = {"z(h)!uang!?"};
     QCOMPARE(result, expected);
     QCOMPARE(err, false);
+
+    result = {"zhuan"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"z(h)!uang!"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"zhuan3"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"z(h)!uang!3"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"zhuan?"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"z(h)!uang!?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
 }
 
 void TestMandarinUtils::soundChangeC()
@@ -584,6 +602,24 @@ void TestMandarinUtils::soundChangeC()
     QCOMPARE(err, false);
 
     result = {"cong1"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"c(h)!ong1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"cong?"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"c(h)!ong?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"chong"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"c(h)!ong"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"chong1"};
     err = MandarinUtils::pinyinSoundChanges(result);
     expected = {"c(h)!ong1"};
     QCOMPARE(result, expected);
@@ -611,6 +647,24 @@ void TestMandarinUtils::soundChangeS()
     QCOMPARE(err, false);
 
     result = {"se?"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"s(h)!e?"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"she"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"s(h)!e"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"she2"};
+    err = MandarinUtils::pinyinSoundChanges(result);
+    expected = {"s(h)!e2"};
+    QCOMPARE(result, expected);
+    QCOMPARE(err, false);
+
+    result = {"she?"};
     err = MandarinUtils::pinyinSoundChanges(result);
     expected = {"s(h)!e?"};
     QCOMPARE(result, expected);

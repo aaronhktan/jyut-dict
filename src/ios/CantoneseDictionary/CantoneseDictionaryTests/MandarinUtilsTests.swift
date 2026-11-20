@@ -545,6 +545,18 @@ struct MandarinUtilsTests {
     #expect(
       pinyinSoundChanges(text: ["zuan?"]) == ["z(h)!uang!?"]
     )
+
+    #expect(
+      pinyinSoundChanges(text: ["zhuan"]) == ["z(h)!uang!"]
+    )
+
+    #expect(
+      pinyinSoundChanges(text: ["zhuan3"]) == ["z(h)!uang!3"]
+    )
+
+    #expect(
+      pinyinSoundChanges(text: ["zhuan?"]) == ["z(h)!uang!?"]
+    )
   }
 
   @Test func soundChangeC() async throws {
@@ -554,6 +566,18 @@ struct MandarinUtilsTests {
 
     #expect(
       pinyinSoundChanges(text: ["cong1"]) == ["c(h)!ong1"]
+    )
+
+    #expect(
+      pinyinSoundChanges(text: ["cong?"]) == ["c(h)!ong?"]
+    )
+
+    #expect(
+      pinyinSoundChanges(text: ["chong"]) == ["c(h)!ong"]
+    )
+
+    #expect(
+      pinyinSoundChanges(text: ["chong1"]) == ["c(h)!ong1"]
     )
 
     #expect(
@@ -572,6 +596,18 @@ struct MandarinUtilsTests {
 
     #expect(
       pinyinSoundChanges(text: ["se?"]) == ["s(h)!e?"]
+    )
+
+    #expect(
+      pinyinSoundChanges(text: ["she"]) == ["s(h)!e"]
+    )
+
+    #expect(
+      pinyinSoundChanges(text: ["she2"]) == ["s(h)!e2"]
+    )
+
+    #expect(
+      pinyinSoundChanges(text: ["she?"]) == ["s(h)!e?"]
     )
   }
 

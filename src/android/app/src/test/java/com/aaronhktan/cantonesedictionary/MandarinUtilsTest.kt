@@ -7,6 +7,7 @@ import com.aaronhktan.cantonesedictionary.logic.utils.convertPinyinToZhuyin
 import com.aaronhktan.cantonesedictionary.logic.utils.createNumberedPinyin
 import com.aaronhktan.cantonesedictionary.logic.utils.createPinyinWithV
 import com.aaronhktan.cantonesedictionary.logic.utils.createPrettyPinyin
+import com.aaronhktan.cantonesedictionary.logic.utils.pinyinSoundChanges
 import com.aaronhktan.cantonesedictionary.logic.utils.segmentPinyin
 import org.junit.Test
 
@@ -438,5 +439,103 @@ class MandarinUtilsUnitTest {
         assertEquals(
             Pair(false, listOf("kljnxclkjvnl")), segmentPinyin("kljnxclkjvnl")
         )
+    }
+
+    @Test
+    fun mandarinUtils_pinyinSoundChanges_z() {
+        assertEquals(listOf("z(h)!uang!"), pinyinSoundChanges(listOf("zuan")))
+        assertEquals(listOf("z(h)!uang!3"), pinyinSoundChanges(listOf("zuan3")))
+        assertEquals(listOf("z(h)!uang!?"), pinyinSoundChanges(listOf("zuan?")))
+
+        assertEquals(listOf("z(h)!uang!"), pinyinSoundChanges(listOf("zhuan")))
+        assertEquals(listOf("z(h)!uang!3"), pinyinSoundChanges(listOf("zhuan3")))
+        assertEquals(listOf("z(h)!uang!?"), pinyinSoundChanges(listOf("zhuan?")))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinSoundChanges_c() {
+        assertEquals(listOf("c(h)!ong"), pinyinSoundChanges(listOf("cong")))
+        assertEquals(listOf("c(h)!ong1"), pinyinSoundChanges(listOf("cong1")))
+        assertEquals(listOf("c(h)!ong?"), pinyinSoundChanges(listOf("cong?")))
+
+        assertEquals(listOf("c(h)!ong"), pinyinSoundChanges(listOf("chong")))
+        assertEquals(listOf("c(h)!ong1"), pinyinSoundChanges(listOf("chong1")))
+        assertEquals(listOf("c(h)!ong?"), pinyinSoundChanges(listOf("chong?")))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinSoundChanges_s() {
+        assertEquals(listOf("s(h)!e"), pinyinSoundChanges(listOf("se")))
+        assertEquals(listOf("s(h)!e2"), pinyinSoundChanges(listOf("se2")))
+        assertEquals(listOf("s(h)!e?"), pinyinSoundChanges(listOf("se?")))
+
+        assertEquals(listOf("s(h)!e"), pinyinSoundChanges(listOf("she")))
+        assertEquals(listOf("s(h)!e2"), pinyinSoundChanges(listOf("she2")))
+        assertEquals(listOf("s(h)!e?"), pinyinSoundChanges(listOf("she?")))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinSoundChanges_n() {
+        assertEquals(listOf("(n|l)i"), pinyinSoundChanges(listOf("ni")))
+        assertEquals(listOf("(n|l)i3"), pinyinSoundChanges(listOf("ni3")))
+        assertEquals(listOf("(n|l)i?"), pinyinSoundChanges(listOf("ni?")))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinSoundChanges_r() {
+        assertEquals(listOf("(l|r)e"), pinyinSoundChanges(listOf("re")))
+        assertEquals(listOf("(l|r)e4"), pinyinSoundChanges(listOf("re4")))
+        assertEquals(listOf("(l|r)e?"), pinyinSoundChanges(listOf("re?")))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinSoundChanges_ln() {
+        assertEquals(listOf("(l|n)i"), pinyinSoundChanges(listOf("li")))
+        assertEquals(listOf("(l|n)ie4"), pinyinSoundChanges(listOf("lie4")))
+        assertEquals(listOf("(l|n)iao?"), pinyinSoundChanges(listOf("liao?")))
+        assertEquals(listOf("(l|n)iu"), pinyinSoundChanges(listOf("liu")))
+        assertEquals(listOf("(l|n)iang!2"), pinyinSoundChanges(listOf("lian2")))
+        assertEquals(listOf("(l|n)ing!?"), pinyinSoundChanges(listOf("lin?")))
+        assertEquals(listOf("(l|n)iang!"), pinyinSoundChanges(listOf("liang")))
+        assertEquals(listOf("(l|n)ing!1"), pinyinSoundChanges(listOf("ling1")))
+        assertEquals(listOf("(l|n)u:?"), pinyinSoundChanges(listOf("lu:?")))
+        assertEquals(listOf("(l|n)u:e"), pinyinSoundChanges(listOf("lu:e")))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinSoundChanges_lnr() {
+        assertEquals(listOf("(l|n|r)ang!"), pinyinSoundChanges(listOf("lang")))
+        assertEquals(listOf("(l|n|r)ang!4"), pinyinSoundChanges(listOf("lang4")))
+        assertEquals(listOf("(l|n|r)ang!?"), pinyinSoundChanges(listOf("lang?")))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinSoundChanges_ang() {
+        assertEquals(listOf("bang!"), pinyinSoundChanges(listOf("bang")))
+        assertEquals(listOf("bang!1"), pinyinSoundChanges(listOf("bang1")))
+        assertEquals(listOf("bang!?"), pinyinSoundChanges(listOf("bang?")))
+        assertEquals(listOf("bang!"), pinyinSoundChanges(listOf("ban")))
+        assertEquals(listOf("bang!1"), pinyinSoundChanges(listOf("ban1")))
+        assertEquals(listOf("bang!?"), pinyinSoundChanges(listOf("ban?")))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinSoundChanges_eng() {
+        assertEquals(listOf("peng!"), pinyinSoundChanges(listOf("peng")))
+        assertEquals(listOf("peng!4"), pinyinSoundChanges(listOf("peng4")))
+        assertEquals(listOf("peng!?"), pinyinSoundChanges(listOf("peng?")))
+        assertEquals(listOf("peng!"), pinyinSoundChanges(listOf("pen")))
+        assertEquals(listOf("peng!1"), pinyinSoundChanges(listOf("pen1")))
+        assertEquals(listOf("peng!?"), pinyinSoundChanges(listOf("pen?")))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinSoundChanges_ing() {
+        assertEquals(listOf("bing!"), pinyinSoundChanges(listOf("bing")))
+        assertEquals(listOf("bing!3"), pinyinSoundChanges(listOf("bing3")))
+        assertEquals(listOf("bing!?"), pinyinSoundChanges(listOf("bing?")))
+        assertEquals(listOf("ping!"), pinyinSoundChanges(listOf("pin")))
+        assertEquals(listOf("ping!1"), pinyinSoundChanges(listOf("pin1")))
+        assertEquals(listOf("ping!?"), pinyinSoundChanges(listOf("pin?")))
     }
 }
