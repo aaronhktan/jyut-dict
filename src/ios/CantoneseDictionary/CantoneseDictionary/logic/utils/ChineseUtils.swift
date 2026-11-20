@@ -69,6 +69,7 @@ nonisolated func applyColours(
     case .cantonese:
       if tone >= jyutpingToneColours.count {
         colouredString.append(AttributedString(currentString))
+        toneIdx += 1
         continue
       }
 
@@ -77,6 +78,7 @@ nonisolated func applyColours(
     case .mandarin:
       if tone >= pinyinToneColours.count {
         colouredString.append(AttributedString(currentString))
+        toneIdx += 1
         continue
       }
 
