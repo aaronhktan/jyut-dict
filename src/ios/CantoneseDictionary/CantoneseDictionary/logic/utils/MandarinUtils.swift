@@ -379,6 +379,9 @@ private nonisolated func convertIPAMandarinSyllable(
   var ipaInitial: String = ""
   var ipaFinal: String = ""
 
+  var ipaInitialMatch: String = ""
+  var ipaFinalMatch: String = ""
+
   if syllable == "ng" {
     ipaFinal = mandarinIPAFinals["ng"]!
   } else {
@@ -388,8 +391,11 @@ private nonisolated func convertIPAMandarinSyllable(
       return ("", syllable)
     }
 
-    ipaInitial = mandarinIPAInitials[String(match[1].substring!)] ?? ""
-    ipaFinal = mandarinIPAFinals[String(match[2].substring!)] ?? ""
+    ipaInitialMatch = String(match[1].substring!)
+    ipaFinalMatch = String(match[2].substring!)
+
+    ipaInitial = mandarinIPAInitials[ipaInitialMatch] ?? ""
+    ipaFinal = mandarinIPAFinals[ipaFinalMatch] ?? ""
 
     if ipaInitial.isEmpty && ipaFinal.isEmpty {
       logger.error("Could not find initial or final in: \(syllable)")
@@ -403,9 +409,9 @@ private nonisolated func convertIPAMandarinSyllable(
   if ipaInitial == "ʈ͡ʂʰ" || ipaInitial == "ʂ" || ipaInitial == "ʈ͡ʂ"
     || ipaInitial == "ʐ"
   {
-    if ipaFinal == "ir" {
+    if ipaFinalMatch == "ir" {
       ipaFinal = "ʐ̩ɻ"
-    } else if ipaFinal == "i" {
+    } else if ipaFinalMatch == "i" {
       ipaFinal = "ʐ̩"
     }
   }
@@ -414,9 +420,9 @@ private nonisolated func convertIPAMandarinSyllable(
   // fricative (+ voiced retroflex approximant if erhua)
   // in Pinyin starting with c, s, or z
   if ipaInitial == "t͡sʰ" || ipaInitial == "s" || ipaInitial == "t͡s" {
-    if ipaFinal == "ir" {
+    if ipaFinalMatch == "ir" {
       ipaFinal = "z̩ɻ"
-    } else if ipaFinal == "i" {
+    } else if ipaFinalMatch == "i" {
       ipaFinal = "z̩"
     }
   }

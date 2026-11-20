@@ -476,67 +476,73 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
 std::tuple<std::string, std::string> convertIPAMandarinSyllable(
     std::string &syllable)
 {
-    std::string ipa_initial;
-    std::string ipa_final;
+    std::string ipaInitial;
+    std::string ipaFinal;
+
+    std::string ipaInitialMatch;
+    std::string ipaFinalMatch;
 
     // Check for special-case "ng", otherwise get replacement initial and final as normal
     if (syllable == "ng") {
-        ipa_final = mandarinIPAFinals.at("ng");
+        ipaFinal = mandarinIPAFinals.at("ng");
     } else {
-        std::smatch ipa_match;
+        std::smatch ipaMatch;
 
         const auto regex_res = std::regex_match(syllable,
-                                                ipa_match,
+                                                ipaMatch,
                                                 mandarinIPASyllableRegex);
         if (!regex_res) {
             std::cerr << "Invalid pinyin for IPA conversion!" << std::endl;
             return std::make_tuple("", syllable);
         }
 
-        bool found_initial = !(mandarinIPAInitials.find(ipa_match[1])
+        ipaInitialMatch = ipaMatch[1];
+        ipaFinalMatch = ipaMatch[2];
+
+        bool found_initial = !(mandarinIPAInitials.find(ipaInitialMatch)
                                == mandarinIPAInitials.end());
-        bool found_final = !(mandarinIPAFinals.find(ipa_match[2])
+        bool found_final = !(mandarinIPAFinals.find(ipaFinalMatch)
                              == mandarinIPAFinals.end());
         if (!found_initial && !found_final) {
             return std::make_tuple("", syllable);
         }
         if (found_initial) {
-            ipa_initial = mandarinIPAInitials.at(ipa_match[1]);
+            ipaInitial = mandarinIPAInitials.at(ipaInitialMatch);
         }
         if (found_final) {
-            ipa_final = mandarinIPAFinals.at(ipa_match[2]);
+            ipaFinal = mandarinIPAFinals.at(ipaFinalMatch);
         }
     }
 
     // Replace close front unrounded vowel with syllabic retroflex sibilant
     // fricative (+ voiced retroflex approximant if erhua)
     // in Pinyin starting with ch, sh, zh, or r
-    if (ipa_initial == "ʈ͡ʂʰ" || ipa_initial == "ʂ" || ipa_initial == "ʈ͡ʂ"
-        || ipa_initial == "ʐ") {
-        if (ipa_final == "ir") {
-            ipa_final = "ʐ̩ɻ";
-        } else if (ipa_final == "i") {
-            ipa_final = "ʐ̩";
+    if (ipaInitial == "ʈ͡ʂʰ" || ipaInitial == "ʂ" || ipaInitial == "ʈ͡ʂ"
+        || ipaInitial == "ʐ") {
+        if (ipaFinalMatch == "ir") {
+            ipaFinal = "ʐ̩ɻ";
+        } else if (ipaFinalMatch == "i") {
+            ipaFinal = "ʐ̩";
         }
     }
 
     // Replace close front unrounded vowel with syllabic alveolar sibilant
     // fricative (+ voiced retroflex approximant if erhua)
     // in Pinyin starting with c, s, or z
-    if (ipa_initial == "t͡sʰ" || ipa_initial == "s" || ipa_initial == "t͡s") {
-        if (ipa_final == "ir") {
-            ipa_final = "z̩ɻ";
-        } else if (ipa_final == "i") {
-            ipa_final = "z̩";
+    if (ipaInitial == "t͡sʰ" || ipaInitial == "s" || ipaInitial == "t͡s") {
+        if (ipaFinalMatch == "ir") {
+            ipaFinal = "z̩ɻ";
+        } else if (ipaFinalMatch == "i") {
+            ipaFinal = "z̩";
         }
     }
 
     // Do some cleanup for Pinyin like "ri"
-    if (ipa_initial == "ʐ" && ipa_final == "ʐ̩") {
-        ipa_initial = "";
+    if (ipaInitial == "ʐ" && ipaFinal == "ʐ̩") {
+        ipaInitial = "";
     }
 
-    return std::make_tuple(ipa_initial, ipa_final);
+    return std::make_tuple(ipaInitial, ipaFinal);
 }
 
 std::string convertPinyinToIPA(const std::string &pinyin,

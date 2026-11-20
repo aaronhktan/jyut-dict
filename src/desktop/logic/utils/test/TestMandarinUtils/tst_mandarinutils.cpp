@@ -41,6 +41,7 @@ private slots:
     void pinyinToZhuyinMalformed();
 
     void pinyinToIPASimple();
+    void pinyinToIPAEmpty();
     void pinyinToIPARejectNoTone();
     void pinyinToIPARejectSingleLetter();
     void pinyinToIPARejectSpecialCharacter();
@@ -50,10 +51,13 @@ private slots:
     void pinyinToIPASpecialCaseRi();
     void pinyinToIPASyllableWithV();
     void pinyinToIPAVoicelessInitial();
+    void pinyinToIPAInvalidInitialAndFinal();
     void pinyinToIPAToneThree();
     void pinyinToIPAToneFour();
     void pinyinToIPAOtherTone();
+    void pinyinToIPAOnlyTone();
     void pinyinToIPAErhua();
+    void pinyinToIPAGlottal();
 
     void segmentPinyinSimple();
     void segmentPinyinNoDigits();
@@ -288,6 +292,12 @@ void TestMandarinUtils::pinyinToIPASimple()
 #endif
 }
 
+void TestMandarinUtils::pinyinToIPAEmpty()
+{
+    std::string result = MandarinUtils::convertPinyinToIPA("");
+    QCOMPARE(result, "");
+}
+
 void TestMandarinUtils::pinyinToIPARejectNoTone()
 {
     std::string result = MandarinUtils::convertPinyinToIPA("ba");
@@ -397,6 +407,19 @@ void TestMandarinUtils::pinyinToIPAVoicelessInitial()
 #endif
 }
 
+void TestMandarinUtils::pinyinToIPAInvalidInitialAndFinal()
+{
+#ifdef Q_OS_WINDOWS
+    QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
+#endif
+    std::string result = MandarinUtils::convertPinyinToIPA("wz1");
+#ifdef Q_OS_MAC
+    QCOMPARE(result, "wz ˥ ˥");
+#else
+    QCOMPARE(result, "wz˥˥");
+#endif
+}
+
 void TestMandarinUtils::pinyinToIPAToneThree()
 {
 #ifdef Q_OS_WINDOWS
@@ -463,6 +486,13 @@ void TestMandarinUtils::pinyinToIPAOtherTone()
     QCOMPARE(result, "mä");
 #endif
 }
+
+void TestMandarinUtils::pinyinToIPAOnlyTone()
+{
+    std::string result = MandarinUtils::convertPinyinToIPA("66");
+    QCOMPARE(result, "66");
+}
+
 void TestMandarinUtils::pinyinToIPAErhua()
 {
 #ifdef Q_OS_WINDOWS
@@ -480,6 +510,47 @@ void TestMandarinUtils::pinyinToIPAErhua()
     QCOMPARE(result, "t͡ɕʰɥɑɻ ˥ ˥");
 #else
     QCOMPARE(result, "t͡ɕʰɥɑɻ˥˥");
+#endif
+
+    result = MandarinUtils::convertPinyinToIPA("shi2");
+#ifdef Q_OS_MAC
+    QCOMPARE(result, "ʂʐ̩ ˧ ˥");
+#else
+    QCOMPARE(result, "ʂʐ̩˧˥");
+#endif
+
+    result = MandarinUtils::convertPinyinToIPA("shir2");
+#ifdef Q_OS_MAC
+    QCOMPARE(result, "ʂʐ̩ɻ ˧ ˥");
+#else
+    QCOMPARE(result, "ʂʐ̩ɻ˧˥");
+#endif
+
+    result = MandarinUtils::convertPinyinToIPA("ci2");
+#ifdef Q_OS_MAC
+    QCOMPARE(result, "t͡sʰz̩ ˧ ˥");
+#else
+    QCOMPARE(result, "t͡sʰz̩˧˥");
+#endif
+
+    result = MandarinUtils::convertPinyinToIPA("cir2");
+#ifdef Q_OS_MAC
+    QCOMPARE(result, "t͡sʰz̩ɻ ˧ ˥");
+#else
+    QCOMPARE(result, "t͡sʰz̩ɻ˧˥");
+#endif
+}
+
+void TestMandarinUtils::pinyinToIPAGlottal()
+{
+#ifdef Q_OS_WINDOWS
+    QSKIP("IPA tone comparison doesn't work on Windows, skipping test");
+#endif
+    std::string result = MandarinUtils::convertPinyinToIPA("e2");
+#ifdef Q_OS_MAC
+    QCOMPARE(result, "ˀɤ ˧ ˥");
+#else
+    QCOMPARE(result, "ˀɤ˧˥");
 #endif
 }
 

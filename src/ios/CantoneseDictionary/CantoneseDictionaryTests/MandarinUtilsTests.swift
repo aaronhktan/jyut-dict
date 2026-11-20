@@ -195,6 +195,12 @@ struct MandarinUtilsTests {
     )
   }
 
+  @Test func pinyinToIPAEmpty() async throws {
+    #expect(
+      convertPinyinToIPA(pinyin: "") == ""
+    )
+  }
+
   @Test func pinyinToIPARejectNoTone() async throws {
     #expect(
       convertPinyinToIPA(pinyin: "ba") == "ba"
@@ -257,6 +263,12 @@ struct MandarinUtilsTests {
     )
   }
 
+  @Test func pinyinToIPAInvalidInitialAndFinal() async throws {
+    #expect(
+      convertPinyinToIPA(pinyin: "wz1") == "wz˥˥"
+    )
+  }
+
   @Test func pinyinToIPAToneThree() async throws {
     #expect(
       convertPinyinToIPA(pinyin: "ke3") == "kʰɤ˨˩˦"
@@ -291,6 +303,12 @@ struct MandarinUtilsTests {
     )
   }
 
+  @Test func pinyinToIPAOnlyTone() async throws {
+    #expect(
+      convertPinyinToIPA(pinyin: "66", useSpacesToSegment: true) == "66"
+    )
+  }
+
   @Test func pinyinToIPAErhua() async throws {
     #expect(
       convertPinyinToIPA(pinyin: "huar1") == "xu̯ɑɻ˥˥"
@@ -298,6 +316,28 @@ struct MandarinUtilsTests {
 
     #expect(
       convertPinyinToIPA(pinyin: "quanr1") == "t͡ɕʰɥɑɻ˥˥"
+    )
+
+    #expect(
+      convertPinyinToIPA(pinyin: "shi2") == "ʂʐ̩˧˥"
+    )
+
+    #expect(
+      convertPinyinToIPA(pinyin: "shir2") == "ʂʐ̩ɻ˧˥"
+    )
+
+    #expect(
+      convertPinyinToIPA(pinyin: "ci2") == "t͡sʰz̩˧˥"
+    )
+
+    #expect(
+      convertPinyinToIPA(pinyin: "cir2") == "t͡sʰz̩ɻ˧˥"
+    )
+  }
+
+  @Test func pinyinToIPAGlottal() async throws {
+    #expect(
+      convertPinyinToIPA(pinyin: "e2") == "ˀɤ˧˥"
     )
   }
 

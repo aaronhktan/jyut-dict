@@ -62,8 +62,7 @@ private val zhuyinTones: List<String> = listOf("", "", "ˊ", "ˇ", "ˋ", "˙")
 
 private val zhuyinIPrecederRegex = Regex("([zcs]h?)i")
 
-@Suppress("SpellCheckingInspection")
-private val zhuyinRRegex = Regex("([r])i")
+private val zhuyinRRegex = Regex("(r)i")
 private val zhuyinNgSpecialCaseRegex = Regex("^ng([012345])$")
 private val zhuyinHmSpecialCaseRegex = Regex("^hm([012345])$")
 private val zhuyinHngSpecialCaseRegex = Regex("^hng([012345])$")
@@ -138,7 +137,7 @@ fun createPrettyPinyin(pinyin: String): String {
         return pinyin
     }
 
-    var processedSyllables: MutableList<String> = mutableListOf()
+    val processedSyllables: MutableList<String> = mutableListOf()
     val (_, syllables) = segmentPinyin(pinyin)
 
     for (s in syllables) {
@@ -186,12 +185,13 @@ fun createPinyinWithV(pinyin: String): String {
     return pinyin.replace("u:", "v")
 }
 
+@Suppress("SpellCheckingInspection")
 fun convertPinyinToZhuyin(pinyin: String, useSpacesToSegment: Boolean = false): String {
     if (pinyin.isEmpty()) {
         return pinyin
     }
 
-    var syllables: MutableList<String> = mutableListOf()
+    var syllables: MutableList<String>
     var pinyinCopy = ""
     if (useSpacesToSegment) {
         // Insert a space before and after every special character, so that the
@@ -221,7 +221,7 @@ fun convertPinyinToZhuyin(pinyin: String, useSpacesToSegment: Boolean = false): 
             zhuyinSyllables.add(syllable)
             continue
         }
-        var tone = syllable[toneIdx].toString().toInt()
+        val tone = syllable[toneIdx].toString().toInt()
 
         var zhuyinSyllable = syllable
         zhuyinSyllable = zhuyinSyllable
@@ -287,13 +287,171 @@ fun convertPinyinToZhuyin(pinyin: String, useSpacesToSegment: Boolean = false): 
     return zhuyinSyllables.joinToString(" ")
 }
 
+private fun convertIPAMandarinSyllable(syllable: String): Pair<String, String> {
+    var ipaInitial = ""
+    var ipaFinal = ""
+
+    var ipaInitialMatch = ""
+    var ipaFinalMatch = ""
+    if (syllable == "ng") {
+        ipaFinal = mandarinIPAFinals["ng"] ?: ""
+    } else {
+        mandarinIPASyllableRegex.find(syllable)?.let { match ->
+            ipaInitialMatch = match.destructured.component1()
+            ipaFinalMatch = match.destructured.component2()
+            ipaInitial = mandarinIPAInitials[ipaInitialMatch] ?: ""
+            ipaFinal = mandarinIPAFinals[ipaFinalMatch] ?: ""
+
+            if (ipaInitial.isEmpty() && ipaFinal.isEmpty()) {
+                Log.e(LOG_TAG, "Could not find initial or final in $syllable")
+                return Pair("", syllable)
+            }
+        }
+    }
+
+    // Replace close front unrounded vowel with syllabic retroflex sibilant
+    // fricative (+ voiced retroflex approximant if erhua)
+    // in Pinyin starting with ch, sh, zh, or r
+    if (ipaInitial == "ʈ͡ʂʰ" || ipaInitial == "ʂ" || ipaInitial == "ʈ͡ʂ"
+        || ipaInitial == "ʐ"
+    ) {
+        if (ipaFinalMatch == "ir") {
+            ipaFinal = "ʐ̩ɻ"
+        } else if (ipaFinalMatch == "i") {
+            ipaFinal = "ʐ̩"
+        }
+    }
+
+    // Replace close front unrounded vowel with syllabic alveolar sibilant
+    // fricative (+ voiced retroflex approximant if erhua)
+    // in Pinyin starting with c, s, or z
+    if (ipaInitial == "t͡sʰ" || ipaInitial == "s" || ipaInitial == "t͡s") {
+        if (ipaFinalMatch == "ir") {
+            ipaFinal = "z̩ɻ"
+        } else if (ipaFinalMatch == "i") {
+            ipaFinal = "z̩"
+        }
+    }
+
+    // Do some cleanup for Pinyin like "ri"
+    if (ipaInitial == "ʐ" && ipaFinal == "ʐ̩") {
+        ipaInitial = ""
+    }
+
+    return Pair(ipaInitial, ipaFinal)
+}
+
+fun convertPinyinToIPA(pinyin: String, useSpacesToSegment: Boolean = false): String {
+    if (pinyin.isEmpty()) {
+        return pinyin
+    }
+
+    val syllables: MutableList<String>
+    var pinyinCopy = ""
+    if (useSpacesToSegment) {
+        // Insert a space before and after every special character, so that the
+        // zhuyin conversion doesn't attempt to convert special characters.
+        for (c in specialCharacters) {
+            pinyinCopy = pinyin.split(c).joinToString(" $c ")
+        }
+        syllables = pinyinCopy.split(" ").toMutableList()
+    } else {
+        val (_, result) = segmentPinyin(
+            pinyin,
+            removeSpecialCharacters = false,
+            removeGlobCharacters = false
+        )
+        syllables = result.toMutableList()
+    }
+
+    // Pre-compute list of tones corresponding to each syllable
+    // This is used for tone sandhi reasons (3->3 sandhi, x->5 sandhi, etc.)
+    val syllableTones: MutableList<Pair<Int, Int>> = mutableListOf()
+    for (syllable in syllables) {
+        val toneIdx = syllable.indexOfFirst { it in '1'..'5' }
+        if (toneIdx == -1) {
+            syllableTones.add(Pair(-1, -1))
+        } else {
+            val tone = syllable[toneIdx].toString().toInt()
+            syllableTones.add(Pair(tone, toneIdx))
+        }
+    }
+
+    val ipaSyllables: MutableList<String> = mutableListOf()
+    for (i in syllables.indices) {
+        val syllable = syllables[i]
+        var ipaGlottal = ""
+        var ipaTone: String
+
+        if (syllable.length == 1 || specialCharacters.contains(syllable)) {
+            ipaSyllables.add(syllable)
+            continue
+        }
+
+        val (tone, toneIdx) = syllableTones[i]
+        if (toneIdx == -1) {
+            ipaSyllables.add(syllable)
+            continue
+        }
+        var tonelessSyllable = syllable.substring(0..<toneIdx)
+
+        // Figure out whether this syllable needs a glottal stop
+        if (mandarinIPAGlottal.contains(tonelessSyllable)) {
+            ipaGlottal = "ˀ"
+        }
+
+        tonelessSyllable = tonelessSyllable
+            // Mark close front rounded vowel with v instead of "u" or "u:"
+            .replace("u:", "v")
+            .replace(pinyinVPrecederRegex, "$1v")
+
+        // Convert initial and final
+        var (ipaInitial, ipaFinal) = convertIPAMandarinSyllable(tonelessSyllable)
+
+        // Convert tones
+        val nextTone = if (i == syllables.size - 1) -1 else syllableTones[i + 1].component1()
+        val previousTone = if (i == 0) -1 else syllableTones[i - 1].component1()
+
+        when (tone) {
+            5 -> {
+                // When neutral tone, replace some initials with voiceless versions
+                ipaInitial = mandarinIPAVoicelessInitials[ipaInitial] ?: ipaInitial
+                ipaFinal = if (ipaFinal == "ɤ") "ə" else ipaFinal
+                ipaTone = if (previousTone == -1) "" else mandarinIPANeutralTone[previousTone - 1]
+            }
+
+            3 -> {
+                ipaTone = if (i == syllables.size - 1) {
+                    if (i == 0) "˨˩˦" else "˨˩˦꜕꜖(꜓)"
+                } else {
+                    // If next syllable doesn't have tone, default to no tone sandhi
+                    // (which is also what happens when the following tone is tone #5
+                    if (nextTone == -1) mandarinIPAThirdTone[4] else mandarinIPAThirdTone[nextTone - 1]
+                }
+            }
+
+            4 -> {
+                ipaTone = if (nextTone == 4) "˥˩꜒꜔" else mandarinIPATones[tone - 1]
+            }
+
+            else -> {
+                ipaTone = mandarinIPATones[tone - 1]
+            }
+        }
+
+        ipaSyllables.add("$ipaGlottal$ipaInitial$ipaFinal$ipaTone")
+    }
+
+    return ipaSyllables.joinToString(" ")
+}
+
 fun segmentPinyin(
     text: String,
     removeSpecialCharacters: Boolean = true,
     removeGlobCharacters: Boolean = true
 ): Pair<Boolean, List<String>> {
     val processedText = text.lowercase()
-    var syllables: MutableList<String> = mutableListOf()
+    val syllables: MutableList<String> = mutableListOf()
 
     var validPinyin = true
     var startIdx = 0
@@ -355,7 +513,7 @@ fun segmentPinyin(
         // If initial is valid, then extend the end_index for length of initial
         // cluster of consonants.
         for (initialLen in (1..2).reversed()) {
-            var offset = min(processedText.length - endIdx, initialLen)
+            val offset = min(processedText.length - endIdx, initialLen)
             currentString = processedText.substring(endIdx, endIdx + offset)
             if (pinyinInitials.contains(currentString)) {
                 if (initialFound) {
@@ -388,7 +546,7 @@ fun segmentPinyin(
                 }
                 if (endIdx < processedText.length && processedText[endIdx].isDigit()) {
                     val tone = processedText[endIdx].toString().toInt()
-                    if (tone < 1 || tone > 5) {
+                    if (tone !in 1..5) {
                         validPinyin = false
                     }
                     ++endIdx

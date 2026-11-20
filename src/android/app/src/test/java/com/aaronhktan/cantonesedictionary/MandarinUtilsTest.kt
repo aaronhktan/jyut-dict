@@ -2,6 +2,7 @@
 
 package com.aaronhktan.cantonesedictionary
 
+import com.aaronhktan.cantonesedictionary.logic.utils.convertPinyinToIPA
 import com.aaronhktan.cantonesedictionary.logic.utils.convertPinyinToZhuyin
 import com.aaronhktan.cantonesedictionary.logic.utils.createNumberedPinyin
 import com.aaronhktan.cantonesedictionary.logic.utils.createPinyinWithV
@@ -146,6 +147,112 @@ class MandarinUtilsUnitTest {
     @Test
     fun mandarinUtils_pinyinToZhuyin_malformed() {
         assertEquals("chzng2 ㄑㄩㄢㄦ", convertPinyinToZhuyin("chzng2 quanr1"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToIPA_simple() {
+        assertEquals("pä˥˥ tä˧˥ tʰʊŋ˥˥", convertPinyinToIPA("ba1 da2 tong1"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToIPA_empty() {
+        assertEquals("", convertPinyinToIPA(""))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToIPA_rejectNoTone() {
+        assertEquals("ba", convertPinyinToIPA("ba"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToIPA_rejectSingleLetter() {
+        assertEquals("a", convertPinyinToIPA("a"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToIPA_rejectSpecialCharacter() {
+        assertEquals("-", convertPinyinToIPA("-"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToIPA_noSpaces() {
+        assertEquals("pä˥˥ tä˧˥ tʰʊŋ˥˥", convertPinyinToIPA("ba1da2tong1"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToIPA_spacesToSegment() {
+        assertEquals(
+            "pä˥˥ tä˧˥ tʰʊŋ˥˥",
+            convertPinyinToIPA("ba1 da2 tong1", useSpacesToSegment = true)
+        )
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToIPA_specialCaseNg() {
+        assertEquals("ŋ̍", convertPinyinToIPA("ng5"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToIPA_specialCaseRi() {
+        assertEquals("ʐ̩˥˩", convertPinyinToIPA("ri4"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToIPA_specialCaseV() {
+        assertEquals("ny˨˩˦", convertPinyinToIPA("nv3"))
+        assertEquals("t͡ɕʰy˥˩", convertPinyinToIPA("qu4"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToIPA_voicelessInitial() {
+        assertEquals("g̊ə", convertPinyinToIPA("ge5"))
+        assertEquals("i˥˥ g̊ə˨", convertPinyinToIPA("yi1 ge5"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToIPA_invalidInitialAndFinal() {
+        assertEquals("wz˥˥", convertPinyinToIPA("wz1"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToIPA_toneThree() {
+        assertEquals("kʰɤ˨˩˦", convertPinyinToIPA("ke3"))
+        assertEquals("kʰɤ˨˩˦꜔꜒ i˨˩˦꜕꜖(꜓)", convertPinyinToIPA("ke3 yi3"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToIPA_toneFour() {
+        assertEquals("ɕjä˥˩꜒꜔ t͡ɕʰy˥˩", convertPinyinToIPA("xia4 qu4"))
+        assertEquals("ɕjä˥˩", convertPinyinToIPA("xia4"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToIPA_otherTone() {
+        assertEquals("mä˥˥", convertPinyinToIPA("ma1"))
+        assertEquals("mä˧˥", convertPinyinToIPA("ma2"))
+        assertEquals("mä", convertPinyinToIPA("ma5"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToIPA_onlyTone() {
+        assertEquals("66", convertPinyinToIPA("66", useSpacesToSegment = true))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToIPA_erhua() {
+        assertEquals("xu̯ɑɻ˥˥", convertPinyinToIPA("huar1"))
+        assertEquals("t͡ɕʰɥɑɻ˥˥", convertPinyinToIPA("quanr1"))
+
+        assertEquals("ʂʐ̩˧˥", convertPinyinToIPA("shi2"))
+        assertEquals("ʂʐ̩ɻ˧˥", convertPinyinToIPA("shir2"))
+
+        assertEquals("t͡sʰz̩˧˥", convertPinyinToIPA("ci2"))
+        assertEquals("t͡sʰz̩ɻ˧˥", convertPinyinToIPA("cir2"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToIPA_glottal() {
+        assertEquals("ˀɤ˧˥", convertPinyinToIPA("e2"))
     }
 
     @Test
