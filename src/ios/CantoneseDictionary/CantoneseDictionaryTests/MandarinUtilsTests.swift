@@ -98,6 +98,12 @@ struct MandarinUtilsTests {
     )
   }
 
+  @Test func pinyinToZhuyinEmpty() async throws {
+    #expect(
+      convertPinyinToZhuyin(pinyin: "") == ""
+    )
+  }
+
   @Test func pinyinToZhuyinRejectNoTone() async throws {
     #expect(
       convertPinyinToZhuyin(pinyin: "ba") == "ba"
@@ -159,6 +165,21 @@ struct MandarinUtilsTests {
   @Test func pinyinToZhuyinErhua() async throws {
     #expect(
       convertPinyinToZhuyin(pinyin: "quanr1") == "ㄑㄩㄢㄦ"
+    )
+  }
+
+  @Test func pinyinToZhuyinInvalidFinal() async throws {
+    #expect(
+      convertPinyinToZhuyin(pinyin: "ma1n", useSpacesToSegment: true) == "ma1n"
+    )
+  }
+
+  @Test func pinyinToZhuyinInvalidTone() async throws {
+    #expect(
+      convertPinyinToZhuyin(pinyin: "ba0") == "ㄅㄚ"
+    )
+    #expect(
+      convertPinyinToZhuyin(pinyin: "ba6") == "ba6"
     )
   }
 

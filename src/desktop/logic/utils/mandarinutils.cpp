@@ -373,7 +373,7 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
         }
 
         // Skip syllables that don't have tone
-        auto location = syllable.find_first_of("12345");
+        auto location = syllable.find_first_of("012345");
         if (location == std::string::npos) {
             zhuyin_syllables.push_back(syllable);
             continue;
@@ -440,6 +440,10 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
             zhuyin_syllable = std::regex_replace(zhuyin_syllable,
                                                  zhuyinFinalRegex,
                                                  final + er);
+        } else {
+            std::cerr << "Invalid pinyin final found in zhuyin conversion: "
+                      << pinyin << std::endl;
+            return pinyin;
         }
 
         // Add tone to zhuyin syllable

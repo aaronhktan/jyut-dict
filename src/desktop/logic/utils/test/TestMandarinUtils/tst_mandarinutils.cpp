@@ -26,16 +26,19 @@ private slots:
 
     void pinyinWithVSimple();
 
-    void pinuyinToZhuyinSimple();
-    void pinuyinToZhuyinRejectNoTone();
-    void pinuyinToZhuyinRejectSingleLetter();
-    void pinuyinToZhuyinRejectSpecialCharacter();
-    void pinuyinToZhuyinNoSpaces();
-    void pinuyinToZhuyinSpacesToSegment();
-    void pinuyinToZhuyinSpecialInitial();
-    void pinuyinToZhuyinSpecialFinals();
-    void pinuyinToZhuyinErhua();
-    void pinuyinToZhuyinMalformed();
+    void pinyinToZhuyinSimple();
+    void pinyinToZhuyinEmpty();
+    void pinyinToZhuyinRejectNoTone();
+    void pinyinToZhuyinRejectSingleLetter();
+    void pinyinToZhuyinRejectSpecialCharacter();
+    void pinyinToZhuyinNoSpaces();
+    void pinyinToZhuyinSpacesToSegment();
+    void pinyinToZhuyinSpecialInitial();
+    void pinyinToZhuyinSpecialFinals();
+    void pinyinToZhuyinErhua();
+    void pinyinToZhuyinInvalidFinal();
+    void pinyinToZhuyinInvalidTone();
+    void pinyinToZhuyinMalformed();
 
     void pinyinToIPASimple();
     void pinyinToIPARejectNoTone();
@@ -175,41 +178,51 @@ void TestMandarinUtils::pinyinWithVSimple()
     QCOMPARE(result, "nv3 hai2");
 }
 
-void TestMandarinUtils::pinuyinToZhuyinSimple()
+void TestMandarinUtils::pinyinToZhuyinSimple()
 {
     std::string result = MandarinUtils::convertPinyinToZhuyin("ba1 da2 tong1");
     QCOMPARE(result, "ㄅㄚ ㄉㄚˊ ㄊㄨㄥ");
 }
 
-void TestMandarinUtils::pinuyinToZhuyinRejectNoTone()
+void TestMandarinUtils::pinyinToZhuyinEmpty()
+{
+    std::string result = MandarinUtils::convertPinyinToZhuyin("");
+    QCOMPARE(result, "");
+}
+
+void TestMandarinUtils::pinyinToZhuyinRejectNoTone()
 {
     std::string result = MandarinUtils::convertPinyinToZhuyin("ba");
     QCOMPARE(result, "ba");
 }
 
-void TestMandarinUtils::pinuyinToZhuyinRejectSingleLetter()
+void TestMandarinUtils::pinyinToZhuyinRejectSingleLetter()
 {
     std::string result = MandarinUtils::convertPinyinToZhuyin("a");
     QCOMPARE(result, "a");
 }
-void TestMandarinUtils::pinuyinToZhuyinRejectSpecialCharacter()
+
+void TestMandarinUtils::pinyinToZhuyinRejectSpecialCharacter()
 {
     std::string result = MandarinUtils::convertPinyinToZhuyin("-");
     QCOMPARE(result, "-");
 }
-void TestMandarinUtils::pinuyinToZhuyinNoSpaces()
+
+void TestMandarinUtils::pinyinToZhuyinNoSpaces()
 {
     std::string result = MandarinUtils::convertPinyinToZhuyin("ba1da2tong1");
     QCOMPARE(result, "ㄅㄚ ㄉㄚˊ ㄊㄨㄥ");
 }
-void TestMandarinUtils::pinuyinToZhuyinSpacesToSegment()
+
+void TestMandarinUtils::pinyinToZhuyinSpacesToSegment()
 {
     std::string result
         = MandarinUtils::convertPinyinToZhuyin("ba1 da2 tong1",
                                                /* useSpacesToSegment = */ true);
     QCOMPARE(result, "ㄅㄚ ㄉㄚˊ ㄊㄨㄥ");
 }
-void TestMandarinUtils::pinuyinToZhuyinSpecialInitial()
+
+void TestMandarinUtils::pinyinToZhuyinSpecialInitial()
 {
     std::string result = MandarinUtils::convertPinyinToZhuyin("qu4");
     QCOMPARE(result, "ㄑㄩˋ");
@@ -220,7 +233,8 @@ void TestMandarinUtils::pinuyinToZhuyinSpecialInitial()
     result = MandarinUtils::convertPinyinToZhuyin("ri4");
     QCOMPARE(result, "ㄖˋ");
 }
-void TestMandarinUtils::pinuyinToZhuyinSpecialFinals()
+
+void TestMandarinUtils::pinyinToZhuyinSpecialFinals()
 {
     std::string result = MandarinUtils::convertPinyinToZhuyin("hm5");
     QCOMPARE(result, "˙ㄏㄇ");
@@ -231,12 +245,31 @@ void TestMandarinUtils::pinuyinToZhuyinSpecialFinals()
     result = MandarinUtils::convertPinyinToZhuyin("er2");
     QCOMPARE(result, "ㄦˊ");
 }
-void TestMandarinUtils::pinuyinToZhuyinErhua()
+
+void TestMandarinUtils::pinyinToZhuyinErhua()
 {
     std::string result = MandarinUtils::convertPinyinToZhuyin("quanr1");
     QCOMPARE(result, "ㄑㄩㄢㄦ");
 }
-void TestMandarinUtils::pinuyinToZhuyinMalformed()
+
+void TestMandarinUtils::pinyinToZhuyinInvalidFinal()
+{
+    std::string result
+        = MandarinUtils::convertPinyinToZhuyin("ma1n",
+                                               /* useSpacesToSegment */ true);
+    QCOMPARE(result, "ma1n");
+}
+
+void TestMandarinUtils::pinyinToZhuyinInvalidTone()
+{
+    std::string result = MandarinUtils::convertPinyinToZhuyin("ba0");
+    QCOMPARE(result, "ㄅㄚ");
+
+    result = MandarinUtils::convertPinyinToZhuyin("ba6");
+    QCOMPARE(result, "ba6");
+}
+
+void TestMandarinUtils::pinyinToZhuyinMalformed()
 {
     std::string result = MandarinUtils::convertPinyinToZhuyin("chzng2 quanr1");
     QCOMPARE(result, "chzng2 ㄑㄩㄢㄦ");

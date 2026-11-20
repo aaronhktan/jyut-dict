@@ -2,6 +2,7 @@
 
 package com.aaronhktan.cantonesedictionary
 
+import com.aaronhktan.cantonesedictionary.logic.utils.convertPinyinToZhuyin
 import com.aaronhktan.cantonesedictionary.logic.utils.createNumberedPinyin
 import com.aaronhktan.cantonesedictionary.logic.utils.createPinyinWithV
 import com.aaronhktan.cantonesedictionary.logic.utils.createPrettyPinyin
@@ -72,6 +73,79 @@ class MandarinUtilsUnitTest {
     @Test
     fun mandarinUtils_pinyinWithV_simple() {
         assertEquals("nv3 hai2", createPinyinWithV("nu:3 hai2"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToZhuyin_simple() {
+        assertEquals("ㄅㄚ ㄉㄚˊ ㄊㄨㄥ", convertPinyinToZhuyin("ba1 da2 tong1"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToZhuyin_empty() {
+        assertEquals("", convertPinyinToZhuyin(""))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToZhuyin_rejectNoTone() {
+        assertEquals("ba", convertPinyinToZhuyin("ba"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToZhuyin_rejectSingleLetter() {
+        assertEquals("a", convertPinyinToZhuyin("a"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToZhuyin_rejectSpecialCharacter() {
+        assertEquals("-", convertPinyinToZhuyin("-"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToZhuyin_noSpaces() {
+        assertEquals("ㄅㄚ ㄉㄚˊ ㄊㄨㄥ", convertPinyinToZhuyin("ba1da2tong1"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToZhuyin_spacesToSegment() {
+        assertEquals(
+            "ㄅㄚ ㄉㄚˊ ㄊㄨㄥ",
+            convertPinyinToZhuyin("ba1 da2 tong1", useSpacesToSegment = true)
+        )
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToZhuyin_specialInitial() {
+        assertEquals("ㄑㄩˋ", convertPinyinToZhuyin("qu4"))
+        assertEquals("ㄔ", convertPinyinToZhuyin("chi1"))
+        assertEquals("ㄖˋ", convertPinyinToZhuyin("ri4"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToZhuyin_specialFinals() {
+        assertEquals("˙ㄏㄇ", convertPinyinToZhuyin("hm5"))
+        assertEquals("˙ㄏㄫ", convertPinyinToZhuyin("hng5"))
+        assertEquals("ㄦˊ", convertPinyinToZhuyin("er2"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToZhuyin_erHua() {
+        assertEquals("ㄑㄩㄢㄦ", convertPinyinToZhuyin("quanr1"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToZhuyin_invalidFinal() {
+        assertEquals("ma1n", convertPinyinToZhuyin("ma1n", useSpacesToSegment = true))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToZhuyin_invalidTone() {
+        assertEquals("ㄅㄚ", convertPinyinToZhuyin("ba0"))
+        assertEquals("ba6", convertPinyinToZhuyin("ba6"))
+    }
+
+    @Test
+    fun mandarinUtils_pinyinToZhuyin_malformed() {
+        assertEquals("chzng2 ㄑㄩㄢㄦ", convertPinyinToZhuyin("chzng2 quanr1"))
     }
 
     @Test

@@ -186,6 +186,107 @@ fun createPinyinWithV(pinyin: String): String {
     return pinyin.replace("u:", "v")
 }
 
+fun convertPinyinToZhuyin(pinyin: String, useSpacesToSegment: Boolean = false): String {
+    if (pinyin.isEmpty()) {
+        return pinyin
+    }
+
+    var syllables: MutableList<String> = mutableListOf()
+    var pinyinCopy = ""
+    if (useSpacesToSegment) {
+        // Insert a space before and after every special character, so that the
+        // zhuyin conversion doesn't attempt to convert special characters.
+        for (c in specialCharacters) {
+            pinyinCopy = pinyin.split(c).joinToString(" $c ")
+        }
+        syllables = pinyinCopy.split(" ").toMutableList()
+    } else {
+        val (_, result) = segmentPinyin(
+            pinyin,
+            removeSpecialCharacters = false,
+            removeGlobCharacters = false
+        )
+        syllables = result.toMutableList()
+    }
+
+    val zhuyinSyllables: MutableList<String> = mutableListOf()
+    for (syllable in syllables) {
+        if (syllable.length == 1 || specialCharacters.contains(syllable)) {
+            zhuyinSyllables.add(syllable)
+            continue
+        }
+
+        val toneIdx = syllable.indexOfFirst { it in '0'..'5' }
+        if (toneIdx == -1) {
+            zhuyinSyllables.add(syllable)
+            continue
+        }
+        var tone = syllable[toneIdx].toString().toInt()
+
+        var zhuyinSyllable = syllable
+        zhuyinSyllable = zhuyinSyllable
+            .replace("u:", "v")
+            .replace(pinyinVPrecederRegex, "$1v")
+            .replace(zhuyinIPrecederRegex, "$1")
+            .replace(zhuyinRRegex, "$1")
+            .replace(zhuyinNgSpecialCaseRegex, "ㄫ$1$1")
+            .replace(zhuyinHmSpecialCaseRegex, "ㄏㄇ$1")
+            .replace(zhuyinHngSpecialCaseRegex, "ㄏㄫ$1")
+            .replace(zhuyinErSpecialCaseRegex, "ㄦ$1")
+
+
+        zhuyinInitialRegex.find(zhuyinSyllable)?.let { initialMatch ->
+            val initial = initialMatch.destructured.component1()
+            if (initial.isNotEmpty() && zhuyinInitials[initial] != null) {
+                val initialReplacement = zhuyinInitials[initial]!!
+                zhuyinSyllable =
+                    zhuyinSyllable.replaceRange(initialMatch.range, initialReplacement)
+            }
+        }
+
+        zhuyinFinalRegex.find(zhuyinSyllable)?.let { finalMatch ->
+            val final = finalMatch.destructured.component1()
+            var finalReplacement: String? = null
+            if (final.isNotEmpty()) {
+                finalReplacement = zhuyinFinals[final]
+                if (finalReplacement == null) {
+                    Log.e(LOG_TAG, "Pinyin final had no valid zhuyin conversion: $final")
+                    zhuyinSyllables.add(syllable)
+                    continue
+                }
+            }
+            var er = ""
+            if (finalMatch.destructured.component2().isNotEmpty()) {
+                er = "ㄦ"
+            }
+            zhuyinSyllable =
+                zhuyinSyllable.replaceRange(finalMatch.range, (finalReplacement ?: "") + er)
+        } ?: run {
+            Log.e(LOG_TAG, "Invalid pinyin final found in zhuyin conversion: $pinyin")
+            return pinyin
+        }
+
+        if (tone == 5) {
+            zhuyinSyllable = zhuyinTones[tone] + zhuyinSyllable
+        } else {
+            val erIdx = zhuyinSyllable.indexOf("ㄦ")
+            if (erIdx != -1 && zhuyinSyllable != "ㄦ") {
+                zhuyinSyllable = "${zhuyinSyllable.substring(0..<erIdx)}${zhuyinTones[tone]}${
+                    zhuyinSyllable.substring(
+                        erIdx
+                    )
+                }"
+            } else {
+                zhuyinSyllable += zhuyinTones[tone]
+            }
+        }
+
+        zhuyinSyllables.add(zhuyinSyllable)
+    }
+
+    return zhuyinSyllables.joinToString(" ")
+}
+
 fun segmentPinyin(
     text: String,
     removeSpecialCharacters: Boolean = true,

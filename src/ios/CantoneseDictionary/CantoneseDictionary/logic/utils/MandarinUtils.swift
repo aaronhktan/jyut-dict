@@ -224,7 +224,7 @@ nonisolated func convertPinyinToZhuyin(
   var pinyinCopy = ""
   if useSpacesToSegment {
     // Insert a space before and after every special character, so that the
-    // IPA conversion doesn't attempt to convert special characters.
+    // zhuyin conversion doesn't attempt to convert special characters.
     specialCharacters.forEach { c in
       pinyinCopy = pinyin.split(separator: c).joined(
         separator: " " + String(c) + " "
@@ -331,7 +331,6 @@ nonisolated func convertPinyinToZhuyin(
       logger.error(
         "Invalid pinyin final found in zhuyin conversion: \(pinyin)"
       )
-      zhuyinSyllables.append(syllable)
       return pinyin
     }
     var final: String? = nil
