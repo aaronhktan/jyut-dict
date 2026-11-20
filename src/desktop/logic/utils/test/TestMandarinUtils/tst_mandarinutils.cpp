@@ -12,12 +12,15 @@ public:
 
 private slots:
     void prettyPinyinSimple();
+    void prettyPinyinEmpty();
     void prettyPinyinRejectNoTone();
     void prettyPinyinRejectSingleLetter();
     void prettyPinyinRejectSpecialCharacter();
     void prettyPinyinSecondaryVowel();
     void prettyPinyinUmlaut();
+    void prettyPinyinNoVowel();
     void prettyPinyinTones();
+    void prettyPinyinInvalidTone();
 
     void numberedPinyinSimple();
 
@@ -55,6 +58,7 @@ private slots:
     void segmentPinyinNoDigitsNoSpaces();
     void segmentPinyinNoDigitsApostrophe();
     void segmentPinyinDigitsApostrophe();
+    void segmentPinyinDanglingInitialBeforeWhitespace();
     void segmentPinyinRemoveSpecialCharacters();
     void segmentPinyinKeepGlobCharacters();
     void segmentPinyinKeepGlobCharactersNoWhitespace();
@@ -62,12 +66,14 @@ private slots:
     void segmentPinyinKeepMultipleGlobCharactersWhitespace();
     void segmentPinyinKeepMultipleGlobCharactersWhitespaceSurround();
     void segmentPinyinGlobCharactersTrimWhitespace();
+    void segmentPinyinKeepGlobCharactersAfterInvalidCharacter();
     void segmentPinyinKeepSpecialCharacters();
     void segmentPinyinRemoveWhitespace();
     void segmentPinyinLower();
     void segmentPinyinLowerWithDigits();
     void segmentPinyinMultipleFinalsVowelsOnly();
     void segmentPinyinMultipleFinals();
+    void segmentPinyinErhua();
     void segmentPinyinInvalidTone();
     void segmentPinyinGarbage();
 
@@ -91,6 +97,12 @@ void TestMandarinUtils::prettyPinyinSimple()
 {
     std::string result = MandarinUtils::createPrettyPinyin("shuai4 ge1");
     QCOMPARE(result, "shuài gē");
+}
+
+void TestMandarinUtils::prettyPinyinEmpty()
+{
+    std::string result = MandarinUtils::createPrettyPinyin("");
+    QCOMPARE(result, "");
 }
 
 void TestMandarinUtils::prettyPinyinRejectNoTone()
@@ -126,11 +138,29 @@ void TestMandarinUtils::prettyPinyinUmlaut()
     QCOMPARE(result, "nǚ hái");
 }
 
+void TestMandarinUtils::prettyPinyinNoVowel()
+{
+    std::string result = MandarinUtils::createPrettyPinyin("mmm");
+    QCOMPARE(result, "mmm");
+
+    result = MandarinUtils::createPrettyPinyin("hng5");
+    QCOMPARE(result, "hng5");
+}
+
 void TestMandarinUtils::prettyPinyinTones()
 {
     std::string result = MandarinUtils::createPrettyPinyin(
         "ma1 ma2 ma3 ma4 ma5");
     QCOMPARE(result, "mā má mǎ mà ma");
+}
+
+void TestMandarinUtils::prettyPinyinInvalidTone()
+{
+    std::string result = MandarinUtils::createPrettyPinyin("ma0");
+    QCOMPARE(result, "ma");
+
+    result = MandarinUtils::createPrettyPinyin("ma6");
+    QCOMPARE(result, "ma6");
 }
 
 void TestMandarinUtils::numberedPinyinSimple()
@@ -774,6 +804,14 @@ void TestMandarinUtils::segmentPinyinDigitsApostrophe()
     QCOMPARE(result, expected);
 }
 
+void TestMandarinUtils::segmentPinyinDanglingInitialBeforeWhitespace()
+{
+    std::vector<std::string> result;
+    MandarinUtils::segmentPinyin("guang3 b dong1", result);
+    std::vector<std::string> expected = {"guang3", "b", "dong1"};
+    QCOMPARE(result, expected);
+}
+
 void TestMandarinUtils::segmentPinyinRemoveSpecialCharacters()
 {
     std::vector<std::string> result;
@@ -869,6 +907,17 @@ void TestMandarinUtils::segmentPinyinGlobCharactersTrimWhitespace()
     QCOMPARE(result, expected);
 }
 
+void TestMandarinUtils::segmentPinyinKeepGlobCharactersAfterInvalidCharacter()
+{
+    std::vector<std::string> result;
+    MandarinUtils::segmentPinyin("9*",
+                                 result,
+                                 /* removeSpecialCharacters = */ true,
+                                 /* removeGlobCharacters = */ false);
+    std::vector<std::string> expected = {"9", "*"};
+    QCOMPARE(result, expected);
+}
+
 void TestMandarinUtils::segmentPinyinKeepSpecialCharacters()
 {
     std::vector<std::string> result;
@@ -926,6 +975,25 @@ void TestMandarinUtils::segmentPinyinMultipleFinals()
                                  /* removeGlobCharacters = */ false);
     std::vector<std::string> expected = {"ang", "ang"};
     QCOMPARE(result, expected);
+}
+
+void TestMandarinUtils::segmentPinyinErhua()
+{
+    std::vector<std::string> result;
+    bool valid = MandarinUtils::segmentPinyin("huar", result);
+    std::vector<std::string> expected = {"huar"};
+    QCOMPARE(result, expected);
+    QCOMPARE(valid, true);
+
+    valid = MandarinUtils::segmentPinyin("huar1", result);
+    expected = {"huar1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(valid, true);
+
+    valid = MandarinUtils::segmentPinyin("huar4 dong1", result);
+    expected = {"huar4", "dong1"};
+    QCOMPARE(result, expected);
+    QCOMPARE(valid, true);
 }
 
 void TestMandarinUtils::segmentPinyinInvalidTone()

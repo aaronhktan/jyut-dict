@@ -842,7 +842,7 @@ bool segmentPinyin(const QString &string,
             }
             if (!removeGlobCharacters && isGlobCharacter) {
                 // Add anything before the current glob character
-                if (endIdx >= 1 && (endIdx - startIdx >= 1)) {
+                if (endIdx > 0 && endIdx > startIdx) {
                     const QString previousInitial
                         = string.mid(startIdx, endIdx - startIdx).toLower();
                     syllables.push_back(previousInitial.toStdString());

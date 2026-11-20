@@ -407,7 +407,7 @@ fun segmentJyutping(
     removeGlobCharacters: Boolean = true,
     removeRegexCharacters: Boolean = true
 ): Pair<Boolean, List<String>> {
-    var processedText = text
+    var processedText = text.lowercase()
     val syllables: MutableList<String> = mutableListOf()
     var validJyutping = true
 
@@ -433,7 +433,7 @@ fun segmentJyutping(
     while (endIdx < processedText.length) {
         var componentFound = false
 
-        var currentString = processedText[endIdx].lowercase()
+        var currentString = processedText[endIdx].toString()
         val isSpecialCharacter = specialCharacters.contains(currentString)
         val isGlobCharacter = currentString.trim() == "*" || currentString.trim() == "?"
         if (currentString == " " || currentString == "'" || isSpecialCharacter || isGlobCharacter) {
@@ -444,7 +444,7 @@ fun segmentJyutping(
                 // sequence [initial] + [separator] is only valid Jyutping if the
                 // initial is also a valid final (i.e. [final] + [separator] is
                 // OK, but [initial] + [separator] is not).
-                val previousInitial = processedText.substring(startIdx, endIdx).lowercase()
+                val previousInitial = processedText.substring(startIdx, endIdx)
                 syllables.add(previousInitial)
                 if (!jyutpingFinals.contains(previousInitial)) {
                     validJyutping = false
@@ -454,7 +454,7 @@ fun segmentJyutping(
             }
             if (isGlobCharacter) {
                 if (endIdx > 0 && endIdx > startIdx) {
-                    val previousInitial = processedText.substring(startIdx, endIdx).lowercase()
+                    val previousInitial = processedText.substring(startIdx, endIdx)
                     syllables.add(previousInitial)
                     if (!jyutpingFinals.contains(previousInitial)) {
                         validJyutping = false
@@ -497,7 +497,7 @@ fun segmentJyutping(
         // This block checks for the latter case.
         if (currentString[0].isDigit()) {
             if (initialFound) {
-                var previousInitial = processedText.substring(startIdx, endIdx).lowercase()
+                var previousInitial = processedText.substring(startIdx, endIdx)
 
                 var isValidFinal = false
                 if (removeRegexCharacters) {
@@ -515,7 +515,7 @@ fun segmentJyutping(
 
                 if (isValidFinal) {
                     ++endIdx
-                    previousInitial = processedText.substring(startIdx, endIdx).lowercase()
+                    previousInitial = processedText.substring(startIdx, endIdx)
                     syllables.add(previousInitial)
                     startIdx = endIdx
                     initialFound = false
@@ -543,7 +543,7 @@ fun segmentJyutping(
         val maxInitialLength =
             if (removeRegexCharacters) min(2, remainingLength) else min(16, remainingLength)
         for (initialLen in (1..maxInitialLength).reversed()) {
-            currentString = processedText.substring(endIdx, endIdx + initialLen).lowercase()
+            currentString = processedText.substring(endIdx, endIdx + initialLen)
 
             var isValidInitial = false
             if (removeRegexCharacters) {
@@ -562,7 +562,7 @@ fun segmentJyutping(
             if (initialFound) {
                 // Multiple initials in a row are only valid if previous "initial"
                 // was actually a final (like m or ng)
-                val previousInitial = processedText.substring(startIdx, endIdx).lowercase()
+                val previousInitial = processedText.substring(startIdx, endIdx)
                 var previousInitialIsValidFinal = false
                 if (removeRegexCharacters) {
                     previousInitialIsValidFinal = jyutpingFinals.contains(previousInitial)
@@ -601,7 +601,7 @@ fun segmentJyutping(
         val maxFinalLength =
             if (removeRegexCharacters) min(4, remainingLength) else min(16, remainingLength)
         for (finalLen in (1..maxFinalLength).reversed()) {
-            currentString = processedText.substring(endIdx, endIdx + finalLen).lowercase()
+            currentString = processedText.substring(endIdx, endIdx + finalLen)
 
             var isValidFinal = false
             if (removeRegexCharacters) {
@@ -624,7 +624,7 @@ fun segmentJyutping(
                     }
                 }
 
-                val syllable = processedText.substring(startIdx, endIdx).lowercase()
+                val syllable = processedText.substring(startIdx, endIdx)
                 syllables.add(syllable)
                 startIdx = endIdx
                 componentFound = true
@@ -643,7 +643,7 @@ fun segmentJyutping(
     }
 
     // Then add whatever's left in the search term, minus whitespace.
-    val lastSyllable = processedText.substring(startIdx, endIdx).trim().lowercase()
+    val lastSyllable = processedText.substring(startIdx, endIdx).trim()
     if (lastSyllable.isNotEmpty() && lastSyllable != "'") {
         syllables.add(lastSyllable)
         if (!jyutpingFinals.contains(lastSyllable)) {

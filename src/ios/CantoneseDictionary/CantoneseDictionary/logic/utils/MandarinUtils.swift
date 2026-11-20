@@ -141,9 +141,6 @@ nonisolated func createPrettyPinyin(pinyin: String) -> String {
 
   var processedSyllables: [String] = []
   let (_, syllables) = segmentPinyin(text: pinyin)
-  if syllables.isEmpty {
-    return pinyin
-  }
 
   for s in syllables {
     var syllable = s

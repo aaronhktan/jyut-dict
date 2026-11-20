@@ -16,6 +16,12 @@ struct MandarinUtilsTests {
     )
   }
 
+  @Test func prettyPinyinEmpty() async throws {
+    #expect(
+      createPrettyPinyin(pinyin: "") == ""
+    )
+  }
+
   @Test func prettyPinyinRejectNoTone() async throws {
     #expect(
       createPrettyPinyin(pinyin: "ba") == "ba"
@@ -50,9 +56,27 @@ struct MandarinUtilsTests {
     )
   }
 
+  @Test func prettyPinyinNoVowel() async throws {
+    #expect(
+      createPrettyPinyin(pinyin: "mmm") == "mmm"
+    )
+    #expect(
+      createPrettyPinyin(pinyin: "hng5") == "hng5"
+    )
+  }
+
   @Test func prettyPinyinTones() async throws {
     #expect(
       createPrettyPinyin(pinyin: "ma1 ma2 ma3 ma4 ma5") == "mā má mǎ mà ma"
+    )
+  }
+
+  @Test func prettyPinyinInvalidTone() async throws {
+    #expect(
+      createPrettyPinyin(pinyin: "ma0") == "ma"
+    )
+    #expect(
+      createPrettyPinyin(pinyin: "ma6") == "ma6"
     )
   }
 
@@ -292,6 +316,12 @@ struct MandarinUtilsTests {
     )
   }
 
+  @Test func segmentPinyinDanglingInitialBeforeWhitespace() async throws {
+    #expect(
+      segmentPinyin(text: "guang3 b dong1") == (false, ["guang3", "b", "dong1"])
+    )
+  }
+
   @Test func segmentPinyinRemoveSpecialCharacters() async throws {
     #expect(
       segmentPinyin(text: "guang。dong？") == (true, ["guang", "dong"])
@@ -364,6 +394,14 @@ struct MandarinUtilsTests {
     )
   }
 
+  @Test func segmentPinyinKeepGlobCharactersAfterInvalidCharacter() async throws {
+    #expect(
+      segmentPinyin(text: "9*", removeGlobCharacters: false) == (
+        false, ["9", "*"]
+      )
+    )
+  }
+
   @Test func segmentPinyinKeepSpecialCharacters() async throws {
     #expect(
       segmentPinyin(text: "guang？ dong1", removeSpecialCharacters: false) == (
@@ -401,6 +439,20 @@ struct MandarinUtilsTests {
   @Test func segmentPinyinMultipleFinals() async throws {
     #expect(
       segmentPinyin(text: "angang") == (true, ["ang", "ang"])
+    )
+  }
+
+  @Test func segmentPinyinErhua() async throws {
+    #expect(
+      segmentPinyin(text: "huar") == (true, ["huar"])
+    )
+
+    #expect(
+      segmentPinyin(text: "huar1") == (true, ["huar1"])
+    )
+
+    #expect(
+      segmentPinyin(text: "huar4 dong1") == (true, ["huar4", "dong1"])
     )
   }
 
