@@ -131,6 +131,9 @@ nonisolated func constructRomanisationQuery(
   var result: String = ""
   for s in syllables {
     let trimmedSyllable = s.trimmingCharacters(in: .whitespacesAndNewlines)
+    if trimmedSyllable.isEmpty {
+      continue
+    }
     if trimmedSyllable.suffix(1).first!.isNumber {
       result += space + trimmedSyllable
       space = " "

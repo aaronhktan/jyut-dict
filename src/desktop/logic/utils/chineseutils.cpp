@@ -25,7 +25,7 @@ std::string applyColours(const std::string &original,
     const auto data = QString::fromStdString(original)
                           .normalized(QString::NormalizationForm_C)
                           .toStdU32String();
-    size_t pos = 0;
+    size_t toneIdx = 0;
     for (const auto codepoint : data) {
         const std::string originalStr
             = QString::fromStdU32String(std::u32string{codepoint}).toStdString();
@@ -38,7 +38,7 @@ std::string applyColours(const std::string &original,
             == QString::fromStdString(Utils::SAME_CHARACTER_STRING)
                    .toStdU32String()[0]) {
             coloured_string += originalStr;
-            pos++;
+            toneIdx++;
             continue;
         }
 
@@ -68,17 +68,18 @@ std::string applyColours(const std::string &original,
         }
 
         // Get the tone...
-        if (pos >= tones.size()) {
+        if (toneIdx >= tones.size()) {
             coloured_string += originalStr;
             continue;
         }
-        const size_t tone = tones[pos];
+        const size_t tone = tones[toneIdx];
 
         // ... and apply tone colour formatting to the string
         switch (type) {
         case EntryColourPhoneticType::CANTONESE: {
             if (tone >= jyutpingToneColours.size()) {
                 coloured_string += originalStr;
+                ++toneIdx;
                 continue;
             }
             coloured_string += "<font color=\""
@@ -89,6 +90,7 @@ std::string applyColours(const std::string &original,
         case EntryColourPhoneticType::MANDARIN: {
             if (tone >= pinyinToneColours.size()) {
                 coloured_string += originalStr;
+                ++toneIdx;
                 continue;
             }
             coloured_string += "<font color=\""
@@ -105,7 +107,7 @@ std::string applyColours(const std::string &original,
         coloured_string += originalStr;
         coloured_string += "</font>";
 
-        pos++;
+        toneIdx++;
     }
 
     return coloured_string;
@@ -161,7 +163,10 @@ std::string constructRomanisationQuery(std::span<const std::string> words,
     std::ostringstream string;
     for (size_t i = 0; i < words.size() - 1; i++) {
         Utils::trim(words[i], trimmed_word);
-        if (std::isdigit(words[i].back())) {
+        if (trimmed_word.empty()) {
+            continue;
+        }
+        if (std::isdigit(trimmed_word.back())) {
             string << space << words[i];
             space = " ";
             added_delimiter = false;
@@ -187,6 +192,10 @@ std::string constructRomanisationQuery(std::span<const std::string> words,
     }
 
     Utils::trim(words.back(), trimmed_word);
+    if (trimmed_word.empty()) {
+        return string.str();
+    }
+
     if (std::isdigit(words.back().back())) {
         string << space << words.back();
     } else if (trimmed_word == "*" || trimmed_word == "?") {

@@ -51,6 +51,107 @@ struct ChineseUtilsTests {
     )
   }
 
+  @Test func applyColoursSkipSameCharacters() async throws {
+    let text = sameCharacterString + sameCharacterString
+    let tones = [4, 6]
+    let expected = AttributedString(sameCharacterString + sameCharacterString)
+    #expect(
+      applyColours(
+        text: text,
+        tones: tones,
+        jyutpingToneColours: defaultJyutpingToneColours,
+        pinyinToneColours: [],
+        type: .cantonese
+      ) == expected
+    )
+  }
+
+  @Test func applyColoursVariousCodepoints() async throws {
+    var firstChar = AttributedString("\u{3400}")
+    firstChar.foregroundColor = defaultJyutpingToneColours[1]
+    var secondChar = AttributedString("\u{20000}")
+    secondChar.foregroundColor = defaultJyutpingToneColours[2]
+    var thirdChar = AttributedString("\u{2A700}")
+    thirdChar.foregroundColor = defaultJyutpingToneColours[3]
+    var fourthChar = AttributedString("\u{2B740}")
+    fourthChar.foregroundColor = defaultJyutpingToneColours[4]
+    var fifthChar = AttributedString("\u{2B820}")
+    fifthChar.foregroundColor = defaultJyutpingToneColours[5]
+    var sixthChar = AttributedString("\u{2CEB0}")
+    sixthChar.foregroundColor = defaultJyutpingToneColours[6]
+    let seventhChar = AttributedString("\u{200}")
+
+    let text = "\u{3400}\u{20000}\u{2A700}\u{2B740}\u{2B820}\u{2CEB0}\u{200}"
+    let tones = [1, 2, 3, 4, 5, 6, 6]
+    let expected = firstChar + secondChar + thirdChar + fourthChar + fifthChar + sixthChar + seventhChar
+    #expect(
+      applyColours(
+        text: text,
+        tones: tones,
+        jyutpingToneColours: defaultJyutpingToneColours,
+        pinyinToneColours: [],
+        type: .cantonese
+      ) == expected
+    )
+  }
+
+  @Test func applyColoursInvalidCantoneseTones() async throws {
+    var firstChar = AttributedString("唔")
+    firstChar.foregroundColor = defaultJyutpingToneColours[4]
+    let secondChar = AttributedString("係")
+
+    let text = "唔係"
+    let tones = [4, 7]
+    let expected = firstChar + secondChar
+    #expect(
+      applyColours(
+        text: text,
+        tones: tones,
+        jyutpingToneColours: defaultJyutpingToneColours,
+        pinyinToneColours: [],
+        type: .cantonese
+      ) == expected
+    )
+  }
+
+  @Test func applyColoursInvalidMandarinTones() async throws {
+    let firstChar = AttributedString("不")
+    var secondChar = AttributedString("是")
+    secondChar.foregroundColor = defaultPinyinToneColours[4]
+
+    let text = "不是"
+    let tones = [7, 4]
+    let expected = firstChar + secondChar
+    #expect(
+      applyColours(
+        text: text,
+        tones: tones,
+        jyutpingToneColours: [],
+        pinyinToneColours: defaultPinyinToneColours,
+        type: .mandarin
+      ) == expected
+    )
+  }
+
+  @Test func applyColoursNotEnoughTones() async throws {
+    var firstChar = AttributedString("唔")
+    firstChar.foregroundColor = defaultJyutpingToneColours[4]
+    let secondChar = AttributedString("係")
+
+    let text = "唔係"
+    let tones = [4]
+    let expected = firstChar + secondChar
+    #expect(
+      applyColours(
+        text: text,
+        tones: tones,
+        jyutpingToneColours: defaultJyutpingToneColours,
+        pinyinToneColours: [],
+        type: .cantonese
+      ) == expected
+    )
+  }
+
   @Test func compareStringSimple() async throws {
     #expect(
       compareStrings(original: "語言藝術", comparison: "语言艺术")
@@ -80,6 +181,16 @@ struct ChineseUtilsTests {
   @Test func compareStringsCompatibilityVariantNormalization() async throws {
     #expect(
       compareStrings(original: "響", comparison: "響") == sameCharacterString
+    )
+  }
+
+  @Test func constructRomanisationQueryEmpty() async throws {
+    #expect(
+      constructRomanisationQuery(syllables: [], delimiter: "?") == ""
+    )
+
+    #expect(
+      constructRomanisationQuery(syllables: [""], delimiter: "?") == ""
     )
   }
 
@@ -131,6 +242,11 @@ struct ChineseUtilsTests {
     #expect(
       constructRomanisationQuery(syllables: ["se", " ?", "?", "? ", "dak"], delimiter: "?")
         == "se? ??? dak?"
+    )
+
+    #expect(
+      constructRomanisationQuery(syllables: ["se", "*"], delimiter: "?")
+        == "se*"
     )
   }
 

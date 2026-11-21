@@ -229,6 +229,7 @@ class ChineseUtilsUnitTest {
     @Test
     fun chineseUtils_constructRomanisationQuery_empty() {
         assertEquals("", constructRomanisationQuery(listOf(), delimiter = "?"))
+        assertEquals("", constructRomanisationQuery(listOf(""), delimiter = "?"))
     }
 
     @Test

@@ -16,6 +16,11 @@ public:
 private slots:
     void applyColoursJyutping();
     void applyColoursPinyin();
+    void applyColoursSkipSameCharacters();
+    void applyColoursVariousCodepoints();
+    void applyColoursInvalidCantoneseTones();
+    void applyColoursInvalidMandarinTones();
+    void applyColoursNotEnoughTones();
 
     void compareStringsSimple();
     void compareStringsSingleMultibyteGrapheme();
@@ -24,6 +29,7 @@ private slots:
     void compareStringsCompatibilityVariantNormalization();
 
     void constructRomanisationQuerySingleSyllable();
+    void constructRomanisationQueryEmpty();
     void constructRomanisationQueryMultiSyllable();
     void constructRomanisationQueryGlobCharacters();
     void constructRomanisationQueryOnlyGlobCharacters();
@@ -50,6 +56,7 @@ void TestChineseUtils::applyColoursJyutping()
                            + "\">係</font>";
     QCOMPARE(result, expected);
 }
+
 void TestChineseUtils::applyColoursPinyin()
 {
     std::string text = "不是";
@@ -65,6 +72,97 @@ void TestChineseUtils::applyColoursPinyin()
                            + "\">不</font>" + "<font color=\""
                            + Settings::defaultPinyinToneColours[4]
                            + "\">是</font>";
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::applyColoursSkipSameCharacters()
+{
+    std::string text = std::string{Utils::SAME_CHARACTER_STRING}
+                       + std::string{Utils::SAME_CHARACTER_STRING};
+    std::vector<uint8_t> tones = {4, 6};
+    std::string result
+        = ChineseUtils::applyColours(text,
+                                     tones,
+                                     Settings::defaultJyutpingToneColours,
+                                     {},
+                                     EntryColourPhoneticType::CANTONESE);
+    std::string expected = std::string{Utils::SAME_CHARACTER_STRING}
+                           + std::string{Utils::SAME_CHARACTER_STRING};
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::applyColoursVariousCodepoints()
+{
+    std::string text
+        = "\u3400\U00020000\U0002a700\U0002b740\U0002b820\U0002ceb0\u0200";
+    std::vector<uint8_t> tones = {1, 2, 3, 4, 5, 6, 6};
+    std::string result
+        = ChineseUtils::applyColours(text,
+                                     tones,
+                                     Settings::defaultJyutpingToneColours,
+                                     {},
+                                     EntryColourPhoneticType::CANTONESE);
+    std::string expected = "<font color=\""
+                           + Settings::defaultJyutpingToneColours[1]
+                           + "\">\u3400</font><font color=\""
+                           + Settings::defaultJyutpingToneColours[2]
+                           + "\">\U00020000</font>" + "<font color=\""
+                           + Settings::defaultJyutpingToneColours[3]
+                           + "\">\U0002a700</font><font color=\""
+                           + Settings::defaultJyutpingToneColours[4]
+                           + "\">\U0002b740</font>" + "<font color=\""
+                           + Settings::defaultJyutpingToneColours[5]
+                           + "\">\U0002b820</font><font color=\""
+                           + Settings::defaultJyutpingToneColours[6]
+                           + "\">\U0002ceb0</font>\u0200";
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::applyColoursInvalidCantoneseTones()
+{
+    std::string text = "唔係";
+    std::vector<uint8_t> tones = {4, 7};
+    std::string result
+        = ChineseUtils::applyColours(text,
+                                     tones,
+                                     Settings::defaultJyutpingToneColours,
+                                     {},
+                                     EntryColourPhoneticType::CANTONESE);
+    std::string expected = "<font color=\""
+                           + Settings::defaultJyutpingToneColours[4]
+                           + "\">唔</font>係";
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::applyColoursInvalidMandarinTones()
+{
+    std::string text = "不是";
+    std::vector<uint8_t> tones = {7, 4};
+    std::string result
+        = ChineseUtils::applyColours(text,
+                                     tones,
+                                     {},
+                                     Settings::defaultPinyinToneColours,
+                                     EntryColourPhoneticType::MANDARIN);
+    std::string expected = "不<font color=\""
+                           + Settings::defaultPinyinToneColours[4]
+                           + "\">是</font>";
+    QCOMPARE(result, expected);
+}
+
+void TestChineseUtils::applyColoursNotEnoughTones()
+{
+    std::string text = "唔係";
+    std::vector<uint8_t> tones = {4};
+    std::string result
+        = ChineseUtils::applyColours(text,
+                                     tones,
+                                     Settings::defaultJyutpingToneColours,
+                                     {},
+                                     EntryColourPhoneticType::CANTONESE);
+    std::string expected = "<font color=\""
+                           + Settings::defaultJyutpingToneColours[4]
+                           + "\">唔</font>係";
     QCOMPARE(result, expected);
 }
 
@@ -99,6 +197,19 @@ void TestChineseUtils::compareStringsCompatibilityVariantNormalization()
 {
     std::string result = ChineseUtils::compareStrings("響", "響");
     QCOMPARE(result, Utils::SAME_CHARACTER_STRING);
+}
+
+void TestChineseUtils::constructRomanisationQueryEmpty()
+{
+    std::string result
+        = ChineseUtils::constructRomanisationQuery(std::vector<std::string>{},
+                                                   "?");
+    QCOMPARE(result, "");
+
+    result
+        = ChineseUtils::constructRomanisationQuery(std::vector<std::string>{""},
+                                                   "?");
+    QCOMPARE(result, "");
 }
 
 void TestChineseUtils::constructRomanisationQuerySingleSyllable()
@@ -152,6 +263,10 @@ void TestChineseUtils::constructRomanisationQueryGlobCharacters()
     result = ChineseUtils::constructRomanisationQuery(
         std::vector<std::string>{"se", " ?", "?", "? ", "dak"}, "?");
     QCOMPARE(result, "se? ??? dak?");
+
+    result = ChineseUtils::constructRomanisationQuery(
+        std::vector<std::string>{"se", "*"}, "?");
+    QCOMPARE(result, "se*");
 }
 
 void TestChineseUtils::constructRomanisationQueryOnlyGlobCharacters()

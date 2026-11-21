@@ -167,6 +167,9 @@ fun constructRomanisationQuery(
     var result = ""
     for (s in syllables) {
         val trimmedSyllable = s.trim()
+        if (trimmedSyllable.isEmpty()) {
+            continue
+        }
         if (trimmedSyllable.last().isDigit()) {
             result += space + trimmedSyllable
             space = " "
