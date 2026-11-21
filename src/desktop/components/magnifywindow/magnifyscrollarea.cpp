@@ -57,23 +57,6 @@ void MagnifyScrollArea::resizeEvent(QResizeEvent *event)
 void MagnifyScrollArea::updateStyleRequested(void)
 {
     if (_entryIsValid) {
-        _entry.refreshColours(
-            _settings
-                ->value("entryColourPhoneticType",
-                        QVariant::fromValue(EntryColourPhoneticType::CANTONESE))
-                .value<EntryColourPhoneticType>());
-
-        CantoneseOptions cantoneseOptions
-            = _settings
-                  ->value("Entry/cantonesePronunciationOptions",
-                          QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
-                  .value<CantoneseOptions>();
-        MandarinOptions mandarinOptions
-            = _settings
-                  ->value("Entry/mandarinPronunciationOptions",
-                          QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
-                  .value<MandarinOptions>();
-        _entry.generatePhonetic(cantoneseOptions, mandarinOptions);
         _scrollAreaWidget->setEntry(_entry);
     }
 

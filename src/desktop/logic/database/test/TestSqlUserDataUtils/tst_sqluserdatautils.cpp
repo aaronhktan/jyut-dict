@@ -350,8 +350,8 @@ void TestSqlUserDataUtils::favouriteUnfavouriteEntry()
     std::vector<DefinitionsSet> definitions = {
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
-    Entry expected{"白云山",
-                   "白雲山",
+    Entry expected{"白雲山",
+                   "白云山",
                    "baak6 wan4 saan1",
                    "bai2 yun2 shan1",
                    definitions};

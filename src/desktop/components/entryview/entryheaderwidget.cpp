@@ -91,7 +91,14 @@ void EntryHeaderWidget::setEntry(const Entry &entry)
                             QVariant::fromValue(
                                 EntryCharactersOptions::PREFER_TRADITIONAL))
                     .value<EntryCharactersOptions>(),
-                true)
+                true,
+                Settings::getSettings()
+                    ->value("entryColourPhoneticType",
+                            QVariant::fromValue(
+                                EntryColourPhoneticType::CANTONESE))
+                    .value<EntryColourPhoneticType>(),
+                Settings::jyutpingToneColours,
+                Settings::pinyinToneColours)
             .c_str());
 
     const CantoneseOptions cantoneseOptions

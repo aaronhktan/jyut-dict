@@ -133,7 +133,7 @@ void EntryScrollArea::setEntry(const Entry &entry)
     disconnect(_updateUITimer, nullptr, this, nullptr);
 
     _updateUITimer->setInterval(25);
-    QObject::connect(_updateUITimer, &QTimer::timeout, this, [this, entry] {
+    QObject::connect(_updateUITimer, &QTimer::timeout, this, [this, entry]() mutable {
         if (_enableUIUpdate) {
             _updateUITimer->stop();
             disconnect(_updateUITimer, nullptr, this, nullptr);

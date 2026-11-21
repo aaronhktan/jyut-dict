@@ -141,8 +141,6 @@ void ExampleContentWidget::setExampleVector(std::span<const Example> examples)
                           QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
                   .value<MandarinOptions>();
 
-        example.generatePhonetic(cantoneseOptions, mandarinOptions);
-
         QString cantonesePronunciation = QString::fromStdString(
                                              example.getCantonesePhonetic(
                                                  cantoneseOptions))

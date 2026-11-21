@@ -67,17 +67,6 @@ void ExampleScrollAreaWidget::setStyle([[maybe_unused]] bool use_dark)
 void ExampleScrollAreaWidget::updateStyleRequested(void)
 {
     if (_example.has_value()) {
-        CantoneseOptions cantoneseOptions
-            = _settings
-                  ->value("Entry/cantonesePronunciationOptions",
-                          QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
-                  .value<CantoneseOptions>();
-        MandarinOptions mandarinOptions
-            = _settings
-                  ->value("Entry/mandarinPronunciationOptions",
-                          QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
-                  .value<MandarinOptions>();
-        _example.value().generatePhonetic(cantoneseOptions, mandarinOptions);
         _exampleViewHeaderWidget->setExample(_example.value());
     }
     QEvent event{QEvent::PaletteChange};

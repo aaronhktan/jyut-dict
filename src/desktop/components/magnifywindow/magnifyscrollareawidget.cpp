@@ -75,16 +75,27 @@ void MagnifyScrollAreaWidget::setEntry(const Entry &entry)
                       QVariant::fromValue(
                           EntryCharactersOptions::PREFER_TRADITIONAL))
               .value<EntryCharactersOptions>();
+    EntryColourPhoneticType colourPhoneticType
+        = _settings
+              ->value("entryColourPhoneticType",
+                      QVariant::fromValue(EntryColourPhoneticType::CANTONESE))
+              .value<EntryColourPhoneticType>();
 
     _traditionalLabel->setText(
         entry
             .getCharactersNoSecondary(EntryCharactersOptions::ONLY_TRADITIONAL,
-                                      /* use_colours */ true)
+                                      /* use_colours */ true,
+                                      colourPhoneticType,
+                                      Settings::jyutpingToneColours,
+                                      Settings::pinyinToneColours)
             .c_str());
     _simplifiedLabel->setText(
         entry
             .getCharactersNoSecondary(EntryCharactersOptions::ONLY_SIMPLIFIED,
-                                      /* use_colours */ true)
+                                      /* use_colours */ true,
+                                      colourPhoneticType,
+                                      Settings::jyutpingToneColours,
+                                      Settings::pinyinToneColours)
             .c_str());
 
     switch (characterOptions) {

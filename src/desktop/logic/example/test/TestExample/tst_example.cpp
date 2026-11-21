@@ -24,16 +24,11 @@ TestExample::~TestExample() {}
 void TestExample::constructor()
 {
     std::string language = "yue";
-    std::string simplified = "台山话";
     std::string traditional = "臺山話";
+    std::string simplified = "台山话";
     std::string jyutping = "toi4 saan1 waa2";
     std::string pinyin = "tai2 shan1 hua4";
-    Example example{language,
-                            simplified,
-                            traditional,
-                            jyutping,
-                            pinyin,
-                            {}};
+    Example example{language, traditional, simplified, jyutping, pinyin, {}};
 
     QCOMPARE(example.getSourceLanguage(), language);
     QCOMPARE(example.getSimplified(), simplified);
@@ -52,15 +47,15 @@ void TestExample::settersAndGetters()
     TranslationSet set = {"Wiktionary", {translation}};
 
     std::string language = "yue";
-    std::string simplified = "台山话";
     std::string traditional = "臺山話";
+    std::string simplified = "台山话";
     std::string jyutping = "toi4 saan1 waa2";
     std::string pinyin = "tai2 shan1 hua4";
 
     Example example{"", "", "", "", "", {set}};
     example.setSourceLanguage(language);
-    example.setSimplified(simplified);
     example.setTraditional(traditional);
+    example.setSimplified(simplified);
     example.setJyutping(jyutping);
     example.setPinyin(pinyin);
 
@@ -84,20 +79,8 @@ void TestExample::generatePhonetic()
     std::string traditional = "臺山話";
     std::string jyutping = "toi4 saan1 waa2";
     std::string pinyin = "tai2 shan1 hua4";
-    Example example{language,
-                            simplified,
-                            traditional,
-                            jyutping,
-                            pinyin,
-                            {}};
+    Example example{language, traditional, simplified, jyutping, pinyin, {}};
 
-    example.generatePhonetic(CantoneseOptions::RAW_JYUTPING
-                                  | CantoneseOptions::PRETTY_YALE
-                                  | CantoneseOptions::CANTONESE_IPA,
-                              MandarinOptions::NUMBERED_PINYIN
-                                  | MandarinOptions::PRETTY_PINYIN
-                                  | MandarinOptions::ZHUYIN
-                                  | MandarinOptions::MANDARIN_IPA);
     QCOMPARE(QString::fromStdString(
                  example.getCantonesePhonetic(CantoneseOptions::RAW_JYUTPING)),
              QString::fromStdString(jyutping));
@@ -126,7 +109,9 @@ void TestExample::generatePhonetic()
     QCOMPARE(QString::fromStdString(
                  example.getMandarinPhonetic(MandarinOptions::PRETTY_PINYIN)),
              "tái shān huà");
-    QCOMPARE(QString::fromStdString(example.getPrettyPinyin()), "tái shān huà");
+    QCOMPARE(QString::fromStdString(
+                 example.getMandarinPhonetic(MandarinOptions::PRETTY_PINYIN)),
+             "tái shān huà");
     QCOMPARE(QString::fromStdString(
                  example.getMandarinPhonetic(MandarinOptions::ZHUYIN)),
              "ㄊㄞˊ ㄕㄢ ㄏㄨㄚˋ");

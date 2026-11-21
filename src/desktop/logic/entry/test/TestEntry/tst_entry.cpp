@@ -2,6 +2,7 @@
 
 #include "logic/entry/entry.h"
 #include "logic/entry/entrycharactersoptions.h"
+#include "logic/settings/settings.h"
 #include "logic/utils/chineseutils.h"
 
 class TestEntry : public QObject
@@ -35,70 +36,93 @@ TestEntry::~TestEntry() {}
 
 void TestEntry::getCharacters()
 {
-    std::string simplified{"清远"};
     std::string traditional{"清遠"};
+    std::string simplified{"清远"};
     std::string jyutping{"cing1 jyun5"};
     std::string pinyin{"qing1 yuan3"};
-    Entry entry{simplified, traditional, jyutping, pinyin, {}};
+    Entry entry{traditional, simplified, jyutping, pinyin, {}};
 
     QCOMPARE(QString::fromStdString(
-                 entry.getCharacters(EntryCharactersOptions::ONLY_SIMPLIFIED,
-                                     /* useColours = */ false)),
-             QString::fromStdString(simplified));
-    QCOMPARE(QString::fromStdString(
                  entry.getCharacters(EntryCharactersOptions::ONLY_TRADITIONAL,
-                                     /* useColours = */ false)),
+                                     /* useColours = */ false,
+                                     EntryColourPhoneticType::CANTONESE,
+                                     Settings::jyutpingToneColours,
+                                     Settings::pinyinToneColours)),
              QString::fromStdString(traditional));
     QCOMPARE(QString::fromStdString(
-                 entry.getCharacters(EntryCharactersOptions::PREFER_SIMPLIFIED,
-                                     /* useColours = */ false)),
-             QString::fromStdString(
-                 simplified + " ["
-                 + ChineseUtils::compareStrings(simplified, traditional) + "]"));
+                 entry.getCharacters(EntryCharactersOptions::ONLY_SIMPLIFIED,
+                                     /* useColours = */ false,
+                                     EntryColourPhoneticType::CANTONESE,
+                                     Settings::jyutpingToneColours,
+                                     Settings::pinyinToneColours)),
+             QString::fromStdString(simplified));
     QCOMPARE(QString::fromStdString(
                  entry.getCharacters(EntryCharactersOptions::PREFER_TRADITIONAL,
-                                     /* useColours = */ false)),
+                                     /* useColours = */ false,
+                                     EntryColourPhoneticType::CANTONESE,
+                                     Settings::jyutpingToneColours,
+                                     Settings::pinyinToneColours)),
              QString::fromStdString(
                  traditional + " ["
                  + ChineseUtils::compareStrings(traditional, simplified) + "]"));
+    QCOMPARE(QString::fromStdString(
+                 entry.getCharacters(EntryCharactersOptions::PREFER_SIMPLIFIED,
+                                     /* useColours = */ false,
+                                     EntryColourPhoneticType::CANTONESE,
+                                     Settings::jyutpingToneColours,
+                                     Settings::pinyinToneColours)),
+             QString::fromStdString(
+                 simplified + " ["
+                 + ChineseUtils::compareStrings(simplified, traditional) + "]"));
+    QCOMPARE(QString::fromStdString(entry.getCharactersNoSecondary(
+                 EntryCharactersOptions::ONLY_TRADITIONAL,
+                 /* useColours = */ false,
+                 EntryColourPhoneticType::CANTONESE,
+                 Settings::jyutpingToneColours,
+                 Settings::pinyinToneColours)),
+             QString::fromStdString(traditional));
+    QCOMPARE(QString::fromStdString(entry.getCharactersNoSecondary(
+                 EntryCharactersOptions::ONLY_TRADITIONAL,
+                 /* useColours = */ false,
+                 EntryColourPhoneticType::CANTONESE,
+                 Settings::jyutpingToneColours,
+                 Settings::pinyinToneColours)),
+             QString::fromStdString(traditional));
     QCOMPARE(QString::fromStdString(entry.getCharactersNoSecondary(
                  EntryCharactersOptions::ONLY_SIMPLIFIED,
-                 /* useColours = */ false)),
+                 /* useColours = */ false,
+                 EntryColourPhoneticType::CANTONESE,
+                 Settings::jyutpingToneColours,
+                 Settings::pinyinToneColours)),
              QString::fromStdString(simplified));
     QCOMPARE(QString::fromStdString(entry.getCharactersNoSecondary(
                  EntryCharactersOptions::PREFER_SIMPLIFIED,
-                 /* useColours = */ false)),
+                 /* useColours = */ false,
+                 EntryColourPhoneticType::CANTONESE,
+                 Settings::jyutpingToneColours,
+                 Settings::pinyinToneColours)),
              QString::fromStdString(simplified));
-    QCOMPARE(QString::fromStdString(entry.getCharactersNoSecondary(
-                 EntryCharactersOptions::ONLY_TRADITIONAL,
-                 /* useColours = */ false)),
-             QString::fromStdString(traditional));
-    QCOMPARE(QString::fromStdString(entry.getCharactersNoSecondary(
-                 EntryCharactersOptions::ONLY_TRADITIONAL,
-                 /* useColours = */ false)),
-             QString::fromStdString(traditional));
 }
 
 void TestEntry::simplifiedAndTraditional()
 {
-    std::string simplified{"清远"};
     std::string traditional{"清遠"};
-    Entry entry{simplified, traditional, "", "", {}};
+    std::string simplified{"清远"};
+    Entry entry{traditional, simplified, "", "", {}};
 
+    QCOMPARE(QString::fromStdString(entry.getTraditional()),
+             QString::fromStdString(traditional));
     QCOMPARE(QString::fromStdString(entry.getSimplified()),
              QString::fromStdString(simplified));
-    QCOMPARE(QString::fromStdString(entry.getTraditional()),
-             QString::fromStdString(traditional));
-
-    std::string newSimplified{"广州"};
-    entry.setSimplified(newSimplified);
-    QCOMPARE(QString::fromStdString(entry.getSimplified()),
-             QString::fromStdString(newSimplified));
-    QCOMPARE(QString::fromStdString(entry.getTraditional()),
-             QString::fromStdString(traditional));
 
     std::string newTraditional{"廣州"};
     entry.setTraditional(newTraditional);
+    QCOMPARE(QString::fromStdString(entry.getSimplified()),
+             QString::fromStdString(simplified));
+    QCOMPARE(QString::fromStdString(entry.getTraditional()),
+             QString::fromStdString(newTraditional));
+    std::string newSimplified{"广州"};
+    entry.setSimplified(newSimplified);
     QCOMPARE(QString::fromStdString(entry.getSimplified()),
              QString::fromStdString(newSimplified));
     QCOMPARE(QString::fromStdString(entry.getTraditional()),
@@ -107,15 +131,11 @@ void TestEntry::simplifiedAndTraditional()
 
 void TestEntry::cantonesePhonetic()
 {
-    std::string simplified = "台山话";
     std::string traditional = "臺山話";
+    std::string simplified = "台山话";
     std::string jyutping = "toi4 saan1 waa2";
     std::string pinyin = "tai2 shan1 hua4";
-    Entry entry{simplified, traditional, jyutping, pinyin, {}};
-    entry.generatePhonetic(CantoneseOptions::RAW_JYUTPING
-                               | CantoneseOptions::PRETTY_YALE
-                               | CantoneseOptions::CANTONESE_IPA,
-                           MandarinOptions::NONE);
+    Entry entry{traditional, simplified, jyutping, pinyin, {}};
 
     QCOMPARE(QString::fromStdString(
                  entry.getCantonesePhonetic(CantoneseOptions::RAW_JYUTPING)),
@@ -158,16 +178,11 @@ void TestEntry::cantoneseToneNumbers()
 
 void TestEntry::mandarinPhonetic()
 {
-    std::string simplified = "台山话";
     std::string traditional = "臺山話";
+    std::string simplified = "台山话";
     std::string jyutping = "toi4 saan1 waa2";
     std::string pinyin = "tai2 shan1 hua4";
-    Entry entry{simplified, traditional, jyutping, pinyin, {}};
-    entry.generatePhonetic(CantoneseOptions::NONE,
-                           MandarinOptions::PRETTY_PINYIN
-                               | MandarinOptions::ZHUYIN
-                               | MandarinOptions::MANDARIN_IPA);
-
+    Entry entry{traditional, simplified, jyutping, pinyin, {}};
     QCOMPARE(QString::fromStdString(
                  entry.getMandarinPhonetic(MandarinOptions::RAW_PINYIN)),
              QString::fromStdString(pinyin));
@@ -212,19 +227,11 @@ void TestEntry::mandarinToneNumbers()
 
 void TestEntry::getPhonetic()
 {
-    std::string simplified = "台山话";
     std::string traditional = "臺山話";
+    std::string simplified = "台山话";
     std::string jyutping = "toi4 saan1 waa2";
     std::string pinyin = "tai2 shan1 hua4";
-    Entry entry{simplified, traditional, jyutping, pinyin, {}};
-    entry.generatePhonetic(CantoneseOptions::RAW_JYUTPING
-                               | CantoneseOptions::PRETTY_YALE
-                               | CantoneseOptions::CANTONESE_IPA,
-                           MandarinOptions::NUMBERED_PINYIN
-                               | MandarinOptions::PRETTY_PINYIN
-                               | MandarinOptions::ZHUYIN
-                               | MandarinOptions::MANDARIN_IPA);
-
+    Entry entry{traditional, simplified, jyutping, pinyin, {}};
     QCOMPARE(QString::fromStdString(
                  entry.getPhonetic(EntryPhoneticOptions::ONLY_CANTONESE)),
              QString::fromStdString(jyutping));
@@ -280,11 +287,11 @@ void TestEntry::definitions()
 
     DefinitionsSet definitionsSet{"CC-CEDICT", definitions};
 
-    std::string simplified = "唐人街";
     std::string traditional = "唐人街";
+    std::string simplified = "唐人街";
     std::string jyutping = "tong4 jan4 gaai1";
     std::string pinyin = "tang2 ren2 jie1";
-    Entry entry{simplified, traditional, jyutping, pinyin, {definitionsSet}};
+    Entry entry{traditional, simplified, jyutping, pinyin, {definitionsSet}};
 
     QCOMPARE(std::vector<DefinitionsSet>(entry.getDefinitionsSets().begin(),
                                          entry.getDefinitionsSets().end()),
@@ -311,34 +318,40 @@ void TestEntry::definitions()
 
 void TestEntry::refreshColours()
 {
-    std::string simplified = "岭南文化";
     std::string traditional = "嶺南文化";
+    std::string simplified = "岭南文化";
     std::string jyutping = "ling5 naam4 man4 faa3";
     std::string pinyin = "ling3 nan2 wen2 hua4";
-    Entry entry{simplified, traditional, jyutping, pinyin, {}};
+    Entry entry{traditional, simplified, jyutping, pinyin, {}};
 
-    entry.refreshColours(EntryColourPhoneticType::CANTONESE);
     QCOMPARE(
         QString::fromStdString(
             entry.getCharacters(EntryCharactersOptions::ONLY_SIMPLIFIED,
-                                /* useColours = */ true)),
+                                /* useColours = */ true,
+                                EntryColourPhoneticType::CANTONESE,
+                                Settings::jyutpingToneColours,
+                                Settings::pinyinToneColours)),
         "<font color=\"#068900\">\u5CAD</font><font "
         "color=\"#c2185b\">\u5357</font><font "
         "color=\"#c2185b\">\u6587</font><font color=\"#657ff1\">\u5316</font>");
 
-    entry.refreshColours(EntryColourPhoneticType::MANDARIN);
     QCOMPARE(
         QString::fromStdString(
             entry.getCharacters(EntryCharactersOptions::ONLY_TRADITIONAL,
-                                /* useColours = */ true)),
+                                /* useColours = */ true,
+                                EntryColourPhoneticType::MANDARIN,
+                                Settings::jyutpingToneColours,
+                                Settings::pinyinToneColours)),
         "<font color=\"#18a6f2\">\u5DBA</font><font "
         "color=\"#02ba1f\">\u5357</font><font "
         "color=\"#02ba1f\">\u6587</font><font color=\"#9e77ff\">\u5316</font>");
 
-    entry.refreshColours(EntryColourPhoneticType::NONE);
     QCOMPARE(QString::fromStdString(
                  entry.getCharacters(EntryCharactersOptions::ONLY_TRADITIONAL,
-                                     /* useColours = */ true)),
+                                     /* useColours = */ true,
+                                     EntryColourPhoneticType::NONE,
+                                     Settings::jyutpingToneColours,
+                                     Settings::pinyinToneColours)),
              "嶺南文化");
 }
 

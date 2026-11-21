@@ -129,24 +129,6 @@ void ExampleSplitter::translateUI(void)
     setWindowTitle(title);
 }
 
-void ExampleSplitter::prepareExample(Example &example) const
-{
-    // Although the setting is named Entry/xxxPronunciationOptions, it applies
-    // to all detail views (i.e. both the entry detail view and example detail
-    // view.)
-    CantoneseOptions cantoneseOptions
-        = Settings::getSettings()
-              ->value("Entry/cantonesePronunciationOptions",
-                      QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
-              .value<CantoneseOptions>();
-    MandarinOptions mandarinOptions
-        = Settings::getSettings()
-              ->value("Entry/mandarinPronunciationOptions",
-                      QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
-              .value<MandarinOptions>();
-    example.generatePhonetic(cantoneseOptions, mandarinOptions);
-}
-
 void ExampleSplitter::openCurrentSelectionInNewWindow(void)
 {
     QModelIndex entryIndex = _resultListView->currentIndex();
@@ -157,16 +139,12 @@ void ExampleSplitter::handleClick(const QModelIndex &selection)
 {
     Example example = qvariant_cast<Example>(selection.data());
 
-    prepareExample(example);
-
     _exampleScrollArea->setExample(example);
 }
 
 void ExampleSplitter::handleDoubleClick(const QModelIndex &selection)
 {
     Example example = qvariant_cast<Example>(selection.data());
-
-    prepareExample(example);
 
     ExampleScrollArea *area = new ExampleScrollArea{nullptr};
     area->setParent(this, Qt::Window);

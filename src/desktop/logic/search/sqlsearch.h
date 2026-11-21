@@ -50,8 +50,8 @@ public:
     void searchEnglish(const QString &searchTerm) override;
     void searchAutoDetect(const QString &searchTerm) override;
 
-    void searchByUnique(const QString &simplified,
-                        const QString &traditional,
+    void searchByUnique(const QString &traditional,
+                        const QString &simplified,
                         const QString &jyutping,
                         const QString &pinyin) override;
 
@@ -107,8 +107,8 @@ private:
     void searchAutoDetectThread(const QString &searchTerm,
                                 const unsigned long long queryID);
 
-    void searchByUniqueThread(const QString &simplified,
-                              const QString &traditional,
+    void searchByUniqueThread(const QString &traditional,
+                              const QString &simplified,
                               const QString &jyutping,
                               const QString &pinyin,
                               const unsigned long long queryID);

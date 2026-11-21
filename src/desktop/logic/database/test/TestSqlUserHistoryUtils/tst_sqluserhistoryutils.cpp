@@ -373,15 +373,15 @@ void TestSqlUserHistoryUtils::viewHistory()
     std::vector<DefinitionsSet> definitions = {
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
-    Entry originalEntry{"白云山",
-                        "白雲山",
+    Entry originalEntry{"白雲山",
+                        "白云山",
                         "baak6 wan4 saan1",
                         "bai2 yun2 shan1",
                         definitions};
 
     // The result we get back from the database should have no definitions.
-    Entry expectedEntry{"白云山",
-                        "白雲山",
+    Entry expectedEntry{"白雲山",
+                        "白云山",
                         "baak6 wan4 saan1",
                         "bai2 yun2 shan1",
                         {}};

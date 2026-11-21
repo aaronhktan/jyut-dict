@@ -17,10 +17,11 @@ public:
     virtual void searchEnglish(const QString &searchTerm) = 0;
     virtual void searchAutoDetect(const QString &searchTerm) = 0;
 
-    virtual void searchByUnique(const QString &simplified,
-                                const QString &traditional,
+    virtual void searchByUnique(const QString &traditional,
+                                const QString &simplified,
                                 const QString &jyutping,
-                                const QString &pinyin) = 0;
+                                const QString &pinyin)
+        = 0;
 };
 
 #endif // ISEARCH_H

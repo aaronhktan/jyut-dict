@@ -580,8 +580,8 @@ void SQLSearch::searchAutoDetect(const QString &searchTerm)
               queryId);
 }
 
-void SQLSearch::searchByUnique(const QString &simplified,
-                               const QString &traditional,
+void SQLSearch::searchByUnique(const QString &traditional,
+                               const QString &simplified,
                                const QString &jyutping,
                                const QString &pinyin)
 {
@@ -609,8 +609,8 @@ void SQLSearch::searchByUnique(const QString &simplified,
     watcher->setFuture(
         QtConcurrent::run(&SQLSearch::searchByUniqueThread,
                           this,
-                          simplified.normalized(QString::NormalizationForm_C),
                           traditional.normalized(QString::NormalizationForm_C),
+                          simplified.normalized(QString::NormalizationForm_C),
                           jyutping.normalized(QString::NormalizationForm_C),
                           pinyin.normalized(QString::NormalizationForm_C),
                           queryID));
@@ -1024,8 +1024,8 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
 }
 
 // To seach by unique, select by all the attributes that we have.
-void SQLSearch::searchByUniqueThread(const QString &simplified,
-                                     const QString &traditional,
+void SQLSearch::searchByUniqueThread(const QString &traditional,
+                                     const QString &simplified,
                                      const QString &jyutping,
                                      const QString &pinyin,
                                      const unsigned long long queryID)

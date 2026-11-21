@@ -16,11 +16,11 @@ class Example
 public:
     explicit Example() = default;
     Example(const std::string &sourceLanguage,
-                   const std::string &simplified,
-                   const std::string &traditional,
-                   const std::string &jyutping,
-                   const std::string &pinyin,
-                   const std::vector<TranslationSet> &translationSets);
+            const std::string &traditional,
+            const std::string &simplified,
+            const std::string &jyutping,
+            const std::string &pinyin,
+            const std::vector<TranslationSet> &translationSets);
 
     friend std::ostream &operator<<(std::ostream &out,
                                     const Example &example);
@@ -38,14 +38,11 @@ public:
 
     const std::string &getCharacters(EntryCharactersOptions options) const;
 
-    const std::string &getSimplified(void) const;
-    void setSimplified(std::string simplified);
-
     const std::string &getTraditional(void) const;
     void setTraditional(std::string traditional);
 
-    bool generatePhonetic(CantoneseOptions cantoneseOptions,
-                          MandarinOptions mandarinOptions);
+    const std::string &getSimplified(void) const;
+    void setSimplified(std::string simplified);
 
     const std::string &getPhonetic(EntryPhoneticOptions options,
                                    CantoneseOptions cantoneseOptions,
@@ -58,7 +55,6 @@ public:
     void setJyutping(const std::string &jyutping);
 
     const std::string &getPinyin(void) const;
-    const std::string &getPrettyPinyin(void) const;
     void setPinyin(const std::string &pinyin);
 
     std::span<const TranslationSet> getTranslationSets(void) const;
@@ -71,19 +67,23 @@ public:
     bool isEmpty(void) const;
 
 private:
+    bool generatePhonetic(
+        CantoneseOptions cantoneseOptions = CantoneseOptions::NONE,
+        MandarinOptions mandarinOptions = MandarinOptions::NONE) const;
+
     std::string _sourceLanguage;
-    std::string _simplified;
     std::string _traditional;
+    std::string _simplified;
 
     std::string _jyutping;
-    std::optional<std::string> _yale = std::nullopt;
-    std::optional<std::string> _cantoneseIPA = std::nullopt;
+    mutable std::optional<std::string> _yale = std::nullopt;
+    mutable std::optional<std::string> _cantoneseIPA = std::nullopt;
 
     std::string _pinyin;
-    std::optional<std::string> _prettyPinyin = std::nullopt;
-    std::optional<std::string> _numberedPinyin = std::nullopt;
-    std::optional<std::string> _zhuyin = std::nullopt;
-    std::optional<std::string> _mandarinIPA = std::nullopt;
+    mutable std::optional<std::string> _prettyPinyin = std::nullopt;
+    mutable std::optional<std::string> _numberedPinyin = std::nullopt;
+    mutable std::optional<std::string> _zhuyin = std::nullopt;
+    mutable std::optional<std::string> _mandarinIPA = std::nullopt;
 
     std::vector<TranslationSet> _translationSets;
 

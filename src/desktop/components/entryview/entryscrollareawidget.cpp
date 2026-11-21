@@ -164,23 +164,6 @@ void EntryScrollAreaWidget::setStyle([[maybe_unused]] bool use_dark)
 void EntryScrollAreaWidget::updateStyleRequested(void)
 {
     if (_entry.has_value()) {
-        _entry.value().refreshColours(
-            _settings
-                ->value("entryColourPhoneticType",
-                        QVariant::fromValue(EntryColourPhoneticType::CANTONESE))
-                .value<EntryColourPhoneticType>());
-
-        CantoneseOptions cantoneseOptions
-            = _settings
-                  ->value("Entry/cantonesePronunciationOptions",
-                          QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
-                  .value<CantoneseOptions>();
-        MandarinOptions mandarinOptions
-            = _settings
-                  ->value("Entry/mandarinPronunciationOptions",
-                          QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
-                  .value<MandarinOptions>();
-        _entry.value().generatePhonetic(cantoneseOptions, mandarinOptions);
         _entryHeaderWidget->setEntry(_entry.value());
     }
 

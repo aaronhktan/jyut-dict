@@ -153,6 +153,10 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
     -> AttributedString
   {
     var hasher = Hasher()
+    hasher.combine(_traditional)
+    hasher.combine(_simplified)
+    hasher.combine(_jyutping)
+    hasher.combine(_pinyin)
     hasher.combine(options)
     hasher.combine(useColours)
     hasher.combine(colourPhoneticType)
@@ -203,6 +207,10 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
     -> AttributedString
   {
     var hasher = Hasher()
+    hasher.combine(_traditional)
+    hasher.combine(_simplified)
+    hasher.combine(_jyutping)
+    hasher.combine(_pinyin)
     hasher.combine(options)
     hasher.combine(useColours)
     hasher.combine(colourPhoneticType)
@@ -277,7 +285,7 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
     }
   }
 
-  func generatePhonetic(
+  private func generatePhonetic(
     cantoneseOptions: CantoneseOptions = [],
     mandarinOptions: MandarinOptions = []
   ) {
@@ -317,15 +325,6 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
       == MandarinOptions.rawPinyinWithV.rawValue) && _pinyinWithV == nil
     {
       _pinyinWithV = createPinyinWithV(pinyin: _pinyin)
-    }
-  }
-
-  func generateDefinitionsPhonetic(
-    cantoneseOptions: CantoneseOptions,
-    mandarinOptions: MandarinOptions
-  ) {
-    for d in _definitions ?? [] {
-      d.generatePhonetic(cantoneseOptions, mandarinOptions)
     }
   }
 
@@ -431,6 +430,8 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
     }
     set {
       _jyutping = newValue.lowercased()
+      _yale = nil
+      _cantoneseIPA = nil
       _jyutpingNumbers = nil
     }
   }
@@ -464,6 +465,11 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
     }
     set {
       _pinyin = newValue.lowercased()
+      _prettyPinyin = nil
+      _numberedPinyin = nil
+      _zhuyin = nil
+      _mandarinIPA = nil
+      _pinyinWithV = nil
       _pinyinNumbers = nil
     }
   }
@@ -514,7 +520,7 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
     return _definitionSnippet ?? ""
   }
 
-  func refreshColours(
+  private func refreshColours(
     type: EntryColourPhoneticType,
     jyutpingToneColours: [Color],
     pinyinToneColours: [Color]

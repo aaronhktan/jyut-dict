@@ -210,7 +210,14 @@ void EntryViewExampleCardSection::setEntry(const Entry &entry)
                                  QVariant::fromValue(
                                      EntryCharactersOptions::PREFER_TRADITIONAL))
                          .value<EntryCharactersOptions>(),
-                     false)
+                     false,
+                     Settings::getSettings()
+                         ->value("entryColourPhoneticType",
+                                 QVariant::fromValue(
+                                     EntryColourPhoneticType::CANTONESE))
+                         .value<EntryColourPhoneticType>(),
+                     Settings::jyutpingToneColours,
+                     Settings::pinyinToneColours)
                  .c_str();
     _title = _title.trimmed();
 }
@@ -358,8 +365,8 @@ EntryViewExampleCardSection::getSamplesForEachSource(
             }
 
             Example example = Example(e.getSourceLanguage(),
-                                      e.getSimplified(),
                                       e.getTraditional(),
+                                      e.getSimplified(),
                                       e.getJyutping(),
                                       e.getPinyin(),
                                       std::vector<TranslationSet>{

@@ -100,7 +100,15 @@ class Entry {
         jyutpingToneColours: List<Color>,
         pinyinToneColours: List<Color>
     ): AnnotatedString {
-        var hash = Objects.hash(options, useColours, colourPhoneticType)
+        var hash = Objects.hash(
+            _traditional,
+            _simplified,
+            _jyutping,
+            _pinyin,
+            options,
+            useColours,
+            colourPhoneticType
+        )
         val colours =
             if (colourPhoneticType == EntryColourPhoneticType.MANDARIN) pinyinToneColours else jyutpingToneColours
         for (c in colours) {
@@ -215,22 +223,13 @@ class Entry {
             _numberedPinyin = createNumberedPinyin(_pinyin)
         }
         if (mandarinOptions.contains(MandarinOptions.ZHUYIN) && _zhuyin == null) {
-            _numberedPinyin = convertPinyinToZhuyin(_pinyin)
+            _zhuyin = convertPinyinToZhuyin(_pinyin)
         }
-        if (mandarinOptions.contains(MandarinOptions.MANDARIN_IPA) && _zhuyin == null) {
+        if (mandarinOptions.contains(MandarinOptions.MANDARIN_IPA) && _mandarinIPA == null) {
             _mandarinIPA = convertPinyinToIPA(_pinyin)
         }
         if (mandarinOptions.contains(MandarinOptions.RAW_PINYIN_WITH_V) && _pinyinWithV == null) {
-            _numberedPinyin = createPinyinWithV(_pinyin)
-        }
-    }
-
-    fun generateDefinitionsPhonetic(
-        cantoneseOptions: CantoneseOptions,
-        mandarinOptions: MandarinOptions
-    ) {
-        for (d in _definitions ?: listOf()) {
-            d.generatePhonetic(cantoneseOptions, mandarinOptions)
+            _pinyinWithV = createPinyinWithV(_pinyin)
         }
     }
 
@@ -289,7 +288,7 @@ class Entry {
                 if (_cantoneseIPA == null) {
                     generatePhonetic(cantoneseOptions = EnumSet.of(CantoneseOptions.CANTONESE_IPA))
                 }
-                return _yale ?: "Cantonese IPA not available"
+                return _cantoneseIPA ?: "Cantonese IPA not available"
             }
 
             CantoneseOptions.RAW_JYUTPING -> {
@@ -345,6 +344,8 @@ class Entry {
         get() = _jyutping
         set(value) {
             _jyutping = value.lowercase()
+            _yale = null
+            _cantoneseIPA = null
             _jyutpingNumbers = null
         }
 
@@ -369,6 +370,11 @@ class Entry {
         get() = _pinyin
         set(value) {
             _pinyin = value.lowercase()
+            _prettyPinyin = null
+            _numberedPinyin = null
+            _zhuyin = null
+            _mandarinIPA = null
+            _pinyinWithV = null
             _pinyinNumbers = null
         }
 
@@ -412,7 +418,7 @@ class Entry {
         return _definitionSnippet ?: ""
     }
 
-    fun refreshColours(
+    private fun refreshColours(
         type: EntryColourPhoneticType,
         jyutpingToneColours: List<Color>,
         pinyinToneColours: List<Color>

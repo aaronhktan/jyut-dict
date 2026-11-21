@@ -81,12 +81,13 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
                                 example_translations.emplace_back(sourceName, targetTranslations);
                             }
 
-                            examples.emplace_back(example["language"].toString().toStdString(),
-                                                   example["simplified"].toString().toStdString(),
-                                                   example["traditional"].toString().toStdString(),
-                                                   example["jyutping"].toString().toStdString(),
-                                                   example["pinyin"].toString().toStdString(),
-                                                   example_translations);
+                            examples.emplace_back(
+                                example["language"].toString().toStdString(),
+                                example["traditional"].toString().toStdString(),
+                                example["simplified"].toString().toStdString(),
+                                example["jyutping"].toString().toStdString(),
+                                example["pinyin"].toString().toStdString(),
+                                example_translations);
                         }
                     }
 
@@ -105,8 +106,8 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
             }
         }
 
-        entries.emplace_back(simplified,
-                             traditional,
+        entries.emplace_back(traditional,
+                             simplified,
                              jyutping,
                              pinyin,
                              definitionsSets);
@@ -176,8 +177,8 @@ std::vector<Example> parseExamples(QSqlQuery &query)
         }
 
         examples.emplace_back(sourceLanguage,
-                              simplified,
                               traditional,
+                              simplified,
                               jyutping,
                               pinyin,
                               translationSets);

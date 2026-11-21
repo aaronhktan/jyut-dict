@@ -84,7 +84,6 @@ void ExampleResultListDelegate::paint(QPainter *painter,
                                   QVariant::fromValue(
                                       MandarinOptions::PRETTY_PINYIN))
                           .value<MandarinOptions>();
-    example.generatePhonetic(cantoneseOptions, mandarinOptions);
 
     QRect r{option.rect};
     QRect boundingRect;

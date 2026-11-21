@@ -40,8 +40,6 @@ private:
     void setupUI();
     void translateUI();
 
-    void prepareEntry(Entry &entry) const;
-
 #ifdef Q_OS_WIN
     void setStyle(bool use_dark);
     bool _paletteRecentlyChanged = false;
@@ -64,8 +62,6 @@ public slots:
                               const SearchParameters &parameters);
 
 private slots:
-    void prepareEntry(Entry &entry);
-
     void handleClick(const QModelIndex &selection);
     void handleDoubleClick(const QModelIndex &selection);
 };

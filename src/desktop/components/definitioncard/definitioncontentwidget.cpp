@@ -149,7 +149,6 @@ void DefinitionContentWidget::setDefinitions(
                       .value<MandarinOptions>();
 
             Example example = definitions[i].examples[j];
-            example.generatePhonetic(cantoneseOptions, mandarinOptions);
 
             QString cantonese = QString::fromStdString(
                                     example.getCantonesePhonetic(

@@ -168,8 +168,8 @@ void MainSplitter::forwardViewHistoryItem(const Entry &entry)
     // the results come from another source, like searching, but in that case
     // we lose at most one entry. I consider this to be an acceptable tradeoff.
     _addToHistory = false;
-    _search->searchByUnique(entry.getSimplified().c_str(),
-                            entry.getTraditional().c_str(),
+    _search->searchByUnique(entry.getTraditional().c_str(),
+                            entry.getSimplified().c_str(),
                             entry.getJyutping().c_str(),
                             entry.getPinyin().c_str());
 }
@@ -202,36 +202,6 @@ void MainSplitter::prepareEntry(Entry &entry, bool addToHistory) const
         });
         _addToHistoryTimer->start(1000);
     }
-
-    entry.refreshColours(
-        Settings::getSettings()
-            ->value("entryColourPhoneticType",
-                    QVariant::fromValue(EntryColourPhoneticType::CANTONESE))
-            .value<EntryColourPhoneticType>());
-
-    CantoneseOptions cantoneseOptions
-        = Settings::getSettings()
-              ->value("Entry/cantonesePronunciationOptions",
-                      QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
-              .value<CantoneseOptions>();
-    MandarinOptions mandarinOptions
-        = Settings::getSettings()
-              ->value("Entry/mandarinPronunciationOptions",
-                      QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
-              .value<MandarinOptions>();
-    entry.generatePhonetic(cantoneseOptions, mandarinOptions);
-
-    cantoneseOptions = Settings::getSettings()
-                           ->value("Preview/cantonesePronunciationOptions",
-                                   QVariant::fromValue(
-                                       CantoneseOptions::RAW_JYUTPING))
-                           .value<CantoneseOptions>();
-    mandarinOptions = Settings::getSettings()
-                          ->value("Preview/mandarinPronunciationOptions",
-                                  QVariant::fromValue(
-                                      MandarinOptions::PRETTY_PINYIN))
-                          .value<MandarinOptions>();
-    entry.generateDefinitionsPhonetic(cantoneseOptions, mandarinOptions);
 }
 
 void MainSplitter::handleModelReset(void)
@@ -271,7 +241,7 @@ void MainSplitter::handleDoubleClick(const QModelIndex &selection)
 
     prepareEntry(entry, _addToHistory);
 
-    QTimer::singleShot(50, this, [this, entry] {
+    QTimer::singleShot(50, this, [this, entry]() mutable {
         EntryScrollArea *area = new EntryScrollArea{_sqlUserUtils,
                                                     _manager,
                                                     nullptr};

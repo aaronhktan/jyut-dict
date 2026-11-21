@@ -49,8 +49,6 @@ public:
     bool isEmpty() const;
 
     void pushDefinition(const Definition::Definition definition);
-    void generatePhonetic(CantoneseOptions cantoneseOptions,
-                          MandarinOptions mandarinOptions);
 
     const std::string &getSource() const;
     const std::string &getSourceLongString() const;

@@ -44,4 +44,4 @@ void trim(const std::string &string, std::string &result)
                                 std::regex("^\\s+|\\s+$|(\\s)\\s+"),
                                 "$1");
 }
-}
+} // namespace Utils

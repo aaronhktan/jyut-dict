@@ -92,7 +92,6 @@ void ResultListDelegate::paint(QPainter *painter,
                                       QVariant::fromValue(
                                           MandarinOptions::PRETTY_PINYIN))
                               .value<MandarinOptions>();
-        entry.generatePhonetic(cantoneseOptions, mandarinOptions);
         use_colours = !(option.state & QStyle::State_Selected);
     }
 
@@ -125,15 +124,20 @@ void ResultListDelegate::paint(QPainter *painter,
                              -cellLeftPadding,
                              0);
 
-    entry.refreshColours(
-        _settings
-            ->value("entryColourPhoneticType",
-                    QVariant::fromValue(EntryColourPhoneticType::CANTONESE))
-            .value<EntryColourPhoneticType>());
+    EntryColourPhoneticType colourPhoneticType
+        = _settings
+              ->value("entryColourPhoneticType",
+                      QVariant::fromValue(EntryColourPhoneticType::CANTONESE))
+              .value<EntryColourPhoneticType>();
     // Can't elide this text because QFontMetrics tries to elide the rich text
     // HTML annotations.
-    const QString characters{
-        entry.getCharacters(characterOptions, use_colours).c_str()};
+    const QString characters{entry
+                                 .getCharacters(characterOptions,
+                                                use_colours,
+                                                colourPhoneticType,
+                                                Settings::jyutpingToneColours,
+                                                Settings::pinyinToneColours)
+                                 .c_str()};
 
     // Use QTextDocument for rich text
     QTextDocument *doc = new QTextDocument;

@@ -305,7 +305,7 @@ void TestSqlSearch::searchSimplified()
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
     std::vector<Entry> expected = {
-        {"白云山", "白雲山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
+        {"白雲山", "白云山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
     };
     observer.setExpected(expected);
 
@@ -358,8 +358,8 @@ void TestSqlSearch::searchSimplified()
     };
     std::vector<Example> examples = {
         {"cmn",
-         "从这里走路去越秀公园要多久？",
          "從這裡走路去越秀公園要多久？",
+         "从这里走路去越秀公园要多久？",
          "cung4 ze2 leoi5 zau2 lou6 heoi3 jyut6 sau3 gung1 jyun2 jiu3 do1 "
          "gau2 ？",
          "cong2 zhe4 li3 zou3 lu4 qu4 yue4 xiu4 gong1 yuan2 yao4 duo1 jiu3 ？",
@@ -445,7 +445,7 @@ void TestSqlSearch::searchTraditional()
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
     std::vector<Entry> expected = {
-        {"白云山", "白雲山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
+        {"白雲山", "白云山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
     };
     observer.setExpected(expected);
 
@@ -498,8 +498,8 @@ void TestSqlSearch::searchTraditional()
     };
     std::vector<Example> examples = {
         {"cmn",
-         "从这里走路去越秀公园要多久？",
          "從這裡走路去越秀公園要多久？",
+         "从这里走路去越秀公园要多久？",
          "cung4 ze2 leoi5 zau2 lou6 heoi3 jyut6 sau3 gung1 jyun2 jiu3 do1 "
          "gau2 ？",
          "cong2 zhe4 li3 zou3 lu4 qu4 yue4 xiu4 gong1 yuan2 yao4 duo1 jiu3 ？",
@@ -585,7 +585,7 @@ void TestSqlSearch::searchJyutping()
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
     std::vector<Entry> expected = {
-        {"白云山", "白雲山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
+        {"白雲山", "白云山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
     };
     observer.setExpected(expected);
 
@@ -652,8 +652,8 @@ void TestSqlSearch::searchJyutping()
     };
     std::vector<Example> examples = {
         {"cmn",
-         "从这里走路去越秀公园要多久？",
          "從這裡走路去越秀公園要多久？",
+         "从这里走路去越秀公园要多久？",
          "cung4 ze2 leoi5 zau2 lou6 heoi3 jyut6 sau3 gung1 jyun2 jiu3 do1 "
          "gau2 ？",
          "cong2 zhe4 li3 zou3 lu4 qu4 yue4 xiu4 gong1 yuan2 yao4 duo1 jiu3 ？",
@@ -775,7 +775,7 @@ void TestSqlSearch::searchPinyin()
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
     std::vector<Entry> expected = {
-        {"白云山", "白雲山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
+        {"白雲山", "白云山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
     };
     observer.setExpected(expected);
 
@@ -842,8 +842,8 @@ void TestSqlSearch::searchPinyin()
     };
     std::vector<Example> examples = {
         {"cmn",
-         "从这里走路去越秀公园要多久？",
          "從這裡走路去越秀公園要多久？",
+         "从这里走路去越秀公园要多久？",
          "cung4 ze2 leoi5 zau2 lou6 heoi3 jyut6 sau3 gung1 jyun2 jiu3 do1 "
          "gau2 ？",
          "cong2 zhe4 li3 zou3 lu4 qu4 yue4 xiu4 gong1 yuan2 yao4 duo1 jiu3 ？",
@@ -953,7 +953,7 @@ void TestSqlSearch::searchEnglish()
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
     std::vector<Entry> expected = {
-        {"白云山", "白雲山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
+        {"白雲山", "白云山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
     };
     observer.setExpected(expected);
 
@@ -990,8 +990,8 @@ void TestSqlSearch::searchEnglish()
     };
     std::vector<Example> examples = {
         {"cmn",
-         "从这里走路去越秀公园要多久？",
          "從這裡走路去越秀公園要多久？",
+         "从这里走路去越秀公园要多久？",
          "cung4 ze2 leoi5 zau2 lou6 heoi3 jyut6 sau3 gung1 jyun2 jiu3 do1 "
          "gau2 ？",
          "cong2 zhe4 li3 zou3 lu4 qu4 yue4 xiu4 gong1 yuan2 yao4 duo1 jiu3 ？",
@@ -1059,7 +1059,7 @@ void TestSqlSearch::searchAutoDetect()
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
     std::vector<Entry> expected = {
-        {"白云山", "白雲山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
+        {"白雲山", "白云山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
     };
     observer.setExpected(expected);
 
@@ -1287,11 +1287,11 @@ void TestSqlSearch::searchUnique()
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
     std::vector<Entry> expected = {
-        {"白云山", "白雲山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
+        {"白雲山", "白云山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
     };
     observer.setExpected(expected);
-    search.searchByUnique("白云山",
-                          "白雲山",
+    search.searchByUnique("白雲山",
+                          "白云山",
                           "baak6 wan4 saan1",
                           "bai2 yun2 shan1");
     {
@@ -1344,8 +1344,8 @@ void TestSqlSearch::searchTraditionalExamples()
     };
     std::vector<Example> examples = {
         {"cmn",
-         "从这里走路去越秀公园要多久？",
          "從這裡走路去越秀公園要多久？",
+         "从这里走路去越秀公园要多久？",
          "cung4 ze2 leoi5 zau2 lou6 heoi3 jyut6 sau3 gung1 jyun2 jiu3 do1 "
          "gau2 ？",
          "cong2 zhe4 li3 zou3 lu4 qu4 yue4 xiu4 gong1 yuan2 yao4 duo1 jiu3 ？",

@@ -75,22 +75,22 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
                           QVariant::fromValue(
                               EntryCharactersOptions::PREFER_TRADITIONAL))
                   .value<EntryCharactersOptions>();
-        phoneticOptions = _settings
-                              ->value("Preview/phoneticOptions",
+        phoneticOptions
+            = _settings
+                  ->value("Preview/phoneticOptions",
+                          QVariant::fromValue(
+                              EntryPhoneticOptions::PREFER_CANTONESE))
+                  .value<EntryPhoneticOptions>();
+        cantoneseOptions = Settings::getSettings()
+                               ->value("Preview/cantonesePronunciationOptions",
+                                       QVariant::fromValue(
+                                           CantoneseOptions::RAW_JYUTPING))
+                               .value<CantoneseOptions>();
+        mandarinOptions = Settings::getSettings()
+                              ->value("Preview/mandarinPronunciationOptions",
                                       QVariant::fromValue(
-                                          EntryPhoneticOptions::PREFER_CANTONESE))
-                              .value<EntryPhoneticOptions>();
-        cantoneseOptions
-            = Settings::getSettings()
-                  ->value("Preview/cantonesePronunciationOptions",
-                          QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
-                  .value<CantoneseOptions>();
-        mandarinOptions
-            = Settings::getSettings()
-                  ->value("Preview/mandarinPronunciationOptions",
-                          QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
-                  .value<MandarinOptions>();
-        entry.generatePhonetic(cantoneseOptions, mandarinOptions);
+                                          MandarinOptions::PRETTY_PINYIN))
+                              .value<MandarinOptions>();
         use_colours = !(option.state & QStyle::State_Selected);
     }
 
@@ -124,13 +124,18 @@ void ViewHistoryListDelegate::paint(QPainter *painter,
                              -cellLeftPadding,
                              0);
 
-    entry.refreshColours(
-        _settings
-            ->value("entryColourPhoneticType",
-                    QVariant::fromValue(EntryColourPhoneticType::CANTONESE))
-            .value<EntryColourPhoneticType>());
-    const QString characters{
-        entry.getCharacters(characterOptions, use_colours).c_str()};
+    EntryColourPhoneticType colourPhoneticType
+        = _settings
+              ->value("entryColourPhoneticType",
+                      QVariant::fromValue(EntryColourPhoneticType::CANTONESE))
+              .value<EntryColourPhoneticType>();
+    const QString characters{entry
+                                 .getCharacters(characterOptions,
+                                                use_colours,
+                                                colourPhoneticType,
+                                                Settings::jyutpingToneColours,
+                                                Settings::pinyinToneColours)
+                                 .c_str()};
 
     QTextDocument *doc = new QTextDocument;
     doc->setHtml(characters);

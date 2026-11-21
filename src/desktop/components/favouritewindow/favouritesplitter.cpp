@@ -6,8 +6,6 @@
 #include "logic/database/sqldatabasemanager.h"
 #include "logic/database/sqluserdatautils.h"
 #include "logic/entry/entry.h"
-#include "logic/entry/entryphoneticoptions.h"
-#include "logic/settings/settingsutils.h"
 #ifdef Q_OS_WIN
 #include "logic/utils/utils_windows.h"
 #endif
@@ -154,27 +152,6 @@ void FavouriteSplitter::searchQueryRequested(const QString &query,
     emit searchQuery(query, parameters);
 }
 
-void FavouriteSplitter::prepareEntry(Entry &entry)
-{
-    entry.refreshColours(
-        Settings::getSettings()
-            ->value("entryColourPhoneticType",
-                    QVariant::fromValue(EntryColourPhoneticType::CANTONESE))
-            .value<EntryColourPhoneticType>());
-
-    CantoneseOptions cantoneseOptions
-        = Settings::getSettings()
-              ->value("Entry/cantonesePronunciationOptions",
-                      QVariant::fromValue(CantoneseOptions::RAW_JYUTPING))
-              .value<CantoneseOptions>();
-    MandarinOptions mandarinOptions
-        = Settings::getSettings()
-              ->value("Entry/mandarinPronunciationOptions",
-                      QVariant::fromValue(MandarinOptions::PRETTY_PINYIN))
-              .value<MandarinOptions>();
-    entry.generatePhonetic(cantoneseOptions, mandarinOptions);
-}
-
 void FavouriteSplitter::handleClick(const QModelIndex &selection)
 {
     Entry entry = qvariant_cast<Entry>(selection.data());
@@ -184,7 +161,6 @@ void FavouriteSplitter::handleClick(const QModelIndex &selection)
         return;
     }
 
-    prepareEntry(entry);
     _entryScrollArea->setEntry(entry);
 }
 
@@ -197,9 +173,7 @@ void FavouriteSplitter::handleDoubleClick(const QModelIndex &selection)
         return;
     }
 
-    prepareEntry(entry);
-
-    QTimer::singleShot(50, this, [this, entry] {
+    QTimer::singleShot(50, this, [this, entry]() mutable {
         EntryScrollArea *area = new EntryScrollArea{_sqlUserUtils, _manager, nullptr};
         area->setParent(this, Qt::Window);
         area->setEntry(entry);

@@ -3,6 +3,8 @@
 
 #include <qglobal.h>
 
+#include <cstdint>
+#include <functional>
 #include <string>
 #include <system_error>
 #include <vector>
@@ -78,6 +80,24 @@ constexpr auto VARIANT = "install";
                std::vector<std::string> &result);
 
     void trim(const std::string &string, std::string &result);
+
+    template<typename T>
+    void hash_combine(std::uint64_t &seed, const T &value)
+    {
+        // See https://www.boost.org/doc/libs/latest/libs/container_hash/doc/html/hash.html#notes_hash_combine
+        // and https://jonkagstrom.com/mx3/mx3_rev2.html
+        const auto mix = [](std::uint64_t x) {
+            x ^= x >> 32;
+            x *= 0xe9846af9b1a615d;
+            x ^= x >> 32;
+            x *= 0xe9846af9b1a615d;
+            x ^= x >> 28;
+            return x;
+        };
+
+        seed = mix(seed + 0x9e3779b9 + std::hash<T>{}(value));
+    }
+
     } // namespace Utils
 
 #endif // UTILS_H

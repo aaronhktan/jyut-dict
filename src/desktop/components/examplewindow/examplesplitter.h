@@ -39,8 +39,6 @@ public:
 private:
     void translateUI(void);
 
-    void prepareExample(Example &example) const;
-
 #ifdef Q_OS_WIN
     void setStyle(bool use_dark);
     bool _paletteRecentlyChanged = false;
