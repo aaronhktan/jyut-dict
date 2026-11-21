@@ -115,8 +115,8 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
     self._rowid = rowid
     self._traditional = traditional
     self._simplified = simplified
-    self._jyutping = jyutping
-    self._pinyin = pinyin
+    self._jyutping = jyutping.lowercased()
+    self._pinyin = pinyin.lowercased()
     self._definitions = definitions
 
     self._simplifiedDifference = compareStrings(
