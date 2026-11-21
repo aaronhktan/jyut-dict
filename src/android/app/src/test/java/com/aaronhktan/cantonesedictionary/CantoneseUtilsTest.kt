@@ -1014,7 +1014,10 @@ class CantoneseUtilsUnitTest {
         assertEquals("(g|k)w!(y!u|a|eo)n", jyutpingAutocorrect("kwun", unsafeSubstitutions = true))
 
         assertEquals("baakw(y!u|a|eo)n", jyutpingAutocorrect("baakwun"))
-        assertEquals("baa(g|k)w!(y!u|a|eo)n", jyutpingAutocorrect("baakwun", unsafeSubstitutions = true))
+        assertEquals(
+            "baa(g|k)w!(y!u|a|eo)n",
+            jyutpingAutocorrect("baakwun", unsafeSubstitutions = true)
+        )
 
         assertEquals("c(yu)n", jyutpingAutocorrect("tsuen"))
         assertEquals("c(yu)n", jyutpingAutocorrect("tsuen", unsafeSubstitutions = true))
@@ -1052,7 +1055,10 @@ class CantoneseUtilsUnitTest {
         assertEquals(" g(y!u|a|eo)n", jyutpingAutocorrect(" gun"))
         assertEquals(" g(y!u|a|eo)n", jyutpingAutocorrect(" gun", unsafeSubstitutions = true))
         assertEquals("g(y!u|a|eo)nzoeng", jyutpingAutocorrect("gunzoeng"))
-        assertEquals("g(y!u|a|eo)nzoeng", jyutpingAutocorrect("gunzoeng", unsafeSubstitutions = true))
+        assertEquals(
+            "g(y!u|a|eo)nzoeng",
+            jyutpingAutocorrect("gunzoeng", unsafeSubstitutions = true)
+        )
     }
 
     @Test
@@ -1280,5 +1286,108 @@ class CantoneseUtilsUnitTest {
         assertEquals(listOf("buk"), jyutpingSoundChanges(listOf("buk")))
         assertEquals(listOf("buk1"), jyutpingSoundChanges(listOf("buk1")))
         assertEquals(listOf("buk?"), jyutpingSoundChanges(listOf("buk?")))
+    }
+
+    @Test
+    fun cantoneseutils_endToEnd_clarence() {
+        val inputExpected: Map<String, List<String>> = mapOf(
+            "seut goh" to listOf("s(eo|yu)(k|t)", "(g|k)w!ou"),
+            "gongyeun" to listOf("(g|k)w!(o|u)ng", "(j)(eo|yu)n"),
+            "tsum4yut6" to listOf("(c|z)aa!m4", "(jaa!|jyu|yu)(k|t)6"),
+            "tsum yut" to listOf("(c|z)aa!m", "(jaa!|jyu|yu)(k|t)"),
+            "gum yut" to listOf("(g|k)aa!m", "(jaa!|jyu|yu)(k|t)"),
+            "gum man" to listOf("(g|k)aa!m", "maa!ng!"),
+            "sum" to listOf("saa!m"),
+            "sun" to listOf("s(y!u|aa!|eo)n"),
+            "cheung" to listOf("(c|z)oeng"),
+            "chun" to listOf("(c|z)(y!u|aa!|eo)n"),
+            "hui" to listOf("heoi"),
+            "yutback" to listOf("(j)(aa!|yu)(k|t)", "baa!(k|t)"),
+        )
+
+        for ((input, expected) in inputExpected) {
+            val intermediate = jyutpingAutocorrect(input, unsafeSubstitutions = true)
+            val (_, segmented) = segmentJyutping(
+                intermediate,
+                removeSpecialCharacters = true,
+                removeGlobCharacters = false,
+                removeRegexCharacters = false
+            )
+            val result = jyutpingSoundChanges(segmented)
+            assertEquals(expected, result)
+        }
+    }
+
+    @Test
+    fun cantoneseutils_endToEnd_michelle() {
+        val inputExpected: Map<String, List<String>> = mapOf(
+            "xuet go" to listOf("s(yu)(k|t)", "(g|k)w!(ou!)"),
+            "gong yuen" to listOf("(g|k)w!(o|u)ng", "(j)y(y!u|aa!|eo)n"),
+            "kum yut" to listOf("(g|k)aa!m", "(jaa!|jyu|yu)(k|t)"),
+            "gai suen gay" to listOf("(g|k)aa!i", "s(yu)n", "(g|k)ei"),
+            "yut bak" to listOf("(j)(aa!|yu)(k|t)", "baa!(k|t)"),
+        )
+
+        for ((input, expected) in inputExpected) {
+            val intermediate = jyutpingAutocorrect(input, unsafeSubstitutions = true)
+            val (_, segmented) = segmentJyutping(
+                intermediate,
+                removeSpecialCharacters = true,
+                removeGlobCharacters = false,
+                removeRegexCharacters = false
+            )
+            val result = jyutpingSoundChanges(segmented)
+            assertEquals(expected, result)
+        }
+    }
+
+    @Test
+    fun cantoneseutils_endToEnd_yvonne() {
+        val inputExpected: Map<String, List<String>> = mapOf(
+            "shyut go" to listOf("s(yu)(k|t)", "(g|k)w!(ou!)"),
+            "gong yun" to listOf("(g|k)w!(o|u)ng", "(jaa!|jyu|yu)n"),
+            "cum yut" to listOf("(k)aa!m", "(jaa!|jyu|yu)(k|t)"),
+            "cheun" to listOf("(c|z)(eo|yu)n"),
+            "gai syun gei" to listOf("(g|k)aa!i", "sy(y!u|aa!|eo)n", "(g|k)ei"),
+            "yut baat" to listOf("(j)(aa!|yu)(k|t)", "baa!(k|t)"),
+        )
+
+        for ((input, expected) in inputExpected) {
+            val intermediate = jyutpingAutocorrect(input, unsafeSubstitutions = true)
+            val (_, segmented) = segmentJyutping(
+                intermediate,
+                removeSpecialCharacters = true,
+                removeGlobCharacters = false,
+                removeRegexCharacters = false
+            )
+            val result = jyutpingSoundChanges(segmented)
+            assertEquals(expected, result)
+        }
+    }
+
+    @Test
+    fun cantoneseutils_endToEnd_aaron() {
+        val inputExpected: Map<String, List<String>> = mapOf(
+            "hagao" to listOf("haa!", "(g|k)aa!u"),
+            "josun" to listOf("(j|z)(ou!)", "s(y!u|aa!|eo)n"),
+            "sun" to listOf("s(y!u|aa!|eo)n"),
+            "jo ye" to listOf("(j|z)(ou!)", "(j)e"),
+            "choysum" to listOf("(c|z)oi", "saa!m"),
+            "shiumai" to listOf("siu", "maa!i"),
+            "fongzow" to listOf("f(o|u)ng", "(c|z)aa!u"),
+            "jesungdoongmut" to listOf("(j|z)e", "s(y!u|aa!|eo)ng", "(d|t)(y!u)ng", "m(aa!|y!u)(k|t)"),
+        )
+
+        for ((input, expected) in inputExpected) {
+            val intermediate = jyutpingAutocorrect(input, unsafeSubstitutions = true)
+            val (_, segmented) = segmentJyutping(
+                intermediate,
+                removeSpecialCharacters = true,
+                removeGlobCharacters = false,
+                removeRegexCharacters = false
+            )
+            val result = jyutpingSoundChanges(segmented)
+            assertEquals(expected, result)
+        }
     }
 }
