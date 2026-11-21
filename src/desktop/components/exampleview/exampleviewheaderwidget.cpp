@@ -670,8 +670,7 @@ void ExampleViewHeaderWidget::displayPronunciationLabels(
     if ((mandarinOptions & MandarinOptions::MANDARIN_IPA)
         == MandarinOptions::MANDARIN_IPA) {
         _pronunciationTypeLabels.emplace_back(new QLabel{this});
-        _pronunciationTypeLabels.back()->setObjectName(
-            "numberedPinyinTypeLabel");
+        _pronunciationTypeLabels.back()->setObjectName("mandarinIPATypeLabel");
         _exampleHeaderLayout->addWidget(_pronunciationTypeLabels.back(),
                                         row,
                                         0,
