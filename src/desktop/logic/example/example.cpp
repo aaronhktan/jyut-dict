@@ -202,29 +202,6 @@ std::string Example::getTranslationSnippet(void) const
     return snippets.at(0).content;
 }
 
-std::string Example::getTranslationSnippetLanguage(void) const
-{
-    if (_translationSets.empty()) {
-        return "";
-    }
-
-    TranslationSet translationSet = _translationSets.at(0);
-
-    if (translationSet.getTranslationSnippet().empty()) {
-        return "";
-    }
-
-    std::vector<Translation::Translation>
-        snippets{translationSet.getTranslationSnippet().begin(),
-                 translationSet.getTranslationSnippet().end()};
-
-    if (snippets.empty()) {
-        return "";
-    }
-
-    return snippets.at(0).language;
-}
-
 void Example::setIsWelcome(const bool isWelcome)
 {
     _isWelcome = isWelcome;

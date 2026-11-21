@@ -82,7 +82,7 @@ void TestEntry::getCharacters()
                  Settings::pinyinToneColours)),
              QString::fromStdString(traditional));
     QCOMPARE(QString::fromStdString(entry.getCharactersNoSecondary(
-                 EntryCharactersOptions::ONLY_TRADITIONAL,
+                 EntryCharactersOptions::PREFER_TRADITIONAL,
                  /* useColours = */ false,
                  EntryColourPhoneticType::CANTONESE,
                  Settings::jyutpingToneColours,

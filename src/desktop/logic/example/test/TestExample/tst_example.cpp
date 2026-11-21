@@ -68,8 +68,6 @@ void TestExample::settersAndGetters()
              QString::fromStdString(pinyin));
     QCOMPARE(QString::fromStdString(example.getTranslationSnippet()),
              "Taishanese");
-    QCOMPARE(QString::fromStdString(example.getTranslationSnippetLanguage()),
-             "eng");
 }
 
 void TestExample::generatePhonetic()

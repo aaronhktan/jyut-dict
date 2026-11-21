@@ -10,8 +10,8 @@ import Foundation
 nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
   let id = UUID()
   private var _sourceLanguage: String
-  private var _simplified: String
   private var _traditional: String
+  private var _simplified: String
 
   private var _jyutping: String
   private var _yale: String?
@@ -26,9 +26,6 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
 
   private var _translations: [TranslationSet]
 
-  private var _isWelcome: Bool = false
-  private var _isEmpty: Bool = false
-
   init(
     sourceLanguage: String,
     traditional: String,
@@ -40,8 +37,8 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
     self._sourceLanguage = sourceLanguage
     self._traditional = traditional
     self._simplified = simplified
-    self._jyutping = jyutping
-    self._pinyin = pinyin
+    self._jyutping = jyutping.lowercased()
+    self._pinyin = pinyin.lowercased()
     self._translations = translations
   }
 
@@ -70,6 +67,7 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
       return _simplified
     }
   }
+
   var traditional: String {
     get {
       _traditional
@@ -85,49 +83,6 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
     }
     set {
       _simplified = newValue
-    }
-  }
-
-  func generatePhonetic(
-    cantoneseOptions: CantoneseOptions = [],
-    mandarinOptions: MandarinOptions = []
-  ) {
-    if (cantoneseOptions.rawValue & CantoneseOptions.prettyYale.rawValue
-      == CantoneseOptions.prettyYale.rawValue) && _yale == nil
-    {
-      _yale = convertJyutpingToYale(jyutping: _jyutping)
-    }
-    if (cantoneseOptions.rawValue & CantoneseOptions.cantoneseIPA.rawValue
-      == CantoneseOptions.cantoneseIPA.rawValue) && _cantoneseIPA == nil
-    {
-      _cantoneseIPA = convertJyutpingToIPA(jyutping: _jyutping)
-    }
-
-    if (mandarinOptions.rawValue & MandarinOptions.prettyPinyin.rawValue
-      == MandarinOptions.prettyPinyin.rawValue) && _prettyPinyin == nil
-    {
-      _prettyPinyin = createPrettyPinyin(pinyin: _pinyin)
-    }
-    if (mandarinOptions.rawValue & MandarinOptions.numberedPinyin.rawValue
-      == MandarinOptions.numberedPinyin.rawValue)
-      && _numberedPinyin == nil
-    {
-      _numberedPinyin = createNumberedPinyin(pinyin: _pinyin)
-    }
-    if (mandarinOptions.rawValue & MandarinOptions.zhuyin.rawValue
-      == MandarinOptions.zhuyin.rawValue) && _zhuyin == nil
-    {
-      _zhuyin = convertPinyinToZhuyin(pinyin: _pinyin)
-    }
-    if (mandarinOptions.rawValue & MandarinOptions.mandarinIPA.rawValue
-      == MandarinOptions.mandarinIPA.rawValue) && _mandarinIPA == nil
-    {
-      _mandarinIPA = convertPinyinToIPA(pinyin: _pinyin)
-    }
-    if (mandarinOptions.rawValue & MandarinOptions.rawPinyinWithV.rawValue
-      == MandarinOptions.rawPinyinWithV.rawValue) && _pinyinWithV == nil
-    {
-      _pinyinWithV = createPinyinWithV(pinyin: _pinyin)
     }
   }
 
@@ -200,7 +155,9 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
       _jyutping
     }
     set {
-      _jyutping = newValue
+      _jyutping = newValue.lowercased()
+      _yale = nil
+      _cantoneseIPA = nil
     }
   }
 
@@ -209,12 +166,13 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
       _pinyin
     }
     set {
-      _pinyin = newValue
+      _pinyin = newValue.lowercased()
+      _prettyPinyin = nil
+      _numberedPinyin = nil
+      _zhuyin = nil
+      _mandarinIPA = nil
+      _pinyinWithV = nil
     }
-  }
-
-  func getPrettyPinyin() -> String {
-    _prettyPinyin ?? ""
   }
 
   func getTranslationSets() -> [TranslationSet] {
@@ -227,12 +185,7 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
     }
 
     let translationSet: TranslationSet = _translations[0]
-    if translationSet.getTranslationSnippet().isEmpty {
-      return ""
-    }
-
     let snippets: [Translation] = translationSet.getTranslationSnippet()
-
     if snippets.isEmpty {
       return ""
     }
@@ -240,40 +193,46 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
     return snippets[0].content
   }
 
-  func getSentenceSnippetLanguage() -> String {
-    if _translations.isEmpty {
-      return ""
+  private func generatePhonetic(
+    cantoneseOptions: CantoneseOptions = [],
+    mandarinOptions: MandarinOptions = []
+  ) {
+    if (cantoneseOptions.rawValue & CantoneseOptions.prettyYale.rawValue
+      == CantoneseOptions.prettyYale.rawValue) && _yale == nil
+    {
+      _yale = convertJyutpingToYale(jyutping: _jyutping)
+    }
+    if (cantoneseOptions.rawValue & CantoneseOptions.cantoneseIPA.rawValue
+      == CantoneseOptions.cantoneseIPA.rawValue) && _cantoneseIPA == nil
+    {
+      _cantoneseIPA = convertJyutpingToIPA(jyutping: _jyutping)
     }
 
-    let translationSet: TranslationSet = _translations[0]
-    if translationSet.getTranslationSnippet().isEmpty {
-      return ""
+    if (mandarinOptions.rawValue & MandarinOptions.prettyPinyin.rawValue
+      == MandarinOptions.prettyPinyin.rawValue) && _prettyPinyin == nil
+    {
+      _prettyPinyin = createPrettyPinyin(pinyin: _pinyin)
     }
-
-    let snippets: [Translation] = translationSet.getTranslationSnippet()
-
-    if snippets.isEmpty {
-      return ""
+    if (mandarinOptions.rawValue & MandarinOptions.numberedPinyin.rawValue
+      == MandarinOptions.numberedPinyin.rawValue)
+      && _numberedPinyin == nil
+    {
+      _numberedPinyin = createNumberedPinyin(pinyin: _pinyin)
     }
-
-    return snippets[0].language
-  }
-
-  var isWelcome: Bool {
-    get {
-      _isWelcome
+    if (mandarinOptions.rawValue & MandarinOptions.zhuyin.rawValue
+      == MandarinOptions.zhuyin.rawValue) && _zhuyin == nil
+    {
+      _zhuyin = convertPinyinToZhuyin(pinyin: _pinyin)
     }
-    set {
-      _isWelcome = newValue
+    if (mandarinOptions.rawValue & MandarinOptions.mandarinIPA.rawValue
+      == MandarinOptions.mandarinIPA.rawValue) && _mandarinIPA == nil
+    {
+      _mandarinIPA = convertPinyinToIPA(pinyin: _pinyin)
     }
-  }
-
-  var isEmpty: Bool {
-    get {
-      _isEmpty
-    }
-    set {
-      _isEmpty = newValue
+    if (mandarinOptions.rawValue & MandarinOptions.rawPinyinWithV.rawValue
+      == MandarinOptions.rawPinyinWithV.rawValue) && _pinyinWithV == nil
+    {
+      _pinyinWithV = createPinyinWithV(pinyin: _pinyin)
     }
   }
 }

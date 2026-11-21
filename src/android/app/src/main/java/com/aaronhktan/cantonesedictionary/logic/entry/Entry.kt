@@ -122,27 +122,23 @@ class Entry {
 
         when (options) {
             EntryCharactersOptions.ONLY_TRADITIONAL -> {
-                return (if (useColours) _colouredTraditional else AnnotatedString(_traditional))
-                    ?: AnnotatedString("")
+                return if (useColours) _colouredTraditional!! else AnnotatedString(_traditional)
             }
 
             EntryCharactersOptions.ONLY_SIMPLIFIED -> {
-                return (if (useColours) _colouredSimplified else AnnotatedString(_simplified))
-                    ?: AnnotatedString("")
+                return if (useColours) _colouredSimplified!! else AnnotatedString(_simplified)
             }
 
             EntryCharactersOptions.PREFER_TRADITIONAL -> {
-                return (if (useColours) _colouredPreferTraditional else AnnotatedString(
+                return if (useColours) _colouredPreferTraditional!! else AnnotatedString(
                     _preferTraditional
-                ))
-                    ?: AnnotatedString("")
+                )
             }
 
             EntryCharactersOptions.PREFER_SIMPLIFIED -> {
-                return (if (useColours) _colouredPreferSimplified else AnnotatedString(
+                return if (useColours) _colouredPreferSimplified!! else AnnotatedString(
                     _preferSimplified
-                ))
-                    ?: AnnotatedString("")
+                )
             }
         }
     }
@@ -154,7 +150,15 @@ class Entry {
         jyutpingToneColours: List<Color>,
         pinyinToneColours: List<Color>
     ): AnnotatedString {
-        var hash = Objects.hash(options, useColours, colourPhoneticType)
+        var hash = Objects.hash(
+            _traditional,
+            _simplified,
+            _jyutping,
+            _pinyin,
+            options,
+            useColours,
+            colourPhoneticType
+        )
         val colours =
             if (colourPhoneticType == EntryColourPhoneticType.MANDARIN) pinyinToneColours else jyutpingToneColours
         for (c in colours) {
@@ -168,17 +172,11 @@ class Entry {
 
         return when (options) {
             EntryCharactersOptions.ONLY_TRADITIONAL, EntryCharactersOptions.PREFER_TRADITIONAL -> {
-                (if (useColours) _colouredPreferTraditional else AnnotatedString(
-                    _preferTraditional
-                ))
-                    ?: AnnotatedString("")
+                if (useColours) _colouredTraditional!! else AnnotatedString(_traditional)
             }
 
             EntryCharactersOptions.ONLY_SIMPLIFIED, EntryCharactersOptions.PREFER_SIMPLIFIED -> {
-                (if (useColours) _colouredPreferSimplified else AnnotatedString(
-                    _preferSimplified
-                ))
-                    ?: AnnotatedString("")
+                if (useColours) _colouredSimplified!! else AnnotatedString(_simplified)
             }
         }
     }
@@ -204,34 +202,6 @@ class Entry {
             _preferTraditional = "$_traditional [$_simplifiedDifference]"
             _preferSimplified = "$_simplified [$_traditionalDifference]"
         }
-
-    fun generatePhonetic(
-        cantoneseOptions: EnumSet<CantoneseOptions> = EnumSet.noneOf(CantoneseOptions::class.java),
-        mandarinOptions: EnumSet<MandarinOptions> = EnumSet.noneOf(MandarinOptions::class.java)
-    ) {
-        if (cantoneseOptions.contains(CantoneseOptions.PRETTY_YALE) && _yale == null) {
-            _yale = convertJyutpingToYale(_jyutping)
-        }
-        if (cantoneseOptions.contains(CantoneseOptions.CANTONESE_IPA) && _cantoneseIPA == null) {
-            _cantoneseIPA = convertJyutpingToIPA(_jyutping)
-        }
-
-        if (mandarinOptions.contains(MandarinOptions.PRETTY_PINYIN) && _prettyPinyin == null) {
-            _prettyPinyin = createPrettyPinyin(_pinyin)
-        }
-        if (mandarinOptions.contains(MandarinOptions.NUMBERED_PINYIN) && _numberedPinyin == null) {
-            _numberedPinyin = createNumberedPinyin(_pinyin)
-        }
-        if (mandarinOptions.contains(MandarinOptions.ZHUYIN) && _zhuyin == null) {
-            _zhuyin = convertPinyinToZhuyin(_pinyin)
-        }
-        if (mandarinOptions.contains(MandarinOptions.MANDARIN_IPA) && _mandarinIPA == null) {
-            _mandarinIPA = convertPinyinToIPA(_pinyin)
-        }
-        if (mandarinOptions.contains(MandarinOptions.RAW_PINYIN_WITH_V) && _pinyinWithV == null) {
-            _pinyinWithV = createPinyinWithV(_pinyin)
-        }
-    }
 
     fun getPhonetic(
         options: EntryPhoneticOptions,
@@ -416,6 +386,34 @@ class Entry {
         }
 
         return _definitionSnippet ?: ""
+    }
+
+    private fun generatePhonetic(
+        cantoneseOptions: EnumSet<CantoneseOptions> = EnumSet.noneOf(CantoneseOptions::class.java),
+        mandarinOptions: EnumSet<MandarinOptions> = EnumSet.noneOf(MandarinOptions::class.java)
+    ) {
+        if (cantoneseOptions.contains(CantoneseOptions.PRETTY_YALE) && _yale == null) {
+            _yale = convertJyutpingToYale(_jyutping)
+        }
+        if (cantoneseOptions.contains(CantoneseOptions.CANTONESE_IPA) && _cantoneseIPA == null) {
+            _cantoneseIPA = convertJyutpingToIPA(_jyutping)
+        }
+
+        if (mandarinOptions.contains(MandarinOptions.PRETTY_PINYIN) && _prettyPinyin == null) {
+            _prettyPinyin = createPrettyPinyin(_pinyin)
+        }
+        if (mandarinOptions.contains(MandarinOptions.NUMBERED_PINYIN) && _numberedPinyin == null) {
+            _numberedPinyin = createNumberedPinyin(_pinyin)
+        }
+        if (mandarinOptions.contains(MandarinOptions.ZHUYIN) && _zhuyin == null) {
+            _zhuyin = convertPinyinToZhuyin(_pinyin)
+        }
+        if (mandarinOptions.contains(MandarinOptions.MANDARIN_IPA) && _mandarinIPA == null) {
+            _mandarinIPA = convertPinyinToIPA(_pinyin)
+        }
+        if (mandarinOptions.contains(MandarinOptions.RAW_PINYIN_WITH_V) && _pinyinWithV == null) {
+            _pinyinWithV = createPinyinWithV(_pinyin)
+        }
     }
 
     private fun refreshColours(

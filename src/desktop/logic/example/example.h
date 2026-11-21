@@ -59,7 +59,6 @@ public:
 
     std::span<const TranslationSet> getTranslationSets(void) const;
     std::string getTranslationSnippet(void) const;
-    std::string getTranslationSnippetLanguage(void) const;
 
     void setIsWelcome(const bool isWelcome);
     bool isWelcome(void) const;

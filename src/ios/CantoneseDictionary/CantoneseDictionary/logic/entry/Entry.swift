@@ -285,49 +285,6 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
     }
   }
 
-  private func generatePhonetic(
-    cantoneseOptions: CantoneseOptions = [],
-    mandarinOptions: MandarinOptions = []
-  ) {
-    if (cantoneseOptions.rawValue & CantoneseOptions.prettyYale.rawValue
-      == CantoneseOptions.prettyYale.rawValue) && _yale == nil
-    {
-      _yale = convertJyutpingToYale(jyutping: _jyutping)
-    }
-    if (cantoneseOptions.rawValue & CantoneseOptions.cantoneseIPA.rawValue
-      == CantoneseOptions.cantoneseIPA.rawValue) && _cantoneseIPA == nil
-    {
-      _cantoneseIPA = convertJyutpingToIPA(jyutping: _jyutping)
-    }
-
-    if (mandarinOptions.rawValue & MandarinOptions.prettyPinyin.rawValue
-      == MandarinOptions.prettyPinyin.rawValue) && _prettyPinyin == nil
-    {
-      _prettyPinyin = createPrettyPinyin(pinyin: _pinyin)
-    }
-    if (mandarinOptions.rawValue & MandarinOptions.numberedPinyin.rawValue
-      == MandarinOptions.numberedPinyin.rawValue)
-      && _numberedPinyin == nil
-    {
-      _numberedPinyin = createNumberedPinyin(pinyin: _pinyin)
-    }
-    if (mandarinOptions.rawValue & MandarinOptions.zhuyin.rawValue
-      == MandarinOptions.zhuyin.rawValue) && _zhuyin == nil
-    {
-      _zhuyin = convertPinyinToZhuyin(pinyin: _pinyin)
-    }
-    if (mandarinOptions.rawValue & MandarinOptions.mandarinIPA.rawValue
-      == MandarinOptions.mandarinIPA.rawValue) && _mandarinIPA == nil
-    {
-      _mandarinIPA = convertPinyinToIPA(pinyin: _pinyin)
-    }
-    if (mandarinOptions.rawValue & MandarinOptions.rawPinyinWithV.rawValue
-      == MandarinOptions.rawPinyinWithV.rawValue) && _pinyinWithV == nil
-    {
-      _pinyinWithV = createPinyinWithV(pinyin: _pinyin)
-    }
-  }
-
   func getPhonetic(
     options: EntryPhoneticOptions,
     cantoneseOptions: CantoneseOptions = [],
@@ -518,6 +475,49 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
     }
 
     return _definitionSnippet ?? ""
+  }
+
+  private func generatePhonetic(
+    cantoneseOptions: CantoneseOptions = [],
+    mandarinOptions: MandarinOptions = []
+  ) {
+    if (cantoneseOptions.rawValue & CantoneseOptions.prettyYale.rawValue
+      == CantoneseOptions.prettyYale.rawValue) && _yale == nil
+    {
+      _yale = convertJyutpingToYale(jyutping: _jyutping)
+    }
+    if (cantoneseOptions.rawValue & CantoneseOptions.cantoneseIPA.rawValue
+      == CantoneseOptions.cantoneseIPA.rawValue) && _cantoneseIPA == nil
+    {
+      _cantoneseIPA = convertJyutpingToIPA(jyutping: _jyutping)
+    }
+
+    if (mandarinOptions.rawValue & MandarinOptions.prettyPinyin.rawValue
+      == MandarinOptions.prettyPinyin.rawValue) && _prettyPinyin == nil
+    {
+      _prettyPinyin = createPrettyPinyin(pinyin: _pinyin)
+    }
+    if (mandarinOptions.rawValue & MandarinOptions.numberedPinyin.rawValue
+      == MandarinOptions.numberedPinyin.rawValue)
+      && _numberedPinyin == nil
+    {
+      _numberedPinyin = createNumberedPinyin(pinyin: _pinyin)
+    }
+    if (mandarinOptions.rawValue & MandarinOptions.zhuyin.rawValue
+      == MandarinOptions.zhuyin.rawValue) && _zhuyin == nil
+    {
+      _zhuyin = convertPinyinToZhuyin(pinyin: _pinyin)
+    }
+    if (mandarinOptions.rawValue & MandarinOptions.mandarinIPA.rawValue
+      == MandarinOptions.mandarinIPA.rawValue) && _mandarinIPA == nil
+    {
+      _mandarinIPA = convertPinyinToIPA(pinyin: _pinyin)
+    }
+    if (mandarinOptions.rawValue & MandarinOptions.rawPinyinWithV.rawValue
+      == MandarinOptions.rawPinyinWithV.rawValue) && _pinyinWithV == nil
+    {
+      _pinyinWithV = createPinyinWithV(pinyin: _pinyin)
+    }
   }
 
   private func refreshColours(

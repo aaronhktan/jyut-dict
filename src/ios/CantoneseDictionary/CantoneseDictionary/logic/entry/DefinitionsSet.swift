@@ -43,20 +43,6 @@ nonisolated class DefinitionsSet: Hashable, Identifiable, @unchecked Sendable {
     _definitions.append(definition)
   }
 
-  func generatePhonetic(
-    _ cantoneseOptions: CantoneseOptions,
-    _ mandarinOptions: MandarinOptions
-  ) {
-    _definitions.forEach { definition in
-      definition.examples.forEach { example in
-        example.generatePhonetic(
-          cantoneseOptions: cantoneseOptions,
-          mandarinOptions: mandarinOptions
-        )
-      }
-    }
-  }
-
   var source: String {
     _source
   }

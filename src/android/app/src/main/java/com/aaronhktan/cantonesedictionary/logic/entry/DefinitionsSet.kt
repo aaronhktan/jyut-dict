@@ -13,10 +13,10 @@ data class Definition(
 class DefinitionsSet {
     @OptIn(ExperimentalUuidApi::class)
     private val id: Uuid = Uuid.random()
-    private val _source: String = ""
-    private val _sourceShortString: String = ""
+    private var _source: String = ""
+    private var _sourceShortString: String = ""
     private var _snippet: String? = null
-    private val _definitions: MutableList<Definition> = mutableListOf()
+    private var _definitions: MutableList<Definition> = mutableListOf()
 
     constructor(
         source: String,
@@ -34,14 +34,6 @@ class DefinitionsSet {
 
     fun appendDefinition(definition: Definition) {
         _definitions.add(definition)
-    }
-
-    fun generatePhonetic(cantoneseOptions: CantoneseOptions, mandarinOptions: MandarinOptions) {
-        for (d in _definitions) {
-            for (e in d.examples) {
-                e.generatePhonetic(cantoneseOptions, mandarinOptions)
-            }
-        }
     }
 
     var source: String = _source
