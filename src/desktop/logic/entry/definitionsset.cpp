@@ -30,11 +30,6 @@ bool DefinitionsSet::isEmpty() const
     return _definitions.empty();
 }
 
-void DefinitionsSet::pushDefinition(const Definition::Definition definition)
-{
-    _definitions.push_back(definition);
-}
-
 const std::string &DefinitionsSet::getSource() const
 {
     return _source;

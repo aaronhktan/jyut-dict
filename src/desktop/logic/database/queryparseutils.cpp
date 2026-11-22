@@ -157,22 +157,23 @@ std::vector<Example> parseExamples(QSqlQuery &query)
                 const std::string translationSourceName
                     = translation_set["source"].toString().toStdString();
 
+                std::vector<Translation::Translation> translations;
+                for (const QJsonValue &translation :
+                     translation_set["translations"].toArray()) {
+                    // Parse each translation in this group
+                    translations.emplace_back(
+                        translation["translation"].toString().toStdString(),
+                        translation["language"].toString().toStdString(),
+                        translation["direct"].toInt() == 1);
+                }
+
                 // If the example has the source it comes from, use it
                 // Otherwise, assume it comes from the same source as the
                 // definition it is linked to (if any)
                 translationSets.emplace_back(translationSourceName.empty()
                                                  ? definitionSourceName
-                                                 : translationSourceName);
-
-                for (const QJsonValue &translation :
-                     translation_set["translations"].toArray()) {
-                    // Parse each translation in this group
-                    std::vector<Translation::Translation> targetTranslations;
-                    translationSets.back().pushTranslation(
-                        {translation["translation"].toString().toStdString(),
-                         translation["language"].toString().toStdString(),
-                         translation["direct"].toInt() == 1});
-                }
+                                                 : translationSourceName,
+                                             translations);
             }
         }
 

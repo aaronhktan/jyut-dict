@@ -1017,7 +1017,7 @@ class EntryUnitTest {
     }
 
     @Test
-    fun entry_getJyutpingNumbers_resetPinyin() {
+    fun entry_getPinyinNumbers_resetPinyin() {
         val entry = Entry(
             rowId = 1,
             traditional = "清遠",

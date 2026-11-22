@@ -14,8 +14,13 @@ public:
 
 private slots:
     void isEmpty();
-    void simple();
+    void cloneSimple();
+    void equalsSimple();
+    void getDefinitionsSnippetSimple();
+    void getDefinitionsSnippetEmpty();
+    void definitionsCopy();
 
+    void simple();
     void getSources();
     void getDefinitions();
 };
@@ -28,6 +33,68 @@ void TestDefinitionsSet::isEmpty()
 {
     DefinitionsSet set{"CC-CEDICT", {}};
     QCOMPARE(set.isEmpty(), true);
+}
+
+void TestDefinitionsSet::cloneSimple()
+{
+    Definition::Definition
+        definition{"Qingyuan, prefecture-level city in Guangdong", "", {}};
+    DefinitionsSet definitionsSet{"CC-CEDICT", {definition}};
+
+    DefinitionsSet secondDefinitionsSet = definitionsSet;
+    QCOMPARE(definitionsSet, secondDefinitionsSet);
+    QCOMPARE(&definitionsSet == &secondDefinitionsSet, false);
+
+    definition.definitionContent
+        = "(historical) Qingyuan (a former county of Guangdong, China)";
+    QCOMPARE(definitionsSet, secondDefinitionsSet);
+    QCOMPARE(definitionsSet.getDefinitions()[0].definitionContent,
+             "Qingyuan, prefecture-level city in Guangdong");
+    QCOMPARE(secondDefinitionsSet.getDefinitions()[0].definitionContent,
+             "Qingyuan, prefecture-level city in Guangdong");
+}
+
+void TestDefinitionsSet::equalsSimple()
+{
+    Definition::Definition
+        definition{"Qingyuan, prefecture-level city in Guangdong", "", {}};
+    DefinitionsSet definitionsSet{"CC-CEDICT", {definition}};
+
+    Definition::Definition
+        secondDefinition{"Qingyuan, prefecture-level city in Guangdong", "", {}};
+    DefinitionsSet secondDefinitionsSet{"CC-CEDICT", {secondDefinition}};
+
+    QCOMPARE(definitionsSet, secondDefinitionsSet);
+    QCOMPARE(&definitionsSet == &secondDefinitionsSet, false);
+}
+
+void TestDefinitionsSet::getDefinitionsSnippetSimple()
+{
+    Definition::Definition
+        definition{"Qingyuan, prefecture-level city in Guangdong", "", {}};
+    DefinitionsSet definitionsSet{"CC-CEDICT", {definition}};
+
+    QCOMPARE(definitionsSet.getDefinitionsSnippet(),
+             "Qingyuan, prefecture-level city in Guangdong");
+}
+
+void TestDefinitionsSet::getDefinitionsSnippetEmpty()
+{
+    DefinitionsSet definitionsSet{"CC-CEDICT", {}};
+    QCOMPARE(definitionsSet.getDefinitionsSnippet(), "");
+}
+
+void TestDefinitionsSet::definitionsCopy()
+{
+    Definition::Definition
+        definition{"Qingyuan, prefecture-level city in Guangdong", "", {}};
+    std::vector<Definition::Definition> definitionsList{definition};
+    DefinitionsSet definitionsSet{"CC-CEDICT", definitionsList};
+
+    std::span<const Definition::Definition> s = definitionsSet.getDefinitions();
+    std::vector<Definition::Definition> v;
+    v.assign(s.begin(), s.end());
+    QCOMPARE(v, definitionsList);
 }
 
 void TestDefinitionsSet::simple()

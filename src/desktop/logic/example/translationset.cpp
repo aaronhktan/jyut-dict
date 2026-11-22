@@ -45,12 +45,6 @@ bool TranslationSet::isEmpty(void) const
                           });
 }
 
-bool TranslationSet::pushTranslation(const Translation::Translation &translation)
-{
-    _translations.push_back(translation);
-    return true;
-}
-
 const std::string &TranslationSet::getSource(void) const
 {
     return _source;

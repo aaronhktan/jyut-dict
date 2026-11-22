@@ -45,8 +45,6 @@ public:
     }
     bool isEmpty(void) const;
 
-    bool pushTranslation(const Translation::Translation &translation);
-
     const std::string &getSource(void) const;
     const std::string &getSourceLongString(void) const;
     const std::string &getSourceShortString(void) const;
