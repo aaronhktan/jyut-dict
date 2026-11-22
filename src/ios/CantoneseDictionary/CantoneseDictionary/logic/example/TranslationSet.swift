@@ -18,7 +18,7 @@ struct Translation: Hashable, Identifiable {
   }
 }
 
-nonisolated class TranslationSet: Hashable, Identifiable, @unchecked Sendable {
+nonisolated struct TranslationSet: Hashable, Identifiable {
   let id: UUID
   private var _source: String
   private var _snippet: [Translation]?
@@ -46,27 +46,19 @@ nonisolated class TranslationSet: Hashable, Identifiable, @unchecked Sendable {
       })
   }
 
-  func appendTranslation(_ translation: Translation) {
-    _translations.append(translation)
-  }
-
   var source: String {
     _source
   }
 
   func getTranslationSnippet() -> [Translation] {
-    if let snippet = _snippet {
-      return snippet
-    }
-
-    _snippet = []
+    var snippet: [Translation] = []
     for i in 0...4 {
       if i < _translations.count {
-        _snippet?.append(_translations[i])
+        snippet.append(_translations[i])
       }
     }
 
-    return _snippet ?? []
+    return snippet
   }
 
   var translations: [Translation] {

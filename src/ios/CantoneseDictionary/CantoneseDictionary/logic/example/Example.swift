@@ -7,22 +7,14 @@
 
 import Foundation
 
-nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
+nonisolated struct Example: Hashable, Identifiable {
   let id = UUID()
   private var _sourceLanguage: String
   private var _traditional: String
   private var _simplified: String
 
   private var _jyutping: String
-  private var _yale: String?
-  private var _cantoneseIPA: String?
-
   private var _pinyin: String
-  private var _prettyPinyin: String?
-  private var _numberedPinyin: String?
-  private var _zhuyin: String?
-  private var _mandarinIPA: String?
-  private var _pinyinWithV: String?
 
   private var _translations: [TranslationSet]
 
@@ -102,15 +94,13 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
   func getCantonesePhonetic(cantoneseOptions: CantoneseOptions) -> String {
     switch cantoneseOptions {
     case .prettyYale:
-      if _yale == nil {
-        generatePhonetic(cantoneseOptions: .prettyYale)
+      return PhoneticCache.shared.value(for: .prettyYale, jyutping: _jyutping) {
+        convertJyutpingToYale(jyutping: _jyutping)
       }
-      return _yale ?? "Yale not available"
     case .cantoneseIPA:
-      if _cantoneseIPA == nil {
-        generatePhonetic(cantoneseOptions: .cantoneseIPA)
+      return PhoneticCache.shared.value(for: .prettyYale, jyutping: _jyutping) {
+        convertJyutpingToIPA(jyutping: _jyutping)
       }
-      return _cantoneseIPA ?? "Cantonese IPA not available"
     case .rawJyutping:
       fallthrough
     default:
@@ -121,30 +111,25 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
   func getMandarinPhonetic(mandarinOptions: MandarinOptions) -> String {
     switch mandarinOptions {
     case .prettyPinyin:
-      if _prettyPinyin == nil {
-        generatePhonetic(mandarinOptions: .prettyPinyin)
+      return PhoneticCache.shared.value(for: .prettyPinyin, pinyin: _pinyin) {
+        createPrettyPinyin(pinyin: _pinyin)
       }
-      return _prettyPinyin ?? "Pretty pinyin not available"
     case .numberedPinyin:
-      if _numberedPinyin == nil {
-        generatePhonetic(mandarinOptions: .numberedPinyin)
+      return PhoneticCache.shared.value(for: .numberedPinyin, pinyin: _pinyin) {
+        createNumberedPinyin(pinyin: _pinyin)
       }
-      return _numberedPinyin ?? "Numbered pinyin not available"
     case .zhuyin:
-      if _zhuyin == nil {
-        generatePhonetic(mandarinOptions: .zhuyin)
+      return PhoneticCache.shared.value(for: .zhuyin, pinyin: _pinyin) {
+        convertPinyinToZhuyin(pinyin: _pinyin)
       }
-      return _zhuyin ?? "Zhuyin not available"
     case .mandarinIPA:
-      if _mandarinIPA == nil {
-        generatePhonetic(mandarinOptions: .mandarinIPA)
+      return PhoneticCache.shared.value(for: .mandarinIPA, pinyin: _pinyin) {
+        convertPinyinToIPA(pinyin: _pinyin)
       }
-      return _mandarinIPA ?? "Mandarin IPA not available"
     case .rawPinyinWithV:
-      if _pinyinWithV == nil {
-        generatePhonetic(mandarinOptions: .rawPinyinWithV)
+      return PhoneticCache.shared.value(for: .rawPinyinWithV, pinyin: _pinyin) {
+        createPinyinWithV(pinyin: _pinyin)
       }
-      return _pinyinWithV ?? "Pinyin with V not available"
     default:
       return _pinyin
     }
@@ -156,8 +141,6 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
     }
     set {
       _jyutping = newValue.lowercased()
-      _yale = nil
-      _cantoneseIPA = nil
     }
   }
 
@@ -167,11 +150,6 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
     }
     set {
       _pinyin = newValue.lowercased()
-      _prettyPinyin = nil
-      _numberedPinyin = nil
-      _zhuyin = nil
-      _mandarinIPA = nil
-      _pinyinWithV = nil
     }
   }
 
@@ -191,48 +169,5 @@ nonisolated class Example: Hashable, Identifiable, @unchecked Sendable {
     }
 
     return snippets[0].content
-  }
-
-  private func generatePhonetic(
-    cantoneseOptions: CantoneseOptions = [],
-    mandarinOptions: MandarinOptions = []
-  ) {
-    if (cantoneseOptions.rawValue & CantoneseOptions.prettyYale.rawValue
-      == CantoneseOptions.prettyYale.rawValue) && _yale == nil
-    {
-      _yale = convertJyutpingToYale(jyutping: _jyutping)
-    }
-    if (cantoneseOptions.rawValue & CantoneseOptions.cantoneseIPA.rawValue
-      == CantoneseOptions.cantoneseIPA.rawValue) && _cantoneseIPA == nil
-    {
-      _cantoneseIPA = convertJyutpingToIPA(jyutping: _jyutping)
-    }
-
-    if (mandarinOptions.rawValue & MandarinOptions.prettyPinyin.rawValue
-      == MandarinOptions.prettyPinyin.rawValue) && _prettyPinyin == nil
-    {
-      _prettyPinyin = createPrettyPinyin(pinyin: _pinyin)
-    }
-    if (mandarinOptions.rawValue & MandarinOptions.numberedPinyin.rawValue
-      == MandarinOptions.numberedPinyin.rawValue)
-      && _numberedPinyin == nil
-    {
-      _numberedPinyin = createNumberedPinyin(pinyin: _pinyin)
-    }
-    if (mandarinOptions.rawValue & MandarinOptions.zhuyin.rawValue
-      == MandarinOptions.zhuyin.rawValue) && _zhuyin == nil
-    {
-      _zhuyin = convertPinyinToZhuyin(pinyin: _pinyin)
-    }
-    if (mandarinOptions.rawValue & MandarinOptions.mandarinIPA.rawValue
-      == MandarinOptions.mandarinIPA.rawValue) && _mandarinIPA == nil
-    {
-      _mandarinIPA = convertPinyinToIPA(pinyin: _pinyin)
-    }
-    if (mandarinOptions.rawValue & MandarinOptions.rawPinyinWithV.rawValue
-      == MandarinOptions.rawPinyinWithV.rawValue) && _pinyinWithV == nil
-    {
-      _pinyinWithV = createPinyinWithV(pinyin: _pinyin)
-    }
   }
 }

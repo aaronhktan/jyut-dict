@@ -70,7 +70,7 @@ nonisolated struct MandarinOptions: OptionSet, Hashable, Sendable {
   var id: Self { self }
 }
 
-nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
+nonisolated struct Entry: Hashable, Identifiable {
   private var _traditional: String
   private var _traditionalDifference: String
   private var _preferTraditional: String
@@ -78,29 +78,10 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
   private var _simplifiedDifference: String
   private var _preferSimplified: String
 
-  private var _colouredTraditional: AttributedString?
-  private var _colouredTraditionalDifference: AttributedString?
-  private var _colouredPreferTraditional: AttributedString?
-  private var _colouredSimplified: AttributedString?
-  private var _colouredSimplifiedDifference: AttributedString?
-  private var _colouredPreferSimplified: AttributedString?
-  private var _cachedCharacterHash: Int?
-
   private var _jyutping: String
-  private var _yale: String?
-  private var _cantoneseIPA: String?
-  private var _jyutpingNumbers: [Int]?
-
   private var _pinyin: String
-  private var _prettyPinyin: String?
-  private var _numberedPinyin: String?
-  private var _zhuyin: String?
-  private var _mandarinIPA: String?
-  private var _pinyinWithV: String?
-  private var _pinyinNumbers: [Int]?
 
   private var _definitions: [DefinitionsSet]?
-  private var _definitionSnippet: String?
 
   private var _rowid: Int = -1
 
@@ -152,48 +133,112 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
   )
     -> AttributedString
   {
-    var hasher = Hasher()
-    hasher.combine(_traditional)
-    hasher.combine(_simplified)
-    hasher.combine(_jyutping)
-    hasher.combine(_pinyin)
-    hasher.combine(options)
-    hasher.combine(useColours)
-    hasher.combine(colourPhoneticType)
-    let colours = (colourPhoneticType == .mandarin) ? pinyinToneColours : jyutpingToneColours
-    for colour in colours {
-      hasher.combine(colour)
-    }
-    let hash = hasher.finalize()
-
-    if _cachedCharacterHash == nil || _cachedCharacterHash != hash {
-      refreshColours(
-        type: colourPhoneticType, jyutpingToneColours: jyutpingToneColours,
-        pinyinToneColours: pinyinToneColours)
-      _cachedCharacterHash = hash
-    }
-
     switch options {
     case .onlyTraditional:
-      return
-        (useColours
-        ? _colouredTraditional : AttributedString(_traditional)) ?? ""
+      if useColours {
+        var tones: [Int]
+        switch colourPhoneticType {
+        case .none:
+          return AttributedString(_traditional)
+        case .cantonese:
+          tones = getJyutpingNumbers()
+        case .mandarin:
+          tones = getPinyinNumbers()
+        }
+        return applyColours(
+          text: _traditional,
+          tones: tones,
+          jyutpingToneColours: jyutpingToneColours,
+          pinyinToneColours: pinyinToneColours,
+          type: colourPhoneticType
+        )
+      } else {
+        return AttributedString(_traditional)
+      }
     case .onlySimplified:
-      return
-        (useColours
-        ? _colouredSimplified : AttributedString(_simplified)) ?? ""
+      if useColours {
+        var tones: [Int]
+        switch colourPhoneticType {
+        case .none:
+          return AttributedString(_simplified)
+        case .cantonese:
+          tones = getJyutpingNumbers()
+        case .mandarin:
+          tones = getPinyinNumbers()
+        }
+        return applyColours(
+          text: _simplified,
+          tones: tones,
+          jyutpingToneColours: jyutpingToneColours,
+          pinyinToneColours: pinyinToneColours,
+          type: colourPhoneticType
+        )
+      } else {
+        return AttributedString(_simplified)
+      }
     case .preferTraditional:
-      return
-        (useColours
-        ? _colouredPreferTraditional
-        : AttributedString(_preferTraditional))
-        ?? ""
+      if useColours {
+        var tones: [Int]
+        switch colourPhoneticType {
+        case .none:
+          return AttributedString(_traditional) + AttributedString(" [")
+            + AttributedString(_simplified) + AttributedString("]")
+        case .cantonese:
+          tones = getJyutpingNumbers()
+        case .mandarin:
+          tones = getPinyinNumbers()
+        }
+        let colouredTraditional = applyColours(
+          text: _traditional,
+          tones: tones,
+          jyutpingToneColours: jyutpingToneColours,
+          pinyinToneColours: pinyinToneColours,
+          type: colourPhoneticType
+        )
+        let colouredSimplifiedDifference = applyColours(
+          text: _simplifiedDifference,
+          tones: tones,
+          jyutpingToneColours: jyutpingToneColours,
+          pinyinToneColours: pinyinToneColours,
+          type: colourPhoneticType
+        )
+        return colouredTraditional + AttributedString(" [")
+          + colouredSimplifiedDifference + AttributedString("]")
+      } else {
+        return AttributedString(traditional) + AttributedString(" [")
+          + AttributedString(_simplifiedDifference) + AttributedString("]")
+      }
     case .preferSimplified:
-      return
-        (useColours
-        ? _colouredPreferSimplified
-        : AttributedString(_preferSimplified))
-        ?? ""
+      if useColours {
+        var tones: [Int]
+        switch colourPhoneticType {
+        case .none:
+          return AttributedString(_traditional)
+        case .cantonese:
+          tones = getJyutpingNumbers()
+        case .mandarin:
+          tones = getPinyinNumbers()
+        }
+        let colouredSimplified = applyColours(
+          text: _simplified,
+          tones: tones,
+          jyutpingToneColours: jyutpingToneColours,
+          pinyinToneColours: pinyinToneColours,
+          type: colourPhoneticType
+        )
+        let colouredTraditionalDifference = applyColours(
+          text: _traditionalDifference,
+          tones: tones,
+          jyutpingToneColours: jyutpingToneColours,
+          pinyinToneColours: pinyinToneColours,
+          type: colourPhoneticType
+        )
+        return colouredSimplified + AttributedString(" [")
+          + colouredTraditionalDifference + AttributedString("]")
+      } else {
+        return AttributedString(simplified) + AttributedString(" [")
+          + AttributedString(_traditionalDifference) + AttributedString("]")
+      }
     }
   }
 
@@ -206,38 +251,49 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
   )
     -> AttributedString
   {
-    var hasher = Hasher()
-    hasher.combine(_traditional)
-    hasher.combine(_simplified)
-    hasher.combine(_jyutping)
-    hasher.combine(_pinyin)
-    hasher.combine(options)
-    hasher.combine(useColours)
-    hasher.combine(colourPhoneticType)
-    let colours = (colourPhoneticType == .mandarin) ? pinyinToneColours : jyutpingToneColours
-    for colour in colours {
-      hasher.combine(colour)
-    }
-    let hash = hasher.finalize()
-
-    if _cachedCharacterHash == nil || _cachedCharacterHash != hash {
-      refreshColours(
-        type: colourPhoneticType, jyutpingToneColours: jyutpingToneColours,
-        pinyinToneColours: pinyinToneColours)
-      _cachedCharacterHash = hash
-    }
-
     switch options {
     case .onlyTraditional, .preferTraditional:
-      return
-        (useColours
-        ? _colouredPreferTraditional
-        : AttributedString(_preferTraditional))
-        ?? ""
+      if useColours {
+        var tones: [Int]
+        switch colourPhoneticType {
+        case .none:
+          return AttributedString(_traditional)
+        case .cantonese:
+          tones = getJyutpingNumbers()
+        case .mandarin:
+          tones = getPinyinNumbers()
+        }
+        return applyColours(
+          text: _traditional,
+          tones: tones,
+          jyutpingToneColours: jyutpingToneColours,
+          pinyinToneColours: pinyinToneColours,
+          type: colourPhoneticType
+        )
+      } else {
+        return AttributedString(_traditional)
+      }
     case .onlySimplified, .preferSimplified:
-      return
-        (useColours
-        ? _colouredSimplified : AttributedString(_simplified)) ?? ""
+      if useColours {
+        var tones: [Int]
+        switch colourPhoneticType {
+        case .none:
+          return AttributedString(_simplified)
+        case .cantonese:
+          tones = getJyutpingNumbers()
+        case .mandarin:
+          tones = getPinyinNumbers()
+        }
+        return applyColours(
+          text: _simplified,
+          tones: tones,
+          jyutpingToneColours: jyutpingToneColours,
+          pinyinToneColours: pinyinToneColours,
+          type: colourPhoneticType
+        )
+      } else {
+        return AttributedString(_simplified)
+      }
     }
   }
 
@@ -331,15 +387,13 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
   func getCantonesePhonetic(cantoneseOptions: CantoneseOptions) -> String {
     switch cantoneseOptions {
     case .prettyYale:
-      if _yale == nil {
-        generatePhonetic(cantoneseOptions: .prettyYale)
+      return PhoneticCache.shared.value(for: .prettyYale, jyutping: _jyutping) {
+        convertJyutpingToYale(jyutping: _jyutping)
       }
-      return _yale ?? "Yale not available"
     case .cantoneseIPA:
-      if _cantoneseIPA == nil {
-        generatePhonetic(cantoneseOptions: .cantoneseIPA)
+      return PhoneticCache.shared.value(for: .cantoneseIPA, jyutping: _jyutping) {
+        convertJyutpingToIPA(jyutping: _jyutping)
       }
-      return _cantoneseIPA ?? "Cantonese IPA not available"
     case .rawJyutping:
       fallthrough
     default:
@@ -352,30 +406,25 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
   {
     switch mandarinOptions {
     case .prettyPinyin:
-      if _prettyPinyin == nil {
-        generatePhonetic(mandarinOptions: .prettyPinyin)
+      return PhoneticCache.shared.value(for: .prettyPinyin, pinyin: _pinyin) {
+        createPrettyPinyin(pinyin: _pinyin)
       }
-      return _prettyPinyin ?? "Pretty pinyin not available"
     case .numberedPinyin:
-      if _numberedPinyin == nil {
-        generatePhonetic(mandarinOptions: .numberedPinyin)
+      return PhoneticCache.shared.value(for: .numberedPinyin, pinyin: _pinyin) {
+        createNumberedPinyin(pinyin: _pinyin)
       }
-      return _numberedPinyin ?? "Numbered pinyin not available"
     case .zhuyin:
-      if _zhuyin == nil {
-        generatePhonetic(mandarinOptions: .zhuyin)
+      return PhoneticCache.shared.value(for: .zhuyin, pinyin: _pinyin) {
+        convertPinyinToZhuyin(pinyin: _pinyin)
       }
-      return _zhuyin ?? "Zhuyin not available"
     case .mandarinIPA:
-      if _mandarinIPA == nil {
-        generatePhonetic(mandarinOptions: .mandarinIPA)
+      return PhoneticCache.shared.value(for: .mandarinIPA, pinyin: _pinyin) {
+        convertPinyinToIPA(pinyin: _pinyin)
       }
-      return _mandarinIPA ?? "Mandarin IPA not available"
     case .rawPinyinWithV:
-      if _pinyinWithV == nil {
-        generatePhonetic(mandarinOptions: .rawPinyinWithV)
+      return PhoneticCache.shared.value(for: .rawPinyinWithV, pinyin: _pinyin) {
+        createPinyinWithV(pinyin: _pinyin)
       }
-      return _pinyinWithV ?? "Pinyin with V not available"
     default:
       return _pinyin
     }
@@ -387,33 +436,28 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
     }
     set {
       _jyutping = newValue.lowercased()
-      _yale = nil
-      _cantoneseIPA = nil
-      _jyutpingNumbers = nil
     }
   }
 
   func getJyutpingNumbers() -> [Int] {
-    if _jyutpingNumbers == nil {
-      _jyutpingNumbers = []
+    var jyutpingNumbers: [Int] = []
 
-      let tones = ["0", "1", "2", "3", "4", "5", "6"]
-      var toneIdx = _jyutping.firstIndex(where: {
-        tones.contains(String($0))
-      })
+    let tones = ["0", "1", "2", "3", "4", "5", "6"]
+    var toneIdx = _jyutping.firstIndex(where: {
+      tones.contains(String($0))
+    })
 
-      while toneIdx != nil {
-        if let tone = Int(String(_jyutping[toneIdx!])) {
-          _jyutpingNumbers!.append(tone)
-        }
-        toneIdx = _jyutping[_jyutping.index(after: toneIdx!)...]
-          .firstIndex(where: {
-            tones.contains(String($0))
-          })
+    while toneIdx != nil {
+      if let tone = Int(String(_jyutping[toneIdx!])) {
+        jyutpingNumbers.append(tone)
       }
+      toneIdx = _jyutping[_jyutping.index(after: toneIdx!)...]
+        .firstIndex(where: {
+          tones.contains(String($0))
+        })
     }
 
-    return _jyutpingNumbers!
+    return jyutpingNumbers
   }
 
   var pinyin: String {
@@ -422,166 +466,49 @@ nonisolated class Entry: Hashable, Identifiable, @unchecked Sendable {
     }
     set {
       _pinyin = newValue.lowercased()
-      _prettyPinyin = nil
-      _numberedPinyin = nil
-      _zhuyin = nil
-      _mandarinIPA = nil
-      _pinyinWithV = nil
-      _pinyinNumbers = nil
     }
   }
 
   func getPinyinNumbers() -> [Int] {
-    if _pinyinNumbers == nil {
-      _pinyinNumbers = []
+    var pinyinNumbers: [Int] = []
 
-      let tones = ["0", "1", "2", "3", "4", "5"]
-      var toneIdx = _pinyin.firstIndex(where: {
-        tones.contains(String($0))
-      })
+    let tones = ["0", "1", "2", "3", "4", "5"]
+    var toneIdx = _pinyin.firstIndex(where: {
+      tones.contains(String($0))
+    })
 
-      while toneIdx != nil {
-        if let tone = Int(String(_pinyin[toneIdx!])) {
-          _pinyinNumbers!.append(tone)
-        }
-        toneIdx = _pinyin[_pinyin.index(after: toneIdx!)...]
-          .firstIndex(where: {
-            tones.contains(String($0))
-          })
+    while toneIdx != nil {
+      if let tone = Int(String(_pinyin[toneIdx!])) {
+        pinyinNumbers.append(tone)
       }
+      toneIdx = _pinyin[_pinyin.index(after: toneIdx!)...]
+        .firstIndex(where: {
+          tones.contains(String($0))
+        })
     }
 
-    return _pinyinNumbers!
+    return pinyinNumbers
   }
 
   func getDefinitionsSets() -> [DefinitionsSet]? {
     return _definitions
   }
 
-  func getDefinitionSnippet() -> String {
+  var definitionSnippet: String {
     if _definitions == nil || _definitions!.isEmpty {
-      return _definitionSnippet ?? ""
+      return ""
     }
 
-    if _definitionSnippet == nil {
-      for d in _definitions ?? [] {
-        guard !d.isEmpty else {
-          continue
-        }
-
-        _definitionSnippet = d.getDefinitionSnippet()
-        break
+    var definitionSnippet = ""
+    for d in _definitions ?? [] {
+      guard !d.isEmpty else {
+        continue
       }
+
+      definitionSnippet = d.definitionSnippet
+      break
     }
 
-    return _definitionSnippet ?? ""
-  }
-
-  private func generatePhonetic(
-    cantoneseOptions: CantoneseOptions = [],
-    mandarinOptions: MandarinOptions = []
-  ) {
-    if (cantoneseOptions.rawValue & CantoneseOptions.prettyYale.rawValue
-      == CantoneseOptions.prettyYale.rawValue) && _yale == nil
-    {
-      _yale = convertJyutpingToYale(jyutping: _jyutping)
-    }
-    if (cantoneseOptions.rawValue & CantoneseOptions.cantoneseIPA.rawValue
-      == CantoneseOptions.cantoneseIPA.rawValue) && _cantoneseIPA == nil
-    {
-      _cantoneseIPA = convertJyutpingToIPA(jyutping: _jyutping)
-    }
-
-    if (mandarinOptions.rawValue & MandarinOptions.prettyPinyin.rawValue
-      == MandarinOptions.prettyPinyin.rawValue) && _prettyPinyin == nil
-    {
-      _prettyPinyin = createPrettyPinyin(pinyin: _pinyin)
-    }
-    if (mandarinOptions.rawValue & MandarinOptions.numberedPinyin.rawValue
-      == MandarinOptions.numberedPinyin.rawValue)
-      && _numberedPinyin == nil
-    {
-      _numberedPinyin = createNumberedPinyin(pinyin: _pinyin)
-    }
-    if (mandarinOptions.rawValue & MandarinOptions.zhuyin.rawValue
-      == MandarinOptions.zhuyin.rawValue) && _zhuyin == nil
-    {
-      _zhuyin = convertPinyinToZhuyin(pinyin: _pinyin)
-    }
-    if (mandarinOptions.rawValue & MandarinOptions.mandarinIPA.rawValue
-      == MandarinOptions.mandarinIPA.rawValue) && _mandarinIPA == nil
-    {
-      _mandarinIPA = convertPinyinToIPA(pinyin: _pinyin)
-    }
-    if (mandarinOptions.rawValue & MandarinOptions.rawPinyinWithV.rawValue
-      == MandarinOptions.rawPinyinWithV.rawValue) && _pinyinWithV == nil
-    {
-      _pinyinWithV = createPinyinWithV(pinyin: _pinyin)
-    }
-  }
-
-  private func refreshColours(
-    type: EntryColourPhoneticType,
-    jyutpingToneColours: [Color],
-    pinyinToneColours: [Color]
-  ) {
-    var tones: [Int]
-    switch type {
-    case .none:
-      _colouredTraditional = AttributedString(_traditional)
-      _colouredSimplified = AttributedString(_simplified)
-      _colouredTraditionalDifference = AttributedString(
-        _traditionalDifference
-      )
-      _colouredSimplifiedDifference = AttributedString(
-        _simplifiedDifference
-      )
-      _colouredPreferTraditional =
-        _colouredTraditional! + AttributedString("[")
-        + _colouredSimplifiedDifference! + AttributedString("]")
-      _colouredPreferTraditional =
-        _colouredSimplified! + AttributedString("[")
-        + _colouredTraditionalDifference! + AttributedString("]")
-      return
-    case .cantonese:
-      tones = getJyutpingNumbers()
-    case .mandarin:
-      tones = getPinyinNumbers()
-    }
-    _colouredTraditional = applyColours(
-      text: _traditional,
-      tones: tones,
-      jyutpingToneColours: jyutpingToneColours,
-      pinyinToneColours: pinyinToneColours,
-      type: type
-    )
-    _colouredSimplified = applyColours(
-      text: _simplified,
-      tones: tones,
-      jyutpingToneColours: jyutpingToneColours,
-      pinyinToneColours: pinyinToneColours,
-      type: type
-    )
-    _colouredTraditionalDifference = applyColours(
-      text: _traditionalDifference,
-      tones: tones,
-      jyutpingToneColours: jyutpingToneColours,
-      pinyinToneColours: pinyinToneColours,
-      type: type
-    )
-    _colouredSimplifiedDifference = applyColours(
-      text: _simplifiedDifference,
-      tones: tones,
-      jyutpingToneColours: jyutpingToneColours,
-      pinyinToneColours: pinyinToneColours,
-      type: type
-    )
-
-    _colouredPreferTraditional =
-      _colouredTraditional! + AttributedString("[")
-      + _colouredSimplifiedDifference! + AttributedString("]")
-    _colouredPreferSimplified =
-      _colouredSimplified! + AttributedString("[")
-      + _colouredTraditionalDifference! + AttributedString("]")
+    return definitionSnippet
   }
 }

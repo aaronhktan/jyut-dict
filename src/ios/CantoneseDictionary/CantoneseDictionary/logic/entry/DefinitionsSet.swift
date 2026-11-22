@@ -13,11 +13,10 @@ nonisolated struct Definition: Hashable {
   var examples: [Example]
 }
 
-nonisolated class DefinitionsSet: Hashable, Identifiable, @unchecked Sendable {
+nonisolated struct DefinitionsSet: Hashable, Identifiable {
   let id: UUID
   private var _source: String
   private var _sourceShortString: String
-  private var _snippet: String?
   private var _definitions: [Definition]
 
   init(source: String, sourceShortString: String, definitions: [Definition]) {
@@ -39,10 +38,6 @@ nonisolated class DefinitionsSet: Hashable, Identifiable, @unchecked Sendable {
     _definitions.isEmpty
   }
 
-  func appendDefinition(_ definition: Definition) {
-    _definitions.append(definition)
-  }
-
   var source: String {
     _source
   }
@@ -51,22 +46,18 @@ nonisolated class DefinitionsSet: Hashable, Identifiable, @unchecked Sendable {
     _sourceShortString
   }
 
-  func getDefinitionSnippet() -> String {
+  var definitionSnippet: String {
     if isEmpty {
-      return _snippet ?? ""
+      return ""
     }
 
-    if let snippet = _snippet {
-      return snippet
-    }
-
-    _snippet = ""
+    var snippet = ""
     for i in 0..<_definitions.count - 1 {
       let firstLineBreak =
         _definitions[i].definitionContent.firstIndex(where: {
           ["\r", "\n"].contains($0)
         }) ?? _definitions[i].definitionContent.endIndex
-      _snippet?.append(
+      snippet.append(
         contentsOf: _definitions[i].definitionContent[..<firstLineBreak]
           + "; "
       )
@@ -76,11 +67,11 @@ nonisolated class DefinitionsSet: Hashable, Identifiable, @unchecked Sendable {
         lastDefinition.definitionContent.firstIndex(where: {
           ["\r", "\n"].contains($0)
         }) ?? lastDefinition.definitionContent.endIndex
-      _snippet?.append(
+      snippet.append(
         contentsOf: lastDefinition.definitionContent[..<firstLineBreak]
       )
     }
-    return _snippet ?? ""
+    return snippet
   }
 
   var definitions: [Definition] {

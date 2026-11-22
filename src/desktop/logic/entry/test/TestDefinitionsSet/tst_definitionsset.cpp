@@ -14,7 +14,7 @@ public:
 
 private slots:
     void isEmpty();
-    void addDefinitions();
+    void simple();
 
     void getSources();
     void getDefinitions();
@@ -30,7 +30,7 @@ void TestDefinitionsSet::isEmpty()
     QCOMPARE(set.isEmpty(), true);
 }
 
-void TestDefinitionsSet::addDefinitions()
+void TestDefinitionsSet::simple()
 {
     std::vector<Definition::Definition> definitions{
         {"香港地區名；係香港嘅政治商業中心，大部份政府機構、銀行總行、跨國金融"
@@ -41,9 +41,6 @@ void TestDefinitionsSet::addDefinitions()
     DefinitionsSet set{"粵典—words.hk", definitions};
     QCOMPARE(set.isEmpty(), false);
     QCOMPARE(set.getDefinitions().size(), 1);
-
-    set.pushDefinition({"Central (a place in Hong Kong)", "name", {}});
-    QCOMPARE(set.getDefinitions().size(), 2);
 }
 
 void TestDefinitionsSet::getSources()

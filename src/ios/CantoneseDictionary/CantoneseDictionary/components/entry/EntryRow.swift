@@ -39,7 +39,7 @@ struct EntryRow: View {
         )
       )
       .rowLine()
-      Text(entry.getDefinitionSnippet())
+      Text(entry.definitionSnippet)
         .rowLine()
     }
     .onAppear {

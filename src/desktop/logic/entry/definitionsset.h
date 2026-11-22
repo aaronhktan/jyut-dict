@@ -48,8 +48,6 @@ public:
     }
     bool isEmpty() const;
 
-    void pushDefinition(const Definition::Definition definition);
-
     const std::string &getSource() const;
     const std::string &getSourceLongString() const;
     const std::string &getSourceShortString() const;
