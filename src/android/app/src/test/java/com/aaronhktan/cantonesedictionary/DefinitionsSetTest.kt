@@ -149,4 +149,14 @@ class DefinitionsSetUnitTest {
         assertFalse(definitionList === definitionsSet.definitions)
         assertFalse(definitionsSet.definitions === definitionsSet.definitions)
     }
+
+    @Test
+    fun definitionsSet_source_simple() {
+        val definitionsSet = DefinitionsSet(
+            "CC-CANTO", "CCY", listOf()
+        )
+
+        assertEquals("CC-CANTO", definitionsSet.source)
+        assertEquals("CCY", definitionsSet.sourceShortString)
+    }
 }

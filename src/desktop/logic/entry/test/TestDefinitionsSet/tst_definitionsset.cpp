@@ -19,9 +19,9 @@ private slots:
     void getDefinitionsSnippetSimple();
     void getDefinitionsSnippetEmpty();
     void definitionsCopy();
+    void sourcesSimple();
 
     void simple();
-    void getSources();
     void getDefinitions();
 };
 
@@ -97,26 +97,12 @@ void TestDefinitionsSet::definitionsCopy()
     QCOMPARE(v, definitionsList);
 }
 
-void TestDefinitionsSet::simple()
-{
-    std::vector<Definition::Definition> definitions{
-        {"香港地區名；係香港嘅政治商業中心，大部份政府機構、銀行總行、跨國金融"
-         "機構、外國領事館嘅所在地",
-         "名詞",
-         {}},
-    };
-    DefinitionsSet set{"粵典—words.hk", definitions};
-    QCOMPARE(set.isEmpty(), false);
-    QCOMPARE(set.getDefinitions().size(), 1);
-}
-
-void TestDefinitionsSet::getSources()
+void TestDefinitionsSet::sourcesSimple()
 {
     std::string sourceName = "粵典—words.hk";
     std::string sourceShortName = "WHK";
 
-    QCOMPARE(SourceUtils::addSource(sourceName, sourceShortName),
-             true);
+    QCOMPARE(SourceUtils::addSource(sourceName, sourceShortName), true);
 
     std::vector<Definition::Definition> definitions{
         {"香港地區名；係香港嘅政治商業中心，大部份政府機構、銀行總行、跨國金融"
@@ -133,6 +119,19 @@ void TestDefinitionsSet::getSources()
              QString::fromStdString(sourceShortName));
 
     QCOMPARE(SourceUtils::removeSource(sourceName), true);
+}
+
+void TestDefinitionsSet::simple()
+{
+    std::vector<Definition::Definition> definitions{
+        {"香港地區名；係香港嘅政治商業中心，大部份政府機構、銀行總行、跨國金融"
+         "機構、外國領事館嘅所在地",
+         "名詞",
+         {}},
+    };
+    DefinitionsSet set{"粵典—words.hk", definitions};
+    QCOMPARE(set.isEmpty(), false);
+    QCOMPARE(set.getDefinitions().size(), 1);
 }
 
 void TestDefinitionsSet::getDefinitions()

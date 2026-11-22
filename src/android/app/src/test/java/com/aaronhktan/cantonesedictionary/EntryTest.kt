@@ -1174,4 +1174,18 @@ class EntryUnitTest {
 
         assertEquals("", entry.getDefinitionSnippet())
     }
+
+    @Test
+    fun entry_getId_simple() {
+        val entry = Entry(
+            rowId = 1,
+            traditional = "清遠",
+            simplified = "清远",
+            jyutping = "cing1 jyun5",
+            pinyin = "qing1 yuan3",
+            definitions = listOf()
+        )
+
+        assertEquals(1, entry.id)
+    }
 }

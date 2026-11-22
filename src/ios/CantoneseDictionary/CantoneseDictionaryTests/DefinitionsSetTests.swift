@@ -83,4 +83,11 @@ struct DefinitionsSetTests {
     #expect(definitionList[0] != definition)
     #expect(definitionsSet.definitions == definitionList)
   }
+
+  @Test func sourceSimple() async throws {
+    let definitionsSet = DefinitionsSet(
+      source: "CC-CANTO", sourceShortString: "CCY", definitions: [])
+    #expect(definitionsSet.source == "CC-CANTO")
+    #expect(definitionsSet.sourceShortString == "CCY")
+  }
 }
