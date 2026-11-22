@@ -4,6 +4,7 @@ import com.aaronhktan.cantonesedictionary.logic.entry.Definition
 import com.aaronhktan.cantonesedictionary.logic.entry.DefinitionsSet
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class DefinitionsSetUnitTest {
@@ -11,6 +12,17 @@ class DefinitionsSetUnitTest {
     fun definitionsSet_isEmpty_simple() {
         val ds = DefinitionsSet("CC-CANTO", "CCY", listOf())
         assertEquals(true, ds.isEmpty())
+    }
+
+    @Test
+    fun definitionsSet_isEmpty_false() {
+        val definition = Definition(
+            "Qingyuan, prefecture-level city in Guangdong",
+            label = "",
+            examples = listOf()
+        )
+        val ds = DefinitionsSet("CC-CANTO", "CCY", listOf(definition))
+        assertEquals(false, ds.isEmpty())
     }
 
     @Test
@@ -28,9 +40,9 @@ class DefinitionsSetUnitTest {
 
         val secondDefinitionsSet = definitionsSet.clone()
 
-        assertEquals(false, definitionsSet === secondDefinitionsSet)
-        assertEquals(true, definitionsSet == secondDefinitionsSet)
-        assertEquals(true, definitionsSet.hashCode() == secondDefinitionsSet.hashCode())
+        assertFalse(definitionsSet === secondDefinitionsSet)
+        assertTrue(definitionsSet == secondDefinitionsSet)
+        assertTrue(definitionsSet.hashCode() == secondDefinitionsSet.hashCode())
 
         val secondDefinition = Definition(
             "(historical) Qingyuan (a former county of Guangdong, China)",
@@ -38,8 +50,8 @@ class DefinitionsSetUnitTest {
             examples = listOf()
         )
         secondDefinitionsSet.appendDefinition(secondDefinition)
-        assertEquals(false, definitionsSet == secondDefinitionsSet)
-        assertEquals(false, definitionsSet.hashCode() == secondDefinitionsSet.hashCode())
+        assertFalse(definitionsSet == secondDefinitionsSet)
+        assertFalse(definitionsSet.hashCode() == secondDefinitionsSet.hashCode())
     }
 
     @Test
@@ -66,12 +78,53 @@ class DefinitionsSetUnitTest {
             )
         )
 
-        val definitionsSetRef = definitionsSet
-        assertEquals(true, definitionsSet.equals(definitionsSetRef))
-        assertEquals(false, definitionsSet.equals(1))
+        assertFalse(definitionsSet === secondDefinitionsSet)
+        assertTrue(definitionsSet == secondDefinitionsSet)
 
-        assertEquals(false, definitionsSet === secondDefinitionsSet)
-        assertEquals(true, definitionsSet == secondDefinitionsSet)
+        val thirdDefinitionsSet = definitionsSet.clone()
+        assertFalse(definitionsSet === thirdDefinitionsSet)
+        assertTrue(definitionsSet == thirdDefinitionsSet)
+    }
+
+    @Test
+    fun definitionsSet_equals_false() {
+        val definition = Definition(
+            "Qingyuan, prefecture-level city in Guangdong",
+            label = "",
+            examples = listOf()
+        )
+        val definitionsSet = DefinitionsSet(
+            "CC-CANTO", "CCY", listOf(
+                definition
+            )
+        )
+
+        val secondDefinition = Definition(
+            "(historical) Qingyuan (a former county of Guangdong, China)",
+            label = "",
+            examples = listOf()
+        )
+        val secondDefinitionsSet = DefinitionsSet(
+            "CC-CANTO", "CCY", listOf(
+                secondDefinition
+            )
+        )
+
+        assertFalse(definitionsSet === secondDefinitionsSet)
+        assertFalse(definitionsSet == secondDefinitionsSet)
+
+        val thirdDefinition = Definition(
+            "Qingyuan, prefecture-level city in Guangdong",
+            label = "noun",
+            examples = listOf()
+        )
+        val thirdDefinitionsSet = DefinitionsSet(
+            "CC-CANTO", "CCY", listOf(
+                thirdDefinition
+            )
+        )
+        assertFalse(definitionsSet === thirdDefinitionsSet)
+        assertFalse(definitionsSet == thirdDefinitionsSet)
     }
 
     @Test
@@ -98,8 +151,49 @@ class DefinitionsSetUnitTest {
             )
         )
 
-        assertEquals(false, definitionsSet === secondDefinitionsSet)
-        assertEquals(true, definitionsSet.hashCode() == secondDefinitionsSet.hashCode())
+        assertFalse(definitionsSet === secondDefinitionsSet)
+        assertTrue(definitionsSet.hashCode() == secondDefinitionsSet.hashCode())
+    }
+
+    @Test
+    fun definitionsSet_hashCode_false() {
+        val definition = Definition(
+            "Qingyuan, prefecture-level city in Guangdong",
+            label = "",
+            examples = listOf()
+        )
+        val definitionsSet = DefinitionsSet(
+            "CC-CANTO", "CCY", listOf(
+                definition
+            )
+        )
+
+        val secondDefinition = Definition(
+            "(historical) Qingyuan (a former county of Guangdong, China)",
+            label = "",
+            examples = listOf()
+        )
+        val secondDefinitionsSet = DefinitionsSet(
+            "CC-CANTO", "CCY", listOf(
+                secondDefinition
+            )
+        )
+
+        assertFalse(definitionsSet === secondDefinitionsSet)
+        assertFalse(definitionsSet.hashCode() == secondDefinitionsSet.hashCode())
+
+        val thirdDefinition = Definition(
+            "Qingyuan, prefecture-level city in Guangdong",
+            label = "noun",
+            examples = listOf()
+        )
+        val thirdDefinitionsSet = DefinitionsSet(
+            "CC-CANTO", "CCY", listOf(
+                thirdDefinition
+            )
+        )
+        assertFalse(definitionsSet === thirdDefinitionsSet)
+        assertFalse(definitionsSet.hashCode() == thirdDefinitionsSet.hashCode())
     }
 
     @Test
@@ -145,7 +239,7 @@ class DefinitionsSetUnitTest {
             "CC-CANTO", "CCY", definitionList
         )
 
-        assertEquals(definitionList, definitionsSet.definitions)
+        assertTrue(definitionList == definitionsSet.definitions)
         assertFalse(definitionList === definitionsSet.definitions)
         assertFalse(definitionsSet.definitions === definitionsSet.definitions)
     }

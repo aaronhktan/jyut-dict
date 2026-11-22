@@ -1,6 +1,8 @@
 package com.aaronhktan.cantonesedictionary.logic.example
 
 import com.aaronhktan.cantonesedictionary.logic.entry.Definition
+import com.aaronhktan.cantonesedictionary.logic.entry.DefinitionsSet
+import java.util.Objects
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -33,26 +35,44 @@ class TranslationSet : Cloneable {
         translations = _translations.map { it.clone() }
     )
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is TranslationSet) return false
+
+        return (this._source == other._source
+                && this._translations == other._translations)
+    }
+
+    override fun hashCode(): Int {
+        var hash = Objects.hash(_source)
+        for (t in _translations) {
+            hash = Objects.hash(hash, t)
+        }
+        return hash
+    }
+
     fun isEmpty(): Boolean {
         return (_translations.isEmpty()
                 || _translations.all { it.content.isEmpty() && it.language.isEmpty() && !it.directTarget })
     }
 
-    var source: String = _source
-        private set
+    val source: String
+        get() = _source
 
     fun getTranslationSnippet(): List<Translation> {
         _snippet?.let { return it }
 
         val snippets: MutableList<Translation> = mutableListOf()
-        for (t in _translations) {
-            snippets.add(t)
+        for (i in 0..4) {
+            if (i < _translations.size) {
+                snippets.add(_translations[i])
+            }
         }
         _snippet = snippets.toList()
 
         return _snippet ?: listOf()
     }
 
-    var translations: List<Translation> = _translations
-        private set
+    val translations: List<Translation>
+        get() = _translations.map { it.clone() }
 }

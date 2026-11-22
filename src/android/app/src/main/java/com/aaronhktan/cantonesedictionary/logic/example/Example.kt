@@ -14,6 +14,7 @@ import com.aaronhktan.cantonesedictionary.logic.utils.createNumberedPinyin
 import com.aaronhktan.cantonesedictionary.logic.utils.createPinyinWithV
 import com.aaronhktan.cantonesedictionary.logic.utils.createPrettyPinyin
 import java.util.EnumSet
+import java.util.Objects
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -50,7 +51,7 @@ class Example : Cloneable {
         _simplified = simplified
         _jyutping = jyutping.lowercase()
         _pinyin = pinyin.lowercase()
-        _translations = translations
+        _translations = translations.map { it.clone() }
     }
 
     public override fun clone() = Example(
@@ -61,6 +62,26 @@ class Example : Cloneable {
         pinyin = _pinyin,
         translations = _translations.map { it.clone() }
     )
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Example) return false
+
+        return (this._sourceLanguage == other._sourceLanguage
+                && this._traditional == other._traditional
+                && this._simplified == other._simplified
+                && this._jyutping == other._jyutping
+                && this._pinyin == other._pinyin
+                && this._translations == other._translations)
+    }
+
+    override fun hashCode(): Int {
+        var hash = Objects.hash(_sourceLanguage, _traditional, _simplified, _jyutping, _pinyin)
+        for (t in _translations) {
+            hash = Objects.hash(hash, t)
+        }
+        return hash
+    }
 
     var sourceLanguage: String
         get() = _sourceLanguage
@@ -83,13 +104,13 @@ class Example : Cloneable {
     var traditional: String
         get() = _traditional
         set(value) {
-            _traditional = traditional
+            _traditional = value
         }
 
     var simplified: String
         get() = _simplified
         set(value) {
-            _simplified = simplified
+            _simplified = value
         }
 
     fun getPhonetic(
@@ -182,7 +203,7 @@ class Example : Cloneable {
         }
 
     var pinyin: String
-        get() = pinyin
+        get() = _pinyin
         set(value) {
             _pinyin = value.lowercase()
             _prettyPinyin = null
@@ -192,11 +213,9 @@ class Example : Cloneable {
             _pinyinWithV = null
         }
 
-    var translationSets: List<TranslationSet>
-        get() = _translations
-        set(value) {
-            _translations = value
-        }
+    fun getTranslationSets(): List<TranslationSet> {
+        return _translations.map { it.clone() }
+    }
 
     fun getTranslationSnippet(): String {
         if (_translations.isEmpty()) {
