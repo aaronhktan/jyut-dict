@@ -1,9 +1,11 @@
 package com.aaronhktan.cantonesedictionary.logic.example
 
 import com.aaronhktan.cantonesedictionary.logic.entry.CantoneseOptions
+import com.aaronhktan.cantonesedictionary.logic.entry.DefinitionsSet
 import com.aaronhktan.cantonesedictionary.logic.entry.EntryCharactersOptions
 import com.aaronhktan.cantonesedictionary.logic.entry.EntryPhoneticOptions
 import com.aaronhktan.cantonesedictionary.logic.entry.MandarinOptions
+import com.aaronhktan.cantonesedictionary.logic.example.TranslationSet
 import com.aaronhktan.cantonesedictionary.logic.utils.convertJyutpingToIPA
 import com.aaronhktan.cantonesedictionary.logic.utils.convertJyutpingToYale
 import com.aaronhktan.cantonesedictionary.logic.utils.convertPinyinToIPA
@@ -15,7 +17,7 @@ import java.util.EnumSet
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-class Example {
+class Example : Cloneable {
     @OptIn(ExperimentalUuidApi::class)
     private val id: Uuid = Uuid.random()
     private var _sourceLanguage: String = ""
@@ -35,7 +37,14 @@ class Example {
 
     private var _translations: List<TranslationSet> = listOf()
 
-    constructor(sourceLanguage: String, traditional: String, simplified: String, jyutping: String, pinyin: String, translations: List<TranslationSet>) {
+    constructor(
+        sourceLanguage: String,
+        traditional: String,
+        simplified: String,
+        jyutping: String,
+        pinyin: String,
+        translations: List<TranslationSet>
+    ) {
         _sourceLanguage = sourceLanguage
         _traditional = traditional
         _simplified = simplified
@@ -43,6 +52,15 @@ class Example {
         _pinyin = pinyin.lowercase()
         _translations = translations
     }
+
+    public override fun clone() = Example(
+        sourceLanguage = _sourceLanguage,
+        traditional = _traditional,
+        simplified = _simplified,
+        jyutping = _jyutping,
+        pinyin = _pinyin,
+        translations = _translations.map { it.clone() }
+    )
 
     var sourceLanguage: String
         get() = _sourceLanguage
@@ -74,8 +92,11 @@ class Example {
             _simplified = simplified
         }
 
-    fun getPhonetic(options: EntryPhoneticOptions, cantoneseOptions: CantoneseOptions, mandarinOptions: MandarinOptions): String
-    {
+    fun getPhonetic(
+        options: EntryPhoneticOptions,
+        cantoneseOptions: CantoneseOptions,
+        mandarinOptions: MandarinOptions
+    ): String {
         return when (options) {
             EntryPhoneticOptions.ONLY_CANTONESE, EntryPhoneticOptions.PREFER_CANTONESE -> {
                 getCantonesePhonetic(cantoneseOptions)

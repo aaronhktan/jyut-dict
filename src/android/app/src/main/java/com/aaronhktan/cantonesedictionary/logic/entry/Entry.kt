@@ -81,7 +81,7 @@ class Entry {
         _simplified = simplified
         _jyutping = jyutping.lowercase()
         _pinyin = pinyin.lowercase()
-        _definitions = definitions
+        _definitions = definitions.map { it.clone() }
 
         _traditionalDifference = compareStrings(simplified, traditional)
         _simplifiedDifference = compareStrings(traditional, simplified)
@@ -90,8 +90,8 @@ class Entry {
         _preferSimplified = "$_simplified [$_traditionalDifference]"
     }
 
-    var id: Int = _rowId
-        private set
+    val id: Int
+        get() = _rowId
 
     fun getCharacters(
         options: EntryCharactersOptions,
@@ -366,7 +366,7 @@ class Entry {
     }
 
     fun getDefinitionsSets(): List<DefinitionsSet>? {
-        return _definitions
+        return _definitions?.map { it.clone() }
     }
 
     fun getDefinitionSnippet(): String {
@@ -430,7 +430,7 @@ class Entry {
                 _colouredSimplifiedDifference = AnnotatedString(_simplifiedDifference)
                 _colouredPreferTraditional =
                     _colouredSimplifiedDifference?.let {
-                        _colouredTraditional?.plus(AnnotatedString("["))
+                        _colouredTraditional?.plus(AnnotatedString(" ["))
                             ?.plus(it)
                     }?.plus(
                         AnnotatedString(
@@ -439,7 +439,7 @@ class Entry {
                     )
                 _colouredPreferSimplified =
                     _colouredTraditionalDifference?.let {
-                        _colouredSimplified?.plus(AnnotatedString("["))
+                        _colouredSimplified?.plus(AnnotatedString(" ["))
                             ?.plus(it)
                     }?.plus(
                         AnnotatedString(
@@ -487,11 +487,11 @@ class Entry {
             type = type
         )
         _colouredPreferTraditional = _colouredSimplifiedDifference?.let {
-            _colouredTraditional?.plus(AnnotatedString("["))
+            _colouredTraditional?.plus(AnnotatedString(" ["))
                 ?.plus(it)?.plus(AnnotatedString("]")) ?: AnnotatedString("")
         }
         _colouredPreferSimplified = _colouredTraditionalDifference?.let {
-            _colouredSimplified?.plus(AnnotatedString("["))
+            _colouredSimplified?.plus(AnnotatedString(" ["))
                 ?.plus(it)?.plus(AnnotatedString("]")) ?: AnnotatedString("")
         }
     }
