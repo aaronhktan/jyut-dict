@@ -448,7 +448,7 @@ class ExampleUnitTest {
                 mandarinOptions = MandarinOptions.ZHUYIN
             )
         )
-        phoneticString = "tʰaɪ̯˧˥ ʂän˥˥ xwä˥˩"
+        phoneticString = "tʰaɪ̯˧˥ ʂän˥˥ xu̯ä˥˩"
         assertEquals(
             phoneticString,
             example.getPhonetic(
@@ -577,7 +577,7 @@ class ExampleUnitTest {
                 mandarinOptions = MandarinOptions.ZHUYIN
             )
         )
-        phoneticString = "tʰaɪ̯˧˥ ʂän˥˥ xwä˥˩"
+        phoneticString = "tʰaɪ̯˧˥ ʂän˥˥ xu̯ä˥˩"
         assertEquals(
             phoneticString,
             example.getPhonetic(
@@ -627,7 +627,7 @@ class ExampleUnitTest {
                 mandarinOptions = MandarinOptions.ZHUYIN
             )
         )
-        phoneticString = "sz̩˥˩꜒꜔ i˥˩꜒꜔ xwä˥˩"
+        phoneticString = "sz̩˥˩꜒꜔ i˥˩꜒꜔ xu̯ä˥˩"
         assertEquals(
             phoneticString,
             example.getPhonetic(

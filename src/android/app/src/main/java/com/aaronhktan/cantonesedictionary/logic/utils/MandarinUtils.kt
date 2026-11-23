@@ -96,7 +96,7 @@ private val mandarinIPAFinals: Map<String, String> = mapOf(
     "ir" to "iə̯ɻ", "iu" to "joʊ̯", "iur" to "jɤʊ̯ɻʷ", "m" to "m̩",
     "n" to "n̩", "ng" to "ŋ̍", "o" to "wɔ", "ong" to "ʊŋ",
     "ongr" to "ʊ̃ɻ", "or" to "wɔɻ", "ou" to "oʊ̯", "our" to "ɤʊ̯ɻʷ",
-    "u" to "u", "ua" to "wä", "uai" to "waɪ̯", "uair" to "wɑɻ",
+    "u" to "u", "ua" to "u̯ä", "uai" to "waɪ̯", "uair" to "wɑɻ",
     "uan" to "wän", "uang" to "wɑŋ", "uangr" to "wɑ̃ɻ", "uanr" to "wɑɻ",
     "uar" to "u̯ɑɻ", "ue" to "ɥɛ", "ui" to "weɪ̯", "uir" to "wəɻ",
     "un" to "wən", "unr" to "wəɻ", "uo" to "wɔ", "uor" to "wɔɻ",

@@ -169,7 +169,7 @@ struct ExampleTests {
     #expect(
       example.getPhonetic(
         options: .preferMandarin, cantoneseOptions: .rawJyutping, mandarinOptions: .mandarinIPA)
-        == "tʰaɪ̯˧˥ ʂän˥˥ xwä˥˩")
+        == "tʰaɪ̯˧˥ ʂän˥˥ xu̯ä˥˩")
 
     example.jyutping = ""
     #expect(
@@ -247,7 +247,7 @@ struct ExampleTests {
     #expect(
       example.getPhonetic(
         options: .preferMandarin, cantoneseOptions: .rawJyutping, mandarinOptions: .mandarinIPA)
-        == "tʰaɪ̯˧˥ ʂän˥˥ xwä˥˩")
+        == "tʰaɪ̯˧˥ ʂän˥˥ xu̯ä˥˩")
     #expect(
       example.getPhonetic(
         options: .preferMandarin, cantoneseOptions: .rawJyutping, mandarinOptions: .rawPinyinWithV)
@@ -275,7 +275,7 @@ struct ExampleTests {
     #expect(
       example.getPhonetic(
         options: .preferMandarin, cantoneseOptions: .rawJyutping, mandarinOptions: .mandarinIPA)
-        == "sz̩˥˩꜒꜔ i˥˩꜒꜔ xwä˥˩")
+        == "sz̩˥˩꜒꜔ i˥˩꜒꜔ xu̯ä˥˩")
     #expect(
       example.getPhonetic(
         options: .preferMandarin, cantoneseOptions: .rawJyutping, mandarinOptions: .rawPinyinWithV)

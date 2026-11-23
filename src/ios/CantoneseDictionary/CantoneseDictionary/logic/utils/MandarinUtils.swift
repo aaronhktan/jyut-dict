@@ -97,7 +97,7 @@ nonisolated let mandarinIPAFinals: [String: String] = [
   "ir": "iə̯ɻ", "iu": "joʊ̯", "iur": "jɤʊ̯ɻʷ", "m": "m̩",
   "n": "n̩", "ng": "ŋ̍", "o": "wɔ", "ong": "ʊŋ",
   "ongr": "ʊ̃ɻ", "or": "wɔɻ", "ou": "oʊ̯", "our": "ɤʊ̯ɻʷ",
-  "u": "u", "ua": "wä", "uai": "waɪ̯", "uair": "wɑɻ",
+  "u": "u", "ua": "u̯ä", "uai": "waɪ̯", "uair": "wɑɻ",
   "uan": "wän", "uang": "wɑŋ", "uangr": "wɑ̃ɻ", "uanr": "wɑɻ",
   "uar": "u̯ɑɻ", "ue": "ɥɛ", "ui": "weɪ̯", "uir": "wəɻ",
   "un": "wən", "unr": "wəɻ", "uo": "wɔ", "uor": "wɔɻ",
