@@ -13,9 +13,14 @@ public:
 
 private slots:
     void isEmpty();
+    void isEmptyFalse();
+
+    void getTranslationSnippetSimple();
+    void getTranslationSnippetEmpty();
+
+    void getTranslations();
 
     void getSources();
-    void getTranslations();
 };
 
 TestTranslationSet::TestTranslationSet() {}
@@ -28,26 +33,30 @@ void TestTranslationSet::isEmpty()
     QCOMPARE(set.isEmpty(), true);
 }
 
-void TestTranslationSet::getSources()
+void TestTranslationSet::isEmptyFalse()
 {
-    std::string sourceName = "粵典—words.hk";
-    std::string sourceShortName = "WHK";
+    Translation::Translation translation{"egg waffle", "eng", true};
+    TranslationSet set = {"粵典—words.hk", {translation}};
+    QCOMPARE(set.isEmpty(), false);
+}
 
-    QCOMPARE(SourceUtils::addSource(sourceName, sourceShortName),
-             true);
+void TestTranslationSet::getTranslationSnippetSimple()
+{
+    Translation::Translation translation{"egg waffle", "eng", true};
+    TranslationSet set = {"粵典—words.hk", {translation}};
+    QCOMPARE(std::vector<Translation::Translation>(
+                 set.getTranslationSnippet().begin(),
+                 set.getTranslationSnippet().end()),
+             {translation});
+}
 
-    std::vector<Translation::Translation> translations{
-        {"I don't even know where I flung the key at.", "eng", true},
-    };
-    TranslationSet set{"粵典—words.hk", translations};
-    QCOMPARE(QString::fromStdString(set.getSource()),
-             QString::fromStdString(sourceName));
-    QCOMPARE(QString::fromStdString(set.getSourceLongString()),
-             QString::fromStdString(sourceName));
-    QCOMPARE(QString::fromStdString(set.getSourceShortString()),
-             QString::fromStdString(sourceShortName));
-
-    QCOMPARE(SourceUtils::removeSource(sourceName), true);
+void TestTranslationSet::getTranslationSnippetEmpty()
+{
+    TranslationSet set = {"粵典—words.hk", {}};
+    QCOMPARE(std::vector<Translation::Translation>(
+                 set.getTranslationSnippet().begin(),
+                 set.getTranslationSnippet().end()),
+             {});
 }
 
 void TestTranslationSet::getTranslations()
@@ -74,6 +83,27 @@ void TestTranslationSet::getTranslations()
                                               set.getTranslationSnippet().end()),
         translations);
     QCOMPARE(set.getTranslationSnippet().size(), translations.size());
+}
+
+void TestTranslationSet::getSources()
+{
+    std::string sourceName = "粵典—words.hk";
+    std::string sourceShortName = "WHK";
+
+    QCOMPARE(SourceUtils::addSource(sourceName, sourceShortName), true);
+
+    std::vector<Translation::Translation> translations{
+        {"I don't even know where I flung the key at.", "eng", true},
+    };
+    TranslationSet set{"粵典—words.hk", translations};
+    QCOMPARE(QString::fromStdString(set.getSource()),
+             QString::fromStdString(sourceName));
+    QCOMPARE(QString::fromStdString(set.getSourceLongString()),
+             QString::fromStdString(sourceName));
+    QCOMPARE(QString::fromStdString(set.getSourceShortString()),
+             QString::fromStdString(sourceShortName));
+
+    QCOMPARE(SourceUtils::removeSource(sourceName), true);
 }
 
 QTEST_APPLESS_MAIN(TestTranslationSet)

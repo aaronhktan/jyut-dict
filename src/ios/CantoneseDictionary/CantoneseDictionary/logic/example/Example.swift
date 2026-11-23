@@ -98,7 +98,7 @@ nonisolated struct Example: Hashable, Identifiable {
         convertJyutpingToYale(jyutping: _jyutping)
       }
     case .cantoneseIPA:
-      return PhoneticCache.shared.value(for: .prettyYale, jyutping: _jyutping) {
+      return PhoneticCache.shared.value(for: .cantoneseIPA, jyutping: _jyutping) {
         convertJyutpingToIPA(jyutping: _jyutping)
       }
     case .rawJyutping:

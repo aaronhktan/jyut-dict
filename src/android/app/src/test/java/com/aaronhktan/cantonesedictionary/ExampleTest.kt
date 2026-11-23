@@ -353,6 +353,134 @@ class ExampleUnitTest {
         assertEquals(newSimplified, example.getCharacters(EntryCharactersOptions.PREFER_SIMPLIFIED))
     }
 
+
+    @Test
+    fun example_getPhonetic_cantonese() {
+        val jyutping = "toi4 saan1 waa2"
+        val example = Example(
+            sourceLanguage = "yue",
+            traditional = "臺山話",
+            simplified = "台山话",
+            jyutping = "toi4 saan1 waa2",
+            pinyin = "tai2 shan1 hua4",
+            translations = listOf()
+        )
+
+        assertEquals(jyutping, example.jyutping)
+        assertEquals(
+            jyutping,
+            example.getPhonetic(
+                options = EntryPhoneticOptions.PREFER_CANTONESE,
+                cantoneseOptions = CantoneseOptions.RAW_JYUTPING,
+                mandarinOptions = MandarinOptions.RAW_PINYIN
+            )
+        )
+        var phoneticString = "tòih sāan wá"
+        assertEquals(
+            phoneticString,
+            example.getPhonetic(
+                options = EntryPhoneticOptions.PREFER_CANTONESE,
+                cantoneseOptions = CantoneseOptions.PRETTY_YALE,
+                mandarinOptions = MandarinOptions.RAW_PINYIN
+            )
+        )
+        phoneticString = "tʰɔːi̯˨˩ säːn˥ wäː˧˥"
+        assertEquals(
+            phoneticString,
+            example.getPhonetic(
+                options = EntryPhoneticOptions.PREFER_CANTONESE,
+                cantoneseOptions = CantoneseOptions.CANTONESE_IPA,
+                mandarinOptions = MandarinOptions.RAW_PINYIN
+            )
+        )
+
+        example.pinyin = ""
+        phoneticString = "tòih sāan wá"
+        assertEquals(
+            phoneticString,
+            example.getPhonetic(
+                options = EntryPhoneticOptions.PREFER_CANTONESE,
+                cantoneseOptions = CantoneseOptions.PRETTY_YALE,
+                mandarinOptions = MandarinOptions.RAW_PINYIN
+            )
+        )
+        example.jyutping = ""
+        example.pinyin = "tai2 shan1 hua4"
+        phoneticString = ""
+        assertEquals(
+            phoneticString,
+            example.getPhonetic(
+                options = EntryPhoneticOptions.PREFER_CANTONESE,
+                cantoneseOptions = CantoneseOptions.CANTONESE_IPA,
+                mandarinOptions = MandarinOptions.RAW_PINYIN
+            )
+        )
+    }
+
+    @Test
+    fun example_getPhonetic_mandarin() {
+        val pinyin = "tai2 shan1 hua4"
+        val example = Example(
+            sourceLanguage = "yue",
+            traditional = "臺山話",
+            simplified = "台山话",
+            jyutping = "toi4 saan1 waa2",
+            pinyin = "tai2 shan1 hua4",
+            translations = listOf()
+        )
+
+        assertEquals(pinyin, example.pinyin)
+        var phoneticString = "tái shān huà"
+        assertEquals(
+            phoneticString,
+            example.getPhonetic(
+                options = EntryPhoneticOptions.PREFER_MANDARIN,
+                cantoneseOptions = CantoneseOptions.RAW_JYUTPING,
+                mandarinOptions = MandarinOptions.PRETTY_PINYIN
+            )
+        )
+        phoneticString = "ㄊㄞˊ ㄕㄢ ㄏㄨㄚˋ"
+        assertEquals(
+            phoneticString,
+            example.getPhonetic(
+                options = EntryPhoneticOptions.PREFER_MANDARIN,
+                cantoneseOptions = CantoneseOptions.RAW_JYUTPING,
+                mandarinOptions = MandarinOptions.ZHUYIN
+            )
+        )
+        phoneticString = "tʰaɪ̯˧˥ ʂän˥˥ xwä˥˩"
+        assertEquals(
+            phoneticString,
+            example.getPhonetic(
+                options = EntryPhoneticOptions.PREFER_MANDARIN,
+                cantoneseOptions = CantoneseOptions.RAW_JYUTPING,
+                mandarinOptions = MandarinOptions.MANDARIN_IPA
+            )
+        )
+
+        example.jyutping = ""
+        phoneticString = "tai2 shan1 hua4"
+        assertEquals(
+            phoneticString,
+            example.getPhonetic(
+                options = EntryPhoneticOptions.PREFER_MANDARIN,
+                cantoneseOptions = CantoneseOptions.RAW_JYUTPING,
+                mandarinOptions = MandarinOptions.RAW_PINYIN
+            )
+        )
+        example.pinyin = ""
+        example.jyutping = "toi4 saan1 waa2"
+        phoneticString = ""
+        assertEquals(
+            phoneticString,
+            example.getPhonetic(
+                options = EntryPhoneticOptions.PREFER_MANDARIN,
+                cantoneseOptions = CantoneseOptions.RAW_JYUTPING,
+                mandarinOptions = MandarinOptions.MANDARIN_IPA
+            )
+        )
+    }
+
     @Test
     fun example_jyutping_getSet() {
         val jyutping = "toi4 saan1 waa2"
@@ -515,133 +643,6 @@ class ExampleUnitTest {
                 options = EntryPhoneticOptions.ONLY_MANDARIN,
                 cantoneseOptions = CantoneseOptions.RAW_JYUTPING,
                 mandarinOptions = MandarinOptions.RAW_PINYIN_WITH_V
-            )
-        )
-    }
-
-    @Test
-    fun example_getPhonetic_cantonese() {
-        val jyutping = "toi4 saan1 waa2"
-        val example = Example(
-            sourceLanguage = "yue",
-            traditional = "臺山話",
-            simplified = "台山话",
-            jyutping = "toi4 saan1 waa2",
-            pinyin = "tai2 shan1 hua4",
-            translations = listOf()
-        )
-
-        assertEquals(jyutping, example.jyutping)
-        assertEquals(
-            jyutping,
-            example.getPhonetic(
-                options = EntryPhoneticOptions.PREFER_CANTONESE,
-                cantoneseOptions = CantoneseOptions.RAW_JYUTPING,
-                mandarinOptions = MandarinOptions.RAW_PINYIN
-            )
-        )
-        var phoneticString = "tòih sāan wá"
-        assertEquals(
-            phoneticString,
-            example.getPhonetic(
-                options = EntryPhoneticOptions.PREFER_CANTONESE,
-                cantoneseOptions = CantoneseOptions.PRETTY_YALE,
-                mandarinOptions = MandarinOptions.RAW_PINYIN
-            )
-        )
-        phoneticString = "tʰɔːi̯˨˩ säːn˥ wäː˧˥"
-        assertEquals(
-            phoneticString,
-            example.getPhonetic(
-                options = EntryPhoneticOptions.PREFER_CANTONESE,
-                cantoneseOptions = CantoneseOptions.CANTONESE_IPA,
-                mandarinOptions = MandarinOptions.RAW_PINYIN
-            )
-        )
-
-        example.pinyin = ""
-        phoneticString = "tòih sāan wá"
-        assertEquals(
-            phoneticString,
-            example.getPhonetic(
-                options = EntryPhoneticOptions.PREFER_CANTONESE,
-                cantoneseOptions = CantoneseOptions.PRETTY_YALE,
-                mandarinOptions = MandarinOptions.RAW_PINYIN
-            )
-        )
-        example.jyutping = ""
-        example.pinyin = "tai2 shan1 hua4"
-        phoneticString = ""
-        assertEquals(
-            phoneticString,
-            example.getPhonetic(
-                options = EntryPhoneticOptions.PREFER_CANTONESE,
-                cantoneseOptions = CantoneseOptions.CANTONESE_IPA,
-                mandarinOptions = MandarinOptions.RAW_PINYIN
-            )
-        )
-    }
-
-    @Test
-    fun example_getPhonetic_mandarin() {
-        val pinyin = "tai2 shan1 hua4"
-        val example = Example(
-            sourceLanguage = "yue",
-            traditional = "臺山話",
-            simplified = "台山话",
-            jyutping = "toi4 saan1 waa2",
-            pinyin = "tai2 shan1 hua4",
-            translations = listOf()
-        )
-
-        assertEquals(pinyin, example.pinyin)
-        var phoneticString = "tái shān huà"
-        assertEquals(
-            phoneticString,
-            example.getPhonetic(
-                options = EntryPhoneticOptions.PREFER_MANDARIN,
-                cantoneseOptions = CantoneseOptions.RAW_JYUTPING,
-                mandarinOptions = MandarinOptions.PRETTY_PINYIN
-            )
-        )
-        phoneticString = "ㄊㄞˊ ㄕㄢ ㄏㄨㄚˋ"
-        assertEquals(
-            phoneticString,
-            example.getPhonetic(
-                options = EntryPhoneticOptions.PREFER_MANDARIN,
-                cantoneseOptions = CantoneseOptions.RAW_JYUTPING,
-                mandarinOptions = MandarinOptions.ZHUYIN
-            )
-        )
-        phoneticString = "tʰaɪ̯˧˥ ʂän˥˥ xwä˥˩"
-        assertEquals(
-            phoneticString,
-            example.getPhonetic(
-                options = EntryPhoneticOptions.PREFER_MANDARIN,
-                cantoneseOptions = CantoneseOptions.RAW_JYUTPING,
-                mandarinOptions = MandarinOptions.MANDARIN_IPA
-            )
-        )
-
-        example.jyutping = ""
-        phoneticString = "tai2 shan1 hua4"
-        assertEquals(
-            phoneticString,
-            example.getPhonetic(
-                options = EntryPhoneticOptions.PREFER_MANDARIN,
-                cantoneseOptions = CantoneseOptions.RAW_JYUTPING,
-                mandarinOptions = MandarinOptions.RAW_PINYIN
-            )
-        )
-        example.pinyin = ""
-        example.jyutping = "toi4 saan1 waa2"
-        phoneticString = ""
-        assertEquals(
-            phoneticString,
-            example.getPhonetic(
-                options = EntryPhoneticOptions.PREFER_MANDARIN,
-                cantoneseOptions = CantoneseOptions.RAW_JYUTPING,
-                mandarinOptions = MandarinOptions.MANDARIN_IPA
             )
         )
     }

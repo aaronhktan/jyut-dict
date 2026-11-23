@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Translation: Hashable, Identifiable {
+nonisolated struct Translation: Hashable, Identifiable {
   let id = UUID()
   var content: String
   var language: String

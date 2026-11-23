@@ -15,7 +15,17 @@ Example::Example(const std::string &sourceLanguage,
     , _jyutping{jyutping}
     , _pinyin{pinyin}
     , _translationSets{translationSets}
-{}
+{
+    // Normalize pinyin and jyutping to lowercase >:(
+    std::transform(_jyutping.cbegin(),
+                   _jyutping.cend(),
+                   _jyutping.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+    std::transform(_pinyin.cbegin(),
+                   _pinyin.cend(),
+                   _pinyin.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+}
 
 std::ostream &operator<<(std::ostream &out, const Example &example)
 {
@@ -156,6 +166,10 @@ const std::string &Example::getJyutping(void) const
 void Example::setJyutping(const std::string &jyutping)
 {
     _jyutping = jyutping;
+    std::transform(_jyutping.cbegin(),
+                   _jyutping.cend(),
+                   _jyutping.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
     _yale = std::nullopt;
     _cantoneseIPA = std::nullopt;
 }
@@ -168,6 +182,10 @@ const std::string &Example::getPinyin(void) const
 void Example::setPinyin(const std::string &pinyin)
 {
     _pinyin = pinyin;
+    std::transform(_pinyin.cbegin(),
+                   _pinyin.cend(),
+                   _pinyin.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
     _prettyPinyin = std::nullopt;
     _numberedPinyin = std::nullopt;
     _zhuyin = std::nullopt;
