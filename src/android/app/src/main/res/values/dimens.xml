@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <dimen name="horizontal_padding">16dp</dimen>
+    <dimen name="vertical_padding">16dp</dimen>
+
+    <dimen name="content_padding">16dp</dimen>
+
+    <dimen name="column_spacing">8dp</dimen>
+    <dimen name="row_spacing">8dp</dimen>
+    <dimen name="grid_spacing">8dp</dimen>
+
+    <dimen name="search_pane_default_width">400dp</dimen>
+    <dimen name="search_pane_min_height">800dp</dimen>
+</resources>
