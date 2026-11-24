@@ -1,5 +1,27 @@
 package com.aaronhktan.cantonesedictionary.logic.utils
 
+import android.util.Log
+import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.SQLiteStatement
+import com.aaronhktan.cantonesedictionary.logic.entry.Definition
+import com.aaronhktan.cantonesedictionary.logic.entry.DefinitionsSet
+import com.aaronhktan.cantonesedictionary.logic.entry.Entry
+import com.aaronhktan.cantonesedictionary.logic.example.Example
+import com.aaronhktan.cantonesedictionary.logic.example.Translation
+import com.aaronhktan.cantonesedictionary.logic.example.TranslationSet
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.intOrNull
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+
+private const val LOG_TAG = "QueryUtils"
+
 fun prepareCharacterBindValues(characters: String): String {
     val searchExactMatch =
         (characters.length >= 3 && characters.startsWith("\"") && characters.endsWith("\""))
@@ -87,7 +109,9 @@ fun preparePinyinBindValues(
         .replace("v", "u:")
         .replace("ü", "u:")
     val searchExactMatch =
-        (processedPinyin.length >= 3 && processedPinyin.startsWith("\"") && processedPinyin.endsWith("\""))
+        (processedPinyin.length >= 3 && processedPinyin.startsWith("\"") && processedPinyin.endsWith(
+            "\""
+        ))
     val appendWildcard = !processedPinyin.endsWith("$")
 
     var pinyinSyllables: List<String> = listOf()
@@ -144,4 +168,176 @@ fun prepareEnglishBindValues(english: String): Pair<String, String> {
     }
 
     return Pair(ftsParam, likeParam)
+}
+
+fun parseReturnedEntryRecords(statement: SQLiteStatement): List<Entry> {
+    Log.i(LOG_TAG, "parsing returned entry records!")
+    val result: MutableList<Entry> = mutableListOf()
+
+    val columnIndices = statement.columnIndices()
+    val rowIdIdx = columnIndices["entry_id"]!!
+    val traditionalIdx = columnIndices["traditional"]!!
+    val simplifiedIdx = columnIndices["simplified"]!!
+    val jyutpingIdx = columnIndices["jyutping"]!!
+    val pinyinIdx = columnIndices["pinyin"]!!
+    val definitionsIdx = columnIndices["definitions"]!!
+    while (statement.step()) {
+        val definitionsSets: MutableList<DefinitionsSet> = mutableListOf()
+        var definitionsListArray: JsonArray
+        try {
+            definitionsListArray =
+                Json.parseToJsonElement(statement.getText(definitionsIdx)).jsonArray
+            for (definitionGroupsJSON in definitionsListArray) {
+                val definitionGroupsElement = definitionGroupsJSON.jsonObject
+                val source = definitionGroupsElement["source"]?.jsonPrimitive?.contentOrNull
+
+                val definitionsArray: JsonArray?
+                val definitions: MutableList<Definition> = mutableListOf()
+                try {
+                    definitionsArray = definitionGroupsElement["definitions"]?.jsonArray
+                    if (definitionsArray == null) {
+                        throw SerializationException("Couldn't parse definitions as array")
+                    }
+
+                    for (definitionJSON in definitionsArray) {
+                        val definitionElement = definitionJSON.jsonObject
+                        val definition =
+                            definitionElement["definition"]?.jsonPrimitive?.contentOrNull
+                        val label = definitionElement["label"]?.jsonPrimitive?.contentOrNull ?: ""
+
+                        val examplesArray: JsonArray?
+                        val examples: MutableList<Example> = mutableListOf()
+                        try {
+                            examplesArray = definitionElement["examples"]?.jsonArray
+                            if (examplesArray == null) {
+                                throw SerializationException("Couldn't parse examples as array")
+                            }
+
+                            for (exampleJSON in examplesArray) {
+                                if (exampleJSON == JsonNull) {
+                                    continue
+                                }
+                                val exampleElement = exampleJSON.jsonObject
+                                val traditional =
+                                    exampleElement["traditional"]?.jsonPrimitive?.contentOrNull
+                                val simplified =
+                                    exampleElement["simplified"]?.jsonPrimitive?.contentOrNull
+                                val jyutping =
+                                    exampleElement["jyutping"]?.jsonPrimitive?.contentOrNull
+                                val pinyin = exampleElement["pinyin"]?.jsonPrimitive?.contentOrNull
+                                val language =
+                                    exampleElement["language"]?.jsonPrimitive?.contentOrNull
+
+                                val translationsArray: JsonArray?
+                                val translations: MutableList<Translation> = mutableListOf()
+                                try {
+                                    translationsArray = exampleElement["translations"]?.jsonArray
+                                    if (translationsArray == null) {
+                                        throw SerializationException("Couldn't parse translations as array")
+                                    }
+
+                                    for (translationJSON in translationsArray) {
+                                        val translationElement = translationJSON.jsonObject
+                                        val translation =
+                                            translationElement["translation"]?.jsonPrimitive?.contentOrNull
+                                        val language =
+                                            translationElement["language"]?.jsonPrimitive?.contentOrNull
+                                        val direct =
+                                            (translationElement["direct"]?.jsonPrimitive?.intOrNull
+                                                ?: 0) == 1
+
+                                        translations.add(
+                                            Translation(
+                                                content = translation!!,
+                                                language = language!!,
+                                                directTarget = direct,
+                                            )
+                                        )
+                                    }
+                                } catch (s: SerializationException) {
+                                    Log.e(
+                                        LOG_TAG,
+                                        "Translations array could not be parsed! ${s.message}"
+                                    )
+                                    continue
+                                }
+
+                                val translationSet = TranslationSet(
+                                    source = source!!,
+                                    translations = translations,
+                                )
+
+                                examples.add(
+                                    Example(
+                                        sourceLanguage = language!!,
+                                        traditional = traditional!!,
+                                        simplified = simplified!!,
+                                        jyutping = jyutping!!,
+                                        pinyin = pinyin!!,
+                                        translations = listOf(translationSet)
+                                    )
+                                )
+                            }
+                        } catch (s: SerializationException) {
+                            Log.e(
+                                LOG_TAG,
+                                "Examples array could not be parsed! ${s.message}"
+                            )
+                            continue
+                        } finally {
+                            Log.i(LOG_TAG, "Adding to definitions...")
+                            definitions.add(
+                                Definition(
+                                    definitionContent = definition!!,
+                                    label = label,
+                                    examples = examples,
+                                )
+                            )
+                        }
+
+                    }
+                } catch (s: SerializationException) {
+                    Log.e(
+                        LOG_TAG,
+                        "Definitions set was not a dict!, ${s.message}"
+                    )
+                    continue
+                } finally {
+                    definitionsSets.add(
+                        DefinitionsSet(
+                            source = source!!,
+                            sourceShortString = source,
+                            definitions = definitions,
+                        )
+                    )
+                }
+            }
+        } catch (s: SerializationException) {
+            Log.e(
+                LOG_TAG,
+                "Could not parse definitions ${statement.getText(definitionsIdx)} as JSON"
+            )
+            continue
+        } finally {
+            result.add(
+                Entry(
+                    rowId = statement.getInt(rowIdIdx),
+                    traditional = statement.getText(traditionalIdx),
+                    simplified = statement.getText(simplifiedIdx),
+                    jyutping = statement.getText(jyutpingIdx),
+                    pinyin = statement.getText(pinyinIdx),
+                    definitions = definitionsSets,
+                )
+            )
+        }
+    }
+
+    return result.toList()
+}
+
+fun parseExistenceRecords(statement: SQLiteStatement): Boolean {
+    while (statement.step()) {
+        return statement.getInt(0) == 1
+    }
+    return false
 }

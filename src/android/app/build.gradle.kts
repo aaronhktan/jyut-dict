@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -60,7 +61,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:${rootProject.extra["lifecycle_version"]}")
     implementation(libs.androidx.compose.material.icons.core)
     implementation("androidx.compose.material:material-icons-extended")
+    implementation(libs.androidx.sqlite.ktx)
     implementation(libs.androidx.ui)
+    implementation(libs.androidx.sqlite.bundled)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))

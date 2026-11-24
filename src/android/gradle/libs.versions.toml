@@ -1,19 +1,22 @@
 [versions]
-agp = "9.5.1"
+agp = "9.5.2"
 coreKtx = "1.19.1"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
-lifecycleRuntimeKtx = "2.11.0"
+lifecycleRuntimeKtx = "2.11.1"
 activityCompose = "1.13.0"
-kotlin = "2.2.10"
-composeBom = "2026.02.01"
+kotlin = "2.4.21"
+composeBom = "2026.11.01"
 material3WindowSizeClass = "1.5.0"
 material3 = "1.5.0"
 adaptiveLayout = "1.3.0"
 adaptiveNavigation = "1.3.0"
 ui = "1.13.0"
 foundationLayout = "1.13.0"
+sqlite = "2.7.1"
+ksp = "2.3.14"
+sqliteKtx = "2.7.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -38,8 +41,11 @@ androidx-compose-adaptive-layout = { group = "androidx.compose.material3.adaptiv
 androidx-compose-adaptive-navigation = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation", version.ref = "adaptiveNavigation" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
+androidx-sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
+androidx-sqlite-ktx = { group = "androidx.sqlite", name = "sqlite-ktx", version.ref = "sqliteKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 

@@ -72,7 +72,7 @@ nonisolated func unfoldBasicRegex(for pattern: String) -> [String] {
     if regexIdx == nil {
       out.append(s)
     } else if regexIdx == s.startIndex {
-      out.append(String(s[s.index(after: s.startIndex)...]))
+      out.append(String(s.dropFirst()))
     } else {
       var tmp = s
       tmp.removeSubrange(
