@@ -332,6 +332,71 @@ struct EntryTests {
     )
   }
 
+  @Test func getCharactersColourNone() async throws {
+    let traditional = "清遠"
+    let simplified = "清远"
+    let entry = Entry(
+      rowid: 1, traditional: traditional, simplified: simplified, jyutping: "cing1 jyun5",
+      pinyin: "qing1 yuan3", definitions: [])
+
+    var colouredTraditionalString: AttributedString = "清遠"
+    var colouredSimplifiedString: AttributedString = "清远"
+
+    var colouredPreferTraditionalString = AttributedString(
+      "清遠 [\(sameCharacterString)远]")
+    var colouredPreferSimplifiedString = AttributedString(
+      "清远 [\(sameCharacterString)遠]")
+
+    #expect(
+      entry.getCharacters(
+        options: .onlyTraditional, useColours: true, colourPhoneticType: .none,
+        jyutpingToneColours: defaultJyutpingToneColours, pinyinToneColours: defaultPinyinToneColours
+      ) == colouredTraditionalString
+    )
+    #expect(
+      entry.getCharacters(
+        options: .onlySimplified, useColours: true, colourPhoneticType: .none,
+        jyutpingToneColours: defaultJyutpingToneColours, pinyinToneColours: defaultPinyinToneColours
+      ) == colouredSimplifiedString
+    )
+    #expect(
+      entry.getCharacters(
+        options: .preferTraditional, useColours: true, colourPhoneticType: .none,
+        jyutpingToneColours: defaultJyutpingToneColours, pinyinToneColours: defaultPinyinToneColours
+      ) == colouredPreferTraditionalString
+    )
+    #expect(
+      entry.getCharacters(
+        options: .preferSimplified, useColours: true, colourPhoneticType: .none,
+        jyutpingToneColours: defaultJyutpingToneColours, pinyinToneColours: defaultPinyinToneColours
+      ) == colouredPreferSimplifiedString
+    )
+    #expect(
+      entry.getCharactersNoSecondary(
+        options: .onlyTraditional, useColours: true, colourPhoneticType: .none,
+        jyutpingToneColours: defaultJyutpingToneColours, pinyinToneColours: defaultPinyinToneColours
+      ) == colouredTraditionalString
+    )
+    #expect(
+      entry.getCharactersNoSecondary(
+        options: .onlySimplified, useColours: true, colourPhoneticType: .none,
+        jyutpingToneColours: defaultJyutpingToneColours, pinyinToneColours: defaultPinyinToneColours
+      ) == colouredSimplifiedString
+    )
+    #expect(
+      entry.getCharactersNoSecondary(
+        options: .preferTraditional, useColours: true, colourPhoneticType: .none,
+        jyutpingToneColours: defaultJyutpingToneColours, pinyinToneColours: defaultPinyinToneColours
+      ) == colouredTraditionalString
+    )
+    #expect(
+      entry.getCharactersNoSecondary(
+        options: .preferSimplified, useColours: true, colourPhoneticType: .none,
+        jyutpingToneColours: defaultJyutpingToneColours, pinyinToneColours: defaultPinyinToneColours
+      ) == colouredSimplifiedString
+    )
+  }
+
   @Test func getCharactersSimpleNone() async throws {
     let traditional = "清遠"
     let simplified = "清远"

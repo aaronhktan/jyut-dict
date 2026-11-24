@@ -1,6 +1,5 @@
 package com.aaronhktan.cantonesedictionary.ui.components
 
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -16,7 +15,7 @@ fun CantoneseDictionaryApp(
     HomeScreen(
         dictionaryUiState = dictionaryUiState,
         onQueryChanged = {
-            viewModel.updateSearchResults(it)
+            viewModel.updateSearchQuery(it)
         },
         onEntrySelected = {
             viewModel.updateDetailsScreenStates(it)

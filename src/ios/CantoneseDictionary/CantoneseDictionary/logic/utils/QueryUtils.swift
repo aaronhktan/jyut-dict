@@ -44,7 +44,7 @@ nonisolated func prepareJyutpingBindValues(
   var correctedTerm = jyutping
   if !searchExactMatch && useFuzzyJyutping {
     if appendWildcard {
-      correctedTerm = jyutpingAutocorrect(text: jyutping, unsafeSubstitutions: unsafeFuzzyJyutping)
+      correctedTerm = jyutpingAutocorrect(text: correctedTerm, unsafeSubstitutions: unsafeFuzzyJyutping)
     } else {
       correctedTerm = jyutpingAutocorrect(
         text: String(jyutping.prefix(jyutping.count - 1)),
@@ -105,21 +105,24 @@ nonisolated func preparePinyinBindValues(
   pinyin: String,
   useFuzzyPinyin: Bool
 ) -> String {
+  let processedPinyin = pinyin.replacingOccurrences(of: "v", with: "u:")
+    .replacingOccurrences(of: "ü", with: "u:")
+
   let searchExactMatch =
-    pinyin.count >= 3
-    && ((pinyin.hasPrefix("\"")
-      && pinyin.hasSuffix("\""))
-      || (pinyin.hasPrefix("“") && pinyin.hasSuffix("”")))
-  let appendWildcard = !pinyin.hasSuffix("$")
+    processedPinyin.count >= 3
+    && ((processedPinyin.hasPrefix("\"")
+      && processedPinyin.hasSuffix("\""))
+      || (processedPinyin.hasPrefix("“") && processedPinyin.hasSuffix("”")))
+  let appendWildcard = !processedPinyin.hasSuffix("$")
 
   var pinyinSyllables: [String] = []
   if searchExactMatch {
     pinyinSyllables = String(
-      pinyin.dropFirst().dropLast()
+      processedPinyin.dropFirst().dropLast()
     ).components(separatedBy: " ")
   } else {
     (_, pinyinSyllables) = segmentPinyin(
-      text: pinyin,
+      text: processedPinyin,
       removeSpecialCharacters: true,
       removeGlobCharacters: false
     )
@@ -398,7 +401,8 @@ nonisolated func parseReturnedSearchHistoryRecords(rows: [Row]) -> [SearchHistor
     let timestamp = row["timestamp"] as! String
     results.append(
       SearchHistoryItem(
-        searchTerm: searchTerm, inputMethod: InputMethod(rawValue: Int(method)) ?? .autoDetect, timestamp: timestamp))
+        searchTerm: searchTerm, inputMethod: InputMethod(rawValue: Int(method)) ?? .autoDetect,
+        timestamp: timestamp))
   }
   return results
 }

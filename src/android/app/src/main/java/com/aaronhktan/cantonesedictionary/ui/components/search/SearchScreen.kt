@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExpandedDockedSearchBar
@@ -55,6 +57,7 @@ fun SearchScreen(
     modifier: Modifier = Modifier
 ) {
     val searchBarState = rememberSearchBarState()
+    val listState = rememberLazyListState()
 
     Scaffold(
         topBar = {
@@ -62,6 +65,7 @@ fun SearchScreen(
                 SearchScreenContents(
                     dictionaryUiState = dictionaryUiState,
                     searchBarState = searchBarState,
+                    listState = listState,
                     isSinglePane = isSinglePane,
                     onQueryChanged = onQueryChanged,
                     onEntrySelected = onEntrySelected,
@@ -78,6 +82,7 @@ fun SearchScreen(
                 SearchScreenContents(
                     dictionaryUiState = dictionaryUiState,
                     searchBarState = searchBarState,
+                    listState = listState,
                     isSinglePane = isSinglePane,
                     onQueryChanged = onQueryChanged,
                     onEntrySelected = onEntrySelected,
@@ -104,6 +109,7 @@ fun SearchScreen(
 private fun SearchScreenContents(
     dictionaryUiState: DictionaryUiState,
     searchBarState: SearchBarState,
+    listState: LazyListState,
     isSinglePane: Boolean,
     onQueryChanged: (String) -> Unit,
     onEntrySelected: (Entry) -> Unit,
@@ -157,6 +163,8 @@ private fun SearchScreenContents(
         ExpandedFullScreenContainedSearchBar(state = searchBarState, inputField = inputField) {
             SearchResults(
                 dictionaryUiState = dictionaryUiState,
+                listState = listState,
+                isSinglePane = isSinglePane,
                 onEntrySelected = { result ->
                     shouldReexpand = true
                     scope.launch {
@@ -179,6 +187,8 @@ private fun SearchScreenContents(
         ) {
             SearchResults(
                 dictionaryUiState = dictionaryUiState,
+                listState = listState,
+                isSinglePane = isSinglePane,
                 onEntrySelected = { result ->
                     onEntrySelected(result)
                 },
@@ -198,12 +208,14 @@ private fun SearchScreenContents(
 @Composable
 fun SearchResults(
     dictionaryUiState: DictionaryUiState,
+    listState: LazyListState,
+    isSinglePane: Boolean,
     onEntrySelected: (Entry) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val searchResults = dictionaryUiState.searchResults ?: listOf()
-    Log.d("test", "Updating search results with ${searchResults.count()} items")
     LazyColumn(
+        state = listState,
         modifier = modifier
     ) {
         items(searchResults, key = { entry -> entry.id }) { entry ->
@@ -215,6 +227,14 @@ fun SearchResults(
                         onEntrySelected(entry)
                     }
             )
+        }
+    }
+
+    if (!isSinglePane) {
+        LaunchedEffect(searchResults) {
+            if (searchResults.isNotEmpty()) {
+                onEntrySelected(searchResults[0])
+            }
         }
     }
 }

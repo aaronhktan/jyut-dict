@@ -182,7 +182,7 @@ nonisolated struct Entry: Hashable, Identifiable {
         switch colourPhoneticType {
         case .none:
           return AttributedString(_traditional) + AttributedString(" [")
-            + AttributedString(_simplified) + AttributedString("]")
+            + AttributedString(_simplifiedDifference) + AttributedString("]")
         case .cantonese:
           tones = getJyutpingNumbers()
         case .mandarin:
@@ -213,7 +213,8 @@ nonisolated struct Entry: Hashable, Identifiable {
         var tones: [Int]
         switch colourPhoneticType {
         case .none:
-          return AttributedString(_traditional)
+          return AttributedString(_simplified) + AttributedString(" [")
+            + AttributedString(_traditionalDifference) + AttributedString("]")
         case .cantonese:
           tones = getJyutpingNumbers()
         case .mandarin:
