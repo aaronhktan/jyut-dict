@@ -1,6 +1,5 @@
 package com.aaronhktan.cantonesedictionary.ui.components.search
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -41,7 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.PopupProperties
 import com.aaronhktan.cantonesedictionary.R
 import com.aaronhktan.cantonesedictionary.logic.entry.Entry
-import com.aaronhktan.cantonesedictionary.ui.components.DictionaryUiState
+import com.aaronhktan.cantonesedictionary.ui.components.SearchScreenUiState
 import com.aaronhktan.cantonesedictionary.ui.components.entry.EntryRow
 import com.aaronhktan.cantonesedictionary.ui.theme.CantoneseDictionaryTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -50,7 +49,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SearchScreen(
-    dictionaryUiState: DictionaryUiState,
+    searchScreenUiState: SearchScreenUiState,
     isSinglePane: Boolean,
     onQueryChanged: (String) -> Unit,
     onEntrySelected: (Entry) -> Unit,
@@ -63,7 +62,7 @@ fun SearchScreen(
         topBar = {
             if (!isSinglePane) {
                 SearchScreenContents(
-                    dictionaryUiState = dictionaryUiState,
+                    searchScreenUiState = searchScreenUiState,
                     searchBarState = searchBarState,
                     listState = listState,
                     isSinglePane = isSinglePane,
@@ -80,7 +79,7 @@ fun SearchScreen(
         bottomBar = {
             if (isSinglePane) {
                 SearchScreenContents(
-                    dictionaryUiState = dictionaryUiState,
+                    searchScreenUiState = searchScreenUiState,
                     searchBarState = searchBarState,
                     listState = listState,
                     isSinglePane = isSinglePane,
@@ -107,7 +106,7 @@ fun SearchScreen(
 
 @Composable
 private fun SearchScreenContents(
-    dictionaryUiState: DictionaryUiState,
+    searchScreenUiState: SearchScreenUiState,
     searchBarState: SearchBarState,
     listState: LazyListState,
     isSinglePane: Boolean,
@@ -123,7 +122,7 @@ private fun SearchScreenContents(
             val focusManager = LocalFocusManager.current
 
             SearchBarDefaults.InputField(
-                textFieldState = dictionaryUiState.textFieldState,
+                textFieldState = searchScreenUiState.textFieldState,
                 searchBarState = searchBarState,
                 onSearch = {
                     keyboardController?.hide()
@@ -143,8 +142,8 @@ private fun SearchScreenContents(
         }
     }
 
-    LaunchedEffect(dictionaryUiState.textFieldState) {
-        snapshotFlow { dictionaryUiState.textFieldState.text.toString() }
+    LaunchedEffect(searchScreenUiState.textFieldState) {
+        snapshotFlow { searchScreenUiState.textFieldState.text.toString() }
             .distinctUntilChanged()
             .collectLatest { query ->
                 onQueryChanged(query)
@@ -162,7 +161,7 @@ private fun SearchScreenContents(
     if (isSinglePane) {
         ExpandedFullScreenContainedSearchBar(state = searchBarState, inputField = inputField) {
             SearchResults(
-                dictionaryUiState = dictionaryUiState,
+                searchScreenUiState = searchScreenUiState,
                 listState = listState,
                 isSinglePane = isSinglePane,
                 onEntrySelected = { result ->
@@ -186,7 +185,7 @@ private fun SearchScreenContents(
             ),
         ) {
             SearchResults(
-                dictionaryUiState = dictionaryUiState,
+                searchScreenUiState = searchScreenUiState,
                 listState = listState,
                 isSinglePane = isSinglePane,
                 onEntrySelected = { result ->
@@ -207,13 +206,13 @@ private fun SearchScreenContents(
 
 @Composable
 fun SearchResults(
-    dictionaryUiState: DictionaryUiState,
+    searchScreenUiState: SearchScreenUiState,
     listState: LazyListState,
     isSinglePane: Boolean,
     onEntrySelected: (Entry) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val searchResults = dictionaryUiState.searchResults ?: listOf()
+    val searchResults = searchScreenUiState.searchResults ?: listOf()
     LazyColumn(
         state = listState,
         modifier = modifier
@@ -244,7 +243,7 @@ fun SearchResults(
 fun SearchScreenPreviewSinglePane() {
     CantoneseDictionaryTheme {
         SearchScreen(
-            dictionaryUiState = DictionaryUiState(),
+            searchScreenUiState = SearchScreenUiState(),
             isSinglePane = true,
             onQueryChanged = {},
             onEntrySelected = {})
@@ -256,7 +255,7 @@ fun SearchScreenPreviewSinglePane() {
 fun SearchScreenPreviewDoublePane() {
     CantoneseDictionaryTheme {
         SearchScreen(
-            dictionaryUiState = DictionaryUiState(),
+            searchScreenUiState = SearchScreenUiState(),
             isSinglePane = false,
             onQueryChanged = {},
             onEntrySelected = {})

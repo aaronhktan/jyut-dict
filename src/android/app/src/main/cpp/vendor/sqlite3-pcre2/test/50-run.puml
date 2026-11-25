@@ -1,0 +1,38 @@
+@startuml test-run
+start
+
+group run.sh
+    :Insert into testcampaign
+    (lib, started_at)>
+
+    while (has next testcase) is (yes)
+        :Select id, execute_sql, evaluate_sql
+        from testcase
+        where id=next<
+        :Insert into testreport>
+        partition "Test Execution" {
+            note
+                The Test Execution is run
+                with a separate and single
+                SQLite connection.
+                --
+                The process standard
+                output, error and exit
+                code are recorded.
+            end note
+            :.load lib/
+            :Update testreport
+            set report_value = ((execute_sql))>
+        }
+        :Update testreport
+        set stdout, stderr, exit_code>
+        :Update testreport
+        set evaluation = ((evaluate_sql))>
+    endwhile (no)
+
+    :update testcampaign
+    set ended_at>
+end group
+
+stop
+@enduml

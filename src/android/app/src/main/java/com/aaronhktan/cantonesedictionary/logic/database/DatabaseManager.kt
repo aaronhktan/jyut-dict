@@ -1,6 +1,7 @@
 package com.aaronhktan.cantonesedictionary.logic.database
 
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
@@ -78,8 +79,24 @@ class DatabaseManager {
         }
     }
 
-    private fun setupDatabase() {
+    private fun setupDatabase(context: Context) {
         val driver = BundledSQLiteDriver()
+
+        val extensionPath = File(
+            context.applicationInfo.nativeLibraryDir,
+            "libsqlite3pcre2.so"
+        ).absolutePath
+
+        Log.d("SQLite", "Extension path: $extensionPath")
+        Log.d("SQLite", "Extension exists: ${File(extensionPath).exists()}")
+        Log.d("SQLite", "Primary ABI: ${Build.SUPPORTED_ABIS.first()}")
+        Log.d("SQLite", "Native dir: ${context.applicationInfo.nativeLibraryDir}")
+        Log.d("SQLite", "Native dirs: ${context.applicationInfo.sourceDir}")
+
+        driver.addExtension(
+            extensionPath,
+            "sqlite3_extension_init"
+        )
 
         _readerChannel = Channel(Runtime.getRuntime().availableProcessors())
 
@@ -177,7 +194,7 @@ class DatabaseManager {
                     async { db.copyUserDatabaseFromBundle(context) }
                 )
 
-                db.setupDatabase()
+                db.setupDatabase(context)
 
                 return@withContext db
             }

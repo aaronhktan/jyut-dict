@@ -178,7 +178,7 @@ std::vector<QString> literalPrefixes(const QString &regex)
     if (firstIdx != -1) {
         qsizetype secondIdx = regex.indexOf("?", firstIdx + 1);
         if (secondIdx != -1) {
-            endIdx = std::min(endIdx, secondIdx);
+            endIdx = std::min(endIdx, secondIdx - 1);
         }
     }
 

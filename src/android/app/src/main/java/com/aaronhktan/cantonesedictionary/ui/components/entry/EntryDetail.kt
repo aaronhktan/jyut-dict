@@ -1,8 +1,8 @@
 package com.aaronhktan.cantonesedictionary.ui.components.entry
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Grid
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.aaronhktan.cantonesedictionary.R
 import com.aaronhktan.cantonesedictionary.data.datastore.defaultJyutpingToneColours
 import com.aaronhktan.cantonesedictionary.data.datastore.defaultPinyinToneColours
 import com.aaronhktan.cantonesedictionary.logic.entry.CantoneseOptions
@@ -31,21 +32,20 @@ import com.aaronhktan.cantonesedictionary.logic.entry.EntryCharactersOptions
 import com.aaronhktan.cantonesedictionary.logic.entry.EntryColourPhoneticType
 import com.aaronhktan.cantonesedictionary.logic.entry.EntryPhoneticOptions
 import com.aaronhktan.cantonesedictionary.logic.entry.MandarinOptions
-import com.aaronhktan.cantonesedictionary.ui.components.DictionaryUiState
 import com.aaronhktan.cantonesedictionary.ui.theme.CantoneseDictionaryTheme
-import com.aaronhktan.cantonesedictionary.R
 
 @Composable
 fun EntryDetail(
-    dictionaryUiState: DictionaryUiState,
+    entryDetailUiState: EntryDetailUiState,
     modifier: Modifier = Modifier
 ) {
-    val entry = dictionaryUiState.currentSelectedEntry
+    val entry = entryDetailUiState.currentEntry
 
     if (entry != null) {
         LazyColumn(
+            modifier = modifier,
+            contentPadding = PaddingValues(dimensionResource(R.dimen.content_padding)),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.column_spacing)),
-            modifier = modifier
         ) {
             item {
                 Text(
@@ -264,8 +264,8 @@ fun EntryDetailPreview() {
         )
     )
 
-    var dictionaryUiState = DictionaryUiState(currentSelectedEntry = entry)
+    var entryDetailUiState = EntryDetailUiState(currentEntry = entry)
     CantoneseDictionaryTheme {
-        EntryDetail(dictionaryUiState = dictionaryUiState)
+        EntryDetail(entryDetailUiState = entryDetailUiState)
     }
 }

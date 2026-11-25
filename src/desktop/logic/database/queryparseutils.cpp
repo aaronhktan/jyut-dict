@@ -65,8 +65,8 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
                         // Parse each example
                         if (!example.isNull()) {
                             std::vector<Translation::Translation> targetTranslations;
-                            if (!example["translations"].isNull()) {
-                                // Parse each of the example translations
+                            if (!example["translations"]
+                                     .isNull()) { // Parse each of the example translation
                                 for (const QJsonValue &translation :
                                      example["translations"].toArray()) {
                                     targetTranslations.emplace_back(

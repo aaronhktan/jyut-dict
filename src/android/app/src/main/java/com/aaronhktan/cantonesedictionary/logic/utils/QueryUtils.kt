@@ -1,7 +1,6 @@
 package com.aaronhktan.cantonesedictionary.logic.utils
 
 import android.util.Log
-import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteStatement
 import com.aaronhktan.cantonesedictionary.logic.entry.Definition
 import com.aaronhktan.cantonesedictionary.logic.entry.DefinitionsSet
@@ -9,10 +8,10 @@ import com.aaronhktan.cantonesedictionary.logic.entry.Entry
 import com.aaronhktan.cantonesedictionary.logic.example.Example
 import com.aaronhktan.cantonesedictionary.logic.example.Translation
 import com.aaronhktan.cantonesedictionary.logic.example.TranslationSet
+import kotlinx.coroutines.yield
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.intOrNull
@@ -170,8 +169,7 @@ fun prepareEnglishBindValues(english: String): Pair<String, String> {
     return Pair(ftsParam, likeParam)
 }
 
-fun parseReturnedEntryRecords(statement: SQLiteStatement): List<Entry> {
-    Log.i(LOG_TAG, "parsing returned entry records!")
+suspend fun parseReturnedEntryRecords(statement: SQLiteStatement): List<Entry> {
     val result: MutableList<Entry> = mutableListOf()
 
     val columnIndices = statement.columnIndices()
@@ -181,7 +179,12 @@ fun parseReturnedEntryRecords(statement: SQLiteStatement): List<Entry> {
     val jyutpingIdx = columnIndices["jyutping"]!!
     val pinyinIdx = columnIndices["pinyin"]!!
     val definitionsIdx = columnIndices["definitions"]!!
+
+    var statementIdx = 0
     while (statement.step()) {
+        if (++statementIdx % 1000 == 0) {
+            yield()
+        }
         val definitionsSets: MutableList<DefinitionsSet> = mutableListOf()
         var definitionsListArray: JsonArray
         try {
@@ -285,7 +288,6 @@ fun parseReturnedEntryRecords(statement: SQLiteStatement): List<Entry> {
                             )
                             continue
                         } finally {
-                            Log.i(LOG_TAG, "Adding to definitions...")
                             definitions.add(
                                 Definition(
                                     definitionContent = definition!!,
@@ -333,6 +335,93 @@ fun parseReturnedEntryRecords(statement: SQLiteStatement): List<Entry> {
     }
 
     return result.toList()
+}
+
+suspend fun parseReturnedExampleRecords(statement: SQLiteStatement): List<Example> {
+    val result: MutableList<Example> = mutableListOf()
+
+    val columnIndices = statement.columnIndices()
+    val traditionalIdx = columnIndices["traditional"]!!
+    val simplifiedIdx = columnIndices["simplified"]!!
+    val jyutpingIdx = columnIndices["jyutping"]!!
+    val pinyinIdx = columnIndices["pinyin"]!!
+    val languageIdx = columnIndices["language"]!!
+    val translationsIdx = columnIndices["translations"]!!
+
+    var statementIdx = 0
+    while (statement.step()) {
+        if (++statementIdx % 1000 == 0) {
+            yield()
+        }
+        val translationSets: MutableList<TranslationSet> = mutableListOf()
+        try {
+            val translationSetArray =
+                Json.parseToJsonElement(statement.getText(translationsIdx)).jsonArray
+
+            for (translationSetJSON in translationSetArray) {
+                val translationSetElement = translationSetJSON.jsonObject
+                val source = translationSetElement["source"]?.jsonPrimitive?.contentOrNull
+
+                val translationsArray: JsonArray?
+                val translations: MutableList<Translation> = mutableListOf()
+                try {
+                    translationsArray = translationSetElement["translations"]?.jsonArray
+                    if (translationsArray == null) {
+                        throw SerializationException("Could not parse translations as array")
+                    }
+                    for (translationJSON in translationsArray) {
+                        val translationElement = translationJSON.jsonObject
+                        val translation =
+                            translationElement["translation"]?.jsonPrimitive?.contentOrNull
+                        val language =
+                            translationElement["language"]?.jsonPrimitive?.contentOrNull
+                        val direct =
+                            (translationElement["direct"]?.jsonPrimitive?.intOrNull
+                                ?: 0) == 1
+
+                        translations.add(
+                            Translation(
+                                content = translation!!,
+                                language = language!!,
+                                directTarget = direct,
+                            )
+                        )
+                    }
+                } catch (s: SerializationException) {
+                    Log.e(
+                        LOG_TAG,
+                        "Translations array could not be parsed! ${s.message}"
+                    )
+                    continue
+                } finally {
+                    val translationSet = TranslationSet(
+                        source = source!!,
+                        translations = translations,
+                    )
+
+                    translationSets.add(translationSet)
+                }
+            }
+        } catch (s: SerializationException) {
+            Log.e(
+                LOG_TAG,
+                "Could not parse translation sets array ${statement.getText(translationsIdx)}, error: ${s.message}"
+            )
+        } finally {
+            result.add(
+                Example(
+                    sourceLanguage = statement.getText(languageIdx),
+                    traditional = statement.getText(traditionalIdx),
+                    simplified = statement.getText(simplifiedIdx),
+                    jyutping = statement.getText(jyutpingIdx),
+                    pinyin = statement.getText(pinyinIdx),
+                    translations = translationSets,
+                )
+            )
+        }
+    }
+
+    return result
 }
 
 fun parseExistenceRecords(statement: SQLiteStatement): Boolean {

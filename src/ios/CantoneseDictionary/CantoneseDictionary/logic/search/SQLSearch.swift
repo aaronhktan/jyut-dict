@@ -173,7 +173,7 @@ actor SQLSearch {
     if let first = pattern.firstIndex(of: "?") {
       let afterFirst = pattern.index(after: first)
       if let second = pattern[afterFirst...].firstIndex(of: "?"), second < endIdx {
-        endIdx = second
+        endIdx = pattern.index(before: second)
       }
     }
 
@@ -543,6 +543,7 @@ actor SQLSearch {
   @concurrent func searchEnglish(searchTerm: String) async -> [Entry] {
     let (ftsParam, likeParam) = prepareEnglishBindValues(english: searchTerm)
     logger.info("searchEnglish patterns: '\(ftsParam)', '\(likeParam)'")
+
     var results: [Entry] = []
     do {
       results = try await pool.read { db in
@@ -561,10 +562,10 @@ actor SQLSearch {
   }
 
   @concurrent func searchExamplesByTraditional(searchTerm: String) async -> [Example] {
-    var results: [Example] = []
     let likeTerm = "%\(searchTerm)%"
     logger.info("searchExamplesByTraditional pattern: '\(likeTerm)'")
 
+    var results: [Example] = []
     do {
       results = try await pool.read { db in
         let rows = try Row.fetchAll(
