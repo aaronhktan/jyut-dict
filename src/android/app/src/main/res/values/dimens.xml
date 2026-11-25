@@ -13,6 +13,6 @@
     <dimen name="search_pane_default_width">400dp</dimen>
     <dimen name="search_pane_min_height">800dp</dimen>
 
-    <dimen name="number_width">16dp</dimen>
+    <dimen name="number_width">20dp</dimen>
     <dimen name="bullet_width">8dp</dimen>
 </resources>

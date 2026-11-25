@@ -45,22 +45,23 @@ fun DefinitionCard(definitionsSet: DefinitionsSet, modifier: Modifier = Modifier
                 text = definitionsSet.source,
                 modifier = Modifier
                     .background(
-                        color = MaterialTheme.colorScheme.tertiaryContainer,
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
                         shape = RoundedCornerShape(topEnd = 0.dp, bottomEnd = 0.dp)
                     )
                     .fillMaxWidth()
                     .padding(
                         dimensionResource(R.dimen.content_padding),
                     ),
-                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.titleSmall,
             )
 
             Surface(
-                color = MaterialTheme.colorScheme.primaryContainer,
+                color = MaterialTheme.colorScheme.surfaceContainer,
                 modifier = Modifier
                     .background(
-                        color = MaterialTheme.colorScheme.primaryContainer, // This has no effect but must be passed in anyway
+                        // This has no effect but must be passed in anyway to prevent a weird white box
+                        color = MaterialTheme.colorScheme.surfaceContainer,
                         shape = RoundedCornerShape(topEnd = 0.dp, bottomEnd = 0.dp)
                     )
                     .fillMaxWidth()
@@ -79,7 +80,7 @@ fun DefinitionCard(definitionsSet: DefinitionsSet, modifier: Modifier = Modifier
                                 text = (index + 1).toString(),
                                 modifier = Modifier
                                     .width(dimensionResource(R.dimen.number_width)),
-                                color = MaterialTheme.colorScheme.secondary,
+                                color = MaterialTheme.colorScheme.onSurface,
                                 style = MaterialTheme.typography.bodyMedium,
                             )
 
@@ -98,7 +99,7 @@ fun DefinitionView(definition: Definition, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         Text(
             text = definition.definitionContent,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.bodyMedium,
         )
 

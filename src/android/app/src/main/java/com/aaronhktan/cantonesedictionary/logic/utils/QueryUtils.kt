@@ -182,7 +182,7 @@ suspend fun parseReturnedEntryRecords(statement: SQLiteStatement): List<Entry> {
 
     var statementIdx = 0
     while (statement.step()) {
-        if (++statementIdx % 1000 == 0) {
+        if (++statementIdx % 500 == 0) {
             yield()
         }
         val definitionsSets: MutableList<DefinitionsSet> = mutableListOf()

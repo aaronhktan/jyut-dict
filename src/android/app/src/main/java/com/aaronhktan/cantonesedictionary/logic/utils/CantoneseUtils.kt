@@ -1302,10 +1302,12 @@ fun jyutpingSoundChanges(syllables: List<String>): List<String> {
         } else if (
             (changedSyllable.endsWith("t")
                     && !changedSyllable.endsWith("it")
-                    && !changedSyllable.endsWith("ut"))
+                    && !changedSyllable.endsWith("ut")
+                    && !changedSyllable.endsWith("d|t"))
             || (choppedSyllable.endsWith("t")
                     && !choppedSyllable.endsWith("it")
-                    && !choppedSyllable.endsWith("ut"))
+                    && !choppedSyllable.endsWith("ut")
+                    && !choppedSyllable.endsWith("d|t"))
         ) {
             // velarization of final [t]
             val replacementIdx = changedSyllable.lastIndexOf("t")
@@ -1314,10 +1316,12 @@ fun jyutpingSoundChanges(syllables: List<String>): List<String> {
         } else if (
             (changedSyllable.endsWith("k")
                     && !changedSyllable.endsWith("ik")
-                    && !changedSyllable.endsWith("uk"))
+                    && !changedSyllable.endsWith("uk")
+                    && !changedSyllable.endsWith("g|k"))
             || (choppedSyllable.endsWith("k")
                     && !choppedSyllable.endsWith("ik")
-                    && !choppedSyllable.endsWith("uk"))
+                    && !choppedSyllable.endsWith("uk")
+                    && !choppedSyllable.endsWith("g|k"))
         ) {
             // velarization of final [k]
             val replacementIdx = changedSyllable.lastIndexOf("k")

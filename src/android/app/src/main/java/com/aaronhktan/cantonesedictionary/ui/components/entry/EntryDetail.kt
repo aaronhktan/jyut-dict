@@ -82,7 +82,7 @@ fun CantonesePronunciationView(entry: Entry, modifier: Modifier = Modifier) {
     ) {
         FilledIconButton(
             onClick = {},
-            shape = IconButtonDefaults.extraSmallRoundShape,
+            shape = IconButtonDefaults.extraSmallSquareShape,
             modifier = Modifier
                 .gridItem(row = 1, column = 1, alignment = Alignment.CenterStart)
                 .size(IconButtonDefaults.extraSmallContainerSize())
@@ -157,7 +157,7 @@ fun MandarinPronunciationView(entry: Entry, modifier: Modifier = Modifier) {
     ) {
         FilledIconButton(
             onClick = {},
-            shape = IconButtonDefaults.extraSmallRoundShape,
+            shape = IconButtonDefaults.extraSmallSquareShape,
             modifier = Modifier
                 .gridItem(row = 1, column = 1, alignment = Alignment.CenterStart)
                 .size(IconButtonDefaults.extraSmallContainerSize())
