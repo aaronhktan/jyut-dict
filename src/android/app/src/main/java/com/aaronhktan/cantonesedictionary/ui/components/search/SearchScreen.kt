@@ -110,7 +110,6 @@ fun SearchScreen(
                     languageSelectorExpanded = languageSelectorExpanded,
                     isSinglePane = isSinglePane,
                     onLanguageSelectorToggled = { value ->
-                        Log.d(LOG_TAG, "Updating language selector toggle to $value")
                         languageSelectorExpanded = value
                     },
                     onQueryChanged = onQueryChanged,
@@ -132,7 +131,6 @@ fun SearchScreen(
                     languageSelectorExpanded = languageSelectorExpanded,
                     isSinglePane = isSinglePane,
                     onLanguageSelectorToggled = { value ->
-                        Log.d(LOG_TAG, "Updating language selector toggle to $value")
                         languageSelectorExpanded = value
                     },
                     onQueryChanged = onQueryChanged,
