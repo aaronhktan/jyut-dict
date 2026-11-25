@@ -381,8 +381,8 @@ suspend fun parseReturnedExampleRecords(statement: SQLiteStatement): List<Exampl
 
                         translations.add(
                             Translation(
-                                content = translation!!,
-                                language = language!!,
+                                content = translation ?: "x",
+                                language = language ?: "",
                                 directTarget = direct,
                             )
                         )
@@ -395,7 +395,7 @@ suspend fun parseReturnedExampleRecords(statement: SQLiteStatement): List<Exampl
                     continue
                 } finally {
                     val translationSet = TranslationSet(
-                        source = source!!,
+                        source = source ?: "",
                         translations = translations,
                     )
 
@@ -411,10 +411,10 @@ suspend fun parseReturnedExampleRecords(statement: SQLiteStatement): List<Exampl
             result.add(
                 Example(
                     sourceLanguage = statement.getText(languageIdx),
-                    traditional = statement.getText(traditionalIdx),
-                    simplified = statement.getText(simplifiedIdx),
-                    jyutping = statement.getText(jyutpingIdx),
-                    pinyin = statement.getText(pinyinIdx),
+                    traditional = statement.getText(traditionalIdx).trim(),
+                    simplified = statement.getText(simplifiedIdx).trim(),
+                    jyutping = statement.getText(jyutpingIdx).trim(),
+                    pinyin = statement.getText(pinyinIdx).trim(),
                     translations = translationSets,
                 )
             )

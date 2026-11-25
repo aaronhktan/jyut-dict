@@ -1,0 +1,178 @@
+package com.aaronhktan.cantonesedictionary.ui.components.entry
+
+import android.view.RoundedCorner
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.aaronhktan.cantonesedictionary.R
+import com.aaronhktan.cantonesedictionary.data.local.LocalLanguageDataProvider
+import com.aaronhktan.cantonesedictionary.logic.entry.CantoneseOptions
+import com.aaronhktan.cantonesedictionary.logic.entry.MandarinOptions
+import com.aaronhktan.cantonesedictionary.logic.example.Example
+import com.aaronhktan.cantonesedictionary.logic.example.Translation
+import com.aaronhktan.cantonesedictionary.logic.example.TranslationSet
+import com.aaronhktan.cantonesedictionary.ui.components.utils.getContrastingColour
+import com.aaronhktan.cantonesedictionary.ui.theme.CantoneseDictionaryTheme
+
+@Composable
+fun ExampleCard(source: String, examples: List<Example>, modifier: Modifier = Modifier) {
+    Card(modifier = modifier) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = "Examples ($source)",
+                modifier = Modifier
+                    .background(
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                        shape = RoundedCornerShape(topEnd = 0.dp, bottomEnd = 0.dp)
+                    )
+                    .fillMaxWidth()
+                    .padding(
+                        dimensionResource(R.dimen.content_padding),
+                    ),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.titleSmall,
+            )
+
+            Surface(
+                color = MaterialTheme.colorScheme.surfaceContainer,
+                modifier = Modifier
+                    .background(
+                        // This has no effect but must be passed in anyway to prevent a weird white box
+                        color = MaterialTheme.colorScheme.surfaceContainer,
+                        shape = RoundedCornerShape(topEnd = 0.dp, bottomEnd = 0.dp)
+                    )
+                    .fillMaxWidth()
+                    .padding(
+                        dimensionResource(R.dimen.content_padding),
+                    ),
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(
+                        dimensionResource(R.dimen.column_spacing)
+                    ),
+                ) {
+                    examples.forEachIndexed { index, example ->
+                        Row {
+                            Text(
+                                text = (index + 1).toString(),
+                                modifier = Modifier
+                                    .width(dimensionResource(R.dimen.number_width)),
+                                color = MaterialTheme.colorScheme.secondary,
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+
+                            ExampleView(example)
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+@Composable
+private fun ExampleView(example: Example, modifier: Modifier = Modifier) {
+    Column(modifier = modifier) {
+        val backgroundColour =
+            LocalLanguageDataProvider.iso693ToColour[example.sourceLanguage] ?: Color.Gray
+        Text(
+            text = LocalLanguageDataProvider.iso693ToLanguageName[example.sourceLanguage]
+                ?: "Other",
+            modifier = Modifier
+                .background(
+                    color = backgroundColour,
+                    shape = RoundedCornerShape(50)
+                )
+                .padding(
+                    horizontal = dimensionResource(R.dimen.language_capsule_padding_horizontal),
+                    vertical = dimensionResource(R.dimen.language_capsule_padding_vertical)
+                ),
+            color = getContrastingColour(backgroundColour),
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Text(
+            text = example.traditional,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Text(
+            text = example.simplified,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        val cantonese = example.getCantonesePhonetic(CantoneseOptions.RAW_JYUTPING)
+        if (cantonese.isNotEmpty()) {
+            Text(
+                text = cantonese,
+                color = MaterialTheme.colorScheme.secondary,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+        val mandarin = example.getMandarinPhonetic(MandarinOptions.RAW_PINYIN)
+        if (mandarin.isNotEmpty()) {
+            Text(
+                text = mandarin,
+                color = MaterialTheme.colorScheme.secondary,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+
+        example.getTranslationSets().forEach { translationSet ->
+            val first = translationSet.translations.firstOrNull()
+            if (first != null) {
+                Text(
+                    text = first.content,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ExampleCardPreview() {
+    val translation = Translation(
+        content = "There have been days of heavy raining in Tsingyün (A city in Guangdong), and the situation of flooding is pressing.",
+        language = "eng",
+        directTarget = true
+    )
+
+    val translationSet = TranslationSet(
+        source = "粵典—words.hk",
+        translations = listOf(translation)
+    )
+
+    val example = Example(
+        sourceLanguage = "yue",
+        traditional = "清遠 呢幾日有連日嘅大雨，汛情緊急。",
+        simplified = "清远 呢几日有连日嘅大雨，汛情紧急。",
+        jyutping = "cing1 jyun5 nei1 gei2 jat6 jau5 lin4 jat6 ge3 daai6 jyu5, seon3 cing4 gan2 gap1",
+        pinyin = "",
+        translations = listOf(translationSet)
+    )
+
+    CantoneseDictionaryTheme {
+        ExampleCard(
+            source = "粵典—words.hk",
+            examples = listOf(example)
+        )
+    }
+}

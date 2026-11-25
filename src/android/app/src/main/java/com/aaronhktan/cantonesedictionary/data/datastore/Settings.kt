@@ -20,11 +20,3 @@ val defaultPinyinToneColours: List<Color> = listOf(
     Color(0xff9e77ff),
     Color(0xff808080),
 )
-
-val languageColours: Map<String, Color> = mapOf(
-    "cmn" to Color(0xFF0E8B53),
-    "deu" to Color(0xFFBAC85F),
-    "eng" to Color(0xFF644C8F),
-    "fra" to Color(0xFF00308F),
-    "yue" to Color(0xFFAD1F5A),
-)

@@ -15,4 +15,7 @@
 
     <dimen name="number_width">20dp</dimen>
     <dimen name="bullet_width">8dp</dimen>
+
+    <dimen name="language_capsule_padding_horizontal">8dp</dimen>
+    <dimen name="language_capsule_padding_vertical">3dp</dimen>
 </resources>

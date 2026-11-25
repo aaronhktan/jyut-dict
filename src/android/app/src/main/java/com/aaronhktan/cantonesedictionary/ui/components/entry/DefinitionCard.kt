@@ -3,24 +3,17 @@ package com.aaronhktan.cantonesedictionary.ui.components.entry
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Grid
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,7 +35,7 @@ fun DefinitionCard(definitionsSet: DefinitionsSet, modifier: Modifier = Modifier
                 .fillMaxWidth()
         ) {
             Text(
-                text = definitionsSet.source,
+                text = "Definitions (${definitionsSet.source})",
                 modifier = Modifier
                     .background(
                         color = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -80,7 +73,7 @@ fun DefinitionCard(definitionsSet: DefinitionsSet, modifier: Modifier = Modifier
                                 text = (index + 1).toString(),
                                 modifier = Modifier
                                     .width(dimensionResource(R.dimen.number_width)),
-                                color = MaterialTheme.colorScheme.onSurface,
+                                color = MaterialTheme.colorScheme.secondary,
                                 style = MaterialTheme.typography.bodyMedium,
                             )
 
@@ -95,7 +88,7 @@ fun DefinitionCard(definitionsSet: DefinitionsSet, modifier: Modifier = Modifier
 }
 
 @Composable
-fun DefinitionView(definition: Definition, modifier: Modifier = Modifier) {
+private fun DefinitionView(definition: Definition, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         Text(
             text = definition.definitionContent,
@@ -110,7 +103,7 @@ fun DefinitionView(definition: Definition, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ExampleView(example: Example, modifier: Modifier = Modifier) {
+private fun ExampleView(example: Example, modifier: Modifier = Modifier) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.row_spacing)),
         modifier = modifier,
@@ -132,15 +125,22 @@ fun ExampleView(example: Example, modifier: Modifier = Modifier) {
                 text = example.simplified,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            Text(
-                text = example.getCantonesePhonetic(CantoneseOptions.RAW_JYUTPING),
-                color = MaterialTheme.colorScheme.secondary,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-//            Text(
-//                text = example.getMandarinPhonetic(MandarinOptions.RAW_PINYIN),
-//                style = MaterialTheme.typography.bodyMedium,
-//            )
+            val cantonese = example.getCantonesePhonetic(CantoneseOptions.RAW_JYUTPING)
+            if (cantonese.isNotEmpty()) {
+                Text(
+                    text = cantonese,
+                    color = MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            val mandarin = example.getMandarinPhonetic(MandarinOptions.RAW_PINYIN)
+            if (mandarin.isNotEmpty()) {
+                Text(
+                    text = mandarin,
+                    color = MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
 
             example.getTranslationSets().forEach { translationSet ->
                 val first = translationSet.translations.firstOrNull()

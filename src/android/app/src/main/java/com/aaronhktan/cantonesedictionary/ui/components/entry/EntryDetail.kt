@@ -1,6 +1,15 @@
 package com.aaronhktan.cantonesedictionary.ui.components.entry
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Grid
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -18,8 +27,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.aaronhktan.cantonesedictionary.R
 import com.aaronhktan.cantonesedictionary.data.datastore.defaultJyutpingToneColours
@@ -37,7 +48,7 @@ import com.aaronhktan.cantonesedictionary.ui.theme.CantoneseDictionaryTheme
 @Composable
 fun EntryDetail(
     entryDetailUiState: EntryDetailUiState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val entry = entryDetailUiState.currentEntry
 
@@ -58,8 +69,10 @@ fun EntryDetail(
                     ),
                     style = MaterialTheme.typography.displayMedium,
                 )
-                CantonesePronunciationView(entry = entry)
-                MandarinPronunciationView(entry = entry)
+                Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.column_spacing))) {
+                    CantonesePronunciationView(entry = entry)
+                    MandarinPronunciationView(entry = entry)
+                }
             }
 
             val definitionsSets = entry.getDefinitionsSets() ?: listOf()
@@ -67,6 +80,32 @@ fun EntryDetail(
                 definitionsSets,
                 key = { definitionSet -> definitionSet.hashCode() }) { definitionSet ->
                 DefinitionCard(definitionSet)
+            }
+
+            val examplesBySource = entryDetailUiState.examplesBySource.orEmpty()
+            item {
+                val density = LocalDensity.current
+                AnimatedVisibility(
+                    visible = examplesBySource.isNotEmpty(),
+                    enter = slideInVertically {
+                        with(density) { -40.dp.roundToPx() }
+                    } + expandVertically(
+                        expandFrom = Alignment.Top
+                    ) + fadeIn(
+                        initialAlpha = 0.3f
+                    ),
+                    exit = ExitTransition.None
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(
+                            dimensionResource(R.dimen.column_spacing)
+                        )
+                    ) {
+                        examplesBySource.forEach { (source, examples) ->
+                            ExampleCard(source, examples)
+                        }
+                    }
+                }
             }
         }
     }
@@ -76,7 +115,8 @@ fun EntryDetail(
 fun CantonesePronunciationView(entry: Entry, modifier: Modifier = Modifier) {
     Grid(
         config = {
-            gap(8.dp)
+            rowGap(4.dp)
+            columnGap(8.dp)
         },
         modifier = modifier,
     ) {
@@ -84,7 +124,7 @@ fun CantonesePronunciationView(entry: Entry, modifier: Modifier = Modifier) {
             onClick = {},
             shape = IconButtonDefaults.extraSmallSquareShape,
             modifier = Modifier
-                .gridItem(row = 1, column = 1, alignment = Alignment.CenterStart)
+                .gridItem(row = 1, column = 1, rowSpan = 3, alignment = Alignment.TopStart)
                 .size(IconButtonDefaults.extraSmallContainerSize())
                 .fillMaxSize(),
         ) {
@@ -98,7 +138,7 @@ fun CantonesePronunciationView(entry: Entry, modifier: Modifier = Modifier) {
             Text(
                 text = "Jyutping",
                 color = MaterialTheme.colorScheme.secondary,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
             )
             Text(
                 text = entry.getPhonetic(
@@ -106,6 +146,7 @@ fun CantonesePronunciationView(entry: Entry, modifier: Modifier = Modifier) {
                     CantoneseOptions.RAW_JYUTPING,
                     MandarinOptions.RAW_PINYIN
                 ),
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
         Row(
@@ -116,7 +157,7 @@ fun CantonesePronunciationView(entry: Entry, modifier: Modifier = Modifier) {
             Text(
                 text = "Yale",
                 color = MaterialTheme.colorScheme.secondary,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
             )
             Text(
                 text = entry.getPhonetic(
@@ -124,6 +165,7 @@ fun CantonesePronunciationView(entry: Entry, modifier: Modifier = Modifier) {
                     CantoneseOptions.PRETTY_YALE,
                     MandarinOptions.RAW_PINYIN
                 ),
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
         Row(
@@ -134,7 +176,7 @@ fun CantonesePronunciationView(entry: Entry, modifier: Modifier = Modifier) {
             Text(
                 text = "Cantonese IPA",
                 color = MaterialTheme.colorScheme.secondary,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
             )
             Text(
                 text = entry.getPhonetic(
@@ -142,6 +184,7 @@ fun CantonesePronunciationView(entry: Entry, modifier: Modifier = Modifier) {
                     CantoneseOptions.CANTONESE_IPA,
                     MandarinOptions.RAW_PINYIN
                 ),
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }
@@ -151,7 +194,8 @@ fun CantonesePronunciationView(entry: Entry, modifier: Modifier = Modifier) {
 fun MandarinPronunciationView(entry: Entry, modifier: Modifier = Modifier) {
     Grid(
         config = {
-            gap(8.dp)
+            rowGap(4.dp)
+            columnGap(8.dp)
         },
         modifier = modifier,
     ) {
@@ -159,7 +203,7 @@ fun MandarinPronunciationView(entry: Entry, modifier: Modifier = Modifier) {
             onClick = {},
             shape = IconButtonDefaults.extraSmallSquareShape,
             modifier = Modifier
-                .gridItem(row = 1, column = 1, alignment = Alignment.CenterStart)
+                .gridItem(row = 1, column = 1, rowSpan = 3, alignment = Alignment.TopStart)
                 .size(IconButtonDefaults.extraSmallContainerSize())
                 .fillMaxSize(),
         ) {
@@ -173,7 +217,7 @@ fun MandarinPronunciationView(entry: Entry, modifier: Modifier = Modifier) {
             Text(
                 text = "Pinyin",
                 color = MaterialTheme.colorScheme.secondary,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
             )
             Text(
                 text = entry.getPhonetic(
@@ -181,6 +225,7 @@ fun MandarinPronunciationView(entry: Entry, modifier: Modifier = Modifier) {
                     CantoneseOptions.RAW_JYUTPING,
                     MandarinOptions.PRETTY_PINYIN
                 ),
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
         Row(
@@ -191,7 +236,7 @@ fun MandarinPronunciationView(entry: Entry, modifier: Modifier = Modifier) {
             Text(
                 text = "Pinyin with digits",
                 color = MaterialTheme.colorScheme.secondary,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
             )
             Text(
                 text = entry.getPhonetic(
@@ -199,6 +244,7 @@ fun MandarinPronunciationView(entry: Entry, modifier: Modifier = Modifier) {
                     CantoneseOptions.RAW_JYUTPING,
                     MandarinOptions.NUMBERED_PINYIN,
                 ),
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
         Row(
@@ -209,7 +255,7 @@ fun MandarinPronunciationView(entry: Entry, modifier: Modifier = Modifier) {
             Text(
                 text = "Zhuyin",
                 color = MaterialTheme.colorScheme.secondary,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
             )
             Text(
                 text = entry.getPhonetic(
@@ -217,6 +263,7 @@ fun MandarinPronunciationView(entry: Entry, modifier: Modifier = Modifier) {
                     CantoneseOptions.RAW_JYUTPING,
                     MandarinOptions.ZHUYIN
                 ),
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
         Row(
@@ -227,7 +274,7 @@ fun MandarinPronunciationView(entry: Entry, modifier: Modifier = Modifier) {
             Text(
                 text = "Mandarin IPA",
                 color = MaterialTheme.colorScheme.secondary,
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
             )
             Text(
                 text = entry.getPhonetic(
@@ -235,6 +282,7 @@ fun MandarinPronunciationView(entry: Entry, modifier: Modifier = Modifier) {
                     CantoneseOptions.RAW_JYUTPING,
                     MandarinOptions.MANDARIN_IPA
                 ),
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }
