@@ -119,9 +119,6 @@ google-services.json
 # Test files
 /test/*
 
-# Screenshot files
-**/search/*
-
 # Generated databases
 *.db
 *.aar
