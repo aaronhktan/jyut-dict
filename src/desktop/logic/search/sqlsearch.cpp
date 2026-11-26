@@ -877,21 +877,24 @@ void SQLSearch::searchEnglishThread(const QString &searchTerm,
     bool searchExactMatch = searchTerm.startsWith("\"")
                             && searchTerm.endsWith("\"")
                             && searchTerm.length() >= 3;
-    QString searchTermWithoutQuotes;
-    if (searchExactMatch) {
-        searchTermWithoutQuotes = searchTerm.mid(1, searchTerm.size() - 2);
-    }
+    QString phrase = searchExactMatch ? searchTerm.mid(1, searchTerm.size() - 2)
+                                      : searchTerm;
+    QString ftsParam{phrase};
+    ftsParam.replace("\"",
+                     "\"\""
+                     "");
+    QString likeParam = searchExactMatch ? phrase : searchTerm;
 
     std::vector<Entry> results;
 
     QSqlQuery query{_manager->getDatabase()};
     query.prepare(SEARCH_ENGLISH_QUERY);
     if (searchExactMatch) {
-        query.addBindValue("\"" + searchTermWithoutQuotes + "\"");
-        query.addBindValue(searchTermWithoutQuotes);
+        query.addBindValue("\"" + ftsParam + "\"");
+        query.addBindValue(likeParam);
     } else {
-        query.addBindValue("\"" + searchTerm + "\"");
-        query.addBindValue("%" + searchTerm + "%");
+        query.addBindValue("\"" + ftsParam + "\"");
+        query.addBindValue("%" + likeParam + "%");
     }
     query.setForwardOnly(true);
     query.exec();

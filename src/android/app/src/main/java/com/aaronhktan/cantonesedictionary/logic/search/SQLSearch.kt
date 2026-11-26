@@ -470,7 +470,7 @@ class SQLSearch {
 
     suspend fun searchEnglish(searchTerm: String): List<Entry> {
         val (ftsParam, likeParam) = prepareEnglishBindValues(english = searchTerm)
-        Log.d(LOG_TAG, "searchEnglish patterns: '$ftsParam', '$likeParam")
+        Log.d(LOG_TAG, "searchEnglish patterns: '$ftsParam', '$likeParam'")
 
         var result: List<Entry> = listOf()
         _manager.read { conn ->

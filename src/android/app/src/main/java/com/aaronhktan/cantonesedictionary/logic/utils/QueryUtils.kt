@@ -160,13 +160,13 @@ fun prepareEnglishBindValues(english: String): Pair<String, String> {
     val searchExactMatch =
         (english.length >= 3 && english.startsWith("\"") && english.endsWith("\""))
 
-    val ftsParam = "\"$english\""
-    var likeParam = english
-    likeParam = if (searchExactMatch) {
-        likeParam.drop(1).dropLast(1)
+    val phrase = if (searchExactMatch) {
+        english.drop(1).dropLast(1)
     } else {
-        "%$english%"
+        english
     }
+    val ftsParam = "\"${phrase.replace("\"", "\"\"")}\""
+    val likeParam = if (searchExactMatch) phrase else "%$english%"
 
     return Pair(ftsParam, likeParam)
 }

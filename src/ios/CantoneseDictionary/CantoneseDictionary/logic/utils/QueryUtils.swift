@@ -171,13 +171,9 @@ nonisolated func prepareEnglishBindValues(
       && english.hasSuffix("\""))
       || (english.hasPrefix("“") && english.hasSuffix("”")))
 
-  let ftsParam = "\"\(english)\""
-  var likeParam = english
-  if searchExactMatch {
-    likeParam = String(likeParam.dropFirst().dropLast())
-  } else {
-    likeParam = "%\(english)%"
-  }
+  let phrase = searchExactMatch ? String(english.dropFirst().dropLast()) : english
+  let ftsParam = "\"\(english.replacingOccurrences(of: "\"", with: "\"\""))\""
+  var likeParam = searchExactMatch ? phrase : "%$\(english)%"
 
   return (ftsParam, likeParam)
 }

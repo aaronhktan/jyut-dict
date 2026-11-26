@@ -130,9 +130,7 @@ class DatabaseManager {
     }
 
     suspend fun <T> read(lambda: suspend (SQLiteConnection) -> T): T {
-        Log.i(LOG_TAG, "Starting read...")
         val reader = _readerChannel.receive()
-        Log.i(LOG_TAG, "Got reader..")
         try {
             return withContext(Dispatchers.IO) {
                 reader.execSQL("BEGIN")

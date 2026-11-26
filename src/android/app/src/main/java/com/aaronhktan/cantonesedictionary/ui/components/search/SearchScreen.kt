@@ -1,6 +1,7 @@
 package com.aaronhktan.cantonesedictionary.ui.components.search
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -369,7 +370,12 @@ fun SearchResults(
                     SplitButtonDefaults.LeadingButton(
                         onClick = { onLanguageSelectorToggled(true) }
                     ) {
-                        Text(inputMethodText)
+                        AnimatedContent(
+                            targetState = inputMethodText,
+                            label = "Input method text",
+                        ) { text ->
+                            Text(text, maxLines = 1)
+                        }
                     }
                 },
                 trailingButton = {
