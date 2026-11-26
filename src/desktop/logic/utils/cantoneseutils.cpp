@@ -1065,6 +1065,8 @@ bool jyutpingAutocorrect(const QString &in,
     out.replace("ui", "(eo|u)i");
     out.replace("un", "(y!u|a|eo)n");
     out.replace("ut", "(a|y!u)t");
+    out.replace("up", "(a|u)p");
+    out.replace("uk", "(a|u)k");
 
     out.replace("o ", "(ou!) ");
     out.replace("o'", "(ou!)'");

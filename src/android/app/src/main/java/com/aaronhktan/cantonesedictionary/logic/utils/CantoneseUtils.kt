@@ -1160,6 +1160,8 @@ fun jyutpingAutocorrect(text: String, unsafeSubstitutions: Boolean = false): Str
         .replace("ui", "(eo|u)i")
         .replace("un", "(y!u|a|eo)n")
         .replace("ut", "(a|y!u)t")
+        .replace("up", "(a|u)p")
+        .replace("uk", "(a|u)k")
 
     out = out.replace("o ", "(ou!) ")
     out = out.replace("o'", "(ou!)'")

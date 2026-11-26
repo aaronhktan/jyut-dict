@@ -1481,6 +1481,8 @@ nonisolated func jyutpingAutocorrect(
   out = out.replacingOccurrences(of: "ui", with: "(eo|u)i")
   out = out.replacingOccurrences(of: "un", with: "(y!u|a|eo)n")
   out = out.replacingOccurrences(of: "ut", with: "(a|y!u)t")
+  out = out.replacingOccurrences(of: "up", with: "(a|u)p")
+  out = out.replacingOccurrences(of: "uk", with: "(a|u)k")
 
   out = out.replacingOccurrences(of: "o ", with: "(ou!) ")
   out = out.replacingOccurrences(of: "o'", with: "(ou!)'")
