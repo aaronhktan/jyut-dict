@@ -1353,39 +1353,39 @@ struct CantoneseUtilsTests {
 
   @Test func autocorrectJyutpingYuk() async throws {
     #expect(
-      jyutpingAutocorrect(text: "yuk") == "(j)uk"
+      jyutpingAutocorrect(text: "yuk") == "(j)(a|u)k"
     )
 
     #expect(
       jyutpingAutocorrect(text: "yuk", unsafeSubstitutions: true)
-        == "(j)uk"
+        == "(j)(a|u)k"
     )
 
     #expect(
-      jyutpingAutocorrect(text: " yuk") == " (j)uk"
+      jyutpingAutocorrect(text: " yuk") == " (j)(a|u)k"
     )
 
     #expect(
       jyutpingAutocorrect(text: " yuk", unsafeSubstitutions: true)
-        == " (j)uk"
+        == " (j)(a|u)k"
     )
 
     #expect(
-      jyutpingAutocorrect(text: "geyyuk") == "gei(j)uk"
+      jyutpingAutocorrect(text: "geyyuk") == "gei(j)(a|u)k"
     )
 
     #expect(
       jyutpingAutocorrect(text: "geyyuk", unsafeSubstitutions: true)
-        == "gei(j)uk"
+        == "gei(j)(a|u)k"
     )
 
     #expect(
-      jyutpingAutocorrect(text: "gey yuk") == "gei (j)uk"
+      jyutpingAutocorrect(text: "gey yuk") == "gei (j)(a|u)k"
     )
 
     #expect(
       jyutpingAutocorrect(text: "gey yuk", unsafeSubstitutions: true)
-        == "gei (j)uk"
+        == "gei (j)(a|u)k"
     )
 
     #expect(
@@ -1408,14 +1408,14 @@ struct CantoneseUtilsTests {
 
     #expect(
       jyutpingAutocorrect(text: "jyu kapgey yukgeyyukyukyukyukyuk yuk")
-        == "jyu kapgei (j)ukgei(j)uk(j)uk(j)uk(j)uk(j)uk (j)uk"
+        == "jyu kapgei (j)(a|u)kgei(j)(a|u)k(j)(a|u)k(j)(a|u)k(j)(a|u)k(j)(a|u)k (j)(a|u)k"
     )
 
     #expect(
       jyutpingAutocorrect(
         text: "jyu kapgey yukgeyyukyukyukyukyuk yuk",
         unsafeSubstitutions: true
-      ) == "jyu kapgei (j)ukgei(j)uk(j)uk(j)uk(j)uk(j)uk (j)uk"
+      ) == "jyu kapgei (j)(a|u)kgei(j)(a|u)k(j)(a|u)k(j)(a|u)k(j)(a|u)k(j)(a|u)k (j)(a|u)k"
     )
 
     // Test with ) after initial
@@ -1761,6 +1761,64 @@ struct CantoneseUtilsTests {
     #expect(
       jyutpingAutocorrect(text: "gumgut", unsafeSubstitutions: true)
         == "gamg(a|y!u)t"
+    )
+  }
+
+  @Test func autocorrectJyutpingUp() async throws {
+    #expect(
+      jyutpingAutocorrect(text: "gup") == "g(a|u)p"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "gup", unsafeSubstitutions: true)
+        == "g(a|u)p"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: " gup") == " g(a|u)p"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: " gup", unsafeSubstitutions: true)
+        == " g(a|u)p"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "gupzyu") == "g(a|u)pzyu"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "gupzyu", unsafeSubstitutions: true)
+        == "g(a|u)pzyu"
+    )
+  }
+
+  @Test func autocorrectJyutpingUk() async throws {
+    #expect(
+      jyutpingAutocorrect(text: "suk") == "s(a|u)k"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "suk", unsafeSubstitutions: true)
+        == "s(a|u)k"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: " suk") == " s(a|u)k"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: " suk", unsafeSubstitutions: true)
+        == " s(a|u)k"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "sukce") == "s(a|u)kce"
+    )
+
+    #expect(
+      jyutpingAutocorrect(text: "sukce", unsafeSubstitutions: true)
+        == "s(a|u)kce"
     )
   }
 

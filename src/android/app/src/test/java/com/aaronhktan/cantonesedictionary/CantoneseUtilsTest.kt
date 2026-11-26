@@ -879,20 +879,20 @@ class CantoneseUtilsUnitTest {
 
     @Test
     fun cantoneseUtils_autocorrectJyutping_yuk() {
-        assertEquals("(j)uk ", jyutpingAutocorrect("yuk "))
-        assertEquals("(j)uk ", jyutpingAutocorrect("yuk ", unsafeSubstitutions = true))
-        assertEquals(" (j)uk", jyutpingAutocorrect(" yuk"))
-        assertEquals(" (j)uk", jyutpingAutocorrect(" yuk", unsafeSubstitutions = true))
-        assertEquals("(j)uk'", jyutpingAutocorrect("yuk'"))
-        assertEquals("(j)uk'", jyutpingAutocorrect("yuk'", unsafeSubstitutions = true))
-        assertEquals("(j)uk", jyutpingAutocorrect("yuk"))
-        assertEquals("(j)uk", jyutpingAutocorrect("yuk", unsafeSubstitutions = true))
+        assertEquals("(j)(a|u)k ", jyutpingAutocorrect("yuk "))
+        assertEquals("(j)(a|u)k ", jyutpingAutocorrect("yuk ", unsafeSubstitutions = true))
+        assertEquals(" (j)(a|u)k", jyutpingAutocorrect(" yuk"))
+        assertEquals(" (j)(a|u)k", jyutpingAutocorrect(" yuk", unsafeSubstitutions = true))
+        assertEquals("(j)(a|u)k'", jyutpingAutocorrect("yuk'"))
+        assertEquals("(j)(a|u)k'", jyutpingAutocorrect("yuk'", unsafeSubstitutions = true))
+        assertEquals("(j)(a|u)k", jyutpingAutocorrect("yuk"))
+        assertEquals("(j)(a|u)k", jyutpingAutocorrect("yuk", unsafeSubstitutions = true))
 
-        assertEquals("gei(j)uk", jyutpingAutocorrect("geyyuk"))
-        assertEquals("gei(j)uk", jyutpingAutocorrect("geyyuk", unsafeSubstitutions = true))
+        assertEquals("gei(j)(a|u)k", jyutpingAutocorrect("geyyuk"))
+        assertEquals("gei(j)(a|u)k", jyutpingAutocorrect("geyyuk", unsafeSubstitutions = true))
 
-        assertEquals("gei (j)uk", jyutpingAutocorrect("gey yuk"))
-        assertEquals("gei (j)uk", jyutpingAutocorrect("gey yuk", unsafeSubstitutions = true))
+        assertEquals("gei (j)(a|u)k", jyutpingAutocorrect("gey yuk"))
+        assertEquals("gei (j)(a|u)k", jyutpingAutocorrect("gey yuk", unsafeSubstitutions = true))
 
         assertEquals("jyu kap", jyutpingAutocorrect("jyukap"))
         assertEquals("jyu kap", jyutpingAutocorrect("jyukap", unsafeSubstitutions = true))
@@ -901,11 +901,11 @@ class CantoneseUtilsUnitTest {
         assertEquals("jyu kap", jyutpingAutocorrect("jyu kap", unsafeSubstitutions = true))
 
         assertEquals(
-            "jyu kapgei (j)ukgei(j)uk(j)uk(j)uk(j)uk(j)uk (j)uk",
+            "jyu kapgei (j)(a|u)kgei(j)(a|u)k(j)(a|u)k(j)(a|u)k(j)(a|u)k(j)(a|u)k (j)(a|u)k",
             jyutpingAutocorrect("jyu kapgey yukgeyyukyukyukyukyuk yuk")
         )
         assertEquals(
-            "jyu kapgei (j)ukgei(j)uk(j)uk(j)uk(j)uk(j)uk (j)uk",
+            "jyu kapgei (j)(a|u)kgei(j)(a|u)k(j)(a|u)k(j)(a|u)k(j)(a|u)k(j)(a|u)k (j)(a|u)k",
             jyutpingAutocorrect("jyu kapgey yukgeyyukyukyukyukyuk yuk", unsafeSubstitutions = true)
         )
 
@@ -1069,6 +1069,26 @@ class CantoneseUtilsUnitTest {
         assertEquals(" g(a|y!u)t", jyutpingAutocorrect(" gut", unsafeSubstitutions = true))
         assertEquals("gamg(a|y!u)t", jyutpingAutocorrect("gumgut"))
         assertEquals("gamg(a|y!u)t", jyutpingAutocorrect("gumgut", unsafeSubstitutions = true))
+    }
+
+    @Test
+    fun cantoneseUtils_autocorrectJyutping_up() {
+        assertEquals("g(a|u)p", jyutpingAutocorrect("gup"))
+        assertEquals("g(a|u)p", jyutpingAutocorrect("gup", unsafeSubstitutions = true))
+        assertEquals(" g(a|u)p", jyutpingAutocorrect(" gup"))
+        assertEquals(" g(a|u)p", jyutpingAutocorrect(" gup", unsafeSubstitutions = true))
+        assertEquals("g(a|u)pzyu", jyutpingAutocorrect("gupzyu"))
+        assertEquals("g(a|u)pzyu", jyutpingAutocorrect("gupzyu", unsafeSubstitutions = true))
+    }
+
+    @Test
+    fun cantoneseUtils_autocorrectJyutping_uk() {
+        assertEquals("s(a|u)k", jyutpingAutocorrect("suk"))
+        assertEquals("s(a|u)k", jyutpingAutocorrect("suk", unsafeSubstitutions = true))
+        assertEquals(" s(a|u)k", jyutpingAutocorrect(" suk"))
+        assertEquals(" s(a|u)k", jyutpingAutocorrect(" suk", unsafeSubstitutions = true))
+        assertEquals("s(a|u)kce", jyutpingAutocorrect("sukce"))
+        assertEquals("s(a|u)kce", jyutpingAutocorrect("sukce", unsafeSubstitutions = true))
     }
 
     @Test
