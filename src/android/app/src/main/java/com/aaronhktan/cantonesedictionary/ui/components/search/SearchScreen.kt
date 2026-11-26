@@ -1,6 +1,5 @@
 package com.aaronhktan.cantonesedictionary.ui.components.search
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.clickable
@@ -21,9 +20,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExpandedFullScreenContainedSearchBar
@@ -74,11 +70,11 @@ import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.window.PopupProperties
 import com.aaronhktan.cantonesedictionary.R
 import com.aaronhktan.cantonesedictionary.logic.entry.Entry
+import com.aaronhktan.cantonesedictionary.logic.utils.InputMethod
 import com.aaronhktan.cantonesedictionary.ui.components.SearchScreenUiState
 import com.aaronhktan.cantonesedictionary.ui.components.entry.EntryRow
 import com.aaronhktan.cantonesedictionary.ui.theme.CantoneseDictionaryTheme
@@ -88,17 +84,29 @@ import kotlinx.coroutines.launch
 
 private const val LOG_TAG = "SearchScreen"
 
+private val inputMethodOptions: List<InputMethod> = listOf(
+    InputMethod.AUTO_DETECT,
+    InputMethod.TRADITIONAL,
+    InputMethod.SIMPLIFIED,
+    InputMethod.FUZZY_JYUTPING,
+    InputMethod.JYUTPING,
+    InputMethod.FUZZY_PINYIN,
+    InputMethod.PINYIN,
+    InputMethod.ENGLISH
+)
+
 @Composable
 fun SearchScreen(
     searchScreenUiState: SearchScreenUiState,
     isSinglePane: Boolean,
     onQueryChanged: (String) -> Unit,
+    onInputMethodChanged: (InputMethod) -> Unit,
     onEntrySelected: (Entry) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val searchBarState = rememberSearchBarState()
     val listState = rememberLazyListState()
-    var languageSelectorExpanded by rememberSaveable { mutableStateOf(false) }
+    var inputMethodSelectorExpanded by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -107,10 +115,14 @@ fun SearchScreen(
                     searchScreenUiState = searchScreenUiState,
                     searchBarState = searchBarState,
                     listState = listState,
-                    languageSelectorExpanded = languageSelectorExpanded,
+                    inputMethodSelectorExpanded = inputMethodSelectorExpanded,
                     isSinglePane = isSinglePane,
-                    onLanguageSelectorToggled = { value ->
-                        languageSelectorExpanded = value
+                    onInputMethodSelectorToggled = { value ->
+                        inputMethodSelectorExpanded = value
+                    },
+                    onInputMethodChanged = { method ->
+                        onInputMethodChanged(method)
+                        inputMethodSelectorExpanded = false
                     },
                     onQueryChanged = onQueryChanged,
                     onEntrySelected = onEntrySelected,
@@ -128,10 +140,14 @@ fun SearchScreen(
                     searchScreenUiState = searchScreenUiState,
                     searchBarState = searchBarState,
                     listState = listState,
-                    languageSelectorExpanded = languageSelectorExpanded,
+                    inputMethodSelectorExpanded = inputMethodSelectorExpanded,
                     isSinglePane = isSinglePane,
-                    onLanguageSelectorToggled = { value ->
-                        languageSelectorExpanded = value
+                    onInputMethodSelectorToggled = { value ->
+                        inputMethodSelectorExpanded = value
+                    },
+                    onInputMethodChanged = { method ->
+                        onInputMethodChanged(method)
+                        inputMethodSelectorExpanded = false
                     },
                     onQueryChanged = onQueryChanged,
                     onEntrySelected = onEntrySelected,
@@ -159,9 +175,10 @@ private fun SearchScreenContents(
     searchScreenUiState: SearchScreenUiState,
     searchBarState: SearchBarState,
     listState: LazyListState,
-    languageSelectorExpanded: Boolean,
+    inputMethodSelectorExpanded: Boolean,
     isSinglePane: Boolean,
-    onLanguageSelectorToggled: (Boolean) -> Unit,
+    onInputMethodSelectorToggled: (Boolean) -> Unit,
+    onInputMethodChanged: (InputMethod) -> Unit,
     onQueryChanged: (String) -> Unit,
     onEntrySelected: (Entry) -> Unit,
     modifier: Modifier = Modifier
@@ -199,8 +216,9 @@ private fun SearchScreenContents(
             SearchResults(
                 searchScreenUiState = searchScreenUiState,
                 listState = listState,
-                languageSelectorExpanded = languageSelectorExpanded,
+                languageSelectorExpanded = inputMethodSelectorExpanded,
                 isSinglePane = isSinglePane,
+                onInputMethodChanged = onInputMethodChanged,
                 onEntrySelected = { result ->
                     shouldReexpand = true
                     scope.launch {
@@ -208,7 +226,7 @@ private fun SearchScreenContents(
                     }
                     onEntrySelected(result)
                 },
-                onLanguageSelectorToggled = onLanguageSelectorToggled,
+                onLanguageSelectorToggled = onInputMethodSelectorToggled,
                 modifier = Modifier
                     .fillMaxWidth(),
             )
@@ -246,12 +264,13 @@ private fun SearchScreenContents(
             SearchResults(
                 searchScreenUiState = searchScreenUiState,
                 listState = listState,
-                languageSelectorExpanded = languageSelectorExpanded,
+                languageSelectorExpanded = inputMethodSelectorExpanded,
                 isSinglePane = isSinglePane,
+                onInputMethodChanged = onInputMethodChanged,
                 onEntrySelected = { result ->
                     onEntrySelected(result)
                 },
-                onLanguageSelectorToggled = onLanguageSelectorToggled,
+                onLanguageSelectorToggled = onInputMethodSelectorToggled,
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = dimensionResource(R.dimen.search_pane_min_height)),
@@ -297,10 +316,13 @@ fun SearchResults(
     languageSelectorExpanded: Boolean,
     isSinglePane: Boolean,
     onLanguageSelectorToggled: (Boolean) -> Unit,
+    onInputMethodChanged: (InputMethod) -> Unit,
     onEntrySelected: (Entry) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val searchResults = searchScreenUiState.searchResults ?: listOf()
+    val detectedInputMethod = searchScreenUiState.detectedInputMethod
+    var inputMethodText by remember { mutableStateOf(searchScreenUiState.selectedInputMethod.descriptionString()) }
     var buttonHeight by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
 
@@ -347,7 +369,7 @@ fun SearchResults(
                     SplitButtonDefaults.LeadingButton(
                         onClick = { onLanguageSelectorToggled(true) }
                     ) {
-                        Text("Fuzzy Jyutping")
+                        Text(inputMethodText)
                     }
                 },
                 trailingButton = {
@@ -419,30 +441,15 @@ fun SearchResults(
                     shapes = MenuDefaults.groupShape(0, 1),
                     containerColor = MenuDefaults.groupVibrantContainerColor,
                 ) {
-                    SelectableDropdownMenuItem(
-                        selected = true,
-                        text = { Text("Edit") },
-                        shapes = MenuDefaults.itemShape(0, 3),
-                        onClick = { /* Handle edit! */ },
-                        leadingIcon = { Icon(Icons.Outlined.Edit, contentDescription = null) },
-                        colors = MenuDefaults.selectableItemVibrantColors(),
-                    )
-                    SelectableDropdownMenuItem(
-                        selected = false,
-                        text = { Text("Settings") },
-                        shapes = MenuDefaults.itemShape(1, 3),
-                        onClick = { /* Handle settings! */ },
-                        leadingIcon = { Icon(Icons.Outlined.Settings, contentDescription = null) },
-                        colors = MenuDefaults.selectableItemVibrantColors(),
-                    )
-                    SelectableDropdownMenuItem(
-                        selected = false,
-                        text = { Text("Send Feedback") },
-                        shapes = MenuDefaults.itemShape(2, 3),
-                        onClick = { /* Handle send feedback! */ },
-                        leadingIcon = { Icon(Icons.Outlined.Email, contentDescription = null) },
-                        colors = MenuDefaults.selectableItemVibrantColors(),
-                    )
+                    inputMethodOptions.forEachIndexed { idx, method ->
+                        SelectableDropdownMenuItem(
+                            selected = searchScreenUiState.selectedInputMethod == method,
+                            text = { Text(method.descriptionString()) },
+                            shapes = MenuDefaults.itemShape(idx, inputMethodOptions.size),
+                            onClick = { onInputMethodChanged(method) },
+                            colors = MenuDefaults.selectableItemVibrantColors(),
+                        )
+                    }
                 }
             }
         }
@@ -460,11 +467,35 @@ fun SearchResults(
         }
     }
 
-    if (!isSinglePane) {
-        LaunchedEffect(searchResults) {
-            if (searchResults.isNotEmpty()) {
-                onEntrySelected(searchResults[0])
+    LaunchedEffect(searchResults) {
+        if (searchResults.isNotEmpty()) {
+            listState.scrollToItem(0)
+
+            if (!isSinglePane) {
+                onEntrySelected(searchResults.first())
             }
+        }
+    }
+
+    LaunchedEffect(detectedInputMethod) {
+        if (searchScreenUiState.selectedInputMethod == InputMethod.AUTO_DETECT) {
+            inputMethodText = if (detectedInputMethod != null) {
+                "Detected input: ${detectedInputMethod.descriptionString()}"
+            } else {
+                "Auto-detect language"
+            }
+        }
+    }
+
+    LaunchedEffect(searchScreenUiState.selectedInputMethod) {
+        if (searchScreenUiState.selectedInputMethod == InputMethod.AUTO_DETECT) {
+            inputMethodText = if (detectedInputMethod != null) {
+                "Detected input: ${detectedInputMethod.descriptionString()}"
+            } else {
+                "Auto-detect language"
+            }
+        } else {
+            inputMethodText = searchScreenUiState.selectedInputMethod.descriptionString()
         }
     }
 }
@@ -476,6 +507,7 @@ fun SearchScreenPreviewSinglePane() {
         SearchScreen(
             searchScreenUiState = SearchScreenUiState(),
             isSinglePane = true,
+            onInputMethodChanged = {},
             onQueryChanged = {},
             onEntrySelected = {})
     }
@@ -488,6 +520,7 @@ fun SearchScreenPreviewDoublePane() {
         SearchScreen(
             searchScreenUiState = SearchScreenUiState(),
             isSinglePane = false,
+            onInputMethodChanged = {},
             onQueryChanged = {},
             onEntrySelected = {})
     }

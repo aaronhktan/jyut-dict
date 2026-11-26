@@ -337,7 +337,7 @@ const val pinyinExistenceQuery = """
         SELECT
           rowid
         FROM entries
-        WHERE pinyin %@ ?
+        WHERE pinyin GLOB ?
       ) AS existence
   """
 

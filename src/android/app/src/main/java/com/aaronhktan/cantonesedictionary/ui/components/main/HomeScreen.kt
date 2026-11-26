@@ -64,6 +64,9 @@ fun HomeScreen(
                     onQueryChanged = {
                         searchScreenViewModel.updateSearchQuery(it)
                     },
+                    onInputMethodChanged = { method ->
+                        searchScreenViewModel.updateInputMethod(method)
+                    },
                     onEntrySelected = { entry ->
                         searchScreenViewModel.updateSelectedEntry(entry)
                         coroutineScope.launch {

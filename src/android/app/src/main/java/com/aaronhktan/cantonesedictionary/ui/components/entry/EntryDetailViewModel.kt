@@ -12,7 +12,9 @@ import com.aaronhktan.cantonesedictionary.logic.example.Example
 import com.aaronhktan.cantonesedictionary.logic.search.SQLSearch
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -50,7 +52,7 @@ class EntryDetailViewModel(application: Application) : AndroidViewModel(applicat
                             return@flow
                         }
 
-                        _uiState.update{
+                        _uiState.update {
                             it.copy(
                                 allExamples = null,
                                 examplesBySource = null,
@@ -58,44 +60,52 @@ class EntryDetailViewModel(application: Application) : AndroidViewModel(applicat
                         }
 
                         emit(searcher.searchByRowId(id.toString()))
-                    }
-                }
-                .onEach { entry ->
-                    if (entry == null) {
+                    }.onEach { entry ->
+                        if (entry == null) {
+                            _uiState.update {
+                                it.copy(
+                                    currentEntry = null,
+                                    allExamples = null,
+                                    examplesBySource = null
+                                )
+                            }
+                            return@onEach
+                        }
+
+                        delay(300.milliseconds)
+                        currentCoroutineContext().ensureActive()
+
                         _uiState.update {
                             it.copy(
-                                currentEntry = null,
-                                allExamples = null,
-                                examplesBySource = null
+                                currentEntry = entry
                             )
                         }
-                        return@onEach
-                    }
-                    _uiState.update {
-                        it.copy(
-                            currentEntry = entry
-                        )
-                    }
 
-                    val examples = searcher.searchExamplesByTraditional(entry.traditional)
-                    val examplesBySource: MutableMap<String, MutableList<Example>> = mutableMapOf()
-                    for (e in examples) {
-                        val source = e.getTranslationSets().firstOrNull()?.source
-                        if (!source.isNullOrEmpty()) {
-                            if (examplesBySource.getOrPut(source, { mutableListOf() }).size >= 2) {
-                                continue
+                        val examples = searcher.searchExamplesByTraditional(entry.traditional)
+                        val examplesBySource: MutableMap<String, MutableList<Example>> =
+                            mutableMapOf()
+                        for (e in examples) {
+                            currentCoroutineContext().ensureActive()
+                            val source = e.getTranslationSets().firstOrNull()?.source
+                            if (!source.isNullOrEmpty()) {
+                                if (examplesBySource.getOrPut(
+                                        source,
+                                        { mutableListOf() }).size >= 2
+                                ) {
+                                    continue
+                                }
+                                examplesBySource[source]?.add(e)
                             }
-                            examplesBySource[source]?.add(e)
                         }
-                    }
 
-                    yield()
+                        currentCoroutineContext().ensureActive()
 
-                    _uiState.update {
-                        it.copy(
-                            examplesBySource = examplesBySource,
-                            allExamples = examples,
-                        )
+                        _uiState.update {
+                            it.copy(
+                                examplesBySource = examplesBySource,
+                                allExamples = examples,
+                            )
+                        }
                     }
                 }
                 .collect {

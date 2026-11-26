@@ -8,6 +8,8 @@ import com.aaronhktan.cantonesedictionary.logic.entry.Entry
 import com.aaronhktan.cantonesedictionary.logic.example.Example
 import com.aaronhktan.cantonesedictionary.logic.example.Translation
 import com.aaronhktan.cantonesedictionary.logic.example.TranslationSet
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.yield
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
@@ -183,7 +185,7 @@ suspend fun parseReturnedEntryRecords(statement: SQLiteStatement): List<Entry> {
     var statementIdx = 0
     while (statement.step()) {
         if (++statementIdx % 500 == 0) {
-            yield()
+            currentCoroutineContext().ensureActive()
         }
         val definitionsSets: MutableList<DefinitionsSet> = mutableListOf()
         var definitionsListArray: JsonArray
@@ -234,7 +236,7 @@ suspend fun parseReturnedEntryRecords(statement: SQLiteStatement): List<Entry> {
                                 val translationsArray: JsonArray?
                                 val translations: MutableList<Translation> = mutableListOf()
                                 try {
-                                    translationsArray = exampleElement["translations"]?.jsonArray
+                                    translationsArray = exampleElement["translations"] as? JsonArray
                                     if (translationsArray == null) {
                                         throw SerializationException("Couldn't parse translations as array")
                                     }
@@ -350,8 +352,8 @@ suspend fun parseReturnedExampleRecords(statement: SQLiteStatement): List<Exampl
 
     var statementIdx = 0
     while (statement.step()) {
-        if (++statementIdx % 1000 == 0) {
-            yield()
+        if (++statementIdx % 500 == 0) {
+            currentCoroutineContext().ensureActive()
         }
         val translationSets: MutableList<TranslationSet> = mutableListOf()
         try {
