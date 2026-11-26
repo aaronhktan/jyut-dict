@@ -140,7 +140,6 @@ extension HandwritingView {
           topTrailingRadius: 20
         )
       )
-      .padding([.horizontal])
       .gesture(
         DragGesture(minimumDistance: 0, coordinateSpace: .local)
           .onChanged { value in
@@ -176,6 +175,7 @@ extension HandwritingView {
             canvasState.doRecognition()
           }
       )
+      .padding([.horizontal])
 
       HStack {
         Button("Reset canvas", systemImage: "trash") {
