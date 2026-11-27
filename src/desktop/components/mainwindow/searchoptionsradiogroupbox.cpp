@@ -36,21 +36,26 @@ public:
 protected:
     void wheelEvent(QWheelEvent *wheel) override
     {
-        if (wheel->pixelDelta().y() != 0) {
-            // Commonly from a trackpad, don't override
+        // When a user scrolls (vertically) on a mouse, the scroll area should move horizontally.
+
+        switch (wheel->device()->type()) {
+        case QInputDevice::DeviceType::TouchPad: {
             QScrollArea::wheelEvent(wheel);
-            return;
+            break;
         }
 
-        if (wheel->angleDelta().y() > 0) {
-            // Commonly from a mouse, override
+        case QInputDevice::DeviceType::Mouse: {
             horizontalScrollBar()->setValue(horizontalScrollBar()->value()
-                                            - wheel->angleDelta().y());
+                                            - wheel->angleDelta().y() / 2);
             wheel->accept();
-            return;
+            break;
         }
 
-        QScrollArea::wheelEvent(wheel);
+        default: {
+            QScrollArea::wheelEvent(wheel);
+            break;
+        }
+        }
     }
 };
 } // namespace
