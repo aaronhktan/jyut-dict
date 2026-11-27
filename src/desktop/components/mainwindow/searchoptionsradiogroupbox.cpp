@@ -19,9 +19,41 @@
 #include <QLocale>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QScrollBar>
 #include <QStyle>
 #include <QTimer>
+#include <QWheelEvent>
 #include <QWidget>
+
+namespace {
+class HorizontalScrollArea : public QScrollArea
+{
+public:
+    HorizontalScrollArea(QWidget *parent)
+        : QScrollArea{parent}
+    {}
+
+protected:
+    void wheelEvent(QWheelEvent *wheel) override
+    {
+        if (wheel->pixelDelta().y() != 0) {
+            // Commonly from a trackpad, don't override
+            QScrollArea::wheelEvent(wheel);
+            return;
+        }
+
+        if (wheel->angleDelta().y() > 0) {
+            // Commonly from a mouse, override
+            horizontalScrollBar()->setValue(horizontalScrollBar()->value()
+                                            - wheel->angleDelta().y());
+            wheel->accept();
+            return;
+        }
+
+        QScrollArea::wheelEvent(wheel);
+    }
+};
+} // namespace
 
 SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(
     std::shared_ptr<ISearchOptionsMediator> mediator,
@@ -119,8 +151,10 @@ void SearchOptionsRadioGroupBox::setupUI()
     _layout->setSpacing(10);
 #endif
 
-    _scrollArea = new QScrollArea{this};
+    _scrollArea = new HorizontalScrollArea{this};
     _scrollArea->setFrameShape(QFrame::NoFrame);
+    _scrollArea->installEventFilter(_scrollArea);
+
     _scrollArea->setWidgetResizable(true);
     _scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _innerWidget = new QWidget{this};

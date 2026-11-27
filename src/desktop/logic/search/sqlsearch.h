@@ -47,10 +47,13 @@ public:
 
     void searchSimplified(const QString &searchTerm) override;
     void searchTraditional(const QString &searchTerm) override;
-    void searchJyutping(const QString &searchTerm, bool fuzzyJyutping) override;
+    void searchJyutping(const QString &searchTerm,
+                        bool fuzzyJyutping,
+                        bool unsafeFuzzyJyutping) override;
     void searchPinyin(const QString &searchTerm, bool fuzzyPinyin) override;
     void searchEnglish(const QString &searchTerm) override;
-    void searchAutoDetect(const QString &searchTerm) override;
+    void searchAutoDetect(const QString &searchTerm,
+                          bool unsafeFuzzyJyutping) override;
 
     void searchByUnique(const QString &traditional,
                         const QString &simplified,
@@ -126,6 +129,7 @@ private:
                                  const unsigned long long queryID);
     void searchJyutpingThread(const QString &searchTerm,
                               bool fuzzyJyutping,
+                              bool unsafeFuzzyJyutping,
                               const unsigned long long queryID);
     void searchPinyinThread(const QString &searchTerm,
                             bool fuzzyPinyin,
@@ -133,6 +137,7 @@ private:
     void searchEnglishThread(const QString &searchTerm,
                              const unsigned long long queryID);
     void searchAutoDetectThread(const QString &searchTerm,
+                                bool unsafeFuzzyJyutping,
                                 const unsigned long long queryID);
 
     void searchByUniqueThread(const QString &traditional,
@@ -155,7 +160,6 @@ private:
     std::list<ISearchObserver *> _observers;
 
     std::shared_ptr<SQLDatabaseManager> _manager;
-    std::unique_ptr<QSettings> _settings;
 
     std::atomic<unsigned long long> _queryID;
     std::mt19937_64 _generator;

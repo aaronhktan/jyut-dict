@@ -105,11 +105,23 @@ void SearchLineEdit::search(std::optional<SearchParameters> paramOverride)
         break;
     }
     case SearchParameters::JYUTPING: {
-        _search->searchJyutping(text().trimmed(), /* fuzzyJyutping */ false);
+        _search->searchJyutping(text().trimmed(),
+                                /* fuzzyJyutping */ false,
+                                /* unsafeFuzzyJyutping */
+                                _settings
+                                    ->value("Search/dangerousFuzzyJyutping",
+                                            QVariant{false})
+                                    .toBool());
         break;
     }
     case SearchParameters::FUZZY_JYUTPING: {
-        _search->searchJyutping(text().trimmed(), /* fuzzyJyutping */ true);
+        _search->searchJyutping(text().trimmed(),
+                                /* fuzzyJyutping */ true,
+                                /* unsafeFuzzyJyutping */
+                                _settings
+                                    ->value("Search/dangerousFuzzyJyutping",
+                                            QVariant{false})
+                                    .toBool());
         break;
     }
     case SearchParameters::PINYIN: {
@@ -125,7 +137,12 @@ void SearchLineEdit::search(std::optional<SearchParameters> paramOverride)
         break;
     }
     case SearchParameters::AUTO_DETECT:
-        _search->searchAutoDetect(text().trimmed());
+        _search->searchAutoDetect(text().trimmed(),
+                                  /* unsafeFuzzyJyutping */
+                                  _settings
+                                      ->value("Search/dangerousFuzzyJyutping",
+                                              QVariant{false})
+                                      .toBool());
         break;
     default: {
         break;

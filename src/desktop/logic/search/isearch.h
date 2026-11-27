@@ -12,11 +12,15 @@ public:
 
     virtual void searchSimplified(const QString &searchTerm) = 0;
     virtual void searchTraditional(const QString &searchTerm) = 0;
-    virtual void searchJyutping(const QString &searchTerm, bool fuzzyJyutping)
+    virtual void searchJyutping(const QString &searchTerm,
+                                bool fuzzyJyutping,
+                                bool unsafeFuzzyJyutping)
         = 0;
     virtual void searchPinyin(const QString &searchTerm, bool fuzzyPinyin) = 0;
     virtual void searchEnglish(const QString &searchTerm) = 0;
-    virtual void searchAutoDetect(const QString &searchTerm) = 0;
+    virtual void searchAutoDetect(const QString &searchTerm,
+                                  bool unsafeFuzzyJyutping)
+        = 0;
 
     virtual void searchByUnique(const QString &traditional,
                                 const QString &simplified,

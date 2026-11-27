@@ -5,7 +5,6 @@
 #include "logic/database/sqldatabaseutils.h"
 #include "logic/entry/entry.h"
 #include "logic/search/searchqueries.h"
-#include "logic/settings/settingsutils.h"
 #include "logic/source/sourcemetadata.h"
 #include "logic/utils/cantoneseutils.h"
 #include "logic/utils/chineseutils.h"
@@ -66,7 +65,7 @@ void prepareJyutpingBindValues(const QString &searchTerm,
             jyutpingSyllables,
             /* removeSpecialCharacters */ true,
             /* removeGlobCharacters */ false,
-            /* removeRegexCharacters= */ !fuzzyJyutping);
+            /* removeRegexCharacters */ !fuzzyJyutping);
     }
 
     if (!searchExactMatch && fuzzyJyutping) {
@@ -226,7 +225,6 @@ SQLSearch::SQLSearch()
 {
     std::random_device rd;
     _generator = std::mt19937_64{rd()};
-    _settings = Settings::getSettings();
 }
 
 SQLSearch::SQLSearch(std::shared_ptr<SQLDatabaseManager> manager)
@@ -234,7 +232,6 @@ SQLSearch::SQLSearch(std::shared_ptr<SQLDatabaseManager> manager)
 {
     std::random_device rd;
     _generator = std::mt19937_64{rd()};
-    _settings = Settings::getSettings();
 }
 
 SQLSearch::~SQLSearch()
@@ -558,7 +555,9 @@ void SQLSearch::searchTraditional(const QString &searchTerm)
               queryID);
 }
 
-void SQLSearch::searchJyutping(const QString &searchTerm, bool fuzzyJyutping)
+void SQLSearch::searchJyutping(const QString &searchTerm,
+                               bool fuzzyJyutping,
+                               bool unsafeFuzzyJyutping)
 {
     unsigned long long queryID = generateAndSetQueryID();
     if (searchTerm.isEmpty()) {
@@ -569,6 +568,7 @@ void SQLSearch::searchJyutping(const QString &searchTerm, bool fuzzyJyutping)
               this,
               searchTerm.normalized(QString::NormalizationForm_C),
               fuzzyJyutping,
+              unsafeFuzzyJyutping,
               queryID);
 }
 
@@ -599,7 +599,8 @@ void SQLSearch::searchEnglish(const QString &searchTerm)
               queryID);
 }
 
-void SQLSearch::searchAutoDetect(const QString &searchTerm)
+void SQLSearch::searchAutoDetect(const QString &searchTerm,
+                                 bool unsafeFuzzyJyutping)
 {
     unsigned long long queryID = generateAndSetQueryID();
     if (searchTerm.isEmpty()) {
@@ -610,6 +611,7 @@ void SQLSearch::searchAutoDetect(const QString &searchTerm)
     runThread(&SQLSearch::searchAutoDetectThread,
               this,
               searchTerm.normalized(QString::NormalizationForm_C),
+              unsafeFuzzyJyutping,
               queryID);
 }
 
@@ -757,16 +759,12 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
 // to add another set of quotes around placeholder values.
 void SQLSearch::searchJyutpingThread(const QString &searchTerm,
                                      bool fuzzyJyutping,
+                                     bool unsafeFuzzyJyutping,
                                      const unsigned long long queryID)
 {
     std::vector<Entry> results;
 
     QSqlQuery query{_manager->getDatabase()};
-
-    bool unsafeFuzzyJyutping = _settings
-                                   ->value("Search/dangerousFuzzyJyutping",
-                                           QVariant{false})
-                                   .toBool();
 
     QString pattern;
     prepareJyutpingBindValues(searchTerm,
@@ -912,6 +910,7 @@ void SQLSearch::searchEnglishThread(const QString &searchTerm,
 }
 
 void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
+                                       bool unsafeFuzzyJyutping,
                                        const unsigned long long queryID)
 {
     ScriptDetector sd{searchTerm};
@@ -926,19 +925,9 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
         return;
     }
 
-    bool fuzzyJyutping
-        = _settings->value("Search/fuzzyJyutping", QVariant{true}).toBool();
-    bool unsafeFuzzyJyutping = _settings
-                                   ->value("Search/unsafeFuzzyJyutping",
-                                           QVariant{false})
-                                   .toBool();
-    bool fuzzyPinyin
-        = _settings->value("Search/fuzzyPinyin", QVariant{true}).toBool();
-
     QSqlQuery jyutpingQuery{_manager->getDatabase()};
 
     bool jyutpingExists = false;
-
     {
         QString jyutpingSearchTerm;
         prepareJyutpingBindValues(searchTerm,
@@ -953,7 +942,10 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
     }
     if (jyutpingExists) {
         notifyObserversIfQueryIdCurrent(SearchParameters::JYUTPING, queryID);
-        searchJyutpingThread(searchTerm, false, queryID);
+        searchJyutpingThread(searchTerm,
+                             /* fuzzyJyutping */ false,
+                             unsafeFuzzyJyutping,
+                             queryID);
         return;
     }
 
@@ -989,14 +981,19 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
     if (jyutpingExists) {
         notifyObserversIfQueryIdCurrent(SearchParameters::FUZZY_JYUTPING,
                                         queryID);
-        searchJyutpingThread(searchTerm, true, queryID);
+        searchJyutpingThread(searchTerm,
+                             /* fuzzyJyutping */ true,
+                             unsafeFuzzyJyutping,
+                             queryID);
         return;
     }
 
     bool pinyinExists = false;
     {
         QString pinyinSearchTerm;
-        preparePinyinBindValues(searchTerm, pinyinSearchTerm, fuzzyPinyin);
+        preparePinyinBindValues(searchTerm,
+                                pinyinSearchTerm,
+                                /* fuzzyPinyin */ false);
         QSqlQuery pinyinQuery{_manager->getDatabase()};
         pinyinQuery.prepare(QString{SEARCH_PINYIN_EXISTS_QUERY});
         pinyinQuery.addBindValue(pinyinSearchTerm);
@@ -1012,7 +1009,9 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
 
     {
         QString pinyinSearchTerm;
-        preparePinyinBindValues(searchTerm, pinyinSearchTerm, fuzzyPinyin);
+        preparePinyinBindValues(searchTerm,
+                                pinyinSearchTerm,
+                                /* fuzzyPinyin */ true);
         QRegularExpression r{pinyinSearchTerm.sliced(1)};
         std::unordered_set<QString> filteredPinyin;
         std::vector<QString> prefixes = literalPrefixes(

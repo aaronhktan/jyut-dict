@@ -604,55 +604,73 @@ void TestSqlSearch::searchJyutping()
     };
     observer.setExpected(expected);
 
-    search.searchJyutping("baak6 wan4 saan1", /* fuzzy */ false);
+    search.searchJyutping("baak6 wan4 saan1",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("baak6 wan4 saan1$", /* fuzzy */ false);
+    search.searchJyutping("baak6 wan4 saan1$",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("\"baak6 wan4 saan1\"", /* fuzzy */ false);
+    search.searchJyutping("\"baak6 wan4 saan1\"",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("baak6'wan4saan1", /* fuzzy */ false);
+    search.searchJyutping("baak6'wan4saan1",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("baakwansaan", /* fuzzy */ false);
+    search.searchJyutping("baakwansaan",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("baakwan", /* fuzzy */ false);
+    search.searchJyutping("baakwan",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("baak6*saan1", /* fuzzy */ false);
+    search.searchJyutping("baak6*saan1",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("*saan1", /* fuzzy */ false);
+    search.searchJyutping("*saan1",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("baak6*", /* fuzzy */ false);
+    search.searchJyutping("baak6*",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
@@ -681,49 +699,65 @@ void TestSqlSearch::searchJyutping()
         {3, "越秀", "越秀", "jyut6 sau3", "yue4 xiu4", definitions},
     };
     observer.setExpected(expected);
-    search.searchJyutping("jyut6 sau3", /* fuzzy */ false);
+    search.searchJyutping("jyut6 sau3",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("jyut? sau?", /* fuzzy */ false);
+    search.searchJyutping("jyut? sau?",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("*sau?", /* fuzzy */ false);
+    search.searchJyutping("*sau?",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("jyut?*", /* fuzzy */ false);
+    search.searchJyutping("jyut?*",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("jyut? ????", /* fuzzy */ false);
+    search.searchJyutping("jyut? ????",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("yuet? ????", /* fuzzy */ true);
+    search.searchJyutping("yuet? ????",
+                          /* fuzzy */ true,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("yuetshow", /* fuzzy */ true);
+    search.searchJyutping("yuetshow",
+                          /* fuzzy */ true,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("????? ????$", /* fuzzy */ true);
+    search.searchJyutping("????? ????$",
+                          /* fuzzy */ true,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
@@ -741,37 +775,49 @@ void TestSqlSearch::searchJyutpingNoResults()
     std::vector<Entry> expected;
     observer.setExpected(expected);
 
-    search.searchJyutping("白云山", /* fuzzy */ false);
+    search.searchJyutping("白云山",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("白???", /* fuzzy */ false);
+    search.searchJyutping("白???",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("*白白白白山", /* fuzzy */ false);
+    search.searchJyutping("*白白白白山",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("白云*", /* fuzzy */ false);
+    search.searchJyutping("白云*",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("\"jyut6\"", /* fuzzy */ false);
+    search.searchJyutping("\"jyut6\"",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("jyut6$", /* fuzzy */ false);
+    search.searchJyutping("jyut6$",
+                          /* fuzzy */ false,
+                          /* unsafeFuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
@@ -1059,13 +1105,13 @@ void TestSqlSearch::searchEnglishNoResults()
     std::vector<Entry> expected;
     observer.setExpected(expected);
 
-    search.searchJyutping("snoofles", /* fuzzy */ false);
+    search.searchEnglish("snoofles");
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("\"baiyun\"", /* fuzzy */ false);
+    search.searchEnglish("\"baiyun\"");
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
@@ -1093,151 +1139,155 @@ void TestSqlSearch::searchAutoDetect()
     };
     observer.setExpected(expected);
 
-    search.searchAutoDetect("白雲山");
+    search.searchAutoDetect("白雲山", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("白云山");
+    search.searchAutoDetect("白云山", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("白?山");
+    search.searchAutoDetect("白?山", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("*山");
+    search.searchAutoDetect("*山", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("白*");
+    search.searchAutoDetect("白*", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("baak6 wan4 saan1");
+    search.searchAutoDetect("baak6 wan4 saan1", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("baak6 wan4 saan1$");
+    search.searchAutoDetect("baak6 wan4 saan1$",
+                            /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("\"baak6 wan4 saan1\"");
+    search.searchAutoDetect("\"baak6 wan4 saan1\"",
+                            /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("baak6'wan4saan1");
+    search.searchAutoDetect("baak6'wan4saan1", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("baakwansaan");
+    search.searchAutoDetect("baakwansaan", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("baakwan");
+    search.searchAutoDetect("baakwan", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("baak6*saan1");
+    search.searchAutoDetect("baak6*saan1", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("*saan1");
+    search.searchAutoDetect("*saan1", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("baak6*");
+    search.searchAutoDetect("baak6*", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("bai2 yun2 shan1");
+    search.searchAutoDetect("bai2 yun2 shan1", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("bai2 yun2 shan1$");
+    search.searchAutoDetect("bai2 yun2 shan1$", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("\"bai2 yun2 shan1\"");
+    search.searchAutoDetect("\"bai2 yun2 shan1\"",
+                            /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("bai2'yun2shan1");
+    search.searchAutoDetect("bai2'yun2shan1", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("baiyunshan");
+    search.searchAutoDetect("baiyunshan", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("baiyun");
+    search.searchAutoDetect("baiyun", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("bai2*shan1");
+    search.searchAutoDetect("bai2*shan1", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("*shan1");
+    search.searchAutoDetect("*shan1", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("bai2*");
+    search.searchAutoDetect("bai2*", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("mountain");
+    search.searchAutoDetect("mountain", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("\"baiyun mountain\"");
+    search.searchAutoDetect("\"baiyun mountain\"",
+                            /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
@@ -1253,7 +1303,7 @@ void TestSqlSearch::searchAutoDetect()
     observer.setExpected(expected);
     // Test for Unicode normalization: the string being searched
     // is U+F901, but the one in the dictionary is U+66F4
-    search.searchAutoDetect("更");
+    search.searchAutoDetect("更", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
@@ -1268,25 +1318,25 @@ void TestSqlSearch::searchAutoDetectNoResults()
 
     search.registerObserver(&observer);
 
-    search.searchAutoDetect("白???");
+    search.searchAutoDetect("白???", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("*白白白白山");
+    search.searchAutoDetect("*白白白白山", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("\"jyut6\"");
+    search.searchAutoDetect("\"jyut6\"", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchAutoDetect("jyut6$");
+    search.searchAutoDetect("jyut6$", /* unsafeFuzzyJyutping */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
