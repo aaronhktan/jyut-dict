@@ -124,7 +124,11 @@ void SearchOptionsRadioGroupBox::setupUI()
     _scrollArea->setWidgetResizable(true);
     _scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _innerWidget = new QWidget{this};
+#ifdef Q_OS_MAC
     _innerWidget->setAttribute(Qt::WA_TranslucentBackground, true);
+#else
+    _innerWidget->setObjectName("innerWidget");
+#endif
     _innerWidgetLayout = new QHBoxLayout{_innerWidget};
     _innerWidgetLayout->setContentsMargins(0, 0, 0, 0);
 #ifdef Q_OS_LINUX
@@ -373,6 +377,18 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
 
     setMinimumHeight(std::max(_currentChoiceLabel->minimumHeight(),
                               _simplifiedButton->minimumHeight()));
+
+#ifdef Q_OS_WIN
+    if (use_dark) {
+        _innerWidget->setStyleSheet("QWidget#innerWidget { "
+                                    "   background-color: #202020; "
+                                    "}");
+    } else {
+        _innerWidget->setStyleSheet("QWidget#innerWidget { "
+                                    "   background-color: white; "
+                                    "} ");
+    }
+#endif
 }
 
 void SearchOptionsRadioGroupBox::animateAutoDetectText(QPushButton *button,
@@ -422,12 +438,14 @@ void SearchOptionsRadioGroupBox::animateAutoDetectText(QPushButton *button,
     fadeInOut->addAnimation(width);
     fadeInOut->addAnimation(fadeIn);
 
-    connect(fadeOut, &QAbstractAnimation::finished, button, [button, newText] {
+    connect(width, &QAbstractAnimation::finished, button, [button, newText] {
         button->setText(newText);
     });
 
     connect(fadeInOut, &QAbstractAnimation::finished, button, [button] {
+#ifndef Q_OS_WIN
         button->setFixedSize(button->sizeHint());
+#endif
         button->updateGeometry();
         button->setGraphicsEffect(nullptr);
         button->update();

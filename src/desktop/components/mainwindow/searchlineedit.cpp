@@ -10,6 +10,7 @@
 #elif defined (Q_OS_LINUX)
 #include "logic/utils/utils_linux.h"
 #elif defined(Q_OS_WIN)
+#include "logic/utils/utils_qt.h"
 #include "logic/utils/utils_windows.h"
 #endif
 #include "windows/handwritingwindow.h"
