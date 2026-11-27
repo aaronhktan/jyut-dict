@@ -40,16 +40,29 @@ protected:
 
         switch (wheel->device()->type()) {
         case QInputDevice::DeviceType::TouchPad: {
+            qDebug() << " got touchpad event";
+#ifdef Q_OS_MAC
             QScrollArea::wheelEvent(wheel);
+#else
+            if (wheel->angleDelta().x() != 0) {
+                QScrollArea::wheelEvent(wheel);
+            } else {
+                horizontalScrollBar()->setValue(horizontalScrollBar()->value()
+                                                - wheel->angleDelta().y() / 2);
+            }
+            wheel->accept();
+#endif
             break;
         }
 
+#ifdef Q_OS_MAC
         case QInputDevice::DeviceType::Mouse: {
             horizontalScrollBar()->setValue(horizontalScrollBar()->value()
                                             - wheel->angleDelta().y() / 2);
             wheel->accept();
             break;
         }
+#endif
 
         default: {
             QScrollArea::wheelEvent(wheel);
