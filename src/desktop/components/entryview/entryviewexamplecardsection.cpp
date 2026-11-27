@@ -17,6 +17,7 @@
 #include "logic/utils/utils_qt.h"
 
 #include <QEvent>
+#include <QGraphicsOpacityEffect>
 #include <QString>
 #include <QTimer>
 #include <QToolButton>
@@ -50,6 +51,11 @@ EntryViewExampleCardSection::EntryViewExampleCardSection(QWidget *parent)
     : QWidget{parent}
 {
     setupUI();
+}
+
+EntryViewExampleCardSection::~EntryViewExampleCardSection()
+{
+    _search->deregisterObserver(this);
 }
 
 void EntryViewExampleCardSection::callback(const std::vector<Example> &examples,
@@ -248,10 +254,10 @@ void EntryViewExampleCardSection::updateUI(const std::vector<Example> &examples,
         _exampleCards.push_back(new ExampleCardWidget{this});
         _exampleCards.back()->displayExamples(item.second);
 
-        _exampleCardsLayout->addWidget(_exampleCards.back(), Qt::AlignHCenter);
+        addWidgetWithFade(_exampleCards.back(), Qt::AlignCenter);
     }
 
-    _exampleCardsLayout->addWidget(_viewAllExamplesButton);
+    addWidgetWithFade(_viewAllExamplesButton, Qt::AlignRight);
     _exampleCardsLayout->setAlignment(_viewAllExamplesButton, Qt::AlignRight);
     _viewAllExamplesButton->setVisible(true);
 
@@ -346,6 +352,28 @@ void EntryViewExampleCardSection::openExampleWindow(
                        + (window()->width() - splitter->size().width()) / 2,
                    window()->y()
                        + (window()->height() - splitter->size().height()) / 2);
+}
+
+void EntryViewExampleCardSection::addWidgetWithFade(QWidget *widget,
+                                                    Qt::Alignment alignment)
+{
+    QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(widget);
+    widget->setGraphicsEffect(effect);
+
+    QPropertyAnimation *animation = new QPropertyAnimation(effect,
+                                                           "opacity",
+                                                           widget);
+    animation->setDuration(250);
+    animation->setStartValue(0.0);
+    animation->setEndValue(1.0);
+    animation->setEasingCurve(QEasingCurve::OutCubic);
+
+    _exampleCardsLayout->addWidget(widget, alignment);
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
+    QObject::connect(animation, &QPropertyAnimation::finished, widget, [widget] {
+        widget->setGraphicsEffect(nullptr);
+        widget->update();
+    });
 }
 
 // Given some examples, returns a set of five (or fewer) examples from

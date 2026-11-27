@@ -33,6 +33,7 @@ public:
     explicit EntryViewExampleCardSection(
         std::shared_ptr<SQLDatabaseManager> manager, QWidget *parent = nullptr);
     explicit EntryViewExampleCardSection(QWidget *parent = nullptr);
+    ~EntryViewExampleCardSection();
     void callback(const std::vector<Example> &examples,
                   bool emptyQuery) override;
 
@@ -48,6 +49,7 @@ private:
 
     void showLoadingWidget(void);
     void openExampleWindow(const std::vector<Example> &examples);
+    void addWidgetWithFade(QWidget *widget, Qt::Alignment alignment);
 
     std::mutex layoutMutex;
     std::mutex updateMutex;

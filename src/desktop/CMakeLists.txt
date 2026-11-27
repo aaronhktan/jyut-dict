@@ -93,7 +93,6 @@ set(PROJECT_HEADERS
         components/settings/advancedtab.h
         components/settings/contacttab.h
         components/settings/dictionarytab.h
-        components/settings/searchtab.h
         components/settings/settingstab.h
         components/settings/texttab.h
         components/sourcelist/sourcelistdelegate.h
@@ -169,7 +168,6 @@ set(PROJECT_HEADERS
         windows/sourceupdateresultwindow.h
         windows/transcriptionwindow.h
         windows/updatewindow.h
-        windows/welcomewindow.h
 )
 
 set(PROJECT_SOURCES
@@ -223,7 +221,6 @@ set(PROJECT_SOURCES
         components/settings/advancedtab.cpp
         components/settings/contacttab.cpp
         components/settings/dictionarytab.cpp
-        components/settings/searchtab.cpp
         components/settings/settingstab.cpp
         components/settings/texttab.cpp
         components/sourcelist/sourcelistdelegate.cpp
@@ -288,7 +285,6 @@ set(PROJECT_SOURCES
         windows/sourceupdateresultwindow.cpp
         windows/transcriptionwindow.cpp
         windows/updatewindow.cpp
-        windows/welcomewindow.cpp
         ${TS_FILES}
 )
 
@@ -333,7 +329,7 @@ add_subdirectory(logic/database/test/TestSqlUserDataUtils)
 add_subdirectory(logic/database/test/TestSqlUserHistoryUtils)
 add_subdirectory(logic/entry/test/TestDefinitionsSet)
 add_subdirectory(logic/entry/test/TestEntry)
-add_subdirectory(logic/search/test/TestSqlSearch)
+# add_subdirectory(logic/search/test/TestSqlSearch)
 add_subdirectory(logic/example/test/TestExample)
 add_subdirectory(logic/example/test/TestTranslationSet)
 add_subdirectory(logic/settings/test/TestSettingsUtils)

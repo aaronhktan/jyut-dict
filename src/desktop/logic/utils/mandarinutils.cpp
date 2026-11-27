@@ -468,7 +468,9 @@ std::string convertPinyinToZhuyin(const std::string &pinyin,
 
     // Remove trailing space
     std::string result = zhuyin.str();
-    result.erase(result.end() - 1);
+    if (!result.empty()) {
+        result.erase(result.end() - 1);
+    }
 
     return result;
 }
@@ -721,7 +723,9 @@ std::string convertPinyinToIPA(const std::string &pinyin,
 
     // Remove trailing space
     std::string result = ipa.str();
-    result.resize(result.size() - double_space.length());
+    if (result.size() >= double_space.length()) {
+        result.resize(result.size() - double_space.length());
+    }
 
     return result;
 }

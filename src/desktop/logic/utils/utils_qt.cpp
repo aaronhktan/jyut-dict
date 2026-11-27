@@ -56,14 +56,19 @@ QMap<SearchParameters, std::string> searchParameterMap = {
     {SearchParameters::TRADITIONAL,
      QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::TC_STRING)
          .toStdString()},
-    {SearchParameters::CHINESE,
-     QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::CN_STRING)
-         .toStdString()},
     {SearchParameters::JYUTPING,
      QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::JP_STRING)
          .toStdString()},
+    {SearchParameters::FUZZY_JYUTPING,
+     QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                 Strings::FUZZY_JP_STRING)
+         .toStdString()},
     {SearchParameters::PINYIN,
      QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::PY_STRING)
+         .toStdString()},
+    {SearchParameters::FUZZY_PINYIN,
+     QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                 Strings::FUZZY_PY_STRING)
          .toStdString()},
     {SearchParameters::ENGLISH,
      QCoreApplication::translate(Strings::STRINGS_CONTEXT, Strings::EN_STRING)
@@ -180,17 +185,21 @@ void refreshLanguageMap()
          QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                      Strings::TC_STRING)
              .toStdString()},
-        {SearchParameters::CHINESE,
-         QCoreApplication::translate(Strings::STRINGS_CONTEXT,
-                                     Strings::CN_STRING)
-             .toStdString()},
         {SearchParameters::JYUTPING,
          QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                      Strings::JP_STRING)
              .toStdString()},
+        {SearchParameters::FUZZY_JYUTPING,
+         QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                     Strings::FUZZY_JP_STRING)
+             .toStdString()},
         {SearchParameters::PINYIN,
          QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                      Strings::PY_STRING)
+             .toStdString()},
+        {SearchParameters::FUZZY_PINYIN,
+         QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                     Strings::FUZZY_PY_STRING)
              .toStdString()},
         {SearchParameters::ENGLISH,
          QCoreApplication::translate(Strings::STRINGS_CONTEXT,

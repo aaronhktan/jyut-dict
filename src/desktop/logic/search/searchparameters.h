@@ -1,24 +1,27 @@
 #ifndef SEARCHPARAMETERS_H
 #define SEARCHPARAMETERS_H
 
-#include <QtGlobal>
 #include <QDataStream>
+#include <QTranslator>
+#include <QtGlobal>
 
 #include <QMetaType>
 
 // An enum that defines all possible search parameters
 
 enum class SearchParameters : int {
-    SIMPLIFIED = 1,
-    TRADITIONAL,
-    CHINESE,
+    SIMPLIFIED = 0,
+    TRADITIONAL = 1,
 
-    JYUTPING,
-    PINYIN,
+    JYUTPING = 2,
+    FUZZY_JYUTPING = 3,
+    PINYIN = 4,
+    FUZZY_PINYIN = 5,
 
-    ENGLISH,
+    ENGLISH = 6,
 
     AUTO_DETECT = 1000,
+    NONE = 1001,
 };
 
 Q_DECLARE_METATYPE(SearchParameters)

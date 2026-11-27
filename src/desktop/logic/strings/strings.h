@@ -173,13 +173,14 @@ constexpr auto YUE_STRING = QT_TRANSLATE_NOOP("strings", "Cantonese");
 constexpr auto CMN_STRING = QT_TRANSLATE_NOOP("strings", "Mandarin");
 constexpr auto ZHO_STRING = QT_TRANSLATE_NOOP("strings", "Chinese");
 
-constexpr auto SC_STRING = QT_TRANSLATE_NOOP("strings", "SC");
-constexpr auto TC_STRING = QT_TRANSLATE_NOOP("strings", "TC");
-constexpr auto CN_STRING = QT_TRANSLATE_NOOP("strings", "CN");
-constexpr auto JP_STRING = QT_TRANSLATE_NOOP("strings", "JP");
-constexpr auto PY_STRING = QT_TRANSLATE_NOOP("strings", "PY");
-constexpr auto EN_STRING = QT_TRANSLATE_NOOP("strings", "EN");
-constexpr auto AD_STRING = QT_TRANSLATE_NOOP("strings", "AUTO");
+constexpr auto SC_STRING = QT_TRANSLATE_NOOP("strings", "Simplified Chinese");
+constexpr auto TC_STRING = QT_TRANSLATE_NOOP("strings", "Traditional Chinese");
+constexpr auto JP_STRING = QT_TRANSLATE_NOOP("strings", "Jyutping");
+constexpr auto FUZZY_JP_STRING = QT_TRANSLATE_NOOP("strings", "Fuzzy Jyutping");
+constexpr auto PY_STRING = QT_TRANSLATE_NOOP("strings", "Pinyin");
+constexpr auto FUZZY_PY_STRING = QT_TRANSLATE_NOOP("strings", "Fuzzy Pinyin");
+constexpr auto EN_STRING = QT_TRANSLATE_NOOP("strings", "English");
+constexpr auto AD_STRING = QT_TRANSLATE_NOOP("strings", "Detect language");
 } // namespace Strings
 
 #endif // STRINGS_H

@@ -5,7 +5,6 @@
 #include "logic/search/isearchoptionsmediator.h"
 #include "logic/settings/settings.h"
 #include "logic/settings/settingsutils.h"
-#include "logic/utils/utils_qt.h"
 #ifdef Q_OS_MAC
 #include "logic/utils/utils_mac.h"
 #elif defined (Q_OS_LINUX)
@@ -95,20 +94,28 @@ void SearchLineEdit::search(std::optional<SearchParameters> paramOverride)
 {
     SearchParameters params = paramOverride.value_or(_parameters);
     switch (params) {
-    case SearchParameters::SIMPLIFIED: {
-        _search->searchSimplified(text().trimmed());
-        break;
-    }
     case SearchParameters::TRADITIONAL: {
         _search->searchTraditional(text().trimmed());
         break;
     }
-    case SearchParameters::PINYIN: {
-        _search->searchPinyin(text().trimmed());
+    case SearchParameters::SIMPLIFIED: {
+        _search->searchSimplified(text().trimmed());
         break;
     }
     case SearchParameters::JYUTPING: {
-        _search->searchJyutping(text().trimmed());
+        _search->searchJyutping(text().trimmed(), /* fuzzyJyutping */ false);
+        break;
+    }
+    case SearchParameters::FUZZY_JYUTPING: {
+        _search->searchJyutping(text().trimmed(), /* fuzzyJyutping */ true);
+        break;
+    }
+    case SearchParameters::PINYIN: {
+        _search->searchPinyin(text().trimmed(), /* fuzzyPinyin */ false);
+        break;
+    }
+    case SearchParameters::FUZZY_PINYIN: {
+        _search->searchJyutping(text().trimmed(), /* fuzzyJyutping */ true);
         break;
     }
     case SearchParameters::ENGLISH: {
@@ -116,7 +123,8 @@ void SearchLineEdit::search(std::optional<SearchParameters> paramOverride)
         break;
     }
     case SearchParameters::AUTO_DETECT:
-        [[fallthrough]];
+        _search->searchAutoDetect(text().trimmed());
+        break;
     default: {
         break;
     }
@@ -389,15 +397,7 @@ void SearchLineEdit::addSearchTermToHistory(SearchParameters parameters) const
 void SearchLineEdit::searchTriggered(void)
 {
     checkClearVisibility();
-    if (_settings->value("Search/autoDetectLanguage", QVariant{true}).toBool()) {
-        // Since auto-detect is a setting independent of the SearchParameter specified
-        // by the search options group box, it must be handled separately from the
-        // other options.
-        _search->searchAutoDetect(text().trimmed());
-        addSearchTermToHistory(SearchParameters::AUTO_DETECT);
-    } else {
-        search();
-    }
+    search();
 }
 
 #ifndef Q_OS_LINUX

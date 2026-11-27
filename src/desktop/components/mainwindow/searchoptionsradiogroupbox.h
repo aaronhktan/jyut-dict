@@ -15,6 +15,7 @@ class QEvent;
 class QHBoxLayout;
 class QLabel;
 class QPushButton;
+class QScrollArea;
 class QWidget;
 
 // The SearchOptionsRadioGroupBox allows users to change search parameters
@@ -31,6 +32,7 @@ public:
         std::shared_ptr<ISearchOptionsMediator> mediator,
         std::shared_ptr<SQLSearch> manager,
         QWidget *parent = nullptr);
+    ~SearchOptionsRadioGroupBox();
 
     void detectedLanguage(SearchParameters) override;
     void changeEvent(QEvent *event) override;
@@ -38,11 +40,12 @@ public:
     void setOption(const SearchParameters parameters) override;
 
 private:
-    void setupUI(void);
-    void translateUI(void);
+    void setupUI();
+    void translateUI();
     void setStyle(bool use_dark);
 
-    void notifyMediator(void);
+    void notifyMediator();
+    void animateAutoDetectText(QPushButton *button, const QString &newText);
 
     bool _paletteRecentlyChanged = false;
 
@@ -53,13 +56,25 @@ private:
     QHBoxLayout *_layout;
 
     QLabel *_currentChoiceLabel;
+
+    QScrollArea *_scrollArea;
+    QWidget *_innerWidget;
+    QHBoxLayout *_innerWidgetLayout;
+
+    QPushButton *_autoDetectButton;
     QPushButton *_simplifiedButton;
     QPushButton *_traditionalButton;
     QPushButton *_jyutpingButton;
+    QPushButton *_fuzzyJyutpingButton;
     QPushButton *_pinyinButton;
+    QPushButton *_fuzzyPinyinButton;
     QPushButton *_englishButton;
 
+public slots:
+    void changeAutoDetectText(SearchParameters parameters);
+
 signals:
+    void detectedLanguageChanged(SearchParameters parameters);
     void optionSelected(const SearchParameters parameters) override;
 };
 

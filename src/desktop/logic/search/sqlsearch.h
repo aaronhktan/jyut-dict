@@ -6,8 +6,10 @@
 
 #include <QFutureWatcher>
 #include <QSettings>
+#include <QtConcurrent/QtConcurrent>
 
 #include <atomic>
+#include <functional>
 #include <list>
 #include <memory>
 #include <mutex>
@@ -45,8 +47,8 @@ public:
 
     void searchSimplified(const QString &searchTerm) override;
     void searchTraditional(const QString &searchTerm) override;
-    void searchJyutping(const QString &searchTerm) override;
-    void searchPinyin(const QString &searchTerm) override;
+    void searchJyutping(const QString &searchTerm, bool fuzzyJyutping) override;
+    void searchPinyin(const QString &searchTerm, bool fuzzyPinyin) override;
     void searchEnglish(const QString &searchTerm) override;
     void searchAutoDetect(const QString &searchTerm) override;
 
@@ -89,18 +91,44 @@ private:
     std::vector<int> rowIdFilteredByJyutping(const QString &jyutping);
     std::vector<int> rowIdFilteredByPinyin(const QString &pinyin);
 
-    void runThread(
-        void (SQLSearch::*threadFunction)(const QString &searchTerm,
-                                          const unsigned long long queryID),
-        const QString &searchTerm,
-        const unsigned long long queryID);
+    template<typename F, typename... A>
+    void runThread(F &&fun, A &&...args)
+    {
+        if (!_manager) {
+            std::cout << "No database specified!" << std::endl;
+            return;
+        }
+
+        QFutureWatcher<void> *watcher = new QFutureWatcher<void>();
+        QObject::connect(watcher,
+                         &QFutureWatcher<void>::finished,
+                         watcher,
+                         [this, watcher] {
+                             {
+                                 std::lock_guard lock(_watchers.mut);
+                                 _watchers.set.erase(watcher);
+                             }
+                             delete watcher;
+                         });
+        {
+            std::lock_guard lock(_watchers.mut);
+            _watchers.set.emplace(watcher);
+        }
+        watcher->setFuture(
+            QtConcurrent::run([fn = std::forward<F>(fun),
+                               ... args = std::forward<A>(args)]() mutable {
+                std::invoke(fn, std::move(args)...);
+            }));
+    }
     void searchSimplifiedThread(const QString &searchTerm,
                                 const unsigned long long queryID);
     void searchTraditionalThread(const QString &searchTerm,
                                  const unsigned long long queryID);
     void searchJyutpingThread(const QString &searchTerm,
+                              bool fuzzyJyutping,
                               const unsigned long long queryID);
     void searchPinyinThread(const QString &searchTerm,
+                            bool fuzzyPinyin,
                             const unsigned long long queryID);
     void searchEnglishThread(const QString &searchTerm,
                              const unsigned long long queryID);

@@ -16,6 +16,11 @@ ExampleResultListModel::ExampleResultListModel(
     _search->registerObserver(this);
 }
 
+ExampleResultListModel::~ExampleResultListModel()
+{
+    _search->deregisterObserver(this);
+}
+
 void ExampleResultListModel::callback(
     [[maybe_unused]] const std::vector<Entry> &entries,
     [[maybe_unused]] bool emptyQuery)

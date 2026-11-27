@@ -105,6 +105,20 @@ void AdvancedTab::setupUI()
     initializeForceDarkModeCheckbox(_forceDarkModeCheckbox);
 #endif
 
+    QFrame *_searchDivider = new QFrame{this};
+    _searchDivider->setObjectName("divider");
+    _searchDivider->setFrameShape(QFrame::HLine);
+    _searchDivider->setFrameShadow(QFrame::Raised);
+    _searchDivider->setFixedHeight(1);
+
+    _dangerousFuzzyJyutping = new QWidget{this};
+    _dangerousFuzzyJyutpingLayout = new QGridLayout{_dangerousFuzzyJyutping};
+    _dangerousFuzzyJyutpingLayout->setContentsMargins(0, 11, 0, 0);
+    _dangerousFuzzyJyutpingCheckbox = new QCheckBox{this};
+    _dangerousFuzzyJyutpingCheckbox->setTristate(false);
+    _dangerousFuzzyJyutpingDescription = new QLabel{this};
+    initializeDangerousFuzzyJyutping(_dangerousFuzzyJyutping);
+
     QFrame *_ttsDivider = new QFrame{this};
     _ttsDivider->setObjectName("divider");
     _ttsDivider->setFrameShape(QFrame::HLine);
@@ -207,6 +221,8 @@ void AdvancedTab::setupUI()
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     _tabLayout->addRow(" ", _forceDarkModeCheckbox);
 #endif
+    _tabLayout->addRow(_searchDivider);
+    _tabLayout->addRow(" ", _dangerousFuzzyJyutping);
     _tabLayout->addRow(_ttsDivider);
     _tabLayout->addRow(" ", _cantoneseTTSWidget);
     _tabLayout->addRow(" ", _mandarinTTSWidget);
@@ -241,6 +257,14 @@ void AdvancedTab::translateUI()
         button->style()->polish(button);
     }
 
+    QColor backgroundColour = Utils::isDarkMode()
+                                  ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                  : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R};
+
     static_cast<QLabel *>(_tabLayout->labelForField(_updateCheckbox))
         ->setText(tr("Automatically check for app updates on startup:"));
     static_cast<QLabel *>(_tabLayout->labelForField(_sourceUpdateCheckbox))
@@ -249,6 +273,20 @@ void AdvancedTab::translateUI()
     static_cast<QLabel *>(_tabLayout->labelForField(_forceDarkModeCheckbox))
         ->setText(tr("Enable dark mode:"));
 #endif
+
+    static_cast<QLabel *>(_tabLayout->labelForField(_dangerousFuzzyJyutping))
+#ifdef Q_OS_WIN
+        ->setText(tr("Risky fuzzy Jyutping matches:"));
+#else
+        ->setText(tr("\tRisky fuzzy Jyutping matches:"));
+#endif
+    _dangerousFuzzyJyutpingDescription->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::DANGEROUS_FUZZY_JYUTPING_EXPLAINER)
+            .arg(backgroundColour.name()));
+    _dangerousFuzzyJyutpingDescription->setWordWrap(true);
+    _dangerousFuzzyJyutpingDescription->setMinimumWidth(300);
+
     static_cast<QLabel *>(_tabLayout->labelForField(_cantoneseTTSWidget))
         ->setText(tr("Cantonese text-to-speech:"));
     _useCantoneseQtTTSBackend->setText(tr("Qt"));
@@ -258,13 +296,6 @@ void AdvancedTab::translateUI()
     _useMandarinQtTTSBackend->setText(tr("Qt"));
     _useMandarinGoogleOfflineSyllableTTSBackend->setText(tr("Google"));
 
-    QColor backgroundColour = Utils::isDarkMode()
-                                  ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
-                                           Utils::LABEL_TEXT_COLOUR_DARK_G,
-                                           Utils::LABEL_TEXT_COLOUR_DARK_B}
-                                  : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
-                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R,
-                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R};
     _ttsExplainer->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
                                                        Strings::TTS_EXPLAINER)
                                .arg(backgroundColour.name()));
@@ -323,6 +354,24 @@ void AdvancedTab::setStyle(bool use_dark)
 #ifdef Q_OS_MAC
     }
 #endif
+
+    QColor backgroundColour = Utils::isDarkMode()
+                                  ? QColor{Utils::LABEL_TEXT_COLOUR_DARK_R,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_G,
+                                           Utils::LABEL_TEXT_COLOUR_DARK_B}
+                                  : QColor{Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R,
+                                           Utils::LABEL_TEXT_COLOUR_LIGHT_R};
+    _dangerousFuzzyJyutpingDescription->setText(
+        QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                    Strings::DANGEROUS_FUZZY_JYUTPING_EXPLAINER)
+            .arg(backgroundColour.name()));
+    _dangerousFuzzyJyutpingDescription->setWordWrap(true);
+    _dangerousFuzzyJyutpingDescription->setMinimumWidth(300);
+
+    _ttsExplainer->setText(QCoreApplication::translate(Strings::STRINGS_CONTEXT,
+                                                       Strings::TTS_EXPLAINER)
+                               .arg(backgroundColour.name()));
 }
 
 void AdvancedTab::initializeUpdateCheckbox(QCheckBox *checkbox)
@@ -363,6 +412,26 @@ void AdvancedTab::initializeForceDarkModeCheckbox(QCheckBox *checkbox)
     });
 }
 #endif
+
+void AdvancedTab::initializeDangerousFuzzyJyutping(QWidget *widget)
+{
+    static_cast<QGridLayout *>(widget->layout())
+        ->addWidget(_dangerousFuzzyJyutpingCheckbox, 0, 0, 1, -1);
+    static_cast<QGridLayout *>(widget->layout())
+        ->addWidget(_dangerousFuzzyJyutpingDescription, 1, 0, 1, -1);
+
+    connect(_dangerousFuzzyJyutpingCheckbox,
+            &QCheckBox::checkStateChanged,
+            this,
+            [this] {
+                _settings
+                    ->setValue("Search/dangerousFuzzyJyutping",
+                               _dangerousFuzzyJyutpingCheckbox->checkState());
+                _settings->sync();
+                emit triggerSearch();
+            });
+    setDangerousFuzzyJyutpingCheckboxDefault(_dangerousFuzzyJyutpingCheckbox);
+}
 
 void AdvancedTab::initializeCantoneseTTSWidget(QWidget *widget)
 {
@@ -505,6 +574,13 @@ void AdvancedTab::setForceDarkModeCheckboxDefault(QCheckBox *checkbox)
 }
 #endif
 
+void AdvancedTab::setDangerousFuzzyJyutpingCheckboxDefault(QCheckBox *checkbox)
+{
+    checkbox->setChecked(
+        _settings->value("Search/dangerousFuzzyJyutping", QVariant{false})
+            .toBool());
+}
+
 void AdvancedTab::setCantoneseTTSWidgetDefault(QWidget *widget)
 {
     TextToSpeech::SpeakerBackend backend
@@ -597,6 +673,7 @@ void AdvancedTab::resetSettings(QSettings &settings)
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     setForceDarkModeCheckboxDefault(_forceDarkModeCheckbox);
 #endif
+    setDangerousFuzzyJyutpingCheckboxDefault(_dangerousFuzzyJyutpingCheckbox);
     setCantoneseTTSWidgetDefault(_cantoneseTTSWidget);
     setMandarinTTSWidgetDefault(_cantoneseTTSWidget);
     setLanguageComboboxDefault(_languageCombobox);

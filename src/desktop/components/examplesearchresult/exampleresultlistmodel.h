@@ -28,6 +28,7 @@ public:
     explicit ExampleResultListModel(std::shared_ptr<SQLSearch> sqlSearch,
                                     std::vector<Example> examples,
                                     QObject *parent = nullptr);
+    ~ExampleResultListModel();
 
     void callback(const std::vector<Entry> &entries, bool emptyQuery) override;
     void callback(const std::vector<Example> &examples,

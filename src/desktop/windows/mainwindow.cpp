@@ -28,7 +28,6 @@
 #include "windows/settingswindow.h"
 #include "windows/sourceupdatewindow.h"
 #include "windows/updatewindow.h"
-#include "windows/welcomewindow.h"
 
 #include <QAction>
 #include <QApplication>
@@ -207,20 +206,6 @@ MainWindow::MainWindow(QWidget *parent)
     // Translate UI
     translateUI();
 
-    // Show welcome dialog if needed
-    bool welcomed = _settings
-                        ->value(QString{"Advanced/%1Welcomed"}.arg(
-                                    Utils::CURRENT_VERSION),
-                                QVariant{false})
-                        .toBool();
-    if (!welcomed) {
-#ifdef Q_OS_LINUX
-        QTimer::singleShot(500, this, [this] { openWelcomeWindow(); });
-#else
-        QTimer::singleShot(200, this, [this] { openWelcomeWindow(); });
-#endif
-    }
-
     // Check for updates
     bool updateNotificationEnabled
         = _settings->value("Advanced/updateNotificationsEnabled", QVariant{true})
@@ -364,10 +349,13 @@ void MainWindow::translateUI(void)
     _handwritingAction->setText(tr("Start Handwriting"));
     _setFocusToResultsAction->setText(
         tr("Jump to First Item in Search Results"));
+    _selectAutoDetectAction->setText(tr("Detect search language"));
     _selectSimplifiedAction->setText(tr("Search Simplified Chinese"));
     _selectTraditionalAction->setText(tr("Search Traditional Chinese"));
     _selectJyutpingAction->setText(tr("Search Jyutping"));
+    _selectFuzzyJyutpingAction->setText(tr("Search Fuzzy Jyutping"));
     _selectPinyinAction->setText(tr("Search Pinyin"));
+    _selectFuzzyPinyinAction->setText(tr("Search Fuzzy Pinyin"));
     _selectEnglishAction->setText(tr("Search English"));
 
     _favouriteCurrentEntryAction->setText(tr("Save or Unsave Current Entry"));
@@ -384,24 +372,6 @@ void MainWindow::translateUI(void)
         tr("Find Entries That Contain Current Entry"));
     _searchWordsEndingAction->setText(
         tr("Find Entries That End With Current Entry"));
-
-    if (_settings->value("Search/autoDetectLanguage", QVariant{true}).toBool()) {
-        _autoDetectLanguageAction->setText(
-            tr("Disable Automatic Search Language Switching"));
-    } else {
-        _autoDetectLanguageAction->setText(
-            tr("Enable Automatic Search Language Switching"));
-    }
-    if (_settings->value("Search/fuzzyJyutping", QVariant{true}).toBool()) {
-        _fuzzyJyutpingAction->setText(tr("Disable Fuzzy Jyutping"));
-    } else {
-        _fuzzyJyutpingAction->setText(tr("Enable Fuzzy Jyutping"));
-    }
-    if (_settings->value("Search/fuzzyPinyin", QVariant{true}).toBool()) {
-        _fuzzyPinyinAction->setText(tr("Disable Fuzzy Pinyin"));
-    } else {
-        _fuzzyPinyinAction->setText(tr("Enable Fuzzy Pinyin"));
-    }
 
     _historyWindowAction->setText(tr("View Search History"));
     _favouritesWindowAction->setText(tr("Open List of Saved Words"));
@@ -895,7 +865,7 @@ void MainWindow::notifyUpdateAvailable(bool updateAvailable,
                                        bool showIfNoUpdate)
 {
     if (updateAvailable || showIfNoUpdate) {
-        if (_welcomeWindow || _databaseMigrationDialog) {
+        if (_databaseMigrationDialog) {
             _dialogQueue.push_back([updateAvailable,
                                     versionNumber,
                                     url,
@@ -948,8 +918,7 @@ void MainWindow::notifySourceUpdateAvailable(
     std::vector<IUpdateChecker::SourceManifestMetadata> &a, bool showIfNoUpdate)
 {
     if (!a.empty() || showIfNoUpdate) {
-        if (_welcomeWindow || _databaseMigrationDialog
-            || _updateAvailableWindow) {
+        if (_databaseMigrationDialog || _updateAvailableWindow) {
             _dialogQueue.push_back([a, showIfNoUpdate, this]() mutable {
                 notifySourceUpdateAvailable(a, showIfNoUpdate);
             });
@@ -1076,73 +1045,71 @@ void MainWindow::createActions(void)
             &MainWindow::setFocusToResults);
     _searchMenu->addAction(_setFocusToResultsAction);
 
-    _selectSimplifiedAction = new QAction{this};
-    _selectSimplifiedAction->setShortcut(QKeySequence{"Ctrl+1"});
-    connect(_selectSimplifiedAction,
-            &QAction::triggered,
-            this,
-            &MainWindow::selectSimplified);
-    _searchMenu->addAction(_selectSimplifiedAction);
+    _selectAutoDetectAction = new QAction{this};
+    _selectAutoDetectAction->setShortcut(QKeySequence{"Ctrl+1"});
+    connect(_selectAutoDetectAction, &QAction::triggered, this, [this]() {
+        _mainToolBar->changeSearchParameters(SearchParameters::AUTO_DETECT);
+        _mainToolBar->setFocus();
+    });
+    _searchMenu->addAction(_selectAutoDetectAction);
 
     _selectTraditionalAction = new QAction{this};
     _selectTraditionalAction->setShortcut(QKeySequence{"Ctrl+2"});
-    connect(_selectTraditionalAction,
-            &QAction::triggered,
-            this,
-            &MainWindow::selectTraditional);
+    connect(_selectTraditionalAction, &QAction::triggered, this, [this]() {
+        _mainToolBar->changeSearchParameters(SearchParameters::TRADITIONAL);
+        _mainToolBar->setFocus();
+    });
     _searchMenu->addAction(_selectTraditionalAction);
 
+    _selectSimplifiedAction = new QAction{this};
+    _selectSimplifiedAction->setShortcut(QKeySequence{"Ctrl+3"});
+    connect(_selectSimplifiedAction, &QAction::triggered, this, [this]() {
+        _mainToolBar->changeSearchParameters(SearchParameters::SIMPLIFIED);
+        _mainToolBar->setFocus();
+    });
+    _searchMenu->addAction(_selectSimplifiedAction);
+
     _selectJyutpingAction = new QAction{this};
-    _selectJyutpingAction->setShortcut(QKeySequence{"Ctrl+3"});
-    connect(_selectJyutpingAction,
-            &QAction::triggered,
-            this,
-            &MainWindow::selectJyutping);
+    _selectJyutpingAction->setShortcut(QKeySequence{"Ctrl+4"});
+    connect(_selectJyutpingAction, &QAction::triggered, this, [this]() {
+        _mainToolBar->changeSearchParameters(SearchParameters::JYUTPING);
+        _mainToolBar->setFocus();
+    });
     _searchMenu->addAction(_selectJyutpingAction);
 
+    _selectFuzzyJyutpingAction = new QAction{this};
+    _selectFuzzyJyutpingAction->setShortcut(QKeySequence{"Ctrl+5"});
+    connect(_selectFuzzyJyutpingAction, &QAction::triggered, this, [this]() {
+        _mainToolBar->changeSearchParameters(SearchParameters::FUZZY_JYUTPING);
+        _mainToolBar->setFocus();
+    });
+    _searchMenu->addAction(_selectFuzzyJyutpingAction);
+
     _selectPinyinAction = new QAction{this};
-    _selectPinyinAction->setShortcut(QKeySequence{"Ctrl+4"});
-    connect(_selectPinyinAction,
-            &QAction::triggered,
-            this,
-            &MainWindow::selectPinyin);
+    _selectPinyinAction->setShortcut(QKeySequence{"Ctrl+6"});
+    connect(_selectPinyinAction, &QAction::triggered, this, [this]() {
+        _mainToolBar->changeSearchParameters(SearchParameters::PINYIN);
+        _mainToolBar->setFocus();
+    });
     _searchMenu->addAction(_selectPinyinAction);
 
+    _selectFuzzyPinyinAction = new QAction{this};
+    _selectFuzzyPinyinAction->setShortcut(QKeySequence{"Ctrl+7"});
+    connect(_selectFuzzyPinyinAction, &QAction::triggered, this, [this]() {
+        _mainToolBar->changeSearchParameters(SearchParameters::FUZZY_PINYIN);
+        _mainToolBar->setFocus();
+    });
+    _searchMenu->addAction(_selectFuzzyPinyinAction);
+
     _selectEnglishAction = new QAction{this};
-    _selectEnglishAction->setShortcut(QKeySequence{"Ctrl+5"});
-    connect(_selectEnglishAction,
-            &QAction::triggered,
-            this,
-            &MainWindow::selectEnglish);
+    _selectEnglishAction->setShortcut(QKeySequence{"Ctrl+8"});
+    connect(_selectEnglishAction, &QAction::triggered, this, [this]() {
+        _mainToolBar->changeSearchParameters(SearchParameters::ENGLISH);
+        _mainToolBar->setFocus();
+    });
     _searchMenu->addAction(_selectEnglishAction);
 
     _searchMenu->addSeparator();
-
-    _autoDetectLanguageAction = new QAction{this};
-    _autoDetectLanguageAction->setShortcut(QKeySequence{"Ctrl+Shift+A"});
-    connect(_autoDetectLanguageAction,
-            &QAction::triggered,
-            this,
-            &MainWindow::autoDetectLanguage);
-    _searchMenu->addAction(_autoDetectLanguageAction);
-
-    _searchMenu->addSeparator();
-
-    _fuzzyJyutpingAction = new QAction{this};
-    _fuzzyJyutpingAction->setShortcut(QKeySequence{"Ctrl+Shift+J"});
-    connect(_fuzzyJyutpingAction,
-            &QAction::triggered,
-            this,
-            &MainWindow::fuzzyJyutping);
-    _searchMenu->addAction(_fuzzyJyutpingAction);
-
-    _fuzzyPinyinAction = new QAction{this};
-    _fuzzyPinyinAction->setShortcut(QKeySequence{"Ctrl+Shift+P"});
-    connect(_fuzzyPinyinAction,
-            &QAction::triggered,
-            this,
-            &MainWindow::fuzzyPinyin);
-    _searchMenu->addAction(_fuzzyPinyinAction);
 
     _favouriteCurrentEntryAction = new QAction{this};
     _favouriteCurrentEntryAction->setShortcut(QKeySequence{"Ctrl+S"});
@@ -1376,80 +1343,6 @@ void MainWindow::setFocusToResults(void) const
     _mainSplitter->setFocusToResults();
 }
 
-void MainWindow::selectSimplified(void) const
-{
-    _mainToolBar->changeSearchParameters(SearchParameters::SIMPLIFIED);
-    _mainToolBar->setFocus();
-}
-
-void MainWindow::selectTraditional(void) const
-{
-    _mainToolBar->changeSearchParameters(SearchParameters::TRADITIONAL);
-    _mainToolBar->setFocus();
-}
-
-void MainWindow::selectJyutping(void) const
-{
-    _mainToolBar->changeSearchParameters(SearchParameters::JYUTPING);
-    _mainToolBar->setFocus();
-}
-
-void MainWindow::selectPinyin(void) const
-{
-    _mainToolBar->changeSearchParameters(SearchParameters::PINYIN);
-    _mainToolBar->setFocus();
-}
-
-void MainWindow::selectEnglish(void) const
-{
-    _mainToolBar->changeSearchParameters(SearchParameters::ENGLISH);
-    _mainToolBar->setFocus();
-}
-
-void MainWindow::autoDetectLanguage(void) const
-{
-    if (_settings->value("Search/autoDetectLanguage", QVariant{true}).toBool()) {
-        _settings->setValue("Search/autoDetectLanguage", false);
-        _autoDetectLanguageAction->setText(
-            tr("Enable Automatic Search Language Switching"));
-        SearchParameters lastSelected
-            = _settings
-                  ->value("SearchOptionsRadioGroupBox/lastSelected",
-                          QVariant::fromValue(SearchParameters::ENGLISH))
-                  .value<SearchParameters>();
-        _mainToolBar->changeSearchParameters(lastSelected);
-    } else {
-        _settings->setValue("Search/autoDetectLanguage", true);
-        _autoDetectLanguageAction->setText(
-            tr("Disable Automatic Search Language Switching"));
-        _mainToolBar->searchRequested();
-    }
-}
-
-void MainWindow::fuzzyJyutping(void) const
-{
-    if (_settings->value("Search/fuzzyJyutping", QVariant{true}).toBool()) {
-        _settings->setValue("Search/fuzzyJyutping", false);
-        _fuzzyJyutpingAction->setText(tr("Enable Fuzzy Jyutping"));
-    } else {
-        _settings->setValue("Search/fuzzyJyutping", true);
-        _fuzzyJyutpingAction->setText(tr("Disable Fuzzy Jyutping"));
-    }
-    _mainToolBar->searchRequested();
-}
-
-void MainWindow::fuzzyPinyin(void) const
-{
-    if (_settings->value("Search/fuzzyPinyin", QVariant{true}).toBool()) {
-        _settings->setValue("Search/fuzzyPinyin", false);
-        _fuzzyPinyinAction->setText(tr("Enable Fuzzy Pinyin"));
-    } else {
-        _settings->setValue("Search/fuzzyPinyin", true);
-        _fuzzyPinyinAction->setText(tr("Disable Fuzzy Pinyin"));
-    }
-    _mainToolBar->searchRequested();
-}
-
 void MainWindow::toggleMinimized(void)
 {
     if (!isMinimized()) {
@@ -1550,37 +1443,6 @@ void MainWindow::openFavouritesWindow(void)
             &FavouriteSplitter::searchQuery,
             _mainToolBar,
             &MainToolBar::searchQueryRequested);
-}
-
-void MainWindow::openWelcomeWindow(void)
-{
-    if (_welcomeWindow) {
-        _welcomeWindow->activateWindow();
-        _welcomeWindow->raise();
-        return;
-    }
-
-    _welcomeWindow = new WelcomeWindow{this};
-    _welcomeWindow->setFocus();
-    _welcomeWindow->show();
-
-    connect(_welcomeWindow, &WelcomeWindow::welcomeCompleted, this, [this] {
-        QTimer::singleShot(100, this, [this] {
-            // Dialogs may be suppressed while the welcome window is visible,
-            // so check whether they need to be shown (it's assumed that each
-            // call will "chain" to the next one)
-            _welcomeWindow = nullptr;
-            if (!_dialogQueue.empty()) {
-                auto func = _dialogQueue.front();
-                _dialogQueue.pop_front();
-                func();
-            }
-        });
-
-        _settings->setValue(QString{"Advanced/%1Welcomed"}.arg(
-                                Utils::CURRENT_VERSION),
-                            true);
-    });
 }
 
 void MainWindow::checkForUpdate(bool showProgress)
@@ -1757,10 +1619,7 @@ void MainWindow::checkForSourceUpdate(bool showProgress)
 
 void MainWindow::notifyDatabaseMigration(void)
 {
-    if (_welcomeWindow) {
-        _dialogQueue.push_back([this] { notifyDatabaseMigration(); });
-        return;
-    } else if (!_databaseMigrating) {
+    if (!_databaseMigrating) {
         if (!_dialogQueue.empty()) {
             auto func = _dialogQueue.front();
             _dialogQueue.pop_front();
@@ -1798,10 +1657,7 @@ void MainWindow::notifyDatabaseMigration(void)
 
 void MainWindow::finishedDatabaseMigration(bool success)
 {
-    if (_welcomeWindow) {
-        _dialogQueue.push_back(
-            [success, this]() { finishedDatabaseMigration(success); });
-    } else if (!_databaseMigrating) {
+    if (!_databaseMigrating) {
         if (!_dialogQueue.empty()) {
             auto func = _dialogQueue.front();
             _dialogQueue.pop_front();

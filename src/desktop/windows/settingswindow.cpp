@@ -3,7 +3,6 @@
 #include "components/settings/advancedtab.h"
 #include "components/settings/contacttab.h"
 #include "components/settings/dictionarytab.h"
-#include "components/settings/searchtab.h"
 #include "components/settings/settingstab.h"
 #include "components/settings/texttab.h"
 #include "logic/database/sqldatabasemanager.h"
@@ -110,9 +109,6 @@ void SettingsWindow::setupUI()
     SettingsTab *generalTab = new SettingsTab{this};
     _contentStackedWidget->addWidget(generalTab);
 
-    SearchTab *searchTab = new SearchTab{this};
-    _contentStackedWidget->addWidget(searchTab);
-
     TextTab *textTab = new TextTab{this};
     _contentStackedWidget->addWidget(textTab);
 
@@ -132,15 +128,16 @@ void SettingsWindow::setupUI()
             this,
             &SettingsWindow::updateStyleRequested);
 
-    connect(searchTab,
-            &SearchTab::triggerSearch,
-            this,
-            &SettingsWindow::searchRequested);
 
     connect(textTab,
             &TextTab::updateStyle,
             this,
             &SettingsWindow::updateStyleRequested);
+
+    connect(advancedTab,
+            &AdvancedTab::triggerSearch,
+            this,
+            &SettingsWindow::searchRequested);
 
     connect(advancedTab,
             &AdvancedTab::settingsReset,
@@ -174,11 +171,10 @@ void SettingsWindow::translateUI()
     }
 
     _actions[0]->setText(tr("General"));
-    _actions[1]->setText(tr("Search"));
-    _actions[2]->setText(tr("Text"));
-    _actions[3]->setText(tr("Dictionaries"));
-    _actions[4]->setText(tr("Advanced"));
-    _actions[5]->setText(tr("Contact"));
+    _actions[1]->setText(tr("Text"));
+    _actions[2]->setText(tr("Dictionaries"));
+    _actions[3]->setText(tr("Advanced"));
+    _actions[4]->setText(tr("Contact"));
 
 #ifdef Q_OS_MAC
     setWindowTitle(tr("Preferences"));
@@ -430,9 +426,6 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
     QIcon settings = QIcon(":/images/settings.png");
     QIcon settings_inverted = QIcon(":/images/settings_inverted.png");
     QIcon settings_disabled = QIcon(":/images/settings_disabled.png");
-    QIcon search = QIcon(":/images/searchtab.png");
-    QIcon search_inverted = QIcon(":/images/searchtab_inverted.png");
-    QIcon search_disabled = QIcon(":/images/searchtab_disabled.png");
     QIcon text = QIcon(":/images/texttab.png");
     QIcon text_inverted = QIcon(":/images/texttab_inverted.png");
     QIcon text_disabled = QIcon(":/images/texttab_disabled.png");
@@ -449,26 +442,23 @@ void SettingsWindow::setButtonIcon(bool use_dark, int index)
     // Set icons for each tab
     if (QGuiApplication::applicationState() == Qt::ApplicationInactive) {
         _actions[0]->setIcon(settings_disabled);
-        _actions[1]->setIcon(search_disabled);
-        _actions[2]->setIcon(text_disabled);
-        _actions[3]->setIcon(dictionary_disabled);
-        _actions[4]->setIcon(sliders_disabled);
-        _actions[5]->setIcon(help_disabled);
+        _actions[1]->setIcon(text_disabled);
+        _actions[2]->setIcon(dictionary_disabled);
+        _actions[3]->setIcon(sliders_disabled);
+        _actions[4]->setIcon(help_disabled);
     } else {
         if (use_dark) {
             _actions[0]->setIcon(settings_inverted);
-            _actions[1]->setIcon(search_inverted);
-            _actions[2]->setIcon(text_inverted);
-            _actions[3]->setIcon(dictionary_inverted);
-            _actions[4]->setIcon(sliders_inverted);
-            _actions[5]->setIcon(help_inverted);
+            _actions[1]->setIcon(text_inverted);
+            _actions[2]->setIcon(dictionary_inverted);
+            _actions[3]->setIcon(sliders_inverted);
+            _actions[4]->setIcon(help_inverted);
         } else {
             _actions[0]->setIcon(index == 0 ? settings_inverted : settings);
-            _actions[1]->setIcon(index == 1 ? search_inverted : search);
-            _actions[2]->setIcon(index == 2 ? text_inverted : text);
-            _actions[3]->setIcon(index == 3 ? dictionary_inverted : dictionary);
-            _actions[4]->setIcon(index == 4 ? sliders_inverted : sliders);
-            _actions[5]->setIcon(index == 5 ? help_inverted : help);
+            _actions[1]->setIcon(index == 2 ? text_inverted : text);
+            _actions[2]->setIcon(index == 3 ? dictionary_inverted : dictionary);
+            _actions[3]->setIcon(index == 4 ? sliders_inverted : sliders);
+            _actions[4]->setIcon(index == 5 ? help_inverted : help);
         }
     }
 

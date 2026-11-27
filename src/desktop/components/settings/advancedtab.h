@@ -19,6 +19,7 @@ class RestoreDatabaseDialog;
 class QCheckBox;
 class QComboBox;
 class QEvent;
+class QGridLayout;
 class QFormLayout;
 class QLabel;
 class QProgressDialog;
@@ -60,6 +61,7 @@ private:
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     void initializeForceDarkModeCheckbox(QCheckBox *checkbox);
 #endif
+    void initializeDangerousFuzzyJyutping(QWidget *widget);
     void initializeCantoneseTTSWidget(QWidget *widget);
     void initializeMandarinTTSWidget(QWidget *widget);
     void initializeLanguageCombobox(QComboBox *combobox);
@@ -70,6 +72,8 @@ private:
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     void setForceDarkModeCheckboxDefault(QCheckBox *checkbox);
 #endif
+    void setDangerousFuzzyJyutpingCheckboxDefault(
+        QCheckBox *dangerouFuzzyJyutpingCheckbox);
     void setCantoneseTTSWidgetDefault(QWidget *widget);
     void setCantoneseTTSSettings(TextToSpeech::SpeakerBackend backend,
                                  TextToSpeech::SpeakerVoice voice);
@@ -108,6 +112,11 @@ private:
 #if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
     QCheckBox *_forceDarkModeCheckbox;
 #endif
+
+    QWidget *_dangerousFuzzyJyutping;
+    QGridLayout *_dangerousFuzzyJyutpingLayout;
+    QCheckBox *_dangerousFuzzyJyutpingCheckbox;
+    QLabel *_dangerousFuzzyJyutpingDescription;
 
     QWidget *_cantoneseTTSWidget;
     QLayout *_cantoneseTTSLayout;
@@ -152,6 +161,9 @@ private slots:
                        std::shared_ptr<AdvancedTab::TextToSpeechCallbacks> cbs);
 
 signals:
+signals:
+    void triggerSearch(void);
+
     void settingsReset(void);
 };
 

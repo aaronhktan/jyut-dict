@@ -31,7 +31,6 @@ class SQLSearch;
 class SQLUserHistoryUtils;
 class SQLUserDataUtils;
 class UpdateAvailableWindow;
-class WelcomeWindow;
 
 class QAction;
 class QEvent;
@@ -78,14 +77,14 @@ private:
     QAction *_dictationAction;
     QAction *_handwritingAction;
     QAction *_setFocusToResultsAction;
+    QAction *_selectAutoDetectAction;
     QAction *_selectSimplifiedAction;
     QAction *_selectTraditionalAction;
     QAction *_selectJyutpingAction;
+    QAction *_selectFuzzyJyutpingAction;
     QAction *_selectPinyinAction;
+    QAction *_selectFuzzyPinyinAction;
     QAction *_selectEnglishAction;
-    QAction *_autoDetectLanguageAction;
-    QAction *_fuzzyJyutpingAction;
-    QAction *_fuzzyPinyinAction;
 
     QAction *_favouriteCurrentEntryAction;
     QAction *_shareCurrentEntryAction;
@@ -110,7 +109,6 @@ private:
     QPointer<SettingsWindow> _settingsWindow = nullptr;
     QPointer<HistoryWindow> _historyWindow = nullptr;
     QPointer<FavouriteSplitter> _favouritesWindow = nullptr;
-    QPointer<WelcomeWindow> _welcomeWindow = nullptr;
 
     QPointer<UpdateAvailableWindow> _updateAvailableWindow = nullptr;
     QPointer<SourceUpdateWindow> _sourceUpdateWindow = nullptr;
@@ -150,14 +148,6 @@ private:
     void dictation(void) const;
     void handwriting(void) const;
     void setFocusToResults(void) const;
-    void selectSimplified(void) const;
-    void selectTraditional(void) const;
-    void selectJyutping(void) const;
-    void selectPinyin(void) const;
-    void selectEnglish(void) const;
-    void autoDetectLanguage(void) const;
-    void fuzzyJyutping(void) const;
-    void fuzzyPinyin(void) const;
 
     void toggleMinimized(void);
     void toggleMaximized(void);
@@ -166,7 +156,6 @@ private:
     void openSettingsWindow(void);
     void openHistoryWindow(void);
     void openFavouritesWindow(void);
-    void openWelcomeWindow(void);
 
     void checkForUpdate(bool showProgress);
     void checkForSourceUpdate(bool showProgress);

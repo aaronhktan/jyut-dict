@@ -535,7 +535,12 @@ std::vector<int> SQLSearch::rowIdFilteredByPinyin(const QString &pinyin)
 void SQLSearch::searchSimplified(const QString &searchTerm)
 {
     unsigned long long queryID = generateAndSetQueryID();
+    if (searchTerm.isEmpty()) {
+        notifyObserversOfEmptySet(true, queryID);
+        return;
+    }
     runThread(&SQLSearch::searchSimplifiedThread,
+              this,
               searchTerm.normalized(QString::NormalizationForm_C),
               queryID);
 }
@@ -543,41 +548,69 @@ void SQLSearch::searchSimplified(const QString &searchTerm)
 void SQLSearch::searchTraditional(const QString &searchTerm)
 {
     unsigned long long queryID = generateAndSetQueryID();
+    if (searchTerm.isEmpty()) {
+        notifyObserversOfEmptySet(true, queryID);
+        return;
+    }
     runThread(&SQLSearch::searchTraditionalThread,
+              this,
               searchTerm.normalized(QString::NormalizationForm_C),
               queryID);
 }
 
-void SQLSearch::searchJyutping(const QString &searchTerm)
+void SQLSearch::searchJyutping(const QString &searchTerm, bool fuzzyJyutping)
 {
     unsigned long long queryID = generateAndSetQueryID();
+    if (searchTerm.isEmpty()) {
+        notifyObserversOfEmptySet(true, queryID);
+        return;
+    }
     runThread(&SQLSearch::searchJyutpingThread,
+              this,
               searchTerm.normalized(QString::NormalizationForm_C),
+              fuzzyJyutping,
               queryID);
 }
 
-void SQLSearch::searchPinyin(const QString &searchTerm)
+void SQLSearch::searchPinyin(const QString &searchTerm, bool fuzzyPinyin)
 {
     unsigned long long queryID = generateAndSetQueryID();
+    if (searchTerm.isEmpty()) {
+        notifyObserversOfEmptySet(true, queryID);
+        return;
+    }
     runThread(&SQLSearch::searchPinyinThread,
+              this,
               searchTerm.normalized(QString::NormalizationForm_C),
+              fuzzyPinyin,
               queryID);
 }
 
 void SQLSearch::searchEnglish(const QString &searchTerm)
 {
     unsigned long long queryID = generateAndSetQueryID();
+    if (searchTerm.isEmpty()) {
+        notifyObserversOfEmptySet(true, queryID);
+        return;
+    }
     runThread(&SQLSearch::searchEnglishThread,
+              this,
               searchTerm.normalized(QString::NormalizationForm_C),
               queryID);
 }
 
 void SQLSearch::searchAutoDetect(const QString &searchTerm)
 {
-    unsigned long long queryId = generateAndSetQueryID();
+    unsigned long long queryID = generateAndSetQueryID();
+    if (searchTerm.isEmpty()) {
+        notifyObserversOfEmptySet(true, queryID);
+        notifyObserversIfQueryIdCurrent(SearchParameters::NONE, queryID);
+        return;
+    }
     runThread(&SQLSearch::searchAutoDetectThread,
+              this,
               searchTerm.normalized(QString::NormalizationForm_C),
-              queryId);
+              queryID);
 }
 
 void SQLSearch::searchByUnique(const QString &traditional,
@@ -620,40 +653,9 @@ void SQLSearch::searchTraditionalExamples(const QString &searchTerm)
 {
     unsigned long long queryID = generateAndSetQueryID();
     runThread(&SQLSearch::searchTraditionalExamplesThread,
+              this,
               searchTerm.normalized(QString::NormalizationForm_C),
               queryID);
-}
-
-void SQLSearch::runThread(void (SQLSearch::*threadFunction)(const QString &searchTerm, const unsigned long long queryID),
-                          const QString &searchTerm, const unsigned long long queryID)
-{
-    if (searchTerm.isEmpty()) {
-        notifyObserversOfEmptySet(true, queryID);
-        return;
-    }
-
-    if (!_manager) {
-        std::cout << "No database specified!" << std::endl;
-        return;
-    }
-
-    QFutureWatcher<void> *watcher = new QFutureWatcher<void>();
-    QObject::connect(watcher,
-                     &QFutureWatcher<void>::finished,
-                     watcher,
-                     [this, watcher] {
-                         {
-                             std::lock_guard lock(_watchers.mut);
-                             _watchers.set.erase(watcher);
-                         }
-                         delete watcher;
-                     });
-    {
-        std::lock_guard lock(_watchers.mut);
-        _watchers.set.emplace(watcher);
-    }
-    watcher->setFuture(
-        QtConcurrent::run(threadFunction, this, searchTerm, queryID));
 }
 
 // NOTE: If you are modifying these functions, you may also want to modify
@@ -754,14 +756,13 @@ void SQLSearch::searchTraditionalThread(const QString &searchTerm,
 // surrounds the bound value with single quotes, i.e. "'". There is no need
 // to add another set of quotes around placeholder values.
 void SQLSearch::searchJyutpingThread(const QString &searchTerm,
+                                     bool fuzzyJyutping,
                                      const unsigned long long queryID)
 {
     std::vector<Entry> results;
 
     QSqlQuery query{_manager->getDatabase()};
 
-    bool fuzzyJyutping
-        = _settings->value("Search/fuzzyJyutping", QVariant{true}).toBool();
     bool unsafeFuzzyJyutping = _settings
                                    ->value("Search/dangerousFuzzyJyutping",
                                            QVariant{false})
@@ -817,14 +818,13 @@ void SQLSearch::searchJyutpingThread(const QString &searchTerm,
 }
 
 void SQLSearch::searchPinyinThread(const QString &searchTerm,
+                                   bool fuzzyPinyin,
                                    const unsigned long long queryID)
 {
     std::vector<Entry> results;
 
     QSqlQuery query{_manager->getDatabase()};
 
-    bool fuzzyPinyin
-        = _settings->value("Search/fuzzyPinyin", QVariant{true}).toBool();
     QString pattern;
     preparePinyinBindValues(searchTerm, pattern, fuzzyPinyin);
 
@@ -936,19 +936,33 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
         = _settings->value("Search/fuzzyPinyin", QVariant{true}).toBool();
 
     QSqlQuery jyutpingQuery{_manager->getDatabase()};
+
     bool jyutpingExists = false;
-    QString jyutpingSearchTerm;
-    prepareJyutpingBindValues(searchTerm,
-                              jyutpingSearchTerm,
-                              fuzzyJyutping,
-                              unsafeFuzzyJyutping);
-    if (!fuzzyJyutping) {
+
+    {
+        QString jyutpingSearchTerm;
+        prepareJyutpingBindValues(searchTerm,
+                                  jyutpingSearchTerm,
+                                  false,
+                                  unsafeFuzzyJyutping);
         jyutpingQuery.prepare(SEARCH_JYUTPING_EXISTS_QUERY);
         jyutpingQuery.addBindValue(jyutpingSearchTerm);
         jyutpingQuery.setForwardOnly(true);
         jyutpingQuery.exec();
         jyutpingExists = QueryParseUtils::parseExistence(jyutpingQuery);
-    } else {
+    }
+    if (jyutpingExists) {
+        notifyObserversIfQueryIdCurrent(SearchParameters::JYUTPING, queryID);
+        searchJyutpingThread(searchTerm, false, queryID);
+        return;
+    }
+
+    {
+        QString jyutpingSearchTerm;
+        prepareJyutpingBindValues(searchTerm,
+                                  jyutpingSearchTerm,
+                                  true,
+                                  unsafeFuzzyJyutping);
         QRegularExpression r{jyutpingSearchTerm.sliced(1)};
         std::unordered_set<QString> filteredJyutping;
         std::vector<QString> prefixes = literalPrefixes(
@@ -972,24 +986,33 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
             }
         }
     }
-
     if (jyutpingExists) {
-        notifyObserversIfQueryIdCurrent(SearchParameters::JYUTPING, queryID);
-        searchJyutpingThread(searchTerm, queryID);
+        notifyObserversIfQueryIdCurrent(SearchParameters::FUZZY_JYUTPING,
+                                        queryID);
+        searchJyutpingThread(searchTerm, true, queryID);
         return;
     }
 
     bool pinyinExists = false;
-    QString pinyinSearchTerm;
-    preparePinyinBindValues(searchTerm, pinyinSearchTerm, fuzzyPinyin);
-    if (!fuzzyPinyin) {
+    {
+        QString pinyinSearchTerm;
+        preparePinyinBindValues(searchTerm, pinyinSearchTerm, fuzzyPinyin);
         QSqlQuery pinyinQuery{_manager->getDatabase()};
-        pinyinQuery.prepare(QString{SEARCH_PINYIN_EXISTS_QUERY}.arg(GLOB_STR));
+        pinyinQuery.prepare(QString{SEARCH_PINYIN_EXISTS_QUERY});
         pinyinQuery.addBindValue(pinyinSearchTerm);
         pinyinQuery.setForwardOnly(true);
         pinyinQuery.exec();
         pinyinExists = QueryParseUtils::parseExistence(pinyinQuery);
-    } else {
+    }
+    if (pinyinExists) {
+        notifyObserversIfQueryIdCurrent(SearchParameters::PINYIN, queryID);
+        searchPinyinThread(searchTerm, false, queryID);
+        return;
+    }
+
+    {
+        QString pinyinSearchTerm;
+        preparePinyinBindValues(searchTerm, pinyinSearchTerm, fuzzyPinyin);
         QRegularExpression r{pinyinSearchTerm.sliced(1)};
         std::unordered_set<QString> filteredPinyin;
         std::vector<QString> prefixes = literalPrefixes(
@@ -1014,10 +1037,9 @@ void SQLSearch::searchAutoDetectThread(const QString &searchTerm,
             }
         }
     }
-
     if (pinyinExists) {
-        notifyObserversIfQueryIdCurrent(SearchParameters::PINYIN, queryID);
-        searchPinyinThread(searchTerm, queryID);
+        notifyObserversIfQueryIdCurrent(SearchParameters::FUZZY_PINYIN, queryID);
+        searchPinyinThread(searchTerm, true, queryID);
         return;
     }
 

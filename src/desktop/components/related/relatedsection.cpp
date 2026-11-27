@@ -4,7 +4,9 @@
 #include "logic/entry/entry.h"
 
 #include <QEvent>
+#include <QGraphicsOpacityEffect>
 #include <QGridLayout>
+#include <QPropertyAnimation>
 #include <QPushButton>
 #include <QTimer>
 
@@ -19,10 +21,28 @@ void RelatedSection::setVisible(bool visible)
     if (visible) {
         // Only have margin at top of this widget if is visible
         _relatedLayout->setContentsMargins(0, 11, 0, 0);
+
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(this);
+        setGraphicsEffect(effect);
+
+        QPropertyAnimation *animation = new QPropertyAnimation(effect,
+                                                               "opacity",
+                                                               this);
+        animation->setDuration(250);
+        animation->setStartValue(0.0);
+        animation->setEndValue(1.0);
+        animation->setEasingCurve(QEasingCurve::OutCubic);
+
+        QWidget::setVisible(visible);
+        animation->start(QAbstractAnimation::DeleteWhenStopped);
+        QObject::connect(animation, &QPropertyAnimation::finished, this, [this] {
+            setGraphicsEffect(nullptr);
+            update();
+        });
     } else {
         _relatedLayout->setContentsMargins(0, 0, 0, 0);
+        QWidget::setVisible(visible);
     }
-    QWidget::setVisible(visible);
 }
 
 void RelatedSection::setEntry(const Entry &entry)
