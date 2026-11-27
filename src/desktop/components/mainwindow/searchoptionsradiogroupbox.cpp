@@ -378,7 +378,17 @@ void SearchOptionsRadioGroupBox::setStyle(bool use_dark)
     setMinimumHeight(std::max(_currentChoiceLabel->minimumHeight(),
                               _simplifiedButton->minimumHeight()));
 
-#ifdef Q_OS_WIN
+#ifdef Q_OS_LINUX
+    if (Utils::isDarkMode()) {
+        _innerWidget->setStyleSheet("QWidget#innerWidget { "
+                                    "   background-color: #2E2E32; "
+                                    "}");
+    } else {
+        _innerWidget->setStyleSheet("QWidget#innerWidget { "
+                                    "   background: white; "
+                                    "}");
+    }
+#elif defined(Q_OS_WIN)
     if (use_dark) {
         _innerWidget->setStyleSheet("QWidget#innerWidget { "
                                     "   background-color: #202020; "
@@ -443,7 +453,7 @@ void SearchOptionsRadioGroupBox::animateAutoDetectText(QPushButton *button,
     });
 
     connect(fadeInOut, &QAbstractAnimation::finished, button, [button] {
-#ifndef Q_OS_WIN
+#ifdef Q_OS_MAC
         button->setFixedSize(button->sizeHint());
 #endif
         button->updateGeometry();
