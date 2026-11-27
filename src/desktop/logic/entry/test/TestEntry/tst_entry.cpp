@@ -545,7 +545,7 @@ void TestEntry::jyutpingGetSet()
                                    CantoneseOptions::CANTONESE_IPA)),
              QString::fromStdString(cantoneseIPA));
 #elif defined(Q_OS_LINUX)
-    std::string cantoneseIPA{"t͡sʰɪŋ˥ jyːn˩˧"};
+    std::string cantoneseIPA{"t͡sʰɪŋ˥  jyːn˩˧"};
     QCOMPARE(QString::fromStdString(
                  entry.getPhonetic(EntryPhoneticOptions::ONLY_CANTONESE,
                                    CantoneseOptions::CANTONESE_IPA)),
@@ -575,7 +575,7 @@ void TestEntry::jyutpingGetSet()
                                    CantoneseOptions::CANTONESE_IPA)),
              QString::fromStdString(newCantoneseIPA));
 #elif defined(Q_OS_LINUX)
-    std::string newCantoneseIPA{"kʷɔːŋ˧˥ t͡sɐu̯˥"};
+    std::string newCantoneseIPA{"kʷɔːŋ˧˥  t͡sɐu̯˥"};
     QCOMPARE(QString::fromStdString(
                  entry.getPhonetic(EntryPhoneticOptions::ONLY_CANTONESE,
                                    CantoneseOptions::CANTONESE_IPA)),
@@ -619,10 +619,10 @@ void TestEntry::pinyinGetSet()
                                    MandarinOptions::MANDARIN_IPA)),
              QString::fromStdString(mandarinIPA));
 #elif defined(Q_OS_LINUX)
-    std::string mandarinIPA{"t͡ɕʰiŋ˥˥ ɥɛn˨˩˦꜕꜖(꜓)"};
+    std::string mandarinIPA{"t͡ɕʰiŋ˥˥  ɥɛn˨˩˦꜕꜖(꜓)"};
     QCOMPARE(QString::fromStdString(
                  entry.getPhonetic(EntryPhoneticOptions::ONLY_MANDARIN,
-                                   MandarinOptions::mandarinIPA)),
+                                   MandarinOptions::MANDARIN_IPA)),
              QString::fromStdString(mandarinIPA));
 #endif
 
@@ -659,10 +659,10 @@ void TestEntry::pinyinGetSet()
                                    MandarinOptions::MANDARIN_IPA)),
              QString::fromStdString(newMandarinIPA));
 #elif defined(Q_OS_LINUX)
-    std::string newMandarinIPA{"kwɑŋ˨˩˦꜕꜖꜖ ʈ͡ʂoʊ̯˥˥"};
+    std::string newMandarinIPA{"kwɑŋ˨˩˦꜕꜖꜖  ʈ͡ʂoʊ̯˥˥"};
     QCOMPARE(QString::fromStdString(
                  entry.getPhonetic(EntryPhoneticOptions::ONLY_MANDARIN,
-                                   MandarinOptions::mandarinIPA)),
+                                   MandarinOptions::MANDARIN_IPA)),
              QString::fromStdString(newMandarinIPA));
 #endif
 }
@@ -697,7 +697,7 @@ void TestEntry::getPhoneticCantonese()
                  entry.getPhonetic(EntryPhoneticOptions::PREFER_CANTONESE,
                                    CantoneseOptions::CANTONESE_IPA,
                                    MandarinOptions::RAW_PINYIN)),
-             QString::fromStdString("t͡sʰɪŋ˥ jyːn˩˧ (qing1 yuan3)"));
+             QString::fromStdString("t͡sʰɪŋ˥  jyːn˩˧ (qing1 yuan3)"));
 #endif
 
     entry.setPinyin("");
@@ -749,10 +749,10 @@ void TestEntry::getPhoneticMandarin()
                  "t͡ɕʰiŋ ˥ ˥  ɥɛn ˨ ˩ ˦ ꜕ ꜖ ( ꜓ ) (cing1 jyun5)"));
 #elif defined(Q_OS_LINUX)
     QCOMPARE(QString::fromStdString(
-                 entry.getPhonetic(EntryPhoneticOptions::PREFER_CANTONESE,
-                                   CantoneseOptions::CANTONESE_IPA,
-                                   MandarinOptions::RAW_PINYIN)),
-             QString::fromStdString("t͡ɕʰiŋ˥˥ ɥɛn˨˩˦꜕꜖(꜓) (cing1 jyun5)"));
+                 entry.getPhonetic(EntryPhoneticOptions::PREFER_MANDARIN,
+                                   CantoneseOptions::RAW_JYUTPING,
+                                   MandarinOptions::MANDARIN_IPA)),
+             QString::fromStdString("t͡ɕʰiŋ˥˥  ɥɛn˨˩˦꜕꜖(꜓) (cing1 jyun5)"));
 #endif
 
     entry.setJyutping("");

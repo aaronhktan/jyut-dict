@@ -192,7 +192,7 @@ void TestExample::getPhoneticMandarin()
 #elif defined(Q_OS_LINUX)
     QCOMPARE(QString::fromStdString(
                  example.getMandarinPhonetic(MandarinOptions::MANDARIN_IPA)),
-             QString{"tʰaɪ̯˧˥ ʂän˥˥ xu̯ä˥˩"});
+             QString{"tʰaɪ̯˧˥  ʂän˥˥  xu̯ä˥˩"});
 #endif
 
     example.setJyutping("");
@@ -248,7 +248,7 @@ void TestExample::jyutpingGetSet()
 #elif defined(Q_OS_LINUX)
     QCOMPARE(QString::fromStdString(
                  example.getCantonesePhonetic(CantoneseOptions::CANTONESE_IPA)),
-             QString{"sei̯˧ jɐp̚˥ wäː˧˥"});
+             QString{"sei̯˧  jɐp̚˥  wäː˧˥"});
 #endif
 }
 
@@ -281,7 +281,7 @@ void TestExample::pinyinGetSet()
 #elif defined(Q_OS_LINUX)
     QCOMPARE(QString::fromStdString(
                  example.getMandarinPhonetic(MandarinOptions::MANDARIN_IPA)),
-             QString{"tʰaɪ̯˧˥ ʂän˥˥ xu̯ä˥˩"});
+             QString{"tʰaɪ̯˧˥  ʂän˥˥  xu̯ä˥˩"});
 #endif
 
     std::string newPinyin{"Si4 yi4 HuA4"};
@@ -307,7 +307,7 @@ void TestExample::pinyinGetSet()
 #elif defined(Q_OS_LINUX)
     QCOMPARE(QString::fromStdString(
                  example.getMandarinPhonetic(MandarinOptions::MANDARIN_IPA)),
-             QString{"sz̩˥˩꜒꜔ i˥˩꜒꜔ xu̯ä˥˩"});
+             QString{"sz̩˥˩꜒꜔  i˥˩꜒꜔  xu̯ä˥˩"});
 #endif
 }
 
