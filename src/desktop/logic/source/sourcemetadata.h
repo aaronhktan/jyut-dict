@@ -38,7 +38,7 @@ private:
     std::string _other;
 };
 
-inline uint qHash(const SourceMetadata &key, uint seed)
+inline uint qHash(const SourceMetadata &key, uint seed = 0)
 {
     return qHashMulti(seed,
                       QString::fromStdString(key.getName()),
