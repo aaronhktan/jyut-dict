@@ -7,12 +7,14 @@
 
 #include <QVariant>
 
-Entry::Entry(const std::string &traditional,
+Entry::Entry(size_t id,
+             const std::string &traditional,
              const std::string &simplified,
              const std::string &jyutping,
              const std::string &pinyin,
              const std::vector<DefinitionsSet> &definitions)
-    : _traditional{traditional}
+    : _id{id}
+    , _traditional{traditional}
     , _simplified{simplified}
     , _jyutping{jyutping}
     , _pinyin{pinyin}
@@ -37,6 +39,7 @@ Entry::Entry(const std::string &traditional,
 
 Entry::Entry(const Entry &entry)
     : QObject()
+    , _id{entry._id}
     , _traditional{entry._traditional}
     , _traditionalDifference{entry._traditionalDifference}
     , _preferTraditional{entry._preferTraditional}
@@ -66,7 +69,8 @@ Entry::Entry(const Entry &entry)
 {}
 
 Entry::Entry(Entry &&entry)
-    : _traditional{std::move(entry._traditional)}
+    : _id{std::move(entry._id)}
+    , _traditional{std::move(entry._traditional)}
     , _traditionalDifference{std::move(entry._traditionalDifference)}
     , _preferTraditional{std::move(entry._preferTraditional)}
     , _simplified{std::move(entry._simplified)}
@@ -102,6 +106,7 @@ Entry &Entry::operator=(const Entry &entry)
         return *this;
     }
 
+    _id = entry._id;
     _traditional = entry._traditional;
     _traditionalDifference = entry._traditionalDifference;
     _preferTraditional = entry._preferTraditional;
@@ -138,6 +143,7 @@ Entry &Entry::operator=(Entry &&entry)
         return *this;
     }
 
+    _id = std::move(entry._id);
     _traditional = std::move(entry._traditional);
     _traditionalDifference = std::move(entry._traditionalDifference);
     _preferTraditional = std::move(entry._preferTraditional);
@@ -176,9 +182,9 @@ bool Entry::operator==(const Entry &other) const
         return true;
     }
 
-    if (other._simplified == _simplified && other._traditional == _traditional
-        && other._jyutping == _jyutping && other._pinyin == _pinyin
-        && other._definitions == _definitions) {
+    if (other._id == _id && other._simplified == _simplified
+        && other._traditional == _traditional && other._jyutping == _jyutping
+        && other._pinyin == _pinyin && other._definitions == _definitions) {
         return true;
     }
 
@@ -192,6 +198,7 @@ bool Entry::operator!=(const Entry &other) const
 
 std::ostream &operator<<(std::ostream &out, const Entry &entry)
 {
+    out << "ID: " << entry._id << "\n";
     out << "Simplified: " << entry.getSimplified() << "\n";
     out << "Traditional: " << entry.getTraditional() << "\n";
     out << "Jyutping: " << entry.getJyutping() << "\n";

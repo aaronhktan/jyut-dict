@@ -95,6 +95,9 @@ EntryContentWidget::EntryContentWidget(
 
 void EntryContentWidget::setEntry(const Entry &entry)
 {
+    if (_entry.has_value() && _entry.value().id() == entry.id()) {
+        return;
+    }
     _entry = entry;
 
     _definitionSection->setEntry(entry);

@@ -305,7 +305,12 @@ void TestSqlSearch::searchSimplified()
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
     std::vector<Entry> expected = {
-        {"白雲山", "白云山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
+        {1,
+         "白雲山",
+         "白云山",
+         "baak6 wan4 saan1",
+         "bai2 yun2 shan1",
+         definitions},
     };
     observer.setExpected(expected);
 
@@ -338,7 +343,7 @@ void TestSqlSearch::searchSimplified()
         {"CC-CANTO", {{"more", "adverb", {}}}},
     };
     expected = {
-        {"更", "更", "gang3", "geng4", definitions},
+        {2, "更", "更", "gang3", "geng4", definitions},
     };
     observer.setExpected(expected);
     // Test for Unicode normalization: the string being searched
@@ -369,7 +374,7 @@ void TestSqlSearch::searchSimplified()
         {"Wiktionary", {{"Yuexiu (a district)", "name", examples}}},
     };
     expected = {
-        {"越秀", "越秀", "jyut6 sau3", "yue4 xiu4", definitions},
+        {3, "越秀", "越秀", "jyut6 sau3", "yue4 xiu4", definitions},
     };
     observer.setExpected(expected);
     search.searchSimplified("越秀");
@@ -445,7 +450,12 @@ void TestSqlSearch::searchTraditional()
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
     std::vector<Entry> expected = {
-        {"白雲山", "白云山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
+        {1,
+         "白雲山",
+         "白云山",
+         "baak6 wan4 saan1",
+         "bai2 yun2 shan1",
+         definitions},
     };
     observer.setExpected(expected);
 
@@ -478,7 +488,7 @@ void TestSqlSearch::searchTraditional()
         {"CC-CANTO", {{"more", "adverb", {}}}},
     };
     expected = {
-        {"更", "更", "gang3", "geng4", definitions},
+        {2, "更", "更", "gang3", "geng4", definitions},
     };
     observer.setExpected(expected);
     // Test for Unicode normalization: the string being searched
@@ -509,7 +519,7 @@ void TestSqlSearch::searchTraditional()
         {"Wiktionary", {{"Yuexiu (a district)", "name", examples}}},
     };
     expected = {
-        {"越秀", "越秀", "jyut6 sau3", "yue4 xiu4", definitions},
+        {3, "越秀", "越秀", "jyut6 sau3", "yue4 xiu4", definitions},
     };
     observer.setExpected(expected);
     search.searchTraditional("越秀");
@@ -585,59 +595,64 @@ void TestSqlSearch::searchJyutping()
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
     std::vector<Entry> expected = {
-        {"白雲山", "白云山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
+        {1,
+         "白雲山",
+         "白云山",
+         "baak6 wan4 saan1",
+         "bai2 yun2 shan1",
+         definitions},
     };
     observer.setExpected(expected);
 
-    search.searchJyutping("baak6 wan4 saan1");
+    search.searchJyutping("baak6 wan4 saan1", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("baak6 wan4 saan1$");
+    search.searchJyutping("baak6 wan4 saan1$", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("\"baak6 wan4 saan1\"");
+    search.searchJyutping("\"baak6 wan4 saan1\"", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("baak6'wan4saan1");
+    search.searchJyutping("baak6'wan4saan1", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("baakwansaan");
+    search.searchJyutping("baakwansaan", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("baakwan");
+    search.searchJyutping("baakwan", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("baak6*saan1");
+    search.searchJyutping("baak6*saan1", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("*saan1");
+    search.searchJyutping("*saan1", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("baak6*");
+    search.searchJyutping("baak6*", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
@@ -663,52 +678,52 @@ void TestSqlSearch::searchJyutping()
         {"Wiktionary", {{"Yuexiu (a district)", "name", examples}}},
     };
     expected = {
-        {"越秀", "越秀", "jyut6 sau3", "yue4 xiu4", definitions},
+        {3, "越秀", "越秀", "jyut6 sau3", "yue4 xiu4", definitions},
     };
     observer.setExpected(expected);
-    search.searchJyutping("jyut6 sau3");
+    search.searchJyutping("jyut6 sau3", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("jyut? sau?");
+    search.searchJyutping("jyut? sau?", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("*sau?");
+    search.searchJyutping("*sau?", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("jyut?*");
+    search.searchJyutping("jyut?*", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("jyut? ????");
+    search.searchJyutping("jyut? ????", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("yuet? ????");
+    search.searchJyutping("yuet? ????", /* fuzzy */ true);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("yuetshow");
+    search.searchJyutping("yuetshow", /* fuzzy */ true);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("????? ????$");
+    search.searchJyutping("????? ????$", /* fuzzy */ true);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
@@ -726,37 +741,37 @@ void TestSqlSearch::searchJyutpingNoResults()
     std::vector<Entry> expected;
     observer.setExpected(expected);
 
-    search.searchJyutping("白云山");
+    search.searchJyutping("白云山", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("白???");
+    search.searchJyutping("白???", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("*白白白白山");
+    search.searchJyutping("*白白白白山", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("白云*");
+    search.searchJyutping("白云*", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("\"jyut6\"");
+    search.searchJyutping("\"jyut6\"", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("jyut6$");
+    search.searchJyutping("jyut6$", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
@@ -775,59 +790,64 @@ void TestSqlSearch::searchPinyin()
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
     std::vector<Entry> expected = {
-        {"白雲山", "白云山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
+        {1,
+         "白雲山",
+         "白云山",
+         "baak6 wan4 saan1",
+         "bai2 yun2 shan1",
+         definitions},
     };
     observer.setExpected(expected);
 
-    search.searchPinyin("bai2 yun2 shan1");
+    search.searchPinyin("bai2 yun2 shan1", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("bai2 yun2 shan1$");
+    search.searchPinyin("bai2 yun2 shan1$", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("\"bai2 yun2 shan1\"");
+    search.searchPinyin("\"bai2 yun2 shan1\"", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("bai2'yun2shan1");
+    search.searchPinyin("bai2'yun2shan1", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("baiyunshan");
+    search.searchPinyin("baiyunshan", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("baiyun");
+    search.searchPinyin("baiyun", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("bai2*shan1");
+    search.searchPinyin("bai2*shan1", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("*shan1");
+    search.searchPinyin("*shan1", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("bai2*");
+    search.searchPinyin("bai2*", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
@@ -853,40 +873,40 @@ void TestSqlSearch::searchPinyin()
         {"Wiktionary", {{"Yuexiu (a district)", "name", examples}}},
     };
     expected = {
-        {"越秀", "越秀", "jyut6 sau3", "yue4 xiu4", definitions},
+        {3, "越秀", "越秀", "jyut6 sau3", "yue4 xiu4", definitions},
     };
     observer.setExpected(expected);
-    search.searchPinyin("yue4 xiu4");
+    search.searchPinyin("yue4 xiu4", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("yue? xiu?");
+    search.searchPinyin("yue? xiu?", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("*xiu?");
+    search.searchPinyin("*xiu?", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("yue?*");
+    search.searchPinyin("yue?*", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("yue? ????");
+    search.searchPinyin("yue? ????", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("???? ????$");
+    search.searchPinyin("???? ????$", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
@@ -904,37 +924,37 @@ void TestSqlSearch::searchPinyinNoResults()
     std::vector<Entry> expected;
     observer.setExpected(expected);
 
-    search.searchPinyin("白云山");
+    search.searchPinyin("白云山", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("白???");
+    search.searchPinyin("白???", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("*白白白白山");
+    search.searchPinyin("*白白白白山", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("白云*");
+    search.searchPinyin("白云*", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("\"yue4\"");
+    search.searchPinyin("\"yue4\"", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("yue4$");
+    search.searchPinyin("yue4$", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
@@ -953,7 +973,12 @@ void TestSqlSearch::searchEnglish()
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
     std::vector<Entry> expected = {
-        {"白雲山", "白云山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
+        {1,
+         "白雲山",
+         "白云山",
+         "baak6 wan4 saan1",
+         "bai2 yun2 shan1",
+         definitions},
     };
     observer.setExpected(expected);
 
@@ -1001,7 +1026,7 @@ void TestSqlSearch::searchEnglish()
         {"Wiktionary", {{"Yuexiu (a district)", "name", examples}}},
     };
     expected = {
-        {"越秀", "越秀", "jyut6 sau3", "yue4 xiu4", definitions},
+        {3, "越秀", "越秀", "jyut6 sau3", "yue4 xiu4", definitions},
     };
     observer.setExpected(expected);
     search.searchEnglish("yuexiu");
@@ -1034,13 +1059,13 @@ void TestSqlSearch::searchEnglishNoResults()
     std::vector<Entry> expected;
     observer.setExpected(expected);
 
-    search.searchJyutping("snoofles");
+    search.searchJyutping("snoofles", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchJyutping("\"baiyun\"");
+    search.searchJyutping("\"baiyun\"", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
@@ -1059,7 +1084,12 @@ void TestSqlSearch::searchAutoDetect()
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
     std::vector<Entry> expected = {
-        {"白雲山", "白云山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
+        {1,
+         "白雲山",
+         "白云山",
+         "baak6 wan4 saan1",
+         "bai2 yun2 shan1",
+         definitions},
     };
     observer.setExpected(expected);
 
@@ -1218,7 +1248,7 @@ void TestSqlSearch::searchAutoDetect()
         {"CC-CANTO", {{"more", "adverb", {}}}},
     };
     expected = {
-        {"更", "更", "gang3", "geng4", definitions},
+        {2, "更", "更", "gang3", "geng4", definitions},
     };
     observer.setExpected(expected);
     // Test for Unicode normalization: the string being searched
@@ -1262,13 +1292,13 @@ void TestSqlSearch::searchAutoDetectNoResults()
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("\"yue4\"");
+    search.searchPinyin("\"yue4\"", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
         QCOMPARE(observer.testFailed, false);
     }
-    search.searchPinyin("yue4$");
+    search.searchPinyin("yue4$", /* fuzzy */ false);
     {
         std::unique_lock lock{observer.mutex};
         observer.resultsReady.wait(lock);
@@ -1287,7 +1317,12 @@ void TestSqlSearch::searchUnique()
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
     std::vector<Entry> expected = {
-        {"白雲山", "白云山", "baak6 wan4 saan1", "bai2 yun2 shan1", definitions},
+        {1,
+         "白雲山",
+         "白云山",
+         "baak6 wan4 saan1",
+         "bai2 yun2 shan1",
+         definitions},
     };
     observer.setExpected(expected);
     search.searchByUnique("白雲山",
@@ -1316,7 +1351,7 @@ void TestSqlSearch::searchUnique()
         {"CC-CANTO", {{"more", "adverb", {}}}},
     };
     expected = {
-        {"更", "更", "gang3", "geng4", definitions},
+        {2, "更", "更", "gang3", "geng4", definitions},
     };
     observer.setExpected(expected);
     // Test for Unicode normalization: the string being searched

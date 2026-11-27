@@ -89,7 +89,8 @@ void ResultListModel::setWelcome()
         setEmpty();
         return;
     }
-    Entry entry{tr("Welcome!").toStdString(),
+    Entry entry{1,
+                tr("Welcome!").toStdString(),
                 tr("Welcome!").toStdString(),
                 "—",
                 "—",
@@ -107,7 +108,8 @@ void ResultListModel::setWelcome()
 void ResultListModel::setEmpty()
 {
     if (!_isFavouritesList) {
-        Entry entry{tr("No results...").toStdString(),
+        Entry entry{1,
+                    tr("No results...").toStdString(),
                     tr("No results...").toStdString(),
                     "",
                     "",
@@ -125,7 +127,8 @@ void ResultListModel::setEmpty()
 
         setEntries({entry});
     } else {
-        Entry entry{tr("Nothing saved...").toStdString(),
+        Entry entry{1,
+                    tr("Nothing saved...").toStdString(),
                     tr("Nothing saved...").toStdString(),
                     "",
                     "",

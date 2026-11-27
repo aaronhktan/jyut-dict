@@ -15,6 +15,7 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
 {
     std::vector<Entry> entries;
 
+    const int idIndex = query.record().indexOf("entry_id");
     const int simplifiedIndex = query.record().indexOf("simplified");
     const int traditionalIndex = query.record().indexOf("traditional");
     const int jyutpingIndex = query.record().indexOf("jyutping");
@@ -25,6 +26,7 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
 
     while (query.next()) {
         // Get fields from table
+        const int id = query.value(idIndex).toInt();
         const std::string simplified
             = query.value(simplifiedIndex).toString().toStdString();
         const std::string traditional
@@ -106,7 +108,8 @@ std::vector<Entry> parseEntries(QSqlQuery &query, bool parseDefinitions)
             }
         }
 
-        entries.emplace_back(traditional,
+        entries.emplace_back(id,
+                             traditional,
                              simplified,
                              jyutping,
                              pinyin,

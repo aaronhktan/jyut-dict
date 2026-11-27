@@ -350,7 +350,8 @@ void TestSqlUserDataUtils::favouriteUnfavouriteEntry()
     std::vector<DefinitionsSet> definitions = {
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
-    Entry expected{"白雲山",
+    Entry expected{1,
+                   "白雲山",
                    "白云山",
                    "baak6 wan4 saan1",
                    "bai2 yun2 shan1",
@@ -416,7 +417,7 @@ void TestSqlUserDataUtils::checkIfEntryHasBeenFavourited()
 
     utils.registerObserver(&observer);
 
-    Entry expected{"更", "更", "gang3", "geng4", {}};
+    Entry expected{2, "更", "更", "gang3", "geng4", {}};
     observer.setExpected(false, expected);
     observer.setExpected({});
 
@@ -432,7 +433,7 @@ void TestSqlUserDataUtils::checkIfEntryHasBeenFavourited()
     std::vector<DefinitionsSet> definitions = {
         {"CC-CANTO", {{"more", "adverb", {}}}},
     };
-    expected = {"更", "更", "gang3", "geng4", definitions};
+    expected = {2, "更", "更", "gang3", "geng4", definitions};
     observer.setExpected(true, expected);
     observer.setExpected({expected});
 
@@ -489,7 +490,7 @@ void TestSqlUserDataUtils::searchForAllFavouritedWords()
     std::vector<DefinitionsSet> definitions = {
         {"CC-CANTO", {{"more", "adverb", {}}}},
     };
-    Entry expected = {"更", "更", "gang3", "geng4", definitions};
+    Entry expected = {2, "更", "更", "gang3", "geng4", definitions};
     observer.setExpected(true, expected);
     observer.setExpected({expected});
 

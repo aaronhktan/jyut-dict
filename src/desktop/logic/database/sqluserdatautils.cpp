@@ -204,7 +204,7 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
         " "
         //// Construct the final entry object
         "matching_entries AS ( "
-        "  SELECT simplified, traditional, jyutping, pinyin, "
+        "  SELECT entry_id, simplified, traditional, jyutping, pinyin, "
         "json_group_array(json(definitions)) AS definitions "
         "  FROM matching_definition_groups AS mdg "
         "  LEFT JOIN entries ON entries.entry_id = mdg.fk_entry_id "
@@ -212,7 +212,8 @@ void SQLUserDataUtils::searchForAllFavouritedWordsThread(void)
         ") "
         " "
         "SELECT "
-        "  e.simplified, e.traditional, e.jyutping, e.pinyin, e.definitions "
+        "  entry_id, e.simplified, e.traditional, e.jyutping, e.pinyin, "
+        "  e.definitions "
         "FROM "
         "  matching_entries AS e "
         "INNER JOIN user.favourite_words "

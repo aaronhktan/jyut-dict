@@ -49,6 +49,7 @@ SearchOptionsRadioGroupBox::SearchOptionsRadioGroupBox(
             && button->property("data").value<SearchParameters>()
                    == lastSelected) {
             button->click();
+            _scrollArea->ensureWidgetVisible(button);
             break;
         }
     }
@@ -93,6 +94,7 @@ void SearchOptionsRadioGroupBox::setOption(const SearchParameters parameters)
         if (button->property("data").isValid()
             && button->property("data") == QVariant::fromValue(parameters)) {
             button->click();
+            _scrollArea->ensureWidgetVisible(button);
         }
     }
     if (parameters != SearchParameters::AUTO_DETECT) {
@@ -427,6 +429,8 @@ void SearchOptionsRadioGroupBox::animateAutoDetectText(QPushButton *button,
     connect(fadeInOut, &QAbstractAnimation::finished, button, [button] {
         button->setFixedSize(button->sizeHint());
         button->updateGeometry();
+        button->setGraphicsEffect(nullptr);
+        button->update();
     });
 
     fadeInOut->start(QAbstractAnimation::DeleteWhenStopped);

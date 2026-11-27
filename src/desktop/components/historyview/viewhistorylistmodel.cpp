@@ -39,9 +39,12 @@ void ViewHistoryListModel::setEntries(const std::vector<Entry> &entries, bool em
 
 void ViewHistoryListModel::setEmpty(void)
 {
-    Entry entry = Entry{tr("No viewed items...").toStdString(),
+    Entry entry = Entry{1,
                         tr("No viewed items...").toStdString(),
-                        "", "", {}};
+                        tr("No viewed items...").toStdString(),
+                        "",
+                        "",
+                        {}};
     entry.addDefinitions(
         "CEDICT",
         {Definition::Definition{tr("After viewing an entry, you can find it "

@@ -57,7 +57,7 @@ void TestEntry::getCharactersSimpleCantonese()
     std::string simplified{"清远"};
     std::string jyutping{"cing1 jyun5"};
     std::string pinyin{"qing1 yuan3"};
-    Entry entry{traditional, simplified, jyutping, pinyin, {}};
+    Entry entry{1, traditional, simplified, jyutping, pinyin, {}};
 
     QCOMPARE(QString::fromStdString(
                  entry.getCharacters(EntryCharactersOptions::ONLY_TRADITIONAL,
@@ -127,7 +127,7 @@ void TestEntry::getCharactersSimpleMandarin()
     std::string simplified{"清远"};
     std::string jyutping{"cing1 jyun5"};
     std::string pinyin{"qing1 yuan3"};
-    Entry entry{traditional, simplified, jyutping, pinyin, {}};
+    Entry entry{1, traditional, simplified, jyutping, pinyin, {}};
 
     QCOMPARE(QString::fromStdString(
                  entry.getCharacters(EntryCharactersOptions::ONLY_TRADITIONAL,
@@ -197,7 +197,7 @@ void TestEntry::getCharactersColourCantonese()
     std::string simplified{"清远"};
     std::string jyutping{"cing1 jyun5"};
     std::string pinyin{"qing1 yuan3"};
-    Entry entry{traditional, simplified, jyutping, pinyin, {}};
+    Entry entry{1, traditional, simplified, jyutping, pinyin, {}};
 
     std::string expectedTraditional = "<font color=\""
                                       + Settings::defaultJyutpingToneColours[1]
@@ -286,7 +286,7 @@ void TestEntry::getCharactersColourMandarin()
     std::string simplified{"清远"};
     std::string jyutping{"cing1 jyun5"};
     std::string pinyin{"qing1 yuan3"};
-    Entry entry{traditional, simplified, jyutping, pinyin, {}};
+    Entry entry{1, traditional, simplified, jyutping, pinyin, {}};
 
     std::string expectedTraditional = "<font color=\""
                                       + Settings::defaultPinyinToneColours[1]
@@ -373,7 +373,7 @@ void TestEntry::getCharactersSimpleNone()
     std::string simplified{"清远"};
     std::string jyutping{"cing1 jyun5"};
     std::string pinyin{"qing1 yuan3"};
-    Entry entry{traditional, simplified, jyutping, pinyin, {}};
+    Entry entry{1, traditional, simplified, jyutping, pinyin, {}};
 
     QCOMPARE(QString::fromStdString(
                  entry.getCharacters(EntryCharactersOptions::ONLY_TRADITIONAL,
@@ -443,7 +443,7 @@ void TestEntry::traditionalGetSet()
     std::string simplified{"清远"};
     std::string jyutping{"cing1 jyun5"};
     std::string pinyin{"qing1 yuan3"};
-    Entry entry{traditional, simplified, jyutping, pinyin, {}};
+    Entry entry{1, traditional, simplified, jyutping, pinyin, {}};
 
     std::string expectedTraditional = "<font color=\""
                                       + Settings::defaultJyutpingToneColours[1]
@@ -484,7 +484,7 @@ void TestEntry::simplifiedGetSet()
     std::string simplified{"清远"};
     std::string jyutping{"cing1 jyun5"};
     std::string pinyin{"qing1 yuan3"};
-    Entry entry{traditional, simplified, jyutping, pinyin, {}};
+    Entry entry{1, traditional, simplified, jyutping, pinyin, {}};
 
     std::string expectedSimplified = "<font color=\""
                                      + Settings::defaultJyutpingToneColours[1]
@@ -525,7 +525,7 @@ void TestEntry::jyutpingGetSet()
     std::string simplified{"清远"};
     std::string jyutping{"cing1 jyun5"};
     std::string pinyin{"qing1 yuan3"};
-    Entry entry{traditional, simplified, jyutping, pinyin, {}};
+    Entry entry{1, traditional, simplified, jyutping, pinyin, {}};
 
     QCOMPARE(QString::fromStdString(entry.getJyutping()),
              QString::fromStdString(jyutping));
@@ -589,7 +589,7 @@ void TestEntry::pinyinGetSet()
     std::string simplified{"清远"};
     std::string jyutping{"cing1 jyun5"};
     std::string pinyin{"qing1 yuan3"};
-    Entry entry{traditional, simplified, jyutping, pinyin, {}};
+    Entry entry{1, traditional, simplified, jyutping, pinyin, {}};
 
     QCOMPARE(QString::fromStdString(entry.getPinyin()),
              QString::fromStdString(pinyin));
@@ -673,7 +673,7 @@ void TestEntry::getPhoneticCantonese()
     std::string simplified{"清远"};
     std::string jyutping{"cing1 jyun5"};
     std::string pinyin{"qing1 yuan3"};
-    Entry entry{traditional, simplified, jyutping, pinyin, {}};
+    Entry entry{1, traditional, simplified, jyutping, pinyin, {}};
 
     QCOMPARE(QString::fromStdString(entry.getJyutping()),
              QString::fromStdString(jyutping));
@@ -721,7 +721,7 @@ void TestEntry::getPhoneticMandarin()
     std::string simplified{"清远"};
     std::string jyutping{"cing1 jyun5"};
     std::string pinyin{"qing1 yuan3"};
-    Entry entry{traditional, simplified, jyutping, pinyin, {}};
+    Entry entry{1, traditional, simplified, jyutping, pinyin, {}};
 
     QCOMPARE(QString::fromStdString(entry.getPinyin()),
              QString::fromStdString(pinyin));
@@ -773,7 +773,7 @@ void TestEntry::getPhoneticMandarin()
 void TestEntry::getJyutpingNumbersSimple()
 {
     std::string jyutping = "toi4 saan1 waa2";
-    Entry entry{"", "", jyutping, "", {}};
+    Entry entry{1, "", "", jyutping, "", {}};
 
     auto result = entry.getJyutpingNumbers();
     std::vector<uint8_t> expected{4, 1, 2};
@@ -793,7 +793,7 @@ void TestEntry::getJyutpingNumbersSimple()
 void TestEntry::getJyutpingNumbersInvalidTones()
 {
     std::string jyutping = "toi4 saan1 saan7 waa2";
-    Entry entry{"", "", jyutping, "", {}};
+    Entry entry{1, "", "", jyutping, "", {}};
 
     auto result = entry.getJyutpingNumbers();
     std::vector<uint8_t> expected{4, 1, 2};
@@ -803,7 +803,7 @@ void TestEntry::getJyutpingNumbersInvalidTones()
 void TestEntry::getJyutpingNumbersResetJyutping()
 {
     std::string jyutping = "toi4 saan1 waa2";
-    Entry entry{"", "", jyutping, "", {}};
+    Entry entry{1, "", "", jyutping, "", {}};
 
     auto result = entry.getJyutpingNumbers();
     std::vector<uint8_t> expected{4, 1, 2};
@@ -818,7 +818,7 @@ void TestEntry::getJyutpingNumbersResetJyutping()
 void TestEntry::getPinyinNumbersSimple()
 {
     std::string pinyin = "tai2 shan1 hua4";
-    Entry entry{"", "", "", pinyin, {}};
+    Entry entry{1, "", "", "", pinyin, {}};
 
     auto result = entry.getPinyinNumbers();
     std::vector<uint8_t> expected{2, 1, 4};
@@ -838,7 +838,7 @@ void TestEntry::getPinyinNumbersSimple()
 void TestEntry::getPinyinNumbersInvalidTones()
 {
     std::string pinyin = "tai2 shan1 shan6 hua4";
-    Entry entry{"", "", "", pinyin, {}};
+    Entry entry{1, "", "", "", pinyin, {}};
 
     auto result = entry.getPinyinNumbers();
     std::vector<uint8_t> expected{2, 1, 4};
@@ -848,7 +848,7 @@ void TestEntry::getPinyinNumbersInvalidTones()
 void TestEntry::getPinyinNumbersResetPinyin()
 {
     std::string pinyin = "tai2 shan1 hua4";
-    Entry entry{"", "", "", pinyin, {}};
+    Entry entry{1, "", "", "", pinyin, {}};
 
     auto result = entry.getPinyinNumbers();
     std::vector<uint8_t> expected{2, 1, 4};
@@ -873,7 +873,7 @@ void TestEntry::getDefinitionsSetsSimple()
     std::string simplified = "唐人街";
     std::string jyutping = "tong4 jan4 gaai1";
     std::string pinyin = "tang2 ren2 jie1";
-    Entry entry{traditional, simplified, jyutping, pinyin, {definitionsSet}};
+    Entry entry{1, traditional, simplified, jyutping, pinyin, {definitionsSet}};
 
     QCOMPARE(std::vector<DefinitionsSet>(entry.getDefinitionsSets().begin(),
                                          entry.getDefinitionsSets().end()),
@@ -894,7 +894,7 @@ void TestEntry::modifyDefinitionsSetsSimple()
     std::string simplified = "唐人街";
     std::string jyutping = "tong4 jan4 gaai1";
     std::string pinyin = "tang2 ren2 jie1";
-    Entry entry{traditional, simplified, jyutping, pinyin, {definitionsSet}};
+    Entry entry{1, traditional, simplified, jyutping, pinyin, {definitionsSet}};
 
     QCOMPARE(std::vector<DefinitionsSet>(entry.getDefinitionsSets().begin(),
                                          entry.getDefinitionsSets().end()),
@@ -917,7 +917,7 @@ void TestEntry::getDefinitionSnippetSimple()
     std::string simplified = "唐人街";
     std::string jyutping = "tong4 jan4 gaai1";
     std::string pinyin = "tang2 ren2 jie1";
-    Entry entry{traditional, simplified, jyutping, pinyin, {definitionsSet}};
+    Entry entry{1, traditional, simplified, jyutping, pinyin, {definitionsSet}};
 
     QCOMPARE(entry.getDefinitionSnippet(), "Chinatown");
 }
@@ -928,7 +928,7 @@ void TestEntry::getDefinitionSnippetEmptyDefinitionsSet()
     std::string simplified = "唐人街";
     std::string jyutping = "tong4 jan4 gaai1";
     std::string pinyin = "tang2 ren2 jie1";
-    Entry entry{traditional, simplified, jyutping, pinyin, {}};
+    Entry entry{1, traditional, simplified, jyutping, pinyin, {}};
 
     QCOMPARE(entry.getDefinitionSnippet(), "");
 }
@@ -941,7 +941,7 @@ void TestEntry::getDefintionSnippetEmptyDefinition()
     std::string simplified = "唐人街";
     std::string jyutping = "tong4 jan4 gaai1";
     std::string pinyin = "tang2 ren2 jie1";
-    Entry entry{traditional, simplified, jyutping, pinyin, {definitionsSet}};
+    Entry entry{1, traditional, simplified, jyutping, pinyin, {definitionsSet}};
 
     QCOMPARE(entry.getDefinitionSnippet(), "");
 }

@@ -24,7 +24,8 @@ class Entry : public QObject
 {
 public:
     explicit Entry() = default;
-    Entry(const std::string &traditional,
+    Entry(size_t id,
+          const std::string &traditional,
           const std::string &simplified,
           const std::string &jyutping,
           const std::string &pinyin,
@@ -41,6 +42,8 @@ public:
     bool operator==(const Entry &other) const;
     bool operator!=(const Entry &other) const;
     friend std::ostream &operator<<(std::ostream &out, const Entry &entry);
+
+    size_t id() const { return _id; }
 
     const std::string &getCharacters(
         EntryCharactersOptions options,
@@ -101,6 +104,7 @@ private:
                         std::span<const std::string> jyutpingToneColours,
                         std::span<const std::string> pinyinToneColours) const;
 
+    size_t _id;
     std::string _traditional;
     std::string _traditionalDifference;
     std::string _preferTraditional;

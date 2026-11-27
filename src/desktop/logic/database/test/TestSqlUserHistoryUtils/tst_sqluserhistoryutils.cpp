@@ -23,6 +23,8 @@ public:
     void callback(const std::vector<SearchTermHistoryItem> &results,
                   bool emptyQuery) override
     {
+        qDebug() << "received: " << results.size();
+        qDebug() << "expected: " << _results.size();
         if (results != _results) {
             testFailed = true;
         }
@@ -373,14 +375,16 @@ void TestSqlUserHistoryUtils::viewHistory()
     std::vector<DefinitionsSet> definitions = {
         {"CC-CANTO", {{"Baiyun Mountain", "noun", {}}}},
     };
-    Entry originalEntry{"白雲山",
+    Entry originalEntry{0,
+                        "白雲山",
                         "白云山",
                         "baak6 wan4 saan1",
                         "bai2 yun2 shan1",
                         definitions};
 
     // The result we get back from the database should have no definitions.
-    Entry expectedEntry{"白雲山",
+    Entry expectedEntry{0,
+                        "白雲山",
                         "白云山",
                         "baak6 wan4 saan1",
                         "bai2 yun2 shan1",
@@ -396,7 +400,7 @@ void TestSqlUserHistoryUtils::viewHistory()
         QCOMPARE(observer.testFailed, false);
     }
 
-    expected.emplace_back(Entry{"更", "更", "gang3", "geng4", {}});
+    expected.emplace_back(Entry{0, "更", "更", "gang3", "geng4", {}});
     observer.setExpected(expected);
     utils.addViewToHistory(expected.back());
     std::this_thread::sleep_for(std::chrono::milliseconds(50));

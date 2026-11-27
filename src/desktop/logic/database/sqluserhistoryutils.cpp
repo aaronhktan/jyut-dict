@@ -180,11 +180,11 @@ void SQLUserHistoryUtils::searchAllViewHistoryThread(void)
 
     QSqlQuery query{_manager->getDatabase()};
 
-    query.exec(
-        "SELECT traditional, simplified, pinyin, jyutping, timestamp "
-        "FROM user.view_history "
-        "ORDER BY timestamp DESC "
-        "LIMIT 1000");
+    query.exec("SELECT 0 AS entry_id, traditional, simplified, pinyin, "
+               "jyutping, timestamp "
+               "FROM user.view_history "
+               "ORDER BY timestamp DESC "
+               "LIMIT 1000");
 
     results = QueryParseUtils::parseEntries(query, /*parseDefinitions=*/false);
     _manager->closeAndRemoveDatabaseConnection();

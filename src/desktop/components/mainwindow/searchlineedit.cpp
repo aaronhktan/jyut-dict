@@ -115,7 +115,7 @@ void SearchLineEdit::search(std::optional<SearchParameters> paramOverride)
         break;
     }
     case SearchParameters::FUZZY_PINYIN: {
-        _search->searchJyutping(text().trimmed(), /* fuzzyJyutping */ true);
+        _search->searchPinyin(text().trimmed(), /* fuzzyPinyin */ true);
         break;
     }
     case SearchParameters::ENGLISH: {
