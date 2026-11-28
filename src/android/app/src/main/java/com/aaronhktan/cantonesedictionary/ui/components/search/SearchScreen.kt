@@ -39,6 +39,7 @@ import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExpandedFullScreenContainedSearchBar
@@ -388,7 +389,7 @@ private fun SearchResults(
     onEntrySelected: (Entry) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val searchResults = searchScreenUiState.searchResults ?: listOf()
+    val searchResults = searchScreenUiState.searchResults
 
     val detectedInputMethod = searchScreenUiState.detectedInputMethod
     var inputMethodText by remember { mutableStateOf(searchScreenUiState.selectedInputMethod.descriptionString()) }
@@ -396,30 +397,69 @@ private fun SearchResults(
 
     val density = LocalDensity.current
 
+    LaunchedEffect(detectedInputMethod) {
+        if (searchScreenUiState.selectedInputMethod == InputMethod.AUTO_DETECT) {
+            inputMethodText = if (detectedInputMethod != null) {
+                "Detected input: ${detectedInputMethod.descriptionString()}"
+            } else {
+                "Auto-detect language"
+            }
+        }
+    }
+
+    LaunchedEffect(searchScreenUiState.selectedInputMethod) {
+        if (searchScreenUiState.selectedInputMethod == InputMethod.AUTO_DETECT) {
+            inputMethodText = if (detectedInputMethod != null) {
+                "Detected input: ${detectedInputMethod.descriptionString()}"
+            } else {
+                "Auto-detect language"
+            }
+        } else {
+            inputMethodText = searchScreenUiState.selectedInputMethod.descriptionString()
+        }
+    }
+
+    LaunchedEffect(searchResults) {
+        if (!searchResults.isNullOrEmpty()) {
+            listState.scrollToItem(0)
+
+            if (!isSinglePane) {
+                onEntrySelected(searchResults.first())
+            }
+        }
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize(),
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            state = listState,
-            contentPadding = PaddingValues(
-                bottom = with(density) {
-                    buttonHeight.toDp() + 2 * dimensionResource(R.dimen.content_padding)
-                }
-            )
-        ) {
-            items(searchResults, key = { entry -> entry.id }) { entry ->
-                EntryRow(
-                    entry,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            onEntrySelected(entry)
-                        }
+        if (searchResults == null) {
+            Unit
+        } else if (searchResults.isEmpty()) {
+            NoResultsScreen(Modifier.fillMaxWidth())
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                state = listState,
+                contentPadding = PaddingValues(
+                    bottom = with(density) {
+                        buttonHeight.toDp() + 2 * dimensionResource(R.dimen.content_padding)
+                    }
                 )
+            ) {
+                items(searchResults, key = { entry -> entry.id }) { entry ->
+                    EntryRow(
+                        entry,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onEntrySelected(entry)
+                            }
+                    )
+                }
             }
         }
+
 
         Box(
             modifier = Modifier
@@ -453,38 +493,6 @@ private fun SearchResults(
                         indication = null
                     ) { onLanguageSelectorToggled(false) }
             )
-        }
-    }
-
-    LaunchedEffect(searchResults) {
-        if (searchResults.isNotEmpty()) {
-            listState.scrollToItem(0)
-
-            if (!isSinglePane) {
-                onEntrySelected(searchResults.first())
-            }
-        }
-    }
-
-    LaunchedEffect(detectedInputMethod) {
-        if (searchScreenUiState.selectedInputMethod == InputMethod.AUTO_DETECT) {
-            inputMethodText = if (detectedInputMethod != null) {
-                "Detected input: ${detectedInputMethod.descriptionString()}"
-            } else {
-                "Auto-detect language"
-            }
-        }
-    }
-
-    LaunchedEffect(searchScreenUiState.selectedInputMethod) {
-        if (searchScreenUiState.selectedInputMethod == InputMethod.AUTO_DETECT) {
-            inputMethodText = if (detectedInputMethod != null) {
-                "Detected input: ${detectedInputMethod.descriptionString()}"
-            } else {
-                "Auto-detect language"
-            }
-        } else {
-            inputMethodText = searchScreenUiState.selectedInputMethod.descriptionString()
         }
     }
 }
@@ -607,8 +615,7 @@ fun WelcomeScreen(modifier: Modifier = Modifier) {
         Image(
             painter = painterResource(R.drawable.icon),
             contentDescription = "App icon",
-            modifier = Modifier.
-                width(150.dp)
+            modifier = Modifier.width(150.dp)
         )
         Text(
             text = "Welcome to Jyut Dictionary",
@@ -617,6 +624,31 @@ fun WelcomeScreen(modifier: Modifier = Modifier) {
         )
         Text(
             text = "A Project by Aaron Tan",
+            color = MaterialTheme.colorScheme.secondary,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        Spacer(Modifier.weight(1f))
+    }
+}
+
+@Composable
+fun NoResultsScreen(modifier: Modifier = Modifier) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.content_padding)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        Spacer(Modifier.weight(1f))
+        Icon(
+            imageVector = Icons.Filled.SearchOff,
+            contentDescription = "No search results icon",
+            modifier = Modifier
+                .size(with(LocalDensity.current) { MaterialTheme.typography.displayLarge.fontSize.toDp() }),
+            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+        )
+        Text(
+            text = "No search results were found.",
             color = MaterialTheme.colorScheme.secondary,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyLarge,
@@ -646,5 +678,13 @@ fun SearchScreenPreviewDoublePane() {
             isSinglePane = false,
             onInputMethodChanged = {},
             onEntrySelected = {})
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NoResultsPreview() {
+    CantoneseDictionaryTheme {
+        NoResultsScreen()
     }
 }

@@ -17,6 +17,9 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -28,6 +31,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.collections.listOf
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val LOG_TAG = "SearchScreenViewModel"
 
@@ -66,15 +70,18 @@ class SearchScreenViewModel(application: Application) : AndroidViewModel(applica
                             _uiState.update {
                                 it.copy(
                                     detectedInputMethod = null,
-                                    searchResults = listOf()
+                                    searchResults = null,
                                 )
                             }
                             return@flow
                         }
 
-                        emit(
-                            triggerSearch(query, method)
-                        )
+                        val result = triggerSearch(query, method)
+                        if (result.isEmpty()) {
+                            delay(300.milliseconds)
+                            currentCoroutineContext().ensureActive()
+                        }
+                        emit(result)
                     }
                 }
                 .collect { result ->
@@ -213,6 +220,7 @@ class SearchScreenViewModel(application: Application) : AndroidViewModel(applica
             )
         }
     }
+
     fun updateSearchQuery(query: String) {
         Log.d(LOG_TAG, "Updating query to $query, ${query.isEmpty()}")
         _query.update {
