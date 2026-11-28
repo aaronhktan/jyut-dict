@@ -206,6 +206,13 @@ class SearchScreenViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
+    fun updateShouldReexpand(shouldReexpand: Boolean) {
+        _uiState.update {
+            it.copy(
+                shouldReexpand = shouldReexpand
+            )
+        }
+    }
     fun updateSearchQuery(query: String) {
         Log.d(LOG_TAG, "Updating query to $query, ${query.isEmpty()}")
         _query.update {

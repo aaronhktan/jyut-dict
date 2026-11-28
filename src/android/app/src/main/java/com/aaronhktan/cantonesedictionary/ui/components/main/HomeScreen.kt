@@ -1,8 +1,12 @@
 package com.aaronhktan.cantonesedictionary.ui.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
@@ -12,10 +16,15 @@ import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaf
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.aaronhktan.cantonesedictionary.MainApplication
@@ -34,7 +43,7 @@ fun HomeScreen(
     val context = LocalContext.current
     val application = context.applicationContext as MainApplication
     val repository: DictionaryRepository =
-        (application as MainApplication).container.dictionaryRepository
+        application.container.dictionaryRepository
 
     val searchScreenViewModel: SearchScreenViewModel = viewModel()
     val searchScreenUiState = searchScreenViewModel.uiState.collectAsStateWithLifecycle().value
@@ -65,9 +74,6 @@ fun HomeScreen(
                 SearchScreen(
                     searchScreenUiState = searchScreenUiState,
                     isSinglePane = scaffoldNavigator.scaffoldDirective.maxHorizontalPartitions == 1,
-                    onQueryChanged = {
-                        searchScreenViewModel.updateSearchQuery(it)
-                    },
                     onInputMethodChanged = { method ->
                         searchScreenViewModel.updateInputMethod(method)
                     },

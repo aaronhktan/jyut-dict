@@ -9,13 +9,16 @@ import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +27,7 @@ import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -84,6 +88,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -91,6 +96,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
@@ -123,7 +129,6 @@ private val inputMethodOptions: List<InputMethod> = listOf(
 fun SearchScreen(
     searchScreenUiState: SearchScreenUiState,
     isSinglePane: Boolean,
-    onQueryChanged: (String) -> Unit,
     onInputMethodChanged: (InputMethod) -> Unit,
     onEntrySelected: (Entry) -> Unit,
     modifier: Modifier = Modifier
@@ -148,7 +153,6 @@ fun SearchScreen(
                         onInputMethodChanged(method)
                         inputMethodSelectorExpanded = false
                     },
-                    onQueryChanged = onQueryChanged,
                     onEntrySelected = onEntrySelected,
                     Modifier
                         .padding(
@@ -173,7 +177,6 @@ fun SearchScreen(
                         onInputMethodChanged(method)
                         inputMethodSelectorExpanded = false
                     },
-                    onQueryChanged = onQueryChanged,
                     onEntrySelected = onEntrySelected,
                     Modifier
                         .fillMaxWidth()
@@ -186,10 +189,10 @@ fun SearchScreen(
         },
         modifier = modifier
     ) { innerPadding ->
-        Box {
-            LazyColumn(contentPadding = innerPadding) {
-                // TODO: Show welcome screen here
-            }
+        Column(
+            modifier = Modifier.padding(innerPadding),
+        ) {
+            WelcomeScreen()
         }
     }
 }
@@ -203,7 +206,6 @@ private fun SearchScreenContents(
     isSinglePane: Boolean,
     onInputMethodSelectorToggled: (Boolean) -> Unit,
     onInputMethodChanged: (InputMethod) -> Unit,
-    onQueryChanged: (String) -> Unit,
     onEntrySelected: (Entry) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -319,7 +321,7 @@ private fun SearchScreenContents(
 }
 
 @Composable
-fun SearchInputField(
+private fun SearchInputField(
     searchScreenUiState: SearchScreenUiState,
     searchBarState: SearchBarState,
     showBackButton: Boolean,
@@ -375,9 +377,8 @@ fun SearchInputField(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchResults(
+private fun SearchResults(
     searchScreenUiState: SearchScreenUiState,
     listState: LazyListState,
     languageSelectorExpanded: Boolean,
@@ -433,99 +434,13 @@ fun SearchResults(
                     canFocus = false
                 }
         ) {
-            SplitButtonLayout(
-                leadingButton = {
-                    SplitButtonDefaults.LeadingButton(
-                        onClick = { onLanguageSelectorToggled(true) }
-                    ) {
-                        AnimatedContent(
-                            targetState = inputMethodText,
-                            label = "Input method text",
-                        ) { text ->
-                            Text(text, maxLines = 1)
-                        }
-                    }
-                },
-                trailingButton = {
-                    val description = "Switch search language"
-                    TooltipBox(
-                        positionProvider =
-                            TooltipDefaults.rememberTooltipPositionProvider(
-                                TooltipAnchorPosition.Above
-                            ),
-                        tooltip = {
-                            PlainTooltip(
-                                modifier =
-                                    Modifier.semantics {
-                                        liveRegion = LiveRegionMode.Assertive
-                                        paneTitle = description
-                                    }
-                            ) {
-                                Text(description)
-                            }
-                        },
-                        state = rememberTooltipState(),
-                    ) {
-                        SplitButtonDefaults.TrailingButton(
-                            checked = languageSelectorExpanded,
-                            onCheckedChange = { onLanguageSelectorToggled(it) },
-                            modifier =
-                                Modifier.semantics {
-                                    stateDescription =
-                                        if (languageSelectorExpanded) "Expanded" else "Collapsed"
-                                    contentDescription = description
-                                },
-                        ) {
-                            val rotation: Float by
-                            animateFloatAsState(
-                                targetValue = if (languageSelectorExpanded) 180f else 0f,
-                                label = "Trailing Icon Rotation",
-                            )
-                            Icon(
-                                Icons.Filled.KeyboardArrowDown,
-                                modifier =
-                                    Modifier
-                                        .size(SplitButtonDefaults.TrailingIconSize)
-                                        .graphicsLayer {
-                                            this.rotationZ = rotation
-                                        },
-                                contentDescription = "Localized description",
-                            )
-                        }
-                    }
-                },
+            LanguageSelector(
+                searchScreenUiState = searchScreenUiState,
+                inputMethodText = inputMethodText,
+                languageSelectorExpanded = languageSelectorExpanded,
+                onLanguageSelectorToggled = onLanguageSelectorToggled,
+                onInputMethodChanged = onInputMethodChanged
             )
-
-            DropdownMenuPopup(
-                expanded = languageSelectorExpanded,
-                onDismissRequest = { onLanguageSelectorToggled(false) },
-                popupPositionProvider = MenuDefaults.rememberDropdownMenuPopupPositionProvider(
-                    dropdownMenuAnchorPosition = MenuAnchorPosition.Above
-                ),
-                properties = PopupProperties(
-                    // This prevents the keyboard from being dismissed, since the button can't steal focus away
-                    focusable = false,
-                    // When focusable is false, the tap registers to "outside of the popup".
-                    // So we must set this value to false to prevent the trailing button from
-                    // firing twice: once from tapping the button, and once from tapping "outside" it
-                    dismissOnClickOutside = false,
-                ),
-            ) {
-                DropdownMenuGroup(
-                    shapes = MenuDefaults.groupShape(0, 1),
-                    containerColor = MenuDefaults.groupVibrantContainerColor,
-                ) {
-                    inputMethodOptions.forEachIndexed { idx, method ->
-                        SelectableDropdownMenuItem(
-                            selected = searchScreenUiState.selectedInputMethod == method,
-                            text = { Text(method.descriptionString()) },
-                            shapes = MenuDefaults.itemShape(idx, inputMethodOptions.size),
-                            onClick = { onInputMethodChanged(method) },
-                            colors = MenuDefaults.selectableItemVibrantColors(),
-                        )
-                    }
-                }
-            }
         }
 
         // This allows "click outside of the popup to dismiss" behaviour that's disabled by `dismissOnClickOutside = false`
@@ -574,6 +489,142 @@ fun SearchResults(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LanguageSelector(
+    searchScreenUiState: SearchScreenUiState,
+    inputMethodText: String,
+    languageSelectorExpanded: Boolean,
+    onLanguageSelectorToggled: (Boolean) -> Unit,
+    onInputMethodChanged: (InputMethod) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    SplitButtonLayout(
+        leadingButton = {
+            SplitButtonDefaults.LeadingButton(
+                onClick = { onLanguageSelectorToggled(true) }
+            ) {
+                AnimatedContent(
+                    targetState = inputMethodText,
+                    label = "Input method text",
+                ) { text ->
+                    Text(text, maxLines = 1)
+                }
+            }
+        },
+        trailingButton = {
+            val description = "Switch search language"
+            TooltipBox(
+                positionProvider =
+                    TooltipDefaults.rememberTooltipPositionProvider(
+                        TooltipAnchorPosition.Above
+                    ),
+                tooltip = {
+                    PlainTooltip(
+                        modifier =
+                            Modifier.semantics {
+                                liveRegion = LiveRegionMode.Assertive
+                                paneTitle = description
+                            }
+                    ) {
+                        Text(description)
+                    }
+                },
+                state = rememberTooltipState(),
+            ) {
+                SplitButtonDefaults.TrailingButton(
+                    checked = languageSelectorExpanded,
+                    onCheckedChange = { onLanguageSelectorToggled(it) },
+                    modifier =
+                        Modifier.semantics {
+                            stateDescription =
+                                if (languageSelectorExpanded) "Expanded" else "Collapsed"
+                            contentDescription = description
+                        },
+                ) {
+                    val rotation: Float by
+                    animateFloatAsState(
+                        targetValue = if (languageSelectorExpanded) 180f else 0f,
+                        label = "Trailing Icon Rotation",
+                    )
+                    Icon(
+                        Icons.Filled.KeyboardArrowDown,
+                        modifier =
+                            Modifier
+                                .size(SplitButtonDefaults.TrailingIconSize)
+                                .graphicsLayer {
+                                    this.rotationZ = rotation
+                                },
+                        contentDescription = "Localized description",
+                    )
+                }
+            }
+        },
+        modifier = modifier,
+    )
+
+    DropdownMenuPopup(
+        expanded = languageSelectorExpanded,
+        onDismissRequest = { onLanguageSelectorToggled(false) },
+        popupPositionProvider = MenuDefaults.rememberDropdownMenuPopupPositionProvider(
+            dropdownMenuAnchorPosition = MenuAnchorPosition.Above
+        ),
+        properties = PopupProperties(
+            // This prevents the keyboard from being dismissed, since the button can't steal focus away
+            focusable = false,
+            // When focusable is false, the tap registers to "outside of the popup".
+            // So we must set this value to false to prevent the trailing button from
+            // firing twice: once from tapping the button, and once from tapping "outside" it
+            dismissOnClickOutside = false,
+        ),
+    ) {
+        DropdownMenuGroup(
+            shapes = MenuDefaults.groupShape(0, 1),
+            containerColor = MenuDefaults.groupVibrantContainerColor,
+        ) {
+            inputMethodOptions.forEachIndexed { idx, method ->
+                SelectableDropdownMenuItem(
+                    selected = searchScreenUiState.selectedInputMethod == method,
+                    text = { Text(method.descriptionString()) },
+                    shapes = MenuDefaults.itemShape(idx, inputMethodOptions.size),
+                    onClick = { onInputMethodChanged(method) },
+                    colors = MenuDefaults.selectableItemVibrantColors(),
+                )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun WelcomeScreen(modifier: Modifier = Modifier) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.content_padding)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        Spacer(Modifier.weight(1f))
+        Image(
+            painter = painterResource(R.drawable.icon),
+            contentDescription = "App icon",
+            modifier = Modifier.
+                width(150.dp)
+        )
+        Text(
+            text = "Welcome to Jyut Dictionary",
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.displaySmall,
+        )
+        Text(
+            text = "A Project by Aaron Tan",
+            color = MaterialTheme.colorScheme.secondary,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        Spacer(Modifier.weight(1f))
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun SearchScreenPreviewSinglePane() {
@@ -582,7 +633,6 @@ fun SearchScreenPreviewSinglePane() {
             searchScreenUiState = SearchScreenUiState(),
             isSinglePane = true,
             onInputMethodChanged = {},
-            onQueryChanged = {},
             onEntrySelected = {})
     }
 }
@@ -595,7 +645,6 @@ fun SearchScreenPreviewDoublePane() {
             searchScreenUiState = SearchScreenUiState(),
             isSinglePane = false,
             onInputMethodChanged = {},
-            onQueryChanged = {},
             onEntrySelected = {})
     }
 }
