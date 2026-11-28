@@ -1,15 +1,25 @@
 package com.aaronhktan.cantonesedictionary.ui.components.search
 
 import android.view.animation.PathInterpolator
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
@@ -22,11 +32,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -59,7 +71,8 @@ fun CustomDockedSearchPopup(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     gap: Dp = 4.dp,
-    inputField: @Composable (FocusRequester) -> Unit,
+    backButton: @Composable () -> Unit,
+    inputField: @Composable (FocusRequester, Modifier) -> Unit,
     results: @Composable () -> Unit
 ) {
     // The focusRequester lets the input field request focus when searching
@@ -74,6 +87,7 @@ fun CustomDockedSearchPopup(
     // The anchor values are properties of the search box
     var anchorWidth by remember { mutableIntStateOf(0) }
     var anchorBottomPx by remember { mutableIntStateOf(0) }
+    var inputHasFocus by remember { mutableStateOf(false) }
 
     val density = LocalDensity.current
 
@@ -88,7 +102,6 @@ fun CustomDockedSearchPopup(
     val navigationBarsTopPx = containerHeightPx - navigationBarsHeightPx
     val navigationBarsTop = with(density) { navigationBarsTopPx.toDp() }
 
-
     val maxHeight = minOf(
         // Heights of elements that the popup should not overlap with, from bottom to top
         (navigationBarsTop - dimensionResource(R.dimen.content_padding) - gap - anchorBottom).coerceAtLeast(
@@ -100,12 +113,37 @@ fun CustomDockedSearchPopup(
     )
 
     Box(modifier = modifier) {
-        Box(
-            modifier = Modifier.onGloballyPositioned {
-                anchorWidth = it.size.width
-                anchorBottomPx = it.boundsInWindow().bottom.roundToInt()
-            }) {
-            inputField(focusRequester)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .onGloballyPositioned {
+                    anchorWidth = it.size.width
+                    anchorBottomPx = it.boundsInWindow().bottom.roundToInt()
+                },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AnimatedVisibility(
+                visible = inputHasFocus,
+                enter = expandHorizontally(
+                    expandFrom = Alignment.Start
+                ) + fadeIn(),
+                exit = shrinkHorizontally(
+                    shrinkTowards = Alignment.Start
+                ) + fadeOut(),
+            ) {
+                backButton()
+            }
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+            ) {
+                inputField(focusRequester, Modifier
+                    .onFocusChanged {
+                        inputHasFocus = it.isFocused
+                    })
+
+            }
         }
 
         if (anchorWidth > 0) {
@@ -128,9 +166,7 @@ fun CustomDockedSearchPopup(
                                 0, (windowSize.width - popupContentSize.width).coerceAtLeast(0)
                             )
 
-                            val desiredY = anchorBounds.bottom + gapPx
-                            val maxY = (keyboardTopPx - popupContentSize.height).coerceAtLeast(0)
-                            val y = desiredY.coerceIn(0, maxY)
+                            val y = anchorBounds.bottom + gapPx
 
                             return IntOffset(x, y)
                         }

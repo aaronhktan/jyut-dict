@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenuGroup
@@ -29,6 +31,7 @@ import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExpandedFullScreenContainedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MenuAnchorPosition
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.PlainTooltip
@@ -45,6 +48,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
@@ -242,7 +246,21 @@ private fun SearchScreenContents(
                 .focusProperties {
                     canFocus = searchBarState.currentValue == SearchBarValue.Expanded
                 },
-            inputField = { focusRequester ->
+            backButton = {
+                IconButton(
+                    onClick = {
+                        scope.launch {
+                            searchBarState.animateToCollapsed()
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Dismiss search",
+                    )
+                }
+            },
+            inputField = { focusRequester, modifier ->
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = SearchBarDefaults.dockedShape,
@@ -252,7 +270,7 @@ private fun SearchScreenContents(
                     SearchInputField(
                         searchScreenUiState,
                         searchBarState,
-                        Modifier.focusRequester(focusRequester),
+                        modifier.focusRequester(focusRequester),
                     )
                 }
             },
