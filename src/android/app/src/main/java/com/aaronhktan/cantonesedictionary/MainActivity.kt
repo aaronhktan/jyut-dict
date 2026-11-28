@@ -10,12 +10,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.aaronhktan.cantonesedictionary.logic.database.DatabaseManager
 import com.aaronhktan.cantonesedictionary.ui.components.CantoneseDictionaryApp
 import com.aaronhktan.cantonesedictionary.ui.theme.CantoneseDictionaryTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        installSplashScreen()
+
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()

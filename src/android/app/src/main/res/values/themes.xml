@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.JyutDictionary" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.JyutDictionary" parent="Theme.SplashScreen">
+
+        <item name="windowSplashScreenBackground">#CC0001</item>
+
+        <item name="windowSplashScreenAnimatedIcon">
+            @drawable/ic_launcher_foreground
+        </item>
+
+        <item name="postSplashScreenTheme">
+            @style/Theme.JyutDictionary.Main
+        </item>
+
+    </style>
+
+    <style name="Theme.JyutDictionary.Main"
+        parent="android:Theme.Material.Light.NoActionBar"/>
+
 </resources>

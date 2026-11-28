@@ -96,6 +96,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.sqlite.bundled)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation("androidx.core:core-splashscreen:1.2.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
