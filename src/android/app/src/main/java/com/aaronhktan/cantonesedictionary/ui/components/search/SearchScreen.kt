@@ -3,9 +3,16 @@ package com.aaronhktan.cantonesedictionary.ui.components.search
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -24,6 +31,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenuGroup
@@ -32,6 +41,7 @@ import androidx.compose.material3.ExpandedFullScreenContainedSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorPosition
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.PlainTooltip
@@ -65,6 +75,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -80,6 +92,7 @@ import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import androidx.compose.ui.window.PopupProperties
 import com.aaronhktan.cantonesedictionary.R
@@ -206,7 +219,13 @@ private fun SearchScreenContents(
 
     if (isSinglePane) {
         val inputField: @Composable () -> Unit =
-            { SearchInputField(searchScreenUiState, searchBarState) }
+            {
+                SearchInputField(
+                    searchScreenUiState,
+                    searchBarState,
+                    showBackButton = searchBarState.currentValue == SearchBarValue.Expanded
+                )
+            }
         SearchBar(
             state = searchBarState,
             inputField = inputField,
@@ -270,6 +289,7 @@ private fun SearchScreenContents(
                     SearchInputField(
                         searchScreenUiState,
                         searchBarState,
+                        showBackButton = false,
                         modifier.focusRequester(focusRequester),
                     )
                 }
@@ -302,24 +322,57 @@ private fun SearchScreenContents(
 fun SearchInputField(
     searchScreenUiState: SearchScreenUiState,
     searchBarState: SearchBarState,
+    showBackButton: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val scope = rememberCoroutineScope()
+    var inputHasFocus by remember { mutableStateOf(false) }
+
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    SearchBarDefaults.InputField(
-        textFieldState = searchScreenUiState.textFieldState,
-        searchBarState = searchBarState,
-        onSearch = {
-            keyboardController?.hide()
-            focusManager.clearFocus()
-        },
-        modifier = modifier,
-        placeholder = {
-            Text(modifier = Modifier.clearAndSetSemantics {}, text = "Search")
-        },
-        leadingIcon = { Icon(Icons.Default.Search, contentDescription = "Search") },
-    )
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(0.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        SearchBarDefaults.InputField(
+            textFieldState = searchScreenUiState.textFieldState,
+            searchBarState = searchBarState,
+            onSearch = {
+                keyboardController?.hide()
+                focusManager.clearFocus()
+            },
+            modifier = modifier
+                .onFocusChanged {
+                    inputHasFocus = it.isFocused
+                },
+            placeholder = {
+                Text(modifier = Modifier.clearAndSetSemantics {}, text = "Search")
+            },
+            leadingIcon = {
+                if (showBackButton) {
+                    IconButton(
+                        onClick = {
+                            scope.launch {
+                                searchBarState.animateToCollapsed()
+                            }
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.ArrowBackIosNew,
+                            contentDescription = "Dismiss search",
+                        )
+                    }
+                } else {
+                    Icon(
+                        Icons.Default.Search,
+                        contentDescription = "Search",
+                    )
+                }
+            },
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
