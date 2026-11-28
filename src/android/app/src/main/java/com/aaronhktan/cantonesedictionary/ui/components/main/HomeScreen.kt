@@ -1,5 +1,8 @@
 package com.aaronhktan.cantonesedictionary.ui.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
@@ -10,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -84,6 +88,7 @@ fun HomeScreen(
             AnimatedPane() {
                 EntryDetail(
                     entryDetailUiState = entryDetailUiState,
+                    showBackButton = scaffoldNavigator.scaffoldDirective.maxHorizontalPartitions == 1,
                     modifier = modifier,
                 )
             }
