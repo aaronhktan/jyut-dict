@@ -87,7 +87,6 @@ fun CustomDockedSearchPopup(
     // The anchor values are properties of the search box
     var anchorWidth by remember { mutableIntStateOf(0) }
     var anchorBottomPx by remember { mutableIntStateOf(0) }
-    var inputHasFocus by remember { mutableStateOf(false) }
 
     val density = LocalDensity.current
 
@@ -123,7 +122,7 @@ fun CustomDockedSearchPopup(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AnimatedVisibility(
-                visible = inputHasFocus,
+                visible = expanded,
                 enter = expandHorizontally(
                     expandFrom = Alignment.Start
                 ) + fadeIn(),
@@ -138,10 +137,7 @@ fun CustomDockedSearchPopup(
                 modifier = Modifier
                     .weight(1f)
             ) {
-                inputField(focusRequester, Modifier
-                    .onFocusChanged {
-                        inputHasFocus = it.isFocused
-                    })
+                inputField(focusRequester, Modifier)
 
             }
         }
@@ -171,7 +167,9 @@ fun CustomDockedSearchPopup(
                             return IntOffset(x, y)
                         }
                     }
-                }, onDismissRequest = onDismissRequest, properties = PopupProperties(
+                },
+                onDismissRequest = onDismissRequest,
+                properties = PopupProperties(
                     focusable = false,
                     dismissOnClickOutside = false,
                 )
