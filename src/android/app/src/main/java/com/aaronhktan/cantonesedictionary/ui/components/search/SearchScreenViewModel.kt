@@ -3,6 +3,7 @@ package com.aaronhktan.cantonesedictionary.ui.components
 import android.app.Application
 import android.util.Log
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -213,19 +214,15 @@ class SearchScreenViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    fun updateShouldReexpand(shouldReexpand: Boolean) {
-        _uiState.update {
-            it.copy(
-                shouldReexpand = shouldReexpand
-            )
-        }
-    }
-
     fun updateSearchQuery(query: String) {
         Log.d(LOG_TAG, "Updating query to $query, ${query.isEmpty()}")
         _query.update {
             query
         }
+    }
+
+    fun clearSearchInputText() {
+        _textFieldState.clearText()
     }
 
     fun updateSelectedEntry(entry: Entry) {

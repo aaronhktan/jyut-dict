@@ -37,6 +37,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SearchOff
@@ -130,6 +131,7 @@ private val inputMethodOptions: List<InputMethod> = listOf(
 fun SearchScreen(
     searchScreenUiState: SearchScreenUiState,
     isSinglePane: Boolean,
+    onClearText: () -> Unit,
     onInputMethodChanged: (InputMethod) -> Unit,
     onEntrySelected: (Entry) -> Unit,
     modifier: Modifier = Modifier
@@ -147,6 +149,7 @@ fun SearchScreen(
                     listState = listState,
                     inputMethodSelectorExpanded = inputMethodSelectorExpanded,
                     isSinglePane = isSinglePane,
+                    onClearText = onClearText,
                     onInputMethodSelectorToggled = { value ->
                         inputMethodSelectorExpanded = value
                     },
@@ -171,6 +174,7 @@ fun SearchScreen(
                     listState = listState,
                     inputMethodSelectorExpanded = inputMethodSelectorExpanded,
                     isSinglePane = isSinglePane,
+                    onClearText = onClearText,
                     onInputMethodSelectorToggled = { value ->
                         inputMethodSelectorExpanded = value
                     },
@@ -205,6 +209,7 @@ private fun SearchScreenContents(
     listState: LazyListState,
     inputMethodSelectorExpanded: Boolean,
     isSinglePane: Boolean,
+    onClearText: () -> Unit,
     onInputMethodSelectorToggled: (Boolean) -> Unit,
     onInputMethodChanged: (InputMethod) -> Unit,
     onEntrySelected: (Entry) -> Unit,
@@ -226,6 +231,7 @@ private fun SearchScreenContents(
                 SearchInputField(
                     searchScreenUiState,
                     searchBarState,
+                    onClearText = onClearText,
                     showBackButton = searchBarState.currentValue == SearchBarValue.Expanded
                 )
             }
@@ -293,6 +299,7 @@ private fun SearchScreenContents(
                         searchScreenUiState,
                         searchBarState,
                         showBackButton = false,
+                        onClearText = onClearText,
                         modifier.focusRequester(focusRequester),
                     )
                 }
@@ -326,6 +333,7 @@ private fun SearchInputField(
     searchScreenUiState: SearchScreenUiState,
     searchBarState: SearchBarState,
     showBackButton: Boolean,
+    onClearText: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
@@ -333,7 +341,6 @@ private fun SearchInputField(
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
-
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(0.dp),
@@ -374,6 +381,18 @@ private fun SearchInputField(
                     )
                 }
             },
+            trailingIcon = {
+                if (searchScreenUiState.textFieldState.text.isNotEmpty()) {
+                    IconButton(
+                        onClick = onClearText,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Clear search text",
+                        )
+                    }
+                }
+            }
         )
     }
 }
@@ -664,6 +683,7 @@ fun SearchScreenPreviewSinglePane() {
         SearchScreen(
             searchScreenUiState = SearchScreenUiState(),
             isSinglePane = true,
+            onClearText = {},
             onInputMethodChanged = {},
             onEntrySelected = {})
     }
@@ -676,6 +696,7 @@ fun SearchScreenPreviewDoublePane() {
         SearchScreen(
             searchScreenUiState = SearchScreenUiState(),
             isSinglePane = false,
+            onClearText = {},
             onInputMethodChanged = {},
             onEntrySelected = {})
     }

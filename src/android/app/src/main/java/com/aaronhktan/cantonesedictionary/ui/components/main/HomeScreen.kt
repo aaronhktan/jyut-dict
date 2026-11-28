@@ -74,6 +74,9 @@ fun HomeScreen(
                 SearchScreen(
                     searchScreenUiState = searchScreenUiState,
                     isSinglePane = scaffoldNavigator.scaffoldDirective.maxHorizontalPartitions == 1,
+                    onClearText = {
+                        searchScreenViewModel.clearSearchInputText()
+                    },
                     onInputMethodChanged = { method ->
                         searchScreenViewModel.updateInputMethod(method)
                     },
