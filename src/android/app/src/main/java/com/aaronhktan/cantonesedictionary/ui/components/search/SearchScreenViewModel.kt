@@ -2,6 +2,8 @@ package com.aaronhktan.cantonesedictionary.ui.components
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.aaronhktan.cantonesedictionary.MainApplication
@@ -17,7 +19,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
@@ -33,7 +37,8 @@ class SearchScreenViewModel(application: Application) : AndroidViewModel(applica
     private val _repository: DictionaryRepository =
         (application as MainApplication).container.dictionaryRepository
 
-    private val _uiState = MutableStateFlow(SearchScreenUiState())
+    private val _textFieldState = TextFieldState()
+    private val _uiState = MutableStateFlow(SearchScreenUiState(_textFieldState))
     val uiState: StateFlow<SearchScreenUiState> = _uiState
 
     private val _query = MutableStateFlow("")
@@ -45,7 +50,11 @@ class SearchScreenViewModel(application: Application) : AndroidViewModel(applica
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun initializeUIState() {
-        _uiState.value = SearchScreenUiState()
+        viewModelScope.launch {
+            snapshotFlow { _textFieldState.text.toString() }
+                .distinctUntilChanged()
+                .collectLatest { updateSearchQuery(it) }
+        }
 
         viewModelScope.launch {
             _query.combine(_inputMethod) { query, method ->

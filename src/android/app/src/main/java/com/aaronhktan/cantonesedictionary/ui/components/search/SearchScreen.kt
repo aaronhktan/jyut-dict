@@ -1,5 +1,6 @@
 package com.aaronhktan.cantonesedictionary.ui.components.search
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
@@ -7,9 +8,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -57,11 +60,13 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -81,6 +86,7 @@ import com.aaronhktan.cantonesedictionary.ui.components.entry.EntryRow
 import com.aaronhktan.cantonesedictionary.ui.theme.CantoneseDictionaryTheme
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
 private const val LOG_TAG = "SearchScreen"
@@ -189,17 +195,9 @@ private fun SearchScreenContents(
 
     LaunchedEffect(Unit) {
         if (shouldReexpand && isSinglePane) {
-            shouldReexpand = false
             searchBarState.animateToExpanded()
+            shouldReexpand = false
         }
-    }
-
-    LaunchedEffect(searchScreenUiState.textFieldState) {
-        snapshotFlow { searchScreenUiState.textFieldState.text.toString() }
-            .distinctUntilChanged()
-            .collectLatest { query ->
-                onQueryChanged(query)
-            }
     }
 
     if (isSinglePane) {
@@ -244,7 +242,7 @@ private fun SearchScreenContents(
                 .focusProperties {
                     canFocus = searchBarState.currentValue == SearchBarValue.Expanded
                 },
-            inputField = {
+            inputField = { focusRequester ->
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = SearchBarDefaults.dockedShape,
@@ -254,10 +252,7 @@ private fun SearchScreenContents(
                     SearchInputField(
                         searchScreenUiState,
                         searchBarState,
-                        Modifier
-                            .focusProperties {
-                                canFocus = searchBarState.currentValue == SearchBarValue.Expanded
-                            }
+                        Modifier.focusRequester(focusRequester),
                     )
                 }
             },
@@ -322,9 +317,11 @@ fun SearchResults(
     modifier: Modifier = Modifier
 ) {
     val searchResults = searchScreenUiState.searchResults ?: listOf()
+
     val detectedInputMethod = searchScreenUiState.detectedInputMethod
     var inputMethodText by remember { mutableStateOf(searchScreenUiState.selectedInputMethod.descriptionString()) }
     var buttonHeight by remember { mutableIntStateOf(0) }
+
     val density = LocalDensity.current
 
     Box(

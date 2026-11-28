@@ -9,21 +9,29 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
@@ -33,6 +41,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
+import com.aaronhktan.cantonesedictionary.R
+import kotlin.math.roundToInt
 
 // Based on values in https://m3.material.io/styles/motion/easing-and-duration/tokens-specs
 val EmphasizedDecelerateEasing: Easing = Easing { fraction ->
@@ -48,32 +58,61 @@ fun CustomDockedSearchPopup(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
-    maxHeightFraction: Float = 0.8f,
     gap: Dp = 4.dp,
-    inputField: @Composable () -> Unit,
+    inputField: @Composable (FocusRequester) -> Unit,
     results: @Composable () -> Unit
 ) {
+    // The focusRequester lets the input field request focus when searching
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(expanded) {
+        if (expanded) {
+            focusRequester.requestFocus()
+        }
+    }
+
+    // The anchor values are properties of the search box
     var anchorWidth by remember { mutableIntStateOf(0) }
+    var anchorBottomPx by remember { mutableIntStateOf(0) }
 
     val density = LocalDensity.current
-    val screenHeight = with(LocalDensity.current) {
-        LocalWindowInfo.current.containerSize.height.toDp()
-    }
-    val maxHeight = screenHeight * maxHeightFraction
+
+    val anchorBottom = with(density) { anchorBottomPx.toDp() }
+    val containerHeightPx = LocalWindowInfo.current.containerSize.height
+
+    val keyboardHeightPx = WindowInsets.ime.getBottom(density)
+    val keyboardTopPx = containerHeightPx - keyboardHeightPx
+    val keyboardTop = with(density) { keyboardTopPx.toDp() }
+
+    val navigationBarsHeightPx = WindowInsets.navigationBars.getBottom(density)
+    val navigationBarsTopPx = containerHeightPx - navigationBarsHeightPx
+    val navigationBarsTop = with(density) { navigationBarsTopPx.toDp() }
+
+
+    val maxHeight = minOf(
+        // Heights of elements that the popup should not overlap with, from bottom to top
+        (navigationBarsTop - dimensionResource(R.dimen.content_padding) - gap - anchorBottom).coerceAtLeast(
+            0.dp
+        ),
+        (keyboardTop - dimensionResource(R.dimen.content_padding) - gap - anchorBottom).coerceAtLeast(
+            0.dp
+        )
+    )
 
     Box(modifier = modifier) {
         Box(
             modifier = Modifier.onGloballyPositioned {
                 anchorWidth = it.size.width
+                anchorBottomPx = it.boundsInWindow().bottom.roundToInt()
             }) {
-            inputField()
+            inputField(focusRequester)
         }
 
         if (anchorWidth > 0) {
             val gapPx = with(density) { gap.roundToPx() }
 
             Popup(
-                popupPositionProvider = remember(gapPx) {
+                popupPositionProvider = remember(gapPx, keyboardTopPx) {
                     object : PopupPositionProvider {
                         override fun calculatePosition(
                             anchorBounds: IntRect,
@@ -89,7 +128,9 @@ fun CustomDockedSearchPopup(
                                 0, (windowSize.width - popupContentSize.width).coerceAtLeast(0)
                             )
 
-                            val y = anchorBounds.bottom + gapPx
+                            val desiredY = anchorBounds.bottom + gapPx
+                            val maxY = (keyboardTopPx - popupContentSize.height).coerceAtLeast(0)
+                            val y = desiredY.coerceIn(0, maxY)
 
                             return IntOffset(x, y)
                         }
